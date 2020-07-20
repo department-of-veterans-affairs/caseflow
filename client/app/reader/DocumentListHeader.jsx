@@ -18,7 +18,14 @@ class DocumentListHeader extends React.Component {
       `/reader/appeal/${this.props.vacolsId}/claims_folder_searches`,
       { data: { query } },
       ENDPOINT_NAMES.CLAIMS_FOLDER_SEARCHES
-    ).then(_.noop);
+    ).
+      then(() => {
+        // no op
+      }).
+      catch((error) => {
+        // we don't care reporting via Raven.
+        console.error(error);
+      });
   }
 
   render() {
@@ -53,6 +60,8 @@ DocumentListHeader.propTypes = {
   setSearch: PropTypes.func.isRequired,
   noDocuments: PropTypes.bool,
   clearAllFilters: PropTypes.func,
+  clearSearch: PropTypes.func,
+  docFilterCriteria: PropTypes.object,
   numberOfDocuments: PropTypes.number.isRequired,
   vacolsId: PropTypes.string
 };

@@ -1,5 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'glamor';
+
+const labelTextStyling = css({
+  marginTop: '0.65em',
+  marginBottom: '0.65em'
+});
 
 export default class TextField extends React.Component {
 
@@ -27,7 +33,9 @@ export default class TextField extends React.Component {
       max,
       autoComplete,
       useAriaLabel,
-      dateErrorMessage
+      dateErrorMessage,
+      labelText,
+      inputStyling
     } = this.props;
 
     let textInputClass = className.concat(
@@ -51,7 +59,7 @@ export default class TextField extends React.Component {
     const labelContents =
       <span>
         {label || name}
-        {required && <span className="cf-required">Required</span>}
+        {required && !readOnly && <span className="cf-required">Required</span>}
         {optional && <span className="cf-optional">Optional</span>}
       </span>;
 
@@ -68,6 +76,7 @@ export default class TextField extends React.Component {
           }
         </label>
       }
+      {labelText && <p{...labelTextStyling}>{labelText}</p>}
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       {this.props.fixedInput ?
         <p>{value}</p> :
@@ -86,6 +95,7 @@ export default class TextField extends React.Component {
           max={max}
           autoComplete={autoComplete}
           {...ariaLabelObj}
+          {...inputStyling}
         />
       }
 
@@ -115,6 +125,10 @@ TextField.propTypes = {
     PropTypes.string,
     PropTypes.bool
   ]),
+  labelText: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool
+  ]),
   useAriaLabel: PropTypes.bool,
   name: PropTypes.string.isRequired,
   onChange(props) {
@@ -124,6 +138,12 @@ TextField.propTypes = {
       }
     }
   },
+  title: PropTypes.string,
+  onKeyPress: PropTypes.func,
+  strongLabel: PropTypes.bool,
+  maxLength: PropTypes.number,
+  max: PropTypes.any,
+  autoComplete: PropTypes.string,
   placeholder: PropTypes.string,
   readOnly: PropTypes.bool,
   fixedInput: PropTypes.bool,
@@ -134,5 +154,6 @@ TextField.propTypes = {
   value: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number
-  ])
+  ]),
+  inputStyling: PropTypes.object
 };

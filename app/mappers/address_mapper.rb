@@ -11,7 +11,8 @@ module AddressMapper
       city: bgs_address[:city_nm],
       country: bgs_address[:cntry_nm],
       state: bgs_address[:postal_cd],
-      zip: bgs_address[:zip_prefix_nbr]
+      zip: bgs_address[:zip_prefix_nbr],
+      type: bgs_address[:ptcpnt_addrs_type_nm]
     }
   end
 

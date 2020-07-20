@@ -6,7 +6,7 @@ describe IssueSerializer, :all_dbs do
   end
 
   context "#appeal" do
-    let(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
+    let(:receipt_date) { ama_test_start_date + 1 }
 
     let(:request_issue1) do
       create(:request_issue,

@@ -1,18 +1,19 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import React from 'react';
+import _ from 'lodash';
+
+import { formatDateStr, getMinutesToMilliseconds } from '../../util/DateUtil';
 import {
   onReceiveDropdownData,
   onFetchDropdownData,
   onDropdownError
 } from '../common/actions';
 import ApiUtil from '../../util/ApiUtil';
-import _ from 'lodash';
-import { formatDateStr, getMinutesToMilliseconds } from '../../util/DateUtil';
+import COPY from '../../../COPY';
 import LoadingLabel from './LoadingLabel';
 import SearchableDropdown from '../SearchableDropdown';
-import COPY from '../../../COPY.json';
 
 class HearingDateDropdown extends React.Component {
   componentDidMount() {
@@ -127,7 +128,8 @@ class HearingDateDropdown extends React.Component {
           onChange={this.onOptionSelected}
           options={options}
           errorMessage={errorMsg || errorMessage}
-          placeholder={placeholder} />
+          placeholder={placeholder}
+        />
       </React.Fragment>
     );
   }
@@ -136,12 +138,25 @@ class HearingDateDropdown extends React.Component {
 HearingDateDropdown.propTypes = {
   name: PropTypes.string,
   label: PropTypes.string,
+  hearingDates: PropTypes.shape({
+    options: PropTypes.arrayOf(
+      PropTypes.shape({
+        value: PropTypes.any,
+        label: PropTypes.string,
+      })
+    ),
+    isFetching: PropTypes.bool,
+    errorMsg: PropTypes.string
+  }),
   regionalOffice: PropTypes.string.isRequired,
   value: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object
   ]),
   onChange: PropTypes.func.isRequired,
+  onDropdownError: PropTypes.func,
+  onFetchDropdownData: PropTypes.func,
+  onReceiveDropdownData: PropTypes.func,
   readOnly: PropTypes.bool,
   placeholder: PropTypes.string,
   errorMessage: PropTypes.string,

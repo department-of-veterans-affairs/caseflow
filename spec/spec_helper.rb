@@ -10,6 +10,20 @@ else
   # default is aggregate via simplecov for CI
   require "simplecov"
 end
+if ENV["CI"]
+  require "rspec/retry"
+  # Repeat all failed feature tests in CI twice
+  RSpec.configure do |config|
+    # show retry status in spec process
+    config.verbose_retry = true
+    # show exception that triggers a retry if verbose_retry is set to true
+    config.display_try_failure_messages = true
+    # run retry twice only on features
+    config.around :each, type: :feature do |ex|
+      ex.run_with_retry retry: 2
+    end
+  end
+end
 require File.expand_path("../config/environment", __dir__)
 require "rspec/rails"
 

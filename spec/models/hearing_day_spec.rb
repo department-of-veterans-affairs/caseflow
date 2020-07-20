@@ -68,6 +68,69 @@ describe HearingDay, :all_dbs do
         expect(hearing_day.room).to eq "5"
       end
     end
+
+    context "video hearing day with invalid RO key" do
+      subject do
+        create(
+          :hearing_day,
+          request_type: HearingDay::REQUEST_TYPES[:video],
+          regional_office: "RO1000"
+        )
+      end
+
+      it "throws a validation error" do
+        expect { subject }.to raise_error(
+          ActiveRecord::RecordInvalid,
+          "Validation failed: Regional office key (RO1000) is invalid"
+        )
+      end
+    end
+
+    context "central hearing day with a non-nil RO key" do
+      subject do
+        create(
+          :hearing_day,
+          request_type: HearingDay::REQUEST_TYPES[:central],
+          regional_office: "RO10"
+        )
+      end
+
+      it "throws a validation error" do
+        expect { subject }.to raise_error(
+          ActiveRecord::RecordInvalid,
+          "Validation failed: Regional office must be blank"
+        )
+      end
+    end
+
+    context "hearing day with invalid request type" do
+      subject { create(:hearing_day, request_type: "abcdefg", regional_office: "RO10") }
+
+      it "throws a validation error" do
+        expect { subject }.to raise_error(
+          ActiveRecord::RecordInvalid,
+          "Validation failed: Request type is invalid"
+        )
+      end
+    end
+
+    context "hearing day with judge id that does not exist" do
+      subject do
+        create(
+          :hearing_day,
+          request_type: HearingDay::REQUEST_TYPES[:video],
+          regional_office: "RO10",
+          judge_id: 9876
+        )
+      end
+
+      it "throws a validation error" do
+        expect { subject }.to raise_error(
+          ActiveRecord::RecordInvalid,
+          "Validation failed: Judge can't be blank"
+        )
+      end
+    end
   end
 
   context "update hearing day" do
@@ -234,7 +297,7 @@ describe HearingDay, :all_dbs do
       subject { HearingDayRange.new(schedule_period.start_date, schedule_period.end_date).load_days }
 
       it do
-        expect(subject.size).to eql(434)
+        expect(subject.size).to eql(427)
       end
     end
   end

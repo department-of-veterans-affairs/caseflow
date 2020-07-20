@@ -143,7 +143,7 @@ feature "Task queue", :all_dbs do
     end
 
     it "shows tabs on the queue page" do
-      expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
+      expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
       expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, vacols_tasks.length))
       expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_task_count))
       expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
@@ -151,12 +151,12 @@ feature "Task queue", :all_dbs do
 
     it "shows the right number of cases in each tab" do
       # Assigned tab
-      expect(page).to have_content(COPY::ATTORNEY_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION)
+      expect(page).to have_content(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION)
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
 
       # On Hold tab
       find("button", text: format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_task_count)).click
-      expect(page).to have_content(COPY::ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
+      expect(page).to have_content(COPY::USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
       expect(find("tbody").find_all("tr").length).to eq(attorney_on_hold_task_count)
       appeal = attorney_task.appeal
       expect(page).to have_content("#{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
@@ -202,8 +202,8 @@ feature "Task queue", :all_dbs do
       expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTION_BOX_TITLE)
 
       # Marking the task as complete correctly changes the task's status in the database.
-      find(".Select-control", text: "Select an action…").click
-      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
+      find(".cf-select__control", text: "Select an action…").click
+      find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
       find("button", text: "Mark complete").click
 
@@ -303,8 +303,8 @@ feature "Task queue", :all_dbs do
       visit "/queue/appeals/#{appeal.uuid}"
       find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
-      find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
-      find("div", class: "Select-option", text: label).click
+      find(".cf-select__control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+      find("div", class: "cf-select__option", text: label).click
 
       fill_in("taskInstructions", with: instructions)
       find("button", text: "Submit").click
@@ -347,8 +347,8 @@ feature "Task queue", :all_dbs do
 
         find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
-        find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
-        find("div", class: "Select-option", text: COPY::AOD_MOTION_MAIL_TASK_LABEL).click
+        find(".cf-select__control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+        find("div", class: "cf-select__option", text: COPY::AOD_MOTION_MAIL_TASK_LABEL).click
 
         fill_in("taskInstructions", with: instructions)
         find("button", text: "Submit").click
@@ -390,7 +390,7 @@ feature "Task queue", :all_dbs do
     end
 
     context "when a VacateMotionMailTask task is routed to Pulac Cerullo" do
-      let!(:root_task) { create(:root_task) }
+      let!(:root_task) { create(:root_task, :completed) }
 
       it "creates two child tasks: one Pulac Cerullo Task, and a child of that task " \
         "assigned to the first user in the Pulac Cerullo org" do
@@ -406,8 +406,8 @@ feature "Task queue", :all_dbs do
 
         find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
-        find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
-        find("div", class: "Select-option", text: COPY::AOD_MOTION_MAIL_TASK_LABEL).click
+        find(".cf-select__control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+        find("div", class: "cf-select__option", text: COPY::AOD_MOTION_MAIL_TASK_LABEL).click
 
         fill_in("taskInstructions", with: instructions)
         find("button", text: "Submit").click
@@ -435,6 +435,8 @@ feature "Task queue", :all_dbs do
 
     let(:unassigned_count) { 8 }
     let(:assigned_count) { 12 }
+    let(:foia_task_count) { unassigned_count / 2 }
+    let(:on_hold_count) { assigned_count / 2 }
     let!(:unassigned_tasks) do
       create_list(:privacy_act_task, unassigned_count, :in_progress, assigned_to: organization)
     end
@@ -445,339 +447,228 @@ feature "Task queue", :all_dbs do
     before do
       organization.add_user(organization_user)
       User.authenticate!(user: organization_user)
+      Task.on_hold.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
+        .each_with_index do |task, idx|
+          child_task = create(:ama_task, parent: task)
+          child_task.update!(status: Constants.TASK_STATUSES.on_hold) if idx < on_hold_count
+        end
+      Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
+        .take(foia_task_count).each { |task| task.update!(type: FoiaTask.name) }
     end
 
-    context "when not using pagination" do
-      before do
-        visit(organization.path)
-      end
-
-      it "shows the right organization name" do
-        expect(page).to have_content(organization.name)
-      end
-
-      it "shows tabs on the queue page" do
-        expect(page).to have_content(
-          format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_count)
-        )
-        expect(page).to have_content(
-          format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count)
-        )
-        expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
-      end
-
-      it "does not show all cases tab for non-VSO organization" do
-        expect(page).to_not have_content(COPY::TRACKING_TASKS_TAB_TITLE)
-      end
-
-      it "shows the right number of cases in each tab" do
-        # Unassigned tab
-        expect(page).to have_content(
-          format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
-        )
-        expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
-
-        # Assigned tab
-        find("button", text: format(
-          COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count
-        )).click
-        expect(page).to have_content(
-          format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, organization.name)
-        )
-        expect(find("tbody").find_all("tr").length).to eq(assigned_count)
-      end
-
-      it "shows queue switcher dropdown" do
-        expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
-      end
-
-      context "when organization tasks include one associated with a LegacyAppeal that has been removed from VACOLS" do
-        let!(:tasks) do
-          Array.new(4) do
-            vacols_case = create(:case)
-            legacy_appeal = create(:legacy_appeal, vacols_case: vacols_case)
-            vacols_case.destroy!
-            create(:generic_task, :in_progress, appeal: legacy_appeal, assigned_to: organization)
-          end
-        end
-
-        it "loads the task queue successfully" do
-          # Re-navigate to the organization queue so we pick up the above task creation.
-          visit(organization.path)
-
-          tasks.each { |t| expect(page).to have_content(t.appeal.veteran_file_number) }
-          expect(page).to_not have_content("Information cannot be found")
-        end
-      end
-
-      context "when filtering tasks" do
-        let(:translation_task_count) { unassigned_count / 2 }
-        let!(:unassigned_tasks) do
-          privacy_tasks = create_list(
-            :privacy_act_task, unassigned_count / 2,
-            :in_progress,
-            assigned_to: organization
-          )
-          translation_tasks = create_list(
-            :translation_task,
-            translation_task_count,
-            :in_progress,
-            assigned_to: organization
-          )
-
-          privacy_tasks + translation_tasks
-        end
-
-        before { visit(organization.path) }
-
-        it "filters are correct, and filter as expected" do
-          step "check if there are the right number of rows for the unassigned table" do
-            expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
-          end
-
-          step "check if the filter options are as expected" do
-            page.find(".unselected-filter-icon-inner", match: :first).click
-            expect(page).to have_content("#{PrivacyActTask.label.humanize} (#{unassigned_count / 2})")
-            expect(page).to have_content("#{TranslationTask.label.humanize} (#{translation_task_count})")
-          end
-
-          step "clicking on a filter reduces the number of results by the expect amount" do
-            page.find("label", text: "#{TranslationTask.label.humanize} (#{translation_task_count})").click
-            expect(find("tbody").find_all("tr").length).to eq(translation_task_count)
-          end
-        end
-      end
+    it "shows the on hold tab" do
+      visit(organization.path)
+      expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count / 2))
+      expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, on_hold_count))
     end
 
-    context "when pagination is enabled" do
-      let(:foia_task_count) { unassigned_count / 2 }
-      let(:on_hold_count) { assigned_count / 2 }
-
+    context "when following a deep link to paged results" do
       before do
-        allow_any_instance_of(Organization).to receive(:use_task_pages_api?).and_return(true)
-        Task.on_hold.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
-          .each_with_index do |task, idx|
-            child_task = create(:generic_task, parent_id: task.id)
-            child_task.update!(status: Constants.TASK_STATUSES.on_hold) if idx < on_hold_count
-          end
-        Task.active.where(assigned_to_type: Organization.name, assigned_to_id: organization.id)
-          .take(foia_task_count).each { |task| task.update!(type: FoiaTask.name) }
+        visit("#{organization.path}?#{query_string}")
       end
 
-      it "shows the on hold tab" do
-        visit(organization.path)
-        expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count / 2))
-        expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, on_hold_count))
-      end
-
-      context "when following a deep link to paged results" do
-        before do
-          visit("#{organization.path}?#{query_string}")
-        end
-
-        context "when specifying the tab name" do
-          let(:query_string) do
-            "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME}"
-          end
-
-          it "opens the correct tab on load" do
-            expect(page.find(".cf-tab.cf-active")).to have_content(
-              format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count / 2)
-            )
-          end
-        end
-
-        context "when specifying sort column" do
-          let(:query_string) do
-            "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"\
-            "&#{Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}"
-          end
-
-          it "sorts the correct column ascending" do
-            (1..foia_task_count).each do |index|
-              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
-            end
-            (foia_task_count + 1..unassigned_count).each do |index|
-              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(PrivacyActTask.label)
-            end
-          end
-        end
-
-        context "when specifying sort order" do
-          let(:query_string) do
-            "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"\
-            "&#{Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}"\
-            "&#{Constants.QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC}"
-          end
-
-          it "sorts the correct column descending" do
-            (1..foia_task_count).each do |index|
-              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(PrivacyActTask.label)
-            end
-            (foia_task_count + 1..unassigned_count).each do |index|
-              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
-            end
-          end
-        end
-
-        context "when specifying the page number" do
-          let(:unassigned_count) { 20 }
-          let(:default_cases_for_page) { 15 }
-          let(:page_no) { 2 }
-
-          let(:query_string) do
-            "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"\
-            "&#{Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM}=#{page_no}"
-          end
-
-          it "opens the correct tab on load" do
-            expect(page).to have_content(
-              "Viewing #{default_cases_for_page + 1}-#{unassigned_count} of #{unassigned_count} total"
-            )
-            page.find_all(".cf-current-page").each { |btn| expect(btn).to have_content(page_no) }
-            expect(find("tbody").find_all("tr").length).to eq(unassigned_count - default_cases_for_page)
-          end
-        end
-
-        context "when specifying filters" do
-          let(:escaped_query) do
-            {
-              Constants.QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM =>
-              ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{FoiaTask.name}"]
-            }.to_query
-          end
-
-          let(:query_string) do
-            "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"\
-            "&#{escaped_query}"
-          end
-
-          it "filters tasks correctly" do
-            (1..foia_task_count).each do |index|
-              expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
-            end
-            expect(page).to have_content("Viewing 1-#{foia_task_count} of #{foia_task_count} total")
-            expect(find("tbody").find_all("tr").length).to eq(foia_task_count)
-            expect(find("tbody")).not_to have_content(PrivacyActTask.label)
-          end
-        end
-      end
-
-      let(:default_tab_query_string) do
-        "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"
-      end
-      let(:default_page_query_string) do
-        "#{Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM}=1"
-      end
-      let(:default_query_string) do
-        "#{default_tab_query_string}&#{default_page_query_string}"
-      end
-
-      context "when visiting the org queue" do
-        it "updates the url" do
-          visit(organization.path)
-          expect(page.find(".cf-tab.cf-active")).to have_content(
-            format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_count)
-          )
-          expect(URI.parse(current_url).query).to eq "#{default_tab_query_string}&#{default_page_query_string}"
-        end
-      end
-
-      context "when changing tabs" do
+      context "when specifying the tab name" do
         let(:query_string) do
           "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME}"
         end
 
-        it "switches to the corrct tab and updates the url" do
-          visit(organization.path)
-          click_on format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count / 2)
+        it "opens the correct tab on load" do
           expect(page.find(".cf-tab.cf-active")).to have_content(
             format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count / 2)
           )
-          expect(URI.parse(current_url).query).to eq "#{query_string}&#{default_page_query_string}"
         end
       end
 
-      context "sorting by column" do
-        let(:query_string_desc) do
-          "#{Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}"\
+      context "when specifying sort column" do
+        let(:query_string) do
+          "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"\
+          "&#{Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}"
+        end
+
+        it "sorts the correct column ascending" do
+          (1..foia_task_count).each do |index|
+            expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
+          end
+          (foia_task_count + 1..unassigned_count).each do |index|
+            expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(PrivacyActTask.label)
+          end
+        end
+      end
+
+      context "when specifying sort order" do
+        let(:query_string) do
+          "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"\
+          "&#{Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}"\
           "&#{Constants.QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC}"
         end
-        let(:query_string_asc) do
-          "#{Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}"\
-          "&#{Constants.QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC}"
-        end
 
-        it "sorts the correct column and updates the url" do
-          visit(organization.path)
-          page.find_all("svg.table-icon")[1].click
+        it "sorts the correct column descending" do
           (1..foia_task_count).each do |index|
             expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(PrivacyActTask.label)
           end
           (foia_task_count + 1..unassigned_count).each do |index|
             expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
           end
-          expect(URI.parse(current_url).query).to eq "#{default_query_string}&#{query_string_desc}"
-          page.find_all("svg.table-icon")[1].click
-          (1..foia_task_count).each do |index|
-            expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
-          end
-          (foia_task_count + 1..unassigned_count).each do |index|
-            expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(PrivacyActTask.label)
-          end
-          expect(URI.parse(current_url).query).to eq "#{default_query_string}&#{query_string_asc}"
         end
       end
 
-      context "navigating to another page" do
+      context "when specifying the page number" do
         let(:unassigned_count) { 20 }
         let(:default_cases_for_page) { 15 }
         let(:page_no) { 2 }
 
         let(:query_string) do
-          "#{Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM}=#{page_no}"
+          "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"\
+          "&#{Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM}=#{page_no}"
         end
 
-        it "shows the correct tasks and updates the url" do
-          visit(organization.path)
-          page.find_all("button", text: "Next").first.click
+        it "opens the correct tab on load" do
           expect(page).to have_content(
             "Viewing #{default_cases_for_page + 1}-#{unassigned_count} of #{unassigned_count} total"
           )
           page.find_all(".cf-current-page").each { |btn| expect(btn).to have_content(page_no) }
           expect(find("tbody").find_all("tr").length).to eq(unassigned_count - default_cases_for_page)
-          expect(URI.parse(current_url).query).to eq "#{default_tab_query_string}&#{query_string}"
         end
       end
 
-      context "when filtering tasks" do
-        let(:query_string) do
+      context "when specifying filters" do
+        let(:escaped_query) do
           {
             Constants.QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM =>
             ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{FoiaTask.name}"]
           }.to_query
         end
 
-        it "shows the correct filters" do
-          visit(organization.path)
-          expect(page).to have_content(
-            format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
-          )
-          page.find_all("path.unselected-filter-icon-inner").first.click
-          expect(page).to have_content("#{Task.label} (#{unassigned_count / 2})")
-          expect(page).to have_content("#{FoiaTask.label} (#{foia_task_count})")
+        let(:query_string) do
+          "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"\
+          "&#{escaped_query}"
         end
 
-        it "filters tasks correctly and updates the url" do
-          visit(organization.path)
-          expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
-          page.find_all("path.unselected-filter-icon-inner").first.click
-          page.find("label", text: "#{FoiaTask.label} (#{foia_task_count})").click
+        it "filters tasks correctly" do
+          (1..foia_task_count).each do |index|
+            expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
+          end
+          expect(page).to have_content("Viewing 1-#{foia_task_count} of #{foia_task_count} total")
           expect(find("tbody").find_all("tr").length).to eq(foia_task_count)
-          expect(URI.parse(current_url).query).to eq "#{default_query_string}&#{query_string}"
-          click_on "Clear all filters"
-          expect(URI.parse(current_url).query).to eq default_query_string
+          expect(find("tbody")).not_to have_content(PrivacyActTask.label)
         end
+      end
+    end
+
+    let(:default_tab_query_string) do
+      "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME}"
+    end
+    let(:default_page_query_string) do
+      "#{Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM}=1"
+    end
+    let(:default_query_string) do
+      "#{default_tab_query_string}&#{default_page_query_string}"
+    end
+
+    context "when visiting the org queue" do
+      it "updates the url" do
+        visit(organization.path)
+        expect(page.find(".cf-tab.cf-active")).to have_content(
+          format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_count)
+        )
+        expect(URI.parse(current_url).query).to eq "#{default_tab_query_string}&#{default_page_query_string}"
+      end
+    end
+
+    context "when changing tabs" do
+      let(:query_string) do
+        "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME}"
+      end
+
+      it "switches to the corrct tab and updates the url" do
+        visit(organization.path)
+        click_on format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count / 2)
+        expect(page.find(".cf-tab.cf-active")).to have_content(
+          format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count / 2)
+        )
+        expect(URI.parse(current_url).query).to eq "#{query_string}&#{default_page_query_string}"
+      end
+    end
+
+    context "sorting by column" do
+      let(:query_string_desc) do
+        "#{Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}"\
+        "&#{Constants.QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC}"
+      end
+      let(:query_string_asc) do
+        "#{Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}"\
+        "&#{Constants.QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC}"
+      end
+
+      it "sorts the correct column and updates the url" do
+        visit(organization.path)
+        page.find_all("svg.table-icon")[1].click
+        (1..foia_task_count).each do |index|
+          expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(PrivacyActTask.label)
+        end
+        (foia_task_count + 1..unassigned_count).each do |index|
+          expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
+        end
+        expect(URI.parse(current_url).query).to eq "#{default_query_string}&#{query_string_desc}"
+        page.find_all("svg.table-icon")[1].click
+        (1..foia_task_count).each do |index|
+          expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(FoiaTask.label)
+        end
+        (foia_task_count + 1..unassigned_count).each do |index|
+          expect(page.find("tbody>tr:nth-of-type(#{index})")).to have_content(PrivacyActTask.label)
+        end
+        expect(URI.parse(current_url).query).to eq "#{default_query_string}&#{query_string_asc}"
+      end
+    end
+
+    context "navigating to another page" do
+      let(:unassigned_count) { 20 }
+      let(:default_cases_for_page) { 15 }
+      let(:page_no) { 2 }
+
+      let(:query_string) do
+        "#{Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM}=#{page_no}"
+      end
+
+      it "shows the correct tasks and updates the url" do
+        visit(organization.path)
+        page.find_all("button", text: "Next").first.click
+        expect(page).to have_content(
+          "Viewing #{default_cases_for_page + 1}-#{unassigned_count} of #{unassigned_count} total"
+        )
+        page.find_all(".cf-current-page").each { |btn| expect(btn).to have_content(page_no) }
+        expect(find("tbody").find_all("tr").length).to eq(unassigned_count - default_cases_for_page)
+        expect(URI.parse(current_url).query).to eq "#{default_tab_query_string}&#{query_string}"
+      end
+    end
+
+    context "when filtering tasks" do
+      let(:query_string) do
+        {
+          Constants.QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM =>
+          ["col=#{Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name}&val=#{FoiaTask.name}"]
+        }.to_query
+      end
+
+      it "shows the correct filters" do
+        visit(organization.path)
+        expect(page).to have_content(
+          format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
+        )
+        page.find_all("path.unselected-filter-icon-inner").first.click
+        expect(page).to have_content("#{Task.label} (#{unassigned_count / 2})")
+        expect(page).to have_content("#{FoiaTask.label} (#{foia_task_count})")
+      end
+
+      it "filters tasks correctly and updates the url" do
+        visit(organization.path)
+        expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
+        page.find_all("path.unselected-filter-icon-inner").first.click
+        page.find("label", text: "#{FoiaTask.label} (#{foia_task_count})").click
+        expect(find("tbody").find_all("tr").length).to eq(foia_task_count)
+        expect(URI.parse(current_url).query).to eq "#{default_query_string}&#{query_string}"
+        click_on "Clear all filters"
+        expect(URI.parse(current_url).query).to eq default_query_string
       end
     end
   end
@@ -804,8 +695,8 @@ feature "Task queue", :all_dbs do
       it "should be actionable" do
         visit("/queue/appeals/#{appeal.external_id}")
 
-        find(".Select-control", text: "Select an action…").click
-        find("div .Select-option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_JUDGE.label).click
+        find(".cf-select__control", text: "Select an action…").click
+        find("div .cf-select__option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_JUDGE.label).click
         expect(page).to have_content("Instructions:")
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
@@ -847,9 +738,9 @@ feature "Task queue", :all_dbs do
 
       it "the location is updated to caseflow when a user assigns a colocated task back to the hearing team" do
         visit("/queue/appeals/#{appeal.external_id}")
-        find(".Select-control", text: "Select an action…").click
+        find(".cf-select__control", text: "Select an action…").click
         expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label).click
         find("button", text: "Send case").click
         expect(page).to have_content("Bob Smith's case has been sent to the Confirm schedule hearing team")
         expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:schedule_hearing]
@@ -857,10 +748,11 @@ feature "Task queue", :all_dbs do
 
       it "the case should be returned in the attorneys queue when canceled" do
         visit("/queue/appeals/#{appeal.external_id}")
-        find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         expect(page).to have_content(Constants.TASK_ACTIONS.CANCEL_TASK.label)
         expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label)
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CANCEL_TASK.label).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.CANCEL_TASK.label).click
+        fill_in "taskInstructions", with: "Cancelling task"
         find("button", text: COPY::MODAL_SUBMIT_BUTTON).click
         expect(page).to have_content("Task for Bob Smith's case has been cancelled")
         User.authenticate!(user: attorney)
@@ -873,18 +765,43 @@ feature "Task queue", :all_dbs do
 
         it "creates a schedule hearing task when a user assigns a colocated task back to the hearing team" do
           visit("/queue/appeals/#{appeal.external_id}")
-          find(".Select-control", text: "Select an action…").click
+          find(".cf-select__control", text: "Select an action…").click
           expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
-          find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label).click
+          find(
+            "div",
+            class: "cf-select__option",
+            text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label
+          ).click
           find("button", text: "Send case").click
           expect(page).to have_content("Bob Smith's case has been sent to the Confirm schedule hearing team")
-          expect(appeal.tasks.pluck(:type)).to include(ScheduleHearingTask.name, HearingTask.name)
+          expect(appeal.tasks.pluck(:type)).to include(
+            ScheduleHearingTask.name, HearingTask.name, DistributionTask.name
+          )
         end
       end
     end
   end
 
   describe "JudgeTask" do
+    shared_examples "create an admin action" do
+      it "should be able to be sent to VLJ support staff" do
+        # On case details page select the "Add admin action" option
+        click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)
+
+        # On case details page fill in the admin action
+        action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
+        click_dropdown(text: action)
+        fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
+        find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
+
+        # Expect to see a success message, the correct number of remaining tasks and have the task in the database
+        expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, "an", "action", action))
+        expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
+        expect(judge_task.children.length).to eq(1)
+        expect(judge_task.children.first).to be_a(ColocatedTask)
+      end
+    end
+
     let!(:judge_user) { create(:user) }
     let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
     let!(:judge_team) { JudgeTeam.create_for_judge(judge_user) }
@@ -943,8 +860,8 @@ feature "Task queue", :all_dbs do
       it "should display an option to mark task complete" do
         expect(qr_person_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
 
-        find(".Select-control", text: "Select an action…").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
+        find(".cf-select__control", text: "Select an action…").click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
         expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteran_full_name))
@@ -952,22 +869,7 @@ feature "Task queue", :all_dbs do
         expect(qr_person_task.reload.status).to eq(Constants.TASK_STATUSES.assigned)
       end
 
-      it "should be able to be sent to VLJ support staff" do
-        # On case details page select the "Add admin action" option
-        click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)
-
-        # On case details page fill in the admin action
-        action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
-        click_dropdown(text: action)
-        fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
-        find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
-
-        # Expect to see a success message, the correct number of remaining tasks and have the task in the database
-        expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, "an", "action", action))
-        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 0))
-        expect(judge_task.children.length).to eq(1)
-        expect(judge_task.children.first).to be_a(ColocatedTask)
-      end
+      it_behaves_like "create an admin action"
     end
 
     context "when it was created from a BvaDispatchTask" do
@@ -1042,8 +944,8 @@ feature "Task queue", :all_dbs do
       it "should display an option of Ready for Dispatch" do
         expect(bva_dispatch_person_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
 
-        find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label).click
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label).click
 
         expect(page).to have_content(COPY::DECISION_ISSUE_PAGE_TITLE)
         click_on "Continue"
@@ -1079,32 +981,17 @@ feature "Task queue", :all_dbs do
         expect(judge_task.children.first.status).to eq(Constants.TASK_STATUSES.assigned)
       end
 
-      it "should be able to be sent to VLJ support staff" do
-        # On case details page select the "Add admin action" option
-        click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)
-
-        # On case details page fill in the admin action
-        action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
-        click_dropdown(text: action)
-        fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
-        find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
-
-        # Expect to see a success message, the correct number of remaining tasks and have the task in the database
-        expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, "an", "action", action))
-        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 0))
-        expect(judge_task.children.length).to eq(1)
-        expect(judge_task.children.first).to be_a(ColocatedTask)
-      end
+      it_behaves_like "create an admin action"
     end
 
     context "when it was created through case distribution" do
       before do
-        create(:ama_judge_task, appeal: appeal, assigned_to: judge_user)
+        create(:ama_judge_assign_task, appeal: appeal, assigned_to: judge_user)
         visit("/queue/appeals/#{appeal.external_id}")
       end
 
       it "should not display an option to mark task complete" do
-        find(".Select-control", text: "Select an action…").click
+        find(".cf-select__control", text: "Select an action…").click
         expect(page).to_not have_content(Constants.TASK_ACTIONS.MARK_COMPLETE.label)
       end
     end
@@ -1125,7 +1012,7 @@ feature "Task queue", :all_dbs do
 
       it "should display both legacy and caseflow review tasks" do
         visit("/queue")
-        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 2))
+        expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
       end
 
       it "should be able to add admin actions from case details" do
@@ -1143,7 +1030,7 @@ feature "Task queue", :all_dbs do
 
         # Expect to see a success message and the correct number of remaining tasks
         expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, "an", "action", action))
-        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 1))
+        expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
       end
     end
   end
@@ -1153,13 +1040,14 @@ feature "Task queue", :all_dbs do
       let(:user) { create(:user) }
       let(:root_task) { create(:root_task) }
       let(:appeal) { root_task.appeal }
-      let(:task) { create(:generic_task, assigned_to: user) }
+      let(:task) { create(:ama_task, assigned_to: user) }
 
       before { User.authenticate!(user: user) }
 
       it "allows the user to cancel the task" do
         visit("queue/appeals/#{task.appeal.external_id}")
         click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: COPY::CANCEL_TASK_MODAL_TITLE)
+        fill_in "taskInstructions", with: "Cancelling task"
         click_button("Submit")
         expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name))
         expect(page.current_path).to eq("/queue")
@@ -1171,7 +1059,7 @@ feature "Task queue", :all_dbs do
       let(:user) { create(:user) }
       let(:vacols_case) { create(:case) }
       let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
-      let!(:task) { create(:generic_task, appeal: legacy_appeal, assigned_to: user) }
+      let!(:task) { create(:ama_task, appeal: legacy_appeal, assigned_to: user) }
 
       before do
         vacols_case.destroy!
@@ -1193,12 +1081,12 @@ feature "Task queue", :all_dbs do
     let(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }
     let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
     let!(:root_task) { create(:root_task, appeal: appeal) }
-    let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+    let!(:hearing_task) { create(:hearing_task, parent: root_task) }
     let!(:disposition_task) do
-      create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal)
+      create(:assign_hearing_disposition_task, parent: hearing_task)
     end
     let!(:transcription_task) do
-      create(:transcription_task, parent: disposition_task, appeal: appeal, assigned_to: user)
+      create(:transcription_task, parent: disposition_task, assigned_to: user)
     end
     let(:days_on_hold) { 18 }
     let!(:timed_hold_task) do

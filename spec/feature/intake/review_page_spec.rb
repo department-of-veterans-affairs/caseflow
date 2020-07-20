@@ -144,6 +144,7 @@ feature "Intake Review Page", :postgres do
       end
 
       context "when the claimant is missing an address" do
+        let(:error_text) { "Please supply the claimant's address in VBMS" }
         before do
           allow_any_instance_of(BgsAddressService).to receive(:fetch_bgs_record).and_return(nil)
         end
@@ -152,7 +153,7 @@ feature "Intake Review Page", :postgres do
           it "does not require the claimant to have an address" do
             review = start_appeal(veteran, veteran_is_not_claimant: veteran_is_not_claimant).first
 
-            check_claimant_address_error(review, benefit_type)
+            check_claimant_address_error(review, benefit_type, error_text)
           end
         end
 
@@ -165,7 +166,7 @@ feature "Intake Review Page", :postgres do
                 veteran_is_not_claimant: veteran_is_not_claimant
               ).first
 
-              check_claimant_address_error(review, benefit_type)
+              check_claimant_address_error(review, benefit_type, error_text)
             end
           end
         end
@@ -183,8 +184,30 @@ feature "Intake Review Page", :postgres do
                   benefit_type: benefit_type
                 ).first
 
-                check_claimant_address_error(review, benefit_type)
+                check_claimant_address_error(review, benefit_type, error_text)
               end
+            end
+          end
+        end
+      end
+
+      context "when the claimant has an invalid address" do
+        let(:invalid_address) { { address_line_1: "one", address_line_2: "two  ", city: nil, state: nil, zip: nil } }
+        let(:error_text) { "Please update the claimant's address in VBMS to be valid" }
+        before do
+          allow_any_instance_of(BgsAddressService).to receive(:fetch_bgs_record).and_return(invalid_address)
+        end
+
+        [:higher_level_review, :supplemental_claim].each do |claim_review_type|
+          describe "given a #{claim_review_type}" do
+            it "requires that the claimant have a valid address" do
+              review = start_claim_review(
+                claim_review_type,
+                veteran: veteran,
+                veteran_is_not_claimant: veteran_is_not_claimant
+              ).first
+
+              check_claimant_address_error(review, benefit_type, error_text)
             end
           end
         end
@@ -238,6 +261,108 @@ feature "Intake Review Page", :postgres do
           end
         end
       end
+
+      context "when adding a new claimant" do
+        let(:attorneys) do
+          Array.new(15) { create(:bgs_attorney) }
+        end
+
+        context "without attorney_fees feature toggle" do
+          it "doesn't allow adding new claimants" do
+            start_appeal(
+              veteran,
+              veteran_is_not_claimant: veteran_is_not_claimant
+            )
+
+            visit "/intake"
+
+            expect(page).to have_current_path("/intake/review_request")
+
+            within_fieldset("Is the claimant someone other than the Veteran?") do
+              find("label", text: "Yes", match: :prefer_exact).click
+            end
+
+            expect(page).to_not have_content("+ Add Claimant")
+          end
+        end
+
+        context "with attorney_fees feature toggle" do
+          before { FeatureToggle.enable!(:attorney_fees) }
+          after { FeatureToggle.disable!(:attorney_fees) }
+
+          let(:attorney) { attorneys.last }
+
+          it "allows adding new claimants" do
+            start_appeal(
+              veteran,
+              veteran_is_not_claimant: veteran_is_not_claimant
+            )
+
+            visit "/intake"
+
+            expect(page).to have_current_path("/intake/review_request")
+
+            within_fieldset("Is the claimant someone other than the Veteran?") do
+              find("label", text: "Yes", match: :prefer_exact).click
+            end
+
+            expect(page).to have_content("+ Add Claimant")
+
+            click_button("+ Add Claimant")
+            expect(page).to have_selector("#add_claimant_modal")
+            expect(page).to have_button("Add this claimant", disabled: true)
+            claimant_search(attorney.name)
+            select_claimant(0)
+            expect(page).to have_button("Add this claimant", disabled: false)
+            click_button "Add this claimant"
+            expect(page).to_not have_selector("#add_claimant_modal")
+            expect(page).to have_content("#{attorney.name}, Attorney")
+            find(".remove-item").click
+            expect(page).to_not have_content("#{attorney.name}, Attorney")
+          end
+
+          scenario "when claimant is not listed" do
+            start_appeal(
+              veteran,
+              veteran_is_not_claimant: veteran_is_not_claimant
+            )
+
+            visit "/intake"
+
+            expect(page).to have_current_path("/intake/review_request")
+
+            within_fieldset("Is the claimant someone other than the Veteran?") do
+              find("label", text: "Yes", match: :prefer_exact).click
+            end
+
+            expect(page).to have_content("+ Add Claimant")
+
+            click_button("+ Add Claimant")
+            expect(page).to have_content("Claimant not listed")
+            expect(page).to have_button("Add this claimant", disabled: true)
+            find("label[for=noClaimant]").click
+            expect(page).to have_content("Notes e.g.")
+            expect(page).to have_button("Add this claimant", disabled: true)
+
+            fill_in "Notes e.g.", with: "The claimant's name not listed is Sandra smith!"
+            expect(page).to have_button("Add this claimant", disabled: false)
+            click_button "Add this claimant"
+            expect(page).to_not have_selector("#add_claimant_modal")
+            expect(page).to have_content("Claimant not listed, Attorney")
+            expect(page).to have_content("The claimant's name not listed is Sandra smith!")
+            find(".remove-item").click
+            expect(page).to_not have_content("The claimant's name not listed is Sandra smith!")
+          end
+        end
+
+        def claimant_search(search)
+          find(".dropdown-claimant").fill_in "claimant", with: search
+        end
+
+        def select_claimant(index = 0)
+          click_dropdown({ index: index }, find(".dropdown-claimant"))
+        end
+      end
     end
   end
 end
@@ -258,10 +383,10 @@ def check_deceased_veteran_cant_be_payee
   end
 
   # click on payee code dropdown
-  find(".Select-control").click
+  find(".cf-select__control").click
 
   # verify that veteran cannot be selected
-  expect(page).not_to have_content("00 - Veteran")
+  expect(page.has_no_content?("00 - Veteran")).to eq(true)
   expect(page).to have_content("10 - Spouse")
 end
 
@@ -294,11 +419,11 @@ def check_pension_and_compensation_payee_code
 
   expect(page).to have_content("Please select an option.")
 
-  expect(find(".Select-placeholder")).to have_content("Select")
+  expect(find(".cf-select__placeholder")).to have_content("Select")
 
   find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
 
-  expect(find(".Select-multi-value-wrapper")).to have_content("11 - C&P First Child")
+  expect(find(".cf-select__value-container")).to have_content("11 - C&P First Child")
 
   fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
   find("#cf-payee-code").send_keys :enter
@@ -307,7 +432,7 @@ def check_pension_and_compensation_payee_code
   expect(page).to have_current_path("/intake/add_issues")
 end
 
-def check_claimant_address_error(review, benefit_type)
+def check_claimant_address_error(review, benefit_type, error_text)
   visit "/intake"
   expect(page).to have_current_path("/intake/review_request")
 
@@ -323,10 +448,10 @@ def check_claimant_address_error(review, benefit_type)
   click_intake_continue
 
   if review.processed_in_caseflow?
-    expect(page).to_not have_content("Please update the claimant's address")
+    expect(page).to_not have_content(error_text)
     expect(page).to have_current_path("/intake/add_issues")
   else
-    expect(page).to have_content("Please update the claimant's address")
+    expect(page).to have_content(error_text)
   end
 end
 
@@ -359,14 +484,14 @@ def check_invalid_veteran_alert_on_review_page(form_type)
   click_on "Search"
 
   expect(page).to have_current_path("/intake/review_request")
-  expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+  expect(page).to_not have_content("Check the Veteran's profile for invalid information")
 
   within_fieldset("What is the Benefit Type?") do
     find("label", text: "Compensation", match: :prefer_exact).click
   end
 
-  expect(page).to have_content("The Veteran's profile has missing or invalid information")
-  expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
+  expect(page).to have_content("Check the Veteran's profile for invalid information")
+  expect(page).to have_content("Please fill in the following fields in the Veteran's profile in VBMS or")
   expect(page).to have_content(
     "the corporate database, then retry establishing the EP in Caseflow: country."
   )
@@ -377,7 +502,7 @@ def check_invalid_veteran_alert_on_review_page(form_type)
     find("label", text: "Education", match: :prefer_exact).click
   end
 
-  expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+  expect(page).to_not have_content("Check the Veteran's profile for invalid information")
   expect(page).to have_button("Continue to next step", disabled: false)
 end
 

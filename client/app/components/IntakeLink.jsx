@@ -21,7 +21,7 @@ const textStyling = css({
 
 const IntakeLink = (props) => <div {...containerStyling}>
   <Link href="/intake" target={props.newWindow ? '_blank' : '_self'}>
-    <i className="fa fa-inbox" ariaHidden="true"></i>
+    <i className="fa fa-inbox" aria-hidden="true"></i>
     <h3 {...textStyling}>Intake</h3>
   </Link>
 </div>;

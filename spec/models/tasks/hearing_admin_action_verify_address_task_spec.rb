@@ -3,13 +3,12 @@
 RSpec.shared_examples "Address Verify Task for Appeal" do
   let!(:user) { create(:hearings_coordinator) }
   let(:distribution_task) { create(:distribution_task, appeal: appeal) }
-  let(:parent_hearing_task) { create(:hearing_task, parent: distribution_task, appeal: appeal) }
+  let(:parent_hearing_task) { create(:hearing_task, parent: distribution_task) }
   let!(:schedule_hearing_task) { create(:schedule_hearing_task, :completed, appeal: appeal) }
   let!(:verify_address_task) do
     create(
       :hearing_admin_action_verify_address_task,
       parent: parent_hearing_task,
-      appeal: appeal,
       assigned_to: HearingsManagement.singleton,
       assigned_to_type: "Organization"
     )
@@ -51,7 +50,13 @@ RSpec.shared_examples "Address Verify Task for Appeal" do
       verify_address_task.update!(status: Constants.TASK_STATUSES.completed)
 
       expect(verify_address_task.status).to eq Constants.TASK_STATUSES.completed
-      expect(RegionalOffice::ROS).to include(appeal.class.first.closest_regional_office)
+      expect(appeal.class.first.closest_regional_office).to eq("RO17")
+
+      ahls = appeal.class.first.available_hearing_locations.map(&:facility_id).uniq
+
+      # St. Petersburg RO facility id, and 2 alternate facilities
+      expect(ahls.count).to eq 3
+      expect(ahls).to match_array(%w[vba_317 vba_317a vc_0742V])
     end
 
     it "throws an access error trying to update from params with random user" do
@@ -86,7 +91,7 @@ end
 
 describe HearingAdminActionVerifyAddressTask, :all_dbs do
   describe "Address Verify Workflow with Legacy Appeal" do
-    let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+    let!(:appeal) { create(:legacy_appeal, :with_veteran_address, vacols_case: create(:case)) }
     let!(:appeal_id) { appeal.vacols_id }
 
     include_examples "Address Verify Task for Appeal"

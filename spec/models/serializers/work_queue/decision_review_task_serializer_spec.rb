@@ -57,16 +57,16 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
 
     context "decision review has one claimant with name but no relationship" do
       let(:claimant) do
-        claimant = create(:claimant)
+        claimant = build(:claimant, payee_code: "00")
         allow(claimant).to receive(:relationship) {}
         claimant
       end
 
       let(:hlr) do
-        create(:higher_level_review,
-               veteran_file_number: veteran.file_number,
-               claimants: [claimant],
-               veteran_is_not_claimant: true)
+        build(:higher_level_review,
+              veteran_file_number: veteran.file_number,
+              claimants: [claimant],
+              veteran_is_not_claimant: true)
       end
 
       it "returns placeholder 'claimant'" do

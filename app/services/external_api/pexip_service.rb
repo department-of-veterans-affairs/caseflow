@@ -15,11 +15,13 @@ class ExternalApi::PexipService
 
   def create_conference(host_pin:, guest_pin:, name:)
     body = {
-      "aliases": [{ "alias": name }, { "alias": "BVA#{name}" }, { "alias": "BVA#{name}.#{client_host}" }],
+      "aliases": [{ "alias": "BVA#{name}" }, { "alias": VirtualHearing.formatted_alias(name) }, { "alias": name }],
       "allow_guests": true,
       "description": "Created by Caseflow",
       "enable_chat": "yes",
       "enable_overlay_text": true,
+      # Theme ID is hard coded for now because it's the same in both environments.
+      "ivr_theme": "/api/admin/configuration/v1/ivr_theme/13/",
       "force_presenter_into_main": true,
       "guest_pin": guest_pin.to_s,
       "name": "BVA#{name}",
@@ -52,8 +54,8 @@ class ExternalApi::PexipService
     url = "https://#{host}:#{port}/#{endpoint}"
     request = HTTPI::Request.new(url)
     request.auth.basic(user_name, password)
-    request.open_timeout = 30
-    request.read_timeout = 30
+    request.open_timeout = 300
+    request.read_timeout = 300
     request.auth.ssl.ca_cert_file = ENV["SSL_CERT_FILE"]
     request.body = body.to_json unless body.nil?
 

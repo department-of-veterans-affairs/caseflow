@@ -5,7 +5,7 @@ class LegacyTask
   include ActiveModel::Serialization
 
   ATTRS = [:id, :appeal_id, :assigned_to, :assigned_at, :docket_name, :previous_task,
-           :docket_date, :added_by, :task_id, :action, :document_id, :assigned_by, :work_product].freeze
+           :docket_date, :added_by, :task_id, :action, :document_id, :assigned_by, :work_product, :started_at].freeze
 
   attr_accessor(*ATTRS)
   attr_writer :appeal
@@ -33,17 +33,11 @@ class LegacyTask
     assigned_at
   end
 
+  # :nocov:
   def label
-    action
+    fail Caseflow::Error::MustImplementInSubclass
   end
-
-  def hide_from_case_timeline
-    false
-  end
-
-  def hide_from_task_snapshot
-    false
-  end
+  # :nocov:
 
   def serializer_class
     ::WorkQueue::LegacyTaskSerializer
@@ -72,9 +66,11 @@ class LegacyTask
     (Time.zone.today - assigned_at.to_date).to_i if assigned_at
   end
 
+  # :nocov:
   def available_actions(_role)
-    []
+    fail Caseflow::Error::MustImplementInSubclass
   end
+  # :nocov:
 
   ### Serializer Methods End
 
@@ -90,7 +86,8 @@ class LegacyTask
       task_id: record.created_at ? record.vacols_id + "-" + record.created_at.strftime("%Y-%m-%d") : nil,
       document_id: record.document_id,
       assigned_by: record.assigned_by,
-      appeal: appeal
+      appeal: appeal,
+      started_at: appeal.appeal_views.find_by(user: user)&.created_at
     )
   end
 

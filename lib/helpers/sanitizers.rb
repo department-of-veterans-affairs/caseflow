@@ -125,7 +125,7 @@ class Helpers::Sanitizers
       last_name = ::Faker::Name.last_name
       login = (first_name[0..0] + last_name[0..7]).upcase
 
-      count = staff_id_hash.values.select { |row_hash| row_hash[:login].start_with?(login) }.count
+      count = staff_id_hash.values.count { |row_hash| row_hash[:login].start_with?(login) }
 
       login = "#{login}#{count}" if count > 0
 

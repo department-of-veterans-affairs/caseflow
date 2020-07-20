@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class JudgeCaseReview < ApplicationRecord
+class JudgeCaseReview < CaseflowRecord
   include CaseReviewConcern
   include IssueUpdater
 

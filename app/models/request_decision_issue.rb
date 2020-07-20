@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class RequestDecisionIssue < ApplicationRecord
+class RequestDecisionIssue < CaseflowRecord
   belongs_to :request_issue
   belongs_to :decision_issue
 

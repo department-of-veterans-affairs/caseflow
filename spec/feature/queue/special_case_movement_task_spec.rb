@@ -18,7 +18,7 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
     SpecialCaseMovementTeam.singleton.add_user(scm_user)
     User.authenticate!(user: scm_user)
   end
-  describe "Special Case Movement Team Member" do
+  describe "Case Movement Team Member" do
     context "With the Appeal in the right state" do
       it "successfully assigns the task to judge" do
         visit("queue/appeals/#{appeal.external_id}")
@@ -38,8 +38,8 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
         User.authenticate!(user: judge_user)
         visit "/queue"
         find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
-        expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
-        click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
+        expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id))
+        click_on format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id)
         expect(page).to have_content("Cases to Assign")
         # Expect to find case in Assign Queue
         expect(page).to have_content("#{veteran.first_name} #{veteran.last_name}")

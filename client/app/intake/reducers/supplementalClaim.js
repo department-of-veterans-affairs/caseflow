@@ -1,6 +1,5 @@
-import _ from 'lodash';
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
-import { applyCommonReducers } from './common';
+import { applyCommonReducers, commonStateFromServerIntake } from './common';
 import { formatRequestIssues, formatContestableIssues } from '../util/issues';
 import {
   convertStringToBoolean,
@@ -18,71 +17,11 @@ const updateFromServerIntake = (state, serverIntake) => {
     return state;
   }
 
-  const contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
-
+  const commonState = commonStateFromServerIntake(serverIntake);
   return update(state, {
-    isStarted: {
-      $set: Boolean(serverIntake.id)
-    },
-    receiptDate: {
-      $set: serverIntake.receiptDate
-    },
+    ...commonState,
     benefitType: {
-      $set: serverIntake.benefitType
-    },
-    processedInCaseflow: {
-      $set: serverIntake.processed_in_caseflow
-    },
-    veteranIsNotClaimant: {
-      $set: serverIntake.veteranIsNotClaimant
-    },
-    claimant: {
-      $set: serverIntake.veteranIsNotClaimant ? serverIntake.claimant : null
-    },
-    payeeCode: {
-      $set: serverIntake.payeeCode
-    },
-    legacyOptInApproved: {
-      $set: serverIntake.legacyOptInApproved
-    },
-    legacyAppeals: {
-      $set: serverIntake.legacyAppeals
-    },
-    isReviewed: {
-      $set: Boolean(serverIntake.receiptDate)
-    },
-    contestableIssues: {
-      $set: contestableIssues
-    },
-    activeNonratingRequestIssues: {
-      $set: formatRequestIssues(serverIntake.activeNonratingRequestIssues)
-    },
-    requestIssues: {
-      $set: formatRequestIssues(serverIntake.requestIssues, contestableIssues)
-    },
-    isComplete: {
-      $set: Boolean(serverIntake.completed_at)
-    },
-    relationships: {
-      $set: formatRelationships(serverIntake.relationships)
-    },
-    intakeUser: {
-      $set: serverIntake.intakeUser
-   },
-    asyncJobUrl: {
-      $set: serverIntake.asyncJobUrl
-    },
-    processedAt: {
-      $set: serverIntake.processedAt
-    },
-    veteranValid: {
-      $set: serverIntake.veteranValid
-    },
-    veteranInvalidFields: {
-      $set: {
-        veteranMissingFields: _.join(serverIntake.veteranInvalidFields.veteran_missing_fields, ', '),
-        veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long
-      }
+      $set: serverIntake.benefit_type
     }
   });
 };
@@ -93,6 +32,7 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     nonRatingRequestIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
     untimelyExemptionModalVisible: false,
+    legacyOptInModalVisible: false,
     removeIssueModalVisible: false,
     receiptDate: null,
     receiptDateError: null,

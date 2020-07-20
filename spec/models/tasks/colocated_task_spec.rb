@@ -229,6 +229,16 @@ describe ColocatedTask, :all_dbs do
         expect(ColocatedTask.all.count).to eq 0
       end
     end
+
+    context "When trying to create an invalid task type" do
+      let(:type) { PreRoutingFoiaColocatedTask.name }
+      let(:params_list) { [{ assigned_by: attorney, type: type, appeal: appeal_1 }] }
+
+      it "throws an error" do
+        expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError, /Cannot create task of type #{type}/)
+        expect(ColocatedTask.all.count).to eq 0
+      end
+    end
   end
 
   context ".update" do
@@ -355,7 +365,7 @@ describe ColocatedTask, :all_dbs do
         # go back to in-progres - should reset date
         expect(colocated_admin_action.reload.started_at).to eq time5
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
-        expect(colocated_admin_action.closed_at).to eq time6
+        expect(colocated_admin_action.closed_at).to be_nil
       end
     end
   end
@@ -364,12 +374,11 @@ describe ColocatedTask, :all_dbs do
     let(:colocated_user) { create(:user) }
     let(:colocated_task) do
       # We expect all ColocatedTasks that are assigned to individuals to have parent tasks assigned to the organization.
-      org_task = create(:colocated_task, assigned_by: attorney)
+      org_task = create(:colocated_task, appeal: appeal_1, assigned_by: attorney)
       create(
         :colocated_task,
         assigned_by: attorney,
         assigned_to: colocated_user,
-        appeal: appeal_1,
         parent: org_task
       )
     end
@@ -451,7 +460,7 @@ describe ColocatedTask, :all_dbs do
       let(:legacy_colocated_task) { org_colocated_task.children.first }
 
       before do
-        org_colocated_task.appeal.case_record.update!(bfcurloc: location_code)
+        org_colocated_task.appeal.case_record&.update!(bfcurloc: location_code)
       end
 
       context "when the location code is CASEFLOW" do
@@ -486,6 +495,17 @@ describe ColocatedTask, :all_dbs do
         it "does not change the case's location_code" do
           legacy_colocated_task.update!(status: Constants.TASK_STATUSES.cancelled)
           expect(org_colocated_task.reload.appeal.location_code).to eq(location_code)
+        end
+      end
+
+      context "when the VACOLS case has been deleted" do
+        let!(:appeal_1) { create(:legacy_appeal) }
+        let(:task_type_trait) { ColocatedTask.actions_assigned_to_colocated.sample.to_sym }
+        let(:location_code) { "FAKELOC" }
+
+        it "does not attempt to access the location code" do
+          legacy_colocated_task.cancelled!
+          expect(org_colocated_task.reload.appeal.location_code).to be_nil
         end
       end
     end
@@ -528,6 +548,124 @@ describe ColocatedTask, :all_dbs do
 
       # Our AssociatedVacolsModels hold on to their VACOLS properties aggressively. Re-fetch the object to avoid that.
       expect(LegacyAppeal.find(appeal.id).location_code).to eq(initial_assigner.vacols_uniq_id)
+    end
+  end
+
+  describe "Reassign PreRoutingColocatedTask" do
+    let(:task_class) { PreRoutingFoiaColocatedTask }
+    let(:parent_task) do
+      PreRoutingFoiaColocatedTask.create(
+        assigned_by: attorney,
+        assigned_to: colocated_org,
+        parent: appeal_1.root_task,
+        appeal: appeal_1
+      )
+    end
+    let!(:child_task) { parent_task.children.first }
+    let(:reassign_params) { { assigned_to_type: User.name, assigned_to_id: Colocated.singleton.next_assignee.id } }
+
+    subject { child_task.reassign(reassign_params, attorney) }
+
+    it "allows the reassign" do
+      tasks = subject
+
+      expect(tasks.count).to eq 2
+      expect(child_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+      expect(parent_task.reload.children.open.first.assigned_to).not_to eq colocated_org.users.first
+      expect(parent_task.children.open.first.label).to eq task_class.label
+    end
+  end
+
+  describe "special handling for Motion to Vacate attorney checkout flow" do
+    let(:vacate_type) { "vacate_and_de_novo" }
+
+    let!(:judge) { create(:user, full_name: "Judge the First", css_id: "JUDGE_1") }
+    let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
+    let!(:attorney_staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+    let(:receipt_date) { Time.zone.today - 20 }
+    let!(:appeal) do
+      create(:appeal, receipt_date: receipt_date)
+    end
+
+    let!(:decision_issues) do
+      3.times do |idx|
+        create(
+          :decision_issue,
+          :rating,
+          decision_review: appeal,
+          disposition: "denied",
+          description: "Decision issue description #{idx}",
+          decision_text: "decision issue"
+        )
+      end
+    end
+
+    let!(:root_task) { create(:root_task, appeal: appeal) }
+
+    let!(:motions_attorney) { create(:user, full_name: "Motions attorney") }
+
+    let(:vacate_motion_mail_task) do
+      create(:vacate_motion_mail_task, assigned_to: motions_attorney, parent: root_task)
+    end
+    let(:judge_address_motion_to_vacate_task) do
+      create(:judge_address_motion_to_vacate_task,
+             appeal: appeal,
+             assigned_to: judge,
+             parent: vacate_motion_mail_task
+      )
+    end
+    let(:post_decision_motion_params) do
+      {
+        instructions: "I am granting this",
+        disposition: "granted",
+        vacate_type: vacate_type,
+        assigned_to_id: attorney
+      }
+    end
+    let(:post_decision_motion_updater) do
+      PostDecisionMotionUpdater.new(judge_address_motion_to_vacate_task, post_decision_motion_params)
+    end
+    let(:vacate_stream) { Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "vacate") }
+    let(:attorney_task) { AttorneyTask.find_by(assigned_to: attorney) }
+    let(:parent) { create(:ama_judge_decision_review_task, assigned_to: judge, appeal: vacate_stream ) }
+
+    let(:params_list) do
+      [{
+        assigned_by: attorney,
+        type: AojColocatedTask.name,
+        parent_id: parent.id,
+        appeal: vacate_stream
+      }]
+    end
+
+    before do
+      create(:staff, :judge_role, sdomainid: judge.css_id)
+      judge_team.add_user(attorney)
+
+      FeatureToggle.enable!(:review_motion_to_vacate)
+
+      post_decision_motion_updater.process
+      appeal.reload
+
+      judge_address_motion_to_vacate_task.update(status: Constants.TASK_STATUSES.completed)
+    end
+
+    after { FeatureToggle.disable!(:review_motion_to_vacate) }
+
+    context "vacate & de novo" do
+      it "passes validation and creates child tasks" do
+        expect { subject }.not_to raise_error
+        expect(ColocatedTask.all.count).to eq 2
+      end
+    end
+
+    context "other vacate type" do
+      let(:vacate_type) { "straight_vacate" }
+
+      it "doesn't pass" do
+        expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError)
+        expect(ColocatedTask.all.count).to eq 0
+      end
     end
   end
 end

@@ -3,7 +3,7 @@ import React from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import Button from '../../components/Button';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import { GrayDot, GreenCheckmark, CancelIcon } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
 import { taskIsOnHold, sortTaskList } from '../utils';
@@ -11,7 +11,7 @@ import StringUtil from '../../util/StringUtil';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import ActionsDropdown from '../components/ActionsDropdown';
 import OnHoldLabel from '../components/OnHoldLabel';
-import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
+import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import DecisionDateTimeLine from '../components/DecisionDateTimeLine';
 
 export const grayLineStyling = css({
@@ -153,8 +153,15 @@ class TaskRows extends React.PureComponent {
   assignedByListItem = (task) => {
     const assignor = task.assignedBy.firstName ? this.getAbbrevName(task.assignedBy) : null;
 
-    return assignor ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_FROM_LABEL}</dt>
+    return assignor ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL}</dt>
       <dd>{assignor}</dd></div> : null;
+  }
+
+  cancelledByListItem = (task) => {
+    const canceler = task.cancelledBy?.cssId;
+
+    return canceler ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_CANCELER_LABEL}</dt>
+      <dd>{canceler}</dd></div> : null;
   }
 
   taskLabelListItem = (task) => {
@@ -243,6 +250,7 @@ class TaskRows extends React.PureComponent {
           { timeline && timelineTitle }
           { this.assignedToListItem(task) }
           { this.assignedByListItem(task) }
+          { this.cancelledByListItem(task) }
           { this.taskLabelListItem(task) }
           { this.taskInstructionsListItem(task) }
         </CaseDetailsDescriptionList>
@@ -297,7 +305,7 @@ class TaskRows extends React.PureComponent {
           { moment(appeal.nodDate).format('MM/DD/YYYY') }
         </td>
         <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer">
-          { <GreenCheckmark /> } </td>
+          <GreenCheckmark /></td>
         <td className="taskContainerStyling taskInformationTimelineContainerStyling">
           { COPY.CASE_TIMELINE_NOD_RECEIVED } <br />
         </td>

@@ -3,6 +3,12 @@
 # transformed Task model, with denormalized User/Org attributes
 
 class ETL::Task < ETL::Record
+  acts_as_tree
+
+  include PrintsTaskTree
+
+  belongs_to :appeal, primary_key: :appeal_id, foreign_key: :appeal_id, class_name: "ETL::Appeal"
+
   class << self
     def origin_primary_key
       :task_id

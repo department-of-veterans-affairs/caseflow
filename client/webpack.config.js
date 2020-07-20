@@ -16,7 +16,7 @@ const config = {
     new webpack.EnvironmentPlugin({ NODE_ENV: 'development' })
   ]),
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx', '.json'],
     alias: {
       // This does not actually appear to be necessary, but it does silence
       // a warning from superagent-no-cache.
@@ -44,58 +44,22 @@ const config = {
         }
       },
       {
-        test: /\.module\.s(a|c)ss$/,
+        test: /\.((c|sa|sc)ss)$/i,
         use: [
-          {
-            loader: 'style-loader'
-          },
+          'style-loader',
           {
             loader: 'css-loader',
             options: {
-              modules: true,
-              sourceMap: true
-            }
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              sourceMap: true
-            }
-          }
-        ]
-      },
-      {
-        test: /\.scss?$/,
-        exclude: /\.module.(s(a|c)ss)$/,
-        use: [
-          {
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true
-            }
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              sourceMap: true
-            }
-          }
-        ]
-      },
-      {
-        test: /\.css?$/,
-        use: [
-          {
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader',
-            options: {
+              importLoaders: 1,
+              modules: { auto: true },
               sourceMap: true,
-              url: false
+              localsConvention: 'camelCase'
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true
             }
           }
         ]

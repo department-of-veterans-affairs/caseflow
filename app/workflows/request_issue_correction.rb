@@ -29,10 +29,12 @@ class RequestIssueCorrection
     unidentified_issue_text
     untimely_exemption
     untimely_exemption_notes
+    covid_timeliness_exempt
     vacols_id
     vacols_sequence_id
     veteran_participant_id
     edited_description
+    verified_unidentified_issue
   ].freeze
 
   def call

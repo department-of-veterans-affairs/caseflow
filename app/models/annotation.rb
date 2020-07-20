@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Annotation < ApplicationRecord
+class Annotation < CaseflowRecord
   belongs_to :document
   belongs_to :user
   validates :comment, presence: true

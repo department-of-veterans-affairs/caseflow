@@ -4,7 +4,20 @@ FactoryBot.define do
   factory :claimant do
     sequence(:decision_review_id)
     sequence(:participant_id)
-    decision_review_type { "Appeal" }
+    association :decision_review, factory: :appeal
+
+    initialize_with do
+      klass = attributes[:type]&.constantize
+      decision_review = attributes[:decision_review]
+      if decision_review
+        klass ||= (decision_review.veteran_is_not_claimant ? DependentClaimant : VeteranClaimant)
+      end
+      klass ||= VeteranClaimant
+      if klass == VeteranClaimant
+        attributes[:participant_id] ||= decision_review&.veteran&.participant_id
+      end
+      klass.new(**attributes)
+    end
 
     trait :advanced_on_docket_due_to_age do
       after(:create) do |claimant, _evaluator|

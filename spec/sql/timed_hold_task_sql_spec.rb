@@ -10,7 +10,7 @@ describe "Timed Hold Task example", :postgres do
       TimedHoldTask.create!(
         appeal: create(:appeal),
         assigned_to: create(:user),
-        parent: create(:generic_task),
+        parent: create(:ama_task),
         days_on_hold: 30
       )
     end

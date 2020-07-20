@@ -10,6 +10,10 @@ class SpecialCaseMovementTask < Task
                 :verify_appeal_distributable
   after_create :close_and_create_judge_task
 
+  def self.label
+    COPY::CASE_MOVEMENT_TASK_LABEL
+  end
+
   private
 
   def close_and_create_judge_task
@@ -39,14 +43,14 @@ class SpecialCaseMovementTask < Task
     #   This may change as we add more 'from' scenarios
     if !parent.is_a?(DistributionTask)
       fail(Caseflow::Error::InvalidParentTask,
-           message: "Special Case Movement must have a Distribution task parent")
+           message: "Case Movement task must have a Distribution task parent")
     end
   end
 
   def verify_user_organization
     if !SpecialCaseMovementTeam.singleton.user_has_access?(assigned_by)
       fail(Caseflow::Error::ActionForbiddenError,
-           message: "Special Case Movement restricted to Special Case Movement Team members")
+           message: "Case Movement restricted to Case Movement Team members")
     end
   end
 end

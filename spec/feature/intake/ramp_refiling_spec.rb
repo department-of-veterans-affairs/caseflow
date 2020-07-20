@@ -287,7 +287,7 @@ RSpec.feature "RAMP Refiling Intake", :postgres do
       ramp_refiling = RampRefiling.find_by(veteran_file_number: "12341234")
       expect(ramp_refiling).to_not be_nil
       expect(ramp_refiling.option_selected).to eq("appeal")
-      expect(ramp_refiling.appeal_docket).to eq("evidence_submission")
+      expect(ramp_refiling.appeal_docket).to eq(Constants.AMA_DOCKETS.evidence_submission)
       expect(ramp_refiling.receipt_date.to_date).to eq(receipt_date)
 
       safe_click "#finish-intake"
@@ -402,7 +402,8 @@ RSpec.feature "RAMP Refiling Intake", :postgres do
           suppress_acknowledgement_letter: false,
           claimant_participant_id: veteran.participant_id,
           limited_poa_code: nil,
-          limited_poa_access: nil
+          limited_poa_access: nil,
+          status_type_code: "PEND"
         },
         veteran_hash: intake.veteran.to_vbms_hash,
         user: current_user

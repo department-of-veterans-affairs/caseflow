@@ -35,6 +35,19 @@
       }
     }
   }
+
+  //Inline Code Text
+  code,
+  pre {
+    background-color: $color-gray-lightest;
+    color: $color-base;
+
+    &::before,
+    &::after {
+      letter-spacing: -0.2em;
+      content: '\00a0';
+    }
+  }
 }
 
 .cf-styleguide-logo-row {
@@ -51,19 +64,6 @@
 
   .cf-sg-alert-slim {
     max-width: 320px;
-  }
-}
-
-//Inline Code Text
-code,
-pre {
-  background-color: $color-gray-lightest;
-  color: $color-base;
-
-  &::before,
-  &::after {
-    letter-spacing: -0.2em;
-    content: '\00a0';
   }
 }
 

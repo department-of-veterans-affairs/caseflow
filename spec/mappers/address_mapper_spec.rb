@@ -22,7 +22,8 @@ describe AddressMapper do
         city_nm: city,
         postal_cd: state,
         zip_prefix_nbr: zip_code,
-        cntry_nm: country
+        cntry_nm: country,
+        ptcpnt_addrs_type_nm: "Mailing"
       }
     end
     let(:bgs_address) { bgs_address_template }
@@ -35,7 +36,8 @@ describe AddressMapper do
         city: city,
         country: country,
         state: state,
-        zip: zip_code
+        zip: zip_code,
+        type: "Mailing"
       }
     end
     let(:result) { result_template }

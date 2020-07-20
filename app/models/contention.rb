@@ -7,16 +7,22 @@ class Contention
     self.description = description
   end
 
-  # BGS limits contention text to 255 bytes
+  # BGS limits contention text to 255 bytes long, and free of newlines
   def text
     return unless description
 
-    (description.bytesize > 255) ? truncated_description : description
+    truncate(remove_newlines(description))
   end
 
   private
 
-  def truncated_description
+  def remove_newlines(description)
+    description.gsub(/\s*[\r\n]+\s*/, " ")
+  end
+
+  def truncate(description)
+    return description if description.bytesize <= 255
+
     trimmed = []
     description.split("").each do |char|
       break if trimmed.join("").bytesize >= 252

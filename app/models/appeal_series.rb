@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AppealSeries < ApplicationRecord
+class AppealSeries < CaseflowRecord
   has_many :appeals, class_name: "LegacyAppeal", dependent: :nullify
 
   # Timeliness is returned as a range of integer months from 50 to 84.1%tile.
@@ -171,7 +171,8 @@ class AppealSeries < ApplicationRecord
   end
 
   def latest_appeal_by_decision_date
-    appeals.max_by(&:decision_date)
+    # explicit cast to_i to allow for nil comparison with Time object
+    appeals.max_by { |appeal| appeal.decision_date.to_i }
   end
 
   def fetch_docket

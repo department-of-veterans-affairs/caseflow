@@ -52,7 +52,7 @@ class Pagination extends React.PureComponent {
     // Otherwise, the beginning of the range is the previous amount of cases + 1
     const beginningCaseNumber = totalCases === 0 ? 0 : ((currentPage * pageSize) - pageSize + 1);
     // If there are no pages, there is no data, so the range should be 0-0.
-    // Otherwise, the end of the range is the previous amount of cases + 
+    // Otherwise, the end of the range is the previous amount of cases +
     // the amount of data in the current page.
     const endingCaseNumber = totalCases === 0 ? 0 : (beginningCaseNumber + currentCases - 1);
     // Create the range
@@ -135,8 +135,8 @@ Pagination.propTypes = {
   pageSize: PropTypes.number.isRequired,
   currentPage: PropTypes.number.isRequired,
   currentCases: PropTypes.number.isRequired,
-  totalPages: PropTypes.number.isRequired,
-  totalCases: PropTypes.number.isRequired,
+  totalPages: PropTypes.number,
+  totalCases: PropTypes.number,
   updatePage: PropTypes.func.isRequired
 };
 

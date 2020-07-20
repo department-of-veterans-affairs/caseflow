@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Distribution < ApplicationRecord
+class Distribution < CaseflowRecord
   include ActiveModel::Serializers::JSON
   include AmaCaseDistribution
 
@@ -9,8 +9,8 @@ class Distribution < ApplicationRecord
 
   validates :judge, presence: true
   validate :validate_user_is_judge, on: :create
-  validate :validate_number_of_unassigned_cases, on: :create
-  validate :validate_days_waiting_of_unassigned_cases, on: :create
+  validate :validate_number_of_unassigned_cases, on: :create, unless: :priority_push?
+  validate :validate_days_waiting_of_unassigned_cases, on: :create, unless: :priority_push?
   validate :validate_judge_has_no_pending_distributions, on: :create
 
   enum status: { pending: "pending", started: "started", error: "error", completed: "completed" }
@@ -22,7 +22,7 @@ class Distribution < ApplicationRecord
 
   class << self
     def pending_for_judge(judge)
-      find_by(status: %w[pending started], judge: judge)
+      where(status: %w[pending started], judge: judge)
     end
   end
 
@@ -74,7 +74,9 @@ class Distribution < ApplicationRecord
   end
 
   def validate_judge_has_no_pending_distributions
-    errors.add(:judge, :pending_distribution) if self.class.pending_for_judge(judge)
+    if self.class.pending_for_judge(judge).where(priority_push: priority_push).exists?
+      errors.add(:judge, :pending_distribution)
+    end
   end
 
   def judge_tasks

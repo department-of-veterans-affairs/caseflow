@@ -2,7 +2,7 @@ import Alert from '../components/Alert';
 import ApiUtil from '../util/ApiUtil';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../components/Button';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import PropTypes from 'prop-types';

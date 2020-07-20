@@ -7,6 +7,10 @@ class DispatchStatsController < ApplicationController
   before_action :verify_access
 
   def show
+    # deprecated 2019/08/28
+    # either remove this controller entirely or render 404.
+    render "errors/404", layout: "application", status: :not_found
+
     @stats = {
       hourly: 0...24,
       daily: 0...30,

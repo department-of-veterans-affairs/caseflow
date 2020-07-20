@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
@@ -8,11 +9,11 @@ import ApiUtil from '../../util/ApiUtil';
 import QueueFlowModal from './QueueFlowModal';
 import Dropdown from '../../components/Dropdown';
 import { cityForRegionalOfficeCode } from '../utils';
-import { bulkAssignTasks } from '../QueueActions';
-import { setActiveOrganization } from '../uiReducer/uiActions';
+import { setActiveOrganization, requestSave } from '../uiReducer/uiActions';
 import LoadingScreen from '../../components/LoadingScreen';
 import { LOGO_COLORS } from '../../constants/AppConstants';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
+import { setQueueConfig } from '../QueueActions';
 
 const BULK_ASSIGN_ISSUE_COUNT = [5, 10, 20, 30, 40, 50];
 
@@ -59,26 +60,31 @@ class BulkAssignModal extends React.PureComponent {
   }
 
   bulkAssignTasks = () => {
-    this.props.bulkAssignTasks(this.state.modal);
-
     const {
-      taskType: task_type,
-      numberOfTasks: task_count,
-      assignedUser: assigned_to_id,
-      regionalOffice: regional_office
+      taskType,
+      numberOfTasks,
+      assignedUser,
+      regionalOffice
     } = this.state.modal;
 
-    const data = { bulk_task_assignment: {
-      organization_url: this.organizationUrl(),
-      regional_office,
-      assigned_to_id,
-      task_type,
-      task_count }
+    const data = {
+      bulk_task_assignment: {
+        organization_url: this.organizationUrl(),
+        regional_office: regionalOffice,
+        assigned_to_id: assignedUser,
+        task_type: taskType,
+        task_count: numberOfTasks
+      }
     };
 
-    return ApiUtil.post('/bulk_task_assignments', { data }).then(() => {
+    const successMessage = {
+      title: `You have bulk assigned ${numberOfTasks} ${taskType.replace(/([a-z])([A-Z])/g, '$1 $2')} tasks`,
+      detail: 'Please go to your individual queue to see any self assigned tasks'
+    };
+
+    return this.props.requestSave('/bulk_task_assignments', { data }, successMessage).then((resp) => {
       this.props.history.push(`/organizations/${this.organizationUrl()}`);
-      window.location.reload();
+      this.props.setQueueConfig(resp.body.queue_config);
     }).
       catch(() => {
         // handle the error
@@ -204,6 +210,7 @@ class BulkAssignModal extends React.PureComponent {
     return <QueueFlowModal
       pathAfterSubmit={`/organizations/${this.organizationUrl()}`}
       button={COPY.BULK_ASSIGN_BUTTON_TEXT}
+      onCancel={this.props.onCancel}
       submit={this.bulkAssignTasks}
       validateForm={this.validateForm}
       title={COPY.BULK_ASSIGN_MODAL_TITLE}>
@@ -217,6 +224,15 @@ class BulkAssignModal extends React.PureComponent {
   ;
 }
 
+BulkAssignModal.propTypes = {
+  highlightFormItems: PropTypes.bool,
+  history: PropTypes.object,
+  location: PropTypes.object,
+  onCancel: PropTypes.func,
+  requestSave: PropTypes.func,
+  setQueueConfig: PropTypes.func
+};
+
 const mapStateToProps = (state) => {
   const {
     highlightFormItems
@@ -228,8 +244,10 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({ bulkAssignTasks,
-    setActiveOrganization }, dispatch)
-);
+  bindActionCreators({
+    setActiveOrganization,
+    requestSave,
+    setQueueConfig
+  }, dispatch));
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(BulkAssignModal));

@@ -465,8 +465,10 @@ describe EstablishClaim, :all_dbs do
           create(:case_with_decision, :status_remand, folder: folder)
         end
 
-        it { is_expected.to include("Reviewed Remand decision") }
-        it { is_expected.to include("VACOLS Updated: Changed Location to 98") }
+        it "has expected actions", :aggregate_failures do
+          is_expected.to include("Reviewed Remand decision")
+          is_expected.to include("VACOLS Updated: Changed Location to 98")
+        end
 
         context "when an EP was established for ARC" do
           let(:ep_code) { "170RMDAMC" }
@@ -476,15 +478,19 @@ describe EstablishClaim, :all_dbs do
             create(:case_with_decision, :status_remand, folder: folder)
           end
 
-          it { is_expected.to include("Established EP: 170RMDAMC - ARC-Remand for Station 397 - ARC") }
-          it { is_expected.to_not include(/Added Diary Note/) }
+          it "has expected actions", :aggregate_failures do
+            is_expected.to include("Established EP: 170RMDAMC - ARC-Remand for Station 397 - ARC")
+            is_expected.to_not include(/Added Diary Note/)
+          end
         end
 
         context "when the appeal was routed to an RO in VACOLS" do
           let(:special_issues) { { vamc: true } }
 
-          it { is_expected.to include("VACOLS Updated: Changed Location to 54") }
-          it { is_expected.to include("VACOLS Updated: Added Diary Note on VAMC") }
+          it "works", :aggregate_failures do
+            is_expected.to include("VACOLS Updated: Changed Location to 54")
+            is_expected.to include("VACOLS Updated: Added Diary Note on VAMC")
+          end
         end
       end
 
@@ -494,8 +500,10 @@ describe EstablishClaim, :all_dbs do
               [create(:case_issue, :education, :disposition_allowed)], folder: folder)
         end
 
-        it { is_expected.to include("Reviewed Full Grant decision") }
-        it { is_expected.to_not include(/VACOLS Updated/) }
+        it "has expected actions", :aggregate_failures do
+          is_expected.to include("Reviewed Full Grant decision")
+          is_expected.to_not include(/VACOLS Updated/)
+        end
 
         context "when an EP was established" do
           let(:outgoing_reference_id) { "VBMS123" }
@@ -519,7 +527,7 @@ describe EstablishClaim, :all_dbs do
 
           it do
             is_expected
-              .to include("Sent email to: appealcoach@va.gov in Philadelphia COWAC, PA - re: Radiation Issue(s)")
+              .to include("Sent email to: appealcoach@va.gov in Philadelphia COWAC, PA - re: Radiation Issue")
           end
         end
 
@@ -552,7 +560,7 @@ describe EstablishClaim, :all_dbs do
       let(:completion_status) { :special_issue_emailed }
       let(:special_issues) { { vamc: true, radiation: true } }
 
-      it { is_expected.to eq("Emailed - Radiation; VAMC Issue(s)") }
+      it { is_expected.to eq("Emailed - Radiation; VAMC Issues") }
     end
 
     context "when completion_status doesn't need additional information" do

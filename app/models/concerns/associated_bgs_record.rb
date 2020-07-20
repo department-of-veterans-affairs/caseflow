@@ -37,6 +37,10 @@ module AssociatedBgsRecord
       @bgs_attributes ||= []
     end
 
+    def cached_bgs_attributes
+      self::CACHED_BGS_ATTRIBUTES # consumers must define
+    end
+
     private
 
     def extract_attributes_and_options(attributes)
@@ -55,10 +59,20 @@ module AssociatedBgsRecord
   end
 
   def bgs_record
-    @bgs_record ||= (fetch_bgs_record || :not_found)
+    @bgs_record ||= (try_and_retry_bgs_record || :not_found)
   end
 
   private
+
+  def try_and_retry_bgs_record
+    fetch_bgs_record
+  rescue BGS::ShareError => error
+    if error.ignorable?
+      fetch_bgs_record
+    else
+      raise error # re-raise if we can't try again
+    end
+  end
 
   def load_bgs_record!
     return if !accessible? || !found? || @bgs_record_loaded
@@ -71,5 +85,22 @@ module AssociatedBgsRecord
     end
 
     @bgs_record_loaded = true
+  end
+
+  def stale_attributes
+    self.class.cached_bgs_attributes.select { |attr| self[attr].nil? || self[attr].to_s != bgs_record[attr].to_s }
+  end
+
+  def cached_or_fetched_from_bgs(attr_name:, bgs_attr: nil)
+    bgs_attr ||= attr_name
+    self[attr_name] ||= begin
+      return if not_found?
+
+      bgs_record.dig(bgs_attr)
+    end
+  end
+
+  def not_found?
+    bgs_record == :not_found
   end
 end

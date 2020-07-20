@@ -315,6 +315,14 @@ class VACOLS::Case < VACOLS::Record
     # :nocov:
   end
 
+  def paperless?
+    folder.tivbms == "Y"
+  end
+
+  def certified_with_caseflow?
+    bfdcertool.present?
+  end
+
   # The attributes that are copied over when the case is cloned because of a remand
   def remand_clone_attributes
     slice(

@@ -6,10 +6,11 @@
 # be generated when a decision gets remanded or vacated.
 
 # rubocop:disable Metrics/ClassLength
-class RequestIssue < ApplicationRecord
+class RequestIssue < CaseflowRecord
   include Asyncable
   include HasBusinessLine
   include DecisionSyncable
+  include HasDecisionReviewUpdatedSince
 
   # how many days before we give up trying to sync decisions
   REQUIRES_PROCESSING_WINDOW_DAYS = 30
@@ -25,6 +26,7 @@ class RequestIssue < ApplicationRecord
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   has_many :hearing_issue_notes
   has_one :legacy_issue_optin
+  has_many :legacy_issues
   belongs_to :correction_request_issue, class_name: "RequestIssue", foreign_key: "corrected_by_request_issue_id"
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   belongs_to :contested_decision_issue, class_name: "DecisionIssue"
@@ -107,7 +109,8 @@ class RequestIssue < ApplicationRecord
       where(
         contested_rating_issue_reference_id: nil,
         contested_rating_decision_reference_id: nil,
-        is_unidentified: [nil, false]
+        is_unidentified: [nil, false],
+        verified_unidentified_issue: [nil, false]
       ).where.not(nonrating_issue_category: nil)
     end
 
@@ -166,6 +169,7 @@ class RequestIssue < ApplicationRecord
     # rubocop:disable Metrics/MethodLength
     def attributes_from_intake_data(data)
       contested_issue_present = attributes_look_like_contested_issue?(data)
+      issue_text = (data[:is_unidentified] || data[:verified_unidentified_issue]) ? data[:decision_text] : nil
 
       {
         contested_rating_issue_reference_id: data[:rating_issue_reference_id],
@@ -173,7 +177,7 @@ class RequestIssue < ApplicationRecord
         contested_rating_decision_reference_id: data[:rating_decision_reference_id],
         contested_issue_description: contested_issue_present ? data[:decision_text] : nil,
         nonrating_issue_description: data[:nonrating_issue_category] ? data[:decision_text] : nil,
-        unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
+        unidentified_issue_text: issue_text,
         decision_date: data[:decision_date],
         nonrating_issue_category: data[:nonrating_issue_category],
         benefit_type: data[:benefit_type],
@@ -181,6 +185,7 @@ class RequestIssue < ApplicationRecord
         is_unidentified: data[:is_unidentified],
         untimely_exemption: data[:untimely_exemption],
         untimely_exemption_notes: data[:untimely_exemption_notes],
+        covid_timeliness_exempt: data[:untimely_exemption_covid],
         ramp_claim_id: data[:ramp_claim_id],
         vacols_id: data[:vacols_id],
         vacols_sequence_id: data[:vacols_sequence_id],
@@ -188,7 +193,8 @@ class RequestIssue < ApplicationRecord
         ineligible_reason: data[:ineligible_reason],
         ineligible_due_to_id: data[:ineligible_due_to_id],
         edited_description: data[:edited_description],
-        correction_type: data[:correction_type]
+        correction_type: data[:correction_type],
+        verified_unidentified_issue: data[:verified_unidentified_issue]
       }
     end
     # rubocop:enable Metrics/MethodLength
@@ -211,7 +217,7 @@ class RequestIssue < ApplicationRecord
     update!(end_product_establishment: epe) if epe
 
     RequestIssueCorrectionCleaner.new(self).remove_dta_request_issue! if correction?
-    create_legacy_issue_optin if legacy_issue_opted_in?
+    handle_legacy_issues!
   end
 
   def end_product_code
@@ -229,7 +235,11 @@ class RequestIssue < ApplicationRecord
   end
 
   def rating?
-    !!associated_rating_issue? || previous_rating_issue? || !!associated_rating_decision?
+    !!associated_rating_issue? ||
+      !!previous_rating_issue? ||
+      !!associated_rating_decision? ||
+      !!contested_decision_issue&.rating? ||
+      verified_unidentified_issue
   end
 
   def nonrating?
@@ -270,13 +280,13 @@ class RequestIssue < ApplicationRecord
     return edited_description if edited_description.present?
     return contested_issue_description if contested_issue_description
     return "#{nonrating_issue_category} - #{nonrating_issue_description}" if nonrating?
-    return unidentified_issue_text if is_unidentified?
+    return unidentified_issue_text if is_unidentified? || verified_unidentified_issue
   end
 
   # If the request issue is unidentified, we want to prompt the VBMS/SHARE user to correct the issue.
   # For that reason we use a special prompt message instead of the issue text.
   def contention_text
-    return UNIDENTIFIED_ISSUE_MSG if is_unidentified?
+    return UNIDENTIFIED_ISSUE_MSG if is_unidentified? && !verified_unidentified_issue
 
     Contention.new(description).text
   end
@@ -400,16 +410,6 @@ class RequestIssue < ApplicationRecord
     end
   end
 
-  def create_legacy_issue_optin
-    LegacyIssueOptin.create!(
-      request_issue: self,
-      vacols_id: vacols_id,
-      vacols_sequence_id: vacols_sequence_id,
-      original_disposition_code: vacols_issue.disposition_id,
-      original_disposition_date: vacols_issue.disposition_date
-    )
-  end
-
   def vacols_issue
     return unless vacols_id && vacols_sequence_id
 
@@ -442,7 +442,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def close_after_end_product_canceled!
-    return unless end_product_establishment&.reload&.status_canceled?
+    return unless end_product_establishment&.reload&.status_cancelled?
 
     close!(status: :end_product_canceled) do
       legacy_issue_optin&.flag_for_rollback!
@@ -477,6 +477,18 @@ class RequestIssue < ApplicationRecord
       decision_review: decision_review,
       benefit_type: benefit_type,
       caseflow_decision_date: decision_issue_param[:decision_date]
+    )
+  end
+
+  def create_vacated_decision_issue!
+    decision_issues.find_or_create_by!(
+      decision_review: decision_review,
+      decision_review_type: decision_review_type,
+      disposition: "vacated",
+      description: "The decision: #{description} has been vacated.",
+      caseflow_decision_date: Time.zone.today,
+      benefit_type: benefit_type,
+      participant_id: decision_review.veteran.participant_id
     )
   end
 
@@ -555,6 +567,14 @@ class RequestIssue < ApplicationRecord
     end_product_establishment.contention_for_object(self)
   end
 
+  def bgs_contention
+    end_product_establishment&.bgs_contention_for_object(self)
+  end
+
+  def exam_requested?
+    bgs_contention&.exam_requested?
+  end
+
   def editable?
     !contention_connected_to_rating?
   end
@@ -567,11 +587,53 @@ class RequestIssue < ApplicationRecord
     contested_decision_issue&.remanded?
   end
 
+  def remand_type
+    return unless remanded?
+
+    # if this request issue is a correction for a decision issue, use the original issue's remand type
+    # instead of the contested decision issue's disposition
+    return previous_request_issue&.remand_type if decision_correction?
+
+    if contested_decision_issue.disposition == DecisionIssue::DIFFERENCE_OF_OPINION
+      "difference_of_opinion"
+    else
+      "duty_to_assist"
+    end
+  end
+
   def title_of_active_review
     duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
   end
 
+  def handle_legacy_issues!
+    create_legacy_issue!
+    create_legacy_issue_optin!
+  end
+
   private
+
+  def create_legacy_issue!
+    return unless vacols_id && vacols_sequence_id
+
+    legacy_issues.create!(
+      vacols_id: vacols_id,
+      vacols_sequence_id: vacols_sequence_id
+    )
+  end
+
+  def create_legacy_issue_optin!
+    return unless legacy_issue_opted_in?
+
+    LegacyIssueOptin.create!(
+      request_issue: self,
+      original_disposition_code: vacols_issue.disposition_id,
+      original_disposition_date: vacols_issue.disposition_date,
+      legacy_issue: legacy_issues.first,
+      original_legacy_appeal_decision_date: vacols_issue&.legacy_appeal&.decision_date,
+      original_legacy_appeal_disposition_code: vacols_issue&.legacy_appeal&.case_record&.bfdc,
+      folder_decision_date: vacols_issue&.legacy_appeal&.case_record&.folder&.tidcls
+    )
+  end
 
   # When a request issue already has a rating in VBMS, prevent user from editing it.
   # LockedRatingError indicates that the matching rating issue could be locked,
@@ -586,7 +648,7 @@ class RequestIssue < ApplicationRecord
     false
   rescue Rating::NilRatingProfileListError
     false
-  rescue Rating::LockedRatingError, Rating::BackfilledRatingError
+  rescue PromulgatedRating::LockedRatingError, PromulgatedRating::BackfilledRatingError
     true
   end
 
@@ -669,7 +731,7 @@ class RequestIssue < ApplicationRecord
         rating_promulgation_date: end_product_establishment_associated_rating_promulgation_date,
         decision_review: decision_review,
         benefit_type: benefit_type,
-        end_product_last_action_date: end_product_establishment.result.last_action_date
+        end_product_last_action_date: end_product_establishment.last_action_date
       )
     end
   end
@@ -721,7 +783,9 @@ class RequestIssue < ApplicationRecord
       rating_profile_date: rating_issue.profile_date,
       decision_review: decision_review,
       benefit_type: rating_issue.benefit_type,
-      end_product_last_action_date: end_product_establishment.result.last_action_date
+      subject_text: rating_issue.subject_text,
+      percent_number: rating_issue.percent_number,
+      end_product_last_action_date: end_product_establishment.last_action_date
     )
   end
 
@@ -808,13 +872,19 @@ class RequestIssue < ApplicationRecord
     return unless vacols_id
     return unless decision_review.serialized_legacy_appeals.any?
 
-    unless vacols_issue.eligible_for_opt_in? && legacy_appeal_eligible_for_opt_in?
+    unless issue_eligible_for_opt_in? && legacy_appeal_eligible_for_opt_in?
       self.ineligible_reason = :legacy_appeal_not_eligible
     end
   end
 
+  def issue_eligible_for_opt_in?
+    vacols_issue.eligible_for_opt_in?(covid_flag: covid_timeliness_exempt)
+  end
+
   def legacy_appeal_eligible_for_opt_in?
-    vacols_issue.legacy_appeal.eligible_for_soc_opt_in?(decision_review.receipt_date)
+    vacols_issue.legacy_appeal.eligible_for_opt_in?(
+      receipt_date: decision_review.receipt_date, covid_flag: covid_timeliness_exempt
+    )
   end
 
   def check_for_active_request_issue_by_rating!

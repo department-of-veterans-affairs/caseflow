@@ -10,7 +10,6 @@ import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ApiUtil from '../../util/ApiUtil';
 import {
   onReceiveDailyDocket,
-  onReceiveHearing,
   onReceiveSavedHearing,
   onResetSaveSuccessful,
   selectHearingRoom,
@@ -30,7 +29,6 @@ import {
   handleLockHearingServerError,
   onResetLockHearingAfterError
 } from '../actions/dailyDocketActions';
-import { onReceiveAlerts } from '../../components/common/actions';
 import DailyDocket from '../components/dailyDocket/DailyDocket';
 import DailyDocketPrinted from '../components/dailyDocket/DailyDocketPrinted';
 import HearingDayEditModal from '../components/HearingDayEditModal';
@@ -71,19 +69,6 @@ export class DailyDocketContainer extends React.Component {
     this.props.onResetLockHearingAfterError();
   };
 
-  loadHearingDetails = (hearings) => {
-    _.each(hearings, (hearing) => {
-      ApiUtil.get(`/hearings/${hearing.externalId}`).then((response) => {
-        const hearingResp = ApiUtil.convertToCamelCase(response.body.data);
-
-        this.props.onReceiveHearing(hearingResp);
-      }).
-        catch((error) => {
-          console.log(`Hearing endpoint failed with: ${error}`); // eslint-disable-line no-console
-        });
-    });
-  }
-
   loadHearingDay = () => {
     const requestUrl = `/hearings/hearing_day/${this.props.match.params.hearingDayId}`;
 
@@ -94,19 +79,22 @@ export class DailyDocketContainer extends React.Component {
       const hearingDay = _.omit(resp.hearingDay, ['hearings']);
 
       this.props.onReceiveDailyDocket(hearingDay, hearings);
-
-      this.loadHearingDetails(resp.hearingDay.hearings);
     });
   };
 
   formatHearingFormData = (hearingFormData) => {
     const { virtualHearing, location, ...rest } = hearingFormData;
 
-    return ApiUtil.convertToSnakeCase(_.omitBy({
-      ...rest,
-      hearing_location_attributes: location,
-      virtual_hearing_attributes: virtualHearing || {}
-    }, _.isUndefined));
+    return ApiUtil.convertToSnakeCase(
+      _.omitBy(
+        {
+          ..._.omit(rest, ['advanceOnDocketMotion']),
+          hearing_location_attributes: location,
+          virtual_hearing_attributes: virtualHearing || {}
+        },
+        _.isUndefined
+      )
+    );
   };
 
   formatAodMotionForm = (aodMotionForm, hearing) => {
@@ -114,12 +102,14 @@ export class DailyDocketContainer extends React.Component {
       return {};
     }
 
-    // always send reason and person_id
-    return ApiUtil.convertToSnakeCase({
-      ...aodMotionForm,
-      person_id: hearing.claimantId || hearing.advanceOnDocketMotion.personId,
-      reason: aodMotionForm.reason || hearing.advanceOnDocketMotion.reason
-    });
+    // always send full AOD data
+    return ApiUtil.convertToSnakeCase(
+      {
+        ..._.omit(hearing.advanceOnDocketMotion, ['date', 'judgeName', 'userId']),
+        ...aodMotionForm,
+        person_id: hearing.claimantId || hearing.advanceOnDocketMotion.personId
+      }
+    );
   }
 
   saveHearing = (hearingId, hearingFormData) => {
@@ -134,9 +124,8 @@ export class DailyDocketContainer extends React.Component {
         const hearingResp = ApiUtil.convertToCamelCase(response.body.data);
 
         this.props.onReceiveSavedHearing(hearingResp);
-        this.props.onReceiveAlerts(response.body.alerts);
 
-        return true;
+        return response;
       }, (err) => {
         this.props.handleDailyDocketServerError(err);
 
@@ -162,10 +151,6 @@ export class DailyDocketContainer extends React.Component {
         this.props.handleDailyDocketServerError(err);
       });
   };
-
-  createHearingPromise = () => Promise.all([
-    this.loadHearingDay()
-  ]);
 
   openModal = () => {
     this.setState({ showModalAlert: false,
@@ -239,7 +224,7 @@ export class DailyDocketContainer extends React.Component {
 
   render() {
     const loadingDataDisplay = <LoadingDataDisplay
-      createLoadPromise={this.createHearingPromise}
+      createLoadPromise={this.loadHearingDay}
       loadingComponentProps={{
         spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
         message: 'Loading the daily docket...'
@@ -311,7 +296,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveDailyDocket,
-  onReceiveHearing,
   onReceiveSavedHearing,
   onResetSaveSuccessful,
   selectHearingRoom,
@@ -325,7 +309,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onDisplayLockModal,
   onCancelDisplayLockModal,
   onUpdateLock,
-  onReceiveAlerts,
   onResetLockSuccessMessage,
   handleDailyDocketServerError,
   onResetDailyDocketAfterError,
@@ -381,8 +364,6 @@ DailyDocketContainer.propTypes = {
   onSuccessfulHearingDayDelete: PropTypes.func,
   onReceiveDailyDocket: PropTypes.func,
   onReceiveSavedHearing: PropTypes.func,
-  onReceiveHearing: PropTypes.func,
-  onReceiveAlerts: PropTypes.func,
   onResetSaveSuccessful: PropTypes.func,
   onResetLockHearingAfterError: PropTypes.func,
   onResetLockSuccessMessage: PropTypes.func,

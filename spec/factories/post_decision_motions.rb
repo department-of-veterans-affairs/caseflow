@@ -2,7 +2,8 @@
 
 FactoryBot.define do
   factory :post_decision_motion do
-    disposition { "MyString" }
-    task { nil }
+    appeal { create(:appeal, stream_type: "vacate") }
+    disposition { "granted" }
+    vacate_type { "straight_vacate" }
   end
 end

@@ -87,20 +87,6 @@ export const addIssue = (currentIssue) => (dispatch) => {
   });
 };
 
-export const addUnidentifiedIssue = (description, notes, correctionType, decisionDate) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.ADD_ISSUE,
-    payload: {
-      isUnidentified: true,
-      description,
-      notes,
-      correctionType,
-      editable: true,
-      decisionDate
-    }
-  });
-};
-
 export const addContestableIssue = (args) => (dispatch) => {
   const currentIssue = args.currentIssue || issueByIndex(args.contestableIssues, args.contestableIssueIndex);
 
@@ -126,6 +112,7 @@ export const addContestableIssue = (args) => (dispatch) => {
       vacolsId: args.vacolsId,
       vacolsSequenceId: args.vacolsSequenceId,
       eligibleForSocOptIn: args.eligibleForSocOptIn,
+      eligibleForSocOptInWithExemption: args.eligibleForSocOptInWithExemption,
       correctionType: args.correctionType,
       editable: true
     }
@@ -147,6 +134,7 @@ export const addNonratingRequestIssue = (args) => (dispatch) => {
       vacolsId: args.vacolsId,
       vacolsSequenceId: args.vacolsSequenceId,
       eligibleForSocOptIn: args.eligibleForSocOptIn,
+      eligibleForSocOptInWithExemption: args.eligibleForSocOptInWithExemption,
       ineligibleDueToId: args.ineligibleDueToId,
       ineligibleReason: args.ineligibleReason,
       decisionReviewTitle: args.decisionReviewTitle,

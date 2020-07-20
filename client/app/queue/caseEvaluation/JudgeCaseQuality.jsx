@@ -7,8 +7,8 @@ import RadioField from '../../components/RadioField';
 import CheckboxGroup from '../../components/CheckboxGroup';
 import Alert from '../../components/Alert';
 import { css } from 'glamor';
-import COPY from '../../../COPY.json';
-import JUDGE_CASE_REVIEW_OPTIONS from '../../../constants/JUDGE_CASE_REVIEW_OPTIONS.json';
+import COPY from '../../../COPY';
+import JUDGE_CASE_REVIEW_OPTIONS from '../../../constants/JUDGE_CASE_REVIEW_OPTIONS';
 import {
   headerStyling,
   errorStylingNoTopMargin,

@@ -57,7 +57,7 @@ describe BulkTaskReassignment, :all_dbs do
         before do
           tasks.each { |task| task.update!(type: FoiaTask.name) }
           parent_tasks.map do |parent|
-            create(:ama_judge_task, assigned_to: user, parent: parent)
+            create(:ama_judge_assign_task, assigned_to: user, parent: parent)
             create(:ama_judge_decision_review_task, assigned_to: user, parent: parent)
           end
         end
@@ -82,10 +82,10 @@ describe BulkTaskReassignment, :all_dbs do
       end
 
       context "the tasks are JudgeAssignTasks" do
-        let(:task_type) { :ama_judge_task }
+        let(:task_type) { :ama_judge_assign_task }
 
         context "with open children" do
-          let(:child_tasks) { tasks.map { |task| create(:task, parent_id: task.id) } }
+          let(:child_tasks) { tasks.map { |task| create(:task, parent: task) } }
 
           it "fails and warns the caller of open children of JudgeAssignTasks" do
             bad_parent_output = child_tasks.map(&:id).sort.join(", ")
@@ -116,8 +116,8 @@ describe BulkTaskReassignment, :all_dbs do
         let(:task_type) { :ama_judge_decision_review_task }
 
         context "with no open children" do
-          let(:child_tasks) { tasks.first(2).map { |task| create(:task, parent_id: task.id) } }
-          let!(:child_atty_tasks) { tasks.last(2).map { |task| create(:ama_attorney_task, parent_id: task.id) } }
+          let(:child_tasks) { tasks.first(2).map { |task| create(:task, parent: task) } }
+          let!(:child_atty_tasks) { tasks.last(2).map { |task| create(:ama_attorney_task, parent: task) } }
 
           it "fails and warns the caller of open children of JudgeAssignTasks" do
             bad_parent_output = child_tasks.map(&:parent_id).sort.join(", ")
@@ -129,7 +129,7 @@ describe BulkTaskReassignment, :all_dbs do
         context "with children attorney tasks (and assignee attorney is being made inactive)" do
           let(:attorney) { create(:user) }
           let!(:child_tasks) do
-            tasks.map { |task| create(:ama_attorney_task, :completed, parent_id: task.id, assigned_to: attorney) }
+            tasks.map { |task| create(:ama_attorney_task, :completed, parent: task, assigned_to: attorney) }
           end
 
           context "but no judge team for the attorney" do
@@ -323,7 +323,7 @@ describe BulkTaskReassignment, :all_dbs do
     subject { BulkTaskReassignment.new(user).perform_dry_run }
 
     context "the tasks are JudgeAssignTasks" do
-      let(:task_type) { :ama_judge_task }
+      let(:task_type) { :ama_judge_assign_task }
 
       it "only describes what changes will be made" do
         judge_assign_message = "Would cancel #{task_count} JudgeAssignTasks with ids #{ids_output} and create " \
@@ -342,7 +342,7 @@ describe BulkTaskReassignment, :all_dbs do
       context "with children attorney tasks" do
         let(:attorney) { create(:user) }
         let!(:child_tasks) do
-          tasks.map { |task| create(:ama_attorney_task, :completed, parent_id: task.id, assigned_to: attorney) }
+          tasks.map { |task| create(:ama_attorney_task, :completed, parent: task, assigned_to: attorney) }
         end
         let!(:judge_team) { JudgeTeam.create_for_judge(create(:user)) }
 

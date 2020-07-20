@@ -196,7 +196,7 @@ module Asyncable
 
   def sanitized_error
     # keep PII out of output
-    (self[self.class.error_column] || "none").gsub(/\s.+/s, "")
+    (self[self.class.error_column] || "none").gsub(/\s.+/m, "")
   end
 
   def expired_without_processing?
@@ -214,6 +214,10 @@ module Asyncable
 
   def submitted_not_processed?
     submitted? && !processed?
+  end
+
+  def previously_attempted?
+    self[self.class.last_submitted_at_column] != self[self.class.submitted_at_column]
   end
 
   def sort_by_last_submitted_at

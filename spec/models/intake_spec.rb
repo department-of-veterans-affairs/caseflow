@@ -70,8 +70,10 @@ describe Intake, :postgres do
     context "when form_type is supported" do
       let(:form_type) { "ramp_election" }
 
-      it { is_expected.to be_a(RampElectionIntake) }
-      it { is_expected.to have_attributes(veteran_file_number: veteran_file_number, user: user) }
+      it "creates expected", :aggregate_failures do
+        is_expected.to be_a(RampElectionIntake)
+        is_expected.to have_attributes(veteran_file_number: veteran_file_number, user: user)
+      end
     end
 
     context "when form_type is not supported" do
@@ -646,7 +648,7 @@ describe Intake, :postgres do
       end
 
       before do
-        higher_level_review.create_claimants!(participant_id: "5382910292", payee_code: "10")
+        higher_level_review.create_claimant!(participant_id: "5382910292", payee_code: "10", type: "DependentClaimant")
       end
 
       it "clears expired intakes and creates new intake" do

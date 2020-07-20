@@ -7,7 +7,6 @@ describe TrackVeteranTask, :postgres do
     create(
       :track_veteran_task,
       parent: root_task,
-      appeal: root_task.appeal,
       assigned_to: vso
     )
   end
@@ -147,7 +146,7 @@ describe TrackVeteranTask, :postgres do
       let(:vso) { create(:vso) }
       let(:vso_staff) { create(:user) }
       let(:org_ihp_task) do
-        create(:informal_hearing_presentation_task, appeal: appeal, parent: root_task, assigned_to: vso)
+        create(:informal_hearing_presentation_task, parent: root_task, assigned_to: vso)
       end
       let!(:individual_ihp_task) do
         create(

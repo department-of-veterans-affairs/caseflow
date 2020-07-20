@@ -52,6 +52,14 @@
     "value": "address_motion_to_vacate",
     "func": "address_motion_to_vacate_data"
   },
+  "REVIEW_VACATE_DECISION": {
+    "label": "Decision ready for review",
+    "value": "motion_to_vacate_checkout/review_vacatures"
+  },
+  "REVIEW_VACATE_RETURN_TO_JUDGE": {
+    "label": "Return to judge",
+    "value": "return_to_judge"
+  },
   "SIGN_MOTION_TO_VACATE": {
     "label": "Sign Motion to Vacate",
     "value": "sign_motion_to_vacate",
@@ -61,6 +69,11 @@
     "label": "Cancel hearing request",
     "value": "modal/cancel_task",
     "func": "cancel_foreign_veterans_case_data"
+  },
+  "CANCEL_AND_RETURN_TASK": {
+    "label": "Cancel task and return to judge",
+    "value": "modal/cancel_task",
+    "func": "cancel_task_data"
   },
   "CANCEL_TASK": {
     "label": "Cancel task",
@@ -111,6 +124,10 @@
     "label": "Ready for Dispatch",
     "value": "dispatch_decision/dispositions"
   },
+  "JUDGE_AMA_CHECKOUT_SP_ISSUES": {
+    "label": "Ready for Dispatch",
+    "value": "dispatch_decision/special_issues"
+  },
   "JUDGE_CHECKOUT_PULAC_CERULLO_REMINDER": {
     "label": "Ready for Dispatch",
     "value": "modal/check_cavc"
@@ -125,9 +142,9 @@
     "func": "return_to_attorney_data"
   },
   "LIT_SUPPORT_PULAC_CERULLO": {
-    "label": "Notify Litigation Support of CAVC jurisdictional conflict",
-    "value": "modal/assign_to_pulac_cerullo",
-    "func": "assign_to_pulac_cerullo_data"
+    "label": "Notify Litigation Support of Possible Conflict of Jurisdiction",
+    "value": "modal/flag_conflict_of_jurisdiction",
+    "func": "flag_conflict_of_jurisdiction_data"
   },
   "MARK_COMPLETE": {
     "label": "Mark task complete",
@@ -148,7 +165,7 @@
     "value": "modal/end_hold"
   },
   "SPECIAL_CASE_MOVEMENT": {
-    "label": "Special Case Movement: Advance to judge",
+    "label": "Case Movement: Advance to judge",
     "value": "modal/special_case_movement",
     "func": "special_case_movement_data"
   },
@@ -202,6 +219,10 @@
     "label": "Decision ready for review",
     "value": "draft_decision/dispositions"
   },
+  "REVIEW_AMA_DECISION_SP_ISSUES": {
+    "label": "Decision ready for review",
+    "value": "draft_decision/special_issues"
+  },
   "REVIEW_DECISION_DRAFT": {
     "func": "review_decision_draft"
   },
@@ -218,10 +239,6 @@
     "label": "Send to Schedule Veterans list",
     "value": "modal/send_to_schedule_veterans_list",
     "func": "send_to_schedule_veterans_list"
-  },
-  "SEND_TO_TEAM": {
-    "label": "Send to team",
-    "value": "modal/send_colocated_task"
   },
   "SEND_TO_TRANSLATION": {
     "label": "Assign to Translation team",

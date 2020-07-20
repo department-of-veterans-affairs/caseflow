@@ -9,21 +9,37 @@ class EndProduct
     "PEND" => "Pending",
     "CLR" => "Cleared",
     "CAN" => "Canceled",
-    "RW" => "Ready to work"
+    "RW" => "Ready to work",
+    "RFD" => "Ready for decision"
   }.freeze
 
   INACTIVE_STATUSES = %w[CAN CLR].freeze
 
+  DIFFERENCE_OF_OPINION_CODES = {
+    "040AMADOR" => "AMA Difference of Opinion - Rating",
+    "040AMADONR" => "AMA Difference of Opinion - NR",
+    "040ADORPMC" => "PMC AMA Difference of Opinion - Rating",
+    "040ADONRPMC" => "PMC AMA Difference of Opinion - NR",
+    "930AMADOR" => "AMA Difference of Opinion - Rating",
+    "930AMADONR" => "AMA Difference of Opinion - NR",
+    "930DORPMC" => "PMC AMA Difference of Opinion - Rating",
+    "930DONRPMC" => "PMC AMA Difference of Opinion - NR"
+  }.freeze
+
   RAMP_CODES = {
     "682HLRRRAMP" => "Higher-Level Review Rating",
-    "683SCRRRAMP" => "Supplemental Claim Review Rating"
+    "683SCRRRAMP" => "Supplemental Claim Review Rating",
+    "683HAERRAMP" => "Higher-Level Review Additional Evidence Rating"
   }.freeze
 
   DTA_CODES = {
     "040HDER" => "Supplemental Claim Rating DTA",
     "040HDENR" => "Supplemental Claim Nonrating DTA",
     "040HDERPMC" => "PMC HLR DTA Error - Rating",
-    "040HDENRPMC" => "PMC HLR DTA Error - Non-Rating",
+    "040HDENRPMC" => "PMC HLR DTA Error - Non-Rating"
+  }.freeze
+
+  REMAND_CODES = {
     "040BDENR" => "Board DTA Error - Non-Rating",
     "040BDER" => "Board DTA Error - Rating",
     "040BDENRPMC" => "PMC Board DTA Error - Non-Rating",
@@ -65,6 +81,12 @@ class EndProduct
     "930AHCNRNQE" => "AMA HLR Correction of Non-Rating NQE",
     "930AHCRLQPMC" => "AMA PMC HLR Correction of Rating LQE",
     "930AHCRNQPMC" => "AMA PMC HLR Correction of Rating NQE",
+    "930AHDENLPMC" => "AMA PMC HLR DTA Error NR - Correction of LQE",
+    "930AHDENNPMC" => "AMA PMC HLR DTA Error NR - Correction of NQE",
+    "930AHDENRPMC" => "AMA PMC HLR DTA Error Non-Rating",
+    "930AHDERLPMC" => "AMA PMC HLR DTA Error Rating - Correction of LQE",
+    "930AHDERNPMC" => "AMA PMC HLR DTA Error Rating - Correction of NQE",
+    "930AHDERPMC" => "AMA PMC HLR DTA Error Rating",
     "930AHNRCPMC" => "AMA PMC HLR Non-Rating Control",
     "930AMABDENCL" => "AMA Board DTA Error NR - Correction of LQE",
     "930AMABDENCN" => "AMA Board DTA Error NR - Correction of NQE",
@@ -142,11 +164,14 @@ class EndProduct
     "070RMBVAGPMC" => "PMC Remand with BVA Grant"
   }.freeze
 
-  CODES = DISPATCH_CODES.merge(RAMP_CODES)
+  CODES = DISPATCH_CODES
+    .merge(CORRECTION_REVIEW_CODES)
+    .merge(DIFFERENCE_OF_OPINION_CODES)
+    .merge(EFFECTUATION_CODES)
     .merge(DECISION_REVIEW_CODES)
     .merge(DTA_CODES)
-    .merge(EFFECTUATION_CODES)
-    .merge(CORRECTION_REVIEW_CODES)
+    .merge(RAMP_CODES)
+    .merge(REMAND_CODES)
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 
@@ -238,7 +263,8 @@ class EndProduct
       gulf_war_registry: gulf_war_registry,
       claimant_participant_id: claimant_participant_id,
       limited_poa_code: limited_poa_code,
-      limited_poa_access: limited_poa_access
+      limited_poa_access: limited_poa_access,
+      status_type_code: status_type_code
     }
   end
 
@@ -272,6 +298,16 @@ class EndProduct
 
   def contentions
     @contentions ||= claim_id ? VBMSService.fetch_contentions(claim_id: claim_id) : nil
+  end
+
+  def bgs_contentions
+    @bgs_contentions ||= begin
+      if claim_id && FeatureToggle.enabled?(:detect_contention_exam, user: RequestStore.store[:current_user])
+        BgsContention.fetch_all(claim_id)
+      else
+        []
+      end
+    end
   end
 
   def limited_poa

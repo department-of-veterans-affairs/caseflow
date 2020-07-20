@@ -33,7 +33,7 @@ describe TaskSorter, :all_dbs do
     end
 
     context "when the input tasks argument is not an ActiveRecord::Relation object" do
-      let(:args) { { tasks: [create(:generic_task)] } }
+      let(:args) { { tasks: [create(:ama_task)] } }
 
       it "raises an error" do
         expect { subject }.to raise_error(Caseflow::Error::MissingRequiredProperty)
@@ -43,7 +43,7 @@ describe TaskSorter, :all_dbs do
     context "when all input arguments are valid" do
       let(:column) { QueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name) }
       let(:sort_order) { Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC }
-      let(:tasks) { Task.where(id: create_list(:generic_task, 6).pluck(:id)) }
+      let(:tasks) { Task.where(id: create_list(:ama_task, 6).pluck(:id)) }
 
       let(:args) { { column: column, sort_order: sort_order, tasks: tasks } }
 
@@ -69,7 +69,7 @@ describe TaskSorter, :all_dbs do
     end
 
     context "when there are tasks and we specify a column to sort by" do
-      let(:tasks) { Task.where(id: create_list(:generic_task, 14).pluck(:id)) }
+      let(:tasks) { Task.where(id: create_list(:ama_task, 14).pluck(:id)) }
       let(:args) { { tasks: tasks, column: QueueColumn.from_name(column_name) } }
 
       context "when sorting by closed_at date" do
@@ -137,7 +137,7 @@ describe TaskSorter, :all_dbs do
 
       context "when sorting by task type" do
         let(:column_name) { Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name }
-        let(:tasks) { Task.where(id: create_list(:generic_task, task_types.length).pluck(:id)) }
+        let(:tasks) { Task.where(id: create_list(:ama_task, task_types.length).pluck(:id)) }
 
         let(:task_types) do
           [
@@ -233,22 +233,20 @@ describe TaskSorter, :all_dbs do
 
       context "when sorting by assigned to column" do
         let(:column_name) { Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name }
-        let(:tasks) { Task.where(id: create_list(:generic_task, 5).pluck(:id)) }
-
-        before do
-          users = []
-          5.times do
-            users.push(create(:user, css_id: Faker::Name.unique.first_name))
-          end
-          tasks.each_with_index do |task, index|
-            user = users[index % 5]
-            task.update!(assigned_to_id: user.id)
-            create(:cached_appeal, appeal_id: task.appeal_id, assignee_label: user.css_id)
-          end
+        let(:orgs) { create_list(:organization, 2) }
+        let(:users) { create_list(:user, 2) }
+        let(:org_1_task) { create(:task, assigned_to: orgs.first) }
+        let(:org_2_task) { create(:task, assigned_to: orgs.second) }
+        let(:user_1_task) { create(:task, assigned_to: users.first) }
+        let(:user_2_task) { create(:task, assigned_to: users.second) }
+        let(:tasks) do
+          Task.where(id: [org_1_task, org_2_task, user_1_task, user_2_task])
         end
 
         it "sorts by assigned to" do
-          expected_order = tasks.sort_by { |task| task.appeal.assigned_to_location }
+          expected_order = tasks.sort_by do |task|
+            task.assigned_to.is_a?(User) ? task.assigned_to.css_id : task.assigned_to.name
+          end
           expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
         end
       end
@@ -256,10 +254,17 @@ describe TaskSorter, :all_dbs do
       context "when sorting by case details link column" do
         let(:column_name) { Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name }
 
+        let(:fake_names) do
+          # fixed length 8 and fixed ASCII charset to avoid spec-only sort bug with sql-vs-ruby
+          names = []
+          100.times { names << (0...8).map { rand(65...90).chr }.join }
+          names
+        end
+
         before do
           tasks.each do |task|
-            first_name = Faker::Name.first_name
-            last_name = "#{Faker::Name.middle_name} #{Faker::Name.last_name}"
+            first_name = fake_names.shuffle
+            last_name = "#{fake_names.shuffle} #{fake_names.shuffle}"
             task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
             create(
               :cached_appeal,
@@ -300,7 +305,7 @@ describe TaskSorter, :all_dbs do
 
           appeals = [create(:appeal, :advanced_on_docket_due_to_motion), create(:appeal)]
           appeals.each do |appeal|
-            create(:colocated_task, appeal: appeal, assigned_to: org)
+            create(:ama_colocated_task, appeal: appeal, assigned_to: org)
             create(:cached_appeal,
                    appeal_id: appeal.id,
                    appeal_type: Appeal.name,
@@ -310,10 +315,11 @@ describe TaskSorter, :all_dbs do
         end
 
         it "sorts by AOD status, case type, and docket number" do
-          expected_order = CachedAppeal.all.sort_by do |cached_appeal|
-            [cached_appeal.is_aod ? 1 : 0, cached_appeal.case_type, cached_appeal.docket_number]
-          end
-          expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+          # postgres ascending sort sorts booleans [true, false] as [false, true]. We want is_aod appeals to show up
+          # first so we sort descending on is_aod
+          expected_order = CachedAppeal.order(is_aod: :desc, case_type: :asc, docket_number: :asc)
+          expect(expected_order.first.is_aod).to eq true
+          expect(subject.map(&:appeal_id)).to eq(expected_order.pluck(:appeal_id))
         end
       end
     end

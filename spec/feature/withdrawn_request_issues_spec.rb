@@ -52,8 +52,8 @@ feature "attorney checkout flow when appeal has withdrawn request issues", :all_
   end
 
   def select_allowed_disposition
-    find(".Select-control", text: "Select disposition").click
-    find("div", class: "Select-option", text: "Allowed").click
+    find(".cf-select__control", text: "Select disposition").click
+    find("div", class: "cf-select__option", text: "Allowed").click
   end
 
   def fill_in_document_id
@@ -79,8 +79,7 @@ feature "attorney checkout flow when appeal has withdrawn request issues", :all_
       :in_progress,
       assigned_to: attorney,
       assigned_by: judge,
-      parent: parent_task,
-      appeal: appeal
+      parent: parent_task
     )
   end
 
@@ -96,8 +95,7 @@ feature "attorney checkout flow when appeal has withdrawn request issues", :all_
     create(
       :ama_judge_decision_review_task,
       assigned_to: judge,
-      appeal: appeal,
-      parent: create(:root_task)
+      parent: create(:root_task, appeal: appeal)
     )
   end
 

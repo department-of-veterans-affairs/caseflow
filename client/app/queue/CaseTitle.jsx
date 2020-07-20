@@ -8,10 +8,10 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 
 import { COLORS } from '../constants/AppConstants';
 import CopyTextButton from '../components/CopyTextButton';
+import BadgeArea from './components/BadgeArea';
 import { toggleVeteranCaseList } from './uiReducer/uiActions';
 
 const containingDivStyling = css({
-
   display: 'block',
   // Offsets the padding from .cf-app-segment--alt to make the bottom border full width.
   margin: '-2rem -4rem 0 -4rem',
@@ -46,24 +46,22 @@ const viewCasesStyling = css({
 
 class CaseTitle extends React.PureComponent {
   render = () => {
-    const {
-      appeal,
-      veteranCaseListIsVisible
-    } = this.props;
+    const { appeal, veteranCaseListIsVisible } = this.props;
 
-    return <CaseTitleScaffolding heading={appeal.veteranFullName}>
-      <React.Fragment>
-        Veteran ID:&nbsp;
-        <CopyTextButton text={appeal.veteranFileNumber} label="Veteran ID" />
-      </React.Fragment>
+    return (
+      <CaseTitleScaffolding heading={appeal.veteranFullName}>
+        <React.Fragment>
+          Veteran ID:&nbsp;
+          <CopyTextButton text={appeal.veteranFileNumber} label="Veteran ID" />
+        </React.Fragment>
 
-      <span {...viewCasesStyling}>
-        <Link onClick={this.props.toggleVeteranCaseList}>
-          { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
-        </Link>
-      </span>
-    </CaseTitleScaffolding>;
-  }
+        <span {...viewCasesStyling}>
+          <Link onClick={this.props.toggleVeteranCaseList}>{veteranCaseListIsVisible ? 'Hide' : 'View'} all cases</Link>
+        </span>
+        <BadgeArea appeal={appeal} isHorizontal />
+      </CaseTitleScaffolding>
+    );
+  };
 }
 
 CaseTitle.propTypes = {
@@ -82,9 +80,16 @@ CaseTitle.defaultProps = {
 const CaseTitleScaffolding = (props) => (
   <div {...containingDivStyling}>
     <h1 {...headerStyling}>{props.heading}</h1>
-    <ul {...listStyling}>
-      {props.children.map((child, i) => child && <li key={i} {...listItemStyling}>{child}</li>)}
-    </ul>
+    <div {...listStyling}>
+      {props.children.map(
+        (child, i) =>
+          child && (
+            <div key={i} {...listItemStyling}>
+              {child}
+            </div>
+          )
+      )}
+    </div>
   </div>
 );
 
@@ -98,8 +103,15 @@ const mapStateToProps = (state) => ({
   userIsVsoEmployee: state.ui.userIsVsoEmployee
 });
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  toggleVeteranCaseList
-}, dispatch);
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      toggleVeteranCaseList
+    },
+    dispatch
+  );
 
-export default connect(mapStateToProps, mapDispatchToProps)(CaseTitle);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CaseTitle);

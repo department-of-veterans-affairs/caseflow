@@ -4,12 +4,11 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { onReceiveAmaTasks } from '../QueueActions';
 import QueueFlowModal from './QueueFlowModal';
-import { requestSave } from '../uiReducer/uiActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import TextareaField from '../../components/TextareaField';
-import COPY from '../../../COPY.json';
-import TASK_ACTIONS from '../../../constants/TASK_ACTIONS.json';
+import COPY from '../../../COPY';
+import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
 import { sprintf } from 'sprintf-js';
 import {
   appealWithDetailSelector,
@@ -21,6 +20,11 @@ import {
   COLOCATED_HOLD_DURATIONS
 } from '../constants';
 import { withRouter } from 'react-router-dom';
+import {
+  requestSave,
+  resetErrorMessages,
+  resetSuccessMessages,
+} from '../uiReducer/uiActions';
 
 class StartHoldModal extends React.Component {
   constructor(props) {
@@ -32,6 +36,11 @@ class StartHoldModal extends React.Component {
       instructions: ''
     };
   }
+
+  componentDidMount = () => {
+    this.props.resetSuccessMessages();
+    this.props.resetErrorMessages();
+  };
 
   holdLength = () => this.state.hold === CUSTOM_HOLD_DURATION_TEXT ? this.state.customHold : this.state.hold;
 
@@ -111,6 +120,8 @@ StartHoldModal.propTypes = {
   highlightFormItems: PropTypes.bool,
   onReceiveAmaTasks: PropTypes.func,
   requestSave: PropTypes.func,
+  resetSuccessMessages: PropTypes.func,
+  resetErrorMessages: PropTypes.func,
   task: PropTypes.shape({
     taskId: PropTypes.string
   })
@@ -124,6 +135,8 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
+  resetErrorMessages,
+  resetSuccessMessages,
   onReceiveAmaTasks
 }, dispatch);
 

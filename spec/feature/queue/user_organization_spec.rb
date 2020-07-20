@@ -26,7 +26,7 @@ RSpec.feature "User organization", :postgres do
       visit "/"
 
       find(".cf-dropdown-trigger").click
-      expect(page).not_to have_content("#{organization.name} team management")
+      expect(page.has_no_content?("#{organization.name} team management")).to eq(true)
     end
   end
 
@@ -49,12 +49,12 @@ RSpec.feature "User organization", :postgres do
 
       expect(page).to have_content(format(COPY::USER_MANAGEMENT_PAGE_TITLE, organization.name))
 
-      find(".Select-control", text: COPY::USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT).click
+      find(".cf-select__control", text: COPY::USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT).click
       fill_in("Add user", with: user_with_role.css_id)
       expect(page).to have_content(user_with_role.full_name)
       expect(page).to_not have_content(user_without_role.full_name)
 
-      find("div", class: "Select-option", text: user_with_role.full_name).click
+      find("div", class: "cf-select__option", text: user_with_role.full_name).click
 
       expect(page).to have_content(user_with_role.full_name)
       expect(user_with_role.organizations.first).to eq(organization)
@@ -77,7 +77,7 @@ RSpec.feature "User organization", :postgres do
         page.assert_selector("button", text: COPY::USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT, count: 1)
         expect(organization.user_is_admin?(other_org_user)).to eq(false)
 
-        click_on("Make-user-admin-#{other_org_user.id}")
+        click_on("Add-team-admin-#{other_org_user.id}")
 
         # Now that both members of the organization are admins we should see this text twice.
         page.assert_selector("button", text: COPY::USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT, count: 2)

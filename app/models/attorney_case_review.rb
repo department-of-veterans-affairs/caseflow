@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AttorneyCaseReview < ApplicationRecord
+class AttorneyCaseReview < CaseflowRecord
   include CaseReviewConcern
   include IssueUpdater
   include ::AmaAttorneyCaseReviewDocumentIdValidator

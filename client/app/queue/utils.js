@@ -1,22 +1,20 @@
 /* eslint-disable max-lines */
 import React from 'react';
-import _, { escapeRegExp } from 'lodash';
+import _, { capitalize, escapeRegExp } from 'lodash';
 import moment from 'moment';
 import StringUtil from '../util/StringUtil';
-import {
-  redText,
-  ISSUE_DISPOSITIONS,
-  VACOLS_DISPOSITIONS,
-  LEGACY_APPEAL_TYPES
-} from './constants';
+import { redText, ISSUE_DISPOSITIONS, VACOLS_DISPOSITIONS, LEGACY_APPEAL_TYPES } from './constants';
+import { css } from 'glamor';
 
-import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
-import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
-import UNDECIDED_VACOLS_DISPOSITIONS_BY_ID from '../../constants/UNDECIDED_VACOLS_DISPOSITIONS_BY_ID.json';
-import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
-import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
-import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION.json';
-import COPY from '../../COPY.json';
+import ISSUE_INFO from '../../constants/ISSUE_INFO';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS';
+import UNDECIDED_VACOLS_DISPOSITIONS_BY_ID from '../../constants/UNDECIDED_VACOLS_DISPOSITIONS_BY_ID';
+import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES';
+import TASK_STATUSES from '../../constants/TASK_STATUSES';
+import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMATION';
+import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
+import COPY from '../../COPY';
+import { COLORS } from '../constants/AppConstants';
 import { formatDateStrUtc } from '../util/DateUtil';
 
 /**
@@ -28,15 +26,24 @@ import { formatDateStrUtc } from '../util/DateUtil';
  * @returns {Array}
  */
 
-export const getUndecidedIssues = (issues) => _.filter(issues, (issue) => {
-  if (!issue.disposition) {
-    return true;
-  }
+export const getUndecidedIssues = (issues) =>
+  _.filter(issues, (issue) => {
+    if (!issue.disposition) {
+      return true;
+    }
 
-  if (issue.disposition && issue.disposition in UNDECIDED_VACOLS_DISPOSITIONS_BY_ID) {
-    return true;
-  }
-});
+    if (issue.disposition && issue.disposition in UNDECIDED_VACOLS_DISPOSITIONS_BY_ID) {
+      return true;
+    }
+  });
+
+export const mostRecentHeldHearingForAppeal = (appeal) => {
+  const hearings = appeal.hearings.
+    filter((hearing) => hearing.disposition === HEARING_DISPOSITION_TYPES.held).
+    sort((h1, h2) => (h1.date < h2.date ? 1 : -1));
+
+  return hearings.length ? hearings[0] : null;
+};
 
 export const prepareMostRecentlyHeldHearingForStore = (appealId, hearing) => {
   return {
@@ -47,16 +54,20 @@ export const prepareMostRecentlyHeldHearingForStore = (appealId, hearing) => {
       date: hearing.date,
       type: hearing.type,
       externalId: hearing.external_id,
-      disposition: hearing.disposition
+      disposition: hearing.disposition,
+      isVirtual: hearing.is_virtual,
+      scheduledForIsPast: hearing.scheduled_for_is_past
     }
   };
 };
 
 const taskAttributesFromRawTask = (task) => {
-  const decisionPreparedBy = task.attributes.decision_prepared_by.first_name ? {
-    firstName: task.attributes.decision_prepared_by.first_name,
-    lastName: task.attributes.decision_prepared_by.last_name
-  } : null;
+  const decisionPreparedBy = task.attributes.decision_prepared_by?.first_name ?
+    {
+      firstName: task.attributes.decision_prepared_by.first_name,
+      lastName: task.attributes.decision_prepared_by.last_name
+    } :
+    null;
 
   return {
     uniqueId: task.id,
@@ -70,6 +81,7 @@ const taskAttributesFromRawTask = (task) => {
     closestRegionalOffice: task.attributes.closest_regional_office,
     createdAt: task.attributes.created_at,
     closedAt: task.attributes.closed_at,
+    startedAt: task.attributes.started_at,
     assigneeName: task.attributes.assignee_name,
     assignedTo: {
       cssId: task.attributes.assigned_to.css_id,
@@ -84,7 +96,11 @@ const taskAttributesFromRawTask = (task) => {
       cssId: task.attributes.assigned_by.css_id,
       pgId: task.attributes.assigned_by.pg_id
     },
+    cancelledBy: {
+      cssId: task.attributes.cancelled_by.css_id,
+    },
     taskId: task.id,
+    parentId: task.attributes.parent_id,
     label: task.attributes.label,
     documentId: task.attributes.document_id,
     externalHearingId: task.attributes.external_hearing_id,
@@ -100,7 +116,13 @@ const taskAttributesFromRawTask = (task) => {
     timelineTitle: task.attributes.timeline_title,
     hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
     hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
-    hideFromCaseTimeline: task.attributes.hide_from_case_timeline
+    hideFromCaseTimeline: task.attributes.hide_from_case_timeline,
+    availableHearingLocations: task.attributes.available_hearing_locations,
+    // `powerOfAttorneyName` and `suggestedHearingLocation` are only present for
+    // /hearings/scheduled/assign page, and are not returned from the API when
+    // requesting the full task.
+    powerOfAttorneyName: task.attributes.power_of_attorney_name,
+    suggestedHearingLocation: task.attributes.suggested_hearing_location
   };
 };
 
@@ -116,9 +138,11 @@ const appealAttributesFromRawTask = (task) => ({
   type: task.attributes.appeal_type,
   externalId: task.attributes.external_appeal_id,
   docketName: task.attributes.docket_name,
+  docketRangeDate: task.attributes.docket_range_date,
   isLegacyAppeal: task.attributes.docket_name === 'legacy',
   caseType: task.attributes.case_type,
   isAdvancedOnDocket: task.attributes.aod,
+  overtime: task.attributes.overtime,
   issueCount: task.attributes.issue_count,
   docketNumber: task.attributes.docket_number,
   veteranFullName: task.attributes.veteran_full_name,
@@ -126,27 +150,27 @@ const appealAttributesFromRawTask = (task) => ({
   isPaperCase: task.attributes.paper_case
 });
 
-const extractAppealsFromTasks =
-  (tasks) => {
-    return tasks.reduce((accumulator, task) => {
-      if (!accumulator[task.attributes.external_appeal_id]) {
-        accumulator[task.attributes.external_appeal_id] = appealAttributesFromRawTask(task);
-      }
+const extractAppealsFromTasks = (tasks) => {
+  return tasks.reduce((accumulator, task) => {
+    if (!accumulator[task.attributes.external_appeal_id]) {
+      accumulator[task.attributes.external_appeal_id] = appealAttributesFromRawTask(task);
+    }
 
-      return accumulator;
-    }, {});
-  };
+    return accumulator;
+  }, {});
+};
 
-export const extractAppealsAndAmaTasks =
-(tasks) => ({
+export const extractAppealsAndAmaTasks = (tasks) => ({
   tasks: {},
   appeals: extractAppealsFromTasks(tasks),
-  amaTasks: prepareTasksForStore(tasks) });
+  amaTasks: prepareTasksForStore(tasks)
+});
 
-export const tasksWithAppealsFromRawTasks = (tasks) => tasks.map((task) => ({
-  ...taskAttributesFromRawTask(task),
-  appeal: appealAttributesFromRawTask(task)
-}));
+export const tasksWithAppealsFromRawTasks = (tasks) =>
+  tasks.map((task) => ({
+    ...taskAttributesFromRawTask(task),
+    appeal: appealAttributesFromRawTask(task)
+  }));
 
 export const prepareLegacyTasksForStore = (tasks) => {
   const mappedLegacyTasks = tasks.map((task) => {
@@ -159,6 +183,8 @@ export const prepareLegacyTasksForStore = (tasks) => {
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_on,
       closedAt: null,
+      startedAt: task.attributes.started_at,
+      assigneeName: task.attributes.assignee_name,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
         isOrganization: task.attributes.assigned_to.is_organization,
@@ -206,17 +232,16 @@ export const prepareAllTasksForStore = (tasks) => {
   };
 };
 
-export const associateTasksWithAppeals =
-  (serverData) => {
-    const {
-      tasks: { data: tasks }
-    } = serverData;
+export const associateTasksWithAppeals = (serverData) => {
+  const {
+    tasks: { data: tasks }
+  } = serverData;
 
-    return {
-      tasks: prepareLegacyTasksForStore(tasks),
-      appeals: extractAppealsFromTasks(tasks)
-    };
+  return {
+    tasks: prepareLegacyTasksForStore(tasks),
+    appeals: extractAppealsFromTasks(tasks)
   };
+};
 
 export const prepareAppealIssuesForStore = (appeal) => {
   // Give even legacy issues an 'id' property, because other issues will have it,
@@ -233,18 +258,19 @@ export const prepareAppealIssuesForStore = (appeal) => {
   return issues;
 };
 
-export const prepareAppealHearingsForStore = (appeal) => appeal.attributes.hearings.
-  map((hearing) => ({
+export const prepareAppealHearingsForStore = (appeal) =>
+  appeal.attributes.hearings.map((hearing) => ({
     heldBy: hearing.held_by,
     viewedByJudge: hearing.viewed_by_judge,
     date: hearing.date,
     type: hearing.type,
     externalId: hearing.external_id,
-    disposition: hearing.disposition
+    disposition: hearing.disposition,
+    isVirtual: hearing.is_virtual
   }));
 
-const prepareAppealAvailableHearingLocationsForStore = (appeal) => appeal.attributes.
-  available_hearing_locations.map((ahl) => ({
+const prepareAppealAvailableHearingLocationsForStore = (appeal) =>
+  appeal.attributes.available_hearing_locations.map((ahl) => ({
     name: ahl.name,
     address: ahl.address,
     city: ahl.city,
@@ -256,78 +282,78 @@ const prepareAppealAvailableHearingLocationsForStore = (appeal) => appeal.attrib
     zipCode: ahl.zip_code
   }));
 
-export const prepareAppealForStore =
-  (appeals) => {
+export const prepareAppealForStore = (appeals) => {
+  const appealHash = appeals.reduce((accumulator, appeal) => {
+    const {
+      attributes: { issues }
+    } = appeal;
 
-    const appealHash = appeals.reduce((accumulator, appeal) => {
-      const {
-        attributes: { issues }
-      } = appeal;
-
-      accumulator[appeal.attributes.external_id] = {
-        id: appeal.id,
-        externalId: appeal.attributes.external_id,
-        docketName: appeal.attributes.docket_name,
-        withdrawn: appeal.attributes.withdrawn,
-        removed: appeal.attributes.removed,
-        withdrawalDate: formatDateStrUtc(appeal.attributes.withdrawal_date),
-        isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
-        caseType: appeal.attributes.type,
-        isAdvancedOnDocket: appeal.attributes.aod,
-        issueCount: (appeal.attributes.docket_name === 'legacy' ? getUndecidedIssues(issues) : issues).length,
-        docketNumber: appeal.attributes.docket_number,
-        assignedAttorney: appeal.attributes.assigned_attorney,
-        assignedJudge: appeal.attributes.assigned_judge,
-        veteranFullName: appeal.attributes.veteran_full_name,
-        veteranFileNumber: appeal.attributes.veteran_file_number,
-        isPaperCase: appeal.attributes.paper_case,
-        sanitizedHearingRequestType: appeal.attributes.sanitized_hearing_request_type
-      };
-
-      return accumulator;
-    }, {});
-
-    const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
-      accumulator[appeal.attributes.external_id] = {
-        hearings: prepareAppealHearingsForStore(appeal),
-        completedHearingOnPreviousAppeal: appeal.attributes['completed_hearing_on_previous_appeal?'],
-        issues: prepareAppealIssuesForStore(appeal),
-        decisionIssues: appeal.attributes.decision_issues,
-        canEditRequestIssues: appeal.attributes.can_edit_request_issues,
-        appellantIsNotVeteran: appeal.attributes.appellant_is_not_veteran,
-        appellantFullName: appeal.attributes.appellant_full_name,
-        appellantAddress: appeal.attributes.appellant_address,
-        appellantRelationship: appeal.attributes.appellant_relationship,
-        assignedToLocation: appeal.attributes.assigned_to_location,
-        veteranDateOfBirth: appeal.attributes.veteran_date_of_birth,
-        veteranDateOfDeath: appeal.attributes.veteran_date_of_death,
-        veteranGender: appeal.attributes.veteran_gender,
-        veteranAddress: appeal.attributes.veteran_address,
-        closestRegionalOffice: appeal.attributes.closest_regional_office,
-        availableHearingLocations: prepareAppealAvailableHearingLocationsForStore(appeal),
-        externalId: appeal.attributes.external_id,
-        status: appeal.attributes.status,
-        decisionDate: appeal.attributes.decision_date,
-        form9Date: appeal.attributes.form9_date,
-        nodDate: appeal.attributes.nod_date,
-        certificationDate: appeal.attributes.certification_date,
-        powerOfAttorney: appeal.attributes.power_of_attorney,
-        regionalOffice: appeal.attributes.regional_office,
-        caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
-        documentID: appeal.attributes.document_id,
-        caseReviewId: appeal.attributes.attorney_case_review_id,
-        canEditDocumentId: appeal.attributes.can_edit_document_id,
-        attorneyCaseRewriteDetails: appeal.attributes.attorney_case_rewrite_details
-      };
-
-      return accumulator;
-    }, {});
-
-    return {
-      appeals: appealHash,
-      appealDetails: appealDetailsHash
+    accumulator[appeal.attributes.external_id] = {
+      id: appeal.id,
+      externalId: appeal.attributes.external_id,
+      docketName: appeal.attributes.docket_name,
+      withdrawn: appeal.attributes.withdrawn,
+      removed: appeal.attributes.removed,
+      overtime: appeal.attributes.overtime,
+      withdrawalDate: formatDateStrUtc(appeal.attributes.withdrawal_date),
+      isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
+      caseType: appeal.attributes.type,
+      isAdvancedOnDocket: appeal.attributes.aod,
+      issueCount: (appeal.attributes.docket_name === 'legacy' ? getUndecidedIssues(issues) : issues).length,
+      docketNumber: appeal.attributes.docket_number,
+      assignedAttorney: appeal.attributes.assigned_attorney,
+      assignedJudge: appeal.attributes.assigned_judge,
+      veteranFullName: appeal.attributes.veteran_full_name,
+      veteranFileNumber: appeal.attributes.veteran_file_number,
+      isPaperCase: appeal.attributes.paper_case,
+      sanitizedHearingRequestType: appeal.attributes.sanitized_hearing_request_type,
+      vacateType: appeal.attributes.vacate_type
     };
+
+    return accumulator;
+  }, {});
+
+  const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
+    accumulator[appeal.attributes.external_id] = {
+      hearings: prepareAppealHearingsForStore(appeal),
+      completedHearingOnPreviousAppeal: appeal.attributes['completed_hearing_on_previous_appeal?'],
+      issues: prepareAppealIssuesForStore(appeal),
+      decisionIssues: appeal.attributes.decision_issues,
+      canEditRequestIssues: appeal.attributes.can_edit_request_issues,
+      appellantIsNotVeteran: appeal.attributes.appellant_is_not_veteran,
+      appellantFullName: appeal.attributes.appellant_full_name,
+      appellantAddress: appeal.attributes.appellant_address,
+      appellantRelationship: appeal.attributes.appellant_relationship,
+      assignedToLocation: appeal.attributes.assigned_to_location,
+      veteranDateOfBirth: appeal.attributes.veteran_date_of_birth,
+      veteranDateOfDeath: appeal.attributes.veteran_date_of_death,
+      veteranGender: appeal.attributes.veteran_gender,
+      veteranAddress: appeal.attributes.veteran_address,
+      closestRegionalOffice: appeal.attributes.closest_regional_office,
+      availableHearingLocations: prepareAppealAvailableHearingLocationsForStore(appeal),
+      externalId: appeal.attributes.external_id,
+      status: appeal.attributes.status,
+      decisionDate: appeal.attributes.decision_date,
+      form9Date: appeal.attributes.form9_date,
+      nodDate: appeal.attributes.nod_date,
+      certificationDate: appeal.attributes.certification_date,
+      powerOfAttorney: appeal.attributes.power_of_attorney,
+      regionalOffice: appeal.attributes.regional_office,
+      caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
+      documentID: appeal.attributes.document_id,
+      caseReviewId: appeal.attributes.attorney_case_review_id,
+      canEditDocumentId: appeal.attributes.can_edit_document_id,
+      attorneyCaseRewriteDetails: appeal.attributes.attorney_case_rewrite_details
+    };
+
+    return accumulator;
+  }, {});
+
+  return {
+    appeals: appealHash,
+    appealDetails: appealDetailsHash
   };
+};
 
 export const prepareClaimReviewForStore = (claimReviews) => {
   const claimReviewHash = claimReviews.reduce((accumulator, claimReview) => {
@@ -355,25 +381,34 @@ export const prepareClaimReviewForStore = (claimReviews) => {
 };
 
 export const renderAppealType = (appeal) => {
-  const {
-    isAdvancedOnDocket,
-    caseType
-  } = appeal;
+  const { isAdvancedOnDocket, caseType } = appeal;
   const cavc = caseType === LEGACY_APPEAL_TYPES.CAVC_REMAND;
 
-  return <React.Fragment>
-    {isAdvancedOnDocket && <span><span {...redText}>AOD</span>, </span>}
-    {cavc ? <span {...redText}>CAVC</span> : <span>{caseType}</span>}
-  </React.Fragment>;
+  return (
+    <React.Fragment>
+      {isAdvancedOnDocket && (
+        <span>
+          <span {...redText}>AOD</span>,{' '}
+        </span>
+      )}
+      {cavc ? <span {...redText}>CAVC</span> : <span>{caseType}</span>}
+    </React.Fragment>
+  );
 };
 
 export const renderLegacyAppealType = ({ aod, type }) => {
   const cavc = type === 'Court Remand';
 
-  return <React.Fragment>
-    {aod && <span><span {...redText}>AOD</span>, </span>}
-    {cavc ? <span {...redText}>CAVC</span> : <span>{type}</span>}
-  </React.Fragment>;
+  return (
+    <React.Fragment>
+      {aod && (
+        <span>
+          <span {...redText}>AOD</span>,{' '}
+        </span>
+      )}
+      {cavc ? <span {...redText}>CAVC</span> : <span>{type}</span>}
+    </React.Fragment>
+  );
 };
 
 export const getDecisionTypeDisplay = (checkoutFlow) => {
@@ -390,11 +425,7 @@ export const getDecisionTypeDisplay = (checkoutFlow) => {
 export const getIssueProgramDescription = (issue) =>
   _.get(ISSUE_INFO[issue.program], 'description', '') || 'Compensation';
 export const getIssueTypeDescription = (issue) => {
-  const {
-    program,
-    type,
-    description
-  } = issue;
+  const { program, type, description } = issue;
 
   if (!program) {
     return description;
@@ -414,9 +445,7 @@ export const getIssueDiagnosticCodeLabel = (code) => {
 };
 
 // Build case review payloads for attorney decision draft submissions as well as judge decision evaluations.
-export const buildCaseReviewPayload = (
-  checkoutFlow, decision, draftDecisionSubmission, issues, args = {}
-) => {
+export const buildCaseReviewPayload = (checkoutFlow, decision, draftDecisionSubmission, issues, args = {}) => {
   const payload = {
     data: {
       tasks: {
@@ -483,10 +512,7 @@ export const buildCaseReviewPayload = (
  */
 export const validateWorkProductTypeAndId = (decision) => {
   const {
-    opts: {
-      document_id: documentId,
-      work_product: workProduct
-    }
+    opts: { document_id: documentId, work_product: workProduct }
   } = decision;
   const newFormat = new RegExp(/^\d{5}-\d{8}$/);
 
@@ -510,21 +536,19 @@ export const taskHasNewDocuments = (task, newDocsForAppeal) => {
 };
 
 export const taskIsOnHold = (task) => {
-  if (task.onHoldDuration && task.placedOnHoldAt) {
-    return moment().startOf('day').
-      diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;
-  }
-
   return task.status === TASK_STATUSES.on_hold;
 };
 
 export const taskHasCompletedHold = (task) => {
   if (task.onHoldDuration && task.placedOnHoldAt) {
-    return moment().startOf('day').
-      diff(moment(task.placedOnHoldAt), 'days') >= task.onHoldDuration;
+    return (
+      moment().
+        startOf('day').
+        diff(moment(task.placedOnHoldAt), 'days') >= task.onHoldDuration
+    );
   }
 
-  return task.status === TASK_STATUSES.on_hold;
+  return false;
 };
 
 export const taskIsActive = (task) => ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);
@@ -562,14 +586,16 @@ export const nullToFalse = (key, obj) => {
 
 export const sortTaskList = (taskList) => {
   return taskList.sort((prev, next) => {
-    return new Date(next.closedAt || next.createdAt).getTime() -
-    new Date(prev.closedAt || prev.createdAt).getTime();
+    return new Date(next.closedAt || next.createdAt).getTime() - new Date(prev.closedAt || prev.createdAt).getTime();
   });
 };
 
 export const regionalOfficeCity = (objWithLocation, defaultToUnknown) => {
-  return _.get(objWithLocation, 'closestRegionalOffice.location_hash.city',
-    defaultToUnknown ? COPY.UNKNOWN_REGIONAL_OFFICE : defaultToUnknown);
+  return _.get(
+    objWithLocation,
+    'closestRegionalOffice.location_hash.city',
+    defaultToUnknown ? COPY.UNKNOWN_REGIONAL_OFFICE : defaultToUnknown
+  );
 };
 
 export const cityForRegionalOfficeCode = (code) => {
@@ -579,7 +605,51 @@ export const cityForRegionalOfficeCode = (code) => {
 };
 
 export const hasDASRecord = (task, requireDasRecord) => {
-  return (task.appeal.isLegacyAppeal && requireDasRecord) ? Boolean(task.taskId) : true;
+  return task.appeal.isLegacyAppeal && requireDasRecord ? Boolean(task.taskId) : true;
 };
 
-export const collapseColumn = (requireDasRecord) => (task) => hasDASRecord(task, requireDasRecord) ? 1 : 0;
+export const collapseColumn = (requireDasRecord) => (task) => (hasDASRecord(task, requireDasRecord) ? 1 : 0);
+
+/**
+ * Method to determine whether to apply styling to the Current Assignee (location)
+ * @param {object} appeal -- The appeal for which to determine the location
+ * @param {number} userId -- The ID of the current user for showing "Assigned to You" cases
+ * @returns {string} -- The value of the current location either as a string or JSX
+ */
+export const labelForLocation = (appeal, userId) => {
+  // If there is no location or the appeal is cancelled, don't show a location
+  if (!appeal.assignedToLocation || appeal.status === 'cancelled') {
+    return '';
+  }
+
+  // REGEX to determine the current user
+  const regex = new RegExp(`\\b(?:BVA|VACO|VHAISA)?${appeal.assignedToLocation}\\b`);
+
+  // Override label and apply styling to the current user
+  if (userId.match(regex) !== null) {
+    return (
+      <span
+        {...css({
+          color: COLORS.GREEN
+        })}
+      >
+        {COPY.CASE_LIST_TABLE_ASSIGNEE_IS_CURRENT_USER_LABEL}
+      </span>
+    );
+  }
+
+  // Default return just the assigned location value
+  return appeal.assignedToLocation;
+};
+
+/**
+ * Method to optionally apply styling to the status column
+ * @param {object} appeal -- The appeal for which to determine the status
+ * @returns {string} -- The value of the current location either as a string or JSX
+ */
+export const statusLabel = (appeal) =>
+  appeal.status === 'cancelled' ? (
+    <span {...css({ color: COLORS.RED })}>{capitalize(appeal.status)}</span>
+  ) : (
+    appeal.status ? StringUtil.snakeCaseToCapitalized(appeal.status) : ""
+  );

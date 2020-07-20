@@ -2095,6 +2095,10 @@
     "staff_description": "Adenitis, tuberculous, active or inactive",
     "status_description": "tuberculous lymphadenitis"
   },
+  "7712": {
+    "staff_description": "Inguinal adenitis",
+    "status_description": "multiple myeloma"
+  },
   "7714": {
     "staff_description": "Sickle cell anemia",
     "status_description": "sickle cell anemia"

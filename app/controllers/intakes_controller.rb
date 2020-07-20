@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class IntakesController < ApplicationController
+  include ValidationConcern
+
   before_action :verify_access, :react_routed, :set_application, :check_intake_out_of_service
 
   def index
@@ -11,6 +13,7 @@ class IntakesController < ApplicationController
     end
   end
 
+  validates :create, using: IntakesSchemas.create
   def create
     return render json: intake_in_progress.ui_hash if intake_in_progress
 
@@ -33,6 +36,7 @@ class IntakesController < ApplicationController
     render json: {}
   end
 
+  validates :review, using: IntakesSchemas.review
   def review
     if intake.review!(params)
       render json: intake.ui_hash
@@ -62,6 +66,13 @@ class IntakesController < ApplicationController
     }, status: :bad_request
   end
 
+  def attorneys
+    results = AttorneySearch.new(params[:query]).fetch_attorneys.map do |attorney|
+      attorney.as_json.extract!("name", "participant_id")
+    end
+    render json: results
+  end
+
   def error
     intake.save_error!(code: params[:error_code])
     render json: {}
@@ -78,6 +89,7 @@ class IntakesController < ApplicationController
   def index_props
     {
       userDisplayName: current_user.display_name,
+      userCanIntakeAppeals: current_user.can_intake_appeals?,
       serverIntake: intake_ui_hash,
       dropdownUrls: dropdown_urls,
       page: "Intake",
@@ -87,8 +99,12 @@ class IntakesController < ApplicationController
         inbox: FeatureToggle.enabled?(:inbox, user: current_user),
         useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
         rampIntake: FeatureToggle.enabled?(:ramp_intake, user: current_user),
+        restrictAppealIntakes: FeatureToggle.enabled?(:restrict_appeal_intakes, user: current_user),
         editContentionText: FeatureToggle.enabled?(:edit_contention_text, user: current_user),
-        unidentifiedIssueDecisionDate: FeatureToggle.enabled?(:unidentified_issue_decision_date, user: current_user)
+        unidentifiedIssueDecisionDate: FeatureToggle.enabled?(:unidentified_issue_decision_date, user: current_user),
+        covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
+        verifyUnidentifiedIssue: FeatureToggle.enabled?(:verify_unidentified_issue, user: current_user),
+        attorneyFees: FeatureToggle.enabled?(:attorney_fees, user: current_user)
       }
     }
   rescue StandardError => error

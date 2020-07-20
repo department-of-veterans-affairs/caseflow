@@ -40,7 +40,7 @@ class Intake::DecisionReviewSerializer
   end
 
   attribute :receipt_date do |object|
-    object.receipt_date.to_formatted_s(:json_date)
+    object.receipt_date&.to_formatted_s(:json_date)
   end
 
   attribute :veteran do |object|

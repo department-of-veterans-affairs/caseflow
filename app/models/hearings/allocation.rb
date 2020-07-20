@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Allocation < ApplicationRecord
+class Allocation < CaseflowRecord
   belongs_to :schedule_period
 
   class << self

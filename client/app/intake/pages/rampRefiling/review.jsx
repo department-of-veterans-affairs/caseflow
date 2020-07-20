@@ -13,7 +13,7 @@ import { setReceiptDate, setOptionSelected } from '../../actions/intake';
 import { toggleIneligibleError } from '../../util';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
-import COPY from '../../../../COPY.json';
+import COPY from '../../../../COPY';
 import PropTypes from 'prop-types';
 
 class Review extends React.PureComponent {

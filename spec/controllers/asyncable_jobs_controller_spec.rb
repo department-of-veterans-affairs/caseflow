@@ -31,7 +31,7 @@ describe AsyncableJobsController, :postgres, type: :controller do
   end
 
   describe "#index" do
-    context "user is not Admin Intake" do
+    context "user is not Admin Intake or Manage Claim Establishment" do
       let(:user) { create(:default_user) }
 
       it "returns unauthorized" do
@@ -86,6 +86,16 @@ describe AsyncableJobsController, :postgres, type: :controller do
       end
     end
 
+    context "user is Manage Claim Establishment" do
+      let(:user) { User.authenticate!(roles: ["Manage Claim Establishment"]) }
+
+      it "allows access" do
+        get :index
+
+        expect(response.status).to eq 200
+      end
+    end
+
     context "user is Admin Intake" do
       let(:user) { User.authenticate!(roles: ["Admin Intake"]) }
       let(:veteran) { create(:veteran) }
@@ -119,7 +129,7 @@ describe AsyncableJobsController, :postgres, type: :controller do
         create(:decision_document, submitted_at: 7.days.ago, attempted_at: 7.days.ago)
       end
       let!(:task_timer) do
-        task = create(:generic_task)
+        task = create(:ama_task)
         TaskTimer.create!(task: task, submitted_at: 7.days.ago, attempted_at: 7.days.ago)
       end
 

@@ -28,4 +28,36 @@ describe ApplicationController, type: :controller do
       end
     end
   end
+
+  describe "no cache headers" do
+    controller(ApplicationController) do
+      def index
+        render json: { hello: "world" }, status: :ok
+      end
+    end
+
+    context "when toggle not set" do
+      it "does not set Cache-Control" do
+        get :index
+
+        expect(response.headers["Cache-Control"]).to be_nil
+      end
+    end
+
+    context "when toggle set" do
+      before do
+        FeatureToggle.enable!(:set_no_cache_headers)
+      end
+
+      after do
+        FeatureToggle.disable!(:set_no_cache_headers)
+      end
+
+      it "sets Cache-Control etc" do
+        get :index
+
+        expect(response.headers["Cache-Control"]).to eq "no-cache, no-store"
+      end
+    end
+  end
 end

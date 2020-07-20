@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import CheckboxGroup from '../../components/CheckboxGroup';
-import { JUDGE_ADDRESS_MTV_ISSUE_SELECTION_LABEL } from '../../../COPY.json';
+import { JUDGE_ADDRESS_MTV_ISSUE_SELECTION_LABEL } from '../../../COPY';
 
 const getDisplayOptions = (issues) => {
   // CheckboxGroup expects options with id (string) & label
@@ -35,6 +35,7 @@ export const MTVIssueSelection = ({ issues, onChange }) => {
       }}
       value={selectedIssues}
       options={getDisplayOptions(issues)}
+      strongLabel
     />
   );
 };

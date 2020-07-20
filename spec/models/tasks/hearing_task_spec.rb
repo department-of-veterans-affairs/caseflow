@@ -4,17 +4,16 @@ describe HearingTask, :postgres do
   describe ".create_change_hearing_disposition_task" do
     let(:appeal) { create(:appeal) }
     let(:root_task) { create(:root_task, appeal: appeal) }
-    let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+    let(:hearing_task) { create(:hearing_task, parent: root_task) }
     let(:instructions) { "These are the instructions I've written for you." }
     let!(:disposition_task) do
       create(
         :assign_hearing_disposition_task,
         :in_progress,
-        parent: hearing_task,
-        appeal: appeal
+        parent: hearing_task
       )
     end
-    let!(:transcription_task) { create(:transcription_task, parent: disposition_task, appeal: appeal) }
+    let!(:transcription_task) { create(:transcription_task, parent: disposition_task) }
 
     subject { hearing_task.create_change_hearing_disposition_task(instructions) }
 
@@ -37,15 +36,14 @@ describe HearingTask, :postgres do
 
   describe "#assign_hearing_disposition_task" do
     let(:root_task) { create(:root_task) }
-    let(:hearing_task) { create(:hearing_task, parent: root_task, appeal: root_task.appeal) }
+    let(:hearing_task) { create(:hearing_task, parent: root_task) }
     let(:disposition_task_type) { :assign_hearing_disposition_task }
     let(:trait) { :assigned }
     let!(:disposition_task) do
       create(
         disposition_task_type,
         trait,
-        parent: hearing_task,
-        appeal: root_task.appeal
+        parent: hearing_task
       )
     end
 

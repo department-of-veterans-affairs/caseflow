@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Metrics::V1::HistogramController < ApplicationController
+  protect_from_forgery with: :null_session
+
   def create
     histograms.each do |metric|
       DataDogService.histogram(

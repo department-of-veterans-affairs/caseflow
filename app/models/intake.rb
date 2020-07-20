@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Intake < ApplicationRecord
+class Intake < CaseflowRecord
   class FormTypeNotSupported < StandardError; end
 
   belongs_to :user
@@ -40,6 +40,12 @@ class Intake < ApplicationRecord
   attr_reader :error_data
 
   after_initialize :strip_file_number
+
+  scope :updated_since_for_appeals, lambda { |since|
+    select(:detail_id)
+      .where("#{table_name}.updated_at >= ?", since)
+      .where("detail_type='Appeal'")
+  }
 
   def strip_file_number
     return if veteran_file_number.nil?
@@ -113,7 +119,7 @@ class Intake < ApplicationRecord
         completed_at: Time.zone.now,
         completion_status: :error
       )
-      return false
+      false
     end
   end
 
@@ -211,9 +217,27 @@ class Intake < ApplicationRecord
         errors.any? { |e| e[:error] == :too_long }
     end
 
+    address_invalid_characters = veteran.errors.details.any? do |field_name, errors|
+      [:address_line1, :address_line2, :address_line3].include?(field_name) &&
+        errors.any? { |e| e[:error] == "invalid_characters" }
+    end
+
+    city_invalid_characters = veteran.errors.details[:city]&.any? { |e| e[:error] == "invalid_characters" }
+
+    city_too_long = veteran.errors.details[:city]&.any? { |e| e[:error] == "too_long" }
+
+    date_of_birth = veteran.errors.details[:date_of_birth]&.any? { |e| e[:error] == "invalid_date_of_birth" }
+
+    name_suffix_invalid = veteran.errors.details[:name_suffix]&.any? { |e| e[:error] == "invalid_character" }
+
     {
       veteran_missing_fields: missing_fields,
-      veteran_address_too_long: address_too_long
+      veteran_address_too_long: address_too_long,
+      veteran_address_invalid_fields: address_invalid_characters,
+      veteran_city_invalid_fields: city_invalid_characters,
+      veteran_city_too_long: city_too_long,
+      veteran_date_of_birth_invalid: date_of_birth,
+      veteran_name_suffix_invalid: name_suffix_invalid
     }
   end
 

@@ -129,7 +129,7 @@ describe AppealStatusApiDecorator, :all_dbs do
   end
 
   context "#events" do
-    let(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
+    let(:receipt_date) { ama_test_start_date + 1 }
     let!(:appeal) { create(:appeal, receipt_date: receipt_date) }
     let!(:decision_date) { receipt_date + 130.days }
     let!(:decision_document) { create(:decision_document, appeal: appeal, decision_date: decision_date) }
@@ -332,6 +332,10 @@ describe AppealStatusApiDecorator, :all_dbs do
         create(:evidence_submission_window_task, :in_progress, appeal: appeal, assigned_to: Bva.singleton)
       end
 
+      before do
+        appeal.update(docket_type: Constants.AMA_DOCKETS.evidence_submission)
+      end
+
       it "has an evidentiary_period alert" do
         expect(subject.count).to eq(1)
         expect(subject[0][:type]).to eq("evidentiary_period")
@@ -341,7 +345,7 @@ describe AppealStatusApiDecorator, :all_dbs do
 
     context "has a scheduled hearing" do
       let!(:appeal_root_task) { create(:root_task, :in_progress, appeal: appeal) }
-      let!(:hearing_task) { create(:hearing_task, parent: appeal_root_task, appeal: appeal) }
+      let!(:hearing_task) { create(:hearing_task, parent: appeal_root_task) }
       let(:hearing_scheduled_for) { Time.zone.today + 15.days }
       let!(:hearing_day) do
         create(:hearing_day,

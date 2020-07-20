@@ -2,9 +2,18 @@
 
 ##
 # Task assigned to the BvaOrganization after a hearing is scheduled, created after the ScheduleHearingTask
-# is completed. When the associated hearing's disposition is set, the appropriate tasks are set as children
-#   (e.g., TranscriptionTask, EvidenceWindowTask, etc.).
-# The task is marked complete when these children tasks are completed.
+# is completed.
+#
+# When the associated hearing's disposition is set, the appropriate tasks are set as children
+#   held: For legacy, task is set to be completed; for AMA, TranscriptionTask is created as child and
+#         EvidenceSubmissionWindowTask is also created as child unless the veteran/appellant has waived
+#         the 90 day evidence hold
+#   Cancelled: Task is cancelled and EvidenceWindowSubmissionWindow task is created as a child of RootTask
+#   No show: NoShowHearingTask is created as a child of this task
+#   Postponed: 2 options: Schedule new hearing or cancel HearingTask tree and create new ScheduleHearingTask
+#
+# The task is marked complete when the children tasks are completed.
+
 class AssignHearingDispositionTask < Task
   validates :parent, presence: true
   before_create :check_parent_type
@@ -14,6 +23,13 @@ class AssignHearingDispositionTask < Task
   class HearingDispositionNotPostponed < StandardError; end
   class HearingDispositionNotNoShow < StandardError; end
   class HearingDispositionNotHeld < StandardError; end
+  class HearingAssociationMissing < StandardError
+    def initialize(hearing_task_id)
+      super("Hearing task (#{hearing_task_id}) is missing an associated hearing. " \
+        "This means that either the hearing was deleted in VACOLS or " \
+        "the hearing association has been deleted.")
+    end
+  end
 
   class << self
     def create_assign_hearing_disposition_task!(appeal, parent, hearing)
@@ -76,7 +92,7 @@ class AssignHearingDispositionTask < Task
       )
     end
 
-    update!(status: Constants.TASK_STATUSES.cancelled)
+    update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
   end
 
   def postpone!
@@ -110,7 +126,9 @@ class AssignHearingDispositionTask < Task
   private
 
   def update_children_status_after_closed
-    children.open.update_all(status: status)
+    update_args = { status: status }
+    update_args[:closed_at] = Time.zone.now if self.class.closed_statuses.include?(status)
+    children.open.update_all(update_args)
   end
 
   def cascade_closure_from_child_task?(_child_task)
@@ -136,6 +154,9 @@ class AssignHearingDispositionTask < Task
   end
 
   def update_hearing_disposition(disposition:)
+    # Ensure the hearing exists
+    fail HearingAssociationMissing, id if hearing.nil?
+
     if hearing.is_a?(LegacyHearing)
       hearing.update_caseflow_and_vacols(disposition: disposition)
     else

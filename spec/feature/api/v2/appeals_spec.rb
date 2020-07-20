@@ -135,8 +135,12 @@ describe "Appeals API v2", :all_dbs, type: :request do
         "Authorization": "Token token=#{api_key.key_string}"
       }
 
-      allow(ApiKey).to receive(:authorize).and_raise("Much random error")
-      expect(Raven).to receive(:capture_exception)
+      random_error = StandardError.new("Much random error")
+
+      allow(ApiKey).to receive(:authorize).and_raise(random_error)
+      expect(Raven).to receive(:capture_exception).with(
+        random_error, hash_including(extra: hash_including(vbms_id: "444444444S"))
+      )
       expect(Raven).to receive(:last_event_id).and_return("a1b2c3")
 
       get "/api/v2/appeals", headers: headers
@@ -174,7 +178,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
       json = JSON.parse(response.body)
 
       # test for the 200 status-code
-      expect(response).to be_success
+      expect(response).to be_successful
 
       # check to make sure the right amount of appeals are returned
       expect(json["data"].length).to eq(2)
@@ -358,7 +362,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
              veteran_file_number: veteran_file_number,
              receipt_date: receipt_date,
              request_issues: [request_issue1, request_issue2],
-             docket_type: "evidence_submission")
+             docket_type: Constants.AMA_DOCKETS.evidence_submission)
     end
 
     let!(:task) { create(:task, :in_progress, type: RootTask.name, appeal: appeal) }
@@ -382,7 +386,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
       json = JSON.parse(response.body)
 
       # test for the 200 status-code
-      expect(response).to be_success
+      expect(response).to be_successful
       # check to make sure the right amount of appeals are returned
       expect(json["data"].length).to eq(3)
 
@@ -513,7 +517,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
       create(:appeal,
              veteran_file_number: veteran_file_number,
              receipt_date: receipt_date,
-             docket_type: "evidence_submission")
+             docket_type: Constants.AMA_DOCKETS.evidence_submission)
     end
 
     before do
@@ -533,7 +537,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
       json = JSON.parse(response.body)
 
       # test for the 200 status-code
-      expect(response).to be_success
+      expect(response).to be_successful
       # check to make sure the right amount of appeals are returned
       expect(json["data"].length).to eq(0)
     end
@@ -609,7 +613,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
       json = JSON.parse(response.body)
 
       # test for the 200 status-code
-      expect(response).to be_success
+      expect(response).to be_successful
       # check to make sure the right amount of appeals are returned
       expect(json["data"].length).to eq(1)
       expect(json["data"].first["type"]).to eq("higherLevelReview")

@@ -25,6 +25,10 @@ export const caseListReducer = (state = initialState, action = {}) => {
         errorMessage: { $set: action.payload.error }
       }
     });
+  case Constants.REQUEST_APPEAL_USING_CASE_SEARCH:
+    return update(state, {
+      isRequestingAppealsUsingVeteranId: { $set: true }
+    });
   case Constants.CLEAR_CASE_LIST_SEARCH:
     return update(state, {
       caseListCriteria: { $set: initialState.caseListCriteria },

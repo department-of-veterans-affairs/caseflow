@@ -1,18 +1,36 @@
 # frozen_string_literal: true
 
-# Class to coordinate interactions between controller
-# and repository class. Eventually may persist data to
-# Caseflow DB. For now all schedule data is sent to the
-# VACOLS DB (Aug 2018 implementation).
-class HearingDay < ApplicationRecord
+##
+# HearingDay groups hearings, both AMA and legacy, by a regional office and a room at the BVA.
+# Hearing Admin can create a HearingDay either individually or in bulk at the begining of
+# each year by uploading bunch of spreadsheets.
+#
+# Each HearingDay has a request type which applies to all hearings associated for that day.
+# Request types:
+#   'V' (also known as video hearing):
+#       The veteran/appellant travels to a regional office to have a hearing through video conference
+#       with a VLJ (Veterans Law Judge) who joins from the board at Washington D.C.
+#   'C' (also known as Central):
+#       The veteran/appellant travels to the board in D.C to have a in-person hearing with the VLJ.
+#   'T' (also known as travel board)
+#       The VLJ travels to the the Veteran/Appellant's closest regional office to conduct the hearing.
+#
+# If the request type is video('V'), then the HearingDay has a regional office associated.
+# Currently, a video hearing can be switched to a virtual hearing represented by VirtualHearing.
+#
+# Each HearingDay has a maximum number of hearings that can be held which is either based on the
+# timezone of associated regional office or 12 if the request type is central('C).
+#
+# A HearingDay can be assigned to a judge.
+
+class HearingDay < CaseflowRecord
+  include UpdatedByUserConcern
+
   acts_as_paranoid
 
   belongs_to :judge, class_name: "User"
   belongs_to :created_by, class_name: "User"
-  belongs_to :updated_by, class_name: "User"
   has_many :hearings
-
-  validates :regional_office, absence: true, if: :central_office?
 
   class HearingDayHasChildrenRecords < StandardError; end
 
@@ -30,6 +48,7 @@ class HearingDay < ApplicationRecord
     "America/Indiana/Indianapolis" => 12,
     "America/Kentucky/Louisville" => 12,
     "America/Denver" => 10,
+    "America/Phoenix" => 10,
     "America/Los_Angeles" => 8,
     "America/Boise" => 10,
     "America/Puerto_Rico" => 12,
@@ -38,9 +57,25 @@ class HearingDay < ApplicationRecord
     "America/Anchorage" => 8
   }.freeze
 
-  before_create :assign_created_and_updated_by_user
-  before_update :assign_updated_by_user
+  before_create :assign_created_by_user
   after_update :update_children_records
+
+  # Validates if the judge id maps to an actual record.
+  validates :judge, presence: true, if: -> { judge_id.present? }
+
+  validates :regional_office, absence: true, if: :central_office?
+  validates :regional_office,
+            inclusion: {
+              in: RegionalOffice.all.map(&:key),
+              message: "key (%<value>s) is invalid"
+            },
+            unless: :central_office?
+
+  validates :request_type,
+            inclusion: {
+              in: REQUEST_TYPES.values,
+              message: "is invalid"
+            }
 
   def central_office?
     request_type == REQUEST_TYPES[:central]
@@ -86,7 +121,18 @@ class HearingDay < ApplicationRecord
   end
 
   def to_hash
-    ::HearingDaySerializer.new(self).serializable_hash[:data][:attributes]
+    video_hearing_days_request_types = if request_type == REQUEST_TYPES[:video]
+                                         VideoHearingDayRequestTypeQuery
+                                           .new(HearingDay.where(id: id))
+                                           .call
+                                       else
+                                         {}
+                                       end
+
+    ::HearingDaySerializer.new(
+      self,
+      params: { video_hearing_days_request_types: video_hearing_days_request_types }
+    ).serializable_hash[:data][:attributes]
   end
 
   def hearing_day_full?
@@ -98,7 +144,7 @@ class HearingDay < ApplicationRecord
       return SLOTS_BY_REQUEST_TYPE[request_type]
     end
 
-    SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
+    SLOTS_BY_TIMEZONE[RegionalOffice.find!(regional_office).timezone]
   end
 
   def judge_first_name
@@ -111,13 +157,8 @@ class HearingDay < ApplicationRecord
 
   private
 
-  def assign_created_and_updated_by_user
+  def assign_created_by_user
     self.created_by ||= RequestStore[:current_user]
-    assign_updated_by_user
-  end
-
-  def assign_updated_by_user
-    self.updated_by ||= RequestStore[:current_user]
   end
 
   def update_children_records

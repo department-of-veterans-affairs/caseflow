@@ -11,7 +11,7 @@ describe MailTask, :postgres do
   describe ".create_from_params" do
     # Use AodMotionMailTask because we do create subclasses of MailTask, never MailTask itself.
     let(:task_class) { AodMotionMailTask }
-    let(:params) { { appeal: root_task.appeal, parent_id: root_task_id, type: task_class.name } }
+    let(:params) { { appeal: root_task.appeal, parent_id: root_task_id, type: task_class.name, instructions: "Test" } }
     let(:root_task_id) { root_task.id }
 
     context "when no root_task exists for appeal" do
@@ -24,17 +24,19 @@ describe MailTask, :postgres do
 
     context "when root_task exists for appeal" do
       it "creates AodMotionMailTask assigned to MailTeam and AodTeam" do
-        expect { task_class.create_from_params(params, user) }.to_not raise_error
+        expect(task_class.create_from_params(params, user)).to eq root_task.children[0].children[0]
         expect(root_task.children.length).to eq(1)
 
         mail_task = root_task.children[0]
         expect(mail_task.class).to eq(task_class)
         expect(mail_task.assigned_to).to eq(mail_team)
+        expect(mail_task.instructions).to eq(params[:instructions])
         expect(mail_task.children.length).to eq(1)
 
         child_task = mail_task.children[0]
         expect(child_task.class).to eq(task_class)
         expect(child_task.assigned_to).to eq(AodTeam.singleton)
+        expect(child_task.instructions).to eq(params[:instructions])
         expect(child_task.children.length).to eq(0)
       end
     end
@@ -50,6 +52,22 @@ describe MailTask, :postgres do
       end
     end
 
+    context "when the default assignee is the mail team" do
+      before do
+        allow(task_class).to receive(:child_task_assignee).and_return(MailTeam.singleton)
+      end
+
+      it "should not create any child tasks" do
+        expect(task_class.create_from_params(params, user)).to eq root_task.children[0]
+        expect(root_task.children.length).to eq(1)
+
+        mail_task = root_task.children[0]
+        expect(mail_task.class).to eq(task_class)
+        expect(mail_task.assigned_to).to eq(mail_team)
+        expect(mail_task.children.length).to eq(0)
+      end
+    end
+
     context "when user is not a member of the mail team" do
       let(:non_mail_user) { create(:user) }
 
@@ -62,7 +80,7 @@ describe MailTask, :postgres do
 
     context "when the task is a blocking mail task" do
       let(:task_class) { FoiaRequestMailTask }
-      let!(:distribution_task) { create(:distribution_task, parent: root_task, appeal: root_task.appeal) }
+      let!(:distribution_task) { create(:distribution_task, parent: root_task) }
 
       it "creates FoiaRequestMailTask as a child of the distribution task" do
         expect { task_class.create_from_params(params, user) }.to_not raise_error
@@ -96,7 +114,7 @@ describe MailTask, :postgres do
     subject { MailTask.pending_hearing_task?(root_task) }
 
     context "when the task's appeal has an open HearingTask" do
-      before { create(:hearing_task, parent: root_task, appeal: appeal) }
+      before { create(:hearing_task, parent: root_task) }
 
       it "indicates there there is a pending_hearing_task" do
         expect(subject).to eq(true)
@@ -105,7 +123,7 @@ describe MailTask, :postgres do
 
     context "when the task's appeal has a closed HearingTask" do
       before do
-        create(:hearing_task, :completed, parent: root_task, appeal: appeal)
+        create(:hearing_task, :completed, parent: root_task)
       end
 
       it "indicates there there is not a pending_hearing_task" do
@@ -151,7 +169,7 @@ describe MailTask, :postgres do
 
     context "when all individually assigned tasks are complete" do
       before do
-        create_list(:generic_task, 4, :completed, appeal: root_task.appeal)
+        create_list(:ama_task, 4, :completed, appeal: root_task.appeal)
       end
 
       it "should return nil" do
@@ -161,11 +179,11 @@ describe MailTask, :postgres do
 
     context "when the most recent active task is assigned to an organization" do
       let(:user) { create(:user) }
-      let(:user_task) { create(:generic_task, appeal: root_task.appeal, assigned_to: user) }
+      let(:user_task) { create(:ama_task, appeal: root_task.appeal, assigned_to: user) }
 
       before do
         create(
-          :generic_task,
+          :ama_task,
           appeal: root_task.appeal,
           assigned_to: create(:organization),
           parent: user_task
@@ -185,8 +203,8 @@ describe MailTask, :postgres do
       let(:user) { create(:user) }
 
       before do
-        create_list(:generic_task, 6, appeal: root_task.appeal)
-        create(:generic_task, appeal: root_task.appeal, assigned_to: user)
+        create_list(:ama_task, 6, appeal: root_task.appeal)
+        create(:ama_task, appeal: root_task.appeal, assigned_to: user)
       end
 
       it "should return the user who was assigned the most recently created task" do
@@ -238,8 +256,8 @@ describe MailTask, :postgres do
     context "for an AppealWithdrawalMailTask" do
       let(:task_class) { AppealWithdrawalMailTask }
 
-      it "should always route to BVA Intake" do
-        expect(subject).to eq(BvaIntake.singleton)
+      it "should always route to Case Review" do
+        expect(subject).to eq(CaseReview.singleton)
       end
     end
 
@@ -278,25 +296,17 @@ describe MailTask, :postgres do
     context "for an EvidenceOrArgumentMailTask" do
       let(:task_class) { EvidenceOrArgumentMailTask }
 
-      context "when the appeal has a pending hearing task" do
-        before { allow(task_class).to receive(:pending_hearing_task?).and_return(true) }
-
-        it "should route to hearing admin branch" do
-          expect(subject).to eq(HearingAdmin.singleton)
-        end
-      end
-
       context "when the appeal is not active" do
         before { allow(task_class).to receive(:case_active?).and_return(false) }
 
-        it "should raise an error" do
-          expect { subject }.to raise_error(Caseflow::Error::MailRoutingError)
+        it "should route to VLJ support staff" do
+          expect(subject).to eq(Colocated.singleton)
         end
       end
 
-      context "when the appeal is active and has no pending_hearing_task" do
-        it "should route to VLJ support staff" do
-          expect(subject).to eq(Colocated.singleton)
+      context "when the appeal is active" do
+        it "should route to the Mail Team" do
+          expect(subject).to eq(MailTeam.singleton)
         end
       end
     end
@@ -425,8 +435,8 @@ describe MailTask, :postgres do
       context "when the appeal is active, does not have any hearing tasks, but does have individually assigned tasks" do
         let(:user) { create(:user) }
         before do
-          create_list(:generic_task, 4, appeal: root_task.appeal)
-          create(:generic_task, appeal: root_task.appeal, assigned_to: user)
+          create_list(:ama_task, 4, appeal: root_task.appeal)
+          create(:ama_task, appeal: root_task.appeal, assigned_to: user)
         end
 
         it "should route to the user who is assigned the most recently created active task" do
@@ -472,7 +482,7 @@ describe MailTask, :postgres do
     subject { mail_task.available_actions(user) }
 
     context "when the current user is not a member of the lit support team" do
-      let(:generic_task_actions) do
+      let(:task_actions) do
         [
           Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
           Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
@@ -487,21 +497,21 @@ describe MailTask, :postgres do
       context "for a ClearAndUnmistakeableErrorMailTask" do
         let(:task_class) { ClearAndUnmistakeableErrorMailTask }
         it "returns the available_actions as defined by Task" do
-          expect(subject).to eq(generic_task_actions)
+          expect(subject).to eq(task_actions)
         end
       end
 
       context "for a ReconsiderationMotionMailTask" do
         let(:task_class) { ReconsiderationMotionMailTask }
         it "returns the available_actions as defined by Task" do
-          expect(subject).to eq(generic_task_actions)
+          expect(subject).to eq(task_actions)
         end
       end
 
       context "for a VacateMotionMailTask" do
         let(:task_class) { VacateMotionMailTask }
         it "returns the available_actions as defined by Task" do
-          expect(subject).to eq(generic_task_actions)
+          expect(subject).to eq(task_actions)
         end
       end
     end

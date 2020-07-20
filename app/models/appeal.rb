@@ -6,10 +6,12 @@
 # which went into effect Feb 19, 2019.
 
 class Appeal < DecisionReview
+  include AppealConcern
   include BgsService
   include Taskable
   include PrintsTaskTree
   include HasTaskHistory
+  include AppealAvailableHearingLocations
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -22,7 +24,17 @@ class Appeal < DecisionReview
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
   has_one :special_issue_list
+  has_one :post_decision_motion
   has_many :record_synced_by_job, as: :record
+  has_one :work_mode, as: :appeal
+
+  enum stream_type: {
+    "original": "original",
+    "vacate": "vacate",
+    "de_novo": "de_novo"
+  }
+
+  after_save :set_original_stream_data
 
   with_options on: :intake_review do
     validates :receipt_date, :docket_type, presence: { message: "blank" }
@@ -43,6 +55,8 @@ class Appeal < DecisionReview
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
   STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
+
+  alias_attribute :nod_date, :receipt_date # LegacyAppeal parity
 
   def document_fetcher
     @document_fetcher ||= DocumentFetcher.new(
@@ -70,7 +84,35 @@ class Appeal < DecisionReview
   end
 
   def type
-    "Original"
+    stream_type&.titlecase || "Original"
+  end
+
+  def create_stream(stream_type)
+    ActiveRecord::Base.transaction do
+      Appeal.create!(slice(
+        :receipt_date,
+        :veteran_file_number,
+        :legacy_opt_in_approved,
+        :veteran_is_not_claimant,
+        :docket_type
+      ).merge(
+        stream_type: stream_type,
+        stream_docket_number: docket_number,
+        established_at: Time.zone.now
+      )).tap do |stream|
+        stream.create_claimant!(
+          participant_id: claimant.participant_id,
+          payee_code: claimant.payee_code,
+          type: claimant.type
+        )
+      end
+    end
+  end
+
+  def vacate_type
+    return nil unless vacate?
+
+    post_decision_motion&.vacate_type
   end
 
   # Returns the most directly responsible party for an appeal when it is at the Board,
@@ -192,15 +234,6 @@ class Appeal < DecisionReview
     tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
   end
 
-  def veteran_name
-    # For consistency with LegacyAppeal.veteran_name
-    veteran&.name&.formatted(:form)
-  end
-
-  def veteran_middle_initial
-    veteran&.name&.middle_initial
-  end
-
   def veteran_is_deceased
     veteran_death_date.present?
   end
@@ -219,6 +252,7 @@ class Appeal < DecisionReview
            :date_of_birth,
            :age,
            :available_hearing_locations,
+           :email_address,
            :country, to: :veteran, prefix: true
 
   def veteran_if_exists
@@ -233,7 +267,7 @@ class Appeal < DecisionReview
     veteran_if_exists&.available_hearing_locations
   end
 
-  def regional_office
+  def regional_office_key
     nil
   end
 
@@ -246,19 +280,33 @@ class Appeal < DecisionReview
   alias aod advanced_on_docket?
 
   delegate :first_name,
+           :middle_name,
            :last_name,
            :name_suffix, to: :veteran, prefix: true, allow_nil: true
 
   alias appellant claimant
 
   delegate :first_name,
-           :last_name,
            :middle_name,
+           :last_name,
            :name_suffix,
            :address_line_1,
            :city,
            :zip,
-           :state, to: :appellant, prefix: true, allow_nil: true
+           :state,
+           :email_address, to: :appellant, prefix: true, allow_nil: true
+
+  def appellant_middle_initial
+    appellant_middle_name&.first
+  end
+
+  def appellant_is_not_veteran
+    !!veteran_is_not_claimant
+  end
+
+  def veteran_middle_initial
+    veteran_middle_name&.first
+  end
 
   def cavc
     "not implemented for AMA"
@@ -281,13 +329,14 @@ class Appeal < DecisionReview
       issue.benefit_type ||= issue.contested_benefit_type || issue.guess_benefit_type
       issue.veteran_participant_id = veteran.participant_id
       issue.save!
-      issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
+      issue.handle_legacy_issues!
     end
     request_issues.reload
   end
 
   def docket_number
-    return "Missing Docket Number" unless receipt_date
+    return stream_docket_number if stream_docket_number
+    return "Missing Docket Number" unless receipt_date && persisted?
 
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
@@ -304,11 +353,11 @@ class Appeal < DecisionReview
            to: :power_of_attorney, allow_nil: true
 
   def power_of_attorneys
-    claimants.map(&:power_of_attorney)
+    claimants.map(&:power_of_attorney).compact
   end
 
   def representatives
-    vso_participant_ids = power_of_attorneys.map(&:participant_id) - [nil]
+    vso_participant_ids = power_of_attorneys.map(&:participant_id).compact.uniq
     Representative.where(participant_id: vso_participant_ids)
   end
 
@@ -379,18 +428,21 @@ class Appeal < DecisionReview
   def finalized_decision_issues_before_receipt_date
     return [] unless receipt_date
 
-    DecisionIssue.includes(:decision_review).where(participant_id: veteran.participant_id)
-      .select(&:finalized?)
-      .select do |issue|
-        issue.approx_decision_date && issue.approx_decision_date < receipt_date
-      end
+    @finalized_decision_issues_before_receipt_date ||= begin
+      DecisionIssue.includes(:decision_review).where(participant_id: veteran.participant_id)
+        .select(&:finalized?)
+        .select do |issue|
+          issue.approx_decision_date && issue.approx_decision_date < receipt_date
+        end
+    end
   end
 
   def create_business_line_tasks!
-    issues_needing_tasks = request_issues.select(&:requires_record_request_task?)
-    business_lines = issues_needing_tasks.map(&:business_line).uniq
+    business_lines_needing_assignment.each do |business_line|
+      if business_line.nil? || business_line.name.blank?
+        fail Caseflow::Error::MissingBusinessLine
+      end
 
-    business_lines.each do |business_line|
       next if tasks.any? { |task| task.is_a?(VeteranRecordRequest) && task.assigned_to == business_line }
 
       VeteranRecordRequest.create!(
@@ -412,6 +464,18 @@ class Appeal < DecisionReview
   end
 
   private
+
+  def business_lines_needing_assignment
+    request_issues.select(&:requires_record_request_task?).map(&:business_line).uniq
+  end
+
+  # If any database fields need populating after the first save, e.g. because we
+  # know the new ID, immediately do a second save! so the record is accurate.
+  def set_original_stream_data
+    self.stream_docket_number ||= docket_number if receipt_date
+    self.stream_type ||= type.parameterize.underscore.to_sym
+    save! if has_changes_to_save? # prevent infinite recursion
+  end
 
   def maybe_create_translation_task
     veteran_state_code = veteran&.state

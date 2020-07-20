@@ -6,82 +6,37 @@ describe AttorneyLegacyTask, :postgres do
   end
 
   context "#from_vacols" do
-    subject do
-      AttorneyLegacyTask.from_vacols(
-        case_assignment,
-        LegacyAppeal.create(vacols_id: "1111"),
-        User.new(css_id: "USER_ID")
+    subject { AttorneyLegacyTask.from_vacols(case_assignment, appeal, user) }
+
+    let(:vacols_id) { "1111" }
+    let(:appeal) { LegacyAppeal.create(vacols_id: vacols_id) }
+    let(:user) { create(:user) }
+    let(:case_assignment) do
+      OpenStruct.new(
+        vacols_id: vacols_id,
+        date_due: 1.day.ago,
+        assigned_to_location_date: 5.days.ago,
+        created_at: 6.days.ago,
+        docket_date: nil
       )
     end
 
     context "when there is information about the case assignment" do
-      let(:case_assignment) do
-        vacols_id = "1111"
-        OpenStruct.new(
-          vacols_id: vacols_id,
-          date_due: 1.day.ago,
-          assigned_to_location_date: 5.days.ago,
-          created_at: 6.days.ago,
-          docket_date: nil
-        )
-      end
-
       it "sets all the fields correctly" do
-        expect(subject.user_id).to eq("USER_ID")
-        expect(subject.id).to eq("1111")
+        expect(subject.user_id).to eq(user.css_id)
+        expect(subject.id).to eq(vacols_id)
         expect(subject.assigned_on).to eq 5.days.ago.to_date
         expect(subject.task_id).to eq "1111-2015-01-24"
+        expect(subject.started_at).to eq nil
       end
-    end
-  end
 
-  context "#hide_from_case_timeline" do
-    subject do
-      AttorneyLegacyTask.from_vacols(
-        case_assignment,
-        LegacyAppeal.create(vacols_id: "1111"),
-        User.new(css_id: "USER_ID")
-      )
-    end
+      context "when the user has viewed the appeal before" do
+        before { AppealView.create(appeal: appeal, user: user, created_at: 5.days.ago) }
 
-    let(:case_assignment) do
-      vacols_id = "1111"
-      OpenStruct.new(
-        vacols_id: vacols_id,
-        date_due: 1.day.ago,
-        assigned_to_location_date: 5.days.ago,
-        created_at: 6.days.ago,
-        docket_date: nil
-      )
-    end
-
-    it "should alwayse be false" do
-      expect(subject.hide_from_case_timeline).to eq(false)
-    end
-  end
-
-  context "#hide_from_task_snapshot" do
-    subject do
-      AttorneyLegacyTask.from_vacols(
-        case_assignment,
-        LegacyAppeal.create(vacols_id: "1111"),
-        User.new(css_id: "USER_ID")
-      )
-    end
-
-    let(:case_assignment) do
-      vacols_id = "1111"
-      OpenStruct.new(
-        vacols_id: vacols_id,
-        date_due: 1.day.ago,
-        assigned_to_location_date: 5.days.ago,
-        created_at: 6.days.ago,
-        docket_date: nil
-      )
-    end
-
-    it "should alwayse be false" do
-      expect(subject.hide_from_task_snapshot).to eq(false)
+        it "sets the started_at timetamp" do
+          expect(subject.started_at).to eq 5.days.ago
+        end
+      end
     end
   end
 end

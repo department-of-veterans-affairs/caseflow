@@ -18,4 +18,8 @@ module Rails
       Rails.env.to_sym
     end
   end
+
+  def self.deploy_env
+    current_env
+  end
 end

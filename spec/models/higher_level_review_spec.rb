@@ -8,7 +8,7 @@ describe HigherLevelReview, :postgres do
   let(:veteran_file_number) { "64205555" }
   let(:ssn) { "64205555" }
   let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number, ssn: ssn) }
-  let(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
+  let(:receipt_date) { ama_test_start_date + 1 }
   let(:benefit_type) { "compensation" }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
@@ -83,7 +83,7 @@ describe HigherLevelReview, :postgres do
         end
 
         context "when it is before AMA begin date" do
-          let(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 1 }
+          let(:receipt_date) { ama_test_start_date - 1 }
 
           it "adds an error to receipt_date" do
             is_expected.to be false
@@ -136,7 +136,7 @@ describe HigherLevelReview, :postgres do
 
     it "returns claimant's participant ID" do
       higher_level_review.save!
-      higher_level_review.create_claimants!(participant_id: "12345", payee_code: "00")
+      higher_level_review.create_claimant!(participant_id: "12345", payee_code: "00", type: "VeteranClaimant")
       higher_level_review.save!
       higher_level_review.reload
       expect(subject).to eql("12345")
@@ -144,8 +144,8 @@ describe HigherLevelReview, :postgres do
 
     it "returns new claimant's participant ID if replaced" do
       higher_level_review.save!
-      higher_level_review.create_claimants!(participant_id: "12345", payee_code: "00")
-      higher_level_review.create_claimants!(participant_id: "23456", payee_code: "00")
+      higher_level_review.create_claimant!(participant_id: "12345", payee_code: "00", type: "VeteranClaimant")
+      higher_level_review.create_claimant!(participant_id: "23456", payee_code: "00", type: "VeteranClaimant")
       higher_level_review.reload
       expect(subject).to eql("23456")
     end
@@ -160,7 +160,7 @@ describe HigherLevelReview, :postgres do
 
     it "returns claimant's payee_code" do
       higher_level_review.save!
-      higher_level_review.create_claimants!(participant_id: "12345", payee_code: "10")
+      higher_level_review.create_claimant!(participant_id: "12345", payee_code: "10", type: "DependentClaimant")
       higher_level_review.save!
       higher_level_review.reload
       expect(subject).to eql("10")
@@ -168,8 +168,8 @@ describe HigherLevelReview, :postgres do
 
     it "returns new claimant's payee_code if replaced" do
       higher_level_review.save!
-      higher_level_review.create_claimants!(participant_id: "12345", payee_code: "10")
-      higher_level_review.create_claimants!(participant_id: "23456", payee_code: "11")
+      higher_level_review.create_claimant!(participant_id: "12345", payee_code: "10", type: "DependentClaimant")
+      higher_level_review.create_claimant!(participant_id: "23456", payee_code: "11", type: "DependentClaimant")
       higher_level_review.reload
       expect(subject).to eql("11")
     end
@@ -220,7 +220,7 @@ describe HigherLevelReview, :postgres do
       end
 
       let!(:claimant) do
-        Claimant.create!(
+        DependentClaimant.create!(
           decision_review: higher_level_review,
           participant_id: veteran.participant_id,
           payee_code: "10"

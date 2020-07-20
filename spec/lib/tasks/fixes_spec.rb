@@ -1,13 +1,7 @@
 # frozen_string_literal: true
 
-require "rake"
-
-describe "task rake fixes", :all_dbs do
-  before :all do
-    Rake.application = Rake::Application.new
-    Rake.application.rake_require "tasks/fixes"
-    Rake::Task.define_task :environment
-  end
+describe "fixes", :all_dbs do
+  include_context "rake"
 
   describe "fixes:activate_stalled_hearing_tasks" do
     subject do
@@ -19,20 +13,20 @@ describe "task rake fixes", :all_dbs do
       # a legacy appeal
       let(:appeal1) { create(:legacy_appeal, vacols_case: create(:case)) }
       let(:root_task1) { create(:root_task, appeal: appeal1) }
-      let(:hearing_task1) { create(:hearing_task, appeal: appeal1, parent: root_task1) }
-      let!(:schedule_hearing_task1) { create(:schedule_hearing_task, appeal: appeal1, parent: hearing_task1) }
+      let(:hearing_task1) { create(:hearing_task, parent: root_task1) }
+      let!(:schedule_hearing_task1) { create(:schedule_hearing_task, parent: hearing_task1) }
       # a second legacy appeal
       let(:appeal2) { create(:legacy_appeal, vacols_case: create(:case)) }
       let(:root_task2) { create(:root_task, appeal: appeal2) }
-      let(:hearing_task2) { create(:hearing_task, appeal: appeal2, parent: root_task2) }
-      let!(:schedule_hearing_task2) { create(:schedule_hearing_task, appeal: appeal2, parent: hearing_task2) }
+      let(:hearing_task2) { create(:hearing_task, parent: root_task2) }
+      let!(:schedule_hearing_task2) { create(:schedule_hearing_task, parent: hearing_task2) }
       # an ama appeal
       let(:appeal3) { create(:appeal) }
       let(:root_task3) { create(:root_task, appeal: appeal3) }
-      let(:distribution_task3) { create(:distribution_task, appeal: appeal3, parent: root_task3) }
-      let(:hearing_task3) { create(:hearing_task, appeal: appeal3, parent: distribution_task3) }
-      let!(:schedule_hearing_task3) { create(:schedule_hearing_task, appeal: appeal3, parent: hearing_task3) }
-      let!(:track_veteran_task3) { create(:track_veteran_task, appeal: appeal3, parent: root_task3) }
+      let(:distribution_task3) { create(:distribution_task, parent: root_task3) }
+      let(:hearing_task3) { create(:hearing_task, parent: distribution_task3) }
+      let!(:schedule_hearing_task3) { create(:schedule_hearing_task, parent: hearing_task3) }
+      let!(:track_veteran_task3) { create(:track_veteran_task, parent: root_task3) }
 
       let(:schedule_hearing_tasks) { [schedule_hearing_task1, schedule_hearing_task2, schedule_hearing_task3] }
 
@@ -161,8 +155,8 @@ describe "task rake fixes", :all_dbs do
           end
 
           context "there's another HearingTask on the same appeal as one of the stalled HearingTasks" do
-            let(:hearing_task2b) { create(:hearing_task, appeal: appeal2, parent: root_task2) }
-            let!(:schedule_hearing_task2b) { create(:schedule_hearing_task, appeal: appeal2, parent: hearing_task2b) }
+            let(:hearing_task2b) { create(:hearing_task, parent: root_task2) }
+            let!(:schedule_hearing_task2b) { create(:schedule_hearing_task, parent: hearing_task2b) }
 
             it "doesn't try to change the open HearingTask on the same appeal" do
               ids = [hearing_task1.id, hearing_task3.id]
@@ -201,7 +195,7 @@ describe "task rake fixes", :all_dbs do
 
           context "a HearingTask has more than one child" do
             let!(:disposition_task1) do
-              create(:assign_hearing_disposition_task, appeal: appeal1, parent: hearing_task1)
+              create(:assign_hearing_disposition_task, parent: hearing_task1)
             end
 
             before do
@@ -225,7 +219,7 @@ describe "task rake fixes", :all_dbs do
 
           context "a HearingTask's on_hold ScheduleHearingTask child has an open descendant" do
             let!(:verify_address_task2) do
-              create(:hearing_admin_action_verify_address_task, appeal: appeal2, parent: schedule_hearing_task2)
+              create(:hearing_admin_action_verify_address_task, parent: schedule_hearing_task2)
             end
 
             before do

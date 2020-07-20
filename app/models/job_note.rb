@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class JobNote < ApplicationRecord
+class JobNote < CaseflowRecord
   belongs_to :user
   belongs_to :job, polymorphic: true
 

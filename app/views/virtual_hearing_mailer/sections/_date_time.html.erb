@@ -2,5 +2,11 @@
   Date and Time
 </h3>
 <p>
-  <%= @virtual_hearing.hearing.scheduled_for.strftime("%A, %d %B %Y at %I:%M%P %Z") %>
+<% if @recipient.title == MailRecipient::RECIPIENT_TITLES[:judge] %>
+  <%= VirtualHearings::CalendarTemplateHelper.central_office_display_time_for_virtual_hearing(@virtual_hearing) %>
+<% elsif @recipient.title == MailRecipient::RECIPIENT_TITLES[:representative] %>
+  <%= VirtualHearings::CalendarTemplateHelper.representative_display_time_for_virtual_hearing(@virtual_hearing) %>
+<% elsif @recipient.title == MailRecipient::RECIPIENT_TITLES[:appellant] %>
+  <%= VirtualHearings::CalendarTemplateHelper.appellant_display_time_for_virtual_hearing(@virtual_hearing) %>
+<% end %>
 </p>

@@ -9,6 +9,8 @@
 
 client/.eslintcache
 client/yarn-error.log
+client/coverage
+client/junit.xml
 
 # Ignore the default SQLite database.
 /db/*.sqlite3
@@ -29,6 +31,7 @@ tags
 
 # Ignore hidden files
 .*
+!.storybook
 !/.github
 !.codeclimate.yml
 !.dockerignore
@@ -41,6 +44,9 @@ node_modules
 
 # Generated js bundles
 /app/assets/javascripts/*
+
+# Storybook
+/public/storybook/*
 
 # Generated public assets
 /public/assets/*
@@ -60,3 +66,6 @@ local/vacols/build_facols/*
 
 # makefile
 Makefile
+
+# ERD diagrams are not checked in
+*-erd.pdf

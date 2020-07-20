@@ -3,6 +3,7 @@
 class Api::V1::JobsController < Api::ApplicationController
   # available jobs supported by this endpoint
   SUPPORTED_JOBS = {
+    "amo_metrics_report" => AMOMetricsReportJob,
     "calculate_dispatch_stats" => CalculateDispatchStatsJob,
     "create_establish_claim" => CreateEstablishClaimTasksJob,
     "data_integrity_checks" => DataIntegrityChecksJob,
@@ -18,6 +19,7 @@ class Api::V1::JobsController < Api::ApplicationController
     "prepare_establish_claim" => PrepareEstablishClaimTasksJob,
     "reassign_old_tasks" => ReassignOldTasksJob,
     "retrieve_documents_for_reader" => RetrieveDocumentsForReaderJob,
+    "stats_collector" => StatsCollectorJob,
     "sync_intake" => SyncIntakeJob,
     "sync_reviews" => SyncReviewsJob,
     "take_docket_snapshot" => TakeDocketSnapshotJob,

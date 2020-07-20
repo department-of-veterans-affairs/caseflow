@@ -1,30 +1,31 @@
 # frozen_string_literal: true
 
 class JudgeTeam < Organization
+  scope :pushed_priority_cases_allowed, -> { where(accepts_priority_pushed_cases: true) }
+
   class << self
     def for_judge(user)
       if use_judge_team_roles?
         administered_judge_teams = user.administered_judge_teams
-        return unless administered_judge_teams.any?
 
         # Find the one, if any, we're the JudgeTeamLead for
         administered_judge_teams.detect { |jt| user == jt.judge }
       else
-        user.administered_teams.detect { |team| team.is_a?(JudgeTeam) }
+        user.administered_teams.detect { |team| team.is_a?(JudgeTeam) && team.judge.eql?(user) }
       end
     end
 
     def create_for_judge(user)
       fail(Caseflow::Error::DuplicateJudgeTeam, user_id: user.id) if JudgeTeam.for_judge(user)
 
-      create!(name: user.css_id, url: user.css_id.downcase).tap do |org|
+      create!(name: user.css_id, url: user.css_id.downcase, accepts_priority_pushed_cases: true).tap do |org|
         # make_user_admin invokes add_user, which handles adding the JudgeTeamLead JudgeTeamRole
         OrganizationsUser.make_user_admin(user, org)
       end
     end
 
     def use_judge_team_roles?
-      FeatureToggle.enabled?(:use_judge_team_role)
+      FeatureToggle.enabled?(:judge_admin_scm)
     end
   end
 
@@ -34,13 +35,13 @@ class JudgeTeam < Organization
   def add_user(user)
     super.tap do |org_user|
       class_name = (users.count == 1) ? JudgeTeamLead : DecisionDraftingAttorney
-      class_name.create!(organizations_user: org_user)
+      class_name.find_or_create_by(organizations_user: org_user)
     end
   end
 
   def judge
     if use_judge_team_roles?
-      judge_team_roles.detect { |role| role.is_a?(JudgeTeamLead) }.organizations_user.user
+      judge_team_roles.includes(:organizations_user, :user).detect { |role| role.is_a?(JudgeTeamLead) }.user
     else
       admins.first
     end

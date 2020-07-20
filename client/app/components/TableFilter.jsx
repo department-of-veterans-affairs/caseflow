@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { sprintf } from 'sprintf-js';
 
 import { css, hover } from 'glamor';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 import FilterIcon from './FilterIcon';
 import QueueDropdownFilter from '../queue/QueueDropdownFilter';
 import FilterOption from './FilterOption';
@@ -41,8 +42,9 @@ const iconStyle = css(
  *     user readable text
  *   - @label {string} used for the aria-label on the icon,
  *   - @valueName {string} used as the name for the dropdown filter.
- *   - @valueTransform {function(any)} function that takes the value of the
- *     column, and transforms it into a string.
+ *   - @valueTransform {function(any, any)} function that takes the value of the
+ *     column, and transforms it into a string. The row is passed in as a second
+ *     argument.
  */
 
 class TableFilter extends React.PureComponent {
@@ -52,10 +54,10 @@ class TableFilter extends React.PureComponent {
     this.state = { open: false };
   }
 
-  transformColumnValue = (columnValue) => {
+  transformColumnValue = (columnValue, row) => {
     const { valueTransform } = this.props;
 
-    return valueTransform ? valueTransform(columnValue) : columnValue;
+    return valueTransform ? valueTransform(columnValue, row) : columnValue;
   }
 
   filterDropdownOptions = (tableDataByRow, columnName) => {
@@ -72,7 +74,7 @@ class TableFilter extends React.PureComponent {
 
     const countByColumnName = _.countBy(
       tableDataByRow,
-      (row) => this.transformColumnValue(_.get(row, columnName))
+      (row) => this.transformColumnValue(_.get(row, columnName), row)
     );
     const uniqueOptions = [];
 
@@ -150,12 +152,23 @@ class TableFilter extends React.PureComponent {
     this.hideDropdown();
   }
 
+  filterIconAriaLabel = () => {
+    const {
+      filteredByList,
+      columnName,
+      label
+    } = this.props;
+
+    const selectedOptions = filteredByList[columnName] || '';
+
+    return selectedOptions.length ? sprintf('%s. Filtering by %s', label, selectedOptions) : label;
+  }
+
   render() {
     const {
       tableData,
       columnName,
       anyFiltersAreSet,
-      label,
       valueName,
       getFilterValues
     } = this.props;
@@ -172,7 +185,7 @@ class TableFilter extends React.PureComponent {
     return (
       <span {...iconStyle}>
         <FilterIcon
-          label={label}
+          label={this.filterIconAriaLabel()}
           getRef={this.props.getFilterIconRef}
           selected={this.isFilterOpen()}
           handleActivate={this.toggleDropdown} />

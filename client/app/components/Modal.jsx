@@ -10,6 +10,15 @@ import { css } from 'glamor';
 const modalTextStyling = css({ width: '100%',
   fontFamily: 'Source Sans Pro' });
 
+const iconStyling = css({
+  float: 'left',
+  flexGrow: 0,
+  flexShrink: 0,
+  flexBasis: '13%',
+  marginTop: '1rem',
+  color: '#323a45'
+});
+
 export default class Modal extends React.Component {
   constructor(props) {
     super(props);
@@ -30,7 +39,7 @@ export default class Modal extends React.Component {
       event.preventDefault();
       firstButton.focus();
     }
-  }
+  };
 
   keyHandler = (event) => {
     if (event.key === 'Escape') {
@@ -40,9 +49,9 @@ export default class Modal extends React.Component {
     if (event.key === 'Tab') {
       this.handleTab(event);
     }
-  }
+  };
 
-  modalCloseFocus = (modalClose) => this.modalClose = modalClose
+  modalCloseFocus = (modalClose) => (this.modalClose = modalClose);
 
   componentWillUnmount() {
     window.removeEventListener('keydown', this.keyHandler);
@@ -70,27 +79,31 @@ export default class Modal extends React.Component {
         classNames = [...object.classNames, ...classNames];
       }
 
-      return <Button
-        name={object.name}
-        onClick={object.onClick}
-        classNames={classNames}
-        loading={object.loading}
-        disabled={object.disabled}
-        key={i}
-        id={this.buttonIdPrefix + i}
-      />;
+      return (
+        <Button
+          name={object.name}
+          onClick={object.onClick}
+          classNames={classNames}
+          loading={object.loading}
+          disabled={object.disabled}
+          key={i}
+          id={this.buttonIdPrefix + i}
+        />
+      );
     });
   }
 
   render() {
-    let {
+    const {
       children,
+      className,
       closeHandler,
       id,
       noDivider,
       confirmButton,
       cancelButton,
       title,
+      icon,
       customStyles
     } = this.props;
 
@@ -99,52 +112,52 @@ export default class Modal extends React.Component {
     if (!confirmButton && !cancelButton) {
       modalButtons = this.generateButtons();
     } else {
-      modalButtons = <div>
-        <span className="cf-push-right">
-          {confirmButton}
-        </span>
-        {cancelButton &&
-          <span className="cf-push-left">
-            {cancelButton}
-          </span>
-        }
-      </div>;
+      modalButtons = (
+        <div>
+          <span className="cf-push-right">{confirmButton}</span>
+          {cancelButton && <span className="cf-push-left">{cancelButton}</span>}
+        </div>
+      );
     }
 
-    return <section
-      className="cf-modal active"
-      id="modal_id"
-      role="alertdialog"
-      aria-labelledby="modal_id-title"
-      aria-describedby="modal_id-desc"
-      aria-modal="true"
-    >
-      <ScrollLock />
-      <div className="cf-modal-body" id={id || ''} {...customStyles}>
-        <button
-          type="button"
-          id={`${this.buttonIdPrefix}close`}
-          className="cf-modal-close"
-          onClick={closeHandler}
-          ref={this.modalCloseFocus}
-        >
-          {closeSymbolHtml()}
-        </button>
-        <h1 id="modal_id-title">{title}</h1>
-        <div {...modalTextStyling}>
-          {children}
+    return (
+      <section
+        className={`cf-modal active ${className}`}
+        id="modal_id"
+        role="alertdialog"
+        aria-labelledby="modal_id-title"
+        aria-describedby="modal_id-desc"
+        aria-modal="true"
+      >
+        <ScrollLock />
+        <div className="cf-modal-body" id={id || ''} {...customStyles}>
+          <button
+            type="button"
+            id={`${this.buttonIdPrefix}close`}
+            className="cf-modal-close"
+            onClick={closeHandler}
+            ref={this.modalCloseFocus}
+          >
+            {closeSymbolHtml()}
+          </button>
+          <div style={{ display: 'flex' }}>
+            {icon && <i className={`fa fa-2x fa-${icon}`} {...iconStyling} />}
+            <div {...css({ flexGrow: 1 })}>
+              <h1 id="modal_id-title">{title}</h1>
+              <div {...modalTextStyling}>{children}</div>
+            </div>
+          </div>
+          {noDivider ? '' : <div className="cf-modal-divider" />}
+          <div className="cf-modal-controls">{modalButtons}</div>
         </div>
-        {noDivider ? '' : <div className="cf-modal-divider"></div>}
-        <div className="cf-modal-controls">
-          {modalButtons}
-        </div>
-      </div>
-    </section>;
+      </section>
+    );
   }
 }
 
 Modal.defaultProps = {
-  buttons: []
+  buttons: [],
+  className: ''
 };
 
 Modal.propTypes = {
@@ -159,11 +172,13 @@ Modal.propTypes = {
       return new Error('You cannot set both `buttons` and one of `confirmButton` or `cancelButton`');
     }
   },
+  className: PropTypes.string,
   confirmButton: PropTypes.element,
   cancelButton: PropTypes.element,
   id: PropTypes.string,
   label: PropTypes.string,
   noDivider: PropTypes.bool,
   specialContent: PropTypes.func,
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
+  icon: PropTypes.string
 };

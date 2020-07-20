@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Dispatch::Task < ApplicationRecord
+class Dispatch::Task < CaseflowRecord
   self.table_name = "dispatch_tasks"
 
   include RetryHelper

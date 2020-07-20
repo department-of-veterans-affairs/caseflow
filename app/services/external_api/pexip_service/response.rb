@@ -24,8 +24,7 @@ class ExternalApi::PexipService::Response
   def check_for_error
     return if success?
 
-    msg = error_message(resp)
-
+    msg = error_message
     case code
     when 400
       Caseflow::Error::PexipBadRequestError.new(code: code, message: msg)
@@ -40,13 +39,13 @@ class ExternalApi::PexipService::Response
     end
   end
 
-  def error_message(resp)
-    return "No error message" if resp.raw_body.empty?
+  def error_message
+    return "No error message from Pexip" if resp.raw_body.empty?
 
     begin
       JSON.parse(resp.raw_body)["conference"]["name"].first
     rescue JSON::ParserError
-      "No error message"
+      "No error message from Pexip"
     end
   end
   # :nocov:

@@ -205,11 +205,16 @@ RSpec.describe Tasks::ChangeTypeController, :postgres, type: :controller do
     end
 
     context "for a non supported task type" do
-      let(:params) do
-        {
-          task: { action: "other", instructions: new_instructions },
-          id: create(:ama_judge_task, parent: root_task).id
-        }
+      let(:new_task_type) { PreRoutingFoiaColocatedTask }
+      let(:parent_task) do
+        create(
+          :ama_colocated_task,
+          :ihp,
+          appeal: root_task.appeal,
+          parent_id: root_task.id,
+          assigned_by: assigner,
+          instructions: [old_instructions]
+        )
       end
 
       it "returns an error" do

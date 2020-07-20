@@ -11,6 +11,7 @@ export default class StyleGuideColors extends React.PureComponent {
     Gray: '#5b616b',
     'Gray-light': '#aeb0b5',
     'Gray-lighter': COLORS.GREY_LIGHT,
+    'Gray-lightest': '#f1f1f1',
     'Gray-warm-light': '#e4e2e0',
     Primary: '#0071bc',
     White: COLORS.WHITE,
@@ -39,6 +40,7 @@ export default class StyleGuideColors extends React.PureComponent {
     'Gray',
     'Gray-light',
     'Gray-lighter',
+    'Gray-lightest',
     'Gray-warm-light',
     'Primary',
     'White'

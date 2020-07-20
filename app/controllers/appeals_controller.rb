@@ -48,7 +48,9 @@ class AppealsController < ApplicationController
   end
 
   def document_count
-    render json: { document_count: EFolderService.document_count(appeal.veteran_file_number, current_user) }
+    doc_count = EFolderService.document_count(appeal.veteran_file_number, current_user)
+    status = (doc_count == ::ExternalApi::EfolderService::DOCUMENT_COUNT_DEFERRED) ? 202 : 200
+    render json: { document_count: doc_count }, status: status
   rescue Caseflow::Error::EfolderAccessForbidden => error
     render(error.serialize_response)
   rescue StandardError => error
@@ -65,8 +67,6 @@ class AppealsController < ApplicationController
   end
 
   def most_recent_hearing
-    log_hearings_request
-
     most_recently_held_hearing = HearingsForAppeal.new(url_appeal_uuid)
       .held_hearings
       .max_by(&:scheduled_for)
@@ -92,11 +92,12 @@ class AppealsController < ApplicationController
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        if BGSService.new.can_access?(appeal.veteran_file_number)
+        if BGSService.new.can_access?(appeal.veteran_file_number) || user_represents_claimant_not_veteran
           id = params[:appeal_id]
           MetricsService.record("Get appeal information for ID #{id}",
                                 service: :queue,
                                 name: "AppealsController.show") do
+            appeal.appeal_views.find_or_create_by(user: current_user).update!(last_viewed_at: Time.zone.now)
             render json: { appeal: json_appeals(appeal)[:data] }
           end
         else
@@ -106,21 +107,12 @@ class AppealsController < ApplicationController
     end
   end
 
-  def task_tree
-    return render_access_error unless FeatureToggle.enabled?(:appeal_viz, user: current_user)
-
-    return render_access_error unless BGSService.new.can_access?(appeal.veteran_file_number)
-
-    no_cache
-
-    respond_to do |format|
-      format.html { render template: "queue/task_tree", layout: "plain_application" }
-      format.text { render plain: appeal.structure_render(*Task.column_names) }
-      format.json { render json: { task_tree: task_tree_as_json } }
-    end
+  def edit
+    # only AMA appeals may call /edit
+    return not_found if appeal.is_a?(LegacyAppeal)
   end
 
-  helper_method :appeal, :url_appeal_uuid, :task_tree_as_json
+  helper_method :appeal, :url_appeal_uuid
 
   def appeal
     @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
@@ -128,10 +120,6 @@ class AppealsController < ApplicationController
 
   def url_appeal_uuid
     params[:appeal_id]
-  end
-
-  def task_tree_as_json
-    @task_tree_as_json ||= appeal.structure_as_json(*Task.column_names)
   end
 
   def update
@@ -150,6 +138,12 @@ class AppealsController < ApplicationController
 
   private
 
+  def user_represents_claimant_not_veteran
+    return false unless FeatureToggle.enabled?(:vso_claimant_representative)
+
+    appeal.appellant_is_not_veteran && appeal.representatives.any? { |rep| rep.user_has_access?(current_user) }
+  end
+
   # :reek:DuplicateMethodCall { allow_calls: ['result.extra'] }
   # :reek:FeatureEnvy
   def render_search_results_as_json(result)
@@ -158,16 +152,6 @@ class AppealsController < ApplicationController
     else
       render json: result.to_h, status: result.extra[:status]
     end
-  end
-
-  def log_hearings_request
-    # Log requests to this endpoint to try to investigate cause addressed by this rollback:
-    # https://github.com/department-of-veterans-affairs/caseflow/pull/9271
-    DataDogService.increment_counter(
-      metric_group: "request_counter",
-      metric_name: "hearings_for_appeal",
-      app_name: RequestStore[:application]
-    )
   end
 
   def request_issues_update
@@ -244,7 +228,7 @@ class AppealsController < ApplicationController
   end
 
   def access_error_message
-    (appeal.veteran&.multiple_phone_numbers?) ? COPY::DUPLICATE_PHONE_NUMBER_TITLE : COPY::ACCESS_DENIED_TITLE
+    appeal.veteran&.multiple_phone_numbers? ? COPY::DUPLICATE_PHONE_NUMBER_TITLE : COPY::ACCESS_DENIED_TITLE
   end
 
   def docket_number?(search)

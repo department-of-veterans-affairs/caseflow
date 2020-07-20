@@ -8,6 +8,7 @@ import Alert from '../../components/Alert';
 import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 import * as Constants from '../../establishClaim/constants';
+import WindowUtil from '../../util/WindowUtil';
 
 export class AssociatePage extends React.Component {
 
@@ -20,6 +21,7 @@ export class AssociatePage extends React.Component {
     };
   }
 
+  // eslint-disable-next-line camelcase
   UNSAFE_componentWillMount() {
     if (!this.props.endProducts.length) {
       this.props.history.goBack();
@@ -90,7 +92,7 @@ export class AssociatePage extends React.Component {
     return ApiUtil.post(
       `/dispatch/establish-claim/${id}/assign-existing-end-product`,
       { data }).then(() => {
-      window.location.reload();
+      WindowUtil.reloadWithPOST();
       this.setState({
         epLoading: null
       });
@@ -127,11 +129,11 @@ export class AssociatePage extends React.Component {
 
     if (this.props.hasAvailableModifers) {
       title = <span> <h1>Route Claim</h1>
-        <h2> Existing End Product(s)</h2></span>;
+        <h2> Existing End Products</h2></span>;
       alert = <div><h3 className="usa-alert-heading">Existing EP</h3>
-        <p className="usa-alert-text">We found one or more existing EP(s)
+        <p className="usa-alert-text">We found one or more existing EPs
           created within 30 days of this decision date.
-          Please review the existing EP(s) in the table below.
+          Please review the existing EPs in the table below.
           Select one to assign to this claim or create a new EP.
         </p>
       </div>;
@@ -141,7 +143,7 @@ export class AssociatePage extends React.Component {
       alert = <div><h3 className="usa-alert-heading">
           Existing EP, all EP & Claim Label Modifiers in use
       </h3>
-      <p className="usa-alert-text">We found one or more existing EP(s)
+      <p className="usa-alert-text">We found one or more existing EPs
           created within 30 days of this decision date. You may assign a
           existing EP from the table below to this claim.
       </p>
@@ -205,7 +207,8 @@ AssociatePage.propTypes = {
   backToDecisionReviewText: PropTypes.string.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   hasAvailableModifers: PropTypes.bool.isRequired,
-  task: PropTypes.object.isRequired
+  task: PropTypes.object.isRequired,
+  loading: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({

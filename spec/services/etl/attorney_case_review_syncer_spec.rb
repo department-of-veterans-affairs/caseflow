@@ -11,6 +11,8 @@ describe ETL::AttorneyCaseReviewSyncer, :etl, :all_dbs do
     create(:attorney_case_review, attorney: attorney, reviewing_judge: judge, task_id: task_id)
   end
 
+  let(:etl_build) { ETL::Build.create }
+
   # rubocop:disable Metrics/AbcSize
   def expect_denormalized_users(etl_acr)
     expect(etl_acr.attorney_css_id).to eq(attorney.css_id)
@@ -27,7 +29,7 @@ describe ETL::AttorneyCaseReviewSyncer, :etl, :all_dbs do
       CachedUser.sync_from_vacols
     end
 
-    subject { described_class.new.call }
+    subject { described_class.new(etl_build: etl_build).call }
 
     context "LegacyAppeal" do
       let(:task_id) { "#{appeal.vacols_id}-2019-12-17" }

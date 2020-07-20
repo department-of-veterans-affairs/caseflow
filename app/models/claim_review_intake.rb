@@ -38,9 +38,11 @@ class ClaimReviewIntake < DecisionReviewIntake
 
   def create_claimant!
     if request_params[:veteran_is_not_claimant] == true
+      claimant_type = "DependentClaimant"
       participant_id = request_params[:claimant]
       payee_code = need_payee_code? ? request_params[:payee_code] : nil
     else
+      claimant_type = "VeteranClaimant"
       participant_id = veteran.participant_id
       payee_code = nil
     end
@@ -48,6 +50,7 @@ class ClaimReviewIntake < DecisionReviewIntake
     Claimant.find_or_initialize_by(
       decision_review: detail
     ).tap do |claimant|
+      claimant.type = claimant_type
       claimant.participant_id = participant_id
       claimant.payee_code = payee_code
       claimant.save!

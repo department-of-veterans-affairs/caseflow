@@ -2,7 +2,19 @@
 
 ##
 # Task to schedule a hearing for a veteran making a claim.
-# Created by the intake process for any appeal electing to have a hearing.
+#
+# When this task is created, HearingTask is created as the parent task in the appeal tree.
+#
+# For AMA appeals, task is created by the intake process for any appeal electing to have a hearing.
+# For Legacy appeals, Geomatching is resposnible for finding all appeals in VACOLS ready to be scheduled
+# and creating a ScheduleHearingTask for each of them.
+#
+# A coordinator can block this task by creating a HearingAdminActionTask for some reasons listed
+# here: https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Hearings#2-schedule-veteran
+#
+# This task also allows coordinators to withdraw hearings. For AMA, this creates an EvidenceSubmissionWindowTask
+# and for legacy this moves the appeal to case storage.
+#
 # Once completed, an AssignHearingDispositionTask is created.
 
 class ScheduleHearingTask < Task
@@ -53,17 +65,22 @@ class ScheduleHearingTask < Task
       fail Caseflow::Error::ActionForbiddenError, message: COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR
     end
 
-    # cancel my children, myself, and my hearing task ancestor
-    children.open.update_all(status: Constants.TASK_STATUSES.cancelled)
-    update!(status: Constants.TASK_STATUSES.cancelled)
-    ancestor_task_of_type(HearingTask)&.update!(status: Constants.TASK_STATUSES.cancelled)
+    multi_transaction do
+      # cancel my children, myself, and my hearing task ancestor
+      children.open.update_all(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
+      update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
+      ancestor_task_of_type(HearingTask)&.update!(
+        status: Constants.TASK_STATUSES.cancelled,
+        closed_at: Time.zone.now
+      )
 
-    # cancel the old HearingTask and create a new one associated with the same hearing
-    new_hearing_task = hearing_task.cancel_and_recreate
-    HearingTaskAssociation.create!(hearing: hearing_task.hearing, hearing_task: new_hearing_task)
+      # cancel the old HearingTask and create a new one associated with the same hearing
+      new_hearing_task = hearing_task.cancel_and_recreate
+      HearingTaskAssociation.create!(hearing: hearing_task.hearing, hearing_task: new_hearing_task)
 
-    # create a ChangeHearingDispositionTask on the new HearingTask
-    new_hearing_task.create_change_hearing_disposition_task(instructions)
+      # create a ChangeHearingDispositionTask on the new HearingTask
+      new_hearing_task.create_change_hearing_disposition_task(instructions)
+    end
   end
 
   def available_actions(user)

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 
 import DropdownButton from '../../components/DropdownButton';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 
 // NOTE: parent container needs to be given 'position: relative'
 const style = css({

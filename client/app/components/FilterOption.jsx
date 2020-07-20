@@ -13,7 +13,8 @@ const listStyling = css({
   paddingLeft: 0
 });
 const listItemStyling = css({
-  padding: '1px'
+  padding: '1px',
+  position: 'relative'
 });
 
 const FilterOption = ({ options, setSelectedValue,
@@ -43,7 +44,9 @@ const FilterOption = ({ options, setSelectedValue,
 
 FilterOption.propTypes = {
   options: PropTypes.array.isRequired,
-  setSelectedValue: PropTypes.func.isRequired
+  setSelectedValue: PropTypes.func.isRequired,
+  dropdownFilterViewListStyle: PropTypes.object,
+  dropdownFilterViewListItemStyle: PropTypes.object
 };
 
 export default FilterOption;

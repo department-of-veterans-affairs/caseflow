@@ -46,11 +46,18 @@ module.exports = function(api) {
     plugins,
     env: {
       development: {
-        plugins: ['react-hot-loader/babel']
+        plugins: ['react-hot-loader/babel', 'react-docgen']
       },
       test: {
         presets: [
-          '@babel/preset-env',
+          [
+            '@babel/preset-env',
+            {
+              useBuiltIns: 'usage',
+              corejs: 3,
+              targets: '> 0.25%, not dead'
+            }
+          ],
           ['@babel/preset-react', { development: true }]
         ]
       }

@@ -8,7 +8,7 @@ describe StatusSerializer, :all_dbs do
   context "#appeal" do
     let(:judge) { create(:user) }
     let!(:hearings_user) { create(:hearings_coordinator) }
-    let!(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
+    let!(:receipt_date) { ama_test_start_date + 1 }
     let(:appeal) { create(:appeal, receipt_date: receipt_date) }
     let!(:appeal_root_task) { create(:root_task, :in_progress, appeal: appeal) }
 
@@ -33,7 +33,7 @@ describe StatusSerializer, :all_dbs do
     end
 
     context "hearing is scheduled" do
-      let(:hearing_task) { create(:hearing_task, parent: appeal_root_task, appeal: appeal) }
+      let(:hearing_task) { create(:hearing_task, parent: appeal_root_task) }
       let(:hearing_scheduled_for) { Time.zone.today + 15.days }
       let(:hearing_day) do
         create(:hearing_day,

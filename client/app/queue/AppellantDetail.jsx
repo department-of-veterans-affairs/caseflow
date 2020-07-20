@@ -1,18 +1,12 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
+import React from 'react';
 import _ from 'lodash';
 
-import BareList from '../components/BareList';
 import { boldText } from './constants';
+import { detailListStyling } from './Detail';
 import Address from './components/Address';
-import COPY from '../../COPY.json';
-
-const detailListStyling = css({
-  paddingLeft: 0,
-  listStyle: 'none',
-  marginBottom: '3rem'
-});
+import BareList from '../components/BareList';
+import COPY from '../../COPY';
 
 export default class AppellantDetail extends React.PureComponent {
   getAppealAttr = (attr) => _.get(this.props.appeal, attr);

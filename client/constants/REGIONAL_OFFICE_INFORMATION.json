@@ -40,7 +40,7 @@
     "city": "White River Junction",
     "state": "VT",
     "timezone": "America/New_York",
-    "hold_hearings": true,
+    "hold_hearings": false,
     "facility_locator_id": "vba_405",
     "alternate_locations": ["vba_373"]
   },
@@ -78,7 +78,9 @@
     "timezone": "America/New_York",
     "hold_hearings": true,
     "facility_locator_id": "vba_309",
-    "alternate_locations": null
+    "alternate_locations": [
+      "vha_460HE"
+    ]
   },
   "RO10": {
     "label": "Philadelphia regional office",
@@ -91,8 +93,7 @@
       "vha_595",
       "vba_460",
       "vha_693",
-      "vha_542",
-      "vha_460HE"
+      "vha_542"
     ]
   },
   "RO11": {
@@ -183,7 +184,7 @@
     "timezone": "America/Chicago",
     "hold_hearings": true,
     "facility_locator_id": "vba_320",
-    "alternate_locations": ["vc_0701V", "vc_0720V", "vc_0719V", "vha_626GF"]
+    "alternate_locations": ["vc_0720V", "vc_0719V", "vha_626GF"]
   },
   "RO21": {
     "label": "New Orleans regional office",
@@ -249,7 +250,6 @@
       "vha_596GA",
       "vha_657GL",
       "vha_626GJ",
-      "vc_0701V",
       "vha_626GC",
       "vha_538GB",
       "vha_603GF",
@@ -257,8 +257,7 @@
       "vha_657GP",
       "vha_657GO",
       "vha_626GH",
-      "vc_0719V",
-      "vc_0701V"
+      "vc_0719V"
     ]
   },
   "RO28": {
@@ -438,7 +437,7 @@
     "label": "Phoenix regional office",
     "city": "Phoenix",
     "state": "AZ",
-    "timezone": "America/Denver",
+    "timezone": "America/Phoenix",
     "hold_hearings": true,
     "facility_locator_id": "vba_345",
     "alternate_locations": null
@@ -690,7 +689,7 @@
     "timezone": "America/New_York",
     "hold_hearings": true,
     "facility_locator_id": "vba_373",
-    "alternate_locations": ["vba_405"]
+    "alternate_locations": null
   },
   "RO74": {
     "label": null,

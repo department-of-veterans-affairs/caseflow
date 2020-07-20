@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Alert from '../../components/Alert';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 
 class UnidentifiedIssueAlert extends React.Component {
   render() {

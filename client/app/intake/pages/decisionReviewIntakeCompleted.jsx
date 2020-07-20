@@ -11,17 +11,24 @@ import { legacyIssue } from '../util/issues';
 import IneligibleIssuesList from '../components/IneligibleIssuesList';
 import SmallLoader from '../../components/SmallLoader';
 import { LOGO_COLORS } from '../../constants/AppConstants';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import UnidentifiedIssueAlert from '../components/UnidentifiedIssueAlert';
 
-const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, detailEditUrl }) => {
+const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, detailEditUrl, completedReview }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
 
   const leadMessageArr = [
-    `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been submitted.`,
-    <div>If needed, you may <a href={detailEditUrl}>correct the issues</a>.</div>
+    `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been submitted.`
   ];
+
+  if (!completedReview.processedInCaseflow) {
+    leadMessageArr[0] += ' It may take up to 24 hours for the claim to establish.';
+  }
+
+  leadMessageArr.push(
+    <div>If needed, you may <a href={detailEditUrl}>correct the issues</a>.</div>
+  );
 
   if (asyncJobUrl) {
     leadMessageArr.push(<div>You may check on the <a href={asyncJobUrl}>status of the VBMS establishment</a>.</div>);
@@ -148,7 +155,8 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
           detailEditUrl,
           veteran,
           formName: selectedForm.name,
-          requestIssues
+          requestIssues,
+          completedReview
         })
       }
       checklist={
@@ -162,6 +170,11 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     />
     { vacolsOptInIssues.length > 0 && <VacolsOptInList issues={vacolsOptInIssues} legacyAppeals={legacyAppeals} /> }
     { ineligibleRequestIssues.length > 0 && <IneligibleIssuesList issues={ineligibleRequestIssues} /> }
+    { !completedReview.processedInCaseflow && (
+      <h2 className="cf-msg-screen-deck">
+          You will receive a message in your Caseflow Inbox if the establishment fails or is delayed.
+      </h2>)
+    }
     </div>
     ;
   }

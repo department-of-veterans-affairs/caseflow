@@ -16,13 +16,13 @@ class OrganizationAssignedTasksTab < QueueTab
   end
 
   def tasks
-    Task.includes(*task_includes).visible_in_queue_table_view.active.where(parent: on_hold_tasks)
+    on_hold_task_children_and_timed_hold_parents
   end
 
   # rubocop:disable Metrics/AbcSize
   def column_names
     [
-      Constants.QUEUE_CONFIG.COLUMNS.HEARING_BADGE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
       Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
       Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
       show_regional_office_column ? Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name : nil,
@@ -33,4 +33,10 @@ class OrganizationAssignedTasksTab < QueueTab
     ].compact
   end
   # rubocop:enable Metrics/AbcSize
+
+  private
+
+  def on_hold_task_children
+    super.active
+  end
 end

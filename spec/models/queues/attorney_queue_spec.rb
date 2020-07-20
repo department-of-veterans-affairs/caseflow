@@ -17,10 +17,11 @@ describe AttorneyQueue, :all_dbs do
       let(:org1) { Colocated.singleton }
       let!(:action1) { create(:colocated_task, assigned_by: user, assigned_to: org1) }
       let(:org2) { Colocated.singleton }
-      let!(:action2) { create(:colocated_task, appeal: appeal, assigned_by: user, assigned_to: org2) }
+      let!(:action2) { create(:colocated_task, :ihp, appeal: appeal, assigned_by: user, assigned_to: org2) }
       let!(:action3) do
         create(
           :colocated_task,
+          :poa_clarification,
           appeal: appeal,
           assigned_by: user
         ).tap do |task|

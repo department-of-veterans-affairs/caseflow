@@ -7,7 +7,6 @@ import ApiUtil from '../util/ApiUtil';
 import { getMinutesToMilliseconds } from '../util/DateUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { extractAppealsAndAmaTasks } from './utils';
 
 import {
   onReceiveQueue,
@@ -17,10 +16,9 @@ import {
 import {
   setActiveOrganization
 } from './uiReducer/uiActions';
+import WindowUtil from '../util/WindowUtil';
 
 class OrganizationQueueLoadingScreen extends React.PureComponent {
-  reload = () => window.location.reload();
-
   createOrgQueueLoadPromise = () => {
     const requestOptions = {
       timeout: { response: getMinutesToMilliseconds(5) }
@@ -30,15 +28,14 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
       then(
         (response) => {
           const {
-            tasks: { data: tasks },
             id,
             organization_name: organizationName,
             is_vso: isVso,
+            user_can_bulk_assign: userCanBulkAssign,
             queue_config: queueConfig
           } = response.body;
 
-          this.props.setActiveOrganization(id, organizationName, isVso);
-          this.props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));
+          this.props.setActiveOrganization(id, organizationName, isVso, userCanBulkAssign);
           this.props.setQueueConfig(queueConfig);
         }
       ).
@@ -50,7 +47,7 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
   render = () => {
     const failStatusMessageChildren = <div>
       It looks like Caseflow was unable to load your cases.<br />
-      Please <a onClick={this.reload}>refresh the page</a> and try again.
+      Please <a onClick={WindowUtil.reloadWithPOST}>refresh the page</a> and try again.
     </div>;
 
     const loadingDataDisplay = <LoadingDataDisplay

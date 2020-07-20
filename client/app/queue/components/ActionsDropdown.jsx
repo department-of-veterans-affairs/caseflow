@@ -14,7 +14,7 @@ import {
 import {
   dropdownStyling
 } from '../constants';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 
 class ActionsDropdown extends React.PureComponent {
   changeRoute = (option) => {

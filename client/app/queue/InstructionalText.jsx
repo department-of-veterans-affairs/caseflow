@@ -1,13 +1,18 @@
 import Button from '../components/Button';
 import * as React from 'react';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
+
 const verticalLine = css(
   {
     borderLeft: 'thick solid lightgrey',
     marginLeft: '20px',
-    paddingLeft: '20px'
+    paddingLeft: '20px',
+    marginTop: '10px'
   }
 );
+
+const headerSpacing = css({ marginBottom: '10px' });
 
 export default class InstructionalText extends React.PureComponent {
     linkClicked = false;
@@ -24,13 +29,22 @@ export default class InstructionalText extends React.PureComponent {
         {this.props.informationalTitle}
       </Button>
       { this.linkClicked && <div {...verticalLine}>
-        <div>{this.props.informationHeader}</div>
-        <br />
-        <div>{this.props.bulletOne}</div>
-        <div> {this.props.bulletTwo}</div>
-        <div> {this.props.bulletThree}</div>
+        <div {...headerSpacing}>{this.props.informationHeader}</div>
+        <ol>
+          <li>{this.props.bulletOne}</li>
+          <li> {this.props.bulletTwo}</li>
+          <li> {this.props.bulletThree}</li>
+        </ol>
       </div>}
       </div>;
     }
 
 }
+
+InstructionalText.propTypes = {
+  informationalTitle: PropTypes.string,
+  informationHeader: PropTypes.string,
+  bulletOne: PropTypes.string,
+  bulletTwo: PropTypes.string,
+  bulletThree: PropTypes.string
+};
