@@ -156,7 +156,7 @@ feature "Higher-Level Review", :all_dbs do
       "If you do not see the claimant in the options below or if the claimant's information needs updated,"
     )
     expect(page).to have_content(
-      "What is the payee code for this claimant?\nPlease select an option."
+      "Please select an option.\nBob Vance, Spouse"
     )
 
     find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click

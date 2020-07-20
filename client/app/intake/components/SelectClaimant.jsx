@@ -8,6 +8,7 @@ import {
   DECEASED_PAYEE_CODES,
   LIVING_PAYEE_CODES
 } from '../constants';
+import { convertStringToBoolean } from '../util';
 import COPY from '../../../COPY';
 import { useSelector } from 'react-redux';
 import Button from '../../components/Button';
@@ -82,11 +83,16 @@ export const SelectClaimant = (props) => {
     veteranIsNotClaimant,
     attorneyFees
   ]);
+  const handleVeteranIsNotClaimant = (value) => {
+    value = convertStringToBoolean(value);
+    setVeteranIsNotClaimant(value);
+    setClaimant({ claimant: null, claimantType: (value ? 'dependent' : 'veteran') });
+  };
   const handleRemove = () => {
     setNewClaimant(null);
-    setClaimant({ claimant: null, claimantType: null, claimantNotes: null });
+    setClaimant({ claimant: null, claimantType: 'dependent', claimantNotes: null });
   };
-  const handleSelectClaimant = (value) => setClaimant({ claimant: value });
+  const handleSelectClaimant = (value) => setClaimant({ claimant: value, claimantType: 'dependent' });
   const handleAddClaimant = ({ name, participantId, claimantType, claimantNotes }) => {
     setNewClaimant({
       displayElem: <RemovableRadioLabel
@@ -142,7 +148,7 @@ export const SelectClaimant = (props) => {
     // disable veteran claimant option if veteran is deceased
     veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE;
     // set claimant value to someone other than the veteran
-    setVeteranIsNotClaimant('true');
+    handleVeteranIsNotClaimant('true');
   }
 
   return (
@@ -153,7 +159,7 @@ export const SelectClaimant = (props) => {
         strongLabel
         vertical
         options={veteranClaimantOptions}
-        onChange={setVeteranIsNotClaimant}
+        onChange={handleVeteranIsNotClaimant}
         errorMessage={veteranIsNotClaimantError}
         value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant.toString()}
       />

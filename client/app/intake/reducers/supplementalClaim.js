@@ -86,7 +86,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
   let veteranIsNotClaimant;
 
   if (action.payload) {
-    veteranIsNotClaimant = convertStringToBoolean(action.payload.veteranIsNotClaimant);
+    veteranIsNotClaimant = action.payload.veteranIsNotClaimant;
   }
 
   switch (action.type) {
@@ -119,7 +119,10 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: action.payload.claimant
       },
       payeeCode: {
-        $set: getDefaultPayeeCode(state, action.payload.claimant)
+        $set: action.payload.claimant && getDefaultPayeeCode(state, action.payload.claimant)
+      },
+      claimantType: {
+        $set: action.payload.claimantType
       }
     });
   case ACTIONS.SET_PAYEE_CODE:
@@ -183,7 +186,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')
       },
       veteranIsNotClaimantError: {
-        $set: getBlankOptionError(action.payload.responseErrorCodes, 'veteran_is_not_claimant')
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'claimant_type')
       },
       claimantError: {
         $set: getClaimantError(action.payload.responseErrorCodes)

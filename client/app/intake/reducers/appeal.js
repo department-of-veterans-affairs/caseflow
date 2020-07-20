@@ -84,7 +84,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
   let veteranIsNotClaimant;
 
   if (action.payload) {
-    veteranIsNotClaimant = convertStringToBoolean(action.payload.veteranIsNotClaimant);
+    veteranIsNotClaimant = action.payload.veteranIsNotClaimant;
   }
 
   switch (action.type) {
@@ -181,7 +181,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         $set: getReceiptDateError(action.payload.responseErrorCodes, state)
       },
       veteranIsNotClaimantError: {
-        $set: getBlankOptionError(action.payload.responseErrorCodes, 'veteran_is_not_claimant')
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'claimant_type')
       },
       claimantError: {
         $set: getClaimantError(action.payload.responseErrorCodes)

@@ -3,13 +3,8 @@
 class OtherClaimantValidator < ClaimantValidator
   ERRORS = {
     claimant_notes_required: "notes may not be blank for OtherClaimant",
-    payee_code_required: "payee_code may not be blank",
     claimant_required: "participant_id may not be blank",
-    claimant_address_required: "claimant_address_required",
-    claimant_address_invalid: "claimant_address_invalid",
-    claimant_city_invalid: "claimant_city_invalid",
     blank: "blank",
-    invalid: "invalid"
   }.freeze
 
   delegate :notes, to: :claimant
