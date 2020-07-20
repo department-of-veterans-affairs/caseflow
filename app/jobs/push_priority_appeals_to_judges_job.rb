@@ -14,7 +14,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   # Distribute all priority cases tied to a judge without limit
   def distribute_non_genpop_priority_appeals
-    eligible_judges.each do |judge|
+    judges_with_tied_priority_cases.each do |judge|
       Distribution.create!(judge: judge, priority_push: true).distribute!
     end
   end
@@ -25,6 +25,11 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     eligible_judge_target_distributions_with_leftovers.each do |judge, target|
       Distribution.create!(judge: judge, priority_push: true).distribute!(target)
     end
+  end
+
+  # Find all judges or previous acting judges that have priority cases tied to them
+  def judges_with_tied_priority_cases
+    User.active.where(css_id: VACOLS::CaseDocket.judge_cssids_tied_to_cases)
   end
 
   # Give any leftover cases to judges with the lowest distribution targets. Remove judges with 0 cases to be distributed
