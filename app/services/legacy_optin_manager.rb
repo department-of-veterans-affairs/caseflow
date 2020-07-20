@@ -18,11 +18,15 @@ class LegacyOptinManager
 
         pending_opt_ins.each(&:opt_in!)
 
+        # Handle legacy appeals where after this opt-in there are no more remaining issues
         affected_legacy_appeals.each do |legacy_appeal|
-          if legacy_appeal.issues.reject(&:closed?).empty?
-            LegacyIssueOptin.revert_opted_in_remand_issues(legacy_appeal.vacols_id) if legacy_appeal.remand?
-            LegacyIssueOptin.close_legacy_appeal_in_vacols(legacy_appeal) if legacy_appeal.active?
-            LegacyIssueOptin.opt_in_decided_appeal(legacy_appeal) if legacy_appeal.advance_failure_to_respond?
+          next unless legacy_appeal.issues.reject(&:closed?).empty?
+
+          LegacyIssueOptin.revert_opted_in_remand_issues(legacy_appeal.vacols_id) if legacy_appeal.remand?
+          LegacyIssueOptin.close_legacy_appeal_in_vacols(legacy_appeal) if legacy_appeal.active?
+          
+          if legacy_appeal.advance_failure_to_respond? && legacy_appeal.issues.all?(&:opted_into_ama?)
+            LegacyIssueOptin.opt_in_decided_appeal(legacy_appeal)
           end
         end
       end

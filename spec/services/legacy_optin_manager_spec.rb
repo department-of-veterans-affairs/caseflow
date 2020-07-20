@@ -224,6 +224,34 @@ describe LegacyOptinManager, :all_dbs do
           expect(failure_to_respond_case.bfddec).to eq(Time.zone.today)
         end
 
+        context "when an advanced failure to respond appeal has closed but not opted in issues" do
+          let(:failure_to_respond_case) do
+            create(:case,
+                   :status_complete,
+                   :disposition_advance_failure_to_respond,
+                   bfkey: "gcode",
+                   case_issues: [gcode_issue, another_issue],
+                   bfdsoc: 1.day.ago,
+                   bfddec: closed_disposition_date)
+          end
+          let(:another_issue) do
+            create(:case_issue, :disposition_advance_failure_to_respond, issseq: 2, issdcls: closed_disposition_date)
+          end
+          let(:another_ri) do
+            create(:request_issue, vacols_id: failure_to_respond_case.bfkey, vacols_sequence_id: another_issue.issseq)
+          end
+
+          it "does not opt in the advance failure to respond appeal" do
+            subject
+            # legacy issue still gets opted in
+            expect(vacols_issue("gcode", 1).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
+            expect(vacols_issue("gcode", 1).issdcls).to eq(Time.zone.today)
+
+            # Parent legacy appeal does not get opted in
+            expect(failure_to_respond_case.bfdc).to eq ("G")
+          end
+        end
+
         context "when issues are rolled back on a closed appeal" do
           before do
             LegacyOptinManager.new(decision_review: appeal).process!
