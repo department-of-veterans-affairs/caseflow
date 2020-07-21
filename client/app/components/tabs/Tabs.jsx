@@ -82,7 +82,7 @@ export const Tabs = ({
   return (
     <Tab.Container
       idPrefix={idPrefix}
-      active={active}
+      active={active.toString()}
       onChange={onChange}
       mountOnEnter={mountOnEnter}
       unmountOnExit={unmountOnExit}
