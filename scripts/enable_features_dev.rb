@@ -50,6 +50,9 @@ class FeatureToggleSearch
   attr_reader :file, :regex
 end
 
+# Flags that are turned off by default because
+#   - they make significantly drastic changes in Dev/Demo compared to Production
+#   - the work around the feature has been paused
 vexing_flags = [
   "legacy_das_deprecation"
 ]
