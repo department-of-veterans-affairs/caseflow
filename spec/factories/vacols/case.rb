@@ -242,6 +242,10 @@ FactoryBot.define do
       bfdc { "P" }
     end
 
+    trait :disposition_ama do
+      bfdc { "O" }
+    end
+
     trait :representative_american_legion do
       bfso { "A" }
     end
