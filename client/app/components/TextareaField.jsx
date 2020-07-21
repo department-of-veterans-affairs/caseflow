@@ -35,8 +35,9 @@ export default class TextareaField extends React.Component {
       optional,
     } = this.props;
 
-    const className =
-      'cf-form-textarea' + `${errorMessage ? ' usa-input-error' : ''}`;
+    const className = classNamesFn('cf-form-textarea', {
+      'usa-input-error': Boolean(errorMessage),
+    });
 
     // There is only a value for this variable if maxlength and value props are not null.
     // Otherwise characterLimitCount will be null also.
