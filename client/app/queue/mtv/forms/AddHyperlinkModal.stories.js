@@ -10,17 +10,21 @@ export default {
   parameters: {
     docs: {
       inlineStories: false,
-      iframeHeight: 600
-    }
-  }
+      iframeHeight: 600,
+    },
+  },
 };
 
-export const standard = () => (
-  <AddHyperlinkModal onCancel={action('cancel', 'standard')} onSubmit={action('submit', 'standard')} />
-);
+const Template = (args) => <AddHyperlinkModal {...args} />;
 
-standard.parameters = {
+export const Basic = Template.bind({});
+Basic.argTypes = {
+  onCancel: { action: 'cancel' },
+  onSubmit: { action: 'submit' },
+};
+Basic.parameters = {
   docs: {
-    storyDescription: 'This is used to add hyperlink options within `DecisionHyperlinks` component'
-  }
+    storyDescription:
+      'This is used to add hyperlink options within `DecisionHyperlinks` component',
+  },
 };
