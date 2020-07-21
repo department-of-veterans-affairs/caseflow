@@ -5,7 +5,7 @@
 # cases tied to a judge without limit. The second step distributes remaining general population cases (cases not tied to
 # an active judge) while attempting to even out the number of priority cases all judges have received over one month
 class PushPriorityAppealsToJudgesJob < CaseflowJob
-  include AutoCaseDistribution
+  include AutomaticCaseDistribution
 
   def perform
     distribute_non_genpop_priority_appeals
