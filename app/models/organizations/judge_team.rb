@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class JudgeTeam < Organization
-  scope :available_for_priority_case_distribution, -> { active }
+  scope :pushed_priority_cases_allowed, -> { active.where(accepts_priority_pushed_cases: true) }
 
   class << self
     def for_judge(user)
@@ -18,7 +18,7 @@ class JudgeTeam < Organization
     def create_for_judge(user)
       fail(Caseflow::Error::DuplicateJudgeTeam, user_id: user.id) if JudgeTeam.for_judge(user)
 
-      create!(name: user.css_id, url: user.css_id.downcase).tap do |org|
+      create!(name: user.css_id, url: user.css_id.downcase, accepts_priority_pushed_cases: true).tap do |org|
         # make_user_admin invokes add_user, which handles adding the JudgeTeamLead JudgeTeamRole
         OrganizationsUser.make_user_admin(user, org)
       end

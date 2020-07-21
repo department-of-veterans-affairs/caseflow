@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -41,6 +41,10 @@ export const SetOvertimeStatusModal = (props) => {
         props.setOvertime(externalId, resp.body.work_mode.overtime);
       });
   };
+
+  useEffect(() => {
+    props.resetSuccessMessages();
+  }, []);
 
   return (
     <React.Fragment>

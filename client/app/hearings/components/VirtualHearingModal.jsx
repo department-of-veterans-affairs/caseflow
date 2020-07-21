@@ -9,6 +9,7 @@ import Button from '../../components/Button';
 import COPY from '../../../COPY';
 import Modal from '../../components/Modal';
 import TextField from '../../components/TextField';
+import { HEARING_CONVERSION_TYPES } from '../constants';
 
 const getCentralOfficeTime = (hearing) => {
   const newTime = `${moment(hearing.scheduledFor).format('YYYY-MM-DD')}T${hearing.scheduledTimeString}`;
@@ -137,19 +138,14 @@ const ChangeToVirtual = (props) => {
 
   // Prefill appellant/veteran email address and representative email on mount.
   useEffect(() => {
-    if (_.isUndefined(virtualHearing.appellantEmail)) {
-      update(
-        {
-          appellantEmail: hearing.appellantIsNotVeteran ?
-            hearing.appellantEmailAddress :
-            hearing.veteranEmailAddress
-        }
-      );
-    }
+    // Determine which email to use
+    const appellantEmail = hearing.appellantIsNotVeteran ? hearing.appellantEmailAddress : hearing.veteranEmailAddress;
 
-    if (_.isUndefined(virtualHearing.representativeEmail)) {
-      update({ representativeEmail: hearing.representativeEmailAddress });
-    }
+    // Set the emails if not already set
+    update('virtualHearing', {
+      [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
+      [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress
+    });
   }, []);
 
   return (
@@ -162,7 +158,7 @@ const ChangeToVirtual = (props) => {
         label={`${appellantTitle} Email`}
         errorMessage={appellantEmailError}
         readOnly={readOnly}
-        onChange={(appellantEmail) => update({ appellantEmail })}
+        onChange={(appellantEmail) => update('virtualHearing', { appellantEmail })}
       />
       <TextField
         strongLabel
@@ -171,7 +167,7 @@ const ChangeToVirtual = (props) => {
         label="POA/Representative Email"
         errorMessage={representativeEmailError}
         readOnly={readOnly}
-        onChange={(representativeEmail) => update({ representativeEmail })}
+        onChange={(representativeEmail) => update('virtualHearing', { representativeEmail })}
       />
       <p
         dangerouslySetInnerHTML={
@@ -332,12 +328,7 @@ VirtualHearingModal.propTypes = {
     representativeEmailAddress: PropTypes.string,
     veteranEmailAddress: PropTypes.string
   }).isRequired,
-  type: PropTypes.oneOf([
-    'change_to_virtual',
-    'change_from_virtual',
-    'change_email',
-    'change_hearing_time'
-  ]).isRequired,
+  type: PropTypes.oneOf(HEARING_CONVERSION_TYPES).isRequired,
   timeWasEdited: PropTypes.bool,
   representativeEmailEdited: PropTypes.bool,
   appellantEmailEdited: PropTypes.bool,

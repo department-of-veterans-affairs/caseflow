@@ -85,9 +85,8 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     eligible_judges.map { |judge| [judge, judge_priority_distributions_this_month[judge.id] || 0] }.to_h
   end
 
-  # TODO: Update when kat's toggle has been merged
   def eligible_judges
-    @eligible_judges ||= JudgeTeam.available_for_priority_case_distribution.map(&:judge)
+    @eligible_judges ||= JudgeTeam.pushed_priority_cases_allowed.map(&:judge)
   end
 
   # Produces a hash of judge_id and the number of cases distributed to them in the last month

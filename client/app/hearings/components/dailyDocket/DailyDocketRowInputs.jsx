@@ -100,7 +100,7 @@ export const HearingDetailsLink = ({ hearing }) => (
     <b>Hearing Details</b>
     <br />
     <div {...staticSpacing}>
-      <Link href={`/hearings/${hearing.externalId}/details`}>
+      <Link to={`/${hearing.externalId}/details`}>
         Edit Hearing Details
         <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
       </Link>

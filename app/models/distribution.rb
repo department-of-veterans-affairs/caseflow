@@ -2,7 +2,7 @@
 
 class Distribution < CaseflowRecord
   include ActiveModel::Serializers::JSON
-  include AmaCaseDistribution
+  include AutomaticCaseDistribution
 
   has_many :distributed_cases
   belongs_to :judge, class_name: "User"
@@ -43,7 +43,7 @@ class Distribution < CaseflowRecord
     multi_transaction do
       ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = #{transaction_time_out}"
 
-      priority_push? ? priority_push_distribution(limit) : ama_distribution
+      priority_push? ? priority_push_distribution(limit) : requested_distribution
 
       update!(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
     end
