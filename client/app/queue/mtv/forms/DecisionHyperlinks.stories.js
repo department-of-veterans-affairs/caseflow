@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { action } from '@storybook/addon-actions';
 import { DecisionHyperlinks } from './DecisionHyperlinks';
+import { dispositions } from '../mtvConstants';
 
 export default {
   title: 'Queue/Motions to Vacate/Motions Attorney/DecisionHyperlinks',
@@ -11,9 +11,9 @@ export default {
     disposition: {
       control: {
         type: 'select',
-        options: ['granted', 'partially_granted', 'denied', 'dismissed'],
+        options: dispositions,
       },
-    }
+    },
   },
 };
 
