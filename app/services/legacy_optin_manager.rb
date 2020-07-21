@@ -22,12 +22,7 @@ class LegacyOptinManager
         affected_legacy_appeals.each do |legacy_appeal|
           next unless legacy_appeal.issues.reject(&:closed?).empty?
 
-          LegacyIssueOptin.revert_opted_in_remand_issues(legacy_appeal.vacols_id) if legacy_appeal.remand?
-          LegacyIssueOptin.close_legacy_appeal_in_vacols(legacy_appeal) if legacy_appeal.active?
-          
-          if legacy_appeal.advance_failure_to_respond? && legacy_appeal.issues.all?(&:opted_into_ama?)
-            LegacyIssueOptin.opt_in_decided_appeal(legacy_appeal)
-          end
+          LegacyIssueOptin.handle_legacy_appeal_opt_ins(legacy_appeal)
         end
       end
     end
