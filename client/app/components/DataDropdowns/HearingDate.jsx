@@ -54,7 +54,7 @@ class HearingDateDropdown extends React.Component {
             const scheduled = formatDateStr(hearingDate.scheduledFor);
 
             return {
-              label: `${scheduled} (${hearingDate.filledSlots}/${hearingDate.totalSlots})`,
+              label: `${scheduled} ${hearingDate.room} (${hearingDate.filledSlots}/${hearingDate.totalSlots})`,
               value: {
                 ...hearingDate,
                 hearingDate: formatDateStr(hearingDate.scheduledFor, 'YYYY-MM-DD', 'YYYY-MM-DD')
