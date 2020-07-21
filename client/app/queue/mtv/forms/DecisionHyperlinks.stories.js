@@ -6,21 +6,33 @@ import { DecisionHyperlinks } from './DecisionHyperlinks';
 export default {
   title: 'Queue/Motions to Vacate/Motions Attorney/DecisionHyperlinks',
   component: DecisionHyperlinks,
-  decorators: []
+  argTypes: {
+    onChange: { action: 'change' },
+    disposition: {
+      control: {
+        type: 'select',
+        options: ['granted', 'partially_granted', 'denied', 'dismissed'],
+      },
+    }
+  },
 };
 
-export const granted = () => <DecisionHyperlinks onChange={action('change', 'granted')} disposition="granted" />;
+const Template = (args) => <DecisionHyperlinks {...args} />;
 
-granted.parameters = {
+export const Granted = Template.bind({});
+Granted.args = { disposition: 'granted' };
+Granted.parameters = {
   docs: {
-    storyDescription: 'This is used by attorney to add hyperlinks for decision documents (grant-type disposition)'
-  }
+    storyDescription:
+      'This is used by attorney to add hyperlinks for decision documents (grant-type disposition)',
+  },
 };
 
-export const denied = () => <DecisionHyperlinks onChange={action('change', 'denied')} disposition="denied" />;
-
-denied.parameters = {
+export const Denied = Template.bind({});
+Denied.args = { disposition: 'denied' };
+Denied.parameters = {
   docs: {
-    storyDescription: 'This is used by attorney to add hyperlinks for decision documents (denied disposition)'
-  }
+    storyDescription:
+      'This is used by attorney to add hyperlinks for decision documents (denied disposition)',
+  },
 };
