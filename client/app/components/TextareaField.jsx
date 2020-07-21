@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import classNamesFn from 'classnames';
 import pluralize from 'pluralize';
 
+import { FormLabel } from './FormLabel';
+
 export default class TextareaField extends React.Component {
   onChange = (event) => {
     this.props.onChange(event.target.value);
@@ -35,12 +37,7 @@ export default class TextareaField extends React.Component {
     // Otherwise characterLimitCount will be null also.
     const characterLimitCount = (Boolean(maxlength) && Boolean(value)) ? (maxlength - value.length) : null;
 
-    const labelContents =
-      <span>
-        {label || name}
-        {required && <span className="cf-required">Required</span>}
-        {optional && <span className="cf-optional">Optional</span>}
-      </span>;
+    const labelContents = <FormLabel label={label} name={name} required={required} optional={optional} />;
 
     // hideLabel still leaves the label element in the DOM (for a11y purposes)
     // but makes it invisible to any screens

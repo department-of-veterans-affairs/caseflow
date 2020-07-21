@@ -1,10 +1,17 @@
 import React from 'react';
 
 import { HearingTime } from 'app/hearings/components/modalForms/HearingTime';
-import HEARING_TIME_OPTIONS from 'constants/HEARING_TIME_OPTIONS.json';
 import { mount } from 'enzyme';
+import HEARING_TIME_OPTIONS from 'constants/HEARING_TIME_OPTIONS';
+import { COMMON_TIMEZONES } from 'app/constants/AppConstants';
+import TIMEZONES from 'constants/TIMEZONES';
+
+const [timezoneLabel] = Object.keys(TIMEZONES).filter((zone) => TIMEZONES[zone] === COMMON_TIMEZONES[3]);
 
 describe('HearingTime', () => {
+  // Ignore warnings about SearchableDropdown
+  jest.spyOn(console, 'error').mockReturnValue();
+
   test('Matches snapshot with default props when passed in', () => {
     const form = mount(<HearingTime />);
 
@@ -26,6 +33,15 @@ describe('HearingTime', () => {
     // Expect the naming of forms to match expected
     expect(form.exists({ name: 'hearingTime0' })).toBe(true);
     expect(form.exists({ name: 'optionalHearingTime0' })).toBe(true);
+  });
+
+  test('Matches snapshot when enableZone is true', () => {
+    // Run the test
+    const hearingTime = mount(<HearingTime enableZone value={HEARING_TIME_OPTIONS[0].value} />);
+
+    // Assertions
+    expect(hearingTime).toMatchSnapshot();
+    expect(hearingTime.find('Select').prop('value').label).toContain(timezoneLabel);
   });
 
   test('Matches snapshot when other time is not selected', () => {
