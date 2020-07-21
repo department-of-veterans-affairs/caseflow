@@ -14,7 +14,7 @@ import { ReadOnly } from './details/ReadOnly';
 import { virtualHearingModalStyles } from './details/style';
 
 const getCentralOfficeTime = (hearing) => {
-  const newTime = `${moment(hearing.scheduledFor).format('YYYY-MM-DD')}T${ hearing.scheduledTimeString }`;
+  const newTime = `${moment(hearing.scheduledFor).format('YYYY-MM-DD')}T${hearing.scheduledTimeString}`;
 
   return moment.
     tz(newTime, hearing.regionalOfficeTimezone).
@@ -59,7 +59,7 @@ DateTime.propTypes = {
     readableRequestType: PropTypes.string,
     scheduledFor: PropTypes.string,
   }),
-  timeWasEdited: PropTypes.bool,
+  timeWasEdited: PropTypes.bool
 };
 
 const ReadOnlyEmails = ({
@@ -183,7 +183,9 @@ ChangeFromVirtual.propTypes = {
 };
 
 const ChangeToVirtual = (props) => {
-  const { hearing, readOnly, representativeEmailError, update, appellantEmailError, virtualHearing } = props;
+  const {
+    hearing, readOnly, representativeEmailError, update, appellantEmailError, virtualHearing
+  } = props;
   const appellantTitle = getAppellantTitleForHearing(hearing);
 
   // Prefill appellant/veteran email address and representative email on mount.
@@ -194,7 +196,7 @@ const ChangeToVirtual = (props) => {
     // Set the emails if not already set
     update('virtualHearing', {
       [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
-      [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress,
+      [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress
     });
   }, []);
 
@@ -220,8 +222,8 @@ const ChangeToVirtual = (props) => {
         onChange={(representativeEmail) => update('virtualHearing', { representativeEmail })}
       />
       <p
-        dangerouslySetInnerHTML={{
-          __html: sprintf(COPY.VIRTUAL_HEARING_MODAL_CONFIRMATION, { appellantTitle }) }
+        dangerouslySetInnerHTML={
+          { __html: sprintf(COPY.VIRTUAL_HEARING_MODAL_CONFIRMATION, { appellantTitle }) }
         }
       />
     </React.Fragment>
@@ -267,7 +269,7 @@ const TYPES = {
     intro: COPY.VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_INTRO,
     button: COPY.VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON,
     element: ChangeEmail
-  },
+  }
 };
 
 const VirtualHearingModal = (props) => {
@@ -344,8 +346,8 @@ const VirtualHearingModal = (props) => {
         }
       >
         <p
-          dangerouslySetInnerHTML={{
-            __html: sprintf(typeSettings.intro, { appellantTitle }) }
+          dangerouslySetInnerHTML={
+            { __html: sprintf(typeSettings.intro, { appellantTitle }) }
           }
         />
 
