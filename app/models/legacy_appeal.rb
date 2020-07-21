@@ -1122,6 +1122,16 @@ class LegacyAppeal < CaseflowRecord
       repository.nonpriority_decisions_per_year
     end
 
+    def rollback_opt_in_on_decided_appeal(appeal:, user:, original_data:)
+      return unless appeal.disposition == "AMA SOC/SSOC Opt-in"
+
+      repository.rollback_opt_in_on_decided_appeal!(
+        appeal: appeal,
+        user: user,
+        original_data: original_data
+      )
+    end
+
     private
 
     def close_single(appeal:, user:, closed_on:, disposition:)

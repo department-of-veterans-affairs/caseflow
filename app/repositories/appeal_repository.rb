@@ -613,6 +613,28 @@ class AppealRepository
     end
   end
 
+  # If an appeal was previously decided, we are just restoring data, we do not have to reset the appeal to active
+  # original_data example: { disposition_code: "G", decision_date: "2019-11-30", folder_decision_date: "2019-11-30" }
+  def rollback_opt_in_on_decided_appeal!(appeal:, user:, original_data:)
+    return unless appeal.disposition == "AMA SOC/SSOC Opt-in"
+
+    case_record = appeal.case_record
+    folder_record = case_record.folder
+
+    VACOLS::Case.transaction do
+      case_record.update!(
+        bfddec: original_data[:decision_date],
+        bfdc: original_data[:disposition_code],
+      )
+
+      folder_record.update!(
+        tidcls: original_data[:folder_decision_date],
+        timdtime: VacolsHelper.local_time_with_utc_timezone,
+        timduser: user.regional_office
+      )
+    end
+  end
+
   def self.certify(appeal:, certification:)
     certification_date = AppealRepository.dateshift_to_utc Time.zone.now
 
