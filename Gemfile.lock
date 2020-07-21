@@ -47,8 +47,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: eb402ebd17eb39cd13df3c21d749e1b598676324
-  ref: eb402ebd17eb39cd13df3c21d749e1b598676324
+  revision: 21e2c4ac87be8a340073ceea403a685154df2f8f
+  ref: 21e2c4ac87be8a340073ceea403a685154df2f8f
   specs:
     bgs (0.2)
       httpclient
@@ -552,7 +552,7 @@ GEM
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (>= 1.1, < 3)
-    savon (2.12.0)
+    savon (2.12.1)
       akami (~> 1.2)
       builder (>= 2.1.2)
       gyoku (~> 1.2)
