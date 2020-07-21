@@ -5,7 +5,7 @@
 # cases tied to a judge without limit. The second step distributes remaining general population cases (cases not tied to
 # an active judge) while attempting to even out the number of priority cases all judges have received over one month
 class PushPriorityAppealsToJudgesJob < CaseflowJob
-  include AmaCaseDistribution
+  include AutoCaseDistribution
 
   def perform
     distribute_non_genpop_priority_appeals
@@ -14,7 +14,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   # Distribute all priority cases tied to a judge without limit
   def distribute_non_genpop_priority_appeals
-    judges_with_tied_priority_cases.each do |judge|
+    judges_with_tied_priority_cases.map do |judge|
       Distribution.create!(judge: judge, priority_push: true).distribute!
     end
   end
@@ -22,7 +22,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   # Distribute remaining general population cases while attempting to even out the number of priority cases all judges
   # have received over one month
   def distribute_genpop_priority_appeals
-    eligible_judge_target_distributions_with_leftovers.each do |judge, target|
+    eligible_judge_target_distributions_with_leftovers.map do |judge, target|
       Distribution.create!(judge: judge, priority_push: true).distribute!(target)
     end
   end
