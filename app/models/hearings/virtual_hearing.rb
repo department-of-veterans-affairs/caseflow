@@ -45,7 +45,6 @@ class VirtualHearing < CaseflowRecord
   validates_email_format_of :judge_email, allow_nil: true
   validates_email_format_of :appellant_email
   validates_email_format_of :representative_email, allow_nil: true
-  validate :associated_hearing_is_video, on: :create
   validate :hearing_is_not_virtual, on: :create
 
   scope :eligible_for_deletion,

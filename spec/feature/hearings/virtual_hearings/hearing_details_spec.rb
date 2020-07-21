@@ -127,7 +127,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
   context "user switches hearing type to 'Virtual'" do
     scenario "veteran and representative emails are pre loaded" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
-      click_dropdown(name: "hearingType", index: 1)
+      click_dropdown(name: "hearingType", index: 0)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
       expect(page).to have_field("appellant-email", with: pre_loaded_veteran_email)
       expect(page).to have_field("representative-email", with: pre_loaded_rep_email)
@@ -135,7 +135,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
 
     scenario "hearing is switched to 'Virtual'" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
-      click_dropdown(name: "hearingType", index: 1)
+      click_dropdown(name: "hearingType", index: 0)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
 
       fill_in "appellant-email", with: fill_in_veteran_email
@@ -168,7 +168,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
       # Change the hearing type to virtual
-      click_dropdown(name: "hearingType", index: 1)
+      click_dropdown(name: "hearingType", index: 0)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
 
       # Fill email address and confirm changes to close the Modal
@@ -190,7 +190,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       hearing.update(judge: current_user)
 
       # Change the hearing type to virtual
-      click_dropdown(name: "hearingType", index: 1)
+      click_dropdown(name: "hearingType", index: 0)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE)
 
       # Fill email address and confirm changes to close the Modal

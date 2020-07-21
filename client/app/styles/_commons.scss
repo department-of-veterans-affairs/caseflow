@@ -8,6 +8,10 @@ body {
   background: $cf-background;
 }
 
+pre {
+  font-family: inherit;
+}
+
 .content {
   min-height: calc(100vh - 125px);
   padding-bottom: 30px;

@@ -113,6 +113,12 @@ const commonComponentsReducer = (state = initialState, action = {}) => {
         $set: state.alerts.filter((alert) => action.payload.timestamps.indexOf(alert.timestamp) === -1)
       }
     });
+  case ACTIONS.CLEAR_ALERTS:
+    return update(state, {
+      alerts: {
+        $set: []
+      }
+    });
   case ACTIONS.RECEIVE_REGIONAL_OFFICES:
     return update(state, {
       regionalOffices: {

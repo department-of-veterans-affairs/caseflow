@@ -225,11 +225,7 @@ export const toggleCancelled = (first, second, form) =>
  */
 export const getChanges = (first, second) => {
   // Handle cancelled status
-  const { init, current } = toggleCancelled(
-    first,
-    second,
-    'virtualHearingForm'
-  );
+  const { init, current } = toggleCancelled(first, second, 'virtualHearing');
 
   return deepDiff(init, current);
 };
@@ -250,23 +246,26 @@ export const getOptionsFromObject = (object, noneOption, transformer) =>
  */
 export const zoneName = (name) => {
   // Filter the zone name
-  const [zone] = Object.keys(TIMEZONES).filter((tz) => TIMEZONES[tz] === name);
+  const [zone] = Object.keys(TIMEZONES).filter((tz) => TIMEZONES[tz] === COMMON_TIMEZONES[3]);
 
   // Return the friendly zone name
-  return zone;
+  return moment(name, 'h:mm A').isValid() ? `${moment(name, 'h:mm A').format('h:mm A')} ${zone}` : name;
 };
 
 /**
  * Method to add timezone to the label of the time
  * @returns {Array} -- List of hearing times with the zone appended to the label
  */
-export const hearingTimeOptsWithZone = () =>
-  HEARING_TIME_OPTIONS.map((time) => ({
-    ...time,
-    label: `${moment(time.label, 'h:mm A').format('h:mm A')} ${zoneName(
-      COMMON_TIMEZONES[0]
-    )}`
-  }));
+export const hearingTimeOptsWithZone = (options) =>
+  options.map((time) => {
+    const label = time.label ? 'label' : 'displayText';
+
+    return {
+      ...time,
+      [label]: zoneName(time[label])
+
+    };
+  });
 
 /**
  * Method to normalize the Regional Office Timezone names
