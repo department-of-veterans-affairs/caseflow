@@ -4,7 +4,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   queue_with_priority :low_priority
   application_attr :hearing_schedule
 
-  QUERY_LIMIT = 500
+  QUERY_LIMIT = 750
   def create_schedule_hearing_tasks
     AppealRepository.create_schedule_hearing_tasks
   end
