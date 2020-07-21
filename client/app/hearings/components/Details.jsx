@@ -93,7 +93,7 @@ const HearingDetails = (props) => {
       // Determine the current state and whether to error
       const virtual = hearing.isVirtual || hearing.wasVirtual || converting;
       const noEmail = !hearing.virtualHearing?.appellantEmail;
-      const emailUpdated = editedEmails?.appellantEmailEdited;
+      const emailUpdated = editedEmails?.appellantEmailEdited || editedEmails?.representativeEmailEdited;
       const timezoneUpdated = editedEmails?.representativeTzEdited || editedEmails?.appellantTzEdited;
 
       if (virtual && noEmail) {
@@ -105,7 +105,7 @@ const HearingDetails = (props) => {
         // Focus to the error
         return document.getElementById('email-section').scrollIntoView();
       } else if ((emailUpdated || timezoneUpdated) && !converting) {
-        return openVirtualHearingModal({ type: emailUpdated ? 'change_email' : 'change_hearing_time' });
+        return openVirtualHearingModal({ type: 'change_email' });
       }
 
       // Only send updated properties

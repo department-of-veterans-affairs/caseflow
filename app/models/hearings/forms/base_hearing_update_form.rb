@@ -92,14 +92,18 @@ class BaseHearingUpdateForm
   end
 
   def only_time_updated_or_timezone_updated?
-    (!virtual_hearing_created? &&
-      scheduled_time_string.present? ||
-      # Also send virtual hearing time updates if the representative timezone is changed
-      (virtual_hearing_attributes&.dig(:representative_tz).present? &&
-        virtual_hearing_attributes&.dig(:representative_email).blank?) ||
-      (virtual_hearing_attributes&.dig(:appellant_tz).present? &&
-        virtual_hearing_attributes&.dig(:appellant_email).blank?)
-    )
+    # Always false if the virtual hearing was just created or if any emails were changed
+    if virtual_hearing_created? || virtual_hearing_attributes&.keys&.any? do |a|
+         %w[appellant_email representative_email].include? a
+       end
+      return false
+    end
+
+    # True if hearing time was updated
+    scheduled_time_string.present? ||
+      # True if the representative timezone or appellant timezone is changed
+      virtual_hearing_attributes&.dig(:representative_tz).present? ||
+      virtual_hearing_attributes&.dig(:appellant_tz).present?
   end
 
   def start_async_job?
@@ -144,12 +148,18 @@ class BaseHearingUpdateForm
     virtual_hearing_attributes&.key?(:request_cancelled) || scheduled_time_string.present?
   end
 
+  # Send appellant email if cancelling, updating time or updating either appellant email or appellant timezone
   def appellant_email_sent_flag
-    !(updates_requiring_email? || virtual_hearing_attributes&.key?(:appellant_email))
+    !(updates_requiring_email? ||
+      virtual_hearing_attributes&.key?(:appellant_email) ||
+      virtual_hearing_attributes&.key?(:appellant_tz))
   end
 
+  # Send rep email if cancelling, updating time or updating either rep email or rep timezone
   def representative_email_sent_flag
-    !(updates_requiring_email? || virtual_hearing_attributes&.key?(:representative_email))
+    !(updates_requiring_email? ||
+      virtual_hearing_attributes&.key?(:representative_email) ||
+      virtual_hearing_attributes&.key?(:representative_tz))
   end
 
   # also returns false if the judge id is present or true if the virtual hearing is being cancelled
@@ -197,7 +207,6 @@ class BaseHearingUpdateForm
     @virtual_hearing_created ||= false
   end
 
-  # rubocop:disable Metrics/AbcSize
   def create_or_update_virtual_hearing
     # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
     virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
@@ -227,7 +236,6 @@ class BaseHearingUpdateForm
       DataDogService.increment_counter(metric_name: "created_virtual_hearing.successful", **updated_metric_info)
     end
   end
-  # rubocop:enable Metrics/AbcSize
 
   def only_emails_updated?
     email_changed = virtual_hearing_attributes&.key?(:appellant_email) ||
