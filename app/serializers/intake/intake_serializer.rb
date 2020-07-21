@@ -23,4 +23,8 @@ class Intake::IntakeSerializer
   attribute :relationships do |object|
     object.veteran&.relationships&.map(&:serialize)
   end
+
+  attribute :receipt_date do |object|
+    object.detail&.receipt_date
+  end
 end

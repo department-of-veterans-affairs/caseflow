@@ -25,7 +25,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.sameOffice
     },
     benefitType: {
-      $set: serverIntake.benefit_type
+      $set: serverIntake.benefitType
     }
   });
 };

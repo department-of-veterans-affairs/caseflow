@@ -2,6 +2,7 @@
 
 class Intake::ClaimReviewIntakeSerializer < Intake::DecisionReviewIntakeSerializer
   include FastJsonapi::ObjectSerializer
+  set_key_transform :camel_lower
 
   attribute :detail_edit_url do |object|
     object.detail&.reload&.caseflow_only_edit_issues_url

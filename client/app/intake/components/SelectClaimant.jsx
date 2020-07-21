@@ -6,7 +6,7 @@ import {
   BOOLEAN_RADIO_OPTIONS,
   BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE,
   DECEASED_PAYEE_CODES,
-  LIVING_PAYEE_CODES 
+  LIVING_PAYEE_CODES
 } from '../constants';
 import COPY from '../../../COPY';
 import { useSelector } from 'react-redux';

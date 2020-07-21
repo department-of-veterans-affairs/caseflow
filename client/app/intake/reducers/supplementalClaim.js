@@ -21,7 +21,7 @@ const updateFromServerIntake = (state, serverIntake) => {
   return update(state, {
     ...commonState,
     benefitType: {
-      $set: serverIntake.benefit_type
+      $set: serverIntake.benefitType
     }
   });
 };
