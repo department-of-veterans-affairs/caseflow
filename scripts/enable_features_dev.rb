@@ -50,8 +50,13 @@ class FeatureToggleSearch
   attr_reader :file, :regex
 end
 
+vexing_flags = [
+  "legacy_das_deprecation"
+]
+
 all_features = AllFeatureToggles.new.call.flatten.uniq
 all_features.map! { |feature| feature.split(",")[0] }
+all_features.reject! { |toggle| vexing_flags.include? toggle }
 
 all_features.each_with_object([]) do |feature, result|
   result << { "feature" => feature, "enable_all" => true }
