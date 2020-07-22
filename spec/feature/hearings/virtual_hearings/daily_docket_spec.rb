@@ -8,17 +8,36 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
   end
 
   let!(:current_user) { User.authenticate!(css_id: "BVAYELLOW", roles: ["Edit HearSched", "Build HearSched"]) }
-  let!(:hearing) { create(:hearing, :with_tasks, regional_office: "RO06", scheduled_time: "9:00AM") }
+  let(:regional_office_key) { "RO59" } # Honolulu, HI
+  let(:regional_office_timezone) { RegionalOffice.new(regional_office_key).timezone }
+  let!(:hearing) { create(:hearing, :with_tasks, regional_office: regional_office_key, scheduled_time: "9:00AM") }
   let!(:virtual_hearing) { create(:virtual_hearing, :all_emails_sent, status: :active, hearing: hearing) }
+  let(:updated_hearing_time) { "11:00 am" }
+  let(:expected_regional_office_time) do
+    Time
+      .parse(updated_hearing_time)
+      .strftime("%F %T")
+      .in_time_zone(regional_office_timezone) # cast the updated hearing time to the ro timezone
+      .strftime("%-l:%M %P %Z") # and render it in the format expected in the modal
+  end
+  let(:expected_central_office_time) do
+    Time
+      .parse(updated_hearing_time)
+      .strftime("%F %T")
+      .in_time_zone(regional_office_timezone) # cast the updated hearing time to the ro timezone
+      .in_time_zone(HearingTimeService::CENTRAL_OFFICE_TIMEZONE) # convert it to the central office timezone
+      .strftime("%-l:%M %P ET") # and render it in the format expected in the modal
+  end
 
   scenario "Virtual hearing time is updated" do
     visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
     hearing.reload
     expect(page).to have_content("Daily Docket")
-    choose("hearingTime1_other", allow_label_click: true)
-    click_dropdown(name: "optionalHearingTime1", index: 2)
+    choose("hearingTime0_other", allow_label_click: true)
+    click_dropdown(name: "optionalHearingTime0", text: updated_hearing_time)
     expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE)
     expect(page).to have_content(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
+    expect(page).to have_content("Time: #{expected_central_office_time} / #{expected_regional_office_time}")
     click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
 
     hearing.reload
@@ -35,7 +54,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     expect(events.count).to eq 3
     expect(events.where(sent_by_id: current_user.id).count).to eq 3
     expect(events.where(email_type: "updated_time_confirmation").count).to eq 3
-    expect(events.where(email_address: hearing.virtual_hearing.veteran_email).count).to eq 1
+    expect(events.where(email_address: hearing.virtual_hearing.appellant_email).count).to eq 1
     expect(events.where(recipient_role: "appellant").count).to eq 1
     expect(events.where(email_address: hearing.virtual_hearing.representative_email).count).to eq 1
     expect(events.where(recipient_role: "representative").count).to eq 1
@@ -47,26 +66,26 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
     visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
     hearing.reload
     expect(page).to have_content("Daily Docket")
-    choose("hearingTime1_other", allow_label_click: true)
-    click_dropdown(name: "optionalHearingTime1", index: 3)
+    choose("hearingTime0_other", allow_label_click: true)
+    click_dropdown(name: "optionalHearingTime0", index: 3)
     click_button("Change-Hearing-Time-button-id-close")
   end
 
   context "Dropdowns and radio buttons are disabled while async job is running" do
     scenario "async job is not completed" do
-      virtual_hearing.update(veteran_email_sent: false)
+      virtual_hearing.update(appellant_email_sent: false)
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-      expect(find(".dropdown-#{hearing.uuid}-disposition")).to have_css(".is-disabled")
+      expect(find(".dropdown-#{hearing.uuid}-disposition")).to have_css(".cf-select__control--is-disabled")
       expect(all(".cf-form-radio-option").first).to have_css(".disabled")
-      expect(find(".dropdown-optionalHearingTime1")).to have_css(".is-disabled")
+      expect(find(".dropdown-optionalHearingTime0")).to have_css(".cf-select__control--is-disabled")
     end
 
     scenario "async job is completed" do
-      virtual_hearing.update(veteran_email_sent: true)
+      virtual_hearing.update(appellant_email_sent: true)
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-      expect(find(".dropdown-#{hearing.uuid}-disposition")).to have_no_css(".is-disabled")
+      expect(find(".dropdown-#{hearing.uuid}-disposition")).to have_no_css(".cf-select__control--is-disabled")
       expect(all(".cf-form-radio-option").first).to have_no_css(".disabled")
-      expect(find(".dropdown-optionalHearingTime1")).to have_no_css(".is-disabled")
+      expect(find(".dropdown-optionalHearingTime0")).to have_no_css(".cf-select__control--is-disabled")
     end
   end
 

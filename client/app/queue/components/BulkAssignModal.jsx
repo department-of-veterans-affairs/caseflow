@@ -9,12 +9,11 @@ import ApiUtil from '../../util/ApiUtil';
 import QueueFlowModal from './QueueFlowModal';
 import Dropdown from '../../components/Dropdown';
 import { cityForRegionalOfficeCode } from '../utils';
-import { bulkAssignTasks } from '../QueueActions';
-import { setActiveOrganization } from '../uiReducer/uiActions';
+import { setActiveOrganization, requestSave } from '../uiReducer/uiActions';
 import LoadingScreen from '../../components/LoadingScreen';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY';
-import WindowUtil from '../../util/WindowUtil';
+import { setQueueConfig } from '../QueueActions';
 
 const BULK_ASSIGN_ISSUE_COUNT = [5, 10, 20, 30, 40, 50];
 
@@ -61,8 +60,6 @@ class BulkAssignModal extends React.PureComponent {
   }
 
   bulkAssignTasks = () => {
-    this.props.bulkAssignTasks(this.state.modal);
-
     const {
       taskType,
       numberOfTasks,
@@ -80,9 +77,14 @@ class BulkAssignModal extends React.PureComponent {
       }
     };
 
-    return ApiUtil.post('/bulk_task_assignments', { data }).then(() => {
+    const successMessage = {
+      title: `You have bulk assigned ${numberOfTasks} ${taskType.replace(/([a-z])([A-Z])/g, '$1 $2')} tasks`,
+      detail: 'Please go to your individual queue to see any self assigned tasks'
+    };
+
+    return this.props.requestSave('/bulk_task_assignments', { data }, successMessage).then((resp) => {
       this.props.history.push(`/organizations/${this.organizationUrl()}`);
-      WindowUtil.reloadWithPOST();
+      this.props.setQueueConfig(resp.body.queue_config);
     }).
       catch(() => {
         // handle the error
@@ -223,11 +225,12 @@ class BulkAssignModal extends React.PureComponent {
 }
 
 BulkAssignModal.propTypes = {
-  bulkAssignTasks: PropTypes.func,
   highlightFormItems: PropTypes.bool,
   history: PropTypes.object,
   location: PropTypes.object,
-  onCancel: PropTypes.func
+  onCancel: PropTypes.func,
+  requestSave: PropTypes.func,
+  setQueueConfig: PropTypes.func
 };
 
 const mapStateToProps = (state) => {
@@ -241,8 +244,10 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({ bulkAssignTasks,
-    setActiveOrganization }, dispatch)
-);
+  bindActionCreators({
+    setActiveOrganization,
+    requestSave,
+    setQueueConfig
+  }, dispatch));
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(BulkAssignModal));

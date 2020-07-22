@@ -1,6 +1,22 @@
 # frozen_string_literal: true
 
+##
+# Virtual hearing is a type of hearing where the veteran/appellant can have a hearing with a VLJ
+# by joining a video conference from any device without having to travel to a VA facility.
+# Caseflow integrates with a conferencing solution called Pexip to create conference rooms
+# and uses GovDelivery to send email notifications to participants of hearing
+# which includes the veteran/appellant, judge, and representative.
+#
+# This model tracks data about the conference rooms as well as the participant email address
+# and whether the emails have been sent out. When a hearing coordinator switches a hearing to
+# virtual hearing, CreateConferenceJob is kicked off to create a conference and send out
+# emails to participants including the link to video conference as well as other details about
+# the hearing. DeleteConferencesJob is kicked off to delete the conference resource
+# when the the virtual hearing is cancelled or after the hearing takes place.
+
 class VirtualHearing < CaseflowRecord
+  include UpdatedByUserConcern
+
   class << self
     def client_host_or_default
       ENV["PEXIP_CLIENT_HOST"] || "care.evn.va.gov"
@@ -19,24 +35,17 @@ class VirtualHearing < CaseflowRecord
 
   belongs_to :hearing, polymorphic: true
   belongs_to :created_by, class_name: "User"
-  belongs_to :updated_by, class_name: "User", optional: true
 
   # Tracks the progress of the job that creates the virtual hearing in Pexip.
   has_one :establishment, class_name: "VirtualHearingEstablishment"
 
   before_create :assign_created_by_user
-  before_save :assign_updated_by_user
 
   validates :appellant_email, presence: true, on: :create
   validates_email_format_of :judge_email, allow_nil: true
   validates_email_format_of :appellant_email
   validates_email_format_of :representative_email, allow_nil: true
-  validate :associated_hearing_is_video, on: :create
   validate :hearing_is_not_virtual, on: :create
-
-  # T0D0: Finish migration from veteran_email => appellant_email.
-  alias_attribute :appellant_email, :veteran_email
-  alias_attribute :appellant_email_sent, :veteran_email_sent
 
   scope :eligible_for_deletion,
         lambda {
@@ -149,7 +158,7 @@ class VirtualHearing < CaseflowRecord
     update(request_cancelled: true)
   end
 
-  # checks if emails were sent to veteran and reps
+  # checks if emails were sent to appellant and reps
   def cancellation_emails_sent?
     appellant_email_sent && (representative_email.nil? || representative_email_sent)
   end
@@ -158,12 +167,6 @@ class VirtualHearing < CaseflowRecord
 
   def assign_created_by_user
     self.created_by ||= RequestStore.store[:current_user]
-  end
-
-  def assign_updated_by_user
-    return if RequestStore.store[:current_user] == User.system_user && updated_by.present?
-
-    self.updated_by = RequestStore.store[:current_user] if RequestStore.store[:current_user].present?
   end
 
   def associated_hearing_is_video

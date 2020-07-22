@@ -196,6 +196,14 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
         $set: action.payload.assigneeId
       }
     });
+  case ACTIONS.RESET_ASSIGNEES:
+    return update(state, {
+      selectedAssigneeSecondary: {
+        $set: null
+      }, selectedAssignee: {
+        $set: null
+      }
+    });
   case ACTIONS.SET_ORGANIZATIONS:
     return update(state, {
       organizations: {
@@ -207,7 +215,8 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
       activeOrganization: {
         id: { $set: action.payload.id },
         name: { $set: action.payload.name },
-        isVso: { $set: action.payload.isVso }
+        isVso: { $set: action.payload.isVso },
+        userCanBulkAssign: { $set: action.payload.userCanBulkAssign }
       }
     });
   case ACTIONS.SET_HEARING_DAY:

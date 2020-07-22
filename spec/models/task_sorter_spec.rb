@@ -254,10 +254,17 @@ describe TaskSorter, :all_dbs do
       context "when sorting by case details link column" do
         let(:column_name) { Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name }
 
+        let(:fake_names) do
+          # fixed length 8 and fixed ASCII charset to avoid spec-only sort bug with sql-vs-ruby
+          names = []
+          100.times { names << (0...8).map { rand(65...90).chr }.join }
+          names
+        end
+
         before do
           tasks.each do |task|
-            first_name = Faker::Name.first_name
-            last_name = "#{Faker::Name.middle_name} #{Faker::Name.last_name}"
+            first_name = fake_names.shuffle
+            last_name = "#{fake_names.shuffle} #{fake_names.shuffle}"
             task.appeal.veteran.update!(first_name: first_name, last_name: last_name)
             create(
               :cached_appeal,
@@ -308,10 +315,11 @@ describe TaskSorter, :all_dbs do
         end
 
         it "sorts by AOD status, case type, and docket number" do
-          expected_order = CachedAppeal.all.sort_by do |cached_appeal|
-            [cached_appeal.is_aod ? 1 : 0, cached_appeal.case_type, cached_appeal.docket_number]
-          end
-          expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id))
+          # postgres ascending sort sorts booleans [true, false] as [false, true]. We want is_aod appeals to show up
+          # first so we sort descending on is_aod
+          expected_order = CachedAppeal.order(is_aod: :desc, case_type: :asc, docket_number: :asc)
+          expect(expected_order.first.is_aod).to eq true
+          expect(subject.map(&:appeal_id)).to eq(expected_order.pluck(:appeal_id))
         end
       end
     end

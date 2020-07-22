@@ -152,7 +152,7 @@ class EndProductEstablishment < CaseflowRecord
 
   alias end_product result
 
-  delegate :contentions, to: :cached_result
+  delegate :contentions, :bgs_contentions, to: :cached_result
 
   def limited_poa_on_established_claim
     result&.limited_poa
@@ -285,6 +285,10 @@ class EndProductEstablishment < CaseflowRecord
     source.request_issues.where(end_product_establishment_id: id)
   end
 
+  def associated_rating_cache_key
+    "end_product_establishments/#{id}/associated_rating"
+  end
+
   def associated_rating
     @associated_rating ||= fetch_associated_rating
   end
@@ -326,6 +330,10 @@ class EndProductEstablishment < CaseflowRecord
 
   def contention_for_object(for_object)
     contentions.find { |contention| contention.id.to_i == for_object.contention_reference_id.to_i }
+  end
+
+  def bgs_contention_for_object(for_object)
+    bgs_contentions.find { |contention| contention.reference_id.to_i == for_object.contention_reference_id.to_i }
   end
 
   def veteran
@@ -416,8 +424,10 @@ class EndProductEstablishment < CaseflowRecord
   end
 
   def fetch_associated_rating
-    potential_decision_ratings.find do |rating|
-      rating.associated_end_products.any? { |end_product| end_product.claim_id == reference_id }
+    Rails.cache.fetch(associated_rating_cache_key, expires_in: 3.hours) do
+      potential_decision_ratings.find do |rating|
+        rating.associated_end_products.any? { |end_product| end_product.claim_id == reference_id }
+      end
     end
   end
 

@@ -153,7 +153,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def appeal_has_task_assigned_to_user?(appeal)
-    if appeal.class.name == "LegacyAppeal"
+    if appeal.is_a?(LegacyAppeal)
       fail_if_no_access_to_legacy_task!(appeal.vacols_id)
     else
       appeal.tasks.includes(:assigned_to).any? do |task|
@@ -317,10 +317,12 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def use_task_pages_api?
-    FeatureToggle.enabled?(:user_queue_pagination, user: self) && !attorney? && !judge?
+    FeatureToggle.enabled?(:user_queue_pagination, user: self)
   end
 
   def queue_tabs
+    return [assigned_tasks_tab] if judge_in_vacols? && !attorney_in_vacols?
+
     [
       assigned_tasks_tab,
       on_hold_tasks_tab,
@@ -344,16 +346,16 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     ::CompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
-  def can_bulk_assign_tasks?
-    false
-  end
-
   def can_act_on_behalf_of_judges?
-    member_of_organization?(SpecialCaseMovementTeam.singleton) && FeatureToggle.enabled?(:scm_view_judge_assign_queue)
+    member_of_organization?(SpecialCaseMovementTeam.singleton)
   end
 
   def show_regional_office_in_queue?
     HearingsManagement.singleton.user_has_access?(self)
+  end
+
+  def can_be_assigned_legacy_tasks?
+    judge_in_vacols? || attorney_in_vacols?
   end
 
   def show_reader_link_column?

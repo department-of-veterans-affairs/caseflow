@@ -8,7 +8,6 @@ import _ from 'lodash';
 import querystring from 'querystring';
 
 import { HearingsUserContext } from './contexts/HearingsUserContext';
-import { HearingsFormContextProvider } from './contexts/HearingsFormContext';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import AppFrame from '../components/AppFrame';
 import AssignHearingsContainer from './containers/AssignHearingsContainer';
@@ -28,6 +27,7 @@ import UnsupportedBrowserBanner from '../components/UnsupportedBrowserBanner';
 export default class HearingsApp extends React.PureComponent {
   userPermissionProps = () => {
     const {
+      userCanConvertCentralHearings,
       userCanScheduleVirtualHearings,
       userCanAssignHearingSchedule,
       userCanBuildHearingSchedule,
@@ -40,6 +40,7 @@ export default class HearingsApp extends React.PureComponent {
     } = this.props;
 
     return Object.freeze({
+      userCanConvertCentralHearings,
       userCanScheduleVirtualHearings,
       userCanAssignHearingSchedule,
       userCanBuildHearingSchedule,
@@ -75,9 +76,7 @@ export default class HearingsApp extends React.PureComponent {
 
   routeForHearingDetails = ({ match: { params }, history }) => (
     <HearingsUserContext.Provider value={this.userPermissionProps()}>
-      <HearingsFormContextProvider>
-        <HearingDetailsContainer hearingId={params.hearingId} history={history} />
-      </HearingsFormContextProvider>
+      <HearingDetailsContainer hearingId={params.hearingId} history={history} />
     </HearingsUserContext.Provider>
   );
 
@@ -191,6 +190,7 @@ HearingsApp.propTypes = {
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
   userCanScheduleVirtualHearings: PropTypes.bool,
+  userCanConvertCentralHearings: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
   userCanBuildHearingSchedule: PropTypes.bool,
   userCanViewHearingSchedule: PropTypes.bool,

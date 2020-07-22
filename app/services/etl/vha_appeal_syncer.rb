@@ -6,7 +6,7 @@ class ETL::VhaAppealSyncer < ETL::VhaDecisionReviewSyncer
   end
 
   def target_class
-    ETL::VhaAppeal
+    ETL::DecisionReview::Appeal
   end
 
   protected

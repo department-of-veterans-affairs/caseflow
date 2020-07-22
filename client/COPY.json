@@ -71,6 +71,17 @@
   "TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL": "VLJ",
   "TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL": "Attorney",
   "TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL": "Decision Document ID",
+  "TASK_SNAPSHOT_REMOVE_OVERTIME_HEADER": "Remove overtime status",
+  "TASK_SNAPSHOT_REMOVE_OVERTIME_CONFIRMATION": "This case is marked for overtime. Do you want to remove overtime status from this case?",
+  "TASK_SNAPSHOT_REMOVE_OVERTIME_SUCCESS": "%s's case has been removed from overtime status",
+  "TASK_SNAPSHOT_REMOVE_OVERTIME_SUCCESS_DETAIL": "The \"OT\" label has been removed from this case and will no longer be visible to judges and attorneys",
+  "TASK_SNAPSHOT_MARK_AS_OVERTIME_HEADER": "Mark case as overtime",
+  "TASK_SNAPSHOT_MARK_AS_OVERTIME_CONFIRMATION": "This case does not have an overtime status. Do you want to mark this case for overtime?",
+  "TASK_SNAPSHOT_MARK_AS_OVERTIME_SUCCESS": "%s's case has been marked for overtime",
+  "TASK_SNAPSHOT_MARK_AS_OVERTIME_SUCCESS_DETAIL": "A new \"OT\" label has been added to the case and will be visible to all judges and attorneys",
+  "TASK_SNAPSHOT_OVERTIME_LABEL": "Overtime Status",
+  "TASK_SNAPSHOT_IS_OVERTIME": "Remove overtime status from this case",
+  "TASK_SNAPSHOT_IS_NOT_OVERTIME": "Mark this case as overtime",
   "TASK_SNAPSHOT_EDIT_DOCUMENT_ID_MODAL_TITLE": "Edit document ID",
   "TASK_SNAPSHOT_TASK_TYPE_LABEL": "Task",
   "TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL": "Task instructions",
@@ -249,7 +260,7 @@
   "ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL": "Please select someone to assign the tasks to.",
   "ASSIGN_WIDGET_NO_TASK_TITLE": "No tasks selected",
   "ASSIGN_WIDGET_NO_TASK_DETAIL": "Please select a task.",
-  "ASSIGN_WIDGET_SUCCESS": "%(verb)s %(numCases)s %(casePlural)s",
+  "ASSIGN_WIDGET_SUCCESS": "%(verb)s %(numCases)s %(casePlural)s to %(assignee)s",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE": "Error assigning tasks",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL": "One or more tasks couldn't be assigned. Reassign tasks to a judge on the case details screen",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL_LINK": "Please assign tasks to an attorney from your assign page.",
@@ -304,7 +315,7 @@
   "CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_TITLE": "Cancel hearing request",
   "CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_DETAIL": "Canceling this hearing request will release it to a hearing coordinator for review. A 90 day evidence hold may still apply to this case.",
 
-  "SPECIAL_CASE_MOVEMENT_MODAL_TITLE": "Special Case Movement",
+  "SPECIAL_CASE_MOVEMENT_MODAL_TITLE": "Case Movement",
   "SPECIAL_CASE_MOVEMENT_MODAL_DETAIL": "This action overrides the normal case distribution process and immediately assigns the appeal to the judge selected.",
   "SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER": "Select a judge",
 
@@ -512,6 +523,7 @@
   "UNAUTHORIZED_PAGE_ACCESS_MESSAGE": "You aren't authorized to use this part of Caseflow yet.",
   "CASE_DETAILS_LOADING_FAILURE_TITLE": "Unable to load this case",
 
+  "CASE_MOVEMENT_TASK_LABEL": "Case Movement",
   "JUDGE_ASSIGN_TASK_LABEL": "Assign",
   "JUDGE_DECISION_REVIEW_TASK_LABEL": "Review",
   "JUDGE_QUALITY_REVIEW_TASK_LABEL": "Quality review",
@@ -574,10 +586,11 @@
   "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If you do not see the claimant in the options below or if the claimant's information needs updated, and you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
   "CLAIMANT_NOT_FOUND_END": " for assistance.",
   "ADD_CLAIMANT_MODAL_TITLE": "Add Claimant",
-  "ADD_CLAIMANT_MODAL_DESCRIPTION": "To add a claimant, please select whether or not the claimant is an attorney and search for their name. Please note: at this time, you are only able to add attorneys as claimants. If you need to add another claimant and you have access, please add them to the Corporate Database. If you do not have access, please [email](mailto:VACaseflowIntake@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database) for assistance.",
+  "ADD_CLAIMANT_MODAL_DESCRIPTION": "To add a claimant, select their relationship to the veteran and type to search for their name. **Please note:** at this time, you are only able to add attorneys as claimants.\n\n If you are unable to find attorney in the list of names below, select \"Claimant not listed\" and add their name, address, and law firm (if applicable) in the notes section.",
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",
   "INTAKE_WITHDRAWN_BANNER": "This review will be withdrawn. You can intake these issues as a different type of decision review, if that was requested.",
   "INTAKE_RATING_MAY_BE_PROCESS": "Rating may be in progress",
+  "INTAKE_CONTENTION_HAS_EXAM_REQUESTED": "A medical exam is requested. Issue cannot be removed.",
   "INTAKE_SEARCH_ERROR_INVALID_FILE_NUMBER": "Please enter a valid Veteran ID and try again.",
   "INTAKE_SEARCH_ERROR_NOT_ACCESSIBLE": "It looks like you do not have the necessary level of access to view this information. Please alert your manager so they can assign the form to someone else.",
   "INTAKE_SEARCH_ERROR_NOT_MODIFIABLE": "You do not appear to have permission to establish a claim for this Veteran. Often this is because they are an employee at the same station as you. Please alert your manager so they can assign the form to someone else.",
@@ -687,6 +700,12 @@
 
   "VIRTUAL_HEARING_REQUEST_TYPE": "Virtual",
   "VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS": "Scheduling in progress",
+  "VIRTUAL_HEARING_TIME_HELPER_TEXT": "The time at the Board of Veterans' Appeals in Washington, DC",
+  "VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT": "The hearing time in email notifications is calculated based on the timezone",
+  "VIRTUAL_HEARING_EMAIL_HELPER_TEXT": "Changes to the email are used to send notifications for this hearing only",
+
+  "CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL": "Emails will be sent to the Veteran and POA / Representative to notify them that their virtual hearing link is no longer valid and they must appear in-person at the Board of Veterans’ Appeals Central Office.",
+  "CENTRAL_OFFICE_CHANGE_TO_VIRTUAL": "Email notifications will be sent to the Veteran, POA / Representative, and Veterans Law Judge (VLJ).",
 
   "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE": "Change to Virtual Hearing",
   "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_TITLE": "Change to Video Hearing",
@@ -785,7 +804,8 @@
   "VLJ_VIRTUAL_HEARING_LINK_LABEL": "VLJ Link",
   "GUEST_VIRTUAL_HEARING_LINK_LABEL": "Guest Link",
   "REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL": "Virtual Hearing Link",
-  "OPEN_VIRTUAL_HEARINGS_LINK": "Open Virtual Hearing",
+  "VLJ_VIRTUAL_HEARINGS_LINK_TEXT": "Start Virtual Hearing",
+  "GUEST_VIRTUAL_HEARINGS_LINK_TEXT": "Join Virtual Hearing",
 
   "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s."
 }

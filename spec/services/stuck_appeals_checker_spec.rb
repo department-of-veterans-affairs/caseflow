@@ -20,13 +20,19 @@ describe StuckAppealsChecker, :postgres do
     create(:bva_dispatch_task, :completed, appeal: appeal)
     appeal
   end
+  let!(:appeal_with_closed_root_open_child) do
+    appeal = create(:appeal, :with_post_intake_tasks)
+    appeal.root_task.completed!
+    appeal
+  end
 
   describe "#call" do
     it "reports 3 appeals stuck" do
       subject.call
 
       expect(subject.report?).to eq(true)
-      expect(subject.report).to match(/^Stuck Appeals: 3 reported/)
+      expect(subject.report).to match(/AppealsWithNoTasksOrAllTasksOnHoldQuery: 3/)
+      expect(subject.report).to match(/AppealsWithClosedRootTaskOpenChildrenQuery: 1/)
     end
   end
 end

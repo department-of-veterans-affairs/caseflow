@@ -91,8 +91,15 @@ class BaseHearingUpdateForm
     )
   end
 
-  def only_time_updated?
-    !virtual_hearing_created? && scheduled_time_string.present?
+  def only_time_updated_or_timezone_updated?
+    (!virtual_hearing_created? &&
+      scheduled_time_string.present? ||
+      # Also send virtual hearing time updates if the representative timezone is changed
+      (virtual_hearing_attributes&.dig(:representative_tz).present? &&
+        virtual_hearing_attributes&.dig(:representative_email).blank?) ||
+      (virtual_hearing_attributes&.dig(:appellant_tz).present? &&
+        virtual_hearing_attributes&.dig(:appellant_email).blank?)
+    )
   end
 
   def start_async_job?
@@ -123,7 +130,7 @@ class BaseHearingUpdateForm
       hearing_type: hearing.class.name,
       # TODO: Ideally, this would use symbols, but symbols can't be serialized for ActiveJob.
       # Rails 6 supports passing symbols to a job.
-      email_type: only_time_updated? ? "updated_time_confirmation" : "confirmation"
+      email_type: only_time_updated_or_timezone_updated? ? "updated_time_confirmation" : "confirmation"
     }
 
     if run_async?
@@ -155,6 +162,17 @@ class BaseHearingUpdateForm
     virtual_hearing_attributes&.dig(:request_cancelled) == true
   end
 
+  # strip leading and trailing spaces
+  def sanitize_updated_emails
+    if virtual_hearing_attributes[:appellant_email].present?
+      virtual_hearing_attributes[:appellant_email] = virtual_hearing_attributes[:appellant_email].strip
+    end
+
+    if virtual_hearing_attributes[:representative_email].present?
+      virtual_hearing_attributes[:representative_email] = virtual_hearing_attributes[:representative_email].strip
+    end
+  end
+
   def virtual_hearing_updates
     # The email sent flag should always be set to false if any changes are made.
     # The judge_email_sent flag should not be set to false if virtual hearing is cancelled.
@@ -163,6 +181,8 @@ class BaseHearingUpdateForm
       judge_email_sent: judge_email_sent_flag,
       representative_email_sent: representative_email_sent_flag
     }.reject { |_k, email_sent| email_sent == true }
+
+    sanitize_updated_emails if virtual_hearing_attributes.present?
 
     updates = (virtual_hearing_attributes || {}).compact.merge(emails_sent_updates)
 
@@ -177,12 +197,15 @@ class BaseHearingUpdateForm
     @virtual_hearing_created ||= false
   end
 
+  # rubocop:disable Metrics/AbcSize
   def create_or_update_virtual_hearing
     # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.
     virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
-      new_virtual_hearing.appellant_email = virtual_hearing_attributes[:appellant_email]
+      new_virtual_hearing.appellant_email = virtual_hearing_attributes[:appellant_email]&.strip
       new_virtual_hearing.judge_email = hearing.judge&.email
-      new_virtual_hearing.representative_email = virtual_hearing_attributes[:representative_email]
+      new_virtual_hearing.representative_email = virtual_hearing_attributes[:representative_email]&.strip
+      new_virtual_hearing.appellant_tz = virtual_hearing_attributes[:appellant_tz]
+      new_virtual_hearing.representative_tz = virtual_hearing_attributes[:representative_tz]
       @virtual_hearing_created = true
     end
 
@@ -204,6 +227,7 @@ class BaseHearingUpdateForm
       DataDogService.increment_counter(metric_name: "created_virtual_hearing.successful", **updated_metric_info)
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   def only_emails_updated?
     email_changed = virtual_hearing_attributes&.key?(:appellant_email) ||
@@ -230,7 +254,7 @@ class BaseHearingUpdateForm
       "CHANGED_TO_VIRTUAL"
     elsif virtual_hearing_cancelled?
       "CHANGED_FROM_VIRTUAL"
-    elsif only_time_updated?
+    elsif only_time_updated_or_timezone_updated?
       "CHANGED_HEARING_TIME"
     elsif only_emails_updated?
       email_change_type

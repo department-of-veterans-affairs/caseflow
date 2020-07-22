@@ -17,4 +17,38 @@ namespace :local do
 
     puts ">>> END local:destroy"
   end
+
+  desc "Nuke docker environment (removes all process, containers, images and volumes)"
+  task :nuke do
+    puts ">>> BEGIN local:nuke"
+
+    puts ">>> 01/05 Stopping all docker processes"
+    processes = system("docker ps -aq")
+    if processes != true
+      system("docker stop #{processes}") || abort
+    end
+
+    puts ">>> 02/05 Removing all docker containers"
+    containers = system("docker ps -aq")
+    if containers != true
+      system("docker rm -f #{containers}") || abort
+    end
+
+    puts ">>> 03/05 Removing all docker images"
+    images = system("docker images -aq")
+    if images != true
+      system("docker rmi -f #{images}") || abort
+    end
+
+    puts ">>> 04/05 Removing all docker volumes"
+    volumes = system("docker volume ls -q")
+    if volumes != true
+      system("docker volume rm -f #{volumes}") || abort
+    end
+
+    puts ">>> 05/05 Destroying environment"
+    system("make destroy") || abort
+
+    puts ">>> END local:nuke"
+  end
 end

@@ -15,9 +15,7 @@
   "COLUMNS": {
     "APPEAL_TYPE": {
       "filterable": true,
-      "name": "typeColumn",
-      "sorting_table": "cached_appeal_attributes",
-      "sorting_columns": ["is_aod", "case_type", "docket_number"]
+      "name": "typeColumn"
     },
     "CASE_DETAILS_LINK": {
       "name": "detailsColumn",
@@ -40,6 +38,9 @@
     },
     "DOCUMENT_COUNT_READER_LINK": {
       "name": "readerLinkColumn"
+    },
+    "DOCUMENT_ID": {
+      "name": "documentIdColumn"
     },
     "BADGES": {
       "name": "badgesColumn"

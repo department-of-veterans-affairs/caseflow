@@ -6,6 +6,6 @@ class ETL::VhaSupplementalClaimSyncer < ETL::VhaClaimReviewSyncer
   end
 
   def target_class
-    ETL::VhaSupplementalClaim
+    ETL::DecisionReview::SupplementalClaim
   end
 end

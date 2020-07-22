@@ -26,10 +26,18 @@ class WorkModesController < ApplicationController
   def validate_modification_access_to_overtime
     fail(Caseflow::Error::ActionForbiddenError) unless FeatureToggle.enabled?(:overtime_revamp)
 
-    unless current_user.judge? && current_user.appeal_has_task_assigned_to_user?(appeal)
+    unless current_user.judge? && current_user_is_assigned_to_appeal?
       msg = "Only judges assigned to this appeal can toggle overtime status"
       fail(Caseflow::Error::ActionForbiddenError, message: msg)
     end
+
     true
+  end
+
+  def current_user_is_assigned_to_appeal?
+    # handle case where legacy appeal has an AttorneyLegacyTask assigned by a judge
+    return true if appeal.is_a?(LegacyAppeal) && QueueRepository.any_task_assigned_by_user?(appeal, current_user)
+
+    current_user.appeal_has_task_assigned_to_user?(appeal)
   end
 end

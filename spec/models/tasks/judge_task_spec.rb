@@ -28,13 +28,10 @@ describe JudgeTask, :all_dbs do
       end
     end
 
-    context "user is a Special Case Movement team member" do
+    context "user is a Case Movement team member" do
       let(:user) do
         create(:user).tap { |scm_user| SpecialCaseMovementTeam.singleton.add_user(scm_user) }
       end
-
-      before { FeatureToggle.enable!(:scm_view_judge_assign_queue) }
-      after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
 
       context "in the assign phase" do
         it "should return the Case Management assignment actions along with attorneys" do

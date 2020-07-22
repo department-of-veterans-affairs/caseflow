@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { Tabs } from './tabs/Tabs';
+import { Tab } from './tabs/Tab';
+
 /*
  * This component can be used to easily build tabs.
  * The required props are:
@@ -11,101 +14,70 @@ import PropTypes from 'prop-types';
  * Optional props:
  * - @name {string} used in each tab ID to differentiate multiple sets of tabs
  * on a page. This is for accessibility purposes.
-*/
-export default class TabWindow extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      currentPage: this.props.defaultPage || 0,
-      disabled: false
-    };
-  }
-
-  onTabClick = (tabNumber) => () => {
-    this.setState({
-      currentPage: tabNumber
-    });
-
-    if (this.props.onChange) {
-      this.props.onChange(tabNumber);
-    }
-  }
-
-  getTabHeaderWithSVG = (tab) => {
-    return <span>
-      {tab.icon ? tab.icon : ''}
+ */
+const TabWindow = ({
+  fullPage = false,
+  defaultPage = 0,
+  name = 'main',
+  onChange,
+  tabs = [],
+}) => {
+  const tabContent = (tab) => (
+    <span>
+      {tab.icon ?? ''}
       <span>{tab.label}</span>
-      {tab.indicator ? tab.indicator : ''}
-    </span>;
+      {tab.indicator ?? ''}
+    </span>
+  );
+
+  // If there's only one tab, avoid rendering out tabs and just display the content.
+  // This avoids any weird accessibility issues of having a tabpanel w/o corresponding tab
+  if (tabs.length === 1) {
+    return tabs[0].page;
   }
 
-  getTabHeader = (tab) => {
-    return `${tab.label} tab window`;
-  };
-
-  getTabClassName = (index, currentPage, isTabDisabled) => {
-    let className = `cf-tab${index === currentPage ? ' cf-active' : ''}`;
-
-    className += isTabDisabled ? ' disabled' : '';
-
-    return className;
-  }
-
-  // For pages with only one set of tabs or a non-specified tab group name
-  // the name returns "undefined". This appends the word "main" to the tab group.
-  getTabGroupName = (name) => {
-    return name ? name : 'main';
-  }
-
-  render() {
-    let {
-      name,
-      tabs,
-      fullPage,
-      bodyStyling
-    } = this.props;
-
-    return <div>
-      { tabs && tabs.length && tabs.length > 1 &&
-          <div className={
-            `cf-tab-navigation${fullPage ? ' cf-tab-navigation-full-screen' : ''}`
-          }>
-            {tabs.map((tab, i) =>
-              <button
-                className={this.getTabClassName(i, this.state.currentPage, tab.disable)}
-                key={i}
-                id={`${this.getTabGroupName(name)}-tab-${i}`}
-                onClick={this.onTabClick(i)}
-                aria-label={this.getTabHeader(tab)}
-                disabled={Boolean(tab.disable)}
-                role="tab"
-              >
-                <span>
-                  {this.getTabHeaderWithSVG(tab)}
-                </span>
-              </button>
-            )}
-          </div>
-      }
-      { tabs && tabs.length && <div className="cf-tab-window-body-full-screen" {...bodyStyling}>
-        {tabs[this.state.currentPage].page}
-      </div>
-      }
-    </div>;
-  }
-}
+  return (
+    <Tabs
+      fullWidth={fullPage}
+      idPrefix={name}
+      active={defaultPage.toString()}
+      onChange={onChange}
+      mountOnEnter
+      unmountOnExit
+    >
+      {tabs.map((item, idx) => (
+        <Tab
+          title={tabContent(item)}
+          key={idx}
+          value={idx}
+          disabled={Boolean(item.disable)}
+        >
+          {item.page}
+        </Tab>
+      ))}
+    </Tabs>
+  );
+};
 
 TabWindow.propTypes = {
-  bodyStyling: PropTypes.object,
   fullPage: PropTypes.bool,
   name: PropTypes.string,
   onChange: PropTypes.func,
-  tabs: PropTypes.arrayOf(PropTypes.shape({
-    disable: PropTypes.bool,
-    icon: PropTypes.obj,
-    indicator: PropTypes.obj,
-    label: PropTypes.node.isRequired,
-    page: PropTypes.node.isRequired
-  })),
-  defaultPage: PropTypes.number
+  tabs: PropTypes.arrayOf(
+    PropTypes.shape({
+      disable: PropTypes.bool,
+      icon: PropTypes.obj,
+      indicator: PropTypes.obj,
+      label: PropTypes.node.isRequired,
+      page: PropTypes.node.isRequired,
+    })
+  ),
+  defaultPage: PropTypes.number,
 };
+
+TabWindow.defaultProps = {
+  defaultPage: 0,
+  fullPage: false,
+};
+
+export default TabWindow;

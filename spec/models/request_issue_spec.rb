@@ -275,6 +275,36 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context "legacy_optin" do
+    let!(:legacy_appeal) do
+      create(:legacy_appeal, vacols_case:
+        create(
+          :case,
+          :status_active,
+          bfkey: vacols_id,
+          bfcorlid: "#{veteran.file_number}S",
+          bfdc: "G",
+          bfddec: 3.days.ago,
+          folder: create(:folder, tidcls: folder_date),
+          case_issues: [
+            create(:case_issue, :ankylosis_of_hip),
+            create(:case_issue, :limitation_of_thigh_motion_extension)
+          ]
+        ))
+    end
+    let(:vacols_id) { "vacols7" }
+    let(:vacols_sequence_id) { 1 }
+    let(:decision_date) { 3.days.ago.to_date }
+    let(:folder_date) { 5.days.ago.to_date }
+    subject { rating_request_issue.handle_legacy_issues! }
+    it "saves legacy appeal disposition and decision date " do
+      subject
+      expect(rating_request_issue.legacy_issue_optin.original_legacy_appeal_disposition_code).to eq "G"
+      expect(rating_request_issue.legacy_issue_optin.original_legacy_appeal_decision_date).to eq(decision_date)
+      expect(rating_request_issue.legacy_issue_optin.folder_decision_date).to eq(folder_date)
+    end
+  end
+
   context "#contention" do
     let(:end_product_establishment) { create(:end_product_establishment, :active) }
     let!(:contention) do
@@ -316,6 +346,45 @@ describe RequestIssue, :all_dbs do
       let(:contention_reference_id) { nil }
 
       it { is_expected.to eq(false) }
+    end
+  end
+
+  context "#exam_requested?" do
+    subject { rating_request_issue.exam_requested? }
+    before { FeatureToggle.enable!(:detect_contention_exam) }
+    after { FeatureToggle.disable!(:detect_contention_exam) }
+
+    context "when there is no contention" do
+      let(:contention_reference_id) { nil }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "when there is no end product establishment" do
+      let(:end_product_establishment) { nil }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "when there is a contention" do
+      let(:end_product_establishment) { create(:end_product_establishment, :active) }
+      let(:contention_reference_id) { 1234 }
+      let(:orig_source_type_code) { "APP" }
+      let!(:contention) do
+        Generators::BgsContention.build(
+          reference_id: contention_reference_id,
+          claim_id: end_product_establishment.reference_id,
+          orig_source_type_code: orig_source_type_code
+        )
+      end
+
+      it { is_expected.to be_falsey }
+
+      context "when there is an exam scheduled" do
+        let(:orig_source_type_code) { "EXAM" }
+
+        it { is_expected.to be true }
+      end
     end
   end
 
@@ -1421,7 +1490,7 @@ describe RequestIssue, :all_dbs do
 
           context "NOD and SOC dates are still ineligible" do
             let(:nod_date) { Constants::DATES["NOD_COVID_ELIGIBLE"].to_date - 1.day }
-            let(:soc_date) { Constants::DATES["SOC_COVID_ELIGIBLE"].to_date - 1.day }
+            let(:soc_date) { Constants::DATES["SOC_COVID_ELIGIBLE"].to_date - 3.days }
 
             it "is not eligible" do
               rating_request_issue.validate_eligibility!

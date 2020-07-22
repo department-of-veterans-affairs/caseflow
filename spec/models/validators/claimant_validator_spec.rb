@@ -6,7 +6,8 @@ describe ClaimantValidator, :postgres do
     Claimant.new(
       decision_review: decision_review,
       participant_id: participant_id,
-      payee_code: payee_code
+      payee_code: payee_code,
+      type: type
     )
   end
   let(:address_line_1) { "123 Some Road" }
@@ -16,6 +17,7 @@ describe ClaimantValidator, :postgres do
   let(:decision_review) { HigherLevelReview.new(benefit_type: "compensation") }
   let(:participant_id) { "different from the veteran's" }
   let(:payee_code) { "10" }
+  let(:type) { "DependentClaimant" }
 
   before do
     allow(claimant).to receive(:address_line_1).and_return(address_line_1)

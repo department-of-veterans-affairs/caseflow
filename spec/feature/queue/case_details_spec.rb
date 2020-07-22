@@ -212,12 +212,18 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to_not have_content("Regional Office")
       end
 
-      scenario "when there is no POA" do
-        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
-        visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
-        expect(page).to have_content("Power of Attorney")
-        expect(page).to have_content(COPY::CASE_DETAILS_NO_POA)
+      context "when there is no POA" do
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(nil)
+        end
+
+        scenario "contains message for no POA" do
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+          expect(page).to have_content("Power of Attorney")
+          expect(page).to have_content(COPY::CASE_DETAILS_NO_POA)
+        end
       end
     end
 
@@ -795,8 +801,8 @@ RSpec.feature "Case details", :all_dbs do
       it "marking task as complete works" do
         visit "/queue/appeals/#{task.appeal.uuid}"
 
-        find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
+        find(".cf-select__control", text: "Select an action").click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
 
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
@@ -1224,6 +1230,7 @@ RSpec.feature "Case details", :all_dbs do
         prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
         text = Constants.TASK_ACTIONS.CANCEL_TASK.label
         click_dropdown(prompt: prompt, text: text)
+        fill_in "taskInstructions", with: "Cancelling task"
         click_button("Submit")
 
         expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name))

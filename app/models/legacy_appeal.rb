@@ -106,9 +106,12 @@ class LegacyAppeal < CaseflowRecord
     (self.class.repository.remand_return_date(vacols_id) || false) unless active?
   end
 
-  # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
+  # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js 'specialIssue` value
   # rubocop:disable Metrics/LineLength
   SPECIAL_ISSUES = {
+    blue_water: "Blue Water",
+    burn_pit: "Burn Pit",
+    us_court_of_appeals_for_veterans_claims: "US Court of Appeals for Veterans Claims (CAVC)",
     contaminated_water_at_camp_lejeune: "Contaminated Water at Camp LeJeune",
     dic_death_or_accrued_benefits_united_states: "DIC - death, or accrued benefits - United States",
     education_gi_bill_dependents_educational_assistance_scholars: "Education - GI Bill, dependents educational assistance, scholarship, transfer of entitlement",
@@ -120,8 +123,10 @@ class LegacyAppeal < CaseflowRecord
     incarcerated_veterans: "Incarcerated Veterans",
     insurance: "Insurance",
     manlincon_compliance: "Manlincon Compliance",
+    military_sexual_trauma: "Military Sexual Trauma (MST)",
     mustard_gas: "Mustard Gas",
     national_cemetery_administration: "National Cemetery Administration",
+    no_special_issues: "No Special Issues",
     nonrating_issue: "Non-rating issue",
     pension_united_states: "Pension - United States",
     private_attorney_or_agent: "Private Attorney or Agent",
@@ -217,6 +222,34 @@ class LegacyAppeal < CaseflowRecord
     (decision_date + 120.days).to_date
   end
 
+  def appellant_tz
+    return if appellant_address.blank?
+
+    # Use an address object if this is a hash
+    address = appellant_address.is_a?(Hash) ? Address.new(appellant_address) : appellant_address
+
+    begin
+      TimezoneService.address_to_timezone(address).identifier
+    rescue StandardError => error
+      log_error(error)
+      nil
+    end
+  end
+
+  def representative_tz
+    return if representative_address.blank?
+
+    # Use an address object if this is a hash
+    address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
+
+    begin
+      TimezoneService.address_to_timezone(address).identifier
+    rescue StandardError => error
+      log_error(error)
+      nil
+    end
+  end
+
   def appellant_address
     appellant_address_from_bgs = bgs_address_service&.address
 
@@ -260,13 +293,13 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def appellant_email_address
-    person_for_appellant&.[](:email_addr)
+    person_for_appellant&.email_address
   end
 
   def person_for_appellant
     return nil if appellant_ssn.blank?
 
-    bgs.fetch_person_by_ssn(appellant_ssn)
+    Person.find_or_create_by_ssn(appellant_ssn)
   end
 
   def veteran_if_exists
@@ -860,12 +893,16 @@ class LegacyAppeal < CaseflowRecord
   def soc_eligible_for_opt_in?(receipt_date:, covid_flag: false)
     return false unless soc_date
 
-    soc_eligible = receipt_date - 60.days
-    eligible_date = covid_flag ? [soc_eligible, Constants::DATES["SOC_COVID_ELIGIBLE"].to_date].min : soc_eligible
-    earliest_eligible_date = [eligible_date, Constants::DATES["AMA_ACTIVATION"].to_date].max
-
     # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
-    ([soc_date] + ssoc_dates).any? { |soc_date| soc_date >= earliest_eligible_date }
+    all_dates = ([soc_date] + ssoc_dates).compact
+
+    latest_soc_date = all_dates.max
+    return true if covid_flag && latest_soc_date >= Constants::DATES["SOC_COVID_ELIGIBLE"].to_date
+    return false if latest_soc_date < Constants::DATES["AMA_ACTIVATION"].to_date
+
+    eligible_until = self.class.next_available_business_day(latest_soc_date + 61.days)
+
+    eligible_until >= receipt_date
   end
 
   def nod_eligible_for_opt_in?(receipt_date:, covid_flag: false)
@@ -880,7 +917,7 @@ class LegacyAppeal < CaseflowRecord
 
   def bgs_address_service
     participant_id = if appellant_is_not_veteran
-                       person_for_appellant&.[](:ptcpnt_id)
+                       person_for_appellant&.participant_id
                      else
                        veteran&.participant_id
                      end
@@ -935,7 +972,7 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def claimant_participant_id
-    person_for_appellant&.dig(:ptcpnt_id)
+    person_for_appellant&.participant_id
   end
 
   class << self
@@ -946,6 +983,25 @@ class LegacyAppeal < CaseflowRecord
 
       appeal.save
       appeal
+    end
+
+    # This checks for weather the eligiable soc_date falls on a satuday,
+    # sunday, or holiday thus adding one/two business days on the receipt_date.
+    def next_available_business_day(date)
+      date += 1.day if Holidays.on(date, :federal_reserve, :observed).any?
+      date += 2.days if date.saturday?
+      date += 1.day if date.sunday?
+      date += 1.day if inauguration_day?(date)
+
+      date
+    end
+
+    def inauguration_day?(date)
+      return unless date.is_a?(Date)
+
+      # 2001 is a past year with an inauguration date
+      # This returns true for both the inauguration date, or the observed date if it falls on a Sunday
+      ((date.year - 2001) % 4 == 0) && date.month == 1 && (date.day == 20 || (date.monday? && date.day == 21))
     end
 
     def veteran_file_number_from_bfcorlid(bfcorlid)

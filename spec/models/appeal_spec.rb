@@ -27,7 +27,10 @@ describe Appeal, :all_dbs do
         stream_type: stream_type,
         established_at: Time.zone.now
       )
-      expect(subject.reload.claimant.participant_id).to eq(appeal.claimant.participant_id)
+      expect(subject.reload.claimant).to have_attributes(
+        participant_id: appeal.claimant.participant_id,
+        type: appeal.claimant.type
+      )
     end
 
     context "for de_novo appeal stream" do
@@ -524,6 +527,25 @@ describe Appeal, :all_dbs do
       it "returns claimant's name" do
         expect(subject).to_not eq nil
         expect(subject).to eq appeal.claimant.first_name
+      end
+    end
+
+    context "when appeal doesn't have claimants" do
+      let(:appeal) { create(:appeal, number_of_claimants: 0) }
+
+      it { is_expected.to eq nil }
+    end
+  end
+
+  context "#appellant_middle_initial" do
+    subject { appeal.appellant_middle_initial }
+
+    context "when appeal has claimants" do
+      let(:appeal) { create(:appeal, number_of_claimants: 1) }
+
+      it "returns non-nil string of size 1" do
+        expect(subject).to_not eq nil
+        expect(subject.size).to eq 1
       end
     end
 

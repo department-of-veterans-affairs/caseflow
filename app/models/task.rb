@@ -60,9 +60,9 @@ class Task < CaseflowRecord
 
   scope :not_cancelled, -> { where.not(status: Constants.TASK_STATUSES.cancelled) }
 
-  scope :recently_closed, -> { closed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now) }
+  scope :recently_completed, -> { completed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now) }
 
-  scope :incomplete_or_recently_closed, -> { open.or(recently_closed) }
+  scope :incomplete_or_recently_completed, -> { open.or(recently_completed) }
 
   # Equivalent to .reject(&:hide_from_queue_table_view) but offloads that to the database.
   scope :visible_in_queue_table_view, lambda {
@@ -517,6 +517,8 @@ class Task < CaseflowRecord
 
     update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: reassign_params[:instructions])
 
+    appeal.overtime = false if appeal.overtime? && reassign_clears_overtime?
+
     [sibling, self, sibling.children].flatten
   end
 
@@ -591,6 +593,10 @@ class Task < CaseflowRecord
     return nil unless record
 
     User.find_by_id(record.whodunnit)
+  end
+
+  def reassign_clears_overtime?
+    false
   end
 
   private
