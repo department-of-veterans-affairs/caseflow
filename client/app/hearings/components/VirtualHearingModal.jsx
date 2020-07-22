@@ -43,7 +43,7 @@ const formatTimeString = (hearing, timeWasEdited) => {
   return timeString;
 };
 
-const DateTime = ({ hearing, timeWasEdited }) => (
+export const DateTime = ({ hearing, timeWasEdited }) => (
   <div>
     <strong>Hearing Date:&nbsp;</strong>
     {moment(hearing.scheduledFor).format('MM/DD/YYYY')}
@@ -62,7 +62,7 @@ DateTime.propTypes = {
   timeWasEdited: PropTypes.bool
 };
 
-const ReadOnlyEmails = ({
+export const ReadOnlyEmails = ({
   hearing,
   virtualHearing,
   appellantEmailEdited,
@@ -144,20 +144,20 @@ ReadOnlyEmails.propTypes = {
   showAllEmails: PropTypes.bool,
 };
 
-const ChangeHearingTime = (props) => (
+export const ChangeHearingTime = (props) => (
   <React.Fragment>
     <DateTime {...props} />
     <ReadOnlyEmails {...props} showAllEmails />
   </React.Fragment>
 );
 
-const ChangeEmail = (props) => (
+export const ChangeEmail = (props) => (
   <React.Fragment>
     <ReadOnlyEmails {...props} />
   </React.Fragment>
 );
 
-const ChangeFromVirtual = (props) => {
+export const ChangeFromVirtual = (props) => {
   const hearing = { props };
 
   return (
@@ -182,7 +182,7 @@ ChangeFromVirtual.propTypes = {
   })
 };
 
-const ChangeToVirtual = (props) => {
+export const ChangeToVirtual = (props) => {
   const {
     hearing, readOnly, representativeEmailError, update, appellantEmailError, virtualHearing
   } = props;
@@ -248,7 +248,8 @@ ChangeToVirtual.propTypes = {
 };
 
 const INVALID_EMAIL_FORMAT = 'Please enter a valid email address';
-const TYPES = {
+
+export const TYPES = {
   change_to_virtual: {
     title: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE,
     intro: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_INTRO,

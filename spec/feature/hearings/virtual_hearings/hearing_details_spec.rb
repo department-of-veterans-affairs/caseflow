@@ -435,4 +435,39 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       expect(page).to have_field("POA/Representative Email", readonly: true)
     end
   end
+
+  context "Updating POA/Representative email address" do
+    scenario "Sends confirmation email only to the POA/Representative" do
+    end
+  end
+
+  context "Updating Appellant email address" do
+    scenario "Sends confirmation email only to the Appellant" do
+    end
+  end
+
+  context "Updating both Appellant and POA/Representative email address" do
+    scenario "Sends confirmation emails to both the Appellant and the POA/Representative" do
+    end
+  end
+
+  context "Updating POA/Representative timezone" do
+    scenario "Sends update hearing time email only to the POA/Representative" do
+    end
+  end
+
+  context "Updating Appellant timezone" do
+    scenario "Sends update hearing time email only to the Appellant" do
+    end
+  end
+
+  context "Updating both Appellant and POA/Representative timezone" do
+    scenario "Sends update hearing time emails to both the Appellant and the POA/Representative" do
+    end
+  end
+
+  context "Updating either Appellant and POA/Representative email address and timezone" do
+    scenario "Sends confirmation emails to both the Appellant and the POA/Representative" do
+    end
+  end
 end

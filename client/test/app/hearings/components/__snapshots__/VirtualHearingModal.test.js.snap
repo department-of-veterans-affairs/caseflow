@@ -1,0 +1,673 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
+<VirtualHearingModal
+  hearing={
+    Object {
+      "advanceOnDocketMotion": null,
+      "aod": false,
+      "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c3",
+      "appealId": 613,
+      "appellantAddressLine1": "9999 MISSION ST",
+      "appellantCity": "SAN FRANCISCO",
+      "appellantEmailAddress": "tom.brady@caseflow.gov",
+      "appellantFirstName": "Tom",
+      "appellantIsNotVeteran": true,
+      "appellantLastName": "Brady",
+      "appellantState": "CA",
+      "appellantZip": "94103",
+      "availableHearingLocations": Object {},
+      "bvaPoc": null,
+      "centralOfficeTimeString": "04:00",
+      "claimantId": 604,
+      "closestRegionalOffice": null,
+      "currentIssueCount": 0,
+      "disposition": null,
+      "dispositionEditable": true,
+      "docketName": "hearing",
+      "docketNumber": "200624-613",
+      "emailEvents": Array [],
+      "evidenceWindowWaived": false,
+      "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "hearingDayId": 11,
+      "id": 10,
+      "isVirtual": false,
+      "judge": Object {
+        "createdAt": "2020-06-25T11:00:43.257-04:00",
+        "cssId": "BVAAABSHIRE",
+        "displayName": "BVAAABSHIRE (VACO)",
+        "efolderDocumentsFetchedAt": null,
+        "email": null,
+        "fullName": "Aaron Judge_HearingsAndCases Abshire",
+        "id": 3,
+        "lastLoginAt": null,
+        "roles": Object {},
+        "selectedRegionalOffice": null,
+        "stationId": "101",
+        "status": "active",
+        "statusUpdatedAt": null,
+        "updatedAt": "2020-06-25T11:00:43.257-04:00",
+      },
+      "judgeId": "3",
+      "location": null,
+      "militaryService": "",
+      "notes": null,
+      "paperCase": false,
+      "prepped": null,
+      "readableLocation": null,
+      "readableRequestType": "Video",
+      "regionalOfficeKey": "RO17",
+      "regionalOfficeName": "St. Petersburg regional office",
+      "regionalOfficeTimezone": "America/New_York",
+      "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeEmailAddress": "tom.brady@caseflow.gov",
+      "representativeName": null,
+      "room": "1",
+      "scheduledFor": "2020-07-06T04:00:00.000-04:00",
+      "scheduledForIsPast": false,
+      "scheduledTime": "2000-01-01T04:00:00.000-05:00",
+      "scheduledTimeString": "04:00",
+      "summary": null,
+      "transcriptRequested": null,
+      "transcription": Object {},
+      "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+      "veteranAge": 85,
+      "veteranEmailAddress": "Brian.Hodkiewicz@test.com",
+      "veteranFileNumber": "100000005",
+      "veteranFirstName": "Brian",
+      "veteranGender": "M",
+      "veteranLastName": "Hodkiewicz",
+      "virtualHearing": null,
+      "wasVirtual": false,
+      "witness": null,
+      "worksheetIssues": Object {},
+    }
+  }
+  type="change_to_virtual"
+  update={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+  virtualHearing={
+    Object {
+      "aliasWithHost": "BVA0000009@care.evn.va.gov",
+      "appellantEmail": "Bob.Smith@test.com",
+      "clientHost": "care.evn.va.gov",
+      "false": "tom.brady@caseflow.gov",
+      "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+      "guestPin": "2684353125#",
+      "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+      "hostPin": "8600030#",
+      "jobCompleted": true,
+      "representativeEmail": "tom.brady@caseflow.gov",
+      "requestCancelled": false,
+      "status": "active",
+    }
+  }
+>
+  <div>
+    <Modal
+      buttons={Array []}
+      cancelButton={
+        <Button
+          classNames={
+            Array [
+              "cf-submit",
+            ]
+          }
+          disabled={false}
+          linkStyling={true}
+          name="cancel-virtual-hearing"
+          onClick={[Function]}
+          type="button"
+        >
+          Cancel
+        </Button>
+      }
+      className=""
+      closeHandler={[Function]}
+      confirmButton={
+        <Button
+          classNames={
+            Array [
+              "usa-button-secondary",
+            ]
+          }
+          disabled={false}
+          loading={false}
+          name="submit-virtual-hearing"
+          onClick={[Function]}
+          type="button"
+        >
+          Change and Send Email
+        </Button>
+      }
+      title="Change to Virtual Hearing"
+    >
+      <section
+        aria-describedby="modal_id-desc"
+        aria-labelledby="modal_id-title"
+        aria-modal="true"
+        className="cf-modal active "
+        id="modal_id"
+        role="alertdialog"
+      >
+        <TouchProvider>
+          <ScrollLock
+            accountForScrollbars={true}
+          >
+            <Sheet
+              styles="body {
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      position: relative !important;
+      
+      padding-right: 1024px !important;
+    }"
+            />
+          </ScrollLock>
+        </TouchProvider>
+        <div
+          className="cf-modal-body"
+          id=""
+        >
+          <button
+            className="cf-modal-close"
+            id="Change-to-Virtual-Hearing-button-id-close"
+            onClick={[Function]}
+            type="button"
+          >
+            <svg
+              className="cf-icon-close"
+              height="55"
+              viewBox="0 0 55 55"
+              width="55"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <title>
+                close
+              </title>
+              <path
+                d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+              />
+            </svg>
+          </button>
+          <div
+            style={
+              Object {
+                "display": "flex",
+              }
+            }
+          >
+            <div
+              data-css-1gs0ko2=""
+            >
+              <h1
+                id="modal_id-title"
+              >
+                Change to Virtual Hearing
+              </h1>
+              <div
+                data-css-o98ubo=""
+              >
+                <p
+                  dangerouslySetInnerHTML={
+                    Object {
+                      "__html": "Email notifications will be sent to the Appellant, POA / Representative, and VLJ.",
+                    }
+                  }
+                />
+                <ChangeToVirtual
+                  appellantEmailError={null}
+                  hearing={
+                    Object {
+                      "advanceOnDocketMotion": null,
+                      "aod": false,
+                      "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c3",
+                      "appealId": 613,
+                      "appellantAddressLine1": "9999 MISSION ST",
+                      "appellantCity": "SAN FRANCISCO",
+                      "appellantEmailAddress": "tom.brady@caseflow.gov",
+                      "appellantFirstName": "Tom",
+                      "appellantIsNotVeteran": true,
+                      "appellantLastName": "Brady",
+                      "appellantState": "CA",
+                      "appellantZip": "94103",
+                      "availableHearingLocations": Object {},
+                      "bvaPoc": null,
+                      "centralOfficeTimeString": "04:00",
+                      "claimantId": 604,
+                      "closestRegionalOffice": null,
+                      "currentIssueCount": 0,
+                      "disposition": null,
+                      "dispositionEditable": true,
+                      "docketName": "hearing",
+                      "docketNumber": "200624-613",
+                      "emailEvents": Array [],
+                      "evidenceWindowWaived": false,
+                      "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+                      "hearingDayId": 11,
+                      "id": 10,
+                      "isVirtual": false,
+                      "judge": Object {
+                        "createdAt": "2020-06-25T11:00:43.257-04:00",
+                        "cssId": "BVAAABSHIRE",
+                        "displayName": "BVAAABSHIRE (VACO)",
+                        "efolderDocumentsFetchedAt": null,
+                        "email": null,
+                        "fullName": "Aaron Judge_HearingsAndCases Abshire",
+                        "id": 3,
+                        "lastLoginAt": null,
+                        "roles": Object {},
+                        "selectedRegionalOffice": null,
+                        "stationId": "101",
+                        "status": "active",
+                        "statusUpdatedAt": null,
+                        "updatedAt": "2020-06-25T11:00:43.257-04:00",
+                      },
+                      "judgeId": "3",
+                      "location": null,
+                      "militaryService": "",
+                      "notes": null,
+                      "paperCase": false,
+                      "prepped": null,
+                      "readableLocation": null,
+                      "readableRequestType": "Video",
+                      "regionalOfficeKey": "RO17",
+                      "regionalOfficeName": "St. Petersburg regional office",
+                      "regionalOfficeTimezone": "America/New_York",
+                      "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+                      "representativeEmailAddress": "tom.brady@caseflow.gov",
+                      "representativeName": null,
+                      "room": "1",
+                      "scheduledFor": "2020-07-06T04:00:00.000-04:00",
+                      "scheduledForIsPast": false,
+                      "scheduledTime": "2000-01-01T04:00:00.000-05:00",
+                      "scheduledTimeString": "04:00",
+                      "summary": null,
+                      "transcriptRequested": null,
+                      "transcription": Object {},
+                      "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+                      "veteranAge": 85,
+                      "veteranEmailAddress": "Brian.Hodkiewicz@test.com",
+                      "veteranFileNumber": "100000005",
+                      "veteranFirstName": "Brian",
+                      "veteranGender": "M",
+                      "veteranLastName": "Hodkiewicz",
+                      "virtualHearing": null,
+                      "wasVirtual": false,
+                      "witness": null,
+                      "worksheetIssues": Object {},
+                    }
+                  }
+                  readOnly={false}
+                  representativeEmailError={null}
+                  type="change_to_virtual"
+                  update={
+                    [MockFunction] {
+                      "calls": Array [
+                        Array [
+                          "virtualHearing",
+                          Object {
+                            "false": "tom.brady@caseflow.gov",
+                          },
+                        ],
+                      ],
+                      "results": Array [
+                        Object {
+                          "type": "return",
+                          "value": undefined,
+                        },
+                      ],
+                    }
+                  }
+                  virtualHearing={
+                    Object {
+                      "aliasWithHost": "BVA0000009@care.evn.va.gov",
+                      "appellantEmail": "Bob.Smith@test.com",
+                      "clientHost": "care.evn.va.gov",
+                      "false": "tom.brady@caseflow.gov",
+                      "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+                      "guestPin": "2684353125#",
+                      "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+                      "hostPin": "8600030#",
+                      "jobCompleted": true,
+                      "representativeEmail": "tom.brady@caseflow.gov",
+                      "requestCancelled": false,
+                      "status": "active",
+                    }
+                  }
+                >
+                  <DateTime
+                    appellantEmailError={null}
+                    hearing={
+                      Object {
+                        "advanceOnDocketMotion": null,
+                        "aod": false,
+                        "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c3",
+                        "appealId": 613,
+                        "appellantAddressLine1": "9999 MISSION ST",
+                        "appellantCity": "SAN FRANCISCO",
+                        "appellantEmailAddress": "tom.brady@caseflow.gov",
+                        "appellantFirstName": "Tom",
+                        "appellantIsNotVeteran": true,
+                        "appellantLastName": "Brady",
+                        "appellantState": "CA",
+                        "appellantZip": "94103",
+                        "availableHearingLocations": Object {},
+                        "bvaPoc": null,
+                        "centralOfficeTimeString": "04:00",
+                        "claimantId": 604,
+                        "closestRegionalOffice": null,
+                        "currentIssueCount": 0,
+                        "disposition": null,
+                        "dispositionEditable": true,
+                        "docketName": "hearing",
+                        "docketNumber": "200624-613",
+                        "emailEvents": Array [],
+                        "evidenceWindowWaived": false,
+                        "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+                        "hearingDayId": 11,
+                        "id": 10,
+                        "isVirtual": false,
+                        "judge": Object {
+                          "createdAt": "2020-06-25T11:00:43.257-04:00",
+                          "cssId": "BVAAABSHIRE",
+                          "displayName": "BVAAABSHIRE (VACO)",
+                          "efolderDocumentsFetchedAt": null,
+                          "email": null,
+                          "fullName": "Aaron Judge_HearingsAndCases Abshire",
+                          "id": 3,
+                          "lastLoginAt": null,
+                          "roles": Object {},
+                          "selectedRegionalOffice": null,
+                          "stationId": "101",
+                          "status": "active",
+                          "statusUpdatedAt": null,
+                          "updatedAt": "2020-06-25T11:00:43.257-04:00",
+                        },
+                        "judgeId": "3",
+                        "location": null,
+                        "militaryService": "",
+                        "notes": null,
+                        "paperCase": false,
+                        "prepped": null,
+                        "readableLocation": null,
+                        "readableRequestType": "Video",
+                        "regionalOfficeKey": "RO17",
+                        "regionalOfficeName": "St. Petersburg regional office",
+                        "regionalOfficeTimezone": "America/New_York",
+                        "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+                        "representativeEmailAddress": "tom.brady@caseflow.gov",
+                        "representativeName": null,
+                        "room": "1",
+                        "scheduledFor": "2020-07-06T04:00:00.000-04:00",
+                        "scheduledForIsPast": false,
+                        "scheduledTime": "2000-01-01T04:00:00.000-05:00",
+                        "scheduledTimeString": "04:00",
+                        "summary": null,
+                        "transcriptRequested": null,
+                        "transcription": Object {},
+                        "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+                        "veteranAge": 85,
+                        "veteranEmailAddress": "Brian.Hodkiewicz@test.com",
+                        "veteranFileNumber": "100000005",
+                        "veteranFirstName": "Brian",
+                        "veteranGender": "M",
+                        "veteranLastName": "Hodkiewicz",
+                        "virtualHearing": null,
+                        "wasVirtual": false,
+                        "witness": null,
+                        "worksheetIssues": Object {},
+                      }
+                    }
+                    readOnly={false}
+                    representativeEmailError={null}
+                    type="change_to_virtual"
+                    update={
+                      [MockFunction] {
+                        "calls": Array [
+                          Array [
+                            "virtualHearing",
+                            Object {
+                              "false": "tom.brady@caseflow.gov",
+                            },
+                          ],
+                        ],
+                        "results": Array [
+                          Object {
+                            "type": "return",
+                            "value": undefined,
+                          },
+                        ],
+                      }
+                    }
+                    virtualHearing={
+                      Object {
+                        "aliasWithHost": "BVA0000009@care.evn.va.gov",
+                        "appellantEmail": "Bob.Smith@test.com",
+                        "clientHost": "care.evn.va.gov",
+                        "false": "tom.brady@caseflow.gov",
+                        "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+                        "guestPin": "2684353125#",
+                        "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+                        "hostPin": "8600030#",
+                        "jobCompleted": true,
+                        "representativeEmail": "tom.brady@caseflow.gov",
+                        "requestCancelled": false,
+                        "status": "active",
+                      }
+                    }
+                  >
+                    <div>
+                      <strong>
+                        Hearing Date: 
+                      </strong>
+                      07/06/2020
+                      <br />
+                      <strong>
+                        Hearing Time: 
+                      </strong>
+                      4:00 AM Eastern Time (US & Canada)
+                    </div>
+                  </DateTime>
+                  <TextField
+                    className={
+                      Array [
+                        "cf-form-textinput",
+                      ]
+                    }
+                    errorMessage={null}
+                    label="Appellant Email"
+                    name="appellant-email"
+                    onChange={[Function]}
+                    optional={false}
+                    readOnly={false}
+                    required={false}
+                    strongLabel={true}
+                    type="text"
+                    useAriaLabel={false}
+                    value="Bob.Smith@test.com"
+                  >
+                    <div
+                      className="cf-form-textinput   "
+                    >
+                      <label
+                        htmlFor="appellant-email"
+                      >
+                        <strong>
+                          <FormLabel
+                            label="Appellant Email"
+                            name="appellant-email"
+                            optional={false}
+                            required={false}
+                          >
+                            <span>
+                              Appellant Email
+                            </span>
+                          </FormLabel>
+                        </strong>
+                      </label>
+                      <input
+                        className={
+                          Array [
+                            "cf-form-textinput",
+                          ]
+                        }
+                        id="appellant-email"
+                        name="appellant-email"
+                        onChange={[Function]}
+                        readOnly={false}
+                        type="text"
+                        value="Bob.Smith@test.com"
+                      />
+                    </div>
+                  </TextField>
+                  <TextField
+                    className={
+                      Array [
+                        "cf-form-textinput",
+                      ]
+                    }
+                    errorMessage={null}
+                    label="POA/Representative Email"
+                    name="representative-email"
+                    onChange={[Function]}
+                    optional={false}
+                    readOnly={false}
+                    required={false}
+                    strongLabel={true}
+                    type="text"
+                    useAriaLabel={false}
+                    value="tom.brady@caseflow.gov"
+                  >
+                    <div
+                      className="cf-form-textinput   "
+                    >
+                      <label
+                        htmlFor="representative-email"
+                      >
+                        <strong>
+                          <FormLabel
+                            label="POA/Representative Email"
+                            name="representative-email"
+                            optional={false}
+                            required={false}
+                          >
+                            <span>
+                              POA/Representative Email
+                            </span>
+                          </FormLabel>
+                        </strong>
+                      </label>
+                      <input
+                        className={
+                          Array [
+                            "cf-form-textinput",
+                          ]
+                        }
+                        id="representative-email"
+                        name="representative-email"
+                        onChange={[Function]}
+                        readOnly={false}
+                        type="text"
+                        value="tom.brady@caseflow.gov"
+                      />
+                    </div>
+                  </TextField>
+                  <p
+                    dangerouslySetInnerHTML={
+                      Object {
+                        "__html": "Changes to the Appellant and POA / Representative emails will be used to send notifications <strong>for this hearing only</strong>.",
+                      }
+                    }
+                  />
+                </ChangeToVirtual>
+              </div>
+            </div>
+          </div>
+          <div
+            className="cf-modal-divider"
+          />
+          <div
+            className="cf-modal-controls"
+          >
+            <div>
+              <span
+                className="cf-push-right"
+              >
+                <Button
+                  classNames={
+                    Array [
+                      "usa-button-secondary",
+                    ]
+                  }
+                  disabled={false}
+                  loading={false}
+                  name="submit-virtual-hearing"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  <span>
+                    <button
+                      className="usa-button-secondary usa-button"
+                      disabled={false}
+                      id="button-submit-virtual-hearing"
+                      onClick={[Function]}
+                      type="button"
+                    >
+                      Change and Send Email
+                    </button>
+                  </span>
+                </Button>
+              </span>
+              <span
+                className="cf-push-left"
+              >
+                <Button
+                  classNames={
+                    Array [
+                      "cf-submit",
+                    ]
+                  }
+                  disabled={false}
+                  linkStyling={true}
+                  name="cancel-virtual-hearing"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  <span>
+                    <button
+                      className="cf-submit cf-btn-link usa-button"
+                      disabled={false}
+                      id="button-cancel-virtual-hearing"
+                      onClick={[Function]}
+                      type="button"
+                    >
+                      Cancel
+                    </button>
+                  </span>
+                </Button>
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </Modal>
+  </div>
+</VirtualHearingModal>
+`;
