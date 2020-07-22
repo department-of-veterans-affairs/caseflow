@@ -187,51 +187,6 @@ describe VACOLS::CaseDocket, :all_dbs do
     end
   end
 
-  context ".judge_cssids_tied_to_ready_priority_cases" do
-    subject { VACOLS::CaseDocket.judge_cssids_tied_to_ready_priority_cases}
-
-    let(:third_judge) { create(:user) }
-    let!(:third_vacols_judge) { create(:staff, :judge_role, sdomainid: third_judge.css_id) }
-
-    before do
-      create(
-        :case_hearing,
-        :disposition_held,
-        folder_nr: aod_ready_case.bfkey,
-        hearing_date: 5.days.ago.to_date,
-        board_member: judge.vacols_attorney_id
-      )
-
-      create(
-        :case_hearing,
-        :disposition_held,
-        folder_nr: postcavc_ready_case.bfkey,
-        hearing_date: 5.days.ago.to_date,
-        board_member: another_judge.vacols_attorney_id
-      )
-
-      create(
-        :case_hearing,
-        :disposition_held,
-        folder_nr: aod_unready_case.bfkey,
-        hearing_date: 5.days.ago.to_date,
-        board_member: third_judge.vacols_attorney_id
-      )
-
-      create(
-        :case_hearing,
-        :disposition_held,
-        folder_nr: nonpriority_ready_case.bfkey,
-        hearing_date: 5.days.ago.to_date,
-        board_member: third_judge.vacols_attorney_id
-      )
-    end
-
-    it "returns judges linked to ready priority cases" do
-      expect(subject).to match_array [judge.css_id, another_judge.css_id]
-    end
-  end
-
   context ".nonpriority_hearing_cases_for_judge_count" do
     subject { VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge) }
 

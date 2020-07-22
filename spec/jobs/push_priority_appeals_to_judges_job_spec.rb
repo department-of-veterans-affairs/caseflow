@@ -5,7 +5,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     arr.each_with_index.map { |count, i| [i, count] }.to_h
   end
 
-  context ".distribute_non_genpop_priority_appeals" do
+  fcontext ".distribute_non_genpop_priority_appeals" do
     before do
       allow_any_instance_of(DirectReviewDocket)
         .to receive(:nonpriority_receipts_per_year)
@@ -14,6 +14,13 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       allow(Docket)
         .to receive(:nonpriority_decisions_per_year)
         .and_return(1000)
+      allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(
+        [
+          judge_with_ready_priority_cases,
+          judge_with_ready_nonpriority_cases,
+          judge_with_nonready_priority_cases
+        ]
+      )
     end
 
     let(:ready_priority_bfkey) { "12345" }

@@ -289,26 +289,6 @@ class VACOLS::CaseDocket < VACOLS::Record
     connection.exec_query(fmtd_query).count
   end
 
-  def self.judge_cssids_tied_to_ready_priority_cases
-    query = <<-SQL
-      select distinct SDOMAINID
-        from (
-          select SDOMAINID, case when BFHINES is null or BFHINES <> 'GP' then nvl(VLJ_HEARINGS.VLJ, VLJ_PRIORDEC.VLJ) end VLJ
-          from (
-            #{SELECT_READY_APPEALS}
-              and (BFAC = '7' or AOD = '1')
-          ) BRIEFF
-          #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
-          #{JOIN_ASSOCIATED_VLJS_BY_PRIOR_DECISIONS}
-          inner join STAFF on STAFF.SATTYID = nvl(VLJ_HEARINGS.VLJ, VLJ_PRIORDEC.VLJ)
-          where STAFF.SACTIVE = 'A'
-        )
-      where VLJ is not null
-    SQL
-
-    connection.exec_query(query).rows.flatten
-  end
-
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
 
