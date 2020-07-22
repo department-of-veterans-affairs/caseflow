@@ -74,7 +74,7 @@ class WorkQueue::TaskColumnSerializer
     columns = [Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name]
 
     if serialize_attribute?(params, columns)
-      object.appeal.number_of_issues
+      object.appeal.is_a?(LegacyAppeal) ? object.appeal.undecided_issues.count : object.appeal.number_of_issues
     end
   end
 
