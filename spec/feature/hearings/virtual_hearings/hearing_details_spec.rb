@@ -72,14 +72,6 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
     COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % hearing.appeal.veteran.name
   end
 
-  let!(:central_virtual_hearing) do
-    create(:virtual_hearing,
-           :all_emails_sent,
-           :previously_central,
-           status: :active,
-           hearing: central_hearing)
-  end
-
   let(:pre_loaded_veteran_email) { hearing.appeal.veteran.email_address }
   let(:pre_loaded_rep_email) { hearing.appeal.representative_email_address }
   let(:fill_in_veteran_email) { "email@testingEmail.com" }
@@ -524,6 +516,14 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
   end
 
   context "Updating POA/Representative timezone" do
+    let!(:central_virtual_hearing) do
+      create(:virtual_hearing,
+             :all_emails_sent,
+             :previously_central,
+             status: :active,
+             hearing: central_hearing)
+    end
+
     scenario "Sends update hearing time email only to the POA/Representative" do
       visit "hearings/" + central_hearing.external_id.to_s + "/details"
 
@@ -551,6 +551,14 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
   end
 
   context "Updating Appellant timezone" do
+    let!(:central_virtual_hearing) do
+      create(:virtual_hearing,
+             :all_emails_sent,
+             :previously_central,
+             status: :active,
+             hearing: central_hearing)
+    end
+
     scenario "Sends update hearing time email only to the Appellant" do
       visit "hearings/" + central_hearing.external_id.to_s + "/details"
 
@@ -578,6 +586,14 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
   end
 
   context "Updating both Appellant and POA/Representative timezone" do
+    let!(:central_virtual_hearing) do
+      create(:virtual_hearing,
+             :all_emails_sent,
+             :previously_central,
+             status: :active,
+             hearing: central_hearing)
+    end
+
     scenario "Sends update hearing time emails to both the Appellant and the POA/Representative" do
       visit "hearings/" + central_hearing.external_id.to_s + "/details"
 
@@ -608,6 +624,14 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
   end
 
   context "Updating either Appellant and POA/Representative email address and timezone" do
+    let!(:central_virtual_hearing) do
+      create(:virtual_hearing,
+             :all_emails_sent,
+             :previously_central,
+             status: :active,
+             hearing: central_hearing)
+    end
+
     scenario "Sends the confirmation email" do
       visit "hearings/" + central_hearing.external_id.to_s + "/details"
 

@@ -135,7 +135,7 @@ exports[`VirtualHearingModal ChangeEmail sub-component Displays ReadOnlyEmails c
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -144,7 +144,7 @@ exports[`VirtualHearingModal ChangeEmail sub-component Displays ReadOnlyEmails c
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -284,7 +284,7 @@ exports[`VirtualHearingModal ChangeEmail sub-component Displays ReadOnlyEmails c
       Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": "America/Denver",
+        "appellantTz": null,
         "clientHost": "care.evn.va.gov",
         "false": "tom.brady@caseflow.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -293,7 +293,7 @@ exports[`VirtualHearingModal ChangeEmail sub-component Displays ReadOnlyEmails c
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": "America/Los_Angeles",
+        "representativeTz": null,
         "requestCancelled": false,
         "status": "active",
       }
@@ -439,7 +439,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -448,7 +448,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -590,7 +590,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
       Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": "America/Denver",
+        "appellantTz": null,
         "clientHost": "care.evn.va.gov",
         "false": "tom.brady@caseflow.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -599,7 +599,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": "America/Los_Angeles",
+        "representativeTz": null,
         "requestCancelled": false,
         "status": "active",
       }
@@ -760,7 +760,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
       Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": "America/Denver",
+        "appellantTz": null,
         "clientHost": "care.evn.va.gov",
         "false": "tom.brady@caseflow.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -769,7 +769,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": "America/Los_Angeles",
+        "representativeTz": null,
         "requestCancelled": false,
         "status": "active",
       }
@@ -929,7 +929,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -938,7 +938,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -1078,7 +1078,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
       Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": "America/Denver",
+        "appellantTz": null,
         "clientHost": "care.evn.va.gov",
         "false": "tom.brady@caseflow.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -1087,7 +1087,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": "America/Los_Angeles",
+        "representativeTz": null,
         "requestCancelled": false,
         "status": "active",
       }
@@ -1240,7 +1240,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
       Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": "America/Denver",
+        "appellantTz": null,
         "clientHost": "care.evn.va.gov",
         "false": "tom.brady@caseflow.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -1249,7 +1249,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": "America/Los_Angeles",
+        "representativeTz": null,
         "requestCancelled": false,
         "status": "active",
       }
@@ -1409,7 +1409,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -1418,7 +1418,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -1558,7 +1558,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
       Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": "America/Denver",
+        "appellantTz": null,
         "clientHost": "care.evn.va.gov",
         "false": "tom.brady@caseflow.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -1567,7 +1567,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": "America/Los_Angeles",
+        "representativeTz": null,
         "requestCancelled": false,
         "status": "active",
       }
@@ -1720,7 +1720,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
       Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": "America/Denver",
+        "appellantTz": null,
         "clientHost": "care.evn.va.gov",
         "false": "tom.brady@caseflow.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -1729,7 +1729,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": "America/Los_Angeles",
+        "representativeTz": null,
         "requestCancelled": false,
         "status": "active",
       }
@@ -1880,7 +1880,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -1889,7 +1889,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -2020,7 +2020,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
       Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": "America/Denver",
+        "appellantTz": null,
         "clientHost": "care.evn.va.gov",
         "false": "tom.brady@caseflow.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -2029,7 +2029,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": "America/Los_Angeles",
+        "representativeTz": null,
         "requestCancelled": false,
         "status": "active",
       }
@@ -2276,7 +2276,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -2285,7 +2285,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -2405,7 +2405,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
       Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": "America/Denver",
+        "appellantTz": null,
         "clientHost": "care.evn.va.gov",
         "false": "tom.brady@caseflow.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -2414,7 +2414,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": "America/Los_Angeles",
+        "representativeTz": null,
         "requestCancelled": false,
         "status": "active",
       }
@@ -2676,7 +2676,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -2685,7 +2685,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -2826,7 +2826,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
       Object {
         "aliasWithHost": "BVA0000009@care.evn.va.gov",
         "appellantEmail": "Bob.Smith@test.com",
-        "appellantTz": "America/Denver",
+        "appellantTz": null,
         "clientHost": "care.evn.va.gov",
         "false": "tom.brady@caseflow.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -2835,7 +2835,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
         "hostPin": "8600030#",
         "jobCompleted": true,
         "representativeEmail": "tom.brady@caseflow.gov",
-        "representativeTz": "America/Los_Angeles",
+        "representativeTz": null,
         "requestCancelled": false,
         "status": "active",
       }
@@ -3101,7 +3101,7 @@ exports[`VirtualHearingModal DateTime sub-component Displays divider for formerl
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -3110,7 +3110,7 @@ exports[`VirtualHearingModal DateTime sub-component Displays divider for formerl
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -3268,7 +3268,7 @@ exports[`VirtualHearingModal DateTime sub-component Displays formatted hearing d
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -3277,7 +3277,7 @@ exports[`VirtualHearingModal DateTime sub-component Displays formatted hearing d
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -3403,7 +3403,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -3412,7 +3412,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -3638,7 +3638,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
                     Object {
                       "aliasWithHost": "BVA0000009@care.evn.va.gov",
                       "appellantEmail": "Bob.Smith@test.com",
-                      "appellantTz": "America/Denver",
+                      "appellantTz": null,
                       "clientHost": "care.evn.va.gov",
                       "false": "tom.brady@caseflow.gov",
                       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -3647,7 +3647,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
                       "hostPin": "8600030#",
                       "jobCompleted": true,
                       "representativeEmail": "tom.brady@caseflow.gov",
-                      "representativeTz": "America/Los_Angeles",
+                      "representativeTz": null,
                       "requestCancelled": false,
                       "status": "active",
                     }
@@ -3761,7 +3761,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
                       Object {
                         "aliasWithHost": "BVA0000009@care.evn.va.gov",
                         "appellantEmail": "Bob.Smith@test.com",
-                        "appellantTz": "America/Denver",
+                        "appellantTz": null,
                         "clientHost": "care.evn.va.gov",
                         "false": "tom.brady@caseflow.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -3770,7 +3770,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
                         "hostPin": "8600030#",
                         "jobCompleted": true,
                         "representativeEmail": "tom.brady@caseflow.gov",
-                        "representativeTz": "America/Los_Angeles",
+                        "representativeTz": null,
                         "requestCancelled": false,
                         "status": "active",
                       }
@@ -3958,7 +3958,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -3967,7 +3967,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -4193,7 +4193,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                     Object {
                       "aliasWithHost": "BVA0000009@care.evn.va.gov",
                       "appellantEmail": "Bob.Smith@test.com",
-                      "appellantTz": "America/Denver",
+                      "appellantTz": null,
                       "clientHost": "care.evn.va.gov",
                       "false": "tom.brady@caseflow.gov",
                       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -4202,7 +4202,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                       "hostPin": "8600030#",
                       "jobCompleted": true,
                       "representativeEmail": "tom.brady@caseflow.gov",
-                      "representativeTz": "America/Los_Angeles",
+                      "representativeTz": null,
                       "requestCancelled": false,
                       "status": "active",
                     }
@@ -4316,7 +4316,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                       Object {
                         "aliasWithHost": "BVA0000009@care.evn.va.gov",
                         "appellantEmail": "Bob.Smith@test.com",
-                        "appellantTz": "America/Denver",
+                        "appellantTz": null,
                         "clientHost": "care.evn.va.gov",
                         "false": "tom.brady@caseflow.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -4325,7 +4325,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                         "hostPin": "8600030#",
                         "jobCompleted": true,
                         "representativeEmail": "tom.brady@caseflow.gov",
-                        "representativeTz": "America/Los_Angeles",
+                        "representativeTz": null,
                         "requestCancelled": false,
                         "status": "active",
                       }
@@ -4452,7 +4452,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                       Object {
                         "aliasWithHost": "BVA0000009@care.evn.va.gov",
                         "appellantEmail": "Bob.Smith@test.com",
-                        "appellantTz": "America/Denver",
+                        "appellantTz": null,
                         "clientHost": "care.evn.va.gov",
                         "false": "tom.brady@caseflow.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -4461,7 +4461,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                         "hostPin": "8600030#",
                         "jobCompleted": true,
                         "representativeEmail": "tom.brady@caseflow.gov",
-                        "representativeTz": "America/Los_Angeles",
+                        "representativeTz": null,
                         "requestCancelled": false,
                         "status": "active",
                       }
@@ -4665,7 +4665,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -4674,7 +4674,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -4900,7 +4900,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                     Object {
                       "aliasWithHost": "BVA0000009@care.evn.va.gov",
                       "appellantEmail": "Bob.Smith@test.com",
-                      "appellantTz": "America/Denver",
+                      "appellantTz": null,
                       "clientHost": "care.evn.va.gov",
                       "false": "tom.brady@caseflow.gov",
                       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -4909,7 +4909,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                       "hostPin": "8600030#",
                       "jobCompleted": true,
                       "representativeEmail": "tom.brady@caseflow.gov",
-                      "representativeTz": "America/Los_Angeles",
+                      "representativeTz": null,
                       "requestCancelled": false,
                       "status": "active",
                     }
@@ -5023,7 +5023,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                       Object {
                         "aliasWithHost": "BVA0000009@care.evn.va.gov",
                         "appellantEmail": "Bob.Smith@test.com",
-                        "appellantTz": "America/Denver",
+                        "appellantTz": null,
                         "clientHost": "care.evn.va.gov",
                         "false": "tom.brady@caseflow.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -5032,7 +5032,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                         "hostPin": "8600030#",
                         "jobCompleted": true,
                         "representativeEmail": "tom.brady@caseflow.gov",
-                        "representativeTz": "America/Los_Angeles",
+                        "representativeTz": null,
                         "requestCancelled": false,
                         "status": "active",
                       }
@@ -5159,7 +5159,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                       Object {
                         "aliasWithHost": "BVA0000009@care.evn.va.gov",
                         "appellantEmail": "Bob.Smith@test.com",
-                        "appellantTz": "America/Denver",
+                        "appellantTz": null,
                         "clientHost": "care.evn.va.gov",
                         "false": "tom.brady@caseflow.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -5168,7 +5168,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                         "hostPin": "8600030#",
                         "jobCompleted": true,
                         "representativeEmail": "tom.brady@caseflow.gov",
-                        "representativeTz": "America/Los_Angeles",
+                        "representativeTz": null,
                         "requestCancelled": false,
                         "status": "active",
                       }
@@ -5372,7 +5372,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -5381,7 +5381,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -5607,7 +5607,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                     Object {
                       "aliasWithHost": "BVA0000009@care.evn.va.gov",
                       "appellantEmail": "Bob.Smith@test.com",
-                      "appellantTz": "America/Denver",
+                      "appellantTz": null,
                       "clientHost": "care.evn.va.gov",
                       "false": "tom.brady@caseflow.gov",
                       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -5616,7 +5616,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                       "hostPin": "8600030#",
                       "jobCompleted": true,
                       "representativeEmail": "tom.brady@caseflow.gov",
-                      "representativeTz": "America/Los_Angeles",
+                      "representativeTz": null,
                       "requestCancelled": false,
                       "status": "active",
                     }
@@ -5730,7 +5730,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                       Object {
                         "aliasWithHost": "BVA0000009@care.evn.va.gov",
                         "appellantEmail": "Bob.Smith@test.com",
-                        "appellantTz": "America/Denver",
+                        "appellantTz": null,
                         "clientHost": "care.evn.va.gov",
                         "false": "tom.brady@caseflow.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -5739,7 +5739,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                         "hostPin": "8600030#",
                         "jobCompleted": true,
                         "representativeEmail": "tom.brady@caseflow.gov",
-                        "representativeTz": "America/Los_Angeles",
+                        "representativeTz": null,
                         "requestCancelled": false,
                         "status": "active",
                       }
@@ -6080,7 +6080,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -6089,7 +6089,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -6101,7 +6101,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="6:30 AM Mountain Time (US & Canada)"
+      text="8:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6110,7 +6110,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          6:30 AM Mountain Time (US & Canada)
+          8:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6136,7 +6136,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="5:30 AM Pacific Time (US & Canada)"
+      text="8:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6145,7 +6145,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          5:30 AM Pacific Time (US & Canada)
+          8:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6304,7 +6304,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -6313,7 +6313,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -6325,7 +6325,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="6:30 AM Mountain Time (US & Canada)"
+      text="8:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6334,7 +6334,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          6:30 AM Mountain Time (US & Canada)
+          8:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6360,7 +6360,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="5:30 AM Pacific Time (US & Canada)"
+      text="8:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6369,7 +6369,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          5:30 AM Pacific Time (US & Canada)
+          8:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6528,7 +6528,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -6537,7 +6537,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -6549,7 +6549,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="6:30 AM Mountain Time (US & Canada)"
+      text="8:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6558,7 +6558,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          6:30 AM Mountain Time (US & Canada)
+          8:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6717,7 +6717,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -6726,7 +6726,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -6738,7 +6738,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="5:30 AM Pacific Time (US & Canada)"
+      text="8:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6747,7 +6747,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          5:30 AM Pacific Time (US & Canada)
+          8:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6908,7 +6908,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -6917,7 +6917,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -7077,7 +7077,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -7086,7 +7086,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -7246,7 +7246,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -7255,7 +7255,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -7408,7 +7408,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
-      "appellantTz": "America/Denver",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -7417,7 +7417,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
-      "representativeTz": "America/Los_Angeles",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }

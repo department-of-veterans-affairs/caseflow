@@ -22,6 +22,21 @@ const updateSpy = jest.fn();
 const error = 'Something went wrong...';
 const location = { name: 'Somewhere' };
 
+// Helper test to check email assertions on formerly central hearings
+const showAllEmailsAssertion = (node) => {
+  expect(node.find(ReadOnly)).toHaveLength(4);
+  expect(node.find(ReadOnly).first().
+    text()).toContain(zoneName(centralHearing.scheduledTimeString, virtualHearing.virtualHearing.appellantTz));
+  expect(node.find(ReadOnly).at(1).
+    text()).toContain(virtualHearing.virtualHearing.appellantEmail);
+  expect(node.find(ReadOnly).at(2).
+    text()).toContain(zoneName(centralHearing.scheduledTimeString, virtualHearing.virtualHearing.representativeTz));
+  expect(node.find(ReadOnly).at(3).
+    text()).toContain(virtualHearing.virtualHearing.representativeEmail);
+  expect(node.find('.cf-help-divider')).toHaveLength(1);
+
+};
+
 describe('VirtualHearingModal', () => {
   test('Matches snapshot with default props', () => {
     // Run the test
@@ -407,16 +422,7 @@ describe('VirtualHearingModal', () => {
         );
 
         // Assertions
-        expect(readOnlyEmails.find(ReadOnly)).toHaveLength(4);
-        expect(readOnlyEmails.find(ReadOnly).first().
-          text()).toContain(zoneName(centralHearing.scheduledTimeString, virtualHearing.virtualHearing.appellantTz));
-        expect(readOnlyEmails.find(ReadOnly).at(1).
-          text()).toContain(virtualHearing.virtualHearing.appellantEmail);
-        expect(readOnlyEmails.find(ReadOnly).at(2).
-          text()).toContain(zoneName(centralHearing.scheduledTimeString, virtualHearing.virtualHearing.representativeTz));
-        expect(readOnlyEmails.find(ReadOnly).at(3).
-          text()).toContain(virtualHearing.virtualHearing.representativeEmail);
-        expect(readOnlyEmails.find('.cf-help-divider')).toHaveLength(1);
+        showAllEmailsAssertion(readOnlyEmails);
         expect(readOnlyEmails).toMatchSnapshot();
       });
 
@@ -432,16 +438,7 @@ describe('VirtualHearingModal', () => {
         );
 
         // Assertions
-        expect(readOnlyEmails.find(ReadOnly)).toHaveLength(4);
-        expect(readOnlyEmails.find(ReadOnly).first().
-          text()).toContain(zoneName(centralHearing.scheduledTimeString, virtualHearing.virtualHearing.appellantTz));
-        expect(readOnlyEmails.find(ReadOnly).at(1).
-          text()).toContain(virtualHearing.virtualHearing.appellantEmail);
-        expect(readOnlyEmails.find(ReadOnly).at(2).
-          text()).toContain(zoneName(centralHearing.scheduledTimeString, virtualHearing.virtualHearing.representativeTz));
-        expect(readOnlyEmails.find(ReadOnly).at(3).
-          text()).toContain(virtualHearing.virtualHearing.representativeEmail);
-        expect(readOnlyEmails.find('.cf-help-divider')).toHaveLength(1);
+        showAllEmailsAssertion(readOnlyEmails);
         expect(readOnlyEmails).toMatchSnapshot();
       });
     });
