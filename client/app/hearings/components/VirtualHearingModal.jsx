@@ -158,7 +158,7 @@ export const ChangeEmail = (props) => (
 );
 
 export const ChangeFromVirtual = (props) => {
-  const hearing = { props };
+  const { hearing } = props;
 
   return (
     <React.Fragment>

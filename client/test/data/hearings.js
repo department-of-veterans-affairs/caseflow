@@ -19,6 +19,8 @@ export const virtualHearingEmails = {
 
 export const virtualHearing = {
   virtualHearing: {
+    appellantTz: 'America/Denver',
+    representativeTz: 'America/Los_Angeles',
     appellantEmail: 'Bob.Smith@test.com',
     representativeEmail: 'tom.brady@caseflow.gov',
     status: 'active',
