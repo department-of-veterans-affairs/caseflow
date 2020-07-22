@@ -72,7 +72,7 @@ export const formatRelationships = (relationships) => {
 };
 
 export const getDefaultPayeeCode = (state, claimant) => {
-  return _.find(state.relationships, { value: claimant }).defaultPayeeCode;
+  return (claimant ? _.find(state.relationships, { value: claimant }).defaultPayeeCode : null);
 };
 
 export const formatRadioOptions = (options) => {

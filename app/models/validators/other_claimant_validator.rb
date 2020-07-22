@@ -4,7 +4,7 @@ class OtherClaimantValidator < ClaimantValidator
   ERRORS = {
     claimant_notes_required: "notes may not be blank for OtherClaimant",
     claimant_required: "participant_id may not be blank",
-    blank: "blank",
+    blank: "blank"
   }.freeze
 
   delegate :notes, to: :claimant

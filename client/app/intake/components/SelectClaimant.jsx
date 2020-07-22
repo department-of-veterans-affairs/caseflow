@@ -84,9 +84,9 @@ export const SelectClaimant = (props) => {
     attorneyFees
   ]);
   const handleVeteranIsNotClaimant = (value) => {
-    value = convertStringToBoolean(value);
-    setVeteranIsNotClaimant(value);
-    setClaimant({ claimant: null, claimantType: (value ? 'dependent' : 'veteran') });
+    const veteranIsNotClaimant = convertStringToBoolean(value);
+    setVeteranIsNotClaimant(veteranIsNotClaimant);
+    setClaimant({ claimant: null, claimantType: (veteranIsNotClaimant ? 'dependent' : 'veteran') });
   };
   const handleRemove = () => {
     setNewClaimant(null);

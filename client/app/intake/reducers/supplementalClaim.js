@@ -119,7 +119,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: action.payload.claimant
       },
       payeeCode: {
-        $set: action.payload.claimant && getDefaultPayeeCode(state, action.payload.claimant)
+        $set: getDefaultPayeeCode(state, action.payload.claimant)
       },
       claimantType: {
         $set: action.payload.claimantType
