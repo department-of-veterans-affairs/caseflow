@@ -98,6 +98,7 @@ const DetailsForm = (props) => {
             disabled={readOnly}
             value={hearing?.notes || ''}
             onChange={(notes) => update('hearing', { notes })}
+            maxlength={1000}
           />
         </div>
       </ContentSection>
