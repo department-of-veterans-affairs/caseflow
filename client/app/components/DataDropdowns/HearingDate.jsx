@@ -1,8 +1,8 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import React from 'react';
-import _ from 'lodash';
+import React, { useEffect } from 'react';
+import { isEqual, values, find } from 'lodash';
 
 import { formatDateStr, getMinutesToMilliseconds } from '../../util/DateUtil';
 import {
@@ -15,35 +15,41 @@ import COPY from '../../../COPY';
 import LoadingLabel from './LoadingLabel';
 import SearchableDropdown from '../SearchableDropdown';
 
-class HearingDateDropdown extends React.Component {
-  componentDidMount() {
-    setTimeout(this.getHearingDates, 0);
+const HearingDateDropdown = (
+  {
+    name, label, value, hearingDates, regionalOffice, onChange, readOnly,
+    placeholder, errorMessage, validateValueOnMount, onFetchDropdownData,
+    onReceiveDropdownData, onDropdownError
   }
+) => {
+  const hearingDateOptions = hearingDates.options;
 
-  componentDidUpdate(prevProps) {
-    const { hearingDates: { options }, validateValueOnMount, onChange } = this.props;
-
-    if (!_.isEqual(prevProps.hearingDates.options, options) && validateValueOnMount) {
-      const option = this.getSelectedOption() || {};
-
-      onChange(option.value, option.label);
+  const getSelectedOption = () => {
+    if (!value) {
+      return hearingDateOptions ? hearingDateOptions[0] : {};
     }
 
-    if (prevProps.regionalOffice !== this.props.regionalOffice) {
-      setTimeout(() => this.getHearingDates(true), 0);
+    let comparison;
+
+    if (typeof (value) === 'string') {
+      comparison = (opt) => opt?.value.hearingDate === formatDateStr(value, 'YYYY-MM-DD', 'YYYY-MM-DD');
+    } else {
+      comparison = (opt) => opt?.value === value;
     }
+
+    find(hearingDateOptions, comparison);
   }
 
-  getHearingDates = (force) => {
-    const { hearingDates: { options, isFetching }, regionalOffice } = this.props;
+  const getHearingDates = (force) => {
     const name = `hearingDatesFor${regionalOffice}`;
     const xhrUrl = `/regional_offices/${regionalOffice}/hearing_dates.json`;
 
-    if ((options && !force) || isFetching) {
+    // currently fetching the dates
+    if ((hearingDateOptions && !force) || hearingDates.isFetching) {
       return;
     }
 
-    this.props.onFetchDropdownData(name);
+    onFetchDropdownData(name);
 
     return ApiUtil.
       get(xhrUrl, { timeout: { response: getMinutesToMilliseconds(5) } }).
@@ -74,66 +80,55 @@ class HearingDateDropdown extends React.Component {
           }
         );
 
-        this.props.onReceiveDropdownData(name, hearingDateOptions);
+        onReceiveDropdownData(name, hearingDateOptions);
 
         if (hearingDateOptions && hearingDateOptions.length === 1) {
-          this.props.onDropdownError(name, 'There are no upcoming hearing dates for this regional office.');
+          onDropdownError(name, 'There are no upcoming hearing dates for this regional office.');
         } else {
-          this.props.onDropdownError(name, null);
+          onDropdownError(name, null);
         }
       });
   }
 
-  getSelectedOption = () => {
-    const { value, hearingDates: { options } } = this.props;
-
-    if (!value) {
-      return options ? options[0] : {};
+  // only if different RO is selected
+  useEffect(() => {
+    const timer = setTimeout(() => getHearingDates(true), 0);
+    return () => {
+      clearTimeout(timer)
     }
+  }, [regionalOffice])
 
-    let comparison;
+  // only if there's new set of hearingDateOptions
+  useEffect(() => {
+    if (validateValueOnMount) {
+      const option = getSelectedOption() || {};
 
-    if (typeof (value) === 'string') {
-      comparison = (opt) => opt.value.hearingDate === formatDateStr(value, 'YYYY-MM-DD', 'YYYY-MM-DD');
-    } else {
-      comparison = (opt) => opt.value === value;
+      onChange(option.value, option.label);
     }
+  }, [hearingDateOptions])
 
-    return _.find(options, comparison);
+  const onOptionSelected = (option) => {
+    onChange(option?.value, option?.label);
   }
 
-  onOptionSelected = (option) => {
-    const { onChange } = this.props;
-    const safeOption = option || {};
-
-    return onChange(safeOption.value, safeOption.label);
-  }
-
-  render() {
-    const {
-      name, label, readOnly, errorMessage, placeholder,
-      hearingDates: { options, isFetching, errorMsg }
-    } = this.props;
-
-    return (
-      <React.Fragment>
-        <SearchableDropdown
-          name={name}
-          label={
-            isFetching ? <LoadingLabel text={COPY.HEARING_DATE_LOADING} /> : label
-          }
-          strongLabel
-          readOnly={readOnly}
-          value={this.getSelectedOption()}
-          onChange={this.onOptionSelected}
-          options={options}
-          errorMessage={errorMsg || errorMessage}
-          placeholder={placeholder}
-        />
-      </React.Fragment>
-    );
-  }
-}
+  return (
+    <React.Fragment>
+      <SearchableDropdown
+        name={name}
+        label={
+          hearingDates.isFetching ? <LoadingLabel text={COPY.HEARING_DATE_LOADING} /> : label
+        }
+        strongLabel
+        readOnly={readOnly}
+        value={getSelectedOption}
+        onChange={onOptionSelected}
+        options={hearingDateOptions}
+        errorMessage={hearingDates.errorMsg || errorMessage}
+        placeholder={placeholder}
+      />
+    </React.Fragment>
+  );
+};
 
 HearingDateDropdown.propTypes = {
   name: PropTypes.string,
