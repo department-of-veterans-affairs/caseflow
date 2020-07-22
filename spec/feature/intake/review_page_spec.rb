@@ -70,11 +70,9 @@ feature "Intake Review Page", :postgres do
     end
 
     context "when the user goes back and edits the claimant" do
-      let(:veteran_is_not_claimant) { false }
-
       describe "given an appeal" do
         it "only saves one claimant" do
-          review = start_appeal(veteran, veteran_is_not_claimant: veteran_is_not_claimant).first
+          review = start_appeal(veteran).first
 
           check_edited_claimant(review)
         end
@@ -83,11 +81,7 @@ feature "Intake Review Page", :postgres do
       [:higher_level_review, :supplemental_claim].each do |claim_review_type|
         describe "given a #{claim_review_type}" do
           it "only saves one claimant" do
-            review = start_claim_review(
-              claim_review_type,
-              veteran: veteran,
-              veteran_is_not_claimant: veteran_is_not_claimant
-            ).first
+            review = start_claim_review(claim_review_type, veteran: veteran).first
 
             check_edited_claimant(review)
           end
@@ -116,7 +110,7 @@ feature "Intake Review Page", :postgres do
     end
 
     context "when the Veteran is not the claimant" do
-      let(:veteran_is_not_claimant) { true }
+      let(:claim_participant_id) { "20678356" }
       let!(:recent_end_product_with_claimant) do
         Generators::EndProduct.build(
           veteran_file_number: veteran.file_number,
@@ -151,7 +145,7 @@ feature "Intake Review Page", :postgres do
 
         describe "given an appeal" do
           it "does not require the claimant to have an address" do
-            review = start_appeal(veteran, veteran_is_not_claimant: veteran_is_not_claimant).first
+            review = start_appeal(veteran, claim_participant_id: claim_participant_id).first
 
             check_claimant_address_error(review, benefit_type, error_text)
           end
@@ -163,7 +157,8 @@ feature "Intake Review Page", :postgres do
               review = start_claim_review(
                 claim_review_type,
                 veteran: veteran,
-                veteran_is_not_claimant: veteran_is_not_claimant
+                claim_participant_id: claim_participant_id,
+                no_claimant: true
               ).first
 
               check_claimant_address_error(review, benefit_type, error_text)
@@ -180,7 +175,7 @@ feature "Intake Review Page", :postgres do
                 review = start_claim_review(
                   claim_review_type,
                   veteran: veteran,
-                  veteran_is_not_claimant: veteran_is_not_claimant,
+                  claim_participant_id: claim_participant_id,
                   benefit_type: benefit_type
                 ).first
 
@@ -204,7 +199,8 @@ feature "Intake Review Page", :postgres do
               review = start_claim_review(
                 claim_review_type,
                 veteran: veteran,
-                veteran_is_not_claimant: veteran_is_not_claimant
+                claim_participant_id: claim_participant_id,
+                no_claimant: true
               ).first
 
               check_claimant_address_error(review, benefit_type, error_text)
@@ -217,7 +213,7 @@ feature "Intake Review Page", :postgres do
         [:higher_level_review, :supplemental_claim].each do |claim_review_type|
           describe "given a #{claim_review_type}" do
             it "requires payee code and shows default value" do
-              start_claim_review(claim_review_type, veteran: veteran, veteran_is_not_claimant: veteran_is_not_claimant)
+              start_claim_review(claim_review_type, veteran: veteran, claim_participant_id: claim_participant_id)
               check_pension_and_compensation_payee_code
             end
           end
@@ -234,7 +230,7 @@ feature "Intake Review Page", :postgres do
             start_higher_level_review(
               veteran,
               benefit_type: benefit_type,
-              veteran_is_not_claimant: veteran_is_not_claimant
+              claim_participant_id: claim_participant_id
             )
             check_no_relationships_behavior
           end
@@ -245,7 +241,7 @@ feature "Intake Review Page", :postgres do
             start_supplemental_claim(
               veteran,
               benefit_type: benefit_type,
-              veteran_is_not_claimant: veteran_is_not_claimant
+              claim_participant_id: claim_participant_id
             )
             check_no_relationships_behavior
           end
@@ -253,10 +249,7 @@ feature "Intake Review Page", :postgres do
 
         context "appeal" do
           it "shows message and does not allow user to continue" do
-            start_appeal(
-              veteran,
-              veteran_is_not_claimant: veteran_is_not_claimant
-            )
+            start_appeal(veteran, claim_participant_id: claim_participant_id)
             check_no_relationships_behavior
           end
         end
@@ -269,10 +262,7 @@ feature "Intake Review Page", :postgres do
 
         context "without attorney_fees feature toggle" do
           it "doesn't allow adding new claimants" do
-            start_appeal(
-              veteran,
-              veteran_is_not_claimant: veteran_is_not_claimant
-            )
+            start_appeal(veteran, claim_participant_id: claim_participant_id)
 
             visit "/intake"
 
@@ -295,7 +285,7 @@ feature "Intake Review Page", :postgres do
           it "allows adding new claimants" do
             appeal, _intake = start_appeal(
               veteran,
-              veteran_is_not_claimant: veteran_is_not_claimant,
+              claim_participant_id: claim_participant_id,
               no_claimant: true
             )
 
@@ -334,7 +324,7 @@ feature "Intake Review Page", :postgres do
           scenario "when claimant is not listed" do
             appeal, _intake = start_appeal(
               veteran,
-              veteran_is_not_claimant: veteran_is_not_claimant,
+              claim_participant_id: claim_participant_id,
               no_claimant: true
             )
 
@@ -456,9 +446,12 @@ def check_pension_and_compensation_payee_code
   expect(page).to have_content(
     "Receipt date cannot be in the future."
   )
-  expect(page).to have_content("Please select an option.")
 
   fill_in "What is the Receipt Date of this form?", with: Time.zone.today.mdY
+
+  click_intake_continue
+
+  expect(page).to have_content("Please select an option.")
 
   within_fieldset("What is the Benefit Type?") do
     find("label", text: "Pension", match: :prefer_exact).click
