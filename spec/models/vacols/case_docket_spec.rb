@@ -187,8 +187,8 @@ describe VACOLS::CaseDocket, :all_dbs do
     end
   end
 
-  context ".judge_cssids_tied_to_cases" do
-    subject { VACOLS::CaseDocket.judge_cssids_tied_to_cases}
+  context ".judge_cssids_tied_to_ready_priority_cases" do
+    subject { VACOLS::CaseDocket.judge_cssids_tied_to_ready_priority_cases}
 
     let(:third_judge) { create(:user) }
     let!(:third_vacols_judge) { create(:staff, :judge_role, sdomainid: third_judge.css_id) }

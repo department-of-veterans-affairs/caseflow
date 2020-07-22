@@ -289,7 +289,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     connection.exec_query(fmtd_query).count
   end
 
-  def self.judge_cssids_tied_to_cases
+  def self.judge_cssids_tied_to_ready_priority_cases
     query = <<-SQL
       select distinct SDOMAINID
         from (
