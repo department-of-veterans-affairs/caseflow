@@ -807,5 +807,8 @@
   "VLJ_VIRTUAL_HEARINGS_LINK_TEXT": "Start Virtual Hearing",
   "GUEST_VIRTUAL_HEARINGS_LINK_TEXT": "Join Virtual Hearing",
 
-  "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s."
+  "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s.",
+
+  "PRIORITY_PUSH_SUCCESS_MESSAGE": "All priority cases distributed!",
+  "PRIORITY_PUSH_WARNING_MESSAGE": "Some cases are ready to distribute but could not be. This could be due to the tied judge being an acting judge or an attorney (`!user.judge_in_vacols?`). These will be handled manually by the board. The tied judge could also have priority distribution turned off and should not be pushed cases (`JudgeTeam.for_judge(user).accepts_priority_pushed_cases?`). There could also be a duplicate distributed case blocking distribution (`DistributedCase.find_by(case_id: case_id`) or our validations for redistributing legacy appeals failed (https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/services/redistributed_case.rb#L26)"
 }

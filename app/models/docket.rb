@@ -38,6 +38,10 @@ class Docket
     appeals(priority: true, ready: true).limit(num).map(&:ready_for_distribution_at)
   end
 
+  def ready_priority_appeal_ids
+    appeals(priority: true, ready: true).pluck(:uuid)
+  end
+
   # rubocop:disable Lint/UnusedMethodArgument
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1)
     Distribution.transaction do

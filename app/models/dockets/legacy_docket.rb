@@ -26,6 +26,10 @@ class LegacyDocket
     count(priority: false) + nod_count * NOD_ADJUSTMENT
   end
 
+  def ready_priority_appeal_ids
+    VACOLS::CaseDocket.priority_ready_appeal_vacols_ids
+  end
+
   def age_of_n_oldest_priority_appeals(num)
     LegacyAppeal.repository.age_of_n_oldest_priority_appeals(num)
   end

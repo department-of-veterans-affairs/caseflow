@@ -8,8 +8,35 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   include AutomaticCaseDistribution
 
   def perform
-    distribute_non_genpop_priority_appeals
-    distribute_genpop_priority_appeals
+    @tied_distributions = distribute_non_genpop_priority_appeals
+    @genpop_distributions = distribute_genpop_priority_appeals
+    send_job_report
+  end
+
+  def send_job_report
+    slack_service.send_notification(slack_report, self.class.name, "#appeals-job-alerts")
+    datadog_report_runtime(metric_group_name: "priority_appeal_push_job")
+  end
+
+  def slack_report
+    priority_cases_not_distributed = docket_coordinator.dockets.map do |docket_type, docket|
+      [docket_type, {
+        ready_priority_appeals: docket.ready_priority_appeal_ids,
+        oldest_appeal_ready_at: docket.age_of_n_oldest_priority_appeals(1).first&.to_date
+      }]
+    end.to_h
+
+    additional_info = COPY::PRIORITY_PUSH_SUCCESS_MESSAGE
+    if priority_cases_not_distributed.any? { |_, stats| stats[:ready_priority_appeals].count > 0 }
+      additional_info = COPY::PRIORITY_PUSH_WARNING_MESSAGE
+    end
+
+    {
+      number_of_tied_cases_ditributed: @tied_distributions.map { |stats| stats["batch_size"] }.sum,
+      number_of_genpop_cases_ditributed: @genpop_distributions.map { |stats| stats["batch_size"] }.sum,
+      priority_cases_not_distributed: priority_cases_not_distributed,
+      info: additional_info
+    }
   end
 
   # Distribute all priority cases tied to a judge without limit
@@ -71,8 +98,12 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     end
   end
 
+  def docket_coordinator
+    @docket_coordinator ||= DocketCoordinator.new
+  end
+
   def ready_priority_appeals_count
-    @ready_priority_appeals_count ||= DocketCoordinator.new.priority_count
+    @ready_priority_appeals_count ||= docket_coordinator.priority_count
   end
 
   # Number of priority distributions every eligible judge has received in the last month
@@ -89,7 +120,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     @judge_priority_distributions_this_month ||= priority_distributions_this_month
       .pluck(:judge_id, :statistics)
       .group_by(&:first)
-      .map { |judge_id, arr| [judge_id, arr.flat_map(&:last).map { |stats| stats["batch_size"] }.reduce(:+)] }.to_h
+      .map { |judge_id, arr| [judge_id, arr.flat_map(&:last).map { |stats| stats["batch_size"] }.sum] }.to_h
   end
 
   def priority_distributions_this_month

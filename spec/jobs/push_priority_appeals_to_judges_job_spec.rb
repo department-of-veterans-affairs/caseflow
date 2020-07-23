@@ -243,6 +243,81 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
   end
 
+  context ".slack_report" do
+    let!(:job) { PushPriorityAppealsToJudgesJob.new }
+    let!(:legacy_priority_case) do
+      create(
+        :case,
+        :aod,
+        bfd19: 1.year.ago,
+        bfac: "1",
+        bfmpro: "ACT",
+        bfcurloc: "81",
+        bfdloout: 1.month.ago,
+        folder: build(
+          :folder,
+          tinum: "1801000",
+          titrnum: "123456789S"
+        )
+      )
+    end
+    let!(:ready_priority_hearing_case) do
+      appeal = FactoryBot.create(:appeal,
+                                 :advanced_on_docket_due_to_age,
+                                 :ready_for_distribution,
+                                 docket_type: Constants.AMA_DOCKETS.hearing)
+      appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: 2.months.ago)
+      appeal.reload
+    end
+    let!(:ready_priority_evidence_case) do
+      appeal = create(:appeal,
+                      :with_post_intake_tasks,
+                      :advanced_on_docket_due_to_age,
+                      docket_type: Constants.AMA_DOCKETS.evidence_submission)
+      appeal.tasks.find_by(type: EvidenceSubmissionWindowTask.name).completed!
+      appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: 3.months.ago)
+      appeal
+    end
+    let!(:ready_priority_direct_case) do
+      appeal = create(:appeal,
+                      :with_post_intake_tasks,
+                      :advanced_on_docket_due_to_age,
+                      docket_type: Constants.AMA_DOCKETS.direct_review,
+                      receipt_date: 1.month.ago)
+      appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: 4.months.ago)
+      appeal
+    end
+
+    subject { job.slack_report }
+
+    before do
+      job.instance_variable_set(:@tied_distributions, (0...5).map { |count| { "batch_size" => count } })
+      job.instance_variable_set(:@genpop_distributions, (0...5).map { |count| { "batch_size" => count } })
+    end
+
+    it "returns ids and age of ready priority appeals not distributed" do
+      expect(subject[:number_of_tied_cases_ditributed]).to eq 10
+      expect(subject[:number_of_genpop_cases_ditributed]).to eq 10
+      expect(subject[:info]).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
+
+      legacy_report = subject[:priority_cases_not_distributed][:legacy]
+      expect(legacy_report[:ready_priority_appeals]).to match_array [legacy_priority_case.bfkey]
+      expect(legacy_report[:oldest_appeal_ready_at]).to eq 1.month.ago.to_date
+
+      hearing_report = subject[:priority_cases_not_distributed][:hearing]
+      expect(hearing_report[:ready_priority_appeals]).to match_array [ready_priority_hearing_case.uuid]
+      expect(hearing_report[:oldest_appeal_ready_at]).to eq 2.months.ago.to_date
+
+      evidence_submission_report = subject[:priority_cases_not_distributed][:evidence_submission]
+      expect(evidence_submission_report[:ready_priority_appeals]).to match_array [ready_priority_evidence_case.uuid]
+      expect(evidence_submission_report[:oldest_appeal_ready_at]).to eq 3.months.ago.to_date
+
+      direct_review_report = subject[:priority_cases_not_distributed][:direct_review]
+      expect(direct_review_report[:ready_priority_appeals]).to match_array [ready_priority_direct_case.uuid]
+      expect(direct_review_report[:oldest_appeal_ready_at]).to eq 4.months.ago.to_date
+    end
+  end
+
   context ".eligible_judge_target_distributions_with_leftovers" do
     shared_examples "correct target distributions with leftovers" do
       before do
