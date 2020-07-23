@@ -19,6 +19,7 @@ export default {
 };
 
 const Template = (args) => {
+  // See https://github.com/storybookjs/storybook/issues/11657
   //   const [_args, updateArgs] = useArgs();
   //   const handleChange = (value) => updateArgs({ value });
   const [value, setValue] = useState('');

@@ -25,6 +25,9 @@ const config = {
 };
 
 const Template = (args) => {
+  // Storybook devs suggest using the useArgs hook for this purpose, but there is currently an issue
+  // that impedes usability within the Docs tab:
+  // https://github.com/storybookjs/storybook/issues/11657
   //   const [_args, updateArgs] = useArgs();
   //   const handleChange = (value) => updateArgs({ value });
   const [value, setValue] = useState('');
