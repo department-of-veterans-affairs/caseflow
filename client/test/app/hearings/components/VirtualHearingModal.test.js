@@ -34,7 +34,15 @@ const showAllEmailsAssertion = (node) => {
   expect(node.find(ReadOnly).at(3).
     text()).toContain(virtualHearing.virtualHearing.representativeEmail);
   expect(node.find('.cf-help-divider')).toHaveLength(1);
+};
 
+const showSingleEmailAssertion = (node, email, tz) => {
+  expect(node.find(ReadOnly)).toHaveLength(2);
+  expect(node.find(ReadOnly).first().
+    text()).toContain(zoneName(centralHearing.scheduledTimeString, tz));
+  expect(node.find(ReadOnly).at(1).
+    text()).toContain(email);
+  expect(node.find('.cf-help-divider')).toHaveLength(0);
 };
 
 describe('VirtualHearingModal', () => {
@@ -367,7 +375,7 @@ describe('VirtualHearingModal', () => {
     });
 
     describe('Formerly Central Virtual Hearing', () => {
-      test('Displays only appellant email/time when appellantEmailEdited', () => {
+      test('Displays only appellant email when appellantEmailEdited', () => {
         // Run the test
         const readOnlyEmails = mount(
           <ReadOnlyEmails
@@ -379,16 +387,15 @@ describe('VirtualHearingModal', () => {
         );
 
         // Assertions
-        expect(readOnlyEmails.find(ReadOnly)).toHaveLength(2);
-        expect(readOnlyEmails.find(ReadOnly).first().
-          text()).toContain(zoneName(centralHearing.scheduledTimeString, virtualHearing.virtualHearing.appellantTz));
-        expect(readOnlyEmails.find(ReadOnly).at(1).
-          text()).toContain(virtualHearing.virtualHearing.appellantEmail);
-        expect(readOnlyEmails.find('.cf-help-divider')).toHaveLength(0);
+        showSingleEmailAssertion(
+          readOnlyEmails,
+          virtualHearing.virtualHearing.appellantEmail,
+          virtualHearing.virtualHearing.appellantTz
+        );
         expect(readOnlyEmails).toMatchSnapshot();
       });
 
-      test('Displays only representative email/time when representativeEmailEdited', () => {
+      test('Displays only representative email when representativeEmailEdited', () => {
         // Run the test
         const readOnlyEmails = mount(
           <ReadOnlyEmails
@@ -400,16 +407,15 @@ describe('VirtualHearingModal', () => {
         );
 
         // Assertions
-        expect(readOnlyEmails.find(ReadOnly)).toHaveLength(2);
-        expect(readOnlyEmails.find(ReadOnly).first().
-          text()).toContain(zoneName(centralHearing.scheduledTimeString, virtualHearing.virtualHearing.representativeTz));
-        expect(readOnlyEmails.find(ReadOnly).at(1).
-          text()).toContain(virtualHearing.virtualHearing.representativeEmail);
-        expect(readOnlyEmails.find('.cf-help-divider')).toHaveLength(0);
+        showSingleEmailAssertion(
+          readOnlyEmails,
+          virtualHearing.virtualHearing.representativeEmail,
+          virtualHearing.virtualHearing.representativeTz
+        );
         expect(readOnlyEmails).toMatchSnapshot();
       });
 
-      test('Displays both representative email/time and appellant email/time when both are edited', () => {
+      test('Displays both representative email/time and appellant email/time when both timezones are edited', () => {
         // Run the test
         const readOnlyEmails = mount(
           <ReadOnlyEmails
@@ -439,6 +445,80 @@ describe('VirtualHearingModal', () => {
 
         // Assertions
         showAllEmailsAssertion(readOnlyEmails);
+        expect(readOnlyEmails).toMatchSnapshot();
+      });
+
+      test('Displays Section divider when appellant timezone and POA/Representative email edited', () => {
+        // Run the test
+        const readOnlyEmails = mount(
+          <ReadOnlyEmails
+            appellantTzEdited
+            representativeEmailEdited
+            update={updateSpy}
+            hearing={centralHearing}
+            virtualHearing={virtualHearing.virtualHearing}
+          />
+        );
+
+        // Assertions
+        showAllEmailsAssertion(readOnlyEmails);
+        expect(readOnlyEmails).toMatchSnapshot();
+      });
+
+      test('Displays Section divider when appellant email and POA/Representative timezone edited', () => {
+        // Run the test
+        const readOnlyEmails = mount(
+          <ReadOnlyEmails
+            appellantEmailEdited
+            representativeTzEdited
+            update={updateSpy}
+            hearing={centralHearing}
+            virtualHearing={virtualHearing.virtualHearing}
+          />
+        );
+
+        // Assertions
+        showAllEmailsAssertion(readOnlyEmails);
+        expect(readOnlyEmails).toMatchSnapshot();
+      });
+
+      test('Does not display Section divider when only appellant timezone edited', () => {
+        // Run the test
+        const readOnlyEmails = mount(
+          <ReadOnlyEmails
+            appellantEmailEdited
+            update={updateSpy}
+            hearing={centralHearing}
+            virtualHearing={virtualHearing.virtualHearing}
+          />
+        );
+
+        // Assertions
+        showSingleEmailAssertion(
+          readOnlyEmails,
+          virtualHearing.virtualHearing.appellantEmail,
+          virtualHearing.virtualHearing.appellantTz
+        );
+        expect(readOnlyEmails).toMatchSnapshot();
+      });
+
+      test('Does not display Section divider when only POA/Representative timezone edited', () => {
+        // Run the test
+        const readOnlyEmails = mount(
+          <ReadOnlyEmails
+            representativeTzEdited
+            update={updateSpy}
+            hearing={centralHearing}
+            virtualHearing={virtualHearing.virtualHearing}
+          />
+        );
+
+        // Assertions
+        showSingleEmailAssertion(
+          readOnlyEmails,
+          virtualHearing.virtualHearing.representativeEmail,
+          virtualHearing.virtualHearing.representativeTz
+        );
         expect(readOnlyEmails).toMatchSnapshot();
       });
     });

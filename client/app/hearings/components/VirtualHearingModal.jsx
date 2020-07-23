@@ -73,6 +73,19 @@ export const ReadOnlyEmails = ({
 }) => {
   const appellantTitle = getAppellantTitleForHearing(hearing);
 
+  // Check for appellant edits
+  const appellantEdited = appellantTzEdited || appellantEmailEdited ?
+    representativeEmailEdited || representativeTzEdited :
+    false;
+
+  // Check for representative edits
+  const repEdited = representativeEmailEdited || representativeTzEdited ?
+    appellantTzEdited || appellantEmailEdited :
+    false;
+
+  // Determine whether ti display a divider
+  const showDivider = repEdited || appellantEdited || showAllEmails;
+
   return hearing.readableRequestType === 'Video' ? (
     <React.Fragment>
       {(appellantEmailEdited || showAllEmails) && (
@@ -106,7 +119,7 @@ export const ReadOnlyEmails = ({
           />
         </React.Fragment>
       )}
-      {((appellantTzEdited && representativeTzEdited) || showAllEmails) && <div className="cf-help-divider" />}
+      {showDivider && <div className="cf-help-divider" />}
       {(representativeTzEdited || representativeEmailEdited || showAllEmails) && (
         <React.Fragment>
           <ReadOnly

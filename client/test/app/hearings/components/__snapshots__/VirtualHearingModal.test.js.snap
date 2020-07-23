@@ -5944,7 +5944,457 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
 </VirtualHearingModal>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays both representative email/time and appellant email/time when both are edited 1`] = `
+exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays Section divider when appellant email and POA/Representative timezone edited 1`] = `
+<ReadOnlyEmails
+  appellantEmailEdited={true}
+  hearing={
+    Object {
+      "advanceOnDocketMotion": null,
+      "aod": false,
+      "appealExternalId": "c781353c-a911-45f4-aafa-88e1f6536eb1",
+      "appealId": 607,
+      "appellantAddressLine1": "9999 MISSION ST",
+      "appellantCity": "SAN FRANCISCO",
+      "appellantEmailAddress": "tom.brady@caseflow.gov",
+      "appellantFirstName": "Tom",
+      "appellantIsNotVeteran": false,
+      "appellantLastName": "Brady",
+      "appellantState": "CA",
+      "appellantTz": "America/New_York",
+      "appellantZip": "94103",
+      "availableHearingLocations": Object {},
+      "bvaPoc": "Stacy BuildAndEditHearingSchedule Yellow",
+      "centralOfficeTimeString": "08:30",
+      "claimantId": 604,
+      "closestRegionalOffice": null,
+      "currentIssueCount": 0,
+      "disposition": null,
+      "dispositionEditable": true,
+      "docketName": "hearing",
+      "docketNumber": "200629-607",
+      "evidenceWindowWaived": false,
+      "externalId": "45331d90-6498-4f49-8248-772906f4161f",
+      "hearingDayId": 6,
+      "id": 7,
+      "isVirtual": false,
+      "judge": Object {
+        "createdAt": "2020-06-30T14:57:05.457-04:00",
+        "cssId": "BVAEBECKER",
+        "displayName": "BVAEBECKER (VACO)",
+        "efolderDocumentsFetchedAt": null,
+        "email": null,
+        "fullName": "Elizabeth Judge_CaseToAssign Becker",
+        "id": 5,
+        "lastLoginAt": null,
+        "roles": Object {},
+        "selectedRegionalOffice": null,
+        "stationId": "101",
+        "status": "active",
+        "statusUpdatedAt": null,
+        "updatedAt": "2020-06-30T14:57:05.457-04:00",
+      },
+      "judgeId": "5",
+      "location": null,
+      "militaryService": "",
+      "notes": null,
+      "paperCase": false,
+      "prepped": null,
+      "readableLocation": "Washington, DC",
+      "readableRequestType": "Central",
+      "regionalOfficeKey": "C",
+      "regionalOfficeName": "Central",
+      "regionalOfficeTimezone": "America/New_York",
+      "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeEmailAddress": "tom.brady@caseflow.gov",
+      "representativeName": null,
+      "room": "1",
+      "scheduledFor": "2020-07-11T08:30:00.000-04:00",
+      "scheduledForIsPast": false,
+      "scheduledTime": "2000-01-01T08:30:00.000-05:00",
+      "scheduledTimeString": "08:30",
+      "summary": null,
+      "transcriptRequested": null,
+      "transcription": Object {},
+      "uuid": "45331d90-6498-4f49-8248-772906f4161f",
+      "veteranAge": 85,
+      "veteranEmailAddress": "Kathlene.Morissette@test.com",
+      "veteranFileNumber": "100000002",
+      "veteranFirstName": "Kathlene",
+      "veteranGender": "M",
+      "veteranLastName": "Morissette",
+      "wasVirtual": false,
+      "witness": null,
+      "worksheetIssues": Object {},
+    }
+  }
+  representativeTzEdited={true}
+  update={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+  virtualHearing={
+    Object {
+      "aliasWithHost": "BVA0000009@care.evn.va.gov",
+      "appellantEmail": "Bob.Smith@test.com",
+      "appellantTz": null,
+      "clientHost": "care.evn.va.gov",
+      "false": "tom.brady@caseflow.gov",
+      "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+      "guestPin": "2684353125#",
+      "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+      "hostPin": "8600030#",
+      "jobCompleted": true,
+      "representativeEmail": "tom.brady@caseflow.gov",
+      "representativeTz": null,
+      "requestCancelled": false,
+      "status": "active",
+    }
+  }
+>
+  <div
+    data-css-18v9q72=""
+  >
+    <ReadOnly
+      label="Veteran Hearing Time"
+      spacing={15}
+      text="8:30 AM Eastern Time (US & Canada)"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Veteran Hearing Time
+        </strong>
+        <pre>
+          8:30 AM Eastern Time (US & Canada)
+        </pre>
+      </div>
+    </ReadOnly>
+    <ReadOnly
+      label="Veteran Email"
+      spacing={15}
+      text="Bob.Smith@test.com"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Veteran Email
+        </strong>
+        <pre>
+          Bob.Smith@test.com
+        </pre>
+      </div>
+    </ReadOnly>
+    <div
+      className="cf-help-divider"
+    />
+    <ReadOnly
+      label="POA/Representative Hearing Time"
+      spacing={15}
+      text="8:30 AM Eastern Time (US & Canada)"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          POA/Representative Hearing Time
+        </strong>
+        <pre>
+          8:30 AM Eastern Time (US & Canada)
+        </pre>
+      </div>
+    </ReadOnly>
+    <ReadOnly
+      label="POA/Representative Email"
+      spacing={15}
+      text="tom.brady@caseflow.gov"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          POA/Representative Email
+        </strong>
+        <pre>
+          tom.brady@caseflow.gov
+        </pre>
+      </div>
+    </ReadOnly>
+  </div>
+</ReadOnlyEmails>
+`;
+
+exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays Section divider when appellant timezone and POA/Representative email edited 1`] = `
+<ReadOnlyEmails
+  appellantTzEdited={true}
+  hearing={
+    Object {
+      "advanceOnDocketMotion": null,
+      "aod": false,
+      "appealExternalId": "c781353c-a911-45f4-aafa-88e1f6536eb1",
+      "appealId": 607,
+      "appellantAddressLine1": "9999 MISSION ST",
+      "appellantCity": "SAN FRANCISCO",
+      "appellantEmailAddress": "tom.brady@caseflow.gov",
+      "appellantFirstName": "Tom",
+      "appellantIsNotVeteran": false,
+      "appellantLastName": "Brady",
+      "appellantState": "CA",
+      "appellantTz": "America/New_York",
+      "appellantZip": "94103",
+      "availableHearingLocations": Object {},
+      "bvaPoc": "Stacy BuildAndEditHearingSchedule Yellow",
+      "centralOfficeTimeString": "08:30",
+      "claimantId": 604,
+      "closestRegionalOffice": null,
+      "currentIssueCount": 0,
+      "disposition": null,
+      "dispositionEditable": true,
+      "docketName": "hearing",
+      "docketNumber": "200629-607",
+      "evidenceWindowWaived": false,
+      "externalId": "45331d90-6498-4f49-8248-772906f4161f",
+      "hearingDayId": 6,
+      "id": 7,
+      "isVirtual": false,
+      "judge": Object {
+        "createdAt": "2020-06-30T14:57:05.457-04:00",
+        "cssId": "BVAEBECKER",
+        "displayName": "BVAEBECKER (VACO)",
+        "efolderDocumentsFetchedAt": null,
+        "email": null,
+        "fullName": "Elizabeth Judge_CaseToAssign Becker",
+        "id": 5,
+        "lastLoginAt": null,
+        "roles": Object {},
+        "selectedRegionalOffice": null,
+        "stationId": "101",
+        "status": "active",
+        "statusUpdatedAt": null,
+        "updatedAt": "2020-06-30T14:57:05.457-04:00",
+      },
+      "judgeId": "5",
+      "location": null,
+      "militaryService": "",
+      "notes": null,
+      "paperCase": false,
+      "prepped": null,
+      "readableLocation": "Washington, DC",
+      "readableRequestType": "Central",
+      "regionalOfficeKey": "C",
+      "regionalOfficeName": "Central",
+      "regionalOfficeTimezone": "America/New_York",
+      "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeEmailAddress": "tom.brady@caseflow.gov",
+      "representativeName": null,
+      "room": "1",
+      "scheduledFor": "2020-07-11T08:30:00.000-04:00",
+      "scheduledForIsPast": false,
+      "scheduledTime": "2000-01-01T08:30:00.000-05:00",
+      "scheduledTimeString": "08:30",
+      "summary": null,
+      "transcriptRequested": null,
+      "transcription": Object {},
+      "uuid": "45331d90-6498-4f49-8248-772906f4161f",
+      "veteranAge": 85,
+      "veteranEmailAddress": "Kathlene.Morissette@test.com",
+      "veteranFileNumber": "100000002",
+      "veteranFirstName": "Kathlene",
+      "veteranGender": "M",
+      "veteranLastName": "Morissette",
+      "wasVirtual": false,
+      "witness": null,
+      "worksheetIssues": Object {},
+    }
+  }
+  representativeEmailEdited={true}
+  update={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+  virtualHearing={
+    Object {
+      "aliasWithHost": "BVA0000009@care.evn.va.gov",
+      "appellantEmail": "Bob.Smith@test.com",
+      "appellantTz": null,
+      "clientHost": "care.evn.va.gov",
+      "false": "tom.brady@caseflow.gov",
+      "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+      "guestPin": "2684353125#",
+      "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+      "hostPin": "8600030#",
+      "jobCompleted": true,
+      "representativeEmail": "tom.brady@caseflow.gov",
+      "representativeTz": null,
+      "requestCancelled": false,
+      "status": "active",
+    }
+  }
+>
+  <div
+    data-css-18v9q72=""
+  >
+    <ReadOnly
+      label="Veteran Hearing Time"
+      spacing={15}
+      text="8:30 AM Eastern Time (US & Canada)"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Veteran Hearing Time
+        </strong>
+        <pre>
+          8:30 AM Eastern Time (US & Canada)
+        </pre>
+      </div>
+    </ReadOnly>
+    <ReadOnly
+      label="Veteran Email"
+      spacing={15}
+      text="Bob.Smith@test.com"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Veteran Email
+        </strong>
+        <pre>
+          Bob.Smith@test.com
+        </pre>
+      </div>
+    </ReadOnly>
+    <div
+      className="cf-help-divider"
+    />
+    <ReadOnly
+      label="POA/Representative Hearing Time"
+      spacing={15}
+      text="8:30 AM Eastern Time (US & Canada)"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          POA/Representative Hearing Time
+        </strong>
+        <pre>
+          8:30 AM Eastern Time (US & Canada)
+        </pre>
+      </div>
+    </ReadOnly>
+    <ReadOnly
+      label="POA/Representative Email"
+      spacing={15}
+      text="tom.brady@caseflow.gov"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          POA/Representative Email
+        </strong>
+        <pre>
+          tom.brady@caseflow.gov
+        </pre>
+      </div>
+    </ReadOnly>
+  </div>
+</ReadOnlyEmails>
+`;
+
+exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays both representative email/time and appellant email/time when both timezones are edited 1`] = `
 <ReadOnlyEmails
   appellantTzEdited={true}
   hearing={
@@ -6393,7 +6843,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
 </ReadOnlyEmails>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays only appellant email/time when appellantEmailEdited 1`] = `
+exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays only appellant email when appellantEmailEdited 1`] = `
 <ReadOnlyEmails
   appellantEmailEdited={true}
   hearing={
@@ -6582,7 +7032,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
 </ReadOnlyEmails>
 `;
 
-exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays only representative email/time when representativeEmailEdited 1`] = `
+exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Displays only representative email when representativeEmailEdited 1`] = `
 <ReadOnlyEmails
   hearing={
     Object {
@@ -6764,6 +7214,384 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
         </strong>
         <pre>
           tom.brady@caseflow.gov
+        </pre>
+      </div>
+    </ReadOnly>
+  </div>
+</ReadOnlyEmails>
+`;
+
+exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Does not display Section divider when only POA/Representative timezone edited 1`] = `
+<ReadOnlyEmails
+  hearing={
+    Object {
+      "advanceOnDocketMotion": null,
+      "aod": false,
+      "appealExternalId": "c781353c-a911-45f4-aafa-88e1f6536eb1",
+      "appealId": 607,
+      "appellantAddressLine1": "9999 MISSION ST",
+      "appellantCity": "SAN FRANCISCO",
+      "appellantEmailAddress": "tom.brady@caseflow.gov",
+      "appellantFirstName": "Tom",
+      "appellantIsNotVeteran": false,
+      "appellantLastName": "Brady",
+      "appellantState": "CA",
+      "appellantTz": "America/New_York",
+      "appellantZip": "94103",
+      "availableHearingLocations": Object {},
+      "bvaPoc": "Stacy BuildAndEditHearingSchedule Yellow",
+      "centralOfficeTimeString": "08:30",
+      "claimantId": 604,
+      "closestRegionalOffice": null,
+      "currentIssueCount": 0,
+      "disposition": null,
+      "dispositionEditable": true,
+      "docketName": "hearing",
+      "docketNumber": "200629-607",
+      "evidenceWindowWaived": false,
+      "externalId": "45331d90-6498-4f49-8248-772906f4161f",
+      "hearingDayId": 6,
+      "id": 7,
+      "isVirtual": false,
+      "judge": Object {
+        "createdAt": "2020-06-30T14:57:05.457-04:00",
+        "cssId": "BVAEBECKER",
+        "displayName": "BVAEBECKER (VACO)",
+        "efolderDocumentsFetchedAt": null,
+        "email": null,
+        "fullName": "Elizabeth Judge_CaseToAssign Becker",
+        "id": 5,
+        "lastLoginAt": null,
+        "roles": Object {},
+        "selectedRegionalOffice": null,
+        "stationId": "101",
+        "status": "active",
+        "statusUpdatedAt": null,
+        "updatedAt": "2020-06-30T14:57:05.457-04:00",
+      },
+      "judgeId": "5",
+      "location": null,
+      "militaryService": "",
+      "notes": null,
+      "paperCase": false,
+      "prepped": null,
+      "readableLocation": "Washington, DC",
+      "readableRequestType": "Central",
+      "regionalOfficeKey": "C",
+      "regionalOfficeName": "Central",
+      "regionalOfficeTimezone": "America/New_York",
+      "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeEmailAddress": "tom.brady@caseflow.gov",
+      "representativeName": null,
+      "room": "1",
+      "scheduledFor": "2020-07-11T08:30:00.000-04:00",
+      "scheduledForIsPast": false,
+      "scheduledTime": "2000-01-01T08:30:00.000-05:00",
+      "scheduledTimeString": "08:30",
+      "summary": null,
+      "transcriptRequested": null,
+      "transcription": Object {},
+      "uuid": "45331d90-6498-4f49-8248-772906f4161f",
+      "veteranAge": 85,
+      "veteranEmailAddress": "Kathlene.Morissette@test.com",
+      "veteranFileNumber": "100000002",
+      "veteranFirstName": "Kathlene",
+      "veteranGender": "M",
+      "veteranLastName": "Morissette",
+      "wasVirtual": false,
+      "witness": null,
+      "worksheetIssues": Object {},
+    }
+  }
+  representativeTzEdited={true}
+  update={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+  virtualHearing={
+    Object {
+      "aliasWithHost": "BVA0000009@care.evn.va.gov",
+      "appellantEmail": "Bob.Smith@test.com",
+      "appellantTz": null,
+      "clientHost": "care.evn.va.gov",
+      "false": "tom.brady@caseflow.gov",
+      "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+      "guestPin": "2684353125#",
+      "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+      "hostPin": "8600030#",
+      "jobCompleted": true,
+      "representativeEmail": "tom.brady@caseflow.gov",
+      "representativeTz": null,
+      "requestCancelled": false,
+      "status": "active",
+    }
+  }
+>
+  <div
+    data-css-18v9q72=""
+  >
+    <ReadOnly
+      label="POA/Representative Hearing Time"
+      spacing={15}
+      text="8:30 AM Eastern Time (US & Canada)"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          POA/Representative Hearing Time
+        </strong>
+        <pre>
+          8:30 AM Eastern Time (US & Canada)
+        </pre>
+      </div>
+    </ReadOnly>
+    <ReadOnly
+      label="POA/Representative Email"
+      spacing={15}
+      text="tom.brady@caseflow.gov"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          POA/Representative Email
+        </strong>
+        <pre>
+          tom.brady@caseflow.gov
+        </pre>
+      </div>
+    </ReadOnly>
+  </div>
+</ReadOnlyEmails>
+`;
+
+exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtual Hearing Does not display Section divider when only appellant timezone edited 1`] = `
+<ReadOnlyEmails
+  appellantEmailEdited={true}
+  hearing={
+    Object {
+      "advanceOnDocketMotion": null,
+      "aod": false,
+      "appealExternalId": "c781353c-a911-45f4-aafa-88e1f6536eb1",
+      "appealId": 607,
+      "appellantAddressLine1": "9999 MISSION ST",
+      "appellantCity": "SAN FRANCISCO",
+      "appellantEmailAddress": "tom.brady@caseflow.gov",
+      "appellantFirstName": "Tom",
+      "appellantIsNotVeteran": false,
+      "appellantLastName": "Brady",
+      "appellantState": "CA",
+      "appellantTz": "America/New_York",
+      "appellantZip": "94103",
+      "availableHearingLocations": Object {},
+      "bvaPoc": "Stacy BuildAndEditHearingSchedule Yellow",
+      "centralOfficeTimeString": "08:30",
+      "claimantId": 604,
+      "closestRegionalOffice": null,
+      "currentIssueCount": 0,
+      "disposition": null,
+      "dispositionEditable": true,
+      "docketName": "hearing",
+      "docketNumber": "200629-607",
+      "evidenceWindowWaived": false,
+      "externalId": "45331d90-6498-4f49-8248-772906f4161f",
+      "hearingDayId": 6,
+      "id": 7,
+      "isVirtual": false,
+      "judge": Object {
+        "createdAt": "2020-06-30T14:57:05.457-04:00",
+        "cssId": "BVAEBECKER",
+        "displayName": "BVAEBECKER (VACO)",
+        "efolderDocumentsFetchedAt": null,
+        "email": null,
+        "fullName": "Elizabeth Judge_CaseToAssign Becker",
+        "id": 5,
+        "lastLoginAt": null,
+        "roles": Object {},
+        "selectedRegionalOffice": null,
+        "stationId": "101",
+        "status": "active",
+        "statusUpdatedAt": null,
+        "updatedAt": "2020-06-30T14:57:05.457-04:00",
+      },
+      "judgeId": "5",
+      "location": null,
+      "militaryService": "",
+      "notes": null,
+      "paperCase": false,
+      "prepped": null,
+      "readableLocation": "Washington, DC",
+      "readableRequestType": "Central",
+      "regionalOfficeKey": "C",
+      "regionalOfficeName": "Central",
+      "regionalOfficeTimezone": "America/New_York",
+      "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeEmailAddress": "tom.brady@caseflow.gov",
+      "representativeName": null,
+      "room": "1",
+      "scheduledFor": "2020-07-11T08:30:00.000-04:00",
+      "scheduledForIsPast": false,
+      "scheduledTime": "2000-01-01T08:30:00.000-05:00",
+      "scheduledTimeString": "08:30",
+      "summary": null,
+      "transcriptRequested": null,
+      "transcription": Object {},
+      "uuid": "45331d90-6498-4f49-8248-772906f4161f",
+      "veteranAge": 85,
+      "veteranEmailAddress": "Kathlene.Morissette@test.com",
+      "veteranFileNumber": "100000002",
+      "veteranFirstName": "Kathlene",
+      "veteranGender": "M",
+      "veteranLastName": "Morissette",
+      "wasVirtual": false,
+      "witness": null,
+      "worksheetIssues": Object {},
+    }
+  }
+  update={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+        Array [
+          "virtualHearing",
+          Object {
+            "false": "tom.brady@caseflow.gov",
+          },
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+  virtualHearing={
+    Object {
+      "aliasWithHost": "BVA0000009@care.evn.va.gov",
+      "appellantEmail": "Bob.Smith@test.com",
+      "appellantTz": null,
+      "clientHost": "care.evn.va.gov",
+      "false": "tom.brady@caseflow.gov",
+      "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+      "guestPin": "2684353125#",
+      "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+      "hostPin": "8600030#",
+      "jobCompleted": true,
+      "representativeEmail": "tom.brady@caseflow.gov",
+      "representativeTz": null,
+      "requestCancelled": false,
+      "status": "active",
+    }
+  }
+>
+  <div
+    data-css-18v9q72=""
+  >
+    <ReadOnly
+      label="Veteran Hearing Time"
+      spacing={15}
+      text="8:30 AM Eastern Time (US & Canada)"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Veteran Hearing Time
+        </strong>
+        <pre>
+          8:30 AM Eastern Time (US & Canada)
+        </pre>
+      </div>
+    </ReadOnly>
+    <ReadOnly
+      label="Veteran Email"
+      spacing={15}
+      text="Bob.Smith@test.com"
+    >
+      <div
+        data-css-acl5jg=""
+      >
+        <strong>
+          Veteran Email
+        </strong>
+        <pre>
+          Bob.Smith@test.com
         </pre>
       </div>
     </ReadOnly>
