@@ -37,11 +37,11 @@ new_etl_migrations = git.modified_files.grep(/db\/etl\/migrate\//).any?
 
 # migration without migrating
 if new_db_migrations && git.modified_files.grep(/db\/schema.rb/).none?
-  warn("This PR contains one or more db migrations, but the schema.rb is not modified. Did you forget to run 'make migrate'?")
+  warn("This PR contains db migrations, but the schema.rb is not modified. Did you forget to run 'make migrate'?")
 end
 
 if new_etl_migrations && git.modified_files.grep(/db\/etl\/schema.rb/).none?
-  warn("This PR contains one or more etl db migrations, but the etl schema.rb is not modified. Did you forget to run 'make migrate'?")
+  warn("This PR contains etl migrations, but the etl schema.rb is not modified. Did you forget to run 'make migrate'?")
 end
 
 # migration without running rake db:docs
