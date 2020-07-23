@@ -14,29 +14,30 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   def send_job_report
-    slack_service.send_notification(slack_report, self.class.name, "#appeals-job-alerts")
+    slack_service.send_notification(slack_report.join("\n"), self.class.name, "#appeals-job-alerts")
     datadog_report_runtime(metric_group_name: "priority_appeal_push_job")
   end
 
   def slack_report
-    priority_cases_not_distributed = docket_coordinator.dockets.map do |docket_type, docket|
-      [docket_type, {
-        ready_priority_appeals: docket.ready_priority_appeal_ids,
-        oldest_appeal_ready_at: docket.age_of_n_oldest_priority_appeals(1).first&.to_date
-      }]
+    report = []
+    report << "#{@tied_distributions.map { |stats| stats['batch_size'] }.sum} cases tied to judges distributed"
+    report << "#{@genpop_distributions.map { |stats| stats['batch_size'] }.sum} genpop cases distributed"
+
+    appeals_not_distributed = docket_coordinator.dockets.map do |docket_type, docket|
+      [docket_type, docket.ready_priority_appeal_ids]
     end.to_h
 
-    additional_info = COPY::PRIORITY_PUSH_SUCCESS_MESSAGE
-    if priority_cases_not_distributed.any? { |_, stats| stats[:ready_priority_appeals].count > 0 }
-      additional_info = COPY::PRIORITY_PUSH_WARNING_MESSAGE
+    if appeals_not_distributed.values.flatten.any?
+      report << "Legacy appeals not distributed: `LegacyAppeal.where(vacols_id: #{appeals_not_distributed[:legacy]})`"
+      ama_appeals_not_distributed = appeals_not_distributed.values.drop(1).flatten
+      report << "AMA appeals not distributed: `Appeal.where(uuid: #{ama_appeals_not_distributed})`"
+      docket_coordinator.dockets.each do |docket_type, docket|
+        report << "Age of oldest #{docket_type} case: #{docket.oldest_priority_appeal_days_waiting} days"
+      end
+      report << COPY::PRIORITY_PUSH_WARNING_MESSAGE
     end
 
-    {
-      number_of_tied_cases_ditributed: @tied_distributions.map { |stats| stats["batch_size"] }.sum,
-      number_of_genpop_cases_ditributed: @genpop_distributions.map { |stats| stats["batch_size"] }.sum,
-      priority_cases_not_distributed: priority_cases_not_distributed,
-      info: additional_info
-    }
+    report
   end
 
   # Distribute all priority cases tied to a judge without limit

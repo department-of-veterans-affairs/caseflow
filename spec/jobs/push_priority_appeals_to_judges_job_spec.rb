@@ -295,26 +295,26 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       job.instance_variable_set(:@genpop_distributions, (0...5).map { |count| { "batch_size" => count } })
     end
 
-    it "returns ids and age of ready priority appeals not distributed" do
-      expect(subject[:number_of_tied_cases_ditributed]).to eq 10
-      expect(subject[:number_of_genpop_cases_ditributed]).to eq 10
-      expect(subject[:info]).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
+    fit "returns ids and age of ready priority appeals not distributed" do
+      expect(subject.first).to eq "10 cases tied to judges distributed"
+      expect(subject.second).to eq "10 genpop cases distributed"
 
-      legacy_report = subject[:priority_cases_not_distributed][:legacy]
-      expect(legacy_report[:ready_priority_appeals]).to match_array [legacy_priority_case.bfkey]
-      expect(legacy_report[:oldest_appeal_ready_at]).to eq 1.month.ago.to_date
+      expect(subject.third.include?(legacy_priority_case.bfkey)).to be true
+      expect(subject.fourth.include?(ready_priority_hearing_case.uuid)).to be true
+      expect(subject.fourth.include?(ready_priority_evidence_case.uuid)).to be true
+      expect(subject.fourth.include?(ready_priority_direct_case.uuid)).to be true
 
-      hearing_report = subject[:priority_cases_not_distributed][:hearing]
-      expect(hearing_report[:ready_priority_appeals]).to match_array [ready_priority_hearing_case.uuid]
-      expect(hearing_report[:oldest_appeal_ready_at]).to eq 2.months.ago.to_date
+      today = Time.zone.now.to_date
+      legacy_days_waiting = (today - legacy_priority_case.bfdloout.to_date).to_i
+      expect(subject[4]).to eq "Age of oldest legacy case: #{legacy_days_waiting} days"
+      direct_review_days_waiting = (today - ready_priority_direct_case.ready_for_distribution_at.to_date).to_i
+      expect(subject[5]).to eq "Age of oldest direct_review case: #{direct_review_days_waiting} days"
+      evidence_submission_days_waiting = (today - ready_priority_evidence_case.ready_for_distribution_at.to_date).to_i
+      expect(subject[6]).to eq "Age of oldest evidence_submission case: #{evidence_submission_days_waiting} days"
+      hearing_days_waiting = (today - ready_priority_hearing_case.ready_for_distribution_at.to_date).to_i
+      expect(subject[7]).to eq "Age of oldest hearing case: #{hearing_days_waiting} days"
 
-      evidence_submission_report = subject[:priority_cases_not_distributed][:evidence_submission]
-      expect(evidence_submission_report[:ready_priority_appeals]).to match_array [ready_priority_evidence_case.uuid]
-      expect(evidence_submission_report[:oldest_appeal_ready_at]).to eq 3.months.ago.to_date
-
-      direct_review_report = subject[:priority_cases_not_distributed][:direct_review]
-      expect(direct_review_report[:ready_priority_appeals]).to match_array [ready_priority_direct_case.uuid]
-      expect(direct_review_report[:oldest_appeal_ready_at]).to eq 4.months.ago.to_date
+      expect(subject.last).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
     end
   end
 
