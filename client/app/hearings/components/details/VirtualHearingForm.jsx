@@ -24,17 +24,19 @@ export const VirtualHearingForm = (
   const appellantTitle = getAppellantTitleForHearing(hearing);
   const user = useContext(HearingsUserContext);
 
-  // Prefill appellant/veteran email address and representative email on mount.
   useEffect(() => {
     // Try to use the existing timezones if present
     const { appellantTz, representativeTz } = (virtualHearing || {});
 
     // Set the  timezone if not already set
     update('virtualHearing', {
-      [!representativeTz && 'representativeTz']: representativeTz || hearing?.representativeTz,
-      [!appellantTz && 'appellantTz']: appellantTz || hearing?.appellantTz,
+      [!representativeTz && 'representativeTz']: representativeTz,
+      [!appellantTz && 'appellantTz']: appellantTz,
     });
   }, []);
+
+  const defaultAppellantTz = hearing?.appellantTz;
+  const defaultRepresentativeTz = hearing?.representativeTz;
 
   return (
     <ContentSection
@@ -55,11 +57,12 @@ export const VirtualHearingForm = (
             {hearing.readableRequestType !== 'Video' && <div className="usa-width-one-third">
               <Timezone
                 required
-                value={virtualHearing?.appellantTz}
+                value={virtualHearing?.appellantTz || defaultAppellantTz}
                 onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
                 readOnly={readOnlyEmails}
                 time={hearing.scheduledTimeString}
-                name={`${appellantTitle} Timezone`}
+                name="appellantTz"
+                label={`${appellantTitle} Timezone`}
               />
               <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
             </div>}
@@ -80,11 +83,12 @@ export const VirtualHearingForm = (
           <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
             {hearing.readableRequestType !== 'Video' && <div className="usa-width-one-third">
               <Timezone
-                value={virtualHearing?.representativeTz}
+                value={virtualHearing?.representativeTz || defaultRepresentativeTz}
                 onChange={(representativeTz) => update('virtualHearing', { representativeTz })}
                 readOnly={readOnlyEmails || !virtualHearing?.representativeEmail}
                 time={hearing.scheduledTimeString}
-                name="POA/Representative Timezone"
+                name="representativeTz"
+                label="POA/Representative Timezone"
               />
               <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
             </div>}

@@ -105,7 +105,7 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :issue_count do |object|
-    object.appeal.number_of_issues
+    object.appeal.is_a?(LegacyAppeal) ? object.appeal.undecided_issues.count : object.appeal.number_of_issues
   end
 
   attribute :external_hearing_id do |object|
