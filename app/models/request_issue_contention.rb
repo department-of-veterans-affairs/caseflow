@@ -6,7 +6,7 @@ class RequestIssueContention
   end
 
   delegate :contention_reference_id, :contention_removed_at, :contention_updated_at,
-           :edited_description, to: :request_issue
+           :edited_description, :end_product_establishment, to: :request_issue
 
   def vbms_contention
     return unless contention_reference_id
@@ -15,7 +15,7 @@ class RequestIssueContention
   end
 
   def update_text!
-    return unless contention_text_update_pending
+    return unless contention_reference_id && contention_text_update_pending
 
     fail EndProductEstablishment::ContentionNotFound, contention_reference_id unless vbms_contention
 

@@ -58,7 +58,7 @@ class RequestIssuesUpdate < CaseflowRecord
     review.end_product_establishments.each { |epe| epe.user = user } if review.processed_in_vbms?
 
     review.establish!
-    edited_issues.each { |issue| issue.end_product_establishment && RequestIssueContention.new(issue).update_text! }
+    edited_issues.each { |issue| issue.contention_reference_id && RequestIssueContention.new(issue).update_text! }
     potential_end_products_to_remove = []
     removed_or_withdrawn_issues.select(&:end_product_establishment).each do |request_issue|
       RequestIssueContention.new(request_issue).remove!
