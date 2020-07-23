@@ -284,7 +284,7 @@ class Appeal < DecisionReview
   end
 
   def conditionally_set_aod_reason
-    reason = :age if claimant.advanced_on_docket_based_on_age?
+    reason = :age if claimant.person.advanced_on_docket_based_on_age?
     reason = :motion if AdvanceOnDocketMotion.granted_for_person?(claimant.person.id, receipt_date)
 
     if aod_reason
