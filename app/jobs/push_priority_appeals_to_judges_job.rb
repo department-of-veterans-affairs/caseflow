@@ -28,6 +28,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     end.to_h
 
     if appeals_not_distributed.values.flatten.any?
+      report << "[WARN]"
       report << "Legacy appeals not distributed: `LegacyAppeal.where(vacols_id: #{appeals_not_distributed[:legacy]})`"
       ama_appeals_not_distributed = appeals_not_distributed.values.drop(1).flatten
       report << "AMA appeals not distributed: `Appeal.where(uuid: #{ama_appeals_not_distributed})`"
