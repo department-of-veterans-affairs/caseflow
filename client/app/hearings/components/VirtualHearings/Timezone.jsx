@@ -7,6 +7,7 @@ import { timezoneStyles } from '../details/style';
 
 export const Timezone = ({
   name,
+  label,
   readOnly,
   value,
   errorMessage,
@@ -21,6 +22,7 @@ export const Timezone = ({
       required={required}
       styling={timezoneStyles(commonsCount)}
       name={name}
+      label={label}
       readOnly={readOnly}
       placeholder="Select a timezone"
       options={options}
@@ -45,5 +47,6 @@ Timezone.propTypes = {
   required: PropTypes.bool,
   value: PropTypes.string,
   name: PropTypes.string,
+  label: PropTypes.string,
   time: PropTypes.string
 };
