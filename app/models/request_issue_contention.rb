@@ -6,7 +6,7 @@ class RequestIssueContention
   end
 
   delegate :contention_reference_id, :contention_removed_at, :contention_updated_at,
-           :edited_description, :end_product_establishment, to: :request_issue
+           :edited_description, to: :request_issue
 
   def vbms_contention
     return unless contention_reference_id
