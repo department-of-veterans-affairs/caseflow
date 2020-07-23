@@ -89,10 +89,11 @@ class LegacyAppeal < CaseflowRecord
 
   # To match Appeals AOD behavior
   def aod?
-    aod
+    advanced_on_docket?
   end
 
   def advanced_on_docket?
+    # update(aod_reason: aod) if aod_reason != aod
     aod
   end
 

@@ -34,6 +34,8 @@ class Appeal < DecisionReview
     "de_novo": "de_novo"
   }
 
+  after_create :conditionally_set_aod_reason
+
   after_save :set_original_stream_data
 
   with_options on: :intake_review do
@@ -271,8 +273,27 @@ class Appeal < DecisionReview
     nil
   end
 
+  # aod_reason can be nil to imply no AOD
+  enum aod_reason: {
+    age: "age",
+    motion: "motion"
+  }
+
   def advanced_on_docket?
-    claimant&.advanced_on_docket?(receipt_date)
+    !!aod_reason || conditionally_set_aod_reason
+  end
+
+  def conditionally_set_aod_reason
+    reason = :age if claimant.advanced_on_docket_based_on_age?
+    reason = :motion if AdvanceOnDocketMotion.granted_for_person?(claimant.person.id, receipt_date)
+
+    if aod_reason
+      Rails.logger.warn("Downgrading AOD status of appeal #{id} from #{aod_reason} to nil.")
+      reason = nil
+    end
+
+    update(aod_reason: reason)
+    aod_reason
   end
 
   # Prefer aod? over aod going forward, as this function returns a boolean

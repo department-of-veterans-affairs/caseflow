@@ -13,7 +13,7 @@ class Person < CaseflowRecord
     :last_name,
     :middle_name,
     :name_suffix,
-    :date_of_birth,
+    :date_of_birth, # Does not get updated
     :email_address,
     :ssn,
     :participant_id
@@ -48,11 +48,11 @@ class Person < CaseflowRecord
     end
   end
 
-  def advanced_on_docket?(appeal_receipt_date)
-    advanced_on_docket_based_on_age? || AdvanceOnDocketMotion.granted_for_person?(id, appeal_receipt_date)
-  end
+  # def advanced_on_docket?(appeal_receipt_date)
+  #   advanced_on_docket_based_on_age? || AdvanceOnDocketMotion.granted_for_person?(id, appeal_receipt_date)
+  # end
 
-  def date_of_birth
+  def date_of_birth # cache = our DB; does not get updated if not nil # Asked Foxtrot.
     cached_or_fetched_from_bgs(attr_name: :date_of_birth)&.to_date
   end
 

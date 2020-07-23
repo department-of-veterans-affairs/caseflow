@@ -26,7 +26,7 @@ class ETL::Appeal < ETL::Record
       veteran = original.veteran
       claimant = original.claimants.last
       person = claimant&.person
-      aod = person&.advance_on_docket_motions&.last
+      aod = person&.advance_on_docket_motions&.last # Why only examining the last? Bug?
 
       # avoid BGS call on sync for nil values
       person_attributes = (person&.attributes || {}).symbolize_keys
@@ -35,8 +35,9 @@ class ETL::Appeal < ETL::Record
       target.appeal_id = original.id
       target.active_appeal = original.active?
       target.aod_due_to_dob = person&.advanced_on_docket_based_on_age? || false
+      # rename to aod_motion_granted
       target.aod_granted = aod&.granted? || false
-      target.aod_reason = aod&.reason
+      target.aod_reason = original.aod_reason
       target.aod_user_id = aod&.user_id
       target.claimant_dob = person_attributes[:date_of_birth]
       target.claimant_first_name = person_attributes[:first_name]
