@@ -110,12 +110,12 @@ class VACOLS::CaseDocket < VACOLS::Record
         select BFKEY, BFDLOOUT,
           case when BFHINES is null or BFHINES <> 'GP' then nvl(VLJ_HEARINGS.VLJ, VLJ_PRIORDEC.VLJ) end VLJ
         from (
-          #{VACOLS::CaseDocket::SELECT_READY_APPEALS}
+          #{SELECT_READY_APPEALS}
             and (BFAC = '7' or AOD = '1')
           order by BFDLOOUT
         ) BRIEFF
-        #{VACOLS::CaseDocket::JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
-        #{VACOLS::CaseDocket::JOIN_ASSOCIATED_VLJS_BY_PRIOR_DECISIONS}
+        #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+        #{JOIN_ASSOCIATED_VLJS_BY_PRIOR_DECISIONS}
       )
   "
 
@@ -266,7 +266,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   def self.priority_ready_appeal_vacols_ids
-    VACOLS::CaseDocket.connection.exec_query(SELECT_PRIORITY_APPEALS).to_hash.map { |appeal| appeal["bfkey"] }
+    connection.exec_query(SELECT_PRIORITY_APPEALS).to_hash.map { |appeal| appeal["bfkey"] }
   end
 
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
