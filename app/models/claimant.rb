@@ -46,7 +46,7 @@ class Claimant < CaseflowRecord
   end
 
   delegate :date_of_birth,
-           # :advanced_on_docket?,
+           :advanced_on_docket?,
            :name,
            :first_name,
            :last_name,

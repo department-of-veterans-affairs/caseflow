@@ -284,15 +284,17 @@ class Appeal < DecisionReview
   end
 
   def conditionally_set_aod_reason
-    reason = :age if claimant.person.advanced_on_docket_based_on_age?
-    reason = :motion if AdvanceOnDocketMotion.granted_for_person?(claimant.person.id, receipt_date)
+    if claimant&.person
+      reason = :age if claimant.person.advanced_on_docket_based_on_age?
+      reason = :motion if AdvanceOnDocketMotion.granted_for_person?(claimant.person.id, receipt_date)
+    end
 
     if aod_reason
       Rails.logger.warn("Downgrading AOD status of appeal #{id} from #{aod_reason} to nil.")
-      reason = nil
+      update(aod_reason: nil)
     end
 
-    update(aod_reason: reason)
+    update(aod_reason: reason) if reason
     aod_reason
   end
 

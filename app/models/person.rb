@@ -8,6 +8,8 @@ class Person < CaseflowRecord
   has_many :claimants, primary_key: :participant_id, foreign_key: :participant_id
   validates :participant_id, presence: true
 
+  after_update :conditionally_set_aod_on_active_appeals, if: :date_of_birth
+
   CACHED_BGS_ATTRIBUTES = [
     :first_name,
     :last_name,
@@ -48,9 +50,9 @@ class Person < CaseflowRecord
     end
   end
 
-  # def advanced_on_docket?(appeal_receipt_date)
-  #   advanced_on_docket_based_on_age? || AdvanceOnDocketMotion.granted_for_person?(id, appeal_receipt_date)
-  # end
+  def advanced_on_docket?(appeal_receipt_date)
+    advanced_on_docket_based_on_age? || AdvanceOnDocketMotion.granted_for_person?(id, appeal_receipt_date)
+  end
 
   def date_of_birth # cache = our DB; does not get updated if not nil # Asked Foxtrot.
     cached_or_fetched_from_bgs(attr_name: :date_of_birth)&.to_date
@@ -145,5 +147,16 @@ class Person < CaseflowRecord
     bgs_record[:middle_name] ||= bgs_record.dig(:middle_nm)
     bgs_record[:email_address] ||= bgs_record.dig(:email_addr)
     bgs_record
+  end
+
+  # Should probably be async process
+  def conditionally_set_aod_on_active_appeals
+    if advanced_on_docket_based_on_age?
+      veteran = Veteran.find_by_participant_id(participant_id)
+      return unless veteran
+
+      appeals = AppealFinder.find_appeals_with_file_numbers(veteran.file_number)
+      appeals.map(&:conditionally_set_aod_reason)
+    end
   end
 end
