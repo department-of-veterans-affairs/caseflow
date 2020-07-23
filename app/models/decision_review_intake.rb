@@ -52,6 +52,27 @@ class DecisionReviewIntake < Intake
 
   private
 
+  def create_claimant!
+    # This is essentially a find_or_initialize_by, but ensures that the save! below kicks off the
+    # validations for the intended subclass.
+    (Claimant.find_by(decision_review: detail) || claimant_type.constantize.new).tap do |claimant|
+      # Ensure that the claimant model can set validation errors on the same detail object
+      claimant.decision_review = detail
+      claimant.type = claimant_type
+      claimant.participant_id = participant_id
+      claimant.payee_code = (need_payee_code? ? request_params[:payee_code] : nil)
+      claimant.notes = request_params[:claimant_notes]
+      claimant.save!
+    end
+    update_person!
+  end
+
+  # :nocov:
+  def need_payee_code?
+    fail Caseflow::Error::MustImplementInSubclass
+  end
+  # :nocov:
+
   def set_review_errors
     fetch_claimant_errors
     detail.validate

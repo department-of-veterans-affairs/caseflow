@@ -40,20 +40,6 @@ class ClaimReviewIntake < DecisionReviewIntake
 
   private
 
-  def create_claimant!
-    # This is a find_or_initialize_by, but ensures that the save! below kicks off the validations
-    # for the intended subclass.
-    (Claimant.find_by(decision_review: detail) || claimant_type.constantize.new).tap do |claimant|
-      # Ensure that the claimant model can set validation errors on the same detail object
-      claimant.decision_review = detail
-      claimant.type = claimant_type
-      claimant.participant_id = participant_id
-      claimant.payee_code = (need_payee_code? ? request_params[:payee_code] : nil)
-      claimant.save!
-    end
-    update_person!
-  end
-
   def need_payee_code?
     # payee_code is only required for claim reviews where the claimant is a dependent
     # and the benefit_type is compensation or pension

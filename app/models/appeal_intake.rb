@@ -39,21 +39,8 @@ class AppealIntake < DecisionReviewIntake
 
   private
 
-  def create_claimant!
-    Claimant.find_or_initialize_by(
-      decision_review: detail,
-      type: claimant_type
-    ).tap do |claimant|
-      claimant.participant_id = participant_id
-      claimant.notes = request_params[:claimant_notes]
-      claimant.save!
-    end
-
-    # If there was a claimant of a different type for this appeal, remove it
-    # This largely only happens in testing
-    Claimant.where(decision_review: detail).where.not(type: claimant_type).take&.destroy!
-
-    update_person!
+  def need_payee_code?
+    false
   end
 
   def review_param_keys
