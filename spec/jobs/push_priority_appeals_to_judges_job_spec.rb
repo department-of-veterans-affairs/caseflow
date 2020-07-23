@@ -5,7 +5,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     arr.each_with_index.map { |count, i| [i, count] }.to_h
   end
 
-  fcontext ".distribute_non_genpop_priority_appeals" do
+  context ".distribute_non_genpop_priority_appeals" do
     before do
       allow_any_instance_of(DirectReviewDocket)
         .to receive(:nonpriority_receipts_per_year)
@@ -14,13 +14,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       allow(Docket)
         .to receive(:nonpriority_decisions_per_year)
         .and_return(1000)
-      allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(
-        [
-          judge_with_ready_priority_cases,
-          judge_with_ready_nonpriority_cases,
-          judge_with_nonready_priority_cases
-        ]
-      )
+      allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
     end
 
     let(:ready_priority_bfkey) { "12345" }
@@ -125,13 +119,20 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         hearing.update!(judge: judge)
       end
     end
+    let(:eligible_judges) do
+      [
+        judge_with_ready_priority_cases,
+        judge_with_ready_nonpriority_cases,
+        judge_with_nonready_priority_cases
+      ]
+    end
 
     subject { PushPriorityAppealsToJudgesJob.new.distribute_non_genpop_priority_appeals }
 
     it "should only distribute the ready priority cases tied to a judge" do
-      expect(subject.count).to eq 1
-      expect(subject.first.statistics["batch_size"]).to eq 2
-      distributed_cases = DistributedCase.where(distribution: subject.first)
+      expect(subject.count).to eq eligible_judges.count
+      expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 0, 0]
+      distributed_cases = DistributedCase.where(distribution: subject)
       expect(distributed_cases.count).to eq 2
       expect(distributed_cases.map(&:case_id)).to match_array [ready_priority_bfkey, ready_priority_uuid]
       expect(distributed_cases.map(&:docket)).to match_array ["legacy", Constants.AMA_DOCKETS.hearing]
