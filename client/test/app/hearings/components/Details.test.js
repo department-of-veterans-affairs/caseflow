@@ -1,26 +1,27 @@
 import React from 'react';
 
-import { EmailNotificationHistory } from 'app/hearings/components/details/EmailNotificationHistory';
+import { DetailsHeader } from 'app/hearings/components/details/DetailsHeader';
+import { HearingConversion } from 'app/hearings/components/HearingConversion';
 import { TranscriptionFormSection } from 'app/hearings/components/details/TranscriptionFormSection';
+import { VirtualHearingForm } from 'app/hearings/components/details/VirtualHearingForm';
 import { detailsStore, hearingDetailsWrapper } from 'test/data/stores/hearingsStore';
 import { mount } from 'enzyme';
-import DetailsForm from 'app/hearings/components/details/DetailsForm';
-import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
 import {
   userWithVirtualHearingsFeatureEnabled,
   userWithConvertCentralHearingsEnabled,
   legacyHearing,
   amaHearing,
   defaultHearing,
-  centralHearing,
 } from 'test/data';
-import Details from 'app/hearings/components/Details';
-import { DetailsHeader } from 'app/hearings/components/details/DetailsHeader';
-import { VirtualHearingForm } from 'app/hearings/components/details/VirtualHearingForm';
 import Button from 'app/components/Button';
+import DateSelector from 'app/components/DateSelector';
+import Details from 'app/hearings/components/Details';
+import DetailsForm from 'app/hearings/components/details/DetailsForm';
+import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
 import SearchableDropdown from 'app/components/SearchableDropdown';
+import TranscriptionRequestInputs from
+  'app/hearings/components/details/TranscriptionRequestInputs';
 import VirtualHearingModal from 'app/hearings/components/VirtualHearingModal';
-import { HearingConversion } from 'app/hearings/components/HearingConversion';
 
 // Define the function spies
 const saveHearingSpy = jest.fn();
@@ -143,6 +144,46 @@ describe('Details', () => {
     // Ensure the modal is displayed
     expect(details.find(VirtualHearingModal)).toHaveLength(1);
     expect(details.find(HearingConversion)).toHaveLength(0);
+
+    expect(details).toMatchSnapshot();
+  });
+
+  test('Does not display VirtualHearingModal when updating transcription details with AMA virtual hearing', () => {
+    const details = mount(
+      <Details
+        hearing={amaHearing}
+        saveHearing={saveHearingSpy}
+        setHearing={setHearingSpy}
+        goBack={goBackSpy}
+        onReceiveAlerts={onReceiveAlertsSpy}
+        onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
+        transitionAlert={transitionAlertSpy}
+      />,
+      {
+        wrappingComponent: hearingDetailsWrapper(
+          userWithVirtualHearingsFeatureEnabled,
+          amaHearing
+        ),
+        wrappingComponentProps: { store: detailsStore },
+      }
+    );
+
+    // Update the transcription sent date field
+    details.
+      find(TranscriptionRequestInputs).
+      find(DateSelector).
+      find('input').
+      simulate('change', { target: { value: '07/25/2020' } });
+
+    // Click save
+    details.
+      find(Button).
+      findWhere((node) => node.prop('name') === 'Save').
+      find('button').
+      simulate('click');
+
+    // Ensure the modal is not displayed
+    expect(details.exists(VirtualHearingModal)).toEqual(false);
 
     expect(details).toMatchSnapshot();
   });
