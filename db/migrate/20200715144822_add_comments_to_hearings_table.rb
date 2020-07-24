@@ -1,5 +1,5 @@
 class AddCommentsToHearingsTable < ActiveRecord::Migration[5.2]
-  def change
+  def change #tap
   	# hearings
   	change_column_comment :hearings, :appeal_id, "Appeal ID; use as FK to appeals"
   	change_column_comment :hearings, :bva_poc, "Hearing coordinator full name"
