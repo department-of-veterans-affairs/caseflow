@@ -61,7 +61,8 @@ export const VirtualHearingForm = (
                 onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
                 readOnly={readOnlyEmails}
                 time={hearing.scheduledTimeString}
-                name={`${appellantTitle} Timezone`}
+                name="appellantTz"
+                label={`${appellantTitle} Timezone`}
               />
               <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
             </div>}
@@ -86,7 +87,8 @@ export const VirtualHearingForm = (
                 onChange={(representativeTz) => update('virtualHearing', { representativeTz })}
                 readOnly={readOnlyEmails || !virtualHearing?.representativeEmail}
                 time={hearing.scheduledTimeString}
-                name="POA/Representative Timezone"
+                name="representativeTz"
+                label="POA/Representative Timezone"
               />
               <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
             </div>}

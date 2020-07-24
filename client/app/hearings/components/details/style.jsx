@@ -151,3 +151,9 @@ export const inputFix = css({
     marginBottom: '2rem !important',
   },
 });
+
+export const virtualHearingModalStyles = css({
+  '& pre': {
+    margin: '5px 0'
+  }
+});
