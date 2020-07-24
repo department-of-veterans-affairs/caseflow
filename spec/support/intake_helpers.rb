@@ -98,8 +98,8 @@ module IntakeHelpers
       stub_valid_address
       participant_id = claim_participant_id || test_veteran.participant_id
       payee_code = claim_participant_id ? "02" : "00"
-      claimant_type = claim_participant_id.present? ? DependentClaimant : VeteranClaimant
-      claimant_type.create!(
+      claimant_class = claim_participant_id.present? ? DependentClaimant : VeteranClaimant
+      claimant_class.create!(
         decision_review: supplemental_claim,
         participant_id: participant_id,
         payee_code: payee_code
@@ -135,8 +135,8 @@ module IntakeHelpers
     unless no_claimant
       stub_valid_address
       participant_id = claim_participant_id || test_veteran.participant_id
-      claimant_type = claim_participant_id.present? ? DependentClaimant : VeteranClaimant
-      claimant_type.create!(
+      claimant_class = claim_participant_id.present? ? DependentClaimant : VeteranClaimant
+      claimant_class.create!(
         decision_review: appeal,
         participant_id: participant_id
       )

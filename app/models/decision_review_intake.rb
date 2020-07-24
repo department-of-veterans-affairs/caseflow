@@ -55,10 +55,10 @@ class DecisionReviewIntake < Intake
   def create_claimant!
     # This is essentially a find_or_initialize_by, but ensures that the save! below kicks off the
     # validations for the intended subclass.
-    (Claimant.find_by(decision_review: detail) || claimant_type.constantize.new).tap do |claimant|
+    (Claimant.find_by(decision_review: detail) || claimant_class_name.constantize.new).tap do |claimant|
       # Ensure that the claimant model can set validation errors on the same detail object
       claimant.decision_review = detail
-      claimant.type = claimant_type
+      claimant.type = claimant_class_name
       claimant.participant_id = participant_id
       claimant.payee_code = (need_payee_code? ? request_params[:payee_code] : nil)
       claimant.notes = request_params[:claimant_notes]
@@ -126,18 +126,18 @@ class DecisionReviewIntake < Intake
     end
   end
 
-  def claimant_type
+  def claimant_class_name
     "#{request_params[:claimant_type].capitalize}Claimant"
   end
 
   def veteran_is_not_claimant
-    claimant_type != "VeteranClaimant"
+    claimant_class_name != "VeteranClaimant"
   end
 
   # If user has specified a different claimant, use that
   # Otherwise we use the veteran's participant_id, even for OtherClaimant
   def participant_id
-    if %w[VeteranClaimant OtherClaimant].include? claimant_type
+    if %w[VeteranClaimant OtherClaimant].include? claimant_class_name
       veteran.participant_id
     else
       request_params[:claimant]

@@ -513,9 +513,9 @@ feature "Higher-Level Review", :all_dbs do
       detail: higher_level_review
     )
 
-    claimant_type = claim_participant_id.present? ? DependentClaimant : VeteranClaimant
+    claimant_class = claim_participant_id.present? ? DependentClaimant : VeteranClaimant
     participant_id = claim_participant_id || test_veteran.participant_id
-    claimant_type.create!(
+    claimant_class.create!(
       decision_review: higher_level_review,
       participant_id: participant_id,
       payee_code: claim_participant_id.present? ? "02" : "00"

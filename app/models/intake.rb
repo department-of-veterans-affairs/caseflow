@@ -203,7 +203,7 @@ class Intake < CaseflowRecord
       completed_at: completed_at,
       relationships: veteran&.relationships&.map(&:serialize),
       processed_in_caseflow: detail.try(:processed_in_caseflow?),
-      claimantType: detail.try(:claimant_type)&.sub(/Claimant$/, "")&.downcase
+      claimantType: detail.try(:claimant_type)
     }
   end
 

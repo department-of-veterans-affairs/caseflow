@@ -157,6 +157,10 @@ class DecisionReview < CaseflowRecord
   end
 
   def claimant_type
+    claimant_class_name&.sub(/Claimant$/, "")&.downcase
+  end
+
+  def claimant_class_name
     claimant&.type
   end
 

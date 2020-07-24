@@ -22,11 +22,11 @@ const getClaimantField = (veteran, intakeData) => {
   };
 
   const claimantType = intakeData.claimantType;
-  const claimant = claimantMap[claimantType ?? 'veteran']?.();
+  const claimantDisplayText = claimantMap[claimantType ?? 'veteran']?.();
 
   return [{
     field: 'Claimant',
-    content: claimant
+    content: claimantDisplayText
   }];
 };
 
