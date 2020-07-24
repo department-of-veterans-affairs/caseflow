@@ -270,7 +270,7 @@ class Appeal < DecisionReview
   end
 
   def conditionally_set_age_aod
-    aod_based_on_age = claimant&.person.advanced_on_docket_based_on_age?
+    aod_based_on_age = claimant.person.advanced_on_docket_based_on_age? if claimant
     update(age_aod: aod_based_on_age) if age_aod != aod_based_on_age
   end
 
