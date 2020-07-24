@@ -50,8 +50,16 @@ class FeatureToggleSearch
   attr_reader :file, :regex
 end
 
+# Flags that are turned off by default because
+#   - they make significantly drastic changes in Dev/Demo compared to Production
+#   - the work around the feature has been paused
+vexing_flags = [
+  "legacy_das_deprecation"
+]
+
 all_features = AllFeatureToggles.new.call.flatten.uniq
 all_features.map! { |feature| feature.split(",")[0] }
+all_features.reject! { |toggle| vexing_flags.include? toggle }
 
 all_features.each_with_object([]) do |feature, result|
   result << { "feature" => feature, "enable_all" => true }

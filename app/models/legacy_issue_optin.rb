@@ -31,6 +31,23 @@ class LegacyIssueOptin < CaseflowRecord
         disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[VACOLS_DISPOSITION_CODE]
       )
     end
+
+    def opt_in_decided_appeal(legacy_appeal)
+      LegacyAppeal.opt_in_decided_appeal(
+        appeal: legacy_appeal,
+        user: RequestStore.store[:current_user],
+        closed_on: Time.zone.today
+      )
+    end
+
+    def handle_legacy_appeal_opt_ins(legacy_appeal)
+      LegacyIssueOptin.revert_opted_in_remand_issues(legacy_appeal.vacols_id) if legacy_appeal.remand?
+      LegacyIssueOptin.close_legacy_appeal_in_vacols(legacy_appeal) if legacy_appeal.active?
+
+      if legacy_appeal.advance_failure_to_respond? && legacy_appeal.issues.all?(&:opted_into_ama?)
+        LegacyIssueOptin.opt_in_decided_appeal(legacy_appeal)
+      end
+    end
   end
 
   def opt_in!

@@ -389,7 +389,7 @@ describe AppealRepository, :all_dbs do
       end
     end
   end
-
+  
   describe ".rollback_opt_in_on_decided_appeal!" do
     subject do
       AppealRepository.rollback_opt_in_on_decided_appeal!(
@@ -445,6 +445,56 @@ describe AppealRepository, :all_dbs do
         expect(case_record.bfdc).to eq "G"
         expect(case_record.bfddec).to eq(past_decision_date)
         expect(folder_record.reload.tidcls).to eq(past_decision_date)
+      end
+    end
+  end
+  
+  describe ".opt_in_decided_appeal!" do
+    subject { AppealRepository.opt_in_decided_appeal!(appeal: legacy_appeal, user: user, closed_on: new_decision_date) }
+
+    let!(:user) { create(:user) }
+    let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: case_record) }
+    let(:folder_record) { create(:folder, tidcls: past_decision_date) }
+    let(:past_decision_date) { 5.days.ago.to_date }
+    let(:new_decision_date) { Time.zone.today }
+
+    context "Appeal does not have an advance failure to respond disposition" do
+      let(:case_record) do
+        create(
+          :case,
+          :status_complete,
+          :disposition_allowed,
+          bfddec: past_decision_date,
+          folder: folder_record
+        )
+      end
+
+      it "raises an error" do
+        expect { subject }.to raise_error(AppealRepository::AppealNotValidToClose)
+        expect(case_record.bfdc).to eq "1"
+        expect(case_record.bfddec).to eq(past_decision_date)
+        expect(folder_record.reload.tidcls).to eq(past_decision_date)
+      end
+    end
+
+    context "Appeal has an advance failure to respond disposition" do
+      let(:case_record) do
+        create(
+          :case,
+          :status_complete,
+          :disposition_advance_failure_to_respond,
+          bfddec: past_decision_date,
+          folder: folder_record
+        )
+      end
+
+      it "opts in the appeal and updates decision dates" do
+        subject
+
+        expect(case_record.reload).to be_closed
+        expect(case_record.bfdc).to eq "O"
+        expect(case_record.bfddec).to eq(new_decision_date)
+        expect(folder_record.reload.tidcls).to eq(new_decision_date)
       end
     end
   end
