@@ -108,6 +108,7 @@ describe Claimant, :postgres do
       it "returns true" do
         claimant = create(:claimant, :advanced_on_docket_due_to_age)
         expect(claimant.advanced_on_docket?(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket_based_on_age?).to eq(true)
       end
     end
 
@@ -117,6 +118,7 @@ describe Claimant, :postgres do
         create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true)
 
         expect(claimant.advanced_on_docket?(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket_motion_granted?(1.year.ago)).to eq(true)
       end
     end
 
@@ -124,6 +126,8 @@ describe Claimant, :postgres do
       it "returns false" do
         claimant = create(:claimant)
         expect(claimant.advanced_on_docket?(1.year.ago)).to eq(false)
+        expect(claimant.advanced_on_docket_based_on_age?).to eq(false)
+        expect(claimant.advanced_on_docket_motion_granted?(1.year.ago)).to eq(false)
       end
     end
   end
