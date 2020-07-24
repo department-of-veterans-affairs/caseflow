@@ -11,27 +11,29 @@ class SetAppealAgeAodJob < CaseflowJob
 
     # We expect there to be only one claimant on an appeal. Any claimant meeting the age criteria will cause AOD.
     appeals = non_aod_active_appeals.joins(claimants: :person).where("people.date_of_birth <= ?", 75.years.ago)
+    detail_msg = "IDs of age-related AOD appeals: #{appeals.pluck(:id)}"
+
     appeals.update_all(age_aod: true)
     appeals.update_all(updated_at: Time.now.utc)
 
-    log_success
+    log_success(detail_msg)
   rescue StandardError => error
-    log_error(self.class.name, error)
+    log_error(self.class.name, error, detail_msg)
   end
 
   protected
 
-  def log_success
+  def log_success(details)
     duration = time_ago_in_words(start_time)
-    msg = "#{self.class.name} completed after running for #{duration}."
+    msg = "#{self.class.name} completed after running for #{duration}.\n#{details}"
     Rails.logger.info(msg)
 
     slack_service.send_notification("[INFO] #{msg}")
   end
 
-  def log_error(collector_name, err)
+  def log_error(collector_name, err, details)
     duration = time_ago_in_words(start_time)
-    msg = "#{collector_name} failed after running for #{duration}. Fatal error: #{err.message}"
+    msg = "#{collector_name} failed after running for #{duration}. Fatal error: #{err.message}.\n#{details}"
     Rails.logger.info(msg)
     Rails.logger.info(err.backtrace.join("\n"))
 

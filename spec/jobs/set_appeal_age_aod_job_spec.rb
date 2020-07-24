@@ -4,7 +4,7 @@ describe SetAppealAgeAodJob, :postgres do
   include_context "Metrics Reports"
 
   # rubocop:disable Metrics/LineLength
-  let(:report) do
+  let(:success_msg) do
     "[INFO] SetAppealAgeAodJob completed after running for less than a minute."
   end
   # rubocop:enable Metrics/LineLength
@@ -30,7 +30,7 @@ describe SetAppealAgeAodJob, :postgres do
       expect(cancelled_age_aod_appeal.active?).to eq(false)
 
       described_class.perform_now
-      expect(@slack_msg).to eq(report)
+      expect(@slack_msg).to include(success_msg)
 
       # `age_aod` will be nil
       # `age_aod` being false means that it was once true (in the case where the claimant's DOB was updated)
@@ -39,6 +39,21 @@ describe SetAppealAgeAodJob, :postgres do
 
       expect(age_aod_appeal.reload.age_aod).to eq(true)
       expect(motion_aod_appeal.reload.age_aod).to eq(false)
+    end
+
+    context "when the entire job fails" do
+      let(:error_msg) { "Some dummy error" }
+
+      it "sends a message to Slack that includes the error" do
+        slack_msg = ""
+        allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+
+        allow_any_instance_of(described_class).to receive(:non_aod_active_appeals).and_raise(error_msg)
+        described_class.perform_now
+
+        expected_msg = "#{described_class.name} failed after running for .*. Fatal error: #{error_msg}"
+        expect(slack_msg).to match(/#{expected_msg}/)
+      end
     end
   end
 end
