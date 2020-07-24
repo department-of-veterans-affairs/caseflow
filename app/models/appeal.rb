@@ -280,7 +280,7 @@ class Appeal < DecisionReview
   }
 
   def advanced_on_docket?
-    !!aod_reason || conditionally_set_aod_reason
+    !!aod_reason || !!conditionally_set_aod_reason
   end
 
   def conditionally_set_aod_reason
