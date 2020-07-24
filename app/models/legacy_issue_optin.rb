@@ -65,7 +65,7 @@ class LegacyIssueOptin < CaseflowRecord
 
   def rollback!
     reopen_legacy_appeal if legacy_appeal_needs_to_be_reopened?
-    handle_advance_failure_to_respond_appeals
+    rollback_advance_failure_to_respond_appeals
     revert_open_remand_issues if legacy_appeal.remand?
     rollback_issue_disposition
   end
@@ -116,7 +116,7 @@ class LegacyIssueOptin < CaseflowRecord
     )
   end
 
-  def handle_advance_failure_to_respond_appeals
+  def rollback_advance_failure_to_respond_appeals
     return unless original_legacy_appeal_disposition_code == "G"
 
     # We only need to revert the opt-in on the appeal for the first issue being rolled back

@@ -389,7 +389,7 @@ describe AppealRepository, :all_dbs do
       end
     end
   end
-  
+
   describe ".rollback_opt_in_on_decided_appeal!" do
     subject do
       AppealRepository.rollback_opt_in_on_decided_appeal!(
@@ -448,7 +448,7 @@ describe AppealRepository, :all_dbs do
       end
     end
   end
-  
+
   describe ".opt_in_decided_appeal!" do
     subject { AppealRepository.opt_in_decided_appeal!(appeal: legacy_appeal, user: user, closed_on: new_decision_date) }
 

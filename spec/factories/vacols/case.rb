@@ -242,7 +242,6 @@ FactoryBot.define do
       bfdc { "P" }
     end
 
-
     trait :disposition_ama do
       bfdc { "O" }
     end

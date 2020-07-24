@@ -658,7 +658,7 @@ class AppealRepository
       VACOLS::Case.transaction do
         case_record.update!(
           bfddec: original_data[:decision_date],
-          bfdc: original_data[:disposition_code],
+          bfdc: original_data[:disposition_code]
         )
 
         folder_record.update!(
