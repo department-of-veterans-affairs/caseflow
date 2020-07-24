@@ -716,6 +716,7 @@ describe RequestIssuesUpdate, :all_dbs do
         edited_description: edited_description
       )
     end
+    let(:edited_issue_contention_id) { "3" }
 
     let!(:riu) do
       create(:request_issues_update, :requires_processing,
@@ -746,7 +747,7 @@ describe RequestIssuesUpdate, :all_dbs do
       Generators::Contention.build(
         claim_id: edited_issue.end_product_establishment.reference_id,
         text: "old request issue description",
-        id: "3",
+        id: edited_issue_contention_id,
         start_date: Time.zone.now,
         submit_date: 5.days.ago
       )
