@@ -276,6 +276,8 @@ class Appeal < DecisionReview
 
   def advanced_on_docket?
     conditionally_set_age_aod
+    # One of the AOD motion reasons is 'age'. Keep interrogation of any motions separate from `age_aod`,
+    # which reflects `claimant.advanced_on_docket_based_on_age?`.
     age_aod || claimant&.advanced_on_docket_motion_granted?(receipt_date)
   end
 

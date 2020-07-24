@@ -49,7 +49,7 @@ class Person < CaseflowRecord
   end
 
   def advanced_on_docket?(appeal_receipt_date)
-    advanced_on_docket_based_on_age? || advanced_on_docket_motion_granted?
+    advanced_on_docket_based_on_age? || advanced_on_docket_motion_granted?(appeal_receipt_date)
   end
 
   def date_of_birth
