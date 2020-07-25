@@ -53,6 +53,8 @@ describe LegacyOptinManager, :all_dbs do
   let(:remand_ri1) { create(:request_issue, vacols_id: remand_case.bfkey, vacols_sequence_id: remand_issue1.issseq) }
   let(:remand_ri2) { create(:request_issue, vacols_id: remand_case.bfkey, vacols_sequence_id: remand_issue2.issseq) }
 
+  # For remands we're doing an extra check where there's also another issue on another decision review
+  # Not to test behavior specific to remands, just to cover this scenario in general
   let!(:higher_level_review) { create(:higher_level_review, request_issues: [hlr_remand_ri]) }
   let(:hlr_remand_issue) { create(:case_issue, :disposition_remanded, issseq: 3) }
   let(:hlr_remand_ri) do
@@ -132,6 +134,7 @@ describe LegacyOptinManager, :all_dbs do
                vacols_id: remand_ri1.vacols_id,
                vacols_sequence_id: remand_ri1.vacols_sequence_id)
       end
+      let!(:hlr_remand_optin) { create(:legacy_issue_optin, request_issue: hlr_remand_ri) }
       let!(:closed_optin1) do
         create(:legacy_issue_optin,
                request_issue: closed_ri1,
@@ -219,9 +222,8 @@ describe LegacyOptinManager, :all_dbs do
         end
 
         let!(:undecided_optin2) { create(:legacy_issue_optin, request_issue: undecided_ri2) }
-        let!(:remand_optin2) { create(:legacy_issue_optin, request_issue: remand_ri2) }
         let!(:closed_optin2) { create(:legacy_issue_optin, request_issue: closed_ri2) }
-        let!(:hlr_remand_optin) { create(:legacy_issue_optin, request_issue: hlr_remand_ri) }
+        let!(:remand_optin2) { create(:legacy_issue_optin, request_issue: remand_ri2) }
         let!(:gcode_optin2) do
           create(:legacy_issue_optin,
                  request_issue: gcode_ri2,
@@ -246,6 +248,7 @@ describe LegacyOptinManager, :all_dbs do
 
         it "rolls back remand issues, closes the remand, and creates a follow up appeal" do
           subject
+
           expect(vacols_issue("remand", 1).issdc).to eq(remand_optin1.original_disposition_code)
           expect(vacols_issue("remand", 1).issdcls).to eq(remand_optin1.original_disposition_date)
           expect(vacols_issue("remand", 2).issdc).to eq(remand_optin2.original_disposition_code)
