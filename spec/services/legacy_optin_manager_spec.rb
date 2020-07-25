@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-#
+
 # The LegacyOptInManager covers optin-in and rolling back legacy issues.
 # There are two request issues set up for each type below
 # On opt-in, we only opt-in the parent legacy appeal when the last issue on the legacy appeal is opted-in
@@ -92,8 +92,7 @@ describe LegacyOptinManager, :all_dbs do
            case_issues: [gcode_issue1, gcode_issue2],
            bfdsoc: 1.day.ago,
            bfddec: closed_disposition_date,
-           folder: folder_record
-         )
+           folder: folder_record)
   end
   let(:gcode_issue1) do
     create(:case_issue, :disposition_advance_failure_to_respond, issseq: 1, issdcls: closed_disposition_date)
@@ -146,8 +145,7 @@ describe LegacyOptinManager, :all_dbs do
                vacols_sequence_id: gcode_ri1.vacols_sequence_id,
                original_legacy_appeal_decision_date: closed_disposition_date,
                original_legacy_appeal_disposition_code: "G",
-               folder_decision_date: folder_close_date
-             )
+               folder_decision_date: folder_close_date)
       end
 
       let(:issue) { Issue.load_from_vacols(vacols_issue("undecided", 1).attributes) }
@@ -231,8 +229,7 @@ describe LegacyOptinManager, :all_dbs do
                  vacols_sequence_id: gcode_ri2.vacols_sequence_id,
                  original_legacy_appeal_decision_date: closed_disposition_date,
                  original_legacy_appeal_disposition_code: "G",
-                 folder_decision_date: folder_close_date
-               )
+                 folder_decision_date: folder_close_date)
         end
 
         it "closes the undecided issues and closes the undecided appeal" do
@@ -317,7 +314,7 @@ describe LegacyOptinManager, :all_dbs do
               expect(already_closed_case.bfddec).to eq(closed_disposition_date)
             end
 
-            it "reopens the remand, deletes the post remand, re-opts in remanded issues and rollsback the disposition" do
+            it "reopens the remand, deletes the post remand, reopts in remanded issues and rollsback the disposition" do
               follow_up_appeal = VACOLS::Case.find_by(bfkey: "remandP")
               follow_up_appeal_issues = VACOLS::CaseIssue.where(isskey: "remandP")
 

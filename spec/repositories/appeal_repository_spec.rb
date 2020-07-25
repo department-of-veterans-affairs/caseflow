@@ -392,7 +392,7 @@ describe AppealRepository, :all_dbs do
 
   context "AMA Opt-ins and rollbacks on previously decided appeals" do
     let!(:user) { create(:user) }
-    let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: case_record) }
+    let!(:appeal) { create(:legacy_appeal, vacols_case: case_record) }
     let(:folder_record) { create(:folder, tidcls: past_decision_date) }
     let(:past_decision_date) { 5.days.ago.to_date }
     let(:new_decision_date) { Time.zone.today }
@@ -401,7 +401,7 @@ describe AppealRepository, :all_dbs do
     end
 
     describe ".opt_in_decided_appeal!" do
-      subject { AppealRepository.opt_in_decided_appeal!(appeal: legacy_appeal, user: user, closed_on: new_decision_date) }
+      subject { AppealRepository.opt_in_decided_appeal!(appeal: appeal, user: user, closed_on: new_decision_date) }
 
       context "Appeal does not have an advance failure to respond disposition" do
         let(:case_record) do
@@ -447,7 +447,7 @@ describe AppealRepository, :all_dbs do
     describe ".rollback_opt_in_on_decided_appeal!" do
       subject do
         AppealRepository.rollback_opt_in_on_decided_appeal!(
-          appeal: legacy_appeal,
+          appeal: appeal,
           user: user,
           original_data: original_data
         )
