@@ -25,7 +25,7 @@ Who are the stakeholders? -->
 <!-- A brief summary of research, findings, and recommendations. -->
 
 ### Requirements and/or Acceptance Criteria
-<!-- What requirements are being address? What acceptance criteria should be fulfilled by the solution? -->
+<!-- What requirements are being addressed? What acceptance criteria should be fulfilled by the solution? -->
 
 ### Concerns
 <!-- Concerns about potential solutions. Explicitly state if they should be addressed in the chosen solution. -->
