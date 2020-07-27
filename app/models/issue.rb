@@ -161,6 +161,10 @@ class Issue
     disposition == :merged
   end
 
+  def opted_into_ama?
+    disposition == :ama_soc_ssoc_opt_in
+  end
+
   # "New Material" (and "Non new material") are the exact
   # terms used internally by attorneys/judges. These mean the issue
   # was allowing/denying new material (such as medical evidence) to be used
