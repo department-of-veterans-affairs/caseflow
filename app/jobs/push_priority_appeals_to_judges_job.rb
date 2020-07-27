@@ -22,23 +22,28 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     report = []
     report << "#{@tied_distributions.map { |stats| stats['batch_size'] }.sum} cases tied to judges distributed"
     report << "#{@genpop_distributions.map { |stats| stats['batch_size'] }.sum} genpop cases distributed"
+    report << "Priority Target: #{priority_target}"
+    report << "Previous monthly distributions: #{eligible_judge_priority_distributions_this_month}"
 
     appeals_not_distributed = docket_coordinator.dockets.map do |docket_type, docket|
       [docket_type, docket.ready_priority_appeal_ids]
     end.to_h
 
     if appeals_not_distributed.values.flatten.any?
-      report << "[WARN]"
-      report << "Legacy appeals not distributed: `LegacyAppeal.where(vacols_id: #{appeals_not_distributed[:legacy]})`"
-      ama_appeals_not_distributed = appeals_not_distributed.values.drop(1).flatten
-      report << "AMA appeals not distributed: `Appeal.where(uuid: #{ama_appeals_not_distributed})`"
-      docket_coordinator.dockets.each do |docket_type, docket|
-        report << "Age of oldest #{docket_type} case: #{docket.oldest_priority_appeal_days_waiting} days"
-      end
-      report << COPY::PRIORITY_PUSH_WARNING_MESSAGE
+      add_stuck_appeals_to_report(report, appeals_not_distributed)
     end
 
     report
+  end
+
+  def add_stuck_appeals_to_report(report, appeals)
+    report << "[WARN]"
+    report << "Legacy appeals not distributed: `LegacyAppeal.where(vacols_id: #{appeals[:legacy]})`"
+    report << "AMA appeals not distributed: `Appeal.where(uuid: #{appeals.values.drop(1).flatten})`"
+    docket_coordinator.dockets.each do |docket_type, docket|
+      report << "Age of oldest #{docket_type} case: #{docket.oldest_priority_appeal_days_waiting} days"
+    end
+    report << COPY::PRIORITY_PUSH_WARNING_MESSAGE
   end
 
   # Distribute all priority cases tied to a judge without limit

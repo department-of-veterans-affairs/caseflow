@@ -245,6 +245,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
   context ".slack_report" do
     let!(:job) { PushPriorityAppealsToJudgesJob.new }
+    let(:previous_distributions) { to_judge_hash([4, 3, 2, 1, 0]) }
     let!(:legacy_priority_case) do
       create(
         :case,
@@ -293,26 +294,31 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     before do
       job.instance_variable_set(:@tied_distributions, (0...5).map { |count| { "batch_size" => count } })
       job.instance_variable_set(:@genpop_distributions, (0...5).map { |count| { "batch_size" => count } })
+      allow_any_instance_of(PushPriorityAppealsToJudgesJob)
+        .to receive(:eligible_judge_priority_distributions_this_month).and_return(previous_distributions)
+      allow_any_instance_of(DocketCoordinator).to receive(:priority_count).and_return(20)
     end
 
     it "returns ids and age of ready priority appeals not distributed" do
       expect(subject.first).to eq "10 cases tied to judges distributed"
       expect(subject.second).to eq "10 genpop cases distributed"
+      expect(subject.third).to eq "Priority Target: 6"
+      expect(subject.fourth).to eq "Previous monthly distributions: #{previous_distributions}"
 
-      expect(subject.fourth.include?(legacy_priority_case.bfkey)).to be true
-      expect(subject.fifth.include?(ready_priority_hearing_case.uuid)).to be true
-      expect(subject.fifth.include?(ready_priority_evidence_case.uuid)).to be true
-      expect(subject.fifth.include?(ready_priority_direct_case.uuid)).to be true
+      expect(subject[5].include?(legacy_priority_case.bfkey)).to be true
+      expect(subject[6].include?(ready_priority_hearing_case.uuid)).to be true
+      expect(subject[6].include?(ready_priority_evidence_case.uuid)).to be true
+      expect(subject[6].include?(ready_priority_direct_case.uuid)).to be true
 
       today = Time.zone.now.to_date
       legacy_days_waiting = (today - legacy_priority_case.bfdloout.to_date).to_i
-      expect(subject[5]).to eq "Age of oldest legacy case: #{legacy_days_waiting} days"
+      expect(subject[7]).to eq "Age of oldest legacy case: #{legacy_days_waiting} days"
       direct_review_days_waiting = (today - ready_priority_direct_case.ready_for_distribution_at.to_date).to_i
-      expect(subject[6]).to eq "Age of oldest direct_review case: #{direct_review_days_waiting} days"
+      expect(subject[8]).to eq "Age of oldest direct_review case: #{direct_review_days_waiting} days"
       evidence_submission_days_waiting = (today - ready_priority_evidence_case.ready_for_distribution_at.to_date).to_i
-      expect(subject[7]).to eq "Age of oldest evidence_submission case: #{evidence_submission_days_waiting} days"
+      expect(subject[9]).to eq "Age of oldest evidence_submission case: #{evidence_submission_days_waiting} days"
       hearing_days_waiting = (today - ready_priority_hearing_case.ready_for_distribution_at.to_date).to_i
-      expect(subject[8]).to eq "Age of oldest hearing case: #{hearing_days_waiting} days"
+      expect(subject[10]).to eq "Age of oldest hearing case: #{hearing_days_waiting} days"
 
       expect(subject.last).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
     end
