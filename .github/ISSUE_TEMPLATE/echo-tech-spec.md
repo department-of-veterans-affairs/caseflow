@@ -62,6 +62,7 @@ How will we safely ship this work? Are there migrations, external dependencies t
  - [ ] Tech spec drafter: Facilitate that discussion.
  - [ ] Other developers: Read the tech spec before arriving at the discussion.
  - [ ] Other developers: Remind the tech spec drafter if a tech spec has been produced and no meeting has been scheduled.
+ - [ ] One or more solutions determined as viable paths forward
  - [ ] Tech spec drafter: Turn tech spec into next-step actionable tickets.
     - [ ] Write tickets as is necessary
     - [ ] Other developers provide more formal feedback as is necessary.
