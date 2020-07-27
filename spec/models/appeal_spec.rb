@@ -460,7 +460,7 @@ describe Appeal, :all_dbs do
 
       it "returns true" do
         expect(appeal.advanced_on_docket?).to eq(true)
-        expect(appeal.age_aod).to eq(true)
+        expect(appeal.aod_based_on_age).to eq(true)
       end
     end
 
@@ -469,7 +469,7 @@ describe Appeal, :all_dbs do
 
       it "returns false" do
         expect(appeal.advanced_on_docket?).to eq(false)
-        expect(appeal.age_aod).to eq(false)
+        expect(appeal.aod_based_on_age).to eq(false)
       end
     end
 
@@ -478,7 +478,7 @@ describe Appeal, :all_dbs do
 
       it "returns true" do
         expect(appeal.advanced_on_docket?).to eq(true)
-        expect(appeal.age_aod).to eq(false)
+        expect(appeal.aod_based_on_age).to eq(false)
       end
     end
   end

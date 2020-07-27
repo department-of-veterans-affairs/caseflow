@@ -2,7 +2,7 @@
 
 # Early morning job that checks if the claimant meets the Advance-On-Docket age criteria.
 # If criteria is satisfied, all active appeals associated with claimant will be marked as AOD.
-# This job only sets age_aod to true; it does not set it from true to false (see appeal.conditionally_set_age_aod).
+# This job only sets aod_based_on_age to true; it does not set it from true to false (see appeal.conditionally_set_age_aod).
 class SetAppealAgeAodJob < CaseflowJob
   include ActionView::Helpers::DateHelper
 
@@ -13,8 +13,7 @@ class SetAppealAgeAodJob < CaseflowJob
     appeals = non_aod_active_appeals.joins(claimants: :person).where("people.date_of_birth <= ?", 75.years.ago)
     detail_msg = "IDs of age-related AOD appeals: #{appeals.pluck(:id)}"
 
-    appeals.update_all(age_aod: true)
-    appeals.update_all(updated_at: Time.now.utc)
+    appeals.update_all(aod_based_on_age: true, updated_at: Time.now.utc)
 
     log_success(detail_msg)
   rescue StandardError => error
@@ -45,8 +44,8 @@ class SetAppealAgeAodJob < CaseflowJob
   private
 
   def non_aod_active_appeals
-    # `age_aod` is initially nil
-    # `age_aod` being false means that it was once true (in the case where the claimant's DOB was updated)
-    Appeal.active.where(age_aod: [nil, false])
+    # `aod_based_on_age` is initially nil
+    # `aod_based_on_age` being false means that it was once true (in the case where the claimant's DOB was updated)
+    Appeal.active.where(aod_based_on_age: [nil, false])
   end
 end

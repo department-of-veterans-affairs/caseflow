@@ -34,7 +34,7 @@ class Appeal < DecisionReview
     "de_novo": "de_novo"
   }
 
-  after_create :conditionally_set_age_aod
+  after_create :conditionally_set_aod_based_on_age
 
   after_save :set_original_stream_data
 
@@ -269,16 +269,16 @@ class Appeal < DecisionReview
     nil
   end
 
-  def conditionally_set_age_aod
-    aod_based_on_age = claimant&.advanced_on_docket_based_on_age?
-    update(age_aod: aod_based_on_age) if age_aod != aod_based_on_age
+  def conditionally_set_aod_based_on_age
+    updated_aod_based_on_age = claimant&.advanced_on_docket_based_on_age?
+    update(aod_based_on_age: updated_aod_based_on_age) if aod_based_on_age != updated_aod_based_on_age
   end
 
   def advanced_on_docket?
-    conditionally_set_age_aod
-    # One of the AOD motion reasons is 'age'. Keep interrogation of any motions separate from `age_aod`,
+    conditionally_set_aod_based_on_age
+    # One of the AOD motion reasons is 'age'. Keep interrogation of any motions separate from `aod_based_on_age`,
     # which reflects `claimant.advanced_on_docket_based_on_age?`.
-    age_aod || claimant&.advanced_on_docket_motion_granted?(receipt_date)
+    aod_based_on_age || claimant&.advanced_on_docket_motion_granted?(receipt_date)
   end
 
   # Prefer aod? over aod going forward, as this function returns a boolean
