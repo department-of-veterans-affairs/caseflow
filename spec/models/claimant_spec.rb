@@ -202,6 +202,14 @@ describe Claimant, :postgres do
         expect(bgs_service).to have_received(:fetch_poas_by_participant_ids).once
       end
     end
+
+    context "when claimant is attorney" do
+      let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age, type: "AttorneyClaimant") }
+
+      it "returns BgsPowerOfAttorney" do
+        expect(subject).to be_a BgsPowerOfAttorney
+      end
+    end
   end
 
   context "#valid?" do
