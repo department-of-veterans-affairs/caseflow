@@ -203,8 +203,16 @@ describe Claimant, :postgres do
       end
     end
 
-    context "when claimant is attorney" do
+    context "when claimant is AttorneyClaimant" do
       let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age, type: "AttorneyClaimant") }
+
+      before do
+        create(:bgs_attorney, participant_id: claimant.participant_id, name: "JOHN SMITH")
+      end
+
+      it "returns name of AttorneyClaimant" do
+        expect(claimant.name).to eq "JOHN SMITH"
+      end
 
       it "returns BgsPowerOfAttorney" do
         expect(subject).to be_a BgsPowerOfAttorney
