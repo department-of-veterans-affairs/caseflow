@@ -15,7 +15,7 @@ describe HearingRooms do
       context "for key (#{key})" do
         let(:hearing_room_key) { key.to_s }
 
-        it "resolves to room with label '#{value["label"]}'" do
+        it "resolves to room with label '#{value['label']}'" do
           expect(subject).not_to be_nil
           expect(subject.label).to be(value["label"])
         end

@@ -255,7 +255,7 @@ describe HearingDay, :all_dbs do
           it "has 12 slots" do
             expect(subject).to be(12)
           end
-        end        
+        end
       end
     end
 
