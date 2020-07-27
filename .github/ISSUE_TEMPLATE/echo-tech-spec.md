@@ -24,6 +24,12 @@ Tech specs are considered 'done' when key stakeholders have reviewed and approve
 ## Overview
 <!-- A brief summary of research, findings, and recommendations. -->
 
+### Requirements and/or Acceptance Criteria
+<!-- What requirements are being address? What acceptance criteria should be fulfilled by the solution? -->
+
+### Concerns
+<!-- Concerns about potential solutions. Explicitly state if they should be addressed in the chosen solution? -->
+
 ## Open Questions
 <!-- Sometimes we're missing information needed to fully spec work. 
 What is missing? Who can answer these questions, and how might it affect the recommendation? -->
@@ -37,6 +43,9 @@ Is the work sufficiently defined such that someone else could pick it up?
 Is the work parallelizable?
 What new API endpoints, database fields / tables / models need to be defined?
 How will we safely ship this work? Are there migrations, external dependencies that need to be notified, documentation changes, etc? -->
+
+### Implementation concerns
+<!-- List implementation-specific concerns about each option. -->
 
 ## Test Plan
 <!-- How do we validate this work? What types of testing is required? -->
