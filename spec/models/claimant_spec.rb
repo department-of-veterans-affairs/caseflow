@@ -104,7 +104,6 @@ describe Claimant, :postgres do
   end
 
   context "#advanced_on_docket?" do
-
     context "when claimant satisfies AOD age criteria" do
       let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age) }
 
