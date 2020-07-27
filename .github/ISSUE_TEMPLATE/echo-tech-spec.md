@@ -17,9 +17,9 @@ Tech specs are considered 'done' when key stakeholders have reviewed and approve
 ## Context
 <!-- Why are you creating this tech spec? 
 
-<!-- What information helps readers understand the rest of this tech spec? 
+What information helps readers understand the rest of this tech spec? 
 
-<!-- Who are the stakeholders? -->
+Who are the stakeholders? -->
 
 ## Overview
 <!-- A brief summary of research, findings, and recommendations. -->
@@ -28,7 +28,7 @@ Tech specs are considered 'done' when key stakeholders have reviewed and approve
 <!-- What requirements are being address? What acceptance criteria should be fulfilled by the solution? -->
 
 ### Concerns
-<!-- Concerns about potential solutions. Explicitly state if they should be addressed in the chosen solution? -->
+<!-- Concerns about potential solutions. Explicitly state if they should be addressed in the chosen solution. -->
 
 ## Open Questions
 <!-- Sometimes we're missing information needed to fully spec work. 
