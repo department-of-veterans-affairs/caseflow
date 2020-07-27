@@ -44,9 +44,6 @@ class Claimant < CaseflowRecord
   end
 
   delegate :date_of_birth,
-           :advanced_on_docket?,
-           :advanced_on_docket_based_on_age?,
-           :advanced_on_docket_motion_granted?,
            :name,
            :first_name,
            :last_name,
@@ -62,6 +59,24 @@ class Claimant < CaseflowRecord
            :state,
            :zip,
            to: :bgs_address_service
+
+  def advanced_on_docket?(appeal_receipt_date)
+    return false if is_a?(AttorneyClaimant)
+
+    person&.advanced_on_docket?(appeal_receipt_date)
+  end
+
+  def advanced_on_docket_based_on_age?
+    return false if is_a?(AttorneyClaimant)
+
+    person&.advanced_on_docket_based_on_age?
+  end
+
+  def advanced_on_docket_motion_granted?(appeal_receipt_date)
+    return false if is_a?(AttorneyClaimant)
+
+    person&.advanced_on_docket_motion_granted?(appeal_receipt_date)
+  end
 
   private
 
