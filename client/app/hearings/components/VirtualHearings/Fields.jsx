@@ -74,7 +74,6 @@ export const VirtualHearingFields = ({
           />
         </div>
       </div>
-
     </React.Fragment>
   ) : (
     <div id="email-section" className="usa-grid">

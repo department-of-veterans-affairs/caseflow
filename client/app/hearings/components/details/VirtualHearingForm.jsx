@@ -14,6 +14,7 @@ export const VirtualHearingForm = (
     return null;
   }
 
+  // Hide the virtual hearing fields only when we are scheduling the virtual hearing
   const showFields = (hearing?.isVirtual || hearing?.wasVirtual) && virtualHearing;
   const readOnlyEmails = readOnly || !virtualHearing?.jobCompleted || hearing?.wasVirtual || hearing.scheduledForIsPast;
   const appellantTitle = getAppellantTitleForHearing(hearing);
