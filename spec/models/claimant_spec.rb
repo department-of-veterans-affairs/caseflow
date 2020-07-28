@@ -122,6 +122,7 @@ describe Claimant, :postgres do
 
       it "returns true" do
         expect(claimant.advanced_on_docket?(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket_based_on_age?).to eq(false)
         expect(claimant.advanced_on_docket_motion_granted?(1.year.ago)).to eq(true)
       end
     end

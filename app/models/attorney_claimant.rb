@@ -6,7 +6,7 @@
 class AttorneyClaimant < Claimant
   delegate :name, to: :bgs_attorney
 
-  def advanced_on_docket?(appeal_receipt_date)
+  def advanced_on_docket?(_appeal_receipt_date)
     false
   end
 
@@ -14,7 +14,7 @@ class AttorneyClaimant < Claimant
     false
   end
 
-  def advanced_on_docket_motion_granted?(appeal_receipt_date)
+  def advanced_on_docket_motion_granted?(_appeal_receipt_date)
     false
   end
 

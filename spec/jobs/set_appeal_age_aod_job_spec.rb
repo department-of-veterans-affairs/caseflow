@@ -59,7 +59,7 @@ describe SetAppealAgeAodJob, :postgres do
         slack_msg = ""
         allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
 
-        allow_any_instance_of(described_class).to receive(:non_aod_active_appeals).and_raise(error_msg)
+        allow_any_instance_of(described_class).to receive(:appeals_to_set_age_based_aod).and_raise(error_msg)
         described_class.perform_now
 
         expected_msg = "#{described_class.name} failed after running for .*. Fatal error: #{error_msg}"
