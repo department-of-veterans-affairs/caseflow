@@ -5123,6 +5123,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
         <div>
           <TextareaField
             disabled={false}
+            maxlength={1000}
             name="Notes"
             onChange={[Function]}
             optional={false}
@@ -5144,14 +5145,21 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                 htmlFor="Notes"
               >
                 <strong>
-                  <span>
-                    Notes
-                  </span>
+                  <FormLabel
+                    name="Notes"
+                    optional={false}
+                    required={false}
+                  >
+                    <span>
+                      Notes
+                    </span>
+                  </FormLabel>
                 </strong>
               </label>
               <textarea
                 disabled={false}
                 id="Notes"
+                maxLength={1000}
                 name="Notes"
                 onChange={[Function]}
                 value=""
@@ -5371,9 +5379,16 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                     htmlFor="taskNumber"
                   >
                     <strong>
-                      <span>
-                        Task #
-                      </span>
+                      <FormLabel
+                        label="Task #"
+                        name="taskNumber"
+                        optional={false}
+                        required={false}
+                      >
+                        <span>
+                          Task #
+                        </span>
+                      </FormLabel>
                     </strong>
                   </label>
                   <input
@@ -7000,9 +7015,16 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       htmlFor="sentToTranscriberDate"
                     >
                       <strong>
-                        <span>
-                          Sent to Transcriber
-                        </span>
+                        <FormLabel
+                          label="Sent to Transcriber"
+                          name="sentToTranscriberDate"
+                          optional={false}
+                          required={false}
+                        >
+                          <span>
+                            Sent to Transcriber
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <input
@@ -7053,9 +7075,16 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       htmlFor="expectedReturnDate"
                     >
                       <strong>
-                        <span>
-                          Expected Return Date
-                        </span>
+                        <FormLabel
+                          label="Expected Return Date"
+                          name="expectedReturnDate"
+                          optional={false}
+                          required={false}
+                        >
+                          <span>
+                            Expected Return Date
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <input
@@ -7106,9 +7135,16 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       htmlFor="uploadedToVbmsDate"
                     >
                       <strong>
-                        <span>
-                          Transcript Uploaded to VBMS
-                        </span>
+                        <FormLabel
+                          label="Transcript Uploaded to VBMS"
+                          name="uploadedToVbmsDate"
+                          optional={false}
+                          required={false}
+                        >
+                          <span>
+                            Transcript Uploaded to VBMS
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <input
@@ -8822,9 +8858,16 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       htmlFor="problemNoticeSentDate"
                     >
                       <strong>
-                        <span>
-                          Problem Notice Sent
-                        </span>
+                        <FormLabel
+                          label="Problem Notice Sent"
+                          name="problemNoticeSentDate"
+                          optional={false}
+                          required={false}
+                        >
+                          <span>
+                            Problem Notice Sent
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <input
@@ -9145,9 +9188,16 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       htmlFor="copySentDate"
                     >
                       <strong>
-                        <span>
-                          Copy Sent to Appellant/Rep
-                        </span>
+                        <FormLabel
+                          label="Copy Sent to Appellant/Rep"
+                          name="copySentDate"
+                          optional={false}
+                          required={false}
+                        >
+                          <span>
+                            Copy Sent to Appellant/Rep
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <input
@@ -14301,6 +14351,7 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
         <div>
           <TextareaField
             disabled={false}
+            maxlength={1000}
             name="Notes"
             onChange={[Function]}
             optional={false}
@@ -14322,14 +14373,21 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                 htmlFor="Notes"
               >
                 <strong>
-                  <span>
-                    Notes
-                  </span>
+                  <FormLabel
+                    name="Notes"
+                    optional={false}
+                    required={false}
+                  >
+                    <span>
+                      Notes
+                    </span>
+                  </FormLabel>
                 </strong>
               </label>
               <textarea
                 disabled={false}
                 id="Notes"
+                maxLength={1000}
                 name="Notes"
                 onChange={[Function]}
                 value=""
@@ -14552,9 +14610,16 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                     htmlFor="taskNumber"
                   >
                     <strong>
-                      <span>
-                        Task #
-                      </span>
+                      <FormLabel
+                        label="Task #"
+                        name="taskNumber"
+                        optional={false}
+                        required={false}
+                      >
+                        <span>
+                          Task #
+                        </span>
+                      </FormLabel>
                     </strong>
                   </label>
                   <input
@@ -16181,9 +16246,16 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       htmlFor="sentToTranscriberDate"
                     >
                       <strong>
-                        <span>
-                          Sent to Transcriber
-                        </span>
+                        <FormLabel
+                          label="Sent to Transcriber"
+                          name="sentToTranscriberDate"
+                          optional={false}
+                          required={false}
+                        >
+                          <span>
+                            Sent to Transcriber
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <input
@@ -16234,9 +16306,16 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       htmlFor="expectedReturnDate"
                     >
                       <strong>
-                        <span>
-                          Expected Return Date
-                        </span>
+                        <FormLabel
+                          label="Expected Return Date"
+                          name="expectedReturnDate"
+                          optional={false}
+                          required={false}
+                        >
+                          <span>
+                            Expected Return Date
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <input
@@ -16287,9 +16366,16 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       htmlFor="uploadedToVbmsDate"
                     >
                       <strong>
-                        <span>
-                          Transcript Uploaded to VBMS
-                        </span>
+                        <FormLabel
+                          label="Transcript Uploaded to VBMS"
+                          name="uploadedToVbmsDate"
+                          optional={false}
+                          required={false}
+                        >
+                          <span>
+                            Transcript Uploaded to VBMS
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <input
@@ -18003,9 +18089,16 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       htmlFor="problemNoticeSentDate"
                     >
                       <strong>
-                        <span>
-                          Problem Notice Sent
-                        </span>
+                        <FormLabel
+                          label="Problem Notice Sent"
+                          name="problemNoticeSentDate"
+                          optional={false}
+                          required={false}
+                        >
+                          <span>
+                            Problem Notice Sent
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <input
@@ -18327,9 +18420,16 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       htmlFor="copySentDate"
                     >
                       <strong>
-                        <span>
-                          Copy Sent to Appellant/Rep
-                        </span>
+                        <FormLabel
+                          label="Copy Sent to Appellant/Rep"
+                          name="copySentDate"
+                          optional={false}
+                          required={false}
+                        >
+                          <span>
+                            Copy Sent to Appellant/Rep
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <input
@@ -24906,6 +25006,7 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
         <div>
           <TextareaField
             disabled={false}
+            maxlength={1000}
             name="Notes"
             onChange={[Function]}
             optional={false}
@@ -24927,14 +25028,21 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 htmlFor="Notes"
               >
                 <strong>
-                  <span>
-                    Notes
-                  </span>
+                  <FormLabel
+                    name="Notes"
+                    optional={false}
+                    required={false}
+                  >
+                    <span>
+                      Notes
+                    </span>
+                  </FormLabel>
                 </strong>
               </label>
               <textarea
                 disabled={false}
                 id="Notes"
+                maxLength={1000}
                 name="Notes"
                 onChange={[Function]}
                 value=""
@@ -25157,9 +25265,16 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                     htmlFor="taskNumber"
                   >
                     <strong>
-                      <span>
-                        Task #
-                      </span>
+                      <FormLabel
+                        label="Task #"
+                        name="taskNumber"
+                        optional={false}
+                        required={false}
+                      >
+                        <span>
+                          Task #
+                        </span>
+                      </FormLabel>
                     </strong>
                   </label>
                   <input
@@ -26786,9 +26901,16 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       htmlFor="sentToTranscriberDate"
                     >
                       <strong>
-                        <span>
-                          Sent to Transcriber
-                        </span>
+                        <FormLabel
+                          label="Sent to Transcriber"
+                          name="sentToTranscriberDate"
+                          optional={false}
+                          required={false}
+                        >
+                          <span>
+                            Sent to Transcriber
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <input
@@ -26839,9 +26961,16 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       htmlFor="expectedReturnDate"
                     >
                       <strong>
-                        <span>
-                          Expected Return Date
-                        </span>
+                        <FormLabel
+                          label="Expected Return Date"
+                          name="expectedReturnDate"
+                          optional={false}
+                          required={false}
+                        >
+                          <span>
+                            Expected Return Date
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <input
@@ -26892,9 +27021,16 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       htmlFor="uploadedToVbmsDate"
                     >
                       <strong>
-                        <span>
-                          Transcript Uploaded to VBMS
-                        </span>
+                        <FormLabel
+                          label="Transcript Uploaded to VBMS"
+                          name="uploadedToVbmsDate"
+                          optional={false}
+                          required={false}
+                        >
+                          <span>
+                            Transcript Uploaded to VBMS
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <input
@@ -28608,9 +28744,16 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       htmlFor="problemNoticeSentDate"
                     >
                       <strong>
-                        <span>
-                          Problem Notice Sent
-                        </span>
+                        <FormLabel
+                          label="Problem Notice Sent"
+                          name="problemNoticeSentDate"
+                          optional={false}
+                          required={false}
+                        >
+                          <span>
+                            Problem Notice Sent
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <input
@@ -28932,9 +29075,16 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       htmlFor="copySentDate"
                     >
                       <strong>
-                        <span>
-                          Copy Sent to Appellant/Rep
-                        </span>
+                        <FormLabel
+                          label="Copy Sent to Appellant/Rep"
+                          name="copySentDate"
+                          optional={false}
+                          required={false}
+                        >
+                          <span>
+                            Copy Sent to Appellant/Rep
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <input
@@ -35512,6 +35662,7 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
         <div>
           <TextareaField
             disabled={false}
+            maxlength={1000}
             name="Notes"
             onChange={[Function]}
             optional={false}
@@ -35533,14 +35684,21 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 htmlFor="Notes"
               >
                 <strong>
-                  <span>
-                    Notes
-                  </span>
+                  <FormLabel
+                    name="Notes"
+                    optional={false}
+                    required={false}
+                  >
+                    <span>
+                      Notes
+                    </span>
+                  </FormLabel>
                 </strong>
               </label>
               <textarea
                 disabled={false}
                 id="Notes"
+                maxLength={1000}
                 name="Notes"
                 onChange={[Function]}
                 value=""
@@ -35763,9 +35921,16 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                     htmlFor="taskNumber"
                   >
                     <strong>
-                      <span>
-                        Task #
-                      </span>
+                      <FormLabel
+                        label="Task #"
+                        name="taskNumber"
+                        optional={false}
+                        required={false}
+                      >
+                        <span>
+                          Task #
+                        </span>
+                      </FormLabel>
                     </strong>
                   </label>
                   <input
@@ -37392,9 +37557,16 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       htmlFor="sentToTranscriberDate"
                     >
                       <strong>
-                        <span>
-                          Sent to Transcriber
-                        </span>
+                        <FormLabel
+                          label="Sent to Transcriber"
+                          name="sentToTranscriberDate"
+                          optional={false}
+                          required={false}
+                        >
+                          <span>
+                            Sent to Transcriber
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <input
@@ -37445,9 +37617,16 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       htmlFor="expectedReturnDate"
                     >
                       <strong>
-                        <span>
-                          Expected Return Date
-                        </span>
+                        <FormLabel
+                          label="Expected Return Date"
+                          name="expectedReturnDate"
+                          optional={false}
+                          required={false}
+                        >
+                          <span>
+                            Expected Return Date
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <input
@@ -37498,9 +37677,16 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       htmlFor="uploadedToVbmsDate"
                     >
                       <strong>
-                        <span>
-                          Transcript Uploaded to VBMS
-                        </span>
+                        <FormLabel
+                          label="Transcript Uploaded to VBMS"
+                          name="uploadedToVbmsDate"
+                          optional={false}
+                          required={false}
+                        >
+                          <span>
+                            Transcript Uploaded to VBMS
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <input
@@ -39214,9 +39400,16 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       htmlFor="problemNoticeSentDate"
                     >
                       <strong>
-                        <span>
-                          Problem Notice Sent
-                        </span>
+                        <FormLabel
+                          label="Problem Notice Sent"
+                          name="problemNoticeSentDate"
+                          optional={false}
+                          required={false}
+                        >
+                          <span>
+                            Problem Notice Sent
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <input
@@ -39538,9 +39731,16 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       htmlFor="copySentDate"
                     >
                       <strong>
-                        <span>
-                          Copy Sent to Appellant/Rep
-                        </span>
+                        <FormLabel
+                          label="Copy Sent to Appellant/Rep"
+                          name="copySentDate"
+                          optional={false}
+                          required={false}
+                        >
+                          <span>
+                            Copy Sent to Appellant/Rep
+                          </span>
+                        </FormLabel>
                       </strong>
                     </label>
                     <input
@@ -46080,6 +46280,7 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
         <div>
           <TextareaField
             disabled={false}
+            maxlength={1000}
             name="Notes"
             onChange={[Function]}
             optional={false}
@@ -46101,14 +46302,21 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                 htmlFor="Notes"
               >
                 <strong>
-                  <span>
-                    Notes
-                  </span>
+                  <FormLabel
+                    name="Notes"
+                    optional={false}
+                    required={false}
+                  >
+                    <span>
+                      Notes
+                    </span>
+                  </FormLabel>
                 </strong>
               </label>
               <textarea
                 disabled={false}
                 id="Notes"
+                maxLength={1000}
                 name="Notes"
                 onChange={[Function]}
                 value=""
