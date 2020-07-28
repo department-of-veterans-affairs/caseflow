@@ -240,11 +240,13 @@ describe HearingDay, :all_dbs do
     subject { hearing_day.total_slots }
 
     context "for a video day" do
+      let(:room) { "1" }
       let(:hearing_day) do
         create(
           :hearing_day,
           request_type: HearingDay::REQUEST_TYPES[:video],
-          regional_office: regional_office_key
+          regional_office: regional_office_key,
+          room: room
         )
       end
 
@@ -254,6 +256,14 @@ describe HearingDay, :all_dbs do
 
           it "has 12 slots" do
             expect(subject).to be(12)
+          end
+
+          context "with no room" do
+            let(:room) { nil }
+
+            it "has 12 slots" do
+              expect(subject).to be(12)
+            end
           end
         end
       end
