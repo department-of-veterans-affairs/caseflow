@@ -2,18 +2,21 @@
 
 # Early morning job that checks if the claimant meets the Advance-On-Docket age criteria.
 # If criteria is satisfied, all active appeals associated with claimant will be marked as AOD.
-# This job only sets aod_based_on_age to true; it does not set it from true to false (see appeal.conditionally_set_age_aod).
+# This job also handles the scenario where a claimant's DOB is updated such that their appeal(s) are no longer AOD.
 class SetAppealAgeAodJob < CaseflowJob
   include ActionView::Helpers::DateHelper
 
   def perform
     RequestStore.store[:current_user] = User.system_user
 
-    # We expect there to be only one claimant on an appeal. Any claimant meeting the age criteria will cause AOD.
-    appeals = non_aod_active_appeals.joins(claimants: :person).where("people.date_of_birth <= ?", 75.years.ago)
-    detail_msg = "IDs of age-related AOD appeals: #{appeals.pluck(:id)}"
+    aod_appeals_to_unset = appeals_to_unset_age_based_aod
+    detail_msg = "IDs of appeals to remove age-related AOD: #{aod_appeals_to_unset.pluck(:id)}"
+    aod_appeals_to_unset.update_all(aod_based_on_age: false, updated_at: Time.now.utc)
 
-    appeals.update_all(aod_based_on_age: true, updated_at: Time.now.utc)
+    # We expect there to be only one claimant on an appeal. Any claimant meeting the age criteria will cause AOD.
+    appeals_for_aod = appeals_to_set_age_based_aod
+    detail_msg += "\nIDs of appeals to be updated with age-related AOD: #{appeals_for_aod.pluck(:id)}"
+    appeals_for_aod.update_all(aod_based_on_age: true, updated_at: Time.now.utc)
 
     log_success(detail_msg)
   rescue StandardError => error
@@ -43,7 +46,19 @@ class SetAppealAgeAodJob < CaseflowJob
 
   private
 
-  def non_aod_active_appeals
+  def appeals_to_unset_age_based_aod
+    active_appeals_with_age_based_aod.joins(claimants: :person).where("people.date_of_birth > ?", 75.years.ago)
+  end
+
+  def active_appeals_with_age_based_aod
+    Appeal.active.where(aod_based_on_age: true)
+  end
+
+  def appeals_to_set_age_based_aod
+    active_appeals_without_age_based_aod.joins(claimants: :person).where("people.date_of_birth <= ?", 75.years.ago)
+  end
+
+  def active_appeals_without_age_based_aod
     # `aod_based_on_age` is initially nil
     # `aod_based_on_age` being false means that it was once true (in the case where the claimant's DOB was updated)
     Appeal.active.where(aod_based_on_age: [nil, false])

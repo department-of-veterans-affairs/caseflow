@@ -12,6 +12,9 @@ describe SetAppealAgeAodJob, :postgres do
   describe "#perform" do
     let(:non_aod_appeal) { create(:appeal, :with_schedule_hearing_tasks) }
 
+    # appeal with wrong date-of-birth causing AOD; it is fixed in the before block
+    let(:age_aod_appeal_wrong_dob) { create(:appeal, :with_schedule_hearing_tasks, :advanced_on_docket_due_to_age) }
+
     let(:age_aod_appeal) { create(:appeal, :with_schedule_hearing_tasks, :advanced_on_docket_due_to_age) }
     let(:motion_aod_appeal) { create(:appeal, :with_schedule_hearing_tasks, :advanced_on_docket_due_to_motion) }
 
@@ -20,6 +23,10 @@ describe SetAppealAgeAodJob, :postgres do
 
     before do
       allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
+
+      age_aod_appeal_wrong_dob.update(aod_based_on_age: true)
+      # simulate date-of-birth being corrected
+      age_aod_appeal_wrong_dob.claimant.person.update(date_of_birth: 50.years.ago)
     end
 
     it "sets aod_based_on_age for only active appeals with a claimant that satisfies the age criteria" do
@@ -28,6 +35,8 @@ describe SetAppealAgeAodJob, :postgres do
       expect(motion_aod_appeal.active?).to eq(true)
       expect(inactive_age_aod_appeal.active?).to eq(false)
       expect(cancelled_age_aod_appeal.active?).to eq(false)
+
+      expect(age_aod_appeal_wrong_dob.aod_based_on_age).to eq(true)
 
       described_class.perform_now
       expect(@slack_msg).to include(success_msg)
@@ -39,6 +48,8 @@ describe SetAppealAgeAodJob, :postgres do
 
       expect(age_aod_appeal.reload.aod_based_on_age).to eq(true)
       expect(motion_aod_appeal.reload.aod_based_on_age).to eq(false)
+
+      expect(age_aod_appeal_wrong_dob.reload.aod_based_on_age).to eq(false)
     end
 
     context "when the entire job fails" do
