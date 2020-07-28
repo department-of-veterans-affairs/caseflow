@@ -159,9 +159,9 @@ describe Claimant, :postgres do
       end
 
       it "returns false" do
-        expect(claimant.advanced_on_docket?(1.year.ago)).to eq(false)
         expect(claimant.advanced_on_docket_based_on_age?).to eq(false)
         expect(claimant.advanced_on_docket_motion_granted?(1.year.ago)).to eq(false)
+        expect(claimant.advanced_on_docket?(1.year.ago)).to eq(false)
       end
     end
   end
