@@ -100,7 +100,7 @@ detectors:
       - UserReporter#report_user_related_records
       - User#appeal_has_task_assigned_to_user?
       - VeteranAttributeCacher
-      - VideoHearingDayRequestTypeQuery#call
+      - HearingDayRequestTypeQuery#call
       - WarmBgsCachesJob
       - ExternalApi::PexipService#send_pexip_request
       - ControllerSchema#remove_unknown_keys
