@@ -4,6 +4,8 @@
 # An attorney can be a claimant when contesting attorney fees.
 
 class AttorneyClaimant < Claimant
+  validate { |claimant| ClaimantValidator.new(claimant).validate }
+
   delegate :name, to: :bgs_attorney
 
   def advanced_on_docket?(_appeal_receipt_date)

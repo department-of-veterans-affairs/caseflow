@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_24_031142) do
+ActiveRecord::Schema.define(version: 2020_07_28_172002) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1200,7 +1200,6 @@ ActiveRecord::Schema.define(version: 2020_07_24_031142) do
     t.string "appeal_type"
     t.boolean "blue_water", default: false, comment: "Blue Water"
     t.boolean "burn_pit", default: false, comment: "Burn Pit"
-    t.boolean "cavc", default: false, comment: "US Court of Appeals for Veterans Claims (CAVC)"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.datetime "created_at"
     t.boolean "dic_death_or_accrued_benefits_united_states", default: false
@@ -1224,6 +1223,7 @@ ActiveRecord::Schema.define(version: 2020_07_24_031142) do
     t.boolean "rice_compliance", default: false
     t.boolean "spina_bifida", default: false
     t.datetime "updated_at"
+    t.boolean "us_court_of_appeals_for_veterans_claims", default: false, comment: "US Court of Appeals for Veterans Claims (CAVC)"
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_philippines", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false

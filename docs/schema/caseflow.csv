@@ -917,7 +917,6 @@ special_issue_lists,appeal_id,integer (8) FK,,,x,,x,
 special_issue_lists,appeal_type,string,,,,,x,
 special_issue_lists,blue_water,boolean,,,,,,Blue Water
 special_issue_lists,burn_pit,boolean,,,,,,Burn Pit
-special_issue_lists,cavc,boolean,,,,,,US Court of Appeals for Veterans Claims (CAVC)
 special_issue_lists,contaminated_water_at_camp_lejeune,boolean,,,,,,
 special_issue_lists,created_at,datetime,,,,,,
 special_issue_lists,dic_death_or_accrued_benefits_united_states,boolean,,,,,,
@@ -942,6 +941,7 @@ special_issue_lists,radiation,boolean,,,,,,
 special_issue_lists,rice_compliance,boolean,,,,,,
 special_issue_lists,spina_bifida,boolean,,,,,,
 special_issue_lists,updated_at,datetime,,,,,x,
+special_issue_lists,us_court_of_appeals_for_veterans_claims,boolean,,,,,,US Court of Appeals for Veterans Claims (CAVC)
 special_issue_lists,us_territory_claim_american_samoa_guam_northern_mariana_isla,boolean,,,,,,
 special_issue_lists,us_territory_claim_philippines,boolean,,,,,,
 special_issue_lists,us_territory_claim_puerto_rico_and_virgin_islands,boolean,,,,,,

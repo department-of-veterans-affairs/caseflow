@@ -179,6 +179,9 @@ export const commonStateFromServerIntake = (serverIntake) => {
     claimant: {
       $set: serverIntake.veteran_is_not_claimant ? serverIntake.claimant : null
     },
+    claimantType: {
+      $set: serverIntake.claimantType
+    },
     payeeCode: {
       $set: serverIntake.payeeCode
     },
@@ -210,7 +213,7 @@ export const commonStateFromServerIntake = (serverIntake) => {
       $set: formatRelationships(serverIntake.relationships)
     },
     intakeUser: {
-     $set: serverIntake.intakeUser
+      $set: serverIntake.intakeUser
     },
     asyncJobUrl: {
       $set: serverIntake.asyncJobUrl

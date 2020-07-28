@@ -10,7 +10,6 @@ class Claimant < CaseflowRecord
   belongs_to :decision_review, polymorphic: true
   belongs_to :person, primary_key: :participant_id, foreign_key: :participant_id
 
-  validate { |claimant| ClaimantValidator.new(claimant).validate }
   validates :participant_id,
             uniqueness: { scope: [:decision_review_id, :decision_review_type],
                           on: :create }
