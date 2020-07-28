@@ -90,6 +90,7 @@ ActiveRecord::Schema.define(version: 2020_07_28_172002) do
   end
 
   create_table "appeals", comment: "Decision reviews intaken for AMA appeals to the board (also known as a notice of disagreement).", force: :cascade do |t|
+    t.boolean "aod_based_on_age", comment: "If true, appeal is advance-on-docket due to claimant's age."
     t.string "closest_regional_office", comment: "The code for the regional office closest to the Veteran on the appeal."
     t.datetime "created_at"
     t.date "docket_range_date", comment: "Date that appeal was added to hearing docket range."
@@ -111,6 +112,7 @@ ActiveRecord::Schema.define(version: 2020_07_28_172002) do
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the appeal, which can be used to navigate to appeals/appeal_uuid. This allows a single ID to determine an appeal whether it is a legacy appeal or an AMA appeal."
     t.string "veteran_file_number", null: false, comment: "The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
     t.boolean "veteran_is_not_claimant", comment: "Selected by the user during intake, indicates whether the Veteran is the claimant, or if the claimant is someone else such as a dependent. Must be TRUE if Veteran is deceased."
+    t.index ["aod_based_on_age"], name: "index_appeals_on_aod_based_on_age"
     t.index ["docket_type"], name: "index_appeals_on_docket_type"
     t.index ["established_at"], name: "index_appeals_on_established_at"
     t.index ["updated_at"], name: "index_appeals_on_updated_at"
