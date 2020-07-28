@@ -155,6 +155,7 @@ detectors:
       - QueueConfig
       - RequestIssue
       - BulkTaskReassignment
+      - Seeds::Hearings
       - Task
       - UpdateCachedAppealsAttributesJob
       - Veteran
