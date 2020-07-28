@@ -29,7 +29,6 @@ export default class HearingsApp extends React.PureComponent {
     const {
       userCanConvertCentralHearings,
       userCanScheduleVirtualHearings,
-      userCanScheduleVirtualHearingsForCentral,
       userCanAssignHearingSchedule,
       userCanBuildHearingSchedule,
       userCanViewHearingSchedule,
@@ -43,7 +42,6 @@ export default class HearingsApp extends React.PureComponent {
     return Object.freeze({
       userCanConvertCentralHearings,
       userCanScheduleVirtualHearings,
-      userCanScheduleVirtualHearingsForCentral,
       userCanAssignHearingSchedule,
       userCanBuildHearingSchedule,
       userCanViewHearingSchedule,
@@ -192,7 +190,7 @@ HearingsApp.propTypes = {
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
   userCanScheduleVirtualHearings: PropTypes.bool,
-  userCanScheduleVirtualHearingsForCentral: PropTypes.bool,
+  userCanConvertCentralHearings: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
   userCanBuildHearingSchedule: PropTypes.bool,
   userCanViewHearingSchedule: PropTypes.bool,

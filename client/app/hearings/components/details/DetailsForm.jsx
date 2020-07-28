@@ -27,38 +27,37 @@ const DetailsForm = (props) => {
     errors,
     convertHearing,
   } = props;
-  const { userCanScheduleVirtualHearings } = useContext(HearingsUserContext);
-  const { userCanScheduleVirtualHearingsForCentral } = useContext(HearingsUserContext);
-  const enableVirtualHearings = userCanScheduleVirtualHearings && requestType !== 'Central';
-  const { state: { hearingForms }, dispatch } = useContext(HearingsFormContext);
-  const { hearingDetailsForm, virtualHearingForm, transcriptionDetailsForm } = hearingForms;
+  const { userCanScheduleVirtualHearings, userCanConvertCentralHearings } = useContext(HearingsUserContext);
+  const enableVirtualHearings =
+    requestType === 'Central' ?
+      userCanConvertCentralHearings :
+      userCanScheduleVirtualHearings;
 
   return (
     <React.Fragment>
-      <div {...rowThirds}>
-        <JudgeDropdown
-          name="judgeDropdown"
-          value={hearingDetailsForm?.judgeId}
-          readOnly={readOnly}
-          onChange={(judgeId) => dispatch({ type: UPDATE_HEARING_DETAILS, payload: { judgeId } })}
-        />
-        <HearingCoordinatorDropdown
-          name="hearingCoordinatorDropdown"
-          value={hearingDetailsForm?.bvaPoc}
-          readOnly={readOnly}
-          onChange={(bvaPoc) => dispatch({ type: UPDATE_HEARING_DETAILS, payload: { bvaPoc } })}
-        />
-        <HearingRoomDropdown
-          name="hearingRoomDropdown"
-          value={hearingDetailsForm?.room}
-          readOnly={readOnly}
-          onChange={(room) => dispatch({ type: UPDATE_HEARING_DETAILS, payload: { room } })}
-        />
-      </div>
-      {(enableVirtualHearings || userCanScheduleVirtualHearingsForCentral) && (
-        <React.Fragment>
-          <div className="cf-help-divider" />
-          <div {...flexParent}>
+      <ContentSection header="Hearing Details">
+        <div {...rowThirds}>
+          <JudgeDropdown
+            name="judgeDropdown"
+            value={hearing?.judgeId}
+            readOnly={readOnly}
+            onChange={(judgeId) => update('hearing', { judgeId })}
+          />
+          <HearingCoordinatorDropdown
+            name="hearingCoordinatorDropdown"
+            value={hearing?.bvaPoc}
+            readOnly={readOnly}
+            onChange={(bvaPoc) => update('hearing', { bvaPoc })}
+          />
+          <HearingRoomDropdown
+            name="hearingRoomDropdown"
+            value={hearing?.room}
+            readOnly={readOnly}
+            onChange={(room) => update('hearing', { room })}
+          />
+        </div>
+        <div {...rowThirds}>
+          {enableVirtualHearings && (
             <HearingTypeDropdown
               convertHearing={convertHearing}
               virtualHearing={hearing?.virtualHearing}
