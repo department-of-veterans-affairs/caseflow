@@ -2,6 +2,7 @@
 
 ##
 # The Claimant model associates a claimant to a decision review.
+# There are several subclasses, such as VeteranClaimant, DependentClaimant, and AttorneyClaimant.
 
 class Claimant < CaseflowRecord
   include HasDecisionReviewUpdatedSince
@@ -44,6 +45,8 @@ class Claimant < CaseflowRecord
 
   delegate :date_of_birth,
            :advanced_on_docket?,
+           :advanced_on_docket_based_on_age?,
+           :advanced_on_docket_motion_granted?,
            :name,
            :first_name,
            :last_name,
