@@ -1,23 +1,23 @@
 # frozen_string_literal: true
 
+##
+# The Claimant model associates a claimant to a decision review.
+
 class Claimant < CaseflowRecord
-  include AssociatedBgsRecord
   include HasDecisionReviewUpdatedSince
 
   belongs_to :decision_review, polymorphic: true
   belongs_to :person, primary_key: :participant_id, foreign_key: :participant_id
 
-  bgs_attr_accessor :relationship
-
-  validate { |claimant| ClaimantValidator.new(claimant).validate }
   validates :participant_id,
             uniqueness: { scope: [:decision_review_id, :decision_review_type],
                           on: :create }
 
-  def self.create_without_intake!(participant_id:, payee_code:)
+  def self.create_without_intake!(participant_id:, payee_code:, type:)
     create!(
       participant_id: participant_id,
-      payee_code: payee_code
+      payee_code: payee_code,
+      type: type
     )
     Person.find_or_create_by_participant_id(participant_id)
   end
@@ -58,23 +58,6 @@ class Claimant < CaseflowRecord
            :state,
            :zip,
            to: :bgs_address_service
-
-  def fetch_bgs_record
-    general_info = bgs.fetch_claimant_info_by_participant_id(participant_id)
-    name_info = bgs.fetch_person_info(participant_id)
-
-    general_info.merge(name_info)
-  end
-
-  def bgs_payee_code
-    return unless bgs_record
-
-    bgs_record[:payee_code]
-  end
-
-  def bgs_record
-    @bgs_record ||= try_and_retry_bgs_record
-  end
 
   private
 

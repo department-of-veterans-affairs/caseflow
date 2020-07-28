@@ -84,7 +84,7 @@ RSpec.shared_examples "Address Verify Task Frontend Workflow" do
         visit("/queue/appeals/#{appeal_id}")
 
         expect(page).to have_content("Verify Address")
-        expect(page).not_to have_selector(".Select-control")
+        expect(page).not_to have_selector(".cf-select__control")
       end
     end
   end

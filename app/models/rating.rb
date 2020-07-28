@@ -6,7 +6,7 @@ class Rating
   include ActiveModel::Model
 
   ONE_YEAR_PLUS_DAYS = 372.days
-  TWO_LIFETIMES_DAYS = 250.years
+  TWO_LIFETIMES = 250.years
 
   class NilRatingProfileListError < StandardError
     def ignorable?
@@ -16,7 +16,7 @@ class Rating
 
   class << self
     def fetch_all(participant_id)
-      fetch_timely(participant_id: participant_id, from_date: (Time.zone.today - TWO_LIFETIMES_DAYS))
+      fetch_timely(participant_id: participant_id, from_date: (Time.zone.today - TWO_LIFETIMES))
     end
 
     def fetch_timely(participant_id:, from_date:)
@@ -32,11 +32,17 @@ class Rating
     end
 
     def sorted_ratings_from_bgs_response(response:, start_date:)
-      unsorted = ratings_from_bgs_response(response).select do |rating|
-        rating.promulgation_date > start_date
-      end
+      unsorted = ratings_from_bgs_response(response)
+      unpromulgated = unsorted.select { |rating| rating.promulgation_date.nil? }
+      sorted = unsorted.reject do |rating|
+        rating.promulgation_date.nil? || rating.promulgation_date < start_date
+      end.sort_by(&:promulgation_date).reverse
 
-      unsorted.sort_by(&:promulgation_date).reverse
+      unpromulgated + sorted
+    end
+
+    def fetch_promulgated(participant_id)
+      fetch_all(participant_id).select { |rating| rating.promulgation_date.present? }
     end
 
     def from_bgs_hash(_data)

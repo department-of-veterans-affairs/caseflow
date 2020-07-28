@@ -3,6 +3,9 @@
 # These are rules to help us codify our engineering norms for PRs.
 # Please refer to the documentation here: http://danger.systems/ruby/
 
+# Shared consts
+CHANGED_FILES = (git.added_files + git.modified_files).freeze
+
 # Make it more obvious that a PR is a work in progress and shouldn't be merged yet
 warn("PR is classed as Work in Progress") if github.pr_title.include? "WIP"
 
@@ -25,13 +28,30 @@ if git.modified_files.grep(/db\/schema.rb/).any?
   warn("This PR changes the schema. Please use the PR template checklist.")
 end
 
-# migration without running rake db:migrate
-if git.modified_files.grep(/db\/migrate\//).any? && git.modified_files.grep(/db\/schema.rb/).none?
-  warn("This PR contains one or more db migrations, but the schema.rb is not modified.")
+if git.modified_files.grep(/db\/etl\/schema.rb/).any?
+  warn("This PR changes the etl schema. Please use the PR template checklist.")
 end
 
-if git.modified_files.grep(/db\/migrate\//).any? && git.modified_files.grep(/docs\/schema/).none?
+new_db_migrations = git.modified_files.grep(/db\/migrate\//).any?
+new_etl_migrations = git.modified_files.grep(/db\/etl\/migrate\//).any?
+
+# migration without migrating
+if new_db_migrations && git.modified_files.grep(/db\/schema.rb/).none?
+  warn("This PR contains db migrations, but the schema.rb is not modified. Did you forget to run 'make migrate'?")
+end
+
+if new_etl_migrations && git.modified_files.grep(/db\/etl\/schema.rb/).none?
+  warn("This PR contains etl migrations, but the etl schema.rb is not modified. Did you forget to run 'make migrate'?")
+end
+
+# migration without running rake db:docs
+if (new_db_migrations || new_etl_migrations) && git.modified_files.grep(/docs\/schema/).none?
   warn("This PR contains one or more db migrations. Did you forget to run 'make docs'?")
+end
+
+# Encourage writing Storybook stories for React components
+if CHANGED_FILES.grep(/\.jsx/).any?
+  warn("This PR modifies React components — consider adding/updating corresponding Storybook file")
 end
 
 # We should not disable Rubocop rules unless there's a very good reason

@@ -1,7 +1,13 @@
 # frozen_string_literal: true
 
+##
+# HearingLocation is created for a Hearing/LegacyHearing when the coordinator schedules
+# the veteran/appellant for hearing for a location from a list of AvailableHearingLocations.
+
 class HearingLocation < CaseflowRecord
   belongs_to :hearing, polymorphic: true
+
+  validates :facility_id, presence: true, on: :create
 
   # backwards compat data fix for "central" office.
   # we have mistakenly been using facility_id "vba_372"
@@ -21,19 +27,11 @@ class HearingLocation < CaseflowRecord
   end
 
   def street_address
-    addr = facility_address(key)
-
-    return unless addr
-
-    addr["address_1"]
+    facility_address(key)["address_1"]
   end
 
   def timezone
-    tz = facility_address(key)
-
-    return unless tz
-
-    tz["timezone"]
+    facility_address(key)["timezone"]
   end
 
   def full_address
@@ -56,6 +54,8 @@ class HearingLocation < CaseflowRecord
   end
 
   def facility_address(location_key)
-    Constants::REGIONAL_OFFICE_FACILITY_ADDRESS[location_key]
+    return {} if location_key.blank?
+
+    Constants::REGIONAL_OFFICE_FACILITY_ADDRESS[location_key] || {}
   end
 end

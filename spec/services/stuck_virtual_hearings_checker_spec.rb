@@ -53,7 +53,11 @@ describe StuckVirtualHearingsChecker, :postgres do
 
       report_lines = subject.report.split("\n")
       expect(report_lines).to include("Found 1 stuck virtual hearing: ")
-      expect(report_lines).to include("`VirtualHearing.find(#{virtual_hearing_pending.id})` last attempted at ")
+      expect(report_lines).to include(
+        "`VirtualHearing.find(#{virtual_hearing_pending.id})` " \
+        "last attempted at #{virtual_hearing_pending.establishment.attempted_at}, " \
+        "scheduled for #{virtual_hearing_pending.hearing.scheduled_for}"
+      )
     end
   end
 
@@ -78,7 +82,11 @@ describe StuckVirtualHearingsChecker, :postgres do
 
       report_lines = subject.report.split("\n")
       expect(report_lines).to include("Found 1 stuck virtual hearing: ")
-      expect(report_lines).to include("`VirtualHearing.find(#{virtual_hearing_no_emails.id})` last attempted at ")
+      expect(report_lines).to include(
+        "`VirtualHearing.find(#{virtual_hearing_no_emails.id})` " \
+        "last attempted at #{virtual_hearing_no_emails.establishment.attempted_at}, " \
+        "scheduled for #{virtual_hearing_no_emails.hearing.scheduled_for}"
+      )
     end
   end
 
@@ -114,9 +122,16 @@ describe StuckVirtualHearingsChecker, :postgres do
 
       report_lines = subject.report.split("\n")
       expect(report_lines).to include("Found 2 stuck virtual hearings: ")
-      expect(report_lines).to include("`VirtualHearing.find(#{virtual_hearing_pending.id})` " \
-        "last attempted at #{virtual_hearing_pending.establishment.attempted_at}")
-      expect(report_lines).to include("`VirtualHearing.find(#{virtual_hearing_no_emails.id})` last attempted at ")
+      expect(report_lines).to include(
+        "`VirtualHearing.find(#{virtual_hearing_pending.id})` " \
+        "last attempted at #{virtual_hearing_pending.establishment.attempted_at}, " \
+        "scheduled for #{virtual_hearing.hearing.scheduled_for}"
+      )
+      expect(report_lines).to include(
+        "`VirtualHearing.find(#{virtual_hearing_no_emails.id})` " \
+        "last attempted at #{virtual_hearing_no_emails.establishment.attempted_at}, " \
+        "scheduled for #{virtual_hearing_no_emails.hearing.scheduled_for}"
+      )
     end
   end
 end

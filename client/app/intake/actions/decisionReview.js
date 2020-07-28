@@ -1,7 +1,7 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { analyticsCallback, submitIntakeCompleteRequest } from './intake';
-import { prepareReviewData } from '../util';
+import { validateReviewData, prepareReviewData } from '../util';
 import { formatIssues } from '../util/issues';
 
 const analytics = true;
@@ -11,6 +11,16 @@ export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => 
     type: ACTIONS.SUBMIT_REVIEW_START,
     meta: { analytics }
   });
+
+  const validationErrors = validateReviewData(intakeData, intakeType);
+  if (validationErrors) {
+    dispatch({
+      type: ACTIONS.SUBMIT_REVIEW_FAIL,
+      payload: { responseErrorCodes: validationErrors },
+      meta: { analytics }
+    });
+    return Promise.reject();
+  }
 
   const data = prepareReviewData(intakeData, intakeType);
 
@@ -78,10 +88,10 @@ export const setVeteranIsNotClaimant = (veteranIsNotClaimant) => ({
   }
 });
 
-export const setClaimant = (claimant) => ({
+export const setClaimant = (updates) => ({
   type: ACTIONS.SET_CLAIMANT,
   payload: {
-    claimant
+    ...updates
   }
 });
 

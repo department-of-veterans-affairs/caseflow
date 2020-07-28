@@ -3,10 +3,14 @@
 describe SlackService do
   let(:slack_service) { SlackService.new(url: "http://www.example.com") }
   let(:http_agent) { double("http") }
+  let(:ssl_config) { double("ssl") }
 
   before do
     @http_params = nil
     allow(HTTPClient).to receive(:new) { http_agent }
+    allow(http_agent).to receive(:ssl_config) { ssl_config }
+    allow(ssl_config).to receive(:clear_cert_store) { true }
+    allow(ssl_config).to receive(:add_trust_ca) { true }
     allow(http_agent).to receive(:post) do |_url, params|
       @http_params = params
       "response"

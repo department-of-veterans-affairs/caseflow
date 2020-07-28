@@ -3,6 +3,8 @@
 class VirtualHearingSerializer
   include FastJsonapi::ObjectSerializer
 
+  attribute :appellant_tz
+  attribute :representative_tz
   attribute :appellant_email
   attribute :representative_email
   attribute :status

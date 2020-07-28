@@ -188,8 +188,8 @@ jobs:
       - run:
           name: Database setup
           command: |
-            ~/project/ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate"
-            ~/project/ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate"
+            ~/project/ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate:redo"
+            ~/project/ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate:redo"
 
       - run:
           name: Wait for FACOLS to be ready
@@ -337,6 +337,7 @@ jobs:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - NODE_ENV: test
           - JEST_DIR: /home/circleci/test-results/jest
+          - TEST_REPORTER: jest-junit
           - JEST_JUNIT_OUTPUT_DIR: /home/circleci/test-results/jest
           - KARMA_JUNIT_OUTPUT_DIR: /home/circleci/test-results/karma
           - KARMA_JUNIT_OUTPUT_FILE: /home/circleci/test-results/karma/karma.xml
@@ -363,7 +364,7 @@ jobs:
           command: |
             mkdir -p ~/test-results/jest
             pushd client
-            ~/project/ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit"
+            ~/project/ci-bin/capture-log "node_modules/.bin/jest -u --ci --reporters=default --reporters=jest-junit"
 
       - run:
           name: Karma

@@ -13,30 +13,16 @@ const containerStyles = css({
   position: 'relative'
 });
 
-const alertStyling = css({
-  marginBottom: '1.5em'
-});
-
 class OrganizationQueue extends React.PureComponent {
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
   }
 
   render = () => {
-    const { success, tasksAssignedByBulk } = this.props;
+    const { success } = this.props;
 
     return <AppSegment filledBackground styling={containerStyles}>
       {success && <Alert type="success" title={success.title} message={success.detail} />}
-      {tasksAssignedByBulk.assignedUser &&
-        <Alert
-          message="Please go to your individual queue to see your self assigned tasks"
-          title={`You have bulk assigned
-            ${tasksAssignedByBulk.numberOfTasks}
-            ${tasksAssignedByBulk.taskType.replace(/([a-z])([A-Z])/g, '$1 $2')}
-            tasks`}
-          type="success"
-          styling={alertStyling} />
-      }
       <QueueTableBuilder />
     </AppSegment>;
   };
@@ -44,26 +30,11 @@ class OrganizationQueue extends React.PureComponent {
 
 OrganizationQueue.propTypes = {
   clearCaseSelectSearch: PropTypes.func,
-  onHoldTasks: PropTypes.array,
-  organizations: PropTypes.array,
-  success: PropTypes.object,
-  tasksAssignedByBulk: PropTypes.object
+  success: PropTypes.object
 };
 
-const mapStateToProps = (state) => {
-  const { success } = state.ui.messages;
+const mapStateToProps = (state) => ({ success: state.ui.messages.success });
 
-  return {
-    success,
-    organizations: state.ui.organizations,
-    tasksAssignedByBulk: state.queue.tasksAssignedByBulk
-  };
-};
-
-const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
-    clearCaseSelectSearch
-  }, dispatch)
-});
+const mapDispatchToProps = (dispatch) => ({ ...bindActionCreators({ clearCaseSelectSearch }, dispatch) });
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);

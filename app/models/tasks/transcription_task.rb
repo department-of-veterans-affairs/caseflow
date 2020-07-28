@@ -1,13 +1,31 @@
 # frozen_string_literal: true
 
+##
+# Task to either confirm the completion of the hearing transcription or reschedule the hearing.
+#
+# If there's a problem with the hearing recording, the veteran/appellant is usually notified.
+# Veterans/Appllants can choose to continue with partial or no transcrition or ask to be
+# scheduled for a new hearing.
+#
+# When marked as Transcribed, the appeal will be released to a judge for review but the
+# EvidenceSubmissionWindowTask will stay open if there is one for the appeal.
+#
+# This task is only only applicable to AMA appeals in caseflow
+
 class TranscriptionTask < Task
   before_create :check_parent_type
 
+  VALID_PARENT_TYPES = [
+    AssignHearingDispositionTask,
+    MissingHearingTranscriptsColocatedTask,
+    TranscriptionTask
+  ].freeze
+
   def check_parent_type
-    unless parent.is_a?(AssignHearingDispositionTask) || parent.is_a?(MissingHearingTranscriptsColocatedTask)
+    unless VALID_PARENT_TYPES.any? { |type| parent.is_a?(type) }
       fail(
         Caseflow::Error::InvalidParentTask,
-        message: "TranscriptionTask parents must be AssignHearingDispositionTask/MissingHearingTranscriptsColocatedTask"
+        message: "TranscriptionTask parents must be #{VALID_PARENT_TYPES.map(&:name).join(' or ')}"
       )
     end
   end

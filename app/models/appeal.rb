@@ -6,6 +6,7 @@
 # which went into effect Feb 19, 2019.
 
 class Appeal < DecisionReview
+  include AppealConcern
   include BgsService
   include Taskable
   include PrintsTaskTree
@@ -99,7 +100,11 @@ class Appeal < DecisionReview
         stream_docket_number: docket_number,
         established_at: Time.zone.now
       )).tap do |stream|
-        stream.create_claimant!(participant_id: claimant.participant_id, payee_code: claimant.payee_code)
+        stream.create_claimant!(
+          participant_id: claimant.participant_id,
+          payee_code: claimant.payee_code,
+          type: claimant.type
+        )
       end
     end
   end
@@ -127,13 +132,9 @@ class Appeal < DecisionReview
     decorated_with_status.fetch_status.to_s.titleize
   end
 
-  def program
-    decorated_with_status.program
-  end
+  delegate :program, to: :decorated_with_status
 
-  def distributed_to_a_judge?
-    decorated_with_status.distributed_to_a_judge?
-  end
+  delegate :distributed_to_a_judge?, to: :decorated_with_status
 
   def decorated_with_status
     AppealStatusApiDecorator.new(self)
@@ -229,15 +230,6 @@ class Appeal < DecisionReview
     tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
   end
 
-  def veteran_name
-    # For consistency with LegacyAppeal.veteran_name
-    veteran&.name&.formatted(:form)
-  end
-
-  def veteran_middle_initial
-    veteran&.name&.middle_initial
-  end
-
   def veteran_is_deceased
     veteran_death_date.present?
   end
@@ -271,7 +263,7 @@ class Appeal < DecisionReview
     veteran_if_exists&.available_hearing_locations
   end
 
-  def regional_office
+  def regional_office_key
     nil
   end
 
@@ -284,14 +276,15 @@ class Appeal < DecisionReview
   alias aod advanced_on_docket?
 
   delegate :first_name,
+           :middle_name,
            :last_name,
            :name_suffix, to: :veteran, prefix: true, allow_nil: true
 
   alias appellant claimant
 
   delegate :first_name,
-           :last_name,
            :middle_name,
+           :last_name,
            :name_suffix,
            :address_line_1,
            :city,
@@ -299,8 +292,44 @@ class Appeal < DecisionReview
            :state,
            :email_address, to: :appellant, prefix: true, allow_nil: true
 
+  def appellant_tz
+    return if address.blank?
+
+    # Use an address object if this is a hash
+    appellant_address = address.is_a?(Hash) ? Address.new(address) : address
+
+    begin
+      TimezoneService.address_to_timezone(appellant_address).identifier
+    rescue StandardError => error
+      log_error(error)
+      nil
+    end
+  end
+
+  def representative_tz
+    return if representative_address.blank?
+
+    # Use an address object if this is a hash
+    rep_address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
+
+    begin
+      TimezoneService.address_to_timezone(rep_address).identifier
+    rescue StandardError => error
+      log_error(error)
+      nil
+    end
+  end
+
+  def appellant_middle_initial
+    appellant_middle_name&.first
+  end
+
   def appellant_is_not_veteran
     !!veteran_is_not_claimant
+  end
+
+  def veteran_middle_initial
+    veteran_middle_name&.first
   end
 
   def cavc
@@ -423,11 +452,13 @@ class Appeal < DecisionReview
   def finalized_decision_issues_before_receipt_date
     return [] unless receipt_date
 
-    DecisionIssue.includes(:decision_review).where(participant_id: veteran.participant_id)
-      .select(&:finalized?)
-      .select do |issue|
-        issue.approx_decision_date && issue.approx_decision_date < receipt_date
-      end
+    @finalized_decision_issues_before_receipt_date ||= begin
+      DecisionIssue.includes(:decision_review).where(participant_id: veteran.participant_id)
+        .select(&:finalized?)
+        .select do |issue|
+          issue.approx_decision_date && issue.approx_decision_date < receipt_date
+        end
+    end
   end
 
   def create_business_line_tasks!

@@ -109,14 +109,6 @@ feature "Supplemental Claim Intake", :all_dbs do
       find("label", text: "Compensation", match: :prefer_exact).click
     end
 
-    fill_in "What is the Receipt Date of this form?", with: (Time.zone.today + 1.day).mdY
-    click_intake_continue
-    expect(page).to have_content(
-      "Receipt date cannot be in the future."
-    )
-
-    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
-
     expect(page).to_not have_content("Please select the claimant listed on the form.")
     within_fieldset("Is the claimant someone other than the Veteran?") do
       find("label", text: "Yes", match: :prefer_exact).click
@@ -132,6 +124,13 @@ feature "Supplemental Claim Intake", :all_dbs do
     find("#cf-payee-code").send_keys :enter
 
     select_agree_to_withdraw_legacy_issues(false)
+
+    fill_in "What is the Receipt Date of this form?", with: (Time.zone.today + 1.day).mdY
+    click_intake_continue
+    expect(page).to have_content(
+      "Receipt date cannot be in the future."
+    )
+    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
     click_intake_continue
 
@@ -367,7 +366,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       detail: supplemental_claim
     )
 
-    Claimant.create!(
+    VeteranClaimant.create!(
       decision_review: supplemental_claim,
       participant_id: test_veteran.participant_id
     )

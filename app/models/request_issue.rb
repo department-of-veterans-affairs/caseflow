@@ -628,7 +628,10 @@ class RequestIssue < CaseflowRecord
       request_issue: self,
       original_disposition_code: vacols_issue.disposition_id,
       original_disposition_date: vacols_issue.disposition_date,
-      legacy_issue: legacy_issues.first
+      legacy_issue: legacy_issues.first,
+      original_legacy_appeal_decision_date: vacols_issue&.legacy_appeal&.decision_date,
+      original_legacy_appeal_disposition_code: vacols_issue&.legacy_appeal&.case_record&.bfdc,
+      folder_decision_date: vacols_issue&.legacy_appeal&.case_record&.folder&.tidcls
     )
   end
 
@@ -780,6 +783,8 @@ class RequestIssue < CaseflowRecord
       rating_profile_date: rating_issue.profile_date,
       decision_review: decision_review,
       benefit_type: rating_issue.benefit_type,
+      subject_text: rating_issue.subject_text,
+      percent_number: rating_issue.percent_number,
       end_product_last_action_date: end_product_establishment.last_action_date
     )
   end

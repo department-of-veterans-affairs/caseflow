@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
@@ -8,6 +8,7 @@ import {
   DECEASED_PAYEE_CODES,
   LIVING_PAYEE_CODES
 } from '../constants';
+import { convertStringToBoolean } from '../util';
 import COPY from '../../../COPY';
 import { useSelector } from 'react-redux';
 import Button from '../../components/Button';
@@ -34,6 +35,25 @@ const noClaimantsCopy = React.createElement(
   COPY.CLAIMANT_NOT_FOUND_END
 );
 
+const RemovableRadioLabel = ({ text, onRemove, notes }) => (
+  <>
+    <span>{text}</span>{' '}
+    {onRemove && (
+      <Button linkStyling onClick={onRemove} classNames={['remove-item']} styling={{ style: { marginTop: '-1rem' } }}>
+        <i className="fa fa-trash-o" aria-hidden="true" /> Remove
+      </Button>
+    )}
+    <br />
+    <span><i>{notes}</i></span>
+  </>
+);
+
+RemovableRadioLabel.propTypes = {
+  text: PropTypes.string,
+  onRemove: PropTypes.func,
+  notes: PropTypes.string
+};
+
 export const SelectClaimant = (props) => {
   const {
     formType,
@@ -53,12 +73,38 @@ export const SelectClaimant = (props) => {
 
   const { attorneyFees } = useSelector((state) => state.featureToggles);
   const [showClaimantModal, setShowClaimantModal] = useState(false);
+  const [newClaimant, setNewClaimant] = useState(null);
   const openAddClaimantModal = () => setShowClaimantModal(true);
-  const handleAddClaimant = (newClaimant) => {
-    // eslint-disable-next-line
-    console.log('claimant', newClaimant);
-  };
+  const radioOpts = useMemo(() => {
+    return [...relationships, ...(newClaimant ? [newClaimant] : [])];
+  }, [newClaimant, relationships]);
+  const allowAddClaimant = useMemo(() => formType === 'appeal' && attorneyFees && veteranIsNotClaimant, [
+    formType,
+    veteranIsNotClaimant,
+    attorneyFees
+  ]);
+  const handleVeteranIsNotClaimant = (value) => {
+    const boolValue = convertStringToBoolean(value);
 
+    setVeteranIsNotClaimant(boolValue);
+    setClaimant({ claimant: null, claimantType: (boolValue ? 'dependent' : 'veteran') });
+  };
+  const handleRemove = () => {
+    setNewClaimant(null);
+    setClaimant({ claimant: null, claimantType: 'dependent', claimantNotes: null });
+  };
+  const handleSelectDependent = (value) => setClaimant({ claimant: value, claimantType: 'dependent' });
+  const handleAddClaimant = ({ name, participantId, claimantType, claimantNotes }) => {
+    setNewClaimant({
+      displayElem: <RemovableRadioLabel
+        text={`${name || 'Claimant not listed'}, Attorney`} onRemove={handleRemove} notes={claimantNotes} />,
+      value: participantId,
+      defaultPayeeCode: '',
+      claimantNotes
+    });
+    setClaimant({ claimant: participantId ?? null, claimantType, claimantNotes, claimantName: name });
+    setShowClaimantModal(false);
+  };
   const handlePayeeCodeChange = (event) => setPayeeCode(event ? event.value : null);
   const shouldShowPayeeCode = () => {
     return formType !== 'appeal' && (benefitType === 'compensation' || benefitType === 'pension');
@@ -75,8 +121,8 @@ export const SelectClaimant = (props) => {
           label={claimantLabel}
           strongLabel
           vertical
-          options={relationships}
-          onChange={setClaimant}
+          options={radioOpts}
+          onChange={handleSelectDependent}
           value={claimant}
           errorMessage={claimantError}
         />
@@ -103,7 +149,7 @@ export const SelectClaimant = (props) => {
     // disable veteran claimant option if veteran is deceased
     veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE;
     // set claimant value to someone other than the veteran
-    setVeteranIsNotClaimant('true');
+    handleVeteranIsNotClaimant('true');
   }
 
   return (
@@ -114,7 +160,7 @@ export const SelectClaimant = (props) => {
         strongLabel
         vertical
         options={veteranClaimantOptions}
-        onChange={setVeteranIsNotClaimant}
+        onChange={handleVeteranIsNotClaimant}
         errorMessage={veteranIsNotClaimantError}
         value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant.toString()}
       />
@@ -122,7 +168,7 @@ export const SelectClaimant = (props) => {
       {showClaimants && hasRelationships && claimantOptions()}
       {showClaimants && !hasRelationships && noClaimantsCopy}
 
-      {attorneyFees && veteranIsNotClaimant && (
+      {allowAddClaimant && (
         <>
           <Button
             classNames={['usa-button-secondary', classes.button]}

@@ -36,8 +36,8 @@ RSpec.feature "Login", :all_dbs do
   end
 
   def select_ro_from_dropdown
-    find(".Select-control").click
-    find("#react-select-2--option-0").click
+    find(".cf-select__control").click
+    find("#react-select-2-option-0").click
   end
 
   context "VSO user has multple RO values" do
@@ -144,6 +144,7 @@ RSpec.feature "Login", :all_dbs do
       visit "/help"
 
       click_on "Menu"
+      expect(page).to have_link("Sign In", href: "/search")
       click_on "Sign In"
 
       expect(current_path).to eq("/fake-login-page")

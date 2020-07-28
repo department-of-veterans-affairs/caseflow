@@ -317,6 +317,16 @@ class Fakes::BGSService
     result.empty? ? nil : result
   end
 
+  def poas_list
+    [
+      { ptcpnt_id: "12345678", nm: "NANCY BAUMBACH", org_type_nm: "POA Attorney" },
+      { ptcpnt_id: "55114884", nm: "RICH TREUTING SR.", org_type_nm: "POA Agent" },
+      { ptcpnt_id: "56242925", nm: "MADELINE JENKINS", org_type_nm: "POA Attorney" },
+      { ptcpnt_id: "21543986", nm: "ACADIA VETERAN SERVICES", org_type_nm: "POA State Organization" },
+      { ptcpnt_id: "56154689", nm: "RANDALL KOHLER III", org_type_nm: "POA Attorney" }
+    ]
+  end
+
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
     address = (self.class.address_records || {})[participant_id]
@@ -377,7 +387,7 @@ class Fakes::BGSService
 
   def build_ratings_in_range(all_ratings, start_date, end_date)
     ratings = all_ratings.select do |rating|
-      start_date <= rating[:prmlgn_dt] && end_date >= rating[:prmlgn_dt]
+      rating[:prmlgn_dt].nil? || (start_date <= rating[:prmlgn_dt] && end_date >= rating[:prmlgn_dt])
     end
 
     # BGS returns the data not as an array if there is only one rating

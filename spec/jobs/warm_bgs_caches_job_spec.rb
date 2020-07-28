@@ -51,10 +51,10 @@ describe WarmBgsCachesJob, :all_dbs do
       expect(bgs_address_service).to have_received(:fetch_bgs_record).once
       expect(Rails.cache.exist?(address_cache_key)).to eq(true)
       expect(appeal.veteran.reload[:ssn]).to_not be_nil
-      expect(BgsPowerOfAttorney.all.count).to eq(2) # open_appeal + appeal
+      expect(BgsPowerOfAttorney.all.count).to eq(1) # open_appeal
       expect(appeal.representative_name).to_not be_nil
       expect(@slack_msg).to be_nil
-      expect(@people_sync).to eq(6)
+      expect(@people_sync).to eq(5)
     end
 
     context "BGS POA changes at BGS" do

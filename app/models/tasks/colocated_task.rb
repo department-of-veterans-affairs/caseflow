@@ -153,7 +153,7 @@ class ColocatedTask < Task
   def update_location_in_vacols
     if saved_change_to_status? &&
        !open? &&
-       all_tasks_closed_for_appeal? &&
+       all_colocated_tasks_closed_for_appeal? &&
        appeal_in_caseflow_vacols_location? &&
        assigned_to.is_a?(Organization)
       AppealRepository.update_location!(appeal, vacols_location)
@@ -172,7 +172,7 @@ class ColocatedTask < Task
     assigned_by.vacols_uniq_id
   end
 
-  def all_tasks_closed_for_appeal?
+  def all_colocated_tasks_closed_for_appeal?
     appeal.tasks.open.select { |task| task.is_a?(ColocatedTask) }.none?
   end
 

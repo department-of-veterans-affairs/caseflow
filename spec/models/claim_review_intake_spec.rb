@@ -24,8 +24,8 @@ describe ClaimReviewIntake, :postgres do
     let(:receipt_date) { 1.day.ago }
     let(:benefit_type) { "compensation" }
     let(:claimant) { nil }
+    let(:claimant_type) { "veteran" }
     let(:payee_code) { nil }
-    let(:veteran_is_not_claimant) { false }
     let(:legacy_opt_in_approved) { false }
 
     let(:detail) do
@@ -42,8 +42,8 @@ describe ClaimReviewIntake, :postgres do
         receipt_date: receipt_date,
         benefit_type: benefit_type,
         claimant: claimant,
+        claimant_type: claimant_type,
         payee_code: payee_code,
-        veteran_is_not_claimant: veteran_is_not_claimant,
         legacy_opt_in_approved: legacy_opt_in_approved
       )
     end
@@ -56,15 +56,16 @@ describe ClaimReviewIntake, :postgres do
         expect(intake.detail.claimant).to have_attributes(
           participant_id: intake.veteran.participant_id,
           payee_code: nil,
-          decision_review: intake.detail
+          decision_review: intake.detail,
+          type: "VeteranClaimant"
         )
       end
     end
 
     context "Claimant is different than Veteran" do
       let(:claimant) { "1234" }
+      let(:claimant_type) { "dependent" }
       let(:payee_code) { "10" }
-      let(:veteran_is_not_claimant) { true }
 
       it "adds other relationship to claimants" do
         subject
@@ -73,7 +74,8 @@ describe ClaimReviewIntake, :postgres do
         expect(intake.detail.claimant).to have_attributes(
           participant_id: "1234",
           payee_code: "10",
-          decision_review: intake.detail
+          decision_review: intake.detail,
+          type: "DependentClaimant"
         )
       end
 

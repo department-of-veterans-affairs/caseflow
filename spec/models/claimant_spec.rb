@@ -3,10 +3,9 @@
 describe Claimant, :postgres do
   let(:name) { nil }
   let(:relationship_to_veteran) { nil }
+  let(:payee_code) { nil }
   let(:claimant_info) do
-    {
-      relationship: relationship_to_veteran
-    }
+    { relationship: relationship_to_veteran, payee_code: payee_code }
   end
 
   let(:name_info) do
@@ -36,12 +35,13 @@ describe Claimant, :postgres do
   end
 
   context "lazy loading instance attributes from BGS" do
-    let(:claimant) { create(:claimant) }
+    let(:claimant) { create(:claimant, type: "DependentClaimant") }
 
     context "when claimant exists in BGS" do
       let(:first_name) { "HARRY" }
       let(:last_name) { "POTTER" }
       let(:relationship_to_veteran) { "SON" }
+      let(:payee_code) { "12" }
       let(:address_line_1) { "4 Privet Dr" }
       let(:address_line_2) { "Little Whinging" }
       let(:city) { "Washington" }
@@ -66,6 +66,7 @@ describe Claimant, :postgres do
       it "returns BGS attributes when accessed through instance" do
         expect(claimant.name).to eq "Harry Potter"
         expect(claimant.relationship).to eq relationship_to_veteran
+        expect(claimant.bgs_payee_code).to eq payee_code
         expect(claimant.address_line_1).to eq address_line_1
         expect(claimant.address_line_2).to eq address_line_2
         expect(claimant.city).to eq city
@@ -90,7 +91,11 @@ describe Claimant, :postgres do
     end
 
     it "saves date of birth" do
-      claimant = appeal.claimants.create_without_intake!(participant_id: participant_id, payee_code: "1")
+      claimant = appeal.claimants.create_without_intake!(
+        participant_id: participant_id,
+        payee_code: "1",
+        type: "VeteranClaimant"
+      )
       expect(claimant.date_of_birth).to eq(date_of_birth.to_date)
       person = Person.find_by(participant_id: participant_id)
       expect(person).to_not eq nil

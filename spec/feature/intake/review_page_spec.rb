@@ -70,11 +70,9 @@ feature "Intake Review Page", :postgres do
     end
 
     context "when the user goes back and edits the claimant" do
-      let(:veteran_is_not_claimant) { false }
-
       describe "given an appeal" do
         it "only saves one claimant" do
-          review = start_appeal(veteran, veteran_is_not_claimant: veteran_is_not_claimant).first
+          review = start_appeal(veteran).first
 
           check_edited_claimant(review)
         end
@@ -83,11 +81,7 @@ feature "Intake Review Page", :postgres do
       [:higher_level_review, :supplemental_claim].each do |claim_review_type|
         describe "given a #{claim_review_type}" do
           it "only saves one claimant" do
-            review = start_claim_review(
-              claim_review_type,
-              veteran: veteran,
-              veteran_is_not_claimant: veteran_is_not_claimant
-            ).first
+            review = start_claim_review(claim_review_type, veteran: veteran).first
 
             check_edited_claimant(review)
           end
@@ -116,7 +110,7 @@ feature "Intake Review Page", :postgres do
     end
 
     context "when the Veteran is not the claimant" do
-      let(:veteran_is_not_claimant) { true }
+      let(:claim_participant_id) { "20678356" }
       let!(:recent_end_product_with_claimant) do
         Generators::EndProduct.build(
           veteran_file_number: veteran.file_number,
@@ -151,7 +145,7 @@ feature "Intake Review Page", :postgres do
 
         describe "given an appeal" do
           it "does not require the claimant to have an address" do
-            review = start_appeal(veteran, veteran_is_not_claimant: veteran_is_not_claimant).first
+            review = start_appeal(veteran, claim_participant_id: claim_participant_id).first
 
             check_claimant_address_error(review, benefit_type, error_text)
           end
@@ -163,7 +157,8 @@ feature "Intake Review Page", :postgres do
               review = start_claim_review(
                 claim_review_type,
                 veteran: veteran,
-                veteran_is_not_claimant: veteran_is_not_claimant
+                claim_participant_id: claim_participant_id,
+                no_claimant: true
               ).first
 
               check_claimant_address_error(review, benefit_type, error_text)
@@ -180,7 +175,7 @@ feature "Intake Review Page", :postgres do
                 review = start_claim_review(
                   claim_review_type,
                   veteran: veteran,
-                  veteran_is_not_claimant: veteran_is_not_claimant,
+                  claim_participant_id: claim_participant_id,
                   benefit_type: benefit_type
                 ).first
 
@@ -204,7 +199,8 @@ feature "Intake Review Page", :postgres do
               review = start_claim_review(
                 claim_review_type,
                 veteran: veteran,
-                veteran_is_not_claimant: veteran_is_not_claimant
+                claim_participant_id: claim_participant_id,
+                no_claimant: true
               ).first
 
               check_claimant_address_error(review, benefit_type, error_text)
@@ -217,7 +213,7 @@ feature "Intake Review Page", :postgres do
         [:higher_level_review, :supplemental_claim].each do |claim_review_type|
           describe "given a #{claim_review_type}" do
             it "requires payee code and shows default value" do
-              start_claim_review(claim_review_type, veteran: veteran, veteran_is_not_claimant: veteran_is_not_claimant)
+              start_claim_review(claim_review_type, veteran: veteran, claim_participant_id: claim_participant_id)
               check_pension_and_compensation_payee_code
             end
           end
@@ -234,7 +230,7 @@ feature "Intake Review Page", :postgres do
             start_higher_level_review(
               veteran,
               benefit_type: benefit_type,
-              veteran_is_not_claimant: veteran_is_not_claimant
+              claim_participant_id: claim_participant_id
             )
             check_no_relationships_behavior
           end
@@ -245,7 +241,7 @@ feature "Intake Review Page", :postgres do
             start_supplemental_claim(
               veteran,
               benefit_type: benefit_type,
-              veteran_is_not_claimant: veteran_is_not_claimant
+              claim_participant_id: claim_participant_id
             )
             check_no_relationships_behavior
           end
@@ -253,12 +249,157 @@ feature "Intake Review Page", :postgres do
 
         context "appeal" do
           it "shows message and does not allow user to continue" do
-            start_appeal(
-              veteran,
-              veteran_is_not_claimant: veteran_is_not_claimant
-            )
+            start_appeal(veteran, claim_participant_id: claim_participant_id)
             check_no_relationships_behavior
           end
+        end
+      end
+
+      context "when adding a new claimant" do
+        let(:attorneys) do
+          Array.new(15) { create(:bgs_attorney) }
+        end
+
+        context "without attorney_fees feature toggle" do
+          it "doesn't allow adding new claimants" do
+            start_appeal(veteran, claim_participant_id: claim_participant_id)
+
+            visit "/intake"
+
+            expect(page).to have_current_path("/intake/review_request")
+
+            within_fieldset("Is the claimant someone other than the Veteran?") do
+              find("label", text: "Yes", match: :prefer_exact).click
+            end
+
+            expect(page).to_not have_content("+ Add Claimant")
+          end
+        end
+
+        context "with attorney_fees feature toggle" do
+          before { FeatureToggle.enable!(:attorney_fees) }
+          after { FeatureToggle.disable!(:attorney_fees) }
+
+          let(:attorney) { attorneys.last }
+
+          it "allows adding new claimants" do
+            appeal, _intake = start_appeal(
+              veteran,
+              claim_participant_id: claim_participant_id,
+              no_claimant: true
+            )
+
+            visit "/intake"
+
+            expect(page).to have_current_path("/intake/review_request")
+
+            within_fieldset("Is the claimant someone other than the Veteran?") do
+              find("label", text: "Yes", match: :prefer_exact).click
+            end
+
+            expect(page).to have_content("+ Add Claimant")
+
+            add_existing_attorney(attorney)
+
+            # Verify that this can be removed
+            find(".remove-item").click
+            expect(page).to_not have_content("#{attorney.name}, Attorney")
+
+            # Add again
+            add_existing_attorney(attorney)
+
+            click_button "Continue to next step"
+
+            expect(page).to have_current_path("/intake/add_issues")
+
+            expect(Claimant.count).to eq(1)
+            expect(appeal.claimant).to have_attributes(
+              type: "AttorneyClaimant",
+              participant_id: attorney.participant_id
+            )
+
+            expect(page).to have_content("#{attorney.name}, Attorney")
+          end
+
+          scenario "when claimant is not listed" do
+            appeal, _intake = start_appeal(
+              veteran,
+              claim_participant_id: claim_participant_id,
+              no_claimant: true
+            )
+
+            visit "/intake"
+
+            expect(page).to have_current_path("/intake/review_request")
+
+            within_fieldset("Is the claimant someone other than the Veteran?") do
+              find("label", text: "Yes", match: :prefer_exact).click
+            end
+
+            expect(page).to have_content("+ Add Claimant")
+
+            notes = "Unlisted claimant: Sandra Smith"
+
+            add_unlisted_claimant(notes)
+
+            # Verify removal
+            find(".remove-item").click
+            expect(page).to_not have_content(notes)
+
+            # Add again
+            add_unlisted_claimant(notes)
+
+            click_button "Continue to next step"
+
+            expect(page).to have_current_path("/intake/add_issues")
+
+            expect(Claimant.count).to eq(1)
+            expect(appeal.claimant).to have_attributes(
+              type: "OtherClaimant",
+              participant_id: veteran.participant_id,
+              notes: notes
+            )
+
+            expect(page).to have_content(notes)
+          end
+        end
+
+        def add_existing_attorney(attorney)
+          click_button("+ Add Claimant")
+          expect(page).to have_selector("#add_claimant_modal")
+          expect(page).to have_button("Add this claimant", disabled: true)
+          claimant_search(attorney.name)
+          select_claimant(0)
+          expect(page).to have_button("Add this claimant", disabled: false)
+          click_button "Add this claimant"
+          expect(page).to_not have_selector("#add_claimant_modal")
+          expect(page).to have_content("#{attorney.name}, Attorney")
+        end
+
+        # rubocop: disable Metrics/AbcSize
+        def add_unlisted_claimant(notes)
+          click_button("+ Add Claimant")
+          expect(page).to have_content("Claimant not listed")
+          expect(page).to have_button("Add this claimant", disabled: true)
+          find("label[for=notListed]").click
+          expect(page).to have_content("Notes e.g.")
+          expect(page).to have_button("Add this claimant", disabled: true)
+
+          fill_in "Notes e.g.", with: notes
+          expect(page).to have_button("Add this claimant", disabled: false)
+          click_button "Add this claimant"
+          expect(page).to_not have_selector("#add_claimant_modal")
+          expect(page).to have_content("Claimant not listed, Attorney")
+          expect(page).to have_content(notes)
+        end
+        # rubocop: enable Metrics/AbcSize
+
+        def claimant_search(search)
+          find(".dropdown-claimant").fill_in "claimant", with: search
+        end
+
+        def select_claimant(index = 0)
+          click_dropdown({ index: index }, find(".dropdown-claimant"))
         end
       end
     end
@@ -281,7 +422,7 @@ def check_deceased_veteran_cant_be_payee
   end
 
   # click on payee code dropdown
-  find(".Select-control").click
+  find(".cf-select__control").click
 
   # verify that veteran cannot be selected
   expect(page.has_no_content?("00 - Veteran")).to eq(true)
@@ -305,9 +446,12 @@ def check_pension_and_compensation_payee_code
   expect(page).to have_content(
     "Receipt date cannot be in the future."
   )
-  expect(page).to have_content("Please select an option.")
 
   fill_in "What is the Receipt Date of this form?", with: Time.zone.today.mdY
+
+  click_intake_continue
+
+  expect(page).to have_content("Please select an option.")
 
   within_fieldset("What is the Benefit Type?") do
     find("label", text: "Pension", match: :prefer_exact).click
@@ -317,11 +461,11 @@ def check_pension_and_compensation_payee_code
 
   expect(page).to have_content("Please select an option.")
 
-  expect(find(".Select-placeholder")).to have_content("Select")
+  expect(find(".cf-select__placeholder")).to have_content("Select")
 
   find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
 
-  expect(find(".Select-multi-value-wrapper")).to have_content("11 - C&P First Child")
+  expect(find(".cf-select__value-container")).to have_content("11 - C&P First Child")
 
   fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
   find("#cf-payee-code").send_keys :enter

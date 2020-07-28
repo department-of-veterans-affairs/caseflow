@@ -4,6 +4,10 @@
 
 class ETL::LegacyHearing < ETL::HearingRecord
   class << self
+    def mirrored_hearing_attributes
+      super - [:evidence_window_waived, :scheduled_time, :uuid]
+    end
+
     private
 
     def merge_original_attributes_to_target(original, target)

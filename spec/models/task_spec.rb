@@ -897,6 +897,64 @@ describe Task, :all_dbs do
         end
       end
     end
+
+    context "When the appeal has not been marked for overtime" do
+      let!(:appeal) { create(:appeal) }
+      let(:task) { create(:ama_judge_assign_task, appeal: appeal) }
+
+      before { FeatureToggle.enable!(:overtime_revamp) }
+      after { FeatureToggle.disable!(:overtime_revamp) }
+
+      it "does not create a new work mode for the appeal" do
+        expect(appeal.work_mode.nil?).to be true
+        subject
+        expect(appeal.work_mode.nil?).to be true
+      end
+    end
+
+    context "When the appeal has been marked for overtime" do
+      shared_examples "clears overtime" do
+        it "sets overtime to false" do
+          expect(appeal.overtime?).to be true
+          subject
+          expect(appeal.overtime?).to be false
+        end
+      end
+
+      let!(:appeal) { create(:appeal) }
+      let(:task) { create(:ama_task, appeal: appeal.reload) }
+
+      before do
+        appeal.overtime = true
+        FeatureToggle.enable!(:overtime_revamp)
+      end
+      after { FeatureToggle.disable!(:overtime_revamp) }
+
+      context "when the task type is not a judge or attorney task" do
+        it "does not clear the overtime status" do
+          expect(appeal.overtime?).to be true
+          subject
+          expect(appeal.overtime?).to be true
+        end
+      end
+
+      context "when the task is a judge task" do
+        let(:task) { create(:ama_judge_assign_task, appeal: appeal) }
+
+        it_behaves_like "clears overtime"
+      end
+
+      context "when the task is an attorney task" do
+        let(:judge) { create(:user, :with_vacols_judge_record) }
+        let(:attorney) { create(:user, :with_vacols_attorney_record) }
+        let(:new_assignee) { create(:user, :with_vacols_attorney_record) }
+        let(:task) { create(:ama_attorney_rewrite_task, assigned_to: attorney, assigned_by: judge, appeal: appeal) }
+
+        subject { task.reassign(params, judge) }
+
+        it_behaves_like "clears overtime"
+      end
+    end
   end
 
   describe ".verify_org_task_unique" do
