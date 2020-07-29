@@ -6,22 +6,27 @@ describe('StringUtil', () => {
     const uuid = uuidv4();
     const links = [
       `https://appeals.cf.ds.va.gov/reader/appeal/${uuid}/documents/42416990`,
+      `https://appeals.cf.ds.va.gov/reader/appeal/${uuid}/documents/42416990?foo=bar`,
     ];
 
     test('within other text, surrounded by spaces', () => {
-      const input = `foo ${links[0]} bar`;
-      const output = StringUtil.parseLinks(input);
-      const expected = `foo <a href="${links[0]}">${links[0]}</a> bar`;
+      for (const link of links) {
+        const input = `foo ${links[0]} bar`;
+        const output = StringUtil.parseLinks(input);
+        const expected = `foo <a href="${link}">${link}</a> bar`;
 
-      expect(output).toBe(expected);
+        expect(output).toBe(expected);
+      }
     });
 
     test('within other text, surrounded by new lines', () => {
-      const input = `foo\n${links[0]}\nbar`;
-      const output = StringUtil.parseLinks(input);
-      const expected = `foo\n<a href="${links[0]}">${links[0]}</a>\nbar`;
+      for (const link of links) {
+        const input = `foo\n${link}\nbar`;
+        const output = StringUtil.parseLinks(input);
+        const expected = `foo\n<a href="${link}">${link}</a>\nbar`;
 
-      expect(output).toBe(expected);
+        expect(output).toBe(expected);
+      }
     });
   });
 });
