@@ -19,7 +19,7 @@ export const Timezone = ({
 
   return (
     <SearchableDropdown
-      required={required}
+      required={!readOnly && required}
       styling={timezoneStyles(commonsCount)}
       name={name}
       label={label}

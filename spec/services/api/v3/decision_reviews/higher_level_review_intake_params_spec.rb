@@ -282,8 +282,8 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
           same_office: same_office,
           benefit_type: benefit_type,
           claimant: participant_id,
+          claimant_type: "dependent",
           payee_code: payee_code,
-          veteran_is_not_claimant: true,
           legacy_opt_in_approved: legacy_opt_in_approved
         }.as_json
       )

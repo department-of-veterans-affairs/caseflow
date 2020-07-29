@@ -614,7 +614,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
       <strong>
         Hearing Time: 
       </strong>
-      4:00 AM Eastern Time (US & Canada)
+      7:00 AM Eastern Time (US & Canada)
     </div>
   </DateTime>
   <div>
@@ -1102,7 +1102,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
       <strong>
         Hearing Time: 
       </strong>
-      4:00 AM Eastern Time (US & Canada)
+      7:00 AM Eastern Time (US & Canada)
     </div>
   </DateTime>
   <ReadOnlyEmails
@@ -1582,7 +1582,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
       <strong>
         Hearing Time: 
       </strong>
-      4:00 AM Eastern Time (US & Canada)
+      7:00 AM Eastern Time (US & Canada)
     </div>
   </DateTime>
   <ReadOnlyEmails
@@ -2044,7 +2044,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
       <strong>
         Hearing Time: 
       </strong>
-      4:00 AM Eastern Time (US & Canada)
+      7:00 AM Eastern Time (US & Canada)
     </div>
   </DateTime>
   <TextField
@@ -2429,7 +2429,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
       <strong>
         Hearing Time: 
       </strong>
-      4:00 AM Eastern Time (US & Canada)
+      7:00 AM Eastern Time (US & Canada)
     </div>
   </DateTime>
   <TextField
@@ -2850,7 +2850,7 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
       <strong>
         Hearing Time: 
       </strong>
-      4:00 AM Eastern Time (US & Canada)
+      7:00 AM Eastern Time (US & Canada)
     </div>
   </DateTime>
   <TextField
@@ -3125,7 +3125,7 @@ exports[`VirtualHearingModal DateTime sub-component Displays divider for formerl
     <strong>
       Hearing Time: 
     </strong>
-    8:30 AM Eastern Time (US & Canada)
+    11:30 AM Eastern Time (US & Canada)
     <div
       className="cf-help-divider"
     />
@@ -3292,7 +3292,7 @@ exports[`VirtualHearingModal DateTime sub-component Displays formatted hearing d
     <strong>
       Hearing Time: 
     </strong>
-    4:00 AM Eastern Time (US & Canada)
+    7:00 AM Eastern Time (US & Canada)
   </div>
 </DateTime>
 `;
@@ -4340,7 +4340,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                       <strong>
                         Hearing Time: 
                       </strong>
-                      4:00 AM Eastern Time (US & Canada)
+                      7:00 AM Eastern Time (US & Canada)
                     </div>
                   </DateTime>
                   <ReadOnlyEmails
@@ -5047,7 +5047,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                       <strong>
                         Hearing Time: 
                       </strong>
-                      4:00 AM Eastern Time (US & Canada)
+                      7:00 AM Eastern Time (US & Canada)
                     </div>
                   </DateTime>
                   <ReadOnlyEmails
@@ -5754,7 +5754,7 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                       <strong>
                         Hearing Time: 
                       </strong>
-                      4:00 AM Eastern Time (US & Canada)
+                      7:00 AM Eastern Time (US & Canada)
                     </div>
                   </DateTime>
                   <TextField
@@ -6101,7 +6101,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="11:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6110,7 +6110,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          11:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6136,7 +6136,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="11:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6145,7 +6145,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          11:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6326,7 +6326,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="11:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6335,7 +6335,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          11:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6361,7 +6361,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="11:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6370,7 +6370,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          11:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6551,7 +6551,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="11:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6560,7 +6560,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          11:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6586,7 +6586,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="11:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6595,7 +6595,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          11:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6775,7 +6775,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="11:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6784,7 +6784,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          11:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6810,7 +6810,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="11:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -6819,7 +6819,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          11:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -6999,7 +6999,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="11:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -7008,7 +7008,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          11:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -7188,7 +7188,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="11:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -7197,7 +7197,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          11:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -7377,7 +7377,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="POA/Representative Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="11:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -7386,7 +7386,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           POA/Representative Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          11:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>
@@ -7566,7 +7566,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
     <ReadOnly
       label="Veteran Hearing Time"
       spacing={15}
-      text="8:30 AM Eastern Time (US & Canada)"
+      text="11:30 AM Eastern Time (US & Canada)"
     >
       <div
         data-css-acl5jg=""
@@ -7575,7 +7575,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
           Veteran Hearing Time
         </strong>
         <pre>
-          8:30 AM Eastern Time (US & Canada)
+          11:30 AM Eastern Time (US & Canada)
         </pre>
       </div>
     </ReadOnly>

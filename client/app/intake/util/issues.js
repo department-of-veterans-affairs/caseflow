@@ -3,24 +3,30 @@ import { formatDateStr } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES';
 import { FORM_TYPES } from '../constants';
 
-const getNonVeteranClaimant = (intakeData) => {
-  const claimant = intakeData.relationships.filter((relationship) => {
-    return relationship.value === intakeData.claimant;
-  });
+const getDependentClaimant = (intakeData) => {
+  const relation = intakeData.relationships.find(({ value }) => value === intakeData.claimant);
 
   if (!intakeData.payeeCode) {
-    return claimant[0].displayText;
+    return relation.displayText;
   }
 
-  return `${claimant[0].displayText} (payee code ${intakeData.payeeCode})`;
+  return `${relation.displayText} (payee code ${intakeData.payeeCode})`;
 };
 
 const getClaimantField = (veteran, intakeData) => {
-  const claimant = intakeData.veteranIsNotClaimant ? getNonVeteranClaimant(intakeData) : veteran.name;
+  const claimantMap = {
+    veteran: () => veteran.name,
+    dependent: () => getDependentClaimant(intakeData),
+    attorney: () => `${intakeData.claimantName}, Attorney`,
+    other: () => intakeData.claimantNotes
+  };
+
+  const claimantType = intakeData.claimantType;
+  const claimantDisplayText = claimantMap[claimantType ?? 'veteran']?.();
 
   return [{
     field: 'Claimant',
-    content: claimant
+    content: claimantDisplayText
   }];
 };
 
