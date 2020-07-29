@@ -3,25 +3,19 @@
 describe HearingDayRequestTypeQuery do
   subject { HearingDayRequestTypeQuery.new.call }
 
-  context "with central hearing day" do
-    let!(:hearing_day) do
-      create(
-        :hearing_day,
-        request_type: HearingDay::REQUEST_TYPES[:central]
-      )
-    end
-
-    it "returns empty hash" do
-      expect(subject).to be_empty
+  shared_examples_for "it returns correct hash with expected key and value" do |expected_type|
+    it "returns a hash with the hearing day id as key and '#{expected_type}' as value" do
+      expect(subject).to have_key(hearing_day.id)
+      expect(subject[hearing_day.id]).to eq expected_type
     end
   end
 
-  context "with video hearing day" do
+  shared_examples_for "request type query for hearing day" do |expected_type|
     let!(:hearing_day) do
       create(
         :hearing_day,
-        regional_office: "RO01",
-        request_type: HearingDay::REQUEST_TYPES[:video]
+        regional_office: regional_office,
+        request_type: request_type
       )
     end
 
@@ -31,25 +25,16 @@ describe HearingDayRequestTypeQuery do
       end
     end
 
-    shared_examples_for "it returns correct hash with expected key and value" do |expected_type|
-      it "returns a hash with the hearing day id as key and '#{expected_type}' as value" do
-        expect(subject).to have_key(hearing_day.id)
-        expect(subject[hearing_day.id]).to eq expected_type
-      end
-    end
-
-    context "single ama video hearing" do
+    context "single ama #{expected_type.downcase} hearing" do
       let!(:hearing) { create(:hearing, hearing_day: hearing_day) }
 
-      include_examples "it returns correct hash with expected key and value",
-                       Hearing::HEARING_TYPES[:V]
+      include_examples "it returns correct hash with expected key and value", expected_type
     end
 
-    context "single legacy video hearing" do
+    context "single legacy #{expected_type.downcase} hearing" do
       let!(:legacy_hearing) { create(:legacy_hearing, hearing_day: hearing_day) }
 
-      include_examples "it returns correct hash with expected key and value",
-                       Hearing::HEARING_TYPES[:V]
+      include_examples "it returns correct hash with expected key and value", expected_type
     end
 
     context "mix of ama and legacy video hearings" do
@@ -60,8 +45,7 @@ describe HearingDayRequestTypeQuery do
         ]
       end
 
-      include_examples "it returns correct hash with expected key and value",
-                       Hearing::HEARING_TYPES[:V]
+      include_examples "it returns correct hash with expected key and value", expected_type
     end
 
     context "single ama virtual hearing" do
@@ -83,8 +67,8 @@ describe HearingDayRequestTypeQuery do
       let(:hearing_day) do
         create(
           :hearing_day,
-          regional_office: "RO01",
-          request_type: HearingDay::REQUEST_TYPES[:video],
+          regional_office: regional_office,
+          request_type: request_type,
           scheduled_for: Time.zone.today - 1.week
         )
       end
@@ -113,7 +97,7 @@ describe HearingDayRequestTypeQuery do
         end
 
         include_examples "it returns correct hash with expected key and value",
-                         "Virtual"
+                         COPY::VIRTUAL_HEARING_REQUEST_TYPE
       end
 
       context "hearing is a legacy hearing" do
@@ -121,7 +105,7 @@ describe HearingDayRequestTypeQuery do
         let(:hearing) { create(:legacy_hearing, disposition: disposition, hearing_day: hearing_day) }
 
         include_examples "it returns correct hash with expected key and value",
-                         "Virtual"
+                         COPY::VIRTUAL_HEARING_REQUEST_TYPE
       end
     end
 
@@ -142,7 +126,7 @@ describe HearingDayRequestTypeQuery do
       end
     end
 
-    context "mix of legacy and ama and video and virtual hearings" do
+    context "mix of legacy and ama and #{expected_type.downcase} and virtual hearings" do
       let(:hearings) do
         [
           create(:hearing, hearing_day: hearing_day),
@@ -152,7 +136,21 @@ describe HearingDayRequestTypeQuery do
       let!(:virtual_hearing) { create(:virtual_hearing, :initialized, hearing: hearings[0]) }
 
       include_examples "it returns correct hash with expected key and value",
-                       "Video, Virtual"
+                       "#{expected_type}, Virtual"
     end
+  end
+
+  context "with central hearing day" do
+    let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
+    let(:regional_office) { nil }
+
+    include_examples "request type query for hearing day", Hearing::HEARING_TYPES[:C]
+  end
+
+  context "with video hearing day" do
+    let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
+    let(:regional_office) { "RO01" }
+
+    include_examples "request type query for hearing day", Hearing::HEARING_TYPES[:V]
   end
 end
