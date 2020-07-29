@@ -37,7 +37,7 @@ class AssignHearingModal extends React.PureComponent {
   }
 
   componentDidMount = () => {
-    const { openHearing } = this.props;
+    const { appeal, openHearing } = this.props;
 
     if (openHearing) {
       this.props.showErrorMessage({
@@ -189,13 +189,10 @@ class AssignHearingModal extends React.PureComponent {
     const { showErrorMessages, showFullHearingDayWarning } = this.state;
     const { address_line_1: addressLine1, city, state, zip } = appeal.appellantAddress || {};
 
-    if (openHearing) {
-      return null;
-    }
-
     return (
       <QueueFlowModal
         submit={this.completeScheduleHearingTask}
+        submitDisabled={!!openHearing}
         validateForm={this.validateForm}
         title="Schedule Veteran"
         button="Schedule"
@@ -210,15 +207,21 @@ class AssignHearingModal extends React.PureComponent {
               {COPY.SCHEDULE_VETERAN_FULL_HEARING_DAY_MESSAGE_DETAIL}
             </Alert>
           }
-          <p>
-            Veteran Address<br />
-            {addressLine1}<br />
-            {`${city}, ${state} ${zip}`}
-          </p>
-          <AssignHearingForm
-            appeal={appeal}
-            showErrorMessages={showErrorMessages}
-            {...this.getInitialValues()} />
+          {
+            !openHearing &&
+            <React.Fragment>
+              <p>
+                Veteran Address<br />
+                {addressLine1}<br />
+                {`${city}, ${state} ${zip}`}
+              </p>
+              <AssignHearingForm
+                appeal={appeal}
+                showErrorMessages={showErrorMessages}
+                {...this.getInitialValues()}
+              />
+            </React.Fragment>
+          }
         </div>
       </QueueFlowModal>
     );
