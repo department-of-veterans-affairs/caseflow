@@ -71,34 +71,24 @@ describe Distribution, :all_dbs do
       end
     end
 
+    def create_legacy_case_hearing(bfkey, board_member: judge.vacols_attorney_id)
+      create(:case_hearing,
+             :disposition_held,
+             folder_nr: bfkey,
+             hearing_date: 1.month.ago,
+             board_member: board_member)
+    end
+
     let!(:same_judge_priority_hearings) do
-      legacy_priority_cases[0..1].map do |appeal|
-        create(:case_hearing,
-               :disposition_held,
-               folder_nr: appeal.bfkey,
-               hearing_date: 1.month.ago,
-               board_member: judge.vacols_attorney_id)
-      end
+      legacy_priority_cases[0..1].map { |appeal| create_legacy_case_hearing(appeal.bfkey) }
     end
 
     let!(:same_judge_nonpriority_hearings) do
-      legacy_nonpriority_cases[29..33].map do |appeal|
-        create(:case_hearing,
-               :disposition_held,
-               folder_nr: appeal.bfkey,
-               hearing_date: 1.month.ago,
-               board_member: judge.vacols_attorney_id)
-      end
+      legacy_nonpriority_cases[29..33].map { |appeal| create_legacy_case_hearing(appeal.bfkey) }
     end
 
     let!(:other_judge_hearings) do
-      legacy_nonpriority_cases[2..27].map do |appeal|
-        create(:case_hearing,
-               :disposition_held,
-               folder_nr: appeal.bfkey,
-               hearing_date: 1.month.ago,
-               board_member: "1234")
-      end
+      legacy_nonpriority_cases[2..27].map { |appeal| create_legacy_case_hearing(appeal.bfkey, board_member: "1234") }
     end
 
     before do
@@ -208,13 +198,7 @@ describe Distribution, :all_dbs do
       after { FeatureToggle.disable!(:priority_acd) }
 
       let!(:more_same_judge_nonpriority_hearings) do
-        legacy_nonpriority_cases[33..63].map do |appeal|
-          create(:case_hearing,
-                 :disposition_held,
-                 folder_nr: appeal.bfkey,
-                 hearing_date: 1.month.ago,
-                 board_member: judge.vacols_attorney_id)
-        end
+        legacy_nonpriority_cases[34..63].map { |appeal| create_legacy_case_hearing(appeal.bfkey) }
       end
 
       it "distributes legacy hearing non priority cases down to 30" do
