@@ -7,7 +7,7 @@ FactoryBot.define do
     sequence(:bfcorlid, 300_000_000) { |n| "#{n}S" }
 
     association :correspondent, factory: :correspondent
-    association :folder, factory: :folder, ticknum: :bfkey
+    folder { association :folder, ticknum: bfkey, tinum: bfkey }
 
     bfregoff { "RO18" }
 
@@ -172,6 +172,22 @@ FactoryBot.define do
       end
     end
 
+    trait :tied_to_judge do
+      transient do
+        tied_judge { nil }
+      end
+
+      after(:create) do |vacols_case, evaluator|
+        create(
+          :case_hearing,
+          :disposition_held,
+          folder_nr: vacols_case.bfkey,
+          hearing_date: 5.days.ago.to_date,
+          user: evaluator.tied_judge
+        )
+      end
+    end
+
     trait :type_original do
       bfac { "1" }
     end
@@ -199,6 +215,11 @@ FactoryBot.define do
 
     trait :status_active do
       bfmpro { "ACT" }
+    end
+
+    trait :ready_for_distribution do
+      status_active
+      bfcurloc { "81" }
     end
 
     trait :status_remand do

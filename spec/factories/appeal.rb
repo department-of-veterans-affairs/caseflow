@@ -104,6 +104,43 @@ FactoryBot.define do
       docket_type { Constants.AMA_DOCKETS.hearing }
     end
 
+    trait :evidence_submission_docket do
+      docket_type { Constants.AMA_DOCKETS.evidence_submission }
+    end
+
+    trait :direct_review_docket do
+      docket_type { Constants.AMA_DOCKETS.direct_review }
+    end
+
+    trait :held_hearing do
+      transient do
+        adding_user { nil }
+      end
+
+      after(:create) do |appeal, evaluator|
+        create(:hearing, judge: nil, disposition: "held", appeal: appeal, adding_user: evaluator.adding_user)
+      end
+    end
+
+    trait :tied_to_judge do
+      transient do
+        tied_judge { nil }
+      end
+
+      after(:create) do |appeal, evaluator|
+        hearing_day = create(
+          :hearing_day,
+          scheduled_for: 1.day.ago,
+          created_by: evaluator.tied_judge,
+          updated_by: evaluator.tied_judge
+        )
+        Hearing.find_by(disposition: Constants.HEARING_DISPOSITION_TYPES.held, appeal: appeal).update!(
+          judge: evaluator.tied_judge,
+          hearing_day: hearing_day
+        )
+      end
+    end
+
     trait :outcoded do
       after(:create) do |appeal, _evaluator|
         appeal.create_tasks_on_intake_success!
