@@ -15,7 +15,7 @@ class RequestIssueContention
   end
 
   def update_text!
-    return unless contention_text_update_pending
+    return unless contention_reference_id && contention_text_update_pending
 
     fail EndProductEstablishment::ContentionNotFound, contention_reference_id unless vbms_contention
 
