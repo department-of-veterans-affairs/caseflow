@@ -17,7 +17,9 @@ export class DailyDocketPrinted extends React.Component {
 
     document.title += ` ${getDate(this.props.docket.scheduledFor)}`;
 
-    openPrintDialogue();
+    if (!this.props.disablePrompt) {
+      openPrintDialogue();
+    }
   }
 
   isUserJudge = () => this.props.user.userHasHearingPrepRole;
@@ -125,7 +127,14 @@ export class DailyDocketPrinted extends React.Component {
 DailyDocketPrinted.propTypes = {
   user: PropTypes.object.isRequired,
   docket: PropTypes.object,
-  hearings: PropTypes.object
+  hearings: PropTypes.object,
+
+  // Whether or not to display the print screen prompt.
+  disablePrompt: PropTypes.bool
+};
+
+DailyDocketPrinted.defaultProps = {
+  disablePrompt: false
 };
 
 export default DailyDocketPrinted;
