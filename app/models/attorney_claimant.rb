@@ -8,6 +8,18 @@ class AttorneyClaimant < Claimant
 
   delegate :name, to: :bgs_attorney
 
+  def advanced_on_docket?(_appeal_receipt_date)
+    false
+  end
+
+  def advanced_on_docket_based_on_age?
+    false
+  end
+
+  def advanced_on_docket_motion_granted?(_appeal_receipt_date)
+    false
+  end
+
   private
 
   def find_power_of_attorney
