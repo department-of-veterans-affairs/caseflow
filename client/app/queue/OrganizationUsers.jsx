@@ -19,7 +19,7 @@ const userStyle = css({
   margin: '.5rem 0 2rem',
   borderBottom: '1rem solid gray',
   borderWidth: '1px',
-  paddingBottom: '1rem'
+  paddingBottom: '1.4rem'
 });
 const topUserStyle = css({
   margin: '2rem 0 2rem',
@@ -28,7 +28,7 @@ const topUserStyle = css({
   padding: '2.5rem 0 1.5rem',
 });
 const buttonPaddingStyle = css({
-  paddingLeft: '1.5rem',
+  paddingTop: '.5rem',
   display: 'inline-block',
   height: '4.5rem'
 });
@@ -182,7 +182,7 @@ export default class OrganizationUsers extends React.PureComponent {
             { judgeTeam && judge && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
             { judgeTeam && attorney && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
             { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
-            { !admin && this.removeUserButton(user) }
+            <div>{ !admin && this.removeUserButton(user) }</div>
           </li>
         </div>
       </React.Fragment>;
