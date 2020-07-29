@@ -20,14 +20,22 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   def slack_report
     report = []
-    report << "#{@tied_distributions.map { |stats| stats['batch_size'] }.sum} cases tied to judges distributed"
-    report << "#{@genpop_distributions.map { |stats| stats['batch_size'] }.sum} genpop cases distributed"
-    report << "Priority Target: #{priority_target}"
-    report << "Previous monthly distributions: #{eligible_judge_priority_distributions_this_month}"
+    report << "*Number of cases tied to judges distributed*: " \
+              "#{@tied_distributions.map { |stats| stats['batch_size'] }.sum}"
+    report << "*Number of general population cases distributed*: " \
+              "#{@genpop_distributions.map { |stats| stats['batch_size'] }.sum}"
 
     appeals_not_distributed = docket_coordinator.dockets.map do |docket_type, docket|
+      report << "*Age of oldest #{docket_type} case*: #{docket.oldest_priority_appeal_days_waiting} days"
       [docket_type, docket.ready_priority_appeal_ids]
     end.to_h
+
+    report << "*Number of appeals _not_ distributed*: #{appeals_not_distributed.values.flatten.count}"
+
+    report << ""
+    report << "*Debugging information*"
+    report << "Priority Target: #{priority_target}"
+    report << "Previous monthly distributions: #{eligible_judge_priority_distributions_this_month}"
 
     if appeals_not_distributed.values.flatten.any?
       add_stuck_appeals_to_report(report, appeals_not_distributed)
@@ -37,12 +45,9 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   def add_stuck_appeals_to_report(report, appeals)
-    report << "[WARN]"
+    report.unshift("[WARN]")
     report << "Legacy appeals not distributed: `LegacyAppeal.where(vacols_id: #{appeals[:legacy]})`"
     report << "AMA appeals not distributed: `Appeal.where(uuid: #{appeals.values.drop(1).flatten})`"
-    docket_coordinator.dockets.each do |docket_type, docket|
-      report << "Age of oldest #{docket_type} case: #{docket.oldest_priority_appeal_days_waiting} days"
-    end
     report << COPY::PRIORITY_PUSH_WARNING_MESSAGE
   end
 
