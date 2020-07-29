@@ -92,7 +92,7 @@ const StringUtil = {
   parseLinks(str = '', { target = '_blank' } = {}) {
     // From https://code.tutsplus.com/tutorials/8-regular-expressions-you-should-know--net-6149
     // eslint-disable-next-line no-useless-escape
-    const regex = /((https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?)/gi;
+    const regex = /((https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?)(?=\s)/gi;
 
     return DOMPurify.sanitize(str.replace(regex, `<a href="$&" ${target ? `target="${target}"` : ''}>$&</a>`));
   },
