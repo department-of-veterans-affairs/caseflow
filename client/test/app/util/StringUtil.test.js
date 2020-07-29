@@ -11,7 +11,7 @@ describe('StringUtil', () => {
 
     test('within other text, surrounded by spaces', () => {
       for (const link of links) {
-        const input = `foo ${links[0]} bar`;
+        const input = `foo ${link} bar`;
         const output = StringUtil.parseLinks(input);
         const expected = `foo <a href="${link}">${link}</a> bar`;
 
