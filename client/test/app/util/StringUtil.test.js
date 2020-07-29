@@ -13,7 +13,8 @@ describe('StringUtil', () => {
       for (const link of links) {
         const input = `foo ${link} bar`;
         const output = StringUtil.parseLinks(input);
-        const expected = `foo <a href="${link}">${link}</a> bar`;
+
+        const expected = `foo <a target="_blank" href="${link}">${link}</a> bar`;
 
         expect(output).toBe(expected);
       }
@@ -23,7 +24,19 @@ describe('StringUtil', () => {
       for (const link of links) {
         const input = `foo\n${link}\nbar`;
         const output = StringUtil.parseLinks(input);
-        const expected = `foo\n<a href="${link}">${link}</a>\nbar`;
+        const expected = `foo\n<a target="_blank" href="${link}">${link}</a>\nbar`;
+
+        expect(output).toBe(expected);
+      }
+    });
+
+    test('allows a custom target', () => {
+      const options = { target: '' };
+
+      for (const link of links) {
+        const input = `foo ${link} bar`;
+        const output = StringUtil.parseLinks(input, options);
+        const expected = `foo <a href="${link}">${link}</a> bar`;
 
         expect(output).toBe(expected);
       }
