@@ -12,7 +12,6 @@ import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../../../constants/HEARING
 import Table from '../../../components/Table';
 
 export class DailyDocketPrinted extends React.Component {
-
   componentDidMount() {
     window.onafterprint = () => window.close();
 
@@ -61,11 +60,9 @@ export class DailyDocketPrinted extends React.Component {
             <strong>Veteran:</strong> {veteranName}<br />
             <strong>Representative:</strong> {representativeName}<br />
             <strong>Location:</strong> {hearing.readableLocation}<br />
-            {hearing.readableRequestType !== 'Central' &&
-              <span>
-                <strong>Type:</strong> {hearing.isVirtual ? 'Virtual' : hearing.readableRequestType}<br />
-              </span>
-            }
+            <span>
+              <strong>Type:</strong> {hearing.isVirtual ? 'Virtual' : hearing.readableRequestType}<br />
+            </span>
             {hearing.notes &&
               <span><strong>Notes:</strong> {hearing.notes}</span>
             }
@@ -106,7 +103,8 @@ export class DailyDocketPrinted extends React.Component {
         <Table
           columns={this.getTableColumns()}
           rowObjects={currentHearings}
-          slowReRendersAreOk />
+          slowReRendersAreOk
+        />
 
         {_.size(previousHearings) > 0 &&
           <div>
@@ -115,7 +113,8 @@ export class DailyDocketPrinted extends React.Component {
             <Table
               columns={this.getTableColumns()}
               rowObjects={previousHearings}
-              slowReRendersAreOk />
+              slowReRendersAreOk
+            />
           </div>
         }
       </AppSegment>
