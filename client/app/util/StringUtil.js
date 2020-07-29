@@ -95,6 +95,9 @@ const StringUtil = {
    * @param {object} options allows setting of target
    */
   parseLinks(str = '', { target = '_blank' } = {}) {
+    // Original regex from https://code.tutsplus.com/tutorials/8-regular-expressions-you-should-know--net-6149
+    // Modified by @nanotone to better deal with whitespace:
+    // https://github.com/department-of-veterans-affairs/caseflow/pull/14788
     // eslint-disable-next-line
     const regex = /(https?:\/\/|\b)[-\da-z.]+\.[a-z]{2,6}\/\S*/gi;
 
