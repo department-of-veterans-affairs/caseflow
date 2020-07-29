@@ -9,6 +9,7 @@ module Seeds
       create_previous_distribtions
       create_cases_tied_to_judges
       create_genpop_cases
+      create_errorable_cases
     end
 
     private
@@ -41,11 +42,8 @@ module Seeds
       create_evidence_submission_genpop_cases
     end
 
-    def create_nonready_priority_genpop_cases
-      create_legacy_nonready_priority_genpop_cases
-      create_ama_hearing_nonready_priority_genpop_cases
-      create_direct_review_nonready_priority_genpop_cases
-      create_evidence_submission_nonready_priority_genpop_cases
+    def create_errorable_cases
+      create_legacy_appeal_with_previous_distribution
     end
 
     def create_legacy_cases_tied_to_judge(judge)
@@ -58,6 +56,13 @@ module Seeds
       create_hearing_ready_priority_cases_tied_to_judge(judge)
       create_hearing_nonready_priority_cases_tied_to_judge(judge)
       create_hearing_ready_nonpriority_cases_tied_to_judge(judge)
+    end
+
+    def create_nonready_priority_genpop_cases
+      create_legacy_nonready_priority_genpop_cases
+      create_ama_hearing_nonready_priority_genpop_cases
+      create_direct_review_nonready_priority_genpop_cases
+      create_evidence_submission_nonready_priority_genpop_cases
     end
 
     def create_legacy_genpop_cases
@@ -330,6 +335,30 @@ module Seeds
           :ready_for_distribution
         )
       end
+    end
+
+    def create_legacy_appeal_with_previous_distribution
+      vacols_case = FactoryBot.create(
+        :case,
+        :aod,
+        :ready_for_distribution,
+        bfkey: random_key,
+        correspondent: FactoryBot.create(:correspondent, stafkey: random_key)
+      )
+      FactoryBot.create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case)
+
+      distribution = FactoryBot.build(:distribution, :priority, :completed, :this_month, judge: User.third)
+      distribution.save!(validate: false)
+
+      distribution.distributed_cases.create(
+        case_id: vacols_case.bfkey,
+        priority: false,
+        docket: "legacy",
+        ready_at: VacolsHelper.normalize_vacols_datetime(vacols_case.bfdloout),
+        docket_index: "123",
+        genpop: false,
+        genpop_query: "any"
+      )
     end
 
     def judges_with_tied_cases
