@@ -174,8 +174,7 @@ module Seeds
       )
 
       root_task = appeal.root_task
-      judge = create(:user, station_id: 101, full_name: "Apurva Judge_CaseAtDispatch Wakefield")
-      create(:staff, :judge_role, user: judge)
+      judge = User.find_by(css_id: "BVAAWAKEFIELD")
       judge_task = create(
         :ama_judge_decision_review_task,
         assigned_to: judge,
@@ -183,8 +182,7 @@ module Seeds
         parent: root_task
       )
 
-      atty = create(:user, station_id: 101, full_name: "Andy Attorney_CaseAtDispatch Belanger")
-      create(:staff, :attorney_role, user: atty)
+      atty = User.find_by(css_id: "BVAABELANGER")
       atty_task = create(
         :ama_attorney_task,
         :in_progress,
@@ -193,9 +191,6 @@ module Seeds
         parent: judge_task,
         appeal: appeal
       )
-
-      judge_team = JudgeTeam.create_for_judge(judge)
-      judge_team.add_user(atty)
 
       appeal.request_issues.each do |request_issue|
         create(
