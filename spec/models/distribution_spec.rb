@@ -34,41 +34,29 @@ describe Distribution, :all_dbs do
 
     let(:legacy_priority_count) { 14 }
 
-    let!(:legacy_priority_cases) do
-      (1..legacy_priority_count).map do |i|
-        create(
-          :case,
-          :aod,
-          bfd19: 1.year.ago,
-          bfac: "1",
-          bfmpro: "ACT",
-          bfcurloc: "81",
-          bfdloout: i.days.ago,
-          folder: build(
-            :folder,
-            tinum: "1801#{format('%<index>03d', index: i)}",
-            titrnum: "123456789S"
-          )
+    def create_legacy_case(index, traits = nil)
+      create(
+        :case,
+        *traits,
+        bfd19: 1.year.ago,
+        bfac: "1",
+        bfmpro: "ACT",
+        bfcurloc: "81",
+        bfdloout: index.days.ago,
+        folder: build(
+          :folder,
+          tinum: "1801#{format('%<index>03d', index: index)}",
+          titrnum: "123456789S"
         )
-      end
+      )
+    end
+
+    let!(:legacy_priority_cases) do
+      (1..legacy_priority_count).map { |i| create_legacy_case(i, :aod) }
     end
 
     let!(:legacy_nonpriority_cases) do
-      (15..100).map do |i|
-        create(
-          :case,
-          bfd19: 1.year.ago,
-          bfac: "1",
-          bfmpro: "ACT",
-          bfcurloc: "81",
-          bfdloout: i.days.ago,
-          folder: build(
-            :folder,
-            tinum: "1801#{format('%<index>03d', index: i)}",
-            titrnum: "123456789S"
-          )
-        )
-      end
+      (15..100).map { |i| create_legacy_case(i) }
     end
 
     def create_legacy_case_hearing_for(appeal, board_member: judge.vacols_attorney_id)
