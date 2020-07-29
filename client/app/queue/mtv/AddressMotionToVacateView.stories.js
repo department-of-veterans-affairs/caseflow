@@ -12,6 +12,26 @@ const appealId = uuidv4();
 const taskId = '1';
 const appeal = {
   externalId: appealId,
+  issues: [
+    { id: 1, program: 'compensation', description: 'issue description' },
+    { id: 2, program: 'compensation', description: 'issue description 2' },
+  ],
+  decisionIssues: [
+    {
+      id: 1,
+      disposition: 'allowed',
+      description: 'Decision issue 1',
+      benefit_type: 'compensation',
+      request_issue_ids: [1],
+    },
+    {
+      id: 2,
+      disposition: 'allowed',
+      description: 'Decision issue 2',
+      benefit_type: 'compensation',
+      request_issue_ids: [2],
+    },
+  ],
   veteranFullName: 'John Doe',
   veteranFileNumber: '123456789',
   veteranInfo: {
