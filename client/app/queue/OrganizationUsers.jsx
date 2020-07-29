@@ -15,16 +15,26 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 
-const buttonStyle = css({ margin: '.5rem 0 3rem',
+const userStyle = css({
+  margin: '.5rem 0 2rem',
   borderBottom: '1rem solid gray',
-  borderWidth: '1px' });
-const topUserStyle = css({ marginTop: '2rem',
+  borderWidth: '1px',
+  paddingBottom: '1rem'
+});
+const topUserStyle = css({
+  margin: '2rem 0 2rem',
   borderTop: '1rem solid gray',
   borderWidth: '1px',
-  paddingTop: '2.5rem' });
-const buttonPaddingStyle = css({ marginRight: '1rem',
+  padding: '2.5rem 0 1.5rem',
+});
+const buttonPaddingStyle = css({
+  paddingLeft: '1.5rem',
   display: 'inline-block',
-  height: '6rem' });
+  height: '4.5rem'
+});
+const headingStyle = css({
+  paddingLeft: '1.4rem'
+});
 
 export default class OrganizationUsers extends React.PureComponent {
   constructor(props) {
@@ -39,8 +49,6 @@ export default class OrganizationUsers extends React.PureComponent {
       error: null,
       addingUser: null,
       removingUser: {},
-      changingAdminRights: {},
-      changingDecisionDrafting: {}
     };
   }
 
@@ -137,66 +145,6 @@ export default class OrganizationUsers extends React.PureComponent {
     });
   }
 
-  modifyUser = (user, flagName) => {
-    this.setState({
-      [flagName]: { ...this.state[flagName],
-        [user.id]: true }
-    });
-  }
-
-  modifyUserSuccess = (response, user, flagName) => {
-    const updatedUser = response.body.users.data[0];
-    // Replace the existing version of the user so it has the updated attributes
-    const updatedUserList = this.state.organizationUsers.map((existingUser) => {
-      return (existingUser.id === updatedUser.id) ? updatedUser : existingUser;
-    });
-
-    this.setState({
-      organizationUsers: updatedUserList,
-      [flagName]: { ...this.state[flagName],
-        [user.id]: false }
-    });
-  }
-
-  modifyUserError = (title, body, user, flagName) => {
-    this.setState({
-      [flagName]: { ...this.state[flagName],
-        [user.id]: false },
-      error: {
-        title,
-        body
-      }
-    });
-  }
-
-  modifyAdminRights = (user, adminFlag) => () => {
-    const flagName = 'changingAdminRights';
-
-    this.modifyUser(user, flagName);
-
-    const payload = { data: { admin: adminFlag } };
-
-    ApiUtil.patch(`/organizations/${this.props.organization}/users/${user.id}`, payload).then((response) => {
-      this.modifyUserSuccess(response, user, flagName);
-    }, (error) => {
-      this.modifyUserError(COPY.USER_MANAGEMENT_ADMIN_RIGHTS_CHANGE_ERROR_TITLE, error.message, user, flagName);
-    });
-  }
-
-  modifyDecisionDrafting = (user, attorneyFlag) => () => {
-    const flagName = 'changingDecisionDrafting';
-
-    this.modifyUser(user, flagName);
-
-    const payload = { data: { attorney: attorneyFlag } };
-
-    ApiUtil.patch(`/organizations/${this.props.organization}/users/${user.id}`, payload).then((response) => {
-      this.modifyUserSuccess(response, user, flagName);
-    }, (error) => {
-      this.modifyUserError(COPY.USER_MANAGEMENT_DECISION_DRAFTING_CHANGE_ERROR_TITLE, error.message, user, flagName);
-    });
-  }
-
   asyncLoadUser = (inputValue) => {
     // don't search till we have min length input
     if (inputValue.length < 2) {
@@ -214,22 +162,6 @@ export default class OrganizationUsers extends React.PureComponent {
     });
   }
 
-  decisionDraftingButton = (user, attorney) =>
-    <span {...buttonPaddingStyle}><Button
-      name={attorney ? COPY.USER_MANAGEMENT_DISABLE_DECISION_DRAFTING_BUTTON_TEXT : COPY.USER_MANAGEMENT_ENABLE_DECISION_DRAFTING_BUTTON_TEXT}
-      id={attorney ? `Disable-decision-drafting-${user.id}` : `Enable-decision-drafting-${user.id}`}
-      classNames={attorney ? ['usa-button-secondary'] : ['usa-button-primary']}
-      loading={this.state.changingDecisionDrafting[user.id]}
-      onClick={this.modifyDecisionDrafting(user, !attorney)} /></span>
-
-  adminButton = (user, admin) =>
-    <span {...buttonPaddingStyle}><Button
-      name={admin ? COPY.USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT : COPY.USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT}
-      id={admin ? `Remove-admin-rights-${user.id}` : `Add-team-admin-${user.id}`}
-      classNames={admin ? ['usa-button-secondary'] : ['usa-button-primary']}
-      loading={this.state.changingAdminRights[user.id]}
-      onClick={this.modifyAdminRights(user, !admin)} /></span>
-
   removeUserButton = (user) =>
     <span {...buttonPaddingStyle}><Button
       name={COPY.USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT}
@@ -245,14 +177,13 @@ export default class OrganizationUsers extends React.PureComponent {
       const topStyle = i === 0 ? topUserStyle : {};
 
       return <React.Fragment>
-        <li key={user.id} {...topStyle}>{this.formatName(user)}
-          { judgeTeam && judge && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
-          { judgeTeam && attorney && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
-          { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> } &nbsp;</li>
-        <div {...buttonStyle}>
-          { judgeTeam && !judge && this.decisionDraftingButton(user, attorney) }
-          { this.adminButton(user, admin) }
-          { this.removeUserButton(user) }
+        <div {...userStyle}>
+          <li key={user.id} {...topStyle}>{this.formatName(user)}
+            { judgeTeam && judge && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
+            { judgeTeam && attorney && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
+            { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
+            { !admin && this.removeUserButton(user) }
+          </li>
         </div>
       </React.Fragment>;
     });
@@ -278,11 +209,7 @@ export default class OrganizationUsers extends React.PureComponent {
         { judgeTeam &&
             <div>
               <h2>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h2>
-              <ul>
-                <li><strong>{COPY.USER_MANAGEMENT_DECISION_DRAFTING_HEADING}</strong>{COPY.USER_MANAGEMENT_DECISION_DRAFTING_DESCRIPTION}</li>
-                <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li>
-                <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION}</li>
-              </ul>
+              <ul {...headingStyle}><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION}</ul>
             </div>
         }
         <ul>{listOfUsers}</ul>
