@@ -80,7 +80,7 @@ export const amaHearing = {
   regionalOfficeName: 'Central',
   regionalOfficeTimezone: 'America/New_York',
   representative: 'Attorney McAttorneyFace',
-  representativeName: null,
+  representativeName: 'PARALYZED VETERANS OF AMERICA, INC.',
   representativeEmailAddress: 'tom.brady@caseflow.gov',
   representativeTz: 'America/Denver',
   room: '2',

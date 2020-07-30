@@ -807,5 +807,6 @@
   "VLJ_VIRTUAL_HEARINGS_LINK_TEXT": "Start Virtual Hearing",
   "GUEST_VIRTUAL_HEARINGS_LINK_TEXT": "Join Virtual Hearing",
 
-  "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s."
+  "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s.",
+  "NO_REPRESENTATIVE_IN_VBMS": ""
 }
