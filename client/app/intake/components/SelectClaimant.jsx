@@ -83,7 +83,7 @@ export const SelectClaimant = (props) => {
     veteranIsNotClaimant,
     attorneyFees
   ]);
-  const handleVeteranIsNotClaimant = (value) => {
+  const handleVeteranIsNotClaimantChange = (value) => {
     const boolValue = convertStringToBoolean(value);
 
     setVeteranIsNotClaimant(boolValue);
@@ -149,7 +149,7 @@ export const SelectClaimant = (props) => {
     // disable veteran claimant option if veteran is deceased
     veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE;
     // set claimant value to someone other than the veteran
-    handleVeteranIsNotClaimant('true');
+    setVeteranIsNotClaimant(true);
   }
 
   return (
@@ -160,7 +160,7 @@ export const SelectClaimant = (props) => {
         strongLabel
         vertical
         options={veteranClaimantOptions}
-        onChange={handleVeteranIsNotClaimant}
+        onChange={handleVeteranIsNotClaimantChange}
         errorMessage={veteranIsNotClaimantError}
         value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant.toString()}
       />
