@@ -37,7 +37,7 @@ class AssignHearingModal extends React.PureComponent {
   }
 
   componentDidMount = () => {
-    const { appeal, openHearing } = this.props;
+    const { openHearing } = this.props;
 
     if (openHearing) {
       this.props.showErrorMessage({
@@ -100,9 +100,9 @@ class AssignHearingModal extends React.PureComponent {
       }
     };
 
-    return this.props
-      .requestPatch(`/tasks/${scheduleHearingTask.taskId}`, payload, this.getSuccessMsg())
-      .then(
+    return this.props.
+      requestPatch(`/tasks/${scheduleHearingTask.taskId}`, payload, this.getSuccessMsg()).
+      then(
         () => {
           history.goBack();
 
@@ -192,7 +192,7 @@ class AssignHearingModal extends React.PureComponent {
     return (
       <QueueFlowModal
         submit={this.completeScheduleHearingTask}
-        submitDisabled={!!openHearing}
+        submitDisabled={Boolean(openHearing)}
         validateForm={this.validateForm}
         title="Schedule Veteran"
         button="Schedule"
