@@ -54,15 +54,18 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   # Distribute all priority cases tied to a judge without limit
   def distribute_non_genpop_priority_appeals
     eligible_judges.map do |judge|
-      Distribution.create!(judge: judge, priority_push: true).tap(&:distribute!)
+      Distribution.create!(judge: User.find(judge.id), priority_push: true).tap(&:distribute!)
     end
   end
 
   # Distribute remaining general population cases while attempting to even out the number of priority cases all judges
   # have received over one month
   def distribute_genpop_priority_appeals
-    eligible_judge_target_distributions_with_leftovers.map do |judge, target|
-      Distribution.create!(judge: judge, priority_push: true).tap { |distribution| distribution.distribute!(target) }
+    eligible_judge_target_distributions_with_leftovers.map do |judge_id, target|
+      Distribution.create!(
+        judge: User.find(judge_id),
+        priority_push: true
+      ).tap { |distribution| distribution.distribute!(target) }
     end
   end
 
@@ -70,12 +73,12 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   # as these are the final counts to distribute remaining ready priority cases
   def eligible_judge_target_distributions_with_leftovers
     leftover_cases = leftover_cases_count
-    eligible_judge_target_distributions.sort_by(&:last).map do |judge, target|
+    eligible_judge_target_distributions.sort_by(&:last).map do |judge_id, target|
       if leftover_cases > 0
         leftover_cases -= 1
         target += 1
       end
-      (target > 0) ? [judge, target] : nil
+      (target > 0) ? [judge_id, target] : nil
     end.compact.to_h
   end
 
@@ -88,9 +91,9 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   # Calculate the number of cases a judge should receive based on the priority target. Don't toss out judges with 0 as
   # they could receive some of the leftover cases (if any)
   def eligible_judge_target_distributions
-    eligible_judge_priority_distributions_this_month.map do |judge, distributions_this_month|
+    eligible_judge_priority_distributions_this_month.map do |judge_id, distributions_this_month|
       target = priority_target - distributions_this_month
-      (target >= 0) ? [judge, target] : nil
+      (target >= 0) ? [judge_id, target] : nil
     end.compact.to_h
   end
 
@@ -120,7 +123,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   # Number of priority distributions every eligible judge has received in the last month
   def eligible_judge_priority_distributions_this_month
-    eligible_judges.map { |judge| [judge, judge_priority_distributions_this_month[judge.id] || 0] }.to_h
+    eligible_judges.map { |judge| [judge.id, judge_priority_distributions_this_month[judge.id] || 0] }.to_h
   end
 
   def eligible_judges
