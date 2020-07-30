@@ -220,7 +220,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     before do
       allow_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:eligible_judge_priority_distributions_this_month).and_return(
-          judges.each_with_index.map { |judge, i| [judge, judge_distributions_this_month[i]] }.to_h
+          judges.each_with_index.map { |judge, i| [judge.id, judge_distributions_this_month[i]] }.to_h
         )
     end
 
@@ -683,8 +683,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       ].each do |ineligible_judge|
         expect(subject[ineligible_judge]).to be nil
       end
-      expect(subject[judge_with_team_and_distributions]).to eq distributions_for_valid_judge
-      expect(subject[judge_with_team_without_distributions]).to eq 0
+      expect(subject[judge_with_team_and_distributions.id]).to eq distributions_for_valid_judge
+      expect(subject[judge_with_team_without_distributions.id]).to eq 0
     end
   end
 
