@@ -21,9 +21,9 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   def slack_report
     report = []
     report << "*Number of cases tied to judges distributed*: " \
-              "#{@tied_distributions.map { |stats| stats['batch_size'] }.sum}"
+              "#{@tied_distributions.map { |distribution| distribution.statistics['batch_size'] }.sum}"
     report << "*Number of general population cases distributed*: " \
-              "#{@genpop_distributions.map { |stats| stats['batch_size'] }.sum}"
+              "#{@genpop_distributions.map { |distribution| distribution.statistics['batch_size'] }.sum}"
 
     appeals_not_distributed = docket_coordinator.dockets.map do |docket_type, docket|
       report << "*Age of oldest #{docket_type} case*: #{docket.oldest_priority_appeal_days_waiting} days"
