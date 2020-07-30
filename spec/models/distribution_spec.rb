@@ -192,7 +192,7 @@ describe Distribution, :all_dbs do
         legacy_nonpriority_cases[34..(34 + to_add - 1)].map { |appeal| create_legacy_case_hearing_for(appeal) }
       end
 
-      fcontext "the judge's backlog has more than #{BACKLOG_LIMIT} legacy hearing non priority cases" do
+      context "the judge's backlog has more than #{BACKLOG_LIMIT} legacy hearing non priority cases" do
         let(:total_tied_nonpriority_hearings) { BACKLOG_LIMIT + 5 }
 
         it "distributes legacy hearing non priority cases down to #{BACKLOG_LIMIT}" do
