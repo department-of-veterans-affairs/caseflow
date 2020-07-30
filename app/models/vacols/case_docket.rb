@@ -144,7 +144,6 @@ class VACOLS::CaseDocket < VACOLS::Record
         from BRIEFF
         #{JOIN_MAIL_BLOCKS_DISTRIBUTION}
         #{JOIN_DIARY_BLOCKS_DISTRIBUTION}
-        from BRIEFF
         left join (
           select TSKTKNM, count(*) CNT
           from ASSIGN

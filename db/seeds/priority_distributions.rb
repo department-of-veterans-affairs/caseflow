@@ -347,14 +347,20 @@ module Seeds
       )
       FactoryBot.create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case)
 
-      distribution = FactoryBot.build(:distribution, :priority, :completed, :this_month, judge: User.third)
+      create_distribution_for_case_id(vacols_case.bfkey)
+    end
+
+    def create_distribution_for_case_id(case_id)
+      distribution = FactoryBot.build(
+        :distribution, :priority, :completed, :this_month, judge: User.third, statistics: { "batch_size" => rand(10) }
+      )
       distribution.save!(validate: false)
 
       distribution.distributed_cases.create(
         case_id: vacols_case.bfkey,
-        priority: false,
+        priority: case_id,
         docket: "legacy",
-        ready_at: VacolsHelper.normalize_vacols_datetime(vacols_case.bfdloout),
+        ready_at: Time.zone.now,
         docket_index: "123",
         genpop: false,
         genpop_query: "any"
