@@ -221,6 +221,7 @@ FactoryBot.define do
     trait :ready_for_distribution do
       status_active
       bfcurloc { "81" }
+      bfd19 { 1.year.ago.to_date }
     end
 
     trait :status_remand do

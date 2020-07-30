@@ -15,8 +15,8 @@ module Seeds
     private
 
     def organize_judges
-      JudgeTeam.find_by(name: "BVAACTING").inactive!
-      JudgeTeam.find_by(name: "BVAAWAKEFIELD").update!(accepts_priority_pushed_cases: false)
+      JudgeTeam.find_by(name: "BVAACTING")&.destroy!
+      JudgeTeam.find_by(name: "BVAAWAKEFIELD")&.update!(accepts_priority_pushed_cases: false)
     end
 
     def create_previous_distribtions
@@ -90,35 +90,38 @@ module Seeds
     end
 
     def create_priority_distribution_this_month(judge)
-      build(
+      distribution = FactoryBot.build(
         :distribution,
         :priority,
-        :completed,
         :this_month,
         judge: judge,
         statistics: { "batch_size" => rand(10) }
-      ).save(validate: false)
+      )
+      distribution.save(validate: false)
+      distribution.completed!
     end
 
     def create_priority_distribution_last_month(judge)
-      build(
+      distribution = FactoryBot.build(
         :distribution,
         :priority,
-        :completed,
         :last_month,
         judge: judge,
         statistics: { "batch_size" => rand(10) }
-      ).save(validate: false)
+      )
+      distribution.save(validate: false)
+      distribution.completed!
     end
 
     def create_nonpriority_distribution_this_month(judge)
-      build(
+      distribution = FactoryBot.build(
         :distribution,
-        :completed,
         :this_month,
         judge: judge,
         statistics: { "batch_size" => rand(10) }
-      ).save(validate: false)
+      )
+      distribution.save(validate: false)
+      distribution.completed!
     end
 
     def create_legacy_ready_priority_cases_tied_to_judge(judge)
@@ -307,8 +310,8 @@ module Seeds
     end
 
     def create_evidence_submission_ready_priority_genpop_cases
-      rand(50).times do
-        create(
+      rand(10).times do
+        FactoryBot.create(
           :appeal,
           :evidence_submission_docket,
           :ready_for_distribution,
@@ -338,26 +341,27 @@ module Seeds
     end
 
     def create_legacy_appeal_with_previous_distribution
-      vacols_case = FactoryBot.create(
+      vacols_case = create(
         :case,
         :aod,
         :ready_for_distribution,
-        bfkey: random_key,
-        correspondent: FactoryBot.create(:correspondent, stafkey: random_key)
+        bfkey: "91847124",
+        correspondent: create(:correspondent, stafkey: "91847124")
       )
-      FactoryBot.create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case)
+      create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case)
 
       create_distribution_for_case_id(vacols_case.bfkey)
     end
 
     def create_distribution_for_case_id(case_id)
-      distribution = FactoryBot.build(
+      distribution = build(
         :distribution, :priority, :completed, :this_month, judge: User.third, statistics: { "batch_size" => rand(10) }
       )
       distribution.save!(validate: false)
+      distribution.completed!
 
       distribution.distributed_cases.create(
-        case_id: vacols_case.bfkey,
+        case_id: case_id,
         priority: case_id,
         docket: "legacy",
         ready_at: Time.zone.now,
