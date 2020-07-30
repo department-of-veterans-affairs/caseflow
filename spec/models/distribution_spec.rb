@@ -215,7 +215,7 @@ describe Distribution, :all_dbs do
         end
       end
 
-      fcontext "the judge's backlog has less than #{BACKLOG_LIMIT} legacy hearing non priority cases" do
+      context "the judge's backlog has less than #{BACKLOG_LIMIT} legacy hearing non priority cases" do
         let(:total_tied_nonpriority_hearings) { BACKLOG_LIMIT - 5 }
 
         it "distributes legacy hearing non priority cases down to #{BACKLOG_LIMIT}" do
