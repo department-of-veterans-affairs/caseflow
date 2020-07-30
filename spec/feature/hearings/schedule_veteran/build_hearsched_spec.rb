@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
+RSpec.feature "Schedule Veteran For A Hearing" do
   let!(:current_user) do
     user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
     User.authenticate!(user: user)
@@ -561,7 +561,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       )
     end
 
-    scenario "shows an error message in the schedule veteran's modal", focus: true do
+    scenario "shows an error message in the schedule veteran's modal" do
       visit "queue/appeals/#{appeal.external_id}"
       # Expected dropdowns on page:
       #   [0] - Assign disposition task
