@@ -185,25 +185,62 @@ describe Distribution, :all_dbs do
       before { FeatureToggle.enable!(:priority_acd) }
       after { FeatureToggle.disable!(:priority_acd) }
 
-      let!(:more_same_judge_nonpriority_hearings) do
-        legacy_nonpriority_cases[34..63].map { |appeal| create_legacy_case_hearing_for(appeal) }
+      BACKLOG_LIMIT = VACOLS::CaseDocket::HEARING_BACKLOG_LIMIT
+
+      let(:nonpriority_cases_for_judge_count) do
+        same_judge_nonpriority_hearings.count + more_same_judge_nonpriority_hearings.count
       end
 
-      BACKLOG_LIMIT = 30
+      context "more than #{BACKLOG_LIMIT} legacy hearing non priority cases" do
+        let!(:more_same_judge_nonpriority_hearings) do
+          legacy_nonpriority_cases[34..63].map { |appeal| create_legacy_case_hearing_for(appeal) }
+        end
 
-      it "distributes legacy hearing non priority cases down to #{BACKLOG_LIMIT}" do
-        nonpriority_cases_for_judge = same_judge_nonpriority_hearings.count + more_same_judge_nonpriority_hearings.count
-        expect(VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge)).to eq nonpriority_cases_for_judge
-        subject.distribute!
+        it "distributes legacy hearing non priority cases down to #{BACKLOG_LIMIT}" do
+          expect(VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge))
+            .to eq nonpriority_cases_for_judge_count
+          subject.distribute!
 
-        expect(subject.valid?).to eq(true)
-        expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(BACKLOG_LIMIT)
-        dcs_legacy = subject.distributed_cases.where(docket: "legacy")
-        judge_tied_leg_distributions = nonpriority_cases_for_judge - BACKLOG_LIMIT
-        expect(dcs_legacy.where(priority: false, genpop_query: "not_genpop").count).to eq judge_tied_leg_distributions
-        expect(dcs_legacy.where(priority: true, genpop_query: "not_genpop").count).to eq(2)
-        expect(dcs_legacy.where(priority: true, genpop_query: "any").count).to eq(2)
-        expect(dcs_legacy.count).to be >= 8
+          expect(subject.valid?).to eq(true)
+          expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(BACKLOG_LIMIT)
+          dcs_legacy = subject.distributed_cases.where(docket: "legacy")
+
+          # distributions reliant on BACKLOG_LIMIT
+          judge_tied_leg_distributions = nonpriority_cases_for_judge - BACKLOG_LIMIT
+          expect(dcs_legacy.where(priority: false, genpop_query: "not_genpop").count).to eq judge_tied_leg_distributions
+
+          # distributions after handling BACKLOG_LIMIT
+          expect(dcs_legacy.where(priority: true, genpop_query: "not_genpop").count).to eq(2)
+          expect(dcs_legacy.where(priority: true, genpop_query: "any").count).to eq(2)
+          expect(dcs_legacy.count).to be >= 8
+        end
+      end
+
+      context "less than #{BACKLOG_LIMIT} legacy hearing non priority cases" do
+        let!(:more_same_judge_nonpriority_hearings) do
+          legacy_nonpriority_cases[34..43].map { |appeal| create_legacy_case_hearing_for(appeal) }
+        end
+
+        it "distributes legacy hearing non priority cases down to #{BACKLOG_LIMIT}" do
+          expect(VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge))
+            .to eq nonpriority_cases_for_judge_count
+          subject.distribute!
+
+          expect(subject.valid?).to eq(true)
+          dcs_legacy = subject.distributed_cases.where(docket: "legacy")
+
+          # distributions reliant on BACKLOG_LIMIT
+          expect(dcs_legacy.where(priority: false, genpop_query: "not_genpop").count).to eq(0)
+
+          # distributions after handling BACKLOG_LIMIT
+          remaining_in_backlog = nonpriority_cases_for_judge_count -
+                                 dcs_legacy.where(priority: false, genpop: false).count
+          expect(subject.statistics["legacy_hearing_backlog_count"]).to eq remaining_in_backlog
+
+          expect(dcs_legacy.where(priority: true, genpop_query: "not_genpop").count).to eq(2)
+          expect(dcs_legacy.where(priority: true, genpop_query: "any").count).to eq(2)
+          expect(dcs_legacy.count).to be >= 8
+        end
       end
     end
 
@@ -227,7 +264,7 @@ describe Distribution, :all_dbs do
       end
     end
 
-    context "when an illegit nonpriority legacy case re-distribtution is attempted" do
+    context "when an illegit nonpriority legacy case re-distribution is attempted" do
       let(:case_id) { legacy_case.bfkey }
       let(:legacy_case) { legacy_nonpriority_cases.first }
 
@@ -250,7 +287,7 @@ describe Distribution, :all_dbs do
       end
     end
 
-    context "when a legit nonpriority legacy case re-distribtution is attempted" do
+    context "when a legit nonpriority legacy case re-distribution is attempted" do
       let(:case_id) { legacy_case.bfkey }
       let(:legacy_case) { legacy_nonpriority_cases.first }
       let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case) }
@@ -287,7 +324,7 @@ describe Distribution, :all_dbs do
       )
     end
 
-    context "when an illegit priority legacy case re-distribtution is attempted" do
+    context "when an illegit priority legacy case re-distribution is attempted" do
       let(:case_id) { legacy_case.bfkey }
       let(:legacy_case) { legacy_priority_cases.last }
 
@@ -310,7 +347,7 @@ describe Distribution, :all_dbs do
       end
     end
 
-    context "when a legit priority legacy case re-distribtution is attempted" do
+    context "when a legit priority legacy case re-distribution is attempted" do
       let(:case_id) { legacy_case.bfkey }
       let(:legacy_case) { legacy_priority_cases.last }
       let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case) }
