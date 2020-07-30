@@ -292,8 +292,10 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     subject { job.slack_report }
 
     before do
-      job.instance_variable_set(:@tied_distributions, (0...5).map { |count| { "batch_size" => count } })
-      job.instance_variable_set(:@genpop_distributions, (0...5).map { |count| { "batch_size" => count } })
+      job.instance_variable_set(:@tied_distributions, (0...5).map { |count| { statistics: { "batch_size" => count } } })
+      job.instance_variable_set(
+        :@genpop_distributions, (0...5).map { |count| { statistics: { "batch_size" => count } } }
+      )
       allow_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:eligible_judge_priority_distributions_this_month).and_return(previous_distributions)
       allow_any_instance_of(DocketCoordinator).to receive(:priority_count).and_return(20)
