@@ -1135,7 +1135,8 @@ class LegacyAppeal < CaseflowRecord
     end
 
     def rollback_opt_in_on_decided_appeal(appeal:, user:, original_data:)
-      return unless appeal.disposition == "AMA SOC/SSOC Opt-in"
+      opt_in_disposition = Constants::VACOLS_DISPOSITIONS_BY_ID[LegacyIssueOptin::VACOLS_DISPOSITION_CODE]
+      return unless appeal.disposition == opt_in_disposition
 
       repository.rollback_opt_in_on_decided_appeal!(
         appeal: appeal,
