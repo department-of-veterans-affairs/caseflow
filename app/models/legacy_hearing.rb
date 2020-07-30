@@ -67,7 +67,7 @@ class LegacyHearing < CaseflowRecord
 
   delegate :veteran_age, :veteran_gender, :vbms_id, :representative_address, :number_of_documents,
            :number_of_documents_after_certification, :appellant_tz, :representative_tz,
-           :representative_type, :representative_name, :veteran, :veteran_file_number, :docket_name,
+           :representative_type, :veteran, :veteran_file_number, :docket_name,
            :closest_regional_office, :available_hearing_locations, :veteran_email_address,
            :appellant_address, :appellant_address_line_1, :appellant_address_line_2, :appellant_city,
            :appellant_country, :appellant_state, :appellant_zip, :appellant_email_address,

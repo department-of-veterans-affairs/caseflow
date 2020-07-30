@@ -109,7 +109,7 @@ export const HearingConversion = ({
           <React.Fragment>
             <AddressLine
               label={hearing?.representativeType}
-              name={hearing?.representativeName}
+              name={hearing?.representativeName || hearing?.representative}
               addressLine1={hearing?.representativeAddress?.addressLine1}
               addressState={hearing?.representativeAddress?.state}
               addressCity={hearing?.representativeAddress?.city}
