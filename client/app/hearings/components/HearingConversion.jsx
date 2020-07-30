@@ -31,6 +31,9 @@ export const HearingConversion = ({
 
   // Prefill appellant/veteran email address and representative email on mount.
   useEffect(() => {
+    // Focus the top of the page
+    window.scrollTo(0, 0);
+
     // Determine which email to use
     const appellantEmail = hearing.appellantIsNotVeteran ? hearing.appellantEmailAddress : hearing.veteranEmailAddress;
 
@@ -129,7 +132,7 @@ export const HearingConversion = ({
               readOnly={!virtual}
               emailType="representativeEmail"
               label="POA/Representative Email"
-              email={virtualHearing?.representativeEmail}
+              email={virtual ? virtualHearing?.representativeEmail : virtualHearing?.representativeEmail || 'None'}
               error={errors?.representativeEmail}
               type={type}
               update={update}
