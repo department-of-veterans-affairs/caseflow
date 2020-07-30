@@ -256,7 +256,7 @@ export const zoneName = (time, name) => {
   const [zone] = Object.keys(TIMEZONES).filter((tz) => TIMEZONES[tz] === timezone);
 
   // Return the value if it is not a valid time
-  return moment(time, 'h:mm A').isValid() ? `${moment(time, 'h:mm').tz(timezone).
+  return moment(time, 'h:mm A').isValid() ? `${moment(time, 'h:mm a').tz(timezone).
     format('h:mm A')} ${zone}` : time;
 };
 
