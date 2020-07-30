@@ -533,6 +533,46 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     end
   end
 
+  context "With an appeal where there is an open hearing" do
+    let(:regional_office) { "RO39" }
+    let(:hearing_day) do
+      create(
+        :hearing_day,
+        request_type: HearingDay::REQUEST_TYPES[:video],
+        scheduled_for: Time.zone.today + 160,
+        regional_office: regional_office
+      )
+    end
+    let(:appeal) do
+      create(
+        :appeal,
+        :hearing_docket,
+        :with_post_intake_tasks,
+        closest_regional_office: regional_office
+      )
+    end
+    let!(:hearing) do
+      create(
+        :hearing,
+        :with_tasks,
+        appeal: appeal,
+        hearing_day: hearing_day,
+        regional_office: regional_office
+      )
+    end
+
+    scenario "shows an error message in the schedule veteran's modal", focus: true do
+      visit "queue/appeals/#{appeal.external_id}"
+      # Expected dropdowns on page:
+      #   [0] - Assign disposition task
+      #   [1] - Schedule hearing task
+      within page.all(".cf-form-dropdown")[1] do
+        click_dropdown(text: "Schedule Veteran")
+      end
+      expect(page).to have_content("Open Hearing")
+    end
+  end
+
   context "No upcoming hearing days" do
     scenario "Show status message for empty upcoming hearing days" do
       visit "hearings/schedule/assign"
