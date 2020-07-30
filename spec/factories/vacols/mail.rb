@@ -6,12 +6,14 @@ FactoryBot.define do
 
     trait :blocking do
       mltype { "03" }
-      mlcompdate { nil }
     end
 
-    trait :non_blocking do
-      mltype { "03" }
+    trait :completed do
       mlcompdate { Time.zone.now.to_date }
+    end
+
+    trait :incomplete do
+      mlcompdate { nil }
     end
   end
 end

@@ -53,7 +53,7 @@ describe VACOLS::CaseDocket, :all_dbs do
       bfcurloc: "83",
       bfdloout: 1.day.ago,
       folder: build(:folder, tinum: another_nonpriority_ready_case_docket_number, titrnum: "123456789S")
-    ).tap { |vacols_case| create(:mail, :non_blocking, mlfolder: vacols_case.bfkey) }
+    ).tap { |vacols_case| create(:mail, :blocking, :completed, mlfolder: vacols_case.bfkey) }
   end
 
   let!(:nonpriority_unready_case) do
@@ -107,7 +107,7 @@ describe VACOLS::CaseDocket, :all_dbs do
            bfd19: 1.year.ago,
            bfac: "1",
            bfmpro: "ACT",
-           bfcurloc: "81").tap { |vacols_case| create(:mail, :blocking, mlfolder: vacols_case.bfkey) }
+           bfcurloc: "81").tap { |vacols_case| create(:mail, :blocking, :incomplete, mlfolder: vacols_case.bfkey) }
   end
 
   context ".counts_by_priority_and_readiness" do
