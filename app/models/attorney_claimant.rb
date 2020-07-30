@@ -8,6 +8,10 @@ class AttorneyClaimant < Claimant
 
   delegate :name, to: :bgs_attorney
 
+  def relationship
+    "Attorney"
+  end
+
   private
 
   def find_power_of_attorney

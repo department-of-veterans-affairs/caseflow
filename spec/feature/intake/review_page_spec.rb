@@ -282,7 +282,7 @@ feature "Intake Review Page", :postgres do
 
           let(:attorney) { attorneys.last }
 
-          it "allows adding new claimants" do
+          fit "allows adding new claimants" do
             appeal, _intake = start_appeal(
               veteran,
               claim_participant_id: claim_participant_id,
@@ -300,7 +300,7 @@ feature "Intake Review Page", :postgres do
             expect(page).to have_content("+ Add Claimant")
 
             add_existing_attorney(attorney)
-
+binding.pry
             # Verify that this can be removed
             find(".remove-item").click
             expect(page).to_not have_content("#{attorney.name}, Attorney")
