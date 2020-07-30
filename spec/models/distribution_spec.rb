@@ -181,24 +181,23 @@ describe Distribution, :all_dbs do
       expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.evidence_submission).count).to eq(2)
     end
 
-    context "with priority_acd on and the judge's backlog is full" do
+    context "with priority_acd on" do
       before { FeatureToggle.enable!(:priority_acd) }
       after { FeatureToggle.disable!(:priority_acd) }
 
       BACKLOG_LIMIT = VACOLS::CaseDocket::HEARING_BACKLOG_LIMIT
 
-      let(:nonpriority_cases_for_judge_count) do
-        same_judge_nonpriority_hearings.count + more_same_judge_nonpriority_hearings.count
+      let!(:more_same_judge_nonpriority_hearings) do
+        to_add = total_tied_nonpriority_hearings - same_judge_nonpriority_hearings.count
+        legacy_nonpriority_cases[34..(34 + to_add - 1)].map { |appeal| create_legacy_case_hearing_for(appeal) }
       end
 
-      context "more than #{BACKLOG_LIMIT} legacy hearing non priority cases" do
-        let!(:more_same_judge_nonpriority_hearings) do
-          legacy_nonpriority_cases[34..63].map { |appeal| create_legacy_case_hearing_for(appeal) }
-        end
+      fcontext "the judge's backlog has more than #{BACKLOG_LIMIT} legacy hearing non priority cases" do
+        let(:total_tied_nonpriority_hearings) { BACKLOG_LIMIT + 5 }
 
         it "distributes legacy hearing non priority cases down to #{BACKLOG_LIMIT}" do
           expect(VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge))
-            .to eq nonpriority_cases_for_judge_count
+            .to eq total_tied_nonpriority_hearings
           subject.distribute!
 
           expect(subject.valid?).to eq(true)
@@ -206,7 +205,7 @@ describe Distribution, :all_dbs do
           dcs_legacy = subject.distributed_cases.where(docket: "legacy")
 
           # distributions reliant on BACKLOG_LIMIT
-          judge_tied_leg_distributions = nonpriority_cases_for_judge - BACKLOG_LIMIT
+          judge_tied_leg_distributions = total_tied_nonpriority_hearings - BACKLOG_LIMIT
           expect(dcs_legacy.where(priority: false, genpop_query: "not_genpop").count).to eq judge_tied_leg_distributions
 
           # distributions after handling BACKLOG_LIMIT
@@ -216,14 +215,12 @@ describe Distribution, :all_dbs do
         end
       end
 
-      context "less than #{BACKLOG_LIMIT} legacy hearing non priority cases" do
-        let!(:more_same_judge_nonpriority_hearings) do
-          legacy_nonpriority_cases[34..43].map { |appeal| create_legacy_case_hearing_for(appeal) }
-        end
+      fcontext "the judge's backlog has less than #{BACKLOG_LIMIT} legacy hearing non priority cases" do
+        let(:total_tied_nonpriority_hearings) { BACKLOG_LIMIT - 5 }
 
         it "distributes legacy hearing non priority cases down to #{BACKLOG_LIMIT}" do
           expect(VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge))
-            .to eq nonpriority_cases_for_judge_count
+            .to eq total_tied_nonpriority_hearings
           subject.distribute!
 
           expect(subject.valid?).to eq(true)
@@ -233,7 +230,7 @@ describe Distribution, :all_dbs do
           expect(dcs_legacy.where(priority: false, genpop_query: "not_genpop").count).to eq(0)
 
           # distributions after handling BACKLOG_LIMIT
-          remaining_in_backlog = nonpriority_cases_for_judge_count -
+          remaining_in_backlog = total_tied_nonpriority_hearings -
                                  dcs_legacy.where(priority: false, genpop: false).count
           expect(subject.statistics["legacy_hearing_backlog_count"]).to eq remaining_in_backlog
 
