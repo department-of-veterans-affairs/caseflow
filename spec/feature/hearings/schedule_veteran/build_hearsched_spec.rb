@@ -109,8 +109,9 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     end
     let!(:veteran) { create(:veteran, file_number: "123456789") }
     let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
+    let(:room_label) { HearingDayMapper.label_for_room(hearing_day.room) }
 
-    scenario "Schedule Veteran for video" do
+    scenario "Schedule Veteran for video", focus: true do
       cache_appeals
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
@@ -125,6 +126,11 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       find("label", text: "8:30 am").click
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       expect(page).not_to have_content("Could not find hearing locations for this veteran")
+      expect(page).not_to have_content("There are no upcoming hearing dates for this regional office.")
+      click_dropdown(
+        text: "#{hearing_day.scheduled_for.to_formatted_s(:short_date)} (0/#{hearing_day.total_slots}) #{room_label}",
+        name: "hearingDate"
+      )
       click_button("Schedule", exact: true)
       click_on "Back to Schedule Veterans"
       expect(page).to have_content("Schedule Veterans")
