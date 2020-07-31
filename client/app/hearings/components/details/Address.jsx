@@ -17,14 +17,14 @@ export const AddressLine = ({
 }) => {
   // Handle any missing address fields
   const format = (field) => (field ? `${field}\n` : '');
+  const text = addressLine1 && addressState && addressCity && addressZip ?
+    `${format(name)}${format(addressLine1)}${addressCity}, ${addressState} ${addressZip}` :
+    format(name);
 
   return (
-    /* eslint-disable-next-line no-undefined */
-    addressLine1 !== undefined && (
-      <ReadOnly
-        label={label}
-        text={`${format(name)}${format(addressLine1)}${addressCity}, ${addressState} ${addressZip}`} />
-    )
+    <ReadOnly
+      label={label}
+      text={text} />
   );
 };
 
