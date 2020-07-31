@@ -12,6 +12,7 @@ import TextField from '../../components/TextField';
 import { HEARING_CONVERSION_TYPES } from '../constants';
 import { ReadOnly } from './details/ReadOnly';
 import { virtualHearingModalStyles } from './details/style';
+import { COMMON_TIMEZONES } from '../../constants/AppConstants';
 
 const getCentralOfficeTime = (hearing) => {
   const newTime = `${moment(hearing.scheduledFor).format('YYYY-MM-DD')}T${hearing.scheduledTimeString}`;
