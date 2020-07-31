@@ -16,24 +16,30 @@ import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 
 const userStyle = css({
-  margin: '.5rem 0 2rem',
-  borderBottom: '1rem solid gray',
-  borderWidth: '1px',
-  paddingBottom: '1.4rem'
+  margin: '.5rem 0 .5rem',
+  padding: '.5rem 0 .5rem',
+  listStyle: 'none'
 });
 const topUserStyle = css({
-  margin: '2rem 0 2rem',
-  borderTop: '1rem solid gray',
+  borderTop: '.1rem solid gray',
+  margin: '.5rem 0 .5rem',
+  padding: '1rem 0 .5rem',
+  listStyle: 'none'
+});
+const topUserBorder = css({
+  borderBottom: '.1rem solid gray',
+});
+const buttonStyle = css({
+  paddingRight: '1rem',
+  display: 'inline-block'
+});
+const buttonContainerStyle = css({
+  borderBottom: '1rem solid gray',
   borderWidth: '1px',
-  padding: '2.5rem 0 1.5rem',
+  padding: '.5rem 0 2rem',
 });
-const buttonPaddingStyle = css({
-  paddingTop: '.5rem',
-  display: 'inline-block',
-  height: '4.5rem'
-});
-const headingStyle = css({
-  paddingLeft: '1.4rem'
+const listStyle = css({
+  listStyle: 'none'
 });
 
 export default class OrganizationUsers extends React.PureComponent {
@@ -48,6 +54,7 @@ export default class OrganizationUsers extends React.PureComponent {
       loading: true,
       error: null,
       addingUser: null,
+      changingAdminRights: {},
       removingUser: {},
     };
   }
@@ -145,6 +152,52 @@ export default class OrganizationUsers extends React.PureComponent {
     });
   }
 
+  modifyUser = (user, flagName) => {
+    this.setState({
+      [flagName]: { ...this.state[flagName],
+        [user.id]: true }
+    });
+  }
+
+  modifyUserSuccess = (response, user, flagName) => {
+    const updatedUser = response.body.users.data[0];
+    // Replace the existing version of the user so it has the updated attributes
+    const updatedUserList = this.state.organizationUsers.map((existingUser) => {
+      return (existingUser.id === updatedUser.id) ? updatedUser : existingUser;
+    });
+
+    this.setState({
+      organizationUsers: updatedUserList,
+      [flagName]: { ...this.state[flagName],
+        [user.id]: false }
+    });
+  }
+
+  modifyUserError = (title, body, user, flagName) => {
+    this.setState({
+      [flagName]: { ...this.state[flagName],
+        [user.id]: false },
+      error: {
+        title,
+        body
+      }
+    });
+  }
+
+  modifyAdminRights = (user, adminFlag) => () => {
+    const flagName = 'changingAdminRights';
+
+    this.modifyUser(user, flagName);
+
+    const payload = { data: { admin: adminFlag } };
+
+    ApiUtil.patch(`/organizations/${this.props.organization}/users/${user.id}`, payload).then((response) => {
+      this.modifyUserSuccess(response, user, flagName);
+    }, (error) => {
+      this.modifyUserError(COPY.USER_MANAGEMENT_ADMIN_RIGHTS_CHANGE_ERROR_TITLE, error.message, user, flagName);
+    });
+  }
+
   asyncLoadUser = (inputValue) => {
     // don't search till we have min length input
     if (inputValue.length < 2) {
@@ -162,29 +215,39 @@ export default class OrganizationUsers extends React.PureComponent {
     });
   }
 
+  adminButton = (user, admin) =>
+    <div {...buttonStyle}><Button
+      name={admin ? COPY.USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT : COPY.USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT}
+      id={admin ? `Remove-admin-rights-${user.id}` : `Add-team-admin-${user.id}`}
+      classNames={admin ? ['usa-button-secondary'] : ['usa-button-primary']}
+      loading={this.state.changingAdminRights[user.id]}
+      onClick={this.modifyAdminRights(user, !admin)} /></div>
+
   removeUserButton = (user) =>
-    <span {...buttonPaddingStyle}><Button
+    <div {...buttonStyle}><Button
       name={COPY.USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT}
       id={`Remove-user-${user.id}`}
       classNames={['usa-button-secondary']}
       loading={this.state.removingUser[user.id]}
-      onClick={this.removeUser(user)} /></span>
+      onClick={this.removeUser(user)} /></div>
 
   mainContent = () => {
     const judgeTeam = this.state.judgeTeam;
     const listOfUsers = this.state.organizationUsers.map((user, i) => {
       const { judge, attorney, admin } = user.attributes;
-      const topStyle = i === 0 ? topUserStyle : {};
+      const style = i === 0 ? topUserStyle : userStyle;
 
       return <React.Fragment>
-        <div {...userStyle}>
-          <li key={user.id} {...topStyle}>{this.formatName(user)}
-            { judgeTeam && judge && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
-            { judgeTeam && attorney && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
-            { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
-            <div>{ !admin && this.removeUserButton(user) }</div>
-          </li>
-        </div>
+        <li key={user.id} {...style}>{this.formatName(user)}
+          { judgeTeam && judge && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
+          { judgeTeam && attorney && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
+          { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
+        </li>
+        { judgeTeam && admin ? <div {...topUserBorder}></div> :
+          <div {...buttonContainerStyle}>
+            { !judgeTeam && this.adminButton(user, admin) }
+            { this.removeUserButton(user) }
+          </div> }
       </React.Fragment>;
     });
 
@@ -206,12 +269,13 @@ export default class OrganizationUsers extends React.PureComponent {
         async={this.asyncLoadUser} />
       <br />
       <div>
-        { judgeTeam &&
-            <div>
-              <h2>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h2>
-              <ul {...headingStyle}><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION}</ul>
-            </div>
-        }
+        <div>
+          <h2>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h2>
+          <ul {...listStyle}>
+            { !judgeTeam && <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li> }
+            <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{judgeTeam ? COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION : COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION}</li>
+          </ul>
+        </div>
         <ul>{listOfUsers}</ul>
       </div>
     </React.Fragment>;
