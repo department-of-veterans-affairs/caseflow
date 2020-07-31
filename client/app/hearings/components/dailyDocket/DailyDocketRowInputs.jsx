@@ -236,6 +236,7 @@ export const NotesField = ({ hearing, update, readOnly }) => {
 
   return (
     <TextareaField
+      maxlength={1000}
       label="Notes"
       name={`${hearing.externalId}-notes`}
       strongLabel

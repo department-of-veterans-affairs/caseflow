@@ -18,7 +18,7 @@ export const VirtualHearingEmail = ({ email, emailType, label, readOnly, error, 
         errorMessage={error}
         name={label}
         value={email}
-        required={required}
+        required={!disabled && required}
         strongLabel
         className={[classnames('cf-form-textinput', 'cf-inline-field', { [enablePadding]: error })]}
         onChange={(newEmail) => update('virtualHearing', { [emailType]: newEmail })}

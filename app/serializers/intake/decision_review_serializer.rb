@@ -5,6 +5,7 @@ class Intake::DecisionReviewSerializer
   set_key_transform :camel_lower
 
   attribute :claimant, &:claimant_participant_id
+  attribute :claimant_type
   attribute :veteran_is_not_claimant
   attribute :processed_in_caseflow, &:processed_in_caseflow?
   attribute :legacy_opt_in_approved
