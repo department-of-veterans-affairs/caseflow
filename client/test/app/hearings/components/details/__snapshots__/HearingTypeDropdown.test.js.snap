@@ -2979,6 +2979,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -2987,6 +2988,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
@@ -4487,6 +4489,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
     Object {
       "aliasWithHost": "BVA0000009@care.evn.va.gov",
       "appellantEmail": "Bob.Smith@test.com",
+      "appellantTz": null,
       "clientHost": "care.evn.va.gov",
       "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
@@ -4495,6 +4498,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
       "hostPin": "8600030#",
       "jobCompleted": true,
       "representativeEmail": "tom.brady@caseflow.gov",
+      "representativeTz": null,
       "requestCancelled": false,
       "status": "active",
     }
