@@ -208,67 +208,67 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
           "value": "12:45",
         },
         Object {
-          "label": "1:00 AM Eastern Time (US & Canada)",
+          "label": "1:00 PM Eastern Time (US & Canada)",
           "value": "13:00",
         },
         Object {
-          "label": "1:15 AM Eastern Time (US & Canada)",
+          "label": "1:15 PM Eastern Time (US & Canada)",
           "value": "13:15",
         },
         Object {
-          "label": "1:30 AM Eastern Time (US & Canada)",
+          "label": "1:30 PM Eastern Time (US & Canada)",
           "value": "13:30",
         },
         Object {
-          "label": "1:45 AM Eastern Time (US & Canada)",
+          "label": "1:45 PM Eastern Time (US & Canada)",
           "value": "13:45",
         },
         Object {
-          "label": "2:00 AM Eastern Time (US & Canada)",
+          "label": "2:00 PM Eastern Time (US & Canada)",
           "value": "14:00",
         },
         Object {
-          "label": "2:15 AM Eastern Time (US & Canada)",
+          "label": "2:15 PM Eastern Time (US & Canada)",
           "value": "14:15",
         },
         Object {
-          "label": "2:30 AM Eastern Time (US & Canada)",
+          "label": "2:30 PM Eastern Time (US & Canada)",
           "value": "14:30",
         },
         Object {
-          "label": "2:45 AM Eastern Time (US & Canada)",
+          "label": "2:45 PM Eastern Time (US & Canada)",
           "value": "14:45",
         },
         Object {
-          "label": "3:00 AM Eastern Time (US & Canada)",
+          "label": "3:00 PM Eastern Time (US & Canada)",
           "value": "15:00",
         },
         Object {
-          "label": "3:15 AM Eastern Time (US & Canada)",
+          "label": "3:15 PM Eastern Time (US & Canada)",
           "value": "15:15",
         },
         Object {
-          "label": "3:30 AM Eastern Time (US & Canada)",
+          "label": "3:30 PM Eastern Time (US & Canada)",
           "value": "15:30",
         },
         Object {
-          "label": "3:45 AM Eastern Time (US & Canada)",
+          "label": "3:45 PM Eastern Time (US & Canada)",
           "value": "15:45",
         },
         Object {
-          "label": "4:00 AM Eastern Time (US & Canada)",
+          "label": "4:00 PM Eastern Time (US & Canada)",
           "value": "16:00",
         },
         Object {
-          "label": "4:15 AM Eastern Time (US & Canada)",
+          "label": "4:15 PM Eastern Time (US & Canada)",
           "value": "16:15",
         },
         Object {
-          "label": "4:30 AM Eastern Time (US & Canada)",
+          "label": "4:30 PM Eastern Time (US & Canada)",
           "value": "16:30",
         },
         Object {
-          "label": "4:45 AM Eastern Time (US & Canada)",
+          "label": "4:45 PM Eastern Time (US & Canada)",
           "value": "16:45",
         },
       ]
@@ -388,67 +388,67 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                   "value": "12:45",
                 },
                 Object {
-                  "label": "1:00 AM Eastern Time (US & Canada)",
+                  "label": "1:00 PM Eastern Time (US & Canada)",
                   "value": "13:00",
                 },
                 Object {
-                  "label": "1:15 AM Eastern Time (US & Canada)",
+                  "label": "1:15 PM Eastern Time (US & Canada)",
                   "value": "13:15",
                 },
                 Object {
-                  "label": "1:30 AM Eastern Time (US & Canada)",
+                  "label": "1:30 PM Eastern Time (US & Canada)",
                   "value": "13:30",
                 },
                 Object {
-                  "label": "1:45 AM Eastern Time (US & Canada)",
+                  "label": "1:45 PM Eastern Time (US & Canada)",
                   "value": "13:45",
                 },
                 Object {
-                  "label": "2:00 AM Eastern Time (US & Canada)",
+                  "label": "2:00 PM Eastern Time (US & Canada)",
                   "value": "14:00",
                 },
                 Object {
-                  "label": "2:15 AM Eastern Time (US & Canada)",
+                  "label": "2:15 PM Eastern Time (US & Canada)",
                   "value": "14:15",
                 },
                 Object {
-                  "label": "2:30 AM Eastern Time (US & Canada)",
+                  "label": "2:30 PM Eastern Time (US & Canada)",
                   "value": "14:30",
                 },
                 Object {
-                  "label": "2:45 AM Eastern Time (US & Canada)",
+                  "label": "2:45 PM Eastern Time (US & Canada)",
                   "value": "14:45",
                 },
                 Object {
-                  "label": "3:00 AM Eastern Time (US & Canada)",
+                  "label": "3:00 PM Eastern Time (US & Canada)",
                   "value": "15:00",
                 },
                 Object {
-                  "label": "3:15 AM Eastern Time (US & Canada)",
+                  "label": "3:15 PM Eastern Time (US & Canada)",
                   "value": "15:15",
                 },
                 Object {
-                  "label": "3:30 AM Eastern Time (US & Canada)",
+                  "label": "3:30 PM Eastern Time (US & Canada)",
                   "value": "15:30",
                 },
                 Object {
-                  "label": "3:45 AM Eastern Time (US & Canada)",
+                  "label": "3:45 PM Eastern Time (US & Canada)",
                   "value": "15:45",
                 },
                 Object {
-                  "label": "4:00 AM Eastern Time (US & Canada)",
+                  "label": "4:00 PM Eastern Time (US & Canada)",
                   "value": "16:00",
                 },
                 Object {
-                  "label": "4:15 AM Eastern Time (US & Canada)",
+                  "label": "4:15 PM Eastern Time (US & Canada)",
                   "value": "16:15",
                 },
                 Object {
-                  "label": "4:30 AM Eastern Time (US & Canada)",
+                  "label": "4:30 PM Eastern Time (US & Canada)",
                   "value": "16:30",
                 },
                 Object {
-                  "label": "4:45 AM Eastern Time (US & Canada)",
+                  "label": "4:45 PM Eastern Time (US & Canada)",
                   "value": "16:45",
                 },
               ]
@@ -586,67 +586,67 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                     "value": "12:45",
                   },
                   Object {
-                    "label": "1:00 AM Eastern Time (US & Canada)",
+                    "label": "1:00 PM Eastern Time (US & Canada)",
                     "value": "13:00",
                   },
                   Object {
-                    "label": "1:15 AM Eastern Time (US & Canada)",
+                    "label": "1:15 PM Eastern Time (US & Canada)",
                     "value": "13:15",
                   },
                   Object {
-                    "label": "1:30 AM Eastern Time (US & Canada)",
+                    "label": "1:30 PM Eastern Time (US & Canada)",
                     "value": "13:30",
                   },
                   Object {
-                    "label": "1:45 AM Eastern Time (US & Canada)",
+                    "label": "1:45 PM Eastern Time (US & Canada)",
                     "value": "13:45",
                   },
                   Object {
-                    "label": "2:00 AM Eastern Time (US & Canada)",
+                    "label": "2:00 PM Eastern Time (US & Canada)",
                     "value": "14:00",
                   },
                   Object {
-                    "label": "2:15 AM Eastern Time (US & Canada)",
+                    "label": "2:15 PM Eastern Time (US & Canada)",
                     "value": "14:15",
                   },
                   Object {
-                    "label": "2:30 AM Eastern Time (US & Canada)",
+                    "label": "2:30 PM Eastern Time (US & Canada)",
                     "value": "14:30",
                   },
                   Object {
-                    "label": "2:45 AM Eastern Time (US & Canada)",
+                    "label": "2:45 PM Eastern Time (US & Canada)",
                     "value": "14:45",
                   },
                   Object {
-                    "label": "3:00 AM Eastern Time (US & Canada)",
+                    "label": "3:00 PM Eastern Time (US & Canada)",
                     "value": "15:00",
                   },
                   Object {
-                    "label": "3:15 AM Eastern Time (US & Canada)",
+                    "label": "3:15 PM Eastern Time (US & Canada)",
                     "value": "15:15",
                   },
                   Object {
-                    "label": "3:30 AM Eastern Time (US & Canada)",
+                    "label": "3:30 PM Eastern Time (US & Canada)",
                     "value": "15:30",
                   },
                   Object {
-                    "label": "3:45 AM Eastern Time (US & Canada)",
+                    "label": "3:45 PM Eastern Time (US & Canada)",
                     "value": "15:45",
                   },
                   Object {
-                    "label": "4:00 AM Eastern Time (US & Canada)",
+                    "label": "4:00 PM Eastern Time (US & Canada)",
                     "value": "16:00",
                   },
                   Object {
-                    "label": "4:15 AM Eastern Time (US & Canada)",
+                    "label": "4:15 PM Eastern Time (US & Canada)",
                     "value": "16:15",
                   },
                   Object {
-                    "label": "4:30 AM Eastern Time (US & Canada)",
+                    "label": "4:30 PM Eastern Time (US & Canada)",
                     "value": "16:30",
                   },
                   Object {
-                    "label": "4:45 AM Eastern Time (US & Canada)",
+                    "label": "4:45 PM Eastern Time (US & Canada)",
                     "value": "16:45",
                   },
                 ]
@@ -764,67 +764,67 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                       "value": "12:45",
                     },
                     Object {
-                      "label": "1:00 AM Eastern Time (US & Canada)",
+                      "label": "1:00 PM Eastern Time (US & Canada)",
                       "value": "13:00",
                     },
                     Object {
-                      "label": "1:15 AM Eastern Time (US & Canada)",
+                      "label": "1:15 PM Eastern Time (US & Canada)",
                       "value": "13:15",
                     },
                     Object {
-                      "label": "1:30 AM Eastern Time (US & Canada)",
+                      "label": "1:30 PM Eastern Time (US & Canada)",
                       "value": "13:30",
                     },
                     Object {
-                      "label": "1:45 AM Eastern Time (US & Canada)",
+                      "label": "1:45 PM Eastern Time (US & Canada)",
                       "value": "13:45",
                     },
                     Object {
-                      "label": "2:00 AM Eastern Time (US & Canada)",
+                      "label": "2:00 PM Eastern Time (US & Canada)",
                       "value": "14:00",
                     },
                     Object {
-                      "label": "2:15 AM Eastern Time (US & Canada)",
+                      "label": "2:15 PM Eastern Time (US & Canada)",
                       "value": "14:15",
                     },
                     Object {
-                      "label": "2:30 AM Eastern Time (US & Canada)",
+                      "label": "2:30 PM Eastern Time (US & Canada)",
                       "value": "14:30",
                     },
                     Object {
-                      "label": "2:45 AM Eastern Time (US & Canada)",
+                      "label": "2:45 PM Eastern Time (US & Canada)",
                       "value": "14:45",
                     },
                     Object {
-                      "label": "3:00 AM Eastern Time (US & Canada)",
+                      "label": "3:00 PM Eastern Time (US & Canada)",
                       "value": "15:00",
                     },
                     Object {
-                      "label": "3:15 AM Eastern Time (US & Canada)",
+                      "label": "3:15 PM Eastern Time (US & Canada)",
                       "value": "15:15",
                     },
                     Object {
-                      "label": "3:30 AM Eastern Time (US & Canada)",
+                      "label": "3:30 PM Eastern Time (US & Canada)",
                       "value": "15:30",
                     },
                     Object {
-                      "label": "3:45 AM Eastern Time (US & Canada)",
+                      "label": "3:45 PM Eastern Time (US & Canada)",
                       "value": "15:45",
                     },
                     Object {
-                      "label": "4:00 AM Eastern Time (US & Canada)",
+                      "label": "4:00 PM Eastern Time (US & Canada)",
                       "value": "16:00",
                     },
                     Object {
-                      "label": "4:15 AM Eastern Time (US & Canada)",
+                      "label": "4:15 PM Eastern Time (US & Canada)",
                       "value": "16:15",
                     },
                     Object {
-                      "label": "4:30 AM Eastern Time (US & Canada)",
+                      "label": "4:30 PM Eastern Time (US & Canada)",
                       "value": "16:30",
                     },
                     Object {
-                      "label": "4:45 AM Eastern Time (US & Canada)",
+                      "label": "4:45 PM Eastern Time (US & Canada)",
                       "value": "16:45",
                     },
                   ]
@@ -951,67 +951,67 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                         "value": "12:45",
                       },
                       Object {
-                        "label": "1:00 AM Eastern Time (US & Canada)",
+                        "label": "1:00 PM Eastern Time (US & Canada)",
                         "value": "13:00",
                       },
                       Object {
-                        "label": "1:15 AM Eastern Time (US & Canada)",
+                        "label": "1:15 PM Eastern Time (US & Canada)",
                         "value": "13:15",
                       },
                       Object {
-                        "label": "1:30 AM Eastern Time (US & Canada)",
+                        "label": "1:30 PM Eastern Time (US & Canada)",
                         "value": "13:30",
                       },
                       Object {
-                        "label": "1:45 AM Eastern Time (US & Canada)",
+                        "label": "1:45 PM Eastern Time (US & Canada)",
                         "value": "13:45",
                       },
                       Object {
-                        "label": "2:00 AM Eastern Time (US & Canada)",
+                        "label": "2:00 PM Eastern Time (US & Canada)",
                         "value": "14:00",
                       },
                       Object {
-                        "label": "2:15 AM Eastern Time (US & Canada)",
+                        "label": "2:15 PM Eastern Time (US & Canada)",
                         "value": "14:15",
                       },
                       Object {
-                        "label": "2:30 AM Eastern Time (US & Canada)",
+                        "label": "2:30 PM Eastern Time (US & Canada)",
                         "value": "14:30",
                       },
                       Object {
-                        "label": "2:45 AM Eastern Time (US & Canada)",
+                        "label": "2:45 PM Eastern Time (US & Canada)",
                         "value": "14:45",
                       },
                       Object {
-                        "label": "3:00 AM Eastern Time (US & Canada)",
+                        "label": "3:00 PM Eastern Time (US & Canada)",
                         "value": "15:00",
                       },
                       Object {
-                        "label": "3:15 AM Eastern Time (US & Canada)",
+                        "label": "3:15 PM Eastern Time (US & Canada)",
                         "value": "15:15",
                       },
                       Object {
-                        "label": "3:30 AM Eastern Time (US & Canada)",
+                        "label": "3:30 PM Eastern Time (US & Canada)",
                         "value": "15:30",
                       },
                       Object {
-                        "label": "3:45 AM Eastern Time (US & Canada)",
+                        "label": "3:45 PM Eastern Time (US & Canada)",
                         "value": "15:45",
                       },
                       Object {
-                        "label": "4:00 AM Eastern Time (US & Canada)",
+                        "label": "4:00 PM Eastern Time (US & Canada)",
                         "value": "16:00",
                       },
                       Object {
-                        "label": "4:15 AM Eastern Time (US & Canada)",
+                        "label": "4:15 PM Eastern Time (US & Canada)",
                         "value": "16:15",
                       },
                       Object {
-                        "label": "4:30 AM Eastern Time (US & Canada)",
+                        "label": "4:30 PM Eastern Time (US & Canada)",
                         "value": "16:30",
                       },
                       Object {
-                        "label": "4:45 AM Eastern Time (US & Canada)",
+                        "label": "4:45 PM Eastern Time (US & Canada)",
                         "value": "16:45",
                       },
                     ],
@@ -1178,67 +1178,67 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                             "value": "12:45",
                           },
                           Object {
-                            "label": "1:00 AM Eastern Time (US & Canada)",
+                            "label": "1:00 PM Eastern Time (US & Canada)",
                             "value": "13:00",
                           },
                           Object {
-                            "label": "1:15 AM Eastern Time (US & Canada)",
+                            "label": "1:15 PM Eastern Time (US & Canada)",
                             "value": "13:15",
                           },
                           Object {
-                            "label": "1:30 AM Eastern Time (US & Canada)",
+                            "label": "1:30 PM Eastern Time (US & Canada)",
                             "value": "13:30",
                           },
                           Object {
-                            "label": "1:45 AM Eastern Time (US & Canada)",
+                            "label": "1:45 PM Eastern Time (US & Canada)",
                             "value": "13:45",
                           },
                           Object {
-                            "label": "2:00 AM Eastern Time (US & Canada)",
+                            "label": "2:00 PM Eastern Time (US & Canada)",
                             "value": "14:00",
                           },
                           Object {
-                            "label": "2:15 AM Eastern Time (US & Canada)",
+                            "label": "2:15 PM Eastern Time (US & Canada)",
                             "value": "14:15",
                           },
                           Object {
-                            "label": "2:30 AM Eastern Time (US & Canada)",
+                            "label": "2:30 PM Eastern Time (US & Canada)",
                             "value": "14:30",
                           },
                           Object {
-                            "label": "2:45 AM Eastern Time (US & Canada)",
+                            "label": "2:45 PM Eastern Time (US & Canada)",
                             "value": "14:45",
                           },
                           Object {
-                            "label": "3:00 AM Eastern Time (US & Canada)",
+                            "label": "3:00 PM Eastern Time (US & Canada)",
                             "value": "15:00",
                           },
                           Object {
-                            "label": "3:15 AM Eastern Time (US & Canada)",
+                            "label": "3:15 PM Eastern Time (US & Canada)",
                             "value": "15:15",
                           },
                           Object {
-                            "label": "3:30 AM Eastern Time (US & Canada)",
+                            "label": "3:30 PM Eastern Time (US & Canada)",
                             "value": "15:30",
                           },
                           Object {
-                            "label": "3:45 AM Eastern Time (US & Canada)",
+                            "label": "3:45 PM Eastern Time (US & Canada)",
                             "value": "15:45",
                           },
                           Object {
-                            "label": "4:00 AM Eastern Time (US & Canada)",
+                            "label": "4:00 PM Eastern Time (US & Canada)",
                             "value": "16:00",
                           },
                           Object {
-                            "label": "4:15 AM Eastern Time (US & Canada)",
+                            "label": "4:15 PM Eastern Time (US & Canada)",
                             "value": "16:15",
                           },
                           Object {
-                            "label": "4:30 AM Eastern Time (US & Canada)",
+                            "label": "4:30 PM Eastern Time (US & Canada)",
                             "value": "16:30",
                           },
                           Object {
-                            "label": "4:45 AM Eastern Time (US & Canada)",
+                            "label": "4:45 PM Eastern Time (US & Canada)",
                             "value": "16:45",
                           },
                         ]
@@ -1365,67 +1365,67 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                               "value": "12:45",
                             },
                             Object {
-                              "label": "1:00 AM Eastern Time (US & Canada)",
+                              "label": "1:00 PM Eastern Time (US & Canada)",
                               "value": "13:00",
                             },
                             Object {
-                              "label": "1:15 AM Eastern Time (US & Canada)",
+                              "label": "1:15 PM Eastern Time (US & Canada)",
                               "value": "13:15",
                             },
                             Object {
-                              "label": "1:30 AM Eastern Time (US & Canada)",
+                              "label": "1:30 PM Eastern Time (US & Canada)",
                               "value": "13:30",
                             },
                             Object {
-                              "label": "1:45 AM Eastern Time (US & Canada)",
+                              "label": "1:45 PM Eastern Time (US & Canada)",
                               "value": "13:45",
                             },
                             Object {
-                              "label": "2:00 AM Eastern Time (US & Canada)",
+                              "label": "2:00 PM Eastern Time (US & Canada)",
                               "value": "14:00",
                             },
                             Object {
-                              "label": "2:15 AM Eastern Time (US & Canada)",
+                              "label": "2:15 PM Eastern Time (US & Canada)",
                               "value": "14:15",
                             },
                             Object {
-                              "label": "2:30 AM Eastern Time (US & Canada)",
+                              "label": "2:30 PM Eastern Time (US & Canada)",
                               "value": "14:30",
                             },
                             Object {
-                              "label": "2:45 AM Eastern Time (US & Canada)",
+                              "label": "2:45 PM Eastern Time (US & Canada)",
                               "value": "14:45",
                             },
                             Object {
-                              "label": "3:00 AM Eastern Time (US & Canada)",
+                              "label": "3:00 PM Eastern Time (US & Canada)",
                               "value": "15:00",
                             },
                             Object {
-                              "label": "3:15 AM Eastern Time (US & Canada)",
+                              "label": "3:15 PM Eastern Time (US & Canada)",
                               "value": "15:15",
                             },
                             Object {
-                              "label": "3:30 AM Eastern Time (US & Canada)",
+                              "label": "3:30 PM Eastern Time (US & Canada)",
                               "value": "15:30",
                             },
                             Object {
-                              "label": "3:45 AM Eastern Time (US & Canada)",
+                              "label": "3:45 PM Eastern Time (US & Canada)",
                               "value": "15:45",
                             },
                             Object {
-                              "label": "4:00 AM Eastern Time (US & Canada)",
+                              "label": "4:00 PM Eastern Time (US & Canada)",
                               "value": "16:00",
                             },
                             Object {
-                              "label": "4:15 AM Eastern Time (US & Canada)",
+                              "label": "4:15 PM Eastern Time (US & Canada)",
                               "value": "16:15",
                             },
                             Object {
-                              "label": "4:30 AM Eastern Time (US & Canada)",
+                              "label": "4:30 PM Eastern Time (US & Canada)",
                               "value": "16:30",
                             },
                             Object {
-                              "label": "4:45 AM Eastern Time (US & Canada)",
+                              "label": "4:45 PM Eastern Time (US & Canada)",
                               "value": "16:45",
                             },
                           ],
@@ -1600,67 +1600,67 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                   "value": "12:45",
                                 },
                                 Object {
-                                  "label": "1:00 AM Eastern Time (US & Canada)",
+                                  "label": "1:00 PM Eastern Time (US & Canada)",
                                   "value": "13:00",
                                 },
                                 Object {
-                                  "label": "1:15 AM Eastern Time (US & Canada)",
+                                  "label": "1:15 PM Eastern Time (US & Canada)",
                                   "value": "13:15",
                                 },
                                 Object {
-                                  "label": "1:30 AM Eastern Time (US & Canada)",
+                                  "label": "1:30 PM Eastern Time (US & Canada)",
                                   "value": "13:30",
                                 },
                                 Object {
-                                  "label": "1:45 AM Eastern Time (US & Canada)",
+                                  "label": "1:45 PM Eastern Time (US & Canada)",
                                   "value": "13:45",
                                 },
                                 Object {
-                                  "label": "2:00 AM Eastern Time (US & Canada)",
+                                  "label": "2:00 PM Eastern Time (US & Canada)",
                                   "value": "14:00",
                                 },
                                 Object {
-                                  "label": "2:15 AM Eastern Time (US & Canada)",
+                                  "label": "2:15 PM Eastern Time (US & Canada)",
                                   "value": "14:15",
                                 },
                                 Object {
-                                  "label": "2:30 AM Eastern Time (US & Canada)",
+                                  "label": "2:30 PM Eastern Time (US & Canada)",
                                   "value": "14:30",
                                 },
                                 Object {
-                                  "label": "2:45 AM Eastern Time (US & Canada)",
+                                  "label": "2:45 PM Eastern Time (US & Canada)",
                                   "value": "14:45",
                                 },
                                 Object {
-                                  "label": "3:00 AM Eastern Time (US & Canada)",
+                                  "label": "3:00 PM Eastern Time (US & Canada)",
                                   "value": "15:00",
                                 },
                                 Object {
-                                  "label": "3:15 AM Eastern Time (US & Canada)",
+                                  "label": "3:15 PM Eastern Time (US & Canada)",
                                   "value": "15:15",
                                 },
                                 Object {
-                                  "label": "3:30 AM Eastern Time (US & Canada)",
+                                  "label": "3:30 PM Eastern Time (US & Canada)",
                                   "value": "15:30",
                                 },
                                 Object {
-                                  "label": "3:45 AM Eastern Time (US & Canada)",
+                                  "label": "3:45 PM Eastern Time (US & Canada)",
                                   "value": "15:45",
                                 },
                                 Object {
-                                  "label": "4:00 AM Eastern Time (US & Canada)",
+                                  "label": "4:00 PM Eastern Time (US & Canada)",
                                   "value": "16:00",
                                 },
                                 Object {
-                                  "label": "4:15 AM Eastern Time (US & Canada)",
+                                  "label": "4:15 PM Eastern Time (US & Canada)",
                                   "value": "16:15",
                                 },
                                 Object {
-                                  "label": "4:30 AM Eastern Time (US & Canada)",
+                                  "label": "4:30 PM Eastern Time (US & Canada)",
                                   "value": "16:30",
                                 },
                                 Object {
-                                  "label": "4:45 AM Eastern Time (US & Canada)",
+                                  "label": "4:45 PM Eastern Time (US & Canada)",
                                   "value": "16:45",
                                 },
                               ]
@@ -1787,67 +1787,67 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                     "value": "12:45",
                                   },
                                   Object {
-                                    "label": "1:00 AM Eastern Time (US & Canada)",
+                                    "label": "1:00 PM Eastern Time (US & Canada)",
                                     "value": "13:00",
                                   },
                                   Object {
-                                    "label": "1:15 AM Eastern Time (US & Canada)",
+                                    "label": "1:15 PM Eastern Time (US & Canada)",
                                     "value": "13:15",
                                   },
                                   Object {
-                                    "label": "1:30 AM Eastern Time (US & Canada)",
+                                    "label": "1:30 PM Eastern Time (US & Canada)",
                                     "value": "13:30",
                                   },
                                   Object {
-                                    "label": "1:45 AM Eastern Time (US & Canada)",
+                                    "label": "1:45 PM Eastern Time (US & Canada)",
                                     "value": "13:45",
                                   },
                                   Object {
-                                    "label": "2:00 AM Eastern Time (US & Canada)",
+                                    "label": "2:00 PM Eastern Time (US & Canada)",
                                     "value": "14:00",
                                   },
                                   Object {
-                                    "label": "2:15 AM Eastern Time (US & Canada)",
+                                    "label": "2:15 PM Eastern Time (US & Canada)",
                                     "value": "14:15",
                                   },
                                   Object {
-                                    "label": "2:30 AM Eastern Time (US & Canada)",
+                                    "label": "2:30 PM Eastern Time (US & Canada)",
                                     "value": "14:30",
                                   },
                                   Object {
-                                    "label": "2:45 AM Eastern Time (US & Canada)",
+                                    "label": "2:45 PM Eastern Time (US & Canada)",
                                     "value": "14:45",
                                   },
                                   Object {
-                                    "label": "3:00 AM Eastern Time (US & Canada)",
+                                    "label": "3:00 PM Eastern Time (US & Canada)",
                                     "value": "15:00",
                                   },
                                   Object {
-                                    "label": "3:15 AM Eastern Time (US & Canada)",
+                                    "label": "3:15 PM Eastern Time (US & Canada)",
                                     "value": "15:15",
                                   },
                                   Object {
-                                    "label": "3:30 AM Eastern Time (US & Canada)",
+                                    "label": "3:30 PM Eastern Time (US & Canada)",
                                     "value": "15:30",
                                   },
                                   Object {
-                                    "label": "3:45 AM Eastern Time (US & Canada)",
+                                    "label": "3:45 PM Eastern Time (US & Canada)",
                                     "value": "15:45",
                                   },
                                   Object {
-                                    "label": "4:00 AM Eastern Time (US & Canada)",
+                                    "label": "4:00 PM Eastern Time (US & Canada)",
                                     "value": "16:00",
                                   },
                                   Object {
-                                    "label": "4:15 AM Eastern Time (US & Canada)",
+                                    "label": "4:15 PM Eastern Time (US & Canada)",
                                     "value": "16:15",
                                   },
                                   Object {
-                                    "label": "4:30 AM Eastern Time (US & Canada)",
+                                    "label": "4:30 PM Eastern Time (US & Canada)",
                                     "value": "16:30",
                                   },
                                   Object {
-                                    "label": "4:45 AM Eastern Time (US & Canada)",
+                                    "label": "4:45 PM Eastern Time (US & Canada)",
                                     "value": "16:45",
                                   },
                                 ],
@@ -2013,67 +2013,67 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                         "value": "12:45",
                                       },
                                       Object {
-                                        "label": "1:00 AM Eastern Time (US & Canada)",
+                                        "label": "1:00 PM Eastern Time (US & Canada)",
                                         "value": "13:00",
                                       },
                                       Object {
-                                        "label": "1:15 AM Eastern Time (US & Canada)",
+                                        "label": "1:15 PM Eastern Time (US & Canada)",
                                         "value": "13:15",
                                       },
                                       Object {
-                                        "label": "1:30 AM Eastern Time (US & Canada)",
+                                        "label": "1:30 PM Eastern Time (US & Canada)",
                                         "value": "13:30",
                                       },
                                       Object {
-                                        "label": "1:45 AM Eastern Time (US & Canada)",
+                                        "label": "1:45 PM Eastern Time (US & Canada)",
                                         "value": "13:45",
                                       },
                                       Object {
-                                        "label": "2:00 AM Eastern Time (US & Canada)",
+                                        "label": "2:00 PM Eastern Time (US & Canada)",
                                         "value": "14:00",
                                       },
                                       Object {
-                                        "label": "2:15 AM Eastern Time (US & Canada)",
+                                        "label": "2:15 PM Eastern Time (US & Canada)",
                                         "value": "14:15",
                                       },
                                       Object {
-                                        "label": "2:30 AM Eastern Time (US & Canada)",
+                                        "label": "2:30 PM Eastern Time (US & Canada)",
                                         "value": "14:30",
                                       },
                                       Object {
-                                        "label": "2:45 AM Eastern Time (US & Canada)",
+                                        "label": "2:45 PM Eastern Time (US & Canada)",
                                         "value": "14:45",
                                       },
                                       Object {
-                                        "label": "3:00 AM Eastern Time (US & Canada)",
+                                        "label": "3:00 PM Eastern Time (US & Canada)",
                                         "value": "15:00",
                                       },
                                       Object {
-                                        "label": "3:15 AM Eastern Time (US & Canada)",
+                                        "label": "3:15 PM Eastern Time (US & Canada)",
                                         "value": "15:15",
                                       },
                                       Object {
-                                        "label": "3:30 AM Eastern Time (US & Canada)",
+                                        "label": "3:30 PM Eastern Time (US & Canada)",
                                         "value": "15:30",
                                       },
                                       Object {
-                                        "label": "3:45 AM Eastern Time (US & Canada)",
+                                        "label": "3:45 PM Eastern Time (US & Canada)",
                                         "value": "15:45",
                                       },
                                       Object {
-                                        "label": "4:00 AM Eastern Time (US & Canada)",
+                                        "label": "4:00 PM Eastern Time (US & Canada)",
                                         "value": "16:00",
                                       },
                                       Object {
-                                        "label": "4:15 AM Eastern Time (US & Canada)",
+                                        "label": "4:15 PM Eastern Time (US & Canada)",
                                         "value": "16:15",
                                       },
                                       Object {
-                                        "label": "4:30 AM Eastern Time (US & Canada)",
+                                        "label": "4:30 PM Eastern Time (US & Canada)",
                                         "value": "16:30",
                                       },
                                       Object {
-                                        "label": "4:45 AM Eastern Time (US & Canada)",
+                                        "label": "4:45 PM Eastern Time (US & Canada)",
                                         "value": "16:45",
                                       },
                                     ]
@@ -2200,67 +2200,67 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                           "value": "12:45",
                                         },
                                         Object {
-                                          "label": "1:00 AM Eastern Time (US & Canada)",
+                                          "label": "1:00 PM Eastern Time (US & Canada)",
                                           "value": "13:00",
                                         },
                                         Object {
-                                          "label": "1:15 AM Eastern Time (US & Canada)",
+                                          "label": "1:15 PM Eastern Time (US & Canada)",
                                           "value": "13:15",
                                         },
                                         Object {
-                                          "label": "1:30 AM Eastern Time (US & Canada)",
+                                          "label": "1:30 PM Eastern Time (US & Canada)",
                                           "value": "13:30",
                                         },
                                         Object {
-                                          "label": "1:45 AM Eastern Time (US & Canada)",
+                                          "label": "1:45 PM Eastern Time (US & Canada)",
                                           "value": "13:45",
                                         },
                                         Object {
-                                          "label": "2:00 AM Eastern Time (US & Canada)",
+                                          "label": "2:00 PM Eastern Time (US & Canada)",
                                           "value": "14:00",
                                         },
                                         Object {
-                                          "label": "2:15 AM Eastern Time (US & Canada)",
+                                          "label": "2:15 PM Eastern Time (US & Canada)",
                                           "value": "14:15",
                                         },
                                         Object {
-                                          "label": "2:30 AM Eastern Time (US & Canada)",
+                                          "label": "2:30 PM Eastern Time (US & Canada)",
                                           "value": "14:30",
                                         },
                                         Object {
-                                          "label": "2:45 AM Eastern Time (US & Canada)",
+                                          "label": "2:45 PM Eastern Time (US & Canada)",
                                           "value": "14:45",
                                         },
                                         Object {
-                                          "label": "3:00 AM Eastern Time (US & Canada)",
+                                          "label": "3:00 PM Eastern Time (US & Canada)",
                                           "value": "15:00",
                                         },
                                         Object {
-                                          "label": "3:15 AM Eastern Time (US & Canada)",
+                                          "label": "3:15 PM Eastern Time (US & Canada)",
                                           "value": "15:15",
                                         },
                                         Object {
-                                          "label": "3:30 AM Eastern Time (US & Canada)",
+                                          "label": "3:30 PM Eastern Time (US & Canada)",
                                           "value": "15:30",
                                         },
                                         Object {
-                                          "label": "3:45 AM Eastern Time (US & Canada)",
+                                          "label": "3:45 PM Eastern Time (US & Canada)",
                                           "value": "15:45",
                                         },
                                         Object {
-                                          "label": "4:00 AM Eastern Time (US & Canada)",
+                                          "label": "4:00 PM Eastern Time (US & Canada)",
                                           "value": "16:00",
                                         },
                                         Object {
-                                          "label": "4:15 AM Eastern Time (US & Canada)",
+                                          "label": "4:15 PM Eastern Time (US & Canada)",
                                           "value": "16:15",
                                         },
                                         Object {
-                                          "label": "4:30 AM Eastern Time (US & Canada)",
+                                          "label": "4:30 PM Eastern Time (US & Canada)",
                                           "value": "16:30",
                                         },
                                         Object {
-                                          "label": "4:45 AM Eastern Time (US & Canada)",
+                                          "label": "4:45 PM Eastern Time (US & Canada)",
                                           "value": "16:45",
                                         },
                                       ],
@@ -2474,67 +2474,67 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                           "value": "12:45",
                                         },
                                         Object {
-                                          "label": "1:00 AM Eastern Time (US & Canada)",
+                                          "label": "1:00 PM Eastern Time (US & Canada)",
                                           "value": "13:00",
                                         },
                                         Object {
-                                          "label": "1:15 AM Eastern Time (US & Canada)",
+                                          "label": "1:15 PM Eastern Time (US & Canada)",
                                           "value": "13:15",
                                         },
                                         Object {
-                                          "label": "1:30 AM Eastern Time (US & Canada)",
+                                          "label": "1:30 PM Eastern Time (US & Canada)",
                                           "value": "13:30",
                                         },
                                         Object {
-                                          "label": "1:45 AM Eastern Time (US & Canada)",
+                                          "label": "1:45 PM Eastern Time (US & Canada)",
                                           "value": "13:45",
                                         },
                                         Object {
-                                          "label": "2:00 AM Eastern Time (US & Canada)",
+                                          "label": "2:00 PM Eastern Time (US & Canada)",
                                           "value": "14:00",
                                         },
                                         Object {
-                                          "label": "2:15 AM Eastern Time (US & Canada)",
+                                          "label": "2:15 PM Eastern Time (US & Canada)",
                                           "value": "14:15",
                                         },
                                         Object {
-                                          "label": "2:30 AM Eastern Time (US & Canada)",
+                                          "label": "2:30 PM Eastern Time (US & Canada)",
                                           "value": "14:30",
                                         },
                                         Object {
-                                          "label": "2:45 AM Eastern Time (US & Canada)",
+                                          "label": "2:45 PM Eastern Time (US & Canada)",
                                           "value": "14:45",
                                         },
                                         Object {
-                                          "label": "3:00 AM Eastern Time (US & Canada)",
+                                          "label": "3:00 PM Eastern Time (US & Canada)",
                                           "value": "15:00",
                                         },
                                         Object {
-                                          "label": "3:15 AM Eastern Time (US & Canada)",
+                                          "label": "3:15 PM Eastern Time (US & Canada)",
                                           "value": "15:15",
                                         },
                                         Object {
-                                          "label": "3:30 AM Eastern Time (US & Canada)",
+                                          "label": "3:30 PM Eastern Time (US & Canada)",
                                           "value": "15:30",
                                         },
                                         Object {
-                                          "label": "3:45 AM Eastern Time (US & Canada)",
+                                          "label": "3:45 PM Eastern Time (US & Canada)",
                                           "value": "15:45",
                                         },
                                         Object {
-                                          "label": "4:00 AM Eastern Time (US & Canada)",
+                                          "label": "4:00 PM Eastern Time (US & Canada)",
                                           "value": "16:00",
                                         },
                                         Object {
-                                          "label": "4:15 AM Eastern Time (US & Canada)",
+                                          "label": "4:15 PM Eastern Time (US & Canada)",
                                           "value": "16:15",
                                         },
                                         Object {
-                                          "label": "4:30 AM Eastern Time (US & Canada)",
+                                          "label": "4:30 PM Eastern Time (US & Canada)",
                                           "value": "16:30",
                                         },
                                         Object {
-                                          "label": "4:45 AM Eastern Time (US & Canada)",
+                                          "label": "4:45 PM Eastern Time (US & Canada)",
                                           "value": "16:45",
                                         },
                                       ],
@@ -2777,67 +2777,67 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                   "value": "12:45",
                                 },
                                 Object {
-                                  "label": "1:00 AM Eastern Time (US & Canada)",
+                                  "label": "1:00 PM Eastern Time (US & Canada)",
                                   "value": "13:00",
                                 },
                                 Object {
-                                  "label": "1:15 AM Eastern Time (US & Canada)",
+                                  "label": "1:15 PM Eastern Time (US & Canada)",
                                   "value": "13:15",
                                 },
                                 Object {
-                                  "label": "1:30 AM Eastern Time (US & Canada)",
+                                  "label": "1:30 PM Eastern Time (US & Canada)",
                                   "value": "13:30",
                                 },
                                 Object {
-                                  "label": "1:45 AM Eastern Time (US & Canada)",
+                                  "label": "1:45 PM Eastern Time (US & Canada)",
                                   "value": "13:45",
                                 },
                                 Object {
-                                  "label": "2:00 AM Eastern Time (US & Canada)",
+                                  "label": "2:00 PM Eastern Time (US & Canada)",
                                   "value": "14:00",
                                 },
                                 Object {
-                                  "label": "2:15 AM Eastern Time (US & Canada)",
+                                  "label": "2:15 PM Eastern Time (US & Canada)",
                                   "value": "14:15",
                                 },
                                 Object {
-                                  "label": "2:30 AM Eastern Time (US & Canada)",
+                                  "label": "2:30 PM Eastern Time (US & Canada)",
                                   "value": "14:30",
                                 },
                                 Object {
-                                  "label": "2:45 AM Eastern Time (US & Canada)",
+                                  "label": "2:45 PM Eastern Time (US & Canada)",
                                   "value": "14:45",
                                 },
                                 Object {
-                                  "label": "3:00 AM Eastern Time (US & Canada)",
+                                  "label": "3:00 PM Eastern Time (US & Canada)",
                                   "value": "15:00",
                                 },
                                 Object {
-                                  "label": "3:15 AM Eastern Time (US & Canada)",
+                                  "label": "3:15 PM Eastern Time (US & Canada)",
                                   "value": "15:15",
                                 },
                                 Object {
-                                  "label": "3:30 AM Eastern Time (US & Canada)",
+                                  "label": "3:30 PM Eastern Time (US & Canada)",
                                   "value": "15:30",
                                 },
                                 Object {
-                                  "label": "3:45 AM Eastern Time (US & Canada)",
+                                  "label": "3:45 PM Eastern Time (US & Canada)",
                                   "value": "15:45",
                                 },
                                 Object {
-                                  "label": "4:00 AM Eastern Time (US & Canada)",
+                                  "label": "4:00 PM Eastern Time (US & Canada)",
                                   "value": "16:00",
                                 },
                                 Object {
-                                  "label": "4:15 AM Eastern Time (US & Canada)",
+                                  "label": "4:15 PM Eastern Time (US & Canada)",
                                   "value": "16:15",
                                 },
                                 Object {
-                                  "label": "4:30 AM Eastern Time (US & Canada)",
+                                  "label": "4:30 PM Eastern Time (US & Canada)",
                                   "value": "16:30",
                                 },
                                 Object {
-                                  "label": "4:45 AM Eastern Time (US & Canada)",
+                                  "label": "4:45 PM Eastern Time (US & Canada)",
                                   "value": "16:45",
                                 },
                               ]
@@ -2964,67 +2964,67 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                     "value": "12:45",
                                   },
                                   Object {
-                                    "label": "1:00 AM Eastern Time (US & Canada)",
+                                    "label": "1:00 PM Eastern Time (US & Canada)",
                                     "value": "13:00",
                                   },
                                   Object {
-                                    "label": "1:15 AM Eastern Time (US & Canada)",
+                                    "label": "1:15 PM Eastern Time (US & Canada)",
                                     "value": "13:15",
                                   },
                                   Object {
-                                    "label": "1:30 AM Eastern Time (US & Canada)",
+                                    "label": "1:30 PM Eastern Time (US & Canada)",
                                     "value": "13:30",
                                   },
                                   Object {
-                                    "label": "1:45 AM Eastern Time (US & Canada)",
+                                    "label": "1:45 PM Eastern Time (US & Canada)",
                                     "value": "13:45",
                                   },
                                   Object {
-                                    "label": "2:00 AM Eastern Time (US & Canada)",
+                                    "label": "2:00 PM Eastern Time (US & Canada)",
                                     "value": "14:00",
                                   },
                                   Object {
-                                    "label": "2:15 AM Eastern Time (US & Canada)",
+                                    "label": "2:15 PM Eastern Time (US & Canada)",
                                     "value": "14:15",
                                   },
                                   Object {
-                                    "label": "2:30 AM Eastern Time (US & Canada)",
+                                    "label": "2:30 PM Eastern Time (US & Canada)",
                                     "value": "14:30",
                                   },
                                   Object {
-                                    "label": "2:45 AM Eastern Time (US & Canada)",
+                                    "label": "2:45 PM Eastern Time (US & Canada)",
                                     "value": "14:45",
                                   },
                                   Object {
-                                    "label": "3:00 AM Eastern Time (US & Canada)",
+                                    "label": "3:00 PM Eastern Time (US & Canada)",
                                     "value": "15:00",
                                   },
                                   Object {
-                                    "label": "3:15 AM Eastern Time (US & Canada)",
+                                    "label": "3:15 PM Eastern Time (US & Canada)",
                                     "value": "15:15",
                                   },
                                   Object {
-                                    "label": "3:30 AM Eastern Time (US & Canada)",
+                                    "label": "3:30 PM Eastern Time (US & Canada)",
                                     "value": "15:30",
                                   },
                                   Object {
-                                    "label": "3:45 AM Eastern Time (US & Canada)",
+                                    "label": "3:45 PM Eastern Time (US & Canada)",
                                     "value": "15:45",
                                   },
                                   Object {
-                                    "label": "4:00 AM Eastern Time (US & Canada)",
+                                    "label": "4:00 PM Eastern Time (US & Canada)",
                                     "value": "16:00",
                                   },
                                   Object {
-                                    "label": "4:15 AM Eastern Time (US & Canada)",
+                                    "label": "4:15 PM Eastern Time (US & Canada)",
                                     "value": "16:15",
                                   },
                                   Object {
-                                    "label": "4:30 AM Eastern Time (US & Canada)",
+                                    "label": "4:30 PM Eastern Time (US & Canada)",
                                     "value": "16:30",
                                   },
                                   Object {
-                                    "label": "4:45 AM Eastern Time (US & Canada)",
+                                    "label": "4:45 PM Eastern Time (US & Canada)",
                                     "value": "16:45",
                                   },
                                 ],
@@ -3181,67 +3181,67 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                         "value": "12:45",
                                       },
                                       Object {
-                                        "label": "1:00 AM Eastern Time (US & Canada)",
+                                        "label": "1:00 PM Eastern Time (US & Canada)",
                                         "value": "13:00",
                                       },
                                       Object {
-                                        "label": "1:15 AM Eastern Time (US & Canada)",
+                                        "label": "1:15 PM Eastern Time (US & Canada)",
                                         "value": "13:15",
                                       },
                                       Object {
-                                        "label": "1:30 AM Eastern Time (US & Canada)",
+                                        "label": "1:30 PM Eastern Time (US & Canada)",
                                         "value": "13:30",
                                       },
                                       Object {
-                                        "label": "1:45 AM Eastern Time (US & Canada)",
+                                        "label": "1:45 PM Eastern Time (US & Canada)",
                                         "value": "13:45",
                                       },
                                       Object {
-                                        "label": "2:00 AM Eastern Time (US & Canada)",
+                                        "label": "2:00 PM Eastern Time (US & Canada)",
                                         "value": "14:00",
                                       },
                                       Object {
-                                        "label": "2:15 AM Eastern Time (US & Canada)",
+                                        "label": "2:15 PM Eastern Time (US & Canada)",
                                         "value": "14:15",
                                       },
                                       Object {
-                                        "label": "2:30 AM Eastern Time (US & Canada)",
+                                        "label": "2:30 PM Eastern Time (US & Canada)",
                                         "value": "14:30",
                                       },
                                       Object {
-                                        "label": "2:45 AM Eastern Time (US & Canada)",
+                                        "label": "2:45 PM Eastern Time (US & Canada)",
                                         "value": "14:45",
                                       },
                                       Object {
-                                        "label": "3:00 AM Eastern Time (US & Canada)",
+                                        "label": "3:00 PM Eastern Time (US & Canada)",
                                         "value": "15:00",
                                       },
                                       Object {
-                                        "label": "3:15 AM Eastern Time (US & Canada)",
+                                        "label": "3:15 PM Eastern Time (US & Canada)",
                                         "value": "15:15",
                                       },
                                       Object {
-                                        "label": "3:30 AM Eastern Time (US & Canada)",
+                                        "label": "3:30 PM Eastern Time (US & Canada)",
                                         "value": "15:30",
                                       },
                                       Object {
-                                        "label": "3:45 AM Eastern Time (US & Canada)",
+                                        "label": "3:45 PM Eastern Time (US & Canada)",
                                         "value": "15:45",
                                       },
                                       Object {
-                                        "label": "4:00 AM Eastern Time (US & Canada)",
+                                        "label": "4:00 PM Eastern Time (US & Canada)",
                                         "value": "16:00",
                                       },
                                       Object {
-                                        "label": "4:15 AM Eastern Time (US & Canada)",
+                                        "label": "4:15 PM Eastern Time (US & Canada)",
                                         "value": "16:15",
                                       },
                                       Object {
-                                        "label": "4:30 AM Eastern Time (US & Canada)",
+                                        "label": "4:30 PM Eastern Time (US & Canada)",
                                         "value": "16:30",
                                       },
                                       Object {
-                                        "label": "4:45 AM Eastern Time (US & Canada)",
+                                        "label": "4:45 PM Eastern Time (US & Canada)",
                                         "value": "16:45",
                                       },
                                     ]
@@ -3368,67 +3368,67 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                           "value": "12:45",
                                         },
                                         Object {
-                                          "label": "1:00 AM Eastern Time (US & Canada)",
+                                          "label": "1:00 PM Eastern Time (US & Canada)",
                                           "value": "13:00",
                                         },
                                         Object {
-                                          "label": "1:15 AM Eastern Time (US & Canada)",
+                                          "label": "1:15 PM Eastern Time (US & Canada)",
                                           "value": "13:15",
                                         },
                                         Object {
-                                          "label": "1:30 AM Eastern Time (US & Canada)",
+                                          "label": "1:30 PM Eastern Time (US & Canada)",
                                           "value": "13:30",
                                         },
                                         Object {
-                                          "label": "1:45 AM Eastern Time (US & Canada)",
+                                          "label": "1:45 PM Eastern Time (US & Canada)",
                                           "value": "13:45",
                                         },
                                         Object {
-                                          "label": "2:00 AM Eastern Time (US & Canada)",
+                                          "label": "2:00 PM Eastern Time (US & Canada)",
                                           "value": "14:00",
                                         },
                                         Object {
-                                          "label": "2:15 AM Eastern Time (US & Canada)",
+                                          "label": "2:15 PM Eastern Time (US & Canada)",
                                           "value": "14:15",
                                         },
                                         Object {
-                                          "label": "2:30 AM Eastern Time (US & Canada)",
+                                          "label": "2:30 PM Eastern Time (US & Canada)",
                                           "value": "14:30",
                                         },
                                         Object {
-                                          "label": "2:45 AM Eastern Time (US & Canada)",
+                                          "label": "2:45 PM Eastern Time (US & Canada)",
                                           "value": "14:45",
                                         },
                                         Object {
-                                          "label": "3:00 AM Eastern Time (US & Canada)",
+                                          "label": "3:00 PM Eastern Time (US & Canada)",
                                           "value": "15:00",
                                         },
                                         Object {
-                                          "label": "3:15 AM Eastern Time (US & Canada)",
+                                          "label": "3:15 PM Eastern Time (US & Canada)",
                                           "value": "15:15",
                                         },
                                         Object {
-                                          "label": "3:30 AM Eastern Time (US & Canada)",
+                                          "label": "3:30 PM Eastern Time (US & Canada)",
                                           "value": "15:30",
                                         },
                                         Object {
-                                          "label": "3:45 AM Eastern Time (US & Canada)",
+                                          "label": "3:45 PM Eastern Time (US & Canada)",
                                           "value": "15:45",
                                         },
                                         Object {
-                                          "label": "4:00 AM Eastern Time (US & Canada)",
+                                          "label": "4:00 PM Eastern Time (US & Canada)",
                                           "value": "16:00",
                                         },
                                         Object {
-                                          "label": "4:15 AM Eastern Time (US & Canada)",
+                                          "label": "4:15 PM Eastern Time (US & Canada)",
                                           "value": "16:15",
                                         },
                                         Object {
-                                          "label": "4:30 AM Eastern Time (US & Canada)",
+                                          "label": "4:30 PM Eastern Time (US & Canada)",
                                           "value": "16:30",
                                         },
                                         Object {
-                                          "label": "4:45 AM Eastern Time (US & Canada)",
+                                          "label": "4:45 PM Eastern Time (US & Canada)",
                                           "value": "16:45",
                                         },
                                       ],
@@ -3596,67 +3596,67 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                         "value": "12:45",
                                       },
                                       Object {
-                                        "label": "1:00 AM Eastern Time (US & Canada)",
+                                        "label": "1:00 PM Eastern Time (US & Canada)",
                                         "value": "13:00",
                                       },
                                       Object {
-                                        "label": "1:15 AM Eastern Time (US & Canada)",
+                                        "label": "1:15 PM Eastern Time (US & Canada)",
                                         "value": "13:15",
                                       },
                                       Object {
-                                        "label": "1:30 AM Eastern Time (US & Canada)",
+                                        "label": "1:30 PM Eastern Time (US & Canada)",
                                         "value": "13:30",
                                       },
                                       Object {
-                                        "label": "1:45 AM Eastern Time (US & Canada)",
+                                        "label": "1:45 PM Eastern Time (US & Canada)",
                                         "value": "13:45",
                                       },
                                       Object {
-                                        "label": "2:00 AM Eastern Time (US & Canada)",
+                                        "label": "2:00 PM Eastern Time (US & Canada)",
                                         "value": "14:00",
                                       },
                                       Object {
-                                        "label": "2:15 AM Eastern Time (US & Canada)",
+                                        "label": "2:15 PM Eastern Time (US & Canada)",
                                         "value": "14:15",
                                       },
                                       Object {
-                                        "label": "2:30 AM Eastern Time (US & Canada)",
+                                        "label": "2:30 PM Eastern Time (US & Canada)",
                                         "value": "14:30",
                                       },
                                       Object {
-                                        "label": "2:45 AM Eastern Time (US & Canada)",
+                                        "label": "2:45 PM Eastern Time (US & Canada)",
                                         "value": "14:45",
                                       },
                                       Object {
-                                        "label": "3:00 AM Eastern Time (US & Canada)",
+                                        "label": "3:00 PM Eastern Time (US & Canada)",
                                         "value": "15:00",
                                       },
                                       Object {
-                                        "label": "3:15 AM Eastern Time (US & Canada)",
+                                        "label": "3:15 PM Eastern Time (US & Canada)",
                                         "value": "15:15",
                                       },
                                       Object {
-                                        "label": "3:30 AM Eastern Time (US & Canada)",
+                                        "label": "3:30 PM Eastern Time (US & Canada)",
                                         "value": "15:30",
                                       },
                                       Object {
-                                        "label": "3:45 AM Eastern Time (US & Canada)",
+                                        "label": "3:45 PM Eastern Time (US & Canada)",
                                         "value": "15:45",
                                       },
                                       Object {
-                                        "label": "4:00 AM Eastern Time (US & Canada)",
+                                        "label": "4:00 PM Eastern Time (US & Canada)",
                                         "value": "16:00",
                                       },
                                       Object {
-                                        "label": "4:15 AM Eastern Time (US & Canada)",
+                                        "label": "4:15 PM Eastern Time (US & Canada)",
                                         "value": "16:15",
                                       },
                                       Object {
-                                        "label": "4:30 AM Eastern Time (US & Canada)",
+                                        "label": "4:30 PM Eastern Time (US & Canada)",
                                         "value": "16:30",
                                       },
                                       Object {
-                                        "label": "4:45 AM Eastern Time (US & Canada)",
+                                        "label": "4:45 PM Eastern Time (US & Canada)",
                                         "value": "16:45",
                                       },
                                     ]
@@ -3783,67 +3783,67 @@ exports[`HearingTime Matches snapshot when enableZone is true 1`] = `
                                           "value": "12:45",
                                         },
                                         Object {
-                                          "label": "1:00 AM Eastern Time (US & Canada)",
+                                          "label": "1:00 PM Eastern Time (US & Canada)",
                                           "value": "13:00",
                                         },
                                         Object {
-                                          "label": "1:15 AM Eastern Time (US & Canada)",
+                                          "label": "1:15 PM Eastern Time (US & Canada)",
                                           "value": "13:15",
                                         },
                                         Object {
-                                          "label": "1:30 AM Eastern Time (US & Canada)",
+                                          "label": "1:30 PM Eastern Time (US & Canada)",
                                           "value": "13:30",
                                         },
                                         Object {
-                                          "label": "1:45 AM Eastern Time (US & Canada)",
+                                          "label": "1:45 PM Eastern Time (US & Canada)",
                                           "value": "13:45",
                                         },
                                         Object {
-                                          "label": "2:00 AM Eastern Time (US & Canada)",
+                                          "label": "2:00 PM Eastern Time (US & Canada)",
                                           "value": "14:00",
                                         },
                                         Object {
-                                          "label": "2:15 AM Eastern Time (US & Canada)",
+                                          "label": "2:15 PM Eastern Time (US & Canada)",
                                           "value": "14:15",
                                         },
                                         Object {
-                                          "label": "2:30 AM Eastern Time (US & Canada)",
+                                          "label": "2:30 PM Eastern Time (US & Canada)",
                                           "value": "14:30",
                                         },
                                         Object {
-                                          "label": "2:45 AM Eastern Time (US & Canada)",
+                                          "label": "2:45 PM Eastern Time (US & Canada)",
                                           "value": "14:45",
                                         },
                                         Object {
-                                          "label": "3:00 AM Eastern Time (US & Canada)",
+                                          "label": "3:00 PM Eastern Time (US & Canada)",
                                           "value": "15:00",
                                         },
                                         Object {
-                                          "label": "3:15 AM Eastern Time (US & Canada)",
+                                          "label": "3:15 PM Eastern Time (US & Canada)",
                                           "value": "15:15",
                                         },
                                         Object {
-                                          "label": "3:30 AM Eastern Time (US & Canada)",
+                                          "label": "3:30 PM Eastern Time (US & Canada)",
                                           "value": "15:30",
                                         },
                                         Object {
-                                          "label": "3:45 AM Eastern Time (US & Canada)",
+                                          "label": "3:45 PM Eastern Time (US & Canada)",
                                           "value": "15:45",
                                         },
                                         Object {
-                                          "label": "4:00 AM Eastern Time (US & Canada)",
+                                          "label": "4:00 PM Eastern Time (US & Canada)",
                                           "value": "16:00",
                                         },
                                         Object {
-                                          "label": "4:15 AM Eastern Time (US & Canada)",
+                                          "label": "4:15 PM Eastern Time (US & Canada)",
                                           "value": "16:15",
                                         },
                                         Object {
-                                          "label": "4:30 AM Eastern Time (US & Canada)",
+                                          "label": "4:30 PM Eastern Time (US & Canada)",
                                           "value": "16:30",
                                         },
                                         Object {
-                                          "label": "4:45 AM Eastern Time (US & Canada)",
+                                          "label": "4:45 PM Eastern Time (US & Canada)",
                                           "value": "16:45",
                                         },
                                       ],
