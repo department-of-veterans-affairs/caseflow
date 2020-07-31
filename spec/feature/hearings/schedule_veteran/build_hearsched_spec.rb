@@ -111,7 +111,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
     let(:room_label) { HearingDayMapper.label_for_room(hearing_day.room) }
 
-    scenario "Schedule Veteran for video", focus: true do
+    scenario "Schedule Veteran for video" do
       cache_appeals
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
