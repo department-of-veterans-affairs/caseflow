@@ -56,7 +56,7 @@ class AssignHearingModal extends React.PureComponent {
 
   toggleFullHearingDayWarning = () => {
     const { assignHearingForm, hearingDay } = this.props;
-    const selectedHearingDay = (assignHearingForm || {}).hearingDay || hearingDay;
+    const selectedHearingDay = assignHearingForm?.hearingDay || hearingDay;
 
     if (!selectedHearingDay) {
       return;
@@ -66,10 +66,6 @@ class AssignHearingModal extends React.PureComponent {
       showFullHearingDayWarning: selectedHearingDay.filledSlots >= selectedHearingDay.totalSlots
     });
   }
-
-  submit = () => {
-    return this.completeScheduleHearingTask();
-  };
 
   validateForm = () => {
     const { assignHearingForm, openHearing } = this.props;
@@ -104,26 +100,30 @@ class AssignHearingModal extends React.PureComponent {
       }
     };
 
-    return this.props.requestPatch(`/tasks/${scheduleHearingTask.taskId}`, payload, this.getSuccessMsg()).
-      then(() => {
-        history.goBack();
-        this.resetAppealDetails();
+    return this.props.
+      requestPatch(`/tasks/${scheduleHearingTask.taskId}`, payload, this.getSuccessMsg()).
+      then(
+        () => {
+          history.goBack();
 
-      }, () => {
-        if (appeal.isLegacyAppeal) {
-          this.props.showErrorMessage({
-            title: 'No Available Slots',
-            detail: 'Could not find any available slots for this regional office and hearing day combination. ' +
-                    'Please select a different date.'
-          });
-        } else {
-          this.props.showErrorMessage({
-            title: 'No Hearing Day',
-            detail: 'Until April 1st hearing days for AMA appeals need to be created manually. ' +
-                    'Please contact the Caseflow Team for assistance.'
-          });
+          this.resetAppealDetails();
+        },
+        () => {
+          if (appeal.isLegacyAppeal) {
+            this.props.showErrorMessage({
+              title: 'No Available Slots',
+              detail: 'Could not find any available slots for this regional office and hearing day combination. ' +
+                      'Please select a different date.'
+            });
+          } else {
+            this.props.showErrorMessage({
+              title: 'No Hearing Day',
+              detail: 'Until April 1st hearing days for AMA appeals need to be created manually. ' +
+                      'Please contact the Caseflow Team for assistance.'
+            });
+          }
         }
-      });
+      );
   }
 
   resetAppealDetails = () => {
@@ -189,13 +189,10 @@ class AssignHearingModal extends React.PureComponent {
     const { showErrorMessages, showFullHearingDayWarning } = this.state;
     const { address_line_1: addressLine1, city, state, zip } = appeal.appellantAddress || {};
 
-    if (openHearing) {
-      return null;
-    }
-
     return (
       <QueueFlowModal
-        submit={this.submit}
+        submit={this.completeScheduleHearingTask}
+        submitDisabled={Boolean(openHearing)}
         validateForm={this.validateForm}
         title="Schedule Veteran"
         button="Schedule"
@@ -210,15 +207,21 @@ class AssignHearingModal extends React.PureComponent {
               {COPY.SCHEDULE_VETERAN_FULL_HEARING_DAY_MESSAGE_DETAIL}
             </Alert>
           }
-          <p>
-            Veteran Address<br />
-            {addressLine1}<br />
-            {`${city}, ${state} ${zip}`}
-          </p>
-          <AssignHearingForm
-            appeal={appeal}
-            showErrorMessages={showErrorMessages}
-            {...this.getInitialValues()} />
+          {
+            !openHearing &&
+            <React.Fragment>
+              <p>
+                Veteran Address<br />
+                {addressLine1}<br />
+                {`${city}, ${state} ${zip}`}
+              </p>
+              <AssignHearingForm
+                appeal={appeal}
+                showErrorMessages={showErrorMessages}
+                {...this.getInitialValues()}
+              />
+            </React.Fragment>
+          }
         </div>
       </QueueFlowModal>
     );
@@ -226,6 +229,7 @@ class AssignHearingModal extends React.PureComponent {
 }
 
 AssignHearingModal.propTypes = {
+  // The open hearing for an appeal (if it exists).
   openHearing: PropTypes.shape({
     date: PropTypes.string
   }),

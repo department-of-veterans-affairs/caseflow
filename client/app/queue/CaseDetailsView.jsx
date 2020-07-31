@@ -56,10 +56,16 @@ export const CaseDetailsView = (props) => {
   const success = useSelector((state) => state.ui.messages.success);
   const error = useSelector((state) => state.ui.messages.error);
   const veteranCaseListIsVisible = useSelector((state) => state.ui.veteranCaseListIsVisible);
+  const modalIsOpen = window.location.pathname.includes('modal');
 
   useEffect(() => {
     window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
-    props.resetErrorMessages();
+
+    // Prevent error messages from being reset if a modal is being displayed. This allows
+    // the modal to show error messages without them being cleared by the CaseDetailsView.
+    if (!modalIsOpen) {
+      props.resetErrorMessages();
+    }
 
     const { hearingDate, regionalOffice } = getQueryParams(window.location.search);
 
@@ -72,8 +78,6 @@ export const CaseDetailsView = (props) => {
   }, []);
 
   const doPulacCerulloReminder = useMemo(() => needsPulacCerulloAlert(appeal, tasks), [appeal, tasks]);
-
-  const modalIsOpen = window.location.pathname.includes('modal');
 
   return (
     <React.Fragment>

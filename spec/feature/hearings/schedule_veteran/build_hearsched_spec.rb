@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
+RSpec.feature "Schedule Veteran For A Hearing" do
   let!(:current_user) do
     user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
     User.authenticate!(user: user)
   end
 
   let(:other_user) { create(:user) }
+  let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
 
   before do
     HearingsManagement.singleton.add_user(current_user)
@@ -32,11 +33,8 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     let(:appellant_appeal_link_text) do
       "#{legacy_appeal.appellant[:first_name]} #{legacy_appeal.appellant[:last_name]} | #{veteran.file_number}"
     end
-    let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
 
-    before do
-      cache_appeals
-    end
+    before { cache_appeals }
 
     def navigate_to_schedule_veteran_modal
       visit "hearings/schedule/assign"
@@ -49,6 +47,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
       expect(page).to have_content("Time")
     end
+
     scenario "address from BGS is displayed in schedule veteran modal" do
       navigate_to_schedule_veteran_modal
 
@@ -58,6 +57,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
         "#{FakeConstants.BGS_SERVICE.DEFAULT_STATE} #{FakeConstants.BGS_SERVICE.DEFAULT_ZIP}"
       )
     end
+
     scenario "Schedule Veteran for central hearing" do
       navigate_to_schedule_veteran_modal
       # Wait for the contents of the dropdown to finish loading before clicking into the dropdown.
@@ -108,7 +108,6 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       )
     end
     let!(:veteran) { create(:veteran, file_number: "123456789") }
-    let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
 
     scenario "Schedule Veteran for video" do
       cache_appeals
@@ -180,9 +179,7 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
     let(:contested_claimant_task_instructions) { "Contested claimant task instructions" }
     let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_ama_appeals }
 
-    before do
-      cache_appeals
-    end
+    before { cache_appeals }
 
     scenario "Can create multiple admin actions and reassign them" do
       visit "hearings/schedule/assign"
@@ -473,7 +470,6 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       )
     end
     let!(:veteran5) { create(:veteran, file_number: "523454787") }
-    let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
 
     scenario "Verify docket order is CVAC, AOD, then regular." do
       cache_appeals
@@ -535,6 +531,46 @@ RSpec.feature "Schedule Veteran For A Hearing", :all_dbs do
       click_button("Schedule", exact: true)
 
       expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
+    end
+  end
+
+  context "With an appeal where there is an open hearing" do
+    let(:regional_office) { "RO39" }
+    let(:hearing_day) do
+      create(
+        :hearing_day,
+        request_type: HearingDay::REQUEST_TYPES[:video],
+        scheduled_for: Time.zone.today + 160,
+        regional_office: regional_office
+      )
+    end
+    let(:appeal) do
+      create(
+        :appeal,
+        :hearing_docket,
+        :with_post_intake_tasks,
+        closest_regional_office: regional_office
+      )
+    end
+    let!(:hearing) do
+      create(
+        :hearing,
+        :with_tasks,
+        appeal: appeal,
+        hearing_day: hearing_day,
+        regional_office: regional_office
+      )
+    end
+
+    scenario "shows an error message in the schedule veteran's modal" do
+      visit "queue/appeals/#{appeal.external_id}"
+      # Expected dropdowns on page:
+      #   [0] - Assign disposition task
+      #   [1] - Schedule hearing task
+      within page.all(".cf-form-dropdown")[1] do
+        click_dropdown(text: "Schedule Veteran")
+      end
+      expect(page).to have_content("Open Hearing")
     end
   end
 
