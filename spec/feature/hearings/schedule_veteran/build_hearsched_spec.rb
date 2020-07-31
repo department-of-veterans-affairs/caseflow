@@ -177,6 +177,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
     let(:incarcerated_veteran_task_instructions) { "Incarcerated veteran task instructions" }
     let(:contested_claimant_task_instructions) { "Contested claimant task instructions" }
+    let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_ama_appeals }
 
     before { cache_appeals }
 
