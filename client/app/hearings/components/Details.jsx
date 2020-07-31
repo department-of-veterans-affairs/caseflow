@@ -99,7 +99,8 @@ const HearingDetails = (props) => {
       if (virtual && noEmail) {
         // Set the Virtual Hearing errors
         setVirtualHearingErrors({
-          [!hearing.virtualHearing.appellantEmail && 'appellantEmail']: 'Appellant email is required',
+          [!hearing.virtualHearing.appellantEmail && 'appellantEmail']:
+            `${getAppellantTitleForHearing(hearing)} email is required`,
         });
 
         // Focus to the error
