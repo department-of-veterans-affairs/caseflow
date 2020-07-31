@@ -30,6 +30,7 @@ class RegionalOfficesController < ApplicationController
         scheduled_for: day.scheduled_for,
         request_type: day.request_type,
         room: day.room,
+        room_label: HearingDayMapper.label_for_room(day.room) || "",
         filled_slots: hearings.size,
         total_slots: day.total_slots
       }
