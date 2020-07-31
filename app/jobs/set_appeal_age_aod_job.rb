@@ -6,6 +6,8 @@
 class SetAppealAgeAodJob < CaseflowJob
   include ActionView::Helpers::DateHelper
 
+  queue_with_priority :low_priority
+
   def perform
     RequestStore.store[:current_user] = User.system_user
 
