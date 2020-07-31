@@ -271,6 +271,8 @@ class DailyDocketRow extends React.Component {
         <StaticHearingDay hearing={hearing} />
         <HearingTime
           {...inputProps}
+          disableRadioOptions={hearing.isVirtual}
+          enableZone={hearing.isVirtual}
           componentIndex={rowIndex}
           regionalOffice={regionalOffice}
           readOnly={
@@ -364,9 +366,9 @@ class DailyDocketRow extends React.Component {
       const resp = ApiUtil.convertToCamelCase(response);
 
       if (resp.jobCompleted) {
-        this.updateVirtualHearing(resp);
+        this.updateVirtualHearing(null, resp);
         this.props.transitionAlert('virtualHearing');
-        this.setState({ startPolling: false });
+        this.setState({ startPolling: false, edited: false, editedFields: [] });
       }
 
       // continue polling if return true (opposite of job_completed)
