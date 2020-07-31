@@ -54,13 +54,13 @@ class IntakeRenderer
 
     result = "#{obj.class.name} #{obj.id}"
     details = try("#{self.class.prefix(obj)}_details", obj)&.compact
-    result += " (#{details.join(", ")})" if details.present?
+    result += " (#{details.join(', ')})" if details.present?
     result
   end
 
   def calculate_breadcrumbs(obj)
     context = try("#{self.class.prefix(obj)}_context", obj)
-    return [] unless context.present?
+    return [] if context.blank?
 
     [label(context), calculate_breadcrumbs(context)].flatten
   end
@@ -75,7 +75,8 @@ class IntakeRenderer
   def veteran_children(vet)
     reviews = [Appeal, HigherLevelReview, SupplementalClaim].map do |klass|
       klass.where(veteran_file_number: vet.file_number)
-    end.flatten.sort_by { |dr| dr.receipt_date || Time.zone.today }
+    end.flatten
+    reviews.sort_by! { |dr| dr.receipt_date || Time.zone.today }
     reviews.map { |dr| structure(dr) }
   end
 
@@ -109,7 +110,7 @@ class IntakeRenderer
   def claimant_details(claimant)
     details = []
     if show_pii
-      details << (claimant.name.present? ? claimant.name : "#{claimant.first_name} #{claimant.last_name}")
+      details << (claimant.name.presence || "#{claimant.first_name} #{claimant.last_name}")
     end
     details << "PID: #{claimant.participant_id}"
     details << "payee: #{claimant.payee_code}" if claimant.decision_review.processed_in_vbms?
@@ -129,7 +130,7 @@ class IntakeRenderer
   end
 
   def end_product_establishment_details(epe)
-    [epe.code, "mod: #{epe.modifier || "nil"}", epe.synced_status]
+    [epe.code, "mod: #{epe.modifier || 'nil'}", epe.synced_status]
   end
 
   def end_product_establishment_children(epe)
@@ -178,7 +179,8 @@ class IntakeRenderer
       [ri.contention_removed_at, "contention removed"],
       [ri.contention_updated_at, "contention updated"],
       [ri.decision_sync_attempted_at, "decision sync attempted"],
-      [ri.decision_sync_canceled_at, "decision sync canceled"]]
+      [ri.decision_sync_canceled_at, "decision sync canceled"]
+    ]
     history.select! { |hi| hi[0].present? }.map { |hi| "#{hi[0].to_s}: #{hi[1]}" }.sort
   end
 
@@ -188,7 +190,7 @@ class IntakeRenderer
 
   def request_issues_update_children(riu)
     children = ["performed by: #{label(riu.user)}"]
-    %w[ added removed withdrawn edited correction ].each do |update_type|
+    %w[added removed withdrawn edited correction].each do |update_type|
       issues = riu.send("#{update_type}_issues")
       if issues.present?
         children << { "#{update_type}:": issues.map { |ri| label(ri) } }
@@ -206,6 +208,6 @@ class IntakeRenderer
   end
 
   def truncate(text, size)
-    text.size > size ? text[0, size - 1] + "…" : text
+    (text.size > size) ? text[0, size - 1] + "…" : text
   end
 end
