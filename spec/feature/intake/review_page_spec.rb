@@ -427,6 +427,9 @@ def check_deceased_veteran_cant_be_payee
   # verify that veteran cannot be selected
   expect(page.has_no_content?("00 - Veteran")).to eq(true)
   expect(page).to have_content("10 - Spouse")
+
+  find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
+  expect(find(".cf-select__value-container")).to have_content("10 - Spouse")
 end
 
 # rubocop: disable Metrics/AbcSize
