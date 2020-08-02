@@ -5,7 +5,7 @@ class DecisionReviewIntake < Intake
 
   def ui_hash
     Intake::DecisionReviewIntakeSerializer.new(self).serializable_hash[:data][:attributes]
-    rescue Rating::NilRatingProfileListError, PromulgatedRating::LockedRatingError
+  rescue Rating::NilRatingProfileListError, PromulgatedRating::LockedRatingError
     cancel!(reason: "system_error")
     raise
   end

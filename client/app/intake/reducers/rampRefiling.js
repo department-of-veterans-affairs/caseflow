@@ -14,7 +14,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: Boolean(serverIntake.id)
     },
     optionSelected: {
-      $set: serverIntake.option_selected
+      $set: serverIntake.optionSelected
     },
     receiptDate: {
       $set: serverIntake.receiptDate
@@ -23,10 +23,10 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.appealDocket
     },
     electionReceiptDate: {
-      $set: serverIntake.election_receipt_date && formatDateStr(serverIntake.electionReceiptDate)
+      $set: serverIntake.electionReceiptDate && formatDateStr(serverIntake.electionReceiptDate)
     },
     isReviewed: {
-      $set: Boolean(serverIntake.option_selected && serverIntake.receiptDate)
+      $set: Boolean(serverIntake.optionSelected && serverIntake.receiptDate)
     },
     issues: {
       $set: state.issues || _.keyBy(serverIntake.issues, 'id')

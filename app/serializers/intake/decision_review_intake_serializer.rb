@@ -50,4 +50,8 @@ class Intake::DecisionReviewIntakeSerializer < Intake::IntakeSerializer
   attribute :veteran_valid do |object|
     object.detail&.veteran&.valid?(:bgs)
   end
+
+  attribute :detail_edit_url do |object|
+    object.detail&.reload&.caseflow_only_edit_issues_url
+  end
 end

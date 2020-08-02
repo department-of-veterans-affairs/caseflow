@@ -31,13 +31,13 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.notice_date && formatDateStr(serverIntake.notice_date)
     },
     optionSelected: {
-      $set: serverIntake.option_selected
+      $set: serverIntake.optionSelected
     },
     receiptDate: {
       $set: serverIntake.receiptDate
     },
     isReviewed: {
-      $set: Boolean(serverIntake.option_selected && serverIntake.receiptDate)
+      $set: Boolean(serverIntake.optionSelected && serverIntake.receiptDate)
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
