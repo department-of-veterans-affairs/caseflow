@@ -311,7 +311,7 @@ class Appeal < DecisionReview
     begin
       TimezoneService.address_to_timezone(appellant_address).identifier
     rescue StandardError => error
-      Raven.capture_message(error)
+      Raven.capture_exception(error)
       nil
     end
   end
@@ -325,7 +325,7 @@ class Appeal < DecisionReview
     begin
       TimezoneService.address_to_timezone(rep_address).identifier
     rescue StandardError => error
-      Raven.capture_message(error)
+      Raven.capture_exception(error)
       nil
     end
   end

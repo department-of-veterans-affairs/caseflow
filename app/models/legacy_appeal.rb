@@ -231,7 +231,7 @@ class LegacyAppeal < CaseflowRecord
     begin
       TimezoneService.address_to_timezone(address).identifier
     rescue StandardError => error
-      Raven.capture_message(error)
+      Raven.capture_exception(error)
       nil
     end
   end
@@ -245,7 +245,7 @@ class LegacyAppeal < CaseflowRecord
     begin
       TimezoneService.address_to_timezone(address).identifier
     rescue StandardError => error
-      Raven.capture_message(error)
+      Raven.capture_exception(error)
       nil
     end
   end
