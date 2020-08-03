@@ -290,7 +290,9 @@ export const TYPES = {
       const emailUpdated = appellantEmailEdited || representativeEmailEdited;
       const tzUpdated = appellantTzEdited || representativeTzEdited;
 
-      if (emailUpdated) {
+      if (emailUpdated && tzUpdated) {
+        return COPY.VIRTUAL_HEARING_MODAL_UPDATE_GENERIC_TITLE;
+      } else if (emailUpdated) {
         return COPY.VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE;
       }
 
