@@ -16,3 +16,7 @@ export const userWithConvertCentralHearingsEnabled = {
   userCanConvertCentralHearings: true
 };
 
+export const userWithJudgeRole = {
+  ...anyUser,
+  userHasHearingPrepRole: true
+};

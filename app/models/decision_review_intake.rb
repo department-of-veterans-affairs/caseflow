@@ -38,6 +38,27 @@ class DecisionReviewIntake < Intake
 
   private
 
+  def create_claimant!
+    # This is essentially a find_or_initialize_by, but ensures that the save! below kicks off the
+    # validations for the intended subclass.
+    (Claimant.find_by(decision_review: detail) || claimant_class_name.constantize.new).tap do |claimant|
+      # Ensure that the claimant model can set validation errors on the same detail object
+      claimant.decision_review = detail
+      claimant.type = claimant_class_name
+      claimant.participant_id = participant_id
+      claimant.payee_code = (need_payee_code? ? request_params[:payee_code] : nil)
+      claimant.notes = request_params[:claimant_notes]
+      claimant.save!
+    end
+    update_person!
+  end
+
+  # :nocov:
+  def need_payee_code?
+    fail Caseflow::Error::MustImplementInSubclass
+  end
+  # :nocov:
+
   def set_review_errors
     fetch_claimant_errors
     detail.validate
@@ -89,5 +110,35 @@ class DecisionReviewIntake < Intake
       epe.veteran = veteran
       epe.sync!
     end
+  end
+
+  def claimant_class_name
+    "#{request_params[:claimant_type]&.capitalize}Claimant"
+  end
+
+  def veteran_is_not_claimant
+    claimant_class_name != "VeteranClaimant"
+  end
+
+  # If user has specified a different claimant, use that
+  # Otherwise we use the veteran's participant_id, even for OtherClaimant
+  def participant_id
+    if %w[VeteranClaimant OtherClaimant].include? claimant_class_name
+      veteran.participant_id
+    else
+      request_params[:claimant]
+    end
+  end
+
+  # :nocov:
+  def review_param_keys
+    fail Caseflow::Error::MustImplementInSubclass
+  end
+  # :nocov:
+
+  def review_params
+    params = request_params.permit(*review_param_keys)
+    params[:veteran_is_not_claimant] = veteran_is_not_claimant
+    params
   end
 end

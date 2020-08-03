@@ -58,6 +58,7 @@ class HearingSerializer
   attribute :regional_office_name
   attribute :regional_office_timezone
   attribute :representative, if: for_full
+  attribute :representative_type, if: for_full
   attribute :representative_name, if: for_full
   attribute :representative_address, if: for_full
   attribute :representative_email_address, if: for_full

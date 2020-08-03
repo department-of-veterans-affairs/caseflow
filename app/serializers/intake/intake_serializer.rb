@@ -27,4 +27,12 @@ class Intake::IntakeSerializer
   attribute :receipt_date do |object|
     object.detail&.receipt_date
   end
+
+  attribute :processed_in_caseflow do |object|
+    object.detail&.try(:processed_in_caseflow?)
+  end
+
+  attribute :claimant_type do |object|
+    object.detail&.try(:claimant_type)
+  end
 end
