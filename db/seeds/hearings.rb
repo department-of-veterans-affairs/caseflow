@@ -82,6 +82,7 @@ module Seeds
 
       create(
         :case_hearing,
+        hearing_type: (ro_key == "C") ? HearingDay::REQUEST_TYPES[:central] : HearingDay::REQUEST_TYPES[:video],
         folder_nr: folder_map[ro_key],
         vdkey: day.id,
         board_member: User.find_by_css_id("BVAAABSHIRE").vacols_attorney_id.to_i
