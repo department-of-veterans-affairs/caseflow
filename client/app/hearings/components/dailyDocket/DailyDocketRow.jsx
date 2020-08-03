@@ -448,6 +448,7 @@ DailyDocketRow.propTypes = {
   readOnly: PropTypes.bool,
   hidePreviouslyScheduled: PropTypes.bool,
   hearing: PropTypes.shape({
+    regionalOfficeTimezone: PropTypes.string,
     docketName: PropTypes.string,
     advanceOnDocketMotion: PropTypes.object,
     virtualHearing: PropTypes.shape({
