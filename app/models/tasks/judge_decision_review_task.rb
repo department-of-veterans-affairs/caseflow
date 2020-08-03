@@ -10,7 +10,7 @@ class JudgeDecisionReviewTask < JudgeTask
     return [] unless assigned_to == user
 
     judge_checkout_label = if ama?
-                             ama_judge_actions
+                             ama_judge_actions(user)
                            else
                              Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.to_h
                            end
@@ -46,8 +46,10 @@ class JudgeDecisionReviewTask < JudgeTask
 
   private
 
-  def ama_judge_actions
-    return Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT_SP_ISSUES.to_h if FeatureToggle.enabled?(:special_issues_revamp)
+  def ama_judge_actions(user)
+    if FeatureToggle.enabled?(:special_issues_revamp, user: user)
+      return Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT_SP_ISSUES.to_h
+    end
 
     Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.to_h
   end

@@ -63,6 +63,11 @@ class VirtualHearing < CaseflowRecord
   scope :cancelled,
         -> { where(request_cancelled: true) }
 
+  VALID_REQUEST_TYPES = [
+    HearingDay::REQUEST_TYPES[:video],
+    HearingDay::REQUEST_TYPES[:central]
+  ].freeze
+
   def all_emails_sent?
     appellant_email_sent &&
       (judge_email.nil? || judge_email_sent) &&
