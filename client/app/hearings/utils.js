@@ -257,7 +257,7 @@ export const zoneName = (time, name, format) => {
 
   // Return the value if it is not a valid time
   return moment(time, 'h:mm A').isValid() ? `${moment(time, 'h:mm a').tz(timezone).
-    format(`h:mm A ${format || ''}`)} ${label}` : time;
+    format(`h:mm A ${format || ''}`)}${label}` : time;
 };
 
 /**
