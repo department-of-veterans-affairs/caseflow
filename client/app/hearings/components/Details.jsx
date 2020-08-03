@@ -97,7 +97,7 @@ const HearingDetails = (props) => {
       const emailUpdated = editedEmails?.appellantEmailEdited || editedEmails?.representativeEmailEdited;
       const timezoneUpdated = editedEmails?.representativeTzEdited || editedEmails?.appellantTzEdited;
 
-      if (virtual && (noEmail || noRepTimezone)) {
+      if (virtual && (noEmail || (noRepTimezone && hearing.readableRequestType !== 'Video'))) {
         // Set the Virtual Hearing errors
         setVirtualHearingErrors({
           [noEmail && 'appellantEmail']: `${getAppellantTitleForHearing(hearing)} email is required`,
