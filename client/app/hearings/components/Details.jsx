@@ -93,14 +93,15 @@ const HearingDetails = (props) => {
       // Determine the current state and whether to error
       const virtual = hearing.isVirtual || hearing.wasVirtual || converting;
       const noEmail = !hearing.virtualHearing?.appellantEmail;
+      const noRepTimezone = hearing.virtualHearing?.representativeEmail && !hearing.virtualHearing?.representativeTz;
       const emailUpdated = editedEmails?.appellantEmailEdited || editedEmails?.representativeEmailEdited;
       const timezoneUpdated = editedEmails?.representativeTzEdited || editedEmails?.appellantTzEdited;
 
-      if (virtual && noEmail) {
+      if (virtual && (noEmail || noRepTimezone)) {
         // Set the Virtual Hearing errors
         setVirtualHearingErrors({
-          [!hearing.virtualHearing.appellantEmail && 'appellantEmail']:
-            `${getAppellantTitleForHearing(hearing)} email is required`,
+          [noEmail && 'appellantEmail']: `${getAppellantTitleForHearing(hearing)} email is required`,
+          [noRepTimezone && 'representativeTz']: 'Timezone is required to send email notifications.'
         });
 
         // Focus to the error
