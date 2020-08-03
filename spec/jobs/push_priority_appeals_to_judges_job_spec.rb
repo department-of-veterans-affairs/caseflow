@@ -289,13 +289,19 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       appeal
     end
 
+    let(:distributed_cases) do
+      (0...5).map do |count|
+        distribution = build(:distribution, statistics: { "batch_size" => count })
+        distribution.save(validate: false)
+        distribution
+      end
+    end
+
     subject { job.slack_report }
 
     before do
-      job.instance_variable_set(:@tied_distributions, (0...5).map { |count| { statistics: { "batch_size" => count } } })
-      job.instance_variable_set(
-        :@genpop_distributions, (0...5).map { |count| { statistics: { "batch_size" => count } } }
-      )
+      job.instance_variable_set(:@tied_distributions, distributed_cases)
+      job.instance_variable_set(:@genpop_distributions, distributed_cases)
       allow_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:eligible_judge_priority_distributions_this_month).and_return(previous_distributions)
       allow_any_instance_of(DocketCoordinator).to receive(:priority_count).and_return(20)
