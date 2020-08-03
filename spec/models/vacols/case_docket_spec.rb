@@ -45,13 +45,15 @@ describe VACOLS::CaseDocket, :all_dbs do
 
   let(:another_nonpriority_ready_case_docket_number) { "1801002" }
   let!(:another_nonpriority_ready_case) do
-    create(:case,
-           bfd19: 1.year.ago,
-           bfac: "1",
-           bfmpro: "ACT",
-           bfcurloc: "83",
-           bfdloout: 1.day.ago,
-           folder: build(:folder, tinum: another_nonpriority_ready_case_docket_number, titrnum: "123456789S"))
+    create(
+      :case,
+      bfd19: 1.year.ago,
+      bfac: "1",
+      bfmpro: "ACT",
+      bfcurloc: "83",
+      bfdloout: 1.day.ago,
+      folder: build(:folder, tinum: another_nonpriority_ready_case_docket_number, titrnum: "123456789S")
+    ).tap { |vacols_case| create(:mail, :blocking, :completed, mlfolder: vacols_case.bfkey) }
   end
 
   let!(:nonpriority_unready_case) do
@@ -90,7 +92,7 @@ describe VACOLS::CaseDocket, :all_dbs do
            folder: build(:folder, tinum: postcavc_ready_case_docket_number, titrnum: "123456789S"))
   end
 
-  let!(:aod_unready_case) do
+  let!(:aod_case_unready_due_to_location) do
     create(:case,
            :aod,
            bfd19: 1.year.ago,
@@ -99,11 +101,20 @@ describe VACOLS::CaseDocket, :all_dbs do
            bfcurloc: "55")
   end
 
+  let!(:aod_case_unready_due_to_blocking_mail) do
+    create(:case,
+           :aod,
+           bfd19: 1.year.ago,
+           bfac: "1",
+           bfmpro: "ACT",
+           bfcurloc: "81").tap { |vacols_case| create(:mail, :blocking, :incomplete, mlfolder: vacols_case.bfkey) }
+  end
+
   context ".counts_by_priority_and_readiness" do
     subject { VACOLS::CaseDocket.counts_by_priority_and_readiness }
     it "creates counts grouped by priority and readiness" do
       expect(subject).to match_array([
-                                       { "n" => 1, "priority" => 1, "ready" => 0 },
+                                       { "n" => 2, "priority" => 1, "ready" => 0 },
                                        { "n" => 2, "priority" => 1, "ready" => 1 },
                                        { "n" => 1, "priority" => 0, "ready" => 0 },
                                        { "n" => 2, "priority" => 0, "ready" => 1 }
@@ -433,7 +444,7 @@ describe VACOLS::CaseDocket, :all_dbs do
     end
 
     it "does not distribute non-ready or nonpriority cases" do
-      expect(aod_unready_case.reload.bfcurloc).to eq("55")
+      expect(aod_case_unready_due_to_location.reload.bfcurloc).to eq("55")
       expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
     end
 

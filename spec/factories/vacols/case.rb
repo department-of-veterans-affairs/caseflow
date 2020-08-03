@@ -265,6 +265,10 @@ FactoryBot.define do
       bfdc { "P" }
     end
 
+    trait :disposition_advance_failure_to_respond do
+      bfdc { "G" }
+    end
+
     trait :representative_american_legion do
       bfso { "A" }
     end

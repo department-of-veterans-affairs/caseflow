@@ -309,6 +309,18 @@ class ExternalApi::VADotGovService
       request.body = body.to_json unless body.nil?
       request.headers = headers.merge(apikey: ENV["VA_DOT_GOV_API_KEY"])
 
+      # Rate limit requests to VA.gov veteran verification API. This is meant to be an aggressive,
+      # temporary safety measure because it's more costly (in terms of computing resources) if we
+      # hit the rate limit. The sleep will be removed as a part of the work on this issue:
+      # https://github.com/department-of-veterans-affairs/caseflow/issues/14710
+      #
+      # Rate Limit: https://developer.va.gov/explore/verification/docs/veteran_confirmation?version=current
+      #
+      # > We implemented basic rate limiting of 60 requests per minute. If you exceed this quota,
+      # > your request will return a 429 status code. You may petition for increased rate limits by
+      # > emailing and requests will be decided on a case by case basis.
+      sleep 1
+
       MetricsService.record("api.va.gov #{method.to_s.upcase} request to #{url}",
                             service: :va_dot_gov,
                             name: endpoint) do

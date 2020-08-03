@@ -35,7 +35,7 @@ class HearingDaySerializer
     end
 
     # `video_hearing_days_request_types` should be constructed with
-    # VideoHearingDayRequestTypeQuery. It is an optimized way to get the request type
+    # HearingDayRequestTypeQuery. It is an optimized way to get the request type
     # for a video hearing day, which can vary depending on how many virtual hearings
     # a video hearing day has.
     request_type = params[:video_hearing_days_request_types][hearing_day.id]
@@ -46,7 +46,7 @@ class HearingDaySerializer
   end
 
   def self.serialize_collection(hearing_days)
-    video_hearing_days_request_types = VideoHearingDayRequestTypeQuery.new.call
+    video_hearing_days_request_types = HearingDayRequestTypeQuery.new.call
 
     ::HearingDaySerializer.new(
       hearing_days,

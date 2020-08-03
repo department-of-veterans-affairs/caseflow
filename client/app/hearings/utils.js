@@ -241,15 +241,23 @@ export const getOptionsFromObject = (object, noneOption, transformer) =>
 
 /**
  * Method to get the Timezone label of a Timezone value
- * @param {string} tz -- Key of the Timezone to get the label
+ * @param {string} time -- The time to which the zone is being added
+ * @param {string} name -- Name of the zone, defaults to New York
  * @returns {string} -- The label of the timezone
  */
-export const zoneName = (name) => {
-  // Filter the zone name
-  const [zone] = Object.keys(TIMEZONES).filter((tz) => TIMEZONES[tz] === COMMON_TIMEZONES[3]);
+export const zoneName = (time, name) => {
+  // Default to using EST for all times before conversion
+  moment.tz.setDefault(COMMON_TIMEZONES[3]);
 
-  // Return the friendly zone name
-  return moment(name, 'h:mm A').isValid() ? `${moment(name, 'h:mm A').format('h:mm A')} ${zone}` : name;
+  // Default to using America/New_York
+  const timezone = name ? name : COMMON_TIMEZONES[3];
+
+  // Filter the zone name
+  const [zone] = Object.keys(TIMEZONES).filter((tz) => TIMEZONES[tz] === timezone);
+
+  // Return the value if it is not a valid time
+  return moment(time, 'h:mm A').isValid() ? `${moment(time, 'h:mm a').tz(timezone).
+    format('h:mm A')} ${zone}` : time;
 };
 
 /**

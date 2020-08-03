@@ -36,12 +36,12 @@ FactoryBot.define do
           claimant.save
         end
       elsif evaluator.number_of_claimants
-        claimant_type = appeal.veteran_is_not_claimant ? "DependentClaimant" : "VeteranClaimant"
+        claimant_class_name = appeal.veteran_is_not_claimant ? "DependentClaimant" : "VeteranClaimant"
         create_list(
           :claimant,
           evaluator.number_of_claimants,
           decision_review: appeal,
-          type: claimant_type
+          type: claimant_class_name
         )
       else
         create(

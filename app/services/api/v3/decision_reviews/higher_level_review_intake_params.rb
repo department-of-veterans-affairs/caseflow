@@ -58,8 +58,8 @@ class Api::V3::DecisionReviews::HigherLevelReviewIntakeParams
       same_office: attributes["sameOffice"],
       benefit_type: attributes["benefitType"],
       claimant: claimant_who_is_not_the_veteran["participantId"],
+      claimant_type: (veteran_is_not_the_claimant? ? "dependent" : "veteran"),
       payee_code: claimant_who_is_not_the_veteran["payeeCode"],
-      veteran_is_not_claimant: veteran_is_not_the_claimant?,
       legacy_opt_in_approved: attributes["legacyOptInApproved"]
     )
   end
