@@ -638,6 +638,10 @@ class LegacyAppeal < CaseflowRecord
     disposition == "Merged Appeal"
   end
 
+  def advance_failure_to_respond?
+    disposition == "Advance Failure to Respond"
+  end
+
   def special_issues
     SPECIAL_ISSUES.inject([]) do |list, special_issue|
       send(special_issue[0]) ? (list + [special_issue[1]]) : list
@@ -1067,6 +1071,14 @@ class LegacyAppeal < CaseflowRecord
           )
         end
       end
+    end
+
+    def opt_in_decided_appeal(appeal:, user:, closed_on:)
+      repository.opt_in_decided_appeal!(
+        appeal: appeal,
+        user: user,
+        closed_on: closed_on
+      )
     end
 
     def certify(appeal)

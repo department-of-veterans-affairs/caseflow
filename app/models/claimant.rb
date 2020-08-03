@@ -2,6 +2,7 @@
 
 ##
 # The Claimant model associates a claimant to a decision review.
+# There are several subclasses, such as VeteranClaimant, DependentClaimant, and AttorneyClaimant.
 
 class Claimant < CaseflowRecord
   include HasDecisionReviewUpdatedSince
@@ -9,7 +10,6 @@ class Claimant < CaseflowRecord
   belongs_to :decision_review, polymorphic: true
   belongs_to :person, primary_key: :participant_id, foreign_key: :participant_id
 
-  validate { |claimant| ClaimantValidator.new(claimant).validate }
   validates :participant_id,
             uniqueness: { scope: [:decision_review_id, :decision_review_type],
                           on: :create }
@@ -44,6 +44,8 @@ class Claimant < CaseflowRecord
 
   delegate :date_of_birth,
            :advanced_on_docket?,
+           :advanced_on_docket_based_on_age?,
+           :advanced_on_docket_motion_granted?,
            :name,
            :first_name,
            :last_name,
