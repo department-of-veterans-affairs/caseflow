@@ -144,8 +144,11 @@ class VACOLS::CaseDocket < VACOLS::Record
       select count(*) N, PRIORITY, READY
       from (
         select case when BFAC = '7' or nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0) > 0 then 1 else 0 end as PRIORITY,
-          case when BFCURLOC in ('81', '83') then 1 else 0 end as READY
+          case when BFCURLOC in ('81', '83') and MAIL_BLOCKS_DISTRIBUTION = 0 and DIARY_BLOCKS_DISTRIBUTION = 0
+            then 1 else 0 end as READY
         from BRIEFF
+        #{JOIN_MAIL_BLOCKS_DISTRIBUTION}
+        #{JOIN_DIARY_BLOCKS_DISTRIBUTION}
         left join (
           select TSKTKNM, count(*) CNT
           from ASSIGN

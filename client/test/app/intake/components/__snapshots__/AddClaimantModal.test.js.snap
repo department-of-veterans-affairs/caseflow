@@ -80,49 +80,34 @@ exports[`AddClaimantModal renders correctly 1`] = `
                   class="cf-select"
                 >
                   <div
-                    class=" css-2b097c-container"
+                    class="cf-select--is-disabled css-14jk2my-container"
                   >
                     <div
-                      class="cf-select__control css-yk16xz-control"
+                      class="cf-select__control cf-select__control--is-disabled css-1fhf3k1-control"
                     >
                       <div
                         class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
                       >
                         <div
-                          class="cf-select__single-value css-1uccc91-singleValue"
+                          class="cf-select__single-value cf-select__single-value--is-disabled css-107lb6w-singleValue"
                         >
                           Attorney (previously or currently)
                         </div>
-                        <div
-                          class="css-81nyic-Input"
-                        >
-                          <div
-                            class="cf-select__input"
-                            style="display: inline-block;"
-                          >
-                            <input
-                              aria-autocomplete="list"
-                              autocapitalize="none"
-                              autocomplete="off"
-                              autocorrect="off"
-                              id="relationship"
-                              spellcheck="false"
-                              style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
-                              tabindex="0"
-                              type="text"
-                              value=""
-                            />
-                            <div
-                              style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                            />
-                          </div>
-                        </div>
+                        <input
+                          aria-autocomplete="list"
+                          class="css-62g3xt-dummyInput"
+                          disabled=""
+                          id="relationship"
+                          readonly=""
+                          tabindex="0"
+                          value=""
+                        />
                       </div>
                       <div
                         class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
                       >
                         <span
-                          class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
+                          class="cf-select__indicator-separator css-109onse-indicatorSeparator"
                         />
                         <div
                           aria-hidden="true"
@@ -249,19 +234,19 @@ exports[`AddClaimantModal renders correctly 1`] = `
               </div>
             </div>
             <div
-              class="checkbox-wrapper-noClaimant cf-form-checkboxes"
+              class="checkbox-wrapper-notListed cf-form-checkboxes"
             >
               <div
                 class="cf-form-checkbox"
               >
                 <input
-                  aria-label="noClaimant"
-                  id="noClaimant"
-                  name="noClaimant"
+                  aria-label="notListed"
+                  id="notListed"
+                  name="notListed"
                   type="checkbox"
                 />
                 <label
-                  for="noClaimant"
+                  for="notListed"
                 >
                   <span
                     class=""

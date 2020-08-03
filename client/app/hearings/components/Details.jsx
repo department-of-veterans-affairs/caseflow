@@ -17,7 +17,7 @@ import Alert from '../../components/Alert';
 import Button from '../../components/Button';
 import UserAlerts from '../../components/UserAlerts';
 import ApiUtil from '../../util/ApiUtil';
-import { deepDiff, pollVirtualHearingData, getChanges } from '../utils';
+import { deepDiff, pollVirtualHearingData, getChanges, getAppellantTitleForHearing } from '../utils';
 import DetailsForm from './details/DetailsForm';
 import { DetailsHeader } from './details/DetailsHeader';
 import VirtualHearingModal from './VirtualHearingModal';
@@ -93,19 +93,20 @@ const HearingDetails = (props) => {
       // Determine the current state and whether to error
       const virtual = hearing.isVirtual || hearing.wasVirtual || converting;
       const noEmail = !hearing.virtualHearing?.appellantEmail;
-      const emailUpdated = editedEmails?.appellantEmailEdited;
+      const emailUpdated = editedEmails?.appellantEmailEdited || editedEmails?.representativeEmailEdited;
       const timezoneUpdated = editedEmails?.representativeTzEdited || editedEmails?.appellantTzEdited;
 
       if (virtual && noEmail) {
         // Set the Virtual Hearing errors
         setVirtualHearingErrors({
-          [!hearing.virtualHearing.appellantEmail && 'appellantEmail']: 'Appellant email is required',
+          [!hearing.virtualHearing.appellantEmail && 'appellantEmail']:
+            `${getAppellantTitleForHearing(hearing)} email is required`,
         });
 
         // Focus to the error
         return document.getElementById('email-section').scrollIntoView();
       } else if ((emailUpdated || timezoneUpdated) && !converting) {
-        return openVirtualHearingModal({ type: emailUpdated ? 'change_email' : 'change_hearing_time' });
+        return openVirtualHearingModal({ type: 'change_email' });
       }
 
       // Only send updated properties
@@ -157,16 +158,28 @@ const HearingDetails = (props) => {
       // Retrieve the error message from the body
       const msg = respError?.response?.body?.errors.length > 0 && respError?.response?.body?.errors[0]?.message;
 
-      if (code === 1002) {
-        if (converting) {
-          setError(msg);
-        }
+      // Set the state with the error
+      setLoading(false);
 
+      if (code === 1002 && hearing?.readableRequestType === 'Video') {
         // 1002 is returned with an invalid email. rethrow respError, then re-catch it in VirtualHearingModal
+        setError(msg);
         throw respError;
       }
-      setLoading(false);
-      setError(msg);
+
+      // Remove the validation string from th error
+      const messages = msg.split(':')[1];
+
+      // Set inline errors if not Video because it doesnt use the VirtualHearingModal
+      const errors = messages.split(',').reduce((list, message) => ({
+        ...list,
+        [(/Representative/).test(message) ? 'representativeEmail' : 'appellantEmail']:
+          message.replace('Appellant', getAppellantTitleForHearing(hearing))
+      }), {});
+
+      document.getElementById('email-section').scrollIntoView();
+
+      setVirtualHearingErrors(errors);
     }
   };
 

@@ -31,6 +31,11 @@ FactoryBot.define do
       before(:create, &:generate_conference_pins)
     end
 
+    trait :previously_central do
+      appellant_tz { "America/Denver" }
+      representative_tz { "America/Los_Angeles" }
+    end
+
     trait :all_emails_sent do
       appellant_email_sent { true }
       representative_email_sent { true }
