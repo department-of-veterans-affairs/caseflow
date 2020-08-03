@@ -7,10 +7,10 @@ class Intake::DecisionReviewSerializer
   attribute :claimant, &:claimant_participant_id
   attribute :claimant_type
   attribute :claimant_name do |object|
-    object.claimant.name
+    object.claimant&.name
   end
   attribute :claimant_notes do |object|
-    object.claimant.notes
+    object.claimant&.notes
   end
   attribute :veteran_is_not_claimant
   attribute :processed_in_caseflow, &:processed_in_caseflow?
