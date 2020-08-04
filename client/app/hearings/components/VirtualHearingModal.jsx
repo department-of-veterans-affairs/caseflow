@@ -316,7 +316,8 @@ const VirtualHearingModal = (props) => {
     representativeEmailEdited,
     representativeTzEdited,
     appellantEmailEdited,
-    appellantTzEdited
+    appellantTzEdited,
+    scrollLock
   } = props;
   const [appellantEmailError, setAppellantEmailError] = useState(null);
   const [representativeEmailError, setRepresentativeEmailError] = useState(null);
@@ -397,6 +398,7 @@ const VirtualHearingModal = (props) => {
             Cancel
           </Button>
         }
+        scrollLock={scrollLock}
       >
         <p
           dangerouslySetInnerHTML={
@@ -442,7 +444,10 @@ VirtualHearingModal.propTypes = {
   update: PropTypes.func,
   submit: PropTypes.func,
   reset: PropTypes.func,
-  closeModal: PropTypes.func
+  closeModal: PropTypes.func,
+
+  // Passthrough to `Modal` to enable/disable the `ScrollLock` element from displaying.
+  scrollLock: PropTypes.bool
 };
 
 export default VirtualHearingModal;
