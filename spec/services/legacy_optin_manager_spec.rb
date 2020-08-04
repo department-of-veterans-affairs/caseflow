@@ -276,13 +276,38 @@ describe LegacyOptinManager, :all_dbs do
 
           # Appeals that were closed and not failure to respond stay the same
           expect(already_closed_case.reload).to be_closed
-          expect(failure_to_respond_case.bfdc).to_not eq "O"
+          expect(already_closed_case.bfdc).to_not eq "O"
           expect(already_closed_case.bfddec).to eq(closed_disposition_date)
 
           # Appeals that were closed with a G disposition get opted in
           expect(failure_to_respond_case.reload).to be_closed
           expect(failure_to_respond_case.bfdc).to eq LegacyIssueOptin::VACOLS_DISPOSITION_CODE
           expect(failure_to_respond_case.bfddec).to eq(Time.zone.today)
+        end
+
+        context "when an advance failure to respond has an issue decided with another disposition" do
+          let(:allowed_issue) do
+            create(:case_issue, :disposition_allowed, issseq: 2, issdcls: closed_disposition_date)
+          end
+
+          let!(:failure_to_respond_case) do
+            create(:case,
+                   :status_complete,
+                   :disposition_advance_failure_to_respond,
+                   bfkey: "gcode",
+                   case_issues: [gcode_issue1, gcode_issue2, allowed_issue],
+                   bfdsoc: 1.day.ago,
+                   bfddec: closed_disposition_date,
+                   folder: folder_record)
+          end
+
+          # Legacy appeals get opted-in as long as none of the issues still have the "G" disposition
+          # even if the issues were not opted-in to AMA
+          it "opt-ins the parent legacy appeal" do
+            subject
+
+            expect(failure_to_respond_case.reload.bfdc).to eq LegacyIssueOptin::VACOLS_DISPOSITION_CODE
+          end
         end
 
         context "when the last issue on the legacy appeal was previously opted-in" do
