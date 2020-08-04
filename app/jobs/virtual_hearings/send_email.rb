@@ -118,7 +118,7 @@ class VirtualHearings::SendEmail
     # The "appellant" title is used in the email and is consistent whether or not the
     # veteran is or isn't the appellant, but the email event can be more specific.
     recipient_is_veteran = (
-      recipient.title.eq?(MailRecipient::RECIPIENT_TITLES[:appellant]) &&
+      recipient.title == MailRecipient::RECIPIENT_TITLES[:appellant] &&
       !appeal.appellant_is_not_veteran
     )
     SentHearingEmailEvent.create!(
