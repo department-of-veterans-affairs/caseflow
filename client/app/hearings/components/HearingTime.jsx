@@ -13,11 +13,11 @@ export const HearingTime = (
   // Default to using EST for all times before conversion
   moment.tz.setDefault(hearing.regionalOfficeTimezone || 'America/New_York');
 
-  // Determine whether to display a representative timezone
-  const repTimezone = hearing.virtualHearing?.representativeTz === hearing.regionalOfficeTimezone &&
+  // Determine whether to display the appellant timezone
+  const repTimezone = hearing.virtualHearing?.appellantTz === hearing.regionalOfficeTimezone &&
     hearing.regionalOfficeTimezone === 'America/New_York' ?
     '' :
-    hearing.virtualHearing?.representativeTz || hearing.regionalOfficeTimezone;
+    hearing.virtualHearing?.appellantTz || hearing.regionalOfficeTimezone;
 
   // Determine what timezone to use
   const timezone = hearing.isVirtual ?
