@@ -101,7 +101,7 @@ TextareaField.defaultProps = {
 TextareaField.propTypes = {
   hideLabel: PropTypes.bool,
   id: PropTypes.string,
-  label: PropTypes.string,
+  label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   strongLabel: PropTypes.bool,
   maxlength: PropTypes.number,
   name: PropTypes.string.isRequired,

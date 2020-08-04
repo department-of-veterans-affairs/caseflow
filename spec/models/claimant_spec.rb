@@ -104,25 +104,63 @@ describe Claimant, :postgres do
   end
 
   context "#advanced_on_docket?" do
-    context "when claimant is over 75 years old" do
+    context "when claimant satisfies AOD age criteria" do
+      let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age) }
+
       it "returns true" do
-        claimant = create(:claimant, :advanced_on_docket_due_to_age)
         expect(claimant.advanced_on_docket?(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket_based_on_age?).to eq(true)
       end
     end
 
     context "when claimant has motion granted" do
-      it "returns true" do
-        claimant = create(:claimant)
-        create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true)
+      let(:claimant) { create(:claimant) }
 
+      before do
+        create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true)
+      end
+
+      it "returns true" do
         expect(claimant.advanced_on_docket?(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket_based_on_age?).to eq(false)
+        expect(claimant.advanced_on_docket_motion_granted?(1.year.ago)).to eq(true)
       end
     end
 
     context "when claimant is younger than 75 years old and has no motion granted" do
+      let(:claimant) { create(:claimant) }
+
       it "returns false" do
-        claimant = create(:claimant)
+        expect(claimant.advanced_on_docket?(1.year.ago)).to eq(false)
+        expect(claimant.advanced_on_docket_based_on_age?).to eq(false)
+        expect(claimant.advanced_on_docket_motion_granted?(1.year.ago)).to eq(false)
+      end
+    end
+
+    context "when claimant satisfies AOD age criteria and has motion granted" do
+      let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age) }
+
+      before do
+        create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true)
+      end
+
+      it "returns true" do
+        expect(claimant.advanced_on_docket?(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket_based_on_age?).to eq(true)
+        expect(claimant.advanced_on_docket_motion_granted?(1.year.ago)).to eq(true)
+      end
+    end
+
+    context "when AttorneyClaimant satisfies AOD age criteria and has motion granted" do
+      let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age, type: "AttorneyClaimant") }
+
+      before do
+        create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true)
+      end
+
+      it "returns false" do
+        expect(claimant.advanced_on_docket_based_on_age?).to eq(false)
+        expect(claimant.advanced_on_docket_motion_granted?(1.year.ago)).to eq(false)
         expect(claimant.advanced_on_docket?(1.year.ago)).to eq(false)
       end
     end
@@ -163,6 +201,22 @@ describe Claimant, :postgres do
 
         expect(bgs_service).to have_received(:fetch_poa_by_file_number).once
         expect(bgs_service).to have_received(:fetch_poas_by_participant_ids).once
+      end
+    end
+
+    context "when claimant is AttorneyClaimant" do
+      let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age, type: "AttorneyClaimant") }
+
+      before do
+        create(:bgs_attorney, participant_id: claimant.participant_id, name: "JOHN SMITH")
+      end
+
+      it "returns name of AttorneyClaimant" do
+        expect(claimant.name).to eq "JOHN SMITH"
+      end
+
+      it "returns BgsPowerOfAttorney" do
+        expect(subject).to be_a BgsPowerOfAttorney
       end
     end
   end

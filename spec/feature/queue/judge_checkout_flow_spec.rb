@@ -87,7 +87,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
     end
 
     context "when special_issues_revamp feature is enabled" do
-      before { FeatureToggle.enable!(:special_issues_revamp) }
+      before { FeatureToggle.enable!(:special_issues_revamp, users: [judge_user.css_id]) }
       after { FeatureToggle.disable!(:special_issues_revamp) }
       scenario "starts dispatch checkout flow" do
         visit "/queue"

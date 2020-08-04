@@ -65,7 +65,7 @@ class ControllerSchema
 
   # mutates params by removing fields not declared in the schema, other than path params
   def remove_unknown_keys(params, path_params = {})
-    allowed = fields.map(&:name) + path_params.keys.map(&:to_s)
+    allowed = (fields.map(&:name) + path_params.keys).map(&:to_s)
     removed = params.keys - allowed
     params.slice!(*allowed)
     Rails.logger.info("Removed unknown keys from controller params: #{removed}") if removed.present?

@@ -108,7 +108,6 @@ class AssignHearingForm extends React.Component {
             regionalOffice={regionalOffice}
             value={hearingDay || initialHearingDate}
             onChange={(value) => this.onChange({ hearingDay: value })}
-            validateValueOnMount
           />
           <HearingTime
             errorMessage={this.getErrorMessage('scheduledTimeString')}

@@ -231,7 +231,7 @@ class LegacyAppeal < CaseflowRecord
     begin
       TimezoneService.address_to_timezone(address).identifier
     rescue StandardError => error
-      log_error(error)
+      Raven.capture_exception(error)
       nil
     end
   end
@@ -245,7 +245,7 @@ class LegacyAppeal < CaseflowRecord
     begin
       TimezoneService.address_to_timezone(address).identifier
     rescue StandardError => error
-      log_error(error)
+      Raven.capture_exception(error)
       nil
     end
   end
@@ -636,6 +636,10 @@ class LegacyAppeal < CaseflowRecord
 
   def merged?
     disposition == "Merged Appeal"
+  end
+
+  def advance_failure_to_respond?
+    disposition == "Advance Failure to Respond"
   end
 
   def special_issues
@@ -1067,6 +1071,14 @@ class LegacyAppeal < CaseflowRecord
           )
         end
       end
+    end
+
+    def opt_in_decided_appeal(appeal:, user:, closed_on:)
+      repository.opt_in_decided_appeal!(
+        appeal: appeal,
+        user: user,
+        closed_on: closed_on
+      )
     end
 
     def certify(appeal)
