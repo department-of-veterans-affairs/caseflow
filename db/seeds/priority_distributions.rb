@@ -345,8 +345,8 @@ module Seeds
         :case,
         :aod,
         :ready_for_distribution,
-        bfkey: "91847124",
-        correspondent: create(:correspondent, stafkey: "91847124")
+        bfkey: random_key,
+        correspondent: create(:correspondent, stafkey: random_key)
       )
       create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: vacols_case)
 
