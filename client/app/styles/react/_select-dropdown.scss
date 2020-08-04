@@ -16,7 +16,7 @@ $cf-select-text-color: #323a45;
 
     &--is-disabled {
       background-color: $cf-select-disabled-bg-color;
-      
+
       .cf-select__single-value {
         color: $cf-select-disabled-color;
       }
