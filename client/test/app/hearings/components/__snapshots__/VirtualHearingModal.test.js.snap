@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`VirtualHearingModal ChangeEmail sub-component Displays ReadOnlyEmails component 1`] = `
-<ChangeEmail
+exports[`VirtualHearingModal ChangeEmailOrTimezone sub-component Displays ReadOnlyEmails component 1`] = `
+<ChangeEmailOrTimezone
   hearing={
     Object {
       "advanceOnDocketMotion": null,
@@ -299,7 +299,7 @@ exports[`VirtualHearingModal ChangeEmail sub-component Displays ReadOnlyEmails c
       }
     }
   />
-</ChangeEmail>
+</ChangeEmailOrTimezone>
 `;
 
 exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Location when present 1`] = `
@@ -3297,7 +3297,7 @@ exports[`VirtualHearingModal DateTime sub-component Displays formatted hearing d
 </DateTime>
 `;
 
-exports[`VirtualHearingModal Displays ChangeEmail component when type is change_email 1`] = `
+exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type is change_email 1`] = `
 <VirtualHearingModal
   hearing={
     Object {
@@ -3380,7 +3380,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
       "worksheetIssues": Object {},
     }
   }
-  type="change_email"
+  type="change_email_or_timezone"
   update={
     [MockFunction] {
       "calls": Array [
@@ -3455,7 +3455,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
           Update and Send Email
         </Button>
       }
-      title="Update Email Address"
+      title="Update Timezone"
     >
       <section
         aria-describedby="modal_id-desc"
@@ -3486,7 +3486,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
         >
           <button
             className="cf-modal-close"
-            id="Update-Email-Address-button-id-close"
+            id="Update-Timezone-button-id-close"
             onClick={[Function]}
             type="button"
           >
@@ -3518,7 +3518,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
               <h1
                 id="modal_id-title"
               >
-                Update Email Address
+                Update Timezone
               </h1>
               <div
                 data-css-o98ubo=""
@@ -3530,7 +3530,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
                     }
                   }
                 />
-                <ChangeEmail
+                <ChangeEmailOrTimezone
                   appellantEmailError={null}
                   hearing={
                     Object {
@@ -3615,7 +3615,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
                   }
                   readOnly={false}
                   representativeEmailError={null}
-                  type="change_email"
+                  type="change_email_or_timezone"
                   update={
                     [MockFunction] {
                       "calls": Array [
@@ -3738,7 +3738,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
                     }
                     readOnly={false}
                     representativeEmailError={null}
-                    type="change_email"
+                    type="change_email_or_timezone"
                     update={
                       [MockFunction] {
                         "calls": Array [
@@ -3776,7 +3776,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
                       }
                     }
                   />
-                </ChangeEmail>
+                </ChangeEmailOrTimezone>
               </div>
             </div>
           </div>
