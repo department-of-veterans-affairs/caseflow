@@ -32,7 +32,7 @@ class Intake::IntakeSerializer
     object.detail&.try(:processed_in_caseflow?)
   end
 
-  attribute :claimant_type do |object|
+  attribute :claimantType do |object|
     object.detail&.try(:claimant_type)
   end
 end
