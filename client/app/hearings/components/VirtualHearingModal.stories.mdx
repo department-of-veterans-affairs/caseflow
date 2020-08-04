@@ -16,8 +16,10 @@ export const defaultProps = {};
 
 # Virtual Hearing Modal
 
+### Changing a Video/Central Hearing to Virtual
+
 <Preview>
-  <Story name="Normal">
+  <Story name="Change to Virtual">
     {() => {
       return (
         <VirtualHearingModal
@@ -27,7 +29,77 @@ export const defaultProps = {};
           closeModal={(e) => action("close")(e.target)}
           hearing={amaHearing}
           virtualHearing={amaHearing.virtualHearing}
+          scrollLock={false}
           type="change_to_virtual"
+          open
+        />
+      );
+    }}
+  </Story>
+</Preview>
+
+### Changing a Virtual Hearing back to Video/Central
+
+<Preview>
+  <Story name="Change from Virtual">
+    {() => {
+      return (
+        <VirtualHearingModal
+          update={(e) => action("update")(e.target)}
+          reset={(e) => action("reset")(e.target)}
+          submit={(e) => action("submit")(e.target)}
+          closeModal={(e) => action("close")(e.target)}
+          hearing={amaHearing}
+          virtualHearing={amaHearing.virtualHearing}
+          scrollLock={false}
+          type="change_from_virtual"
+          open
+        />
+      );
+    }}
+  </Story>
+</Preview>
+
+### Changing the Time of a Hearing
+
+<Preview>
+  <Story name="Change Hearing Time">
+    {() => {
+      return (
+        <VirtualHearingModal
+          update={(e) => action("update")(e.target)}
+          reset={(e) => action("reset")(e.target)}
+          submit={(e) => action("submit")(e.target)}
+          closeModal={(e) => action("close")(e.target)}
+          hearing={amaHearing}
+          virtualHearing={amaHearing.virtualHearing}
+          scrollLock={false}
+          type="change_hearing_time"
+          timeWasEdited
+          open
+        />
+      );
+    }}
+  </Story>
+</Preview>
+
+### Changing the Email or Timezone of a Virtual Hearing
+
+<Preview>
+  <Story name="Change Email or Timezone">
+    {() => {
+      return (
+        <VirtualHearingModal
+          submit={(e) => action("submit")(e.target)}
+          closeModal={(e) => action("close")(e.target)}
+          hearing={amaHearing}
+          virtualHearing={amaHearing.virtualHearing}
+          scrollLock={false}
+          type="change_email_or_timezone"
+          representativeEmailEdited
+          representativeTzEdited
+          appellantEmailEdited
+          appellantTzEdited
           open
         />
       );
