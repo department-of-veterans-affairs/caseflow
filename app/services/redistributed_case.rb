@@ -17,8 +17,14 @@ class RedistributedCase
 
     if ok_to_redistribute?
       rename_existing_distributed_case!
+    # If there are open tasks, this case should not be at a judge waiting for a decision or in case storage waiting to
+    # be distributed, it should be "in" caseflow. No need to alert as the case has been fixed.
+    elsif legacy_appeal_relevant_tasks.any?(&:open?)
+      fix_vacols_case_location(LegacyAppeal::LOCATION_CODES[:caseflow])
+      false
     else
       alert_existing_distributed_case_not_unique
+      fix_vacols_case_location(legacy_appeal.previous_location_code)
       false
     end
   end
@@ -71,6 +77,10 @@ class RedistributedCase
         previous_location: legacy_appeal.location_history.last.summary
       }
     )
+  end
+
+  def fix_vacols_case_location(location)
+    legacy_appeal.case_record.update_vacols_location!(location)
   end
 
   def legacy_appeal

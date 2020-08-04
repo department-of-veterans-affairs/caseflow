@@ -891,6 +891,10 @@ class LegacyAppeal < CaseflowRecord
     VACOLS::Priorloc.where(lockey: vacols_id).order(:locdout)
   end
 
+  def previous_location_code
+    location_history[-2].summary[:location]
+  end
+
   private
 
   def soc_eligible_for_opt_in?(receipt_date:, covid_flag: false)

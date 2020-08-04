@@ -264,13 +264,14 @@ describe Distribution, :all_dbs do
     context "when an illegit nonpriority legacy case re-distribution is attempted" do
       let(:case_id) { legacy_case.bfkey }
       let!(:previous_location) { legacy_case.bfcurloc }
-      let(:legacy_case) { legacy_nonpriority_cases.first }
+      let(:legacy_case) { legacy_nonpriority_cases.second }
 
       before do
         @raven_called = false
         distribution = create(:distribution, judge: judge)
-        # illegit because appeal has open tasks
-        create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case)
+        # illegit because appeal has completed hearing tasks
+        appeal = create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case)
+        appeal.tasks.open.where.not(type: RootTask.name).each(&:completed!)
         create_nonpriority_distributed_case(distribution, case_id, legacy_case.bfdloout)
         distribution.update!(status: "completed", completed_at: today)
         allow(Raven).to receive(:capture_exception) { @raven_called = true }
@@ -326,7 +327,6 @@ describe Distribution, :all_dbs do
 
     context "when an illegit priority legacy case re-distribution is attempted" do
       let(:case_id) { legacy_case.bfkey }
-      let!(:previous_location) { legacy_case.bfcurloc }
       let(:legacy_case) { legacy_priority_cases.last }
 
       before do
@@ -343,9 +343,9 @@ describe Distribution, :all_dbs do
         subject.distribute!
         expect(subject.valid?).to eq(true)
         expect(subject.error?).to eq(false)
-        expect(@raven_called).to eq(true)
+        expect(@raven_called).to eq(false)
         expect(subject.distributed_cases.pluck(:case_id)).to_not include(case_id)
-        expect(legacy_case.reload.bfcurloc).to eq(previous_location)
+        expect(legacy_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
       end
     end
 
