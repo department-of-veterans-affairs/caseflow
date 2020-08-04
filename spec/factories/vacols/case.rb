@@ -179,6 +179,7 @@ FactoryBot.define do
       end
 
       after(:create) do |vacols_case, evaluator|
+        VACOLS::Folder.find_by(tinum: vacols_case.bfkey).update!(titrnum: "123456789S")
         create(
           :case_hearing,
           :disposition_held,
