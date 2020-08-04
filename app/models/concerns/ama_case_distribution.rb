@@ -23,15 +23,15 @@ module AmaCaseDistribution
     @remaining_docket_proportions = docket_proportions.clone
     @nonpriority_iterations = 0
 
-    # Distribute priority appeals that are tied to judges (not genpop).
-    distribute_appeals(:legacy, @rem, priority: true, genpop: "not_genpop")
-    distribute_appeals(:hearing, @rem, priority: true, genpop: "not_genpop")
-
     # Distribute legacy cases tied to a judge down to the board provided limit of 30, regardless of the legacy docket
     # range
     if FeatureToggle.enabled?(:priority_acd)
       distribute_appeals(:legacy, @rem, priority: false, genpop: "not_genpop", bust_backlog: true)
     end
+
+    # Distribute priority appeals that are tied to judges (not genpop).
+    distribute_appeals(:legacy, @rem, priority: true, genpop: "not_genpop")
+    distribute_appeals(:hearing, @rem, priority: true, genpop: "not_genpop")
 
     # Distribute nonpriority appeals that are tied to judges.
     # Legacy docket appeals that are tied to judges are only distributed when they are within the docket range.
