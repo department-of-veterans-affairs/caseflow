@@ -263,6 +263,7 @@ describe Distribution, :all_dbs do
 
     context "when an illegit nonpriority legacy case re-distribution is attempted" do
       let(:case_id) { legacy_case.bfkey }
+      let!(:previous_location) { legacy_case.bfcurloc }
       let(:legacy_case) { legacy_nonpriority_cases.first }
 
       before do
@@ -281,6 +282,7 @@ describe Distribution, :all_dbs do
         expect(subject.error?).to eq(false)
         expect(@raven_called).to eq(true)
         expect(subject.distributed_cases.pluck(:case_id)).to_not include(case_id)
+        expect(legacy_case.reload.bfcurloc).to eq(previous_location)
       end
     end
 
@@ -306,6 +308,7 @@ describe Distribution, :all_dbs do
         expect(subject.distributed_cases.pluck(:case_id)).to include(case_id)
         expect(DistributedCase.find_by(case_id: case_id)).to_not be_nil
         expect(DistributedCase.find_by(case_id: original_distributed_case_id)).to_not be_nil
+        expect(legacy_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
       end
     end
 
@@ -323,6 +326,7 @@ describe Distribution, :all_dbs do
 
     context "when an illegit priority legacy case re-distribution is attempted" do
       let(:case_id) { legacy_case.bfkey }
+      let!(:previous_location) { legacy_case.bfcurloc }
       let(:legacy_case) { legacy_priority_cases.last }
 
       before do
@@ -341,6 +345,7 @@ describe Distribution, :all_dbs do
         expect(subject.error?).to eq(false)
         expect(@raven_called).to eq(true)
         expect(subject.distributed_cases.pluck(:case_id)).to_not include(case_id)
+        expect(legacy_case.reload.bfcurloc).to eq(previous_location)
       end
     end
 
@@ -366,6 +371,7 @@ describe Distribution, :all_dbs do
         expect(subject.distributed_cases.pluck(:case_id)).to include(case_id)
         expect(DistributedCase.find_by(case_id: case_id)).to_not be_nil
         expect(DistributedCase.find_by(case_id: original_distributed_case_id)).to_not be_nil
+        expect(legacy_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
       end
     end
 
