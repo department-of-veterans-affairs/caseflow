@@ -10,7 +10,7 @@ export default {
   parameters: {
     docs: {
       inlineStories: false,
-      iframeHeight: 600,
+      iframeHeight: 700,
     },
   },
   argTypes: {
