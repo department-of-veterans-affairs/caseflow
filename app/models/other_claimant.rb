@@ -7,4 +7,8 @@
 
 class OtherClaimant < Claimant
   validate { |claimant| OtherClaimantValidator.new(claimant).validate }
+
+  def relationship
+    "Other"
+  end
 end
