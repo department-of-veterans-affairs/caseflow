@@ -71,7 +71,7 @@ export const HearingConversion = ({
           {!video && <HelperText label={COPY.VIRTUAL_HEARING_TIME_HELPER_TEXT} />}
         </div>
       </div>
-      {video && (
+      {video && !virtual && (
         <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
           <div className="usa-width-one-half">
             <ReadOnly label="Regional Office" text={hearing.regionalOfficeName} />

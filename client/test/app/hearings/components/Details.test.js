@@ -12,6 +12,7 @@ import {
   legacyHearing,
   amaHearing,
   defaultHearing,
+  userUseFullPageVideoToVirtual,
 } from 'test/data';
 import Button from 'app/components/Button';
 import DateSelector from 'app/components/DateSelector';
@@ -22,6 +23,7 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 import TranscriptionRequestInputs from
   'app/hearings/components/details/TranscriptionRequestInputs';
 import VirtualHearingModal from 'app/hearings/components/VirtualHearingModal';
+import ApiUtil from 'app/util/ApiUtil';
 
 // Define the function spies
 const saveHearingSpy = jest.fn();
@@ -102,6 +104,43 @@ describe('Details', () => {
     // Change the value of the hearing type
     dropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
     dropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
+    dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
+
+    // Ensure the modal is displayed
+    expect(details.find(VirtualHearingModal)).toHaveLength(0);
+    expect(details.find(HearingConversion)).toHaveLength(1);
+
+    expect(details).toMatchSnapshot();
+  });
+
+  test('Displays HearingConversion when converting from video and feature flag enabled', () => {
+    const details = mount(
+      <Details
+        hearing={defaultHearing}
+        saveHearing={saveHearingSpy}
+        setHearing={setHearingSpy}
+        goBack={goBackSpy}
+        onReceiveAlerts={onReceiveAlertsSpy}
+        onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
+        transitionAlert={transitionAlertSpy}
+      />,
+      {
+        wrappingComponent: hearingDetailsWrapper(
+          userUseFullPageVideoToVirtual,
+          defaultHearing
+        ),
+        wrappingComponentProps: { store: detailsStore },
+      }
+    );
+    const dropdown = details.find(HearingTypeDropdown).find(SearchableDropdown);
+
+    // Change the value of the hearing type
+    dropdown.
+      find('Select').
+      simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
+    dropdown.
+      find('Select').
+      simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
     dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
 
     // Ensure the modal is displayed
