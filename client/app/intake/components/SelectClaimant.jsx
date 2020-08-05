@@ -93,12 +93,12 @@ export const SelectClaimant = (props) => {
     setNewClaimant(null);
     setClaimant({ claimant: null, claimantType: 'dependent', claimantNotes: null });
   };
-  const handleSelectDependent = (value) => setClaimant({ claimant: value, claimantType: 'dependent' });
+  const handleSelectDependent = (value) => setClaimant({ claimant: value || null, claimantType: 'dependent' });
   const handleAddClaimant = ({ name, participantId, claimantType, claimantNotes }) => {
     setNewClaimant({
       displayElem: <RemovableRadioLabel
         text={`${name || 'Claimant not listed'}, Attorney`} onRemove={handleRemove} notes={claimantNotes} />,
-      value: participantId,
+      value: participantId ?? '',
       defaultPayeeCode: '',
       claimantNotes
     });
@@ -123,7 +123,7 @@ export const SelectClaimant = (props) => {
           vertical
           options={radioOpts}
           onChange={handleSelectDependent}
-          value={claimant}
+          value={claimant ?? ''}
           errorMessage={claimantError}
         />
 
