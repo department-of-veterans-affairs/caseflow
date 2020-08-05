@@ -13,6 +13,8 @@ class ColocatedTaskDistributor < RoundRobinTaskDistributor
       &.find_by(assigned_to: assignee_pool)
       &.assigned_to
 
+    log_state(invoker: "colocated", existing_assignee: open_assignee, appeal: options.dig(:appeal))
+
     open_assignee || super()
   end
 end

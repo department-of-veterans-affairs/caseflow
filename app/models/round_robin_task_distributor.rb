@@ -38,12 +38,14 @@ class RoundRobinTaskDistributor
     (last_assignee_index + 1) % assignee_pool.length
   end
 
-  def next_assignee(_options = {})
+  def next_assignee(options = {})
     unless valid?
       fail Caseflow::Error::RoundRobinTaskDistributorError, message: errors.full_messages.join(", ")
     end
 
-    assignee_pool[next_assignee_index]
+    next_index = next_assignee_index
+    log_state(invoker: "round_robin", next_index: next_index, appeal: options.dig(:appeal))
+    assignee_pool[next_index]
   end
 
   private
@@ -52,5 +54,30 @@ class RoundRobinTaskDistributor
     unless assignee_pool.all? { |a| a.is_a?(User) }
       errors.add(:assignee_pool, COPY::TASK_DISTRIBUTOR_ASSIGNEE_POOL_USERS_ONLY_MESSAGE)
     end
+  end
+
+  # Output a colon seperated list of debugging info to the logs
+  #
+  # Class running this
+  # Which RR next_assignee called this
+  # appeal (not always available)
+  # Round Robin Task type being considered
+  # Round Robin - task analyzed for last assignee
+  # Round Robin - found previous assignee
+  # Round Robin - calculated next assignee (if using index)
+  # Round Robin - existing assignee for this appeal
+  # Round Robin - assignee pool considered
+  def log_state(invoker:, next_index: nil, existing_assignee: nil, appeal:)
+    log_string = "RRDTracking; "
+    log_string += "#{self.class.name}; "
+    log_string += "#{invoker}; "
+    log_string += "#{appeal ? appeal.id : "not provided"}; "
+    log_string += "#{task_class}; "
+    log_string += "#{latest_task&.id}; "
+    log_string += "#{last_assignee&.id}; "
+    log_string += "#{next_index ? assignee_pool[next_index].id : nil}; "
+    log_string += "#{existing_assignee}; "
+    log_string += "#{assignee_pool.pluck(:id)}; "
+    Rails.logger.info(log_string)
   end
 end
