@@ -530,7 +530,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       click_dropdown(name: "representativeTz", index: 0)
       click_button("Save")
 
-      expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
+      expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
       click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
 
@@ -565,7 +565,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       click_dropdown(name: "appellantTz", index: 0)
       click_button("Save")
 
-      expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
+      expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
       click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
 
@@ -601,7 +601,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       click_dropdown(name: "appellantTz", index: 0)
       click_button("Save")
 
-      expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
+      expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
       click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
 
@@ -639,7 +639,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       click_dropdown(name: "appellantTz", index: 0)
       click_button("Save")
 
-      expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
+      expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_GENERIC_TITLE)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
       click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
 
