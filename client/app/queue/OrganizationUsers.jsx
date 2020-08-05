@@ -273,7 +273,9 @@ export default class OrganizationUsers extends React.PureComponent {
           <h2>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h2>
           <ul {...listStyle}>
             { !judgeTeam && <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li> }
-            <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{judgeTeam ? COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION : COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION}</li>
+            <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{judgeTeam ?
+              COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION :
+              COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION}</li>
           </ul>
         </div>
         <ul>{listOfUsers}</ul>
