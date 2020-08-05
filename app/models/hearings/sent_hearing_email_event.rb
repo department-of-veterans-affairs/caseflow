@@ -40,8 +40,10 @@ class SentHearingEmailEvent < CaseflowRecord
     case recipient_role
     when "judge"
       "VLJ Email"
-    when "appellant", "veteran"
+    when "appellant"
       "Appellant Email"
+    when "veteran"
+      "Veteran Email"
     when "representative"
       "POA/Representative Email"
     else

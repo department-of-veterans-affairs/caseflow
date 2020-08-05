@@ -709,6 +709,8 @@
   "VIRTUAL_HEARING_MODAL_CHANGE_TO_CENTRAL_TITLE": "Change to Central Hearing",
   "VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE": "Change Hearing Time",
   "VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE": "Update Email Address",
+  "VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE": "Update Timezone",
+  "VIRTUAL_HEARING_MODAL_UPDATE_GENERIC_TITLE": "Update Virtual Hearing",
   "VIRTUAL_HEARING_CHANGE_HEARING_BUTTON": "Change and Send Email",
   "VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON": "Update and Send Email",
   "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_INTRO": "Email notifications will be sent to the %(appellantTitle)s, POA / Representative, and VLJ.",
