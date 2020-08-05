@@ -110,6 +110,7 @@ export default class Modal extends React.Component {
       title,
       icon,
       customStyles,
+      scrollLock
     } = this.props;
 
     let modalButtons;
@@ -134,7 +135,7 @@ export default class Modal extends React.Component {
         aria-describedby="modal_id-desc"
         aria-modal="true"
       >
-        <ScrollLock />
+        {scrollLock && <ScrollLock />}
         <div className="cf-modal-body" id={id || ''} {...customStyles}>
           <button
             type="button"
@@ -163,6 +164,7 @@ export default class Modal extends React.Component {
 Modal.defaultProps = {
   buttons: [],
   className: '',
+  scrollLock: true
 };
 
 Modal.propTypes = {
@@ -184,6 +186,9 @@ Modal.propTypes = {
   cancelButton: PropTypes.element,
   id: PropTypes.string,
   noDivider: PropTypes.bool,
+
+  // Enable/disable the `ScrollLock` element from displaying (for Storybook).
+  scrollLock: PropTypes.bool,
   specialContent: PropTypes.func,
   title: PropTypes.string.isRequired,
   icon: PropTypes.string,
