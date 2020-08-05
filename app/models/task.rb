@@ -602,6 +602,8 @@ class Task < CaseflowRecord
   private
 
   def create_and_auto_assign_child_task(options = {})
+    options[:appeal_id] = appeal&.id unless options[:appeal_id]
+    options[:task_id] = id unless options[:task]
     dup.tap do |child_task|
       child_task.assigned_to = assigned_to.next_assignee(**options)
       child_task.parent = self

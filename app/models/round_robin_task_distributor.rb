@@ -11,16 +11,24 @@ class RoundRobinTaskDistributor
   def initialize(assignee_pool:, task_class:)
     @assignee_pool = assignee_pool.select(&:active?)
     @task_class = task_class
+    @state = {
+      class: self.class.name,
+      invoker: "round_robin",
+      task_class: @task_class.name,
+      assignee_pool: @assignee_pool.pluck(:id)
+    }
   end
 
   def latest_task
     # Use id as a proxy for created_at since the id field is already indexed.
     # Request .visible_in_queue_table_view to avoid TimedHoldTask or similar tasks
-    task_class
+    latest = task_class
       .visible_in_queue_table_view
       .where(assigned_to: assignee_pool)
       .order(id: :desc)
       .first
+    @state[:latest_task_id] = latest&.id
+    latest
   end
 
   def last_assignee
@@ -34,6 +42,8 @@ class RoundRobinTaskDistributor
   def next_assignee_index
     return 0 unless last_assignee
     return 0 unless last_assignee_index
+    curr_last_assignee = last_assignee
+    @state[:last_assignee_id] = curr_last_assignee&.id
 
     (last_assignee_index + 1) % assignee_pool.length
   end
@@ -44,7 +54,9 @@ class RoundRobinTaskDistributor
     end
 
     next_index = next_assignee_index
-    log_state(invoker: "round_robin", next_index: next_index, appeal: options.dig(:appeal))
+    @state[:next_index] = next_index ? assignee_pool[next_index].id : nil
+    @state[:appeal_id] = options[:appeal_id] || "no appeal_id"
+    log_state
     assignee_pool[next_index]
   end
 
@@ -56,7 +68,7 @@ class RoundRobinTaskDistributor
     end
   end
 
-  # Output a colon seperated list of debugging info to the logs
+  # Output a semicolon separated list of debugging info to the logs
   #
   # Class running this
   # Which RR next_assignee called this
@@ -67,17 +79,12 @@ class RoundRobinTaskDistributor
   # Round Robin - calculated next assignee (if using index)
   # Round Robin - existing assignee for this appeal
   # Round Robin - assignee pool considered
-  def log_state(invoker:, next_index: nil, existing_assignee: nil, appeal:)
-    log_string = "RRDTracking; "
-    log_string += "#{self.class.name}; "
-    log_string += "#{invoker}; "
-    log_string += "#{appeal ? appeal.id : "not provided"}; "
-    log_string += "#{task_class}; "
-    log_string += "#{latest_task&.id}; "
-    log_string += "#{last_assignee&.id}; "
-    log_string += "#{next_index ? assignee_pool[next_index].id : nil}; "
-    log_string += "#{existing_assignee}; "
-    log_string += "#{assignee_pool.pluck(:id)}; "
+  def log_state
+    elements = [:class, :invoker, :appeal_id, :task_class, :task_id, :latest_task_id, :last_assignee_id, :next_index,
+                :existing_assignee, :assignee_pool]
+    log_string = "RRDTracking;" + elements.map { |key| "#{key}: #{@state[key]}" }.join("; ")
+    puts log_string
+    # pp @state
     Rails.logger.info(log_string)
   end
 end
