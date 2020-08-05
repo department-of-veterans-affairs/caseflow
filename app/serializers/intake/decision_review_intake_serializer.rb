@@ -48,7 +48,7 @@ class Intake::DecisionReviewIntakeSerializer < Intake::IntakeSerializer
   end
 
   attribute :veteran_valid do |object|
-    object.detail&.veteran&.valid?(:bgs)
+    object.veteran&.valid?(:bgs)
   end
 
   attribute :detail_edit_url do |object|
