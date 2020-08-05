@@ -24,7 +24,7 @@ class RedistributedCase
       false
     else
       alert_existing_distributed_case_not_unique
-      fix_vacols_case_location(legacy_appeal.previous_location_code)
+      fix_vacols_case_location(LegacyAppeal::LOCATION_CODES[:case_storage])
       false
     end
   end
