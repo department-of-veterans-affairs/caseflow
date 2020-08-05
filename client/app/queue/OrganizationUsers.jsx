@@ -243,7 +243,7 @@ export default class OrganizationUsers extends React.PureComponent {
           { judgeTeam && attorney && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
           { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
         </li>
-        { judgeTeam && admin ? 
+        { judgeTeam && admin ?
           <div {...topUserBorder}></div> :
           <div {...buttonContainerStyle}>
             { !judgeTeam && this.adminButton(user, admin) }
