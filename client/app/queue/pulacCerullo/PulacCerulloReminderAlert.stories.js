@@ -8,12 +8,10 @@ export default {
   decorators: []
 };
 
-export const standard = () => <PulacCerulloReminderAlert />;
+export const Basic = (args) => <PulacCerulloReminderAlert {...args} />;
 
-standard.story = {
-  parameters: {
-    docs: {
-      storyDescription: 'This provides a reminder for a user to check CAVC for a conflict of juristiction'
-    }
+Basic.parameters = {
+  docs: {
+    storyDescription: 'This provides a reminder for a user to check CAVC for a conflict of juristiction'
   }
 };

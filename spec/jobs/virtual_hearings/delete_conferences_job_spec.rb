@@ -51,7 +51,7 @@ describe VirtualHearings::DeleteConferencesJob do
         expect(events.where(sent_by_id: virtual_hearing.updated_by_id).count).to eq 2
         expect(events.where(email_type: "cancellation").count).to eq 2
         expect(events.where(email_address: virtual_hearing.appellant_email).count).to eq 1
-        expect(events.where(recipient_role: "appellant").count).to eq 1
+        expect(events.sent_to_appellant.count).to eq 1
         expect(events.where(email_address: virtual_hearing.representative_email).count).to eq 1
         expect(events.where(recipient_role: "representative").count).to eq 1
         expect(events.where(recipient_role: "judge").count).to eq 0
