@@ -10,15 +10,17 @@ export default {
   component: Tabs,
   decorators: [
     (storyFn) => (
-      <div style={{ minHeight: '250px', maxWidth: '800px', padding: '20px' }}>
+      <div
+        style={{ minHeight: '250px', maxWidth: '800px', padding: '20px 30px' }}
+      >
         {storyFn()}
       </div>
     ),
   ],
 };
 
-export const tabs = () => (
-  <Tabs>
+export const tabs = (args) => (
+  <Tabs {...args}>
     <Tab title="Tab 1" value="1">
       Tab 1 Content
     </Tab>
@@ -28,8 +30,8 @@ export const tabs = () => (
   </Tabs>
 );
 
-export const disabled = () => (
-  <Tabs>
+export const Disabled = (args) => (
+  <Tabs {...args}>
     <Tab title="Tab 1" value="1">
       Tab 1 Content
     </Tab>
@@ -45,8 +47,8 @@ export const disabled = () => (
   </Tabs>
 );
 
-export const defaultTab = () => (
-  <Tabs active="2">
+export const DefaultTab = (args) => (
+  <Tabs {...args}>
     <Tab title="Tab 1" value="1">
       Tab 1 Content
     </Tab>
@@ -58,9 +60,10 @@ export const defaultTab = () => (
     </Tab>
   </Tabs>
 );
+DefaultTab.args = { active: '2' };
 
-export const fullWidth = () => (
-  <Tabs fullWidth>
+export const FullWidth = (args) => (
+  <Tabs {...args}>
     <Tab title="Tab 1" value="1">
       <h4>Tab 1 Content</h4>
       <p>
@@ -84,9 +87,10 @@ export const fullWidth = () => (
     </Tab>
   </Tabs>
 );
+FullWidth.args = { fullWidth: true };
 
-export const mountOnEnter = () => (
-  <Tabs mountOnEnter>
+export const MountOnEnter = (args) => (
+  <Tabs {...args}>
     <Tab title="Tab 1" value="1">
       Tab 1 content (rendered when tab is first activated)
     </Tab>
@@ -98,9 +102,10 @@ export const mountOnEnter = () => (
     </Tab>
   </Tabs>
 );
+MountOnEnter.args = { mountOnEnter: true };
 
-export const unmountOnExit = () => (
-  <Tabs mountOnEnter unmountOnExit>
+export const UnmountOnExit = (args) => (
+  <Tabs {...args}>
     <Tab title="Tab 1" value="1">
       Tab 1 content (only rendered when tab is currently active)
     </Tab>
@@ -112,9 +117,10 @@ export const unmountOnExit = () => (
     </Tab>
   </Tabs>
 );
+UnmountOnExit.args = { mountOnEnter: true, unmountOnExit: true };
 
-export const manual = () => (
-  <Tab.Container active="2" onChange={action('onChange', 'manual')}>
+export const Manual = (args) => (
+  <Tab.Container {...args}>
     <Tab.List>
       <Tab.Item value="1">Tab 1</Tab.Item>
       <Tab.Item value="2">Tab 2</Tab.Item>
@@ -129,11 +135,14 @@ export const manual = () => (
     </Tab.Content>
   </Tab.Container>
 );
+Manual.args = { active: '2' };
+Manual.argTypes = { onChange: { action: 'onChange' } };
 
-manual.story = {
-  parameters: {
-    docs: {
-      storyDescription: '',
-    },
+Manual.parameters = {
+  docs: {
+    storyDescription: [
+      'One can use the lower-level components to build a more customized layout.',
+      'Note that `<Tab.List>` and `<Tab.Panel>` must be wrapped in a `<Tab.Container>`',
+    ].join(' '),
   },
 };

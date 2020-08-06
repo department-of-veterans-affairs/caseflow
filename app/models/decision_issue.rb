@@ -234,7 +234,7 @@ class DecisionIssue < CaseflowRecord
   end
 
   def dta_payee_code
-    decision_review.payee_code || prior_payee_code || decision_review.claimant.bgs_payee_code
+    decision_review.payee_code || prior_payee_code || decision_review.claimant&.bgs_payee_code
   end
 
   def find_remand_supplemental_claim
