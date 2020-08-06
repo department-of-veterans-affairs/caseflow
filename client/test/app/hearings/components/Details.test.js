@@ -32,6 +32,17 @@ const onReceiveAlertsSpy = jest.fn();
 const onReceiveTransitioningAlertSpy = jest.fn();
 const transitionAlertSpy = jest.fn();
 
+const detailButtonsTest = (node) => {
+  node.find(Button).map((n, i) => {
+    // Expect the cancel button first
+    if (i === 0) {
+      return expect(n.prop('name')).toEqual('Cancel');
+    }
+
+    return expect(n.prop('name')).toEqual('Save');
+  });
+};
+
 describe('Details', () => {
   test('Matches snapshot with default props', () => {
     const details = mount(
@@ -67,14 +78,7 @@ describe('Details', () => {
     expect(details.find(TranscriptionFormSection)).toHaveLength(1);
 
     // Ensure the save and cancel buttons are present
-    details.find(Button).map((node, i) => {
-      // Expect the cancel button first
-      if (i === 0) {
-        return expect(node.prop('name')).toEqual('Cancel');
-      }
-
-      return expect(node.prop('name')).toEqual('Save');
-    });
+    detailButtonsTest(details);
 
     expect(details).toMatchSnapshot();
   });
@@ -223,14 +227,8 @@ describe('Details', () => {
     expect(details.find(TranscriptionFormSection)).toHaveLength(0);
 
     // Ensure the save and cancel buttons are present
-    details.find(Button).map((node, i) => {
-      // Expect the cancel button first
-      if (i === 0) {
-        return expect(node.prop('name')).toEqual('Cancel');
-      }
+    detailButtonsTest(details);
 
-      return expect(node.prop('name')).toEqual('Save');
-    });
     expect(toJson(details, { noKey: true })).toMatchSnapshot();
   });
 
