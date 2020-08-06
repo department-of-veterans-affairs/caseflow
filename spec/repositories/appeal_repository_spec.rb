@@ -399,20 +399,23 @@ describe AppealRepository, :all_dbs do
     let(:original_data) do
       { disposition_code: "G", decision_date: past_decision_date, folder_decision_date: past_decision_date }
     end
+    let(:case_record) do
+      create(
+        :case,
+        :status_complete,
+        bfdc: disposition,
+        bfddec: decision_date,
+        folder: folder_record
+      )
+    end
 
     describe ".opt_in_decided_appeal!" do
       subject { AppealRepository.opt_in_decided_appeal!(appeal: appeal, user: user, closed_on: new_decision_date) }
 
+      let(:decision_date) { past_decision_date }
+
       context "Appeal does not have an advance failure to respond disposition" do
-        let(:case_record) do
-          create(
-            :case,
-            :status_complete,
-            :disposition_allowed,
-            bfddec: past_decision_date,
-            folder: folder_record
-          )
-        end
+        let(:disposition) { Constants::VACOLS_DISPOSITIONS_BY_ID.key("Allowed") }
 
         it "raises an error" do
           expect { subject }.to raise_error(AppealRepository::AppealNotValidToClose)
@@ -423,15 +426,7 @@ describe AppealRepository, :all_dbs do
       end
 
       context "Appeal has an advance failure to respond disposition" do
-        let(:case_record) do
-          create(
-            :case,
-            :status_complete,
-            :disposition_advance_failure_to_respond,
-            bfddec: past_decision_date,
-            folder: folder_record
-          )
-        end
+        let(:disposition) { Constants::VACOLS_DISPOSITIONS_BY_ID.key("Advance Failure to Respond") }
 
         it "opts in the appeal and updates decision dates" do
           subject
@@ -454,17 +449,10 @@ describe AppealRepository, :all_dbs do
       end
 
       let(:folder_record) { create(:folder, tidcls: new_decision_date) }
+      let(:decision_date) { new_decision_date }
 
       context "Appeal is not currently opted in" do
-        let(:case_record) do
-          create(
-            :case,
-            :status_complete,
-            :disposition_allowed,
-            bfddec: new_decision_date,
-            folder: folder_record
-          )
-        end
+        let(:disposition) { Constants::VACOLS_DISPOSITIONS_BY_ID.key("Allowed") }
 
         it "does nothing" do
           expect(subject).to be_nil
@@ -475,15 +463,7 @@ describe AppealRepository, :all_dbs do
       end
 
       context "Appeal is opted in" do
-        let(:case_record) do
-          create(
-            :case,
-            :status_complete,
-            :disposition_ama,
-            bfddec: new_decision_date,
-            folder: folder_record
-          )
-        end
+        let(:disposition) { Constants::VACOLS_DISPOSITIONS_BY_ID.key("AMA SOC/SSOC Opt-in") }
 
         it "restores original data on legacy appeal" do
           subject

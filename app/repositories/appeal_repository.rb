@@ -650,7 +650,8 @@ class AppealRepository
     # If an appeal was previously decided, we are just restoring data, we do not have to reset the appeal to active
     # original_data example: { disposition_code: "G", decision_date: "2019-11-30", folder_decision_date: "2019-11-30" }
     def rollback_opt_in_on_decided_appeal!(appeal:, user:, original_data:)
-      return unless appeal.disposition == "AMA SOC/SSOC Opt-in"
+      opt_in_disposition = Constants::VACOLS_DISPOSITIONS_BY_ID[LegacyIssueOptin::VACOLS_DISPOSITION_CODE]
+      return unless appeal.disposition == opt_in_disposition
 
       case_record = appeal.case_record
       folder_record = case_record.folder
