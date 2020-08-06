@@ -108,8 +108,6 @@ export default class TestUsers extends React.PureComponent {
       }
     ];
 
-    const veteranRecords = this.props.veteranRecords;
-
     const tabs = this.props.appSelectList.map((app) => {
       let tab = {};
 
@@ -222,9 +220,8 @@ export default class TestUsers extends React.PureComponent {
                 <div>
                   <h3>Local Veteran Records</h3>
                   <p>
-                  These fake Veteran records are available locally.
+                    Local veteran records are now available on a <a href="/test/veterans">separate page</a>. Note that they may take a while to load.
                   </p>
-                  <Table columns={veteranColumns} rowObjects={veteranRecords} />
                 </div>
               </div> }
             { this.props.isGlobalAdmin &&
@@ -254,7 +251,6 @@ TestUsers.propTypes = {
   isGlobalAdmin: PropTypes.bool,
   testUsersList: PropTypes.array.isRequired,
   featuresList: PropTypes.array.isRequired,
-  veteranRecords: PropTypes.array.isRequired,
   appSelectList: PropTypes.array.isRequired,
   epTypes: PropTypes.array.isRequired,
   userDisplayName: PropTypes.string,

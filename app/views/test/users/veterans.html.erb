@@ -1,0 +1,11 @@
+<% content_for :page_title do %>&nbsp;&gt; Test Veterans<% end %>
+
+<% content_for :full_page_content do %>
+  <%= react_component("TestVeterans", props: {
+    userDisplayName: current_user.display_name,
+    dropdownUrls: dropdown_urls,
+    page: "TestVeterans",
+    currentUser: current_user.to_hash,
+    veteranRecords: veteran_records
+  }) %>
+<% end %>
