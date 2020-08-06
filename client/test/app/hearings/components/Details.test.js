@@ -22,6 +22,7 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 import TranscriptionRequestInputs from
   'app/hearings/components/details/TranscriptionRequestInputs';
 import VirtualHearingModal from 'app/hearings/components/VirtualHearingModal';
+import toJson from 'enzyme-to-json';
 
 // Define the function spies
 const saveHearingSpy = jest.fn();
@@ -108,7 +109,7 @@ describe('Details', () => {
     expect(details.find(VirtualHearingModal)).toHaveLength(0);
     expect(details.find(HearingConversion)).toHaveLength(1);
 
-    expect(details).toMatchSnapshot();
+    expect(toJson(details, { noKey: true })).toMatchSnapshot();
   });
 
   test('Displays VirtualHearingModal when converting from video', () => {
@@ -145,7 +146,7 @@ describe('Details', () => {
     expect(details.find(VirtualHearingModal)).toHaveLength(1);
     expect(details.find(HearingConversion)).toHaveLength(0);
 
-    expect(details).toMatchSnapshot();
+    expect(toJson(details, { noKey: true })).toMatchSnapshot();
   });
 
   test('Does not display VirtualHearingModal when updating transcription details with AMA virtual hearing', () => {
@@ -185,7 +186,7 @@ describe('Details', () => {
     // Ensure the modal is not displayed
     expect(details.exists(VirtualHearingModal)).toEqual(false);
 
-    expect(details).toMatchSnapshot();
+    expect(toJson(details, { noKey: true })).toMatchSnapshot();
   });
 
   test('Does not display transcription section for legacy hearings', () => {
@@ -230,7 +231,7 @@ describe('Details', () => {
 
       return expect(node.prop('name')).toEqual('Save');
     });
-    expect(details).toMatchSnapshot();
+    expect(toJson(details, { noKey: true })).toMatchSnapshot();
   });
 
   test('Displays VirtualHearing details when there is a virtual hearing', () => {
@@ -261,6 +262,6 @@ describe('Details', () => {
       0
     );
 
-    expect(details).toMatchSnapshot();
+    expect(toJson(details, { noKey: true })).toMatchSnapshot();
   });
 });
