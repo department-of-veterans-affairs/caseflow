@@ -28,7 +28,7 @@ import Feedback from './containers/Feedback';
 import StatsContainer from './containers/stats/StatsContainer';
 import Login from './login';
 import TestUsers from './test/TestUsers';
-import TestVeterans from './test/TestVeterans';
+import TestData from './test/TestData';
 import PerformanceDegradationBanner from './components/PerformanceDegradationBanner';
 import EstablishClaimAdmin from './establishClaimAdmin';
 import Queue from './queue/index';
@@ -50,7 +50,7 @@ const COMPONENTS = {
   CaseWorker,
   Login,
   TestUsers,
-  TestVeterans,
+  TestData,
   Error404,
   Error500,
   OutOfService,
@@ -88,7 +88,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         './containers/EstablishClaimPage/index',
         './login/index',
         './test/TestUsers',
-        './test/TestVeterans',
+        './test/TestData',
         './containers/stats/StatsContainer',
         './certification/Certification',
         './manageEstablishClaim/ManageEstablishClaim',

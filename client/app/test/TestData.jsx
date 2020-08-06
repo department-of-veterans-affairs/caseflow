@@ -5,10 +5,9 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import NavigationBar from '../components/NavigationBar';
 import AppFrame from '../components/AppFrame';
 import { BrowserRouter } from 'react-router-dom';
-import _ from 'lodash';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
-export default class TestVeterans extends React.PureComponent {
+export default class TestData extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -55,7 +54,7 @@ export default class TestVeterans extends React.PureComponent {
 
 }
 
-TestVeterans.propTypes = {
+TestData.propTypes = {
   currentUser: PropTypes.object.isRequired,
   veteranRecords: PropTypes.array.isRequired,
   userDisplayName: PropTypes.string,

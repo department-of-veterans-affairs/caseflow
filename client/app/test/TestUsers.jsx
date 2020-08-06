@@ -6,7 +6,6 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import Button from '../components/Button';
 import TabWindow from '../components/TabWindow';
 import TextField from '../components/TextField';
-import Table from '../components/Table';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import NavigationBar from '../components/NavigationBar';
 import AppFrame from '../components/AppFrame';
@@ -96,17 +95,6 @@ export default class TestUsers extends React.PureComponent {
       label: feature,
       tagId: feature
     }));
-
-    const veteranColumns = [
-      {
-        header: 'File Number',
-        valueFunction: (rec) => (rec.file_number)
-      },
-      {
-        header: 'Description',
-        valueFunction: (rec) => (rec.description)
-      }
-    ];
 
     const tabs = this.props.appSelectList.map((app) => {
       let tab = {};
@@ -220,7 +208,8 @@ export default class TestUsers extends React.PureComponent {
                 <div>
                   <h3>Local Veteran Records</h3>
                   <p>
-                    Local veteran records are now available on a <a href="/test/veterans">separate page</a>. Note that they may take a while to load.
+                    Local veteran records are now available on a <a href="/test/veterans">separate page</a>.
+                    Note that this page may take a while to load.
                   </p>
                 </div>
               </div> }
