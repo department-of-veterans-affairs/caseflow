@@ -208,7 +208,7 @@ export default class TestUsers extends React.PureComponent {
                 <div>
                   <h3>Local Veteran Records</h3>
                   <p>
-                    Local veteran records are now available on a <a href="/test/veterans">separate page</a>.
+                    Local veteran records are now available on a <a href="/test/data">separate page</a>.
                     Note that this page may take a while to load.
                   </p>
                 </div>
