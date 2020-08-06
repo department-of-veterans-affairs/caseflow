@@ -14,7 +14,7 @@ class RoundRobinTaskDistributor
     @state = {
       class: self.class.name,
       invoker: "round_robin",
-      task_class: @task_class.name,
+      task_class: @task_class&.name,
       assignee_pool: @assignee_pool.pluck(:id)
     }
   end
