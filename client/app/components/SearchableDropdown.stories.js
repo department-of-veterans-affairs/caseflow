@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import faker from 'faker';
 
+import { useArgs } from '@storybook/client-api';
 import { action } from '@storybook/addon-actions';
 
 import SearchableDropdown from './SearchableDropdown';
@@ -21,118 +22,90 @@ export default {
       <div style={{ minWidth: '300px', maxWidth: '400px' }}>{storyFn()}</div>
     ),
   ],
+  args: {
+    options,
+  },
 };
 
-export const basic = () => {
-  return <SearchableDropdown name="basic" options={options} />;
+const Template = (args) => <SearchableDropdown {...args} />;
+
+export const Basic = Template.bind({});
+Basic.args = { name: 'basic' };
+
+export const Label = Template.bind({});
+Label.args = { name: 'label', label: 'Custom Label Text' };
+
+export const DefaultValue = Template.bind({});
+DefaultValue.args = {
+  name: 'defaultValue',
+  label: 'Select an Option',
+  value: options[2],
 };
 
-export const label = () => {
-  return (
-    <SearchableDropdown
-      name="label"
-      label="Custom Label Text"
-      options={options}
-    />
-  );
+export const ReadOnly = Template.bind({});
+ReadOnly.args = {
+  name: 'readOnly',
+  label: 'I am readonly',
+  value: options[2],
+  readOnly: true,
 };
 
-export const defaultValue = () => {
-  return (
-    <SearchableDropdown
-      name="defaultValue"
-      label="Select an Option"
-      options={options}
-      value={options[2]}
-    />
-  );
+export const ErrorMessage = Template.bind({});
+ErrorMessage.args = {
+  name: 'error',
+  label: 'Custom Label Text',
+  errorMessage: 'Something is wrong',
 };
 
-export const readOnly = () => {
-  return (
-    <SearchableDropdown
-      name="label"
-      label="Custom Label Text"
-      options={options}
-      value={options[1]}
-      readOnly
-    />
-  );
+export const Controlled = (args) => {
+  // eslint-disable-next-line no-unused-vars
+  const [_args, updateArgs] = useArgs();
+
+  const handleChange = (val) => updateArgs({ value: val });
+
+  return <SearchableDropdown {...args} onChange={handleChange} />;
+};
+Controlled.args = {
+  name: 'controlled',
+  label: 'Value Controlled Externally',
+  value: options[1],
 };
 
-export const error = () => {
-  return (
-    <SearchableDropdown
-      name="label"
-      label="Custom Label Text"
-      options={options}
-      errorMessage="Something is wrong"
-    />
-  );
+export const ClearOnSelect = (args) => {
+  const handleChange = (val) => {
+    action('onChange')(val);
+  };
+
+  return <SearchableDropdown {...args} onChange={handleChange} />;
+};
+ClearOnSelect.args = {
+  name: 'clearOnSelect',
+  label: 'Clears Control upon Selection',
+  value: options[1],
+  clearOnSelect: true,
 };
 
-export const controlled = () => {
-  const [value, setValue] = useState(options[1]);
-  const handleChange = (val) => setValue(val);
-
-  return (
-    <SearchableDropdown
-      name="controlled"
-      label="Value Controlled Externally"
-      options={options}
-      value={value}
-      onChange={handleChange}
-    />
-  );
+export const Multiple = Template.bind({});
+Multiple.args = {
+  name: 'multiple',
+  label: 'Select multiple',
+  value: options[2],
+  multi: true,
 };
 
-export const clearOnSelect = () => {
-  const handleChange = (val) => action('onChange')(val);
-
-  return (
-    <SearchableDropdown
-      name="controlled"
-      label="Clears Control upon Selection"
-      options={options}
-      value={options[1]}
-      onChange={handleChange}
-      clearOnSelect
-    />
-  );
+export const Creatable = Template.bind({});
+Creatable.args = {
+  name: 'creatable',
+  label: 'Supports Adding Custom Option',
+  creatable: true,
 };
 
-export const multiple = () => {
-  return (
-    <SearchableDropdown
-      name="multiple"
-      label="Select Multiple"
-      options={options}
-      multi
-    />
-  );
-};
-
-export const creatable = () => {
-  return (
-    <SearchableDropdown
-      name="creatable"
-      label="Supports Adding Custom Option"
-      options={options}
-      creatable
-    />
-  );
-};
-
-export const creatableMultiple = () => {
-  return (
-    <SearchableDropdown
-      name="creatableMultiple"
-      label="Supports Adding Custom Options"
-      options={options}
-      creatable
-      multi
-    />
-  );
+export const CreatableMultiple = Template.bind({});
+CreatableMultiple.args = {
+  name: 'creatableMultiple',
+  label: 'Supports Adding Custom Options',
+  creatable: true,
+  multi: true,
 };
 
 export const async = () => {
