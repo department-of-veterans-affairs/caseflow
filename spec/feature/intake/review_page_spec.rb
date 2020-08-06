@@ -391,6 +391,8 @@ feature "Intake Review Page", :postgres do
           expect(page).to_not have_selector("#add_claimant_modal")
           expect(page).to have_content("Claimant not listed, Attorney")
           expect(page).to have_content(notes)
+          # unlisted claimant has empty ID for radio value
+          expect(find("input", id: "claimant-options_", visible: false).checked?).to eq(true)
         end
         # rubocop: enable Metrics/AbcSize
 
