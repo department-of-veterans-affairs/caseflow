@@ -5,7 +5,7 @@ import classNames from 'classnames';
 
 import * as DateUtil from '../../util/DateUtil';
 import { JudgeDropdown } from '../../components/DataDropdowns/index';
-import { marginTop, noMaxWidth } from './details/style';
+import { spacing, marginTop, noMaxWidth } from './details/style';
 import COPY from '../../../COPY';
 import { AddressLine } from './details/Address';
 import { VirtualHearingSection } from './VirtualHearings/Section';
@@ -72,7 +72,7 @@ export const HearingConversion = ({
         </div>
       </div>
       {video && !virtual && (
-        <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
+        <div className={classNames('usa-grid', { [marginTop(30)]: true, [spacing('5px 0', 'pre')]: true })}>
           <div className="usa-width-one-half">
             <ReadOnly label="Regional Office" text={hearing.regionalOfficeName} />
             <HearingLocationDropdown
