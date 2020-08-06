@@ -19,6 +19,10 @@ $cf-select-text-color: #323a45;
       .cf-select__indicators {
         opacity: 0.35;
       }
+
+      input {
+        margin: 0;
+      }
     }
 
     .cf-select__value-container {
