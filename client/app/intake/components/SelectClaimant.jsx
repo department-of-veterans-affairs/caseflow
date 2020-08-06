@@ -175,7 +175,7 @@ export const SelectClaimant = (props) => {
         options={veteranClaimantOptions}
         onChange={handleVeteranIsNotClaimantChange}
         errorMessage={veteranIsNotClaimantError}
-        value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant.toString()}
+        value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant?.toString()}
       />
 
       {showClaimants && hasRelationships && claimantOptions()}
