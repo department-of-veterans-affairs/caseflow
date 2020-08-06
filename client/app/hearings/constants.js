@@ -122,6 +122,6 @@ export const LIST_SCHEDULE_VIEWS = {
 export const HEARING_CONVERSION_TYPES = [
   'change_to_virtual',
   'change_from_virtual',
-  'change_email',
+  'change_email_or_timezone',
   'change_hearing_time'
 ];

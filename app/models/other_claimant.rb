@@ -6,4 +6,9 @@
 # Currently used for attorney fee cases when the attorney isn't found in the BGS attorney database.
 
 class OtherClaimant < Claimant
+  validate { |claimant| OtherClaimantValidator.new(claimant).validate }
+
+  def relationship
+    "Other"
+  end
 end
