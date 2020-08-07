@@ -184,111 +184,113 @@ describe Distribution, :all_dbs do
         expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.direct_review).count).to be >= 3
         expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.evidence_submission).count).to eq(2)
       end
-    end
 
-    context "with priority_acd on" do
-      before { FeatureToggle.enable!(:priority_acd) }
-      after { FeatureToggle.disable!(:priority_acd) }
+      context "with priority_acd on" do
+        before { FeatureToggle.enable!(:priority_acd) }
+        after { FeatureToggle.disable!(:priority_acd) }
 
-      BACKLOG_LIMIT = VACOLS::CaseDocket::HEARING_BACKLOG_LIMIT
+        BACKLOG_LIMIT = VACOLS::CaseDocket::HEARING_BACKLOG_LIMIT
 
-      let!(:more_same_judge_nonpriority_hearings) do
-        to_add = total_tied_nonpriority_hearings - same_judge_nonpriority_hearings.count
-        legacy_nonpriority_cases[34..(34 + to_add - 1)].map { |appeal| create_legacy_case_hearing_for(appeal) }
-      end
+        let!(:more_same_judge_nonpriority_hearings) do
+          to_add = total_tied_nonpriority_hearings - same_judge_nonpriority_hearings.count
+          legacy_nonpriority_cases[34..(34 + to_add - 1)].map { |appeal| create_legacy_case_hearing_for(appeal) }
+        end
 
-      context "the judge's backlog has more than #{BACKLOG_LIMIT} legacy hearing non priority cases" do
-        let(:total_tied_nonpriority_hearings) { BACKLOG_LIMIT + 5 }
+        context "the judge's backlog has more than #{BACKLOG_LIMIT} legacy hearing non priority cases" do
+          let(:total_tied_nonpriority_hearings) { BACKLOG_LIMIT + 5 }
 
-        it "distributes legacy hearing non priority cases down to #{BACKLOG_LIMIT}" do
-          expect(VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge))
-            .to eq total_tied_nonpriority_hearings
-          subject.distribute!
+          it "distributes legacy hearing non priority cases down to #{BACKLOG_LIMIT}" do
+            expect(VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge))
+              .to eq total_tied_nonpriority_hearings
+            subject.distribute!
 
-          expect(subject.valid?).to eq(true)
-          expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(BACKLOG_LIMIT)
-          dcs_legacy = subject.distributed_cases.where(docket: "legacy")
+            expect(subject.valid?).to eq(true)
+            expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(BACKLOG_LIMIT)
+            dcs_legacy = subject.distributed_cases.where(docket: "legacy")
 
-          # distributions reliant on BACKLOG_LIMIT
-          judge_tied_leg_distributions = total_tied_nonpriority_hearings - BACKLOG_LIMIT
-          expect(dcs_legacy.where(priority: false, genpop_query: "not_genpop").count).to eq judge_tied_leg_distributions
+            # distributions reliant on BACKLOG_LIMIT
+            judge_tied_leg_distributions = total_tied_nonpriority_hearings - BACKLOG_LIMIT
+            expect(dcs_legacy.where(priority: false, genpop_query: "not_genpop").count).to eq(
+              judge_tied_leg_distributions
+            )
 
-          # distributions after handling BACKLOG_LIMIT
-          expect(dcs_legacy.where(priority: true, genpop_query: "not_genpop").count).to eq(2)
-          expect(dcs_legacy.where(priority: true, genpop_query: "any").count).to eq(2)
-          expect(dcs_legacy.count).to be >= 8
+            # distributions after handling BACKLOG_LIMIT
+            expect(dcs_legacy.where(priority: true, genpop_query: "not_genpop").count).to eq(2)
+            expect(dcs_legacy.where(priority: true, genpop_query: "any").count).to eq(2)
+            expect(dcs_legacy.count).to be >= 8
+          end
+        end
+
+        context "the judge's backlog has less than #{BACKLOG_LIMIT} legacy hearing non priority cases" do
+          let(:total_tied_nonpriority_hearings) { BACKLOG_LIMIT - 5 }
+
+          it "distributes legacy hearing non priority cases down to #{BACKLOG_LIMIT}" do
+            expect(VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge))
+              .to eq total_tied_nonpriority_hearings
+            subject.distribute!
+
+            expect(subject.valid?).to eq(true)
+            dcs_legacy = subject.distributed_cases.where(docket: "legacy")
+
+            # distributions reliant on BACKLOG_LIMIT
+            expect(dcs_legacy.where(priority: false, genpop_query: "not_genpop").count).to eq(0)
+
+            # distributions after handling BACKLOG_LIMIT
+            remaining_in_backlog = total_tied_nonpriority_hearings -
+                                   dcs_legacy.where(priority: false, genpop: false).count
+            expect(subject.statistics["legacy_hearing_backlog_count"]).to eq remaining_in_backlog
+
+            expect(dcs_legacy.where(priority: true, genpop_query: "not_genpop").count).to eq(2)
+            expect(dcs_legacy.where(priority: true, genpop_query: "any").count).to eq(2)
+            expect(dcs_legacy.count).to be >= 8
+          end
         end
       end
 
-      context "the judge's backlog has less than #{BACKLOG_LIMIT} legacy hearing non priority cases" do
-        let(:total_tied_nonpriority_hearings) { BACKLOG_LIMIT - 5 }
+      def create_nonpriority_distributed_case(distribution, case_id, ready_at)
+        distribution.distributed_cases.create(
+          case_id: case_id,
+          priority: false,
+          docket: "legacy",
+          ready_at: VacolsHelper.normalize_vacols_datetime(ready_at),
+          docket_index: "123",
+          genpop: false,
+          genpop_query: "any"
+        )
+      end
 
-        it "distributes legacy hearing non priority cases down to #{BACKLOG_LIMIT}" do
-          expect(VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge))
-            .to eq total_tied_nonpriority_hearings
-          subject.distribute!
-
-          expect(subject.valid?).to eq(true)
-          dcs_legacy = subject.distributed_cases.where(docket: "legacy")
-
-          # distributions reliant on BACKLOG_LIMIT
-          expect(dcs_legacy.where(priority: false, genpop_query: "not_genpop").count).to eq(0)
-
-          # distributions after handling BACKLOG_LIMIT
-          remaining_in_backlog = total_tied_nonpriority_hearings -
-                                 dcs_legacy.where(priority: false, genpop: false).count
-          expect(subject.statistics["legacy_hearing_backlog_count"]).to eq remaining_in_backlog
-
-          expect(dcs_legacy.where(priority: true, genpop_query: "not_genpop").count).to eq(2)
-          expect(dcs_legacy.where(priority: true, genpop_query: "any").count).to eq(2)
-          expect(dcs_legacy.count).to be >= 8
+      def cancel_relevant_legacy_appeal_tasks
+        legacy_appeal.tasks.reject { |t| t.type == "RootTask" }.each do |task|
+          # update_columns to avoid triggers that will update VACOLS location dates and
+          # mess up ACD date logic.
+          task.update_columns(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
         end
       end
-    end
 
-    def create_nonpriority_distributed_case(distribution, case_id, ready_at)
-      distribution.distributed_cases.create(
-        case_id: case_id,
-        priority: false,
-        docket: "legacy",
-        ready_at: VacolsHelper.normalize_vacols_datetime(ready_at),
-        docket_index: "123",
-        genpop: false,
-        genpop_query: "any"
-      )
-    end
+      context "when an illegit nonpriority legacy case re-distribution is attempted" do
+        let(:case_id) { legacy_case.bfkey }
+        let!(:previous_location) { legacy_case.bfcurloc }
+        let(:legacy_case) { legacy_nonpriority_cases.second }
 
-    def cancel_relevant_legacy_appeal_tasks
-      legacy_appeal.tasks.reject { |t| t.type == "RootTask" }.each do |task|
-        # update_columns to avoid triggers that will update VACOLS location dates and
-        # mess up ACD date logic.
-        task.update_columns(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
-      end
-    end
+        before do
+          @raven_called = false
+          distribution = create(:distribution, judge: judge)
+          # illegit because appeal has completed hearing tasks
+          appeal = create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case)
+          appeal.tasks.open.where.not(type: RootTask.name).each(&:completed!)
+          create_nonpriority_distributed_case(distribution, case_id, legacy_case.bfdloout)
+          distribution.update!(status: "completed", completed_at: today)
+          allow(Raven).to receive(:capture_exception) { @raven_called = true }
+        end
 
-    context "when an illegit nonpriority legacy case re-distribution is attempted" do
-      let(:case_id) { legacy_case.bfkey }
-      let!(:previous_location) { legacy_case.bfcurloc }
-      let(:legacy_case) { legacy_nonpriority_cases.second }
-
-      before do
-        @raven_called = false
-        distribution = create(:distribution, judge: judge)
-        # illegit because appeal has completed hearing tasks
-        appeal = create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case)
-        appeal.tasks.open.where.not(type: RootTask.name).each(&:completed!)
-        create_nonpriority_distributed_case(distribution, case_id, legacy_case.bfdloout)
-        distribution.update!(status: "completed", completed_at: today)
-        allow(Raven).to receive(:capture_exception) { @raven_called = true }
-      end
-
-      it "does not create a duplicate distributed_case and sends alert" do
-        subject.distribute!
-        expect(subject.valid?).to eq(true)
-        expect(subject.error?).to eq(false)
-        expect(@raven_called).to eq(true)
-        expect(subject.distributed_cases.pluck(:case_id)).to_not include(case_id)
-        expect(legacy_case.reload.bfcurloc).to eq(previous_location)
+        it "does not create a duplicate distributed_case and sends alert" do
+          subject.distribute!
+          expect(subject.valid?).to eq(true)
+          expect(subject.error?).to eq(false)
+          expect(@raven_called).to eq(true)
+          expect(subject.distributed_cases.pluck(:case_id)).to_not include(case_id)
+          expect(legacy_case.reload.bfcurloc).to eq(previous_location)
+        end
       end
 
       context "when a legit nonpriority legacy case re-distribution is attempted" do
