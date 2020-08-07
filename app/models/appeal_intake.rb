@@ -8,7 +8,7 @@ class AppealIntake < DecisionReviewIntake
   end
 
   def ui_hash
-    super.merge(docket_type: detail.docket_type)
+    Intake::AppealIntakeSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def review!(request_params)
