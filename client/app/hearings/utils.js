@@ -267,7 +267,7 @@ export const zoneName = (time, name, format) => {
 export const hearingTimeOptsWithZone = (options, local) =>
   options.map((item) => {
     // Default to using EST for all times before conversion
-    moment.tz.setDefault(zone === true ? 'America/New_York' : zone);
+    moment.tz.setDefault(local === true ? 'America/New_York' : local);
 
     // Check which label to use
     const label = item.label ? 'label' : 'displayText';
