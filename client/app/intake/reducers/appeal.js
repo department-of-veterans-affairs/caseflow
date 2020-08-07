@@ -21,7 +21,7 @@ const updateFromServerIntake = (state, serverIntake) => {
   return update(state, {
     ...commonState,
     docketType: {
-      $set: serverIntake.docket_type
+      $set: serverIntake.docketType
     }
   });
 };
