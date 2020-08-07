@@ -76,7 +76,7 @@ module AutomaticCaseDistribution
 
   def ama_statistics
     {
-      batch_size: priority_push? ? @appeals.count : batch_size,
+      batch_size: @appeals.count,
       total_batch_size: total_batch_size,
       priority_count: priority_count,
       direct_review_due_count: direct_review_due_count,

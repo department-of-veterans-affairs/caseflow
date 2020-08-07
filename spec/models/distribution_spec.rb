@@ -210,7 +210,9 @@ describe Distribution, :all_dbs do
 
             # distributions reliant on BACKLOG_LIMIT
             judge_tied_leg_distributions = total_tied_nonpriority_hearings - BACKLOG_LIMIT
-            expect(dcs_legacy.where(priority: false, genpop_query: "not_genpop").count).to eq judge_tied_leg_distributions
+            expect(dcs_legacy.where(priority: false, genpop_query: "not_genpop").count).to eq(
+              judge_tied_leg_distributions
+            )
 
             # distributions after handling BACKLOG_LIMIT
             expect(dcs_legacy.where(priority: true, genpop_query: "not_genpop").count).to eq(2)
