@@ -84,7 +84,7 @@ export const amaHearing = {
   representativeEmailAddress: 'tom.brady@caseflow.gov',
   representativeTz: 'America/Denver',
   room: '2',
-  scheduledFor: (new Date().getDate() + 1).toString(),
+  scheduledFor: '2020-07-06T06:00:00.000-04:00',
   scheduledForIsPast: false,
   scheduledTime: '2000-01-01T03:30:00.000-05:00',
   scheduledTimeString: '03:30',
