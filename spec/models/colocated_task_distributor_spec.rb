@@ -19,7 +19,7 @@ describe ColocatedTaskDistributor, :all_dbs do
 
       before do
         total_distribution_count.times do
-          create(:task, assigned_to: colocated_task_distributor.next_assignee)
+          create(:ama_colocated_task)
         end
       end
 
@@ -36,9 +36,8 @@ describe ColocatedTaskDistributor, :all_dbs do
       before do
         iterations.times do
           create(
-            :task,
-            appeal: appeal,
-            assigned_to: colocated_task_distributor.next_assignee(appeal: appeal)
+            :ama_colocated_task,
+            parent: appeal.root_task
           )
         end
       end
@@ -52,14 +51,14 @@ describe ColocatedTaskDistributor, :all_dbs do
       it "should not reset the next_assignee to the first member in our list of assignees" do
         # Create tasks assigned to all but one member of the list of assignees
         (assignee_pool_size - 1).times do
-          create(:task, assigned_to: colocated_task_distributor.next_assignee)
+          create(:ama_colocated_task)
         end
 
         last_assignee_index = assignee_pool_size - 1
         expect(colocated_task_distributor.next_assignee_index).to eq(last_assignee_index)
 
         # Create a task assigned to somebody not in the list of assignees
-        create(:task)
+        create(:ama_colocated_task)
         expect(colocated_task_distributor.next_assignee_index).to eq(last_assignee_index)
       end
     end

@@ -273,9 +273,10 @@ describe BulkTaskReassignment, :all_dbs do
             let(:team_member_count) { task_count / 4 }
 
             it "describes what changes will be made and makes them" do
+              # expect(Rails.logger).to receive(:info).at_least(8).times.with(/RRDTracking;class: ColocatedTaskDistributor/)
               automatic_org_message = "Reassigning #{task_count} tasks with ids #{ids_output} to " \
                                       "#{team_member_count} members of the parent tasks' organization"
-              # TO FIX: expect(Rails.logger).to receive(:info).with(automatic_org_message)
+              expect(Rails.logger).to receive(:info).with(automatic_org_message).once
 
               subject
               tasks.each do |task|
