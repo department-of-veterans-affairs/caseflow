@@ -4,4 +4,5 @@ export * from 'test/data/regional-offices';
 export * from 'test/data/tasks';
 export * from 'test/data/tabs';
 export * from 'test/data/hearings';
+export * from 'test/data/appeals';
 export * from 'test/data/user';
