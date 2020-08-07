@@ -13,19 +13,20 @@ feature "Intake Review Page", :postgres do
   end
   let(:benefit_type) { "compensation" }
 
-  describe "Validating receipt date not before ama" do
+  describe "Validating receipt date not blank or before AMA" do
     before { FeatureToggle.enable!(:use_ama_activation_date) }
 
-    it "shows correct error with AMA date" do
-      start_higher_level_review(veteran)
+    it "shows correct error with blank or pre-AMA dates" do
+      start_higher_level_review(veteran, receipt_date: nil)
       visit "/intake"
       expect(page).to have_current_path("/intake/review_request")
+      click_intake_continue
+
+      expect(page).to have_content("Please enter a valid receipt date.")
       fill_in "What is the Receipt Date of this form?", with: "01/01/2019"
       click_intake_continue
 
-      expect(page).to have_content(
-        "Receipt Date cannot be prior to 02/19/2019."
-      )
+      expect(page).to have_content("Receipt Date cannot be prior to 02/19/2019.")
     end
   end
 
