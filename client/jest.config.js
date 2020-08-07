@@ -7,6 +7,8 @@ module.exports = {
     '^COPY': '<rootDir>/COPY',
     '\\.(css|less|scss|sss|styl)$': '<rootDir>/node_modules/jest-css-modules'
   },
+  // Runs before the environment is configured
+  globalSetup: './test/global-setup.js',
   setupFilesAfterEnv: ['./test/app/jestSetup.js'],
   transformIgnorePatterns: ['node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)'],
   // eslint-disable-next-line no-undefined
