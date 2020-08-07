@@ -6,7 +6,6 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import Button from '../components/Button';
 import TabWindow from '../components/TabWindow';
 import TextField from '../components/TextField';
-import Table from '../components/Table';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import NavigationBar from '../components/NavigationBar';
 import AppFrame from '../components/AppFrame';
@@ -96,19 +95,6 @@ export default class TestUsers extends React.PureComponent {
       label: feature,
       tagId: feature
     }));
-
-    const veteranColumns = [
-      {
-        header: 'File Number',
-        valueFunction: (rec) => (rec.file_number)
-      },
-      {
-        header: 'Description',
-        valueFunction: (rec) => (rec.description)
-      }
-    ];
-
-    const veteranRecords = this.props.veteranRecords;
 
     const tabs = this.props.appSelectList.map((app) => {
       let tab = {};
@@ -222,9 +208,9 @@ export default class TestUsers extends React.PureComponent {
                 <div>
                   <h3>Local Veteran Records</h3>
                   <p>
-                  These fake Veteran records are available locally.
+                    Local veteran records are now available on a <a href="/test/data">separate page</a>.
+                    Note that this page may take a while to load.
                   </p>
-                  <Table columns={veteranColumns} rowObjects={veteranRecords} />
                 </div>
               </div> }
             { this.props.isGlobalAdmin &&
@@ -254,7 +240,6 @@ TestUsers.propTypes = {
   isGlobalAdmin: PropTypes.bool,
   testUsersList: PropTypes.array.isRequired,
   featuresList: PropTypes.array.isRequired,
-  veteranRecords: PropTypes.array.isRequired,
   appSelectList: PropTypes.array.isRequired,
   epTypes: PropTypes.array.isRequired,
   userDisplayName: PropTypes.string,

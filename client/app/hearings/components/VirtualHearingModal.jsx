@@ -165,7 +165,7 @@ export const ChangeHearingTime = (props) => (
   </React.Fragment>
 );
 
-export const ChangeEmail = (props) => (
+export const ChangeEmailOrTimezone = (props) => (
   <React.Fragment>
     <ReadOnlyEmails {...props} />
   </React.Fragment>
@@ -265,37 +265,77 @@ const INVALID_EMAIL_FORMAT = 'Please enter a valid email address';
 
 export const TYPES = {
   change_to_virtual: {
-    title: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE,
+    title: () => COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE,
     intro: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_INTRO,
     element: ChangeToVirtual
   },
   change_from_virtual: {
-    title: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_TITLE,
+    title: () => COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_TITLE,
     intro: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_INTRO,
     element: ChangeFromVirtual
   },
   change_hearing_time: {
-    title: COPY.VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE,
+    title: () => COPY.VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE,
     intro: COPY.VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_INTRO,
     button: COPY.VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_BUTTON,
     element: ChangeHearingTime
   },
-  change_email: {
-    title: COPY.VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE,
+  change_email_or_timezone: {
+    // The modal title changes depending on the which updates the user made to the
+    // virtual hearing.
+    title: ({
+      representativeEmailEdited,
+      representativeTzEdited,
+      appellantEmailEdited,
+      appellantTzEdited,
+    }) => {
+      const emailUpdated = appellantEmailEdited || representativeEmailEdited;
+      const tzUpdated = appellantTzEdited || representativeTzEdited;
+
+      if (emailUpdated && tzUpdated) {
+        return COPY.VIRTUAL_HEARING_MODAL_UPDATE_GENERIC_TITLE;
+      } else if (emailUpdated) {
+        return COPY.VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE;
+      }
+
+      return COPY.VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE;
+
+    },
     intro: COPY.VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_INTRO,
     button: COPY.VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON,
-    element: ChangeEmail
+    element: ChangeEmailOrTimezone
   }
 };
 
 const VirtualHearingModal = (props) => {
-  const { closeModal, hearing, virtualHearing, reset, submit, type } = props;
+  const {
+    closeModal,
+    hearing,
+    virtualHearing,
+    reset,
+    submit,
+    type,
+    representativeEmailEdited,
+    representativeTzEdited,
+    appellantEmailEdited,
+    appellantTzEdited,
+    scrollLock
+  } = props;
   const [appellantEmailError, setAppellantEmailError] = useState(null);
   const [representativeEmailError, setRepresentativeEmailError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const typeSettings = TYPES[type];
   const appellantTitle = getAppellantTitleForHearing(hearing);
+  const modalTitle = sprintf(
+    typeSettings.title({
+      representativeEmailEdited,
+      representativeTzEdited,
+      appellantEmailEdited,
+      appellantTzEdited
+    }),
+    { appellantTitle }
+  );
 
   const validateForm = () => {
     if (_.isEmpty(virtualHearing.appellantEmail)) {
@@ -337,7 +377,7 @@ const VirtualHearingModal = (props) => {
   return (
     <div>
       <Modal
-        title={sprintf(typeSettings.title, { appellantTitle })}
+        title={modalTitle}
         closeHandler={onReset}
         confirmButton={
           <Button
@@ -360,6 +400,7 @@ const VirtualHearingModal = (props) => {
             Cancel
           </Button>
         }
+        scrollLock={scrollLock}
       >
         <p
           dangerouslySetInnerHTML={
@@ -399,11 +440,16 @@ VirtualHearingModal.propTypes = {
   type: PropTypes.oneOf(HEARING_CONVERSION_TYPES).isRequired,
   timeWasEdited: PropTypes.bool,
   representativeEmailEdited: PropTypes.bool,
+  representativeTzEdited: PropTypes.bool,
   appellantEmailEdited: PropTypes.bool,
+  appellantTzEdited: PropTypes.bool,
   update: PropTypes.func,
   submit: PropTypes.func,
   reset: PropTypes.func,
-  closeModal: PropTypes.func
+  closeModal: PropTypes.func,
+
+  // Passthrough to `Modal` to enable/disable the `ScrollLock` element from displaying.
+  scrollLock: PropTypes.bool
 };
 
 export default VirtualHearingModal;

@@ -5,7 +5,7 @@ import VirtualHearingModal, {
   ChangeHearingTime,
   ChangeToVirtual,
   ChangeFromVirtual,
-  ChangeEmail
+  ChangeEmailOrTimezone
   , DateTime, ReadOnlyEmails } from 'app/hearings/components/VirtualHearingModal';
 import { defaultHearing, virtualHearing } from 'test/data';
 import { HEARING_CONVERSION_TYPES } from 'app/hearings/constants';
@@ -88,7 +88,7 @@ describe('VirtualHearingModal', () => {
     expect(modal).toMatchSnapshot();
   });
 
-  test('Displays ChangeEmail component when type is change_email', () => {
+  test('Displays ChangeEmailOrTimezone component when type is change_email_or_timezone', () => {
     // Run the test
     const modal = mount(
       <VirtualHearingModal
@@ -99,9 +99,9 @@ describe('VirtualHearingModal', () => {
       />);
 
     // Assertions
-    expect(modal.find(ChangeEmail)).toHaveLength(1);
-    expect(modal.find(ChangeEmail).prop('hearing')).toEqual(defaultHearing);
-    expect(modal.find(ChangeEmail).prop('virtualHearing')).toEqual(virtualHearing.virtualHearing);
+    expect(modal.find(ChangeEmailOrTimezone)).toHaveLength(1);
+    expect(modal.find(ChangeEmailOrTimezone).prop('hearing')).toEqual(defaultHearing);
+    expect(modal.find(ChangeEmailOrTimezone).prop('virtualHearing')).toEqual(virtualHearing.virtualHearing);
     expect(modal.find(Button).first().
       text()).toEqual('Update and Send Email');
     expect(modal.find(Button).at(1).
@@ -220,11 +220,12 @@ describe('VirtualHearingModal', () => {
       expect(changeFromVirtual).toMatchSnapshot();
     });
   });
-  describe('ChangeEmail sub-component', () => {
+
+  describe('ChangeEmailOrTimezone sub-component', () => {
     test('Displays ReadOnlyEmails component', () => {
       // Run the test
       const changeEmail = mount(
-        <ChangeEmail
+        <ChangeEmailOrTimezone
           update={updateSpy}
           hearing={defaultHearing}
           virtualHearing={virtualHearing.virtualHearing}
