@@ -84,7 +84,7 @@ export const ReadOnlyEmails = ({
     false;
 
   // Determine whether ti display a divider
-  const showDivider = repEdited || appellantEdited || showAllEmails;
+  const showDivider = virtualHearing.representativeEmail && (repEdited || appellantEdited || showAllEmails);
 
   return hearing.readableRequestType === 'Video' ? (
     <React.Fragment>
@@ -120,7 +120,8 @@ export const ReadOnlyEmails = ({
         </React.Fragment>
       )}
       {showDivider && <div className="cf-help-divider" />}
-      {(representativeTzEdited || representativeEmailEdited || showAllEmails) && (
+      {(virtualHearing.representativeEmail &&
+       (representativeTzEdited || representativeEmailEdited || showAllEmails)) && (
         <React.Fragment>
           <ReadOnly
             spacing={15}
@@ -276,6 +277,7 @@ export const TYPES = {
   change_hearing_time: {
     title: () => COPY.VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE,
     intro: COPY.VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_INTRO,
+    button: COPY.VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_BUTTON,
     element: ChangeHearingTime
   },
   change_email_or_timezone: {

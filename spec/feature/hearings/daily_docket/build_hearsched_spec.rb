@@ -52,7 +52,7 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
       expect(page).to_not have_content("Finding hearing locations", wait: 30)
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       fill_in "Notes", with: "This is a note about the hearing!"
-      find("label", text: "8:30 am").click
+      find("label", text: "8:30 AM Eastern Time (US & Canada)").click
       find("label", text: "Transcript Requested").click
       click_button("Save")
 
