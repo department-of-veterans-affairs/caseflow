@@ -179,6 +179,8 @@ class Veteran < CaseflowRecord
     zip_code = bgs_record&.[](:zip_code)
     zip_code ||= (@address_line3 if (@address_line3 || "").match?(Address::ZIP_CODE_REGEX))
 
+    errors.add(:zip_code, "invalid_zip_code") unless zip_code.match?(/^(?=(\D*\d){5}\D*$)/)
+
     # Write to cache for research purposes. Will remove!
     # See:
     #   https://github.com/department-of-veterans-affairs/caseflow/issues/13889
@@ -352,11 +354,11 @@ class Veteran < CaseflowRecord
             # Only make request to BGS if finding by file number is nil
             find_by(file_number: file_number) ||
               find_by(file_number: bgs.fetch_veteran_info(file_number)&.dig(:ssn))
-          rescue BGS::ShareError
-            nil
+                rescue BGS::ShareError
+                  nil
           end
 
-      return nil unless veteran.present?
+      return nil if veteran.blank?
 
       # Check to see if veteran is accessible to make sure bgs_record is
       # a hash and not :not_found. Also if it's not found, bgs_record returns
