@@ -110,7 +110,7 @@ const HearingDetails = (props) => {
         // Focus to the error
         return document.getElementById('email-section').scrollIntoView();
       } else if ((emailUpdated || timezoneUpdated) && !converting) {
-        return openVirtualHearingModal({ type: 'change_email' });
+        return openVirtualHearingModal({ type: 'change_email_or_timezone' });
       }
 
       // Only send updated properties

@@ -163,7 +163,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       expect(events.where(sent_by_id: current_user.id).count).to eq 2
       expect(events.where(email_type: "confirmation").count).to eq 2
       expect(events.where(email_address: fill_in_veteran_email).count).to eq 1
-      expect(events.where(recipient_role: "appellant").count).to eq 1
+      expect(events.sent_to_appellant.count).to eq 1
       expect(events.where(email_address: pre_loaded_rep_email).count).to eq 1
       expect(events.where(recipient_role: "representative").count).to eq 1
 
@@ -415,7 +415,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       expect(events.where(sent_by_id: current_user.id).count).to eq 2
       expect(events.where(email_type: "confirmation").count).to eq 2
       expect(events.where(email_address: fill_in_veteran_email).count).to eq 1
-      expect(events.where(recipient_role: "appellant").count).to eq 1
+      expect(events.sent_to_appellant.count).to eq 1
       expect(events.where(email_address: fill_in_rep_email).count).to eq 1
       expect(events.where(recipient_role: "representative").count).to eq 1
 
@@ -508,7 +508,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       expect(events.where(sent_by_id: current_user.id).count).to eq 1
       expect(events.where(email_type: "confirmation").count).to eq 1
       expect(events.where(email_address: fill_in_veteran_email).count).to eq 1
-      expect(events.where(recipient_role: "appellant").count).to eq 1
+      expect(events.sent_to_appellant.count).to eq 1
 
       # Check the Email Notification History
       check_email_event_table(hearing, 1)
@@ -530,7 +530,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       click_dropdown(name: "representativeTz", index: 0)
       click_button("Save")
 
-      expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
+      expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
       click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
 
@@ -565,7 +565,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       click_dropdown(name: "appellantTz", index: 0)
       click_button("Save")
 
-      expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
+      expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
       click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
 
@@ -578,7 +578,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       expect(events.where(sent_by_id: current_user.id).count).to eq 1
       expect(events.where(email_type: "updated_time_confirmation").count).to eq 1
       expect(events.where(email_address: central_virtual_hearing.appellant_email).count).to eq 1
-      expect(events.where(recipient_role: "appellant").count).to eq 1
+      expect(events.sent_to_appellant.count).to eq 1
 
       # Check the Email Notification History
       check_email_event_table(central_hearing, 1)
@@ -601,7 +601,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       click_dropdown(name: "appellantTz", index: 0)
       click_button("Save")
 
-      expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
+      expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
       click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
 
@@ -614,7 +614,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       expect(events.where(sent_by_id: current_user.id).count).to eq 2
       expect(events.where(email_type: "updated_time_confirmation").count).to eq 2
       expect(events.where(email_address: central_virtual_hearing.appellant_email).count).to eq 1
-      expect(events.where(recipient_role: "appellant").count).to eq 1
+      expect(events.sent_to_appellant.count).to eq 1
       expect(events.where(email_address: central_virtual_hearing.representative_email).count).to eq 1
       expect(events.where(recipient_role: "representative").count).to eq 1
 
@@ -639,7 +639,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       click_dropdown(name: "appellantTz", index: 0)
       click_button("Save")
 
-      expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
+      expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_GENERIC_TITLE)
       expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
       click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
 
@@ -652,7 +652,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       expect(events.where(sent_by_id: current_user.id).count).to eq 2
       expect(events.where(email_type: "confirmation").count).to eq 2
       expect(events.where(email_address: central_virtual_hearing.appellant_email).count).to eq 1
-      expect(events.where(recipient_role: "appellant").count).to eq 1
+      expect(events.sent_to_appellant.count).to eq 1
       expect(events.where(email_address: fill_in_rep_email).count).to eq 1
       expect(events.where(recipient_role: "representative").count).to eq 1
 
