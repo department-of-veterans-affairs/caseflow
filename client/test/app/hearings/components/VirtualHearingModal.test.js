@@ -124,7 +124,7 @@ describe('VirtualHearingModal', () => {
     expect(modal.find(ChangeHearingTime).prop('hearing')).toEqual(defaultHearing);
     expect(modal.find(ChangeHearingTime).prop('virtualHearing')).toEqual(virtualHearing.virtualHearing);
     expect(modal.find(Button).first().
-      text()).toEqual('Change and Send Email');
+      text()).toEqual('Update Hearing Time');
     expect(modal.find(Button).at(1).
       text()).toEqual('Cancel');
     expect(modal).toMatchSnapshot();
