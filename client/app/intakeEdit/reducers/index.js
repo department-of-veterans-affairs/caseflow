@@ -18,7 +18,7 @@ export const mapDataToInitialState = function(props = {}) {
       veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long,
       veteranAddressInvalidFields: serverIntake.veteranInvalidFields.veteran_address_invalid_address,
       veteranCityInvalidFields: serverIntake.veteranInvalidFields.veteran_city_invalid_address,
-      veteranZipCodeInvalid: serverIntake.veteranZipCodeInvalid.veteran_zip_code_invalid
+      veteranZipCodeInvalid: serverIntake.veteranInvalidFields.veteran_zip_code_invalid
     };
   }
 
