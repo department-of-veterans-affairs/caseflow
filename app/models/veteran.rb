@@ -178,8 +178,8 @@ class Veteran < CaseflowRecord
   def zip_code
     zip_code = bgs_record&.[](:zip_code)
     zip_code ||= (@address_line3 if (@address_line3 || "").match?(Address::ZIP_CODE_REGEX))
-
-    errors.add(:zip_code, "invalid_zip_code") unless zip_code.match?(/^(?=(\D*\d){5}\D*$)/)
+     # binding.pry
+    errors.add(:zip_code, "invalid_zip_code") unless zip_code&.match?(/^(?=(\D*\d){5}\D*$)/)
 
     # Write to cache for research purposes. Will remove!
     # See:
