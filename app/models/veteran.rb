@@ -31,6 +31,7 @@ class Veteran < CaseflowRecord
     validate :validate_city
     validate :validate_date_of_birth
     validate :validate_name_suffix
+    validate :validate_zip_code
   end
 
   delegate :full_address, to: :address
@@ -178,8 +179,6 @@ class Veteran < CaseflowRecord
   def zip_code
     zip_code = bgs_record&.[](:zip_code)
     zip_code ||= (@address_line3 if (@address_line3 || "").match?(Address::ZIP_CODE_REGEX))
-     # binding.pry
-    errors.add(:zip_code, "invalid_zip_code") unless zip_code&.match?(/^(?=(\D*\d){5}\D*$)/)
 
     # Write to cache for research purposes. Will remove!
     # See:
@@ -194,6 +193,11 @@ class Veteran < CaseflowRecord
   alias address_line_2 address_line2
   alias address_line_3 address_line3
   alias gender sex
+
+  def validate_zip_code
+     # This regex validation checks for that zip code is 5 characters long
+    errors.add(:zip_code, "invalid_zip_code") unless zip_code&.match?(/^(?=(\D*\d){5}\D*$)/)
+  end
 
   def validate_address_line
     [:address_line1, :address_line2, :address_line3].each do |address|
