@@ -1,18 +1,13 @@
 # frozen_string_literal: true
 
 class TeamManagementController < ApplicationController
-  before_action :deny_non_bva_admins
+  before_action :verify_access
 
   def index
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        render json: {
-          judge_teams: JudgeTeam.order(:name).map { |jt| serialize_org(jt) },
-          private_bars: PrivateBar.order(:name).map { |private_bar| serialize_org(private_bar) },
-          vsos: Vso.order(:name).map { |vso| serialize_org(vso) },
-          other_orgs: other_orgs.map { |org| serialize_org(org) }
-        }
+        render json: current_user.can_view_only_judge_team_management? ? judge_teams : all_teams
       end
     end
   end
@@ -69,6 +64,22 @@ class TeamManagementController < ApplicationController
     params.require(:organization).permit(:name, :participant_id, :url)
   end
 
+  def judge_teams
+    {
+      judge_teams: JudgeTeam.order(:name).map { |jt| serialize_org(jt) }
+    }
+  end
+
+  def all_teams
+    judge_teams.merge(
+      {
+        private_bars: PrivateBar.order(:name).map { |private_bar| serialize_org(private_bar) },
+        vsos: Vso.order(:name).map { |vso| serialize_org(vso) },
+        other_orgs: other_orgs.map { |org| serialize_org(org) }
+      }
+    )
+  end
+
   def other_orgs
     Organization.order(:name).reject { |org| org.is_a?(JudgeTeam) || org.is_a?(Representative) }
   end
@@ -80,7 +91,11 @@ class TeamManagementController < ApplicationController
       participant_id: org.participant_id,
       type: org.type,
       url: org.url,
-      user_admin_path: org.user_admin_path
+      user_admin_path: current_user.can_view_only_judge_team_management? ? nil : org.user_admin_path
     }
+  end
+
+  def verify_access
+    current_user.can_view_team_management?
   end
 end

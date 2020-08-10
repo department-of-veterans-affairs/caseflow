@@ -61,28 +61,34 @@ class TeamManagement extends React.PureComponent {
               </OrgHeader>
               <OrgList orgs={this.props.judgeTeams} />
 
-              <OrgHeader>
-                VSOs <Button name={COPY.TEAM_MANAGEMENT_ADD_VSO_BUTTON} onClick={this.addIhpWritingVso} />
-              </OrgHeader>
-              <OrgList orgs={this.props.vsos} isRepresentative />
+              { this.props.vsos && <React.Fragment>
+                <OrgHeader>
+                  VSOs <Button name={COPY.TEAM_MANAGEMENT_ADD_VSO_BUTTON} onClick={this.addIhpWritingVso} />
+                </OrgHeader>
+                <OrgList orgs={this.props.vsos} isRepresentative />
+              </React.Fragment> }
 
-              <OrgHeader>
-                Private Bar
-                <span {...css({ marginLeft: '1rem' })}>
-                  <Button name={COPY.TEAM_MANAGEMENT_ADD_PRIVATE_BAR_BUTTON} onClick={this.addPrivateBar} />
-                </span>
-                <span {...css({ marginLeft: '1rem' })}>
-                  <Button
-                    name="Look up Participant ID"
-                    onClick={this.lookupParticipantId}
-                    classNames={['usa-button-secondary']}
-                  />
-                </span>
-              </OrgHeader>
-              <OrgList orgs={this.props.privateBars} isRepresentative />
+              { this.props.privateBars && <React.Fragment>
+                <OrgHeader>
+                  Private Bar
+                  <span {...css({ marginLeft: '1rem' })}>
+                    <Button name={COPY.TEAM_MANAGEMENT_ADD_PRIVATE_BAR_BUTTON} onClick={this.addPrivateBar} />
+                  </span>
+                  <span {...css({ marginLeft: '1rem' })}>
+                    <Button
+                      name="Look up Participant ID"
+                      onClick={this.lookupParticipantId}
+                      classNames={['usa-button-secondary']}
+                    />
+                  </span>
+                </OrgHeader>
+                <OrgList orgs={this.props.privateBars} isRepresentative />
+              </React.Fragment> }
 
-              <OrgHeader>Other teams</OrgHeader>
-              <OrgList orgs={this.props.otherOrgs} />
+              { this.props.otherOrgs && <React.Fragment>
+                <OrgHeader>Other teams</OrgHeader>
+                <OrgList orgs={this.props.otherOrgs} />
+              </React.Fragment> }
             </tbody>
           </table>
 
@@ -263,7 +269,7 @@ class OrgRow extends React.PureComponent {
         }
       </td>
       <td>
-        { this.state.url && <Link to={this.state.user_admin_path}>
+        { this.state.url && this.state.user_admin_path && <Link to={this.state.user_admin_path}>
           <Button
             name="Org Admin Page"
             classNames={['usa-button-secondary']}

@@ -14,6 +14,10 @@ module Seeds
       "BVAOSCHOWALT" => { attorneys: %w[BVASCASPER1 BVAOWEHNER BVASFUNK1] }
     }.freeze
 
+    DEVELOPMENT_DVC_TEAMS = {
+      "BVATCOLLIER" => %w[BVAAABSHIRE BVAGSPORER BVAEBECKER]
+    }.freeze
+
     def seed!
       create_users
     end
@@ -30,6 +34,7 @@ module Seeds
       User.create(css_id: "BVATWARNER", station_id: 101, full_name: "Theresa BuildHearingSchedule Warner")
       User.create(css_id: "BVAGWHITE", station_id: 101, full_name: "George BVADispatchUser_Cases White")
       User.create(css_id: "BVAGGREY", station_id: 101, full_name: "Gina BVADispatchUser_NoCases Grey")
+      User.create(css_id: "BVATCOLLIER", station_id: 101, full_name: "Tonja DVCTeam Collier")
       dispatch_admin = User.create(
         css_id: "BVAGBLACK",
         station_id: 101,
@@ -70,6 +75,7 @@ module Seeds
       create_mail_team_user
       create_case_search_only_user
       create_judge_teams
+      create_dvc_teams
       create_hearings_user
       create_edit_hearings_user
       create_non_admin_hearing_coordinator_user
@@ -161,6 +167,17 @@ module Seeds
         h[:attorneys].each do |css_id|
           judge_team.add_user(User.find_or_create_by(css_id: css_id, station_id: 101))
         end
+      end
+    end
+
+    def create_dvc_teams
+      DEVELOPMENT_DVC_TEAMS.each_pair do |dvc_css_id, judges|
+        dvc = User.find_or_create_by(css_id: dvc_css_id, station_id: 101)
+        # TODO: create dvc team
+        # dvc_team = DvcTeam.for_judge(judge) || DvcTeam.create_for_judge(judge)
+        # judges.each do |css_id|
+        #   dvc_team.add_user(User.find_or_create_by(css_id: css_id, station_id: 101))
+        # end
       end
     end
 

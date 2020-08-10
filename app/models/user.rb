@@ -350,6 +350,19 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     member_of_organization?(SpecialCaseMovementTeam.singleton)
   end
 
+  def can_view_team_management?
+    member_of_organization?(Bva.singleton) || can_view_only_judge_team_management?
+  end
+
+  # TODO: UPDATE WHEN DVC TEAMS ARE DONE
+  def can_view_only_judge_team_management?
+    css_id.eql? "BVATCOLLIER"
+  end
+
+  def can_view_user_management?
+    member_of_organization?(Bva.singleton)
+  end
+
   def show_regional_office_in_queue?
     HearingsManagement.singleton.user_has_access?(self)
   end

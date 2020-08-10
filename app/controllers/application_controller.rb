@@ -38,27 +38,6 @@ class ApplicationController < ApplicationBaseController
     redirect_to "/unauthorized" unless Bva.singleton.user_has_access?(current_user)
   end
 
-  def manage_teams_menu_items
-    current_user.administered_teams.map do |team|
-      {
-        title: "#{team.name} team management",
-        link: team.user_admin_path
-      }
-    end
-  end
-
-  def admin_menu_items
-    [
-      {
-        title: COPY::TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK,
-        link: url_for(controller: "/team_management", action: "index")
-      }, {
-        title: COPY::USER_MANAGEMENT_PAGE_DROPDOWN_LINK,
-        link: url_for(controller: "/user_management", action: "index")
-      }
-    ]
-  end
-
   def handle_non_critical_error(endpoint, err)
     Rails.logger.error "#{err.message}\n#{err.backtrace.join("\n")}"
 
@@ -136,6 +115,29 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :application_urls
 
+  def manage_teams_menu_items
+    current_user.administered_teams.map do |team|
+      {
+        title: "#{team.name} team management",
+        link: team.user_admin_path
+      }
+    end
+  end
+
+  def manage_all_teams_menu_item
+    {
+      title: COPY::TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK,
+      link: url_for(controller: "/team_management", action: "index")
+    }
+  end
+
+  def manage_users_menu_item
+    {
+      title: COPY::USER_MANAGEMENT_PAGE_DROPDOWN_LINK,
+      link: url_for(controller: "/user_management", action: "index")
+    }
+  end
+
   def dropdown_urls
     urls = [
       { title: "Help", link: help_url },
@@ -144,7 +146,8 @@ class ApplicationController < ApplicationBaseController
     ]
 
     urls.concat(manage_teams_menu_items) if current_user&.administered_teams&.any?
-    urls.concat(admin_menu_items) if Bva.singleton.user_has_access?(current_user)
+    urls.push(manage_all_teams_menu_item) if current_user&.can_view_team_management?
+    urls.push(manage_users_menu_item) if current_user&.can_view_user_management?
 
     if ApplicationController.dependencies_faked? && current_user.present?
       urls.append(title: "Switch User", link: url_for(controller: "/test/users", action: "index"))
