@@ -96,6 +96,8 @@ class TeamManagementController < ApplicationController
   end
 
   def verify_access
-    current_user.can_view_team_management? || current_user.can_view_judge_team_management?
+    unless current_user.can_view_team_management? || current_user.can_view_judge_team_management?
+      redirect_to "/unauthorized"
+    end
   end
 end
