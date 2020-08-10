@@ -61,7 +61,7 @@ class TeamManagementController < ApplicationController
   private
 
   def update_params
-    params.require(:organization).permit(:name, :participant_id, :url)
+    params.require(:organization).permit(:name, :participant_id, :url, :accepts_priority_pushed_cases)
   end
 
   def judge_teams
@@ -86,6 +86,8 @@ class TeamManagementController < ApplicationController
 
   def serialize_org(org)
     {
+      accepts_priority_pushed_cases: org.accepts_priority_pushed_cases,
+      current_user_can_toggle_priority_pushed_cases: current_user.can_view_judge_team_management?,
       id: org.id,
       name: org.is_a?(JudgeTeam) ? org.judge.full_name.titleize : org.name,
       participant_id: org.participant_id,

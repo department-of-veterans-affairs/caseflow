@@ -8,6 +8,7 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import PropTypes from 'prop-types';
 import React from 'react';
 import TextField from '../components/TextField';
+import RadioField from '../components/RadioField';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
@@ -59,7 +60,7 @@ class TeamManagement extends React.PureComponent {
               <OrgHeader>
                 Judge teams <Button name={COPY.TEAM_MANAGEMENT_ADD_JUDGE_BUTTON} onClick={this.addJudgeTeam} />
               </OrgHeader>
-              <OrgList orgs={this.props.judgeTeams} />
+              <OrgList orgs={this.props.judgeTeams} showPriorityPushToggles />
 
               { this.props.vsos && <React.Fragment>
                 <OrgHeader>
@@ -161,24 +162,32 @@ class OrgList extends React.PureComponent {
       <tr {...labelRowStyling}>
         <td>{COPY.TEAM_MANAGEMENT_NAME_COLUMN_HEADING}</td>
         <td>{COPY.TEAM_MANAGEMENT_URL_COLUMN_HEADING}</td>
+        <td>{ this.props.showPriorityPushToggles && COPY.TEAM_MANAGEMENT_PRIORITY_DISTRIBUTION_COLUMN_HEADING}</td>
         <td>{ this.props.isRepresentative && COPY.TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING}</td>
         <td></td>
         <td></td>
       </tr>
       { this.props.orgs.map((org) =>
-        <OrgRow {...org} key={org.id} isRepresentative={this.props.isRepresentative} />
+        <OrgRow
+          {...org}
+          key={org.id}
+          isRepresentative={this.props.isRepresentative}
+          showPriorityPushToggles={this.props.showPriorityPushToggles}
+        />
       ) }
     </React.Fragment>;
   }
 }
 
 OrgList.defaultProps = {
-  isRepresentative: false
+  isRepresentative: false,
+  showPriorityPushToggles: false
 };
 
 OrgList.propTypes = {
   orgs: PropTypes.array,
-  isRepresentative: PropTypes.bool
+  isRepresentative: PropTypes.bool,
+  showPriorityPushToggles: PropTypes.bool
 };
 
 class OrgRow extends React.PureComponent {
@@ -186,6 +195,7 @@ class OrgRow extends React.PureComponent {
     super(props);
 
     this.state = {
+      accepts_priority_pushed_cases: props.accepts_priority_pushed_cases,
       id: props.id,
       name: props.name,
       url: props.url,
@@ -197,6 +207,21 @@ class OrgRow extends React.PureComponent {
   changeName = (value) => this.setState({ name: value });
   changeUrl = (value) => this.setState({ url: value });
   changeParticipantId = (value) => this.setState({ participant_id: value });
+
+  changePriorityPush = (judgeTeamId, priorityPush) => {
+    const payload = {
+      data: {
+        organization: {
+          accepts_priority_pushed_cases: priorityPush === 'true'
+        }
+      }
+    };
+
+    return ApiUtil.patch(`/team_management/${judgeTeamId}`, payload).
+      then((resp) => {
+        this.setState({ accepts_priority_pushed_cases: resp.body.org.accepts_priority_pushed_cases });
+      });
+  };
 
   // TODO: Add feedback around whether this request was successful or not.
   submitUpdate = () => {
@@ -226,6 +251,18 @@ class OrgRow extends React.PureComponent {
 
   // TODO: Indicate that changes have been made to the row by enabling the submit changes button. Default to disabled.
   render = () => {
+    const priorityPushRadioOptions = [
+      {
+        displayText: 'Available',
+        value: true,
+        disabled: !this.state.accepts_priority_pushed_cases && !this.props.current_user_can_toggle_priority_pushed_cases
+      }, {
+        displayText: 'Unavailable',
+        value: false,
+        disabled: this.state.accepts_priority_pushed_cases && !this.props.current_user_can_toggle_priority_pushed_cases
+      }
+    ];
+
     return <tr>
       <td>
         <TextField
@@ -246,6 +283,17 @@ class OrgRow extends React.PureComponent {
           onChange={this.changeUrl}
           readOnly={!this.props.isRepresentative}
         />
+      </td>
+      <td>
+        { this.props.showPriorityPushToggles &&
+          <RadioField
+            id={`priority-push-${this.props.id}`}
+            options={priorityPushRadioOptions}
+            value={this.state.accepts_priority_pushed_cases}
+            onChange={(option) => this.changePriorityPush(this.props.id, option)}
+
+          />
+        }
       </td>
       <td>
         { this.props.isRepresentative &&
@@ -281,14 +329,18 @@ class OrgRow extends React.PureComponent {
 }
 
 OrgRow.defaultProps = {
-  isRepresentative: false
+  isRepresentative: false,
+  showPriorityPushToggles: false
 };
 
 OrgRow.propTypes = {
+  accepts_priority_pushed_cases: PropTypes.bool,
+  current_user_can_toggle_priority_pushed_cases: PropTypes.bool,
   id: PropTypes.number,
   name: PropTypes.string,
   participant_id: PropTypes.number,
   isRepresentative: PropTypes.bool,
+  showPriorityPushToggles: PropTypes.bool,
   url: PropTypes.string,
   user_admin_path: PropTypes.string
 };
