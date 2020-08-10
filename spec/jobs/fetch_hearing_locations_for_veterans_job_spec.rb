@@ -161,7 +161,7 @@ describe FetchHearingLocationsForVeteransJob do
 
       context "when API limit is reached" do
         before(:each) do
-          allow(subject).to(receive(:sleep_before_retry_on_limit_error) { })
+          allow(subject).to(receive(:sleep_before_retry_on_limit_error) {})
           allow_any_instance_of(VaDotGovAddressValidator).to(
             receive(:update_closest_ro_and_ahls)
               .and_raise(Caseflow::Error::VaDotGovLimitError.new(code: 500, message: "Error"))
