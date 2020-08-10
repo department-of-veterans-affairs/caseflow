@@ -33,6 +33,39 @@ RSpec.feature "Team management page", :postgres do
         find("#menu-trigger").click
         expect(page).to have_content(COPY::TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK)
       end
+
+      scenario "user can view the team management page" do
+        visit("/team_management")
+        expect(page).to have_content("Judge teams")
+        expect(page).to have_content("VSOs")
+        expect(page).to have_content("Private Bar")
+        expect(page).to have_content("Other teams")
+      end
+    end
+
+    context "when user is a dvc" do
+      before do
+        dvc = create(:user)
+        # TODO: incorperate alec's changes
+        # DvcTeam.create_for_judge(judge)
+        allow(dvc).to receive(:can_view_judge_team_management?).and_return(true)
+        User.authenticate!(user: dvc)
+      end
+
+      scenario "link appears in dropdown menu" do
+        visit("/queue")
+
+        find("#menu-trigger").click
+        expect(page).to have_content(COPY::TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK)
+      end
+
+      scenario "user can view the team management page, but only judges" do
+        visit("/team_management")
+        expect(page).to have_content("Judge teams")
+        expect(page).to have_no_content("VSOs")
+        expect(page).to have_no_content("Private Bar")
+        expect(page).to have_no_content("Other teams")
+      end
     end
   end
 end
