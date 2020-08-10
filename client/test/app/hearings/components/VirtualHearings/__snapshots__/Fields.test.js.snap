@@ -15323,6 +15323,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
         name="representativeTz"
         onChange={[Function]}
         readOnly={false}
+        required="tom.brady@caseflow.gov"
         time="08:15"
         value={null}
       >
@@ -16099,6 +16100,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
           }
           placeholder="Select a timezone"
           readOnly={false}
+          required="tom.brady@caseflow.gov"
           strongLabel={true}
           styling={
             Object {
@@ -16125,6 +16127,11 @@ exports[`Fields Matches snapshot with default props 1`] = `
               <strong>
                 <span>
                   POA/Representative Timezone
+                  <span
+                    className="cf-required"
+                  >
+                    Required
+                  </span>
                 </span>
               </strong>
             </label>
