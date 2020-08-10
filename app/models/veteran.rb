@@ -195,7 +195,7 @@ class Veteran < CaseflowRecord
   alias gender sex
 
   def validate_zip_code
-     # This regex validation checks for that zip code is 5 characters long
+    # This regex validation checks for that zip code is 5 characters long
     errors.add(:zip_code, "invalid_zip_code") unless zip_code&.match?(/^(?=(\D*\d){5}\D*$)/)
   end
 
