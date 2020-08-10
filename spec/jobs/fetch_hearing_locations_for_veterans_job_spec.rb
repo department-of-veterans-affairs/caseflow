@@ -138,7 +138,7 @@ describe FetchHearingLocationsForVeteransJob do
         end
       end
 
-      context "when appeal can't be matched" do
+      context "when appeal can't be geomatched" do
         let(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
 
         before do
