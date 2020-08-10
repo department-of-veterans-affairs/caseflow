@@ -30,7 +30,7 @@ export default class LegacyOptInApproved extends React.PureComponent {
           onChange(convertStringToBoolean(newValue));
         }}
         errorMessage={errorMessage}
-        value={value === null ? null : value.toString()}
+        value={value === null ? null : value?.toString()}
       />
     </div>;
   }

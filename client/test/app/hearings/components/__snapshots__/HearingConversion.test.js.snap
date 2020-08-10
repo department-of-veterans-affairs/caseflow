@@ -64,7 +64,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
       "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
       "representativeTz": "America/Denver",
       "room": "2",
-      "scheduledFor": "32",
+      "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
       "scheduledTime": "2000-01-01T03:30:00.000-05:00",
       "scheduledTimeString": "03:30",
@@ -99,7 +99,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
       "worksheetIssues": Object {},
     }
   }
-  scheduledFor="32"
+  scheduledFor="2020-07-06T06:00:00.000-04:00"
   title="Convert to Virtual"
   type="change_from_virtual"
   update={
@@ -152,7 +152,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
       </span>
       <ReadOnly
         label="Hearing Date"
-        text="01/01/2032"
+        text="07/06/2020"
       >
         <div
           data-css-1a5irm0=""
@@ -161,7 +161,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
             Hearing Date
           </strong>
           <pre>
-            01/01/2032
+            07/06/2020
           </pre>
         </div>
       </ReadOnly>
@@ -4381,7 +4381,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
       "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
       "representativeTz": "America/Denver",
       "room": "2",
-      "scheduledFor": "32",
+      "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
       "scheduledTime": "2000-01-01T03:30:00.000-05:00",
       "scheduledTimeString": "03:30",
@@ -4416,7 +4416,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
       "worksheetIssues": Object {},
     }
   }
-  scheduledFor="32"
+  scheduledFor="2020-07-06T06:00:00.000-04:00"
   title="Convert to Virtual"
   type="change_to_virtual"
   update={
@@ -4457,7 +4457,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
       </span>
       <ReadOnly
         label="Hearing Date"
-        text="01/01/2032"
+        text="07/06/2020"
       >
         <div
           data-css-1a5irm0=""
@@ -4466,7 +4466,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
             Hearing Date
           </strong>
           <pre>
-            01/01/2032
+            07/06/2020
           </pre>
         </div>
       </ReadOnly>
@@ -40010,7 +40010,7 @@ exports[`HearingConversion Shows Representative name when representative address
       "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
       "representativeTz": "America/Denver",
       "room": "2",
-      "scheduledFor": "32",
+      "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
       "scheduledTime": "2000-01-01T03:30:00.000-05:00",
       "scheduledTimeString": "03:30",
@@ -40045,7 +40045,7 @@ exports[`HearingConversion Shows Representative name when representative address
       "worksheetIssues": Object {},
     }
   }
-  scheduledFor="32"
+  scheduledFor="2020-07-06T06:00:00.000-04:00"
   title="Convert to Virtual"
   type="change_from_virtual"
   update={
@@ -40122,7 +40122,7 @@ exports[`HearingConversion Shows Representative name when representative address
       </span>
       <ReadOnly
         label="Hearing Date"
-        text="01/01/2032"
+        text="07/06/2020"
       >
         <div
           data-css-1a5irm0=""
@@ -40131,7 +40131,7 @@ exports[`HearingConversion Shows Representative name when representative address
             Hearing Date
           </strong>
           <pre>
-            01/01/2032
+            07/06/2020
           </pre>
         </div>
       </ReadOnly>
@@ -44399,7 +44399,7 @@ exports[`HearingConversion Shows Representative not present message when no repr
       "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
       "representativeTz": "America/Denver",
       "room": "2",
-      "scheduledFor": "32",
+      "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
       "scheduledTime": "2000-01-01T03:30:00.000-05:00",
       "scheduledTimeString": "03:30",
@@ -44434,7 +44434,7 @@ exports[`HearingConversion Shows Representative not present message when no repr
       "worksheetIssues": Object {},
     }
   }
-  scheduledFor="32"
+  scheduledFor="2020-07-06T06:00:00.000-04:00"
   title="Convert to Virtual"
   type="change_from_virtual"
   update={
@@ -44499,7 +44499,7 @@ exports[`HearingConversion Shows Representative not present message when no repr
       </span>
       <ReadOnly
         label="Hearing Date"
-        text="01/01/2032"
+        text="07/06/2020"
       >
         <div
           data-css-1a5irm0=""
@@ -44508,7 +44508,7 @@ exports[`HearingConversion Shows Representative not present message when no repr
             Hearing Date
           </strong>
           <pre>
-            01/01/2032
+            07/06/2020
           </pre>
         </div>
       </ReadOnly>

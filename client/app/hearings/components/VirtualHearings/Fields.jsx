@@ -54,6 +54,8 @@ export const VirtualHearingFields = ({
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className="usa-width-one-third">
           <Timezone
+            errorMessage={errors?.representativeTz}
+            required={virtualHearing?.representativeEmail}
             value={virtualHearing?.representativeTz || defaultRepresentativeTz}
             onChange={(representativeTz) => update('virtualHearing', { representativeTz })}
             readOnly={readOnly || !virtualHearing?.representativeEmail}
