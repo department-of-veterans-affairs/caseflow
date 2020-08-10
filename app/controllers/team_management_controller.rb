@@ -8,9 +8,9 @@ class TeamManagementController < ApplicationController
       format.html { render template: "queue/index" }
       format.json do
         render json: {
-          judge_teams: JudgeTeam.all.order(:id).map { |jt| serialize_org(jt) },
-          private_bars: PrivateBar.all.order(:id).map { |private_bar| serialize_org(private_bar) },
-          vsos: Vso.all.order(:id).map { |vso| serialize_org(vso) },
+          judge_teams: JudgeTeam.order(:name).map { |jt| serialize_org(jt) },
+          private_bars: PrivateBar.order(:name).map { |private_bar| serialize_org(private_bar) },
+          vsos: Vso.order(:name).map { |vso| serialize_org(vso) },
           other_orgs: other_orgs.map { |org| serialize_org(org) }
         }
       end
@@ -70,7 +70,7 @@ class TeamManagementController < ApplicationController
   end
 
   def other_orgs
-    Organization.all.order(:id).reject { |org| org.is_a?(JudgeTeam) || org.is_a?(Representative) }
+    Organization.order(:name).reject { |org| org.is_a?(JudgeTeam) || org.is_a?(Representative) }
   end
 
   def serialize_org(org)
