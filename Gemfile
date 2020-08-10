@@ -93,7 +93,7 @@ group :test, :development, :demo do
   # Testing tools
   gem "capybara"
   gem "capybara-screenshot"
-  gem "danger", "~> 5.10"
+  gem "danger", "~> 6.0"
   gem "database_cleaner"
   gem "factory_bot_rails", "~> 4.8"
   gem "faker"
