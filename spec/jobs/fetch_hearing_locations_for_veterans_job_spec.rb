@@ -5,6 +5,13 @@ require "faker"
 describe FetchHearingLocationsForVeteransJob do
   let!(:job) { FetchHearingLocationsForVeteransJob.new }
 
+  before do
+    # Force the job to only run for 5 seconds. This overrides the default job
+    # duration which is supposed to take into account latency from the actual
+    # API.
+    stub_const("FetchHearingLocationsForVeteransJob::JOB_DURATION", 5.seconds)
+  end
+
   describe "find_appeals_ready_for_geomatching" do
     let!(:legacy_appeal_with_ro_updated_one_day_ago) { create(:legacy_appeal, vacols_case: create(:case)) }
     let!(:hearing_location_updated_one_day_ago) do
