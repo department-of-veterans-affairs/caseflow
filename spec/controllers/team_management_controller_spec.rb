@@ -8,7 +8,7 @@ describe TeamManagementController, :postgres, type: :controller do
     User.authenticate!(user: user)
   end
 
-  fdescribe "GET /team_management" do
+  describe "GET /team_management" do
     context "when current user is not a member of the Bva organization" do
       before { User.authenticate!(user: create(:user)) }
 
