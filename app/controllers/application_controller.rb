@@ -146,7 +146,9 @@ class ApplicationController < ApplicationBaseController
     ]
 
     urls.concat(manage_teams_menu_items) if current_user&.administered_teams&.any?
-    urls.push(manage_all_teams_menu_item) if current_user&.can_view_team_management?
+    if current_user&.can_view_team_management? || current_user&.can_view_judge_team_management?
+      urls.push(manage_all_teams_menu_item)
+    end
     urls.push(manage_users_menu_item) if current_user&.can_view_user_management?
 
     if ApplicationController.dependencies_faked? && current_user.present?

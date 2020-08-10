@@ -351,11 +351,12 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_view_team_management?
-    member_of_organization?(Bva.singleton) || can_view_only_judge_team_management?
+    member_of_organization?(Bva.singleton)
   end
 
   # TODO: UPDATE WHEN DVC TEAMS ARE DONE
-  def can_view_only_judge_team_management?
+  def can_view_judge_team_management?
+    # DvcTeam.for_dvc(self).present?
     css_id.eql? "BVATCOLLIER"
   end
 

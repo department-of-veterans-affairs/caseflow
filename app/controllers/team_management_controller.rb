@@ -7,7 +7,7 @@ class TeamManagementController < ApplicationController
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        render json: current_user.can_view_only_judge_team_management? ? judge_teams : all_teams
+        render json: current_user.can_view_team_management? ? all_teams : judge_teams
       end
     end
   end
@@ -91,11 +91,11 @@ class TeamManagementController < ApplicationController
       participant_id: org.participant_id,
       type: org.type,
       url: org.url,
-      user_admin_path: current_user.can_view_only_judge_team_management? ? nil : org.user_admin_path
+      user_admin_path: current_user.can_view_team_management? ? org.user_admin_path : nil
     }
   end
 
   def verify_access
-    current_user.can_view_team_management?
+    current_user.can_view_team_management? || current_user.can_view_judge_team_management?
   end
 end
