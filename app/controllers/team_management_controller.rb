@@ -76,7 +76,7 @@ class TeamManagementController < ApplicationController
   def serialize_org(org)
     {
       id: org.id,
-      name: org.name,
+      name: org.is_a?(JudgeTeam) ? org.judge.full_name.titleize : org.name,
       participant_id: org.participant_id,
       type: org.type,
       url: org.url,

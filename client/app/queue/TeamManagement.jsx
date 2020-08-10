@@ -64,7 +64,7 @@ class TeamManagement extends React.PureComponent {
               <OrgHeader>
                 VSOs <Button name={COPY.TEAM_MANAGEMENT_ADD_VSO_BUTTON} onClick={this.addIhpWritingVso} />
               </OrgHeader>
-              <OrgList orgs={this.props.vsos} showBgsParticipantId />
+              <OrgList orgs={this.props.vsos} isRepresentative />
 
               <OrgHeader>
                 Private Bar
@@ -79,7 +79,7 @@ class TeamManagement extends React.PureComponent {
                   />
                 </span>
               </OrgHeader>
-              <OrgList orgs={this.props.privateBars} showBgsParticipantId />
+              <OrgList orgs={this.props.privateBars} isRepresentative />
 
               <OrgHeader>Other teams</OrgHeader>
               <OrgList orgs={this.props.otherOrgs} />
@@ -153,27 +153,26 @@ class OrgList extends React.PureComponent {
   render = () => {
     return <React.Fragment>
       <tr {...labelRowStyling}>
-        <td>{COPY.TEAM_MANAGEMENT_ID_COLUMN_HEADING}</td>
         <td>{COPY.TEAM_MANAGEMENT_NAME_COLUMN_HEADING}</td>
         <td>{COPY.TEAM_MANAGEMENT_URL_COLUMN_HEADING}</td>
-        <td>{ this.props.showBgsParticipantId && COPY.TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING}</td>
+        <td>{ this.props.isRepresentative && COPY.TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING}</td>
         <td></td>
         <td></td>
       </tr>
       { this.props.orgs.map((org) =>
-        <OrgRow {...org} key={org.id} showBgsParticipantId={this.props.showBgsParticipantId} />
+        <OrgRow {...org} key={org.id} isRepresentative={this.props.isRepresentative} />
       ) }
     </React.Fragment>;
   }
 }
 
 OrgList.defaultProps = {
-  showBgsParticipantId: false
+  isRepresentative: false
 };
 
 OrgList.propTypes = {
   orgs: PropTypes.array,
-  showBgsParticipantId: PropTypes.bool
+  isRepresentative: PropTypes.bool
 };
 
 class OrgRow extends React.PureComponent {
@@ -222,7 +221,6 @@ class OrgRow extends React.PureComponent {
   // TODO: Indicate that changes have been made to the row by enabling the submit changes button. Default to disabled.
   render = () => {
     return <tr>
-      <td>{ this.props.id }</td>
       <td>
         <TextField
           name={`${COPY.TEAM_MANAGEMENT_NAME_COLUMN_HEADING}-${this.props.id}`}
@@ -230,6 +228,7 @@ class OrgRow extends React.PureComponent {
           useAriaLabel
           value={this.state.name}
           onChange={this.changeName}
+          readOnly={!this.props.isRepresentative}
         />
       </td>
       <td>
@@ -239,10 +238,11 @@ class OrgRow extends React.PureComponent {
           useAriaLabel
           value={this.state.url}
           onChange={this.changeUrl}
+          readOnly={!this.props.isRepresentative}
         />
       </td>
       <td>
-        { this.props.showBgsParticipantId &&
+        { this.props.isRepresentative &&
           <TextField
             name={`${COPY.TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING}-${this.props.id}`}
             label={false}
@@ -253,29 +253,36 @@ class OrgRow extends React.PureComponent {
         }
       </td>
       <td>
-        <Button
-          name={COPY.TEAM_MANAGEMENT_UPDATE_ROW_BUTTON}
-          id={`${this.props.id}`}
-          classNames={['usa-button-secondary']}
-          onClick={this.submitUpdate}
-        />
+        { this.props.isRepresentative &&
+          <Button
+            name={COPY.TEAM_MANAGEMENT_UPDATE_ROW_BUTTON}
+            id={`${this.props.id}`}
+            classNames={['usa-button-secondary']}
+            onClick={this.submitUpdate}
+          />
+        }
       </td>
       <td>
-        { this.state.url && <Link to={this.state.user_admin_path}>Org admin page</Link> }
+        { this.state.url && <Link to={this.state.user_admin_path}>
+          <Button
+            name="Org Admin Page"
+            classNames={['usa-button-secondary']}
+          />
+        </Link> }
       </td>
     </tr>;
   }
 }
 
 OrgRow.defaultProps = {
-  showBgsParticipantId: false
+  isRepresentative: false
 };
 
 OrgRow.propTypes = {
   id: PropTypes.number,
   name: PropTypes.string,
   participant_id: PropTypes.number,
-  showBgsParticipantId: PropTypes.bool,
+  isRepresentative: PropTypes.bool,
   url: PropTypes.string,
   user_admin_path: PropTypes.string
 };
