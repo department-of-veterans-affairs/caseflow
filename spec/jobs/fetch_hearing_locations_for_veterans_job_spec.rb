@@ -2,7 +2,7 @@
 
 require "faker"
 
-describe FetchHearingLocationsForVeteransJob, :all_dbs do
+describe FetchHearingLocationsForVeteransJob do
   let!(:job) { FetchHearingLocationsForVeteransJob.new }
 
   describe "find_appeals_ready_for_geomatching" do
@@ -91,15 +91,19 @@ describe FetchHearingLocationsForVeteransJob, :all_dbs do
 
     describe "#perform" do
       before(:each) do
-        allow_any_instance_of(VaDotGovAddressValidator).to receive(:update_closest_ro_and_ahls)
-          .and_return(status: :matched_available_hearing_locations)
+        allow_any_instance_of(VaDotGovAddressValidator).to(
+          receive(:update_closest_ro_and_ahls)
+            .and_return(status: :matched_available_hearing_locations)
+        )
       end
 
       subject { FetchHearingLocationsForVeteransJob.new }
 
       it "creates schedule hearing tasks for appeal and records a geomatched result" do
-        expect(subject).to receive(:record_geomatched_appeal)
-          .with(legacy_appeal.external_id, :matched_available_hearing_locations)
+        expect(subject).to(
+          receive(:record_geomatched_appeal)
+            .with(legacy_appeal.external_id, :matched_available_hearing_locations)
+        )
 
         subject.perform
 
@@ -131,8 +135,11 @@ describe FetchHearingLocationsForVeteransJob, :all_dbs do
         let(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
 
         before do
-          allow_any_instance_of(VaDotGovAddressValidator).to receive(:update_closest_ro_and_ahls)
-            .and_return(status: :created_verify_address_admin_action)
+          allow_any_instance_of(VaDotGovAddressValidator).to(
+            receive(:update_closest_ro_and_ahls)
+              .and_return(status: :created_verify_address_admin_action)
+          )
+
           AvailableHearingLocations.create(appeal: appeal, facility_id: "fake_152", updated_at: Time.zone.now - 15.days)
         end
 
@@ -147,13 +154,17 @@ describe FetchHearingLocationsForVeteransJob, :all_dbs do
 
       context "when API limit is reached" do
         before(:each) do
-          allow_any_instance_of(VaDotGovAddressValidator).to receive(:update_closest_ro_and_ahls)
-            .and_raise(Caseflow::Error::VaDotGovLimitError.new(code: 500, message: "Error"))
+          allow(subject).to(receive(:sleep_before_retry_on_limit_error) { })
+          allow_any_instance_of(VaDotGovAddressValidator).to(
+            receive(:update_closest_ro_and_ahls)
+              .and_raise(Caseflow::Error::VaDotGovLimitError.new(code: 500, message: "Error"))
+          )
         end
 
         it "records a geomatch error" do
-          expect(subject).to receive(:record_geomatched_appeal)
-            .with(legacy_appeal.external_id, "limit_error")
+          expect(subject).to(
+            receive(:record_geomatched_appeal).with(legacy_appeal.external_id, "limit_error")
+          )
 
           subject.perform
         end
@@ -161,13 +172,15 @@ describe FetchHearingLocationsForVeteransJob, :all_dbs do
 
       context "when unknown error is thrown" do
         before(:each) do
-          allow_any_instance_of(VaDotGovAddressValidator).to receive(:update_closest_ro_and_ahls)
-            .and_raise(StandardError)
+          allow_any_instance_of(VaDotGovAddressValidator).to(
+            receive(:update_closest_ro_and_ahls).and_raise(StandardError)
+          )
         end
 
         it "records a geomatch error" do
-          expect(subject).to receive(:record_geomatched_appeal)
-            .with(legacy_appeal.external_id, "error")
+          expect(subject).to(
+            receive(:record_geomatched_appeal).with(legacy_appeal.external_id, "error")
+          )
           expect(Raven).to receive(:capture_exception)
 
           subject.perform
