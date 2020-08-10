@@ -204,7 +204,9 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
           </div>
           <CopyTextButton
             label=""
+            styling={Object {}}
             text="Copy VLJ Link"
+            textToCopy={null}
           >
             <Tooltip
               id="tooltip-Copy VLJ Link"
@@ -449,7 +451,9 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
           </div>
           <CopyTextButton
             label=""
+            styling={Object {}}
             text="Copy Guest Link"
+            textToCopy={null}
           >
             <Tooltip
               id="tooltip-Copy Guest Link"
