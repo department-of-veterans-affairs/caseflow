@@ -291,7 +291,6 @@ class OrgRow extends React.PureComponent {
             options={priorityPushRadioOptions}
             value={this.state.accepts_priority_pushed_cases}
             onChange={(option) => this.changePriorityPush(this.props.id, option)}
-
           />
         }
       </td>

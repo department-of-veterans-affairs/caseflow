@@ -70,27 +70,48 @@ RSpec.feature "Team management page", :postgres do
   end
 
   describe "Toggling priority push for a judge team" do
-    before do
-      dvc = create(:user)
-      # TODO: incorperate alec's changes
-      # DvcTeam.create_for_judge(judge)
-      allow(dvc).to receive(:can_view_judge_team_management?).and_return(true)
-      User.authenticate!(user: dvc)
-    end
-
     let!(:judge_team) { JudgeTeam.create_for_judge(create(:user)) }
 
-    scenario "link appears in dropdown menu" do
-      visit("/team_management")
-      expect(page).to have_content("Judge teams")
-      expect(page.find("#priority-push-#{judge_team.id}_true", visible: false).checked?).to eq true
-      expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).checked?).to eq false
-      find(".cf-form-radio-option", text: "Unavailable").click
-      expect(judge_team.reload.accepts_priority_pushed_cases).to be false
-      expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).checked?).to eq true
-      visit("/team_management")
-      expect(page.find("#priority-push-#{judge_team.id}_true", visible: false).checked?).to eq false
-      expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).checked?).to eq true
+    context "when user is in Bva organization" do
+      scenario "user can view priority push availablity, but cannot change it" do
+        visit("/team_management")
+        expect(page).to have_content("Judge teams")
+        binding.pry
+        expect(page.find("#priority-push-#{judge_team.id}_true", visible: false).checked?).to eq true
+        expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).checked?).to eq false
+        expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).disabled?).to eq true
+        find(".cf-form-radio-option", text: "Unavailable").click
+        expect(judge_team.reload.accepts_priority_pushed_cases).to be true
+        expect(page.find("#priority-push-#{judge_team.id}_true", visible: false).checked?).to eq true
+        expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).checked?).to eq false
+        visit("/team_management")
+        expect(page.find("#priority-push-#{judge_team.id}_true", visible: false).checked?).to eq true
+        expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).checked?).to eq false
+        expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).disabled?).to eq true
+      end
+    end
+
+    context "when the user is a dvc" do
+      before do
+        dvc = create(:user)
+        # TODO: incorperate alec's changes
+        # DvcTeam.create_for_judge(judge)
+        allow(dvc).to receive(:can_view_judge_team_management?).and_return(true)
+        User.authenticate!(user: dvc)
+      end
+
+      scenario "link appears in dropdown menu" do
+        visit("/team_management")
+        expect(page).to have_content("Judge teams")
+        expect(page.find("#priority-push-#{judge_team.id}_true", visible: false).checked?).to eq true
+        expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).checked?).to eq false
+        find(".cf-form-radio-option", text: "Unavailable").click
+        expect(judge_team.reload.accepts_priority_pushed_cases).to be false
+        expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).checked?).to eq true
+        visit("/team_management")
+        expect(page.find("#priority-push-#{judge_team.id}_true", visible: false).checked?).to eq false
+        expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).checked?).to eq true
+      end
     end
   end
 end
