@@ -23499,6 +23499,7 @@ SAN FRANCISCO, CA 94103
               name="POA/Representative Timezone"
               onChange={[Function]}
               readOnly={false}
+              required="tom.brady@caseflow.gov"
               time="03:30"
               value={null}
             >
@@ -24274,6 +24275,7 @@ SAN FRANCISCO, CA 94103
                 }
                 placeholder="Select a timezone"
                 readOnly={false}
+                required="tom.brady@caseflow.gov"
                 strongLabel={true}
                 styling={
                   Object {
@@ -24300,6 +24302,11 @@ SAN FRANCISCO, CA 94103
                     <strong>
                       <span>
                         POA/Representative Timezone
+                        <span
+                          className="cf-required"
+                        >
+                          Required
+                        </span>
                       </span>
                     </strong>
                   </label>
