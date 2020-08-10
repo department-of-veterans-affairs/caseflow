@@ -201,6 +201,9 @@ describe FetchHearingLocationsForVeteransJob do
         end
 
         context "with multiple appeals" do
+          let!(:veteran_3) { create(:veteran, file_number: "000000000") }
+          let!(:appeal) { create(:appeal, veteran_file_number: "000000000") }
+          let!(:task_2) { create(:schedule_hearing_task, appeal: appeal) }
 
         end
       end
