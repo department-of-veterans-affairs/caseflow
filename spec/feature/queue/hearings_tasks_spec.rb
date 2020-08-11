@@ -43,7 +43,7 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
       expect(new_parent_hearing_task).to be_a(HearingTask)
       expect(new_parent_hearing_task.children.first).to be_a(ScheduleHearingTask)
 
-      expect(distribution_task.ready_for_distribution?).to eq(false)
+      expect(distribution_task.appeal.ready_for_distribution?).to eq(false)
     end
 
     context "with a hearing and a hearing admin member" do
@@ -179,7 +179,7 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
             expect(parent_hearing_task.reload.children.open.count).to eq(0)
             expect(InformalHearingPresentationTask.count).to eq(0)
 
-            expect(distribution_task.reload.ready_for_distribution?).to eq(true)
+            expect(distribution_task.reload.appeal.ready_for_distribution?).to eq(true)
           end
         end
 
@@ -193,7 +193,7 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
             expect(parent_hearing_task.parent.reload.children.open.count).to eq(1)
             expect(parent_hearing_task.parent.children.open.first).to be_a(InformalHearingPresentationTask)
 
-            expect(distribution_task.reload.ready_for_distribution?).to eq(false)
+            expect(distribution_task.reload.appeal.ready_for_distribution?).to eq(false)
           end
         end
       end
@@ -206,7 +206,7 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
           expect(parent_hearing_task.reload.children.open.count).to eq(0)
           expect(InformalHearingPresentationTask.count).to eq(0)
 
-          expect(distribution_task.reload.ready_for_distribution?).to eq(true)
+          expect(distribution_task.reload.appeal.ready_for_distribution?).to eq(true)
         end
       end
     end

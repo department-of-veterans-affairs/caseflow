@@ -112,8 +112,6 @@ class Docket
         .group("appeals.id")
         .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
                 DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
-        .having("count(case when tasks.type in (?) and tasks.status not in (?) then 1 end) = ?",
-                MailTask.blocking_subclasses, Task.closed_statuses, 0)
     end
 
     def ordered_by_distribution_ready_date
