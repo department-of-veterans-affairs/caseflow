@@ -652,9 +652,9 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
   context ".eligible_judge_priority_distributions_this_month" do
     let!(:judge_without_team) { create(:user) }
     let!(:judge_without_active_team) { create(:user).tap { |judge| JudgeTeam.create_for_judge(judge).inactive! } }
-    # let!(:judge_without_priority_push_team) do
-    #   create(:user).tap { |judge| JudgeTeam.create_for_judge(judge).update(accepts_priority_pushed_cases: false) }
-    # end
+    let!(:judge_without_priority_push_team) do
+      create(:user).tap { |judge| JudgeTeam.create_for_judge(judge).update(accepts_priority_pushed_cases: false) }
+    end
     let!(:judge_with_org) { create(:user).tap { |judge| create(:organization).add_user(judge) } }
     let!(:judge_with_team_and_distributions) { create(:user).tap { |judge| JudgeTeam.create_for_judge(judge) } }
     let!(:judge_with_team_without_distributions) { create(:user).tap { |judge| JudgeTeam.create_for_judge(judge) } }
@@ -668,7 +668,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         .and_return(
           judge_without_team.id => 5,
           judge_without_active_team.id => 5,
-          # judge_without_priority_push_team.id => 5,
+          judge_without_priority_push_team.id => 5,
           judge_with_org.id => 5,
           judge_with_team_and_distributions.id => distributions_for_valid_judge
         )
@@ -678,7 +678,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       [
         judge_without_team,
         judge_without_active_team,
-        # judge_without_priority_push_team,
+        judge_without_priority_push_team,
         judge_with_org
       ].each do |ineligible_judge|
         expect(subject[ineligible_judge]).to be nil
@@ -688,13 +688,12 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
   end
 
-  # TODO: Update when kat's toggle has been merged
   context ".eligible_judges" do
     let!(:judge_without_team) { create(:user) }
     let!(:judge_without_active_team) { create(:user).tap { |judge| JudgeTeam.create_for_judge(judge).inactive! } }
-    # let!(:judge_without_priority_push_team) do
-    #   create(:user).tap { |judge| JudgeTeam.create_for_judge(judge).update(accepts_priority_pushed_cases: false) }
-    # end
+    let!(:judge_without_priority_push_team) do
+      create(:user).tap { |judge| JudgeTeam.create_for_judge(judge).update(accepts_priority_pushed_cases: false) }
+    end
     let!(:judge_with_org) { create(:user).tap { |judge| create(:organization).add_user(judge) } }
     let!(:judge_with_team) { create(:user).tap { |judge| JudgeTeam.create_for_judge(judge) } }
 
