@@ -37,7 +37,7 @@ describe TeamManagementController, :postgres, type: :controller do
           response_body = JSON.parse(response.body)
           expect(response_body["vsos"].length).to eq(vsos.count)
           expect(response_body["judge_teams"].length).to eq(judge_team_count)
-          expect(response_body["judge_teams"].first['user_admin_path'].present?).to be true
+          expect(response_body["judge_teams"].first["user_admin_path"].present?).to be true
           expect(response_body["private_bars"].length).to eq(private_bars.count)
           expect(response_body["other_orgs"].length).to eq(other_org_count)
         end
@@ -59,7 +59,7 @@ describe TeamManagementController, :postgres, type: :controller do
 
           response_body = JSON.parse(response.body)
           expect(response_body["judge_teams"].length).to eq(judge_team_count)
-          expect(response_body["judge_teams"].first['user_admin_path'].present?).to be false
+          expect(response_body["judge_teams"].first["user_admin_path"].present?).to be false
           expect(response_body["vsos"]).to eq nil
           expect(response_body["private_bars"]).to eq nil
           expect(response_body["other_orgs"]).to eq nil
