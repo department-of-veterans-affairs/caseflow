@@ -9,7 +9,7 @@ const labelTextStyling = css({
   marginBottom: '0.65em'
 });
 
-export default class TextField extends React.Component {
+export class TextField extends React.Component {
 
   onChange = (event) => this.props.onChange(event.target.value);
 
@@ -154,3 +154,5 @@ TextField.propTypes = {
   ]),
   inputStyling: PropTypes.object
 };
+
+export default TextField;
