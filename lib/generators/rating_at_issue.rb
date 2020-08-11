@@ -35,7 +35,7 @@ class Generators::RatingAtIssue < Generators::Rating
       end
 
       # BGS returns the data not as an array if there is only one issue
-      (issue_data.length == 1) ? issue_data.first : issue_data
+      (issue_data.length == 1) ? { rba_issue: issue_data.first } : { rba_issue: issue_data }
     end
   end
 end

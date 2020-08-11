@@ -4736,11 +4736,11 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
           type="button"
           willNeverBeLoading={false}
         >
-          Change and Send Email
+          Update Hearing Time
         </Button>
       }
       scrollLock={true}
-      title="Change Hearing Time"
+      title="Update Hearing Time"
     >
       <section
         aria-describedby="modal_id-desc"
@@ -4771,7 +4771,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
         >
           <button
             className="cf-modal-close"
-            id="Change-Hearing-Time-button-id-close"
+            id="Update-Hearing-Time-button-id-close"
             onClick={[Function]}
             type="button"
           >
@@ -4803,7 +4803,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
               <h1
                 id="modal_id-title"
               >
-                Change Hearing Time
+                Update Hearing Time
               </h1>
               <div
                 data-css-o98ubo=""
@@ -5249,7 +5249,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                       onClick={[Function]}
                       type="button"
                     >
-                      Change and Send Email
+                      Update Hearing Time
                     </button>
                   </span>
                 </Button>
