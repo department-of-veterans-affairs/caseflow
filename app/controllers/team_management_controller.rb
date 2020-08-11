@@ -72,11 +72,9 @@ class TeamManagementController < ApplicationController
 
   def all_teams
     judge_teams.merge(
-      {
-        private_bars: PrivateBar.order(:name).map { |private_bar| serialize_org(private_bar) },
-        vsos: Vso.order(:name).map { |vso| serialize_org(vso) },
-        other_orgs: other_orgs.map { |org| serialize_org(org) }
-      }
+      private_bars: PrivateBar.order(:name).map { |private_bar| serialize_org(private_bar) },
+      vsos: Vso.order(:name).map { |vso| serialize_org(vso) },
+      other_orgs: other_orgs.map { |org| serialize_org(org) }
     )
   end
 
@@ -85,14 +83,7 @@ class TeamManagementController < ApplicationController
   end
 
   def serialize_org(org)
-    {
-      id: org.id,
-      name: org.is_a?(JudgeTeam) ? org.judge.full_name.titleize : org.name,
-      participant_id: org.participant_id,
-      type: org.type,
-      url: org.url,
-      user_admin_path: current_user.can_view_team_management? ? org.user_admin_path : nil
-    }
+    org.serialize.merge(user_admin_path: current_user.can_view_team_management? ? org.user_admin_path : nil)
   end
 
   def verify_access

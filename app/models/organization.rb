@@ -138,6 +138,16 @@ class Organization < CaseflowRecord
 
   private
 
+  def serialize
+    {
+      id: id,
+      name: is_a?(JudgeTeam) ? judge.full_name.titleize : name,
+      participant_id: participant_id,
+      type: type,
+      url: url
+    }
+  end
+
   def clean_url
     self.url = url&.parameterize&.dasherize
   end
