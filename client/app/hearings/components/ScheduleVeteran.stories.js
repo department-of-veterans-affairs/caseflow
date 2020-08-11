@@ -3,10 +3,10 @@ import { useArgs } from '@storybook/client-api';
 
 import queueReducer, { initialState } from '../../queue/reducers';
 import ReduxBase from '../../components/ReduxBase';
-import { amaHearing } from '../../../test/data/hearings';
+import { defaultHearing, hearingDateOptions } from '../../../test/data/hearings';
 import { amaAppeal } from '../../../test/data/appeals';
 import { ScheduleVeteran } from './ScheduleVeteran';
-import { roList } from '../../../test/data/regional-offices';
+import { roList, roLocations } from '../../../test/data/regional-offices';
 
 export default {
   title: 'Hearings/Components/ScheduleVeteran',
@@ -18,31 +18,65 @@ export default {
     },
   },
   argTypes: {
-    onChange: { action: 'onChange' },
-    type: {
-      control: { type: 'select', options: ['date', 'datetime-local', 'text'] },
-    },
   }
 };
 
 const defaultArgs = {
   appeal: amaAppeal,
-  hearing: amaHearing,
+  hearing: defaultHearing,
 };
 
 const Template = (args) => {
   const [storyArgs, updateStoryArgs] = useArgs();
-  const handleChange = (value) => {
-    args.onChange(value);
-    updateStoryArgs({ ...storyArgs, value });
+  const handleChange = (key, value) => {
+    updateStoryArgs({
+      ...defaultArgs,
+      ...storyArgs,
+      [key]: {
+        ...defaultArgs[key],
+        ...storyArgs[key],
+        ...value
+      }
+    });
   };
 
   return (
-    <ReduxBase reducer={queueReducer} initialState={{ queue: { ...initialState } }}>
-      <ScheduleVeteran {...args} {...defaultArgs} onChange={handleChange} roList={roList} />
+    <ReduxBase reducer={queueReducer} initialState={{
+      queue: { ...initialState },
+      components: {
+        dropdowns: {
+          regionalOffices: { options: roList },
+          [`hearingLocationsFor${amaAppeal.externalId}At${defaultHearing.regionalOfficeKey}`]: { options: roLocations },
+          [`hearingDatesFor${defaultHearing.regionalOfficeKey}`]: { options: hearingDateOptions }
+        }
+      }
+    }}>
+      <ScheduleVeteran
+        {...args}
+        {...defaultArgs}
+        {...storyArgs}
+        onChange={handleChange}
+        /* eslint-disable no-console */
+        submit={() => console.log('Submitted')}
+        goBack={() => console.log('Cancelled')}
+        /* eslint-enable no-console */
+      />
     </ReduxBase>
 
   );
 };
 
 export const Default = Template.bind({});
+
+export const Loading = Template.bind({});
+Loading.args = {
+  loading: true
+};
+
+export const RegionalOfficeSelected = Template.bind({});
+RegionalOfficeSelected.args = {
+  appeal: {
+    ...amaAppeal,
+    regionalOffice: defaultHearing.regionalOfficeKey
+  }
+};
