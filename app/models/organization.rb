@@ -136,7 +136,7 @@ class Organization < CaseflowRecord
     ::OrganizationCompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
-  def serializable_hash
+  def serialize
     {
       id: id,
       name: is_a?(JudgeTeam) ? judge.full_name.titleize : name,

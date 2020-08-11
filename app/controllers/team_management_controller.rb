@@ -83,7 +83,7 @@ class TeamManagementController < ApplicationController
   end
 
   def serialize_org(org)
-    org.serializable_hash.merge(user_admin_path: current_user.can_view_team_management? ? org.user_admin_path : nil)
+    org.serialize.merge(user_admin_path: current_user.can_view_team_management? ? org.user_admin_path : nil)
   end
 
   def verify_access
