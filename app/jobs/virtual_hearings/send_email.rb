@@ -100,7 +100,10 @@ class VirtualHearings::SendEmail
     Rails.logger.info("Sending email to #{recipient.inspect}...")
 
     msg = email.deliver_now!
-  rescue StandardError => error
+  rescue StandardError, Savon::Error, BGS::ShareError => error
+    # Savon::Error and BGS::ShareError are sometimes thrown when making requests to BGS enpoints
+    Raven.capture_exception(error)
+
     Rails.logger.warn("Failed to send #{type} email to #{recipient.title}: #{error}")
     Rails.logger.warn(error.backtrace.join($INPUT_RECORD_SEPARATOR))
 
