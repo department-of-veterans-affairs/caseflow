@@ -161,9 +161,9 @@ class OrgList extends React.PureComponent {
     return <React.Fragment>
       <tr {...labelRowStyling}>
         <td>{COPY.TEAM_MANAGEMENT_NAME_COLUMN_HEADING}</td>
-        <td>{COPY.TEAM_MANAGEMENT_URL_COLUMN_HEADING}</td>
-        <td>{ this.props.showPriorityPushToggles && COPY.TEAM_MANAGEMENT_PRIORITY_DISTRIBUTION_COLUMN_HEADING}</td>
-        <td>{ this.props.isRepresentative && COPY.TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING}</td>
+        <td>{this.props.isRepresentative && COPY.TEAM_MANAGEMENT_URL_COLUMN_HEADING}</td>
+        <td>{this.props.showPriorityPushToggles && COPY.TEAM_MANAGEMENT_PRIORITY_DISTRIBUTION_COLUMN_HEADING}</td>
+        <td>{this.props.isRepresentative && COPY.TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING}</td>
         <td></td>
         <td></td>
       </tr>
@@ -275,14 +275,14 @@ class OrgRow extends React.PureComponent {
         />
       </td>
       <td>
-        <TextField
+        { this.props.isRepresentative && <TextField
           name={`${COPY.TEAM_MANAGEMENT_URL_COLUMN_HEADING}-${this.props.id}`}
           label={false}
           useAriaLabel
           value={this.state.url}
           onChange={this.changeUrl}
           readOnly={!this.props.isRepresentative}
-        />
+        /> }
       </td>
       <td>
         { this.props.showPriorityPushToggles &&
