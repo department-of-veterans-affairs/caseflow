@@ -14,7 +14,7 @@ import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import BuildScheduleContainer from './containers/BuildScheduleContainer';
 import BuildScheduleUploadContainer from './containers/BuildScheduleUploadContainer';
 import DailyDocketContainer from './containers/DailyDocketContainer';
-import HearingDetailsContainer from './containers/DetailsContainer';
+import { HearingDetailsContainer } from './containers/DetailsContainer';
 import HearingWorksheetContainer from './containers/HearingWorksheetContainer';
 import HearingWorksheetPrintAllContainer from './containers/HearingWorksheetPrintAllContainer';
 import ListScheduleContainer from './containers/ListScheduleContainer';
