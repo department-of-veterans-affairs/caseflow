@@ -1,12 +1,10 @@
 import React from 'react';
 import { useArgs } from '@storybook/client-api';
 
-import queueReducer, { initialState } from '../../queue/reducers';
-import ReduxBase from '../../components/ReduxBase';
-import { defaultHearing, hearingDateOptions } from '../../../test/data/hearings';
+import { defaultHearing } from '../../../test/data/hearings';
 import { amaAppeal } from '../../../test/data/appeals';
 import { ScheduleVeteran } from './ScheduleVeteran';
-import { roList, roLocations } from '../../../test/data/regional-offices';
+import { queueWrapper as Wrapper } from '../../../test/data/stores/queueStore';
 
 export default {
   title: 'Hearings/Components/ScheduleVeteran',
@@ -41,16 +39,7 @@ const Template = (args) => {
   };
 
   return (
-    <ReduxBase reducer={queueReducer} initialState={{
-      queue: { ...initialState },
-      components: {
-        dropdowns: {
-          regionalOffices: { options: roList },
-          [`hearingLocationsFor${amaAppeal.externalId}At${defaultHearing.regionalOfficeKey}`]: { options: roLocations },
-          [`hearingDatesFor${defaultHearing.regionalOfficeKey}`]: { options: hearingDateOptions }
-        }
-      }
-    }}>
+    <Wrapper>
       <ScheduleVeteran
         {...args}
         {...defaultArgs}
@@ -61,7 +50,7 @@ const Template = (args) => {
         goBack={() => console.log('Cancelled')}
         /* eslint-enable no-console */
       />
-    </ReduxBase>
+    </Wrapper>
 
   );
 };

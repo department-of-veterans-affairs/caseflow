@@ -3,8 +3,10 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-import reducer from 'app/queue/reducers';
-import { defaultHearing, amaAppeal, hearingDateOptions, roLocations, roList } from 'test/data';
+import reducer from '../../../app/queue/reducers';
+import { defaultHearing, hearingDateOptions } from '../../data/hearings';
+import { amaAppeal } from '../../data/appeals';
+import { roLocations, roList } from '../../data/regional-offices';
 
 export const initialState = {
   components: {
