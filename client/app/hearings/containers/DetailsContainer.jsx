@@ -16,6 +16,8 @@ export const HearingDetailsContainer = ({ hearingId, history }) => {
     ApiUtil.
       get(`/hearings/${hearingId}`).
       then((resp) => {
+        // This represents the initial hearing that is setup in the HearingsFormContext.
+        // Afterwards, the initial hearing is managed by the HearingDetails child.
         setHearing(ApiUtil.convertToCamelCase(resp.body.data));
       })
   );
