@@ -38,7 +38,7 @@ describe SpecialCaseMovementTask, :postgres do
           before do
             create(:congressional_interest_mail_task,
                    appeal: appeal,
-                   parent: appeal.root_task)
+                   parent: dist_task)
           end
           it "should error with appeal not ready" do
             expect { subject }.to raise_error do |error|
