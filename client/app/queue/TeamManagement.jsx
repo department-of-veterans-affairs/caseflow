@@ -161,8 +161,8 @@ class OrgList extends React.PureComponent {
     return <React.Fragment>
       <tr {...labelRowStyling}>
         <td>{COPY.TEAM_MANAGEMENT_NAME_COLUMN_HEADING}</td>
-        <td>{this.props.isRepresentative && COPY.TEAM_MANAGEMENT_URL_COLUMN_HEADING}</td>
-        <td>{this.props.showPriorityPushToggles && COPY.TEAM_MANAGEMENT_PRIORITY_DISTRIBUTION_COLUMN_HEADING}</td>
+        { this.props.showPriorityPushToggles && <td>{COPY.TEAM_MANAGEMENT_PRIORITY_DISTRIBUTION_COLUMN_HEADING}</td> }
+        { this.props.isRepresentative && <td>{COPY.TEAM_MANAGEMENT_URL_COLUMN_HEADING}</td> }
         <td>{this.props.isRepresentative && COPY.TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING}</td>
         <td></td>
         <td></td>
@@ -189,6 +189,10 @@ OrgList.propTypes = {
   isRepresentative: PropTypes.bool,
   showPriorityPushToggles: PropTypes.bool
 };
+
+const orgRowStyling = css({
+  '&:last_child': { textAlign: 'right' }
+});
 
 class OrgRow extends React.PureComponent {
   constructor(props) {
@@ -263,7 +267,7 @@ class OrgRow extends React.PureComponent {
       }
     ];
 
-    return <tr>
+    return <tr {...orgRowStyling}>
       <td>
         <TextField
           name={`${COPY.TEAM_MANAGEMENT_NAME_COLUMN_HEADING}-${this.props.id}`}
@@ -274,26 +278,25 @@ class OrgRow extends React.PureComponent {
           readOnly={!this.props.isRepresentative}
         />
       </td>
-      <td>
-        { this.props.isRepresentative && <TextField
+      { this.props.showPriorityPushToggles && <td>
+        <RadioField
+          id={`priority-push-${this.props.id}`}
+          options={priorityPushRadioOptions}
+          value={this.state.accepts_priority_pushed_cases}
+          onChange={(option) => this.changePriorityPush(this.props.id, option)}
+        />
+      </td> }
+      { this.props.isRepresentative && <td>
+        <TextField
           name={`${COPY.TEAM_MANAGEMENT_URL_COLUMN_HEADING}-${this.props.id}`}
           label={false}
           useAriaLabel
           value={this.state.url}
           onChange={this.changeUrl}
           readOnly={!this.props.isRepresentative}
-        /> }
-      </td>
-      <td>
-        { this.props.showPriorityPushToggles &&
-          <RadioField
-            id={`priority-push-${this.props.id}`}
-            options={priorityPushRadioOptions}
-            value={this.state.accepts_priority_pushed_cases}
-            onChange={(option) => this.changePriorityPush(this.props.id, option)}
-          />
-        }
-      </td>
+        />
+      </td> }
+      { !this.props.isRepresentative && !this.props.showPriorityPushToggles && <td></td> }
       <td>
         { this.props.isRepresentative &&
           <TextField
