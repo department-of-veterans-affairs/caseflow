@@ -50,12 +50,12 @@ class LegacyOptInModal extends React.Component {
       if (vacolsSequenceId) {
         const vacolsIssue = legacyAppeal.issues.find((i) => i.vacols_sequence_id === parseInt(vacolsSequenceId, 10));
         const eligibleWithExemption = legacyAppeal.eligible_for_soc_opt_in_with_exemption &&
-          vacolsIssue.eligible_for_soc_opt_in_with_exemption;
+          vacolsIssue?.eligible_for_soc_opt_in_with_exemption;
 
         this.setState({
           vacolsId: legacyValues[0],
           vacolsSequenceId,
-          eligibleForSocOptIn: legacyAppeal.eligible_for_soc_opt_in && vacolsIssue.eligible_for_soc_opt_in,
+          eligibleForSocOptIn: legacyAppeal.eligible_for_soc_opt_in && vacolsIssue?.eligible_for_soc_opt_in,
           eligibleForSocOptInWithExemption: eligibleWithExemption
         });
       }

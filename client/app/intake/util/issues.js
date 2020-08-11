@@ -60,7 +60,9 @@ export const legacyIssue = (issue, legacyAppeals) => {
     throw new Error(`No legacyAppeal found for '${issue.vacolsId}'`);
   }
 
-  return _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })[0];
+  const legacyIssues = _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })
+
+  return legacyIssues.count > 0 && legacyIssues[0];
 };
 
 export const validateDateNotInFuture = (date) => {

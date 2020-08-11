@@ -97,7 +97,7 @@ class VacolsOptInList extends React.PureComponent {
           <strong>{COPY.VACOLS_OPTIN_ISSUE_CLOSED}</strong>
           {this.props.issues.map((ri, i) =>
             <p key={`vacols-issue-${i}`} className="">
-              {legacyIssue(ri, this.props.legacyAppeals).description}
+              {legacyIssue(ri, this.props.legacyAppeals)&.description || COPY.INTAKE_VACOLS_ISSUE_MISSING}
             </p>)}
         </li>
       </ul>
