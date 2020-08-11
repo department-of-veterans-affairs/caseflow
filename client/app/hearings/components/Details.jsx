@@ -93,20 +93,24 @@ const HearingDetails = (props) => {
       // Determine the current state and whether to error
       const virtual = hearing.isVirtual || hearing.wasVirtual || converting;
       const noEmail = !hearing.virtualHearing?.appellantEmail;
+      const noRepEmail = !hearing.virtualHearing?.representativeEmail && hearing.virtualHearing?.representativeTz;
+      const noRepTimezone = !hearing.virtualHearing?.representativeTz && hearing.virtualHearing?.representativeEmail;
       const emailUpdated = editedEmails?.appellantEmailEdited || editedEmails?.representativeEmailEdited;
       const timezoneUpdated = editedEmails?.representativeTzEdited || editedEmails?.appellantTzEdited;
+      const errors = noEmail || ((noRepTimezone || noRepEmail) && hearing.readableRequestType !== 'Video');
 
-      if (virtual && noEmail) {
+      if (virtual && errors) {
         // Set the Virtual Hearing errors
         setVirtualHearingErrors({
-          [!hearing.virtualHearing.appellantEmail && 'appellantEmail']:
-            `${getAppellantTitleForHearing(hearing)} email is required`,
+          [noRepEmail && 'representativeEmail']: 'POA/Representative email is required',
+          [noEmail && 'appellantEmail']: `${getAppellantTitleForHearing(hearing)} email is required`,
+          [noRepTimezone && 'representativeTz']: 'Timezone is required to send email notifications.'
         });
 
         // Focus to the error
         return document.getElementById('email-section').scrollIntoView();
       } else if ((emailUpdated || timezoneUpdated) && !converting) {
-        return openVirtualHearingModal({ type: 'change_email' });
+        return openVirtualHearingModal({ type: 'change_email_or_timezone' });
       }
 
       // Only send updated properties

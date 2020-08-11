@@ -151,7 +151,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
       "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
       "representativeTz": "America/Denver",
       "room": "2",
-      "scheduledFor": "32",
+      "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
       "scheduledTime": "2000-01-01T03:30:00.000-05:00",
       "scheduledTimeString": "03:30",
@@ -312,7 +312,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
               "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
               "representativeTz": "America/Denver",
               "room": "2",
-              "scheduledFor": "32",
+              "scheduledFor": "2020-07-06T06:00:00.000-04:00",
               "scheduledForIsPast": false,
               "scheduledTime": "2000-01-01T03:30:00.000-05:00",
               "scheduledTimeString": "03:30",
@@ -445,7 +445,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
                   "representativeTz": "America/Denver",
                   "room": "2",
-                  "scheduledFor": "32",
+                  "scheduledFor": "2020-07-06T06:00:00.000-04:00",
                   "scheduledForIsPast": false,
                   "scheduledTime": "2000-01-01T03:30:00.000-05:00",
                   "scheduledTimeString": "03:30",
@@ -587,7 +587,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                       "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
                       "representativeTz": "America/Denver",
                       "room": "2",
-                      "scheduledFor": "32",
+                      "scheduledFor": "2020-07-06T06:00:00.000-04:00",
                       "scheduledForIsPast": false,
                       "scheduledTime": "2000-01-01T03:30:00.000-05:00",
                       "scheduledTimeString": "03:30",
@@ -720,7 +720,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
                         "representativeTz": "America/Denver",
                         "room": "2",
-                        "scheduledFor": "32",
+                        "scheduledFor": "2020-07-06T06:00:00.000-04:00",
                         "scheduledForIsPast": false,
                         "scheduledTime": "2000-01-01T03:30:00.000-05:00",
                         "scheduledTimeString": "03:30",
@@ -864,6 +864,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   </div>
                   <CopyTextButton
                     label=""
+                    styling={Object {}}
                     text="Copy VLJ Link"
                     textToCopy="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host"
                   >
@@ -1001,7 +1002,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
                   "representativeTz": "America/Denver",
                   "room": "2",
-                  "scheduledFor": "32",
+                  "scheduledFor": "2020-07-06T06:00:00.000-04:00",
                   "scheduledForIsPast": false,
                   "scheduledTime": "2000-01-01T03:30:00.000-05:00",
                   "scheduledTimeString": "03:30",
@@ -1143,7 +1144,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                       "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
                       "representativeTz": "America/Denver",
                       "room": "2",
-                      "scheduledFor": "32",
+                      "scheduledFor": "2020-07-06T06:00:00.000-04:00",
                       "scheduledForIsPast": false,
                       "scheduledTime": "2000-01-01T03:30:00.000-05:00",
                       "scheduledTimeString": "03:30",
@@ -1276,7 +1277,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
                         "representativeTz": "America/Denver",
                         "room": "2",
-                        "scheduledFor": "32",
+                        "scheduledFor": "2020-07-06T06:00:00.000-04:00",
                         "scheduledForIsPast": false,
                         "scheduledTime": "2000-01-01T03:30:00.000-05:00",
                         "scheduledTimeString": "03:30",
@@ -1420,6 +1421,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   </div>
                   <CopyTextButton
                     label=""
+                    styling={Object {}}
                     text="Copy Guest Link"
                     textToCopy="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
                   >
@@ -16759,6 +16761,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                 name="representativeTz"
                 onChange={[Function]}
                 readOnly={false}
+                required="tom.brady@caseflow.gov"
                 time="03:30"
                 value="America/Denver"
               >
@@ -17535,6 +17538,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   }
                   placeholder="Select a timezone"
                   readOnly={false}
+                  required="tom.brady@caseflow.gov"
                   strongLabel={true}
                   styling={
                     Object {
@@ -17561,6 +17565,11 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                       <strong>
                         <span>
                           POA/Representative Timezone
+                          <span
+                            className="cf-required"
+                          >
+                            Required
+                          </span>
                         </span>
                       </strong>
                     </label>
@@ -31988,7 +31997,7 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
       "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
       "representativeTz": "America/Denver",
       "room": "2",
-      "scheduledFor": "32",
+      "scheduledFor": "2020-07-06T06:00:00.000-04:00",
       "scheduledForIsPast": false,
       "scheduledTime": "2000-01-01T03:30:00.000-05:00",
       "scheduledTimeString": "03:30",
@@ -32120,7 +32129,7 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
               "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
               "representativeTz": "America/Denver",
               "room": "2",
-              "scheduledFor": "32",
+              "scheduledFor": "2020-07-06T06:00:00.000-04:00",
               "scheduledForIsPast": false,
               "scheduledTime": "2000-01-01T03:30:00.000-05:00",
               "scheduledTimeString": "03:30",
@@ -32235,7 +32244,7 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
                   "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
                   "representativeTz": "America/Denver",
                   "room": "2",
-                  "scheduledFor": "32",
+                  "scheduledFor": "2020-07-06T06:00:00.000-04:00",
                   "scheduledForIsPast": false,
                   "scheduledTime": "2000-01-01T03:30:00.000-05:00",
                   "scheduledTimeString": "03:30",
@@ -32364,7 +32373,7 @@ exports[`VirtualHearingForm Shows only hearing links with no virtualHearing 1`] 
                   "representativeName": "PARALYZED VETERANS OF AMERICA, INC.",
                   "representativeTz": "America/Denver",
                   "room": "2",
-                  "scheduledFor": "32",
+                  "scheduledFor": "2020-07-06T06:00:00.000-04:00",
                   "scheduledForIsPast": false,
                   "scheduledTime": "2000-01-01T03:30:00.000-05:00",
                   "scheduledTimeString": "03:30",
