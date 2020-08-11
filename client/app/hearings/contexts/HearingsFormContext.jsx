@@ -11,7 +11,7 @@ export const SET_UPDATED = 'setUpdated';
 
 const formatHearing = (hearing) => ({
   ...hearing,
-  judgeId: hearing.judgeId ? hearing.judgeId.toString() : null,
+  judgeId: hearing.judgeId?.toString(),
   evidenceWindowWaived: hearing.evidenceWindowWaived || false,
   emailEvents: values(hearing?.emailEvents),
   // Transcription Request
