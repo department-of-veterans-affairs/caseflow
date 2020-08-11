@@ -37,7 +37,7 @@ const HearingDetails = (props) => {
   const updateHearing = updateHearingDispatcher(hearing, dispatch);
 
   // Pull out the inherited state to handle actions
-  const { saveHearing, setHearing, goBack, disabled } = props;
+  const { saveHearing, goBack, disabled } = props;
 
   // Determine whether this is a legacy hearing
   const isLegacy = hearing?.docketName !== 'hearing';
@@ -138,24 +138,21 @@ const HearingDetails = (props) => {
       const hearingResp = ApiUtil.convertToCamelCase(response.body?.data);
       const alerts = response.body?.alerts;
 
-      // set hearing on DetailsContainer
-      setHearing(hearingResp, () => {
-        if (alerts) {
-          const { hearing: hearingAlerts, virtual_hearing: virtualHearingAlerts } = alerts;
+      if (alerts) {
+        const { hearing: hearingAlerts, virtual_hearing: virtualHearingAlerts } = alerts;
 
-          if (hearingAlerts) {
-            props.onReceiveAlerts(hearingAlerts);
-          }
-
-          if (!isEmpty(virtualHearingAlerts)) {
-            props.onReceiveTransitioningAlert(virtualHearingAlerts, 'virtualHearing');
-            setShouldStartPolling(true);
-          }
+        if (hearingAlerts) {
+          props.onReceiveAlerts(hearingAlerts);
         }
 
-        // Reset the state
-        reset(hearingResp);
-      });
+        if (!isEmpty(virtualHearingAlerts)) {
+          props.onReceiveTransitioningAlert(virtualHearingAlerts, 'virtualHearing');
+          setShouldStartPolling(true);
+        }
+      }
+
+      // Reset the state
+      reset(hearingResp);
     } catch (respError) {
       const code = get(respError, 'response.body.errors[0].code') || '';
 
@@ -306,9 +303,7 @@ const HearingDetails = (props) => {
 };
 
 HearingDetails.propTypes = {
-  hearing: PropTypes.object.isRequired,
   saveHearing: PropTypes.func,
-  setHearing: PropTypes.func,
   goBack: PropTypes.func,
   disabled: PropTypes.bool,
   onReceiveAlerts: PropTypes.func,
