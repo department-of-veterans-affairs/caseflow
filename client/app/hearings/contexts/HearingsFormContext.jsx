@@ -54,7 +54,7 @@ const setUpdated = (state, value) => ({
 
 const reset = (state, hearing) => ({
   ...state,
-  initialHearing: hearing,
+  initialHearing: formatHearing(hearing),
   hearing: formatHearing(hearing),
   formsUpdated: false
 });
