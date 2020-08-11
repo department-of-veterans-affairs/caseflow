@@ -238,14 +238,14 @@ class OrgRow extends React.PureComponent {
         />
       </td>
       <td>
-        <TextField
+        { this.props.isRepresentative && <TextField
           name={`${COPY.TEAM_MANAGEMENT_URL_COLUMN_HEADING}-${this.props.id}`}
           label={false}
           useAriaLabel
           value={this.state.url}
           onChange={this.changeUrl}
           readOnly={!this.props.isRepresentative}
-        />
+        /> }
       </td>
       <td>
         { this.props.isRepresentative &&
