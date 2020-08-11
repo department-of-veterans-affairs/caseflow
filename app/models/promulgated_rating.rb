@@ -28,8 +28,8 @@ class PromulgatedRating < Rating
 
     def from_bgs_hash(data)
       new(
-        participant_id: data[:comp_id][:ptcpnt_vet_id],
-        profile_date: data[:comp_id][:prfil_dt],
+        participant_id: data.dig(:comp_id, :ptcpnt_vet_id),
+        profile_date: data.dig(:comp_id, :prfil_dt),
         promulgation_date: data[:prmlgn_dt]
       )
     end
