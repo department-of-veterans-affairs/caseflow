@@ -115,6 +115,14 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :application_urls
 
+  def defult_menu_items
+    [
+      { title: "Help", link: help_url },
+      { title: "Send Feedback", link: feedback_url, target: "_blank" },
+      { title: "Release History", link: release_history_url, target: "_blank" }
+    ]
+  end
+
   def manage_teams_menu_items
     current_user.administered_teams.map do |team|
       {
@@ -139,11 +147,7 @@ class ApplicationController < ApplicationBaseController
   end
 
   def dropdown_urls
-    urls = [
-      { title: "Help", link: help_url },
-      { title: "Send Feedback", link: feedback_url, target: "_blank" },
-      { title: "Release History", link: release_history_url, target: "_blank" }
-    ]
+    urls = defult_menu_items
 
     urls.concat(manage_teams_menu_items) if current_user&.administered_teams&.any?
     if current_user&.can_view_team_management? || current_user&.can_view_judge_team_management?
@@ -151,12 +155,11 @@ class ApplicationController < ApplicationBaseController
     end
     urls.push(manage_users_menu_item) if current_user&.can_view_user_management?
 
-    if ApplicationController.dependencies_faked? && current_user.present?
-      urls.append(title: "Switch User", link: url_for(controller: "/test/users", action: "index"))
-    end
-
     if current_user.present?
       urls.append(title: "Sign Out", link: url_for(controller: "/sessions", action: "destroy"), border: true)
+      if ApplicationController.dependencies_faked?
+        urls.append(title: "Switch User", link: url_for(controller: "/test/users", action: "index"))
+      end
     else
       urls.append(title: "Sign In", link: url_for("/search"), border: true)
     end
