@@ -90,38 +90,27 @@ module Seeds
     end
 
     def create_priority_distribution_this_month(judge)
-      distribution = FactoryBot.build(
-        :distribution,
-        :priority,
-        :this_month,
+      create_unvalidated_completed_distribution(
+        traits: [:priority, :this_month],
         judge: judge,
         statistics: { "batch_size" => rand(10) }
       )
-      distribution.save(validate: false)
-      distribution.completed!
     end
 
     def create_priority_distribution_last_month(judge)
-      distribution = FactoryBot.build(
-        :distribution,
-        :priority,
-        :last_month,
+      create_unvalidated_completed_distribution(
+        traits: [:priority, :last_month],
         judge: judge,
         statistics: { "batch_size" => rand(10) }
       )
-      distribution.save(validate: false)
-      distribution.completed!
     end
 
     def create_nonpriority_distribution_this_month(judge)
-      distribution = FactoryBot.build(
-        :distribution,
-        :this_month,
+      create_unvalidated_completed_distribution(
+        traits: [:this_month],
         judge: judge,
         statistics: { "batch_size" => rand(10) }
       )
-      distribution.save(validate: false)
-      distribution.completed!
     end
 
     def create_legacy_ready_priority_cases_tied_to_judge(judge)
@@ -354,13 +343,11 @@ module Seeds
     end
 
     def create_distribution_for_case_id(case_id)
-      distribution = build(
-        :distribution, :priority, :completed, :this_month, judge: User.third, statistics: { "batch_size" => rand(10) }
-      )
-      distribution.save!(validate: false)
-      distribution.completed!
-
-      distribution.distributed_cases.create(
+      create_unvalidated_completed_distribution(
+        traits: [:priority, :completed, :this_month],
+        judge: User.third,
+        statistics: { "batch_size" => rand(10) }
+      ).distributed_cases.create(
         case_id: case_id,
         priority: case_id,
         docket: "legacy",
@@ -369,6 +356,13 @@ module Seeds
         genpop: false,
         genpop_query: "any"
       )
+    end
+
+    def create_unvalidated_completed_distribution(attrs = {})
+      distribution = FactoryBot.build(:distribution, *attrs.delete(:traits), attrs)
+      distribution.save!(validate: false)
+      distribution.completed!
+      distribution
     end
 
     def judges_with_tied_cases
