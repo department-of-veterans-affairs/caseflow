@@ -160,8 +160,8 @@ class OrgList extends React.PureComponent {
     return <React.Fragment>
       <tr {...labelRowStyling}>
         <td>{COPY.TEAM_MANAGEMENT_NAME_COLUMN_HEADING}</td>
-        <td>{COPY.TEAM_MANAGEMENT_URL_COLUMN_HEADING}</td>
-        <td>{ this.props.isRepresentative && COPY.TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING}</td>
+        <td>{this.props.isRepresentative && COPY.TEAM_MANAGEMENT_URL_COLUMN_HEADING}</td>
+        <td>{this.props.isRepresentative && COPY.TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING}</td>
         <td></td>
         <td></td>
       </tr>
