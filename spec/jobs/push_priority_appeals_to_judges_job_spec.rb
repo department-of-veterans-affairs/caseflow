@@ -321,7 +321,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       hearing_days_waiting = (today - ready_priority_hearing_case.ready_for_distribution_at.to_date).to_i
       expect(subject[6]).to eq "*Age of oldest hearing case*: #{hearing_days_waiting} days"
 
-
       expect(subject[7]).to eq "*Number of appeals _not_ distributed*: 4"
 
       expect(subject[10]).to eq "Priority Target: 6"
