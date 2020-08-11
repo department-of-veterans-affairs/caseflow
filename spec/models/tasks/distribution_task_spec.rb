@@ -26,21 +26,12 @@ describe DistributionTask, :postgres do
       expect(distribution_task.available_actions(scm_user).count).to eq(1)
     end
 
-    it "with congressional interest mail task it has no actions" do
+    it "with a child task it has no actions" do
       CongressionalInterestMailTask.create_from_params({
                                                          appeal: distribution_task.appeal,
                                                          parent_id: distribution_task.appeal.root_task.id
                                                        }, user)
       expect(distribution_task.available_actions(scm_user).count).to eq(0)
-    end
-
-    it "with address change mail task it has actions" do
-      AodMotionMailTask.create!(
-        appeal: distribution_task.appeal,
-        parent_id: distribution_task.appeal.root_task.id,
-        assigned_to: MailTeam.singleton
-      )
-      expect(distribution_task.available_actions(scm_user).count).to eq(1)
     end
   end
 end
