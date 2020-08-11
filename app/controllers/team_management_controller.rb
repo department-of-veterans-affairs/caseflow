@@ -83,7 +83,7 @@ class TeamManagementController < ApplicationController
   end
 
   def serialize_org(org)
-    org.serializable_hash.merge(
+    org.serialize.merge(
       current_user_can_toggle_priority_pushed_cases: current_user.can_view_judge_team_management?,
       user_admin_path: current_user.can_view_team_management? ? org.user_admin_path : nil
     )
