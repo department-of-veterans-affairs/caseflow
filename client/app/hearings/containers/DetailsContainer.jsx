@@ -24,7 +24,7 @@ export const HearingDetailsContainer = ({ hearingId, history }) => {
 
   const saveHearing = (data) => {
     return ApiUtil.
-      patch(`/hearings/${hearing.externalId}`, { data: ApiUtil.convertToSnakeCase(data) })
+      patch(`/hearings/${hearing.externalId}`, { data: ApiUtil.convertToSnakeCase(data) });
   };
 
   return (
