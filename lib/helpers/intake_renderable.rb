@@ -3,7 +3,7 @@
 module IntakeRenderable
   extend ActiveSupport::Concern
 
-  def structure_render(*atts)
+  def render_intake(*atts)
     IntakeRenderer.render(self, *atts)
   end
 end

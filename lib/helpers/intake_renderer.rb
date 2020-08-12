@@ -81,11 +81,12 @@ class IntakeRenderer
   end
 
   def decision_review_details(dr)
-    ["received #{dr.receipt_date.to_s}", dr.uuid]
+    ["rcvd #{dr.receipt_date.to_s}", dr.uuid]
   end
 
   def decision_review_children(dr)
     children = []
+    children << "est. err: #{truncate(dr.establishment_error, 60)}" if dr.establishment_error.present?
     children << (structure(dr.claimant) || "no claimant")
     children << (structure(dr.intake) || "no intake")
 
@@ -109,8 +110,10 @@ class IntakeRenderer
 
   def claimant_details(claimant)
     details = []
-    if show_pii
-      details << (claimant.name.presence || "#{claimant.first_name} #{claimant.last_name}")
+    if claimant.name.blank?
+      details << "Name unknown"
+    elsif show_pii
+      details << claimant.name
     end
     details << "PID: #{claimant.participant_id}"
     details << "payee: #{claimant.payee_code}" if claimant.decision_review.processed_in_vbms?
@@ -157,7 +160,7 @@ class IntakeRenderer
 
   def request_issue_children(ri)
     children = []
-    children << "edited: #{truncate(ri.edited_description, 50)}" if ri.edited_description.present?
+    children << "descr: #{truncate(ri.description, 50)}"
     children << "#{ri.nonrating_issue_category} - #{ri.nonrating_issue_description}" if ri.nonrating?
     children << "Contention #{ri.contention_reference_id}" if ri.contention_reference_id
     children << "corrected by: #{label(ri.correction_request_issue)}" if ri.corrected?
@@ -196,6 +199,7 @@ class IntakeRenderer
         children << { "#{update_type}:": issues.map { |ri| label(ri) } }
       end
     end
+    children << "error: #{truncate(riu.error, 60)}" if riu.error.present?
     children
   end
 
