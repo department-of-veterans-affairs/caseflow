@@ -139,7 +139,7 @@ class Organization < CaseflowRecord
   def serialize
     {
       id: id,
-      name: is_a?(JudgeTeam) ? judge.full_name.titleize : name,
+      name: name,
       participant_id: participant_id,
       type: type,
       url: url
