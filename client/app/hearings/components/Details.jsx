@@ -1,12 +1,21 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
+import { isEmpty, isUndefined, get } from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import React, { useState, useContext, useEffect } from 'react';
-import { isEmpty, isUndefined, get } from 'lodash';
 
-import { HearingsFormContext, updateHearingDispatcher, RESET_HEARING } from '../contexts/HearingsFormContext';
+import { DetailsHeader } from './details/DetailsHeader';
+import { HearingConversion } from './HearingConversion';
+import {
+  HearingsFormContext,
+  updateHearingDispatcher,
+  RESET_HEARING,
+  RESET_VIRTUAL_HEARING
+} from '../contexts/HearingsFormContext';
+import { deepDiff, pollVirtualHearingData, getChanges, getAppellantTitleForHearing } from '../utils';
+import { inputFix } from './details/style';
 import {
   onReceiveAlerts,
   onReceiveTransitioningAlert,
@@ -14,15 +23,11 @@ import {
   clearAlerts
 } from '../../components/common/actions';
 import Alert from '../../components/Alert';
-import Button from '../../components/Button';
-import UserAlerts from '../../components/UserAlerts';
 import ApiUtil from '../../util/ApiUtil';
-import { deepDiff, pollVirtualHearingData, getChanges, getAppellantTitleForHearing } from '../utils';
+import Button from '../../components/Button';
 import DetailsForm from './details/DetailsForm';
-import { DetailsHeader } from './details/DetailsHeader';
+import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
-import { HearingConversion } from './HearingConversion';
-import { inputFix } from './details/style';
 
 /**
  * Hearing Details Component
@@ -52,13 +57,12 @@ const HearingDetails = (props) => {
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
 
   // Method to reset the state
-  const reset = (initialState) => {
+  const reset = () => {
     // Reset the state
     setVirtualHearingErrors({});
     convertHearing('');
     setLoading(false);
     setError(false);
-    dispatch({ type: RESET_HEARING, payload: initialState });
 
     // Focus the top of the page
     window.scrollTo(0, 0);
@@ -152,7 +156,8 @@ const HearingDetails = (props) => {
       }
 
       // Reset the state
-      reset(hearingResp);
+      reset();
+      dispatch({ type: RESET_HEARING, payload: hearingResp });
     } catch (respError) {
       const code = get(respError, 'response.body.errors[0].code') || '';
 
@@ -194,13 +199,7 @@ const HearingDetails = (props) => {
         setShouldStartPolling(false);
 
         // Reset the state with the new details
-        reset({
-          ...hearing,
-          virtualHearing: {
-            ...hearing.virtualHearing,
-            ...resp,
-          },
-        });
+        dispatch({ type: RESET_VIRTUAL_HEARING, payload: resp });
         props.transitionAlert('virtualHearing');
       }
 
