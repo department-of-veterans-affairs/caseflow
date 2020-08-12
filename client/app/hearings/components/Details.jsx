@@ -199,6 +199,7 @@ const HearingDetails = (props) => {
         setShouldStartPolling(false);
 
         // Reset the state with the new details
+        reset();
         dispatch({ type: RESET_VIRTUAL_HEARING, payload: resp });
         props.transitionAlert('virtualHearing');
       }
