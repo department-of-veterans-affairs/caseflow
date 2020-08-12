@@ -64,6 +64,10 @@ class JudgeTeam < Organization
     false
   end
 
+  def serialize
+    super.merge(name: judge.full_name.titleize)
+  end
+
   private
 
   def use_judge_team_roles?
