@@ -90,48 +90,4 @@ describe('HearingConversion', () => {
     expect(conversion).toMatchSnapshot();
   });
 
-  test('Shows Representative not present message when no representative', () => {
-    const conversion = mount(
-      <HearingConversion
-        scheduledFor={amaHearing.scheduledFor.toString()}
-        type={HEARING_CONVERSION_TYPES[1]}
-        title={defaultTitle}
-        update={updateSpy}
-        hearing={{
-          ...amaHearing,
-          representative: null
-        }}
-      />
-    );
-
-    // Assertions
-    expect(conversion.find(AddressLine)).toHaveLength(1);
-    expect(conversion.find(VirtualHearingSection).at(1).
-      find(ReadOnly).
-      prop('text')).toEqual(
-      `The ${getAppellantTitleForHearing(amaHearing)} does not have a representative recorded in VBMS`
-    );
-    expect(conversion).toMatchSnapshot();
-  });
-
-  test('Shows Representative name when representative address blank', () => {
-    const conversion = mount(
-      <HearingConversion
-        scheduledFor={amaHearing.scheduledFor.toString()}
-        type={HEARING_CONVERSION_TYPES[1]}
-        title={defaultTitle}
-        update={updateSpy}
-        hearing={{
-          ...amaHearing,
-          representativeAddress: null
-        }}
-      />
-    );
-
-    // Assertions
-    expect(conversion.find(AddressLine)).toHaveLength(2);
-    expect(conversion.find(AddressLine).at(1).
-      text()).toMatch(amaHearing.representativeName);
-    expect(conversion).toMatchSnapshot();
-  });
 });
