@@ -140,7 +140,7 @@ class AddedIssue extends React.PureComponent {
 AddedIssue.propTypes = {
   formType: PropTypes.string.isRequired,
   issue: PropTypes.shape({
-    beforeAma: PropTypes.string,
+    beforeAma: PropTypes.bool,
     correctionType: PropTypes.string,
     date: PropTypes.string,
     decisionReviewTitle: PropTypes.string,
