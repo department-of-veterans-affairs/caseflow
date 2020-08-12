@@ -155,7 +155,8 @@ exports[`TextareaField Displays character count when maxlength and value are pre
         5
          
         characters
-         left
+         
+        left
       </i>
     </p>
   </div>
@@ -372,7 +373,8 @@ exports[`TextareaField Emojis consume 2 characters 1`] = `
         0
          
         characters
-         left
+         
+        left
       </i>
     </p>
   </div>
