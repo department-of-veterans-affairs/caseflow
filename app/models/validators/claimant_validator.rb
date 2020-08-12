@@ -11,7 +11,7 @@ class ClaimantValidator
     invalid: "invalid"
   }.freeze
 
-  BENEFIT_TYPE_REQUIRES_PAYEE_CODE = %w[compensation pension].freeze
+  BENEFIT_TYPE_REQUIRES_PAYEE_CODE = %w[compensation pension fiduciary].freeze
 
   def initialize(claimant)
     @claimant = claimant
