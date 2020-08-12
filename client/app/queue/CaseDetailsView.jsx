@@ -140,6 +140,7 @@ export const CaseDetailsView = (props) => {
 CaseDetailsView.propTypes = {
   appeal: PropTypes.object,
   appealId: PropTypes.string.isRequired,
+  clearAlerts: PropTypes.func,
   tasks: PropTypes.array,
   error: PropTypes.object,
   resetErrorMessages: PropTypes.func,

@@ -9,7 +9,7 @@ import Alert from './Alert';
 
 const ALERT_EXPIRATION = 30000;
 
-const UserAlerts = ({ alerts, removeAlertsWithTimestamps }) => {
+const UserAlerts = ({ alerts, ...props }) => {
   const removeExpiredAlerts = () => {
     const currentTime = Date.now();
 
@@ -20,7 +20,7 @@ const UserAlerts = ({ alerts, removeAlertsWithTimestamps }) => {
       map((alert) => alert.timestamp);
 
     if (expiredAlertTimestamps.length > 0) {
-      removeAlertsWithTimestamps(uniq(expiredAlertTimestamps));
+      props.removeAlertsWithTimestamps(uniq(expiredAlertTimestamps));
     }
   };
 
