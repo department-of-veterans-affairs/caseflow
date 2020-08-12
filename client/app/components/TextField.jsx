@@ -36,6 +36,7 @@ export const TextField = (props) => {
     labelText,
     inputStyling,
     inputProps,
+    inputRef
   } = props;
 
   const textInputClass = className.
@@ -81,6 +82,7 @@ export const TextField = (props) => {
         <p>{value}</p>
       ) : (
         <input
+          ref={inputRef}
           className={className}
           name={name}
           id={name}
@@ -121,11 +123,45 @@ TextField.propTypes = {
   dateErrorMessage: PropTypes.string,
   errorMessage: PropTypes.string,
   className: PropTypes.arrayOf(PropTypes.string),
+  inputStyling: PropTypes.object,
+
+  /**
+   * Props to be applied to the `input` element
+   */
+  inputProps: PropTypes.object,
+
+  /**
+   * Pass a ref to the `input` element
+   */
+  inputRef: PropTypes.oneOfType([
+    // Either a function
+    PropTypes.func,
+    // Or the instance of a DOM native element (see the note about SSR)
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+  ]),
   invisible: PropTypes.bool,
+
+  /**
+   * Text to display in a `label` element
+   */
   label: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
-  labelText: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+
+  /**
+   * Plain text to display in lieu of a `label`
+   */
+  labelText: PropTypes.string,
   useAriaLabel: PropTypes.bool,
+
+  /**
+   * String to be applied to the `name` attribute of the `input` element
+   */
   name: PropTypes.string.isRequired,
+
+  /**
+   * Callback fired when value is changed
+   *
+   * @param {string | number} value The current value of the component
+   */
   onChange: PropTypes.func,
   title: PropTypes.string,
   onKeyPress: PropTypes.func,
@@ -140,13 +176,11 @@ TextField.propTypes = {
   optional: PropTypes.bool.isRequired,
   type: PropTypes.string,
   validationError: PropTypes.string,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  inputStyling: PropTypes.object,
 
   /**
-   * Props to be applied to the `input` element
+   * The value of the `input` element; required for a controlled component
    */
-  inputProps: PropTypes.object,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 export default TextField;
