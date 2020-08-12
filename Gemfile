@@ -8,7 +8,8 @@ gem "aasm", "4.11.0"
 gem "activerecord-import"
 gem "acts_as_tree"
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "21e2c4ac87be8a340073ceea403a685154df2f8f"
+
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "5b7bedc99caaca3a79cff8b159eb48db0b2ec669"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
