@@ -6,9 +6,6 @@ import { deepDiff } from '../utils';
 
 const HearingsFormContext = React.createContext();
 
-export const RESET_HEARING = 'reset';
-export const SET_UPDATED = 'setUpdated';
-
 const formatHearing = (hearing) => ({
   ...hearing,
   judgeId: hearing.judgeId?.toString(),
@@ -46,12 +43,15 @@ const formatHearing = (hearing) => ({
   }
 });
 
+export const SET_UPDATED = 'setUpdated';
 const setUpdated = (state, value) => ({
   ...state,
   hearing: { ...state.hearing, ...value },
   formsUpdated: !isEmpty(deepDiff(state.initialHearing, { ...state.hearing, ...value }))
 });
 
+// Full reset of everything.
+export const RESET_HEARING = 'reset';
 const reset = (state, hearing) => ({
   ...state,
   initialHearing: formatHearing(hearing),
@@ -59,12 +59,36 @@ const reset = (state, hearing) => ({
   formsUpdated: false
 });
 
+// Resets only the `virtualHearing` field, and should preserve all other fields.
+export const RESET_VIRTUAL_HEARING = 'resetVirtualHearing';
+const resetVirtualHearing = (state, virtualHearing) => {
+  return {
+    ...state,
+    initialHearing: {
+      ...state.initialHearing,
+      virtualHearing: {
+        ...(state.initialHearing?.virtualHearing || {}),
+        ...virtualHearing
+      }
+    },
+    hearing: {
+      ...state.hearing,
+      virtualHearing: {
+        ...(state.hearing?.virtualHearing || {}),
+        ...virtualHearing
+      }
+    }
+  };
+};
+
 const reducer = (state, action) => {
   switch (action.type) {
   case SET_UPDATED:
     return setUpdated(state, action.payload);
   case RESET_HEARING:
     return reset(state, action.payload);
+  case RESET_VIRTUAL_HEARING:
+    return resetVirtualHearing(state, action.payload);
   default:
     return state;
   }
