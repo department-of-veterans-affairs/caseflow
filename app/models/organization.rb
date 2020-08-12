@@ -140,7 +140,7 @@ class Organization < CaseflowRecord
     {
       accepts_priority_pushed_cases: accepts_priority_pushed_cases,
       id: id,
-      name: is_a?(JudgeTeam) ? judge.full_name.titleize : name,
+      name: name,
       participant_id: participant_id,
       type: type,
       url: url
