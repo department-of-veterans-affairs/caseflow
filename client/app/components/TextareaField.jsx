@@ -19,6 +19,8 @@ export const TextareaField = (props) => {
     errorMessage,
     hideLabel,
     id,
+    inputProps,
+    inputRef,
     maxlength,
     label,
     strongLabel,
@@ -77,6 +79,8 @@ export const TextareaField = (props) => {
         maxLength={maxlength}
         disabled={disabled}
         placeholder={placeholder}
+        ref={inputRef}
+        {...inputProps}
       />
       {characterLimitCount !== null && (
         <p>
@@ -99,15 +103,41 @@ TextareaField.defaultProps = {
 TextareaField.propTypes = {
   hideLabel: PropTypes.bool,
   id: PropTypes.string,
+
+  /**
+   * Props to be applied to the `input` element
+   */
+  inputProps: PropTypes.object,
+
+  /**
+   * Pass a ref to the `input` element
+   */
+  inputRef: PropTypes.oneOfType([
+    // Either a function
+    PropTypes.func,
+    // Or the instance of a DOM native element (see the note about SSR)
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+  ]),
+
   label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   strongLabel: PropTypes.bool,
   maxlength: PropTypes.number,
+
+  /**
+   * String to be applied to the `name` attribute of the `input` element
+   */
   name: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
+
+  /**
+   * Callback fired when value is changed
+   *
+   * @param {string} value The current value of the component
+   */
+  onChange: PropTypes.func,
+
   onKeyDown: PropTypes.func,
   type: PropTypes.string,
   errorMessage: PropTypes.string,
-  value: PropTypes.string,
   styling: PropTypes.object,
   disabled: PropTypes.bool,
   placeholder: PropTypes.string,
@@ -115,6 +145,11 @@ TextareaField.propTypes = {
   required: PropTypes.bool,
   labelStyling: PropTypes.object,
   textAreaStyling: PropTypes.object,
+
+  /**
+   * The value of the `input` element; required for a controlled component
+   */
+  value: PropTypes.string,
 };
 
 export default TextareaField;
