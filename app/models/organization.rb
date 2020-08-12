@@ -136,6 +136,16 @@ class Organization < CaseflowRecord
     ::OrganizationCompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
+  def serialize
+    {
+      id: id,
+      name: is_a?(JudgeTeam) ? judge.full_name.titleize : name,
+      participant_id: participant_id,
+      type: type,
+      url: url
+    }
+  end
+
   private
 
   def clean_url
