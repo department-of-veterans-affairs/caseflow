@@ -6,82 +6,85 @@ import { FormLabel } from './FormLabel';
 
 const labelTextStyling = css({
   marginTop: '0.65em',
-  marginBottom: '0.65em'
+  marginBottom: '0.65em',
 });
 
-export class TextField extends React.Component {
+export const TextField = (props) => {
+  const handleChange = (event) => props.onChange?.(event.target.value);
 
-  onChange = (event) => this.props.onChange(event.target.value);
+  const {
+    errorMessage,
+    className,
+    label,
+    name,
+    readOnly,
+    required,
+    optional,
+    type,
+    value,
+    validationError,
+    invisible,
+    placeholder,
+    title,
+    onKeyPress,
+    strongLabel,
+    maxLength,
+    max,
+    autoComplete,
+    useAriaLabel,
+    dateErrorMessage,
+    labelText,
+    inputStyling,
+    inputProps,
+  } = props;
 
-  render() {
+  const textInputClass = className.
+    concat(invisible ? ' cf-invisible' : '').
+    concat(errorMessage ? 'usa-input-error' : '').
+    concat(dateErrorMessage ? 'cf-date-error' : '');
 
-    let {
-      errorMessage,
-      className,
-      label,
-      name,
-      readOnly,
-      required,
-      optional,
-      type,
-      value,
-      validationError,
-      invisible,
-      placeholder,
-      title,
-      onKeyPress,
-      strongLabel,
-      maxLength,
-      max,
-      autoComplete,
-      useAriaLabel,
-      dateErrorMessage,
-      labelText,
-      inputStyling
-    } = this.props;
+  // Use empty string instead of null or undefined,
+  // otherwise React displays the following error:
+  //
+  // "`value` prop on `input` should not be null.
+  // Consider using the empty string to clear the component
+  // or `undefined` for uncontrolled components."
+  //
+  // value = value === null || typeof value === 'undefined' ? '' : value;
 
-    let textInputClass = className.concat(
-      invisible ? ' cf-invisible' : ''
-    ).concat(
-      errorMessage ? 'usa-input-error' : ''
-    ).
-      concat(
-        dateErrorMessage ? 'cf-date-error' : ''
-      );
+  const labelContents = (
+    <FormLabel
+      label={label}
+      name={name}
+      required={required}
+      optional={optional}
+    />
+  );
 
-    // Use empty string instead of null or undefined,
-    // otherwise React displays the following error:
-    //
-    // "`value` prop on `input` should not be null.
-    // Consider using the empty string to clear the component
-    // or `undefined` for uncontrolled components."
-    //
-    value = (value === null || typeof value === 'undefined') ? '' : value;
+  const ariaLabelObj = useAriaLabel ? { 'aria-label': name } : {};
 
-    const labelContents = <FormLabel label={label} name={name} required={required} optional={optional} />;
-
-    const ariaLabelObj = useAriaLabel ? { 'aria-label': name } : {};
-
-    return <div className={textInputClass.join(' ')}>
-      {dateErrorMessage && <span className="usa-input-error-message">{dateErrorMessage}</span>}
-      {label !== false &&
+  return (
+    <div className={textInputClass.join(' ')}>
+      {dateErrorMessage && (
+        <span className="usa-input-error-message">{dateErrorMessage}</span>
+      )}
+      {label !== false && (
         <label htmlFor={name}>
-          {
-            strongLabel ?
-              <strong>{labelContents}</strong> :
-              labelContents
-          }
+          {strongLabel ? <strong>{labelContents}</strong> : labelContents}
         </label>
-      }
-      {labelText && <p{...labelTextStyling}>{labelText}</p>}
-      {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
-      {this.props.fixedInput ?
-        <p>{value}</p> :
+      )}
+      {labelText && <p {...labelTextStyling}>{labelText}</p>}
+      {errorMessage && (
+        <span className="usa-input-error-message">{errorMessage}</span>
+      )}
+      {props.fixedInput ? (
+        <p>{value}</p>
+      ) : (
         <input
           className={className}
           name={name}
           id={name}
-          onChange={this.onChange}
+          onChange={handleChange}
           onKeyPress={onKeyPress}
           type={type}
           value={value}
@@ -91,26 +94,27 @@ export class TextField extends React.Component {
           maxLength={maxLength}
           max={max}
           autoComplete={autoComplete}
+          {...inputProps}
           {...ariaLabelObj}
           {...inputStyling}
         />
-      }
+      )}
 
-      {(validationError) &&
+      {validationError && (
         <div className="cf-validation">
           <span>{validationError}</span>
         </div>
-      }
-    </div>;
-  }
-}
+      )}
+    </div>
+  );
+};
 
 TextField.defaultProps = {
   required: false,
   optional: false,
   useAriaLabel: false,
   type: 'text',
-  className: ['cf-form-textinput']
+  className: ['cf-form-textinput'],
 };
 
 TextField.propTypes = {
@@ -118,23 +122,11 @@ TextField.propTypes = {
   errorMessage: PropTypes.string,
   className: PropTypes.arrayOf(PropTypes.string),
   invisible: PropTypes.bool,
-  label: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.bool
-  ]),
-  labelText: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.bool
-  ]),
+  label: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  labelText: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   useAriaLabel: PropTypes.bool,
   name: PropTypes.string.isRequired,
-  onChange(props) {
-    if (!props.readOnly) {
-      if (typeof props.onChange !== 'function') {
-        return new Error('If TextField is not ReadOnly, then onChange must be defined');
-      }
-    }
-  },
+  onChange: PropTypes.func,
   title: PropTypes.string,
   onKeyPress: PropTypes.func,
   strongLabel: PropTypes.bool,
@@ -148,11 +140,13 @@ TextField.propTypes = {
   optional: PropTypes.bool.isRequired,
   type: PropTypes.string,
   validationError: PropTypes.string,
-  value: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number
-  ]),
-  inputStyling: PropTypes.object
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  inputStyling: PropTypes.object,
+
+  /**
+   * Props to be applied to the `input` element
+   */
+  inputProps: PropTypes.object,
 };
 
 export default TextField;
