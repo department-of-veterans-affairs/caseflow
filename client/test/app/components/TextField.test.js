@@ -96,27 +96,27 @@ describe('TextField', () => {
     };
     const { input } = setup(props);
 
-    expect(input.name).toBe(props.name);
-    expect(input.readOnly).toBe(true);
-    expect(input.autocomplete).toBe(props.autoComplete);
-    expect(input.placeholder).toBe(props.placeholder);
-    expect(input.title).toBe(props.title);
+    expect(input).toHaveAttribute('name', props.name);
+    expect(input.readOnly).toBe(props.readOnly);
+    expect(input).toHaveAttribute('autocomplete', props.autoComplete);
+    expect(input).toHaveAttribute('placeholder', props.placeholder);
+    expect(input).toHaveAttribute('title', props.title);
 
     // Verify inputProps
-    expect(input.type).toBe('search');
+    expect(input).toHaveAttribute('type', 'search');
   });
 
   describe('controlled', () => {
     it('sets input value from props', async () => {
       const { input } = setup({ value: defaults.value });
 
-      expect(input.value).toBe(defaults.value);
+      expect(input).toHaveValue(defaults.value);
     });
 
     it('correctly calls onChange', async () => {
       const { input } = setup({ value: '' });
 
-      expect(input.value).toBe('');
+      expect(input).toHaveValue('');
 
       await userEvent.type(input, defaults.value);
 
@@ -127,7 +127,7 @@ describe('TextField', () => {
       expect(handleChange).toHaveBeenLastCalledWith(defaults.value);
 
       // Value should not have been updated yet
-      expect(input.value).toBe('');
+      expect(input).toHaveValue('');
     });
   });
 
@@ -135,10 +135,10 @@ describe('TextField', () => {
     it('natively updates input value if `value` prop not set', async () => {
       const { input } = setup();
 
-      expect(input.value).toBe('');
+      expect(input).toHaveValue('');
       await userEvent.type(input, defaults.value);
 
-      expect(input.value).toBe(defaults.value);
+      expect(input).toHaveValue(defaults.value);
     });
   });
 });
