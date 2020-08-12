@@ -9,6 +9,7 @@ class IntakeRenderer
     EndProductEstablishment
     RequestIssue
     RequestIssuesUpdate
+    DecisionIssue
     User
   ].freeze
 
@@ -93,15 +94,16 @@ class IntakeRenderer
     epes = dr.try(:end_product_establishments)&.to_a
     other_ris = dr.request_issues.where(end_product_establishment: nil).map { |ri| structure(ri) }
     if epes.present?
-      children << epes.map { |epe| structure(epe) }
+      children += epes.map { |epe| structure(epe) }
       children << { "other issues:": other_ris } if other_ris.present?
     else
-      children << other_ris
+      children += other_ris
     end
 
-    children << dr.request_issues_updates.map { |riu| structure(riu) }
+    children += dr.request_issues_updates.map { |riu| structure(riu) }
+    children += dr.decision_issues.map { |di| structure(di) }
 
-    children.flatten
+    children
   end
 
   def decision_review_context(dr)
@@ -116,7 +118,7 @@ class IntakeRenderer
       details << claimant.name
     end
     details << "PID: #{claimant.participant_id}"
-    details << "payee: #{claimant.payee_code}" if claimant.decision_review.processed_in_vbms?
+    details << "payee: #{claimant.payee_code || 'nil'}" if claimant.decision_review.processed_in_vbms?
     details
   end
 
@@ -137,7 +139,21 @@ class IntakeRenderer
   end
 
   def end_product_establishment_children(epe)
-    epe.request_issues.map { |ri| structure(ri) }
+    children = []
+    children << "Claim #{epe.reference_id}" if epe.reference_id.present?
+    children += epe.request_issues.map { |ri| structure(ri) }
+    history = end_product_establishment_history(epe)
+    children << { "history:": history } if history.present?
+    children
+  end
+
+  def end_product_establishment_history(epe)
+    history = [
+      [epe.created_at, "created"],
+      [epe.established_at, "established"],
+      [epe.last_synced_at, "last synced: #{epe.synced_status || 'nil'}"]
+    ]
+    history.select { |hi| hi[0].present? }.map { |hi| "#{hi[0].to_s}: #{hi[1]}" }.sort
   end
 
   def end_product_establishment_context(epe)
@@ -160,17 +176,24 @@ class IntakeRenderer
 
   def request_issue_children(ri)
     children = []
-    children << "descr: #{truncate(ri.description, 50)}"
+    children << "descr: #{truncate(ri.description, 55)}"
     children << "#{ri.nonrating_issue_category} - #{ri.nonrating_issue_description}" if ri.nonrating?
-    children << "Contention #{ri.contention_reference_id}" if ri.contention_reference_id
+    if ri.contention_reference_id
+      contention = "Contention #{ri.contention_reference_id}"
+      contention += " (disp: #{ri.contention_disposition.disposition})" if ri.contention_disposition
+      children << contention
+    end
     children << "corrected by: #{label(ri.correction_request_issue)}" if ri.corrected?
     if ri.ineligible_reason.present?
-      label = "ineligible (#{ri.ineligible_reason})"
+      child = "ineligible (#{ri.ineligible_reason})"
       if ri.ineligible_due_to_id.present?
-        label += " due to #{label(ri.ineligible_due_to)}"
+        child = {
+          "#{child}" => ["due to #{label(ri.ineligible_due_to)}"]
+        }
       end
-      children << label
+      children << child
     end
+    children += ri.decision_issues.map { |di| label(di) }
     history = request_issue_history(ri)
     children << { "history:": history } if history.present?
     children
@@ -178,13 +201,15 @@ class IntakeRenderer
 
   def request_issue_history(ri)
     history = [
+      [ri.created_at, "created"],
       [ri.closed_at, "closed: #{ri.closed_status}"],
+      [ri.rating_issue_associated_at, "rating issue associated"],
       [ri.contention_removed_at, "contention removed"],
       [ri.contention_updated_at, "contention updated"],
       [ri.decision_sync_attempted_at, "decision sync attempted"],
       [ri.decision_sync_canceled_at, "decision sync canceled"]
     ]
-    history.select! { |hi| hi[0].present? }.map { |hi| "#{hi[0].to_s}: #{hi[1]}" }.sort
+    history.select { |hi| hi[0].present? }.map { |hi| "#{hi[0].to_s}: #{hi[1]}" }.sort
   end
 
   def request_issue_context(ri)
@@ -205,6 +230,18 @@ class IntakeRenderer
 
   def request_issues_update_context(riu)
     riu.review
+  end
+
+  def decision_issue_details(di)
+    [di.disposition]
+  end
+
+  def decision_issue_children(di)
+    ["descr: #{truncate(di.description, 60)}"] + di.request_issues.map { |ri| label(ri) }
+  end
+
+  def decision_issue_context(di)
+    di.decision_review
   end
 
   def user_details(user)
