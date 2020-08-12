@@ -69,3 +69,16 @@ RegionalOfficeSelected.args = {
     regionalOffice: defaultHearing.regionalOfficeKey
   }
 };
+
+export const WithErrors = Template.bind({});
+WithErrors.args = {
+  appeal: {
+    ...amaAppeal,
+    regionalOffice: defaultHearing.regionalOfficeKey
+  },
+  errors: {
+    hearingLocation: 'Unknown Hearing Location',
+    hearingDay: 'Cannot find hearing day',
+    scheduledTimeString: 'Invalid time selected',
+  }
+};
