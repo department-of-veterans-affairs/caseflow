@@ -39,7 +39,8 @@ describe HearingDayRoomAssignment do
     end
 
     context "for a video docket" do
-      let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
+      let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
+      let(:regional_office) { "RO01" }
 
       context "no rooms are assigned" do
         it "returns non-nil room" do
@@ -53,7 +54,8 @@ describe HearingDayRoomAssignment do
             :hearing_day,
             request_type: request_type,
             room: first_pass,
-            scheduled_for: scheduled_for
+            scheduled_for: scheduled_for,
+            regional_office: regional_office
           )
 
           second_pass = described_class
