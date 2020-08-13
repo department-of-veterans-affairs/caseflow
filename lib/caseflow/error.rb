@@ -124,6 +124,17 @@ module Caseflow::Error
     end
   end
 
+  class IneligibleForBlockedSpecialCaseMovement < SerializableError
+    attr_accessor :appeal_id
+
+    def initialize(args)
+      @code = args[:code] || 500
+      @appeal_id = args[:appeal_id] || nil
+      @title = "This appeal cannot be advanced to a judge"
+      @message = args[:message] || "Appeal #{@appeal_id} must be in Case Storage to be eligible for Case Movement"
+    end
+  end
+
   class IneligibleForSpecialCaseMovement < SerializableError
     attr_accessor :appeal_id
 
