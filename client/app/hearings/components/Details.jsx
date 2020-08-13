@@ -211,7 +211,7 @@ const HearingDetails = (props) => {
 
   const editedEmails = getEditedEmails();
   const convertLabel = converting === 'change_to_virtual' ?
-    'Convert to Virtual Hearing' : 'Convert to Central Office Hearing';
+    'Convert to Virtual Hearing' : `Convert to ${hearing.readableRequestType} Hearing`;
 
   return (
     <React.Fragment>
