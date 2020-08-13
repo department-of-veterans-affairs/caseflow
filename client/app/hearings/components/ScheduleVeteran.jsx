@@ -21,6 +21,15 @@ export const ScheduleVeteran = ({ appeal, hearing, ...props }) => {
   const ro = appeal.regionalOffice || hearing.regionalOffice;
   const location = appeal.hearingLocation || hearing.location;
   const header = `Schedule ${appellantTitle} for a Hearing`;
+  const virtual = hearing?.virtualHearing;
+
+  const handleChange = () => {
+    if (virtual) {
+      return props.onChange('hearing', { virtualHearing: null });
+    }
+
+    return props.onChange('hearing', { virtualHearing: { status: 'pending' } });
+  };
 
   return (
     <React.Fragment>
@@ -28,36 +37,23 @@ export const ScheduleVeteran = ({ appeal, hearing, ...props }) => {
         <h1>{header}</h1>
         <div {...marginTop(45)} />
         <div className="usa-width-one-half">
-          <HearingTypeDropdown requestType={hearing.readableRequestType} />
+          <HearingTypeDropdown
+            scheduling
+            update={handleChange}
+            requestType={hearing.readableRequestType}
+            virtualHearing={hearing?.virtualHearing}
+          />
         </div>
         <div className="cf-help-divider usa-width-one-whole" />
-        <div className="usa-width-one-half">
-          <div {...virtualHearingModalStyles}>
-            <ReadOnly spacing={0} label={`${appellantTitle} Address`} text={
-              <AddressLine
-                spacing={5}
-                name={appeal?.veteranInfo?.veteran?.full_name}
-                addressLine1={appeal?.veteranInfo?.veteran?.address?.address_line_1}
-                addressState={appeal?.veteranInfo?.veteran?.address?.state}
-                addressCity={appeal?.veteranInfo?.veteran?.address?.city}
-                addressZip={appeal?.veteranInfo?.veteran?.address?.zip}
-              />}
-            />
-          </div>
-          <RegionalOfficeDropdown
-            onChange={(regionalOffice) => props.onChange('appeal', { regionalOffice })}
-            value={ro}
-            validateValueOnMount
-          />
-          {ro && (
-            <React.Fragment>
-              <AppealHearingLocationsDropdown
-                key={`hearingLocation__${ro}`}
-                regionalOffice={ro}
-                appealId={appeal.externalId}
-                value={location}
-                onChange={(hearingLocation) => props.onChange('appeal', { hearingLocation })}
-              />
+        {virtual ? (
+          <React.Fragment>
+
+            <div className="usa-width-one-half" {...virtualHearingModalStyles}>
+              <ReadOnly spacing={0} label="Regional Office" text={appeal.regionalOffice} />
+              <ReadOnly spacing={25} label="Hearing Location" text={appeal.hearingLocation?.name} />
+
+            </div>
+            <div className="usa-width-one-half">
               <HearingDateDropdown
                 key={`hearingDate__${ro}`}
                 regionalOffice={ro}
@@ -71,9 +67,54 @@ export const ScheduleVeteran = ({ appeal, hearing, ...props }) => {
                 onChange={(scheduledTimeString) => props.onChange('hearing', { scheduledTimeString })}
                 value={hearing.scheduledTimeString}
               />
-            </React.Fragment>
-          )}
-        </div>
+            </div>
+            <div className="cf-help-divider usa-width-one-whole" />
+          </React.Fragment>
+        ) : (
+          <div className="usa-width-one-half">
+            <div {...virtualHearingModalStyles}>
+              <ReadOnly spacing={0} label={`${appellantTitle} Address`} text={
+                <AddressLine
+                  spacing={5}
+                  name={appeal?.veteranInfo?.veteran?.full_name}
+                  addressLine1={appeal?.veteranInfo?.veteran?.address?.address_line_1}
+                  addressState={appeal?.veteranInfo?.veteran?.address?.state}
+                  addressCity={appeal?.veteranInfo?.veteran?.address?.city}
+                  addressZip={appeal?.veteranInfo?.veteran?.address?.zip}
+                />}
+              />
+            </div>
+            <RegionalOfficeDropdown
+              onChange={(regionalOffice) => props.onChange('appeal', { regionalOffice })}
+              value={ro}
+              validateValueOnMount
+            />
+            {ro && (
+              <React.Fragment>
+                <AppealHearingLocationsDropdown
+                  key={`hearingLocation__${ro}`}
+                  regionalOffice={ro}
+                  appealId={appeal.externalId}
+                  value={location}
+                  onChange={(hearingLocation) => props.onChange('appeal', { hearingLocation })}
+                />
+                <HearingDateDropdown
+                  key={`hearingDate__${ro}`}
+                  regionalOffice={ro}
+                  value={appeal.hearingDay}
+                  onChange={(hearingDay) => props.onChange('appeal', { hearingDay })}
+                />
+                <HearingTime
+                  vertical
+                  label="Hearing Time"
+                  enableZone
+                  onChange={(scheduledTimeString) => props.onChange('hearing', { scheduledTimeString })}
+                  value={hearing.scheduledTimeString}
+                />
+
+              </React.Fragment>
+            )}
+          </div>)}
       </AppSegment>
       <Button
         name="Cancel"

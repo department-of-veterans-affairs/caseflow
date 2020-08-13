@@ -2,7 +2,7 @@ import React from 'react';
 import { useArgs } from '@storybook/client-api';
 
 import { defaultHearing } from '../../../test/data/hearings';
-import { amaAppeal } from '../../../test/data/appeals';
+import { amaAppeal, scheduleHearingDetails } from '../../../test/data/appeals';
 import { ScheduleVeteran } from './ScheduleVeteran';
 import { queueWrapper as Wrapper } from '../../../test/data/stores/queueStore';
 
@@ -67,5 +67,14 @@ RegionalOfficeSelected.args = {
   appeal: {
     ...amaAppeal,
     regionalOffice: defaultHearing.regionalOfficeKey
+  }
+};
+
+export const VirtualConversion = Template.bind({});
+VirtualConversion.args = {
+  appeal: {
+    ...amaAppeal,
+    regionalOffice: defaultHearing.regionalOfficeKey,
+    hearingLocation: scheduleHearingDetails.hearingLocation
   }
 };
