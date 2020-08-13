@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-export default class Checkbox extends React.Component {
+export class Checkbox extends React.Component {
   onChange = (event) => {
     this.props.onChange(event.target.checked, event);
   }
@@ -65,9 +65,11 @@ Checkbox.propTypes = {
   required: PropTypes.bool.isRequired,
   disabled: PropTypes.bool,
   id: PropTypes.string,
-  errorMessage: PropTypes.object,
+  errorMessage: PropTypes.node,
   unpadded: PropTypes.bool,
   hideLabel: PropTypes.bool,
   value: PropTypes.bool,
   styling: PropTypes.object
 };
+
+export default Checkbox;
