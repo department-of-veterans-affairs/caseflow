@@ -26,7 +26,7 @@ RadioFieldHelpText.propTypes = {
  *
  */
 
-export default class RadioField extends React.Component {
+export class RadioField extends React.Component {
   isVertical() {
     return this.props.vertical || this.props.options.length > 2;
   }
@@ -120,3 +120,5 @@ RadioField.propTypes = {
   hideLabel: PropTypes.bool,
   styling: PropTypes.object
 };
+
+export default RadioField;
