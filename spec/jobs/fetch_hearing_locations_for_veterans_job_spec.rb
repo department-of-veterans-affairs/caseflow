@@ -231,7 +231,7 @@ describe FetchHearingLocationsForVeteransJob do
               end
             end)
           end
-          
+
           context "retries to geomatch" do
             it "retries geomatching hearing locations for appeal" do
               expect(subject).to(receive(:record_geomatched_appeal).once.with(legacy_appeal.external_id, "limit_error"))
