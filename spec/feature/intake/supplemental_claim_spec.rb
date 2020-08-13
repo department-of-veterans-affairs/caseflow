@@ -467,6 +467,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Ed Merica")
+      check_row("SOC/SSOC Opt-in", "No")
 
       # clicking the add issues button should bring up the modal
       click_intake_add_issue
@@ -818,6 +819,8 @@ feature "Supplemental Claim Intake", :all_dbs do
         scenario "adding issues" do
           start_supplemental_claim(veteran, legacy_opt_in_approved: true)
           visit "/intake/add_issues"
+
+          check_row("SOC/SSOC Opt-in", "Yes")
 
           click_intake_add_issue
           expect(page).to have_content("Next")
