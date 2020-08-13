@@ -47,7 +47,8 @@ describe BlockedSpecialCaseMovementTask do
           before do
             # TODO: this _should_ not cancel after we finish
             # https://github.com/department-of-veterans-affairs/caseflow/issues/14057
-            # Distribution Blocking. Update this test to properly pass then!
+            # Distribution Blocking. Update this test then, either to properly pass, or remove
+            # completely if no longer distinguishing
             create(:congressional_interest_mail_task,
                    appeal: appeal,
                    parent: dist_task)
