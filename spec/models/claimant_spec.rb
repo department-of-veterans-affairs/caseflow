@@ -232,8 +232,10 @@ describe Claimant, :postgres do
               veteran_file_number: create(:veteran).file_number)
       end
 
+      let(:payee_code) { "10" }
+
       let!(:claimant) do
-        create(:claimant, decision_review: decision_review, participant_id: participant_id)
+        create(:claimant, decision_review: decision_review, participant_id: participant_id, payee_code: payee_code)
       end
 
       context "when created with the same participant_id and the same decision_review" do
@@ -288,9 +290,9 @@ describe Claimant, :postgres do
       context "when decision_review.benefit_type is fiduciary" do
         let(:benefit_type) { "fiduciary" }
 
-        it "allows blank value" do
-          expect(subject).to be_valid
-          expect(subject.errors.messages[:payee_code]).to eq []
+        it "requires non-blank value" do
+          expect(subject).to_not be_valid
+          expect(subject.errors.messages[:payee_code]).to eq ["blank"]
         end
       end
     end

@@ -13,7 +13,6 @@
 # 7. decision review type
 
 EP_CODES = [
-  %w[030HLRFID fiduciary na higher_level_review],
   %w[030HLRNR primary na original na compensation nonrating higher_level_review],
   %w[030HLRNRPMC primary na original na pension nonrating higher_level_review],
   %w[030HLRR primary na original na compensation rating higher_level_review],
@@ -93,7 +92,9 @@ EP_CODES = [
   %w[930DONRPMC 930 control remand difference_of_opinion pension nonrating higher_level_review],
   %w[930DORPMC 930 control remand difference_of_opinion pension rating higher_level_review],
   %w[930DORPMC 930 local_quality_error remand difference_of_opinion pension rating higher_level_review],
-  %w[930DORPMC 930 national_quality_error remand difference_of_opinion pension rating higher_level_review]
+  %w[930DORPMC 930 national_quality_error remand difference_of_opinion pension rating higher_level_review],
+  %w[030HLRFID na fiduciary higher_level_review]
+
 ].freeze
 
 describe "Request Issue Correction Cleaner", :postgres do
