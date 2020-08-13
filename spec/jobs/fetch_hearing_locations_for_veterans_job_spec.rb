@@ -2,7 +2,6 @@
 
 describe FetchHearingLocationsForVeteransJob do
   let!(:job) { FetchHearingLocationsForVeteransJob.new }
-  include ActiveJob::TestHelper
 
   before do
     # Force the job to only run for 5 seconds. This overrides the default job
