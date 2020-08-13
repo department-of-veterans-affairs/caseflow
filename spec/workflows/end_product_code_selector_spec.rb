@@ -13,6 +13,7 @@
 # 7. decision review type
 
 EP_CODES = [
+  %w[030HLRFID fiduciary na higher_level_review],
   %w[030HLRNR primary na original na compensation nonrating higher_level_review],
   %w[030HLRNRPMC primary na original na pension nonrating higher_level_review],
   %w[030HLRR primary na original na compensation rating higher_level_review],
@@ -128,6 +129,15 @@ describe "Request Issue Correction Cleaner", :postgres do
 
       it "returns a rating EP code" do
         expect(subject).to eq("030HLRR")
+      end
+    end
+
+    context "for fiduciary benefit_type" do
+      let(:decision_review) { higher_level_review }
+      let(:benefit_type) { "fiduciary" }
+
+      it "returns a fiduciary EP code" do
+        expect(subject).to eq("030HLRFID")
       end
     end
 
