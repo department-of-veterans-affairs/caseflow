@@ -40,7 +40,7 @@ export const RadioField = (props) => {
     strongLabel,
     hideLabel,
     styling,
-    vertical
+    vertical,
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -63,6 +63,9 @@ export const RadioField = (props) => {
     </span>
   );
 
+  const handleChange = (event) => onChange?.(event.target.value);
+  const controlled = useMemo(() => typeof value !== 'undefined', [value]);
+
   return (
     <fieldset className={radioClass.join(' ')} {...styling}>
       <legend className={labelClass}>
@@ -81,13 +84,11 @@ export const RadioField = (props) => {
           >
             <input
               name={name}
-              onChange={(event) => {
-                onChange(event.target.value);
-              }}
+              onChange={handleChange}
               type="radio"
               id={`${idPart}_${option.value}`}
               value={option.value}
-              checked={value === option.value}
+              checked={controlled ? value === option.value : undefined}
               disabled={Boolean(option.disabled)}
             />
             <label
@@ -113,17 +114,70 @@ RadioField.propTypes = {
   id: PropTypes.string,
   className: PropTypes.arrayOf(PropTypes.string),
   required: PropTypes.bool,
+
+  /**
+   * Text to display in a `legend` element for the radio group fieldset
+   */
   label: PropTypes.node,
+
+  /**
+   * String to be applied to the `name` attribute of all the `input` elements
+   */
   name: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
+
+  /**
+   * Callback fired when value is changed
+   *
+   * @param {string} value The current value of the component
+   */
+  onChange: PropTypes.func,
+
+  /**
+   * An array of options used to define individual radio inputs
+   */
   options: PropTypes.arrayOf(
     PropTypes.shape({
+
+      /**
+       * Text to be used as label for individual radio input
+       */
       displayText: PropTypes.node,
+
+      /**
+       * The `value` attribute for the radio input
+       */
       value: PropTypes.string,
+
+      /**
+       * Help text to be displayed below the label
+       */
       help: PropTypes.string,
+
+      /**
+       * Pass a ref to the `input` element
+       */
+      inputRef: PropTypes.oneOfType([
+        // Either a function
+        PropTypes.func,
+        // Or the instance of a DOM native element (see the note about SSR)
+        PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+      ]),
+
+      /**
+       * Props to be applied to the `input` element
+       */
+      inputProps: PropTypes.object,
     })
   ),
+
+  /**
+   * The value of the named `input` element(s); required for a controlled component
+   */
   value: PropTypes.string,
+
+  /**
+   * Stack `input` elements vertically (automatic for more than two options)
+   */
   vertical: PropTypes.bool,
   errorMessage: PropTypes.string,
   strongLabel: PropTypes.bool,
