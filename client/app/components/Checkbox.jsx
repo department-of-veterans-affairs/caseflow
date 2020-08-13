@@ -2,43 +2,37 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-export class Checkbox extends React.Component {
-  onChange = (event) => {
-    this.props.onChange(event.target.checked, event);
-  }
+export const Checkbox = (props) => {
+  const {
+    label,
+    name,
+    required,
+    value,
+    disabled,
+    id,
+    errorMessage,
+    unpadded,
+    hideLabel,
+    onChange,
+    styling,
+  } = props;
 
-  render() {
-    let {
-      label,
-      name,
-      required,
-      value,
-      disabled,
-      id,
-      errorMessage,
-      unpadded,
-      hideLabel,
-      styling
-    } = this.props;
+  const handleChange = (event) => onChange?.(event.target.checked, event);
 
-    let classNames = [
-      `checkbox-wrapper-${name}`
-    ];
+  const wrapperClasses = classnames(`checkbox-wrapper-${name}`, {
+    'cf-form-checkboxes': !unpadded,
+    'usa-input-error': Boolean(errorMessage)
+  });
 
-    if (!unpadded) {
-      classNames.push('cf-form-checkboxes');
-    }
-
-    if (errorMessage) {
-      classNames.push('usa-input-error');
-    }
-
-    return <div className={classNames.join(' ')} {...styling}>
-      {errorMessage && <div className="usa-input-error-message">{errorMessage}</div>}
+  return (
+    <div className={wrapperClasses} {...styling}>
+      {errorMessage && (
+        <div className="usa-input-error-message">{errorMessage}</div>
+      )}
       <div className="cf-form-checkbox">
         <input
           name={name}
-          onChange={this.onChange}
+          onChange={handleChange}
           type="checkbox"
           id={id || name}
           checked={value}
@@ -47,15 +41,16 @@ export class Checkbox extends React.Component {
         />
         <label htmlFor={name}>
           <span className={classnames({ 'usa-sr-only': hideLabel })}>
-            {(label || name)}
-          </span> {required && <span className="cf-required">Required</span>}
+            {label || name}
+          </span>{' '}
+          {required && <span className="cf-required">Required</span>}
         </label>
       </div>
-    </div>;
-  }
-}
+    </div>
+  );
+};
 Checkbox.defaultProps = {
-  required: false
+  required: false,
 };
 
 Checkbox.propTypes = {
@@ -69,7 +64,7 @@ Checkbox.propTypes = {
   unpadded: PropTypes.bool,
   hideLabel: PropTypes.bool,
   value: PropTypes.bool,
-  styling: PropTypes.object
+  styling: PropTypes.object,
 };
 
 export default Checkbox;
