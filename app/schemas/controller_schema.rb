@@ -28,13 +28,13 @@ class ControllerSchema
 
       if nullable
         if array
-          key.maybe { array(:hash).each(nested_schema) }
+          key.maybe { array(nested_schema) }
         else
           key.maybe { hash(nested_schema) }
         end
       else
         if array
-          key.array(:hash).each(nested_schema)
+          key.value(:array).each { hash(nested_schema) }
         else
           key.hash(nested_schema)
         end
@@ -116,9 +116,17 @@ class ControllerSchema
     fields
       .select { |field| field.type == :nested && params.include?(field.name) }
       .each do |field|
-        nested_params = field.nested.remove_unknown_keys(params[field.name], in_place: in_place)
+        if field.array
+          nested_array_params = params[field.name].map do |value|
+            field.nested.remove_unknown_keys(value, in_place: in_place)
+          end
 
-        params[field.name] = nested_params unless in_place
+          params[field.name] = nested_array_params unless in_place
+        else
+          nested_params = field.nested.remove_unknown_keys(params[field.name], in_place: in_place)
+
+          params[field.name] = nested_params unless in_place
+        end
       end
 
     Rails.logger.info("Removed unknown keys from controller params: #{removed}") if removed.present?
@@ -126,6 +134,8 @@ class ControllerSchema
   end
 
   def validate(params)
+    puts params.to_unsafe_h
+    puts dry_schema
     dry_schema.call(params.to_unsafe_h)
   end
 
