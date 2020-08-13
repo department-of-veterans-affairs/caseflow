@@ -39,7 +39,7 @@ class TeamManagementController < ApplicationController
 
     render json: { org: serialize_org(org) }, status: :ok
   end
- 
+
   def create_dvc_team
     user = User.find(params[:user_id])
 

@@ -3,38 +3,6 @@
 describe DvcTeam, :postgres do
   let(:dvc) { create(:user) }
 
-#   context "scope" do
-#     context "pushed_priority_cases_allowed" do
-#       let(:dvc2) { create(:user) }
-#       let!(:dvc_team_available) { DvcTeam.create_for_dvc(dvc) }
-#       let(:dvc_team_unavailable) { DvcTeam.create_for_dvc(dvc2) }
-
-#       before { dvc_team_unavailable.update(accepts_priority_pushed_cases: false) }
-
-#       it "should return only the available DvcTeams" do
-#         expect(DvcTeam.pushed_priority_cases_allowed).to eq([dvc_team_available])
-#       end
-#     end
-#   end
-
-#   shared_examples "has the dvc and attorneys" do
-#     describe ".dvc" do
-#       it "returns the team dvc" do
-#         expect(dvc_team.dvc).to eq dvc.user
-#       end
-#     end
-
-#     describe ".attorneys" do
-#       it "returns the team attorneys" do
-#         expect(dvc_team.attorneys).to match_array attorneys
-#       end
-#     end
-#   end
-
-#   shared_examples "successful dvc team creation" do
-
-#   end
-
   describe ".create_for_dvc" do
     subject { DvcTeam.create_for_dvc(dvc) }
 
@@ -90,8 +58,8 @@ describe DvcTeam, :postgres do
       end
     end
   
-      # Limitation of the current approach is that users are effectively limited to being the admin of
-      # a single DvcTeam.
+    # Limitation of the current approach is that users are effectively limited to being the admin of
+    # a single DvcTeam.
     context "when user is admin of multiple DvcTeams" do
       let!(:first_dvc_team) { DvcTeam.create_for_dvc(user) }
       let!(:second_dvc_team) do
