@@ -4,12 +4,11 @@ class ControllerSchema
   SUPPORTED_TYPES = %w[bool date datetime float integer string nested].freeze
 
   class Field
-    attr_reader :name, :type, :array, :nested, :optional, :nullable, :included_in, :doc
+    attr_reader :name, :type, :nested, :optional, :nullable, :included_in, :doc
 
     def initialize(name, type, **options)
       @name = name
       @type = type
-      @array = options.fetch(:array, false)
       # nested only applies when the Field type is "nested"
       @nested = options.fetch(:nested, nil)
       @optional = options.fetch(:optional, false)
@@ -27,17 +26,9 @@ class ControllerSchema
       nested_schema = nested.dry_schema
 
       if nullable
-        if array
-          key.maybe { array(nested_schema) }
-        else
-          key.maybe { hash(nested_schema) }
-        end
+        key.maybe { hash(nested_schema) }
       else
-        if array
-          key.value(:array).each { hash(nested_schema) }
-        else
-          key.hash(nested_schema)
-        end
+        key.hash(nested_schema)
       end
     end
 
@@ -47,22 +38,9 @@ class ControllerSchema
 
       key = register_key(dry_dsl)
       if nullable
-        if array
-          # create locals so that they can be accessed within the context of the
-          # block
-          dry_type = type
-          array_type_options = value_options
-
-          key.maybe { array(dry_type, **array_type_options) }
-        else
-          key.maybe(type, **value_options)
-        end
+        key.maybe(type, **value_options)
       else
-        if array
-          key.value(:array).each(type, **value_options)
-        else
-          key.value(type, **value_options)
-        end
+        key.value(type, **value_options)
       end
     end
 
@@ -79,6 +57,34 @@ class ControllerSchema
         { "included_in?": included_in + [nil] }
       else
         { "included_in?": included_in }
+      end
+    end
+  end
+
+  class ArrayField < Field
+    def register_nested(dry_dsl)
+      key = register_key(dry_dsl)
+      nested_schema = nested.dry_schema
+
+      if nullable
+        key.maybe { array(nested_schema) }
+      else
+        key.hash(nested_schema)
+      end
+    end
+
+    def register(dry_dsl)
+      return register_nested(dry_dsl) if type == :nested
+
+      key = register_key(dry_dsl)
+      if nullable
+        # create locals so that they can be accessed within the context of the block
+        dry_type = type
+        array_type_options = value_options
+
+        key.maybe { array(dry_type, **array_type_options) }
+      else
+        key.value(:array).each(type, **value_options)
       end
     end
   end
@@ -116,7 +122,7 @@ class ControllerSchema
     fields
       .select { |field| field.type == :nested && params.include?(field.name) }
       .each do |field|
-        if field.array
+        if field.is_a? ArrayField
           nested_array_params = params[field.name].map do |value|
             field.nested.remove_unknown_keys(value, in_place: in_place)
           end
@@ -134,8 +140,6 @@ class ControllerSchema
   end
 
   def validate(params)
-    puts params.to_unsafe_h
-    puts dry_schema
     dry_schema.call(params.to_unsafe_h)
   end
 
@@ -158,7 +162,11 @@ class ControllerSchema
         options[:nested] = ControllerSchema.new(format, &nested)
       end
 
-      @fields << Field.new(field_name, method_name, **options)
+      @fields << if options.fetch(:array, false)
+                   ArrayField.new(field_name, method_name, **options)
+                 else
+                   Field.new(field_name, method_name, **options)
+                 end
     else
       super
     end
