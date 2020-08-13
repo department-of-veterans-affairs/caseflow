@@ -125,17 +125,17 @@ describe('RadioField', () => {
     });
   });
 
-  //   describe('uncontrolled', () => {
-  //     it('natively updates input value if `value` prop not set', async () => {
-  //       const { inputs } = setup();
+  describe('uncontrolled', () => {
+    it('natively updates input value if `value` prop not set', async () => {
+      const { inputs } = setup();
 
-  //       const opt = defaults.options[1];
-  //       const checked = () => inputs.filter((el) => el.checked);
+      const opt = defaults.options[1];
+      const checked = () => inputs.filter((el) => el.checked);
 
-  //       expect(checked().length).toBe(0);
-  //       await userEvent.click(screen.getByLabelText(opt.displayText));
+      expect(checked().length).toBe(0);
+      await userEvent.click(screen.getByLabelText(opt.displayText));
 
-  //       expect(checked().length).toBe(1);
-  //     });
-  //   });
+      expect(checked().length).toBe(1);
+    });
+  });
 });
