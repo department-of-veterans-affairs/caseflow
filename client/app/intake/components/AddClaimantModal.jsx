@@ -80,7 +80,7 @@ export const AddClaimantModal = ({
         onSubmit({
           name: claimant?.label,
           participantId: claimant?.value,
-          claimantType: relationship?.value,
+          claimantType: (unlistedClaimant ? 'other' : 'attorney'),
           claimantNotes,
         }),
       disabled: isInvalid,
@@ -91,12 +91,6 @@ export const AddClaimantModal = ({
     if (!unlistedClaimant) {
       setClaimantNotes('');
     }
-
-    // For now, this can only be either 'attorney' or 'other';
-    // will need to change logic when others are available
-    setRelationship(
-      unlistedClaimant ? relationshipOpts[1] : relationshipOpts[0]
-    );
   }, [unlistedClaimant]);
 
   return (
