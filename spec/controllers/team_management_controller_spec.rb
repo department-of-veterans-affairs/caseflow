@@ -20,9 +20,10 @@ describe TeamManagementController, :postgres, type: :controller do
       end
     end
 
-    context "when current user is a member of the Bva organization" do
+    fcontext "when current user is a member of the Bva organization" do
       context "when there are organizations in the database" do
         let!(:vsos) { create_list(:vso, 5) }
+        let!(:dvc_team_count) { 2.times { DvcTeam.create_for_dvc(create(:user)) } }
         let!(:judge_team_count) { 3.times { JudgeTeam.create_for_judge(create(:user)) } }
         let!(:private_bars) { create_list(:private_bar, 4) }
         let!(:other_orgs) { create_list(:organization, 7) }
@@ -37,6 +38,7 @@ describe TeamManagementController, :postgres, type: :controller do
 
           response_body = JSON.parse(response.body)
           expect(response_body["vsos"].length).to eq(vsos.count)
+          expect(response_body["dvc_teams"].length).to eq(dvc_team_count)
           expect(response_body["judge_teams"].length).to eq(judge_team_count)
           expect(response_body["private_bars"].length).to eq(private_bars.count)
           expect(response_body["other_orgs"].length).to eq(other_org_count)
@@ -104,6 +106,38 @@ describe TeamManagementController, :postgres, type: :controller do
         response_body = JSON.parse(response.body)
         org = JudgeTeam.find(response_body["org"]["id"])
         expect(org.judge.id).to eq(judge.id)
+      end
+    end
+  end
+
+  describe "POST /team_management/dvc_team/:id" do
+    let(:dvc) { create(:user) }
+    let(:dvc_id) { dvc.id }
+    let(:params) { { user_id: dvc_id } }
+
+    context "for a user who does not exist" do
+      let(:dvc_id) { "fake ID" }
+      it "returns a 404 error" do
+        post(:create_dvc_team, params: params, format: :json)
+        expect(response.status).to eq(404)
+      end
+    end
+
+    context "for a user who already has a JudgeTeam" do
+      before { DvcTeam.create_for_dvc(dvc) }
+      it "returns a 400 error" do
+        post(:create_dvc_team, params: params, format: :json)
+        expect(response.status).to eq(400)
+      end
+    end
+
+    context "for a user who does not yet have a DvcTeam" do
+      it "properly creates new organization" do
+        post(:create_dvc_team, params: params, format: :json)
+        expect(response.status).to eq(200)
+        response_body = JSON.parse(response.body)
+        org = DvcTeam.find(response_body["org"]["id"])
+        expect(org.dvc.id).to eq(dvc.id)
       end
     end
   end

@@ -121,6 +121,26 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
     end
   end
 
+  describe "GET /users?role=non_dvcs" do
+    before { dvc_team_count.times { DvcTeam.create_for_dvc(create(:user)) } }
+
+    context "when there are no dvc teams" do
+      let!(:users) { create_list(:user, 6) }
+      let(:dvc_team_count) { 0 }
+
+      # Add one for the current user who was created outside the scope of this test.
+      let(:user_count) { users.count + 1 }
+
+      it "returns all of the users in the database" do
+        get(:index, params: { role: "non_dvcs" })
+
+        expect(response.status).to eq(200)
+        response_body = JSON.parse(response.body)
+        expect(response_body["non_dvcs"]["data"].size).to eq(user_count)
+      end
+    end
+  end
+
   describe "GET /users?css_id=<css_id>" do
     let!(:users) { create_list(:user, 8) }
     let(:org) { create(:organization) }

@@ -42,6 +42,8 @@ const listStyle = css({
   listStyle: 'none'
 });
 
+// const dropdownLabel = 'Please enter a valid name or CSS ID to search for a user';
+
 export default class OrganizationUsers extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -265,6 +267,7 @@ export default class OrganizationUsers extends React.PureComponent {
             `${COPY.USER_MANAGEMENT_ADD_USER_LOADING_MESSAGE} ${this.formatName(this.state.addingUser)}` :
             COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT
         }
+        noResultsText={COPY.TEAM_MANAGEMENT_DROPDOWN_LABEL}
         value={null}
         onChange={this.addUser}
         async={this.asyncLoadUser} />
