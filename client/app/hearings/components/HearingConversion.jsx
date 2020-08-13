@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { sprintf } from 'sprintf-js';
 
 import * as DateUtil from '../../util/DateUtil';
 import { JudgeDropdown } from '../../components/DataDropdowns/index';
@@ -55,7 +56,7 @@ export const HearingConversion = ({
   return (
     <AppSegment filledBackground>
       <h1 className="cf-margin-bottom-0">{title}</h1>
-      <span>{helperLabel}</span>
+      <span>{sprintf(helperLabel, getAppellantTitleForHearing(hearing))}</span>
       <ReadOnly label="Hearing Date" text={DateUtil.formatDateStr(scheduledFor)} />
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className="usa-width-one-half">
