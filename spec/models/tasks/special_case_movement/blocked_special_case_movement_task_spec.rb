@@ -7,9 +7,9 @@ describe BlockedSpecialCaseMovementTask do
 
       subject do
         BlockedSpecialCaseMovementTask.create!(appeal: appeal,
-                                        assigned_to: cm_user,
-                                        assigned_by: cm_user,
-                                        parent: dist_task)
+                                               assigned_to: cm_user,
+                                               assigned_by: cm_user,
+                                               parent: dist_task)
       end
 
       before do
@@ -17,24 +17,24 @@ describe BlockedSpecialCaseMovementTask do
       end
 
       shared_examples "completed distribution and at JudgeAssign" do
-          it "should create the SCM task and JudgeAssign task" do
-            expect { subject }.not_to raise_error
-            scm_task =  appeal.tasks.where(type: BlockedSpecialCaseMovementTask.name).first
-            expect(scm_task.status).to eq(Constants.TASK_STATUSES.completed)
-            judge_task = appeal.tasks.open.where(type: JudgeAssignTask.name).first
-            expect(judge_task.status).to eq(Constants.TASK_STATUSES.assigned)
-          end
+        it "should create the SCM task and JudgeAssign task" do
+          expect { subject }.not_to raise_error
+          scm_task =  appeal.tasks.where(type: BlockedSpecialCaseMovementTask.name).first
+          expect(scm_task.status).to eq(Constants.TASK_STATUSES.completed)
+          judge_task = appeal.tasks.open.where(type: JudgeAssignTask.name).first
+          expect(judge_task.status).to eq(Constants.TASK_STATUSES.assigned)
+        end
       end
 
       shared_examples "cancelled distribution children" do
-          it "cancel any open distribution descendants" do
-            dist_task = appeal.tasks.open.where(type: DistributionTask.name).first
-            open_tasks = dist_task.descendants.select(&:open?) - [dist_task]
-            expect { subject }.not_to raise_error
-            open_tasks.each do |task|
-              expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
-            end
+        it "cancel any open distribution descendants" do
+          dist_task = appeal.tasks.open.where(type: DistributionTask.name).first
+          open_tasks = dist_task.descendants.select(&:open?) - [dist_task]
+          expect { subject }.not_to raise_error
+          open_tasks.each do |task|
+            expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
           end
+        end
       end
 
       context "appeal ready for distribution" do
@@ -51,7 +51,7 @@ describe BlockedSpecialCaseMovementTask do
 
         context "with (dispatch) blocking mail task" do
           before do
-            # TODO this _should_ not cancel after we finish 
+            # TODO: this _should_ not cancel after we finish
             # https://github.com/department-of-veterans-affairs/caseflow/issues/14057
             # Distribution Blocking. Update this test to properly pass then!
             create(:congressional_interest_mail_task,
@@ -106,9 +106,9 @@ describe BlockedSpecialCaseMovementTask do
 
           subject do
             BlockedSpecialCaseMovementTask.create!(appeal: appeal,
-                                            assigned_to: cm_user,
-                                            assigned_by: cm_user,
-                                            parent: evidence_window_task)
+                                                   assigned_to: cm_user,
+                                                   assigned_by: cm_user,
+                                                   parent: evidence_window_task)
           end
 
           it "should error with wrong parent type" do
@@ -127,9 +127,9 @@ describe BlockedSpecialCaseMovementTask do
 
         subject do
           BlockedSpecialCaseMovementTask.create!(appeal: appeal,
-                                          assigned_to: cm_user,
-                                          assigned_by: cm_user,
-                                          parent: dist_task)
+                                                 assigned_to: cm_user,
+                                                 assigned_by: cm_user,
+                                                 parent: dist_task)
         end
 
         it "should error with appeal not distributable" do
@@ -149,9 +149,9 @@ describe BlockedSpecialCaseMovementTask do
 
       subject do
         BlockedSpecialCaseMovementTask.create!(appeal: appeal,
-                                        assigned_to: user,
-                                        assigned_by: user,
-                                        parent: dist_task)
+                                               assigned_to: user,
+                                               assigned_by: user,
+                                               parent: dist_task)
       end
 
       it "should error with user error" do
