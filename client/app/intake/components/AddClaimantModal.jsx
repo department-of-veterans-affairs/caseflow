@@ -14,7 +14,6 @@ import TextareaField from '../../components/TextareaField';
 
 const relationshipOpts = [
   { label: 'Attorney (previously or currently)', value: 'attorney' },
-  { label: 'Other', value: 'other' },
 ];
 
 const fetchAttorneys = async (search = '') => {
@@ -117,7 +116,6 @@ export const AddClaimantModal = ({
         value={relationship}
         options={relationshipOpts}
         debounce={250}
-        readOnly
         strongLabel
       />
       <SearchableDropdown
