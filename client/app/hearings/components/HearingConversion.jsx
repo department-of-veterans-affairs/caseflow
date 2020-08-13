@@ -5,7 +5,7 @@ import classNames from 'classnames';
 
 import * as DateUtil from '../../util/DateUtil';
 import { JudgeDropdown } from '../../components/DataDropdowns/index';
-import { marginTop, noMaxWidth } from './details/style';
+import { spacing, marginTop, noMaxWidth } from './details/style';
 import COPY from '../../../COPY';
 import { AddressLine } from './details/Address';
 import { VirtualHearingSection } from './VirtualHearings/Section';
@@ -16,6 +16,7 @@ import { HearingTime } from './modalForms/HearingTime';
 import { Timezone } from './VirtualHearings/Timezone';
 import { getAppellantTitleForHearing } from '../utils';
 import { HEARING_CONVERSION_TYPES } from '../constants';
+import { HearingLocationDropdown } from './dailyDocket/DailyDocketRowInputs';
 
 export const HearingConversion = ({
   hearing: { virtualHearing, ...hearing },
@@ -27,9 +28,11 @@ export const HearingConversion = ({
 }) => {
   const appellantTitle = getAppellantTitleForHearing(hearing);
   const virtual = type === 'change_to_virtual';
-  const helperLabel = virtual ? COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
+  const video = hearing.readableRequestType === 'Video';
+  const convertLabel = video ? COPY.VIDEO_CHANGE_FROM_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
+  const helperLabel = virtual ? COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL : convertLabel;
 
-  // Prefill appellant/veteran email address and representative email on mount.
+  // Pre-fill appellant/veteran email address and representative email on mount.
   useEffect(() => {
     // Focus the top of the page
     window.scrollTo(0, 0);
@@ -59,14 +62,27 @@ export const HearingConversion = ({
           <HearingTime
             vertical
             label="Hearing Time"
-            disableRadioOptions={virtual}
+            disableRadioOptions={virtual && !video}
             enableZone
+            localZone={hearing.regionalOfficeTimezone}
             onChange={(scheduledTimeString) => update('hearing', { scheduledTimeString })}
             value={hearing.scheduledTimeString}
           />
-          <HelperText label={COPY.VIRTUAL_HEARING_TIME_HELPER_TEXT} />
+          {!video && <HelperText label={COPY.VIRTUAL_HEARING_TIME_HELPER_TEXT} />}
         </div>
       </div>
+      {video && !virtual && (
+        <div className={classNames('usa-grid', { [marginTop(30)]: true, [spacing('5px 0', 'pre')]: true })}>
+          <div className="usa-width-one-half">
+            <ReadOnly label="Regional Office" text={hearing.regionalOfficeName} />
+            <HearingLocationDropdown
+              regionalOffice={hearing.regionalOfficeKey}
+              hearing={hearing}
+              update={(values) => update('hearing', values)}
+            />
+          </div>
+        </div>
+      )}
       <VirtualHearingSection label={appellantTitle}>
         <AddressLine
           name={`${hearing?.veteranFirstName} ${hearing?.veteranLastName}`}
@@ -75,7 +91,7 @@ export const HearingConversion = ({
           addressCity={hearing?.appellantCity}
           addressZip={hearing?.appellantZip}
         />
-        {virtual && (
+        {virtual && !video && (
           <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
             <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
               <Timezone
@@ -115,7 +131,7 @@ export const HearingConversion = ({
               addressCity={hearing?.representativeAddress?.city}
               addressZip={hearing?.representativeAddress?.zip}
             />
-            {virtual && (
+            {virtual && !video && (
               <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
                 <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
                   <Timezone

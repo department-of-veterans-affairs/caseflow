@@ -175,5 +175,10 @@ export const regionalOfficeSection = css({
     margin: 0,
     lineHeight: '125%'
   }
-})
-;
+});
+
+export const spacing = (space, el) => css({
+  [`& ${el}`]: {
+    margin: space
+  }
+});
