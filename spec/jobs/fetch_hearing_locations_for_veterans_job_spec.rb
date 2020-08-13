@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "faker"
-
 describe FetchHearingLocationsForVeteransJob do
   let!(:job) { FetchHearingLocationsForVeteransJob.new }
   include ActiveJob::TestHelper
@@ -200,14 +198,24 @@ describe FetchHearingLocationsForVeteransJob do
   
               subject.perform
             end
+
+            context "with multiple appeals" do
+              let!(:veteran_3) { create(:veteran, file_number: "000000000") }
+              let!(:appeal) { create(:appeal, veteran_file_number: "000000000") }
+              let!(:task_2) { create(:schedule_hearing_task, appeal: appeal) }
+
+              it "retries the same appeal again" do
+                expect(subject).to(
+                  receive(:record_geomatched_appeal).with(legacy_appeal.external_id, "limit_error").at_least(:once)
+                )
+                expect(subject).not_to(
+                  receive(:record_geomatched_appeal).with(appeal.external_id, any_args)
+                )
+    
+                subject.perform
+              end
+            end
           end
-  
-          context "with multiple appeals" do
-            let!(:veteran_3) { create(:veteran, file_number: "000000000") }
-            let!(:appeal) { create(:appeal, veteran_file_number: "000000000") }
-            let!(:task_2) { create(:schedule_hearing_task, appeal: appeal) }
-  
-          end  
         end
 
         context "and limit error is only returned the first time" do 
