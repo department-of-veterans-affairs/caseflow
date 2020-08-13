@@ -206,7 +206,7 @@ describe FetchHearingLocationsForVeteransJob do
 
               it "retries the same appeal again" do
                 expect(subject).to(
-                  receive(:record_geomatched_appeal).with(legacy_appeal.external_id, "limit_error").at_least(:once)
+                  receive(:record_geomatched_appeal).with(legacy_appeal.external_id, "limit_error").at_least(:twice)
                 )
                 expect(subject).not_to(
                   receive(:record_geomatched_appeal).with(appeal.external_id, any_args)
