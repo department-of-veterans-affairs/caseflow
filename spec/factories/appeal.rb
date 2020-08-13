@@ -198,11 +198,11 @@ FactoryBot.define do
     trait :mail_blocking_distribution do
       ready_for_distribution
       after(:create) do |appeal, _evaluator|
-        distribution_task = appeal.tasks.active.select { |task| task.is_a?(DistributionTask) }.first
+        distribution_task = appeal.tasks.active.detect { |task| task.is_a?(DistributionTask) }
         create(
           :extension_request_mail_task,
           appeal: appeal,
-          parent: distribution_task,
+          parent: distribution_task
         )
       end
     end

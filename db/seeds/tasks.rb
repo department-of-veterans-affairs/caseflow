@@ -97,7 +97,7 @@ module Seeds
       end
 
       # Create AMA appeals blocked for distribution due to Evidence Window
-      appeals = (1..30).each do |num|
+      (1..30).each do |num|
         vet_file_number = format("4324324%<num>02d", num: num)
         create(
           :appeal,
