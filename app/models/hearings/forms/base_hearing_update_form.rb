@@ -66,7 +66,8 @@ class BaseHearingUpdateForm
   def show_update_alert?
     # if user only changes the hearing time for a virtual hearing, don't show update alert
     # scheduled_time for hearing, scheduled_for for legacy
-    return false if hearing.virtual? && hearing_updates.except(:scheduled_time, :scheduled_for).empty?
+    return false if hearing.virtual? && (hearing_updates.dig(:scheduled_time).present? ||
+                    hearing_updates.dig(:scheduled_for).present?)
 
     hearing_updated?
   end
@@ -91,8 +92,19 @@ class BaseHearingUpdateForm
     )
   end
 
-  def only_time_updated?
-    !virtual_hearing_created? && scheduled_time_string.present?
+  def only_time_updated_or_timezone_updated?
+    # Always false if the virtual hearing was just created or if any emails were changed
+    if virtual_hearing_created? || virtual_hearing_attributes&.keys&.any? do |attribute|
+         %w[appellant_email representative_email].include? attribute
+       end
+      return false
+    end
+
+    # True if hearing time was updated
+    scheduled_time_string.present? ||
+      # True if the representative timezone or appellant timezone is changed
+      virtual_hearing_attributes&.dig(:representative_tz).present? ||
+      virtual_hearing_attributes&.dig(:appellant_tz).present?
   end
 
   def start_async_job?
@@ -123,7 +135,7 @@ class BaseHearingUpdateForm
       hearing_type: hearing.class.name,
       # TODO: Ideally, this would use symbols, but symbols can't be serialized for ActiveJob.
       # Rails 6 supports passing symbols to a job.
-      email_type: only_time_updated? ? "updated_time_confirmation" : "confirmation"
+      email_type: only_time_updated_or_timezone_updated? ? "updated_time_confirmation" : "confirmation"
     }
 
     if run_async?
@@ -137,12 +149,18 @@ class BaseHearingUpdateForm
     virtual_hearing_attributes&.key?(:request_cancelled) || scheduled_time_string.present?
   end
 
+  # Send appellant email if cancelling, updating time or updating either appellant email or appellant timezone
   def appellant_email_sent_flag
-    !(updates_requiring_email? || virtual_hearing_attributes&.key?(:appellant_email))
+    !(updates_requiring_email? ||
+      virtual_hearing_attributes&.key?(:appellant_email) ||
+      virtual_hearing_attributes&.key?(:appellant_tz))
   end
 
+  # Send rep email if cancelling, updating time or updating either rep email or rep timezone
   def representative_email_sent_flag
-    !(updates_requiring_email? || virtual_hearing_attributes&.key?(:representative_email))
+    !(updates_requiring_email? ||
+      virtual_hearing_attributes&.key?(:representative_email) ||
+      virtual_hearing_attributes&.key?(:representative_tz))
   end
 
   # also returns false if the judge id is present or true if the virtual hearing is being cancelled
@@ -247,7 +265,7 @@ class BaseHearingUpdateForm
       "CHANGED_TO_VIRTUAL"
     elsif virtual_hearing_cancelled?
       "CHANGED_FROM_VIRTUAL"
-    elsif only_time_updated?
+    elsif only_time_updated_or_timezone_updated?
       "CHANGED_HEARING_TIME"
     elsif only_emails_updated?
       email_change_type

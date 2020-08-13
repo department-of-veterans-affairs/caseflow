@@ -104,9 +104,11 @@ detectors:
       - UserReporter#report_user_related_records
       - User#appeal_has_task_assigned_to_user?
       - VeteranAttributeCacher
+      - HearingDayRequestTypeQuery#call
       - WarmBgsCachesJob
       - ExternalApi::PexipService#send_pexip_request
       - ControllerSchema#remove_unknown_keys
+      - BusinessLineReporter#as_csv
   InstanceVariableAssumption:
     exclude:
       - Appeal
@@ -158,6 +160,7 @@ detectors:
       - QueueConfig
       - RequestIssue
       - BulkTaskReassignment
+      - Seeds::Hearings
       - Task
       - UpdateCachedAppealsAttributesJob
       - Veteran

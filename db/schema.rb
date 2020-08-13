@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_07_012721) do
+ActiveRecord::Schema.define(version: 2020_07_28_172002) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -90,6 +90,7 @@ ActiveRecord::Schema.define(version: 2020_07_07_012721) do
   end
 
   create_table "appeals", comment: "Decision reviews intaken for AMA appeals to the board (also known as a notice of disagreement).", force: :cascade do |t|
+    t.boolean "aod_based_on_age", comment: "If true, appeal is advance-on-docket due to claimant's age."
     t.string "closest_regional_office", comment: "The code for the regional office closest to the Veteran on the appeal."
     t.datetime "created_at"
     t.date "docket_range_date", comment: "Date that appeal was added to hearing docket range."
@@ -111,6 +112,7 @@ ActiveRecord::Schema.define(version: 2020_07_07_012721) do
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the appeal, which can be used to navigate to appeals/appeal_uuid. This allows a single ID to determine an appeal whether it is a legacy appeal or an AMA appeal."
     t.string "veteran_file_number", null: false, comment: "The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
     t.boolean "veteran_is_not_claimant", comment: "Selected by the user during intake, indicates whether the Veteran is the claimant, or if the claimant is someone else such as a dependent. Must be TRUE if Veteran is deceased."
+    t.index ["aod_based_on_age"], name: "index_appeals_on_aod_based_on_age"
     t.index ["docket_type"], name: "index_appeals_on_docket_type"
     t.index ["established_at"], name: "index_appeals_on_established_at"
     t.index ["updated_at"], name: "index_appeals_on_updated_at"
@@ -135,19 +137,19 @@ ActiveRecord::Schema.define(version: 2020_07_07_012721) do
   end
 
   create_table "available_hearing_locations", force: :cascade do |t|
-    t.string "address"
-    t.integer "appeal_id"
-    t.string "appeal_type"
-    t.string "city"
-    t.string "classification"
-    t.datetime "created_at", null: false
-    t.float "distance"
-    t.string "facility_id"
-    t.string "facility_type"
-    t.string "name"
-    t.string "state"
-    t.datetime "updated_at", null: false
-    t.string "veteran_file_number"
+    t.string "address", comment: "Full address of the location"
+    t.integer "appeal_id", comment: "Appeal/LegacyAppeal ID; use as FK to appeals/legacy_appeals"
+    t.string "appeal_type", comment: "'Appeal' or 'LegacyAppeal'"
+    t.string "city", comment: "i.e 'New York', 'Houston', etc"
+    t.string "classification", comment: "The classification for location; i.e 'Regional Benefit Office', 'VA Medical Center (VAMC)', etc"
+    t.datetime "created_at", null: false, comment: "Automatic timestamp of when hearing location was created"
+    t.float "distance", comment: "Distance between appellant's location and the hearing location"
+    t.string "facility_id", comment: "Id associated with the facility; i.e 'vba_313', 'vba_354a', 'vba_317', etc"
+    t.string "facility_type", comment: "The type of facility; i.e, 'va_benefits_facility', 'va_health_facility', 'vet_center', etc"
+    t.string "name", comment: "Name of location; i.e 'Chicago Regional Benefit Office', 'Jennings VA Clinic', etc"
+    t.string "state", comment: "State in abbreviated form; i.e 'NY', 'CA', etc"
+    t.datetime "updated_at", null: false, comment: "Automatic timestamp of when hearing location was updated"
+    t.string "veteran_file_number", comment: "The VBA corporate file number of the Veteran for the appeal"
     t.string "zip_code"
     t.index ["appeal_id", "appeal_type"], name: "index_available_hearing_locations_on_appeal_id_and_appeal_type"
     t.index ["updated_at"], name: "index_available_hearing_locations_on_updated_at"
@@ -439,6 +441,7 @@ ActiveRecord::Schema.define(version: 2020_07_07_012721) do
     t.datetime "created_at", null: false
     t.datetime "errored_at", comment: "when the Distribution job suffered an error"
     t.integer "judge_id"
+    t.boolean "priority_push", default: false, comment: "Whether or not this distribution is a priority-appeals-only push to judges via a weekly job (not manually requested)"
     t.datetime "started_at", comment: "when the Distribution job commenced"
     t.json "statistics"
     t.string "status"
@@ -626,27 +629,27 @@ ActiveRecord::Schema.define(version: 2020_07_07_012721) do
   end
 
   create_table "hearing_appeal_stream_snapshots", id: false, force: :cascade do |t|
-    t.integer "appeal_id"
-    t.datetime "created_at", null: false
-    t.integer "hearing_id"
-    t.datetime "updated_at"
+    t.integer "appeal_id", comment: "LegacyAppeal ID; use as FK to legacy_appeals"
+    t.datetime "created_at", null: false, comment: "Automatic timestamp of when snapshot was created"
+    t.integer "hearing_id", comment: "LegacyHearing ID; use as FK to legacy_hearings"
+    t.datetime "updated_at", comment: "Automatic timestamp of when snapshot was updated"
     t.index ["hearing_id", "appeal_id"], name: "index_hearing_appeal_stream_snapshots_hearing_and_appeal_ids", unique: true
     t.index ["updated_at"], name: "index_hearing_appeal_stream_snapshots_on_updated_at"
   end
 
   create_table "hearing_days", force: :cascade do |t|
-    t.string "bva_poc"
-    t.datetime "created_at", null: false
+    t.string "bva_poc", comment: "Hearing coordinator full name"
+    t.datetime "created_at", null: false, comment: "Automatic timestamp of when hearing day was created"
     t.bigint "created_by_id", null: false, comment: "The ID of the user who created the Hearing Day"
-    t.datetime "deleted_at"
-    t.integer "judge_id"
-    t.boolean "lock"
-    t.text "notes"
-    t.string "regional_office"
-    t.string "request_type", null: false
+    t.datetime "deleted_at", comment: "Automatic timestamp of when hearing day was deleted"
+    t.integer "judge_id", comment: "User ID of judge who is assigned to the hearing day"
+    t.boolean "lock", comment: "Determines if the hearing day is locked and can't be edited"
+    t.text "notes", comment: "Any notes about hearing day"
+    t.string "regional_office", comment: "Regional office key associated with hearing day"
+    t.string "request_type", null: false, comment: "Hearing request types for all associated hearings; can be one of: 'T', 'C' or 'V'"
     t.string "room", comment: "The room at BVA where the hearing will take place"
-    t.date "scheduled_for", null: false
-    t.datetime "updated_at", null: false
+    t.date "scheduled_for", null: false, comment: "The date when all associated hearings will take place"
+    t.datetime "updated_at", null: false, comment: "Automatic timestamp of when hearing day was updated"
     t.bigint "updated_by_id", null: false, comment: "The ID of the user who most recently updated the Hearing Day"
     t.index ["created_by_id"], name: "index_hearing_days_on_created_by_id"
     t.index ["deleted_at"], name: "index_hearing_days_on_deleted_at"
@@ -671,18 +674,18 @@ ActiveRecord::Schema.define(version: 2020_07_07_012721) do
   end
 
   create_table "hearing_locations", force: :cascade do |t|
-    t.string "address"
-    t.string "city"
-    t.string "classification"
-    t.datetime "created_at", null: false
-    t.float "distance"
-    t.string "facility_id"
-    t.string "facility_type"
-    t.integer "hearing_id"
-    t.string "hearing_type"
-    t.string "name"
-    t.string "state"
-    t.datetime "updated_at", null: false
+    t.string "address", comment: "Full address of the location"
+    t.string "city", comment: "i.e 'New York', 'Houston', etc"
+    t.string "classification", comment: "The classification for location; i.e 'Regional Benefit Office', 'VA Medical Center (VAMC)', etc"
+    t.datetime "created_at", null: false, comment: "Automatic timestamp of when hearing location was created"
+    t.float "distance", comment: "Distance between appellant's location and the hearing location"
+    t.string "facility_id", comment: "Id associated with the facility; i.e 'vba_313', 'vba_354a', 'vba_317', etc"
+    t.string "facility_type", comment: "The type of facility; i.e, 'va_benefits_facility', 'va_health_facility', 'vet_center', etc"
+    t.integer "hearing_id", comment: "Hearing/LegacyHearing ID; use as FK to hearings/legacy_hearings"
+    t.string "hearing_type", comment: "'Hearing' or 'LegacyHearing'"
+    t.string "name", comment: "Name of location; i.e 'Chicago Regional Benefit Office', 'Jennings VA Clinic', etc"
+    t.string "state", comment: "State in abbreviated form; i.e 'NY', 'CA', etc"
+    t.datetime "updated_at", null: false, comment: "Automatic timestamp of when hearing location was updated"
     t.string "zip_code"
     t.index ["hearing_id"], name: "index_hearing_locations_on_hearing_id"
     t.index ["hearing_type"], name: "index_hearing_locations_on_hearing_type"
@@ -690,47 +693,47 @@ ActiveRecord::Schema.define(version: 2020_07_07_012721) do
   end
 
   create_table "hearing_task_associations", force: :cascade do |t|
-    t.datetime "created_at"
-    t.bigint "hearing_id", null: false
-    t.bigint "hearing_task_id", null: false
-    t.string "hearing_type", null: false
-    t.datetime "updated_at"
+    t.datetime "created_at", comment: "Automatic timestamp of when association was created"
+    t.bigint "hearing_id", null: false, comment: "Hearing/LegacyHearing ID; use as FK to hearings/legacy_hearings"
+    t.bigint "hearing_task_id", null: false, comment: "associated HearingTask ID; use as fk to tasks"
+    t.string "hearing_type", null: false, comment: "'Hearing' or 'LegacyHearing'"
+    t.datetime "updated_at", comment: "Automatic timestamp of when association was updated"
     t.index ["hearing_task_id"], name: "index_hearing_task_associations_on_hearing_task_id"
     t.index ["hearing_type", "hearing_id"], name: "index_hearing_task_associations_on_hearing_type_and_hearing_id"
     t.index ["updated_at"], name: "index_hearing_task_associations_on_updated_at"
   end
 
   create_table "hearing_views", id: :serial, force: :cascade do |t|
-    t.datetime "created_at"
-    t.integer "hearing_id", null: false
-    t.string "hearing_type"
-    t.datetime "updated_at"
-    t.integer "user_id", null: false
+    t.datetime "created_at", comment: "Automatic timestamp of when hearing view was created"
+    t.integer "hearing_id", null: false, comment: "Hearing/LegacyHearing ID; use as FK to hearings/legacy_hearings"
+    t.string "hearing_type", comment: "'Hearing' or 'LegacyHearing'"
+    t.datetime "updated_at", comment: "Automatic timestamp of when hearing view was updated"
+    t.integer "user_id", null: false, comment: "User ID; use as FK to users"
     t.index ["hearing_id", "user_id", "hearing_type"], name: "index_hearing_views_on_hearing_id_and_user_id_and_hearing_type", unique: true
   end
 
   create_table "hearings", force: :cascade do |t|
-    t.integer "appeal_id", null: false
-    t.string "bva_poc"
+    t.integer "appeal_id", null: false, comment: "Appeal ID; use as FK to appeals"
+    t.string "bva_poc", comment: "Hearing coordinator full name"
     t.datetime "created_at", comment: "Automatic timestamp when row was created."
     t.bigint "created_by_id", comment: "The ID of the user who created the Hearing"
-    t.string "disposition"
-    t.boolean "evidence_window_waived"
-    t.integer "hearing_day_id", null: false
-    t.integer "judge_id"
-    t.string "military_service"
-    t.string "notes"
-    t.boolean "prepped"
-    t.string "representative_name"
-    t.string "room"
-    t.time "scheduled_time", null: false
-    t.text "summary"
-    t.boolean "transcript_requested"
-    t.date "transcript_sent_date"
+    t.string "disposition", comment: "Hearing disposition; can be one of: 'held', 'postponed', 'no_show', or 'cancelled'"
+    t.boolean "evidence_window_waived", comment: "Determines whether the veteran/appelant has wavied the 90 day evidence hold"
+    t.integer "hearing_day_id", null: false, comment: "HearingDay ID; use as FK to HearingDays"
+    t.integer "judge_id", comment: "User ID of judge who will hold the hearing"
+    t.string "military_service", comment: "Periods and circumstances of military service"
+    t.string "notes", comment: "Any notes taken prior or post hearing"
+    t.boolean "prepped", comment: "Determines whether the judge has checked the hearing as prepped"
+    t.string "representative_name", comment: "Name of Appellant's representative if applicable"
+    t.string "room", comment: "The room at BVA where the hearing will take place; ported from associated HearingDay"
+    t.time "scheduled_time", null: false, comment: "Date and Time when hearing will take place"
+    t.text "summary", comment: "Summary of hearing"
+    t.boolean "transcript_requested", comment: "Determines whether the veteran/appellant has requested the hearing transcription"
+    t.date "transcript_sent_date", comment: "Date of when the hearing transcription was sent to the Veteran/Appellant"
     t.datetime "updated_at", comment: "Timestamp when record was last updated."
     t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the Hearing"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
-    t.string "witness"
+    t.string "witness", comment: "Witness/Observer present during hearing"
     t.index ["created_by_id"], name: "index_hearings_on_created_by_id"
     t.index ["updated_at"], name: "index_hearings_on_updated_at"
     t.index ["updated_by_id"], name: "index_hearings_on_updated_by_id"
@@ -843,7 +846,7 @@ ActiveRecord::Schema.define(version: 2020_07_07_012721) do
     t.boolean "military_sexual_trauma", default: false, comment: "Military Sexual Trauma (MST)"
     t.boolean "mustard_gas", default: false
     t.boolean "national_cemetery_administration", default: false
-    t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues, added belatedly"
+    t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues; column added belatedly"
     t.boolean "nonrating_issue", default: false
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
@@ -866,18 +869,18 @@ ActiveRecord::Schema.define(version: 2020_07_07_012721) do
   end
 
   create_table "legacy_hearings", force: :cascade do |t|
-    t.integer "appeal_id"
+    t.integer "appeal_id", comment: "LegacyAppeal ID; use as FK to legacy_appeals"
     t.datetime "created_at", comment: "Automatic timestamp when row was created."
     t.bigint "created_by_id", comment: "The ID of the user who created the Legacy Hearing"
     t.bigint "hearing_day_id", comment: "The hearing day the hearing will take place on"
-    t.string "military_service"
-    t.boolean "prepped"
-    t.text "summary"
+    t.string "military_service", comment: "Periods and circumstances of military service"
+    t.boolean "prepped", comment: "Determines whether the judge has checked the hearing as prepped"
+    t.text "summary", comment: "Summary of hearing"
     t.datetime "updated_at", comment: "Timestamp when record was last updated."
     t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the Legacy Hearing"
-    t.integer "user_id"
+    t.integer "user_id", comment: "User ID of judge who will hold the hearing"
     t.string "vacols_id", null: false, comment: "Corresponds to VACOLS’ hearsched.hearing_pkseq"
-    t.string "witness"
+    t.string "witness", comment: "Witness/Observer present during hearing"
     t.index ["created_by_id"], name: "index_legacy_hearings_on_created_by_id"
     t.index ["hearing_day_id"], name: "index_legacy_hearings_on_hearing_day_id"
     t.index ["updated_at"], name: "index_legacy_hearings_on_updated_at"
@@ -889,7 +892,7 @@ ActiveRecord::Schema.define(version: 2020_07_07_012721) do
   create_table "legacy_issue_optins", comment: "When a VACOLS issue from a legacy appeal is opted-in to AMA, this table keeps track of the related request_issue, and the status of processing the opt-in, or rollback if the request issue is removed from a Decision Review.", force: :cascade do |t|
     t.datetime "created_at", null: false, comment: "When a Request Issue is connected to a VACOLS issue on a legacy appeal, and the Veteran has agreed to withdraw their legacy appeals, a legacy_issue_optin is created at the time the Decision Review is successfully intaken. This is used to indicate that the legacy issue should subsequently be opted into AMA in VACOLS. "
     t.string "error"
-    t.datetime "folder_date_time_of_decision", comment: "Date/Time of decision"
+    t.date "folder_decision_date", comment: "Decision date on case record folder"
     t.bigint "legacy_issue_id", comment: "The legacy issue being opted in, which connects to the request issue"
     t.datetime "optin_processed_at", comment: "The timestamp for when the opt-in was successfully processed, meaning it was updated in VACOLS as opted into AMA."
     t.string "original_disposition_code", comment: "The original disposition code of the VACOLS issue being opted in. Stored in case the opt-in is rolled back."
@@ -939,6 +942,7 @@ ActiveRecord::Schema.define(version: 2020_07_07_012721) do
   end
 
   create_table "organizations", force: :cascade do |t|
+    t.boolean "accepts_priority_pushed_cases", comment: "Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases"
     t.datetime "created_at"
     t.string "name"
     t.string "participant_id", comment: "Organizations BGS partipant id"
@@ -948,6 +952,7 @@ ActiveRecord::Schema.define(version: 2020_07_07_012721) do
     t.string "type", comment: "Single table inheritance"
     t.datetime "updated_at"
     t.string "url", comment: "Unique portion of the organization queue url"
+    t.index ["accepts_priority_pushed_cases"], name: "index_organizations_on_accepts_priority_pushed_cases"
     t.index ["status"], name: "index_organizations_on_status"
     t.index ["updated_at"], name: "index_organizations_on_updated_at"
     t.index ["url"], name: "index_organizations_on_url", unique: true
@@ -1182,7 +1187,7 @@ ActiveRecord::Schema.define(version: 2020_07_07_012721) do
     t.string "email_type", comment: "The type of email sent: cancellation, confirmation, updated_time_confirmation"
     t.string "external_message_id", comment: "The ID returned by the GovDelivery API when we send an email"
     t.bigint "hearing_id", null: false, comment: "Associated hearing"
-    t.string "hearing_type", null: false
+    t.string "hearing_type", null: false, comment: "'Hearing' or 'LegacyHearing'"
     t.string "recipient_role", comment: "The role of the recipient: veteran, representative, judge"
     t.datetime "sent_at", null: false, comment: "The date and time the email was sent"
     t.bigint "sent_by_id", null: false, comment: "User who initiated sending the email"
@@ -1195,7 +1200,6 @@ ActiveRecord::Schema.define(version: 2020_07_07_012721) do
     t.string "appeal_type"
     t.boolean "blue_water", default: false, comment: "Blue Water"
     t.boolean "burn_pit", default: false, comment: "Burn Pit"
-    t.boolean "cavc", default: false, comment: "US Court of Appeals for Veterans Claims (CAVC)"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.datetime "created_at"
     t.boolean "dic_death_or_accrued_benefits_united_states", default: false
@@ -1219,6 +1223,7 @@ ActiveRecord::Schema.define(version: 2020_07_07_012721) do
     t.boolean "rice_compliance", default: false
     t.boolean "spina_bifida", default: false
     t.datetime "updated_at"
+    t.boolean "us_court_of_appeals_for_veterans_claims", default: false, comment: "US Court of Appeals for Veterans Claims (CAVC)"
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_philippines", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
@@ -1309,17 +1314,17 @@ ActiveRecord::Schema.define(version: 2020_07_07_012721) do
   end
 
   create_table "transcriptions", force: :cascade do |t|
-    t.datetime "created_at"
-    t.date "expected_return_date"
-    t.bigint "hearing_id"
-    t.date "problem_notice_sent_date"
-    t.string "problem_type"
-    t.string "requested_remedy"
-    t.date "sent_to_transcriber_date"
-    t.string "task_number"
-    t.string "transcriber"
-    t.datetime "updated_at"
-    t.date "uploaded_to_vbms_date"
+    t.datetime "created_at", comment: "Automatic timestamp of when transcription was created"
+    t.date "expected_return_date", comment: "Expected date when transcription would be returned by the transcriber"
+    t.bigint "hearing_id", comment: "Hearing ID; use as FK to hearings"
+    t.date "problem_notice_sent_date", comment: "Date when notice of problem with recording was sent to appellant"
+    t.string "problem_type", comment: "Any problem with hearing recording; could be one of: 'No audio', 'Poor Audio Quality', 'Incomplete Hearing' or 'Other (see notes)'"
+    t.string "requested_remedy", comment: "Any remedy requested by the apellant for the recording problem; could be one of: 'Proceed without transcript', 'Proceed with partial transcript' or 'New hearing'"
+    t.date "sent_to_transcriber_date", comment: "Date when the recording was sent to transcriber"
+    t.string "task_number", comment: "Number associated with transcription"
+    t.string "transcriber", comment: "Contractor who will transcribe the recording; i.e, 'Genesis Government Solutions, Inc.', 'Jamison Professional Services', etc"
+    t.datetime "updated_at", comment: "Automatic timestamp of when transcription was updated"
+    t.date "uploaded_to_vbms_date", comment: "Date when the hearing transcription was uploaded to VBMS"
     t.index ["hearing_id"], name: "index_transcriptions_on_hearing_id"
     t.index ["updated_at"], name: "index_transcriptions_on_updated_at"
   end
@@ -1420,12 +1425,12 @@ ActiveRecord::Schema.define(version: 2020_07_07_012721) do
     t.string "appellant_tz", limit: 50, comment: "Stores appellant timezone"
     t.boolean "conference_deleted", default: false, null: false, comment: "Whether or not the conference was deleted from Pexip"
     t.integer "conference_id", comment: "ID of conference from Pexip"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", null: false, comment: "Automatic timestamp of when virtual hearing was created"
     t.bigint "created_by_id", null: false, comment: "User who created the virtual hearing"
     t.integer "guest_pin", comment: "PIN number for guests of Pexip conference"
     t.string "guest_pin_long", limit: 11, comment: "Change the guest pin to store a longer pin with the # sign trailing"
     t.bigint "hearing_id", comment: "Associated hearing"
-    t.string "hearing_type"
+    t.string "hearing_type", comment: "'Hearing' or 'LegacyHearing'"
     t.integer "host_pin", comment: "PIN number for host of Pexip conference"
     t.string "host_pin_long", limit: 8, comment: "Change the host pin to store a longer pin with the # sign trailing"
     t.string "judge_email", comment: "Judge's email address"
@@ -1434,7 +1439,7 @@ ActiveRecord::Schema.define(version: 2020_07_07_012721) do
     t.boolean "representative_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran's representative"
     t.string "representative_tz", limit: 50, comment: "Stores representative timezone"
     t.boolean "request_cancelled", default: false, comment: "Determines whether the user has cancelled the virtual hearing request"
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", null: false, comment: "Automatic timestamp of when virtual hearing was updated"
     t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the virtual hearing"
     t.index ["alias"], name: "index_virtual_hearings_on_alias"
     t.index ["conference_id"], name: "index_virtual_hearings_on_conference_id"

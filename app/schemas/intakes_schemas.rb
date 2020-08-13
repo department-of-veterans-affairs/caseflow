@@ -15,18 +15,15 @@ class IntakesSchemas
     def review
       ControllerSchema.json do |schema|
         schema.date :receipt_date
-        schema.string :benefit_type, optional: true, nullable: true, doc: "not applicable to Appeals"
-        schema.string :docket_type,
-                      optional: true,
-                      nullable: true,
-                      included_in?: DOCKET_OPTIONS,
-                      doc: "Appeals only"
+        schema.string :benefit_type, optional: true, doc: "not applicable to Appeals"
+        schema.string :docket_type, optional: true, included_in?: DOCKET_OPTIONS, doc: "Appeals only"
         schema.string :claimant, optional: true, nullable: true
+        schema.string :claimant_type, optional: true, included_in?: %w[veteran dependent attorney other]
+        schema.string :claimant_notes, optional: true, nullable: true, doc: "Appeals only"
         schema.string :payee_code, optional: true, nullable: true
-        schema.bool :informal_conference, optional: true, nullable: true, doc: "HLRs only"
+        schema.bool :informal_conference, optional: true, doc: "HLRs only"
         schema.bool :same_office, optional: true, nullable: true, doc: "HLRs only"
-        schema.bool :veteran_is_not_claimant, optional: true, nullable: true
-        schema.bool :legacy_opt_in_approved, optional: true, nullable: true
+        schema.bool :legacy_opt_in_approved, optional: true
 
         # RAMP-specific fields
         schema.string :option_selected,

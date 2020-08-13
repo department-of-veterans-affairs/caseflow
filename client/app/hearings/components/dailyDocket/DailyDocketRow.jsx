@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
-import _ from 'lodash';
+import { isUndefined, isNil, isEmpty, omitBy, get } from 'lodash';
 
 import { AodModal } from './DailyDocketModals';
 import {
@@ -33,7 +33,7 @@ import Button from '../../../components/Button';
 import HearingText from './DailyDocketRowDisplayText';
 import VirtualHearingModal from '../VirtualHearingModal';
 
-const SaveButton = ({ hearing, cancelUpdate, saveHearing }) => {
+const SaveButton = ({ hearing, loading, cancelUpdate, saveHearing }) => {
   return (
     <div
       {...css({
@@ -47,7 +47,7 @@ const SaveButton = ({ hearing, cancelUpdate, saveHearing }) => {
       </Button>
       <Button
         styling={css({ float: 'right' })}
-        disabled={hearing.dateEdited && !hearing.dispositionEdited}
+        disabled={loading || (hearing.dateEdited && !hearing.dispositionEdited)}
         onClick={saveHearing}
       >
         Save
@@ -58,6 +58,7 @@ const SaveButton = ({ hearing, cancelUpdate, saveHearing }) => {
 
 SaveButton.propTypes = {
   hearing: PropTypes.object,
+  loading: PropTypes.bool,
   cancelUpdate: PropTypes.func,
   saveHearing: PropTypes.func
 };
@@ -74,6 +75,7 @@ class DailyDocketRow extends React.Component {
         advanceOnDocketMotionReason: false
       },
       aodModalActive: false,
+      loading: false,
       edited: false,
       editedFields: [],
       virtualHearingModalActive: false,
@@ -109,7 +111,7 @@ class DailyDocketRow extends React.Component {
     });
   };
 
-  updateVirtualHearing = (values) => {
+  updateVirtualHearing = (_, values) => {
     this.update({
       virtualHearing: {
         ...(this.props.hearing.virtualHearing || {}),
@@ -143,8 +145,8 @@ class DailyDocketRow extends React.Component {
     const invalid = {
       advanceOnDocketMotionReason:
         hearing.advanceOnDocketMotion &&
-        !_.isNil(hearing.advanceOnDocketMotion.granted) &&
-        _.isNil(hearing.advanceOnDocketMotion.reason)
+        !isNil(hearing.advanceOnDocketMotion.granted) &&
+        isNil(hearing.advanceOnDocketMotion.reason)
     };
 
     this.setState({ invalid });
@@ -156,7 +158,7 @@ class DailyDocketRow extends React.Component {
     const { initialState } = this.state;
     const { user } = this.props;
 
-    if (_.isNil(initialState.advanceOnDocketMotion) || !user.userHasHearingPrepRole) {
+    if (isNil(initialState.advanceOnDocketMotion) || !user.userHasHearingPrepRole) {
       return false;
     }
 
@@ -179,12 +181,14 @@ class DailyDocketRow extends React.Component {
     }
 
     const hearingChanges = deepDiff(this.state.initialState, this.props.hearing);
-    const locationWasUpdated = !_.isEmpty(_.omitBy(hearingChanges?.location, _.isUndefined));
+    const locationWasUpdated = !isEmpty(omitBy(hearingChanges?.location, isUndefined));
     const submitData = {
       ...hearingChanges,
       // Always send full location details because a new record is created each update
       location: locationWasUpdated ? this.props.hearing?.location : {}
     };
+
+    this.setState({ loading: true });
 
     return this.props.
       saveHearing(this.props.hearing.externalId, submitData).
@@ -200,7 +204,7 @@ class DailyDocketRow extends React.Component {
           this.props.onReceiveAlerts(alerts.hearing);
         }
 
-        if (!_.isEmpty(alerts.virtual_hearing)) {
+        if (!isEmpty(alerts.virtual_hearing)) {
           this.props.onReceiveTransitioningAlert(alerts.virtual_hearing, 'virtualHearing');
           this.setState({ startPolling: true });
         }
@@ -210,7 +214,8 @@ class DailyDocketRow extends React.Component {
           editedFields: [],
           edited: false
         });
-      });
+      }).
+      finally(() => this.setState({ loading: false }));
   };
 
   saveThenUpdateDisposition = (toDisposition) => {
@@ -219,6 +224,8 @@ class DailyDocketRow extends React.Component {
       disposition: toDisposition
     };
     const hearingChanges = deepDiff(this.state.initialState, hearingWithDisp);
+
+    this.setState({ loading: true });
 
     return this.props.
       saveHearing(hearingWithDisp.externalId, hearingChanges).
@@ -243,7 +250,8 @@ class DailyDocketRow extends React.Component {
             edited: false
           });
         }
-      });
+      }).
+      finally(() => this.setState({ loading: false }));
   };
 
   isAmaHearing = () => this.props.hearing.docketName === 'hearing';
@@ -271,6 +279,8 @@ class DailyDocketRow extends React.Component {
         <StaticHearingDay hearing={hearing} />
         <HearingTime
           {...inputProps}
+          disableRadioOptions={hearing.isVirtual}
+          enableZone={hearing.regionalOfficeTimezone || 'America/New_York'}
           componentIndex={rowIndex}
           regionalOffice={regionalOffice}
           readOnly={
@@ -328,6 +338,7 @@ class DailyDocketRow extends React.Component {
         {this.state.edited && (
           <SaveButton
             hearing={this.props.hearing}
+            loading={this.state.loading}
             cancelUpdate={this.cancelUpdate}
             saveHearing={this.checkAodAndSave}
           />
@@ -364,9 +375,9 @@ class DailyDocketRow extends React.Component {
       const resp = ApiUtil.convertToCamelCase(response);
 
       if (resp.jobCompleted) {
-        this.updateVirtualHearing(resp);
+        this.updateVirtualHearing(null, resp);
         this.props.transitionAlert('virtualHearing');
-        this.setState({ startPolling: false });
+        this.setState({ startPolling: false, edited: false, editedFields: [] });
       }
 
       // continue polling if return true (opposite of job_completed)
@@ -378,7 +389,7 @@ class DailyDocketRow extends React.Component {
     <VirtualHearingModal
       closeModal={this.closeVirtualHearingModal}
       hearing={hearing}
-      timeWasEdited={this.state.initialState.scheduledTimeString !== _.get(hearing, 'scheduledTimeString')}
+      timeWasEdited={this.state.initialState.scheduledTimeString !== get(hearing, 'scheduledTimeString')}
       virtualHearing={hearing.virtualHearing || {}}
       reset={() => {
         this.update({ scheduledTimeString: this.state.initialState.scheduledTimeString });
@@ -446,6 +457,7 @@ DailyDocketRow.propTypes = {
   readOnly: PropTypes.bool,
   hidePreviouslyScheduled: PropTypes.bool,
   hearing: PropTypes.shape({
+    regionalOfficeTimezone: PropTypes.string,
     docketName: PropTypes.string,
     advanceOnDocketMotion: PropTypes.object,
     virtualHearing: PropTypes.shape({

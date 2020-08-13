@@ -8,7 +8,7 @@ class AppealIntake < DecisionReviewIntake
   end
 
   def ui_hash
-    super.merge(docket_type: detail.docket_type)
+    Intake::AppealIntakeSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def review!(request_params)
@@ -39,32 +39,11 @@ class AppealIntake < DecisionReviewIntake
 
   private
 
-  def create_claimant!
-    if request_params[:veteran_is_not_claimant] == true
-      claimant_type = "DependentClaimant"
-      participant_id = request_params[:claimant]
-    else
-      claimant_type = "VeteranClaimant"
-      participant_id = veteran.participant_id
-    end
-
-    Claimant.find_or_initialize_by(
-      decision_review: detail
-    ).tap do |claimant|
-      claimant.type = claimant_type
-      claimant.participant_id = participant_id
-      claimant.notes = request_params[:claimant_notes]
-      claimant.save!
-    end
-    update_person!
+  def need_payee_code?
+    false
   end
 
-  def review_params
-    request_params.permit(
-      :receipt_date,
-      :docket_type,
-      :veteran_is_not_claimant,
-      :legacy_opt_in_approved
-    )
+  def review_param_keys
+    %w[receipt_date docket_type legacy_opt_in_approved]
   end
 end

@@ -100,7 +100,10 @@ class VirtualHearings::SendEmail
     Rails.logger.info("Sending email to #{recipient.inspect}...")
 
     msg = email.deliver_now!
-  rescue StandardError => error
+  rescue StandardError, Savon::Error, BGS::ShareError => error
+    # Savon::Error and BGS::ShareError are sometimes thrown when making requests to BGS enpoints
+    Raven.capture_exception(error)
+
     Rails.logger.warn("Failed to send #{type} email to #{recipient.title}: #{error}")
     Rails.logger.warn(error.backtrace.join($INPUT_RECORD_SEPARATOR))
 
@@ -115,12 +118,18 @@ class VirtualHearings::SendEmail
 
   # :nocov:
   def create_sent_hearing_email_event(recipient, external_id)
+    # The "appellant" title is used in the email and is consistent whether or not the
+    # veteran is or isn't the appellant, but the email event can be more specific.
+    recipient_is_veteran = (
+      recipient.title == MailRecipient::RECIPIENT_TITLES[:appellant] &&
+      !appeal.appellant_is_not_veteran
+    )
     SentHearingEmailEvent.create!(
       hearing: hearing,
       email_type: type,
       email_address: recipient.email,
       external_message_id: external_id,
-      recipient_role: recipient.title.downcase,
+      recipient_role: recipient_is_veteran ? "veteran" : recipient.title.downcase,
       sent_by: virtual_hearing.updated_by
     )
   rescue StandardError => error

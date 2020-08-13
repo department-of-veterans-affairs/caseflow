@@ -94,4 +94,23 @@ describe('Timezone', () => {
     });
     expect(tz).toMatchSnapshot();
   });
+
+  test('Respects required prop', () => {
+    // Run the test
+    const tz = mount(<Timezone required time={HEARING_TIME_OPTIONS[0].value} />);
+
+    // Assertions
+    expect(tz.find('.cf-required')).toHaveLength(1);
+    expect(tz).toMatchSnapshot();
+  });
+
+  test('Does not show required when ReadOnly', () => {
+    // Run the test
+    const tz = mount(<Timezone required readOnly time={HEARING_TIME_OPTIONS[0].value} />);
+
+    // Assertions
+    expect(tz.find('.cf-required')).toHaveLength(0);
+    expect(tz).toMatchSnapshot();
+  });
+
 });

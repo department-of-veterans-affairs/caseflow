@@ -34,71 +34,49 @@ describe Distribution, :all_dbs do
 
     let(:legacy_priority_count) { 14 }
 
-    let!(:legacy_priority_cases) do
-      (1..legacy_priority_count).map do |i|
-        create(
-          :case,
-          :aod,
-          bfd19: 1.year.ago,
-          bfac: "1",
-          bfmpro: "ACT",
-          bfcurloc: "81",
-          bfdloout: i.days.ago,
-          folder: build(
-            :folder,
-            tinum: "1801#{format('%<index>03d', index: i)}",
-            titrnum: "123456789S"
-          )
+    def create_legacy_case(index, traits = nil)
+      create(
+        :case,
+        *traits,
+        bfd19: 1.year.ago,
+        bfac: "1",
+        bfmpro: "ACT",
+        bfcurloc: "81",
+        bfdloout: index.days.ago,
+        folder: build(
+          :folder,
+          tinum: "1801#{format('%<index>03d', index: index)}",
+          titrnum: "123456789S"
         )
-      end
+      )
+    end
+
+    let!(:legacy_priority_cases) do
+      (1..legacy_priority_count).map { |i| create_legacy_case(i, :aod) }
     end
 
     let!(:legacy_nonpriority_cases) do
-      (15..100).map do |i|
-        create(
-          :case,
-          bfd19: 1.year.ago,
-          bfac: "1",
-          bfmpro: "ACT",
-          bfcurloc: "81",
-          bfdloout: i.days.ago,
-          folder: build(
-            :folder,
-            tinum: "1801#{format('%<index>03d', index: i)}",
-            titrnum: "123456789S"
-          )
-        )
-      end
+      (15..100).map { |i| create_legacy_case(i) }
+    end
+
+    def create_legacy_case_hearing_for(appeal, board_member: judge.vacols_attorney_id)
+      create(:case_hearing,
+             :disposition_held,
+             folder_nr: appeal.bfkey,
+             hearing_date: 1.month.ago,
+             board_member: board_member)
     end
 
     let!(:same_judge_priority_hearings) do
-      legacy_priority_cases[0..1].map do |appeal|
-        create(:case_hearing,
-               :disposition_held,
-               folder_nr: appeal.bfkey,
-               hearing_date: 1.month.ago,
-               board_member: judge.vacols_attorney_id)
-      end
+      legacy_priority_cases[0..1].map { |appeal| create_legacy_case_hearing_for(appeal) }
     end
 
     let!(:same_judge_nonpriority_hearings) do
-      legacy_nonpriority_cases[29..33].map do |appeal|
-        create(:case_hearing,
-               :disposition_held,
-               folder_nr: appeal.bfkey,
-               hearing_date: 1.month.ago,
-               board_member: judge.vacols_attorney_id)
-      end
+      legacy_nonpriority_cases[29..33].map { |appeal| create_legacy_case_hearing_for(appeal) }
     end
 
     let!(:other_judge_hearings) do
-      legacy_nonpriority_cases[2..27].map do |appeal|
-        create(:case_hearing,
-               :disposition_held,
-               folder_nr: appeal.bfkey,
-               hearing_date: 1.month.ago,
-               board_member: "1234")
-      end
+      legacy_nonpriority_cases[2..27].map { |appeal| create_legacy_case_hearing_for(appeal, board_member: "1234") }
     end
 
     before do
@@ -203,27 +181,63 @@ describe Distribution, :all_dbs do
       expect(subject.distributed_cases.where(docket: Constants.AMA_DOCKETS.evidence_submission).count).to eq(2)
     end
 
-    context "with priority_acd on and the judge's backlog is full" do
+    context "with priority_acd on" do
       before { FeatureToggle.enable!(:priority_acd) }
       after { FeatureToggle.disable!(:priority_acd) }
 
+      BACKLOG_LIMIT = VACOLS::CaseDocket::HEARING_BACKLOG_LIMIT
+
       let!(:more_same_judge_nonpriority_hearings) do
-        legacy_nonpriority_cases[33..63].map do |appeal|
-          create(:case_hearing,
-                 :disposition_held,
-                 folder_nr: appeal.bfkey,
-                 hearing_date: 1.month.ago,
-                 board_member: judge.vacols_attorney_id)
+        to_add = total_tied_nonpriority_hearings - same_judge_nonpriority_hearings.count
+        legacy_nonpriority_cases[34..(34 + to_add - 1)].map { |appeal| create_legacy_case_hearing_for(appeal) }
+      end
+
+      context "the judge's backlog has more than #{BACKLOG_LIMIT} legacy hearing non priority cases" do
+        let(:total_tied_nonpriority_hearings) { BACKLOG_LIMIT + 5 }
+
+        it "distributes legacy hearing non priority cases down to #{BACKLOG_LIMIT}" do
+          expect(VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge))
+            .to eq total_tied_nonpriority_hearings
+          subject.distribute!
+
+          expect(subject.valid?).to eq(true)
+          expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(BACKLOG_LIMIT)
+          dcs_legacy = subject.distributed_cases.where(docket: "legacy")
+
+          # distributions reliant on BACKLOG_LIMIT
+          judge_tied_leg_distributions = total_tied_nonpriority_hearings - BACKLOG_LIMIT
+          expect(dcs_legacy.where(priority: false, genpop_query: "not_genpop").count).to eq judge_tied_leg_distributions
+
+          # distributions after handling BACKLOG_LIMIT
+          expect(dcs_legacy.where(priority: true, genpop_query: "not_genpop").count).to eq(2)
+          expect(dcs_legacy.where(priority: true, genpop_query: "any").count).to eq(2)
+          expect(dcs_legacy.count).to be >= 8
         end
       end
 
-      it "distributes legacy hearing non priority cases down to 30" do
-        expect(VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge)).to eq 35
-        subject.distribute!
-        expect(subject.valid?).to eq(true)
-        expect(subject.statistics["legacy_hearing_backlog_count"]).to eq(30)
-        expect(subject.distributed_cases.where(priority: false, genpop_query: "not_genpop").count).to eq(5)
-        expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
+      context "the judge's backlog has less than #{BACKLOG_LIMIT} legacy hearing non priority cases" do
+        let(:total_tied_nonpriority_hearings) { BACKLOG_LIMIT - 5 }
+
+        it "distributes legacy hearing non priority cases down to #{BACKLOG_LIMIT}" do
+          expect(VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge))
+            .to eq total_tied_nonpriority_hearings
+          subject.distribute!
+
+          expect(subject.valid?).to eq(true)
+          dcs_legacy = subject.distributed_cases.where(docket: "legacy")
+
+          # distributions reliant on BACKLOG_LIMIT
+          expect(dcs_legacy.where(priority: false, genpop_query: "not_genpop").count).to eq(0)
+
+          # distributions after handling BACKLOG_LIMIT
+          remaining_in_backlog = total_tied_nonpriority_hearings -
+                                 dcs_legacy.where(priority: false, genpop: false).count
+          expect(subject.statistics["legacy_hearing_backlog_count"]).to eq remaining_in_backlog
+
+          expect(dcs_legacy.where(priority: true, genpop_query: "not_genpop").count).to eq(2)
+          expect(dcs_legacy.where(priority: true, genpop_query: "any").count).to eq(2)
+          expect(dcs_legacy.count).to be >= 8
+        end
       end
     end
 
@@ -247,15 +261,17 @@ describe Distribution, :all_dbs do
       end
     end
 
-    context "when an illegit nonpriority legacy case re-distribtution is attempted" do
+    context "when an illegit nonpriority legacy case re-distribution is attempted" do
       let(:case_id) { legacy_case.bfkey }
-      let(:legacy_case) { legacy_nonpriority_cases.first }
+      let!(:previous_location) { legacy_case.bfcurloc }
+      let(:legacy_case) { legacy_nonpriority_cases.second }
 
       before do
         @raven_called = false
         distribution = create(:distribution, judge: judge)
-        # illegit because appeal has open tasks
-        create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case)
+        # illegit because appeal has completed hearing tasks
+        appeal = create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case)
+        appeal.tasks.open.where.not(type: RootTask.name).each(&:completed!)
         create_nonpriority_distributed_case(distribution, case_id, legacy_case.bfdloout)
         distribution.update!(status: "completed", completed_at: today)
         allow(Raven).to receive(:capture_exception) { @raven_called = true }
@@ -267,10 +283,11 @@ describe Distribution, :all_dbs do
         expect(subject.error?).to eq(false)
         expect(@raven_called).to eq(true)
         expect(subject.distributed_cases.pluck(:case_id)).to_not include(case_id)
+        expect(legacy_case.reload.bfcurloc).to eq(previous_location)
       end
     end
 
-    context "when a legit nonpriority legacy case re-distribtution is attempted" do
+    context "when a legit nonpriority legacy case re-distribution is attempted" do
       let(:case_id) { legacy_case.bfkey }
       let(:legacy_case) { legacy_nonpriority_cases.first }
       let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case) }
@@ -292,6 +309,7 @@ describe Distribution, :all_dbs do
         expect(subject.distributed_cases.pluck(:case_id)).to include(case_id)
         expect(DistributedCase.find_by(case_id: case_id)).to_not be_nil
         expect(DistributedCase.find_by(case_id: original_distributed_case_id)).to_not be_nil
+        expect(legacy_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
       end
     end
 
@@ -307,7 +325,7 @@ describe Distribution, :all_dbs do
       )
     end
 
-    context "when an illegit priority legacy case re-distribtution is attempted" do
+    context "when an illegit priority legacy case re-distribution is attempted" do
       let(:case_id) { legacy_case.bfkey }
       let(:legacy_case) { legacy_priority_cases.last }
 
@@ -325,12 +343,13 @@ describe Distribution, :all_dbs do
         subject.distribute!
         expect(subject.valid?).to eq(true)
         expect(subject.error?).to eq(false)
-        expect(@raven_called).to eq(true)
+        expect(@raven_called).to eq(false)
         expect(subject.distributed_cases.pluck(:case_id)).to_not include(case_id)
+        expect(legacy_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
       end
     end
 
-    context "when a legit priority legacy case re-distribtution is attempted" do
+    context "when a legit priority legacy case re-distribution is attempted" do
       let(:case_id) { legacy_case.bfkey }
       let(:legacy_case) { legacy_priority_cases.last }
       let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case) }
@@ -352,6 +371,7 @@ describe Distribution, :all_dbs do
         expect(subject.distributed_cases.pluck(:case_id)).to include(case_id)
         expect(DistributedCase.find_by(case_id: case_id)).to_not be_nil
         expect(DistributedCase.find_by(case_id: original_distributed_case_id)).to_not be_nil
+        expect(legacy_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
       end
     end
 
@@ -411,9 +431,16 @@ describe Distribution, :all_dbs do
   end
 
   context "validations" do
-    subject { Distribution.create(judge: user) }
+    shared_examples "passes validations" do
+      it "is valid" do
+        expect(subject.valid?).to be true
+      end
+    end
+
+    subject { Distribution.create(judge: user, priority_push: priority_push) }
 
     let(:user) { judge }
+    let(:priority_push) { false }
 
     context "existing Distribution record with status pending" do
       let!(:existing_distribution) { create(:distribution, judge: judge) }
@@ -421,6 +448,12 @@ describe Distribution, :all_dbs do
       it "prevents new Distribution record" do
         expect(subject.errors.details).to have_key(:judge)
         expect(subject.errors.details[:judge]).to include(error: :pending_distribution)
+      end
+
+      context "when the priority_push is not the same" do
+        let!(:existing_distribution) { create(:distribution, judge: judge, priority_push: true) }
+
+        it_behaves_like "passes validations"
       end
     end
 
@@ -431,12 +464,18 @@ describe Distribution, :all_dbs do
         expect(subject.errors.details).to have_key(:judge)
         expect(subject.errors.details[:judge]).to include(error: :pending_distribution)
       end
+
+      context "when the priority_push is not the same" do
+        let!(:existing_distribution) { create(:distribution, judge: judge, status: :started, priority_push: true) }
+
+        it_behaves_like "passes validations"
+      end
     end
 
     context "when the user is not a judge in VACOLS" do
       let(:user) { create(:user) }
 
-      it "does not validate" do
+      it "is invalid" do
         expect(subject.errors.details).to have_key(:judge)
         expect(subject.errors.details[:judge]).to include(error: :not_judge)
       end
@@ -448,7 +487,7 @@ describe Distribution, :all_dbs do
         3.times { create(:ama_judge_assign_task, assigned_to: judge, assigned_at: Time.zone.today) }
       end
 
-      it "validates" do
+      it "is valid" do
         expect(subject.errors.details).not_to have_key(:judge)
       end
     end
@@ -459,27 +498,45 @@ describe Distribution, :all_dbs do
         4.times { create(:ama_judge_assign_task, assigned_to: judge, assigned_at: Time.zone.today) }
       end
 
-      it "does not validate" do
+      it "is invalid" do
         expect(subject.errors.details).to have_key(:judge)
         expect(subject.errors.details[:judge]).to include(error: :too_many_unassigned_cases)
+      end
+
+      context "when priority_push is true" do
+        let(:priority_push) { true }
+
+        it_behaves_like "passes validations"
       end
     end
 
     context "when the judge has an appeal that has waited more than 30 days" do
       let!(:task) { create(:ama_judge_assign_task, assigned_to: judge, assigned_at: 31.days.ago) }
 
-      it "does not validate" do
+      it "is invalid" do
         expect(subject.errors.details).to have_key(:judge)
         expect(subject.errors.details[:judge]).to include(error: :unassigned_cases_waiting_too_long)
+      end
+
+      context "when priority_push is true" do
+        let(:priority_push) { true }
+
+        it_behaves_like "passes validations"
       end
     end
 
     context "when the judge has a legacy appeal that has waited more than 30 days" do
       let!(:task) { create(:case, bfcurloc: vacols_judge.slogid, bfdloout: 31.days.ago) }
 
-      it "does not validate" do
+      it "is invalid" do
         expect(subject.errors.details).to have_key(:judge)
         expect(subject.errors.details[:judge]).to include(error: :unassigned_cases_waiting_too_long)
+      end
+
+      context "when priority_push is true" do
+        let(:priority_push) { true }
+
+        it_behaves_like "passes validations"
       end
     end
   end

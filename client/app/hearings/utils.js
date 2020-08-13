@@ -225,11 +225,7 @@ export const toggleCancelled = (first, second, form) =>
  */
 export const getChanges = (first, second) => {
   // Handle cancelled status
-  const { init, current } = toggleCancelled(
-    first,
-    second,
-    'virtualHearingForm'
-  );
+  const { init, current } = toggleCancelled(first, second, 'virtualHearing');
 
   return deepDiff(init, current);
 };
@@ -245,28 +241,42 @@ export const getOptionsFromObject = (object, noneOption, transformer) =>
 
 /**
  * Method to get the Timezone label of a Timezone value
- * @param {string} tz -- Key of the Timezone to get the label
+ * @param {string} time -- The time to which the zone is being added
+ * @param {string} name -- Name of the zone, defaults to New York
  * @returns {string} -- The label of the timezone
  */
-export const zoneName = (name) => {
-  // Filter the zone name
-  const [zone] = Object.keys(TIMEZONES).filter((tz) => TIMEZONES[tz] === name);
+export const zoneName = (time, name, format) => {
+  // Default to using America/New_York
+  const timezone = name ? name : COMMON_TIMEZONES[3];
 
-  // Return the friendly zone name
-  return zone;
+  // Filter the zone name
+  const [zone] = Object.keys(TIMEZONES).filter((tz) => TIMEZONES[tz] === timezone);
+
+  // Set the label
+  const label = format ? '' : zone;
+
+  // Return the value if it is not a valid time
+  return moment(time, 'h:mm A').isValid() ? `${moment(time, 'h:mm a').tz(timezone).
+    format(`h:mm A ${format || ''}`)}${label}` : time;
 };
 
 /**
  * Method to add timezone to the label of the time
  * @returns {Array} -- List of hearing times with the zone appended to the label
  */
-export const hearingTimeOptsWithZone = () =>
-  HEARING_TIME_OPTIONS.map((time) => ({
-    ...time,
-    label: `${moment(time.label, 'h:mm A').format('h:mm A')} ${zoneName(
-      COMMON_TIMEZONES[0]
-    )}`
-  }));
+export const hearingTimeOptsWithZone = (options, zone) =>
+  options.map((time) => {
+    const label = time.label ? 'label' : 'displayText';
+
+    // Default to using EST for all times before conversion
+    moment.tz.setDefault(zone === true ? 'America/New_York' : zone);
+
+    return {
+      ...time,
+      [label]: zoneName(time[label], zone === true ? '' : zone)
+
+    };
+  });
 
 /**
  * Method to normalize the Regional Office Timezone names

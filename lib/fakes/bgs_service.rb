@@ -387,7 +387,7 @@ class Fakes::BGSService
 
   def build_ratings_in_range(all_ratings, start_date, end_date)
     ratings = all_ratings.select do |rating|
-      start_date <= rating[:prmlgn_dt] && end_date >= rating[:prmlgn_dt]
+      rating[:prmlgn_dt].nil? || (start_date <= rating[:prmlgn_dt] && end_date >= rating[:prmlgn_dt])
     end
 
     # BGS returns the data not as an array if there is only one rating

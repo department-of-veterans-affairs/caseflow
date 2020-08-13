@@ -94,12 +94,8 @@ feature "Higher-Level Review", :all_dbs do
 
     expect(page).to have_current_path("/intake/review_request")
 
-    fill_in "What is the Receipt Date of this form?", with: Time.zone.tomorrow.mdY
     click_intake_continue
 
-    expect(page).to have_content(
-      "Receipt date cannot be in the future."
-    )
     expect(page).to have_content(
       "What is the Benefit Type?\nPlease select an option."
     )
@@ -119,8 +115,6 @@ feature "Higher-Level Review", :all_dbs do
     within_fieldset("What is the Benefit Type?") do
       find("label", text: "Fiduciary", match: :prefer_exact).click
     end
-
-    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
     within_fieldset("Was an informal conference requested?") do
       find("label", text: "Yes", match: :prefer_exact).click
@@ -153,10 +147,10 @@ feature "Higher-Level Review", :all_dbs do
     click_intake_continue
 
     expect(page).to have_content(
-      "If you do not see the claimant in the options below or if the claimant's information needs updated,"
+      "If you do not see the claimant in the options below or if the claimant's information needs to be updated, please"
     )
     expect(page).to have_content(
-      "What is the payee code for this claimant?\nPlease select an option."
+      "Please select an option.\nBob Vance, Spouse"
     )
 
     find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
@@ -165,6 +159,16 @@ feature "Higher-Level Review", :all_dbs do
     find("#cf-payee-code").send_keys :enter
 
     select_agree_to_withdraw_legacy_issues(false)
+
+    fill_in "What is the Receipt Date of this form?", with: Time.zone.tomorrow.mdY
+
+    click_intake_continue
+
+    expect(page).to have_content(
+      "Receipt date cannot be in the future."
+    )
+
+    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
     click_intake_continue
 
@@ -491,8 +495,7 @@ feature "Higher-Level Review", :all_dbs do
     test_veteran,
     is_comp: true,
     claim_participant_id: nil,
-    legacy_opt_in_approved: false,
-    veteran_is_not_claimant: false
+    legacy_opt_in_approved: false
   )
 
     higher_level_review = HigherLevelReview.create!(
@@ -501,7 +504,7 @@ feature "Higher-Level Review", :all_dbs do
       informal_conference: false, same_office: false,
       benefit_type: is_comp ? "compensation" : "education",
       legacy_opt_in_approved: legacy_opt_in_approved,
-      veteran_is_not_claimant: veteran_is_not_claimant
+      veteran_is_not_claimant: claim_participant_id.present?
     )
 
     intake = HigherLevelReviewIntake.create!(
@@ -510,11 +513,12 @@ feature "Higher-Level Review", :all_dbs do
       detail: higher_level_review
     )
 
-    Claimant.create!(
+    claimant_class = claim_participant_id.present? ? DependentClaimant : VeteranClaimant
+    participant_id = claim_participant_id || test_veteran.participant_id
+    claimant_class.create!(
       decision_review: higher_level_review,
-      participant_id: claim_participant_id || test_veteran.participant_id,
-      payee_code: claim_participant_id ? "02" : "00",
-      type: claim_participant_id ? "DependentClaimant" : "VeteranClaimant"
+      participant_id: participant_id,
+      payee_code: claim_participant_id.present? ? "02" : "00"
     )
 
     higher_level_review.start_review!
@@ -744,17 +748,14 @@ feature "Higher-Level Review", :all_dbs do
         relationship_type: "Spouse"
       )
 
-      higher_level_review, = start_higher_level_review(
-        veteran,
-        claim_participant_id: "5382910292",
-        veteran_is_not_claimant: true
-      )
+      higher_level_review, = start_higher_level_review(veteran, claim_participant_id: "5382910292")
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add / Remove Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Bob Vance, Spouse (payee code 02)")
+      check_row("SOC/SSOC Opt-in", "No")
 
       # clicking the add issues button should bring up the modal
       click_intake_add_issue
@@ -1107,11 +1108,7 @@ feature "Higher-Level Review", :all_dbs do
       end
 
       scenario "the issue is ineligible" do
-        start_higher_level_review(
-          veteran,
-          claim_participant_id: "5382910292",
-          veteran_is_not_claimant: false
-        )
+        start_higher_level_review(veteran)
         visit "/intake/add_issues"
 
         expect(page).to have_content("Add / Remove Issues")
@@ -1297,6 +1294,8 @@ feature "Higher-Level Review", :all_dbs do
         scenario "adding issues" do
           start_higher_level_review(veteran, legacy_opt_in_approved: true)
           visit "/intake/add_issues"
+
+          check_row("SOC/SSOC Opt-in", "Yes")
 
           click_intake_add_issue
           expect(page).to have_content("Next")

@@ -222,6 +222,34 @@ class LegacyAppeal < CaseflowRecord
     (decision_date + 120.days).to_date
   end
 
+  def appellant_tz
+    return if appellant_address.blank?
+
+    # Use an address object if this is a hash
+    address = appellant_address.is_a?(Hash) ? Address.new(appellant_address) : appellant_address
+
+    begin
+      TimezoneService.address_to_timezone(address).identifier
+    rescue StandardError => error
+      Raven.capture_exception(error)
+      nil
+    end
+  end
+
+  def representative_tz
+    return if representative_address.blank?
+
+    # Use an address object if this is a hash
+    address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
+
+    begin
+      TimezoneService.address_to_timezone(address).identifier
+    rescue StandardError => error
+      Raven.capture_exception(error)
+      nil
+    end
+  end
+
   def appellant_address
     appellant_address_from_bgs = bgs_address_service&.address
 
@@ -608,6 +636,10 @@ class LegacyAppeal < CaseflowRecord
 
   def merged?
     disposition == "Merged Appeal"
+  end
+
+  def advance_failure_to_respond?
+    disposition == "Advance Failure to Respond"
   end
 
   def special_issues
@@ -1041,6 +1073,14 @@ class LegacyAppeal < CaseflowRecord
       end
     end
 
+    def opt_in_decided_appeal(appeal:, user:, closed_on:)
+      repository.opt_in_decided_appeal!(
+        appeal: appeal,
+        user: user,
+        closed_on: closed_on
+      )
+    end
+
     def certify(appeal)
       form8 = Form8.find_by(vacols_id: appeal.vacols_id)
       # `find_by_vacols_id` filters out any cancelled certifications,
@@ -1092,6 +1132,17 @@ class LegacyAppeal < CaseflowRecord
 
     def nonpriority_decisions_per_year
       repository.nonpriority_decisions_per_year
+    end
+
+    def rollback_opt_in_on_decided_appeal(appeal:, user:, original_data:)
+      opt_in_disposition = Constants::VACOLS_DISPOSITIONS_BY_ID[LegacyIssueOptin::VACOLS_DISPOSITION_CODE]
+      return unless appeal.disposition == opt_in_disposition
+
+      repository.rollback_opt_in_on_decided_appeal!(
+        appeal: appeal,
+        user: user,
+        original_data: original_data
+      )
     end
 
     private

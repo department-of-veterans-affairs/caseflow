@@ -156,6 +156,14 @@ class DecisionReview < CaseflowRecord
     claimant&.participant_id
   end
 
+  def claimant_type
+    claimant_class_name&.sub(/Claimant$/, "")&.downcase
+  end
+
+  def claimant_class_name
+    claimant&.type
+  end
+
   def finalized_decision_issues_before_receipt_date
     fail NotImplementedError
   end

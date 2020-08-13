@@ -13,7 +13,8 @@ import Checkbox from '../../components/Checkbox';
 import TextareaField from '../../components/TextareaField';
 
 const relationshipOpts = [
-  { label: 'Attorney (previously or currently)', value: 'attorney' }
+  { label: 'Attorney (previously or currently)', value: 'attorney' },
+  { label: 'Other', value: 'other' },
 ];
 
 const fetchAttorneys = async (search = '') => {
@@ -32,7 +33,7 @@ const getClaimantOpts = async (search = '', asyncFn) => {
   const res = await asyncFn(search);
   const options = res.map((item) => ({
     label: item.name,
-    value: item.participant_id
+    value: item.participant_id,
   }));
 
   return options;
@@ -43,19 +44,21 @@ const filterOption = () => true;
 export const AddClaimantModal = ({
   onCancel,
   onSubmit,
-  onSearch = fetchAttorneys
+  onSearch = fetchAttorneys,
 }) => {
   const [claimant, setClaimant] = useState(null);
   const [relationship, setRelationship] = useState(relationshipOpts[0]);
-  const [unlistedClaimant, setNotClaimant] = useState(false);
+  const [unlistedClaimant, setUnlistedClaimant] = useState(false);
   const [claimantNotes, setClaimantNotes] = useState('');
   const isInvalid = useMemo(() => {
-    return (!unlistedClaimant && !claimant) || (unlistedClaimant && !claimantNotes);
+    return (
+      (!unlistedClaimant && !claimant) || (unlistedClaimant && !claimantNotes)
+    );
   }, [claimant, unlistedClaimant, claimantNotes]);
 
   const handleChangeRelationship = (value) => setRelationship(value);
   const handleChangeClaimant = (value) => setClaimant(value);
-  const handleNotClaimant = (value) => setNotClaimant(value);
+  const handleNotListed = (value) => setUnlistedClaimant(value);
   const handleClaimantNotes = (value) => setClaimantNotes(value);
 
   const asyncFn = useCallback(
@@ -69,20 +72,32 @@ export const AddClaimantModal = ({
     {
       classNames: ['cf-modal-link', 'cf-btn-link'],
       name: 'Cancel',
-      onClick: onCancel
+      onClick: onCancel,
     },
     {
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Add this claimant',
-      onClick: () => onSubmit({ name: claimant?.label, participantId: claimant?.value, claimantNotes }),
-      disabled: isInvalid
-    }
+      onClick: () =>
+        onSubmit({
+          name: claimant?.label,
+          participantId: claimant?.value,
+          claimantType: relationship?.value,
+          claimantNotes,
+        }),
+      disabled: isInvalid,
+    },
   ];
 
   useEffect(() => {
     if (!unlistedClaimant) {
-      return handleClaimantNotes('');
+      setClaimantNotes('');
     }
+
+    // For now, this can only be either 'attorney' or 'other';
+    // will need to change logic when others are available
+    setRelationship(
+      unlistedClaimant ? relationshipOpts[1] : relationshipOpts[0]
+    );
   }, [unlistedClaimant]);
 
   return (
@@ -102,6 +117,7 @@ export const AddClaimantModal = ({
         value={relationship}
         options={relationshipOpts}
         debounce={250}
+        readOnly
         strongLabel
       />
       <SearchableDropdown
@@ -119,18 +135,22 @@ export const AddClaimantModal = ({
 
       <Checkbox
         label="Claimant not listed"
-        name="noClaimant"
-        onChange={handleNotClaimant}
+        name="notListed"
+        onChange={handleNotListed}
         value={unlistedClaimant}
       />
       {unlistedClaimant && (
         <TextareaField
-          label= {<span><b>Notes</b> e.g. claimant's name, address, law firm</span>}
+          label={
+            <span>
+              <b>Notes</b> e.g. claimant's name, address, law firm
+            </span>
+          }
           name="notes"
           value={claimantNotes}
-          onChange={handleClaimantNotes} />
+          onChange={handleClaimantNotes}
+        />
       )}
-
     </Modal>
   );
 };
@@ -139,5 +159,5 @@ AddClaimantModal.propTypes = {
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
   onSearch: PropTypes.func,
-  readOnly: PropTypes.bool
+  readOnly: PropTypes.bool,
 };
