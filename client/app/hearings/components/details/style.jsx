@@ -157,3 +157,23 @@ export const virtualHearingModalStyles = css({
     margin: '5px 0'
   }
 });
+
+export const regionalOfficeSection = css({
+  lineHeight: '200%',
+  '& .cf-form-radio-option': {
+    lineHeight: '100%'
+  },
+  '& .usa-input-error-message': {
+    margin: '10px 0',
+  },
+  '& .usa-input-error': {
+    lineHeight: '100%',
+    margin: 0,
+    paddingLeft: 15
+  },
+  '& pre': {
+    margin: 0,
+    lineHeight: '125%'
+  }
+})
+;

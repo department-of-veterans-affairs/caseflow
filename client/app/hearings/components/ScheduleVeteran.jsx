@@ -11,12 +11,12 @@ import { AddressLine } from './details/Address';
 import { getAppellantTitleForHearing } from '../utils';
 import { ReadOnly } from './details/ReadOnly';
 import HearingTypeDropdown from './details/HearingTypeDropdown';
-import { marginTop, virtualHearingModalStyles } from './details/style';
+import { marginTop, regionalOfficeSection } from './details/style';
 import { HearingTime } from './modalForms/HearingTime';
 import Button from '../../components/Button';
 import { css } from 'glamor';
 
-export const ScheduleVeteran = ({ appeal, hearing, ...props }) => {
+export const ScheduleVeteran = ({ appeal, hearing, errors, ...props }) => {
   const appellantTitle = getAppellantTitleForHearing(hearing);
   const ro = appeal.regionalOffice || hearing.regionalOffice;
   const location = appeal.hearingLocation || hearing.location;
@@ -32,7 +32,7 @@ export const ScheduleVeteran = ({ appeal, hearing, ...props }) => {
   };
 
   return (
-    <React.Fragment>
+    <div {...regionalOfficeSection}>
       <AppSegment filledBackground >
         <h1>{header}</h1>
         <div {...marginTop(45)} />
@@ -48,18 +48,21 @@ export const ScheduleVeteran = ({ appeal, hearing, ...props }) => {
         {virtual ? (
           <React.Fragment>
 
-            <div className="usa-width-one-half" {...virtualHearingModalStyles}>
+            <div className="usa-width-one-half" >
               <ReadOnly spacing={0} label="Regional Office" text={appeal.regionalOffice} />
               <ReadOnly spacing={25} label="Hearing Location" text={appeal.hearingLocation?.name} />
 
             </div>
-            <div className="usa-width-one-half">
+            <div {...marginTop(25)} className="usa-width-one-half">
               <HearingDateDropdown
+                errorMessage={errors?.hearingDay}
                 key={`hearingDate__${ro}`}
                 regionalOffice={ro}
                 value={appeal.hearingDay}
                 onChange={(hearingDay) => props.onChange('appeal', { hearingDay })}
               />
+            </div>
+            <div {...marginTop(25)} className="usa-width-one-half" >
               <HearingTime
                 vertical
                 label="Hearing Time"
@@ -72,7 +75,7 @@ export const ScheduleVeteran = ({ appeal, hearing, ...props }) => {
           </React.Fragment>
         ) : (
           <div className="usa-width-one-half">
-            <div {...virtualHearingModalStyles}>
+            <div >
               <ReadOnly spacing={0} label={`${appellantTitle} Address`} text={
                 <AddressLine
                   spacing={5}
@@ -92,6 +95,7 @@ export const ScheduleVeteran = ({ appeal, hearing, ...props }) => {
             {ro && (
               <React.Fragment>
                 <AppealHearingLocationsDropdown
+                  errorMessage={errors?.hearingLocation}
                   key={`hearingLocation__${ro}`}
                   regionalOffice={ro}
                   appealId={appeal.externalId}
@@ -134,7 +138,7 @@ export const ScheduleVeteran = ({ appeal, hearing, ...props }) => {
           Schedule
         </Button>
       </span>
-    </React.Fragment>
+    </div>
   );
 };
 
@@ -144,6 +148,7 @@ ScheduleVeteran.propTypes = {
   goBack: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
   appeal: PropTypes.object,
+  errors: PropTypes.object,
   hearing: PropTypes.object
 };
 

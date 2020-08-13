@@ -75,6 +75,18 @@ VirtualConversion.args = {
   appeal: {
     ...amaAppeal,
     regionalOffice: defaultHearing.regionalOfficeKey,
-    hearingLocation: scheduleHearingDetails.hearingLocation
+    hearingLocation: scheduleHearingDetails.hearingLocation }
+};
+
+export const WithErrors = Template.bind({});
+WithErrors.args = {
+  appeal: {
+    ...amaAppeal,
+    regionalOffice: defaultHearing.regionalOfficeKey
+  },
+  errors: {
+    hearingLocation: 'Unknown Hearing Location',
+    hearingDay: 'Cannot find hearing day',
+    scheduledTimeString: 'Invalid time selected',
   }
 };
