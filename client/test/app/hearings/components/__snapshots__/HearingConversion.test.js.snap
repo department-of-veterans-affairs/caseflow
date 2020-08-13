@@ -48875,7 +48875,7 @@ exports[`HearingConversion Video Hearings Displays regional office name and hear
         Convert to Virtual
       </h1>
       <span>
-        Emails will be sent to the Veteran and POA / Representative to notify them that their virtual hearing link is no longer valid and they must appear in-person at their designated Regional Office or alternate hearing location.
+        Emails will be sent to the Appellant and POA / Representative to notify them that their virtual hearing link is no longer valid and they must appear in-person at their designated Regional Office or alternate hearing location.
       </span>
       <ReadOnly
         label="Hearing Date"
@@ -54726,7 +54726,7 @@ exports[`HearingConversion Video Hearings Displays regional office time and cent
         Convert to Virtual
       </h1>
       <span>
-        Email notifications will be sent to the Veteran, POA / Representative, and Veterans Law Judge (VLJ).
+        Email notifications will be sent to the Appellant, POA / Representative, and Veterans Law Judge (VLJ).
       </span>
       <ReadOnly
         label="Hearing Date"
