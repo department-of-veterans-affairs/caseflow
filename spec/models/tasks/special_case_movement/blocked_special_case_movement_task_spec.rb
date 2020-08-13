@@ -38,10 +38,10 @@ describe BlockedSpecialCaseMovementTask do
         let(:dist_task) { appeal.tasks.active.where(type: DistributionTask.name).first }
 
         context "with no blocking tasks" do
-          it_behaves_like "completed distribution and at JudgeAssign"
+          it_behaves_like "successful creation"
         end
 
-        it_behaves_like "succeeds when there's a nonblocking mail task"
+        it_behaves_like "appeal has a nonblocking mail task"
 
         context "with (dispatch) blocking mail task" do
           before do
@@ -52,7 +52,7 @@ describe BlockedSpecialCaseMovementTask do
                    appeal: appeal,
                    parent: dist_task)
           end
-          it_behaves_like "completed distribution and at JudgeAssign"
+          it_behaves_like "successful creation"
           it_behaves_like "cancelled distribution children"
         end
 
@@ -62,7 +62,7 @@ describe BlockedSpecialCaseMovementTask do
                    appeal: appeal,
                    parent: dist_task)
           end
-          it_behaves_like "completed distribution and at JudgeAssign"
+          it_behaves_like "successful creation"
           it_behaves_like "cancelled distribution children"
         end
       end
@@ -76,18 +76,18 @@ describe BlockedSpecialCaseMovementTask do
         let(:dist_task) { appeal.tasks.open.where(type: DistributionTask.name).first }
 
         context "with distribution task on_hold" do
-          it_behaves_like "completed distribution and at JudgeAssign"
+          it_behaves_like "successful creation"
           it_behaves_like "cancelled distribution children"
         end
 
-        it_behaves_like "wrong parent task type"
+        it_behaves_like "wrong parent task type provided"
       end
 
-      it_behaves_like "appeal past distribution fails" do
+      it_behaves_like "appeal past distribution" do
         let(:expected_error) { Caseflow::Error::IneligibleForBlockedSpecialCaseMovement }
       end
     end
 
-    it_behaves_like "fails with wrong user"
+    it_behaves_like "non Case Movement user provided"
   end
 end

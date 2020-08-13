@@ -19,7 +19,6 @@ class BlockedSpecialCaseMovementTask < SpecialCaseMovementTask
   end
 
   def verify_appeal_distributable
-    # for us this means there is an open distribution task - right?
     if DistributionTask.open.where(appeal: appeal).empty?
       fail(Caseflow::Error::IneligibleForBlockedSpecialCaseMovement, appeal_id: appeal.id)
     end
