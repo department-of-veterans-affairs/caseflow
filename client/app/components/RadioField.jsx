@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import classNames from 'classnames';
@@ -16,7 +16,7 @@ const RadioFieldHelpText = ({ help, className }) => {
 
 RadioFieldHelpText.propTypes = {
   help: PropTypes.string.isRequired,
-  className: PropTypes.string
+  className: PropTypes.string,
 };
 
 /**
@@ -26,77 +26,87 @@ RadioFieldHelpText.propTypes = {
  *
  */
 
-export class RadioField extends React.Component {
-  isVertical() {
-    return this.props.vertical || this.props.options.length > 2;
-  }
+export const RadioField = (props) => {
+  const {
+    id,
+    className,
+    label,
+    name,
+    options,
+    value,
+    onChange,
+    required,
+    errorMessage,
+    strongLabel,
+    hideLabel,
+    styling,
+    vertical
+  } = props;
 
-  render() {
-    const {
-      id,
-      className,
-      label,
-      name,
-      options,
-      value,
-      onChange,
-      required,
-      errorMessage,
-      strongLabel,
-      hideLabel,
-      styling
-    } = this.props;
+  const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
+    vertical,
+    options,
+  ]);
 
-    const radioClass = className.
-      concat(this.isVertical() ? 'cf-form-radio' : 'cf-form-radio-inline').
-      concat(errorMessage ? 'usa-input-error' : '');
+  const radioClass = className.
+    concat(isVertical ? 'cf-form-radio' : 'cf-form-radio-inline').
+    concat(errorMessage ? 'usa-input-error' : '');
 
-    const labelClass = hideLabel ? 'usa-sr-only' : '';
+  const labelClass = hideLabel ? 'usa-sr-only' : '';
 
-    // Since HTML5 IDs should not contain spaces...
-    const idPart = StringUtil.html5CompliantId(id || name);
+  // Since HTML5 IDs should not contain spaces...
+  const idPart = StringUtil.html5CompliantId(id || name);
 
-    const labelContents = (
-      <span>
-        {label || name} {required && <RequiredIndicator />}
-      </span>
-    );
+  const labelContents = (
+    <span>
+      {label || name} {required && <RequiredIndicator />}
+    </span>
+  );
 
-    return (
-      <fieldset className={radioClass.join(' ')} {...styling}>
-        <legend className={labelClass}>{strongLabel ? <strong>{labelContents}</strong> : labelContents}</legend>
+  return (
+    <fieldset className={radioClass.join(' ')} {...styling}>
+      <legend className={labelClass}>
+        {strongLabel ? <strong>{labelContents}</strong> : labelContents}
+      </legend>
 
-        {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
+      {errorMessage && (
+        <span className="usa-input-error-message">{errorMessage}</span>
+      )}
 
-        <div className="cf-form-radio-options">
-          {options.map((option, i) => (
-            <div className="cf-form-radio-option" key={`${idPart}-${option.value}-${i}`}>
-              <input
-                name={name}
-                onChange={(event) => {
-                  onChange(event.target.value);
-                }}
-                type="radio"
-                id={`${idPart}_${option.value}`}
-                value={option.value}
-                checked={value === option.value}
-                disabled={Boolean(option.disabled)}
-              />
-              <label className={option.disabled ? 'disabled' : ''} htmlFor={`${idPart}_${option.value}`}>
-                {option.displayText || option.displayElem}
-              </label>
-              {option.help && <RadioFieldHelpText help={option.help} />}
-            </div>
-          ))}
-        </div>
-      </fieldset>
-    );
-  }
-}
+      <div className="cf-form-radio-options">
+        {options.map((option, i) => (
+          <div
+            className="cf-form-radio-option"
+            key={`${idPart}-${option.value}-${i}`}
+          >
+            <input
+              name={name}
+              onChange={(event) => {
+                onChange(event.target.value);
+              }}
+              type="radio"
+              id={`${idPart}_${option.value}`}
+              value={option.value}
+              checked={value === option.value}
+              disabled={Boolean(option.disabled)}
+            />
+            <label
+              className={option.disabled ? 'disabled' : ''}
+              htmlFor={`${idPart}_${option.value}`}
+            >
+              {option.displayText || option.displayElem}
+            </label>
+            {option.help && <RadioFieldHelpText help={option.help} />}
+          </div>
+        ))}
+      </div>
+    </fieldset>
+  );
+};
 
 RadioField.defaultProps = {
   required: false,
-  className: ['usa-fieldset-inputs']
+  className: ['usa-fieldset-inputs'],
 };
 
 RadioField.propTypes = {
@@ -110,7 +120,7 @@ RadioField.propTypes = {
     PropTypes.shape({
       displayText: PropTypes.node,
       value: PropTypes.string,
-      help: PropTypes.string
+      help: PropTypes.string,
     })
   ),
   value: PropTypes.string,
@@ -118,7 +128,7 @@ RadioField.propTypes = {
   errorMessage: PropTypes.string,
   strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
-  styling: PropTypes.object
+  styling: PropTypes.object,
 };
 
 export default RadioField;
