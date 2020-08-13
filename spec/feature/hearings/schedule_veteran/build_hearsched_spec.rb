@@ -110,7 +110,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
     let!(:veteran) { create(:veteran, file_number: "123456789") }
     let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
-    let(:room_label) { HearingDayMapper.label_for_room(hearing_day.room) }
+    let(:room_label) { HearingRooms.find!(hearing_day.room)&.label }
 
     scenario "Schedule Veteran for video" do
       cache_appeals
