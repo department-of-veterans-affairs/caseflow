@@ -88,6 +88,7 @@ export const RadioField = (props) => {
               type="radio"
               id={`${idPart}_${option.value}`}
               value={option.value}
+              // eslint-disable-next-line no-undefined
               checked={controlled ? value === option.value : undefined}
               disabled={Boolean(option.disabled)}
             />
