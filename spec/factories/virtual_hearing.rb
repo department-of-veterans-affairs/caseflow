@@ -14,6 +14,8 @@ FactoryBot.define do
     appellant_email_sent { false }
     representative_email { "caseflow-representative@test.com" }
     representative_email_sent { false }
+    appellant_tz { nil }
+    representative_tz { nil }
     association :created_by, factory: :user
     association :updated_by, factory: :user
     establishment { nil }
@@ -27,6 +29,11 @@ FactoryBot.define do
       alias_name { rand(1..9).to_s[0..6] }
       conference_id { rand(1..9) }
       before(:create, &:generate_conference_pins)
+    end
+
+    trait :previously_central do
+      appellant_tz { "America/Denver" }
+      representative_tz { "America/Los_Angeles" }
     end
 
     trait :all_emails_sent do

@@ -485,8 +485,8 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
     end
 
     context "Special issue validation" do
-      before { FeatureToggle.enable!(:special_issues_revamp) }
-      after { FeatureToggle.disable!(:special_issues_revamp) }
+      before { FeatureToggle.enable!(:special_issues_revamp_dispatch, users: [current_user.css_id]) }
+      after { FeatureToggle.disable!(:special_issues_revamp_dispatch) }
 
       let!(:task) do
         create(:establish_claim,
@@ -506,6 +506,16 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
         # Error!
         expect(page).to have_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_TITLE)
         expect(page).to have_content(COPY::SPECIAL_ISSUES_NONE_CHOSEN_DETAIL)
+
+        # Selecting No Special Issues clears & disables other checkboxes
+        click_label("blueWater")
+        expect(page.find("#blueWater", visible: false).checked?).to eq true
+        click_label("noSpecialIssues")
+        expect(page.find("#blueWater", visible: false).checked?).to eq false
+        expect(page.find("#blueWater", visible: false).disabled?).to eq true
+        click_label("noSpecialIssues")
+        expect(page.find("#blueWater", visible: false).checked?).to eq false
+        expect(page.find("#blueWater", visible: false).disabled?).to eq false
 
         # Select no special issues and move forward
         click_label("noSpecialIssues")

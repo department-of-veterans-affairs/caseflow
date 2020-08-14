@@ -3,15 +3,11 @@ import React, { useContext } from 'react';
 
 import { ContentSection } from '../../../components/ContentSection';
 import { EmailNotificationHistory } from './EmailNotificationHistory';
-import {
-  HearingsFormContext,
-  UPDATE_HEARING_DETAILS
-} from '../../contexts/HearingsFormContext';
 import { HearingsUserContext } from '../../contexts/HearingsUserContext';
 import {
   JudgeDropdown,
   HearingCoordinatorDropdown,
-  HearingRoomDropdown
+  HearingRoomDropdown,
 } from '../../../components/DataDropdowns/index';
 import { TranscriptionFormSection } from './TranscriptionFormSection';
 import { VirtualHearingForm } from './VirtualHearingForm';
@@ -22,19 +18,28 @@ import TextareaField from '../../../components/TextareaField';
 
 const DetailsForm = (props) => {
   const {
+    hearing,
+    update,
     isLegacy,
-    isVirtual,
     openVirtualHearingModal,
     readOnly,
     requestType,
-    wasVirtual,
     errors,
-    updateVirtualHearing
+    convertHearing,
   } = props;
-  const { userCanScheduleVirtualHearings } = useContext(HearingsUserContext);
-  const enableVirtualHearings = userCanScheduleVirtualHearings && requestType !== 'Central';
-  const { state: { hearingForms }, dispatch } = useContext(HearingsFormContext);
-  const { hearingDetailsForm, virtualHearingForm, transcriptionDetailsForm } = hearingForms;
+
+  // Get the user permissions
+  const {
+    userCanScheduleVirtualHearings,
+    userCanConvertCentralHearings,
+    userUseFullPageVideoToVirtual
+  } = useContext(HearingsUserContext);
+
+  // Set whether to enable virtual hearings
+  const enableVirtualHearings =
+    requestType === 'Central' ?
+      userCanConvertCentralHearings :
+      userCanScheduleVirtualHearings;
 
   return (
     <React.Fragment>
@@ -42,53 +47,55 @@ const DetailsForm = (props) => {
         <div {...rowThirds}>
           <JudgeDropdown
             name="judgeDropdown"
-            value={hearingDetailsForm?.judgeId}
+            value={hearing?.judgeId}
             readOnly={readOnly}
-            onChange={(judgeId) => dispatch({ type: UPDATE_HEARING_DETAILS, payload: { judgeId } })}
+            onChange={(judgeId) => update('hearing', { judgeId })}
           />
           <HearingCoordinatorDropdown
             name="hearingCoordinatorDropdown"
-            value={hearingDetailsForm?.bvaPoc}
+            value={hearing?.bvaPoc}
             readOnly={readOnly}
-            onChange={(bvaPoc) => dispatch({ type: UPDATE_HEARING_DETAILS, payload: { bvaPoc } })}
+            onChange={(bvaPoc) => update('hearing', { bvaPoc })}
           />
           <HearingRoomDropdown
             name="hearingRoomDropdown"
-            value={hearingDetailsForm?.room}
+            value={hearing?.room}
             readOnly={readOnly}
-            onChange={(room) => dispatch({ type: UPDATE_HEARING_DETAILS, payload: { room } })}
+            onChange={(room) => update('hearing', { room })}
           />
         </div>
         <div {...rowThirds}>
-          {enableVirtualHearings &&
+          {enableVirtualHearings && (
             <HearingTypeDropdown
-              virtualHearing={virtualHearingForm}
+              enableFullPageConversion={userUseFullPageVideoToVirtual}
+              convertHearing={convertHearing}
+              virtualHearing={hearing?.virtualHearing}
               requestType={requestType}
-              updateVirtualHearing={updateVirtualHearing}
+              update={update}
               openModal={openVirtualHearingModal}
               readOnly={
-                hearingDetailsForm?.scheduledForIsPast ||
-                ((isVirtual || wasVirtual) &&
-                !virtualHearingForm?.jobCompleted)
+                hearing?.scheduledForIsPast ||
+                ((hearing?.isVirtual || hearing?.wasVirtual) &&
+                  !hearing?.virtualHearing?.jobCompleted)
               }
               styling={columnThird}
             />
-          }
+          )}
           <div>
-            {!isLegacy &&
+            {!isLegacy && (
               <React.Fragment>
                 <strong>Waive 90 Day Evidence Hold</strong>
                 <Checkbox
                   label="Yes, Waive 90 Day Evidence Hold"
                   name="evidenceWindowWaived"
                   disabled={readOnly}
-                  value={hearingDetailsForm?.evidenceWindowWaived || false}
-                  onChange={(evidenceWindowWaived) => dispatch(
-                    { type: UPDATE_HEARING_DETAILS, payload: { evidenceWindowWaived } }
-                  )}
+                  value={hearing?.evidenceWindowWaived || false}
+                  onChange={(evidenceWindowWaived) =>
+                    update('hearing', { evidenceWindowWaived })
+                  }
                 />
               </React.Fragment>
-            }
+            )}
           </div>
           <div />
         </div>
@@ -98,34 +105,33 @@ const DetailsForm = (props) => {
             strongLabel
             styling={maxWidthFormInput}
             disabled={readOnly}
-            value={hearingDetailsForm?.notes || ''}
-            onChange={(notes) => dispatch({ type: UPDATE_HEARING_DETAILS, payload: { notes } })}
+            value={hearing?.notes || ''}
+            onChange={(notes) => update('hearing', { notes })}
+            maxlength={1000}
           />
         </div>
       </ContentSection>
 
       <VirtualHearingForm
         errors={errors}
-        hearing={hearingDetailsForm}
-        isVirtual={isVirtual}
+        hearing={hearing}
         readOnly={readOnly}
-        virtualHearing={virtualHearingForm}
-        wasVirtual={wasVirtual}
-        dispatch={dispatch}
+        virtualHearing={hearing?.virtualHearing}
+        update={update}
       />
 
-      {hearingDetailsForm?.emailEvents.length > 0 &&
-        <EmailNotificationHistory rows={hearingDetailsForm?.emailEvents} />
-      }
+      {hearing?.emailEvents?.length > 0 && (
+        <EmailNotificationHistory rows={hearing?.emailEvents} />
+      )}
 
-      {!isLegacy &&
+      {!isLegacy && (
         <TranscriptionFormSection
-          hearing={hearingDetailsForm}
+          hearing={hearing}
           readOnly={readOnly}
-          transcription={transcriptionDetailsForm}
-          dispatch={dispatch}
+          transcription={hearing.transcription}
+          update={update}
         />
-      }
+      )}
     </React.Fragment>
   );
 };
@@ -133,15 +139,20 @@ const DetailsForm = (props) => {
 DetailsForm.propTypes = {
   errors: PropTypes.shape({
     appellantEmail: PropTypes.string,
-    representativeEmail: PropTypes.string
+    representativeEmail: PropTypes.string,
+  }),
+  hearing: PropTypes.shape({
+    virtualHearing: PropTypes.object,
+    transcription: PropTypes.object,
+    wasVirtual: PropTypes.bool,
+    isVirtual: PropTypes.bool,
   }),
   isLegacy: PropTypes.bool,
-  isVirtual: PropTypes.bool,
   openVirtualHearingModal: PropTypes.func,
   readOnly: PropTypes.bool,
   requestType: PropTypes.string,
-  updateVirtualHearing: PropTypes.func,
-  wasVirtual: PropTypes.bool
+  update: PropTypes.func,
+  convertHearing: PropTypes.func,
 };
 
 export default DetailsForm;

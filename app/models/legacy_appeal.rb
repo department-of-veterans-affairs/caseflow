@@ -106,9 +106,12 @@ class LegacyAppeal < CaseflowRecord
     (self.class.repository.remand_return_date(vacols_id) || false) unless active?
   end
 
-  # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
+  # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js 'specialIssue` value
   # rubocop:disable Metrics/LineLength
   SPECIAL_ISSUES = {
+    blue_water: "Blue Water",
+    burn_pit: "Burn Pit",
+    us_court_of_appeals_for_veterans_claims: "US Court of Appeals for Veterans Claims (CAVC)",
     contaminated_water_at_camp_lejeune: "Contaminated Water at Camp LeJeune",
     dic_death_or_accrued_benefits_united_states: "DIC - death, or accrued benefits - United States",
     education_gi_bill_dependents_educational_assistance_scholars: "Education - GI Bill, dependents educational assistance, scholarship, transfer of entitlement",
@@ -120,8 +123,10 @@ class LegacyAppeal < CaseflowRecord
     incarcerated_veterans: "Incarcerated Veterans",
     insurance: "Insurance",
     manlincon_compliance: "Manlincon Compliance",
+    military_sexual_trauma: "Military Sexual Trauma (MST)",
     mustard_gas: "Mustard Gas",
     national_cemetery_administration: "National Cemetery Administration",
+    no_special_issues: "No Special Issues",
     nonrating_issue: "Non-rating issue",
     pension_united_states: "Pension - United States",
     private_attorney_or_agent: "Private Attorney or Agent",
@@ -215,6 +220,34 @@ class LegacyAppeal < CaseflowRecord
     return unless decided_by_bva?
 
     (decision_date + 120.days).to_date
+  end
+
+  def appellant_tz
+    return if appellant_address.blank?
+
+    # Use an address object if this is a hash
+    address = appellant_address.is_a?(Hash) ? Address.new(appellant_address) : appellant_address
+
+    begin
+      TimezoneService.address_to_timezone(address).identifier
+    rescue StandardError => error
+      Raven.capture_exception(error)
+      nil
+    end
+  end
+
+  def representative_tz
+    return if representative_address.blank?
+
+    # Use an address object if this is a hash
+    address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
+
+    begin
+      TimezoneService.address_to_timezone(address).identifier
+    rescue StandardError => error
+      Raven.capture_exception(error)
+      nil
+    end
   end
 
   def appellant_address
@@ -603,6 +636,10 @@ class LegacyAppeal < CaseflowRecord
 
   def merged?
     disposition == "Merged Appeal"
+  end
+
+  def advance_failure_to_respond?
+    disposition == "Advance Failure to Respond"
   end
 
   def special_issues
@@ -1036,6 +1073,14 @@ class LegacyAppeal < CaseflowRecord
       end
     end
 
+    def opt_in_decided_appeal(appeal:, user:, closed_on:)
+      repository.opt_in_decided_appeal!(
+        appeal: appeal,
+        user: user,
+        closed_on: closed_on
+      )
+    end
+
     def certify(appeal)
       form8 = Form8.find_by(vacols_id: appeal.vacols_id)
       # `find_by_vacols_id` filters out any cancelled certifications,
@@ -1087,6 +1132,17 @@ class LegacyAppeal < CaseflowRecord
 
     def nonpriority_decisions_per_year
       repository.nonpriority_decisions_per_year
+    end
+
+    def rollback_opt_in_on_decided_appeal(appeal:, user:, original_data:)
+      opt_in_disposition = Constants::VACOLS_DISPOSITIONS_BY_ID[LegacyIssueOptin::VACOLS_DISPOSITION_CODE]
+      return unless appeal.disposition == opt_in_disposition
+
+      repository.rollback_opt_in_on_decided_appeal!(
+        appeal: appeal,
+        user: user,
+        original_data: original_data
+      )
     end
 
     private

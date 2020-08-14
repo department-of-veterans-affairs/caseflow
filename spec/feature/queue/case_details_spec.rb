@@ -257,6 +257,7 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to_not have_content("Regional Office")
       end
     end
+
     context "when veteran is in BGS" do
       let!(:appeal) do
         create(
@@ -302,6 +303,36 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to have_content(appeal.appellant_address_line_1)
         expect(page).to have_content(COPY::CASE_DETAILS_VETERAN_ADDRESS_SOURCE)
         expect(page).to_not have_content("Regional Office")
+      end
+    end
+
+    context "when appellant is an attorney or unlisted claimant" do
+      let(:bgs_atty) { create(:bgs_attorney) }
+      let(:appeal) do
+        create(
+          :appeal,
+          associated_judge: judge_user,
+          associated_attorney: attorney_user,
+          number_of_claimants: 0,
+          veteran_is_not_claimant: true
+        )
+      end
+
+      %w[Attorney Other].each do |claimant_type|
+        scenario "details view informs us that appellant's relationship to Veteran is #{claimant_type}" do
+          create(
+            :claimant,
+            decision_review: appeal,
+            type: "#{claimant_type}Claimant",
+            participant_id: bgs_atty.participant_id,
+            notes: (claimant_type == "Other") ? "sample notes" : nil
+          )
+          visit "/queue/appeals/#{appeal.uuid}"
+
+          expect(page).to have_content("About the Veteran")
+          expect(page).to have_content("About the Appellant")
+          expect(page).to have_content("Relation to Veteran: #{claimant_type}")
+        end
       end
     end
 
@@ -801,8 +832,8 @@ RSpec.feature "Case details", :all_dbs do
       it "marking task as complete works" do
         visit "/queue/appeals/#{task.appeal.uuid}"
 
-        find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
+        find(".cf-select__control", text: "Select an action").click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
 
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
@@ -1230,6 +1261,7 @@ RSpec.feature "Case details", :all_dbs do
         prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
         text = Constants.TASK_ACTIONS.CANCEL_TASK.label
         click_dropdown(prompt: prompt, text: text)
+        fill_in "taskInstructions", with: "Cancelling task"
         click_button("Submit")
 
         expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name))

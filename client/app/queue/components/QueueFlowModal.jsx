@@ -53,7 +53,7 @@ class QueueFlowModal extends React.PureComponent {
   };
 
   render = () => {
-    const { title, button, children, error, success } = this.props;
+    const { title, button, children, error, success, submitDisabled } = this.props;
 
     return (
       <Modal
@@ -67,6 +67,7 @@ class QueueFlowModal extends React.PureComponent {
           {
             classNames: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
             name: button,
+            disabled: submitDisabled,
             loading: this.state.loading,
             onClick: this.submit
           }
@@ -84,6 +85,7 @@ class QueueFlowModal extends React.PureComponent {
 QueueFlowModal.defaultProps = {
   button: COPY.MODAL_SUBMIT_BUTTON,
   pathAfterSubmit: '/queue',
+  submitDisabled: false,
   title: ''
 };
 
@@ -97,6 +99,7 @@ QueueFlowModal.propTypes = {
   pathAfterSubmit: PropTypes.string,
   // submit should return a promise on which .then() can be called
   submit: PropTypes.func,
+  submitDisabled: PropTypes.bool,
   validateForm: PropTypes.func,
   saveSuccessful: PropTypes.bool,
   success: PropTypes.object,

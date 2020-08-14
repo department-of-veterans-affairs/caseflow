@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 
+import { FormLabel } from './FormLabel';
+
 const labelTextStyling = css({
   marginTop: '0.65em',
   marginBottom: '0.65em'
@@ -56,12 +58,7 @@ export default class TextField extends React.Component {
     //
     value = (value === null || typeof value === 'undefined') ? '' : value;
 
-    const labelContents =
-      <span>
-        {label || name}
-        {required && !readOnly && <span className="cf-required">Required</span>}
-        {optional && <span className="cf-optional">Optional</span>}
-      </span>;
+    const labelContents = <FormLabel label={label} name={name} required={required} optional={optional} />;
 
     const ariaLabelObj = useAriaLabel ? { 'aria-label': name } : {};
 

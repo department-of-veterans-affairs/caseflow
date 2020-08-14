@@ -8,14 +8,6 @@ export const dailyDocketReducer = function(state = {}, action = {}) {
       hearingDay: { $set: action.payload.hearingDay },
       hearings: { $set: action.payload.hearings }
     });
-  case ACTIONS.RECEIVE_HEARING:
-    return update(state, {
-      hearings: {
-        [action.payload.hearing.externalId]: {
-          $set: action.payload.hearing
-        }
-      }
-    });
   case ACTIONS.DISPLAY_LOCK_MODAL:
     return update(state, {
       displayLockModal: {

@@ -1,4 +1,5 @@
 import { css } from 'glamor';
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export const labelPaddingFirst = css({
   paddingBottom: 5,
@@ -81,3 +82,85 @@ export const enablePadding = css({
 export const hearingLinksContainer = css({
   marginBottom: 38
 });
+
+export const fullWidth = css({ display: 'flex', flex: 1 });
+
+export const leftAlign = css({
+  marginTop: 30,
+  display: 'flex',
+  '& > *': {
+    paddingLeft: 15,
+    paddingRight: 15,
+    flex: 1,
+    margin: 0
+  },
+  '& > :first-child': {
+    paddingLeft: 0
+  },
+  '& > :last-child': {
+    paddingRight: 0
+  },
+});
+
+export const noMaxWidth = css({
+  '& label': {
+    maxWidth: 'none !important'
+  }
+});
+
+export const marginTop = (margin) =>
+  css({
+    marginTop: margin
+  });
+
+export const helperLabel = css({ marginTop: 15, color: COLORS.GREY_DARK });
+export const timezoneDropdownStyles = (count) => ({
+  height: `${count * 39}px !important`,
+  maxHeight: 'none'
+});
+
+export const timezoneStyles = (count) => ({
+  '& .cf-select__menu-list': {
+    height: `${count * 39}px !important`,
+    maxHeight: 'none',
+    overflowY: 'auto',
+    [`& > :nth-child(${count})`]: {
+      borderBottom: '1px solid grey'
+    }
+  }
+});
+
+export const verticalAlign = css({
+  flexDirection: 'column',
+  display: 'flex',
+  '& > :first-child': {
+    flex: 1,
+    '& .cf-form-radio-options': {
+      flexDirection: 'column',
+      display: 'flex',
+    },
+  },
+  '& > :last-child': {
+    flex: 1,
+    paddingLeft: 0
+  },
+});
+
+export const inputFix = css({
+  '& .question-label': {
+    marginBottom: '2rem !important',
+  },
+});
+
+export const virtualHearingModalStyles = css({
+  '& pre': {
+    margin: '5px 0'
+  }
+});
+
+export const spacing = (space, el) => css({
+  [`& ${el}`]: {
+    margin: space
+  }
+})
+;

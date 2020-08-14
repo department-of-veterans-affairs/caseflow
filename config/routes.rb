@@ -31,12 +31,14 @@ Rails.application.routes.draw do
       resources :hearings, only: :show, param: :hearing_day
     end
     namespace :v3 do
-      namespace :decision_review do
+      namespace :decision_reviews do
+        namespace :higher_level_reviews do
+          get "contestable_issues(/:benefit_type)", to: "contestable_issues#index"
+        end
         resources :higher_level_reviews, only: [:create, :show]
         resources :supplemental_claims, only: [:create, :show]
         resources :appeals, only: [:create, :show]
         resources :intake_statuses, only: :show
-        resources :contestable_issues, only: [:index]
       end
     end
     namespace :docs do
@@ -319,6 +321,7 @@ Rails.application.routes.draw do
       post "/set_user/:id", to: "users#set_user", as: "set_user"
       post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'
       post "/reseed", to: "users#reseed", as: "reseed"
+      get "/data", to: "users#data"
     end
     post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
     post "/toggle_feature", to: "users#toggle_feature", as: "toggle_feature"

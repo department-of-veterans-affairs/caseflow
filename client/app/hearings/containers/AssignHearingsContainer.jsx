@@ -1,13 +1,13 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import COPY from '../../../COPY';
-import _ from 'lodash';
 import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
 import React from 'react';
+import _ from 'lodash';
 
+import { AssignHearings } from '../components/assignHearings/AssignHearings';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import { RegionalOfficeDropdown } from '../../components/DataDropdowns';
 import { encodeQueryParams, getQueryParams } from '../../util/QueryParamsUtil';
@@ -19,7 +19,7 @@ import {
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import { setUserCssId } from '../../queue/uiReducer/uiActions';
 import ApiUtil from '../../util/ApiUtil';
-import AssignHearings from '../components/assignHearings/AssignHearings';
+import COPY from '../../../COPY';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 
 const centralOfficeStaticEntry = [{

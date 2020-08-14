@@ -138,9 +138,9 @@ class DecisionReview < CaseflowRecord
   end
 
   # Creates claimants for automatically generated decision reviews
-  def create_claimant!(participant_id:, payee_code:)
+  def create_claimant!(participant_id:, payee_code:, type:)
     remove_claimants!
-    claimants.create_without_intake!(participant_id: participant_id, payee_code: payee_code)
+    claimants.create_without_intake!(participant_id: participant_id, payee_code: payee_code, type: type)
   end
 
   def remove_claimants!
@@ -154,6 +154,14 @@ class DecisionReview < CaseflowRecord
 
   def claimant_participant_id
     claimant&.participant_id
+  end
+
+  def claimant_type
+    claimant_class_name&.sub(/Claimant$/, "")&.downcase
+  end
+
+  def claimant_class_name
+    claimant&.type
   end
 
   def finalized_decision_issues_before_receipt_date

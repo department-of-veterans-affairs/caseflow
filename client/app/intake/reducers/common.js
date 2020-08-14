@@ -174,19 +174,22 @@ export const commonStateFromServerIntake = (serverIntake) => {
       $set: serverIntake.receipt_date
     },
     veteranIsNotClaimant: {
-      $set: serverIntake.veteran_is_not_claimant
+      $set: serverIntake.veteranIsNotClaimant
     },
     claimant: {
-      $set: serverIntake.veteran_is_not_claimant ? serverIntake.claimant : null
+      $set: serverIntake.veteranIsNotClaimant ? serverIntake.claimant : null
+    },
+    claimantType: {
+      $set: serverIntake.claimantType
     },
     payeeCode: {
       $set: serverIntake.payeeCode
     },
     processedInCaseflow: {
-      $set: serverIntake.processed_in_caseflow
+      $set: serverIntake.processedInCaseflow
     },
     legacyOptInApproved: {
-      $set: serverIntake.legacy_opt_in_approved
+      $set: serverIntake.legacyOptInApproved
     },
     legacyAppeals: {
       $set: serverIntake.legacyAppeals
@@ -210,7 +213,7 @@ export const commonStateFromServerIntake = (serverIntake) => {
       $set: formatRelationships(serverIntake.relationships)
     },
     intakeUser: {
-     $set: serverIntake.intakeUser
+      $set: serverIntake.intakeUser
     },
     asyncJobUrl: {
       $set: serverIntake.asyncJobUrl

@@ -1,100 +1,75 @@
 import PropTypes from 'prop-types';
-import React, { useContext } from 'react';
-import classnames from 'classnames';
+import React, { useContext, useEffect } from 'react';
 
 import { ContentSection } from '../../../components/ContentSection';
 import { HearingLinks } from './HearingLinks';
 import { HearingsUserContext } from '../../contexts/HearingsUserContext';
-import { UPDATE_VIRTUAL_HEARING } from '../../contexts/HearingsFormContext';
-import { enablePadding, maxWidthFormInput, rowThirds } from './style';
 import { getAppellantTitleForHearing } from '../../utils';
-import TextField from '../../../components/TextField';
+import { VirtualHearingFields } from '../VirtualHearings/Fields';
 
 export const VirtualHearingForm = (
-  { hearing, virtualHearing, isVirtual, wasVirtual, readOnly, dispatch, errors }
+  { hearing, virtualHearing, readOnly, update, errors }
 ) => {
-  if (!isVirtual && !wasVirtual) {
+  if (!hearing?.isVirtual && !hearing?.wasVirtual) {
     return null;
   }
 
-  const showEmailFields = (isVirtual || wasVirtual) && virtualHearing;
-  const readOnlyEmails = readOnly || !virtualHearing?.jobCompleted || wasVirtual || hearing.scheduledForIsPast;
+  // Hide the virtual hearing fields only when we are scheduling the virtual hearing
+  const showFields = (hearing?.isVirtual || hearing?.wasVirtual) && virtualHearing;
+  const readOnlyEmails = readOnly || !virtualHearing?.jobCompleted || hearing?.wasVirtual || hearing.scheduledForIsPast;
   const appellantTitle = getAppellantTitleForHearing(hearing);
   const user = useContext(HearingsUserContext);
 
+  useEffect(() => {
+    // Try to use the existing timezones if present
+    const { appellantTz, representativeTz } = (virtualHearing || {});
+
+    // Set the  timezone if not already set
+    update('virtualHearing', {
+      [!representativeTz && 'representativeTz']: representativeTz,
+      [!appellantTz && 'appellantTz']: appellantTz,
+    });
+  }, []);
+
   return (
     <ContentSection
-      header={`${wasVirtual ? 'Previous ' : ''}Virtual Hearing Details`}
+      header={`${hearing?.wasVirtual ? 'Previous ' : ''}Virtual Hearing Details`}
     >
       <HearingLinks
         user={user}
         hearing={hearing}
         virtualHearing={virtualHearing}
-        isVirtual={isVirtual}
-        wasVirtual={wasVirtual}
+        isVirtual={hearing?.isVirtual}
+        wasVirtual={hearing?.wasVirtual}
       />
-      {showEmailFields && (
-        <React.Fragment>
-          <div className="cf-help-divider" />
-          <h3>{appellantTitle}</h3>
-          <div {...rowThirds}>
-            <TextField
-              errorMessage={errors?.appellantEmail}
-              name={`${appellantTitle} Email`}
-              value={virtualHearing.appellantEmail}
-              required
-              strongLabel
-              className={[
-                classnames('cf-form-textinput', 'cf-inline-field', {
-                  [enablePadding]: errors?.appellantEmail
-                })
-              ]}
-              readOnly={readOnlyEmails}
-              onChange={
-                (appellantEmail) => dispatch({
-                  type: UPDATE_VIRTUAL_HEARING,
-                  payload: { appellantEmail }
-                })
-              }
-              inputStyling={maxWidthFormInput}
-            />
-            <div />
-            <div />
-          </div>
-          <div className="cf-help-divider" />
-          <h3>Power of Attorney</h3>
-          <div {...rowThirds}>
-            <TextField
-              errorMessage={errors?.repEmail}
-              name="POA/Representative Email"
-              value={virtualHearing.representativeEmail}
-              strongLabel
-              className={[classnames('cf-form-textinput', 'cf-inline-field')]}
-              readOnly={readOnlyEmails}
-              onChange={
-                (representativeEmail) => dispatch({
-                  type: UPDATE_VIRTUAL_HEARING,
-                  payload: { representativeEmail }
-                })
-              }
-              inputStyling={maxWidthFormInput}
-            />
-            <div />
-            <div />
-          </div>
-        </React.Fragment>
+      <div className="cf-help-divider" />
+      {showFields && (
+        <VirtualHearingFields
+          appellantTitle={appellantTitle}
+          errors={errors}
+          readOnly={readOnlyEmails}
+          update={update}
+          virtualHearing={virtualHearing}
+          time={hearing.scheduledTimeString}
+          requestType={hearing.readableRequestType}
+          defaultAppellantTz={hearing?.appellantTz}
+          defaultRepresentativeTz={hearing?.representativeTz}
+        />
       )}
     </ContentSection>
   );
 };
 
 VirtualHearingForm.propTypes = {
-  dispatch: PropTypes.func,
+  update: PropTypes.func,
   hearing: PropTypes.shape({
+    readableRequestType: PropTypes.string,
+    scheduledTimeString: PropTypes.string,
     appellantIsNotVeteran: PropTypes.bool,
-    scheduledForIsPast: PropTypes.bool
+    scheduledForIsPast: PropTypes.bool,
+    wasVirtual: PropTypes.bool,
+    isVirtual: PropTypes.bool
   }),
-  isVirtual: PropTypes.bool,
   readOnly: PropTypes.bool,
   virtualHearing: PropTypes.shape({
     appellantEmail: PropTypes.string,
@@ -104,6 +79,5 @@ VirtualHearingForm.propTypes = {
   errors: PropTypes.shape({
     appellantEmail: PropTypes.string,
     representativeEmail: PropTypes.string
-  }),
-  wasVirtual: PropTypes.bool
+  })
 };

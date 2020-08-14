@@ -44,7 +44,7 @@ export default class UserManagement extends React.PureComponent {
 
       this.setState({ remainingUsers: users });
 
-      return { options: this.dropdownOptions() };
+      return this.dropdownOptions();
     });
   }
 

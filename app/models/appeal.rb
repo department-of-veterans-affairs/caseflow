@@ -34,6 +34,8 @@ class Appeal < DecisionReview
     "de_novo": "de_novo"
   }
 
+  after_create :conditionally_set_aod_based_on_age
+
   after_save :set_original_stream_data
 
   with_options on: :intake_review do
@@ -100,7 +102,11 @@ class Appeal < DecisionReview
         stream_docket_number: docket_number,
         established_at: Time.zone.now
       )).tap do |stream|
-        stream.create_claimant!(participant_id: claimant.participant_id, payee_code: claimant.payee_code)
+        stream.create_claimant!(
+          participant_id: claimant.participant_id,
+          payee_code: claimant.payee_code,
+          type: claimant.type
+        )
       end
     end
   end
@@ -128,13 +134,9 @@ class Appeal < DecisionReview
     decorated_with_status.fetch_status.to_s.titleize
   end
 
-  def program
-    decorated_with_status.program
-  end
+  delegate :program, to: :decorated_with_status
 
-  def distributed_to_a_judge?
-    decorated_with_status.distributed_to_a_judge?
-  end
+  delegate :distributed_to_a_judge?, to: :decorated_with_status
 
   def decorated_with_status
     AppealStatusApiDecorator.new(self)
@@ -267,8 +269,16 @@ class Appeal < DecisionReview
     nil
   end
 
+  def conditionally_set_aod_based_on_age
+    updated_aod_based_on_age = claimant&.advanced_on_docket_based_on_age?
+    update(aod_based_on_age: updated_aod_based_on_age) if aod_based_on_age != updated_aod_based_on_age
+  end
+
   def advanced_on_docket?
-    claimant&.advanced_on_docket?(receipt_date)
+    conditionally_set_aod_based_on_age
+    # One of the AOD motion reasons is 'age'. Keep interrogation of any motions separate from `aod_based_on_age`,
+    # which reflects `claimant.advanced_on_docket_based_on_age?`.
+    aod_based_on_age || claimant&.advanced_on_docket_motion_granted?(receipt_date)
   end
 
   # Prefer aod? over aod going forward, as this function returns a boolean
@@ -291,6 +301,34 @@ class Appeal < DecisionReview
            :zip,
            :state,
            :email_address, to: :appellant, prefix: true, allow_nil: true
+
+  def appellant_tz
+    return if address.blank?
+
+    # Use an address object if this is a hash
+    appellant_address = address.is_a?(Hash) ? Address.new(address) : address
+
+    begin
+      TimezoneService.address_to_timezone(appellant_address).identifier
+    rescue StandardError => error
+      Raven.capture_exception(error)
+      nil
+    end
+  end
+
+  def representative_tz
+    return if representative_address.blank?
+
+    # Use an address object if this is a hash
+    rep_address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
+
+    begin
+      TimezoneService.address_to_timezone(rep_address).identifier
+    rescue StandardError => error
+      Raven.capture_exception(error)
+      nil
+    end
+  end
 
   def appellant_middle_initial
     appellant_middle_name&.first

@@ -225,7 +225,7 @@ feature "Appeal Intake", :all_dbs do
       detail: appeal
     )
 
-    Claimant.create!(
+    VeteranClaimant.create!(
       decision_review: appeal,
       participant_id: test_veteran.participant_id
     )
@@ -350,6 +350,7 @@ feature "Appeal Intake", :all_dbs do
     expect(page).to have_content("Add / Remove Issues")
     check_row("Review option", "Evidence Submission")
     check_row("Claimant", "Ed Merica")
+    check_row("SOC/SSOC Opt-in", "No")
 
     # clicking the add issues button should bring up the modal
     click_intake_add_issue
@@ -727,6 +728,8 @@ feature "Appeal Intake", :all_dbs do
       scenario "adding issues" do
         start_appeal(veteran, legacy_opt_in_approved: true)
         visit "/intake/add_issues"
+
+        check_row("SOC/SSOC Opt-in", "Yes")
 
         click_intake_add_issue
         expect(page).to have_content("Next")
