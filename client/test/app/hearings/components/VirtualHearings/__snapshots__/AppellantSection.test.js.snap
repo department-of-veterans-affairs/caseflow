@@ -118,9 +118,9 @@ exports[`Appellant Displays timezone when virtual 1`] = `
     <div
       className="cf-help-divider"
     />
-    <h3>
+    <h2>
       Veteran
-    </h3>
+    </h2>
     <AddressLine
       addressCity="SAN FRANCISCO"
       addressLine1="9999 MISSION ST"
@@ -15367,9 +15367,9 @@ exports[`Appellant Does not allow editing emails when read-only 1`] = `
     <div
       className="cf-help-divider"
     />
-    <h3>
+    <h2>
       Veteran
-    </h3>
+    </h2>
     <AddressLine
       addressCity="SAN FRANCISCO"
       addressLine1="9999 MISSION ST"
@@ -15548,9 +15548,9 @@ exports[`Appellant Matches snapshot with default props 1`] = `
     <div
       className="cf-help-divider"
     />
-    <h3>
+    <h2>
       Veteran
-    </h3>
+    </h2>
     <AddressLine
       addressCity="SAN FRANCISCO"
       addressLine1="9999 MISSION ST"

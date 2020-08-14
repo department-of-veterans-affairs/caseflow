@@ -118,9 +118,9 @@ exports[`RepresentativeSection Displays timezone when virtual 1`] = `
     <div
       className="cf-help-divider"
     />
-    <h3>
+    <h2>
       Power of Attorney
-    </h3>
+    </h2>
     <AddressLine
       addressCity="SAN FRANCISCO"
       addressLine1="9999 MISSION ST"
@@ -15360,9 +15360,9 @@ exports[`RepresentativeSection Does not allow editing emails when read-only 1`] 
     <div
       className="cf-help-divider"
     />
-    <h3>
+    <h2>
       Power of Attorney
-    </h3>
+    </h2>
     <AddressLine
       addressCity="SAN FRANCISCO"
       addressLine1="9999 MISSION ST"
@@ -15539,9 +15539,9 @@ exports[`RepresentativeSection Matches snapshot with default props 1`] = `
     <div
       className="cf-help-divider"
     />
-    <h3>
+    <h2>
       Power of Attorney
-    </h3>
+    </h2>
     <AddressLine
       addressCity="SAN FRANCISCO"
       addressLine1="9999 MISSION ST"
@@ -15774,9 +15774,9 @@ exports[`RepresentativeSection Shows Representative name when representative add
     <div
       className="cf-help-divider"
     />
-    <h3>
+    <h2>
       Power of Attorney
-    </h3>
+    </h2>
     <AddressLine
       name="PARALYZED VETERANS OF AMERICA, INC."
     >
@@ -16002,9 +16002,9 @@ exports[`RepresentativeSection Shows Representative not present message when no 
     <div
       className="cf-help-divider"
     />
-    <h3>
+    <h2>
       Power of Attorney
-    </h3>
+    </h2>
     <ReadOnly
       text="The Veteran does not have a representative recorded in VBMS"
     >
@@ -16016,6 +16016,84 @@ exports[`RepresentativeSection Shows Representative not present message when no 
         </pre>
       </div>
     </ReadOnly>
+    <div
+      className="usa-grid css-1jfbwxw"
+    >
+      <div
+        className="usa-width-one-half css-uplrl8"
+      >
+        <VirtualHearingEmail
+          email="tom.brady@caseflow.gov"
+          emailType="representativeEmail"
+          label="POA/Representative Email"
+          type="change_to_virtual"
+          update={[MockFunction]}
+        >
+          <TextField
+            className={
+              Array [
+                "cf-form-textinput cf-inline-field",
+              ]
+            }
+            inputStyling={
+              Object {
+                "data-css-d0z96": "",
+              }
+            }
+            name="POA/Representative Email"
+            onChange={[Function]}
+            optional={false}
+            required={false}
+            strongLabel={true}
+            type="text"
+            useAriaLabel={false}
+            value="tom.brady@caseflow.gov"
+          >
+            <div
+              className="cf-form-textinput cf-inline-field   "
+            >
+              <label
+                htmlFor="POA/Representative Email"
+              >
+                <strong>
+                  <FormLabel
+                    name="POA/Representative Email"
+                    optional={false}
+                    required={false}
+                  >
+                    <span>
+                      POA/Representative Email
+                    </span>
+                  </FormLabel>
+                </strong>
+              </label>
+              <input
+                className={
+                  Array [
+                    "cf-form-textinput cf-inline-field",
+                  ]
+                }
+                data-css-d0z96=""
+                id="POA/Representative Email"
+                name="POA/Representative Email"
+                onChange={[Function]}
+                type="text"
+                value="tom.brady@caseflow.gov"
+              />
+            </div>
+          </TextField>
+          <HelperText
+            label="Changes to the email are used to send notifications for this hearing only"
+          >
+            <span
+              data-css-tgxxqt=""
+            >
+              Changes to the email are used to send notifications for this hearing only
+            </span>
+          </HelperText>
+        </VirtualHearingEmail>
+      </div>
+    </div>
   </VirtualHearingSection>
 </RepresentativeSection>
 `;
