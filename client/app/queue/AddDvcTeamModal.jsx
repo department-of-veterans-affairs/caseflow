@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import ApiUtil from '../util/ApiUtil';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
@@ -10,48 +10,48 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import { onReceiveNewDvcTeam } from './teamManagement/actions';
 import {
   requestSave,
+  resetSuccessMessages,
   showErrorMessage
 } from './uiReducer/uiActions';
 import { withRouter } from 'react-router-dom';
 import QueueFlowModal from './components/QueueFlowModal';
 
-class AddDvcTeamModal extends React.Component {
-  constructor(props) {
-    super(props);
+export const AddDvcTeamModal = (props) => {
 
-    this.state = {
-      usersWithoutDvcTeam: [],
-      selectedDvc: null
-    };
-  }
+  const [usersWithoutDvcTeam, setUsersWithoutDvcTeam] = useState([]);
+  const [selectedDvc, setSelectedDvc] = useState(null);
 
-  loadingPromise = () => {
-    return ApiUtil.get('/users?role=non_dvcs').then((resp) => {
-      return this.setState({ usersWithoutDvcTeam: resp.body.non_dvcs.data });
-    });
-  }
+  useEffect(() => {
+    props.resetSuccessMessages();
+  }, []);
 
-  selectDvc = (value) => this.setState({ selectedDvc: value });
+  const loadingPromise = async () => {
+    const resp = await ApiUtil.get('/users?role=non_dvcs');
 
-  formatName = (user) => `${user.attributes.full_name} (${user.attributes.css_id})`;
+    return setUsersWithoutDvcTeam(resp.body.non_dvcs.data);
+  };
 
-  dropdownOptions = () =>
-    this.state.usersWithoutDvcTeam.map((user) => ({ label: this.formatName(user),
+  const selectDvc = (value) => setSelectedDvc(value);
+
+  const formatName = (user) => `${user.attributes.full_name} (${user.attributes.css_id})`;
+
+  const dropdownOptions = () =>
+    usersWithoutDvcTeam.map((user) => ({ label: formatName(user),
       value: user }));
 
-  submit = () => this.props.requestSave(`/team_management/dvc_team/${this.state.selectedDvc.value.id}`).
-    then((resp) => this.props.onReceiveNewDvcTeam(resp.body)).
-    catch((err) => this.props.showErrorMessage({ title: 'Error',
+  const submit = () => props.requestSave(`/team_management/dvc_team/${selectedDvc.value.id}`).
+    then((resp) => props.onReceiveNewDvcTeam(resp.body)).
+    catch((err) => props.showErrorMessage({ title: 'Error',
       detail: err }));
 
-  render = () => {
-    return <QueueFlowModal
+  return (
+    <QueueFlowModal
       title={COPY.TEAM_MANAGEMENT_ADD_DVC_TEAM_MODAL_TITLE}
       pathAfterSubmit="/team_management"
-      submit={this.submit}
+      submit={submit}
     >
       <LoadingDataDisplay
-        createLoadPromise={this.loadingPromise}
+        createLoadPromise={loadingPromise}
         loadingComponentProps={{
           spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
           message: 'Loading users...'
@@ -62,17 +62,18 @@ class AddDvcTeamModal extends React.Component {
           hideLabel
           searchable
           placeholder={COPY.TEAM_MANAGEMENT_SELECT_DVC_LABEL}
-          value={this.state.selectedDvc}
-          onChange={this.selectDvc}
-          options={this.dropdownOptions()} />
+          value={selectedDvc}
+          onChange={selectDvc}
+          options={dropdownOptions()} />
       </LoadingDataDisplay>
-    </QueueFlowModal>;
-  };
-}
+    </QueueFlowModal>
+  );
+};
 
 AddDvcTeamModal.propTypes = {
   onReceiveNewDvcTeam: PropTypes.func,
   requestSave: PropTypes.func,
+  resetSuccessMessages: PropTypes.func,
   showErrorMessage: PropTypes.func
 };
 
@@ -81,6 +82,7 @@ const mapStateToProps = () => ({});
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveNewDvcTeam,
   requestSave,
+  resetSuccessMessages,
   showErrorMessage
 }, dispatch);
 
