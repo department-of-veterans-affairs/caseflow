@@ -71,6 +71,38 @@ describe('Checkbox', () => {
     expect(screen.queryByText(errorMessage)).toBeTruthy();
   });
 
+  it('passes along other input props', async () => {
+    const props = {
+      name: 'bar',
+      inputProps: {
+        title: 'input title',
+      },
+    };
+    const { input } = setup(props);
+
+    expect(input).toHaveAttribute('name', props.name);
+
+    // Verify inputProps
+    expect(input).toHaveAttribute('title', props.title);
+  });
+
+  it('honors the `disabled` prop', async () => {
+    const { container, input } = setup({ disabled: true });
+
+    expect(input).toBeDisabled();
+    expect(container).toMatchSnapshot();
+  });
+
+  it('honors the `required` prop', async () => {
+    const { container, input } = setup({ required: true });
+
+    // It doesn't actually set `required` on the input, just labels
+    expect(input).not.toBeRequired();
+
+    expect(screen.queryByText(/required/i)).toBeTruthy();
+    expect(container).toMatchSnapshot();
+  });
+
   describe('controlled', () => {
     it('sets input value from props', async () => {
       const { input } = setup({ value: true });
