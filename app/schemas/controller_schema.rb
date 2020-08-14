@@ -69,7 +69,7 @@ class ControllerSchema
       if nullable
         key.maybe { array(nested_schema) }
       else
-        key.hash(nested_schema)
+        key.value(:array).each { hash(nested_schema) }
       end
     end
 
