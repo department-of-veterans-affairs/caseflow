@@ -17,6 +17,7 @@ export const RepresentativeSection = ({
   errors,
   type,
   virtual,
+  video,
   readOnly,
   update,
   appellantTitle
@@ -32,40 +33,40 @@ export const RepresentativeSection = ({
           addressCity={hearing?.representativeAddress?.city}
           addressZip={hearing?.representativeAddress?.zip}
         />
-        {virtual && (
-          <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-            <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })}>
-              <Timezone
-                errorMessage={errors?.representativeTz}
-                required={virtualHearing?.representativeEmail}
-                value={virtualHearing?.representativeTz}
-                onChange={(representativeTz) =>
-                  update('virtualHearing', { representativeTz })
-                }
-                time={hearing.scheduledTimeString}
-                name="POA/Representative Timezone"
-              />
-              <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
-            </div>
-          </div>
-        )}
-        <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-          <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
-            <VirtualHearingEmail
-              readOnly={readOnly}
-              emailType="representativeEmail"
-              label="POA/Representative Email"
-              email={virtual ? virtualHearing?.representativeEmail : virtualHearing?.representativeEmail || 'None'}
-              error={errors?.representativeEmail}
-              type={type}
-              update={update}
-            />
-          </div>
-        </div>
       </React.Fragment>
     ) : (
       <ReadOnly text={`The ${appellantTitle} does not have a representative recorded in VBMS`} />
     )}
+    {virtual && !video && (
+      <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
+        <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })}>
+          <Timezone
+            errorMessage={errors?.representativeTz}
+            required={virtualHearing?.representativeEmail}
+            value={virtualHearing?.representativeTz}
+            onChange={(representativeTz) =>
+              update('virtualHearing', { representativeTz })
+            }
+            time={hearing.scheduledTimeString}
+            name="POA/Representative Timezone"
+          />
+          <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
+        </div>
+      </div>
+    )}
+    <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
+      <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
+        <VirtualHearingEmail
+          readOnly={readOnly}
+          emailType="representativeEmail"
+          label="POA/Representative Email"
+          email={virtual ? virtualHearing?.representativeEmail : virtualHearing?.representativeEmail || 'None'}
+          error={errors?.representativeEmail}
+          type={type}
+          update={update}
+        />
+      </div>
+    </div>
   </VirtualHearingSection>
 );
 
@@ -76,6 +77,7 @@ RepresentativeSection.propTypes = {
   type: PropTypes.string,
   update: PropTypes.func,
   virtual: PropTypes.bool,
+  video: PropTypes.bool,
   readOnly: PropTypes.bool,
   appellantTitle: PropTypes.string
 };
