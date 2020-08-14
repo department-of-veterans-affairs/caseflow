@@ -36,22 +36,13 @@ export const TextField = (props) => {
     labelText,
     inputStyling,
     inputProps,
-    inputRef
+    inputRef,
   } = props;
 
   const textInputClass = className.
     concat(invisible ? ' cf-invisible' : '').
     concat(errorMessage ? 'usa-input-error' : '').
     concat(dateErrorMessage ? 'cf-date-error' : '');
-
-  // Use empty string instead of null or undefined,
-  // otherwise React displays the following error:
-  //
-  // "`value` prop on `input` should not be null.
-  // Consider using the empty string to clear the component
-  // or `undefined` for uncontrolled components."
-  //
-  // value = value === null || typeof value === 'undefined' ? '' : value;
 
   const labelContents = (
     <FormLabel
@@ -137,7 +128,7 @@ TextField.propTypes = {
     // Either a function
     PropTypes.func,
     // Or the instance of a DOM native element (see the note about SSR)
-    PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   ]),
   invisible: PropTypes.bool,
 
