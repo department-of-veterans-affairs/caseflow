@@ -710,8 +710,10 @@
   "VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT": "The hearing time in email notifications is calculated based on the timezone",
   "VIRTUAL_HEARING_EMAIL_HELPER_TEXT": "Changes to the email are used to send notifications for this hearing only",
 
-  "CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL": "Emails will be sent to the Veteran and POA / Representative to notify them that their virtual hearing link is no longer valid and they must appear in-person at the Board of Veterans’ Appeals Central Office.",
-  "CENTRAL_OFFICE_CHANGE_TO_VIRTUAL": "Email notifications will be sent to the Veteran, POA / Representative, and Veterans Law Judge (VLJ).",
+  "CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL": "Emails will be sent to the %s and POA / Representative to notify them that their virtual hearing link is no longer valid and they must appear in-person at the Board of Veterans’ Appeals Central Office.",
+  "CENTRAL_OFFICE_CHANGE_TO_VIRTUAL": "Email notifications will be sent to the %s, POA / Representative, and Veterans Law Judge (VLJ).",
+
+  "VIDEO_CHANGE_FROM_VIRTUAL": "Emails will be sent to the %s and POA / Representative to notify them that their virtual hearing link is no longer valid and they must appear in-person at their designated Regional Office or alternate hearing location.",
 
   "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE": "Change to Virtual Hearing",
   "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_TITLE": "Change to Video Hearing",
