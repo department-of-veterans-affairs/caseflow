@@ -48608,6 +48608,81 @@ SAN FRANCISCO, CA 94103
             </pre>
           </div>
         </ReadOnly>
+        <div
+          className="usa-grid css-1jfbwxw"
+        >
+          <div
+            className="usa-width-one-half css-uplrl8"
+          >
+            <VirtualHearingEmail
+              email="tom.brady@caseflow.gov"
+              emailType="representativeEmail"
+              label="POA/Representative Email"
+              readOnly={true}
+              type="change_from_virtual"
+              update={
+                [MockFunction] {
+                  "calls": Array [
+                    Array [
+                      "virtualHearing",
+                      Object {
+                        "appellantTz": "America/Los_Angeles",
+                        "false": "tom.brady@caseflow.gov",
+                        "representativeTz": "America/Denver",
+                      },
+                    ],
+                    Array [
+                      "virtualHearing",
+                      Object {
+                        "appellantTz": "America/Los_Angeles",
+                        "false": "tom.brady@caseflow.gov",
+                        "representativeTz": "America/Denver",
+                      },
+                    ],
+                    Array [
+                      "virtualHearing",
+                      Object {
+                        "appellantTz": "America/Los_Angeles",
+                        "false": "tom.brady@caseflow.gov",
+                        "representativeTz": "America/Denver",
+                      },
+                    ],
+                  ],
+                  "results": Array [
+                    Object {
+                      "type": "return",
+                      "value": undefined,
+                    },
+                    Object {
+                      "type": "return",
+                      "value": undefined,
+                    },
+                    Object {
+                      "type": "return",
+                      "value": undefined,
+                    },
+                  ],
+                }
+              }
+            >
+              <ReadOnly
+                label="POA/Representative Email"
+                text="tom.brady@caseflow.gov"
+              >
+                <div
+                  data-css-1a5irm0=""
+                >
+                  <strong>
+                    POA/Representative Email
+                  </strong>
+                  <pre>
+                    tom.brady@caseflow.gov
+                  </pre>
+                </div>
+              </ReadOnly>
+            </VirtualHearingEmail>
+          </div>
+        </div>
       </VirtualHearingSection>
       <VirtualHearingSection
         hide={true}
