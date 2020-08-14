@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 
@@ -21,6 +21,7 @@ export const TextField = (props) => {
     required,
     optional,
     type,
+    defaultValue,
     value,
     validationError,
     invisible,
@@ -55,6 +56,10 @@ export const TextField = (props) => {
 
   const ariaLabelObj = useAriaLabel ? { 'aria-label': name } : {};
 
+  // Transform `null` values to empty strings to avoid React warnings
+  // We allow `undefined` as it indicates uncontrolled usage
+  const adjustedVal = useMemo(() => typeof value === 'object' && !value ? '' : value);
+
   return (
     <div className={textInputClass.join(' ')}>
       {dateErrorMessage && (
@@ -80,7 +85,8 @@ export const TextField = (props) => {
           onChange={handleChange}
           onKeyPress={onKeyPress}
           type={type}
-          value={value}
+          defaultValue={defaultValue}
+          value={adjustedVal}
           readOnly={readOnly}
           placeholder={placeholder}
           title={title}
@@ -112,6 +118,11 @@ TextField.defaultProps = {
 
 TextField.propTypes = {
   dateErrorMessage: PropTypes.string,
+
+  /**
+   * The initial value of the `input` element; use for uncontrolled components where not using `value` prop
+   */
+  defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   errorMessage: PropTypes.string,
   className: PropTypes.arrayOf(PropTypes.string),
   inputStyling: PropTypes.object,

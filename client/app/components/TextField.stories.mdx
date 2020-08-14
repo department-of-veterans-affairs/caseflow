@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs/blocks';
 
 import * as TextFieldStories from './TextField.stories';
 
@@ -36,13 +36,13 @@ A controlled input means the updating of the value is handled external to the co
 
 <Story story={TextFieldStories.Controlled} />
 
-<Props of={TextField} />
+<ArgsTable of={TextField} />
 
 ### Text Input Error
 
 Similar to the USWDS we mark fields with a “required” or “optional” label to the top fight of the form input type. Our required text is secondary as we’ve done research showing that this makes the demarcation more noticeable. Similarly, prompting questions have the “required” text immediately following the text.
 
-<Preview>
+<Canvas>
   <Story name="Error Message">
     {() => {
       const [value, setValue] = useState('');
@@ -66,4 +66,4 @@ Similar to the USWDS we mark fields with a “required” or “optional” labe
       );
     }}
   </Story>
-</Preview>
+</Canvas>
