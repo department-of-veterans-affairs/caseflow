@@ -70,8 +70,8 @@ RegionalOfficeSelected.args = {
   }
 };
 
-export const VirtualConversion = Template.bind({});
-VirtualConversion.args = {
+export const VideoToVirtualConversion = Template.bind({});
+VideoToVirtualConversion.args = {
   appeal: {
     ...amaAppeal,
     regionalOffice: defaultHearing.regionalOfficeKey,

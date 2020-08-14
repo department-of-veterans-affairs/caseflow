@@ -25,6 +25,7 @@ export const ScheduleVeteran = ({ appeal, hearing, errors, ...props }) => {
   const location = appeal.hearingLocation || hearing.location;
   const header = `Schedule ${appellantTitle} for a Hearing`;
   const virtual = hearing?.virtualHearing;
+  const video = hearing?.readableRequestType === 'Video';
 
   const handleChange = () => {
     if (virtual) {
@@ -76,6 +77,7 @@ export const ScheduleVeteran = ({ appeal, hearing, errors, ...props }) => {
             </div>
             <div className="cf-help-divider usa-width-one-whole" />
             <AppellantSection
+              video={video}
               update={(_, virtualHearing) => props.onChange('hearing', virtualHearing)}
               appellantTitle={appellantTitle}
               hearing={hearing}
@@ -84,6 +86,7 @@ export const ScheduleVeteran = ({ appeal, hearing, errors, ...props }) => {
             />
             <RepresentativeSection
               virtual
+              video={video}
               update={(_, virtualHearing) => props.onChange('hearing', { virtualHearing: { ...hearing?.virtualHearing, ...virtualHearing } })}
               appellantTitle={appellantTitle}
               hearing={hearing}
