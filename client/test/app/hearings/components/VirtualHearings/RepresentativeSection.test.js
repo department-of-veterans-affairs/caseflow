@@ -88,7 +88,7 @@ describe('RepresentativeSection', () => {
 
     // Assertions
     expect(representativeSection.find(AddressLine)).toHaveLength(0);
-    expect(representativeSection.find(VirtualHearingEmail)).toHaveLength(0);
+    expect(representativeSection.find(VirtualHearingEmail)).toHaveLength(1);
     expect(representativeSection.find(VirtualHearingSection).first().
       find(ReadOnly).
       prop('text')).toEqual(
