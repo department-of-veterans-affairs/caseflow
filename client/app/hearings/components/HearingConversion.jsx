@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { sprintf } from 'sprintf-js';
 
 import * as DateUtil from '../../util/DateUtil';
 import { JudgeDropdown } from '../../components/DataDropdowns/index';
@@ -26,7 +27,9 @@ export const HearingConversion = ({
 }) => {
   const appellantTitle = getAppellantTitleForHearing(hearing);
   const virtual = type === 'change_to_virtual';
-  const helperLabel = virtual ? COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
+  const video = hearing.readableRequestType === 'Video';
+  const convertLabel = video ? COPY.VIDEO_CHANGE_FROM_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
+  const helperLabel = virtual ? COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL : convertLabel;
 
   // Set the section props
   const sectionProps = { hearing, virtualHearing, virtual, type, errors, update, appellantTitle, readOnly: !virtual };
@@ -54,19 +57,20 @@ export const HearingConversion = ({
   return (
     <AppSegment filledBackground>
       <h1 className="cf-margin-bottom-0">{title}</h1>
-      <span>{helperLabel}</span>
+      <span>{sprintf(helperLabel, getAppellantTitleForHearing(hearing))}</span>
       <ReadOnly label="Hearing Date" text={DateUtil.formatDateStr(scheduledFor)} />
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className="usa-width-one-half">
           <HearingTime
             vertical
             label="Hearing Time"
-            disableRadioOptions={virtual}
+            disableRadioOptions={virtual && !video}
             enableZone
+            localZone={hearing.regionalOfficeTimezone}
             onChange={(scheduledTimeString) => update('hearing', { scheduledTimeString })}
             value={hearing.scheduledTimeString}
           />
-          <HelperText label={COPY.VIRTUAL_HEARING_TIME_HELPER_TEXT} />
+          {!video && <HelperText label={COPY.VIRTUAL_HEARING_TIME_HELPER_TEXT} />}
         </div>
       </div>
       <AppellantSection {...sectionProps} />

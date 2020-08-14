@@ -5,9 +5,9 @@ exports[`VirtualHearingSection Matches snapshot with default props 1`] = `
   <div
     className="cf-help-divider"
   />
-  <h3>
+  <h2>
     Section Header
-  </h3>
+  </h2>
   <Tester />
 </Fragment>
 `;

@@ -54,11 +54,5 @@ module HearingDayMapper
 
       "#{ro.city}, #{ro.state}"
     end
-
-    def label_for_room(room_nbr)
-      return if room_nbr.nil?
-
-      HearingRooms.find!(room_nbr).label
-    end
   end
 end

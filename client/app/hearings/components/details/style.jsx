@@ -157,3 +157,10 @@ export const virtualHearingModalStyles = css({
     margin: '5px 0'
   }
 });
+
+export const spacing = (space, el) => css({
+  [`& ${el}`]: {
+    margin: space
+  }
+})
+;
