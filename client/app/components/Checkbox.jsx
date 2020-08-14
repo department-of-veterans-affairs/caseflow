@@ -10,6 +10,8 @@ export const Checkbox = (props) => {
     value,
     disabled,
     id,
+    inputProps,
+    inputRef,
     errorMessage,
     unpadded,
     hideLabel,
@@ -21,7 +23,7 @@ export const Checkbox = (props) => {
 
   const wrapperClasses = classnames(`checkbox-wrapper-${name}`, {
     'cf-form-checkboxes': !unpadded,
-    'usa-input-error': Boolean(errorMessage)
+    'usa-input-error': Boolean(errorMessage),
   });
 
   return (
@@ -38,6 +40,8 @@ export const Checkbox = (props) => {
           checked={value}
           disabled={disabled}
           aria-label={name}
+          ref={inputRef}
+          {...inputProps}
         />
         <label htmlFor={name}>
           <span className={classnames({ 'usa-sr-only': hideLabel })}>
@@ -54,15 +58,58 @@ Checkbox.defaultProps = {
 };
 
 Checkbox.propTypes = {
+
+  /**
+   * Text (or other node) to display in associated `label` element
+   */
   label: PropTypes.node,
+
+  /**
+   * String to be applied to the `name` attribute of the `input` element
+   */
   name: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
+
+  /**
+   * Callback fired when value is changed
+   *
+   * @param {boolean} value The current value of the component
+   * @param {object} event The SyntheticEvent object
+   */
+  onChange: PropTypes.func,
+
   required: PropTypes.bool.isRequired,
   disabled: PropTypes.bool,
+
+  /**
+   * Sets the `id` attribute on the `input` element; defaults to value of `name` prop
+   */
   id: PropTypes.string,
+
+  /**
+   * Pass a ref to the `input` element
+   */
+  inputRef: PropTypes.oneOfType([
+    // Either a function
+    PropTypes.func,
+    // Or the instance of a DOM native element (see the note about SSR)
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  ]),
+
+  /**
+   * Props to be applied to the `input` element
+   */
+  inputProps: PropTypes.object,
+
+  /**
+   * Text (or other node) to display to indicate an error state
+   */
   errorMessage: PropTypes.node,
   unpadded: PropTypes.bool,
   hideLabel: PropTypes.bool,
+
+  /**
+   * The value of the named `input` element(s); required for a controlled component
+   */
   value: PropTypes.bool,
   styling: PropTypes.object,
 };
