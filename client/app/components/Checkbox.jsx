@@ -7,6 +7,7 @@ export const Checkbox = (props) => {
     label,
     name,
     required,
+    defaultValue,
     value,
     disabled,
     id,
@@ -37,6 +38,7 @@ export const Checkbox = (props) => {
           onChange={handleChange}
           type="checkbox"
           id={id || name}
+          defaultChecked={defaultValue}
           checked={value}
           disabled={disabled}
           aria-label={name}
@@ -58,6 +60,11 @@ Checkbox.defaultProps = {
 };
 
 Checkbox.propTypes = {
+
+  /**
+   * The initial value of the `input` element; use for uncontrolled components where not using `value` prop
+   */
+  defaultValue: PropTypes.bool,
 
   /**
    * Text (or other node) to display in associated `label` element

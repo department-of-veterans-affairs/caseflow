@@ -16,6 +16,7 @@ export const TextareaField = (props) => {
   };
 
   const {
+    defaultValue,
     errorMessage,
     hideLabel,
     id,
@@ -75,6 +76,7 @@ export const TextareaField = (props) => {
         onChange={handleChange}
         onKeyDown={props.onKeyDown}
         type={type}
+        defaultValue={defaultValue}
         value={value}
         maxLength={maxlength}
         disabled={disabled}
@@ -101,6 +103,12 @@ TextareaField.defaultProps = {
 };
 
 TextareaField.propTypes = {
+
+  /**
+   * The initial value of the `input` element; use for uncontrolled components where not using `value` prop
+   */
+  defaultValue: PropTypes.string,
+
   hideLabel: PropTypes.bool,
   id: PropTypes.string,
 

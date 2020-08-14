@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 
-// import { useArgs } from '@storybook/client-api';
-
 import Checkbox from './Checkbox';
 
 export default {
@@ -13,6 +11,7 @@ export default {
   args: {
     name: 'checkbox',
     label: 'Yes, I like checks',
+    defaultValue: false,
   },
   argTypes: {
     errorMessage: { control: { type: 'text' } },
@@ -23,20 +22,40 @@ export default {
 const UncontrolledTemplate = (args) => <Checkbox {...args} />;
 
 export const Basic = UncontrolledTemplate.bind({});
+Basic.args = { name: 'basic' };
 
-const ControlledTemplate = (args) => {
-  // See https://github.com/storybookjs/storybook/issues/11657
-  //   const [_args, updateArgs] = useArgs();
-  //   const handleChange = (value) => updateArgs({ value });
-  const [value, setValue] = useState('');
+export const DefaultValue = UncontrolledTemplate.bind({});
+DefaultValue.args = { name: 'defaultValue-demo', defaultValue: true };
+/* eslint-disable max-len */
+DefaultValue.parameters = {
+  docs: {
+    description: {
+      story:
+        'When using as an uncontrolled component, you can set the initial value using the `defaultValue` prop: ```<Checkbox name="starts-true" defaultValue={true} />```',
+    },
+  },
+};
+/* eslint-enable max-len */
+
+export const Disabled = UncontrolledTemplate.bind({});
+Disabled.args = { name: 'disabled-demo', disabled: true };
+
+export const Controlled = () => {
+  const [value, setValue] = useState(false);
   const handleChange = (val) => setValue(val);
 
-  return <Checkbox {...args} onChange={handleChange} value={value} />;
+  return (
+    <Checkbox
+      name="controlled"
+      label="I'm a controlled component"
+      onChange={handleChange}
+      value={value}
+    />
+  );
 };
-
-export const Controlled = ControlledTemplate.bind({});
 Controlled.parameters = {
   docs: {
+    inlineStories: false,
     description: {
       story:
         'To use as a controlled component, `value` and `onChange` props must be set',
