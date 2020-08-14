@@ -21,7 +21,6 @@ describe DvcTeam, :postgres do
     context "when a DvcTeam already exists for this user" do
       before { DvcTeam.create_for_dvc(dvc) }
 
-
       it "raises an error and fails to create the new DvcTeam" do
         dvc.reload
         expect { subject }.to raise_error(Caseflow::Error::DuplicateDvcTeam)
@@ -39,7 +38,7 @@ describe DvcTeam, :postgres do
         expect(DvcTeam.for_dvc(user)).to eq(nil)
       end
     end
-    
+
     context "when user is admin of DvcTeam" do
       let!(:dvc_team) { DvcTeam.create_for_dvc(user) }
 
@@ -48,7 +47,7 @@ describe DvcTeam, :postgres do
         expect(DvcTeam.for_dvc(user)).to eq(dvc_team)
       end
     end
-  
+
     context "when user is member of DvcTeam" do
       let!(:dvc_team) { DvcTeam.create_for_dvc(dvc) }
       before { dvc_team.add_user(user) }
@@ -57,7 +56,7 @@ describe DvcTeam, :postgres do
         expect(DvcTeam.for_dvc(user)).to eq(nil)
       end
     end
-  
+
     # Limitation of the current approach is that users are effectively limited to being the admin of
     # a single DvcTeam.
     context "when user is admin of multiple DvcTeams" do
@@ -67,7 +66,7 @@ describe DvcTeam, :postgres do
           OrganizationsUser.make_user_admin(user, org)
         end
       end
-  
+
       it "should return first dvc team even when they admin two dvc teams" do
         user.reload
         expect(DvcTeam.for_dvc(user)).to eq(first_dvc_team)
@@ -88,7 +87,7 @@ describe DvcTeam, :postgres do
     end
 
     it "returns the team dvc and the team judges" do
-      expect(dvc_team.dvc).to eq dvc 
+      expect(dvc_team.dvc).to eq dvc
       expect(dvc_team.judges).to match_array judges
     end
   end
