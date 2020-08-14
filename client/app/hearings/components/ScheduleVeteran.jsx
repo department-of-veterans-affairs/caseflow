@@ -69,6 +69,7 @@ export const ScheduleVeteran = ({ appeal, hearing, errors, ...props }) => {
             <div {...marginTop(15)} className="usa-width-one-half" >
               <HearingTime
                 vertical
+                errorMessage={errors?.scheduledTimeString}
                 label="Hearing Time"
                 enableZone
                 onChange={(scheduledTimeString) => props.onChange('hearing', { scheduledTimeString })}
@@ -77,6 +78,7 @@ export const ScheduleVeteran = ({ appeal, hearing, errors, ...props }) => {
             </div>
             <div className="cf-help-divider usa-width-one-whole" />
             <AppellantSection
+              errors={errors}
               video={video}
               update={(_, virtualHearing) => props.onChange('hearing', virtualHearing)}
               appellantTitle={appellantTitle}
@@ -86,6 +88,7 @@ export const ScheduleVeteran = ({ appeal, hearing, errors, ...props }) => {
             />
             <RepresentativeSection
               virtual
+              errors={errors}
               video={video}
               update={(_, virtualHearing) => props.onChange('hearing', { virtualHearing: { ...hearing?.virtualHearing, ...virtualHearing } })}
               appellantTitle={appellantTitle}
@@ -124,12 +127,14 @@ export const ScheduleVeteran = ({ appeal, hearing, errors, ...props }) => {
                   onChange={(hearingLocation) => props.onChange('appeal', { hearingLocation })}
                 />
                 <HearingDateDropdown
+                  errorMessage={errors?.hearingDay}
                   key={`hearingDate__${ro}`}
                   regionalOffice={ro}
                   value={appeal.hearingDay}
                   onChange={(hearingDay) => props.onChange('appeal', { hearingDay })}
                 />
                 <HearingTime
+                  errorMessage={errors?.scheduledTimeString}
                   vertical
                   label="Hearing Time"
                   enableZone
