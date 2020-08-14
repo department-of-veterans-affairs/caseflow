@@ -62,6 +62,22 @@ describe BulkTaskAssignment, :postgres do
       end
     end
 
+    shared_examples "valid bulk assign" do
+      it "bulk assigns tasks" do
+        count_before = Task.count
+        bulk_assignment = BulkTaskAssignment.new(params)
+        expect(bulk_assignment.valid?).to eq true
+        result = bulk_assignment.process
+        expect(Task.count).to eq count_before + 2
+        expect(result.count).to eq 2
+        expect(result.first.assigned_to).to eq assigned_to
+        expect(result.first.type).to eq "NoShowHearingTask"
+        expect(result.first.assigned_by).to eq assigned_by
+        expect(result.first.appeal).to eq no_show_hearing_task1.appeal
+        expect(result.first.parent_id).to eq no_show_hearing_task1.id
+      end
+    end
+
     context "when assigned to user does not belong to organization" do
       let(:assigned_to_param) { create(:user) }
       let(:error) { "does not belong to organization with url #{organization.url}" }
@@ -111,18 +127,28 @@ describe BulkTaskAssignment, :postgres do
     end
 
     context "when all attributes are present" do
-      it "bulk assigns tasks" do
-        count_before = Task.count
-        bulk_assignment = BulkTaskAssignment.new(params)
-        expect(bulk_assignment.valid?).to eq true
-        result = bulk_assignment.process
-        expect(Task.count).to eq count_before + 2
-        expect(result.count).to eq 2
-        expect(result.first.assigned_to).to eq assigned_to
-        expect(result.first.type).to eq "NoShowHearingTask"
-        expect(result.first.assigned_by).to eq assigned_by
-        expect(result.first.appeal).to eq no_show_hearing_task1.appeal
-        expect(result.first.parent_id).to eq no_show_hearing_task1.id
+      it_behaves_like "valid bulk assign"
+
+      context "when the org is not hearings management" do
+        context "when the org is the mail team" do
+          let(:organization) { MailTeam.singleton }
+
+          it_behaves_like "valid bulk assign"
+        end
+
+        context "when the org is a vso" do
+          let(:organization) { create(:vso, name: "VSO that cannot bulk assign") }
+          let(:error) { "with url #{organization_url} cannot bulk assign tasks" }
+          let(:error_sym) { :organization }
+
+          it_behaves_like "invalid bulk assign"
+
+          context "when the vso is American Legion" do
+            let(:organization) { create(:vso, name: "American Legion") }
+
+            it_behaves_like "valid bulk assign"
+          end
+        end
       end
 
       context "when there are legacy appeals and regional office is passed" do
