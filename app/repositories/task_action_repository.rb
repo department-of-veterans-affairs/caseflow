@@ -313,6 +313,17 @@ class TaskActionRepository
       }
     end
 
+    def blocked_special_case_movement_data(task, _user = nil)
+      {
+        selected: task.appeal.assigned_judge,
+        options: users_to_options(Judge.list_all),
+        # TODO: Update with Kat's changes
+        # type: BlockedSpecialCaseMovementTask.name,
+        type: SpecialCaseMovementTask.name,
+        blocking_tasks: task.visible_blocking_tasks.map(&:serialize_for_cancellation)
+      }
+    end
+
     def toggle_timed_hold(task, user)
       action = Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
       action = Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h if task.on_timed_hold?
