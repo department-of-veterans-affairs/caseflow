@@ -215,28 +215,28 @@ class HearingsSchemas
       proc do |schema|
         schema.date :expected_return_date,
                     optional: true,
-                    nullable: false
+                    nullable: true
         schema.date :problem_notice_sent_date,
                     optional: true,
-                    nullable: false
+                    nullable: true
         schema.string :problem_type,
                       optional: true,
-                      nullable: false
+                      nullable: true
         schema.string :requested_remedy,
                       optional: true,
-                      nullable: false
+                      nullable: true
         schema.date :sent_to_transcriber_date,
                     optional: true,
-                    nullable: false
+                    nullable: true
         schema.string :task_number,
                       optional: true,
-                      nullable: false
+                      nullable: true
         schema.string :transcriber,
                       optional: true,
-                      nullable: false
+                      nullable: true
         schema.date :uploaded_to_vbms_date,
                     optional: true,
-                    nullable: false
+                    nullable: true
       end
     end
 
