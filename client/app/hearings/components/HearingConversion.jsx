@@ -32,7 +32,17 @@ export const HearingConversion = ({
   const helperLabel = virtual ? COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL : convertLabel;
 
   // Set the section props
-  const sectionProps = { hearing, virtualHearing, virtual, type, errors, update, appellantTitle, readOnly: !virtual };
+  const sectionProps = {
+    hearing,
+    virtualHearing,
+    virtual,
+    video,
+    type,
+    errors,
+    update,
+    appellantTitle,
+    readOnly: !virtual
+  };
 
   // Prefill appellant/veteran email address and representative email on mount.
   useEffect(() => {

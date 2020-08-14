@@ -16,6 +16,7 @@ export const AppellantSection = ({
   errors,
   type,
   virtual,
+  video,
   readOnly,
   update,
   appellantTitle
@@ -28,7 +29,7 @@ export const AppellantSection = ({
       addressCity={hearing?.appellantCity}
       addressZip={hearing?.appellantZip}
     />
-    {virtual && (
+    {virtual && !video && (
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
           <Timezone
@@ -66,6 +67,7 @@ AppellantSection.propTypes = {
   type: PropTypes.string,
   update: PropTypes.func,
   virtual: PropTypes.bool,
+  video: PropTypes.bool,
   readOnly: PropTypes.bool,
   appellantTitle: PropTypes.string
 };
