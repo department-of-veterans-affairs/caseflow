@@ -15,6 +15,9 @@ import { marginTop, regionalOfficeSection } from './details/style';
 import { HearingTime } from './modalForms/HearingTime';
 import Button from '../../components/Button';
 import { css } from 'glamor';
+import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
+import { AppellantSection } from './VirtualHearings/AppellantSection';
+import { HEARING_CONVERSION_TYPES } from '../constants';
 
 export const ScheduleVeteran = ({ appeal, hearing, errors, ...props }) => {
   const appellantTitle = getAppellantTitleForHearing(hearing);
@@ -38,7 +41,7 @@ export const ScheduleVeteran = ({ appeal, hearing, errors, ...props }) => {
         <div {...marginTop(45)} />
         <div className="usa-width-one-half">
           <HearingTypeDropdown
-            scheduling
+            enableFullPageConversion
             update={handleChange}
             requestType={hearing.readableRequestType}
             virtualHearing={hearing?.virtualHearing}
@@ -50,10 +53,10 @@ export const ScheduleVeteran = ({ appeal, hearing, errors, ...props }) => {
 
             <div className="usa-width-one-half" >
               <ReadOnly spacing={0} label="Regional Office" text={appeal.regionalOffice} />
-              <ReadOnly spacing={25} label="Hearing Location" text={appeal.hearingLocation?.name} />
+              <ReadOnly spacing={15} label="Hearing Location" text={appeal.hearingLocation?.name} />
 
             </div>
-            <div {...marginTop(25)} className="usa-width-one-half">
+            <div {...marginTop(15)} className="usa-width-one-half">
               <HearingDateDropdown
                 errorMessage={errors?.hearingDay}
                 key={`hearingDate__${ro}`}
@@ -62,7 +65,7 @@ export const ScheduleVeteran = ({ appeal, hearing, errors, ...props }) => {
                 onChange={(hearingDay) => props.onChange('appeal', { hearingDay })}
               />
             </div>
-            <div {...marginTop(25)} className="usa-width-one-half" >
+            <div {...marginTop(15)} className="usa-width-one-half" >
               <HearingTime
                 vertical
                 label="Hearing Time"
@@ -72,6 +75,21 @@ export const ScheduleVeteran = ({ appeal, hearing, errors, ...props }) => {
               />
             </div>
             <div className="cf-help-divider usa-width-one-whole" />
+            <AppellantSection
+              update={(_, virtualHearing) => props.onChange('hearing', virtualHearing)}
+              appellantTitle={appellantTitle}
+              hearing={hearing}
+              virtualHearing={hearing?.virtualHearing}
+              type={HEARING_CONVERSION_TYPES[0]}
+            />
+            <RepresentativeSection
+              virtual
+              update={(_, virtualHearing) => props.onChange('hearing', { virtualHearing: { ...hearing?.virtualHearing, ...virtualHearing } })}
+              appellantTitle={appellantTitle}
+              hearing={hearing}
+              virtualHearing={hearing?.virtualHearing}
+              type={HEARING_CONVERSION_TYPES[0]}
+            />
           </React.Fragment>
         ) : (
           <div className="usa-width-one-half">

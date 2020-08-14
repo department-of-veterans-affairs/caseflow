@@ -6,7 +6,7 @@ import { sprintf } from 'sprintf-js';
 
 import * as DateUtil from '../../util/DateUtil';
 import { JudgeDropdown } from '../../components/DataDropdowns/index';
-import { spacing, marginTop, noMaxWidth } from './details/style';
+import { marginTop } from './details/style';
 import COPY from '../../../COPY';
 import { VirtualHearingSection } from './VirtualHearings/Section';
 import { ReadOnly } from './details/ReadOnly';
