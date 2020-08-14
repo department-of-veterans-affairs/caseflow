@@ -29,9 +29,9 @@ export const VirtualHearingEmail = ({ email, emailType, label, readOnly, error, 
   );
 
 VirtualHearingEmail.propTypes = {
-  email: PropTypes.string.isRequired,
-  emailType: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
+  email: PropTypes.string,
+  emailType: PropTypes.string,
+  label: PropTypes.string,
   readOnly: PropTypes.bool,
   error: PropTypes.string,
   update: PropTypes.func,
