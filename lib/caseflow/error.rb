@@ -246,6 +246,20 @@ module Caseflow::Error
     end
   end
 
+  class DuplicateDvcTeam < SerializableError
+    def initialize(args)
+      @user_id = args[:user_id]
+      @code = args[:code] || 400
+      @message = args[:message] || "User #{@user_id} already has a DvcTeam. Cannot create another DvcTeam for user."
+    end
+  end
+
+  class NonexistentDvcTeam < StandardError
+    def initialize(args)
+      @user_id = args[:user_id]
+    end
+  end
+
   class DuplicateJudgeTeam < SerializableError
     def initialize(args)
       @user_id = args[:user_id]
