@@ -8,7 +8,7 @@ const DEFAULT_TEXT = 'mm/dd/yyyy';
 // TODO (mdbenjam): modify this to not accept months like 13 or days like 34
 const DATE_REGEX = /[0,1](?:\d(?:\/(?:[0-3](?:\d(?:\/(?:\d{0,4})?)?)?)?)?)?/;
 
-export default class DateSelector extends React.Component {
+export class DateSelector extends React.Component {
   dateFill = (initialValue) => {
     let value = initialValue || '';
     let propsValue = this.props.value || '';
@@ -90,3 +90,5 @@ DateSelector.propTypes = {
   validationError: PropTypes.string,
   value: PropTypes.string
 };
+
+export default DateSelector;
