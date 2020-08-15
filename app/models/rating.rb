@@ -45,6 +45,10 @@ class Rating
       fetch_all(participant_id).select { |rating| rating.promulgation_date.present? }
     end
 
+    def fetch_unpromulgated(participant_id)
+      fetch_all(participant_id).select { |rating| rating.promulgation_date.nil? }
+    end
+
     def from_bgs_hash(_data)
       fail Caseflow::Error::MustImplementInSubclass
     end

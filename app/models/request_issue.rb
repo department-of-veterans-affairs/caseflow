@@ -635,11 +635,7 @@ class RequestIssue < CaseflowRecord
     )
   end
 
-  # When a request issue already has a rating in VBMS, prevent user from editing it.
-  # LockedRatingError indicates that the matching rating issue could be locked,
-  # we can't know if the rating issues include this specific issue
-  # BackfilledRatingError prevents from fetching the list of ratings
-  # so we don't know if there is a rating in progress
+  # When a request issue contention is connected to a new rating issue, it can no longer be removed in VBMS.
   def contention_connected_to_rating?
     if contention_reference_id && end_product_establishment&.associated_rating
       return matching_rating_issues.any?
@@ -648,8 +644,6 @@ class RequestIssue < CaseflowRecord
     false
   rescue Rating::NilRatingProfileListError
     false
-  rescue PromulgatedRating::LockedRatingError, PromulgatedRating::BackfilledRatingError
-    true
   end
 
   def limited_poa

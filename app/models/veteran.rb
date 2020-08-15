@@ -235,6 +235,10 @@ class Veteran < CaseflowRecord
     end
   end
 
+  def unpromulgated_ratings
+    @unpromulgated_ratings ||= RatingAtIssue.fetch_unpromulgated(participant_id)
+  end
+
   def decision_issues
     DecisionIssue.where(participant_id: participant_id)
   end
