@@ -47,9 +47,13 @@ class BaseHearingUpdateForm
 
   def hearing_updates; end
 
+  # Whether or not the hearing has been updated by the form.
+  #
+  # @return [Boolean]
+  #   True if there is at least one non-nil and non-empty key in the hearing updates
   def hearing_updated?
-    hearing_updates.each_key do |key|
-      return true if hearing_updates.dig(key).present?
+    hearing_updates.each_value do |value|
+      return true unless [nil, {}, []].include?(value)
     end
     false
   end
