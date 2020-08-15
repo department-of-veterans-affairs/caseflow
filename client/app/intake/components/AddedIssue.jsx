@@ -119,12 +119,12 @@ class AddedIssue extends React.PureComponent {
         {issue.untimelyExemptionNotes && (
           <span className="issue-notes">Untimely Exemption Notes:&nbsp;{issue.untimelyExemptionNotes}</span>
         )}
-        {issue.vacolsId && !eligibleState.errorMsg && (
+        {vacolsIssue && !eligibleState.errorMsg && (
           <div className="issue-vacols">
             <span className="msg">
               {issue.id ? COPY.VACOLS_OPTIN_ISSUE_CLOSED_EDIT : COPY.VACOLS_OPTIN_ISSUE_NEW}:
             </span>
-            <span className="desc">{vacolsIssue?.description || COPY.INTAKE_VACOLS_ISSUE_MISSING}</span>
+            <span className="desc">{vacolsIssue.description}</span>
           </div>
         )}
         {issue.withdrawalPending && <p>Withdrawal pending</p>}

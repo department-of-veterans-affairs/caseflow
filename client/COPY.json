@@ -602,7 +602,6 @@
   "VACOLS_OPTIN_ISSUE_NEW": "Adding this issue will automatically close VACOLS issue",
   "VACOLS_OPTIN_ISSUE_CLOSED_EDIT": "This issue has automatically closed the VACOLS issue",
   "VACOLS_OPTIN_ISSUE_CLOSED": "VACOLS issue has been closed",
-  "INTAKE_VACOLS_ISSUE_MISSING": "Issue no longer available in VACOLS",
 
   "WITHDRAW_HEARING_MODAL_TITLE": "Confirm withdraw hearing",
   "WITHDRAW_HEARING_MODAL_BODY": "Sending to Schedule Veteran will place this case in the list of Veterans to be scheduled.",

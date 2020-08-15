@@ -135,12 +135,22 @@ feature "Higher Level Review Edit issues", :all_dbs do
       IssueRepository.delete_vacols_issue!(vacols_id: "vacols1", vacols_sequence_id: 2)
     end
 
-    fit "loads page and shows message about missing issue" do
+    it "does not show VACOLS text on edit or confirmation page" do
       visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
-binding.pry
-      expect(page).to have_content("PTSD denied")
-      expect(page).to have_content(COPY::INTAKE_VACOLS_ISSUE_MISSING)
 
+      expect(page).to have_content("PTSD denied")
+      expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED_EDIT)
+
+      # Add another issue in order to also check the confirmation page
+      click_intake_add_issue
+      add_intake_rating_issue("Back pain")
+      select_intake_no_match
+      click_edit_submit_and_confirm
+
+      expect(page).to have_current_path(
+        "/higher_level_reviews/#{higher_level_review.uuid}/edit/confirmation"
+      )
+      expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
     end
   end
 

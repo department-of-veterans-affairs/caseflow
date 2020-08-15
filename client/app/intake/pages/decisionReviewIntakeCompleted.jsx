@@ -136,7 +136,9 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     }
 
     const ineligibleRequestIssues = requestIssues.filter((ri) => ri.ineligibleReason);
-    const vacolsOptInIssues = requestIssues.filter((ri) => ri.vacolsId && !ri.ineligibleReason);
+    const vacolsOptInIssues = requestIssues.filter(
+      (ri) => ri.vacolsId && !ri.ineligibleReason && legacyIssue(ri, legacyAppeals)
+    );
 
     if (completedReview.processedInCaseflow && formType !== FORM_TYPES.APPEAL.key) {
       // we do not use Redirect because state no longer matters,
