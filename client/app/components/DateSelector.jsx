@@ -8,14 +8,28 @@ const DEFAULT_TEXT = 'mm/dd/yyyy';
 // TODO (mdbenjam): modify this to not accept months like 13 or days like 34
 const DATE_REGEX = /[0,1](?:\d(?:\/(?:[0-3](?:\d(?:\/(?:\d{0,4})?)?)?)?)?)?/;
 
-export class DateSelector extends React.Component {
-  dateFill = (initialValue) => {
-    let value = initialValue || '';
-    let propsValue = this.props.value || '';
+export const DateSelector = (props) => {
+  const {
+    errorMessage,
+    label,
+    name,
+    onChange,
+    readOnly,
+    required,
+    type,
+    validationError,
+    value,
+    dateErrorMessage,
+    ...passthroughProps
+  } = props;
 
-    if (this.props.type === 'date' && this.props.onChange) {
+  const dateFill = (newVal = '') => {
+    const propsValue = props.value || '';
+    let updatedVal = newVal;
+
+    if (type === 'date') {
       // input type=date handles validation, returns yyyy-mm-dd, displays mm/dd/yyyy
-      return this.props.onChange(value);
+      return onChange?.(value);
     }
 
     // If the user added characters we append a '/' before putting
@@ -23,39 +37,26 @@ export class DateSelector extends React.Component {
     // the regex test will strip it. Otherwise, the user doesn't have
     // to type a '/'. If the user removed characters we check if the
     // last character is a '/' and remove it for them.
-    if (value.length > propsValue.length) {
-      value = `${value}/`;
+    if (updatedVal.length > propsValue.length) {
+      updatedVal = `${updatedVal}/`;
     } else if (propsValue.charAt(propsValue.length - 1) === '/') {
-      value = value.substr(0, value.length - 1);
+      updatedVal = updatedVal.substr(0, updatedVal.length - 1);
     }
 
     // Test the input agains the date regex above. The regex matches
     // as much of an allowed date as possible. Therefore this will just
     // removing any non-date characters
-    let match = DATE_REGEX.exec(value);
+    const match = DATE_REGEX.exec(updatedVal);
 
-    value = match ? match[0] : '';
+    const result = match ? match[0] : '';
 
-    if (this.props.onChange) {
-      this.props.onChange(value);
-    }
-  }
+    onChange?.(result);
+  };
 
-  render() {
-    let {
-      errorMessage,
-      label,
-      name,
-      readOnly,
-      required,
-      type,
-      validationError,
-      value,
-      dateErrorMessage,
-      ...passthroughProps
-    } = _.omit(this.props, 'onChange');
+  const handleChange = (val) => dateFill(val);
 
-    return <TextField
+  return (
+    <TextField
       errorMessage={errorMessage}
       label={label}
       name={name}
@@ -63,32 +64,28 @@ export class DateSelector extends React.Component {
       type={type}
       value={value}
       validationError={validationError}
-      onChange={this.dateFill}
+      onChange={handleChange}
       placeholder={DEFAULT_TEXT}
       required={required}
       {...passthroughProps}
       max="9999-12-31"
       dateErrorMessage={dateErrorMessage}
-    />;
-
-  }
-}
+    />
+  );
+};
 
 DateSelector.propTypes = {
   errorMessage: PropTypes.string,
   dateErrorMessage: PropTypes.string,
   invisible: PropTypes.bool,
-  label: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.bool
-  ]),
+  label: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func,
   readOnly: PropTypes.bool,
   required: PropTypes.bool,
   type: PropTypes.string,
   validationError: PropTypes.string,
-  value: PropTypes.string
+  value: PropTypes.string,
 };
 
 export default DateSelector;
