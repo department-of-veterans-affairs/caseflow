@@ -135,7 +135,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       IssueRepository.delete_vacols_issue!(vacols_id: "vacols1", vacols_sequence_id: 2)
     end
 
-    it "does not show VACOLS text on edit or confirmation page" do
+    it "edit page loads and does not show VACOLS issue" do
       visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
 
       expect(page).to have_content("PTSD denied")
@@ -150,7 +150,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       expect(page).to have_current_path(
         "/higher_level_reviews/#{higher_level_review.uuid}/edit/confirmation"
       )
-      expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
+      expect(page).to have_content("A Higher-Level Review Rating EP is being updated")
     end
   end
 

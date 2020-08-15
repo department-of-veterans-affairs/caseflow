@@ -81,13 +81,13 @@ class AddedIssue extends React.PureComponent {
   };
 
   render() {
-    const { issue, issueIdx } = this.props;
+    const { issue, issueIdx, legacyAppeals } = this.props;
     let eligibleState = {
       errorMsg: '',
       cssKlasses: ['issue-desc']
     };
 
-    const vacolsIssue = legacyIssue(issue, this.props.legacyAppeals);
+    const vacolsIssue = legacyIssue(issue, legacyAppeals);
 
     if (this.needsEligibilityCheck()) {
       let eligibilityCheck = this.getEligibility();

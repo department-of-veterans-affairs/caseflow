@@ -97,7 +97,7 @@ class VacolsOptInList extends React.PureComponent {
           <strong>{COPY.VACOLS_OPTIN_ISSUE_CLOSED}</strong>
           {this.props.issues.map((ri, i) =>
             <p key={`vacols-issue-${i}`} className="">
-              {legacyIssue(ri, this.props.legacyAppeals)?.description || COPY.INTAKE_VACOLS_ISSUE_MISSING}
+              {legacyIssue(ri, this.props.legacyAppeals).description}
             </p>)}
         </li>
       </ul>
@@ -136,9 +136,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     }
 
     const ineligibleRequestIssues = requestIssues.filter((ri) => ri.ineligibleReason);
-    const vacolsOptInIssues = requestIssues.filter(
-      (ri) => ri.vacolsId && !ri.ineligibleReason && legacyIssue(ri, legacyAppeals)
-    );
+    const vacolsOptInIssues = requestIssues.filter((ri) => ri.vacolsId && !ri.ineligibleReason);
 
     if (completedReview.processedInCaseflow && formType !== FORM_TYPES.APPEAL.key) {
       // we do not use Redirect because state no longer matters,
