@@ -290,7 +290,9 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
       { field: 'Informal conference request',
         content: intakeData.informalConference ? 'Yes' : 'No' },
       { field: 'Same office request',
-        content: intakeData.sameOffice ? 'Yes' : 'No' }
+        content: intakeData.sameOffice ? 'Yes' : 'No' },
+      { field: 'SOC/SSOC Opt-in',
+        content: intakeData.legacyOptInApproved ? 'Yes' : 'No' },
     ];
     break;
   case 'supplemental_claim':
@@ -302,7 +304,9 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
       { field: 'Receipt date of this form',
         content: formatDateStr(intakeData.receiptDate) },
       { field: 'Benefit type',
-        content: _.startCase(intakeData.benefitType) }
+        content: _.startCase(intakeData.benefitType) },
+      { field: 'SOC/SSOC Opt-in',
+        content: intakeData.legacyOptInApproved ? 'Yes' : 'No' },
     ];
     break;
   case 'appeal':
@@ -312,7 +316,9 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
       { field: 'NOD receipt date',
         content: formatDateStr(intakeData.receiptDate) },
       { field: 'Review option',
-        content: _.startCase(intakeData?.docketType?.split('_').join(' ')) }
+        content: _.startCase(intakeData?.docketType?.split('_').join(' ')) },
+      { field: 'SOC/SSOC Opt-in',
+        content: intakeData.legacyOptInApproved ? 'Yes' : 'No' },
     ];
     break;
   default:
