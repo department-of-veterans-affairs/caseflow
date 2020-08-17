@@ -47,7 +47,7 @@ export const HearingConversion = ({
         [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
         [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress,
       });
-  }
+  };
 
   // Pre-fill appellant/veteran email address and representative email on mount.
   useEffect(() => {
