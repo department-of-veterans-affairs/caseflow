@@ -101,14 +101,13 @@ const HearingDetails = (props) => {
       const noRepTimezone = !hearing.virtualHearing?.representativeTz && hearing.virtualHearing?.representativeEmail;
       const emailUpdated = editedEmails?.appellantEmailEdited || editedEmails?.representativeEmailEdited;
       const timezoneUpdated = editedEmails?.representativeTzEdited || editedEmails?.appellantTzEdited;
-      const errors = noEmail || ((noRepTimezone || noRepEmail) && hearing.readableRequestType !== 'Video');
+      const errors = noEmail || (noRepTimezone && !noRepEmail && hearing.readableRequestType !== 'Video');
 
       if (virtual && errors) {
         // Set the Virtual Hearing errors
         setVirtualHearingErrors({
-          [noRepEmail && 'representativeEmail']: 'POA/Representative email is required',
           [noEmail && 'appellantEmail']: `${getAppellantTitleForHearing(hearing)} email is required`,
-          [noRepTimezone && 'representativeTz']: 'Timezone is required to send email notifications.'
+          [noRepTimezone && !noRepEmail && 'representativeTz']: 'Timezone is required to send email notifications.'
         });
 
         // Focus to the error
