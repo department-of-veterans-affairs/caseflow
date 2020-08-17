@@ -117,38 +117,6 @@ class ControllerSchema
     yield self if block
   end
 
-  # mutates params by removing fields not declared in the schema, other than path params
-  def remove_unknown_keys(params, in_place: true, path_params: {})
-    allowed = (fields.map(&:name) + path_params.keys).map(&:to_s)
-    removed = params.keys - allowed
-
-    if in_place
-      params.slice!(*allowed)
-    else
-      params = params.slice(*allowed)
-    end
-
-    # Recursively descend into nested params and remove unknown keys.
-    fields
-      .select { |field| field.nested? && params.include?(field.name) }
-      .each do |field|
-        if field.is_a? ArrayField
-          nested_array_params = params[field.name].map do |value|
-            field.nested.remove_unknown_keys(value, in_place: in_place)
-          end
-
-          params[field.name] = nested_array_params unless in_place
-        else
-          nested_params = field.nested.remove_unknown_keys(params[field.name], in_place: in_place)
-
-          params[field.name] = nested_params unless in_place
-        end
-      end
-
-    Rails.logger.info("Removed unknown keys from controller params: #{removed}") if removed.present?
-    params
-  end
-
   def validate(params)
     dry_schema.call(params.to_unsafe_h)
   end

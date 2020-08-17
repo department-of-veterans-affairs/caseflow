@@ -15,7 +15,6 @@ detectors:
       - HearingRepository#slot_new_hearing
       - LegacyDocket#distribute_appeals
       - Veteran
-      - ControllerSchema#remove_unknown_keys
       - ControllerSchema#respond_to_missing?
   ControlParameter:
     exclude:
@@ -107,7 +106,6 @@ detectors:
       - HearingDayRequestTypeQuery#call
       - WarmBgsCachesJob
       - ExternalApi::PexipService#send_pexip_request
-      - ControllerSchema#remove_unknown_keys
       - BusinessLineReporter#as_csv
   InstanceVariableAssumption:
     exclude:

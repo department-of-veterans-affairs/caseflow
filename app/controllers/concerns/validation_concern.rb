@@ -24,7 +24,7 @@ module ValidationConcern
     schema = self.class.validation_schemas[action_name.to_sym]
     return if schema.nil?
 
-    schema.remove_unknown_keys(params, in_place: false).permit!
+    UnknownKeyRemover.new(schema).remove_unknown_keys(params).permit!
   end
 
   # :nocov:
@@ -32,7 +32,7 @@ module ValidationConcern
     schema = self.class.validation_schemas[action_name.to_sym]
     return if schema.nil?
 
-    schema.remove_unknown_keys(params, path_params: request.path_parameters)
+    UnknownKeyRemover.new(schema).remove_unknown_keys_in_place(params, path_params: request.path_parameters)
     result = schema.validate(params)
     if result.failure?
       errors = result.errors.map { |msg| msg.path.join(".") + " #{msg.text}" }
