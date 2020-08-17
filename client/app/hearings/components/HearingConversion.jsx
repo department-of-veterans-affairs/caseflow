@@ -146,6 +146,7 @@ export const HearingConversion = ({
                 onChange={(representativeTz) => update('virtualHearing', { representativeTz })}
                 time={hearing.scheduledTimeString}
                 name="POA/Representative Timezone"
+                readOnly={!virtualHearing?.representativeEmail}
               />
               <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
             </div>
