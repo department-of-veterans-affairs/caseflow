@@ -131,7 +131,7 @@ module Caseflow::Error
       @code = args[:code] || 500
       @appeal_id = args[:appeal_id] || nil
       @title = "This appeal cannot be advanced to a judge"
-      @message = args[:message] || "Appeal #{@appeal_id} must be waiting to be distributed be eligible for Case Movement"
+      @message = args[:message] || "Appeal #{@appeal_id} must be awaiting distribution be eligible for Case Movement"
     end
   end
 
