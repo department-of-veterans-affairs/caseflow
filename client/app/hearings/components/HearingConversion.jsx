@@ -47,12 +47,12 @@ export const HearingConversion = ({
     // Set the emails and timezone to defaults if not already set
     if (virtual) {
       update(
-        'virtualHearing',{
-        [!representativeTz && 'representativeTz']: representativeTz || hearing?.representativeTz,
-        [!appellantTz && 'appellantTz']: appellantTz || hearing?.appellantTz,
-        [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
-        [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress,
-      });
+        'virtualHearing', {
+          [!representativeTz && 'representativeTz']: representativeTz || hearing?.representativeTz,
+          [!appellantTz && 'appellantTz']: appellantTz || hearing?.appellantTz,
+          [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
+          [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress,
+        });
     }
   }, []);
 
