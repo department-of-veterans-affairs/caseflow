@@ -139,6 +139,23 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
         expect(response_body["non_dvcs"]["data"].size).to eq(user_count)
       end
     end
+
+    context "when there is a dvc team" do
+      let!(:dvc_team) { DvcTeam.create_for_dvc(create(:user)) }
+      let!(:users) { create_list(:user, 6) }
+      let(:dvc_team_count) { 1 }
+
+      # Add one for the current user who was created outside the scope of this test.
+      let(:user_count) { users.count + 1 }
+
+      it "returns only the users without a DVC team" do
+        get(:index, params: { role: "non_dvcs" })
+        expect(response.status).to eq(200)
+        expect(response.body).not_to include(dvc_team.name)
+        response_body = JSON.parse(response.body)
+        expect(response_body["non_dvcs"]["data"].size).to eq(user_count)
+      end
+    end
   end
 
   describe "GET /users?css_id=<css_id>" do
