@@ -1,12 +1,13 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
+import _ from 'lodash';
 import classnames from 'classnames';
 
-import { enablePadding, maxWidthFormInput } from '../details/style';
-import TextField from '../../../components/TextField';
-import { ReadOnly } from '../details/ReadOnly';
 import { HelperText } from './HelperText';
+import { ReadOnly } from '../details/ReadOnly';
+import { enablePadding, maxWidthFormInput } from '../details/style';
 import COPY from '../../../../COPY';
+import TextField from '../../../components/TextField';
 
 export const VirtualHearingEmail = ({ email, emailType, label, readOnly, error, update, required, disabled }) =>
   readOnly ? (
@@ -21,7 +22,7 @@ export const VirtualHearingEmail = ({ email, emailType, label, readOnly, error, 
         required={!disabled && required}
         strongLabel
         className={[classnames('cf-form-textinput', 'cf-inline-field', { [enablePadding]: error })]}
-        onChange={(newEmail) => update('virtualHearing', { [emailType]: newEmail })}
+        onChange={(newEmail) => update('virtualHearing', { [emailType]: _.isEmpty(newEmail) ? null : newEmail })}
         inputStyling={maxWidthFormInput}
       />
       <HelperText label={COPY.VIRTUAL_HEARING_EMAIL_HELPER_TEXT} />
