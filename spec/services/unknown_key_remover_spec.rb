@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe UnknownKeyRemover do
   let(:params) { ActionController::Parameters.new(params_hash) }
   let(:schema) do
