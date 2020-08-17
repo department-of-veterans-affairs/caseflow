@@ -15,17 +15,7 @@ class UnknownKeyRemover
       params.slice!(*allowed)
 
       # Recursively descend into nested params and remove unknown keys.
-      schema
-        .fields
-        .select { |field| field.nested? && params.include?(field.name) }
-        .each do |field|
-          remover = UnknownKeyRemover.new(field.nested)
-          if field.is_a?(ControllerSchema::ArrayField)
-            params[field.name].map { |value| remover.remove_unknown_keys_in_place(value) }
-          else
-            remover.remove_unknown_keys_in_place(params[field.name])
-          end
-        end
+      nested_schema_fields(params).each { |field| handle_nested_field_in_place(field, params) }
     end
   end
 
@@ -41,17 +31,7 @@ class UnknownKeyRemover
       params = params.slice(*allowed)
 
       # Recursively descend into nested params and remove unknown keys.
-      schema
-        .fields
-        .select { |field| field.nested? && params.include?(field.name) }
-        .each do |field|
-          remover = UnknownKeyRemover.new(field.nested)
-          params[field.name] = if field.is_a?(ControllerSchema::ArrayField)
-                                 params[field.name].map { |value| remover.remove_unknown_keys(value) }
-                               else
-                                 remover.remove_unknown_keys(params[field.name])
-                               end
-        end
+      nested_schema_fields(params).each { |field| handle_nested_field(field, params) }
     end
 
     params
@@ -61,36 +41,54 @@ class UnknownKeyRemover
 
   attr_reader :schema
 
+  # Removes unknown keys for a nested schema field.
+  #
+  # @param field       [ControllerSchema::Field] the nested schema field
+  # @param params      [ActionController::Parameters] parameters from the body of a request
+  def handle_nested_field(field, params)
+    remover = UnknownKeyRemover.new(field.nested)
+    params[field.name] = if field.is_a?(ControllerSchema::ArrayField)
+                           params[field.name].map { |value| remover.remove_unknown_keys(value) }
+                         else
+                           remover.remove_unknown_keys(params[field.name])
+                         end
+  end
+
+
+  # Removes unknown keys for a nested schema field (in place).
+  #
+  # @param field       [ControllerSchema::Field] the nested schema field
+  # @param params      [ActionController::Parameters] parameters from the body of a request
+  def handle_nested_field_in_place(field, params)
+    remover = UnknownKeyRemover.new(field.nested)
+    if field.is_a?(ControllerSchema::ArrayField)
+      params[field.name].map { |value| remover.remove_unknown_keys_in_place(value) }
+    else
+      remover.remove_unknown_keys_in_place(params[field.name])
+    end
+  end
+
   # Wrapper around an implementation to remove unknown keys.
   #
   # @param params      [ActionController::Parameters] parameters from the body of a request
   # @param path_params [Hash] parameters that form the path of a request
   def remove_unknown_keys_wrapper(params, path_params)
-    allowed = allowed_keys(path_params)
-    removed = remove_keys(params, path_params)
+    allowed = (schema.fields.map(&:name) + path_params.keys).map(&:to_s)
+    removed = params.keys - allowed
 
     yield(allowed)
     Rails.logger.info("Removed unknown keys from controller params: #{removed}") if removed.present?
   end
 
-  # Determines which keys are allowed by the schema.
-  #
-  # @param path_params [Hash] parameters that form the path of a request
-  #
-  # @return            [Array<String>]
-  #   A list of keys that are allowed by the schema
-  def allowed_keys(path_params)
-    (schema.fields.map(&:name) + path_params.keys).map(&:to_s)
-  end
-
-  # Determines which keys to remove from the parameters of a request.
+  # Gets a list of nested schema fields that are present in the request parameters.
   #
   # @param params      [ActionController::Parameters] parameters from the body of a request
-  # @param path_params [Hash] parameters that form the path of a request
   #
-  # @return            [Array<String>]
-  #   A list of keys to remove
-  def remove_keys(params, path_params)
-    params.keys - allowed_keys(path_params)
+  # @return            [Array<ControllerSchema::Field>]
+  #   A list of nested schema fields
+  def nested_schema_fields(params)
+    schema
+      .fields
+      .select { |field| field.nested? && params.include?(field.name) }
   end
 end
