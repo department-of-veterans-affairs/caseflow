@@ -44,13 +44,16 @@ export const HearingConversion = ({
     // Try to use the existing timezones if present
     const { appellantTz, representativeTz } = (virtualHearing || {});
 
-    // Set the emails and timezone if not already set
-    update('virtualHearing', {
-      [!representativeTz && 'representativeTz']: representativeTz || hearing?.representativeTz,
-      [!appellantTz && 'appellantTz']: appellantTz || hearing?.appellantTz,
-      [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
-      [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress,
-    });
+    // Set the emails and timezone to defaults if not already set
+    if (virtual) {
+      update(
+        'virtualHearing',{
+        [!representativeTz && 'representativeTz']: representativeTz || hearing?.representativeTz,
+        [!appellantTz && 'appellantTz']: appellantTz || hearing?.appellantTz,
+        [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
+        [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress,
+      });
+    }
   }, []);
 
   return (
