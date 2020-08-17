@@ -108,9 +108,14 @@ describe('HearingConversion', () => {
     );
 
     // Assertions
+    expect(conversion.find(VirtualHearingSection).at(1).
+      find(VirtualHearingEmail)).toHaveLength(1);
+    expect(conversion.find(VirtualHearingSection).at(1).
+      find(ReadOnly)).toHaveLength(2);
     expect(conversion.find(AddressLine)).toHaveLength(1);
     expect(conversion.find(VirtualHearingSection).at(1).
       find(ReadOnly).
+      first().
       prop('text')).toEqual(
       `The ${getAppellantTitleForHearing(amaHearing)} does not have a representative recorded in VBMS`
     );

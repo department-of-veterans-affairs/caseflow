@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_28_172002) do
+ActiveRecord::Schema.define(version: 2020_08_13_235013) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1359,6 +1359,7 @@ ActiveRecord::Schema.define(version: 2020_07_28_172002) do
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
     t.bigint "appeal_id", null: false
+    t.string "appeal_type", comment: "'Appeal' or 'LegacyAppeal'"
     t.datetime "attempted_at"
     t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
     t.datetime "created_at", null: false

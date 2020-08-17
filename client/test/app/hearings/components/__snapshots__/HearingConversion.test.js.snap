@@ -48608,6 +48608,81 @@ SAN FRANCISCO, CA 94103
             </pre>
           </div>
         </ReadOnly>
+        <div
+          className="usa-grid css-1jfbwxw"
+        >
+          <div
+            className="usa-width-one-half css-uplrl8"
+          >
+            <VirtualHearingEmail
+              email="tom.brady@caseflow.gov"
+              emailType="representativeEmail"
+              label="POA/Representative Email"
+              readOnly={true}
+              type="change_from_virtual"
+              update={
+                [MockFunction] {
+                  "calls": Array [
+                    Array [
+                      "virtualHearing",
+                      Object {
+                        "appellantTz": "America/Los_Angeles",
+                        "false": "tom.brady@caseflow.gov",
+                        "representativeTz": "America/Denver",
+                      },
+                    ],
+                    Array [
+                      "virtualHearing",
+                      Object {
+                        "appellantTz": "America/Los_Angeles",
+                        "false": "tom.brady@caseflow.gov",
+                        "representativeTz": "America/Denver",
+                      },
+                    ],
+                    Array [
+                      "virtualHearing",
+                      Object {
+                        "appellantTz": "America/Los_Angeles",
+                        "false": "tom.brady@caseflow.gov",
+                        "representativeTz": "America/Denver",
+                      },
+                    ],
+                  ],
+                  "results": Array [
+                    Object {
+                      "type": "return",
+                      "value": undefined,
+                    },
+                    Object {
+                      "type": "return",
+                      "value": undefined,
+                    },
+                    Object {
+                      "type": "return",
+                      "value": undefined,
+                    },
+                  ],
+                }
+              }
+            >
+              <ReadOnly
+                label="POA/Representative Email"
+                text="tom.brady@caseflow.gov"
+              >
+                <div
+                  data-css-1a5irm0=""
+                >
+                  <strong>
+                    POA/Representative Email
+                  </strong>
+                  <pre>
+                    tom.brady@caseflow.gov
+                  </pre>
+                </div>
+              </ReadOnly>
+            </VirtualHearingEmail>
+          </div>
+        </div>
       </VirtualHearingSection>
       <VirtualHearingSection
         hide={true}
@@ -48800,7 +48875,7 @@ exports[`HearingConversion Video Hearings Displays regional office name and hear
         Convert to Virtual
       </h1>
       <span>
-        Emails will be sent to the Veteran and POA / Representative to notify them that their virtual hearing link is no longer valid and they must appear in-person at their designated Regional Office or alternate hearing location.
+        Emails will be sent to the Appellant and POA / Representative to notify them that their virtual hearing link is no longer valid and they must appear in-person at their designated Regional Office or alternate hearing location.
       </span>
       <ReadOnly
         label="Hearing Date"
@@ -54651,7 +54726,7 @@ exports[`HearingConversion Video Hearings Displays regional office time and cent
         Convert to Virtual
       </h1>
       <span>
-        Email notifications will be sent to the Veteran, POA / Representative, and Veterans Law Judge (VLJ).
+        Email notifications will be sent to the Appellant, POA / Representative, and Veterans Law Judge (VLJ).
       </span>
       <ReadOnly
         label="Hearing Date"

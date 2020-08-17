@@ -1042,6 +1042,7 @@ user_quotas,updated_at,datetime ∗,x,,,,x,
 user_quotas,user_id,integer ∗ FK,x,,x,,x,
 vbms_uploaded_documents,,,,,,,,
 vbms_uploaded_documents,appeal_id,integer (8) ∗ FK,x,,x,,x,
+vbms_uploaded_documents,appeal_type,string,,,,,,'Appeal' or 'LegacyAppeal'
 vbms_uploaded_documents,attempted_at,datetime,,,,,,
 vbms_uploaded_documents,canceled_at,datetime,,,,,,Timestamp when job was abandoned
 vbms_uploaded_documents,created_at,datetime ∗,x,,,,,
