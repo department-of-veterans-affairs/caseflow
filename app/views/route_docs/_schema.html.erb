@@ -7,7 +7,7 @@
       <label for="<%= id %>" aria-label="Expand Nested Schema"></label>
     <% end %>
     <span class="details">
-      <%= field.type %>,
+      <%= field.type %><%= field.array? ? "[ ]" : "" %>,
       <%= (field.optional ? "optional" : "required") %>,
       <%= (field.nullable ? "nullable" : "non-nullable") %>
     </span>

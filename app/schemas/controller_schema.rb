@@ -20,6 +20,10 @@ class ControllerSchema
       @doc = options.fetch(:doc, nil)
     end
 
+    def array?
+      false
+    end
+
     def nested?
       type == :nested
     end
@@ -72,6 +76,10 @@ class ControllerSchema
   end
 
   class ArrayField < Field
+    def array?
+      true
+    end
+
     private
 
     def register_nested(dry_dsl)
