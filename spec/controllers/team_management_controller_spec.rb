@@ -123,7 +123,7 @@ describe TeamManagementController, :postgres, type: :controller do
       end
     end
 
-    context "for a user who already has a JudgeTeam" do
+    context "for a user who already has a DvcTeam" do
       before { DvcTeam.create_for_dvc(dvc) }
       it "returns a 400 error" do
         post(:create_dvc_team, params: params, format: :json)
