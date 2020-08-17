@@ -303,13 +303,13 @@ class BaseHearingUpdateForm
     nested_alert = VirtualHearingUserAlertBuilder.new(
       change_type: change_type,
       alert_type: :info,
-      appeal: hearing.appeal
+      hearing: hearing
     ).call.to_hash
 
     nested_alert[:next] = VirtualHearingUserAlertBuilder.new(
       change_type: change_type,
       alert_type: :success,
-      appeal: hearing.appeal
+      hearing: hearing
     ).call.to_hash
 
     @virtual_hearing_alert = nested_alert
