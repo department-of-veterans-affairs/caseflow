@@ -20,7 +20,22 @@ class ControllerSchema
       @doc = options.fetch(:doc, nil)
     end
 
-    # converts this Field with a nested schema into a DSL entryon a Dry::Schema
+    def nested?
+      type == :nested
+    end
+
+    # convert this Field into a DSL entry on a Dry::Schema
+    def register(dry_dsl)
+      if nested?
+        register_nested(dry_dsl) 
+      else
+        register_default(dry_dsl)
+      end
+    end
+
+    private
+
+    # converts a Field with a nested schema into a DSL entry on a Dry::Schema
     def register_nested(dry_dsl)
       key = register_key(dry_dsl)
       nested_schema = nested.dry_schema
@@ -32,10 +47,7 @@ class ControllerSchema
       end
     end
 
-    # convert this Field into a DSL entry on a Dry::Schema
-    def register(dry_dsl)
-      return register_nested(dry_dsl) if type == :nested
-
+    def register_default(dry_dsl)
       key = register_key(dry_dsl)
       if nullable
         key.maybe(type, **value_options)
@@ -43,8 +55,6 @@ class ControllerSchema
         key.value(type, **value_options)
       end
     end
-
-    private
 
     def register_key(dry_dsl)
       dry_dsl.send((optional ? "optional" : "required"), name)
@@ -62,6 +72,8 @@ class ControllerSchema
   end
 
   class ArrayField < Field
+    private
+
     def register_nested(dry_dsl)
       key = register_key(dry_dsl)
       nested_schema = nested.dry_schema
@@ -73,9 +85,7 @@ class ControllerSchema
       end
     end
 
-    def register(dry_dsl)
-      return register_nested(dry_dsl) if type == :nested
-
+    def register_default(dry_dsl)
       key = register_key(dry_dsl)
       if nullable
         # create locals so that they can be accessed within the context of the block
@@ -120,7 +130,7 @@ class ControllerSchema
 
     # Recursively descend into nested params and remove unknown keys.
     fields
-      .select { |field| field.type == :nested && params.include?(field.name) }
+      .select { |field| field.nested? && params.include?(field.name) }
       .each do |field|
         if field.is_a? ArrayField
           nested_array_params = params[field.name].map do |value|
