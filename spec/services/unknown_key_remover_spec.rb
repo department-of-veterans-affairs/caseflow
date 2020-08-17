@@ -10,6 +10,18 @@ describe UnknownKeyRemover do
     end
   end
 
+  shared_context "nested_schema" do
+    let(:schema) do
+      ControllerSchema.json do |schema|
+        schema.nested :inner,
+                      optional: true,
+                      nullable: true do |nested|
+                        nested.string :field, optional: false, nullable: false
+                      end
+      end
+    end
+  end
+
   describe "#remove_unknown_keys_in_place" do
     subject do
       UnknownKeyRemover
@@ -28,22 +40,15 @@ describe UnknownKeyRemover do
     end
 
     context "for nested schema" do
-      let(:schema) do
-        ControllerSchema.json do |schema|
-          schema.nested :inner,
-                        optional: true,
-                        nullable: true do |nested|
-                          nested.string :field, optional: false, nullable: false
-                        end
-        end
-      end
+      include_context "nested_schema"
 
       context "when unknown params are included in nested field" do
-        let(:params_hash) { { inner: { field: "hello", not_field: 123 } } }
+        let(:params_hash) { { inner: { field: "hello", not_field: 123 }, outer_not_field: 123 } }
 
         it "removes unknown params" do
           subject
           expect(params).to include(:inner)
+          expect(params).not_to include(:outer_not_field)
           expect(params[:inner]).to include(:field)
           expect(params[:inner]).not_to include(:not_field)
         end
