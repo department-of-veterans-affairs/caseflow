@@ -129,4 +129,70 @@ describe('ScheduleVeteran', () => {
     expect(submitSpy).toHaveBeenCalledTimes(1);
     expect(scheduleVeteran).toMatchSnapshot();
   });
+
+  test('Displays Virtual Hearing form fields when type is changed to Virtual', () => {
+    // Render the address component
+    const scheduleVeteran = shallow(
+      <ScheduleVeteran
+        goBack={cancelSpy}
+        submit={submitSpy}
+        onChange={changeSpy}
+        appeal={{
+          ...amaAppeal,
+          regionalOffice: defaultHearing.regionalOfficeKey,
+        }}
+        hearing={defaultHearing}
+      />,
+      {
+        wrappingComponent: queueWrapper,
+        wrappingComponentProps: { store: queueStore },
+      }
+    );
+
+    expect(scheduleVeteran).toMatchSnapshot();
+  });
+
+  test('Can toggle back to Video', () => {
+    // Render the address component
+    const scheduleVeteran = shallow(
+      <ScheduleVeteran
+        goBack={cancelSpy}
+        submit={submitSpy}
+        onChange={changeSpy}
+        appeal={{
+          ...amaAppeal,
+          regionalOffice: defaultHearing.regionalOfficeKey,
+        }}
+        hearing={defaultHearing}
+      />,
+      {
+        wrappingComponent: queueWrapper,
+        wrappingComponentProps: { store: queueStore },
+      }
+    );
+
+    expect(scheduleVeteran).toMatchSnapshot();
+  });
+
+  test('Displays error messages when errors are present', () => {
+    // Render the address component
+    const scheduleVeteran = shallow(
+      <ScheduleVeteran
+        goBack={cancelSpy}
+        submit={submitSpy}
+        onChange={changeSpy}
+        appeal={{
+          ...amaAppeal,
+          regionalOffice: defaultHearing.regionalOfficeKey,
+        }}
+        hearing={defaultHearing}
+      />,
+      {
+        wrappingComponent: queueWrapper,
+        wrappingComponentProps: { store: queueStore },
+      }
+    );
+
+    expect(scheduleVeteran).toMatchSnapshot();
+  });
 });
