@@ -586,8 +586,8 @@ intakes,completed_at,datetime,,,,,,"Timestamp for when the intake was completed,
 intakes,completion_started_at,datetime,,,,,,Timestamp for when the user submitted the intake to be completed.
 intakes,completion_status,string,,,,,,"Indicates whether the intake was successful, or was closed by being canceled, expired, or due to an error."
 intakes,created_at,datetime,,,,,,
-intakes,detail_id,integer FK,,,x,,,The ID of the record created as a result of the intake.
-intakes,detail_type,string,,,,,,The type of the record created as a result of the intake.
+intakes,detail_id,integer FK,,,x,,x,The ID of the record created as a result of the intake.
+intakes,detail_type,string,,,,,x,The type of the record created as a result of the intake.
 intakes,error_code,string,,,,,,"If the intake was unsuccessful due to a set of known errors, the error code is stored here. An error is also stored here for RAMP elections that are connected to an active end product, even though the intake is a success."
 intakes,id,integer PK,x,x,,,,
 intakes,started_at,datetime,,,,,,"Timestamp for when the intake was created, which happens when a user successfully searches for a Veteran."
