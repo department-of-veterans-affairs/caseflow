@@ -54,7 +54,6 @@ class UnknownKeyRemover
                          end
   end
 
-
   # Removes unknown keys for a nested schema field (in place).
   #
   # @param field       [ControllerSchema::Field] the nested schema field
