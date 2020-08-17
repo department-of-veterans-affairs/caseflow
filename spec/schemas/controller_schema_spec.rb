@@ -30,37 +30,6 @@ describe ControllerSchema do
     end
   end
 
-  describe "#remove_unknown_keys" do
-    subject do
-      schema.remove_unknown_keys(params, path_params: { known: "foo" })
-    end
-
-    context "when unknown params are included" do
-      let(:params_hash) { { id: 123, name: "value", known: "foo", unknown: "bar" } }
-
-      it "removes unknown params" do
-        subject
-        expect(params).to include(:id, :name, :known)
-        expect(params).not_to include(:unknown)
-      end
-    end
-
-    context "for nested schema" do
-      include_context "nested_schema"
-
-      context "when unknown params are included in nested field" do
-        let(:params_hash) { { inner: { field: "hello", not_field: 123 } } }
-
-        it "removes unknown params" do
-          subject
-          expect(params).to include(:inner)
-          expect(params[:inner]).to include(:field)
-          expect(params[:inner]).not_to include(:not_field)
-        end
-      end
-    end
-  end
-
   describe "#validate" do
     subject { schema.validate(params) }
 
