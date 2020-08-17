@@ -52,6 +52,7 @@ detectors:
       - LegacyDocket
       - Seeds::Tasks
       - TaskTreeRenderModule
+      - UnknownKeyRemover
   DuplicateMethodCall:
     enabled: false
   FeatureEnvy:
@@ -99,6 +100,7 @@ detectors:
       - SlackService#http_service
       - SyncReviewsJob
       - TaskTimerJob
+      - UnknownKeyRemover#nested_schema_fields
       - UpdateCachedAppealsAttributesJob
       - UserReporter#report_user_related_records
       - User#appeal_has_task_assigned_to_user?
