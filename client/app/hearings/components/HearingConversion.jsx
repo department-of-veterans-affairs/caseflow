@@ -33,26 +33,30 @@ export const HearingConversion = ({
   const convertLabel = video ? COPY.VIDEO_CHANGE_FROM_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
   const helperLabel = virtual ? COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL : convertLabel;
 
-  // Pre-fill appellant/veteran email address and representative email on mount.
-  useEffect(() => {
-    // Focus the top of the page
-    window.scrollTo(0, 0);
-
+  const prefillFields = () => {
     // Determine which email to use
     const appellantEmail = hearing.appellantIsNotVeteran ? hearing.appellantEmailAddress : hearing.veteranEmailAddress;
 
     // Try to use the existing timezones if present
     const { appellantTz, representativeTz } = (virtualHearing || {});
 
+    update(
+      'virtualHearing', {
+        [!representativeTz && 'representativeTz']: representativeTz || hearing?.representativeTz,
+        [!appellantTz && 'appellantTz']: appellantTz || hearing?.appellantTz,
+        [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
+        [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress,
+      });
+  }
+
+  // Pre-fill appellant/veteran email address and representative email on mount.
+  useEffect(() => {
+    // Focus the top of the page
+    window.scrollTo(0, 0);
+
     // Set the emails and timezone to defaults if not already set
     if (virtual) {
-      update(
-        'virtualHearing', {
-          [!representativeTz && 'representativeTz']: representativeTz || hearing?.representativeTz,
-          [!appellantTz && 'appellantTz']: appellantTz || hearing?.appellantTz,
-          [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
-          [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress,
-        });
+      prefillFields();
     }
   }, []);
 
