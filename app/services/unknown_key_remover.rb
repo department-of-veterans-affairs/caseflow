@@ -46,11 +46,11 @@ class UnknownKeyRemover
         .select { |field| field.nested? && params.include?(field.name) }
         .each do |field|
           remover = UnknownKeyRemover.new(field.nested)
-          if field.is_a?is_a?(ControllerSchema::ArrayField)
-            params[field.name] = params[field.name].map { |value| remover.remove_unknown_keys(value) }
-          else
-            params[field.name] = remover.remove_unknown_keys(params[field.name])
-          end
+          params[field.name] = if field.is_a?(ControllerSchema::ArrayField)
+                                 params[field.name].map { |value| remover.remove_unknown_keys(value) }
+                               else
+                                 remover.remove_unknown_keys(params[field.name])
+                               end
         end
     end
 
