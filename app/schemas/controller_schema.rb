@@ -27,7 +27,7 @@ class ControllerSchema
     # convert this Field into a DSL entry on a Dry::Schema
     def register(dry_dsl)
       if nested?
-        register_nested(dry_dsl) 
+        register_nested(dry_dsl)
       else
         register_default(dry_dsl)
       end
