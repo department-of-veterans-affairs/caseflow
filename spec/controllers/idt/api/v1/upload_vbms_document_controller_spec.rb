@@ -96,26 +96,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
           }
         end
 
-        it "returns a successful message and creates a new VbmsUploadedDocument" do
-          expect { post :create, params: params }.to change(VbmsUploadedDocument, :count).by(1)
-
-          success_message = JSON.parse(response.body)["message"]
-
-          expect(success_message).to eq "Document successfully queued for upload."
-          expect(response.status).to eq(200)
-        end
-
-        it "queues the document for upload to VBMS" do
-          expect(VbmsUploadedDocument).to receive(:create).with(document_params).and_return(uploaded_document)
-          expect(UploadDocumentToVbmsJob).to receive(:perform_later).with(document_id: uploaded_document.id)
-          expect(uploaded_document).to receive(:cache_file)
-
-          post :create, params: params
-        end
-
-        context "the appeal is a LegacyAppeal" do
-          let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
-
+        shared_examples "success_with_valid_parameters" do
           it "returns a successful message and creates a new VbmsUploadedDocument" do
             expect { post :create, params: params }.to change(VbmsUploadedDocument, :count).by(1)
 
@@ -132,6 +113,14 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
 
             post :create, params: params
           end
+        end
+
+        it_behaves_like "success_with_valid_parameters"
+
+        context "the appeal is a LegacyAppeal" do
+          let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+
+          it_behaves_like "success_with_valid_parameters"
         end
       end
     end
