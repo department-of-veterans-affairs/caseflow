@@ -20,7 +20,7 @@ class Distribution < CaseflowRecord
   CASES_PER_ATTORNEY = 3
   ALTERNATIVE_BATCH_SIZE = 15
 
-  scope :priority_push, -> { where(priority_push: true) }
+  scope :priority_pushed, -> { where(priority_push: true) }
 
   class << self
     def pending_for_judge(judge)

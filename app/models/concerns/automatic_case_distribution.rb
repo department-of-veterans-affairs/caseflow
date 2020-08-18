@@ -69,7 +69,7 @@ module AutomaticCaseDistribution
   end
 
   def distribute_limited_priority_appeals_from_all_dockets(limit)
-    oldest_priority_appeals_by_docket(limit).each do |docket, number_of_appeals_to_distribute|
+    num_oldest_priority_appeals_by_docket(limit).each do |docket, number_of_appeals_to_distribute|
       distribute_appeals(docket, number_of_appeals_to_distribute, priority: true)
     end
   end
@@ -91,14 +91,17 @@ module AutomaticCaseDistribution
     }
   end
 
-  def distribute_appeals(docket, num, priority: false, genpop: "any", range: nil, bust_backlog: false)
-    return [] unless num.nil? || num > 0
+  # Handles the distribution of appeals from any docket while tracking appeals distributed and the remaining number of
+  # appeals to distribute. A nil limit will distribute an infinate number of appeals, only to be used for non_genpop
+  # distributions (distributions tied to a judge)
+  def distribute_appeals(docket, limit = nil, priority: false, genpop: "any", range: nil, bust_backlog: false)
+    return [] unless limit.nil? || limit > 0
 
     if range.nil? && !bust_backlog
-      appeals = dockets[docket].distribute_appeals(self, priority: priority, genpop: genpop, limit: num)
+      appeals = dockets[docket].distribute_appeals(self, priority: priority, genpop: genpop, limit: limit)
     elsif docket == :legacy && priority == false
       appeals = dockets[docket].distribute_nonpriority_appeals(
-        self, genpop: genpop, range: range, limit: num, bust_backlog: bust_backlog
+        self, genpop: genpop, range: range, limit: limit, bust_backlog: bust_backlog
       )
     else
       fail "'range' and 'bust_backlog' are only valid arguments when distributing nonpriority, legacy appeals"
@@ -127,9 +130,9 @@ module AutomaticCaseDistribution
     @remaining_docket_proportions
       .normalize!
       .stochastic_allocation(@rem)
-      .each do |docket, calculated_number_of_appeals_to_distribute|
-        appeals = distribute_appeals(docket, calculated_number_of_appeals_to_distribute, priority: false)
-        @remaining_docket_proportions[docket] = 0 if appeals.count < calculated_number_of_appeals_to_distribute
+      .each do |docket, number_of_appeals_to_distribute|
+        appeals = distribute_appeals(docket, number_of_appeals_to_distribute, priority: false)
+        @remaining_docket_proportions[docket] = 0 if appeals.count < number_of_appeals_to_distribute
       end
   end
 
@@ -146,13 +149,14 @@ module AutomaticCaseDistribution
     (docket_margin_net_of_priority * docket_proportions[:legacy]).round
   end
 
-  def oldest_priority_appeals_by_docket(num)
+  def num_oldest_priority_appeals_by_docket(num)
     return {} unless num > 0
 
     DocketCoordinator.new.dockets
       .flat_map { |sym, docket| docket.age_of_n_oldest_priority_appeals(num).map { |age| [age, sym] } }
-      .sort_by { |age_and_sym| age_and_sym[0] }
+      .sort_by { |age, _| age }
       .first(num)
-      .each_with_object(Hash.new(0)) { |limited_age_and_sym, counts| counts[limited_age_and_sym[1]] += 1 }
+      .group_by{|age, sym| sym}
+      .transform_values(&:count)
   end
 end

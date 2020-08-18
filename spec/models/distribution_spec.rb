@@ -40,27 +40,45 @@ describe Distribution, :all_dbs do
         .and_return(1000)
     end
 
+    def create_legacy_case(index, traits = nil)
+      create(
+        :case,
+        *traits,
+        bfd19: 1.year.ago,
+        bfac: "1",
+        bfmpro: "ACT",
+        bfcurloc: "81",
+        bfdloout: index.days.ago,
+        folder: build(
+          :folder,
+          tinum: "1801#{format('%<index>03d', index: index)}",
+          titrnum: "123456789S"
+        )
+      )
+    end
+
+    def create_legacy_case_hearing_for(appeal, board_member: judge.vacols_attorney_id)
+      create(:case_hearing,
+             :disposition_held,
+             folder_nr: appeal.bfkey,
+             hearing_date: 1.month.ago,
+             board_member: board_member)
+    end
+
     context "priority_push is false" do
+      before do
+        allow_any_instance_of(HearingRequestDocket)
+          .to receive(:age_of_n_oldest_priority_appeals)
+          .and_return([])
+
+        allow_any_instance_of(HearingRequestDocket)
+          .to receive(:distribute_appeals)
+          .and_return([])
+      end
+
       subject { Distribution.create!(judge: judge) }
 
       let(:legacy_priority_count) { 14 }
-
-      def create_legacy_case(index, traits = nil)
-        create(
-          :case,
-          *traits,
-          bfd19: 1.year.ago,
-          bfac: "1",
-          bfmpro: "ACT",
-          bfcurloc: "81",
-          bfdloout: index.days.ago,
-          folder: build(
-            :folder,
-            tinum: "1801#{format('%<index>03d', index: index)}",
-            titrnum: "123456789S"
-          )
-        )
-      end
 
       let!(:legacy_priority_cases) do
         (1..legacy_priority_count).map { |i| create_legacy_case(i, :aod) }
@@ -68,14 +86,6 @@ describe Distribution, :all_dbs do
 
       let!(:legacy_nonpriority_cases) do
         (15..100).map { |i| create_legacy_case(i) }
-      end
-
-      def create_legacy_case_hearing_for(appeal, board_member: judge.vacols_attorney_id)
-        create(:case_hearing,
-               :disposition_held,
-               folder_nr: appeal.bfkey,
-               hearing_date: 1.month.ago,
-               board_member: board_member)
       end
 
       let!(:same_judge_priority_hearings) do
@@ -88,16 +98,6 @@ describe Distribution, :all_dbs do
 
       let!(:other_judge_hearings) do
         legacy_nonpriority_cases[2..27].map { |appeal| create_legacy_case_hearing_for(appeal, board_member: "1234") }
-      end
-
-      before do
-        allow_any_instance_of(HearingRequestDocket)
-          .to receive(:age_of_n_oldest_priority_appeals)
-          .and_return([])
-
-        allow_any_instance_of(HearingRequestDocket)
-          .to receive(:distribute_appeals)
-          .and_return([])
       end
 
       let!(:due_direct_review_cases) do
@@ -439,60 +439,14 @@ describe Distribution, :all_dbs do
     context "priority_push is true" do
       subject { Distribution.create!(judge: judge, priority_push: true) }
 
-      let!(:legacy_priority_cases) do
-        (1..4).map do |i|
-          create(
-            :case,
-            :aod,
-            bfd19: 1.year.ago,
-            bfac: "1",
-            bfmpro: "ACT",
-            bfcurloc: "81",
-            bfdloout: i.months.ago,
-            folder: build(
-              :folder,
-              tinum: "1801#{format('%<index>03d', index: i)}",
-              titrnum: "123456789S"
-            )
-          )
-        end
-      end
-
-      let!(:legacy_nonpriority_cases) do
-        (5..8).map do |i|
-          create(
-            :case,
-            bfd19: 1.year.ago,
-            bfac: "1",
-            bfmpro: "ACT",
-            bfcurloc: "81",
-            bfdloout: i.months.ago,
-            folder: build(
-              :folder,
-              tinum: "1801#{format('%<index>03d', index: i)}",
-              titrnum: "123456789S"
-            )
-          )
-        end
-      end
-
-      let!(:other_priority_legacy_hearings) do
-        legacy_priority_cases[0..1].map do |appeal|
-          create(:case_hearing,
-                 :disposition_held,
-                 folder_nr: appeal.bfkey,
-                 hearing_date: 1.month.ago)
-        end
-      end
+      let!(:legacy_priority_cases) { (5..8).map { |i| create_legacy_case(i, :aod) } }
 
       let!(:priority_legacy_hearings_tied_to_judge) do
-        legacy_priority_cases[2..3].map do |appeal|
-          create(:case_hearing,
-                 :disposition_held,
-                 folder_nr: appeal.bfkey,
-                 hearing_date: 1.month.ago,
-                 board_member: judge.vacols_attorney_id)
-        end
+        legacy_priority_cases[2..3].map { |appeal| create_legacy_case_hearing_for(appeal) }
+      end
+
+      let!(:priority_legacy_hearings_not_tied_to_judge) do
+        legacy_nonpriority_cases[0..1].map { |appeal| create_legacy_case_hearing_for(appeal, board_member: "1234") }
       end
 
       let!(:priority_ama_hearings_tied_to_judge) do
@@ -508,7 +462,7 @@ describe Distribution, :all_dbs do
         end
       end
 
-      let!(:other_priority_ama_hearings) do
+      let!(:priority_ama_hearings_not_tied_to_judge) do
         (1...3).map do |i|
           appeal = FactoryBot.create(:appeal,
                                      :advanced_on_docket_due_to_age,
