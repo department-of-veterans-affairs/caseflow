@@ -3,7 +3,7 @@
 class DvcTeam < Organization
   class << self
     def for_dvc(user)
-      DvcTeam.find{|t| t.dvc.eql?(user)}
+      DvcTeam.find { |team| team.dvc.eql?(user) }
     end
 
     def create_for_dvc(user)
