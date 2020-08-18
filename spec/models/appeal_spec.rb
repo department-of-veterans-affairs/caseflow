@@ -1038,7 +1038,7 @@ describe Appeal, :all_dbs do
     let (:user) { create(:user) }
 
     before do
-      allow_any_instance_of(BvaDispatch).to receive(:next_assignee).and_return(user)
+      BvaDispatch.singleton.add_user(user)
       dispatch_task = BvaDispatchTask.create_from_root_task(appeal.root_task)
       dispatch_task.descendants.each { |task| task.update_column(:status, status) }
     end
@@ -1113,7 +1113,7 @@ describe Appeal, :all_dbs do
       context "existing open QualityReviewTask" do
         let (:user) { create(:user) }
         before do
-          allow_any_instance_of(Organization).to receive(:next_assignee).and_return(user)
+          BvaDispatch.singleton.add_user(user)
           QualityReviewTask.create_from_root_task(appeal.root_task)
         end
 
@@ -1125,7 +1125,6 @@ describe Appeal, :all_dbs do
       context "existing closed QualityReviewTask" do
         let (:user) { create(:user) }
         before do
-          allow_any_instance_of(Organization).to receive(:next_assignee).and_return(user)
           qr_task = QualityReviewTask.create_from_root_task(appeal.root_task)
           qr_task.descendants.each { |task| task.update_column(:status, Constants.TASK_STATUSES.completed) }
         end
