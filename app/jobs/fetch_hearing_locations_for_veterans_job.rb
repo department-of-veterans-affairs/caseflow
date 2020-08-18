@@ -53,8 +53,8 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
           geomatch(appeal)
 
           current_appeal += 1
-        rescue Caseflow::Error::VaDotGovLimitError => error
-          sleep_before_retry_on_limit_error(error)
+        rescue Caseflow::Error::VaDotGovLimitError
+          sleep_before_retry_on_limit_error
 
           break
         rescue StandardError
@@ -79,11 +79,8 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   # Pauses execution based on an error received from VA.gov.
   #
   # @note This is its own method so that it can be stubbed by the test suite.
-  #
-  # @param limit_error  [Caseflow::Error::VaDotGovLimitError] instance of an error received from VA.gov
-  def sleep_before_retry_on_limit_error(limit_error)
-    sleep_time_in_minutes = limit_error.remaining_time || limit_error.rate_limit || 5
-    sleep sleep_time_in_minutes * 60
+  def sleep_before_retry_on_limit_error
+    sleep 15
   end
 
   # Performs geomatching for an appeal.
@@ -103,9 +100,6 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       record_geomatched_appeal(appeal.external_id, geomatch_result[:status])
     rescue Caseflow::Error::VaDotGovLimitError => error
       Rails.logger.error("VA.gov returned a rate limit error")
-      Rails.logger.error(
-        "Remaining time = #{error.remaining_time}, rate limit = #{error.rate_limit}"
-      )
       record_geomatched_appeal(appeal.external_id, "limit_error")
       raise
     rescue StandardError => error

@@ -35,9 +35,7 @@ class ExternalApi::VADotGovService::Response
     when 429
       Caseflow::Error::VaDotGovLimitError.new(
         code: code,
-        message: "Mapping service is temporarily unavailable. Please try again later.",
-        rate_limit: response.headers["X-RateLimit-Limit-minute"],
-        remaining_time: response.headers["X-RateLimit-Remaining-minute"]
+        message: "Mapping service is temporarily unavailable. Please try again later."
       )
     when 400
       Caseflow::Error::VaDotGovRequestError.new(

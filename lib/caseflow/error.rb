@@ -34,15 +34,7 @@ module Caseflow::Error
   class VaDotGovAPIError < SerializableError; end
   class VaDotGovRequestError < VaDotGovAPIError; end
   class VaDotGovServerError < VaDotGovAPIError; end
-  class VaDotGovLimitError < VaDotGovAPIError
-    attr_reader :rate_limit, :remaining_time
-
-    def initialize(args = {})
-      super
-      @rate_limit = args[:rate_limit]
-      @remaining_time = args[:remaining_time]
-    end
-  end
+  class VaDotGovLimitError < VaDotGovAPIError; end
   class VaDotGovAddressCouldNotBeFoundError < VaDotGovAPIError; end
   class VaDotGovMissingFacilityError < VaDotGovAPIError; end
   class VaDotGovInvalidInputError < VaDotGovAPIError; end

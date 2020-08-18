@@ -167,13 +167,16 @@ describe FetchHearingLocationsForVeteransJob do
             )
           end
 
-          context "and VaDotGovLimitError has a remaining time that exceeds the expected end time of the job" do
+          context "and VaDotGovLimitError wait time exceeds the expected end time of the job" do
             let(:limit_error) do
               Caseflow::Error::VaDotGovLimitError.new(
                 code: 500,
-                message: "Error",
-                remaining_time: 0.1 # Remaining time in minutes. ~1 second longer than the fake job duration.
+                message: "Error"
               )
+            end
+
+            before do
+              allow(subject).to(receive(:sleep_before_retry_on_limit_error) { sleep(6) })
             end
 
             it "records a geomatch error once" do
