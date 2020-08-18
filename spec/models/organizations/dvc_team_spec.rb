@@ -41,12 +41,11 @@ describe DvcTeam, :postgres do
       end
     end
 
-    context "when user is admin of DvcTeam" do
-      let!(:dvc_team) { DvcTeam.create_for_dvc(user) }
-
-      it "returns the DvcTeam for the user" do
-        user.reload
-        expect(DvcTeam.for_dvc(user)).to eq(dvc_team)
+    context "when dvc user is admin of DvcTeam" do
+      let!(:dvc_team) { DvcTeam.create_for_dvc(dvc) }
+      
+      it "returns the DvcTeam for the dvc user" do
+        expect(DvcTeam.for_dvc(dvc)).to eq(dvc_team)
       end
     end
 
