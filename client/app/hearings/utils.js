@@ -264,17 +264,23 @@ export const zoneName = (time, name, format) => {
  * Method to add timezone to the label of the time
  * @returns {Array} -- List of hearing times with the zone appended to the label
  */
-export const hearingTimeOptsWithZone = (options, zone) =>
-  options.map((time) => {
-    const label = time.label ? 'label' : 'displayText';
-
+export const hearingTimeOptsWithZone = (options, local) =>
+  options.map((item) => {
     // Default to using EST for all times before conversion
-    moment.tz.setDefault(zone === true ? 'America/New_York' : zone);
+    moment.tz.setDefault(local === true ? 'America/New_York' : local);
+
+    // Check which label to use
+    const label = item.label ? 'label' : 'displayText';
+
+    // Set the time
+    const time = zoneName(item[label]);
+
+    // Set the time in the local timezone
+    const localTime = zoneName(item[label], local === true ? '' : local);
 
     return {
-      ...time,
-      [label]: zoneName(time[label], zone === true ? '' : zone)
-
+      ...item,
+      [label]: local && localTime !== time ? `${localTime} / ${time}` : time
     };
   });
 
