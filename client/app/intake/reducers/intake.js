@@ -15,7 +15,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.async_job_url
     },
     detailEditUrl: {
-      $set: serverIntake.detail_edit_url
+      $set: serverIntake.detailEditUrl
     },
     unreadMessages: {
       $set: serverIntake.unread_messages

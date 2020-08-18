@@ -245,33 +245,42 @@ export const getOptionsFromObject = (object, noneOption, transformer) =>
  * @param {string} name -- Name of the zone, defaults to New York
  * @returns {string} -- The label of the timezone
  */
-export const zoneName = (time, name) => {
-  // Default to using EST for all times before conversion
-  moment.tz.setDefault(COMMON_TIMEZONES[3]);
-
+export const zoneName = (time, name, format) => {
   // Default to using America/New_York
   const timezone = name ? name : COMMON_TIMEZONES[3];
 
   // Filter the zone name
   const [zone] = Object.keys(TIMEZONES).filter((tz) => TIMEZONES[tz] === timezone);
 
+  // Set the label
+  const label = format ? '' : zone;
+
   // Return the value if it is not a valid time
   return moment(time, 'h:mm A').isValid() ? `${moment(time, 'h:mm a').tz(timezone).
-    format('h:mm A')} ${zone}` : time;
+    format(`h:mm A ${format || ''}`)}${label}` : time;
 };
 
 /**
  * Method to add timezone to the label of the time
  * @returns {Array} -- List of hearing times with the zone appended to the label
  */
-export const hearingTimeOptsWithZone = (options) =>
-  options.map((time) => {
-    const label = time.label ? 'label' : 'displayText';
+export const hearingTimeOptsWithZone = (options, local) =>
+  options.map((item) => {
+    // Default to using EST for all times before conversion
+    moment.tz.setDefault(local === true ? 'America/New_York' : local);
+
+    // Check which label to use
+    const label = item.label ? 'label' : 'displayText';
+
+    // Set the time
+    const time = zoneName(item[label]);
+
+    // Set the time in the local timezone
+    const localTime = zoneName(item[label], local === true ? '' : local);
 
     return {
-      ...time,
-      [label]: zoneName(time[label])
-
+      ...item,
+      [label]: local && localTime !== time ? `${localTime} / ${time}` : time
     };
   });
 

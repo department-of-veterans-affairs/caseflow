@@ -3297,7 +3297,7 @@ exports[`VirtualHearingModal DateTime sub-component Displays formatted hearing d
 </DateTime>
 `;
 
-exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type is change_email 1`] = `
+exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type is change_email_or_timezone 1`] = `
 <VirtualHearingModal
   hearing={
     Object {
@@ -3430,9 +3430,11 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
           }
           disabled={false}
           linkStyling={true}
+          loading={false}
           name="cancel-virtual-hearing"
           onClick={[Function]}
           type="button"
+          willNeverBeLoading={false}
         >
           Cancel
         </Button>
@@ -3447,14 +3449,17 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
             ]
           }
           disabled={false}
+          linkStyling={false}
           loading={false}
           name="submit-virtual-hearing"
           onClick={[Function]}
           type="button"
+          willNeverBeLoading={false}
         >
           Update and Send Email
         </Button>
       }
+      scrollLock={true}
       title="Update Timezone"
     >
       <section
@@ -3797,10 +3802,12 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
                     ]
                   }
                   disabled={false}
+                  linkStyling={false}
                   loading={false}
                   name="submit-virtual-hearing"
                   onClick={[Function]}
                   type="button"
+                  willNeverBeLoading={false}
                 >
                   <span>
                     <button
@@ -3826,9 +3833,11 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
                   }
                   disabled={false}
                   linkStyling={true}
+                  loading={false}
                   name="cancel-virtual-hearing"
                   onClick={[Function]}
                   type="button"
+                  willNeverBeLoading={false}
                 >
                   <span>
                     <button
@@ -3985,9 +3994,11 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
           }
           disabled={false}
           linkStyling={true}
+          loading={false}
           name="cancel-virtual-hearing"
           onClick={[Function]}
           type="button"
+          willNeverBeLoading={false}
         >
           Cancel
         </Button>
@@ -4002,14 +4013,17 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
             ]
           }
           disabled={false}
+          linkStyling={false}
           loading={false}
           name="submit-virtual-hearing"
           onClick={[Function]}
           type="button"
+          willNeverBeLoading={false}
         >
           Change and Send Email
         </Button>
       }
+      scrollLock={true}
       title="Change to Video Hearing"
     >
       <section
@@ -4504,10 +4518,12 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                     ]
                   }
                   disabled={false}
+                  linkStyling={false}
                   loading={false}
                   name="submit-virtual-hearing"
                   onClick={[Function]}
                   type="button"
+                  willNeverBeLoading={false}
                 >
                   <span>
                     <button
@@ -4533,9 +4549,11 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                   }
                   disabled={false}
                   linkStyling={true}
+                  loading={false}
                   name="cancel-virtual-hearing"
                   onClick={[Function]}
                   type="button"
+                  willNeverBeLoading={false}
                 >
                   <span>
                     <button
@@ -4692,9 +4710,11 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
           }
           disabled={false}
           linkStyling={true}
+          loading={false}
           name="cancel-virtual-hearing"
           onClick={[Function]}
           type="button"
+          willNeverBeLoading={false}
         >
           Cancel
         </Button>
@@ -4709,15 +4729,18 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
             ]
           }
           disabled={false}
+          linkStyling={false}
           loading={false}
           name="submit-virtual-hearing"
           onClick={[Function]}
           type="button"
+          willNeverBeLoading={false}
         >
-          Change and Send Email
+          Update Hearing Time
         </Button>
       }
-      title="Change Hearing Time"
+      scrollLock={true}
+      title="Update Hearing Time"
     >
       <section
         aria-describedby="modal_id-desc"
@@ -4748,7 +4771,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
         >
           <button
             className="cf-modal-close"
-            id="Change-Hearing-Time-button-id-close"
+            id="Update-Hearing-Time-button-id-close"
             onClick={[Function]}
             type="button"
           >
@@ -4780,7 +4803,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
               <h1
                 id="modal_id-title"
               >
-                Change Hearing Time
+                Update Hearing Time
               </h1>
               <div
                 data-css-o98ubo=""
@@ -5211,10 +5234,12 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                     ]
                   }
                   disabled={false}
+                  linkStyling={false}
                   loading={false}
                   name="submit-virtual-hearing"
                   onClick={[Function]}
                   type="button"
+                  willNeverBeLoading={false}
                 >
                   <span>
                     <button
@@ -5224,7 +5249,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                       onClick={[Function]}
                       type="button"
                     >
-                      Change and Send Email
+                      Update Hearing Time
                     </button>
                   </span>
                 </Button>
@@ -5240,9 +5265,11 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                   }
                   disabled={false}
                   linkStyling={true}
+                  loading={false}
                   name="cancel-virtual-hearing"
                   onClick={[Function]}
                   type="button"
+                  willNeverBeLoading={false}
                 >
                   <span>
                     <button
@@ -5399,9 +5426,11 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
           }
           disabled={false}
           linkStyling={true}
+          loading={false}
           name="cancel-virtual-hearing"
           onClick={[Function]}
           type="button"
+          willNeverBeLoading={false}
         >
           Cancel
         </Button>
@@ -5416,14 +5445,17 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
             ]
           }
           disabled={false}
+          linkStyling={false}
           loading={false}
           name="submit-virtual-hearing"
           onClick={[Function]}
           type="button"
+          willNeverBeLoading={false}
         >
           Change and Send Email
         </Button>
       }
+      scrollLock={true}
       title="Change to Virtual Hearing"
     >
       <section
@@ -5889,10 +5921,12 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                     ]
                   }
                   disabled={false}
+                  linkStyling={false}
                   loading={false}
                   name="submit-virtual-hearing"
                   onClick={[Function]}
                   type="button"
+                  willNeverBeLoading={false}
                 >
                   <span>
                     <button
@@ -5918,9 +5952,11 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                   }
                   disabled={false}
                   linkStyling={true}
+                  loading={false}
                   name="cancel-virtual-hearing"
                   onClick={[Function]}
                   type="button"
+                  willNeverBeLoading={false}
                 >
                   <span>
                     <button

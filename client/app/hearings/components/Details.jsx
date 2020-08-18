@@ -1,12 +1,21 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
+import { isEmpty, isUndefined, get } from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import React, { useState, useContext, useEffect } from 'react';
-import { isEmpty, isUndefined, get } from 'lodash';
 
-import { HearingsFormContext, updateHearingDispatcher, RESET_HEARING } from '../contexts/HearingsFormContext';
+import { DetailsHeader } from './details/DetailsHeader';
+import { HearingConversion } from './HearingConversion';
+import {
+  HearingsFormContext,
+  updateHearingDispatcher,
+  RESET_HEARING,
+  RESET_VIRTUAL_HEARING
+} from '../contexts/HearingsFormContext';
+import { deepDiff, pollVirtualHearingData, getChanges, getAppellantTitleForHearing } from '../utils';
+import { inputFix } from './details/style';
 import {
   onReceiveAlerts,
   onReceiveTransitioningAlert,
@@ -14,15 +23,11 @@ import {
   clearAlerts
 } from '../../components/common/actions';
 import Alert from '../../components/Alert';
-import Button from '../../components/Button';
-import UserAlerts from '../../components/UserAlerts';
 import ApiUtil from '../../util/ApiUtil';
-import { deepDiff, pollVirtualHearingData, getChanges, getAppellantTitleForHearing } from '../utils';
+import Button from '../../components/Button';
 import DetailsForm from './details/DetailsForm';
-import { DetailsHeader } from './details/DetailsHeader';
+import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
-import { HearingConversion } from './HearingConversion';
-import { inputFix } from './details/style';
 
 /**
  * Hearing Details Component
@@ -37,7 +42,7 @@ const HearingDetails = (props) => {
   const updateHearing = updateHearingDispatcher(hearing, dispatch);
 
   // Pull out the inherited state to handle actions
-  const { saveHearing, setHearing, goBack, disabled } = props;
+  const { saveHearing, goBack, disabled } = props;
 
   // Determine whether this is a legacy hearing
   const isLegacy = hearing?.docketName !== 'hearing';
@@ -52,13 +57,12 @@ const HearingDetails = (props) => {
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
 
   // Method to reset the state
-  const reset = (initialState) => {
+  const reset = () => {
     // Reset the state
     setVirtualHearingErrors({});
     convertHearing('');
     setLoading(false);
     setError(false);
-    dispatch({ type: RESET_HEARING, payload: initialState });
 
     // Focus the top of the page
     window.scrollTo(0, 0);
@@ -93,14 +97,18 @@ const HearingDetails = (props) => {
       // Determine the current state and whether to error
       const virtual = hearing.isVirtual || hearing.wasVirtual || converting;
       const noEmail = !hearing.virtualHearing?.appellantEmail;
+      const noRepEmail = !hearing.virtualHearing?.representativeEmail && hearing.virtualHearing?.representativeTz;
+      const noRepTimezone = !hearing.virtualHearing?.representativeTz && hearing.virtualHearing?.representativeEmail;
       const emailUpdated = editedEmails?.appellantEmailEdited || editedEmails?.representativeEmailEdited;
       const timezoneUpdated = editedEmails?.representativeTzEdited || editedEmails?.appellantTzEdited;
+      const errors = noEmail || ((noRepTimezone || noRepEmail) && hearing.readableRequestType !== 'Video');
 
-      if (virtual && noEmail) {
+      if (virtual && errors) {
         // Set the Virtual Hearing errors
         setVirtualHearingErrors({
-          [!hearing.virtualHearing.appellantEmail && 'appellantEmail']:
-            `${getAppellantTitleForHearing(hearing)} email is required`,
+          [noRepEmail && 'representativeEmail']: 'POA/Representative email is required',
+          [noEmail && 'appellantEmail']: `${getAppellantTitleForHearing(hearing)} email is required`,
+          [noRepTimezone && 'representativeTz']: 'Timezone is required to send email notifications.'
         });
 
         // Focus to the error
@@ -134,24 +142,22 @@ const HearingDetails = (props) => {
       const hearingResp = ApiUtil.convertToCamelCase(response.body?.data);
       const alerts = response.body?.alerts;
 
-      // set hearing on DetailsContainer
-      setHearing(hearingResp, () => {
-        if (alerts) {
-          const { hearing: hearingAlerts, virtual_hearing: virtualHearingAlerts } = alerts;
+      if (alerts) {
+        const { hearing: hearingAlerts, virtual_hearing: virtualHearingAlerts } = alerts;
 
-          if (hearingAlerts) {
-            props.onReceiveAlerts(hearingAlerts);
-          }
-
-          if (!isEmpty(virtualHearingAlerts)) {
-            props.onReceiveTransitioningAlert(virtualHearingAlerts, 'virtualHearing');
-            setShouldStartPolling(true);
-          }
+        if (hearingAlerts) {
+          props.onReceiveAlerts(hearingAlerts);
         }
 
-        // Reset the state
-        reset(hearingResp);
-      });
+        if (!isEmpty(virtualHearingAlerts)) {
+          props.onReceiveTransitioningAlert(virtualHearingAlerts, 'virtualHearing');
+          setShouldStartPolling(true);
+        }
+      }
+
+      // Reset the state
+      reset();
+      dispatch({ type: RESET_HEARING, payload: hearingResp });
     } catch (respError) {
       const code = get(respError, 'response.body.errors[0].code') || '';
 
@@ -193,13 +199,8 @@ const HearingDetails = (props) => {
         setShouldStartPolling(false);
 
         // Reset the state with the new details
-        reset({
-          ...hearing,
-          virtualHearing: {
-            ...hearing.virtualHearing,
-            ...resp,
-          },
-        });
+        reset();
+        dispatch({ type: RESET_VIRTUAL_HEARING, payload: resp });
         props.transitionAlert('virtualHearing');
       }
 
@@ -210,7 +211,7 @@ const HearingDetails = (props) => {
 
   const editedEmails = getEditedEmails();
   const convertLabel = converting === 'change_to_virtual' ?
-    'Convert to Virtual Hearing' : 'Convert to Central Office Hearing';
+    'Convert to Virtual Hearing' : `Convert to ${hearing.readableRequestType} Hearing`;
 
   return (
     <React.Fragment>
@@ -302,9 +303,7 @@ const HearingDetails = (props) => {
 };
 
 HearingDetails.propTypes = {
-  hearing: PropTypes.object.isRequired,
   saveHearing: PropTypes.func,
-  setHearing: PropTypes.func,
   goBack: PropTypes.func,
   disabled: PropTypes.bool,
   onReceiveAlerts: PropTypes.func,

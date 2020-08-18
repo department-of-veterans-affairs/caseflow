@@ -24,6 +24,7 @@ class LegacyAppeal < CaseflowRecord
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
   has_many :decision_documents, as: :appeal
+  has_many :vbms_uploaded_documents, as: :appeal
   has_one :special_issue_list, as: :appeal
   has_many :record_synced_by_job, as: :record
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
@@ -1132,6 +1133,17 @@ class LegacyAppeal < CaseflowRecord
 
     def nonpriority_decisions_per_year
       repository.nonpriority_decisions_per_year
+    end
+
+    def rollback_opt_in_on_decided_appeal(appeal:, user:, original_data:)
+      opt_in_disposition = Constants::VACOLS_DISPOSITIONS_BY_ID[LegacyIssueOptin::VACOLS_DISPOSITION_CODE]
+      return unless appeal.disposition == opt_in_disposition
+
+      repository.rollback_opt_in_on_decided_appeal!(
+        appeal: appeal,
+        user: user,
+        original_data: original_data
+      )
     end
 
     private
