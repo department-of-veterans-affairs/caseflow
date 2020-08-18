@@ -1033,4 +1033,105 @@ describe Appeal, :all_dbs do
       end
     end
   end
+
+  shared_examples "existing BvaDispatchTask" do |status, result|
+    let (:user) { create(:user) }
+
+    before do
+      allow_any_instance_of(BvaDispatch).to receive(:next_assignee).and_return(user)
+      dispatch_task = BvaDispatchTask.create_from_root_task(appeal.root_task)
+      dispatch_task.descendants.each { |task| task.update_column(:status, status) }
+    end
+
+    it "should return #{result}" do
+      expect(subject).to eq(result)
+    end
+  end
+
+  shared_examples "depends on existing BvaDispatchTask" do
+      context "no existing BvaDispatchTask" do
+        it "should return true" do
+          expect(subject).to eq(true)
+        end
+      end
+
+      context "existing open BvaDispatchTask" do
+        include_examples "existing BvaDispatchTask",
+          Constants.TASK_STATUSES.in_progress,
+          false
+      end
+
+      context "existing complete BvaDispatchTask" do
+        include_examples "existing BvaDispatchTask",
+          Constants.TASK_STATUSES.completed,
+          false
+      end
+
+      context "existing cancelled BvaDispatchTask" do
+        include_examples "existing BvaDispatchTask",
+          Constants.TASK_STATUSES.cancelled,
+          true
+
+        context "existing open BvaDispatchTask" do
+          include_examples "existing BvaDispatchTask",
+            Constants.TASK_STATUSES.assigned,
+            false
+        end
+
+        context "existing completed BvaDispatchTask" do
+          include_examples "existing BvaDispatchTask",
+            Constants.TASK_STATUSES.completed,
+            false
+        end
+      end
+  end
+
+  describe ".ready_for_bva_dispatch?" do
+    subject { appeal.ready_for_bva_dispatch? }
+
+    context "no complete JudgeDecisionReviewTask" do
+      it "should return false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "has complete JudgeDecisionReviewTask" do
+      let (:appeal) do
+        create(:appeal,
+               :at_judge_review,
+               docket_type: Constants.AMA_DOCKETS.direct_review)
+      end
+      before do
+        JudgeDecisionReviewTask.find_by(appeal: appeal)
+          .update_column(:status, Constants.TASK_STATUSES.completed)
+      end
+
+      context "no QualityReviewTask" do
+        include_examples "depends on existing BvaDispatchTask"
+      end
+
+      context "existing open QualityReviewTask" do
+        let (:user) { create(:user) }
+        before do
+          allow_any_instance_of(Organization).to receive(:next_assignee).and_return(user)
+          QualityReviewTask.create_from_root_task(appeal.root_task)
+        end
+
+        it "should return false" do
+          expect(subject).to eq(false)
+        end
+      end
+
+      context "existing closed QualityReviewTask" do
+        let (:user) { create(:user) }
+        before do
+          allow_any_instance_of(Organization).to receive(:next_assignee).and_return(user)
+          qr_task = QualityReviewTask.create_from_root_task(appeal.root_task)
+          qr_task.descendants.each { |task| task.update_column(:status, Constants.TASK_STATUSES.completed) }
+        end
+
+        include_examples "depends on existing BvaDispatchTask"
+      end
+    end
+  end
 end

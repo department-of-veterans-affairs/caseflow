@@ -497,6 +497,14 @@ class Appeal < DecisionReview
     false
   end
 
+  def ready_for_bva_dispatch?
+    return false if QualityReviewTask.find_by(appeal: self)&.open?
+    return false if BvaDispatchTask.find_by(appeal: self)&.completed?
+    return false if BvaDispatchTask.find_by(appeal: self)&.open?
+    return true if JudgeDecisionReviewTask.find_by(appeal: self)&.completed?
+    false
+  end
+
   private
 
   def business_lines_needing_assignment
