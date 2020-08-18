@@ -1072,13 +1072,13 @@ describe Appeal, :all_dbs do
           Constants.TASK_STATUSES.cancelled,
           true
 
-        context "existing open BvaDispatchTask" do
+        context "and existing open BvaDispatchTask" do
           include_examples "existing BvaDispatchTask",
             Constants.TASK_STATUSES.assigned,
             false
         end
 
-        context "existing completed BvaDispatchTask" do
+        context "and existing completed BvaDispatchTask" do
           include_examples "existing BvaDispatchTask",
             Constants.TASK_STATUSES.completed,
             false
