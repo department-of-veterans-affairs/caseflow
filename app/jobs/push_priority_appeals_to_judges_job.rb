@@ -100,6 +100,6 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   def priority_distributions_this_month
-    Distribution.priority_push.completed.where(completed_at: 30.days.ago..Time.zone.now)
+    Distribution.priority_pushed.completed.where(completed_at: 30.days.ago..Time.zone.now)
   end
 end
