@@ -406,13 +406,13 @@ feature "Intake Review Page", :postgres do
             click_on "Establish EP"
 
             expect(page).to have_content("Contention: Appointment of a Fiduciary")
-            fiduciary_issue = EndProductEstablishment.where(
+            fiduciary_end_product = EndProductEstablishment.where(
               code: "040SCRFID",
               modifier: "040",
               payee_code: "11",
               source_type: "SupplementalClaim"
             )
-            expect(fiduciary_issue).to_not be_nil
+            expect(fiduciary_end_product).to_not be_nil
           end
         end
 
