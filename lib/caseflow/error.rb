@@ -254,12 +254,6 @@ module Caseflow::Error
     end
   end
 
-  class NonexistentDvcTeam < StandardError
-    def initialize(args)
-      @user_id = args[:user_id]
-    end
-  end
-
   class DuplicateJudgeTeam < SerializableError
     def initialize(args)
       @user_id = args[:user_id]
