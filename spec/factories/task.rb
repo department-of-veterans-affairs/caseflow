@@ -474,6 +474,12 @@ FactoryBot.define do
         assigned_by { nil }
       end
 
+      factory :extension_request_mail_task, class: ExtensionRequestMailTask do
+        parent { create(:root_task, appeal: appeal) }
+        assigned_to { MailTeam.singleton }
+        assigned_by { nil }
+      end
+
       factory :judge_address_motion_to_vacate_task, class: JudgeAddressMotionToVacateTask do
         parent { create(:vacate_motion_mail_task, appeal: appeal) }
       end
