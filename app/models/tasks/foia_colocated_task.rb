@@ -33,6 +33,11 @@ class FoiaColocatedTask < ColocatedTask
     )
   end
 
+  def blocks_dispatch?
+    return false unless FeatureToggle.enabled?(:cm_move_with_blocking_tasks)
+    true
+  end
+
   private
 
   def cascade_closure_from_child_task?(child_task)

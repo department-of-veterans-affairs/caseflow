@@ -21,4 +21,16 @@ describe FoiaTask do
       end
     end
   end
+
+  describe ".blocks_dispatch?" do
+    let(:appeal) { create(:appeal) }
+    let(:task) { create(:foia_task, appeal: appeal) }
+
+    before { FeatureToggle.enable!(:cm_move_with_blocking_tasks) }
+    after { FeatureToggle.disable!(:cm_move_with_blocking_tasks) }
+
+    it "blocks dispatch" do
+      expect(task.blocks_dispatch?).to be(true)
+    end
+  end
 end

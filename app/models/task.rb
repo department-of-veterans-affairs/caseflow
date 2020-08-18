@@ -599,6 +599,10 @@ class Task < CaseflowRecord
     false
   end
 
+  def blocks_dispatch?
+    false
+  end
+
   private
 
   def create_and_auto_assign_child_task(options = {})
