@@ -57,23 +57,6 @@ describe DvcTeam, :postgres do
         expect(DvcTeam.for_dvc(user)).to eq(nil)
       end
     end
-
-    # Limitation of the current approach is that users are effectively limited to being the admin of
-    # a single DvcTeam.
-    context "when user is admin of multiple DvcTeams" do
-      let!(:first_dvc_team) { DvcTeam.create_for_dvc(user) }
-      let!(:second_dvc_team) do
-        DvcTeam.create!(name: "#{user.css_id}_2", url: "#{user.css_id.downcase}_2").tap do |org|
-          OrganizationsUser.make_user_admin(user, org)
-        end
-      end
-
-      it "returns the first DvcTeam even when they are admins of two DvcTeams" do
-        user.reload
-        expect(DvcTeam.for_dvc(user)).to eq(first_dvc_team)
-        expect(user.administered_teams.length).to eq(2)
-      end
-    end
   end
 
   context "a DvcTeam with judges as (non-admin) members" do
