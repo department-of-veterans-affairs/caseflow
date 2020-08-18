@@ -390,7 +390,7 @@ class Task < CaseflowRecord
   end
 
   def cancel_descendants
-    descendants.each { |desc| desc.update!(status: Constants.TASK_STATUSES.cancelled) }
+    descendants.select(&:open?).each { |desc| desc.update!(status: Constants.TASK_STATUSES.cancelled) }
   end
 
   def create_twin_of_type(_params)
