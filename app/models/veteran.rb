@@ -196,7 +196,11 @@ class Veteran < CaseflowRecord
 
   def validate_zip_code
     # This regex validation checks for that zip code is 5 characters long
-    errors.add(:zip_code, "invalid_zip_code") unless zip_code&.match?(/^(?=(\D*\d){5}\D*$)/)
+    zip_code = bgs_record&.[](:zip_code)
+
+    if zip_code && country == "USA"
+      errors.add(:zip_code, "invalid_zip_code") unless zip_code&.match?(/^(?=(\D*\d){5}\D*$)/)
+    end
   end
 
   def validate_address_line
