@@ -262,12 +262,6 @@ module Caseflow::Error
     end
   end
 
-  class NonexistentJudgeTeam < StandardError
-    def initialize(args)
-      @user_id = args[:user_id]
-    end
-  end
-
   class MultipleAppealsByVBMSID < StandardError; end
   class CertificationMissingData < StandardError; end
   class InvalidSSN < StandardError; end
