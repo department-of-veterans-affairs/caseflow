@@ -27,7 +27,7 @@ class VirtualHearingUserAlertBuilder
     recipients << ", and VLJ" if hearing.virtual_hearing.judge_email.present?
 
     recipients_except_vlj = appellant_title.dup
-    recipients_except_vlj << "and POA / Representative" if hearing.virtual_hearing.representative_email.present?
+    recipients_except_vlj << " and POA / Representative" if hearing.virtual_hearing.representative_email.present?
 
     format(
       copy["MESSAGE"],
