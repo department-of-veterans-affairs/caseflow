@@ -446,7 +446,7 @@ describe Distribution, :all_dbs do
       end
 
       let!(:priority_legacy_hearings_not_tied_to_judge) do
-        legacy_nonpriority_cases[0..1].map { |appeal| create_legacy_case_hearing_for(appeal, board_member: "1234") }
+        legacy_priority_cases[0..1].map { |appeal| create_legacy_case_hearing_for(appeal, board_member: "1234") }
       end
 
       let!(:priority_ama_hearings_tied_to_judge) do
