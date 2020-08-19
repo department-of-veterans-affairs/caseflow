@@ -93,9 +93,8 @@ EP_CODES = [
   %w[930DORPMC 930 control remand difference_of_opinion pension rating higher_level_review],
   %w[930DORPMC 930 local_quality_error remand difference_of_opinion pension rating higher_level_review],
   %w[930DORPMC 930 national_quality_error remand difference_of_opinion pension rating higher_level_review],
-  %w[030HLRFID na fiduciary higher_level_review],
-  %w[040SCRFID na fiduciary supplemental_claim]
-
+  %w[030HLRFID primary na original na fiduciary nonrating higher_level_review],
+  %w[040SCRFID primary na original na fiduciary nonrating supplemental_claim]
 ].freeze
 
 describe "Request Issue Correction Cleaner", :postgres do
@@ -134,26 +133,6 @@ describe "Request Issue Correction Cleaner", :postgres do
       end
     end
 
-    context "for fiduciary benefit_type" do
-      context "for higher_level_review claim" do
-        let(:decision_review) { higher_level_review }
-        let(:benefit_type) { "fiduciary" }
-
-        it "returns a fiduciary EP code on higher_level_review " do
-          expect(subject).to eq("030HLRFID")
-        end
-      end
-
-      context "for higher_level_review claim on supplemental_claim" do
-        let(:decision_review) { supplemental_claim }
-        let(:benefit_type) { "fiduciary" }
-
-        it "returns a fiduciary EP code" do
-          expect(subject).to eq("040SCRFID")
-        end
-      end
-    end
-
     EP_CODES.each do |ep_code|
       context "given attributes for EP code #{ep_code}" do
         subject { EndProductCodeSelector.new(request_issue).call }
@@ -178,6 +157,14 @@ describe "Request Issue Correction Cleaner", :postgres do
           let(:contested_rating_issue_reference_id) { "1" }
         else
           let(:nonrating_issue_category) { "Apportionment" }
+        end
+
+        if ep_code[1] == "030HLRFID"
+          let(:decision_review) { "higher_level_review" }
+        end
+
+        if ep_code[1] == "040SCRFID"
+          let(:decision_review) { "supplemental_claim" }
         end
 
         it "correctly returns EP code" do
