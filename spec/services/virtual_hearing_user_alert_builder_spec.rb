@@ -11,7 +11,7 @@ describe VirtualHearingUserAlertBuilder do
         judge_email: judge_email,
         representative_email: representative_email
       )
-    end
+  end
   let(:judge_email) { "judge@va.gov" }
   let(:representative_email) { "representative@va.gov" }
 
