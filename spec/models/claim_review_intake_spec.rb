@@ -150,7 +150,7 @@ describe ClaimReviewIntake, :postgres do
       context "And benefit type is not compensation or pension" do
         let(:benefit_type) { "fiduciary" }
 
-        it "sets payee_code" do
+        it "sets payee_code to nil" do
           subject
 
           expect(intake.detail.claimants.count).to eq 1

@@ -93,7 +93,8 @@ EP_CODES = [
   %w[930DORPMC 930 control remand difference_of_opinion pension rating higher_level_review],
   %w[930DORPMC 930 local_quality_error remand difference_of_opinion pension rating higher_level_review],
   %w[930DORPMC 930 national_quality_error remand difference_of_opinion pension rating higher_level_review],
-  %w[030HLRFID na fiduciary higher_level_review]
+  %w[030HLRFID na fiduciary higher_level_review],
+  %w[040SCRFID na fiduciary supplemental_claim]
 
 ].freeze
 
@@ -134,11 +135,22 @@ describe "Request Issue Correction Cleaner", :postgres do
     end
 
     context "for fiduciary benefit_type" do
-      let(:decision_review) { higher_level_review }
-      let(:benefit_type) { "fiduciary" }
+      context "for higher_level_review claim" do
+        let(:decision_review) { higher_level_review }
+        let(:benefit_type) { "fiduciary" }
 
-      it "returns a fiduciary EP code" do
-        expect(subject).to eq("030HLRFID")
+        it "returns a fiduciary EP code on higher_level_review " do
+          expect(subject).to eq("030HLRFID")
+        end
+      end
+
+      context "for higher_level_review claim on supplemental_claim" do
+        let(:decision_review) { supplemental_claim }
+        let(:benefit_type) { "fiduciary" }
+
+        it "returns a fiduciary EP code" do
+          expect(subject).to eq("040SCRFID")
+        end
       end
     end
 

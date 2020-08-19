@@ -290,7 +290,7 @@ describe Claimant, :postgres do
       context "when decision_review.benefit_type is fiduciary" do
         let(:benefit_type) { "fiduciary" }
 
-        it "requires non-blank value" do
+        it "allows blank value" do
           expect(subject).to be_valid
           expect(subject.errors.messages[:payee_code]).to eq []
         end
