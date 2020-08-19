@@ -84,19 +84,21 @@ describe ScheduleHearingTask, :all_dbs do
       let(:schedule_hearing_task) { create(:schedule_hearing_task) }
       let(:update_params) do
         {
-          status: "completed",
+          status: Constants.TASK_STATUSES.completed,
           business_payloads: {
             description: "Update",
             values: {
-              "hearing_day_id": hearing_day.id,
-              "scheduled_time_string": "09:00"
+              hearing_day_id: hearing_day.id,
+              scheduled_time_string: "09:00"
             }
           }
         }
       end
 
+      subject { schedule_hearing_task.update_from_params(update_params, hearings_management_user) }
+
       it "associates a caseflow hearing with the hearing day" do
-        schedule_hearing_task.update_from_params(update_params, hearings_management_user)
+        subject
 
         expect(Hearing.count).to eq(1)
         expect(Hearing.first.hearing_day).to eq(hearing_day)
@@ -104,13 +106,49 @@ describe ScheduleHearingTask, :all_dbs do
       end
 
       it "creates a AssignHearingDispositionTask and associated object" do
-        schedule_hearing_task.update_from_params(update_params, hearings_management_user)
+        subject
 
         expect(AssignHearingDispositionTask.count).to eq(1)
         expect(AssignHearingDispositionTask.first.appeal).to eq(schedule_hearing_task.appeal)
         expect(HearingTaskAssociation.count).to eq(1)
         expect(HearingTaskAssociation.first.hearing).to eq(Hearing.first)
         expect(HearingTaskAssociation.first.hearing_task).to eq(HearingTask.first)
+      end
+
+      context "when params includes virtual_hearing_attributes", :aggregate_failures do
+        let(:appellant_email) { "fake@email.com" }
+        let(:virtual_hearing_attributes) do
+          {
+            appellant_email: appellant_email
+          }
+        end
+
+        before do
+          update_params[:business_payloads][:values][:virtual_hearing_attributes] = virtual_hearing_attributes
+        end
+
+        it "converts hearing to virtual hearing", :aggregate_failures do
+          subject
+
+          expect(Hearing.count).to eq(1)
+          expect(Hearing.first.virtual_hearing).not_to eq(nil)
+          expect(Hearing.first.virtual?).to eq(true)
+          expect(Hearing.first.virtual_hearing.appellant_email).to eq(appellant_email)
+        end
+
+        context "with invalid params" do
+          let(:appellant_email) { "blah" }
+
+          it "raises error and does not create a hearing object" do
+            expect { subject }
+              .to raise_error(Caseflow::Error::VirtualHearingConversionFailed)
+              .with_message("Validation failed: Appellant email does not appear to be a valid e-mail address")
+
+            # does not create the hearing
+            expect(Hearing.count).to eq(0)
+            expect(AssignHearingDispositionTask.count).to eq(0)
+          end
+        end
       end
     end
 
