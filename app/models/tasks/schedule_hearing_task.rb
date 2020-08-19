@@ -38,6 +38,16 @@ class ScheduleHearingTask < Task
     end
   end
 
+  def create_hearing(task_values)
+    HearingRepository.slot_new_hearing(
+      task_values[:hearing_day_id],
+      appeal: appeal,
+      hearing_location_attrs: task_values[:hearing_location]&.to_hash,
+      scheduled_time_string: task_values[:scheduled_time_string],
+      override_full_hearing_day_validation: task_values[:override_full_hearing_day_validation]
+    )
+  end
+
   def update_from_params(params, current_user)
     multi_transaction do
       verify_user_can_update!(current_user)
@@ -46,13 +56,8 @@ class ScheduleHearingTask < Task
         task_values = params.delete(:business_payloads)[:values]
 
         multi_transaction do
-          hearing = HearingRepository.slot_new_hearing(
-            task_values[:hearing_day_id],
-            appeal: appeal,
-            hearing_location_attrs: task_values[:hearing_location]&.to_hash,
-            scheduled_time_string: task_values[:scheduled_time_string],
-            override_full_hearing_day_validation: task_values[:override_full_hearing_day_validation]
-          )
+          hearing = create_hearing(task_values)
+
           AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, parent, hearing)
 
           if task_values[:virtual_hearing_attributes].present?
@@ -107,9 +112,8 @@ class ScheduleHearingTask < Task
     hearing_admin_actions
   end
 
-
   def alerts
-     @alerts ||= []
+    @alerts ||= []
   end
 
   private

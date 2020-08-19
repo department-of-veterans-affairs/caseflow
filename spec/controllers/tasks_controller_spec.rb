@@ -656,7 +656,9 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     end
 
     context "when payload includes virtual hearing attributes and complete status" do
-      let(:hearing_day) { create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:video], regional_office: "RO31") }
+      let(:hearing_day) do
+        create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:video], regional_office: "RO31")
+      end
       let(:appellant_email) { "fake@email.com" }
       let(:virtual_hearing_attributes) do
         {
@@ -746,7 +748,9 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         end
         let(:hearing_task) { create(:hearing_task, parent: root_task) }
         let(:prev_hearing) { create(:hearing, hearing_day: hearing_day) }
-        let!(:hearing_task_association) { HearingTaskAssociation.create!(hearing: prev_hearing, hearing_task: hearing_task) }
+        let!(:hearing_task_association) do
+          HearingTaskAssociation.create!(hearing: prev_hearing, hearing_task: hearing_task)
+        end
         let(:params) do
           {
             task: {
@@ -777,7 +781,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
           # get the new hearing
           appeal_id = response_body[0]["attributes"]["appeal_id"]
-          new_hearing_task = HearingTask.find_by(appeal_id: appeal_id, status:  Constants.TASK_STATUSES.on_hold)
+          new_hearing_task = HearingTask.find_by(appeal_id: appeal_id, status: Constants.TASK_STATUSES.on_hold)
           new_hearing = new_hearing_task.hearing
 
           expect(new_hearing.virtual?).to eq(true)

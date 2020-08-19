@@ -158,7 +158,7 @@ const HearingDetails = (props) => {
       const alerts = response.body?.alerts;
 
       if (alerts) {
-        alerts.forEach(alert =>  processAlert(alert))
+        alerts.forEach((alert) => processAlert(alert));
       }
 
       // Reset the state
