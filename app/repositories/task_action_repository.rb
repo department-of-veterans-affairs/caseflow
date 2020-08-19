@@ -317,9 +317,7 @@ class TaskActionRepository
       {
         selected: task.appeal.assigned_judge,
         options: users_to_options(Judge.list_all),
-        # TODO: Update with Kat's changes
-        # type: BlockedSpecialCaseMovementTask.name,
-        type: SpecialCaseMovementTask.name,
+        type: BlockedSpecialCaseMovementTask.name,
         blocking_tasks: task.visible_blocking_tasks.map(&:serialize_for_cancellation)
       }
     end

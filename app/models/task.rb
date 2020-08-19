@@ -600,10 +600,18 @@ class Task < CaseflowRecord
   end
 
   def serialize_for_cancellation
+    assignee_display_name = ""
+
+    if assigned_to.is_a?(Organization)
+      assignee_display_name = assigned_to.name
+    else
+      assignee_display_name =  "#{assigned_to.full_name.titlecase} (#{assigned_to.css_id})"
+    end
+
     {
       id: id,
       assigned_to_email: assigned_to.is_a?(Organization) ? assigned_to.admins.first&.email : assigned_to.email,
-      assigned_to_name: assigned_to.is_a?(Organization) ? assigned_to.name : assigned_to.full_name.titlecase,
+      assigned_to_name: assignee_display_name,
       type: type
     }
   end
