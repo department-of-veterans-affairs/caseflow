@@ -52,6 +52,7 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
       veteranAddressTooLong: null,
       veteranAddressInvalidFields: null,
       veteranCityInvalidFields: null,
+      veteranZipCodeInvalid: null,
       pids: null
     },
     cancelModalVisible: false,
@@ -136,6 +137,9 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
         veteranNameSuffixInvalid: {
           $set: action.payload.errorData.veteran_name_suffix_invalid
         },
+        veteranZipCodeInvalid: {
+          $set: action.payload.errorData.veteran_zip_code_invalid
+        },
         pids: {
           $set: _.join(action.payload.errorData.pids, ', ')
         }
@@ -168,6 +172,9 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
           $set: null
         },
         veteranCityInvalidFields: {
+          $set: null
+        },
+        veteranZipCodeInvalid: {
           $set: null
         },
         pids: {
