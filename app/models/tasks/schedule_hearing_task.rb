@@ -18,8 +18,11 @@
 # Once completed, an AssignHearingDispositionTask is created.
 
 class ScheduleHearingTask < Task
+  include ConvertToVirtualHearing
+
   before_validation :set_assignee
   before_create :create_parent_hearing_task
+  delegate :hearing, to: :parent, allow_nil: true
 
   def self.label
     "Schedule hearing"
@@ -42,19 +45,25 @@ class ScheduleHearingTask < Task
       if params[:status] == Constants.TASK_STATUSES.completed
         task_values = params.delete(:business_payloads)[:values]
 
-        hearing = HearingRepository.slot_new_hearing(
-          task_values[:hearing_day_id],
-          appeal: appeal,
-          hearing_location_attrs: task_values[:hearing_location]&.to_hash,
-          scheduled_time_string: task_values[:scheduled_time_string],
-          override_full_hearing_day_validation: task_values[:override_full_hearing_day_validation]
-        )
-        AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, parent, hearing)
+        multi_transaction do
+          hearing = HearingRepository.slot_new_hearing(
+            task_values[:hearing_day_id],
+            appeal: appeal,
+            hearing_location_attrs: task_values[:hearing_location]&.to_hash,
+            scheduled_time_string: task_values[:scheduled_time_string],
+            override_full_hearing_day_validation: task_values[:override_full_hearing_day_validation]
+          )
+          AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, parent, hearing)
+
+          if task_values[:virtual_hearing_attributes].present?
+            convert_hearing_to_virtual(hearing, task_values[:virtual_hearing_attributes])
+          end
+        end
       elsif params[:status] == Constants.TASK_STATUSES.cancelled
         withdraw_hearing
       end
 
-      super(params, current_user)
+      super(params, current_user) # returns [self]
     end
   end
 
@@ -96,6 +105,11 @@ class ScheduleHearingTask < Task
     end
 
     hearing_admin_actions
+  end
+
+
+  def alerts
+     @alerts ||= []
   end
 
   private

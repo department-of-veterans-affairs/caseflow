@@ -15,6 +15,8 @@
 # The task is marked complete when the children tasks are completed.
 
 class AssignHearingDispositionTask < Task
+  include ConvertToVirtualHearing
+
   validates :parent, presence: true
   before_create :check_parent_type
   delegate :hearing, to: :hearing_task, allow_nil: true
@@ -123,6 +125,10 @@ class AssignHearingDispositionTask < Task
     end
   end
 
+  def alerts
+    @alerts ||= []
+  end
+
   private
 
   def update_children_status_after_closed
@@ -174,14 +180,18 @@ class AssignHearingDispositionTask < Task
     end
   end
 
-  def reschedule(hearing_day_id:, scheduled_time_string:, hearing_location: nil)
-    new_hearing_task = hearing_task.cancel_and_recreate
+  def reschedule(hearing_day_id:, scheduled_time_string:, hearing_location: nil, virtual_hearing_attributes: nil)
+    multi_transaction do
+      new_hearing_task = hearing_task.cancel_and_recreate
 
-    new_hearing = HearingRepository.slot_new_hearing(hearing_day_id,
-                                                     appeal: appeal,
-                                                     hearing_location_attrs: hearing_location&.to_hash,
-                                                     scheduled_time_string: scheduled_time_string)
-    self.class.create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)
+      new_hearing = HearingRepository.slot_new_hearing(hearing_day_id,
+                                                       appeal: appeal,
+                                                       hearing_location_attrs: hearing_location&.to_hash,
+                                                       scheduled_time_string: scheduled_time_string)
+      self.class.create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)
+
+      convert_hearing_to_virtual(new_hearing, virtual_hearing_attributes) if virtual_hearing_attributes.present?
+    end
   end
 
   def mark_hearing_cancelled
@@ -219,7 +229,8 @@ class AssignHearingDispositionTask < Task
       reschedule(
         hearing_day_id: new_hearing_attrs[:hearing_day_id],
         scheduled_time_string: new_hearing_attrs[:scheduled_time_string],
-        hearing_location: new_hearing_attrs[:hearing_location]
+        hearing_location: new_hearing_attrs[:hearing_location],
+        virtual_hearing_attributes: new_hearing_attrs[:virtual_hearing_attributes]
       )
     when "schedule_later"
       schedule_later(
