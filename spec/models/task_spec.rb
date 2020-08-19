@@ -1686,18 +1686,44 @@ describe Task, :all_dbs do
       third_level_completed_task.update(status: Constants.TASK_STATUSES.completed)
     end
 
-    it "cancels all open descendants" do
-      second_level_tasks.first.cancel_descendants
+    context "when no instructions are passed" do
+      it "cancels all open descendants" do
+        second_level_tasks.first.cancel_descendants
 
-      expect(second_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
-      expect(third_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
-      expect(third_level_tasks.second.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
-      # previously completed task _not_ cancelled
-      expect(third_level_completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(second_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(third_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(third_level_tasks.second.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(second_level_tasks.first.reload.instructions).to eq([])
+        expect(third_level_tasks.first.reload.instructions).to eq([])
+        expect(third_level_tasks.second.reload.instructions).to eq([])
+        # previously completed task _not_ cancelled
+        expect(third_level_completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
 
-      # parent and sibling not cancelled
-      expect(top_level_task.reload.open?).to eq(true)
-      expect(second_level_tasks.second.reload.open?).to eq(true)
+        # parent and sibling not cancelled
+        expect(top_level_task.reload.open?).to eq(true)
+        expect(second_level_tasks.second.reload.open?).to eq(true)
+      end
+    end
+
+    context "when no instructions are passed" do
+      let(:instructions) { "instructions" }
+
+      it "cancels all open descendants" do
+        second_level_tasks.first.cancel_descendants(instructions)
+
+        expect(second_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(third_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(third_level_tasks.second.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(second_level_tasks.first.reload.instructions).to eq([instructions])
+        expect(third_level_tasks.first.reload.instructions).to eq([instructions])
+        expect(third_level_tasks.second.reload.instructions).to eq([instructions])
+        # previously completed task _not_ cancelled
+        expect(third_level_completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+
+        # parent and sibling not cancelled
+        expect(top_level_task.reload.open?).to eq(true)
+        expect(second_level_tasks.second.reload.open?).to eq(true)
+      end
     end
   end
 end
