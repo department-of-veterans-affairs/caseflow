@@ -5761,7 +5761,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                     name="taskNumber"
                     onChange={[Function]}
                     type="text"
-                    value=""
                   />
                 </div>
               </TextField>
@@ -7399,7 +7398,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -7459,7 +7457,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -7519,7 +7516,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -9243,7 +9239,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       placeholder="mm/dd/yyyy"
                       readOnly={true}
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -9572,7 +9567,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -15352,7 +15346,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                     name="taskNumber"
                     onChange={[Function]}
                     type="text"
-                    value=""
                   />
                 </div>
               </TextField>
@@ -16990,7 +16983,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -17050,7 +17042,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -17110,7 +17101,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -18834,7 +18824,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       placeholder="mm/dd/yyyy"
                       readOnly={true}
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -19164,7 +19153,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -26367,7 +26355,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                     name="taskNumber"
                     onChange={[Function]}
                     type="text"
-                    value=""
                   />
                 </div>
               </TextField>
@@ -28005,7 +27992,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -28065,7 +28051,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -28125,7 +28110,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -29849,7 +29833,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       placeholder="mm/dd/yyyy"
                       readOnly={true}
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -30179,7 +30162,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -37383,7 +37365,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                     name="taskNumber"
                     onChange={[Function]}
                     type="text"
-                    value=""
                   />
                 </div>
               </TextField>
@@ -39021,7 +39002,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -39081,7 +39061,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -39141,7 +39120,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -40865,7 +40843,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       placeholder="mm/dd/yyyy"
                       readOnly={true}
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -41195,7 +41172,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
