@@ -5,12 +5,12 @@ describe VirtualHearingUserAlertBuilder do
   let(:appeal) { create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number) }
   let(:hearing) { create(:hearing, appeal: appeal) }
   let!(:virtual_hearing) do
-      create(
-        :virtual_hearing,
-        hearing: hearing,
-        judge_email: judge_email,
-        representative_email: representative_email
-      )
+    create(
+      :virtual_hearing,
+      hearing: hearing,
+      judge_email: judge_email,
+      representative_email: representative_email
+    )
   end
   let(:judge_email) { "judge@va.gov" }
   let(:representative_email) { "representative@va.gov" }
