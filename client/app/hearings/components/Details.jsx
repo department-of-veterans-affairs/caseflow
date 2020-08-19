@@ -88,6 +88,23 @@ const HearingDetails = (props) => {
     };
   };
 
+  const processHearingAlert = (alert) => {
+    props.onReceiveAlerts(alert.hearing);
+  }
+
+  const processVirtualHearingAlert = (alert) => {
+    props.onReceiveTransitioningAlert(alert.virtual_hearing, 'virtualHearing');
+    setShouldStartPolling(true);
+  }
+
+  const processAlert = (alert) => {
+    if ("hearing" in alert) {
+      processHearingAlert(alert);
+    } else if ("virtual_hearing" in alert && !isEmpty(alert.virtual_hearing)) {
+      processVirtualHearingAlert(alert);
+    }
+  }
+
   const submit = async (editedEmails) => {
     try {
       // Determine the current state and whether to error
@@ -141,16 +158,7 @@ const HearingDetails = (props) => {
       // set hearing on DetailsContainer
       setHearing(hearingResp, () => {
         if (alerts) {
-          const { hearing: hearingAlerts, virtual_hearing: virtualHearingAlerts } = alerts;
-
-          if (hearingAlerts) {
-            props.onReceiveAlerts(hearingAlerts);
-          }
-
-          if (!isEmpty(virtualHearingAlerts)) {
-            props.onReceiveTransitioningAlert(virtualHearingAlerts, 'virtualHearing');
-            setShouldStartPolling(true);
-          }
+          alerts.forEach(alert =>  processAlert(alert))
         }
 
         // Reset the state

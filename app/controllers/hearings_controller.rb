@@ -12,7 +12,7 @@ class HearingsController < HearingsApplicationController
   end
 
   rescue_from ActiveRecord::RecordNotUnique do |_error|
-    render json: { "errors": ["message": "Virtual hearing already exists", code: 1003] }, status: :conflict
+    render json: { "errors": ["message": COPY::VIRTUAL_HEARING_ALREADY_CREATED, code: 1003] }, status: :conflict
   end
 
   rescue_from ActiveRecord::RecordInvalid do |error|
@@ -38,10 +38,10 @@ class HearingsController < HearingsApplicationController
 
     render json: {
       data: form.hearing.to_hash(current_user.id),
-      alerts: {
-        hearing: form.hearing_alerts,
-        virtual_hearing: form.virtual_hearing_alert
-      }
+      alerts: [
+        { hearing: form.hearing_alerts },
+        { virtual_hearing: form.virtual_hearing_alert }
+      ]
     }
   end
 
