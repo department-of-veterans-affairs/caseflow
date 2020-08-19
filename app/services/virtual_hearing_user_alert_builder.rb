@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class VirtualHearingUserAlertBuilder
-  def initialize(change_type:, alert_type:, appeal:, virtual_hearing_updates:)
+  def initialize(change_type:, alert_type:, hearing:, virtual_hearing_updates:)
     @change_type = change_type
     @alert_type = alert_type
-    @appeal = appeal
+    @hearing = hearing
     @virtual_hearing_updates = virtual_hearing_updates
   end
 
@@ -14,33 +14,58 @@ class VirtualHearingUserAlertBuilder
 
   private
 
-  attr_reader :change_type, :alert_type, :appeal, :virtual_hearing_updates
+  attr_reader :change_type, :alert_type, :hearing, :virtual_hearing_updates
 
   def title
-    copy["TITLE"] % (appeal.veteran&.name || "the veteran")
+    copy["TITLE"] % (hearing.appeal.veteran&.name || "the veteran")
+  end
+
+  def appellant_title
+    hearing.appeal.appellant_is_not_veteran ? "Appellant" : "Veteran"
+  end
+
+  # Appellant is a recipient if the `appellant_email_sent` flag is changing.
+  def appellant_is_recipient?
+    !virtual_hearing_updates.fetch(:appellant_email_sent, true)
+  end
+
+  # POA / Representative is a recipient if the `representative_email_sent` flag is
+  # changing, and there is a `representative_email` stored.
+  def representative_is_recipient?
+    !virtual_hearing_updates.fetch(:representative_email_sent, true) &&
+      hearing.virtual_hearing.representative_email.present?
+  end
+
+  # VLJ is a recipient if the `judge_email_sent` flag is changing, and there
+  # is a `judge_email` stored.
+  def vlj_is_recipient?
+    !virtual_hearing_updates.fetch(:judge_email_sent, true) &&
+      hearing.virtual_hearing.judge_email.present?
   end
 
   def message
     recipients = []
+    recipients_except_vlj = []
 
-    unless virtual_hearing_updates.fetch(:appellant_email_sent, true)
-      appellant_title = appeal.appellant_is_not_veteran ? "Appellant" : "Veteran"
+    if appellant_is_recipient?
       recipients << appellant_title
+      recipients_except_vlj << appellant_title
     end
 
-    unless virtual_hearing_updates.fetch(:representative_email_sent, true)
+    if representative_is_recipient?
       recipients << "POA / Representative"
+      recipients_except_vlj << "POA / Representative"
     end
 
-    unless virtual_hearing_updates.fetch(:judge_email_sent, true)
-      judge = recipients.empty? ? "VLJ" : "and VLJ" 
-      recipients << judge 
+    if vlj_is_recipient?
+      recipients << (recipients.empty? ? "VLJ" : "and VLJ")
     end
 
     format(
       copy["MESSAGE"],
       appellant_title: appellant_title,
-      recipients: recipients.join(recipients.size > 2 ? ", " : " and ")
+      recipients: recipients.join((recipients.size > 2) ? ", " : " and "),
+      recipients_except_vlj: recipients_except_vlj.join(" and ")
     )
   end
 

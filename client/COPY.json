@@ -738,7 +738,7 @@
     },
     "CHANGED_FROM_VIRTUAL": {
       "TITLE": "We're updating %s's hearing type",
-      "MESSAGE": "Emails to the %{recipients} are in progress."
+      "MESSAGE": "Emails to the %{recipients_except_vlj} are in progress."
     },
     "CHANGED_EMAIL": {
       "TITLE": "We're emailing the invite to %s's hearing",
@@ -746,7 +746,7 @@
     },
     "CHANGED_HEARING_TIME": {
       "TITLE": "We're updating the hearing time of %s's hearing",
-      "MESSAGE": "Emails to the %{recipients} are in progress."
+      "MESSAGE": "Emails to the %{recipients_except_vlj} are in progress."
     }
   },
 
@@ -757,7 +757,7 @@
     },
     "CHANGED_FROM_VIRTUAL": {
       "TITLE": "You have successfully updated the type of %s's hearing.",
-      "MESSAGE": "Email notifications were sent to the %{recipients}."
+      "MESSAGE": "Email notifications were sent to the %{recipients_except_vlj}."
     },
     "CHANGED_EMAIL": {
       "TITLE": "You have successfully emailed the invite to %s's virtual hearing.",
@@ -765,7 +765,7 @@
     },
     "CHANGED_HEARING_TIME": {
       "TITLE": "You have successfully updated the time of %s's virtual hearing",
-      "MESSAGE": "Email notifications were sent to the %{recipients}."
+      "MESSAGE": "Email notifications were sent to the %{recipients_except_vlj}."
     }
   },
 
