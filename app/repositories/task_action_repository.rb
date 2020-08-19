@@ -315,7 +315,6 @@ class TaskActionRepository
 
     def blocked_special_case_movement_data(task, _user = nil)
       {
-        selected: task.appeal.assigned_judge,
         options: users_to_options(Judge.list_all),
         type: BlockedSpecialCaseMovementTask.name,
         blocking_tasks: task.visible_blocking_tasks.map(&:serialize_for_cancellation)

@@ -219,6 +219,7 @@ class TasksController < ApplicationController
   def create_params
     @create_params ||= [params.require("tasks")].flatten.map do |task|
       appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id])
+      task.merge(instructions: [task[:instructions]].flatten.compact)
       task = task.permit(:type, { instructions: [] }, :assigned_to_id,
                          :assigned_to_type, :parent_id, business_payloads: [:description, values: {}])
         .merge(assigned_by: current_user)
