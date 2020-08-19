@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 class VirtualHearingUserAlertBuilder
-  def initialize(change_type:, alert_type:, hearing:)
+  def initialize(change_type:, alert_type:, appeal:, virtual_hearing_updates:)
     @change_type = change_type
     @alert_type = alert_type
-    @hearing = hearing
+    @appeal = appeal
+    @virtual_hearing_updates = virtual_hearing_updates
   end
 
   def call
@@ -13,27 +14,33 @@ class VirtualHearingUserAlertBuilder
 
   private
 
-  attr_reader :change_type, :alert_type, :hearing
+  attr_reader :change_type, :alert_type, :appeal, :virtual_hearing_updates
 
   def title
-    copy["TITLE"] % (hearing.appeal.veteran&.name || "the veteran")
+    copy["TITLE"] % (appeal.veteran&.name || "the veteran")
   end
 
   def message
-    appellant_title = hearing.appeal.appellant_is_not_veteran ? "Appellant" : "Veteran"
+    recipients = []
 
-    recipients = appellant_title.dup
-    recipients << ", POA / Representative" if hearing.virtual_hearing.representative_email.present?
-    recipients << ", and VLJ" if hearing.virtual_hearing.judge_email.present?
+    unless virtual_hearing_updates.fetch(:appellant_email_sent, true)
+      appellant_title = appeal.appellant_is_not_veteran ? "Appellant" : "Veteran"
+      recipients << appellant_title
+    end
 
-    recipients_except_vlj = appellant_title.dup
-    recipients_except_vlj << " and POA / Representative" if hearing.virtual_hearing.representative_email.present?
+    unless virtual_hearing_updates.fetch(:representative_email_sent, true)
+      recipients << "POA / Representative"
+    end
+
+    unless virtual_hearing_updates.fetch(:judge_email_sent, true)
+      judge = recipients.empty? ? "VLJ" : "and VLJ" 
+      recipients << judge 
+    end
 
     format(
       copy["MESSAGE"],
       appellant_title: appellant_title,
-      recipients: recipients,
-      recipients_except_vlj: recipients_except_vlj
+      recipients: recipients.join(recipients.size > 2 ? ", " : " and ")
     )
   end
 
