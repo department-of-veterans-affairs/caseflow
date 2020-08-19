@@ -14,7 +14,7 @@ import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import BuildScheduleContainer from './containers/BuildScheduleContainer';
 import BuildScheduleUploadContainer from './containers/BuildScheduleUploadContainer';
 import DailyDocketContainer from './containers/DailyDocketContainer';
-import HearingDetailsContainer from './containers/DetailsContainer';
+import { HearingDetailsContainer } from './containers/DetailsContainer';
 import HearingWorksheetContainer from './containers/HearingWorksheetContainer';
 import HearingWorksheetPrintAllContainer from './containers/HearingWorksheetPrintAllContainer';
 import ListScheduleContainer from './containers/ListScheduleContainer';
@@ -27,6 +27,7 @@ import UnsupportedBrowserBanner from '../components/UnsupportedBrowserBanner';
 export default class HearingsApp extends React.PureComponent {
   userPermissionProps = () => {
     const {
+      userUseFullPageVideoToVirtual,
       userCanConvertCentralHearings,
       userCanScheduleVirtualHearings,
       userCanAssignHearingSchedule,
@@ -40,6 +41,7 @@ export default class HearingsApp extends React.PureComponent {
     } = this.props;
 
     return Object.freeze({
+      userUseFullPageVideoToVirtual,
       userCanConvertCentralHearings,
       userCanScheduleVirtualHearings,
       userCanAssignHearingSchedule,
@@ -189,6 +191,7 @@ HearingsApp.propTypes = {
   applicationUrls: PropTypes.array,
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
+  userUseFullPageVideoToVirtual: PropTypes.bool,
   userCanScheduleVirtualHearings: PropTypes.bool,
   userCanConvertCentralHearings: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,

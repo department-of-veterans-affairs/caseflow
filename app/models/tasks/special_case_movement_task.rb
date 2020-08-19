@@ -8,7 +8,7 @@ class SpecialCaseMovementTask < Task
   before_create :verify_parent_task_type,
                 :verify_user_organization,
                 :verify_appeal_distributable
-  after_create :close_and_create_judge_task
+  after_create :distribute_to_judge
 
   def self.label
     COPY::CASE_MOVEMENT_TASK_LABEL
@@ -16,7 +16,7 @@ class SpecialCaseMovementTask < Task
 
   private
 
-  def close_and_create_judge_task
+  def distribute_to_judge
     Task.transaction do
       JudgeAssignTask.create!(appeal: appeal,
                               parent: appeal.root_task,

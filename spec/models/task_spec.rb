@@ -1674,4 +1674,30 @@ describe Task, :all_dbs do
       end
     end
   end
+
+  describe ".cancel_descendants" do
+    let(:appeal) { create(:appeal) }
+    let(:top_level_task) { create(:task, appeal: appeal) }
+    let(:second_level_tasks) { create_list(:task, 2, parent: top_level_task) }
+    let(:third_level_completed_task) { create(:task, parent: second_level_tasks.first) }
+    let!(:third_level_tasks) { create_list(:task, 2, parent: second_level_tasks.first) }
+
+    before do
+      third_level_completed_task.update(status: Constants.TASK_STATUSES.completed)
+    end
+
+    it "cancels all open descendants" do
+      second_level_tasks.first.cancel_descendants
+
+      expect(second_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+      expect(third_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+      expect(third_level_tasks.second.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+      # previously completed task _not_ cancelled
+      expect(third_level_completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+
+      # parent and sibling not cancelled
+      expect(top_level_task.reload.open?).to eq(true)
+      expect(second_level_tasks.second.reload.open?).to eq(true)
+    end
+  end
 end

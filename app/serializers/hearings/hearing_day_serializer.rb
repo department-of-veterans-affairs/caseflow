@@ -22,7 +22,7 @@ class HearingDaySerializer
   attribute :regional_office_key, &:regional_office
   attribute :request_type
   attribute :room do |object|
-    HearingDayMapper.label_for_room(object.room)
+    HearingRooms.find!(object.room).label unless object.room.nil?
   end
   attribute :scheduled_for
   attribute :total_slots
