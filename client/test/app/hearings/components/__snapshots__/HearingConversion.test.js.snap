@@ -58857,7 +58857,6 @@ SAN FRANCISCO, CA 94103
                     name="Appellant Email"
                     onChange={[Function]}
                     type="text"
-                    value=""
                   />
                 </div>
               </TextField>
@@ -59030,7 +59029,6 @@ SAN FRANCISCO, CA 94103
                     name="POA/Representative Email"
                     onChange={[Function]}
                     type="text"
-                    value=""
                   />
                 </div>
               </TextField>
