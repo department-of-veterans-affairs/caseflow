@@ -42,8 +42,6 @@ const listStyle = css({
   listStyle: 'none'
 });
 
-// const dropdownLabel = 'Please enter a valid name or CSS ID to search for a user';
-
 export default class OrganizationUsers extends React.PureComponent {
   constructor(props) {
     super(props);
