@@ -92,21 +92,15 @@ const HearingDetails = (props) => {
     };
   };
 
-  const processHearingAlert = (alert) => {
-    props.onReceiveAlerts(alert.hearing);
-  };
-
-  const processVirtualHearingAlert = (alert) => {
-    props.onReceiveTransitioningAlert(alert.virtual_hearing, 'virtualHearing');
-    setShouldStartPolling(true);
-  };
-
-  const processAlert = (alert) => {
-    if ('hearing' in alert) {
-      processHearingAlert(alert);
-    } else if ('virtual_hearing' in alert && !isEmpty(alert.virtual_hearing)) {
-      processVirtualHearingAlert(alert);
-    }
+  const processAlerts = (alerts) => {
+    alerts.forEach((alert) => {
+      if ('hearing' in alert) {
+        props.onReceiveAlerts(alert.hearing);
+      } else if ('virtual_hearing' in alert && !isEmpty(alert.virtual_hearing)) {
+        props.onReceiveTransitioningAlert(alert.virtual_hearing, 'virtualHearing');
+        setShouldStartPolling(true);
+      }
+    });
   };
 
   const submit = async (editedEmails) => {
@@ -155,10 +149,11 @@ const HearingDetails = (props) => {
         },
       });
       const hearingResp = ApiUtil.convertToCamelCase(response.body?.data);
+
       const alerts = response.body?.alerts;
 
       if (alerts) {
-        alerts.forEach((alert) => processAlert(alert));
+        processAlerts(alerts);
       }
 
       // Reset the state
