@@ -389,8 +389,10 @@ class Task < CaseflowRecord
     type.eql?(task_to_check&.type)
   end
 
-  def cancel_descendants
-    descendants.select(&:open?).each { |desc| desc.update!(status: Constants.TASK_STATUSES.cancelled) }
+  def cancel_descendants(instructions = [])
+    descendants.select(&:open?).each do |desc|
+      desc.update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: instructions)
+    end
   end
 
   def create_twin_of_type(_params)
@@ -421,7 +423,7 @@ class Task < CaseflowRecord
   end
 
   def duplicate_org_task
-    assigned_to.is_a?(Organization) && children.any? do |child_task|
+    assigned_to.is_a?(Organization) && descendants.any? do |child_task|
       User.name == child_task.assigned_to_type && type == child_task.type
     end
   end

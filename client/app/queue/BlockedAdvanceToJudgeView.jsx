@@ -99,8 +99,10 @@ class BlockedAdvanceToJudgeView extends React.Component {
             parent_id: task.taskId,
             assigned_to_id: this.state.selectedAssignee,
             assigned_to_type: 'User',
-            cancellationInstructions: this.state.cancellationInstructions,
-            instructions: this.state.instructions,
+            instructions: [
+              `${this.state.selectedReason}: ${this.state.cancellationInstructions}`,
+              this.state.instructions
+            ]
           }
         ]
       }
