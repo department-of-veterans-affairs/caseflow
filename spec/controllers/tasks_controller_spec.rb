@@ -655,7 +655,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       end
     end
 
-    context "when payload includes virtual hearing attributes and complete status", focus: true do
+    context "when payload includes virtual hearing attributes and complete status" do
       let(:hearing_day) { create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:video], regional_office: "RO31") }
       let(:appellant_email) { "fake@email.com" }
       let(:virtual_hearing_attributes) do

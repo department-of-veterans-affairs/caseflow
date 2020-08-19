@@ -90,20 +90,20 @@ const HearingDetails = (props) => {
 
   const processHearingAlert = (alert) => {
     props.onReceiveAlerts(alert.hearing);
-  }
+  };
 
   const processVirtualHearingAlert = (alert) => {
     props.onReceiveTransitioningAlert(alert.virtual_hearing, 'virtualHearing');
     setShouldStartPolling(true);
-  }
+  };
 
   const processAlert = (alert) => {
-    if ("hearing" in alert) {
+    if ('hearing' in alert) {
       processHearingAlert(alert);
-    } else if ("virtual_hearing" in alert && !isEmpty(alert.virtual_hearing)) {
+    } else if ('virtual_hearing' in alert && !isEmpty(alert.virtual_hearing)) {
       processVirtualHearingAlert(alert);
     }
-  }
+  };
 
   const submit = async (editedEmails) => {
     try {
@@ -158,7 +158,7 @@ const HearingDetails = (props) => {
       // set hearing on DetailsContainer
       setHearing(hearingResp, () => {
         if (alerts) {
-          alerts.forEach(alert =>  processAlert(alert))
+          alerts.forEach((alert) => processAlert(alert));
         }
 
         // Reset the state
