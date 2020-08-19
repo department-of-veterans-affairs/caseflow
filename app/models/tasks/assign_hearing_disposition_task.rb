@@ -188,9 +188,10 @@ class AssignHearingDispositionTask < Task
                                                        appeal: appeal,
                                                        hearing_location_attrs: hearing_location&.to_hash,
                                                        scheduled_time_string: scheduled_time_string)
-      self.class.create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)
 
       convert_hearing_to_virtual(new_hearing, virtual_hearing_attributes) if virtual_hearing_attributes.present?
+
+      self.class.create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)
     end
   end
 

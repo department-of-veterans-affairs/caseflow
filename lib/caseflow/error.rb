@@ -352,8 +352,9 @@ module Caseflow::Error
     attr_accessor :code, :message
 
     def initialize(args = {})
-      @code = (args[:error_type] == ActiveRecord::RecordNotUnique) ? :conflict : args[:code]
-      @message = (args[:error_type] == ActiveRecord::RecordNotUnique) ? COPY::VIRTUAL_HEARING_ALREADY_CREATED : args[:message]
+      @error_type = args[:error_type]
+      @code = (@error_type == ActiveRecord::RecordNotUnique) ? :conflict : args[:code]
+      @message = (@error_type == ActiveRecord::RecordNotUnique) ? COPY::VIRTUAL_HEARING_ALREADY_CREATED : args[:message]
     end
   end
 end

@@ -38,31 +38,20 @@ class ScheduleHearingTask < Task
     end
   end
 
-  def create_hearing(task_values)
-    HearingRepository.slot_new_hearing(
-      task_values[:hearing_day_id],
-      appeal: appeal,
-      hearing_location_attrs: task_values[:hearing_location]&.to_hash,
-      scheduled_time_string: task_values[:scheduled_time_string],
-      override_full_hearing_day_validation: task_values[:override_full_hearing_day_validation]
-    )
-  end
-
   def update_from_params(params, current_user)
     multi_transaction do
       verify_user_can_update!(current_user)
-
       if params[:status] == Constants.TASK_STATUSES.completed
         task_values = params.delete(:business_payloads)[:values]
 
         multi_transaction do
           hearing = create_hearing(task_values)
 
-          AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, parent, hearing)
-
           if task_values[:virtual_hearing_attributes].present?
             convert_hearing_to_virtual(hearing, task_values[:virtual_hearing_attributes])
           end
+
+          AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, parent, hearing)
         end
       elsif params[:status] == Constants.TASK_STATUSES.cancelled
         withdraw_hearing
@@ -117,6 +106,16 @@ class ScheduleHearingTask < Task
   end
 
   private
+
+  def create_hearing(task_values)
+    HearingRepository.slot_new_hearing(
+      task_values[:hearing_day_id],
+      appeal: appeal,
+      hearing_location_attrs: task_values[:hearing_location]&.to_hash,
+      scheduled_time_string: task_values[:scheduled_time_string],
+      override_full_hearing_day_validation: task_values[:override_full_hearing_day_validation]
+    )
+  end
 
   def set_assignee
     self.assigned_to ||= Bva.singleton

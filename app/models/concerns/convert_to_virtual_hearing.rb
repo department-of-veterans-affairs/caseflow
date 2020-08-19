@@ -16,6 +16,11 @@ module ConvertToVirtualHearing
 
     @alerts = [{ hearing: form.hearing_alerts }, { virtual_hearing: form.virtual_hearing_alert }]
   rescue StandardError => error
-    raise Caseflow::Error::VirtualHearingConversionFailed, error_class: error.class, message: error.message, code: :bad_request
+    raise(
+      Caseflow::Error::VirtualHearingConversionFailed,
+      error_class: error.class,
+      message: error.message,
+      code: :bad_request
+    )
   end
 end
