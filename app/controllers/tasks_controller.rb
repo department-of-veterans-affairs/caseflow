@@ -95,7 +95,16 @@ class TasksController < ApplicationController
     tasks = task.update_from_params(update_params, current_user)
     tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
-    render json: { tasks: json_tasks(tasks.uniq) }
+    tasks_hash = json_tasks(tasks.uniq)
+
+    # add alerts if a task class defines it
+    # currently only defined by ScheduleHearingTask and AssignHearingDispositionTask for virtual hearing related updates
+    alerts = tasks.reduce([]) { |alerts, t| t.respond_to?(:alerts) ? alerts + t.alerts : alerts }
+    tasks_hash[:alerts] = alerts if alerts # does not add to hash if alerts == []
+
+    render json: {
+      tasks: tasks_hash
+    }
   rescue AssignHearingDispositionTask::HearingAssociationMissing => error
     Raven.capture_exception(error)
     render json: {
@@ -104,6 +113,10 @@ class TasksController < ApplicationController
         "detail": error
       ]
     }, status: :bad_request
+  rescue Caseflow::Error::VirtualHearingConversionFailed => error
+    Raven.capture_exception(error)
+
+    render json: { "errors": ["message": error.message] }, status: error.code
   end
 
   def for_appeal
