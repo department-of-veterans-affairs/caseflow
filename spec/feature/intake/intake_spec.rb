@@ -535,19 +535,18 @@ feature "Intake", :all_dbs do
         end
       end
 
-      context "invalid zip code" do
+      context "four digit zip" do
         let(:veteran) do
           Generators::Veteran.build(
             file_number: "12341234",
-            sex: nil,
-            ssn: nil,
+
             country: "USA",
             address_line1: "1234",
             zip_code: "1234"
           )
         end
 
-        scenario "veteran has invalid zipcode" do
+        scenario "veteran has four digit zip" do
           visit "/intake"
           select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
           safe_click ".cf-submit.usa-button"
@@ -567,19 +566,20 @@ feature "Intake", :all_dbs do
         end
       end
 
-      context "valid zip code" do
+      context "not a US address and zipcode" do
+        let!(:country) { "CANADA" }
+        let!(:zip_code) { "1234" }
+
         let(:veteran) do
-          Generators::Veteran.build(
-            file_number: "12341234",
-            sex: nil,
-            ssn: nil,
-            country: "CANADA",
-            address_line1: "1234",
-            zip_code: "1234"
+          create(
+            :veteran,
+            country: country,
+            zip_code: zip_code,
+            file_number: "12341234"
           )
         end
 
-        scenario "veteran has valid zipcode" do
+        scenario "veteran has valid zipcode from different country" do
           visit "/intake"
           select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
           safe_click ".cf-submit.usa-button"
