@@ -686,6 +686,29 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
       subject { patch :update, as: :json, params: params }
 
+      shared_examples "returns alerts" do
+        it "returns alerts", :aggregate_failures do
+          subject
+
+          expect(response.status).to eq 200
+          response_body = JSON.parse(response.body)["tasks"]
+          expect(response_body["alerts"]).not_to eq(nil)
+        end
+      end
+
+      shared_examples_for "request with invalid attributes" do
+        let(:virtual_hearing_attributes) do
+          {
+            appellant_email: "blah"
+          }
+        end
+        it "fails to schedule hearing", :aggregate_failures do
+          subject
+
+          expect(response.status).not_to eq 200
+        end
+      end
+
       context "when task is ScheduleHearingTask" do
         let(:params) do
           {
@@ -719,26 +742,9 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           expect(new_hearing.virtual_hearing.appellant_email).to eq(appellant_email)
         end
 
-        it "returns alerts", :aggregate_failures do
-          subject
+        include_examples "returns alerts"
 
-          expect(response.status).to eq 200
-          response_body = JSON.parse(response.body)["tasks"]
-          expect(response_body["alerts"]).not_to eq(nil)
-        end
-
-        context "with invalid attributes" do
-          let(:virtual_hearing_attributes) do
-            {
-              appellant_email: "blah"
-            }
-          end
-          it "fails to schedule hearing", :aggregate_failures do
-            subject
-
-            expect(response.status).not_to eq 200
-          end
-        end
+        it_behaves_like "request with invalid attributes"
       end
 
       context "when task is AssignHearingDispositionTask" do
@@ -789,27 +795,9 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           expect(new_hearing.virtual_hearing.appellant_email).to eq(appellant_email)
         end
 
-        it "returns alerts", :aggregate_failures do
-          subject
+        include_examples "returns alerts"
 
-          expect(response.status).to eq 200
-          response_body = JSON.parse(response.body)["tasks"]
-          expect(response_body["alerts"]).not_to eq(nil)
-        end
-
-        context "with invalid attributes", focus: true do
-          let(:virtual_hearing_attributes) do
-            {
-              appellant_email: "blah"
-            }
-          end
-
-          it "fails schedule hearing", :aggregate_failures do
-            subject
-
-            expect(response.status).not_to eq 200
-          end
-        end
+        it_behaves_like "request with invalid attributes"
       end
     end
   end
