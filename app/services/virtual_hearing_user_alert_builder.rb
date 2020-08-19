@@ -58,7 +58,7 @@ class VirtualHearingUserAlertBuilder
     end
 
     if vlj_is_recipient?
-      recipients << (recipients.empty? ? "VLJ" : "and VLJ")
+      recipients << ((recipients.size == 2) ? "and VLJ" : "VLJ")
     end
 
     format(
