@@ -254,7 +254,8 @@ describe AssignHearingDispositionTask, :all_dbs do
     end
 
     it "fails with missing hearing association error" do
-      expect { subject }.to raise_error(AssignHearingDispositionTask::HearingAssociationMissing)
+      pattern = /Hearing task \(#{hearing_task.id}\) is missing an associated hearing/
+      expect { subject }.to raise_error(AssignHearingDispositionTask::HearingAssociationMissing, pattern)
     end
   end
 

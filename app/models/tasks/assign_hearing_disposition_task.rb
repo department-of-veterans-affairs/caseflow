@@ -155,7 +155,7 @@ class AssignHearingDispositionTask < Task
 
   def update_hearing_disposition(disposition:)
     # Ensure the hearing exists
-    fail HearingAssociationMissing, id if hearing.nil?
+    fail HearingAssociationMissing, hearing_task&.id if hearing.nil?
 
     if hearing.is_a?(LegacyHearing)
       hearing.update_caseflow_and_vacols(disposition: disposition)
