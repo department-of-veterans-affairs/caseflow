@@ -256,16 +256,23 @@ describe Task, :all_dbs do
   describe "#duplicate_org_task" do
     let(:root_task) { create(:root_task) }
     let(:qr_user) { create(:user) }
-    let!(:quality_review_organization_task) do
+    let!(:quality_review_grandparent_organization_task) do
       create(:qr_task, assigned_to: QualityReview.singleton, parent: root_task)
     end
+    let!(:quality_review_parent_organization_task) do
+      create(:qr_task, assigned_to: QualityReview.singleton, parent: quality_review_grandparent_organization_task)
+    end
     let!(:quality_review_task) do
-      create(:qr_task, assigned_to: qr_user, parent: quality_review_organization_task)
+      create(:qr_task, assigned_to: qr_user, parent: quality_review_parent_organization_task)
     end
 
     context "when there are duplicate organization tasks" do
-      it "returns true when there is a duplicate task assigned to an organization" do
-        expect(quality_review_organization_task.duplicate_org_task).to eq(true)
+      it "returns true when there is a duplicate descendent task assigned to a user" do
+        expect(quality_review_grandparent_organization_task.duplicate_org_task).to eq(true)
+      end
+
+      it "returns true when there is a duplicate child task assigned to a user" do
+        expect(quality_review_parent_organization_task.duplicate_org_task).to eq(true)
       end
 
       it "returns false otherwise" do
