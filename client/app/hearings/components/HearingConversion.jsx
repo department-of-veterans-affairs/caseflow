@@ -44,24 +44,31 @@ export const HearingConversion = ({
     readOnly: !virtual
   };
 
-  // Prefill appellant/veteran email address and representative email on mount.
-  useEffect(() => {
-    // Focus the top of the page
-    window.scrollTo(0, 0);
-
+  const prefillFields = () => {
     // Determine which email to use
     const appellantEmail = hearing.appellantIsNotVeteran ? hearing.appellantEmailAddress : hearing.veteranEmailAddress;
 
     // Try to use the existing timezones if present
     const { appellantTz, representativeTz } = (virtualHearing || {});
 
-    // Set the emails and timezone if not already set
-    update('virtualHearing', {
-      [!representativeTz && 'representativeTz']: representativeTz || hearing?.representativeTz,
-      [!appellantTz && 'appellantTz']: appellantTz || hearing?.appellantTz,
-      [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
-      [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress,
-    });
+    update(
+      'virtualHearing', {
+        [!representativeTz && 'representativeTz']: representativeTz || hearing?.representativeTz,
+        [!appellantTz && 'appellantTz']: appellantTz || hearing?.appellantTz,
+        [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
+        [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress,
+      });
+  };
+
+  // Pre-fill appellant/veteran email address and representative email on mount.
+  useEffect(() => {
+    // Focus the top of the page
+    window.scrollTo(0, 0);
+
+    // Set the emails and timezone to defaults if not already set
+    if (virtual) {
+      prefillFields();
+    }
   }, []);
 
   return (
