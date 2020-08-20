@@ -483,7 +483,7 @@ describe Appeal, :all_dbs do
     end
   end
 
-  context "#find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id" do
+  context "#find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id" do
     context "with a uuid (AMA appeal id)" do
       let(:veteran_file_number) { "64205050" }
 
@@ -492,13 +492,13 @@ describe Appeal, :all_dbs do
       end
 
       it "finds the appeal" do
-        expect(Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal.uuid)).to \
+        expect(Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(appeal.uuid)).to \
           eq(appeal)
       end
 
       it "returns RecordNotFound for a non-existant one" do
         made_up_uuid = "11111111-aaaa-bbbb-CCCC-999999999999"
-        expect { Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(made_up_uuid) }.to \
+        expect { Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(made_up_uuid) }.to \
           raise_exception(ActiveRecord::RecordNotFound, "Couldn't find Appeal")
       end
     end
@@ -512,14 +512,14 @@ describe Appeal, :all_dbs do
 
       it "finds the appeal" do
         legacy_appeal.save
-        expect(Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(legacy_appeal.vacols_id)).to \
+        expect(Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(legacy_appeal.vacols_id)).to \
           eq(legacy_appeal)
       end
 
       it "returns RecordNotFound for a non-existant one" do
         made_up_non_uuid = "9876543"
         expect do
-          Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(made_up_non_uuid)
+          Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(made_up_non_uuid)
         end.to raise_exception(ActiveRecord::RecordNotFound)
       end
     end

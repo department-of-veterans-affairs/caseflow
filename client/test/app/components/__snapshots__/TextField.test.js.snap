@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TextField renders correctly 1`] = `
+<div>
+  <div
+    class="cf-form-textinput   "
+  >
+    <label
+      for="field1"
+    >
+      <span>
+        field1
+      </span>
+    </label>
+    <input
+      class="cf-form-textinput"
+      id="field1"
+      name="field1"
+      type="text"
+      value=""
+    />
+  </div>
+</div>
+`;
