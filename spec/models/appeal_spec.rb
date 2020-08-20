@@ -1033,4 +1033,23 @@ describe Appeal, :all_dbs do
       end
     end
   end
+
+  describe ".ready_for_distribution?" do
+    let(:appeal) { create(:appeal) }
+    let(:distribution_task) { create(:distribution_task, appeal: appeal, assigned_to: Bva.singleton) }
+
+    it "is set to assigned and ready for distribution is tracked when all child tasks are completed" do
+      child_task = create(:informal_hearing_presentation_task, parent: distribution_task)
+      expect(appeal.ready_for_distribution?).to eq(false)
+
+      child_task.update!(status: "completed")
+      expect(appeal.ready_for_distribution?).to eq(true)
+
+      another_child_task = create(:informal_hearing_presentation_task, parent: distribution_task)
+      expect(appeal.ready_for_distribution?).to eq(false)
+
+      another_child_task.update!(status: "completed")
+      expect(appeal.ready_for_distribution?).to eq(true)
+    end
+  end
 end
