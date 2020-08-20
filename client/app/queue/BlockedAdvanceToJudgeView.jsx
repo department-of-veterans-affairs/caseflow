@@ -198,7 +198,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
         <TextareaField
           required
           errorMessage={highlightFormItems && !this.validInstructions() ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-          id="taskInstructions"
+          id="judgeInstructions"
           onChange={(value) => this.setState({ instructions: value })}
           value={this.state.instructions}
         />
@@ -244,7 +244,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
           errorMessage={
             highlightFormItems && !this.validCancellationInstructions() ? COPY.FORM_ERROR_FIELD_REQUIRED : null
           }
-          id="taskInstructions"
+          id="cancellationInstructions"
           onChange={(value) => this.setState({ cancellationInstructions: value })}
           value={this.state.cancellationInstructions}
         />
