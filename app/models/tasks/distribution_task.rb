@@ -28,10 +28,6 @@ class DistributionTask < Task
     update!(status: :assigned, assigned_at: Time.zone.now)
   end
 
-  def ready_for_distribution?
-    assigned?
-  end
-
   def ready_for_distribution_at
     assigned_at
   end
