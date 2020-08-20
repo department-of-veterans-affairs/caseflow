@@ -16,7 +16,14 @@ import Button from '../../components/Button';
 import { marginTop, regionalOfficeSection, saveButton, cancelButton } from './details/style';
 import { isEmpty, orderBy } from 'lodash';
 
-export const ScheduleVeteranForm = ({ appeal, hearing, errors, initialRegionalOffice, initialHearingDate, ...props }) => {
+export const ScheduleVeteranForm = ({
+  appeal,
+  hearing,
+  errors,
+  initialRegionalOffice,
+  initialHearingDate,
+  ...props
+}) => {
   const appellantTitle = getAppellantTitleForHearing(appeal);
   const ro = appeal.regionalOffice || hearing.regionalOffice || initialRegionalOffice;
   const location = appeal.hearingLocation || hearing.location;
