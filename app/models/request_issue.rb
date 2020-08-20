@@ -424,7 +424,7 @@ class RequestIssue < CaseflowRecord
 
   def close!(status:, closed_at_value: Time.zone.now)
     # No need to update if already closed unless switching from ineligible to removed
-    return unless closed_at.nil? || (status == :removed && ineligible?)
+    return unless closed_at.nil? || (status.to_sym == :removed && ineligible?)
 
     transaction do
       update!(closed_at: closed_at_value, closed_status: status)
