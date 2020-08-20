@@ -502,6 +502,8 @@
   "LOOKUP_PARTICIPANT_ID_MODAL_ERROR_GENERIC": "There was an error processing your request. Please retry your action and contact support if errors persist.",
 
   "USER_MANAGEMENT_PAGE_TITLE": "Team management for %s",
+  "USER_MANAGEMENT_JUDGE_TEAM_PAGE_TITLE": "Team management for %s Judge Team",
+  "USER_MANAGEMENT_DVC_TEAM_PAGE_TITLE": "Team management for %s DVC Team",
   "USER_MANAGEMENT_INITIAL_LOAD_ERROR_TITLE": "Failed to load users",
   "USER_MANAGEMENT_INITIAL_LOAD_LOADING_MESSAGE": "Loading users...",
   "USER_MANAGEMENT_ADD_USER_ERROR_TITLE": "Failed to add user",
@@ -519,6 +521,7 @@
   "USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION": "Remove an attorney from this judge team. Judges may not be removed from their own judge team.",
   "USER_MANAGEMENT_REMOVE_USER_DESCRIPTION": "Remove a user from this team.",
   "USER_MANAGEMENT_JUDGE_LABEL": "Judge Team Lead",
+  "USER_MANAGEMENT_DVC_LABEL": "Deputy Vice Chairman",
   "USER_MANAGEMENT_ATTORNEY_LABEL": "Decision-Drafting Attorney",
   "USER_MANAGEMENT_ADMIN_LABEL": "Team Admin",
   "USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT": "Add admin rights",
