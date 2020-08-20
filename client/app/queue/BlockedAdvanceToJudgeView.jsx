@@ -273,10 +273,8 @@ BlockedAdvanceToJudgeView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const { highlightFormItems } = state.ui;
-
   return {
-    highlightFormItems,
+    highlightFormItems: state.ui.highlightFormItems,
     task: taskById(state, { taskId: ownProps.taskId }),
     appeal: appealWithDetailSelector(state, ownProps)
   };
