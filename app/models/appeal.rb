@@ -73,7 +73,7 @@ class Appeal < DecisionReview
   delegate :documents, :manifest_vbms_fetched_at, :number_of_documents,
            :manifest_vva_fetched_at, to: :document_fetcher
 
-  def self.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
+  def self.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(id)
     if UUID_REGEX.match?(id)
       find_by_uuid!(id)
     else
@@ -216,16 +216,7 @@ class Appeal < DecisionReview
   end
 
   def ready_for_distribution?
-    # Appeals are ready for distribution when the DistributionTask is the active task, meaning there are no outstanding
-    #   Evidence Window or Hearing tasks, and when there are no mail tasks that legally restrict the distribution of
-    #   the case, aka blocking mail tasks
-    return false unless tasks.active.where(type: DistributionTask.name).any?
-
-    MailTask.open.where(appeal: self).find_each do |mail_task|
-      return false if mail_task.blocking?
-    end
-
-    true
+    tasks.active.where(type: DistributionTask.name).any?
   end
 
   def ready_for_distribution_at

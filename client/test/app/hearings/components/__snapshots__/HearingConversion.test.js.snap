@@ -112,20 +112,8 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
             "representativeTz": "America/Denver",
           },
         ],
-        Array [
-          "virtualHearing",
-          Object {
-            "appellantTz": "America/Los_Angeles",
-            "false": "tom.brady@caseflow.gov",
-            "representativeTz": "America/Denver",
-          },
-        ],
       ],
       "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
         Object {
           "type": "return",
           "value": undefined,
@@ -4214,20 +4202,8 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
                   "representativeTz": "America/Denver",
                 },
               ],
-              Array [
-                "virtualHearing",
-                Object {
-                  "appellantTz": "America/Los_Angeles",
-                  "false": "tom.brady@caseflow.gov",
-                  "representativeTz": "America/Denver",
-                },
-              ],
             ],
             "results": Array [
-              Object {
-                "type": "return",
-                "value": undefined,
-              },
               Object {
                 "type": "return",
                 "value": undefined,
@@ -4313,20 +4289,8 @@ SAN FRANCISCO, CA 94103
                           "representativeTz": "America/Denver",
                         },
                       ],
-                      Array [
-                        "virtualHearing",
-                        Object {
-                          "appellantTz": "America/Los_Angeles",
-                          "false": "tom.brady@caseflow.gov",
-                          "representativeTz": "America/Denver",
-                        },
-                      ],
                     ],
                     "results": Array [
-                      Object {
-                        "type": "return",
-                        "value": undefined,
-                      },
                       Object {
                         "type": "return",
                         "value": undefined,
@@ -4451,20 +4415,8 @@ SAN FRANCISCO, CA 94103
                   "representativeTz": "America/Denver",
                 },
               ],
-              Array [
-                "virtualHearing",
-                Object {
-                  "appellantTz": "America/Los_Angeles",
-                  "false": "tom.brady@caseflow.gov",
-                  "representativeTz": "America/Denver",
-                },
-              ],
             ],
             "results": Array [
-              Object {
-                "type": "return",
-                "value": undefined,
-              },
               Object {
                 "type": "return",
                 "value": undefined,
@@ -4542,20 +4494,8 @@ SAN FRANCISCO, CA 94103
                           "representativeTz": "America/Denver",
                         },
                       ],
-                      Array [
-                        "virtualHearing",
-                        Object {
-                          "appellantTz": "America/Los_Angeles",
-                          "false": "tom.brady@caseflow.gov",
-                          "representativeTz": "America/Denver",
-                        },
-                      ],
                     ],
                     "results": Array [
-                      Object {
-                        "type": "return",
-                        "value": undefined,
-                      },
                       Object {
                         "type": "return",
                         "value": undefined,

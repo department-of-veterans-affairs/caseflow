@@ -519,6 +519,14 @@ describe Veteran, :all_dbs do
     end
   end
 
+  context "when a zip code is invalid" do
+    let(:zip_code) { "1234" }
+
+    it "zip code has invalid characters" do
+      expect(veteran.validate_zip_code).to eq ["invalid_zip_code"]
+    end
+  end
+
   context "given a military address and nil city & state" do
     let(:military_postal_type_code) { "AA" }
     let(:city) { nil }
