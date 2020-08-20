@@ -501,12 +501,14 @@ class Appeal < DecisionReview
   #  - the appeal is not at Quality Review
   #  - the appeal has not already completed BVA Dispatch
   #  - the appeal is not already at BVA Dispatch
-  #  - the appeal has finished Judge Decision Review
+  #  - the appeal is not at Judge Decision Review
+  #  - the appeal has a finished Judge Decision Review
   def ready_for_bva_dispatch?
-    return false if QualityReviewTask.find_by(appeal: self)&.open?
-    return false if BvaDispatchTask.find_by(appeal: self)&.completed?
-    return false if BvaDispatchTask.find_by(appeal: self)&.open?
-    return true if JudgeDecisionReviewTask.find_by(appeal: self)&.completed?
+    return false if QualityReviewTask.open.find_by(appeal: self)
+    return false if BvaDispatchTask.completed.find_by(appeal: self)
+    return false if BvaDispatchTask.open.find_by(appeal: self)
+    return false if JudgeDecisionReviewTask.open.find_by(appeal: self)
+    return true if JudgeDecisionReviewTask.completed.find_by(appeal: self)
     false
   end
 

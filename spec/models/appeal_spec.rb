@@ -1106,6 +1106,17 @@ describe Appeal, :all_dbs do
           .update_column(:status, Constants.TASK_STATUSES.completed)
       end
 
+      context "and an open JudgeDecisionReviewTask" do
+        before do
+          JudgeDecisionReviewTask.create!(appeal: appeal, assigned_to: create(:user), parent: appeal.root_task)
+        end
+
+        it "should return false" do
+          byebug
+          expect(subject).to eq(false)
+        end
+      end
+
       context "no QualityReviewTask" do
         include_examples "depends on existing BvaDispatchTask"
       end
