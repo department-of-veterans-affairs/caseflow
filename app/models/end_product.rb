@@ -164,6 +164,11 @@ class EndProduct
     "070RMBVAGPMC" => "PMC Remand with BVA Grant"
   }.freeze
 
+  FIDUCIARY_CODES = {
+    "030HLRFID" => "FID-Higher Level Review",
+    "040SCRFID" => "FID-Supplemental Claim Review"
+  }.freeze
+
   CODES = DISPATCH_CODES
     .merge(CORRECTION_REVIEW_CODES)
     .merge(DIFFERENCE_OF_OPINION_CODES)
@@ -172,6 +177,7 @@ class EndProduct
     .merge(DTA_CODES)
     .merge(RAMP_CODES)
     .merge(REMAND_CODES)
+    .merge(FIDUCIARY_CODES)
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 

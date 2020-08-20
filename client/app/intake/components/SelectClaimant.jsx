@@ -71,7 +71,7 @@ export const SelectClaimant = (props) => {
     setPayeeCode
   } = props;
 
-  const { attorneyFees } = useSelector((state) => state.featureToggles);
+  const { attorneyFees, establishFiduciaryEps } = useSelector((state) => state.featureToggles);
   const [showClaimantModal, setShowClaimantModal] = useState(false);
   const [newClaimant, setNewClaimant] = useState(null);
   const openAddClaimantModal = () => setShowClaimantModal(true);
@@ -83,6 +83,12 @@ export const SelectClaimant = (props) => {
     veteranIsNotClaimant,
     attorneyFees
   ]);
+
+  const allowFiduciary = useMemo(() => establishFiduciaryEps && benefitType === 'fiduciary', [
+    benefitType,
+    establishFiduciaryEps
+  ]);
+
   const handleVeteranIsNotClaimantChange = (value) => {
     const boolValue = convertStringToBoolean(value);
 
@@ -120,7 +126,7 @@ export const SelectClaimant = (props) => {
   };
   const handlePayeeCodeChange = (event) => setPayeeCode(event ? event.value : null);
   const shouldShowPayeeCode = () => {
-    return formType !== 'appeal' && (benefitType === 'compensation' || benefitType === 'pension');
+    return formType !== 'appeal' && (benefitType === 'compensation' || benefitType === 'pension' || allowFiduciary);
   };
 
   const hasRelationships = relationships.length > 0;
