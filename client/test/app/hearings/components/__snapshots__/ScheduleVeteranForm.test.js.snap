@@ -1,12 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ScheduleVeteran Can cancel the form 1`] = `
-<Fragment>
+exports[`ScheduleVeteranForm Can cancel the form 1`] = `
+<div
+  data-css-7jz325=""
+>
   <AppSegment
     filledBackground={true}
   >
     <h1>
-      Schedule Appellant for a Hearing
+      Schedule Veteran for a Hearing
     </h1>
     <div
       data-css-16cycjp=""
@@ -24,24 +26,20 @@ exports[`ScheduleVeteran Can cancel the form 1`] = `
     <div
       className="usa-width-one-half"
     >
-      <div
-        data-css-18v9q72=""
-      >
-        <ReadOnly
-          label="Appellant Address"
-          spacing={0}
-          text={
-            <AddressLine
-              addressCity="Orlando"
-              addressLine1="1234 Main Street"
-              addressState="FL"
-              addressZip="12345"
-              name="Abellona Valtas"
-              spacing={5}
-            />
-          }
-        />
-      </div>
+      <ReadOnly
+        label="Veteran Address"
+        spacing={0}
+        text={
+          <AddressLine
+            addressCity="SAN FRANCISCO"
+            addressLine1="9999 MISSION ST"
+            addressState="CA"
+            addressZip="94103"
+            name="Abellona Valtas"
+            spacing={5}
+          />
+        }
+      />
       <Connect(RegionalOfficeDropdown)
         onChange={[Function]}
         validateValueOnMount={true}
@@ -49,9 +47,11 @@ exports[`ScheduleVeteran Can cancel the form 1`] = `
       />
       <Connect(AppealHearingLocationsDropdown)
         appealId="3afefa82-5736-47c8-a977-0b4b8586f73e"
+        dynamic={true}
         key="hearingLocation__RO17"
         onChange={[Function]}
         regionalOffice="RO17"
+        staticHearingLocations={Array []}
         value={null}
       />
       <Connect(HearingDateDropdown)
@@ -109,16 +109,18 @@ exports[`ScheduleVeteran Can cancel the form 1`] = `
       Schedule
     </Button>
   </span>
-</Fragment>
+</div>
 `;
 
-exports[`ScheduleVeteran Can submit the form 1`] = `
-<Fragment>
+exports[`ScheduleVeteranForm Can submit the form 1`] = `
+<div
+  data-css-7jz325=""
+>
   <AppSegment
     filledBackground={true}
   >
     <h1>
-      Schedule Appellant for a Hearing
+      Schedule Veteran for a Hearing
     </h1>
     <div
       data-css-16cycjp=""
@@ -136,24 +138,20 @@ exports[`ScheduleVeteran Can submit the form 1`] = `
     <div
       className="usa-width-one-half"
     >
-      <div
-        data-css-18v9q72=""
-      >
-        <ReadOnly
-          label="Appellant Address"
-          spacing={0}
-          text={
-            <AddressLine
-              addressCity="Orlando"
-              addressLine1="1234 Main Street"
-              addressState="FL"
-              addressZip="12345"
-              name="Abellona Valtas"
-              spacing={5}
-            />
-          }
-        />
-      </div>
+      <ReadOnly
+        label="Veteran Address"
+        spacing={0}
+        text={
+          <AddressLine
+            addressCity="SAN FRANCISCO"
+            addressLine1="9999 MISSION ST"
+            addressState="CA"
+            addressZip="94103"
+            name="Abellona Valtas"
+            spacing={5}
+          />
+        }
+      />
       <Connect(RegionalOfficeDropdown)
         onChange={[Function]}
         validateValueOnMount={true}
@@ -161,9 +159,11 @@ exports[`ScheduleVeteran Can submit the form 1`] = `
       />
       <Connect(AppealHearingLocationsDropdown)
         appealId="3afefa82-5736-47c8-a977-0b4b8586f73e"
+        dynamic={true}
         key="hearingLocation__RO17"
         onChange={[Function]}
         regionalOffice="RO17"
+        staticHearingLocations={Array []}
         value={null}
       />
       <Connect(HearingDateDropdown)
@@ -221,16 +221,18 @@ exports[`ScheduleVeteran Can submit the form 1`] = `
       Schedule
     </Button>
   </span>
-</Fragment>
+</div>
 `;
 
-exports[`ScheduleVeteran Displays hearing form when regional office is selected 1`] = `
-<Fragment>
+exports[`ScheduleVeteranForm Displays hearing form when regional office is selected 1`] = `
+<div
+  data-css-7jz325=""
+>
   <AppSegment
     filledBackground={true}
   >
     <h1>
-      Schedule Appellant for a Hearing
+      Schedule Veteran for a Hearing
     </h1>
     <div
       data-css-16cycjp=""
@@ -248,24 +250,20 @@ exports[`ScheduleVeteran Displays hearing form when regional office is selected 
     <div
       className="usa-width-one-half"
     >
-      <div
-        data-css-18v9q72=""
-      >
-        <ReadOnly
-          label="Appellant Address"
-          spacing={0}
-          text={
-            <AddressLine
-              addressCity="Orlando"
-              addressLine1="1234 Main Street"
-              addressState="FL"
-              addressZip="12345"
-              name="Abellona Valtas"
-              spacing={5}
-            />
-          }
-        />
-      </div>
+      <ReadOnly
+        label="Veteran Address"
+        spacing={0}
+        text={
+          <AddressLine
+            addressCity="SAN FRANCISCO"
+            addressLine1="9999 MISSION ST"
+            addressState="CA"
+            addressZip="94103"
+            name="Abellona Valtas"
+            spacing={5}
+          />
+        }
+      />
       <Connect(RegionalOfficeDropdown)
         onChange={[Function]}
         validateValueOnMount={true}
@@ -273,9 +271,11 @@ exports[`ScheduleVeteran Displays hearing form when regional office is selected 
       />
       <Connect(AppealHearingLocationsDropdown)
         appealId="3afefa82-5736-47c8-a977-0b4b8586f73e"
+        dynamic={true}
         key="hearingLocation__RO17"
         onChange={[Function]}
         regionalOffice="RO17"
+        staticHearingLocations={Array []}
         value={null}
       />
       <Connect(HearingDateDropdown)
@@ -333,16 +333,18 @@ exports[`ScheduleVeteran Displays hearing form when regional office is selected 
       Schedule
     </Button>
   </span>
-</Fragment>
+</div>
 `;
 
-exports[`ScheduleVeteran Matches snapshot with default props 1`] = `
-<Fragment>
+exports[`ScheduleVeteranForm Matches snapshot with default props 1`] = `
+<div
+  data-css-7jz325=""
+>
   <AppSegment
     filledBackground={true}
   >
     <h1>
-      Schedule Appellant for a Hearing
+      Schedule Veteran for a Hearing
     </h1>
     <div
       data-css-16cycjp=""
@@ -360,24 +362,20 @@ exports[`ScheduleVeteran Matches snapshot with default props 1`] = `
     <div
       className="usa-width-one-half"
     >
-      <div
-        data-css-18v9q72=""
-      >
-        <ReadOnly
-          label="Appellant Address"
-          spacing={0}
-          text={
-            <AddressLine
-              addressCity="Orlando"
-              addressLine1="1234 Main Street"
-              addressState="FL"
-              addressZip="12345"
-              name="Abellona Valtas"
-              spacing={5}
-            />
-          }
-        />
-      </div>
+      <ReadOnly
+        label="Veteran Address"
+        spacing={0}
+        text={
+          <AddressLine
+            addressCity="SAN FRANCISCO"
+            addressLine1="9999 MISSION ST"
+            addressState="CA"
+            addressZip="94103"
+            name="Abellona Valtas"
+            spacing={5}
+          />
+        }
+      />
       <Connect(RegionalOfficeDropdown)
         onChange={[Function]}
         validateValueOnMount={true}
@@ -424,5 +422,5 @@ exports[`ScheduleVeteran Matches snapshot with default props 1`] = `
       Schedule
     </Button>
   </span>
-</Fragment>
+</div>
 `;

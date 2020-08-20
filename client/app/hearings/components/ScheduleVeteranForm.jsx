@@ -11,19 +11,21 @@ import { AddressLine } from './details/Address';
 import { getAppellantTitleForHearing } from '../utils';
 import { ReadOnly } from './details/ReadOnly';
 import HearingTypeDropdown from './details/HearingTypeDropdown';
-import { marginTop, virtualHearingModalStyles } from './details/style';
 import { HearingTime } from './modalForms/HearingTime';
 import Button from '../../components/Button';
-import { css } from 'glamor';
+import { marginTop, regionalOfficeSection, saveButton, cancelButton } from './details/style';
+import { isEmpty, orderBy } from 'lodash';
 
-export const ScheduleVeteran = ({ appeal, hearing, ...props }) => {
-  const appellantTitle = getAppellantTitleForHearing(hearing);
-  const ro = appeal.regionalOffice || hearing.regionalOffice;
+export const ScheduleVeteranForm = ({ appeal, hearing, errors, initialRegionalOffice, initialHearingDate, ...props }) => {
+  const appellantTitle = getAppellantTitleForHearing(appeal);
+  const ro = appeal.regionalOffice || hearing.regionalOffice || initialRegionalOffice;
   const location = appeal.hearingLocation || hearing.location;
   const header = `Schedule ${appellantTitle} for a Hearing`;
+  const availableHearingLocations = orderBy(appeal.availableHearingLocations || [], ['distance'], ['asc']);
+  const dynamic = ro !== appeal.closestRegionalOffice || isEmpty(appeal.availableHearingLocations);
 
   return (
-    <React.Fragment>
+    <div {...regionalOfficeSection}>
       <AppSegment filledBackground >
         <h1>{header}</h1>
         <div {...marginTop(45)} />
@@ -31,19 +33,17 @@ export const ScheduleVeteran = ({ appeal, hearing, ...props }) => {
           <HearingTypeDropdown requestType={hearing.readableRequestType} />
         </div>
         <div className="cf-help-divider usa-width-one-whole" />
-        <div className="usa-width-one-half">
-          <div {...virtualHearingModalStyles}>
-            <ReadOnly spacing={0} label={`${appellantTitle} Address`} text={
-              <AddressLine
-                spacing={5}
-                name={appeal?.veteranInfo?.veteran?.full_name}
-                addressLine1={appeal?.veteranInfo?.veteran?.address?.address_line_1}
-                addressState={appeal?.veteranInfo?.veteran?.address?.state}
-                addressCity={appeal?.veteranInfo?.veteran?.address?.city}
-                addressZip={appeal?.veteranInfo?.veteran?.address?.zip}
-              />}
-            />
-          </div>
+        <div className="usa-width-one-half" >
+          <ReadOnly spacing={0} label={`${appellantTitle} Address`} text={
+            <AddressLine
+              spacing={5}
+              name={appeal?.appellantFullName}
+              addressLine1={appeal?.appellantAddress?.address_line_1}
+              addressState={appeal?.appellantAddress?.state}
+              addressCity={appeal?.appellantAddress?.city}
+              addressZip={appeal?.appellantAddress?.zip}
+            />}
+          />
           <RegionalOfficeDropdown
             onChange={(regionalOffice) => props.onChange('appeal', { regionalOffice })}
             value={ro}
@@ -52,25 +52,31 @@ export const ScheduleVeteran = ({ appeal, hearing, ...props }) => {
           {ro && (
             <React.Fragment>
               <AppealHearingLocationsDropdown
+                errorMessage={errors?.hearingLocation}
                 key={`hearingLocation__${ro}`}
                 regionalOffice={ro}
                 appealId={appeal.externalId}
                 value={location}
                 onChange={(hearingLocation) => props.onChange('appeal', { hearingLocation })}
+                dynamic={dynamic}
+                staticHearingLocations={availableHearingLocations}
               />
               <HearingDateDropdown
+                errorMessage={errors?.hearingDay}
                 key={`hearingDate__${ro}`}
                 regionalOffice={ro}
-                value={appeal.hearingDay}
+                value={appeal.hearingDay || initialHearingDate}
                 onChange={(hearingDay) => props.onChange('appeal', { hearingDay })}
               />
               <HearingTime
+                errorMessage={errors?.scheduledTimeString}
                 vertical
                 label="Hearing Time"
                 enableZone
                 onChange={(scheduledTimeString) => props.onChange('hearing', { scheduledTimeString })}
                 value={hearing.scheduledTimeString}
               />
+
             </React.Fragment>
           )}
         </div>
@@ -79,11 +85,11 @@ export const ScheduleVeteran = ({ appeal, hearing, ...props }) => {
         name="Cancel"
         linkStyling
         onClick={() => props.goBack()}
-        styling={css({ float: 'left', paddingLeft: 0, paddingRight: 0 })}
+        styling={cancelButton}
       >
           Cancel
       </Button>
-      <span {...css({ float: 'right' })}>
+      <span {...saveButton}>
         <Button
           name="Schedule"
           loading={props.loading}
@@ -93,17 +99,20 @@ export const ScheduleVeteran = ({ appeal, hearing, ...props }) => {
           Schedule
         </Button>
       </span>
-    </React.Fragment>
+    </div>
   );
 };
 
-ScheduleVeteran.propTypes = {
+ScheduleVeteranForm.propTypes = {
   loading: PropTypes.bool,
   submit: PropTypes.func.isRequired,
   goBack: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
   appeal: PropTypes.object,
-  hearing: PropTypes.object
+  errors: PropTypes.object,
+  hearing: PropTypes.object,
+  initialRegionalOffice: PropTypes.string,
+  initialHearingDate: PropTypes.string
 };
 
 /* eslint-enable camelcase */
