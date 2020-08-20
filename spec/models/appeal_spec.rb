@@ -1035,7 +1035,7 @@ describe Appeal, :all_dbs do
   end
 
   shared_examples "existing BvaDispatchTask" do |status, result|
-    let (:user) { create(:user) }
+    let(:user) { create(:user) }
 
     before do
       BvaDispatch.singleton.add_user(user)
@@ -1049,41 +1049,41 @@ describe Appeal, :all_dbs do
   end
 
   shared_examples "depends on existing BvaDispatchTask" do
-      context "no existing BvaDispatchTask" do
-        it "should return true" do
-          expect(subject).to eq(true)
-        end
+    context "no existing BvaDispatchTask" do
+      it "should return true" do
+        expect(subject).to eq(true)
       end
+    end
 
-      context "existing open BvaDispatchTask" do
+    context "existing open BvaDispatchTask" do
+      include_examples "existing BvaDispatchTask",
+                       Constants.TASK_STATUSES.in_progress,
+                       false
+    end
+
+    context "existing complete BvaDispatchTask" do
+      include_examples "existing BvaDispatchTask",
+                       Constants.TASK_STATUSES.completed,
+                       false
+    end
+
+    context "existing cancelled BvaDispatchTask" do
+      include_examples "existing BvaDispatchTask",
+                       Constants.TASK_STATUSES.cancelled,
+                       true
+
+      context "and existing open BvaDispatchTask" do
         include_examples "existing BvaDispatchTask",
-          Constants.TASK_STATUSES.in_progress,
-          false
+                         Constants.TASK_STATUSES.assigned,
+                         false
       end
 
-      context "existing complete BvaDispatchTask" do
+      context "and existing completed BvaDispatchTask" do
         include_examples "existing BvaDispatchTask",
-          Constants.TASK_STATUSES.completed,
-          false
+                         Constants.TASK_STATUSES.completed,
+                         false
       end
-
-      context "existing cancelled BvaDispatchTask" do
-        include_examples "existing BvaDispatchTask",
-          Constants.TASK_STATUSES.cancelled,
-          true
-
-        context "and existing open BvaDispatchTask" do
-          include_examples "existing BvaDispatchTask",
-            Constants.TASK_STATUSES.assigned,
-            false
-        end
-
-        context "and existing completed BvaDispatchTask" do
-          include_examples "existing BvaDispatchTask",
-            Constants.TASK_STATUSES.completed,
-            false
-        end
-      end
+    end
   end
 
   describe ".ready_for_bva_dispatch?" do
@@ -1096,7 +1096,7 @@ describe Appeal, :all_dbs do
     end
 
     context "has complete JudgeDecisionReviewTask" do
-      let (:appeal) do
+      let(:appeal) do
         create(:appeal,
                :at_judge_review,
                docket_type: Constants.AMA_DOCKETS.direct_review)
@@ -1112,7 +1112,6 @@ describe Appeal, :all_dbs do
         end
 
         it "should return false" do
-          byebug
           expect(subject).to eq(false)
         end
       end
@@ -1122,7 +1121,7 @@ describe Appeal, :all_dbs do
       end
 
       context "existing open QualityReviewTask" do
-        let (:user) { create(:user) }
+        let(:user) { create(:user) }
         before do
           BvaDispatch.singleton.add_user(user)
           QualityReviewTask.create_from_root_task(appeal.root_task)
@@ -1134,7 +1133,7 @@ describe Appeal, :all_dbs do
       end
 
       context "existing closed QualityReviewTask" do
-        let (:user) { create(:user) }
+        let(:user) { create(:user) }
         before do
           qr_task = QualityReviewTask.create_from_root_task(appeal.root_task)
           qr_task.descendants.each { |task| task.update_column(:status, Constants.TASK_STATUSES.completed) }

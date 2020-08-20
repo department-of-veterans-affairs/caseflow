@@ -509,6 +509,7 @@ class Appeal < DecisionReview
     return false if BvaDispatchTask.open.find_by(appeal: self)
     return false if JudgeDecisionReviewTask.open.find_by(appeal: self)
     return true if JudgeDecisionReviewTask.completed.find_by(appeal: self)
+
     false
   end
 
