@@ -2796,6 +2796,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                     "label": "13 (1W440)",
                     "value": "13",
                   },
+                  Object {
+                    "label": "14 (Utah)",
+                    "value": "14",
+                  },
+                  Object {
+                    "label": "15 (Gold)",
+                    "value": "15",
+                  },
+                  Object {
+                    "label": "16 (Juno)",
+                    "value": "16",
+                  },
+                  Object {
+                    "label": "17 (Sword)",
+                    "value": "17",
+                  },
+                  Object {
+                    "label": "18 (Omaha)",
+                    "value": "18",
+                  },
                 ]
               }
               strongLabel={true}
@@ -2895,6 +2915,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                           Object {
                             "label": "13 (1W440)",
                             "value": "13",
+                          },
+                          Object {
+                            "label": "14 (Utah)",
+                            "value": "14",
+                          },
+                          Object {
+                            "label": "15 (Gold)",
+                            "value": "15",
+                          },
+                          Object {
+                            "label": "16 (Juno)",
+                            "value": "16",
+                          },
+                          Object {
+                            "label": "17 (Sword)",
+                            "value": "17",
+                          },
+                          Object {
+                            "label": "18 (Omaha)",
+                            "value": "18",
                           },
                         ]
                       }
@@ -3009,6 +3049,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                               "label": "13 (1W440)",
                               "value": "13",
                             },
+                            Object {
+                              "label": "14 (Utah)",
+                              "value": "14",
+                            },
+                            Object {
+                              "label": "15 (Gold)",
+                              "value": "15",
+                            },
+                            Object {
+                              "label": "16 (Juno)",
+                              "value": "16",
+                            },
+                            Object {
+                              "label": "17 (Sword)",
+                              "value": "17",
+                            },
+                            Object {
+                              "label": "18 (Omaha)",
+                              "value": "18",
+                            },
                           ]
                         }
                         pageSize={5}
@@ -3102,6 +3162,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                               Object {
                                 "label": "13 (1W440)",
                                 "value": "13",
+                              },
+                              Object {
+                                "label": "14 (Utah)",
+                                "value": "14",
+                              },
+                              Object {
+                                "label": "15 (Gold)",
+                                "value": "15",
+                              },
+                              Object {
+                                "label": "16 (Juno)",
+                                "value": "16",
+                              },
+                              Object {
+                                "label": "17 (Sword)",
+                                "value": "17",
+                              },
+                              Object {
+                                "label": "18 (Omaha)",
+                                "value": "18",
                               },
                             ]
                           }
@@ -3205,6 +3285,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                 Object {
                                   "label": "13 (1W440)",
                                   "value": "13",
+                                },
+                                Object {
+                                  "label": "14 (Utah)",
+                                  "value": "14",
+                                },
+                                Object {
+                                  "label": "15 (Gold)",
+                                  "value": "15",
+                                },
+                                Object {
+                                  "label": "16 (Juno)",
+                                  "value": "16",
+                                },
+                                Object {
+                                  "label": "17 (Sword)",
+                                  "value": "17",
+                                },
+                                Object {
+                                  "label": "18 (Omaha)",
+                                  "value": "18",
                                 },
                               ],
                               "pageSize": 5,
@@ -3349,6 +3449,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                       "label": "13 (1W440)",
                                       "value": "13",
                                     },
+                                    Object {
+                                      "label": "14 (Utah)",
+                                      "value": "14",
+                                    },
+                                    Object {
+                                      "label": "15 (Gold)",
+                                      "value": "15",
+                                    },
+                                    Object {
+                                      "label": "16 (Juno)",
+                                      "value": "16",
+                                    },
+                                    Object {
+                                      "label": "17 (Sword)",
+                                      "value": "17",
+                                    },
+                                    Object {
+                                      "label": "18 (Omaha)",
+                                      "value": "18",
+                                    },
                                   ]
                                 }
                                 selectOption={[Function]}
@@ -3451,6 +3571,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                       Object {
                                         "label": "13 (1W440)",
                                         "value": "13",
+                                      },
+                                      Object {
+                                        "label": "14 (Utah)",
+                                        "value": "14",
+                                      },
+                                      Object {
+                                        "label": "15 (Gold)",
+                                        "value": "15",
+                                      },
+                                      Object {
+                                        "label": "16 (Juno)",
+                                        "value": "16",
+                                      },
+                                      Object {
+                                        "label": "17 (Sword)",
+                                        "value": "17",
+                                      },
+                                      Object {
+                                        "label": "18 (Omaha)",
+                                        "value": "18",
                                       },
                                     ],
                                     "pageSize": 5,
@@ -3603,6 +3743,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                             "label": "13 (1W440)",
                                             "value": "13",
                                           },
+                                          Object {
+                                            "label": "14 (Utah)",
+                                            "value": "14",
+                                          },
+                                          Object {
+                                            "label": "15 (Gold)",
+                                            "value": "15",
+                                          },
+                                          Object {
+                                            "label": "16 (Juno)",
+                                            "value": "16",
+                                          },
+                                          Object {
+                                            "label": "17 (Sword)",
+                                            "value": "17",
+                                          },
+                                          Object {
+                                            "label": "18 (Omaha)",
+                                            "value": "18",
+                                          },
                                         ]
                                       }
                                       selectOption={[Function]}
@@ -3705,6 +3865,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                             Object {
                                               "label": "13 (1W440)",
                                               "value": "13",
+                                            },
+                                            Object {
+                                              "label": "14 (Utah)",
+                                              "value": "14",
+                                            },
+                                            Object {
+                                              "label": "15 (Gold)",
+                                              "value": "15",
+                                            },
+                                            Object {
+                                              "label": "16 (Juno)",
+                                              "value": "16",
+                                            },
+                                            Object {
+                                              "label": "17 (Sword)",
+                                              "value": "17",
+                                            },
+                                            Object {
+                                              "label": "18 (Omaha)",
+                                              "value": "18",
                                             },
                                           ],
                                           "pageSize": 5,
@@ -3848,6 +4028,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   "label": "13 (1W440)",
                                                   "value": "13",
                                                 },
+                                                Object {
+                                                  "label": "14 (Utah)",
+                                                  "value": "14",
+                                                },
+                                                Object {
+                                                  "label": "15 (Gold)",
+                                                  "value": "15",
+                                                },
+                                                Object {
+                                                  "label": "16 (Juno)",
+                                                  "value": "16",
+                                                },
+                                                Object {
+                                                  "label": "17 (Sword)",
+                                                  "value": "17",
+                                                },
+                                                Object {
+                                                  "label": "18 (Omaha)",
+                                                  "value": "18",
+                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -3950,6 +4150,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   Object {
                                                     "label": "13 (1W440)",
                                                     "value": "13",
+                                                  },
+                                                  Object {
+                                                    "label": "14 (Utah)",
+                                                    "value": "14",
+                                                  },
+                                                  Object {
+                                                    "label": "15 (Gold)",
+                                                    "value": "15",
+                                                  },
+                                                  Object {
+                                                    "label": "16 (Juno)",
+                                                    "value": "16",
+                                                  },
+                                                  Object {
+                                                    "label": "17 (Sword)",
+                                                    "value": "17",
+                                                  },
+                                                  Object {
+                                                    "label": "18 (Omaha)",
+                                                    "value": "18",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -4140,6 +4360,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   Object {
                                                     "label": "13 (1W440)",
                                                     "value": "13",
+                                                  },
+                                                  Object {
+                                                    "label": "14 (Utah)",
+                                                    "value": "14",
+                                                  },
+                                                  Object {
+                                                    "label": "15 (Gold)",
+                                                    "value": "15",
+                                                  },
+                                                  Object {
+                                                    "label": "16 (Juno)",
+                                                    "value": "16",
+                                                  },
+                                                  Object {
+                                                    "label": "17 (Sword)",
+                                                    "value": "17",
+                                                  },
+                                                  Object {
+                                                    "label": "18 (Omaha)",
+                                                    "value": "18",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -4360,6 +4600,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                             "label": "13 (1W440)",
                                             "value": "13",
                                           },
+                                          Object {
+                                            "label": "14 (Utah)",
+                                            "value": "14",
+                                          },
+                                          Object {
+                                            "label": "15 (Gold)",
+                                            "value": "15",
+                                          },
+                                          Object {
+                                            "label": "16 (Juno)",
+                                            "value": "16",
+                                          },
+                                          Object {
+                                            "label": "17 (Sword)",
+                                            "value": "17",
+                                          },
+                                          Object {
+                                            "label": "18 (Omaha)",
+                                            "value": "18",
+                                          },
                                         ]
                                       }
                                       selectOption={[Function]}
@@ -4462,6 +4722,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                             Object {
                                               "label": "13 (1W440)",
                                               "value": "13",
+                                            },
+                                            Object {
+                                              "label": "14 (Utah)",
+                                              "value": "14",
+                                            },
+                                            Object {
+                                              "label": "15 (Gold)",
+                                              "value": "15",
+                                            },
+                                            Object {
+                                              "label": "16 (Juno)",
+                                              "value": "16",
+                                            },
+                                            Object {
+                                              "label": "17 (Sword)",
+                                              "value": "17",
+                                            },
+                                            Object {
+                                              "label": "18 (Omaha)",
+                                              "value": "18",
                                             },
                                           ],
                                           "pageSize": 5,
@@ -4596,6 +4876,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   "label": "13 (1W440)",
                                                   "value": "13",
                                                 },
+                                                Object {
+                                                  "label": "14 (Utah)",
+                                                  "value": "14",
+                                                },
+                                                Object {
+                                                  "label": "15 (Gold)",
+                                                  "value": "15",
+                                                },
+                                                Object {
+                                                  "label": "16 (Juno)",
+                                                  "value": "16",
+                                                },
+                                                Object {
+                                                  "label": "17 (Sword)",
+                                                  "value": "17",
+                                                },
+                                                Object {
+                                                  "label": "18 (Omaha)",
+                                                  "value": "18",
+                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -4698,6 +4998,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   Object {
                                                     "label": "13 (1W440)",
                                                     "value": "13",
+                                                  },
+                                                  Object {
+                                                    "label": "14 (Utah)",
+                                                    "value": "14",
+                                                  },
+                                                  Object {
+                                                    "label": "15 (Gold)",
+                                                    "value": "15",
+                                                  },
+                                                  Object {
+                                                    "label": "16 (Juno)",
+                                                    "value": "16",
+                                                  },
+                                                  Object {
+                                                    "label": "17 (Sword)",
+                                                    "value": "17",
+                                                  },
+                                                  Object {
+                                                    "label": "18 (Omaha)",
+                                                    "value": "18",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -4843,6 +5163,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   "label": "13 (1W440)",
                                                   "value": "13",
                                                 },
+                                                Object {
+                                                  "label": "14 (Utah)",
+                                                  "value": "14",
+                                                },
+                                                Object {
+                                                  "label": "15 (Gold)",
+                                                  "value": "15",
+                                                },
+                                                Object {
+                                                  "label": "16 (Juno)",
+                                                  "value": "16",
+                                                },
+                                                Object {
+                                                  "label": "17 (Sword)",
+                                                  "value": "17",
+                                                },
+                                                Object {
+                                                  "label": "18 (Omaha)",
+                                                  "value": "18",
+                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -4945,6 +5285,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   Object {
                                                     "label": "13 (1W440)",
                                                     "value": "13",
+                                                  },
+                                                  Object {
+                                                    "label": "14 (Utah)",
+                                                    "value": "14",
+                                                  },
+                                                  Object {
+                                                    "label": "15 (Gold)",
+                                                    "value": "15",
+                                                  },
+                                                  Object {
+                                                    "label": "16 (Juno)",
+                                                    "value": "16",
+                                                  },
+                                                  Object {
+                                                    "label": "17 (Sword)",
+                                                    "value": "17",
+                                                  },
+                                                  Object {
+                                                    "label": "18 (Omaha)",
+                                                    "value": "18",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -5401,7 +5761,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                     name="taskNumber"
                     onChange={[Function]}
                     type="text"
-                    value=""
                   />
                 </div>
               </TextField>
@@ -7039,7 +7398,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -7099,7 +7457,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -7159,7 +7516,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -8883,7 +9239,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       placeholder="mm/dd/yyyy"
                       readOnly={true}
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -9212,7 +9567,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -12024,6 +12378,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                     "label": "13 (1W440)",
                     "value": "13",
                   },
+                  Object {
+                    "label": "14 (Utah)",
+                    "value": "14",
+                  },
+                  Object {
+                    "label": "15 (Gold)",
+                    "value": "15",
+                  },
+                  Object {
+                    "label": "16 (Juno)",
+                    "value": "16",
+                  },
+                  Object {
+                    "label": "17 (Sword)",
+                    "value": "17",
+                  },
+                  Object {
+                    "label": "18 (Omaha)",
+                    "value": "18",
+                  },
                 ]
               }
               strongLabel={true}
@@ -12123,6 +12497,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                           Object {
                             "label": "13 (1W440)",
                             "value": "13",
+                          },
+                          Object {
+                            "label": "14 (Utah)",
+                            "value": "14",
+                          },
+                          Object {
+                            "label": "15 (Gold)",
+                            "value": "15",
+                          },
+                          Object {
+                            "label": "16 (Juno)",
+                            "value": "16",
+                          },
+                          Object {
+                            "label": "17 (Sword)",
+                            "value": "17",
+                          },
+                          Object {
+                            "label": "18 (Omaha)",
+                            "value": "18",
                           },
                         ]
                       }
@@ -12237,6 +12631,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                               "label": "13 (1W440)",
                               "value": "13",
                             },
+                            Object {
+                              "label": "14 (Utah)",
+                              "value": "14",
+                            },
+                            Object {
+                              "label": "15 (Gold)",
+                              "value": "15",
+                            },
+                            Object {
+                              "label": "16 (Juno)",
+                              "value": "16",
+                            },
+                            Object {
+                              "label": "17 (Sword)",
+                              "value": "17",
+                            },
+                            Object {
+                              "label": "18 (Omaha)",
+                              "value": "18",
+                            },
                           ]
                         }
                         pageSize={5}
@@ -12330,6 +12744,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                               Object {
                                 "label": "13 (1W440)",
                                 "value": "13",
+                              },
+                              Object {
+                                "label": "14 (Utah)",
+                                "value": "14",
+                              },
+                              Object {
+                                "label": "15 (Gold)",
+                                "value": "15",
+                              },
+                              Object {
+                                "label": "16 (Juno)",
+                                "value": "16",
+                              },
+                              Object {
+                                "label": "17 (Sword)",
+                                "value": "17",
+                              },
+                              Object {
+                                "label": "18 (Omaha)",
+                                "value": "18",
                               },
                             ]
                           }
@@ -12433,6 +12867,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                 Object {
                                   "label": "13 (1W440)",
                                   "value": "13",
+                                },
+                                Object {
+                                  "label": "14 (Utah)",
+                                  "value": "14",
+                                },
+                                Object {
+                                  "label": "15 (Gold)",
+                                  "value": "15",
+                                },
+                                Object {
+                                  "label": "16 (Juno)",
+                                  "value": "16",
+                                },
+                                Object {
+                                  "label": "17 (Sword)",
+                                  "value": "17",
+                                },
+                                Object {
+                                  "label": "18 (Omaha)",
+                                  "value": "18",
                                 },
                               ],
                               "pageSize": 5,
@@ -12577,6 +13031,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                       "label": "13 (1W440)",
                                       "value": "13",
                                     },
+                                    Object {
+                                      "label": "14 (Utah)",
+                                      "value": "14",
+                                    },
+                                    Object {
+                                      "label": "15 (Gold)",
+                                      "value": "15",
+                                    },
+                                    Object {
+                                      "label": "16 (Juno)",
+                                      "value": "16",
+                                    },
+                                    Object {
+                                      "label": "17 (Sword)",
+                                      "value": "17",
+                                    },
+                                    Object {
+                                      "label": "18 (Omaha)",
+                                      "value": "18",
+                                    },
                                   ]
                                 }
                                 selectOption={[Function]}
@@ -12679,6 +13153,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                       Object {
                                         "label": "13 (1W440)",
                                         "value": "13",
+                                      },
+                                      Object {
+                                        "label": "14 (Utah)",
+                                        "value": "14",
+                                      },
+                                      Object {
+                                        "label": "15 (Gold)",
+                                        "value": "15",
+                                      },
+                                      Object {
+                                        "label": "16 (Juno)",
+                                        "value": "16",
+                                      },
+                                      Object {
+                                        "label": "17 (Sword)",
+                                        "value": "17",
+                                      },
+                                      Object {
+                                        "label": "18 (Omaha)",
+                                        "value": "18",
                                       },
                                     ],
                                     "pageSize": 5,
@@ -12831,6 +13325,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             "label": "13 (1W440)",
                                             "value": "13",
                                           },
+                                          Object {
+                                            "label": "14 (Utah)",
+                                            "value": "14",
+                                          },
+                                          Object {
+                                            "label": "15 (Gold)",
+                                            "value": "15",
+                                          },
+                                          Object {
+                                            "label": "16 (Juno)",
+                                            "value": "16",
+                                          },
+                                          Object {
+                                            "label": "17 (Sword)",
+                                            "value": "17",
+                                          },
+                                          Object {
+                                            "label": "18 (Omaha)",
+                                            "value": "18",
+                                          },
                                         ]
                                       }
                                       selectOption={[Function]}
@@ -12933,6 +13447,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             Object {
                                               "label": "13 (1W440)",
                                               "value": "13",
+                                            },
+                                            Object {
+                                              "label": "14 (Utah)",
+                                              "value": "14",
+                                            },
+                                            Object {
+                                              "label": "15 (Gold)",
+                                              "value": "15",
+                                            },
+                                            Object {
+                                              "label": "16 (Juno)",
+                                              "value": "16",
+                                            },
+                                            Object {
+                                              "label": "17 (Sword)",
+                                              "value": "17",
+                                            },
+                                            Object {
+                                              "label": "18 (Omaha)",
+                                              "value": "18",
                                             },
                                           ],
                                           "pageSize": 5,
@@ -13076,6 +13610,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "label": "13 (1W440)",
                                                   "value": "13",
                                                 },
+                                                Object {
+                                                  "label": "14 (Utah)",
+                                                  "value": "14",
+                                                },
+                                                Object {
+                                                  "label": "15 (Gold)",
+                                                  "value": "15",
+                                                },
+                                                Object {
+                                                  "label": "16 (Juno)",
+                                                  "value": "16",
+                                                },
+                                                Object {
+                                                  "label": "17 (Sword)",
+                                                  "value": "17",
+                                                },
+                                                Object {
+                                                  "label": "18 (Omaha)",
+                                                  "value": "18",
+                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -13178,6 +13732,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   Object {
                                                     "label": "13 (1W440)",
                                                     "value": "13",
+                                                  },
+                                                  Object {
+                                                    "label": "14 (Utah)",
+                                                    "value": "14",
+                                                  },
+                                                  Object {
+                                                    "label": "15 (Gold)",
+                                                    "value": "15",
+                                                  },
+                                                  Object {
+                                                    "label": "16 (Juno)",
+                                                    "value": "16",
+                                                  },
+                                                  Object {
+                                                    "label": "17 (Sword)",
+                                                    "value": "17",
+                                                  },
+                                                  Object {
+                                                    "label": "18 (Omaha)",
+                                                    "value": "18",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -13368,6 +13942,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   Object {
                                                     "label": "13 (1W440)",
                                                     "value": "13",
+                                                  },
+                                                  Object {
+                                                    "label": "14 (Utah)",
+                                                    "value": "14",
+                                                  },
+                                                  Object {
+                                                    "label": "15 (Gold)",
+                                                    "value": "15",
+                                                  },
+                                                  Object {
+                                                    "label": "16 (Juno)",
+                                                    "value": "16",
+                                                  },
+                                                  Object {
+                                                    "label": "17 (Sword)",
+                                                    "value": "17",
+                                                  },
+                                                  Object {
+                                                    "label": "18 (Omaha)",
+                                                    "value": "18",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -13588,6 +14182,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             "label": "13 (1W440)",
                                             "value": "13",
                                           },
+                                          Object {
+                                            "label": "14 (Utah)",
+                                            "value": "14",
+                                          },
+                                          Object {
+                                            "label": "15 (Gold)",
+                                            "value": "15",
+                                          },
+                                          Object {
+                                            "label": "16 (Juno)",
+                                            "value": "16",
+                                          },
+                                          Object {
+                                            "label": "17 (Sword)",
+                                            "value": "17",
+                                          },
+                                          Object {
+                                            "label": "18 (Omaha)",
+                                            "value": "18",
+                                          },
                                         ]
                                       }
                                       selectOption={[Function]}
@@ -13690,6 +14304,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             Object {
                                               "label": "13 (1W440)",
                                               "value": "13",
+                                            },
+                                            Object {
+                                              "label": "14 (Utah)",
+                                              "value": "14",
+                                            },
+                                            Object {
+                                              "label": "15 (Gold)",
+                                              "value": "15",
+                                            },
+                                            Object {
+                                              "label": "16 (Juno)",
+                                              "value": "16",
+                                            },
+                                            Object {
+                                              "label": "17 (Sword)",
+                                              "value": "17",
+                                            },
+                                            Object {
+                                              "label": "18 (Omaha)",
+                                              "value": "18",
                                             },
                                           ],
                                           "pageSize": 5,
@@ -13824,6 +14458,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "label": "13 (1W440)",
                                                   "value": "13",
                                                 },
+                                                Object {
+                                                  "label": "14 (Utah)",
+                                                  "value": "14",
+                                                },
+                                                Object {
+                                                  "label": "15 (Gold)",
+                                                  "value": "15",
+                                                },
+                                                Object {
+                                                  "label": "16 (Juno)",
+                                                  "value": "16",
+                                                },
+                                                Object {
+                                                  "label": "17 (Sword)",
+                                                  "value": "17",
+                                                },
+                                                Object {
+                                                  "label": "18 (Omaha)",
+                                                  "value": "18",
+                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -13926,6 +14580,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   Object {
                                                     "label": "13 (1W440)",
                                                     "value": "13",
+                                                  },
+                                                  Object {
+                                                    "label": "14 (Utah)",
+                                                    "value": "14",
+                                                  },
+                                                  Object {
+                                                    "label": "15 (Gold)",
+                                                    "value": "15",
+                                                  },
+                                                  Object {
+                                                    "label": "16 (Juno)",
+                                                    "value": "16",
+                                                  },
+                                                  Object {
+                                                    "label": "17 (Sword)",
+                                                    "value": "17",
+                                                  },
+                                                  Object {
+                                                    "label": "18 (Omaha)",
+                                                    "value": "18",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -14071,6 +14745,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "label": "13 (1W440)",
                                                   "value": "13",
                                                 },
+                                                Object {
+                                                  "label": "14 (Utah)",
+                                                  "value": "14",
+                                                },
+                                                Object {
+                                                  "label": "15 (Gold)",
+                                                  "value": "15",
+                                                },
+                                                Object {
+                                                  "label": "16 (Juno)",
+                                                  "value": "16",
+                                                },
+                                                Object {
+                                                  "label": "17 (Sword)",
+                                                  "value": "17",
+                                                },
+                                                Object {
+                                                  "label": "18 (Omaha)",
+                                                  "value": "18",
+                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -14173,6 +14867,26 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   Object {
                                                     "label": "13 (1W440)",
                                                     "value": "13",
+                                                  },
+                                                  Object {
+                                                    "label": "14 (Utah)",
+                                                    "value": "14",
+                                                  },
+                                                  Object {
+                                                    "label": "15 (Gold)",
+                                                    "value": "15",
+                                                  },
+                                                  Object {
+                                                    "label": "16 (Juno)",
+                                                    "value": "16",
+                                                  },
+                                                  Object {
+                                                    "label": "17 (Sword)",
+                                                    "value": "17",
+                                                  },
+                                                  Object {
+                                                    "label": "18 (Omaha)",
+                                                    "value": "18",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -14632,7 +15346,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                     name="taskNumber"
                     onChange={[Function]}
                     type="text"
-                    value=""
                   />
                 </div>
               </TextField>
@@ -16270,7 +16983,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -16330,7 +17042,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -16390,7 +17101,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -18114,7 +18824,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       placeholder="mm/dd/yyyy"
                       readOnly={true}
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -18444,7 +19153,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -21256,6 +21964,26 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                     "label": "13 (1W440)",
                     "value": "13",
                   },
+                  Object {
+                    "label": "14 (Utah)",
+                    "value": "14",
+                  },
+                  Object {
+                    "label": "15 (Gold)",
+                    "value": "15",
+                  },
+                  Object {
+                    "label": "16 (Juno)",
+                    "value": "16",
+                  },
+                  Object {
+                    "label": "17 (Sword)",
+                    "value": "17",
+                  },
+                  Object {
+                    "label": "18 (Omaha)",
+                    "value": "18",
+                  },
                 ]
               }
               strongLabel={true}
@@ -21355,6 +22083,26 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                           Object {
                             "label": "13 (1W440)",
                             "value": "13",
+                          },
+                          Object {
+                            "label": "14 (Utah)",
+                            "value": "14",
+                          },
+                          Object {
+                            "label": "15 (Gold)",
+                            "value": "15",
+                          },
+                          Object {
+                            "label": "16 (Juno)",
+                            "value": "16",
+                          },
+                          Object {
+                            "label": "17 (Sword)",
+                            "value": "17",
+                          },
+                          Object {
+                            "label": "18 (Omaha)",
+                            "value": "18",
                           },
                         ]
                       }
@@ -21469,6 +22217,26 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                               "label": "13 (1W440)",
                               "value": "13",
                             },
+                            Object {
+                              "label": "14 (Utah)",
+                              "value": "14",
+                            },
+                            Object {
+                              "label": "15 (Gold)",
+                              "value": "15",
+                            },
+                            Object {
+                              "label": "16 (Juno)",
+                              "value": "16",
+                            },
+                            Object {
+                              "label": "17 (Sword)",
+                              "value": "17",
+                            },
+                            Object {
+                              "label": "18 (Omaha)",
+                              "value": "18",
+                            },
                           ]
                         }
                         pageSize={5}
@@ -21562,6 +22330,26 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                               Object {
                                 "label": "13 (1W440)",
                                 "value": "13",
+                              },
+                              Object {
+                                "label": "14 (Utah)",
+                                "value": "14",
+                              },
+                              Object {
+                                "label": "15 (Gold)",
+                                "value": "15",
+                              },
+                              Object {
+                                "label": "16 (Juno)",
+                                "value": "16",
+                              },
+                              Object {
+                                "label": "17 (Sword)",
+                                "value": "17",
+                              },
+                              Object {
+                                "label": "18 (Omaha)",
+                                "value": "18",
                               },
                             ]
                           }
@@ -21665,6 +22453,26 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                 Object {
                                   "label": "13 (1W440)",
                                   "value": "13",
+                                },
+                                Object {
+                                  "label": "14 (Utah)",
+                                  "value": "14",
+                                },
+                                Object {
+                                  "label": "15 (Gold)",
+                                  "value": "15",
+                                },
+                                Object {
+                                  "label": "16 (Juno)",
+                                  "value": "16",
+                                },
+                                Object {
+                                  "label": "17 (Sword)",
+                                  "value": "17",
+                                },
+                                Object {
+                                  "label": "18 (Omaha)",
+                                  "value": "18",
                                 },
                               ],
                               "pageSize": 5,
@@ -21809,6 +22617,26 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                       "label": "13 (1W440)",
                                       "value": "13",
                                     },
+                                    Object {
+                                      "label": "14 (Utah)",
+                                      "value": "14",
+                                    },
+                                    Object {
+                                      "label": "15 (Gold)",
+                                      "value": "15",
+                                    },
+                                    Object {
+                                      "label": "16 (Juno)",
+                                      "value": "16",
+                                    },
+                                    Object {
+                                      "label": "17 (Sword)",
+                                      "value": "17",
+                                    },
+                                    Object {
+                                      "label": "18 (Omaha)",
+                                      "value": "18",
+                                    },
                                   ]
                                 }
                                 selectOption={[Function]}
@@ -21911,6 +22739,26 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                       Object {
                                         "label": "13 (1W440)",
                                         "value": "13",
+                                      },
+                                      Object {
+                                        "label": "14 (Utah)",
+                                        "value": "14",
+                                      },
+                                      Object {
+                                        "label": "15 (Gold)",
+                                        "value": "15",
+                                      },
+                                      Object {
+                                        "label": "16 (Juno)",
+                                        "value": "16",
+                                      },
+                                      Object {
+                                        "label": "17 (Sword)",
+                                        "value": "17",
+                                      },
+                                      Object {
+                                        "label": "18 (Omaha)",
+                                        "value": "18",
                                       },
                                     ],
                                     "pageSize": 5,
@@ -22063,6 +22911,26 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             "label": "13 (1W440)",
                                             "value": "13",
                                           },
+                                          Object {
+                                            "label": "14 (Utah)",
+                                            "value": "14",
+                                          },
+                                          Object {
+                                            "label": "15 (Gold)",
+                                            "value": "15",
+                                          },
+                                          Object {
+                                            "label": "16 (Juno)",
+                                            "value": "16",
+                                          },
+                                          Object {
+                                            "label": "17 (Sword)",
+                                            "value": "17",
+                                          },
+                                          Object {
+                                            "label": "18 (Omaha)",
+                                            "value": "18",
+                                          },
                                         ]
                                       }
                                       selectOption={[Function]}
@@ -22165,6 +23033,26 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             Object {
                                               "label": "13 (1W440)",
                                               "value": "13",
+                                            },
+                                            Object {
+                                              "label": "14 (Utah)",
+                                              "value": "14",
+                                            },
+                                            Object {
+                                              "label": "15 (Gold)",
+                                              "value": "15",
+                                            },
+                                            Object {
+                                              "label": "16 (Juno)",
+                                              "value": "16",
+                                            },
+                                            Object {
+                                              "label": "17 (Sword)",
+                                              "value": "17",
+                                            },
+                                            Object {
+                                              "label": "18 (Omaha)",
+                                              "value": "18",
                                             },
                                           ],
                                           "pageSize": 5,
@@ -22308,6 +23196,26 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "label": "13 (1W440)",
                                                   "value": "13",
                                                 },
+                                                Object {
+                                                  "label": "14 (Utah)",
+                                                  "value": "14",
+                                                },
+                                                Object {
+                                                  "label": "15 (Gold)",
+                                                  "value": "15",
+                                                },
+                                                Object {
+                                                  "label": "16 (Juno)",
+                                                  "value": "16",
+                                                },
+                                                Object {
+                                                  "label": "17 (Sword)",
+                                                  "value": "17",
+                                                },
+                                                Object {
+                                                  "label": "18 (Omaha)",
+                                                  "value": "18",
+                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -22410,6 +23318,26 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   Object {
                                                     "label": "13 (1W440)",
                                                     "value": "13",
+                                                  },
+                                                  Object {
+                                                    "label": "14 (Utah)",
+                                                    "value": "14",
+                                                  },
+                                                  Object {
+                                                    "label": "15 (Gold)",
+                                                    "value": "15",
+                                                  },
+                                                  Object {
+                                                    "label": "16 (Juno)",
+                                                    "value": "16",
+                                                  },
+                                                  Object {
+                                                    "label": "17 (Sword)",
+                                                    "value": "17",
+                                                  },
+                                                  Object {
+                                                    "label": "18 (Omaha)",
+                                                    "value": "18",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -22600,6 +23528,26 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   Object {
                                                     "label": "13 (1W440)",
                                                     "value": "13",
+                                                  },
+                                                  Object {
+                                                    "label": "14 (Utah)",
+                                                    "value": "14",
+                                                  },
+                                                  Object {
+                                                    "label": "15 (Gold)",
+                                                    "value": "15",
+                                                  },
+                                                  Object {
+                                                    "label": "16 (Juno)",
+                                                    "value": "16",
+                                                  },
+                                                  Object {
+                                                    "label": "17 (Sword)",
+                                                    "value": "17",
+                                                  },
+                                                  Object {
+                                                    "label": "18 (Omaha)",
+                                                    "value": "18",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -22820,6 +23768,26 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             "label": "13 (1W440)",
                                             "value": "13",
                                           },
+                                          Object {
+                                            "label": "14 (Utah)",
+                                            "value": "14",
+                                          },
+                                          Object {
+                                            "label": "15 (Gold)",
+                                            "value": "15",
+                                          },
+                                          Object {
+                                            "label": "16 (Juno)",
+                                            "value": "16",
+                                          },
+                                          Object {
+                                            "label": "17 (Sword)",
+                                            "value": "17",
+                                          },
+                                          Object {
+                                            "label": "18 (Omaha)",
+                                            "value": "18",
+                                          },
                                         ]
                                       }
                                       selectOption={[Function]}
@@ -22922,6 +23890,26 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             Object {
                                               "label": "13 (1W440)",
                                               "value": "13",
+                                            },
+                                            Object {
+                                              "label": "14 (Utah)",
+                                              "value": "14",
+                                            },
+                                            Object {
+                                              "label": "15 (Gold)",
+                                              "value": "15",
+                                            },
+                                            Object {
+                                              "label": "16 (Juno)",
+                                              "value": "16",
+                                            },
+                                            Object {
+                                              "label": "17 (Sword)",
+                                              "value": "17",
+                                            },
+                                            Object {
+                                              "label": "18 (Omaha)",
+                                              "value": "18",
                                             },
                                           ],
                                           "pageSize": 5,
@@ -23056,6 +24044,26 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "label": "13 (1W440)",
                                                   "value": "13",
                                                 },
+                                                Object {
+                                                  "label": "14 (Utah)",
+                                                  "value": "14",
+                                                },
+                                                Object {
+                                                  "label": "15 (Gold)",
+                                                  "value": "15",
+                                                },
+                                                Object {
+                                                  "label": "16 (Juno)",
+                                                  "value": "16",
+                                                },
+                                                Object {
+                                                  "label": "17 (Sword)",
+                                                  "value": "17",
+                                                },
+                                                Object {
+                                                  "label": "18 (Omaha)",
+                                                  "value": "18",
+                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -23158,6 +24166,26 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   Object {
                                                     "label": "13 (1W440)",
                                                     "value": "13",
+                                                  },
+                                                  Object {
+                                                    "label": "14 (Utah)",
+                                                    "value": "14",
+                                                  },
+                                                  Object {
+                                                    "label": "15 (Gold)",
+                                                    "value": "15",
+                                                  },
+                                                  Object {
+                                                    "label": "16 (Juno)",
+                                                    "value": "16",
+                                                  },
+                                                  Object {
+                                                    "label": "17 (Sword)",
+                                                    "value": "17",
+                                                  },
+                                                  Object {
+                                                    "label": "18 (Omaha)",
+                                                    "value": "18",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -23303,6 +24331,26 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "label": "13 (1W440)",
                                                   "value": "13",
                                                 },
+                                                Object {
+                                                  "label": "14 (Utah)",
+                                                  "value": "14",
+                                                },
+                                                Object {
+                                                  "label": "15 (Gold)",
+                                                  "value": "15",
+                                                },
+                                                Object {
+                                                  "label": "16 (Juno)",
+                                                  "value": "16",
+                                                },
+                                                Object {
+                                                  "label": "17 (Sword)",
+                                                  "value": "17",
+                                                },
+                                                Object {
+                                                  "label": "18 (Omaha)",
+                                                  "value": "18",
+                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -23405,6 +24453,26 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   Object {
                                                     "label": "13 (1W440)",
                                                     "value": "13",
+                                                  },
+                                                  Object {
+                                                    "label": "14 (Utah)",
+                                                    "value": "14",
+                                                  },
+                                                  Object {
+                                                    "label": "15 (Gold)",
+                                                    "value": "15",
+                                                  },
+                                                  Object {
+                                                    "label": "16 (Juno)",
+                                                    "value": "16",
+                                                  },
+                                                  Object {
+                                                    "label": "17 (Sword)",
+                                                    "value": "17",
+                                                  },
+                                                  Object {
+                                                    "label": "18 (Omaha)",
+                                                    "value": "18",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -25287,7 +26355,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                     name="taskNumber"
                     onChange={[Function]}
                     type="text"
-                    value=""
                   />
                 </div>
               </TextField>
@@ -26925,7 +27992,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -26985,7 +28051,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -27045,7 +28110,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -28769,7 +29833,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       placeholder="mm/dd/yyyy"
                       readOnly={true}
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -29099,7 +30162,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -31912,6 +32974,26 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                     "label": "13 (1W440)",
                     "value": "13",
                   },
+                  Object {
+                    "label": "14 (Utah)",
+                    "value": "14",
+                  },
+                  Object {
+                    "label": "15 (Gold)",
+                    "value": "15",
+                  },
+                  Object {
+                    "label": "16 (Juno)",
+                    "value": "16",
+                  },
+                  Object {
+                    "label": "17 (Sword)",
+                    "value": "17",
+                  },
+                  Object {
+                    "label": "18 (Omaha)",
+                    "value": "18",
+                  },
                 ]
               }
               strongLabel={true}
@@ -32011,6 +33093,26 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                           Object {
                             "label": "13 (1W440)",
                             "value": "13",
+                          },
+                          Object {
+                            "label": "14 (Utah)",
+                            "value": "14",
+                          },
+                          Object {
+                            "label": "15 (Gold)",
+                            "value": "15",
+                          },
+                          Object {
+                            "label": "16 (Juno)",
+                            "value": "16",
+                          },
+                          Object {
+                            "label": "17 (Sword)",
+                            "value": "17",
+                          },
+                          Object {
+                            "label": "18 (Omaha)",
+                            "value": "18",
                           },
                         ]
                       }
@@ -32125,6 +33227,26 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                               "label": "13 (1W440)",
                               "value": "13",
                             },
+                            Object {
+                              "label": "14 (Utah)",
+                              "value": "14",
+                            },
+                            Object {
+                              "label": "15 (Gold)",
+                              "value": "15",
+                            },
+                            Object {
+                              "label": "16 (Juno)",
+                              "value": "16",
+                            },
+                            Object {
+                              "label": "17 (Sword)",
+                              "value": "17",
+                            },
+                            Object {
+                              "label": "18 (Omaha)",
+                              "value": "18",
+                            },
                           ]
                         }
                         pageSize={5}
@@ -32218,6 +33340,26 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                               Object {
                                 "label": "13 (1W440)",
                                 "value": "13",
+                              },
+                              Object {
+                                "label": "14 (Utah)",
+                                "value": "14",
+                              },
+                              Object {
+                                "label": "15 (Gold)",
+                                "value": "15",
+                              },
+                              Object {
+                                "label": "16 (Juno)",
+                                "value": "16",
+                              },
+                              Object {
+                                "label": "17 (Sword)",
+                                "value": "17",
+                              },
+                              Object {
+                                "label": "18 (Omaha)",
+                                "value": "18",
                               },
                             ]
                           }
@@ -32321,6 +33463,26 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                 Object {
                                   "label": "13 (1W440)",
                                   "value": "13",
+                                },
+                                Object {
+                                  "label": "14 (Utah)",
+                                  "value": "14",
+                                },
+                                Object {
+                                  "label": "15 (Gold)",
+                                  "value": "15",
+                                },
+                                Object {
+                                  "label": "16 (Juno)",
+                                  "value": "16",
+                                },
+                                Object {
+                                  "label": "17 (Sword)",
+                                  "value": "17",
+                                },
+                                Object {
+                                  "label": "18 (Omaha)",
+                                  "value": "18",
                                 },
                               ],
                               "pageSize": 5,
@@ -32465,6 +33627,26 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                       "label": "13 (1W440)",
                                       "value": "13",
                                     },
+                                    Object {
+                                      "label": "14 (Utah)",
+                                      "value": "14",
+                                    },
+                                    Object {
+                                      "label": "15 (Gold)",
+                                      "value": "15",
+                                    },
+                                    Object {
+                                      "label": "16 (Juno)",
+                                      "value": "16",
+                                    },
+                                    Object {
+                                      "label": "17 (Sword)",
+                                      "value": "17",
+                                    },
+                                    Object {
+                                      "label": "18 (Omaha)",
+                                      "value": "18",
+                                    },
                                   ]
                                 }
                                 selectOption={[Function]}
@@ -32567,6 +33749,26 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                       Object {
                                         "label": "13 (1W440)",
                                         "value": "13",
+                                      },
+                                      Object {
+                                        "label": "14 (Utah)",
+                                        "value": "14",
+                                      },
+                                      Object {
+                                        "label": "15 (Gold)",
+                                        "value": "15",
+                                      },
+                                      Object {
+                                        "label": "16 (Juno)",
+                                        "value": "16",
+                                      },
+                                      Object {
+                                        "label": "17 (Sword)",
+                                        "value": "17",
+                                      },
+                                      Object {
+                                        "label": "18 (Omaha)",
+                                        "value": "18",
                                       },
                                     ],
                                     "pageSize": 5,
@@ -32719,6 +33921,26 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             "label": "13 (1W440)",
                                             "value": "13",
                                           },
+                                          Object {
+                                            "label": "14 (Utah)",
+                                            "value": "14",
+                                          },
+                                          Object {
+                                            "label": "15 (Gold)",
+                                            "value": "15",
+                                          },
+                                          Object {
+                                            "label": "16 (Juno)",
+                                            "value": "16",
+                                          },
+                                          Object {
+                                            "label": "17 (Sword)",
+                                            "value": "17",
+                                          },
+                                          Object {
+                                            "label": "18 (Omaha)",
+                                            "value": "18",
+                                          },
                                         ]
                                       }
                                       selectOption={[Function]}
@@ -32821,6 +34043,26 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             Object {
                                               "label": "13 (1W440)",
                                               "value": "13",
+                                            },
+                                            Object {
+                                              "label": "14 (Utah)",
+                                              "value": "14",
+                                            },
+                                            Object {
+                                              "label": "15 (Gold)",
+                                              "value": "15",
+                                            },
+                                            Object {
+                                              "label": "16 (Juno)",
+                                              "value": "16",
+                                            },
+                                            Object {
+                                              "label": "17 (Sword)",
+                                              "value": "17",
+                                            },
+                                            Object {
+                                              "label": "18 (Omaha)",
+                                              "value": "18",
                                             },
                                           ],
                                           "pageSize": 5,
@@ -32964,6 +34206,26 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "label": "13 (1W440)",
                                                   "value": "13",
                                                 },
+                                                Object {
+                                                  "label": "14 (Utah)",
+                                                  "value": "14",
+                                                },
+                                                Object {
+                                                  "label": "15 (Gold)",
+                                                  "value": "15",
+                                                },
+                                                Object {
+                                                  "label": "16 (Juno)",
+                                                  "value": "16",
+                                                },
+                                                Object {
+                                                  "label": "17 (Sword)",
+                                                  "value": "17",
+                                                },
+                                                Object {
+                                                  "label": "18 (Omaha)",
+                                                  "value": "18",
+                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -33066,6 +34328,26 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   Object {
                                                     "label": "13 (1W440)",
                                                     "value": "13",
+                                                  },
+                                                  Object {
+                                                    "label": "14 (Utah)",
+                                                    "value": "14",
+                                                  },
+                                                  Object {
+                                                    "label": "15 (Gold)",
+                                                    "value": "15",
+                                                  },
+                                                  Object {
+                                                    "label": "16 (Juno)",
+                                                    "value": "16",
+                                                  },
+                                                  Object {
+                                                    "label": "17 (Sword)",
+                                                    "value": "17",
+                                                  },
+                                                  Object {
+                                                    "label": "18 (Omaha)",
+                                                    "value": "18",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -33256,6 +34538,26 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   Object {
                                                     "label": "13 (1W440)",
                                                     "value": "13",
+                                                  },
+                                                  Object {
+                                                    "label": "14 (Utah)",
+                                                    "value": "14",
+                                                  },
+                                                  Object {
+                                                    "label": "15 (Gold)",
+                                                    "value": "15",
+                                                  },
+                                                  Object {
+                                                    "label": "16 (Juno)",
+                                                    "value": "16",
+                                                  },
+                                                  Object {
+                                                    "label": "17 (Sword)",
+                                                    "value": "17",
+                                                  },
+                                                  Object {
+                                                    "label": "18 (Omaha)",
+                                                    "value": "18",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -33476,6 +34778,26 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             "label": "13 (1W440)",
                                             "value": "13",
                                           },
+                                          Object {
+                                            "label": "14 (Utah)",
+                                            "value": "14",
+                                          },
+                                          Object {
+                                            "label": "15 (Gold)",
+                                            "value": "15",
+                                          },
+                                          Object {
+                                            "label": "16 (Juno)",
+                                            "value": "16",
+                                          },
+                                          Object {
+                                            "label": "17 (Sword)",
+                                            "value": "17",
+                                          },
+                                          Object {
+                                            "label": "18 (Omaha)",
+                                            "value": "18",
+                                          },
                                         ]
                                       }
                                       selectOption={[Function]}
@@ -33578,6 +34900,26 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             Object {
                                               "label": "13 (1W440)",
                                               "value": "13",
+                                            },
+                                            Object {
+                                              "label": "14 (Utah)",
+                                              "value": "14",
+                                            },
+                                            Object {
+                                              "label": "15 (Gold)",
+                                              "value": "15",
+                                            },
+                                            Object {
+                                              "label": "16 (Juno)",
+                                              "value": "16",
+                                            },
+                                            Object {
+                                              "label": "17 (Sword)",
+                                              "value": "17",
+                                            },
+                                            Object {
+                                              "label": "18 (Omaha)",
+                                              "value": "18",
                                             },
                                           ],
                                           "pageSize": 5,
@@ -33712,6 +35054,26 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "label": "13 (1W440)",
                                                   "value": "13",
                                                 },
+                                                Object {
+                                                  "label": "14 (Utah)",
+                                                  "value": "14",
+                                                },
+                                                Object {
+                                                  "label": "15 (Gold)",
+                                                  "value": "15",
+                                                },
+                                                Object {
+                                                  "label": "16 (Juno)",
+                                                  "value": "16",
+                                                },
+                                                Object {
+                                                  "label": "17 (Sword)",
+                                                  "value": "17",
+                                                },
+                                                Object {
+                                                  "label": "18 (Omaha)",
+                                                  "value": "18",
+                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -33814,6 +35176,26 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   Object {
                                                     "label": "13 (1W440)",
                                                     "value": "13",
+                                                  },
+                                                  Object {
+                                                    "label": "14 (Utah)",
+                                                    "value": "14",
+                                                  },
+                                                  Object {
+                                                    "label": "15 (Gold)",
+                                                    "value": "15",
+                                                  },
+                                                  Object {
+                                                    "label": "16 (Juno)",
+                                                    "value": "16",
+                                                  },
+                                                  Object {
+                                                    "label": "17 (Sword)",
+                                                    "value": "17",
+                                                  },
+                                                  Object {
+                                                    "label": "18 (Omaha)",
+                                                    "value": "18",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -33959,6 +35341,26 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "label": "13 (1W440)",
                                                   "value": "13",
                                                 },
+                                                Object {
+                                                  "label": "14 (Utah)",
+                                                  "value": "14",
+                                                },
+                                                Object {
+                                                  "label": "15 (Gold)",
+                                                  "value": "15",
+                                                },
+                                                Object {
+                                                  "label": "16 (Juno)",
+                                                  "value": "16",
+                                                },
+                                                Object {
+                                                  "label": "17 (Sword)",
+                                                  "value": "17",
+                                                },
+                                                Object {
+                                                  "label": "18 (Omaha)",
+                                                  "value": "18",
+                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -34061,6 +35463,26 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   Object {
                                                     "label": "13 (1W440)",
                                                     "value": "13",
+                                                  },
+                                                  Object {
+                                                    "label": "14 (Utah)",
+                                                    "value": "14",
+                                                  },
+                                                  Object {
+                                                    "label": "15 (Gold)",
+                                                    "value": "15",
+                                                  },
+                                                  Object {
+                                                    "label": "16 (Juno)",
+                                                    "value": "16",
+                                                  },
+                                                  Object {
+                                                    "label": "17 (Sword)",
+                                                    "value": "17",
+                                                  },
+                                                  Object {
+                                                    "label": "18 (Omaha)",
+                                                    "value": "18",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -35943,7 +37365,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                     name="taskNumber"
                     onChange={[Function]}
                     type="text"
-                    value=""
                   />
                 </div>
               </TextField>
@@ -37581,7 +39002,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -37641,7 +39061,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -37701,7 +39120,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -39425,7 +40843,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       placeholder="mm/dd/yyyy"
                       readOnly={true}
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -39755,7 +41172,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -42568,6 +43984,26 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                     "label": "13 (1W440)",
                     "value": "13",
                   },
+                  Object {
+                    "label": "14 (Utah)",
+                    "value": "14",
+                  },
+                  Object {
+                    "label": "15 (Gold)",
+                    "value": "15",
+                  },
+                  Object {
+                    "label": "16 (Juno)",
+                    "value": "16",
+                  },
+                  Object {
+                    "label": "17 (Sword)",
+                    "value": "17",
+                  },
+                  Object {
+                    "label": "18 (Omaha)",
+                    "value": "18",
+                  },
                 ]
               }
               strongLabel={true}
@@ -42667,6 +44103,26 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                           Object {
                             "label": "13 (1W440)",
                             "value": "13",
+                          },
+                          Object {
+                            "label": "14 (Utah)",
+                            "value": "14",
+                          },
+                          Object {
+                            "label": "15 (Gold)",
+                            "value": "15",
+                          },
+                          Object {
+                            "label": "16 (Juno)",
+                            "value": "16",
+                          },
+                          Object {
+                            "label": "17 (Sword)",
+                            "value": "17",
+                          },
+                          Object {
+                            "label": "18 (Omaha)",
+                            "value": "18",
                           },
                         ]
                       }
@@ -42781,6 +44237,26 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                               "label": "13 (1W440)",
                               "value": "13",
                             },
+                            Object {
+                              "label": "14 (Utah)",
+                              "value": "14",
+                            },
+                            Object {
+                              "label": "15 (Gold)",
+                              "value": "15",
+                            },
+                            Object {
+                              "label": "16 (Juno)",
+                              "value": "16",
+                            },
+                            Object {
+                              "label": "17 (Sword)",
+                              "value": "17",
+                            },
+                            Object {
+                              "label": "18 (Omaha)",
+                              "value": "18",
+                            },
                           ]
                         }
                         pageSize={5}
@@ -42874,6 +44350,26 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                               Object {
                                 "label": "13 (1W440)",
                                 "value": "13",
+                              },
+                              Object {
+                                "label": "14 (Utah)",
+                                "value": "14",
+                              },
+                              Object {
+                                "label": "15 (Gold)",
+                                "value": "15",
+                              },
+                              Object {
+                                "label": "16 (Juno)",
+                                "value": "16",
+                              },
+                              Object {
+                                "label": "17 (Sword)",
+                                "value": "17",
+                              },
+                              Object {
+                                "label": "18 (Omaha)",
+                                "value": "18",
                               },
                             ]
                           }
@@ -42977,6 +44473,26 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                 Object {
                                   "label": "13 (1W440)",
                                   "value": "13",
+                                },
+                                Object {
+                                  "label": "14 (Utah)",
+                                  "value": "14",
+                                },
+                                Object {
+                                  "label": "15 (Gold)",
+                                  "value": "15",
+                                },
+                                Object {
+                                  "label": "16 (Juno)",
+                                  "value": "16",
+                                },
+                                Object {
+                                  "label": "17 (Sword)",
+                                  "value": "17",
+                                },
+                                Object {
+                                  "label": "18 (Omaha)",
+                                  "value": "18",
                                 },
                               ],
                               "pageSize": 5,
@@ -43121,6 +44637,26 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                       "label": "13 (1W440)",
                                       "value": "13",
                                     },
+                                    Object {
+                                      "label": "14 (Utah)",
+                                      "value": "14",
+                                    },
+                                    Object {
+                                      "label": "15 (Gold)",
+                                      "value": "15",
+                                    },
+                                    Object {
+                                      "label": "16 (Juno)",
+                                      "value": "16",
+                                    },
+                                    Object {
+                                      "label": "17 (Sword)",
+                                      "value": "17",
+                                    },
+                                    Object {
+                                      "label": "18 (Omaha)",
+                                      "value": "18",
+                                    },
                                   ]
                                 }
                                 selectOption={[Function]}
@@ -43223,6 +44759,26 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                       Object {
                                         "label": "13 (1W440)",
                                         "value": "13",
+                                      },
+                                      Object {
+                                        "label": "14 (Utah)",
+                                        "value": "14",
+                                      },
+                                      Object {
+                                        "label": "15 (Gold)",
+                                        "value": "15",
+                                      },
+                                      Object {
+                                        "label": "16 (Juno)",
+                                        "value": "16",
+                                      },
+                                      Object {
+                                        "label": "17 (Sword)",
+                                        "value": "17",
+                                      },
+                                      Object {
+                                        "label": "18 (Omaha)",
+                                        "value": "18",
                                       },
                                     ],
                                     "pageSize": 5,
@@ -43375,6 +44931,26 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                             "label": "13 (1W440)",
                                             "value": "13",
                                           },
+                                          Object {
+                                            "label": "14 (Utah)",
+                                            "value": "14",
+                                          },
+                                          Object {
+                                            "label": "15 (Gold)",
+                                            "value": "15",
+                                          },
+                                          Object {
+                                            "label": "16 (Juno)",
+                                            "value": "16",
+                                          },
+                                          Object {
+                                            "label": "17 (Sword)",
+                                            "value": "17",
+                                          },
+                                          Object {
+                                            "label": "18 (Omaha)",
+                                            "value": "18",
+                                          },
                                         ]
                                       }
                                       selectOption={[Function]}
@@ -43477,6 +45053,26 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                             Object {
                                               "label": "13 (1W440)",
                                               "value": "13",
+                                            },
+                                            Object {
+                                              "label": "14 (Utah)",
+                                              "value": "14",
+                                            },
+                                            Object {
+                                              "label": "15 (Gold)",
+                                              "value": "15",
+                                            },
+                                            Object {
+                                              "label": "16 (Juno)",
+                                              "value": "16",
+                                            },
+                                            Object {
+                                              "label": "17 (Sword)",
+                                              "value": "17",
+                                            },
+                                            Object {
+                                              "label": "18 (Omaha)",
+                                              "value": "18",
                                             },
                                           ],
                                           "pageSize": 5,
@@ -43620,6 +45216,26 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   "label": "13 (1W440)",
                                                   "value": "13",
                                                 },
+                                                Object {
+                                                  "label": "14 (Utah)",
+                                                  "value": "14",
+                                                },
+                                                Object {
+                                                  "label": "15 (Gold)",
+                                                  "value": "15",
+                                                },
+                                                Object {
+                                                  "label": "16 (Juno)",
+                                                  "value": "16",
+                                                },
+                                                Object {
+                                                  "label": "17 (Sword)",
+                                                  "value": "17",
+                                                },
+                                                Object {
+                                                  "label": "18 (Omaha)",
+                                                  "value": "18",
+                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -43722,6 +45338,26 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   Object {
                                                     "label": "13 (1W440)",
                                                     "value": "13",
+                                                  },
+                                                  Object {
+                                                    "label": "14 (Utah)",
+                                                    "value": "14",
+                                                  },
+                                                  Object {
+                                                    "label": "15 (Gold)",
+                                                    "value": "15",
+                                                  },
+                                                  Object {
+                                                    "label": "16 (Juno)",
+                                                    "value": "16",
+                                                  },
+                                                  Object {
+                                                    "label": "17 (Sword)",
+                                                    "value": "17",
+                                                  },
+                                                  Object {
+                                                    "label": "18 (Omaha)",
+                                                    "value": "18",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -43912,6 +45548,26 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   Object {
                                                     "label": "13 (1W440)",
                                                     "value": "13",
+                                                  },
+                                                  Object {
+                                                    "label": "14 (Utah)",
+                                                    "value": "14",
+                                                  },
+                                                  Object {
+                                                    "label": "15 (Gold)",
+                                                    "value": "15",
+                                                  },
+                                                  Object {
+                                                    "label": "16 (Juno)",
+                                                    "value": "16",
+                                                  },
+                                                  Object {
+                                                    "label": "17 (Sword)",
+                                                    "value": "17",
+                                                  },
+                                                  Object {
+                                                    "label": "18 (Omaha)",
+                                                    "value": "18",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -44132,6 +45788,26 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                             "label": "13 (1W440)",
                                             "value": "13",
                                           },
+                                          Object {
+                                            "label": "14 (Utah)",
+                                            "value": "14",
+                                          },
+                                          Object {
+                                            "label": "15 (Gold)",
+                                            "value": "15",
+                                          },
+                                          Object {
+                                            "label": "16 (Juno)",
+                                            "value": "16",
+                                          },
+                                          Object {
+                                            "label": "17 (Sword)",
+                                            "value": "17",
+                                          },
+                                          Object {
+                                            "label": "18 (Omaha)",
+                                            "value": "18",
+                                          },
                                         ]
                                       }
                                       selectOption={[Function]}
@@ -44234,6 +45910,26 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                             Object {
                                               "label": "13 (1W440)",
                                               "value": "13",
+                                            },
+                                            Object {
+                                              "label": "14 (Utah)",
+                                              "value": "14",
+                                            },
+                                            Object {
+                                              "label": "15 (Gold)",
+                                              "value": "15",
+                                            },
+                                            Object {
+                                              "label": "16 (Juno)",
+                                              "value": "16",
+                                            },
+                                            Object {
+                                              "label": "17 (Sword)",
+                                              "value": "17",
+                                            },
+                                            Object {
+                                              "label": "18 (Omaha)",
+                                              "value": "18",
                                             },
                                           ],
                                           "pageSize": 5,
@@ -44368,6 +46064,26 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   "label": "13 (1W440)",
                                                   "value": "13",
                                                 },
+                                                Object {
+                                                  "label": "14 (Utah)",
+                                                  "value": "14",
+                                                },
+                                                Object {
+                                                  "label": "15 (Gold)",
+                                                  "value": "15",
+                                                },
+                                                Object {
+                                                  "label": "16 (Juno)",
+                                                  "value": "16",
+                                                },
+                                                Object {
+                                                  "label": "17 (Sword)",
+                                                  "value": "17",
+                                                },
+                                                Object {
+                                                  "label": "18 (Omaha)",
+                                                  "value": "18",
+                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -44470,6 +46186,26 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   Object {
                                                     "label": "13 (1W440)",
                                                     "value": "13",
+                                                  },
+                                                  Object {
+                                                    "label": "14 (Utah)",
+                                                    "value": "14",
+                                                  },
+                                                  Object {
+                                                    "label": "15 (Gold)",
+                                                    "value": "15",
+                                                  },
+                                                  Object {
+                                                    "label": "16 (Juno)",
+                                                    "value": "16",
+                                                  },
+                                                  Object {
+                                                    "label": "17 (Sword)",
+                                                    "value": "17",
+                                                  },
+                                                  Object {
+                                                    "label": "18 (Omaha)",
+                                                    "value": "18",
                                                   },
                                                 ],
                                                 "pageSize": 5,
@@ -44615,6 +46351,26 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   "label": "13 (1W440)",
                                                   "value": "13",
                                                 },
+                                                Object {
+                                                  "label": "14 (Utah)",
+                                                  "value": "14",
+                                                },
+                                                Object {
+                                                  "label": "15 (Gold)",
+                                                  "value": "15",
+                                                },
+                                                Object {
+                                                  "label": "16 (Juno)",
+                                                  "value": "16",
+                                                },
+                                                Object {
+                                                  "label": "17 (Sword)",
+                                                  "value": "17",
+                                                },
+                                                Object {
+                                                  "label": "18 (Omaha)",
+                                                  "value": "18",
+                                                },
                                               ]
                                             }
                                             selectOption={[Function]}
@@ -44717,6 +46473,26 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   Object {
                                                     "label": "13 (1W440)",
                                                     "value": "13",
+                                                  },
+                                                  Object {
+                                                    "label": "14 (Utah)",
+                                                    "value": "14",
+                                                  },
+                                                  Object {
+                                                    "label": "15 (Gold)",
+                                                    "value": "15",
+                                                  },
+                                                  Object {
+                                                    "label": "16 (Juno)",
+                                                    "value": "16",
+                                                  },
+                                                  Object {
+                                                    "label": "17 (Sword)",
+                                                    "value": "17",
+                                                  },
+                                                  Object {
+                                                    "label": "18 (Omaha)",
+                                                    "value": "18",
                                                   },
                                                 ],
                                                 "pageSize": 5,

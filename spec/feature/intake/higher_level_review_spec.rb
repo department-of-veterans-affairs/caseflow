@@ -147,7 +147,7 @@ feature "Higher-Level Review", :all_dbs do
     click_intake_continue
 
     expect(page).to have_content(
-      "If you do not see the claimant in the options below or if the claimant's information needs updated,"
+      "If you do not see the claimant in the options below or if the claimant's information needs to be updated, please"
     )
     expect(page).to have_content(
       "Please select an option.\nBob Vance, Spouse"
@@ -755,6 +755,7 @@ feature "Higher-Level Review", :all_dbs do
       check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Bob Vance, Spouse (payee code 02)")
+      check_row("SOC/SSOC Opt-in", "No")
 
       # clicking the add issues button should bring up the modal
       click_intake_add_issue
@@ -1293,6 +1294,8 @@ feature "Higher-Level Review", :all_dbs do
         scenario "adding issues" do
           start_higher_level_review(veteran, legacy_opt_in_approved: true)
           visit "/intake/add_issues"
+
+          check_row("SOC/SSOC Opt-in", "Yes")
 
           click_intake_add_issue
           expect(page).to have_content("Next")

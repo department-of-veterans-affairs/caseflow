@@ -8,7 +8,8 @@ gem "aasm", "4.11.0"
 gem "activerecord-import"
 gem "acts_as_tree"
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "21e2c4ac87be8a340073ceea403a685154df2f8f"
+
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "4ceb40dd3cf407adb8a860e8a7219ed523e72af1"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
@@ -93,7 +94,7 @@ group :test, :development, :demo do
   # Testing tools
   gem "capybara"
   gem "capybara-screenshot"
-  gem "danger", "~> 5.10"
+  gem "danger", "~> 6.0"
   gem "database_cleaner"
   gem "factory_bot_rails", "~> 4.8"
   gem "faker"
