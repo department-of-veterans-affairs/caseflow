@@ -1579,6 +1579,7 @@ describe RequestIssue, :all_dbs do
 
     context "with already closed request issue" do
       let(:closed_status) { "withdrawn" }
+      let(:closed_at) { 1.day.ago }
 
       it "refrains from updating" do
         expect(rating_request_issue.reload.closed_status).to eq("withdrawn")
