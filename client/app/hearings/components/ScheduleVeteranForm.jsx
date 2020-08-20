@@ -99,7 +99,14 @@ export const ScheduleVeteranForm = ({
               virtual
               errors={errors}
               video={video}
-              update={(_, virtualHearing) => props.onChange('hearing', { virtualHearing: { ...hearing?.virtualHearing, ...virtualHearing } })}
+              update={(_, virtualHearing) =>
+                props.onChange('hearing', {
+                  virtualHearing: {
+                    ...hearing?.virtualHearing,
+                    ...virtualHearing,
+                  },
+                })
+              }
               appellantTitle={appellantTitle}
               hearing={hearing}
               virtualHearing={hearing?.virtualHearing}
