@@ -11,7 +11,7 @@ class ClaimantValidator
     invalid: "invalid"
   }.freeze
 
-  BENEFIT_TYPE_REQUIRES_PAYEE_CODE = %w[compensation pension].freeze
+  BENEFIT_TYPE_REQUIRES_PAYEE_CODE = %w[compensation pension fiduciary].freeze
 
   def initialize(claimant)
     @claimant = claimant
@@ -80,7 +80,11 @@ class ClaimantValidator
   end
 
   def benefit_type_requires_payee_code?
-    BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(decision_review.benefit_type)
+    if !FeatureToggle.enabled?(:establish_fiduciary_eps) && decision_review.try(:benefit_type) == "fiduciary"
+      false
+    else
+      BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(decision_review.benefit_type)
+    end
   end
 
   def veteran_is_claimant?
