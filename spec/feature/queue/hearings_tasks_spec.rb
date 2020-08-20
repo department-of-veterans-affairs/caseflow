@@ -184,7 +184,7 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
         context "when the VSO is not supposed to write an IHP for this appeal" do
           before { allow_any_instance_of(Representative).to receive(:should_write_ihp?) { false } }
 
-          it_behaves_like "ready for distribution"
+          include_examples "ready for distribution"
         end
 
         context "when the VSO is supposed to write an IHP for this appeal" do
@@ -203,7 +203,7 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
       end
 
       context "when the appellant is not represented by a VSO" do
-        it_behaves_like "ready for distribution"
+        include_examples "ready for distribution"
       end
     end
   end
