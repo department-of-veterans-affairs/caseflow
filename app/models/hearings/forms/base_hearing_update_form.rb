@@ -47,9 +47,13 @@ class BaseHearingUpdateForm
 
   def hearing_updates; end
 
+  # Whether or not the hearing has been updated by the form.
+  #
+  # @return [Boolean]
+  #   True if there is at least one non-nil and non-empty key in the hearing updates
   def hearing_updated?
-    hearing_updates.each_key do |key|
-      return true if hearing_updates.dig(key).present?
+    hearing_updates.each_value do |value|
+      return true unless [nil, {}, []].include?(value)
     end
     false
   end
@@ -299,13 +303,13 @@ class BaseHearingUpdateForm
     nested_alert = VirtualHearingUserAlertBuilder.new(
       change_type: change_type,
       alert_type: :info,
-      appeal: hearing.appeal
+      hearing: hearing
     ).call.to_hash
 
     nested_alert[:next] = VirtualHearingUserAlertBuilder.new(
       change_type: change_type,
       alert_type: :success,
-      appeal: hearing.appeal
+      hearing: hearing
     ).call.to_hash
 
     @virtual_hearing_alert = nested_alert

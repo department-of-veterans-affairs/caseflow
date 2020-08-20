@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { sprintf } from 'sprintf-js';
 
 import * as DateUtil from '../../util/DateUtil';
 import { JudgeDropdown } from '../../components/DataDropdowns/index';
@@ -32,30 +33,37 @@ export const HearingConversion = ({
   const convertLabel = video ? COPY.VIDEO_CHANGE_FROM_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
   const helperLabel = virtual ? COPY.CENTRAL_OFFICE_CHANGE_TO_VIRTUAL : convertLabel;
 
-  // Pre-fill appellant/veteran email address and representative email on mount.
-  useEffect(() => {
-    // Focus the top of the page
-    window.scrollTo(0, 0);
-
+  const prefillFields = () => {
     // Determine which email to use
     const appellantEmail = hearing.appellantIsNotVeteran ? hearing.appellantEmailAddress : hearing.veteranEmailAddress;
 
     // Try to use the existing timezones if present
     const { appellantTz, representativeTz } = (virtualHearing || {});
 
-    // Set the emails and timezone if not already set
-    update('virtualHearing', {
-      [!representativeTz && 'representativeTz']: representativeTz || hearing?.representativeTz,
-      [!appellantTz && 'appellantTz']: appellantTz || hearing?.appellantTz,
-      [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
-      [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress,
-    });
+    update(
+      'virtualHearing', {
+        [!representativeTz && 'representativeTz']: representativeTz || hearing?.representativeTz,
+        [!appellantTz && 'appellantTz']: appellantTz || hearing?.appellantTz,
+        [!virtualHearing?.appellantEmail && 'appellantEmail']: appellantEmail,
+        [!virtualHearing?.representativeEmail && 'representativeEmail']: hearing.representativeEmailAddress,
+      });
+  };
+
+  // Pre-fill appellant/veteran email address and representative email on mount.
+  useEffect(() => {
+    // Focus the top of the page
+    window.scrollTo(0, 0);
+
+    // Set the emails and timezone to defaults if not already set
+    if (virtual) {
+      prefillFields();
+    }
   }, []);
 
   return (
     <AppSegment filledBackground>
       <h1 className="cf-margin-bottom-0">{title}</h1>
-      <span>{helperLabel}</span>
+      <span>{sprintf(helperLabel, getAppellantTitleForHearing(hearing))}</span>
       <ReadOnly label="Hearing Date" text={DateUtil.formatDateStr(scheduledFor)} />
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className="usa-width-one-half">
@@ -122,49 +130,48 @@ export const HearingConversion = ({
       </VirtualHearingSection>
       <VirtualHearingSection label="Power of Attorney">
         {hearing.representative ? (
-          <React.Fragment>
-            <AddressLine
-              label={hearing?.representativeType}
-              name={hearing?.representativeName || hearing?.representative}
-              addressLine1={hearing?.representativeAddress?.addressLine1}
-              addressState={hearing?.representativeAddress?.state}
-              addressCity={hearing?.representativeAddress?.city}
-              addressZip={hearing?.representativeAddress?.zip}
-            />
-            {virtual && !video && (
-              <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-                <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
-                  <Timezone
-                    errorMessage={errors?.representativeTz}
-                    required={virtualHearing?.representativeEmail}
-                    value={virtualHearing?.representativeTz}
-                    onChange={(representativeTz) => update('virtualHearing', { representativeTz })}
-                    time={hearing.scheduledTimeString}
-                    name="POA/Representative Timezone"
-                  />
-                  <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
-                </div>
-              </div>
-            )}
-            <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-              <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
-                <VirtualHearingEmail
-                  readOnly={!virtual}
-                  emailType="representativeEmail"
-                  label="POA/Representative Email"
-                  email={virtual ? virtualHearing?.representativeEmail : virtualHearing?.representativeEmail || 'None'}
-                  error={errors?.representativeEmail}
-                  type={type}
-                  update={update}
-                />
-              </div>
-            </div>
-          </React.Fragment>
+          <AddressLine
+            label={hearing?.representativeType}
+            name={hearing?.representativeName || hearing?.representative}
+            addressLine1={hearing?.representativeAddress?.addressLine1}
+            addressState={hearing?.representativeAddress?.state}
+            addressCity={hearing?.representativeAddress?.city}
+            addressZip={hearing?.representativeAddress?.zip}
+          />
         ) : (
           <ReadOnly
             text={`The ${getAppellantTitleForHearing(hearing)} does not have a representative recorded in VBMS`}
           />
         )}
+        {virtual && !video && (
+          <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
+            <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
+              <Timezone
+                errorMessage={errors?.representativeTz}
+                required={virtualHearing?.representativeEmail}
+                value={virtualHearing?.representativeTz}
+                onChange={(representativeTz) => update('virtualHearing', { representativeTz })}
+                time={hearing.scheduledTimeString}
+                name="POA/Representative Timezone"
+                readOnly={!virtualHearing?.representativeEmail}
+              />
+              <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
+            </div>
+          </div>
+        )}
+        <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
+          <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
+            <VirtualHearingEmail
+              readOnly={!virtual}
+              emailType="representativeEmail"
+              label="POA/Representative Email"
+              email={virtual ? virtualHearing?.representativeEmail : virtualHearing?.representativeEmail || 'None'}
+              error={errors?.representativeEmail}
+              type={type}
+              update={update}
+            />
+          </div>
+        </div>
       </VirtualHearingSection>
       <VirtualHearingSection hide={!virtual} label="Veterans Law Judge (VLJ)">
         <div className="usa-grid">

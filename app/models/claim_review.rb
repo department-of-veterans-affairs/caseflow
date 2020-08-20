@@ -251,7 +251,7 @@ class ClaimReview < DecisionReview
   end
 
   def can_contest_rating_issues?
-    processed_in_vbms? && !try(:decision_review_remanded?)
+    processed_in_vbms? && benefit_type != "fiduciary" && !try(:decision_review_remanded?)
   end
 
   def cleared_rating_ep?

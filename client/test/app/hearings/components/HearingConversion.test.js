@@ -108,9 +108,14 @@ describe('HearingConversion', () => {
     );
 
     // Assertions
+    expect(conversion.find(VirtualHearingSection).at(1).
+      find(VirtualHearingEmail)).toHaveLength(1);
+    expect(conversion.find(VirtualHearingSection).at(1).
+      find(ReadOnly)).toHaveLength(2);
     expect(conversion.find(AddressLine)).toHaveLength(1);
     expect(conversion.find(VirtualHearingSection).at(1).
       find(ReadOnly).
+      first().
       prop('text')).toEqual(
       `The ${getAppellantTitleForHearing(amaHearing)} does not have a representative recorded in VBMS`
     );
@@ -135,6 +140,39 @@ describe('HearingConversion', () => {
     expect(conversion.find(AddressLine)).toHaveLength(2);
     expect(conversion.find(AddressLine).at(1).
       text()).toMatch(amaHearing.representativeName);
+    expect(conversion).toMatchSnapshot();
+  });
+
+  test('If Representative email is empty then representative timezone is readonly', () => {
+    const hearing ={ 
+      ...amaHearing,
+      virtualHearing: {
+        ...amaHearing.virtualHearing,
+        representativeEmail: null
+      }
+    };
+    const conversion = mount(
+      <HearingConversion
+        scheduledFor={amaHearing.scheduledFor.toString()}
+        type={HEARING_CONVERSION_TYPES[0]}
+        title={defaultTitle}
+        update={updateSpy}
+        hearing={hearing}
+      />,
+      {
+        wrappingComponent: hearingDetailsWrapper(
+          userWithVirtualHearingsFeatureEnabled,
+          hearing
+        ),
+        wrappingComponentProps: { store: detailsStore },
+      }
+    );
+
+    expect(
+      conversion.
+        find(Timezone).
+        exists({ name: "POA/Representative Timezone", readOnly: true })
+    ).toBe(true);
     expect(conversion).toMatchSnapshot();
   });
 
