@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import { ScheduleVeteran } from 'app/hearings/components/ScheduleVeteran';
+import { ScheduleVeteranForm } from 'app/hearings/components/ScheduleVeteranForm';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
 import { amaAppeal, defaultHearing } from 'test/data';
 import { queueWrapper, queueStore } from 'test/data/stores/queueStore';
@@ -20,11 +20,11 @@ const changeSpy = jest.fn();
 const submitSpy = jest.fn();
 const cancelSpy = jest.fn();
 
-describe('ScheduleVeteran', () => {
+describe('ScheduleVeteranForm', () => {
   test('Matches snapshot with default props', () => {
     // Render the address component
     const scheduleVeteran = shallow(
-      <ScheduleVeteran
+      <ScheduleVeteranForm
         goBack={cancelSpy}
         submit={submitSpy}
         onChange={changeSpy}
@@ -52,7 +52,7 @@ describe('ScheduleVeteran', () => {
   test('Displays hearing form when regional office is selected', () => {
     // Render the address component
     const scheduleVeteran = shallow(
-      <ScheduleVeteran
+      <ScheduleVeteranForm
         goBack={cancelSpy}
         submit={submitSpy}
         onChange={changeSpy}
@@ -78,7 +78,7 @@ describe('ScheduleVeteran', () => {
   test('Can cancel the form', () => {
     // Render the address component
     const scheduleVeteran = shallow(
-      <ScheduleVeteran
+      <ScheduleVeteranForm
         goBack={cancelSpy}
         submit={submitSpy}
         onChange={changeSpy}
@@ -105,7 +105,7 @@ describe('ScheduleVeteran', () => {
   test('Can submit the form', () => {
     // Render the address component
     const scheduleVeteran = shallow(
-      <ScheduleVeteran
+      <ScheduleVeteranForm
         goBack={cancelSpy}
         submit={submitSpy}
         onChange={changeSpy}

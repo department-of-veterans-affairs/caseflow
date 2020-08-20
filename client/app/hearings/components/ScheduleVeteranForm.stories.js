@@ -3,12 +3,12 @@ import { useArgs } from '@storybook/client-api';
 
 import { defaultHearing } from '../../../test/data/hearings';
 import { amaAppeal } from '../../../test/data/appeals';
-import { ScheduleVeteran } from './ScheduleVeteran';
+import { ScheduleVeteranForm } from './ScheduleVeteranForm';
 import { queueWrapper as Wrapper } from '../../../test/data/stores/queueStore';
 
 export default {
-  title: 'Hearings/Components/ScheduleVeteran',
-  component: ScheduleVeteran,
+  title: 'Hearings/Components/ScheduleVeteranForm',
+  component: ScheduleVeteranForm,
   parameters: {
     docs: {
       inlineStories: false,
@@ -40,7 +40,7 @@ const Template = (args) => {
 
   return (
     <Wrapper>
-      <ScheduleVeteran
+      <ScheduleVeteranForm
         {...args}
         {...defaultArgs}
         {...storyArgs}
