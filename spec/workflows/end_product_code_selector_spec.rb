@@ -159,14 +159,6 @@ describe "Request Issue Correction Cleaner", :postgres do
           let(:nonrating_issue_category) { "Apportionment" }
         end
 
-        if ep_code[1] == "030HLRFID"
-          let(:decision_review) { "higher_level_review" }
-        end
-
-        if ep_code[1] == "040SCRFID"
-          let(:decision_review) { "supplemental_claim" }
-        end
-
         it "correctly returns EP code" do
           expect(subject).to eq(ep_code[0])
         end
