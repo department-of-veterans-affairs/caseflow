@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ExtensionRequestMailTask < MailTask
-  def self.blocking?
+  def self.blocking_distribution?
     true
   end
 

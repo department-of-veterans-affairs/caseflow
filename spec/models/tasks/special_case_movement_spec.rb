@@ -26,13 +26,13 @@ describe SpecialCaseMovementTask do
         end
         let(:dist_task) { appeal.tasks.active.where(type: DistributionTask.name).first }
 
-        context "with no blocking tasks" do
+        context "with no distribution blocking tasks" do
           it_behaves_like "successful creation"
         end
 
-        it_behaves_like "appeal has a nonblocking mail task"
+        it_behaves_like "appeal has a non distribution-blocking mail task"
 
-        context "with blocking mail task" do
+        context "with distribution blocking mail task" do
           before do
             create(:extension_request_mail_task,
                    appeal: appeal,

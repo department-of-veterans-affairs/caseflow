@@ -192,7 +192,7 @@ FactoryBot.define do
     end
 
     ## Appeal with a realistic task tree
-    ## The appeal would be ready for distribution by the ACD except there is a blocking mail task
+    ## The appeal would be ready for distribution by the ACD except there is a distribution blocking mail task
     ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
     ## for those dockets
     trait :mail_blocking_distribution do

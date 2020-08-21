@@ -12,7 +12,7 @@ shared_examples "successful creation" do
   end
 end
 
-shared_examples "appeal has a nonblocking mail task" do
+shared_examples "appeal has a non distribution-blocking mail task" do
   before do
     create(:aod_motion_mail_task,
            appeal: appeal,

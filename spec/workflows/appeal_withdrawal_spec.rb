@@ -3,11 +3,11 @@
 describe "Withdrawing an appeal", :postgres do
   context "appeal has one request issue and it is withdrawn" do
     it "allows it to be distributed" do
-      add_blocking_mail_task_to_appeal
+      add_distribution_blocking_mail_task_to_appeal
       withdraw_all_request_issues
       tasks = appeal.tasks.reload
 
-      expect(all_blocking_mail_tasks(tasks).pluck(:status).uniq).to eq ["cancelled"]
+      expect(all_distribution_blocking_mail_tasks(tasks).pluck(:status).uniq).to eq ["cancelled"]
 
       expect(distribution_task(tasks).status).to eq "assigned"
       expect(track_veteran_task(tasks).status).to eq "in_progress"
@@ -64,7 +64,7 @@ describe "Withdrawing an appeal", :postgres do
     end
   end
 
-  def add_blocking_mail_task_to_appeal
+  def add_distribution_blocking_mail_task_to_appeal
     MailTeam.singleton.add_user(user)
     CongressionalInterestMailTask.create_from_params(
       {
@@ -151,7 +151,7 @@ describe "Withdrawing an appeal", :postgres do
     tasks.find_by(type: "TrackVeteranTask")
   end
 
-  def all_blocking_mail_tasks(tasks)
+  def all_distribution_blocking_mail_tasks(tasks)
     tasks.where(type: "CongressionalInterestMailTask")
   end
 

@@ -11,6 +11,10 @@ class FoiaColocatedTask < ColocatedTask
     PrivacyTeam.singleton
   end
 
+  def self.blocking_dispatch?
+    true
+  end
+
   def hide_from_case_timeline
     true
   end

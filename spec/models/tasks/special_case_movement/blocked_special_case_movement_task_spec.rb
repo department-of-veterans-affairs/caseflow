@@ -37,27 +37,13 @@ describe BlockedSpecialCaseMovementTask do
         end
         let(:dist_task) { appeal.tasks.active.where(type: DistributionTask.name).first }
 
-        context "with no blocking tasks" do
+        context "with no distribution blocking tasks" do
           it_behaves_like "successful creation"
         end
 
-        it_behaves_like "appeal has a nonblocking mail task"
+        it_behaves_like "appeal has a non distribution-blocking mail task"
 
-        context "with (dispatch) blocking mail task" do
-          before do
-            # TODO: this _should_ not cancel after we finish
-            # https://github.com/department-of-veterans-affairs/caseflow/issues/14057
-            # Distribution Blocking. Update this test then, either to properly pass, or remove
-            # completely if no longer distinguishing
-            create(:congressional_interest_mail_task,
-                   appeal: appeal,
-                   parent: dist_task)
-          end
-          it_behaves_like "successful creation"
-          it_behaves_like "cancelled distribution children"
-        end
-
-        context "with a (distribution) blocking mail task" do
+        context "with a distribution blocking mail task" do
           before do
             create(:extension_request_mail_task,
                    appeal: appeal,

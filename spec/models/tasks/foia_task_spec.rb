@@ -21,4 +21,13 @@ describe FoiaTask do
       end
     end
   end
+
+  describe ".blocking_dispatch?" do
+    let(:appeal) { create(:appeal) }
+    let(:task) { create(:foia_task, appeal: appeal) }
+
+    it "blocks dispatch" do
+      expect(task.blocking_dispatch?).to be(true)
+    end
+  end
 end

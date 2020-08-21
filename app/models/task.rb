@@ -204,6 +204,10 @@ class Task < CaseflowRecord
       "on #{CachedAppeal.table_name}.appeal_id = #{Task.table_name}.appeal_id "\
       "and #{CachedAppeal.table_name}.appeal_type = #{Task.table_name}.appeal_type"
     end
+
+    def blocking_dispatch?
+      false
+    end
   end
 
   ########################################################################################
@@ -597,6 +601,10 @@ class Task < CaseflowRecord
 
   def reassign_clears_overtime?
     false
+  end
+
+  def blocking_dispatch?
+    self.class.blocking_dispatch?
   end
 
   private
