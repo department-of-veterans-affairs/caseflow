@@ -386,6 +386,68 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
             expect(response_body.last["attributes"]["assigned_to"]["id"]).to eq id
           end
         end
+
+        context "when there are no instructions" do
+          let(:params) do
+            [{
+              "external_id": appeal.vacols_id,
+              "parent_id": parent.id,
+              "type": AddressVerificationColocatedTask.name
+            }]
+          end
+
+          it "should not populate instructions" do
+            subject
+
+            expect(response.status).to eq 200
+            response_body = JSON.parse(response.body)["tasks"]["data"]
+            task = response_body.last
+
+            expect(task["attributes"]["instructions"]).to match_array []
+          end
+        end
+
+        context "when instructions are a string" do
+          let(:params) do
+            [{
+              "external_id": appeal.vacols_id,
+              "parent_id": parent.id,
+              "type": AddressVerificationColocatedTask.name,
+              "instructions": "instructions"
+            }]
+          end
+
+          it "should populate instructions" do
+            subject
+
+            expect(response.status).to eq 200
+            response_body = JSON.parse(response.body)["tasks"]["data"]
+            task = response_body.last
+
+            expect(task["attributes"]["instructions"]).to match_array ["instructions"]
+          end
+        end
+
+        context "when instructions are an array" do
+          let(:params) do
+            [{
+              "external_id": appeal.vacols_id,
+              "parent_id": parent.id,
+              "type": AddressVerificationColocatedTask.name,
+              "instructions": ["instructions", "instructions 2"]
+            }]
+          end
+
+          it "should populate instructions" do
+            subject
+
+            expect(response.status).to eq 200
+            response_body = JSON.parse(response.body)["tasks"]["data"]
+            task = response_body.last
+
+            expect(task["attributes"]["instructions"]).to match_array ["instructions", "instructions 2"]
+          end
+        end
       end
 
       context "when current user is an attorney" do
@@ -901,7 +963,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       it "calls create_change_hearing_disposition_task on the NoShowHearingTask" do
         expect_any_instance_of(NoShowHearingTask)
           .to receive(:create_change_hearing_disposition_task)
-          .with(instructions)
+          .with([instructions])
 
         subject
       end
@@ -939,7 +1001,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       it "calls create_change_hearing_disposition_task on the ScheduleHearingTask" do
         expect_any_instance_of(ScheduleHearingTask)
           .to receive(:create_change_hearing_disposition_task)
-          .with(instructions)
+          .with([instructions])
 
         subject
       end
