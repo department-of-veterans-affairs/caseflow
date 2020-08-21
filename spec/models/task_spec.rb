@@ -1705,8 +1705,145 @@ describe Task, :all_dbs do
     let(:appeal) { create(:appeal) }
     let(:task) { create(:task, appeal: appeal) }
 
+    before { FeatureToggle.enable!(:cm_move_with_blocking_tasks) }
+    after { FeatureToggle.disable!(:cm_move_with_blocking_tasks) }
+
     it "does not block dispatch" do
       expect(task.blocking_dispatch?).to be(false)
+    end
+  end
+
+  fdescribe ".set_dispatch_blocker_parent" do
+    let(:user) { create(:user) }
+    let(:appeal) { create(:appeal) }
+    let(:root_task) { RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton) }
+    let(:parent_task) { create(:task, appeal: appeal, parent: root_task) }
+
+    subject { FoiaTask.create!(appeal: appeal, parent: parent_task, assigned_to: create(:user)) }
+
+    before { FeatureToggle.enable!(:cm_move_with_blocking_tasks) }
+    after { FeatureToggle.disable!(:cm_move_with_blocking_tasks) }
+
+    shared_examples "Parent descendant of BvaDispatchTask" do
+      let(:parent_task) { ColocatedTask.find_by(appeal: appeal) }
+
+      before do
+        ColocatedTask.create!(assigned_by: create(:user),
+                              assigned_to: create(:organization),
+                              parent: dispatch_task,
+                              appeal: dispatch_task.appeal)
+      end
+      it "uses the provided task as the parent" do
+        expect(subject.parent).to eq(parent_task)
+      end
+    end
+
+    shared_examples "Organization BvaDispatchTask as parent" do
+      context "that is active" do
+        before do
+          BvaDispatchTask.find_by(appeal: appeal,
+                                  assigned_to_type: "Organization").update!(status: Constants.TASK_STATUSES.assigned)
+        end
+
+        it "uses that as the parent" do
+          expect(subject.parent).to eq(dispatch_org_task)
+        end
+      end
+
+      context "that is on_hold" do
+        before do
+          BvaDispatchTask.find_by(appeal: appeal,
+                                  assigned_to_type: "Organization").update!(status: Constants.TASK_STATUSES.on_hold)
+        end
+
+        it "uses that as the parent" do
+          expect(subject.parent).to eq(dispatch_org_task)
+        end
+
+        context "but the provided task is a descendant of BvaDispatchTask" do
+            let(:dispatch_task) { dispatch_org_task }
+
+          include_examples "Parent descendant of BvaDispatchTask"
+        end
+      end
+
+      context "that is completed" do
+        before do
+          BvaDispatchTask.find_by(appeal: appeal,
+                                  assigned_to_type: "Organization").update!(status: Constants.TASK_STATUSES.completed)
+        end
+        it "uses provided task as the parent" do
+          expect(subject.parent).to eq(parent_task)
+        end
+      end
+    end
+
+    context "appeal has user assigned BvaDispatchTask" do
+      let(:dispatch_user_task) { BvaDispatchTask.find_by(appeal: appeal, assigned_to_type: "User") }
+      before do
+        BvaDispatch.singleton.add_user(user)
+        BvaDispatchTask.create_from_root_task(root_task)
+      end
+
+      context "that is open" do
+        context "that is active" do
+          it "uses that as the parent" do
+            expect(subject.parent).to eq(dispatch_user_task)
+          end
+        end
+
+        context "that is on_hold" do
+          before do
+            dispatch_user_task.update!(status: Constants.TASK_STATUSES.on_hold)
+          end
+
+          it "uses that as the parent" do
+            expect(subject.parent).to eq(dispatch_user_task)
+          end
+
+          context "but the provided task is a descendant of BvaDispatchTask" do
+            let(:dispatch_task) { dispatch_user_task }
+
+            include_examples "Parent descendant of BvaDispatchTask"
+          end
+        end
+      end
+
+      context "that is completed" do
+        before do
+          BvaDispatchTask.find_by(appeal: appeal, assigned_to_type: "User").update_column(:status, Constants.TASK_STATUSES.completed)
+        end
+
+        context "but has an Organization-assigned BvaDispatchTask" do
+          let(:dispatch_org_task) { BvaDispatchTask.find_by(appeal: appeal, assigned_to_type: "Organization") }
+
+          include_examples "Organization BvaDispatchTask as parent"
+        end
+      end
+    end
+
+    context "appeal has no user BvaDispatchTask" do
+      before do
+        BvaDispatch.singleton.add_user(user)
+      end
+
+      context "but has an Organization assigned BvaDispatchTask" do
+        let(:dispatch_org_task) { BvaDispatchTask.find_by(appeal: appeal, assigned_to_type: "Organization") }
+
+        before do
+          BvaDispatch.singleton.add_user(user)
+          BvaDispatchTask.create_from_root_task(root_task)
+          BvaDispatchTask.find_by(appeal: appeal, assigned_to_type: "User").delete
+        end
+
+        include_examples "Organization BvaDispatchTask as parent"
+      end
+
+      context "and no org BvaDispatchTask" do
+        it "uses provided task as the parent" do
+          expect(subject.parent).to eq(parent_task)
+        end
+      end
     end
   end
 end
