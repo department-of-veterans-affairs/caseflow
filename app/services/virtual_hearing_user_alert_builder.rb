@@ -26,20 +26,20 @@ class VirtualHearingUserAlertBuilder
 
   # Appellant is a recipient if the `appellant_email_sent` flag is changing.
   def appellant_is_recipient?
-    !virtual_hearing_updates.fetch(:appellant_email_sent, true)
+    virtual_hearing_updates.key?(:appellant_email_sent)
   end
 
   # POA / Representative is a recipient if the `representative_email_sent` flag is
   # changing, and there is a `representative_email` stored.
   def representative_is_recipient?
-    !virtual_hearing_updates.fetch(:representative_email_sent, true) &&
+    virtual_hearing_updates.key?(:representative_email_sent) &&
       hearing.virtual_hearing.representative_email.present?
   end
 
   # VLJ is a recipient if the `judge_email_sent` flag is changing, and there
   # is a `judge_email` stored.
   def vlj_is_recipient?
-    !virtual_hearing_updates.fetch(:judge_email_sent, true) &&
+    virtual_hearing_updates.key?(:judge_email_sent) &&
       hearing.virtual_hearing.judge_email.present?
   end
 
