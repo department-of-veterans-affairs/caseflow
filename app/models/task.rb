@@ -37,6 +37,7 @@ class Task < CaseflowRecord
   after_create :tell_parent_task_child_task_created
 
   before_save :set_timestamp
+  after_update :dispatch_if_ready, if: :task_just_closed_and_blocking_dispatch?
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
   after_update :cancel_task_timers, if: :task_just_closed?
@@ -608,6 +609,10 @@ class Task < CaseflowRecord
     self.class.blocking_dispatch?
   end
 
+  def task_just_closed_and_blocking_dispatch?
+    task_just_closed? && blocking_dispatch?
+  end
+
   private
 
   def create_and_auto_assign_child_task(options = {})
@@ -683,6 +688,12 @@ class Task < CaseflowRecord
       self.parent = user_dispatch_task if user_dispatch_task.descendants.exclude?(parent)
     elsif org_dispatch_task = BvaDispatchTask.open.find_by(appeal: appeal, assigned_to_type: "Organization")
       self.parent = org_dispatch_task if org_dispatch_task.descendants.exclude?(parent)
+    end
+  end
+
+  def dispatch_if_ready
+    if self.appeal.ready_for_bva_dispatch?
+      BvaDispatchTask.create_from_root_task(self.appeal.root_task)
     end
   end
 
