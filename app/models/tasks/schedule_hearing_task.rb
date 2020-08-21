@@ -101,10 +101,6 @@ class ScheduleHearingTask < Task
     hearing_admin_actions
   end
 
-  def alerts
-    @alerts ||= []
-  end
-
   private
 
   def create_hearing(task_values)

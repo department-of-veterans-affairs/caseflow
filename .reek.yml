@@ -141,7 +141,6 @@ detectors:
       - Api::V3::DecisionReviews::HigherLevelReviewIntakeParams#describe_shape_error
       - ETL::Hearing#merge_original_attributes_to_target
       - RouteDocsController::DocumentedRoute#schema
-      - TasksController#update
   MissingSafeMethod:
     enabled: false
   NestedIterators:

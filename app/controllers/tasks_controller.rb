@@ -97,9 +97,9 @@ class TasksController < ApplicationController
 
     tasks_hash = json_tasks(tasks.uniq)
 
-    # add alerts if a task class defines it
-    # currently only defined by ScheduleHearingTask and AssignHearingDispositionTask for virtual hearing related updates
-    alerts = tasks.reduce([]) { |acc, t| t.respond_to?(:alerts) ? acc + t.alerts : acc }
+    # currently alerts are only returned by ScheduleHearingTask
+    # and AssignHearingDispositionTask for virtual hearing related updates
+    alerts = tasks.reduce { |acc, t| acc + t.alerts }
     tasks_hash[:alerts] = alerts if alerts # does not add to hash if alerts == []
 
     render json: {

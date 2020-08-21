@@ -125,10 +125,6 @@ class AssignHearingDispositionTask < Task
     end
   end
 
-  def alerts
-    @alerts ||= []
-  end
-
   private
 
   def update_children_status_after_closed
