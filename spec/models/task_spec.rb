@@ -1730,8 +1730,44 @@ describe Task, :all_dbs do
         # parent and sibling not cancelled
         expect(top_level_task.reload.open?).to eq(true)
         expect(second_level_tasks.second.reload.open?).to eq(true)
+      end
+    end
+  end
 
+  describe ".serialize_for_cancellation" do
+    let(:user) { create(:user, email: "test@gmail.com") }
 
+    subject { create(:task, assigned_to: assignee).serialize_for_cancellation }
+
+    context "when the task is assigned to an org" do
+      let(:assignee) { create(:organization) }
+
+      context "with no admins" do
+        it "returns the org name and no email" do
+          expect(subject.keys).to match_array [:id, :assigned_to_email, :assigned_to_name, :type]
+          expect(subject[:assigned_to_email]).to be nil
+          expect(subject[:assigned_to_name]).to eq assignee.name
+        end
+      end
+
+      context "with admins" do
+        before { OrganizationsUser.make_user_admin(user, assignee) }
+
+        it "returns the org name and the admin's email" do
+          expect(subject.keys).to match_array [:id, :assigned_to_email, :assigned_to_name, :type]
+          expect(subject[:assigned_to_email]).to eq assignee.admins.first.email
+          expect(subject[:assigned_to_name]).to eq assignee.name
+        end
+      end
+    end
+
+    context "when the task is assigned to a user" do
+      let(:assignee) { user }
+
+      it "returns the user's name and css_id and email" do
+        expect(subject.keys).to match_array [:id, :assigned_to_email, :assigned_to_name, :type]
+        expect(subject[:assigned_to_email]).to eq assignee.email
+        expect(subject[:assigned_to_name]).to eq "#{assignee.full_name.titleize} (#{assignee.css_id})"
       end
     end
   end
