@@ -1,22 +1,23 @@
 # frozen_string_literal: true
 
 describe DistributionTask, :postgres do
-  describe ".available_actions" do
-    let(:user) { create(:user) }
-    let(:scm_user) { create(:user) }
-    let(:scm_org) { SpecialCaseMovementTeam.singleton }
-    let(:root_task) { create(:root_task) }
-    let(:distribution_task) do
-      DistributionTask.create!(
-        appeal: root_task.appeal,
-        assigned_to: Bva.singleton
-      )
-    end
+  let(:user) { create(:user) }
+  let(:scm_user) { create(:user) }
+  let(:scm_org) { SpecialCaseMovementTeam.singleton }
+  let(:root_task) { create(:root_task) }
+  let(:distribution_task) do
+    DistributionTask.create!(
+      appeal: root_task.appeal,
+      assigned_to: Bva.singleton
+    )
+  end
 
-    before do
-      MailTeam.singleton.add_user(user)
-      scm_org.add_user(scm_user)
-    end
+  before do
+    MailTeam.singleton.add_user(user)
+    scm_org.add_user(scm_user)
+  end
+
+  describe ".available_actions" do
 
     it "with regular user has no actions" do
       expect(distribution_task.available_actions(user).count).to eq(0)
@@ -59,6 +60,20 @@ describe DistributionTask, :postgres do
         expect(distribution_task.available_actions(scm_user).first).to eq(
           Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT.to_h
         )
+      end
+    end
+  end
+
+  describe ".actions_available?" do
+    context "when the user is not a member of the case movement team" do
+      it "returns false" do
+        expect(distribution_task.actions_available?(user)).to be false
+      end
+    end
+
+    context "when the user is a member of the case movement team" do
+      it "returns true" do
+        expect(distribution_task.actions_available?(scm_user)).to be true
       end
     end
   end
