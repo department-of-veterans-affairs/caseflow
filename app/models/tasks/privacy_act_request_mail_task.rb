@@ -14,7 +14,6 @@ class PrivacyActRequestMailTask < MailTask
   end
 
   def blocks_dispatch?
-    return false unless FeatureToggle.enabled?(:cm_move_with_blocking_tasks)
     true
   end
 end
