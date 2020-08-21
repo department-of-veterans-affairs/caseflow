@@ -963,7 +963,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       it "calls create_change_hearing_disposition_task on the NoShowHearingTask" do
         expect_any_instance_of(NoShowHearingTask)
           .to receive(:create_change_hearing_disposition_task)
-          .with(instructions)
+          .with([instructions])
 
         subject
       end
@@ -1001,7 +1001,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       it "calls create_change_hearing_disposition_task on the ScheduleHearingTask" do
         expect_any_instance_of(ScheduleHearingTask)
           .to receive(:create_change_hearing_disposition_task)
-          .with(instructions)
+          .with([instructions])
 
         subject
       end
