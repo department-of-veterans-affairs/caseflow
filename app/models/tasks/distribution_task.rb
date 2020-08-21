@@ -7,7 +7,6 @@ class DistributionTask < Task
   before_validation :set_assignee
 
   def actions_available?(user)
-    byebug
     SpecialCaseMovementTeam.singleton.user_has_access?(user)
   end
 
