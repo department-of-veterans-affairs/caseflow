@@ -1841,4 +1841,53 @@ describe Task, :all_dbs do
       end
     end
   end
+
+  describe ".dispatch_if_ready" do
+    let(:appeal) { create(:appeal) }
+    let(:user) { create(:user) }
+    let!(:root_task) { RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton) }
+    let!(:foia_task) { FoiaTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: create(:user)) }
+
+    subject { foia_task.completed! }
+
+    before do
+      allow(appeal).to receive(:ready_for_bva_dispatch?).and_return(ready)
+      BvaDispatch.singleton.add_user(user)
+    end
+
+    context "appeal is not ready for BVA Dispatch" do
+      let(:ready) { false }
+
+      it "does not create BVA Dispatch tasks" do
+        subject
+
+        expect(BvaDispatchTask.find_by(appeal: appeal)).to be(nil)
+      end
+    end
+
+    context "appeal is ready for BVA Dispatch" do
+      let(:ready) { true }
+
+      context "and no other tasks block BVA Dispatch" do
+        it "creates BVA Dispatch tasks" do
+          subject
+
+          expect(BvaDispatchTask.find_by(appeal: appeal)).to be_a(BvaDispatchTask)
+          expect(RootTask.find_by(appeal: appeal).open?).to be(true)
+        end
+      end
+
+      context "but other tasks block BVA Dispatch" do
+        let!(:privacy_act_task) do
+          PrivacyActTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: create(:user))
+        end
+
+        it "does not create BVA Dispatch tasks" do
+          subject
+
+          expect(BvaDispatchTask.find_by(appeal: appeal)).to be(nil)
+        end
+      end
+    end
+  end
 end
