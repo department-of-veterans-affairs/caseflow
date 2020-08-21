@@ -604,7 +604,7 @@ class Task < CaseflowRecord
   end
 
   def blocking_dispatch?
-    self.class.blocking_dispatch
+    self.class.blocking_dispatch?
   end
 
   private
