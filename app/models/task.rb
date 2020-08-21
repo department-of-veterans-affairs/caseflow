@@ -204,6 +204,10 @@ class Task < CaseflowRecord
       "on #{CachedAppeal.table_name}.appeal_id = #{Task.table_name}.appeal_id "\
       "and #{CachedAppeal.table_name}.appeal_type = #{Task.table_name}.appeal_type"
     end
+
+    def blocking_dispatch?
+      false
+    end
   end
 
   ########################################################################################
@@ -600,7 +604,7 @@ class Task < CaseflowRecord
   end
 
   def blocking_dispatch?
-    false
+    self.class.blocking_dispatch
   end
 
   private

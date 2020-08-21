@@ -9,7 +9,7 @@ class FoiaRequestMailTask < MailTask
     PrivacyTeam.singleton
   end
 
-  def blocking_dispatch?
+  def self.blocking_dispatch?
     true
   end
 end

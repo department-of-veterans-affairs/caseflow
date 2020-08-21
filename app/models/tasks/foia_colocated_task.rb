@@ -11,6 +11,10 @@ class FoiaColocatedTask < ColocatedTask
     PrivacyTeam.singleton
   end
 
+  def self.blocking_dispatch?
+    true
+  end
+
   def hide_from_case_timeline
     true
   end
@@ -31,10 +35,6 @@ class FoiaColocatedTask < ColocatedTask
       appeal: appeal,
       parent: self
     )
-  end
-
-  def blocking_dispatch?
-    true
   end
 
   private
