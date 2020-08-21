@@ -215,6 +215,10 @@ class ExternalApi::BGSService
     @poas_list ||= fetch_poas_list
   end
 
+  def pay_grade_list
+    @pay_grade_list ||= fetch_pay_grade_list
+  end
+
   def fetch_poas_list
     DBService.release_db_connections
     MetricsService.record("BGS: fetch list of poas",
@@ -402,6 +406,15 @@ class ExternalApi::BGSService
                           service: :bgs,
                           name: "contention.find_contention_by_claim_id") do
       client.contention.find_contention_by_claim_id(claim_id)
+    end
+  end
+
+  def fetch_pay_grade_list
+    DBService.release_db_connections
+    MetricsService.record("BGS: fetch list of pay grades",
+                          service: :bgs,
+                          name: "share_standard_data.find_pay_grades") do
+      client.share_standard_data.find_pay_grades
     end
   end
 
