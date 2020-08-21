@@ -54,7 +54,7 @@ const UpcomingHearingDaysNav = ({
                     styling={dateSelected ? buttonColorSelected : {}}
                     onClick={() => onSelectedHearingDayChange(hearingDay)}
                     linkStyling>
-                      {`${moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}  
+                    {`${moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}  
                       ${hearingDay.room ?? ''}`}
                   </Button>
                 </li>
