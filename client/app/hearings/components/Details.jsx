@@ -14,6 +14,7 @@ import {
   RESET_HEARING,
   RESET_VIRTUAL_HEARING
 } from '../contexts/HearingsFormContext';
+import { HearingsUserContext } from '../contexts/HearingsUserContext';
 import { deepDiff, pollVirtualHearingData, getChanges, getAppellantTitleForHearing } from '../utils';
 import { inputFix } from './details/style';
 import {
@@ -37,6 +38,9 @@ import VirtualHearingModal from './VirtualHearingModal';
 const HearingDetails = (props) => {
   // Map the state and dispatch to relevant names
   const { state: { initialHearing, hearing, formsUpdated }, dispatch } = useContext(HearingsFormContext);
+
+  // Pull out feature flag
+  const { userUseFullPageVideoToVirtual } = useContext(HearingsUserContext);
 
   // Create the update hearing dispatcher
   const updateHearing = updateHearingDispatcher(hearing, dispatch);
@@ -165,25 +169,29 @@ const HearingDetails = (props) => {
       // Set the state with the error
       setLoading(false);
 
-      if (code === 1002 && hearing?.readableRequestType === 'Video') {
-        // 1002 is returned with an invalid email. rethrow respError, then re-catch it in VirtualHearingModal
+      // email validations should be thrown inline
+      if (code === 1002) {
+        if (hearing?.readableRequestType === 'Video' && !userUseFullPageVideoToVirtual) {
+          // 1002 is returned with an invalid email. rethrow respError, then re-catch it in VirtualHearingModal
+          throw respError;
+        } else {
+          // Remove the validation string from th error
+          const messages = msg.split(':')[1];
+
+          // Set inline errors for hearing conversion page
+          const errors = messages.split(',').reduce((list, message) => ({
+            ...list,
+            [(/Representative/).test(message) ? 'representativeEmail' : 'appellantEmail']:
+              message.replace('Appellant', getAppellantTitleForHearing(hearing))
+          }), {});
+
+          document.getElementById('email-section').scrollIntoView();
+
+          setVirtualHearingErrors(errors);
+        }
+      } else {
         setError(msg);
-        throw respError;
       }
-
-      // Remove the validation string from th error
-      const messages = msg.split(':')[1];
-
-      // Set inline errors if not Video because it doesnt use the VirtualHearingModal
-      const errors = messages.split(',').reduce((list, message) => ({
-        ...list,
-        [(/Representative/).test(message) ? 'representativeEmail' : 'appellantEmail']:
-          message.replace('Appellant', getAppellantTitleForHearing(hearing))
-      }), {});
-
-      document.getElementById('email-section').scrollIntoView();
-
-      setVirtualHearingErrors(errors);
     }
   };
 
