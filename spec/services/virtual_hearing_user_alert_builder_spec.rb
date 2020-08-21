@@ -26,10 +26,6 @@ describe VirtualHearingUserAlertBuilder do
       .call
   end
 
-  shared_context "no POA email" do
-    let(:representative_email) { nil }
-  end
-
   context "change type is CHANGED_TO_VIRTUAL" do
     let(:change_type) { "CHANGED_TO_VIRTUAL" }
 
@@ -47,7 +43,7 @@ describe VirtualHearingUserAlertBuilder do
       let(:alert_type) { :info }
 
       context "no POA email" do
-        include_context "no POA email"
+        let(:representative_email) { nil }
 
         it "has expected title and message" do
           expect(subject.title).to eq(
@@ -93,7 +89,7 @@ describe VirtualHearingUserAlertBuilder do
       let(:alert_type) { :success }
 
       context "no POA email" do
-        include_context "no POA email"
+        let(:representative_email) { nil }
 
         it "has expected title and message" do
           expect(subject.title).to eq(
@@ -200,7 +196,7 @@ describe VirtualHearingUserAlertBuilder do
       let(:alert_type) { :info }
 
       context "no POA email" do
-        include_context "no POA email"
+        let(:representative_email) { nil }
 
         let(:virtual_hearing_updates) do
           {
