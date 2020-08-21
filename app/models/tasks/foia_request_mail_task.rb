@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 class FoiaRequestMailTask < MailTask
-  def self.blocking_distribution?
-    true
-  end
-
   def self.label
     COPY::FOIA_REQUEST_MAIL_TASK_LABEL
   end
