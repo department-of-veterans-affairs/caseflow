@@ -780,6 +780,7 @@
     }
   },
 
+  "VIRTUAL_HEARING_ALREADY_CREATED": "Virtual hearing already exists",
   "VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL": "VLJ Virtual Hearing Link",
   "VLJ_VIRTUAL_HEARING_LINK_LABEL": "VLJ Link",
   "GUEST_VIRTUAL_HEARING_LINK_LABEL": "Guest Link",
