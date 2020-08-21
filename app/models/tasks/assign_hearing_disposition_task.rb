@@ -15,8 +15,6 @@
 # The task is marked complete when the children tasks are completed.
 
 class AssignHearingDispositionTask < Task
-  include ConvertToVirtualHearing
-
   validates :parent, presence: true
   before_create :check_parent_type
   delegate :hearing, to: :hearing_task, allow_nil: true
@@ -184,8 +182,10 @@ class AssignHearingDispositionTask < Task
                                                        appeal: appeal,
                                                        hearing_location_attrs: hearing_location&.to_hash,
                                                        scheduled_time_string: scheduled_time_string)
-
-      convert_hearing_to_virtual(new_hearing, virtual_hearing_attributes) if virtual_hearing_attributes.present?
+      if virtual_hearing_attributes.present?
+        @alerts = VirtualHearings::ConvertToVirtualHearingService
+          .convert_hearing_to_virtual(new_hearing, virtual_hearing_attributes)
+      end
 
       self.class.create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)
     end

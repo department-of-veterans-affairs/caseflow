@@ -18,8 +18,6 @@
 # Once completed, an AssignHearingDispositionTask is created.
 
 class ScheduleHearingTask < Task
-  include ConvertToVirtualHearing
-
   before_validation :set_assignee
   before_create :create_parent_hearing_task
   delegate :hearing, to: :parent, allow_nil: true
@@ -48,7 +46,8 @@ class ScheduleHearingTask < Task
           hearing = create_hearing(task_values)
 
           if task_values[:virtual_hearing_attributes].present?
-            convert_hearing_to_virtual(hearing, task_values[:virtual_hearing_attributes])
+            @alerts = VirtualHearings::ConvertToVirtualHearingService
+              .convert_hearing_to_virtual(hearing, task_values[:virtual_hearing_attributes])
           end
 
           AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, parent, hearing)
