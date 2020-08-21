@@ -7,20 +7,18 @@ import DateSelector from './DateSelector';
 export default {
   title: 'Commons/Components/DateSelector',
   component: DateSelector,
-  decorators: [
-
-  ],
+  decorators: [],
   args: {
     name: 'datefield',
     label: 'Enter Date',
-    type: 'date'
+    type: 'date',
   },
   argTypes: {
     onChange: { action: 'onChange' },
     type: {
       control: { type: 'select', options: ['date', 'datetime-local', 'text'] },
     },
-  }
+  },
 };
 
 const Template = (args) => {
@@ -38,7 +36,7 @@ export const Default = Template.bind({});
 export const ReadOnly = Template.bind({});
 ReadOnly.args = {
   value: '2020-01-30',
-  readOnly: true
+  readOnly: true,
 };
 
 export const ErrorMsg = Template.bind({});
@@ -49,4 +47,12 @@ ErrorMsg.args = {
 export const DateErrorMsg = Template.bind({});
 DateErrorMsg.args = {
   dateErrorMessage: 'Invalid date',
+};
+
+const UncontrolledTemplate = (args) => <DateSelector {...args} />;
+
+export const Uncontrolled = UncontrolledTemplate.bind({});
+Uncontrolled.args = {
+  name: 'uncontrolled',
+  value: undefined
 };
