@@ -62,9 +62,7 @@ export const deepDiff = (firstObj, secondObj) => {
     (result, firstVal, key) => {
       const secondVal = secondObj[key];
 
-      if (_.isEqual(firstVal, secondVal)) {
-        result[key] = null;
-      } else if (_.isObject(firstVal) && _.isObject(secondVal)) {
+      if (_.isObject(firstVal) && _.isObject(secondVal)) {
         result[key] = deepDiff(firstVal, secondVal);
       } else {
         result[key] = secondVal;
@@ -75,7 +73,7 @@ export const deepDiff = (firstObj, secondObj) => {
     {}
   );
 
-  return _.pickBy(changedObject, (val) => val !== null);
+  return changedObject;
 };
 
 export const filterCurrentIssues = (issues) =>
