@@ -79,10 +79,12 @@ describe MailTask, :postgres do
     end
 
     context "when the task is a blocking distribution mail task" do
-      let(:task_class) { CongressionalInterestMailTask }
+      let(:task_class) { ExtensionRequestMailTask }
       let!(:distribution_task) { create(:distribution_task, parent: root_task) }
 
-      it "creates CongressionalInterestMailTask as a child of the distribution task" do
+      before { Colocated.singleton.add_user(create(:user)) }
+
+      it "creates ExtensionRequestMailTask as a child of the distribution task" do
         expect { task_class.create_from_params(params, user) }.to_not raise_error
         expect(distribution_task.children.length).to eq(1)
 
@@ -93,8 +95,8 @@ describe MailTask, :postgres do
 
         child_task = mail_task.children[0]
         expect(child_task.class).to eq(task_class)
-        expect(child_task.assigned_to).to eq(LitigationSupport.singleton)
-        expect(child_task.children.length).to eq(0)
+        expect(child_task.assigned_to).to eq(Colocated.singleton)
+        expect(child_task.children.length).to eq(1)
 
         expect(root_task.appeal.ready_for_distribution?).to eq false
       end

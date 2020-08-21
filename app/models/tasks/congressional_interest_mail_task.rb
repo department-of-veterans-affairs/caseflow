@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CongressionalInterestMailTask < MailTask
-  def self.blocking_distribution?
+  def self.blocking_dispatch?
     true
   end
 
