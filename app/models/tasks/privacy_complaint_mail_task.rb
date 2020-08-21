@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PrivacyComplaintMailTask < MailTask
-  def self.blocking?
+  def self.blocking_distribution?
     true
   end
 

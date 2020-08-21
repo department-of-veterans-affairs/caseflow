@@ -526,7 +526,7 @@ describe MailTask, :postgres do
 
     it "returns the distribution task if it is a blocking task, root task otherwise" do
       MailTask.subclasses.each do |task_class|
-        expected_parent = task_class.blocking? ? distrubution_task : root_task
+        expected_parent = task_class.blocking_distribution? ? distrubution_task : root_task
         expect(task_class.parent_if_blocking_task(root_task)).to eq expected_parent
       end
     end

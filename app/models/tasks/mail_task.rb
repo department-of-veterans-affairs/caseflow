@@ -14,7 +14,7 @@ class MailTask < Task
   def verify_org_task_unique; end
 
   class << self
-    def blocking?
+    def blocking_distribution?
       # Some open mail tasks should block distribution of an appeal to judges.
       # Define this method in subclasses for blocking task types.
       false
@@ -25,7 +25,7 @@ class MailTask < Task
     end
 
     def parent_if_blocking_task(parent_task)
-      if blocking? && !parent_task.appeal.distributed_to_a_judge?
+      if blocking_distribution? && !parent_task.appeal.distributed_to_a_judge?
         return parent_task.appeal.tasks.find_by(type: DistributionTask.name)
       end
 
@@ -87,8 +87,8 @@ class MailTask < Task
     super || (assigned_to.eql?(MailTeam.singleton) && !active?)
   end
 
-  def blocking?
-    self.class.blocking?
+  def blocking_distribution?
+    self.class.blocking_distribution?
   end
 
   def available_actions(user)
