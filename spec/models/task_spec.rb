@@ -1730,8 +1730,6 @@ describe Task, :all_dbs do
         # parent and sibling not cancelled
         expect(top_level_task.reload.open?).to eq(true)
         expect(second_level_tasks.second.reload.open?).to eq(true)
-
-
       end
     end
   end
