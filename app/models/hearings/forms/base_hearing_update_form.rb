@@ -199,7 +199,7 @@ class BaseHearingUpdateForm
 
     sanitize_updated_emails if virtual_hearing_attributes.present?
 
-    updates = (virtual_hearing_attributes || {}).compact.merge(emails_sent_updates)
+    updates = (virtual_hearing_attributes || {}).merge(emails_sent_updates)
 
     if judge_id.present?
       updates[:judge_email] = hearing.judge&.email
