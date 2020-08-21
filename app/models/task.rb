@@ -31,6 +31,7 @@ class Task < CaseflowRecord
 
   before_create :set_assigned_at
   before_create :verify_org_task_unique
+  before_create :set_dispatch_blocker_parent, if: :blocking_dispatch?
 
   after_create :create_and_auto_assign_child_task, if: :automatically_assign_org_task?
   after_create :tell_parent_task_child_task_created
@@ -675,6 +676,15 @@ class Task < CaseflowRecord
 
   def set_assigned_at
     self.assigned_at = created_at unless assigned_at
+  end
+
+  def set_dispatch_blocker_parent
+    dispatch_task = BvaDispatchTask.open.find_by(appeal: appeal, assigned_to_type: "User") ||
+                    BvaDispatchTask.open.find_by(appeal: appeal, assigned_to_type: "Organization")
+
+    if dispatch_task&.descendants&.exclude?(parent)
+      self.parent = dispatch_task
+    end
   end
 
   STATUS_TIMESTAMPS = {
