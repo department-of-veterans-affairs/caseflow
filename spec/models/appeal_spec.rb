@@ -483,7 +483,7 @@ describe Appeal, :all_dbs do
     end
   end
 
-  context "#find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id" do
+  context "#find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id" do
     context "with a uuid (AMA appeal id)" do
       let(:veteran_file_number) { "64205050" }
 
@@ -492,13 +492,13 @@ describe Appeal, :all_dbs do
       end
 
       it "finds the appeal" do
-        expect(Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal.uuid)).to \
+        expect(Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(appeal.uuid)).to \
           eq(appeal)
       end
 
       it "returns RecordNotFound for a non-existant one" do
         made_up_uuid = "11111111-aaaa-bbbb-CCCC-999999999999"
-        expect { Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(made_up_uuid) }.to \
+        expect { Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(made_up_uuid) }.to \
           raise_exception(ActiveRecord::RecordNotFound, "Couldn't find Appeal")
       end
     end
@@ -512,14 +512,14 @@ describe Appeal, :all_dbs do
 
       it "finds the appeal" do
         legacy_appeal.save
-        expect(Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(legacy_appeal.vacols_id)).to \
+        expect(Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(legacy_appeal.vacols_id)).to \
           eq(legacy_appeal)
       end
 
       it "returns RecordNotFound for a non-existant one" do
         made_up_non_uuid = "9876543"
         expect do
-          Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(made_up_non_uuid)
+          Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(made_up_non_uuid)
         end.to raise_exception(ActiveRecord::RecordNotFound)
       end
     end
@@ -1035,7 +1035,7 @@ describe Appeal, :all_dbs do
   end
 
   shared_examples "existing BvaDispatchTask" do |status, result|
-    let (:user) { create(:user) }
+    let(:user) { create(:user) }
 
     before do
       BvaDispatch.singleton.add_user(user)
@@ -1049,41 +1049,41 @@ describe Appeal, :all_dbs do
   end
 
   shared_examples "depends on existing BvaDispatchTask" do
-      context "no existing BvaDispatchTask" do
-        it "should return true" do
-          expect(subject).to eq(true)
-        end
+    context "no existing BvaDispatchTask" do
+      it "should return true" do
+        expect(subject).to eq(true)
       end
+    end
 
-      context "existing open BvaDispatchTask" do
+    context "existing open BvaDispatchTask" do
+      include_examples "existing BvaDispatchTask",
+                       Constants.TASK_STATUSES.in_progress,
+                       false
+    end
+
+    context "existing complete BvaDispatchTask" do
+      include_examples "existing BvaDispatchTask",
+                       Constants.TASK_STATUSES.completed,
+                       false
+    end
+
+    context "existing cancelled BvaDispatchTask" do
+      include_examples "existing BvaDispatchTask",
+                       Constants.TASK_STATUSES.cancelled,
+                       true
+
+      context "and existing open BvaDispatchTask" do
         include_examples "existing BvaDispatchTask",
-          Constants.TASK_STATUSES.in_progress,
-          false
+                         Constants.TASK_STATUSES.assigned,
+                         false
       end
 
-      context "existing complete BvaDispatchTask" do
+      context "and existing completed BvaDispatchTask" do
         include_examples "existing BvaDispatchTask",
-          Constants.TASK_STATUSES.completed,
-          false
+                         Constants.TASK_STATUSES.completed,
+                         false
       end
-
-      context "existing cancelled BvaDispatchTask" do
-        include_examples "existing BvaDispatchTask",
-          Constants.TASK_STATUSES.cancelled,
-          true
-
-        context "and existing open BvaDispatchTask" do
-          include_examples "existing BvaDispatchTask",
-            Constants.TASK_STATUSES.assigned,
-            false
-        end
-
-        context "and existing completed BvaDispatchTask" do
-          include_examples "existing BvaDispatchTask",
-            Constants.TASK_STATUSES.completed,
-            false
-        end
-      end
+    end
   end
 
   describe ".ready_for_bva_dispatch?" do
@@ -1096,7 +1096,7 @@ describe Appeal, :all_dbs do
     end
 
     context "has complete JudgeDecisionReviewTask" do
-      let (:appeal) do
+      let(:appeal) do
         create(:appeal,
                :at_judge_review,
                docket_type: Constants.AMA_DOCKETS.direct_review)
@@ -1106,12 +1106,22 @@ describe Appeal, :all_dbs do
           .update_column(:status, Constants.TASK_STATUSES.completed)
       end
 
+      context "and an open JudgeDecisionReviewTask" do
+        before do
+          JudgeDecisionReviewTask.create!(appeal: appeal, assigned_to: create(:user), parent: appeal.root_task)
+        end
+
+        it "should return false" do
+          expect(subject).to eq(false)
+        end
+      end
+
       context "no QualityReviewTask" do
         include_examples "depends on existing BvaDispatchTask"
       end
 
       context "existing open QualityReviewTask" do
-        let (:user) { create(:user) }
+        let(:user) { create(:user) }
         before do
           BvaDispatch.singleton.add_user(user)
           QualityReviewTask.create_from_root_task(appeal.root_task)
@@ -1123,7 +1133,7 @@ describe Appeal, :all_dbs do
       end
 
       context "existing closed QualityReviewTask" do
-        let (:user) { create(:user) }
+        let(:user) { create(:user) }
         before do
           qr_task = QualityReviewTask.create_from_root_task(appeal.root_task)
           qr_task.descendants.each { |task| task.update_column(:status, Constants.TASK_STATUSES.completed) }

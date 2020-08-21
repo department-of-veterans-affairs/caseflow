@@ -73,7 +73,7 @@ class Appeal < DecisionReview
   delegate :documents, :manifest_vbms_fetched_at, :number_of_documents,
            :manifest_vva_fetched_at, to: :document_fetcher
 
-  def self.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
+  def self.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(id)
     if UUID_REGEX.match?(id)
       find_by_uuid!(id)
     else
@@ -501,12 +501,16 @@ class Appeal < DecisionReview
   #  - the appeal is not at Quality Review
   #  - the appeal has not already completed BVA Dispatch
   #  - the appeal is not already at BVA Dispatch
-  #  - the appeal has finished Judge Decision Review
+  #  - the appeal is not at Judge Decision Review
+  #  - the appeal has a finished Judge Decision Review
   def ready_for_bva_dispatch?
-    return false if QualityReviewTask.find_by(appeal: self)&.open?
-    return false if BvaDispatchTask.find_by(appeal: self)&.completed?
-    return false if BvaDispatchTask.find_by(appeal: self)&.open?
-    return true if JudgeDecisionReviewTask.find_by(appeal: self)&.completed?
+    return false if Task.open.where(appeal: self).where("type IN (?, ?, ?)",
+                                                        JudgeDecisionReviewTask.name,
+                                                        QualityReviewTask.name,
+                                                        BvaDispatchTask.name).any?
+    return false if BvaDispatchTask.completed.find_by(appeal: self)
+    return true if JudgeDecisionReviewTask.completed.find_by(appeal: self)
+
     false
   end
 
