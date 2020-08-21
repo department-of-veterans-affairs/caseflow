@@ -1713,7 +1713,7 @@ describe Task, :all_dbs do
     end
   end
 
-  fdescribe ".set_dispatch_blocker_parent" do
+  describe ".set_dispatch_blocker_parent" do
     let(:user) { create(:user) }
     let(:appeal) { create(:appeal) }
     let(:root_task) { RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton) }
