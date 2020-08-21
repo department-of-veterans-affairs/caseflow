@@ -1700,4 +1700,13 @@ describe Task, :all_dbs do
       expect(second_level_tasks.second.reload.open?).to eq(true)
     end
   end
+
+  describe ".blocking_dispatch?" do
+    let(:appeal) { create(:appeal) }
+    let(:task) { create(:task, appeal: appeal) }
+
+    it "does not block dispatch" do
+      expect(task.blocking_dispatch?).to be(false)
+    end
+  end
 end
