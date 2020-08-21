@@ -342,3 +342,104 @@ export const centralHearing = {
   witness: null,
   worksheetIssues: {},
 };
+
+export const hearingDateOptions = [
+  {
+    label: ' ',
+    value: {
+      hearingId: null,
+      hearingDate: null
+    }
+  },
+  {
+    label: '08/15/2020 (0/12)  ',
+    value: {
+      hearingId: 36,
+      regionalOffice: 'RO17',
+      timezone: 'America/New_York',
+      scheduledFor: '2020-08-15',
+      requestType: 'V',
+      room: '001',
+      roomLabel: '',
+      filledSlots: 0,
+      totalSlots: 12,
+      hearingDate: '2020-08-15'
+    }
+  },
+  {
+    label: '08/21/2020 (2/12) 1 (1W200A) ',
+    value: {
+      hearingId: 11,
+      regionalOffice: 'RO17',
+      timezone: 'America/New_York',
+      scheduledFor: '2020-08-21',
+      requestType: 'V',
+      room: '1',
+      roomLabel: '1 (1W200A)',
+      filledSlots: 2,
+      totalSlots: 12,
+      hearingDate: '2020-08-21'
+    }
+  },
+  {
+    label: '09/01/2020 (2/12) 1 (1W200A) ',
+    value: {
+      hearingId: 12,
+      regionalOffice: 'RO17',
+      timezone: 'America/New_York',
+      scheduledFor: '2020-09-01',
+      requestType: 'V',
+      room: '1',
+      roomLabel: '1 (1W200A)',
+      filledSlots: 2,
+      totalSlots: 12,
+      hearingDate: '2020-09-01'
+    }
+  },
+  {
+    label: '09/12/2020 (2/12) 1 (1W200A) ',
+    value: {
+      hearingId: 13,
+      regionalOffice: 'RO17',
+      timezone: 'America/New_York',
+      scheduledFor: '2020-09-12',
+      requestType: 'V',
+      room: '1',
+      roomLabel: '1 (1W200A)',
+      filledSlots: 2,
+      totalSlots: 12,
+      hearingDate: '2020-09-12'
+    }
+  },
+  {
+    label: '09/23/2020 (0/12) 1 (1W200A) ',
+    value: {
+      hearingId: 14,
+      regionalOffice: 'RO17',
+      timezone: 'America/New_York',
+      scheduledFor: '2020-09-23',
+      requestType: 'V',
+      room: '1',
+      roomLabel: '1 (1W200A)',
+      filledSlots: 0,
+      totalSlots: 12,
+      hearingDate: '2020-09-23'
+    }
+  },
+  {
+    label: '10/04/2020 (0/12) 1 (1W200A) ',
+    value: {
+      hearingId: 15,
+      regionalOffice: 'RO17',
+      timezone: 'America/New_York',
+      scheduledFor: '2020-10-04',
+      requestType: 'V',
+      room: '1',
+      roomLabel: '1 (1W200A)',
+      filledSlots: 0,
+      totalSlots: 12,
+      hearingDate: '2020-10-04'
+    }
+  }
+]
+;
