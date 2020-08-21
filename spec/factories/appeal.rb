@@ -192,6 +192,22 @@ FactoryBot.define do
     end
 
     ## Appeal with a realistic task tree
+    ## The appeal would be ready for distribution by the ACD except there is a blocking mail task
+    ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
+    ## for those dockets
+    trait :mail_blocking_distribution do
+      ready_for_distribution
+      after(:create) do |appeal, _evaluator|
+        distribution_task = appeal.tasks.active.detect { |task| task.is_a?(DistributionTask) }
+        create(
+          :extension_request_mail_task,
+          appeal: appeal,
+          parent: distribution_task
+        )
+      end
+    end
+
+    ## Appeal with a realistic task tree
     ## The appeal is assigned to a Judge for a decision
     ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
     ## for those dockets. Strongly suggest you provide a judge.
