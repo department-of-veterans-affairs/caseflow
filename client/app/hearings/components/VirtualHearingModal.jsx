@@ -359,7 +359,7 @@ const VirtualHearingModal = (props) => {
       ?.then(closeModal)
       ?.catch((error) => {
         // Details.jsx re-throws email invalid error that we catch here.
-        const msg = error.response?.body.errors[0]?.message;
+        const msg = error.response?.body?.errors[0]?.message;
         const representativeEmailIsValid = msg?.indexOf('Representative') === -1;
         const appellantEmailIsValid = msg?.indexOf('Veteran') === -1 && msg?.indexOf('Appellant') === -1;
 
