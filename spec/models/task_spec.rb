@@ -1761,7 +1761,7 @@ describe Task, :all_dbs do
         end
 
         context "but the provided task is a descendant of BvaDispatchTask" do
-            let(:dispatch_task) { dispatch_org_task }
+          let(:dispatch_task) { dispatch_org_task }
 
           include_examples "Parent descendant of BvaDispatchTask"
         end
@@ -1811,7 +1811,8 @@ describe Task, :all_dbs do
 
       context "that is completed" do
         before do
-          BvaDispatchTask.find_by(appeal: appeal, assigned_to_type: "User").update_column(:status, Constants.TASK_STATUSES.completed)
+          BvaDispatchTask.find_by(appeal: appeal,
+                                  assigned_to_type: "User").update_column(:status, Constants.TASK_STATUSES.completed)
         end
 
         context "but has an Organization-assigned BvaDispatchTask" do
@@ -1883,7 +1884,9 @@ describe Task, :all_dbs do
       end
 
       context "but other tasks block BVA Dispatch" do
-        let!(:privacy_act_task) { PrivacyActTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: create(:user)) }
+        let!(:privacy_act_task) do
+          PrivacyActTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: create(:user))
+        end
 
         it "does not create BVA Dispatch tasks" do
           subject

@@ -684,16 +684,17 @@ class Task < CaseflowRecord
   end
 
   def set_dispatch_blocker_parent
-    if user_dispatch_task = BvaDispatchTask.open.find_by(appeal: appeal, assigned_to_type: "User")
-      self.parent = user_dispatch_task if user_dispatch_task.descendants.exclude?(parent)
-    elsif org_dispatch_task = BvaDispatchTask.open.find_by(appeal: appeal, assigned_to_type: "Organization")
-      self.parent = org_dispatch_task if org_dispatch_task.descendants.exclude?(parent)
+    dispatch_task = BvaDispatchTask.open.find_by(appeal: appeal, assigned_to_type: "User") ||
+                    BvaDispatchTask.open.find_by(appeal: appeal, assigned_to_type: "Organization")
+
+    if dispatch_task&.descendants&.exclude?(parent)
+      self.parent = dispatch_task
     end
   end
 
   def dispatch_if_ready
-    if self.appeal.ready_for_bva_dispatch?
-      BvaDispatchTask.create_from_root_task(self.appeal.root_task)
+    if appeal.ready_for_bva_dispatch?
+      BvaDispatchTask.create_from_root_task(appeal.root_task)
     end
   end
 
