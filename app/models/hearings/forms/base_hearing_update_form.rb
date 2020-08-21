@@ -230,11 +230,11 @@ class BaseHearingUpdateForm
     # Handle the status toggle of the virtual hearing
     if virtual_hearing_cancelled?
       # Update the virtual hearings
-      virtual_hearing.update(virtual_hearing_updates)
+      virtual_hearing.update!(virtual_hearing_updates)
 
       DataDogService.increment_counter(metric_name: "cancelled_virtual_hearing.successful", **updated_metric_info)
     elsif !virtual_hearing_created?
-      virtual_hearing.update(virtual_hearing_updates)
+      virtual_hearing.update!(virtual_hearing_updates)
       virtual_hearing.establishment.restart!
       DataDogService.increment_counter(metric_name: "updated_virtual_hearing.successful", **updated_metric_info)
     else
