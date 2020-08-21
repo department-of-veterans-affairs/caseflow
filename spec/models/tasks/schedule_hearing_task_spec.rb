@@ -115,7 +115,7 @@ describe ScheduleHearingTask, :all_dbs do
         expect(HearingTaskAssociation.first.hearing_task).to eq(HearingTask.first)
       end
 
-      context "when params includes virtual_hearing_attributes", :aggregate_failures do
+      context "when params includes virtual_hearing_attributes" do
         let(:appellant_email) { "fake@email.com" }
         let(:virtual_hearing_attributes) do
           {
