@@ -31,7 +31,7 @@ class PrivacyActTask < Task
     []
   end
 
-  def blocks_dispatch?
+  def blocking_dispatch?
     true
   end
 end

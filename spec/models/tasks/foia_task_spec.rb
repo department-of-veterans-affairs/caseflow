@@ -22,12 +22,12 @@ describe FoiaTask do
     end
   end
 
-  describe ".blocks_dispatch?" do
+  describe ".blocking_dispatch?" do
     let(:appeal) { create(:appeal) }
     let(:task) { create(:foia_task, appeal: appeal) }
 
     it "blocks dispatch" do
-      expect(task.blocks_dispatch?).to be(true)
+      expect(task.blocking_dispatch?).to be(true)
     end
   end
 end

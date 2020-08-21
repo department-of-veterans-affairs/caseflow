@@ -9,7 +9,7 @@ class PrivacyComplaintMailTask < MailTask
     PrivacyTeam.singleton
   end
 
-  def blocks_dispatch?
+  def blocking_dispatch?
     true
   end
 end

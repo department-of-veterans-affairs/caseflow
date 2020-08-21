@@ -8,7 +8,7 @@ class FoiaTask < Task
     super(user).reject { |action| action == Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h }
   end
 
-  def blocks_dispatch?
+  def blocking_dispatch?
     true
   end
 end

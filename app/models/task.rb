@@ -599,7 +599,7 @@ class Task < CaseflowRecord
     false
   end
 
-  def blocks_dispatch?
+  def blocking_dispatch?
     false
   end
 

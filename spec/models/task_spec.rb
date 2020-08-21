@@ -1701,12 +1701,12 @@ describe Task, :all_dbs do
     end
   end
 
-  describe ".blocks_dispatch?" do
+  describe ".blocking_dispatch?" do
     let(:appeal) { create(:appeal) }
     let(:task) { create(:task, appeal: appeal) }
 
     it "does not block dispatch" do
-      expect(task.blocks_dispatch?).to be(false)
+      expect(task.blocking_dispatch?).to be(false)
     end
   end
 end
