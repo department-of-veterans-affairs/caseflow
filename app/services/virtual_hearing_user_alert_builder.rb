@@ -58,14 +58,14 @@ class VirtualHearingUserAlertBuilder
     end
 
     if vlj_is_recipient?
-      recipients << ((recipients.size == 2) ? "and VLJ" : "VLJ")
+      recipients << "VLJ"
     end
 
     format(
       copy["MESSAGE"],
       appellant_title: appellant_title,
-      recipients: recipients.join((recipients.size > 2) ? ", " : " and "),
-      recipients_except_vlj: recipients_except_vlj.join(" and ")
+      recipients: recipients.to_sentence,
+      recipients_except_vlj: recipients_except_vlj.to_sentence
     )
   end
 
