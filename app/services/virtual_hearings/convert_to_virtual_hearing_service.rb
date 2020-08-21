@@ -10,6 +10,7 @@ class VirtualHearings::ConvertToVirtualHearingService
     def convert_hearing_to_virtual(hearing, virtual_hearing_attributes)
       update_attributes = { hearing: hearing, virtual_hearing_attributes: virtual_hearing_attributes }
 
+      update_attributes = { virtual_hearing_attributes: virtual_hearing_attributes.to_h, hearing: hearing}
       form = if hearing.is_a?(LegacyHearing)
                LegacyHearingUpdateForm.new(update_attributes)
              else
