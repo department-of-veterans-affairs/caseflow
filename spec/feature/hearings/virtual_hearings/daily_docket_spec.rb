@@ -65,7 +65,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
       expect(page).to have_content(
         format(
           COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_HEARING_TIME"]["MESSAGE"],
-          recipients_except_vlj: "Veteran and POA / Representative"
+          recipients: "Veteran and POA / Representative"
         )
       )
 
@@ -143,7 +143,7 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
       expect(page).to have_content(
         format(
           COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_HEARING_TIME"]["MESSAGE"],
-          recipients_except_vlj: "Veteran and POA / Representative"
+          recipients: "Veteran and POA / Representative"
         )
       )
 
