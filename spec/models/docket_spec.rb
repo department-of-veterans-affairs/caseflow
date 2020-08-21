@@ -85,10 +85,7 @@ describe Docket, :all_dbs do
       context "when only looking for appeals that are ready for distribution" do
         subject { DirectReviewDocket.new.appeals(ready: true) }
 
-        it "only returns active appeals that meet both of these conditions:
-            it has at least one Distribution Task with status assigned
-            AND
-            it doesn't have any blocking Mail Tasks." do
+        it "only returns active appeals that have at least one Distribution Task with status assigned" do
           expected_appeals = [
             appeal,
             denied_aod_motion_appeal,
@@ -120,7 +117,7 @@ describe Docket, :all_dbs do
           MailTeam.singleton.add_user(user)
         end
 
-        context "nonblocking mail tasks" do
+        context "non distribution-blocking mail tasks" do
           it "includes those appeals" do
             nonblocking_appeal = create(:appeal,
                                         :with_post_intake_tasks,
@@ -134,7 +131,7 @@ describe Docket, :all_dbs do
           end
         end
 
-        context "blocking mail tasks with status not completed or cancelled" do
+        context "distribution blocking mail tasks with status not completed or cancelled" do
           it "excludes those appeals" do
             blocking_appeal = create(:appeal,
                                      :with_post_intake_tasks,
@@ -148,7 +145,7 @@ describe Docket, :all_dbs do
           end
         end
 
-        context "blocking mail tasks with status completed or cancelled" do
+        context "distribution blocking mail tasks with status completed or cancelled" do
           it "includes those appeals",
              skip: "https://github.com/department-of-veterans-affairs/caseflow/issues/10516#issuecomment-503269122" do
             with_blocking_but_closed_tasks = create(:appeal,
@@ -164,7 +161,7 @@ describe Docket, :all_dbs do
           end
         end
 
-        context "nonblocking mail tasks but closed Root Task" do
+        context "non distribution-blocking mail tasks but closed Root Task" do
           it "excludes those appeals" do
             inactive_appeal = create(:appeal,
                                      :with_post_intake_tasks,

@@ -1721,9 +1721,6 @@ describe Task, :all_dbs do
 
     subject { FoiaTask.create!(appeal: appeal, parent: parent_task, assigned_to: create(:user)) }
 
-    before { FeatureToggle.enable!(:cm_move_with_blocking_tasks) }
-    after { FeatureToggle.disable!(:cm_move_with_blocking_tasks) }
-
     shared_examples "Parent descendant of BvaDispatchTask" do
       let(:parent_task) { ColocatedTask.find_by(appeal: appeal) }
 
