@@ -1712,10 +1712,10 @@ describe Task, :all_dbs do
       end
     end
 
-    context "when no instructions are passed" do
+    context "when instructions are passed" do
       let(:instructions) { "instructions" }
 
-      it "cancels all open descendants" do
+      it "cancels all open descendants and adds instructions to the cancelled tasks" do
         second_level_tasks.first.cancel_descendants(instructions)
 
         expect(second_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
