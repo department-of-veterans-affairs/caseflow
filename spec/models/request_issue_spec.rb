@@ -1565,6 +1565,50 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context "#close!" do
+    subject { rating_request_issue.close!(status: new_status) }
+    let(:new_status) { "decided" }
+
+    context "with open request issue" do
+      it "sets the specified closed status" do
+        expect(rating_request_issue.reload.closed_status).to be_nil
+        subject
+        expect(rating_request_issue.reload.closed_status).to eq("decided")
+      end
+    end
+
+    context "with already closed request issue" do
+      let(:closed_status) { "withdrawn" }
+      let(:closed_at) { 1.day.ago }
+
+      it "refrains from updating" do
+        expect(rating_request_issue.reload.closed_status).to eq("withdrawn")
+        subject
+        expect(rating_request_issue.reload.closed_status).to eq("withdrawn")
+      end
+
+      context "when prior status was ineligible" do
+        let(:closed_status) { "ineligible" }
+
+        it "leaves as-is when not removing" do
+          expect(rating_request_issue.reload.closed_status).to eq("ineligible")
+          subject
+          expect(rating_request_issue.reload.closed_status).to eq("ineligible")
+        end
+
+        context "when updating to `removed`" do
+          let(:new_status) { "removed" }
+
+          it "successfully removes the issue" do
+            expect(rating_request_issue.reload.closed_status).to eq("ineligible")
+            subject
+            expect(rating_request_issue.reload.closed_status).to eq("removed")
+          end
+        end
+      end
+    end
+  end
+
   context "#close_after_end_product_canceled!" do
     subject { rating_request_issue.close_after_end_product_canceled! }
     let(:end_product_establishment) { create(:end_product_establishment, :canceled) }

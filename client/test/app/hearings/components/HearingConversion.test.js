@@ -143,6 +143,39 @@ describe('HearingConversion', () => {
     expect(conversion).toMatchSnapshot();
   });
 
+  test('If Representative email is empty then representative timezone is readonly', () => {
+    const hearing ={ 
+      ...amaHearing,
+      virtualHearing: {
+        ...amaHearing.virtualHearing,
+        representativeEmail: null
+      }
+    };
+    const conversion = mount(
+      <HearingConversion
+        scheduledFor={amaHearing.scheduledFor.toString()}
+        type={HEARING_CONVERSION_TYPES[0]}
+        title={defaultTitle}
+        update={updateSpy}
+        hearing={hearing}
+      />,
+      {
+        wrappingComponent: hearingDetailsWrapper(
+          userWithVirtualHearingsFeatureEnabled,
+          hearing
+        ),
+        wrappingComponentProps: { store: detailsStore },
+      }
+    );
+
+    expect(
+      conversion.
+        find(Timezone).
+        exists({ name: "POA/Representative Timezone", readOnly: true })
+    ).toBe(true);
+    expect(conversion).toMatchSnapshot();
+  });
+
   describe('Video Hearings', () => {
     test('Displays regional office time and central office time when converting to virtual', () => {
       const conversion = mount(
