@@ -161,6 +161,24 @@ describe ClaimReviewIntake, :postgres do
           )
         end
       end
+
+      context "And fiduciary featureToggle turned on" do
+        before { FeatureToggle.enable!(:establish_fiduciary_eps) }
+        after { FeatureToggle.disable!(:establish_fiduciary_eps) }
+
+        let(:benefit_type) { "fiduciary" }
+
+        it "sets payee_code" do
+          subject
+
+          expect(intake.detail.claimants.count).to eq 1
+          expect(intake.detail.claimant).to have_attributes(
+            participant_id: "1234",
+            payee_code: "10",
+            decision_review: intake.detail
+          )
+        end
+      end
     end
   end
 end
