@@ -115,6 +115,7 @@ describe Docket, :all_dbs do
 
         before do
           MailTeam.singleton.add_user(user)
+          Colocated.singleton.add_user(user)
         end
 
         context "non distribution-blocking mail tasks" do
@@ -136,26 +137,25 @@ describe Docket, :all_dbs do
             blocking_appeal = create(:appeal,
                                      :with_post_intake_tasks,
                                      docket_type: Constants.AMA_DOCKETS.direct_review)
-            CongressionalInterestMailTask.create_from_params({
-                                                               appeal: blocking_appeal,
-                                                               parent_id: blocking_appeal.root_task.id
-                                                             }, user)
+            ExtensionRequestMailTask.create_from_params({
+                                                          appeal: blocking_appeal,
+                                                          parent_id: blocking_appeal.root_task.id
+                                                        }, user)
 
             expect(subject).to_not include blocking_appeal
           end
         end
 
         context "distribution blocking mail tasks with status completed or cancelled" do
-          it "includes those appeals",
-             skip: "https://github.com/department-of-veterans-affairs/caseflow/issues/10516#issuecomment-503269122" do
+          it "includes those appeals" do
             with_blocking_but_closed_tasks = create(:appeal,
                                                     :with_post_intake_tasks,
                                                     docket_type: Constants.AMA_DOCKETS.direct_review)
-            FoiaRequestMailTask.create_from_params({
-                                                     appeal: with_blocking_but_closed_tasks,
-                                                     parent_id: with_blocking_but_closed_tasks.root_task.id
-                                                   }, user)
-            FoiaRequestMailTask.find_by(appeal: with_blocking_but_closed_tasks).update!(status: "completed")
+            ExtensionRequestMailTask.create_from_params({
+                                                          appeal: with_blocking_but_closed_tasks,
+                                                          parent_id: with_blocking_but_closed_tasks.root_task.id
+                                                        }, user)
+            ExtensionRequestMailTask.find_by(appeal: with_blocking_but_closed_tasks).update!(status: "completed")
 
             expect(subject).to include with_blocking_but_closed_tasks
           end
