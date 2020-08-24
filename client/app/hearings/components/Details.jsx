@@ -259,6 +259,7 @@ const HearingDetails = (props) => {
             />
             <DetailsForm
               hearing={hearing}
+              initialHearing={initialHearing}
               update={updateHearing}
               convertHearing={convertHearing}
               errors={virtualHearingErrors}
