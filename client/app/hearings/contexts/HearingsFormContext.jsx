@@ -59,23 +59,24 @@ const reset = (state, hearing) => ({
   formsUpdated: false
 });
 
-// Resets only the `virtualHearing` field, and should preserve all other fields.
+// Resets only the `virtualHearing` and `emailEvents` field, and should preserve all other fields.
 export const RESET_VIRTUAL_HEARING = 'resetVirtualHearing';
-const resetVirtualHearing = (state, virtualHearing) => {
+const resetVirtualHearing = (state, payload) => {
   return {
     ...state,
     initialHearing: {
       ...state.initialHearing,
       virtualHearing: {
         ...(state.initialHearing?.virtualHearing || {}),
-        ...virtualHearing
+        ...payload.virtualHearing
       }
     },
     hearing: {
       ...state.hearing,
+      emailEvents: values(payload.emailEvents),
       virtualHearing: {
         ...(state.hearing?.virtualHearing || {}),
-        ...virtualHearing
+        ...payload.virtualHearing
       }
     }
   };

@@ -204,7 +204,7 @@ const HearingDetails = (props) => {
       // guestLink, and hostLink
       const resp = ApiUtil.convertToCamelCase(response);
 
-      if (resp.jobCompleted) {
+      if (resp.virtualHearing.jobCompleted) {
         setShouldStartPolling(false);
 
         // Reset the state with the new details
