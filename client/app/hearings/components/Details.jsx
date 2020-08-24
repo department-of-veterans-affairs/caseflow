@@ -102,7 +102,10 @@ const HearingDetails = (props) => {
       const virtual = hearing.isVirtual || hearing.wasVirtual || converting;
       const noEmail = !hearing.virtualHearing?.appellantEmail;
       const noRepTimezone = !hearing.virtualHearing?.representativeTz && hearing.virtualHearing?.representativeEmail;
-      const emailUpdated = editedEmails?.appellantEmailEdited || (editedEmails?.representativeEmailEdited && hearing.virtualHearing?.representativeEmail);
+      const emailUpdated = (
+        editedEmails?.appellantEmailEdited ||
+        (editedEmails?.representativeEmailEdited && hearing.virtualHearing?.representativeEmail)
+      );
       const timezoneUpdated = editedEmails?.representativeTzEdited || editedEmails?.appellantTzEdited;
       const errors = noEmail || (noRepTimezone && hearing.readableRequestType !== 'Video');
 
