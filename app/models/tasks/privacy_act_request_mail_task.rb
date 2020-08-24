@@ -9,7 +9,11 @@ class PrivacyActRequestMailTask < MailTask
     PrivacyTeam.singleton
   end
 
+  def self.blocking_distribution?
+    FeatureToggle.enabled?(:block_at_dispatch) ? false : true
+  end
+
   def self.blocking_dispatch?
-    true
+    FeatureToggle.enabled?(:block_at_dispatch) ? true : false
   end
 end

@@ -118,6 +118,9 @@ describe Docket, :all_dbs do
           Colocated.singleton.add_user(user)
         end
 
+        before { FeatureToggle.enable!(:block_at_dispatch) }
+        after { FeatureToggle.disable!(:block_at_dispatch) }
+
         context "non distribution-blocking mail tasks" do
           it "includes those appeals" do
             nonblocking_appeal = create(:appeal,
