@@ -22,7 +22,6 @@ class AdvanceOnDocketMotion < CaseflowRecord
 
   class << self
     def granted_for_person?(person_id, appeal)
-      byebug
       eligible_motions(person_id, appeal).granted.any?
     end
 
