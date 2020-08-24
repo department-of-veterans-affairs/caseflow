@@ -613,6 +613,11 @@ class Task < CaseflowRecord
     task_just_closed? && blocking_dispatch?
   end
 
+  # currently only defined by ScheduleHearingTask and AssignHearingDispositionTask for virtual hearing related updates
+  def alerts
+    @alerts ||= []
+  end
+
   private
 
   def create_and_auto_assign_child_task(options = {})

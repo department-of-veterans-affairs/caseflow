@@ -120,11 +120,11 @@ describe('TextField', () => {
 
       await userEvent.type(input, defaults.value);
 
-      // Calls onChange handler
+      // Calls onChange handler each time a key is pressed
       expect(handleChange).toHaveBeenCalledTimes(defaults.value.length);
 
       // While we aren't updating value, handleChange is still getting called
-      expect(handleChange).toHaveBeenLastCalledWith(defaults.value);
+      expect(handleChange).toHaveBeenLastCalledWith(defaults.value[defaults.value.length - 1]);
 
       // Value should not have been updated yet
       expect(input).toHaveValue('');
