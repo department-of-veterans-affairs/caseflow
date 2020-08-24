@@ -62,8 +62,16 @@ export const deepDiff = (firstObj, secondObj) => {
     (result, firstVal, key) => {
       const secondVal = secondObj[key];
 
-      if (_.isObject(firstVal) && _.isObject(secondVal)) {
-        result[key] = deepDiff(firstVal, secondVal);
+      if (_.isEqual(firstVal, secondVal)) {
+        delete result[key];
+      } else if (_.isObject(firstVal) && _.isObject(secondVal)) {
+        const nestedDiff = deepDiff(firstVal, secondVal);
+
+        if (!nestedDiff || _.isEmpty(nestedDiff)) {
+          delete result[key];
+        } else {
+          result[key] = nestedDiff;
+        }
       } else {
         result[key] = secondVal;
       }
