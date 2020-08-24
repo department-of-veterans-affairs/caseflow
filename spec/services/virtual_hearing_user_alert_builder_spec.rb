@@ -211,7 +211,7 @@ describe VirtualHearingUserAlertBuilder do
           expect(subject.message).to eq(
             format(
               COPY::VIRTUAL_HEARING_PROGRESS_ALERTS[change_type]["MESSAGE"],
-              recipients_except_vlj: "Veteran"
+              recipients: "Veteran"
             )
           )
         end
@@ -232,7 +232,7 @@ describe VirtualHearingUserAlertBuilder do
           expect(subject.message).to eq(
             format(
               COPY::VIRTUAL_HEARING_PROGRESS_ALERTS[change_type]["MESSAGE"],
-              recipients_except_vlj: "Veteran and POA / Representative"
+              recipients: "Veteran and POA / Representative"
             )
           )
         end
