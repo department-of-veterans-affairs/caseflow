@@ -19,7 +19,6 @@ import TextareaField from '../components/TextareaField';
 import QueueFlowModal from './components/QueueFlowModal';
 
 import { requestPatch } from './uiReducer/uiActions';
-import Alert from '../components/Alert';
 
 class ChangeHearingDispositionModal extends React.Component {
   constructor(props) {
