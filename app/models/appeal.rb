@@ -488,6 +488,23 @@ class Appeal < DecisionReview
     false
   end
 
+  # We are ready for BVA dispatch if
+  #  - the appeal is not at Quality Review
+  #  - the appeal has not already completed BVA Dispatch
+  #  - the appeal is not already at BVA Dispatch
+  #  - the appeal is not at Judge Decision Review
+  #  - the appeal has a finished Judge Decision Review
+  def ready_for_bva_dispatch?
+    return false if Task.open.where(appeal: self).where("type IN (?, ?, ?)",
+                                                        JudgeDecisionReviewTask.name,
+                                                        QualityReviewTask.name,
+                                                        BvaDispatchTask.name).any?
+    return false if BvaDispatchTask.completed.find_by(appeal: self)
+    return true if JudgeDecisionReviewTask.completed.find_by(appeal: self)
+
+    false
+  end
+
   private
 
   def business_lines_needing_assignment
