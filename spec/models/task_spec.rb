@@ -1732,7 +1732,8 @@ describe Task, :all_dbs do
     let(:appeal) { create(:appeal) }
     let(:root_task) { RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton) }
     let(:parent_task) { create(:task, appeal: appeal, parent: root_task) }
-
+    before { FeatureToggle.enable!(:block_at_dispatch) }
+    after { FeatureToggle.disable!(:block_at_dispatch) }
     subject { FoiaTask.create!(appeal: appeal, parent: parent_task, assigned_to: create(:user)) }
 
     shared_examples "Parent descendant of BvaDispatchTask" do
@@ -1826,20 +1827,20 @@ describe Task, :all_dbs do
                                   assigned_to_type: "User").update_column(:status, Constants.TASK_STATUSES.completed)
         end
 
-        context "but has an Organization-assigned BvaDispatchTask" do
+        context "but has an organization-assignee BvaDispatchTask" do
           let(:dispatch_org_task) { BvaDispatchTask.find_by(appeal: appeal, assigned_to_type: "Organization") }
 
-          include_examples "Organization BvaDispatchTask as parent"
+          include_examples "organization-assignee BvaDispatchTask as parent"
         end
       end
     end
 
-    context "appeal has no user BvaDispatchTask" do
+    context "appeal has no user-assignee BvaDispatchTask" do
       before do
         BvaDispatch.singleton.add_user(user)
       end
 
-      context "but has an Organization assigned BvaDispatchTask" do
+      context "but has an organization-assignee BvaDispatchTask" do
         let(:dispatch_org_task) { BvaDispatchTask.find_by(appeal: appeal, assigned_to_type: "Organization") }
 
         before do
@@ -1851,7 +1852,7 @@ describe Task, :all_dbs do
         include_examples "Organization BvaDispatchTask as parent"
       end
 
-      context "and no org BvaDispatchTask" do
+      context "and no organization-assignee BvaDispatchTask" do
         it "uses provided task as the parent" do
           expect(subject.parent).to eq(parent_task)
         end
