@@ -87,9 +87,7 @@ class HearingSerializer
     end
   end
   attribute :email_events, if: for_full do |object|
-    object.email_events.order(sent_at: :desc).map do |event|
-      SentEmailEventSerializer.new(event).serializable_hash[:data][:attributes]
-    end
+    object.serialized_email_events
   end
   attribute :was_virtual, &:was_virtual?
   attribute :witness
