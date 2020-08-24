@@ -1750,7 +1750,7 @@ describe Task, :all_dbs do
       end
     end
 
-    shared_examples "Organization BvaDispatchTask as parent" do
+    shared_examples "organization-assignee BvaDispatchTask as parent" do
       context "that is active" do
         before do
           BvaDispatchTask.find_by(appeal: appeal,
@@ -1849,7 +1849,7 @@ describe Task, :all_dbs do
           BvaDispatchTask.find_by(appeal: appeal, assigned_to_type: "User").delete
         end
 
-        include_examples "Organization BvaDispatchTask as parent"
+        include_examples "organization-assignee BvaDispatchTask as parent"
       end
 
       context "and no organization-assignee BvaDispatchTask" do
