@@ -56,7 +56,7 @@ export const VirtualHearingFields = ({
         <div className="usa-width-one-third">
           <Timezone
             errorMessage={errors?.representativeTz}
-            required={!!virtualHearing?.representativeEmail}
+            required={Boolean(virtualHearing?.representativeEmail)}
             value={virtualHearing?.representativeTz || defaultRepresentativeTz}
             onChange={(representativeTz) => update('virtualHearing', { representativeTz })}
             readOnly={readOnly || !virtualHearing?.representativeEmail}
