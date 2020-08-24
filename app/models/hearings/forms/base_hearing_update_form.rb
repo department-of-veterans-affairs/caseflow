@@ -169,7 +169,7 @@ class BaseHearingUpdateForm
   # Send rep email if cancelling, updating time or updating either rep email or rep timezone
   def representative_email_sent_flag
     should_send_email = updates_requiring_email? ||
-                        virtual_hearing_attributes&.fetch(:representative_email).present? ||
+                        virtual_hearing_attributes&.fetch(:representative_email, nil).present? ||
                         virtual_hearing_attributes&.key?(:representative_tz)
     !should_send_email
   end
