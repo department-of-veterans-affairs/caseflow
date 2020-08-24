@@ -96,6 +96,17 @@ const HearingDetails = (props) => {
     };
   };
 
+  const processAlerts = (alerts) => {
+    alerts.forEach((alert) => {
+      if ('hearing' in alert) {
+        props.onReceiveAlerts(alert.hearing);
+      } else if ('virtual_hearing' in alert && !isEmpty(alert.virtual_hearing)) {
+        props.onReceiveTransitioningAlert(alert.virtual_hearing, 'virtualHearing');
+        setShouldStartPolling(true);
+      }
+    });
+  };
+
   const submit = async (editedEmails) => {
     try {
       // Determine the current state and whether to error
@@ -142,19 +153,11 @@ const HearingDetails = (props) => {
         },
       });
       const hearingResp = ApiUtil.convertToCamelCase(response.body?.data);
+
       const alerts = response.body?.alerts;
 
       if (alerts) {
-        const { hearing: hearingAlerts, virtual_hearing: virtualHearingAlerts } = alerts;
-
-        if (hearingAlerts) {
-          props.onReceiveAlerts(hearingAlerts);
-        }
-
-        if (!isEmpty(virtualHearingAlerts)) {
-          props.onReceiveTransitioningAlert(virtualHearingAlerts, 'virtualHearing');
-          setShouldStartPolling(true);
-        }
+        processAlerts(alerts);
       }
 
       // Reset the state
