@@ -160,16 +160,18 @@ class BaseHearingUpdateForm
 
   # Send appellant email if cancelling, updating time or updating either appellant email or appellant timezone
   def appellant_email_sent_flag
-    !(updates_requiring_email? ||
-      virtual_hearing_attributes&.key?(:appellant_email) ||
-      virtual_hearing_attributes&.key?(:appellant_tz))
+    should_send_email = updates_requiring_email? ||
+                        virtual_hearing_attributes&.key?(:appellant_email) ||
+                        virtual_hearing_attributes&.key?(:appellant_tz)
+    !should_send_email
   end
 
   # Send rep email if cancelling, updating time or updating either rep email or rep timezone
   def representative_email_sent_flag
-    !(updates_requiring_email? ||
-      virtual_hearing_attributes&.key?(:representative_email) ||
-      virtual_hearing_attributes&.key?(:representative_tz))
+    should_send_email = updates_requiring_email? ||
+                        virtual_hearing_attributes&.fetch(:representative_email).present? ||
+                        virtual_hearing_attributes&.key?(:representative_tz)
+    !should_send_email
   end
 
   # also returns false if the judge id is present or true if the virtual hearing is being cancelled
