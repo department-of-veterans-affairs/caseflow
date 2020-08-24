@@ -1866,6 +1866,9 @@ describe Task, :all_dbs do
     let!(:root_task) { RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton) }
     let!(:foia_task) { FoiaTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: create(:user)) }
 
+    before { FeatureToggle.enable!(:block_at_dispatch) }
+    after { FeatureToggle.disable!(:block_at_dispatch) }
+
     subject { foia_task.completed! }
 
     before do
