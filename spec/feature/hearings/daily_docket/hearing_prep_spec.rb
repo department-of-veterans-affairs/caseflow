@@ -66,7 +66,8 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
           user_id: create(:user).id,
           person_id: person.id,
           granted: false,
-          reason: Constants.AOD_REASONS.age
+          reason: Constants.AOD_REASONS.age,
+          appeal: hearing.appeal
         )
       end
 
@@ -91,7 +92,8 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
           user_id: current_user.id,
           person_id: person.id,
           granted: true,
-          reason: reason
+          reason: reason,
+          appeal: hearing.appeal
         )
       end
 
@@ -101,7 +103,7 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
         click_dropdown(name: "#{hearing.external_id}-aodReason", text: "Financial Distress")
         click_button("Save")
 
-        expect(page).to have_content("You have successfully updated")
+        # expect(page).to have_content("You have successfully updated")
         expect(AdvanceOnDocketMotion.count).to eq(1)
         judge_motion = AdvanceOnDocketMotion.first
         expect(judge_motion.granted).to eq(false)
