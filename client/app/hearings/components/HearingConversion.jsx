@@ -148,7 +148,7 @@ export const HearingConversion = ({
             <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
               <Timezone
                 errorMessage={errors?.representativeTz}
-                required={virtualHearing?.representativeEmail}
+                required={!!virtualHearing?.representativeEmail}
                 value={virtualHearing?.representativeTz}
                 onChange={(representativeTz) => update('virtualHearing', { representativeTz })}
                 time={hearing.scheduledTimeString}
