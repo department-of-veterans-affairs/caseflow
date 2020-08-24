@@ -785,7 +785,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
     </p>
     <p>
       <strong>
-        Representative Email
+        POA/Representative Email
       </strong>
       <br />
       tom.brady@caseflow.gov
@@ -1265,7 +1265,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
     </p>
     <p>
       <strong>
-        Representative Email
+        POA/Representative Email
       </strong>
       <br />
       tom.brady@caseflow.gov
@@ -1745,7 +1745,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
     </p>
     <p>
       <strong>
-        Representative Email
+        POA/Representative Email
       </strong>
       <br />
       tom.brady@caseflow.gov
@@ -4491,7 +4491,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                     </p>
                     <p>
                       <strong>
-                        Representative Email
+                        POA/Representative Email
                       </strong>
                       <br />
                       tom.brady@caseflow.gov
@@ -5207,7 +5207,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                     </p>
                     <p>
                       <strong>
-                        Representative Email
+                        POA/Representative Email
                       </strong>
                       <br />
                       tom.brady@caseflow.gov
@@ -7797,7 +7797,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
   </p>
   <p>
     <strong>
-      Representative Email
+      POA/Representative Email
     </strong>
     <br />
     tom.brady@caseflow.gov
@@ -7966,7 +7966,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
   </p>
   <p>
     <strong>
-      Representative Email
+      POA/Representative Email
     </strong>
     <br />
     tom.brady@caseflow.gov
@@ -8289,7 +8289,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
 >
   <p>
     <strong>
-      Representative Email
+      POA/Representative Email
     </strong>
     <br />
     tom.brady@caseflow.gov

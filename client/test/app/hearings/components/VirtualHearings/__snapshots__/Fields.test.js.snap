@@ -15323,7 +15323,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
         name="representativeTz"
         onChange={[Function]}
         readOnly={false}
-        required="tom.brady@caseflow.gov"
+        required={true}
         time="08:15"
         value={null}
       >
@@ -16100,7 +16100,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
           }
           placeholder="Select a timezone"
           readOnly={false}
-          required="tom.brady@caseflow.gov"
+          required={true}
           strongLabel={true}
           styling={
             Object {
@@ -30336,6 +30336,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
         email="tom.brady@caseflow.gov"
         emailType="representativeEmail"
         label="POA/Representative Email"
+        update={[Function]}
       >
         <TextField
           className={

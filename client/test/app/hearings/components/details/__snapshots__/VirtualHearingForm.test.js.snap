@@ -16761,7 +16761,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                 name="representativeTz"
                 onChange={[Function]}
                 readOnly={false}
-                required="tom.brady@caseflow.gov"
+                required={true}
                 time="03:30"
                 value="America/Denver"
               >
@@ -17538,7 +17538,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   }
                   placeholder="Select a timezone"
                   readOnly={false}
-                  required="tom.brady@caseflow.gov"
+                  required={true}
                   strongLabel={true}
                   styling={
                     Object {
@@ -31828,36 +31828,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                 email="tom.brady@caseflow.gov"
                 emailType="representativeEmail"
                 label="POA/Representative Email"
-                update={
-                  [MockFunction] {
-                    "calls": Array [
-                      Array [
-                        "virtualHearing",
-                        Object {
-                          "appellantTz": undefined,
-                          "representativeTz": undefined,
-                        },
-                      ],
-                      Array [
-                        "virtualHearing",
-                        Object {
-                          "appellantTz": null,
-                          "representativeTz": null,
-                        },
-                      ],
-                    ],
-                    "results": Array [
-                      Object {
-                        "type": "return",
-                        "value": undefined,
-                      },
-                      Object {
-                        "type": "return",
-                        "value": undefined,
-                      },
-                    ],
-                  }
-                }
+                update={[Function]}
               >
                 <TextField
                   className={
