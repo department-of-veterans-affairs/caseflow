@@ -190,7 +190,6 @@ class Veteran < CaseflowRecord
   end
 
   def pay_grades
-    binding.pry
     return unless service
 
     service.map { |service| service[:pay_grade] }.compact
