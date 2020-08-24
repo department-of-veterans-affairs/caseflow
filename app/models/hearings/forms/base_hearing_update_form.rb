@@ -29,7 +29,8 @@ class BaseHearingUpdateForm
       hearing.reload
 
       start_async_job
-      add_virtual_hearing_alert
+
+      add_virtual_hearing_alert if show_virtual_hearing_progress_alerts?
     end
   end
 
@@ -73,7 +74,11 @@ class BaseHearingUpdateForm
     return false if hearing.virtual? && (hearing_updates.dig(:scheduled_time).present? ||
                     hearing_updates.dig(:scheduled_for).present?)
 
-    hearing_updated?
+    hearing_updated? || (virtual_hearing_updates.present? && !show_virtual_hearing_progress_alerts?)
+  end
+
+  def show_virtual_hearing_progress_alerts?
+    [appellant_email_sent_flag, representative_email_sent_flag, judge_email_sent_flag].any?(false)
   end
 
   def should_create_or_update_virtual_hearing?
