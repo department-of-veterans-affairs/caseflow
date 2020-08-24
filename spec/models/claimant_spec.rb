@@ -104,11 +104,10 @@ describe Claimant, :postgres do
   end
 
   context "#advanced_on_docket?" do
-    let(:appeal) { create(:appeal, receipt_date: 1.year.ago)}
+    let(:appeal) { create(:appeal, receipt_date: 1.year.ago) }
 
     context "when claimant satisfies AOD age criteria" do
       let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age) }
-      let(:appeal) { create(:appeal, receipt_date: 1.year.ago)}
 
       it "returns true" do
         expect(claimant.advanced_on_docket?(appeal)).to eq(true)
