@@ -410,12 +410,14 @@ class ExternalApi::BGSService
   end
 
   def fetch_pay_grade_list
-    DBService.release_db_connections
-    MetricsService.record("BGS: fetch list of pay grades",
+    Rails.cache.fetch("bgs_pay_grades", expires_in: 24.hours) do
+     DBService.release_db_connections
+     MetricsService.record("BGS: fetch list of pay grades",
                           service: :bgs,
                           name: "share_standard_data.find_pay_grades") do
       client.share_standard_data.find_pay_grades
-    end
+     end
+   end
   end
 
   private

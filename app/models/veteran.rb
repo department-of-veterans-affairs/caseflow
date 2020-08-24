@@ -246,8 +246,9 @@ class Veteran < CaseflowRecord
     # list of valid pay grades came from
     # https://github.com/department-of-veterans-affairs/appeals-team/blob/master/Project%20Folders/
     # Caseflow%20Projects/Intake/BGS-VBMS/BGS-API-Docs/ShareStandardDataServiceInputOutput.doc
+    binding.pry
     return errors.add(:pay_grades, "invalid_pay_grade") if pay_grades&.any? do |pay_grade|
-     BGSService.new.pay_grade_list.exclude?(pay_grade.strip)
+      BGSService.new.pay_grade_list.exclude?(pay_grade.strip)
     end
   end
 
