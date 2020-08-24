@@ -44,11 +44,16 @@ const formatHearing = (hearing) => ({
 });
 
 export const SET_UPDATED = 'setUpdated';
-const setUpdated = (state, value) => ({
-  ...state,
-  hearing: { ...state.hearing, ...value },
-  formsUpdated: !isEmpty(deepDiff(state.initialHearing, { ...state.hearing, ...value }))
-});
+const setUpdated = (state, value) => {
+  const newState = {
+    ...state,
+    hearing: { ...state.hearing, ...value },
+  };
+
+  newState.formsUpdated = !isEmpty(deepDiff(newState.initialHearing, newState.hearing));
+
+  return newState;
+};
 
 // Full reset of everything.
 export const RESET_HEARING = 'reset';
@@ -62,7 +67,7 @@ const reset = (state, hearing) => ({
 // Resets only the `virtualHearing` field, and should preserve all other fields.
 export const RESET_VIRTUAL_HEARING = 'resetVirtualHearing';
 const resetVirtualHearing = (state, virtualHearing) => {
-  return {
+  const newState = {
     ...state,
     initialHearing: {
       ...state.initialHearing,
@@ -79,6 +84,10 @@ const resetVirtualHearing = (state, virtualHearing) => {
       }
     }
   };
+
+  newState.formsUpdated = !isEmpty(deepDiff(newState.initialHearing, newState.hearing));
+
+  return newState;
 };
 
 const reducer = (state, action) => {
