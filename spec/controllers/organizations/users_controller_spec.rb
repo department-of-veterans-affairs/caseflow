@@ -55,7 +55,7 @@ describe Organizations::UsersController, :postgres, type: :controller do
       end
     end
 
-    context "admin user" do
+    fcontext "admin user" do
       before { User.stub = admin_user }
 
       it_behaves_like "can view org"
