@@ -747,7 +747,7 @@
     },
     "CHANGED_HEARING_TIME": {
       "TITLE": "We're updating the hearing time of %s's hearing",
-      "MESSAGE": "Emails to the %{recipients_except_vlj} are in progress."
+      "MESSAGE": "Emails to the %{recipients} are in progress."
     }
   },
 
@@ -766,7 +766,7 @@
     },
     "CHANGED_HEARING_TIME": {
       "TITLE": "You have successfully updated the time of %s's virtual hearing",
-      "MESSAGE": "Email notifications were sent to the %{recipients_except_vlj}."
+      "MESSAGE": "Email notifications were sent to the %{recipients}."
     }
   },
 
