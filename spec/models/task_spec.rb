@@ -1705,6 +1705,9 @@ describe Task, :all_dbs do
     let(:appeal) { create(:appeal) }
     let(:task) { create(:task, appeal: appeal) }
 
+    before { FeatureToggle.enable!(:block_at_dispatch) }
+    after { FeatureToggle.disable!(:block_at_dispatch) }
+
     it "does not block dispatch" do
       expect(task.blocking_dispatch?).to be(false)
     end
