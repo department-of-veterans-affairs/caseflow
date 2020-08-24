@@ -1712,14 +1712,14 @@ describe Task, :all_dbs do
     context "for dispatch blocking types" do
       it "blocks dispatch" do
         [CongressionalInterestMailTask,
-          FoiaRequestMailTask,
-          PrivacyActRequestMailTask,
-          PrivacyComplaintMailTask,
-          FoiaColocatedTask,
-          FoiaTask,
-          PrivacyActTask].each do |blocking_class|
-            expect(blocking_class.blocking_dispatch?).to be(true)
-          end
+         FoiaRequestMailTask,
+         PrivacyActRequestMailTask,
+         PrivacyComplaintMailTask,
+         FoiaColocatedTask,
+         FoiaTask,
+         PrivacyActTask].each do |blocking_class|
+          expect(blocking_class.blocking_dispatch?).to be(true)
+        end
       end
     end
   end
