@@ -10,13 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_14_222133) do
+ActiveRecord::Schema.define(version: 2020_08_24_143143) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
   create_table "advance_on_docket_motions", force: :cascade do |t|
+    t.integer "appeal_id", comment: "The ID of the appeal this motion is associated with"
+    t.string "appeal_type", comment: "The type of appeal this motion is associated with"
     t.datetime "created_at", null: false
     t.boolean "granted", comment: "Whether VLJ has determined that there is sufficient cause to fast-track an appeal, i.e. grant or deny the motion to AOD."
     t.bigint "person_id", comment: "Appellant ID"
