@@ -215,10 +215,6 @@ class ExternalApi::BGSService
     @poas_list ||= fetch_poas_list
   end
 
-  def pay_grade_list
-    @pay_grade_list ||= fetch_pay_grade_list
-  end
-
   def fetch_poas_list
     DBService.release_db_connections
     MetricsService.record("BGS: fetch list of poas",
@@ -409,9 +405,11 @@ class ExternalApi::BGSService
     end
   end
 
-  def fetch_pay_grade_list
-    Rails.cache.fetch("bgs_pay_grades", expires_in: 24.hours) do
-     DBService.release_db_connections
+  def pay_grade_list
+    DBService.release_db_connections
+    
+    @pay_grade_list ||=
+    Rails.cache.fetch("pay_grade_list", expires_in: 1.day) do
      MetricsService.record("BGS: fetch list of pay grades",
                           service: :bgs,
                           name: "share_standard_data.find_pay_grades") do
