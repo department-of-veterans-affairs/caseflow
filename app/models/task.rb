@@ -606,6 +606,8 @@ class Task < CaseflowRecord
   end
 
   def blocking_dispatch?
+    return false if appeal_type == "LegacyAppeal"
+
     self.class.blocking_dispatch?
   end
 
