@@ -84,14 +84,12 @@ class Generators::Veteran
                     entered_on_duty_date: "02132002",
                     released_active_duty_date: "12212003",
                     char_of_svc_code: "HON",
-                    pay_grade: "E4"
-                  },  
+                    pay_grade: "E4" },
                   { branch_of_service: "Navy",
                     entered_on_duty_date: "07022006",
                     released_active_duty_date: "06282008",
                     char_of_svc_code: "UHC",
-                    pay_grade: "E5"
-                     }]
+                    pay_grade: "E5" }]
       }
     end
     # rubocop:enable Metrics/MethodLength
