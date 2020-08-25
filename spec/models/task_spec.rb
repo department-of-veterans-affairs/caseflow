@@ -1753,12 +1753,12 @@ describe Task, :all_dbs do
     let(:user) { create(:user) }
     let(:appeal) { create(:appeal) }
     let(:root_task) { RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton) }
-    let(:parent_task) { create(:task, appeal: appeal, parent: root_task) }
+    let(:parent_task) { create(:task, parent: root_task) }
     before { FeatureToggle.enable!(:block_at_dispatch) }
     after { FeatureToggle.disable!(:block_at_dispatch) }
     subject { FoiaTask.create!(appeal: appeal, parent: parent_task, assigned_to: create(:user)) }
 
-    shared_examples "Parent descendant of BvaDispatchTask" do
+    shared_examples "parent task is descendant of BvaDispatchTask" do
       let(:parent_task) { ColocatedTask.find_by(appeal: appeal) }
 
       before do
@@ -1767,7 +1767,7 @@ describe Task, :all_dbs do
                               parent: dispatch_task,
                               appeal: dispatch_task.appeal)
       end
-      it "uses the provided task as the parent" do
+      it "uses the descendant task as the parent" do
         expect(subject.parent).to eq(parent_task)
       end
     end
@@ -1794,10 +1794,10 @@ describe Task, :all_dbs do
           expect(subject.parent).to eq(dispatch_org_task)
         end
 
-        context "but the provided task is a descendant of BvaDispatchTask" do
+        context "but the parent task is a descendant of BvaDispatchTask" do
           let(:dispatch_task) { dispatch_org_task }
 
-          include_examples "Parent descendant of BvaDispatchTask"
+          include_examples "parent task is descendant of BvaDispatchTask"
         end
       end
 
@@ -1806,13 +1806,13 @@ describe Task, :all_dbs do
           BvaDispatchTask.find_by(appeal: appeal,
                                   assigned_to_type: "Organization").update!(status: Constants.TASK_STATUSES.completed)
         end
-        it "uses provided task as the parent" do
+        it "doesn't change the parent task" do
           expect(subject.parent).to eq(parent_task)
         end
       end
     end
 
-    context "appeal has user assigned BvaDispatchTask" do
+    context "appeal has user-assignee BvaDispatchTask" do
       let(:dispatch_user_task) { BvaDispatchTask.find_by(appeal: appeal, assigned_to_type: "User") }
       before do
         BvaDispatch.singleton.add_user(user)
@@ -1835,10 +1835,10 @@ describe Task, :all_dbs do
             expect(subject.parent).to eq(dispatch_user_task)
           end
 
-          context "but the provided task is a descendant of BvaDispatchTask" do
+          context "but the parent task is a descendant of BvaDispatchTask" do
             let(:dispatch_task) { dispatch_user_task }
 
-            include_examples "Parent descendant of BvaDispatchTask"
+            include_examples "parent task is descendant of BvaDispatchTask"
           end
         end
       end
@@ -1875,7 +1875,7 @@ describe Task, :all_dbs do
       end
 
       context "and no organization-assignee BvaDispatchTask" do
-        it "uses provided task as the parent" do
+        it "doesn't change the parent task" do
           expect(subject.parent).to eq(parent_task)
         end
       end
