@@ -50,7 +50,7 @@ const setUpdated = (state, value) => {
   return {
     ...state,
     hearing: newHearing,
-    formsUpdated: !isEmpty(deepDiff(newState.initialHearing, newHearing))
+    formsUpdated: !isEmpty(deepDiff(state.initialHearing, newHearing))
   };
 };
 
@@ -73,18 +73,19 @@ const resetVirtualHearing = (state, virtualHearing) => {
       ...virtualHearing
     }
   };
+  const newInitialHearing = {
+    ...state.initialHearing,
+    virtualHearing: {
+      ...(state.initialHearing?.virtualHearing || {}),
+      ...virtualHearing
+    }
+  };
 
   return {
     ...state,
-    initialHearing: {
-      ...state.initialHearing,
-      virtualHearing: {
-        ...(state.initialHearing?.virtualHearing || {}),
-        ...virtualHearing
-      }
-    },
+    initialHearing: newInitialHearing,
     hearing: newHearing,
-    formsUpdated: !isEmpty(deepDiff(newState.initialHearing, newHearing))
+    formsUpdated: !isEmpty(deepDiff(newInitialHearing, newHearing))
   };
 };
 
