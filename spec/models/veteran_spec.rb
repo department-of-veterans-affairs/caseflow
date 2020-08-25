@@ -519,6 +519,14 @@ describe Veteran, :all_dbs do
     end
   end
 
+  context "when a zip code is invalid" do
+    let(:zip_code) { "1234" }
+
+    it "zip code has invalid characters" do
+      expect(veteran.validate_zip_code).to eq ["invalid_zip_code"]
+    end
+  end
+
   context "given a military address and nil city & state" do
     let(:military_postal_type_code) { "AA" }
     let(:city) { nil }
@@ -664,6 +672,20 @@ describe Veteran, :all_dbs do
 
       it "fetches based on SSN" do
         expect(described_class.find_or_create_by_file_number_or_ssn(ssn)).to eq(veteran)
+      end
+
+      context "veteran saved in Caseflow with SSN as filenumber" do
+        let!(:veteran_by_ssn) { create(:veteran, file_number: ssn, ssn: ssn) }
+
+        before do
+          veteran.destroy! # leaves it in BGS
+        end
+
+        it "finds the veteran based on SSN and does not create a duplicate" do
+          expect(described_class.find_or_create_by_file_number_or_ssn(ssn)).to eq(veteran_by_ssn)
+          expect(described_class.find_or_create_by_file_number_or_ssn(file_number)).to eq(veteran_by_ssn)
+          expect(Veteran.where(ssn: ssn).count).to eq 1
+        end
       end
     end
 

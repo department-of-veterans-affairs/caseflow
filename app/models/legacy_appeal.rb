@@ -24,6 +24,7 @@ class LegacyAppeal < CaseflowRecord
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
   has_many :decision_documents, as: :appeal
+  has_many :vbms_uploaded_documents, as: :appeal
   has_one :special_issue_list, as: :appeal
   has_many :record_synced_by_job, as: :record
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
@@ -220,6 +221,34 @@ class LegacyAppeal < CaseflowRecord
     return unless decided_by_bva?
 
     (decision_date + 120.days).to_date
+  end
+
+  def appellant_tz
+    return if appellant_address.blank?
+
+    # Use an address object if this is a hash
+    address = appellant_address.is_a?(Hash) ? Address.new(appellant_address) : appellant_address
+
+    begin
+      TimezoneService.address_to_timezone(address).identifier
+    rescue StandardError => error
+      Raven.capture_exception(error)
+      nil
+    end
+  end
+
+  def representative_tz
+    return if representative_address.blank?
+
+    # Use an address object if this is a hash
+    address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
+
+    begin
+      TimezoneService.address_to_timezone(address).identifier
+    rescue StandardError => error
+      Raven.capture_exception(error)
+      nil
+    end
   end
 
   def appellant_address
@@ -610,6 +639,10 @@ class LegacyAppeal < CaseflowRecord
     disposition == "Merged Appeal"
   end
 
+  def advance_failure_to_respond?
+    disposition == "Advance Failure to Respond"
+  end
+
   def special_issues
     SPECIAL_ISSUES.inject([]) do |list, special_issue|
       send(special_issue[0]) ? (list + [special_issue[1]]) : list
@@ -859,6 +892,11 @@ class LegacyAppeal < CaseflowRecord
     VACOLS::Priorloc.where(lockey: vacols_id).order(:locdout)
   end
 
+  # Only AMA Appeals go to BVA Dispatch in Caseflow
+  def ready_for_bva_dispatch?
+    false
+  end
+
   private
 
   def soc_eligible_for_opt_in?(receipt_date:, covid_flag: false)
@@ -1041,6 +1079,14 @@ class LegacyAppeal < CaseflowRecord
       end
     end
 
+    def opt_in_decided_appeal(appeal:, user:, closed_on:)
+      repository.opt_in_decided_appeal!(
+        appeal: appeal,
+        user: user,
+        closed_on: closed_on
+      )
+    end
+
     def certify(appeal)
       form8 = Form8.find_by(vacols_id: appeal.vacols_id)
       # `find_by_vacols_id` filters out any cancelled certifications,
@@ -1092,6 +1138,17 @@ class LegacyAppeal < CaseflowRecord
 
     def nonpriority_decisions_per_year
       repository.nonpriority_decisions_per_year
+    end
+
+    def rollback_opt_in_on_decided_appeal(appeal:, user:, original_data:)
+      opt_in_disposition = Constants::VACOLS_DISPOSITIONS_BY_ID[LegacyIssueOptin::VACOLS_DISPOSITION_CODE]
+      return unless appeal.disposition == opt_in_disposition
+
+      repository.rollback_opt_in_on_decided_appeal!(
+        appeal: appeal,
+        user: user,
+        original_data: original_data
+      )
     end
 
     private

@@ -389,4 +389,91 @@ describe AppealRepository, :all_dbs do
       end
     end
   end
+
+  context "AMA Opt-ins and rollbacks on previously decided appeals" do
+    let!(:user) { create(:user) }
+    let!(:appeal) { create(:legacy_appeal, vacols_case: case_record) }
+    let(:folder_record) { create(:folder, tidcls: past_decision_date) }
+    let(:past_decision_date) { 5.days.ago.to_date }
+    let(:new_decision_date) { Time.zone.today }
+    let(:original_data) do
+      { disposition_code: "G", decision_date: past_decision_date, folder_decision_date: past_decision_date }
+    end
+    let(:case_record) do
+      create(
+        :case,
+        :status_complete,
+        bfdc: disposition,
+        bfddec: decision_date,
+        folder: folder_record
+      )
+    end
+
+    describe ".opt_in_decided_appeal!" do
+      subject { AppealRepository.opt_in_decided_appeal!(appeal: appeal, user: user, closed_on: new_decision_date) }
+
+      let(:decision_date) { past_decision_date }
+
+      context "Appeal does not have an advance failure to respond disposition" do
+        let(:disposition) { Constants::VACOLS_DISPOSITIONS_BY_ID.key("Allowed") }
+
+        it "raises an error" do
+          expect { subject }.to raise_error(AppealRepository::AppealNotValidToClose)
+          expect(case_record.bfdc).to eq "1"
+          expect(case_record.bfddec).to eq(past_decision_date)
+          expect(folder_record.reload.tidcls).to eq(past_decision_date)
+        end
+      end
+
+      context "Appeal has an advance failure to respond disposition" do
+        let(:disposition) { Constants::VACOLS_DISPOSITIONS_BY_ID.key("Advance Failure to Respond") }
+
+        it "opts in the appeal and updates decision dates" do
+          subject
+
+          expect(case_record.reload).to be_closed
+          expect(case_record.bfdc).to eq "O"
+          expect(case_record.bfddec).to eq(new_decision_date)
+          expect(folder_record.reload.tidcls).to eq(new_decision_date)
+        end
+      end
+    end
+
+    describe ".rollback_opt_in_on_decided_appeal!" do
+      subject do
+        AppealRepository.rollback_opt_in_on_decided_appeal!(
+          appeal: appeal,
+          user: user,
+          original_data: original_data
+        )
+      end
+
+      let(:folder_record) { create(:folder, tidcls: new_decision_date) }
+      let(:decision_date) { new_decision_date }
+
+      context "Appeal is not currently opted in" do
+        let(:disposition) { Constants::VACOLS_DISPOSITIONS_BY_ID.key("Allowed") }
+
+        it "does nothing" do
+          expect(subject).to be_nil
+          expect(case_record.bfdc).to eq "1"
+          expect(case_record.bfddec).to eq(new_decision_date)
+          expect(folder_record.reload.tidcls).to eq(new_decision_date)
+        end
+      end
+
+      context "Appeal is opted in" do
+        let(:disposition) { Constants::VACOLS_DISPOSITIONS_BY_ID.key("AMA SOC/SSOC Opt-in") }
+
+        it "restores original data on legacy appeal" do
+          subject
+
+          expect(case_record.reload).to be_closed
+          expect(case_record.bfdc).to eq "G"
+          expect(case_record.bfddec).to eq(past_decision_date)
+          expect(folder_record.reload.tidcls).to eq(past_decision_date)
+        end
+      end
+    end
+  end
 end

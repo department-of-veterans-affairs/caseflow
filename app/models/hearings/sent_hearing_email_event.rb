@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+##
+# Model to track the history of virtual hearing emails sent out hearing
+# recipients (judge, representative, appellant).
+
 class SentHearingEmailEvent < CaseflowRecord
   belongs_to :hearing, polymorphic: true
   belongs_to :sent_by, class_name: "User"
@@ -36,8 +40,10 @@ class SentHearingEmailEvent < CaseflowRecord
     case recipient_role
     when "judge"
       "VLJ Email"
-    when "appellant", "veteran"
+    when "appellant"
       "Appellant Email"
+    when "veteran"
+      "Veteran Email"
     when "representative"
       "POA/Representative Email"
     else

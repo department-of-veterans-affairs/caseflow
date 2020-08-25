@@ -8,6 +8,7 @@ import {
   DECEASED_PAYEE_CODES,
   LIVING_PAYEE_CODES
 } from '../constants';
+import { convertStringToBoolean } from '../util';
 import COPY from '../../../COPY';
 import { useSelector } from 'react-redux';
 import Button from '../../components/Button';
@@ -70,7 +71,7 @@ export const SelectClaimant = (props) => {
     setPayeeCode
   } = props;
 
-  const { attorneyFees } = useSelector((state) => state.featureToggles);
+  const { attorneyFees, establishFiduciaryEps } = useSelector((state) => state.featureToggles);
   const [showClaimantModal, setShowClaimantModal] = useState(false);
   const [newClaimant, setNewClaimant] = useState(null);
   const openAddClaimantModal = () => setShowClaimantModal(true);
@@ -82,24 +83,50 @@ export const SelectClaimant = (props) => {
     veteranIsNotClaimant,
     attorneyFees
   ]);
+
+  const allowFiduciary = useMemo(() => establishFiduciaryEps && benefitType === 'fiduciary', [
+    benefitType,
+    establishFiduciaryEps
+  ]);
+
+  const handleVeteranIsNotClaimantChange = (value) => {
+    const boolValue = convertStringToBoolean(value);
+
+    setVeteranIsNotClaimant(boolValue);
+    setClaimant({ claimant: null, claimantType: (boolValue ? 'dependent' : 'veteran') });
+  };
   const handleRemove = () => {
     setNewClaimant(null);
-    setClaimant(null);
+    setClaimant({ claimant: null, claimantType: 'dependent', claimantNotes: null });
   };
-  const handleAddClaimant = ({ name, participantId, claimantNotes }) => {
+  const handleSelectNonVeteran = (value) => {
+    if (newClaimant && value === newClaimant.value) {
+      setClaimant({
+        claimant: value || null,
+        claimantName: newClaimant.claimantName,
+        claimantNotes: newClaimant.claimantNotes,
+        claimantType: newClaimant.claimantType,
+      });
+    } else {
+      setClaimant({ claimant: value, claimantType: 'dependent' });
+    }
+  };
+  const handleAddClaimant = ({ name, participantId, claimantType, claimantNotes }) => {
     setNewClaimant({
       displayElem: <RemovableRadioLabel
         text={`${name || 'Claimant not listed'}, Attorney`} onRemove={handleRemove} notes={claimantNotes} />,
-      value: participantId,
+      value: participantId ?? '',
       defaultPayeeCode: '',
-      claimantNotes
+      claimantName: name,
+      claimantNotes,
+      claimantType
     });
-    setClaimant(participantId, claimantNotes);
+    setClaimant({ claimant: participantId ?? null, claimantType, claimantNotes, claimantName: name });
     setShowClaimantModal(false);
   };
   const handlePayeeCodeChange = (event) => setPayeeCode(event ? event.value : null);
   const shouldShowPayeeCode = () => {
-    return formType !== 'appeal' && (benefitType === 'compensation' || benefitType === 'pension');
+    return formType !== 'appeal' && (benefitType === 'compensation' || benefitType === 'pension' || allowFiduciary);
   };
 
   const hasRelationships = relationships.length > 0;
@@ -114,8 +141,8 @@ export const SelectClaimant = (props) => {
           strongLabel
           vertical
           options={radioOpts}
-          onChange={setClaimant}
-          value={claimant}
+          onChange={handleSelectNonVeteran}
+          value={claimant ?? ''}
           errorMessage={claimantError}
         />
 
@@ -141,7 +168,7 @@ export const SelectClaimant = (props) => {
     // disable veteran claimant option if veteran is deceased
     veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE;
     // set claimant value to someone other than the veteran
-    setVeteranIsNotClaimant('true');
+    setVeteranIsNotClaimant(true);
   }
 
   return (
@@ -152,9 +179,9 @@ export const SelectClaimant = (props) => {
         strongLabel
         vertical
         options={veteranClaimantOptions}
-        onChange={setVeteranIsNotClaimant}
+        onChange={handleVeteranIsNotClaimantChange}
         errorMessage={veteranIsNotClaimantError}
-        value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant.toString()}
+        value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant?.toString()}
       />
 
       {showClaimants && hasRelationships && claimantOptions()}

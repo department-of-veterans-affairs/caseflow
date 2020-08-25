@@ -36,12 +36,12 @@ FactoryBot.define do
           claimant.save
         end
       elsif evaluator.number_of_claimants
-        claimant_type = appeal.veteran_is_not_claimant ? "DependentClaimant" : "VeteranClaimant"
+        claimant_class_name = appeal.veteran_is_not_claimant ? "DependentClaimant" : "VeteranClaimant"
         create_list(
           :claimant,
           evaluator.number_of_claimants,
           decision_review: appeal,
-          type: claimant_type
+          type: claimant_class_name
         )
       else
         create(
@@ -188,6 +188,22 @@ FactoryBot.define do
       after(:create) do |appeal, _evaluator|
         distribution_tasks = appeal.tasks.select { |task| task.is_a?(DistributionTask) }
         distribution_tasks.each(&:ready_for_distribution!)
+      end
+    end
+
+    ## Appeal with a realistic task tree
+    ## The appeal would be ready for distribution by the ACD except there is a blocking mail task
+    ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
+    ## for those dockets
+    trait :mail_blocking_distribution do
+      ready_for_distribution
+      after(:create) do |appeal, _evaluator|
+        distribution_task = appeal.tasks.active.detect { |task| task.is_a?(DistributionTask) }
+        create(
+          :extension_request_mail_task,
+          appeal: appeal,
+          parent: distribution_task
+        )
       end
     end
 

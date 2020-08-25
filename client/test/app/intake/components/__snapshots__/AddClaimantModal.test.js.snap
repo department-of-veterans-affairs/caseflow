@@ -249,19 +249,19 @@ exports[`AddClaimantModal renders correctly 1`] = `
               </div>
             </div>
             <div
-              class="checkbox-wrapper-noClaimant cf-form-checkboxes"
+              class="checkbox-wrapper-notListed cf-form-checkboxes"
             >
               <div
                 class="cf-form-checkbox"
               >
                 <input
-                  aria-label="noClaimant"
-                  id="noClaimant"
-                  name="noClaimant"
+                  aria-label="notListed"
+                  id="notListed"
+                  name="notListed"
                   type="checkbox"
                 />
                 <label
-                  for="noClaimant"
+                  for="notListed"
                 >
                   <span
                     class=""

@@ -193,17 +193,7 @@ class Intake < CaseflowRecord
   end
 
   def ui_hash
-    {
-      id: id,
-      form_type: form_type,
-      veteran_file_number: veteran_file_number,
-      veteran_name: veteran&.name&.formatted(:readable_short),
-      veteran_form_name: veteran&.name&.formatted(:form),
-      veteran_is_deceased: veteran&.deceased?,
-      completed_at: completed_at,
-      relationships: veteran&.relationships&.map(&:serialize),
-      processed_in_caseflow: detail.try(:processed_in_caseflow?)
-    }
+    Intake::IntakeSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def form_type
@@ -217,6 +207,8 @@ class Intake < CaseflowRecord
     raise error
   end
 
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def veteran_invalid_fields
     missing_fields = veteran.errors.details
       .select { |_, errors| errors.any? { |e| e[:error] == :blank } }
@@ -240,6 +232,8 @@ class Intake < CaseflowRecord
 
     name_suffix_invalid = veteran.errors.details[:name_suffix]&.any? { |e| e[:error] == "invalid_character" }
 
+    zip_code_invalid = veteran.errors.details[:zip_code]&.any? { |e| e[:error] == "invalid_zip_code" }
+
     {
       veteran_missing_fields: missing_fields,
       veteran_address_too_long: address_too_long,
@@ -247,9 +241,12 @@ class Intake < CaseflowRecord
       veteran_city_invalid_fields: city_invalid_characters,
       veteran_city_too_long: city_too_long,
       veteran_date_of_birth_invalid: date_of_birth,
-      veteran_name_suffix_invalid: name_suffix_invalid
+      veteran_name_suffix_invalid: name_suffix_invalid,
+      veteran_zip_code_invalid: zip_code_invalid
     }
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   # Optionally implement this methods in subclass
   def validate_detail_on_start

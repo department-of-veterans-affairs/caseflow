@@ -485,8 +485,8 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
     end
 
     context "Special issue validation" do
-      before { FeatureToggle.enable!(:special_issues_revamp) }
-      after { FeatureToggle.disable!(:special_issues_revamp) }
+      before { FeatureToggle.enable!(:special_issues_revamp_dispatch, users: [current_user.css_id]) }
+      after { FeatureToggle.disable!(:special_issues_revamp_dispatch) }
 
       let!(:task) do
         create(:establish_claim,

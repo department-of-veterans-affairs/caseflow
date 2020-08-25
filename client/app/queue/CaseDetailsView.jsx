@@ -1,34 +1,33 @@
+import { bindActionCreators } from 'redux';
+import { connect, useSelector } from 'react-redux';
 import { css } from 'glamor';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
 import React, { useEffect, useMemo } from 'react';
-import { connect, useSelector } from 'react-redux';
 import _ from 'lodash';
-import { bindActionCreators } from 'redux';
-
-import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-
-import Alert from '../components/Alert';
-import AppellantDetail from './AppellantDetail';
-import VeteranDetail from './VeteranDetail';
-import VeteranCasesView from './VeteranCasesView';
-import CaseHearingsDetail from './CaseHearingsDetail';
-import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
-import CaseTitle from './CaseTitle';
-import CaseTitleDetails from './CaseTitleDetails';
-import TaskSnapshot from './TaskSnapshot';
-import CaseDetailsIssueList from './components/CaseDetailsIssueList';
-import StickyNavContentArea from './StickyNavContentArea';
-import { resetErrorMessages, resetSuccessMessages, setHearingDay } from './uiReducer/uiActions';
-import CaseTimeline from './CaseTimeline';
-import { getQueryParams } from '../util/QueryParamsUtil';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
-import COPY from '../../COPY';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-
 import { appealWithDetailSelector, getAllTasksForAppeal } from './selectors';
+import { clearAlerts } from '../components/common/actions';
+import { getQueryParams } from '../util/QueryParamsUtil';
 import { needsPulacCerulloAlert } from './pulacCerullo';
+import { resetErrorMessages, resetSuccessMessages, setHearingDay } from './uiReducer/uiActions';
+import Alert from '../components/Alert';
+import AppellantDetail from './AppellantDetail';
+import COPY from '../../COPY';
+import CaseDetailsIssueList from './components/CaseDetailsIssueList';
+import CaseHearingsDetail from './CaseHearingsDetail';
+import CaseTimeline from './CaseTimeline';
+import CaseTitle from './CaseTitle';
+import CaseTitleDetails from './CaseTitleDetails';
+import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
+import StickyNavContentArea from './StickyNavContentArea';
+import TaskSnapshot from './TaskSnapshot';
+import UserAlerts from '../components/UserAlerts';
+import VeteranCasesView from './VeteranCasesView';
+import VeteranDetail from './VeteranDetail';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -56,10 +55,17 @@ export const CaseDetailsView = (props) => {
   const success = useSelector((state) => state.ui.messages.success);
   const error = useSelector((state) => state.ui.messages.error);
   const veteranCaseListIsVisible = useSelector((state) => state.ui.veteranCaseListIsVisible);
+  const modalIsOpen = window.location.pathname.includes('modal');
 
   useEffect(() => {
     window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
-    props.resetErrorMessages();
+
+    // Prevent error messages from being reset if a modal is being displayed. This allows
+    // the modal to show error messages without them being cleared by the CaseDetailsView.
+    if (!modalIsOpen) {
+      props.resetErrorMessages();
+      props.clearAlerts();
+    }
 
     const { hearingDate, regionalOffice } = getQueryParams(window.location.search);
 
@@ -72,8 +78,6 @@ export const CaseDetailsView = (props) => {
   }, []);
 
   const doPulacCerulloReminder = useMemo(() => needsPulacCerulloAlert(appeal, tasks), [appeal, tasks]);
-
-  const modalIsOpen = window.location.pathname.includes('modal');
 
   return (
     <React.Fragment>
@@ -91,6 +95,7 @@ export const CaseDetailsView = (props) => {
           </Alert>
         </div>
       )}
+      {!modalIsOpen && <UserAlerts />}
       <AppSegment filledBackground>
         <CaseTitle appeal={appeal} />
         <CaseTitleDetails
@@ -135,6 +140,7 @@ export const CaseDetailsView = (props) => {
 CaseDetailsView.propTypes = {
   appeal: PropTypes.object,
   appealId: PropTypes.string.isRequired,
+  clearAlerts: PropTypes.func,
   tasks: PropTypes.array,
   error: PropTypes.object,
   resetErrorMessages: PropTypes.func,
@@ -147,6 +153,7 @@ CaseDetailsView.propTypes = {
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
+      clearAlerts,
       resetErrorMessages,
       resetSuccessMessages,
       setHearingDay

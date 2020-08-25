@@ -32,11 +32,17 @@ class Rating
     end
 
     def sorted_ratings_from_bgs_response(response:, start_date:)
-      unsorted = ratings_from_bgs_response(response).select do |rating|
-        rating.promulgation_date > start_date
-      end
+      unsorted = ratings_from_bgs_response(response)
+      unpromulgated = unsorted.select { |rating| rating.promulgation_date.nil? }
+      sorted = unsorted.reject do |rating|
+        rating.promulgation_date.nil? || rating.promulgation_date < start_date
+      end.sort_by(&:promulgation_date).reverse
 
-      unsorted.sort_by(&:promulgation_date).reverse
+      unpromulgated + sorted
+    end
+
+    def fetch_promulgated(participant_id)
+      fetch_all(participant_id).select { |rating| rating.promulgation_date.present? }
     end
 
     def from_bgs_hash(_data)

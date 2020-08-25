@@ -1,5 +1,19 @@
 # frozen_string_literal: true
 
+##
+# Virtual hearing is a type of hearing where the veteran/appellant can have a hearing with a VLJ
+# by joining a video conference from any device without having to travel to a VA facility.
+# Caseflow integrates with a conferencing solution called Pexip to create conference rooms
+# and uses GovDelivery to send email notifications to participants of hearing
+# which includes the veteran/appellant, judge, and representative.
+#
+# This model tracks data about the conference rooms as well as the participant email address
+# and whether the emails have been sent out. When a hearing coordinator switches a hearing to
+# virtual hearing, CreateConferenceJob is kicked off to create a conference and send out
+# emails to participants including the link to video conference as well as other details about
+# the hearing. DeleteConferencesJob is kicked off to delete the conference resource
+# when the the virtual hearing is cancelled or after the hearing takes place.
+
 class VirtualHearing < CaseflowRecord
   include UpdatedByUserConcern
 
@@ -31,7 +45,6 @@ class VirtualHearing < CaseflowRecord
   validates_email_format_of :judge_email, allow_nil: true
   validates_email_format_of :appellant_email
   validates_email_format_of :representative_email, allow_nil: true
-  validate :associated_hearing_is_video, on: :create
   validate :hearing_is_not_virtual, on: :create
 
   scope :eligible_for_deletion,
@@ -49,6 +62,11 @@ class VirtualHearing < CaseflowRecord
 
   scope :cancelled,
         -> { where(request_cancelled: true) }
+
+  VALID_REQUEST_TYPES = [
+    HearingDay::REQUEST_TYPES[:video],
+    HearingDay::REQUEST_TYPES[:central]
+  ].freeze
 
   def all_emails_sent?
     appellant_email_sent &&

@@ -93,7 +93,7 @@ module HearingMapper
       return if value.nil?
       fail(InvalidNotesError) if !value.is_a?(String)
 
-      value[0, 100]
+      value[0, 1000]
     end
 
     def disposition_to_vacols_format(value, keys)

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { Tab } from './Tab';
@@ -19,6 +19,8 @@ export const TabContainer = ({ active = '1', onChange, ...rest }) => {
 
     onChange?.(val);
   };
+
+  useEffect(() => setValue(active), [active]);
 
   return <Tab.Context value={value} onSelect={onSelect} {...rest} />;
 };
