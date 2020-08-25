@@ -82,25 +82,21 @@ describe RatingAtIssue do
     let!(:rating) do
       Generators::RatingAtIssue.build(
         participant_id: "DRAYMOND",
-        profile_date: receipt_date - 370.days,
-        issues: [
-          { reference_id: "ref_id1", decision_text: "PTSD denied", contention_reference_id: "1111" },
-          { reference_id: "ref_id2", decision_text: "Left leg", contention_reference_id: "2222" }
-        ]
+        promulgation_date: receipt_date - 370.days
       )
     end
 
     let!(:untimely_rating) do
       Generators::RatingAtIssue.build(
         participant_id: "DRAYMOND",
-        profile_date: receipt_date - 100.years
+        promulgation_date: receipt_date - 100.years
       )
     end
 
     let!(:unpromulgated_rating) do
       Generators::RatingAtIssue.build(
         participant_id: "DRAYMOND",
-        profile_date: receipt_date - 100.years,
+        promulgation_date: receipt_date - 100.years,
         promulgation_date: nil
       )
     end
