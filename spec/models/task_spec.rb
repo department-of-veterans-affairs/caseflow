@@ -1702,14 +1702,36 @@ describe Task, :all_dbs do
   end
 
   describe ".blocking_dispatch?" do
-    let(:appeal) { create(:appeal) }
-    let(:task) { create(:task, appeal: appeal) }
-
     before { FeatureToggle.enable!(:block_at_dispatch) }
     after { FeatureToggle.disable!(:block_at_dispatch) }
 
-    it "does not block dispatch" do
-      expect(task.blocking_dispatch?).to be(false)
+    context "on AMA appeals" do
+      let(:appeal) { create(:appeal) }
+
+      context "a non-blocking task" do
+        let(:task) { create(:task, appeal: appeal) }
+
+        it "does not block dispatch" do
+          expect(task.blocking_dispatch?).to be(false)
+        end
+      end
+
+      context "a blocking task" do
+        let(:task) { create(:congressional_interest_mail_task, appeal: appeal) }
+
+        it "blocks dispatch" do
+          expect(task.blocking_dispatch?).to be(true)
+        end
+      end
+    end
+
+    context "on legacy appeals, a normally blocking task" do
+      let(:appeal) { create(:legacy_appeal) }
+      let(:task) { create(:congressional_interest_mail_task, appeal: appeal) }
+
+      it "does not block dispatch" do
+        expect(task.blocking_dispatch?).to be(false)
+      end
     end
 
     context "for dispatch blocking types" do
