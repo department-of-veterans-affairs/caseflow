@@ -20,3 +20,9 @@ export const userWithJudgeRole = {
   ...anyUser,
   userHasHearingPrepRole: true
 };
+
+export const userUseFullPageVideoToVirtual = {
+  ...userWithVirtualHearingsFeatureEnabled,
+  userUseFullPageVideoToVirtual: true
+}
+;
