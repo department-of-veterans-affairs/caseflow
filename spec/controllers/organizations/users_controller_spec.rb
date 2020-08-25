@@ -9,7 +9,7 @@ describe Organizations::UsersController, :postgres, type: :controller do
     end
 
     let(:admin_user) do
-      User.authenticate!(roles: ["Admin Intake"])
+      create(:user, roles: ["Admin Intake"])
     end
 
     let(:bva_admin_user) do
