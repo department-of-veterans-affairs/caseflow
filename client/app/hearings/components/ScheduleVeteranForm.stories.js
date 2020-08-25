@@ -83,10 +83,6 @@ CentralToVirtualConversion.args = {
   hearing: {
     ...centralHearing,
   },
-  appeal: {
-    ...amaAppeal,
-    regionalOffice: defaultHearing.regionalOfficeKey,
-    hearingLocation: scheduleHearingDetails.hearingLocation }
 };
 
 export const VideoWithErrors = Template.bind({});

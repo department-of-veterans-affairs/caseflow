@@ -18,6 +18,7 @@ import { AppellantSection } from './VirtualHearings/AppellantSection';
 import { HEARING_CONVERSION_TYPES } from '../constants';
 import { marginTop, regionalOfficeSection, saveButton, cancelButton } from './details/style';
 import { isEmpty, orderBy } from 'lodash';
+import COPY from '../../../COPY';
 
 export const ScheduleVeteranForm = ({
   appeal,
@@ -48,7 +49,7 @@ export const ScheduleVeteranForm = ({
     <div {...regionalOfficeSection}>
       <AppSegment filledBackground >
         <h1>{header}</h1>
-        <div {...marginTop(45)} />
+        {virtual ? <span>{COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL}</span> : <div {...marginTop(45)} />}
         <div className="usa-width-one-half">
           <HearingTypeDropdown
             enableFullPageConversion
@@ -62,8 +63,8 @@ export const ScheduleVeteranForm = ({
           <React.Fragment>
 
             <div className="usa-width-one-half" >
-              <ReadOnly spacing={0} label="Regional Office" text={appeal.regionalOffice} />
-              <ReadOnly spacing={15} label="Hearing Location" text={appeal.hearingLocation?.name} />
+              <ReadOnly spacing={0} label="Regional Office" text={appeal.regionalOffice || 'Central'} />
+              <ReadOnly spacing={15} label="Hearing Location" text={appeal.hearingLocation?.name || 'Virtual'} />
 
             </div>
             <div {...marginTop(15)} className="usa-width-one-half">
@@ -87,6 +88,7 @@ export const ScheduleVeteranForm = ({
             </div>
             <div className="cf-help-divider usa-width-one-whole" />
             <AppellantSection
+              virtual={virtual}
               errors={errors}
               video={video}
               update={(_, virtualHearing) => props.onChange('hearing', virtualHearing)}
@@ -96,7 +98,7 @@ export const ScheduleVeteranForm = ({
               type={HEARING_CONVERSION_TYPES[0]}
             />
             <RepresentativeSection
-              virtual
+              virtual={virtual}
               errors={errors}
               video={video}
               update={(_, virtualHearing) =>
