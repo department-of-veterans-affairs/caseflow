@@ -244,7 +244,7 @@ class Veteran < CaseflowRecord
 
   def validate_veteran_pay_grade
     return errors.add(:pay_grades, "invalid_pay_grade") if pay_grades&.any? do |pay_grade|
-      BGSService.new.pay_grade_list.exclude?(pay_grade.strip)
+      BGSService.new.pay_grade_list.map { |pay_grades| pay_grades[:codes] }.exclude?(pay_grade.strip)
     end
   end
 
