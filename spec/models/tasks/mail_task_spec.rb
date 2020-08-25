@@ -516,4 +516,19 @@ describe MailTask, :postgres do
       end
     end
   end
+
+  describe ".parent_if_blocking_task" do
+    let(:root_task) { appeal.root_task }
+    let(:distrubution_task) { appeal.tasks.find_by(type: DistributionTask.name) }
+    let(:appeal) { create(:appeal, :ready_for_distribution) }
+
+    before { allow(appeal).to receive(:distributed_to_a_judge?).and_return false }
+
+    it "returns the distribution task if it is a blocking task, root task otherwise" do
+      MailTask.subclasses.each do |task_class|
+        expected_parent = task_class.blocking? ? distrubution_task : root_task
+        expect(task_class.parent_if_blocking_task(root_task)).to eq expected_parent
+      end
+    end
+  end
 end
