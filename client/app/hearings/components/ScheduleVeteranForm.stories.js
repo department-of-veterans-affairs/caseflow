@@ -1,7 +1,7 @@
 import React from 'react';
 import { useArgs } from '@storybook/client-api';
 
-import { defaultHearing, virtualHearing } from '../../../test/data/hearings';
+import { defaultHearing, virtualHearing, centralHearing } from '../../../test/data/hearings';
 import { amaAppeal, scheduleHearingDetails } from '../../../test/data/appeals';
 import { ScheduleVeteranForm } from './ScheduleVeteranForm';
 import { queueWrapper as Wrapper } from '../../../test/data/stores/queueStore';
@@ -72,6 +72,17 @@ RegionalOfficeSelected.args = {
 
 export const VideoToVirtualConversion = Template.bind({});
 VideoToVirtualConversion.args = {
+  appeal: {
+    ...amaAppeal,
+    regionalOffice: defaultHearing.regionalOfficeKey,
+    hearingLocation: scheduleHearingDetails.hearingLocation }
+};
+
+export const CentralToVirtualConversion = Template.bind({});
+CentralToVirtualConversion.args = {
+  hearing: {
+    ...centralHearing,
+  },
   appeal: {
     ...amaAppeal,
     regionalOffice: defaultHearing.regionalOfficeKey,

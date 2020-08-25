@@ -12,7 +12,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 
 export class ReaderLoadingScreen extends React.Component {
   createLoadPromise = () => {
-    if (!this.props.loadedAppealId && this.props.loadedAppealId === this.props.vacolsId) {
+    if (this.props.loadedAppealId && this.props.loadedAppealId === this.props.vacolsId) {
       return Promise.resolve();
     }
 
