@@ -349,6 +349,12 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context "#contention_connected_to_rating?" do
+    subject { rating_request_issue.exam_requested? }
+
+    
+  end
+
   context "#exam_requested?" do
     subject { rating_request_issue.exam_requested? }
     before { FeatureToggle.enable!(:detect_contention_exam) }
