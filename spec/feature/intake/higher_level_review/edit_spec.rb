@@ -76,6 +76,21 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
   let(:participant_id) { "5382910292" }
 
+  let(:request_issue) do
+    create(
+      :request_issue,
+      contested_rating_issue_reference_id: "def456",
+      contested_rating_issue_profile_date: rating.profile_date,
+      decision_review: higher_level_review,
+      benefit_type: benefit_type,
+      contested_issue_description: "PTSD denied",
+      vacols_id: vacols_id,
+      vacols_sequence_id: vacols_sequence_id
+    )
+  end
+  let(:vacols_id) { nil }
+  let(:vacols_sequence_id) { nil }
+
   before do
     higher_level_review.create_claimant!(participant_id: participant_id, payee_code: "10", type: "DependentClaimant")
 
@@ -91,17 +106,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
   end
 
   context "when contentions disappear from VBMS between creation and edit" do
-    let(:request_issue) do
-      create(
-        :request_issue,
-        contested_rating_issue_reference_id: "def456",
-        contested_rating_issue_profile_date: rating.profile_date,
-        decision_review: higher_level_review,
-        benefit_type: benefit_type,
-        contested_issue_description: "PTSD denied"
-      )
-    end
-
     before do
       higher_level_review.create_issues!([request_issue])
       higher_level_review.establish!
@@ -115,6 +119,38 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
       expect(page).to_not have_content("PTSD denied")
       expect(request_issue.reload).to be_closed
+    end
+  end
+
+  context "When an opted-in issue no longer exists in VACOLS" do
+    let(:vacols_id) { "vacols1" }
+    let(:vacols_sequence_id) { "2" }
+
+    before do
+      setup_active_eligible_legacy_appeal(veteran.file_number)
+      higher_level_review.create_issues!([request_issue])
+      higher_level_review.establish!
+      higher_level_review.reload
+      request_issue.reload
+      IssueRepository.delete_vacols_issue!(vacols_id: "vacols1", vacols_sequence_id: 2)
+    end
+
+    it "edit page loads and does not show VACOLS issue" do
+      visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
+      expect(page).to have_content("PTSD denied")
+      expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED_EDIT)
+
+      # Add another issue in order to also check the confirmation page
+      click_intake_add_issue
+      add_intake_rating_issue("Back pain")
+      select_intake_no_match
+      click_edit_submit_and_confirm
+
+      expect(page).to have_current_path(
+        "/higher_level_reviews/#{higher_level_review.uuid}/edit/confirmation"
+      )
+      expect(page).to have_content("A Higher-Level Review Rating EP is being updated")
     end
   end
 
