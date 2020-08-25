@@ -3,6 +3,12 @@
 class Generators::RatingAtIssue < Generators::Rating
   class << self
     def create_ratings(attrs)
+      Fakes::BGSService.store_rating_profile_record(
+        attrs[:participant_id],
+        attrs[:profile_date],
+        bgs_rating_profile_data(attrs)
+      )
+
       RatingAtIssue.from_bgs_hash(bgs_rating_data(attrs))
     end
 
@@ -14,8 +20,8 @@ class Generators::RatingAtIssue < Generators::Rating
         ptcpnt_vet_id: attrs[:participant_id],
         prmlgn_dt: attrs[:promulgation_date],
         rba_issue_list: bgs_rating_issues_data(attrs),
-        disability_list: [attrs[:disabilities], bgs_rating_decisions_data(attrs)].compact.flatten,
-        rba_claim_list: bgs_associated_claims_data(attrs)
+        disability_list: { disability: [attrs[:disabilities], bgs_rating_decisions_data(attrs)].compact.flatten },
+        rba_claim_list: { rba_claim: bgs_associated_claims_data(attrs) }
       }
     end
 
@@ -30,7 +36,8 @@ class Generators::RatingAtIssue < Generators::Rating
             prfl_dt: issue[:profile_date],
             cntntn_id: issue[:contention_reference_id]
           },
-          dis_sn: issue[:dis_sn]
+          dis_sn: issue[:dis_sn],
+          subjct_txt: issue[:subject_text]
         }
       end
 
