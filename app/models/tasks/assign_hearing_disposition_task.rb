@@ -25,9 +25,7 @@ class AssignHearingDispositionTask < Task
   class HearingDispositionNotHeld < StandardError; end
   class HearingAssociationMissing < StandardError
     def initialize(hearing_task_id)
-      super("Hearing task (#{hearing_task_id}) is missing an associated hearing. " \
-        "This means that either the hearing was deleted in VACOLS or " \
-        "the hearing association has been deleted.")
+      super(format(COPY::HEARING_TASK_ASSOCIATION_MISSING_MESASAGE, hearing_task_id))
     end
   end
 
@@ -155,7 +153,7 @@ class AssignHearingDispositionTask < Task
 
   def update_hearing_disposition(disposition:)
     # Ensure the hearing exists
-    fail HearingAssociationMissing, id if hearing.nil?
+    fail HearingAssociationMissing, hearing_task&.id if hearing.nil?
 
     if hearing.is_a?(LegacyHearing)
       hearing.update_caseflow_and_vacols(disposition: disposition)
