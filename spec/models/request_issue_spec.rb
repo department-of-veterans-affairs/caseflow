@@ -349,10 +349,40 @@ describe RequestIssue, :all_dbs do
     end
   end
 
-  context "#contention_connected_to_rating?" do
-    subject { rating_request_issue.exam_requested? }
+  context "#editable?" do
+    subject { rating_request_issue.editable? }
+    let(:receipt_date) { 1.month.ago }
+    let(:end_product_establishment) do
+      create(
+        :end_product_establishment,
+        :active,
+        established_at: receipt_date + 5.days,
+        veteran: veteran
+      )
+    end
 
-    
+    it { is_expected.to be true }
+
+    context "when there's a connected rating" do
+      before do
+        Generators::PromulgatedRating.build(
+          participant_id: veteran.participant_id,
+          profile_date: receipt_date + 10.days,
+          promulgation_date: receipt_date + 10.days,
+          issues: [
+            {
+              reference_id: "ref_id1", decision_text: "PTSD denied",
+              contention_reference_id: rating_request_issue.contention_reference_id
+            }
+          ],
+          associated_claims: [{ clm_id: end_product_establishment.reference_id, bnft_clm_tc: "030HLRR" }]
+        )
+      end
+
+      it "returns false" do
+        expect(subject).to eq false
+      end
+    end
   end
 
   context "#exam_requested?" do

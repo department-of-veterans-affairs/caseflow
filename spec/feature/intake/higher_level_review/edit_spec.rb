@@ -825,14 +825,14 @@ feature "Higher Level Review Edit issues", :all_dbs do
     before do
       higher_level_review.create_issues!(request_issues)
       higher_level_review.establish!
-
-      # Associated ratings are fetched between established at and now
-      # So if established_at is the same as now, it will always return the NilRatingProfileListError
-      request_issue.end_product_establishment.update!(established_at: receipt_date)
     end
 
     context "when request issues are read only" do
       before do
+        # Associated ratings are fetched between established at and now
+        # So if established_at is the same as now, it will always return the NilRatingProfileListError
+        request_issue.end_product_establishment.update!(established_at: receipt_date)
+
         Generators::PromulgatedRating.build(
           participant_id: veteran.participant_id,
           profile_date: receipt_date + 10.days,
