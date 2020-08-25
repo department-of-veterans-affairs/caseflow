@@ -16,9 +16,9 @@ class AdvanceOnDocketMotion < CaseflowRecord
 
   scope :granted, -> { where(granted: true) }
   scope :eligible_due_to_age, -> { age }
-  scope :eligible_due_to_appeal, ->(appeal) { where(appeal: appeal).where.not(reason: Constants.AOD_REASONS.age) }
+  scope :eligible_due_to_appeal, ->(appeal) { where(appeal: appeal).where.not(id: age) }
   scope :eligible_due_to_date, lambda { |receipt_date|
-    where(created_at: receipt_date..DateTime::Infinity.new).where.not(reason: Constants.AOD_REASONS.age)
+    where(created_at: receipt_date..DateTime::Infinity.new).where.not(id: age)
   }
   scope :for_person, ->(person_id) { where(person_id: person_id) }
 
