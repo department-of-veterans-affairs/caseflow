@@ -649,6 +649,8 @@
   "ERROR_ADDRESS_LINE_INVALID_CHARACTERS": "This Veteran's address has invalid characters. Please edit it in VBMS or SHARE so each address field does not have invalid characters (including double spaces) then try again.",
   "ERROR_CITY_INVALID_CHARACTERS": "This Veteran's city has invalid characters. Please edit it in VBMS or SHARE so each address field does not have invalid characters (including double spaces) then try again.",
   "ERROR_ADDRESS_TOO_LONG": "This Veteran's address is too long. Please edit it in VBMS or SHARE so each address field is no longer than 20 characters (including spaces) then try again",
+  "ERROR_INVALID_ZIP_CODE": "Zip codes in the USA must be 5 characters long. Please check the veteran's address and try again.",
+
 
   "END_HOLD_MODAL_TITLE": "End hold early",
   "END_HOLD_MODAL_BODY": "Do you want to end the hold early?",
@@ -732,62 +734,38 @@
   "VIRTUAL_HEARING_PROGRESS_ALERTS": {
     "CHANGED_TO_VIRTUAL": {
       "TITLE": "We're scheduling %s's virtual hearing",
-      "MESSAGE": "<ul><li>Link to the virtual hearing is in progress.</li><li>Emails to the %{appellant_title}, POA / Representative, and VLJ are in progress.</li></ul>"
+      "MESSAGE": "<ul><li>Link to the virtual hearing is in progress.</li><li>Emails to the %{recipients} are in progress.</li></ul>"
     },
     "CHANGED_FROM_VIRTUAL": {
       "TITLE": "We're updating %s's hearing type",
-      "MESSAGE": "Emails to the %{appellant_title} and POA / Representative are in progress."
+      "MESSAGE": "Emails to the %{recipients_except_vlj} are in progress."
     },
-    "CHANGED_APPELLANT_AND_POA_EMAIL": {
+    "CHANGED_EMAIL": {
       "TITLE": "We're emailing the invite to %s's hearing",
-      "MESSAGE": "Emails to the %{appellant_title} and POA / Representative are in progress."
-    },
-    "CHANGED_APPELLANT_EMAIL": {
-      "TITLE": "We're emailing the invite to %s's hearing",
-      "MESSAGE": "Email to %{appellant_title} is in progress."
-    },
-    "CHANGED_POA_EMAIL": {
-      "TITLE": "We're emailing the invite to %s's hearing",
-      "MESSAGE": "Email to POA / Representative is in progress."
-    },
-    "CHANGED_VLJ_EMAIL": {
-      "TITLE": "We're emailing the invite to %s's hearing",
-      "MESSAGE": "Email to VLJ is in progress."
+      "MESSAGE": "Email to %{recipients} is in progress."
     },
     "CHANGED_HEARING_TIME": {
       "TITLE": "We're updating the hearing time of %s's hearing",
-      "MESSAGE": "Emails to the %{appellant_title}, POA / Representative, and VLJ are in progress."
+      "MESSAGE": "Emails to the %{recipients} are in progress."
     }
   },
 
   "VIRTUAL_HEARING_SUCCESS_ALERTS": {
     "CHANGED_TO_VIRTUAL": {
       "TITLE": "You have successfully scheduled %s's virtual hearing.",
-      "MESSAGE": "Email notifications were sent to the %{appellant_title}, POA/Representative, and VLJ."
+      "MESSAGE": "Email notifications were sent to the %{recipients}."
     },
     "CHANGED_FROM_VIRTUAL": {
       "TITLE": "You have successfully updated the type of %s's hearing.",
-      "MESSAGE": "Email notifications were sent to the %{appellant_title} and POA/Representative."
+      "MESSAGE": "Email notifications were sent to the %{recipients_except_vlj}."
     },
-    "CHANGED_APPELLANT_AND_POA_EMAIL": {
-      "TITLE": "You have successfully emailed the invite to %s's virtual hearing.",
-      "MESSAGE": ""
-    },
-    "CHANGED_APPELLANT_EMAIL": {
-      "TITLE": "You have successfully emailed the invite to %s's virtual hearing.",
-      "MESSAGE": ""
-    },
-    "CHANGED_POA_EMAIL": {
-      "TITLE": "You have successfully emailed the invite to %s's virtual hearing.",
-      "MESSAGE": ""
-    },
-    "CHANGED_VLJ_EMAIL": {
+    "CHANGED_EMAIL": {
       "TITLE": "You have successfully emailed the invite to %s's virtual hearing.",
       "MESSAGE": ""
     },
     "CHANGED_HEARING_TIME": {
       "TITLE": "You have successfully updated the time of %s's virtual hearing",
-      "MESSAGE": "Email notifications were sent to the %{appellant_title} and POA/Representative."
+      "MESSAGE": "Email notifications were sent to the %{recipients}."
     }
   },
 
@@ -802,6 +780,7 @@
     }
   },
 
+  "VIRTUAL_HEARING_ALREADY_CREATED": "Virtual hearing already exists",
   "VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL": "VLJ Virtual Hearing Link",
   "VLJ_VIRTUAL_HEARING_LINK_LABEL": "VLJ Link",
   "GUEST_VIRTUAL_HEARING_LINK_LABEL": "Guest Link",
