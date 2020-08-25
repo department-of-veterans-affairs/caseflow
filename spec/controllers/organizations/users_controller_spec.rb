@@ -9,7 +9,7 @@ describe Organizations::UsersController, :postgres, type: :controller do
     end
 
     let(:admin_user) do
-      create(:user, roles: ["Admin Intake"])
+      User.authenticate!(roles: ["Admin Intake"])
     end
 
     let(:bva_admin_user) do
@@ -55,7 +55,7 @@ describe Organizations::UsersController, :postgres, type: :controller do
       end
     end
 
-    fcontext "admin user" do
+    context "admin user" do
       before { User.stub = admin_user }
 
       it_behaves_like "can view org"
