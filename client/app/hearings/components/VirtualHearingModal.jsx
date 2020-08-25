@@ -95,9 +95,10 @@ export const ReadOnlyEmails = ({
           {virtualHearing.appellantEmail}
         </p>
       )}
-      {(representativeEmailEdited || showAllEmails) && (
+      {(virtualHearing.representativeEmail &&
+       (representativeEmailEdited || showAllEmails)) && (
         <p>
-          <strong>Representative Email</strong>
+          <strong>POA/Representative Email</strong>
           <br />
           {virtualHearing.representativeEmail}
         </p>
