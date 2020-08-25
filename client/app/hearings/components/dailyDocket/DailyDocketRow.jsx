@@ -380,13 +380,14 @@ class DailyDocketRow extends React.Component {
       const resp = ApiUtil.convertToCamelCase(response);
 
       if (resp.virtualHearing.jobCompleted) {
-        this.updateVirtualHearing(null, resp.virtualHearing);
-        this.props.transitionAlert('virtualHearing');
         this.setState({ startPolling: false, edited: false, editedFields: [] });
+        this.updateVirtualHearing(null, resp.virtualHearing);
+
+        this.props.transitionAlert('virtualHearing');
       }
 
-      // continue polling if return true (opposite of job_completed)
-      return !response.job_completed;
+      // continue polling if return true (opposite of jobCompleted)
+      return !resp.virtualHearing.jobCompleted;
     });
   };
 
