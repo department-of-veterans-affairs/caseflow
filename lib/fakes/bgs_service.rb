@@ -410,12 +410,13 @@ class Fakes::BGSService
   def rating_at_issue_profile_data(rating)
     promulgated_rating_data = rating.dig(:comp_id)
 
-    # If a PromulgatedRating was originally stored in rating_store, do some conversion
+    # If a PromulgatedRating was originally stored in rating_store
+    # convert to be compatible with RatingAtIssue
     if promulgated_rating_data.present?
       rating_profile = fetch_rating_profile(
-            participant_id: promulgated_rating_data[:ptcpnt_vet_id],
-            profile_date: promulgated_rating_data[:prfil_dt]
-          )
+        participant_id: promulgated_rating_data[:ptcpnt_vet_id],
+        profile_date: promulgated_rating_data[:prfil_dt]
+      )
 
       {
         prfl_dt: promulgated_rating_data[:prfil_dt],

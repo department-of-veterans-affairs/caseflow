@@ -825,16 +825,26 @@ feature "Higher Level Review Edit issues", :all_dbs do
     before do
       higher_level_review.create_issues!(request_issues)
       higher_level_review.establish!
+      
+      # Associated ratings are fetched between established at and now
+      # So if established_at is the same as now, it will always return the NilRatingProfileListError
+      request_issue.end_product_establishment.update!(established_at: receipt_date)
+
+      Generators::PromulgatedRating.build(
+        participant_id: veteran.participant_id,
+        profile_date: receipt_date + 10.days,
+        promulgation_date: receipt_date + 10.days,
+        issues: [
+          { reference_id: "ref_id1", decision_text: "PTSD denied", contention_reference_id: request_issue.reload.contention_reference_id }
+        ],
+        associated_claims: [{ clm_id:  rating_ep_claim_id, bnft_clm_tc: "030HLRR" }]
+      )
     end
 
     context "when request issues are read only" do
-      before do
-        allow_any_instance_of(RequestIssue).to receive(:editable?).and_return(false)
-      end
-
       it "does not allow to edit request issue" do
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
-        expect(page).to have_content("Rating may be in progress")
+        expect(page).to have_content(COPY::INTAKE_RATING_MAY_BE_PROCESS)
       end
     end
 
