@@ -134,9 +134,13 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 0, 0]
       distributed_cases = DistributedCase.where(distribution: subject)
       expect(distributed_cases.count).to eq 2
+      # Ensure only the 2 ready priority  cases that are tied to a were a part of this distribution
       expect(distributed_cases.map(&:case_id)).to match_array [ready_priority_bfkey, ready_priority_uuid]
+      # Ensure the cases came from dockets that can have cases tied to judges
       expect(distributed_cases.map(&:docket)).to match_array ["legacy", Constants.AMA_DOCKETS.hearing]
+      # Ensure the cases were all priority cases
       expect(distributed_cases.map(&:priority).uniq).to match_array [true]
+      # Ensure the cases were all tied to judges, not from general population
       expect(distributed_cases.map(&:genpop).uniq).to match_array [false]
     end
   end
@@ -150,6 +154,11 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       allow(Docket)
         .to receive(:nonpriority_decisions_per_year)
         .and_return(1000)
+
+      allow_any_instance_of(PushPriorityAppealsToJudgesJob)
+        .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(
+          judges.each_with_index.map { |judge, i| [judge.id, judge_distributions_this_month[i]] }.to_h
+        )
     end
 
     subject { PushPriorityAppealsToJudgesJob.new.distribute_genpop_priority_appeals }
@@ -183,10 +192,10 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
     let!(:ready_priority_hearing_cases) do
       (1..5).map do |i|
-        appeal = FactoryBot.create(:appeal,
-                                   :advanced_on_docket_due_to_age,
-                                   :ready_for_distribution,
-                                   docket_type: Constants.AMA_DOCKETS.hearing)
+        appeal = create(:appeal,
+                        :advanced_on_docket_due_to_age,
+                        :ready_for_distribution,
+                        docket_type: Constants.AMA_DOCKETS.hearing)
         appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.months.ago)
         appeal.reload
       end
@@ -217,22 +226,22 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     let(:priority_count) { Appeal.count + VACOLS::Case.count }
     let(:priority_target) { (priority_count + judge_distributions_this_month.sum) / judges.count }
 
-    before do
-      allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-        .to receive(:eligible_judge_priority_distributions_this_month).and_return(
-          judges.each_with_index.map { |judge, i| [judge.id, judge_distributions_this_month[i]] }.to_h
-        )
-    end
-
-    it "should distibute ready priortiy appeals to the judges based on the priority target" do
+    it "should distibute ready priortiy appeals to the judges" do
       expect(subject.count).to eq judges.count
       distributed_cases = DistributedCase.where(distribution: subject)
+      # Ensure we distributed all distributable cases
       expect(distributed_cases.count).to eq priority_count
+      # Ensure all distributed cases were priority cases
       expect(distributed_cases.map(&:priority).uniq.compact).to match_array [true]
+      # Ensure all distributed cases were not tied to a judge, from general population
       expect(distributed_cases.map(&:genpop).uniq.compact).to match_array [true]
+      # Ensure cases came from all dockets
       expect(distributed_cases.pluck(:docket).uniq).to match_array(Constants::AMA_DOCKETS.keys.unshift("legacy"))
+      # Ensure 5 cases came from each docket
       expect(distributed_cases.group(:docket).count.values.uniq).to match_array [5]
+    end
 
+    it "distributes cases to each judge based on their priority target" do
       judges.each_with_index do |judge, i|
         target_distributions = priority_target - judge_distributions_this_month[i]
         distribution = subject.detect { |dist| dist.judge_id == judge.id }
@@ -247,7 +256,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     shared_examples "correct target distributions with leftovers" do
       before do
         allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-          .to receive(:eligible_judge_priority_distributions_this_month).and_return(to_judge_hash(distribution_counts))
+          .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(to_judge_hash(distribution_counts))
         allow_any_instance_of(DocketCoordinator).to receive(:priority_count).and_return(priority_count)
       end
 
@@ -297,7 +306,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
 
       context "when there have been some distributions this month" do
-        let(:number_of_distributions) { 10 }
+        let(:number_of_distributions) { eligible_judge_count * 2 }
 
         it_behaves_like "even distributions this month"
       end
@@ -355,7 +364,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         # Mock cases already distributed this month
         @distribution_counts = to_judge_hash(Array.new(number_judges).map { rand(12) })
         allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-          .to receive(:eligible_judge_priority_distributions_this_month).and_return(@distribution_counts)
+          .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(@distribution_counts)
         allow_any_instance_of(PushPriorityAppealsToJudgesJob)
           .to receive(:ready_priority_appeals_count).and_return(priority_count)
       end
@@ -367,6 +376,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           @distribution_counts.merge!(target_distributions) { |_, prev_dists, target_dist| prev_dists + target_dist }
         end
         final_counts = @distribution_counts.values.uniq
+        # Expect no more than two distinct counts, no more than 1 apart
         expect(final_counts.max - final_counts.min).to be <= 1
         expect(final_counts.count).to be <= 2
       end
@@ -376,7 +386,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
   context ".leftover_cases_count" do
     before do
       allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-        .to receive(:eligible_judge_target_distributions).and_return(target_distributions)
+        .to receive(:target_distributions_for_eligible_judges).and_return(target_distributions)
       allow_any_instance_of(DocketCoordinator).to receive(:priority_count).and_return(priority_count)
     end
 
@@ -410,21 +420,21 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       let(:priority_count) { target_distributions.values.sum + leftover_cases_count }
       let(:target_distributions) { to_judge_hash([5, 10, 15, 20, 25]) }
 
-      it "returns no leftover cases" do
+      it "returns the correct number of leftover cases" do
         expect(subject).to eq leftover_cases_count
       end
     end
   end
 
-  context ".eligible_judge_target_distributions" do
+  context ".target_distributions_for_eligible_judges" do
     shared_examples "correct target distributions" do
       before do
         allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-          .to receive(:eligible_judge_priority_distributions_this_month).and_return(to_judge_hash(distribution_counts))
+          .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(to_judge_hash(distribution_counts))
         allow_any_instance_of(DocketCoordinator).to receive(:priority_count).and_return(priority_count)
       end
 
-      subject { PushPriorityAppealsToJudgesJob.new.eligible_judge_target_distributions }
+      subject { PushPriorityAppealsToJudgesJob.new.target_distributions_for_eligible_judges }
 
       it "returns hash of how many cases should be distributed to each judge that is below the priority target " \
         "excluding any leftover cases" do
@@ -466,7 +476,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
 
       context "when there have been some distributions this month" do
-        let(:number_of_distributions) { 10 }
+        let(:number_of_distributions) { eligible_judge_count * 2 }
 
         context "when there are more eligible judges than cases to distribute" do
           let(:eligible_judge_count) { 10 }
@@ -537,7 +547,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     shared_examples "correct target" do
       before do
         allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-          .to receive(:eligible_judge_priority_distributions_this_month).and_return(to_judge_hash(distribution_counts))
+          .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(to_judge_hash(distribution_counts))
         allow_any_instance_of(DocketCoordinator).to receive(:priority_count).and_return(priority_count)
       end
 
@@ -582,7 +592,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
 
       context "when there have been some distributions this month" do
-        let(:number_of_distributions) { 10 }
+        let(:number_of_distributions) { eligible_judge_count * 2 }
 
         context "when there are more eligible judges than cases to distribute" do
           let(:eligible_judge_count) { 10 }
@@ -649,7 +659,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
   end
 
-  context ".eligible_judge_priority_distributions_this_month" do
+  context ".priority_distributions_this_month_for_eligible_judges" do
     let!(:judge_without_team) { create(:user) }
     let!(:judge_without_active_team) { create(:user).tap { |judge| JudgeTeam.create_for_judge(judge).inactive! } }
     let!(:judge_without_priority_push_team) do
@@ -661,10 +671,10 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     let!(:distributions_for_valid_judge) { 6 }
 
-    subject { PushPriorityAppealsToJudgesJob.new.eligible_judge_priority_distributions_this_month }
+    subject { PushPriorityAppealsToJudgesJob.new.priority_distributions_this_month_for_eligible_judges }
 
     before do
-      allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:judge_priority_distributions_this_month)
+      allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:priority_distributions_this_month_for_all_judges)
         .and_return(
           judge_without_team.id => 5,
           judge_without_active_team.id => 5,
@@ -704,10 +714,10 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
   end
 
-  context ".judge_priority_distributions_this_month" do
+  context ".priority_distributions_this_month_for_all_judges" do
     let(:batch_size) { 20 }
     let!(:judge_with_no_priority_distributions) do
-      create(:user, :with_vacols_judge_record).tap do |judge|
+      create(:user, :with_vacols_judge_record) do |judge|
         create(
           :distribution,
           judge: judge,
@@ -734,7 +744,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           :distribution,
           judge: judge,
           priority_push: true,
-          completed_at: 1.day.ago,
           statistics: { "batch_size": batch_size }
         )
       end
@@ -769,7 +778,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
     end
 
-    subject { PushPriorityAppealsToJudgesJob.new.judge_priority_distributions_this_month }
+    subject { PushPriorityAppealsToJudgesJob.new.priority_distributions_this_month_for_all_judges }
 
     it "returns the sum of the batch sizes from all valid distributions for each judge" do
       expect(subject.keys).to match_array(
@@ -793,8 +802,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       create(
         :distribution,
         judge: create(:user, :with_vacols_judge_record),
-        priority_push: true,
-        completed_at: 1.day.ago
+        priority_push: true
       )
     end
     let!(:older_priority_distribution) do

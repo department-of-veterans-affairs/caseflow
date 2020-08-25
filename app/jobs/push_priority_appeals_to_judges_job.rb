@@ -3,8 +3,11 @@
 # Job that pushes priority cases to a judge rather than waiting for them to request cases. This will distribute cases
 # to all judges whose teams that have `accepts_priority_pushed_cases` enabled. The first step distributes all priority
 # cases tied to a judge without limit. The second step distributes remaining general population cases (cases not tied to
-# an active judge) while attempting to even out the number of priority cases all judges have received over one month
+# an active judge) while attempting to even out the number of priority cases all judges have received over one month.
 class PushPriorityAppealsToJudgesJob < CaseflowJob
+  queue_with_priority :low_priority
+  application_attr :queue
+
   include AutomaticCaseDistribution
 
   def perform
@@ -34,7 +37,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   # as these are the final counts to distribute remaining ready priority cases
   def eligible_judge_target_distributions_with_leftovers
     leftover_cases = leftover_cases_count
-    eligible_judge_target_distributions.sort_by(&:last).map do |judge_id, target|
+    target_distributions_for_eligible_judges.sort_by(&:last).map do |judge_id, target|
       if leftover_cases > 0
         leftover_cases -= 1
         target += 1
@@ -46,13 +49,13 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   # Because we cannot distribute fractional cases, there can be cases leftover after taking the priority target
   # into account. This number will always be less than the number of judges that need distribution because division
   def leftover_cases_count
-    ready_priority_appeals_count - eligible_judge_target_distributions.values.sum
+    ready_priority_appeals_count - target_distributions_for_eligible_judges.values.sum
   end
 
   # Calculate the number of cases a judge should receive based on the priority target. Don't toss out judges with 0 as
   # they could receive some of the leftover cases (if any)
-  def eligible_judge_target_distributions
-    eligible_judge_priority_distributions_this_month.map do |judge_id, distributions_this_month|
+  def target_distributions_for_eligible_judges
+    priority_distributions_this_month_for_eligible_judges.map do |judge_id, distributions_this_month|
       target = priority_target - distributions_this_month
       (target >= 0) ? [judge_id, target] : nil
     end.compact.to_h
@@ -62,9 +65,12 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   # even case counts over a full month (or as close as we can get to it)
   def priority_target
     @priority_target ||= begin
-      distribution_counts = eligible_judge_priority_distributions_this_month.values
+      distribution_counts = priority_distributions_this_month_for_eligible_judges.values
       target = (distribution_counts.sum + ready_priority_appeals_count) / distribution_counts.count
 
+      # If there are any judges that have previous distributions that are MORE than the currently calculated priority
+      # target, no target will be large enough to get all other judges up to their number of cases. Remove them from
+      # consideration and recalculate the target for all other judges.
       while distribution_counts.any? { |distribution_count| distribution_count > target }
         distribution_counts = distribution_counts.reject { |distribution_count| distribution_count > target }
         target = (distribution_counts.sum + ready_priority_appeals_count) / distribution_counts.count
@@ -83,8 +89,8 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   # Number of priority distributions every eligible judge has received in the last month
-  def eligible_judge_priority_distributions_this_month
-    eligible_judges.map { |judge| [judge.id, judge_priority_distributions_this_month[judge.id] || 0] }.to_h
+  def priority_distributions_this_month_for_eligible_judges
+    eligible_judges.map { |judge| [judge.id, priority_distributions_this_month_for_all_judges[judge.id] || 0] }.to_h
   end
 
   def eligible_judges
@@ -92,8 +98,8 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   end
 
   # Produces a hash of judge_id and the number of cases distributed to them in the last month
-  def judge_priority_distributions_this_month
-    @judge_priority_distributions_this_month ||= priority_distributions_this_month
+  def priority_distributions_this_month_for_all_judges
+    @priority_distributions_this_month_for_all_judges ||= priority_distributions_this_month
       .pluck(:judge_id, :statistics)
       .group_by(&:first)
       .map { |judge_id, arr| [judge_id, arr.flat_map(&:last).map { |stats| stats["batch_size"] }.sum] }.to_h

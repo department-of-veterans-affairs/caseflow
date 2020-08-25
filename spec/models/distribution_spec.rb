@@ -464,10 +464,10 @@ describe Distribution, :all_dbs do
 
       let!(:priority_ama_hearings_not_tied_to_judge) do
         (1...3).map do |i|
-          appeal = FactoryBot.create(:appeal,
-                                     :advanced_on_docket_due_to_age,
-                                     :ready_for_distribution,
-                                     docket_type: Constants.AMA_DOCKETS.hearing)
+          appeal = create(:appeal,
+                          :advanced_on_docket_due_to_age,
+                          :ready_for_distribution,
+                          docket_type: Constants.AMA_DOCKETS.hearing)
           appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.months.ago)
           appeal.reload
         end
