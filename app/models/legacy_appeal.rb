@@ -892,6 +892,11 @@ class LegacyAppeal < CaseflowRecord
     VACOLS::Priorloc.where(lockey: vacols_id).order(:locdout)
   end
 
+  # Only AMA Appeals go to BVA Dispatch in Caseflow
+  def ready_for_bva_dispatch?
+    false
+  end
+
   private
 
   def soc_eligible_for_opt_in?(receipt_date:, covid_flag: false)
