@@ -347,4 +347,14 @@ module Caseflow::Error
   class PexipMethodNotAllowedError < PexipApiError; end
 
   class WorkModeCouldNotUpdateError < StandardError; end
+
+  class VirtualHearingConversionFailed < SerializableError
+    attr_accessor :code, :message
+
+    def initialize(args = {})
+      @error_type = args[:error_type]
+      @code = (@error_type == ActiveRecord::RecordNotUnique) ? :conflict : args[:code]
+      @message = (@error_type == ActiveRecord::RecordNotUnique) ? COPY::VIRTUAL_HEARING_ALREADY_CREATED : args[:message]
+    end
+  end
 end

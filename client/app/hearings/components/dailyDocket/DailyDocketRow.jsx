@@ -173,6 +173,17 @@ class DailyDocketRow extends React.Component {
     }
   };
 
+  processAlerts = (alerts) => {
+    alerts.forEach((alert) => {
+      if ('hearing' in alert) {
+        this.props.onReceiveAlerts(alert.hearing);
+      } else if ('virtual_hearing' in alert && !isEmpty(alert.virtual_hearing)) {
+        this.props.onReceiveTransitioningAlert(alert.virtual_hearing, 'virtualHearing');
+        this.setState({ startPolling: true });
+      }
+    });
+  };
+
   saveHearing = () => {
     const isValid = this.validate();
 
@@ -200,13 +211,8 @@ class DailyDocketRow extends React.Component {
 
         const alerts = response.body?.alerts;
 
-        if (alerts?.hearing) {
-          this.props.onReceiveAlerts(alerts.hearing);
-        }
-
-        if (!isEmpty(alerts.virtual_hearing)) {
-          this.props.onReceiveTransitioningAlert(alerts.virtual_hearing, 'virtualHearing');
-          this.setState({ startPolling: true });
+        if (alerts) {
+          this.processAlerts(alerts);
         }
 
         this.setState({
@@ -237,8 +243,8 @@ class DailyDocketRow extends React.Component {
 
         const alerts = response.body?.alerts;
 
-        if (alerts?.hearing) {
-          this.props.onReceiveAlerts(alerts.hearing);
+        if (alerts) {
+          this.processAlerts(alerts);
         }
 
         this.update(hearingWithDisp);
