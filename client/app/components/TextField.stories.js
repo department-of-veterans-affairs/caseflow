@@ -24,7 +24,9 @@ const config = {
   },
 };
 
-const Template = (args) => {
+const UncontrolledTpl = (args) => <TextField {...args} />;
+
+const ControlledTpl = (args) => {
   // Storybook devs suggest using the useArgs hook for this purpose, but there is currently an issue
   // that impedes usability within the Docs tab:
   // https://github.com/storybookjs/storybook/issues/11657
@@ -36,8 +38,12 @@ const Template = (args) => {
   return <TextField {...args} onChange={handleChange} value={value} />;
 };
 
-export const Basic = Template.bind({});
-Basic.args = { name: 'basic', label: 'Enter some text' };
-Basic.argTypes = { ...config.argTypes };
+export const Uncontrolled = UncontrolledTpl.bind({});
+Uncontrolled.args = { ...config.args, name: 'uncontrolled' };
+Uncontrolled.argTypes = { ...config.argTypes };
 
-export default config;
+export const Controlled = ControlledTpl.bind({});
+Controlled.args = { ...config.args, name: 'controlled' };
+Controlled.argTypes = { ...config.argTypes };
+
+// export default config;

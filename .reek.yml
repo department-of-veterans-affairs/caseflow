@@ -61,8 +61,10 @@ detectors:
       - AppealAvailableHearingLocations#suggested_hearing_location
       - AppealTaskHistory#build_events
       - ApplicationRecord#as_hash
+      - AssignHearingDispositionTask#reschedule_or_schedule_later
       - AssignJudgeteamRoles#process
       - AsyncableJobsReporter
+      - ConvertToVirtualHearing#convert_hearing_to_virtual
       - ClaimReviewAsyncStatsReporter#as_csv
       - DataIntegrityChecksJob
       - DecisionIssueSyncJob
@@ -90,6 +92,7 @@ detectors:
       - RequestIssue#find_or_create_decision_issue_from_rating_issue
       - RequestIssue#special_issues
       - RequestIssueReporter#as_csv
+      - ScheduleHearingTask#create_hearing
       - Seeds::Hearings
       - Seeds::Tasks#create_colocated_legacy_tasks
       - Seeds::Users#create_aod_user_and_tasks
@@ -118,6 +121,7 @@ detectors:
   LongParameterList:
     exclude:
       - Address#initialize
+      - AssignHearingDispositionTask#reschedule
       - ExternalApi::VBMSService#self.create_contentions!
       - LegacyDocket#new_distributed_case
       - Api::V3::DecisionReviews::ContestableIssueFinder#initialize

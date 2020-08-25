@@ -40,7 +40,7 @@ describe Distribution, :all_dbs do
         .and_return(1000)
     end
 
-    def create_legacy_case(distribution_ready_days_ago, traits = nil)
+    def create_legacy_case(distribution_ready_months_ago, traits = nil)
       create(
         :case,
         *traits,
@@ -48,10 +48,10 @@ describe Distribution, :all_dbs do
         bfac: "1",
         bfmpro: "ACT",
         bfcurloc: "81",
-        bfdloout: distribution_ready_days_ago.days.ago,
+        bfdloout: distribution_ready_months_ago.months.ago,
         folder: build(
           :folder,
-          tinum: "1801#{format('%<index>03d', index: distribution_ready_days_ago)}",
+          tinum: "1801#{format('%<index>03d', index: distribution_ready_months_ago)}",
           titrnum: "123456789S"
         )
       )
@@ -439,14 +439,60 @@ describe Distribution, :all_dbs do
     context "priority_push is true" do
       subject { Distribution.create!(judge: judge, priority_push: true) }
 
-      let!(:legacy_priority_cases) { (5..8).map { |i| create_legacy_case(i, :aod) } }
+      let!(:legacy_priority_cases) do
+        (1..4).map do |i|
+          create(
+            :case,
+            :aod,
+            bfd19: 1.year.ago,
+            bfac: "1",
+            bfmpro: "ACT",
+            bfcurloc: "81",
+            bfdloout: i.months.ago,
+            folder: build(
+              :folder,
+              tinum: "1801#{format('%<index>03d', index: i)}",
+              titrnum: "123456789S"
+            )
+          )
+        end
+      end
 
-      let!(:priority_legacy_hearings_tied_to_judge) do
-        legacy_priority_cases[2..3].map { |appeal| create_legacy_case_hearing_for(appeal) }
+      let!(:legacy_nonpriority_cases) do
+        (5..8).map do |i|
+          create(
+            :case,
+            bfd19: 1.year.ago,
+            bfac: "1",
+            bfmpro: "ACT",
+            bfcurloc: "81",
+            bfdloout: i.months.ago,
+            folder: build(
+              :folder,
+              tinum: "1801#{format('%<index>03d', index: i)}",
+              titrnum: "123456789S"
+            )
+          )
+        end
       end
 
       let!(:priority_legacy_hearings_not_tied_to_judge) do
-        legacy_priority_cases[0..1].map { |appeal| create_legacy_case_hearing_for(appeal, board_member: "1234") }
+        legacy_priority_cases[0..1].map do |appeal|
+          create(:case_hearing,
+                 :disposition_held,
+                 folder_nr: appeal.bfkey,
+                 hearing_date: 1.month.ago)
+        end
+      end
+
+      let!(:priority_legacy_hearings_tied_to_judge) do
+        legacy_priority_cases[2..3].map do |appeal|
+          create(:case_hearing,
+                  :disposition_held,
+                  folder_nr: appeal.bfkey,
+                  hearing_date: 1.month.ago,
+                  board_member: judge.vacols_attorney_id)
+        end
       end
 
       let!(:priority_ama_hearings_tied_to_judge) do
@@ -464,10 +510,10 @@ describe Distribution, :all_dbs do
 
       let!(:priority_ama_hearings_not_tied_to_judge) do
         (1...3).map do |i|
-          appeal = FactoryBot.create(:appeal,
-                                     :advanced_on_docket_due_to_age,
-                                     :ready_for_distribution,
-                                     docket_type: Constants.AMA_DOCKETS.hearing)
+          appeal = create(:appeal,
+                          :advanced_on_docket_due_to_age,
+                          :ready_for_distribution,
+                          docket_type: Constants.AMA_DOCKETS.hearing)
           appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.months.ago)
           appeal.reload
         end
@@ -532,7 +578,7 @@ describe Distribution, :all_dbs do
         it "distributes that number of priority cases from all dockets, based on docket age" do
           oldest_case_from_each_docket = [
             legacy_priority_cases.last.bfkey,
-            other_priority_ama_hearings.last.uuid,
+            priority_ama_hearings_not_tied_to_judge.last.uuid,
             priority_direct_review_cases.last.uuid,
             evidence_submission_cases.last.uuid
           ]
