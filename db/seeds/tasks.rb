@@ -78,7 +78,8 @@ module Seeds
           )
         )
       end
-      # Create AMA tasks ready for distribution
+
+      # Create AMA appeals ready for distribution
       (1..30).each do |num|
         vet_file_number = format("3213213%<num>02d", num: num)
         create(
@@ -95,6 +96,39 @@ module Seeds
         )
       end
 
+      # Create AMA appeals blocked for distribution due to Evidence Window
+      (1..30).each do |num|
+        vet_file_number = format("4324324%<num>02d", num: num)
+        create(
+          :appeal,
+          :with_post_intake_tasks,
+          number_of_claimants: 1,
+          active_task_assigned_at: Time.zone.now,
+          veteran_file_number: vet_file_number,
+          docket_type: Constants.AMA_DOCKETS.evidence_submission,
+          closest_regional_office: "RO17",
+          request_issues: create_list(
+            :request_issue, 2, :nonrating, notes: notes
+          )
+        )
+      end
+
+      # Create AMA appeals blocked for distribution due to blocking mail
+      (1..30).each do |num|
+        vet_file_number = format("4324334%<num>02d", num: num)
+        create(
+          :appeal,
+          :mail_blocking_distribution,
+          number_of_claimants: 1,
+          active_task_assigned_at: Time.zone.now,
+          veteran_file_number: vet_file_number,
+          docket_type: Constants.AMA_DOCKETS.direct_review,
+          closest_regional_office: "RO17",
+          request_issues: create_list(
+            :request_issue, 2, :nonrating, notes: notes
+          )
+        )
+      end
       LegacyAppeal.create(vacols_id: "2096907", vbms_id: "228081153S")
       LegacyAppeal.create(vacols_id: "2226048", vbms_id: "213912991S")
       LegacyAppeal.create(vacols_id: "2249056", vbms_id: "608428712S")

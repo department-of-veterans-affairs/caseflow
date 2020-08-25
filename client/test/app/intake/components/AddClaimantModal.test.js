@@ -100,7 +100,7 @@ describe('AddClaimantModal', () => {
       expect(screen.queryByLabelText(/notes.*/i)).toBeTruthy();
     });
 
-    it('should change relationship field if "claimant not listed" is selected', async () => {
+    it('should not change relationship field if "claimant not listed" is selected', async () => {
       const { container } = render(
         <AddClaimantModal
           onSearch={performQuery}
@@ -120,7 +120,7 @@ describe('AddClaimantModal', () => {
 
       userEvent.click(screen.getByLabelText(/claimant not listed/i));
 
-      expect(queryByText(/other/i)).toBeTruthy();
+      expect(queryByText(/attorney/i)).toBeTruthy();
     });
   });
 

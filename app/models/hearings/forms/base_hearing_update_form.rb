@@ -47,9 +47,13 @@ class BaseHearingUpdateForm
 
   def hearing_updates; end
 
+  # Whether or not the hearing has been updated by the form.
+  #
+  # @return [Boolean]
+  #   True if there is at least one non-nil and non-empty key in the hearing updates
   def hearing_updated?
-    hearing_updates.each_key do |key|
-      return true if hearing_updates.dig(key).present?
+    hearing_updates.each_value do |value|
+      return true unless [nil, {}, []].include?(value)
     end
     false
   end
@@ -248,18 +252,6 @@ class BaseHearingUpdateForm
     email_changed && !virtual_hearing_cancelled? && !virtual_hearing_created?
   end
 
-  def email_change_type
-    if virtual_hearing_attributes&.key?(:appellant_email) && virtual_hearing_attributes&.key?(:representative_email)
-      "CHANGED_APPELLANT_AND_POA_EMAIL"
-    elsif virtual_hearing_attributes&.key?(:appellant_email)
-      "CHANGED_APPELLANT_EMAIL"
-    elsif virtual_hearing_attributes&.key?(:representative_email)
-      "CHANGED_POA_EMAIL"
-    elsif judge_id.present?
-      "CHANGED_VLJ_EMAIL"
-    end
-  end
-
   def change_type
     if virtual_hearing_created?
       "CHANGED_TO_VIRTUAL"
@@ -268,7 +260,7 @@ class BaseHearingUpdateForm
     elsif only_time_updated_or_timezone_updated?
       "CHANGED_HEARING_TIME"
     elsif only_emails_updated?
-      email_change_type
+      "CHANGED_EMAIL"
     end
   end
 
@@ -299,13 +291,15 @@ class BaseHearingUpdateForm
     nested_alert = VirtualHearingUserAlertBuilder.new(
       change_type: change_type,
       alert_type: :info,
-      appeal: hearing.appeal
+      hearing: hearing,
+      virtual_hearing_updates: virtual_hearing_updates
     ).call.to_hash
 
     nested_alert[:next] = VirtualHearingUserAlertBuilder.new(
       change_type: change_type,
       alert_type: :success,
-      appeal: hearing.appeal
+      hearing: hearing,
+      virtual_hearing_updates: virtual_hearing_updates
     ).call.to_hash
 
     @virtual_hearing_alert = nested_alert

@@ -33,7 +33,7 @@ import Button from '../../../components/Button';
 import HearingText from './DailyDocketRowDisplayText';
 import VirtualHearingModal from '../VirtualHearingModal';
 
-const SaveButton = ({ hearing, cancelUpdate, saveHearing }) => {
+const SaveButton = ({ hearing, loading, cancelUpdate, saveHearing }) => {
   return (
     <div
       {...css({
@@ -47,7 +47,7 @@ const SaveButton = ({ hearing, cancelUpdate, saveHearing }) => {
       </Button>
       <Button
         styling={css({ float: 'right' })}
-        disabled={hearing.dateEdited && !hearing.dispositionEdited}
+        disabled={loading || (hearing.dateEdited && !hearing.dispositionEdited)}
         onClick={saveHearing}
       >
         Save
@@ -58,6 +58,7 @@ const SaveButton = ({ hearing, cancelUpdate, saveHearing }) => {
 
 SaveButton.propTypes = {
   hearing: PropTypes.object,
+  loading: PropTypes.bool,
   cancelUpdate: PropTypes.func,
   saveHearing: PropTypes.func
 };
@@ -74,6 +75,7 @@ class DailyDocketRow extends React.Component {
         advanceOnDocketMotionReason: false
       },
       aodModalActive: false,
+      loading: false,
       edited: false,
       editedFields: [],
       virtualHearingModalActive: false,
@@ -171,6 +173,17 @@ class DailyDocketRow extends React.Component {
     }
   };
 
+  processAlerts = (alerts) => {
+    alerts.forEach((alert) => {
+      if ('hearing' in alert) {
+        this.props.onReceiveAlerts(alert.hearing);
+      } else if ('virtual_hearing' in alert && !isEmpty(alert.virtual_hearing)) {
+        this.props.onReceiveTransitioningAlert(alert.virtual_hearing, 'virtualHearing');
+        this.setState({ startPolling: true });
+      }
+    });
+  };
+
   saveHearing = () => {
     const isValid = this.validate();
 
@@ -186,6 +199,8 @@ class DailyDocketRow extends React.Component {
       location: locationWasUpdated ? this.props.hearing?.location : {}
     };
 
+    this.setState({ loading: true });
+
     return this.props.
       saveHearing(this.props.hearing.externalId, submitData).
       then((response) => {
@@ -196,13 +211,8 @@ class DailyDocketRow extends React.Component {
 
         const alerts = response.body?.alerts;
 
-        if (alerts?.hearing) {
-          this.props.onReceiveAlerts(alerts.hearing);
-        }
-
-        if (!isEmpty(alerts.virtual_hearing)) {
-          this.props.onReceiveTransitioningAlert(alerts.virtual_hearing, 'virtualHearing');
-          this.setState({ startPolling: true });
+        if (alerts) {
+          this.processAlerts(alerts);
         }
 
         this.setState({
@@ -210,7 +220,8 @@ class DailyDocketRow extends React.Component {
           editedFields: [],
           edited: false
         });
-      });
+      }).
+      finally(() => this.setState({ loading: false }));
   };
 
   saveThenUpdateDisposition = (toDisposition) => {
@@ -219,6 +230,8 @@ class DailyDocketRow extends React.Component {
       disposition: toDisposition
     };
     const hearingChanges = deepDiff(this.state.initialState, hearingWithDisp);
+
+    this.setState({ loading: true });
 
     return this.props.
       saveHearing(hearingWithDisp.externalId, hearingChanges).
@@ -230,8 +243,8 @@ class DailyDocketRow extends React.Component {
 
         const alerts = response.body?.alerts;
 
-        if (alerts?.hearing) {
-          this.props.onReceiveAlerts(alerts.hearing);
+        if (alerts) {
+          this.processAlerts(alerts);
         }
 
         this.update(hearingWithDisp);
@@ -243,7 +256,8 @@ class DailyDocketRow extends React.Component {
             edited: false
           });
         }
-      });
+      }).
+      finally(() => this.setState({ loading: false }));
   };
 
   isAmaHearing = () => this.props.hearing.docketName === 'hearing';
@@ -330,6 +344,7 @@ class DailyDocketRow extends React.Component {
         {this.state.edited && (
           <SaveButton
             hearing={this.props.hearing}
+            loading={this.state.loading}
             cancelUpdate={this.cancelUpdate}
             saveHearing={this.checkAodAndSave}
           />

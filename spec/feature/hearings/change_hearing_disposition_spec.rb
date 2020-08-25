@@ -132,9 +132,7 @@ RSpec.shared_examples "Change hearing disposition" do
         fill_in "Notes", with: instructions_text
         click_button("Submit")
 
-        expect(page).to have_content("Hearing task (#{change_task.id}) is missing an associated hearing. " \
-        "This means that either the hearing was deleted in VACOLS or " \
-        "the hearing association has been deleted.")
+        expect(page).to have_content(format(COPY::HEARING_TASK_ASSOCIATION_MISSING_MESASAGE, hearing_task.id))
       end
     end
   end

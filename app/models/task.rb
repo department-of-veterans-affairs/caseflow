@@ -390,7 +390,7 @@ class Task < CaseflowRecord
   end
 
   def cancel_descendants
-    descendants.each { |desc| desc.update!(status: Constants.TASK_STATUSES.cancelled) }
+    descendants.select(&:open?).each { |desc| desc.update!(status: Constants.TASK_STATUSES.cancelled) }
   end
 
   def create_twin_of_type(_params)
@@ -597,6 +597,11 @@ class Task < CaseflowRecord
 
   def reassign_clears_overtime?
     false
+  end
+
+  # currently only defined by ScheduleHearingTask and AssignHearingDispositionTask for virtual hearing related updates
+  def alerts
+    @alerts ||= []
   end
 
   private
