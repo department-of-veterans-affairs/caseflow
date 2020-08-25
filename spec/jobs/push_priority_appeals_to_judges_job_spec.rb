@@ -132,15 +132,13 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     it "should only distribute the ready priority cases tied to a judge" do
       expect(subject.count).to eq eligible_judges.count
       expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 0, 0]
+
+      # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
       distributed_cases = DistributedCase.where(distribution: subject)
       expect(distributed_cases.count).to eq 2
-      # Ensure only the 2 ready priority  cases that are tied to a were a part of this distribution
       expect(distributed_cases.map(&:case_id)).to match_array [ready_priority_bfkey, ready_priority_uuid]
-      # Ensure the cases came from dockets that can have cases tied to judges
       expect(distributed_cases.map(&:docket)).to match_array ["legacy", Constants.AMA_DOCKETS.hearing]
-      # Ensure the cases were all priority cases
       expect(distributed_cases.map(&:priority).uniq).to match_array [true]
-      # Ensure the cases were all tied to judges, not from general population
       expect(distributed_cases.map(&:genpop).uniq).to match_array [false]
     end
   end
@@ -228,16 +226,13 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     it "should distibute ready priortiy appeals to the judges" do
       expect(subject.count).to eq judges.count
+
+      # Ensure we distributed all available ready cases from any docket that are not tied to a judge
       distributed_cases = DistributedCase.where(distribution: subject)
-      # Ensure we distributed all distributable cases
       expect(distributed_cases.count).to eq priority_count
-      # Ensure all distributed cases were priority cases
       expect(distributed_cases.map(&:priority).uniq.compact).to match_array [true]
-      # Ensure all distributed cases were not tied to a judge, from general population
       expect(distributed_cases.map(&:genpop).uniq.compact).to match_array [true]
-      # Ensure cases came from all dockets
       expect(distributed_cases.pluck(:docket).uniq).to match_array(Constants::AMA_DOCKETS.keys.unshift("legacy"))
-      # Ensure 5 cases came from each docket
       expect(distributed_cases.group(:docket).count.values.uniq).to match_array [5]
     end
 
