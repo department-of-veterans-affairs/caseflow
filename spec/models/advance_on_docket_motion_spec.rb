@@ -75,7 +75,7 @@ describe AdvanceOnDocketMotion, :postgres do
     let(:granted) { false }
     let(:reason) { described_class.reasons[:financial_distress] }
     let(:appeal) { create(:appeal, receipt_date: appeal_receipt_date) }
-    let(:appeal_on_motion) { nil }
+    let(:appeal_on_motion) { create(:appeal) }
 
     before do
       described_class.create!(
