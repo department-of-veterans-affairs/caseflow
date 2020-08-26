@@ -8,7 +8,7 @@ import { getAppellantTitleForHearing } from '../../utils';
 import { VirtualHearingFields } from '../VirtualHearings/Fields';
 
 export const VirtualHearingForm = (
-  { hearing, virtualHearing, readOnly, update, errors }
+  { hearing, initialHearing, virtualHearing, readOnly, update, errors }
 ) => {
   if (!hearing?.isVirtual && !hearing?.wasVirtual) {
     return null;
@@ -53,6 +53,7 @@ export const VirtualHearingForm = (
           time={hearing.scheduledTimeString}
           requestType={hearing.readableRequestType}
           defaultAppellantTz={hearing?.appellantTz}
+          initialRepresentativeTz={initialHearing?.virtualHearing?.representativeTz}
           defaultRepresentativeTz={hearing?.representativeTz}
         />
       )}
@@ -69,6 +70,9 @@ VirtualHearingForm.propTypes = {
     scheduledForIsPast: PropTypes.bool,
     wasVirtual: PropTypes.bool,
     isVirtual: PropTypes.bool
+  }),
+  initialHearing: PropTypes.shape({
+    virtualHearing: PropTypes.object
   }),
   readOnly: PropTypes.bool,
   virtualHearing: PropTypes.shape({

@@ -42,7 +42,7 @@ export const RepresentativeSection = ({
         <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })}>
           <Timezone
             errorMessage={errors?.representativeTz}
-            required={virtualHearing?.representativeEmail}
+            required={Boolean(virtualHearing?.representativeEmail)}
             value={virtualHearing?.representativeTz}
             onChange={(representativeTz) =>
               update('virtualHearing', { representativeTz })

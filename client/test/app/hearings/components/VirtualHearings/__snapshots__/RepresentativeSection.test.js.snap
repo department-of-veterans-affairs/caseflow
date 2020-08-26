@@ -154,7 +154,7 @@ SAN FRANCISCO, CA 94103
           name="POA/Representative Timezone"
           onChange={[Function]}
           readOnly={false}
-          required="tom.brady@caseflow.gov"
+          required={true}
           time="06:00"
           value={null}
         >
@@ -930,7 +930,7 @@ SAN FRANCISCO, CA 94103
             }
             placeholder="Select a timezone"
             readOnly={false}
-            required="tom.brady@caseflow.gov"
+            required={true}
             strongLabel={true}
             styling={
               Object {
