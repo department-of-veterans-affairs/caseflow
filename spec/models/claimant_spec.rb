@@ -104,11 +104,13 @@ describe Claimant, :postgres do
   end
 
   context "#advanced_on_docket?" do
+    let(:appeal) { create(:appeal, receipt_date: 1.year.ago) }
+
     context "when claimant satisfies AOD age criteria" do
       let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age) }
 
       it "returns true" do
-        expect(claimant.advanced_on_docket?(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket?(appeal)).to eq(true)
         expect(claimant.advanced_on_docket_based_on_age?).to eq(true)
       end
     end
@@ -117,13 +119,13 @@ describe Claimant, :postgres do
       let(:claimant) { create(:claimant) }
 
       before do
-        create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true)
+        create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true, appeal: appeal)
       end
 
       it "returns true" do
-        expect(claimant.advanced_on_docket?(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket?(appeal)).to eq(true)
         expect(claimant.advanced_on_docket_based_on_age?).to eq(false)
-        expect(claimant.advanced_on_docket_motion_granted?(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket_motion_granted?(appeal)).to eq(true)
       end
     end
 
@@ -131,9 +133,9 @@ describe Claimant, :postgres do
       let(:claimant) { create(:claimant) }
 
       it "returns false" do
-        expect(claimant.advanced_on_docket?(1.year.ago)).to eq(false)
+        expect(claimant.advanced_on_docket?(appeal)).to eq(false)
         expect(claimant.advanced_on_docket_based_on_age?).to eq(false)
-        expect(claimant.advanced_on_docket_motion_granted?(1.year.ago)).to eq(false)
+        expect(claimant.advanced_on_docket_motion_granted?(appeal)).to eq(false)
       end
     end
 
@@ -141,13 +143,13 @@ describe Claimant, :postgres do
       let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age) }
 
       before do
-        create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true)
+        create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true, appeal: appeal)
       end
 
       it "returns true" do
-        expect(claimant.advanced_on_docket?(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket?(appeal)).to eq(true)
         expect(claimant.advanced_on_docket_based_on_age?).to eq(true)
-        expect(claimant.advanced_on_docket_motion_granted?(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket_motion_granted?(appeal)).to eq(true)
       end
     end
 
@@ -155,13 +157,13 @@ describe Claimant, :postgres do
       let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age, type: "AttorneyClaimant") }
 
       before do
-        create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true)
+        create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true, appeal: appeal)
       end
 
       it "returns false" do
         expect(claimant.advanced_on_docket_based_on_age?).to eq(false)
-        expect(claimant.advanced_on_docket_motion_granted?(1.year.ago)).to eq(false)
-        expect(claimant.advanced_on_docket?(1.year.ago)).to eq(false)
+        expect(claimant.advanced_on_docket_motion_granted?(appeal)).to eq(false)
+        expect(claimant.advanced_on_docket?(appeal)).to eq(false)
       end
     end
   end
