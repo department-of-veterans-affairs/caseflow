@@ -44,8 +44,8 @@ export default class AssignHearingsTabs extends React.PureComponent {
       <div className="usa-width-three-fourths">
         {!_.isNil(selectedHearingDay) &&
           <h1>
-            {`${moment(selectedHearingDay.scheduledFor).format('ddd M/DD/YYYY')}
-              ${room} (${availableSlots} slots remaining)`}
+            {`${moment(selectedHearingDay.scheduledFor).format('ddd M/DD/YYYY')}  
+              ${room ?? ''} (${availableSlots} slots remaining)`}
           </h1>
         }
         <TabWindow
