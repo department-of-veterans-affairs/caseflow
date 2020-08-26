@@ -16,7 +16,7 @@ class AttorneyClaimant < Claimant
     false
   end
 
-  def advanced_on_docket_motion_granted?(_appeal_receipt_date)
+  def advanced_on_docket_motion_granted?(_appeal)
     false
   end
 

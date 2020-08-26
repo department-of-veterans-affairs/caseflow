@@ -216,16 +216,7 @@ class Appeal < DecisionReview
   end
 
   def ready_for_distribution?
-    # Appeals are ready for distribution when the DistributionTask is the active task, meaning there are no outstanding
-    #   Evidence Window or Hearing tasks, and when there are no mail tasks that legally restrict the distribution of
-    #   the case, aka blocking mail tasks
-    return false unless tasks.active.where(type: DistributionTask.name).any?
-
-    MailTask.open.where(appeal: self).find_each do |mail_task|
-      return false if mail_task.blocking?
-    end
-
-    true
+    tasks.active.where(type: DistributionTask.name).any?
   end
 
   def ready_for_distribution_at
@@ -278,7 +269,7 @@ class Appeal < DecisionReview
     conditionally_set_aod_based_on_age
     # One of the AOD motion reasons is 'age'. Keep interrogation of any motions separate from `aod_based_on_age`,
     # which reflects `claimant.advanced_on_docket_based_on_age?`.
-    aod_based_on_age || claimant&.advanced_on_docket_motion_granted?(receipt_date)
+    aod_based_on_age || claimant&.advanced_on_docket_motion_granted?(self)
   end
 
   # Prefer aod? over aod going forward, as this function returns a boolean
@@ -494,6 +485,23 @@ class Appeal < DecisionReview
 
   def eligible_for_death_dismissal?(_user)
     # Death dismissal processing is only for VACOLs/Legacy appeals
+    false
+  end
+
+  # We are ready for BVA dispatch if
+  #  - the appeal is not at Quality Review
+  #  - the appeal has not already completed BVA Dispatch
+  #  - the appeal is not already at BVA Dispatch
+  #  - the appeal is not at Judge Decision Review
+  #  - the appeal has a finished Judge Decision Review
+  def ready_for_bva_dispatch?
+    return false if Task.open.where(appeal: self).where("type IN (?, ?, ?)",
+                                                        JudgeDecisionReviewTask.name,
+                                                        QualityReviewTask.name,
+                                                        BvaDispatchTask.name).any?
+    return false if BvaDispatchTask.completed.find_by(appeal: self)
+    return true if JudgeDecisionReviewTask.completed.find_by(appeal: self)
+
     false
   end
 

@@ -11,7 +11,6 @@ exports[`Fields Does not display timezone or divider for Video hearings 1`] = `
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -193,7 +192,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -15323,7 +15321,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
         name="representativeTz"
         onChange={[Function]}
         readOnly={false}
-        required="tom.brady@caseflow.gov"
+        required={true}
         time="08:15"
         value={null}
       >
@@ -16100,7 +16098,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
           }
           placeholder="Select a timezone"
           readOnly={false}
-          required="tom.brady@caseflow.gov"
+          required={true}
           strongLabel={true}
           styling={
             Object {
@@ -30336,6 +30334,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
         email="tom.brady@caseflow.gov"
         emailType="representativeEmail"
         label="POA/Representative Email"
+        update={[Function]}
       >
         <TextField
           className={
