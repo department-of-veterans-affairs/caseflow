@@ -21,7 +21,7 @@ describe BulkTaskAssignment, :postgres do
              created_at: 1.day.ago)
     end
 
-    # Even it is the oldest task, it should skip it becasue it is on hold
+    # Even it is the oldest task, it should skip it because it is on hold
     let!(:no_show_hearing_task4) do
       create(:no_show_hearing_task,
              :on_hold,
@@ -132,6 +132,57 @@ describe BulkTaskAssignment, :postgres do
           expect(task_with_legacy_appeal.assigned_to).to eq assigned_to
           expect(task_with_legacy_appeal.type).to eq "NoShowHearingTask"
           expect(task_with_legacy_appeal.assigned_by).to eq assigned_by
+        end
+      end
+
+      def create_no_show_hearing_task_for_appeal(appeal, creation_time = 1.day.ago)
+        create(:no_show_hearing_task,
+               appeal: appeal,
+               assigned_to: organization,
+               created_at: creation_time)
+      end
+
+      context "when there are priority appeals" do
+        let(:regional_office) { nil }
+        let(:task_count) { 20 }
+
+        let(:aod_appeal) { create(:appeal, :advanced_on_docket_due_to_motion) }
+        # Since cavc is not currently supported, ignore CAVC AMA appeals for now; use CAVC legacy appeals for now
+        let(:aod_legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, :aod)) }
+        let(:cavc_legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, :type_cavc_remand)) }
+        let(:cavc_aod_legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, :aod, :type_cavc_remand)) }
+
+        before do
+          create_no_show_hearing_task_for_appeal(aod_appeal, 3.days.ago)
+          create_no_show_hearing_task_for_appeal(aod_legacy_appeal, 2.days.ago)
+          create_no_show_hearing_task_for_appeal(cavc_legacy_appeal)
+          create_no_show_hearing_task_for_appeal(cavc_aod_legacy_appeal)
+        end
+
+        let(:expected_appeal_ordering) { [cavc_aod_legacy_appeal, aod_appeal, aod_legacy_appeal, cavc_legacy_appeal] }
+
+        subject { BulkTaskAssignment.new(params).process }
+
+        it "sorts priority appeals first" do
+          pp Task.active.map { |t| [t.appeal.id, t.appeal.class.name, t.appeal.aod?, t.appeal.cavc?] }
+          Task.active.order(:created_at).map { |t| t.appeal.treee }
+
+          prioritized_tasks = subject
+          pp prioritized_tasks.map { |t| [t.appeal.id, t.appeal.class.name, t.appeal.aod?, t.appeal.cavc?] }
+          prioritized_tasks.map { |t| t.appeal.treee }
+          expect(prioritized_tasks.first(4).map(&:appeal)).to eq(expected_appeal_ordering)
+
+          appeals_of_returned_tasks = prioritized_tasks.map(&:appeal)
+          expect(appeals_of_returned_tasks).to include(no_show_hearing_task1.appeal)
+          expect(appeals_of_returned_tasks).to include(no_show_hearing_task2.appeal)
+          expect(appeals_of_returned_tasks).to include(no_show_hearing_task3.appeal)
+        end
+
+        context "when task_count param is less than the number of AOD and CAVC appeals" do
+          let(:task_count) { 2 }
+          it "sorts priority appeals first" do
+            expect(subject.map(&:appeal)).to eq(expected_appeal_ordering.first(task_count))
+          end
         end
       end
     end
