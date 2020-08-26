@@ -121,6 +121,7 @@ FactoryBot.define do
       # the appeal has to be established before the motion is created to apply to it.
       established_at { Time.zone.now - 1 }
       after(:create) do |appeal|
+        appeal.update(aod_based_on_age: false)
         appeal.claimants = begin
           # Create an appeal with two claimants, one with a denied AOD motion
           # and one with a granted motion. The appeal should still be counted as AOD. Appeals only support one claimant,
@@ -149,6 +150,7 @@ FactoryBot.define do
     trait :denied_advance_on_docket do
       established_at { Time.zone.yesterday }
       after(:create) do |appeal|
+        appeal.update(aod_based_on_age: false)
         appeal.claimants = begin
           claimant = create(:claimant)
 
@@ -161,6 +163,7 @@ FactoryBot.define do
     trait :inapplicable_aod_motion do
       established_at { Time.zone.tomorrow }
       after(:create) do |appeal|
+        appeal.update(aod_based_on_age: false)
         appeal.claimants = begin
           claimant = create(:claimant)
           create(:advance_on_docket_motion, person: claimant.person, granted: true, appeal: appeal)
