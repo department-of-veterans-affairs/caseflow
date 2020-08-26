@@ -1806,8 +1806,22 @@ describe Task, :all_dbs do
           BvaDispatchTask.find_by(appeal: appeal,
                                   assigned_to_type: "Organization").update!(status: Constants.TASK_STATUSES.completed)
         end
+
+        include_examples "depends on whether parent blocking_dispatch?"
+      end
+    end
+
+    shared_examples "depends on whether parent blocking_dispatch?" do
+      context "another dispatch blocking task as parent" do
+        let(:parent_task) { create(:congressional_interest_mail_task, parent: root_task) }
         it "doesn't change the parent task" do
           expect(subject.parent).to eq(parent_task)
+        end
+      end
+
+      context "a non dispatch blocking task as parent" do
+        it "sets the root task as parent" do
+          expect(subject.parent).to eq(root_task)
         end
       end
     end
@@ -1875,9 +1889,7 @@ describe Task, :all_dbs do
       end
 
       context "and no organization-assignee BvaDispatchTask" do
-        it "doesn't change the parent task" do
-          expect(subject.parent).to eq(parent_task)
-        end
+        include_examples "depends on whether parent blocking_dispatch?"
       end
     end
   end
