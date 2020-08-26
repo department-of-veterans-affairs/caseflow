@@ -62,7 +62,7 @@ const reset = (state, hearing) => ({
   hearing: formatHearing(hearing),
   formsUpdated: false
 });
-      
+
 export const RESET_VIRTUAL_HEARING = 'resetVirtualHearing';
 
 // Resets only the `virtualHearing` and `emailEvents` field, and should preserve all other fields.
