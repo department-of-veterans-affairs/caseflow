@@ -1812,7 +1812,7 @@ describe Task, :all_dbs do
     end
 
     shared_examples "depends on whether parent blocking_dispatch?" do
-      context "another dispatch blocking task as parent" do
+      context "parent task already blocks dispatch" do
         let(:parent_task) { create(:congressional_interest_mail_task, parent: root_task) }
         it "doesn't change the parent task" do
           expect(subject.parent).to eq(parent_task)
