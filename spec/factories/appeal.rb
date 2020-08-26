@@ -120,16 +120,17 @@ FactoryBot.define do
     trait :advanced_on_docket_due_to_motion do
       # the appeal has to be established before the motion is created to apply to it.
       established_at { Time.zone.now - 1 }
-      claimants do
+      after(:create) do |appeal, _evaluator|
         # Create an appeal with two claimants, one with a denied AOD motion
         # and one with a granted motion. The appeal should still be counted as AOD. Appeals only support one claimant,
         # so set the aod claimant as the last claimant on the appeal (and create it last)
-        another_claimant = create(:claimant)
+        another_claimant = create(:claimant, decision_review: appeal)
         create(:advance_on_docket_motion, person: another_claimant.person, granted: false)
 
-        claimant = create(:claimant)
+        claimant = create(:claimant, decision_review: appeal)
         create(:advance_on_docket_motion, person: claimant.person, granted: true)
-        [another_claimant, claimant]
+
+        appeal.claimants = [another_claimant, claimant]
       end
     end
 

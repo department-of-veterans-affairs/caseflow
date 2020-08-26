@@ -47,7 +47,7 @@ describe SetAppealAgeAodJob, :postgres do
       expect(inactive_age_aod_appeal.reload.aod_based_on_age).not_to eq(true)
 
       expect(age_aod_appeal.reload.aod_based_on_age).to eq(true)
-      expect(motion_aod_appeal.reload.aod_based_on_age).to eq(false)
+      expect(motion_aod_appeal.reload.aod_based_on_age).not_to eq(true)
 
       expect(age_aod_appeal_wrong_dob.reload.aod_based_on_age).to eq(false)
     end
