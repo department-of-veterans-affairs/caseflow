@@ -1819,7 +1819,7 @@ describe Task, :all_dbs do
         end
       end
 
-      context "a non dispatch blocking task as parent" do
+      context "parent task does not block dispatch" do
         it "sets the root task as parent" do
           expect(subject.parent).to eq(root_task)
         end
