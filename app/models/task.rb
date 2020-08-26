@@ -690,12 +690,18 @@ class Task < CaseflowRecord
     self.assigned_at = created_at unless assigned_at
   end
 
-  # If there is a BVA Dispatch task open, we want to make sure we block it                                              
-  # Prefer the provided parent if it already blocks BVA Dispatch, then the User-assigned                                
-  # BVA Dispatch task, and fallback to the Organization assigned one.    
+  # If there is a BVA Dispatch task open, we want to make sure we block it
+  # Prefer the provided parent if it already blocks BVA Dispatch, then the User-assigned
+  # BVA Dispatch task, and fallback to the Organization assigned one.
+  # If there is no BVA Dispatch task open, set the parent to the root_task unless
+  # the parent already blocks BVA Dispatch to avoid splicing connected tasks
   def conditionally_set_dispatch_as_parent
     dispatch_task = BvaDispatchTask.open.find_by(appeal: appeal, assigned_to_type: "User") ||
                     BvaDispatchTask.open.find_by(appeal: appeal, assigned_to_type: "Organization")
+
+    if ! (dispatch_task || self.parent.blocking_dispatch?)
+      self.parent = appeal.root_task
+    end
 
     if dispatch_task&.descendants&.exclude?(parent)
       self.parent = dispatch_task
