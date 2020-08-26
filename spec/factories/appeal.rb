@@ -144,7 +144,7 @@ FactoryBot.define do
 
     trait :denied_advance_on_docket do
       established_at { Time.zone.yesterday }
-      claimants  { [create(:claimant)] }
+      claimants { [create(:claimant)] }
       after(:create) do |appeal|
         create(:advance_on_docket_motion, person: appeal.claimants.last.person, granted: false, appeal: appeal)
       end
