@@ -39,7 +39,7 @@ class BulkTaskAssignment
     @tasks_to_be_assigned ||= begin
       tasks = task_type.constantize
         .active.where(assigned_to_id: organization.id)
-        .limit(task_count).order(:created_at)
+        .order(:created_at)
       if regional_office
         tasks = tasks.joins(
           "INNER JOIN appeals ON appeals.id = appeal_id AND appeal_type = '#{Appeal.name}'"
@@ -47,8 +47,28 @@ class BulkTaskAssignment
                 tasks.joins("INNER JOIN legacy_appeals ON legacy_appeals.id = appeal_id \
                   AND appeal_type = '#{LegacyAppeal.name}'").where("closest_regional_office = ?", regional_office)
       end
-      tasks
+
+      prioritized_tasks(tasks).first(task_count.to_i)
     end
+  end
+
+  def prioritized_tasks(tasks)
+    remaining_tasks = tasks
+    prioritized_tasks = []
+
+    prioritized_tasks += remaining_tasks.select { |t| t.appeal.cavc? && t.appeal.aod? }
+    remaining_tasks -= prioritized_tasks
+
+    prioritized_tasks += remaining_tasks.select { |t| t.appeal.aod? }
+    remaining_tasks -= prioritized_tasks
+
+    prioritized_tasks += remaining_tasks.select { |t| t.appeal.cavc? }
+    remaining_tasks -= prioritized_tasks
+
+    # pp prioritized_tasks, remaining_tasks
+    prioritized_tasks += remaining_tasks
+
+    prioritized_tasks
   end
 
   def assigned_to
