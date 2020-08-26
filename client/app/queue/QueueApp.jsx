@@ -47,6 +47,7 @@ import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
 import CreateMailTaskDialog from './CreateMailTaskDialog';
 import AddJudgeTeamModal from './AddJudgeTeamModal';
+import AddDvcTeamModal from './AddDvcTeamModal';
 import AddVsoModal from './AddVsoModal';
 import AddPrivateBarModal from './AddPrivateBarModal';
 import LookupParticipantIdModal from './LookupParticipantIdModal';
@@ -296,6 +297,8 @@ class QueueApp extends React.PureComponent {
   routedUserManagement = (props) => <UserManagement {...props.match.params} />;
 
   routedAddJudgeTeam = (props) => <AddJudgeTeamModal {...props.match.params} />;
+
+  routedAddDvcTeam = (props) => <AddDvcTeamModal {...props.match.params} />;
 
   routedAddVsoModal = (props) => <AddVsoModal {...props.match.params} />;
 
@@ -649,6 +652,7 @@ class QueueApp extends React.PureComponent {
               />
 
               <Route path="/team_management/add_judge_team" render={this.routedAddJudgeTeam} />
+              <Route path="/team_management/add_dvc_team" render={this.routedAddDvcTeam} />
               <Route path="/team_management/add_vso" render={this.routedAddVsoModal} />
               <Route path="/team_management/add_private_bar" render={this.routedAddPrivateBarModal} />
               <Route path="/team_management/lookup_participant_id" render={this.routedLookupParticipantIdModal} />
