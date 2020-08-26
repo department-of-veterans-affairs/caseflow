@@ -250,7 +250,7 @@ export default class OrganizationUsers extends React.PureComponent {
         { (judgeTeam || dvcTeam) && admin ?
           <div {...topUserBorder}></div> :
           <div {...buttonContainerStyle}>
-            { (!judgeTeam || !dvcTeam) ? '' : this.adminButton(user, admin) }
+            { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
             { this.removeUserButton(user) }
           </div> }
       </React.Fragment>;
