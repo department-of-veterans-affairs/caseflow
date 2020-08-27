@@ -54,7 +54,7 @@ class BulkTaskAssignment
 
   def prioritized_tasks(tasks)
     task_count = tasks.count
-    task_with_initial_priority = tasks.each_with_index.map { |task, i| [task, task_count - i] }
+    task_with_initial_priority = tasks.each_with_index.map { |task, index| [task, task_count - index] }
 
     prioritized_tasks_with_priority = task_with_initial_priority.sort_by do |task, priority|
       priority += task_count**3 if task.appeal.aod?
