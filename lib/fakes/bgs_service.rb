@@ -376,7 +376,6 @@ class Fakes::BGSService
 
   def fetch_rating_profiles_in_range(participant_id:, start_date:, end_date:)
     ratings = get_rating_record(participant_id)[:ratings] || []
-
     # Simulate the response if participant doesn't exist or doesn't have any ratings
     if ratings.blank?
       return { response: { response_text: "No Data Found" } }
@@ -401,7 +400,35 @@ class Fakes::BGSService
   end
 
   def format_rating_at_issue(ratings)
+    ratings = Array.wrap(ratings).map do |rating|
+      rating_at_issue_profile_data(rating)
+    end
+
     { rba_profile_list: ratings.empty? ? nil : { rba_profile: ratings } }
+  end
+
+  def rating_at_issue_profile_data(rating)
+    promulgated_rating_data = rating.dig(:comp_id)
+
+    # If a PromulgatedRating was originally stored in rating_store
+    # convert to be compatible with RatingAtIssue
+    if promulgated_rating_data.present?
+      rating_profile = fetch_rating_profile(
+        participant_id: promulgated_rating_data[:ptcpnt_vet_id],
+        profile_date: promulgated_rating_data[:prfil_dt]
+      )
+
+      {
+        prfl_dt: promulgated_rating_data[:prfil_dt],
+        ptcpnt_vet_id: promulgated_rating_data[:ptcpnt_vet_id],
+        prmlgn_dt: rating[:prmlgn_dt],
+        rba_issue_list: { rba_issue: rating_profile[:rating_issues] },
+        disability_list: { disability: rating_profile[:disabilities] },
+        rba_claim_list: { rba_claim: rating_profile[:associated_claims] }
+      }
+    else
+      rating
+    end
   end
 
   def fetch_rating_profile(participant_id:, profile_date:)
