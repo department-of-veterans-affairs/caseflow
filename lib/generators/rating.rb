@@ -56,6 +56,14 @@ class Generators::Rating
       fail Caseflow::Error::MustImplementInSubclass
     end
 
+    def bgs_rating_profile_data(attrs)
+      {
+        rating_issues: bgs_rating_issues_data(attrs),
+        associated_claims: bgs_associated_claims_data(attrs),
+        disabilities: [attrs[:disabilities], bgs_rating_decisions_data(attrs)].compact.flatten
+      }
+    end
+
     def bgs_rating_decisions_data(attrs)
       return nil unless attrs[:decisions]
 

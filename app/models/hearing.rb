@@ -231,6 +231,12 @@ class Hearing < CaseflowRecord
     ::HearingSerializer.worksheet(self).serializable_hash[:data][:attributes]
   end
 
+  def serialized_email_events
+    email_events.order(sent_at: :desc).map do |event|
+      SentEmailEventSerializer.new(event).serializable_hash[:data][:attributes]
+    end
+  end
+
   private
 
   def assign_created_by_user

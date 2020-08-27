@@ -55,7 +55,7 @@ gem "rails", "5.2.4.3"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
-gem "react_on_rails", "8.0.6"
+gem "react_on_rails", "11.3.0"
 gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"
