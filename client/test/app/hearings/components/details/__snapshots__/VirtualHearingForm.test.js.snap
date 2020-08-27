@@ -1576,7 +1576,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   options={
                     Array [
                       Object {
-                        "label": "None",
+                        "label": "",
                         "value": null,
                       },
                       Object {
@@ -2401,7 +2401,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                           options={
                             Array [
                               Object {
-                                "label": "None",
+                                "label": "",
                                 "value": null,
                               },
                               Object {
@@ -3224,7 +3224,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                             options={
                               Array [
                                 Object {
-                                  "label": "None",
+                                  "label": "",
                                   "value": null,
                                 },
                                 Object {
@@ -4027,7 +4027,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                               options={
                                 Array [
                                   Object {
-                                    "label": "None",
+                                    "label": "",
                                     "value": null,
                                   },
                                   Object {
@@ -4838,7 +4838,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                   "openMenuOnFocus": false,
                                   "options": Array [
                                     Object {
-                                      "label": "None",
+                                      "label": "",
                                       "value": null,
                                     },
                                     Object {
@@ -5690,7 +5690,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                     options={
                                       Array [
                                         Object {
-                                          "label": "None",
+                                          "label": "",
                                           "value": null,
                                         },
                                         Object {
@@ -6501,7 +6501,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                         "openMenuOnFocus": false,
                                         "options": Array [
                                           Object {
-                                            "label": "None",
+                                            "label": "",
                                             "value": null,
                                           },
                                           Object {
@@ -7361,7 +7361,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                           options={
                                             Array [
                                               Object {
-                                                "label": "None",
+                                                "label": "",
                                                 "value": null,
                                               },
                                               Object {
@@ -8172,7 +8172,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               "openMenuOnFocus": false,
                                               "options": Array [
                                                 Object {
-                                                  "label": "None",
+                                                  "label": "",
                                                   "value": null,
                                                 },
                                                 Object {
@@ -9024,7 +9024,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 options={
                                                   Array [
                                                     Object {
-                                                      "label": "None",
+                                                      "label": "",
                                                       "value": null,
                                                     },
                                                     Object {
@@ -9835,7 +9835,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
                                                       Object {
-                                                        "label": "None",
+                                                        "label": "",
                                                         "value": null,
                                                       },
                                                       Object {
@@ -10734,7 +10734,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
                                                       Object {
-                                                        "label": "None",
+                                                        "label": "",
                                                         "value": null,
                                                       },
                                                       Object {
@@ -11662,7 +11662,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                           options={
                                             Array [
                                               Object {
-                                                "label": "None",
+                                                "label": "",
                                                 "value": null,
                                               },
                                               Object {
@@ -12473,7 +12473,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               "openMenuOnFocus": false,
                                               "options": Array [
                                                 Object {
-                                                  "label": "None",
+                                                  "label": "",
                                                   "value": null,
                                                 },
                                                 Object {
@@ -13315,7 +13315,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 options={
                                                   Array [
                                                     Object {
-                                                      "label": "None",
+                                                      "label": "",
                                                       "value": null,
                                                     },
                                                     Object {
@@ -14126,7 +14126,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
                                                       Object {
-                                                        "label": "None",
+                                                        "label": "",
                                                         "value": null,
                                                       },
                                                       Object {
@@ -14979,7 +14979,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 options={
                                                   Array [
                                                     Object {
-                                                      "label": "None",
+                                                      "label": "",
                                                       "value": null,
                                                     },
                                                     Object {
@@ -15790,7 +15790,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
                                                       Object {
-                                                        "label": "None",
+                                                        "label": "",
                                                         "value": null,
                                                       },
                                                       Object {
@@ -16836,7 +16836,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   options={
                     Array [
                       Object {
-                        "label": "None",
+                        "label": "",
                         "value": null,
                       },
                       Object {
@@ -17661,7 +17661,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                           options={
                             Array [
                               Object {
-                                "label": "None",
+                                "label": "",
                                 "value": null,
                               },
                               Object {
@@ -18484,7 +18484,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                             options={
                               Array [
                                 Object {
-                                  "label": "None",
+                                  "label": "",
                                   "value": null,
                                 },
                                 Object {
@@ -19287,7 +19287,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                               options={
                                 Array [
                                   Object {
-                                    "label": "None",
+                                    "label": "",
                                     "value": null,
                                   },
                                   Object {
@@ -20098,7 +20098,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                   "openMenuOnFocus": false,
                                   "options": Array [
                                     Object {
-                                      "label": "None",
+                                      "label": "",
                                       "value": null,
                                     },
                                     Object {
@@ -20950,7 +20950,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                     options={
                                       Array [
                                         Object {
-                                          "label": "None",
+                                          "label": "",
                                           "value": null,
                                         },
                                         Object {
@@ -21761,7 +21761,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                         "openMenuOnFocus": false,
                                         "options": Array [
                                           Object {
-                                            "label": "None",
+                                            "label": "",
                                             "value": null,
                                           },
                                           Object {
@@ -22621,7 +22621,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                           options={
                                             Array [
                                               Object {
-                                                "label": "None",
+                                                "label": "",
                                                 "value": null,
                                               },
                                               Object {
@@ -23432,7 +23432,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               "openMenuOnFocus": false,
                                               "options": Array [
                                                 Object {
-                                                  "label": "None",
+                                                  "label": "",
                                                   "value": null,
                                                 },
                                                 Object {
@@ -24284,7 +24284,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 options={
                                                   Array [
                                                     Object {
-                                                      "label": "None",
+                                                      "label": "",
                                                       "value": null,
                                                     },
                                                     Object {
@@ -25095,7 +25095,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
                                                       Object {
-                                                        "label": "None",
+                                                        "label": "",
                                                         "value": null,
                                                       },
                                                       Object {
@@ -25994,7 +25994,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
                                                       Object {
-                                                        "label": "None",
+                                                        "label": "",
                                                         "value": null,
                                                       },
                                                       Object {
@@ -26922,7 +26922,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                           options={
                                             Array [
                                               Object {
-                                                "label": "None",
+                                                "label": "",
                                                 "value": null,
                                               },
                                               Object {
@@ -27733,7 +27733,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               "openMenuOnFocus": false,
                                               "options": Array [
                                                 Object {
-                                                  "label": "None",
+                                                  "label": "",
                                                   "value": null,
                                                 },
                                                 Object {
@@ -28575,7 +28575,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 options={
                                                   Array [
                                                     Object {
-                                                      "label": "None",
+                                                      "label": "",
                                                       "value": null,
                                                     },
                                                     Object {
@@ -29386,7 +29386,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
                                                       Object {
-                                                        "label": "None",
+                                                        "label": "",
                                                         "value": null,
                                                       },
                                                       Object {
@@ -30239,7 +30239,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 options={
                                                   Array [
                                                     Object {
-                                                      "label": "None",
+                                                      "label": "",
                                                       "value": null,
                                                     },
                                                     Object {
@@ -31050,7 +31050,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
                                                       Object {
-                                                        "label": "None",
+                                                        "label": "",
                                                         "value": null,
                                                       },
                                                       Object {
