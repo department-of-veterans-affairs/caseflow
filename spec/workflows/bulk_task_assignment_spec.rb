@@ -164,12 +164,7 @@ describe BulkTaskAssignment, :postgres do
         subject { BulkTaskAssignment.new(params).process }
 
         it "sorts priority appeals first" do
-          pp Task.active.map { |t| [t.appeal.id, t.appeal.class.name, t.appeal.aod?, t.appeal.cavc?] }
-          Task.active.order(:created_at).map { |t| t.appeal.treee }
-
           prioritized_tasks = subject
-          pp prioritized_tasks.map { |t| [t.appeal.id, t.appeal.class.name, t.appeal.aod?, t.appeal.cavc?] }
-          prioritized_tasks.map { |t| t.appeal.treee }
           expect(prioritized_tasks.first(4).map(&:appeal)).to eq(expected_appeal_ordering)
 
           appeals_of_returned_tasks = prioritized_tasks.map(&:appeal)
