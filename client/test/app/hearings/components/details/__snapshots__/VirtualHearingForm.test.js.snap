@@ -1576,6 +1576,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   options={
                     Array [
                       Object {
+                        "label": "None",
+                        "value": null,
+                      },
+                      Object {
                         "index": -3,
                         "label": "Eastern Time (US & Canada) (3:30 AM)",
                         "value": "America/New_York",
@@ -2397,6 +2401,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                           options={
                             Array [
                               Object {
+                                "label": "None",
+                                "value": null,
+                              },
+                              Object {
                                 "index": -3,
                                 "label": "Eastern Time (US & Canada) (3:30 AM)",
                                 "value": "America/New_York",
@@ -3216,6 +3224,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "None",
+                                  "value": null,
+                                },
+                                Object {
                                   "index": -3,
                                   "label": "Eastern Time (US & Canada) (3:30 AM)",
                                   "value": "America/New_York",
@@ -4014,6 +4026,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                               isRtl={false}
                               options={
                                 Array [
+                                  Object {
+                                    "label": "None",
+                                    "value": null,
+                                  },
                                   Object {
                                     "index": -3,
                                     "label": "Eastern Time (US & Canada) (3:30 AM)",
@@ -4821,6 +4837,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                   "openMenuOnClick": true,
                                   "openMenuOnFocus": false,
                                   "options": Array [
+                                    Object {
+                                      "label": "None",
+                                      "value": null,
+                                    },
                                     Object {
                                       "index": -3,
                                       "label": "Eastern Time (US & Canada) (3:30 AM)",
@@ -5670,6 +5690,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                     options={
                                       Array [
                                         Object {
+                                          "label": "None",
+                                          "value": null,
+                                        },
+                                        Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (3:30 AM)",
                                           "value": "America/New_York",
@@ -6476,6 +6500,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                         "openMenuOnClick": true,
                                         "openMenuOnFocus": false,
                                         "options": Array [
+                                          Object {
+                                            "label": "None",
+                                            "value": null,
+                                          },
                                           Object {
                                             "index": -3,
                                             "label": "Eastern Time (US & Canada) (3:30 AM)",
@@ -7333,6 +7361,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                           options={
                                             Array [
                                               Object {
+                                                "label": "None",
+                                                "value": null,
+                                              },
+                                              Object {
                                                 "index": -3,
                                                 "label": "Eastern Time (US & Canada) (3:30 AM)",
                                                 "value": "America/New_York",
@@ -8139,6 +8171,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               "openMenuOnClick": true,
                                               "openMenuOnFocus": false,
                                               "options": Array [
+                                                Object {
+                                                  "label": "None",
+                                                  "value": null,
+                                                },
                                                 Object {
                                                   "index": -3,
                                                   "label": "Eastern Time (US & Canada) (3:30 AM)",
@@ -8988,6 +9024,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 options={
                                                   Array [
                                                     Object {
+                                                      "label": "None",
+                                                      "value": null,
+                                                    },
+                                                    Object {
                                                       "index": -3,
                                                       "label": "Eastern Time (US & Canada) (3:30 AM)",
                                                       "value": "America/New_York",
@@ -9794,6 +9834,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "openMenuOnClick": true,
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
+                                                      Object {
+                                                        "label": "None",
+                                                        "value": null,
+                                                      },
                                                       Object {
                                                         "index": -3,
                                                         "label": "Eastern Time (US & Canada) (3:30 AM)",
@@ -10689,6 +10733,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "openMenuOnClick": true,
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
+                                                      Object {
+                                                        "label": "None",
+                                                        "value": null,
+                                                      },
                                                       Object {
                                                         "index": -3,
                                                         "label": "Eastern Time (US & Canada) (3:30 AM)",
@@ -11614,6 +11662,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                           options={
                                             Array [
                                               Object {
+                                                "label": "None",
+                                                "value": null,
+                                              },
+                                              Object {
                                                 "index": -3,
                                                 "label": "Eastern Time (US & Canada) (3:30 AM)",
                                                 "value": "America/New_York",
@@ -12420,6 +12472,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               "openMenuOnClick": true,
                                               "openMenuOnFocus": false,
                                               "options": Array [
+                                                Object {
+                                                  "label": "None",
+                                                  "value": null,
+                                                },
                                                 Object {
                                                   "index": -3,
                                                   "label": "Eastern Time (US & Canada) (3:30 AM)",
@@ -13259,6 +13315,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 options={
                                                   Array [
                                                     Object {
+                                                      "label": "None",
+                                                      "value": null,
+                                                    },
+                                                    Object {
                                                       "index": -3,
                                                       "label": "Eastern Time (US & Canada) (3:30 AM)",
                                                       "value": "America/New_York",
@@ -14065,6 +14125,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "openMenuOnClick": true,
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
+                                                      Object {
+                                                        "label": "None",
+                                                        "value": null,
+                                                      },
                                                       Object {
                                                         "index": -3,
                                                         "label": "Eastern Time (US & Canada) (3:30 AM)",
@@ -14915,6 +14979,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 options={
                                                   Array [
                                                     Object {
+                                                      "label": "None",
+                                                      "value": null,
+                                                    },
+                                                    Object {
                                                       "index": -3,
                                                       "label": "Eastern Time (US & Canada) (3:30 AM)",
                                                       "value": "America/New_York",
@@ -15721,6 +15789,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "openMenuOnClick": true,
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
+                                                      Object {
+                                                        "label": "None",
+                                                        "value": null,
+                                                      },
                                                       Object {
                                                         "index": -3,
                                                         "label": "Eastern Time (US & Canada) (3:30 AM)",
@@ -16764,6 +16836,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                   options={
                     Array [
                       Object {
+                        "label": "None",
+                        "value": null,
+                      },
+                      Object {
                         "index": -3,
                         "label": "Eastern Time (US & Canada) (3:30 AM)",
                         "value": "America/New_York",
@@ -17585,6 +17661,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                           options={
                             Array [
                               Object {
+                                "label": "None",
+                                "value": null,
+                              },
+                              Object {
                                 "index": -3,
                                 "label": "Eastern Time (US & Canada) (3:30 AM)",
                                 "value": "America/New_York",
@@ -18404,6 +18484,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "None",
+                                  "value": null,
+                                },
+                                Object {
                                   "index": -3,
                                   "label": "Eastern Time (US & Canada) (3:30 AM)",
                                   "value": "America/New_York",
@@ -19202,6 +19286,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                               isRtl={false}
                               options={
                                 Array [
+                                  Object {
+                                    "label": "None",
+                                    "value": null,
+                                  },
                                   Object {
                                     "index": -3,
                                     "label": "Eastern Time (US & Canada) (3:30 AM)",
@@ -20009,6 +20097,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                   "openMenuOnClick": true,
                                   "openMenuOnFocus": false,
                                   "options": Array [
+                                    Object {
+                                      "label": "None",
+                                      "value": null,
+                                    },
                                     Object {
                                       "index": -3,
                                       "label": "Eastern Time (US & Canada) (3:30 AM)",
@@ -20858,6 +20950,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                     options={
                                       Array [
                                         Object {
+                                          "label": "None",
+                                          "value": null,
+                                        },
+                                        Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (3:30 AM)",
                                           "value": "America/New_York",
@@ -21664,6 +21760,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                         "openMenuOnClick": true,
                                         "openMenuOnFocus": false,
                                         "options": Array [
+                                          Object {
+                                            "label": "None",
+                                            "value": null,
+                                          },
                                           Object {
                                             "index": -3,
                                             "label": "Eastern Time (US & Canada) (3:30 AM)",
@@ -22521,6 +22621,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                           options={
                                             Array [
                                               Object {
+                                                "label": "None",
+                                                "value": null,
+                                              },
+                                              Object {
                                                 "index": -3,
                                                 "label": "Eastern Time (US & Canada) (3:30 AM)",
                                                 "value": "America/New_York",
@@ -23327,6 +23431,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               "openMenuOnClick": true,
                                               "openMenuOnFocus": false,
                                               "options": Array [
+                                                Object {
+                                                  "label": "None",
+                                                  "value": null,
+                                                },
                                                 Object {
                                                   "index": -3,
                                                   "label": "Eastern Time (US & Canada) (3:30 AM)",
@@ -24176,6 +24284,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 options={
                                                   Array [
                                                     Object {
+                                                      "label": "None",
+                                                      "value": null,
+                                                    },
+                                                    Object {
                                                       "index": -3,
                                                       "label": "Eastern Time (US & Canada) (3:30 AM)",
                                                       "value": "America/New_York",
@@ -24982,6 +25094,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "openMenuOnClick": true,
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
+                                                      Object {
+                                                        "label": "None",
+                                                        "value": null,
+                                                      },
                                                       Object {
                                                         "index": -3,
                                                         "label": "Eastern Time (US & Canada) (3:30 AM)",
@@ -25877,6 +25993,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "openMenuOnClick": true,
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
+                                                      Object {
+                                                        "label": "None",
+                                                        "value": null,
+                                                      },
                                                       Object {
                                                         "index": -3,
                                                         "label": "Eastern Time (US & Canada) (3:30 AM)",
@@ -26802,6 +26922,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                           options={
                                             Array [
                                               Object {
+                                                "label": "None",
+                                                "value": null,
+                                              },
+                                              Object {
                                                 "index": -3,
                                                 "label": "Eastern Time (US & Canada) (3:30 AM)",
                                                 "value": "America/New_York",
@@ -27608,6 +27732,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               "openMenuOnClick": true,
                                               "openMenuOnFocus": false,
                                               "options": Array [
+                                                Object {
+                                                  "label": "None",
+                                                  "value": null,
+                                                },
                                                 Object {
                                                   "index": -3,
                                                   "label": "Eastern Time (US & Canada) (3:30 AM)",
@@ -28447,6 +28575,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 options={
                                                   Array [
                                                     Object {
+                                                      "label": "None",
+                                                      "value": null,
+                                                    },
+                                                    Object {
                                                       "index": -3,
                                                       "label": "Eastern Time (US & Canada) (3:30 AM)",
                                                       "value": "America/New_York",
@@ -29253,6 +29385,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "openMenuOnClick": true,
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
+                                                      Object {
+                                                        "label": "None",
+                                                        "value": null,
+                                                      },
                                                       Object {
                                                         "index": -3,
                                                         "label": "Eastern Time (US & Canada) (3:30 AM)",
@@ -30103,6 +30239,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 options={
                                                   Array [
                                                     Object {
+                                                      "label": "None",
+                                                      "value": null,
+                                                    },
+                                                    Object {
                                                       "index": -3,
                                                       "label": "Eastern Time (US & Canada) (3:30 AM)",
                                                       "value": "America/New_York",
@@ -30909,6 +31049,10 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "openMenuOnClick": true,
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
+                                                      Object {
+                                                        "label": "None",
+                                                        "value": null,
+                                                      },
                                                       Object {
                                                         "index": -3,
                                                         "label": "Eastern Time (US & Canada) (3:30 AM)",
