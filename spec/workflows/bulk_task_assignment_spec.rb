@@ -136,10 +136,7 @@ describe BulkTaskAssignment, :postgres do
       end
 
       def create_no_show_hearing_task_for_appeal(appeal, creation_time = 1.day.ago)
-        create(:no_show_hearing_task,
-               appeal: appeal,
-               assigned_to: organization,
-               created_at: creation_time)
+        create(:no_show_hearing_task, appeal: appeal, assigned_to: organization, created_at: creation_time)
       end
 
       context "when there are priority appeals" do
