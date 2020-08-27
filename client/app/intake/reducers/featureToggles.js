@@ -25,6 +25,9 @@ const updateFromServerFeatures = (state, featureToggles) => {
     },
     attorneyFees: {
       $set: Boolean(featureToggles.attorneyFees)
+    },
+    establishFiduciaryEps: {
+      $set: Boolean(featureToggles.establishFiduciaryEps)
     }
   });
 };
@@ -37,7 +40,8 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
       correctClaimReviews: false,
       unidentifiedIssueDecisionDate: false,
       verifyUnidentifiedIssue: false,
-      restrictAppealIntakes: false
+      restrictAppealIntakes: false,
+      establishFiduciaryEps: false
     },
     data.featureToggles
   );

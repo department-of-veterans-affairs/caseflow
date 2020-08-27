@@ -1,0 +1,783 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ScheduleVeteranForm Can cancel the form 1`] = `
+<div
+  data-css-7jz325=""
+>
+  <AppSegment
+    filledBackground={true}
+  >
+    <h1>
+      Schedule Veteran for a Hearing
+    </h1>
+    <div
+      data-css-16cycjp=""
+    />
+    <div
+      className="usa-width-one-half"
+    >
+      <HearingTypeDropdown
+        enableFullPageConversion={true}
+        requestType="Video"
+        update={[Function]}
+        virtualHearing={null}
+      />
+    </div>
+    <div
+      className="cf-help-divider usa-width-one-whole"
+    />
+    <div
+      className="usa-width-one-half"
+    >
+      <ReadOnly
+        label="Veteran Address"
+        spacing={0}
+        text={
+          <AddressLine
+            addressCity="SAN FRANCISCO"
+            addressLine1="9999 MISSION ST"
+            addressState="CA"
+            addressZip="94103"
+            name="Abellona Valtas"
+            spacing={5}
+          />
+        }
+      />
+      <Connect(RegionalOfficeDropdown)
+        onChange={[Function]}
+        validateValueOnMount={true}
+        value="RO17"
+      />
+      <Connect(AppealHearingLocationsDropdown)
+        appealId="3afefa82-5736-47c8-a977-0b4b8586f73e"
+        dynamic={true}
+        key="hearingLocation__RO17"
+        onChange={[Function]}
+        regionalOffice="RO17"
+        staticHearingLocations={Array []}
+        value={null}
+      />
+      <Connect(HearingDateDropdown)
+        key="hearingDate__RO17"
+        onChange={[Function]}
+        regionalOffice="RO17"
+      />
+      <HearingTime
+        componentIndex={0}
+        enableZone={true}
+        label="Hearing Time"
+        onChange={[Function]}
+        value="06:00"
+        vertical={true}
+      />
+    </div>
+  </AppSegment>
+  <Button
+    classNames={
+      Array [
+        "cf-submit",
+      ]
+    }
+    linkStyling={true}
+    loading={false}
+    name="Cancel"
+    onClick={[Function]}
+    styling={
+      Object {
+        "data-css-14x0t8z": "",
+      }
+    }
+    type="button"
+    willNeverBeLoading={false}
+  >
+    Cancel
+  </Button>
+  <span
+    data-css-jf1dde=""
+  >
+    <Button
+      className="usa-button"
+      classNames={
+        Array [
+          "cf-submit",
+        ]
+      }
+      linkStyling={false}
+      loading={false}
+      name="Schedule"
+      onClick={[Function]}
+      type="button"
+      willNeverBeLoading={false}
+    >
+      Schedule
+    </Button>
+  </span>
+</div>
+`;
+
+exports[`ScheduleVeteranForm Can submit the form 1`] = `
+<div
+  data-css-7jz325=""
+>
+  <AppSegment
+    filledBackground={true}
+  >
+    <h1>
+      Schedule Veteran for a Hearing
+    </h1>
+    <div
+      data-css-16cycjp=""
+    />
+    <div
+      className="usa-width-one-half"
+    >
+      <HearingTypeDropdown
+        enableFullPageConversion={true}
+        requestType="Video"
+        update={[Function]}
+        virtualHearing={null}
+      />
+    </div>
+    <div
+      className="cf-help-divider usa-width-one-whole"
+    />
+    <div
+      className="usa-width-one-half"
+    >
+      <ReadOnly
+        label="Veteran Address"
+        spacing={0}
+        text={
+          <AddressLine
+            addressCity="SAN FRANCISCO"
+            addressLine1="9999 MISSION ST"
+            addressState="CA"
+            addressZip="94103"
+            name="Abellona Valtas"
+            spacing={5}
+          />
+        }
+      />
+      <Connect(RegionalOfficeDropdown)
+        onChange={[Function]}
+        validateValueOnMount={true}
+        value="RO17"
+      />
+      <Connect(AppealHearingLocationsDropdown)
+        appealId="3afefa82-5736-47c8-a977-0b4b8586f73e"
+        dynamic={true}
+        key="hearingLocation__RO17"
+        onChange={[Function]}
+        regionalOffice="RO17"
+        staticHearingLocations={Array []}
+        value={null}
+      />
+      <Connect(HearingDateDropdown)
+        key="hearingDate__RO17"
+        onChange={[Function]}
+        regionalOffice="RO17"
+      />
+      <HearingTime
+        componentIndex={0}
+        enableZone={true}
+        label="Hearing Time"
+        onChange={[Function]}
+        value="06:00"
+        vertical={true}
+      />
+    </div>
+  </AppSegment>
+  <Button
+    classNames={
+      Array [
+        "cf-submit",
+      ]
+    }
+    linkStyling={true}
+    loading={false}
+    name="Cancel"
+    onClick={[Function]}
+    styling={
+      Object {
+        "data-css-14x0t8z": "",
+      }
+    }
+    type="button"
+    willNeverBeLoading={false}
+  >
+    Cancel
+  </Button>
+  <span
+    data-css-jf1dde=""
+  >
+    <Button
+      className="usa-button"
+      classNames={
+        Array [
+          "cf-submit",
+        ]
+      }
+      linkStyling={false}
+      loading={false}
+      name="Schedule"
+      onClick={[Function]}
+      type="button"
+      willNeverBeLoading={false}
+    >
+      Schedule
+    </Button>
+  </span>
+</div>
+`;
+
+exports[`ScheduleVeteranForm Can toggle back to Video 1`] = `
+<div
+  data-css-7jz325=""
+>
+  <AppSegment
+    filledBackground={true}
+  >
+    <h1>
+      Schedule Veteran for a Hearing
+    </h1>
+    <div
+      data-css-16cycjp=""
+    />
+    <div
+      className="usa-width-one-half"
+    >
+      <HearingTypeDropdown
+        enableFullPageConversion={true}
+        requestType="Video"
+        update={[Function]}
+        virtualHearing={null}
+      />
+    </div>
+    <div
+      className="cf-help-divider usa-width-one-whole"
+    />
+    <div
+      className="usa-width-one-half"
+    >
+      <ReadOnly
+        label="Veteran Address"
+        spacing={0}
+        text={
+          <AddressLine
+            addressCity="SAN FRANCISCO"
+            addressLine1="9999 MISSION ST"
+            addressState="CA"
+            addressZip="94103"
+            name="Abellona Valtas"
+            spacing={5}
+          />
+        }
+      />
+      <Connect(RegionalOfficeDropdown)
+        onChange={[Function]}
+        validateValueOnMount={true}
+        value="RO17"
+      />
+      <Connect(AppealHearingLocationsDropdown)
+        appealId="3afefa82-5736-47c8-a977-0b4b8586f73e"
+        dynamic={true}
+        key="hearingLocation__RO17"
+        onChange={[Function]}
+        regionalOffice="RO17"
+        staticHearingLocations={Array []}
+        value={null}
+      />
+      <Connect(HearingDateDropdown)
+        key="hearingDate__RO17"
+        onChange={[Function]}
+        regionalOffice="RO17"
+      />
+      <HearingTime
+        componentIndex={0}
+        enableZone={true}
+        label="Hearing Time"
+        onChange={[Function]}
+        value="06:00"
+        vertical={true}
+      />
+    </div>
+  </AppSegment>
+  <Button
+    classNames={
+      Array [
+        "cf-submit",
+      ]
+    }
+    linkStyling={true}
+    loading={false}
+    name="Cancel"
+    onClick={[Function]}
+    styling={
+      Object {
+        "data-css-14x0t8z": "",
+      }
+    }
+    type="button"
+    willNeverBeLoading={false}
+  >
+    Cancel
+  </Button>
+  <span
+    data-css-jf1dde=""
+  >
+    <Button
+      className="usa-button"
+      classNames={
+        Array [
+          "cf-submit",
+        ]
+      }
+      linkStyling={false}
+      loading={false}
+      name="Schedule"
+      onClick={[Function]}
+      type="button"
+      willNeverBeLoading={false}
+    >
+      Schedule
+    </Button>
+  </span>
+</div>
+`;
+
+exports[`ScheduleVeteranForm Displays Virtual Hearing form fields when type is changed to Virtual 1`] = `
+<div
+  data-css-7jz325=""
+>
+  <AppSegment
+    filledBackground={true}
+  >
+    <h1>
+      Schedule Veteran for a Hearing
+    </h1>
+    <div
+      data-css-16cycjp=""
+    />
+    <div
+      className="usa-width-one-half"
+    >
+      <HearingTypeDropdown
+        enableFullPageConversion={true}
+        requestType="Video"
+        update={[Function]}
+        virtualHearing={null}
+      />
+    </div>
+    <div
+      className="cf-help-divider usa-width-one-whole"
+    />
+    <div
+      className="usa-width-one-half"
+    >
+      <ReadOnly
+        label="Veteran Address"
+        spacing={0}
+        text={
+          <AddressLine
+            addressCity="SAN FRANCISCO"
+            addressLine1="9999 MISSION ST"
+            addressState="CA"
+            addressZip="94103"
+            name="Abellona Valtas"
+            spacing={5}
+          />
+        }
+      />
+      <Connect(RegionalOfficeDropdown)
+        onChange={[Function]}
+        validateValueOnMount={true}
+        value="RO17"
+      />
+      <Connect(AppealHearingLocationsDropdown)
+        appealId="3afefa82-5736-47c8-a977-0b4b8586f73e"
+        dynamic={true}
+        key="hearingLocation__RO17"
+        onChange={[Function]}
+        regionalOffice="RO17"
+        staticHearingLocations={Array []}
+        value={null}
+      />
+      <Connect(HearingDateDropdown)
+        key="hearingDate__RO17"
+        onChange={[Function]}
+        regionalOffice="RO17"
+      />
+      <HearingTime
+        componentIndex={0}
+        enableZone={true}
+        label="Hearing Time"
+        onChange={[Function]}
+        value="06:00"
+        vertical={true}
+      />
+    </div>
+  </AppSegment>
+  <Button
+    classNames={
+      Array [
+        "cf-submit",
+      ]
+    }
+    linkStyling={true}
+    loading={false}
+    name="Cancel"
+    onClick={[Function]}
+    styling={
+      Object {
+        "data-css-14x0t8z": "",
+      }
+    }
+    type="button"
+    willNeverBeLoading={false}
+  >
+    Cancel
+  </Button>
+  <span
+    data-css-jf1dde=""
+  >
+    <Button
+      className="usa-button"
+      classNames={
+        Array [
+          "cf-submit",
+        ]
+      }
+      linkStyling={false}
+      loading={false}
+      name="Schedule"
+      onClick={[Function]}
+      type="button"
+      willNeverBeLoading={false}
+    >
+      Schedule
+    </Button>
+  </span>
+</div>
+`;
+
+exports[`ScheduleVeteranForm Displays error messages when errors are present 1`] = `
+<div
+  data-css-7jz325=""
+>
+  <AppSegment
+    filledBackground={true}
+  >
+    <h1>
+      Schedule Veteran for a Hearing
+    </h1>
+    <div
+      data-css-16cycjp=""
+    />
+    <div
+      className="usa-width-one-half"
+    >
+      <HearingTypeDropdown
+        enableFullPageConversion={true}
+        requestType="Video"
+        update={[Function]}
+        virtualHearing={null}
+      />
+    </div>
+    <div
+      className="cf-help-divider usa-width-one-whole"
+    />
+    <div
+      className="usa-width-one-half"
+    >
+      <ReadOnly
+        label="Veteran Address"
+        spacing={0}
+        text={
+          <AddressLine
+            addressCity="SAN FRANCISCO"
+            addressLine1="9999 MISSION ST"
+            addressState="CA"
+            addressZip="94103"
+            name="Abellona Valtas"
+            spacing={5}
+          />
+        }
+      />
+      <Connect(RegionalOfficeDropdown)
+        onChange={[Function]}
+        validateValueOnMount={true}
+        value="RO17"
+      />
+      <Connect(AppealHearingLocationsDropdown)
+        appealId="3afefa82-5736-47c8-a977-0b4b8586f73e"
+        dynamic={true}
+        key="hearingLocation__RO17"
+        onChange={[Function]}
+        regionalOffice="RO17"
+        staticHearingLocations={Array []}
+        value={null}
+      />
+      <Connect(HearingDateDropdown)
+        key="hearingDate__RO17"
+        onChange={[Function]}
+        regionalOffice="RO17"
+      />
+      <HearingTime
+        componentIndex={0}
+        enableZone={true}
+        label="Hearing Time"
+        onChange={[Function]}
+        value="06:00"
+        vertical={true}
+      />
+    </div>
+  </AppSegment>
+  <Button
+    classNames={
+      Array [
+        "cf-submit",
+      ]
+    }
+    linkStyling={true}
+    loading={false}
+    name="Cancel"
+    onClick={[Function]}
+    styling={
+      Object {
+        "data-css-14x0t8z": "",
+      }
+    }
+    type="button"
+    willNeverBeLoading={false}
+  >
+    Cancel
+  </Button>
+  <span
+    data-css-jf1dde=""
+  >
+    <Button
+      className="usa-button"
+      classNames={
+        Array [
+          "cf-submit",
+        ]
+      }
+      linkStyling={false}
+      loading={false}
+      name="Schedule"
+      onClick={[Function]}
+      type="button"
+      willNeverBeLoading={false}
+    >
+      Schedule
+    </Button>
+  </span>
+</div>
+`;
+
+exports[`ScheduleVeteranForm Displays hearing form when regional office is selected 1`] = `
+<div
+  data-css-7jz325=""
+>
+  <AppSegment
+    filledBackground={true}
+  >
+    <h1>
+      Schedule Veteran for a Hearing
+    </h1>
+    <div
+      data-css-16cycjp=""
+    />
+    <div
+      className="usa-width-one-half"
+    >
+      <HearingTypeDropdown
+        enableFullPageConversion={true}
+        requestType="Video"
+        update={[Function]}
+        virtualHearing={null}
+      />
+    </div>
+    <div
+      className="cf-help-divider usa-width-one-whole"
+    />
+    <div
+      className="usa-width-one-half"
+    >
+      <ReadOnly
+        label="Veteran Address"
+        spacing={0}
+        text={
+          <AddressLine
+            addressCity="SAN FRANCISCO"
+            addressLine1="9999 MISSION ST"
+            addressState="CA"
+            addressZip="94103"
+            name="Abellona Valtas"
+            spacing={5}
+          />
+        }
+      />
+      <Connect(RegionalOfficeDropdown)
+        onChange={[Function]}
+        validateValueOnMount={true}
+        value="RO17"
+      />
+      <Connect(AppealHearingLocationsDropdown)
+        appealId="3afefa82-5736-47c8-a977-0b4b8586f73e"
+        dynamic={true}
+        key="hearingLocation__RO17"
+        onChange={[Function]}
+        regionalOffice="RO17"
+        staticHearingLocations={Array []}
+        value={null}
+      />
+      <Connect(HearingDateDropdown)
+        key="hearingDate__RO17"
+        onChange={[Function]}
+        regionalOffice="RO17"
+      />
+      <HearingTime
+        componentIndex={0}
+        enableZone={true}
+        label="Hearing Time"
+        onChange={[Function]}
+        value="06:00"
+        vertical={true}
+      />
+    </div>
+  </AppSegment>
+  <Button
+    classNames={
+      Array [
+        "cf-submit",
+      ]
+    }
+    linkStyling={true}
+    loading={false}
+    name="Cancel"
+    onClick={[Function]}
+    styling={
+      Object {
+        "data-css-14x0t8z": "",
+      }
+    }
+    type="button"
+    willNeverBeLoading={false}
+  >
+    Cancel
+  </Button>
+  <span
+    data-css-jf1dde=""
+  >
+    <Button
+      className="usa-button"
+      classNames={
+        Array [
+          "cf-submit",
+        ]
+      }
+      linkStyling={false}
+      loading={false}
+      name="Schedule"
+      onClick={[Function]}
+      type="button"
+      willNeverBeLoading={false}
+    >
+      Schedule
+    </Button>
+  </span>
+</div>
+`;
+
+exports[`ScheduleVeteranForm Matches snapshot with default props 1`] = `
+<div
+  data-css-7jz325=""
+>
+  <AppSegment
+    filledBackground={true}
+  >
+    <h1>
+      Schedule Veteran for a Hearing
+    </h1>
+    <div
+      data-css-16cycjp=""
+    />
+    <div
+      className="usa-width-one-half"
+    >
+      <HearingTypeDropdown
+        enableFullPageConversion={true}
+        requestType="Video"
+        update={[Function]}
+        virtualHearing={null}
+      />
+    </div>
+    <div
+      className="cf-help-divider usa-width-one-whole"
+    />
+    <div
+      className="usa-width-one-half"
+    >
+      <ReadOnly
+        label="Veteran Address"
+        spacing={0}
+        text={
+          <AddressLine
+            addressCity="SAN FRANCISCO"
+            addressLine1="9999 MISSION ST"
+            addressState="CA"
+            addressZip="94103"
+            name="Abellona Valtas"
+            spacing={5}
+          />
+        }
+      />
+      <Connect(RegionalOfficeDropdown)
+        onChange={[Function]}
+        validateValueOnMount={true}
+      />
+    </div>
+  </AppSegment>
+  <Button
+    classNames={
+      Array [
+        "cf-submit",
+      ]
+    }
+    linkStyling={true}
+    loading={false}
+    name="Cancel"
+    onClick={[Function]}
+    styling={
+      Object {
+        "data-css-14x0t8z": "",
+      }
+    }
+    type="button"
+    willNeverBeLoading={false}
+  >
+    Cancel
+  </Button>
+  <span
+    data-css-jf1dde=""
+  >
+    <Button
+      className="usa-button"
+      classNames={
+        Array [
+          "cf-submit",
+        ]
+      }
+      linkStyling={false}
+      loading={false}
+      name="Schedule"
+      onClick={[Function]}
+      type="button"
+      willNeverBeLoading={false}
+    >
+      Schedule
+    </Button>
+  </span>
+</div>
+`;

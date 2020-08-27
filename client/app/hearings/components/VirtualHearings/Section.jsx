@@ -5,7 +5,7 @@ export const VirtualHearingSection = ({ label, children, hide }) =>
   !hide && (
     <React.Fragment>
       <div className="cf-help-divider" />
-      <h3>{label}</h3>
+      <h2>{label}</h2>
       {children}
     </React.Fragment>
   );
