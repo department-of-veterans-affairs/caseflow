@@ -53,22 +53,15 @@ class BulkTaskAssignment
   end
 
   def prioritized_tasks(tasks)
-    remaining_tasks = tasks
-    prioritized_tasks = []
+    task_count = tasks.count
+    task_with_initial_priority = tasks.each_with_index.map { |task, i| [task, task_count - i] }
 
-    prioritized_tasks += remaining_tasks.select { |t| t.appeal.cavc? && t.appeal.aod? }
-    remaining_tasks -= prioritized_tasks
-
-    prioritized_tasks += remaining_tasks.select { |t| t.appeal.aod? }
-    remaining_tasks -= prioritized_tasks
-
-    prioritized_tasks += remaining_tasks.select { |t| t.appeal.cavc? }
-    remaining_tasks -= prioritized_tasks
-
-    # pp prioritized_tasks, remaining_tasks
-    prioritized_tasks += remaining_tasks
-
-    prioritized_tasks
+    prioritized_tasks_with_priority = task_with_initial_priority.sort_by do |task, priority|
+      priority += task_count**3 if task.appeal.aod?
+      priority += task_count**2 if task.appeal.cavc?
+      -priority
+    end
+    prioritized_tasks_with_priority.map(&:first)
   end
 
   def assigned_to
