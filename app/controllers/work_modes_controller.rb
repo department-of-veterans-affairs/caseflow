@@ -24,7 +24,7 @@ class WorkModesController < ApplicationController
   end
 
   def validate_modification_access_to_overtime
-    fail(Caseflow::Error::ActionForbiddenError) unless FeatureToggle.enabled?(:overtime_revamp)
+    fail(Caseflow::Error::ActionForbiddenError) unless FeatureToggle.enabled?(:overtime_revamp, user: current_user)
 
     unless current_user.judge? && current_user_is_assigned_to_appeal?
       msg = "Only judges assigned to this appeal can toggle overtime status"
