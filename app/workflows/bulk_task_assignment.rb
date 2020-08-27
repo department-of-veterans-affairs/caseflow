@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+# Assign multiple cases, which are selected based on parameters.
+# Cases are prioritized in the following order:
+#   - CAVC AOD Cases
+#   - AOD Cases
+#   - CAVC Cases
+#   - remaining cases
 class BulkTaskAssignment
   include ActiveModel::Model
 
