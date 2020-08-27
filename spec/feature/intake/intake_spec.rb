@@ -534,6 +534,67 @@ feature "Intake", :all_dbs do
           )
         end
       end
+
+      context "four digit zip" do
+        let(:veteran) do
+          Generators::Veteran.build(
+            file_number: "12341234",
+
+            country: "USA",
+            address_line1: "1234",
+            zip_code: "1234"
+          )
+        end
+
+        scenario "veteran has four digit zip" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "12341234"
+          click_on "Search"
+
+          expect(page).to have_current_path("/intake/review_request")
+          within_fieldset("What is the Benefit Type?") do
+            find("label", text: "Compensation", match: :prefer_exact).click
+          end
+
+          expect(page).to have_content("Check the Veteran's profile for invalid information")
+          expect(page).to have_content(
+            "Zip codes in the USA must be 5 characters long. Please check the veteran's address and try again."
+          )
+        end
+      end
+
+      context "not a US address and zipcode" do
+        let!(:country) { "CANADA" }
+        let!(:zip_code) { "1234" }
+
+        let(:veteran) do
+          create(
+            :veteran,
+            country: country,
+            zip_code: zip_code,
+            file_number: "12341234"
+          )
+        end
+
+        scenario "veteran has valid zipcode from different country" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "12341234"
+          click_on "Search"
+
+          expect(page).to have_current_path("/intake/review_request")
+          within_fieldset("What is the Benefit Type?") do
+            find("label", text: "Compensation", match: :prefer_exact).click
+          end
+
+          expect(page).not_to have_content("Check the Veteran's profile for invalid information")
+        end
+      end
     end
   end
 end

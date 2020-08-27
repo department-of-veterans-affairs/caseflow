@@ -173,6 +173,17 @@ class DailyDocketRow extends React.Component {
     }
   };
 
+  processAlerts = (alerts) => {
+    alerts.forEach((alert) => {
+      if ('hearing' in alert) {
+        this.props.onReceiveAlerts(alert.hearing);
+      } else if ('virtual_hearing' in alert && !isEmpty(alert.virtual_hearing)) {
+        this.props.onReceiveTransitioningAlert(alert.virtual_hearing, 'virtualHearing');
+        this.setState({ startPolling: true });
+      }
+    });
+  };
+
   saveHearing = () => {
     const isValid = this.validate();
 
@@ -200,13 +211,8 @@ class DailyDocketRow extends React.Component {
 
         const alerts = response.body?.alerts;
 
-        if (alerts?.hearing) {
-          this.props.onReceiveAlerts(alerts.hearing);
-        }
-
-        if (!isEmpty(alerts.virtual_hearing)) {
-          this.props.onReceiveTransitioningAlert(alerts.virtual_hearing, 'virtualHearing');
-          this.setState({ startPolling: true });
+        if (alerts) {
+          this.processAlerts(alerts);
         }
 
         this.setState({
@@ -237,8 +243,8 @@ class DailyDocketRow extends React.Component {
 
         const alerts = response.body?.alerts;
 
-        if (alerts?.hearing) {
-          this.props.onReceiveAlerts(alerts.hearing);
+        if (alerts) {
+          this.processAlerts(alerts);
         }
 
         this.update(hearingWithDisp);
@@ -371,17 +377,17 @@ class DailyDocketRow extends React.Component {
 
   startPolling = () => {
     return pollVirtualHearingData(this.props.hearing.externalId, (response) => {
-      // response includes jobCompleted, aliasWithHost, and hostPin
       const resp = ApiUtil.convertToCamelCase(response);
 
-      if (resp.jobCompleted) {
-        this.updateVirtualHearing(null, resp);
-        this.props.transitionAlert('virtualHearing');
+      if (resp.virtualHearing.jobCompleted) {
         this.setState({ startPolling: false, edited: false, editedFields: [] });
+        this.updateVirtualHearing(null, resp.virtualHearing);
+
+        this.props.transitionAlert('virtualHearing');
       }
 
-      // continue polling if return true (opposite of job_completed)
-      return !response.job_completed;
+      // continue polling if return true (opposite of jobCompleted)
+      return !resp.virtualHearing.jobCompleted;
     });
   };
 
