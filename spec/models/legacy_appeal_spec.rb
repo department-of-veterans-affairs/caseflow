@@ -2836,4 +2836,16 @@ describe LegacyAppeal, :all_dbs do
       end
     end
   end
+
+  describe ".ready_for_bva_dispatch?" do
+    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+
+    subject { appeal.ready_for_bva_dispatch? }
+
+    context "Legacy appeals do not go to BVA Dispatch via Caseflow" do
+      it "should return false" do
+        expect(subject).to eq(false)
+      end
+    end
+  end
 end

@@ -6,4 +6,5 @@ export * from 'test/data/factory';
 export * from 'test/data/table';
 export * from 'test/data/tabs';
 export * from 'test/data/hearings';
+export * from 'test/data/appeals';
 export * from 'test/data/user';

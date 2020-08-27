@@ -20,10 +20,6 @@ class MailTask < Task
       false
     end
 
-    def blocking_subclasses
-      MailTask.subclasses.select(&:blocking?).map(&:name)
-    end
-
     def subclass_routing_options
       MailTask.subclasses.sort_by(&:label).map { |subclass| { value: subclass.name, label: subclass.label } }
     end

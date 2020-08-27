@@ -9,6 +9,10 @@
 
 class EndProductCodeSelector
   END_PRODUCT_CODES = {
+    fiduciary: {
+      supplemental_claim: "040SCRFID",
+      higher_level_review: "030HLRFID"
+    },
     primary: {
       original: {
         compensation: {
@@ -293,6 +297,10 @@ class EndProductCodeSelector
   end
 
   def choose_code(end_product_codes)
-    end_product_codes[benefit_type.to_sym][review_type][issue_type]
+    if benefit_type == "fiduciary"
+      END_PRODUCT_CODES[:fiduciary][review_type]
+    else
+      end_product_codes[benefit_type.to_sym][review_type][issue_type]
+    end
   end
 end
