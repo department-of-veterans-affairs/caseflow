@@ -377,17 +377,17 @@ class DailyDocketRow extends React.Component {
 
   startPolling = () => {
     return pollVirtualHearingData(this.props.hearing.externalId, (response) => {
-      // response includes jobCompleted, aliasWithHost, and hostPin
       const resp = ApiUtil.convertToCamelCase(response);
 
-      if (resp.jobCompleted) {
-        this.updateVirtualHearing(null, resp);
-        this.props.transitionAlert('virtualHearing');
+      if (resp.virtualHearing.jobCompleted) {
         this.setState({ startPolling: false, edited: false, editedFields: [] });
+        this.updateVirtualHearing(null, resp.virtualHearing);
+
+        this.props.transitionAlert('virtualHearing');
       }
 
-      // continue polling if return true (opposite of job_completed)
-      return !response.job_completed;
+      // continue polling if return true (opposite of jobCompleted)
+      return !resp.virtualHearing.jobCompleted;
     });
   };
 
