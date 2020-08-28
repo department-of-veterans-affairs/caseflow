@@ -92,9 +92,12 @@ class AddColocatedTaskView extends React.PureComponent {
       map((action) => taskActionData(this.props).options.find((option) => option.value === action.type).label).
       join(', ');
     const msgDisplayCount = this.state.adminActions.length === 1 ? 'an' : this.state.adminActions.length;
+    const msgDetails = (msgActions === 'FOIA' && !task.isLegacy) ?
+      COPY.ADD_FOIA_TASK_CONFIRMATION_DETAIL :
+      taskActionData(this.props).message_detail || COPY.ADD_HEARING_ADMIN_TASK_CONFIRMATION_DETAIL;
     const successMsg = {
       title: sprintf(msgTitle, msgDisplayCount, msgSubject, msgActions),
-      detail: taskActionData(this.props).message_detail || COPY.ADD_HEARING_ADMIN_TASK_CONFIRMATION_DETAIL
+      detail: msgDetails
     };
 
     this.props.

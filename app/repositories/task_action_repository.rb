@@ -138,6 +138,7 @@ class TaskActionRepository
       {
         selected: org,
         options: [{ label: org.name, value: org.id }],
+        message_detail: COPY::PRIVACY_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL,
         type: PrivacyActTask.name
       }
     end
