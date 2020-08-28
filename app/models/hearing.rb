@@ -70,6 +70,7 @@ class Hearing < CaseflowRecord
   attr_accessor :override_full_hearing_day_validation
 
   HEARING_TYPES = {
+    R: "Virtual",
     V: "Video",
     T: "Travel",
     C: "Central"
