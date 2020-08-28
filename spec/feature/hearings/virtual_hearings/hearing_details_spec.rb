@@ -560,7 +560,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
     scenario "Sends update hearing time email only to the POA/Representative" do
       visit "hearings/" + central_hearing.external_id.to_s + "/details"
 
-      click_dropdown(name: "representativeTz", index: 0)
+      click_dropdown(name: "representativeTz", index: 1)
       click_button("Save")
 
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
@@ -595,7 +595,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
     scenario "Sends update hearing time email only to the Appellant" do
       visit "hearings/" + central_hearing.external_id.to_s + "/details"
 
-      click_dropdown(name: "appellantTz", index: 0)
+      click_dropdown(name: "appellantTz", index: 1)
       click_button("Save")
 
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
@@ -627,11 +627,11 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
              hearing: central_hearing)
     end
 
-    scenario "Sends update hearing time emails to both the Appellant and the POA/Representative" do
+    scenario "Sends update hearing time emails to both the Appellant and the POA/Representative", focus: true do
       visit "hearings/" + central_hearing.external_id.to_s + "/details"
 
-      click_dropdown(name: "representativeTz", index: 0)
-      click_dropdown(name: "appellantTz", index: 0)
+      click_dropdown(name: "representativeTz", index: 1)
+      click_dropdown(name: "appellantTz", index: 1)
       click_button("Save")
 
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
@@ -669,7 +669,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       visit "hearings/" + central_hearing.external_id.to_s + "/details"
 
       fill_in "POA/Representative Email", with: fill_in_rep_email
-      click_dropdown(name: "appellantTz", index: 0)
+      click_dropdown(name: "appellantTz", index: 1)
       click_button("Save")
 
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_GENERIC_TITLE)
