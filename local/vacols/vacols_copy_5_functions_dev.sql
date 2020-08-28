@@ -1125,6 +1125,7 @@ if team is null then team := '  '; end if;
 if    hrtype = 'C' then hrtype := 'Central Office';
 elsif hrtype = 'T' then hrtype := 'Travel Board  ';
 elsif hrtype = 'V' then hrtype := 'Video         ';
+elsif hrtype = 'R' then hrtype := 'Virtual       ';
 else  hrtype := ' ';
 end if;
 
@@ -1749,7 +1750,7 @@ END;
   hrcnt number;
 BEGIN
 select count(*) into hrcnt from hearsched where folder_nr = folder and
-  hearing_type in ('C', 'V') and hearing_date is not null and
+  hearing_type in ('C', 'V', 'R') and hearing_date is not null and
   board_member is not null and hearing_disp is null;
 RETURN hrcnt;
 END;
@@ -2430,7 +2431,7 @@ tbcnt number;
 
 BEGIN
 select count(*) into tbcnt from HEARSCHED where folder_nr = folder
-  and hearing_type in ('V', 'T')
+  and hearing_type in ('T', 'V', 'R')
   and (hearing_disp is null or hearing_disp = 'H');
 
 if tbcnt > 0 then
