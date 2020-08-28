@@ -148,16 +148,16 @@ FactoryBot.define do
 
     trait :denied_advance_on_docket do
       established_at { Time.zone.yesterday }
-      claimants { [create(:claimant)] }
       after(:create) do |appeal|
+        appeal.claimants { [create(:claimant, decision_review: appeal)] }
         create(:advance_on_docket_motion, person: appeal.claimants.last.person, granted: false, appeal: appeal)
       end
     end
 
     trait :inapplicable_aod_motion do
       established_at { Time.zone.tomorrow }
-      claimants { [create(:claimant)] }
       after(:create) do |appeal|
+        appeal.claimants { [create(:claimant, decision_review: appeal)] }
         create(:advance_on_docket_motion, person: appeal.claimants.last.person, granted: true, appeal: appeal)
         create(:advance_on_docket_motion, person: appeal.claimants.last.person, granted: false, appeal: appeal)
       end
