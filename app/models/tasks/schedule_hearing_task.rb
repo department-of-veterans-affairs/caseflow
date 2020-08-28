@@ -68,16 +68,25 @@ class ScheduleHearingTask < Task
     end
 
     multi_transaction do
-      # cancel my children, myself, and my hearing task ancestor
+      # cancel the old HearingTask and create a new one associated with the same hearing
+      # NOTE: We need to first create new hearing task so there is at least one open hearing task for when_child_task_completed
+      # in HearingTask to prevent triggering of location change for legacy appeals with update below
+      new_hearing_task = hearing_task.cancel_and_recreate
+
+      # cancel my children, possibly myself, and possibly my hearing task ancestor
+      # NOTE: possibly because cancellation depends on whether or not the tasks are assigned to BVA org
       children.open.update_all(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
+
+      # cancel self for sure
       update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
+
+      # cancel parent for sure
       ancestor_task_of_type(HearingTask)&.update!(
         status: Constants.TASK_STATUSES.cancelled,
         closed_at: Time.zone.now
       )
 
-      # cancel the old HearingTask and create a new one associated with the same hearing
-      new_hearing_task = hearing_task.cancel_and_recreate
+      # create the association for new hearing task
       HearingTaskAssociation.create!(hearing: hearing_task.hearing, hearing_task: new_hearing_task)
 
       # create a ChangeHearingDispositionTask on the new HearingTask
