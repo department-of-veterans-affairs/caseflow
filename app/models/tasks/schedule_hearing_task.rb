@@ -69,8 +69,9 @@ class ScheduleHearingTask < Task
 
     multi_transaction do
       # cancel the old HearingTask and create a new one associated with the same hearing
-      # NOTE: We need to first create new hearing task so there is at least one open hearing task for when_child_task_completed
-      # in HearingTask to prevent triggering of location change for legacy appeals with update below
+      # NOTE: We need to first create new hearing task so there is at least one open hearing task for
+      # when_child_task_completed in HearingTask to prevent triggering of location change for legacy appeals
+      # with update below
       new_hearing_task = hearing_task.cancel_and_recreate
 
       # cancel my children, possibly myself, and possibly my hearing task ancestor
