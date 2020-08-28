@@ -1494,8 +1494,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
         />
         <VirtualHearingFields
           appellantTitle="Veteran"
-          defaultAppellantTz="America/Los_Angeles"
-          defaultRepresentativeTz="America/Denver"
           readOnly={false}
           requestType="Central"
           time="03:30"
@@ -1564,7 +1562,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                 readOnly={false}
                 required={true}
                 time="03:30"
-                value="America/Los_Angeles"
+                value={null}
               >
                 <SearchableDropdown
                   clearOnSelect={false}
@@ -2357,7 +2355,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                       },
                     }
                   }
-                  value="America/Los_Angeles"
+                  value={null}
                 >
                   <div
                     className="cf-form-dropdown dropdown-appellantTz"
@@ -3173,13 +3171,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                               "input": [Function],
                             }
                           }
-                          value={
-                            Object {
-                              "index": -0,
-                              "label": "Pacific Time (US & Canada) (12:30 AM)",
-                              "value": "America/Los_Angeles",
-                            }
-                          }
+                          value={null}
                         >
                           <Select
                             backspaceRemovesValue={true}
@@ -4000,20 +3992,14 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                             }
                             tabIndex="0"
                             tabSelectsValue={true}
-                            value={
-                              Object {
-                                "index": -0,
-                                "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                "value": "America/Los_Angeles",
-                              }
-                            }
+                            value={null}
                           >
                             <SelectContainer
                               clearValue={[Function]}
                               cx={[Function]}
                               getStyles={[Function]}
                               getValue={[Function]}
-                              hasValue={true}
+                              hasValue={false}
                               innerProps={
                                 Object {
                                   "id": undefined,
@@ -5612,11 +5598,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                   },
                                   "tabIndex": "0",
                                   "tabSelectsValue": true,
-                                  "value": Object {
-                                    "index": -0,
-                                    "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                    "value": "America/Los_Angeles",
-                                  },
+                                  "value": null,
                                 }
                               }
                               setValue={[Function]}
@@ -5674,7 +5656,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                     cx={[Function]}
                                     getStyles={[Function]}
                                     getValue={[Function]}
-                                    hasValue={true}
+                                    hasValue={false}
                                     innerProps={
                                       Object {
                                         "onMouseDown": [Function],
@@ -7275,11 +7257,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                         },
                                         "tabIndex": "0",
                                         "tabSelectsValue": true,
-                                        "value": Object {
-                                          "index": -0,
-                                          "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                          "value": "America/Los_Angeles",
-                                        },
+                                        "value": null,
                                       }
                                     }
                                     setValue={[Function]}
@@ -7354,7 +7332,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                           cx={[Function]}
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={true}
+                                          hasValue={false}
                                           isDisabled={false}
                                           isMulti={false}
                                           isRtl={false}
@@ -8946,11 +8924,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": Object {
-                                                "index": -0,
-                                                "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                                "value": "America/Los_Angeles",
-                                              },
+                                              "value": null,
                                             }
                                           }
                                           setValue={[Function]}
@@ -8987,7 +8961,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                           <EmotionCssPropInternal
                                             __EMOTION_LABEL_PLEASE_DO_NOT_USE__="ValueContainer"
                                             __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                            className="cf-select__value-container cf-select__value-container--has-value"
+                                            className="cf-select__value-container"
                                             css={
                                               Object {
                                                 "WebkitOverflowScrolling": "touch",
@@ -9003,24 +8977,19 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                             }
                                           >
                                             <div
-                                              className="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                                              className="cf-select__value-container css-g1d714-ValueContainer"
                                             >
-                                              <SingleValue
+                                              <Placeholder
                                                 clearValue={[Function]}
                                                 cx={[Function]}
-                                                data={
-                                                  Object {
-                                                    "index": -0,
-                                                    "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                                    "value": "America/Los_Angeles",
-                                                  }
-                                                }
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={true}
+                                                hasValue={false}
                                                 isDisabled={false}
+                                                isFocused={false}
                                                 isMulti={false}
                                                 isRtl={false}
+                                                key="placeholder"
                                                 options={
                                                   Array [
                                                     Object {
@@ -10609,11 +10578,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": Object {
-                                                      "index": -0,
-                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                                      "value": "America/Los_Angeles",
-                                                    },
+                                                    "value": null,
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -10648,33 +10613,29 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 }
                                               >
                                                 <EmotionCssPropInternal
-                                                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="SingleValue"
+                                                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Placeholder"
                                                   __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                                  className="cf-select__single-value"
+                                                  className="cf-select__placeholder"
                                                   css={
                                                     Object {
                                                       "boxSizing": "border-box",
-                                                      "color": "hsl(0, 0%, 20%)",
-                                                      "label": "singleValue",
+                                                      "color": "hsl(0, 0%, 50%)",
+                                                      "label": "placeholder",
                                                       "marginLeft": 2,
                                                       "marginRight": 2,
-                                                      "maxWidth": "calc(100% - 8px)",
-                                                      "overflow": "hidden",
                                                       "position": "absolute",
-                                                      "textOverflow": "ellipsis",
                                                       "top": "50%",
                                                       "transform": "translateY(-50%)",
-                                                      "whiteSpace": "nowrap",
                                                     }
                                                   }
                                                 >
                                                   <div
-                                                    className="cf-select__single-value css-1uccc91-singleValue"
+                                                    className="cf-select__placeholder css-1wa3eu0-placeholder"
                                                   >
-                                                    Pacific Time (US & Canada) (12:30 AM)
+                                                    Select a timezone
                                                   </div>
                                                 </EmotionCssPropInternal>
-                                              </SingleValue>
+                                              </Placeholder>
                                               <Input
                                                 aria-autocomplete="list"
                                                 autoCapitalize="none"
@@ -11508,11 +11469,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": Object {
-                                                      "index": -0,
-                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                                      "value": "America/Los_Angeles",
-                                                    },
+                                                    "value": null,
                                                   }
                                                 }
                                                 spellCheck="false"
@@ -11655,7 +11612,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                           cx={[Function]}
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={true}
+                                          hasValue={false}
                                           isDisabled={false}
                                           isMulti={false}
                                           isRtl={false}
@@ -13247,11 +13204,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": Object {
-                                                "index": -0,
-                                                "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                                "value": "America/Los_Angeles",
-                                              },
+                                              "value": null,
                                             }
                                           }
                                           setValue={[Function]}
@@ -13307,7 +13260,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 cx={[Function]}
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={true}
+                                                hasValue={false}
                                                 isDisabled={false}
                                                 isFocused={false}
                                                 isMulti={false}
@@ -14900,11 +14853,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": Object {
-                                                      "index": -0,
-                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                                      "value": "America/Los_Angeles",
-                                                    },
+                                                    "value": null,
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -14964,7 +14913,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 cx={[Function]}
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={true}
+                                                hasValue={false}
                                                 innerProps={
                                                   Object {
                                                     "aria-hidden": "true",
@@ -16564,11 +16513,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": Object {
-                                                      "index": -0,
-                                                      "label": "Pacific Time (US & Canada) (12:30 AM)",
-                                                      "value": "America/Los_Angeles",
-                                                    },
+                                                    "value": null,
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -16824,7 +16769,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                 readOnly={false}
                 required={true}
                 time="03:30"
-                value="America/Denver"
+                value={null}
               >
                 <SearchableDropdown
                   clearOnSelect={false}
@@ -17617,7 +17562,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                       },
                     }
                   }
-                  value="America/Denver"
+                  value={null}
                 >
                   <div
                     className="cf-form-dropdown dropdown-representativeTz"
@@ -18433,13 +18378,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                               "input": [Function],
                             }
                           }
-                          value={
-                            Object {
-                              "index": -1,
-                              "label": "Mountain Time (US & Canada) (1:30 AM)",
-                              "value": "America/Denver",
-                            }
-                          }
+                          value={null}
                         >
                           <Select
                             backspaceRemovesValue={true}
@@ -19260,20 +19199,14 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                             }
                             tabIndex="0"
                             tabSelectsValue={true}
-                            value={
-                              Object {
-                                "index": -1,
-                                "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                "value": "America/Denver",
-                              }
-                            }
+                            value={null}
                           >
                             <SelectContainer
                               clearValue={[Function]}
                               cx={[Function]}
                               getStyles={[Function]}
                               getValue={[Function]}
-                              hasValue={true}
+                              hasValue={false}
                               innerProps={
                                 Object {
                                   "id": undefined,
@@ -20872,11 +20805,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                   },
                                   "tabIndex": "0",
                                   "tabSelectsValue": true,
-                                  "value": Object {
-                                    "index": -1,
-                                    "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                    "value": "America/Denver",
-                                  },
+                                  "value": null,
                                 }
                               }
                               setValue={[Function]}
@@ -20934,7 +20863,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                     cx={[Function]}
                                     getStyles={[Function]}
                                     getValue={[Function]}
-                                    hasValue={true}
+                                    hasValue={false}
                                     innerProps={
                                       Object {
                                         "onMouseDown": [Function],
@@ -22535,11 +22464,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                         },
                                         "tabIndex": "0",
                                         "tabSelectsValue": true,
-                                        "value": Object {
-                                          "index": -1,
-                                          "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                          "value": "America/Denver",
-                                        },
+                                        "value": null,
                                       }
                                     }
                                     setValue={[Function]}
@@ -22614,7 +22539,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                           cx={[Function]}
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={true}
+                                          hasValue={false}
                                           isDisabled={false}
                                           isMulti={false}
                                           isRtl={false}
@@ -24206,11 +24131,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": Object {
-                                                "index": -1,
-                                                "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                                "value": "America/Denver",
-                                              },
+                                              "value": null,
                                             }
                                           }
                                           setValue={[Function]}
@@ -24247,7 +24168,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                           <EmotionCssPropInternal
                                             __EMOTION_LABEL_PLEASE_DO_NOT_USE__="ValueContainer"
                                             __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                            className="cf-select__value-container cf-select__value-container--has-value"
+                                            className="cf-select__value-container"
                                             css={
                                               Object {
                                                 "WebkitOverflowScrolling": "touch",
@@ -24263,24 +24184,19 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                             }
                                           >
                                             <div
-                                              className="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
+                                              className="cf-select__value-container css-g1d714-ValueContainer"
                                             >
-                                              <SingleValue
+                                              <Placeholder
                                                 clearValue={[Function]}
                                                 cx={[Function]}
-                                                data={
-                                                  Object {
-                                                    "index": -1,
-                                                    "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                                    "value": "America/Denver",
-                                                  }
-                                                }
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={true}
+                                                hasValue={false}
                                                 isDisabled={false}
+                                                isFocused={false}
                                                 isMulti={false}
                                                 isRtl={false}
+                                                key="placeholder"
                                                 options={
                                                   Array [
                                                     Object {
@@ -25869,11 +25785,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": Object {
-                                                      "index": -1,
-                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                                      "value": "America/Denver",
-                                                    },
+                                                    "value": null,
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -25908,33 +25820,29 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 }
                                               >
                                                 <EmotionCssPropInternal
-                                                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="SingleValue"
+                                                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Placeholder"
                                                   __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                                  className="cf-select__single-value"
+                                                  className="cf-select__placeholder"
                                                   css={
                                                     Object {
                                                       "boxSizing": "border-box",
-                                                      "color": "hsl(0, 0%, 20%)",
-                                                      "label": "singleValue",
+                                                      "color": "hsl(0, 0%, 50%)",
+                                                      "label": "placeholder",
                                                       "marginLeft": 2,
                                                       "marginRight": 2,
-                                                      "maxWidth": "calc(100% - 8px)",
-                                                      "overflow": "hidden",
                                                       "position": "absolute",
-                                                      "textOverflow": "ellipsis",
                                                       "top": "50%",
                                                       "transform": "translateY(-50%)",
-                                                      "whiteSpace": "nowrap",
                                                     }
                                                   }
                                                 >
                                                   <div
-                                                    className="cf-select__single-value css-1uccc91-singleValue"
+                                                    className="cf-select__placeholder css-1wa3eu0-placeholder"
                                                   >
-                                                    Mountain Time (US & Canada) (1:30 AM)
+                                                    Select a timezone
                                                   </div>
                                                 </EmotionCssPropInternal>
-                                              </SingleValue>
+                                              </Placeholder>
                                               <Input
                                                 aria-autocomplete="list"
                                                 autoCapitalize="none"
@@ -26768,11 +26676,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": Object {
-                                                      "index": -1,
-                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                                      "value": "America/Denver",
-                                                    },
+                                                    "value": null,
                                                   }
                                                 }
                                                 spellCheck="false"
@@ -26915,7 +26819,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                           cx={[Function]}
                                           getStyles={[Function]}
                                           getValue={[Function]}
-                                          hasValue={true}
+                                          hasValue={false}
                                           isDisabled={false}
                                           isMulti={false}
                                           isRtl={false}
@@ -28507,11 +28411,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               },
                                               "tabIndex": "0",
                                               "tabSelectsValue": true,
-                                              "value": Object {
-                                                "index": -1,
-                                                "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                                "value": "America/Denver",
-                                              },
+                                              "value": null,
                                             }
                                           }
                                           setValue={[Function]}
@@ -28567,7 +28467,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 cx={[Function]}
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={true}
+                                                hasValue={false}
                                                 isDisabled={false}
                                                 isFocused={false}
                                                 isMulti={false}
@@ -30160,11 +30060,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": Object {
-                                                      "index": -1,
-                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                                      "value": "America/Denver",
-                                                    },
+                                                    "value": null,
                                                   }
                                                 }
                                                 setValue={[Function]}
@@ -30224,7 +30120,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                 cx={[Function]}
                                                 getStyles={[Function]}
                                                 getValue={[Function]}
-                                                hasValue={true}
+                                                hasValue={false}
                                                 innerProps={
                                                   Object {
                                                     "aria-hidden": "true",
@@ -31824,11 +31720,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     },
                                                     "tabIndex": "0",
                                                     "tabSelectsValue": true,
-                                                    "value": Object {
-                                                      "index": -1,
-                                                      "label": "Mountain Time (US & Canada) (1:30 AM)",
-                                                      "value": "America/Denver",
-                                                    },
+                                                    "value": null,
                                                   }
                                                 }
                                                 setValue={[Function]}

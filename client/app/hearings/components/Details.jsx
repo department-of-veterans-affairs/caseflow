@@ -30,6 +30,8 @@ import DetailsForm from './details/DetailsForm';
 import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
 
+import COPY from '../../../COPY';
+
 /**
  * Hearing Details Component
  * @param {Object} props -- React props inherited from client/app/hearings/containers/DetailsContainer.jsx
@@ -126,8 +128,8 @@ const HearingDetails = (props) => {
         // Set the Virtual Hearing errors
         setVirtualHearingErrors({
           [noAppellantEmail && 'appellantEmail']: `${getAppellantTitleForHearing(hearing)} email is required`,
-          [noRepTimezone && 'representativeTz']: 'Timezone is required to send email notifications.',
-          [noAppellantTimezone && 'appellantTz']: 'Timezone is required to send email notifications.'
+          [noRepTimezone && 'representativeTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED,
+          [noAppellantTimezone && 'appellantTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED
         });
 
         // Focus to the error
