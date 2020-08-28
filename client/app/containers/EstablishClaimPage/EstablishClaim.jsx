@@ -147,15 +147,17 @@ export class EstablishClaim extends React.Component {
   }
 
   containsRoutedSpecialIssues = () => {
-    return specialIssueFilters().routedSpecialIssues().some((issue) => {
-      return this.props.specialIssues[issue.specialIssue];
-    });
+    return specialIssueFilters().routedSpecialIssues()
+      .some((issue) => {
+        return this.props.specialIssues[issue.specialIssue];
+      });
   };
 
   containsRoutedOrRegionalOfficeSpecialIssues = () => {
-    return specialIssueFilters().routedOrRegionalSpecialIssues().some((issue) => {
-      return this.props.specialIssues[issue.specialIssue || issue];
-    });
+    return specialIssueFilters().routedOrRegionalSpecialIssues()
+      .some((issue) => {
+        return this.props.specialIssues[issue.specialIssue || issue];
+      });
   };
 
   componentDidMount() {
@@ -428,16 +430,17 @@ export class EstablishClaim extends React.Component {
       return;
     }
 
-    specialIssueFilters().unhandledSpecialIssues().forEach((issue) => {
-      if (this.props.specialIssues[issue.specialIssue]) {
-        this.setState({
-        // If there are multiple unhandled special issues, we'll route
-        // to the email address for the last one.
-          specialIssuesEmail: issue.unhandled.emailAddress,
-          specialIssuesRegionalOffice: issue.unhandled.regionalOffice
-        });
-      }
-    });
+    specialIssueFilters().unhandledSpecialIssues()
+      .forEach((issue) => {
+        if (this.props.specialIssues[issue.specialIssue]) {
+          this.setState({
+          // If there are multiple unhandled special issues, we'll route
+          // to the email address for the last one.
+            specialIssuesEmail: issue.unhandled.emailAddress,
+            specialIssuesRegionalOffice: issue.unhandled.regionalOffice
+          });
+        }
+      });
   };
 
   // This returns true if the flow will create an EP or assign to an existing EP
