@@ -1119,7 +1119,7 @@ describe EndProductEstablishment, :postgres do
       it "caches the associated rating for the given EPE" do
         expect(Rails.cache.exist?(cache_key)).to eq(false)
         # If caching works, this should only get called once
-        expect(PromulgatedRating).to receive(:fetch_in_range).once.and_call_original
+        expect(RatingAtIssue).to receive(:fetch_in_range).once.and_call_original
         subject
         expect(Rails.cache.exist?(cache_key)).to eq(true)
         # when called a second time, should get from cache

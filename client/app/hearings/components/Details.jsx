@@ -215,7 +215,7 @@ const HearingDetails = (props) => {
       // guestLink, and hostLink
       const resp = ApiUtil.convertToCamelCase(response);
 
-      if (resp.jobCompleted) {
+      if (resp.virtualHearing.jobCompleted) {
         setShouldStartPolling(false);
 
         // Reset the state with the new details
@@ -224,8 +224,8 @@ const HearingDetails = (props) => {
         props.transitionAlert('virtualHearing');
       }
 
-      // continue polling if return true (opposite of job_completed)
-      return !response.job_completed;
+      // continue polling if return true (opposite of jobCompleted)
+      return !resp.virtualHearing.jobCompleted;
     });
   };
 

@@ -393,7 +393,7 @@ class EndProductEstablishment < CaseflowRecord
   end
 
   def potential_decision_ratings
-    PromulgatedRating.fetch_in_range(
+    RatingAtIssue.fetch_in_range(
       participant_id: veteran.participant_id,
       start_date: established_at.to_date,
       end_date: Time.zone.today
@@ -424,6 +424,8 @@ class EndProductEstablishment < CaseflowRecord
     request_issues.each { |ri| RequestIssueClosure.new(ri).with_no_decision! }
   end
 
+  # This looks for a new rating associated to this end product when deciding the claim
+  # Not to be confused with associating contentions to rating issues when establishing a claim
   def fetch_associated_rating
     Rails.cache.fetch(associated_rating_cache_key, expires_in: 3.hours) do
       potential_decision_ratings.find do |rating|

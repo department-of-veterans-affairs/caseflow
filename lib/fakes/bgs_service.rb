@@ -327,6 +327,29 @@ class Fakes::BGSService
     ]
   end
 
+  def pay_grade_list
+    {
+      types: [
+        { code: "E1", name: "E-1" },
+        { code: "E2", name: "E-2" },
+        { code: "E3", name: "E-3" },
+        { code: "E4", name: "E-4" },
+        { code: "E5", name: "E-5" },
+        { code: "E6", name: "E-6" },
+        { code: "E9", name: "E-9" },
+        { code: "O1", name: "O-1" },
+        { code: "O2", name: "O-2" },
+        { code: "O3", name: "O-3" },
+        { code: "O4", name: "O-4" },
+        { code: "O5", name: "O-5" },
+        { code: "WO1", name: "WO-1" },
+        { code: "WO2", name: "WO-2" },
+        { code: "WO3", name: "WO-3" },
+        { code: "WO4", name: "WO-4" }
+      ]
+    }
+  end
+
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
     address = (self.class.address_records || {})[participant_id]
@@ -376,7 +399,6 @@ class Fakes::BGSService
 
   def fetch_rating_profiles_in_range(participant_id:, start_date:, end_date:)
     ratings = get_rating_record(participant_id)[:ratings] || []
-
     # Simulate the response if participant doesn't exist or doesn't have any ratings
     if ratings.blank?
       return { response: { response_text: "No Data Found" } }
@@ -401,7 +423,35 @@ class Fakes::BGSService
   end
 
   def format_rating_at_issue(ratings)
+    ratings = Array.wrap(ratings).map do |rating|
+      rating_at_issue_profile_data(rating)
+    end
+
     { rba_profile_list: ratings.empty? ? nil : { rba_profile: ratings } }
+  end
+
+  def rating_at_issue_profile_data(rating)
+    promulgated_rating_data = rating.dig(:comp_id)
+
+    # If a PromulgatedRating was originally stored in rating_store
+    # convert to be compatible with RatingAtIssue
+    if promulgated_rating_data.present?
+      rating_profile = fetch_rating_profile(
+        participant_id: promulgated_rating_data[:ptcpnt_vet_id],
+        profile_date: promulgated_rating_data[:prfil_dt]
+      )
+
+      {
+        prfl_dt: promulgated_rating_data[:prfil_dt],
+        ptcpnt_vet_id: promulgated_rating_data[:ptcpnt_vet_id],
+        prmlgn_dt: rating[:prmlgn_dt],
+        rba_issue_list: { rba_issue: rating_profile[:rating_issues] },
+        disability_list: { disability: rating_profile[:disabilities] },
+        rba_claim_list: { rba_claim: rating_profile[:associated_claims] }
+      }
+    else
+      rating
+    end
   end
 
   def fetch_rating_profile(participant_id:, profile_date:)
