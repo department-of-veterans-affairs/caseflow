@@ -102,7 +102,7 @@
     "react-highlight-words": "^0.8.0",
     "react-hot-loader": "^4.12.18",
     "react-markdown": "^4.2.2",
-    "react-on-rails": "^8.0.6",
+    "react-on-rails": "11.3.0",
     "react-polling": "^1.0.5",
     "react-redux": "^7.2.0",
     "react-router": "^5.1.2",
