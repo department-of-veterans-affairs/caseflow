@@ -1264,6 +1264,30 @@ describe EndProductEstablishment, :postgres do
     end
   end
 
+  context "#cancel!" do
+    subject { epe.send(:cancel!) }
+
+    let(:modifier) { "030" }
+    let(:epe) do
+      create(
+        :end_product_establishment,
+        source: source,
+        veteran_file_number: veteran_file_number,
+        modifier: modifier,
+        synced_status: nil,
+        established_at: 30.days.ago,
+        committed_at: 30.days.ago,
+        payee_code: "00",
+        benefit_type_code: "1"
+      )
+    end
+
+    it do
+      subject
+      expect(epe.synced_status).to eq("CAN")
+    end
+  end
+
   context "#status" do
     subject { epe.status }
 
