@@ -226,64 +226,92 @@ describe ScheduleHearingTask, :all_dbs do
   end
 
   describe "#create_change_hearing_disposition_task" do
-    let(:appeal) { create(:appeal) }
     let(:root_task) { create(:root_task, appeal: appeal) }
-    let(:past_hearing_disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
-    let(:hearing) { create(:hearing, appeal: appeal, disposition: past_hearing_disposition) }
     let(:hearing_task) { create(:hearing_task, parent: root_task) }
-    let!(:disposition_task) do
-      create(:assign_hearing_disposition_task, parent: hearing_task)
-    end
+
     let!(:association) { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
     let!(:hearing_task_2) { create(:hearing_task, parent: root_task) }
     let!(:task) { create(:schedule_hearing_task, parent: hearing_task_2) }
     let(:instructions) { "These are my detailed instructions for a schedule hearing task." }
+
+    let!(:disposition_task) do
+      create(:assign_hearing_disposition_task, parent: hearing_task)
+    end
+
+    subject { task.create_change_hearing_disposition_task(instructions) }
 
     before do
       [hearing_task, disposition_task].each { |task| task&.update!(status: Constants.TASK_STATUSES.completed) }
       create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2)
     end
 
-    subject { task.create_change_hearing_disposition_task(instructions) }
+    shared_examples "creates new task" do
+      it "creates new hearing and change hearing disposition tasks and cancels unwanted tasks" do
+        subject
 
-    it "creates new hearing and change hearing disposition tasks and cancels unwanted tasks" do
-      subject
-
-      expect(hearing_task.reload.open?).to be_falsey
-      expect(hearing_task.closed_at).to_not be_nil
-      expect(disposition_task.reload.open?).to be_falsey
-      expect(disposition_task.closed_at).to_not be_nil
-      expect(hearing_task_2.reload.status).to eq Constants.TASK_STATUSES.cancelled
-      expect(hearing_task_2.closed_at).to_not be_nil
-      expect(task.reload.status).to eq Constants.TASK_STATUSES.cancelled
-      expect(task.closed_at).to_not be_nil
-      new_hearing_tasks = appeal.tasks.open.where(type: HearingTask.name)
-      expect(new_hearing_tasks.count).to eq 1
-      expect(new_hearing_tasks.first.hearing).to eq hearing
-      new_change_tasks = appeal.tasks.open.where(type: ChangeHearingDispositionTask.name)
-      expect(new_change_tasks.count).to eq 1
-      expect(new_change_tasks.first.parent).to eq new_hearing_tasks.first
+        expect(hearing_task.reload.open?).to be_falsey
+        expect(hearing_task.closed_at).to_not be_nil
+        expect(disposition_task.reload.open?).to be_falsey
+        expect(disposition_task.closed_at).to_not be_nil
+        expect(hearing_task_2.reload.status).to eq Constants.TASK_STATUSES.cancelled
+        expect(hearing_task_2.closed_at).to_not be_nil
+        expect(task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+        expect(task.closed_at).to_not be_nil
+        new_hearing_tasks = appeal.tasks.open.where(type: HearingTask.name)
+        expect(new_hearing_tasks.count).to eq 1
+        expect(new_hearing_tasks.first.hearing).to eq hearing
+        new_change_tasks = appeal.tasks.open.where(type: ChangeHearingDispositionTask.name)
+        expect(new_change_tasks.count).to eq 1
+        expect(new_change_tasks.first.parent).to eq new_hearing_tasks.first
+      end
     end
+    context "AMA appeal" do
+      let(:appeal) { create(:appeal) }
+      let(:past_hearing_disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
+      let(:hearing) { create(:hearing, appeal: appeal, disposition: past_hearing_disposition) }
 
-    context "the past hearing disposition is nil" do
-      let(:past_hearing_disposition) { nil }
+      include_examples "creates new task"
 
-      it "raises an error" do
-        expect { subject }
-          .to raise_error(Caseflow::Error::ActionForbiddenError)
-          .with_message(COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR)
+      it "does not create ihp tasks" do
+        subject
+
+        expect(InformalHearingPresentationTask.where(appeal_id: appeal.id).count).to eq(0)
+      end
+
+      context "the past hearing disposition is nil" do
+        let(:past_hearing_disposition) { nil }
+
+        it "raises an error" do
+          expect { subject }
+            .to raise_error(Caseflow::Error::ActionForbiddenError)
+            .with_message(COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR)
+        end
+      end
+
+      context "there's no past inactive hearing task" do
+        let(:hearing_task) { nil }
+        let(:disposition_task) { nil }
+        let(:association) { nil }
+
+        it "raises an error" do
+          expect { subject }
+            .to raise_error(Caseflow::Error::ActionForbiddenError)
+            .with_message(COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR)
+        end
       end
     end
 
-    context "there's no past inactive hearing task" do
-      let(:hearing_task) { nil }
-      let(:disposition_task) { nil }
-      let(:association) { nil }
+    context "Legacy Appeal" do
+      let(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:caseflow]) }
+      let(:veteran_participant_id) { "0000" }
+      let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+      let(:case_hearing_past_disposition) { "P" }
+      let(:hearing) { create(:legacy_hearing, appeal: appeal, disposition: case_hearing_past_disposition) }
 
-      it "raises an error" do
-        expect { subject }
-          .to raise_error(Caseflow::Error::ActionForbiddenError)
-          .with_message(COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR)
+      include_examples "creates new task"
+
+      it "does not change location" do
+        expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
       end
     end
   end
