@@ -23,6 +23,8 @@ class BvaDispatchTask < Task
 
   class << self
     def create_from_root_task(root_task)
+      return if root_task.appeal.tasks.open.map(&:blocking_dispatch?).any?
+
       create!(assigned_to: BvaDispatch.singleton, parent_id: root_task.id, appeal: root_task.appeal)
     end
 

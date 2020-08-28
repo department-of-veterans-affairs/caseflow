@@ -37,6 +37,7 @@ class Task < CaseflowRecord
   after_create :tell_parent_task_child_task_created
 
   before_save :set_timestamp
+  after_update :dispatch_if_ready, if: :task_just_closed_and_blocking_dispatch?
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
   after_update :cancel_task_timers, if: :task_just_closed?
@@ -610,6 +611,10 @@ class Task < CaseflowRecord
     self.class.blocking_dispatch?
   end
 
+  def task_just_closed_and_blocking_dispatch?
+    task_just_closed? && blocking_dispatch?
+  end
+
   # currently only defined by ScheduleHearingTask and AssignHearingDispositionTask for virtual hearing related updates
   def alerts
     @alerts ||= []
@@ -700,6 +705,12 @@ class Task < CaseflowRecord
 
     if dispatch_task&.descendants&.exclude?(parent)
       self.parent = dispatch_task
+    end
+  end
+
+  def dispatch_if_ready
+    if appeal.ready_for_bva_dispatch?
+      BvaDispatchTask.create_from_root_task(appeal.root_task)
     end
   end
 

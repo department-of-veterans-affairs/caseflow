@@ -356,6 +356,7 @@
   "ADD_COLOCATED_TASK_CONFIRMATION_DETAIL": "If you need to make any changes, please email your administration action team.",
   "ADD_COLOCATED_TASK_ACTION_DUPLICATE_ERROR": "There is already an open %s action on this case with the instructions \"%s\"",
   "ADD_HEARING_ADMIN_TASK_CONFIRMATION_DETAIL": "The task has been placed in your teams queue.",
+  "ADD_FOIA_TASK_CONFIRMATION_DETAIL": "You can continue your work on this case while the FOIA task is worked, case remains in your Assigned queue.",
 
   "CHANGE_TASK_TYPE_SUBHEAD": "Change task type",
   "CHANGE_TASK_TYPE_ACTION_LABEL": "Select another task type from the list of available options:",
@@ -420,6 +421,7 @@
   "ASSIGN_TASK_SUCCESS_MESSAGE": "Task assigned to %s",
   "REASSIGN_TASK_SUCCESS_MESSAGE": "Task reassigned to %s",
   "HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL": "You can continue to assign tasks to yourself and others using this queue.",
+  "PRIVACY_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL": "You can return this case to the Judge/Attorney or continue to assign tasks to yourself and others using this queue.",
 
   "CREATE_MAIL_TASK_TITLE": "Create new mail task",
   "MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL": "Select correspondence type",
