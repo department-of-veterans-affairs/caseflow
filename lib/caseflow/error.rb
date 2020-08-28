@@ -124,6 +124,17 @@ module Caseflow::Error
     end
   end
 
+  class IneligibleForBlockedSpecialCaseMovement < SerializableError
+    attr_accessor :appeal_id
+
+    def initialize(args)
+      @code = args[:code] || 500
+      @appeal_id = args[:appeal_id] || nil
+      @title = "This appeal cannot be advanced to a judge"
+      @message = args[:message] || "Appeal #{@appeal_id} must be awaiting distribution be eligible for Case Movement"
+    end
+  end
+
   class IneligibleForSpecialCaseMovement < SerializableError
     attr_accessor :appeal_id
 
@@ -338,4 +349,14 @@ module Caseflow::Error
   class PexipMethodNotAllowedError < PexipApiError; end
 
   class WorkModeCouldNotUpdateError < StandardError; end
+
+  class VirtualHearingConversionFailed < SerializableError
+    attr_accessor :code, :message
+
+    def initialize(args = {})
+      @error_type = args[:error_type]
+      @code = (@error_type == ActiveRecord::RecordNotUnique) ? :conflict : args[:code]
+      @message = (@error_type == ActiveRecord::RecordNotUnique) ? COPY::VIRTUAL_HEARING_ALREADY_CREATED : args[:message]
+    end
+  end
 end

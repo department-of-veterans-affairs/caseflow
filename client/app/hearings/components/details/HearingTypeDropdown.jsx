@@ -40,7 +40,7 @@ class HearingTypeDropdown extends React.Component {
     // Use the modal if the label is video
     if ((label === 'Video' || currentLabel === 'Video') && !enableFullPageConversion) {
       openModal({ type });
-    } else {
+    } else if (convertHearing) {
       convertHearing(type);
     }
 
