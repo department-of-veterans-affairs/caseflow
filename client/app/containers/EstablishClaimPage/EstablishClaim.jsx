@@ -147,15 +147,15 @@ export class EstablishClaim extends React.Component {
   }
 
   containsRoutedSpecialIssues = () => {
-    return specialIssueFilters().routedSpecialIssues()
-      .some((issue) => {
+    return specialIssueFilters().routedSpecialIssues().
+      some((issue) => {
         return this.props.specialIssues[issue.specialIssue];
       });
   };
 
   containsRoutedOrRegionalOfficeSpecialIssues = () => {
-    return specialIssueFilters().routedOrRegionalSpecialIssues()
-      .some((issue) => {
+    return specialIssueFilters().routedOrRegionalSpecialIssues().
+      some((issue) => {
         return this.props.specialIssues[issue.specialIssue || issue];
       });
   };
@@ -430,8 +430,8 @@ export class EstablishClaim extends React.Component {
       return;
     }
 
-    specialIssueFilters().unhandledSpecialIssues()
-      .forEach((issue) => {
+    specialIssueFilters().unhandledSpecialIssues().
+      forEach((issue) => {
         if (this.props.specialIssues[issue.specialIssue]) {
           this.setState({
           // If there are multiple unhandled special issues, we'll route
