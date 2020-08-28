@@ -40,13 +40,13 @@ class ApplicationController < ApplicationBaseController
 
   def manage_teams_menu_items
     current_user.administered_teams.map do |team|
-      title = if (team.type == DvcTeam.name)
-        "#{team.name} DVC team management"
-      elsif (team.type == JudgeTeam.name)
-        "#{team.name} Judge team management"
-      else 
-        "#{team.name} team management"
-      end
+      title = if team.type == DvcTeam.name
+                "#{team.name} DVC team management"
+              elsif team.type == JudgeTeam.name
+                "#{team.name} Judge team management"
+              else
+                "#{team.name} team management"
+              end
 
       {
         title: title,
