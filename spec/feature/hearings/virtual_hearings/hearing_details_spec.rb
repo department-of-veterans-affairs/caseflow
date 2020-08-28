@@ -627,7 +627,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
              hearing: central_hearing)
     end
 
-    scenario "Sends update hearing time emails to both the Appellant and the POA/Representative", focus: true do
+    scenario "Sends update hearing time emails to both the Appellant and the POA/Representative" do
       visit "hearings/" + central_hearing.external_id.to_s + "/details"
 
       click_dropdown(name: "representativeTz", index: 1)
