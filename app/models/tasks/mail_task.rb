@@ -24,7 +24,7 @@ class MailTask < Task
       MailTask.subclasses.sort_by(&:label).map { |subclass| { value: subclass.name, label: subclass.label } }
     end
 
-    def parent_if_blocking_task(parent_task)
+    def parent_if_blocking_distribution_task(parent_task)
       if blocking_distribution? && !parent_task.appeal.distributed_to_a_judge?
         return parent_task.appeal.tasks.find_by(type: DistributionTask.name)
       end
@@ -42,7 +42,7 @@ class MailTask < Task
           # Create a task assigned to the mail team with a child task so we can track how that child was created.
           parent_task = create!(
             appeal: parent_task.appeal,
-            parent_id: parent_if_blocking_task(parent_task).id,
+            parent_id: parent_if_blocking_distribution_task(parent_task).id,
             assigned_to: MailTeam.singleton,
             instructions: [params[:instructions]]
           )

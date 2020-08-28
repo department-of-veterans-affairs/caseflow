@@ -12,7 +12,7 @@ class FoiaColocatedTask < ColocatedTask
   end
 
   def self.blocking_dispatch?
-    FeatureToggle.enabled?(:block_at_dispatch) ? true : false
+    FeatureToggle.enabled?(:block_at_dispatch)
   end
 
   def hide_from_case_timeline

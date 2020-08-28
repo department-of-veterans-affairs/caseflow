@@ -14,6 +14,6 @@ class PrivacyComplaintMailTask < MailTask
   end
 
   def self.blocking_dispatch?
-    FeatureToggle.enabled?(:block_at_dispatch) ? true : false
+    FeatureToggle.enabled?(:block_at_dispatch)
   end
 end
