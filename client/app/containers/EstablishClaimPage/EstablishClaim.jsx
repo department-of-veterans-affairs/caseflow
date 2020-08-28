@@ -147,17 +147,15 @@ export class EstablishClaim extends React.Component {
   }
 
   containsRoutedSpecialIssues = () => {
-    return specialIssueFilters(this.props.featureToggles?.specialIssuesRevamp).routedSpecialIssues().
-      some((issue) => {
-        return this.props.specialIssues[issue.specialIssue];
-      });
+    return specialIssueFilters().routedSpecialIssues().some((issue) => {
+      return this.props.specialIssues[issue.specialIssue];
+    });
   };
 
   containsRoutedOrRegionalOfficeSpecialIssues = () => {
-    return specialIssueFilters(this.props.featureToggles?.specialIssuesRevamp).routedOrRegionalSpecialIssues().
-      some((issue) => {
-        return this.props.specialIssues[issue.specialIssue || issue];
-      });
+    return specialIssueFilters().routedOrRegionalSpecialIssues().some((issue) => {
+      return this.props.specialIssues[issue.specialIssue || issue];
+    });
   };
 
   componentDidMount() {
@@ -243,8 +241,7 @@ export class EstablishClaim extends React.Component {
   getRoutingType = () => {
     let stationOfJurisdiction = getStationOfJurisdiction(
       this.props.specialIssues,
-      this.props.task.appeal.station_key,
-      this.props.featureToggles?.specialIssuesRevamp
+      this.props.task.appeal.station_key
     );
 
     return stationOfJurisdiction === '397' ? 'ARC' : 'Routed';
@@ -410,8 +407,7 @@ export class EstablishClaim extends React.Component {
     claim.date = this.formattedDecisionDate();
     claim.stationOfJurisdiction = getStationOfJurisdiction(
       this.props.specialIssues,
-      this.props.task.appeal.station_key,
-      this.props.featureToggles?.specialIssuesRevamp
+      this.props.task.appeal.station_key
     );
 
     // We have to add in the claimLabel separately, since it is derived from
@@ -432,17 +428,16 @@ export class EstablishClaim extends React.Component {
       return;
     }
 
-    specialIssueFilters(this.props.featureToggles?.specialIssuesRevamp).unhandledSpecialIssues().
-      forEach((issue) => {
-        if (this.props.specialIssues[issue.specialIssue]) {
-          this.setState({
-          // If there are multiple unhandled special issues, we'll route
-          // to the email address for the last one.
-            specialIssuesEmail: issue.unhandled.emailAddress,
-            specialIssuesRegionalOffice: issue.unhandled.regionalOffice
-          });
-        }
-      });
+    specialIssueFilters().unhandledSpecialIssues().forEach((issue) => {
+      if (this.props.specialIssues[issue.specialIssue]) {
+        this.setState({
+        // If there are multiple unhandled special issues, we'll route
+        // to the email address for the last one.
+          specialIssuesEmail: issue.unhandled.emailAddress,
+          specialIssuesRegionalOffice: issue.unhandled.regionalOffice
+        });
+      }
+    });
   };
 
   // This returns true if the flow will create an EP or assign to an existing EP
@@ -455,7 +450,7 @@ export class EstablishClaim extends React.Component {
       return true;
     }
 
-    specialIssueFilters(this.props.featureToggles?.specialIssuesRevamp).unhandledSpecialIssues().
+    specialIssueFilters().unhandledSpecialIssues().
       forEach((issue) => {
         if (this.props.specialIssues[issue.specialIssue]) {
           willCreateEndProduct = false;
@@ -481,7 +476,6 @@ export class EstablishClaim extends React.Component {
             pdfLink={pdfLink}
             pdfjsLink={pdfjsLink}
             task={this.props.task}
-            specialIssuesRevamp={this.props.featureToggles?.specialIssuesRevamp}
           />
         )}
         {this.isAssociatePage() && (
@@ -511,11 +505,9 @@ export class EstablishClaim extends React.Component {
             regionalOfficeKey={this.props.task.appeal.regional_office_key}
             regionalOfficeCities={this.props.regionalOfficeCities}
             stationKey={this.props.task.appeal.station_key}
-            specialIssuesRevamp={this.props.featureToggles?.specialIssuesRevamp}
             stationOfJurisdiction={getStationOfJurisdiction(
               this.props.specialIssues,
-              this.props.task.appeal.station_key,
-              this.props.featureToggles?.specialIssuesRevamp
+              this.props.task.appeal.station_key
             )}
           />
         )}
@@ -531,7 +523,6 @@ export class EstablishClaim extends React.Component {
             showNotePageAlert={this.state.showNotePageAlert}
             displayVacolsNote={decisionType !== FULL_GRANT}
             displayVbmsNote={this.containsRoutedOrRegionalOfficeSpecialIssues()}
-            specialIssuesRevamp={this.props.featureToggles?.specialIssuesRevamp}
           />
         )}
         {this.isEmailPage() && (
@@ -552,7 +543,6 @@ export class EstablishClaim extends React.Component {
             backToDecisionReviewText={BACK_TO_DECISION_REVIEW_TEXT}
             specialIssuesRegionalOffice={this.state.specialIssuesRegionalOffice}
             taskId={this.props.task.id}
-            specialIssuesRevamp={this.props.featureToggles?.specialIssuesRevamp}
           />
         )}
         <CancelModal
@@ -580,8 +570,7 @@ EstablishClaim.propTypes = {
   submitDecisionPageFailure: PropTypes.func,
   beginPerformEstablishClaim: PropTypes.func,
   performEstablishClaimSuccess: PropTypes.func,
-  performEstablishClaimFailure: PropTypes.func,
-  featureToggles: PropTypes.object
+  performEstablishClaimFailure: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({

@@ -221,7 +221,7 @@ export class EstablishClaimDecision extends React.Component {
               </label>
             </legend>
             <div className="cf-multiple-columns">
-              {enabledSpecialIssues(this.props.specialIssuesRevamp).map((issue, index) => {
+              {enabledSpecialIssues().map((issue, index) => {
                 return (
                   <Checkbox
                     id={issue.specialIssue}
@@ -269,7 +269,6 @@ EstablishClaimDecision.propTypes = {
   specialIssues: PropTypes.object.isRequired,
   specialIssuesChange: PropTypes.func,
   specialIssuesError: PropTypes.bool,
-  specialIssuesRevamp: PropTypes.bool,
   task: PropTypes.object.isRequired
 };
 
