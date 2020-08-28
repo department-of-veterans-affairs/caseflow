@@ -1,10 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import SearchBar from '../../components/SearchBar';
 import TabWindow from '../../components/TabWindow';
 import { TaskTableUnconnected } from '../../queue/components/TaskTable';
 import { claimantColumn, veteranParticipantIdColumn, decisionReviewTypeColumn } from './TaskTableColumns';
+import COPY from '../../../COPY.json';
 
 class NonCompTabsUnconnected extends React.PureComponent {
   render = () => {
@@ -12,6 +14,7 @@ class NonCompTabsUnconnected extends React.PureComponent {
       label: 'In progress tasks',
       page: <TaskTableTab
         key="inprogress"
+        description={COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION_UPDATED}
         predefinedColumns={{ includeDaysWaiting: true,
           defaultSortIdx: 3 }}
         tasks={this.props.inProgressTasks} />
@@ -19,6 +22,7 @@ class NonCompTabsUnconnected extends React.PureComponent {
       label: 'Completed tasks',
       page: <TaskTableTab
         key="completed"
+        description={COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION_UPDATED}
         predefinedColumns={{ includeCompletedDate: true,
           defaultSortIdx: 3 }}
         tasks={this.props.completedTasks} />
@@ -40,7 +44,7 @@ class TaskTableTab extends React.PureComponent {
       allTasks: this.props.tasks,
       predefinedColumns: this.props.predefinedColumns,
       shownTasks: this.props.tasks,
-      searchText: ''
+      searchText: '',
     };
   }
 
@@ -63,6 +67,7 @@ class TaskTableTab extends React.PureComponent {
 
   render = () => {
     return <React.Fragment>
+      <div>{this.props.description ?? null}</div>
       <div className="cf-search-ahead-parent cf-push-right cf-noncomp-search">
         <SearchBar
           id="searchBar"
@@ -87,6 +92,13 @@ class TaskTableTab extends React.PureComponent {
     </React.Fragment>;
   }
 }
+
+TaskTableTab.propTypes = {
+  description: PropTypes.node,
+  predefinedColumns: PropTypes.object,
+  tasks: PropTypes.array,
+}
+
 
 const NonCompTabs = connect(
   (state) => ({
