@@ -694,7 +694,7 @@ class Task < CaseflowRecord
     dispatch_task = BvaDispatchTask.open.find_by(appeal: appeal, assigned_to_type: "User") ||
                     BvaDispatchTask.open.find_by(appeal: appeal, assigned_to_type: "Organization")
 
-    if ! (dispatch_task || self.parent.blocking_dispatch?)
+    if ! (dispatch_task || self.parent&.blocking_dispatch?)
       self.parent = appeal.root_task
     end
 
