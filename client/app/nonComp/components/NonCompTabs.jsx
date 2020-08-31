@@ -36,6 +36,14 @@ class NonCompTabsUnconnected extends React.PureComponent {
   }
 }
 
+NonCompTabsUnconnected.propTypes = {
+  completedTasks: PropTypes.array,
+  currentTab: PropTypes.node,
+  dispatch: PropTypes.func,
+  inProgressTasks: PropTypes.array,
+
+}
+
 class TaskTableTab extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -67,7 +75,7 @@ class TaskTableTab extends React.PureComponent {
 
   render = () => {
     return <React.Fragment>
-      <div>{this.props.description ?? null}</div>
+      <div className="cf-noncomp-queue-completed-task">{this.props.description ?? null}</div>
       <div className="cf-search-ahead-parent cf-push-right cf-noncomp-search">
         <SearchBar
           id="searchBar"
