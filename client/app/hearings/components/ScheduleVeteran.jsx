@@ -11,15 +11,13 @@ import COPY from '../../../COPY';
 import { appealWithDetailSelector, scheduleHearingTasksForAppeal } from '../../queue/selectors';
 import { showErrorMessage, requestPatch } from '../../queue/uiReducer/uiActions';
 import { onReceiveAppealDetails } from '../../queue/QueueActions';
-import { prepareAppealForStore } from '../../queue/utils';
 import { formatDateStr } from '../../util/DateUtil';
 import Alert from '../../components/Alert';
 import { marginTop, regionalOfficeSection, saveButton, cancelButton } from './details/style';
-import { find, isEmpty, orderBy } from 'lodash';
+import { find } from 'lodash';
 import { getAppellantTitleForHearing } from '../utils';
 import { onChangeFormData } from '../../components/common/actions';
 import { ScheduleVeteranForm } from './ScheduleVeteranForm';
-import ApiUtil from '../../util/ApiUtil';
 import { HEARING_REQUEST_TYPES } from '../constants';
 
 export const ScheduleVeteran = ({
@@ -200,7 +198,9 @@ export const ScheduleVeteran = ({
 
       <AppSegment filledBackground >
         <h1>{header}</h1>
-        {virtual ? <div {...marginTop(0)}>{COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL}</div> : !fullHearingDay && <div {...marginTop(45)} />}
+        {virtual ?
+          <div {...marginTop(0)}>{COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL}</div> :
+          !fullHearingDay && <div {...marginTop(45)} />}
 
         {fullHearingDay && (
           <Alert

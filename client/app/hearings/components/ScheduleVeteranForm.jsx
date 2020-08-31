@@ -13,7 +13,7 @@ import { HearingTime } from './modalForms/HearingTime';
 import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
 import { HEARING_CONVERSION_TYPES } from '../constants';
-import { marginTop, saveButton, cancelButton } from './details/style';
+import { marginTop } from './details/style';
 import { isEmpty, orderBy } from 'lodash';
 
 export const ScheduleVeteranForm = ({
