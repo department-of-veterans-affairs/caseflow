@@ -389,7 +389,7 @@ class Task < CaseflowRecord
     type.eql?(task_to_check&.type)
   end
 
-  def cancel_descendants(instructions = [])
+  def cancel_descendants(instructions: [])
     descendants.select(&:open?).each do |desc|
       desc.update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: instructions)
     end
@@ -614,6 +614,11 @@ class Task < CaseflowRecord
       assigned_to_name: assignee_display_name,
       type: type
     }
+  end
+
+  # currently only defined by ScheduleHearingTask and AssignHearingDispositionTask for virtual hearing related updates
+  def alerts
+    @alerts ||= []
   end
 
   private

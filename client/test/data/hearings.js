@@ -36,7 +36,6 @@ export const virtualHearing = {
     guestLink:
       'https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest',
     jobCompleted: true,
-    false: 'tom.brady@caseflow.gov',
   },
 };
 
@@ -241,6 +240,12 @@ export const defaultHearing = {
   representative: 'PARALYZED VETERANS OF AMERICA, INC.',
   representativeName: null,
   representativeEmailAddress: 'tom.brady@caseflow.gov',
+  representativeAddress: {
+    addressLine1: '9999 MISSION ST',
+    city: 'SAN FRANCISCO',
+    state: 'CA',
+    zip: '94103',
+  },
   room: '1',
   scheduledFor: '2020-07-06T06:00:00.000-04:00',
   scheduledForIsPast: false,

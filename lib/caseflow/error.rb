@@ -257,17 +257,19 @@ module Caseflow::Error
     end
   end
 
+  class DuplicateDvcTeam < SerializableError
+    def initialize(args)
+      @user_id = args[:user_id]
+      @code = args[:code] || 400
+      @message = args[:message] || "User #{@user_id} already has a DvcTeam. Cannot create another DvcTeam for user."
+    end
+  end
+
   class DuplicateJudgeTeam < SerializableError
     def initialize(args)
       @user_id = args[:user_id]
       @code = args[:code] || 400
       @message = args[:message] || "User #{@user_id} already has a JudgeTeam. Cannot create another JudgeTeam for user."
-    end
-  end
-
-  class NonexistentJudgeTeam < StandardError
-    def initialize(args)
-      @user_id = args[:user_id]
     end
   end
 
@@ -347,4 +349,14 @@ module Caseflow::Error
   class PexipMethodNotAllowedError < PexipApiError; end
 
   class WorkModeCouldNotUpdateError < StandardError; end
+
+  class VirtualHearingConversionFailed < SerializableError
+    attr_accessor :code, :message
+
+    def initialize(args = {})
+      @error_type = args[:error_type]
+      @code = (@error_type == ActiveRecord::RecordNotUnique) ? :conflict : args[:code]
+      @message = (@error_type == ActiveRecord::RecordNotUnique) ? COPY::VIRTUAL_HEARING_ALREADY_CREATED : args[:message]
+    end
+  end
 end

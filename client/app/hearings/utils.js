@@ -62,11 +62,13 @@ export const deepDiff = (firstObj, secondObj) => {
     (result, firstVal, key) => {
       const secondVal = secondObj[key];
 
-      if (_.isEqual(firstVal, secondVal)) {
-        result[key] = null;
-      } else if (_.isObject(firstVal) && _.isObject(secondVal)) {
-        result[key] = deepDiff(firstVal, secondVal);
-      } else {
+      if (_.isObject(firstVal) && _.isObject(secondVal)) {
+        const nestedDiff = deepDiff(firstVal, secondVal);
+
+        if (nestedDiff && !_.isEmpty(nestedDiff)) {
+          result[key] = nestedDiff;
+        }
+      } else if (!_.isEqual(firstVal, secondVal)) {
         result[key] = secondVal;
       }
 
@@ -75,7 +77,7 @@ export const deepDiff = (firstObj, secondObj) => {
     {}
   );
 
-  return _.pickBy(changedObject, (val) => val !== null);
+  return changedObject;
 };
 
 export const filterCurrentIssues = (issues) =>
@@ -320,7 +322,7 @@ export const timezones = (time) => {
   const dateTime = moment(time, 'HH:mm').tz(COMMON_TIMEZONES[0]);
 
   // Map the available timeTIMEZONES to a select options object
-  const options = Object.keys(TIMEZONES).map((zone) => {
+  const unorderedOptions = Object.keys(TIMEZONES).map((zone) => {
     // Default the index to be based on the timezone offset, add 100 to move below the Regional Office zones
     let index = Math.abs(moment.tz(TIMEZONES[zone]).utcOffset()) + 100;
 
@@ -350,5 +352,10 @@ export const timezones = (time) => {
   });
 
   // Return the values and the count of commons
-  return { options: _.orderBy(options, ['index']), commonsCount };
+  const orderedOptions = _.orderBy(unorderedOptions, ['index']);
+
+  // Add null option first to array of timezone options to allow deselecting timezone
+  const options = [{ value: null, label: '' }, ...orderedOptions];
+
+  return { options, commonsCount };
 };
