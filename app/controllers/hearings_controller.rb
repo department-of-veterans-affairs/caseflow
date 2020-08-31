@@ -62,14 +62,16 @@ class HearingsController < HearingsApplicationController
 
   def virtual_hearing_job_status
     render json: {
-      email_events: hearing.email_events,
-      status: hearing.virtual_hearing&.status,
-      job_completed: hearing.virtual_hearing&.job_completed?,
-      alias_with_host: hearing.virtual_hearing&.formatted_alias_or_alias_with_host,
-      guest_link: hearing.virtual_hearing&.guest_link,
-      host_link: hearing.virtual_hearing&.host_link,
-      guest_pin: hearing.virtual_hearing&.guest_pin,
-      host_pin: hearing.virtual_hearing&.host_pin
+      email_events: hearing.serialized_email_events,
+      virtual_hearing: {
+        status: hearing.virtual_hearing&.status,
+        job_completed: hearing.virtual_hearing&.job_completed?,
+        alias_with_host: hearing.virtual_hearing&.formatted_alias_or_alias_with_host,
+        guest_link: hearing.virtual_hearing&.guest_link,
+        host_link: hearing.virtual_hearing&.host_link,
+        guest_pin: hearing.virtual_hearing&.guest_pin,
+        host_pin: hearing.virtual_hearing&.host_pin
+      }
     }
   end
 

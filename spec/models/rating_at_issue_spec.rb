@@ -96,6 +96,7 @@ describe RatingAtIssue do
     let!(:unpromulgated_rating) do
       Generators::RatingAtIssue.build(
         participant_id: "DRAYMOND",
+        promulgation_date: receipt_date - 100.years,
         promulgation_date: nil
       )
     end
