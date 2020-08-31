@@ -15,7 +15,7 @@ class BlockedSpecialCaseMovementTask < SpecialCaseMovementTask
   end
 
   def cancel_tasks_blocking_distribution
-    parent.cancel_descendants(instructions.first)
+    parent.cancel_descendants(instructions: instructions.first)
   end
 
   def verify_appeal_distributable

@@ -389,7 +389,7 @@ class Task < CaseflowRecord
     type.eql?(task_to_check&.type)
   end
 
-  def cancel_descendants(instructions = [])
+  def cancel_descendants(instructions: [])
     descendants.select(&:open?).each do |desc|
       desc.update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: instructions)
     end

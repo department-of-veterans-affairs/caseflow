@@ -1716,7 +1716,7 @@ describe Task, :all_dbs do
       let(:instructions) { "instructions" }
 
       it "cancels all open descendants and adds instructions to the cancelled tasks" do
-        second_level_tasks.first.cancel_descendants(instructions)
+        second_level_tasks.first.cancel_descendants(instructions: instructions)
 
         expect(second_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
         expect(third_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
