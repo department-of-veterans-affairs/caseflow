@@ -210,7 +210,7 @@ class AppealRepository
         hearing_request_type: VACOLS::Case::HEARING_REQUEST_TYPES[case_record.bfhr],
         video_hearing_requested: case_record.bfdocind == "V",
         hearing_requested: (case_record.bfhr == "1" || case_record.bfhr == "2"),
-        hearing_held: %w[1 2 6].include?(case_record.bfha),
+        hearing_held: %w[1 2 6 7].include?(case_record.bfha),
         regional_office_key: case_record.bfregoff,
         certification_date: case_record.bf41stat,
         case_review_date: folder_record.tidktime,
@@ -320,7 +320,7 @@ class AppealRepository
         .includes(:correspondent, :case_issues, :case_hearings, folder: [:outcoder]).reject do |case_record|
           case_record.case_hearings.any? do |hearing|
             # VACOLS contains non-BVA hearings information, we want to confirm the appeal has no scheduled BVA hearings
-            hearing.hearing_disp.nil? && HearingDay::REQUEST_TYPES.value?(hearing.hearing_type)
+            hearing.hearing_disp.nil? && VACOLS::CaseHearing::HEARING_TYPES.include?(hearing.hearing_type)
           end
         end
     end

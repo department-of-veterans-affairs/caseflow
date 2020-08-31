@@ -50,17 +50,19 @@ export const isTimely = (formType, decisionDateStr, receiptDateStr) => {
 };
 
 export const legacyIssue = (issue, legacyAppeals) => {
-  if (issue.vacolsIssue) {
-    return issue.vacolsIssue;
+  if (issue.vacolsId) {
+    if (issue.vacolsIssue) {
+      return issue.vacolsIssue;
+    }
+
+    const legacyAppeal = _.find(legacyAppeals, { vacols_id: issue.vacolsId });
+
+    if (!legacyAppeal) {
+      throw new Error(`No legacyAppeal found for '${issue.vacolsId}'`);
+    }
+
+    return _.find(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })
   }
-
-  let legacyAppeal = _.filter(legacyAppeals, { vacols_id: issue.vacolsId })[0];
-
-  if (!legacyAppeal) {
-    throw new Error(`No legacyAppeal found for '${issue.vacolsId}'`);
-  }
-
-  return _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })[0];
 };
 
 export const validateDateNotInFuture = (date) => {
