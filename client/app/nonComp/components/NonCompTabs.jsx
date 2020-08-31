@@ -6,7 +6,7 @@ import SearchBar from '../../components/SearchBar';
 import TabWindow from '../../components/TabWindow';
 import { TaskTableUnconnected } from '../../queue/components/TaskTable';
 import { claimantColumn, veteranParticipantIdColumn, decisionReviewTypeColumn } from './TaskTableColumns';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 
 class NonCompTabsUnconnected extends React.PureComponent {
   render = () => {
