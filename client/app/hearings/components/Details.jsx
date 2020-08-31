@@ -30,6 +30,8 @@ import DetailsForm from './details/DetailsForm';
 import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
 
+import COPY from '../../../COPY';
+
 /**
  * Hearing Details Component
  * @param {Object} props -- React props inherited from client/app/hearings/containers/DetailsContainer.jsx
@@ -111,20 +113,23 @@ const HearingDetails = (props) => {
     try {
       // Determine the current state and whether to error
       const virtual = hearing.isVirtual || hearing.wasVirtual || converting;
-      const noEmail = !hearing.virtualHearing?.appellantEmail;
+      const noAppellantEmail = !hearing.virtualHearing?.appellantEmail;
       const noRepTimezone = !hearing.virtualHearing?.representativeTz && hearing.virtualHearing?.representativeEmail;
+      const noAppellantTimezone = !hearing.virtualHearing?.appellantTz;
       const emailUpdated = (
         editedEmails?.appellantEmailEdited ||
         (editedEmails?.representativeEmailEdited && hearing.virtualHearing?.representativeEmail)
       );
       const timezoneUpdated = editedEmails?.representativeTzEdited || editedEmails?.appellantTzEdited;
-      const errors = noEmail || (noRepTimezone && hearing.readableRequestType !== 'Video');
+      const errors = noAppellantEmail ||
+                    ((noAppellantTimezone || noRepTimezone) && hearing.readableRequestType !== 'Video');
 
       if (virtual && errors) {
         // Set the Virtual Hearing errors
         setVirtualHearingErrors({
-          [noEmail && 'appellantEmail']: `${getAppellantTitleForHearing(hearing)} email is required`,
-          [noRepTimezone && 'representativeTz']: 'Timezone is required to send email notifications.'
+          [noAppellantEmail && 'appellantEmail']: `${getAppellantTitleForHearing(hearing)} email is required`,
+          [noRepTimezone && 'representativeTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED,
+          [noAppellantTimezone && 'appellantTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED
         });
 
         // Focus to the error
