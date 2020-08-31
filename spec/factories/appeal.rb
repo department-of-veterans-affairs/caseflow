@@ -218,20 +218,16 @@ FactoryBot.define do
 
     ## Appeal with a realistic task tree
     ## The appeal is ready for distribution by the ACD
-    ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
-    ## for those dockets
     trait :ready_for_distribution do
       with_post_intake_tasks
       after(:create) do |appeal, _evaluator|
         distribution_tasks = appeal.tasks.select { |task| task.is_a?(DistributionTask) }
-        distribution_tasks.each(&:ready_for_distribution!)
+        (distribution_tasks.flat_map(&:descendants) - distribution_tasks).each(&:completed!)
       end
     end
 
     ## Appeal with a realistic task tree
     ## The appeal would be ready for distribution by the ACD except there is a blocking mail task
-    ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
-    ## for those dockets
     trait :mail_blocking_distribution do
       ready_for_distribution
       after(:create) do |appeal, _evaluator|
@@ -246,8 +242,7 @@ FactoryBot.define do
 
     ## Appeal with a realistic task tree
     ## The appeal is assigned to a Judge for a decision
-    ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
-    ## for those dockets. Strongly suggest you provide a judge.
+    ## Strongly suggest you provide a judge.
     trait :assigned_to_judge do
       ready_for_distribution
       after(:create) do |appeal, evaluator|
@@ -261,8 +256,7 @@ FactoryBot.define do
 
     ## Appeal with a realistic task tree
     ## The appeal is assigned to an Attorney for decision drafting
-    ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
-    ## for those dockets. Strongly suggest you provide a judge and attorney.
+    ## Strongly suggest you provide a judge and attorney.
     trait :at_attorney_drafting do
       assigned_to_judge
       after(:create) do |appeal, evaluator|
@@ -278,8 +272,7 @@ FactoryBot.define do
 
     ## Appeal with a realistic task tree
     ## The appeal is assigned to a judge at decision review
-    ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
-    ## for those dockets. Strongly suggest you provide a judge and attorney.
+    ## Strongly suggest you provide a judge and attorney.
     trait :at_judge_review do
       at_attorney_drafting
       after(:create) do |appeal|

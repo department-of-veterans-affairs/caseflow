@@ -15,14 +15,13 @@ module Seeds
     private
 
     def organize_judges
-      JudgeTeam.find_by(name: "BVAACTING")&.destroy!
-      JudgeTeam.find_by(name: "BVAAWAKEFIELD")&.update!(accepts_priority_pushed_cases: false)
+      JudgeTeam.unscoped.find_by(name: "BVAACTING").inactive!
+      JudgeTeam.find_by(name: "BVAAWAKEFIELD").update!(accepts_priority_pushed_cases: false)
     end
 
     def create_previous_distribtions
       judges_with_previous_distributions.each do |judge|
-        create_priority_distribution_this_month(judge)
-        create_priority_distribution_this_month(judge)
+        2.times { create_priority_distribution_this_month(judge) }
         create_priority_distribution_last_month(judge)
         create_nonpriority_distribution_this_month(judge)
       end
@@ -56,13 +55,6 @@ module Seeds
       create_hearing_ready_priority_cases_tied_to_judge(judge)
       create_hearing_nonready_priority_cases_tied_to_judge(judge)
       create_hearing_ready_nonpriority_cases_tied_to_judge(judge)
-    end
-
-    def create_nonready_priority_genpop_cases
-      create_legacy_nonready_priority_genpop_cases
-      create_ama_hearing_nonready_priority_genpop_cases
-      create_direct_review_nonready_priority_genpop_cases
-      create_evidence_submission_nonready_priority_genpop_cases
     end
 
     def create_legacy_genpop_cases
@@ -173,6 +165,7 @@ module Seeds
         create(
           :appeal,
           :hearing_docket,
+          :with_post_intake_tasks,
           :advanced_on_docket_due_to_age,
           :held_hearing,
           :tied_to_judge,
@@ -248,6 +241,7 @@ module Seeds
         create(
           :appeal,
           :hearing_docket,
+          :with_post_intake_tasks,
           :advanced_on_docket_due_to_age,
           :held_hearing,
           adding_user: User.first
@@ -283,6 +277,7 @@ module Seeds
         create(
           :appeal,
           :direct_review_docket,
+          :with_post_intake_tasks,
           :advanced_on_docket_due_to_age
         )
       end
@@ -314,6 +309,7 @@ module Seeds
         create(
           :appeal,
           :evidence_submission_docket,
+          :with_post_intake_tasks,
           :advanced_on_docket_due_to_age
         )
       end
@@ -367,14 +363,18 @@ module Seeds
 
     def judges_with_tied_cases
       @judges_with_tied_cases ||= begin
-        JudgeTeam.unscoped.map(&:judge).unshift(User.find_by(full_name: "Steve Attorney_Cases Casper"))
+        judges_with_judge_teams.unshift(User.find_by(full_name: "Steve Attorney_Cases Casper"))
       end
     end
 
     def judges_with_previous_distributions
       @judges_with_previous_distributions ||= begin
-        JudgeTeam.unscoped.map(&:judge).unshift(User.find_by(full_name: "Keith Judge_CaseToAssign_NoTeam Keeling"))
+        judges_with_judge_teams.unshift(User.find_by(full_name: "Keith Judge_CaseToAssign_NoTeam Keeling"))
       end
+    end
+
+    def judges_with_judge_teams
+      JudgeTeam.unscoped.map(&:judge)
     end
 
     def random_key
