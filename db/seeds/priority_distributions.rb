@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
-# create distribution seeds
+# Create distribution seeds to test priority push case distribution job.
+# Mocks previously distributed cases for judges. Sets up cases ready to be distributed.
+# Invoke with:
+# RequestStore[:current_user] = User.system_user
+# Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
+# Seeds::PriorityDistributions.new.seed!
 
 module Seeds
   class PriorityDistributions < Base
