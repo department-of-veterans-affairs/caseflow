@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -64,6 +65,7 @@ export default class OrganizationUsers extends React.PureComponent {
       this.setState({
         organizationName: response.body.organization_name,
         judgeTeam: response.body.judge_team,
+        dvcTeam: response.body.dvc_team,
         organizationUsers: response.body.organization_users.data,
         remainingUsers: [],
         loading: false
@@ -233,20 +235,22 @@ export default class OrganizationUsers extends React.PureComponent {
 
   mainContent = () => {
     const judgeTeam = this.state.judgeTeam;
+    const dvcTeam = this.state.dvcTeam;
     const listOfUsers = this.state.organizationUsers.map((user, i) => {
-      const { judge, attorney, admin } = user.attributes;
+      const { judge, dvc, attorney, admin } = user.attributes;
       const style = i === 0 ? topUserStyle : userStyle;
 
       return <React.Fragment>
         <li key={user.id} {...style}>{this.formatName(user)}
           { judgeTeam && judge && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
+          { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
           { judgeTeam && attorney && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
-          { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
+          { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
         </li>
-        { judgeTeam && admin ?
+        { (judgeTeam || dvcTeam) && admin ?
           <div {...topUserBorder}></div> :
           <div {...buttonContainerStyle}>
-            { !judgeTeam && this.adminButton(user, admin) }
+            { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
             { this.removeUserButton(user) }
           </div> }
       </React.Fragment>;
@@ -265,6 +269,7 @@ export default class OrganizationUsers extends React.PureComponent {
             `${COPY.USER_MANAGEMENT_ADD_USER_LOADING_MESSAGE} ${this.formatName(this.state.addingUser)}` :
             COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT
         }
+        noResultsText={COPY.TEAM_MANAGEMENT_DROPDOWN_LABEL}
         value={null}
         onChange={this.addUser}
         async={this.asyncLoadUser} />
@@ -273,10 +278,10 @@ export default class OrganizationUsers extends React.PureComponent {
         <div>
           <h2>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h2>
           <ul {...listStyle}>
-            { !judgeTeam && <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li> }
-            <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{judgeTeam ?
+            { (judgeTeam || dvcTeam) ? '' : <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li> }
+            <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{ judgeTeam ?
               COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION :
-              COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION}</li>
+              COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION }</li>
           </ul>
         </div>
         <ul>{listOfUsers}</ul>
@@ -298,7 +303,9 @@ export default class OrganizationUsers extends React.PureComponent {
         {this.state.error.body}
       </Alert>}
       <div>
-        <h1>{sprintf(COPY.USER_MANAGEMENT_PAGE_TITLE, this.state.organizationName)}</h1>
+        <h1>{ this.state.judgeTeam ? sprintf(COPY.USER_MANAGEMENT_JUDGE_TEAM_PAGE_TITLE, this.state.organizationName) :
+          this.state.dvcTeam ? sprintf(COPY.USER_MANAGEMENT_DVC_TEAM_PAGE_TITLE, this.state.organizationName) :
+            sprintf(COPY.USER_MANAGEMENT_PAGE_TITLE, this.state.organizationName) }</h1>
         {this.mainContent()}
       </div>
     </AppSegment>

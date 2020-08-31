@@ -83,7 +83,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         first_value(BOARD_MEMBER) over (partition by TITRNUM, TINUM order by HEARING_DATE desc) VLJ
       from HEARSCHED
       inner join FOLDER on FOLDER.TICKNUM = HEARSCHED.FOLDER_NR
-      where HEARING_TYPE in ('C', 'T', 'V') and HEARING_DISP = 'H'
+      where HEARING_TYPE in ('C', 'T', 'V', 'R') and HEARING_DISP = 'H'
     ) VLJ_HEARINGS
       on VLJ_HEARINGS.VLJ not in ('000', '888', '999')
         and VLJ_HEARINGS.TITRNUM = BRIEFF.TITRNUM
@@ -153,7 +153,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         left join (
           select FOLDER_NR, count(*) CNT
           from HEARSCHED
-          where HEARING_TYPE IN ('C', 'T', 'V')
+          where HEARING_TYPE IN ('C', 'T', 'V', 'R')
             AND AOD IN ('G', 'Y')
           group by FOLDER_NR
         ) AOD_HEARINGS on AOD_HEARINGS.FOLDER_NR = BFKEY
@@ -218,7 +218,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         left join (
           select FOLDER_NR, count(*) CNT
           from HEARSCHED
-          where HEARING_TYPE IN ('C', 'T', 'V')
+          where HEARING_TYPE IN ('C', 'T', 'V', 'R')
             AND AOD IN ('G', 'Y')
           group by FOLDER_NR
         ) AOD_HEARINGS on AOD_HEARINGS.FOLDER_NR = BFKEY

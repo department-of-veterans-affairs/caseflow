@@ -32,6 +32,7 @@ class Veteran < CaseflowRecord
     validate :validate_date_of_birth
     validate :validate_name_suffix
     validate :validate_zip_code
+    validate :validate_veteran_pay_grade
   end
 
   delegate :full_address, to: :address
@@ -188,6 +189,12 @@ class Veteran < CaseflowRecord
     zip_code
   end
 
+  def pay_grades
+    return unless service
+
+    service.map { |service| service[:pay_grade] }.compact
+  end
+
   alias zip zip_code
   alias address_line_1 address_line1
   alias address_line_2 address_line2
@@ -195,10 +202,10 @@ class Veteran < CaseflowRecord
   alias gender sex
 
   def validate_zip_code
-    # This regex validation checks for that zip code is 5 characters long
-    zip_code = bgs_record&.[](:zip_code)
+    return unless zip_code
 
-    if zip_code && country == "USA"
+    if country == "USA"
+      # This regex validation checks for that zip code is 5 characters long
       errors.add(:zip_code, "invalid_zip_code") unless zip_code&.match?(/^(?=(\D*\d){5}\D*$)/)
     end
   end
@@ -233,6 +240,12 @@ class Veteran < CaseflowRecord
   def validate_name_suffix
     # This regex validation checks for punctuations in the name suffix
     errors.add(:name_suffix, "invalid_character") if name_suffix&.match?(/[!@#$%^&*(),.?":{}|<>]/)
+  end
+
+  def validate_veteran_pay_grade
+    return errors.add(:pay_grades, "invalid_pay_grade") if pay_grades&.any? do |pay_grades|
+      bgs.pay_grade_list.map { |pay_grade| pay_grade[:code] }.exclude?(pay_grades.strip)
+    end
   end
 
   def ratings

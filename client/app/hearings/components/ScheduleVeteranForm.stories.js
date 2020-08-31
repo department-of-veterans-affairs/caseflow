@@ -1,8 +1,8 @@
 import React from 'react';
 import { useArgs } from '@storybook/client-api';
 
-import { defaultHearing } from '../../../test/data/hearings';
-import { amaAppeal } from '../../../test/data/appeals';
+import { defaultHearing, virtualHearing, centralHearing } from '../../../test/data/hearings';
+import { amaAppeal, scheduleHearingDetails } from '../../../test/data/appeals';
 import { ScheduleVeteranForm } from './ScheduleVeteranForm';
 import { queueWrapper as Wrapper } from '../../../test/data/stores/queueStore';
 
@@ -70,8 +70,27 @@ RegionalOfficeSelected.args = {
   }
 };
 
-export const WithErrors = Template.bind({});
-WithErrors.args = {
+export const VideoToVirtualConversion = Template.bind({});
+VideoToVirtualConversion.args = {
+  appeal: {
+    ...amaAppeal,
+    regionalOffice: defaultHearing.regionalOfficeKey,
+    hearingLocation: scheduleHearingDetails.hearingLocation }
+};
+
+export const CentralToVirtualConversion = Template.bind({});
+CentralToVirtualConversion.args = {
+  hearing: {
+    ...centralHearing,
+  },
+};
+
+export const VideoWithErrors = Template.bind({});
+VideoWithErrors.args = {
+  hearing: {
+    ...defaultHearing,
+    virtualHearing: virtualHearing.virtualHearing
+  },
   appeal: {
     ...amaAppeal,
     regionalOffice: defaultHearing.regionalOfficeKey
@@ -80,5 +99,23 @@ WithErrors.args = {
     hearingLocation: 'Unknown Hearing Location',
     hearingDay: 'Cannot find hearing day',
     scheduledTimeString: 'Invalid time selected',
+  }
+};
+
+export const VirtualWithErrors = Template.bind({});
+VirtualWithErrors.args = {
+  hearing: {
+    ...defaultHearing,
+    virtualHearing: virtualHearing.virtualHearing
+  },
+  appeal: {
+    ...amaAppeal,
+    regionalOffice: defaultHearing.regionalOfficeKey
+  },
+  errors: {
+    hearingDay: 'Cannot find hearing day',
+    scheduledTimeString: 'Invalid time selected',
+    appellantEmail: 'Invalid appellant email',
+    representativeEmail: 'Invalid representative email'
   }
 };
