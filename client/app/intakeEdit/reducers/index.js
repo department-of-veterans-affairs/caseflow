@@ -17,7 +17,9 @@ export const mapDataToInitialState = function(props = {}) {
       veteranMissingFields: _.join(serverIntake.veteranInvalidFields.veteran_missing_fields, ', '),
       veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long,
       veteranAddressInvalidFields: serverIntake.veteranInvalidFields.veteran_address_invalid_address,
-      veteranCityInvalidFields: serverIntake.veteranInvalidFields.veteran_city_invalid_address
+      veteranCityInvalidFields: serverIntake.veteranInvalidFields.veteran_city_invalid_address,
+      veteranZipCodeInvalid: serverIntake.veteranInvalidFields.veteran_zip_code_invalid,
+      veteranPayGradeInvalid: serverIntake.veteranInvalidFields.veteran_pay_grade_invalid
     };
   }
 
