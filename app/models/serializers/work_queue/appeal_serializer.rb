@@ -115,7 +115,7 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :attorney_case_rewrite_details do |object|
-    if FeatureToggle.enabled?(:overtime_revamp)
+    if FeatureToggle.enabled?(:overtime_revamp, user: RequestStore.store[:current_user])
       {
         note_from_attorney: object.latest_attorney_case_review&.note,
         untimely_evidence: object.latest_attorney_case_review&.untimely_evidence

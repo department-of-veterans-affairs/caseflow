@@ -19,6 +19,7 @@ import TextareaField from '../../../components/TextareaField';
 const DetailsForm = (props) => {
   const {
     hearing,
+    initialHearing,
     update,
     isLegacy,
     openVirtualHearingModal,
@@ -27,7 +28,15 @@ const DetailsForm = (props) => {
     errors,
     convertHearing,
   } = props;
-  const { userCanScheduleVirtualHearings, userCanConvertCentralHearings } = useContext(HearingsUserContext);
+
+  // Get the user permissions
+  const {
+    userCanScheduleVirtualHearings,
+    userCanConvertCentralHearings,
+    userUseFullPageVideoToVirtual
+  } = useContext(HearingsUserContext);
+
+  // Set whether to enable virtual hearings
   const enableVirtualHearings =
     requestType === 'Central' ?
       userCanConvertCentralHearings :
@@ -59,6 +68,7 @@ const DetailsForm = (props) => {
         <div {...rowThirds}>
           {enableVirtualHearings && (
             <HearingTypeDropdown
+              enableFullPageConversion={userUseFullPageVideoToVirtual}
               convertHearing={convertHearing}
               virtualHearing={hearing?.virtualHearing}
               requestType={requestType}
@@ -106,6 +116,7 @@ const DetailsForm = (props) => {
       <VirtualHearingForm
         errors={errors}
         hearing={hearing}
+        initialHearing={initialHearing}
         readOnly={readOnly}
         virtualHearing={hearing?.virtualHearing}
         update={update}
@@ -137,6 +148,9 @@ DetailsForm.propTypes = {
     transcription: PropTypes.object,
     wasVirtual: PropTypes.bool,
     isVirtual: PropTypes.bool,
+  }),
+  initialHearing: PropTypes.shape({
+    virtualHearing: PropTypes.object
   }),
   isLegacy: PropTypes.bool,
   openVirtualHearingModal: PropTypes.func,

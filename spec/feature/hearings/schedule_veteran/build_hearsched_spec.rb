@@ -110,7 +110,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
     let!(:veteran) { create(:veteran, file_number: "123456789") }
     let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
-    let(:room_label) { HearingDayMapper.label_for_room(hearing_day.room) }
+    let(:room_label) { HearingRooms.find!(hearing_day.room)&.label }
 
     scenario "Schedule Veteran for video" do
       cache_appeals
@@ -394,6 +394,33 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         click_button("Schedule", exact: true)
 
         expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
+      end
+
+      scenario "should not see room displayed under Available Hearing Days and Assign Hearing Tabs" do
+        visit "hearings/schedule/assign"
+
+        click_dropdown(text: "Denver")
+        click_button("AMA Veterans Waiting", exact: true)
+        click_on "Bob Smith"
+
+        click_dropdown(text: "Schedule Veteran")
+        click_dropdown(
+          text: RegionalOffice.find!(regional_office).city,
+          name: "regionalOffice"
+        )
+        click_dropdown(
+          text: "#{hearing_day.scheduled_for.to_formatted_s(:short_date)} (0/#{hearing_day.total_slots})",
+          name: "hearingDate"
+        )
+        click_dropdown(
+          text: "Holdrege, NE (VHA) 0 miles away",
+          name: "appealHearingLocation"
+        )
+        click_dropdown(text: "10:00 am", name: "optionalHearingTime0")
+        click_button("Schedule", exact: true)
+        click_on "Back to Schedule Veterans"
+
+        expect(page).not_to have_content("null")
       end
     end
   end

@@ -14,6 +14,7 @@ export const AddressLine = ({
   addressState,
   addressCity,
   addressZip,
+  ...props
 }) => {
   // Handle any missing address fields
   const format = (field) => (field ? `${field}\n` : '');
@@ -23,6 +24,7 @@ export const AddressLine = ({
 
   return (
     <ReadOnly
+      {...props}
       label={label}
       text={text} />
   );
