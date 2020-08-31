@@ -35,6 +35,13 @@ describe OrganizationCompletedTasksTab, :postgres do
     end
   end
 
+  describe ".description" do
+    subject { tab.description }
+    it "has the correct description for each tab hash" do
+        expect(subject).to eq(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
+      end
+  end
+
   describe ".tasks" do
     subject { tab.tasks }
 
