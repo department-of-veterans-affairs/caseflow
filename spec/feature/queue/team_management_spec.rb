@@ -46,9 +46,7 @@ RSpec.feature "Team management page", :postgres do
     context "when user is a dvc" do
       before do
         dvc = create(:user)
-        # TODO: incorperate alec's changes
-        # DvcTeam.create_for_judge(judge)
-        allow(dvc).to receive(:can_view_judge_team_management?).and_return(true)
+        DvcTeam.create_for_dvc(dvc)
         User.authenticate!(user: dvc)
       end
 

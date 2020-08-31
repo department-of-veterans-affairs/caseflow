@@ -48,7 +48,7 @@ describe TeamManagementController, :postgres, type: :controller do
       context "when current user is a DVC" do
         before do
           dvc = create(:user)
-          DvcTeam.create_for_judge(judge)
+          DvcTeam.create_for_dvc(dvc)
           User.authenticate!(user: dvc)
         end
 
