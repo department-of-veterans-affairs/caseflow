@@ -10,13 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_14_222133) do
+ActiveRecord::Schema.define(version: 2020_08_24_143143) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
   create_table "advance_on_docket_motions", force: :cascade do |t|
+    t.integer "appeal_id", comment: "The ID of the appeal this motion is associated with"
+    t.string "appeal_type", comment: "The type of appeal this motion is associated with"
     t.datetime "created_at", null: false
     t.boolean "granted", comment: "Whether VLJ has determined that there is sufficient cause to fast-track an appeal, i.e. grant or deny the motion to AOD."
     t.bigint "person_id", comment: "Appellant ID"
@@ -777,6 +779,7 @@ ActiveRecord::Schema.define(version: 2020_08_14_222133) do
     t.datetime "updated_at"
     t.integer "user_id", null: false, comment: "The ID of the user who created the intake."
     t.string "veteran_file_number", comment: "The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
+    t.index ["detail_type", "detail_id"], name: "index_intakes_on_detail_type_and_detail_id"
     t.index ["type", "veteran_file_number"], name: "unique_index_to_avoid_duplicate_intakes", unique: true, where: "(completed_at IS NULL)"
     t.index ["type"], name: "index_intakes_on_type"
     t.index ["updated_at"], name: "index_intakes_on_updated_at"

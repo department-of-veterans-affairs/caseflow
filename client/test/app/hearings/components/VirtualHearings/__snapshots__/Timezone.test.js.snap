@@ -7,7 +7,7 @@ exports[`Timezone Can set timezone 1`] = `
     [MockFunction] {
       "calls": Array [
         Array [
-          "America/Chicago",
+          "America/New_York",
         ],
       ],
       "results": Array [
@@ -30,6 +30,10 @@ exports[`Timezone Can set timezone 1`] = `
     onChange={[Function]}
     options={
       Array [
+        Object {
+          "label": "",
+          "value": null,
+        },
         Object {
           "index": -3,
           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -846,6 +850,10 @@ exports[`Timezone Can set timezone 1`] = `
             options={
               Array [
                 Object {
+                  "label": "",
+                  "value": null,
+                },
+                Object {
                   "index": -3,
                   "label": "Eastern Time (US & Canada) (8:15 AM)",
                   "value": "America/New_York",
@@ -1616,9 +1624,9 @@ exports[`Timezone Can set timezone 1`] = `
             }
             value={
               Object {
-                "index": -2,
-                "label": "Central Time (US & Canada) (7:15 AM)",
-                "value": "America/Chicago",
+                "index": -3,
+                "label": "Eastern Time (US & Canada) (8:15 AM)",
+                "value": "America/New_York",
               }
             }
           >
@@ -1664,6 +1672,10 @@ exports[`Timezone Can set timezone 1`] = `
               openMenuOnFocus={false}
               options={
                 Array [
+                  Object {
+                    "label": "",
+                    "value": null,
+                  },
                   Object {
                     "index": -3,
                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -2439,9 +2451,9 @@ exports[`Timezone Can set timezone 1`] = `
               tabSelectsValue={true}
               value={
                 Object {
-                  "index": -2,
-                  "label": "Central Time (US & Canada) (7:15 AM)",
-                  "value": "America/Chicago",
+                  "index": -3,
+                  "label": "Eastern Time (US & Canada) (8:15 AM)",
+                  "value": "America/New_York",
                 }
               }
             >
@@ -2463,6 +2475,10 @@ exports[`Timezone Can set timezone 1`] = `
                 isRtl={false}
                 options={
                   Array [
+                    Object {
+                      "label": "",
+                      "value": null,
+                    },
                     Object {
                       "index": -3,
                       "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -3271,6 +3287,10 @@ exports[`Timezone Can set timezone 1`] = `
                     "openMenuOnFocus": false,
                     "options": Array [
                       Object {
+                        "label": "",
+                        "value": null,
+                      },
+                      Object {
                         "index": -3,
                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                         "value": "America/New_York",
@@ -4042,9 +4062,9 @@ exports[`Timezone Can set timezone 1`] = `
                     "tabIndex": "0",
                     "tabSelectsValue": true,
                     "value": Object {
-                      "index": -2,
-                      "label": "Central Time (US & Canada) (7:15 AM)",
-                      "value": "America/Chicago",
+                      "index": -3,
+                      "label": "Eastern Time (US & Canada) (8:15 AM)",
+                      "value": "America/New_York",
                     },
                   }
                 }
@@ -4118,6 +4138,10 @@ exports[`Timezone Can set timezone 1`] = `
                       menuIsOpen={false}
                       options={
                         Array [
+                          Object {
+                            "label": "",
+                            "value": null,
+                          },
                           Object {
                             "index": -3,
                             "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -4926,6 +4950,10 @@ exports[`Timezone Can set timezone 1`] = `
                           "openMenuOnFocus": false,
                           "options": Array [
                             Object {
+                              "label": "",
+                              "value": null,
+                            },
+                            Object {
                               "index": -3,
                               "label": "Eastern Time (US & Canada) (8:15 AM)",
                               "value": "America/New_York",
@@ -5697,9 +5725,9 @@ exports[`Timezone Can set timezone 1`] = `
                           "tabIndex": "0",
                           "tabSelectsValue": true,
                           "value": Object {
-                            "index": -2,
-                            "label": "Central Time (US & Canada) (7:15 AM)",
-                            "value": "America/Chicago",
+                            "index": -3,
+                            "label": "Eastern Time (US & Canada) (8:15 AM)",
+                            "value": "America/New_York",
                           },
                         }
                       }
@@ -5781,6 +5809,10 @@ exports[`Timezone Can set timezone 1`] = `
                             isRtl={false}
                             options={
                               Array [
+                                Object {
+                                  "label": "",
+                                  "value": null,
+                                },
                                 Object {
                                   "index": -3,
                                   "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -6589,6 +6621,10 @@ exports[`Timezone Can set timezone 1`] = `
                                 "openMenuOnFocus": false,
                                 "options": Array [
                                   Object {
+                                    "label": "",
+                                    "value": null,
+                                  },
+                                  Object {
                                     "index": -3,
                                     "label": "Eastern Time (US & Canada) (8:15 AM)",
                                     "value": "America/New_York",
@@ -7360,9 +7396,9 @@ exports[`Timezone Can set timezone 1`] = `
                                 "tabIndex": "0",
                                 "tabSelectsValue": true,
                                 "value": Object {
-                                  "index": -2,
-                                  "label": "Central Time (US & Canada) (7:15 AM)",
-                                  "value": "America/Chicago",
+                                  "index": -3,
+                                  "label": "Eastern Time (US & Canada) (8:15 AM)",
+                                  "value": "America/New_York",
                                 },
                               }
                             }
@@ -7423,9 +7459,9 @@ exports[`Timezone Can set timezone 1`] = `
                                   cx={[Function]}
                                   data={
                                     Object {
-                                      "index": -2,
-                                      "label": "Central Time (US & Canada) (7:15 AM)",
-                                      "value": "America/Chicago",
+                                      "index": -3,
+                                      "label": "Eastern Time (US & Canada) (8:15 AM)",
+                                      "value": "America/New_York",
                                     }
                                   }
                                   getStyles={[Function]}
@@ -7436,6 +7472,10 @@ exports[`Timezone Can set timezone 1`] = `
                                   isRtl={false}
                                   options={
                                     Array [
+                                      Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
                                       Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -8244,6 +8284,10 @@ exports[`Timezone Can set timezone 1`] = `
                                       "openMenuOnFocus": false,
                                       "options": Array [
                                         Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
+                                        Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
                                           "value": "America/New_York",
@@ -9015,9 +9059,9 @@ exports[`Timezone Can set timezone 1`] = `
                                       "tabIndex": "0",
                                       "tabSelectsValue": true,
                                       "value": Object {
-                                        "index": -2,
-                                        "label": "Central Time (US & Canada) (7:15 AM)",
-                                        "value": "America/Chicago",
+                                        "index": -3,
+                                        "label": "Eastern Time (US & Canada) (8:15 AM)",
+                                        "value": "America/New_York",
                                       },
                                     }
                                   }
@@ -9076,7 +9120,7 @@ exports[`Timezone Can set timezone 1`] = `
                                     <div
                                       className="cf-select__single-value css-1uccc91-singleValue"
                                     >
-                                      Central Time (US & Canada) (7:15 AM)
+                                      Eastern Time (US & Canada) (8:15 AM)
                                     </div>
                                   </EmotionCssPropInternal>
                                 </SingleValue>
@@ -9139,6 +9183,10 @@ exports[`Timezone Can set timezone 1`] = `
                                       "openMenuOnFocus": false,
                                       "options": Array [
                                         Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
+                                        Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
                                           "value": "America/New_York",
@@ -9910,9 +9958,9 @@ exports[`Timezone Can set timezone 1`] = `
                                       "tabIndex": "0",
                                       "tabSelectsValue": true,
                                       "value": Object {
-                                        "index": -2,
-                                        "label": "Central Time (US & Canada) (7:15 AM)",
-                                        "value": "America/Chicago",
+                                        "index": -3,
+                                        "label": "Eastern Time (US & Canada) (8:15 AM)",
+                                        "value": "America/New_York",
                                       },
                                     }
                                   }
@@ -10063,6 +10111,10 @@ exports[`Timezone Can set timezone 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "",
+                                  "value": null,
+                                },
+                                Object {
                                   "index": -3,
                                   "label": "Eastern Time (US & Canada) (8:15 AM)",
                                   "value": "America/New_York",
@@ -10870,6 +10922,10 @@ exports[`Timezone Can set timezone 1`] = `
                                 "openMenuOnFocus": false,
                                 "options": Array [
                                   Object {
+                                    "label": "",
+                                    "value": null,
+                                  },
+                                  Object {
                                     "index": -3,
                                     "label": "Eastern Time (US & Canada) (8:15 AM)",
                                     "value": "America/New_York",
@@ -11641,9 +11697,9 @@ exports[`Timezone Can set timezone 1`] = `
                                 "tabIndex": "0",
                                 "tabSelectsValue": true,
                                 "value": Object {
-                                  "index": -2,
-                                  "label": "Central Time (US & Canada) (7:15 AM)",
-                                  "value": "America/Chicago",
+                                  "index": -3,
+                                  "label": "Eastern Time (US & Canada) (8:15 AM)",
+                                  "value": "America/New_York",
                                 },
                               }
                             }
@@ -11707,6 +11763,10 @@ exports[`Timezone Can set timezone 1`] = `
                                   isRtl={false}
                                   options={
                                     Array [
+                                      Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
                                       Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -12515,6 +12575,10 @@ exports[`Timezone Can set timezone 1`] = `
                                       "openMenuOnFocus": false,
                                       "options": Array [
                                         Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
+                                        Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
                                           "value": "America/New_York",
@@ -13286,9 +13350,9 @@ exports[`Timezone Can set timezone 1`] = `
                                       "tabIndex": "0",
                                       "tabSelectsValue": true,
                                       "value": Object {
-                                        "index": -2,
-                                        "label": "Central Time (US & Canada) (7:15 AM)",
-                                        "value": "America/Chicago",
+                                        "index": -3,
+                                        "label": "Eastern Time (US & Canada) (8:15 AM)",
+                                        "value": "America/New_York",
                                       },
                                     }
                                   }
@@ -13364,6 +13428,10 @@ exports[`Timezone Can set timezone 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -14171,6 +14239,10 @@ exports[`Timezone Can set timezone 1`] = `
                                       "openMenuOnFocus": false,
                                       "options": Array [
                                         Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
+                                        Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
                                           "value": "America/New_York",
@@ -14942,9 +15014,9 @@ exports[`Timezone Can set timezone 1`] = `
                                       "tabIndex": "0",
                                       "tabSelectsValue": true,
                                       "value": Object {
-                                        "index": -2,
-                                        "label": "Central Time (US & Canada) (7:15 AM)",
-                                        "value": "America/Chicago",
+                                        "index": -3,
+                                        "label": "Eastern Time (US & Canada) (8:15 AM)",
+                                        "value": "America/New_York",
                                       },
                                     }
                                   }
@@ -15077,6 +15149,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
     onChange={[Function]}
     options={
       Array [
+        Object {
+          "label": "",
+          "value": null,
+        },
         Object {
           "index": -3,
           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -15893,6 +15969,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
             options={
               Array [
                 Object {
+                  "label": "",
+                  "value": null,
+                },
+                Object {
                   "index": -3,
                   "label": "Eastern Time (US & Canada) (8:15 AM)",
                   "value": "America/New_York",
@@ -16706,6 +16786,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
               options={
                 Array [
                   Object {
+                    "label": "",
+                    "value": null,
+                  },
+                  Object {
                     "index": -3,
                     "label": "Eastern Time (US & Canada) (8:15 AM)",
                     "value": "America/New_York",
@@ -17498,6 +17582,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 isRtl={false}
                 options={
                   Array [
+                    Object {
+                      "label": "",
+                      "value": null,
+                    },
                     Object {
                       "index": -3,
                       "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -18305,6 +18393,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                     "openMenuOnClick": true,
                     "openMenuOnFocus": false,
                     "options": Array [
+                      Object {
+                        "label": "",
+                        "value": null,
+                      },
                       Object {
                         "index": -3,
                         "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -19150,6 +19242,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                       options={
                         Array [
                           Object {
+                            "label": "",
+                            "value": null,
+                          },
+                          Object {
                             "index": -3,
                             "label": "Eastern Time (US & Canada) (8:15 AM)",
                             "value": "America/New_York",
@@ -19956,6 +20052,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                           "openMenuOnClick": true,
                           "openMenuOnFocus": false,
                           "options": Array [
+                            Object {
+                              "label": "",
+                              "value": null,
+                            },
                             Object {
                               "index": -3,
                               "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -20809,6 +20909,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "",
+                                  "value": null,
+                                },
+                                Object {
                                   "index": -3,
                                   "label": "Eastern Time (US & Canada) (8:15 AM)",
                                   "value": "America/New_York",
@@ -21615,6 +21719,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                 "openMenuOnClick": true,
                                 "openMenuOnFocus": false,
                                 "options": Array [
+                                  Object {
+                                    "label": "",
+                                    "value": null,
+                                  },
                                   Object {
                                     "index": -3,
                                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -22455,6 +22563,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -23261,6 +23373,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -24148,6 +24264,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -25069,6 +25189,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "",
+                                  "value": null,
+                                },
+                                Object {
                                   "index": -3,
                                   "label": "Eastern Time (US & Canada) (8:15 AM)",
                                   "value": "America/New_York",
@@ -25875,6 +25999,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                 "openMenuOnClick": true,
                                 "openMenuOnFocus": false,
                                 "options": Array [
+                                  Object {
+                                    "label": "",
+                                    "value": null,
+                                  },
                                   Object {
                                     "index": -3,
                                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -26710,6 +26838,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -27516,6 +27648,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -28362,6 +28498,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -29168,6 +29308,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -30073,6 +30217,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
     options={
       Array [
         Object {
+          "label": "",
+          "value": null,
+        },
+        Object {
           "index": -3,
           "label": "Eastern Time (US & Canada) (8:15 AM)",
           "value": "America/New_York",
@@ -30889,6 +31037,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
             options={
               Array [
                 Object {
+                  "label": "",
+                  "value": null,
+                },
+                Object {
                   "index": -3,
                   "label": "Eastern Time (US & Canada) (8:15 AM)",
                   "value": "America/New_York",
@@ -31702,6 +31854,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
               options={
                 Array [
                   Object {
+                    "label": "",
+                    "value": null,
+                  },
+                  Object {
                     "index": -3,
                     "label": "Eastern Time (US & Canada) (8:15 AM)",
                     "value": "America/New_York",
@@ -32494,6 +32650,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                 isRtl={false}
                 options={
                   Array [
+                    Object {
+                      "label": "",
+                      "value": null,
+                    },
                     Object {
                       "index": -3,
                       "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -33301,6 +33461,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                     "openMenuOnClick": true,
                     "openMenuOnFocus": false,
                     "options": Array [
+                      Object {
+                        "label": "",
+                        "value": null,
+                      },
                       Object {
                         "index": -3,
                         "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -34146,6 +34310,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                       options={
                         Array [
                           Object {
+                            "label": "",
+                            "value": null,
+                          },
+                          Object {
                             "index": -3,
                             "label": "Eastern Time (US & Canada) (8:15 AM)",
                             "value": "America/New_York",
@@ -34952,6 +35120,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                           "openMenuOnClick": true,
                           "openMenuOnFocus": false,
                           "options": Array [
+                            Object {
+                              "label": "",
+                              "value": null,
+                            },
                             Object {
                               "index": -3,
                               "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -35805,6 +35977,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "",
+                                  "value": null,
+                                },
+                                Object {
                                   "index": -3,
                                   "label": "Eastern Time (US & Canada) (8:15 AM)",
                                   "value": "America/New_York",
@@ -36611,6 +36787,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                 "openMenuOnClick": true,
                                 "openMenuOnFocus": false,
                                 "options": Array [
+                                  Object {
+                                    "label": "",
+                                    "value": null,
+                                  },
                                   Object {
                                     "index": -3,
                                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -37451,6 +37631,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -38257,6 +38441,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -39149,6 +39337,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "",
+                                  "value": null,
+                                },
+                                Object {
                                   "index": -3,
                                   "label": "Eastern Time (US & Canada) (8:15 AM)",
                                   "value": "America/New_York",
@@ -39955,6 +40147,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                 "openMenuOnClick": true,
                                 "openMenuOnFocus": false,
                                 "options": Array [
+                                  Object {
+                                    "label": "",
+                                    "value": null,
+                                  },
                                   Object {
                                     "index": -3,
                                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -40790,6 +40986,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -41596,6 +41796,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -42442,6 +42646,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -43248,6 +43456,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -44146,6 +44358,10 @@ exports[`Timezone Matches snapshot with default props 1`] = `
   options={
     Array [
       Object {
+        "label": "",
+        "value": null,
+      },
+      Object {
         "index": -3,
         "label": "Eastern Time (US & Canada) (8:15 AM)",
         "value": "America/New_York",
@@ -44942,6 +45158,10 @@ exports[`Timezone Respects required prop 1`] = `
     onChange={[Function]}
     options={
       Array [
+        Object {
+          "label": "",
+          "value": null,
+        },
         Object {
           "index": -3,
           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -45764,6 +45984,10 @@ exports[`Timezone Respects required prop 1`] = `
             options={
               Array [
                 Object {
+                  "label": "",
+                  "value": null,
+                },
+                Object {
                   "index": -3,
                   "label": "Eastern Time (US & Canada) (8:15 AM)",
                   "value": "America/New_York",
@@ -46577,6 +46801,10 @@ exports[`Timezone Respects required prop 1`] = `
               options={
                 Array [
                   Object {
+                    "label": "",
+                    "value": null,
+                  },
+                  Object {
                     "index": -3,
                     "label": "Eastern Time (US & Canada) (8:15 AM)",
                     "value": "America/New_York",
@@ -47369,6 +47597,10 @@ exports[`Timezone Respects required prop 1`] = `
                 isRtl={false}
                 options={
                   Array [
+                    Object {
+                      "label": "",
+                      "value": null,
+                    },
                     Object {
                       "index": -3,
                       "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -48176,6 +48408,10 @@ exports[`Timezone Respects required prop 1`] = `
                     "openMenuOnClick": true,
                     "openMenuOnFocus": false,
                     "options": Array [
+                      Object {
+                        "label": "",
+                        "value": null,
+                      },
                       Object {
                         "index": -3,
                         "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -49021,6 +49257,10 @@ exports[`Timezone Respects required prop 1`] = `
                       options={
                         Array [
                           Object {
+                            "label": "",
+                            "value": null,
+                          },
+                          Object {
                             "index": -3,
                             "label": "Eastern Time (US & Canada) (8:15 AM)",
                             "value": "America/New_York",
@@ -49827,6 +50067,10 @@ exports[`Timezone Respects required prop 1`] = `
                           "openMenuOnClick": true,
                           "openMenuOnFocus": false,
                           "options": Array [
+                            Object {
+                              "label": "",
+                              "value": null,
+                            },
                             Object {
                               "index": -3,
                               "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -50680,6 +50924,10 @@ exports[`Timezone Respects required prop 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "",
+                                  "value": null,
+                                },
+                                Object {
                                   "index": -3,
                                   "label": "Eastern Time (US & Canada) (8:15 AM)",
                                   "value": "America/New_York",
@@ -51486,6 +51734,10 @@ exports[`Timezone Respects required prop 1`] = `
                                 "openMenuOnClick": true,
                                 "openMenuOnFocus": false,
                                 "options": Array [
+                                  Object {
+                                    "label": "",
+                                    "value": null,
+                                  },
                                   Object {
                                     "index": -3,
                                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -52326,6 +52578,10 @@ exports[`Timezone Respects required prop 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -53132,6 +53388,10 @@ exports[`Timezone Respects required prop 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -54019,6 +54279,10 @@ exports[`Timezone Respects required prop 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -54940,6 +55204,10 @@ exports[`Timezone Respects required prop 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "",
+                                  "value": null,
+                                },
+                                Object {
                                   "index": -3,
                                   "label": "Eastern Time (US & Canada) (8:15 AM)",
                                   "value": "America/New_York",
@@ -55746,6 +56014,10 @@ exports[`Timezone Respects required prop 1`] = `
                                 "openMenuOnClick": true,
                                 "openMenuOnFocus": false,
                                 "options": Array [
+                                  Object {
+                                    "label": "",
+                                    "value": null,
+                                  },
                                   Object {
                                     "index": -3,
                                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -56581,6 +56853,10 @@ exports[`Timezone Respects required prop 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -57387,6 +57663,10 @@ exports[`Timezone Respects required prop 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -58233,6 +58513,10 @@ exports[`Timezone Respects required prop 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -59039,6 +59323,10 @@ exports[`Timezone Respects required prop 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",

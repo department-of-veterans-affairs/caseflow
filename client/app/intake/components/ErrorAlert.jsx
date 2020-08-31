@@ -8,7 +8,8 @@ import { ERROR_ADDRESS_LINE_INVALID_CHARACTERS,
   ERROR_CITY_INVALID_CHARACTERS,
   ERROR_ADDRESS_TOO_LONG, INTAKE_VETERAN_DATE_OF_BIRTH_ERROR,
   INTAKE_VETERAN_NAME_SUFFIX_ERROR,
-  ERROR_INVALID_ZIP_CODE } from '../../../COPY';
+  ERROR_INVALID_ZIP_CODE,
+  INTAKE_VETERAN_PAY_GRADE_INVALID } from '../../../COPY';
 import { css } from 'glamor';
 
 const missingFieldsMessage = (fields) => <p>
@@ -58,6 +59,10 @@ export const invalidVeteranCharacters = (searchErrorData) => {
   } else if (searchErrorData.veteranZipCodeInvalid) {
     errorMessage = <Fragment>
       <p>{ERROR_INVALID_ZIP_CODE}</p>
+    </Fragment>;
+  } else if (searchErrorData.veteranPayGradeInvalid) {
+    errorMessage = <Fragment>
+      <p>{INTAKE_VETERAN_PAY_GRADE_INVALID}</p>
     </Fragment>;
   }
 

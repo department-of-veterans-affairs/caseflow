@@ -66,7 +66,8 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
           user_id: create(:user).id,
           person_id: person.id,
           granted: false,
-          reason: Constants.AOD_REASONS.age
+          reason: Constants.AOD_REASONS.age,
+          appeal: hearing.appeal
         )
       end
 
@@ -91,7 +92,8 @@ RSpec.feature "Hearing Schedule Daily Docket for Hearing Prep", :all_dbs do
           user_id: current_user.id,
           person_id: person.id,
           granted: true,
-          reason: reason
+          reason: reason,
+          appeal: hearing.appeal
         )
       end
 
