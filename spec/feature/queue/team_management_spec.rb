@@ -36,7 +36,8 @@ RSpec.feature "Team management page", :postgres do
 
       scenario "user can view the team management page" do
         visit("/team_management")
-        expect(page).to have_content("Judge teams")
+        expect(page).to have_content("Judge Teams")
+        expect(page).to have_content("DVC Teams")
         expect(page).to have_content("VSOs")
         expect(page).to have_content("Private Bar")
         expect(page).to have_content("Other teams")
@@ -59,7 +60,8 @@ RSpec.feature "Team management page", :postgres do
 
       scenario "user can view the team management page, but only judges" do
         visit("/team_management")
-        expect(page).to have_content("Judge teams")
+        expect(page).to have_content("Judge Teams")
+        expect(page).to have_no_content("DVC Teams")
         expect(page).to have_no_content("VSOs")
         expect(page).to have_no_content("Private Bar")
         expect(page).to have_no_content("Other teams")
