@@ -34,7 +34,7 @@ describe('Timezone', () => {
     expect(dropdown).toHaveLength(1);
     expect(dropdown.prop('value')).toEqual(null);
     expect(dropdown.prop('styling')).toEqual(timezoneStyles(commonsCount));
-    expect(dropdown.prop('options')).toHaveLength(Object.keys(TIMEZONES).length);
+    expect(dropdown.prop('options')).toHaveLength(Object.keys(TIMEZONES).length + 1);
   });
 
   test('Can set timezone', () => {
@@ -75,9 +75,15 @@ describe('Timezone', () => {
 
     // Assertions
     dropdown.prop('options').map((opt, index) => {
+      // Ensure the first option is null
+      if (index === 0) {
+        expect(opt.value).toEqual(null);
+        expect(opt.label).toEqual('');
+      }
+
       // Ensure the common zones are the first 4
-      if (index <= 3) {
-        expect(opt.value).toEqual(commons[index]);
+      if (index > 0 && index <= 3) {
+        expect(opt.value).toEqual(commons[index - 1]);
       }
 
       // Ensure Regional Office timezones move to the top
