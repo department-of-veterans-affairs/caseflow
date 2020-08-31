@@ -81,11 +81,13 @@ class AddedIssue extends React.PureComponent {
   };
 
   render() {
-    const { issue, issueIdx } = this.props;
+    const { issue, issueIdx, legacyAppeals } = this.props;
     let eligibleState = {
       errorMsg: '',
       cssKlasses: ['issue-desc']
     };
+
+    const vacolsIssue = legacyIssue(issue, legacyAppeals);
 
     if (this.needsEligibilityCheck()) {
       let eligibilityCheck = this.getEligibility();
@@ -117,12 +119,12 @@ class AddedIssue extends React.PureComponent {
         {issue.untimelyExemptionNotes && (
           <span className="issue-notes">Untimely Exemption Notes:&nbsp;{issue.untimelyExemptionNotes}</span>
         )}
-        {issue.vacolsId && !eligibleState.errorMsg && (
+        {vacolsIssue && !eligibleState.errorMsg && (
           <div className="issue-vacols">
             <span className="msg">
               {issue.id ? COPY.VACOLS_OPTIN_ISSUE_CLOSED_EDIT : COPY.VACOLS_OPTIN_ISSUE_NEW}:
             </span>
-            <span className="desc">{legacyIssue(issue, this.props.legacyAppeals).description}</span>
+            <span className="desc">{vacolsIssue.description}</span>
           </div>
         )}
         {issue.withdrawalPending && <p>Withdrawal pending</p>}
@@ -138,7 +140,7 @@ class AddedIssue extends React.PureComponent {
 AddedIssue.propTypes = {
   formType: PropTypes.string.isRequired,
   issue: PropTypes.shape({
-    beforeAma: PropTypes.string,
+    beforeAma: PropTypes.bool,
     correctionType: PropTypes.string,
     date: PropTypes.string,
     decisionReviewTitle: PropTypes.string,

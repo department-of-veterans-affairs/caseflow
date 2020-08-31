@@ -43,6 +43,7 @@ const getTimeOptions = (regionalOffice, readOnly) =>
   );
 
 export const HearingTime = ({
+  localZone,
   componentIndex,
   errorMessage,
   onChange,
@@ -78,7 +79,7 @@ export const HearingTime = ({
             name={`hearingTime${componentIndex}`}
             label={label || 'Time'}
             strongLabel
-            options={enableZone ? hearingTimeOptsWithZone(timeOptions, enableZone) : timeOptions}
+            options={enableZone ? hearingTimeOptsWithZone(timeOptions, localZone || enableZone) : timeOptions}
             onChange={onRadioChange}
             value={isOther ? 'other' : value}
           />
@@ -93,7 +94,7 @@ export const HearingTime = ({
           placeholder="Select a time"
           options={
             enableZone ?
-              hearingTimeOptsWithZone(HEARING_TIME_OPTIONS, enableZone) :
+              hearingTimeOptsWithZone(HEARING_TIME_OPTIONS, localZone || enableZone) :
               HEARING_TIME_OPTIONS
           }
           value={value}
@@ -121,4 +122,5 @@ HearingTime.propTypes = {
   regionalOffice: PropTypes.string,
   value: PropTypes.string,
   label: PropTypes.string,
+  localZone: PropTypes.string,
 };

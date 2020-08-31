@@ -349,6 +349,42 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context "#editable?" do
+    subject { rating_request_issue.editable? }
+    let(:receipt_date) { 1.month.ago }
+    let(:end_product_establishment) do
+      create(
+        :end_product_establishment,
+        :active,
+        established_at: receipt_date + 5.days,
+        veteran: veteran
+      )
+    end
+
+    it { is_expected.to be true }
+
+    context "when there's a connected rating" do
+      before do
+        Generators::PromulgatedRating.build(
+          participant_id: veteran.participant_id,
+          profile_date: receipt_date + 10.days,
+          promulgation_date: receipt_date + 10.days,
+          issues: [
+            {
+              reference_id: "ref_id1", decision_text: "PTSD denied",
+              contention_reference_id: rating_request_issue.contention_reference_id
+            }
+          ],
+          associated_claims: [{ clm_id: end_product_establishment.reference_id, bnft_clm_tc: "030HLRR" }]
+        )
+      end
+
+      it "returns false" do
+        expect(subject).to eq false
+      end
+    end
+  end
+
   context "#exam_requested?" do
     subject { rating_request_issue.exam_requested? }
     before { FeatureToggle.enable!(:detect_contention_exam) }
@@ -1560,6 +1596,50 @@ describe RequestIssue, :all_dbs do
 
           expect(rating_request_issue.contested_rating_issue).to_not be_nil
           expect(rating_request_issue.ineligible_reason).to be_nil
+        end
+      end
+    end
+  end
+
+  context "#close!" do
+    subject { rating_request_issue.close!(status: new_status) }
+    let(:new_status) { "decided" }
+
+    context "with open request issue" do
+      it "sets the specified closed status" do
+        expect(rating_request_issue.reload.closed_status).to be_nil
+        subject
+        expect(rating_request_issue.reload.closed_status).to eq("decided")
+      end
+    end
+
+    context "with already closed request issue" do
+      let(:closed_status) { "withdrawn" }
+      let(:closed_at) { 1.day.ago }
+
+      it "refrains from updating" do
+        expect(rating_request_issue.reload.closed_status).to eq("withdrawn")
+        subject
+        expect(rating_request_issue.reload.closed_status).to eq("withdrawn")
+      end
+
+      context "when prior status was ineligible" do
+        let(:closed_status) { "ineligible" }
+
+        it "leaves as-is when not removing" do
+          expect(rating_request_issue.reload.closed_status).to eq("ineligible")
+          subject
+          expect(rating_request_issue.reload.closed_status).to eq("ineligible")
+        end
+
+        context "when updating to `removed`" do
+          let(:new_status) { "removed" }
+
+          it "successfully removes the issue" do
+            expect(rating_request_issue.reload.closed_status).to eq("ineligible")
+            subject
+            expect(rating_request_issue.reload.closed_status).to eq("removed")
+          end
         end
       end
     end

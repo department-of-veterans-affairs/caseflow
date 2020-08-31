@@ -120,15 +120,13 @@ FactoryBot.define do
     trait :advanced_on_docket_due_to_motion do
       # the appeal has to be established before the motion is created to apply to it.
       established_at { Time.zone.now - 1 }
-      claimants do
-        # Create an appeal with two claimants, one with a denied AOD motion
-        # and one with a granted motion. The appeal should still be counted as AOD. Appeals only support one claimant,
-        # so set the aod claimant as the last claimant on the appeal
-        claimant = create(:claimant)
-        another_claimant = create(:claimant)
-        create(:advance_on_docket_motion, person: claimant.person, granted: true)
-        create(:advance_on_docket_motion, person: another_claimant.person, granted: false)
-        [another_claimant, claimant]
+      # Create an appeal with two claimants, one with a denied AOD motion
+      # and one with a granted motion. The appeal should still be counted as AOD. Appeals only support one claimant,
+      # so set the aod claimant as the last claimant on the appeal
+      claimants { [create(:claimant), create(:claimant)] }
+      after(:create) do |appeal|
+        create(:advance_on_docket_motion, person: appeal.claimants.first.person, granted: false, appeal: appeal)
+        create(:advance_on_docket_motion, person: appeal.claimants.last.person, granted: true, appeal: appeal)
       end
     end
 
@@ -146,21 +144,18 @@ FactoryBot.define do
 
     trait :denied_advance_on_docket do
       established_at { Time.zone.yesterday }
-      claimants do
-        claimant = create(:claimant)
-
-        create(:advance_on_docket_motion, person: claimant.person, granted: false)
-        [claimant]
+      claimants { [create(:claimant)] }
+      after(:create) do |appeal|
+        create(:advance_on_docket_motion, person: appeal.claimants.last.person, granted: false, appeal: appeal)
       end
     end
 
     trait :inapplicable_aod_motion do
       established_at { Time.zone.tomorrow }
-      claimants do
-        claimant = create(:claimant)
-        create(:advance_on_docket_motion, person: claimant.person, granted: true)
-        create(:advance_on_docket_motion, person: claimant.person, granted: false)
-        [claimant]
+      claimants { [create(:claimant)] }
+      after(:create) do |appeal|
+        create(:advance_on_docket_motion, person: appeal.claimants.last.person, granted: true, appeal: appeal)
+        create(:advance_on_docket_motion, person: appeal.claimants.last.person, granted: false, appeal: appeal)
       end
     end
 
@@ -188,6 +183,22 @@ FactoryBot.define do
       after(:create) do |appeal, _evaluator|
         distribution_tasks = appeal.tasks.select { |task| task.is_a?(DistributionTask) }
         distribution_tasks.each(&:ready_for_distribution!)
+      end
+    end
+
+    ## Appeal with a realistic task tree
+    ## The appeal would be ready for distribution by the ACD except there is a blocking mail task
+    ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
+    ## for those dockets
+    trait :mail_blocking_distribution do
+      ready_for_distribution
+      after(:create) do |appeal, _evaluator|
+        distribution_task = appeal.tasks.active.detect { |task| task.is_a?(DistributionTask) }
+        create(
+          :extension_request_mail_task,
+          appeal: appeal,
+          parent: distribution_task
+        )
       end
     end
 

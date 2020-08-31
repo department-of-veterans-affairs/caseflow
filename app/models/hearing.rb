@@ -70,6 +70,7 @@ class Hearing < CaseflowRecord
   attr_accessor :override_full_hearing_day_validation
 
   HEARING_TYPES = {
+    R: "Virtual",
     V: "Video",
     T: "Travel",
     C: "Central"
@@ -229,6 +230,12 @@ class Hearing < CaseflowRecord
 
   def to_hash_for_worksheet(_current_user_id)
     ::HearingSerializer.worksheet(self).serializable_hash[:data][:attributes]
+  end
+
+  def serialized_email_events
+    email_events.order(sent_at: :desc).map do |event|
+      SentEmailEventSerializer.new(event).serializable_hash[:data][:attributes]
+    end
   end
 
   private
