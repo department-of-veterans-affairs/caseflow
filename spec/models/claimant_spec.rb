@@ -107,7 +107,7 @@ describe Claimant, :postgres do
     let(:appeal) { create(:appeal, receipt_date: 1.year.ago) }
 
     context "when claimant satisfies AOD age criteria" do
-      let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age) }
+      let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age, decision_review: appeal) }
 
       it "returns true" do
         expect(claimant.advanced_on_docket?(appeal)).to eq(true)
@@ -116,7 +116,7 @@ describe Claimant, :postgres do
     end
 
     context "when claimant has motion granted" do
-      let(:claimant) { create(:claimant) }
+      let(:claimant) { create(:claimant, decision_review: appeal) }
 
       before do
         create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true, appeal: appeal)
@@ -130,7 +130,7 @@ describe Claimant, :postgres do
     end
 
     context "when claimant is younger than 75 years old and has no motion granted" do
-      let(:claimant) { create(:claimant) }
+      let(:claimant) { create(:claimant, decision_review: appeal) }
 
       it "returns false" do
         expect(claimant.advanced_on_docket?(appeal)).to eq(false)
@@ -140,7 +140,7 @@ describe Claimant, :postgres do
     end
 
     context "when claimant satisfies AOD age criteria and has motion granted" do
-      let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age) }
+      let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age, decision_review: appeal) }
 
       before do
         create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true, appeal: appeal)
@@ -154,7 +154,10 @@ describe Claimant, :postgres do
     end
 
     context "when AttorneyClaimant satisfies AOD age criteria and has motion granted" do
-      let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age, type: "AttorneyClaimant") }
+      let(:claimant) do
+        create(:claimant, :advanced_on_docket_due_to_age,
+               decision_review: appeal, type: "AttorneyClaimant")
+      end
 
       before do
         create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true, appeal: appeal)

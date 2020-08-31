@@ -149,7 +149,7 @@ class DecisionReview < CaseflowRecord
 
   # Currently AMA only supports one claimant per decision review
   def claimant
-    claimants.last
+    claimants.order(:id).last
   end
 
   def claimant_participant_id
