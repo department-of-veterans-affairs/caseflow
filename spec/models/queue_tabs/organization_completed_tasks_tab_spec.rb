@@ -37,7 +37,9 @@ describe OrganizationCompletedTasksTab, :postgres do
 
   describe ".description" do
     subject { tab.description }
-    it "has the correct description for each tab hash" do
+
+    context "when we want to show the amount of cases completed in the last 7 days"
+      it "has the correct description for each tab" do
         expect(subject).to eq(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
       end
   end
