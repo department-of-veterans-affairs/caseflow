@@ -257,13 +257,13 @@ describe Task, :all_dbs do
     let(:root_task) { create(:root_task) }
     let(:mail_user) { create(:user) }
     let!(:mail_grandparent_organization_task) do
-      create(:mail_task, assigned_to: MailTeam.singleton, parent: root_task)
+      create(:aod_motion_mail_task, assigned_to: MailTeam.singleton, parent: root_task)
     end
     let!(:mail_parent_organization_task) do
-      create(:mail_task, assigned_to: MailTeam.singleton, parent: mail_grandparent_organization_task)
+      create(:aod_motion_mail_task, assigned_to: MailTeam.singleton, parent: mail_grandparent_organization_task)
     end
     let!(:mail_task) do
-      create(:mail_task, assigned_to: mail_user, parent: mail_parent_organization_task)
+      create(:aod_motion_mail_task, assigned_to: mail_user, parent: mail_parent_organization_task)
     end
 
     context "when there are duplicate organization tasks" do
