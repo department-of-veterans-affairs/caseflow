@@ -260,7 +260,7 @@ describe Task, :all_dbs do
       create(:mail_task, assigned_to: MailTeam.singleton, parent: root_task)
     end
     let!(:mail_parent_organization_task) do
-      create((:mail_task, assigned_to: MailTeam.singleton, parent: mail_grandparent_organization_task)
+      create(:mail_task, assigned_to: MailTeam.singleton, parent: mail_grandparent_organization_task)
     end
     let!(:mail_task) do
       create(:mail_task, assigned_to: mail_user, parent: mail_parent_organization_task)
