@@ -8,6 +8,7 @@ class TeamManagementController < ApplicationController
       format.html { render template: "queue/index" }
       format.json do
         render json: {
+          dvc_teams: DvcTeam.all.order(:id).map { |dt| serialize_org(dt) },
           judge_teams: JudgeTeam.all.order(:id).map { |jt| serialize_org(jt) },
           private_bars: PrivateBar.all.order(:id).map { |private_bar| serialize_org(private_bar) },
           vsos: Vso.all.order(:id).map { |vso| serialize_org(vso) },
@@ -35,6 +36,18 @@ class TeamManagementController < ApplicationController
     Rails.logger.info("Creating JudgeTeam for user: #{user.inspect}")
 
     org = JudgeTeam.create_for_judge(user)
+
+    render json: { org: serialize_org(org) }, status: :ok
+  end
+
+  def create_dvc_team
+    user = User.find(params[:user_id])
+
+    fail(Caseflow::Error::DuplicateDvcTeam, user_id: user.id) if DvcTeam.for_dvc(user)
+
+    Rails.logger.info("Creating DvcTeam for user: #{user.inspect}")
+
+    org = DvcTeam.create_for_dvc(user)
 
     render json: { org: serialize_org(org) }, status: :ok
   end
@@ -70,7 +83,7 @@ class TeamManagementController < ApplicationController
   end
 
   def other_orgs
-    Organization.all.order(:id).reject { |org| org.is_a?(JudgeTeam) || org.is_a?(Representative) }
+    Organization.all.order(:id).reject { |org| org.is_a?(JudgeTeam) || org.is_a?(DvcTeam) || org.is_a?(Representative) }
   end
 
   def serialize_org(org)
