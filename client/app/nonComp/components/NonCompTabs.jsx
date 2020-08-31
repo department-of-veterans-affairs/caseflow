@@ -41,7 +41,7 @@ NonCompTabsUnconnected.propTypes = {
   currentTab: PropTypes.node,
   dispatch: PropTypes.func,
   inProgressTasks: PropTypes.array,
-}
+};
 
 class TaskTableTab extends React.PureComponent {
   constructor(props) {
@@ -104,7 +104,7 @@ TaskTableTab.propTypes = {
   description: PropTypes.node,
   predefinedColumns: PropTypes.object,
   tasks: PropTypes.array,
-}
+};
 
 const NonCompTabs = connect(
   (state) => ({
