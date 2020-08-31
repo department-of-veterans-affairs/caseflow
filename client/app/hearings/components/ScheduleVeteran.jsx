@@ -56,7 +56,7 @@ export const ScheduleVeteran = ({
 
   // Determine the Request Type for the hearing
   const virtual = assignHearingForm?.virtualHearing;
-  const requestType = HEARING_REQUEST_TYPES[selectedHearingDay.requestType] || 'Video';
+  const requestType = HEARING_REQUEST_TYPES[selectedHearingDay?.requestType] || 'Video';
 
   // Create a hearing object for the form
   const hearing = {
@@ -71,10 +71,10 @@ export const ScheduleVeteran = ({
       zip: appeal.powerOfAttorney?.representative_address?.zip,
     },
     appellantFullName: appeal.appellantFullName,
-    appellantAddressLine1: appeal.appellantAddress.address_line_1,
-    appellantCity: appeal.appellantAddress.city,
-    appellantState: appeal.appellantAddress.state,
-    appellantZip: appeal.appellantAddress.zip,
+    appellantAddressLine1: appeal.appellantAddress?.address_line_1,
+    appellantCity: appeal.appellantAddress?.city,
+    appellantState: appeal.appellantAddress?.state,
+    appellantZip: appeal.appellantAddress?.zip,
     requestType
     /* eslint-enable camelcase */
   };
@@ -113,7 +113,7 @@ export const ScheduleVeteran = ({
     );
 
     // Set the location to allow users to navigate
-    const href = `/hearings/schedule/assign?regional_office_key=${ hearing.hearingDay.regionalOffice }`;
+    const href = `/hearings/schedule/assign?regional_office_key=${hearing.hearingDay.regionalOffice}`;
 
     // Create the alert details
     const detail = (
@@ -121,7 +121,7 @@ export const ScheduleVeteran = ({
         {COPY.SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL}
         <br />
         <br />
-        <Link href={href}>Back to Schedule Veterans</Link>
+        <Link to={href}>Back to Schedule Veterans</Link>
       </p>
     );
 
@@ -142,10 +142,8 @@ export const ScheduleVeteran = ({
         regionalOffice: hearing.regionalOffice ? null : 'Please select a Regional Office '
       };
 
-      console.log(formErrors);
-
       // First validate the form
-      if (openHearing || formErrors) {
+      if (openHearing || Object.keys(formErrors).filter((err) => formErrors[err] !== null).length > 0) {
         return setErrors(formErrors);
       }
 
@@ -216,7 +214,7 @@ export const ScheduleVeteran = ({
           <ScheduleVeteranForm
             errors={errors}
             appeal={appeal}
-            virtual={virtual}
+            virtual={Boolean(virtual)}
             hearing={hearing}
             appellantTitle={appellantTitle}
             onChange={(key, value) => props.onChangeFormData('assignHearing', { [key]: value })}
