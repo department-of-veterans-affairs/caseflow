@@ -173,11 +173,10 @@ module Seeds
     def create_dvc_teams
       DEVELOPMENT_DVC_TEAMS.each_pair do |dvc_css_id, judges|
         dvc = User.find_or_create_by(css_id: dvc_css_id, station_id: 101)
-        # TODO: create dvc team
-        # dvc_team = DvcTeam.for_judge(judge) || DvcTeam.create_for_judge(judge)
-        # judges.each do |css_id|
-        #   dvc_team.add_user(User.find_or_create_by(css_id: css_id, station_id: 101))
-        # end
+        dvc_team = DvcTeam.for_dvc(dvc) || DvcTeam.create_for_dvc(dvc)
+        judges.each do |css_id|
+          dvc_team.add_user(User.find_or_create_by(css_id: css_id, station_id: 101))
+        end
       end
     end
 
