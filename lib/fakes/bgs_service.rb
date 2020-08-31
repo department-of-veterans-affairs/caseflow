@@ -327,6 +327,27 @@ class Fakes::BGSService
     ]
   end
 
+  def pay_grade_list
+    [
+      { code: "E1", name: "E-1" },
+      { code: "E2", name: "E-2" },
+      { code: "E3", name: "E-3" },
+      { code: "E4", name: "E-4" },
+      { code: "E5", name: "E-5" },
+      { code: "E6", name: "E-6" },
+      { code: "E9", name: "E-9" },
+      { code: "O1", name: "O-1" },
+      { code: "O2", name: "O-2" },
+      { code: "O3", name: "O-3" },
+      { code: "O4", name: "O-4" },
+      { code: "O5", name: "O-5" },
+      { code: "WO1", name: "WO-1" },
+      { code: "WO2", name: "WO-2" },
+      { code: "WO3", name: "WO-3" },
+      { code: "WO4", name: "WO-4" }
+    ]
+  end
+
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
     address = (self.class.address_records || {})[participant_id]

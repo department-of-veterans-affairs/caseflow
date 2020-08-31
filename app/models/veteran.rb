@@ -188,6 +188,12 @@ class Veteran < CaseflowRecord
     zip_code
   end
 
+  def pay_grades
+    return unless service
+
+    service.map { |service| service[:pay_grade] }.compact
+  end
+
   alias zip zip_code
   alias address_line_1 address_line1
   alias address_line_2 address_line2
@@ -233,6 +239,12 @@ class Veteran < CaseflowRecord
   def validate_name_suffix
     # This regex validation checks for punctuations in the name suffix
     errors.add(:name_suffix, "invalid_character") if name_suffix&.match?(/[!@#$%^&*(),.?":{}|<>]/)
+  end
+
+  def validate_veteran_pay_grade
+    return errors.add(:pay_grades, "invalid_pay_grade") if pay_grades&.any? do |pay_grades|
+      bgs.pay_grade_list.map { |pay_grade| pay_grade[:code] }.exclude?(pay_grades.strip)
+    end
   end
 
   def ratings

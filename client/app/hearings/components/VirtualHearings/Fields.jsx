@@ -12,8 +12,6 @@ export const VirtualHearingFields = ({
   errors,
   appellantTitle,
   requestType,
-  defaultAppellantTz,
-  defaultRepresentativeTz,
   initialRepresentativeTz,
   virtualHearing,
   readOnly,
@@ -29,7 +27,8 @@ export const VirtualHearingFields = ({
         <div className="usa-width-one-third">
           <Timezone
             required
-            value={virtualHearing?.appellantTz || defaultAppellantTz}
+            errorMessage={errors?.appellantTz}
+            value={virtualHearing?.appellantTz}
             onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
             readOnly={readOnly}
             time={time}
@@ -57,7 +56,7 @@ export const VirtualHearingFields = ({
           <Timezone
             errorMessage={errors?.representativeTz}
             required={Boolean(virtualHearing?.representativeEmail)}
-            value={virtualHearing?.representativeTz || defaultRepresentativeTz}
+            value={virtualHearing?.representativeTz}
             onChange={(representativeTz) => update('virtualHearing', { representativeTz })}
             readOnly={readOnly || !virtualHearing?.representativeEmail}
             time={time}
@@ -123,7 +122,5 @@ VirtualHearingFields.propTypes = {
   update: PropTypes.func,
   virtualHearing: PropTypes.object,
   errors: PropTypes.object,
-  defaultAppellantTz: PropTypes.string,
-  defaultRepresentativeTz: PropTypes.string,
   initialRepresentativeTz: PropTypes.string,
 };
