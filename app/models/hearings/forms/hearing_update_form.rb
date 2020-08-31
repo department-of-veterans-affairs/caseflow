@@ -15,7 +15,7 @@ class HearingUpdateForm < BaseHearingUpdateForm
   end
 
   def hearing_updated?
-    super || advance_on_docket_motion_attributes&.present?
+    super || advance_on_docket_motion_attributes.present?
   end
 
   private

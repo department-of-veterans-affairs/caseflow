@@ -34,6 +34,18 @@ class TeamManagementController < ApplicationController
     render json: { org: serialize_org(org) }, status: :ok
   end
 
+  def create_dvc_team
+    user = User.find(params[:user_id])
+
+    fail(Caseflow::Error::DuplicateDvcTeam, user_id: user.id) if DvcTeam.for_dvc(user)
+
+    Rails.logger.info("Creating DvcTeam for user: #{user.inspect}")
+
+    org = DvcTeam.create_for_dvc(user)
+
+    render json: { org: serialize_org(org) }, status: :ok
+  end
+
   def create_private_bar
     org = PrivateBar.create!(update_params)
 
@@ -72,6 +84,7 @@ class TeamManagementController < ApplicationController
 
   def all_teams
     judge_teams.merge(
+      dvc_teams: DvcTeam.order(:name).map { |dt| serialize_org(dt) },
       private_bars: PrivateBar.order(:name).map { |private_bar| serialize_org(private_bar) },
       vsos: Vso.order(:name).map { |vso| serialize_org(vso) },
       other_orgs: other_orgs.map { |org| serialize_org(org) }
@@ -79,7 +92,7 @@ class TeamManagementController < ApplicationController
   end
 
   def other_orgs
-    Organization.order(:name).reject { |org| org.is_a?(JudgeTeam) || org.is_a?(Representative) }
+    Organization.order(:name).reject { |org| org.is_a?(JudgeTeam) || org.is_a?(DvcTeam) || org.is_a?(Representative) }
   end
 
   def serialize_org(org)

@@ -21,10 +21,16 @@ const tableStyling = css({
   '& input': { margin: 0 }
 });
 
+const buttonStyling = css({
+  marginLeft: '1rem'
+});
+
 class TeamManagement extends React.PureComponent {
   loadingPromise = () => ApiUtil.get('/team_management').then((resp) => this.props.onReceiveTeamList(resp.body));
 
   addJudgeTeam = () => this.props.history.push('/team_management/add_judge_team');
+
+  addDvcTeam = () => this.props.history.push('/team_management/add_dvc_team');
 
   addIhpWritingVso = () => this.props.history.push('/team_management/add_vso');
 
@@ -56,25 +62,43 @@ class TeamManagement extends React.PureComponent {
 
           <table {...tableStyling}>
             <tbody>
-              <OrgHeader>
-                Judge teams <Button name={COPY.TEAM_MANAGEMENT_ADD_JUDGE_BUTTON} onClick={this.addJudgeTeam} />
-              </OrgHeader>
-              <OrgList orgs={this.props.judgeTeams} />
+              { this.props.dvcTeams && <React.Fragment>
+                <OrgHeader>
+                  {COPY.TEAM_MANAGEMENT_ADD_DVC_LABEL}
+                  <span {...buttonStyling}>
+                    <Button name={COPY.TEAM_MANAGEMENT_ADD_DVC_BUTTON} onClick={this.addDvcTeam} />
+                  </span>
+                </OrgHeader>
+                <OrgList orgs={this.props.dvcTeams} />
+              </React.Fragment> }
+
+              { this.props.judgeTeams && <React.Fragment>
+                <OrgHeader>
+                  {COPY.TEAM_MANAGEMENT_ADD_JUDGE_LABEL}
+                  <span {...buttonStyling}>
+                    <Button name={COPY.TEAM_MANAGEMENT_ADD_JUDGE_BUTTON} onClick={this.addJudgeTeam} />
+                  </span>
+                </OrgHeader>
+                <OrgList orgs={this.props.judgeTeams} />
+              </React.Fragment> }
 
               { this.props.vsos && <React.Fragment>
                 <OrgHeader>
-                  VSOs <Button name={COPY.TEAM_MANAGEMENT_ADD_VSO_BUTTON} onClick={this.addIhpWritingVso} />
+                  {COPY.TEAM_MANAGEMENT_ADD_VSO_LABEL}
+                  <span {...buttonStyling}>
+                    <Button name={COPY.TEAM_MANAGEMENT_ADD_VSO_BUTTON} onClick={this.addIhpWritingVso} />
+                  </span>
                 </OrgHeader>
                 <OrgList orgs={this.props.vsos} isRepresentative />
               </React.Fragment> }
 
               { this.props.privateBars && <React.Fragment>
                 <OrgHeader>
-                  Private Bar
-                  <span {...css({ marginLeft: '1rem' })}>
+                  {COPY.TEAM_MANAGEMENT_ADD_PRIVATE_BAR_LABEL}
+                  <span {...buttonStyling}>
                     <Button name={COPY.TEAM_MANAGEMENT_ADD_PRIVATE_BAR_BUTTON} onClick={this.addPrivateBar} />
                   </span>
-                  <span {...css({ marginLeft: '1rem' })}>
+                  <span {...buttonStyling}>
                     <Button
                       name="Look up Participant ID"
                       onClick={this.lookupParticipantId}
@@ -86,7 +110,7 @@ class TeamManagement extends React.PureComponent {
               </React.Fragment> }
 
               { this.props.otherOrgs && <React.Fragment>
-                <OrgHeader>Other teams</OrgHeader>
+                <OrgHeader>{COPY.TEAM_MANAGEMENT_ADD_OTHER_TEAM_LABEL}</OrgHeader>
                 <OrgList orgs={this.props.otherOrgs} />
               </React.Fragment> }
             </tbody>
@@ -101,6 +125,7 @@ class TeamManagement extends React.PureComponent {
 TeamManagement.propTypes = {
   error: PropTypes.object,
   history: PropTypes.object,
+  dvcTeams: PropTypes.array,
   judgeTeams: PropTypes.array,
   onReceiveTeamList: PropTypes.func,
   otherOrgs: PropTypes.array,
@@ -116,6 +141,7 @@ const mapStateToProps = (state) => {
   } = state.ui.messages;
 
   const {
+    dvcTeams,
     judgeTeams,
     privateBars,
     vsos,
@@ -123,6 +149,7 @@ const mapStateToProps = (state) => {
   } = state.teamManagement;
 
   return {
+    dvcTeams,
     judgeTeams,
     privateBars,
     vsos,
