@@ -266,6 +266,12 @@ class LegacyHearing < CaseflowRecord
     ).serializable_hash[:data][:attributes]
   end
 
+  def serialized_email_events
+    email_events.order(sent_at: :desc).map do |event|
+      SentEmailEventSerializer.new(event).serializable_hash[:data][:attributes]
+    end
+  end
+
   def fetch_veteran_age
     veteran_age
   rescue Module::DelegationError

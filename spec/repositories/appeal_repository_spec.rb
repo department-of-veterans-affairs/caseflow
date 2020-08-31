@@ -133,7 +133,20 @@ describe AppealRepository, :all_dbs do
       )
     end
 
-    context "bfha set to value not represent a held hearing" do
+    context "bfha set to a value representing a held virtual hearing" do
+      let(:case_record) do
+        OpenStruct.new(
+          correspondent: correspondent_record,
+          folder: folder_record,
+          bfha: "7",
+          case_issues: []
+        )
+      end
+
+      it { is_expected.to have_attributes(hearing_held: true) }
+    end
+
+    context "bfha set to a value not representing a held hearing" do
       let(:case_record) do
         OpenStruct.new(
           correspondent: correspondent_record,
