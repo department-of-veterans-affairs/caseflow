@@ -255,28 +255,28 @@ describe Task, :all_dbs do
 
   describe "#duplicate_org_task" do
     let(:root_task) { create(:root_task) }
-    let(:qr_user) { create(:user) }
-    let!(:quality_review_grandparent_organization_task) do
-      create(:qr_task, assigned_to: QualityReview.singleton, parent: root_task)
+    let(:mail_user) { create(:user) }
+    let!(:mail_grandparent_organization_task) do
+      create(:mail_task, assigned_to: MailTeam.singleton, parent: root_task)
     end
-    let!(:quality_review_parent_organization_task) do
-      create(:qr_task, assigned_to: QualityReview.singleton, parent: quality_review_grandparent_organization_task)
+    let!(:mail_parent_organization_task) do
+      create((:mail_task, assigned_to: MailTeam.singleton, parent: mail_grandparent_organization_task)
     end
-    let!(:quality_review_task) do
-      create(:qr_task, assigned_to: qr_user, parent: quality_review_parent_organization_task)
+    let!(:mail_task) do
+      create(:mail_task, assigned_to: mail_user, parent: mail_parent_organization_task)
     end
 
     context "when there are duplicate organization tasks" do
       it "returns true when there is a duplicate descendent task assigned to a user" do
-        expect(quality_review_grandparent_organization_task.duplicate_org_task).to eq(true)
+        expect(mail_grandparent_organization_task.duplicate_org_task).to eq(true)
       end
 
       it "returns true when there is a duplicate child task assigned to a user" do
-        expect(quality_review_parent_organization_task.duplicate_org_task).to eq(true)
+        expect(mail_parent_organization_task.duplicate_org_task).to eq(true)
       end
 
       it "returns false otherwise" do
-        expect(quality_review_task.duplicate_org_task).to eq(false)
+        expect(mail_task.duplicate_org_task).to eq(false)
       end
     end
   end
