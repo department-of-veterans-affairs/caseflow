@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# test
 class BgsAddressService
   include ActiveModel::Model
   include AssociatedBgsRecord
