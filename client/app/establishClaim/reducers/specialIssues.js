@@ -33,17 +33,6 @@ let specialIssues = function(state = getSpecialIssuesInitialState(), action) {
     newState[action.payload.specialIssue] = action.payload.value;
     return newState;
   }
-  case Constants.CLEAR_SPECIAL_ISSUES: {
-    let newState = Object.assign({}, state);
-
-    Object.keys(newState).forEach((specialIssue) => {
-      if (newState[specialIssue] === true) {
-        newState[specialIssue] = false;
-      }
-    });
-
-    return newState;
-  }
   default:
     return state;
   }
