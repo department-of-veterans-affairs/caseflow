@@ -319,6 +319,18 @@
   "SPECIAL_CASE_MOVEMENT_MODAL_DETAIL": "This action overrides the normal case distribution process and immediately assigns the appeal to the judge selected.",
   "SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER": "Select a judge",
 
+  "BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_TITLE": "Reassign %s's Case",
+  "BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_SUBTITLE": "This case currently has blocking tasks that will be cancelled to move this case",
+  "BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_TASKS_HEADER": "The following task(s) will be cancelled:",
+  "BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_REASONING_HEADER": "Please provide reason(s) and context for the cancellation:",
+
+  "BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_TITLE": "Confirm Cancellation and Reassign",
+  "BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_WARNING": "To cancel tasks you must select a user to move the case to as well as provide a reason and context for the reassignment below.",
+  "BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_JUDGE_HEADER": "Reassign to",
+  "BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_INSTRUCTIONS_HEADER": "Provide instructions to %s for this reassignment",
+  "BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_SUBMIT": "Cancel Task and Reassign",
+  "BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_ERROR_TITLE": "Could not cancel tasks and reassign to %s",
+
   "MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE": "Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930. Although there are no new legacy appeals after 2019, an old appeal can be reopened through a finding of clear and unmistakable error, which would result in a brand new docket number being assigned. An updated docket number format will need to be in place for legacy appeals by 2030 in order to ensure that docket numbers are sorted correctly.",
 
   "CANCEL_TASK_MODAL_TITLE": "Cancel task",
