@@ -403,7 +403,6 @@ class EndProductEstablishment < CaseflowRecord
   def cancel!
     transaction do
       # delete end product in bgs & set sync status to canceled
-      # binding.pry
       BGSService.new.cancel_end_product(veteran_file_number, code, modifier, payee_code, benefit_type_code)
       update!(synced_status: CANCELED_STATUS)
       handle_cancelled_ep!
