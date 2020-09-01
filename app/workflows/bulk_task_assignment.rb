@@ -50,11 +50,11 @@ class BulkTaskAssignment
   def tasks_satisfying_params
     tasks = task_type.constantize.active.where(assigned_to_id: organization.id)
     if regional_office
-      tasks = tasks.joins(
-        "INNER JOIN appeals ON appeals.id = appeal_id AND appeal_type = '#{Appeal.name}'"
-      ).where("closest_regional_office = ?", regional_office) +
-              tasks.joins("INNER JOIN legacy_appeals ON legacy_appeals.id = appeal_id \
-                AND appeal_type = '#{LegacyAppeal.name}'").where("closest_regional_office = ?", regional_office)
+      tasks_array = tasks.joins("INNER JOIN appeals ON appeals.id = appeal_id "\
+                      "AND appeal_type = '#{Appeal.name}'").where("closest_regional_office = ?", regional_office) +
+                    tasks.joins("INNER JOIN legacy_appeals ON legacy_appeals.id = appeal_id "\
+                      "AND appeal_type = '#{LegacyAppeal.name}'").where("closest_regional_office = ?", regional_office)
+      tasks = Task.where(id: tasks_array.pluck(:id))
     end
     tasks
   end
