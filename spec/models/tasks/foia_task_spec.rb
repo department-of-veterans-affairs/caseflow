@@ -26,9 +26,6 @@ describe FoiaTask do
     let(:appeal) { create(:appeal) }
     let(:task) { create(:foia_task, appeal: appeal) }
 
-    before { FeatureToggle.enable!(:block_at_dispatch) }
-    after { FeatureToggle.disable!(:block_at_dispatch) }
-
     it "blocks dispatch" do
       expect(task.blocking_dispatch?).to be(true)
     end

@@ -5,7 +5,7 @@
 
 class FoiaTask < Task
   def self.blocking_dispatch?
-    FeatureToggle.enabled?(:block_at_dispatch)
+    true
   end
 
   def available_actions(user)

@@ -1702,9 +1702,6 @@ describe Task, :all_dbs do
   end
 
   describe ".blocking_dispatch?" do
-    before { FeatureToggle.enable!(:block_at_dispatch) }
-    after { FeatureToggle.disable!(:block_at_dispatch) }
-
     context "on AMA appeals" do
       let(:appeal) { create(:appeal) }
 
@@ -1754,8 +1751,7 @@ describe Task, :all_dbs do
     let(:appeal) { create(:appeal) }
     let(:root_task) { RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton) }
     let(:parent_task) { create(:task, parent: root_task) }
-    before { FeatureToggle.enable!(:block_at_dispatch) }
-    after { FeatureToggle.disable!(:block_at_dispatch) }
+
     subject { FoiaTask.create!(appeal: appeal, parent: parent_task, assigned_to: create(:user)) }
 
     shared_examples "parent task is descendant of BvaDispatchTask" do
@@ -1899,9 +1895,6 @@ describe Task, :all_dbs do
     let(:user) { create(:user) }
     let!(:root_task) { RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton) }
     let!(:foia_task) { FoiaTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: create(:user)) }
-
-    before { FeatureToggle.enable!(:block_at_dispatch) }
-    after { FeatureToggle.disable!(:block_at_dispatch) }
 
     subject { foia_task.completed! }
 

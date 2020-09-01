@@ -1,12 +1,8 @@
 # frozen_string_literal: true
 
 class CongressionalInterestMailTask < MailTask
-  def self.blocking_distribution?
-    FeatureToggle.enabled?(:block_at_dispatch) ? false : true
-  end
-
   def self.blocking_dispatch?
-    FeatureToggle.enabled?(:block_at_dispatch)
+    true
   end
 
   def self.label
