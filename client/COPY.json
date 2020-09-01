@@ -773,7 +773,7 @@
       "MESSAGE": "Email to %{recipients} is in progress."
     },
     "CHANGED_HEARING_TIME": {
-      "TITLE": "We're updating the hearing time of %s's hearing",
+      "TITLE": "We're updating the time of %s's hearing",
       "MESSAGE": "Emails to the %{recipients} are in progress."
     }
   },
