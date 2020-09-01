@@ -4,7 +4,7 @@ import { shallow } from 'enzyme';
 import { ScheduleVeteranForm } from 'app/hearings/components/ScheduleVeteranForm';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
 import { amaAppeal, defaultHearing, virtualHearing } from 'test/data';
-import { queueWrapper, queueStore } from 'test/data/stores/queueStore';
+import { queueWrapper } from 'test/data/stores/queueStore';
 import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
 import {
   HearingDateDropdown,
