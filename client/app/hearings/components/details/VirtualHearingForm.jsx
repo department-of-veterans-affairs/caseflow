@@ -52,9 +52,7 @@ export const VirtualHearingForm = (
           virtualHearing={virtualHearing}
           time={hearing.scheduledTimeString}
           requestType={hearing.readableRequestType}
-          defaultAppellantTz={hearing?.appellantTz}
           initialRepresentativeTz={initialHearing?.virtualHearing?.representativeTz}
-          defaultRepresentativeTz={hearing?.representativeTz}
         />
       )}
     </ContentSection>

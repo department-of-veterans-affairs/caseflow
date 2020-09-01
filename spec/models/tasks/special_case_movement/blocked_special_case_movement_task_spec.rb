@@ -6,12 +6,16 @@ describe BlockedSpecialCaseMovementTask do
   describe ".create" do
     context "with Case Movement Team user" do
       let(:cm_user) { create(:user) }
+      let(:cancellation_instructions) { "Cancelling task" }
+      let(:assign_instructions) { "Assigning task" }
+      let(:instructions) { [cancellation_instructions, assign_instructions] }
 
       subject do
         BlockedSpecialCaseMovementTask.create!(appeal: appeal,
                                                assigned_to: cm_user,
                                                assigned_by: cm_user,
-                                               parent: dist_task)
+                                               parent: dist_task,
+                                               instructions: instructions)
       end
 
       before do
@@ -25,6 +29,7 @@ describe BlockedSpecialCaseMovementTask do
           expect { subject }.not_to raise_error
           open_tasks.each do |task|
             expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+            expect(task.reload.instructions).to eq([cancellation_instructions])
           end
         end
       end

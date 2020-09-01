@@ -441,7 +441,7 @@ export const hearingDateOptions = [
       requestType: 'V',
       room: '1',
       roomLabel: '1 (1W200A)',
-      filledSlots: 0,
+      filledSlots: 13,
       totalSlots: 12,
       hearingDate: '2020-10-04'
     }
