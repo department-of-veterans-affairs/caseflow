@@ -204,6 +204,14 @@ class Task < CaseflowRecord
       "on #{CachedAppeal.table_name}.appeal_id = #{Task.table_name}.appeal_id "\
       "and #{CachedAppeal.table_name}.appeal_type = #{Task.table_name}.appeal_type"
     end
+
+    def order_by_appeal_priority_clause
+      Arel.sql(
+        "CASE WHEN cached_appeal_attributes.is_aod = TRUE THEN 0 ELSE 1 END, "\
+        "CASE WHEN cached_appeal_attributes.case_type = 'Court Remand' THEN 0 ELSE 1 END, "\
+        "tasks.created_at"
+      )
+    end
   end
 
   ########################################################################################

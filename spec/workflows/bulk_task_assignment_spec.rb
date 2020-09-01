@@ -154,6 +154,8 @@ describe BulkTaskAssignment, :postgres do
           create_no_show_hearing_task_for_appeal(aod_legacy_appeal, 2.days.ago)
           create_no_show_hearing_task_for_appeal(cavc_legacy_appeal)
           create_no_show_hearing_task_for_appeal(cavc_aod_legacy_appeal)
+
+          UpdateCachedAppealsAttributesJob.perform_now
         end
 
         let(:expected_appeal_ordering) { [cavc_aod_legacy_appeal, aod_appeal, aod_legacy_appeal, cavc_legacy_appeal] }
@@ -161,10 +163,10 @@ describe BulkTaskAssignment, :postgres do
         subject { BulkTaskAssignment.new(params).process }
 
         it "sorts priority appeals first" do
-          prioritized_tasks = subject
-          expect(prioritized_tasks.first(4).map(&:appeal)).to eq(expected_appeal_ordering)
+          prioritized_assigned_tasks = subject
+          expect(prioritized_assigned_tasks.first(4).map(&:appeal)).to eq(expected_appeal_ordering)
 
-          appeals_of_returned_tasks = prioritized_tasks.map(&:appeal)
+          appeals_of_returned_tasks = prioritized_assigned_tasks.map(&:appeal)
           expect(appeals_of_returned_tasks).to include(no_show_hearing_task1.appeal)
           expect(appeals_of_returned_tasks).to include(no_show_hearing_task2.appeal)
           expect(appeals_of_returned_tasks).to include(no_show_hearing_task3.appeal)
@@ -174,6 +176,22 @@ describe BulkTaskAssignment, :postgres do
           let(:task_count) { 2 }
           it "sorts priority appeals first" do
             expect(subject.map(&:appeal)).to eq(expected_appeal_ordering.first(task_count))
+          end
+        end
+
+        context "comparing with semantically correct but slower implementation" do
+          def slower_prioritized_tasks(tasks)
+            tasks.sort_by { |task| [task.appeal.aod? ? 0 : 1, task.appeal.cavc? ? 0 : 1, task.created_at] }
+          end
+
+          it "sorts correctly" do
+            bulk_task_assignment = BulkTaskAssignment.new(params)
+            tasks = bulk_task_assignment.send(:tasks_satisfying_params)
+            expect(tasks.count).to eq(7)
+            prioritized_tasks = bulk_task_assignment.send(:prioritized_tasks, tasks)
+            expect(prioritized_tasks).to eq(slower_prioritized_tasks(tasks))
+
+            expect(prioritized_tasks.first(4).map(&:appeal)).to eq(expected_appeal_ordering)
           end
         end
       end

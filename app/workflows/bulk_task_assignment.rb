@@ -43,31 +43,24 @@ class BulkTaskAssignment
 
   def tasks_to_be_assigned
     @tasks_to_be_assigned ||= begin
-      tasks = task_type.constantize
-        .active.where(assigned_to_id: organization.id)
-        .order(:created_at)
-      if regional_office
-        tasks = tasks.joins(
-          "INNER JOIN appeals ON appeals.id = appeal_id AND appeal_type = '#{Appeal.name}'"
-        ).where("closest_regional_office = ?", regional_office) +
-                tasks.joins("INNER JOIN legacy_appeals ON legacy_appeals.id = appeal_id \
-                  AND appeal_type = '#{LegacyAppeal.name}'").where("closest_regional_office = ?", regional_office)
-      end
-
-      prioritized_tasks(tasks).first(task_count.to_i)
+      prioritized_tasks(tasks_satisfying_params).first(task_count.to_i)
     end
   end
 
-  def prioritized_tasks(tasks)
-    task_count = tasks.count
-    task_with_initial_priority = tasks.each_with_index.map { |task, index| [task, task_count - index] }
-
-    prioritized_tasks_with_priority = task_with_initial_priority.sort_by do |task, priority|
-      priority += task_count**3 if task.appeal.aod?
-      priority += task_count**2 if task.appeal.cavc?
-      -priority
+  def tasks_satisfying_params
+    tasks = task_type.constantize.active.where(assigned_to_id: organization.id)
+    if regional_office
+      tasks = tasks.joins(
+        "INNER JOIN appeals ON appeals.id = appeal_id AND appeal_type = '#{Appeal.name}'"
+      ).where("closest_regional_office = ?", regional_office) +
+              tasks.joins("INNER JOIN legacy_appeals ON legacy_appeals.id = appeal_id \
+                AND appeal_type = '#{LegacyAppeal.name}'").where("closest_regional_office = ?", regional_office)
     end
-    prioritized_tasks_with_priority.map(&:first)
+    tasks
+  end
+
+  def prioritized_tasks(tasks)
+    tasks.with_cached_appeals.order(Task.order_by_appeal_priority_clause)
   end
 
   def assigned_to
