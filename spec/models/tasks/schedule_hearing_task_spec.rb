@@ -311,6 +311,8 @@ describe ScheduleHearingTask, :all_dbs do
       include_examples "creates new task"
 
       it "does not change location" do
+        subject
+
         expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
       end
     end
