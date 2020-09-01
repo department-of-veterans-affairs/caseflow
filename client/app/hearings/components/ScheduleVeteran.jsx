@@ -141,7 +141,7 @@ export const ScheduleVeteran = ({
       };
 
       // First validate the form
-      if (openHearing || Object.keys(formErrors).filter((err) => formErrors[err] !== null).length > 0) {
+      if (openHearing || Object.values(formErrors).filter((err) => err !== null).length > 0) {
         return setErrors(formErrors);
       }
 
