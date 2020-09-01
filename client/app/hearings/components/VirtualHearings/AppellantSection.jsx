@@ -40,6 +40,7 @@ export const AppellantSection = ({
             onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
             time={hearing.scheduledTimeString}
             name={`${appellantTitle} Timezone`}
+            errorMessage={errors?.appellantTz}
           />
           <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
         </div>
