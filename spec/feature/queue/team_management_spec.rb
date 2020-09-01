@@ -75,7 +75,7 @@ RSpec.feature "Team management page", :postgres do
     context "when user is in Bva organization" do
       scenario "user can view priority push availablity, but cannot change it" do
         visit("/team_management")
-        expect(page).to have_content("Judge teams")
+        expect(page).to have_content("Judge Teams")
         expect(page.find("#priority-push-#{judge_team.id}_true", visible: false).checked?).to eq true
         expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).checked?).to eq false
         expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).disabled?).to eq true
@@ -99,7 +99,7 @@ RSpec.feature "Team management page", :postgres do
 
       scenario "user can toggele priority push availablity" do
         visit("/team_management")
-        expect(page).to have_content("Judge teams")
+        expect(page).to have_content("Judge Teams")
         expect(page.find("#priority-push-#{judge_team.id}_true", visible: false).checked?).to eq true
         expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).checked?).to eq false
         find(".cf-form-radio-option", text: "Unavailable").click
