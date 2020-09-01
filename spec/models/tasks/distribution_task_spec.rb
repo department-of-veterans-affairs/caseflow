@@ -18,7 +18,6 @@ describe DistributionTask, :postgres do
   end
 
   describe ".available_actions" do
-
     it "with regular user has no actions" do
       expect(distribution_task.available_actions(user).count).to eq(0)
     end
