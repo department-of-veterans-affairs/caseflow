@@ -322,7 +322,7 @@ export const timezones = (time) => {
   const dateTime = moment(time, 'HH:mm').tz(COMMON_TIMEZONES[0]);
 
   // Map the available timeTIMEZONES to a select options object
-  const options = Object.keys(TIMEZONES).map((zone) => {
+  const unorderedOptions = Object.keys(TIMEZONES).map((zone) => {
     // Default the index to be based on the timezone offset, add 100 to move below the Regional Office zones
     let index = Math.abs(moment.tz(TIMEZONES[zone]).utcOffset()) + 100;
 
@@ -352,5 +352,10 @@ export const timezones = (time) => {
   });
 
   // Return the values and the count of commons
-  return { options: _.orderBy(options, ['index']), commonsCount };
+  const orderedOptions = _.orderBy(unorderedOptions, ['index']);
+
+  // Add null option first to array of timezone options to allow deselecting timezone
+  const options = [{ value: null, label: '' }, ...orderedOptions];
+
+  return { options, commonsCount };
 };
