@@ -505,6 +505,15 @@ class Appeal < DecisionReview
     false
   end
 
+  # if there hearings already scheduled, return the type of latest hearing
+  # if no hearings have been scheduled, determine type using cloesest_regional_office
+  # "Central" if cloesest_regional_office office is "C", "Video" otherwise
+  def readable_hearing_request_type
+    return hearings.last.readable_request_type if !hearings.empty?
+
+    closest_regional_office == "C" ? Hearing::HEARING_TYPES[:C] : Hearing::HEARING_TYPES[:V]
+  end
+
   private
 
   def business_lines_needing_assignment

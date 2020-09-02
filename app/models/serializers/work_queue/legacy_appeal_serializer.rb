@@ -6,7 +6,7 @@ class WorkQueue::LegacyAppealSerializer
 
   attribute :assigned_attorney
   attribute :assigned_judge
-  attribute :sanitized_hearing_request_type
+  attribute :readable_hearing_request_type
 
   attribute :issues do |object|
     object.issues.map do |issue|

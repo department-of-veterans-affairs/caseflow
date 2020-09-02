@@ -169,6 +169,12 @@ class LegacyAppeal < CaseflowRecord
     closed: "99"
   }.freeze
 
+  HEARING_REQUEST_TYPES = {
+    central_board: "Central",
+    travel_board: "Travel",
+    video: "Video"
+  }.freeze
+
   def document_fetcher
     @document_fetcher ||= DocumentFetcher.new(
       appeal: self, use_efolder: %w[reader queue hearings].include?(RequestStore.store[:application])
@@ -391,6 +397,10 @@ class LegacyAppeal < CaseflowRecord
     when :travel_board
       video_hearing_requested ? :video : :travel_board
     end
+  end
+
+  def readable_hearing_request_type
+    HEARING_REQUEST_TYPES[sanitized_hearing_request_type]
   end
 
   def veteran_is_deceased
