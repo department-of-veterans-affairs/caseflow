@@ -62,7 +62,7 @@ export const ScheduleVeteranForm = ({
             <HearingDateDropdown
               errorMessage={errors?.hearingDay}
               key={`hearingDate__${ro}`}
-              regionalOffice={ro}
+              regionalOffice={ro || 'C'}
               value={hearing?.hearingDay || initialHearingDate}
               onChange={(hearingDay) => props.onChange('hearingDay', hearingDay)}
             />

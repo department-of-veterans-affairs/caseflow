@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
 import { sprintf } from 'sprintf-js';
@@ -19,6 +19,8 @@ import { getAppellantTitleForHearing } from '../utils';
 import { onChangeFormData } from '../../components/common/actions';
 import { ScheduleVeteranForm } from './ScheduleVeteranForm';
 import { HEARING_REQUEST_TYPES } from '../constants';
+import ApiUtil from '../../util/ApiUtil';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 export const ScheduleVeteran = ({
   scheduleHearingTask,
@@ -30,6 +32,10 @@ export const ScheduleVeteran = ({
   appeal,
   ...props
 }) => {
+  console.log('APPEAL: ', appeal);
+
+  console.log('HEARING DAY: ', hearingDay);
+
   // Create and manage the loading state
   const [loading, setLoading] = useState(false);
 
@@ -60,47 +66,41 @@ export const ScheduleVeteran = ({
   const hearing = {
     /* eslint-disable camelcase */
     ...assignHearingForm,
-    representative: appeal.powerOfAttorney?.representative_name,
-    representativeType: appeal.powerOfAttorney?.representative_type,
+    representative: appeal?.powerOfAttorney?.representative_name,
+    representativeType: appeal?.powerOfAttorney?.representative_type,
     representativeAddress: {
-      addressLine1: appeal.powerOfAttorney?.representative_address?.address_line_1,
-      city: appeal.powerOfAttorney?.representative_address?.city,
-      state: appeal.powerOfAttorney?.representative_address?.state,
-      zip: appeal.powerOfAttorney?.representative_address?.zip,
+      addressLine1: appeal?.powerOfAttorney?.representative_address?.address_line_1,
+      city: appeal?.powerOfAttorney?.representative_address?.city,
+      state: appeal?.powerOfAttorney?.representative_address?.state,
+      zip: appeal?.powerOfAttorney?.representative_address?.zip,
     },
-    appellantFullName: appeal.appellantFullName,
-    appellantAddressLine1: appeal.appellantAddress?.address_line_1,
-    appellantCity: appeal.appellantAddress?.city,
-    appellantState: appeal.appellantAddress?.state,
-    appellantZip: appeal.appellantAddress?.zip,
+    appellantFullName: appeal?.appellantFullName,
+    appellantAddressLine1: appeal?.appellantAddress?.address_line_1,
+    appellantCity: appeal?.appellantAddress?.city,
+    appellantState: appeal?.appellantAddress?.state,
+    appellantZip: appeal?.appellantAddress?.zip,
     requestType
     /* eslint-enable camelcase */
   };
 
   // Reset the component state
   const reset = () => {
+    // Clear the loading state
     setLoading(false);
-    props.showErrorMessage(null);
+
+    // Clear any lingering errors
+    setErrors({});
+
+    // Remove any erroneous virtual hearing data
+    props.onChangeFormData('assignHearing', { virtualHearing: null });
   };
 
   // Initialize the state
-  useEffect(() => {
-    // Check for open hearings so we don't display when present
-    if (openHearing) {
-      props.showErrorMessage({
-        title: 'Open Hearing',
-        detail: openHearingDayError
-      });
-    }
-
-    // Cleanup
-    return () => reset();
-
-  }, []);
+  useEffect(() => () => reset(), []);
 
   const getSuccessMsg = () => {
     // Format the hearing date string
-    const hearingDateStr = formatDateStr(assignHearingForm.hearingDay.hearingDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
+    const hearingDateStr = formatDateStr(hearing?.hearingDay?.hearingDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
 
     // Format the alert title
     const title = sprintf(
@@ -119,7 +119,7 @@ export const ScheduleVeteran = ({
         {COPY.SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL}
         <br />
         <br />
-        <Link to={href}>Back to Schedule Veterans</Link>
+        <Link href={href}>Back to Schedule Veterans</Link>
       </p>
     );
 
@@ -135,7 +135,7 @@ export const ScheduleVeteran = ({
         hearingDay: (hearing.hearingDay && hearing.hearingDay.hearingId) ?
           null :
           'Please select a hearing date',
-        hearingLocation: hearing.hearingLocation ? null : 'Please select a hearing location',
+        hearingLocation: hearing.hearingLocation || hearing.virtualHearing ? null : 'Please select a hearing location',
         scheduledTimeString: hearing.scheduledTimeString ? null : 'Please select a hearing time',
         regionalOffice: hearing.regionalOffice ? null : 'Please select a Regional Office '
       };
@@ -156,13 +156,18 @@ export const ScheduleVeteran = ({
             business_payloads: {
               description: 'Update Task',
               values: {
-                ...hearing.apiFormattedValues,
+                scheduled_time_string: hearing.scheduledTimeString,
+                hearing_day_id: hearing.hearingDay.hearingId,
+                hearing_location: hearing.hearingLocation ? ApiUtil.convertToSnakeCase(hearing.hearingLocation) : null,
                 override_full_hearing_day_validation: fullHearingDay,
+                virtual_hearing_attributes: hearing.virtualHearing
               },
             },
           },
         },
       };
+
+      console.log('DATA: ', payload);
 
       // Patch the hearing task with the form data
       await props.requestPatch(`/tasks/${scheduleHearingTask.taskId}`, payload, getSuccessMsg());
@@ -210,8 +215,10 @@ export const ScheduleVeteran = ({
             {COPY.SCHEDULE_VETERAN_FULL_HEARING_DAY_MESSAGE_DETAIL}
           </Alert>
         )}
-        {error ? <Alert title={error.title} type="error">{error.detail}</Alert> : (
+        {error && <Alert title={error.title} type="error">{error.detail}</Alert>}
+        {openHearing ? <Alert title="Open Hearing" type="error">{openHearingDayError}</Alert> : (
           <ScheduleVeteranForm
+            initialRegionalOffice={hearingDay?.regionalOffice || appeal?.regionalOffice?.key}
             errors={errors}
             appeal={appeal}
             virtual={Boolean(virtual)}
@@ -232,6 +239,7 @@ export const ScheduleVeteran = ({
       </Button>
       <span {...saveButton}>
         <Button
+          disabled={openHearing}
           name="Schedule"
           loading={loading}
           className="usa-button"

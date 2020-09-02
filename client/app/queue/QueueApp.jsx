@@ -84,6 +84,7 @@ import { FlashAlerts } from '../nonComp/components/Alerts';
 
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
 import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
+import ScheduleVeteran from '../hearings/components/ScheduleVeteran';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -256,7 +257,9 @@ class QueueApp extends React.PureComponent {
     <UpdateTaskStatusAssignRegionalOfficeModal updateStatusTo={updateStatusTo} {...props.match.params} />
   );
 
-  routedAssignHearingModal = (props) => <AssignHearingModal userId={this.props.userId} {...props.match.params} />;
+  routedScheduleVeteran = (props) => <ScheduleVeteran userId={this.props.userId} {...props.match.params} />
+
+  routedAssignHearingModal = (props) => <AssignHearingModal userId={this.props.userId} {...props.match.params} />
 
   routedPostponeHearingModal = (props) => <PostponeHearingModal userId={this.props.userId} {...props.match.params} />;
 
@@ -349,6 +352,12 @@ class QueueApp extends React.PureComponent {
 
             {/* Base/page (non-modal) routes */}
             <Switch>
+              {this.props.featureToggles.schedule_veteran_virtual_hearing && <PageRoute
+                exact
+                path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SCHEDULE_VETERAN.value}`}
+                title="Assign Hearing | Caseflow"
+                render={this.routedScheduleVeteran}
+              />}
               <PageRoute
                 exact
                 path={['/search', '/cases/:caseflowVeteranIds']}
@@ -629,12 +638,12 @@ class QueueApp extends React.PureComponent {
                 title="Cancel Task | Caseflow"
                 render={this.routedCancelTaskModal}
               />
-              <PageRoute
+              {!this.props.featureToggles.schedule_veteran_virtual_hearing && <PageRoute
                 exact
                 path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SCHEDULE_VETERAN.value}`}
                 title="Assign Hearing | Caseflow"
                 render={this.routedAssignHearingModal}
-              />
+              />}
               <PageRoute
                 exact
                 path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.POSTPONE_HEARING.value}`}
