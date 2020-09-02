@@ -7,13 +7,6 @@
 # Legacy appeals have VACOLS and BGS as dependencies.
 
 class LegacyAppeal < CaseflowRecord
-  # Reverting changes that supported new contentions in Caseflow Dispatch. See #14714
-  self.ignored_columns = %w[burn_pit
-                            military_sexual_trauma
-                            blue_water
-                            us_court_of_appeals_for_veterans_claims
-                            no_special_issues]
-
   include AppealConcern
   include AssociatedVacolsModel
   include BgsService
