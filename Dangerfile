@@ -21,7 +21,7 @@ end
 if git.modified_files.grep(/app\/services\//).any?
   warn(
     "This PR appears to affect one or more integrations. Make sure to test code in UAT before merging. "\
-    "See https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/Appeals-Deployment---Deploy-Custom-Branch-to-UAT"
+    "See these [instructions for deploying a custom branch to UAT](https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/Appeals-Deployment---Deploy-Custom-Branch-to-UAT)."
   )
 end
 
