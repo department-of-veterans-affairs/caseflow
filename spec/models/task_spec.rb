@@ -255,21 +255,28 @@ describe Task, :all_dbs do
 
   describe "#duplicate_org_task" do
     let(:root_task) { create(:root_task) }
-    let(:qr_user) { create(:user) }
-    let!(:quality_review_organization_task) do
-      create(:qr_task, assigned_to: QualityReview.singleton, parent: root_task)
+    let(:mail_user) { create(:user) }
+    let!(:mail_grandparent_organization_task) do
+      create(:aod_motion_mail_task, assigned_to: MailTeam.singleton, parent: root_task)
     end
-    let!(:quality_review_task) do
-      create(:qr_task, assigned_to: qr_user, parent: quality_review_organization_task)
+    let!(:mail_parent_organization_task) do
+      create(:aod_motion_mail_task, assigned_to: MailTeam.singleton, parent: mail_grandparent_organization_task)
+    end
+    let!(:mail_task) do
+      create(:aod_motion_mail_task, assigned_to: mail_user, parent: mail_parent_organization_task)
     end
 
     context "when there are duplicate organization tasks" do
-      it "returns true when there is a duplicate task assigned to an organization" do
-        expect(quality_review_organization_task.duplicate_org_task).to eq(true)
+      it "returns true when there is a duplicate descendent task assigned to a user" do
+        expect(mail_grandparent_organization_task.duplicate_org_task).to eq(true)
+      end
+
+      it "returns true when there is a duplicate child task assigned to a user" do
+        expect(mail_parent_organization_task.duplicate_org_task).to eq(true)
       end
 
       it "returns false otherwise" do
-        expect(quality_review_task.duplicate_org_task).to eq(false)
+        expect(mail_task.duplicate_org_task).to eq(false)
       end
     end
   end
@@ -1686,18 +1693,82 @@ describe Task, :all_dbs do
       third_level_completed_task.update(status: Constants.TASK_STATUSES.completed)
     end
 
-    it "cancels all open descendants" do
-      second_level_tasks.first.cancel_descendants
+    context "when no instructions are passed" do
+      it "cancels all open descendants" do
+        second_level_tasks.first.cancel_descendants
 
-      expect(second_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
-      expect(third_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
-      expect(third_level_tasks.second.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
-      # previously completed task _not_ cancelled
-      expect(third_level_completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(second_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(third_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(third_level_tasks.second.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(second_level_tasks.first.reload.instructions).to eq([])
+        expect(third_level_tasks.first.reload.instructions).to eq([])
+        expect(third_level_tasks.second.reload.instructions).to eq([])
+        # previously completed task _not_ cancelled
+        expect(third_level_completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
 
-      # parent and sibling not cancelled
-      expect(top_level_task.reload.open?).to eq(true)
-      expect(second_level_tasks.second.reload.open?).to eq(true)
+        # parent and sibling not cancelled
+        expect(top_level_task.reload.open?).to eq(true)
+        expect(second_level_tasks.second.reload.open?).to eq(true)
+      end
+    end
+
+    context "when instructions are passed" do
+      let(:instructions) { "instructions" }
+
+      it "cancels all open descendants and adds instructions to the cancelled tasks" do
+        second_level_tasks.first.cancel_descendants(instructions: instructions)
+
+        expect(second_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(third_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(third_level_tasks.second.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(second_level_tasks.first.reload.instructions).to eq([instructions])
+        expect(third_level_tasks.first.reload.instructions).to eq([instructions])
+        expect(third_level_tasks.second.reload.instructions).to eq([instructions])
+        # previously completed task _not_ cancelled
+        expect(third_level_completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+
+        # parent and sibling not cancelled
+        expect(top_level_task.reload.open?).to eq(true)
+        expect(second_level_tasks.second.reload.open?).to eq(true)
+      end
+    end
+  end
+
+  describe ".serialize_for_cancellation" do
+    let(:user) { create(:user, email: "test@gmail.com") }
+
+    subject { create(:task, assigned_to: assignee).serialize_for_cancellation }
+
+    context "when the task is assigned to an org" do
+      let(:assignee) { create(:organization) }
+
+      context "with no admins" do
+        it "returns the org name and no email" do
+          expect(subject.keys).to match_array [:id, :assigned_to_email, :assigned_to_name, :type]
+          expect(subject[:assigned_to_email]).to be nil
+          expect(subject[:assigned_to_name]).to eq assignee.name
+        end
+      end
+
+      context "with admins" do
+        before { OrganizationsUser.make_user_admin(user, assignee) }
+
+        it "returns the org name and the admin's email" do
+          expect(subject.keys).to match_array [:id, :assigned_to_email, :assigned_to_name, :type]
+          expect(subject[:assigned_to_email]).to eq assignee.admins.first.email
+          expect(subject[:assigned_to_name]).to eq assignee.name
+        end
+      end
+    end
+
+    context "when the task is assigned to a user" do
+      let(:assignee) { user }
+
+      it "returns the user's name and css_id and email" do
+        expect(subject.keys).to match_array [:id, :assigned_to_email, :assigned_to_name, :type]
+        expect(subject[:assigned_to_email]).to eq assignee.email
+        expect(subject[:assigned_to_name]).to eq "#{assignee.full_name.titleize} (#{assignee.css_id})"
+      end
     end
   end
 end

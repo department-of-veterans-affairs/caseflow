@@ -35,6 +35,7 @@ import JudgeDecisionReviewTaskListView from './JudgeDecisionReviewTaskListView';
 import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './caseEvaluation/EvaluateDecisionView';
 import AddColocatedTaskView from './colocatedTasks/AddColocatedTaskView';
+import BlockedAdvanceToJudgeView from './BlockedAdvanceToJudgeView';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
@@ -47,6 +48,7 @@ import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
 import CreateMailTaskDialog from './CreateMailTaskDialog';
 import AddJudgeTeamModal from './AddJudgeTeamModal';
+import AddDvcTeamModal from './AddDvcTeamModal';
 import AddVsoModal from './AddVsoModal';
 import AddPrivateBarModal from './AddPrivateBarModal';
 import LookupParticipantIdModal from './LookupParticipantIdModal';
@@ -214,6 +216,8 @@ class QueueApp extends React.PureComponent {
 
   routedAddColocatedTask = (props) => <AddColocatedTaskView {...props.match.params} role={this.props.userRole} />;
 
+  routedBlockedCaseMovement = (props) => <BlockedAdvanceToJudgeView {...props.match.params} />;
+
   routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView {...props.match.params} />;
 
   routedAssignToAttorney = (props) => <AssignToAttorneyModalView userId={this.props.userId} match={props.match} />;
@@ -296,6 +300,8 @@ class QueueApp extends React.PureComponent {
   routedUserManagement = (props) => <UserManagement {...props.match.params} />;
 
   routedAddJudgeTeam = (props) => <AddJudgeTeamModal {...props.match.params} />;
+
+  routedAddDvcTeam = (props) => <AddDvcTeamModal {...props.match.params} />;
 
   routedAddVsoModal = (props) => <AddVsoModal {...props.match.params} />;
 
@@ -450,6 +456,11 @@ class QueueApp extends React.PureComponent {
                 path="/queue/appeals/:appealId/tasks/:taskId/colocated_task"
                 title="Add Colocated Task | Caseflow"
                 render={this.routedAddColocatedTask}
+              />
+              <Route
+                exact
+                path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT.value}`}
+                render={this.routedBlockedCaseMovement}
               />
 
               <PageRoute
@@ -649,6 +660,7 @@ class QueueApp extends React.PureComponent {
               />
 
               <Route path="/team_management/add_judge_team" render={this.routedAddJudgeTeam} />
+              <Route path="/team_management/add_dvc_team" render={this.routedAddDvcTeam} />
               <Route path="/team_management/add_vso" render={this.routedAddVsoModal} />
               <Route path="/team_management/add_private_bar" render={this.routedAddPrivateBarModal} />
               <Route path="/team_management/lookup_participant_id" render={this.routedLookupParticipantIdModal} />

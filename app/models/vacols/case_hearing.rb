@@ -12,7 +12,14 @@ class VACOLS::CaseHearing < VACOLS::Record
   has_one :staff, foreign_key: :sattyid, primary_key: :board_member
   has_one :brieff, foreign_key: :bfkey, primary_key: :folder_nr, class_name: "Case"
 
-  HEARING_TYPES = %w[V T C].freeze
+  HEARING_TYPE_LOOKUP = {
+    central: "C",
+    travel: "T",
+    video: "V",
+    virtual: "R"
+  }.freeze
+
+  HEARING_TYPES = HEARING_TYPE_LOOKUP.values.freeze
 
   HEARING_DISPOSITIONS = {
     H: Constants.HEARING_DISPOSITION_TYPES.held,
