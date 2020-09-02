@@ -69,7 +69,7 @@ exports[`AddClaimantModal renders correctly 1`] = `
               >
                 <strong>
                   <span>
-                    Claimant's relationship to the veteran
+                    Claimant's relationship to the Veteran
                   </span>
                 </strong>
               </label>
