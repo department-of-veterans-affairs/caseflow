@@ -165,6 +165,10 @@ export class CaseTitleDetails extends React.PureComponent {
           )}
         </TitleDetailsSubheaderSection>
 
+        <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_HEARING_REQUEST_TYPE_LABEL}>
+          {appeal.readableHearingRequestType}
+        </TitleDetailsSubheaderSection>
+
         {!userIsVsoEmployee && appeal && appeal.documentID && (
           <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}>
             <div id="document-id">
