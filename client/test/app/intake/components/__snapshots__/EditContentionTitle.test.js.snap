@@ -30,17 +30,17 @@ exports[`EditContentionTitle renders correctly in edit mode 1`] = `
       >
         <label
           class="question-label"
-          for="3. Contention title "
+          for="3. Contention title"
         >
           <strong>
             <span>
-              3. Contention title 
+              3. Contention title
             </span>
           </strong>
         </label>
         <textarea
-          id="3. Contention title "
-          name="3. Contention title "
+          id="3. Contention title"
+          name="3. Contention title"
           placeholder="Tinnitus"
         >
           Tinnitus

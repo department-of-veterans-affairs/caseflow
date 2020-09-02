@@ -71,6 +71,16 @@ describe('EditContentionTitle', () => {
     expect(container).toMatchSnapshot();
   });
 
+  it('shows issue notes if applicable', () => {
+    const notes = 'Lorem ipsum dolor sit amet.';
+
+    setup({ ...defaults, issue: { ...defaults.issue, notes } });
+
+    expect(screen.queryByText(notes)).not.toBeTruthy();
+    editMode();
+    expect(screen.queryByText(`Notes: ${notes}`)).toBeTruthy();
+  });
+
   it('should allow user to cancel editing', () => {
     setup();
 
