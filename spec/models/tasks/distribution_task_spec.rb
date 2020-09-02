@@ -52,10 +52,10 @@ describe DistributionTask, :postgres do
       after { FeatureToggle.disable!(:scm_move_with_blocking_tasks) }
 
       it "with congressional interest mail task it has a blocking case movement action" do
-        CongressionalInterestMailTask.create_from_params({
-                                                           appeal: distribution_task.appeal,
-                                                           parent_id: distribution_task.appeal.root_task.id
-                                                         }, user)
+        ExtensionRequestMailTask.create_from_params({
+                                                      appeal: distribution_task.appeal,
+                                                      parent_id: distribution_task.appeal.root_task.id
+                                                    }, user)
         expect(distribution_task.available_actions(scm_user).count).to eq(1)
         expect(distribution_task.available_actions(scm_user).first).to eq(
           Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT.to_h
