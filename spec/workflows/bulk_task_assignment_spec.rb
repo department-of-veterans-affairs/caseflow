@@ -178,22 +178,6 @@ describe BulkTaskAssignment, :postgres do
             expect(subject.map(&:appeal)).to eq(expected_appeal_ordering.first(task_count))
           end
         end
-
-        context "comparing with semantically correct but slower implementation" do
-          def slower_prioritized_tasks(tasks)
-            tasks.sort_by { |task| [task.appeal.aod? ? 0 : 1, task.appeal.cavc? ? 0 : 1, task.created_at] }
-          end
-
-          it "sorts correctly" do
-            bulk_task_assignment = BulkTaskAssignment.new(params)
-            tasks = bulk_task_assignment.send(:tasks_satisfying_params)
-            expect(tasks.count).to eq(7)
-            prioritized_tasks = bulk_task_assignment.send(:prioritized_tasks, tasks)
-            expect(prioritized_tasks).to eq(slower_prioritized_tasks(tasks))
-
-            expect(prioritized_tasks.first(4).map(&:appeal)).to eq(expected_appeal_ordering)
-          end
-        end
       end
     end
   end
