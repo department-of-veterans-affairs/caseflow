@@ -50,10 +50,10 @@ class BulkTaskAssignment
       if regional_office
         tasks = tasks.joins("INNER JOIN appeals ON appeals.id = #{Task.table_name}.appeal_id "\
                       "AND #{Task.table_name}.appeal_type = '#{Appeal.name}'")
-                     .where("closest_regional_office = ?", regional_office) +
+          .where("closest_regional_office = ?", regional_office) +
                 tasks.joins("INNER JOIN legacy_appeals ON legacy_appeals.id = #{Task.table_name}.appeal_id "\
                       "AND #{Task.table_name}.appeal_type = '#{LegacyAppeal.name}'")
-                      .where("closest_regional_office = ?", regional_office)
+          .where("closest_regional_office = ?", regional_office)
       end
       tasks
     end
