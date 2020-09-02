@@ -20,35 +20,21 @@ export default {
 };
 
 const defaultArgs = {
+  appellantTitle: 'Veteran',
   appeal: amaAppeal,
-  hearing: defaultHearing,
+  hearing: {
+    ...defaultHearing,
+    requestType: defaultHearing.readableRequestType
+  },
 };
 
 const Template = (args) => {
-  const [storyArgs, updateStoryArgs] = useArgs();
-  const handleChange = (key, value) => {
-    updateStoryArgs({
-      ...defaultArgs,
-      ...storyArgs,
-      [key]: {
-        ...defaultArgs[key],
-        ...storyArgs[key],
-        ...value
-      }
-    });
-  };
-
   return (
     <Wrapper>
       <ScheduleVeteranForm
-        {...args}
         {...defaultArgs}
-        {...storyArgs}
-        onChange={handleChange}
-        /* eslint-disable no-console */
-        submit={() => console.log('Submitted')}
-        goBack={() => console.log('Cancelled')}
-        /* eslint-enable no-console */
+        {...args}
+        onChange={() => console.log('Changed')}
       />
     </Wrapper>
 
@@ -56,11 +42,6 @@ const Template = (args) => {
 };
 
 export const Default = Template.bind({});
-
-export const Loading = Template.bind({});
-Loading.args = {
-  loading: true
-};
 
 export const RegionalOfficeSelected = Template.bind({});
 RegionalOfficeSelected.args = {
@@ -75,13 +56,17 @@ VideoToVirtualConversion.args = {
   appeal: {
     ...amaAppeal,
     regionalOffice: defaultHearing.regionalOfficeKey,
-    hearingLocation: scheduleHearingDetails.hearingLocation }
+    hearingLocation: scheduleHearingDetails.hearingLocation
+  },
+  virtual: true
 };
 
 export const CentralToVirtualConversion = Template.bind({});
 CentralToVirtualConversion.args = {
+  virtual: true,
   hearing: {
     ...centralHearing,
+    requestType: centralHearing.readableRequestType,
   },
 };
 
@@ -89,7 +74,7 @@ export const VideoWithErrors = Template.bind({});
 VideoWithErrors.args = {
   hearing: {
     ...defaultHearing,
-    virtualHearing: virtualHearing.virtualHearing
+    requestType: defaultHearing.readableRequestType,
   },
   appeal: {
     ...amaAppeal,
@@ -104,8 +89,10 @@ VideoWithErrors.args = {
 
 export const VirtualWithErrors = Template.bind({});
 VirtualWithErrors.args = {
+  virtual: true,
   hearing: {
     ...defaultHearing,
+    requestType: defaultHearing.readableRequestType,
     virtualHearing: virtualHearing.virtualHearing
   },
   appeal: {
