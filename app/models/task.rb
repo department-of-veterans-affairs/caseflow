@@ -204,6 +204,14 @@ class Task < CaseflowRecord
       "on #{CachedAppeal.table_name}.appeal_id = #{Task.table_name}.appeal_id "\
       "and #{CachedAppeal.table_name}.appeal_type = #{Task.table_name}.appeal_type"
     end
+
+    def order_by_appeal_priority_clause
+      Arel.sql(
+        "CASE WHEN #{CachedAppeal.table_name}.is_aod = TRUE THEN 0 ELSE 1 END, "\
+        "CASE WHEN #{CachedAppeal.table_name}.case_type = 'Court Remand' THEN 0 ELSE 1 END, "\
+        "#{Task.table_name}.created_at"
+      )
+    end
   end
 
   ########################################################################################
@@ -389,8 +397,10 @@ class Task < CaseflowRecord
     type.eql?(task_to_check&.type)
   end
 
-  def cancel_descendants
-    descendants.select(&:open?).each { |desc| desc.update!(status: Constants.TASK_STATUSES.cancelled) }
+  def cancel_descendants(instructions: [])
+    descendants.select(&:open?).each do |desc|
+      desc.update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: instructions)
+    end
   end
 
   def create_twin_of_type(_params)
@@ -421,7 +431,7 @@ class Task < CaseflowRecord
   end
 
   def duplicate_org_task
-    assigned_to.is_a?(Organization) && children.any? do |child_task|
+    assigned_to.is_a?(Organization) && descendants.any? do |child_task|
       User.name == child_task.assigned_to_type && type == child_task.type
     end
   end
@@ -597,6 +607,21 @@ class Task < CaseflowRecord
 
   def reassign_clears_overtime?
     false
+  end
+
+  def serialize_for_cancellation
+    assignee_display_name = if assigned_to.is_a?(Organization)
+                              assigned_to.name
+                            else
+                              "#{assigned_to.full_name.titlecase} (#{assigned_to.css_id})"
+                            end
+
+    {
+      id: id,
+      assigned_to_email: assigned_to.is_a?(Organization) ? assigned_to.admins.first&.email : assigned_to.email,
+      assigned_to_name: assignee_display_name,
+      type: type
+    }
   end
 
   # currently only defined by ScheduleHearingTask and AssignHearingDispositionTask for virtual hearing related updates

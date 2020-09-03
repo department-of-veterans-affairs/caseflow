@@ -39,7 +39,7 @@ module AutomaticCaseDistribution
 
     # Distribute legacy cases tied to a judge down to the board provided limit of 30, regardless of the legacy docket
     # range
-    if FeatureToggle.enabled?(:priority_acd)
+    if FeatureToggle.enabled?(:priority_acd, user: judge)
       distribute_appeals(:legacy, @rem, priority: false, genpop: "not_genpop", bust_backlog: true)
     end
 
