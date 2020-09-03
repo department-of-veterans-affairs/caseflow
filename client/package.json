@@ -88,7 +88,7 @@
     "mark.js": "^8.11.0",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.27",
-    "node-sass": "^4.13.0",
+    "node-sass": "^4.13.1",
     "pdf-annotate.js": "^1.0.0",
     "pdfjs-dist": "1.10.97",
     "pluralize": "^7.0.0",
