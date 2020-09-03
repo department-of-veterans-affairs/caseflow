@@ -139,6 +139,7 @@ class Organization < CaseflowRecord
 
   def serialize
     {
+      accepts_priority_pushed_cases: accepts_priority_pushed_cases,
       id: id,
       name: name,
       participant_id: participant_id,

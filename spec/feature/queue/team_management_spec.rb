@@ -68,4 +68,47 @@ RSpec.feature "Team management page", :postgres do
       end
     end
   end
+
+  describe "Toggling priority push for a judge team" do
+    let!(:judge_team) { JudgeTeam.create_for_judge(create(:user)) }
+
+    context "when user is in Bva organization" do
+      scenario "user can view priority push availablity, but cannot change it" do
+        visit("/team_management")
+        expect(page).to have_content("Judge Teams")
+        expect(page.find("#priority-push-#{judge_team.id}_true", visible: false).checked?).to eq true
+        expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).checked?).to eq false
+        expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).disabled?).to eq true
+        find(".cf-form-radio-option", text: "Unavailable").click
+        expect(judge_team.reload.accepts_priority_pushed_cases).to be true
+        expect(page.find("#priority-push-#{judge_team.id}_true", visible: false).checked?).to eq true
+        expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).checked?).to eq false
+        visit("/team_management")
+        expect(page.find("#priority-push-#{judge_team.id}_true", visible: false).checked?).to eq true
+        expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).checked?).to eq false
+        expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).disabled?).to eq true
+      end
+    end
+
+    context "when the user is a dvc" do
+      before do
+        dvc = create(:user)
+        DvcTeam.create_for_dvc(dvc)
+        User.authenticate!(user: dvc)
+      end
+
+      scenario "user can toggele priority push availablity" do
+        visit("/team_management")
+        expect(page).to have_content("Judge Teams")
+        expect(page.find("#priority-push-#{judge_team.id}_true", visible: false).checked?).to eq true
+        expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).checked?).to eq false
+        find(".cf-form-radio-option", text: "Unavailable").click
+        expect(page).to have_checked_field("priority-push-#{judge_team.id}_false", visible: false)
+        expect(judge_team.reload.accepts_priority_pushed_cases).to be false
+        visit("/team_management")
+        expect(page.find("#priority-push-#{judge_team.id}_true", visible: false).checked?).to eq false
+        expect(page.find("#priority-push-#{judge_team.id}_false", visible: false).checked?).to eq true
+      end
+    end
+  end
 end
