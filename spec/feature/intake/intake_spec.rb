@@ -596,7 +596,7 @@ feature "Intake", :all_dbs do
         end
       end
 
-      context "invalid pay grade" do
+      context "invalid pay grade", skip: "temporarily removing this validation" do
         let(:service) { [{ branch_of_service: "army", pay_grade: "not valid" }] }
         let(:veteran) do
           Generators::Veteran.build(

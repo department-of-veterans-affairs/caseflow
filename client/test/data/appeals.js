@@ -1,6 +1,36 @@
-export const amaAppeal = {
-  id: '541',
-  externalId: '3afefa82-5736-47c8-a977-0b4b8586f73e',
+export const defaultAssignHearing = {
+  regionalOffice: null,
+  hearingLocation: null,
+  scheduledTimeString: null,
+  errorMessages: {
+    hearingDay: null,
+    hearingLocation: null,
+    scheduledTimeString: null,
+    hasErrorMessages: false
+  },
+  apiFormattedValues: {
+    scheduled_time_string: null,
+    hearing_day_id: null,
+    hearing_location: null
+  }
+};
+
+export const powerOfAttorney = {
+  representative_type: 'Attorney',
+  representative_name: 'Attorney McAttorneyFace',
+  representative_address: {
+    address_line_1: '9999 MISSION ST',
+    address_line_2: 'UBER',
+    address_line_3: 'APT 2',
+    city: 'SAN FRANCISCO',
+    zip: '94103',
+    country: 'USA',
+    state: 'CA'
+  },
+  representative_email_address: 'tom.brady@caseflow.gov'
+};
+
+export const appealData = {
   docketName: 'hearing',
   withdrawn: false,
   removed: false,
@@ -16,17 +46,6 @@ export const amaAppeal = {
   veteranFileNumber: '123456789',
   isPaperCase: false,
   vacateType: null,
-  hearings: [
-    {
-      heldBy: '',
-      viewedByJudge: false,
-      date: '2020-08-07T03:30:00.000-04:00',
-      type: 'Central',
-      externalId: '29e88a5d-8f00-47ea-b178-95a01d912b96',
-      disposition: null,
-      isVirtual: false
-    }
-  ],
   completedHearingOnPreviousAppeal: false,
   issues: [],
   decisionIssues: [],
@@ -50,20 +69,6 @@ export const amaAppeal = {
   decisionDate: null,
   nodDate: '2020-08-05',
   certificationDate: null,
-  powerOfAttorney: {
-    representative_type: 'Attorney',
-    representative_name: 'Attorney McAttorneyFace',
-    representative_address: {
-      address_line_1: '9999 MISSION ST',
-      address_line_2: 'UBER',
-      address_line_3: 'APT 2',
-      city: 'SAN FRANCISCO',
-      zip: '94103',
-      country: 'USA',
-      state: 'CA'
-    },
-    representative_email_address: 'tom.brady@caseflow.gov'
-  },
   regionalOffice: null,
   caseflowVeteranId: 541,
   documentID: null,
@@ -91,8 +96,31 @@ export const amaAppeal = {
       }
     }
   }
-}
-;
+
+};
+export const amaAppeal = {
+  ...appealData,
+  id: '541',
+  externalId: '2afefa82-5736-47c8-a977-0b4b8586f73e',
+  hearings: [],
+};
+
+export const openHearingAppeal = {
+  ...appealData,
+  id: '542',
+  externalId: '3afefa82-5736-47c8-a977-0b4b8586f73e',
+  hearings: [
+    {
+      heldBy: '',
+      viewedByJudge: false,
+      date: '2020-08-07T03:30:00.000-04:00',
+      type: 'Central',
+      externalId: '29e88a5d-8f00-47ea-b178-95a01d912b96',
+      disposition: null,
+      isVirtual: false
+    }
+  ],
+};
 
 export const scheduleHearingDetails = {
   regionalOffice: 'RO17',

@@ -39,7 +39,7 @@ module AutomaticCaseDistribution
 
     # Distribute legacy cases tied to a judge down to the board provided limit of 30, regardless of the legacy docket
     # range
-    if FeatureToggle.enabled?(:priority_acd)
+    if FeatureToggle.enabled?(:priority_acd, user: judge)
       distribute_appeals(:legacy, @rem, priority: false, genpop: "not_genpop", bust_backlog: true)
     end
 
@@ -152,7 +152,7 @@ module AutomaticCaseDistribution
   def num_oldest_priority_appeals_by_docket(num)
     return {} unless num > 0
 
-    DocketCoordinator.new.dockets
+    dockets
       .flat_map { |sym, docket| docket.age_of_n_oldest_priority_appeals(num).map { |age| [age, sym] } }
       .sort_by { |age, _| age }
       .first(num)
