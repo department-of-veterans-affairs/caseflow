@@ -36,7 +36,7 @@ class ExternalApi::BGSService
       end
   end
 
-  def cancel_end_product(veteran_file_number, end_product_code, end_product_modifier, payee_code, benefit_type_code)
+  def cancel_end_product(veteran_file_number, end_product_code, end_product_modifier, payee_code, benefit_type)
     DBService.release_db_connections
 
     @end_products[veteran_file_number] ||=
@@ -45,7 +45,7 @@ class ExternalApi::BGSService
                             end_product_code = #{end_product_code}, \
                             modifier = #{end_product_modifier}
                             payee_code = #{payee_code}
-                            benefit_type_code = #{benefit_type_code}",
+                            benefit_type = #{benefit_type}",
                             service: :bgs,
                             name: "claims.cancel_end_product") do
         client.claims.cancel_end_product(
@@ -53,7 +53,7 @@ class ExternalApi::BGSService
           end_product_code: end_product_code,
           modifier: end_product_modifier,
           payee_code: payee_code,
-          benefit_type_code: benefit_type_code
+          benefit_type: benefit_type
         )
       end
   end
