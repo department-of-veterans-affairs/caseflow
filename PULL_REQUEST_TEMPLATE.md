@@ -21,7 +21,7 @@ Please explain the changes you made here.
 ### Storybook Story
 *For Frontend (Presentationa) Components*
 * [ ] Add a [Storybook](https://github.com/department-of-veterans-affairs/caseflow/wiki/Documenting-React-Components-with-Storybook) file alongside the component file (e.g. create `MyComponent.stories.js` alongside `MyComponent.jsx`)
-* [ ] Give it a title that reflects the component's location within the overall Caseflow hierarchy 
+* [ ] Give it a title that reflects the component's location within the overall Caseflow hierarchy
 * [ ] Write a separate story (within the same file) for each discrete variation of the component
 
 ### Database Changes
@@ -34,3 +34,10 @@ Please explain the changes you made here.
 * [ ] Appropriate indexes added (especially for foreign keys, polymorphic columns, unique constraints, and Rails scopes)
 * [ ] DB schema docs updated with `make docs` (after running `make migrate`)
 * [ ] #appeals-schema notified with summary and link to this PR
+
+### Integrations: Adding endpoints for external APIs
+* [ ] Check that Caseflow's external API code for the endpoint matches the code in the relevant integration repo
+  * [ ] Request: Service name, method name, input field names
+  * [ ] Response: Check expected data structure
+* [ ] Update Fakes
+* [ ] [Deploy the custom branch to UAT to test](https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/Appeals-Deployment---Deploy-Custom-Branch-to-UAT)
