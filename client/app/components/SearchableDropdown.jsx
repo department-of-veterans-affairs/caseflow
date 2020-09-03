@@ -219,7 +219,7 @@ const SelectOpts = PropTypes.arrayOf(
 
 SearchableDropdown.propTypes = {
   async: PropTypes.func,
-  clearable: PropTypes.bool,
+  isClearable: PropTypes.bool,
   clearOnSelect: PropTypes.bool,
   creatable: PropTypes.bool,
   creatableOptions: PropTypes.shape({
