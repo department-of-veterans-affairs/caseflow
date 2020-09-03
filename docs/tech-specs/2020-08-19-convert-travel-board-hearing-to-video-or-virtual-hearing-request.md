@@ -29,7 +29,7 @@ This tech spec is specific to the requirement at hand: putting cases with Travel
 
 ### A user has actions available from the case details page
 
-When a user with the `"Admin Intake"`, `"Build HearSched"` or `"Edit HearSched"` roles visits the case details page for a legacy appeal with a Travel Board hearing request, we will create (if it doesn't already exist) a typical schedule hearing task tree, with a new `ChangeHearingRequestTypeTask` task type as the child of the `ScheduleHearingTask`. The task tree will look like this:
+When a user with the `"Admin Intake"`, `"Build HearSched"` or `"Edit HearSched"` roles visits the case details page for a legacy appeal with a Travel Board hearing request, we will create (if it doesn't already exist) a typical schedule hearing task tree, with a `ChangeHearingRequestTypeTask` as the child of the `ScheduleHearingTask`. The task tree will look like this:
 
 ```
                                                 ┌────────────────────────┐
@@ -41,13 +41,15 @@ LegacyAppeal (legacy) ───────────────────�
                                                 └────────────────────────┘
 ```
 
-The `ChangeHearingRequestTypeTask` will be assigned to the BVA organization by default. It will not be visible in any task queue (by overwriting the `Task` model's `hide_from_queue_table_view` method to return `true`). It will have two actions available on it: "Convert hearing to video", and "Convert hearing to virtual".
+The `ChangeHearingRequestTypeTask` will be assigned to the BVA organization by default. It will not be visible in any task queue (by overwriting the inherited `hide_from_queue_table_view` method to return `true`). It will have two actions available on it: "Convert hearing to video", and "Convert hearing to virtual".
 
 ### A user takes an action on the task
 
-Selecting either action on the task will present the user with a confirmation form, as described in [#12826](https://github.com/department-of-veterans-affairs/caseflow/issues/12826). That form will have a text area field for notes, and a submission button. Submitting the form will cause the following steps to happen.
+Selecting "Convert heraing to video" on the task will present the user with a simple confirmation modal, as described in [#12826](https://github.com/department-of-veterans-affairs/caseflow/issues/12826).
 
+Selecting "Convert hearing to virtual" on the task will present the user with a confirmation form, as described in [#12826](https://github.com/department-of-veterans-affairs/caseflow/issues/12826). That form will have a text area field for notes, and a submission button.
 
+Submitting the modal or the form will cause the following steps to happen.
 
 ### The new request type is saved
 
@@ -80,7 +82,7 @@ With this approach, we can easily access the note and display it/make it editabl
 
 The `ChangeHearingRequestTypeTask` is completed, and its parent `ScheduleHearingTask` status is automatically set to `assigned`.
 
-The active `ScheduleHearingTask` will cause the veteran to show up in the schedule veterans queue for the appropriate RO.
+The active `ScheduleHearingTask` will cause the veteran to show up in the schedule veterans queue for the appropriate RO (after the `UpdateCachedAppealAttributesJob` has cached the appeal).
 
 ### A record of the change is saved
 
