@@ -49,18 +49,6 @@ Selecting either action on the task will present the user with a confirmation fo
 
 
 
-
-
-
-### The note is saved
-
-The note is intended to be viewed when a coordinator is scheduling a hearing. We will therefore append it to the `instructions` of the parent `ScheduleHearingTask` with `Task.update_with_instructions`.
-
-**Open questions:**
-
-1. If the first hearing needs to be rescheduled for any reason, should the contents of the note be copied to the `instructions` field of each future `ScheduleHearingTask` on the appeal?
-2. Is there any other place where the contents of the note will need to be seen by the user?
-
 ### The new request type is saved
 
 In VACOLS, the hearing request type is saved on the appeal. We access the value via the `LegacyAppeal.sanitized_hearing_request_type` method, which can return `:travel_board`, `:central_office`, or `:video`.
@@ -70,6 +58,23 @@ To accomodate our requirements, we'll add a column to the `legacy_appeals` table
 We still want to be able to access the original type of hearing request, so we'll rename `sanitized_hearing_request_type` to `sanitized_vacols_hearing_request_type`.
 
 Then we'll create a new `sanitized_hearing_request_type` method that, if `changed_hearing_request_type` is `nil`, returns the value of `sanitized_vacols_hearing_request_type`, and otherwise returns `changed_hearing_request_type.to_sym`.
+
+### The note is saved
+
+If the hearing request type is being converted to virtual, a note may've been submitted with the form.
+
+The note is intended to be viewed when a coordinator is scheduling a hearing, and it must persist until a hearing has been held, or the hearing request is withdrawn.
+
+We'll save the note in a `HearingNote` object. This is a new model that will record the following details:
+
+1. the contents of the note (`notes`)
+2. the id of person who created/last updated the note (`updated_by_id`)
+3. the date the note was created/updated (`created_at`, `updated_at`)
+4. A polymorphic association with the appeal (`appeal_type`, `appeal_id`)
+
+The table should have an index on the `appeal_type` and `appeal_id` columns together.
+
+With this approach, we can easily access the note and display it/make it editable in whatever context it needs to be seen.
 
 ### The task is completed
 
@@ -91,7 +96,7 @@ We may eventually use these objects to display a record of hearing request type 
 
 ### When the hearing is scheduled
 
-When the hearing is scheduled, we will use the value of `changed_hearing_request_type` to pre-select a hearing type in the schedule form. We'll also display, and make editable, the notes that were saved on the `ScheduleHearingTask` when the new hearing request type was created.
+When the hearing is scheduled, we will use the value of `changed_hearing_request_type` to pre-select a hearing type in the schedule form. We'll also display, and make editable, the notes that were saved in the `HearingNote` object when the new hearing request type was created.
 
 ## Rollout
 
