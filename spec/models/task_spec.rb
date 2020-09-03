@@ -312,7 +312,7 @@ describe Task, :all_dbs do
     let!(:third_level_task) { create_list(:task, 2, parent: second_level_tasks.first) }
     let(:logged_in_user) { create(:user) }
 
-    before { User.authenticate!(user: logged_in_user)}
+    before { User.authenticate!(user: logged_in_user) }
 
     it "cancels all tasks and child subtasks" do
       initial_versions = second_level_tasks[0].versions.count
@@ -1435,7 +1435,7 @@ describe Task, :all_dbs do
       context "when a user is logged in" do
         let(:logged_in_user) { create(:user) }
 
-        before { User.authenticate!(user: logged_in_user)}
+        before { User.authenticate!(user: logged_in_user) }
 
         it "sets the cancelled_by_id of the logged in user" do
           task.update!(status: status)
