@@ -81,6 +81,19 @@ describe('AddClaimantModal', () => {
     expect(screen.queryByLabelText(/notes.*/i)).toBeTruthy();
   });
 
+  it('should clear dropdown', () => {
+    render(
+      <AddClaimantModal
+        onSearch={performQuery}
+        onCancel={onCancel}
+        onSubmit={onSubmit}
+        />
+      );
+
+  userEvent.clear(screen.getByLabelText("Claimant's name"))
+  expect(screen.getByLabelText("Claimant's name")).toHaveAttribute('value', '')
+  });
+
   describe('changes based on "claimant not listed" selection', () => {
     it('should display notes only if "claimant not listed" is selected', () => {
       render(
