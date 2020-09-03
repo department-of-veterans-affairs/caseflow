@@ -55,7 +55,7 @@ Submitting the modal or the form will cause the following steps to happen.
 
 In VACOLS, the hearing request type is saved on the appeal. We access the value via the `LegacyAppeal.sanitized_hearing_request_type` method, which can return `:travel_board`, `:central_office`, or `:video`.
 
-To accomodate our requirements, we'll add a column to the `legacy_appeals` table named `changed_hearing_request_type`, which will have possible values of `nil`, `"video"` or `"virtual"`.
+To accomodate our requirements, we'll add a column to the `legacy_appeals` table named `changed_hearing_request_type`, which will have possible values of `nil`, `"video"`, or `"virtual"`.
 
 We still want to be able to access the original type of hearing request, so we'll rename `sanitized_hearing_request_type` to `sanitized_vacols_hearing_request_type`.
 
