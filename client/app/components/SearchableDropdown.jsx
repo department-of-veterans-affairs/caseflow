@@ -157,7 +157,7 @@ export class SearchableDropdown extends React.Component {
     // because if the selector filters the options to be [], it will show the "no results found"
     // message. We can get around this by unsetting `noResultsText`.
     const handleNoOptions = () =>
-      noResultsText ?? creatable ? null : NO_RESULTS_TEXT;
+      noResultsText ?? (creatable ? null : NO_RESULTS_TEXT);
 
     const labelContents = (
       <span>
@@ -237,6 +237,10 @@ SearchableDropdown.propTypes = {
   loading: PropTypes.bool,
   multi: PropTypes.bool,
   name: PropTypes.string.isRequired,
+
+  /**
+ * react-select will by default set noResultsText to say "No options" unless the prop is explicitly defined
+ */
   noResultsText: PropTypes.string,
   onChange: PropTypes.func,
   options: SelectOpts,

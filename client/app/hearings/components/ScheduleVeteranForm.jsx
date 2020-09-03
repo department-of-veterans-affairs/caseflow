@@ -1,22 +1,25 @@
 /* eslint-disable camelcase */
 import React from 'react';
 import PropTypes from 'prop-types';
-import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import {
   RegionalOfficeDropdown,
   AppealHearingLocationsDropdown,
   HearingDateDropdown
 } from '../../components/DataDropdowns';
 import { AddressLine } from './details/Address';
-import { getAppellantTitleForHearing } from '../utils';
 import { ReadOnly } from './details/ReadOnly';
 import HearingTypeDropdown from './details/HearingTypeDropdown';
 import { HearingTime } from './modalForms/HearingTime';
-import Button from '../../components/Button';
-import { marginTop, regionalOfficeSection, saveButton, cancelButton } from './details/style';
+import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
+import { AppellantSection } from './VirtualHearings/AppellantSection';
+import { HEARING_CONVERSION_TYPES } from '../constants';
+import { marginTop } from './details/style';
 import { isEmpty, orderBy } from 'lodash';
 
 export const ScheduleVeteranForm = ({
+  virtual,
+  requestType,
+  appellantTitle,
   appeal,
   hearing,
   errors,
@@ -24,22 +27,88 @@ export const ScheduleVeteranForm = ({
   initialHearingDate,
   ...props
 }) => {
-  const appellantTitle = getAppellantTitleForHearing(appeal);
-  const ro = appeal.regionalOffice || hearing.regionalOffice || initialRegionalOffice;
-  const location = appeal.hearingLocation || hearing.location;
-  const header = `Schedule ${appellantTitle} for a Hearing`;
-  const availableHearingLocations = orderBy(appeal.availableHearingLocations || [], ['distance'], ['asc']);
-  const dynamic = ro !== appeal.closestRegionalOffice || isEmpty(appeal.availableHearingLocations);
+  const ro = appeal?.regionalOffice || hearing?.regionalOffice || initialRegionalOffice;
+  const location = hearing?.hearingLocation || appeal?.hearingLocation;
+  const video = requestType === 'Video';
+  const availableHearingLocations = orderBy(appeal?.availableHearingLocations || [], ['distance'], ['asc']);
+  const dynamic = ro !== appeal?.closestRegionalOffice || isEmpty(appeal?.availableHearingLocations);
+
+  const handleChange = () => {
+    if (virtual) {
+      return props.onChange('virtualHearing', null);
+    }
+
+    return props.onChange('virtualHearing', { status: 'pending' });
+  };
 
   return (
-    <div {...regionalOfficeSection}>
-      <AppSegment filledBackground >
-        <h1>{header}</h1>
-        <div {...marginTop(45)} />
-        <div className="usa-width-one-half">
-          <HearingTypeDropdown requestType={hearing.readableRequestType} />
-        </div>
-        <div className="cf-help-divider usa-width-one-whole" />
+    <React.Fragment>
+      <div className="usa-width-one-half">
+        <HearingTypeDropdown
+          enableFullPageConversion
+          update={handleChange}
+          requestType={hearing?.requestType}
+          virtualHearing={hearing?.virtualHearing}
+        />
+      </div>
+      <div className="cf-help-divider usa-width-one-whole" />
+      {virtual ? (
+        <React.Fragment>
+
+          <div className="usa-width-one-half">
+            <ReadOnly spacing={0} label="Regional Office" text={appeal.regionalOffice || 'Central'} />
+            <ReadOnly spacing={15} label="Hearing Location" text={appeal.hearingLocation?.name || 'Virtual'} />
+
+            <HearingDateDropdown
+              errorMessage={errors?.hearingDay}
+              key={`hearingDate__${ro}`}
+              regionalOffice={ro}
+              value={hearing?.hearingDay || initialHearingDate}
+              onChange={(hearingDay) => props.onChange('hearingDay', hearingDay)}
+            />
+            <HearingTime
+              vertical
+              errorMessage={errors?.scheduledTimeString}
+              label="Hearing Time"
+              enableZone
+              onChange={(scheduledTimeString) => props.onChange('scheduledTimeString', scheduledTimeString)}
+              value={hearing.scheduledTimeString}
+            />
+          </div>
+          <div className="usa-width-one-whole" {...marginTop(25)}>
+            <AppellantSection
+              virtual={virtual}
+              errors={errors}
+              video={video}
+              update={(_, virtualHearing) =>
+                props.onChange('virtualHearing', {
+                  ...hearing?.virtualHearing,
+                  ...virtualHearing,
+                })
+              }
+              appellantTitle={appellantTitle}
+              hearing={hearing}
+              virtualHearing={hearing?.virtualHearing}
+              type={HEARING_CONVERSION_TYPES[0]}
+            />
+            <RepresentativeSection
+              virtual={virtual}
+              errors={errors}
+              video={video}
+              update={(_, virtualHearing) =>
+                props.onChange('virtualHearing', {
+                  ...hearing?.virtualHearing,
+                  ...virtualHearing,
+                })
+              }
+              appellantTitle={appellantTitle}
+              hearing={hearing}
+              virtualHearing={hearing?.virtualHearing}
+              type={HEARING_CONVERSION_TYPES[0]}
+            />
+          </div>
+        </React.Fragment>
+      ) : (
         <div className="usa-width-one-half" >
           <ReadOnly spacing={0} label={`${appellantTitle} Address`} text={
             <AddressLine
@@ -52,7 +121,8 @@ export const ScheduleVeteranForm = ({
             />}
           />
           <RegionalOfficeDropdown
-            onChange={(regionalOffice) => props.onChange('appeal', { regionalOffice })}
+            errorMessage={errors?.regionalOffice}
+            onChange={(regionalOffice) => props.onChange('regionalOffice', regionalOffice)}
             value={ro}
             validateValueOnMount
           />
@@ -64,7 +134,7 @@ export const ScheduleVeteranForm = ({
                 regionalOffice={ro}
                 appealId={appeal.externalId}
                 value={location}
-                onChange={(hearingLocation) => props.onChange('appeal', { hearingLocation })}
+                onChange={(hearingLocation) => props.onChange('hearingLocation', hearingLocation)}
                 dynamic={dynamic}
                 staticHearingLocations={availableHearingLocations}
               />
@@ -72,54 +142,36 @@ export const ScheduleVeteranForm = ({
                 errorMessage={errors?.hearingDay}
                 key={`hearingDate__${ro}`}
                 regionalOffice={ro}
-                value={appeal.hearingDay || initialHearingDate}
-                onChange={(hearingDay) => props.onChange('appeal', { hearingDay })}
+                value={hearing.hearingDay}
+                onChange={(hearingDay) => props.onChange('hearingDay', hearingDay)}
               />
               <HearingTime
                 errorMessage={errors?.scheduledTimeString}
                 vertical
                 label="Hearing Time"
                 enableZone
-                onChange={(scheduledTimeString) => props.onChange('hearing', { scheduledTimeString })}
+                onChange={(scheduledTimeString) => props.onChange('scheduledTimeString', scheduledTimeString)}
                 value={hearing.scheduledTimeString}
               />
 
             </React.Fragment>
           )}
-        </div>
-      </AppSegment>
-      <Button
-        name="Cancel"
-        linkStyling
-        onClick={() => props.goBack()}
-        styling={cancelButton}
-      >
-          Cancel
-      </Button>
-      <span {...saveButton}>
-        <Button
-          name="Schedule"
-          loading={props.loading}
-          className="usa-button"
-          onClick={() => props.submit()}
-        >
-          Schedule
-        </Button>
-      </span>
-    </div>
+        </div>)}
+    </React.Fragment>
   );
 };
 
 ScheduleVeteranForm.propTypes = {
+  virtual: PropTypes.bool,
   loading: PropTypes.bool,
-  submit: PropTypes.func.isRequired,
-  goBack: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
   appeal: PropTypes.object,
   errors: PropTypes.object,
   hearing: PropTypes.object,
   initialRegionalOffice: PropTypes.string,
-  initialHearingDate: PropTypes.string
+  initialHearingDate: PropTypes.string,
+  appellantTitle: PropTypes.string,
+  requestType: PropTypes.string
 };
 
 /* eslint-enable camelcase */

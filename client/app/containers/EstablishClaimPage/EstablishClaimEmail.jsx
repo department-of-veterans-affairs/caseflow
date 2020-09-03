@@ -26,7 +26,7 @@ export class EstablishClaimEmail extends BaseForm {
 
     let specialIssuesStatus = this.props.specialIssues;
 
-    const selectedSpecialIssue = enabledSpecialIssues(this.props.specialIssuesRevamp).map((issue) => {
+    const selectedSpecialIssue = enabledSpecialIssues().map((issue) => {
       if (specialIssuesStatus[issue.specialIssue]) {
         return issue.display;
       }

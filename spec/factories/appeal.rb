@@ -120,15 +120,17 @@ FactoryBot.define do
     trait :advanced_on_docket_due_to_motion do
       # the appeal has to be established before the motion is created to apply to it.
       established_at { Time.zone.now - 1 }
-      claimants do
+      after(:create) do |appeal|
         # Create an appeal with two claimants, one with a denied AOD motion
         # and one with a granted motion. The appeal should still be counted as AOD. Appeals only support one claimant,
-        # so set the aod claimant as the last claimant on the appeal
-        claimant = create(:claimant)
-        another_claimant = create(:claimant)
-        create(:advance_on_docket_motion, person: claimant.person, granted: true)
-        create(:advance_on_docket_motion, person: another_claimant.person, granted: false)
-        [another_claimant, claimant]
+        # so set the aod claimant as the last claimant on the appeal (and create it last)
+        another_claimant = create(:claimant, decision_review: appeal)
+        create(:advance_on_docket_motion, person: another_claimant.person, granted: false, appeal: appeal)
+
+        claimant = create(:claimant, decision_review: appeal)
+        create(:advance_on_docket_motion, person: claimant.person, granted: true, appeal: appeal)
+
+        appeal.claimants = [another_claimant, claimant]
       end
     end
 
@@ -146,21 +148,18 @@ FactoryBot.define do
 
     trait :denied_advance_on_docket do
       established_at { Time.zone.yesterday }
-      claimants do
-        claimant = create(:claimant)
-
-        create(:advance_on_docket_motion, person: claimant.person, granted: false)
-        [claimant]
+      after(:create) do |appeal|
+        appeal.claimants { [create(:claimant, decision_review: appeal)] }
+        create(:advance_on_docket_motion, person: appeal.claimants.last.person, granted: false, appeal: appeal)
       end
     end
 
     trait :inapplicable_aod_motion do
       established_at { Time.zone.tomorrow }
-      claimants do
-        claimant = create(:claimant)
-        create(:advance_on_docket_motion, person: claimant.person, granted: true)
-        create(:advance_on_docket_motion, person: claimant.person, granted: false)
-        [claimant]
+      after(:create) do |appeal|
+        appeal.claimants { [create(:claimant, decision_review: appeal)] }
+        create(:advance_on_docket_motion, person: appeal.claimants.last.person, granted: true, appeal: appeal)
+        create(:advance_on_docket_motion, person: appeal.claimants.last.person, granted: false, appeal: appeal)
       end
     end
 

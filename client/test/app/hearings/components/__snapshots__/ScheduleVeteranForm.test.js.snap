@@ -1,426 +1,476 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ScheduleVeteranForm Can cancel the form 1`] = `
-<div
-  data-css-7jz325=""
->
-  <AppSegment
-    filledBackground={true}
+exports[`ScheduleVeteranForm Displays Virtual Hearing form fields when type is changed to Virtual 1`] = `
+<Fragment>
+  <div
+    className="usa-width-one-half"
   >
-    <h1>
-      Schedule Veteran for a Hearing
-    </h1>
-    <div
-      data-css-16cycjp=""
-    />
-    <div
-      className="usa-width-one-half"
-    >
-      <HearingTypeDropdown
-        requestType="Video"
-      />
-    </div>
-    <div
-      className="cf-help-divider usa-width-one-whole"
-    />
-    <div
-      className="usa-width-one-half"
-    >
-      <ReadOnly
-        label="Veteran Address"
-        spacing={0}
-        text={
-          <AddressLine
-            addressCity="SAN FRANCISCO"
-            addressLine1="9999 MISSION ST"
-            addressState="CA"
-            addressZip="94103"
-            name="Abellona Valtas"
-            spacing={5}
-          />
+    <HearingTypeDropdown
+      enableFullPageConversion={true}
+      update={[Function]}
+      virtualHearing={
+        Object {
+          "aliasWithHost": "BVA0000009@care.evn.va.gov",
+          "appellantEmail": "Bob.Smith@test.com",
+          "appellantTz": null,
+          "clientHost": "care.evn.va.gov",
+          "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+          "guestPin": "2684353125#",
+          "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+          "hostPin": "8600030#",
+          "jobCompleted": true,
+          "representativeEmail": "tom.brady@caseflow.gov",
+          "representativeTz": null,
+          "requestCancelled": false,
+          "status": "active",
         }
-      />
-      <Connect(RegionalOfficeDropdown)
-        onChange={[Function]}
-        validateValueOnMount={true}
-        value="RO17"
-      />
-      <Connect(AppealHearingLocationsDropdown)
-        appealId="3afefa82-5736-47c8-a977-0b4b8586f73e"
-        dynamic={true}
-        key="hearingLocation__RO17"
-        onChange={[Function]}
-        regionalOffice="RO17"
-        staticHearingLocations={Array []}
-        value={null}
-      />
-      <Connect(HearingDateDropdown)
-        key="hearingDate__RO17"
-        onChange={[Function]}
-        regionalOffice="RO17"
-      />
-      <HearingTime
-        componentIndex={0}
-        enableZone={true}
-        label="Hearing Time"
-        onChange={[Function]}
-        value="06:00"
-        vertical={true}
-      />
-    </div>
-  </AppSegment>
-  <Button
-    classNames={
-      Array [
-        "cf-submit",
-      ]
-    }
-    linkStyling={true}
-    loading={false}
-    name="Cancel"
-    onClick={[Function]}
-    styling={
-      Object {
-        "data-css-14x0t8z": "",
       }
-    }
-    type="button"
-    willNeverBeLoading={false}
+    />
+  </div>
+  <div
+    className="cf-help-divider usa-width-one-whole"
+  />
+  <div
+    className="usa-width-one-half"
   >
-    Cancel
-  </Button>
-  <span
-    data-css-jf1dde=""
+    <ReadOnly
+      label="Regional Office"
+      spacing={0}
+      text="RO17"
+    />
+    <ReadOnly
+      label="Hearing Location"
+      spacing={15}
+      text="Virtual"
+    />
+    <Connect(HearingDateDropdown)
+      key="hearingDate__RO17"
+      onChange={[Function]}
+      regionalOffice="RO17"
+    />
+    <HearingTime
+      componentIndex={0}
+      enableZone={true}
+      label="Hearing Time"
+      onChange={[Function]}
+      value="06:00"
+      vertical={true}
+    />
+  </div>
+  <div
+    className="usa-width-one-whole"
+    data-css-1a5irm0=""
   >
-    <Button
-      className="usa-button"
-      classNames={
-        Array [
-          "cf-submit",
-        ]
+    <AppellantSection
+      hearing={
+        Object {
+          "advanceOnDocketMotion": null,
+          "aod": false,
+          "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c4",
+          "appealId": 613,
+          "appellantAddressLine1": "9999 MISSION ST",
+          "appellantCity": "SAN FRANCISCO",
+          "appellantEmailAddress": "tom.brady@caseflow.gov",
+          "appellantFirstName": "Tom",
+          "appellantIsNotVeteran": true,
+          "appellantLastName": "Brady",
+          "appellantState": "CA",
+          "appellantZip": "94103",
+          "availableHearingLocations": Object {},
+          "bvaPoc": null,
+          "centralOfficeTimeString": "04:00",
+          "claimantId": 604,
+          "closestRegionalOffice": null,
+          "currentIssueCount": 0,
+          "disposition": null,
+          "dispositionEditable": true,
+          "docketName": "hearing",
+          "docketNumber": "200624-614",
+          "emailEvents": Array [],
+          "evidenceWindowWaived": false,
+          "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+          "hearingDayId": 11,
+          "id": 10,
+          "isVirtual": false,
+          "judge": Object {
+            "createdAt": "2020-06-25T11:00:43.257-04:00",
+            "cssId": "BVAAABSHIRE",
+            "displayName": "BVAAABSHIRE (VACO)",
+            "efolderDocumentsFetchedAt": null,
+            "email": null,
+            "fullName": "Aaron Judge_HearingsAndCases Abshire",
+            "id": 3,
+            "lastLoginAt": null,
+            "roles": Object {},
+            "selectedRegionalOffice": null,
+            "stationId": "101",
+            "status": "active",
+            "statusUpdatedAt": null,
+            "updatedAt": "2020-06-25T11:00:43.257-04:00",
+          },
+          "judgeId": "3",
+          "location": null,
+          "militaryService": "",
+          "notes": null,
+          "paperCase": false,
+          "prepped": null,
+          "readableLocation": null,
+          "readableRequestType": "Video",
+          "regionalOfficeKey": "RO17",
+          "regionalOfficeName": "St. Petersburg regional office",
+          "regionalOfficeTimezone": "America/New_York",
+          "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+          "representativeAddress": Object {
+            "addressLine1": "9999 MISSION ST",
+            "city": "SAN FRANCISCO",
+            "state": "CA",
+            "zip": "94103",
+          },
+          "representativeEmailAddress": "tom.brady@caseflow.gov",
+          "representativeName": null,
+          "room": "1",
+          "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+          "scheduledForIsPast": false,
+          "scheduledTime": "2000-01-01T06:00:00.000-05:00",
+          "scheduledTimeString": "06:00",
+          "summary": null,
+          "transcriptRequested": null,
+          "transcription": Object {},
+          "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+          "veteranAge": 85,
+          "veteranEmailAddress": "John.Smith@test.com",
+          "veteranFileNumber": "100000005",
+          "veteranFirstName": "John",
+          "veteranGender": "M",
+          "veteranLastName": "Smith",
+          "virtualHearing": Object {
+            "aliasWithHost": "BVA0000009@care.evn.va.gov",
+            "appellantEmail": "Bob.Smith@test.com",
+            "appellantTz": null,
+            "clientHost": "care.evn.va.gov",
+            "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+            "guestPin": "2684353125#",
+            "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+            "hostPin": "8600030#",
+            "jobCompleted": true,
+            "representativeEmail": "tom.brady@caseflow.gov",
+            "representativeTz": null,
+            "requestCancelled": false,
+            "status": "active",
+          },
+          "wasVirtual": false,
+          "witness": null,
+          "worksheetIssues": Object {},
+        }
       }
-      linkStyling={false}
-      loading={false}
-      name="Schedule"
-      onClick={[Function]}
-      type="button"
-      willNeverBeLoading={false}
-    >
-      Schedule
-    </Button>
-  </span>
-</div>
+      type="change_to_virtual"
+      update={[Function]}
+      video={false}
+      virtual={true}
+      virtualHearing={
+        Object {
+          "aliasWithHost": "BVA0000009@care.evn.va.gov",
+          "appellantEmail": "Bob.Smith@test.com",
+          "appellantTz": null,
+          "clientHost": "care.evn.va.gov",
+          "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+          "guestPin": "2684353125#",
+          "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+          "hostPin": "8600030#",
+          "jobCompleted": true,
+          "representativeEmail": "tom.brady@caseflow.gov",
+          "representativeTz": null,
+          "requestCancelled": false,
+          "status": "active",
+        }
+      }
+    />
+    <RepresentativeSection
+      hearing={
+        Object {
+          "advanceOnDocketMotion": null,
+          "aod": false,
+          "appealExternalId": "0bf0263c-d863-4405-9b2e-f55cff77c6c4",
+          "appealId": 613,
+          "appellantAddressLine1": "9999 MISSION ST",
+          "appellantCity": "SAN FRANCISCO",
+          "appellantEmailAddress": "tom.brady@caseflow.gov",
+          "appellantFirstName": "Tom",
+          "appellantIsNotVeteran": true,
+          "appellantLastName": "Brady",
+          "appellantState": "CA",
+          "appellantZip": "94103",
+          "availableHearingLocations": Object {},
+          "bvaPoc": null,
+          "centralOfficeTimeString": "04:00",
+          "claimantId": 604,
+          "closestRegionalOffice": null,
+          "currentIssueCount": 0,
+          "disposition": null,
+          "dispositionEditable": true,
+          "docketName": "hearing",
+          "docketNumber": "200624-614",
+          "emailEvents": Array [],
+          "evidenceWindowWaived": false,
+          "externalId": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+          "hearingDayId": 11,
+          "id": 10,
+          "isVirtual": false,
+          "judge": Object {
+            "createdAt": "2020-06-25T11:00:43.257-04:00",
+            "cssId": "BVAAABSHIRE",
+            "displayName": "BVAAABSHIRE (VACO)",
+            "efolderDocumentsFetchedAt": null,
+            "email": null,
+            "fullName": "Aaron Judge_HearingsAndCases Abshire",
+            "id": 3,
+            "lastLoginAt": null,
+            "roles": Object {},
+            "selectedRegionalOffice": null,
+            "stationId": "101",
+            "status": "active",
+            "statusUpdatedAt": null,
+            "updatedAt": "2020-06-25T11:00:43.257-04:00",
+          },
+          "judgeId": "3",
+          "location": null,
+          "militaryService": "",
+          "notes": null,
+          "paperCase": false,
+          "prepped": null,
+          "readableLocation": null,
+          "readableRequestType": "Video",
+          "regionalOfficeKey": "RO17",
+          "regionalOfficeName": "St. Petersburg regional office",
+          "regionalOfficeTimezone": "America/New_York",
+          "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+          "representativeAddress": Object {
+            "addressLine1": "9999 MISSION ST",
+            "city": "SAN FRANCISCO",
+            "state": "CA",
+            "zip": "94103",
+          },
+          "representativeEmailAddress": "tom.brady@caseflow.gov",
+          "representativeName": null,
+          "room": "1",
+          "scheduledFor": "2020-07-06T06:00:00.000-04:00",
+          "scheduledForIsPast": false,
+          "scheduledTime": "2000-01-01T06:00:00.000-05:00",
+          "scheduledTimeString": "06:00",
+          "summary": null,
+          "transcriptRequested": null,
+          "transcription": Object {},
+          "uuid": "61e7af7a-586c-446d-b8ee-a65be467e9e0",
+          "veteranAge": 85,
+          "veteranEmailAddress": "John.Smith@test.com",
+          "veteranFileNumber": "100000005",
+          "veteranFirstName": "John",
+          "veteranGender": "M",
+          "veteranLastName": "Smith",
+          "virtualHearing": Object {
+            "aliasWithHost": "BVA0000009@care.evn.va.gov",
+            "appellantEmail": "Bob.Smith@test.com",
+            "appellantTz": null,
+            "clientHost": "care.evn.va.gov",
+            "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+            "guestPin": "2684353125#",
+            "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+            "hostPin": "8600030#",
+            "jobCompleted": true,
+            "representativeEmail": "tom.brady@caseflow.gov",
+            "representativeTz": null,
+            "requestCancelled": false,
+            "status": "active",
+          },
+          "wasVirtual": false,
+          "witness": null,
+          "worksheetIssues": Object {},
+        }
+      }
+      type="change_to_virtual"
+      update={[Function]}
+      video={false}
+      virtual={true}
+      virtualHearing={
+        Object {
+          "aliasWithHost": "BVA0000009@care.evn.va.gov",
+          "appellantEmail": "Bob.Smith@test.com",
+          "appellantTz": null,
+          "clientHost": "care.evn.va.gov",
+          "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
+          "guestPin": "2684353125#",
+          "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
+          "hostPin": "8600030#",
+          "jobCompleted": true,
+          "representativeEmail": "tom.brady@caseflow.gov",
+          "representativeTz": null,
+          "requestCancelled": false,
+          "status": "active",
+        }
+      }
+    />
+  </div>
+</Fragment>
 `;
 
-exports[`ScheduleVeteranForm Can submit the form 1`] = `
-<div
-  data-css-7jz325=""
->
-  <AppSegment
-    filledBackground={true}
+exports[`ScheduleVeteranForm Displays error messages when errors are present 1`] = `
+<Fragment>
+  <div
+    className="usa-width-one-half"
   >
-    <h1>
-      Schedule Veteran for a Hearing
-    </h1>
-    <div
-      data-css-16cycjp=""
+    <HearingTypeDropdown
+      enableFullPageConversion={true}
+      update={[Function]}
+      virtualHearing={null}
     />
-    <div
-      className="usa-width-one-half"
-    >
-      <HearingTypeDropdown
-        requestType="Video"
-      />
-    </div>
-    <div
-      className="cf-help-divider usa-width-one-whole"
+  </div>
+  <div
+    className="cf-help-divider usa-width-one-whole"
+  />
+  <div
+    className="usa-width-one-half"
+  >
+    <ReadOnly
+      label="undefined Address"
+      spacing={0}
+      text={
+        <AddressLine
+          addressCity="SAN FRANCISCO"
+          addressLine1="9999 MISSION ST"
+          addressState="CA"
+          addressZip="94103"
+          name="Abellona Valtas"
+          spacing={5}
+        />
+      }
     />
-    <div
-      className="usa-width-one-half"
-    >
-      <ReadOnly
-        label="Veteran Address"
-        spacing={0}
-        text={
-          <AddressLine
-            addressCity="SAN FRANCISCO"
-            addressLine1="9999 MISSION ST"
-            addressState="CA"
-            addressZip="94103"
-            name="Abellona Valtas"
-            spacing={5}
-          />
-        }
-      />
-      <Connect(RegionalOfficeDropdown)
-        onChange={[Function]}
-        validateValueOnMount={true}
-        value="RO17"
-      />
-      <Connect(AppealHearingLocationsDropdown)
-        appealId="3afefa82-5736-47c8-a977-0b4b8586f73e"
-        dynamic={true}
-        key="hearingLocation__RO17"
-        onChange={[Function]}
-        regionalOffice="RO17"
-        staticHearingLocations={Array []}
-        value={null}
-      />
-      <Connect(HearingDateDropdown)
-        key="hearingDate__RO17"
-        onChange={[Function]}
-        regionalOffice="RO17"
-      />
-      <HearingTime
-        componentIndex={0}
-        enableZone={true}
-        label="Hearing Time"
-        onChange={[Function]}
-        value="06:00"
-        vertical={true}
-      />
-    </div>
-  </AppSegment>
-  <Button
-    classNames={
-      Array [
-        "cf-submit",
-      ]
-    }
-    linkStyling={true}
-    loading={false}
-    name="Cancel"
-    onClick={[Function]}
-    styling={
-      Object {
-        "data-css-14x0t8z": "",
-      }
-    }
-    type="button"
-    willNeverBeLoading={false}
-  >
-    Cancel
-  </Button>
-  <span
-    data-css-jf1dde=""
-  >
-    <Button
-      className="usa-button"
-      classNames={
-        Array [
-          "cf-submit",
-        ]
-      }
-      linkStyling={false}
-      loading={false}
-      name="Schedule"
-      onClick={[Function]}
-      type="button"
-      willNeverBeLoading={false}
-    >
-      Schedule
-    </Button>
-  </span>
-</div>
+    <Connect(RegionalOfficeDropdown)
+      onChange={[Function]}
+      validateValueOnMount={true}
+      value="RO17"
+    />
+    <Connect(AppealHearingLocationsDropdown)
+      appealId="2afefa82-5736-47c8-a977-0b4b8586f73e"
+      dynamic={true}
+      key="hearingLocation__RO17"
+      onChange={[Function]}
+      regionalOffice="RO17"
+      staticHearingLocations={Array []}
+    />
+    <Connect(HearingDateDropdown)
+      errorMessage="Please select hearing day"
+      key="hearingDate__RO17"
+      onChange={[Function]}
+      regionalOffice="RO17"
+    />
+    <HearingTime
+      componentIndex={0}
+      enableZone={true}
+      label="Hearing Time"
+      onChange={[Function]}
+      value="06:00"
+      vertical={true}
+    />
+  </div>
+</Fragment>
 `;
 
 exports[`ScheduleVeteranForm Displays hearing form when regional office is selected 1`] = `
-<div
-  data-css-7jz325=""
->
-  <AppSegment
-    filledBackground={true}
+<Fragment>
+  <div
+    className="usa-width-one-half"
   >
-    <h1>
-      Schedule Veteran for a Hearing
-    </h1>
-    <div
-      data-css-16cycjp=""
+    <HearingTypeDropdown
+      enableFullPageConversion={true}
+      update={[Function]}
+      virtualHearing={null}
     />
-    <div
-      className="usa-width-one-half"
-    >
-      <HearingTypeDropdown
-        requestType="Video"
-      />
-    </div>
-    <div
-      className="cf-help-divider usa-width-one-whole"
+  </div>
+  <div
+    className="cf-help-divider usa-width-one-whole"
+  />
+  <div
+    className="usa-width-one-half"
+  >
+    <ReadOnly
+      label="undefined Address"
+      spacing={0}
+      text={
+        <AddressLine
+          addressCity="SAN FRANCISCO"
+          addressLine1="9999 MISSION ST"
+          addressState="CA"
+          addressZip="94103"
+          name="Abellona Valtas"
+          spacing={5}
+        />
+      }
     />
-    <div
-      className="usa-width-one-half"
-    >
-      <ReadOnly
-        label="Veteran Address"
-        spacing={0}
-        text={
-          <AddressLine
-            addressCity="SAN FRANCISCO"
-            addressLine1="9999 MISSION ST"
-            addressState="CA"
-            addressZip="94103"
-            name="Abellona Valtas"
-            spacing={5}
-          />
-        }
-      />
-      <Connect(RegionalOfficeDropdown)
-        onChange={[Function]}
-        validateValueOnMount={true}
-        value="RO17"
-      />
-      <Connect(AppealHearingLocationsDropdown)
-        appealId="3afefa82-5736-47c8-a977-0b4b8586f73e"
-        dynamic={true}
-        key="hearingLocation__RO17"
-        onChange={[Function]}
-        regionalOffice="RO17"
-        staticHearingLocations={Array []}
-        value={null}
-      />
-      <Connect(HearingDateDropdown)
-        key="hearingDate__RO17"
-        onChange={[Function]}
-        regionalOffice="RO17"
-      />
-      <HearingTime
-        componentIndex={0}
-        enableZone={true}
-        label="Hearing Time"
-        onChange={[Function]}
-        value="06:00"
-        vertical={true}
-      />
-    </div>
-  </AppSegment>
-  <Button
-    classNames={
-      Array [
-        "cf-submit",
-      ]
-    }
-    linkStyling={true}
-    loading={false}
-    name="Cancel"
-    onClick={[Function]}
-    styling={
-      Object {
-        "data-css-14x0t8z": "",
-      }
-    }
-    type="button"
-    willNeverBeLoading={false}
-  >
-    Cancel
-  </Button>
-  <span
-    data-css-jf1dde=""
-  >
-    <Button
-      className="usa-button"
-      classNames={
-        Array [
-          "cf-submit",
-        ]
-      }
-      linkStyling={false}
-      loading={false}
-      name="Schedule"
-      onClick={[Function]}
-      type="button"
-      willNeverBeLoading={false}
-    >
-      Schedule
-    </Button>
-  </span>
-</div>
+    <Connect(RegionalOfficeDropdown)
+      onChange={[Function]}
+      validateValueOnMount={true}
+      value="RO17"
+    />
+    <Connect(AppealHearingLocationsDropdown)
+      appealId="2afefa82-5736-47c8-a977-0b4b8586f73e"
+      dynamic={true}
+      key="hearingLocation__RO17"
+      onChange={[Function]}
+      regionalOffice="RO17"
+      staticHearingLocations={Array []}
+    />
+    <Connect(HearingDateDropdown)
+      key="hearingDate__RO17"
+      onChange={[Function]}
+      regionalOffice="RO17"
+    />
+    <HearingTime
+      componentIndex={0}
+      enableZone={true}
+      label="Hearing Time"
+      onChange={[Function]}
+      value="06:00"
+      vertical={true}
+    />
+  </div>
+</Fragment>
 `;
 
 exports[`ScheduleVeteranForm Matches snapshot with default props 1`] = `
-<div
-  data-css-7jz325=""
->
-  <AppSegment
-    filledBackground={true}
+<Fragment>
+  <div
+    className="usa-width-one-half"
   >
-    <h1>
-      Schedule Veteran for a Hearing
-    </h1>
-    <div
-      data-css-16cycjp=""
+    <HearingTypeDropdown
+      enableFullPageConversion={true}
+      update={[Function]}
+      virtualHearing={null}
     />
-    <div
-      className="usa-width-one-half"
-    >
-      <HearingTypeDropdown
-        requestType="Video"
-      />
-    </div>
-    <div
-      className="cf-help-divider usa-width-one-whole"
+  </div>
+  <div
+    className="cf-help-divider usa-width-one-whole"
+  />
+  <div
+    className="usa-width-one-half"
+  >
+    <ReadOnly
+      label="undefined Address"
+      spacing={0}
+      text={
+        <AddressLine
+          addressCity="SAN FRANCISCO"
+          addressLine1="9999 MISSION ST"
+          addressState="CA"
+          addressZip="94103"
+          name="Abellona Valtas"
+          spacing={5}
+        />
+      }
     />
-    <div
-      className="usa-width-one-half"
-    >
-      <ReadOnly
-        label="Veteran Address"
-        spacing={0}
-        text={
-          <AddressLine
-            addressCity="SAN FRANCISCO"
-            addressLine1="9999 MISSION ST"
-            addressState="CA"
-            addressZip="94103"
-            name="Abellona Valtas"
-            spacing={5}
-          />
-        }
-      />
-      <Connect(RegionalOfficeDropdown)
-        onChange={[Function]}
-        validateValueOnMount={true}
-      />
-    </div>
-  </AppSegment>
-  <Button
-    classNames={
-      Array [
-        "cf-submit",
-      ]
-    }
-    linkStyling={true}
-    loading={false}
-    name="Cancel"
-    onClick={[Function]}
-    styling={
-      Object {
-        "data-css-14x0t8z": "",
-      }
-    }
-    type="button"
-    willNeverBeLoading={false}
-  >
-    Cancel
-  </Button>
-  <span
-    data-css-jf1dde=""
-  >
-    <Button
-      className="usa-button"
-      classNames={
-        Array [
-          "cf-submit",
-        ]
-      }
-      linkStyling={false}
-      loading={false}
-      name="Schedule"
-      onClick={[Function]}
-      type="button"
-      willNeverBeLoading={false}
-    >
-      Schedule
-    </Button>
-  </span>
-</div>
+    <Connect(RegionalOfficeDropdown)
+      onChange={[Function]}
+      validateValueOnMount={true}
+    />
+  </div>
+</Fragment>
 `;

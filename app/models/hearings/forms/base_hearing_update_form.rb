@@ -29,7 +29,8 @@ class BaseHearingUpdateForm
       hearing.reload
 
       start_async_job
-      add_virtual_hearing_alert
+
+      add_virtual_hearing_alert if show_virtual_hearing_progress_alerts?
     end
   end
 
@@ -73,7 +74,11 @@ class BaseHearingUpdateForm
     return false if hearing.virtual? && (hearing_updates.dig(:scheduled_time).present? ||
                     hearing_updates.dig(:scheduled_for).present?)
 
-    hearing_updated?
+    hearing_updated? || (virtual_hearing_updates.present? && !show_virtual_hearing_progress_alerts?)
+  end
+
+  def show_virtual_hearing_progress_alerts?
+    [appellant_email_sent_flag, representative_email_sent_flag, judge_email_sent_flag].any?(false)
   end
 
   def should_create_or_update_virtual_hearing?
@@ -155,16 +160,18 @@ class BaseHearingUpdateForm
 
   # Send appellant email if cancelling, updating time or updating either appellant email or appellant timezone
   def appellant_email_sent_flag
-    !(updates_requiring_email? ||
-      virtual_hearing_attributes&.key?(:appellant_email) ||
-      virtual_hearing_attributes&.key?(:appellant_tz))
+    should_send_email = updates_requiring_email? ||
+                        virtual_hearing_attributes&.key?(:appellant_email) ||
+                        virtual_hearing_attributes&.key?(:appellant_tz)
+    !should_send_email
   end
 
   # Send rep email if cancelling, updating time or updating either rep email or rep timezone
   def representative_email_sent_flag
-    !(updates_requiring_email? ||
-      virtual_hearing_attributes&.key?(:representative_email) ||
-      virtual_hearing_attributes&.key?(:representative_tz))
+    should_send_email = updates_requiring_email? ||
+                        virtual_hearing_attributes&.fetch(:representative_email, nil).present? ||
+                        virtual_hearing_attributes&.key?(:representative_tz)
+    !should_send_email
   end
 
   # also returns false if the judge id is present or true if the virtual hearing is being cancelled
@@ -199,7 +206,7 @@ class BaseHearingUpdateForm
 
     sanitize_updated_emails if virtual_hearing_attributes.present?
 
-    updates = (virtual_hearing_attributes || {}).compact.merge(emails_sent_updates)
+    updates = (virtual_hearing_attributes || {}).merge(emails_sent_updates)
 
     if judge_id.present?
       updates[:judge_email] = hearing.judge&.email
@@ -230,11 +237,11 @@ class BaseHearingUpdateForm
     # Handle the status toggle of the virtual hearing
     if virtual_hearing_cancelled?
       # Update the virtual hearings
-      virtual_hearing.update(virtual_hearing_updates)
+      virtual_hearing.update!(virtual_hearing_updates)
 
       DataDogService.increment_counter(metric_name: "cancelled_virtual_hearing.successful", **updated_metric_info)
     elsif !virtual_hearing_created?
-      virtual_hearing.update(virtual_hearing_updates)
+      virtual_hearing.update!(virtual_hearing_updates)
       virtual_hearing.establishment.restart!
       DataDogService.increment_counter(metric_name: "updated_virtual_hearing.successful", **updated_metric_info)
     else

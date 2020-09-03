@@ -422,6 +422,16 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       # Check the Email Notification History
       check_email_event_table(hearing, 2)
     end
+
+    scenario "input empty veteran email and valid representative email shows validation error" do
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      fill_in "Veteran Email", with: ""
+      fill_in "POA/Representative Email", with: fill_in_rep_email
+      click_button("Save")
+
+      expect(page).to have_content("Veteran email is required")
+    end
   end
 
   context "User can see disabled email fields after switching hearing back to video" do
@@ -477,6 +487,29 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       # Check the Email Notification History
       check_email_event_table(hearing, 1)
     end
+
+    scenario "Removing POA/Representative email address gives expected alert" do
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      fill_in "POA/Representative Email", with: ""
+      click_button("Save")
+
+      expect(page.has_no_content?(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)).to be(true)
+      expect(page).to have_content(COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % hearing.appeal.veteran.name)
+    end
+
+    scenario "input invalid representative email and shows validation error" do
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+
+      fill_in "POA/Representative Email", with: "123456"
+      click_button("Save")
+
+      expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE)
+      expect(page).to have_content(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
+      click_button(COPY::VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON)
+
+      expect(page).to have_content("Representative email does not appear to be a valid e-mail address")
+    end
   end
 
   context "Updating Appellant email address" do
@@ -527,7 +560,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
     scenario "Sends update hearing time email only to the POA/Representative" do
       visit "hearings/" + central_hearing.external_id.to_s + "/details"
 
-      click_dropdown(name: "representativeTz", index: 0)
+      click_dropdown(name: "representativeTz", index: 1)
       click_button("Save")
 
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
@@ -562,7 +595,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
     scenario "Sends update hearing time email only to the Appellant" do
       visit "hearings/" + central_hearing.external_id.to_s + "/details"
 
-      click_dropdown(name: "appellantTz", index: 0)
+      click_dropdown(name: "appellantTz", index: 1)
       click_button("Save")
 
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
@@ -597,8 +630,8 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
     scenario "Sends update hearing time emails to both the Appellant and the POA/Representative" do
       visit "hearings/" + central_hearing.external_id.to_s + "/details"
 
-      click_dropdown(name: "representativeTz", index: 0)
-      click_dropdown(name: "appellantTz", index: 0)
+      click_dropdown(name: "representativeTz", index: 1)
+      click_dropdown(name: "appellantTz", index: 1)
       click_button("Save")
 
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE)
@@ -636,7 +669,7 @@ RSpec.feature "Editing Virtual Hearings from Hearing Details" do
       visit "hearings/" + central_hearing.external_id.to_s + "/details"
 
       fill_in "POA/Representative Email", with: fill_in_rep_email
-      click_dropdown(name: "appellantTz", index: 0)
+      click_dropdown(name: "appellantTz", index: 1)
       click_button("Save")
 
       expect(page).to have_content(COPY::VIRTUAL_HEARING_MODAL_UPDATE_GENERIC_TITLE)
