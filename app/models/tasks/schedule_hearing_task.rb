@@ -69,7 +69,11 @@ class ScheduleHearingTask < Task
 
     multi_transaction do
       # cancel my children, myself, and my hearing task ancestor
-      children.open.update_all(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
+      children.open.update_all(
+        status: Constants.TASK_STATUSES.cancelled,
+        cancelled_by_id: RequestStore[:current_user]&.id,
+        closed_at: Time.zone.now
+      )
       update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
       ancestor_task_of_type(HearingTask)&.update!(
         status: Constants.TASK_STATUSES.cancelled,

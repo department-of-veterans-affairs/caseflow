@@ -40,6 +40,7 @@ describe AssignHearingDispositionTask, :all_dbs do
         expect(Hearing.count).to eq 1
         expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.cancelled
         expect(disposition_task.reload.closed_at).to_not be_nil
+        expect(disposition_task.cancelled_by).to eq user
       end
     end
 
@@ -114,8 +115,10 @@ describe AssignHearingDispositionTask, :all_dbs do
           expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.postponed
           expect(HearingTask.count).to eq 2
           expect(HearingTask.first.cancelled?).to be_truthy
+          expect(HearingTask.first.cancelled_by).to eq user
           expect(HearingTask.last.on_hold?).to be_truthy
           expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
+          expect(AssignHearingDispositionTask.first.cancelled_by).to eq user
           expect(ScheduleHearingTask.count).to eq 1
           expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.last.id
         end
