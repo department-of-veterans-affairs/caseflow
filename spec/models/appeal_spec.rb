@@ -1162,4 +1162,43 @@ describe Appeal, :all_dbs do
       expect(appeal.ready_for_distribution?).to eq(true)
     end
   end
+
+  describe "#readable_hearing_request_type", focus: true do
+    context "there exists a scheduled hearing" do
+      let(:appeal) { create(:appeal) }
+      let!(:hearing) { create(:hearing, appeal: appeal)}
+
+      it "returns 'Central'" do
+        expect(appeal.readable_hearing_request_type).to eq('Central')
+      end
+    end
+
+    context "no hearings have been scheduled" do
+      let(:appeal) { create(:appeal, closest_regional_office: closest_regional_office) }
+
+      context "closest_regional_office is 'C'" do
+        let(:closest_regional_office) { "C" }
+
+        it "returns 'Central'" do
+          expect(appeal.readable_hearing_request_type).to eq('Central')
+        end
+      end
+
+      context "closest_regional_office is a RO" do
+        let(:closest_regional_office) { "RO39" }
+
+        it "returns 'Video'" do
+          expect(appeal.readable_hearing_request_type).to eq('Video')
+        end
+      end
+
+      context "closest_regional_office is a nil" do
+        let(:closest_regional_office) { nil }
+
+        it "returns nil" do
+          expect(appeal.readable_hearing_request_type).to eq(nil)
+        end
+      end
+    end
+  end
 end
