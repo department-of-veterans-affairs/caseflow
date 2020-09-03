@@ -29,7 +29,7 @@ This tech spec is specific to the requirement at hand: putting cases with Travel
 
 ### A user has actions available from the case details page
 
-When a user with the `"Admin Intake"`, `"Build HearSched"` or `"Edit HearSched"` roles visits the case details page for a legacy appeal with a Travel Board hearing request, we will create (if it doesn't already exist) a typical schedule hearing task tree, with a `ChangeHearingRequestTypeTask` as the child of the `ScheduleHearingTask`. The task tree will look like this:
+When a user with the `"Admin Intake"`, `"Build HearSched"`, or `"Edit HearSched"` roles visits the case details page for a legacy appeal with a Travel Board hearing request, we will create (if it doesn't already exist) a typical schedule hearing task tree, with a `ChangeHearingRequestTypeTask` as the child of the `ScheduleHearingTask`. The task tree will look like this:
 
 ```
                                                 ┌────────────────────────┐
@@ -45,7 +45,7 @@ The `ChangeHearingRequestTypeTask` will be assigned to the BVA organization by d
 
 ### A user takes an action on the task
 
-Selecting "Convert heraing to video" on the task will present the user with a simple confirmation modal, as described in [#12826](https://github.com/department-of-veterans-affairs/caseflow/issues/12826).
+Selecting "Convert hearing to video" on the task will present the user with a simple confirmation modal, as described in [#12826](https://github.com/department-of-veterans-affairs/caseflow/issues/12826).
 
 Selecting "Convert hearing to virtual" on the task will present the user with a confirmation form, as described in [#12826](https://github.com/department-of-veterans-affairs/caseflow/issues/12826). That form will have a text area field for notes, and a submission button.
 
@@ -55,7 +55,7 @@ Submitting the modal or the form will cause the following steps to happen.
 
 In VACOLS, the hearing request type is saved on the appeal. We access the value via the `LegacyAppeal.sanitized_hearing_request_type` method, which can return `:travel_board`, `:central_office`, or `:video`.
 
-To accomodate our requirements, we'll add a column to the `legacy_appeals` table named `changed_hearing_request_type`, which will have possible values of `nil`, `"video"`, or `"virtual"`.
+To accommodate our requirements, we'll add a column to the `legacy_appeals` table named `changed_hearing_request_type`, which will have possible values of `nil`, `"video"`, or `"virtual"`.
 
 We still want to be able to access the original type of hearing request, so we'll rename `sanitized_hearing_request_type` to `sanitized_vacols_hearing_request_type`.
 
@@ -63,7 +63,7 @@ Then we'll create a new `sanitized_hearing_request_type` method that, if `change
 
 ### The note is saved
 
-If the hearing request type is being converted to virtual, a note may've been submitted with the form.
+If the hearing request type is being converted to virtual, a note may have been submitted with the form.
 
 The note is intended to be viewed when a coordinator is scheduling a hearing, and it must persist until a hearing has been held, or the hearing request is withdrawn.
 
