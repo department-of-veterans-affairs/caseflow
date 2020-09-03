@@ -1163,13 +1163,13 @@ describe Appeal, :all_dbs do
     end
   end
 
-  describe "#readable_hearing_request_type", focus: true do
+  describe "#readable_hearing_request_type" do
     context "there exists a scheduled hearing" do
       let(:appeal) { create(:appeal) }
-      let!(:hearing) { create(:hearing, appeal: appeal)}
+      let!(:hearing) { create(:hearing, appeal: appeal) }
 
       it "returns 'Central'" do
-        expect(appeal.readable_hearing_request_type).to eq('Central')
+        expect(appeal.readable_hearing_request_type).to eq("Central")
       end
     end
 
@@ -1180,7 +1180,7 @@ describe Appeal, :all_dbs do
         let(:closest_regional_office) { "C" }
 
         it "returns 'Central'" do
-          expect(appeal.readable_hearing_request_type).to eq('Central')
+          expect(appeal.readable_hearing_request_type).to eq("Central")
         end
       end
 
@@ -1188,7 +1188,7 @@ describe Appeal, :all_dbs do
         let(:closest_regional_office) { "RO39" }
 
         it "returns 'Video'" do
-          expect(appeal.readable_hearing_request_type).to eq('Video')
+          expect(appeal.readable_hearing_request_type).to eq("Video")
         end
       end
 

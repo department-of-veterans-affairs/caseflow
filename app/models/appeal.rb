@@ -513,7 +513,7 @@ class Appeal < DecisionReview
 
     return nil if closest_regional_office.nil?
 
-    closest_regional_office == "C" ? Hearing::HEARING_TYPES[:C] : Hearing::HEARING_TYPES[:V]
+    (closest_regional_office == "C") ? Hearing::HEARING_TYPES[:C] : Hearing::HEARING_TYPES[:V]
   end
 
   private
