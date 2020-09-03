@@ -413,7 +413,7 @@ class ExternalApi::BGSService
         MetricsService.record("BGS: fetch list of pay grades",
                               service: :bgs,
                               name: "share_standard_data.find_pay_grades") do
-          client.share_standard_data.find_pay_grades[:return][:types]
+          client.share_standard_data.find_pay_grades
         end
       end
   end
