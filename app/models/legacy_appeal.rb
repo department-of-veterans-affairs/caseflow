@@ -169,7 +169,7 @@ class LegacyAppeal < CaseflowRecord
     closed: "99"
   }.freeze
 
-  HEARING_REQUEST_TYPES = {
+  READABLE_HEARING_REQUEST_TYPES = {
     central_board: "Central",
     travel_board: "Travel",
     video: "Video"
@@ -400,7 +400,7 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def readable_hearing_request_type
-    HEARING_REQUEST_TYPES[sanitized_hearing_request_type]
+    READABLE_HEARING_REQUEST_TYPES[sanitized_hearing_request_type]
   end
 
   def veteran_is_deceased
