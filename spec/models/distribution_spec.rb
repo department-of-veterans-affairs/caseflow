@@ -40,7 +40,7 @@ describe Distribution, :all_dbs do
         .and_return(1000)
     end
 
-    def create_legacy_case(distribution_ready_months_ago, traits = nil)
+    def create_legacy_case(index, traits = nil)
       create(
         :case,
         *traits,
@@ -48,10 +48,10 @@ describe Distribution, :all_dbs do
         bfac: "1",
         bfmpro: "ACT",
         bfcurloc: "81",
-        bfdloout: distribution_ready_months_ago.months.ago,
+        bfdloout: index.days.ago,
         folder: build(
           :folder,
-          tinum: "1801#{format('%<index>03d', index: distribution_ready_months_ago)}",
+          tinum: "1801#{format('%<index>03d', index: index)}",
           titrnum: "123456789S"
         )
       )
