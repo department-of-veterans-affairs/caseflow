@@ -47,20 +47,10 @@ The `ChangeHearingRequestTypeTask` will be assigned to the BVA organization by d
 
 Selecting either action on the task will present the user with a confirmation form, as described in [#12826](https://github.com/department-of-veterans-affairs/caseflow/issues/12826). That form will have a text area field for notes, and a submission button. Submitting the form will cause the following steps to happen.
 
-### A record of the change is saved
 
-A `HearingUpdate` object is saved. This is a new model that may be expanded to record other changes to hearings in the future. For now, we'll just use it to record the following details:
 
-1. What was changed (the `hearing_request_type`)
-2. What it was changed from (`travel_board`)
-3. What it was changed to (`video` or `virtual`)
-4. When it was changed (via `created_at`)
-5. An association with the user who made the change (`user_id`)
-6. A polymorphic association with the appeal (`appeal_type`, `appeal_id`)
 
-The table should have an index on the `appeal_type` and `appeal_id` columns together.
 
-This model may be used to display a record of hearing request type changes to the user.
 
 ### The note is saved
 
@@ -86,6 +76,18 @@ Then we'll create a new `sanitized_hearing_request_type` method that, if `change
 The `ChangeHearingRequestTypeTask` is completed, and its parent `ScheduleHearingTask` status is automatically set to `assigned`.
 
 The active `ScheduleHearingTask` will cause the veteran to show up in the schedule veterans queue for the appropriate RO.
+
+### A record of the change is saved
+
+A `PaperTrail::Version` object is saved. We will configure PaperTrail narrowly, to save only updates to the `changed_hearing_request_type` column. This will allow us to derive the following details:
+
+1. What was changed (the `changed_hearing_request_type`)
+2. What it was changed to (`video` or `virtual`)
+3. When it was changed (via `created_at`)
+5. The user who made the change (`whodunnit`)
+6. The legacy appeal that was changed (`item`)
+
+We may eventually use these objects to display a record of hearing request type changes to the user.
 
 ### When the hearing is scheduled
 
