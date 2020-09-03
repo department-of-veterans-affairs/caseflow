@@ -23,7 +23,9 @@ export const AppellantSection = ({
 }) => (
   <VirtualHearingSection label={appellantTitle}>
     <AddressLine
-      name={`${hearing?.veteranFirstName} ${hearing?.veteranLastName}`}
+      name={hearing?.appellantFullName ?
+         hearing?.appellantFullName :
+          `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`}
       addressLine1={hearing?.appellantAddressLine1}
       addressState={hearing?.appellantState}
       addressCity={hearing?.appellantCity}

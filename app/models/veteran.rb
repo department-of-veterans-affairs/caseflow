@@ -32,7 +32,6 @@ class Veteran < CaseflowRecord
     validate :validate_date_of_birth
     validate :validate_name_suffix
     validate :validate_zip_code
-    validate :validate_veteran_pay_grade
   end
 
   delegate :full_address, to: :address
