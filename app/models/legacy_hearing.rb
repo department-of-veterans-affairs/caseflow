@@ -315,7 +315,7 @@ class LegacyHearing < CaseflowRecord
       self.class.repository.load_vacols_data(self)
       true
     rescue Caseflow::Error::VacolsRecordNotFound => error
-      capture_exception(error)
+      Raven.capture_exception(error)
       false
     end
   end
