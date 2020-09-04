@@ -2797,23 +2797,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                     "value": "13",
                   },
                   Object {
-                    "label": "14 (Utah)",
+                    "label": "14 (3W405)",
                     "value": "14",
                   },
                   Object {
-                    "label": "15 (Gold)",
+                    "label": "15 (3W407)",
                     "value": "15",
                   },
                   Object {
-                    "label": "16 (Juno)",
+                    "label": "16 (3W409)",
                     "value": "16",
                   },
                   Object {
-                    "label": "17 (Sword)",
+                    "label": "17 (3W518)",
                     "value": "17",
                   },
                   Object {
-                    "label": "18 (Omaha)",
+                    "label": "18 (4W325)",
                     "value": "18",
                   },
                 ]
@@ -2917,23 +2917,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                             "value": "13",
                           },
                           Object {
-                            "label": "14 (Utah)",
+                            "label": "14 (3W405)",
                             "value": "14",
                           },
                           Object {
-                            "label": "15 (Gold)",
+                            "label": "15 (3W407)",
                             "value": "15",
                           },
                           Object {
-                            "label": "16 (Juno)",
+                            "label": "16 (3W409)",
                             "value": "16",
                           },
                           Object {
-                            "label": "17 (Sword)",
+                            "label": "17 (3W518)",
                             "value": "17",
                           },
                           Object {
-                            "label": "18 (Omaha)",
+                            "label": "18 (4W325)",
                             "value": "18",
                           },
                         ]
@@ -3050,23 +3050,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                               "value": "13",
                             },
                             Object {
-                              "label": "14 (Utah)",
+                              "label": "14 (3W405)",
                               "value": "14",
                             },
                             Object {
-                              "label": "15 (Gold)",
+                              "label": "15 (3W407)",
                               "value": "15",
                             },
                             Object {
-                              "label": "16 (Juno)",
+                              "label": "16 (3W409)",
                               "value": "16",
                             },
                             Object {
-                              "label": "17 (Sword)",
+                              "label": "17 (3W518)",
                               "value": "17",
                             },
                             Object {
-                              "label": "18 (Omaha)",
+                              "label": "18 (4W325)",
                               "value": "18",
                             },
                           ]
@@ -3164,23 +3164,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                 "value": "13",
                               },
                               Object {
-                                "label": "14 (Utah)",
+                                "label": "14 (3W405)",
                                 "value": "14",
                               },
                               Object {
-                                "label": "15 (Gold)",
+                                "label": "15 (3W407)",
                                 "value": "15",
                               },
                               Object {
-                                "label": "16 (Juno)",
+                                "label": "16 (3W409)",
                                 "value": "16",
                               },
                               Object {
-                                "label": "17 (Sword)",
+                                "label": "17 (3W518)",
                                 "value": "17",
                               },
                               Object {
-                                "label": "18 (Omaha)",
+                                "label": "18 (4W325)",
                                 "value": "18",
                               },
                             ]
@@ -3287,23 +3287,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                   "value": "13",
                                 },
                                 Object {
-                                  "label": "14 (Utah)",
+                                  "label": "14 (3W405)",
                                   "value": "14",
                                 },
                                 Object {
-                                  "label": "15 (Gold)",
+                                  "label": "15 (3W407)",
                                   "value": "15",
                                 },
                                 Object {
-                                  "label": "16 (Juno)",
+                                  "label": "16 (3W409)",
                                   "value": "16",
                                 },
                                 Object {
-                                  "label": "17 (Sword)",
+                                  "label": "17 (3W518)",
                                   "value": "17",
                                 },
                                 Object {
-                                  "label": "18 (Omaha)",
+                                  "label": "18 (4W325)",
                                   "value": "18",
                                 },
                               ],
@@ -3450,23 +3450,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                       "value": "13",
                                     },
                                     Object {
-                                      "label": "14 (Utah)",
+                                      "label": "14 (3W405)",
                                       "value": "14",
                                     },
                                     Object {
-                                      "label": "15 (Gold)",
+                                      "label": "15 (3W407)",
                                       "value": "15",
                                     },
                                     Object {
-                                      "label": "16 (Juno)",
+                                      "label": "16 (3W409)",
                                       "value": "16",
                                     },
                                     Object {
-                                      "label": "17 (Sword)",
+                                      "label": "17 (3W518)",
                                       "value": "17",
                                     },
                                     Object {
-                                      "label": "18 (Omaha)",
+                                      "label": "18 (4W325)",
                                       "value": "18",
                                     },
                                   ]
@@ -3573,23 +3573,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                         "value": "13",
                                       },
                                       Object {
-                                        "label": "14 (Utah)",
+                                        "label": "14 (3W405)",
                                         "value": "14",
                                       },
                                       Object {
-                                        "label": "15 (Gold)",
+                                        "label": "15 (3W407)",
                                         "value": "15",
                                       },
                                       Object {
-                                        "label": "16 (Juno)",
+                                        "label": "16 (3W409)",
                                         "value": "16",
                                       },
                                       Object {
-                                        "label": "17 (Sword)",
+                                        "label": "17 (3W518)",
                                         "value": "17",
                                       },
                                       Object {
-                                        "label": "18 (Omaha)",
+                                        "label": "18 (4W325)",
                                         "value": "18",
                                       },
                                     ],
@@ -3744,23 +3744,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                             "value": "13",
                                           },
                                           Object {
-                                            "label": "14 (Utah)",
+                                            "label": "14 (3W405)",
                                             "value": "14",
                                           },
                                           Object {
-                                            "label": "15 (Gold)",
+                                            "label": "15 (3W407)",
                                             "value": "15",
                                           },
                                           Object {
-                                            "label": "16 (Juno)",
+                                            "label": "16 (3W409)",
                                             "value": "16",
                                           },
                                           Object {
-                                            "label": "17 (Sword)",
+                                            "label": "17 (3W518)",
                                             "value": "17",
                                           },
                                           Object {
-                                            "label": "18 (Omaha)",
+                                            "label": "18 (4W325)",
                                             "value": "18",
                                           },
                                         ]
@@ -3867,23 +3867,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                               "value": "13",
                                             },
                                             Object {
-                                              "label": "14 (Utah)",
+                                              "label": "14 (3W405)",
                                               "value": "14",
                                             },
                                             Object {
-                                              "label": "15 (Gold)",
+                                              "label": "15 (3W407)",
                                               "value": "15",
                                             },
                                             Object {
-                                              "label": "16 (Juno)",
+                                              "label": "16 (3W409)",
                                               "value": "16",
                                             },
                                             Object {
-                                              "label": "17 (Sword)",
+                                              "label": "17 (3W518)",
                                               "value": "17",
                                             },
                                             Object {
-                                              "label": "18 (Omaha)",
+                                              "label": "18 (4W325)",
                                               "value": "18",
                                             },
                                           ],
@@ -4029,23 +4029,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   "value": "13",
                                                 },
                                                 Object {
-                                                  "label": "14 (Utah)",
+                                                  "label": "14 (3W405)",
                                                   "value": "14",
                                                 },
                                                 Object {
-                                                  "label": "15 (Gold)",
+                                                  "label": "15 (3W407)",
                                                   "value": "15",
                                                 },
                                                 Object {
-                                                  "label": "16 (Juno)",
+                                                  "label": "16 (3W409)",
                                                   "value": "16",
                                                 },
                                                 Object {
-                                                  "label": "17 (Sword)",
+                                                  "label": "17 (3W518)",
                                                   "value": "17",
                                                 },
                                                 Object {
-                                                  "label": "18 (Omaha)",
+                                                  "label": "18 (4W325)",
                                                   "value": "18",
                                                 },
                                               ]
@@ -4152,23 +4152,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                     "value": "13",
                                                   },
                                                   Object {
-                                                    "label": "14 (Utah)",
+                                                    "label": "14 (3W405)",
                                                     "value": "14",
                                                   },
                                                   Object {
-                                                    "label": "15 (Gold)",
+                                                    "label": "15 (3W407)",
                                                     "value": "15",
                                                   },
                                                   Object {
-                                                    "label": "16 (Juno)",
+                                                    "label": "16 (3W409)",
                                                     "value": "16",
                                                   },
                                                   Object {
-                                                    "label": "17 (Sword)",
+                                                    "label": "17 (3W518)",
                                                     "value": "17",
                                                   },
                                                   Object {
-                                                    "label": "18 (Omaha)",
+                                                    "label": "18 (4W325)",
                                                     "value": "18",
                                                   },
                                                 ],
@@ -4362,23 +4362,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                     "value": "13",
                                                   },
                                                   Object {
-                                                    "label": "14 (Utah)",
+                                                    "label": "14 (3W405)",
                                                     "value": "14",
                                                   },
                                                   Object {
-                                                    "label": "15 (Gold)",
+                                                    "label": "15 (3W407)",
                                                     "value": "15",
                                                   },
                                                   Object {
-                                                    "label": "16 (Juno)",
+                                                    "label": "16 (3W409)",
                                                     "value": "16",
                                                   },
                                                   Object {
-                                                    "label": "17 (Sword)",
+                                                    "label": "17 (3W518)",
                                                     "value": "17",
                                                   },
                                                   Object {
-                                                    "label": "18 (Omaha)",
+                                                    "label": "18 (4W325)",
                                                     "value": "18",
                                                   },
                                                 ],
@@ -4601,23 +4601,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                             "value": "13",
                                           },
                                           Object {
-                                            "label": "14 (Utah)",
+                                            "label": "14 (3W405)",
                                             "value": "14",
                                           },
                                           Object {
-                                            "label": "15 (Gold)",
+                                            "label": "15 (3W407)",
                                             "value": "15",
                                           },
                                           Object {
-                                            "label": "16 (Juno)",
+                                            "label": "16 (3W409)",
                                             "value": "16",
                                           },
                                           Object {
-                                            "label": "17 (Sword)",
+                                            "label": "17 (3W518)",
                                             "value": "17",
                                           },
                                           Object {
-                                            "label": "18 (Omaha)",
+                                            "label": "18 (4W325)",
                                             "value": "18",
                                           },
                                         ]
@@ -4724,23 +4724,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                               "value": "13",
                                             },
                                             Object {
-                                              "label": "14 (Utah)",
+                                              "label": "14 (3W405)",
                                               "value": "14",
                                             },
                                             Object {
-                                              "label": "15 (Gold)",
+                                              "label": "15 (3W407)",
                                               "value": "15",
                                             },
                                             Object {
-                                              "label": "16 (Juno)",
+                                              "label": "16 (3W409)",
                                               "value": "16",
                                             },
                                             Object {
-                                              "label": "17 (Sword)",
+                                              "label": "17 (3W518)",
                                               "value": "17",
                                             },
                                             Object {
-                                              "label": "18 (Omaha)",
+                                              "label": "18 (4W325)",
                                               "value": "18",
                                             },
                                           ],
@@ -4877,23 +4877,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   "value": "13",
                                                 },
                                                 Object {
-                                                  "label": "14 (Utah)",
+                                                  "label": "14 (3W405)",
                                                   "value": "14",
                                                 },
                                                 Object {
-                                                  "label": "15 (Gold)",
+                                                  "label": "15 (3W407)",
                                                   "value": "15",
                                                 },
                                                 Object {
-                                                  "label": "16 (Juno)",
+                                                  "label": "16 (3W409)",
                                                   "value": "16",
                                                 },
                                                 Object {
-                                                  "label": "17 (Sword)",
+                                                  "label": "17 (3W518)",
                                                   "value": "17",
                                                 },
                                                 Object {
-                                                  "label": "18 (Omaha)",
+                                                  "label": "18 (4W325)",
                                                   "value": "18",
                                                 },
                                               ]
@@ -5000,23 +5000,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                     "value": "13",
                                                   },
                                                   Object {
-                                                    "label": "14 (Utah)",
+                                                    "label": "14 (3W405)",
                                                     "value": "14",
                                                   },
                                                   Object {
-                                                    "label": "15 (Gold)",
+                                                    "label": "15 (3W407)",
                                                     "value": "15",
                                                   },
                                                   Object {
-                                                    "label": "16 (Juno)",
+                                                    "label": "16 (3W409)",
                                                     "value": "16",
                                                   },
                                                   Object {
-                                                    "label": "17 (Sword)",
+                                                    "label": "17 (3W518)",
                                                     "value": "17",
                                                   },
                                                   Object {
-                                                    "label": "18 (Omaha)",
+                                                    "label": "18 (4W325)",
                                                     "value": "18",
                                                   },
                                                 ],
@@ -5164,23 +5164,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                   "value": "13",
                                                 },
                                                 Object {
-                                                  "label": "14 (Utah)",
+                                                  "label": "14 (3W405)",
                                                   "value": "14",
                                                 },
                                                 Object {
-                                                  "label": "15 (Gold)",
+                                                  "label": "15 (3W407)",
                                                   "value": "15",
                                                 },
                                                 Object {
-                                                  "label": "16 (Juno)",
+                                                  "label": "16 (3W409)",
                                                   "value": "16",
                                                 },
                                                 Object {
-                                                  "label": "17 (Sword)",
+                                                  "label": "17 (3W518)",
                                                   "value": "17",
                                                 },
                                                 Object {
-                                                  "label": "18 (Omaha)",
+                                                  "label": "18 (4W325)",
                                                   "value": "18",
                                                 },
                                               ]
@@ -5287,23 +5287,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                                                     "value": "13",
                                                   },
                                                   Object {
-                                                    "label": "14 (Utah)",
+                                                    "label": "14 (3W405)",
                                                     "value": "14",
                                                   },
                                                   Object {
-                                                    "label": "15 (Gold)",
+                                                    "label": "15 (3W407)",
                                                     "value": "15",
                                                   },
                                                   Object {
-                                                    "label": "16 (Juno)",
+                                                    "label": "16 (3W409)",
                                                     "value": "16",
                                                   },
                                                   Object {
-                                                    "label": "17 (Sword)",
+                                                    "label": "17 (3W518)",
                                                     "value": "17",
                                                   },
                                                   Object {
-                                                    "label": "18 (Omaha)",
+                                                    "label": "18 (4W325)",
                                                     "value": "18",
                                                   },
                                                 ],
@@ -5761,7 +5761,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                     name="taskNumber"
                     onChange={[Function]}
                     type="text"
-                    value=""
                   />
                 </div>
               </TextField>
@@ -7399,7 +7398,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -7459,7 +7457,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -7519,7 +7516,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -9243,7 +9239,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       placeholder="mm/dd/yyyy"
                       readOnly={true}
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -9572,7 +9567,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable convert c
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -9647,6 +9641,12 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
       "regionalOfficeName": "St. Petersburg regional office",
       "regionalOfficeTimezone": "America/New_York",
       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "1",
@@ -12385,23 +12385,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                     "value": "13",
                   },
                   Object {
-                    "label": "14 (Utah)",
+                    "label": "14 (3W405)",
                     "value": "14",
                   },
                   Object {
-                    "label": "15 (Gold)",
+                    "label": "15 (3W407)",
                     "value": "15",
                   },
                   Object {
-                    "label": "16 (Juno)",
+                    "label": "16 (3W409)",
                     "value": "16",
                   },
                   Object {
-                    "label": "17 (Sword)",
+                    "label": "17 (3W518)",
                     "value": "17",
                   },
                   Object {
-                    "label": "18 (Omaha)",
+                    "label": "18 (4W325)",
                     "value": "18",
                   },
                 ]
@@ -12505,23 +12505,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                             "value": "13",
                           },
                           Object {
-                            "label": "14 (Utah)",
+                            "label": "14 (3W405)",
                             "value": "14",
                           },
                           Object {
-                            "label": "15 (Gold)",
+                            "label": "15 (3W407)",
                             "value": "15",
                           },
                           Object {
-                            "label": "16 (Juno)",
+                            "label": "16 (3W409)",
                             "value": "16",
                           },
                           Object {
-                            "label": "17 (Sword)",
+                            "label": "17 (3W518)",
                             "value": "17",
                           },
                           Object {
-                            "label": "18 (Omaha)",
+                            "label": "18 (4W325)",
                             "value": "18",
                           },
                         ]
@@ -12638,23 +12638,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                               "value": "13",
                             },
                             Object {
-                              "label": "14 (Utah)",
+                              "label": "14 (3W405)",
                               "value": "14",
                             },
                             Object {
-                              "label": "15 (Gold)",
+                              "label": "15 (3W407)",
                               "value": "15",
                             },
                             Object {
-                              "label": "16 (Juno)",
+                              "label": "16 (3W409)",
                               "value": "16",
                             },
                             Object {
-                              "label": "17 (Sword)",
+                              "label": "17 (3W518)",
                               "value": "17",
                             },
                             Object {
-                              "label": "18 (Omaha)",
+                              "label": "18 (4W325)",
                               "value": "18",
                             },
                           ]
@@ -12752,23 +12752,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                 "value": "13",
                               },
                               Object {
-                                "label": "14 (Utah)",
+                                "label": "14 (3W405)",
                                 "value": "14",
                               },
                               Object {
-                                "label": "15 (Gold)",
+                                "label": "15 (3W407)",
                                 "value": "15",
                               },
                               Object {
-                                "label": "16 (Juno)",
+                                "label": "16 (3W409)",
                                 "value": "16",
                               },
                               Object {
-                                "label": "17 (Sword)",
+                                "label": "17 (3W518)",
                                 "value": "17",
                               },
                               Object {
-                                "label": "18 (Omaha)",
+                                "label": "18 (4W325)",
                                 "value": "18",
                               },
                             ]
@@ -12875,23 +12875,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                   "value": "13",
                                 },
                                 Object {
-                                  "label": "14 (Utah)",
+                                  "label": "14 (3W405)",
                                   "value": "14",
                                 },
                                 Object {
-                                  "label": "15 (Gold)",
+                                  "label": "15 (3W407)",
                                   "value": "15",
                                 },
                                 Object {
-                                  "label": "16 (Juno)",
+                                  "label": "16 (3W409)",
                                   "value": "16",
                                 },
                                 Object {
-                                  "label": "17 (Sword)",
+                                  "label": "17 (3W518)",
                                   "value": "17",
                                 },
                                 Object {
-                                  "label": "18 (Omaha)",
+                                  "label": "18 (4W325)",
                                   "value": "18",
                                 },
                               ],
@@ -13038,23 +13038,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                       "value": "13",
                                     },
                                     Object {
-                                      "label": "14 (Utah)",
+                                      "label": "14 (3W405)",
                                       "value": "14",
                                     },
                                     Object {
-                                      "label": "15 (Gold)",
+                                      "label": "15 (3W407)",
                                       "value": "15",
                                     },
                                     Object {
-                                      "label": "16 (Juno)",
+                                      "label": "16 (3W409)",
                                       "value": "16",
                                     },
                                     Object {
-                                      "label": "17 (Sword)",
+                                      "label": "17 (3W518)",
                                       "value": "17",
                                     },
                                     Object {
-                                      "label": "18 (Omaha)",
+                                      "label": "18 (4W325)",
                                       "value": "18",
                                     },
                                   ]
@@ -13161,23 +13161,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                         "value": "13",
                                       },
                                       Object {
-                                        "label": "14 (Utah)",
+                                        "label": "14 (3W405)",
                                         "value": "14",
                                       },
                                       Object {
-                                        "label": "15 (Gold)",
+                                        "label": "15 (3W407)",
                                         "value": "15",
                                       },
                                       Object {
-                                        "label": "16 (Juno)",
+                                        "label": "16 (3W409)",
                                         "value": "16",
                                       },
                                       Object {
-                                        "label": "17 (Sword)",
+                                        "label": "17 (3W518)",
                                         "value": "17",
                                       },
                                       Object {
-                                        "label": "18 (Omaha)",
+                                        "label": "18 (4W325)",
                                         "value": "18",
                                       },
                                     ],
@@ -13332,23 +13332,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             "value": "13",
                                           },
                                           Object {
-                                            "label": "14 (Utah)",
+                                            "label": "14 (3W405)",
                                             "value": "14",
                                           },
                                           Object {
-                                            "label": "15 (Gold)",
+                                            "label": "15 (3W407)",
                                             "value": "15",
                                           },
                                           Object {
-                                            "label": "16 (Juno)",
+                                            "label": "16 (3W409)",
                                             "value": "16",
                                           },
                                           Object {
-                                            "label": "17 (Sword)",
+                                            "label": "17 (3W518)",
                                             "value": "17",
                                           },
                                           Object {
-                                            "label": "18 (Omaha)",
+                                            "label": "18 (4W325)",
                                             "value": "18",
                                           },
                                         ]
@@ -13455,23 +13455,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                               "value": "13",
                                             },
                                             Object {
-                                              "label": "14 (Utah)",
+                                              "label": "14 (3W405)",
                                               "value": "14",
                                             },
                                             Object {
-                                              "label": "15 (Gold)",
+                                              "label": "15 (3W407)",
                                               "value": "15",
                                             },
                                             Object {
-                                              "label": "16 (Juno)",
+                                              "label": "16 (3W409)",
                                               "value": "16",
                                             },
                                             Object {
-                                              "label": "17 (Sword)",
+                                              "label": "17 (3W518)",
                                               "value": "17",
                                             },
                                             Object {
-                                              "label": "18 (Omaha)",
+                                              "label": "18 (4W325)",
                                               "value": "18",
                                             },
                                           ],
@@ -13617,23 +13617,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "value": "13",
                                                 },
                                                 Object {
-                                                  "label": "14 (Utah)",
+                                                  "label": "14 (3W405)",
                                                   "value": "14",
                                                 },
                                                 Object {
-                                                  "label": "15 (Gold)",
+                                                  "label": "15 (3W407)",
                                                   "value": "15",
                                                 },
                                                 Object {
-                                                  "label": "16 (Juno)",
+                                                  "label": "16 (3W409)",
                                                   "value": "16",
                                                 },
                                                 Object {
-                                                  "label": "17 (Sword)",
+                                                  "label": "17 (3W518)",
                                                   "value": "17",
                                                 },
                                                 Object {
-                                                  "label": "18 (Omaha)",
+                                                  "label": "18 (4W325)",
                                                   "value": "18",
                                                 },
                                               ]
@@ -13740,23 +13740,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                     "value": "13",
                                                   },
                                                   Object {
-                                                    "label": "14 (Utah)",
+                                                    "label": "14 (3W405)",
                                                     "value": "14",
                                                   },
                                                   Object {
-                                                    "label": "15 (Gold)",
+                                                    "label": "15 (3W407)",
                                                     "value": "15",
                                                   },
                                                   Object {
-                                                    "label": "16 (Juno)",
+                                                    "label": "16 (3W409)",
                                                     "value": "16",
                                                   },
                                                   Object {
-                                                    "label": "17 (Sword)",
+                                                    "label": "17 (3W518)",
                                                     "value": "17",
                                                   },
                                                   Object {
-                                                    "label": "18 (Omaha)",
+                                                    "label": "18 (4W325)",
                                                     "value": "18",
                                                   },
                                                 ],
@@ -13950,23 +13950,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                     "value": "13",
                                                   },
                                                   Object {
-                                                    "label": "14 (Utah)",
+                                                    "label": "14 (3W405)",
                                                     "value": "14",
                                                   },
                                                   Object {
-                                                    "label": "15 (Gold)",
+                                                    "label": "15 (3W407)",
                                                     "value": "15",
                                                   },
                                                   Object {
-                                                    "label": "16 (Juno)",
+                                                    "label": "16 (3W409)",
                                                     "value": "16",
                                                   },
                                                   Object {
-                                                    "label": "17 (Sword)",
+                                                    "label": "17 (3W518)",
                                                     "value": "17",
                                                   },
                                                   Object {
-                                                    "label": "18 (Omaha)",
+                                                    "label": "18 (4W325)",
                                                     "value": "18",
                                                   },
                                                 ],
@@ -14189,23 +14189,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                             "value": "13",
                                           },
                                           Object {
-                                            "label": "14 (Utah)",
+                                            "label": "14 (3W405)",
                                             "value": "14",
                                           },
                                           Object {
-                                            "label": "15 (Gold)",
+                                            "label": "15 (3W407)",
                                             "value": "15",
                                           },
                                           Object {
-                                            "label": "16 (Juno)",
+                                            "label": "16 (3W409)",
                                             "value": "16",
                                           },
                                           Object {
-                                            "label": "17 (Sword)",
+                                            "label": "17 (3W518)",
                                             "value": "17",
                                           },
                                           Object {
-                                            "label": "18 (Omaha)",
+                                            "label": "18 (4W325)",
                                             "value": "18",
                                           },
                                         ]
@@ -14312,23 +14312,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                               "value": "13",
                                             },
                                             Object {
-                                              "label": "14 (Utah)",
+                                              "label": "14 (3W405)",
                                               "value": "14",
                                             },
                                             Object {
-                                              "label": "15 (Gold)",
+                                              "label": "15 (3W407)",
                                               "value": "15",
                                             },
                                             Object {
-                                              "label": "16 (Juno)",
+                                              "label": "16 (3W409)",
                                               "value": "16",
                                             },
                                             Object {
-                                              "label": "17 (Sword)",
+                                              "label": "17 (3W518)",
                                               "value": "17",
                                             },
                                             Object {
-                                              "label": "18 (Omaha)",
+                                              "label": "18 (4W325)",
                                               "value": "18",
                                             },
                                           ],
@@ -14465,23 +14465,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "value": "13",
                                                 },
                                                 Object {
-                                                  "label": "14 (Utah)",
+                                                  "label": "14 (3W405)",
                                                   "value": "14",
                                                 },
                                                 Object {
-                                                  "label": "15 (Gold)",
+                                                  "label": "15 (3W407)",
                                                   "value": "15",
                                                 },
                                                 Object {
-                                                  "label": "16 (Juno)",
+                                                  "label": "16 (3W409)",
                                                   "value": "16",
                                                 },
                                                 Object {
-                                                  "label": "17 (Sword)",
+                                                  "label": "17 (3W518)",
                                                   "value": "17",
                                                 },
                                                 Object {
-                                                  "label": "18 (Omaha)",
+                                                  "label": "18 (4W325)",
                                                   "value": "18",
                                                 },
                                               ]
@@ -14588,23 +14588,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                     "value": "13",
                                                   },
                                                   Object {
-                                                    "label": "14 (Utah)",
+                                                    "label": "14 (3W405)",
                                                     "value": "14",
                                                   },
                                                   Object {
-                                                    "label": "15 (Gold)",
+                                                    "label": "15 (3W407)",
                                                     "value": "15",
                                                   },
                                                   Object {
-                                                    "label": "16 (Juno)",
+                                                    "label": "16 (3W409)",
                                                     "value": "16",
                                                   },
                                                   Object {
-                                                    "label": "17 (Sword)",
+                                                    "label": "17 (3W518)",
                                                     "value": "17",
                                                   },
                                                   Object {
-                                                    "label": "18 (Omaha)",
+                                                    "label": "18 (4W325)",
                                                     "value": "18",
                                                   },
                                                 ],
@@ -14752,23 +14752,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                   "value": "13",
                                                 },
                                                 Object {
-                                                  "label": "14 (Utah)",
+                                                  "label": "14 (3W405)",
                                                   "value": "14",
                                                 },
                                                 Object {
-                                                  "label": "15 (Gold)",
+                                                  "label": "15 (3W407)",
                                                   "value": "15",
                                                 },
                                                 Object {
-                                                  "label": "16 (Juno)",
+                                                  "label": "16 (3W409)",
                                                   "value": "16",
                                                 },
                                                 Object {
-                                                  "label": "17 (Sword)",
+                                                  "label": "17 (3W518)",
                                                   "value": "17",
                                                 },
                                                 Object {
-                                                  "label": "18 (Omaha)",
+                                                  "label": "18 (4W325)",
                                                   "value": "18",
                                                 },
                                               ]
@@ -14875,23 +14875,23 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                                                     "value": "13",
                                                   },
                                                   Object {
-                                                    "label": "14 (Utah)",
+                                                    "label": "14 (3W405)",
                                                     "value": "14",
                                                   },
                                                   Object {
-                                                    "label": "15 (Gold)",
+                                                    "label": "15 (3W407)",
                                                     "value": "15",
                                                   },
                                                   Object {
-                                                    "label": "16 (Juno)",
+                                                    "label": "16 (3W409)",
                                                     "value": "16",
                                                   },
                                                   Object {
-                                                    "label": "17 (Sword)",
+                                                    "label": "17 (3W518)",
                                                     "value": "17",
                                                   },
                                                   Object {
-                                                    "label": "18 (Omaha)",
+                                                    "label": "18 (4W325)",
                                                     "value": "18",
                                                   },
                                                 ],
@@ -15177,6 +15177,12 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
         "regionalOfficeName": "St. Petersburg regional office",
         "regionalOfficeTimezone": "America/New_York",
         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeAddress": Object {
+          "addressLine1": "9999 MISSION ST",
+          "city": "SAN FRANCISCO",
+          "state": "CA",
+          "zip": "94103",
+        },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
         "room": "1",
@@ -15261,6 +15267,12 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
         "regionalOfficeName": "St. Petersburg regional office",
         "regionalOfficeTimezone": "America/New_York",
         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeAddress": Object {
+          "addressLine1": "9999 MISSION ST",
+          "city": "SAN FRANCISCO",
+          "state": "CA",
+          "zip": "94103",
+        },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
         "room": "1",
@@ -15352,7 +15364,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                     name="taskNumber"
                     onChange={[Function]}
                     type="text"
-                    value=""
                   />
                 </div>
               </TextField>
@@ -16990,7 +17001,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -17050,7 +17060,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -17110,7 +17119,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -18834,7 +18842,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       placeholder="mm/dd/yyyy"
                       readOnly={true}
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -19042,6 +19049,12 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                 "regionalOfficeName": "St. Petersburg regional office",
                 "regionalOfficeTimezone": "America/New_York",
                 "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+                "representativeAddress": Object {
+                  "addressLine1": "9999 MISSION ST",
+                  "city": "SAN FRANCISCO",
+                  "state": "CA",
+                  "zip": "94103",
+                },
                 "representativeEmailAddress": "tom.brady@caseflow.gov",
                 "representativeName": null,
                 "room": "1",
@@ -19164,7 +19177,6 @@ exports[`DetailsForm Matches snapshot if user does not have the enable virtual h
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -19239,6 +19251,12 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
       "regionalOfficeName": "St. Petersburg regional office",
       "regionalOfficeTimezone": "America/New_York",
       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "1",
@@ -21977,23 +21995,23 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                     "value": "13",
                   },
                   Object {
-                    "label": "14 (Utah)",
+                    "label": "14 (3W405)",
                     "value": "14",
                   },
                   Object {
-                    "label": "15 (Gold)",
+                    "label": "15 (3W407)",
                     "value": "15",
                   },
                   Object {
-                    "label": "16 (Juno)",
+                    "label": "16 (3W409)",
                     "value": "16",
                   },
                   Object {
-                    "label": "17 (Sword)",
+                    "label": "17 (3W518)",
                     "value": "17",
                   },
                   Object {
-                    "label": "18 (Omaha)",
+                    "label": "18 (4W325)",
                     "value": "18",
                   },
                 ]
@@ -22097,23 +22115,23 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                             "value": "13",
                           },
                           Object {
-                            "label": "14 (Utah)",
+                            "label": "14 (3W405)",
                             "value": "14",
                           },
                           Object {
-                            "label": "15 (Gold)",
+                            "label": "15 (3W407)",
                             "value": "15",
                           },
                           Object {
-                            "label": "16 (Juno)",
+                            "label": "16 (3W409)",
                             "value": "16",
                           },
                           Object {
-                            "label": "17 (Sword)",
+                            "label": "17 (3W518)",
                             "value": "17",
                           },
                           Object {
-                            "label": "18 (Omaha)",
+                            "label": "18 (4W325)",
                             "value": "18",
                           },
                         ]
@@ -22230,23 +22248,23 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                               "value": "13",
                             },
                             Object {
-                              "label": "14 (Utah)",
+                              "label": "14 (3W405)",
                               "value": "14",
                             },
                             Object {
-                              "label": "15 (Gold)",
+                              "label": "15 (3W407)",
                               "value": "15",
                             },
                             Object {
-                              "label": "16 (Juno)",
+                              "label": "16 (3W409)",
                               "value": "16",
                             },
                             Object {
-                              "label": "17 (Sword)",
+                              "label": "17 (3W518)",
                               "value": "17",
                             },
                             Object {
-                              "label": "18 (Omaha)",
+                              "label": "18 (4W325)",
                               "value": "18",
                             },
                           ]
@@ -22344,23 +22362,23 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                 "value": "13",
                               },
                               Object {
-                                "label": "14 (Utah)",
+                                "label": "14 (3W405)",
                                 "value": "14",
                               },
                               Object {
-                                "label": "15 (Gold)",
+                                "label": "15 (3W407)",
                                 "value": "15",
                               },
                               Object {
-                                "label": "16 (Juno)",
+                                "label": "16 (3W409)",
                                 "value": "16",
                               },
                               Object {
-                                "label": "17 (Sword)",
+                                "label": "17 (3W518)",
                                 "value": "17",
                               },
                               Object {
-                                "label": "18 (Omaha)",
+                                "label": "18 (4W325)",
                                 "value": "18",
                               },
                             ]
@@ -22467,23 +22485,23 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                   "value": "13",
                                 },
                                 Object {
-                                  "label": "14 (Utah)",
+                                  "label": "14 (3W405)",
                                   "value": "14",
                                 },
                                 Object {
-                                  "label": "15 (Gold)",
+                                  "label": "15 (3W407)",
                                   "value": "15",
                                 },
                                 Object {
-                                  "label": "16 (Juno)",
+                                  "label": "16 (3W409)",
                                   "value": "16",
                                 },
                                 Object {
-                                  "label": "17 (Sword)",
+                                  "label": "17 (3W518)",
                                   "value": "17",
                                 },
                                 Object {
-                                  "label": "18 (Omaha)",
+                                  "label": "18 (4W325)",
                                   "value": "18",
                                 },
                               ],
@@ -22630,23 +22648,23 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                       "value": "13",
                                     },
                                     Object {
-                                      "label": "14 (Utah)",
+                                      "label": "14 (3W405)",
                                       "value": "14",
                                     },
                                     Object {
-                                      "label": "15 (Gold)",
+                                      "label": "15 (3W407)",
                                       "value": "15",
                                     },
                                     Object {
-                                      "label": "16 (Juno)",
+                                      "label": "16 (3W409)",
                                       "value": "16",
                                     },
                                     Object {
-                                      "label": "17 (Sword)",
+                                      "label": "17 (3W518)",
                                       "value": "17",
                                     },
                                     Object {
-                                      "label": "18 (Omaha)",
+                                      "label": "18 (4W325)",
                                       "value": "18",
                                     },
                                   ]
@@ -22753,23 +22771,23 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                         "value": "13",
                                       },
                                       Object {
-                                        "label": "14 (Utah)",
+                                        "label": "14 (3W405)",
                                         "value": "14",
                                       },
                                       Object {
-                                        "label": "15 (Gold)",
+                                        "label": "15 (3W407)",
                                         "value": "15",
                                       },
                                       Object {
-                                        "label": "16 (Juno)",
+                                        "label": "16 (3W409)",
                                         "value": "16",
                                       },
                                       Object {
-                                        "label": "17 (Sword)",
+                                        "label": "17 (3W518)",
                                         "value": "17",
                                       },
                                       Object {
-                                        "label": "18 (Omaha)",
+                                        "label": "18 (4W325)",
                                         "value": "18",
                                       },
                                     ],
@@ -22924,23 +22942,23 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             "value": "13",
                                           },
                                           Object {
-                                            "label": "14 (Utah)",
+                                            "label": "14 (3W405)",
                                             "value": "14",
                                           },
                                           Object {
-                                            "label": "15 (Gold)",
+                                            "label": "15 (3W407)",
                                             "value": "15",
                                           },
                                           Object {
-                                            "label": "16 (Juno)",
+                                            "label": "16 (3W409)",
                                             "value": "16",
                                           },
                                           Object {
-                                            "label": "17 (Sword)",
+                                            "label": "17 (3W518)",
                                             "value": "17",
                                           },
                                           Object {
-                                            "label": "18 (Omaha)",
+                                            "label": "18 (4W325)",
                                             "value": "18",
                                           },
                                         ]
@@ -23047,23 +23065,23 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                               "value": "13",
                                             },
                                             Object {
-                                              "label": "14 (Utah)",
+                                              "label": "14 (3W405)",
                                               "value": "14",
                                             },
                                             Object {
-                                              "label": "15 (Gold)",
+                                              "label": "15 (3W407)",
                                               "value": "15",
                                             },
                                             Object {
-                                              "label": "16 (Juno)",
+                                              "label": "16 (3W409)",
                                               "value": "16",
                                             },
                                             Object {
-                                              "label": "17 (Sword)",
+                                              "label": "17 (3W518)",
                                               "value": "17",
                                             },
                                             Object {
-                                              "label": "18 (Omaha)",
+                                              "label": "18 (4W325)",
                                               "value": "18",
                                             },
                                           ],
@@ -23209,23 +23227,23 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "value": "13",
                                                 },
                                                 Object {
-                                                  "label": "14 (Utah)",
+                                                  "label": "14 (3W405)",
                                                   "value": "14",
                                                 },
                                                 Object {
-                                                  "label": "15 (Gold)",
+                                                  "label": "15 (3W407)",
                                                   "value": "15",
                                                 },
                                                 Object {
-                                                  "label": "16 (Juno)",
+                                                  "label": "16 (3W409)",
                                                   "value": "16",
                                                 },
                                                 Object {
-                                                  "label": "17 (Sword)",
+                                                  "label": "17 (3W518)",
                                                   "value": "17",
                                                 },
                                                 Object {
-                                                  "label": "18 (Omaha)",
+                                                  "label": "18 (4W325)",
                                                   "value": "18",
                                                 },
                                               ]
@@ -23332,23 +23350,23 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                     "value": "13",
                                                   },
                                                   Object {
-                                                    "label": "14 (Utah)",
+                                                    "label": "14 (3W405)",
                                                     "value": "14",
                                                   },
                                                   Object {
-                                                    "label": "15 (Gold)",
+                                                    "label": "15 (3W407)",
                                                     "value": "15",
                                                   },
                                                   Object {
-                                                    "label": "16 (Juno)",
+                                                    "label": "16 (3W409)",
                                                     "value": "16",
                                                   },
                                                   Object {
-                                                    "label": "17 (Sword)",
+                                                    "label": "17 (3W518)",
                                                     "value": "17",
                                                   },
                                                   Object {
-                                                    "label": "18 (Omaha)",
+                                                    "label": "18 (4W325)",
                                                     "value": "18",
                                                   },
                                                 ],
@@ -23542,23 +23560,23 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                     "value": "13",
                                                   },
                                                   Object {
-                                                    "label": "14 (Utah)",
+                                                    "label": "14 (3W405)",
                                                     "value": "14",
                                                   },
                                                   Object {
-                                                    "label": "15 (Gold)",
+                                                    "label": "15 (3W407)",
                                                     "value": "15",
                                                   },
                                                   Object {
-                                                    "label": "16 (Juno)",
+                                                    "label": "16 (3W409)",
                                                     "value": "16",
                                                   },
                                                   Object {
-                                                    "label": "17 (Sword)",
+                                                    "label": "17 (3W518)",
                                                     "value": "17",
                                                   },
                                                   Object {
-                                                    "label": "18 (Omaha)",
+                                                    "label": "18 (4W325)",
                                                     "value": "18",
                                                   },
                                                 ],
@@ -23781,23 +23799,23 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                             "value": "13",
                                           },
                                           Object {
-                                            "label": "14 (Utah)",
+                                            "label": "14 (3W405)",
                                             "value": "14",
                                           },
                                           Object {
-                                            "label": "15 (Gold)",
+                                            "label": "15 (3W407)",
                                             "value": "15",
                                           },
                                           Object {
-                                            "label": "16 (Juno)",
+                                            "label": "16 (3W409)",
                                             "value": "16",
                                           },
                                           Object {
-                                            "label": "17 (Sword)",
+                                            "label": "17 (3W518)",
                                             "value": "17",
                                           },
                                           Object {
-                                            "label": "18 (Omaha)",
+                                            "label": "18 (4W325)",
                                             "value": "18",
                                           },
                                         ]
@@ -23904,23 +23922,23 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                               "value": "13",
                                             },
                                             Object {
-                                              "label": "14 (Utah)",
+                                              "label": "14 (3W405)",
                                               "value": "14",
                                             },
                                             Object {
-                                              "label": "15 (Gold)",
+                                              "label": "15 (3W407)",
                                               "value": "15",
                                             },
                                             Object {
-                                              "label": "16 (Juno)",
+                                              "label": "16 (3W409)",
                                               "value": "16",
                                             },
                                             Object {
-                                              "label": "17 (Sword)",
+                                              "label": "17 (3W518)",
                                               "value": "17",
                                             },
                                             Object {
-                                              "label": "18 (Omaha)",
+                                              "label": "18 (4W325)",
                                               "value": "18",
                                             },
                                           ],
@@ -24057,23 +24075,23 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "value": "13",
                                                 },
                                                 Object {
-                                                  "label": "14 (Utah)",
+                                                  "label": "14 (3W405)",
                                                   "value": "14",
                                                 },
                                                 Object {
-                                                  "label": "15 (Gold)",
+                                                  "label": "15 (3W407)",
                                                   "value": "15",
                                                 },
                                                 Object {
-                                                  "label": "16 (Juno)",
+                                                  "label": "16 (3W409)",
                                                   "value": "16",
                                                 },
                                                 Object {
-                                                  "label": "17 (Sword)",
+                                                  "label": "17 (3W518)",
                                                   "value": "17",
                                                 },
                                                 Object {
-                                                  "label": "18 (Omaha)",
+                                                  "label": "18 (4W325)",
                                                   "value": "18",
                                                 },
                                               ]
@@ -24180,23 +24198,23 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                     "value": "13",
                                                   },
                                                   Object {
-                                                    "label": "14 (Utah)",
+                                                    "label": "14 (3W405)",
                                                     "value": "14",
                                                   },
                                                   Object {
-                                                    "label": "15 (Gold)",
+                                                    "label": "15 (3W407)",
                                                     "value": "15",
                                                   },
                                                   Object {
-                                                    "label": "16 (Juno)",
+                                                    "label": "16 (3W409)",
                                                     "value": "16",
                                                   },
                                                   Object {
-                                                    "label": "17 (Sword)",
+                                                    "label": "17 (3W518)",
                                                     "value": "17",
                                                   },
                                                   Object {
-                                                    "label": "18 (Omaha)",
+                                                    "label": "18 (4W325)",
                                                     "value": "18",
                                                   },
                                                 ],
@@ -24344,23 +24362,23 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                   "value": "13",
                                                 },
                                                 Object {
-                                                  "label": "14 (Utah)",
+                                                  "label": "14 (3W405)",
                                                   "value": "14",
                                                 },
                                                 Object {
-                                                  "label": "15 (Gold)",
+                                                  "label": "15 (3W407)",
                                                   "value": "15",
                                                 },
                                                 Object {
-                                                  "label": "16 (Juno)",
+                                                  "label": "16 (3W409)",
                                                   "value": "16",
                                                 },
                                                 Object {
-                                                  "label": "17 (Sword)",
+                                                  "label": "17 (3W518)",
                                                   "value": "17",
                                                 },
                                                 Object {
-                                                  "label": "18 (Omaha)",
+                                                  "label": "18 (4W325)",
                                                   "value": "18",
                                                 },
                                               ]
@@ -24467,23 +24485,23 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                                                     "value": "13",
                                                   },
                                                   Object {
-                                                    "label": "14 (Utah)",
+                                                    "label": "14 (3W405)",
                                                     "value": "14",
                                                   },
                                                   Object {
-                                                    "label": "15 (Gold)",
+                                                    "label": "15 (3W407)",
                                                     "value": "15",
                                                   },
                                                   Object {
-                                                    "label": "16 (Juno)",
+                                                    "label": "16 (3W409)",
                                                     "value": "16",
                                                   },
                                                   Object {
-                                                    "label": "17 (Sword)",
+                                                    "label": "17 (3W518)",
                                                     "value": "17",
                                                   },
                                                   Object {
-                                                    "label": "18 (Omaha)",
+                                                    "label": "18 (4W325)",
                                                     "value": "18",
                                                   },
                                                 ],
@@ -26192,6 +26210,12 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
         "regionalOfficeName": "St. Petersburg regional office",
         "regionalOfficeTimezone": "America/New_York",
         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeAddress": Object {
+          "addressLine1": "9999 MISSION ST",
+          "city": "SAN FRANCISCO",
+          "state": "CA",
+          "zip": "94103",
+        },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
         "room": "1",
@@ -26276,6 +26300,12 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
         "regionalOfficeName": "St. Petersburg regional office",
         "regionalOfficeTimezone": "America/New_York",
         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeAddress": Object {
+          "addressLine1": "9999 MISSION ST",
+          "city": "SAN FRANCISCO",
+          "state": "CA",
+          "zip": "94103",
+        },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
         "room": "1",
@@ -26367,7 +26397,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                     name="taskNumber"
                     onChange={[Function]}
                     type="text"
-                    value=""
                   />
                 </div>
               </TextField>
@@ -28005,7 +28034,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -28065,7 +28093,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -28125,7 +28152,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -29849,7 +29875,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       placeholder="mm/dd/yyyy"
                       readOnly={true}
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -30057,6 +30082,12 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                 "regionalOfficeName": "St. Petersburg regional office",
                 "regionalOfficeTimezone": "America/New_York",
                 "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+                "representativeAddress": Object {
+                  "addressLine1": "9999 MISSION ST",
+                  "city": "SAN FRANCISCO",
+                  "state": "CA",
+                  "zip": "94103",
+                },
                 "representativeEmailAddress": "tom.brady@caseflow.gov",
                 "representativeName": null,
                 "room": "1",
@@ -30179,7 +30210,6 @@ exports[`DetailsForm Matches snapshot with default props when passed in 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -30254,6 +30284,12 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
       "regionalOfficeName": "St. Petersburg regional office",
       "regionalOfficeTimezone": "America/New_York",
       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "1",
@@ -32993,23 +33029,23 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                     "value": "13",
                   },
                   Object {
-                    "label": "14 (Utah)",
+                    "label": "14 (3W405)",
                     "value": "14",
                   },
                   Object {
-                    "label": "15 (Gold)",
+                    "label": "15 (3W407)",
                     "value": "15",
                   },
                   Object {
-                    "label": "16 (Juno)",
+                    "label": "16 (3W409)",
                     "value": "16",
                   },
                   Object {
-                    "label": "17 (Sword)",
+                    "label": "17 (3W518)",
                     "value": "17",
                   },
                   Object {
-                    "label": "18 (Omaha)",
+                    "label": "18 (4W325)",
                     "value": "18",
                   },
                 ]
@@ -33113,23 +33149,23 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                             "value": "13",
                           },
                           Object {
-                            "label": "14 (Utah)",
+                            "label": "14 (3W405)",
                             "value": "14",
                           },
                           Object {
-                            "label": "15 (Gold)",
+                            "label": "15 (3W407)",
                             "value": "15",
                           },
                           Object {
-                            "label": "16 (Juno)",
+                            "label": "16 (3W409)",
                             "value": "16",
                           },
                           Object {
-                            "label": "17 (Sword)",
+                            "label": "17 (3W518)",
                             "value": "17",
                           },
                           Object {
-                            "label": "18 (Omaha)",
+                            "label": "18 (4W325)",
                             "value": "18",
                           },
                         ]
@@ -33246,23 +33282,23 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                               "value": "13",
                             },
                             Object {
-                              "label": "14 (Utah)",
+                              "label": "14 (3W405)",
                               "value": "14",
                             },
                             Object {
-                              "label": "15 (Gold)",
+                              "label": "15 (3W407)",
                               "value": "15",
                             },
                             Object {
-                              "label": "16 (Juno)",
+                              "label": "16 (3W409)",
                               "value": "16",
                             },
                             Object {
-                              "label": "17 (Sword)",
+                              "label": "17 (3W518)",
                               "value": "17",
                             },
                             Object {
-                              "label": "18 (Omaha)",
+                              "label": "18 (4W325)",
                               "value": "18",
                             },
                           ]
@@ -33360,23 +33396,23 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                 "value": "13",
                               },
                               Object {
-                                "label": "14 (Utah)",
+                                "label": "14 (3W405)",
                                 "value": "14",
                               },
                               Object {
-                                "label": "15 (Gold)",
+                                "label": "15 (3W407)",
                                 "value": "15",
                               },
                               Object {
-                                "label": "16 (Juno)",
+                                "label": "16 (3W409)",
                                 "value": "16",
                               },
                               Object {
-                                "label": "17 (Sword)",
+                                "label": "17 (3W518)",
                                 "value": "17",
                               },
                               Object {
-                                "label": "18 (Omaha)",
+                                "label": "18 (4W325)",
                                 "value": "18",
                               },
                             ]
@@ -33483,23 +33519,23 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                   "value": "13",
                                 },
                                 Object {
-                                  "label": "14 (Utah)",
+                                  "label": "14 (3W405)",
                                   "value": "14",
                                 },
                                 Object {
-                                  "label": "15 (Gold)",
+                                  "label": "15 (3W407)",
                                   "value": "15",
                                 },
                                 Object {
-                                  "label": "16 (Juno)",
+                                  "label": "16 (3W409)",
                                   "value": "16",
                                 },
                                 Object {
-                                  "label": "17 (Sword)",
+                                  "label": "17 (3W518)",
                                   "value": "17",
                                 },
                                 Object {
-                                  "label": "18 (Omaha)",
+                                  "label": "18 (4W325)",
                                   "value": "18",
                                 },
                               ],
@@ -33646,23 +33682,23 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                       "value": "13",
                                     },
                                     Object {
-                                      "label": "14 (Utah)",
+                                      "label": "14 (3W405)",
                                       "value": "14",
                                     },
                                     Object {
-                                      "label": "15 (Gold)",
+                                      "label": "15 (3W407)",
                                       "value": "15",
                                     },
                                     Object {
-                                      "label": "16 (Juno)",
+                                      "label": "16 (3W409)",
                                       "value": "16",
                                     },
                                     Object {
-                                      "label": "17 (Sword)",
+                                      "label": "17 (3W518)",
                                       "value": "17",
                                     },
                                     Object {
-                                      "label": "18 (Omaha)",
+                                      "label": "18 (4W325)",
                                       "value": "18",
                                     },
                                   ]
@@ -33769,23 +33805,23 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                         "value": "13",
                                       },
                                       Object {
-                                        "label": "14 (Utah)",
+                                        "label": "14 (3W405)",
                                         "value": "14",
                                       },
                                       Object {
-                                        "label": "15 (Gold)",
+                                        "label": "15 (3W407)",
                                         "value": "15",
                                       },
                                       Object {
-                                        "label": "16 (Juno)",
+                                        "label": "16 (3W409)",
                                         "value": "16",
                                       },
                                       Object {
-                                        "label": "17 (Sword)",
+                                        "label": "17 (3W518)",
                                         "value": "17",
                                       },
                                       Object {
-                                        "label": "18 (Omaha)",
+                                        "label": "18 (4W325)",
                                         "value": "18",
                                       },
                                     ],
@@ -33940,23 +33976,23 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             "value": "13",
                                           },
                                           Object {
-                                            "label": "14 (Utah)",
+                                            "label": "14 (3W405)",
                                             "value": "14",
                                           },
                                           Object {
-                                            "label": "15 (Gold)",
+                                            "label": "15 (3W407)",
                                             "value": "15",
                                           },
                                           Object {
-                                            "label": "16 (Juno)",
+                                            "label": "16 (3W409)",
                                             "value": "16",
                                           },
                                           Object {
-                                            "label": "17 (Sword)",
+                                            "label": "17 (3W518)",
                                             "value": "17",
                                           },
                                           Object {
-                                            "label": "18 (Omaha)",
+                                            "label": "18 (4W325)",
                                             "value": "18",
                                           },
                                         ]
@@ -34063,23 +34099,23 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                               "value": "13",
                                             },
                                             Object {
-                                              "label": "14 (Utah)",
+                                              "label": "14 (3W405)",
                                               "value": "14",
                                             },
                                             Object {
-                                              "label": "15 (Gold)",
+                                              "label": "15 (3W407)",
                                               "value": "15",
                                             },
                                             Object {
-                                              "label": "16 (Juno)",
+                                              "label": "16 (3W409)",
                                               "value": "16",
                                             },
                                             Object {
-                                              "label": "17 (Sword)",
+                                              "label": "17 (3W518)",
                                               "value": "17",
                                             },
                                             Object {
-                                              "label": "18 (Omaha)",
+                                              "label": "18 (4W325)",
                                               "value": "18",
                                             },
                                           ],
@@ -34225,23 +34261,23 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "value": "13",
                                                 },
                                                 Object {
-                                                  "label": "14 (Utah)",
+                                                  "label": "14 (3W405)",
                                                   "value": "14",
                                                 },
                                                 Object {
-                                                  "label": "15 (Gold)",
+                                                  "label": "15 (3W407)",
                                                   "value": "15",
                                                 },
                                                 Object {
-                                                  "label": "16 (Juno)",
+                                                  "label": "16 (3W409)",
                                                   "value": "16",
                                                 },
                                                 Object {
-                                                  "label": "17 (Sword)",
+                                                  "label": "17 (3W518)",
                                                   "value": "17",
                                                 },
                                                 Object {
-                                                  "label": "18 (Omaha)",
+                                                  "label": "18 (4W325)",
                                                   "value": "18",
                                                 },
                                               ]
@@ -34348,23 +34384,23 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                     "value": "13",
                                                   },
                                                   Object {
-                                                    "label": "14 (Utah)",
+                                                    "label": "14 (3W405)",
                                                     "value": "14",
                                                   },
                                                   Object {
-                                                    "label": "15 (Gold)",
+                                                    "label": "15 (3W407)",
                                                     "value": "15",
                                                   },
                                                   Object {
-                                                    "label": "16 (Juno)",
+                                                    "label": "16 (3W409)",
                                                     "value": "16",
                                                   },
                                                   Object {
-                                                    "label": "17 (Sword)",
+                                                    "label": "17 (3W518)",
                                                     "value": "17",
                                                   },
                                                   Object {
-                                                    "label": "18 (Omaha)",
+                                                    "label": "18 (4W325)",
                                                     "value": "18",
                                                   },
                                                 ],
@@ -34558,23 +34594,23 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                     "value": "13",
                                                   },
                                                   Object {
-                                                    "label": "14 (Utah)",
+                                                    "label": "14 (3W405)",
                                                     "value": "14",
                                                   },
                                                   Object {
-                                                    "label": "15 (Gold)",
+                                                    "label": "15 (3W407)",
                                                     "value": "15",
                                                   },
                                                   Object {
-                                                    "label": "16 (Juno)",
+                                                    "label": "16 (3W409)",
                                                     "value": "16",
                                                   },
                                                   Object {
-                                                    "label": "17 (Sword)",
+                                                    "label": "17 (3W518)",
                                                     "value": "17",
                                                   },
                                                   Object {
-                                                    "label": "18 (Omaha)",
+                                                    "label": "18 (4W325)",
                                                     "value": "18",
                                                   },
                                                 ],
@@ -34797,23 +34833,23 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                             "value": "13",
                                           },
                                           Object {
-                                            "label": "14 (Utah)",
+                                            "label": "14 (3W405)",
                                             "value": "14",
                                           },
                                           Object {
-                                            "label": "15 (Gold)",
+                                            "label": "15 (3W407)",
                                             "value": "15",
                                           },
                                           Object {
-                                            "label": "16 (Juno)",
+                                            "label": "16 (3W409)",
                                             "value": "16",
                                           },
                                           Object {
-                                            "label": "17 (Sword)",
+                                            "label": "17 (3W518)",
                                             "value": "17",
                                           },
                                           Object {
-                                            "label": "18 (Omaha)",
+                                            "label": "18 (4W325)",
                                             "value": "18",
                                           },
                                         ]
@@ -34920,23 +34956,23 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                               "value": "13",
                                             },
                                             Object {
-                                              "label": "14 (Utah)",
+                                              "label": "14 (3W405)",
                                               "value": "14",
                                             },
                                             Object {
-                                              "label": "15 (Gold)",
+                                              "label": "15 (3W407)",
                                               "value": "15",
                                             },
                                             Object {
-                                              "label": "16 (Juno)",
+                                              "label": "16 (3W409)",
                                               "value": "16",
                                             },
                                             Object {
-                                              "label": "17 (Sword)",
+                                              "label": "17 (3W518)",
                                               "value": "17",
                                             },
                                             Object {
-                                              "label": "18 (Omaha)",
+                                              "label": "18 (4W325)",
                                               "value": "18",
                                             },
                                           ],
@@ -35073,23 +35109,23 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "value": "13",
                                                 },
                                                 Object {
-                                                  "label": "14 (Utah)",
+                                                  "label": "14 (3W405)",
                                                   "value": "14",
                                                 },
                                                 Object {
-                                                  "label": "15 (Gold)",
+                                                  "label": "15 (3W407)",
                                                   "value": "15",
                                                 },
                                                 Object {
-                                                  "label": "16 (Juno)",
+                                                  "label": "16 (3W409)",
                                                   "value": "16",
                                                 },
                                                 Object {
-                                                  "label": "17 (Sword)",
+                                                  "label": "17 (3W518)",
                                                   "value": "17",
                                                 },
                                                 Object {
-                                                  "label": "18 (Omaha)",
+                                                  "label": "18 (4W325)",
                                                   "value": "18",
                                                 },
                                               ]
@@ -35196,23 +35232,23 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                     "value": "13",
                                                   },
                                                   Object {
-                                                    "label": "14 (Utah)",
+                                                    "label": "14 (3W405)",
                                                     "value": "14",
                                                   },
                                                   Object {
-                                                    "label": "15 (Gold)",
+                                                    "label": "15 (3W407)",
                                                     "value": "15",
                                                   },
                                                   Object {
-                                                    "label": "16 (Juno)",
+                                                    "label": "16 (3W409)",
                                                     "value": "16",
                                                   },
                                                   Object {
-                                                    "label": "17 (Sword)",
+                                                    "label": "17 (3W518)",
                                                     "value": "17",
                                                   },
                                                   Object {
-                                                    "label": "18 (Omaha)",
+                                                    "label": "18 (4W325)",
                                                     "value": "18",
                                                   },
                                                 ],
@@ -35360,23 +35396,23 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                   "value": "13",
                                                 },
                                                 Object {
-                                                  "label": "14 (Utah)",
+                                                  "label": "14 (3W405)",
                                                   "value": "14",
                                                 },
                                                 Object {
-                                                  "label": "15 (Gold)",
+                                                  "label": "15 (3W407)",
                                                   "value": "15",
                                                 },
                                                 Object {
-                                                  "label": "16 (Juno)",
+                                                  "label": "16 (3W409)",
                                                   "value": "16",
                                                 },
                                                 Object {
-                                                  "label": "17 (Sword)",
+                                                  "label": "17 (3W518)",
                                                   "value": "17",
                                                 },
                                                 Object {
-                                                  "label": "18 (Omaha)",
+                                                  "label": "18 (4W325)",
                                                   "value": "18",
                                                 },
                                               ]
@@ -35483,23 +35519,23 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                                                     "value": "13",
                                                   },
                                                   Object {
-                                                    "label": "14 (Utah)",
+                                                    "label": "14 (3W405)",
                                                     "value": "14",
                                                   },
                                                   Object {
-                                                    "label": "15 (Gold)",
+                                                    "label": "15 (3W407)",
                                                     "value": "15",
                                                   },
                                                   Object {
-                                                    "label": "16 (Juno)",
+                                                    "label": "16 (3W409)",
                                                     "value": "16",
                                                   },
                                                   Object {
-                                                    "label": "17 (Sword)",
+                                                    "label": "17 (3W518)",
                                                     "value": "17",
                                                   },
                                                   Object {
-                                                    "label": "18 (Omaha)",
+                                                    "label": "18 (4W325)",
                                                     "value": "18",
                                                   },
                                                 ],
@@ -37208,6 +37244,12 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
         "regionalOfficeName": "St. Petersburg regional office",
         "regionalOfficeTimezone": "America/New_York",
         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeAddress": Object {
+          "addressLine1": "9999 MISSION ST",
+          "city": "SAN FRANCISCO",
+          "state": "CA",
+          "zip": "94103",
+        },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
         "room": "1",
@@ -37292,6 +37334,12 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
         "regionalOfficeName": "St. Petersburg regional office",
         "regionalOfficeTimezone": "America/New_York",
         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeAddress": Object {
+          "addressLine1": "9999 MISSION ST",
+          "city": "SAN FRANCISCO",
+          "state": "CA",
+          "zip": "94103",
+        },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
         "room": "1",
@@ -37383,7 +37431,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                     name="taskNumber"
                     onChange={[Function]}
                     type="text"
-                    value=""
                   />
                 </div>
               </TextField>
@@ -39021,7 +39068,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -39081,7 +39127,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -39141,7 +39186,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -40865,7 +40909,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       placeholder="mm/dd/yyyy"
                       readOnly={true}
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -41073,6 +41116,12 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                 "regionalOfficeName": "St. Petersburg regional office",
                 "regionalOfficeTimezone": "America/New_York",
                 "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+                "representativeAddress": Object {
+                  "addressLine1": "9999 MISSION ST",
+                  "city": "SAN FRANCISCO",
+                  "state": "CA",
+                  "zip": "94103",
+                },
                 "representativeEmailAddress": "tom.brady@caseflow.gov",
                 "representativeName": null,
                 "room": "1",
@@ -41195,7 +41244,6 @@ exports[`DetailsForm Matches snapshot with for AMA hearing 1`] = `
                       onChange={[Function]}
                       placeholder="mm/dd/yyyy"
                       type="date"
-                      value=""
                     />
                   </div>
                 </TextField>
@@ -41270,6 +41318,12 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
       "regionalOfficeName": "St. Petersburg regional office",
       "regionalOfficeTimezone": "America/New_York",
       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "1",
@@ -44009,23 +44063,23 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                     "value": "13",
                   },
                   Object {
-                    "label": "14 (Utah)",
+                    "label": "14 (3W405)",
                     "value": "14",
                   },
                   Object {
-                    "label": "15 (Gold)",
+                    "label": "15 (3W407)",
                     "value": "15",
                   },
                   Object {
-                    "label": "16 (Juno)",
+                    "label": "16 (3W409)",
                     "value": "16",
                   },
                   Object {
-                    "label": "17 (Sword)",
+                    "label": "17 (3W518)",
                     "value": "17",
                   },
                   Object {
-                    "label": "18 (Omaha)",
+                    "label": "18 (4W325)",
                     "value": "18",
                   },
                 ]
@@ -44129,23 +44183,23 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                             "value": "13",
                           },
                           Object {
-                            "label": "14 (Utah)",
+                            "label": "14 (3W405)",
                             "value": "14",
                           },
                           Object {
-                            "label": "15 (Gold)",
+                            "label": "15 (3W407)",
                             "value": "15",
                           },
                           Object {
-                            "label": "16 (Juno)",
+                            "label": "16 (3W409)",
                             "value": "16",
                           },
                           Object {
-                            "label": "17 (Sword)",
+                            "label": "17 (3W518)",
                             "value": "17",
                           },
                           Object {
-                            "label": "18 (Omaha)",
+                            "label": "18 (4W325)",
                             "value": "18",
                           },
                         ]
@@ -44262,23 +44316,23 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                               "value": "13",
                             },
                             Object {
-                              "label": "14 (Utah)",
+                              "label": "14 (3W405)",
                               "value": "14",
                             },
                             Object {
-                              "label": "15 (Gold)",
+                              "label": "15 (3W407)",
                               "value": "15",
                             },
                             Object {
-                              "label": "16 (Juno)",
+                              "label": "16 (3W409)",
                               "value": "16",
                             },
                             Object {
-                              "label": "17 (Sword)",
+                              "label": "17 (3W518)",
                               "value": "17",
                             },
                             Object {
-                              "label": "18 (Omaha)",
+                              "label": "18 (4W325)",
                               "value": "18",
                             },
                           ]
@@ -44376,23 +44430,23 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                 "value": "13",
                               },
                               Object {
-                                "label": "14 (Utah)",
+                                "label": "14 (3W405)",
                                 "value": "14",
                               },
                               Object {
-                                "label": "15 (Gold)",
+                                "label": "15 (3W407)",
                                 "value": "15",
                               },
                               Object {
-                                "label": "16 (Juno)",
+                                "label": "16 (3W409)",
                                 "value": "16",
                               },
                               Object {
-                                "label": "17 (Sword)",
+                                "label": "17 (3W518)",
                                 "value": "17",
                               },
                               Object {
-                                "label": "18 (Omaha)",
+                                "label": "18 (4W325)",
                                 "value": "18",
                               },
                             ]
@@ -44499,23 +44553,23 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                   "value": "13",
                                 },
                                 Object {
-                                  "label": "14 (Utah)",
+                                  "label": "14 (3W405)",
                                   "value": "14",
                                 },
                                 Object {
-                                  "label": "15 (Gold)",
+                                  "label": "15 (3W407)",
                                   "value": "15",
                                 },
                                 Object {
-                                  "label": "16 (Juno)",
+                                  "label": "16 (3W409)",
                                   "value": "16",
                                 },
                                 Object {
-                                  "label": "17 (Sword)",
+                                  "label": "17 (3W518)",
                                   "value": "17",
                                 },
                                 Object {
-                                  "label": "18 (Omaha)",
+                                  "label": "18 (4W325)",
                                   "value": "18",
                                 },
                               ],
@@ -44662,23 +44716,23 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                       "value": "13",
                                     },
                                     Object {
-                                      "label": "14 (Utah)",
+                                      "label": "14 (3W405)",
                                       "value": "14",
                                     },
                                     Object {
-                                      "label": "15 (Gold)",
+                                      "label": "15 (3W407)",
                                       "value": "15",
                                     },
                                     Object {
-                                      "label": "16 (Juno)",
+                                      "label": "16 (3W409)",
                                       "value": "16",
                                     },
                                     Object {
-                                      "label": "17 (Sword)",
+                                      "label": "17 (3W518)",
                                       "value": "17",
                                     },
                                     Object {
-                                      "label": "18 (Omaha)",
+                                      "label": "18 (4W325)",
                                       "value": "18",
                                     },
                                   ]
@@ -44785,23 +44839,23 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                         "value": "13",
                                       },
                                       Object {
-                                        "label": "14 (Utah)",
+                                        "label": "14 (3W405)",
                                         "value": "14",
                                       },
                                       Object {
-                                        "label": "15 (Gold)",
+                                        "label": "15 (3W407)",
                                         "value": "15",
                                       },
                                       Object {
-                                        "label": "16 (Juno)",
+                                        "label": "16 (3W409)",
                                         "value": "16",
                                       },
                                       Object {
-                                        "label": "17 (Sword)",
+                                        "label": "17 (3W518)",
                                         "value": "17",
                                       },
                                       Object {
-                                        "label": "18 (Omaha)",
+                                        "label": "18 (4W325)",
                                         "value": "18",
                                       },
                                     ],
@@ -44956,23 +45010,23 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                             "value": "13",
                                           },
                                           Object {
-                                            "label": "14 (Utah)",
+                                            "label": "14 (3W405)",
                                             "value": "14",
                                           },
                                           Object {
-                                            "label": "15 (Gold)",
+                                            "label": "15 (3W407)",
                                             "value": "15",
                                           },
                                           Object {
-                                            "label": "16 (Juno)",
+                                            "label": "16 (3W409)",
                                             "value": "16",
                                           },
                                           Object {
-                                            "label": "17 (Sword)",
+                                            "label": "17 (3W518)",
                                             "value": "17",
                                           },
                                           Object {
-                                            "label": "18 (Omaha)",
+                                            "label": "18 (4W325)",
                                             "value": "18",
                                           },
                                         ]
@@ -45079,23 +45133,23 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                               "value": "13",
                                             },
                                             Object {
-                                              "label": "14 (Utah)",
+                                              "label": "14 (3W405)",
                                               "value": "14",
                                             },
                                             Object {
-                                              "label": "15 (Gold)",
+                                              "label": "15 (3W407)",
                                               "value": "15",
                                             },
                                             Object {
-                                              "label": "16 (Juno)",
+                                              "label": "16 (3W409)",
                                               "value": "16",
                                             },
                                             Object {
-                                              "label": "17 (Sword)",
+                                              "label": "17 (3W518)",
                                               "value": "17",
                                             },
                                             Object {
-                                              "label": "18 (Omaha)",
+                                              "label": "18 (4W325)",
                                               "value": "18",
                                             },
                                           ],
@@ -45241,23 +45295,23 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   "value": "13",
                                                 },
                                                 Object {
-                                                  "label": "14 (Utah)",
+                                                  "label": "14 (3W405)",
                                                   "value": "14",
                                                 },
                                                 Object {
-                                                  "label": "15 (Gold)",
+                                                  "label": "15 (3W407)",
                                                   "value": "15",
                                                 },
                                                 Object {
-                                                  "label": "16 (Juno)",
+                                                  "label": "16 (3W409)",
                                                   "value": "16",
                                                 },
                                                 Object {
-                                                  "label": "17 (Sword)",
+                                                  "label": "17 (3W518)",
                                                   "value": "17",
                                                 },
                                                 Object {
-                                                  "label": "18 (Omaha)",
+                                                  "label": "18 (4W325)",
                                                   "value": "18",
                                                 },
                                               ]
@@ -45364,23 +45418,23 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                     "value": "13",
                                                   },
                                                   Object {
-                                                    "label": "14 (Utah)",
+                                                    "label": "14 (3W405)",
                                                     "value": "14",
                                                   },
                                                   Object {
-                                                    "label": "15 (Gold)",
+                                                    "label": "15 (3W407)",
                                                     "value": "15",
                                                   },
                                                   Object {
-                                                    "label": "16 (Juno)",
+                                                    "label": "16 (3W409)",
                                                     "value": "16",
                                                   },
                                                   Object {
-                                                    "label": "17 (Sword)",
+                                                    "label": "17 (3W518)",
                                                     "value": "17",
                                                   },
                                                   Object {
-                                                    "label": "18 (Omaha)",
+                                                    "label": "18 (4W325)",
                                                     "value": "18",
                                                   },
                                                 ],
@@ -45574,23 +45628,23 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                     "value": "13",
                                                   },
                                                   Object {
-                                                    "label": "14 (Utah)",
+                                                    "label": "14 (3W405)",
                                                     "value": "14",
                                                   },
                                                   Object {
-                                                    "label": "15 (Gold)",
+                                                    "label": "15 (3W407)",
                                                     "value": "15",
                                                   },
                                                   Object {
-                                                    "label": "16 (Juno)",
+                                                    "label": "16 (3W409)",
                                                     "value": "16",
                                                   },
                                                   Object {
-                                                    "label": "17 (Sword)",
+                                                    "label": "17 (3W518)",
                                                     "value": "17",
                                                   },
                                                   Object {
-                                                    "label": "18 (Omaha)",
+                                                    "label": "18 (4W325)",
                                                     "value": "18",
                                                   },
                                                 ],
@@ -45813,23 +45867,23 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                             "value": "13",
                                           },
                                           Object {
-                                            "label": "14 (Utah)",
+                                            "label": "14 (3W405)",
                                             "value": "14",
                                           },
                                           Object {
-                                            "label": "15 (Gold)",
+                                            "label": "15 (3W407)",
                                             "value": "15",
                                           },
                                           Object {
-                                            "label": "16 (Juno)",
+                                            "label": "16 (3W409)",
                                             "value": "16",
                                           },
                                           Object {
-                                            "label": "17 (Sword)",
+                                            "label": "17 (3W518)",
                                             "value": "17",
                                           },
                                           Object {
-                                            "label": "18 (Omaha)",
+                                            "label": "18 (4W325)",
                                             "value": "18",
                                           },
                                         ]
@@ -45936,23 +45990,23 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                               "value": "13",
                                             },
                                             Object {
-                                              "label": "14 (Utah)",
+                                              "label": "14 (3W405)",
                                               "value": "14",
                                             },
                                             Object {
-                                              "label": "15 (Gold)",
+                                              "label": "15 (3W407)",
                                               "value": "15",
                                             },
                                             Object {
-                                              "label": "16 (Juno)",
+                                              "label": "16 (3W409)",
                                               "value": "16",
                                             },
                                             Object {
-                                              "label": "17 (Sword)",
+                                              "label": "17 (3W518)",
                                               "value": "17",
                                             },
                                             Object {
-                                              "label": "18 (Omaha)",
+                                              "label": "18 (4W325)",
                                               "value": "18",
                                             },
                                           ],
@@ -46089,23 +46143,23 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   "value": "13",
                                                 },
                                                 Object {
-                                                  "label": "14 (Utah)",
+                                                  "label": "14 (3W405)",
                                                   "value": "14",
                                                 },
                                                 Object {
-                                                  "label": "15 (Gold)",
+                                                  "label": "15 (3W407)",
                                                   "value": "15",
                                                 },
                                                 Object {
-                                                  "label": "16 (Juno)",
+                                                  "label": "16 (3W409)",
                                                   "value": "16",
                                                 },
                                                 Object {
-                                                  "label": "17 (Sword)",
+                                                  "label": "17 (3W518)",
                                                   "value": "17",
                                                 },
                                                 Object {
-                                                  "label": "18 (Omaha)",
+                                                  "label": "18 (4W325)",
                                                   "value": "18",
                                                 },
                                               ]
@@ -46212,23 +46266,23 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                     "value": "13",
                                                   },
                                                   Object {
-                                                    "label": "14 (Utah)",
+                                                    "label": "14 (3W405)",
                                                     "value": "14",
                                                   },
                                                   Object {
-                                                    "label": "15 (Gold)",
+                                                    "label": "15 (3W407)",
                                                     "value": "15",
                                                   },
                                                   Object {
-                                                    "label": "16 (Juno)",
+                                                    "label": "16 (3W409)",
                                                     "value": "16",
                                                   },
                                                   Object {
-                                                    "label": "17 (Sword)",
+                                                    "label": "17 (3W518)",
                                                     "value": "17",
                                                   },
                                                   Object {
-                                                    "label": "18 (Omaha)",
+                                                    "label": "18 (4W325)",
                                                     "value": "18",
                                                   },
                                                 ],
@@ -46376,23 +46430,23 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                   "value": "13",
                                                 },
                                                 Object {
-                                                  "label": "14 (Utah)",
+                                                  "label": "14 (3W405)",
                                                   "value": "14",
                                                 },
                                                 Object {
-                                                  "label": "15 (Gold)",
+                                                  "label": "15 (3W407)",
                                                   "value": "15",
                                                 },
                                                 Object {
-                                                  "label": "16 (Juno)",
+                                                  "label": "16 (3W409)",
                                                   "value": "16",
                                                 },
                                                 Object {
-                                                  "label": "17 (Sword)",
+                                                  "label": "17 (3W518)",
                                                   "value": "17",
                                                 },
                                                 Object {
-                                                  "label": "18 (Omaha)",
+                                                  "label": "18 (4W325)",
                                                   "value": "18",
                                                 },
                                               ]
@@ -46499,23 +46553,23 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
                                                     "value": "13",
                                                   },
                                                   Object {
-                                                    "label": "14 (Utah)",
+                                                    "label": "14 (3W405)",
                                                     "value": "14",
                                                   },
                                                   Object {
-                                                    "label": "15 (Gold)",
+                                                    "label": "15 (3W407)",
                                                     "value": "15",
                                                   },
                                                   Object {
-                                                    "label": "16 (Juno)",
+                                                    "label": "16 (3W409)",
                                                     "value": "16",
                                                   },
                                                   Object {
-                                                    "label": "17 (Sword)",
+                                                    "label": "17 (3W518)",
                                                     "value": "17",
                                                   },
                                                   Object {
-                                                    "label": "18 (Omaha)",
+                                                    "label": "18 (4W325)",
                                                     "value": "18",
                                                   },
                                                 ],
@@ -48186,6 +48240,12 @@ exports[`DetailsForm Matches snapshot with for legacy hearing 1`] = `
         "regionalOfficeName": "St. Petersburg regional office",
         "regionalOfficeTimezone": "America/New_York",
         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeAddress": Object {
+          "addressLine1": "9999 MISSION ST",
+          "city": "SAN FRANCISCO",
+          "state": "CA",
+          "zip": "94103",
+        },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
         "room": "1",

@@ -104,64 +104,69 @@ describe Claimant, :postgres do
   end
 
   context "#advanced_on_docket?" do
+    let(:appeal) { create(:appeal, receipt_date: 1.year.ago) }
+
     context "when claimant satisfies AOD age criteria" do
-      let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age) }
+      let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age, decision_review: appeal) }
 
       it "returns true" do
-        expect(claimant.advanced_on_docket?(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket?(appeal)).to eq(true)
         expect(claimant.advanced_on_docket_based_on_age?).to eq(true)
       end
     end
 
     context "when claimant has motion granted" do
-      let(:claimant) { create(:claimant) }
+      let(:claimant) { create(:claimant, decision_review: appeal) }
 
       before do
-        create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true)
+        create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true, appeal: appeal)
       end
 
       it "returns true" do
-        expect(claimant.advanced_on_docket?(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket?(appeal)).to eq(true)
         expect(claimant.advanced_on_docket_based_on_age?).to eq(false)
-        expect(claimant.advanced_on_docket_motion_granted?(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket_motion_granted?(appeal)).to eq(true)
       end
     end
 
     context "when claimant is younger than 75 years old and has no motion granted" do
-      let(:claimant) { create(:claimant) }
+      let(:claimant) { create(:claimant, decision_review: appeal) }
 
       it "returns false" do
-        expect(claimant.advanced_on_docket?(1.year.ago)).to eq(false)
+        expect(claimant.advanced_on_docket?(appeal)).to eq(false)
         expect(claimant.advanced_on_docket_based_on_age?).to eq(false)
-        expect(claimant.advanced_on_docket_motion_granted?(1.year.ago)).to eq(false)
+        expect(claimant.advanced_on_docket_motion_granted?(appeal)).to eq(false)
       end
     end
 
     context "when claimant satisfies AOD age criteria and has motion granted" do
-      let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age) }
+      let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age, decision_review: appeal) }
 
       before do
-        create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true)
+        create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true, appeal: appeal)
       end
 
       it "returns true" do
-        expect(claimant.advanced_on_docket?(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket?(appeal)).to eq(true)
         expect(claimant.advanced_on_docket_based_on_age?).to eq(true)
-        expect(claimant.advanced_on_docket_motion_granted?(1.year.ago)).to eq(true)
+        expect(claimant.advanced_on_docket_motion_granted?(appeal)).to eq(true)
       end
     end
 
     context "when AttorneyClaimant satisfies AOD age criteria and has motion granted" do
-      let(:claimant) { create(:claimant, :advanced_on_docket_due_to_age, type: "AttorneyClaimant") }
+      let(:claimant) do
+        create(:claimant, :advanced_on_docket_due_to_age,
+               decision_review: appeal, type: "AttorneyClaimant")
+      end
 
       before do
-        create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true)
+        create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true, appeal: appeal)
       end
 
       it "returns false" do
         expect(claimant.advanced_on_docket_based_on_age?).to eq(false)
-        expect(claimant.advanced_on_docket_motion_granted?(1.year.ago)).to eq(false)
-        expect(claimant.advanced_on_docket?(1.year.ago)).to eq(false)
+        expect(claimant.advanced_on_docket_motion_granted?(appeal)).to eq(false)
+        expect(claimant.advanced_on_docket?(appeal)).to eq(false)
       end
     end
   end
@@ -232,8 +237,10 @@ describe Claimant, :postgres do
               veteran_file_number: create(:veteran).file_number)
       end
 
+      let(:payee_code) { "10" }
+
       let!(:claimant) do
-        create(:claimant, decision_review: decision_review, participant_id: participant_id)
+        create(:claimant, decision_review: decision_review, participant_id: participant_id, payee_code: payee_code)
       end
 
       context "when created with the same participant_id and the same decision_review" do
@@ -291,6 +298,17 @@ describe Claimant, :postgres do
         it "allows blank value" do
           expect(subject).to be_valid
           expect(subject.errors.messages[:payee_code]).to eq []
+        end
+      end
+
+      context "when decision_review.benefit_type is fiduciary" do
+        before { FeatureToggle.enable!(:establish_fiduciary_eps) }
+        after { FeatureToggle.disable!(:establish_fiduciary_eps) }
+        let(:benefit_type) { "fiduciary" }
+
+        it "requires non-blank value" do
+          expect(subject).not_to be_valid
+          expect(subject.errors.messages[:payee_code]).to eq ["blank"]
         end
       end
     end

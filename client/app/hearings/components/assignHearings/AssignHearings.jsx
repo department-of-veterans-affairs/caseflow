@@ -54,8 +54,8 @@ const UpcomingHearingDaysNav = ({
                     styling={dateSelected ? buttonColorSelected : {}}
                     onClick={() => onSelectedHearingDayChange(hearingDay)}
                     linkStyling>
-                    {`${moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}
-                    ${hearingDay.room}`}
+                    {`${moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}  
+                      ${hearingDay.room ?? ''}`}
                   </Button>
                 </li>
               );
@@ -79,10 +79,6 @@ UpcomingHearingDaysNav.propTypes = {
 export const AssignHearings = ({
   upcomingHearingDays, selectedHearingDay, selectedRegionalOffice, onSelectedHearingDayChange
 }) => {
-  // St. Petersburg, FL or Winston-Salem, NC
-  const room = selectedRegionalOffice === 'RO17' || selectedRegionalOffice === 'RO18' ?
-    selectedHearingDay?.room :
-    '';
 
   if (_.isEmpty(upcomingHearingDays)) {
     return <NoUpcomingHearingDayMessage />;
@@ -97,7 +93,7 @@ export const AssignHearings = ({
       <AssignHearingsTabs
         selectedRegionalOffice={selectedRegionalOffice}
         selectedHearingDay={selectedHearingDay}
-        room={room}
+        room={selectedHearingDay?.room}
       />
     </React.Fragment>
   );

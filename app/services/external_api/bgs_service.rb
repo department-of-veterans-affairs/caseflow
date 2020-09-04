@@ -36,20 +36,24 @@ class ExternalApi::BGSService
       end
   end
 
-  def cancel_end_product(veteran_file_number, end_product_code, end_product_modifier)
+  def cancel_end_product(veteran_file_number, end_product_code, end_product_modifier, payee_code, benefit_type)
     DBService.release_db_connections
 
     @end_products[veteran_file_number] ||=
       MetricsService.record("BGS: cancel end product by: \
                             file_number = #{veteran_file_number}, \
                             end_product_code = #{end_product_code}, \
-                            modifier = #{end_product_modifier}",
+                            modifier = #{end_product_modifier}
+                            payee_code = #{payee_code}
+                            benefit_type = #{benefit_type}",
                             service: :bgs,
                             name: "claims.cancel_end_product") do
         client.claims.cancel_end_product(
           file_number: veteran_file_number,
           end_product_code: end_product_code,
-          modifier: end_product_modifier
+          modifier: end_product_modifier,
+          payee_code: payee_code,
+          benefit_type: benefit_type
         )
       end
   end
@@ -403,6 +407,19 @@ class ExternalApi::BGSService
                           name: "contention.find_contention_by_claim_id") do
       client.contention.find_contention_by_claim_id(claim_id)
     end
+  end
+
+  def pay_grade_list
+    DBService.release_db_connections
+
+    @pay_grade_list ||=
+      Rails.cache.fetch("pay_grade_list", expires_in: 1.day) do
+        MetricsService.record("BGS: fetch list of pay grades",
+                              service: :bgs,
+                              name: "share_standard_data.find_pay_grades") do
+          client.share_standard_data.find_pay_grades[:return][:types]
+        end
+      end
   end
 
   private
