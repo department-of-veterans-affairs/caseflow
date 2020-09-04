@@ -135,6 +135,16 @@ class Fakes::BGSService
     format_contentions(contentions)
   end
 
+  # :reek:FeatureEnvy
+  def find_current_rating_profile_by_ptcpnt_id(participant_id)
+    record = get_rating_record(participant_id)
+    fail BGS::ShareError, "No Record Found" if record.blank?
+
+    # We grab the latest promulgated rating, assuming that under the hood BGS also does.
+    rating = record[:ratings].max_by { |rt| rt[:prmlgn_dt] }
+    rating_at_issue_profile_data(rating)
+  end
+
   def format_contentions(contentions)
     { contentions: contentions.map { |contention| format_contention(contention) } }
   end
