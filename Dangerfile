@@ -18,6 +18,13 @@ if git.lines_of_code > 500
   )
 end
 
+if git.modified_files.grep(/app\/services\//).any?
+  warn(
+    "This PR appears to affect one or more integrations. Make sure to test code in UAT before merging. "\
+    "See these [instructions for deploying a custom branch to UAT](https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/Appeals-Deployment---Deploy-Custom-Branch-to-UAT)."
+  )
+end
+
 # Don't let testing shortcuts get into master by accident
 if `git diff #{github.base_commit} spec/ | grep -E '(:focus => true)|(focus: true)'`.length > 1
   fail("focus: true is left in test")
