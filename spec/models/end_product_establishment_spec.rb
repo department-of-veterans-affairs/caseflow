@@ -984,6 +984,40 @@ describe EndProductEstablishment, :postgres do
         subject
         expect(end_product_establishment.reload.synced_status).to eq("CAN")
       end
+
+      context "#returns cancel_end_product parameters!" do
+        let!(:modifier) { "030" }
+        let(:benefit_type_code) { Veteran::BENEFIT_TYPE_CODE_LIVE }
+        let(:end_product_establishment) do
+          EndProductEstablishment.new(
+            source: source,
+            veteran_file_number: veteran_file_number,
+            code: code,
+            payee_code: payee_code,
+            claim_date: 2.days.ago,
+            benefit_type_code: benefit_type_code,
+            modifier: modifier,
+            reference_id: "1",
+            synced_status: synced_status,
+            last_synced_at: last_synced_at
+          )
+        end
+
+        let!(:bgs_service) { BGSService.new }
+
+        before do
+          allow(BGSService).to receive(:new) { bgs_service }
+          allow(bgs_service).to receive(:cancel_end_product).and_call_original
+        end
+
+        it do
+          subject
+          expect(bgs_service).to have_received(:cancel_end_product).once.with(veteran_file_number,
+                                                                              code, modifier,
+                                                                              payee_code,
+                                                                              benefit_type_code)
+        end
+      end
     end
 
     context "when source is a RampReview" do

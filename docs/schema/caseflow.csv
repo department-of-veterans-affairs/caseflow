@@ -909,9 +909,9 @@ sent_hearing_email_events,id,integer (8) PK,x,x,,,,
 sent_hearing_email_events,recipient_role,string,,,,,,"The role of the recipient: veteran, representative, judge"
 sent_hearing_email_events,sent_at,datetime ∗,x,,,,,The date and time the email was sent
 sent_hearing_email_events,sent_by_id,integer (8) ∗ FK,x,,x,,x,User who initiated sending the email
-special_issue_lists,,,,,,,,
-special_issue_lists,appeal_id,integer (8) FK,,,x,,x,
-special_issue_lists,appeal_type,string,,,,,x,
+special_issue_lists,,,,,,,,Associates special issues to an AMA or legacy appeal for Caseflow Queue. Caseflow Dispatch uses special issues stored in legacy_appeals. They are intentionally disconnected.
+special_issue_lists,appeal_id,integer (8) FK,,,x,,x,The ID of the appeal associated with this record
+special_issue_lists,appeal_type,string,,,,,x,The type of appeal associated with this record
 special_issue_lists,blue_water,boolean,,,,,,Blue Water
 special_issue_lists,burn_pit,boolean,,,,,,Burn Pit
 special_issue_lists,contaminated_water_at_camp_lejeune,boolean,,,,,,
@@ -975,6 +975,7 @@ tasks,assigned_at,datetime,,,,,,
 tasks,assigned_by_id,integer FK,,,x,,,
 tasks,assigned_to_id,integer ∗ FK,x,,x,,x,
 tasks,assigned_to_type,string ∗,x,,,,x,
+tasks,cancelled_by_id,integer,,,,,,ID of user that cancelled the task. Backfilled from versions table. Can be nil if task was cancelled before this column was added or if there is no user logged in when the task is cancelled
 tasks,closed_at,datetime,,,,,,
 tasks,created_at,datetime ∗,x,,,,,
 tasks,id,integer (8) PK,x,x,,,,
