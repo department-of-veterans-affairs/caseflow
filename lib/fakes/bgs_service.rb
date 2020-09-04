@@ -139,14 +139,16 @@ class Fakes::BGSService
     record = get_rating_record(participant_id)
     fail BGS::ShareError, "No Record Found" if record.blank?
 
+    profiles = record[:profiles]
+
     # We grab the latest promulgated rating, assuming that under the hood BGS also does.
-    rating = record[:ratings].sort_by { |rating| rating[:prmlgn_dt] }.last
+    rating = record[:ratings].max_by { |rt| rt[:prmlgn_dt] }
     profile_date_str = rating[:comp_id][:prfil_dt].iso8601
-    profile_key = record[:profiles].keys.find { |key| key.to_s.start_with?(profile_date_str) }
+    profile_key = profiles.keys.find { |key| key.to_s.start_with?(profile_date_str) }
 
     # The bgs_hash format of a current rating profile is close to what the Rating common code
     # expects, but at the top level it merges some of the rating and the profile fields.
-    bgs_hash = record[:profiles][profile_key].merge(rating[:comp_id])
+    bgs_hash = profiles[profile_key].merge(rating[:comp_id])
     bgs_hash[:prmlgn_dt] = rating[:prmlgn_dt]
     bgs_hash
   end
