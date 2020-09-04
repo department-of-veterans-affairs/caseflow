@@ -1164,15 +1164,6 @@ describe Appeal, :all_dbs do
   end
 
   describe "#readable_hearing_request_type" do
-    context "there exists a scheduled hearing" do
-      let(:appeal) { create(:appeal) }
-      let!(:hearing) { create(:hearing, appeal: appeal) }
-
-      it "returns 'Central'" do
-        expect(appeal.readable_hearing_request_type).to eq("Central")
-      end
-    end
-
     context "no hearings have been scheduled" do
       let(:appeal) { create(:appeal, closest_regional_office: closest_regional_office) }
 
