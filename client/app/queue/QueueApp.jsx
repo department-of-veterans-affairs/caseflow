@@ -147,6 +147,7 @@ class QueueApp extends React.PureComponent {
 
   routedQueueDetail = (props) => (
     <CaseDetailsView
+      userCanScheduleVirtualHearings={this.props.featureToggles.schedule_veteran_virtual_hearing}
       appealId={props.match.params.appealId}
       userCanAccessReader={!this.props.hasCaseDetailsRole && !this.props.userCanViewHearingSchedule}
     />
@@ -261,7 +262,12 @@ class QueueApp extends React.PureComponent {
 
   routedAssignHearingModal = (props) => <AssignHearingModal userId={this.props.userId} {...props.match.params} />
 
-  routedPostponeHearingModal = (props) => <PostponeHearingModal userId={this.props.userId} {...props.match.params} />;
+  routedPostponeHearingModal = (props) => (
+    <PostponeHearingModal
+      userCanScheduleVirtualHearings={this.props.featureToggles.schedule_veteran_virtual_hearing}
+      userId={this.props.userId} {...props.match.params}
+    />
+  )
 
   routedChangeTaskTypeModal = (props) => <ChangeTaskTypeModal {...props.match.params} />;
 
