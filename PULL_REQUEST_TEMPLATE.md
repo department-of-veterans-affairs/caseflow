@@ -8,7 +8,8 @@ Please explain the changes you made here.
 
 ### Testing Plan
 1. Go to ...
-1. For integrations: [Deploy the custom branch to UAT to test](https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/Appeals-Deployment---Deploy-Custom-Branch-to-UAT)
+
+- [ ] For higher-risk changes: [Deploy the custom branch to UAT to test](https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/Applications---Deploy-Custom-Branch-to-UAT)
 
 ### User Facing Changes
  - [ ] Screenshots of UI changes added to PR & Original Issue
@@ -41,3 +42,4 @@ Please explain the changes you made here.
   * [ ] Request: Service name, method name, input field names
   * [ ] Response: Check expected data structure
 * [ ] Update Fakes
+* [ ] Integrations impacting functionality are tested in Caseflow UAT
