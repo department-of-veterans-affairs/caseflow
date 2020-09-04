@@ -11,8 +11,47 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   include AutomaticCaseDistribution
 
   def perform
-    distribute_non_genpop_priority_appeals
-    distribute_genpop_priority_appeals
+    @tied_distributions = distribute_non_genpop_priority_appeals
+    @genpop_distributions = distribute_genpop_priority_appeals
+    send_job_report
+  end
+
+  def send_job_report
+    slack_service.send_notification(slack_report.join("\n"), self.class.name, "#appeals-job-alerts")
+    datadog_report_runtime(metric_group_name: "priority_appeal_push_job")
+  end
+
+  def slack_report
+    report = []
+    report << "*Number of cases tied to judges distributed*: " \
+              "#{@tied_distributions.map { |distribution| distribution.statistics['batch_size'] }.sum}"
+    report << "*Number of general population cases distributed*: " \
+              "#{@genpop_distributions.map { |distribution| distribution.statistics['batch_size'] }.sum}"
+
+    appeals_not_distributed = docket_coordinator.dockets.map do |docket_type, docket|
+      report << "*Age of oldest #{docket_type} case*: #{docket.oldest_priority_appeal_days_waiting} days"
+      [docket_type, docket.ready_priority_appeal_ids]
+    end.to_h
+
+    report << "*Number of appeals _not_ distributed*: #{appeals_not_distributed.values.flatten.count}"
+
+    report << ""
+    report << "*Debugging information*"
+    report << "Priority Target: #{priority_target}"
+    report << "Previous monthly distributions: #{priority_distributions_this_month_for_eligible_judges}"
+
+    if appeals_not_distributed.values.flatten.any?
+      add_stuck_appeals_to_report(report, appeals_not_distributed)
+    end
+
+    report
+  end
+
+  def add_stuck_appeals_to_report(report, appeals)
+    report.unshift("[WARN]")
+    report << "Legacy appeals not distributed: `LegacyAppeal.where(vacols_id: #{appeals[:legacy]})`"
+    report << "AMA appeals not distributed: `Appeal.where(uuid: #{appeals.values.drop(1).flatten})`"
+    report << COPY::PRIORITY_PUSH_WARNING_MESSAGE
   end
 
   # Distribute all priority cases tied to a judge without limit
