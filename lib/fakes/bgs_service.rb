@@ -162,10 +162,12 @@ class Fakes::BGSService
     self.class.rating_store.fetch_and_inflate(participant_id) || {}
   end
 
-  def cancel_end_product(file_number, end_product_code, end_product_modifier)
+  # benefit_type_code is not available data on end product data we fetch from BGS,
+  # and isn't part of the end product store in fakes
+  def cancel_end_product(file_number, end_product_code, end_product_modifier, payee_code, _benefit_type)
     end_products = get_end_products(file_number)
     matching_eps = end_products.select do |ep|
-      ep[:claim_type_code] == end_product_code && ep[:end_product_type_code] == end_product_modifier
+      ep[:claim_type_code] == end_product_code && ep[:modifier] == end_product_modifier && ep[:payee_code] == payee_code
     end
     matching_eps.each do |ep|
       ep[:status_type_code] = "CAN"
