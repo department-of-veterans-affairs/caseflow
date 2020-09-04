@@ -516,7 +516,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     shared_examples "correct target distributions" do
       before do
         allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-          .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(to_judge_hash(distribution_counts))
+          .to receive(:priority_distributions_this_month_for_eligible_judges)
+          .and_return(to_judge_hash(distribution_counts))
         allow_any_instance_of(DocketCoordinator).to receive(:priority_count).and_return(priority_count)
       end
 
@@ -633,7 +634,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     shared_examples "correct target" do
       before do
         allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-          .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(to_judge_hash(distribution_counts))
+          .to receive(:priority_distributions_this_month_for_eligible_judges)
+          .and_return(to_judge_hash(distribution_counts))
         allow_any_instance_of(DocketCoordinator).to receive(:priority_count).and_return(priority_count)
       end
 
@@ -678,7 +680,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
 
       context "when there have been some distributions this month" do
-        let(:number_of_distributions) { eligible_judge_count * 2 }
+        let(:number_of_distributions) { eligible_judge_count }
 
         context "when there are more eligible judges than cases to distribute" do
           let(:eligible_judge_count) { 10 }
@@ -693,7 +695,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         context "when there are more cases to distribute than eligible judges" do
           let(:eligible_judge_count) { 5 }
           let(:priority_count) { 10 }
-          # Priority target will be 2evenly distributed amongst judges
+          # Priority target will be evenly distributed amongst judges
           let(:expected_priority_target) { 12 }
 
           it_behaves_like "correct target"
