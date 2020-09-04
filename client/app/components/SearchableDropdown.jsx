@@ -255,7 +255,7 @@ SearchableDropdown.propTypes = {
 
 /* eslint-disable no-undefined */
 SearchableDropdown.defaultProps = {
-  isClearable: false,
+  isClearable: true,
   clearOnSelect: false,
   loading: false,
   filterOption: undefined,

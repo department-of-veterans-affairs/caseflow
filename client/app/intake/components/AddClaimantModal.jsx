@@ -123,7 +123,7 @@ export const AddClaimantModal = ({
         readOnly={unlistedClaimant}
         debounce={250}
         strongLabel
-        isClearable={true}
+        isClearable
       />
 
       <Checkbox
