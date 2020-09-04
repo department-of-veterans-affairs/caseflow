@@ -7,13 +7,6 @@
 # Legacy appeals have VACOLS and BGS as dependencies.
 
 class LegacyAppeal < CaseflowRecord
-  # Reverting changes that supported new contentions in Caseflow Dispatch. See #14714
-  self.ignored_columns = %w[burn_pit
-                            military_sexual_trauma
-                            blue_water
-                            us_court_of_appeals_for_veterans_claims
-                            no_special_issues]
-
   include AppealConcern
   include AssociatedVacolsModel
   include BgsService
@@ -96,13 +89,8 @@ class LegacyAppeal < CaseflowRecord
   end
 
   # To match Appeals AOD behavior
-  def aod?
-    aod
-  end
-
-  def advanced_on_docket?
-    aod
-  end
+  alias aod? aod
+  alias advanced_on_docket? aod
 
   cache_attribute :dic do
     issues.map(&:dic).include?(true)
@@ -786,6 +774,8 @@ class LegacyAppeal < CaseflowRecord
   def cavc
     type == "Court Remand"
   end
+
+  alias cavc? cavc
 
   # Adding anything to this to_hash can trigger a lazy load which slows down
   # welcome gate dramatically. Don't add anything to it without also adding it to
