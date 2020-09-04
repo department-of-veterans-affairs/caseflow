@@ -182,7 +182,7 @@ describe Distribution, :all_dbs do
     end
 
     context "with priority_acd on" do
-      before { FeatureToggle.enable!(:priority_acd) }
+      before { FeatureToggle.enable!(:priority_acd, users: [judge.css_id]) }
       after { FeatureToggle.disable!(:priority_acd) }
 
       BACKLOG_LIMIT = VACOLS::CaseDocket::HEARING_BACKLOG_LIMIT

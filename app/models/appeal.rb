@@ -333,6 +333,10 @@ class Appeal < DecisionReview
     veteran_middle_name&.first
   end
 
+  def cavc?
+    false if cavc == "not implemented for AMA"
+  end
+
   def cavc
     "not implemented for AMA"
   end
