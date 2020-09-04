@@ -443,7 +443,9 @@ describe RequestIssuesUpdate, :all_dbs do
           expect_any_instance_of(Fakes::BGSService).to receive(:cancel_end_product).with(
             veteran.file_number,
             "030HLRNR",
-            "030"
+            "030",
+            "00",
+            "1"
           )
 
           allow_remove_contention

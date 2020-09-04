@@ -23,7 +23,9 @@ export const AppellantSection = ({
 }) => (
   <VirtualHearingSection label={appellantTitle}>
     <AddressLine
-      name={`${hearing?.veteranFirstName} ${hearing?.veteranLastName}`}
+      name={hearing?.appellantFullName ?
+         hearing?.appellantFullName :
+          `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`}
       addressLine1={hearing?.appellantAddressLine1}
       addressState={hearing?.appellantState}
       addressCity={hearing?.appellantCity}
@@ -38,6 +40,7 @@ export const AppellantSection = ({
             onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
             time={hearing.scheduledTimeString}
             name={`${appellantTitle} Timezone`}
+            errorMessage={errors?.appellantTz}
           />
           <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
         </div>

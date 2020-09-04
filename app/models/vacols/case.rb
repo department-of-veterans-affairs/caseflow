@@ -140,7 +140,7 @@ class VACOLS::Case < VACOLS::Record
       left join (
         select FOLDER_NR, count(*) CNT
         from HEARSCHED
-        where HEARING_TYPE IN ('C', 'T', 'V')
+        where HEARING_TYPE IN ('C', 'T', 'V', 'R')
           AND AOD IN ('G', 'Y')
         group by FOLDER_NR
       ) AOD_HEARINGS
