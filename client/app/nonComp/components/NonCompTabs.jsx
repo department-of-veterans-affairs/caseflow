@@ -14,7 +14,6 @@ class NonCompTabsUnconnected extends React.PureComponent {
       label: 'In progress tasks',
       page: <TaskTableTab
         key="inprogress"
-        description={COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}
         predefinedColumns={{ includeDaysWaiting: true,
           defaultSortIdx: 3 }}
         tasks={this.props.inProgressTasks} />
@@ -74,7 +73,7 @@ class TaskTableTab extends React.PureComponent {
 
   render = () => {
     return <React.Fragment>
-      <div className="cf-noncomp-queue-completed-task">{this.props.description ?? null}</div>
+      {this.props.description && <div className="cf-noncomp-queue-completed-task">{this.props.description}</div>}
       <div className="cf-search-ahead-parent cf-push-right cf-noncomp-search">
         <SearchBar
           id="searchBar"
