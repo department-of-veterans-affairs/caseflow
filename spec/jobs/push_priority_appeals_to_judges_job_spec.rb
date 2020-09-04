@@ -307,7 +307,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       job.instance_variable_set(:@tied_distributions, distributed_cases)
       job.instance_variable_set(:@genpop_distributions, distributed_cases)
       allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-        .to receive(:eligible_judge_priority_distributions_this_month).and_return(previous_distributions)
+        .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(previous_distributions)
       allow_any_instance_of(DocketCoordinator).to receive(:priority_count).and_return(20)
     end
 
