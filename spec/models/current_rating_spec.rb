@@ -5,15 +5,15 @@ describe CurrentRating do
     let(:bgs) { double("BGSService") }
     let(:pid) { "12345" }
     before do
-      allow(BGSService).to receive(:new) { bgs}
+      allow(BGSService).to receive(:new) { bgs }
     end
 
     subject { CurrentRating.fetch_by_participant_id(pid) }
 
     context "when participant exists" do
-      let(:bgs_hash) {
+      let(:bgs_hash) do
         { ptcpnt_vet_id: pid }
-      }
+      end
       before do
         allow(bgs).to receive(:find_current_rating_profile_by_ptcpnt_id).with(pid).and_return(bgs_hash)
       end
@@ -35,7 +35,7 @@ describe CurrentRating do
 
   describe "#from_bgs_hash" do
     let(:yesterday) { DateTime.yesterday }
-    let(:bgs_hash) {
+    let(:bgs_hash) do
       {
         ptcpnt_vet_id: "participant ID",
         prfl_dt: yesterday,
@@ -43,7 +43,7 @@ describe CurrentRating do
         rating_issues: [
           {
             rba_issue_id: "rating issue ID",
-            decn_txt: "issue description text",
+            decn_txt: "issue description text"
           }
         ],
         disabilities: [
@@ -54,7 +54,7 @@ describe CurrentRating do
         ],
         associated_claims: { clm_id: "EP claim ID", bnft_clm_tc: "600PRI" }
       }
-    }
+    end
 
     it "hydrates an object that behaves like a Rating" do
       rating = CurrentRating.from_bgs_hash(bgs_hash)
