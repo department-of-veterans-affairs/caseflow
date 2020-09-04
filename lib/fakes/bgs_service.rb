@@ -135,6 +135,7 @@ class Fakes::BGSService
     format_contentions(contentions)
   end
 
+  # :reek:FeatureEnvy
   def find_current_rating_profile_by_ptcpnt_id(participant_id)
     record = get_rating_record(participant_id)
     fail BGS::ShareError, "No Record Found" if record.blank?
@@ -146,10 +147,11 @@ class Fakes::BGSService
     profile_date_str = rating[:comp_id][:prfil_dt].iso8601
     profile_key = profiles.keys.find { |key| key.to_s.start_with?(profile_date_str) }
 
-    # The bgs_hash format of a current rating profile is close to what the Rating common code
+    # The bgs_hash format of a current rating profile is almost what the Rating common code
     # expects, but at the top level it merges some of the rating and the profile fields.
     bgs_hash = profiles[profile_key].merge(rating[:comp_id])
-    bgs_hash[:prmlgn_dt] = rating[:prmlgn_dt]
+    bgs_hash[:prfl_dt] = bgs_hash.delete(:prfil_dt).to_datetime # spelling mismatch
+    bgs_hash[:prmlgn_dt] = rating[:prmlgn_dt].to_datetime
     bgs_hash
   end
 

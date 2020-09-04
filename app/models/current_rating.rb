@@ -16,7 +16,7 @@ class CurrentRating < Rating
     def from_bgs_hash(data)
       new(
         participant_id: data[:ptcpnt_vet_id],
-        profile_date: data[:prfil_dt],
+        profile_date: data[:prfl_dt],
         promulgation_date: data[:prmlgn_dt],
         rating_profile: data
       )
