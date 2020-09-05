@@ -105,7 +105,7 @@ export const AddClaimantModal = ({
       </div>
       <SearchableDropdown
         name="relationship"
-        label="Claimant's relationship to the veteran"
+        label="Claimant's relationship to the Veteran"
         onChange={handleChangeRelationship}
         value={relationship}
         options={relationshipOpts}
