@@ -374,7 +374,7 @@ feature "Intake Add Issues Page", :all_dbs do
     end
   end
 
-  context "show untimely issue modal with covid_timeliness_exemption feature toggle" , focus: true do
+  context "show untimely issue modal with covid_timeliness_exemption feature toggle" do
     before do
       FeatureToggle.enable!(:covid_timeliness_exemption)
       setup_legacy_opt_in_appeals(veteran.file_number)
