@@ -374,7 +374,7 @@ feature "Intake Add Issues Page", :all_dbs do
     end
   end
 
-  context "show untimely issue modal with covid_timeliness_exemption feature toggle" do
+  context "show untimely issue modal with covid_timeliness_exemption feature toggle" , focus: true do
     before do
       FeatureToggle.enable!(:covid_timeliness_exemption)
       setup_legacy_opt_in_appeals(veteran.file_number)
@@ -624,7 +624,7 @@ feature "Intake Add Issues Page", :all_dbs do
           click_intake_add_issue
           expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
           find(".cf-select__control").click
-          expect(page).to have_content("Constested Claims - Attorney fees")
+          expect(page).to have_content("Contested Claims - Attorney fees")
         end
       end
 
@@ -638,7 +638,7 @@ feature "Intake Add Issues Page", :all_dbs do
           click_intake_add_issue
           expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
           find(".cf-select__control").click
-          expect(page).to_not have_content("Constested Claims - Attorney fees")
+          expect(page).to_not have_content("Contested Claims - Attorney fees")
           expect(page).to have_content("Active Duty Adjustments")
         end
       end
