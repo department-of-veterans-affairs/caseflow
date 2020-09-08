@@ -12,13 +12,15 @@ describe LegacyAppeal, :all_dbs do
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
   let(:veteran_address) { nil }
   let(:appellant_address) { nil }
+  let(:changed_request_type) { nil }
 
   let(:appeal) do
     create(
       :legacy_appeal,
       vacols_case: vacols_case,
       veteran_address: veteran_address,
-      appellant_address: appellant_address
+      appellant_address: appellant_address,
+      changed_request_type: changed_request_type
     )
   end
 
