@@ -2073,6 +2073,20 @@ describe LegacyAppeal, :all_dbs do
         let(:vacols_case) { create(:case, :travel_board_hearing) }
         it { is_expected.to eq(:travel_board) }
       end
+
+      context "when request type overriden in Caseflow to video" do
+        let(:changed_request_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:video] }
+        let(:vacols_case) { create(:case, :travel_board_hearing) }
+
+        it { is_expected.to eq(:video) }
+      end
+
+      context "when request type overriden in Caseflow to virtual" do
+        let(:changed_request_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:virtual] }
+        let(:vacols_case) { create(:case, :travel_board_hearing) }
+
+        it { is_expected.to eq(:virtual) }
+      end
     end
 
     context "when unsupported type" do
