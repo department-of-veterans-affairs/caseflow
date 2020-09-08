@@ -170,7 +170,8 @@ class LegacyAppeal < CaseflowRecord
   READABLE_HEARING_REQUEST_TYPES = {
     central_board: "Central",
     travel_board: "Travel",
-    video: "Video"
+    video: "Video",
+    virtual: "Virtual"
   }.freeze
 
   def document_fetcher
