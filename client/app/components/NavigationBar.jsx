@@ -5,6 +5,7 @@ import { withRouter } from 'react-router';
 
 class CaseflowNavigationBar extends React.PureComponent {
   render = () => <NavigationBar
+    key={this.props.location.key}
     extraBanner={<PerformanceDegradationBanner />}
     {...this.props} />
 }
