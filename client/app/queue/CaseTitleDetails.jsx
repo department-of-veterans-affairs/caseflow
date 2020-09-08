@@ -129,6 +129,11 @@ export class CaseTitleDetails extends React.PureComponent {
 
     const showOvertimeButton = userRole === 'Judge' && (relevantLegacyTasks.length > 0 || userIsAssignedAmaJudge);
 
+    // for ama appeal, use docket name, for legacy appeal docket name is always legacy so
+    // we need to check if the request type is any of threee :central, video, travel or null
+    const showHearingRequestType = appeal?.docketName === 'hearing' ||
+      (appeal?.docketName === 'legacy' && appeal?.readableHearingRequestType);
+
     return (
       <TitleDetailsSubheader>
         <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}>
@@ -164,6 +169,12 @@ export class CaseTitleDetails extends React.PureComponent {
             </span>
           )}
         </TitleDetailsSubheaderSection>
+
+        {showHearingRequestType && (
+          <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_HEARING_REQUEST_TYPE_LABEL}>
+            {appeal.readableHearingRequestType ?? ''}
+          </TitleDetailsSubheaderSection>
+        )}
 
         {!userIsVsoEmployee && appeal && appeal.documentID && (
           <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}>

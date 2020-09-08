@@ -135,4 +135,6 @@ class WorkQueue::AppealSerializer
       case_review: object.latest_attorney_case_review
     ).editable?
   end
+
+  attribute :readable_hearing_request_type
 end
