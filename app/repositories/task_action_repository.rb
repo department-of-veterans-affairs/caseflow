@@ -154,7 +154,7 @@ class TaskActionRepository
       attorney = task.appeal.assigned_attorney
       {
         selected: attorney,
-        options: users_to_options([JudgeTeam.for_judge(task.assigned_to)&.attorneys, attorney].flatten.compact.uniq),
+        options: users_to_options(Attorney.list_all),
         type: PostDecisionMotion.name
       }
     end
