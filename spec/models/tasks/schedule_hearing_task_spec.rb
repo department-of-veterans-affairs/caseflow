@@ -265,6 +265,7 @@ describe ScheduleHearingTask, :all_dbs do
         expect(new_change_tasks.first.parent).to eq new_hearing_tasks.first
       end
     end
+
     context "AMA appeal" do
       let(:appeal) { create(:appeal) }
       let(:past_hearing_disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
@@ -297,6 +298,18 @@ describe ScheduleHearingTask, :all_dbs do
           expect { subject }
             .to raise_error(Caseflow::Error::ActionForbiddenError)
             .with_message(COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR)
+        end
+      end
+
+      context "there's another open task on the hearing task" do
+        let!(:extra_task) { create(:assign_hearing_disposition_task, parent: hearing_task_2) }
+
+        it "sends an exception to Raven and raises a RecordInvalid error" do
+          # tells Raven why we couldn't close the HearingTask
+          expect(Raven).to receive(:capture_exception)
+          # errors when we try to create a new HearingTaskAssociation on
+          # the same hearing as the still-open HearingTask
+          expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
         end
       end
     end
