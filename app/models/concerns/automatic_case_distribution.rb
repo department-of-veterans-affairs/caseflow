@@ -156,7 +156,7 @@ module AutomaticCaseDistribution
       .flat_map { |sym, docket| docket.age_of_n_oldest_priority_appeals(num).map { |age| [age, sym] } }
       .sort_by { |age, _| age }
       .first(num)
-      .group_by{ |_, sym| sym }
+      .group_by { |_, sym| sym }
       .transform_values(&:count)
   end
 end
