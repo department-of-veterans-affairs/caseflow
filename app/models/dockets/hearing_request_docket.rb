@@ -32,6 +32,6 @@ class HearingRequestDocket < Docket
     # 2x2 array containing 4 cases overall and we will end up distributing 4 cases rather than 2. Instead, reinstate the
     # limit here by filtering out the newest cases
     appeals_to_reject = appeals_array.flatten.sort_by(&:ready_for_distribution_at).drop(limit)
-    appeals_array.map{|appeals| appeals - appeals_to_reject}
+    appeals_array.map{ |appeals| appeals - appeals_to_reject }
   end
 end

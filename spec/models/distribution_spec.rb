@@ -488,10 +488,10 @@ describe Distribution, :all_dbs do
       let!(:priority_legacy_hearings_tied_to_judge) do
         legacy_priority_cases[2..3].map do |appeal|
           create(:case_hearing,
-                  :disposition_held,
-                  folder_nr: appeal.bfkey,
-                  hearing_date: 1.month.ago,
-                  board_member: judge.vacols_attorney_id)
+                 :disposition_held,
+                 folder_nr: appeal.bfkey,
+                 hearing_date: 1.month.ago,
+                 board_member: judge.vacols_attorney_id)
         end
       end
 

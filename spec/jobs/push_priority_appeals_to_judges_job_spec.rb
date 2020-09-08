@@ -342,7 +342,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     shared_examples "correct target distributions with leftovers" do
       before do
         allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-          .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(to_judge_hash(distribution_counts))
+          .to receive(:priority_distributions_this_month_for_eligible_judges)
+          .and_return(to_judge_hash(distribution_counts))
         allow_any_instance_of(DocketCoordinator).to receive(:priority_count).and_return(priority_count)
       end
 
@@ -762,7 +763,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     subject { PushPriorityAppealsToJudgesJob.new.priority_distributions_this_month_for_eligible_judges }
 
     before do
-      allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:priority_distributions_this_month_for_all_judges)
+      allow_any_instance_of(PushPriorityAppealsToJudgesJob)
+        .to receive(:priority_distributions_this_month_for_all_judges)
         .and_return(
           judge_without_team.id => 5,
           judge_without_active_team.id => 5,
