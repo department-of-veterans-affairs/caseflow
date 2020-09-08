@@ -1,4 +1,4 @@
-class AddChangedHearingRequestTypeToLegacyAppeal < ActiveRecord::Migration[5.2]
+class AddChangedHearingRequestTypeToLegacyAppeal < Caseflow::Migration
   def change
     add_column :legacy_appeals,
                :changed_request_type,
