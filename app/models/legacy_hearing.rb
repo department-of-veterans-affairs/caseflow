@@ -47,9 +47,9 @@ class LegacyHearing < CaseflowRecord
   vacols_attr_accessor :scheduled_for
 
   # request_type is the current value of HEARSCHED.HEARING_TYPE in VACOLS, but one
-  # should use original_request_type or readable_request_type to make sure we
-  # consistently get the value we expect, as we are now writing to this field in
-  # VACOLS when we convert a legacy hearing to and from virtual.
+  # should use original_request_type to make sure we consistently get the value we
+  # expect, as we are now writing to this field in VACOLS when we convert a legacy
+  # hearing to and from virtual.
   vacols_attr_accessor :request_type
 
   vacols_attr_accessor :venue_key, :vacols_record, :disposition
