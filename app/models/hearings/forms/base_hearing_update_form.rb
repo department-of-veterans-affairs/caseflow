@@ -32,6 +32,8 @@ class BaseHearingUpdateForm
 
       add_virtual_hearing_alert if show_virtual_hearing_progress_alerts?
     end
+
+    after_update_hearing
   end
 
   def hearing_alerts
@@ -45,6 +47,8 @@ class BaseHearingUpdateForm
   protected
 
   def update_hearing; end
+
+  def after_update_hearing; end
 
   def hearing_updates; end
 
