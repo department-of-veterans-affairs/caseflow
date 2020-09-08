@@ -233,6 +233,19 @@ class LegacyHearing < CaseflowRecord
     end
   end
 
+  def update_request_type_in_vacols(new_request_type)
+    if VACOLS::CaseHearing::HEARING_TYPES.exclude? new_request_type
+      fail HearingMapper::InvalidRequestTypeError, "\"#{new_request_type}\" is not a valid request type."
+    end
+
+    # update original_vacols_request_type if request_type is not virtual
+    if request_type != VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:virtual]
+      update!(original_vacols_request_type: request_type)
+    end
+
+    update_caseflow_and_vacols(request_type: new_request_type)
+  end
+
   def readable_location
     if original_request_type == HearingDay::REQUEST_TYPES[:central]
       return "Washington, DC"
