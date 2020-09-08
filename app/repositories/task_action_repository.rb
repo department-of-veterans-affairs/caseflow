@@ -152,9 +152,10 @@ class TaskActionRepository
 
     def address_motion_to_vacate_data(task, _user = nil)
       attorney = task.appeal.assigned_attorney
+      judge_attorneys = JudgeTeam.for_judge(task.assigned_to)&.attorneys
       {
         selected: attorney,
-        options: users_to_options([JudgeTeam.for_judge(task.assigned_to)&.attorneys, attorney].flatten.compact.uniq),
+        options: users_to_options([judge_attorneys.presence || Attorney.list_all, attorney].flatten.compact.uniq),
         type: PostDecisionMotion.name
       }
     end
@@ -310,6 +311,14 @@ class TaskActionRepository
         modal_title: COPY::SPECIAL_CASE_MOVEMENT_MODAL_TITLE,
         modal_body: COPY::SPECIAL_CASE_MOVEMENT_MODAL_DETAIL,
         modal_selector_placeholder: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER
+      }
+    end
+
+    def blocked_special_case_movement_data(task, _user = nil)
+      {
+        options: users_to_options(Judge.list_all),
+        type: BlockedSpecialCaseMovementTask.name,
+        blocking_tasks: task.visible_blocking_tasks.map(&:serialize_for_cancellation)
       }
     end
 

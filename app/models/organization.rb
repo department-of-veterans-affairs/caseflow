@@ -7,6 +7,7 @@ class Organization < CaseflowRecord
   has_many :users, through: :organizations_users
   has_many :judge_team_roles, through: :organizations_users
   has_many :non_admin_users, -> { non_admin }, class_name: "OrganizationsUser"
+  require_dependency "dvc_team"
 
   validates :name, presence: true
   validates :url, presence: true, uniqueness: true
@@ -134,6 +135,18 @@ class Organization < CaseflowRecord
 
   def completed_tasks_tab
     ::OrganizationCompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+  end
+
+  def serialize
+    {
+      accepts_priority_pushed_cases: accepts_priority_pushed_cases,
+      id: id,
+      name: name,
+      participant_id: participant_id,
+      type: type,
+      url: url,
+      user_admin_path: user_admin_path
+    }
   end
 
   private

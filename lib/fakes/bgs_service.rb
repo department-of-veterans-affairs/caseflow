@@ -135,6 +135,16 @@ class Fakes::BGSService
     format_contentions(contentions)
   end
 
+  # :reek:FeatureEnvy
+  def find_current_rating_profile_by_ptcpnt_id(participant_id)
+    record = get_rating_record(participant_id)
+    fail BGS::ShareError, "No Record Found" if record.blank?
+
+    # We grab the latest promulgated rating, assuming that under the hood BGS also does.
+    rating = record[:ratings].max_by { |rt| rt[:prmlgn_dt] }
+    rating_at_issue_profile_data(rating)
+  end
+
   def format_contentions(contentions)
     { contentions: contentions.map { |contention| format_contention(contention) } }
   end
@@ -162,10 +172,12 @@ class Fakes::BGSService
     self.class.rating_store.fetch_and_inflate(participant_id) || {}
   end
 
-  def cancel_end_product(file_number, end_product_code, end_product_modifier)
+  # benefit_type_code is not available data on end product data we fetch from BGS,
+  # and isn't part of the end product store in fakes
+  def cancel_end_product(file_number, end_product_code, end_product_modifier, payee_code, _benefit_type)
     end_products = get_end_products(file_number)
     matching_eps = end_products.select do |ep|
-      ep[:claim_type_code] == end_product_code && ep[:end_product_type_code] == end_product_modifier
+      ep[:claim_type_code] == end_product_code && ep[:modifier] == end_product_modifier && ep[:payee_code] == payee_code
     end
     matching_eps.each do |ep|
       ep[:status_type_code] = "CAN"
@@ -324,6 +336,27 @@ class Fakes::BGSService
       { ptcpnt_id: "56242925", nm: "MADELINE JENKINS", org_type_nm: "POA Attorney" },
       { ptcpnt_id: "21543986", nm: "ACADIA VETERAN SERVICES", org_type_nm: "POA State Organization" },
       { ptcpnt_id: "56154689", nm: "RANDALL KOHLER III", org_type_nm: "POA Attorney" }
+    ]
+  end
+
+  def pay_grade_list
+    [
+      { code: "E1", name: "E-1" },
+      { code: "E2", name: "E-2" },
+      { code: "E3", name: "E-3" },
+      { code: "E4", name: "E-4" },
+      { code: "E5", name: "E-5" },
+      { code: "E6", name: "E-6" },
+      { code: "E9", name: "E-9" },
+      { code: "O1", name: "O-1" },
+      { code: "O2", name: "O-2" },
+      { code: "O3", name: "O-3" },
+      { code: "O4", name: "O-4" },
+      { code: "O5", name: "O-5" },
+      { code: "WO1", name: "WO-1" },
+      { code: "WO2", name: "WO-2" },
+      { code: "WO3", name: "WO-3" },
+      { code: "WO4", name: "WO-4" }
     ]
   end
 

@@ -70,6 +70,7 @@ class Hearing < CaseflowRecord
   attr_accessor :override_full_hearing_day_validation
 
   HEARING_TYPES = {
+    R: "Virtual",
     V: "Video",
     T: "Travel",
     C: "Central"
@@ -101,6 +102,8 @@ class Hearing < CaseflowRecord
   def readable_request_type
     HEARING_TYPES[request_type.to_sym]
   end
+
+  alias original_request_type request_type
 
   def assigned_to_vso?(user)
     appeal.tasks.any? do |task|

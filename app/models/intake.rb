@@ -234,6 +234,8 @@ class Intake < CaseflowRecord
 
     zip_code_invalid = veteran.errors.details[:zip_code]&.any? { |e| e[:error] == "invalid_zip_code" }
 
+    pay_grade_invalid = veteran.errors.details[:pay_grades]&.any? { |e| e[:error] == "invalid_pay_grade" }
+
     {
       veteran_missing_fields: missing_fields,
       veteran_address_too_long: address_too_long,
@@ -242,7 +244,8 @@ class Intake < CaseflowRecord
       veteran_city_too_long: city_too_long,
       veteran_date_of_birth_invalid: date_of_birth,
       veteran_name_suffix_invalid: name_suffix_invalid,
-      veteran_zip_code_invalid: zip_code_invalid
+      veteran_zip_code_invalid: zip_code_invalid,
+      veteran_pay_grade_invalid: pay_grade_invalid
     }
   end
   # rubocop:enable Metrics/AbcSize
