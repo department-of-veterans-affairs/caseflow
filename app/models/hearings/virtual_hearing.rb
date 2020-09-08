@@ -175,7 +175,7 @@ class VirtualHearing < CaseflowRecord
   end
 
   def associated_hearing_is_video
-    if hearing.request_type != HearingDay::REQUEST_TYPES[:video]
+    if hearing.original_request_type != HearingDay::REQUEST_TYPES[:video]
       errors.add(:hearing, "must be a video hearing")
     end
   end

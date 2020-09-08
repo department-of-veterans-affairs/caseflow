@@ -107,28 +107,44 @@ describe HearingMapper do
   end
 
   context ".hearing_fields_to_vacols_codes" do
+    let!(:user) { create(:user, :with_vacols_attorney_record) }
+    let(:scheduled_datetime) { Time.zone.now + 2.weeks }
+    let!(:scheduled_datetime_formatted) { VacolsHelper.format_datetime_with_utc_timezone(scheduled_datetime) }
+
     subject { HearingMapper.hearing_fields_to_vacols_codes(info) }
 
     context "when all values are present" do
       let(:info) do
-        { notes: "test notes",
-          aod: "none",
-          transcript_requested: false,
+        { request_type: "V",
+          scheduled_for: scheduled_datetime,
+          notes: "test notes",
           disposition: "postponed",
           hold_open: 60,
+          aod: "none",
           add_on: false,
-          representative_name: "test name" }
+          transcript_requested: false,
+          representative_name: "test name",
+          folder_nr: "1234567",
+          room: "3",
+          bva_poc: "TESTVALUE",
+          judge_id: user.id }
       end
 
       it "should convert to Vacols values" do
         result = subject
+        expect(result[:request_type]).to eq "V"
+        expect(result[:scheduled_for]).to eq scheduled_datetime_formatted
         expect(result[:notes]).to eq "test notes"
-        expect(result[:aod]).to eq :N
-        expect(result[:transcript_requested]).to eq :N
         expect(result[:disposition]).to eq :P
         expect(result[:hold_open]).to eq 60
+        expect(result[:aod]).to eq :N
         expect(result[:add_on]).to eq :N
+        expect(result[:transcript_requested]).to eq :N
         expect(result[:representative_name]).to eq "test name"
+        expect(result[:folder_nr]).to eq "1234567"
+        expect(result[:room]).to eq "3"
+        expect(result[:bva_poc]).to eq "TESTVALUE"
+        expect(result[:judge_id]).to eq user.vacols_attorney_id
       end
     end
 
@@ -173,6 +189,15 @@ describe HearingMapper do
       end
     end
 
+    context "when request_type is not valid" do
+      let(:info) do
+        { request_type: "NOPE" }
+      end
+      it "raises InvalidRequestTypeError error" do
+        expect { subject }.to raise_error(HearingMapper::InvalidRequestTypeError)
+      end
+    end
+
     context "when aod is not valid" do
       let(:info) do
         { aod: :foo }
@@ -206,6 +231,15 @@ describe HearingMapper do
       end
       it "raises InvalidNotesError error" do
         expect { subject }.to raise_error(HearingMapper::InvalidAddOnError)
+      end
+    end
+
+    context "when request_type is empty" do
+      let(:info) do
+        { request_type: nil }
+      end
+      it "raises InvalidRequestTypeError error" do
+        expect { subject }.to raise_error(HearingMapper::InvalidRequestTypeError)
       end
     end
 
