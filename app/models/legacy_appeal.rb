@@ -388,7 +388,23 @@ class LegacyAppeal < CaseflowRecord
   # `hearing_request_type` is a direct mapping from VACOLS and has some unused
   # values. Also, `hearing_request_type` alone can't disambiguate a video hearing
   # from a travel board hearing. This method cleans all of these issues up.
+  #
+  # [Sept. 2020]:
+  #   In response to COVID, the appellant has the option of changing their hearing
+  #   preference if they were scheduled for a travel board hearing. This method captures
+  #   if a travel board hearing request type was overridden in Caseflow.
   def sanitized_hearing_request_type
+    if changed_hearing_request_type.present?
+      case changed_hearing_request_type
+      when VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:video]
+        :video
+      when VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:virtual]
+        :virtual
+      else
+        fail HearingMapper::InvalidRequestTypeError, "\"#{changed_hearing_request_type}\" is not a valid request type."
+      end
+    end
+
     case hearing_request_type
     when :central_office
       :central_office
