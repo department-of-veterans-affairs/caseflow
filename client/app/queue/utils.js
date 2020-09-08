@@ -306,7 +306,7 @@ export const prepareAppealForStore = (appeals) => {
       veteranFullName: appeal.attributes.veteran_full_name,
       veteranFileNumber: appeal.attributes.veteran_file_number,
       isPaperCase: appeal.attributes.paper_case,
-      sanitizedHearingRequestType: appeal.attributes.sanitized_hearing_request_type,
+      readableHearingRequestType: appeal.attributes.readable_hearing_request_type,
       vacateType: appeal.attributes.vacate_type
     };
 
