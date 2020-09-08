@@ -665,7 +665,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         context "when there are more cases to distribute than eligible judges" do
           let(:eligible_judge_count) { 5 }
           let(:priority_count) { 10 }
-          # Priority target will be 2evenly distributed amongst judges
+          # Priority target will be evenly distributed amongst judges
           let(:expected_priority_target) { 2 }
 
           it_behaves_like "correct target"
@@ -681,7 +681,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
 
       context "when there have been some distributions this month" do
-        let(:number_of_distributions) { eligible_judge_count }
+        let(:number_of_distributions) { 10 }
 
         context "when there are more eligible judges than cases to distribute" do
           let(:eligible_judge_count) { 10 }
