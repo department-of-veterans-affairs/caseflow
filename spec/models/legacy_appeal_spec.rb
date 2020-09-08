@@ -1978,59 +1978,78 @@ describe LegacyAppeal, :all_dbs do
   end
 
   context "#update" do
-    subject { appeal.update(appeals_hash) }
+    subject { appeal.update!(appeals_hash) }
     let(:vacols_case) { create(:case) }
 
     context "when Vacols does not need an update" do
-      let(:appeals_hash) do
-        { worksheet_issues_attributes: [{
-          remand: true,
-          omo: true,
-          description: "Cabbage\nPickle",
-          notes: "Donkey\nCow",
-          from_vacols: true,
-          vacols_sequence_id: 1
-        }] }
+      context "updating worksheet issues" do
+        let(:appeals_hash) do
+          { worksheet_issues_attributes: [{
+            remand: true,
+            omo: true,
+            description: "Cabbage\nPickle",
+            notes: "Donkey\nCow",
+            from_vacols: true,
+            vacols_sequence_id: 1
+          }] }
+        end
+
+        it "updates worksheet issues" do
+          expect(appeal.worksheet_issues.count).to eq(0)
+          subject # do update
+          expect(appeal.worksheet_issues.count).to eq(1)
+
+          issue = appeal.worksheet_issues.first
+          expect(issue.remand).to eq true
+          expect(issue.allow).to eq false
+          expect(issue.deny).to eq false
+          expect(issue.dismiss).to eq false
+          expect(issue.omo).to eq true
+          expect(issue.description).to eq "Cabbage\nPickle"
+          expect(issue.notes).to eq "Donkey\nCow"
+
+          # test that a 2nd save updates the same record, rather than create new one
+          id = appeal.worksheet_issues.first.id
+          appeals_hash[:worksheet_issues_attributes][0][:deny] = true
+          appeals_hash[:worksheet_issues_attributes][0][:notes] = "Tomato"
+          appeals_hash[:worksheet_issues_attributes][0][:id] = id
+
+          appeal.update(appeals_hash)
+
+          expect(appeal.worksheet_issues.count).to eq(1)
+          issue = appeal.worksheet_issues.first
+          expect(issue.id).to eq(id)
+          expect(issue.deny).to eq(true)
+          expect(issue.remand).to eq(true)
+          expect(issue.allow).to eq(false)
+          expect(issue.dismiss).to eq(false)
+          expect(issue.description).to eq "Cabbage\nPickle"
+          expect(issue.notes).to eq "Tomato"
+
+          # soft delete an issue
+          appeals_hash[:worksheet_issues_attributes][0][:_destroy] = "1"
+          appeal.update(appeals_hash)
+          expect(appeal.worksheet_issues.count).to eq(0)
+          expect(appeal.worksheet_issues.with_deleted.count).to eq(1)
+          expect(appeal.worksheet_issues.with_deleted.first.deleted_at).to_not eq nil
+        end
       end
 
-      it "updates worksheet issues" do
-        expect(appeal.worksheet_issues.count).to eq(0)
-        subject # do update
-        expect(appeal.worksheet_issues.count).to eq(1)
+      context "updating changed_request_type to valid value" do
+        let(:appeals_hash) { { changed_request_type: "V" } }
 
-        issue = appeal.worksheet_issues.first
-        expect(issue.remand).to eq true
-        expect(issue.allow).to eq false
-        expect(issue.deny).to eq false
-        expect(issue.dismiss).to eq false
-        expect(issue.omo).to eq true
-        expect(issue.description).to eq "Cabbage\nPickle"
-        expect(issue.notes).to eq "Donkey\nCow"
+        it "successfully updates" do
+          subject
+          expect(appeal.reload.changed_request_type).to eq(VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:video])
+        end
+      end
 
-        # test that a 2nd save updates the same record, rather than create new one
-        id = appeal.worksheet_issues.first.id
-        appeals_hash[:worksheet_issues_attributes][0][:deny] = true
-        appeals_hash[:worksheet_issues_attributes][0][:notes] = "Tomato"
-        appeals_hash[:worksheet_issues_attributes][0][:id] = id
+      context "updating changed_request_type to invalid value" do
+        let(:appeals_hash) { { changed_request_type: "INVALID" } }
 
-        appeal.update(appeals_hash)
-
-        expect(appeal.worksheet_issues.count).to eq(1)
-        issue = appeal.worksheet_issues.first
-        expect(issue.id).to eq(id)
-        expect(issue.deny).to eq(true)
-        expect(issue.remand).to eq(true)
-        expect(issue.allow).to eq(false)
-        expect(issue.dismiss).to eq(false)
-        expect(issue.description).to eq "Cabbage\nPickle"
-        expect(issue.notes).to eq "Tomato"
-
-        # soft delete an issue
-        appeals_hash[:worksheet_issues_attributes][0][:_destroy] = "1"
-        appeal.update(appeals_hash)
-        expect(appeal.worksheet_issues.count).to eq(0)
-        expect(appeal.worksheet_issues.with_deleted.count).to eq(1)
-        expect(appeal.worksheet_issues.with_deleted.first.deleted_at).to_not eq nil
+        it "throws an exception" do
+          expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+        end
       end
     end
   end
