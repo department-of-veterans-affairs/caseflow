@@ -3,6 +3,7 @@
 module HearingMapper
   class InvalidHoldOpenError < StandardError; end
   class InvalidAodError < StandardError; end
+  class InvalidRequestTypeError < StandardError; end
   class InvalidDispositionError < StandardError; end
   class InvalidTranscriptRequestedError < StandardError; end
   class InvalidNotesError < StandardError; end
@@ -12,6 +13,7 @@ module HearingMapper
   class << self
     def hearing_fields_to_vacols_codes(hearing_info)
       {
+        request_type: validate_request_type(hearing_info[:request_type], hearing_info.keys),
         scheduled_for: VacolsHelper.format_datetime_with_utc_timezone(hearing_info[:scheduled_for]),
         notes: notes_to_vacols_format(hearing_info[:notes]),
         disposition: disposition_to_vacols_format(hearing_info[:disposition], hearing_info.keys),
@@ -91,6 +93,18 @@ module HearingMapper
       fail(InvalidNotesError) if !value.is_a?(String)
 
       value[0, 1000]
+    end
+
+    def validate_request_type(value, keys)
+      # request_type must be valid
+      blank_value_passed = keys.include?(:request_type) && value.blank?
+      invalid_value_passed = value.present? && VACOLS::CaseHearing::HEARING_TYPES.exclude?(value)
+
+      if blank_value_passed || invalid_value_passed
+        fail InvalidRequestTypeError, "\"#{value}\" is not a valid request type."
+      end
+
+      value
     end
 
     def disposition_to_vacols_format(value, keys)

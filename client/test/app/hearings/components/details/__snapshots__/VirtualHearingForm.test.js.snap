@@ -1566,7 +1566,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
               >
                 <SearchableDropdown
                   clearOnSelect={false}
-                  clearable={false}
+                  isClearable={true}
                   label="Veteran Timezone"
                   loading={false}
                   name="appellantTz"
@@ -2385,11 +2385,11 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         <StateManager
                           cache={false}
                           classNamePrefix="cf-select"
-                          clearable={false}
                           defaultInputValue=""
                           defaultMenuIsOpen={false}
                           defaultValue={null}
                           inputId="appellantTz"
+                          isClearable={true}
                           isDisabled={false}
                           isLoading={false}
                           isSearchable={true}
@@ -3179,7 +3179,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                             cache={false}
                             captureMenuScroll={false}
                             classNamePrefix="cf-select"
-                            clearable={false}
                             closeMenuOnScroll={false}
                             closeMenuOnSelect={true}
                             components={Object {}}
@@ -3191,6 +3190,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                             getOptionValue={[Function]}
                             inputId="appellantTz"
                             inputValue=""
+                            isClearable={true}
                             isDisabled={false}
                             isLoading={false}
                             isMulti={false}
@@ -4786,7 +4786,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                   "cache": false,
                                   "captureMenuScroll": false,
                                   "classNamePrefix": "cf-select",
-                                  "clearable": false,
                                   "closeMenuOnScroll": false,
                                   "closeMenuOnSelect": true,
                                   "components": Object {},
@@ -4799,6 +4798,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                   "getOptionValue": [Function],
                                   "inputId": "appellantTz",
                                   "inputValue": "",
+                                  "isClearable": true,
                                   "isDisabled": false,
                                   "isLoading": false,
                                   "isMulti": false,
@@ -6445,7 +6445,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                         "cache": false,
                                         "captureMenuScroll": false,
                                         "classNamePrefix": "cf-select",
-                                        "clearable": false,
                                         "closeMenuOnScroll": false,
                                         "closeMenuOnSelect": true,
                                         "components": Object {},
@@ -6458,6 +6457,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                         "getOptionValue": [Function],
                                         "inputId": "appellantTz",
                                         "inputValue": "",
+                                        "isClearable": true,
                                         "isDisabled": false,
                                         "isLoading": false,
                                         "isMulti": false,
@@ -8112,7 +8112,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               "cache": false,
                                               "captureMenuScroll": false,
                                               "classNamePrefix": "cf-select",
-                                              "clearable": false,
                                               "closeMenuOnScroll": false,
                                               "closeMenuOnSelect": true,
                                               "components": Object {},
@@ -8125,6 +8124,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               "getOptionValue": [Function],
                                               "inputId": "appellantTz",
                                               "inputValue": "",
+                                              "isClearable": true,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -9766,7 +9766,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "cache": false,
                                                     "captureMenuScroll": false,
                                                     "classNamePrefix": "cf-select",
-                                                    "clearable": false,
                                                     "closeMenuOnScroll": false,
                                                     "closeMenuOnSelect": true,
                                                     "components": Object {},
@@ -9779,6 +9778,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "getOptionValue": [Function],
                                                     "inputId": "appellantTz",
                                                     "inputValue": "",
+                                                    "isClearable": true,
                                                     "isDisabled": false,
                                                     "isLoading": false,
                                                     "isMulti": false,
@@ -10657,7 +10657,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "cache": false,
                                                     "captureMenuScroll": false,
                                                     "classNamePrefix": "cf-select",
-                                                    "clearable": false,
                                                     "closeMenuOnScroll": false,
                                                     "closeMenuOnSelect": true,
                                                     "components": Object {},
@@ -10670,6 +10669,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "getOptionValue": [Function],
                                                     "inputId": "appellantTz",
                                                     "inputValue": "",
+                                                    "isClearable": true,
                                                     "isDisabled": false,
                                                     "isLoading": false,
                                                     "isMulti": false,
@@ -12392,7 +12392,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               "cache": false,
                                               "captureMenuScroll": false,
                                               "classNamePrefix": "cf-select",
-                                              "clearable": false,
                                               "closeMenuOnScroll": false,
                                               "closeMenuOnSelect": true,
                                               "components": Object {},
@@ -12405,6 +12404,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               "getOptionValue": [Function],
                                               "inputId": "appellantTz",
                                               "inputValue": "",
+                                              "isClearable": true,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -14041,7 +14041,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "cache": false,
                                                     "captureMenuScroll": false,
                                                     "classNamePrefix": "cf-select",
-                                                    "clearable": false,
                                                     "closeMenuOnScroll": false,
                                                     "closeMenuOnSelect": true,
                                                     "components": Object {},
@@ -14054,6 +14053,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "getOptionValue": [Function],
                                                     "inputId": "appellantTz",
                                                     "inputValue": "",
+                                                    "isClearable": true,
                                                     "isDisabled": false,
                                                     "isLoading": false,
                                                     "isMulti": false,
@@ -15701,7 +15701,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "cache": false,
                                                     "captureMenuScroll": false,
                                                     "classNamePrefix": "cf-select",
-                                                    "clearable": false,
                                                     "closeMenuOnScroll": false,
                                                     "closeMenuOnSelect": true,
                                                     "components": Object {},
@@ -15714,6 +15713,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "getOptionValue": [Function],
                                                     "inputId": "appellantTz",
                                                     "inputValue": "",
+                                                    "isClearable": true,
                                                     "isDisabled": false,
                                                     "isLoading": false,
                                                     "isMulti": false,
@@ -16773,7 +16773,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
               >
                 <SearchableDropdown
                   clearOnSelect={false}
-                  clearable={false}
+                  isClearable={true}
                   label="POA/Representative Timezone"
                   loading={false}
                   name="representativeTz"
@@ -17592,11 +17592,11 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                         <StateManager
                           cache={false}
                           classNamePrefix="cf-select"
-                          clearable={false}
                           defaultInputValue=""
                           defaultMenuIsOpen={false}
                           defaultValue={null}
                           inputId="representativeTz"
+                          isClearable={true}
                           isDisabled={false}
                           isLoading={false}
                           isSearchable={true}
@@ -18386,7 +18386,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                             cache={false}
                             captureMenuScroll={false}
                             classNamePrefix="cf-select"
-                            clearable={false}
                             closeMenuOnScroll={false}
                             closeMenuOnSelect={true}
                             components={Object {}}
@@ -18398,6 +18397,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                             getOptionValue={[Function]}
                             inputId="representativeTz"
                             inputValue=""
+                            isClearable={true}
                             isDisabled={false}
                             isLoading={false}
                             isMulti={false}
@@ -19993,7 +19993,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                   "cache": false,
                                   "captureMenuScroll": false,
                                   "classNamePrefix": "cf-select",
-                                  "clearable": false,
                                   "closeMenuOnScroll": false,
                                   "closeMenuOnSelect": true,
                                   "components": Object {},
@@ -20006,6 +20005,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                   "getOptionValue": [Function],
                                   "inputId": "representativeTz",
                                   "inputValue": "",
+                                  "isClearable": true,
                                   "isDisabled": false,
                                   "isLoading": false,
                                   "isMulti": false,
@@ -21652,7 +21652,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                         "cache": false,
                                         "captureMenuScroll": false,
                                         "classNamePrefix": "cf-select",
-                                        "clearable": false,
                                         "closeMenuOnScroll": false,
                                         "closeMenuOnSelect": true,
                                         "components": Object {},
@@ -21665,6 +21664,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                         "getOptionValue": [Function],
                                         "inputId": "representativeTz",
                                         "inputValue": "",
+                                        "isClearable": true,
                                         "isDisabled": false,
                                         "isLoading": false,
                                         "isMulti": false,
@@ -23319,7 +23319,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               "cache": false,
                                               "captureMenuScroll": false,
                                               "classNamePrefix": "cf-select",
-                                              "clearable": false,
                                               "closeMenuOnScroll": false,
                                               "closeMenuOnSelect": true,
                                               "components": Object {},
@@ -23332,6 +23331,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               "getOptionValue": [Function],
                                               "inputId": "representativeTz",
                                               "inputValue": "",
+                                              "isClearable": true,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -24973,7 +24973,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "cache": false,
                                                     "captureMenuScroll": false,
                                                     "classNamePrefix": "cf-select",
-                                                    "clearable": false,
                                                     "closeMenuOnScroll": false,
                                                     "closeMenuOnSelect": true,
                                                     "components": Object {},
@@ -24986,6 +24985,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "getOptionValue": [Function],
                                                     "inputId": "representativeTz",
                                                     "inputValue": "",
+                                                    "isClearable": true,
                                                     "isDisabled": false,
                                                     "isLoading": false,
                                                     "isMulti": false,
@@ -25864,7 +25864,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "cache": false,
                                                     "captureMenuScroll": false,
                                                     "classNamePrefix": "cf-select",
-                                                    "clearable": false,
                                                     "closeMenuOnScroll": false,
                                                     "closeMenuOnSelect": true,
                                                     "components": Object {},
@@ -25877,6 +25876,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "getOptionValue": [Function],
                                                     "inputId": "representativeTz",
                                                     "inputValue": "",
+                                                    "isClearable": true,
                                                     "isDisabled": false,
                                                     "isLoading": false,
                                                     "isMulti": false,
@@ -27599,7 +27599,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               "cache": false,
                                               "captureMenuScroll": false,
                                               "classNamePrefix": "cf-select",
-                                              "clearable": false,
                                               "closeMenuOnScroll": false,
                                               "closeMenuOnSelect": true,
                                               "components": Object {},
@@ -27612,6 +27611,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                               "getOptionValue": [Function],
                                               "inputId": "representativeTz",
                                               "inputValue": "",
+                                              "isClearable": true,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -29248,7 +29248,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "cache": false,
                                                     "captureMenuScroll": false,
                                                     "classNamePrefix": "cf-select",
-                                                    "clearable": false,
                                                     "closeMenuOnScroll": false,
                                                     "closeMenuOnSelect": true,
                                                     "components": Object {},
@@ -29261,6 +29260,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "getOptionValue": [Function],
                                                     "inputId": "representativeTz",
                                                     "inputValue": "",
+                                                    "isClearable": true,
                                                     "isDisabled": false,
                                                     "isLoading": false,
                                                     "isMulti": false,
@@ -30908,7 +30908,6 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "cache": false,
                                                     "captureMenuScroll": false,
                                                     "classNamePrefix": "cf-select",
-                                                    "clearable": false,
                                                     "closeMenuOnScroll": false,
                                                     "closeMenuOnSelect": true,
                                                     "components": Object {},
@@ -30921,6 +30920,7 @@ exports[`VirtualHearingForm Shows hearing details with virtualHearing 1`] = `
                                                     "getOptionValue": [Function],
                                                     "inputId": "representativeTz",
                                                     "inputValue": "",
+                                                    "isClearable": true,
                                                     "isDisabled": false,
                                                     "isLoading": false,
                                                     "isMulti": false,

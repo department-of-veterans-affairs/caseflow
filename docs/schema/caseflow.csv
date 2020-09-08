@@ -669,6 +669,7 @@ legacy_hearings,created_by_id,integer (8) FK,,,x,,x,The ID of the user who creat
 legacy_hearings,hearing_day_id,integer (8),,,,,x,The hearing day the hearing will take place on
 legacy_hearings,id,integer (8) PK,x,x,,,,
 legacy_hearings,military_service,string,,,,,,Periods and circumstances of military service
+legacy_hearings,original_vacols_request_type,string,,,,,,"The original request type of the hearing in VACOLS, before it was changed to Virtual"
 legacy_hearings,prepped,boolean,,,,,,Determines whether the judge has checked the hearing as prepped
 legacy_hearings,summary,text,,,,,,Summary of hearing
 legacy_hearings,updated_at,datetime,,,,,x,Timestamp when record was last updated.
@@ -975,7 +976,6 @@ tasks,assigned_at,datetime,,,,,,
 tasks,assigned_by_id,integer FK,,,x,,,
 tasks,assigned_to_id,integer ∗ FK,x,,x,,x,
 tasks,assigned_to_type,string ∗,x,,,,x,
-tasks,cancelled_by_id,integer,,,,,,ID of user that cancelled the task. Backfilled from versions table. Can be nil if task was cancelled before this column was added or if there is no user logged in when the task is cancelled
 tasks,closed_at,datetime,,,,,,
 tasks,created_at,datetime ∗,x,,,,,
 tasks,id,integer (8) PK,x,x,,,,
