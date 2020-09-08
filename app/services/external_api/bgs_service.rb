@@ -409,6 +409,15 @@ class ExternalApi::BGSService
     end
   end
 
+  def find_current_rating_profile_by_ptcpnt_id(participant_id)
+    DBService.release_db_connections
+    MetricsService.record("BGS: find current rating profile for veteran by participant_id #{participant_id}",
+                          service: :bgs,
+                          name: "rating_profile.find_current_rating_profile_by_ptcpnt_id") do
+      client.rating_profile.find_current_rating_profile_by_ptcpnt_id(participant_id, true)
+    end
+  end
+
   def pay_grade_list
     DBService.release_db_connections
 

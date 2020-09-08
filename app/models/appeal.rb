@@ -509,6 +509,14 @@ class Appeal < DecisionReview
     false
   end
 
+  # Determine type using cloesest_regional_office
+  # "Central" if closest_regional_office office is "C", "Video" otherwise
+  def readable_hearing_request_type
+    return nil if closest_regional_office.nil?
+
+    (closest_regional_office == "C") ? Hearing::HEARING_TYPES[:C] : Hearing::HEARING_TYPES[:V]
+  end
+
   private
 
   def business_lines_needing_assignment

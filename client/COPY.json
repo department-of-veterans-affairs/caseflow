@@ -56,7 +56,8 @@
   "OTHER_REVIEWS_TABLE_SYNCING_DECISIONS_ERROR": "Decisions sync failed. Support notified.",
 
   "TASK_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
-  "TASK_SNAPSHOT_ABOUT_BOX_TYPE_LABEL": "Type",
+  "TASK_SNAPSHOT_ABOUT_BOX_HEARING_REQUEST_TYPE_LABEL": "Hearing Type",
+  "TASK_SNAPSHOT_ABOUT_BOX_TYPE_LABEL": "Appeal Stream Type",
   "TASK_SNAPSHOT_ABOUT_BOX_DOCUMENTS_LABEL": "Veteran Documents",
   "TASK_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL": "Days waiting",
   "TASK_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL": "Docket",
@@ -133,7 +134,7 @@
   "USER_QUEUE_PAGE_TABLE_TITLE": "Your cases",
   "USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to you:",
   "USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold (will return to \"Assigned\" tab when hold is completed):",
-  "QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed (last two weeks):",
+  "QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed (last 7 days):",
 
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION": "Cases owned by the %s team that are unassigned to a person.",
