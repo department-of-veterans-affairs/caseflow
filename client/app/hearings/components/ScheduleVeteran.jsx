@@ -67,10 +67,10 @@ export const ScheduleVeteran = ({
   const requestType = HEARING_REQUEST_TYPES[selectedHearingDay?.requestType] || 'Video';
 
   // Determine whether we are rescheduling
-  const reschedule = scheduledHearing.disposition === 'reschedule';
+  const reschedule = scheduledHearing?.disposition === 'reschedule';
 
   // Set the task ID
-  const taskId = scheduleHearingTask ? scheduleHearingTask.taskId : scheduledHearing.taskId;
+  const taskId = scheduleHearingTask ? scheduleHearingTask.taskId : scheduledHearing?.taskId;
 
   // Create a hearing object for the form
   const hearing = {
@@ -219,7 +219,7 @@ export const ScheduleVeteran = ({
       // Handle inline errors
       if (code === 1002) {
         // Parse the errors into a list
-        const errList = parseVirtualHearingErrors(msg.message);
+        const errList = parseVirtualHearingErrors(msg.message, appeal);
 
         // Scroll errors into view
         document.getElementById('email-section').scrollIntoView();
@@ -310,7 +310,7 @@ export const ScheduleVeteran = ({
 };
 
 ScheduleVeteran.propTypes = {
-  appeals: PropTypes.array,
+  appeals: PropTypes.object,
   // Router inherited props
   history: PropTypes.object,
   appealId: PropTypes.string,

@@ -1,6 +1,9 @@
+import { hearingDateOptions } from './hearings';
+
 export const defaultAssignHearing = {
   regionalOffice: null,
   hearingLocation: null,
+  hearingDay: null,
   scheduledTimeString: null,
   errorMessages: {
     hearingDay: null,
@@ -136,18 +139,7 @@ export const scheduleHearingDetails = {
     facilityType: 'va_health_facility'
   },
   scheduledTimeString: '08:45',
-  hearingDay: {
-    hearingId: 11,
-    regionalOffice: 'RO17',
-    timezone: 'America/New_York',
-    scheduledFor: '2020-08-17',
-    requestType: 'V',
-    room: '1',
-    roomLabel: '1 (1W200A)',
-    filledSlots: 2,
-    totalSlots: 12,
-    hearingDate: '2020-08-17'
-  },
+  hearingDay: hearingDateOptions[1].value,
   errorMessages: {
     hearingDay: null,
     hearingLocation: null,
@@ -156,7 +148,7 @@ export const scheduleHearingDetails = {
   },
   apiFormattedValues: {
     scheduled_time_string: '08:45',
-    hearing_day_id: 11,
+    hearing_day_id: 36,
     hearing_location: {
       name: 'Holdrege VA Clinic',
       address: '1118 Burlington Street, Holdrege NE 68949-1705',
@@ -171,3 +163,11 @@ export const scheduleHearingDetails = {
   }
 }
 ;
+
+export const legacyAppeal = {
+  ...appealData,
+  id: '541',
+  externalId: '4afefa82-5736-47c8-a977-0b4b8586f73e',
+  hearings: [],
+  isLegacyAppeal: true
+};
