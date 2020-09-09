@@ -37,6 +37,7 @@ describe DataIntegrityChecksJob do
     end
 
     allow(Raven).to receive(:capture_exception) { @raven_called = true }
+    allow(Raven).to receive(:last_event_id) { @raven_called && "sentry_12345" }
   end
 
   describe "#perform" do
@@ -112,6 +113,7 @@ describe DataIntegrityChecksJob do
         subject
 
         expect(slack_service).to have_received(:send_notification)
+          .with("Error running ExpiredAsyncJobsChecker. See Sentry event sentry_12345", "ExpiredAsyncJobsChecker", "#appeals-foxtrot")
         expect(@raven_called).to eq(true)
       end
     end
