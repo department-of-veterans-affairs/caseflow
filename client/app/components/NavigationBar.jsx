@@ -6,8 +6,9 @@ import { withRouter } from 'react-router';
 
 class CaseflowNavigationBar extends React.PureComponent {
   render = () => <NavigationBar
-    // Forces NavigationBar PureComponent to update when the user navigates FROM any page TO /queue. This will force
-    // queue loading screen to request the user's queue from the backend
+    // Forces NavigationBar PureComponent to update when the user navigates FROM any page TO /queue by setting the
+    // dummy variable 'key' to true. This change will force queue loading screen to request the user's queue anew
+    // from the backend preventing a whitescreen of death
     key={this.props.location.pathname === '/queue'}
     extraBanner={<PerformanceDegradationBanner />}
     {...this.props} />
