@@ -27,7 +27,7 @@ export const ScheduleVeteranForm = ({
   initialHearingDate,
   ...props
 }) => {
-  const ro = appeal?.regionalOffice || hearing?.regionalOffice || initialRegionalOffice;
+  const ro = hearing?.regionalOffice || appeal?.regionalOffice?.key || initialRegionalOffice;
   const location = hearing?.hearingLocation || appeal?.hearingLocation;
   const video = requestType === 'Video';
   const availableHearingLocations = orderBy(appeal?.availableHearingLocations || [], ['distance'], ['asc']);
