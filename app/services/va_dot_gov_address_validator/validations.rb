@@ -72,7 +72,7 @@ module VaDotGovAddressValidator::Validations
   end
 
   def appeal_is_legacy_and_veteran_requested_central_office?
-    appeal.is_a?(LegacyAppeal) && appeal.hearing_request_type == :central_office
+    appeal.is_a?(LegacyAppeal) && appeal.sanitized_hearing_request_type == :central_office
   end
 
   def appeal_is_legacy_and_veteran_lives_in_va_or_md?
