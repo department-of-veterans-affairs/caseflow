@@ -12,7 +12,7 @@ import HearingTypeDropdown from './details/HearingTypeDropdown';
 import { HearingTime } from './modalForms/HearingTime';
 import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
-import { HEARING_CONVERSION_TYPES } from '../constants';
+import { HEARING_CONVERSION_TYPES, HEARING_REQUEST_TYPES } from '../constants';
 import { marginTop } from './details/style';
 import { isEmpty, orderBy } from 'lodash';
 
@@ -27,7 +27,7 @@ export const ScheduleVeteranForm = ({
   initialHearingDate,
   ...props
 }) => {
-  const ro = hearing?.regionalOffice || appeal?.regionalOffice?.key || initialRegionalOffice;
+  const ro = hearing?.regionalOffice || initialRegionalOffice;
   const location = hearing?.hearingLocation || appeal?.hearingLocation;
   const video = requestType === 'Video';
   const availableHearingLocations = orderBy(appeal?.availableHearingLocations || [], ['distance'], ['asc']);
@@ -56,8 +56,8 @@ export const ScheduleVeteranForm = ({
         <React.Fragment>
 
           <div className="usa-width-one-half">
-            <ReadOnly spacing={0} label="Regional Office" text={appeal.regionalOffice || 'Central'} />
-            <ReadOnly spacing={15} label="Hearing Location" text={appeal.hearingLocation?.name || 'Virtual'} />
+            <ReadOnly spacing={0} label="Regional Office" text={HEARING_REQUEST_TYPES.C} />
+            <ReadOnly spacing={15} label="Hearing Location" text="Virtual" />
 
             <HearingDateDropdown
               errorMessage={errors?.hearingDay}
@@ -72,7 +72,7 @@ export const ScheduleVeteranForm = ({
               label="Hearing Time"
               enableZone
               onChange={(scheduledTimeString) => props.onChange('scheduledTimeString', scheduledTimeString)}
-              value={hearing.scheduledTimeString}
+              value={hearing?.scheduledTimeString}
             />
           </div>
           <div className="usa-width-one-whole" {...marginTop(25)}>
@@ -142,10 +142,11 @@ export const ScheduleVeteranForm = ({
                 errorMessage={errors?.hearingDay}
                 key={`hearingDate__${ro}`}
                 regionalOffice={ro}
-                value={hearing.hearingDay}
+                value={hearing.hearingDay || initialHearingDate}
                 onChange={(hearingDay) => props.onChange('hearingDay', hearingDay)}
               />
               <HearingTime
+                regionalOffice={ro}
                 errorMessage={errors?.scheduledTimeString}
                 vertical
                 label="Hearing Time"
