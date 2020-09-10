@@ -43,6 +43,7 @@ class LegacyAppeal < CaseflowRecord
             },
             allow_nil: true
 
+  class InvalidChangedRequestType < StandardError; end
   class UnknownLocationError < StandardError; end
 
   # When these instance variable getters are called, first check if we've
@@ -402,7 +403,7 @@ class LegacyAppeal < CaseflowRecord
       when VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:virtual]
         return :virtual
       else
-        fail HearingMapper::InvalidRequestTypeError, "\"#{changed_request_type}\" is not a valid request type."
+        fail InvalidChangedRequestType, "\"#{changed_request_type}\" is not a valid request type."
       end
     end
 
