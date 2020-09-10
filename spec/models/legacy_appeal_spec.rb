@@ -2087,7 +2087,7 @@ describe LegacyAppeal, :all_dbs do
         let(:changed_request_type) { HearingDay::REQUEST_TYPES[:virtual] }
         let(:vacols_case) { create(:case, :travel_board_hearing) }
 
-        it { binding.pry; is_expected.to eq(:virtual) }
+        it { is_expected.to eq(:virtual) }
       end
     end
 
