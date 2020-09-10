@@ -21,6 +21,14 @@ module AppealConcern
     "#{regional_office.city}, #{regional_office.state}"
   end
 
+  def closest_regional_office_label
+    return if closest_regional_office.nil?
+
+    return "Central Office" if closest_regional_office == "C"
+
+    RegionalOffice::CITIES[closest_regional_office][:label]
+  end
+
   def veteran_name
     veteran_name_object.formatted(:form)
   end
