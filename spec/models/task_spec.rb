@@ -501,8 +501,8 @@ describe Task, :all_dbs do
     context "when the user is an admin on any of the hearings teams" do
       it "returns the reassign action" do
         [HearingsManagement, HearingAdmin, TranscriptionTeam].each do |org|
-          admin = create(:user).tap { |admin|  OrganizationsUser.make_user_admin(admin, org.singleton) }
-          assignee = create(:user).tap { |user|  org.singleton.add_user(user) }
+          admin = create(:user).tap { |user| OrganizationsUser.make_user_admin(user, org.singleton) }
+          assignee = create(:user).tap { |user| org.singleton.add_user(user) }
           task = create(:ama_task, assigned_to: assignee)
 
           expect(task.available_hearing_user_actions(admin)).to match_array(
@@ -1828,11 +1828,11 @@ describe Task, :all_dbs do
       end
     end
 
-    let(:reassign_action) { Constants.TASK_ACTIONS.REASSIGN_TO_HEARINGS_TEAMS_MEMBER.label }
+    let(:reassign_label) { Constants.TASK_ACTIONS.REASSIGN_TO_HEARINGS_TEAMS_MEMBER.label }
 
     it "can reassign any task assigned to a hearing management team member" do
       tasks.each do |task|
-        expect(task.available_actions_unwrapper(admin).any? { |action| action[:label] == reassign_action }).to be_truthy, "#{task.type}"
+        expect(task.available_actions_unwrapper(admin).any? { |action| action[:label] == reassign_label }).to be true
       end
     end
 
@@ -1842,7 +1842,7 @@ describe Task, :all_dbs do
 
       it "cannot reassign any task assigned to a hearing management team member" do
         tasks.each do |task|
-          expect(task.available_actions_unwrapper(admin).any? { |action| action[:label] == reassign_action }).to be_falsey, "#{task.type}"
+          expect(task.available_actions_unwrapper(admin).any? { |action| action[:label] == reassign_label }).to be false
         end
       end
     end
