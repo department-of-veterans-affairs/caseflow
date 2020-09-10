@@ -206,6 +206,10 @@ class TaskActionRepository
       }
     end
 
+    def change_hearing_request_type_data(task, _user = nil)
+      {}
+    end
+
     def change_task_type_data(task, user = nil)
       if task.is_a? MailTask
         mail_assign_to_organization_data(task, user)
