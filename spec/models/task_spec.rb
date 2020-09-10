@@ -498,7 +498,7 @@ describe Task, :all_dbs do
       expect(subject).to eq []
     end
 
-    fcontext "when the user is an admin on any of the hearings teams" do
+    context "when the user is an admin on any of the hearings teams" do
       it "returns the reassign action" do
         [HearingsManagement, HearingAdmin, TranscriptionTeam].each do |org|
           admin = create(:user).tap { |admin|  OrganizationsUser.make_user_admin(admin, org.singleton) }
