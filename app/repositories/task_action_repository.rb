@@ -64,7 +64,6 @@ class TaskActionRepository
     end
 
     def assign_to_hearings_user_data(task, user = nil)
-      debugger;
       users = [HearingsManagement, HearingAdmin, TranscriptionTeam].map { |team| team.singleton.users }.flatten.uniq
 
       {
