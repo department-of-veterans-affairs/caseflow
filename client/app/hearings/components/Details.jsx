@@ -15,7 +15,7 @@ import {
   RESET_VIRTUAL_HEARING
 } from '../contexts/HearingsFormContext';
 import { HearingsUserContext } from '../contexts/HearingsUserContext';
-import { deepDiff, pollVirtualHearingData, getChanges, getAppellantTitleForHearing } from '../utils';
+import { deepDiff, pollVirtualHearingData, getChanges, getAppellantTitle } from '../utils';
 import { inputFix } from './details/style';
 import {
   onReceiveAlerts,
@@ -61,6 +61,8 @@ const HearingDetails = (props) => {
   const [virtualHearingModalOpen, setVirtualHearingModalOpen] = useState(false);
   const [virtualHearingModalType, setVirtualHearingModalType] = useState(null);
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
+
+  const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
 
   // Method to reset the state
   const reset = () => {
@@ -127,7 +129,7 @@ const HearingDetails = (props) => {
       if (virtual && errors) {
         // Set the Virtual Hearing errors
         setVirtualHearingErrors({
-          [noAppellantEmail && 'appellantEmail']: `${getAppellantTitleForHearing(hearing)} email is required`,
+          [noAppellantEmail && 'appellantEmail']: `${appellantTitle} email is required`,
           [noRepTimezone && 'representativeTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED,
           [noAppellantTimezone && 'appellantTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED
         });
@@ -201,7 +203,7 @@ const HearingDetails = (props) => {
           const errors = messages.split(',').reduce((list, message) => ({
             ...list,
             [(/Representative/).test(message) ? 'representativeEmail' : 'appellantEmail']:
-              message.replace('Appellant', getAppellantTitleForHearing(hearing))
+              message.replace('Appellant', appellantTitle)
           }), {});
 
           document.getElementById('email-section').scrollIntoView();

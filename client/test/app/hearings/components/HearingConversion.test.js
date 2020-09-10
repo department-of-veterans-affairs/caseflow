@@ -13,7 +13,7 @@ import { JudgeDropdown } from 'app/components/DataDropdowns';
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import RadioField from 'app/components/RadioField';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
-import { getAppellantTitleForHearing } from 'app/hearings/utils';
+import { getAppellantTitle } from 'app/hearings/utils';
 import { defaultHearing } from 'test/data/hearings';
 import { HearingLocationDropdown } from 'app/hearings/components/dailyDocket/DailyDocketRowInputs';
 import { HearingTime } from 'app/hearings/components/modalForms/HearingTime';

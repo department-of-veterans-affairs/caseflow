@@ -64,6 +64,7 @@ export const appealData = {
   appellantRelationship: 'Spouse',
   assignedToLocation: 'Hearing Admin',
   closestRegionalOffice: null,
+  closestRegionalOfficeLabel: null,
   availableHearingLocations: [],
   status: 'not_distributed',
   decisionDate: null,
