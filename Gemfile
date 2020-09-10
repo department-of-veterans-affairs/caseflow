@@ -51,7 +51,7 @@ gem "pg", platforms: :ruby
 # We are not yet at version 4.x because we have not tested.
 gem "puma", "~> 3.12.6"
 gem "rack", "~> 2.2.3"
-gem "rails", "5.2.4.3"
+gem "rails", "5.2.4.4"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
