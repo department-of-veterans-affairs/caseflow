@@ -36,8 +36,8 @@ class LegacyAppeal < CaseflowRecord
   validates :changed_request_type,
             inclusion: {
               in: [
-                VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:video],
-                VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:virtual]
+                HearingDay::REQUEST_TYPES[:video],
+                HearingDay::REQUEST_TYPES[:virtual]
               ],
               message: "changed request type (%<value>s) is invalid"
             },
@@ -398,9 +398,9 @@ class LegacyAppeal < CaseflowRecord
   def sanitized_hearing_request_type
     if changed_request_type.present?
       case changed_request_type
-      when VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:video]
+      when HearingDay::REQUEST_TYPES[:video]
         return :video
-      when VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:virtual]
+      when HearingDay::REQUEST_TYPES[:virtual]
         return :virtual
       else
         fail InvalidChangedRequestType, "\"#{changed_request_type}\" is not a valid request type."

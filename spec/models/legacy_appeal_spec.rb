@@ -2042,7 +2042,7 @@ describe LegacyAppeal, :all_dbs do
 
         it "successfully updates" do
           subject
-          expect(appeal.reload.changed_request_type).to eq(VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:video])
+          expect(appeal.reload.changed_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
         end
       end
 
@@ -2077,17 +2077,17 @@ describe LegacyAppeal, :all_dbs do
       end
 
       context "when request type overriden in Caseflow to video" do
-        let(:changed_request_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:video] }
+        let(:changed_request_type) { HearingDay::REQUEST_TYPES[:video] }
         let(:vacols_case) { create(:case, :travel_board_hearing) }
 
         it { is_expected.to eq(:video) }
       end
 
       context "when request type overriden in Caseflow to virtual" do
-        let(:changed_request_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:virtual] }
+        let(:changed_request_type) { HearingDay::REQUEST_TYPES[:virtual] }
         let(:vacols_case) { create(:case, :travel_board_hearing) }
 
-        it { is_expected.to eq(:virtual) }
+        it { binding.pry; is_expected.to eq(:virtual) }
       end
     end
 
