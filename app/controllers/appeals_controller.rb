@@ -98,6 +98,11 @@ class AppealsController < ApplicationController
                                 service: :queue,
                                 name: "AppealsController.show") do
             appeal.appeal_views.find_or_create_by(user: current_user).update!(last_viewed_at: Time.zone.now)
+
+            if appeal.is_a?(LegacyAppeal) && appeal.hearing_request_type == :travel_board && current_user.can_change_hearing_request_type?
+              HearingTaskTreeInitializer.for_appeal_with_pending_travel_board_hearing(appeal)
+            end
+
             render json: { appeal: json_appeals(appeal)[:data] }
           end
         else
