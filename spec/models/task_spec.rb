@@ -498,6 +498,20 @@ describe Task, :all_dbs do
       expect(subject).to eq []
     end
 
+    fcontext "when the user is an admin on any of the hearings teams" do
+      it "returns the reassign action" do
+        [HearingsManagement, HearingAdmin, TranscriptionTeam].each do |org|
+          admin = create(:user).tap { |admin|  OrganizationsUser.make_user_admin(admin, org.singleton) }
+          assignee = create(:user).tap { |user|  org.singleton.add_user(user) }
+          task = create(:ama_task, assigned_to: assignee)
+
+          expect(task.available_hearing_user_actions(admin)).to match_array(
+            [Constants.TASK_ACTIONS.REASSIGN_TO_HEARINGS_TEAMS_MEMBER.to_h]
+          )
+        end
+      end
+    end
+
     context "task has an active hearing task ancestor" do
       let(:appeal) { create(:appeal) }
       let!(:hearing_task) { create(:hearing_task, appeal: appeal) }
@@ -1768,6 +1782,68 @@ describe Task, :all_dbs do
         expect(subject.keys).to match_array [:id, :assigned_to_email, :assigned_to_name, :type]
         expect(subject[:assigned_to_email]).to eq assignee.email
         expect(subject[:assigned_to_name]).to eq "#{assignee.full_name.titleize} (#{assignee.css_id})"
+      end
+    end
+  end
+
+  describe "hearings teams admin available actions" do
+    let(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
+    let(:parent) { appeal.tasks.detect { |task| task.type == HearingTask.name } }
+    let(:task_types) do
+      [
+        ChangeHearingDispositionTask,
+        HearingRelatedMailTask,
+        NoShowHearingTask,
+        ScheduleHearingColocatedTask,
+        TranscriptionTask,
+        HearingAdminActionTask.subclasses
+      ].flatten
+    end
+    let(:tasks) do
+      task_types.map do |type|
+        if type == TranscriptionTask
+          new_parent = AssignHearingDispositionTask.create!(
+            assigned_to: user, assigned_by: admin, parent: parent, appeal: appeal
+          )
+          type.create!(assigned_to: user, assigned_by: admin, parent: new_parent, appeal: appeal)
+        else
+          type.create!(assigned_to: user, assigned_by: admin, parent: parent, appeal: appeal)
+        end
+      end
+    end
+
+    let!(:user) do
+      create(:user).tap do |user|
+        HearingsManagement.singleton.add_user(user)
+        HearingAdmin.singleton.add_user(user)
+        TranscriptionTeam.singleton.add_user(user)
+      end
+    end
+
+    let!(:admin) do
+      create(:user).tap do |user|
+        OrganizationsUser.make_user_admin(user, HearingsManagement.singleton)
+        OrganizationsUser.make_user_admin(user, HearingAdmin.singleton)
+        OrganizationsUser.make_user_admin(user, TranscriptionTeam.singleton)
+      end
+    end
+
+    let(:reassign_action) { Constants.TASK_ACTIONS.REASSIGN_TO_HEARINGS_TEAMS_MEMBER.label }
+
+    it "can reassign any task assigned to a hearing management team member" do
+      tasks.each do |task|
+        expect(task.available_actions_unwrapper(admin).any? { |action| action[:label] == reassign_action }).to be_truthy, "#{task.type}"
+      end
+    end
+
+    context "when the users are a part of a non hearing team" do
+      let!(:user) { create(:user).tap { |user| MailTeam.singleton.add_user(user) } }
+      let!(:admin) { create(:user).tap { |user| OrganizationsUser.make_user_admin(user, MailTeam.singleton) } }
+
+      it "cannot reassign any task assigned to a hearing management team member" do
+        tasks.each do |task|
+          expect(task.available_actions_unwrapper(admin).any? { |action| action[:label] == reassign_action }).to be_falsey, "#{task.type}"
+        end
       end
     end
   end

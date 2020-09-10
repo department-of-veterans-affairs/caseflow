@@ -22,6 +22,11 @@
     "value": "modal/assign_to_hearing_admin_member",
     "func": "assign_to_user_data"
   },
+  "REASSIGN_TO_HEARINGS_TEAMS_MEMBER": {
+    "label": "Assign to person",
+    "value": "modal/reassign_to_person",
+    "func": "assign_to_hearings_user_data"
+  },
   "ASSIGN_TO_MOTIONS_ATTORNEY": {
     "label": "Assign to person",
     "value": "modal/assign_to_person",
