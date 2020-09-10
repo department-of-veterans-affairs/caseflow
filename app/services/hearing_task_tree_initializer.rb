@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HearingTaskTreeInitializer
   class << self
     # Initializes a task tree for an appeal with a pending travel board hearing.
@@ -15,6 +17,9 @@ class HearingTaskTreeInitializer
     # @note Travel board hearings are only available for legacy appeals.
     #
     # @param appeal [LegacyAppeal] the appeal to modify the task tree of
+    #
+    # @return       [LegacyAppeal]
+    #   The legacy appeal with the new task tree
     def for_appeal_with_pending_travel_board_hearing(appeal)
       fail TypeError, "expected a legacy appeal" unless appeal.is_a?(LegacyAppeal)
 
@@ -27,7 +32,7 @@ class HearingTaskTreeInitializer
         ChangeHearingRequestTypeTask.find_or_create_by!(**create_args, parent: schedule_hearing_task)
       end
 
-      return appeal.reload
+      appeal.reload
     end
   end
 end

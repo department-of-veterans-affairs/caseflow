@@ -206,7 +206,7 @@ class TaskActionRepository
       }
     end
 
-    def change_hearing_request_type_data(task, _user = nil)
+    def change_hearing_request_type_data(_task, _user = nil)
       {}
     end
 
