@@ -559,4 +559,65 @@ describe LegacyHearing, :all_dbs do
       end
     end
   end
+
+  context "update_request_type_in_vacols" do
+    let(:new_request_type) { nil }
+
+    subject { hearing.update_request_type_in_vacols(new_request_type) }
+
+    context "request type in VACOLS is not virtual" do
+      let(:request_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:central] }
+
+      context "new request type is virtual" do
+        let(:new_request_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:virtual] }
+
+        it "saves the request type from VACOLS to original_vacols_request_type" do
+          expect(hearing.original_vacols_request_type).to be_nil
+
+          subject
+
+          expect(hearing.original_vacols_request_type).to eq request_type
+        end
+
+        it "updates HEARSCHED.HEARING_TYPE in VACOLS" do
+          expect(hearing.request_type).to eq request_type
+
+          subject
+
+          expect(hearing.request_type).to eq new_request_type
+        end
+      end
+
+      context "new request type is invalid" do
+        let(:new_request_type) { "INVALID" }
+
+        it "raises an InvalidRequestTypeError" do
+          expect { subject }.to raise_error(HearingMapper::InvalidRequestTypeError)
+        end
+      end
+    end
+
+    context "request type in VACOLS is virtual" do
+      let(:request_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:virtual] }
+      let(:new_request_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:central] }
+
+      before { hearing.update!(original_vacols_request_type: new_request_type) }
+
+      it "doesn't change original_vacols_request_type" do
+        expect(hearing.original_vacols_request_type).to eq new_request_type
+
+        subject
+
+        expect(hearing.original_vacols_request_type).to eq new_request_type
+      end
+
+      it "updates HEARSCHED.HEARING_TYPE in VACOLS" do
+        expect(hearing.request_type).to eq request_type
+
+        subject
+
+        expect(hearing.request_type).to eq new_request_type
+      end
+    end
+  end
 end

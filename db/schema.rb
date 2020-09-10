@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_02_141700) do
+ActiveRecord::Schema.define(version: 2020_09_08_050443) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -872,6 +872,7 @@ ActiveRecord::Schema.define(version: 2020_09_02_141700) do
     t.bigint "created_by_id", comment: "The ID of the user who created the Legacy Hearing"
     t.bigint "hearing_day_id", comment: "The hearing day the hearing will take place on"
     t.string "military_service", comment: "Periods and circumstances of military service"
+    t.string "original_vacols_request_type", comment: "The original request type of the hearing in VACOLS, before it was changed to Virtual"
     t.boolean "prepped", comment: "Determines whether the judge has checked the hearing as prepped"
     t.text "summary", comment: "Summary of hearing"
     t.datetime "updated_at", comment: "Timestamp when record was last updated."
@@ -1193,9 +1194,9 @@ ActiveRecord::Schema.define(version: 2020_09_02_141700) do
     t.index ["sent_by_id"], name: "index_sent_hearing_email_events_on_sent_by_id"
   end
 
-  create_table "special_issue_lists", force: :cascade do |t|
-    t.bigint "appeal_id"
-    t.string "appeal_type"
+  create_table "special_issue_lists", comment: "Associates special issues to an AMA or legacy appeal for Caseflow Queue. Caseflow Dispatch uses special issues stored in legacy_appeals. They are intentionally disconnected.", force: :cascade do |t|
+    t.bigint "appeal_id", comment: "The ID of the appeal associated with this record"
+    t.string "appeal_type", comment: "The type of appeal associated with this record"
     t.boolean "blue_water", default: false, comment: "Blue Water"
     t.boolean "burn_pit", default: false, comment: "Burn Pit"
     t.boolean "contaminated_water_at_camp_lejeune", default: false

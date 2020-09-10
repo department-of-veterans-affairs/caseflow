@@ -300,7 +300,7 @@ describe.only('ColocatedTaskListView', () => {
             name: 'readerLinkColumn'
           }
         ],
-        description: 'Cases completed (last two weeks):',
+        description: 'Cases completed (last 7 days):',
         label: 'Completed',
         name: 'completed_person',
         task_page_count: 0,

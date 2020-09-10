@@ -669,6 +669,7 @@ legacy_hearings,created_by_id,integer (8) FK,,,x,,x,The ID of the user who creat
 legacy_hearings,hearing_day_id,integer (8),,,,,x,The hearing day the hearing will take place on
 legacy_hearings,id,integer (8) PK,x,x,,,,
 legacy_hearings,military_service,string,,,,,,Periods and circumstances of military service
+legacy_hearings,original_vacols_request_type,string,,,,,,"The original request type of the hearing in VACOLS, before it was changed to Virtual"
 legacy_hearings,prepped,boolean,,,,,,Determines whether the judge has checked the hearing as prepped
 legacy_hearings,summary,text,,,,,,Summary of hearing
 legacy_hearings,updated_at,datetime,,,,,x,Timestamp when record was last updated.
@@ -909,9 +910,9 @@ sent_hearing_email_events,id,integer (8) PK,x,x,,,,
 sent_hearing_email_events,recipient_role,string,,,,,,"The role of the recipient: veteran, representative, judge"
 sent_hearing_email_events,sent_at,datetime ∗,x,,,,,The date and time the email was sent
 sent_hearing_email_events,sent_by_id,integer (8) ∗ FK,x,,x,,x,User who initiated sending the email
-special_issue_lists,,,,,,,,
-special_issue_lists,appeal_id,integer (8) FK,,,x,,x,
-special_issue_lists,appeal_type,string,,,,,x,
+special_issue_lists,,,,,,,,Associates special issues to an AMA or legacy appeal for Caseflow Queue. Caseflow Dispatch uses special issues stored in legacy_appeals. They are intentionally disconnected.
+special_issue_lists,appeal_id,integer (8) FK,,,x,,x,The ID of the appeal associated with this record
+special_issue_lists,appeal_type,string,,,,,x,The type of appeal associated with this record
 special_issue_lists,blue_water,boolean,,,,,,Blue Water
 special_issue_lists,burn_pit,boolean,,,,,,Burn Pit
 special_issue_lists,contaminated_water_at_camp_lejeune,boolean,,,,,,

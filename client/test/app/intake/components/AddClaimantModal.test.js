@@ -81,6 +81,35 @@ describe('AddClaimantModal', () => {
     expect(screen.queryByLabelText(/notes.*/i)).toBeTruthy();
   });
 
+it('should clear dropdown', async () => {
+    render(
+      <AddClaimantModal
+        onSearch={performQuery}
+        onCancel={onCancel}
+        onSubmit={onSubmit}
+      />
+    );
+
+    const input = screen.getByLabelText(/claimant's name/i);
+
+    // Enter sufficient search, and wait for select options to show
+    await userEvent.type(input, data[0].name.substr(0, 4));
+    jest.advanceTimersByTime(DEBOUNCE);
+    await waitFor(() => screen.getByText(data[0].name));
+
+    // Select claimant
+    await userEvent.click(screen.getByText(data[0].name));
+
+    // Claimant name is shown
+    expect(screen.queryByText(data[0].name)).toBeTruthy();
+
+    // Use the `react-select` clear functionality
+    await selectEvent.clearFirst(input);
+
+    // Claimant name should no longer be shown
+    expect(screen.queryByText(data[0].name)).not.toBeTruthy();
+  });
+
   describe('changes based on "claimant not listed" selection', () => {
     it('should display notes only if "claimant not listed" is selected', () => {
       render(
