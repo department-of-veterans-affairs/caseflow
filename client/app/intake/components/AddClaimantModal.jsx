@@ -105,7 +105,7 @@ export const AddClaimantModal = ({
       </div>
       <SearchableDropdown
         name="relationship"
-        label="Claimant's relationship to the veteran"
+        label="Claimant's relationship to the Veteran"
         onChange={handleChangeRelationship}
         value={relationship}
         options={relationshipOpts}
@@ -123,6 +123,7 @@ export const AddClaimantModal = ({
         readOnly={unlistedClaimant}
         debounce={250}
         strongLabel
+        isClearable
       />
 
       <Checkbox

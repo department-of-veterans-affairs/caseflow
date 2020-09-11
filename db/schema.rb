@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_24_143143) do
+ActiveRecord::Schema.define(version: 2020_09_08_191436) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -829,8 +829,7 @@ ActiveRecord::Schema.define(version: 2020_08_24_143143) do
 
   create_table "legacy_appeals", force: :cascade do |t|
     t.bigint "appeal_series_id"
-    t.boolean "blue_water", default: false, comment: "Blue Water"
-    t.boolean "burn_pit", default: false, comment: "Burn Pit"
+    t.string "changed_request_type", comment: "The new hearing type preference for an appellant that had previously requested a travel board hearing"
     t.string "closest_regional_office"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.datetime "created_at"
@@ -846,10 +845,8 @@ ActiveRecord::Schema.define(version: 2020_08_24_143143) do
     t.boolean "insurance", default: false
     t.boolean "issues_pulled"
     t.boolean "manlincon_compliance", default: false
-    t.boolean "military_sexual_trauma", default: false, comment: "Military Sexual Trauma (MST)"
     t.boolean "mustard_gas", default: false
     t.boolean "national_cemetery_administration", default: false
-    t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues; column added belatedly"
     t.boolean "nonrating_issue", default: false
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
@@ -857,7 +854,6 @@ ActiveRecord::Schema.define(version: 2020_08_24_143143) do
     t.boolean "rice_compliance", default: false
     t.boolean "spina_bifida", default: false
     t.datetime "updated_at"
-    t.boolean "us_court_of_appeals_for_veterans_claims", default: false, comment: "US Court of Appeals for Veterans Claims (CAVC)"
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_philippines", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
@@ -877,6 +873,7 @@ ActiveRecord::Schema.define(version: 2020_08_24_143143) do
     t.bigint "created_by_id", comment: "The ID of the user who created the Legacy Hearing"
     t.bigint "hearing_day_id", comment: "The hearing day the hearing will take place on"
     t.string "military_service", comment: "Periods and circumstances of military service"
+    t.string "original_vacols_request_type", comment: "The original request type of the hearing in VACOLS, before it was changed to Virtual"
     t.boolean "prepped", comment: "Determines whether the judge has checked the hearing as prepped"
     t.text "summary", comment: "Summary of hearing"
     t.datetime "updated_at", comment: "Timestamp when record was last updated."
@@ -1198,9 +1195,9 @@ ActiveRecord::Schema.define(version: 2020_08_24_143143) do
     t.index ["sent_by_id"], name: "index_sent_hearing_email_events_on_sent_by_id"
   end
 
-  create_table "special_issue_lists", force: :cascade do |t|
-    t.bigint "appeal_id"
-    t.string "appeal_type"
+  create_table "special_issue_lists", comment: "Associates special issues to an AMA or legacy appeal for Caseflow Queue. Caseflow Dispatch uses special issues stored in legacy_appeals. They are intentionally disconnected.", force: :cascade do |t|
+    t.bigint "appeal_id", comment: "The ID of the appeal associated with this record"
+    t.string "appeal_type", comment: "The type of appeal associated with this record"
     t.boolean "blue_water", default: false, comment: "Blue Water"
     t.boolean "burn_pit", default: false, comment: "Burn Pit"
     t.boolean "contaminated_water_at_camp_lejeune", default: false

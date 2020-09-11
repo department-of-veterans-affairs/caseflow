@@ -162,7 +162,7 @@ SAN FRANCISCO, CA 94103
         >
           <SearchableDropdown
             clearOnSelect={false}
-            clearable={false}
+            isClearable={true}
             label="Veteran Timezone"
             loading={false}
             name="appellantTz"
@@ -981,11 +981,11 @@ SAN FRANCISCO, CA 94103
                   <StateManager
                     cache={false}
                     classNamePrefix="cf-select"
-                    clearable={false}
                     defaultInputValue=""
                     defaultMenuIsOpen={false}
                     defaultValue={null}
                     inputId="appellantTz"
+                    isClearable={true}
                     isDisabled={false}
                     isLoading={false}
                     isSearchable={true}
@@ -1775,7 +1775,6 @@ SAN FRANCISCO, CA 94103
                       cache={false}
                       captureMenuScroll={false}
                       classNamePrefix="cf-select"
-                      clearable={false}
                       closeMenuOnScroll={false}
                       closeMenuOnSelect={true}
                       components={Object {}}
@@ -1787,6 +1786,7 @@ SAN FRANCISCO, CA 94103
                       getOptionValue={[Function]}
                       inputId="appellantTz"
                       inputValue=""
+                      isClearable={true}
                       isDisabled={false}
                       isLoading={false}
                       isMulti={false}
@@ -3382,7 +3382,6 @@ SAN FRANCISCO, CA 94103
                             "cache": false,
                             "captureMenuScroll": false,
                             "classNamePrefix": "cf-select",
-                            "clearable": false,
                             "closeMenuOnScroll": false,
                             "closeMenuOnSelect": true,
                             "components": Object {},
@@ -3395,6 +3394,7 @@ SAN FRANCISCO, CA 94103
                             "getOptionValue": [Function],
                             "inputId": "appellantTz",
                             "inputValue": "",
+                            "isClearable": true,
                             "isDisabled": false,
                             "isLoading": false,
                             "isMulti": false,
@@ -5041,7 +5041,6 @@ SAN FRANCISCO, CA 94103
                                   "cache": false,
                                   "captureMenuScroll": false,
                                   "classNamePrefix": "cf-select",
-                                  "clearable": false,
                                   "closeMenuOnScroll": false,
                                   "closeMenuOnSelect": true,
                                   "components": Object {},
@@ -5054,6 +5053,7 @@ SAN FRANCISCO, CA 94103
                                   "getOptionValue": [Function],
                                   "inputId": "appellantTz",
                                   "inputValue": "",
+                                  "isClearable": true,
                                   "isDisabled": false,
                                   "isLoading": false,
                                   "isMulti": false,
@@ -6708,7 +6708,6 @@ SAN FRANCISCO, CA 94103
                                         "cache": false,
                                         "captureMenuScroll": false,
                                         "classNamePrefix": "cf-select",
-                                        "clearable": false,
                                         "closeMenuOnScroll": false,
                                         "closeMenuOnSelect": true,
                                         "components": Object {},
@@ -6721,6 +6720,7 @@ SAN FRANCISCO, CA 94103
                                         "getOptionValue": [Function],
                                         "inputId": "appellantTz",
                                         "inputValue": "",
+                                        "isClearable": true,
                                         "isDisabled": false,
                                         "isLoading": false,
                                         "isMulti": false,
@@ -8362,7 +8362,6 @@ SAN FRANCISCO, CA 94103
                                               "cache": false,
                                               "captureMenuScroll": false,
                                               "classNamePrefix": "cf-select",
-                                              "clearable": false,
                                               "closeMenuOnScroll": false,
                                               "closeMenuOnSelect": true,
                                               "components": Object {},
@@ -8375,6 +8374,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "appellantTz",
                                               "inputValue": "",
+                                              "isClearable": true,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -9253,7 +9253,6 @@ SAN FRANCISCO, CA 94103
                                               "cache": false,
                                               "captureMenuScroll": false,
                                               "classNamePrefix": "cf-select",
-                                              "clearable": false,
                                               "closeMenuOnScroll": false,
                                               "closeMenuOnSelect": true,
                                               "components": Object {},
@@ -9266,6 +9265,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "appellantTz",
                                               "inputValue": "",
+                                              "isClearable": true,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -10988,7 +10988,6 @@ SAN FRANCISCO, CA 94103
                                         "cache": false,
                                         "captureMenuScroll": false,
                                         "classNamePrefix": "cf-select",
-                                        "clearable": false,
                                         "closeMenuOnScroll": false,
                                         "closeMenuOnSelect": true,
                                         "components": Object {},
@@ -11001,6 +11000,7 @@ SAN FRANCISCO, CA 94103
                                         "getOptionValue": [Function],
                                         "inputId": "appellantTz",
                                         "inputValue": "",
+                                        "isClearable": true,
                                         "isDisabled": false,
                                         "isLoading": false,
                                         "isMulti": false,
@@ -12637,7 +12637,6 @@ SAN FRANCISCO, CA 94103
                                               "cache": false,
                                               "captureMenuScroll": false,
                                               "classNamePrefix": "cf-select",
-                                              "clearable": false,
                                               "closeMenuOnScroll": false,
                                               "closeMenuOnSelect": true,
                                               "components": Object {},
@@ -12650,6 +12649,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "appellantTz",
                                               "inputValue": "",
+                                              "isClearable": true,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -14297,7 +14297,6 @@ SAN FRANCISCO, CA 94103
                                               "cache": false,
                                               "captureMenuScroll": false,
                                               "classNamePrefix": "cf-select",
-                                              "clearable": false,
                                               "closeMenuOnScroll": false,
                                               "closeMenuOnSelect": true,
                                               "components": Object {},
@@ -14310,6 +14309,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "appellantTz",
                                               "inputValue": "",
+                                              "isClearable": true,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,

@@ -22,6 +22,10 @@ class ScheduleHearingTask < Task
   before_create :create_parent_hearing_task
   delegate :hearing, to: :parent, allow_nil: true
 
+  # error to capture any instances where expect the parent HearingTask to have no
+  # open children tasks but it does
+  class HearingTaskHasOpenChildren < StandardError; end
+
   def self.label
     "Schedule hearing"
   end
@@ -68,16 +72,22 @@ class ScheduleHearingTask < Task
     end
 
     multi_transaction do
-      # cancel my children, myself, and my hearing task ancestor
-      children.open.update_all(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
-      update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
-      ancestor_task_of_type(HearingTask)&.update!(
-        status: Constants.TASK_STATUSES.cancelled,
-        closed_at: Time.zone.now
-      )
-
       # cancel the old HearingTask and create a new one associated with the same hearing
+      # NOTE: We need to first create new hearing task so there is at least one open hearing task for
+      # when_child_task_completed in HearingTask to prevent triggering of location change for legacy appeals
+      # with update below
       new_hearing_task = hearing_task.cancel_and_recreate
+
+      # cancel my children, myself, and possibly my hearing task ancestor
+      # NOTE: possibly because cancellation depends on whether or not the tasks are assigned to BVA org
+      # and all the children tasks of HearingTask have been cancelled
+      cancel_task_and_child_subtasks
+
+      parent = ancestor_task_of_type(HearingTask)
+
+      cancel_parent_task(parent) if parent
+
+      # create the association for new hearing task
       HearingTaskAssociation.create!(hearing: hearing_task.hearing, hearing_task: new_hearing_task)
 
       # create a ChangeHearingDispositionTask on the new HearingTask
@@ -101,6 +111,19 @@ class ScheduleHearingTask < Task
   end
 
   private
+
+  def cancel_parent_task(parent)
+    # if parent HearingTask does not have any open children tasks, cancel it
+    if parent.children.open.empty?
+      parent.update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
+    else # otherwise don't cancel it and capture error in sentry
+      Raven.capture_exception(
+        HearingTaskHasOpenChildren.new(
+          "Hearing Task with id #{parent&.id} could not be cancelled because it has open children tasks."
+        )
+      )
+    end
+  end
 
   def create_hearing(task_values)
     HearingRepository.slot_new_hearing(
