@@ -277,7 +277,7 @@ export const ScheduleVeteran = ({
         )}
         {openHearing && !reschedule ? <Alert title="Open Hearing" type="error">{openHearingDayError}</Alert> : (
           <ScheduleVeteranForm
-            initialHearingDate={selectedHearingDay.hearingDate}
+            initialHearingDate={selectedHearingDay?.hearingDate}
             initialRegionalOffice={initialRegionalOffice}
             errors={errors}
             appeal={appeal}

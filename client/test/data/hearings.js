@@ -237,6 +237,7 @@ export const defaultHearing = {
   prepped: null,
   readableLocation: null,
   readableRequestType: 'Video',
+  regionalOffice: 'RO17',
   regionalOfficeKey: 'RO17',
   regionalOfficeName: 'St. Petersburg regional office',
   regionalOfficeTimezone: 'America/New_York',
