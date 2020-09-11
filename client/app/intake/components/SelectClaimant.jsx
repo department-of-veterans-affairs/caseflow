@@ -22,7 +22,7 @@ const email = React.createElement(
 );
 const claimantLabel = React.createElement(
   'p',
-  { id: 'claimantLabel' },
+  { id: 'claimantLabel', style: {marginTop: "8.95px", marginBottom: "10px"} },
   COPY.CLAIMANT_NOT_FOUND_START,
   email,
   COPY.CLAIMANT_NOT_FOUND_END
@@ -134,7 +134,7 @@ export const SelectClaimant = (props) => {
 
   const claimantOptions = () => {
     return (
-      <div className="cf-claimant-options">
+      <div>
         <RadioField
           name="claimant-options"
           label={claimantLabel}
