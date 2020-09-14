@@ -295,7 +295,10 @@ const HearingDetails = (props) => {
         <Button
           name="Cancel"
           linkStyling
-          onClick={converting ? () => reset(initialHearing) : goBack}
+          onClick={converting ? () => {
+            reset();
+            dispatch({ type: RESET_VIRTUAL_HEARING, payload: initialHearing });
+          } : goBack}
           styling={css({ float: 'left', paddingLeft: 0, paddingRight: 0 })}
         >
           Cancel
