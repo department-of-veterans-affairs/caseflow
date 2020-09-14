@@ -478,7 +478,8 @@ describe MailTask, :postgres do
     context "for an DocketSwitchMailTask" do
       let(:cotb_user) { create(:user) }
       let(:cotb_team) { ClerkOfTheBoard.singleton }
-      
+      let(:mail_team) { cotb_team }
+
       let(:task_class) { DocketSwitchMailTask }
       let(:params) { super().merge(assigned_by: cotb_user) }
 
@@ -486,21 +487,8 @@ describe MailTask, :postgres do
         cotb_team.add_user(cotb_user)
       end
 
-      context "for org task" do
-        it "should route to Clerk of the Board org" do
-          expect(subject).to eq(ClerkOfTheBoard.singleton)
-        end
-      end
-
-      context "for child task" do
-        let(:org_task) { create(:docket_switch_mail_task, appeal: root_task.appeal, parent_id: root_task.id) }
-        let(:params) { {**super(), parent_id: org_task.id, assigned_by: cotb_user} }
-
-        subject { task_class.child_task_assignee(org_task, params) }
-        
-        it "should route to the user that created it" do
-          expect(subject).to eq(cotb_user)
-        end
+      it "should route to the user that created it" do
+        expect(subject).to eq(cotb_user)
       end
     end
   end
