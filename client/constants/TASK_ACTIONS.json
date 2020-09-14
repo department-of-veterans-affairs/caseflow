@@ -65,6 +65,10 @@
     "value": "sign_motion_to_vacate",
     "func": "sign_motion_to_vacate_data"
   },
+  "SWITCH_DOCKET": {
+    "label": "Switch Docket",
+    "value": "switch_docket"
+  },
   "CANCEL_FOREIGN_VETERANS_CASE_TASK": {
     "label": "Cancel hearing request",
     "value": "modal/cancel_task",
