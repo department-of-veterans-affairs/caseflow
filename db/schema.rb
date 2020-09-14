@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_08_050443) do
+ActiveRecord::Schema.define(version: 2020_09_08_191436) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -829,6 +829,7 @@ ActiveRecord::Schema.define(version: 2020_09_08_050443) do
 
   create_table "legacy_appeals", force: :cascade do |t|
     t.bigint "appeal_series_id"
+    t.string "changed_request_type", comment: "The new hearing type preference for an appellant that had previously requested a travel board hearing"
     t.string "closest_regional_office"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.datetime "created_at"
