@@ -18,7 +18,6 @@ class ChangeHearingRequestTypeTask < Task
   def available_actions(user)
     if user.can_change_hearing_request_type?
       [
-        Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO.to_h,
         Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.to_h
       ]
     else
