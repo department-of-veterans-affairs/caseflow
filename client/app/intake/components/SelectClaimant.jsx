@@ -22,7 +22,7 @@ const email = React.createElement(
 );
 const claimantLabel = React.createElement(
   'p',
-  { id: 'claimantLabel', style: { marginTop: '8.95px', marginBottom: '10px' } },
+  { id: 'claimantLabel', style: { marginTop: '8.95px', marginBottom: '0px' } },
   COPY.CLAIMANT_NOT_FOUND_START,
   email,
   COPY.CLAIMANT_NOT_FOUND_END
@@ -172,7 +172,7 @@ export const SelectClaimant = (props) => {
   }
 
   return (
-    <div className="cf-different-claimant">
+    <div className="cf-different-claimant" style={{marginTop: '18.95px'}}>
       <RadioField
         name="different-claimant-option"
         label="Is the claimant someone other than the Veteran?"
