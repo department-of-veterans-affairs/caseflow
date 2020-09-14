@@ -57,7 +57,7 @@ export const HearingTypeConversionForm = ({
       <AppSegment filledBackground>
         <h1 className="cf-margin-bottom-0">{convertTitle}</h1>
         <p dangerouslySetInnerHTML={
-          { __html: sprintf(COPY.CONVERT_HEARING_TYPE_SUBTITLE, appeal?.closestRegionalOfficeLabel) }
+          { __html: sprintf(COPY.CONVERT_HEARING_TYPE_SUBTITLE, appeal?.closestRegionalOfficeLabel ?? '') }
         }
         />
         <HelperText label={COPY.CONVERT_HEARING_TYPE_SUBTITLE_2} />

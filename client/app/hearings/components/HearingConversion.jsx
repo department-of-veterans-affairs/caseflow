@@ -74,7 +74,7 @@ export const HearingConversion = ({
   return (
     <AppSegment filledBackground>
       <h1 className="cf-margin-bottom-0">{title}</h1>
-      <span>{sprintf(helperLabel, getAppellantTitle(hearing?.appellantIsNotVeteran))}</span>
+      <span>{sprintf(helperLabel, appellantTitle)}</span>
       <ReadOnly label="Hearing Date" text={DateUtil.formatDateStr(scheduledFor)} />
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className="usa-width-one-half">

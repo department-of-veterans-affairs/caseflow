@@ -26,7 +26,7 @@ module AppealConcern
 
     return "Central Office" if closest_regional_office == "C"
 
-    RegionalOffice::CITIES[closest_regional_office][:label]
+    RegionalOffice.find!(closest_regional_office).name
   end
 
   def veteran_name
