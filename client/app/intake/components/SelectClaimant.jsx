@@ -78,7 +78,7 @@ export const SelectClaimant = (props) => {
   const radioOpts = useMemo(() => {
     return [...relationships, ...(newClaimant ? [newClaimant] : [])];
   }, [newClaimant, relationships]);
-  const allowAddClaimant = useMemo(() => formType === 'appeal' && attorneyFees && veteranIsNotClaimant, [
+  const allowAddClaimant = useMemo(() => formType === 'appeal' && !attorneyFees && veteranIsNotClaimant, [
     formType,
     veteranIsNotClaimant,
     attorneyFees
@@ -172,7 +172,7 @@ export const SelectClaimant = (props) => {
   }
 
   return (
-    <div className="cf-different-claimant" style={{marginTop: '18.95px'}}>
+    <div className="cf-different-claimant" style={{ marginTop: '18.95px' }}>
       <RadioField
         name="different-claimant-option"
         label="Is the claimant someone other than the Veteran?"
