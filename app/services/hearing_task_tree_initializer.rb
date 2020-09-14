@@ -34,5 +34,57 @@ class HearingTaskTreeInitializer
 
       appeal.reload
     end
+
+    # Initializes schedule hearing tasks for all applicable legacy appeals.
+    #
+    # @note Moved from AppealRepository#create_schedule_hearing_tasks
+    def create_schedule_hearing_tasks
+      # Create legacy appeals where needed
+      ids = cases_that_need_hearings.pluck(:bfkey, :bfcorlid)
+
+      missing_ids = ids - LegacyAppeal.where(vacols_id: ids.map(&:first)).pluck(:vacols_id, :vbms_id)
+      missing_ids.each do |id|
+        LegacyAppeal.find_or_create_by!(vacols_id: id.first) do |appeal|
+          appeal.vbms_id = id.second
+        end
+      end
+
+      # Create the schedule hearing tasks
+      LegacyAppeal.where(vacols_id: ids.map(&:first) - vacols_ids_with_schedule_tasks).each do |appeal|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
+
+        update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+      end
+    end
+
+    private
+
+    # Finds all cases in VACOLS that need a hearing scheduled.
+    #
+    # @note Moved from AppealRepository#cases_that_need_hearings
+    #
+    # @return       [Array<VACOLS::Case>]
+    #   An array of VACOLS cases that need to have a hearing scheduled.
+    def cases_that_need_hearings
+      VACOLS::Case.where(bfhr: "1", bfcurloc: "57").or(VACOLS::Case.where(bfhr: "2", bfdocind: "V", bfcurloc: "57"))
+        .joins(:folder).order("folder.tinum")
+        .includes(:correspondent, :case_issues, :case_hearings, folder: [:outcoder]).reject do |case_record|
+          case_record.case_hearings.any? do |hearing|
+            # VACOLS contains non-BVA hearings information, we want to confirm the appeal has no scheduled BVA hearings
+            hearing.hearing_disp.nil? && VACOLS::CaseHearing::HEARING_TYPES.include?(hearing.hearing_type)
+          end
+        end
+    end
+
+    # Updates the case location for a legacy appeal.
+    #
+    # @note Moved from AppealRepository#update_location!
+    #
+    # @param appeal [LegacyAppeal] the appeal to modify
+    # @param appeal [LegacyAppeal] the appeal's new location
+    def update_location!(appeal, location)
+      appeal.case_record.update_vacols_location!(location)
+    end
   end
 end
