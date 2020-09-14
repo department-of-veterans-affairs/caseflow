@@ -9,6 +9,7 @@
 
 module Seeds
   class PriorityDistributions < Base
+    # :nocov:
     def seed!
       organize_judges
       create_previous_distribtions
@@ -385,5 +386,6 @@ module Seeds
     def random_key
       rand.to_s[2..11]
     end
+    # :nocov:
   end
 end
