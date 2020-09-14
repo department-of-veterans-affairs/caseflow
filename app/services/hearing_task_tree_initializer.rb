@@ -54,7 +54,7 @@ class HearingTaskTreeInitializer
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
 
-        update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+        AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
       end
     end
 
@@ -75,16 +75,6 @@ class HearingTaskTreeInitializer
             hearing.hearing_disp.nil? && VACOLS::CaseHearing::HEARING_TYPES.include?(hearing.hearing_type)
           end
         end
-    end
-
-    # Updates the case location for a legacy appeal.
-    #
-    # @note Moved from AppealRepository#update_location!
-    #
-    # @param appeal [LegacyAppeal] the appeal to modify
-    # @param appeal [LegacyAppeal] the appeal's new location
-    def update_location!(appeal, location)
-      appeal.case_record.update_vacols_location!(location)
     end
   end
 end

@@ -335,6 +335,14 @@ class AppealRepository
       appeal.case_record.update_vacols_location!(location)
     end
 
+    # Updates the case location for a legacy appeal.
+    #
+    # @param appeal [LegacyAppeal] the appeal to modify
+    # @param appeal [LegacyAppeal] the appeal's new location
+    def update_location!(appeal, location)
+      appeal.case_record.update_vacols_location!(location)
+    end
+
     # Determine VACOLS location desired after dispatching a decision
     def location_after_dispatch(appeal:)
       return unless appeal.active?
