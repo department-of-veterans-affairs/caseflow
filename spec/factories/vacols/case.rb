@@ -317,7 +317,7 @@ FactoryBot.define do
 
     trait :docs_in_vbms do
       after(:build) do |vacols_case, _evaluator|
-        vacols_case.folder.tivbms = %w[Y 1 0].sample
+        vacols_case.folder.update!(tivbms: %w[Y 1 0].sample)
       end
     end
 
