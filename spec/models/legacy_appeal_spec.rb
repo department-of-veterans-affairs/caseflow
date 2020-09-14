@@ -1996,10 +1996,13 @@ describe LegacyAppeal, :all_dbs do
           }] }
         end
 
-        it "updates worksheet issues" do
+        it "updates worksheet issues and does not create a new version in paper trail" do
           expect(appeal.worksheet_issues.count).to eq(0)
           subject # do update
           expect(appeal.worksheet_issues.count).to eq(1)
+
+          # Ensure paper trail is not updated after initial update
+          expect(appeal.reload.versions.length).to eq(1)
 
           issue = appeal.worksheet_issues.first
           expect(issue.remand).to eq true
@@ -2017,6 +2020,9 @@ describe LegacyAppeal, :all_dbs do
           appeals_hash[:worksheet_issues_attributes][0][:id] = id
 
           appeal.update(appeals_hash)
+
+          # Ensure paper trail is not updated after additional update
+          expect(appeal.reload.versions.length).to eq(1)
 
           expect(appeal.worksheet_issues.count).to eq(1)
           issue = appeal.worksheet_issues.first
@@ -2039,10 +2045,25 @@ describe LegacyAppeal, :all_dbs do
 
       context "updating changed_request_type to valid value" do
         let(:appeals_hash) { { changed_request_type: "V" } }
+        let(:updated_appeals_hash) { { changed_request_type: HearingDay::REQUEST_TYPES[:virtual] } }
 
         it "successfully updates" do
           subject
           expect(appeal.reload.changed_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
+        end
+
+        it "creates a new version in paper trail" do
+          subject
+
+          # Check for the first round fo updates
+          expect(appeal.reload.changed_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
+          expect(appeal.reload.versions.length).to eq(2)
+          expect(appeal.reload.paper_trail.previous_version.changed_request_type).to eq(nil)
+
+          # Check that changing the hearing request type creates a new paper trail record
+          appeal.update(updated_appeals_hash)
+          expect(appeal.reload.versions.length).to eq(3)
+          expect(appeal.reload.paper_trail.previous_version.changed_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
         end
       end
 

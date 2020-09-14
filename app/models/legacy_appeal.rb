@@ -33,6 +33,9 @@ class LegacyAppeal < CaseflowRecord
   has_one :work_mode, as: :appeal
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
+  # Add Paper Trail configuration
+  has_paper_trail only: [:changed_request_type]
+
   validates :changed_request_type,
             inclusion: {
               in: [
@@ -114,7 +117,6 @@ class LegacyAppeal < CaseflowRecord
   end
 
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js 'specialIssue` value
-  # rubocop:disable Metrics/LineLength
   SPECIAL_ISSUES = {
     contaminated_water_at_camp_lejeune: "Contaminated Water at Camp LeJeune",
     dic_death_or_accrued_benefits_united_states: "DIC - death, or accrued benefits - United States",
@@ -142,7 +144,6 @@ class LegacyAppeal < CaseflowRecord
     vocational_rehab: "Vocational Rehabilitation and Employment",
     waiver_of_overpayment: "Waiver of Overpayment"
   }.freeze
-  # rubocop:enable Metrics/LineLength
 
   # Codes for Appeals Status API
   TYPE_CODES = {
