@@ -106,6 +106,14 @@ export const amaAppeal = {
   hearings: [],
 };
 
+export const amaAppealForTravelBoard = {
+  ...appealData,
+  closestRegionalOfficeLabel: "Nashville Regional office",
+  powerOfAttorney: {
+    ...powerOfAttorney
+  }
+}
+
 export const openHearingAppeal = {
   ...appealData,
   id: '542',

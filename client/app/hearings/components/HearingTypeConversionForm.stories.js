@@ -2,7 +2,7 @@ import React from 'react';
 
 import { HearingTypeConversionForm } from './HearingTypeConversionForm';
 
-import { amaAppeal } from '../../../test/data/appeals';
+import { amaAppealForTravelBoard } from '../../../test/data/appeals';
 
 export default {
   title: 'Hearings/Components/HearingTypeConversionForm',
@@ -22,12 +22,7 @@ const Template = (args) => (
 export const Basic = Template.bind({});
 Basic.args = {
   appeal: {
-    ...amaAppeal,
-    closestRegionalOfficeLabel: "Nashville Regional office",
-    powerOfAttorney: {
-      representative_type: 'Service Organization',
-      representative_name: "MASSACHUSETTS DEPARTMENT OF VETERANS' SERVICES"
-    }
+    ...amaAppealForTravelBoard
   },
   type: "Virtual"
 }
