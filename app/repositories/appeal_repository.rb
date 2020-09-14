@@ -314,12 +314,6 @@ class AppealRepository
       end
     end
 
-    def vacols_ids_with_schedule_tasks
-      ScheduleHearingTask.open.where(appeal_type: LegacyAppeal.name)
-        .joins("LEFT JOIN legacy_appeals ON appeal_id = legacy_appeals.id")
-        .select("legacy_appeals.vacols_id").pluck(:vacols_id).uniq
-    end
-
     def withdraw_hearing!(appeal)
       appeal.case_record.update!(bfhr: "5", bfha: "5")
     end
