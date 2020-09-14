@@ -78,7 +78,7 @@ export const SelectClaimant = (props) => {
   const radioOpts = useMemo(() => {
     return [...relationships, ...(newClaimant ? [newClaimant] : [])];
   }, [newClaimant, relationships]);
-  const allowAddClaimant = useMemo(() => formType === 'appeal' && !attorneyFees && veteranIsNotClaimant, [
+  const allowAddClaimant = useMemo(() => formType === 'appeal' && attorneyFees && veteranIsNotClaimant, [
     formType,
     veteranIsNotClaimant,
     attorneyFees
