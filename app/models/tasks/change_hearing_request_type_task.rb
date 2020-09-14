@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ChangeHearingRequestTypeTask < Task
+  validates :parent, presence: true
+
   def self.label
     "Change hearing request type"
   end
