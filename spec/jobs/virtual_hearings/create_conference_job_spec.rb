@@ -214,5 +214,52 @@ describe VirtualHearings::CreateConferenceJob do
         )
       end
     end
+
+    context "for a legacy hearings" do
+      let(:appeal) do
+        create(
+          :legacy_appeal,
+          :with_veteran,
+          vacols_case: create(:case)
+        )
+      end
+      let!(:representative) do
+        create(
+          :representative,
+          repfirst: "Serrif",
+          replast: "Gnest",
+          repkey: appeal.vacols_id
+        )
+      end
+      let(:hearing) { create(:legacy_hearing, appeal: appeal) }
+
+      context "when representative is different in VACOLS and VBMS" do
+        it "uses the representative in VBMS" do
+          # Sanity check that calling `LegacyAppeal#representative_name` returns the
+          # VACOLS value if the `RequestStore.store[:application]` isn't set
+          expect(appeal.representative_name).to eq("Serrif Gnest")
+
+          expect(MailRecipient).to(
+            receive(:new)
+              .with(instance_of(Hash))
+              .twice
+              .and_call_original
+          )
+          expect(MailRecipient).to(
+            receive(:new)
+              .with(
+                hash_including(
+                  name: FakeConstants.BGS_SERVICE.DEFAULT_POA_NAME,
+                  title: MailRecipient::RECIPIENT_TITLES[:representative]
+                )
+              )
+              .once
+              .and_call_original
+          )
+
+          subject.perform_now
+        end
+      end
+    end
   end
 end
