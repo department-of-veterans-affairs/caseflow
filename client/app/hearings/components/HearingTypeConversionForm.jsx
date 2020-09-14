@@ -3,7 +3,6 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
 
-
 import { marginTop, saveButton, cancelButton } from './details/style';
 import { HelperText } from './VirtualHearings/HelperText';
 import COPY from '../../../COPY';
@@ -11,7 +10,6 @@ import { getAppellantTitle } from '../utils';
 import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
 import Button from '../../components/Button';
-
 
 export const HearingTypeConversionForm = ({
   type,
@@ -21,7 +19,7 @@ export const HearingTypeConversionForm = ({
   const [loading, setLoading] = useState(false);
 
   // reset any states
-  const reset = () => setLoading(false)
+  const reset = () => setLoading(false);
 
   // 'Appellant' or 'Veteran'
   const appellantTitle = getAppellantTitle(appeal?.appellantIsNotVeteran);
@@ -38,7 +36,7 @@ export const HearingTypeConversionForm = ({
   const virtualHearing = {
     appellantEmail: appeal?.veteranInfo?.veteran?.email_address,
     representativeEmail: appeal?.powerOfAttorney?.representative_email_address,
-  }
+  };
   /* eslint-enable camelcase */
 
   // Set the section props
@@ -52,19 +50,19 @@ export const HearingTypeConversionForm = ({
     virtualHearing,
   };
 
-  const convertTitle = sprintf(COPY.CONVERT_HEARING_TYPE_TITLE, type)
+  const convertTitle = sprintf(COPY.CONVERT_HEARING_TYPE_TITLE, type);
 
   return (
     <React.Fragment>
       <AppSegment filledBackground>
         <h1 className="cf-margin-bottom-0">{convertTitle}</h1>
         <p dangerouslySetInnerHTML={
-            { __html: sprintf(COPY.CONVERT_HEARING_TYPE_SUBTITLE, appeal?.closestRegionalOfficeLabel) }
-          }
+          { __html: sprintf(COPY.CONVERT_HEARING_TYPE_SUBTITLE, appeal?.closestRegionalOfficeLabel) }
+        }
         />
         <HelperText label={COPY.CONVERT_HEARING_TYPE_SUBTITLE_2} />
-        <AppellantSection { ...sectionProps }/>
-        <RepresentativeSection { ...sectionProps }/>
+        <AppellantSection {...sectionProps} />
+        <RepresentativeSection {...sectionProps} />
       </AppSegment>
       <div {...marginTop(30)}>
         <Button
@@ -85,7 +83,6 @@ export const HearingTypeConversionForm = ({
             name={convertTitle}
             loading={loading}
             className="usa-button"
-            onClick={() => {}}
           >
             {convertTitle}
           </Button>
