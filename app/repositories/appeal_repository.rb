@@ -320,7 +320,7 @@ class AppealRepository
         .includes(:correspondent, :case_issues, :case_hearings, folder: [:outcoder]).reject do |case_record|
           case_record.case_hearings.any? do |hearing|
             # VACOLS contains non-BVA hearings information, we want to confirm the appeal has no scheduled BVA hearings
-            hearing.hearing_disp.nil? && HearingDay::REQUEST_TYPES.value?(hearing.hearing_type)
+            hearing.hearing_disp.nil? && VACOLS::CaseHearing::HEARING_TYPES.include?(hearing.hearing_type)
           end
         end
     end

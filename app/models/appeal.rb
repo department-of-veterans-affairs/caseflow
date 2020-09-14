@@ -333,6 +333,10 @@ class Appeal < DecisionReview
     veteran_middle_name&.first
   end
 
+  def cavc?
+    false if cavc == "not implemented for AMA"
+  end
+
   def cavc
     "not implemented for AMA"
   end
@@ -503,6 +507,14 @@ class Appeal < DecisionReview
     return true if JudgeDecisionReviewTask.completed.find_by(appeal: self)
 
     false
+  end
+
+  # Determine type using cloesest_regional_office
+  # "Central" if closest_regional_office office is "C", "Video" otherwise
+  def readable_hearing_request_type
+    return nil if closest_regional_office.nil?
+
+    (closest_regional_office == "C") ? Hearing::HEARING_TYPES[:C] : Hearing::HEARING_TYPES[:V]
   end
 
   private

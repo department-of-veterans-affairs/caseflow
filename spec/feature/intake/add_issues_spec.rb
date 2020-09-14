@@ -624,7 +624,7 @@ feature "Intake Add Issues Page", :all_dbs do
           click_intake_add_issue
           expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
           find(".cf-select__control").click
-          expect(page).to have_content("Constested Claims - Attorney fees")
+          expect(page).to have_content("Contested Claims - Attorney fees")
         end
       end
 
@@ -638,7 +638,7 @@ feature "Intake Add Issues Page", :all_dbs do
           click_intake_add_issue
           expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
           find(".cf-select__control").click
-          expect(page).to_not have_content("Constested Claims - Attorney fees")
+          expect(page).to_not have_content("Contested Claims - Attorney fees")
           expect(page).to have_content("Active Duty Adjustments")
         end
       end

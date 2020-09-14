@@ -16,8 +16,7 @@ export class EstablishClaimForm extends React.Component {
     return formattedStationOfJurisdiction(
       this.props.stationOfJurisdiction,
       this.props.regionalOfficeKey,
-      this.props.regionalOfficeCities,
-      this.props.specialIssuesRevamp
+      this.props.regionalOfficeCities
     );
   }
 
@@ -128,7 +127,6 @@ EstablishClaimForm.propTypes = {
   regionalOfficeKey: PropTypes.string.isRequired,
   regionalOfficeCities: PropTypes.object.isRequired,
   stationOfJurisdiction: PropTypes.object.isRequired,
-  specialIssuesRevamp: PropTypes.bool.isRequired,
   loading: PropTypes.bool.isRequired
 };
 
