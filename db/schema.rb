@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_04_140217) do
+ActiveRecord::Schema.define(version: 2020_09_08_191436) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -829,6 +829,7 @@ ActiveRecord::Schema.define(version: 2020_09_04_140217) do
 
   create_table "legacy_appeals", force: :cascade do |t|
     t.bigint "appeal_series_id"
+    t.string "changed_request_type", comment: "The new hearing type preference for an appellant that had previously requested a travel board hearing"
     t.string "closest_regional_office"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.datetime "created_at"
@@ -872,6 +873,7 @@ ActiveRecord::Schema.define(version: 2020_09_04_140217) do
     t.bigint "created_by_id", comment: "The ID of the user who created the Legacy Hearing"
     t.bigint "hearing_day_id", comment: "The hearing day the hearing will take place on"
     t.string "military_service", comment: "Periods and circumstances of military service"
+    t.string "original_vacols_request_type", comment: "The original request type of the hearing in VACOLS, before it was changed to Virtual"
     t.boolean "prepped", comment: "Determines whether the judge has checked the hearing as prepped"
     t.text "summary", comment: "Summary of hearing"
     t.datetime "updated_at", comment: "Timestamp when record was last updated."
