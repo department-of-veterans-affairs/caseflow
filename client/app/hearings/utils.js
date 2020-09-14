@@ -110,10 +110,10 @@ export const APPELLANT_TITLE = 'Appellant';
 
 /**
  * Gets the title to use for the appellant of a hearing.
- * @param {object} hearing -- A hearing
+ * @param {string} appellantIsNotVeteran -- bool
  */
-export const getAppellantTitleForHearing = (hearing) =>
-  hearing?.appellantIsNotVeteran ? APPELLANT_TITLE : VETERAN_TITLE;
+export const getAppellantTitle = (appellantIsNotVeteran) =>
+  appellantIsNotVeteran ? APPELLANT_TITLE : VETERAN_TITLE;
 
 export const VIRTUAL_HEARING_HOST = 'host';
 export const VIRTUAL_HEARING_GUEST = 'guest';
