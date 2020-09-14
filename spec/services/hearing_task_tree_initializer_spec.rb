@@ -1,6 +1,43 @@
 # frozen_string_literal: true
 
 describe HearingTaskTreeInitializer do
+  context "#for_appeal_with_pending_travel_board_hearing" do
+    let(:vacols_case) do
+      create(
+        :case,
+        bfhr: "2"
+      )
+    end
+    let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+
+    subject { described_class.for_appeal_with_pending_travel_board_hearing(appeal) }
+
+    context "if task tree does not already exist" do
+      it "it creates the expected tasks" do
+        expect(ChangeHearingRequestTypeTask.count).to eq(0)
+        expect(ScheduleHearingTask.count).to eq(0)
+        expect(HearingTask.count).to eq(0)
+        subject
+        expect(ChangeHearingRequestTypeTask.count).to eq(1)
+        expect(ScheduleHearingTask.count).to eq(1)
+        expect(HearingTask.count).to eq(1)
+      end
+    end
+
+    context "if task tree already exists" do
+      before do
+        described_class.for_appeal_with_pending_travel_board_hearing(appeal)
+      end
+
+      it "does not create a duplicate task tree" do
+        subject
+        expect(ChangeHearingRequestTypeTask.count).to eq(1)
+        expect(ScheduleHearingTask.count).to eq(1)
+        expect(HearingTask.count).to eq(1)
+      end
+    end
+  end
+
   context "#create_schedule_hearing_tasks" do
     context "when missing legacy appeals" do
       let!(:cases) { create_list(:case, 10, bfcurloc: "57", bfhr: "1") }
