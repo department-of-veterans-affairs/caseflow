@@ -18,7 +18,8 @@ import Alert from '../../components/Alert';
 import { marginTop, regionalOfficeSection, saveButton, cancelButton } from './details/style';
 import { find, get } from 'lodash';
 import { getAppellantTitle, processAlerts, parseVirtualHearingErrors } from '../utils';
-import { onChangeFormData,
+import {
+  onChangeFormData,
   onReceiveAlerts,
   onReceiveTransitioningAlert,
   transitionAlert,
@@ -217,17 +218,12 @@ export const ScheduleVeteran = ({
     } catch (err) {
       const code = get(err, 'response.body.errors[0].code') || '';
 
-      console.log('code: ', code);
       const [msg] = err?.response?.body?.errors.length > 0 && err?.response?.body?.errors;
-
-      console.log('msg: ', msg);
 
       // Handle inline errors
       if (code === 1002) {
         // Parse the errors into a list
         const errList = parseVirtualHearingErrors(msg.message, appeal);
-
-        console.log('ERRORS: ', errList);
 
         // Scroll errors into view
         document.getElementById('email-section').scrollIntoView();
