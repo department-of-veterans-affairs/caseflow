@@ -23,7 +23,7 @@ export const RepresentativeSection = ({
   appellantTitle
 }) => (
   <VirtualHearingSection label="Power of Attorney">
-    {hearing.representative ? (
+    {hearing?.representative ? (
       <React.Fragment>
         <AddressLine
           label={hearing?.representativeType}
