@@ -30,12 +30,13 @@ class RedistributedCase
   end
 
   def ok_to_redistribute?
-    # redistribute if there are no relevant tasks
-    return true if legacy_appeal_relevant_tasks.blank?
+    # redistribute if there are either no relevant tasks or if they are completed or cancelled
+    return true if legacy_appeal_relevant_tasks.blank? || legacy_appeal_relevant_tasks.all?(&:closed?)
 
     # do not redistribute if any relevant task is open (not completed or cancelled)
     return false if legacy_appeal_relevant_tasks.any?(&:open?)
 
+    # we do not expect to hit this however leaving it in just to confirm the logic
     # redistribute if all HearingTasks are cancelled
     return true if !legacy_appeal_hearing_tasks.empty? && legacy_appeal_hearing_tasks.all?(&:cancelled?)
 
@@ -68,10 +69,11 @@ class RedistributedCase
   # send to Sentry but do not raise exception.
   def alert_existing_distributed_case_not_unique
     error = CannotRedistribute.new("DistributedCase already exists")
+    Raven.tags_context judge: new_distribution.judge.css_id
     Raven.capture_exception(
       error,
+      tags: { vacols_id: case_id },
       extra: {
-        vacols_id: case_id,
         judge: new_distribution.judge.css_id,
         location: legacy_appeal.location_code,
         previous_location: legacy_appeal.location_history.last.summary

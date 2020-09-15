@@ -282,13 +282,18 @@ class Task < CaseflowRecord
   # When a status is "active" we expect properties of the task to change. When a task is not "active" we expect that
   # properties of the task will not change.
   def open?
-    !self.class.closed_statuses.include?(status)
+    !closed?
+  end
+
+  def closed?
+    self.class.closed_statuses.include?(status)
   end
 
   def open_with_no_children?
     open? && children.empty?
   end
 
+  # does not include on_hold
   def active?
     self.class.active_statuses.include?(status)
   end
