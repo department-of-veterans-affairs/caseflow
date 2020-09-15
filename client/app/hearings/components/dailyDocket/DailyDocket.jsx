@@ -95,7 +95,7 @@ export default class DailyDocket extends React.Component {
 
     // for Central hearing days, return 'C'
     // Otherwise assume it's a video hearing day and return RO key
-    return dailyDocket.requestType === 'C' ? 'C' : dailyDocket.regionalOfficeKey
+    return dailyDocket.requestType === 'C' ? 'C' : dailyDocket.regionalOfficeKey;
   };
 
   openDispositionModal = ({ hearing, fromDisposition, toDisposition, onConfirm, onCancel }) => {
