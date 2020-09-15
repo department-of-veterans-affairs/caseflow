@@ -114,6 +114,7 @@ exports[`RepresentativeSection Displays timezone when virtual 1`] = `
   <VirtualHearingSection
     hide={false}
     label="Power of Attorney"
+    showDivider={true}
   >
     <div
       className="cf-help-divider"
@@ -160,7 +161,7 @@ SAN FRANCISCO, CA 94103
         >
           <SearchableDropdown
             clearOnSelect={false}
-            clearable={false}
+            isClearable={true}
             loading={false}
             name="POA/Representative Timezone"
             onChange={[Function]}
@@ -978,11 +979,11 @@ SAN FRANCISCO, CA 94103
                   <StateManager
                     cache={false}
                     classNamePrefix="cf-select"
-                    clearable={false}
                     defaultInputValue=""
                     defaultMenuIsOpen={false}
                     defaultValue={null}
                     inputId="POA/Representative Timezone"
+                    isClearable={true}
                     isDisabled={false}
                     isLoading={false}
                     isSearchable={true}
@@ -1772,7 +1773,6 @@ SAN FRANCISCO, CA 94103
                       cache={false}
                       captureMenuScroll={false}
                       classNamePrefix="cf-select"
-                      clearable={false}
                       closeMenuOnScroll={false}
                       closeMenuOnSelect={true}
                       components={Object {}}
@@ -1784,6 +1784,7 @@ SAN FRANCISCO, CA 94103
                       getOptionValue={[Function]}
                       inputId="POA/Representative Timezone"
                       inputValue=""
+                      isClearable={true}
                       isDisabled={false}
                       isLoading={false}
                       isMulti={false}
@@ -3379,7 +3380,6 @@ SAN FRANCISCO, CA 94103
                             "cache": false,
                             "captureMenuScroll": false,
                             "classNamePrefix": "cf-select",
-                            "clearable": false,
                             "closeMenuOnScroll": false,
                             "closeMenuOnSelect": true,
                             "components": Object {},
@@ -3392,6 +3392,7 @@ SAN FRANCISCO, CA 94103
                             "getOptionValue": [Function],
                             "inputId": "POA/Representative Timezone",
                             "inputValue": "",
+                            "isClearable": true,
                             "isDisabled": false,
                             "isLoading": false,
                             "isMulti": false,
@@ -5038,7 +5039,6 @@ SAN FRANCISCO, CA 94103
                                   "cache": false,
                                   "captureMenuScroll": false,
                                   "classNamePrefix": "cf-select",
-                                  "clearable": false,
                                   "closeMenuOnScroll": false,
                                   "closeMenuOnSelect": true,
                                   "components": Object {},
@@ -5051,6 +5051,7 @@ SAN FRANCISCO, CA 94103
                                   "getOptionValue": [Function],
                                   "inputId": "POA/Representative Timezone",
                                   "inputValue": "",
+                                  "isClearable": true,
                                   "isDisabled": false,
                                   "isLoading": false,
                                   "isMulti": false,
@@ -6705,7 +6706,6 @@ SAN FRANCISCO, CA 94103
                                         "cache": false,
                                         "captureMenuScroll": false,
                                         "classNamePrefix": "cf-select",
-                                        "clearable": false,
                                         "closeMenuOnScroll": false,
                                         "closeMenuOnSelect": true,
                                         "components": Object {},
@@ -6718,6 +6718,7 @@ SAN FRANCISCO, CA 94103
                                         "getOptionValue": [Function],
                                         "inputId": "POA/Representative Timezone",
                                         "inputValue": "",
+                                        "isClearable": true,
                                         "isDisabled": false,
                                         "isLoading": false,
                                         "isMulti": false,
@@ -8359,7 +8360,6 @@ SAN FRANCISCO, CA 94103
                                               "cache": false,
                                               "captureMenuScroll": false,
                                               "classNamePrefix": "cf-select",
-                                              "clearable": false,
                                               "closeMenuOnScroll": false,
                                               "closeMenuOnSelect": true,
                                               "components": Object {},
@@ -8372,6 +8372,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "POA/Representative Timezone",
                                               "inputValue": "",
+                                              "isClearable": true,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -9250,7 +9251,6 @@ SAN FRANCISCO, CA 94103
                                               "cache": false,
                                               "captureMenuScroll": false,
                                               "classNamePrefix": "cf-select",
-                                              "clearable": false,
                                               "closeMenuOnScroll": false,
                                               "closeMenuOnSelect": true,
                                               "components": Object {},
@@ -9263,6 +9263,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "POA/Representative Timezone",
                                               "inputValue": "",
+                                              "isClearable": true,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -10985,7 +10986,6 @@ SAN FRANCISCO, CA 94103
                                         "cache": false,
                                         "captureMenuScroll": false,
                                         "classNamePrefix": "cf-select",
-                                        "clearable": false,
                                         "closeMenuOnScroll": false,
                                         "closeMenuOnSelect": true,
                                         "components": Object {},
@@ -10998,6 +10998,7 @@ SAN FRANCISCO, CA 94103
                                         "getOptionValue": [Function],
                                         "inputId": "POA/Representative Timezone",
                                         "inputValue": "",
+                                        "isClearable": true,
                                         "isDisabled": false,
                                         "isLoading": false,
                                         "isMulti": false,
@@ -12634,7 +12635,6 @@ SAN FRANCISCO, CA 94103
                                               "cache": false,
                                               "captureMenuScroll": false,
                                               "classNamePrefix": "cf-select",
-                                              "clearable": false,
                                               "closeMenuOnScroll": false,
                                               "closeMenuOnSelect": true,
                                               "components": Object {},
@@ -12647,6 +12647,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "POA/Representative Timezone",
                                               "inputValue": "",
+                                              "isClearable": true,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -14294,7 +14295,6 @@ SAN FRANCISCO, CA 94103
                                               "cache": false,
                                               "captureMenuScroll": false,
                                               "classNamePrefix": "cf-select",
-                                              "clearable": false,
                                               "closeMenuOnScroll": false,
                                               "closeMenuOnSelect": true,
                                               "components": Object {},
@@ -14307,6 +14307,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "POA/Representative Timezone",
                                               "inputValue": "",
+                                              "isClearable": true,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -15428,6 +15429,7 @@ exports[`RepresentativeSection Does not allow editing emails when read-only 1`] 
   <VirtualHearingSection
     hide={false}
     label="Power of Attorney"
+    showDivider={true}
   >
     <div
       className="cf-help-divider"
@@ -15607,6 +15609,7 @@ exports[`RepresentativeSection Matches snapshot with default props 1`] = `
   <VirtualHearingSection
     hide={false}
     label="Power of Attorney"
+    showDivider={true}
   >
     <div
       className="cf-help-divider"
@@ -15842,6 +15845,7 @@ exports[`RepresentativeSection Shows Representative name when representative add
   <VirtualHearingSection
     hide={false}
     label="Power of Attorney"
+    showDivider={true}
   >
     <div
       className="cf-help-divider"
@@ -16070,6 +16074,7 @@ exports[`RepresentativeSection Shows Representative not present message when no 
   <VirtualHearingSection
     hide={false}
     label="Power of Attorney"
+    showDivider={true}
   >
     <div
       className="cf-help-divider"

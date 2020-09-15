@@ -7,13 +7,6 @@
 # Legacy appeals have VACOLS and BGS as dependencies.
 
 class LegacyAppeal < CaseflowRecord
-  # Reverting changes that supported new contentions in Caseflow Dispatch. See #14714
-  self.ignored_columns = %w[burn_pit
-                            military_sexual_trauma
-                            blue_water
-                            us_court_of_appeals_for_veterans_claims
-                            no_special_issues]
-
   include AppealConcern
   include AssociatedVacolsModel
   include BgsService
@@ -40,6 +33,17 @@ class LegacyAppeal < CaseflowRecord
   has_one :work_mode, as: :appeal
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
+  validates :changed_request_type,
+            inclusion: {
+              in: [
+                HearingDay::REQUEST_TYPES[:video],
+                HearingDay::REQUEST_TYPES[:virtual]
+              ],
+              message: "changed request type (%<value>s) is invalid"
+            },
+            allow_nil: true
+
+  class InvalidChangedRequestType < StandardError; end
   class UnknownLocationError < StandardError; end
 
   # When these instance variable getters are called, first check if we've
@@ -162,6 +166,13 @@ class LegacyAppeal < CaseflowRecord
     case_storage: "81",
     service_organization: "55",
     closed: "99"
+  }.freeze
+
+  READABLE_HEARING_REQUEST_TYPES = {
+    central_board: "Central",
+    travel_board: "Travel",
+    video: "Video",
+    virtual: "Virtual"
   }.freeze
 
   def document_fetcher
@@ -379,13 +390,33 @@ class LegacyAppeal < CaseflowRecord
   # `hearing_request_type` is a direct mapping from VACOLS and has some unused
   # values. Also, `hearing_request_type` alone can't disambiguate a video hearing
   # from a travel board hearing. This method cleans all of these issues up.
+  #
+  # [Sept. 2020]:
+  #   In response to COVID, the appellant has the option of changing their hearing
+  #   preference if they were scheduled for a travel board hearing. This method captures
+  #   if a travel board hearing request type was overridden in Caseflow.
   def sanitized_hearing_request_type
+    if changed_request_type.present?
+      case changed_request_type
+      when HearingDay::REQUEST_TYPES[:video]
+        return :video
+      when HearingDay::REQUEST_TYPES[:virtual]
+        return :virtual
+      else
+        fail InvalidChangedRequestType, "\"#{changed_request_type}\" is not a valid request type."
+      end
+    end
+
     case hearing_request_type
     when :central_office
       :central_office
     when :travel_board
       video_hearing_requested ? :video : :travel_board
     end
+  end
+
+  def readable_hearing_request_type
+    READABLE_HEARING_REQUEST_TYPES[sanitized_hearing_request_type]
   end
 
   def veteran_is_deceased

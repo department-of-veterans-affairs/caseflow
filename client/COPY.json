@@ -56,7 +56,8 @@
   "OTHER_REVIEWS_TABLE_SYNCING_DECISIONS_ERROR": "Decisions sync failed. Support notified.",
 
   "TASK_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
-  "TASK_SNAPSHOT_ABOUT_BOX_TYPE_LABEL": "Type",
+  "TASK_SNAPSHOT_ABOUT_BOX_HEARING_REQUEST_TYPE_LABEL": "Hearing Type",
+  "TASK_SNAPSHOT_ABOUT_BOX_TYPE_LABEL": "Appeal Stream Type",
   "TASK_SNAPSHOT_ABOUT_BOX_DOCUMENTS_LABEL": "Veteran Documents",
   "TASK_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL": "Days waiting",
   "TASK_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL": "Docket",
@@ -133,7 +134,7 @@
   "USER_QUEUE_PAGE_TABLE_TITLE": "Your cases",
   "USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to you:",
   "USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold (will return to \"Assigned\" tab when hold is completed):",
-  "QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed (last two weeks):",
+  "QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed (last 7 days):",
 
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION": "Cases owned by the %s team that are unassigned to a person.",
@@ -474,6 +475,7 @@
   "TEAM_MANAGEMENT_ID_COLUMN_HEADING": "ID",
   "TEAM_MANAGEMENT_NAME_COLUMN_HEADING": "Name",
   "TEAM_MANAGEMENT_URL_COLUMN_HEADING": "URL",
+  "TEAM_MANAGEMENT_PRIORITY_DISTRIBUTION_COLUMN_HEADING": "Priority Case Distribution",
   "TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING": "BGS Participant ID",
   "TEAM_MANAGEMENT_UPDATE_ROW_BUTTON": "Update",
   "TEAM_MANAGEMENT_ADD_JUDGE_LABEL": "Judge Teams",
@@ -753,7 +755,11 @@
   "EMAIL_NOTIFICATION_HISTORY_TITLE": "Email Notification History",
   "EMAIL_NOTIFICATION_HISTORY_INTRO": "Caseflow attempted to send the following email notifications, but this does not guarantee the recipients were able to receive them",
   "VIRTUAL_HEARING_TIMEZONE_REQUIRED": "Timezone is required to send email notifications.",
-  
+
+  "CONVERT_HEARING_TYPE_TITLE": "Convert Hearing To %s",
+  "CONVERT_HEARING_TYPE_SUBTITLE": "The hearing request will appear in the scheduling queue for <strong>%s</strong>.",
+  "CONVERT_HEARING_TYPE_SUBTITLE_2": "Review and update the following information in VBMS if needed. Caseflow won't send email notifications until you schedule the hearing.",
+
   "JUDGE_TEAM_REMOVE_JUDGE_ERROR": "Cannot remove a judge from their judge team.",
   "JUDGE_TEAM_ATTORNEY_RIGHTS_ERROR": "Cannot edit attorney rights on non-attorneys",
 

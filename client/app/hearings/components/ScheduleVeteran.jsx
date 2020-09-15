@@ -15,7 +15,7 @@ import { formatDateStr } from '../../util/DateUtil';
 import Alert from '../../components/Alert';
 import { marginTop, regionalOfficeSection, saveButton, cancelButton } from './details/style';
 import { find } from 'lodash';
-import { getAppellantTitleForHearing } from '../utils';
+import { getAppellantTitle } from '../utils';
 import { onChangeFormData } from '../../components/common/actions';
 import { ScheduleVeteranForm } from './ScheduleVeteranForm';
 import { HEARING_REQUEST_TYPES } from '../constants';
@@ -37,7 +37,7 @@ export const ScheduleVeteran = ({
   const [errors, setErrors] = useState({});
 
   // Get the appellant title ('Veteran' or 'Appellant')
-  const appellantTitle = getAppellantTitleForHearing(appeal);
+  const appellantTitle = getAppellantTitle(appeal?.apppellantIsNotVeteran);
 
   // Get the selected hearing day
   const selectedHearingDay = assignHearingForm?.hearingDay || hearingDay;
