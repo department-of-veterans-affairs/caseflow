@@ -63,6 +63,19 @@ describe DocketSwitchMailTask, :postgres do
     end
   end
 
+  describe ".create_from_params" do
+    let(:params) { { parent_id: root_task.id, instructions: "foo bar" } }
+
+    subject { DocketSwitchMailTask.create_from_params(params, user) }
+
+    it "creates both org task and user task" do
+      expect(DocketSwitchMailTask.all.size).to eq(0)
+      subject
+      binding.pry
+      expect(DocketSwitchMailTask.all.size).to eq(2)
+    end
+  end
+
   describe ".allow_creation?" do
     subject { DocketSwitchMailTask.allow_creation?(user) }
 
@@ -83,15 +96,14 @@ describe DocketSwitchMailTask, :postgres do
 
   describe ".child_task_assignee" do
     let(:org_task) { task_class.create!(appeal: root_task.appeal, parent_id: root_task.id, assigned_to: cotb_team) }
-    let(:params) { {} }
-    let(:parent) { nil }
+    let(:parent) { root_task }
+    let(:params) { { parent_id: parent.id } }
 
     subject { DocketSwitchMailTask.child_task_assignee(parent, params) }
 
     context "when assigned_to is specified" do
       let(:assigned_to) { create(:user) }
-      let(:params) { { assigned_to_type: User.name, assigned_to_id: assigned_to.id } }
-      let(:parent) { root_task }
+      let(:params) { { **super(), assigned_to_type: User.name, assigned_to_id: assigned_to.id } }
 
       it "assigns task to specified user" do
         expect(subject).to eq(assigned_to)
@@ -99,11 +111,9 @@ describe DocketSwitchMailTask, :postgres do
     end
 
     context "when assigned_to not specified, but assigned_by user is available" do
-      let(:params) { { assigned_by: user } }
+      before { RequestStore[:current_user] = user }
 
       context "when parent is root task" do
-        let(:parent) { root_task }
-
         it "creates org task" do
           expect(subject).to eq(ClerkOfTheBoard.singleton)
         end
