@@ -861,6 +861,44 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
         it_behaves_like "request with invalid attributes"
       end
+
+      context "when task is ChangeHearingRequestTypeTask" do
+        let(:attorney_user) { create(:user) }
+        let!(:legacy_appeal) do
+          create(:legacy_appeal,
+                 vacols_case: create(:case, :assigned, bfcorlid: "0000000000S", user: attorney_user))
+        end
+
+        let(:task_type) { :changed_hearing_request_type }
+        let(:action) do
+          create(task_type, appeal: legacy_appeal, assigned_by: assigned_by_user, assigned_to: assigned_to_user)
+        end
+
+        let(:params) do
+          {
+            task: {
+              status: Constants.TASK_STATUSES.completed,
+              business_payloads: {
+                values: {
+                  changed_request_type: HearingDay::REQUEST_TYPES[:video]
+                }
+              }
+            },
+            id: action.id
+          }
+        end
+
+        it "sucessfully updates appeal and closes related tasks", :aggregate_failures do
+          # Ensure that the changed request type is nil before we take action
+          expect(legacy_appeal.changed_request_type).to eq(nil)
+          subject
+
+          # Ensure the update successfully completed the task and changed the appeal
+          expect(response.status).to eq 200
+          expect(legacy_appeal.reload.changed_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
+          expect(action.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        end
+      end
     end
   end
 
