@@ -22,6 +22,16 @@ describe HearingTaskTreeInitializer do
         expect(ScheduleHearingTask.count).to eq(1)
         expect(HearingTask.count).to eq(1)
       end
+
+      it "creates tasks that are all assigned to BVA" do
+        subject
+        expect(
+          appeal
+            .tasks
+            .reject { |task| task.is_a?(RootTask) }
+            .all? { |task| task.assigned_to == Bva.singleton }
+        ).to eq(true)
+      end
     end
 
     context "if task tree already exists" do
