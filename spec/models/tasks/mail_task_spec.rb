@@ -485,6 +485,7 @@ describe MailTask, :postgres do
 
       before do
         cotb_team.add_user(cotb_user)
+        RequestStore[:current_user] = cotb_user
       end
 
       it "should route to the user that created it" do
