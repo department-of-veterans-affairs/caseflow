@@ -54,11 +54,9 @@ class HearingTaskTreeInitializer
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
 
-        update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+        AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
       end
     end
-
-    private
 
     # Finds all cases in VACOLS that need a hearing scheduled.
     #
@@ -77,14 +75,15 @@ class HearingTaskTreeInitializer
         end
     end
 
-    # Updates the case location for a legacy appeal.
+    private
+
+    # Gets VACOLS ids for all appeals with schedule hearing tasks.
     #
-    # @note Moved from AppealRepository#update_location!
-    #
-    # @param appeal [LegacyAppeal] the appeal to modify
-    # @param appeal [LegacyAppeal] the appeal's new location
-    def update_location!(appeal, location)
-      appeal.case_record.update_vacols_location!(location)
+    # @note Moved from AppealRepository#vacols_ids_with_schedule_tasks
+    def vacols_ids_with_schedule_tasks
+      ScheduleHearingTask.open.where(appeal_type: LegacyAppeal.name)
+        .joins("LEFT JOIN legacy_appeals ON appeal_id = legacy_appeals.id")
+        .select("legacy_appeals.vacols_id").pluck(:vacols_id).uniq
     end
   end
 end

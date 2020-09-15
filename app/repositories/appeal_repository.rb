@@ -314,12 +314,6 @@ class AppealRepository
       end
     end
 
-    def vacols_ids_with_schedule_tasks
-      ScheduleHearingTask.open.where(appeal_type: LegacyAppeal.name)
-        .joins("LEFT JOIN legacy_appeals ON appeal_id = legacy_appeals.id")
-        .select("legacy_appeals.vacols_id").pluck(:vacols_id).uniq
-    end
-
     def withdraw_hearing!(appeal)
       appeal.case_record.update!(bfhr: "5", bfha: "5")
     end
@@ -332,6 +326,14 @@ class AppealRepository
 
     def update_location_for_death_dismissal!(appeal:)
       location = LegacyAppeal::LOCATION_CODES[:sr_council_dvc]
+      appeal.case_record.update_vacols_location!(location)
+    end
+
+    # Updates the case location for a legacy appeal.
+    #
+    # @param appeal [LegacyAppeal] the appeal to modify
+    # @param appeal [LegacyAppeal] the appeal's new location
+    def update_location!(appeal, location)
       appeal.case_record.update_vacols_location!(location)
     end
 
