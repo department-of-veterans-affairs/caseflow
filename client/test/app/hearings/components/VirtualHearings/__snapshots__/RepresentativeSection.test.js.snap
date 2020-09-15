@@ -114,6 +114,7 @@ exports[`RepresentativeSection Displays timezone when virtual 1`] = `
   <VirtualHearingSection
     hide={false}
     label="Power of Attorney"
+    showDivider={true}
   >
     <div
       className="cf-help-divider"
@@ -15428,6 +15429,7 @@ exports[`RepresentativeSection Does not allow editing emails when read-only 1`] 
   <VirtualHearingSection
     hide={false}
     label="Power of Attorney"
+    showDivider={true}
   >
     <div
       className="cf-help-divider"
@@ -15607,6 +15609,7 @@ exports[`RepresentativeSection Matches snapshot with default props 1`] = `
   <VirtualHearingSection
     hide={false}
     label="Power of Attorney"
+    showDivider={true}
   >
     <div
       className="cf-help-divider"
@@ -15842,6 +15845,7 @@ exports[`RepresentativeSection Shows Representative name when representative add
   <VirtualHearingSection
     hide={false}
     label="Power of Attorney"
+    showDivider={true}
   >
     <div
       className="cf-help-divider"
@@ -16070,6 +16074,7 @@ exports[`RepresentativeSection Shows Representative not present message when no 
   <VirtualHearingSection
     hide={false}
     label="Power of Attorney"
+    showDivider={true}
   >
     <div
       className="cf-help-divider"

@@ -77,6 +77,8 @@ class WorkQueue::AppealSerializer
 
   attribute :closest_regional_office
 
+  attribute :closest_regional_office_label
+
   attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
 
   attribute :external_id, &:uuid
