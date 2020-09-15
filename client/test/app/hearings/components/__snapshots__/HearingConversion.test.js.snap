@@ -4234,6 +4234,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
         <VirtualHearingSection
           hide={false}
           label="Veteran"
+          showDivider={true}
         >
           <div
             className="cf-help-divider"
@@ -4447,6 +4448,7 @@ SAN FRANCISCO, CA 94103
         <VirtualHearingSection
           hide={false}
           label="Power of Attorney"
+          showDivider={true}
         >
           <div
             className="cf-help-divider"
@@ -4527,6 +4529,7 @@ SAN FRANCISCO, CA 94103
       <VirtualHearingSection
         hide={true}
         label="Veterans Law Judge (VLJ)"
+        showDivider={true}
       />
     </section>
   </AppSegment>
@@ -8651,6 +8654,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
         <VirtualHearingSection
           hide={false}
           label="Veteran"
+          showDivider={true}
         >
           <div
             className="cf-help-divider"
@@ -24004,6 +24008,7 @@ SAN FRANCISCO, CA 94103
         <VirtualHearingSection
           hide={false}
           label="Power of Attorney"
+          showDivider={true}
         >
           <div
             className="cf-help-divider"
@@ -39219,6 +39224,7 @@ SAN FRANCISCO, CA 94103
       <VirtualHearingSection
         hide={false}
         label="Veterans Law Judge (VLJ)"
+        showDivider={true}
       >
         <div
           className="cf-help-divider"
