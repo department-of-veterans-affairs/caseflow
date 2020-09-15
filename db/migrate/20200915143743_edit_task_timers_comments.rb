@@ -1,4 +1,4 @@
-class EditTaskTimersComments < ActiveRecord::Migration[5.2]
+class EditTaskTimersComments < Caseflow::Migration
   def up
     change_table_comment :task_timers, "A task timer allows an associated task's (like EvidenceSubmissionWindowTask and TimedHoldTask) method to be run asynchronously after timer expires."
     change_column_comment :task_timers, :attempted_at, "Async timestamp for most recent attempt to run Task#when_timer_ends."
