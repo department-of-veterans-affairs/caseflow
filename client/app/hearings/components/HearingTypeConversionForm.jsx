@@ -46,6 +46,7 @@ export const HearingTypeConversionForm = ({
     readOnly: true,
     showDivider: false,
     showOnlyAppellantName: true,
+    showMissingEmailAlert: true,
     type,
     virtualHearing,
   };
