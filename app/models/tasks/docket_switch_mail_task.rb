@@ -50,8 +50,8 @@ class DocketSwitchMailTask < MailTask
     def child_task_assignee(parent, params)
       if [:assigned_to_type, :assigned_to_id].all? { |key| params.key?(key) }
         super
-      elsif (parent.type == DocketSwitchMailTask.name) && params[:assigned_by]
-        params[:assigned_by]
+      elsif (parent.type == DocketSwitchMailTask.name) && RequestStore[:current_user]
+        RequestStore[:current_user]
       else
         ClerkOfTheBoard.singleton
       end
