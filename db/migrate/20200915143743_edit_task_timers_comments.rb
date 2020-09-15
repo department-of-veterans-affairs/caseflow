@@ -1,6 +1,6 @@
 class EditTaskTimersComments < Caseflow::Migration
   def up
-    change_table_comment :task_timers, "A task timer allows an associated task's (like EvidenceSubmissionWindowTask and TimedHoldTask) method to be run asynchronously after timer expires."
+    change_table_comment :task_timers, "A task timer allows an associated task's (like EvidenceSubmissionWindowTask and TimedHoldTask) `when_timer_ends` method to be run asynchronously after timer expires."
     change_column_comment :task_timers, :attempted_at, "Async timestamp for most recent attempt to run Task#when_timer_ends."
     change_column_comment :task_timers, :canceled_at, "Timestamp when job was abandoned. Associated task is typically cancelled."
     change_column_comment :task_timers, :last_submitted_at, "Async timestamp for most recent job start. Initially set to when timer should expire (Task#timer_ends_at)."
