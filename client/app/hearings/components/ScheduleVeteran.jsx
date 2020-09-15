@@ -17,8 +17,9 @@ import { formatDateStr } from '../../util/DateUtil';
 import Alert from '../../components/Alert';
 import { marginTop, regionalOfficeSection, saveButton, cancelButton } from './details/style';
 import { find, get } from 'lodash';
-import { getAppellantTitleForHearing, processAlerts, parseVirtualHearingErrors } from '../utils';
-import { onChangeFormData,
+import { getAppellantTitle, processAlerts, parseVirtualHearingErrors } from '../utils';
+import {
+  onChangeFormData,
   onReceiveAlerts,
   onReceiveTransitioningAlert,
   transitionAlert,
@@ -47,7 +48,7 @@ export const ScheduleVeteran = ({
   const [errors, setErrors] = useState({});
 
   // Get the appellant title ('Veteran' or 'Appellant')
-  const appellantTitle = getAppellantTitleForHearing(appeal);
+  const appellantTitle = getAppellantTitle(appeal?.apppellantIsNotVeteran);
 
   // Get the selected hearing day
   const selectedHearingDay = assignHearingForm?.hearingDay || hearingDay;

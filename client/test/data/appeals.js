@@ -67,6 +67,7 @@ export const appealData = {
   appellantRelationship: 'Spouse',
   assignedToLocation: 'Hearing Admin',
   closestRegionalOffice: null,
+  closestRegionalOfficeLabel: null,
   availableHearingLocations: [],
   status: 'not_distributed',
   decisionDate: null,
@@ -107,6 +108,14 @@ export const amaAppeal = {
   externalId: '2afefa82-5736-47c8-a977-0b4b8586f73e',
   hearings: [],
 };
+
+export const amaAppealForTravelBoard = {
+  ...appealData,
+  closestRegionalOfficeLabel: "Nashville Regional office",
+  powerOfAttorney: {
+    ...powerOfAttorney
+  }
+}
 
 export const openHearingAppeal = {
   ...appealData,

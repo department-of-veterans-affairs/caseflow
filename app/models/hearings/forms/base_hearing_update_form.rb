@@ -22,6 +22,8 @@ class BaseHearingUpdateForm
 
         virtual_hearing_changed = true
       end
+
+      after_update_hearing
     end
 
     if virtual_hearing_changed
@@ -45,6 +47,8 @@ class BaseHearingUpdateForm
   protected
 
   def update_hearing; end
+
+  def after_update_hearing; end
 
   def hearing_updates; end
 
