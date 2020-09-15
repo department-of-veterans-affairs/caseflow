@@ -201,10 +201,9 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
               </VirtualHearingEmail>
               <div>
                 <Alert
-                  alertStyling={true}
                   fixed={false}
                   message="If you have the Veteran's email address, enter it in VBMS. The email will be required to send notifications when you schedule the hearing."
-                  scrollOnAlert={true}
+                  scrollOnAlert={false}
                   type="info"
                 >
                   <div
