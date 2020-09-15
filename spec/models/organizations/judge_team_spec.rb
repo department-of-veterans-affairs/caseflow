@@ -11,7 +11,7 @@ describe JudgeTeam, :postgres do
 
       before { judge_team_unavailable.update(accepts_priority_pushed_cases: false) }
 
-      it "should return only the available JudgeTeams" do
+      it "returns only the available JudgeTeams" do
         expect(JudgeTeam.pushed_priority_cases_allowed).to eq([judge_team_available])
       end
     end
@@ -32,7 +32,7 @@ describe JudgeTeam, :postgres do
   end
 
   shared_examples "successful judge team creation" do
-    it "should create a new organization and make the user an admin of that group" do
+    it "creates a new organization and makes the user an admin of that group" do
       expect(JudgeTeam.for_judge(judge)).to eq(nil)
 
       expect { subject }.to_not raise_error
@@ -79,16 +79,16 @@ describe JudgeTeam, :postgres do
       context "when user is admin of a non-JudgeTeam organization" do
         before { OrganizationsUser.make_user_admin(user, create(:organization)) }
 
-        it "should return nil" do
+        it "returns nil" do
           expect(JudgeTeam.for_judge(user)).to eq(nil)
         end
       end
 
-      context "when user is member of JudgeTeam" do
+      context "when user is non-admin member of JudgeTeam" do
         let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
         before { judge_team.add_user(user) }
 
-        it "should return nil" do
+        it "returns nil" do
           expect(JudgeTeam.for_judge(user)).to eq(nil)
         end
       end
@@ -96,7 +96,7 @@ describe JudgeTeam, :postgres do
       context "when user is admin of JudgeTeam" do
         let!(:judge_team) { JudgeTeam.create_for_judge(user) }
 
-        it "should return judge team" do
+        it "returns judge team" do
           user.reload
           expect(JudgeTeam.for_judge(user)).to eq(judge_team)
         end
@@ -112,7 +112,7 @@ describe JudgeTeam, :postgres do
           end
         end
 
-        it "should return first judge team even when they admin two judge teams" do
+        it "returns the first judge team even when they admin two judge teams" do
           user.reload
           expect(JudgeTeam.for_judge(user)).to eq(first_judge_team)
           expect(user.administered_teams.length).to eq(2)
@@ -168,7 +168,7 @@ describe JudgeTeam, :postgres do
         let(:user) { create(:user) }
         before { OrganizationsUser.make_user_admin(user, create(:organization)) }
 
-        it "should return nil, indicating user is not the Judge of this team" do
+        it "returns nil, indicating user is not the Judge of this team" do
           expect(JudgeTeam.for_judge(user)).to eq(nil)
         end
       end
@@ -179,7 +179,7 @@ describe JudgeTeam, :postgres do
         let(:judge_team) { create(:judge_team) }
         before { populate_judge_team_for_testing(judge_team, judge, [user]) }
 
-        it "should return nil, indicating user is not the Judge of this team" do
+        it "returns nil, indicating user is not the Judge of this team" do
           expect(JudgeTeam.for_judge(user)).to eq(nil)
         end
       end
@@ -190,7 +190,7 @@ describe JudgeTeam, :postgres do
         let!(:judge_team) { create(:judge_team) }
         before { populate_judge_team_for_testing(judge_team, judge, [create(:user), user]) }
 
-        it "should return nil" do
+        it "returns nil" do
           expect(JudgeTeam.for_judge(user)).to eq(nil)
         end
       end
@@ -201,7 +201,7 @@ describe JudgeTeam, :postgres do
         let!(:judge_team) { create(:judge_team) }
         before { populate_judge_team_for_testing(judge_team, judge, [create(:user), user]) }
 
-        it "should return judge team" do
+        it "returns the judge team" do
           judge.reload
           expect(JudgeTeam.for_judge(judge)).to eq(judge_team)
         end
@@ -218,7 +218,7 @@ describe JudgeTeam, :postgres do
           populate_judge_team_for_testing(judge_team_dvc, dvc_judge, [user]) # create_for_judge?
         end
 
-        it "should return the JudgeTeamLead team, not the admin'd team" do
+        it "returns the JudgeTeamLead team, not the admin'd team" do
           dvc_judge.reload
           expect(JudgeTeam.for_judge(dvc_judge)).to eq(judge_team_dvc)
           expect(JudgeTeam.for_judge(judge)).to eq(judge_team_reg)
@@ -239,7 +239,7 @@ describe JudgeTeam, :postgres do
   end
 
   describe ".can_receive_task?" do
-    it "should return false because judge teams should not have tasks assigned to them in the web UI" do
+    it "returns false because judge teams should not have tasks assigned to them" do
       expect(JudgeTeam.create_for_judge(judge).can_receive_task?(nil)).to eq(false)
     end
   end

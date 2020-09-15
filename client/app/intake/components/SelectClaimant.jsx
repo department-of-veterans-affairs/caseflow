@@ -71,7 +71,7 @@ export const SelectClaimant = (props) => {
     setPayeeCode
   } = props;
 
-  const { attorneyFees } = useSelector((state) => state.featureToggles);
+  const { attorneyFees, establishFiduciaryEps } = useSelector((state) => state.featureToggles);
   const [showClaimantModal, setShowClaimantModal] = useState(false);
   const [newClaimant, setNewClaimant] = useState(null);
   const openAddClaimantModal = () => setShowClaimantModal(true);
@@ -83,6 +83,12 @@ export const SelectClaimant = (props) => {
     veteranIsNotClaimant,
     attorneyFees
   ]);
+
+  const allowFiduciary = useMemo(() => establishFiduciaryEps && benefitType === 'fiduciary', [
+    benefitType,
+    establishFiduciaryEps
+  ]);
+
   const handleVeteranIsNotClaimantChange = (value) => {
     const boolValue = convertStringToBoolean(value);
 
@@ -93,21 +99,34 @@ export const SelectClaimant = (props) => {
     setNewClaimant(null);
     setClaimant({ claimant: null, claimantType: 'dependent', claimantNotes: null });
   };
-  const handleSelectDependent = (value) => setClaimant({ claimant: value, claimantType: 'dependent' });
+  const handleSelectNonVeteran = (value) => {
+    if (newClaimant && value === newClaimant.value) {
+      setClaimant({
+        claimant: value || null,
+        claimantName: newClaimant.claimantName,
+        claimantNotes: newClaimant.claimantNotes,
+        claimantType: newClaimant.claimantType,
+      });
+    } else {
+      setClaimant({ claimant: value, claimantType: 'dependent' });
+    }
+  };
   const handleAddClaimant = ({ name, participantId, claimantType, claimantNotes }) => {
     setNewClaimant({
       displayElem: <RemovableRadioLabel
         text={`${name || 'Claimant not listed'}, Attorney`} onRemove={handleRemove} notes={claimantNotes} />,
-      value: participantId,
+      value: participantId ?? '',
       defaultPayeeCode: '',
-      claimantNotes
+      claimantName: name,
+      claimantNotes,
+      claimantType
     });
     setClaimant({ claimant: participantId ?? null, claimantType, claimantNotes, claimantName: name });
     setShowClaimantModal(false);
   };
   const handlePayeeCodeChange = (event) => setPayeeCode(event ? event.value : null);
   const shouldShowPayeeCode = () => {
-    return formType !== 'appeal' && (benefitType === 'compensation' || benefitType === 'pension');
+    return formType !== 'appeal' && (benefitType === 'compensation' || benefitType === 'pension' || allowFiduciary);
   };
 
   const hasRelationships = relationships.length > 0;
@@ -122,8 +141,8 @@ export const SelectClaimant = (props) => {
           strongLabel
           vertical
           options={radioOpts}
-          onChange={handleSelectDependent}
-          value={claimant}
+          onChange={handleSelectNonVeteran}
+          value={claimant ?? ''}
           errorMessage={claimantError}
         />
 
@@ -162,7 +181,7 @@ export const SelectClaimant = (props) => {
         options={veteranClaimantOptions}
         onChange={handleVeteranIsNotClaimantChange}
         errorMessage={veteranIsNotClaimantError}
-        value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant.toString()}
+        value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant?.toString()}
       />
 
       {showClaimants && hasRelationships && claimantOptions()}

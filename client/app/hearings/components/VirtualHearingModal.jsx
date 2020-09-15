@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 
-import { getAppellantTitleForHearing, zoneName } from '../utils';
+import { getAppellantTitle, zoneName } from '../utils';
 import Button from '../../components/Button';
 import COPY from '../../../COPY';
 import Modal from '../../components/Modal';
@@ -71,7 +71,7 @@ export const ReadOnlyEmails = ({
   appellantTzEdited,
   showAllEmails = false,
 }) => {
-  const appellantTitle = getAppellantTitleForHearing(hearing);
+  const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
 
   // Check for appellant edits
   const appellantEdited = appellantTzEdited || appellantEmailEdited ?
@@ -84,7 +84,7 @@ export const ReadOnlyEmails = ({
     false;
 
   // Determine whether ti display a divider
-  const showDivider = repEdited || appellantEdited || showAllEmails;
+  const showDivider = virtualHearing.representativeEmail && (repEdited || appellantEdited || showAllEmails);
 
   return hearing.readableRequestType === 'Video' ? (
     <React.Fragment>
@@ -95,9 +95,10 @@ export const ReadOnlyEmails = ({
           {virtualHearing.appellantEmail}
         </p>
       )}
-      {(representativeEmailEdited || showAllEmails) && (
+      {(virtualHearing.representativeEmail &&
+       (representativeEmailEdited || showAllEmails)) && (
         <p>
-          <strong>Representative Email</strong>
+          <strong>POA/Representative Email</strong>
           <br />
           {virtualHearing.representativeEmail}
         </p>
@@ -120,7 +121,8 @@ export const ReadOnlyEmails = ({
         </React.Fragment>
       )}
       {showDivider && <div className="cf-help-divider" />}
-      {(representativeTzEdited || representativeEmailEdited || showAllEmails) && (
+      {(virtualHearing.representativeEmail &&
+       (representativeTzEdited || representativeEmailEdited || showAllEmails)) && (
         <React.Fragment>
           <ReadOnly
             spacing={15}
@@ -164,7 +166,7 @@ export const ChangeHearingTime = (props) => (
   </React.Fragment>
 );
 
-export const ChangeEmail = (props) => (
+export const ChangeEmailOrTimezone = (props) => (
   <React.Fragment>
     <ReadOnlyEmails {...props} />
   </React.Fragment>
@@ -199,7 +201,7 @@ export const ChangeToVirtual = (props) => {
   const {
     hearing, readOnly, representativeEmailError, update, appellantEmailError, virtualHearing
   } = props;
-  const appellantTitle = getAppellantTitleForHearing(hearing);
+  const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
 
   // Prefill appellant/veteran email address and representative email on mount.
   useEffect(() => {
@@ -264,36 +266,77 @@ const INVALID_EMAIL_FORMAT = 'Please enter a valid email address';
 
 export const TYPES = {
   change_to_virtual: {
-    title: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE,
+    title: () => COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE,
     intro: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_INTRO,
     element: ChangeToVirtual
   },
   change_from_virtual: {
-    title: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_TITLE,
+    title: () => COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_TITLE,
     intro: COPY.VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_INTRO,
     element: ChangeFromVirtual
   },
   change_hearing_time: {
-    title: COPY.VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE,
+    title: () => COPY.VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_TITLE,
     intro: COPY.VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_INTRO,
+    button: COPY.VIRTUAL_HEARING_MODAL_CHANGE_HEARING_TIME_BUTTON,
     element: ChangeHearingTime
   },
-  change_email: {
-    title: COPY.VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE,
+  change_email_or_timezone: {
+    // The modal title changes depending on the which updates the user made to the
+    // virtual hearing.
+    title: ({
+      representativeEmailEdited,
+      representativeTzEdited,
+      appellantEmailEdited,
+      appellantTzEdited,
+    }) => {
+      const emailUpdated = appellantEmailEdited || representativeEmailEdited;
+      const tzUpdated = appellantTzEdited || representativeTzEdited;
+
+      if (emailUpdated && tzUpdated) {
+        return COPY.VIRTUAL_HEARING_MODAL_UPDATE_GENERIC_TITLE;
+      } else if (emailUpdated) {
+        return COPY.VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_TITLE;
+      }
+
+      return COPY.VIRTUAL_HEARING_MODAL_UPDATE_TIMEZONE_TITLE;
+
+    },
     intro: COPY.VIRTUAL_HEARING_MODAL_UPDATE_EMAIL_INTRO,
     button: COPY.VIRTUAL_HEARING_UPDATE_EMAIL_BUTTON,
-    element: ChangeEmail
+    element: ChangeEmailOrTimezone
   }
 };
 
 const VirtualHearingModal = (props) => {
-  const { closeModal, hearing, virtualHearing, reset, submit, type } = props;
+  const {
+    closeModal,
+    hearing,
+    virtualHearing,
+    reset,
+    submit,
+    type,
+    representativeEmailEdited,
+    representativeTzEdited,
+    appellantEmailEdited,
+    appellantTzEdited,
+    scrollLock
+  } = props;
   const [appellantEmailError, setAppellantEmailError] = useState(null);
   const [representativeEmailError, setRepresentativeEmailError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const typeSettings = TYPES[type];
-  const appellantTitle = getAppellantTitleForHearing(hearing);
+  const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
+  const modalTitle = sprintf(
+    typeSettings.title({
+      representativeEmailEdited,
+      representativeTzEdited,
+      appellantEmailEdited,
+      appellantTzEdited
+    }),
+    { appellantTitle }
+  );
 
   const validateForm = () => {
     if (_.isEmpty(virtualHearing.appellantEmail)) {
@@ -317,9 +360,9 @@ const VirtualHearingModal = (props) => {
       ?.then(closeModal)
       ?.catch((error) => {
         // Details.jsx re-throws email invalid error that we catch here.
-        const msg = error.response.body.errors[0].message;
-        const representativeEmailIsValid = msg.indexOf('Representative') === -1;
-        const appellantEmailIsValid = msg.indexOf('Veteran') === -1 && msg.indexOf('Appellant') === -1;
+        const msg = error.response?.body?.errors[0]?.message;
+        const representativeEmailIsValid = msg?.indexOf('Representative') === -1;
+        const appellantEmailIsValid = msg?.indexOf('Veteran') === -1 && msg?.indexOf('Appellant') === -1;
 
         setRepresentativeEmailError(representativeEmailIsValid ? null : INVALID_EMAIL_FORMAT);
         setAppellantEmailError(appellantEmailIsValid ? null : INVALID_EMAIL_FORMAT);
@@ -335,7 +378,7 @@ const VirtualHearingModal = (props) => {
   return (
     <div>
       <Modal
-        title={sprintf(typeSettings.title, { appellantTitle })}
+        title={modalTitle}
         closeHandler={onReset}
         confirmButton={
           <Button
@@ -358,6 +401,7 @@ const VirtualHearingModal = (props) => {
             Cancel
           </Button>
         }
+        scrollLock={scrollLock}
       >
         <p
           dangerouslySetInnerHTML={
@@ -397,11 +441,16 @@ VirtualHearingModal.propTypes = {
   type: PropTypes.oneOf(HEARING_CONVERSION_TYPES).isRequired,
   timeWasEdited: PropTypes.bool,
   representativeEmailEdited: PropTypes.bool,
+  representativeTzEdited: PropTypes.bool,
   appellantEmailEdited: PropTypes.bool,
+  appellantTzEdited: PropTypes.bool,
   update: PropTypes.func,
   submit: PropTypes.func,
   reset: PropTypes.func,
-  closeModal: PropTypes.func
+  closeModal: PropTypes.func,
+
+  // Passthrough to `Modal` to enable/disable the `ScrollLock` element from displaying.
+  scrollLock: PropTypes.bool
 };
 
 export default VirtualHearingModal;

@@ -12,13 +12,15 @@ describe LegacyAppeal, :all_dbs do
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
   let(:veteran_address) { nil }
   let(:appellant_address) { nil }
+  let(:changed_request_type) { nil }
 
   let(:appeal) do
     create(
       :legacy_appeal,
       vacols_case: vacols_case,
       veteran_address: veteran_address,
-      appellant_address: appellant_address
+      appellant_address: appellant_address,
+      changed_request_type: changed_request_type
     )
   end
 
@@ -1978,59 +1980,78 @@ describe LegacyAppeal, :all_dbs do
   end
 
   context "#update" do
-    subject { appeal.update(appeals_hash) }
+    subject { appeal.update!(appeals_hash) }
     let(:vacols_case) { create(:case) }
 
     context "when Vacols does not need an update" do
-      let(:appeals_hash) do
-        { worksheet_issues_attributes: [{
-          remand: true,
-          omo: true,
-          description: "Cabbage\nPickle",
-          notes: "Donkey\nCow",
-          from_vacols: true,
-          vacols_sequence_id: 1
-        }] }
+      context "updating worksheet issues" do
+        let(:appeals_hash) do
+          { worksheet_issues_attributes: [{
+            remand: true,
+            omo: true,
+            description: "Cabbage\nPickle",
+            notes: "Donkey\nCow",
+            from_vacols: true,
+            vacols_sequence_id: 1
+          }] }
+        end
+
+        it "updates worksheet issues" do
+          expect(appeal.worksheet_issues.count).to eq(0)
+          subject # do update
+          expect(appeal.worksheet_issues.count).to eq(1)
+
+          issue = appeal.worksheet_issues.first
+          expect(issue.remand).to eq true
+          expect(issue.allow).to eq false
+          expect(issue.deny).to eq false
+          expect(issue.dismiss).to eq false
+          expect(issue.omo).to eq true
+          expect(issue.description).to eq "Cabbage\nPickle"
+          expect(issue.notes).to eq "Donkey\nCow"
+
+          # test that a 2nd save updates the same record, rather than create new one
+          id = appeal.worksheet_issues.first.id
+          appeals_hash[:worksheet_issues_attributes][0][:deny] = true
+          appeals_hash[:worksheet_issues_attributes][0][:notes] = "Tomato"
+          appeals_hash[:worksheet_issues_attributes][0][:id] = id
+
+          appeal.update(appeals_hash)
+
+          expect(appeal.worksheet_issues.count).to eq(1)
+          issue = appeal.worksheet_issues.first
+          expect(issue.id).to eq(id)
+          expect(issue.deny).to eq(true)
+          expect(issue.remand).to eq(true)
+          expect(issue.allow).to eq(false)
+          expect(issue.dismiss).to eq(false)
+          expect(issue.description).to eq "Cabbage\nPickle"
+          expect(issue.notes).to eq "Tomato"
+
+          # soft delete an issue
+          appeals_hash[:worksheet_issues_attributes][0][:_destroy] = "1"
+          appeal.update(appeals_hash)
+          expect(appeal.worksheet_issues.count).to eq(0)
+          expect(appeal.worksheet_issues.with_deleted.count).to eq(1)
+          expect(appeal.worksheet_issues.with_deleted.first.deleted_at).to_not eq nil
+        end
       end
 
-      it "updates worksheet issues" do
-        expect(appeal.worksheet_issues.count).to eq(0)
-        subject # do update
-        expect(appeal.worksheet_issues.count).to eq(1)
+      context "updating changed_request_type to valid value" do
+        let(:appeals_hash) { { changed_request_type: "V" } }
 
-        issue = appeal.worksheet_issues.first
-        expect(issue.remand).to eq true
-        expect(issue.allow).to eq false
-        expect(issue.deny).to eq false
-        expect(issue.dismiss).to eq false
-        expect(issue.omo).to eq true
-        expect(issue.description).to eq "Cabbage\nPickle"
-        expect(issue.notes).to eq "Donkey\nCow"
+        it "successfully updates" do
+          subject
+          expect(appeal.reload.changed_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
+        end
+      end
 
-        # test that a 2nd save updates the same record, rather than create new one
-        id = appeal.worksheet_issues.first.id
-        appeals_hash[:worksheet_issues_attributes][0][:deny] = true
-        appeals_hash[:worksheet_issues_attributes][0][:notes] = "Tomato"
-        appeals_hash[:worksheet_issues_attributes][0][:id] = id
+      context "updating changed_request_type to invalid value" do
+        let(:appeals_hash) { { changed_request_type: "INVALID" } }
 
-        appeal.update(appeals_hash)
-
-        expect(appeal.worksheet_issues.count).to eq(1)
-        issue = appeal.worksheet_issues.first
-        expect(issue.id).to eq(id)
-        expect(issue.deny).to eq(true)
-        expect(issue.remand).to eq(true)
-        expect(issue.allow).to eq(false)
-        expect(issue.dismiss).to eq(false)
-        expect(issue.description).to eq "Cabbage\nPickle"
-        expect(issue.notes).to eq "Tomato"
-
-        # soft delete an issue
-        appeals_hash[:worksheet_issues_attributes][0][:_destroy] = "1"
-        appeal.update(appeals_hash)
-        expect(appeal.worksheet_issues.count).to eq(0)
-        expect(appeal.worksheet_issues.with_deleted.count).to eq(1)
-        expect(appeal.worksheet_issues.with_deleted.first.deleted_at).to_not eq nil
+        it "throws an exception" do
+          expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+        end
       end
     end
   end
@@ -2053,6 +2074,20 @@ describe LegacyAppeal, :all_dbs do
       context "when video_hearing_requested is false" do
         let(:vacols_case) { create(:case, :travel_board_hearing) }
         it { is_expected.to eq(:travel_board) }
+      end
+
+      context "when request type overriden in Caseflow to video" do
+        let(:changed_request_type) { HearingDay::REQUEST_TYPES[:video] }
+        let(:vacols_case) { create(:case, :travel_board_hearing) }
+
+        it { is_expected.to eq(:video) }
+      end
+
+      context "when request type overriden in Caseflow to virtual" do
+        let(:changed_request_type) { HearingDay::REQUEST_TYPES[:virtual] }
+        let(:vacols_case) { create(:case, :travel_board_hearing) }
+
+        it { is_expected.to eq(:virtual) }
       end
     end
 
@@ -2833,6 +2868,18 @@ describe LegacyAppeal, :all_dbs do
 
       it "does not return VSOs with nil participant_id" do
         expect(appeal.representatives).to eq([])
+      end
+    end
+  end
+
+  describe ".ready_for_bva_dispatch?" do
+    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+
+    subject { appeal.ready_for_bva_dispatch? }
+
+    context "Legacy appeals do not go to BVA Dispatch via Caseflow" do
+      it "should return false" do
+        expect(subject).to eq(false)
       end
     end
   end

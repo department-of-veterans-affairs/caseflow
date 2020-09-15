@@ -34,7 +34,13 @@ class Fakes::BGSServiceRecordMaker
   # rubocop:disable Naming/PredicateName
   def has_rating(veteran)
     Generators::PromulgatedRating.build(
-      participant_id: veteran.participant_id
+      participant_id: veteran.participant_id,
+      promulgation_date: Date.new(2019, 10, 11),
+      profile_date: Date.new(2019, 10, 11),
+      issues: [
+        { decision_text: "Service connection is granted for PTSD at 10 percent, effective 10/11/2019." },
+        { decision_text: "Service connection is denied for right knee condition." }
+      ]
     )
   end
 

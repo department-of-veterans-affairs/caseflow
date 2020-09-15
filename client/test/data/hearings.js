@@ -36,7 +36,6 @@ export const virtualHearing = {
     guestLink:
       'https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest',
     jobCompleted: true,
-    false: 'tom.brady@caseflow.gov',
   },
 };
 
@@ -84,7 +83,7 @@ export const amaHearing = {
   representativeEmailAddress: 'tom.brady@caseflow.gov',
   representativeTz: 'America/Denver',
   room: '2',
-  scheduledFor: (new Date().getDate() + 1).toString(),
+  scheduledFor: '2020-07-06T06:00:00.000-04:00',
   scheduledForIsPast: false,
   scheduledTime: '2000-01-01T03:30:00.000-05:00',
   scheduledTimeString: '03:30',
@@ -241,6 +240,12 @@ export const defaultHearing = {
   representative: 'PARALYZED VETERANS OF AMERICA, INC.',
   representativeName: null,
   representativeEmailAddress: 'tom.brady@caseflow.gov',
+  representativeAddress: {
+    addressLine1: '9999 MISSION ST',
+    city: 'SAN FRANCISCO',
+    state: 'CA',
+    zip: '94103',
+  },
   room: '1',
   scheduledFor: '2020-07-06T06:00:00.000-04:00',
   scheduledForIsPast: false,
@@ -342,3 +347,104 @@ export const centralHearing = {
   witness: null,
   worksheetIssues: {},
 };
+
+export const hearingDateOptions = [
+  {
+    label: ' ',
+    value: {
+      hearingId: null,
+      hearingDate: null
+    }
+  },
+  {
+    label: '08/15/2020 (0/12)  ',
+    value: {
+      hearingId: 36,
+      regionalOffice: 'RO17',
+      timezone: 'America/New_York',
+      scheduledFor: '2020-08-15',
+      requestType: 'V',
+      room: '001',
+      roomLabel: '',
+      filledSlots: 0,
+      totalSlots: 12,
+      hearingDate: '2020-08-15'
+    }
+  },
+  {
+    label: '08/21/2020 (2/12) 1 (1W200A) ',
+    value: {
+      hearingId: 11,
+      regionalOffice: 'RO17',
+      timezone: 'America/New_York',
+      scheduledFor: '2020-08-21',
+      requestType: 'V',
+      room: '1',
+      roomLabel: '1 (1W200A)',
+      filledSlots: 2,
+      totalSlots: 12,
+      hearingDate: '2020-08-21'
+    }
+  },
+  {
+    label: '09/01/2020 (2/12) 1 (1W200A) ',
+    value: {
+      hearingId: 12,
+      regionalOffice: 'RO17',
+      timezone: 'America/New_York',
+      scheduledFor: '2020-09-01',
+      requestType: 'V',
+      room: '1',
+      roomLabel: '1 (1W200A)',
+      filledSlots: 2,
+      totalSlots: 12,
+      hearingDate: '2020-09-01'
+    }
+  },
+  {
+    label: '09/12/2020 (2/12) 1 (1W200A) ',
+    value: {
+      hearingId: 13,
+      regionalOffice: 'RO17',
+      timezone: 'America/New_York',
+      scheduledFor: '2020-09-12',
+      requestType: 'V',
+      room: '1',
+      roomLabel: '1 (1W200A)',
+      filledSlots: 2,
+      totalSlots: 12,
+      hearingDate: '2020-09-12'
+    }
+  },
+  {
+    label: '09/23/2020 (0/12) 1 (1W200A) ',
+    value: {
+      hearingId: 14,
+      regionalOffice: 'RO17',
+      timezone: 'America/New_York',
+      scheduledFor: '2020-09-23',
+      requestType: 'V',
+      room: '1',
+      roomLabel: '1 (1W200A)',
+      filledSlots: 0,
+      totalSlots: 12,
+      hearingDate: '2020-09-23'
+    }
+  },
+  {
+    label: '10/04/2020 (0/12) 1 (1W200A) ',
+    value: {
+      hearingId: 15,
+      regionalOffice: 'RO17',
+      timezone: 'America/New_York',
+      scheduledFor: '2020-10-04',
+      requestType: 'V',
+      room: '1',
+      roomLabel: '1 (1W200A)',
+      filledSlots: 13,
+      totalSlots: 12,
+      hearingDate: '2020-10-04'
+    }
+  }
+]
+;

@@ -88,7 +88,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     let!(:staff) { create(:staff, stafkey: "RO39", stc2: 2, stc3: 3, stc4: 4) }
     let!(:vacols_case) do
       create(
-        :case, :video_hearing_requested,
+        :case,
+        :video_hearing_requested,
         folder: create(:folder, tinum: "docket-number"),
         bfcorlid: "123456789S",
         bfcurloc: "CASEFLOW",
@@ -109,7 +110,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
     let!(:veteran) { create(:veteran, file_number: "123456789") }
     let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
-    let(:room_label) { HearingDayMapper.label_for_room(hearing_day.room) }
+    let(:room_label) { HearingRooms.find!(hearing_day.room)&.label }
 
     scenario "Schedule Veteran for video" do
       cache_appeals
@@ -164,21 +165,24 @@ RSpec.feature "Schedule Veteran For A Hearing" do
   end
 
   context "when scheduling an AMA hearing" do
+    let!(:room) { "1" }
+    let!(:regional_office) { "RO39" }
     let!(:hearing_day) do
       create(
         :hearing_day,
         request_type: HearingDay::REQUEST_TYPES[:video],
         scheduled_for: Time.zone.today + 160,
-        regional_office: "RO39"
+        regional_office: regional_office,
+        room: room
       )
     end
-    let!(:staff) { create(:staff, stafkey: "RO39", stc2: 2, stc3: 3, stc4: 4) }
+    let!(:staff) { create(:staff, stafkey: regional_office, stc2: 2, stc3: 3, stc4: 4) }
     let!(:appeal) do
       create(
         :appeal,
         :with_post_intake_tasks,
         docket_type: Constants.AMA_DOCKETS.hearing,
-        closest_regional_office: "RO39",
+        closest_regional_office: regional_office,
         veteran: create(:veteran)
       )
     end
@@ -362,6 +366,122 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_on "Back to Hearing Schedule"
       expect(page).to have_content("Denver")
     end
+
+    context "and room is null" do
+      let(:room) { nil }
+
+      scenario "can schedule a veteran without an error" do
+        visit "hearings/schedule/assign"
+
+        click_dropdown(text: "Denver")
+        click_button("AMA Veterans Waiting", exact: true)
+        click_on "Bob Smith"
+
+        click_dropdown(text: "Schedule Veteran")
+        click_dropdown(
+          text: RegionalOffice.find!(regional_office).city,
+          name: "regionalOffice"
+        )
+        click_dropdown(
+          text: "#{hearing_day.scheduled_for.to_formatted_s(:short_date)} (0/#{hearing_day.total_slots})",
+          name: "hearingDate"
+        )
+        click_dropdown(
+          text: "Holdrege, NE (VHA) 0 miles away",
+          name: "appealHearingLocation"
+        )
+        click_dropdown(text: "10:00 am", name: "optionalHearingTime0")
+        click_button("Schedule", exact: true)
+
+        expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
+      end
+
+      scenario "should not see room displayed under Available Hearing Days and Assign Hearing Tabs" do
+        visit "hearings/schedule/assign"
+
+        click_dropdown(text: "Denver")
+        click_button("AMA Veterans Waiting", exact: true)
+        click_on "Bob Smith"
+
+        click_dropdown(text: "Schedule Veteran")
+        click_dropdown(
+          text: RegionalOffice.find!(regional_office).city,
+          name: "regionalOffice"
+        )
+        click_dropdown(
+          text: "#{hearing_day.scheduled_for.to_formatted_s(:short_date)} (0/#{hearing_day.total_slots})",
+          name: "hearingDate"
+        )
+        click_dropdown(
+          text: "Holdrege, NE (VHA) 0 miles away",
+          name: "appealHearingLocation"
+        )
+        click_dropdown(text: "10:00 am", name: "optionalHearingTime0")
+        click_button("Schedule", exact: true)
+        click_on "Back to Schedule Veterans"
+
+        expect(page).not_to have_content("null")
+      end
+    end
+  end
+
+  context "when scheduling a Legacy hearing" do
+    let(:regional_office) { "RO39" }
+    let(:vacols_case) do
+      create(
+        :case,
+        bfregoff: regional_office
+      )
+    end
+    let!(:legacy_appeal) do
+      create(
+        :legacy_appeal,
+        :with_schedule_hearing_tasks,
+        :with_veteran,
+        closest_regional_office: regional_office,
+        vacols_case: vacols_case
+      )
+    end
+
+    before { cache_appeals }
+
+    context "and room is null" do
+      let!(:hearing_day) do
+        create(
+          :hearing_day,
+          request_type: HearingDay::REQUEST_TYPES[:video],
+          scheduled_for: Time.zone.today + 160,
+          regional_office: regional_office,
+          room: nil
+        )
+      end
+
+      scenario "can schedule a veteran without an error" do
+        visit "hearings/schedule/assign"
+
+        click_dropdown(text: "Denver")
+        click_button("Legacy Veterans Waiting", exact: true)
+        click_on "Bob Smith"
+
+        click_dropdown(text: "Schedule Veteran")
+        click_dropdown(
+          text: RegionalOffice.find!(regional_office).city,
+          name: "regionalOffice"
+        )
+        click_dropdown(
+          text: "#{hearing_day.scheduled_for.to_formatted_s(:short_date)} (0/#{hearing_day.total_slots})",
+          name: "hearingDate"
+        )
+        click_dropdown(
+          text: "Holdrege, NE (VHA) 0 miles away",
+          name: "appealHearingLocation"
+        )
+        click_dropdown(text: "10:00 am", name: "optionalHearingTime0")
+        click_button("Schedule", exact: true)
+
+        expect(page).to have_content(COPY::SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL)
+      end
+    end
   end
 
   context "When list of veterans displays in Legacy Veterans Waiting" do
@@ -520,10 +640,13 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
     scenario "can still schedule veteran successfully" do
       visit "/queue/appeals/#{appeal.external_id}"
+
+      total_slots = hearing_day.total_slots
+
       click_dropdown(text: "Schedule Veteran")
       click_dropdown({ text: RegionalOffice.find!("RO17").city }, find(".cf-modal-body"))
       click_dropdown(
-        text: "#{hearing_day.scheduled_for.to_formatted_s(:short_date)} (12/12)",
+        text: "#{hearing_day.scheduled_for.to_formatted_s(:short_date)} (#{total_slots}/#{total_slots})",
         name: "hearingDate"
       )
 

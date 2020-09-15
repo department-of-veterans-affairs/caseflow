@@ -24,6 +24,7 @@ class LegacyAppeal < CaseflowRecord
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
   has_many :decision_documents, as: :appeal
+  has_many :vbms_uploaded_documents, as: :appeal
   has_one :special_issue_list, as: :appeal
   has_many :record_synced_by_job, as: :record
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
@@ -32,6 +33,17 @@ class LegacyAppeal < CaseflowRecord
   has_one :work_mode, as: :appeal
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
+  validates :changed_request_type,
+            inclusion: {
+              in: [
+                HearingDay::REQUEST_TYPES[:video],
+                HearingDay::REQUEST_TYPES[:virtual]
+              ],
+              message: "changed request type (%<value>s) is invalid"
+            },
+            allow_nil: true
+
+  class InvalidChangedRequestType < StandardError; end
   class UnknownLocationError < StandardError; end
 
   # When these instance variable getters are called, first check if we've
@@ -88,13 +100,8 @@ class LegacyAppeal < CaseflowRecord
   end
 
   # To match Appeals AOD behavior
-  def aod?
-    aod
-  end
-
-  def advanced_on_docket?
-    aod
-  end
+  alias aod? aod
+  alias advanced_on_docket? aod
 
   cache_attribute :dic do
     issues.map(&:dic).include?(true)
@@ -109,9 +116,6 @@ class LegacyAppeal < CaseflowRecord
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js 'specialIssue` value
   # rubocop:disable Metrics/LineLength
   SPECIAL_ISSUES = {
-    blue_water: "Blue Water",
-    burn_pit: "Burn Pit",
-    us_court_of_appeals_for_veterans_claims: "US Court of Appeals for Veterans Claims (CAVC)",
     contaminated_water_at_camp_lejeune: "Contaminated Water at Camp LeJeune",
     dic_death_or_accrued_benefits_united_states: "DIC - death, or accrued benefits - United States",
     education_gi_bill_dependents_educational_assistance_scholars: "Education - GI Bill, dependents educational assistance, scholarship, transfer of entitlement",
@@ -123,10 +127,8 @@ class LegacyAppeal < CaseflowRecord
     incarcerated_veterans: "Incarcerated Veterans",
     insurance: "Insurance",
     manlincon_compliance: "Manlincon Compliance",
-    military_sexual_trauma: "Military Sexual Trauma (MST)",
     mustard_gas: "Mustard Gas",
     national_cemetery_administration: "National Cemetery Administration",
-    no_special_issues: "No Special Issues",
     nonrating_issue: "Non-rating issue",
     pension_united_states: "Pension - United States",
     private_attorney_or_agent: "Private Attorney or Agent",
@@ -164,6 +166,13 @@ class LegacyAppeal < CaseflowRecord
     case_storage: "81",
     service_organization: "55",
     closed: "99"
+  }.freeze
+
+  READABLE_HEARING_REQUEST_TYPES = {
+    central_board: "Central",
+    travel_board: "Travel",
+    video: "Video",
+    virtual: "Virtual"
   }.freeze
 
   def document_fetcher
@@ -381,13 +390,33 @@ class LegacyAppeal < CaseflowRecord
   # `hearing_request_type` is a direct mapping from VACOLS and has some unused
   # values. Also, `hearing_request_type` alone can't disambiguate a video hearing
   # from a travel board hearing. This method cleans all of these issues up.
+  #
+  # [Sept. 2020]:
+  #   In response to COVID, the appellant has the option of changing their hearing
+  #   preference if they were scheduled for a travel board hearing. This method captures
+  #   if a travel board hearing request type was overridden in Caseflow.
   def sanitized_hearing_request_type
+    if changed_request_type.present?
+      case changed_request_type
+      when HearingDay::REQUEST_TYPES[:video]
+        return :video
+      when HearingDay::REQUEST_TYPES[:virtual]
+        return :virtual
+      else
+        fail InvalidChangedRequestType, "\"#{changed_request_type}\" is not a valid request type."
+      end
+    end
+
     case hearing_request_type
     when :central_office
       :central_office
     when :travel_board
       video_hearing_requested ? :video : :travel_board
     end
+  end
+
+  def readable_hearing_request_type
+    READABLE_HEARING_REQUEST_TYPES[sanitized_hearing_request_type]
   end
 
   def veteran_is_deceased
@@ -784,6 +813,8 @@ class LegacyAppeal < CaseflowRecord
     type == "Court Remand"
   end
 
+  alias cavc? cavc
+
   # Adding anything to this to_hash can trigger a lazy load which slows down
   # welcome gate dramatically. Don't add anything to it without also adding it to
   # the query in VACOLS::CaseAssignment.
@@ -889,6 +920,11 @@ class LegacyAppeal < CaseflowRecord
 
   def location_history
     VACOLS::Priorloc.where(lockey: vacols_id).order(:locdout)
+  end
+
+  # Only AMA Appeals go to BVA Dispatch in Caseflow
+  def ready_for_bva_dispatch?
+    false
   end
 
   private
@@ -1132,6 +1168,17 @@ class LegacyAppeal < CaseflowRecord
 
     def nonpriority_decisions_per_year
       repository.nonpriority_decisions_per_year
+    end
+
+    def rollback_opt_in_on_decided_appeal(appeal:, user:, original_data:)
+      opt_in_disposition = Constants::VACOLS_DISPOSITIONS_BY_ID[LegacyIssueOptin::VACOLS_DISPOSITION_CODE]
+      return unless appeal.disposition == opt_in_disposition
+
+      repository.rollback_opt_in_on_decided_appeal!(
+        appeal: appeal,
+        user: user,
+        original_data: original_data
+      )
     end
 
     private

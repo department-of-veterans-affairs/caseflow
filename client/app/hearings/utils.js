@@ -62,11 +62,13 @@ export const deepDiff = (firstObj, secondObj) => {
     (result, firstVal, key) => {
       const secondVal = secondObj[key];
 
-      if (_.isEqual(firstVal, secondVal)) {
-        result[key] = null;
-      } else if (_.isObject(firstVal) && _.isObject(secondVal)) {
-        result[key] = deepDiff(firstVal, secondVal);
-      } else {
+      if (_.isObject(firstVal) && _.isObject(secondVal)) {
+        const nestedDiff = deepDiff(firstVal, secondVal);
+
+        if (nestedDiff && !_.isEmpty(nestedDiff)) {
+          result[key] = nestedDiff;
+        }
+      } else if (!_.isEqual(firstVal, secondVal)) {
         result[key] = secondVal;
       }
 
@@ -75,7 +77,7 @@ export const deepDiff = (firstObj, secondObj) => {
     {}
   );
 
-  return _.pickBy(changedObject, (val) => val !== null);
+  return changedObject;
 };
 
 export const filterCurrentIssues = (issues) =>
@@ -108,10 +110,10 @@ export const APPELLANT_TITLE = 'Appellant';
 
 /**
  * Gets the title to use for the appellant of a hearing.
- * @param {object} hearing -- A hearing
+ * @param {string} appellantIsNotVeteran -- bool
  */
-export const getAppellantTitleForHearing = (hearing) =>
-  hearing?.appellantIsNotVeteran ? APPELLANT_TITLE : VETERAN_TITLE;
+export const getAppellantTitle = (appellantIsNotVeteran) =>
+  appellantIsNotVeteran ? APPELLANT_TITLE : VETERAN_TITLE;
 
 export const VIRTUAL_HEARING_HOST = 'host';
 export const VIRTUAL_HEARING_GUEST = 'guest';
@@ -245,33 +247,42 @@ export const getOptionsFromObject = (object, noneOption, transformer) =>
  * @param {string} name -- Name of the zone, defaults to New York
  * @returns {string} -- The label of the timezone
  */
-export const zoneName = (time, name) => {
-  // Default to using EST for all times before conversion
-  moment.tz.setDefault(COMMON_TIMEZONES[3]);
-
+export const zoneName = (time, name, format) => {
   // Default to using America/New_York
   const timezone = name ? name : COMMON_TIMEZONES[3];
 
   // Filter the zone name
   const [zone] = Object.keys(TIMEZONES).filter((tz) => TIMEZONES[tz] === timezone);
 
+  // Set the label
+  const label = format ? '' : zone;
+
   // Return the value if it is not a valid time
   return moment(time, 'h:mm A').isValid() ? `${moment(time, 'h:mm a').tz(timezone).
-    format('h:mm A')} ${zone}` : time;
+    format(`h:mm A ${format || ''}`)}${label}` : time;
 };
 
 /**
  * Method to add timezone to the label of the time
  * @returns {Array} -- List of hearing times with the zone appended to the label
  */
-export const hearingTimeOptsWithZone = (options) =>
-  options.map((time) => {
-    const label = time.label ? 'label' : 'displayText';
+export const hearingTimeOptsWithZone = (options, local) =>
+  options.map((item) => {
+    // Default to using EST for all times before conversion
+    moment.tz.setDefault(local === true ? 'America/New_York' : local);
+
+    // Check which label to use
+    const label = item.label ? 'label' : 'displayText';
+
+    // Set the time
+    const time = zoneName(item[label]);
+
+    // Set the time in the local timezone
+    const localTime = zoneName(item[label], local === true ? '' : local);
 
     return {
-      ...time,
-      [label]: zoneName(time[label])
-
+      ...item,
+      [label]: local && localTime !== time ? `${localTime} / ${time}` : time
     };
   });
 
@@ -311,7 +322,7 @@ export const timezones = (time) => {
   const dateTime = moment(time, 'HH:mm').tz(COMMON_TIMEZONES[0]);
 
   // Map the available timeTIMEZONES to a select options object
-  const options = Object.keys(TIMEZONES).map((zone) => {
+  const unorderedOptions = Object.keys(TIMEZONES).map((zone) => {
     // Default the index to be based on the timezone offset, add 100 to move below the Regional Office zones
     let index = Math.abs(moment.tz(TIMEZONES[zone]).utcOffset()) + 100;
 
@@ -341,5 +352,10 @@ export const timezones = (time) => {
   });
 
   // Return the values and the count of commons
-  return { options: _.orderBy(options, ['index']), commonsCount };
+  const orderedOptions = _.orderBy(unorderedOptions, ['index']);
+
+  // Add null option first to array of timezone options to allow deselecting timezone
+  const options = [{ value: null, label: '' }, ...orderedOptions];
+
+  return { options, commonsCount };
 };

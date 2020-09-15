@@ -14,7 +14,6 @@ import TextareaField from '../../components/TextareaField';
 
 const relationshipOpts = [
   { label: 'Attorney (previously or currently)', value: 'attorney' },
-  { label: 'Other', value: 'other' },
 ];
 
 const fetchAttorneys = async (search = '') => {
@@ -81,7 +80,7 @@ export const AddClaimantModal = ({
         onSubmit({
           name: claimant?.label,
           participantId: claimant?.value,
-          claimantType: relationship?.value,
+          claimantType: (unlistedClaimant ? 'other' : 'attorney'),
           claimantNotes,
         }),
       disabled: isInvalid,
@@ -92,12 +91,6 @@ export const AddClaimantModal = ({
     if (!unlistedClaimant) {
       setClaimantNotes('');
     }
-
-    // For now, this can only be either 'attorney' or 'other';
-    // will need to change logic when others are available
-    setRelationship(
-      unlistedClaimant ? relationshipOpts[1] : relationshipOpts[0]
-    );
   }, [unlistedClaimant]);
 
   return (
@@ -112,12 +105,11 @@ export const AddClaimantModal = ({
       </div>
       <SearchableDropdown
         name="relationship"
-        label="Claimant's relationship to the veteran"
+        label="Claimant's relationship to the Veteran"
         onChange={handleChangeRelationship}
         value={relationship}
         options={relationshipOpts}
         debounce={250}
-        readOnly
         strongLabel
       />
       <SearchableDropdown
@@ -131,6 +123,7 @@ export const AddClaimantModal = ({
         readOnly={unlistedClaimant}
         debounce={250}
         strongLabel
+        isClearable
       />
 
       <Checkbox

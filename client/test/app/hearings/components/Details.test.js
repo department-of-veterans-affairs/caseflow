@@ -12,6 +12,7 @@ import {
   legacyHearing,
   amaHearing,
   defaultHearing,
+  userUseFullPageVideoToVirtual,
 } from 'test/data';
 import Button from 'app/components/Button';
 import DateSelector from 'app/components/DateSelector';
@@ -22,6 +23,8 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 import TranscriptionRequestInputs from
   'app/hearings/components/details/TranscriptionRequestInputs';
 import VirtualHearingModal from 'app/hearings/components/VirtualHearingModal';
+import ApiUtil from 'app/util/ApiUtil';
+import toJson from 'enzyme-to-json';
 
 // Define the function spies
 const saveHearingSpy = jest.fn();
@@ -30,6 +33,17 @@ const goBackSpy = jest.fn();
 const onReceiveAlertsSpy = jest.fn();
 const onReceiveTransitioningAlertSpy = jest.fn();
 const transitionAlertSpy = jest.fn();
+
+const detailButtonsTest = (node) => {
+  node.find(Button).map((n, i) => {
+    // Expect the cancel button first
+    if (i === 0) {
+      return expect(n.prop('name')).toEqual('Cancel');
+    }
+
+    return expect(n.prop('name')).toEqual('Save');
+  });
+};
 
 describe('Details', () => {
   test('Matches snapshot with default props', () => {
@@ -66,14 +80,7 @@ describe('Details', () => {
     expect(details.find(TranscriptionFormSection)).toHaveLength(1);
 
     // Ensure the save and cancel buttons are present
-    details.find(Button).map((node, i) => {
-      // Expect the cancel button first
-      if (i === 0) {
-        return expect(node.prop('name')).toEqual('Cancel');
-      }
-
-      return expect(node.prop('name')).toEqual('Save');
-    });
+    detailButtonsTest(details);
 
     expect(details).toMatchSnapshot();
   });
@@ -102,6 +109,43 @@ describe('Details', () => {
     // Change the value of the hearing type
     dropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
     dropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
+    dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
+
+    // Ensure the modal is displayed
+    expect(details.find(VirtualHearingModal)).toHaveLength(0);
+    expect(details.find(HearingConversion)).toHaveLength(1);
+
+    expect(toJson(details, { noKey: true })).toMatchSnapshot();
+  });
+
+  test('Displays HearingConversion when converting from video and feature flag enabled', () => {
+    const details = mount(
+      <Details
+        hearing={defaultHearing}
+        saveHearing={saveHearingSpy}
+        setHearing={setHearingSpy}
+        goBack={goBackSpy}
+        onReceiveAlerts={onReceiveAlertsSpy}
+        onReceiveTransitioningAlert={onReceiveTransitioningAlertSpy}
+        transitionAlert={transitionAlertSpy}
+      />,
+      {
+        wrappingComponent: hearingDetailsWrapper(
+          userUseFullPageVideoToVirtual,
+          defaultHearing
+        ),
+        wrappingComponentProps: { store: detailsStore },
+      }
+    );
+    const dropdown = details.find(HearingTypeDropdown).find(SearchableDropdown);
+
+    // Change the value of the hearing type
+    dropdown.
+      find('Select').
+      simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
+    dropdown.
+      find('Select').
+      simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
     dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
 
     // Ensure the modal is displayed
@@ -145,7 +189,7 @@ describe('Details', () => {
     expect(details.find(VirtualHearingModal)).toHaveLength(1);
     expect(details.find(HearingConversion)).toHaveLength(0);
 
-    expect(details).toMatchSnapshot();
+    expect(toJson(details, { noKey: true })).toMatchSnapshot();
   });
 
   test('Does not display VirtualHearingModal when updating transcription details with AMA virtual hearing', () => {
@@ -185,7 +229,7 @@ describe('Details', () => {
     // Ensure the modal is not displayed
     expect(details.exists(VirtualHearingModal)).toEqual(false);
 
-    expect(details).toMatchSnapshot();
+    expect(toJson(details, { noKey: true })).toMatchSnapshot();
   });
 
   test('Does not display transcription section for legacy hearings', () => {
@@ -222,15 +266,9 @@ describe('Details', () => {
     expect(details.find(TranscriptionFormSection)).toHaveLength(0);
 
     // Ensure the save and cancel buttons are present
-    details.find(Button).map((node, i) => {
-      // Expect the cancel button first
-      if (i === 0) {
-        return expect(node.prop('name')).toEqual('Cancel');
-      }
+    detailButtonsTest(details);
 
-      return expect(node.prop('name')).toEqual('Save');
-    });
-    expect(details).toMatchSnapshot();
+    expect(toJson(details, { noKey: true })).toMatchSnapshot();
   });
 
   test('Displays VirtualHearing details when there is a virtual hearing', () => {
@@ -261,6 +299,6 @@ describe('Details', () => {
       0
     );
 
-    expect(details).toMatchSnapshot();
+    expect(toJson(details, { noKey: true })).toMatchSnapshot();
   });
 });

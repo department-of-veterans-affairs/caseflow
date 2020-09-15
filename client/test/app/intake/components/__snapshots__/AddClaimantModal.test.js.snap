@@ -69,7 +69,7 @@ exports[`AddClaimantModal renders correctly 1`] = `
               >
                 <strong>
                   <span>
-                    Claimant's relationship to the veteran
+                    Claimant's relationship to the Veteran
                   </span>
                 </strong>
               </label>
@@ -80,34 +80,66 @@ exports[`AddClaimantModal renders correctly 1`] = `
                   class="cf-select"
                 >
                   <div
-                    class="cf-select--is-disabled css-14jk2my-container"
+                    class=" css-2b097c-container"
                   >
                     <div
-                      class="cf-select__control cf-select__control--is-disabled css-1fhf3k1-control"
+                      class="cf-select__control css-yk16xz-control"
                     >
                       <div
                         class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
                       >
                         <div
-                          class="cf-select__single-value cf-select__single-value--is-disabled css-107lb6w-singleValue"
+                          class="cf-select__single-value css-1uccc91-singleValue"
                         >
                           Attorney (previously or currently)
                         </div>
-                        <input
-                          aria-autocomplete="list"
-                          class="css-62g3xt-dummyInput"
-                          disabled=""
-                          id="relationship"
-                          readonly=""
-                          tabindex="0"
-                          value=""
-                        />
+                        <div
+                          class="css-81nyic-Input"
+                        >
+                          <div
+                            class="cf-select__input"
+                            style="display: inline-block;"
+                          >
+                            <input
+                              aria-autocomplete="list"
+                              autocapitalize="none"
+                              autocomplete="off"
+                              autocorrect="off"
+                              id="relationship"
+                              spellcheck="false"
+                              style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
+                              tabindex="0"
+                              type="text"
+                              value=""
+                            />
+                            <div
+                              style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
+                            />
+                          </div>
+                        </div>
                       </div>
                       <div
                         class="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
                       >
+                        <div
+                          aria-hidden="true"
+                          class="cf-select__indicator cf-select__clear-indicator css-tlfecz-indicatorContainer"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="css-6q0nyr-Svg"
+                            focusable="false"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            width="20"
+                          >
+                            <path
+                              d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z"
+                            />
+                          </svg>
+                        </div>
                         <span
-                          class="cf-select__indicator-separator css-109onse-indicatorSeparator"
+                          class="cf-select__indicator-separator css-1okebmr-indicatorSeparator"
                         />
                         <div
                           aria-hidden="true"

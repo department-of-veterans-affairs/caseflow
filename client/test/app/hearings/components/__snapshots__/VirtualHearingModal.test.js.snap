@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`VirtualHearingModal ChangeEmail sub-component Displays ReadOnlyEmails component 1`] = `
-<ChangeEmail
+exports[`VirtualHearingModal ChangeEmailOrTimezone sub-component Displays ReadOnlyEmails component 1`] = `
+<ChangeEmailOrTimezone
   hearing={
     Object {
       "advanceOnDocketMotion": null,
@@ -60,6 +60,12 @@ exports[`VirtualHearingModal ChangeEmail sub-component Displays ReadOnlyEmails c
       "regionalOfficeName": "St. Petersburg regional office",
       "regionalOfficeTimezone": "America/New_York",
       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "1",
@@ -137,7 +143,6 @@ exports[`VirtualHearingModal ChangeEmail sub-component Displays ReadOnlyEmails c
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -209,6 +214,12 @@ exports[`VirtualHearingModal ChangeEmail sub-component Displays ReadOnlyEmails c
         "regionalOfficeName": "St. Petersburg regional office",
         "regionalOfficeTimezone": "America/New_York",
         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeAddress": Object {
+          "addressLine1": "9999 MISSION ST",
+          "city": "SAN FRANCISCO",
+          "state": "CA",
+          "zip": "94103",
+        },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
         "room": "1",
@@ -286,7 +297,6 @@ exports[`VirtualHearingModal ChangeEmail sub-component Displays ReadOnlyEmails c
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": null,
         "clientHost": "care.evn.va.gov",
-        "false": "tom.brady@caseflow.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -299,7 +309,7 @@ exports[`VirtualHearingModal ChangeEmail sub-component Displays ReadOnlyEmails c
       }
     }
   />
-</ChangeEmail>
+</ChangeEmailOrTimezone>
 `;
 
 exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Location when present 1`] = `
@@ -364,6 +374,12 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
       "regionalOfficeName": "St. Petersburg regional office",
       "regionalOfficeTimezone": "America/New_York",
       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "1",
@@ -441,7 +457,6 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -515,6 +530,12 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
         "regionalOfficeName": "St. Petersburg regional office",
         "regionalOfficeTimezone": "America/New_York",
         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeAddress": Object {
+          "addressLine1": "9999 MISSION ST",
+          "city": "SAN FRANCISCO",
+          "state": "CA",
+          "zip": "94103",
+        },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
         "room": "1",
@@ -592,7 +613,6 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": null,
         "clientHost": "care.evn.va.gov",
-        "false": "tom.brady@caseflow.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -684,6 +704,12 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
         "regionalOfficeName": "St. Petersburg regional office",
         "regionalOfficeTimezone": "America/New_York",
         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeAddress": Object {
+          "addressLine1": "9999 MISSION ST",
+          "city": "SAN FRANCISCO",
+          "state": "CA",
+          "zip": "94103",
+        },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
         "room": "1",
@@ -762,7 +788,6 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": null,
         "clientHost": "care.evn.va.gov",
-        "false": "tom.brady@caseflow.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -785,7 +810,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays Hearing Lo
     </p>
     <p>
       <strong>
-        Representative Email
+        POA/Representative Email
       </strong>
       <br />
       tom.brady@caseflow.gov
@@ -854,6 +879,12 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
       "regionalOfficeName": "St. Petersburg regional office",
       "regionalOfficeTimezone": "America/New_York",
       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "1",
@@ -931,7 +962,6 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1003,6 +1033,12 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
         "regionalOfficeName": "St. Petersburg regional office",
         "regionalOfficeTimezone": "America/New_York",
         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeAddress": Object {
+          "addressLine1": "9999 MISSION ST",
+          "city": "SAN FRANCISCO",
+          "state": "CA",
+          "zip": "94103",
+        },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
         "room": "1",
@@ -1080,7 +1116,6 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": null,
         "clientHost": "care.evn.va.gov",
-        "false": "tom.brady@caseflow.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1164,6 +1199,12 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
         "regionalOfficeName": "St. Petersburg regional office",
         "regionalOfficeTimezone": "America/New_York",
         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeAddress": Object {
+          "addressLine1": "9999 MISSION ST",
+          "city": "SAN FRANCISCO",
+          "state": "CA",
+          "zip": "94103",
+        },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
         "room": "1",
@@ -1242,7 +1283,6 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": null,
         "clientHost": "care.evn.va.gov",
-        "false": "tom.brady@caseflow.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1265,7 +1305,7 @@ exports[`VirtualHearingModal ChangeFromVirtual sub-component Displays ReadOnlyEm
     </p>
     <p>
       <strong>
-        Representative Email
+        POA/Representative Email
       </strong>
       <br />
       tom.brady@caseflow.gov
@@ -1334,6 +1374,12 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
       "regionalOfficeName": "St. Petersburg regional office",
       "regionalOfficeTimezone": "America/New_York",
       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "1",
@@ -1411,7 +1457,6 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1483,6 +1528,12 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
         "regionalOfficeName": "St. Petersburg regional office",
         "regionalOfficeTimezone": "America/New_York",
         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeAddress": Object {
+          "addressLine1": "9999 MISSION ST",
+          "city": "SAN FRANCISCO",
+          "state": "CA",
+          "zip": "94103",
+        },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
         "room": "1",
@@ -1560,7 +1611,6 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": null,
         "clientHost": "care.evn.va.gov",
-        "false": "tom.brady@caseflow.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1644,6 +1694,12 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
         "regionalOfficeName": "St. Petersburg regional office",
         "regionalOfficeTimezone": "America/New_York",
         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeAddress": Object {
+          "addressLine1": "9999 MISSION ST",
+          "city": "SAN FRANCISCO",
+          "state": "CA",
+          "zip": "94103",
+        },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
         "room": "1",
@@ -1722,7 +1778,6 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": null,
         "clientHost": "care.evn.va.gov",
-        "false": "tom.brady@caseflow.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1745,7 +1800,7 @@ exports[`VirtualHearingModal ChangeHearingTime sub-component Displays ReadOnlyEm
     </p>
     <p>
       <strong>
-        Representative Email
+        POA/Representative Email
       </strong>
       <br />
       tom.brady@caseflow.gov
@@ -1815,6 +1870,12 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
       "regionalOfficeName": "St. Petersburg regional office",
       "regionalOfficeTimezone": "America/New_York",
       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "1",
@@ -1882,7 +1943,6 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1955,6 +2015,12 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
         "regionalOfficeName": "St. Petersburg regional office",
         "regionalOfficeTimezone": "America/New_York",
         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeAddress": Object {
+          "addressLine1": "9999 MISSION ST",
+          "city": "SAN FRANCISCO",
+          "state": "CA",
+          "zip": "94103",
+        },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
         "room": "1",
@@ -2022,7 +2088,6 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays appellant em
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": null,
         "clientHost": "care.evn.va.gov",
-        "false": "tom.brady@caseflow.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -2221,6 +2286,12 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
       "regionalOfficeName": "St. Petersburg regional office",
       "regionalOfficeTimezone": "America/New_York",
       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "1",
@@ -2278,7 +2349,6 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -2350,6 +2420,12 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
         "regionalOfficeName": "St. Petersburg regional office",
         "regionalOfficeTimezone": "America/New_York",
         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeAddress": Object {
+          "addressLine1": "9999 MISSION ST",
+          "city": "SAN FRANCISCO",
+          "state": "CA",
+          "zip": "94103",
+        },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
         "room": "1",
@@ -2407,7 +2483,6 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays input for ap
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": null,
         "clientHost": "care.evn.va.gov",
-        "false": "tom.brady@caseflow.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -2600,6 +2675,12 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
       "regionalOfficeName": "St. Petersburg regional office",
       "regionalOfficeTimezone": "America/New_York",
       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "1",
@@ -2678,7 +2759,6 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -2750,6 +2830,12 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
         "regionalOfficeName": "St. Petersburg regional office",
         "regionalOfficeTimezone": "America/New_York",
         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+        "representativeAddress": Object {
+          "addressLine1": "9999 MISSION ST",
+          "city": "SAN FRANCISCO",
+          "state": "CA",
+          "zip": "94103",
+        },
         "representativeEmailAddress": "tom.brady@caseflow.gov",
         "representativeName": null,
         "room": "1",
@@ -2828,7 +2914,6 @@ exports[`VirtualHearingModal ChangeToVirtual sub-component Displays representati
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": null,
         "clientHost": "care.evn.va.gov",
-        "false": "tom.brady@caseflow.gov",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -3103,7 +3188,6 @@ exports[`VirtualHearingModal DateTime sub-component Displays divider for formerl
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -3193,6 +3277,12 @@ exports[`VirtualHearingModal DateTime sub-component Displays formatted hearing d
       "regionalOfficeName": "St. Petersburg regional office",
       "regionalOfficeTimezone": "America/New_York",
       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "1",
@@ -3270,7 +3360,6 @@ exports[`VirtualHearingModal DateTime sub-component Displays formatted hearing d
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -3297,7 +3386,7 @@ exports[`VirtualHearingModal DateTime sub-component Displays formatted hearing d
 </DateTime>
 `;
 
-exports[`VirtualHearingModal Displays ChangeEmail component when type is change_email 1`] = `
+exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type is change_email_or_timezone 1`] = `
 <VirtualHearingModal
   hearing={
     Object {
@@ -3357,6 +3446,12 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
       "regionalOfficeName": "St. Petersburg regional office",
       "regionalOfficeTimezone": "America/New_York",
       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "1",
@@ -3380,7 +3475,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
       "worksheetIssues": Object {},
     }
   }
-  type="change_email"
+  type="change_email_or_timezone"
   update={
     [MockFunction] {
       "calls": Array [
@@ -3405,7 +3500,6 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -3430,9 +3524,11 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
           }
           disabled={false}
           linkStyling={true}
+          loading={false}
           name="cancel-virtual-hearing"
           onClick={[Function]}
           type="button"
+          willNeverBeLoading={false}
         >
           Cancel
         </Button>
@@ -3447,15 +3543,18 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
             ]
           }
           disabled={false}
+          linkStyling={false}
           loading={false}
           name="submit-virtual-hearing"
           onClick={[Function]}
           type="button"
+          willNeverBeLoading={false}
         >
           Update and Send Email
         </Button>
       }
-      title="Update Email Address"
+      scrollLock={true}
+      title="Update Timezone"
     >
       <section
         aria-describedby="modal_id-desc"
@@ -3486,7 +3585,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
         >
           <button
             className="cf-modal-close"
-            id="Update-Email-Address-button-id-close"
+            id="Update-Timezone-button-id-close"
             onClick={[Function]}
             type="button"
           >
@@ -3518,7 +3617,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
               <h1
                 id="modal_id-title"
               >
-                Update Email Address
+                Update Timezone
               </h1>
               <div
                 data-css-o98ubo=""
@@ -3530,7 +3629,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
                     }
                   }
                 />
-                <ChangeEmail
+                <ChangeEmailOrTimezone
                   appellantEmailError={null}
                   hearing={
                     Object {
@@ -3590,6 +3689,12 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
                       "regionalOfficeName": "St. Petersburg regional office",
                       "regionalOfficeTimezone": "America/New_York",
                       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+                      "representativeAddress": Object {
+                        "addressLine1": "9999 MISSION ST",
+                        "city": "SAN FRANCISCO",
+                        "state": "CA",
+                        "zip": "94103",
+                      },
                       "representativeEmailAddress": "tom.brady@caseflow.gov",
                       "representativeName": null,
                       "room": "1",
@@ -3615,7 +3720,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
                   }
                   readOnly={false}
                   representativeEmailError={null}
-                  type="change_email"
+                  type="change_email_or_timezone"
                   update={
                     [MockFunction] {
                       "calls": Array [
@@ -3640,7 +3745,6 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
                       "appellantEmail": "Bob.Smith@test.com",
                       "appellantTz": null,
                       "clientHost": "care.evn.va.gov",
-                      "false": "tom.brady@caseflow.gov",
                       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                       "guestPin": "2684353125#",
                       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -3713,6 +3817,12 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
                         "regionalOfficeName": "St. Petersburg regional office",
                         "regionalOfficeTimezone": "America/New_York",
                         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+                        "representativeAddress": Object {
+                          "addressLine1": "9999 MISSION ST",
+                          "city": "SAN FRANCISCO",
+                          "state": "CA",
+                          "zip": "94103",
+                        },
                         "representativeEmailAddress": "tom.brady@caseflow.gov",
                         "representativeName": null,
                         "room": "1",
@@ -3738,7 +3848,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
                     }
                     readOnly={false}
                     representativeEmailError={null}
-                    type="change_email"
+                    type="change_email_or_timezone"
                     update={
                       [MockFunction] {
                         "calls": Array [
@@ -3763,7 +3873,6 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
                         "appellantEmail": "Bob.Smith@test.com",
                         "appellantTz": null,
                         "clientHost": "care.evn.va.gov",
-                        "false": "tom.brady@caseflow.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                         "guestPin": "2684353125#",
                         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -3776,7 +3885,7 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
                       }
                     }
                   />
-                </ChangeEmail>
+                </ChangeEmailOrTimezone>
               </div>
             </div>
           </div>
@@ -3797,10 +3906,12 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
                     ]
                   }
                   disabled={false}
+                  linkStyling={false}
                   loading={false}
                   name="submit-virtual-hearing"
                   onClick={[Function]}
                   type="button"
+                  willNeverBeLoading={false}
                 >
                   <span>
                     <button
@@ -3826,9 +3937,11 @@ exports[`VirtualHearingModal Displays ChangeEmail component when type is change_
                   }
                   disabled={false}
                   linkStyling={true}
+                  loading={false}
                   name="cancel-virtual-hearing"
                   onClick={[Function]}
                   type="button"
+                  willNeverBeLoading={false}
                 >
                   <span>
                     <button
@@ -3912,6 +4025,12 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
       "regionalOfficeName": "St. Petersburg regional office",
       "regionalOfficeTimezone": "America/New_York",
       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "1",
@@ -3960,7 +4079,6 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -3985,9 +4103,11 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
           }
           disabled={false}
           linkStyling={true}
+          loading={false}
           name="cancel-virtual-hearing"
           onClick={[Function]}
           type="button"
+          willNeverBeLoading={false}
         >
           Cancel
         </Button>
@@ -4002,14 +4122,17 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
             ]
           }
           disabled={false}
+          linkStyling={false}
           loading={false}
           name="submit-virtual-hearing"
           onClick={[Function]}
           type="button"
+          willNeverBeLoading={false}
         >
           Change and Send Email
         </Button>
       }
+      scrollLock={true}
       title="Change to Video Hearing"
     >
       <section
@@ -4145,6 +4268,12 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                       "regionalOfficeName": "St. Petersburg regional office",
                       "regionalOfficeTimezone": "America/New_York",
                       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+                      "representativeAddress": Object {
+                        "addressLine1": "9999 MISSION ST",
+                        "city": "SAN FRANCISCO",
+                        "state": "CA",
+                        "zip": "94103",
+                      },
                       "representativeEmailAddress": "tom.brady@caseflow.gov",
                       "representativeName": null,
                       "room": "1",
@@ -4195,7 +4324,6 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                       "appellantEmail": "Bob.Smith@test.com",
                       "appellantTz": null,
                       "clientHost": "care.evn.va.gov",
-                      "false": "tom.brady@caseflow.gov",
                       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                       "guestPin": "2684353125#",
                       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -4268,6 +4396,12 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                         "regionalOfficeName": "St. Petersburg regional office",
                         "regionalOfficeTimezone": "America/New_York",
                         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+                        "representativeAddress": Object {
+                          "addressLine1": "9999 MISSION ST",
+                          "city": "SAN FRANCISCO",
+                          "state": "CA",
+                          "zip": "94103",
+                        },
                         "representativeEmailAddress": "tom.brady@caseflow.gov",
                         "representativeName": null,
                         "room": "1",
@@ -4318,7 +4452,6 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                         "appellantEmail": "Bob.Smith@test.com",
                         "appellantTz": null,
                         "clientHost": "care.evn.va.gov",
-                        "false": "tom.brady@caseflow.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                         "guestPin": "2684353125#",
                         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -4403,6 +4536,12 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                         "regionalOfficeName": "St. Petersburg regional office",
                         "regionalOfficeTimezone": "America/New_York",
                         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+                        "representativeAddress": Object {
+                          "addressLine1": "9999 MISSION ST",
+                          "city": "SAN FRANCISCO",
+                          "state": "CA",
+                          "zip": "94103",
+                        },
                         "representativeEmailAddress": "tom.brady@caseflow.gov",
                         "representativeName": null,
                         "room": "1",
@@ -4454,7 +4593,6 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                         "appellantEmail": "Bob.Smith@test.com",
                         "appellantTz": null,
                         "clientHost": "care.evn.va.gov",
-                        "false": "tom.brady@caseflow.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                         "guestPin": "2684353125#",
                         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -4477,7 +4615,7 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                     </p>
                     <p>
                       <strong>
-                        Representative Email
+                        POA/Representative Email
                       </strong>
                       <br />
                       tom.brady@caseflow.gov
@@ -4504,10 +4642,12 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                     ]
                   }
                   disabled={false}
+                  linkStyling={false}
                   loading={false}
                   name="submit-virtual-hearing"
                   onClick={[Function]}
                   type="button"
+                  willNeverBeLoading={false}
                 >
                   <span>
                     <button
@@ -4533,9 +4673,11 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
                   }
                   disabled={false}
                   linkStyling={true}
+                  loading={false}
                   name="cancel-virtual-hearing"
                   onClick={[Function]}
                   type="button"
+                  willNeverBeLoading={false}
                 >
                   <span>
                     <button
@@ -4619,6 +4761,12 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
       "regionalOfficeName": "St. Petersburg regional office",
       "regionalOfficeTimezone": "America/New_York",
       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "1",
@@ -4667,7 +4815,6 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -4692,9 +4839,11 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
           }
           disabled={false}
           linkStyling={true}
+          loading={false}
           name="cancel-virtual-hearing"
           onClick={[Function]}
           type="button"
+          willNeverBeLoading={false}
         >
           Cancel
         </Button>
@@ -4709,15 +4858,18 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
             ]
           }
           disabled={false}
+          linkStyling={false}
           loading={false}
           name="submit-virtual-hearing"
           onClick={[Function]}
           type="button"
+          willNeverBeLoading={false}
         >
-          Change and Send Email
+          Update Hearing Time
         </Button>
       }
-      title="Change Hearing Time"
+      scrollLock={true}
+      title="Update Hearing Time"
     >
       <section
         aria-describedby="modal_id-desc"
@@ -4748,7 +4900,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
         >
           <button
             className="cf-modal-close"
-            id="Change-Hearing-Time-button-id-close"
+            id="Update-Hearing-Time-button-id-close"
             onClick={[Function]}
             type="button"
           >
@@ -4780,7 +4932,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
               <h1
                 id="modal_id-title"
               >
-                Change Hearing Time
+                Update Hearing Time
               </h1>
               <div
                 data-css-o98ubo=""
@@ -4852,6 +5004,12 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                       "regionalOfficeName": "St. Petersburg regional office",
                       "regionalOfficeTimezone": "America/New_York",
                       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+                      "representativeAddress": Object {
+                        "addressLine1": "9999 MISSION ST",
+                        "city": "SAN FRANCISCO",
+                        "state": "CA",
+                        "zip": "94103",
+                      },
                       "representativeEmailAddress": "tom.brady@caseflow.gov",
                       "representativeName": null,
                       "room": "1",
@@ -4902,7 +5060,6 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                       "appellantEmail": "Bob.Smith@test.com",
                       "appellantTz": null,
                       "clientHost": "care.evn.va.gov",
-                      "false": "tom.brady@caseflow.gov",
                       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                       "guestPin": "2684353125#",
                       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -4975,6 +5132,12 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                         "regionalOfficeName": "St. Petersburg regional office",
                         "regionalOfficeTimezone": "America/New_York",
                         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+                        "representativeAddress": Object {
+                          "addressLine1": "9999 MISSION ST",
+                          "city": "SAN FRANCISCO",
+                          "state": "CA",
+                          "zip": "94103",
+                        },
                         "representativeEmailAddress": "tom.brady@caseflow.gov",
                         "representativeName": null,
                         "room": "1",
@@ -5025,7 +5188,6 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                         "appellantEmail": "Bob.Smith@test.com",
                         "appellantTz": null,
                         "clientHost": "care.evn.va.gov",
-                        "false": "tom.brady@caseflow.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                         "guestPin": "2684353125#",
                         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -5110,6 +5272,12 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                         "regionalOfficeName": "St. Petersburg regional office",
                         "regionalOfficeTimezone": "America/New_York",
                         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+                        "representativeAddress": Object {
+                          "addressLine1": "9999 MISSION ST",
+                          "city": "SAN FRANCISCO",
+                          "state": "CA",
+                          "zip": "94103",
+                        },
                         "representativeEmailAddress": "tom.brady@caseflow.gov",
                         "representativeName": null,
                         "room": "1",
@@ -5161,7 +5329,6 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                         "appellantEmail": "Bob.Smith@test.com",
                         "appellantTz": null,
                         "clientHost": "care.evn.va.gov",
-                        "false": "tom.brady@caseflow.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                         "guestPin": "2684353125#",
                         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -5184,7 +5351,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                     </p>
                     <p>
                       <strong>
-                        Representative Email
+                        POA/Representative Email
                       </strong>
                       <br />
                       tom.brady@caseflow.gov
@@ -5211,10 +5378,12 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                     ]
                   }
                   disabled={false}
+                  linkStyling={false}
                   loading={false}
                   name="submit-virtual-hearing"
                   onClick={[Function]}
                   type="button"
+                  willNeverBeLoading={false}
                 >
                   <span>
                     <button
@@ -5224,7 +5393,7 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                       onClick={[Function]}
                       type="button"
                     >
-                      Change and Send Email
+                      Update Hearing Time
                     </button>
                   </span>
                 </Button>
@@ -5240,9 +5409,11 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
                   }
                   disabled={false}
                   linkStyling={true}
+                  loading={false}
                   name="cancel-virtual-hearing"
                   onClick={[Function]}
                   type="button"
+                  willNeverBeLoading={false}
                 >
                   <span>
                     <button
@@ -5326,6 +5497,12 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
       "regionalOfficeName": "St. Petersburg regional office",
       "regionalOfficeTimezone": "America/New_York",
       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "1",
@@ -5374,7 +5551,6 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -5399,9 +5575,11 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
           }
           disabled={false}
           linkStyling={true}
+          loading={false}
           name="cancel-virtual-hearing"
           onClick={[Function]}
           type="button"
+          willNeverBeLoading={false}
         >
           Cancel
         </Button>
@@ -5416,14 +5594,17 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
             ]
           }
           disabled={false}
+          linkStyling={false}
           loading={false}
           name="submit-virtual-hearing"
           onClick={[Function]}
           type="button"
+          willNeverBeLoading={false}
         >
           Change and Send Email
         </Button>
       }
+      scrollLock={true}
       title="Change to Virtual Hearing"
     >
       <section
@@ -5559,6 +5740,12 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                       "regionalOfficeName": "St. Petersburg regional office",
                       "regionalOfficeTimezone": "America/New_York",
                       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+                      "representativeAddress": Object {
+                        "addressLine1": "9999 MISSION ST",
+                        "city": "SAN FRANCISCO",
+                        "state": "CA",
+                        "zip": "94103",
+                      },
                       "representativeEmailAddress": "tom.brady@caseflow.gov",
                       "representativeName": null,
                       "room": "1",
@@ -5609,7 +5796,6 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                       "appellantEmail": "Bob.Smith@test.com",
                       "appellantTz": null,
                       "clientHost": "care.evn.va.gov",
-                      "false": "tom.brady@caseflow.gov",
                       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                       "guestPin": "2684353125#",
                       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -5682,6 +5868,12 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                         "regionalOfficeName": "St. Petersburg regional office",
                         "regionalOfficeTimezone": "America/New_York",
                         "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+                        "representativeAddress": Object {
+                          "addressLine1": "9999 MISSION ST",
+                          "city": "SAN FRANCISCO",
+                          "state": "CA",
+                          "zip": "94103",
+                        },
                         "representativeEmailAddress": "tom.brady@caseflow.gov",
                         "representativeName": null,
                         "room": "1",
@@ -5732,7 +5924,6 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                         "appellantEmail": "Bob.Smith@test.com",
                         "appellantTz": null,
                         "clientHost": "care.evn.va.gov",
-                        "false": "tom.brady@caseflow.gov",
                         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                         "guestPin": "2684353125#",
                         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -5889,10 +6080,12 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                     ]
                   }
                   disabled={false}
+                  linkStyling={false}
                   loading={false}
                   name="submit-virtual-hearing"
                   onClick={[Function]}
                   type="button"
+                  willNeverBeLoading={false}
                 >
                   <span>
                     <button
@@ -5918,9 +6111,11 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
                   }
                   disabled={false}
                   linkStyling={true}
+                  loading={false}
                   name="cancel-virtual-hearing"
                   onClick={[Function]}
                   type="button"
+                  willNeverBeLoading={false}
                 >
                   <span>
                     <button
@@ -6082,7 +6277,6 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -6307,7 +6501,6 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -6532,7 +6725,6 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -6756,7 +6948,6 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -6980,7 +7171,6 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -7169,7 +7359,6 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -7358,7 +7547,6 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -7547,7 +7735,6 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Central Virtu
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -7660,6 +7847,12 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "regionalOfficeName": "St. Petersburg regional office",
       "regionalOfficeTimezone": "America/New_York",
       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "1",
@@ -7738,7 +7931,6 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -7761,7 +7953,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
   </p>
   <p>
     <strong>
-      Representative Email
+      POA/Representative Email
     </strong>
     <br />
     tom.brady@caseflow.gov
@@ -7829,6 +8021,12 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "regionalOfficeName": "St. Petersburg regional office",
       "regionalOfficeTimezone": "America/New_York",
       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "1",
@@ -7907,7 +8105,6 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -7930,7 +8127,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
   </p>
   <p>
     <strong>
-      Representative Email
+      POA/Representative Email
     </strong>
     <br />
     tom.brady@caseflow.gov
@@ -7999,6 +8196,12 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "regionalOfficeName": "St. Petersburg regional office",
       "regionalOfficeTimezone": "America/New_York",
       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "1",
@@ -8076,7 +8279,6 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -8160,6 +8362,12 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "regionalOfficeName": "St. Petersburg regional office",
       "regionalOfficeTimezone": "America/New_York",
       "representative": "PARALYZED VETERANS OF AMERICA, INC.",
+      "representativeAddress": Object {
+        "addressLine1": "9999 MISSION ST",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94103",
+      },
       "representativeEmailAddress": "tom.brady@caseflow.gov",
       "representativeName": null,
       "room": "1",
@@ -8238,7 +8446,6 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -8253,7 +8460,7 @@ exports[`VirtualHearingModal ReadOnlyEmails sub-component Formerly Video Virtual
 >
   <p>
     <strong>
-      Representative Email
+      POA/Representative Email
     </strong>
     <br />
     tom.brady@caseflow.gov

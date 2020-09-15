@@ -237,5 +237,10 @@ describe BvaDispatchTask, :all_dbs do
       expect(bva_d_task.available_actions(bva_d_task.assigned_to))
         .not_to include(Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h)
     end
+
+    it "actions should not include 'Mark Task Complete'" do
+      expect(bva_d_task.available_actions(bva_d_task.assigned_to))
+        .not_to include(Constants.TASK_ACTIONS.MARK_COMPLETE.to_h)
+    end
   end
 end

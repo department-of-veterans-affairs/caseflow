@@ -3,7 +3,7 @@ import React from 'react';
 import { HearingConversion } from 'app/hearings/components/HearingConversion';
 import { detailsStore, hearingDetailsWrapper } from 'test/data/stores/hearingsStore';
 import { mount } from 'enzyme';
-import { userWithVirtualHearingsFeatureEnabled, amaHearing } from 'test/data';
+import { userWithVirtualHearingsFeatureEnabled, userUseFullPageVideoToVirtual, amaHearing } from 'test/data';
 import { HEARING_CONVERSION_TYPES } from 'app/hearings/constants';
 import { VirtualHearingSection } from 'app/hearings/components/VirtualHearings/Section';
 import * as DateUtil from 'app/util/DateUtil';
@@ -13,7 +13,9 @@ import { JudgeDropdown } from 'app/components/DataDropdowns';
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import RadioField from 'app/components/RadioField';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
-import { getAppellantTitleForHearing } from 'app/hearings/utils';
+import { defaultHearing } from 'test/data/hearings';
+import { HearingLocationDropdown } from 'app/hearings/components/dailyDocket/DailyDocketRowInputs';
+import { HearingTime } from 'app/hearings/components/modalForms/HearingTime';
 
 const updateSpy = jest.fn();
 const defaultTitle = 'Convert to Virtual';
@@ -90,48 +92,4 @@ describe('HearingConversion', () => {
     expect(conversion).toMatchSnapshot();
   });
 
-  test('Shows Representative not present message when no representative', () => {
-    const conversion = mount(
-      <HearingConversion
-        scheduledFor={amaHearing.scheduledFor.toString()}
-        type={HEARING_CONVERSION_TYPES[1]}
-        title={defaultTitle}
-        update={updateSpy}
-        hearing={{
-          ...amaHearing,
-          representative: null
-        }}
-      />
-    );
-
-    // Assertions
-    expect(conversion.find(AddressLine)).toHaveLength(1);
-    expect(conversion.find(VirtualHearingSection).at(1).
-      find(ReadOnly).
-      prop('text')).toEqual(
-      `The ${getAppellantTitleForHearing(amaHearing)} does not have a representative recorded in VBMS`
-    );
-    expect(conversion).toMatchSnapshot();
-  });
-
-  test('Shows Representative name when representative address blank', () => {
-    const conversion = mount(
-      <HearingConversion
-        scheduledFor={amaHearing.scheduledFor.toString()}
-        type={HEARING_CONVERSION_TYPES[1]}
-        title={defaultTitle}
-        update={updateSpy}
-        hearing={{
-          ...amaHearing,
-          representativeAddress: null
-        }}
-      />
-    );
-
-    // Assertions
-    expect(conversion.find(AddressLine)).toHaveLength(2);
-    expect(conversion.find(AddressLine).at(1).
-      text()).toMatch(amaHearing.representativeName);
-    expect(conversion).toMatchSnapshot();
-  });
 });

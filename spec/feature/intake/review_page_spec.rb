@@ -13,19 +13,20 @@ feature "Intake Review Page", :postgres do
   end
   let(:benefit_type) { "compensation" }
 
-  describe "Validating receipt date not before ama" do
+  describe "Validating receipt date not blank or before AMA" do
     before { FeatureToggle.enable!(:use_ama_activation_date) }
 
-    it "shows correct error with AMA date" do
-      start_higher_level_review(veteran)
+    it "shows correct error with blank or pre-AMA dates" do
+      start_higher_level_review(veteran, receipt_date: nil)
       visit "/intake"
       expect(page).to have_current_path("/intake/review_request")
+      click_intake_continue
+
+      expect(page).to have_content("Please enter a valid receipt date.")
       fill_in "What is the Receipt Date of this form?", with: "01/01/2019"
       click_intake_continue
 
-      expect(page).to have_content(
-        "Receipt Date cannot be prior to 02/19/2019."
-      )
+      expect(page).to have_content("Receipt Date cannot be prior to 02/19/2019.")
     end
   end
 
@@ -364,6 +365,57 @@ feature "Intake Review Page", :postgres do
           end
         end
 
+        context "establish_fiduciary_eps feature toggle" do
+          before { FeatureToggle.enable!(:establish_fiduciary_eps) }
+          after { FeatureToggle.disable!(:establish_fiduciary_eps) }
+
+          let(:benefit_type) { "fiduciary" }
+          let(:nonrating_date) { Time.zone.yesterday }
+
+          scenario "when fiduciary is enabled" do
+            start_supplemental_claim(
+              veteran,
+              benefit_type: benefit_type,
+              claim_participant_id: claim_participant_id
+            )
+
+            visit "/intake"
+
+            expect(page).to have_current_path("/intake/review_request")
+
+            within_fieldset("Is the claimant someone other than the Veteran?") do
+              find("label", text: "Yes", match: :prefer_exact).click
+            end
+
+            expect(page).to have_content("What is the payee code for this claimant?")
+            find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
+            expect(find(".cf-select__value-container")).to have_content("11 - C&P First Child")
+            click_intake_continue
+
+            expect(page).to have_content("Bob Vance, Spouse (payee code 11)")
+            click_button("+ Add issue")
+
+            expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
+            add_intake_nonrating_issue(
+              category: "Appointment of a Fiduciary",
+              description: "Description for A Fiduciary",
+              date: nonrating_date.mdY
+            )
+
+            expect(page).to have_content("Appointment of a Fiduciary (38 CFR 13.100)")
+            click_on "Establish EP"
+
+            expect(page).to have_content("Contention: Appointment of a Fiduciary")
+            fiduciary_end_product = EndProductEstablishment.where(
+              code: "040SCRFID",
+              modifier: "040",
+              payee_code: "11",
+              source_type: "SupplementalClaim"
+            )
+            expect(fiduciary_end_product).to_not be_nil
+          end
+        end
+
         def add_existing_attorney(attorney)
           click_button("+ Add Claimant")
           expect(page).to have_selector("#add_claimant_modal")
@@ -391,6 +443,8 @@ feature "Intake Review Page", :postgres do
           expect(page).to_not have_selector("#add_claimant_modal")
           expect(page).to have_content("Claimant not listed, Attorney")
           expect(page).to have_content(notes)
+          # unlisted claimant has empty ID for radio value
+          expect(find("input", id: "claimant-options_", visible: false).checked?).to eq(true)
         end
         # rubocop: enable Metrics/AbcSize
 

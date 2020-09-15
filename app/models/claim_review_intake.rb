@@ -4,11 +4,7 @@ class ClaimReviewIntake < DecisionReviewIntake
   attr_reader :request_params
 
   def ui_hash
-    super.merge(
-      async_job_url: detail&.async_job_url,
-      benefit_type: detail.benefit_type,
-      processed_in_caseflow: detail.processed_in_caseflow?
-    )
+    Intake::ClaimReviewIntakeSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   def review!(request_params)
@@ -42,9 +38,13 @@ class ClaimReviewIntake < DecisionReviewIntake
 
   def need_payee_code?
     # payee_code is only required for claim reviews where the claimant is a dependent
-    # and the benefit_type is compensation or pension
+    # and the benefit_type is compensation, pension, and fiduciary
     return unless claimant_class_name == "DependentClaimant"
 
-    ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(request_params[:benefit_type])
+    if !FeatureToggle.enabled?(:establish_fiduciary_eps) && (request_params[:benefit_type] == "fiduciary")
+      false
+    else
+      ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(request_params[:benefit_type])
+    end
   end
 end

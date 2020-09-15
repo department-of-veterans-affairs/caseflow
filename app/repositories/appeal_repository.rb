@@ -210,7 +210,7 @@ class AppealRepository
         hearing_request_type: VACOLS::Case::HEARING_REQUEST_TYPES[case_record.bfhr],
         video_hearing_requested: case_record.bfdocind == "V",
         hearing_requested: (case_record.bfhr == "1" || case_record.bfhr == "2"),
-        hearing_held: %w[1 2 6].include?(case_record.bfha),
+        hearing_held: %w[1 2 6 7].include?(case_record.bfha),
         regional_office_key: case_record.bfregoff,
         certification_date: case_record.bf41stat,
         case_review_date: folder_record.tidktime,
@@ -320,7 +320,7 @@ class AppealRepository
         .includes(:correspondent, :case_issues, :case_hearings, folder: [:outcoder]).reject do |case_record|
           case_record.case_hearings.any? do |hearing|
             # VACOLS contains non-BVA hearings information, we want to confirm the appeal has no scheduled BVA hearings
-            hearing.hearing_disp.nil? && HearingDay::REQUEST_TYPES.value?(hearing.hearing_type)
+            hearing.hearing_disp.nil? && VACOLS::CaseHearing::HEARING_TYPES.include?(hearing.hearing_type)
           end
         end
     end
@@ -644,6 +644,29 @@ class AppealRepository
         VACOLS::Case.where(bfkey: follow_up_appeal_key).delete_all
         VACOLS::Folder.where(ticknum: follow_up_appeal_key).delete_all
         VACOLS::CaseIssue.where(isskey: follow_up_appeal_key).delete_all
+      end
+    end
+
+    # If an appeal was previously decided, we are just restoring data, we do not have to reset the appeal to active
+    # original_data example: { disposition_code: "G", decision_date: "2019-11-30", folder_decision_date: "2019-11-30" }
+    def rollback_opt_in_on_decided_appeal!(appeal:, user:, original_data:)
+      opt_in_disposition = Constants::VACOLS_DISPOSITIONS_BY_ID[LegacyIssueOptin::VACOLS_DISPOSITION_CODE]
+      return unless appeal.disposition == opt_in_disposition
+
+      case_record = appeal.case_record
+      folder_record = case_record.folder
+
+      VACOLS::Case.transaction do
+        case_record.update!(
+          bfddec: original_data[:decision_date],
+          bfdc: original_data[:disposition_code]
+        )
+
+        folder_record.update!(
+          tidcls: original_data[:folder_decision_date],
+          timdtime: VacolsHelper.local_time_with_utc_timezone,
+          timduser: user.regional_office
+        )
       end
     end
 

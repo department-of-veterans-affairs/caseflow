@@ -174,12 +174,6 @@ class VirtualHearing < CaseflowRecord
     self.created_by ||= RequestStore.store[:current_user]
   end
 
-  def associated_hearing_is_video
-    if hearing.request_type != HearingDay::REQUEST_TYPES[:video]
-      errors.add(:hearing, "must be a video hearing")
-    end
-  end
-
   def hearing_is_not_virtual
     if hearing.virtual?
       errors.add(:hearing, "hearing is already a virtual hearing")

@@ -53,7 +53,7 @@ describe Veteran, :all_dbs do
   let(:zip_code) { "94117" }
   let(:address_line3) { "Daisies" }
   let(:date_of_birth) { "12/21/1989" }
-  let(:service) { [{ branch_of_service: "army" }] }
+  let(:service) { [{ branch_of_service: "army", pay_grade: "E4" }] }
   let(:date_of_death) { "12/31/2019" }
   let(:ssn) { "123456789" }
 
@@ -254,7 +254,7 @@ describe Veteran, :all_dbs do
         first_name: "June",
         last_name: "Juniper",
         name_suffix: name_suffix,
-        service: [{ branch_of_service: "army" }],
+        service: [{ branch_of_service: "army", pay_grade: "E4" }],
         ssn: "123456789",
         address_line1: "122 Mullberry St.",
         address_line2: "PO BOX 123",
@@ -309,6 +309,21 @@ describe Veteran, :all_dbs do
         let(:military_post_office_type_code) { "DPO" }
 
         it { is_expected.to include(state: "AA", city: "DPO", address_type: "OVR") }
+      end
+    end
+
+    context "when veteran pay grade is invalid" do
+      subject { veteran.validate_veteran_pay_grade }
+      let(:service) do
+        [{ branch_of_service: "Army",
+           entered_on_duty_date: "06282002",
+           released_active_duty_date: "06282003",
+           pay_grade: "not valid",
+           char_of_svc_code: "TBD" }]
+      end
+
+      it "pay grade invalid" do
+        expect(subject).to eq ["invalid_pay_grade"]
       end
     end
   end
@@ -516,6 +531,14 @@ describe Veteran, :all_dbs do
     context "when there is no veteran record returns nil" do
       let(:veteran_record) { nil }
       it { is_expected.to eq(nil) }
+    end
+  end
+
+  context "when a zip code is invalid" do
+    let(:zip_code) { "1234" }
+
+    it "zip code has invalid characters" do
+      expect(veteran.validate_zip_code).to eq ["invalid_zip_code"]
     end
   end
 

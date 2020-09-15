@@ -11,7 +11,9 @@
 class EndProductEstablishment < CaseflowRecord
   belongs_to :source, polymorphic: true
   belongs_to :user
+  has_many :request_issues
   has_many :end_product_code_updates
+  has_many :effectuations, class_name: "BoardGrantEffectuation"
 
   # allow @veteran to be assigned to save upstream calls
   attr_writer :veteran
@@ -279,12 +281,6 @@ class EndProductEstablishment < CaseflowRecord
     end
   end
 
-  def request_issues
-    return RequestIssue.none unless source.try(:request_issues)
-
-    source.request_issues.where(end_product_establishment_id: id)
-  end
-
   def associated_rating_cache_key
     "end_product_establishments/#{id}/associated_rating"
   end
@@ -393,7 +389,7 @@ class EndProductEstablishment < CaseflowRecord
   end
 
   def potential_decision_ratings
-    PromulgatedRating.fetch_in_range(
+    RatingAtIssue.fetch_in_range(
       participant_id: veteran.participant_id,
       start_date: established_at.to_date,
       end_date: Time.zone.today
@@ -403,7 +399,7 @@ class EndProductEstablishment < CaseflowRecord
   def cancel!
     transaction do
       # delete end product in bgs & set sync status to canceled
-      BGSService.new.cancel_end_product(veteran_file_number, code, modifier)
+      BGSService.new.cancel_end_product(veteran_file_number, code, modifier, payee_code, benefit_type_code)
       update!(synced_status: CANCELED_STATUS)
       handle_cancelled_ep!
     end
@@ -423,6 +419,8 @@ class EndProductEstablishment < CaseflowRecord
     request_issues.each { |ri| RequestIssueClosure.new(ri).with_no_decision! }
   end
 
+  # This looks for a new rating associated to this end product when deciding the claim
+  # Not to be confused with associating contentions to rating issues when establishing a claim
   def fetch_associated_rating
     Rails.cache.fetch(associated_rating_cache_key, expires_in: 3.hours) do
       potential_decision_ratings.find do |rating|

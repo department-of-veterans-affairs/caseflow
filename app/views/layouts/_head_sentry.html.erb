@@ -1,7 +1,7 @@
-  <% if ENV["PUBLIC_SENTRY_DSN"] %>
+  <% if ENV["SENTRY_DSN"] %>
     <script src="https://cdn.ravenjs.com/3.27.0/raven.min.js"></script>
     <script>
-      Raven.config("<%= ENV["PUBLIC_SENTRY_DSN"] %>", {
+      Raven.config("<%= ENV["SENTRY_DSN"] %>", {
         release: "<%= Rails.application.config.build_version[:commit][0..6] %>",
         dataCallback: function(data) {
           if (Raven.caseflowAppName) {

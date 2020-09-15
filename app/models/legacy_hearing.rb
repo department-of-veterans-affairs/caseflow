@@ -44,7 +44,15 @@ class LegacyHearing < CaseflowRecord
   # scheduled_for is the correct hearing date and time in Eastern Time for travel
   # board and video hearings, or in the user's (Hearing Coordinator) time zone for
   # central hearings; the transformation happens in HearingMapper.datetime_based_on_type
-  vacols_attr_accessor :scheduled_for, :request_type, :venue_key, :vacols_record, :disposition
+  vacols_attr_accessor :scheduled_for
+
+  # request_type is the current value of HEARSCHED.HEARING_TYPE in VACOLS, but one
+  # should use original_request_type to make sure we consistently get the value we
+  # expect, as we are now writing to this field in VACOLS when we convert a legacy
+  # hearing to and from virtual.
+  vacols_attr_accessor :request_type
+
+  vacols_attr_accessor :venue_key, :vacols_record, :disposition
   vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
   vacols_attr_accessor :representative_name, :hearing_day_vacols_id
@@ -120,8 +128,8 @@ class LegacyHearing < CaseflowRecord
   end
 
   def hearing_day_id_refers_to_vacols_row?
-    (request_type == HearingDay::REQUEST_TYPES[:central] && scheduled_for.to_date < Date.new(2019, 1, 1)) ||
-      (request_type == HearingDay::REQUEST_TYPES[:video] && scheduled_for.to_date < Date.new(2019, 4, 1))
+    (original_request_type == HearingDay::REQUEST_TYPES[:central] && scheduled_for.to_date < Date.new(2019, 1, 1)) ||
+      (original_request_type == HearingDay::REQUEST_TYPES[:video] && scheduled_for.to_date < Date.new(2019, 4, 1))
   end
 
   def hearing_day_id
@@ -147,7 +155,7 @@ class LegacyHearing < CaseflowRecord
   # There is a constraint within the `HearingRepository` context that means that calling
   # `LegacyHearing#regional_office_Key` triggers an unnecessary call to VACOLS.
   def regional_office_key
-    if request_type == HearingDay::REQUEST_TYPES[:travel] || hearing_day.nil?
+    if original_request_type == HearingDay::REQUEST_TYPES[:travel] || hearing_day.nil?
       return (venue_key || appeal&.regional_office_key)
     end
 
@@ -155,7 +163,7 @@ class LegacyHearing < CaseflowRecord
   end
 
   def request_type_location
-    if request_type == HearingDay::REQUEST_TYPES[:central]
+    if original_request_type == HearingDay::REQUEST_TYPES[:central]
       "Board of Veterans' Appeals in Washington, DC"
     elsif venue
       venue[:label]
@@ -225,8 +233,21 @@ class LegacyHearing < CaseflowRecord
     end
   end
 
+  def update_request_type_in_vacols(new_request_type)
+    if VACOLS::CaseHearing::HEARING_TYPES.exclude? new_request_type
+      fail HearingMapper::InvalidRequestTypeError, "\"#{new_request_type}\" is not a valid request type."
+    end
+
+    # update original_vacols_request_type if request_type is not virtual
+    if request_type != VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:virtual]
+      update!(original_vacols_request_type: request_type)
+    end
+
+    update_caseflow_and_vacols(request_type: new_request_type)
+  end
+
   def readable_location
-    if request_type == LegacyHearing::CO_HEARING
+    if original_request_type == HearingDay::REQUEST_TYPES[:central]
       return "Washington, DC"
     end
 
@@ -234,7 +255,11 @@ class LegacyHearing < CaseflowRecord
   end
 
   def readable_request_type
-    Hearing::HEARING_TYPES[request_type.to_sym]
+    Hearing::HEARING_TYPES[original_request_type.to_sym]
+  end
+
+  def original_request_type
+    original_vacols_request_type.presence || request_type
   end
 
   cache_attribute :cached_number_of_documents do
@@ -264,6 +289,12 @@ class LegacyHearing < CaseflowRecord
       self,
       params: { current_user_id: current_user_id }
     ).serializable_hash[:data][:attributes]
+  end
+
+  def serialized_email_events
+    email_events.order(sent_at: :desc).map do |event|
+      SentEmailEventSerializer.new(event).serializable_hash[:data][:attributes]
+    end
   end
 
   def fetch_veteran_age
@@ -309,7 +340,7 @@ class LegacyHearing < CaseflowRecord
       self.class.repository.load_vacols_data(self)
       true
     rescue Caseflow::Error::VacolsRecordNotFound => error
-      capture_exception(error)
+      Raven.capture_exception(error)
       false
     end
   end
