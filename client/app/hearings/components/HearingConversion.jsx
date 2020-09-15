@@ -12,7 +12,7 @@ import { VirtualHearingSection } from './VirtualHearings/Section';
 import { ReadOnly } from './details/ReadOnly';
 import { HelperText } from './VirtualHearings/HelperText';
 import { HearingTime } from './modalForms/HearingTime';
-import { getAppellantTitleForHearing } from '../utils';
+import { getAppellantTitle } from '../utils';
 import { HEARING_CONVERSION_TYPES } from '../constants';
 import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
@@ -25,7 +25,7 @@ export const HearingConversion = ({
   errors,
   update,
 }) => {
-  const appellantTitle = getAppellantTitleForHearing(hearing);
+  const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const virtual = type === 'change_to_virtual';
   const video = hearing.readableRequestType === 'Video';
   const convertLabel = video ? COPY.VIDEO_CHANGE_FROM_VIRTUAL : COPY.CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL;
@@ -74,7 +74,7 @@ export const HearingConversion = ({
   return (
     <AppSegment filledBackground>
       <h1 className="cf-margin-bottom-0">{title}</h1>
-      <span>{sprintf(helperLabel, getAppellantTitleForHearing(hearing))}</span>
+      <span>{sprintf(helperLabel, appellantTitle)}</span>
       <ReadOnly label="Hearing Date" text={DateUtil.formatDateStr(scheduledFor)} />
       <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className="usa-width-one-half">

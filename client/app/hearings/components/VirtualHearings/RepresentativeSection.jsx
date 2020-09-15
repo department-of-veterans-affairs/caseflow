@@ -23,7 +23,7 @@ export const RepresentativeSection = ({
   appellantTitle
 }) => (
   <VirtualHearingSection label="Power of Attorney">
-    {hearing.representative ? (
+    {hearing?.representative ? (
       <React.Fragment>
         <AddressLine
           label={hearing?.representativeType}
@@ -47,7 +47,7 @@ export const RepresentativeSection = ({
             onChange={(representativeTz) =>
               update('virtualHearing', { representativeTz })
             }
-            time={hearing.scheduledTimeString}
+            time={hearing?.scheduledTimeString}
             name="POA/Representative Timezone"
           />
           <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
