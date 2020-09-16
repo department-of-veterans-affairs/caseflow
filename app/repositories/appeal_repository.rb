@@ -332,7 +332,7 @@ class AppealRepository
     # Updates the case location for a legacy appeal.
     #
     # @param appeal [LegacyAppeal] the appeal to modify
-    # @param appeal [LegacyAppeal] the appeal's new location
+    # @param location [String] the appeal's new location (see LegacyAppeal::LOCATION_CODES)
     def update_location!(appeal, location)
       appeal.case_record.update_vacols_location!(location)
     end
