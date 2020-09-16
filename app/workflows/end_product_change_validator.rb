@@ -28,7 +28,11 @@ class EndProductChangeValidator
   end
 
   def code_change_allowed?
-    !(claim_family_change? || source_review_change? || fiduciary? || disallowed_disposition_change?)
+    !(claim_family_change? ||
+      source_review_change? ||
+      fiduciary? ||
+      disallowed_board_grant_change? ||
+      disallowed_disposition_change?)
   end
 
   private
@@ -43,6 +47,10 @@ class EndProductChangeValidator
 
   def fiduciary?
     [old_hash[:benefit_type], new_hash[:benefit_type]].include?("fiduciary")
+  end
+
+  def disallowed_board_grant_change?
+    old_code.start_with?("030BG") && !new_code.start_with?("030BG")
   end
 
   def disallowed_disposition_change?

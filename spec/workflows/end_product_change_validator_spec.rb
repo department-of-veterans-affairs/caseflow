@@ -36,6 +36,14 @@ describe EndProductChangeValidator do
       end
     end
 
+    context "when original code is for a remand" do
+      let(:code) { "030BGR" }
+
+      it "allows changes only to other BGE codes" do
+        expect(subject.keys).to all start_with("030BG")
+      end
+    end
+
     context "when original code is for a DTA claim" do
       let(:code) { "040HDENR" }
 
