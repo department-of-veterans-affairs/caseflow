@@ -153,7 +153,8 @@ SAN FRANCISCO, CA 94103
         className="usa-width-one-half css-uplrl8"
       >
         <Timezone
-          name="Veteran Timezone"
+          label="Veteran Timezone"
+          name="appellantTz"
           onChange={[Function]}
           readOnly={false}
           required={true}
@@ -163,8 +164,9 @@ SAN FRANCISCO, CA 94103
           <SearchableDropdown
             clearOnSelect={false}
             isClearable={true}
+            label="Veteran Timezone"
             loading={false}
-            name="Veteran Timezone"
+            name="appellantTz"
             onChange={[Function]}
             options={
               Array [
@@ -953,12 +955,12 @@ SAN FRANCISCO, CA 94103
             value={null}
           >
             <div
-              className="cf-form-dropdown dropdown-Veteran Timezone"
+              className="cf-form-dropdown dropdown-appellantTz"
               data-css-1gh7024=""
             >
               <label
                 className="question-label"
-                htmlFor="Veteran Timezone"
+                htmlFor="appellantTz"
               >
                 <strong>
                   <span>
@@ -983,7 +985,7 @@ SAN FRANCISCO, CA 94103
                     defaultInputValue=""
                     defaultMenuIsOpen={false}
                     defaultValue={null}
-                    inputId="Veteran Timezone"
+                    inputId="appellantTz"
                     isClearable={true}
                     isDisabled={false}
                     isLoading={false}
@@ -1783,7 +1785,7 @@ SAN FRANCISCO, CA 94103
                       formatGroupLabel={[Function]}
                       getOptionLabel={[Function]}
                       getOptionValue={[Function]}
-                      inputId="Veteran Timezone"
+                      inputId="appellantTz"
                       inputValue=""
                       isClearable={true}
                       isDisabled={false}
@@ -3391,7 +3393,7 @@ SAN FRANCISCO, CA 94103
                             "formatGroupLabel": [Function],
                             "getOptionLabel": [Function],
                             "getOptionValue": [Function],
-                            "inputId": "Veteran Timezone",
+                            "inputId": "appellantTz",
                             "inputValue": "",
                             "isClearable": true,
                             "isDisabled": false,
@@ -5050,7 +5052,7 @@ SAN FRANCISCO, CA 94103
                                   "formatGroupLabel": [Function],
                                   "getOptionLabel": [Function],
                                   "getOptionValue": [Function],
-                                  "inputId": "Veteran Timezone",
+                                  "inputId": "appellantTz",
                                   "inputValue": "",
                                   "isClearable": true,
                                   "isDisabled": false,
@@ -6717,7 +6719,7 @@ SAN FRANCISCO, CA 94103
                                         "formatGroupLabel": [Function],
                                         "getOptionLabel": [Function],
                                         "getOptionValue": [Function],
-                                        "inputId": "Veteran Timezone",
+                                        "inputId": "appellantTz",
                                         "inputValue": "",
                                         "isClearable": true,
                                         "isDisabled": false,
@@ -8371,7 +8373,7 @@ SAN FRANCISCO, CA 94103
                                               "formatGroupLabel": [Function],
                                               "getOptionLabel": [Function],
                                               "getOptionValue": [Function],
-                                              "inputId": "Veteran Timezone",
+                                              "inputId": "appellantTz",
                                               "inputValue": "",
                                               "isClearable": true,
                                               "isDisabled": false,
@@ -9238,7 +9240,7 @@ SAN FRANCISCO, CA 94103
                                           autoCorrect="off"
                                           cx={[Function]}
                                           getStyles={[Function]}
-                                          id="Veteran Timezone"
+                                          id="appellantTz"
                                           innerRef={[Function]}
                                           isDisabled={false}
                                           isHidden={false}
@@ -9262,7 +9264,7 @@ SAN FRANCISCO, CA 94103
                                               "formatGroupLabel": [Function],
                                               "getOptionLabel": [Function],
                                               "getOptionValue": [Function],
-                                              "inputId": "Veteran Timezone",
+                                              "inputId": "appellantTz",
                                               "inputValue": "",
                                               "isClearable": true,
                                               "isDisabled": false,
@@ -10120,7 +10122,7 @@ SAN FRANCISCO, CA 94103
                                                 autoCorrect="off"
                                                 className="cf-select__input"
                                                 disabled={false}
-                                                id="Veteran Timezone"
+                                                id="appellantTz"
                                                 injectStyles={true}
                                                 inputRef={[Function]}
                                                 inputStyle={
@@ -10158,7 +10160,7 @@ SAN FRANCISCO, CA 94103
                                                     autoComplete="off"
                                                     autoCorrect="off"
                                                     disabled={false}
-                                                    id="Veteran Timezone"
+                                                    id="appellantTz"
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
@@ -10997,7 +10999,7 @@ SAN FRANCISCO, CA 94103
                                         "formatGroupLabel": [Function],
                                         "getOptionLabel": [Function],
                                         "getOptionValue": [Function],
-                                        "inputId": "Veteran Timezone",
+                                        "inputId": "appellantTz",
                                         "inputValue": "",
                                         "isClearable": true,
                                         "isDisabled": false,
@@ -12646,7 +12648,7 @@ SAN FRANCISCO, CA 94103
                                               "formatGroupLabel": [Function],
                                               "getOptionLabel": [Function],
                                               "getOptionValue": [Function],
-                                              "inputId": "Veteran Timezone",
+                                              "inputId": "appellantTz",
                                               "inputValue": "",
                                               "isClearable": true,
                                               "isDisabled": false,
@@ -14306,7 +14308,7 @@ SAN FRANCISCO, CA 94103
                                               "formatGroupLabel": [Function],
                                               "getOptionLabel": [Function],
                                               "getOptionValue": [Function],
-                                              "inputId": "Veteran Timezone",
+                                              "inputId": "appellantTz",
                                               "inputValue": "",
                                               "isClearable": true,
                                               "isDisabled": false,
@@ -15244,14 +15246,10 @@ SAN FRANCISCO, CA 94103
         <VirtualHearingEmail
           email="Bob.Smith@test.com"
           emailType="appellantEmail"
-          label="Veteran Timezone"
-          name="appellantTz"
-          onChange={[Function]}
+          label="Veteran Email"
           required={true}
-          time="06:00"
           type="change_to_virtual"
           update={[MockFunction]}
-          value={null}
         >
           <TextField
             className={
@@ -15264,7 +15262,7 @@ SAN FRANCISCO, CA 94103
                 "data-css-d0z96": "",
               }
             }
-            name="Veteran Timezone"
+            name="Veteran Email"
             onChange={[Function]}
             optional={false}
             required={true}
@@ -15277,16 +15275,16 @@ SAN FRANCISCO, CA 94103
               className="cf-form-textinput cf-inline-field   "
             >
               <label
-                htmlFor="Veteran Timezone"
+                htmlFor="Veteran Email"
               >
                 <strong>
                   <FormLabel
-                    name="Veteran Timezone"
+                    name="Veteran Email"
                     optional={false}
                     required={true}
                   >
                     <span>
-                      Veteran Timezone
+                      Veteran Email
                       <span
                         className="cf-required"
                       >
@@ -15303,8 +15301,8 @@ SAN FRANCISCO, CA 94103
                   ]
                 }
                 data-css-d0z96=""
-                id="Veteran Timezone"
-                name="Veteran Timezone"
+                id="Veteran Email"
+                name="Veteran Email"
                 onChange={[Function]}
                 type="text"
                 value="Bob.Smith@test.com"
@@ -15483,25 +15481,21 @@ SAN FRANCISCO, CA 94103
         <VirtualHearingEmail
           email="Bob.Smith@test.com"
           emailType="appellantEmail"
-          label="Veteran Timezone"
-          name="appellantTz"
-          onChange={[Function]}
+          label="Veteran Email"
           readOnly={true}
           required={true}
-          time="06:00"
           type="change_to_virtual"
           update={[MockFunction]}
-          value={null}
         >
           <ReadOnly
-            label="Veteran Timezone"
+            label="Veteran Email"
             text="Bob.Smith@test.com"
           >
             <div
               data-css-1a5irm0=""
             >
               <strong>
-                Veteran Timezone
+                Veteran Email
               </strong>
               <pre>
                 Bob.Smith@test.com
@@ -15670,14 +15664,10 @@ SAN FRANCISCO, CA 94103
         <VirtualHearingEmail
           email="Bob.Smith@test.com"
           emailType="appellantEmail"
-          label="Veteran Timezone"
-          name="appellantTz"
-          onChange={[Function]}
+          label="Veteran Email"
           required={true}
-          time="06:00"
           type="change_to_virtual"
           update={[MockFunction]}
-          value={null}
         >
           <TextField
             className={
@@ -15690,7 +15680,7 @@ SAN FRANCISCO, CA 94103
                 "data-css-d0z96": "",
               }
             }
-            name="Veteran Timezone"
+            name="Veteran Email"
             onChange={[Function]}
             optional={false}
             required={true}
@@ -15703,16 +15693,16 @@ SAN FRANCISCO, CA 94103
               className="cf-form-textinput cf-inline-field   "
             >
               <label
-                htmlFor="Veteran Timezone"
+                htmlFor="Veteran Email"
               >
                 <strong>
                   <FormLabel
-                    name="Veteran Timezone"
+                    name="Veteran Email"
                     optional={false}
                     required={true}
                   >
                     <span>
-                      Veteran Timezone
+                      Veteran Email
                       <span
                         className="cf-required"
                       >
@@ -15729,8 +15719,8 @@ SAN FRANCISCO, CA 94103
                   ]
                 }
                 data-css-d0z96=""
-                id="Veteran Timezone"
-                name="Veteran Timezone"
+                id="Veteran Email"
+                name="Veteran Email"
                 onChange={[Function]}
                 type="text"
                 value="Bob.Smith@test.com"

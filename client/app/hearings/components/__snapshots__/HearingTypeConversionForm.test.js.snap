@@ -172,22 +172,20 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
               <VirtualHearingEmail
                 email="Abellona.Valtas@test.com"
                 emailType="appellantEmail"
-                label="Veteran Timezone"
-                name="appellantTz"
-                onChange={[Function]}
+                label="Veteran Email"
                 readOnly={true}
                 required={true}
                 type="Virtual"
               >
                 <ReadOnly
-                  label="Veteran Timezone"
+                  label="Veteran Email"
                   text="Abellona.Valtas@test.com"
                 >
                   <div
                     data-css-1a5irm0=""
                   >
                     <strong>
-                      Veteran Timezone
+                      Veteran Email
                     </strong>
                     <pre>
                       Abellona.Valtas@test.com
@@ -523,22 +521,20 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
               <VirtualHearingEmail
                 email="Abellona.Valtas@test.com"
                 emailType="appellantEmail"
-                label="Veteran Timezone"
-                name="appellantTz"
-                onChange={[Function]}
+                label="Veteran Email"
                 readOnly={true}
                 required={true}
                 type="Virtual"
               >
                 <ReadOnly
-                  label="Veteran Timezone"
+                  label="Veteran Email"
                   text="Abellona.Valtas@test.com"
                 >
                   <div
                     data-css-1a5irm0=""
                   >
                     <strong>
-                      Veteran Timezone
+                      Veteran Email
                     </strong>
                     <pre>
                       Abellona.Valtas@test.com
