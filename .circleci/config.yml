@@ -218,16 +218,16 @@ jobs:
             ~/project/ci-bin/capture-log "bundle exec rake spec:setup_vacols"
 
       - run:
-        name: RSpec via knapsack_pro Queue Mode
-        command: |
-          # export word is important here!
-          export RAILS_ENV=test
-          bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml]"
-        # Uncomment to profile test performance in CircleCI
-          #environment:
-          #  RDOC: 1
-          #  RD_PROF: 1
-          #  FPROF: 1
+          name: RSpec via knapsack_pro Queue Mode
+          command: |
+            # export word is important here!
+            export RAILS_ENV=test
+            bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml]"
+          # Uncomment to profile test performance in CircleCI
+            #environment:
+            #  RDOC: 1
+            #  RD_PROF: 1
+            #  FPROF: 1
 
       - store_test_results:
           name: Store test results as summary
