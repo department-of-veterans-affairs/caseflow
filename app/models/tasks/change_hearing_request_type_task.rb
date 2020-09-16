@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 ##
 # Task created when a hearing coordinator visits the Case Details page of an appeal with a
 # Travel Board hearing request. Gives the user the option to convert that request to a video
