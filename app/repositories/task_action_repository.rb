@@ -63,6 +63,16 @@ class TaskActionRepository
       }
     end
 
+    def assign_to_hearings_user_data(task, user = nil)
+      users = [HearingsManagement, HearingAdmin, TranscriptionTeam].map { |team| team.singleton.users }.flatten.uniq
+
+      {
+        selected: user,
+        options: users_to_options(users),
+        type: task.type
+      }
+    end
+
     def assign_to_user_data(task, user = nil)
       users = potential_task_assignees(task)
 
