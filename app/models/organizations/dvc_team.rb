@@ -31,4 +31,8 @@ class DvcTeam < Organization
   def selectable_in_queue?
     false
   end
+
+  def serialize
+    super.merge(name: dvc.full_name.titleize)
+  end
 end
