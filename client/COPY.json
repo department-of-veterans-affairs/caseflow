@@ -357,6 +357,8 @@
 
   "CHANGE_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS": "Change hearing disposition (Held, Canceled, No Show, Postponed) if it was marked in error.",
 
+  "CHANGE_HEARING_REQUEST_TYPE_TASK_DEFAULT_INSTRUCTIONS": "Change hearing request type for a Travel Board hearing",
+
   "SCHEDULE_HEARING_TASK_DEFAULT_INSTRUCTIONS": "Schedule Veteran and/or appellant for Board hearing.",
 
   "ADD_COLOCATED_TASK_SUBHEAD": "Submit admin action",
