@@ -17,8 +17,6 @@ class RedistributedCase
 
     if ok_to_redistribute?
       rename_existing_distributed_case!
-    # If there are open tasks, this case should not be at a judge waiting for a decision or in case storage waiting to
-    # be distributed, it should be "in" caseflow. No need to alert as the case has been fixed.
     elsif legacy_appeal_relevant_tasks.any?(&:open?)
       fix_vacols_case_location(LegacyAppeal::LOCATION_CODES[:caseflow])
       false
@@ -30,17 +28,10 @@ class RedistributedCase
   end
 
   def ok_to_redistribute?
+    # If there are open tasks, this case should not be at a judge waiting for a decision or in case storage waiting to be distributed, it should be "in" caseflow.
+    return false if legacy_appeal_relevant_tasks.any?(&:open?)
     # redistribute if there are either no relevant tasks or if they are completed or cancelled
     return true if legacy_appeal_relevant_tasks.blank? || legacy_appeal_relevant_tasks.all?(&:closed?)
-
-    # do not redistribute if any relevant task is open (not completed or cancelled)
-    return false if legacy_appeal_relevant_tasks.any?(&:open?)
-
-    # we do not expect to hit this however leaving it in just to confirm the logic
-    # redistribute if all HearingTasks are cancelled
-    return true if !legacy_appeal_hearing_tasks.empty? && legacy_appeal_hearing_tasks.all?(&:cancelled?)
-
-    # be conservative; return false so that appeal is manually addressed
     false
   end
 
