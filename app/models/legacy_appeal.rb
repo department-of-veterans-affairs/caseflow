@@ -34,7 +34,7 @@ class LegacyAppeal < CaseflowRecord
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   # Add Paper Trail configuration
-  has_paper_trail only: [:changed_request_type]
+  has_paper_trail only: [:changed_request_type], on: [:update]
 
   validates :changed_request_type,
             inclusion: {
