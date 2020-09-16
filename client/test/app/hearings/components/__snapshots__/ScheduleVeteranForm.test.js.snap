@@ -44,9 +44,9 @@ exports[`ScheduleVeteranForm Displays Virtual Hearing form fields when type is c
       text="Virtual"
     />
     <Connect(HearingDateDropdown)
-      key="hearingDate__RO17"
+      key="hearingDate__undefined"
       onChange={[Function]}
-      regionalOffice="RO17"
+      regionalOffice="C"
     />
     <HearingTime
       componentIndex={0}
@@ -116,7 +116,6 @@ exports[`ScheduleVeteranForm Displays Virtual Hearing form fields when type is c
           "prepped": null,
           "readableLocation": null,
           "readableRequestType": "Video",
-          "regionalOffice": "RO17",
           "regionalOfficeKey": "RO17",
           "regionalOfficeName": "St. Petersburg regional office",
           "regionalOfficeTimezone": "America/New_York",
@@ -241,7 +240,6 @@ exports[`ScheduleVeteranForm Displays Virtual Hearing form fields when type is c
           "prepped": null,
           "readableLocation": null,
           "readableRequestType": "Video",
-          "regionalOffice": "RO17",
           "regionalOfficeKey": "RO17",
           "regionalOfficeName": "St. Petersburg regional office",
           "regionalOfficeTimezone": "America/New_York",
@@ -474,29 +472,6 @@ exports[`ScheduleVeteranForm Matches snapshot with default props 1`] = `
     <Connect(RegionalOfficeDropdown)
       onChange={[Function]}
       validateValueOnMount={true}
-      value="RO17"
-    />
-    <Connect(AppealHearingLocationsDropdown)
-      appealId="2afefa82-5736-47c8-a977-0b4b8586f73e"
-      dynamic={true}
-      key="hearingLocation__RO17"
-      onChange={[Function]}
-      regionalOffice="RO17"
-      staticHearingLocations={Array []}
-    />
-    <Connect(HearingDateDropdown)
-      key="hearingDate__RO17"
-      onChange={[Function]}
-      regionalOffice="RO17"
-    />
-    <HearingTime
-      componentIndex={0}
-      enableZone={true}
-      label="Hearing Time"
-      onChange={[Function]}
-      regionalOffice="RO17"
-      value="06:00"
-      vertical={true}
     />
   </div>
 </Fragment>
