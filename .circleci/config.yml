@@ -196,9 +196,6 @@ jobs:
       - attach_workspace:
           at: .
 
-      - setup_remote_docker:
-          docker_layer_caching: true
-
       - run:
           name: Setup testfiles directory
           command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
