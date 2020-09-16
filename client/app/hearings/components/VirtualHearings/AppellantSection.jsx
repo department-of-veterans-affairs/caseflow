@@ -65,8 +65,8 @@ export const AppellantSection = ({
         <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
           <VirtualHearingEmail
             required
-            label={`${appellantTitle} Email`}
             readOnly={readOnly}
+            label={`${appellantTitle} Email`}
             emailType="appellantEmail"
             email={virtualHearing?.appellantEmail}
             error={errors?.appellantEmail}
