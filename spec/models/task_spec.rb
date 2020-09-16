@@ -1417,7 +1417,7 @@ describe Task, :all_dbs do
       end
     end
 
-    fcontext "when status changes to cancelled" do
+    context "when status changes to cancelled" do
       let(:status) { Constants.TASK_STATUSES.cancelled }
 
       it "should set closed_at timestamp" do
