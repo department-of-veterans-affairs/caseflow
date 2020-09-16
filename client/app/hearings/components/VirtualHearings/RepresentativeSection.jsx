@@ -47,8 +47,9 @@ export const RepresentativeSection = ({
             onChange={(representativeTz) =>
               update('virtualHearing', { representativeTz })
             }
-            time={hearing?.scheduledTimeString}
-            name="POA/Representative Timezone"
+            time={hearing.scheduledTimeString}
+            label="POA/Representative Timezone"
+            name="representativeTz"
           />
           <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
         </div>

@@ -53,7 +53,8 @@ export const AppellantSection = ({
               value={virtualHearing?.appellantTz}
               onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
               time={hearing.scheduledTimeString}
-              name={`${appellantTitle} Timezone`}
+              label={`${appellantTitle} Timezone`}
+              name="appellantTz"
               errorMessage={errors?.appellantTz}
             />
             <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
@@ -64,8 +65,8 @@ export const AppellantSection = ({
         <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
           <VirtualHearingEmail
             required
-            readOnly={readOnly}
             label={`${appellantTitle} Email`}
+            readOnly={readOnly}
             emailType="appellantEmail"
             email={virtualHearing?.appellantEmail}
             error={errors?.appellantEmail}

@@ -422,7 +422,7 @@ export const parseVirtualHearingErrors = (msg, hearing) => {
   return messages.split(',').reduce((list, message) => ({
     ...list,
     [(/Representative/).test(message) ? 'representativeEmail' : 'appellantEmail']:
-       message.replace('Appellant', getAppellantTitleForHearing(hearing))
+       message.replace('Appellant', getAppellantTitle(hearing?.appellantIsNotVeteran))
   }), {});
 };
 

@@ -52,6 +52,8 @@ export const ScheduleVeteran = ({
 
   // Get the selected hearing day
   const selectedHearingDay = assignHearingForm?.hearingDay || hearingDay;
+  const initialRegionalOffice =
+   selectedHearingDay?.regionalOffice || appeal?.closestRegionalOffice || appeal?.regionalOffice?.key;
 
   // Check whether to display the warning about full hearing days
   const fullHearingDay = selectedHearingDay?.filledSlots >= selectedHearingDay?.totalSlots;
@@ -65,7 +67,7 @@ export const ScheduleVeteran = ({
 
   // Determine the Request Type for the hearing
   const virtual = assignHearingForm?.virtualHearing;
-  const requestType = HEARING_REQUEST_TYPES[selectedHearingDay?.requestType] || 'Video';
+  const requestType = selectedHearingDay?.regionalOffice === 'C' ? HEARING_REQUEST_TYPES.C : HEARING_REQUEST_TYPES.V;
 
   // Determine whether we are rescheduling
   const reschedule = scheduledHearing?.disposition === 'reschedule';
@@ -115,7 +117,7 @@ export const ScheduleVeteran = ({
     const title = sprintf(
       COPY.SCHEDULE_VETERAN_SUCCESS_MESSAGE_TITLE,
       appeal.appellantFullName,
-      hearing.regionalOffice ? HEARING_REQUEST_TYPES.V : HEARING_REQUEST_TYPES.C,
+      requestType,
       hearingDateStr
     );
 
@@ -215,6 +217,7 @@ export const ScheduleVeteran = ({
       history.push(`/queue/appeals/${appeal.externalId}`);
     } catch (err) {
       const code = get(err, 'response.body.errors[0].code') || '';
+
       const [msg] = err?.response?.body?.errors.length > 0 && err?.response?.body?.errors;
 
       // Handle inline errors
@@ -276,7 +279,8 @@ export const ScheduleVeteran = ({
         )}
         {openHearing && !reschedule ? <Alert title="Open Hearing" type="error">{openHearingDayError}</Alert> : (
           <ScheduleVeteranForm
-            initialRegionalOffice={hearingDay?.regionalOffice || appeal?.regionalOffice?.key}
+            initialHearingDate={selectedHearingDay?.hearingDate}
+            initialRegionalOffice={initialRegionalOffice}
             errors={errors}
             appeal={appeal}
             virtual={Boolean(virtual)}

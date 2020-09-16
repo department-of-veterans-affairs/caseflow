@@ -1,13 +1,12 @@
 import React from 'react';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 
 import reducer from '../../../app/queue/reducers';
 import { defaultHearing, hearingDateOptions } from '../../data/hearings';
 import { amaAppeal, openHearingAppeal, defaultAssignHearing, legacyAppeal } from '../../data/appeals';
 import { roLocations, roList } from '../../data/regional-offices';
-import { scheduledHearingTask } from '../tasks';
 
 export const appealsData = {
   [legacyAppeal.externalId]: legacyAppeal,
@@ -63,9 +62,9 @@ export const queueWrapper = ({ children, ...props }) => (
       ...props?.queue
     },
   })}>
-    <Router>
+    <MemoryRouter keyLength={0}>
       {children}
-    </Router>
+    </MemoryRouter>
   </Provider>
 );
 

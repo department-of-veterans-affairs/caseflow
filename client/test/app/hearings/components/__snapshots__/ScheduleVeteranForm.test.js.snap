@@ -36,7 +36,7 @@ exports[`ScheduleVeteranForm Displays Virtual Hearing form fields when type is c
     <ReadOnly
       label="Regional Office"
       spacing={0}
-      text="RO17"
+      text="Central"
     />
     <ReadOnly
       label="Hearing Location"
@@ -44,9 +44,9 @@ exports[`ScheduleVeteranForm Displays Virtual Hearing form fields when type is c
       text="Virtual"
     />
     <Connect(HearingDateDropdown)
-      key="hearingDate__RO17"
+      key="hearingDate__undefined"
       onChange={[Function]}
-      regionalOffice="RO17"
+      regionalOffice="C"
     />
     <HearingTime
       componentIndex={0}
@@ -368,6 +368,7 @@ exports[`ScheduleVeteranForm Displays error messages when errors are present 1`]
       enableZone={true}
       label="Hearing Time"
       onChange={[Function]}
+      regionalOffice="RO17"
       value="06:00"
       vertical={true}
     />
@@ -429,6 +430,7 @@ exports[`ScheduleVeteranForm Displays hearing form when regional office is selec
       enableZone={true}
       label="Hearing Time"
       onChange={[Function]}
+      regionalOffice="RO17"
       value="06:00"
       vertical={true}
     />
