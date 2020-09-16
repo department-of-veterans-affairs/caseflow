@@ -696,7 +696,7 @@ class Task < CaseflowRecord
   end
 
   def set_cancelled_by_id
-    update!(cancelled_by_id: RequestStore[:current_user]&.id)
+    self.cancelled_by_id = RequestStore[:current_user].id if RequestStore[:current_user]&.id
   end
 
   STATUS_TIMESTAMPS = {
