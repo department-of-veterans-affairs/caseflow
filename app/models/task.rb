@@ -37,7 +37,8 @@ class Task < CaseflowRecord
   after_create :tell_parent_task_child_task_created
 
   before_save :set_timestamp
-  after_update :set_cancelled_by_id, if: :task_just_cancelled?
+
+  before_update :set_cancelled_by_id, if: :task_will_be_cancelled?
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
   after_update :cancel_task_timers, if: :task_just_closed?
@@ -656,8 +657,8 @@ class Task < CaseflowRecord
     saved_change_to_attribute?("status") && !open?
   end
 
-  def task_just_cancelled?
-    saved_change_to_attribute?("status") && cancelled?
+  def task_will_be_cancelled?
+    status_change_to_be_saved&.last == Constants.TASK_STATUSES.cancelled
   end
 
   def task_just_closed_and_has_parent?

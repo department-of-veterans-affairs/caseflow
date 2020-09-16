@@ -1425,6 +1425,23 @@ describe Task, :all_dbs do
         task.update!(status: status)
         expect(task.closed_at).to_not eq(nil)
       end
+
+      it "does not set the cancelled_by_id if there is no logged in user" do
+        task.update!(cancelled_by_id: 1)
+        task.update!(status: status)
+        expect(task.cancelled_by_id).to eq(1)
+      end
+
+      context "when a user is logged in" do
+        let(:logged_in_user) { create(:user) }
+
+        before { User.authenticate!(user: logged_in_user) }
+
+        it "sets the cancelled_by_id of the logged in user" do
+          task.update!(status: status)
+          expect(task.cancelled_by_id).to eq(logged_in_user.id)
+        end
+      end
     end
 
     context "when a timestamp is passed" do
