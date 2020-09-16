@@ -1996,7 +1996,7 @@ describe LegacyAppeal, :all_dbs do
           }] }
         end
 
-        fit "updates worksheet issues and does not create a new version in paper trail" do
+        it "updates worksheet issues and does not create a new version in paper trail" do
           expect(appeal.worksheet_issues.count).to eq(0)
           subject # do update
           expect(appeal.worksheet_issues.count).to eq(1)
@@ -2043,7 +2043,7 @@ describe LegacyAppeal, :all_dbs do
         end
       end
 
-      fcontext "updating changed_request_type to valid value" do
+      context "updating changed_request_type to valid value" do
         let(:appeals_hash) { { changed_request_type: "V" } }
         let(:updated_appeals_hash) { { changed_request_type: HearingDay::REQUEST_TYPES[:virtual] } }
 
