@@ -3,6 +3,8 @@
 class ChangeHearingRequestTypeTask < Task
   validates :parent, presence: true
 
+  before_validation :set_assignee
+
   def self.label
     "Change hearing request type"
   end
@@ -23,5 +25,11 @@ class ChangeHearingRequestTypeTask < Task
     else
       []
     end
+  end
+
+  private
+
+  def set_assignee
+    self.assigned_to ||= Bva.singleton
   end
 end
