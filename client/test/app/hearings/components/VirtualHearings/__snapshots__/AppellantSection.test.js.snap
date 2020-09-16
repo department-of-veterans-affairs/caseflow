@@ -114,6 +114,7 @@ exports[`Appellant Displays timezone when virtual 1`] = `
   <VirtualHearingSection
     hide={false}
     label="Veteran"
+    showDivider={true}
   >
     <div
       className="cf-help-divider"
@@ -15435,6 +15436,7 @@ exports[`Appellant Does not allow editing emails when read-only 1`] = `
   <VirtualHearingSection
     hide={false}
     label="Veteran"
+    showDivider={true}
   >
     <div
       className="cf-help-divider"
@@ -15616,6 +15618,7 @@ exports[`Appellant Matches snapshot with default props 1`] = `
   <VirtualHearingSection
     hide={false}
     label="Veteran"
+    showDivider={true}
   >
     <div
       className="cf-help-divider"

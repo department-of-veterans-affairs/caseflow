@@ -43,6 +43,7 @@ exports[`ScheduleVeteran Can cancel the form 1`] = `
           "caseflowVeteranId": 541,
           "certificationDate": null,
           "closestRegionalOffice": null,
+          "closestRegionalOfficeLabel": null,
           "completedHearingOnPreviousAppeal": false,
           "decisionDate": null,
           "decisionIssues": Array [],
@@ -196,6 +197,7 @@ exports[`ScheduleVeteran Can handle backend validation errors for AMA Appeals 1`
           "caseflowVeteranId": 541,
           "certificationDate": null,
           "closestRegionalOffice": null,
+          "closestRegionalOfficeLabel": null,
           "completedHearingOnPreviousAppeal": false,
           "decisionDate": null,
           "decisionIssues": Array [],
@@ -395,6 +397,7 @@ exports[`ScheduleVeteran Can handle backend validation errors for Legacy Appeals
           "caseflowVeteranId": 541,
           "certificationDate": null,
           "closestRegionalOffice": null,
+          "closestRegionalOfficeLabel": null,
           "completedHearingOnPreviousAppeal": false,
           "decisionDate": null,
           "decisionIssues": Array [],
@@ -594,6 +597,7 @@ exports[`ScheduleVeteran Can submit the form 1`] = `
           "caseflowVeteranId": 541,
           "certificationDate": null,
           "closestRegionalOffice": null,
+          "closestRegionalOfficeLabel": null,
           "completedHearingOnPreviousAppeal": false,
           "decisionDate": null,
           "decisionIssues": Array [],
@@ -793,6 +797,7 @@ exports[`ScheduleVeteran Displays form validation errors when present and does n
           "caseflowVeteranId": 541,
           "certificationDate": null,
           "closestRegionalOffice": null,
+          "closestRegionalOfficeLabel": null,
           "completedHearingOnPreviousAppeal": false,
           "decisionDate": null,
           "decisionIssues": Array [],
@@ -1040,6 +1045,7 @@ exports[`ScheduleVeteran Displays virtual hearing form details for virtual heari
       "caseflowVeteranId": 541,
       "certificationDate": null,
       "closestRegionalOffice": null,
+      "closestRegionalOfficeLabel": null,
       "completedHearingOnPreviousAppeal": false,
       "decisionDate": null,
       "decisionIssues": Array [],
@@ -1333,6 +1339,7 @@ exports[`ScheduleVeteran Displays virtual hearing form details for virtual heari
               "caseflowVeteranId": 541,
               "certificationDate": null,
               "closestRegionalOffice": null,
+              "closestRegionalOfficeLabel": null,
               "completedHearingOnPreviousAppeal": false,
               "decisionDate": null,
               "decisionIssues": Array [],
@@ -10847,6 +10854,7 @@ exports[`ScheduleVeteran Displays virtual hearing form details for virtual heari
               <VirtualHearingSection
                 hide={false}
                 label="Veteran"
+                showDivider={true}
               >
                 <div
                   className="cf-help-divider"
@@ -26159,6 +26167,7 @@ SAN FRANCISCO, CA 94103
               <VirtualHearingSection
                 hide={false}
                 label="Power of Attorney"
+                showDivider={true}
               >
                 <div
                   className="cf-help-divider"
@@ -41460,6 +41469,7 @@ exports[`ScheduleVeteran Displays warning message for full hearing days 1`] = `
           "caseflowVeteranId": 541,
           "certificationDate": null,
           "closestRegionalOffice": null,
+          "closestRegionalOfficeLabel": null,
           "completedHearingOnPreviousAppeal": false,
           "decisionDate": null,
           "decisionIssues": Array [],
@@ -41647,6 +41657,7 @@ exports[`ScheduleVeteran Matches snapshot with default props 1`] = `
       "caseflowVeteranId": 541,
       "certificationDate": null,
       "closestRegionalOffice": null,
+      "closestRegionalOfficeLabel": null,
       "completedHearingOnPreviousAppeal": false,
       "decisionDate": null,
       "decisionIssues": Array [],
@@ -41826,6 +41837,7 @@ exports[`ScheduleVeteran Matches snapshot with default props 1`] = `
               "caseflowVeteranId": 541,
               "certificationDate": null,
               "closestRegionalOffice": null,
+              "closestRegionalOfficeLabel": null,
               "completedHearingOnPreviousAppeal": false,
               "decisionDate": null,
               "decisionIssues": Array [],

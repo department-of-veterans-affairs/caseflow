@@ -17,6 +17,7 @@ class Api::V1::JobsController < Api::ApplicationController
     "nightly_syncs" => NightlySyncsJob,
     "out_of_service_reminder" => OutOfServiceReminderJob,
     "prepare_establish_claim" => PrepareEstablishClaimTasksJob,
+    "push_priority_appeals_to_judges" => PushPriorityAppealsToJudgesJob,
     "reassign_old_tasks" => ReassignOldTasksJob,
     "retrieve_documents_for_reader" => RetrieveDocumentsForReaderJob,
     "set_appeal_age_aod" => SetAppealAgeAodJob,
