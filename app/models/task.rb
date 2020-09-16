@@ -279,7 +279,7 @@ class Task < CaseflowRecord
     []
   end
 
-  #includes on_hold
+  # includes on_hold
   def open?
     self.class.open_statuses.include?(status)
   end
@@ -292,7 +292,9 @@ class Task < CaseflowRecord
     open? && children.empty?
   end
 
-  # When a status is "active" we expect properties of the task to change. When a task is not "active" we expect that properties of the task will not change; on_hold is not included 
+  # When a status is "active" we expect properties of the task to change
+  # When a task is not "active" we expect that properties of the task will not change
+  # on_hold is not included
   def active?
     self.class.active_statuses.include?(status)
   end

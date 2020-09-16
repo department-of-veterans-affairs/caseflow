@@ -28,10 +28,13 @@ class RedistributedCase
   end
 
   def ok_to_redistribute?
-    # If there are open tasks, this case should not be at a judge waiting for a decision or in case storage waiting to be distributed, it should be "in" caseflow.
+    # If there are open tasks, this case should not be at a judge
+    # waiting for a decision or in case storage waiting to be distributed
+    # it should be "in" caseflow.
     return false if legacy_appeal_relevant_tasks.any?(&:open?)
     # redistribute if there are either no relevant tasks or if they are completed or cancelled
     return true if legacy_appeal_relevant_tasks.blank? || legacy_appeal_relevant_tasks.all?(&:closed?)
+
     false
   end
 
