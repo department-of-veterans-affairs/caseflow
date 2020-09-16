@@ -54,7 +54,7 @@ class EndProductChangeValidator
   end
 
   def disallowed_disposition_change?
-    ["board_remand", "dta_error", "difference_of_opinion"].any? do |disp|
+    %w[board_remand dta_error difference_of_opinion].any? do |disp|
       old_hash[:disposition_type] == disp && new_hash[:disposition_type] != disp
     end
   end

@@ -6,7 +6,7 @@ describe EndProductChangeValidator do
 
     context "when original code is in the 040 family" do
       let(:code) { "040SCNRPMC" }
-      
+
       it "allows changes only to other 040 codes" do
         expect(subject.values).to all include(family: "040")
       end
