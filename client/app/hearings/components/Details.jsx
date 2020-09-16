@@ -271,7 +271,7 @@ const HearingDetails = (props) => {
         <Button
           name="Cancel"
           linkStyling
-          onClick={converting ? () => resetState(initialHearing) : goBack}
+          onClick={converting ? () => resetState() : goBack}
           styling={css({ float: 'left', paddingLeft: 0, paddingRight: 0 })}
         >
           Cancel
@@ -295,7 +295,7 @@ const HearingDetails = (props) => {
           update={updateHearing}
           submit={submit}
           closeModal={closeVirtualHearingModal}
-          reset={() => resetState(initialHearing)}
+          reset={() => resetState()}
           type={virtualHearingModalType}
           {...editedEmails}
         />

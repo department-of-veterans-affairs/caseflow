@@ -46,7 +46,6 @@ exports[`ScheduleVeteranForm Displays Virtual Hearing form fields when type is c
     <Connect(HearingDateDropdown)
       key="hearingDate__undefined"
       onChange={[Function]}
-      regionalOffice="C"
     />
     <HearingTime
       componentIndex={0}
