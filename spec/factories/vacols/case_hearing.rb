@@ -42,11 +42,17 @@ FactoryBot.define do
       # Build Caseflow hearing day and associate with legacy hearing.
       if hearing.vdkey.nil?
         regional_office = (hearing.hearing_type == HearingDay::REQUEST_TYPES[:video]) ? "RO13" : nil
-        hearing_day = create(:hearing_day,
-                             scheduled_for: hearing.hearing_date,
-                             request_type: hearing.hearing_type,
-                             regional_office: regional_office)
+        attrs = {
+          scheduled_for: hearing.hearing_date,
+          request_type: hearing.hearing_type,
+          regional_office: regional_office
+        }
+        if evaluator.user
+          attrs[:created_by] = evaluator.user
+          attrs[:updated_by] = evaluator.user
+        end
 
+        hearing_day = create(:hearing_day, attrs)
         hearing.vdkey = hearing_day.id
       end
 
