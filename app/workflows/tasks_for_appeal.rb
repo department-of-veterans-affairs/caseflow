@@ -63,6 +63,7 @@ class TasksForAppeal
       :appeal,
       :assigned_by,
       :assigned_to,
+      :cancelled_by,
       :parent
     ]
   end
