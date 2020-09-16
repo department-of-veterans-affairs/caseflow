@@ -58,9 +58,8 @@ class TasksForAppeal
 
   def initialize_hearing_tasks_for_travel_board?
     appeal.is_a?(LegacyAppeal) &&
-      appeal.hearing_request_type == :travel_board &&
-      user.can_change_hearing_request_type? &&
-      FeatureToggle.enabled?(:convert_travel_board_to_video_or_virtual, user: user)
+      appeal.sanitized_hearing_request_type == :travel_board &&
+      user.can_change_hearing_request_type?
   end
 
   def legacy_appeal_tasks
