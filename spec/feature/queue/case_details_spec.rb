@@ -1352,4 +1352,43 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
   end
+
+  describe "case title details" do
+    shared_examples "show hearing request type" do
+      it "displays hearing request type" do
+        id = appeal.is_a?(Appeal) ? appeal.uuid : appeal.vacols_id
+
+        visit("/queue/appeals/#{id}")
+
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_ABOUT_BOX_HEARING_REQUEST_TYPE_LABEL.upcase)
+        expect(page).to have_content(appeal.readable_hearing_request_type)
+      end
+    end
+
+    context "ama appeal" do
+      context "hearing docket" do
+        let!(:appeal) do
+          create(:appeal, :hearing_docket, closest_regional_office: "C")
+        end
+
+        include_examples "show hearing request type"
+      end
+    end
+
+    context "legacy appeal" do
+      context "hearing docket" do
+        let!(:appeal) do
+          create(
+            :legacy_appeal,
+            vacols_case: create(
+              :case,
+              :travel_board_hearing
+            )
+          )
+        end
+
+        include_examples "show hearing request type"
+      end
+    end
+  end
 end

@@ -177,7 +177,9 @@ class PostponeHearingModal extends React.Component {
       // Change the disposition in the store
       this.props.setScheduledHearing({ disposition: ACTIONS.RESCHEDULE, taskId: task.taskId });
 
-      return this.props.history.push(`/queue/appeals/${appeal.externalId}/tasks/${task.taskId}/${TASK_ACTIONS.SCHEDULE_VETERAN.value}`);
+      return this.props.history.push(
+        `/queue/appeals/${appeal.externalId}/tasks/${task.taskId}/${TASK_ACTIONS.SCHEDULE_VETERAN.value}`
+      );
     }
 
     if (this.state.isPosting) {

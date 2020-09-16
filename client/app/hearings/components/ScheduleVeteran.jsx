@@ -17,8 +17,9 @@ import { formatDateStr } from '../../util/DateUtil';
 import Alert from '../../components/Alert';
 import { marginTop, regionalOfficeSection, saveButton, cancelButton } from './details/style';
 import { find, get } from 'lodash';
-import { getAppellantTitleForHearing, processAlerts, parseVirtualHearingErrors } from '../utils';
-import { onChangeFormData,
+import { getAppellantTitle, processAlerts, parseVirtualHearingErrors } from '../utils';
+import {
+  onChangeFormData,
   onReceiveAlerts,
   onReceiveTransitioningAlert,
   transitionAlert,
@@ -47,10 +48,12 @@ export const ScheduleVeteran = ({
   const [errors, setErrors] = useState({});
 
   // Get the appellant title ('Veteran' or 'Appellant')
-  const appellantTitle = getAppellantTitleForHearing(appeal);
+  const appellantTitle = getAppellantTitle(appeal?.apppellantIsNotVeteran);
 
   // Get the selected hearing day
   const selectedHearingDay = assignHearingForm?.hearingDay || hearingDay;
+  const initialRegionalOffice =
+   selectedHearingDay?.regionalOffice || appeal?.closestRegionalOffice || appeal?.regionalOffice?.key;
 
   // Check whether to display the warning about full hearing days
   const fullHearingDay = selectedHearingDay?.filledSlots >= selectedHearingDay?.totalSlots;
@@ -64,13 +67,13 @@ export const ScheduleVeteran = ({
 
   // Determine the Request Type for the hearing
   const virtual = assignHearingForm?.virtualHearing;
-  const requestType = HEARING_REQUEST_TYPES[selectedHearingDay?.requestType] || 'Video';
+  const requestType = selectedHearingDay?.regionalOffice === 'C' ? HEARING_REQUEST_TYPES.C : HEARING_REQUEST_TYPES.V;
 
   // Determine whether we are rescheduling
-  const reschedule = scheduledHearing.disposition === 'reschedule';
+  const reschedule = scheduledHearing?.disposition === 'reschedule';
 
   // Set the task ID
-  const taskId = scheduleHearingTask ? scheduleHearingTask.taskId : scheduledHearing.taskId;
+  const taskId = scheduleHearingTask ? scheduleHearingTask.taskId : scheduledHearing?.taskId;
 
   // Create a hearing object for the form
   const hearing = {
@@ -114,7 +117,7 @@ export const ScheduleVeteran = ({
     const title = sprintf(
       COPY.SCHEDULE_VETERAN_SUCCESS_MESSAGE_TITLE,
       appeal.appellantFullName,
-      hearing.regionalOffice ? HEARING_REQUEST_TYPES.V : HEARING_REQUEST_TYPES.C,
+      requestType,
       hearingDateStr
     );
 
@@ -214,12 +217,13 @@ export const ScheduleVeteran = ({
       history.push(`/queue/appeals/${appeal.externalId}`);
     } catch (err) {
       const code = get(err, 'response.body.errors[0].code') || '';
+
       const [msg] = err?.response?.body?.errors.length > 0 && err?.response?.body?.errors;
 
       // Handle inline errors
       if (code === 1002) {
         // Parse the errors into a list
-        const errList = parseVirtualHearingErrors(msg.message);
+        const errList = parseVirtualHearingErrors(msg.message, appeal);
 
         // Scroll errors into view
         document.getElementById('email-section').scrollIntoView();
@@ -275,7 +279,8 @@ export const ScheduleVeteran = ({
         )}
         {openHearing && !reschedule ? <Alert title="Open Hearing" type="error">{openHearingDayError}</Alert> : (
           <ScheduleVeteranForm
-            initialRegionalOffice={hearingDay?.regionalOffice || appeal?.regionalOffice?.key}
+            initialHearingDate={selectedHearingDay?.hearingDate}
+            initialRegionalOffice={initialRegionalOffice}
             errors={errors}
             appeal={appeal}
             virtual={Boolean(virtual)}
@@ -310,7 +315,7 @@ export const ScheduleVeteran = ({
 };
 
 ScheduleVeteran.propTypes = {
-  appeals: PropTypes.array,
+  appeals: PropTypes.object,
   // Router inherited props
   history: PropTypes.object,
   appealId: PropTypes.string,

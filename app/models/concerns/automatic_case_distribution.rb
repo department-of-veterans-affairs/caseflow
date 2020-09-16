@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module AmaCaseDistribution
+module AutomaticCaseDistribution
   extend ActiveSupport::Concern
 
   delegate :dockets,
@@ -17,7 +17,21 @@ module AmaCaseDistribution
     @docket_coordinator ||= DocketCoordinator.new
   end
 
-  def ama_distribution
+  def priority_push_distribution(limit = nil)
+    @appeals = []
+    @rem = 0
+
+    if limit.nil?
+      # Distribute priority appeals that are tied to judges (not genpop) with no limit.
+      distribute_appeals(:legacy, nil, priority: true, genpop: "not_genpop")
+      distribute_appeals(:hearing, nil, priority: true, genpop: "not_genpop")
+    else
+      # Distribute <limit> number of cases, regardless of docket type, oldest first.
+      distribute_limited_priority_appeals_from_all_dockets(limit)
+    end
+  end
+
+  def requested_distribution
     @appeals = []
     @rem = batch_size
     @remaining_docket_proportions = docket_proportions.clone
@@ -25,7 +39,7 @@ module AmaCaseDistribution
 
     # Distribute legacy cases tied to a judge down to the board provided limit of 30, regardless of the legacy docket
     # range
-    if FeatureToggle.enabled?(:priority_acd)
+    if FeatureToggle.enabled?(:priority_acd, user: judge)
       distribute_appeals(:legacy, @rem, priority: false, genpop: "not_genpop", bust_backlog: true)
     end
 
@@ -40,9 +54,7 @@ module AmaCaseDistribution
 
     # If we haven't yet met the priority target, distribute additional priority appeals.
     priority_rem = (priority_target - @appeals.count(&:priority)).clamp(0, @rem)
-    oldest_priority_appeals_by_docket(priority_rem).each do |docket, n|
-      distribute_appeals(docket, n, priority: true)
-    end
+    distribute_limited_priority_appeals_from_all_dockets(priority_rem)
 
     # As we may have already distributed nonpriority legacy and hearing docket cases, we adjust the docket proportions.
     deduct_distributed_actuals_from_remaining_docket_proportions(:legacy, :hearing)
@@ -51,15 +63,20 @@ module AmaCaseDistribution
     # If a docket runs out of available appeals, we reallocate its cases to the other dockets.
     until @rem == 0 || @remaining_docket_proportions.all_zero?
       distribute_appeals_according_to_remaining_docket_proportions
-      @nonpriority_iterations += 1
     end
 
     @appeals
   end
 
+  def distribute_limited_priority_appeals_from_all_dockets(limit)
+    num_oldest_priority_appeals_by_docket(limit).each do |docket, number_of_appeals_to_distribute|
+      distribute_appeals(docket, number_of_appeals_to_distribute, priority: true)
+    end
+  end
+
   def ama_statistics
     {
-      batch_size: batch_size,
+      batch_size: @appeals.count,
       total_batch_size: total_batch_size,
       priority_count: priority_count,
       direct_review_due_count: direct_review_due_count,
@@ -74,14 +91,17 @@ module AmaCaseDistribution
     }
   end
 
-  def distribute_appeals(docket, num, priority: false, genpop: "any", range: nil, bust_backlog: false)
-    return [] unless num > 0
+  # Handles the distribution of appeals from any docket while tracking appeals distributed and the remaining number of
+  # appeals to distribute. A nil limit will distribute an infinate number of appeals, only to be used for non_genpop
+  # distributions (distributions tied to a judge)
+  def distribute_appeals(docket, limit = nil, priority: false, genpop: "any", range: nil, bust_backlog: false)
+    return [] unless limit.nil? || limit > 0
 
     if range.nil? && !bust_backlog
-      appeals = dockets[docket].distribute_appeals(self, priority: priority, genpop: genpop, limit: num)
+      appeals = dockets[docket].distribute_appeals(self, priority: priority, genpop: genpop, limit: limit)
     elsif docket == :legacy && priority == false
       appeals = dockets[docket].distribute_nonpriority_appeals(
-        self, genpop: genpop, range: range, limit: num, bust_backlog: bust_backlog
+        self, genpop: genpop, range: range, limit: limit, bust_backlog: bust_backlog
       )
     else
       fail "'range' and 'bust_backlog' are only valid arguments when distributing nonpriority, legacy appeals"
@@ -106,12 +126,13 @@ module AmaCaseDistribution
   end
 
   def distribute_appeals_according_to_remaining_docket_proportions
+    @nonpriority_iterations += 1
     @remaining_docket_proportions
       .normalize!
       .stochastic_allocation(@rem)
-      .each do |docket, n|
-        appeals = distribute_appeals(docket, n, priority: false)
-        @remaining_docket_proportions[docket] = 0 if appeals.count < n
+      .each do |docket, number_of_appeals_to_distribute|
+        appeals = distribute_appeals(docket, number_of_appeals_to_distribute, priority: false)
+        @remaining_docket_proportions[docket] = 0 if appeals.count < number_of_appeals_to_distribute
       end
   end
 
@@ -128,13 +149,14 @@ module AmaCaseDistribution
     (docket_margin_net_of_priority * docket_proportions[:legacy]).round
   end
 
-  def oldest_priority_appeals_by_docket(num)
+  def num_oldest_priority_appeals_by_docket(num)
     return {} unless num > 0
 
     dockets
       .flat_map { |sym, docket| docket.age_of_n_oldest_priority_appeals(num).map { |age| [age, sym] } }
-      .sort_by { |a| a[0] }
+      .sort_by { |age, _| age }
       .first(num)
-      .each_with_object(Hash.new(0)) { |a, counts| counts[a[1]] += 1 }
+      .group_by { |_, sym| sym }
+      .transform_values(&:count)
   end
 end

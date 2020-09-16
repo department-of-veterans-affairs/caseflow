@@ -36,20 +36,24 @@ class ExternalApi::BGSService
       end
   end
 
-  def cancel_end_product(veteran_file_number, end_product_code, end_product_modifier)
+  def cancel_end_product(veteran_file_number, end_product_code, end_product_modifier, payee_code, benefit_type)
     DBService.release_db_connections
 
     @end_products[veteran_file_number] ||=
       MetricsService.record("BGS: cancel end product by: \
                             file_number = #{veteran_file_number}, \
                             end_product_code = #{end_product_code}, \
-                            modifier = #{end_product_modifier}",
+                            modifier = #{end_product_modifier}
+                            payee_code = #{payee_code}
+                            benefit_type = #{benefit_type}",
                             service: :bgs,
                             name: "claims.cancel_end_product") do
         client.claims.cancel_end_product(
           file_number: veteran_file_number,
           end_product_code: end_product_code,
-          modifier: end_product_modifier
+          modifier: end_product_modifier,
+          payee_code: payee_code,
+          benefit_type: benefit_type
         )
       end
   end
@@ -402,6 +406,15 @@ class ExternalApi::BGSService
                           service: :bgs,
                           name: "contention.find_contention_by_claim_id") do
       client.contention.find_contention_by_claim_id(claim_id)
+    end
+  end
+
+  def find_current_rating_profile_by_ptcpnt_id(participant_id)
+    DBService.release_db_connections
+    MetricsService.record("BGS: find current rating profile for veteran by participant_id #{participant_id}",
+                          service: :bgs,
+                          name: "rating_profile.find_current_rating_profile_by_ptcpnt_id") do
+      client.rating_profile.find_current_rating_profile_by_ptcpnt_id(participant_id, true)
     end
   end
 

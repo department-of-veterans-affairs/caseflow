@@ -17,7 +17,7 @@ import { HearingsUserContext } from '../contexts/HearingsUserContext';
 import {
   deepDiff,
   getChanges,
-  getAppellantTitleForHearing,
+  getAppellantTitle,
   processAlerts,
   startPolling,
   parseVirtualHearingErrors
@@ -67,6 +67,8 @@ const HearingDetails = (props) => {
   const [virtualHearingModalOpen, setVirtualHearingModalOpen] = useState(false);
   const [virtualHearingModalType, setVirtualHearingModalType] = useState(null);
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
+
+  const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
 
   // Method to reset the state
   const resetState = () => {
@@ -122,7 +124,7 @@ const HearingDetails = (props) => {
       if (virtual && errors) {
         // Set the Virtual Hearing errors
         setVirtualHearingErrors({
-          [noAppellantEmail && 'appellantEmail']: `${getAppellantTitleForHearing(hearing)} email is required`,
+          [noAppellantEmail && 'appellantEmail']: `${appellantTitle} email is required`,
           [noRepTimezone && 'representativeTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED,
           [noAppellantTimezone && 'appellantTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED
         });

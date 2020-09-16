@@ -77,6 +77,8 @@ class WorkQueue::AppealSerializer
 
   attribute :closest_regional_office
 
+  attribute :closest_regional_office_label
+
   attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
 
   attribute :external_id, &:uuid
@@ -135,4 +137,6 @@ class WorkQueue::AppealSerializer
       case_review: object.latest_attorney_case_review
     ).editable?
   end
+
+  attribute :readable_hearing_request_type
 end

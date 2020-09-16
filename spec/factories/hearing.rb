@@ -5,6 +5,7 @@ FactoryBot.define do
     transient do
       regional_office { nil }
       judge { create(:user, roles: ["Hearing Prep"]) }
+      adding_user { create(:user) }
     end
     appeal { create(:appeal, :hearing_docket) }
     uuid { SecureRandom.uuid }
@@ -13,7 +14,9 @@ FactoryBot.define do
              regional_office: regional_office,
              scheduled_for: Time.zone.today,
              judge: judge,
-             request_type: regional_office.nil? ? "C" : "V")
+             request_type: regional_office.nil? ? "C" : "V",
+             created_by: adding_user,
+             updated_by: adding_user)
     end
     hearing_location do
       if regional_office.present?
@@ -21,8 +24,8 @@ FactoryBot.define do
       end
     end
     scheduled_time { "8:30AM" }
-    created_by { create(:user) }
-    updated_by { create(:user) }
+    created_by { adding_user }
+    updated_by { adding_user }
     virtual_hearing { nil }
 
     trait :held do
