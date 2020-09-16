@@ -10,12 +10,12 @@
   },
   "CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO": {
     "label": "Convert hearing to video",
-    "value": "modal/change_hearing_request_type",
+    "value": "<placeholder>modal/change_hearing_request_type</placeholder>",
     "func": "change_hearing_request_type_data"
   },
   "CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL": {
     "label": "Convert hearing to virtual",
-    "value": "modal/change_hearing_request_type",
+    "value": "<placeholder>page/change_hearing_request_type</placeholder>",
     "func": "change_hearing_request_type_data"
   },
   "ASSIGN_OMO": {

@@ -207,7 +207,7 @@ class TaskActionRepository
     end
 
     def change_hearing_request_type_data(_task, _user = nil)
-      {}
+      {} # Placeholder function that will be implemented in #15159
     end
 
     def change_task_type_data(task, user = nil)
