@@ -310,6 +310,9 @@ describe Task, :all_dbs do
     let!(:top_level_task) { create(:task, appeal: appeal) }
     let!(:second_level_tasks) { create_list(:task, 2, parent: top_level_task) }
     let!(:third_level_task) { create_list(:task, 2, parent: second_level_tasks.first) }
+    let(:logged_in_user) { create(:user) }
+
+    before { User.authenticate!(user: logged_in_user) }
 
     it "cancels all tasks and child subtasks" do
       initial_versions = second_level_tasks[0].versions.count
@@ -321,6 +324,7 @@ describe Task, :all_dbs do
 
       [top_level_task, *second_level_tasks, *third_level_task].each do |task|
         expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(task.cancelled_by_id).to eq(logged_in_user.id)
       end
     end
   end
@@ -1435,6 +1439,24 @@ describe Task, :all_dbs do
         task.update!(status: status)
         expect(task.closed_at).to_not eq(nil)
       end
+
+      it "does not set the cancelled_by_id if there is no logged in user" do
+        task.update!(cancelled_by_id: 1)
+        task.update!(status: status)
+        expect(task.cancelled_by_id).to eq(1)
+      end
+
+      context "when a user is logged in" do
+        let(:logged_in_user) { create(:user) }
+
+        before { User.authenticate!(user: logged_in_user) }
+
+        it "sets the cancelled_by_id of the logged in user" do
+          expect(task.cancelled_by_id).to be_nil
+          task.update!(status: status)
+          expect(task.cancelled_by_id).to eq(logged_in_user.id)
+        end
+      end
     end
 
     context "when a timestamp is passed" do
@@ -1631,67 +1653,6 @@ describe Task, :all_dbs do
         expect(Raven).to have_received(:capture_message).exactly(1).times
         expect(parent_task.status).to eq(Constants.TASK_STATUSES.on_hold)
         expect(parent_task.children.count).to eq(1)
-      end
-    end
-  end
-
-  describe ".cancelled_by" do
-    let(:task) { create(:ama_task) }
-    let(:canceler) { create(:user) }
-    let(:new_canceler) { create(:user) }
-
-    subject { task.cancelled_by }
-
-    context "when the task is still active" do
-      it "returns nil" do
-        expect(subject).to eq nil
-      end
-    end
-
-    context "when the task is cancelled" do
-      context "when there are no versions to interrogate" do
-        before { task.update_column(:status, Constants.TASK_STATUSES.cancelled) }
-
-        it "returns nil" do
-          expect(subject).to eq nil
-        end
-      end
-
-      context "when there are versions to interrogate" do
-        before { task.cancelled! }
-
-        let(:first_version) { task.versions.last }
-
-        context "when there is only one version" do
-          context "when there is no user defined by whodunnit" do
-            it "returns nil" do
-              expect(subject).to eq nil
-            end
-          end
-
-          context "when there is a user defined by whodunnit" do
-            before { first_version.update!(whodunnit: canceler.id.to_s) }
-
-            it "returns the canceler" do
-              expect(subject).to eq canceler
-            end
-          end
-        end
-
-        context "when there are multiple versions" do
-          before do
-            first_version.update!(whodunnit: canceler.id.to_s)
-            task.paper_trail.save_with_version.update!(
-              object_changes: "\"---\nstatus:\n- in_progress\n- cancelled\n",
-              whodunnit: new_canceler.id.to_s,
-              created_at: first_version.created_at + 1.day
-            )
-          end
-
-          it "returns the most recent canceler" do
-            expect(subject).to eq new_canceler
-          end
-        end
       end
     end
   end
