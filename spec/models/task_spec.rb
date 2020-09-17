@@ -1452,6 +1452,7 @@ describe Task, :all_dbs do
         before { User.authenticate!(user: logged_in_user) }
 
         it "sets the cancelled_by_id of the logged in user" do
+          expect(task.cancelled_by_id).to be_nil
           task.update!(status: status)
           expect(task.cancelled_by_id).to eq(logged_in_user.id)
         end

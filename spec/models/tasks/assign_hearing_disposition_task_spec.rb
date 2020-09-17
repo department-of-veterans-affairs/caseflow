@@ -120,7 +120,7 @@ describe AssignHearingDispositionTask, :all_dbs do
           expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
           expect(AssignHearingDispositionTask.first.cancelled_by).to eq user
           expect(ScheduleHearingTask.count).to eq 1
-          expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.last.id
+          expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.order(:id).last.id
         end
 
         context "when task instructions are passed" do
@@ -159,7 +159,7 @@ describe AssignHearingDispositionTask, :all_dbs do
           expect(HearingTask.first.cancelled?).to be_truthy
           expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
           expect(ScheduleHearingTask.count).to eq 1
-          expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.last.id
+          expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.order(:id).last.id
           expect(HearingAdminActionIncarceratedVeteranTask.count).to eq 1
           expect(HearingAdminActionIncarceratedVeteranTask.last.instructions).to eq [admin_action_instructions]
         end
