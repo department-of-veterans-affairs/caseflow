@@ -1265,7 +1265,7 @@ ActiveRecord::Schema.define(version: 2020_09_16_150837) do
     t.index ["updated_at"], name: "index_tags_on_updated_at"
   end
 
-  create_table "task_timers", comment: "A task timer allows an associated task's (like EvidenceSubmissionWindowTask and TimedHoldTask) method to be run asynchronously after timer expires.", force: :cascade do |t|
+  create_table "task_timers", comment: "A task timer allows an associated task's (like EvidenceSubmissionWindowTask and TimedHoldTask) `when_timer_ends` method to be run asynchronously after timer expires.", force: :cascade do |t|
     t.datetime "attempted_at", comment: "Async timestamp for most recent attempt to run Task#when_timer_ends."
     t.datetime "canceled_at", comment: "Timestamp when job was abandoned. Associated task is typically cancelled."
     t.datetime "created_at", null: false, comment: "Automatic timestamp for record creation."
