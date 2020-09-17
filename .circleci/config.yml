@@ -220,11 +220,11 @@ jobs:
       - run:
           name: RSpec via knapsack_pro Queue Mode
           command: |
-            mkdir -p ~/test-results/rspec
             # export word is important here!
             export RAILS_ENV=test
-            bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml]"
+            bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter -o tmp/rspec.xml]"
           environment:
+            KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
             # Uncomment to profile test performance in CircleCI
             #  RDOC: 1
             #  RD_PROF: 1
@@ -253,10 +253,6 @@ jobs:
       - store_artifacts:
           name: Store bullet log
           path: ~/project/log/bullet.log
-
-      - store_artifacts:
-          name: Store testfile ordering
-          path: ~/project/tmp/testfiles
 
       - store_artifacts:
           name: Store run logs
