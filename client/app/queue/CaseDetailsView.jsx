@@ -10,7 +10,7 @@ import _ from 'lodash';
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import { appealWithDetailSelector, getAllTasksForAppeal } from './selectors';
-import { clearAlerts } from '../components/common/actions';
+import { stopPollingHearing, transitionAlert, clearAlerts } from '../components/common/actions';
 import { getQueryParams } from '../util/QueryParamsUtil';
 import { needsPulacCerulloAlert } from './pulacCerullo';
 import { resetErrorMessages, resetSuccessMessages, setHearingDay } from './uiReducer/uiActions';
@@ -28,6 +28,7 @@ import TaskSnapshot from './TaskSnapshot';
 import UserAlerts from '../components/UserAlerts';
 import VeteranCasesView from './VeteranCasesView';
 import VeteranDetail from './VeteranDetail';
+import { startPolling } from '../hearings/utils';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -57,14 +58,24 @@ export const CaseDetailsView = (props) => {
   const veteranCaseListIsVisible = useSelector((state) => state.ui.veteranCaseListIsVisible);
   const modalIsOpen = window.location.pathname.includes('modal');
 
+  const resetState = () => {
+    props.resetErrorMessages();
+    props.clearAlerts();
+  };
+
+  const pollHearing = () => startPolling({ externalId: props.scheduledHearingId }, {
+    setShouldStartPolling: props.stopPollingHearing,
+    resetState,
+    props
+  });
+
   useEffect(() => {
     window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
 
     // Prevent error messages from being reset if a modal is being displayed. This allows
     // the modal to show error messages without them being cleared by the CaseDetailsView.
-    if (!modalIsOpen) {
-      props.resetErrorMessages();
-      props.clearAlerts();
+    if (!modalIsOpen && !props.userCanScheduleVirtualHearings) {
+      resetState();
     }
 
     const { hearingDate, regionalOffice } = getQueryParams(window.location.search);
@@ -95,7 +106,7 @@ export const CaseDetailsView = (props) => {
           </Alert>
         </div>
       )}
-      {!modalIsOpen && <UserAlerts />}
+      {(!modalIsOpen || props.userCanScheduleVirtualHearings) && <UserAlerts />}
       <AppSegment filledBackground>
         <CaseTitle appeal={appeal} />
         <CaseTitleDetails
@@ -132,6 +143,7 @@ export const CaseDetailsView = (props) => {
           )}
           <CaseTimeline title="Case Timeline" appeal={appeal} />}
         </StickyNavContentArea>
+        {props.pollHearing && pollHearing()}
       </AppSegment>
     </React.Fragment>
   );
@@ -147,8 +159,17 @@ CaseDetailsView.propTypes = {
   setHearingDay: PropTypes.func,
   success: PropTypes.object,
   userCanAccessReader: PropTypes.bool,
-  veteranCaseListIsVisible: PropTypes.bool
+  veteranCaseListIsVisible: PropTypes.bool,
+  userCanScheduleVirtualHearings: PropTypes.bool,
+  scheduledHearingId: PropTypes.string,
+  pollHearing: PropTypes.bool,
+  stopPollingHearing: PropTypes.func
 };
+
+const mapStateToProps = (state) => ({
+  scheduledHearingId: state.components.scheduledHearing.externalId,
+  pollHearing: state.components.scheduledHearing.polling
+});
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
@@ -156,12 +177,14 @@ const mapDispatchToProps = (dispatch) =>
       clearAlerts,
       resetErrorMessages,
       resetSuccessMessages,
+      transitionAlert,
+      stopPollingHearing,
       setHearingDay
     },
     dispatch
   );
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(CaseDetailsView);

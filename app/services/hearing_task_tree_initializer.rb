@@ -23,6 +23,8 @@ class HearingTaskTreeInitializer
     def for_appeal_with_pending_travel_board_hearing(appeal)
       fail TypeError, "expected a legacy appeal" unless appeal.is_a?(LegacyAppeal)
 
+      return if appeal.tasks.open.where(type: ChangeHearingRequestTypeTask.name).any?
+
       ActiveRecord::Base.multi_transaction do
         create_args = { appeal: appeal, assigned_to: Bva.singleton }
 

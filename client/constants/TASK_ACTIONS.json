@@ -10,12 +10,12 @@
   },
   "CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO": {
     "label": "Convert hearing to video",
-    "value": "modal/change_hearing_request_type",
+    "value": "<placeholder>modal/change_hearing_request_type</placeholder>",
     "func": "change_hearing_request_type_data"
   },
   "CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL": {
     "label": "Convert hearing to virtual",
-    "value": "modal/change_hearing_request_type",
+    "value": "<placeholder>page/change_hearing_request_type</placeholder>",
     "func": "change_hearing_request_type_data"
   },
   "ASSIGN_OMO": {
@@ -31,6 +31,11 @@
     "label": "Assign to person",
     "value": "modal/assign_to_hearing_admin_member",
     "func": "assign_to_user_data"
+  },
+  "REASSIGN_TO_HEARINGS_TEAMS_MEMBER": {
+    "label": "Assign to person",
+    "value": "modal/reassign_to_person",
+    "func": "assign_to_hearings_user_data"
   },
   "ASSIGN_TO_MOTIONS_ATTORNEY": {
     "label": "Assign to person",

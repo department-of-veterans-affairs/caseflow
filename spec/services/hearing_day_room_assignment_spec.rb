@@ -70,6 +70,21 @@ describe HearingDayRoomAssignment do
           expect(first_pass).to_not be(second_pass)
         end
       end
+
+      context "with a central docket already assigned to room 1" do
+        let!(:central_docket) do
+          create(
+            :hearing_day,
+            scheduled_for: scheduled_for,
+            request_type: HearingDay::REQUEST_TYPES[:central],
+            room: "1"
+          )
+        end
+
+        it "assigns room 3" do
+          expect(subject).to eq("3")
+        end
+      end
     end
   end
 end
