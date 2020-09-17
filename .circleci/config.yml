@@ -218,11 +218,12 @@ jobs:
             ~/project/ci-bin/capture-log "bundle exec rake spec:setup_vacols"
 
       - run:
-          name: RSpec via knapsack_pro Queue Mode
+          name: RSpec
           command: |
-            # export word is important here!
-            export RAILS_ENV=test
-            bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml]"
+            mkdir -p ~/test-results/rspec
+            testfiles=$(circleci tests glob "spec/**/*spec.rb" | circleci tests split --split-by=timings)
+            echo $testfiles > ~/project/tmp/testfiles/rspec_testfiles.txt
+            ~/project/ci-bin/capture-log "bundle exec rspec --no-color --format documentation --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}"
           # Uncomment to profile test performance in CircleCI
             #environment:
             #  RDOC: 1
