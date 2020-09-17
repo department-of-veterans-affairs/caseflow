@@ -1,5 +1,5 @@
 # Caseflow
-[![CircleCI](https://circleci.com/gh/department-of-veterans-affairs/caseflow/tree/master.svg?style=svg)](https://circleci.com/gh/department-of-veterans-affairs/caseflow/tree/master)
+[![CircleCI](https://circleci.com/gh/department-of-veterans-affairs/caseflow/tree/master.svg?style=svg)](https://circleci.com/gh/department-of-veterans-affairs/caseflow/tree/master) [![Knapsack Pro Parallel CI builds for Caseflow Rspec Tests](https://img.shields.io/badge/Knapsack%20Pro-Parallel%20%2F%20Caseflow%20Rspec%20Tests-%230074ff)](https://knapsackpro.com/dashboard/organizations/1468/projects/1177/test_suites/1665/builds?utm_campaign=organization-id-1468&utm_content=test-suite-id-1665&utm_medium=readme&utm_source=knapsack-pro-badge&utm_term=project-id-1177)
 
 Caseflow is a suite of web-based tools to manage VA appeals. It's currently in development by the Appeals Modernization team (est. 2016). It will replace the current system of record for appeals, the Veterans Appeals Control and Location System (VACOLS), which was created in 1979 on now-outdated infrastructure. Additionally, Caseflow will allow the Board of Veterans' Appeals to process appeals under the new guidelines created by the Veterans Appeals Improvement and Modernization Act of 2017, which goes into effect February 14th, 2019.
 
