@@ -114,9 +114,9 @@ describe AssignHearingDispositionTask, :all_dbs do
           expect(Hearing.count).to eq 1
           expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.postponed
           expect(HearingTask.count).to eq 2
-          expect(HearingTask.first.cancelled?).to be_truthy
-          expect(HearingTask.first.cancelled_by).to eq user
-          expect(HearingTask.last.on_hold?).to be_truthy
+          expect(HearingTask.order(:id).first.cancelled?).to be_truthy
+          expect(HearingTask.order(:id).first.cancelled_by).to eq user
+          expect(HearingTask.order(:id).last.on_hold?).to be_truthy
           expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
           expect(AssignHearingDispositionTask.first.cancelled_by).to eq user
           expect(ScheduleHearingTask.count).to eq 1
@@ -156,7 +156,7 @@ describe AssignHearingDispositionTask, :all_dbs do
           expect(Hearing.count).to eq 1
           expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.postponed
           expect(HearingTask.count).to eq 2
-          expect(HearingTask.first.cancelled?).to be_truthy
+          expect(HearingTask.order(:id).first.cancelled?).to be_truthy
           expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
           expect(ScheduleHearingTask.count).to eq 1
           expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.order(:id).last.id
@@ -185,8 +185,8 @@ describe AssignHearingDispositionTask, :all_dbs do
           expect(Hearing.last.hearing_location.facility_id).to eq "vba_370"
           expect(Hearing.last.scheduled_time.strftime("%I:%M%p")).to eq "12:30PM"
           expect(HearingTask.count).to eq 2
-          expect(HearingTask.first.cancelled?).to be_truthy
-          expect(HearingTask.last.hearing_task_association.hearing.id).to eq Hearing.last.id
+          expect(HearingTask.order(:id).first.cancelled?).to be_truthy
+          expect(HearingTask.order(:id).last.hearing_task_association.hearing.id).to eq Hearing.last.id
           expect(AssignHearingDispositionTask.count).to eq 2
           expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
         end
