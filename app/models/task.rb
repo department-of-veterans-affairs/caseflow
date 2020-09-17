@@ -19,6 +19,7 @@ class Task < CaseflowRecord
 
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
+  belongs_to :cancelled_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
   has_many :attorney_case_reviews, dependent: :destroy
   has_many :task_timers, dependent: :destroy
@@ -36,6 +37,8 @@ class Task < CaseflowRecord
   after_create :tell_parent_task_child_task_created
 
   before_save :set_timestamp
+
+  before_update :set_cancelled_by_id, if: :task_will_be_cancelled?
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
   after_update :cancel_task_timers, if: :task_just_closed?
@@ -567,6 +570,7 @@ class Task < CaseflowRecord
       tasks.each { |task| task.paper_trail.save_with_version }
       tasks.update_all(
         status: Constants.TASK_STATUSES.cancelled,
+        cancelled_by_id: RequestStore[:current_user]&.id,
         closed_at: Time.zone.now
       )
       tasks.each { |task| task.reload.paper_trail.save_with_version }
@@ -591,18 +595,6 @@ class Task < CaseflowRecord
 
   def stays_with_reassigned_parent?
     open?
-  end
-
-  def cancelled_by
-    return nil unless cancelled?
-
-    any_status_matcher = Constants::TASK_STATUSES.keys.join("|")
-    task_cancelled_version_matcher = "%status:\\n- (#{any_status_matcher})\\n- #{Constants.TASK_STATUSES.cancelled}%"
-    record = versions.order(:created_at).where("object_changes SIMILAR TO ?", task_cancelled_version_matcher).last
-
-    return nil unless record
-
-    User.find_by_id(record.whodunnit)
   end
 
   def reassign_clears_overtime?
@@ -665,6 +657,10 @@ class Task < CaseflowRecord
     saved_change_to_attribute?("status") && !open?
   end
 
+  def task_will_be_cancelled?
+    status_change_to_be_saved&.last == Constants.TASK_STATUSES.cancelled
+  end
+
   def task_just_closed_and_has_parent?
     task_just_closed? && parent
   end
@@ -697,6 +693,10 @@ class Task < CaseflowRecord
 
   def set_assigned_at
     self.assigned_at = created_at unless assigned_at
+  end
+
+  def set_cancelled_by_id
+    self.cancelled_by_id = RequestStore[:current_user].id if RequestStore[:current_user]&.id
   end
 
   STATUS_TIMESTAMPS = {
