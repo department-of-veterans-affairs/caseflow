@@ -63,6 +63,16 @@ class TaskActionRepository
       }
     end
 
+    def assign_to_hearings_user_data(task, user = nil)
+      users = [HearingsManagement, HearingAdmin, TranscriptionTeam].map { |team| team.singleton.users }.flatten.uniq
+
+      {
+        selected: user,
+        options: users_to_options(users),
+        type: task.type
+      }
+    end
+
     def assign_to_user_data(task, user = nil)
       users = potential_task_assignees(task)
 
@@ -204,6 +214,10 @@ class TaskActionRepository
           }
         end
       }
+    end
+
+    def change_hearing_request_type_data(_task, _user = nil)
+      {} # Placeholder function that will be implemented in #15159
     end
 
     def change_task_type_data(task, user = nil)
