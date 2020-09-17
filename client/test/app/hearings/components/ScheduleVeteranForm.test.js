@@ -56,7 +56,10 @@ describe('ScheduleVeteranForm', () => {
           ...amaAppeal,
           regionalOffice: defaultHearing.regionalOfficeKey,
         }}
-        hearing={defaultHearing}
+        hearing={{
+          ...defaultHearing,
+          regionalOffice: defaultHearing.regionalOfficeKey,
+        }}
       />,
       {
         wrappingComponent: queueWrapper,
@@ -112,7 +115,10 @@ describe('ScheduleVeteranForm', () => {
           ...amaAppeal,
           regionalOffice: defaultHearing.regionalOfficeKey,
         }}
-        hearing={defaultHearing}
+        hearing={{
+          ...defaultHearing,
+          regionalOffice: defaultHearing.regionalOfficeKey,
+        }}
       />,
       {
         wrappingComponent: queueWrapper,

@@ -44,14 +44,6 @@ describe AdvanceOnDocketMotion, :postgres do
       end
     end
 
-    describe "#eligible_due_to_date" do
-      it "Returns all motions created after receipt date, but not age related motions" do
-        non_age_motions = described_class.where.not(id: described_class.age)
-        expect(described_class.eligible_due_to_date(1.day.ago).count).to eq non_age_motions.count / creation_dates.count
-        expect(described_class.eligible_due_to_date(31.days.ago).count).to eq non_age_motions.count
-      end
-    end
-
     describe "#eligible_due_to_appeal" do
       it "Returns all motions linked to the appeal, but not age related motions" do
         expect(described_class.eligible_due_to_appeal(appeals.first).pluck(:appeal_id).uniq).to eq [appeals.first.id]
@@ -118,7 +110,7 @@ describe AdvanceOnDocketMotion, :postgres do
       context "and the motion was granted after the appeal receipt date" do
         let(:appeal_receipt_date) { 30.days.ago }
 
-        it { is_expected.to be true }
+        it { is_expected.to be false }
       end
     end
   end

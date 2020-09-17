@@ -40,9 +40,11 @@ class BoardGrantEffectuation < CaseflowRecord
     return if processed?
 
     attempted!
-    return unless associated_rating
+    if granted_decision_issue.rating?
+      return unless associated_rating
 
-    update_from_matching_rating_issue!
+      update_from_matching_rating_issue!
+    end
     clear_error!
     processed!
   end

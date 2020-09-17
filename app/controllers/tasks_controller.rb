@@ -109,15 +109,14 @@ class TasksController < ApplicationController
   rescue AssignHearingDispositionTask::HearingAssociationMissing => error
     Raven.capture_exception(error)
     render json: {
-      "errors": [
-        "title": "Missing Associated Hearing",
-        "detail": error
-      ]
+      "errors": ["title": "Missing Associated Hearing", "detail": error]
     }, status: :bad_request
   rescue Caseflow::Error::VirtualHearingConversionFailed => error
     Raven.capture_exception(error)
 
-    render json: { "errors": ["message": error.message] }, status: error.code
+    render json: {
+      "errors": ["title": COPY::FAILED_HEARING_UPDATE, "message": error.message, "code": error.code]
+    }, status: :bad_request
   end
 
   def for_appeal

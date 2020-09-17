@@ -171,7 +171,7 @@ AppealHearingLocationsDropdown.propTypes = {
       PropTypes.shape({
         label: PropTypes.string,
         value: PropTypes.shape({
-          facilityId: PropTypes.number,
+          facilityId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
           type: PropTypes.string,
           distance: PropTypes.number,
           facilityType: PropTypes.string,
