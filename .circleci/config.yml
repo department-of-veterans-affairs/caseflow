@@ -220,7 +220,7 @@ jobs:
       - run:
           name: RSpec via knapsack_pro Queue Mode
           command: |
-            # export word is important here!
+            mkdir -p ~/test-results/rspec
             export RAILS_ENV=test
             bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter -o tmp/rspec.xml]"
           environment:
