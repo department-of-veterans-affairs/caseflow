@@ -109,8 +109,8 @@ class AppealRepository
         aod_and_rem_return = VACOLS::Case.where(bfkey: vacols_ids)
           .joins(VACOLS::Case::JOIN_AOD, VACOLS::Case::JOIN_REMAND_RETURN)
           .select("bfkey", "aod", "rem_return")
-          .index_by do |row|
-            (row["bfkey"]).to_s
+          .each_with_object({}) do |row, memo|
+            memo[(row["bfkey"]).to_s] = row
           end
 
         cases.map do |case_record|
