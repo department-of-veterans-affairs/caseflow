@@ -31,7 +31,6 @@ class EndProductChangeValidator
     !(claim_family_change? ||
       source_review_change? ||
       fiduciary? ||
-      disallowed_board_grant_change? ||
       disallowed_disposition_change?)
   end
 
@@ -49,12 +48,8 @@ class EndProductChangeValidator
     [old_hash[:benefit_type], new_hash[:benefit_type]].include?("fiduciary")
   end
 
-  def disallowed_board_grant_change?
-    old_code.start_with?("030BG") && !new_code.start_with?("030BG")
-  end
-
   def disallowed_disposition_change?
-    %w[board_remand dta_error difference_of_opinion].any? do |disp|
+    %w[allowed board_remand dta_error difference_of_opinion].any? do |disp|
       old_hash[:disposition_type] == disp && new_hash[:disposition_type] != disp
     end
   end

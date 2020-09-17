@@ -40,7 +40,7 @@ describe EndProductChangeValidator do
       let(:code) { "030BGR" }
 
       it "allows changes only to other BGE codes" do
-        expect(subject.keys).to all start_with("030BG")
+        expect(subject.values).to all include(disposition_type: "allowed")
       end
     end
 
