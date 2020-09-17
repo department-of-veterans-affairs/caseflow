@@ -47,6 +47,9 @@ class DocketSwitchMailTask < MailTask
       ClerkOfTheBoard.singleton.user_has_access?(user)
     end
 
+    # This differs from the default behavior of `MailTask`
+    # Here we automatically assign the new task to the user that created it
+    # They can reassign if need be, but this covers normal use cases
     def child_task_assignee(parent, params)
       if [:assigned_to_type, :assigned_to_id].all? { |key| params.key?(key) }
         super
