@@ -8,7 +8,7 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require "fake_date_helper"
 require "react_on_rails"
 require "timeout"
-require 'knapsack_pro'
+require "knapsack_pro"
 
 KnapsackPro::Adapters::RSpecAdapter.bind
 
