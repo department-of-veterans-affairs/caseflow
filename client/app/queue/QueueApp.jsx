@@ -84,6 +84,7 @@ import { FlashAlerts } from '../nonComp/components/Alerts';
 
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
 import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
+import ScheduleVeteran from '../hearings/components/ScheduleVeteran';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -146,6 +147,7 @@ class QueueApp extends React.PureComponent {
 
   routedQueueDetail = (props) => (
     <CaseDetailsView
+      userCanScheduleVirtualHearings={this.props.featureToggles.schedule_veteran_virtual_hearing}
       appealId={props.match.params.appealId}
       userCanAccessReader={!this.props.hasCaseDetailsRole && !this.props.userCanViewHearingSchedule}
     />
@@ -256,9 +258,16 @@ class QueueApp extends React.PureComponent {
     <UpdateTaskStatusAssignRegionalOfficeModal updateStatusTo={updateStatusTo} {...props.match.params} />
   );
 
-  routedAssignHearingModal = (props) => <AssignHearingModal userId={this.props.userId} {...props.match.params} />;
+  routedScheduleVeteran = (props) => <ScheduleVeteran userId={this.props.userId} {...props.match.params} />
 
-  routedPostponeHearingModal = (props) => <PostponeHearingModal userId={this.props.userId} {...props.match.params} />;
+  routedAssignHearingModal = (props) => <AssignHearingModal userId={this.props.userId} {...props.match.params} />
+
+  routedPostponeHearingModal = (props) => (
+    <PostponeHearingModal
+      userCanScheduleVirtualHearings={this.props.featureToggles.schedule_veteran_virtual_hearing}
+      userId={this.props.userId} {...props.match.params}
+    />
+  )
 
   routedChangeTaskTypeModal = (props) => <ChangeTaskTypeModal {...props.match.params} />;
 
@@ -633,7 +642,11 @@ class QueueApp extends React.PureComponent {
                 exact
                 path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SCHEDULE_VETERAN.value}`}
                 title="Assign Hearing | Caseflow"
-                render={this.routedAssignHearingModal}
+                render={
+                  this.props.featureToggles.schedule_veteran_virtual_hearing ?
+                    this.routedScheduleVeteran :
+                    this.routedAssignHearingModal
+                }
               />
               <PageRoute
                 exact

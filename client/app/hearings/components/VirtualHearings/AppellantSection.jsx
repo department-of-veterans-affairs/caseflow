@@ -9,6 +9,7 @@ import { HelperText } from './HelperText';
 import { VirtualHearingEmail } from './Emails';
 import { Timezone } from './Timezone';
 import { marginTop, noMaxWidth } from '../details/style';
+import { ReadOnly } from '../details/ReadOnly';
 
 export const AppellantSection = ({
   hearing,
@@ -18,50 +19,65 @@ export const AppellantSection = ({
   virtual,
   video,
   readOnly,
+  showDivider,
   update,
-  appellantTitle
-}) => (
-  <VirtualHearingSection label={appellantTitle}>
-    <AddressLine
-      name={hearing?.appellantFullName ?
-         hearing?.appellantFullName :
-          `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`}
-      addressLine1={hearing?.appellantAddressLine1}
-      addressState={hearing?.appellantState}
-      addressCity={hearing?.appellantCity}
-      addressZip={hearing?.appellantZip}
-    />
-    {virtual && !video && (
-      <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
-        <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
-          <Timezone
-            required
-            value={virtualHearing?.appellantTz}
-            onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
-            time={hearing.scheduledTimeString}
-            name={`${appellantTitle} Timezone`}
-            errorMessage={errors?.appellantTz}
+  appellantTitle,
+  showOnlyAppellantName
+}) => {
+  const appellantName = hearing?.appellantFullName ? hearing?.appellantFullName :
+    `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`;
+
+  const showTimezoneField = virtual && !video;
+
+  return (
+    <VirtualHearingSection label={appellantTitle} showDivider={showDivider}>
+      {showOnlyAppellantName ? (
+        <ReadOnly
+          label={`${appellantTitle} Name`}
+          text={appellantName} />
+      ) :
+        (
+          <AddressLine
+            name={appellantName}
+            addressLine1={hearing?.appellantAddressLine1}
+            addressState={hearing?.appellantState}
+            addressCity={hearing?.appellantCity}
+            addressZip={hearing?.appellantZip}
           />
-          <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
+        )}
+      {showTimezoneField && (
+        <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
+          <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
+            <Timezone
+              required
+              value={virtualHearing?.appellantTz}
+              onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
+              time={hearing.scheduledTimeString}
+              label={`${appellantTitle} Timezone`}
+              name="appellantTz"
+              errorMessage={errors?.appellantTz}
+            />
+            <HelperText label={COPY.VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT} />
+          </div>
+        </div>
+      )}
+      <div id="email-section" className={classNames('usa-grid', { [marginTop(30)]: true })}>
+        <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
+          <VirtualHearingEmail
+            required
+            readOnly={readOnly}
+            label={`${appellantTitle} Email`}
+            emailType="appellantEmail"
+            email={virtualHearing?.appellantEmail}
+            error={errors?.appellantEmail}
+            type={type}
+            update={update}
+          />
         </div>
       </div>
-    )}
-    <div id="email-section" className={classNames('usa-grid', { [marginTop(30)]: true })}>
-      <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
-        <VirtualHearingEmail
-          required
-          readOnly={readOnly}
-          label={`${appellantTitle} Email`}
-          emailType="appellantEmail"
-          email={virtualHearing?.appellantEmail}
-          error={errors?.appellantEmail}
-          type={type}
-          update={update}
-        />
-      </div>
-    </div>
-  </VirtualHearingSection>
-);
+    </VirtualHearingSection>
+  );
+};
 
 AppellantSection.propTypes = {
   hearing: PropTypes.object,
@@ -72,5 +88,7 @@ AppellantSection.propTypes = {
   virtual: PropTypes.bool,
   video: PropTypes.bool,
   readOnly: PropTypes.bool,
-  appellantTitle: PropTypes.string
+  appellantTitle: PropTypes.string,
+  showOnlyAppellantName: PropTypes.bool,
+  showDivider: PropTypes.bool
 };

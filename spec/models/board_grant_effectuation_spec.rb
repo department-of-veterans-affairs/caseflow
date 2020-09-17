@@ -121,6 +121,16 @@ describe BoardGrantEffectuation, :postgres do
         end
       end
     end
+
+    context "when syncing a nonrating decision" do
+      let(:rating_or_nonrating) { :nonrating }
+
+      it "does not try to fetch an associated rating" do
+        expect(end_product_establishment).not_to receive(:associated_rating)
+        subject
+        expect(board_grant_effectuation.decision_sync_error).to be_nil
+      end
+    end
   end
 
   context ".create" do
