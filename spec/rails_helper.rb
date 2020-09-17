@@ -10,8 +10,8 @@ require "react_on_rails"
 require "timeout"
 require "knapsack_pro"
 
-TMP_RSPEC_XML_REPORT = 'tmp/rspec.xml'
-FINAL_RSPEC_XML_REPORT = '~/test-results/rspec/rspec.xml'
+TMP_RSPEC_XML_REPORT = "tmp/rspec.xml"
+FINAL_RSPEC_XML_REPORT = "~/test-results/rspec/rspec.xml"
 
 KnapsackPro::Adapters::RSpecAdapter.bind
 #KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
