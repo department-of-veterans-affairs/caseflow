@@ -8,7 +8,7 @@ describe DecisionDateChecker, :postgres do
           create(:request_issue, :nonrating, id: 34, decision_date: nil),
           create(:request_issue, :nonrating, id: 56, decision_date: nil),
           create(:request_issue, :rating, id: 78),
-          create(:request_issue, :unidentified),
+          create(:request_issue, :unidentified)
         ]
     end
 
