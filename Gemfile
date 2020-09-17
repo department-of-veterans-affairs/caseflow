@@ -103,6 +103,7 @@ group :test, :development, :demo do
   gem "jshint", platforms: :ruby
   gem "pry"
   gem "pry-byebug"
+  gem "rails-erd"
   gem "rb-readline"
   gem "rspec"
   gem "rspec-rails"
@@ -128,7 +129,6 @@ group :development do
   gem "fasterer", require: false
   gem "foreman"
   gem "meta_request"
-  gem "rails-erd"
   gem "ruby-prof", "~> 1.4"
 end
 
