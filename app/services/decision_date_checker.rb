@@ -15,7 +15,6 @@ class DecisionDateChecker < DataIntegrityChecker
     issues_without_decision_date = RequestIssue.where
       .not(nonrating_issue_category: nil)
       .where(decision_date: nil, closed_at: nil)
-    issues_without_decision_date
   end
 
   def build_report
