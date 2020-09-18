@@ -121,15 +121,15 @@ jobs:
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
       - run:
+          name: Wait for FACOLS to be ready
+          command: |
+            ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
+
+      - run:
           name: Database setup
           command: |
             ~/project/ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate"
             ~/project/ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate"
-
-      - run:
-          name: Wait for FACOLS to be ready
-          command: |
-            ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
 
       - run:
           name: make seed-dbs
@@ -195,15 +195,15 @@ jobs:
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
       - run:
+          name: Wait for FACOLS to be ready
+          command: |
+            ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
+
+      - run:
           name: Database setup
           command: |
             ~/project/ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate:redo"
             ~/project/ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate:redo"
-
-      - run:
-          name: Wait for FACOLS to be ready
-          command: |
-            ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
 
       - run:
           name: FACOLS test setup
