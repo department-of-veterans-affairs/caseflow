@@ -16,6 +16,11 @@ commands:
           name: Bundle install
           command: bundle install --path vendor/bundle
 
+      - save_cache:
+          key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ~/project/vendor/bundle
+
   install_node_dependencies:
     description: "Install NodeJS Dependencies"
     steps:
@@ -279,18 +284,7 @@ jobs:
     steps:
       - checkout
 
-      - restore_cache:
-          keys:
-            - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
-
-      - run:
-          name: Bundle install
-          command: bundle install --path vendor/bundle
-
-      - save_cache:
-          key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
-          paths:
-            - ~/project/vendor/bundle
+      - install_ruby_dependencies
 
       - install_node_dependencies
 
