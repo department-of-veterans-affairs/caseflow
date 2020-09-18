@@ -47,9 +47,9 @@ class ChangeHearingRequestTypeTask < Task
 
   def update_appeal_and_self(payload_values, params)
     multi_transaction do
-      appeal.update(changed_request_type: payload_values[:changed_request_type])
+      appeal.update!(changed_request_type: payload_values[:changed_request_type])
 
-      update(params)
+      update!(params)
     end
   end
 
