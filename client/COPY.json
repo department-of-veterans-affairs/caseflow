@@ -605,7 +605,6 @@
   "CORRECT_REQUEST_ISSUES_ESTABLISH_MODAL_TEXT": "You are now creating a 930 EP in VBMS.",
   "CORRECT_REQUEST_ISSUES_ESTABLISH_MODAL_BUTTON": "Yes, establish",
 
-  "NO_RELATIONSHIPS": "This Veteran currently has no known relationships. If you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
   "DUPLICATE_PHONE_NUMBER_TITLE": "Veteran Record Alert",
   "DUPLICATE_PHONE_NUMBER_MESSAGE": "Please contact VLJ Support to request that this veteran's information be updated to remove duplicate phone numbers currently on file to resolve this error.",
   "INCIDENT_FLASH_ERROR_START": "Please send an encrypted email to the ",

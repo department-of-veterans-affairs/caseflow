@@ -30,7 +30,7 @@ const claimantLabel = React.createElement(
 const noClaimantsCopy = React.createElement(
   'p',
   { id: 'noClaimants', className: 'cf-red-text' },
-  COPY.NO_RELATIONSHIPS,
+  COPY.CLAIMANT_NOT_FOUND_START,
   email,
   COPY.CLAIMANT_NOT_FOUND_END
 );
@@ -137,7 +137,7 @@ export const SelectClaimant = (props) => {
       <div>
         <RadioField
           name="claimant-options"
-          label={claimantLabel}
+          label={!claimant && !relationships.length ? "Claimant with no relationships" : claimantLabel}
           strongLabel
           vertical
           options={radioOpts}
@@ -184,8 +184,8 @@ export const SelectClaimant = (props) => {
         value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant?.toString()}
       />
 
-      {showClaimants && hasRelationships && claimantOptions()}
-      {showClaimants && !hasRelationships && noClaimantsCopy}
+      {showClaimants && (hasRelationships || newClaimant) && claimantOptions()}
+      {showClaimants && !hasRelationships  && noClaimantsCopy }
 
       {allowAddClaimant && (
         <>
