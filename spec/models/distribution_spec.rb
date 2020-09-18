@@ -277,18 +277,20 @@ describe Distribution, :all_dbs do
           distribution = create(:distribution, judge: judge)
           # illegit because appeal has open hearing tasks
           appeal = create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case)
+          appeal.tasks.open.where.not(type: RootTask.name).each(&:completed!)
           create_nonpriority_distributed_case(distribution, case_id, legacy_case.bfdloout)
           distribution.update!(status: "completed", completed_at: today)
           allow(Raven).to receive(:capture_exception) { @raven_called = true }
+          allow_any_instance_of(RedistributedCase).to receive(:ok_to_redistribute?).and_return(false)
         end
 
-        it "does not create a duplicate distributed_case and updates the location to caseflow" do
+        it "does not create a duplicate distributed_case and creates an alert" do
           subject.distribute!
           expect(subject.valid?).to eq(true)
           expect(subject.error?).to eq(false)
-          expect(@raven_called).to eq(false)
+          expect(@raven_called).to eq(true)
           expect(subject.distributed_cases.pluck(:case_id)).to_not include(case_id)
-          expect(legacy_case.reload.bfcurloc).to eq("CASEFLOW")
+          expect(legacy_case.reload.bfcurloc).to eq(previous_location)
         end
       end
 

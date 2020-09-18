@@ -66,7 +66,6 @@ class RedistributedCase
       error,
       tags: { vacols_id: case_id },
       extra: {
-        judge: new_distribution.judge.css_id,
         location: legacy_appeal.location_code,
         previous_location: legacy_appeal.location_history.last.summary
       }
