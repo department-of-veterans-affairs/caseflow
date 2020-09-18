@@ -60,7 +60,7 @@ commands:
           command: |
             ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
           environment:
-            RAILS_ENV: development # rake will try to initialize the VACOLS schema if this is test
+            DISABLE_FACTORY_BOT_INITIALIZERS: 1
 
 jobs:
   # build workspace
