@@ -326,6 +326,11 @@ FactoryBot.define do
         assigned_to { HearingAdmin.singleton }
       end
 
+      factory :changed_hearing_request_type, class: ChangeHearingRequestTypeTask do
+        assigned_to { Bva.singleton }
+        parent { create(:schedule_hearing_task, parent: create(:hearing_task, appeal: appeal)) }
+      end
+
       factory :ama_judge_decision_review_task, class: JudgeDecisionReviewTask do
       end
 
