@@ -888,7 +888,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           }
         end
 
-        fit "sucessfully updates appeal and closes related tasks", :aggregate_failures do
+        it "sucessfully updates appeal and closes related tasks", :aggregate_failures do
           # Ensure that the changed request type is nil before we take action
           expect(legacy_appeal.changed_request_type).to eq(nil)
           subject
