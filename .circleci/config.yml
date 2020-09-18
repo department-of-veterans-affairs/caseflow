@@ -1,7 +1,7 @@
 version: 2.1
 jobs:
-  # build webpack.js file
-  build_webpack:
+  # build workspace
+  build_worksapce:
     docker:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
@@ -11,8 +11,37 @@ jobs:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
           - NODE_ENV: test
+    resource_class: large
     steps:
       - checkout
+
+      - run:
+          name: Setup testfiles directory
+          command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
+
+      - run:
+          name: Ruby version
+          command: ruby -v
+
+      - restore_cache:
+          keys:
+            - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+
+      - run:
+          name: Bundle install
+          command: bundle install --path vendor/bundle
+
+      - save_cache:
+          key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ~/project/vendor/bundle
+
+      - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.6.1
+
       - restore_cache:
           name: Restore yarn cache
           key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
@@ -67,28 +96,8 @@ jobs:
       - image: circleci/redis:4.0.10
     resource_class: large
     steps:
-      - checkout
-
-      - run:
-          name: Setup testfiles directory
-          command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
-
-      - run:
-          name: Ruby version
-          command: ruby -v
-
-      - restore_cache:
-          keys:
-            - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
-
-      - run:
-          name: Bundle install
-          command: bundle install --path vendor/bundle
-
-      - save_cache:
-          key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
-          paths:
-            - ~/project/vendor/bundle
+      - attach_workspace:
+          at: .
 
       - run:
           name: install dockerize
@@ -161,27 +170,6 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-
-      - run:
-          name: Setup testfiles directory
-          command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
-
-      - run:
-          name: Ruby version
-          command: ruby -v
-
-      - restore_cache:
-          keys:
-            - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
-
-      - run:
-          name: Bundle install
-          command: bundle install --path vendor/bundle
-
-      - save_cache:
-          key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
-          paths:
-            - ~/project/vendor/bundle
 
       - run:
           name: install dockerize
@@ -403,10 +391,12 @@ workflows:
   version: 2
   build:
     jobs:
-      - build_webpack
+      - build_workspace
       - demo
+          requires:
+            - build_workspace
       - rspec:
           requires:
-            - build_webpack
+            - build_workspace
       - js_tests
       - lint
