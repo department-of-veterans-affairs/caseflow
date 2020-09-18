@@ -373,7 +373,7 @@ workflows:
   build:
     jobs:
       - build_workspace
-      - demo:
+      - demo
       - rspec:
           requires:
             - build_workspace
