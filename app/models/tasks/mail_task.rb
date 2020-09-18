@@ -20,8 +20,13 @@ class MailTask < Task
       false
     end
 
-    def subclass_routing_options
-      MailTask.subclasses.sort_by(&:label).map { |subclass| { value: subclass.name, label: subclass.label } }
+    def subclass_routing_options(user = nil)
+      filtered = MailTask.subclasses.select { |sc| sc.allow_creation?(user) }
+      filtered.sort_by(&:label).map { |subclass| { value: subclass.name, label: subclass.label } }
+    end
+
+    def allow_creation?(_user)
+      true
     end
 
     def parent_if_blocking_task(parent_task)

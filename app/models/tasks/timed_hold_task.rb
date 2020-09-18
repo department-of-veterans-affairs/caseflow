@@ -2,6 +2,7 @@
 
 ##
 # Task that places parent task on hold for specified length of time. Holds expire through the TaskTimerJob.
+# https://github.com/department-of-veterans-affairs/caseflow/wiki/Timed-Tasks#timedholdtask
 
 class TimedHoldTask < Task
   include TimeableTask
