@@ -84,6 +84,7 @@ jobs:
     resource_class: large
     parallelism: 11
     steps:
+      - checkout
 
   # validate our demo/development setup
   demo:
