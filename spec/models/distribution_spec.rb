@@ -284,7 +284,7 @@ describe Distribution, :all_dbs do
           allow_any_instance_of(RedistributedCase).to receive(:ok_to_redistribute?).and_return(false)
         end
 
-        it "does not create a duplicate distributed_case and creates an alert" do
+        it "does not create a duplicate distributed_case and sends alert" do
           subject.distribute!
           expect(subject.valid?).to eq(true)
           expect(subject.error?).to eq(false)
