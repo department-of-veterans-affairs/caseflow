@@ -96,7 +96,6 @@ group :test, :development, :demo do
   gem "capybara-screenshot"
   gem "danger", "~> 6.0"
   gem "database_cleaner"
-  gem "factory_bot_rails", "~> 4.8"
   gem "faker"
   gem "guard-rspec"
   # Linters
@@ -133,6 +132,7 @@ group :development do
 end
 
 group :test do
+  gem "factory_bot_rails", "~> 4.8"
   # For retrying failed feature tests. Read more: https://github.com/NoRedInk/rspec-retry
   gem "rspec-retry"
   gem "webmock"
