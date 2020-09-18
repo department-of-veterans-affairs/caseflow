@@ -1,41 +1,78 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import { mount } from 'enzyme';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import COPY from 'COPY';
-import { ScheduleVeteran } from 'app/hearings/components/ScheduleVeteran';
+import ScheduleVeteran from 'app/hearings/components/ScheduleVeteran';
 import {
   amaAppeal,
   defaultHearing,
   scheduleHearingDetails,
   virtualHearing,
   hearingDateOptions,
+  scheduledHearing,
+  scheduleVeteranResponse,
+  openHearingAppeal,
+  legacyAppeal
 } from 'test/data';
-import { queueWrapper } from 'test/data/stores/queueStore';
+import { queueWrapper, appealsData } from 'test/data/stores/queueStore';
 import Button from 'app/components/Button';
-import { Link } from 'react-router-dom';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { formatDateStr } from 'app/util/DateUtil';
 import { HEARING_REQUEST_TYPES } from 'app/hearings/constants';
 import Alert from 'app/components/Alert';
 import { AppellantSection } from 'app/hearings/components/VirtualHearings/AppellantSection';
 import { RepresentativeSection } from 'app/hearings/components/VirtualHearings/RepresentativeSection';
 import { ScheduleVeteranForm } from 'app/hearings/components/ScheduleVeteranForm';
+import ApiUtil from 'app/util/ApiUtil';
+
+import * as uiActions from 'app/queue/uiReducer/uiActions';
+
+jest.mock('app/queue/uiReducer/uiActions');
+import * as utils from 'app/hearings/utils';
 
 // Set the spies
 const changeSpy = jest.fn();
 const cancelSpy = jest.fn();
-const submitSpy = jest.fn();
-const error = 'Error';
+const defaultError = {
+  response: {
+    body: {
+      errors: [
+        {
+          code: 500
+        }
+      ]
+    }
+  }
+};
+
+let patchSpy;
+const setState = jest.fn();
+const useStateMock = (initState) => [initState, setState];
 
 describe('ScheduleVeteran', () => {
+
+  beforeEach(() => {
+    jest.spyOn(document, 'getElementById').mockReturnValue({ scrollIntoView: jest.fn() });
+    jest.spyOn(utils, 'processAlerts');
+    patchSpy = jest.spyOn(ApiUtil, 'patch');
+    jest.spyOn(React, 'useState').mockImplementation(useStateMock);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   test('Matches snapshot with default props', () => {
-    // Render the address component
+    // Render the scheduleVeteran component
     const scheduleVeteran = mount(
       <ScheduleVeteran
         goBack={cancelSpy}
         onChange={changeSpy}
-        appeal={amaAppeal}
+        appeals={appealsData}
+        appealId={amaAppeal.externalId}
         hearing={defaultHearing}
+        scheduledHearing={scheduledHearing}
       />,
       {
         wrappingComponent: queueWrapper,
@@ -54,7 +91,7 @@ describe('ScheduleVeteran', () => {
     expect(scheduleVeteran).toMatchSnapshot();
   });
 
-  test('Displays form validation errors when present and does not submit form', () => {
+  test('Displays form validation errors when present and does not submit form', async () => {
     // Setup the test
     const errors = {
       hearingLocation: null,
@@ -63,61 +100,68 @@ describe('ScheduleVeteran', () => {
       hearingDay: 'Please select a hearing date'
     };
 
-    // Render the address component
-    const scheduleVeteran = shallow(
+    // Render the scheduleVeteran component
+    const scheduleVeteran = mount(
       <ScheduleVeteran
+        scheduledHearing={scheduledHearing}
         history={{ goBack: cancelSpy }}
-        requestPatch={submitSpy}
         onChange={changeSpy}
-        appeal={amaAppeal}
-        assignHearingForm={{
-          ...scheduleHearingDetails,
-          hearingDay: null
-        }}
+        appeals={appealsData}
+        appealId={amaAppeal.externalId}
       />,
       {
         wrappingComponent: queueWrapper,
+        wrappingComponentProps: {
+          components: {
+            forms: {
+              assignHearing: {
+                ...scheduleHearingDetails,
+                hearingDay: null
+              }
+            }
+          }
+        }
       }
     );
 
     // Run the test
     scheduleVeteran.find(Button).at(1).
+      find('button').
       simulate('click');
-    expect(submitSpy).toHaveBeenCalledTimes(0);
+    expect(patchSpy).toHaveBeenCalledTimes(0);
     expect(scheduleVeteran.find(ScheduleVeteranForm).prop('errors')).toEqual(errors);
     expect(scheduleVeteran).toMatchSnapshot();
   });
-
   test('Can handle backend validation errors for Legacy Appeals', () => {
-    // Setup the spy
-    const errorMessageSpy = jest.fn();
-    const errorSpy = jest.fn(() => {
-      throw error;
+    // Setup the test
+    patchSpy.mockImplementationOnce(() => {
+      throw defaultError;
     });
 
-    // Render the address component
-    const scheduleVeteran = shallow(
+    // Render the scheduleVeteran component
+    const scheduleVeteran = mount(
       <ScheduleVeteran
-        showErrorMessage={errorMessageSpy}
-        history={{ goBack: cancelSpy }}
-        requestPatch={errorSpy}
         onChange={changeSpy}
-        appeal={{
-          ...amaAppeal,
-          isLegacyAppeal: true
-        }}
-        assignHearingForm={scheduleHearingDetails}
+        appeals={appealsData}
+        appealId={legacyAppeal.externalId}
       />,
       {
         wrappingComponent: queueWrapper,
+        wrappingComponentProps: {
+          components: {
+            forms: {
+              assignHearing: scheduleHearingDetails,
+            }
+          }
+        }
       }
     );
 
     // Run the test
     scheduleVeteran.find(Button).at(1).
+      find('button').
       simulate('click');
-    expect(cancelSpy).toHaveBeenCalledTimes(0);
-    expect(errorMessageSpy).toHaveBeenCalledWith({
+    expect(uiActions.showErrorMessage).toHaveBeenCalledWith({
       title: 'No Available Slots',
       detail:
         'Could not find any available slots for this regional office and hearing day combination. ' +
@@ -126,33 +170,132 @@ describe('ScheduleVeteran', () => {
     expect(scheduleVeteran).toMatchSnapshot();
   });
 
-  test('Can handle backend validation errors for AMA Appeals', () => {
-    // Setup the spy
-    const errorMessageSpy = jest.fn();
-    const errorSpy = jest.fn(() => {
-      throw error;
+  test('Displays error message title when present', () => {
+    // Setup the test
+    const titleError = {
+      response: {
+        body: {
+          errors: [
+            {
+              title: 'Error',
+              detail: 'message'
+            }
+          ]
+        }
+      }
+    };
+
+    patchSpy.mockImplementationOnce(() => {
+      throw titleError;
     });
 
-    // Render the address component
-    const scheduleVeteran = shallow(
+    // Render the scheduleVeteran component
+    const scheduleVeteran = mount(
       <ScheduleVeteran
-        showErrorMessage={errorMessageSpy}
-        history={{ goBack: cancelSpy }}
-        requestPatch={errorSpy}
         onChange={changeSpy}
-        appeal={amaAppeal}
-        assignHearingForm={scheduleHearingDetails}
+        appeals={appealsData}
+        appealId={legacyAppeal.externalId}
       />,
       {
         wrappingComponent: queueWrapper,
+        wrappingComponentProps: {
+          components: {
+            forms: {
+              assignHearing: scheduleHearingDetails,
+            }
+          }
+        }
       }
     );
 
     // Run the test
     scheduleVeteran.find(Button).at(1).
+      find('button').
+      simulate('click');
+    expect(uiActions.showErrorMessage).toHaveBeenCalledWith(titleError.response.body.errors[0]);
+    expect(scheduleVeteran).toMatchSnapshot();
+  });
+
+  test('Displays email errors when present', async () => {
+    // Setup the test
+    const emailError = {
+      response: {
+        body: {
+          errors: [
+            {
+              code: 1002,
+              message: 'Validation Error: Appellant email malformed'
+            }
+          ]
+        }
+      }
+    };
+
+    patchSpy.mockImplementationOnce(() => {
+      throw emailError;
+    });
+
+    // Render the scheduleVeteran component
+    const scheduleVeteran = mount(
+      <ScheduleVeteran
+        onChange={changeSpy}
+        appeals={appealsData}
+        appealId={legacyAppeal.externalId}
+      />,
+      {
+        wrappingComponent: queueWrapper,
+        wrappingComponentProps: {
+          components: {
+            forms: {
+              assignHearing: scheduleHearingDetails,
+            }
+          }
+        }
+      }
+    );
+
+    // Run the test
+    expect(scheduleVeteran.find(ScheduleVeteranForm).prop('errors')).toEqual({});
+
+    await scheduleVeteran.find(Button).at(1).
+      find('button').
+      simulate('click');
+    expect(scheduleVeteran.find(ScheduleVeteranForm).prop('errors')).toEqual({ appellantEmail: ' Veteran email malformed' });
+    expect(scheduleVeteran).toMatchSnapshot();
+  });
+
+  test('Can handle backend validation errors for AMA Appeals', () => {
+    // Setup the spy
+    patchSpy.mockImplementationOnce(() => {
+      throw defaultError;
+    });
+
+    // Render the scheduleVeteran component
+    const scheduleVeteran = mount(
+      <ScheduleVeteran
+        history={{ goBack: cancelSpy }}
+        onChange={changeSpy}
+        appeals={appealsData}
+        appealId={amaAppeal.externalId}
+      />,
+      {
+        wrappingComponent: queueWrapper,
+        wrappingComponentProps: {
+          components: {
+            forms: {
+              assignHearing: scheduleHearingDetails,
+            }
+          }
+        }
+      }
+    );
+
+    // Run the test
+    scheduleVeteran.find(Button).at(1).
+      find('button').
       simulate('click');
     expect(cancelSpy).toHaveBeenCalledTimes(0);
-    expect(errorMessageSpy).toHaveBeenCalledWith({
+    expect(uiActions.showErrorMessage).toHaveBeenCalledWith({
       title: 'No Hearing Day',
       detail:
         'Until April 1st hearing days for AMA appeals need to be created manually. ' +
@@ -162,14 +305,12 @@ describe('ScheduleVeteran', () => {
   });
 
   test('Can cancel the form', () => {
-    // Render the address component
-    const scheduleVeteran = shallow(
-      <ScheduleVeteran
-        history={{ goBack: cancelSpy }}
-        onChange={changeSpy}
-        appeal={amaAppeal}
-        hearing={defaultHearing}
-      />,
+    // Render the scheduleVeteran component
+    const scheduleVeteran = mount(
+
+      <ScheduleVeteran.WrappedComponent history={{ goBack: cancelSpy }}>
+        <ScheduleVeteran onChange={changeSpy} />
+      </ScheduleVeteran.WrappedComponent>,
       {
         wrappingComponent: queueWrapper,
       }
@@ -179,6 +320,7 @@ describe('ScheduleVeteran', () => {
     scheduleVeteran.
       find(Button).
       first().
+      find('button').
       simulate('click');
 
     // Assertions
@@ -186,9 +328,72 @@ describe('ScheduleVeteran', () => {
     expect(scheduleVeteran).toMatchSnapshot();
   });
 
-  test('Can submit the form', () => {
+  test('Displays virtual hearing alerts when present', async () => {
     // Setup the test
-    const scheduleHearingTask = { taskId: '123' };
+    patchSpy.mockReturnValueOnce({
+      body: {
+        tasks: {
+          ...scheduleVeteranResponse.body.tasks,
+          alerts: [{ title: 'Success', detail: 'success' }]
+        }
+      }
+    });
+
+    // Render the scheduleVeteran component
+    const scheduleVeteran = mount(
+      <ScheduleVeteran
+        showSuccessMessage={jest.fn()}
+        onChange={changeSpy}
+        appeals={appealsData}
+        appealId={amaAppeal.externalId}
+      />,
+      {
+        wrappingComponent: queueWrapper,
+        wrappingComponentProps: {
+          components: {
+            scheduledHearing,
+            forms: {
+              assignHearing: {
+                ...scheduleHearingDetails,
+                virtualHearing: virtualHearing.virtualHearing
+              }
+            }
+          }
+        }
+      }
+    );
+
+    // Run the test
+    await scheduleVeteran.find(Button).at(1).
+      find('button').
+      simulate('click');
+
+    // Assertions
+    expect(patchSpy).toHaveBeenCalledWith(
+      `/tasks/${scheduledHearing.taskId}`,
+      {
+        data: {
+          task: {
+            status: 'completed',
+            business_payloads: {
+              description: 'Update Task',
+              values: {
+                ...scheduleHearingDetails.apiFormattedValues,
+                virtual_hearing_attributes: ApiUtil.convertToSnakeCase(virtualHearing.virtualHearing),
+                override_full_hearing_day_validation: false,
+              },
+            },
+          },
+        },
+      }
+    );
+    expect(uiActions.showSuccessMessage).not.toHaveBeenCalled();
+    expect(utils.processAlerts).toHaveBeenCalled();
+    expect(scheduleVeteran).toMatchSnapshot();
+  });
+  test('Can submit the form', async () => {
+    // Setup the test
+    patchSpy.mockReturnValue(scheduleVeteranResponse);
     const successMsg = {
       detail: (
         <p>
@@ -197,7 +402,7 @@ describe('ScheduleVeteran', () => {
           in new tab.
           <br />
           <br />
-          <Link to={`/hearings/schedule/assign?regional_office_key=${scheduleHearingDetails.hearingDay.regionalOffice}`}>
+          <Link href={`/hearings/schedule/assign?regional_office_key=${scheduleHearingDetails.hearingDay.regionalOffice}`}>
             Back to Schedule Veterans
           </Link>
         </p>
@@ -211,28 +416,35 @@ describe('ScheduleVeteran', () => {
       )}.`,
     };
 
-    // Render the address component
-    const scheduleVeteran = shallow(
+    // Render the scheduleVeteran component
+    const scheduleVeteran = mount(
       <ScheduleVeteran
-        scheduleHearingTask={scheduleHearingTask}
-        history={{ goBack: cancelSpy }}
-        requestPatch={submitSpy}
+        showSuccessMessage={jest.fn()}
         onChange={changeSpy}
-        appeal={amaAppeal}
-        assignHearingForm={scheduleHearingDetails}
+        appeals={appealsData}
+        appealId={amaAppeal.externalId}
       />,
       {
         wrappingComponent: queueWrapper,
+        wrappingComponentProps: {
+          components: {
+            scheduledHearing,
+            forms: {
+              assignHearing: scheduleHearingDetails,
+            }
+          }
+        }
       }
     );
 
     // Run the test
-    scheduleVeteran.find(Button).at(1).
+    await scheduleVeteran.find(Button).at(1).
+      find('button').
       simulate('click');
 
     // Assertions
-    expect(submitSpy).toHaveBeenCalledWith(
-      `/tasks/${scheduleHearingTask.taskId}`,
+    expect(patchSpy).toHaveBeenCalledWith(
+      `/tasks/${scheduledHearing.taskId}`,
       {
         data: {
           task: {
@@ -241,33 +453,40 @@ describe('ScheduleVeteran', () => {
               description: 'Update Task',
               values: {
                 ...scheduleHearingDetails.apiFormattedValues,
+                virtual_hearing_attributes: null,
                 override_full_hearing_day_validation: false,
               },
             },
           },
         },
-      },
-      successMsg
+      }
     );
-    expect(cancelSpy).toHaveBeenCalledTimes(1);
+    expect(uiActions.showSuccessMessage).toHaveBeenCalledWith(successMsg);
     expect(scheduleVeteran).toMatchSnapshot();
   });
 
   test('Displays warning message for full hearing days', () => {
-    // Render the address component
-    const scheduleVeteran = shallow(
+    // Render the scheduleVeteran component
+    const scheduleVeteran = mount(
       <ScheduleVeteran
+        scheduledHearing={scheduledHearing}
         history={{ goBack: cancelSpy }}
-        requestPatch={submitSpy}
         onChange={changeSpy}
-        appeal={amaAppeal}
-        assignHearingForm={{
-          ...scheduleHearingDetails,
-          hearingDay: hearingDateOptions.filter((date) => date.value.filledSlots >= date.value.totalSlots)[0].value
-        }}
+        appeals={appealsData}
+        appealId={amaAppeal.externalId}
       />,
       {
         wrappingComponent: queueWrapper,
+        wrappingComponentProps: {
+          components: {
+            forms: {
+              assignHearing: {
+                ...scheduleHearingDetails,
+                hearingDay: hearingDateOptions.filter((date) => date.value.filledSlots >= date.value.totalSlots)[0].value
+              }
+            }
+          }
+        }
       }
     );
 
@@ -277,18 +496,25 @@ describe('ScheduleVeteran', () => {
   });
 
   test('Displays only an error when there is an open hearing on the selected appeal', () => {
-    // Render the address component
-    const scheduleVeteran = shallow(
+    // Render the scheduleVeteran component
+    const scheduleVeteran = mount(
       <ScheduleVeteran
+        appeals={appealsData}
+        appealId={openHearingAppeal.externalId}
+        scheduledHearing={scheduledHearing}
         error={{ detail: 'Open Hearing' }}
         history={{ goBack: cancelSpy }}
-        requestPatch={submitSpy}
         onChange={changeSpy}
-        appeal={amaAppeal}
-        assignHearingForm={scheduleHearingDetails}
       />,
       {
         wrappingComponent: queueWrapper,
+        wrappingComponentProps: {
+          components: {
+            forms: {
+              assignHearing: scheduleHearingDetails,
+            }
+          }
+        }
       }
     );
 
@@ -299,21 +525,29 @@ describe('ScheduleVeteran', () => {
   });
 
   test('Displays virtual hearing form details for virtual hearings', () => {
-    // Render the address component
+    // Render the scheduleVeteran component
     const scheduleVeteran = mount(
       <ScheduleVeteran
+        scheduledHearing={scheduledHearing}
         onChangeFormData={changeSpy}
         goBack={cancelSpy}
         onChange={changeSpy}
-        appeal={amaAppeal}
+        appeals={appealsData}
+        appealId={amaAppeal.externalId}
         hearing={defaultHearing}
-        assignHearingForm={{
-          ...scheduleHearingDetails,
-          virtualHearing: virtualHearing.virtualHearing
-        }}
       />,
       {
         wrappingComponent: queueWrapper,
+        wrappingComponentProps: {
+          components: {
+            forms: {
+              assignHearing: {
+                ...scheduleHearingDetails,
+                virtualHearing: virtualHearing.virtualHearing
+              }
+            }
+          }
+        }
       }
     );
 

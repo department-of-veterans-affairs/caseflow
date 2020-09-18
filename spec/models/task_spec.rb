@@ -310,6 +310,9 @@ describe Task, :all_dbs do
     let!(:top_level_task) { create(:task, appeal: appeal) }
     let!(:second_level_tasks) { create_list(:task, 2, parent: top_level_task) }
     let!(:third_level_task) { create_list(:task, 2, parent: second_level_tasks.first) }
+    let(:logged_in_user) { create(:user) }
+
+    before { User.authenticate!(user: logged_in_user) }
 
     it "cancels all tasks and child subtasks" do
       initial_versions = second_level_tasks[0].versions.count
@@ -321,6 +324,7 @@ describe Task, :all_dbs do
 
       [top_level_task, *second_level_tasks, *third_level_task].each do |task|
         expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(task.cancelled_by_id).to eq(logged_in_user.id)
       end
     end
   end
@@ -496,6 +500,20 @@ describe Task, :all_dbs do
 
     it "returns no actions when task doesn't have an active hearing task ancestor" do
       expect(subject).to eq []
+    end
+
+    context "when the user is an admin on any of the hearings teams" do
+      it "returns the reassign action" do
+        [HearingsManagement, HearingAdmin, TranscriptionTeam].each do |org|
+          admin = create(:user).tap { |user| OrganizationsUser.make_user_admin(user, org.singleton) }
+          assignee = create(:user).tap { |user| org.singleton.add_user(user) }
+          task = create(:ama_task, assigned_to: assignee)
+
+          expect(task.available_hearing_user_actions(admin)).to match_array(
+            [Constants.TASK_ACTIONS.REASSIGN_TO_HEARINGS_TEAMS_MEMBER.to_h]
+          )
+        end
+      end
     end
 
     context "task has an active hearing task ancestor" do
@@ -1421,6 +1439,24 @@ describe Task, :all_dbs do
         task.update!(status: status)
         expect(task.closed_at).to_not eq(nil)
       end
+
+      it "does not set the cancelled_by_id if there is no logged in user" do
+        task.update!(cancelled_by_id: 1)
+        task.update!(status: status)
+        expect(task.cancelled_by_id).to eq(1)
+      end
+
+      context "when a user is logged in" do
+        let(:logged_in_user) { create(:user) }
+
+        before { User.authenticate!(user: logged_in_user) }
+
+        it "sets the cancelled_by_id of the logged in user" do
+          expect(task.cancelled_by_id).to be_nil
+          task.update!(status: status)
+          expect(task.cancelled_by_id).to eq(logged_in_user.id)
+        end
+      end
     end
 
     context "when a timestamp is passed" do
@@ -1621,67 +1657,6 @@ describe Task, :all_dbs do
     end
   end
 
-  describe ".cancelled_by" do
-    let(:task) { create(:ama_task) }
-    let(:canceler) { create(:user) }
-    let(:new_canceler) { create(:user) }
-
-    subject { task.cancelled_by }
-
-    context "when the task is still active" do
-      it "returns nil" do
-        expect(subject).to eq nil
-      end
-    end
-
-    context "when the task is cancelled" do
-      context "when there are no versions to interrogate" do
-        before { task.update_column(:status, Constants.TASK_STATUSES.cancelled) }
-
-        it "returns nil" do
-          expect(subject).to eq nil
-        end
-      end
-
-      context "when there are versions to interrogate" do
-        before { task.cancelled! }
-
-        let(:first_version) { task.versions.last }
-
-        context "when there is only one version" do
-          context "when there is no user defined by whodunnit" do
-            it "returns nil" do
-              expect(subject).to eq nil
-            end
-          end
-
-          context "when there is a user defined by whodunnit" do
-            before { first_version.update!(whodunnit: canceler.id.to_s) }
-
-            it "returns the canceler" do
-              expect(subject).to eq canceler
-            end
-          end
-        end
-
-        context "when there are multiple versions" do
-          before do
-            first_version.update!(whodunnit: canceler.id.to_s)
-            task.paper_trail.save_with_version.update!(
-              object_changes: "\"---\nstatus:\n- in_progress\n- cancelled\n",
-              whodunnit: new_canceler.id.to_s,
-              created_at: first_version.created_at + 1.day
-            )
-          end
-
-          it "returns the most recent canceler" do
-            expect(subject).to eq new_canceler
-          end
-        end
-      end
-    end
-  end
-
   describe ".cancel_descendants" do
     let(:appeal) { create(:appeal) }
     let(:top_level_task) { create(:task, appeal: appeal) }
@@ -1768,6 +1743,68 @@ describe Task, :all_dbs do
         expect(subject.keys).to match_array [:id, :assigned_to_email, :assigned_to_name, :type]
         expect(subject[:assigned_to_email]).to eq assignee.email
         expect(subject[:assigned_to_name]).to eq "#{assignee.full_name.titleize} (#{assignee.css_id})"
+      end
+    end
+  end
+
+  describe "hearings teams admin available actions" do
+    let(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
+    let(:parent) { appeal.tasks.detect { |task| task.type == HearingTask.name } }
+    let(:task_types) do
+      [
+        ChangeHearingDispositionTask,
+        HearingRelatedMailTask,
+        NoShowHearingTask,
+        ScheduleHearingColocatedTask,
+        TranscriptionTask,
+        HearingAdminActionTask.subclasses
+      ].flatten
+    end
+    let(:tasks) do
+      task_types.map do |type|
+        if type == TranscriptionTask
+          new_parent = AssignHearingDispositionTask.create!(
+            assigned_to: user, assigned_by: admin, parent: parent, appeal: appeal
+          )
+          type.create!(assigned_to: user, assigned_by: admin, parent: new_parent, appeal: appeal)
+        else
+          type.create!(assigned_to: user, assigned_by: admin, parent: parent, appeal: appeal)
+        end
+      end
+    end
+
+    let!(:user) do
+      create(:user).tap do |user|
+        HearingsManagement.singleton.add_user(user)
+        HearingAdmin.singleton.add_user(user)
+        TranscriptionTeam.singleton.add_user(user)
+      end
+    end
+
+    let!(:admin) do
+      create(:user).tap do |user|
+        OrganizationsUser.make_user_admin(user, HearingsManagement.singleton)
+        OrganizationsUser.make_user_admin(user, HearingAdmin.singleton)
+        OrganizationsUser.make_user_admin(user, TranscriptionTeam.singleton)
+      end
+    end
+
+    let(:reassign_label) { Constants.TASK_ACTIONS.REASSIGN_TO_HEARINGS_TEAMS_MEMBER.label }
+
+    it "can reassign any task assigned to a hearing management team member" do
+      tasks.each do |task|
+        expect(task.available_actions_unwrapper(admin).any? { |action| action[:label] == reassign_label }).to be true
+      end
+    end
+
+    context "when the users are a part of a non hearing team" do
+      let!(:user) { create(:user).tap { |user| MailTeam.singleton.add_user(user) } }
+      let!(:admin) { create(:user).tap { |user| OrganizationsUser.make_user_admin(user, MailTeam.singleton) } }
+
+      it "cannot reassign any task assigned to a hearing management team member" do
+        tasks.each do |task|
+          expect(task.available_actions_unwrapper(admin).any? { |action| action[:label] == reassign_label }).to be false
+        end
       end
     end
   end

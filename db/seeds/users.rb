@@ -76,6 +76,7 @@ module Seeds
       create_lit_support_user
       create_pulac_cerullo_user
       create_mail_team_user
+      create_clerk_of_the_board_user
       create_case_search_only_user
       create_judge_teams
       create_dvc_teams
@@ -317,6 +318,11 @@ module Seeds
     def create_mail_team_user
       u = User.create!(station_id: 101, css_id: "JOLLY_POSTMAN", full_name: "Huan MailUser Tiryaki")
       MailTeam.singleton.add_user(u)
+    end
+
+    def create_clerk_of_the_board_user
+      u = User.create!(station_id: 101, css_id: "CLERK_OF_THE_BOARD_USER", full_name: "Clark ClerkOfTheBoardUser Bard")
+      ClerkOfTheBoard.singleton.add_user(u)
     end
 
     def create_case_search_only_user
