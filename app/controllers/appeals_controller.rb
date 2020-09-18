@@ -98,6 +98,7 @@ class AppealsController < ApplicationController
                                 service: :queue,
                                 name: "AppealsController.show") do
             appeal.appeal_views.find_or_create_by(user: current_user).update!(last_viewed_at: Time.zone.now)
+
             render json: { appeal: json_appeals(appeal)[:data] }
           end
         else

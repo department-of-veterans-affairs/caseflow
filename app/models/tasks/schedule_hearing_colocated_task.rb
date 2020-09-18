@@ -20,6 +20,10 @@ class ScheduleHearingColocatedTask < ColocatedTask
       ]
     end
 
+    if task_is_assigned_to_user_within_admined_hearing_organization?(user)
+      return [Constants.TASK_ACTIONS.REASSIGN_TO_HEARINGS_TEAMS_MEMBER.to_h]
+    end
+
     []
   end
 
