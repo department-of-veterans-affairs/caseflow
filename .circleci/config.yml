@@ -48,6 +48,20 @@ commands:
           environment:
             DOCKERIZE_VERSION: v0.6.1
 
+  wait_for_databases:
+    description: "Wait for FACOLS and PostgreSQL"
+    steps:
+      - run:
+          name: Wait for database
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+
+      - run:
+          name: Wait for FACOLS to be ready
+          command: |
+            ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
+          environment:
+            RAILS_ENV: development # rake will try to initialize the VACOLS schema if this is test
+
 jobs:
   # build workspace
   build_workspace:
@@ -116,14 +130,7 @@ jobs:
 
       - install_dockerize
 
-      - run:
-          name: Wait for database
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m
-
-      - run:
-          name: Wait for FACOLS to be ready
-          command: |
-            ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
+      - wait_for_databases
 
       - run:
           name: Database setup
@@ -190,14 +197,7 @@ jobs:
 
       - install_dockerize
 
-      - run:
-          name: Wait for database
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m
-
-      - run:
-          name: Wait for FACOLS to be ready
-          command: |
-            ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
+      - wait_for_databases
 
       - run:
           name: Database setup
