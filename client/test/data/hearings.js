@@ -1,3 +1,6 @@
+/* eslint-disable max-lines */
+import { scheduledHearingTask } from './tasks';
+
 export const virtualHearingEmails = {
   emailEvents: [
     {
@@ -446,5 +449,21 @@ export const hearingDateOptions = [
       hearingDate: '2020-10-04'
     }
   }
-]
-;
+];
+
+export const scheduledHearing = {
+  taskId: '123',
+  disposition: null,
+  externalId: '3afefa82-5736-47c8-a977-0b4b8586f73e',
+  polling: false,
+};
+
+export const scheduleVeteranResponse = {
+  body: {
+    tasks: {
+      data: [scheduledHearingTask]
+    }
+  }
+};
+
+/* eslint-enable max-lines */

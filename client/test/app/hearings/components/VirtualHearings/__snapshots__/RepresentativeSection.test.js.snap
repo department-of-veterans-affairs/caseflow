@@ -152,7 +152,8 @@ SAN FRANCISCO, CA 94103
         className="usa-width-one-half css-uplrl8"
       >
         <Timezone
-          name="POA/Representative Timezone"
+          label="POA/Representative Timezone"
+          name="representativeTz"
           onChange={[Function]}
           readOnly={false}
           required={true}
@@ -162,8 +163,9 @@ SAN FRANCISCO, CA 94103
           <SearchableDropdown
             clearOnSelect={false}
             isClearable={true}
+            label="POA/Representative Timezone"
             loading={false}
-            name="POA/Representative Timezone"
+            name="representativeTz"
             onChange={[Function]}
             options={
               Array [
@@ -952,12 +954,12 @@ SAN FRANCISCO, CA 94103
             value={null}
           >
             <div
-              className="cf-form-dropdown dropdown-POA/Representative Timezone"
+              className="cf-form-dropdown dropdown-representativeTz"
               data-css-1gh7024=""
             >
               <label
                 className="question-label"
-                htmlFor="POA/Representative Timezone"
+                htmlFor="representativeTz"
               >
                 <strong>
                   <span>
@@ -982,7 +984,7 @@ SAN FRANCISCO, CA 94103
                     defaultInputValue=""
                     defaultMenuIsOpen={false}
                     defaultValue={null}
-                    inputId="POA/Representative Timezone"
+                    inputId="representativeTz"
                     isClearable={true}
                     isDisabled={false}
                     isLoading={false}
@@ -1782,7 +1784,7 @@ SAN FRANCISCO, CA 94103
                       formatGroupLabel={[Function]}
                       getOptionLabel={[Function]}
                       getOptionValue={[Function]}
-                      inputId="POA/Representative Timezone"
+                      inputId="representativeTz"
                       inputValue=""
                       isClearable={true}
                       isDisabled={false}
@@ -3390,7 +3392,7 @@ SAN FRANCISCO, CA 94103
                             "formatGroupLabel": [Function],
                             "getOptionLabel": [Function],
                             "getOptionValue": [Function],
-                            "inputId": "POA/Representative Timezone",
+                            "inputId": "representativeTz",
                             "inputValue": "",
                             "isClearable": true,
                             "isDisabled": false,
@@ -5049,7 +5051,7 @@ SAN FRANCISCO, CA 94103
                                   "formatGroupLabel": [Function],
                                   "getOptionLabel": [Function],
                                   "getOptionValue": [Function],
-                                  "inputId": "POA/Representative Timezone",
+                                  "inputId": "representativeTz",
                                   "inputValue": "",
                                   "isClearable": true,
                                   "isDisabled": false,
@@ -6716,7 +6718,7 @@ SAN FRANCISCO, CA 94103
                                         "formatGroupLabel": [Function],
                                         "getOptionLabel": [Function],
                                         "getOptionValue": [Function],
-                                        "inputId": "POA/Representative Timezone",
+                                        "inputId": "representativeTz",
                                         "inputValue": "",
                                         "isClearable": true,
                                         "isDisabled": false,
@@ -8370,7 +8372,7 @@ SAN FRANCISCO, CA 94103
                                               "formatGroupLabel": [Function],
                                               "getOptionLabel": [Function],
                                               "getOptionValue": [Function],
-                                              "inputId": "POA/Representative Timezone",
+                                              "inputId": "representativeTz",
                                               "inputValue": "",
                                               "isClearable": true,
                                               "isDisabled": false,
@@ -9237,7 +9239,7 @@ SAN FRANCISCO, CA 94103
                                           autoCorrect="off"
                                           cx={[Function]}
                                           getStyles={[Function]}
-                                          id="POA/Representative Timezone"
+                                          id="representativeTz"
                                           innerRef={[Function]}
                                           isDisabled={false}
                                           isHidden={false}
@@ -9261,7 +9263,7 @@ SAN FRANCISCO, CA 94103
                                               "formatGroupLabel": [Function],
                                               "getOptionLabel": [Function],
                                               "getOptionValue": [Function],
-                                              "inputId": "POA/Representative Timezone",
+                                              "inputId": "representativeTz",
                                               "inputValue": "",
                                               "isClearable": true,
                                               "isDisabled": false,
@@ -10119,7 +10121,7 @@ SAN FRANCISCO, CA 94103
                                                 autoCorrect="off"
                                                 className="cf-select__input"
                                                 disabled={false}
-                                                id="POA/Representative Timezone"
+                                                id="representativeTz"
                                                 injectStyles={true}
                                                 inputRef={[Function]}
                                                 inputStyle={
@@ -10157,7 +10159,7 @@ SAN FRANCISCO, CA 94103
                                                     autoComplete="off"
                                                     autoCorrect="off"
                                                     disabled={false}
-                                                    id="POA/Representative Timezone"
+                                                    id="representativeTz"
                                                     onBlur={[Function]}
                                                     onChange={[Function]}
                                                     onFocus={[Function]}
@@ -10996,7 +10998,7 @@ SAN FRANCISCO, CA 94103
                                         "formatGroupLabel": [Function],
                                         "getOptionLabel": [Function],
                                         "getOptionValue": [Function],
-                                        "inputId": "POA/Representative Timezone",
+                                        "inputId": "representativeTz",
                                         "inputValue": "",
                                         "isClearable": true,
                                         "isDisabled": false,
@@ -12645,7 +12647,7 @@ SAN FRANCISCO, CA 94103
                                               "formatGroupLabel": [Function],
                                               "getOptionLabel": [Function],
                                               "getOptionValue": [Function],
-                                              "inputId": "POA/Representative Timezone",
+                                              "inputId": "representativeTz",
                                               "inputValue": "",
                                               "isClearable": true,
                                               "isDisabled": false,
@@ -14305,7 +14307,7 @@ SAN FRANCISCO, CA 94103
                                               "formatGroupLabel": [Function],
                                               "getOptionLabel": [Function],
                                               "getOptionValue": [Function],
-                                              "inputId": "POA/Representative Timezone",
+                                              "inputId": "representativeTz",
                                               "inputValue": "",
                                               "isClearable": true,
                                               "isDisabled": false,

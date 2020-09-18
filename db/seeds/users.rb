@@ -11,7 +11,8 @@ module Seeds
       "BVAGSPORER" => { attorneys: %w[BVAOTRANTOW BVAGBOTSFORD BVAJWEHNER1] },
       "BVAEBECKER" => { attorneys: %w[BVAKBLOCK BVACMERTZ BVAHLUETTGEN] },
       "BVARERDMAN" => { attorneys: %w[BVASRITCHIE BVAJSCHIMMEL BVAKROHAN1] },
-      "BVAOSCHOWALT" => { attorneys: %w[BVASCASPER1 BVAOWEHNER BVASFUNK1] }
+      "BVAOSCHOWALT" => { attorneys: %w[BVASCASPER1 BVAOWEHNER BVASFUNK1] },
+      "BVAAWAKEFIELD" => { attorneys: %w[BVAABELANGER] }
     }.freeze
 
     DEVELOPMENT_DVC_TEAMS = {
@@ -31,6 +32,8 @@ module Seeds
       User.create(css_id: "BVARERDMAN", station_id: 101, full_name: "Rachael JudgeHasAttorneys_Cases Erdman")
       User.create(css_id: "BVAEBECKER", station_id: 101, full_name: "Elizabeth Judge_CaseToAssign Becker")
       User.create(css_id: "BVAKKEELING", station_id: 101, full_name: "Keith Judge_CaseToAssign_NoTeam Keeling")
+      User.create(css_id: "BVAAWAKEFIELD", station_id: 101, full_name: "Apurva Judge_CaseAtDispatch Wakefield")
+      User.create(css_id: "BVAABELANGER", station_id: 101, full_name: "Andy Attorney_CaseAtDispatch Belanger")
       User.create(css_id: "BVATWARNER", station_id: 101, full_name: "Theresa BuildHearingSchedule Warner")
       User.create(css_id: "BVAGWHITE", station_id: 101, full_name: "George BVADispatchUser_Cases White")
       User.create(css_id: "BVAGGREY", station_id: 101, full_name: "Gina BVADispatchUser_NoCases Grey")
@@ -73,6 +76,7 @@ module Seeds
       create_lit_support_user
       create_pulac_cerullo_user
       create_mail_team_user
+      create_clerk_of_the_board_user
       create_case_search_only_user
       create_judge_teams
       create_dvc_teams
@@ -314,6 +318,11 @@ module Seeds
     def create_mail_team_user
       u = User.create!(station_id: 101, css_id: "JOLLY_POSTMAN", full_name: "Huan MailUser Tiryaki")
       MailTeam.singleton.add_user(u)
+    end
+
+    def create_clerk_of_the_board_user
+      u = User.create!(station_id: 101, css_id: "CLERK_OF_THE_BOARD_USER", full_name: "Clark ClerkOfTheBoardUser Bard")
+      ClerkOfTheBoard.singleton.add_user(u)
     end
 
     def create_case_search_only_user
