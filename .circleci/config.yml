@@ -1,5 +1,43 @@
 version: 2.1
 jobs:
+  # build webpack.js file
+  build_webpack:
+    docker:
+      # The first image listed is the image that all steps run inside of.
+      # This can be modified by steps, or can be built as a separate
+      # customized container.
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.5.3-node-browsers
+        environment:
+          - DBUS_SESSION_BUS_ADDRESS: /dev/null
+          - RAILS_ENV: test
+          - NODE_ENV: test
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore yarn cache
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+
+      - run:
+          name: yarn install
+          command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
+
+      - save_cache:
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+            - public/assets
+            - tmp/cache/assets/sprockets
+
+      - run:
+          name: Build webpack
+          command: ~/project/ci-bin/capture-log "cd client && yarn build:test"
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - public/assets/0.webpack-bundle.js
+            - public/assets/webpack-bundle.js
+
   # validate our demo/development setup
   demo:
     docker:
@@ -52,21 +90,6 @@ jobs:
           key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/project/vendor/bundle
-
-      - restore_cache:
-          name: Restore yarn cache
-          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
-
-      - run:
-          name: yarn install
-          command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
-
-      - save_cache:
-          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
-          paths:
-            - ~/.cache/yarn
-            - public/assets
-            - tmp/cache/assets/sprockets
 
       - run:
           name: install dockerize
@@ -159,21 +182,6 @@ jobs:
           key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/project/vendor/bundle
-
-      - restore_cache:
-          name: Restore yarn cache
-          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
-
-      - run:
-          name: yarn install
-          command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
-
-      - save_cache:
-          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
-          paths:
-            - ~/.cache/yarn
-            - public/assets
-            - tmp/cache/assets/sprockets
 
       - run:
           name: install dockerize
@@ -395,7 +403,10 @@ workflows:
   version: 2
   build:
     jobs:
+      - build_webpack
       - demo
-      - rspec
+      - rspec:
+          requires:
+            - build_webpack
       - js_tests
       - lint
