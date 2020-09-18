@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_08_050443) do
+ActiveRecord::Schema.define(version: 2020_09_16_150837) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -829,6 +829,7 @@ ActiveRecord::Schema.define(version: 2020_09_08_050443) do
 
   create_table "legacy_appeals", force: :cascade do |t|
     t.bigint "appeal_series_id"
+    t.string "changed_request_type", comment: "The new hearing type preference for an appellant that had previously requested a travel board hearing"
     t.string "closest_regional_office"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.datetime "created_at"
@@ -1264,15 +1265,15 @@ ActiveRecord::Schema.define(version: 2020_09_08_050443) do
     t.index ["updated_at"], name: "index_tags_on_updated_at"
   end
 
-  create_table "task_timers", comment: "Task timers allow tasks to be run asynchronously after some future date, like EvidenceSubmissionWindowTask.", force: :cascade do |t|
-    t.datetime "attempted_at", comment: "Async timestamp for most recent attempt to run."
-    t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
+  create_table "task_timers", comment: "A task timer allows an associated task's (like EvidenceSubmissionWindowTask and TimedHoldTask) `when_timer_ends` method to be run asynchronously after timer expires.", force: :cascade do |t|
+    t.datetime "attempted_at", comment: "Async timestamp for most recent attempt to run Task#when_timer_ends."
+    t.datetime "canceled_at", comment: "Timestamp when job was abandoned. Associated task is typically cancelled."
     t.datetime "created_at", null: false, comment: "Automatic timestamp for record creation."
     t.string "error", comment: "Async any error message from most recent failed attempt to run."
-    t.datetime "last_submitted_at", comment: "Async timestamp for most recent job start."
-    t.datetime "processed_at", comment: "Async timestamp for when the job completes successfully."
+    t.datetime "last_submitted_at", comment: "Async timestamp for most recent job start. Initially set to when timer should expire (Task#timer_ends_at)."
+    t.datetime "processed_at", comment: "Async timestamp for when the job completes successfully. Associated task's method Task#when_timer_ends ran successfully."
     t.datetime "submitted_at", comment: "Async timestamp for initial job start."
-    t.bigint "task_id", null: false, comment: "ID of the Task to be run."
+    t.bigint "task_id", null: false, comment: "ID of the associated Task to be run."
     t.datetime "updated_at", null: false, comment: "Automatic timestmap for record update."
     t.index ["task_id"], name: "index_task_timers_on_task_id"
     t.index ["updated_at"], name: "index_task_timers_on_updated_at"
@@ -1285,6 +1286,7 @@ ActiveRecord::Schema.define(version: 2020_09_08_050443) do
     t.integer "assigned_by_id"
     t.integer "assigned_to_id", null: false
     t.string "assigned_to_type", null: false
+    t.integer "cancelled_by_id", comment: "ID of user that cancelled the task. Backfilled from versions table. Can be nil if task was cancelled before this column was added or if there is no user logged in when the task is cancelled"
     t.datetime "closed_at"
     t.datetime "created_at", null: false
     t.text "instructions", default: [], array: true

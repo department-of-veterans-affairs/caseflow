@@ -1,20 +1,27 @@
 import React from 'react';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 
 import reducer from '../../../app/queue/reducers';
 import { defaultHearing, hearingDateOptions } from '../../data/hearings';
-import { amaAppeal, openHearingAppeal, defaultAssignHearing } from '../../data/appeals';
+import { amaAppeal, openHearingAppeal, defaultAssignHearing, legacyAppeal } from '../../data/appeals';
 import { roLocations, roList } from '../../data/regional-offices';
 
-const appealsData = {
+export const appealsData = {
+  [legacyAppeal.externalId]: legacyAppeal,
   [amaAppeal.externalId]: amaAppeal,
   [openHearingAppeal.externalId]: openHearingAppeal,
 };
 
 export const initialState = {
   components: {
+    scheduledHearing: {
+      taskId: null,
+      disposition: null,
+      externalId: null,
+      polling: false,
+    },
     dropdowns: {
       regionalOffices: { options: roList },
       [`hearingLocationsFor${amaAppeal.externalId}At${defaultHearing.regionalOfficeKey}`]: { options: roLocations },
@@ -44,6 +51,10 @@ export const queueWrapper = ({ children, ...props }) => (
       forms: {
         ...initialState.components.forms,
         ...props?.components?.forms,
+      },
+      scheduledHearing: {
+        ...initialState.components.scheduledHearing,
+        ...props?.components?.scheduledHearing,
       }
     },
     queue: {
@@ -51,9 +62,9 @@ export const queueWrapper = ({ children, ...props }) => (
       ...props?.queue
     },
   })}>
-    <Router>
+    <MemoryRouter keyLength={0}>
       {children}
-    </Router>
+    </MemoryRouter>
   </Provider>
 );
 

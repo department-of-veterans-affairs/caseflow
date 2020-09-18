@@ -6,7 +6,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
   QUERY_LIMIT = 750
   def create_schedule_hearing_tasks
-    AppealRepository.create_schedule_hearing_tasks
+    HearingTaskTreeInitializer.create_schedule_hearing_tasks
   end
 
   def find_appeals_ready_for_geomatching(appeal_type)

@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+##
+# See https://github.com/department-of-veterans-affairs/caseflow/wiki/Timed-Tasks#timeabletask
+
 module TimeableTask
   extend ActiveSupport::Concern
 
