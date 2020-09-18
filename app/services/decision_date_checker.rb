@@ -1,9 +1,8 @@
-
+# frozen_string_literal: true
 class DecisionDateChecker < DataIntegrityChecker
     def call
-        appeal_ids = request_issues_without_decision_date
-        build_report(appeal_ids)
-    end 
+        build_report
+    end
 
     def slack_channel
         "#appeals-foxtrot"
@@ -12,18 +11,17 @@ class DecisionDateChecker < DataIntegrityChecker
     private
 
     def request_issues_without_decision_date
-        issues_without_decision_date = RequestIssue.where.not(nonrating_issue_category: nil).where(decision_date: nil, closed_at: nil).map(&:id) 
+        issues_without_decision_date = RequestIssue.where.not(nonrating_issue_category: nil).where(decision_date: nil, closed_at: nil)
         issues_without_decision_date
     end
 
-    def build_report(appeal_ids)
-        return if appeal_ids.empty?
+    def build_report
+        return if request_issues_without_decision_date.empty?
 
-        ids = appeal_ids.sort
-        count = appeal_ids.length
-        
+        ids = request_issues_without_decision_date.map(&:id).sort
+        count = ids.length
+
         add_to_report "Found #{count} Non-Rating Issues without decision date"
         add_to_report "RequestIssue.where(id: #{ids})"
     end
-
 end
