@@ -14,12 +14,18 @@ class ChangeHearingDispositionTask < AssignHearingDispositionTask
     [COPY::CHANGE_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS]
   end
 
-  def available_actions(_user)
-    [
+  def available_actions(user)
+    default_actions = [
       Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
       Constants.TASK_ACTIONS.CHANGE_HEARING_DISPOSITION.to_h,
       Constants.TASK_ACTIONS.ASSIGN_TO_HEARING_ADMIN_MEMBER.to_h
     ]
+
+    if task_is_assigned_to_user_within_admined_hearing_organization?(user)
+      return default_actions | [Constants.TASK_ACTIONS.REASSIGN_TO_HEARINGS_TEAMS_MEMBER.to_h]
+    end
+
+    default_actions
   end
 
   def actions_allowable?(user)

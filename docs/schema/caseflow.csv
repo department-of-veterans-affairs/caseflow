@@ -629,6 +629,7 @@ judge_team_roles,type,string,,,,,,
 judge_team_roles,updated_at,datetime ∗,x,,,,x,
 legacy_appeals,,,,,,,,
 legacy_appeals,appeal_series_id,integer (8) FK,,,x,,x,
+legacy_appeals,changed_request_type,string,,,,,,The new hearing type preference for an appellant that had previously requested a travel board hearing
 legacy_appeals,closest_regional_office,string,,,,,,
 legacy_appeals,contaminated_water_at_camp_lejeune,boolean,,,,,,
 legacy_appeals,created_at,datetime,,,,,,
@@ -669,6 +670,7 @@ legacy_hearings,created_by_id,integer (8) FK,,,x,,x,The ID of the user who creat
 legacy_hearings,hearing_day_id,integer (8),,,,,x,The hearing day the hearing will take place on
 legacy_hearings,id,integer (8) PK,x,x,,,,
 legacy_hearings,military_service,string,,,,,,Periods and circumstances of military service
+legacy_hearings,original_vacols_request_type,string,,,,,,"The original request type of the hearing in VACOLS, before it was changed to Virtual"
 legacy_hearings,prepped,boolean,,,,,,Determines whether the judge has checked the hearing as prepped
 legacy_hearings,summary,text,,,,,,Summary of hearing
 legacy_hearings,updated_at,datetime,,,,,x,Timestamp when record was last updated.
@@ -909,9 +911,9 @@ sent_hearing_email_events,id,integer (8) PK,x,x,,,,
 sent_hearing_email_events,recipient_role,string,,,,,,"The role of the recipient: veteran, representative, judge"
 sent_hearing_email_events,sent_at,datetime ∗,x,,,,,The date and time the email was sent
 sent_hearing_email_events,sent_by_id,integer (8) ∗ FK,x,,x,,x,User who initiated sending the email
-special_issue_lists,,,,,,,,
-special_issue_lists,appeal_id,integer (8) FK,,,x,,x,
-special_issue_lists,appeal_type,string,,,,,x,
+special_issue_lists,,,,,,,,Associates special issues to an AMA or legacy appeal for Caseflow Queue. Caseflow Dispatch uses special issues stored in legacy_appeals. They are intentionally disconnected.
+special_issue_lists,appeal_id,integer (8) FK,,,x,,x,The ID of the appeal associated with this record
+special_issue_lists,appeal_type,string,,,,,x,The type of appeal associated with this record
 special_issue_lists,blue_water,boolean,,,,,,Blue Water
 special_issue_lists,burn_pit,boolean,,,,,,Burn Pit
 special_issue_lists,contaminated_water_at_camp_lejeune,boolean,,,,,,
@@ -975,6 +977,7 @@ tasks,assigned_at,datetime,,,,,,
 tasks,assigned_by_id,integer FK,,,x,,,
 tasks,assigned_to_id,integer ∗ FK,x,,x,,x,
 tasks,assigned_to_type,string ∗,x,,,,x,
+tasks,cancelled_by_id,integer FK,,,x,,,ID of user that cancelled the task. Backfilled from versions table. Can be nil if task was cancelled before this column was added or if there is no user logged in when the task is cancelled
 tasks,closed_at,datetime,,,,,,
 tasks,created_at,datetime ∗,x,,,,,
 tasks,id,integer (8) PK,x,x,,,,
@@ -985,16 +988,16 @@ tasks,started_at,datetime,,,,,,
 tasks,status,string ∗,x,,,,x,
 tasks,type,string ∗,x,,,,x,
 tasks,updated_at,datetime ∗,x,,,,x,
-task_timers,,,,,,,,"Task timers allow tasks to be run asynchronously after some future date, like EvidenceSubmissionWindowTask."
-task_timers,attempted_at,datetime,,,,,,Async timestamp for most recent attempt to run.
-task_timers,canceled_at,datetime,,,,,,Timestamp when job was abandoned
+task_timers,,,,,,,,A task timer allows an associated task's (like EvidenceSubmissionWindowTask and TimedHoldTask) `when_timer_ends` method to be run asynchronously after timer expires.
+task_timers,attempted_at,datetime,,,,,,Async timestamp for most recent attempt to run Task#when_timer_ends.
+task_timers,canceled_at,datetime,,,,,,Timestamp when job was abandoned. Associated task is typically cancelled.
 task_timers,created_at,datetime ∗,x,,,,,Automatic timestamp for record creation.
 task_timers,error,string,,,,,,Async any error message from most recent failed attempt to run.
 task_timers,id,integer (8) PK,x,x,,,,
-task_timers,last_submitted_at,datetime,,,,,,Async timestamp for most recent job start.
-task_timers,processed_at,datetime,,,,,,Async timestamp for when the job completes successfully.
+task_timers,last_submitted_at,datetime,,,,,,Async timestamp for most recent job start. Initially set to when timer should expire (Task#timer_ends_at).
+task_timers,processed_at,datetime,,,,,,Async timestamp for when the job completes successfully. Associated task's method Task#when_timer_ends ran successfully.
 task_timers,submitted_at,datetime,,,,,,Async timestamp for initial job start.
-task_timers,task_id,integer (8) ∗ FK,x,,x,,x,ID of the Task to be run.
+task_timers,task_id,integer (8) ∗ FK,x,,x,,x,ID of the associated Task to be run.
 task_timers,updated_at,datetime ∗,x,,,,x,Automatic timestmap for record update.
 team_quotas,,,,,,,,
 team_quotas,created_at,datetime ∗,x,,,,,

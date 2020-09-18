@@ -17,8 +17,8 @@ class TaskActionRepository
       }
     end
 
-    def mail_assign_to_organization_data(task, _user = nil)
-      options = MailTask.subclass_routing_options
+    def mail_assign_to_organization_data(task, user = nil)
+      options = MailTask.subclass_routing_options(user)
       valid_options = task.appeal.outcoded? ? options : options.reject { |opt| opt[:value] == "VacateMotionMailTask" }
       { options: valid_options }
     end
@@ -60,6 +60,16 @@ class TaskActionRepository
           COPY::SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_DETAIL,
           task.appeal.veteran_full_name
         )
+      }
+    end
+
+    def assign_to_hearings_user_data(task, user = nil)
+      users = [HearingsManagement, HearingAdmin, TranscriptionTeam].map { |team| team.singleton.users }.flatten.uniq
+
+      {
+        selected: user,
+        options: users_to_options(users),
+        type: task.type
       }
     end
 
@@ -152,9 +162,10 @@ class TaskActionRepository
 
     def address_motion_to_vacate_data(task, _user = nil)
       attorney = task.appeal.assigned_attorney
+      judge_attorneys = JudgeTeam.for_judge(task.assigned_to)&.attorneys
       {
         selected: attorney,
-        options: users_to_options([JudgeTeam.for_judge(task.assigned_to)&.attorneys, attorney].flatten.compact.uniq),
+        options: users_to_options([judge_attorneys.presence || Attorney.list_all, attorney].flatten.compact.uniq),
         type: PostDecisionMotion.name
       }
     end
@@ -203,6 +214,10 @@ class TaskActionRepository
           }
         end
       }
+    end
+
+    def change_hearing_request_type_data(_task, _user = nil)
+      {} # Placeholder function that will be implemented in #15159
     end
 
     def change_task_type_data(task, user = nil)

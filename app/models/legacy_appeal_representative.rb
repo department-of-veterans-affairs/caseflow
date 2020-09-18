@@ -51,6 +51,7 @@ class LegacyAppealRepresentative
   def use_representative_info_from_bgs?
     RequestStore.store[:application] == "queue" ||
       RequestStore.store[:application] == "hearings" ||
+      RequestStore.store[:application] == "hearing_schedule_job" ||
       RequestStore.store[:application] == "idt"
   end
 

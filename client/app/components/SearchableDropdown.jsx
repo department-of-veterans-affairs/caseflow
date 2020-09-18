@@ -95,7 +95,7 @@ export class SearchableDropdown extends React.Component {
       options,
       defaultOptions,
       filterOption,
-      clearable,
+      isClearable,
       loading,
       placeholder,
       errorMessage,
@@ -189,7 +189,7 @@ export class SearchableDropdown extends React.Component {
               placeholder={
                 placeholder === null ? DEFAULT_PLACEHOLDER : placeholder
               }
-              clearable={clearable}
+              isClearable={isClearable}
               noOptionsMessage={handleNoOptions}
               searchable={searchable}
               isDisabled={readOnly}
@@ -219,7 +219,7 @@ const SelectOpts = PropTypes.arrayOf(
 
 SearchableDropdown.propTypes = {
   async: PropTypes.func,
-  clearable: PropTypes.bool,
+  isClearable: PropTypes.bool,
   clearOnSelect: PropTypes.bool,
   creatable: PropTypes.bool,
   creatableOptions: PropTypes.shape({
@@ -255,7 +255,7 @@ SearchableDropdown.propTypes = {
 
 /* eslint-disable no-undefined */
 SearchableDropdown.defaultProps = {
-  clearable: false,
+  isClearable: true,
   clearOnSelect: false,
   loading: false,
   filterOption: undefined,
