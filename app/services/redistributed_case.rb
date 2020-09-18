@@ -88,8 +88,4 @@ class RedistributedCase
       task.is_a?(TrackVeteranTask) || task.is_a?(RootTask)
     end
   end
-
-  def legacy_appeal_hearing_tasks
-    @legacy_appeal_hearing_tasks ||= legacy_appeal_relevant_tasks.select { |task| task.is_a?(HearingTask) }
-  end
 end

@@ -267,7 +267,7 @@ describe Distribution, :all_dbs do
         end
       end
 
-      context "when a nonpriority legacy case re-distribution is attempted" do
+      context "when an illegit nonpriority legacy case re-distribution is attempted" do
         let(:case_id) { legacy_case.bfkey }
         let!(:previous_location) { legacy_case.bfcurloc }
         let(:legacy_case) { legacy_nonpriority_cases.second }
@@ -275,23 +275,20 @@ describe Distribution, :all_dbs do
         before do
           @raven_called = false
           distribution = create(:distribution, judge: judge)
-          # we now allow appeals with closed actionable tasks to be automatically redistributed
+          # illegit because appeal has open hearing tasks
           appeal = create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case)
-          appeal.tasks.open.where.not(type: RootTask.name).each(&:completed!)
           create_nonpriority_distributed_case(distribution, case_id, legacy_case.bfdloout)
           distribution.update!(status: "completed", completed_at: today)
           allow(Raven).to receive(:capture_exception) { @raven_called = true }
         end
 
-        it "allows the case to be redistributed and does not send an alert" do
+        it "does not create a duplicate distributed_case and updates the location to caseflow" do
           subject.distribute!
           expect(subject.valid?).to eq(true)
           expect(subject.error?).to eq(false)
           expect(@raven_called).to eq(false)
-          expect(subject.distributed_cases.pluck(:case_id)).to include(case_id)
-          expect(DistributedCase.find_by(case_id: case_id)).to_not be_nil
-          expect(DistributedCase.find_by(case_id: original_distributed_case_id)).to_not be_nil
-          expect(legacy_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+          expect(subject.distributed_cases.pluck(:case_id)).to_not include(case_id)
+          expect(legacy_case.reload.bfcurloc).to eq("CASEFLOW")
         end
       end
 
