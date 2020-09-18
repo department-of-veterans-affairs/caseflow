@@ -35,8 +35,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - public/assets/0.webpack-bundle.js
-            - public/assets/webpack-bundle.js
+            - *
 
   # validate our demo/development setup
   demo:
@@ -160,7 +159,8 @@ jobs:
     parallelism: 9
     resource_class: large
     steps:
-      - checkout
+      - attach_workspace:
+          at: .
 
       - run:
           name: Setup testfiles directory
