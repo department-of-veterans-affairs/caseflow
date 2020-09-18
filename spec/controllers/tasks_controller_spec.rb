@@ -897,7 +897,9 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           expect(response.status).to eq 200
           expect(legacy_appeal.reload.changed_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
           expect(action.reload.status).to eq(Constants.TASK_STATUSES.completed)
-          expect(ChangeHearingRequestTypeTask.find_by(appeal: legacy_appeal).status).to eq(Constants.TASK_STATUSES.completed)
+          expect(ChangeHearingRequestTypeTask.find_by(
+            appeal: legacy_appeal
+          ).status).to eq(Constants.TASK_STATUSES.completed)
           expect(ScheduleHearingTask.find_by(appeal: legacy_appeal).status).to eq(Constants.TASK_STATUSES.assigned)
         end
       end
