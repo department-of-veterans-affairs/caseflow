@@ -12,7 +12,7 @@ class DecisionDateChecker < DataIntegrityChecker
   private
 
   def request_issues_without_decision_date
-    issues_without_decision_date = RequestIssue.where
+    RequestIssue.where
       .not(nonrating_issue_category: nil)
       .where(decision_date: nil, closed_at: nil)
   end
