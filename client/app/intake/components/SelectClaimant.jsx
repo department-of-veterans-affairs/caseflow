@@ -137,7 +137,7 @@ export const SelectClaimant = (props) => {
       <div>
         <RadioField
           name="claimant-options"
-          label={!claimant && !relationships.length ? "Claimant with no relationships" : claimantLabel}
+          label={!claimant && !relationships.length ? 'Claimant with no relationships' : claimantLabel}
           strongLabel
           vertical
           options={radioOpts}
@@ -185,7 +185,7 @@ export const SelectClaimant = (props) => {
       />
 
       {showClaimants && (hasRelationships || newClaimant) && claimantOptions()}
-      {showClaimants && !hasRelationships  && noClaimantsCopy }
+      {showClaimants && !hasRelationships && noClaimantsCopy }
 
       {allowAddClaimant && (
         <>
