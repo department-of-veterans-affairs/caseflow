@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 
 import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../constants';
 import RampElectionPage from './rampElection/review';
@@ -131,3 +132,13 @@ export class ReviewButtons extends React.PureComponent {
       <ReviewNextButtonConnected history={this.props.history} />
     </div>
 }
+
+ReviewNextButton.propTypes = {
+  history: PropTypes.object,
+  featureToggles: PropTypes.object,
+  formType: PropTypes.string,
+  intakeForms: PropTypes.object,
+  intakeId: PropTypes.number,
+  submitRampElection: PropTypes.func,
+  submitDecisionReview: PropTypes.func
+};
