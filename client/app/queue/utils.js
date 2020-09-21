@@ -330,6 +330,7 @@ export const prepareAppealForStore = (appeals) => {
       veteranGender: appeal.attributes.veteran_gender,
       veteranAddress: appeal.attributes.veteran_address,
       closestRegionalOffice: appeal.attributes.closest_regional_office,
+      closestRegionalOfficeLabel: appeal.attributes.closest_regional_office_label,
       availableHearingLocations: prepareAppealAvailableHearingLocationsForStore(appeal),
       externalId: appeal.attributes.external_id,
       status: appeal.attributes.status,

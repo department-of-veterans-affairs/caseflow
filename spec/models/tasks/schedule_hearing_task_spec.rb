@@ -256,6 +256,7 @@ describe ScheduleHearingTask, :all_dbs do
         expect(hearing_task_2.reload.status).to eq Constants.TASK_STATUSES.cancelled
         expect(hearing_task_2.closed_at).to_not be_nil
         expect(task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+        expect(task.cancelled_by).to eq hearings_management_user
         expect(task.closed_at).to_not be_nil
         new_hearing_tasks = appeal.tasks.open.where(type: HearingTask.name)
         expect(new_hearing_tasks.count).to eq 1
