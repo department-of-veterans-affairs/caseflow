@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_16_150837) do
+ActiveRecord::Schema.define(version: 2020_09_21_163415) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -762,6 +762,16 @@ ActiveRecord::Schema.define(version: 2020_09_16_150837) do
     t.index ["updated_at"], name: "index_higher_level_reviews_on_updated_at"
     t.index ["uuid"], name: "index_higher_level_reviews_on_uuid"
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
+  end
+
+  create_table "ihp_drafts", force: :cascade do |t|
+    t.integer "appeal_id", null: false, comment: "Appeal id the IHP was written for"
+    t.string "appeal_type", null: false, comment: "Type of appeal the IHP was written for"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at timestamps"
+    t.integer "organization_id", null: false, comment: "IHP writing VSO that drafted the IHP"
+    t.string "path", null: false, comment: "Path to the IHP in the VA V: drive"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at timestamps"
+    t.index ["appeal_type", "appeal_id", "organization_id"], name: "index_ihp_drafts_on_appeal_type_appeal_id_and_organization_id", unique: true
   end
 
   create_table "intakes", id: :serial, comment: "Represents the intake of an form or request made by a veteran.", force: :cascade do |t|
