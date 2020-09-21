@@ -1,5 +1,6 @@
 $cf-select-bg-color: #fff;
-$cf-select-disabled-bg-color: #f1f1f1;
+$cf-select-disabled-bg-color: $color-gray-lightest;
+$cf-select-disabled-color: #323a45;
 $cf-select-border-color: #5b616b;
 $cf-select-text-color: #323a45;
 
@@ -15,6 +16,10 @@ $cf-select-text-color: #323a45;
 
     &--is-disabled {
       background-color: $cf-select-disabled-bg-color;
+
+      .cf-select__single-value {
+        color: $cf-select-disabled-color;
+      }
 
       .cf-select__indicators {
         opacity: 0.35;
