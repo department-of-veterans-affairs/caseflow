@@ -150,10 +150,6 @@ CreateMailTaskDialog.propTypes = {
 const mapStateToProps = (state, ownProps) => {
   const { highlightFormItems } = state.ui;
 
-  console.log('state', state);
-  console.log('ownProps', ownProps);
-  console.log('appealWithDetailSelector', appealWithDetailSelector(state, ownProps));
-
   return {
     highlightFormItems,
     task: taskById(state, { taskId: ownProps.taskId }),
