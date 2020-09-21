@@ -26,7 +26,7 @@ class VirtualHearings::ConvertToVirtualHearingService
         Caseflow::Error::VirtualHearingConversionFailed,
         error_type: error.class,
         message: error.message,
-        code: :bad_request
+        code: 1002
       )
     end
   end

@@ -10,7 +10,7 @@ import { AddressLine } from 'app/hearings/components/details/Address';
 import { VirtualHearingEmail } from 'app/hearings/components/VirtualHearings/Emails';
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
-import { getAppellantTitleForHearing } from 'app/hearings/utils';
+import { getAppellantTitle } from 'app/hearings/utils';
 import TextField from 'app/components/TextField';
 
 const updateSpy = jest.fn();
@@ -92,7 +92,7 @@ describe('RepresentativeSection', () => {
     expect(representativeSection.find(VirtualHearingSection).first().
       find(ReadOnly).
       prop('text')).toEqual(
-      `The ${getAppellantTitleForHearing(amaHearing)} does not have a representative recorded in VBMS`
+      `The ${getAppellantTitle(amaHearing.appellantIsNotVeteran)} does not have a representative recorded in VBMS`
     );
     expect(representativeSection).toMatchSnapshot();
   });

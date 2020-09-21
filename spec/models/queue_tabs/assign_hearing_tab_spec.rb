@@ -49,7 +49,7 @@ describe AssignHearingTab do
         end
 
         before do
-          AppealRepository.create_schedule_hearing_tasks.each do |appeal|
+          HearingTaskTreeInitializer.create_schedule_hearing_tasks.each do |appeal|
             appeal.update(closest_regional_office: regional_office_key)
           end
 
@@ -91,7 +91,7 @@ describe AssignHearingTab do
         end
 
         before do
-          AppealRepository.create_schedule_hearing_tasks.each do |appeal|
+          HearingTaskTreeInitializer.create_schedule_hearing_tasks.each do |appeal|
             appeal.update(closest_regional_office: regional_office_key)
           end
 
@@ -104,7 +104,7 @@ describe AssignHearingTab do
         end
 
         it "does not return tasks for regional office when marked as CO" do
-          AppealRepository.create_schedule_hearing_tasks
+          HearingTaskTreeInitializer.create_schedule_hearing_tasks
           cache_legacy_appeals
 
           tasks = AssignHearingTab.new(appeal_type: LegacyAppeal.name, regional_office_key: regional_office_key).tasks
