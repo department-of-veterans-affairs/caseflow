@@ -16,6 +16,20 @@ class IhpDraft < CaseflowRecord
     Appeal.name => AMA_PATH_MATCHER
   }.freeze
 
+  def self.create_or_update_from_task!(task, path)
+    organization = task.assigned_to_type == Organization.name ? task.assigned_to : task.parent.assigned_to
+    ihp_draft = find_by(appeal: task.appeal, organization: organization)
+    path = path.tr("\"", "")
+
+    if ihp_draft
+      ihp_draft.update!(path: path)
+    else
+      ihp_draft = create!(appeal: task.appeal, organization: organization, path: path)
+    end
+
+    ihp_draft
+  end
+
   def valid_v_drive_path
     return if appeal && path&.match?(V_DRIVE_PATH_MATCHER) && path&.match?(PATH_MATCHERS[appeal_type])
 

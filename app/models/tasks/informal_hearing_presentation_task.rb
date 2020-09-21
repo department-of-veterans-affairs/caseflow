@@ -47,4 +47,14 @@ class InformalHearingPresentationTask < Task
   def self.label
     COPY::IHP_TASK_LABEL
   end
+
+  def update_from_params(params)
+    transaction do
+      super(params)
+
+      if FeatureToggle.enabled?(:ihp_notification) && params[:status] == Constants.TASK_STATUSES.completed
+        IhpDraft.create_or_update_from_task!(self, params[:path])
+      end
+    end
+  end
 end

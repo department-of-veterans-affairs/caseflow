@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 describe IhpDraft do
-  context "#create!" do
-    let(:organization) { create(:organization) }
-    let(:appeal) { create(:appeal) }
-    let(:path) { "\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\AML\\AMA IHPs\\VetName 12345.pdf" }
+  describe ".create!" do
+    subject { IhpDraft.new(params) }
 
+    let(:appeal) { create(:appeal) }
+    let(:organization) { create(:organization) }
+    let(:path) { "\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\AML\\AMA IHPs\\VetName 12345.pdf" }
     let(:params) do
       {
         appeal: appeal,
@@ -13,8 +14,6 @@ describe IhpDraft do
         path: path
       }
     end
-
-    subject { IhpDraft.new(params) }
 
     context "when appeal is not specified" do
       let(:appeal) { nil }
@@ -81,6 +80,78 @@ describe IhpDraft do
       it "successfully creates the record" do
         expect(subject.valid?).to be true
         expect(subject.save!).to be true
+      end
+    end
+  end
+
+  context ".create_or_update_from_task!" do
+    subject { IhpDraft.create_or_update_from_task!(task, path) }
+
+    let(:organization) { create(:organization) }
+    let(:user) { create(:user) }
+    let(:appeal) { create(:appeal) }
+    let(:root_task) { create(:task, appeal: appeal) }
+    let(:org_task) { create(:task, assigned_to: organization, parent: root_task, appeal: appeal) }
+    let(:user_task) { create(:task, assigned_to: user, parent: org_task, appeal: appeal) }
+    let(:task) { org_task }
+    let(:path) { "\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\AML\\AMA IHPs\\VetName 12345.pdf" }
+
+    context "when there is no existing record" do
+      context "when the task is assigned to an organization" do
+        it "creates a new record based on the task's assignee" do
+          expect { subject }.to change(IhpDraft, :count).by(1)
+          expect(subject.organization).to eq organization
+        end
+      end
+
+      context "when the task is assigned to a user" do
+        let(:task) { user_task }
+
+        it "creates a new record based on the parent task's assignee" do
+          expect { subject }.to change(IhpDraft, :count).by(1)
+          expect(subject.organization).to eq organization
+        end
+      end
+
+      context "when the provided path contains extra quotes from copy/paste" do
+        let(:stripped_path) { "\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\AML\\AMA IHPs\\VetName 123.pdf" }
+        let(:path) { "\"\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\AML\\AMA IHPs\\VetName 123.pdf\"" }
+
+        it "strips the quotes before creating" do
+          expect { subject }.to change(IhpDraft, :count).by(1)
+          expect(subject.path).to eq stripped_path
+        end
+      end
+    end
+
+    context "when there is no existing record associated with the ihp writing vso" do
+      let!(:existing_record) { IhpDraft.create!(appeal: appeal, organization: create(:organization), path: path) }
+
+      it "creates a new record" do
+        expect { subject }.to change(IhpDraft, :count).by(1)
+        expect(subject).not_to eq existing_record
+        expect(subject.organization).to eq organization
+      end
+    end
+
+    context "when there is no existing record associated with the task's appeal" do
+      let!(:existing_record) { IhpDraft.create!(appeal: create(:appeal), organization: organization, path: path) }
+
+      it "creates a new record" do
+        expect { subject }.to change(IhpDraft, :count).by(1)
+        expect(subject).not_to eq existing_record
+        expect(subject.appeal).to eq appeal
+      end
+    end
+
+    context "when there is an existing record associated with the appeal and VSO" do
+      let(:old_path) { "\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\AML\\AMA IHPs\\VetName 12.pdf" }
+      let!(:existing_record) { IhpDraft.create!(appeal: appeal, organization: organization, path: old_path) }
+
+      it "updates the existing record" do
+        expect { subject }.to change(IhpDraft, :count).by(0)
+        expect(subject).to eq existing_record
+        expect(subject.path).not_to eq old_path
       end
     end
   end
