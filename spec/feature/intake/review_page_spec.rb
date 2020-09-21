@@ -233,7 +233,7 @@ feature "Intake Review Page", :postgres do
               benefit_type: benefit_type,
               claim_participant_id: claim_participant_id
             )
-            
+
             check_no_relationships_behavior
           end
         end
@@ -365,7 +365,7 @@ feature "Intake Review Page", :postgres do
           end
 
           scenario "when veteran has no relationships" do
-            allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(nil)
+            allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return([])
 
             appeal, _intake = start_appeal(
               veteran,
@@ -384,7 +384,7 @@ feature "Intake Review Page", :postgres do
             expect(page).to have_content("+ Add Claimant")
             expect(page).to have_content("Please select the claimant listed on the form")
             expect(page).to have_button("Continue to next step", disabled: true)
-            
+
             notes = "Unlisted claimant: Sandra Smith"
             add_unlisted_claimant(notes)
             expect(page).to have_button("Continue to next step", disabled: false)
