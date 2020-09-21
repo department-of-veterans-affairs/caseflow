@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { sprintf } from 'sprintf-js';
+import { isUndefined } from 'lodash';
 
 import COPY from '../../../../COPY';
+import Alert from '../../../components/Alert';
 import { AddressLine } from '../details/Address';
 import { VirtualHearingSection } from './Section';
 import { HelperText } from './HelperText';
@@ -22,12 +25,16 @@ export const AppellantSection = ({
   showDivider,
   update,
   appellantTitle,
-  showOnlyAppellantName
+  showOnlyAppellantName,
+  showMissingEmailAlert
 }) => {
   const appellantName = hearing?.appellantFullName ? hearing?.appellantFullName :
     `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`;
 
   const showTimezoneField = virtual && !video;
+
+  // determine whether to show a missing email underneath readonly email
+  const showMissingAlert = readOnly && showMissingEmailAlert && isUndefined(virtualHearing?.appellantEmail);
 
   return (
     <VirtualHearingSection label={appellantTitle} showDivider={showDivider}>
@@ -73,6 +80,15 @@ export const AppellantSection = ({
             type={type}
             update={update}
           />
+          {showMissingAlert && (
+            <div>
+              <Alert
+                message={sprintf(COPY.MISSING_EMAIL_ALERT_MESSAGE, appellantTitle)}
+                type="info"
+                scrollOnAlert={false}
+              />
+            </div>
+          )}
         </div>
       </div>
     </VirtualHearingSection>
@@ -90,5 +106,6 @@ AppellantSection.propTypes = {
   readOnly: PropTypes.bool,
   appellantTitle: PropTypes.string,
   showOnlyAppellantName: PropTypes.bool,
-  showDivider: PropTypes.bool
+  showDivider: PropTypes.bool,
+  showMissingEmailAlert: PropTypes.bool
 };
