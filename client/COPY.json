@@ -440,6 +440,8 @@
   "CREATE_MAIL_TASK_TITLE": "Create new mail task",
   "MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL": "Select correspondence type",
   "MAIL_TASK_CREATION_SUCCESS_MESSAGE": "Created %s task",
+  "SELF_ASSIGNED_MAIL_TASK_CREATION_SUCCESS_TITLE": "You have successfully created a new %s mail task",
+  "SELF_ASSIGNED_MAIL_TASK_CREATION_SUCCESS_MESSAGE": "This task will remain in your Queue. Assign or take action on this at any time through your actions dropdown.",
 
   "CASE_TIMELINE_HEADER": "Below is the history of this case. Soon, you'll be able to see many more details.",
   "CASE_TIMELINE_DISPATCHED_FROM_BVA": "Dispatched from BVA",
