@@ -118,7 +118,8 @@ export const legacyAppeal = {
   id: '1',
   externalId: '1234456',
   docketName: 'Legacy',
-  hearings: []
+  hearings: [],
+  isLegacyAppeal: true
 }
 
 export const legacyAppealForTravelBoard = {
@@ -194,11 +195,3 @@ export const scheduleHearingDetails = {
   }
 }
 ;
-
-export const legacyAppeal = {
-  ...appealData,
-  id: '541',
-  externalId: '4afefa82-5736-47c8-a977-0b4b8586f73e',
-  hearings: [],
-  isLegacyAppeal: true
-};
