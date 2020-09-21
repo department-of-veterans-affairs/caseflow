@@ -12,6 +12,7 @@ import {
   HearingsFormContext,
   updateHearingDispatcher,
   RESET_HEARING,
+  RESET_VIRTUAL_HEARING
 } from '../contexts/HearingsFormContext';
 import { HearingsUserContext } from '../contexts/HearingsUserContext';
 import {
@@ -77,6 +78,9 @@ const HearingDetails = (props) => {
     convertHearing('');
     setLoading(false);
     setError(false);
+
+    // Reset virtual hearing state
+    dispatch({ type: RESET_VIRTUAL_HEARING, payload: initialHearing });
 
     // Focus the top of the page
     window.scrollTo(0, 0);
@@ -271,10 +275,7 @@ const HearingDetails = (props) => {
         <Button
           name="Cancel"
           linkStyling
-          onClick={converting ? () => {
-            resetState();
-            dispatch({ type: RESET_VIRTUAL_HEARING, payload: initialHearing });
-          } : goBack}
+          onClick={converting ? () => resetState() : goBack}
           styling={css({ float: 'left', paddingLeft: 0, paddingRight: 0 })}
         >
           Cancel
