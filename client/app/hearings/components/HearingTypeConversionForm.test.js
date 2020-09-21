@@ -3,7 +3,7 @@ import React from 'react';
 import { HearingTypeConversionForm } from 'app/hearings/components/HearingTypeConversionForm';
 
 import { mount } from 'enzyme';
-import { amaAppealForTravelBoard } from 'test/data';
+import { legacyAppealForTravelBoard, veteranInfoWithoutEmail } from 'test/data';
 import { VirtualHearingSection } from 'app/hearings/components/VirtualHearings/Section';
 import { AddressLine } from 'app/hearings/components/details/Address';
 import { VirtualHearingEmail } from 'app/hearings/components/VirtualHearings/Emails';
@@ -13,7 +13,7 @@ describe('HearingTypeConversionForm', () => {
   test('Matches snapshot with default props', () => {
     const hearingTypeConversionForm = mount(
       <HearingTypeConversionForm
-        appeal={amaAppealForTravelBoard}
+        appeal={legacyAppealForTravelBoard}
         type={'Virtual'}
       />
     );
@@ -28,7 +28,7 @@ describe('HearingTypeConversionForm', () => {
   test('Does not show a divider on top of Appellant Section', () => {
     const hearingTypeConversionForm = mount(
       <HearingTypeConversionForm
-        appeal={amaAppealForTravelBoard}
+        appeal={legacyAppealForTravelBoard}
         type={'Virtual'}
       />
     )
@@ -36,11 +36,30 @@ describe('HearingTypeConversionForm', () => {
     expect(
       hearingTypeConversionForm.
         findWhere(
-          (node) => node.prop('label') === `${getAppellantTitle(amaAppealForTravelBoard.appellantIsNotVeteran)}`
+          (node) => node.prop('label') === `${getAppellantTitle(legacyAppealForTravelBoard.appellantIsNotVeteran)}`
         ).
         prop('showDivider')
     ).toEqual(false);
     expect(hearingTypeConversionForm.find('.cf-help-divider')).toHaveLength(1);
+    expect(hearingTypeConversionForm).toMatchSnapshot();
+  });
+
+  test('Display missing email alert', () => {
+    const appeal = {
+      ...legacyAppealForTravelBoard,
+      veteranInfo: {
+        ...veteranInfoWithoutEmail
+      }
+    }
+
+    const hearingTypeConversionForm = mount(
+      <HearingTypeConversionForm
+        appeal={appeal}
+        type={'Virtual'}
+      />
+    )
+
+    expect(hearingTypeConversionForm.find('.usa-alert')).toHaveLength(1);
     expect(hearingTypeConversionForm).toMatchSnapshot();
   });
 });
