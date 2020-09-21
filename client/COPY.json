@@ -758,7 +758,7 @@
   "EMAIL_NOTIFICATION_HISTORY_TITLE": "Email Notification History",
   "EMAIL_NOTIFICATION_HISTORY_INTRO": "Caseflow attempted to send the following email notifications, but this does not guarantee the recipients were able to receive them",
   "VIRTUAL_HEARING_TIMEZONE_REQUIRED": "Timezone is required to send email notifications.",
-
+  "MISSING_EMAIL_ALERT_MESSAGE": "If you have the %s's email address, enter it in VBMS. The email will be required to send notifications when you schedule the hearing.",
   "CONVERT_HEARING_TYPE_TITLE": "Convert Hearing To %s",
   "CONVERT_HEARING_TYPE_SUBTITLE": "The hearing request will appear in the scheduling queue for <strong>%s</strong>.",
   "CONVERT_HEARING_TYPE_SUBTITLE_2": "Review and update the following information in VBMS if needed. Caseflow won't send email notifications until you schedule the hearing.",
