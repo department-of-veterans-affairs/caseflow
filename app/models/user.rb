@@ -118,6 +118,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     (attorney_in_vacols? || judge_in_vacols?) && FeatureToggle.enabled?(:overtime_revamp, user: self)
   end
 
+  def can_change_hearing_request_type?
+    (can?("Admin Intake") || can?("Build HearSched") || can?("Edit HearSched")) &&
+      FeatureToggle.enabled?(:convert_travel_board_to_video_or_virtual, user: self)
+  end
+
   def vacols_uniq_id
     @vacols_uniq_id ||= user_info[:uniq_id]
   end

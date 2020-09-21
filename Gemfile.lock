@@ -47,8 +47,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: ca870f0b543406b8d7a6be93ca7b3ed1797bacbf
-  ref: ca870f0b543406b8d7a6be93ca7b3ed1797bacbf
+  revision: 128938e80b083588164233b1db91ea7b677a2627
+  ref: 128938e80b083588164233b1db91ea7b677a2627
   specs:
     bgs (0.2)
       httpclient
@@ -618,7 +618,8 @@ GEM
     uniform_notifier (1.12.1)
     validates_email_format_of (1.6.3)
       i18n
-    wasabi (3.5.0)
+    wasabi (3.6.1)
+      addressable
       httpi (~> 2.0)
       nokogiri (>= 1.4.2)
     webdrivers (4.1.2)
