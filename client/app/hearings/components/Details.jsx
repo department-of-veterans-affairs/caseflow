@@ -11,7 +11,7 @@ import { HearingConversion } from './HearingConversion';
 import {
   HearingsFormContext,
   updateHearingDispatcher,
-  RESET_HEARING,
+  RESET_HEARING
 } from '../contexts/HearingsFormContext';
 import { HearingsUserContext } from '../contexts/HearingsUserContext';
 import {
@@ -71,12 +71,17 @@ const HearingDetails = (props) => {
   const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
 
   // Method to reset the state
-  const resetState = () => {
+  const resetState = (resetHearingObj) => {
     // Reset the state
     setVirtualHearingErrors({});
     convertHearing('');
     setLoading(false);
     setError(false);
+
+    // reset hearing
+    if (resetHearingObj) {
+      dispatch({ type: RESET_HEARING, payload: resetHearingObj });
+    }
 
     // Focus the top of the page
     window.scrollTo(0, 0);
@@ -166,8 +171,7 @@ const HearingDetails = (props) => {
       }
 
       // Reset the state
-      resetState();
-      dispatch({ type: RESET_HEARING, payload: hearingResp });
+      resetState(hearingResp);
     } catch (respError) {
       const code = get(respError, 'response.body.errors[0].code') || '';
 
@@ -271,7 +275,7 @@ const HearingDetails = (props) => {
         <Button
           name="Cancel"
           linkStyling
-          onClick={converting ? () => resetState() : goBack}
+          onClick={converting ? () => resetState(initialHearing) : goBack}
           styling={css({ float: 'left', paddingLeft: 0, paddingRight: 0 })}
         >
           Cancel
@@ -295,7 +299,7 @@ const HearingDetails = (props) => {
           update={updateHearing}
           submit={submit}
           closeModal={closeVirtualHearingModal}
-          reset={() => resetState()}
+          reset={() => resetState(initialHearing)}
           type={virtualHearingModalType}
           {...editedEmails}
         />
