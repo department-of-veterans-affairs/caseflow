@@ -664,6 +664,7 @@ feature "Intake", :all_dbs do
             date: 1.month.ago.mdY,
             legacy_issues: true
           )
+          add_intake_rating_issue("No VACOLS issues were found")
 
           expect(page).to_not have_content("Check the Veteran's profile for invalid information")
 
@@ -675,6 +676,7 @@ feature "Intake", :all_dbs do
             date: 1.month.ago.mdY,
             legacy_issues: true
           )
+          add_intake_rating_issue("No VACOLS issues were found")
 
           expect(page).to have_content("Check the Veteran's profile for invalid information")
           expect(page).to have_content(
