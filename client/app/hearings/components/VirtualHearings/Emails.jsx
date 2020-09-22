@@ -11,7 +11,7 @@ import TextField from '../../../components/TextField';
 
 export const VirtualHearingEmail = ({ email, emailType, label, readOnly, error, update, required, disabled }) =>
   readOnly ? (
-    <ReadOnly label={label} text={email} />
+    <ReadOnly label={label} text={email ?? 'None'} />
   ) : (
     <React.Fragment>
       <TextField
