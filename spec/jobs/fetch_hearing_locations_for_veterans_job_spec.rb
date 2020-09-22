@@ -265,6 +265,32 @@ describe FetchHearingLocationsForVeteransJob do
     end
   end
 
+  context "for a travel board appeal in VACOLS" do
+    let!(:vacols_case) do
+      create(
+        :case,
+        bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing],
+        bfhr: "2",
+        bfdocind: nil,
+        bfddec: nil
+      )
+    end
+
+    describe "#perform" do
+      subject { FetchHearingLocationsForVeteransJob.new }
+
+      it "geomatches for the travel board appeal" do
+        subject.perform
+
+        legacy_appeal = LegacyAppeal.find_by(vacols_id: vacols_case.bfkey)
+
+        expect(legacy_appeal).not_to be_nil
+        expect(legacy_appeal.closest_regional_office).not_to be_nil
+        expect(legacy_appeal.available_hearing_locations).not_to be_empty
+      end
+    end
+  end
+
   def veteran_record(file_number:, state: "MA", zip_code: "01002", country: "USA")
     {
       file_number: file_number,
