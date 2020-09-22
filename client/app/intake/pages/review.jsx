@@ -140,5 +140,14 @@ ReviewNextButton.propTypes = {
   intakeForms: PropTypes.object,
   intakeId: PropTypes.number,
   submitRampElection: PropTypes.func,
-  submitDecisionReview: PropTypes.func
+  submitDecisionReview: PropTypes.func,
+  submitRampRefiling: PropTypes.func
+};
+
+Review.propTypes = {
+  featureToggles: PropTypes.object
+};
+
+ReviewButtons.propTypes = {
+  history: PropTypes.object
 };
