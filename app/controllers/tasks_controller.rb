@@ -247,7 +247,7 @@ class TasksController < ApplicationController
       :status,
       :assigned_to_id,
       :instructions,
-      :ihp_link,
+      :ihp_path,
       reassign: [:assigned_to_id, :assigned_to_type, :instructions],
       business_payloads: [:description, values: {}]
     )
