@@ -6,10 +6,6 @@ class CreateIhpDraft < ActiveRecord::Migration[5.2]
       t.integer :organization_id, null: false, comment: "IHP writing VSO that drafted the IHP"
       t.string :path, null: false, comment: "Path to the IHP in the VA V: drive"
 
-      t.index ["appeal_type", "appeal_id", "organization_id"],
-        name: "index_ihp_drafts_on_appeal_type_appeal_id_and_organization_id",
-        unique: true
-
       t.timestamps null: false, comment: "Default created_at/updated_at timestamps"
     end
   end

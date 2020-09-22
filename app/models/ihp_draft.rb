@@ -17,7 +17,7 @@ class IhpDraft < CaseflowRecord
   }.freeze
 
   def self.create_or_update_from_task!(task, path)
-    organization = task.assigned_to_type == Organization.name ? task.assigned_to : task.parent.assigned_to
+    organization = (task.assigned_to_type == Organization.name) ? task.assigned_to : task.parent.assigned_to
     ihp_draft = find_by(appeal: task.appeal, organization: organization)
     path = path.tr("\"", "")
 

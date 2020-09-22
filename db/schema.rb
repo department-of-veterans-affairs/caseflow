@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_21_163415) do
+ActiveRecord::Schema.define(version: 2020_09_22_164708) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -771,7 +771,7 @@ ActiveRecord::Schema.define(version: 2020_09_21_163415) do
     t.integer "organization_id", null: false, comment: "IHP writing VSO that drafted the IHP"
     t.string "path", null: false, comment: "Path to the IHP in the VA V: drive"
     t.datetime "updated_at", null: false, comment: "Default created_at/updated_at timestamps"
-    t.index ["appeal_type", "appeal_id", "organization_id"], name: "index_ihp_drafts_on_appeal_type_appeal_id_and_organization_id", unique: true
+    t.index ["appeal_id", "appeal_type", "organization_id"], name: "index_ihp_drafts_on_appeal_and_organization"
   end
 
   create_table "intakes", id: :serial, comment: "Represents the intake of an form or request made by a veteran.", force: :cascade do |t|
