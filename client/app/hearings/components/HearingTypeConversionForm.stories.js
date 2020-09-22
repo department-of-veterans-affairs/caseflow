@@ -2,7 +2,7 @@ import React from 'react';
 
 import { HearingTypeConversionForm } from './HearingTypeConversionForm';
 
-import { amaAppealForTravelBoard } from '../../../test/data/appeals';
+import { legacyAppealForTravelBoard, veteranInfoWithoutEmail } from '../../../test/data/appeals';
 
 export default {
   title: 'Hearings/Components/HearingTypeConversionForm',
@@ -22,7 +22,7 @@ const Template = (args) => (
 export const Basic = Template.bind({});
 Basic.args = {
   appeal: {
-    ...amaAppealForTravelBoard
+    ...legacyAppealForTravelBoard
   },
   type: "Virtual"
 }
@@ -42,5 +42,16 @@ CentralOffice.args = {
   appeal: {
     ...Basic.args.appeal,
     closestRegionalOfficeLabel: "Central Office"
+  }
+}
+
+export const MissingVeteranEmailAlert = Template.bind({});
+MissingVeteranEmailAlert.args = {
+  ...Basic.args,
+  appeal: {
+    ...Basic.args.appeal,
+    veteranInfo: {
+      ...veteranInfoWithoutEmail
+    }
   }
 }
