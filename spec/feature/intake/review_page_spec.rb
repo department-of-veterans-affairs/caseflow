@@ -367,7 +367,7 @@ feature "Intake Review Page", :postgres do
           scenario "when veteran has no relationships" do
             allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return([])
 
-            appeal = start_appeal(
+            start_appeal(
               veteran,
               claim_participant_id: claim_participant_id,
               no_claimant: true
