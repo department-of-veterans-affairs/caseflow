@@ -104,9 +104,14 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   def find_travel_board_appeals_ready_for_geomatching(exclude_ids)
     VACOLS::Case
       .where(
+        # Travle Board Hearing Request
         bfhr: VACOLS::Case::HEARING_PREFERENCE_TYPES_V2[:TRAVEL_BOARD][:vacols_value],
+        # Current Location
+        bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing],
+        # Video Hearing Request Indicator
         bfdocind: nil,
-        bfdocind: nil
+        # Datetime of Decision
+        bfddec: nil
       )
       .where.not(bfkey: exclude_ids)
       .map do |vacols_case|
