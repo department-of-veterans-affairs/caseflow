@@ -160,6 +160,9 @@ describe FetchHearingLocationsForVeteransJob do
       context "when API limit is reached" do
         let(:limit_error) { Caseflow::Error::VaDotGovLimitError.new(code: 500, message: "Error") }
 
+        # intercept sleep requests
+        before { allow(subject).to(receive(:sleep_before_retry_on_limit_error)) }
+
         context "and limit error is always returned" do
           before(:each) do
             allow_any_instance_of(VaDotGovAddressValidator).to(
@@ -168,18 +171,9 @@ describe FetchHearingLocationsForVeteransJob do
           end
 
           context "and VaDotGovLimitError wait time exceeds the expected end time of the job" do
-            let(:limit_error) do
-              Caseflow::Error::VaDotGovLimitError.new(
-                code: 500,
-                message: "Error"
-              )
-            end
-
-            before do
-              allow(subject).to(receive(:sleep_before_retry_on_limit_error) { sleep(6) })
-            end
-
             it "records a geomatch error once" do
+              allow(subject).to(receive(:job_running_past_expected_end_time?).and_return(false, false, true))
+
               expect(subject).to(
                 receive(:record_geomatched_appeal).with(legacy_appeal.external_id, "limit_error").once
               )
@@ -188,12 +182,14 @@ describe FetchHearingLocationsForVeteransJob do
             end
           end
 
-          context "and sleep call is stubbed out" do
+          context "and VaDotGovLimitError wait time doesn't immediately exceed the expected end time of the job" do
             before do
-              allow(subject).to(receive(:sleep_before_retry_on_limit_error) { sleep(1) })
+              allow(subject).to(
+                receive(:job_running_past_expected_end_time?).and_return(false, false, false, false, true)
+              )
             end
 
-            it "records a geomatch error" do
+            it "records multiple geomatch errors" do
               expect(subject).to(
                 receive(:record_geomatched_appeal).with(legacy_appeal.external_id, "limit_error").at_least(:once)
               )
@@ -222,7 +218,6 @@ describe FetchHearingLocationsForVeteransJob do
 
         context "and limit error is only returned the first time" do
           before(:each) do
-            allow(subject).to(receive(:sleep_before_retry_on_limit_error) { sleep(1) })
             @va_dot_gov_address_validator_count = 0
 
             allow_any_instance_of(VaDotGovAddressValidator).to(receive(:update_closest_ro_and_ahls) do
@@ -243,6 +238,7 @@ describe FetchHearingLocationsForVeteransJob do
                   .once
                   .with(legacy_appeal.external_id, :matched_available_hearing_locations)
               )
+
               subject.perform
             end
           end
