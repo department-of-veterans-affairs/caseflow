@@ -51,6 +51,7 @@ describe FetchHearingLocationsForVeteransJob do
     end
   end
 
+  # Location Code 57 is "Schedule Hearing"
   context "when there is a case in location 57 *without* an associated veteran" do
     let!(:bfcorlid) { "123456789S" }
     let!(:bfcorlid_file_number) { "123456789" }
