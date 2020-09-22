@@ -661,7 +661,8 @@ feature "Intake", :all_dbs do
             benefit_type: "Vocational Rehabilitation and Employment",
             category: "Additional Training",
             description: "Description for Additional Training",
-            date: 1.month.ago.mdY
+            date: 1.month.ago.mdY,
+            legacy_issues: true
           )
 
           expect(page).to_not have_content("Check the Veteran's profile for invalid information")
@@ -671,7 +672,8 @@ feature "Intake", :all_dbs do
             benefit_type: "Compensation",
             category: "Active Duty Adjustments",
             description: "Description for Active Duty Adjustments",
-            date: 1.month.ago.mdY
+            date: 1.month.ago.mdY,
+            legacy_issues: true
           )
 
           expect(page).to have_content("Check the Veteran's profile for invalid information")
