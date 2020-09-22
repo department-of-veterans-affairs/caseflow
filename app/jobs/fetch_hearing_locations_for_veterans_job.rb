@@ -98,7 +98,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       geomatch_result = appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
       handle_geocode_status(appeal, geomatch_result)
       record_geomatched_appeal(appeal.external_id, geomatch_result[:status])
-    rescue Caseflow::Error::VaDotGovLimitError => error
+    rescue Caseflow::Error::VaDotGovLimitError
       Rails.logger.error("VA.gov returned a rate limit error")
       record_geomatched_appeal(appeal.external_id, "limit_error")
       raise
