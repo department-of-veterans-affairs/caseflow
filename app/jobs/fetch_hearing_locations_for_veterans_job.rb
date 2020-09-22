@@ -5,6 +5,8 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   application_attr :hearing_schedule
 
   QUERY_LIMIT = 750
+  JOB_DURATION = 1.hour
+
   def create_schedule_hearing_tasks
     HearingTaskTreeInitializer.create_schedule_hearing_tasks
   end
@@ -22,6 +24,10 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       .order("ahl_updated_at nulls first")
   end
 
+  # Gets appeals that are ready for geomatching.
+  #
+  # @return     [Array<Appeal, LegacyAppeal>]
+  #   An array of appeals that are ready for geomatching, bounded by the `QUERY_LIMIT`.
   def appeals
     @appeals ||= find_appeals_ready_for_geomatching(LegacyAppeal).first(QUERY_LIMIT / 2) +
                  find_appeals_ready_for_geomatching(Appeal).first(QUERY_LIMIT / 2)
@@ -29,27 +35,84 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
   def perform
     RequestStore.store[:current_user] = User.system_user
+
+    @job_expected_end_time = Time.zone.now + JOB_DURATION
+    current_appeal = 0
+
     create_schedule_hearing_tasks
 
-    appeals.each do |appeal|
-      begin
-        appeal.reload # we only selected id and ahl_update_at, reload all columns
-        geomatch_result = geomatch(appeal)
-        record_geomatched_appeal(appeal.external_id, geomatch_result[:status])
-      rescue Caseflow::Error::VaDotGovLimitError
-        Rails.logger.error("VA.gov returned a rate limit error")
-        record_geomatched_appeal(appeal.external_id, "limit_error")
-        break
-      rescue StandardError => error
-        capture_exception(error: error, extra: { appeal_external_id: appeal.external_id })
-        record_geomatched_appeal(appeal.external_id, "error")
+    loop do
+      remaining_appeals = appeals[current_appeal..-1]
+
+      break if remaining_appeals.empty? || job_running_past_expected_end_time?
+
+      remaining_appeals.each do |appeal|
+        break if job_running_past_expected_end_time?
+
+        begin
+          geomatch(appeal)
+
+          current_appeal += 1
+        rescue Caseflow::Error::VaDotGovLimitError
+          sleep_before_retry_on_limit_error
+
+          break
+        rescue StandardError
+          # For unknown errors, we capture the exeception in Sentry. This error could represent
+          # a broad range of things, so we just skip geomatching for the appeal, and expect
+          # that a developer looks into it.
+          current_appeal += 1
+        end
       end
     end
   end
 
-  def geomatch(appeal)
-    geomatch_result = appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
+  private
 
+  attr_accessor :job_expected_end_time
+
+  # Returns whether or not the job is running beyond the expected end time.
+  def job_running_past_expected_end_time?
+    Time.zone.now > job_expected_end_time
+  end
+
+  # Pauses execution based on an error received from VA.gov.
+  #
+  # @note This is its own method so that it can be stubbed by the test suite.
+  def sleep_before_retry_on_limit_error
+    sleep 15
+  end
+
+  # Performs geomatching for an appeal.
+  #
+  # @param appeal  [Appeal, Legacy] the appeal to geomatch
+  #
+  # @raise      [Caseflow::Error::VaDotGovLimitError]
+  #   Re-raises limit error for caller to handle.
+  # @raise      [StandardError]
+  #   Re-raises standard error for caller to handle.
+  def geomatch(appeal)
+    appeal.reload # we only selected id and ahl_update_at, reload all columns
+
+    begin
+      geomatch_result = appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
+      handle_geocode_status(appeal, geomatch_result)
+      record_geomatched_appeal(appeal.external_id, geomatch_result[:status])
+    rescue Caseflow::Error::VaDotGovLimitError
+      Rails.logger.error("VA.gov returned a rate limit error")
+      record_geomatched_appeal(appeal.external_id, "limit_error")
+      raise
+    rescue StandardError => error
+      capture_exception(error: error, extra: { appeal_external_id: appeal.external_id })
+      record_geomatched_appeal(appeal.external_id, "error")
+      raise
+    end
+  end
+
+  # Handles the status from the VaDotGovAddressValidator.
+  #
+  # @param geomatch_result  [Hash] The result from geocoding.
+  def handle_geocode_status(appeal, geomatch_result)
     case geomatch_result[:status]
     when VaDotGovAddressValidator::STATUSES[:matched_available_hearing_locations],
       VaDotGovAddressValidator::STATUSES[:philippines_exception]
@@ -58,8 +121,6 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       VaDotGovAddressValidator::STATUSES[:created_foreign_veteran_admin_action]
       create_available_hearing_location_for_errored_appeal(appeal)
     end
-
-    geomatch_result
   end
 
   def cancel_admin_actions_for_matched_appeal(appeal)
