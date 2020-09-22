@@ -19,8 +19,8 @@ export const HearingTime = (
     '' :
     hearing.virtualHearing?.appellantTz || hearing.regionalOfficeTimezone;
 
-  // Determine what timezone to use
-  const timezone = hearing.isVirtual ?
+  // Determine what timezone to use; always use RO timezone for video/formally-video hearings
+  const timezone = (hearing.isVirtual && hearing.readableRequestType !== 'Video') ?
     repTimezone :
     hearing.regionalOfficeTimezone || 'America/New_York';
 
