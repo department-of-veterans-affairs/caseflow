@@ -133,14 +133,14 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     begin
       geomatch_result = appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
       handle_geocode_status(appeal, geomatch_result)
-      record_geomatched_appeal(appeal.external_id, geomatch_result[:status])
+      record_geomatched_appeal(appeal, geomatch_result[:status])
     rescue Caseflow::Error::VaDotGovLimitError
       Rails.logger.error("VA.gov returned a rate limit error")
-      record_geomatched_appeal(appeal.external_id, "limit_error")
+      record_geomatched_appeal(appeal, "limit_error")
       raise
     rescue StandardError => error
       capture_exception(error: error, extra: { appeal_external_id: appeal.external_id })
-      record_geomatched_appeal(appeal.external_id, "error")
+      record_geomatched_appeal(appeal, "error")
       raise
     end
   end
@@ -180,14 +180,15 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     end
   end
 
-  def record_geomatched_appeal(appeal_external_id, status)
+  def record_geomatched_appeal(appeal, status)
     DataDogService.increment_counter(
       app_name: RequestStore[:application],
       metric_group: "job",
       metric_name: "geomatched_appeals",
       attrs: {
         status: status,
-        appeal_external_id: appeal_external_id
+        appeal_external_id: appeal.external_id,
+        hearing_request_type: appeal.sanitized_hearing_request_type
       }
     )
   end
