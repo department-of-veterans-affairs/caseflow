@@ -410,7 +410,7 @@ class LegacyAppeal < CaseflowRecord
   #   preference if they were scheduled for a travel board hearing. This method captures
   #   if a travel board hearing request type was overridden in Caseflow.
   def sanitized_hearing_request_type
-    current_hearing_request_type if changed_request_type.present?
+    return current_hearing_request_type if changed_request_type.present?
 
     case hearing_request_type
     when :central_office

@@ -256,17 +256,17 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def case_fields_for_vacols_ids(vacols_ids)
     # array of arrays will become hash with bfkey as key.
     # [
-    #   [ 123, { location: 57, status: "Original" } ],
-    #   [ 456, { location: 2, status: "Court Remand" } ],
+    #   [ 123, { location: 57, status: "Original", bfhr: "1", bfdocind: "V"} ],
+    #   [ 456, { location: 2, status: "Court Remand", bfhr: "1", bfdocind: "V" } ],
     #   ...
     # ]
     # becomes
     # {
-    #   123: { location: 57, status: "Original" },
-    #   456: { location: 2, status: "Court Remand" },
+    #   123: { location: 57, status: "Original", bfhr: "1", bfdocind: "V" },
+    #   456: { location: 2, status: "Court Remand", bfhr: "1", bfdocind: "V" },
     #   ...
     # }
-    VACOLS::Case.where(bfkey: vacols_ids).pluck(:bfkey, :bfac, :bfcurloc, :bfkey, :bfdocind).map do
+    VACOLS::Case.where(bfkey: vacols_ids).pluck(:bfkey, :bfac, :bfcurloc, :bfhr, :bfdocind).map do
       |bfkey, bfac, bfcurloc, bfhr, bfdocind|
       [
         bfkey,
