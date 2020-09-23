@@ -85,6 +85,7 @@ import { FlashAlerts } from '../nonComp/components/Alerts';
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
 import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
 import ScheduleVeteran from '../hearings/components/ScheduleVeteran';
+import HearingTypeConversionForm from '../hearings/components/HearingTypeConversionForm';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -270,6 +271,10 @@ class QueueApp extends React.PureComponent {
   )
 
   routedChangeTaskTypeModal = (props) => <ChangeTaskTypeModal {...props.match.params} />;
+
+  routedChangeHearingRequestTypeToVirtual = (props) => (
+    <HearingTypeConversionForm type='Virtual' {...props.match.params} />
+  );
 
   routedSetOvertimeStatusModal = (props) => <SetOvertimeStatusModal {...props.match.params} />;
 
@@ -667,6 +672,12 @@ class QueueApp extends React.PureComponent {
                 path="/queue/appeals/:appealId/tasks/:taskId/modal/change_task_type"
                 title="Change Task Type | Caseflow"
                 render={this.routedChangeTaskTypeModal}
+              />
+              <PageRoute
+                exact
+                path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`}
+                title="Change Hearing Request Type to Virtual | Caseflow"
+                render={this.routedChangeHearingRequestTypeToVirtual}
               />
 
               <Route
