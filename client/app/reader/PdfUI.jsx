@@ -5,7 +5,7 @@ import { css } from 'glamor';
 
 import DocumentSearch from './DocumentSearch';
 import Button from '../components/Button';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import Link from '../components/Link';
 import PdfUIPageNumInput from '../reader/PdfUIPageNumInput';
 import Pdf from './Pdf';
 import DocumentCategoryIcons from './DocumentCategoryIcons';
