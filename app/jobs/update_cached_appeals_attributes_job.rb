@@ -303,32 +303,35 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     end.to_h
   end
 
+  def vacols_request_type(vacols_case)
+    case AppealRepository.hearing_request_type(vacols_case[:bfhr])
+    when :central_office
+      :central_office
+    when :travel_board
+      AppealRepository.video_hearing_requested?(vacols_case[:bfdocind]) ? :video : :travel_board
+    end
+  end
+
   def formally_travel?(vacols_id, vacols_case)
     # the current request type is travel
-    if hearing_type_from_vacols_case(vacols_id, vacols_case) == LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:travel_board]
+    if hearing_type_from_vacols_case(vacols_id, vacols_case) ==
+        LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:travel_board]
       return false
     end
 
     # otherwise check if og request type was travel
-    type = LegacyAppeal.vacols_hearing_request_type(
-      AppealRepository.hearing_request_type(vacols_case[:bfhr]),
-      AppealRepository.video_hearing_requested?(vacols_case[:bfdocind])
-    )
-    type == :travel_board
+    vacols_request_type(vacols_case) == :travel_board
   end
 
   def hearing_type_from_vacols_case(vacols_id, vacols_case)
     la = LegacyAppeal.find_by(vacols_id: vacols_id)
 
-    if la.changed_request_type.present?
-      type = la.current_hearing_request_type
-    else
-      type = LegacyAppeal.vacols_hearing_request_type(
-        AppealRepository.hearing_request_type(vacols_case[:bfhr]),
-        AppealRepository.video_hearing_requested?(vacols_case[:bfdocind])
-      )
-    end
+    type = if la.changed_request_type.present?
+            la.current_hearing_request_type
+          else
+            vacols_request_type(vacols_case)
+          end
 
-     LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[type]
+    LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[type]
   end
 end

@@ -393,9 +393,9 @@ class LegacyAppeal < CaseflowRecord
   def current_hearing_request_type
     case changed_request_type
     when HearingDay::REQUEST_TYPES[:video]
-      return :video
+      :video
     when HearingDay::REQUEST_TYPES[:virtual]
-      return :virtual
+      :virtual
     else
       fail InvalidChangedRequestType, "\"#{changed_request_type}\" is not a valid request type."
     end
@@ -412,7 +412,12 @@ class LegacyAppeal < CaseflowRecord
   def sanitized_hearing_request_type
     current_hearing_request_type if changed_request_type.present?
 
-    vacols_hearing_request_type(hearing_request_type, video_hearing_requested)
+    case hearing_request_type
+    when :central_office
+      :central_office
+    when :travel_board
+      video_hearing_requested ? :video : :travel_board
+    end
   end
 
   def readable_hearing_request_type
@@ -1016,13 +1021,9 @@ class LegacyAppeal < CaseflowRecord
 
   class << self
     def vacols_hearing_request_type(hearing_request_type, video_hearing_requested)
-      case hearing_request_type
-      when :central_office
-        :central_office
-      when :travel_board
-        video_hearing_requested ? :video : :travel_board
-      end
+
     end
+
     def find_or_create_by_vacols_id(vacols_id)
       appeal = find_or_initialize_by(vacols_id: vacols_id)
 
