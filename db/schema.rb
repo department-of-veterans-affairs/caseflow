@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_16_150837) do
+ActiveRecord::Schema.define(version: 2020_09_23_200721) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -260,6 +260,25 @@ ActiveRecord::Schema.define(version: 2020_09_16_150837) do
     t.datetime "updated_at", null: false
     t.index ["sdomainid"], name: "index_cached_user_attributes_on_sdomainid", unique: true
     t.index ["updated_at"], name: "index_cached_user_attributes_on_updated_at"
+  end
+
+  create_table "cavc_remands", force: :cascade do |t|
+    t.bigint "appeal_id", null: false, comment: "Appeal the court is remanding"
+    t.boolean "attorney_represented", null: false, comment: "Whether or not the appellant was represented by an attorney"
+    t.string "cavc_docket_number", null: false, comment: "Docket number of the CAVC judgement"
+    t.string "cavc_judge_full_name", null: false, comment: "CAVC judge that passed the judgement on the remand"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at"
+    t.bigint "created_by_id", null: false, comment: "User that created this record"
+    t.date "decision_date", null: false, comment: "Date CAVC issued a decision"
+    t.bigint "decision_issue_ids", default: [], comment: "Decision issues being remanded. For a JMR, all decision issues on the previous appeal will be remanded. For a JMPR, only some", array: true
+    t.string "instructions", null: false, comment: "Intructions and context provided upon creation of the remand record"
+    t.date "judgement_date", null: false, comment: "Date CAVC issued a judgement"
+    t.date "mandate_date", null: false, comment: "Date mandate was ready"
+    t.string "remand_type", comment: "Type of remand. Can be null if the cavc decision type is not 'Remand'. One of 'JMP', 'JMPR', and 'MDR'"
+    t.string "type", null: false, comment: "CAVC Decision type. Currently one of 'Remand', 'Straight Reversal', and 'Death Dismissal'"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at"
+    t.bigint "updated_by_id", null: false, comment: "User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created."
+    t.index ["appeal_id"], name: "index_cavc_remands_on_appeal_id"
   end
 
   create_table "certification_cancellations", id: :serial, force: :cascade do |t|
