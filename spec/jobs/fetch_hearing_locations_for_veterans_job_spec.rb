@@ -108,7 +108,7 @@ describe FetchHearingLocationsForVeteransJob do
       it "creates schedule hearing tasks for appeal and records a geomatched result" do
         expect(subject).to(
           receive(:record_geomatched_appeal)
-            .with(legacy_appeal.external_id, :matched_available_hearing_locations)
+            .with(legacy_appeal, :matched_available_hearing_locations)
         )
 
         subject.perform
@@ -176,7 +176,7 @@ describe FetchHearingLocationsForVeteransJob do
               allow(subject).to(receive(:job_running_past_expected_end_time?).and_return(false, false, true))
 
               expect(subject).to(
-                receive(:record_geomatched_appeal).with(legacy_appeal.external_id, "limit_error").once
+                receive(:record_geomatched_appeal).with(legacy_appeal, "limit_error").once
               )
 
               subject.perform
@@ -192,7 +192,7 @@ describe FetchHearingLocationsForVeteransJob do
 
             it "records multiple geomatch errors" do
               expect(subject).to(
-                receive(:record_geomatched_appeal).with(legacy_appeal.external_id, "limit_error").at_least(:once)
+                receive(:record_geomatched_appeal).with(legacy_appeal, "limit_error").at_least(:once)
               )
 
               subject.perform
@@ -205,10 +205,10 @@ describe FetchHearingLocationsForVeteransJob do
 
               it "retries the same appeal again" do
                 expect(subject).to(
-                  receive(:record_geomatched_appeal).with(legacy_appeal.external_id, "limit_error").at_least(:twice)
+                  receive(:record_geomatched_appeal).with(legacy_appeal, "limit_error").at_least(:twice)
                 )
                 expect(subject).not_to(
-                  receive(:record_geomatched_appeal).with(appeal.external_id, any_args)
+                  receive(:record_geomatched_appeal).with(appeal, any_args)
                 )
 
                 subject.perform
@@ -233,11 +233,11 @@ describe FetchHearingLocationsForVeteransJob do
 
           context "retries to geomatch" do
             it "retries geomatching hearing locations for appeal" do
-              expect(subject).to(receive(:record_geomatched_appeal).once.with(legacy_appeal.external_id, "limit_error"))
+              expect(subject).to(receive(:record_geomatched_appeal).once.with(legacy_appeal, "limit_error"))
               expect(subject).to(
                 receive(:record_geomatched_appeal)
                   .once
-                  .with(legacy_appeal.external_id, :matched_available_hearing_locations)
+                  .with(legacy_appeal, :matched_available_hearing_locations)
               )
 
               subject.perform
@@ -255,7 +255,7 @@ describe FetchHearingLocationsForVeteransJob do
 
         it "records a geomatch error" do
           expect(subject).to(
-            receive(:record_geomatched_appeal).with(legacy_appeal.external_id, "error")
+            receive(:record_geomatched_appeal).with(legacy_appeal, "error")
           )
           expect(Raven).to receive(:capture_exception)
 
