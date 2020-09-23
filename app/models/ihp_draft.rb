@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Track the path to the ihp draft a vso creates for an appeal and uploads to V:\
+# Validates the format of the path based on whether or not the appeal is a lecagy or ama appeal
 class IhpDraft < CaseflowRecord
   belongs_to :appeal, polymorphic: true
   belongs_to :organization
