@@ -315,7 +315,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def formally_travel?(vacols_id, vacols_case)
     # the current request type is travel
     if hearing_type_from_vacols_case(vacols_id, vacols_case) ==
-        LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:travel_board]
+       LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:travel_board]
       return false
     end
 
@@ -327,10 +327,10 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     la = LegacyAppeal.find_by(vacols_id: vacols_id)
 
     type = if la.changed_request_type.present?
-            la.current_hearing_request_type
-          else
-            vacols_request_type(vacols_case)
-          end
+             la.current_hearing_request_type
+           else
+             vacols_request_type(vacols_case)
+           end
 
     LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[type]
   end

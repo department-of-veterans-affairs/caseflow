@@ -1020,10 +1020,6 @@ class LegacyAppeal < CaseflowRecord
   end
 
   class << self
-    def vacols_hearing_request_type(hearing_request_type, video_hearing_requested)
-
-    end
-
     def find_or_create_by_vacols_id(vacols_id)
       appeal = find_or_initialize_by(vacols_id: vacols_id)
 
