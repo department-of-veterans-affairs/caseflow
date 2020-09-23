@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_16_150837) do
+ActiveRecord::Schema.define(version: 2020_09_21_191403) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -449,6 +449,20 @@ ActiveRecord::Schema.define(version: 2020_09_16_150837) do
     t.string "status"
     t.datetime "updated_at", null: false
     t.index ["updated_at"], name: "index_distributions_on_updated_at"
+  end
+
+  create_table "docket_changes", comment: "Stores the disposition and associated data for Docket Change motions", force: :cascade do |t|
+    t.bigint "appeal_id", null: false
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.string "disposition", comment: "Possible options are granted, partially_granted, and denied"
+    t.string "docket", comment: "The new docket"
+    t.integer "granted_decision_issue_ids", comment: "When a docket change is partially granted, this includes an array of the appeal's decision issue IDs that were selected for the new docket. For full grant, this includes all prior decision issue IDs.", array: true
+    t.datetime "receipt_date", null: false
+    t.bigint "task_id", null: false
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.index ["appeal_id"], name: "index_docket_changes_on_appeal_id"
+    t.index ["created_at"], name: "index_docket_changes_on_created_at"
+    t.index ["task_id"], name: "index_docket_changes_on_task_id"
   end
 
   create_table "docket_snapshots", id: :serial, force: :cascade do |t|
@@ -1498,6 +1512,8 @@ ActiveRecord::Schema.define(version: 2020_09_16_150837) do
   add_foreign_key "certifications", "users"
   add_foreign_key "claims_folder_searches", "users"
   add_foreign_key "dispatch_tasks", "users"
+  add_foreign_key "docket_changes", "appeals"
+  add_foreign_key "docket_changes", "tasks"
   add_foreign_key "document_views", "users"
   add_foreign_key "end_product_establishments", "users"
   add_foreign_key "hearing_days", "users", column: "created_by_id"
