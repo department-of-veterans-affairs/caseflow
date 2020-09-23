@@ -49,6 +49,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         issue_count: request_issues_to_cache[appeal.id] || 0,
         docket_type: appeal.docket_type,
         docket_number: appeal.docket_number,
+        hearing_request_type: appeal.readable_hearing_request_type,
         is_aod: appeal_aod_status.include?(appeal.id),
         power_of_attorney_name: representative_names[appeal.id],
         suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location,
@@ -61,6 +62,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
                       :closest_regional_office_key,
                       :docket_type,
                       :docket_number,
+                      :hearing_request_type,
                       :is_aod,
                       :issue_count,
                       :power_of_attorney_name,
@@ -166,13 +168,23 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
           vacols_id: folder[:vacols_id],
           case_type: vacols_case[:status],
           docket_number: folder[:docket_number],
+          formally_travel: formally_travel?(folder[:vacols_id], vacols_case), # true or false
+          hearing_request_type: hearing_type_from_vacols_case(folder[:vacols_id], vacols_case),
           issue_count: issue_counts_to_cache[folder[:vacols_id]] || 0,
           is_aod: aod_status_to_cache[folder[:vacols_id]],
           veteran_name: veteran_names_to_cache[folder[:correspondent_id]]
         }
       end
 
-      update_columns = [:docket_number, :issue_count, :veteran_name, :case_type, :is_aod]
+      update_columns = [
+        :docket_number,
+        :formally_travel,
+        :hearing_request_type,
+        :issue_count,
+        :veteran_name,
+        :case_type,
+        :is_aod
+      ]
       CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:vacols_id],
                                                                       columns: update_columns }
 
@@ -254,12 +266,15 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     #   456: { location: 2, status: "Court Remand" },
     #   ...
     # }
-    VACOLS::Case.where(bfkey: vacols_ids).pluck(:bfkey, :bfac, :bfcurloc).map do |bfkey, bfac, bfcurloc|
+    VACOLS::Case.where(bfkey: vacols_ids).pluck(:bfkey, :bfac, :bfcurloc, :bfkey, :bfdocind).map do
+      |bfkey, bfac, bfcurloc, bfhr, bfdocind|
       [
         bfkey,
         {
           location: bfcurloc,
-          status: VACOLS::Case::TYPES[bfac]
+          status: VACOLS::Case::TYPES[bfac],
+          bfhr: bfhr,
+          bfdocind: bfdocind
         }
       ]
     end.to_h
@@ -286,5 +301,34 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       # Matches how last names are split and sorted on the front end (see: TaskTable.detailsColumn.getSortValue)
       [veteran.file_number, "#{veteran.last_name&.split(' ')&.last}, #{veteran.first_name}"]
     end.to_h
+  end
+
+  def formally_travel?(vacols_id, vacols_case)
+    # the current request type is travel
+    if hearing_type_from_vacols_case(vacols_id, vacols_case) == LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:travel_board]
+      return false
+    end
+
+    # otherwise check if og request type was travel
+    type = LegacyAppeal.vacols_hearing_request_type(
+      AppealRepository.hearing_request_type(vacols_case[:bfhr]),
+      AppealRepository.video_hearing_requested?(vacols_case[:bfdocind])
+    )
+    type == :travel_board
+  end
+
+  def hearing_type_from_vacols_case(vacols_id, vacols_case)
+    la = LegacyAppeal.find_by(vacols_id: vacols_id)
+
+    if la.changed_request_type.present?
+      type = la.current_hearing_request_type
+    else
+      type = LegacyAppeal.vacols_hearing_request_type(
+        AppealRepository.hearing_request_type(vacols_case[:bfhr]),
+        AppealRepository.video_hearing_requested?(vacols_case[:bfdocind])
+      )
+    end
+
+     LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[type]
   end
 end
