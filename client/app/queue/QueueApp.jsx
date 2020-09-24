@@ -273,7 +273,7 @@ class QueueApp extends React.PureComponent {
   routedChangeTaskTypeModal = (props) => <ChangeTaskTypeModal {...props.match.params} />;
 
   routedChangeHearingRequestTypeToVirtual = (props) => (
-    <HearingTypeConversionForm type='Virtual' {...props.match.params} />
+    <HearingTypeConversionForm type="Virtual" {...props.match.params} />
   );
 
   routedSetOvertimeStatusModal = (props) => <SetOvertimeStatusModal {...props.match.params} />;
