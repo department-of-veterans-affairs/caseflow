@@ -42,7 +42,6 @@ describe CavcTask, :postgres do
     let(:user) { create(:user) }
     let(:cavc_task) { create(:cavc_task) }
     it "returns empty" do
-      binding.pry
       expect(cavc_task.available_actions(user)).to be_empty
     end
   end
