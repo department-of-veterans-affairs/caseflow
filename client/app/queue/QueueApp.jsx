@@ -85,7 +85,7 @@ import { FlashAlerts } from '../nonComp/components/Alerts';
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
 import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
 import ScheduleVeteran from '../hearings/components/ScheduleVeteran';
-import HearingTypeConversionForm from '../hearings/components/HearingTypeConversionForm';
+import HearingTypeConversion from '../hearings/components/HearingTypeConversion';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -273,7 +273,7 @@ class QueueApp extends React.PureComponent {
   routedChangeTaskTypeModal = (props) => <ChangeTaskTypeModal {...props.match.params} />;
 
   routedChangeHearingRequestTypeToVirtual = (props) => (
-    <HearingTypeConversionForm type="Virtual" {...props.match.params} />
+    <HearingTypeConversion type="Virtual" {...props.match.params} />
   );
 
   routedSetOvertimeStatusModal = (props) => <SetOvertimeStatusModal {...props.match.params} />;
