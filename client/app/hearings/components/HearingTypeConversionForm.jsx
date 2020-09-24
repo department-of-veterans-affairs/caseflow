@@ -52,15 +52,18 @@ export const HearingTypeConversionForm = ({
   };
 
   const convertTitle = sprintf(COPY.CONVERT_HEARING_TYPE_TITLE, type);
+  const convertSubtitle = sprintf(
+    COPY.CONVERT_HEARING_TYPE_SUBTITLE,
+    appeal?.closestRegionalOfficeLabel ?
+      `<strong>${appeal.closestRegionalOfficeLabel}</strong>` :
+      COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT
+  );
 
   return (
     <React.Fragment>
       <AppSegment filledBackground>
         <h1 className="cf-margin-bottom-0">{convertTitle}</h1>
-        <p dangerouslySetInnerHTML={
-          { __html: sprintf(COPY.CONVERT_HEARING_TYPE_SUBTITLE, appeal?.closestRegionalOfficeLabel ?? '') }
-        }
-        />
+        <p dangerouslySetInnerHTML={{ __html: convertSubtitle }} />
         <HelperText label={COPY.CONVERT_HEARING_TYPE_SUBTITLE_2} />
         <AppellantSection {...sectionProps} />
         <RepresentativeSection {...sectionProps} />
