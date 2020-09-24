@@ -4,7 +4,7 @@
 # This task is used to track all related CAVC subtasks.
 # If this task is still open, there is still more CAVC-specific work to be done of this appeal.
 # This task should be a child of DistributionTask, and so it blocks distribution until all its children are closed.
-# TODO: There are no actions available to any user for this task.
+# There are no actions available to any user for this task.
 
 class CavcTask < Task
   validates :parent, presence: true, parentTask: { task_type: DistributionTask }, on: :create
