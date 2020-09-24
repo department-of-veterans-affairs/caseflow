@@ -10,7 +10,7 @@ import { sprintf } from 'sprintf-js';
 
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import COPY from '../../../COPY';
-import { CENTRAL_OFFICE_HEARING, VIRTUAL_HEARING } from '../constants';
+import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../constants';
 import { appealWithDetailSelector, scheduleHearingTasksForAppeal } from '../../queue/selectors';
 import { showSuccessMessage, showErrorMessage, requestPatch } from '../../queue/uiReducer/uiActions';
 import { onReceiveAppealDetails } from '../../queue/QueueActions';
@@ -69,7 +69,7 @@ export const ScheduleVeteran = ({
   const virtual = assignHearingForm?.virtualHearing;
   const requestType = selectedHearingDay?.regionalOffice === 'C' ?
     CENTRAL_OFFICE_HEARING :
-    VIRTUAL_HEARING;
+    VIDEO_HEARING;
 
   // Determine whether we are rescheduling
   const reschedule = scheduledHearing?.disposition === 'reschedule';
