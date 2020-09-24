@@ -9,6 +9,8 @@ import { AddressLine } from 'app/hearings/components/details/Address';
 import { VirtualHearingEmail } from 'app/hearings/components/VirtualHearings/Emails';
 import { getAppellantTitle } from 'app/hearings/utils';
 
+import COPY from 'COPY';
+
 describe('HearingTypeConversionForm', () => {
   test('Matches snapshot with default props', () => {
     const hearingTypeConversionForm = mount(
@@ -57,9 +59,32 @@ describe('HearingTypeConversionForm', () => {
         appeal={appeal}
         type={'Virtual'}
       />
-    )
+    );
 
     expect(hearingTypeConversionForm.find('.usa-alert')).toHaveLength(1);
+    expect(hearingTypeConversionForm).toMatchSnapshot();
+  });
+
+  test('Displays "the appropriate regional office" when closest regional office has not been determined yet', () => {
+    const appeal = {
+      ...legacyAppealForTravelBoard,
+      closestRegionalOfficeLabel: null
+    };
+
+    const hearingTypeConversionForm = mount(
+      <HearingTypeConversionForm
+        appeal={appeal}
+        type={'Virtual'}
+      />
+    );
+
+    expect(
+      hearingTypeConversionForm
+        .find('p')
+        .first()
+        .text()
+        .includes(COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT)
+    ).toEqual(true);
     expect(hearingTypeConversionForm).toMatchSnapshot();
   });
 });
