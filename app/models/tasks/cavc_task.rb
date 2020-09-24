@@ -7,8 +7,8 @@
 # TODO: There are no actions available to any user for this task.
 
 class CavcTask < Task
-  #  has_one :hearing_task_association
-  # delegate :hearing, to: :hearing_task_association, allow_nil: true
+  validates :parent, presence: true, parentTask: { task_type: DistributionTask }, on: :create
+
   before_validation :set_assignee
 
   def self.label
@@ -61,24 +61,6 @@ class CavcTask < Task
     #
     # AppealRepository.update_location!(appeal, location)
   end
-
-  # def create_change_hearing_disposition_task(instructions = nil)
-  #   task_names = [AssignHearingDispositionTask.name, ChangeHearingDispositionTask.name]
-  #   active_disposition_tasks = children.open.where(type: task_names).to_a
-  #
-  #   multi_transaction do
-  #     ChangeHearingDispositionTask.create!(
-  #       appeal: appeal,
-  #       parent: self,
-  #       instructions: instructions.present? ? [instructions] : nil
-  #     )
-  #     active_disposition_tasks.each { |task| task.update!(status: Constants.TASK_STATUSES.completed) }
-  #   end
-  # end
-
-  # def disposition_task
-  #   children.open.detect { |child| child.type == AssignHearingDispositionTask.name }
-  # end
 
   private
 
