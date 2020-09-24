@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+  module FactoryBotHelper
+    def self.find_first_task_or_create(appeal, task_type)
+      appeal&.tasks.open.where(type: task_type.name).first ||
+        FactoryBot.create(task_type.name.underscore.to_sym, appeal: appeal)
+    end
+  end
+
   # By default, this task is created in a new Legacy appeal
   factory :task do
     assigned_at { rand(30..35).days.ago }
@@ -290,6 +297,7 @@ FactoryBot.define do
       end
 
       factory :distribution_task, class: DistributionTask do
+        parent { appeal.root_task || create(:root_task, appeal: appeal) }
         assigned_by { nil }
         assigned_to { Bva.singleton }
 
@@ -348,10 +356,7 @@ FactoryBot.define do
       end
 
       factory :cavc_task, class: CavcTask do
-        parent do
-          appeal.tasks.open.where(type: DistributionTask.name).first ||
-            create(:distribution_task, appeal: appeal)
-        end
+        parent { FactoryBotHelper.find_first_task_or_create(appeal, DistributionTask) }
       end
 
       factory :hearing_task, class: HearingTask do

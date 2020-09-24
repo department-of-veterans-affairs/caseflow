@@ -19,8 +19,8 @@ class CavcTask < Task
     [COPY::CAVC_TASK_DEFAULT_INSTRUCTIONS]
   end
 
-  def available_actions(user)
-    return []
+  def available_actions(_user)
+    []
   end
 
   def cancel_and_recreate

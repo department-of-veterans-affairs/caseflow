@@ -18,4 +18,3 @@ class ParentTaskValidator < ActiveModel::Validator
     record.parent&.type == options[:task_type].name
   end
 end
-

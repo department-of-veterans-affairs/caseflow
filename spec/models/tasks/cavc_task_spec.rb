@@ -4,7 +4,7 @@ describe CavcTask, :postgres do
   describe ".create" do
     subject { described_class.create(appeal: appeal, parent: parent_task) }
     let(:appeal) { create(:appeal) }
-    let(:parent_task) { create(:distribution_task, appeal: appeal) }
+    let!(:parent_task) { create(:distribution_task, appeal: appeal) }
 
     context "parent is DistributionTask" do
       it "creates task" do
@@ -16,6 +16,8 @@ describe CavcTask, :postgres do
         expect(parent_task.children).to include new_task
 
         expect(new_task.assigned_to).to eq Bva.singleton
+        expect(new_task.label).to eq "All CAVC-related tasks"
+        expect(new_task.default_instructions).to eq [COPY::CAVC_TASK_DEFAULT_INSTRUCTIONS]
       end
     end
 
@@ -36,6 +38,16 @@ describe CavcTask, :postgres do
         expect(new_task.errors.messages[:parent]).to include("can't be blank")
       end
     end
+
+    context "FactoryBot is used to create CavcTask" do
+      let(:cavc_task) { create(:cavc_task, appeal: appeal) }
+      it "uses existing distribution_task" do
+        cavc_task
+        expect(Appeal.count).to eq 1
+        expect(RootTask.count).to eq 1
+        expect(DistributionTask.count).to eq 1
+      end
+    end
   end
 
   describe "#available_actions" do
@@ -46,4 +58,11 @@ describe CavcTask, :postgres do
     end
   end
 
+  describe "#available_actions" do
+    let(:user) { create(:user) }
+    let(:cavc_task) { create(:cavc_task) }
+    it "returns empty" do
+      expect(cavc_task.available_actions(user)).to be_empty
+    end
+  end
 end
