@@ -6,6 +6,7 @@ import {
   AppealHearingLocationsDropdown,
   HearingDateDropdown
 } from '../../components/DataDropdowns';
+import { CENTRAL_OFFICE_HEARING } from '../constants';
 import { AddressLine } from './details/Address';
 import { ReadOnly } from './details/ReadOnly';
 import HearingTypeDropdown from './details/HearingTypeDropdown';
@@ -14,8 +15,6 @@ import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
 import { marginTop } from './details/style';
 import { isEmpty, orderBy } from 'lodash';
-import HEARING_REQUEST_TYPES from
-  '../../../constants/HEARING_REQUEST_TYPES';
 
 export const ScheduleVeteranForm = ({
   virtual,
@@ -57,7 +56,7 @@ export const ScheduleVeteranForm = ({
         <React.Fragment>
 
           <div className="usa-width-one-half">
-            <ReadOnly spacing={0} label="Regional Office" text={HEARING_REQUEST_TYPES.central} />
+            <ReadOnly spacing={0} label="Regional Office" text={CENTRAL_OFFICE_HEARING} />
             <ReadOnly spacing={15} label="Hearing Location" text="Virtual" />
 
             <HearingDateDropdown

@@ -10,6 +10,7 @@ import { sprintf } from 'sprintf-js';
 
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import COPY from '../../../COPY';
+import { CENTRAL_OFFICE_HEARING, VIRTUAL_HEARING } from '../constants';
 import { appealWithDetailSelector, scheduleHearingTasksForAppeal } from '../../queue/selectors';
 import { showSuccessMessage, showErrorMessage, requestPatch } from '../../queue/uiReducer/uiActions';
 import { onReceiveAppealDetails } from '../../queue/QueueActions';
@@ -28,8 +29,6 @@ import {
 import { ScheduleVeteranForm } from './ScheduleVeteranForm';
 import ApiUtil from '../../util/ApiUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import HEARING_REQUEST_TYPES from
-  '../../../constants/HEARING_REQUEST_TYPES';
 
 export const ScheduleVeteran = ({
   scheduleHearingTask,
@@ -69,8 +68,8 @@ export const ScheduleVeteran = ({
   // Determine the Request Type for the hearing
   const virtual = assignHearingForm?.virtualHearing;
   const requestType = selectedHearingDay?.regionalOffice === 'C' ?
-    HEARING_REQUEST_TYPES.central :
-    HEARING_REQUEST_TYPES.virtual;
+    CENTRAL_OFFICE_HEARING :
+    VIRTUAL_HEARING;
 
   // Determine whether we are rescheduling
   const reschedule = scheduledHearing?.disposition === 'reschedule';
