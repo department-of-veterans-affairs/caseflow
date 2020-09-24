@@ -26,9 +26,10 @@ import {
   startPollingHearing,
 } from '../../components/common/actions';
 import { ScheduleVeteranForm } from './ScheduleVeteranForm';
-import { HEARING_REQUEST_TYPES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import HEARING_REQUEST_TYPES from
+  '../../../constants/HEARING_REQUEST_TYPES';
 
 export const ScheduleVeteran = ({
   scheduleHearingTask,
@@ -67,7 +68,9 @@ export const ScheduleVeteran = ({
 
   // Determine the Request Type for the hearing
   const virtual = assignHearingForm?.virtualHearing;
-  const requestType = selectedHearingDay?.regionalOffice === 'C' ? HEARING_REQUEST_TYPES.C : HEARING_REQUEST_TYPES.V;
+  const requestType = selectedHearingDay?.regionalOffice === 'C' ?
+    HEARING_REQUEST_TYPES.central :
+    HEARING_REQUEST_TYPES.virtual;
 
   // Determine whether we are rescheduling
   const reschedule = scheduledHearing?.disposition === 'reschedule';
