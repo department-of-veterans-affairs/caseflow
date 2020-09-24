@@ -6,7 +6,8 @@ import moment from 'moment';
 import {
   AppealDocketTag,
   CaseDetailsInformation,
-  SuggestedHearingLocation
+  SuggestedHearingLocation,
+  HearingRequestType
 } from './AssignHearingsFields';
 import { NoVeteransToAssignMessage } from './Messages';
 import { VeteranStateDetail } from '../../../queue/VeteranDetail';
@@ -113,12 +114,23 @@ export default class AssignHearingsTable extends React.PureComponent {
       },
       {
         name: 'type',
-        header: 'Types',
+        header: 'Appeal Stream Type',
         align: 'left',
         valueFunction: (row) => renderAppealType({
           caseType: row.appeal.caseType,
           isAdvancedOnDocket: row.appeal.isAdvancedOnDocket
         })
+      },
+      {
+        name: 'hearingRequestType',
+        header: 'Hearing Type',
+        align: 'left',
+        valueFunction: (row) => (
+          <HearingRequestType
+            hearingRequestType={row.hearingRequestType}
+            isFormallyTravel={row.isFormallyTravel}
+          />
+        )
       },
       {
         name: 'docketNum',
