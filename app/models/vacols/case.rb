@@ -375,12 +375,4 @@ class VACOLS::Case < VACOLS::Record
   def closed?
     bfddec.present?
   end
-
-  def hearing_request_type
-    HEARING_REQUEST_TYPES[bfhr]
-  end
-
-  def video_hearing_requested?
-    bfdocind == "V"
-  end
 end
