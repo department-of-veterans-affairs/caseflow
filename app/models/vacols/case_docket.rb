@@ -249,6 +249,17 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeals.map { |appeal| appeal["bfdloout"] }
   end
 
+  def self.age_of_oldest_priority_appeal
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS}
+      where rownum <= ?
+    SQL
+
+    fmtd_query = sanitize_sql_array([query, 1])
+
+    connection.exec_query(fmtd_query).to_hash.first["bfdloout"]
+  end
+
   def self.nonpriority_decisions_per_year
     joins(VACOLS::Case::JOIN_AOD)
       .where(

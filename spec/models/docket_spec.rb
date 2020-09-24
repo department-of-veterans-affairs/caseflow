@@ -206,6 +206,14 @@ describe Docket, :all_dbs do
       end
     end
 
+    context "age_of_oldest_priority_appeal" do
+      subject { DirectReviewDocket.new.age_of_oldest_priority_appeal }
+
+      it "returns the 'ready at' field of the oldest priority appeal that is ready for distribution" do
+        expect(subject).to eq(aod_age_appeal.ready_for_distribution_at)
+      end
+    end
+
     context "distribute_appeals" do
       context "priority appeals" do
         subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: true, limit: 2) }

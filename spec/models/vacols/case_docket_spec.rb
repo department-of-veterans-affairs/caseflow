@@ -151,6 +151,29 @@ describe VACOLS::CaseDocket, :all_dbs do
     end
   end
 
+  context ".age_of_oldest_priority_appeal" do
+    subject { VACOLS::CaseDocket.age_of_oldest_priority_appeal }
+
+    it "returns the oldest priority appeal ready at date" do
+      expect(subject).to eq(aod_ready_case_ready_time.to_date)
+    end
+
+    context "when an appeal is tied to a judge" do
+      let(:original_docket_number) { aod_ready_case_docket_number }
+      let!(:hearing) do
+        create(:case_hearing,
+               :disposition_held,
+               folder_nr: original.bfkey,
+               hearing_date: 5.days.ago.to_date,
+               board_member: judge.vacols_attorney_id)
+      end
+
+      it "does not affect the results of the call" do
+        expect(subject).to eq(aod_ready_case_ready_time.to_date)
+      end
+    end
+  end
+
   context ".nonpriority_decisions_per_year" do
     subject { VACOLS::CaseDocket.nonpriority_decisions_per_year }
 
