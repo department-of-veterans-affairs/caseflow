@@ -38,14 +38,37 @@ describe CavcTask, :postgres do
         expect(new_task.errors.messages[:parent]).to include("can't be blank")
       end
     end
+  end
 
-    context "FactoryBot is used to create CavcTask" do
-      let(:cavc_task) { create(:cavc_task, appeal: appeal) }
-      it "uses existing distribution_task" do
-        cavc_task
+  describe "FactoryBot.create(:cavc_task) with different arguments" do
+    context "appeal is provided" do
+      let(:appeal) { create(:appeal) }
+      let!(:parent_task) { create(:distribution_task, appeal: appeal) }
+      let!(:cavc_task) { create(:cavc_task, appeal: appeal) }
+      it "finds existing distribution_task to use as parent" do
         expect(Appeal.count).to eq 1
         expect(RootTask.count).to eq 1
         expect(DistributionTask.count).to eq 1
+        expect(CavcTask.count).to eq 1
+      end
+    end
+    context "parent task is provided" do
+      let(:parent_task) { create(:distribution_task) }
+      let!(:cavc_task) { create(:cavc_task, parent: parent_task) }
+      it "uses existing distribution_task" do
+        expect(Appeal.count).to eq 1
+        expect(RootTask.count).to eq 1
+        expect(DistributionTask.count).to eq 1
+        expect(CavcTask.count).to eq 1
+      end
+    end
+    context "nothing is provided" do
+      let!(:cavc_task) { create(:cavc_task) }
+      it "create realistic task tree" do
+        expect(Appeal.count).to eq 1
+        expect(RootTask.count).to eq 1
+        expect(DistributionTask.count).to eq 1
+        expect(CavcTask.count).to eq 1
       end
     end
   end
@@ -58,11 +81,38 @@ describe CavcTask, :postgres do
     end
   end
 
-  describe "#available_actions" do
+  context "closing child tasks" do
     let(:user) { create(:user) }
     let(:cavc_task) { create(:cavc_task) }
-    it "returns empty" do
-      expect(cavc_task.available_actions(user)).to be_empty
+    let!(:child_task) { create(:ama_task, parent: cavc_task) }
+    it "completes parent CavcTask" do
+      child_task.completed!
+      expect(cavc_task.closed?)
+      expect(cavc_task.status).to eq "completed"
+    end
+    it "cancels parent CavcTask" do
+      child_task.cancelled!
+      expect(cavc_task.closed?)
+      expect(cavc_task.status).to eq "cancelled"
+    end
+    context "has multiple children" do
+      let!(:child_task2) { create(:ama_task, parent: cavc_task) }
+      it "leaves parent CavcTask open when completing 1 child" do
+        child_task.completed!
+        expect(cavc_task.open?)
+        expect(cavc_task.status).to eq "on_hold"
+      end
+      it "leaves parent CavcTask open when cancelling 1 child" do
+        child_task.cancelled!
+        expect(cavc_task.open?)
+        expect(cavc_task.status).to eq "on_hold"
+      end
+      it "closes parent CavcTask open when closing all children" do
+        child_task.cancelled!
+        child_task2.completed!
+        expect(cavc_task.closed?)
+        expect(cavc_task.status).to eq "completed"
+      end
     end
   end
 end

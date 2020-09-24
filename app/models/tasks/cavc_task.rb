@@ -23,18 +23,6 @@ class CavcTask < Task
     []
   end
 
-  def cancel_and_recreate
-    cavc_task = CavcTask.create!(
-      appeal: appeal,
-      parent: parent,
-      assigned_to: Bva.singleton
-    )
-
-    cancel_task_and_child_subtasks
-
-    cavc_task
-  end
-
   def verify_org_task_unique
     true
   end

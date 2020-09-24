@@ -3,7 +3,7 @@
 FactoryBot.define do
   module FactoryBotHelper
     def self.find_first_task_or_create(appeal, task_type)
-      appeal&.tasks.open.where(type: task_type.name).first ||
+      (appeal.tasks.open.where(type: task_type.name).first if appeal) ||
         FactoryBot.create(task_type.name.underscore.to_sym, appeal: appeal)
     end
   end
