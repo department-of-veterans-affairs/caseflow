@@ -390,6 +390,15 @@ class LegacyAppeal < CaseflowRecord
     hearings.select(&:scheduled_pending?)
   end
 
+  def original_hearing_request_type
+    case hearing_request_type
+    when :central_office
+      :central_office
+    when :travel_board
+      video_hearing_requested ? :video : :travel_board
+    end
+  end
+
   # `hearing_request_type` is a direct mapping from VACOLS and has some unused
   # values. Also, `hearing_request_type` alone can't disambiguate a video hearing
   # from a travel board hearing. This method cleans all of these issues up.
@@ -410,12 +419,7 @@ class LegacyAppeal < CaseflowRecord
       end
     end
 
-    case hearing_request_type
-    when :central_office
-      :central_office
-    when :travel_board
-      video_hearing_requested ? :video : :travel_board
-    end
+    original_hearing_request_type
   end
 
   def readable_hearing_request_type
