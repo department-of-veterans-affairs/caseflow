@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
@@ -9,9 +11,15 @@ import COPY from '../../../COPY';
 import { getAppellantTitle } from '../utils';
 import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
+import { appealWithDetailSelector, taskById } from '../../queue/selectors';
+import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
+import HEARING_REQUEST_TYPES from
+  '../../../constants/HEARING_REQUEST_TYPES';
+import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
 
-export const HearingTypeConversionForm = ({
+const HearingTypeConversionForm = ({
+  task,
   type,
   appeal
 }) => {
@@ -59,6 +67,28 @@ export const HearingTypeConversionForm = ({
       COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT
   );
 
+  const submit = () => {
+    const changedRequestType = type === 'Virtual' ? HEARING_REQUEST_TYPES.virtual : HEARING_REQUEST_TYPES.video;
+    const data = {
+      task: {
+        status: TASK_STATUSES.completed,
+        business_payloads: {
+          values: {
+            changed_request_type: changedRequestType
+          }
+        }
+      }
+    };
+
+    return ApiUtil.
+      patch(`/tasks/${task.taskId}`, { data }).
+      then((response) => {
+      }).
+      catch(() => {
+
+      });
+  };
+
   return (
     <React.Fragment>
       <AppSegment filledBackground>
@@ -87,6 +117,7 @@ export const HearingTypeConversionForm = ({
             name={convertTitle}
             loading={loading}
             className="usa-button"
+            onClick={submit}
           >
             {convertTitle}
           </Button>
@@ -98,7 +129,17 @@ export const HearingTypeConversionForm = ({
 
 HearingTypeConversionForm.propTypes = {
   appeal: PropTypes.object,
+  appealId: PropTypes.string,
+  task: PropTypes.object,
+  taskId: PropTypes.string,
   // Router inherited props
   history: PropTypes.object,
-  type: PropTypes.string
+  type: PropTypes.oneOf(['Virtual'])
 };
+
+const mapStateToProps = (state, ownProps) => ({
+  appeal: appealWithDetailSelector(state, ownProps),
+  task: taskById(state, { taskId: ownProps.taskId })
+});
+
+export default withRouter(connect(mapStateToProps)(HearingTypeConversionForm));
