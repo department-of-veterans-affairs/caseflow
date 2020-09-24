@@ -207,8 +207,8 @@ class AppealRepository
         form9_date: normalize_vacols_date(case_record.bfd19),
         notice_of_death_date: normalize_vacols_date(correspondent_record.sfnod),
         ssoc_dates: ssoc_dates_from(case_record),
-        hearing_request_type: hearing_request_type(case_record.bfhr),
-        video_hearing_requested: video_hearing_requested?(case_record.bfdocind),
+        hearing_request_type: VACOLS::Case.hearing_request_type(case_record.bfhr),
+        video_hearing_requested: VACOLS::Case.video_hearing_requested?(case_record.bfdocind),
         hearing_requested: (case_record.bfhr == "1" || case_record.bfhr == "2"),
         hearing_held: %w[1 2 6 7].include?(case_record.bfha),
         regional_office_key: case_record.bfregoff,
@@ -278,14 +278,6 @@ class AppealRepository
       else
         "Paper"
       end
-    end
-
-    def hearing_request_type(bfhr)
-      VACOLS::Case::HEARING_REQUEST_TYPES[bfhr]
-    end
-
-    def video_hearing_requested?(bfdocind)
-      bfdocind == "V"
     end
 
     # dates in VACOLS are incorrectly recorded as UTC.

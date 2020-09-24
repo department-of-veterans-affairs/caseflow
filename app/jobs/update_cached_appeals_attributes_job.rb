@@ -304,11 +304,11 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   def vacols_request_type(vacols_case)
-    case AppealRepository.hearing_request_type(vacols_case[:bfhr])
+    case VACOLS::Case.hearing_request_type(vacols_case[:bfhr])
     when :central_office
       :central_office
     when :travel_board
-      AppealRepository.video_hearing_requested?(vacols_case[:bfdocind]) ? :video : :travel_board
+      VACOLS::Case.video_hearing_requested?(vacols_case[:bfdocind]) ? :video : :travel_board
     end
   end
 
