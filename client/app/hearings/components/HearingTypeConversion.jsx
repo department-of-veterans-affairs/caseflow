@@ -31,7 +31,7 @@ const HearingTypeConversion = ({
     const title = sprintf(COPY.CONVERT_HEARING_TYPE_SUCCESS, appeal?.appellantFullName, type);
     const detail = sprintf(
       COPY.CONVERT_HEARING_TYPE_SUCCESS_DETAIL,
-      appeal?.closestRegionalOffice || 'appropriate regional office'
+      appeal?.closestRegionalOffice || COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT
     );
 
     return { title, detail };
