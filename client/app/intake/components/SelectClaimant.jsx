@@ -20,20 +20,6 @@ const email = React.createElement(
   { href: 'mailto:VACaseflowIntake@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database' },
   'email'
 );
-const claimantLabel = React.createElement(
-  'p',
-  { id: 'claimantLabel', style: { marginTop: '8.95px', marginBottom: '0px' } },
-  COPY.CLAIMANT_NOT_FOUND_START,
-  email,
-  COPY.CLAIMANT_NOT_FOUND_END
-);
-const noClaimantsCopy = React.createElement(
-  'p',
-  { id: 'noClaimants', className: 'cf-red-text' },
-  COPY.CLAIMANT_NOT_FOUND_START,
-  email,
-  COPY.CLAIMANT_NOT_FOUND_END
-);
 
 const RemovableRadioLabel = ({ text, onRemove, notes }) => (
   <>
@@ -132,12 +118,37 @@ export const SelectClaimant = (props) => {
   const hasRelationships = relationships.length > 0;
   const showClaimants = ['true', true].includes(veteranIsNotClaimant);
 
+  const claimantLabel = () => {
+    return (
+      <p id="claimantLabel" style={{ marginTop: '8.95px', marginBottom: '0px' }}>
+        {COPY.CLAIMANT_NOT_FOUND_START}
+        {email}
+        {COPY.CLAIMANT_NOT_FOUND_END}
+        <br />
+        <br />
+        {attorneyFees && formType === 'appeal' ? COPY.ADD_CLAIMANT_TEXT : ''}
+      </p>);
+  };
+
+  const noClaimantsCopy = () => {
+    return (
+      <p id="noClaimants" className="cf-red-text">
+        {COPY.NO_RELATIONSHIPS}
+        {COPY.ADD_RELATIONSHIPS}
+        {email}
+        {COPY.CLAIMANT_NOT_FOUND_END}
+        <br />
+        <br />
+        {attorneyFees && formType === 'appeal' ? COPY.ADD_CLAIMANT_TEXT : ''}
+      </p>);
+  };
+
   const claimantOptions = () => {
     return (
       <div>
         <RadioField
           name="claimant-options"
-          label={!claimant && !relationships.length ? 'Claimant with no relationships' : claimantLabel}
+          label={!claimant && !relationships.length ? 'Claimant with no relationships' : claimantLabel()}
           strongLabel
           vertical
           options={radioOpts}
@@ -185,7 +196,7 @@ export const SelectClaimant = (props) => {
       />
 
       {showClaimants && (hasRelationships || newClaimant) && claimantOptions()}
-      {showClaimants && !hasRelationships && noClaimantsCopy }
+      {showClaimants && !hasRelationships && noClaimantsCopy() }
 
       {allowAddClaimant && (
         <>

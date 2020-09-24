@@ -496,7 +496,7 @@ end
 def check_no_relationships_behavior
   # first start the review
   visit "/intake"
-  expect(page).to have_content("Please select the claimant listed on the form")
+  expect(page).to have_content("This Veteran currently has no known relationships.")
   expect(page).to have_button("Continue to next step", disabled: true)
   expect(page).to_not have_content("What is the payee code for this claimant?")
 end
