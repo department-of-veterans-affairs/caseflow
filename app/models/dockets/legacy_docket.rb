@@ -40,8 +40,8 @@ class LegacyDocket
     @age_of_oldest_priority_appeal ||= LegacyAppeal.repository.age_of_oldest_priority_appeal
   end
 
-  def age_of_n_oldest_priority_appeals(num)
-    LegacyAppeal.repository.age_of_n_oldest_priority_appeals(num)
+  def age_of_n_oldest_genpop_priority_appeals(num)
+    LegacyAppeal.repository.age_of_n_oldest_genpop_priority_appeals(num)
   end
 
   def distribute_priority_appeals(distribution, genpop: "any", limit: 1)

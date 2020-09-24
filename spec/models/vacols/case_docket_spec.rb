@@ -129,8 +129,8 @@ describe VACOLS::CaseDocket, :all_dbs do
     end
   end
 
-  context ".age_of_n_oldest_priority_appeals" do
-    subject { VACOLS::CaseDocket.age_of_n_oldest_priority_appeals(2) }
+  context ".age_of_n_oldest_genpop_priority_appeals" do
+    subject { VACOLS::CaseDocket.age_of_n_oldest_genpop_priority_appeals(2) }
     it "returns the sorted ages of the n oldest priority appeals" do
       expect(subject).to eq([aod_ready_case_ready_time, 2.days.ago].map(&:to_date))
     end

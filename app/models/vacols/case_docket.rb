@@ -235,7 +235,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
   # rubocop:enable Metrics/MethodLength
 
-  def self.age_of_n_oldest_priority_appeals(num)
+  def self.age_of_n_oldest_genpop_priority_appeals(num)
     conn = connection
 
     query = <<-SQL
