@@ -382,7 +382,7 @@ feature "Intake Review Page", :postgres do
             end
 
             expect(page).to have_content("+ Add Claimant")
-            expect(page).to have_content("Please select the claimant listed on the form")
+            expect(page).to have_content("This Veteran currently has no known relationships")
             expect(page).to have_button("Continue to next step", disabled: true)
 
             notes = "Unlisted claimant: Sandra Smith"
