@@ -3,12 +3,14 @@
 describe UpdateCachedAppealsAttributesJob, :all_dbs do
   subject { UpdateCachedAppealsAttributesJob.perform_now }
 
+  let(:vacols_case1) { create(:case, :travel_board_hearing) }
+  let(:vacols_case2) { create(:case, :video_hearing_requested, :travel_board_hearing) }
+  let(:vacols_case3) { create(:case, :travel_board_hearing) }
+
+  let(:legacy_appeal1) { create(:legacy_appeal, vacols_case: vacols_case1) } # travel
+  let(:legacy_appeal2) { create(:legacy_appeal, vacols_case: vacols_case2) } # video
+
   context "when the job runs successfully" do
-    let(:vacols_case1) { create(:case) }
-    let(:vacols_case2) { create(:case) }
-    let(:vacols_case3) { create(:case) }
-    let(:legacy_appeal1) { create(:legacy_appeal, vacols_case: vacols_case1) }
-    let(:legacy_appeal2) { create(:legacy_appeal, vacols_case: vacols_case2) }
     let(:legacy_appeals) { [legacy_appeal1, legacy_appeal2] }
     let(:appeals) { create_list(:appeal, 5) }
     let(:open_appeals) { appeals + legacy_appeals }
@@ -101,11 +103,6 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
 
   context "caches hearing_request_type and formally_travel correctly" do
     let(:appeal) { create(:appeal, closest_regional_office: "C") } # central
-    let(:vacols_case1) { create(:case, :travel_board_hearing) }
-    let(:vacols_case2) { create(:case, :video_hearing_requested, :travel_board_hearing) }
-    let(:vacols_case3) { create(:case, :travel_board_hearing) }
-    let(:legacy_appeal1) { create(:legacy_appeal, vacols_case: vacols_case1) } # travel
-    let(:legacy_appeal2) { create(:legacy_appeal, vacols_case: vacols_case2) } # video
     let(:legacy_appeal3) do # formally travel, currently virtual
       create(
         :legacy_appeal,
