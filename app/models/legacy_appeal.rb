@@ -390,14 +390,12 @@ class LegacyAppeal < CaseflowRecord
     hearings.select(&:scheduled_pending?)
   end
 
-  def current_hearing_request_type
-    case changed_request_type
-    when HearingDay::REQUEST_TYPES[:video]
-      :video
-    when HearingDay::REQUEST_TYPES[:virtual]
-      :virtual
-    else
-      fail InvalidChangedRequestType, "\"#{changed_request_type}\" is not a valid request type."
+  def original_hearing_request_type
+    case hearing_request_type
+    when :central_office
+      :central_office
+    when :travel_board
+      video_hearing_requested ? :video : :travel_board
     end
   end
 
@@ -410,14 +408,18 @@ class LegacyAppeal < CaseflowRecord
   #   preference if they were scheduled for a travel board hearing. This method captures
   #   if a travel board hearing request type was overridden in Caseflow.
   def sanitized_hearing_request_type
-    return current_hearing_request_type if changed_request_type.present?
-
-    case hearing_request_type
-    when :central_office
-      :central_office
-    when :travel_board
-      video_hearing_requested ? :video : :travel_board
+    if changed_request_type.present?
+      case changed_request_type
+      when HearingDay::REQUEST_TYPES[:video]
+        return :video
+      when HearingDay::REQUEST_TYPES[:virtual]
+        return :virtual
+      else
+        fail InvalidChangedRequestType, "\"#{changed_request_type}\" is not a valid request type."
+      end
     end
+
+    original_hearing_request_type
   end
 
   def readable_hearing_request_type
