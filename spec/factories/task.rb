@@ -347,6 +347,13 @@ FactoryBot.define do
       factory :translation_task, class: TranslationTask do
       end
 
+      factory :cavc_task, class: CavcTask do
+        parent do
+          appeal.tasks.open.where(type: DistributionTask.name).first ||
+            create(:distribution_task, appeal: appeal)
+        end
+      end
+
       factory :hearing_task, class: HearingTask do
         assigned_to { Bva.singleton }
         parent { appeal.root_task || create(:root_task, appeal: appeal) }

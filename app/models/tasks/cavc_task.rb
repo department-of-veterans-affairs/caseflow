@@ -19,6 +19,10 @@ class CavcTask < Task
     [COPY::CAVC_TASK_DEFAULT_INSTRUCTIONS]
   end
 
+  def available_actions(user)
+    return []
+  end
+
   def cancel_and_recreate
     cavc_task = CavcTask.create!(
       appeal: appeal,
@@ -41,25 +45,9 @@ class CavcTask < Task
     # do not move forward if there are any open CavcTasks
     return unless appeal.tasks.open.where(type: CavcTask.name).empty?
 
-    # TODO: needed??
     if appeal.is_a?(LegacyAppeal)
-      update_legacy_appeal_location
-    else
-      # IhpTasksFactory.new(parent).create_ihp_tasks!
+      # Placeholder: update_legacy_appeal_location
     end
-  end
-
-  # TODO: needed?
-  def update_legacy_appeal_location
-    # location = if hearing&.held?
-    #              LegacyAppeal::LOCATION_CODES[:transcription]
-    #            elsif appeal.representatives.empty?
-    #              LegacyAppeal::LOCATION_CODES[:case_storage]
-    #            else
-    #              LegacyAppeal::LOCATION_CODES[:service_organization]
-    #            end
-    #
-    # AppealRepository.update_location!(appeal, location)
   end
 
   private
@@ -67,16 +55,6 @@ class CavcTask < Task
   def set_assignee
     self.assigned_to = Bva.singleton
   end
-
-  # def update_status_if_children_tasks_are_closed(_child_task)
-  #   if children.open.empty? && children.select do |child|
-  #        child.type == AssignHearingDispositionTask.name && child.cancelled?
-  #      end .any?
-  #     return update!(status: :cancelled)
-  #   end
-  #
-  #   super
-  # end
 
   def cascade_closure_from_child_task?(_child_task)
     true

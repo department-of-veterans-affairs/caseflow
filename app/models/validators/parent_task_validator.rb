@@ -9,7 +9,6 @@
 
 class ParentTaskValidator < ActiveModel::Validator
   def validate(record)
-    # binding.pry
     record.errors.add(:parent, "parent should be a #{options[:task_type].name}") unless correct_parent_type?(record)
   end
 
