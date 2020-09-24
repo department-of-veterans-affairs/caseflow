@@ -88,8 +88,7 @@ class ReviewNextButton extends React.PureComponent {
     const invalidVet = intakeData && !intakeData.veteranValid && VBMS_BENEFIT_TYPES.includes(intakeData.benefitType);
     const needsRelationships =
       intakeData?.veteranIsNotClaimant &&
-      intakeData?.relationships.length === 0 &&
-      (!intakeData?.claimant && !intakeData.claimantNotes);
+      !(intakeData?.claimant || intakeData.claimantNotes);
     const disableSubmit = rampRefilingIneligibleOption() || needsRelationships || invalidVet;
 
     return <Button

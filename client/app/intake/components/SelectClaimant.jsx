@@ -196,9 +196,9 @@ export const SelectClaimant = (props) => {
       />
 
       {showClaimants && (hasRelationships || newClaimant) && claimantOptions()}
-      {showClaimants && !hasRelationships && noClaimantsCopy() }
+      {showClaimants && !hasRelationships && !newClaimant && noClaimantsCopy()}
 
-      {allowAddClaimant && (
+      {allowAddClaimant && !newClaimant && (
         <>
           <Button
             classNames={['usa-button-secondary', classes.button]}

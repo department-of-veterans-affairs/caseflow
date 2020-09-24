@@ -231,7 +231,7 @@ feature "Intake Review Page", :postgres do
             start_higher_level_review(
               veteran,
               benefit_type: benefit_type,
-              claim_participant_id: claim_participant_id
+              no_claimant: true
             )
 
             check_no_relationships_behavior
@@ -243,7 +243,7 @@ feature "Intake Review Page", :postgres do
             start_supplemental_claim(
               veteran,
               benefit_type: benefit_type,
-              claim_participant_id: claim_participant_id
+              no_claimant: true
             )
             check_no_relationships_behavior
           end
@@ -251,7 +251,10 @@ feature "Intake Review Page", :postgres do
 
         context "appeal" do
           it "shows message and does not allow user to continue" do
-            start_appeal(veteran, claim_participant_id: claim_participant_id)
+            start_appeal(
+              veteran,
+              no_claimant: true
+            )
             check_no_relationships_behavior
           end
         end
@@ -496,6 +499,9 @@ end
 def check_no_relationships_behavior
   # first start the review
   visit "/intake"
+  within_fieldset("Is the claimant someone other than the Veteran?") do
+    find("label", text: "Yes", match: :prefer_exact).click
+  end
   expect(page).to have_content("This Veteran currently has no known relationships.")
   expect(page).to have_button("Continue to next step", disabled: true)
   expect(page).to_not have_content("What is the payee code for this claimant?")
