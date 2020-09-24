@@ -2,7 +2,7 @@
 
 ##
 # Tests various aspects of the state of `schedule/assign` page, mostly focusing on table
-RSpec.feature "Assign Hearings Table", focus: true do
+RSpec.feature "Assign Hearings Table" do
   let!(:current_user) do
     user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
     User.authenticate!(user: user)

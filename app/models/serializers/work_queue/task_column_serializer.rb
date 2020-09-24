@@ -179,7 +179,7 @@ class WorkQueue::TaskColumnSerializer
 
   # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
   attribute :hearing_request_type do |object, params|
-    columns = [Constants.QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME  ]
+    columns = [Constants.QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME]
 
     if serialize_attribute?(params, columns)
       # The `hearing_request_type` field doesn't exist on the actual model. This
