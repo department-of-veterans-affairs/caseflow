@@ -1,3 +1,4 @@
+import { sprintf } from 'sprintf-js';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -11,18 +12,17 @@ import {
   showSuccessMessage
 } from '../../queue/uiReducer/uiActions';
 import ApiUtil from '../../util/ApiUtil';
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import HEARING_REQUEST_TYPES from
   '../../../constants/HEARING_REQUEST_TYPES';
-import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
+import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 
 const HearingTypeConversion = ({
   appeal,
   history,
-  showErrorMessage,
-  showSuccessMessage,
   task,
-  type
+  type,
+  ...props
 }) => {
   // Create and manage the loading state
   const [loading, setLoading] = useState(false);
@@ -57,7 +57,7 @@ const HearingTypeConversion = ({
 
       setLoading(true);
 
-      await ApiUtil.patch(`/tasks/${task.taskId}`, { data });      
+      await ApiUtil.patch(`/tasks/${task.taskId}`, { data });
     } catch (err) {
       // What could this be?
       return;
@@ -67,7 +67,7 @@ const HearingTypeConversion = ({
       setLoading(false);
     }
 
-    showSuccessMessage(getSuccessMsg());
+    props.showSuccessMessage(getSuccessMsg());
 
     history.push(`/queue/appeals/${appeal.externalId}`);
   };

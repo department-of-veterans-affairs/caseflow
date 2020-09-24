@@ -16,7 +16,6 @@ export const HearingTypeConversionForm = ({
   isLoading,
   onCancel,
   onSubmit,
-  task,
   type,
 }) => {
   // 'Appellant' or 'Veteran'
@@ -96,7 +95,6 @@ HearingTypeConversionForm.defaultProps = {
 
 HearingTypeConversionForm.propTypes = {
   appeal: PropTypes.object,
-  task: PropTypes.object,
   type: PropTypes.oneOf(['Virtual']),
   isLoading: PropTypes.bool,
   onCancel: PropTypes.func,

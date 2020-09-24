@@ -1,12 +1,12 @@
 /* eslint-disable camelcase */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { CENTRAL_OFFICE_HEARING, HEARING_CONVERSION_TYPES } from '../constants';
 import {
   RegionalOfficeDropdown,
   AppealHearingLocationsDropdown,
   HearingDateDropdown
 } from '../../components/DataDropdowns';
-import { CENTRAL_OFFICE_HEARING } from '../constants';
 import { AddressLine } from './details/Address';
 import { ReadOnly } from './details/ReadOnly';
 import HearingTypeDropdown from './details/HearingTypeDropdown';

@@ -675,7 +675,9 @@ class QueueApp extends React.PureComponent {
               />
               <PageRoute
                 exact
-                path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`}
+                path={
+                  `/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`
+                }
                 title="Change Hearing Request Type to Virtual | Caseflow"
                 render={this.routedChangeHearingRequestTypeToVirtual}
               />
