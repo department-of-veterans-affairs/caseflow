@@ -66,6 +66,9 @@ class IntakesController < ApplicationController
       error_code: error.error_code,
       error_data: detail.end_product_base_modifier
     }, status: :bad_request
+  rescue StandardError => error
+    log_error(error)
+    render json: { error_code: "default", error_uuid: error_id }, status: :internal_server_error
   end
 
   def attorneys

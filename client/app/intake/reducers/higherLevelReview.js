@@ -270,6 +270,9 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         },
         completeIntakeErrorData: {
           $set: action.payload.responseErrorData
+        },
+        completeIntakeErrorUUID: {
+          $set: action.payload.responseErrorUUID
         }
       }
     });
