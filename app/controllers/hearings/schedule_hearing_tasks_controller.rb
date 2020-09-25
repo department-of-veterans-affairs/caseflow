@@ -19,10 +19,10 @@ class Hearings::ScheduleHearingTasksController < ApplicationController
 
     # Select `power_of_attorney_name`, `hearing_request_type`, and
     # `formally_travel` from the `CachedAppeal` table. This is an
-    # optimization that fetches the POA name from the `CachedAppeal` table,
-    # where it is already cached for filtering. The `TaskColumnSerializer` is
-    # "aware" of this optimization, and will serialize the cached value instead
-    # of getting the value through the `Appeal` instance.
+    # optimization that fetches these values from the `CachedAppeal` table,
+    # where they are already cached for filtering. The `TaskColumnSerializer` is
+    # "aware" of these optimizations, and will serialize the cached values instead
+    # of getting them through the `Appeal` instance.
     tasks = task_pager
       .paged_tasks
       .select(
