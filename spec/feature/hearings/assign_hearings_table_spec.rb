@@ -441,7 +441,24 @@ RSpec.feature "Assign Hearings Table" do
         table_row = page.find("tr", id: "table-row-1")
         expect(table_row).to have_content("Travel")
         table_row = page.find("tr", id: "table-row-2")
-        expect(table_row).to have_content("formally Travel, Virtual")
+        expect(table_row).to have_content("former Travel, Virtual")
+      end
+    end
+
+    context "AMA Veterans waiting queue" do
+      let!(:schedule_hearing_task1) do # Video
+        create(:schedule_hearing_task, appeal: create(:appeal, closest_regional_office: closest_regional_office))
+      end
+
+      scenario "Verify rows are populated correctly" do
+        cache_ama_appeals
+        visit "hearings/schedule/assign"
+        expect(page).to have_content("Regional Office")
+        click_dropdown(text: "St. Petersburg")
+        click_button("AMA Veterans Waiting", exact: true)
+        expect(page).to have_content("Hearing Type")
+        table_row = page.find("tr", id: "table-row-0")
+        expect(table_row).to have_content("Video")
       end
     end
   end
