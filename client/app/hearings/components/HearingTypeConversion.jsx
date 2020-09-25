@@ -17,7 +17,7 @@ import HEARING_REQUEST_TYPES from
   '../../../constants/HEARING_REQUEST_TYPES';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 
-const HearingTypeConversion = ({
+export const HearingTypeConversion = ({
   appeal,
   history,
   task,
@@ -58,6 +58,8 @@ const HearingTypeConversion = ({
       setLoading(true);
 
       await ApiUtil.patch(`/tasks/${task.taskId}`, { data });
+
+      props.showSuccessMessage(getSuccessMsg());
     } catch (err) {
       // What could this be?
       return;
@@ -66,8 +68,6 @@ const HearingTypeConversion = ({
       // appeals page.
       setLoading(false);
     }
-
-    props.showSuccessMessage(getSuccessMsg());
 
     history.push(`/queue/appeals/${appeal.externalId}`);
   };
