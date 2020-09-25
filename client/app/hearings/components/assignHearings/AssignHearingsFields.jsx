@@ -127,7 +127,7 @@ export const HearingRequestType = ({ hearingRequestType, isFormallyTravel }) => 
 
   return (
     <React.Fragment>
-      {isFormallyTravel ? <span>{`formally Travel, ${hearingRequestType}`}</span> : <span>{hearingRequestType}</span>}
+      {isFormallyTravel ? <span>{`former Travel, ${hearingRequestType}`}</span> : <span>{hearingRequestType}</span>}
     </React.Fragment>
   );
 };
