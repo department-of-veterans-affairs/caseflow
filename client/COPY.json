@@ -777,6 +777,9 @@
 
   "HEARING_UPDATE_SUCCESSFUL_TITLE": "You have successfully updated %s's hearing.",
 
+  "DEFAULT_UPDATE_ERROR_MESSAGE_TITLE": "Unable to save changes",
+  "DEFAULT_UPDATE_ERROR_MESSAGE_DETAIL": "An unknown error occurred",
+
   "VIRTUAL_HEARING_PROGRESS_ALERTS": {
     "CHANGED_TO_VIRTUAL": {
       "TITLE": "We're scheduling %s's virtual hearing",

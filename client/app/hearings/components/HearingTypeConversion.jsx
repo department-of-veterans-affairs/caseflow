@@ -1,6 +1,7 @@
-import { sprintf } from 'sprintf-js';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { get }from 'lodash';
+import { sprintf } from 'sprintf-js';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
@@ -15,7 +16,7 @@ import ApiUtil from '../../util/ApiUtil';
 import COPY from '../../../COPY';
 import HEARING_REQUEST_TYPES from
   '../../../constants/HEARING_REQUEST_TYPES';
-import TASK_STATUSES from '../../../constants/TASK_STATUSES';
+import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
 
 export const HearingTypeConversion = ({
   appeal,
@@ -61,15 +62,21 @@ export const HearingTypeConversion = ({
 
       props.showSuccessMessage(getSuccessMsg());
     } catch (err) {
-      // What could this be?
-      return;
-    } finally {
-      // Show that the action went through before redirecting the user back to the
-      // appeals page.
-      setLoading(false);
-    }
+      const error = get(
+        err,
+        'response.body.errors[0]',
+        {
+          title: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_TITLE,
+          detail: COPY.DEFAULT_UPDATE_ERROR_MESSAGE_DETAIL
+        }
+      );
 
-    history.push(`/queue/appeals/${appeal.externalId}`);
+      props.showErrorMessage(error)
+    } finally {
+      setLoading(false);
+
+      history.push(`/queue/appeals/${appeal.externalId}`);
+    }
   };
 
   return (
