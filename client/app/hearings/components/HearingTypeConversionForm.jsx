@@ -26,7 +26,7 @@ export const HearingTypeConversionForm = ({
   const hearing = {
     representative: appeal?.powerOfAttorney?.representative_name,
     representativeType: appeal?.powerOfAttorney?.representative_type,
-    appellantFullName: appeal?.appellantFullName
+    appellantFullName: appeal?.appellantIsNotVeteran ? appeal?.appellantFullName : appeal?.veteranFullName,
   };
 
   // veteranInfo gets loaded into redux store when case details page loads

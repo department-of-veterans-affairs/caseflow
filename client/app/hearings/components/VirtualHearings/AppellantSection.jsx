@@ -28,9 +28,7 @@ export const AppellantSection = ({
   showOnlyAppellantName,
   showMissingEmailAlert
 }) => {
-  const appellantName = hearing?.appellantFullName ? hearing?.appellantFullName :
-    `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`;
-
+  const appellantName = hearing?.appellantFullName;
   const showTimezoneField = virtual && !video;
 
   // determine whether to show a missing email underneath readonly email
@@ -41,7 +39,8 @@ export const AppellantSection = ({
       {showOnlyAppellantName ? (
         <ReadOnly
           label={`${appellantTitle} Name`}
-          text={appellantName} />
+          text={appellantName}
+        />
       ) :
         (
           <AddressLine
