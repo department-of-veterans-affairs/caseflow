@@ -80,7 +80,7 @@ class PromulgatedRating < Rating
       start_date: profile_date,
       end_date: profile_date
     )
-    matching_rating = ratings_at_issue.find{|rating| profile_date_matches(rating.profile_date)}
+    matching_rating = ratings_at_issue.find { |rating| profile_date_matches(rating.profile_date) }
     matching_rating.present? ? matching_rating.rating_profile : {}
   end
 
