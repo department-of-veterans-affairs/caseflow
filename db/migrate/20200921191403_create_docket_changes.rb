@@ -3,8 +3,9 @@
 class CreateDocketChanges < ActiveRecord::Migration[5.2]
   def change
     create_table :docket_changes, comment: "Stores the disposition and associated data for Docket Change motions" do |t|
-      t.belongs_to :appeal, null: false, foreign_key: true
-      t.belongs_to :task, null: false, foreign_key: true
+      t.references :old_docket_stream, references: :appeals, null: false, foreign_key: { to_table: :appeals }, comment: "References the original appeal stream with old docket"
+      t.references :new_docket_stream, references: :appeals, null: true, foreign_key: { to_table: :appeals }, comment: "References the new appeal stream with the updated docket; initially null until created by workflow"
+      t.belongs_to :task, null: false, foreign_key: true, comment: "The task that triggered the switch"
       t.datetime "receipt_date", null: false
       t.string "docket", comment: "The new docket"
       t.string "disposition", comment: "Possible options are granted, partially_granted, and denied"

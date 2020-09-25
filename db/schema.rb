@@ -452,16 +452,18 @@ ActiveRecord::Schema.define(version: 2020_09_21_191403) do
   end
 
   create_table "docket_changes", comment: "Stores the disposition and associated data for Docket Change motions", force: :cascade do |t|
-    t.bigint "appeal_id", null: false
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.string "disposition", comment: "Possible options are granted, partially_granted, and denied"
     t.string "docket", comment: "The new docket"
     t.integer "granted_decision_issue_ids", comment: "When a docket change is partially granted, this includes an array of the appeal's decision issue IDs that were selected for the new docket. For full grant, this includes all prior decision issue IDs.", array: true
+    t.bigint "new_docket_stream_id", comment: "References the new appeal stream with the updated docket; initially null until created by workflow"
+    t.bigint "old_docket_stream_id", null: false, comment: "References the original appeal stream with old docket"
     t.datetime "receipt_date", null: false
-    t.bigint "task_id", null: false
+    t.bigint "task_id", null: false, comment: "The task that triggered the switch"
     t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
-    t.index ["appeal_id"], name: "index_docket_changes_on_appeal_id"
     t.index ["created_at"], name: "index_docket_changes_on_created_at"
+    t.index ["new_docket_stream_id"], name: "index_docket_changes_on_new_docket_stream_id"
+    t.index ["old_docket_stream_id"], name: "index_docket_changes_on_old_docket_stream_id"
     t.index ["task_id"], name: "index_docket_changes_on_task_id"
   end
 
@@ -1512,7 +1514,8 @@ ActiveRecord::Schema.define(version: 2020_09_21_191403) do
   add_foreign_key "certifications", "users"
   add_foreign_key "claims_folder_searches", "users"
   add_foreign_key "dispatch_tasks", "users"
-  add_foreign_key "docket_changes", "appeals"
+  add_foreign_key "docket_changes", "appeals", column: "new_docket_stream_id"
+  add_foreign_key "docket_changes", "appeals", column: "old_docket_stream_id"
   add_foreign_key "docket_changes", "tasks"
   add_foreign_key "document_views", "users"
   add_foreign_key "end_product_establishments", "users"
