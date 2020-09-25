@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_22_164708) do
+ActiveRecord::Schema.define(version: 2020_09_23_004430) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -227,6 +227,8 @@ ActiveRecord::Schema.define(version: 2020_09_22_164708) do
     t.datetime "created_at"
     t.string "docket_number"
     t.string "docket_type"
+    t.boolean "formally_travel", comment: "Determines if the hearing type was formallly travel board; only applicable to Legacy appeals"
+    t.string "hearing_request_type", limit: 10, comment: "Stores hearing type requested by appellant; could be one of nil, 'Video', 'Central', 'Travel', or 'Virtual'"
     t.boolean "is_aod", comment: "Whether the case is Advanced on Docket"
     t.integer "issue_count", comment: "Number of issues on the appeal."
     t.string "power_of_attorney_name", comment: "'Firstname Lastname' of power of attorney"
@@ -239,6 +241,7 @@ ActiveRecord::Schema.define(version: 2020_09_22_164708) do
     t.index ["closest_regional_office_city"], name: "index_cached_appeal_attributes_on_closest_regional_office_city"
     t.index ["closest_regional_office_key"], name: "index_cached_appeal_attributes_on_closest_regional_office_key"
     t.index ["docket_type"], name: "index_cached_appeal_attributes_on_docket_type"
+    t.index ["hearing_request_type", "formally_travel"], name: "index_cached_appeal_on_hearing_request_type_and_formally_travel"
     t.index ["is_aod"], name: "index_cached_appeal_attributes_on_is_aod"
     t.index ["power_of_attorney_name"], name: "index_cached_appeal_attributes_on_power_of_attorney_name"
     t.index ["suggested_hearing_location"], name: "index_cached_appeal_attributes_on_suggested_hearing_location"
