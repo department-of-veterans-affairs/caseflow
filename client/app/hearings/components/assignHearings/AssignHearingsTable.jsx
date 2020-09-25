@@ -128,7 +128,7 @@ export default class AssignHearingsTable extends React.PureComponent {
         valueFunction: (row) => (
           <HearingRequestType
             hearingRequestType={row.hearingRequestType}
-            isFormallyTravel={row.isFormallyTravel}
+            isFormerTravel={row.isFormerTravel}
           />
         )
       },

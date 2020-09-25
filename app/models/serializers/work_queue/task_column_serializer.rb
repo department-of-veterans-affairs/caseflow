@@ -190,9 +190,9 @@ class WorkQueue::TaskColumnSerializer
   end
 
   # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
-  # formally_travel technically isn't it's own column, it's part of
+  # former_travel technically isn't it's own column, it's part of
   # hearing request type column
-  attribute :formally_travel do |object, params|
+  attribute :former_travel do |object, params|
     columns = [Constants.QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME]
 
     if serialize_attribute?(params, columns)

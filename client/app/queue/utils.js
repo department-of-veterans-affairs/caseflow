@@ -119,13 +119,13 @@ const taskAttributesFromRawTask = (task) => {
     hideFromCaseTimeline: task.attributes.hide_from_case_timeline,
     availableHearingLocations: task.attributes.available_hearing_locations,
     // `powerOfAttorneyName`, `suggestedHearingLocation`,
-    // `hearingRequestType`, and `isFormallyTravel` are only present for
+    // `hearingRequestType`, and `isFormerTravel` are only present for
     // /hearings/scheduled/assign page, and are not returned from the API when
     // requesting the full task.
     powerOfAttorneyName: task.attributes.power_of_attorney_name,
     suggestedHearingLocation: task.attributes.suggested_hearing_location,
     hearingRequestType: task.attributes.hearing_request_type,
-    isFormallyTravel: task.attributes.formally_travel
+    isFormerTravel: task.attributes.former_travel
   };
 };
 

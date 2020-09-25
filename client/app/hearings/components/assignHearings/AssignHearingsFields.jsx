@@ -120,19 +120,19 @@ SuggestedHearingLocation.propTypes = {
   })
 };
 
-export const HearingRequestType = ({ hearingRequestType, isFormallyTravel }) => {
+export const HearingRequestType = ({ hearingRequestType, isFormerTravel }) => {
   if (!hearingRequestType) {
     return null;
   }
 
   return (
     <React.Fragment>
-      {isFormallyTravel ? <span>{`former Travel, ${hearingRequestType}`}</span> : <span>{hearingRequestType}</span>}
+      {isFormerTravel ? <span>{`former Travel, ${hearingRequestType}`}</span> : <span>{hearingRequestType}</span>}
     </React.Fragment>
   );
 };
 
 HearingRequestType.propTypes = {
   hearingRequestType: PropTypes.string,
-  isFormallyTravel: PropTypes.bool
+  isFormerTravel: PropTypes.bool
 };
