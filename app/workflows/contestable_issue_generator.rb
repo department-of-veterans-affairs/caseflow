@@ -66,9 +66,7 @@ class ContestableIssueGenerator
     # rating decisions are a superset of every disability ever recorded for a veteran,
     # so filter out any that are duplicates of a rating issue or that are not related to their parent rating.
     rating_decisions
-      .select do |rating_decision|
-        rating_decision.profile_date && rating_decision.profile_date.to_date <= receipt_date
-      end
+      .select { |rating_decision| rating_decision.profile_date && rating_decision.profile_date.to_date <= receipt_date }
       .map { |rating_decision| ContestableIssue.from_rating_decision(rating_decision, review) }
   end
 
