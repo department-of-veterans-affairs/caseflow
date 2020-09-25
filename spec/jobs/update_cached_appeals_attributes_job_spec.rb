@@ -103,7 +103,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
 
   context "caches hearing_request_type and former_travel correctly" do
     let(:appeal) { create(:appeal, closest_regional_office: "C") } # central
-    let(:legacy_appeal3) do # formally travel, currently virtual
+    let(:legacy_appeal3) do # former travel, currently virtual
       create(
         :legacy_appeal,
         vacols_case: vacols_case3,
