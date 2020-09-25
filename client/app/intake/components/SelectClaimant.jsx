@@ -20,20 +20,6 @@ const email = React.createElement(
   { href: 'mailto:VACaseflowIntake@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database' },
   'email'
 );
-const claimantLabel = React.createElement(
-  'p',
-  { id: 'claimantLabel', style: { marginTop: '8.95px', marginBottom: '0px' } },
-  COPY.CLAIMANT_NOT_FOUND_START,
-  email,
-  COPY.CLAIMANT_NOT_FOUND_END
-);
-const noClaimantsCopy = React.createElement(
-  'p',
-  { id: 'noClaimants', className: 'cf-red-text' },
-  COPY.NO_RELATIONSHIPS,
-  email,
-  COPY.CLAIMANT_NOT_FOUND_END
-);
 
 const RemovableRadioLabel = ({ text, onRemove, notes }) => (
   <>
@@ -132,12 +118,39 @@ export const SelectClaimant = (props) => {
   const hasRelationships = relationships.length > 0;
   const showClaimants = ['true', true].includes(veteranIsNotClaimant);
 
+  const claimantLabel = () => {
+    let claimantNotes = props.claimantNotes;
+
+    return (
+      <p id="claimantLabel" style={{ marginTop: '8.95px', marginBottom: '0px' }}>
+        {COPY.CLAIMANT_NOT_FOUND_START}
+        {email}
+        {COPY.CLAIMANT_NOT_FOUND_END}
+        <br />
+        <br />
+        {attorneyFees && formType === 'appeal' && !(claimant || claimantNotes) ? COPY.ADD_CLAIMANT_TEXT : ''}
+      </p>);
+  };
+
+  const noClaimantsCopy = () => {
+    return (
+      <p id="noClaimants" className="cf-red-text">
+        {COPY.NO_RELATIONSHIPS}
+        {COPY.ADD_RELATIONSHIPS}
+        {email}
+        {COPY.CLAIMANT_NOT_FOUND_END}
+        <br />
+        <br />
+        {attorneyFees && formType === 'appeal' ? COPY.ADD_CLAIMANT_TEXT : ''}
+      </p>);
+  };
+
   const claimantOptions = () => {
     return (
       <div>
         <RadioField
           name="claimant-options"
-          label={claimantLabel}
+          label={claimantLabel()}
           strongLabel
           vertical
           options={radioOpts}
@@ -184,10 +197,10 @@ export const SelectClaimant = (props) => {
         value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant?.toString()}
       />
 
-      {showClaimants && hasRelationships && claimantOptions()}
-      {showClaimants && !hasRelationships && noClaimantsCopy}
+      {showClaimants && (hasRelationships || newClaimant) && claimantOptions()}
+      {showClaimants && !hasRelationships && !newClaimant && noClaimantsCopy()}
 
-      {allowAddClaimant && (
+      {allowAddClaimant && !newClaimant && (
         <>
           <Button
             classNames={['usa-button-secondary', classes.button]}
@@ -218,7 +231,8 @@ SelectClaimant.propTypes = {
   relationships: PropTypes.array,
   payeeCode: PropTypes.string,
   payeeCodeError: PropTypes.string,
-  setPayeeCode: PropTypes.func
+  setPayeeCode: PropTypes.func,
+  claimantNotes: PropTypes.string
 };
 
 export default SelectClaimant;
