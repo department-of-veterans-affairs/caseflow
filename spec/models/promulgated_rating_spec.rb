@@ -124,7 +124,7 @@ describe PromulgatedRating do
       end
 
       it "Fetches the rating profile using RatingAtIssue" do
-        expect(subject.present?).to be true
+        expect(subject.present?)
         expect { rating.issues }.to_not raise_error
         expect(bgs).to have_received(:fetch_rating_profiles_in_range)
       end
