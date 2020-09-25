@@ -31,6 +31,8 @@ class Veteran < CaseflowRecord
     validate :validate_city
     validate :validate_date_of_birth
     validate :validate_name_suffix
+    validate :validate_zip_code
+    validate :validate_veteran_pay_grade
   end
 
   delegate :full_address, to: :address
@@ -187,11 +189,26 @@ class Veteran < CaseflowRecord
     zip_code
   end
 
+  def pay_grades
+    return unless service
+
+    service.map { |service| service[:pay_grade] }.compact
+  end
+
   alias zip zip_code
   alias address_line_1 address_line1
   alias address_line_2 address_line2
   alias address_line_3 address_line3
   alias gender sex
+
+  def validate_zip_code
+    return unless zip_code
+
+    if country == "USA"
+      # This regex validation checks for that zip code is 5 characters long
+      errors.add(:zip_code, "invalid_zip_code") unless zip_code&.match?(/^(?=(\D*\d){5}\D*$)/)
+    end
+  end
 
   def validate_address_line
     [:address_line1, :address_line2, :address_line3].each do |address|
@@ -223,6 +240,12 @@ class Veteran < CaseflowRecord
   def validate_name_suffix
     # This regex validation checks for punctuations in the name suffix
     errors.add(:name_suffix, "invalid_character") if name_suffix&.match?(/[!@#$%^&*(),.?":{}|<>]/)
+  end
+
+  def validate_veteran_pay_grade
+    return errors.add(:pay_grades, "invalid_pay_grade") if pay_grades&.any? do |pay_grades|
+      bgs.pay_grade_list.map { |pay_grade| pay_grade[:code] }.exclude?(pay_grades.strip)
+    end
   end
 
   def ratings
@@ -352,11 +375,11 @@ class Veteran < CaseflowRecord
             # Only make request to BGS if finding by file number is nil
             find_by(file_number: file_number) ||
               find_by(file_number: bgs.fetch_veteran_info(file_number)&.dig(:ssn))
-          rescue BGS::ShareError
-            nil
+                rescue BGS::ShareError
+                  nil
           end
 
-      return nil unless veteran.present?
+      return nil if veteran.blank?
 
       # Check to see if veteran is accessible to make sure bgs_record is
       # a hash and not :not_found. Also if it's not found, bgs_record returns

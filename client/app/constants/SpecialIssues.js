@@ -335,10 +335,8 @@ export const SPECIAL_ISSUES = [
   }
 ];
 
-// Special Issues added in 2020-Spring. Currently separate from the above in order to be
-// locked to the FeatureToggle :special_issues_revamp in SpecialIssueEnabler. As a part of
-// removing the feature toggle these can be cleanly merged into the above array. Reference PR #13781
-export const NEW_SPECIAL_ISSUES = [
+// Special Issues added in 2020-Spring for AMA appeals use only
+export const AMA_SPECIAL_ISSUES = [
   {
     display: 'Burn Pit',
     queueDisplay: 'Burn Pit',

@@ -31,6 +31,23 @@ class LegacyIssueOptin < CaseflowRecord
         disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[VACOLS_DISPOSITION_CODE]
       )
     end
+
+    def opt_in_decided_appeal(legacy_appeal)
+      LegacyAppeal.opt_in_decided_appeal(
+        appeal: legacy_appeal,
+        user: RequestStore.store[:current_user],
+        closed_on: Time.zone.today
+      )
+    end
+
+    def handle_legacy_appeal_opt_ins(legacy_appeal)
+      LegacyIssueOptin.revert_opted_in_remand_issues(legacy_appeal.vacols_id) if legacy_appeal.remand?
+      LegacyIssueOptin.close_legacy_appeal_in_vacols(legacy_appeal) if legacy_appeal.active?
+
+      if legacy_appeal.advance_failure_to_respond? && legacy_appeal.issues.none?(&:advance_failure_to_respond?)
+        LegacyIssueOptin.opt_in_decided_appeal(legacy_appeal)
+      end
+    end
   end
 
   def opt_in!
@@ -48,6 +65,7 @@ class LegacyIssueOptin < CaseflowRecord
 
   def rollback!
     reopen_legacy_appeal if legacy_appeal_needs_to_be_reopened?
+    rollback_advance_failure_to_respond_appeals
     revert_open_remand_issues if legacy_appeal.remand?
     rollback_issue_disposition
   end
@@ -95,6 +113,27 @@ class LegacyIssueOptin < CaseflowRecord
       user: RequestStore.store[:current_user],
       disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[VACOLS_DISPOSITION_CODE],
       reopen_issues: false
+    )
+  end
+
+  def rollback_advance_failure_to_respond_appeals
+    return unless original_legacy_appeal_disposition_code == "G"
+
+    # We only need to revert the opt-in on the appeal for the first issue being rolled back
+    if legacy_appeal.issues.all?(&:opted_into_ama?)
+      revert_decided_appeal
+    end
+  end
+
+  def revert_decided_appeal
+    LegacyAppeal.rollback_opt_in_on_decided_appeal(
+      appeal: legacy_appeal,
+      user: RequestStore.store[:current_user],
+      original_data: {
+        disposition_code: original_legacy_appeal_disposition_code,
+        decision_date: original_legacy_appeal_decision_date,
+        folder_decision_date: folder_decision_date
+      }
     )
   end
 end

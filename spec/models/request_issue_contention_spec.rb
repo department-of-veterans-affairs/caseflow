@@ -54,6 +54,14 @@ describe RequestIssueContention, :postgres do
 
       it { is_expected.to be_falsey }
     end
+
+    context "when the request issue doesn't have a contention" do
+      let(:end_product_establishment) { nil }
+      let(:contention_reference_id) { nil }
+      let(:contention) { nil }
+
+      it { is_expected.to be_falsey }
+    end
   end
 
   context "#remove!" do

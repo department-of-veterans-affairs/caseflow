@@ -3,24 +3,30 @@ import { formatDateStr } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES';
 import { FORM_TYPES } from '../constants';
 
-const getNonVeteranClaimant = (intakeData) => {
-  const claimant = intakeData.relationships.filter((relationship) => {
-    return relationship.value === intakeData.claimant;
-  });
+const getDependentClaimant = (intakeData) => {
+  const relation = intakeData.relationships.find(({ value }) => value === intakeData.claimant);
 
   if (!intakeData.payeeCode) {
-    return claimant[0].displayText;
+    return relation.displayText;
   }
 
-  return `${claimant[0].displayText} (payee code ${intakeData.payeeCode})`;
+  return `${relation.displayText} (payee code ${intakeData.payeeCode})`;
 };
 
 const getClaimantField = (veteran, intakeData) => {
-  const claimant = intakeData.veteranIsNotClaimant ? getNonVeteranClaimant(intakeData) : veteran.name;
+  const claimantMap = {
+    veteran: () => veteran.name,
+    dependent: () => getDependentClaimant(intakeData),
+    attorney: () => `${intakeData.claimantName}, Attorney`,
+    other: () => intakeData.claimantNotes
+  };
+
+  const claimantType = intakeData.claimantType;
+  const claimantDisplayText = claimantMap[claimantType ?? 'veteran']?.();
 
   return [{
     field: 'Claimant',
-    content: claimant
+    content: claimantDisplayText
   }];
 };
 
@@ -44,17 +50,19 @@ export const isTimely = (formType, decisionDateStr, receiptDateStr) => {
 };
 
 export const legacyIssue = (issue, legacyAppeals) => {
-  if (issue.vacolsIssue) {
-    return issue.vacolsIssue;
+  if (issue.vacolsId) {
+    if (issue.vacolsIssue) {
+      return issue.vacolsIssue;
+    }
+
+    const legacyAppeal = _.find(legacyAppeals, { vacols_id: issue.vacolsId });
+
+    if (!legacyAppeal) {
+      throw new Error(`No legacyAppeal found for '${issue.vacolsId}'`);
+    }
+
+    return _.find(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })
   }
-
-  let legacyAppeal = _.filter(legacyAppeals, { vacols_id: issue.vacolsId })[0];
-
-  if (!legacyAppeal) {
-    throw new Error(`No legacyAppeal found for '${issue.vacolsId}'`);
-  }
-
-  return _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })[0];
 };
 
 export const validateDateNotInFuture = (date) => {
@@ -282,7 +290,9 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
       { field: 'Informal conference request',
         content: intakeData.informalConference ? 'Yes' : 'No' },
       { field: 'Same office request',
-        content: intakeData.sameOffice ? 'Yes' : 'No' }
+        content: intakeData.sameOffice ? 'Yes' : 'No' },
+      { field: 'SOC/SSOC Opt-in',
+        content: intakeData.legacyOptInApproved ? 'Yes' : 'No' },
     ];
     break;
   case 'supplemental_claim':
@@ -294,7 +304,9 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
       { field: 'Receipt date of this form',
         content: formatDateStr(intakeData.receiptDate) },
       { field: 'Benefit type',
-        content: _.startCase(intakeData.benefitType) }
+        content: _.startCase(intakeData.benefitType) },
+      { field: 'SOC/SSOC Opt-in',
+        content: intakeData.legacyOptInApproved ? 'Yes' : 'No' },
     ];
     break;
   case 'appeal':
@@ -304,7 +316,9 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
       { field: 'NOD receipt date',
         content: formatDateStr(intakeData.receiptDate) },
       { field: 'Review option',
-        content: _.startCase(intakeData.docketType.split('_').join(' ')) }
+        content: _.startCase(intakeData?.docketType?.split('_').join(' ')) },
+      { field: 'SOC/SSOC Opt-in',
+        content: intakeData.legacyOptInApproved ? 'Yes' : 'No' },
     ];
     break;
   default:

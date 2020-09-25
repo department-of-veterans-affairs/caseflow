@@ -386,6 +386,68 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
             expect(response_body.last["attributes"]["assigned_to"]["id"]).to eq id
           end
         end
+
+        context "when there are no instructions" do
+          let(:params) do
+            [{
+              "external_id": appeal.vacols_id,
+              "parent_id": parent.id,
+              "type": AddressVerificationColocatedTask.name
+            }]
+          end
+
+          it "should not populate instructions" do
+            subject
+
+            expect(response.status).to eq 200
+            response_body = JSON.parse(response.body)["tasks"]["data"]
+            task = response_body.last
+
+            expect(task["attributes"]["instructions"]).to match_array []
+          end
+        end
+
+        context "when instructions are a string" do
+          let(:params) do
+            [{
+              "external_id": appeal.vacols_id,
+              "parent_id": parent.id,
+              "type": AddressVerificationColocatedTask.name,
+              "instructions": "instructions"
+            }]
+          end
+
+          it "should populate instructions" do
+            subject
+
+            expect(response.status).to eq 200
+            response_body = JSON.parse(response.body)["tasks"]["data"]
+            task = response_body.last
+
+            expect(task["attributes"]["instructions"]).to match_array ["instructions"]
+          end
+        end
+
+        context "when instructions are an array" do
+          let(:params) do
+            [{
+              "external_id": appeal.vacols_id,
+              "parent_id": parent.id,
+              "type": AddressVerificationColocatedTask.name,
+              "instructions": ["instructions", "instructions 2"]
+            }]
+          end
+
+          it "should populate instructions" do
+            subject
+
+            expect(response.status).to eq 200
+            response_body = JSON.parse(response.body)["tasks"]["data"]
+            task = response_body.last
+
+            expect(task["attributes"]["instructions"]).to match_array ["instructions", "instructions 2"]
+          end
+        end
       end
 
       context "when current user is an attorney" do
@@ -654,6 +716,194 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(response_body.first["id"]).to eq admin_action.id.to_s
       end
     end
+
+    context "when payload includes virtual hearing attributes and complete status" do
+      let(:hearing_day) do
+        create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:video], regional_office: "RO31")
+      end
+      let(:appellant_email) { "fake@email.com" }
+      let(:virtual_hearing_attributes) do
+        {
+          appellant_email: appellant_email
+        }
+      end
+
+      let(:hearing_values) do
+        {
+          scheduled_time_string: "08:30",
+          hearing_day_id: hearing_day.id,
+          hearing_location: {
+            name: "St. Louis Regional Benefit Office",
+            address: "9700 Page Ave.",
+            city: "ST. Louis",
+            state: "MO",
+            zip_code: "63132",
+            distance: 0,
+            classification: "Regional Benefit Office",
+            facility_id: "vba_331",
+            facility_type: "va_benefits_facility"
+          }
+        }
+      end
+
+      subject { patch :update, as: :json, params: params }
+
+      shared_examples "returns alerts" do
+        it "returns alerts", :aggregate_failures do
+          subject
+
+          expect(response.status).to eq 200
+          response_body = JSON.parse(response.body)["tasks"]
+          expect(response_body["alerts"]).not_to eq(nil)
+        end
+      end
+
+      shared_examples_for "request with invalid attributes" do
+        let(:virtual_hearing_attributes) do
+          {
+            appellant_email: "blah"
+          }
+        end
+        it "fails to schedule hearing", :aggregate_failures do
+          subject
+
+          expect(response.status).not_to eq 200
+        end
+      end
+
+      context "when task is ScheduleHearingTask" do
+        let(:params) do
+          {
+            task: {
+              status: Constants.TASK_STATUSES.completed,
+              business_payloads: {
+                values: {
+                  **hearing_values,
+                  virtual_hearing_attributes: virtual_hearing_attributes
+                }
+              }
+            },
+            id: admin_action.id
+          }
+        end
+
+        let(:task_type) { :schedule_hearing_task }
+
+        it "creates a virtual hearing with correct attributes", :aggregate_failures do
+          subject
+
+          expect(response.status).to eq 200
+
+          # get the new hearing
+          response_body = JSON.parse(response.body)["tasks"]["data"]
+          external_hearing_id = response_body[0]["attributes"]["external_hearing_id"]
+          new_hearing = Hearing.find_by(uuid: external_hearing_id)
+
+          expect(new_hearing.virtual?).to eq(true)
+          expect(new_hearing.virtual_hearing).not_to eq(nil)
+          expect(new_hearing.virtual_hearing.appellant_email).to eq(appellant_email)
+        end
+
+        include_examples "returns alerts"
+
+        it_behaves_like "request with invalid attributes"
+      end
+
+      context "when task is AssignHearingDispositionTask" do
+        let(:task_type) { :assign_hearing_disposition_task }
+        let(:admin_action) do
+          create(task_type, parent: hearing_task, assigned_by: assigned_by_user, assigned_to: assigned_to_user)
+        end
+        let(:hearing_task) { create(:hearing_task, parent: root_task) }
+        let(:prev_hearing) { create(:hearing, hearing_day: hearing_day) }
+        let!(:hearing_task_association) do
+          HearingTaskAssociation.create!(hearing: prev_hearing, hearing_task: hearing_task)
+        end
+        let(:params) do
+          {
+            task: {
+              status: Constants.TASK_STATUSES.cancelled,
+              business_payloads: {
+                values: {
+                  after_disposition_update: {
+                    new_hearing_attrs: {
+                      **hearing_values,
+                      virtual_hearing_attributes: virtual_hearing_attributes
+                    },
+                    action: "reschedule"
+                  },
+                  disposition: Constants.HEARING_DISPOSITION_TYPES.postponed
+                }
+              }
+            },
+            id: admin_action.id
+          }
+        end
+
+        it "creates a virtual hearing with correct attributes", :aggregate_failures do
+          subject
+
+          expect(response.status).to eq 200
+
+          response_body = JSON.parse(response.body)["tasks"]["data"]
+
+          # get the new hearing
+          appeal_id = response_body[0]["attributes"]["appeal_id"]
+          new_hearing_task = HearingTask.find_by(appeal_id: appeal_id, status: Constants.TASK_STATUSES.on_hold)
+          new_hearing = new_hearing_task.hearing
+
+          expect(new_hearing.virtual?).to eq(true)
+          expect(new_hearing.virtual_hearing).not_to eq(nil)
+          expect(new_hearing.virtual_hearing.appellant_email).to eq(appellant_email)
+        end
+
+        include_examples "returns alerts"
+
+        it_behaves_like "request with invalid attributes"
+      end
+
+      context "when task is ChangeHearingRequestTypeTask" do
+        let(:attorney_user) { create(:user) }
+        let!(:legacy_appeal) do
+          create(:legacy_appeal,
+                 vacols_case: create(:case, :assigned, bfcorlid: "0000000000S", user: attorney_user))
+        end
+
+        let(:task_type) { :changed_hearing_request_type }
+        let(:action) do
+          create(task_type, appeal: legacy_appeal, assigned_by: assigned_by_user, assigned_to: assigned_to_user)
+        end
+
+        let(:params) do
+          {
+            task: {
+              status: Constants.TASK_STATUSES.completed,
+              business_payloads: {
+                values: {
+                  changed_request_type: HearingDay::REQUEST_TYPES[:video]
+                }
+              }
+            },
+            id: action.id
+          }
+        end
+
+        it "sucessfully updates appeal and closes related tasks", :aggregate_failures do
+          # Ensure that the changed request type is nil before we take action
+          expect(legacy_appeal.changed_request_type).to eq(nil)
+          subject
+
+          # Ensure the update successfully completed the task and changed the appeal
+          expect(response.status).to eq 200
+          expect(legacy_appeal.reload.changed_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
+          expect(action.reload.status).to eq(Constants.TASK_STATUSES.completed)
+          expect(ChangeHearingRequestTypeTask.find_by(
+            appeal: legacy_appeal
+          ).status).to eq(Constants.TASK_STATUSES.completed)
+          expect(ScheduleHearingTask.find_by(appeal: legacy_appeal).status).to eq(Constants.TASK_STATUSES.assigned)
+        end
+      end
+    end
   end
 
   describe "GET appeals/:id/tasks" do
@@ -901,7 +1151,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       it "calls create_change_hearing_disposition_task on the NoShowHearingTask" do
         expect_any_instance_of(NoShowHearingTask)
           .to receive(:create_change_hearing_disposition_task)
-          .with(instructions)
+          .with([instructions])
 
         subject
       end
@@ -939,7 +1189,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
       it "calls create_change_hearing_disposition_task on the ScheduleHearingTask" do
         expect_any_instance_of(ScheduleHearingTask)
           .to receive(:create_change_hearing_disposition_task)
-          .with(instructions)
+          .with([instructions])
 
         subject
       end

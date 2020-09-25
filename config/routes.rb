@@ -241,6 +241,7 @@ Rails.application.routes.draw do
   resources :team_management, only: [:index, :update]
   get '/team_management(*rest)', to: 'team_management#index'
   post '/team_management/judge_team/:user_id', to: 'team_management#create_judge_team'
+  post '/team_management/dvc_team/:user_id', to: 'team_management#create_dvc_team'
   post '/team_management/private_bar', to: 'team_management#create_private_bar'
   post '/team_management/national_vso', to: 'team_management#create_national_vso'
   post '/team_management/field_vso', to: 'team_management#create_field_vso'
@@ -321,6 +322,7 @@ Rails.application.routes.draw do
       post "/set_user/:id", to: "users#set_user", as: "set_user"
       post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'
       post "/reseed", to: "users#reseed", as: "reseed"
+      get "/data", to: "users#data"
     end
     post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
     post "/toggle_feature", to: "users#toggle_feature", as: "toggle_feature"

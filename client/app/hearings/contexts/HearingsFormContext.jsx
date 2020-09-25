@@ -6,12 +6,9 @@ import { deepDiff } from '../utils';
 
 const HearingsFormContext = React.createContext();
 
-export const RESET_HEARING = 'reset';
-export const SET_UPDATED = 'setUpdated';
-
 const formatHearing = (hearing) => ({
   ...hearing,
-  judgeId: hearing.judgeId ? hearing.judgeId.toString() : null,
+  judgeId: hearing.judgeId?.toString(),
   evidenceWindowWaived: hearing.evidenceWindowWaived || false,
   emailEvents: values(hearing?.emailEvents),
   // Transcription Request
@@ -46,18 +43,54 @@ const formatHearing = (hearing) => ({
   }
 });
 
-const setUpdated = (state, value) => ({
-  ...state,
-  hearing: { ...state.hearing, ...value },
-  formsUpdated: !isEmpty(deepDiff(state.initialHearing, { ...state.hearing, ...value }))
-});
+export const SET_UPDATED = 'setUpdated';
+const setUpdated = (state, value) => {
+  const newHearing = { ...state.hearing, ...value };
 
+  return {
+    ...state,
+    hearing: newHearing,
+    formsUpdated: !isEmpty(deepDiff(state.initialHearing, newHearing))
+  };
+};
+
+// Full reset of everything.
+export const RESET_HEARING = 'reset';
 const reset = (state, hearing) => ({
   ...state,
-  initialHearing: hearing,
+  initialHearing: formatHearing(hearing),
   hearing: formatHearing(hearing),
   formsUpdated: false
 });
+
+export const RESET_VIRTUAL_HEARING = 'resetVirtualHearing';
+
+// Resets only the `virtualHearing` and `emailEvents` field, and should preserve all other fields.
+// NOTE: Only used for resetting states during polling
+const resetVirtualHearing = (state, payload) => {
+  const newHearing = {
+    ...state.hearing,
+    emailEvents: values(payload.emailEvents),
+    virtualHearing: {
+      ...(state.hearing?.virtualHearing || {}),
+      ...payload.virtualHearing
+    }
+  };
+  const newInitialHearing = {
+    ...state.initialHearing,
+    virtualHearing: {
+      ...(state.initialHearing?.virtualHearing || {}),
+      ...payload.virtualHearing
+    }
+  };
+
+  return {
+    ...state,
+    initialHearing: newInitialHearing,
+    hearing: newHearing,
+    formsUpdated: !isEmpty(deepDiff(newInitialHearing, newHearing))
+  };
+};
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -65,6 +98,8 @@ const reducer = (state, action) => {
     return setUpdated(state, action.payload);
   case RESET_HEARING:
     return reset(state, action.payload);
+  case RESET_VIRTUAL_HEARING:
+    return resetVirtualHearing(state, action.payload);
   default:
     return state;
   }

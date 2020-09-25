@@ -38,6 +38,17 @@ class Docket
     appeals(priority: true, ready: true).limit(num).map(&:ready_for_distribution_at)
   end
 
+  def oldest_priority_appeal_days_waiting
+    oldest_appeal_ready_at = age_of_n_oldest_priority_appeals(1).first
+    return 0 if oldest_appeal_ready_at.nil?
+
+    (Time.zone.now.to_date - oldest_appeal_ready_at.to_date).to_i
+  end
+
+  def ready_priority_appeal_ids
+    appeals(priority: true, ready: true).pluck(:uuid)
+  end
+
   # rubocop:disable Lint/UnusedMethodArgument
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1)
     Distribution.transaction do
@@ -112,8 +123,6 @@ class Docket
         .group("appeals.id")
         .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
                 DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
-        .having("count(case when tasks.type in (?) and tasks.status not in (?) then 1 end) = ?",
-                MailTask.blocking_subclasses, Task.closed_statuses, 0)
     end
 
     def ordered_by_distribution_ready_date

@@ -51,6 +51,7 @@ class LegacyHearingSerializer
   attribute :regional_office_name
   attribute :regional_office_timezone
   attribute :representative, if: for_full
+  attribute :representative_type, if: for_full
   attribute :representative_name, if: for_full
   attribute :representative_address, if: for_full
   attribute :representative_email_address, if: for_full
@@ -83,11 +84,7 @@ class LegacyHearingSerializer
       VirtualHearingSerializer.new(object.virtual_hearing).serializable_hash[:data][:attributes]
     end
   end
-  attribute :email_events, if: for_full do |object|
-    object.email_events.order(sent_at: :desc).map do |event|
-      SentEmailEventSerializer.new(event).serializable_hash[:data][:attributes]
-    end
-  end
+  attribute :email_events, if: for_full, &:serialized_email_events
   attribute :was_virtual, &:was_virtual?
   attribute :witness
 end

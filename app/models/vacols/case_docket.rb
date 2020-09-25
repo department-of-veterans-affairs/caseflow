@@ -83,7 +83,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         first_value(BOARD_MEMBER) over (partition by TITRNUM, TINUM order by HEARING_DATE desc) VLJ
       from HEARSCHED
       inner join FOLDER on FOLDER.TICKNUM = HEARSCHED.FOLDER_NR
-      where HEARING_TYPE in ('C', 'T', 'V') and HEARING_DISP = 'H'
+      where HEARING_TYPE in ('C', 'T', 'V', 'R') and HEARING_DISP = 'H'
     ) VLJ_HEARINGS
       on VLJ_HEARINGS.VLJ not in ('000', '888', '999')
         and VLJ_HEARINGS.TITRNUM = BRIEFF.TITRNUM
@@ -117,8 +117,6 @@ class VACOLS::CaseDocket < VACOLS::Record
         #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
         #{JOIN_ASSOCIATED_VLJS_BY_PRIOR_DECISIONS}
       )
-      where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
-        and rownum <= ?
   "
 
   SELECT_NONPRIORITY_APPEALS = "
@@ -133,9 +131,6 @@ class VACOLS::CaseDocket < VACOLS::Record
       ) BRIEFF
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
     )
-    where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
-      and (DOCKET_INDEX <= ? or 1 = ?)
-      and rownum <= ?
   "
 
   # rubocop:disable Metrics/MethodLength
@@ -144,8 +139,11 @@ class VACOLS::CaseDocket < VACOLS::Record
       select count(*) N, PRIORITY, READY
       from (
         select case when BFAC = '7' or nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0) > 0 then 1 else 0 end as PRIORITY,
-          case when BFCURLOC in ('81', '83') then 1 else 0 end as READY
+          case when BFCURLOC in ('81', '83') and MAIL_BLOCKS_DISTRIBUTION = 0 and DIARY_BLOCKS_DISTRIBUTION = 0
+            then 1 else 0 end as READY
         from BRIEFF
+        #{JOIN_MAIL_BLOCKS_DISTRIBUTION}
+        #{JOIN_DIARY_BLOCKS_DISTRIBUTION}
         left join (
           select TSKTKNM, count(*) CNT
           from ASSIGN
@@ -155,7 +153,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         left join (
           select FOLDER_NR, count(*) CNT
           from HEARSCHED
-          where HEARING_TYPE IN ('C', 'T', 'V')
+          where HEARING_TYPE IN ('C', 'T', 'V', 'R')
             AND AOD IN ('G', 'Y')
           group by FOLDER_NR
         ) AOD_HEARINGS on AOD_HEARINGS.FOLDER_NR = BFKEY
@@ -220,7 +218,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         left join (
           select FOLDER_NR, count(*) CNT
           from HEARSCHED
-          where HEARING_TYPE IN ('C', 'T', 'V')
+          where HEARING_TYPE IN ('C', 'T', 'V', 'R')
             AND AOD IN ('G', 'Y')
           group by FOLDER_NR
         ) AOD_HEARINGS on AOD_HEARINGS.FOLDER_NR = BFKEY
@@ -241,18 +239,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     conn = connection
 
     query = <<-SQL
-      select BFKEY, BFDLOOUT, VLJ
-      from (
-        select BFKEY, BFDLOOUT,
-          case when BFHINES is null or BFHINES <> 'GP' then nvl(VLJ_HEARINGS.VLJ, VLJ_PRIORDEC.VLJ) end VLJ
-        from (
-          #{SELECT_READY_APPEALS}
-            and (BFAC = '7' or AOD = '1')
-          order by BFDLOOUT
-        ) BRIEFF
-        #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
-        #{JOIN_ASSOCIATED_VLJS_BY_PRIOR_DECISIONS}
-      )
+      #{SELECT_PRIORITY_APPEALS}
       where VLJ is null and rownum <= ?
     SQL
 
@@ -273,20 +260,16 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.nonpriority_hearing_cases_for_judge_count(judge)
     query = <<-SQL
-      select BFKEY
-      from (
-        select BFKEY, case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
-        from (
-          #{SELECT_READY_APPEALS}
-            and BFAC <> '7' and AOD = '0'
-        ) BRIEFF
-        #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
-      )
+      #{SELECT_NONPRIORITY_APPEALS}
       where (VLJ = ?)
     SQL
 
     fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id])
     connection.exec_query(fmtd_query).count
+  end
+
+  def self.priority_ready_appeal_vacols_ids
+    connection.exec_query(SELECT_PRIORITY_APPEALS).to_hash.map { |appeal| appeal["bfkey"] }
   end
 
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
@@ -305,8 +288,15 @@ class VACOLS::CaseDocket < VACOLS::Record
       limit = (number_of_hearings_over_limit > 0) ? [number_of_hearings_over_limit, limit].min : 0
     end
 
+    query = <<-SQL
+      #{SELECT_NONPRIORITY_APPEALS}
+      where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
+      and (DOCKET_INDEX <= ? or 1 = ?)
+      and rownum <= ?
+    SQL
+
     fmtd_query = sanitize_sql_array([
-                                      SELECT_NONPRIORITY_APPEALS,
+                                      query,
                                       judge.vacols_attorney_id,
                                       (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
                                       (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
@@ -319,12 +309,19 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS}
+      where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
+      and (rownum <= ? or 1 = ?)
+    SQL
+
     fmtd_query = sanitize_sql_array([
-                                      SELECT_PRIORITY_APPEALS,
+                                      query,
                                       judge.vacols_attorney_id,
                                       (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
                                       (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
-                                      limit
+                                      limit,
+                                      limit.nil? ? 1 : 0
                                     ])
 
     distribute_appeals(fmtd_query, judge, dry_run)

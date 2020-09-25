@@ -10,13 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_15_144822) do
+ActiveRecord::Schema.define(version: 2020_09_23_004430) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
   create_table "advance_on_docket_motions", force: :cascade do |t|
+    t.integer "appeal_id", comment: "The ID of the appeal this motion is associated with"
+    t.string "appeal_type", comment: "The type of appeal this motion is associated with"
     t.datetime "created_at", null: false
     t.boolean "granted", comment: "Whether VLJ has determined that there is sufficient cause to fast-track an appeal, i.e. grant or deny the motion to AOD."
     t.bigint "person_id", comment: "Appellant ID"
@@ -90,6 +92,7 @@ ActiveRecord::Schema.define(version: 2020_07_15_144822) do
   end
 
   create_table "appeals", comment: "Decision reviews intaken for AMA appeals to the board (also known as a notice of disagreement).", force: :cascade do |t|
+    t.boolean "aod_based_on_age", comment: "If true, appeal is advance-on-docket due to claimant's age."
     t.string "closest_regional_office", comment: "The code for the regional office closest to the Veteran on the appeal."
     t.datetime "created_at"
     t.date "docket_range_date", comment: "Date that appeal was added to hearing docket range."
@@ -111,6 +114,7 @@ ActiveRecord::Schema.define(version: 2020_07_15_144822) do
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the appeal, which can be used to navigate to appeals/appeal_uuid. This allows a single ID to determine an appeal whether it is a legacy appeal or an AMA appeal."
     t.string "veteran_file_number", null: false, comment: "The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
     t.boolean "veteran_is_not_claimant", comment: "Selected by the user during intake, indicates whether the Veteran is the claimant, or if the claimant is someone else such as a dependent. Must be TRUE if Veteran is deceased."
+    t.index ["aod_based_on_age"], name: "index_appeals_on_aod_based_on_age"
     t.index ["docket_type"], name: "index_appeals_on_docket_type"
     t.index ["established_at"], name: "index_appeals_on_established_at"
     t.index ["updated_at"], name: "index_appeals_on_updated_at"
@@ -223,6 +227,8 @@ ActiveRecord::Schema.define(version: 2020_07_15_144822) do
     t.datetime "created_at"
     t.string "docket_number"
     t.string "docket_type"
+    t.boolean "formally_travel", comment: "Determines if the hearing type was formallly travel board; only applicable to Legacy appeals"
+    t.string "hearing_request_type", limit: 10, comment: "Stores hearing type requested by appellant; could be one of nil, 'Video', 'Central', 'Travel', or 'Virtual'"
     t.boolean "is_aod", comment: "Whether the case is Advanced on Docket"
     t.integer "issue_count", comment: "Number of issues on the appeal."
     t.string "power_of_attorney_name", comment: "'Firstname Lastname' of power of attorney"
@@ -235,6 +241,7 @@ ActiveRecord::Schema.define(version: 2020_07_15_144822) do
     t.index ["closest_regional_office_city"], name: "index_cached_appeal_attributes_on_closest_regional_office_city"
     t.index ["closest_regional_office_key"], name: "index_cached_appeal_attributes_on_closest_regional_office_key"
     t.index ["docket_type"], name: "index_cached_appeal_attributes_on_docket_type"
+    t.index ["hearing_request_type", "formally_travel"], name: "index_cached_appeal_on_hearing_request_type_and_formally_travel"
     t.index ["is_aod"], name: "index_cached_appeal_attributes_on_is_aod"
     t.index ["power_of_attorney_name"], name: "index_cached_appeal_attributes_on_power_of_attorney_name"
     t.index ["suggested_hearing_location"], name: "index_cached_appeal_attributes_on_suggested_hearing_location"
@@ -775,6 +782,7 @@ ActiveRecord::Schema.define(version: 2020_07_15_144822) do
     t.datetime "updated_at"
     t.integer "user_id", null: false, comment: "The ID of the user who created the intake."
     t.string "veteran_file_number", comment: "The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
+    t.index ["detail_type", "detail_id"], name: "index_intakes_on_detail_type_and_detail_id"
     t.index ["type", "veteran_file_number"], name: "unique_index_to_avoid_duplicate_intakes", unique: true, where: "(completed_at IS NULL)"
     t.index ["type"], name: "index_intakes_on_type"
     t.index ["updated_at"], name: "index_intakes_on_updated_at"
@@ -824,8 +832,7 @@ ActiveRecord::Schema.define(version: 2020_07_15_144822) do
 
   create_table "legacy_appeals", force: :cascade do |t|
     t.bigint "appeal_series_id"
-    t.boolean "blue_water", default: false, comment: "Blue Water"
-    t.boolean "burn_pit", default: false, comment: "Burn Pit"
+    t.string "changed_request_type", comment: "The new hearing type preference for an appellant that had previously requested a travel board hearing"
     t.string "closest_regional_office"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.datetime "created_at"
@@ -841,10 +848,8 @@ ActiveRecord::Schema.define(version: 2020_07_15_144822) do
     t.boolean "insurance", default: false
     t.boolean "issues_pulled"
     t.boolean "manlincon_compliance", default: false
-    t.boolean "military_sexual_trauma", default: false, comment: "Military Sexual Trauma (MST)"
     t.boolean "mustard_gas", default: false
     t.boolean "national_cemetery_administration", default: false
-    t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues; column added belatedly"
     t.boolean "nonrating_issue", default: false
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
@@ -852,7 +857,6 @@ ActiveRecord::Schema.define(version: 2020_07_15_144822) do
     t.boolean "rice_compliance", default: false
     t.boolean "spina_bifida", default: false
     t.datetime "updated_at"
-    t.boolean "us_court_of_appeals_for_veterans_claims", default: false, comment: "US Court of Appeals for Veterans Claims (CAVC)"
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_philippines", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
@@ -872,6 +876,7 @@ ActiveRecord::Schema.define(version: 2020_07_15_144822) do
     t.bigint "created_by_id", comment: "The ID of the user who created the Legacy Hearing"
     t.bigint "hearing_day_id", comment: "The hearing day the hearing will take place on"
     t.string "military_service", comment: "Periods and circumstances of military service"
+    t.string "original_vacols_request_type", comment: "The original request type of the hearing in VACOLS, before it was changed to Virtual"
     t.boolean "prepped", comment: "Determines whether the judge has checked the hearing as prepped"
     t.text "summary", comment: "Summary of hearing"
     t.datetime "updated_at", comment: "Timestamp when record was last updated."
@@ -1193,12 +1198,11 @@ ActiveRecord::Schema.define(version: 2020_07_15_144822) do
     t.index ["sent_by_id"], name: "index_sent_hearing_email_events_on_sent_by_id"
   end
 
-  create_table "special_issue_lists", force: :cascade do |t|
-    t.bigint "appeal_id"
-    t.string "appeal_type"
+  create_table "special_issue_lists", comment: "Associates special issues to an AMA or legacy appeal for Caseflow Queue. Caseflow Dispatch uses special issues stored in legacy_appeals. They are intentionally disconnected.", force: :cascade do |t|
+    t.bigint "appeal_id", comment: "The ID of the appeal associated with this record"
+    t.string "appeal_type", comment: "The type of appeal associated with this record"
     t.boolean "blue_water", default: false, comment: "Blue Water"
     t.boolean "burn_pit", default: false, comment: "Burn Pit"
-    t.boolean "cavc", default: false, comment: "US Court of Appeals for Veterans Claims (CAVC)"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.datetime "created_at"
     t.boolean "dic_death_or_accrued_benefits_united_states", default: false
@@ -1222,6 +1226,7 @@ ActiveRecord::Schema.define(version: 2020_07_15_144822) do
     t.boolean "rice_compliance", default: false
     t.boolean "spina_bifida", default: false
     t.datetime "updated_at"
+    t.boolean "us_court_of_appeals_for_veterans_claims", default: false, comment: "US Court of Appeals for Veterans Claims (CAVC)"
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_philippines", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
@@ -1263,15 +1268,15 @@ ActiveRecord::Schema.define(version: 2020_07_15_144822) do
     t.index ["updated_at"], name: "index_tags_on_updated_at"
   end
 
-  create_table "task_timers", comment: "Task timers allow tasks to be run asynchronously after some future date, like EvidenceSubmissionWindowTask.", force: :cascade do |t|
-    t.datetime "attempted_at", comment: "Async timestamp for most recent attempt to run."
-    t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
+  create_table "task_timers", comment: "A task timer allows an associated task's (like EvidenceSubmissionWindowTask and TimedHoldTask) `when_timer_ends` method to be run asynchronously after timer expires.", force: :cascade do |t|
+    t.datetime "attempted_at", comment: "Async timestamp for most recent attempt to run Task#when_timer_ends."
+    t.datetime "canceled_at", comment: "Timestamp when job was abandoned. Associated task is typically cancelled."
     t.datetime "created_at", null: false, comment: "Automatic timestamp for record creation."
     t.string "error", comment: "Async any error message from most recent failed attempt to run."
-    t.datetime "last_submitted_at", comment: "Async timestamp for most recent job start."
-    t.datetime "processed_at", comment: "Async timestamp for when the job completes successfully."
+    t.datetime "last_submitted_at", comment: "Async timestamp for most recent job start. Initially set to when timer should expire (Task#timer_ends_at)."
+    t.datetime "processed_at", comment: "Async timestamp for when the job completes successfully. Associated task's method Task#when_timer_ends ran successfully."
     t.datetime "submitted_at", comment: "Async timestamp for initial job start."
-    t.bigint "task_id", null: false, comment: "ID of the Task to be run."
+    t.bigint "task_id", null: false, comment: "ID of the associated Task to be run."
     t.datetime "updated_at", null: false, comment: "Automatic timestmap for record update."
     t.index ["task_id"], name: "index_task_timers_on_task_id"
     t.index ["updated_at"], name: "index_task_timers_on_updated_at"
@@ -1284,6 +1289,7 @@ ActiveRecord::Schema.define(version: 2020_07_15_144822) do
     t.integer "assigned_by_id"
     t.integer "assigned_to_id", null: false
     t.string "assigned_to_type", null: false
+    t.integer "cancelled_by_id", comment: "ID of user that cancelled the task. Backfilled from versions table. Can be nil if task was cancelled before this column was added or if there is no user logged in when the task is cancelled"
     t.datetime "closed_at"
     t.datetime "created_at", null: false
     t.text "instructions", default: [], array: true
@@ -1356,7 +1362,8 @@ ActiveRecord::Schema.define(version: 2020_07_15_144822) do
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
-    t.bigint "appeal_id", null: false
+    t.bigint "appeal_id", null: false, comment: "Appeal/LegacyAppeal ID; use as FK to appeals/legacy_appeals"
+    t.string "appeal_type", null: false, comment: "'Appeal' or 'LegacyAppeal'"
     t.datetime "attempted_at"
     t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
     t.datetime "created_at", null: false
@@ -1368,6 +1375,7 @@ ActiveRecord::Schema.define(version: 2020_07_15_144822) do
     t.datetime "updated_at", null: false
     t.datetime "uploaded_to_vbms_at"
     t.index ["appeal_id"], name: "index_vbms_uploaded_documents_on_appeal_id"
+    t.index ["appeal_type", "appeal_id"], name: "index_vbms_uploaded_documents_on_appeal_type_and_appeal_id"
     t.index ["updated_at"], name: "index_vbms_uploaded_documents_on_updated_at"
   end
 

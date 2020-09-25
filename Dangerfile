@@ -18,6 +18,13 @@ if git.lines_of_code > 500
   )
 end
 
+if git.modified_files.grep(/app\/services\//).any?
+  warn(
+    "This PR appears to affect one or more integrations. Make sure to test code in UAT before merging. "\
+    "See these [instructions for deploying a custom branch to UAT](https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/Appeals-Deployment---Deploy-Custom-Branch-to-UAT)."
+  )
+end
+
 # Don't let testing shortcuts get into master by accident
 if `git diff #{github.base_commit} spec/ | grep -E '(:focus => true)|(focus: true)'`.length > 1
   fail("focus: true is left in test")
@@ -28,12 +35,24 @@ if git.modified_files.grep(/db\/schema.rb/).any?
   warn("This PR changes the schema. Please use the PR template checklist.")
 end
 
-# migration without running rake db:migrate
-if git.modified_files.grep(/db\/migrate\//).any? && git.modified_files.grep(/db\/schema.rb/).none?
-  warn("This PR contains one or more db migrations, but the schema.rb is not modified.")
+if git.modified_files.grep(/db\/etl\/schema.rb/).any?
+  warn("This PR changes the etl schema. Please use the PR template checklist.")
 end
 
-if git.modified_files.grep(/db\/migrate\//).any? && git.modified_files.grep(/docs\/schema/).none?
+new_db_migrations = git.modified_files.grep(/db\/migrate\//).any?
+new_etl_migrations = git.modified_files.grep(/db\/etl\/migrate\//).any?
+
+# migration without migrating
+if new_db_migrations && git.modified_files.grep(/db\/schema.rb/).none?
+  warn("This PR contains db migrations, but the schema.rb is not modified. Did you forget to run 'make migrate'?")
+end
+
+if new_etl_migrations && git.modified_files.grep(/db\/etl\/schema.rb/).none?
+  warn("This PR contains etl migrations, but the etl schema.rb is not modified. Did you forget to run 'make migrate'?")
+end
+
+# migration without running rake db:docs
+if (new_db_migrations || new_etl_migrations) && git.modified_files.grep(/docs\/schema/).none?
   warn("This PR contains one or more db migrations. Did you forget to run 'make docs'?")
 end
 

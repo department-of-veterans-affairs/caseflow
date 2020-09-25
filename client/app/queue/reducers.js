@@ -616,10 +616,13 @@ const setAppealAod = (state, action) => {
 };
 
 const startedLoadingAppealValue = (state, action) => {
+  const existingState = state.loadingAppealDetail[action.payload.appealId] || {};
+
   return update(state, {
     loadingAppealDetail: {
       $merge: {
         [action.payload.appealId]: {
+          ...existingState,
           [action.payload.name]: {
             loading: true
           }

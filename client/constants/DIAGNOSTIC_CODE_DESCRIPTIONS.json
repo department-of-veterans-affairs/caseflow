@@ -2055,6 +2055,10 @@
     "staff_description": "Endometriosis",
     "status_description": "endometriosis"
   },
+  "7632": {
+    "staff_description": "Female Sexual Arousal Disorder (FSAD)",
+    "status_description": "female sexual arousal disorder"
+  },
   "7699": {
     "staff_description": "Other gynecological or breast disability",
     "status_description": "gynecological or breast disability"

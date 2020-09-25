@@ -25,9 +25,7 @@ class AssignHearingDispositionTask < Task
   class HearingDispositionNotHeld < StandardError; end
   class HearingAssociationMissing < StandardError
     def initialize(hearing_task_id)
-      super("Hearing task (#{hearing_task_id}) is missing an associated hearing. " \
-        "This means that either the hearing was deleted in VACOLS or " \
-        "the hearing association has been deleted.")
+      super(format(COPY::HEARING_TASK_ASSOCIATION_MISSING_MESASAGE, hearing_task_id))
     end
   end
 
@@ -127,7 +125,8 @@ class AssignHearingDispositionTask < Task
 
   def update_children_status_after_closed
     update_args = { status: status }
-    update_args[:closed_at] = Time.zone.now if self.class.closed_statuses.include?(status)
+    update_args[:closed_at] = Time.zone.now unless open?
+    update_args[:cancelled_by_id] = RequestStore[:current_user]&.id if cancelled?
     children.open.update_all(update_args)
   end
 
@@ -155,7 +154,7 @@ class AssignHearingDispositionTask < Task
 
   def update_hearing_disposition(disposition:)
     # Ensure the hearing exists
-    fail HearingAssociationMissing, id if hearing.nil?
+    fail HearingAssociationMissing, hearing_task&.id if hearing.nil?
 
     if hearing.is_a?(LegacyHearing)
       hearing.update_caseflow_and_vacols(disposition: disposition)
@@ -174,14 +173,21 @@ class AssignHearingDispositionTask < Task
     end
   end
 
-  def reschedule(hearing_day_id:, scheduled_time_string:, hearing_location: nil)
-    new_hearing_task = hearing_task.cancel_and_recreate
+  def reschedule(hearing_day_id:, scheduled_time_string:, hearing_location: nil, virtual_hearing_attributes: nil)
+    multi_transaction do
+      new_hearing_task = hearing_task.cancel_and_recreate
 
-    new_hearing = HearingRepository.slot_new_hearing(hearing_day_id,
-                                                     appeal: appeal,
-                                                     hearing_location_attrs: hearing_location&.to_hash,
-                                                     scheduled_time_string: scheduled_time_string)
-    self.class.create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)
+      new_hearing = HearingRepository.slot_new_hearing(hearing_day_id,
+                                                       appeal: appeal,
+                                                       hearing_location_attrs: hearing_location&.to_hash,
+                                                       scheduled_time_string: scheduled_time_string)
+      if virtual_hearing_attributes.present?
+        @alerts = VirtualHearings::ConvertToVirtualHearingService
+          .convert_hearing_to_virtual(new_hearing, virtual_hearing_attributes)
+      end
+
+      self.class.create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)
+    end
   end
 
   def mark_hearing_cancelled
@@ -219,7 +225,8 @@ class AssignHearingDispositionTask < Task
       reschedule(
         hearing_day_id: new_hearing_attrs[:hearing_day_id],
         scheduled_time_string: new_hearing_attrs[:scheduled_time_string],
-        hearing_location: new_hearing_attrs[:hearing_location]
+        hearing_location: new_hearing_attrs[:hearing_location],
+        virtual_hearing_attributes: new_hearing_attrs[:virtual_hearing_attributes]
       )
     when "schedule_later"
       schedule_later(

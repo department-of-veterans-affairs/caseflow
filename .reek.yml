@@ -61,8 +61,10 @@ detectors:
       - AppealAvailableHearingLocations#suggested_hearing_location
       - AppealTaskHistory#build_events
       - ApplicationRecord#as_hash
+      - AssignHearingDispositionTask#reschedule_or_schedule_later
       - AssignJudgeteamRoles#process
       - AsyncableJobsReporter
+      - ConvertToVirtualHearing#convert_hearing_to_virtual
       - ClaimReviewAsyncStatsReporter#as_csv
       - DataIntegrityChecksJob
       - DecisionIssueSyncJob
@@ -79,6 +81,7 @@ detectors:
       - Fakes::BGSService#fetch_poas_by_participant_ids
       - Fakes::PersistentStore#convert_dates_from
       - FetchDocumentsForReaderJob#fetch_for_appeal
+      - FetchHearingLocationsForVeteransJob#sleep_before_retry_on_limit_error
       - HearingSerializerBase
       - LegacyDocket#count
       - RedistributedCase#legacy_appeal_relevant_tasks
@@ -90,6 +93,7 @@ detectors:
       - RequestIssue#find_or_create_decision_issue_from_rating_issue
       - RequestIssue#special_issues
       - RequestIssueReporter#as_csv
+      - ScheduleHearingTask#create_hearing
       - Seeds::Hearings
       - Seeds::Tasks#create_colocated_legacy_tasks
       - Seeds::Users#create_aod_user_and_tasks
@@ -100,6 +104,7 @@ detectors:
       - UserReporter#report_user_related_records
       - User#appeal_has_task_assigned_to_user?
       - VeteranAttributeCacher
+      - HearingDayRequestTypeQuery#call
       - WarmBgsCachesJob
       - ExternalApi::PexipService#send_pexip_request
       - ControllerSchema#remove_unknown_keys
@@ -117,6 +122,7 @@ detectors:
   LongParameterList:
     exclude:
       - Address#initialize
+      - AssignHearingDispositionTask#reschedule
       - ExternalApi::VBMSService#self.create_contentions!
       - LegacyDocket#new_distributed_case
       - Api::V3::DecisionReviews::ContestableIssueFinder#initialize
@@ -154,6 +160,7 @@ detectors:
       - QueueConfig
       - RequestIssue
       - BulkTaskReassignment
+      - Seeds::Hearings
       - Task
       - UpdateCachedAppealsAttributesJob
       - Veteran

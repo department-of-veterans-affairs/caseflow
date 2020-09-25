@@ -257,6 +257,7 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to_not have_content("Regional Office")
       end
     end
+
     context "when veteran is in BGS" do
       let!(:appeal) do
         create(
@@ -302,6 +303,36 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to have_content(appeal.appellant_address_line_1)
         expect(page).to have_content(COPY::CASE_DETAILS_VETERAN_ADDRESS_SOURCE)
         expect(page).to_not have_content("Regional Office")
+      end
+    end
+
+    context "when appellant is an attorney or unlisted claimant" do
+      let(:bgs_atty) { create(:bgs_attorney) }
+      let(:appeal) do
+        create(
+          :appeal,
+          associated_judge: judge_user,
+          associated_attorney: attorney_user,
+          number_of_claimants: 0,
+          veteran_is_not_claimant: true
+        )
+      end
+
+      %w[Attorney Other].each do |claimant_type|
+        scenario "details view informs us that appellant's relationship to Veteran is #{claimant_type}" do
+          create(
+            :claimant,
+            decision_review: appeal,
+            type: "#{claimant_type}Claimant",
+            participant_id: bgs_atty.participant_id,
+            notes: (claimant_type == "Other") ? "sample notes" : nil
+          )
+          visit "/queue/appeals/#{appeal.uuid}"
+
+          expect(page).to have_content("About the Veteran")
+          expect(page).to have_content("About the Appellant")
+          expect(page).to have_content("Relation to Veteran: #{claimant_type}")
+        end
       end
     end
 
@@ -1318,6 +1349,45 @@ RSpec.feature "Case details", :all_dbs do
             expect(page).to have_current_path(case_details_page_path)
           end
         end
+      end
+    end
+  end
+
+  describe "case title details" do
+    shared_examples "show hearing request type" do
+      it "displays hearing request type" do
+        id = appeal.is_a?(Appeal) ? appeal.uuid : appeal.vacols_id
+
+        visit("/queue/appeals/#{id}")
+
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_ABOUT_BOX_HEARING_REQUEST_TYPE_LABEL.upcase)
+        expect(page).to have_content(appeal.readable_hearing_request_type)
+      end
+    end
+
+    context "ama appeal" do
+      context "hearing docket" do
+        let!(:appeal) do
+          create(:appeal, :hearing_docket, closest_regional_office: "C")
+        end
+
+        include_examples "show hearing request type"
+      end
+    end
+
+    context "legacy appeal" do
+      context "hearing docket" do
+        let!(:appeal) do
+          create(
+            :legacy_appeal,
+            vacols_case: create(
+              :case,
+              :travel_board_hearing
+            )
+          )
+        end
+
+        include_examples "show hearing request type"
       end
     end
   end

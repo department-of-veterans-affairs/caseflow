@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 
 import { VirtualHearingEmail } from 'app/hearings/components/VirtualHearings/Emails';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
@@ -24,6 +24,17 @@ describe('VirtualHearingEmails', () => {
     expect(emails).toMatchSnapshot();
   });
 
+  test('Respects required prop', () => {
+    // Run the test
+    const emails = mount(
+      <VirtualHearingEmail label={label} emailType={emailType} email={email} required />
+    );
+
+    // Assertions
+    expect(emails.find('.cf-required')).toHaveLength(1);
+    expect(emails).toMatchSnapshot();
+  });
+
   test('Does not allow editing when ReadOnly', () => {
     // Run the test
     const emails = shallow(
@@ -35,6 +46,17 @@ describe('VirtualHearingEmails', () => {
     expect(emails.find(HelperText)).toHaveLength(0);
     expect(emails.find(ReadOnly).prop('label')).toEqual(label);
     expect(emails.find(ReadOnly).prop('text')).toEqual(email);
+    expect(emails).toMatchSnapshot();
+  });
+
+  test('Does not show required when ReadOnly', () => {
+    // Run the test
+    const emails = mount(
+      <VirtualHearingEmail label={label} emailType={emailType} email={email} disabled required />
+    );
+
+    // Assertions
+    expect(emails.find('.cf-required')).toHaveLength(0);
     expect(emails).toMatchSnapshot();
   });
 })

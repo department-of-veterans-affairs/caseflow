@@ -8,22 +8,12 @@ class HigherLevelReviewIntake < ClaimReviewIntake
   end
 
   def ui_hash
-    super.merge(
-      same_office: detail.same_office,
-      informal_conference: detail.informal_conference
-    )
+    Intake::HigherLevelReviewIntakeSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   private
 
-  def review_params
-    request_params.permit(
-      :receipt_date,
-      :informal_conference,
-      :same_office,
-      :benefit_type,
-      :veteran_is_not_claimant,
-      :legacy_opt_in_approved
-    )
+  def review_param_keys
+    %w[receipt_date informal_conference same_office benefit_type legacy_opt_in_approved]
   end
 end

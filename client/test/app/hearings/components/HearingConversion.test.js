@@ -3,7 +3,7 @@ import React from 'react';
 import { HearingConversion } from 'app/hearings/components/HearingConversion';
 import { detailsStore, hearingDetailsWrapper } from 'test/data/stores/hearingsStore';
 import { mount } from 'enzyme';
-import { userWithVirtualHearingsFeatureEnabled, amaHearing } from 'test/data';
+import { userWithVirtualHearingsFeatureEnabled, userUseFullPageVideoToVirtual, amaHearing } from 'test/data';
 import { HEARING_CONVERSION_TYPES } from 'app/hearings/constants';
 import { VirtualHearingSection } from 'app/hearings/components/VirtualHearings/Section';
 import * as DateUtil from 'app/util/DateUtil';
@@ -12,6 +12,10 @@ import { VirtualHearingEmail } from 'app/hearings/components/VirtualHearings/Ema
 import { JudgeDropdown } from 'app/components/DataDropdowns';
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import RadioField from 'app/components/RadioField';
+import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
+import { defaultHearing } from 'test/data/hearings';
+import { HearingLocationDropdown } from 'app/hearings/components/dailyDocket/DailyDocketRowInputs';
+import { HearingTime } from 'app/hearings/components/modalForms/HearingTime';
 
 const updateSpy = jest.fn();
 const defaultTitle = 'Convert to Virtual';
@@ -87,4 +91,5 @@ describe('HearingConversion', () => {
 
     expect(conversion).toMatchSnapshot();
   });
+
 });

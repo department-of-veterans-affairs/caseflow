@@ -63,6 +63,11 @@ class VirtualHearing < CaseflowRecord
   scope :cancelled,
         -> { where(request_cancelled: true) }
 
+  VALID_REQUEST_TYPES = [
+    HearingDay::REQUEST_TYPES[:video],
+    HearingDay::REQUEST_TYPES[:central]
+  ].freeze
+
   def all_emails_sent?
     appellant_email_sent &&
       (judge_email.nil? || judge_email_sent) &&
@@ -167,12 +172,6 @@ class VirtualHearing < CaseflowRecord
 
   def assign_created_by_user
     self.created_by ||= RequestStore.store[:current_user]
-  end
-
-  def associated_hearing_is_video
-    if hearing.request_type != HearingDay::REQUEST_TYPES[:video]
-      errors.add(:hearing, "must be a video hearing")
-    end
   end
 
   def hearing_is_not_virtual

@@ -113,6 +113,7 @@ export const DISPOSITION_OPTIONS = [{ value: 'held',
 
 export const VIDEO_HEARING = 'Video';
 export const CENTRAL_OFFICE_HEARING = 'Central';
+export const VIRTUAL_HEARING = 'Virtual';
 
 export const LIST_SCHEDULE_VIEWS = {
   DEFAULT_VIEW: 'DEFAULT_VIEW',
@@ -122,6 +123,12 @@ export const LIST_SCHEDULE_VIEWS = {
 export const HEARING_CONVERSION_TYPES = [
   'change_to_virtual',
   'change_from_virtual',
-  'change_email',
+  'change_email_or_timezone',
   'change_hearing_time'
 ];
+
+export const HEARING_REQUEST_TYPES = {
+  V: VIDEO_HEARING,
+  C: CENTRAL_OFFICE_HEARING,
+  R: VIRTUAL_HEARING,
+};
