@@ -54,7 +54,8 @@ export const SelectClaimant = (props) => {
     relationships,
     payeeCode,
     payeeCodeError,
-    setPayeeCode
+    setPayeeCode,
+    claimantNotes
   } = props;
 
   const { attorneyFees, establishFiduciaryEps } = useSelector((state) => state.featureToggles);
@@ -126,7 +127,7 @@ export const SelectClaimant = (props) => {
         {COPY.CLAIMANT_NOT_FOUND_END}
         <br />
         <br />
-        {attorneyFees && formType === 'appeal' ? COPY.ADD_CLAIMANT_TEXT : ''}
+        {attorneyFees && formType === 'appeal' &&(claimant || claimantNotes) ? COPY.ADD_CLAIMANT_TEXT : ''}
       </p>);
   };
 
@@ -229,7 +230,8 @@ SelectClaimant.propTypes = {
   relationships: PropTypes.array,
   payeeCode: PropTypes.string,
   payeeCodeError: PropTypes.string,
-  setPayeeCode: PropTypes.func
+  setPayeeCode: PropTypes.func,
+  claimantNotes: PropTypes.string
 };
 
 export default SelectClaimant;
