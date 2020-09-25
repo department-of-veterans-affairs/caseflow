@@ -442,6 +442,8 @@
   "CREATE_MAIL_TASK_TITLE": "Create new mail task",
   "MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL": "Select correspondence type",
   "MAIL_TASK_CREATION_SUCCESS_MESSAGE": "Created %s task",
+  "SELF_ASSIGNED_MAIL_TASK_CREATION_SUCCESS_TITLE": "You have successfully created a new %s mail task",
+  "SELF_ASSIGNED_MAIL_TASK_CREATION_SUCCESS_MESSAGE": "This task will remain in your Queue. Assign or take action on this at any time through your actions dropdown.",
 
   "CASE_TIMELINE_HEADER": "Below is the history of this case. Soon, you'll be able to see many more details.",
   "CASE_TIMELINE_DISPATCHED_FROM_BVA": "Dispatched from BVA",
@@ -763,8 +765,9 @@
   "VIRTUAL_HEARING_TIMEZONE_REQUIRED": "Timezone is required to send email notifications.",
   "MISSING_EMAIL_ALERT_MESSAGE": "If you have the %s's email address, enter it in VBMS. The email will be required to send notifications when you schedule the hearing.",
   "CONVERT_HEARING_TYPE_TITLE": "Convert Hearing To %s",
-  "CONVERT_HEARING_TYPE_SUBTITLE": "The hearing request will appear in the scheduling queue for <strong>%s</strong>.",
+  "CONVERT_HEARING_TYPE_SUBTITLE": "The hearing request will appear in the scheduling queue for %s.",
   "CONVERT_HEARING_TYPE_SUBTITLE_2": "Review and update the following information in VBMS if needed. Caseflow won't send email notifications until you schedule the hearing.",
+  "CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT": "the appropriate regional office",
 
   "JUDGE_TEAM_REMOVE_JUDGE_ERROR": "Cannot remove a judge from their judge team.",
   "JUDGE_TEAM_ATTORNEY_RIGHTS_ERROR": "Cannot edit attorney rights on non-attorneys",

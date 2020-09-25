@@ -49,6 +49,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         issue_count: request_issues_to_cache[appeal.id] || 0,
         docket_type: appeal.docket_type,
         docket_number: appeal.docket_number,
+        hearing_request_type: appeal.readable_hearing_request_type,
         is_aod: appeal_aod_status.include?(appeal.id),
         power_of_attorney_name: representative_names[appeal.id],
         suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location,
@@ -61,6 +62,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
                       :closest_regional_office_key,
                       :docket_type,
                       :docket_number,
+                      :hearing_request_type,
                       :is_aod,
                       :issue_count,
                       :power_of_attorney_name,
@@ -166,13 +168,23 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
           vacols_id: folder[:vacols_id],
           case_type: vacols_case[:status],
           docket_number: folder[:docket_number],
+          formally_travel: vacols_case[:formally_travel], # true or false
+          hearing_request_type: vacols_case[:hearing_request_type],
           issue_count: issue_counts_to_cache[folder[:vacols_id]] || 0,
           is_aod: aod_status_to_cache[folder[:vacols_id]],
           veteran_name: veteran_names_to_cache[folder[:correspondent_id]]
         }
       end
 
-      update_columns = [:docket_number, :issue_count, :veteran_name, :case_type, :is_aod]
+      update_columns = [
+        :docket_number,
+        :formally_travel,
+        :hearing_request_type,
+        :issue_count,
+        :veteran_name,
+        :case_type,
+        :is_aod
+      ]
       CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:vacols_id],
                                                                       columns: update_columns }
 
@@ -244,22 +256,26 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def case_fields_for_vacols_ids(vacols_ids)
     # array of arrays will become hash with bfkey as key.
     # [
-    #   [ 123, { location: 57, status: "Original" } ],
-    #   [ 456, { location: 2, status: "Court Remand" } ],
+    #   [ 123, { location: 57, status: "Original", hearing_request_type: "Video", formally_travel: true} ],
+    #   [ 456, { location: 2, status: "Court Remand", hearing_request_type: "Video", formally_travel: true } ],
     #   ...
     # ]
     # becomes
     # {
-    #   123: { location: 57, status: "Original" },
-    #   456: { location: 2, status: "Court Remand" },
+    #   123: { location: 57, status: "Original", hearing_request_type: "Video", formally_travel: true },
+    #   456: { location: 2, status: "Court Remand", hearing_request_type: "Video", formally_travel: true },
     #   ...
     # }
-    VACOLS::Case.where(bfkey: vacols_ids).pluck(:bfkey, :bfac, :bfcurloc).map do |bfkey, bfac, bfcurloc|
+    VACOLS::Case.where(bfkey: vacols_ids).map do |vacols_case|
+      legacy_appeal = AppealRepository.build_appeal(vacols_case) # build non-persisting legacy appeal object
+
       [
-        bfkey,
+        vacols_case.bfkey,
         {
-          location: bfcurloc,
-          status: VACOLS::Case::TYPES[bfac]
+          location: vacols_case.bfcurloc,
+          status: VACOLS::Case::TYPES[vacols_case.bfac],
+          hearing_request_type: legacy_appeal.readable_hearing_request_type,
+          formally_travel: formally_travel?(legacy_appeal)
         }
       ]
     end.to_h
@@ -286,5 +302,16 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       # Matches how last names are split and sorted on the front end (see: TaskTable.detailsColumn.getSortValue)
       [veteran.file_number, "#{veteran.last_name&.split(' ')&.last}, #{veteran.first_name}"]
     end.to_h
+  end
+
+  # checks to see if the hearing request type was formally travel
+  def formally_travel?(legacy_appeal)
+    # the current request type is travel
+    if legacy_appeal.readable_hearing_request_type == LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:travel_board]
+      return false
+    end
+
+    # otherwise check if og request type was travel
+    legacy_appeal.original_hearing_request_type == :travel_board
   end
 end
