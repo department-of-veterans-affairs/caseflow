@@ -3,13 +3,14 @@
 class DocketChange < CaseflowRecord
   include HasSimpleAppealUpdatedSince
 
-  belongs_to :appeal
+  belongs_to :old_docket_stream, class_name: "Appeal", optional: false
+  belongs_to :new_docket_stream, class_name: "Appeal"
   belongs_to :task, optional: false
 
   validates :disposition, presence: true
   validate :granted_issues_present_if_partial
 
-  delegate :request_issues, to: :appeal
+  delegate :request_issues, to: :old_docket_stream
 
   enum disposition: {
     granted: "granted",
@@ -23,17 +24,12 @@ class DocketChange < CaseflowRecord
     DecisionIssue.find(granted_decision_issue_ids)
   end
 
-  # Creates request issues on the new docket contesting the decisions to be granted
-  def create_request_issues_for_switch
-    decision_issues_for_switch.map { |di| di.create_contesting_request_issue!(appeal) }
+  def move_granted_decision_issues
+    decision_issues_for_switch.map { |di| di.update!(decision_review: new_docket_stream) }
   end
 
-  def granted_decision_issues
-    @granted_decision_issues ||= request_issues.map { |ri| ri.decision_issues.first }
-  end
-
-  def create_granted_decision_issues
-    request_issues.map(&:create_granted_decision_issue!)
+  def move_granted_request_issues
+    decision_issues_for_switch.map { |di| di.associated_request_issue.update!(decision_review: new_docket_stream) }
   end
 
   private
