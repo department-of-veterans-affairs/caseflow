@@ -127,7 +127,7 @@ export const SelectClaimant = (props) => {
         {COPY.CLAIMANT_NOT_FOUND_END}
         <br />
         <br />
-        {attorneyFees && formType === 'appeal' &&(claimant || claimantNotes) ? COPY.ADD_CLAIMANT_TEXT : ''}
+        {attorneyFees && formType === 'appeal' && !(claimant || claimantNotes) ? COPY.ADD_CLAIMANT_TEXT : ''}
       </p>);
   };
 
