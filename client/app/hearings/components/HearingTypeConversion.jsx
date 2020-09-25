@@ -1,6 +1,6 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { get }from 'lodash';
+import { get } from 'lodash';
 import { sprintf } from 'sprintf-js';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -16,7 +16,7 @@ import ApiUtil from '../../util/ApiUtil';
 import COPY from '../../../COPY';
 import HEARING_REQUEST_TYPES from
   '../../../constants/HEARING_REQUEST_TYPES';
-import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
+import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 
 export const HearingTypeConversion = ({
   appeal,
@@ -71,7 +71,7 @@ export const HearingTypeConversion = ({
         }
       );
 
-      props.showErrorMessage(error)
+      props.showErrorMessage(error);
     } finally {
       setLoading(false);
 
