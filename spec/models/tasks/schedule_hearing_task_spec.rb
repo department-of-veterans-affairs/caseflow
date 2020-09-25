@@ -200,7 +200,7 @@ describe ScheduleHearingTask, :all_dbs do
         end
 
         context "with non-VSO representative" do
-          let!(:private_bar) { create(:private_bar, name: "test", participant_id: "098123") }
+          let!(:private_bar) { create(:private_bar, name: "test", participant_id: participant_id) }
 
           include_examples "route to case storage location"
         end
