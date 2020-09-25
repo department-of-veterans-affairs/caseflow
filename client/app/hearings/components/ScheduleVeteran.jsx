@@ -93,6 +93,7 @@ export const ScheduleVeteran = ({
     appellantCity: appeal?.appellantAddress?.city,
     appellantState: appeal?.appellantAddress?.state,
     appellantZip: appeal?.appellantAddress?.zip,
+    veteranFullName: appeal?.veteranFullName,
     requestType
   };
 

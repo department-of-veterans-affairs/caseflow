@@ -28,7 +28,11 @@ export const AppellantSection = ({
   showOnlyAppellantName,
   showMissingEmailAlert
 }) => {
-  const appellantName = hearing?.appellantFullName;
+  // Depending on where this component is used, the *FullName fields will be available.
+  // If they aren't, the *FirstName/*LastName fields should be available.
+  const appellantName = hearing?.appellantIsNotVeteran ?
+    (hearing?.appellantFullName || `${hearing?.appellantFirstName} ${hearing?.appellantLastName}`) :
+    (hearing?.veteranFullName || `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`);
   const showTimezoneField = virtual && !video;
 
   // determine whether to show a missing email underneath readonly email
