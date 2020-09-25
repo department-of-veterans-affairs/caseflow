@@ -170,48 +170,6 @@ describe RatingDecision do
       end
     end
 
-    describe "#contestable?" do
-      subject { described_class.from_bgs_disability(rating, bgs_record).contestable? }
-
-      context "rating_issue? is true" do
-        it { is_expected.to eq(false) }
-      end
-
-      context "rating_issue? is false" do
-        let(:rating_issue_reference_id) { nil }
-
-        context "promulgation date and original_denial_date are close" do
-          it { is_expected.to eq(true) }
-        end
-
-        context "promulgation date, profile date and disability_date are not close" do
-          let(:disability_date) { promulgation_date + 6.months }
-
-          it { is_expected.to eq(true) }
-        end
-
-        context "profile date and disability date are close, promulgation date is not close" do
-          let(:promulgation_date) { disability_date + 6.months }
-
-          it { is_expected.to eq(true) }
-        end
-
-        context "profile date is near original_denial_date but not promulgation date" do
-          let(:original_denial_date) { promulgation_date - 6.months }
-          let(:profile_date) { promulgation_date - 6.months + 3.days }
-
-          it { is_expected.to eq(true) }
-        end
-
-        context "original_denial_date is pre-2005, disability date is near promulgation date" do
-          let(:original_denial_date) { Time.utc(2004, 1, 1, 12, 0, 0) }
-          let(:disability_date) { promulgation_date - 7.days }
-
-          it { is_expected.to eq(true) }
-        end
-      end
-    end
-
     describe "#effective_date" do
       context "decision is not a rating issue" do
         let(:rating_issue_reference_id) { nil }
