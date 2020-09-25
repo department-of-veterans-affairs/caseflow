@@ -125,6 +125,6 @@ class Distribution < CaseflowRecord
   end
 
   def total_batch_size
-    DecisionDraftingAttorney.users.size * CASES_PER_ATTORNEY
+    JudgeTeam.includes(:non_admin_users).flat_map(&:non_admin_users).size * CASES_PER_ATTORNEY
   end
 end
