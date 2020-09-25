@@ -54,8 +54,7 @@ export const SelectClaimant = (props) => {
     relationships,
     payeeCode,
     payeeCodeError,
-    setPayeeCode,
-    claimantNotes
+    setPayeeCode
   } = props;
 
   const { attorneyFees, establishFiduciaryEps } = useSelector((state) => state.featureToggles);
@@ -120,6 +119,8 @@ export const SelectClaimant = (props) => {
   const showClaimants = ['true', true].includes(veteranIsNotClaimant);
 
   const claimantLabel = () => {
+    let claimantNotes = props.claimantNotes;
+
     return (
       <p id="claimantLabel" style={{ marginTop: '8.95px', marginBottom: '0px' }}>
         {COPY.CLAIMANT_NOT_FOUND_START}
