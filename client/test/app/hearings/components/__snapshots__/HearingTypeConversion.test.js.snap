@@ -349,8 +349,10 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
               hearing={
                 Object {
                   "appellantFullName": undefined,
+                  "appellantIsNotVeteran": undefined,
                   "representative": undefined,
                   "representativeType": undefined,
+                  "veteranFullName": undefined,
                 }
               }
               readOnly={true}
@@ -378,6 +380,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                 </h2>
                 <ReadOnly
                   label="Veteran Name"
+                  text="undefined undefined"
                 >
                   <div
                     data-css-1a5irm0=""
@@ -385,6 +388,9 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                     <strong>
                       Veteran Name
                     </strong>
+                    <pre>
+                      undefined undefined
+                    </pre>
                   </div>
                 </ReadOnly>
                 <div
@@ -452,8 +458,10 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
               hearing={
                 Object {
                   "appellantFullName": undefined,
+                  "appellantIsNotVeteran": undefined,
                   "representative": undefined,
                   "representativeType": undefined,
+                  "veteranFullName": undefined,
                 }
               }
               readOnly={true}

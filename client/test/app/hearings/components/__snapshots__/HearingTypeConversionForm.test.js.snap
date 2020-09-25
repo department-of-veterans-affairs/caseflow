@@ -128,8 +128,10 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
         hearing={
           Object {
             "appellantFullName": "Abellona Valtas",
+            "appellantIsNotVeteran": false,
             "representative": "Attorney McAttorneyFace",
             "representativeType": "Attorney",
+            "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
@@ -235,8 +237,10 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
         hearing={
           Object {
             "appellantFullName": "Abellona Valtas",
+            "appellantIsNotVeteran": false,
             "representative": "Attorney McAttorneyFace",
             "representativeType": "Attorney",
+            "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
@@ -507,8 +511,10 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
         hearing={
           Object {
             "appellantFullName": "Abellona Valtas",
+            "appellantIsNotVeteran": false,
             "representative": "Attorney McAttorneyFace",
             "representativeType": "Attorney",
+            "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
@@ -589,8 +595,10 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
         hearing={
           Object {
             "appellantFullName": "Abellona Valtas",
+            "appellantIsNotVeteran": false,
             "representative": "Attorney McAttorneyFace",
             "representativeType": "Attorney",
+            "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
@@ -861,8 +869,10 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
         hearing={
           Object {
             "appellantFullName": "Abellona Valtas",
+            "appellantIsNotVeteran": false,
             "representative": "Attorney McAttorneyFace",
             "representativeType": "Attorney",
+            "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
@@ -943,8 +953,10 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
         hearing={
           Object {
             "appellantFullName": "Abellona Valtas",
+            "appellantIsNotVeteran": false,
             "representative": "Attorney McAttorneyFace",
             "representativeType": "Attorney",
+            "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
@@ -1215,8 +1227,10 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
         hearing={
           Object {
             "appellantFullName": "Abellona Valtas",
+            "appellantIsNotVeteran": false,
             "representative": "Attorney McAttorneyFace",
             "representativeType": "Attorney",
+            "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
@@ -1297,8 +1311,10 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
         hearing={
           Object {
             "appellantFullName": "Abellona Valtas",
+            "appellantIsNotVeteran": false,
             "representative": "Attorney McAttorneyFace",
             "representativeType": "Attorney",
+            "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
