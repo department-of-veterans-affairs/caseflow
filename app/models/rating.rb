@@ -115,10 +115,4 @@ class Rating
       Array.wrap(rating_profile[:disabilities] || rating_profile.dig(:disability_list, :disability))
     ).most_recent
   end
-
-  # The profile date is used as a key when fetching a rating by profile date.
-  # Profile dates in RatingAtIssue appear to have the same Date/Time stamp, but sometimes disagree by one timezone
-  def profile_date_matches(profile_date_to_compare)
-    profile_date.strftime("%Y-%m-%d %H:%M:%S") == profile_date_to_compare.strftime("%Y-%m-%d %H:%M:%S")
-  end
 end
