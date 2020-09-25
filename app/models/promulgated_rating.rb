@@ -65,9 +65,22 @@ class PromulgatedRating < Rating
     )
   rescue Savon::Error
     {}
+  rescue BGS::ShareError
+    retry_fetching_rating_profile
   end
 
   def rating_profile
     @rating_profile ||= fetch_rating_profile
+  end
+
+  # Re-tries fetching the rating profile with the RatingAtIssue service
+  def retry_fetching_rating_profile
+    ratings_at_issue = RatingAtIssue.fetch_in_range(
+      participant_id: participant_id,
+      start_date: profile_date,
+      end_date: profile_date
+    )
+    matching_rating = ratings_at_issue.find{|rating| rating.profile_date_matches(profile_date)}
+    matching_rating.nil? ? matching_rating.rating_profile : {}
   end
 end
