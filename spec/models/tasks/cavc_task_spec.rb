@@ -64,7 +64,7 @@ describe CavcTask, :postgres do
     end
     context "nothing is provided" do
       let!(:cavc_task) { create(:cavc_task) }
-      it "create realistic task tree" do
+      it "creates realistic task tree" do
         expect(Appeal.count).to eq 1
         expect(RootTask.count).to eq 1
         expect(DistributionTask.count).to eq 1
@@ -107,8 +107,10 @@ describe CavcTask, :postgres do
         expect(cavc_task.open?)
         expect(cavc_task.status).to eq "on_hold"
       end
-      it "closes parent CavcTask open when closing all children" do
+      it "closes parent CavcTask when closing last open child" do
         child_task.cancelled!
+        expect(cavc_task.open?)
+        expect(cavc_task.status).to eq "on_hold"
         child_task2.completed!
         expect(cavc_task.closed?)
         expect(cavc_task.status).to eq "completed"
