@@ -265,7 +265,7 @@ describe DocketCoordinator do
     end
   end
 
-  fdescribe "#priority_count" do
+  describe "#priority_count" do
     subject { DocketCoordinator.new.priority_count }
 
     let(:expected_priority_count) { all_priority_cases_count }
@@ -273,7 +273,7 @@ describe DocketCoordinator do
     it_behaves_like "correct priority count"
   end
 
-  fdescribe "#genpop_priority_count" do
+  describe "#genpop_priority_count" do
     subject { DocketCoordinator.new.genpop_priority_count }
 
     let(:expected_priority_count) { genpop_priority_cases_count }
