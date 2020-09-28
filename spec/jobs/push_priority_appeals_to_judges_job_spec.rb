@@ -308,7 +308,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       job.instance_variable_set(:@genpop_distributions, distributed_cases)
       allow_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(previous_distributions)
-      allow_any_instance_of(DocketCoordinator).to receive(:priority_count).and_return(20)
+      allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(20)
     end
 
     it "returns ids and age of ready priority appeals not distributed" do
@@ -344,7 +344,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         allow_any_instance_of(PushPriorityAppealsToJudgesJob)
           .to receive(:priority_distributions_this_month_for_eligible_judges)
           .and_return(to_judge_hash(distribution_counts))
-        allow_any_instance_of(DocketCoordinator).to receive(:priority_count).and_return(priority_count)
+        allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(priority_count)
       end
 
       subject { PushPriorityAppealsToJudgesJob.new.eligible_judge_target_distributions_with_leftovers }
@@ -474,7 +474,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     before do
       allow_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:target_distributions_for_eligible_judges).and_return(target_distributions)
-      allow_any_instance_of(DocketCoordinator).to receive(:priority_count).and_return(priority_count)
+      allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(priority_count)
     end
 
     subject { PushPriorityAppealsToJudgesJob.new.leftover_cases_count }
@@ -519,7 +519,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         allow_any_instance_of(PushPriorityAppealsToJudgesJob)
           .to receive(:priority_distributions_this_month_for_eligible_judges)
           .and_return(to_judge_hash(distribution_counts))
-        allow_any_instance_of(DocketCoordinator).to receive(:priority_count).and_return(priority_count)
+        allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(priority_count)
       end
 
       subject { PushPriorityAppealsToJudgesJob.new.target_distributions_for_eligible_judges }
@@ -637,7 +637,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         allow_any_instance_of(PushPriorityAppealsToJudgesJob)
           .to receive(:priority_distributions_this_month_for_eligible_judges)
           .and_return(to_judge_hash(distribution_counts))
-        allow_any_instance_of(DocketCoordinator).to receive(:priority_count).and_return(priority_count)
+        allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(priority_count)
       end
 
       subject { PushPriorityAppealsToJudgesJob.new.priority_target }
