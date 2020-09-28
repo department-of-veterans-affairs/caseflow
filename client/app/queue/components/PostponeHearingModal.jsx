@@ -171,15 +171,20 @@ class PostponeHearingModal extends React.Component {
 
   submit = () => {
     const { userCanScheduleVirtualHearings, appeal, task } = this.props;
+    const taskData = taskActionData(this.props);
 
     // Determine whether to redirect to the ful page schedule veteran flow
     if (this.state.afterDispositionUpdateAction === ACTIONS.RESCHEDULE && userCanScheduleVirtualHearings) {
       // Change the disposition in the store
       this.props.setScheduledHearing({ disposition: ACTIONS.RESCHEDULE, taskId: task.taskId });
 
-      return this.props.history.push(
-        `/queue/appeals/${appeal.externalId}/tasks/${task.taskId}/${TASK_ACTIONS.SCHEDULE_VETERAN.value}`
+      this.props.history.push(
+        `/queue/appeals/${appeal.externalId}/tasks/${task.taskId}/${taskData.schedule_hearing_action_path}`
       );
+
+      // This is a failed Promise to prevent `QueueFlowModal` from thinking the
+      // request completed successfully, and redirecting back to the `CaseDetails` page.
+      return Promise.reject();
     }
 
     if (this.state.isPosting) {
