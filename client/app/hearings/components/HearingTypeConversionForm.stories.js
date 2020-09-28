@@ -55,3 +55,12 @@ MissingVeteranEmailAlert.args = {
     }
   }
 }
+
+export const AppealNotGeomatchedYet = Template.bind({});
+AppealNotGeomatchedYet.args = {
+  ...Basic.args,
+  appeal: {
+    ...legacyAppealForTravelBoard,
+    closestRegionalOfficeLabel: null
+  }
+};

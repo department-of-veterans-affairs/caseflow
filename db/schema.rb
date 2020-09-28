@@ -227,6 +227,8 @@ ActiveRecord::Schema.define(version: 2020_09_23_200721) do
     t.datetime "created_at"
     t.string "docket_number"
     t.string "docket_type"
+    t.boolean "formally_travel", comment: "Determines if the hearing type was formallly travel board; only applicable to Legacy appeals"
+    t.string "hearing_request_type", limit: 10, comment: "Stores hearing type requested by appellant; could be one of nil, 'Video', 'Central', 'Travel', or 'Virtual'"
     t.boolean "is_aod", comment: "Whether the case is Advanced on Docket"
     t.integer "issue_count", comment: "Number of issues on the appeal."
     t.string "power_of_attorney_name", comment: "'Firstname Lastname' of power of attorney"
@@ -239,6 +241,7 @@ ActiveRecord::Schema.define(version: 2020_09_23_200721) do
     t.index ["closest_regional_office_city"], name: "index_cached_appeal_attributes_on_closest_regional_office_city"
     t.index ["closest_regional_office_key"], name: "index_cached_appeal_attributes_on_closest_regional_office_key"
     t.index ["docket_type"], name: "index_cached_appeal_attributes_on_docket_type"
+    t.index ["hearing_request_type", "formally_travel"], name: "index_cached_appeal_on_hearing_request_type_and_formally_travel"
     t.index ["is_aod"], name: "index_cached_appeal_attributes_on_is_aod"
     t.index ["power_of_attorney_name"], name: "index_cached_appeal_attributes_on_power_of_attorney_name"
     t.index ["suggested_hearing_location"], name: "index_cached_appeal_attributes_on_suggested_hearing_location"
@@ -781,6 +784,16 @@ ActiveRecord::Schema.define(version: 2020_09_23_200721) do
     t.index ["updated_at"], name: "index_higher_level_reviews_on_updated_at"
     t.index ["uuid"], name: "index_higher_level_reviews_on_uuid"
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
+  end
+
+  create_table "ihp_drafts", force: :cascade do |t|
+    t.integer "appeal_id", null: false, comment: "Appeal id the IHP was written for"
+    t.string "appeal_type", null: false, comment: "Type of appeal the IHP was written for"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at timestamps"
+    t.integer "organization_id", null: false, comment: "IHP writing VSO that drafted the IHP"
+    t.string "path", null: false, comment: "Path to the IHP in the VA V: drive"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at timestamps"
+    t.index ["appeal_id", "appeal_type", "organization_id"], name: "index_ihp_drafts_on_appeal_and_organization"
   end
 
   create_table "intakes", id: :serial, comment: "Represents the intake of an form or request made by a veteran.", force: :cascade do |t|

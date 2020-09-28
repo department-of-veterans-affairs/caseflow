@@ -51,6 +51,7 @@ describe FetchHearingLocationsForVeteransJob do
     end
   end
 
+  # Location Code 57 is "Schedule Hearing"
   context "when there is a case in location 57 *without* an associated veteran" do
     let!(:bfcorlid) { "123456789S" }
     let!(:bfcorlid_file_number) { "123456789" }
@@ -107,7 +108,7 @@ describe FetchHearingLocationsForVeteransJob do
       it "creates schedule hearing tasks for appeal and records a geomatched result" do
         expect(subject).to(
           receive(:record_geomatched_appeal)
-            .with(legacy_appeal.external_id, :matched_available_hearing_locations)
+            .with(legacy_appeal, :matched_available_hearing_locations)
         )
 
         subject.perform
@@ -175,7 +176,7 @@ describe FetchHearingLocationsForVeteransJob do
               allow(subject).to(receive(:job_running_past_expected_end_time?).and_return(false, false, true))
 
               expect(subject).to(
-                receive(:record_geomatched_appeal).with(legacy_appeal.external_id, "limit_error").once
+                receive(:record_geomatched_appeal).with(legacy_appeal, "limit_error").once
               )
 
               subject.perform
@@ -191,7 +192,7 @@ describe FetchHearingLocationsForVeteransJob do
 
             it "records multiple geomatch errors" do
               expect(subject).to(
-                receive(:record_geomatched_appeal).with(legacy_appeal.external_id, "limit_error").at_least(:once)
+                receive(:record_geomatched_appeal).with(legacy_appeal, "limit_error").at_least(:once)
               )
 
               subject.perform
@@ -204,10 +205,10 @@ describe FetchHearingLocationsForVeteransJob do
 
               it "retries the same appeal again" do
                 expect(subject).to(
-                  receive(:record_geomatched_appeal).with(legacy_appeal.external_id, "limit_error").at_least(:twice)
+                  receive(:record_geomatched_appeal).with(legacy_appeal, "limit_error").at_least(:twice)
                 )
                 expect(subject).not_to(
-                  receive(:record_geomatched_appeal).with(appeal.external_id, any_args)
+                  receive(:record_geomatched_appeal).with(appeal, any_args)
                 )
 
                 subject.perform
@@ -232,11 +233,11 @@ describe FetchHearingLocationsForVeteransJob do
 
           context "retries to geomatch" do
             it "retries geomatching hearing locations for appeal" do
-              expect(subject).to(receive(:record_geomatched_appeal).once.with(legacy_appeal.external_id, "limit_error"))
+              expect(subject).to(receive(:record_geomatched_appeal).once.with(legacy_appeal, "limit_error"))
               expect(subject).to(
                 receive(:record_geomatched_appeal)
                   .once
-                  .with(legacy_appeal.external_id, :matched_available_hearing_locations)
+                  .with(legacy_appeal, :matched_available_hearing_locations)
               )
 
               subject.perform
@@ -254,12 +255,38 @@ describe FetchHearingLocationsForVeteransJob do
 
         it "records a geomatch error" do
           expect(subject).to(
-            receive(:record_geomatched_appeal).with(legacy_appeal.external_id, "error")
+            receive(:record_geomatched_appeal).with(legacy_appeal, "error")
           )
           expect(Raven).to receive(:capture_exception)
 
           subject.perform
         end
+      end
+    end
+  end
+
+  context "for a travel board appeal in VACOLS" do
+    let!(:vacols_case) do
+      create(
+        :case,
+        bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing],
+        bfhr: "2",
+        bfdocind: nil,
+        bfddec: nil
+      )
+    end
+
+    describe "#perform" do
+      subject { FetchHearingLocationsForVeteransJob.new }
+
+      it "geomatches for the travel board appeal" do
+        subject.perform
+
+        legacy_appeal = LegacyAppeal.find_by(vacols_id: vacols_case.bfkey)
+
+        expect(legacy_appeal).not_to be_nil
+        expect(legacy_appeal.closest_regional_office).not_to be_nil
+        expect(legacy_appeal.available_hearing_locations).not_to be_empty
       end
     end
   end
