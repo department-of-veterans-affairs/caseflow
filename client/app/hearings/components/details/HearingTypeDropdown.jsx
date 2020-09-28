@@ -1,68 +1,67 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
+
+import { VIDEO_HEARING, VIRTUAL_HEARING } from '../../constants';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 
-class HearingTypeDropdown extends React.Component {
-  constructor(props) {
-    super(props);
-
-    const { requestType } = props;
-
-    this.HEARING_TYPE_OPTIONS = [
-      {
-        value: false,
-        label: requestType
-      },
-      {
-        value: true,
-        label: 'Virtual'
-      }
-    ];
-  }
-
-  getValue = () => {
-    const { virtualHearing } = this.props;
-
-    if (!virtualHearing || !virtualHearing.status || virtualHearing.status === 'cancelled') {
-      return this.HEARING_TYPE_OPTIONS[0];
+/**
+ * Component to convert a hearing to virtual.
+ */
+const HearingTypeDropdown = ({
+  convertHearing,
+  enableFullPageConversion,
+  onChange,
+  openModal,
+  readOnly,
+  requestType,
+  styling,
+  update,
+  virtualHearing,
+}) => {
+  const hearingTypeOptions = [
+    {
+      value: false,
+      label: requestType
+    },
+    {
+      value: true,
+      label: VIRTUAL_HEARING
     }
+  ];
 
-    return this.HEARING_TYPE_OPTIONS[1];
-  };
+  const currentOption = (!virtualHearing || !virtualHearing.status || virtualHearing.status === 'cancelled') ?
+    hearingTypeOptions[0] :
+    hearingTypeOptions[1];
+  const { label: currentLabel } = currentOption;
 
   onChange = ({ label }) => {
-    const { convertHearing, update, openModal, enableFullPageConversion } = this.props;
-    const { label: currentLabel } = this.getValue();
-
     // Change from virtual if the current label is virtual
-    const type = currentLabel === 'Virtual' ? 'change_from_virtual' : 'change_to_virtual';
+    const type = currentLabel === VIRTUAL_HEARING ? 'change_from_virtual' : 'change_to_virtual';
 
     // Use the modal if the label is video
-    if ((label === 'Video' || currentLabel === 'Video') && !enableFullPageConversion) {
+    if ((label === VIDEO_HEARING || currentLabel === VIDEO_HEARING) && !enableFullPageConversion) {
       openModal({ type });
     } else if (convertHearing) {
       convertHearing(type);
     }
 
     // If the current value is not virtual, we are cancelling the virtual hearing
-    update('virtualHearing', { requestCancelled: currentLabel === 'Virtual', jobCompleted: false });
+    update('virtualHearing', { requestCancelled: currentLabel === VIRTUAL_HEARING, jobCompleted: false });
   };
 
-  render() {
-    return (
-      <SearchableDropdown
-        label="Hearing Type"
-        name="hearingType"
-        strongLabel
-        options={this.HEARING_TYPE_OPTIONS.filter((opt) => opt.label !== this.getValue().label)}
-        value={this.getValue()}
-        onChange={this.onChange}
-        readOnly={this.props.readOnly}
-        styling={this.props.styling}
-      />
-    );
-  }
-}
+  return (
+    <SearchableDropdown
+      label="Hearing Type"
+      name="hearingType"
+      strongLabel
+      options={hearingTypeOptions.filter((opt) => opt.label !== currentLabel)}
+      value={currentOption}
+      onChange={onChange}
+      readOnly={readOnly}
+      styling={styling}
+    />
+  );
+};
 
 HearingTypeDropdown.propTypes = {
   enableFullPageConversion: PropTypes.bool,
