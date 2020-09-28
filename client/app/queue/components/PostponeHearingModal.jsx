@@ -18,7 +18,6 @@ import AssignHearingForm from '../../hearings/components/modalForms/AssignHearin
 import ScheduleHearingLaterWithAdminActionForm
   from '../../hearings/components/modalForms/ScheduleHearingLaterWithAdminActionForm';
 import ApiUtil from '../../util/ApiUtil';
-import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
 
 const ACTIONS = {
   RESCHEDULE: 'reschedule',
