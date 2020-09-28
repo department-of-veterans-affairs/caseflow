@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe CavcRemand do
-  fdescribe ".create!" do
+  describe ".create!" do
     subject { CavcRemand.create!(params) }
 
     let(:created_by) { create(:user) }
