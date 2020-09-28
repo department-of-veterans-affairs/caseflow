@@ -8,7 +8,7 @@ class CreateCavcRemand < Caseflow::Migration
       t.string "cavc_docket_number", null: false, comment: "Docket number of the CAVC judgement"
       t.boolean "attorney_represented", null: false, comment: "Whether or not the appellant was represented by an attorney"
       t.string "cavc_judge_full_name", null: false, comment: "CAVC judge that passed the judgement on the remand"
-      t.string "type", null: false, comment: "CAVC Decision type. Currently one of 'Remand', 'Straight Reversal', and 'Death Dismissal'"
+      t.string "cavc_type", null: false, comment: "CAVC Decision type. Currently one of 'Remand', 'Straight Reversal', and 'Death Dismissal'"
       t.string "remand_type", comment: "Type of remand. Can be null if the cavc decision type is not 'Remand'. One of 'JMP', 'JMPR', and 'MDR'"
       t.date "decision_date", null: false, comment: "Date CAVC issued a decision"
       t.date "judgement_date", null: false, comment: "Date CAVC issued a judgement"

@@ -6,13 +6,13 @@ class CavcRemand < CaseflowRecord
   belongs_to :updated_by, class_name: "User"
   belongs_to :appeal
 
-  validates :created_by, :updated_by, :appeal, :attorney_represented, :cavc_judge_full_name, :type, :decision_date,
-            :decision_issue_ids, :instructions, presence: true
+  validates :created_by, :updated_by, :appeal, :cavc_docket_number, :attorney_represented, :cavc_judge_full_name,
+            :cavc_type, :decision_date, :decision_issue_ids, :instructions, presence: true
   validates :judgement_date, :mandate_date, presence: true, if: -> { jmr? || jmpr? }
   validates :cavc_judge_full_name, inclusion: { in: Constants::CAVC_JUDGE_FULL_NAMES }
   validate :decision_issue_ids_match_appeal_decision_issues, if: :jmr?
 
-  enum type: {
+  enum cavc_type: {
     Constants.CAVC_TYPES.remand.to_sym => Constants.CAVC_TYPES.remand,
     Constants.CAVC_TYPES.straight_reversal.to_sym => Constants.CAVC_TYPES.straight_reversal,
     Constants.CAVC_TYPES.death_dismissal.to_sym => Constants.CAVC_TYPES.death_dismissal
