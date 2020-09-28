@@ -50,10 +50,10 @@ describe CavcRemand do
     end
 
     context "when missing required attributes" do
-      let(:created_by) { create(:user) }
+      let(:created_by) { nil }
 
       it "does not save the record" do
-        expect { subject }.to raise_error.with("cannot be blank")
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
 
@@ -61,8 +61,7 @@ describe CavcRemand do
       let(:cavc_judge_full_name) { "Aaron Judge_HearingsAndCases Abshire" }
 
       it "does not save the record" do
-        expect(subject.valid?).to be false
-        expect(subject.errors[:created_by].first).to eq "cannot be blank"
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
   end

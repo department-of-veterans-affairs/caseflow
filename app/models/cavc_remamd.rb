@@ -9,7 +9,7 @@ class CavcRemand < CaseflowRecord
   validates :created_by, :updated_by, :appeal, :attorney_represented, :cavc_judge_full_name, :type, :decision_date,
             :decision_issue_ids, :instructions, presence: true
   validates :judgement_date, :mandate_date, presence: true, if: -> { jmr? || jmpr? }
-  validates :cavc_judge_full_name, inclusion: { in: Constants.CAVC_JUDGE_FULL_NAMES }
+  validates :cavc_judge_full_name, inclusion: { in: Constants::CAVC_JUDGE_FULL_NAMES }
   validate :decision_issue_ids_match_appeal_decision_issues, if: :jmr?
 
   enum type: {
@@ -19,9 +19,9 @@ class CavcRemand < CaseflowRecord
   }
 
   enum remand_type: {
-    Constants.CAVC_TYPES.jmr.to_sym => Constants.CAVC_TYPES.jmr,
-    Constants.CAVC_TYPES.jmpr.to_sym => Constants.CAVC_TYPES.jmpr,
-    Constants.CAVC_TYPES.mdr.to_sym => Constants.CAVC_TYPES.mdr
+    Constants.CAVC_REMAND_TYPES.jmr.to_sym => Constants.CAVC_REMAND_TYPES.jmr,
+    Constants.CAVC_REMAND_TYPES.jmpr.to_sym => Constants.CAVC_REMAND_TYPES.jmpr,
+    Constants.CAVC_REMAND_TYPES.mdr.to_sym => Constants.CAVC_REMAND_TYPES.mdr
   }
 
   def decision_issue_ids_match_appeal_decision_issues
