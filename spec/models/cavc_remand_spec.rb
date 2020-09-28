@@ -9,8 +9,8 @@ describe CavcRemand do
     let(:appeal) { create(:appeal) }
     let(:attorney_represented) { true }
     let(:cavc_judge_full_name) { Constants.CAVC_JUDGE_FULL_NAMES.first }
-    let(:type) { Constants.CAVC_TYPES.first  }
-    let(:remand_type) { Constants.CAVC_REMAND_TYPES.first  }
+    let(:type) { Constants.CAVC_TYPES.first }
+    let(:remand_type) { Constants.CAVC_REMAND_TYPES.first }
     let(:decision_date) { 5.days.ago }
     let(:judgement_date) { 4.days.ago }
     let(:mandate_date) { 3.days.ago }
