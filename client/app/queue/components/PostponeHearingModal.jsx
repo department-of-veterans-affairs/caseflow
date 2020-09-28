@@ -286,7 +286,7 @@ PostponeHearingModal.propTypes = {
   }),
   onReceiveAmaTasks: PropTypes.func,
   onReceiveAppealDetails: PropTypes.func,
-  history: PropTypes.func,
+  history: PropTypes.object,
   requestPatch: PropTypes.func,
   scheduleHearingLaterWithAdminAction: PropTypes.shape({
     apiFormattedValues: PropTypes.shape({
