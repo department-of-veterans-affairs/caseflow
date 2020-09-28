@@ -31,7 +31,7 @@ class LegacyDocket
   end
 
   def ready_priority_appeal_ids
-    LegacyAppeal.repository.ready_priority_appeal_ids
+    LegacyAppeal.repository.priority_ready_appeal_vacols_ids
   end
 
   def oldest_priority_appeal_days_waiting
