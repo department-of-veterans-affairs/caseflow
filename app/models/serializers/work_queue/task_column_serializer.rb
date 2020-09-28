@@ -178,13 +178,39 @@ class WorkQueue::TaskColumnSerializer
   end
 
   # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
+  attribute :hearing_request_type do |object, params|
+    columns = [Constants.QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME]
+
+    if serialize_attribute?(params, columns)
+      # The `hearing_request_type` field doesn't exist on the actual model. This
+      # field needs to be added in a select statement and represents the field from
+      # the `cached_appeal_attributes` table in `Hearings::ScheduleHearingTasksController`.
+      object&.[](:hearing_request_type)
+    end
+  end
+
+  # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
+  # former_travel technically isn't it's own column, it's part of
+  # hearing request type column
+  attribute :former_travel do |object, params|
+    columns = [Constants.QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME]
+
+    if serialize_attribute?(params, columns)
+      # The `formally_travel` field doesn't exist on the actual model. This
+      # field needs to be added in a select statement and represents the field from
+      # the `cached_appeal_attributes` table in `Hearings::ScheduleHearingTasksController`.
+      object&.[](:formally_travel)
+    end
+  end
+
+  # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
   attribute :power_of_attorney_name do |object, params|
     columns = [Constants.QUEUE_CONFIG.POWER_OF_ATTORNEY_COLUMN_NAME]
 
     if serialize_attribute?(params, columns)
       # The `power_of_attorney_name` field doesn't exist on the actual model. This
       # field needs to be added in a select statement and represents the field from
-      # the `cached_appeal_attributes` table.
+      # the `cached_appeal_attributes` table in `Hearings::ScheduleHearingTasksController`.
       object&.[](:power_of_attorney_name)
     end
   end
