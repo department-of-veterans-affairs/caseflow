@@ -713,11 +713,11 @@ class AppealRepository
       end
     end
 
-    def ready_priority_appeal_ids
-      MetricsService.record("VACOLS: ready_priority_appeal_ids",
-                            name: "ready_priority_appeal_ids",
+    def priority_ready_appeal_vacols_ids
+      MetricsService.record("VACOLS: priority_ready_appeal_vacols_ids",
+                            name: "priority_ready_appeal_vacols_ids",
                             service: :vacols) do
-        VACOLS::CaseDocket.ready_priority_appeal_ids
+        VACOLS::CaseDocket.priority_ready_appeal_vacols_ids
       end
     end
 
