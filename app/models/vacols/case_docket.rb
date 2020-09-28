@@ -166,6 +166,15 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
   # rubocop:enable Metrics/MethodLength
 
+  def self.genpop_priority_count
+    query = <<-SQL
+      #{VACOLS::CaseDocket::SELECT_PRIORITY_APPEALS}
+      where VLJ is null
+    SQL
+
+    VACOLS::CaseDocket.connection.exec_query(query).to_hash.count
+  end
+
   def self.nod_count
     where("BFMPRO = 'ADV' and BFD19 is null").count
   end

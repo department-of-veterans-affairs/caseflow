@@ -5,12 +5,18 @@ class HearingRequestDocket < Docket
     Constants.AMA_DOCKETS.hearing
   end
 
-  def age_of_n_oldest_priority_appeals(num)
-    relation = appeals(priority: true, ready: true).limit(num)
+  def ready_priority_appeals
+    appeals(priority: true, ready: true)
+  end
 
+  def age_of_n_oldest_priority_appeals(num)
     HearingRequestDistributionQuery.new(
-      base_relation: relation, genpop: "only_genpop"
+      base_relation: ready_priority_appeals.limit(num), genpop: "only_genpop"
     ).call.map(&:ready_for_distribution_at)
+  end
+
+  def genpop_priority_count
+    HearingRequestDistributionQuery.new(base_relation: ready_priority_appeals, genpop: "only_genpop").call.count
   end
 
   def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1)

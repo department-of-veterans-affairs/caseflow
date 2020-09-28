@@ -453,7 +453,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         allow_any_instance_of(PushPriorityAppealsToJudgesJob)
           .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(@distribution_counts)
         allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-          .to receive(:ready_priority_appeals_count).and_return(priority_count)
+          .to receive(:ready_genpop_priority_appeals_count).and_return(priority_count)
       end
 
       it "evens out over multiple calls" do
