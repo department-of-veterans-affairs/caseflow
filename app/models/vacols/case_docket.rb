@@ -168,11 +168,11 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.genpop_priority_count
     query = <<-SQL
-      #{VACOLS::CaseDocket::SELECT_PRIORITY_APPEALS}
+      #{SELECT_PRIORITY_APPEALS}
       where VLJ is null
     SQL
 
-    VACOLS::CaseDocket.connection.exec_query(query).to_hash.count
+    connection.exec_query(query).to_hash.count
   end
 
   def self.nod_count
