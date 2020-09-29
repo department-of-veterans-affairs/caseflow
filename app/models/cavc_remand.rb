@@ -9,7 +9,7 @@ class CavcRemand < CaseflowRecord
 
   validates :created_by, :updated_by, :appeal, :cavc_docket_number, :represented_by_attorney, :cavc_judge_full_name,
             :cavc_decision_type, :decision_date, :decision_issue_ids, :instructions, presence: true
-  validates :judgement_date, :mandate_date, presence: true, if: -> { jmr? || jmpr? }
+  validates :judgement_date, :mandate_date, presence: true, unless: :mdr?
   validates :cavc_judge_full_name, inclusion: { in: Constants::CAVC_JUDGE_FULL_NAMES }
   validate :decision_issue_ids_match_appeal_decision_issues, if: :jmr?
 
@@ -19,6 +19,8 @@ class CavcRemand < CaseflowRecord
     Constants.CAVC_DECISION_TYPES.death_dismissal.to_sym => Constants.CAVC_DECISION_TYPES.death_dismissal
   }
 
+  # Joint Motion Remand, Joint Motion Partial Remand, and Memorandum Decision on Remand
+  # the Board thinks of these as their initialization first and foremost, though
   enum remand_subtype: {
     Constants.CAVC_REMAND_SUBTYPES.jmr.to_sym => Constants.CAVC_REMAND_SUBTYPES.jmr,
     Constants.CAVC_REMAND_SUBTYPES.jmpr.to_sym => Constants.CAVC_REMAND_SUBTYPES.jmpr,

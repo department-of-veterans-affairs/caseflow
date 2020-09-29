@@ -66,5 +66,63 @@ describe CavcRemand do
         expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
+
+    context "When the mandate date is not set" do
+      let(:mandate_date) {}
+
+      context "When remand subtype is MDR" do
+        let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.mdr }
+
+        it "creates the record" do
+          byebug
+          expect { subject }.not_to raise_error
+        end
+      end
+
+      context "When remand subtype is JMR" do
+        let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.jmr }
+
+        it "does not save the record" do
+          expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+        end
+      end
+
+      context "When remand subtype is JMPR" do
+        let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.jmpr }
+
+        it "does not save the record" do
+          expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+        end
+      end
+    end
+
+    context "When the judgement date is not set" do
+      let(:judgement_date) {}
+
+      context "When remand subtype is MDR" do
+        let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.mdr }
+
+        it "creates the record" do
+          byebug
+          expect { subject }.not_to raise_error
+        end
+      end
+
+      context "When remand subtype is JMR" do
+        let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.jmr }
+
+        it "does not save the record" do
+          expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+        end
+      end
+
+      context "When remand subtype is JMPR" do
+        let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.jmpr }
+
+        it "does not save the record" do
+          expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+        end
+      end
+    end
   end
 end
