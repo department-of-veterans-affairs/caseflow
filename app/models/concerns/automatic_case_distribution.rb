@@ -153,7 +153,7 @@ module AutomaticCaseDistribution
     return {} unless num > 0
 
     dockets
-      .flat_map { |sym, docket| docket.age_of_n_oldest_priority_appeals(num).map { |age| [age, sym] } }
+      .flat_map { |sym, docket| docket.age_of_n_oldest_genpop_priority_appeals(num).map { |age| [age, sym] } }
       .sort_by { |age, _| age }
       .first(num)
       .group_by { |_, sym| sym }
