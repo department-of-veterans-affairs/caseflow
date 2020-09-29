@@ -1,7 +1,12 @@
 /* eslint-disable camelcase */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { CENTRAL_OFFICE_HEARING, HEARING_CONVERSION_TYPES } from '../constants';
+import {
+  TRAVEL_BOARD_HEARING,
+  VIDEO_HEARING,
+  CENTRAL_OFFICE_HEARING,
+  HEARING_CONVERSION_TYPES
+} from '../constants';
 import {
   RegionalOfficeDropdown,
   AppealHearingLocationsDropdown,
@@ -13,7 +18,6 @@ import HearingTypeDropdown from './details/HearingTypeDropdown';
 import { HearingTime } from './modalForms/HearingTime';
 import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
-import { HEARING_CONVERSION_TYPES, TRAVEL_BOARD_HEARING, VIDEO_HEARING } from '../constants';
 import { marginTop } from './details/style';
 import { isEmpty, orderBy } from 'lodash';
 
