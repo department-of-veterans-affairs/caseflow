@@ -94,7 +94,6 @@ export const ScheduleVeteran = ({
     appellantState: appeal?.appellantAddress?.state,
     appellantZip: appeal?.appellantAddress?.zip,
     veteranFullName: appeal?.veteranFullName,
-    requestType
   };
 
   // Reset the component state
