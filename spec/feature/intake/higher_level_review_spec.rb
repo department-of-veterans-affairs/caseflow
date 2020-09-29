@@ -147,7 +147,7 @@ feature "Higher-Level Review", :all_dbs do
     click_intake_continue
 
     expect(page).to have_content(
-      "If you do not see the claimant in the options below or if the claimant's information needs to be updated, please"
+      "If the claimant is a Veteran's dependant (spouse, child, or parent) and they are not listed"
     )
     expect(page).to have_content(
       "Please select an option.\nBob Vance, Spouse"
