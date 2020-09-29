@@ -13,7 +13,6 @@
 # Expected child task: JudgeAssignTask can have one or more AttorneyTask children,
 # one or more ColocatedTask children, or no child tasks at all.
 
-
 class JudgeAssignTask < JudgeTask
   def additional_available_actions(_user)
     [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
