@@ -50,14 +50,14 @@ class AsyncableJobsPage extends React.PureComponent {
 
     this.setState({ isFetchingSearchResults: true });
 
-    ApiUtil.get('/jobs', { headers: { 'case-search': searchTerm } })
-    .then((response) => {
-      const jobs = response.body;
-      const filteredJobs = jobs.filter((job) => job.veteran_file_number === searchTerm);
-      this.setState({
-        isFetchingSearchResults: false,
-        jobs: filteredJobs });
-    }).
+    ApiUtil.get('/jobs', { headers: { 'case-search': searchTerm } }).
+      then((response) => {
+        const jobs = response.body;
+
+        this.setState({
+          isFetchingSearchResults: false,
+          jobs });
+      }).
       catch(() => {
         this.setState({
           isFetchingSearchResults: false,

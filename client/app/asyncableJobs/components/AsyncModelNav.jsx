@@ -6,11 +6,6 @@ import DropdownButton from '../../components/DropdownButton';
 const DATE_TIME_FORMAT = 'ddd MMM DD HH:mm:ss YYYY';
 
 export default class AsyncModelNav extends React.PureComponent {
-
-  constructor(props) {
-    super(props);
-  }
-
   modelNameLinks = () => {
     const links = [];
     const modelNames = this.props.models.sort();
