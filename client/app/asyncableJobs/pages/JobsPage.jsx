@@ -10,6 +10,9 @@ import EasyPagination from '../../components/EasyPagination';
 import AsyncModelNav from '../components/AsyncModelNav';
 import JobRestartButton from '../components/JobRestartButton';
 
+import SearchBar from '../../components/SearchBar';
+import ApiUtil from '../../util/ApiUtil';
+
 const DATE_TIME_FORMAT = 'ddd MMM DD HH:mm:ss YYYY';
 
 class AsyncableJobsPage extends React.PureComponent {
@@ -17,7 +20,11 @@ class AsyncableJobsPage extends React.PureComponent {
     super(props);
 
     this.state = {
-      restarted: 0
+      restarted: 0,
+      jobs: this.props.jobs,
+      veteranId: '',
+      isFetchingSearchResults: false,
+      error: false
     };
   }
 
@@ -34,8 +41,33 @@ class AsyncableJobsPage extends React.PureComponent {
     return moment(datetime).format(DATE_TIME_FORMAT);
   }
 
+  updateVeteranId = (searchInput) => {
+    this.setState({ veteranId: searchInput });
+  }
+
+  handleVeteranIdSearch = () => {
+    const searchTerm = this.state.veteranId;
+
+    this.setState({ isFetchingSearchResults: true });
+
+    ApiUtil.get('/jobs', { headers: { 'case-search': searchTerm } })
+    .then((response) => {
+      const jobs = response.body;
+      const filteredJobs = jobs.filter((job) => job.veteran_file_number === searchTerm);
+      this.setState({
+        isFetchingSearchResults: false,
+        jobs: filteredJobs });
+    }).
+      catch(() => {
+        this.setState({
+          isFetchingSearchResults: false,
+          error: 'No jobs found for Veteran ID'
+        });
+      });
+  }
+
   render = () => {
-    const rowObjects = this.props.jobs;
+    const rowObjects = this.state.jobs;
 
     if (rowObjects.length === 0) {
       return <div>
@@ -119,6 +151,15 @@ class AsyncableJobsPage extends React.PureComponent {
         models={this.props.models}
         fetchedAt={this.props.fetchedAt}
         asyncableJobKlass={this.props.asyncableJobKlass} />
+      <SearchBar
+        size="small"
+        title="Search by Veteran ID"
+        value={this.state.veteranId}
+        onChange={this.updateVeteranId}
+        onSubmit={this.handleVeteranIdSearch}
+        loading={this.state.isFetchingSearchResults}
+        submitUsingEnterKey
+      />
       <hr />
       <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} slowReRendersAreOk />
       <EasyPagination currentCases={rowObjects.length} pagination={this.props.pagination} />
