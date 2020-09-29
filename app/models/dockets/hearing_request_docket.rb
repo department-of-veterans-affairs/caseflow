@@ -15,6 +15,7 @@ class HearingRequestDocket < Docket
     ).call.map(&:ready_for_distribution_at)
   end
 
+  # Hearing cases distinguish genpop from cases tied to a judge
   def genpop_priority_count
     HearingRequestDistributionQuery.new(base_relation: ready_priority_appeals, genpop: "only_genpop").call.count
   end
