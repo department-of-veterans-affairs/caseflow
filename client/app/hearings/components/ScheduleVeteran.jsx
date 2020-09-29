@@ -109,8 +109,8 @@ export const ScheduleVeteran = ({
     props.onChangeFormData('assignHearing', { virtualHearing: null });
   };
 
-  // Initialize the state
-  useEffect(() => reset(), []);
+  // Reset the state on unmount
+  useEffect(() => () => reset(), []);
 
   const getSuccessMsg = () => {
     // Format the hearing date string
