@@ -27,17 +27,6 @@ class CavcTask < Task
     true
   end
 
-  def when_child_task_completed(child_task)
-    super
-
-    # do not move forward if there are any open CavcTasks
-    return unless appeal.tasks.open.where(type: CavcTask.name).empty?
-
-    if appeal.is_a?(LegacyAppeal)
-      # Placeholder: update_legacy_appeal_location
-    end
-  end
-
   private
 
   def set_assignee
