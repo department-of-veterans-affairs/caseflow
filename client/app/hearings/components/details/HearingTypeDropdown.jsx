@@ -10,7 +10,6 @@ import SearchableDropdown from '../../../components/SearchableDropdown';
 const HearingTypeDropdown = ({
   convertHearing,
   enableFullPageConversion,
-  onChange,
   openModal,
   readOnly,
   requestType,
@@ -34,7 +33,7 @@ const HearingTypeDropdown = ({
     hearingTypeOptions[1];
   const { label: currentLabel } = currentOption;
 
-  onChange = ({ label }) => {
+  const onChange = ({ label }) => {
     // Change from virtual if the current label is virtual
     const type = currentLabel === VIRTUAL_HEARING ? 'change_from_virtual' : 'change_to_virtual';
 
