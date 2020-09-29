@@ -36,15 +36,18 @@ export const ScheduleVeteranForm = ({
   const availableHearingLocations = orderBy(appeal?.availableHearingLocations || [], ['distance'], ['asc']);
   const dynamic = ro !== appeal?.closestRegionalOffice || isEmpty(appeal?.availableHearingLocations);
 
-  // For COVID-19, travel board appeals can have either a video or virtual hearing scheduled. In this case,
-  // we consider a travel board hearing as a video hearing, which enables both video and virtual options in
-  // the HearingTypeDropdown.
-  const originalRequestType = [
-    TRAVEL_BOARD_HEARING,
-    VIDEO_HEARING
-  ].includes(appeal?.readableOriginalHearingRequestType) ?
-    VIDEO_HEARING :
-    appeal?.readableOriginalHearingRequestType;
+  const getOriginalRequestType = () => {
+    if (appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING) {
+      // For COVID-19, travel board appeals can have either a video or virtual hearing scheduled. In this case,
+      // we consider a travel board hearing as a video hearing, which enables both video and virtual options in
+      // the HearingTypeDropdown
+      return VIDEO_HEARING;
+    }
+
+    // The default is video hearing if the appeal isn't associated with an RO.
+    return appeal?.readableOriginalHearingRequestType ?? VIDEO_HEARING;
+  };
+  const originalRequestType = getOriginalRequestType();
   const video = originalRequestType === VIDEO_HEARING;
 
   const handleChange = () => {
