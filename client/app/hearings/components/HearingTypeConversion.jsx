@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 
 import { HearingTypeConversionForm } from './HearingTypeConversionForm';
 import { appealWithDetailSelector, taskById } from '../../queue/selectors';
+import { deleteAppeal } from '../../queue/QueueActions';
 import {
   showErrorMessage,
   showSuccessMessage
@@ -61,6 +62,7 @@ export const HearingTypeConversion = ({
       await ApiUtil.patch(`/tasks/${task.taskId}`, { data });
 
       props.showSuccessMessage(getSuccessMsg());
+      props.deleteAppeal(task.externalAppealId);
     } catch (err) {
       const error = get(
         err,
@@ -95,6 +97,7 @@ export const HearingTypeConversion = ({
 HearingTypeConversion.propTypes = {
   appeal: PropTypes.object,
   appealId: PropTypes.string,
+  deleteAppeal: PropTypes.func,
   showErrorMessage: PropTypes.func,
   showSuccessMessage: PropTypes.func,
   task: PropTypes.object,
@@ -112,6 +115,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
+      deleteAppeal,
       showErrorMessage,
       showSuccessMessage
     },
