@@ -705,6 +705,22 @@ class AppealRepository
       end
     end
 
+    def genpop_priority_count
+      MetricsService.record("VACOLS: genpop_priority_count",
+                            name: "genpop_priority_count",
+                            service: :vacols) do
+        VACOLS::CaseDocket.genpop_priority_count
+      end
+    end
+
+    def priority_ready_appeal_vacols_ids
+      MetricsService.record("VACOLS: priority_ready_appeal_vacols_ids",
+                            name: "priority_ready_appeal_vacols_ids",
+                            service: :vacols) do
+        VACOLS::CaseDocket.priority_ready_appeal_vacols_ids
+      end
+    end
+
     def nod_count
       MetricsService.record("VACOLS: nod_count",
                             name: "nod_count",
@@ -739,11 +755,19 @@ class AppealRepository
       end
     end
 
-    def age_of_n_oldest_priority_appeals(num)
-      MetricsService.record("VACOLS: age_of_n_oldest_priority_appeals",
-                            name: "age_of_n_oldest_priority_appeals",
+    def age_of_n_oldest_genpop_priority_appeals(num)
+      MetricsService.record("VACOLS: age_of_n_oldest_genpop_priority_appeals",
+                            name: "age_of_n_oldest_genpop_priority_appeals",
                             service: :vacols) do
-        VACOLS::CaseDocket.age_of_n_oldest_priority_appeals(num)
+        VACOLS::CaseDocket.age_of_n_oldest_genpop_priority_appeals(num)
+      end
+    end
+
+    def age_of_oldest_priority_appeal
+      MetricsService.record("VACOLS: age_of_oldest_priority_appeal",
+                            name: "age_of_oldest_priority_appeal",
+                            service: :vacols) do
+        VACOLS::CaseDocket.age_of_oldest_priority_appeal
       end
     end
 

@@ -66,6 +66,7 @@ const reset = (state, hearing) => ({
 export const RESET_VIRTUAL_HEARING = 'resetVirtualHearing';
 
 // Resets only the `virtualHearing` and `emailEvents` field, and should preserve all other fields.
+// NOTE: Only used for resetting states during polling
 const resetVirtualHearing = (state, payload) => {
   const newHearing = {
     ...state.hearing,

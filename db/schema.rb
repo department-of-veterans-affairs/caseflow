@@ -783,6 +783,16 @@ ActiveRecord::Schema.define(version: 2020_09_23_004430) do
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
+  create_table "ihp_drafts", force: :cascade do |t|
+    t.integer "appeal_id", null: false, comment: "Appeal id the IHP was written for"
+    t.string "appeal_type", null: false, comment: "Type of appeal the IHP was written for"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at timestamps"
+    t.integer "organization_id", null: false, comment: "IHP writing VSO that drafted the IHP"
+    t.string "path", null: false, comment: "Path to the IHP in the VA V: drive"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at timestamps"
+    t.index ["appeal_id", "appeal_type", "organization_id"], name: "index_ihp_drafts_on_appeal_and_organization"
+  end
+
   create_table "intakes", id: :serial, comment: "Represents the intake of an form or request made by a veteran.", force: :cascade do |t|
     t.string "cancel_other", comment: "Notes added if a user canceled an intake for any reason other than the stock set of options."
     t.string "cancel_reason", comment: "The reason the intake was canceled. Could have been manually canceled by a user, or automatic."

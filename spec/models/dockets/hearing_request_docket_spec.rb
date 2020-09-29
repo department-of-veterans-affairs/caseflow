@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 describe HearingRequestDocket, :all_dbs do
-  describe "#age_of_n_oldest_priority_appeals" do
+  describe "#age_of_n_oldest_genpop_priority_appeals" do
     let(:judge_user) { create(:user, last_login_at: Time.zone.now) }
     let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
 
-    subject { HearingRequestDocket.new.age_of_n_oldest_priority_appeals(10) }
+    subject { HearingRequestDocket.new.age_of_n_oldest_genpop_priority_appeals(10) }
 
     it "only returns priority, distributable, hearing docket appeals that match the following conditions:
         where the most recent held hearing was not tied to an active judge
