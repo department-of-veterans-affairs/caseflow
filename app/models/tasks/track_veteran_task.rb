@@ -2,6 +2,7 @@
 
 ##
 # Task created for appellant representatives to track appeals that have been received by the Board.
+# Assigning this task to the representative results in the associated case appearing in their view in Caseflow.
 # Created either when:
 #   - a RootTask is created for an appeal represented by a VSO
 #   - the power of attorney changes on an appeal

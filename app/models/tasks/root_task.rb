@@ -3,6 +3,7 @@
 ##
 # Root task that tracks an appeal all the way through the appeal lifecycle.
 # This task is closed when an appeal has been completely resolved.
+# There should only be one RootTask per appeal.
 
 class RootTask < Task
   before_create :verify_root_task_unique

@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 ##
-# Task that signals that an appeal is ready for distribution to a judge, including for auto case distribution.
+# A DistributionTask is created after the intake process is completed on an AMA case.
+# This task signals that an appeal is ready for distribution to a judge, including for auto case distribution.
+#   - When the distribution task is assigned, Automatic Case Distribution can distribute the case to a judge.
+#     This completes the DistributionTask and creates a JudgeAssignTask, assigned to the judge.
+
 
 class DistributionTask < Task
   before_validation :set_assignee
