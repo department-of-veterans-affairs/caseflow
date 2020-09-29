@@ -235,7 +235,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
   # rubocop:enable Metrics/MethodLength
 
-  def self.age_of_n_oldest_priority_appeals(num)
+  def self.age_of_n_oldest_genpop_priority_appeals(num)
     conn = connection
 
     query = <<-SQL
@@ -247,6 +247,17 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     appeals = conn.exec_query(fmtd_query).to_hash
     appeals.map { |appeal| appeal["bfdloout"] }
+  end
+
+  def self.age_of_oldest_priority_appeal
+    query = <<-SQL
+      #{SELECT_PRIORITY_APPEALS}
+      where rownum <= ?
+    SQL
+
+    fmtd_query = sanitize_sql_array([query, 1])
+
+    connection.exec_query(fmtd_query).to_hash.first["bfdloout"]
   end
 
   def self.nonpriority_decisions_per_year
