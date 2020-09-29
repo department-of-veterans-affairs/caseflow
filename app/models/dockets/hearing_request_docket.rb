@@ -5,7 +5,7 @@ class HearingRequestDocket < Docket
     Constants.AMA_DOCKETS.hearing
   end
 
-  def age_of_n_oldest_priority_appeals(num)
+  def age_of_n_oldest_genpop_priority_appeals(num)
     relation = appeals(priority: true, ready: true).limit(num)
 
     HearingRequestDistributionQuery.new(

@@ -68,7 +68,7 @@ describe Distribution, :all_dbs do
     context "priority_push is false" do
       before do
         allow_any_instance_of(HearingRequestDocket)
-          .to receive(:age_of_n_oldest_priority_appeals)
+          .to receive(:age_of_n_oldest_genpop_priority_appeals)
           .and_return([])
 
         allow_any_instance_of(HearingRequestDocket)
