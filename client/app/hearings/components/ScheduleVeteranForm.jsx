@@ -47,7 +47,7 @@ export const ScheduleVeteranForm = ({
         <HearingTypeDropdown
           enableFullPageConversion
           update={handleChange}
-          requestType={hearing?.requestType}
+          originalRequestType={originalRequestType}
           virtualHearing={hearing?.virtualHearing}
         />
       </div>
