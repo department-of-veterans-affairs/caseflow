@@ -8,10 +8,10 @@ describe CavcRemand do
     let(:updated_by) { create(:user) }
     let(:appeal) { create(:appeal) }
     let(:cavc_docket_number) { "123-1234567" }
-    let(:attorney_represented) { true }
+    let(:represented_by_attorney) { true }
     let(:cavc_judge_full_name) { Constants::CAVC_JUDGE_FULL_NAMES.first }
-    let(:cavc_type) { Constants::CAVC_TYPES.keys.first }
-    let(:remand_type) { Constants::CAVC_REMAND_TYPES.keys.first }
+    let(:cavc_decision_type) { Constants::CAVC_DECISION_TYPES.keys.first }
+    let(:remand_subtype) { Constants::CAVC_REMAND_SUBTYPES.keys.first }
     let(:decision_date) { 5.days.ago.to_date }
     let(:judgement_date) { 4.days.ago.to_date }
     let(:mandate_date) { 3.days.ago.to_date }
@@ -34,10 +34,10 @@ describe CavcRemand do
         updated_by: updated_by,
         appeal: appeal,
         cavc_docket_number: cavc_docket_number,
-        attorney_represented: attorney_represented,
+        represented_by_attorney: represented_by_attorney,
         cavc_judge_full_name: cavc_judge_full_name,
-        cavc_type: cavc_type,
-        remand_type: remand_type,
+        cavc_decision_type: cavc_decision_type,
+        remand_subtype: remand_subtype,
         decision_date: decision_date,
         judgement_date: judgement_date,
         mandate_date: mandate_date,
