@@ -4,24 +4,75 @@ describe "Contestable Issue Generator", :postgres do
   let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
   let(:review) { hlr }
   let(:veteran) { create(:veteran) }
+  let(:past_decision_date) { review.receipt_date - 1.day }
   let!(:past_rating) do
     Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: review.receipt_date - 1.day,
-      profile_date: review.receipt_date - 1.day,
+      promulgation_date: past_decision_date,
+      profile_date: past_decision_date,
       issues: [
         { reference_id: "abc123", decision_text: "Rating issue" }
+      ],
+      decisions: [
+        {
+          rating_issue_reference_id: nil,
+          original_denial_date: past_decision_date,
+          diagnostic_text: "Right arm broken",
+          diagnostic_type: "Bone",
+          disability_id: "123",
+          disability_date: past_decision_date,
+          type_name: "Not Service Connected"
+        },
+        {
+          rating_issue_reference_id: "abc123",
+          original_denial_date: past_decision_date,
+          diagnostic_text: "Left arm broken",
+          diagnostic_type: "Bone",
+          disability_id: "456",
+          disability_date: past_decision_date,
+          type_name: "Not Service Connected"
+        },
+        {
+          rating_issue_reference_id: "disability_with_new_rating_issue_id",
+          original_denial_date: past_decision_date,
+          diagnostic_text: "Pinky toe broken",
+          diagnostic_type: "Bone",
+          disability_id: "123456",
+          disability_date: past_decision_date,
+          type_name: "Not Service Connected"
+        }
       ]
     )
   end
 
+  let(:future_decision_date) { review.receipt_date + 5.days }
   let!(:future_rating) do
     Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: review.receipt_date + 5.days,
-      profile_date: review.receipt_date + 5.days,
+      promulgation_date: future_decision_date,
+      profile_date: future_decision_date,
       issues: [
-        { reference_id: "abc123", decision_text: "Future Rating issue" }
+        { reference_id: "xyz123", decision_text: "Future Rating issue" }
+      ],
+      decisions: [
+        {
+          rating_issue_reference_id: nil,
+          original_denial_date: future_decision_date,
+          diagnostic_text: "Right leg broken",
+          diagnostic_type: "Bone",
+          disability_id: "666001234",
+          disability_date: future_decision_date,
+          type_name: "Not Service Connected"
+        },
+        {
+          rating_issue_reference_id: "xyz123",
+          original_denial_date: future_decision_date,
+          diagnostic_text: "Left leg broken",
+          diagnostic_type: "Bone",
+          disability_id: "4567",
+          disability_date: future_decision_date,
+          type_name: "Not Service Connected"
+        }
       ]
     )
   end
@@ -80,6 +131,20 @@ describe "Contestable Issue Generator", :postgres do
       it "returns decision issues from the same review" do
         expect(subject.count).to eq(4)
         expect(subject.select { |issue| issue.description == "review decision issue" }.empty?).to be false
+      end
+    end
+
+    context "when the contestable_rating_decisions Feature Toggle is enabled" do
+      before { FeatureToggle.enable!(:contestable_rating_decisions) }
+      after { FeatureToggle.disable!(:contestable_rating_decisions) }
+
+      it "returns rating decisions that are not present in rating issues" do
+        expect(subject.count).to eq(5)
+        descriptions = subject.map(&:description)
+        expect(descriptions.grep(/Pinky toe/).count).to eq 1
+        expect(descriptions.grep(/Right arm/).count).to eq 1
+        expect(descriptions.grep(/Left arm/).count).to eq 0
+        expect(descriptions.grep(/leg/).count).to eq 0
       end
     end
 
