@@ -9,12 +9,12 @@ RSpec.describe DocketChange, type: :model do
   end
   let(:cotb_user) { create(:user, full_name: "Clerk Atty") }
   let(:appeal) do 
-      create(
-          :appeal,
-          request_issues: build_list(
-            :request_issue, 3
-          )
-        )
+    create(
+      :appeal,
+      request_issues: build_list(
+        :request_issue, 3
+      )
+    )
   end
   let(:new_docket_stream) { appeal.create_stream(:switched_docket) }
   let(:docket_switch_mail_task) { create(:docket_switch_mail_task, appeal: appeal, assigned_to: cotb_user) }
