@@ -267,6 +267,11 @@
     "value": "modal/schedule_veteran",
     "func": "schedule_veteran_data"
   },
+  "SCHEDULE_VETERAN_V2_PAGE": {
+    "label": "Schedule Veteran",
+    "value": "schedule_veteran",
+    "func": "schedule_veteran_data"
+  },
   "SEND_TO_SCHEDULE_VETERAN_LIST": {
     "label": "Send to Schedule Veterans list",
     "value": "modal/send_to_schedule_veterans_list",

@@ -219,6 +219,12 @@ const SelectOpts = PropTypes.arrayOf(
 
 SearchableDropdown.propTypes = {
   async: PropTypes.func,
+
+  /**
+   * If set to true, it will provide an "X" button that allows user to clear the field
+   * This will return `null` to the `onChange` callback
+   * Design suggests enabling this in all instances unless there is no meaningful null/empty selection
+   */
   isClearable: PropTypes.bool,
   clearOnSelect: PropTypes.bool,
   creatable: PropTypes.bool,
@@ -255,7 +261,6 @@ SearchableDropdown.propTypes = {
 
 /* eslint-disable no-undefined */
 SearchableDropdown.defaultProps = {
-  isClearable: true,
   clearOnSelect: false,
   loading: false,
   filterOption: undefined,
