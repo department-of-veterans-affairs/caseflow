@@ -225,7 +225,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
       >
         <SearchableDropdown
           clearOnSelect={false}
-          isClearable={true}
           label="Veteran Timezone"
           loading={false}
           name="appellantTz"
@@ -1048,7 +1047,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                   defaultMenuIsOpen={false}
                   defaultValue={null}
                   inputId="appellantTz"
-                  isClearable={true}
                   isDisabled={false}
                   isLoading={false}
                   isSearchable={true}
@@ -1849,7 +1847,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                     getOptionValue={[Function]}
                     inputId="appellantTz"
                     inputValue=""
-                    isClearable={true}
                     isDisabled={false}
                     isLoading={false}
                     isMulti={false}
@@ -3457,7 +3454,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                           "getOptionValue": [Function],
                           "inputId": "appellantTz",
                           "inputValue": "",
-                          "isClearable": true,
+                          "isClearable": undefined,
                           "isDisabled": false,
                           "isLoading": false,
                           "isMulti": false,
@@ -5116,7 +5113,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                 "getOptionValue": [Function],
                                 "inputId": "appellantTz",
                                 "inputValue": "",
-                                "isClearable": true,
+                                "isClearable": undefined,
                                 "isDisabled": false,
                                 "isLoading": false,
                                 "isMulti": false,
@@ -6783,7 +6780,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "appellantTz",
                                       "inputValue": "",
-                                      "isClearable": true,
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -8437,7 +8434,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "getOptionValue": [Function],
                                             "inputId": "appellantTz",
                                             "inputValue": "",
-                                            "isClearable": true,
+                                            "isClearable": undefined,
                                             "isDisabled": false,
                                             "isLoading": false,
                                             "isMulti": false,
@@ -9328,7 +9325,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "getOptionValue": [Function],
                                             "inputId": "appellantTz",
                                             "inputValue": "",
-                                            "isClearable": true,
+                                            "isClearable": undefined,
                                             "isDisabled": false,
                                             "isLoading": false,
                                             "isMulti": false,
@@ -11063,7 +11060,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "appellantTz",
                                       "inputValue": "",
-                                      "isClearable": true,
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -12712,7 +12709,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "getOptionValue": [Function],
                                             "inputId": "appellantTz",
                                             "inputValue": "",
-                                            "isClearable": true,
+                                            "isClearable": undefined,
                                             "isDisabled": false,
                                             "isLoading": false,
                                             "isMulti": false,
@@ -14372,7 +14369,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "getOptionValue": [Function],
                                             "inputId": "appellantTz",
                                             "inputValue": "",
-                                            "isClearable": true,
+                                            "isClearable": undefined,
                                             "isDisabled": false,
                                             "isLoading": false,
                                             "isMulti": false,
@@ -15399,7 +15396,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
       >
         <SearchableDropdown
           clearOnSelect={false}
-          isClearable={true}
           label="POA/Representative Timezone"
           loading={false}
           name="representativeTz"
@@ -16222,7 +16218,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                   defaultMenuIsOpen={false}
                   defaultValue={null}
                   inputId="representativeTz"
-                  isClearable={true}
                   isDisabled={false}
                   isLoading={false}
                   isSearchable={true}
@@ -17023,7 +17018,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                     getOptionValue={[Function]}
                     inputId="representativeTz"
                     inputValue=""
-                    isClearable={true}
                     isDisabled={false}
                     isLoading={false}
                     isMulti={false}
@@ -18631,7 +18625,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                           "getOptionValue": [Function],
                           "inputId": "representativeTz",
                           "inputValue": "",
-                          "isClearable": true,
+                          "isClearable": undefined,
                           "isDisabled": false,
                           "isLoading": false,
                           "isMulti": false,
@@ -20290,7 +20284,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                 "getOptionValue": [Function],
                                 "inputId": "representativeTz",
                                 "inputValue": "",
-                                "isClearable": true,
+                                "isClearable": undefined,
                                 "isDisabled": false,
                                 "isLoading": false,
                                 "isMulti": false,
@@ -21957,7 +21951,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "representativeTz",
                                       "inputValue": "",
-                                      "isClearable": true,
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -23611,7 +23605,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "getOptionValue": [Function],
                                             "inputId": "representativeTz",
                                             "inputValue": "",
-                                            "isClearable": true,
+                                            "isClearable": undefined,
                                             "isDisabled": false,
                                             "isLoading": false,
                                             "isMulti": false,
@@ -24502,7 +24496,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "getOptionValue": [Function],
                                             "inputId": "representativeTz",
                                             "inputValue": "",
-                                            "isClearable": true,
+                                            "isClearable": undefined,
                                             "isDisabled": false,
                                             "isLoading": false,
                                             "isMulti": false,
@@ -26237,7 +26231,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "representativeTz",
                                       "inputValue": "",
-                                      "isClearable": true,
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -27886,7 +27880,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "getOptionValue": [Function],
                                             "inputId": "representativeTz",
                                             "inputValue": "",
-                                            "isClearable": true,
+                                            "isClearable": undefined,
                                             "isDisabled": false,
                                             "isLoading": false,
                                             "isMulti": false,
@@ -29546,7 +29540,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "getOptionValue": [Function],
                                             "inputId": "representativeTz",
                                             "inputValue": "",
-                                            "isClearable": true,
+                                            "isClearable": undefined,
                                             "isDisabled": false,
                                             "isLoading": false,
                                             "isMulti": false,
