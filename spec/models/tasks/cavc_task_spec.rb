@@ -85,15 +85,19 @@ describe CavcTask, :postgres do
     let(:user) { create(:user) }
     let(:cavc_task) { create(:cavc_task) }
     let!(:child_task) { create(:ama_task, parent: cavc_task) }
-    it "completes parent CavcTask" do
-      child_task.completed!
-      expect(cavc_task.closed?)
-      expect(cavc_task.status).to eq "completed"
+    context "as complete" do
+      it "completes parent CavcTask" do
+        child_task.completed!
+        expect(cavc_task.closed?)
+        expect(cavc_task.status).to eq "completed"
+      end
     end
-    it "cancels parent CavcTask" do
-      child_task.cancelled!
-      expect(cavc_task.closed?)
-      expect(cavc_task.status).to eq "cancelled"
+    context "as cancelled" do
+      it "cancels parent CavcTask" do
+        child_task.cancelled!
+        expect(cavc_task.closed?)
+        expect(cavc_task.status).to eq "cancelled"
+      end
     end
     context "has multiple children" do
       let!(:child_task2) { create(:ama_task, parent: cavc_task) }

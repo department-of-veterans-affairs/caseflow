@@ -15,6 +15,8 @@ class ParentTaskValidator < ActiveModel::Validator
   private
 
   def correct_parent_type?(record)
+    return true if options[:task_type].nil?
+    
     record.parent&.type == options[:task_type].name
   end
 end
