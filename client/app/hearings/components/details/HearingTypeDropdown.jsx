@@ -12,7 +12,7 @@ const HearingTypeDropdown = ({
   enableFullPageConversion,
   openModal,
   readOnly,
-  requestType,
+  originalRequestType,
   styling,
   update,
   virtualHearing,
@@ -20,7 +20,7 @@ const HearingTypeDropdown = ({
   const hearingTypeOptions = [
     {
       value: false,
-      label: requestType
+      label: originalRequestType
     },
     {
       value: true,
@@ -63,14 +63,20 @@ const HearingTypeDropdown = ({
 };
 
 HearingTypeDropdown.propTypes = {
-  enableFullPageConversion: PropTypes.bool,
-  virtualHearing: PropTypes.object,
-  update: PropTypes.func,
-  openModal: PropTypes.func,
   convertHearing: PropTypes.func,
-  requestType: PropTypes.string,
+  enableFullPageConversion: PropTypes.bool,
+  openModal: PropTypes.func,
+
+  // The original hearing request type.
+  //
+  // This component is used to convert a hearing to virtual from the hearing's
+  // original request type (or vice versa).
+  originalRequestType: PropTypes.string,
+
   readOnly: PropTypes.bool,
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  update: PropTypes.func,
+  virtualHearing: PropTypes.object,
 };
 
 export default HearingTypeDropdown;

@@ -21,7 +21,7 @@ export const defaultProps = {};
         convertHearing={(e) => action("convert")(e.target)}
         update={(e) => action("convert")(e.target)}
         openModal={(e) => action("convert")(e.target)}
-        requestType={select("Type", ["Video", "Central"], "Video", "knobs")}
+        originalRequestType={select("Type", ["Video", "Central"], "Video", "knobs")}
         readOnly={boolean("Read-Only", false, "knobs")}
       />
     )}
