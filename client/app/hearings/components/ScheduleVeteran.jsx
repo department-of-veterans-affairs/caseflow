@@ -110,7 +110,7 @@ export const ScheduleVeteran = ({
   };
 
   // Initialize the state
-  useEffect(() => () => reset(), []);
+  useEffect(() => reset(), []);
 
   const getSuccessMsg = () => {
     // Format the hearing date string
