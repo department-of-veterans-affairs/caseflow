@@ -158,6 +158,8 @@ cached_appeal_attributes,closest_regional_office_key,string,,,,,x,Closest region
 cached_appeal_attributes,created_at,datetime,,,,,,
 cached_appeal_attributes,docket_number,string,,,,,,
 cached_appeal_attributes,docket_type,string,,,,,x,
+cached_appeal_attributes,formally_travel,boolean,,,,,x,Determines if the hearing type was formallly travel board; only applicable to Legacy appeals
+cached_appeal_attributes,hearing_request_type,string (10),,,,,x,"Stores hearing type requested by appellant; could be one of nil, 'Video', 'Central', 'Travel', or 'Virtual'"
 cached_appeal_attributes,is_aod,boolean,,,,,x,Whether the case is Advanced on Docket
 cached_appeal_attributes,issue_count,integer,,,,,,Number of issues on the appeal.
 cached_appeal_attributes,power_of_attorney_name,string,,,,,x,'Firstname Lastname' of power of attorney
@@ -335,7 +337,7 @@ docket_changes,,,,,,,,Stores the disposition and associated data for Docket Chan
 docket_changes,created_at,datetime ∗,x,,,,x,Standard created_at/updated_at timestamps
 docket_changes,disposition,string ∗,x,,,,,"Possible options are granted, partially_granted, and denied"
 docket_changes,docket,string,,,,,,The new docket
-docket_changes,granted_decision_issue_ids,integer,,,,,,"When a docket change is partially granted, this includes an array of the appeal's decision issue IDs that were selected for the new docket. For full grant, this includes all prior decision issue IDs."
+docket_changes,granted_request_issue_ids,integer,,,,,,"When a docket change is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior decision issue IDs."
 docket_changes,id,integer (8) PK,x,x,,,,
 docket_changes,new_docket_stream_id,integer (8) FK,,,x,,x,References the new appeal stream with the updated docket; initially null until created by workflow
 docket_changes,old_docket_stream_id,integer (8) ∗ FK,x,,x,,x,References the original appeal stream with old docket

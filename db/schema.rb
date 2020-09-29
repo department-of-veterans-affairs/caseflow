@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_21_191403) do
+ActiveRecord::Schema.define(version: 2020_09_23_004430) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -227,6 +227,8 @@ ActiveRecord::Schema.define(version: 2020_09_21_191403) do
     t.datetime "created_at"
     t.string "docket_number"
     t.string "docket_type"
+    t.boolean "formally_travel", comment: "Determines if the hearing type was formallly travel board; only applicable to Legacy appeals"
+    t.string "hearing_request_type", limit: 10, comment: "Stores hearing type requested by appellant; could be one of nil, 'Video', 'Central', 'Travel', or 'Virtual'"
     t.boolean "is_aod", comment: "Whether the case is Advanced on Docket"
     t.integer "issue_count", comment: "Number of issues on the appeal."
     t.string "power_of_attorney_name", comment: "'Firstname Lastname' of power of attorney"
@@ -239,6 +241,7 @@ ActiveRecord::Schema.define(version: 2020_09_21_191403) do
     t.index ["closest_regional_office_city"], name: "index_cached_appeal_attributes_on_closest_regional_office_city"
     t.index ["closest_regional_office_key"], name: "index_cached_appeal_attributes_on_closest_regional_office_key"
     t.index ["docket_type"], name: "index_cached_appeal_attributes_on_docket_type"
+    t.index ["hearing_request_type", "formally_travel"], name: "index_cached_appeal_on_hearing_request_type_and_formally_travel"
     t.index ["is_aod"], name: "index_cached_appeal_attributes_on_is_aod"
     t.index ["power_of_attorney_name"], name: "index_cached_appeal_attributes_on_power_of_attorney_name"
     t.index ["suggested_hearing_location"], name: "index_cached_appeal_attributes_on_suggested_hearing_location"
@@ -455,7 +458,7 @@ ActiveRecord::Schema.define(version: 2020_09_21_191403) do
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.string "disposition", comment: "Possible options are granted, partially_granted, and denied"
     t.string "docket", comment: "The new docket"
-    t.integer "granted_decision_issue_ids", comment: "When a docket change is partially granted, this includes an array of the appeal's decision issue IDs that were selected for the new docket. For full grant, this includes all prior decision issue IDs.", array: true
+    t.integer "granted_request_issue_ids", comment: "When a docket change is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior decision issue IDs.", array: true
     t.bigint "new_docket_stream_id", comment: "References the new appeal stream with the updated docket; initially null until created by workflow"
     t.bigint "old_docket_stream_id", null: false, comment: "References the original appeal stream with old docket"
     t.datetime "receipt_date", null: false
