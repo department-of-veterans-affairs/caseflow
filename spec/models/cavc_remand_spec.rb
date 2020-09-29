@@ -48,7 +48,7 @@ describe CavcRemand do
 
     it "creates the record" do
       expect { subject }.not_to raise_error
-      params.keys.each { |key| expect(subject.send(key)).to eq params[key] }
+      params.each_key { |key| expect(subject.send(key)).to eq params[key] }
     end
 
     context "when missing required attributes" do
