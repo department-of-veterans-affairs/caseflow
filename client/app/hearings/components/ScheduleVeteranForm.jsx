@@ -13,12 +13,12 @@ import HearingTypeDropdown from './details/HearingTypeDropdown';
 import { HearingTime } from './modalForms/HearingTime';
 import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
+import { HEARING_CONVERSION_TYPES, TRAVEL_BOARD_HEARING, VIDEO_HEARING } from '../constants';
 import { marginTop } from './details/style';
 import { isEmpty, orderBy } from 'lodash';
 
 export const ScheduleVeteranForm = ({
   virtual,
-  requestType,
   appellantTitle,
   appeal,
   hearing,
@@ -29,9 +29,19 @@ export const ScheduleVeteranForm = ({
 }) => {
   const ro = hearing?.regionalOffice || initialRegionalOffice;
   const location = hearing?.hearingLocation || appeal?.hearingLocation;
-  const video = requestType === 'Video';
   const availableHearingLocations = orderBy(appeal?.availableHearingLocations || [], ['distance'], ['asc']);
   const dynamic = ro !== appeal?.closestRegionalOffice || isEmpty(appeal?.availableHearingLocations);
+
+  // For COVID-19, travel board appeals can have either a video or virtual hearing scheduled. In this case,
+  // we consider a travel board hearing as a video hearing, which enables both video and virtual options in
+  // the HearingTypeDropdown.
+  const originalRequestType = [
+    TRAVEL_BOARD_HEARING,
+    VIDEO_HEARING
+  ].includes(appeal?.readableOriginalHearingRequestType) ?
+    VIDEO_HEARING :
+    appeal?.readableOriginalHearingRequestType;
+  const video = originalRequestType === VIDEO_HEARING;
 
   const handleChange = () => {
     if (virtual) {
@@ -172,7 +182,6 @@ ScheduleVeteranForm.propTypes = {
   initialRegionalOffice: PropTypes.string,
   initialHearingDate: PropTypes.string,
   appellantTitle: PropTypes.string,
-  requestType: PropTypes.string
 };
 
 /* eslint-enable camelcase */
