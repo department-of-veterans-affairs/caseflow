@@ -15,7 +15,7 @@ describe CavcRemand do
     let(:decision_date) { 5.days.ago.to_date }
     let(:judgement_date) { 4.days.ago.to_date }
     let(:mandate_date) { 3.days.ago.to_date }
-    let(:decision_issue_ids) do
+    let(:decision_issues) do
       create_list(
         :decision_issue,
         3,
@@ -24,8 +24,9 @@ describe CavcRemand do
         disposition: "denied",
         description: "Decision issue description",
         decision_text: "decision issue"
-      ).map(&:id)
+      )
     end
+    let(:decision_issue_ids) { decision_issues.map(&:id) }
     let(:instructions) { "Intructions!" }
 
     let(:params) do
@@ -64,6 +65,14 @@ describe CavcRemand do
 
       it "does not save the record" do
         expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+      end
+    end
+
+    context "When JMR is missing issues" do
+      let(:decision_issue_ids) { decision_issues.map(&:id).pop(2) }
+
+      it "does not save the record" do
+        expect { subject }.to raise_error(Caseflow::Error::JmrAppealDecisionIssueMismatch)
       end
     end
 

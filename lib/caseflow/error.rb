@@ -155,6 +155,15 @@ module Caseflow::Error
     end
   end
 
+  class JmrAppealDecisionIssueMismatch < SerializableError
+    def initialize(args)
+      @code = args[:code] || 500
+      @decision_issue_ids = args[:decision_issue_ids] || nil
+      @appeal_id = args[:appeal_id] || nil
+      @message = args[:message] || "JMR remands must cover all Appeal Decision Issues."
+    end
+  end
+
   class BvaDispatchTaskCountMismatch < SerializableError
     # Add attr_accessors for testing
     attr_accessor :user_id, :appeal_id, :tasks
