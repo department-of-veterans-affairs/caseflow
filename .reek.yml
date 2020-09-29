@@ -203,7 +203,7 @@ detectors:
       - Helpers::AppealHearingHelper#hearings
       - JudgeLegacyDecisionReviewTask#review_action
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
-      - LegacyDocket#age_of_n_oldest_priority_appeals
+      - LegacyDocket#age_of_n_oldest_genpop_priority_appeals
       - OrganizationOnHoldTasksTab#name
       - OrganizationTrackingTasksTab#column_names
       - PendingIncompleteAndUncancelledTaskTimersQuery#call
