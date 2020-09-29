@@ -188,7 +188,7 @@ cavc_remands,created_by_id,integer (8) ∗ FK,x,,x,,,User that created this re
 cavc_remands,decision_date,date ∗,x,,,,,"Date CAVC issued a decision, according to the CAVC"
 cavc_remands,decision_issue_ids,integer (8) ∗,x,,,,,"Decision issues being remanded. For a JMR, all decision issues on the previous appeal will be remanded. For a JMPR, only some"
 cavc_remands,id,integer (8) PK,x,x,,,,
-cavc_remands,instructions,string ∗,x,,,,,Intructions and context provided upon creation of the remand record
+cavc_remands,instructions,string ∗,x,,,,,Instructions and context provided upon creation of the remand record
 cavc_remands,judgement_date,date ∗,x,,,,,"Date CAVC issued a judgement, according to the CAVC"
 cavc_remands,mandate_date,date ∗,x,,,,,"Date mandate was ready, according to the CAVC"
 cavc_remands,remand_subtype,string,,,,,,"Type of remand. Can be null if the cavc decision type is not 'Remand'. One of 'JMP', 'JMPR', and 'MDR'"

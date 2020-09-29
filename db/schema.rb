@@ -274,7 +274,7 @@ ActiveRecord::Schema.define(version: 2020_09_23_200721) do
     t.bigint "created_by_id", null: false, comment: "User that created this record"
     t.date "decision_date", null: false, comment: "Date CAVC issued a decision, according to the CAVC"
     t.bigint "decision_issue_ids", default: [], comment: "Decision issues being remanded. For a JMR, all decision issues on the previous appeal will be remanded. For a JMPR, only some", array: true
-    t.string "instructions", null: false, comment: "Intructions and context provided upon creation of the remand record"
+    t.string "instructions", null: false, comment: "Instructions and context provided upon creation of the remand record"
     t.date "judgement_date", null: false, comment: "Date CAVC issued a judgement, according to the CAVC"
     t.date "mandate_date", null: false, comment: "Date mandate was ready, according to the CAVC"
     t.string "remand_subtype", comment: "Type of remand. Can be null if the cavc decision type is not 'Remand'. One of 'JMP', 'JMPR', and 'MDR'"
