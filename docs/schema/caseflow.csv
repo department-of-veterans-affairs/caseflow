@@ -886,7 +886,6 @@ request_issues,veteran_participant_id,string,,,,,,The veteran participant ID. Th
 request_issues_updates,,,,,,,,"Keeps track of edits to request issues on a decision review that happen after the initial intake, such as removing and adding issues.  When the decision review is processed in VBMS, this also tracks whether adding or removing contentions in VBMS for the update has succeeded."
 request_issues_updates,after_request_issue_ids,integer ∗,x,,,,,An array of the active request issue IDs after a user has finished editing a decision review. Used with before_request_issue_ids to determine appropriate actions (such as which contentions need to be added).
 request_issues_updates,attempted_at,datetime,,,,,,Timestamp for when the request issue update processing was last attempted.
-request_issues,request_issue_type,string,,,,,,This determines whether the issue is a rating issue or a nonrating issue.
 request_issues_updates,before_request_issue_ids,integer ∗,x,,,,,An array of the active request issue IDs previously on the decision review before this editing session. Used with after_request_issue_ids to determine appropriate actions (such as which contentions need to be removed).
 request_issues_updates,canceled_at,datetime,,,,,,Timestamp when job was abandoned
 request_issues_updates,corrected_request_issue_ids,integer,,,,,,An array of the request issue IDs that were corrected during this request issues update.
