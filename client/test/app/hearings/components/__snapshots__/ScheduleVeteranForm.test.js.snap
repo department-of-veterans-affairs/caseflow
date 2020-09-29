@@ -7,6 +7,7 @@ exports[`ScheduleVeteranForm Displays Virtual Hearing form fields when type is c
   >
     <HearingTypeDropdown
       enableFullPageConversion={true}
+      originalRequestType="Video"
       update={[Function]}
       virtualHearing={
         Object {
@@ -164,7 +165,7 @@ exports[`ScheduleVeteranForm Displays Virtual Hearing form fields when type is c
       }
       type="change_to_virtual"
       update={[Function]}
-      video={false}
+      video={true}
       virtual={true}
       virtualHearing={
         Object {
@@ -288,7 +289,7 @@ exports[`ScheduleVeteranForm Displays Virtual Hearing form fields when type is c
       }
       type="change_to_virtual"
       update={[Function]}
-      video={false}
+      video={true}
       virtual={true}
       virtualHearing={
         Object {
@@ -319,6 +320,7 @@ exports[`ScheduleVeteranForm Displays error messages when errors are present 1`]
   >
     <HearingTypeDropdown
       enableFullPageConversion={true}
+      originalRequestType="Video"
       update={[Function]}
       virtualHearing={null}
     />
@@ -382,6 +384,7 @@ exports[`ScheduleVeteranForm Displays hearing form when regional office is selec
   >
     <HearingTypeDropdown
       enableFullPageConversion={true}
+      originalRequestType="Video"
       update={[Function]}
       virtualHearing={null}
     />
@@ -444,6 +447,7 @@ exports[`ScheduleVeteranForm Matches snapshot with default props 1`] = `
   >
     <HearingTypeDropdown
       enableFullPageConversion={true}
+      originalRequestType="Video"
       update={[Function]}
       virtualHearing={null}
     />
