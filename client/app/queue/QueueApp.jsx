@@ -640,13 +640,15 @@ class QueueApp extends React.PureComponent {
               />
               <PageRoute
                 exact
+                path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.value}`}
+                title="Assign Hearing | Caseflow"
+                render={this.routedScheduleVeteran}
+              />
+              <PageRoute
+                exact
                 path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SCHEDULE_VETERAN.value}`}
                 title="Assign Hearing | Caseflow"
-                render={
-                  this.props.featureToggles.schedule_veteran_virtual_hearing ?
-                    this.routedScheduleVeteran :
-                    this.routedAssignHearingModal
-                }
+                render={this.routedAssignHearingModal}
               />
               <PageRoute
                 exact
