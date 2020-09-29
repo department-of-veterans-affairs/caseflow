@@ -35,14 +35,17 @@ class LegacyDocket
   end
 
   def oldest_priority_appeal_days_waiting
-    oldest_appeal_ready_at = age_of_n_oldest_priority_appeals(1).first
-    return 0 if oldest_appeal_ready_at.nil?
+    return 0 if age_of_oldest_priority_appeal.nil?
 
-    (Time.zone.now.to_date - oldest_appeal_ready_at.to_date).to_i
+    (Time.zone.now.to_date - age_of_oldest_priority_appeal.to_date).to_i
   end
 
-  def age_of_n_oldest_priority_appeals(num)
-    LegacyAppeal.repository.age_of_n_oldest_priority_appeals(num)
+  def age_of_oldest_priority_appeal
+    @age_of_oldest_priority_appeal ||= LegacyAppeal.repository.age_of_oldest_priority_appeal
+  end
+
+  def age_of_n_oldest_genpop_priority_appeals(num)
+    LegacyAppeal.repository.age_of_n_oldest_genpop_priority_appeals(num)
   end
 
   def distribute_priority_appeals(distribution, genpop: "any", limit: 1)
