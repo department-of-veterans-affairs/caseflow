@@ -263,7 +263,6 @@ export const ScheduleVeteran = ({
 
   return (
     <div {...regionalOfficeSection}>
-
       <AppSegment filledBackground >
         <h1>{header}</h1>
         {error && <Alert title={error.title} type="error">{error.detail}</Alert>}
