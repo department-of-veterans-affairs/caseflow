@@ -56,6 +56,10 @@ class PromulgatedRating < Rating
 
   attr_writer :rating_profile
 
+  def rating_profile
+    @rating_profile ||= fetch_rating_profile
+  end
+
   private
 
   def fetch_rating_profile
@@ -65,9 +69,24 @@ class PromulgatedRating < Rating
     )
   rescue Savon::Error
     {}
+  rescue BGS::ShareError
+    retry_fetching_rating_profile
   end
 
-  def rating_profile
-    @rating_profile ||= fetch_rating_profile
+  # Re-tries fetching the rating profile with the RatingAtIssue service
+  def retry_fetching_rating_profile
+    ratings_at_issue = RatingAtIssue.fetch_in_range(
+      participant_id: participant_id,
+      start_date: profile_date,
+      end_date: profile_date
+    )
+    matching_rating = ratings_at_issue.find { |rating| profile_date_matches(rating.profile_date) }
+    matching_rating.present? ? matching_rating.rating_profile : {}
+  end
+
+  # The profile date is used as a key when fetching a rating by profile date.
+  # Profile dates in RatingAtIssue appear to have the same Date/Time stamp, but sometimes disagree by one timezone
+  def profile_date_matches(profile_date_to_compare)
+    profile_date.strftime("%Y-%m-%d %H:%M:%S") == profile_date_to_compare.strftime("%Y-%m-%d %H:%M:%S")
   end
 end
