@@ -457,7 +457,7 @@ ActiveRecord::Schema.define(version: 2020_09_23_004430) do
   create_table "docket_changes", comment: "Stores the disposition and associated data for Docket Change motions", force: :cascade do |t|
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.string "disposition", comment: "Possible options are granted, partially_granted, and denied"
-    t.string "docket", comment: "The new docket"
+    t.string "docket_type", comment: "The new docket"
     t.integer "granted_request_issue_ids", comment: "When a docket change is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior decision issue IDs.", array: true
     t.bigint "new_docket_stream_id", comment: "References the new appeal stream with the updated docket; initially null until created by workflow"
     t.bigint "old_docket_stream_id", null: false, comment: "References the original appeal stream with old docket"
