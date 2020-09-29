@@ -162,7 +162,6 @@ SAN FRANCISCO, CA 94103
         >
           <SearchableDropdown
             clearOnSelect={false}
-            isClearable={true}
             label="Veteran Timezone"
             loading={false}
             name="appellantTz"
@@ -985,7 +984,6 @@ SAN FRANCISCO, CA 94103
                     defaultMenuIsOpen={false}
                     defaultValue={null}
                     inputId="appellantTz"
-                    isClearable={true}
                     isDisabled={false}
                     isLoading={false}
                     isSearchable={true}
@@ -1786,7 +1784,6 @@ SAN FRANCISCO, CA 94103
                       getOptionValue={[Function]}
                       inputId="appellantTz"
                       inputValue=""
-                      isClearable={true}
                       isDisabled={false}
                       isLoading={false}
                       isMulti={false}
@@ -3394,7 +3391,7 @@ SAN FRANCISCO, CA 94103
                             "getOptionValue": [Function],
                             "inputId": "appellantTz",
                             "inputValue": "",
-                            "isClearable": true,
+                            "isClearable": undefined,
                             "isDisabled": false,
                             "isLoading": false,
                             "isMulti": false,
@@ -5053,7 +5050,7 @@ SAN FRANCISCO, CA 94103
                                   "getOptionValue": [Function],
                                   "inputId": "appellantTz",
                                   "inputValue": "",
-                                  "isClearable": true,
+                                  "isClearable": undefined,
                                   "isDisabled": false,
                                   "isLoading": false,
                                   "isMulti": false,
@@ -6720,7 +6717,7 @@ SAN FRANCISCO, CA 94103
                                         "getOptionValue": [Function],
                                         "inputId": "appellantTz",
                                         "inputValue": "",
-                                        "isClearable": true,
+                                        "isClearable": undefined,
                                         "isDisabled": false,
                                         "isLoading": false,
                                         "isMulti": false,
@@ -8374,7 +8371,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "appellantTz",
                                               "inputValue": "",
-                                              "isClearable": true,
+                                              "isClearable": undefined,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -9265,7 +9262,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "appellantTz",
                                               "inputValue": "",
-                                              "isClearable": true,
+                                              "isClearable": undefined,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -11000,7 +10997,7 @@ SAN FRANCISCO, CA 94103
                                         "getOptionValue": [Function],
                                         "inputId": "appellantTz",
                                         "inputValue": "",
-                                        "isClearable": true,
+                                        "isClearable": undefined,
                                         "isDisabled": false,
                                         "isLoading": false,
                                         "isMulti": false,
@@ -12649,7 +12646,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "appellantTz",
                                               "inputValue": "",
-                                              "isClearable": true,
+                                              "isClearable": undefined,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -14309,7 +14306,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "appellantTz",
                                               "inputValue": "",
-                                              "isClearable": true,
+                                              "isClearable": undefined,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
