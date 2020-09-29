@@ -37,7 +37,7 @@ describe('HearingTypeDropdown', () => {
     // Render the address component
     const hearingType = shallow(
       <HearingTypeDropdown
-        requestType={CENTRAL_OFFICE_HEARING}
+        originalRequestType={CENTRAL_OFFICE_HEARING}
       />
     );
 
@@ -53,7 +53,7 @@ describe('HearingTypeDropdown', () => {
     // Render the address component
     const hearingType = shallow(
       <HearingTypeDropdown
-        requestType={VIDEO_HEARING}
+        originalRequestType={VIDEO_HEARING}
       />
     );
 
@@ -69,7 +69,7 @@ describe('HearingTypeDropdown', () => {
     // Render the address component
     const hearingType = shallow(
       <HearingTypeDropdown
-        requestType={CENTRAL_OFFICE_HEARING}
+        originalRequestType={CENTRAL_OFFICE_HEARING}
         virtualHearing={virtualHearing.virtualHearing}
       />
     );
@@ -86,7 +86,7 @@ describe('HearingTypeDropdown', () => {
     // Render the address component
     const hearingType = mount(
       <HearingTypeDropdown
-        requestType={CENTRAL_OFFICE_HEARING}
+        originalRequestType={CENTRAL_OFFICE_HEARING}
         convertHearing={convertHearingSpy}
         update={updateSpy}
       />
@@ -115,7 +115,7 @@ describe('HearingTypeDropdown', () => {
     // Render the address component
     const hearingType = mount(
       <HearingTypeDropdown
-        requestType={VIDEO_HEARING}
+        originalRequestType={VIDEO_HEARING}
         openModal={openModalSpy}
         update={updateSpy}
       />
@@ -144,7 +144,7 @@ describe('HearingTypeDropdown', () => {
     // Render the address component
     const hearingType = mount(
       <HearingTypeDropdown
-        requestType={CENTRAL_OFFICE_HEARING}
+        originalRequestType={CENTRAL_OFFICE_HEARING}
         virtualHearing={virtualHearing.virtualHearing}
         convertHearing={convertHearingSpy}
         update={updateSpy}
@@ -174,7 +174,7 @@ describe('HearingTypeDropdown', () => {
     // Render the address component
     const hearingType = mount(
       <HearingTypeDropdown
-        requestType={VIDEO_HEARING}
+        originalRequestType={VIDEO_HEARING}
         virtualHearing={virtualHearing.virtualHearing}
         openModal={openModalSpy}
         update={updateSpy}
