@@ -8,7 +8,7 @@ RSpec.describe DocketChange, type: :model do
     JudgeTeam.create_for_judge(judge).tap { |jt| jt.add_user(attorney) }
   end
   let(:cotb_user) { create(:user, full_name: "Clerk Atty") }
-  let(:appeal) do 
+  let(:appeal) do
     create(
       :appeal,
       request_issues: build_list(
