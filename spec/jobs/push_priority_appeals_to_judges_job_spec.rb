@@ -251,6 +251,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     let!(:job) { PushPriorityAppealsToJudgesJob.new }
     let(:previous_distributions) { to_judge_hash([4, 3, 2, 1, 0]) }
     let!(:legacy_priority_case) do
+      judge = create(:user).tap { |judge_user| create(:staff, :judge_role, user: judge_user) }
       create(
         :case,
         :aod,
@@ -264,7 +265,15 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           tinum: "1801000",
           titrnum: "123456789S"
         )
-      )
+      ).tap do |vacols_case|
+        create(
+          :case_hearing,
+          :disposition_held,
+          folder_nr: vacols_case.bfkey,
+          hearing_date: 5.days.ago.to_date,
+          board_member: judge.vacols_attorney_id
+        )
+      end
     end
     let!(:ready_priority_hearing_case) do
       appeal = FactoryBot.create(:appeal,
@@ -272,6 +281,9 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
                                  :ready_for_distribution,
                                  docket_type: Constants.AMA_DOCKETS.hearing)
       appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: 2.months.ago)
+      most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
+      hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
+      hearing.update!(judge: create(:user).tap { |judge_user| create(:staff, :judge_role, user: judge_user) })
       appeal.reload
     end
     let!(:ready_priority_evidence_case) do
