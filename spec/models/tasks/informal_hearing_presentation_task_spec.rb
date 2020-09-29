@@ -90,4 +90,37 @@ describe InformalHearingPresentationTask, :postgres do
       expect(appeal.root_task.reload.children.count { |t| t.type == DistributionTask.name }).to eq(1)
     end
   end
+
+  describe "#update_from_params" do
+    subject { task.update_from_params(params, user) }
+
+    let(:organization) { create(:organization) }
+    let(:user) { create(:user).tap { |org_user| organization.add_user(org_user) } }
+    let(:appeal) { create(:appeal) }
+    let(:task) { create(:informal_hearing_presentation_task, assigned_to: organization, appeal: appeal) }
+    let(:params) { { status: Constants.TASK_STATUSES.completed } }
+
+    before do
+      InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+    end
+
+    it "completes the task" do
+      expect { subject }.to change(IhpDraft, :count).by(0)
+      expect(task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+    end
+
+    context "when ihp_notification feature toggle is on" do
+      let(:path) { "\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\AML\\AMA IHPs\\VetName 12345.pdf" }
+      let(:params) { { status: Constants.TASK_STATUSES.completed, ihp_path: path } }
+
+      before { FeatureToggle.enable!(:ihp_notification) }
+      after { FeatureToggle.disable!(:ihp_notification) }
+
+      it "completes the task and creates an IHP draft" do
+        expect { subject }.to change(IhpDraft, :count).by(1)
+        expect(task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(IhpDraft.where(appeal: appeal, organization: organization).count).to eq 1
+      end
+    end
+  end
 end
