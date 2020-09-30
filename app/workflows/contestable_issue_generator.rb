@@ -41,7 +41,7 @@ class ContestableIssueGenerator
     return from_rating_decisions if FeatureToggle.enabled?(:disability_issue_test, user: RequestStore[:current_user])
     return [] unless FeatureToggle.enabled?(:contestable_rating_decisions, user: RequestStore[:current_user])
 
-    from_rating_decisions.reject { |contestable_issue| rating_issue_duplicate_exists?(contestable_issue) }
+    from_rating_decisions.reject { |contestable_issue| decision_issue_duplicate_exists?(contestable_issue) }
   end
 
   def from_ratings
@@ -66,6 +66,7 @@ class ContestableIssueGenerator
     # rating decisions are a superset of every disability ever recorded for a veteran,
     # so filter out any that are duplicates of a rating issue or that are not related to their parent rating.
     rating_decisions
+      .select(&:contestable?)
       .select { |rating_decision| rating_decision.profile_date && rating_decision.profile_date.to_date <= receipt_date }
       .map { |rating_decision| ContestableIssue.from_rating_decision(rating_decision, review) }
   end
@@ -81,12 +82,6 @@ class ContestableIssueGenerator
   def rating_hash_deserialize(from:, to:)
     ratings.inject([]) do |result, rating_hash|
       result + rating_hash[from].map { |hash| to.deserialize(hash) }
-    end
-  end
-
-  def rating_issue_duplicate_exists?(contestable_issue)
-    contestable_rating_issues.any? do |potential_duplicate|
-      contestable_issue.rating_issue_reference_id == potential_duplicate.rating_issue_reference_id
     end
   end
 
