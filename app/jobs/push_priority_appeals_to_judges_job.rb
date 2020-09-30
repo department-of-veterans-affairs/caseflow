@@ -88,7 +88,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   # Because we cannot distribute fractional cases, there can be cases leftover after taking the priority target
   # into account. This number will always be less than the number of judges that need distribution because division
   def leftover_cases_count
-    ready_priority_appeals_count - target_distributions_for_eligible_judges.values.sum
+    ready_genpop_priority_appeals_count - target_distributions_for_eligible_judges.values.sum
   end
 
   # Calculate the number of cases a judge should receive based on the priority target. Don't toss out judges with 0 as
@@ -105,14 +105,14 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   def priority_target
     @priority_target ||= begin
       distribution_counts = priority_distributions_this_month_for_eligible_judges.values
-      target = (distribution_counts.sum + ready_priority_appeals_count) / distribution_counts.count
+      target = (distribution_counts.sum + ready_genpop_priority_appeals_count) / distribution_counts.count
 
       # If there are any judges that have previous distributions that are MORE than the currently calculated priority
       # target, no target will be large enough to get all other judges up to their number of cases. Remove them from
       # consideration and recalculate the target for all other judges.
       while distribution_counts.any? { |distribution_count| distribution_count > target }
         distribution_counts = distribution_counts.reject { |distribution_count| distribution_count > target }
-        target = (distribution_counts.sum + ready_priority_appeals_count) / distribution_counts.count
+        target = (distribution_counts.sum + ready_genpop_priority_appeals_count) / distribution_counts.count
       end
 
       target
@@ -123,8 +123,8 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     @docket_coordinator ||= DocketCoordinator.new
   end
 
-  def ready_priority_appeals_count
-    @ready_priority_appeals_count ||= docket_coordinator.priority_count
+  def ready_genpop_priority_appeals_count
+    @ready_genpop_priority_appeals_count ||= docket_coordinator.genpop_priority_count
   end
 
   # Number of priority distributions every eligible judge has received in the last month

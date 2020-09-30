@@ -705,6 +705,22 @@ class AppealRepository
       end
     end
 
+    def genpop_priority_count
+      MetricsService.record("VACOLS: genpop_priority_count",
+                            name: "genpop_priority_count",
+                            service: :vacols) do
+        VACOLS::CaseDocket.genpop_priority_count
+      end
+    end
+
+    def priority_ready_appeal_vacols_ids
+      MetricsService.record("VACOLS: priority_ready_appeal_vacols_ids",
+                            name: "priority_ready_appeal_vacols_ids",
+                            service: :vacols) do
+        VACOLS::CaseDocket.priority_ready_appeal_vacols_ids
+      end
+    end
+
     def nod_count
       MetricsService.record("VACOLS: nod_count",
                             name: "nod_count",

@@ -85,6 +85,7 @@ import { FlashAlerts } from '../nonComp/components/Alerts';
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
 import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
 import ScheduleVeteran from '../hearings/components/ScheduleVeteran';
+import HearingTypeConversion from '../hearings/components/HearingTypeConversion';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -270,6 +271,10 @@ class QueueApp extends React.PureComponent {
   )
 
   routedChangeTaskTypeModal = (props) => <ChangeTaskTypeModal {...props.match.params} />;
+
+  routedChangeHearingRequestTypeToVirtual = (props) => (
+    <HearingTypeConversion type="Virtual" {...props.match.params} />
+  );
 
   routedSetOvertimeStatusModal = (props) => <SetOvertimeStatusModal {...props.match.params} />;
 
@@ -640,13 +645,15 @@ class QueueApp extends React.PureComponent {
               />
               <PageRoute
                 exact
+                path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.value}`}
+                title="Assign Hearing | Caseflow"
+                render={this.routedScheduleVeteran}
+              />
+              <PageRoute
+                exact
                 path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SCHEDULE_VETERAN.value}`}
                 title="Assign Hearing | Caseflow"
-                render={
-                  this.props.featureToggles.schedule_veteran_virtual_hearing ?
-                    this.routedScheduleVeteran :
-                    this.routedAssignHearingModal
-                }
+                render={this.routedAssignHearingModal}
               />
               <PageRoute
                 exact
@@ -665,6 +672,14 @@ class QueueApp extends React.PureComponent {
                 path="/queue/appeals/:appealId/tasks/:taskId/modal/change_task_type"
                 title="Change Task Type | Caseflow"
                 render={this.routedChangeTaskTypeModal}
+              />
+              <PageRoute
+                exact
+                path={
+                  `/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`
+                }
+                title="Change Hearing Request Type to Virtual | Caseflow"
+                render={this.routedChangeHearingRequestTypeToVirtual}
               />
 
               <Route
