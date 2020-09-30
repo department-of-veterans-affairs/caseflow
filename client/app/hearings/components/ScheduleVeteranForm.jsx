@@ -35,10 +35,20 @@ export const ScheduleVeteranForm = ({
 
   const handleChange = () => {
     if (virtual) {
-      return props.onChange('virtualHearing', null);
+      // Change the hearing form to recalculate the regional office hearing days
+      return props.onChange('assignHearing', {
+        virtualHearing: null,
+        regionalOffice: appeal.closestRegionalOffice,
+        hearingDay: {}
+      });
     }
 
-    return props.onChange('virtualHearing', { status: 'pending' });
+    // Set the form to contain central office hearing days
+    return props.onChange('assignHearing', {
+      virtualHearing: { status: 'pending' },
+      regionalOffice: 'C',
+      hearingDay: {}
+    });
   };
 
   return (
@@ -64,14 +74,14 @@ export const ScheduleVeteranForm = ({
               key={`hearingDate__${ro}`}
               regionalOffice={ro}
               value={hearing?.hearingDay || initialHearingDate}
-              onChange={(hearingDay) => props.onChange('hearingDay', hearingDay)}
+              onChange={(hearingDay) => props.onChange('assignHearing', { hearingDay })}
             />
             <HearingTime
               vertical
               errorMessage={errors?.scheduledTimeString}
               label="Hearing Time"
               enableZone
-              onChange={(scheduledTimeString) => props.onChange('scheduledTimeString', scheduledTimeString)}
+              onChange={(scheduledTimeString) => props.onChange('assignHearing', { scheduledTimeString })}
               value={hearing?.scheduledTimeString}
             />
           </div>
@@ -81,9 +91,11 @@ export const ScheduleVeteranForm = ({
               errors={errors}
               video={video}
               update={(_, virtualHearing) =>
-                props.onChange('virtualHearing', {
-                  ...hearing?.virtualHearing,
-                  ...virtualHearing,
+                props.onChange('assignHearing', {
+                  virtualHearing: {
+                    ...hearing?.virtualHearing,
+                    ...virtualHearing,
+                  }
                 })
               }
               appellantTitle={appellantTitle}
@@ -96,9 +108,11 @@ export const ScheduleVeteranForm = ({
               errors={errors}
               video={video}
               update={(_, virtualHearing) =>
-                props.onChange('virtualHearing', {
-                  ...hearing?.virtualHearing,
-                  ...virtualHearing,
+                props.onChange('assignHearing', {
+                  virtualHearing: {
+                    ...hearing?.virtualHearing,
+                    ...virtualHearing,
+                  }
                 })
               }
               appellantTitle={appellantTitle}
@@ -122,7 +136,7 @@ export const ScheduleVeteranForm = ({
           />
           <RegionalOfficeDropdown
             errorMessage={errors?.regionalOffice}
-            onChange={(regionalOffice) => props.onChange('regionalOffice', regionalOffice)}
+            onChange={(regionalOffice) => props.onChange('assignHearing', { regionalOffice })}
             value={ro}
             validateValueOnMount
           />
@@ -134,7 +148,7 @@ export const ScheduleVeteranForm = ({
                 regionalOffice={ro}
                 appealId={appeal.externalId}
                 value={location}
-                onChange={(hearingLocation) => props.onChange('hearingLocation', hearingLocation)}
+                onChange={(hearingLocation) => props.onChange('assignHearing', { hearingLocation })}
                 dynamic={dynamic}
                 staticHearingLocations={availableHearingLocations}
               />
@@ -143,7 +157,7 @@ export const ScheduleVeteranForm = ({
                 key={`hearingDate__${ro}`}
                 regionalOffice={ro}
                 value={hearing.hearingDay || initialHearingDate}
-                onChange={(hearingDay) => props.onChange('hearingDay', hearingDay)}
+                onChange={(hearingDay) => props.onChange('assignHearing', { hearingDay })}
               />
               <HearingTime
                 regionalOffice={ro}
@@ -151,7 +165,7 @@ export const ScheduleVeteranForm = ({
                 vertical
                 label="Hearing Time"
                 enableZone
-                onChange={(scheduledTimeString) => props.onChange('scheduledTimeString', scheduledTimeString)}
+                onChange={(scheduledTimeString) => props.onChange('assignHearing', { scheduledTimeString })}
                 value={hearing.scheduledTimeString}
               />
 

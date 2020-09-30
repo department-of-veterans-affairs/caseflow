@@ -289,7 +289,7 @@ export const ScheduleVeteran = ({
             virtual={Boolean(virtual)}
             hearing={hearing}
             appellantTitle={appellantTitle}
-            onChange={(key, value) => props.onChangeFormData('assignHearing', { [key]: value })}
+            onChange={props.onChangeFormData}
           />
         )}
 
