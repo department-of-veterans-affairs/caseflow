@@ -1,9 +1,10 @@
 /* eslint-disable camelcase */
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   TRAVEL_BOARD_HEARING,
   VIDEO_HEARING,
+  VIRTUAL_HEARING,
   CENTRAL_OFFICE_HEARING,
   HEARING_CONVERSION_TYPES
 } from '../constants';
@@ -57,6 +58,17 @@ export const ScheduleVeteranForm = ({
 
     return props.onChange('virtualHearing', { status: 'pending' });
   };
+
+  useEffect(
+    () => {
+      // Initializing a virtual hearing object when the initial request type is virtual to
+      // auto-select the virtual option in the HearingTypeDropdown.
+      if (appeal?.readableHearingRequestType === VIRTUAL_HEARING && !virtual) {
+        handleChange();
+      }
+    },
+    []
+  );
 
   return (
     <React.Fragment>
