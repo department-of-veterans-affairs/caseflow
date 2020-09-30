@@ -15,7 +15,7 @@
   },
   "CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL": {
     "label": "Convert hearing to virtual",
-    "value": "<placeholder>page/change_hearing_request_type</placeholder>",
+    "value": "change_hearing_request_type_to_virtual",
     "func": "change_hearing_request_type_data"
   },
   "ASSIGN_OMO": {

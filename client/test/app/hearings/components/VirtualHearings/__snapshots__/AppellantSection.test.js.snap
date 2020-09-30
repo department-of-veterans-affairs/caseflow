@@ -127,10 +127,10 @@ exports[`Appellant Displays timezone when virtual 1`] = `
       addressLine1="9999 MISSION ST"
       addressState="CA"
       addressZip="94103"
-      name="John Smith"
+      name="Tom Brady"
     >
       <ReadOnly
-        text="John Smith
+        text="Tom Brady
 9999 MISSION ST
 SAN FRANCISCO, CA 94103"
       >
@@ -138,7 +138,7 @@ SAN FRANCISCO, CA 94103"
           data-css-1a5irm0=""
         >
           <pre>
-            John Smith
+            Tom Brady
 9999 MISSION ST
 SAN FRANCISCO, CA 94103
           </pre>
@@ -15448,10 +15448,10 @@ exports[`Appellant Does not allow editing emails when read-only 1`] = `
       addressLine1="9999 MISSION ST"
       addressState="CA"
       addressZip="94103"
-      name="John Smith"
+      name="Tom Brady"
     >
       <ReadOnly
-        text="John Smith
+        text="Tom Brady
 9999 MISSION ST
 SAN FRANCISCO, CA 94103"
       >
@@ -15459,7 +15459,7 @@ SAN FRANCISCO, CA 94103"
           data-css-1a5irm0=""
         >
           <pre>
-            John Smith
+            Tom Brady
 9999 MISSION ST
 SAN FRANCISCO, CA 94103
           </pre>
@@ -15630,10 +15630,10 @@ exports[`Appellant Matches snapshot with default props 1`] = `
       addressLine1="9999 MISSION ST"
       addressState="CA"
       addressZip="94103"
-      name="John Smith"
+      name="Tom Brady"
     >
       <ReadOnly
-        text="John Smith
+        text="Tom Brady
 9999 MISSION ST
 SAN FRANCISCO, CA 94103"
       >
@@ -15641,7 +15641,7 @@ SAN FRANCISCO, CA 94103"
           data-css-1a5irm0=""
         >
           <pre>
-            John Smith
+            Tom Brady
 9999 MISSION ST
 SAN FRANCISCO, CA 94103
           </pre>
