@@ -230,6 +230,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
     type="Virtual"
   >
     <HearingTypeConversion
+      deleteAppeal={[Function]}
       history={
         Object {
           "action": "POP",
