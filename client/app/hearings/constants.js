@@ -113,6 +113,7 @@ export const DISPOSITION_OPTIONS = [{ value: 'held',
 
 export const VIDEO_HEARING = 'Video';
 export const CENTRAL_OFFICE_HEARING = 'Central';
+export const TRAVEL_BOARD_HEARING = 'Travel';
 export const VIRTUAL_HEARING = 'Virtual';
 
 export const LIST_SCHEDULE_VIEWS = {

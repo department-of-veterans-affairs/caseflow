@@ -17,7 +17,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
       ],
     }
   }
-  requestType="Central"
+  originalRequestType="Central"
   update={
     [MockFunction] {
       "calls": Array [
@@ -1464,7 +1464,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
       ],
     }
   }
-  requestType="Video"
+  originalRequestType="Video"
   update={
     [MockFunction] {
       "calls": Array [
@@ -2927,7 +2927,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
       ],
     }
   }
-  requestType="Central"
+  originalRequestType="Central"
   update={
     [MockFunction] {
       "calls": Array [
@@ -4422,7 +4422,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
       ],
     }
   }
-  requestType="Video"
+  originalRequestType="Video"
   update={
     [MockFunction] {
       "calls": Array [

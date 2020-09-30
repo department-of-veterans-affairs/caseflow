@@ -1,7 +1,13 @@
 /* eslint-disable camelcase */
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { CENTRAL_OFFICE_HEARING, HEARING_CONVERSION_TYPES } from '../constants';
+import {
+  TRAVEL_BOARD_HEARING,
+  VIDEO_HEARING,
+  VIRTUAL_HEARING,
+  CENTRAL_OFFICE_HEARING,
+  HEARING_CONVERSION_TYPES
+} from '../constants';
 import {
   RegionalOfficeDropdown,
   AppealHearingLocationsDropdown,
@@ -18,7 +24,6 @@ import { isEmpty, orderBy } from 'lodash';
 
 export const ScheduleVeteranForm = ({
   virtual,
-  requestType,
   appellantTitle,
   appeal,
   hearing,
@@ -29,9 +34,22 @@ export const ScheduleVeteranForm = ({
 }) => {
   const ro = hearing?.regionalOffice || initialRegionalOffice;
   const location = hearing?.hearingLocation || appeal?.hearingLocation;
-  const video = requestType === 'Video';
   const availableHearingLocations = orderBy(appeal?.availableHearingLocations || [], ['distance'], ['asc']);
   const dynamic = ro !== appeal?.closestRegionalOffice || isEmpty(appeal?.availableHearingLocations);
+
+  const getOriginalRequestType = () => {
+    if (appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING) {
+      // For COVID-19, travel board appeals can have either a video or virtual hearing scheduled. In this case,
+      // we consider a travel board hearing as a video hearing, which enables both video and virtual options in
+      // the HearingTypeDropdown
+      return VIDEO_HEARING;
+    }
+
+    // The default is video hearing if the appeal isn't associated with an RO.
+    return appeal?.readableOriginalHearingRequestType ?? VIDEO_HEARING;
+  };
+  const originalRequestType = getOriginalRequestType();
+  const video = originalRequestType === VIDEO_HEARING;
 
   const handleChange = () => {
     if (virtual) {
@@ -51,13 +69,24 @@ export const ScheduleVeteranForm = ({
     });
   };
 
+  useEffect(
+    () => {
+      // Initializing a virtual hearing object when the initial request type is virtual to
+      // auto-select the virtual option in the HearingTypeDropdown.
+      if (appeal?.readableHearingRequestType === VIRTUAL_HEARING && !virtual) {
+        handleChange();
+      }
+    },
+    []
+  );
+
   return (
     <React.Fragment>
       <div className="usa-width-one-half">
         <HearingTypeDropdown
           enableFullPageConversion
           update={handleChange}
-          requestType={hearing?.requestType}
+          originalRequestType={originalRequestType}
           virtualHearing={hearing?.virtualHearing}
         />
       </div>
@@ -186,7 +215,6 @@ ScheduleVeteranForm.propTypes = {
   initialRegionalOffice: PropTypes.string,
   initialHearingDate: PropTypes.string,
   appellantTitle: PropTypes.string,
-  requestType: PropTypes.string
 };
 
 /* eslint-enable camelcase */
