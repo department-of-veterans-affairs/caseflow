@@ -57,4 +57,36 @@ RSpec.describe DocketChange, type: :model do
       expect(subject.size).to eq(granted_request_issue_ids.size)
     end
   end
+
+  context "#granted_issues_present_if_partial" do
+    subject do
+      build(
+        :docket_change,
+        old_docket_stream: appeal,
+        task: docket_switch_mail_task,
+        disposition: disposition,
+        granted_request_issue_ids: granted_request_issue_ids
+      )
+    end
+
+    context "when partially granted" do
+      let(:disposition) { "partially_granted" }
+      
+      context "when issue ids not set" do
+        let(:granted_request_issue_ids) { nil }
+        
+        it "not be valid" do
+          expect(subject).not_to be_valid
+        end
+      end
+    end
+
+    context "when not partial grant" do
+      let(:disposition) { "denied" }
+
+      it "validates without " do
+        expect(subject).to be_valid
+      end
+    end
+  end
 end
