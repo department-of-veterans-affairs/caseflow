@@ -71,10 +71,10 @@ RSpec.describe DocketChange, type: :model do
 
     context "when partially granted" do
       let(:disposition) { "partially_granted" }
-      
+
       context "when issue ids not set" do
         let(:granted_request_issue_ids) { nil }
-        
+
         it "not be valid" do
           expect(subject).not_to be_valid
         end
