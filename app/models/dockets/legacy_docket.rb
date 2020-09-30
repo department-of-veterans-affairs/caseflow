@@ -22,12 +22,16 @@ class LegacyDocket
   end
   # rubocop:enable Metrics/CyclomaticComplexity
 
+  def genpop_priority_count
+    LegacyAppeal.repository.genpop_priority_count
+  end
+
   def weight
     count(priority: false) + nod_count * NOD_ADJUSTMENT
   end
 
   def ready_priority_appeal_ids
-    VACOLS::CaseDocket.priority_ready_appeal_vacols_ids
+    LegacyAppeal.repository.priority_ready_appeal_vacols_ids
   end
 
   def oldest_priority_appeal_days_waiting

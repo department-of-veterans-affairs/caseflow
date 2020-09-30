@@ -100,7 +100,11 @@ class DocketCoordinator
     @priority_count ||= dockets
       .values
       .map { |docket| docket.count(priority: true, ready: true) }
-      .reduce(0, :+)
+      .sum
+  end
+
+  def genpop_priority_count
+    @genpop_priority_count ||= dockets.values.map(&:genpop_priority_count).sum
   end
 
   def direct_review_due_count
@@ -140,6 +144,6 @@ class DocketCoordinator
   end
 
   def nonpriority_decisions_per_year
-    @nonpriority_decisions_per_year ||= [LegacyAppeal, Docket].map(&:nonpriority_decisions_per_year).reduce(0, :+)
+    @nonpriority_decisions_per_year ||= [LegacyAppeal, Docket].map(&:nonpriority_decisions_per_year).sum
   end
 end
