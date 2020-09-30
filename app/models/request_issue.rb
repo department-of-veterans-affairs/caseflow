@@ -235,6 +235,8 @@ class RequestIssue < CaseflowRecord
   end
 
   def rating?
+    # binding.pry
+    #  update!(type:) if RatingRequestIssue || NonratingRequestIssue ||
     !!associated_rating_issue? ||
       !!previous_rating_issue? ||
       !!associated_rating_decision? ||
