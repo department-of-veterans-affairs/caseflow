@@ -63,7 +63,7 @@ export const ScheduleVeteranForm = ({
     () => {
       // Initializing a virtual hearing object when the initial request type is virtual to
       // auto-select the virtual option in the HearingTypeDropdown.
-      if (appeal?.readableHearingRequestType === VIRTUAL_HEARING && !virtual) {
+      if (!virtual) {
         handleChange();
       }
     },
