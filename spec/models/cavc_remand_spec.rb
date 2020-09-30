@@ -83,7 +83,6 @@ describe CavcRemand do
         let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.mdr }
 
         it "creates the record" do
-          byebug
           expect { subject }.not_to raise_error
         end
       end
@@ -112,7 +111,6 @@ describe CavcRemand do
         let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.mdr }
 
         it "creates the record" do
-          byebug
           expect { subject }.not_to raise_error
         end
       end
