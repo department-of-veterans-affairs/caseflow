@@ -48,7 +48,7 @@ export const ScheduleVeteran = ({
   const [errors, setErrors] = useState({});
 
   // Get the appellant title ('Veteran' or 'Appellant')
-  const appellantTitle = getAppellantTitle(appeal?.apppellantIsNotVeteran);
+  const appellantTitle = getAppellantTitle(appeal?.appellantIsNotVeteran);
 
   // Get the selected hearing day
   const selectedHearingDay = assignHearingForm?.hearingDay || hearingDay;
