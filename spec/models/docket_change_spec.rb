@@ -48,4 +48,13 @@ RSpec.describe DocketChange, type: :model do
       expect(docket_change.old_docket_stream.reload.request_issues.size).to eq 0
     end
   end
+
+  context "#request_issues_for_switch" do
+    let(:disposition) { "granted" }
+    subject { docket_change.request_issues_for_switch }
+
+    it "returns the correct request issues" do
+      expect(subject.size).to eq(granted_request_issue_ids.size)
+    end
+  end
 end
