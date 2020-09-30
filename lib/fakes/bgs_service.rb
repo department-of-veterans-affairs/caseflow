@@ -407,10 +407,6 @@ class Fakes::BGSService
     format_promulgated_rating(build_ratings_in_range(ratings, start_date, end_date))
   end
 
-  def fetch_rating_profile(participant_id:, profile_date:)
-    stored_rating_profile(participant_id: participant_id, profile_date: profile_date)
-  end
-
   def fetch_rating_profiles_in_range(participant_id:, start_date:, end_date:)
     ratings = get_rating_record(participant_id)[:ratings] || []
     # Simulate the response if participant doesn't exist or doesn't have any ratings
@@ -450,7 +446,7 @@ class Fakes::BGSService
     # If a PromulgatedRating was originally stored in rating_store
     # convert to be compatible with RatingAtIssue
     if promulgated_rating_data.present?
-      rating_profile = stored_rating_profile(
+      rating_profile = fetch_rating_profile(
         participant_id: promulgated_rating_data[:ptcpnt_vet_id],
         profile_date: promulgated_rating_data[:prfil_dt]
       )
@@ -468,7 +464,7 @@ class Fakes::BGSService
     end
   end
 
-  def stored_rating_profile(participant_id:, profile_date:)
+  def fetch_rating_profile(participant_id:, profile_date:)
     normed_date_key = Fakes::RatingStore.normed_profile_date_key(profile_date).to_sym
     rating_profile = (get_rating_record(participant_id)[:profiles] || {})[normed_date_key]
 
