@@ -69,14 +69,6 @@ class RatingDecision
     promulgation_date
   end
 
-  def contestable?
-    !rating_issue?
-  end
-
-  def rating_issue?
-    rating_issue_reference_id.present?
-  end
-
   def reference_id
     disability_id
   end

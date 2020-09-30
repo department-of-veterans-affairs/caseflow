@@ -30,6 +30,11 @@ class Docket
     appeals(priority: priority, ready: ready).ids.size
   end
 
+  # By default all cases are considered genpop. This can be overridden for specific dockets
+  def genpop_priority_count
+    count(priority: true, ready: true)
+  end
+
   def weight
     count
   end

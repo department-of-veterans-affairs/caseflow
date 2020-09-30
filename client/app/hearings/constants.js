@@ -126,9 +126,3 @@ export const HEARING_CONVERSION_TYPES = [
   'change_email_or_timezone',
   'change_hearing_time'
 ];
-
-export const HEARING_REQUEST_TYPES = {
-  V: VIDEO_HEARING,
-  C: CENTRAL_OFFICE_HEARING,
-  R: VIRTUAL_HEARING,
-};
