@@ -9,7 +9,7 @@ class CreateDocketChanges < ActiveRecord::Migration[5.2]
       t.datetime "receipt_date", null: false
       t.string "docket_type", comment: "The new docket"
       t.string "disposition", comment: "Possible options are granted, partially_granted, and denied"
-      t.integer "granted_request_issue_ids", comment: "When a docket change is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior decision issue IDs.", array: true
+      t.integer "granted_request_issue_ids", comment: "When a docket change is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior request issue IDs.", array: true
       t.timestamps null: false, comment: "Standard created_at/updated_at timestamps"
 
       t.index ["created_at"]

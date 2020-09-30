@@ -337,7 +337,7 @@ docket_changes,,,,,,,,Stores the disposition and associated data for Docket Chan
 docket_changes,created_at,datetime ∗,x,,,,x,Standard created_at/updated_at timestamps
 docket_changes,disposition,string ∗,x,,,,,"Possible options are granted, partially_granted, and denied"
 docket_changes,docket_type,string,,,,,,The new docket
-docket_changes,granted_request_issue_ids,integer,,,,,,"When a docket change is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior decision issue IDs."
+docket_changes,granted_request_issue_ids,integer,,,,,,"When a docket change is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior request issue IDs."
 docket_changes,id,integer (8) PK,x,x,,,,
 docket_changes,new_docket_stream_id,integer (8) FK,,,x,,x,References the new appeal stream with the updated docket; initially null until created by workflow
 docket_changes,old_docket_stream_id,integer (8) ∗ FK,x,,x,,x,References the original appeal stream with old docket
@@ -599,7 +599,7 @@ ihp_drafts,appeal_id,integer ∗ FK,x,,x,,x,Appeal id the IHP was written for
 ihp_drafts,appeal_type,string ∗,x,,,,x,Type of appeal the IHP was written for
 ihp_drafts,created_at,datetime ∗,x,,,,,Default created_at/updated_at timestamps
 ihp_drafts,id,integer (8) PK,x,x,,,,
-ihp_drafts,organization_id,integer ∗ FK,x,,x,,x,IHP writing VSO that drafted the IHP
+ihp_drafts,organization_id,integer ∗ FK,x,,x,,x,IHP-writing VSO that drafted the IHP
 ihp_drafts,path,string ∗,x,,,,,Path to the IHP in the VA V: drive
 ihp_drafts,updated_at,datetime ∗,x,,,,,Default created_at/updated_at timestamps
 intakes,,,,,,,,Represents the intake of an form or request made by a veteran.
