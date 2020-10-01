@@ -94,7 +94,6 @@ export const ScheduleVeteran = ({
     appellantState: appeal?.appellantAddress?.state,
     appellantZip: appeal?.appellantAddress?.zip,
     veteranFullName: appeal?.veteranFullName,
-    requestType
   };
 
   // Reset the component state
@@ -109,7 +108,7 @@ export const ScheduleVeteran = ({
     props.onChangeFormData('assignHearing', { virtualHearing: null });
   };
 
-  // Initialize the state
+  // Reset the state on unmount
   useEffect(() => () => reset(), []);
 
   const getSuccessMsg = () => {

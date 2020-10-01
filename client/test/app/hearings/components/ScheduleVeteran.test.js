@@ -68,8 +68,7 @@ describe('ScheduleVeteran', () => {
     // Render the scheduleVeteran component
     const scheduleVeteran = mount(
       <ScheduleVeteran
-        goBack={cancelSpy}
-        onChange={changeSpy}
+        onChangeFormData={changeSpy}
         appeals={appealsData}
         appealId={amaAppeal.externalId}
         hearing={defaultHearing}
@@ -105,8 +104,7 @@ describe('ScheduleVeteran', () => {
     const scheduleVeteran = mount(
       <ScheduleVeteran
         scheduledHearing={scheduledHearing}
-        history={{ goBack: cancelSpy }}
-        onChange={changeSpy}
+        onChangeFormData={changeSpy}
         appeals={appealsData}
         appealId={amaAppeal.externalId}
       />,
@@ -142,7 +140,7 @@ describe('ScheduleVeteran', () => {
     // Render the scheduleVeteran component
     const scheduleVeteran = mount(
       <ScheduleVeteran
-        onChange={changeSpy}
+        onChangeFormData={changeSpy}
         appeals={appealsData}
         appealId={legacyAppeal.externalId}
       />,
@@ -193,7 +191,7 @@ describe('ScheduleVeteran', () => {
     // Render the scheduleVeteran component
     const scheduleVeteran = mount(
       <ScheduleVeteran
-        onChange={changeSpy}
+        onChangeFormData={changeSpy}
         appeals={appealsData}
         appealId={legacyAppeal.externalId}
       />,
@@ -239,7 +237,7 @@ describe('ScheduleVeteran', () => {
     // Render the scheduleVeteran component
     const scheduleVeteran = mount(
       <ScheduleVeteran
-        onChange={changeSpy}
+        onChangeFormData={changeSpy}
         appeals={appealsData}
         appealId={legacyAppeal.externalId}
       />,
@@ -274,8 +272,7 @@ describe('ScheduleVeteran', () => {
     // Render the scheduleVeteran component
     const scheduleVeteran = mount(
       <ScheduleVeteran
-        history={{ goBack: cancelSpy }}
-        onChange={changeSpy}
+        onChangeFormData={changeSpy}
         appeals={appealsData}
         appealId={amaAppeal.externalId}
       />,
@@ -308,10 +305,11 @@ describe('ScheduleVeteran', () => {
   test('Can cancel the form', () => {
     // Render the scheduleVeteran component
     const scheduleVeteran = mount(
-
-      <ScheduleVeteran.WrappedComponent history={{ goBack: cancelSpy }}>
-        <ScheduleVeteran onChange={changeSpy} />
-      </ScheduleVeteran.WrappedComponent>,
+      <ScheduleVeteran.WrappedComponent
+        history={{ goBack: cancelSpy }}
+        onChangeFormData={changeSpy}
+        appeal={amaAppeal}
+      />,
       {
         wrappingComponent: queueWrapper,
       }
@@ -344,7 +342,7 @@ describe('ScheduleVeteran', () => {
     const scheduleVeteran = mount(
       <ScheduleVeteran
         showSuccessMessage={jest.fn()}
-        onChange={changeSpy}
+        onChangeFormData={changeSpy}
         appeals={appealsData}
         appealId={amaAppeal.externalId}
       />,
@@ -421,7 +419,7 @@ describe('ScheduleVeteran', () => {
     const scheduleVeteran = mount(
       <ScheduleVeteran
         showSuccessMessage={jest.fn()}
-        onChange={changeSpy}
+        onChangeFormData={changeSpy}
         appeals={appealsData}
         appealId={amaAppeal.externalId}
       />,
@@ -471,8 +469,7 @@ describe('ScheduleVeteran', () => {
     const scheduleVeteran = mount(
       <ScheduleVeteran
         scheduledHearing={scheduledHearing}
-        history={{ goBack: cancelSpy }}
-        onChange={changeSpy}
+        onChangeFormData={changeSpy}
         appeals={appealsData}
         appealId={amaAppeal.externalId}
       />,
@@ -505,7 +502,7 @@ describe('ScheduleVeteran', () => {
         scheduledHearing={scheduledHearing}
         error={{ detail: 'Open Hearing' }}
         history={{ goBack: cancelSpy }}
-        onChange={changeSpy}
+        onChangeFormData={changeSpy}
       />,
       {
         wrappingComponent: queueWrapper,
@@ -532,7 +529,6 @@ describe('ScheduleVeteran', () => {
         scheduledHearing={scheduledHearing}
         onChangeFormData={changeSpy}
         goBack={cancelSpy}
-        onChange={changeSpy}
         appeals={appealsData}
         appealId={amaAppeal.externalId}
         hearing={defaultHearing}

@@ -1,7 +1,12 @@
 /* eslint-disable camelcase */
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { HEARING_CONVERSION_TYPES } from '../constants';
+import {
+  TRAVEL_BOARD_HEARING,
+  VIDEO_HEARING,
+  VIRTUAL_HEARING,
+  HEARING_CONVERSION_TYPES
+} from '../constants';
 import {
   RegionalOfficeDropdown,
   AppealHearingLocationsDropdown,
@@ -33,6 +38,19 @@ export const ScheduleVeteranForm = ({
   const availableHearingLocations = orderBy(appeal?.availableHearingLocations || [], ['distance'], ['asc']);
   const dynamic = ro !== appeal?.closestRegionalOffice || isEmpty(appeal?.availableHearingLocations);
 
+  const getOriginalRequestType = () => {
+    if (appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING) {
+    // For COVID-19, travel board appeals can have either a video or virtual hearing scheduled. In this case,
+    // we consider a travel board hearing as a video hearing, which enables both video and virtual options in
+    // the HearingTypeDropdown
+      return VIDEO_HEARING;
+    }
+
+    // The default is video hearing if the appeal isn't associated with an RO.
+    return appeal?.readableOriginalHearingRequestType ?? VIDEO_HEARING;
+  };
+  const originalRequestType = getOriginalRequestType();
+
   // Set the hearing request to Video unless the RO is Central
   const video = ro !== 'C';
 
@@ -42,7 +60,7 @@ export const ScheduleVeteranForm = ({
         <HearingTypeDropdown
           enableFullPageConversion
           update={convertToVirtual}
-          requestType={hearing?.requestType}
+          originalRequestType={originalRequestType}
           virtualHearing={hearing?.virtualHearing}
         />
       </div>
