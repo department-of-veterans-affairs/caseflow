@@ -172,7 +172,7 @@ class LegacyAppeal < CaseflowRecord
   }.freeze
 
   READABLE_HEARING_REQUEST_TYPES = {
-    central_board: "Central",  # Equivalent to :central_office
+    central_board: "Central", # Equivalent to :central_office
     central_office: "Central",
     travel_board: "Travel",
     video: "Video",
