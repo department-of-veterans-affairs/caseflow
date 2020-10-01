@@ -127,10 +127,10 @@ exports[`Appellant Displays timezone when virtual 1`] = `
       addressLine1="9999 MISSION ST"
       addressState="CA"
       addressZip="94103"
-      name="John Smith"
+      name="Tom Brady"
     >
       <ReadOnly
-        text="John Smith
+        text="Tom Brady
 9999 MISSION ST
 SAN FRANCISCO, CA 94103"
       >
@@ -138,7 +138,7 @@ SAN FRANCISCO, CA 94103"
           data-css-1a5irm0=""
         >
           <pre>
-            John Smith
+            Tom Brady
 9999 MISSION ST
 SAN FRANCISCO, CA 94103
           </pre>
@@ -162,7 +162,6 @@ SAN FRANCISCO, CA 94103
         >
           <SearchableDropdown
             clearOnSelect={false}
-            isClearable={true}
             label="Veteran Timezone"
             loading={false}
             name="appellantTz"
@@ -985,7 +984,6 @@ SAN FRANCISCO, CA 94103
                     defaultMenuIsOpen={false}
                     defaultValue={null}
                     inputId="appellantTz"
-                    isClearable={true}
                     isDisabled={false}
                     isLoading={false}
                     isSearchable={true}
@@ -1786,7 +1784,6 @@ SAN FRANCISCO, CA 94103
                       getOptionValue={[Function]}
                       inputId="appellantTz"
                       inputValue=""
-                      isClearable={true}
                       isDisabled={false}
                       isLoading={false}
                       isMulti={false}
@@ -3394,7 +3391,7 @@ SAN FRANCISCO, CA 94103
                             "getOptionValue": [Function],
                             "inputId": "appellantTz",
                             "inputValue": "",
-                            "isClearable": true,
+                            "isClearable": undefined,
                             "isDisabled": false,
                             "isLoading": false,
                             "isMulti": false,
@@ -5053,7 +5050,7 @@ SAN FRANCISCO, CA 94103
                                   "getOptionValue": [Function],
                                   "inputId": "appellantTz",
                                   "inputValue": "",
-                                  "isClearable": true,
+                                  "isClearable": undefined,
                                   "isDisabled": false,
                                   "isLoading": false,
                                   "isMulti": false,
@@ -6720,7 +6717,7 @@ SAN FRANCISCO, CA 94103
                                         "getOptionValue": [Function],
                                         "inputId": "appellantTz",
                                         "inputValue": "",
-                                        "isClearable": true,
+                                        "isClearable": undefined,
                                         "isDisabled": false,
                                         "isLoading": false,
                                         "isMulti": false,
@@ -8374,7 +8371,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "appellantTz",
                                               "inputValue": "",
-                                              "isClearable": true,
+                                              "isClearable": undefined,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -9265,7 +9262,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "appellantTz",
                                               "inputValue": "",
-                                              "isClearable": true,
+                                              "isClearable": undefined,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -11000,7 +10997,7 @@ SAN FRANCISCO, CA 94103
                                         "getOptionValue": [Function],
                                         "inputId": "appellantTz",
                                         "inputValue": "",
-                                        "isClearable": true,
+                                        "isClearable": undefined,
                                         "isDisabled": false,
                                         "isLoading": false,
                                         "isMulti": false,
@@ -12649,7 +12646,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "appellantTz",
                                               "inputValue": "",
-                                              "isClearable": true,
+                                              "isClearable": undefined,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -14309,7 +14306,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "appellantTz",
                                               "inputValue": "",
-                                              "isClearable": true,
+                                              "isClearable": undefined,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -15451,10 +15448,10 @@ exports[`Appellant Does not allow editing emails when read-only 1`] = `
       addressLine1="9999 MISSION ST"
       addressState="CA"
       addressZip="94103"
-      name="John Smith"
+      name="Tom Brady"
     >
       <ReadOnly
-        text="John Smith
+        text="Tom Brady
 9999 MISSION ST
 SAN FRANCISCO, CA 94103"
       >
@@ -15462,7 +15459,7 @@ SAN FRANCISCO, CA 94103"
           data-css-1a5irm0=""
         >
           <pre>
-            John Smith
+            Tom Brady
 9999 MISSION ST
 SAN FRANCISCO, CA 94103
           </pre>
@@ -15633,10 +15630,10 @@ exports[`Appellant Matches snapshot with default props 1`] = `
       addressLine1="9999 MISSION ST"
       addressState="CA"
       addressZip="94103"
-      name="John Smith"
+      name="Tom Brady"
     >
       <ReadOnly
-        text="John Smith
+        text="Tom Brady
 9999 MISSION ST
 SAN FRANCISCO, CA 94103"
       >
@@ -15644,7 +15641,7 @@ SAN FRANCISCO, CA 94103"
           data-css-1a5irm0=""
         >
           <pre>
-            John Smith
+            Tom Brady
 9999 MISSION ST
 SAN FRANCISCO, CA 94103
           </pre>

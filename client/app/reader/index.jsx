@@ -16,17 +16,16 @@ class Reader extends React.PureComponent {
   routedDecisionReviewer = () => <DecisionReviewer {...this.props} />;
 
   render = () => {
-    const Router = this.props.router || BrowserRouter;
 
     return (
       <ReduxBase reducer={rootReducer}>
-        <Router basename="/reader/appeal" {...this.props.routerTestProps}>
+        <BrowserRouter basename="/reader/appeal" {...this.props.routerTestProps}>
           <Switch>
             {/* We want access to React Router's match params, so we'll wrap all possible paths in a <Route>. */}
             <Route path="/:vacolsId/documents" render={this.routedDecisionReviewer} />
             <Route path="/" render={this.routedDecisionReviewer} />
           </Switch>
-        </Router>
+        </BrowserRouter>
       </ReduxBase>
     );
   };

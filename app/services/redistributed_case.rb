@@ -17,8 +17,6 @@ class RedistributedCase
 
     if ok_to_redistribute?
       rename_existing_distributed_case!
-    # If there are open tasks, this case should not be at a judge waiting for a decision or in case storage waiting to
-    # be distributed, it should be "in" caseflow. No need to alert as the case has been fixed.
     elsif legacy_appeal_relevant_tasks.any?(&:open?)
       fix_vacols_case_location(LegacyAppeal::LOCATION_CODES[:caseflow])
       false
@@ -30,16 +28,11 @@ class RedistributedCase
   end
 
   def ok_to_redistribute?
-    # redistribute if there are no relevant tasks
-    return true if legacy_appeal_relevant_tasks.blank?
-
-    # do not redistribute if any relevant task is open (not completed or cancelled)
+    # If there is an open task, the case should be located in "CASEFLOW" and not redistributed.
     return false if legacy_appeal_relevant_tasks.any?(&:open?)
+    # redistribute if there are no relevant tasks or if they are all completed or cancelled
+    return true if legacy_appeal_relevant_tasks.all?(&:closed?)
 
-    # redistribute if all HearingTasks are cancelled
-    return true if !legacy_appeal_hearing_tasks.empty? && legacy_appeal_hearing_tasks.all?(&:cancelled?)
-
-    # be conservative; return false so that appeal is manually addressed
     false
   end
 
@@ -68,11 +61,11 @@ class RedistributedCase
   # send to Sentry but do not raise exception.
   def alert_existing_distributed_case_not_unique
     error = CannotRedistribute.new("DistributedCase already exists")
+    Raven.tags_context judge: new_distribution.judge.css_id
     Raven.capture_exception(
       error,
+      tags: { vacols_id: case_id },
       extra: {
-        vacols_id: case_id,
-        judge: new_distribution.judge.css_id,
         location: legacy_appeal.location_code,
         previous_location: legacy_appeal.location_history.last.summary
       }
@@ -91,9 +84,5 @@ class RedistributedCase
     @legacy_appeal_relevant_tasks ||= legacy_appeal.tasks.reject do |task|
       task.is_a?(TrackVeteranTask) || task.is_a?(RootTask)
     end
-  end
-
-  def legacy_appeal_hearing_tasks
-    @legacy_appeal_hearing_tasks ||= legacy_appeal_relevant_tasks.select { |task| task.is_a?(HearingTask) }
   end
 end

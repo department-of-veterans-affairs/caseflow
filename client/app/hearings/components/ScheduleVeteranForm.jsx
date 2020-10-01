@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { CENTRAL_OFFICE_HEARING, HEARING_CONVERSION_TYPES } from '../constants';
 import {
   RegionalOfficeDropdown,
   AppealHearingLocationsDropdown,
@@ -12,7 +13,6 @@ import HearingTypeDropdown from './details/HearingTypeDropdown';
 import { HearingTime } from './modalForms/HearingTime';
 import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
-import { HEARING_CONVERSION_TYPES, HEARING_REQUEST_TYPES } from '../constants';
 import { marginTop } from './details/style';
 import { isEmpty, orderBy } from 'lodash';
 
@@ -56,7 +56,7 @@ export const ScheduleVeteranForm = ({
         <React.Fragment>
 
           <div className="usa-width-one-half">
-            <ReadOnly spacing={0} label="Regional Office" text={HEARING_REQUEST_TYPES.C} />
+            <ReadOnly spacing={0} label="Regional Office" text={CENTRAL_OFFICE_HEARING} />
             <ReadOnly spacing={15} label="Hearing Location" text="Virtual" />
 
             <HearingDateDropdown

@@ -1,26 +1,23 @@
-import React, { useState } from 'react';
+import { sprintf } from 'sprintf-js';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
-import { sprintf } from 'sprintf-js';
+import React from 'react';
 
-import { marginTop, saveButton, cancelButton } from './details/style';
-import { HelperText } from './VirtualHearings/HelperText';
-import COPY from '../../../COPY';
-import { getAppellantTitle } from '../utils';
-import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
+import { HelperText } from './VirtualHearings/HelperText';
+import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
+import { getAppellantTitle } from '../utils';
+import { marginTop, saveButton, cancelButton } from './details/style';
 import Button from '../../components/Button';
+import COPY from '../../../COPY';
 
 export const HearingTypeConversionForm = ({
+  appeal,
+  isLoading,
+  onCancel,
+  onSubmit,
   type,
-  appeal
 }) => {
-  // Create and manage the loading state
-  const [loading, setLoading] = useState(false);
-
-  // reset any states
-  const reset = () => setLoading(false);
-
   // 'Appellant' or 'Veteran'
   const appellantTitle = getAppellantTitle(appeal?.appellantIsNotVeteran);
 
@@ -29,7 +26,9 @@ export const HearingTypeConversionForm = ({
   const hearing = {
     representative: appeal?.powerOfAttorney?.representative_name,
     representativeType: appeal?.powerOfAttorney?.representative_type,
-    appellantFullName: appeal?.appellantFullName
+    appellantFullName: appeal?.appellantFullName,
+    appellantIsNotVeteran: appeal?.appellantIsNotVeteran,
+    veteranFullName: appeal?.veteranFullName,
   };
 
   // veteranInfo gets loaded into redux store when case details page loads
@@ -46,20 +45,24 @@ export const HearingTypeConversionForm = ({
     readOnly: true,
     showDivider: false,
     showOnlyAppellantName: true,
+    showMissingEmailAlert: true,
     type,
     virtualHearing,
   };
 
   const convertTitle = sprintf(COPY.CONVERT_HEARING_TYPE_TITLE, type);
+  const convertSubtitle = sprintf(
+    COPY.CONVERT_HEARING_TYPE_SUBTITLE,
+    appeal?.closestRegionalOfficeLabel ?
+      `<strong>${appeal.closestRegionalOfficeLabel}</strong>` :
+      COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT
+  );
 
   return (
     <React.Fragment>
       <AppSegment filledBackground>
         <h1 className="cf-margin-bottom-0">{convertTitle}</h1>
-        <p dangerouslySetInnerHTML={
-          { __html: sprintf(COPY.CONVERT_HEARING_TYPE_SUBTITLE, appeal?.closestRegionalOfficeLabel ?? '') }
-        }
-        />
+        <p dangerouslySetInnerHTML={{ __html: convertSubtitle }} />
         <HelperText label={COPY.CONVERT_HEARING_TYPE_SUBTITLE_2} />
         <AppellantSection {...sectionProps} />
         <RepresentativeSection {...sectionProps} />
@@ -68,12 +71,7 @@ export const HearingTypeConversionForm = ({
         <Button
           name="Cancel"
           linkStyling
-          onClick={
-            () => {
-              reset();
-              history.goBack();
-            }
-          }
+          onClick={onCancel}
           styling={cancelButton}
         >
           Cancel
@@ -81,8 +79,9 @@ export const HearingTypeConversionForm = ({
         <span {...saveButton}>
           <Button
             name={convertTitle}
-            loading={loading}
+            loading={isLoading}
             className="usa-button"
+            onClick={onSubmit}
           >
             {convertTitle}
           </Button>
@@ -92,9 +91,14 @@ export const HearingTypeConversionForm = ({
   );
 };
 
+HearingTypeConversionForm.defaultProps = {
+  isLoading: false
+};
+
 HearingTypeConversionForm.propTypes = {
   appeal: PropTypes.object,
-  // Router inherited props
-  history: PropTypes.object,
-  type: PropTypes.string
+  type: PropTypes.oneOf(['Virtual']),
+  isLoading: PropTypes.bool,
+  onCancel: PropTypes.func,
+  onSubmit: PropTypes.func
 };

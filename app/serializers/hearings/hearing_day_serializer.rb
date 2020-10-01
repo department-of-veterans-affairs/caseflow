@@ -31,7 +31,7 @@ class HearingDaySerializer
 
   def self.get_readable_request_type(hearing_day, params)
     if params[:video_hearing_days_request_types].nil?
-      fail ArgumentError, "params must have video_hearing_days_request_tyeps"
+      fail ArgumentError, "params must have video_hearing_days_request_types"
     end
 
     # `video_hearing_days_request_types` should be constructed with

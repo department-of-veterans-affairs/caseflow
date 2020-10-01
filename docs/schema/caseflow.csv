@@ -158,6 +158,8 @@ cached_appeal_attributes,closest_regional_office_key,string,,,,,x,Closest region
 cached_appeal_attributes,created_at,datetime,,,,,,
 cached_appeal_attributes,docket_number,string,,,,,,
 cached_appeal_attributes,docket_type,string,,,,,x,
+cached_appeal_attributes,formally_travel,boolean,,,,,x,Determines if the hearing type was formallly travel board; only applicable to Legacy appeals
+cached_appeal_attributes,hearing_request_type,string (10),,,,,x,"Stores hearing type requested by appellant; could be one of nil, 'Video', 'Central', 'Travel', or 'Virtual'"
 cached_appeal_attributes,is_aod,boolean,,,,,x,Whether the case is Advanced on Docket
 cached_appeal_attributes,issue_count,integer,,,,,,Number of issues on the appeal.
 cached_appeal_attributes,power_of_attorney_name,string,,,,,x,'Firstname Lastname' of power of attorney
@@ -581,6 +583,14 @@ higher_level_reviews,updated_at,datetime,,,,,x,
 higher_level_reviews,uuid,uuid ∗,x,,,,x,The universally unique identifier for the Higher Level Review. Can be used to link to the claim after it is completed.
 higher_level_reviews,veteran_file_number,string ∗,x,,,,x,The file number of the Veteran that the Higher Level Review is for.
 higher_level_reviews,veteran_is_not_claimant,boolean,,,,,,"Indicates whether the Veteran is the claimant on the Higher Level Review form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased."
+ihp_drafts,,,,,,,,
+ihp_drafts,appeal_id,integer ∗ FK,x,,x,,x,Appeal id the IHP was written for
+ihp_drafts,appeal_type,string ∗,x,,,,x,Type of appeal the IHP was written for
+ihp_drafts,created_at,datetime ∗,x,,,,,Default created_at/updated_at timestamps
+ihp_drafts,id,integer (8) PK,x,x,,,,
+ihp_drafts,organization_id,integer ∗ FK,x,,x,,x,IHP writing VSO that drafted the IHP
+ihp_drafts,path,string ∗,x,,,,,Path to the IHP in the VA V: drive
+ihp_drafts,updated_at,datetime ∗,x,,,,,Default created_at/updated_at timestamps
 intakes,,,,,,,,Represents the intake of an form or request made by a veteran.
 intakes,cancel_other,string,,,,,,Notes added if a user canceled an intake for any reason other than the stock set of options.
 intakes,cancel_reason,string,,,,,,"The reason the intake was canceled. Could have been manually canceled by a user, or automatic."
@@ -873,6 +883,7 @@ request_issues,vacols_id,string,,,,,,The vacols_id of the legacy appeal that had
 request_issues,vacols_sequence_id,integer,,,,,,"The vacols_sequence_id, for the specific issue on the legacy appeal which the Claims Assistant determined to match the request issue on the Decision Review. A combination of the vacols_id (for the legacy appeal), and vacols_sequence_id (for which issue on the legacy appeal), is required to identify the issue being opted-in."
 request_issues,verified_unidentified_issue,boolean,,,,,,"A verified unidentified issue allows an issue whose rating data is missing to be intaken as a regular rating issue. In order to be marked as verified, a VSR needs to confirm that they were able to find the record of the decision for the issue."
 request_issues,veteran_participant_id,string,,,,,,The veteran participant ID. This should be unique in upstream systems and used in the future to reconcile duplicates.
+request_issues,type,string,,,,,,This determines whether the issue is a rating issue or a nonrating issue.
 request_issues_updates,,,,,,,,"Keeps track of edits to request issues on a decision review that happen after the initial intake, such as removing and adding issues.  When the decision review is processed in VBMS, this also tracks whether adding or removing contentions in VBMS for the update has succeeded."
 request_issues_updates,after_request_issue_ids,integer ∗,x,,,,,An array of the active request issue IDs after a user has finished editing a decision review. Used with before_request_issue_ids to determine appropriate actions (such as which contentions need to be added).
 request_issues_updates,attempted_at,datetime,,,,,,Timestamp for when the request issue update processing was last attempted.

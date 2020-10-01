@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_16_150837) do
+ActiveRecord::Schema.define(version: 2020_09_29_170305) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -227,6 +227,8 @@ ActiveRecord::Schema.define(version: 2020_09_16_150837) do
     t.datetime "created_at"
     t.string "docket_number"
     t.string "docket_type"
+    t.boolean "formally_travel", comment: "Determines if the hearing type was formallly travel board; only applicable to Legacy appeals"
+    t.string "hearing_request_type", limit: 10, comment: "Stores hearing type requested by appellant; could be one of nil, 'Video', 'Central', 'Travel', or 'Virtual'"
     t.boolean "is_aod", comment: "Whether the case is Advanced on Docket"
     t.integer "issue_count", comment: "Number of issues on the appeal."
     t.string "power_of_attorney_name", comment: "'Firstname Lastname' of power of attorney"
@@ -239,6 +241,7 @@ ActiveRecord::Schema.define(version: 2020_09_16_150837) do
     t.index ["closest_regional_office_city"], name: "index_cached_appeal_attributes_on_closest_regional_office_city"
     t.index ["closest_regional_office_key"], name: "index_cached_appeal_attributes_on_closest_regional_office_key"
     t.index ["docket_type"], name: "index_cached_appeal_attributes_on_docket_type"
+    t.index ["hearing_request_type", "formally_travel"], name: "index_cached_appeal_on_hearing_request_type_and_formally_travel"
     t.index ["is_aod"], name: "index_cached_appeal_attributes_on_is_aod"
     t.index ["power_of_attorney_name"], name: "index_cached_appeal_attributes_on_power_of_attorney_name"
     t.index ["suggested_hearing_location"], name: "index_cached_appeal_attributes_on_suggested_hearing_location"
@@ -764,6 +767,16 @@ ActiveRecord::Schema.define(version: 2020_09_16_150837) do
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
+  create_table "ihp_drafts", force: :cascade do |t|
+    t.integer "appeal_id", null: false, comment: "Appeal id the IHP was written for"
+    t.string "appeal_type", null: false, comment: "Type of appeal the IHP was written for"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at timestamps"
+    t.integer "organization_id", null: false, comment: "IHP writing VSO that drafted the IHP"
+    t.string "path", null: false, comment: "Path to the IHP in the VA V: drive"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at timestamps"
+    t.index ["appeal_id", "appeal_type", "organization_id"], name: "index_ihp_drafts_on_appeal_and_organization"
+  end
+
   create_table "intakes", id: :serial, comment: "Represents the intake of an form or request made by a veteran.", force: :cascade do |t|
     t.string "cancel_other", comment: "Notes added if a user canceled an intake for any reason other than the stock set of options."
     t.string "cancel_reason", comment: "The reason the intake was canceled. Could have been manually canceled by a user, or automatic."
@@ -1127,6 +1140,7 @@ ActiveRecord::Schema.define(version: 2020_09_16_150837) do
     t.text "notes", comment: "Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
     t.string "ramp_claim_id", comment: "If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
     t.datetime "rating_issue_associated_at", comment: "Timestamp when a contention and its contested rating issue are associated in VBMS."
+    t.string "type", default: "RequestIssue", comment: "Determines whether the issue is a rating issue or a nonrating issue"
     t.string "unidentified_issue_text", comment: "User entered description if the request issue is neither a rating or a nonrating issue"
     t.boolean "untimely_exemption", comment: "If the contested issue's decision date was more than a year before the receipt date, it is considered untimely (unless it is a Supplemental Claim). However, an exemption to the timeliness can be requested. If so, it is indicated here."
     t.text "untimely_exemption_notes", comment: "Notes related to the untimeliness exemption requested."

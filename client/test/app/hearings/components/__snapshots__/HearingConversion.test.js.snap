@@ -287,7 +287,6 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
             <SearchableDropdown
               clearOnSelect={false}
               hideLabel={true}
-              isClearable={true}
               label="Hearing Time"
               loading={false}
               name="optionalHearingTime0"
@@ -466,7 +465,6 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
                       defaultMenuIsOpen={false}
                       defaultValue={null}
                       inputId="optionalHearingTime0"
-                      isClearable={true}
                       isLoading={false}
                       isSearchable={true}
                       noOptionsMessage={[Function]}
@@ -641,7 +639,6 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
                         getOptionValue={[Function]}
                         inputId="optionalHearingTime0"
                         inputValue=""
-                        isClearable={true}
                         isDisabled={false}
                         isLoading={false}
                         isMulti={false}
@@ -1001,7 +998,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
                               "getOptionValue": [Function],
                               "inputId": "optionalHearingTime0",
                               "inputValue": "",
-                              "isClearable": true,
+                              "isClearable": undefined,
                               "isDisabled": false,
                               "isLoading": false,
                               "isMulti": false,
@@ -1412,7 +1409,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
                                     "getOptionValue": [Function],
                                     "inputId": "optionalHearingTime0",
                                     "inputValue": "",
-                                    "isClearable": true,
+                                    "isClearable": undefined,
                                     "isDisabled": false,
                                     "isLoading": false,
                                     "isMulti": false,
@@ -1831,7 +1828,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
                                           "getOptionValue": [Function],
                                           "inputId": "optionalHearingTime0",
                                           "inputValue": "",
-                                          "isClearable": true,
+                                          "isClearable": undefined,
                                           "isDisabled": false,
                                           "isLoading": false,
                                           "isMulti": false,
@@ -2237,7 +2234,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
                                                 "getOptionValue": [Function],
                                                 "inputId": "optionalHearingTime0",
                                                 "inputValue": "",
-                                                "isClearable": true,
+                                                "isClearable": undefined,
                                                 "isDisabled": false,
                                                 "isLoading": false,
                                                 "isMulti": false,
@@ -2504,7 +2501,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
                                                 "getOptionValue": [Function],
                                                 "inputId": "optionalHearingTime0",
                                                 "inputValue": "",
-                                                "isClearable": true,
+                                                "isClearable": undefined,
                                                 "isDisabled": false,
                                                 "isLoading": false,
                                                 "isMulti": false,
@@ -2991,7 +2988,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
                                           "getOptionValue": [Function],
                                           "inputId": "optionalHearingTime0",
                                           "inputValue": "",
-                                          "isClearable": true,
+                                          "isClearable": undefined,
                                           "isDisabled": false,
                                           "isLoading": false,
                                           "isMulti": false,
@@ -3392,7 +3389,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
                                                 "getOptionValue": [Function],
                                                 "inputId": "optionalHearingTime0",
                                                 "inputValue": "",
-                                                "isClearable": true,
+                                                "isClearable": undefined,
                                                 "isDisabled": false,
                                                 "isLoading": false,
                                                 "isMulti": false,
@@ -3804,7 +3801,7 @@ exports[`HearingConversion Displays read-only when type is virtual 1`] = `
                                                 "getOptionValue": [Function],
                                                 "inputId": "optionalHearingTime0",
                                                 "inputValue": "",
-                                                "isClearable": true,
+                                                "isClearable": undefined,
                                                 "isDisabled": false,
                                                 "isLoading": false,
                                                 "isMulti": false,
@@ -4707,7 +4704,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
             <SearchableDropdown
               clearOnSelect={false}
               hideLabel={false}
-              isClearable={true}
               label="Hearing Time"
               loading={false}
               name="optionalHearingTime0"
@@ -4886,7 +4882,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                       defaultMenuIsOpen={false}
                       defaultValue={null}
                       inputId="optionalHearingTime0"
-                      isClearable={true}
                       isLoading={false}
                       isSearchable={true}
                       noOptionsMessage={[Function]}
@@ -5061,7 +5056,6 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                         getOptionValue={[Function]}
                         inputId="optionalHearingTime0"
                         inputValue=""
-                        isClearable={true}
                         isDisabled={false}
                         isLoading={false}
                         isMulti={false}
@@ -5421,7 +5415,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                               "getOptionValue": [Function],
                               "inputId": "optionalHearingTime0",
                               "inputValue": "",
-                              "isClearable": true,
+                              "isClearable": undefined,
                               "isDisabled": false,
                               "isLoading": false,
                               "isMulti": false,
@@ -5832,7 +5826,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                     "getOptionValue": [Function],
                                     "inputId": "optionalHearingTime0",
                                     "inputValue": "",
-                                    "isClearable": true,
+                                    "isClearable": undefined,
                                     "isDisabled": false,
                                     "isLoading": false,
                                     "isMulti": false,
@@ -6251,7 +6245,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                           "getOptionValue": [Function],
                                           "inputId": "optionalHearingTime0",
                                           "inputValue": "",
-                                          "isClearable": true,
+                                          "isClearable": undefined,
                                           "isDisabled": false,
                                           "isLoading": false,
                                           "isMulti": false,
@@ -6657,7 +6651,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                                 "getOptionValue": [Function],
                                                 "inputId": "optionalHearingTime0",
                                                 "inputValue": "",
-                                                "isClearable": true,
+                                                "isClearable": undefined,
                                                 "isDisabled": false,
                                                 "isLoading": false,
                                                 "isMulti": false,
@@ -6924,7 +6918,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                                 "getOptionValue": [Function],
                                                 "inputId": "optionalHearingTime0",
                                                 "inputValue": "",
-                                                "isClearable": true,
+                                                "isClearable": undefined,
                                                 "isDisabled": false,
                                                 "isLoading": false,
                                                 "isMulti": false,
@@ -7411,7 +7405,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                           "getOptionValue": [Function],
                                           "inputId": "optionalHearingTime0",
                                           "inputValue": "",
-                                          "isClearable": true,
+                                          "isClearable": undefined,
                                           "isDisabled": false,
                                           "isLoading": false,
                                           "isMulti": false,
@@ -7812,7 +7806,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                                 "getOptionValue": [Function],
                                                 "inputId": "optionalHearingTime0",
                                                 "inputValue": "",
-                                                "isClearable": true,
+                                                "isClearable": undefined,
                                                 "isDisabled": false,
                                                 "isLoading": false,
                                                 "isMulti": false,
@@ -8224,7 +8218,7 @@ exports[`HearingConversion Matches snapshot with default props 1`] = `
                                                 "getOptionValue": [Function],
                                                 "inputId": "optionalHearingTime0",
                                                 "inputValue": "",
-                                                "isClearable": true,
+                                                "isClearable": undefined,
                                                 "isDisabled": false,
                                                 "isLoading": false,
                                                 "isMulti": false,
@@ -8702,7 +8696,6 @@ SAN FRANCISCO, CA 94103
               >
                 <SearchableDropdown
                   clearOnSelect={false}
-                  isClearable={true}
                   label="Veteran Timezone"
                   loading={false}
                   name="appellantTz"
@@ -9525,7 +9518,6 @@ SAN FRANCISCO, CA 94103
                           defaultMenuIsOpen={false}
                           defaultValue={null}
                           inputId="appellantTz"
-                          isClearable={true}
                           isDisabled={false}
                           isLoading={false}
                           isSearchable={true}
@@ -10326,7 +10318,6 @@ SAN FRANCISCO, CA 94103
                             getOptionValue={[Function]}
                             inputId="appellantTz"
                             inputValue=""
-                            isClearable={true}
                             isDisabled={false}
                             isLoading={false}
                             isMulti={false}
@@ -11934,7 +11925,7 @@ SAN FRANCISCO, CA 94103
                                   "getOptionValue": [Function],
                                   "inputId": "appellantTz",
                                   "inputValue": "",
-                                  "isClearable": true,
+                                  "isClearable": undefined,
                                   "isDisabled": false,
                                   "isLoading": false,
                                   "isMulti": false,
@@ -13593,7 +13584,7 @@ SAN FRANCISCO, CA 94103
                                         "getOptionValue": [Function],
                                         "inputId": "appellantTz",
                                         "inputValue": "",
-                                        "isClearable": true,
+                                        "isClearable": undefined,
                                         "isDisabled": false,
                                         "isLoading": false,
                                         "isMulti": false,
@@ -15260,7 +15251,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "appellantTz",
                                               "inputValue": "",
-                                              "isClearable": true,
+                                              "isClearable": undefined,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -16914,7 +16905,7 @@ SAN FRANCISCO, CA 94103
                                                     "getOptionValue": [Function],
                                                     "inputId": "appellantTz",
                                                     "inputValue": "",
-                                                    "isClearable": true,
+                                                    "isClearable": undefined,
                                                     "isDisabled": false,
                                                     "isLoading": false,
                                                     "isMulti": false,
@@ -17805,7 +17796,7 @@ SAN FRANCISCO, CA 94103
                                                     "getOptionValue": [Function],
                                                     "inputId": "appellantTz",
                                                     "inputValue": "",
-                                                    "isClearable": true,
+                                                    "isClearable": undefined,
                                                     "isDisabled": false,
                                                     "isLoading": false,
                                                     "isMulti": false,
@@ -19540,7 +19531,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "appellantTz",
                                               "inputValue": "",
-                                              "isClearable": true,
+                                              "isClearable": undefined,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -21189,7 +21180,7 @@ SAN FRANCISCO, CA 94103
                                                     "getOptionValue": [Function],
                                                     "inputId": "appellantTz",
                                                     "inputValue": "",
-                                                    "isClearable": true,
+                                                    "isClearable": undefined,
                                                     "isDisabled": false,
                                                     "isLoading": false,
                                                     "isMulti": false,
@@ -22849,7 +22840,7 @@ SAN FRANCISCO, CA 94103
                                                     "getOptionValue": [Function],
                                                     "inputId": "appellantTz",
                                                     "inputValue": "",
-                                                    "isClearable": true,
+                                                    "isClearable": undefined,
                                                     "isDisabled": false,
                                                     "isLoading": false,
                                                     "isMulti": false,
@@ -24052,7 +24043,6 @@ SAN FRANCISCO, CA 94103
               >
                 <SearchableDropdown
                   clearOnSelect={false}
-                  isClearable={true}
                   label="POA/Representative Timezone"
                   loading={false}
                   name="representativeTz"
@@ -24875,7 +24865,6 @@ SAN FRANCISCO, CA 94103
                           defaultMenuIsOpen={false}
                           defaultValue={null}
                           inputId="representativeTz"
-                          isClearable={true}
                           isDisabled={false}
                           isLoading={false}
                           isSearchable={true}
@@ -25676,7 +25665,6 @@ SAN FRANCISCO, CA 94103
                             getOptionValue={[Function]}
                             inputId="representativeTz"
                             inputValue=""
-                            isClearable={true}
                             isDisabled={false}
                             isLoading={false}
                             isMulti={false}
@@ -27284,7 +27272,7 @@ SAN FRANCISCO, CA 94103
                                   "getOptionValue": [Function],
                                   "inputId": "representativeTz",
                                   "inputValue": "",
-                                  "isClearable": true,
+                                  "isClearable": undefined,
                                   "isDisabled": false,
                                   "isLoading": false,
                                   "isMulti": false,
@@ -28943,7 +28931,7 @@ SAN FRANCISCO, CA 94103
                                         "getOptionValue": [Function],
                                         "inputId": "representativeTz",
                                         "inputValue": "",
-                                        "isClearable": true,
+                                        "isClearable": undefined,
                                         "isDisabled": false,
                                         "isLoading": false,
                                         "isMulti": false,
@@ -30610,7 +30598,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "representativeTz",
                                               "inputValue": "",
-                                              "isClearable": true,
+                                              "isClearable": undefined,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -32264,7 +32252,7 @@ SAN FRANCISCO, CA 94103
                                                     "getOptionValue": [Function],
                                                     "inputId": "representativeTz",
                                                     "inputValue": "",
-                                                    "isClearable": true,
+                                                    "isClearable": undefined,
                                                     "isDisabled": false,
                                                     "isLoading": false,
                                                     "isMulti": false,
@@ -33155,7 +33143,7 @@ SAN FRANCISCO, CA 94103
                                                     "getOptionValue": [Function],
                                                     "inputId": "representativeTz",
                                                     "inputValue": "",
-                                                    "isClearable": true,
+                                                    "isClearable": undefined,
                                                     "isDisabled": false,
                                                     "isLoading": false,
                                                     "isMulti": false,
@@ -34890,7 +34878,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "representativeTz",
                                               "inputValue": "",
-                                              "isClearable": true,
+                                              "isClearable": undefined,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -36539,7 +36527,7 @@ SAN FRANCISCO, CA 94103
                                                     "getOptionValue": [Function],
                                                     "inputId": "representativeTz",
                                                     "inputValue": "",
-                                                    "isClearable": true,
+                                                    "isClearable": undefined,
                                                     "isDisabled": false,
                                                     "isLoading": false,
                                                     "isMulti": false,
@@ -38199,7 +38187,7 @@ SAN FRANCISCO, CA 94103
                                                     "getOptionValue": [Function],
                                                     "inputId": "representativeTz",
                                                     "inputValue": "",
-                                                    "isClearable": true,
+                                                    "isClearable": undefined,
                                                     "isDisabled": false,
                                                     "isLoading": false,
                                                     "isMulti": false,
@@ -39258,7 +39246,6 @@ SAN FRANCISCO, CA 94103
               >
                 <SearchableDropdown
                   clearOnSelect={false}
-                  isClearable={true}
                   label="VLJ"
                   loading={false}
                   name="judgeDropdown"
@@ -39297,7 +39284,6 @@ SAN FRANCISCO, CA 94103
                           defaultMenuIsOpen={false}
                           defaultValue={null}
                           inputId="judgeDropdown"
-                          isClearable={true}
                           isLoading={false}
                           isSearchable={true}
                           noOptionsMessage={[Function]}
@@ -39333,7 +39319,6 @@ SAN FRANCISCO, CA 94103
                             getOptionValue={[Function]}
                             inputId="judgeDropdown"
                             inputValue=""
-                            isClearable={true}
                             isDisabled={false}
                             isLoading={false}
                             isMulti={false}
@@ -39412,7 +39397,7 @@ SAN FRANCISCO, CA 94103
                                   "getOptionValue": [Function],
                                   "inputId": "judgeDropdown",
                                   "inputValue": "",
-                                  "isClearable": true,
+                                  "isClearable": undefined,
                                   "isDisabled": false,
                                   "isLoading": false,
                                   "isMulti": false,
@@ -39542,7 +39527,7 @@ SAN FRANCISCO, CA 94103
                                         "getOptionValue": [Function],
                                         "inputId": "judgeDropdown",
                                         "inputValue": "",
-                                        "isClearable": true,
+                                        "isClearable": undefined,
                                         "isDisabled": false,
                                         "isLoading": false,
                                         "isMulti": false,
@@ -39680,7 +39665,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "judgeDropdown",
                                               "inputValue": "",
-                                              "isClearable": true,
+                                              "isClearable": undefined,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -39809,7 +39794,7 @@ SAN FRANCISCO, CA 94103
                                                     "getOptionValue": [Function],
                                                     "inputId": "judgeDropdown",
                                                     "inputValue": "",
-                                                    "isClearable": true,
+                                                    "isClearable": undefined,
                                                     "isDisabled": false,
                                                     "isLoading": false,
                                                     "isMulti": false,
@@ -39940,7 +39925,7 @@ SAN FRANCISCO, CA 94103
                                                     "getOptionValue": [Function],
                                                     "inputId": "judgeDropdown",
                                                     "inputValue": "",
-                                                    "isClearable": true,
+                                                    "isClearable": undefined,
                                                     "isDisabled": false,
                                                     "isLoading": false,
                                                     "isMulti": false,
@@ -40146,7 +40131,7 @@ SAN FRANCISCO, CA 94103
                                               "getOptionValue": [Function],
                                               "inputId": "judgeDropdown",
                                               "inputValue": "",
-                                              "isClearable": true,
+                                              "isClearable": undefined,
                                               "isDisabled": false,
                                               "isLoading": false,
                                               "isMulti": false,
@@ -40235,180 +40220,6 @@ SAN FRANCISCO, CA 94103
                                             <div
                                               className="cf-select__indicators css-1hb7zxy-IndicatorsContainer"
                                             >
-                                              <ClearIndicator
-                                                clearValue={[Function]}
-                                                cx={[Function]}
-                                                getStyles={[Function]}
-                                                getValue={[Function]}
-                                                hasValue={true}
-                                                innerProps={
-                                                  Object {
-                                                    "aria-hidden": "true",
-                                                    "onMouseDown": [Function],
-                                                    "onTouchEnd": [Function],
-                                                  }
-                                                }
-                                                isFocused={false}
-                                                isMulti={false}
-                                                isRtl={false}
-                                                options={Array []}
-                                                selectOption={[Function]}
-                                                selectProps={
-                                                  Object {
-                                                    "backspaceRemovesValue": true,
-                                                    "blurInputOnSelect": true,
-                                                    "cache": false,
-                                                    "captureMenuScroll": false,
-                                                    "classNamePrefix": "cf-select",
-                                                    "closeMenuOnScroll": false,
-                                                    "closeMenuOnSelect": true,
-                                                    "components": Object {},
-                                                    "controlShouldRenderValue": true,
-                                                    "defaultOptions": undefined,
-                                                    "escapeClearsValue": false,
-                                                    "filterOption": [Function],
-                                                    "formatGroupLabel": [Function],
-                                                    "getOptionLabel": [Function],
-                                                    "getOptionValue": [Function],
-                                                    "inputId": "judgeDropdown",
-                                                    "inputValue": "",
-                                                    "isClearable": true,
-                                                    "isDisabled": false,
-                                                    "isLoading": false,
-                                                    "isMulti": false,
-                                                    "isOptionDisabled": [Function],
-                                                    "isRtl": false,
-                                                    "isSearchable": true,
-                                                    "loadOptions": undefined,
-                                                    "loadingMessage": [Function],
-                                                    "maxMenuHeight": 300,
-                                                    "menuIsOpen": false,
-                                                    "menuPlacement": "bottom",
-                                                    "menuPosition": "absolute",
-                                                    "menuShouldBlockScroll": false,
-                                                    "menuShouldScrollIntoView": true,
-                                                    "minMenuHeight": 140,
-                                                    "noOptionsMessage": [Function],
-                                                    "onBlurResetsInput": false,
-                                                    "onChange": [Function],
-                                                    "onInputChange": [Function],
-                                                    "onMenuClose": [Function],
-                                                    "onMenuOpen": [Function],
-                                                    "openMenuOnClick": true,
-                                                    "openMenuOnFocus": false,
-                                                    "options": Array [],
-                                                    "pageSize": 5,
-                                                    "placeholder": "Select...",
-                                                    "screenReaderStatus": [Function],
-                                                    "searchable": undefined,
-                                                    "shouldKeyDownEventCreateNewOption": [Function],
-                                                    "styles": Object {
-                                                      "input": [Function],
-                                                    },
-                                                    "tabIndex": "0",
-                                                    "tabSelectsValue": true,
-                                                    "value": Object {
-                                                      "label": null,
-                                                      "value": null,
-                                                    },
-                                                  }
-                                                }
-                                                setValue={[Function]}
-                                                theme={
-                                                  Object {
-                                                    "borderRadius": 4,
-                                                    "colors": Object {
-                                                      "danger": "#DE350B",
-                                                      "dangerLight": "#FFBDAD",
-                                                      "neutral0": "hsl(0, 0%, 100%)",
-                                                      "neutral10": "hsl(0, 0%, 90%)",
-                                                      "neutral20": "hsl(0, 0%, 80%)",
-                                                      "neutral30": "hsl(0, 0%, 70%)",
-                                                      "neutral40": "hsl(0, 0%, 60%)",
-                                                      "neutral5": "hsl(0, 0%, 95%)",
-                                                      "neutral50": "hsl(0, 0%, 50%)",
-                                                      "neutral60": "hsl(0, 0%, 40%)",
-                                                      "neutral70": "hsl(0, 0%, 30%)",
-                                                      "neutral80": "hsl(0, 0%, 20%)",
-                                                      "neutral90": "hsl(0, 0%, 10%)",
-                                                      "primary": "#2684FF",
-                                                      "primary25": "#DEEBFF",
-                                                      "primary50": "#B2D4FF",
-                                                      "primary75": "#4C9AFF",
-                                                    },
-                                                    "spacing": Object {
-                                                      "baseUnit": 4,
-                                                      "controlHeight": 38,
-                                                      "menuGutter": 8,
-                                                    },
-                                                  }
-                                                }
-                                              >
-                                                <EmotionCssPropInternal
-                                                  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="ClearIndicator"
-                                                  __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
-                                                  aria-hidden="true"
-                                                  className="cf-select__indicator cf-select__clear-indicator"
-                                                  css={
-                                                    Object {
-                                                      ":hover": Object {
-                                                        "color": "hsl(0, 0%, 60%)",
-                                                      },
-                                                      "boxSizing": "border-box",
-                                                      "color": "hsl(0, 0%, 80%)",
-                                                      "display": "flex",
-                                                      "label": "indicatorContainer",
-                                                      "padding": 8,
-                                                      "transition": "color 150ms",
-                                                    }
-                                                  }
-                                                  onMouseDown={[Function]}
-                                                  onTouchEnd={[Function]}
-                                                >
-                                                  <div
-                                                    aria-hidden="true"
-                                                    className="cf-select__indicator cf-select__clear-indicator css-tlfecz-indicatorContainer"
-                                                    onMouseDown={[Function]}
-                                                    onTouchEnd={[Function]}
-                                                  >
-                                                    <CrossIcon>
-                                                      <Svg
-                                                        size={20}
-                                                      >
-                                                        <EmotionCssPropInternal
-                                                          __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Svg"
-                                                          __EMOTION_TYPE_PLEASE_DO_NOT_USE__="svg"
-                                                          aria-hidden="true"
-                                                          css={
-                                                            Object {
-                                                              "map": "/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImluZGljYXRvcnMuanMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBa0JJIiwiZmlsZSI6ImluZGljYXRvcnMuanMiLCJzb3VyY2VzQ29udGVudCI6WyIvLyBAZmxvd1xuLyoqIEBqc3gganN4ICovXG5pbXBvcnQgeyB0eXBlIE5vZGUgfSBmcm9tICdyZWFjdCc7XG5pbXBvcnQgeyBqc3gsIGtleWZyYW1lcyB9IGZyb20gJ0BlbW90aW9uL2NvcmUnO1xuXG5pbXBvcnQgdHlwZSB7IENvbW1vblByb3BzLCBUaGVtZSB9IGZyb20gJy4uL3R5cGVzJztcblxuLy8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09XG4vLyBEcm9wZG93biAmIENsZWFyIEljb25zXG4vLyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cblxuY29uc3QgU3ZnID0gKHsgc2l6ZSwgLi4ucHJvcHMgfTogeyBzaXplOiBudW1iZXIgfSkgPT4gKFxuICA8c3ZnXG4gICAgaGVpZ2h0PXtzaXplfVxuICAgIHdpZHRoPXtzaXplfVxuICAgIHZpZXdCb3g9XCIwIDAgMjAgMjBcIlxuICAgIGFyaWEtaGlkZGVuPVwidHJ1ZVwiXG4gICAgZm9jdXNhYmxlPVwiZmFsc2VcIlxuICAgIGNzcz17e1xuICAgICAgZGlzcGxheTogJ2lubGluZS1ibG9jaycsXG4gICAgICBmaWxsOiAnY3VycmVudENvbG9yJyxcbiAgICAgIGxpbmVIZWlnaHQ6IDEsXG4gICAgICBzdHJva2U6ICdjdXJyZW50Q29sb3InLFxuICAgICAgc3Ryb2tlV2lkdGg6IDAsXG4gICAgfX1cbiAgICB7Li4ucHJvcHN9XG4gIC8+XG4pO1xuXG5leHBvcnQgY29uc3QgQ3Jvc3NJY29uID0gKHByb3BzOiBhbnkpID0+IChcbiAgPFN2ZyBzaXplPXsyMH0gey4uLnByb3BzfT5cbiAgICA8cGF0aCBkPVwiTTE0LjM0OCAxNC44NDljLTAuNDY5IDAuNDY5LTEuMjI5IDAuNDY5LTEuNjk3IDBsLTIuNjUxLTMuMDMwLTIuNjUxIDMuMDI5Yy0wLjQ2OSAwLjQ2OS0xLjIyOSAwLjQ2OS0xLjY5NyAwLTAuNDY5LTAuNDY5LTAuNDY5LTEuMjI5IDAtMS42OTdsMi43NTgtMy4xNS0yLjc1OS0zLjE1MmMtMC40NjktMC40NjktMC40NjktMS4yMjggMC0xLjY5N3MxLjIyOC0wLjQ2OSAxLjY5NyAwbDIuNjUyIDMuMDMxIDIuNjUxLTMuMDMxYzAuNDY5LTAuNDY5IDEuMjI4LTAuNDY5IDEuNjk3IDBzMC40NjkgMS4yMjkgMCAxLjY5N2wtMi43NTggMy4xNTIgMi43NTggMy4xNWMwLjQ2OSAwLjQ2OSAwLjQ2OSAxLjIyOSAwIDEuNjk4elwiIC8+XG4gIDwvU3ZnPlxuKTtcbmV4cG9ydCBjb25zdCBEb3duQ2hldnJvbiA9IChwcm9wczogYW55KSA9PiAoXG4gIDxTdmcgc2l6ZT17MjB9IHsuLi5wcm9wc30+XG4gICAgPHBhdGggZD1cIk00LjUxNiA3LjU0OGMwLjQzNi0wLjQ0NiAxLjA0My0wLjQ4MSAxLjU3NiAwbDMuOTA4IDMuNzQ3IDMuOTA4LTMuNzQ3YzAuNTMzLTAuNDgxIDEuMTQxLTAuNDQ2IDEuNTc0IDAgMC40MzYgMC40NDUgMC40MDggMS4xOTcgMCAxLjYxNS0wLjQwNiAwLjQxOC00LjY5NSA0LjUwMi00LjY5NSA0LjUwMi0wLjIxNyAwLjIyMy0wLjUwMiAwLjMzNS0wLjc4NyAwLjMzNXMtMC41Ny0wLjExMi0wLjc4OS0wLjMzNWMwIDAtNC4yODctNC4wODQtNC42OTUtNC41MDJzLTAuNDM2LTEuMTcgMC0xLjYxNXpcIiAvPlxuICA8L1N2Zz5cbik7XG5cbi8vID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuLy8gRHJvcGRvd24gJiBDbGVhciBCdXR0b25zXG4vLyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cblxuZXhwb3J0IHR5cGUgSW5kaWNhdG9yUHJvcHMgPSBDb21tb25Qcm9wcyAmIHtcbiAgLyoqIFRoZSBjaGlsZHJlbiB0byBiZSByZW5kZXJlZCBpbnNpZGUgdGhlIGluZGljYXRvci4gKi9cbiAgY2hpbGRyZW46IE5vZGUsXG4gIC8qKiBQcm9wcyB0aGF0IHdpbGwgYmUgcGFzc2VkIG9uIHRvIHRoZSBjaGlsZHJlbi4gKi9cbiAgaW5uZXJQcm9wczogYW55LFxuICAvKiogVGhlIGZvY3VzZWQgc3RhdGUgb2YgdGhlIHNlbGVjdC4gKi9cbiAgaXNGb2N1c2VkOiBib29sZWFuLFxuICAvKiogV2hldGhlciB0aGUgdGV4dCBpcyByaWdodCB0byBsZWZ0ICovXG4gIGlzUnRsOiBib29sZWFuLFxufTtcblxuY29uc3QgYmFzZUNTUyA9ICh7XG4gIGlzRm9jdXNlZCxcbiAgdGhlbWU6IHtcbiAgICBzcGFjaW5nOiB7IGJhc2VVbml0IH0sXG4gICAgY29sb3JzLFxuICB9LFxufTogSW5kaWNhdG9yUHJvcHMpID0+ICh7XG4gIGxhYmVsOiAnaW5kaWNhdG9yQ29udGFpbmVyJyxcbiAgY29sb3I6IGlzRm9jdXNlZCA/IGNvbG9ycy5uZXV0cmFsNjAgOiBjb2xvcnMubmV1dHJhbDIwLFxuICBkaXNwbGF5OiAnZmxleCcsXG4gIHBhZGRpbmc6IGJhc2VVbml0ICogMixcbiAgdHJhbnNpdGlvbjogJ2NvbG9yIDE1MG1zJyxcblxuICAnOmhvdmVyJzoge1xuICAgIGNvbG9yOiBpc0ZvY3VzZWQgPyBjb2xvcnMubmV1dHJhbDgwIDogY29sb3JzLm5ldXRyYWw0MCxcbiAgfSxcbn0pO1xuXG5leHBvcnQgY29uc3QgZHJvcGRvd25JbmRpY2F0b3JDU1MgPSBiYXNlQ1NTO1xuZXhwb3J0IGNvbnN0IERyb3Bkb3duSW5kaWNhdG9yID0gKHByb3BzOiBJbmRpY2F0b3JQcm9wcykgPT4ge1xuICBjb25zdCB7IGNoaWxkcmVuLCBjbGFzc05hbWUsIGN4LCBnZXRTdHlsZXMsIGlubmVyUHJvcHMgfSA9IHByb3BzO1xuICByZXR1cm4gKFxuICAgIDxkaXZcbiAgICAgIHsuLi5pbm5lclByb3BzfVxuICAgICAgY3NzPXtnZXRTdHlsZXMoJ2Ryb3Bkb3duSW5kaWNhdG9yJywgcHJvcHMpfVxuICAgICAgY2xhc3NOYW1lPXtjeChcbiAgICAgICAge1xuICAgICAgICAgIGluZGljYXRvcjogdHJ1ZSxcbiAgICAgICAgICAnZHJvcGRvd24taW5kaWNhdG9yJzogdHJ1ZSxcbiAgICAgICAgfSxcbiAgICAgICAgY2xhc3NOYW1lXG4gICAgICApfVxuICAgID5cbiAgICAgIHtjaGlsZHJlbiB8fCA8RG93bkNoZXZyb24gLz59XG4gICAgPC9kaXY+XG4gICk7XG59O1xuXG5leHBvcnQgY29uc3QgY2xlYXJJbmRpY2F0b3JDU1MgPSBiYXNlQ1NTO1xuZXhwb3J0IGNvbnN0IENsZWFySW5kaWNhdG9yID0gKHByb3BzOiBJbmRpY2F0b3JQcm9wcykgPT4ge1xuICBjb25zdCB7IGNoaWxkcmVuLCBjbGFzc05hbWUsIGN4LCBnZXRTdHlsZXMsIGlubmVyUHJvcHMgfSA9IHByb3BzO1xuICByZXR1cm4gKFxuICAgIDxkaXZcbiAgICAgIHsuLi5pbm5lclByb3BzfVxuICAgICAgY3NzPXtnZXRTdHlsZXMoJ2NsZWFySW5kaWNhdG9yJywgcHJvcHMpfVxuICAgICAgY2xhc3NOYW1lPXtjeChcbiAgICAgICAge1xuICAgICAgICAgIGluZGljYXRvcjogdHJ1ZSxcbiAgICAgICAgICAnY2xlYXItaW5kaWNhdG9yJzogdHJ1ZSxcbiAgICAgICAgfSxcbiAgICAgICAgY2xhc3NOYW1lXG4gICAgICApfVxuICAgID5cbiAgICAgIHtjaGlsZHJlbiB8fCA8Q3Jvc3NJY29uIC8+fVxuICAgIDwvZGl2PlxuICApO1xufTtcblxuLy8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09XG4vLyBTZXBhcmF0b3Jcbi8vID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuXG50eXBlIFNlcGFyYXRvclN0YXRlID0geyBpc0Rpc2FibGVkOiBib29sZWFuIH07XG5cbmV4cG9ydCBjb25zdCBpbmRpY2F0b3JTZXBhcmF0b3JDU1MgPSAoe1xuICBpc0Rpc2FibGVkLFxuICB0aGVtZToge1xuICAgIHNwYWNpbmc6IHsgYmFzZVVuaXQgfSxcbiAgICBjb2xvcnMsXG4gIH0sXG59OiBDb21tb25Qcm9wcyAmIFNlcGFyYXRvclN0YXRlKSA9PiAoe1xuICBsYWJlbDogJ2luZGljYXRvclNlcGFyYXRvcicsXG4gIGFsaWduU2VsZjogJ3N0cmV0Y2gnLFxuICBiYWNrZ3JvdW5kQ29sb3I6IGlzRGlzYWJsZWQgPyBjb2xvcnMubmV1dHJhbDEwIDogY29sb3JzLm5ldXRyYWwyMCxcbiAgbWFyZ2luQm90dG9tOiBiYXNlVW5pdCAqIDIsXG4gIG1hcmdpblRvcDogYmFzZVVuaXQgKiAyLFxuICB3aWR0aDogMSxcbn0pO1xuXG5leHBvcnQgY29uc3QgSW5kaWNhdG9yU2VwYXJhdG9yID0gKHByb3BzOiBJbmRpY2F0b3JQcm9wcykgPT4ge1xuICBjb25zdCB7IGNsYXNzTmFtZSwgY3gsIGdldFN0eWxlcywgaW5uZXJQcm9wcyB9ID0gcHJvcHM7XG4gIHJldHVybiAoXG4gICAgPHNwYW5cbiAgICAgIHsuLi5pbm5lclByb3BzfVxuICAgICAgY3NzPXtnZXRTdHlsZXMoJ2luZGljYXRvclNlcGFyYXRvcicsIHByb3BzKX1cbiAgICAgIGNsYXNzTmFtZT17Y3goeyAnaW5kaWNhdG9yLXNlcGFyYXRvcic6IHRydWUgfSwgY2xhc3NOYW1lKX1cbiAgICAvPlxuICApO1xufTtcblxuLy8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09XG4vLyBMb2FkaW5nXG4vLyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cblxuY29uc3QgbG9hZGluZ0RvdEFuaW1hdGlvbnMgPSBrZXlmcmFtZXNgXG4gIDAlLCA4MCUsIDEwMCUgeyBvcGFjaXR5OiAwOyB9XG4gIDQwJSB7IG9wYWNpdHk6IDE7IH1cbmA7XG5cbmV4cG9ydCBjb25zdCBsb2FkaW5nSW5kaWNhdG9yQ1NTID0gKHtcbiAgaXNGb2N1c2VkLFxuICBzaXplLFxuICB0aGVtZToge1xuICAgIGNvbG9ycyxcbiAgICBzcGFjaW5nOiB7IGJhc2VVbml0IH0sXG4gIH0sXG59OiB7XG4gIGlzRm9jdXNlZDogYm9vbGVhbixcbiAgc2l6ZTogbnVtYmVyLFxuICB0aGVtZTogVGhlbWUsXG59KSA9PiAoe1xuICBsYWJlbDogJ2xvYWRpbmdJbmRpY2F0b3InLFxuICBjb2xvcjogaXNGb2N1c2VkID8gY29sb3JzLm5ldXRyYWw2MCA6IGNvbG9ycy5uZXV0cmFsMjAsXG4gIGRpc3BsYXk6ICdmbGV4JyxcbiAgcGFkZGluZzogYmFzZVVuaXQgKiAyLFxuICB0cmFuc2l0aW9uOiAnY29sb3IgMTUwbXMnLFxuICBhbGlnblNlbGY6ICdjZW50ZXInLFxuICBmb250U2l6ZTogc2l6ZSxcbiAgbGluZUhlaWdodDogMSxcbiAgbWFyZ2luUmlnaHQ6IHNpemUsXG4gIHRleHRBbGlnbjogJ2NlbnRlcicsXG4gIHZlcnRpY2FsQWxpZ246ICdtaWRkbGUnLFxufSk7XG5cbnR5cGUgRG90UHJvcHMgPSB7IGRlbGF5OiBudW1iZXIsIG9mZnNldDogYm9vbGVhbiB9O1xuY29uc3QgTG9hZGluZ0RvdCA9ICh7IGRlbGF5LCBvZmZzZXQgfTogRG90UHJvcHMpID0+IChcbiAgPHNwYW5cbiAgICBjc3M9e3tcbiAgICAgIGFuaW1hdGlvbjogYCR7bG9hZGluZ0RvdEFuaW1hdGlvbnN9IDFzIGVhc2UtaW4tb3V0ICR7ZGVsYXl9bXMgaW5maW5pdGU7YCxcbiAgICAgIGJhY2tncm91bmRDb2xvcjogJ2N1cnJlbnRDb2xvcicsXG4gICAgICBib3JkZXJSYWRpdXM6ICcxZW0nLFxuICAgICAgZGlzcGxheTogJ2lubGluZS1ibG9jaycsXG4gICAgICBtYXJnaW5MZWZ0OiBvZmZzZXQgPyAnMWVtJyA6IG51bGwsXG4gICAgICBoZWlnaHQ6ICcxZW0nLFxuICAgICAgdmVydGljYWxBbGlnbjogJ3RvcCcsXG4gICAgICB3aWR0aDogJzFlbScsXG4gICAgfX1cbiAgLz5cbik7XG5cbmV4cG9ydCB0eXBlIExvYWRpbmdJY29uUHJvcHMgPSB7XG4gIC8qKiBQcm9wcyB0aGF0IHdpbGwgYmUgcGFzc2VkIG9uIHRvIHRoZSBjaGlsZHJlbi4gKi9cbiAgaW5uZXJQcm9wczogYW55LFxuICAvKiogVGhlIGZvY3VzZWQgc3RhdGUgb2YgdGhlIHNlbGVjdC4gKi9cbiAgaXNGb2N1c2VkOiBib29sZWFuLFxuICAvKiogV2hldGhlciB0aGUgdGV4dCBpcyByaWdodCB0byBsZWZ0ICovXG4gIGlzUnRsOiBib29sZWFuLFxufSAmIENvbW1vblByb3BzICYge1xuICAgIC8qKiBTZXQgc2l6ZSBvZiB0aGUgY29udGFpbmVyLiAqL1xuICAgIHNpemU6IG51bWJlcixcbiAgfTtcbmV4cG9ydCBjb25zdCBMb2FkaW5nSW5kaWNhdG9yID0gKHByb3BzOiBMb2FkaW5nSWNvblByb3BzKSA9PiB7XG4gIGNvbnN0IHsgY2xhc3NOYW1lLCBjeCwgZ2V0U3R5bGVzLCBpbm5lclByb3BzLCBpc1J0bCB9ID0gcHJvcHM7XG5cbiAgcmV0dXJuIChcbiAgICA8ZGl2XG4gICAgICB7Li4uaW5uZXJQcm9wc31cbiAgICAgIGNzcz17Z2V0U3R5bGVzKCdsb2FkaW5nSW5kaWNhdG9yJywgcHJvcHMpfVxuICAgICAgY2xhc3NOYW1lPXtjeChcbiAgICAgICAge1xuICAgICAgICAgIGluZGljYXRvcjogdHJ1ZSxcbiAgICAgICAgICAnbG9hZGluZy1pbmRpY2F0b3InOiB0cnVlLFxuICAgICAgICB9LFxuICAgICAgICBjbGFzc05hbWVcbiAgICAgICl9XG4gICAgPlxuICAgICAgPExvYWRpbmdEb3QgZGVsYXk9ezB9IG9mZnNldD17aXNSdGx9IC8+XG4gICAgICA8TG9hZGluZ0RvdCBkZWxheT17MTYwfSBvZmZzZXQgLz5cbiAgICAgIDxMb2FkaW5nRG90IGRlbGF5PXszMjB9IG9mZnNldD17IWlzUnRsfSAvPlxuICAgIDwvZGl2PlxuICApO1xufTtcbkxvYWRpbmdJbmRpY2F0b3IuZGVmYXVsdFByb3BzID0geyBzaXplOiA0IH07XG4iXX0= */",
-                                                              "name": "19bqh2r",
-                                                              "styles": "display:inline-block;fill:currentColor;line-height:1;stroke:currentColor;stroke-width:0;",
-                                                            }
-                                                          }
-                                                          focusable="false"
-                                                          height={20}
-                                                          viewBox="0 0 20 20"
-                                                          width={20}
-                                                        >
-                                                          <svg
-                                                            aria-hidden="true"
-                                                            className="css-6q0nyr-Svg"
-                                                            focusable="false"
-                                                            height={20}
-                                                            viewBox="0 0 20 20"
-                                                            width={20}
-                                                          >
-                                                            <path
-                                                              d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z"
-                                                            />
-                                                          </svg>
-                                                        </EmotionCssPropInternal>
-                                                      </Svg>
-                                                    </CrossIcon>
-                                                  </div>
-                                                </EmotionCssPropInternal>
-                                              </ClearIndicator>
                                               <IndicatorSeparator
                                                 clearValue={[Function]}
                                                 cx={[Function]}
@@ -40440,7 +40251,7 @@ SAN FRANCISCO, CA 94103
                                                     "getOptionValue": [Function],
                                                     "inputId": "judgeDropdown",
                                                     "inputValue": "",
-                                                    "isClearable": true,
+                                                    "isClearable": undefined,
                                                     "isDisabled": false,
                                                     "isLoading": false,
                                                     "isMulti": false,
@@ -40571,7 +40382,7 @@ SAN FRANCISCO, CA 94103
                                                     "getOptionValue": [Function],
                                                     "inputId": "judgeDropdown",
                                                     "inputValue": "",
-                                                    "isClearable": true,
+                                                    "isClearable": undefined,
                                                     "isDisabled": false,
                                                     "isLoading": false,
                                                     "isMulti": false,
