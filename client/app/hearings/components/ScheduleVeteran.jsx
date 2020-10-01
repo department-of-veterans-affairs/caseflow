@@ -262,6 +262,19 @@ export const ScheduleVeteran = ({
     }
   };
 
+  // Method to handle changing the form fields when toggling between virtual
+  const convertToVirtual = () => {
+    if (virtual) {
+      return props.onChangeFormData('assignHearing', {
+        virtualHearing: null
+      });
+    }
+
+    return props.onChangeFormData('assignHearing', {
+      virtualHearing: { status: 'pending' }
+    });
+  };
+
   return (
     <div {...regionalOfficeSection}>
 
@@ -290,6 +303,7 @@ export const ScheduleVeteran = ({
             hearing={hearing}
             appellantTitle={appellantTitle}
             onChange={(key, value) => props.onChangeFormData('assignHearing', { [key]: value })}
+            convertToVirtual={convertToVirtual}
           />
         )}
 
