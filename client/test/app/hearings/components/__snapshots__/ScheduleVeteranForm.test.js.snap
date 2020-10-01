@@ -192,18 +192,8 @@ exports[`ScheduleVeteranForm Auto-selects virtual if a virtual hearing was reque
             "hearingId": null,
           },
         ],
-        Array [
-          "virtualHearing",
-          Object {
-            "status": "pending",
-          },
-        ],
       ],
       "results": Array [
-        Object {
-          "type": "return",
-          "value": undefined,
-        },
         Object {
           "type": "return",
           "value": undefined,
@@ -220,7 +210,6 @@ exports[`ScheduleVeteranForm Auto-selects virtual if a virtual hearing was reque
     <HearingTypeDropdown
       enableFullPageConversion={true}
       originalRequestType="Video"
-      update={[Function]}
       virtualHearing={
         Object {
           "status": "pending",
@@ -15793,7 +15782,6 @@ exports[`ScheduleVeteranForm Displays Virtual Hearing form fields when type is c
     <HearingTypeDropdown
       enableFullPageConversion={true}
       originalRequestType="Video"
-      update={[Function]}
       virtualHearing={
         Object {
           "aliasWithHost": "BVA0000009@care.evn.va.gov",
@@ -15822,7 +15810,6 @@ exports[`ScheduleVeteranForm Displays Virtual Hearing form fields when type is c
     <ReadOnly
       label="Regional Office"
       spacing={0}
-      text="Central"
     />
     <ReadOnly
       label="Hearing Location"
@@ -16106,7 +16093,6 @@ exports[`ScheduleVeteranForm Displays error messages when errors are present 1`]
     <HearingTypeDropdown
       enableFullPageConversion={true}
       originalRequestType="Video"
-      update={[Function]}
       virtualHearing={null}
     />
   </div>
@@ -16170,7 +16156,6 @@ exports[`ScheduleVeteranForm Displays hearing form when regional office is selec
     <HearingTypeDropdown
       enableFullPageConversion={true}
       originalRequestType="Video"
-      update={[Function]}
       virtualHearing={null}
     />
   </div>
@@ -16233,7 +16218,6 @@ exports[`ScheduleVeteranForm Matches snapshot with default props 1`] = `
     <HearingTypeDropdown
       enableFullPageConversion={true}
       originalRequestType="Video"
-      update={[Function]}
       virtualHearing={null}
     />
   </div>
