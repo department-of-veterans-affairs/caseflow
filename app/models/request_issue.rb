@@ -235,9 +235,6 @@ class RequestIssue < CaseflowRecord
   end
 
   def rating?
-    return true if type == "RatingRequestIssue"
-    return false if type == "NonRatingRequestIssue"
-
     !!associated_rating_issue? ||
       !!previous_rating_issue? ||
       !!associated_rating_decision? ||
