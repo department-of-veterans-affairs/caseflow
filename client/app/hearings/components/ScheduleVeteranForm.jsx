@@ -1,10 +1,9 @@
 /* eslint-disable camelcase */
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import {
   TRAVEL_BOARD_HEARING,
   VIDEO_HEARING,
-  VIRTUAL_HEARING,
   HEARING_CONVERSION_TYPES
 } from '../constants';
 import {
@@ -49,7 +48,6 @@ export const ScheduleVeteranForm = ({
     // The default is video hearing if the appeal isn't associated with an RO.
     return appeal?.readableOriginalHearingRequestType ?? VIDEO_HEARING;
   };
-  const originalRequestType = getOriginalRequestType();
 
   // Set the hearing request to Video unless the RO is Central
   const video = ro !== 'C';
@@ -60,7 +58,7 @@ export const ScheduleVeteranForm = ({
         <HearingTypeDropdown
           enableFullPageConversion
           update={convertToVirtual}
-          originalRequestType={originalRequestType}
+          originalRequestType={getOriginalRequestType()}
           virtualHearing={hearing?.virtualHearing}
         />
       </div>
@@ -68,7 +66,7 @@ export const ScheduleVeteranForm = ({
       {virtual ? (
         <React.Fragment>
           <div className="usa-width-one-half">
-            <ReadOnly spacing={0} label="Regional Office" text={regionalOfficeDetails(ro).label} />
+            <ReadOnly spacing={0} label="Regional Office" text={regionalOfficeDetails(ro)?.label} />
             <ReadOnly spacing={15} label="Hearing Location" text="Virtual" />
             <HearingDateDropdown
               errorMessage={errors?.hearingDay}
