@@ -53,8 +53,16 @@ describe CavcRemand do
     end
 
     context "When missing required attributes" do
-      let(:created_by) { nil }
+      context "for remands mandates" do
+        let(:remand_subtype) { nil }
 
+        it "does not save the record" do
+          expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+        end
+      end
+
+      let(:cavc_decision_type) { Constants::CAVC_DECISION_TYPES.keys.second }
+      let(:created_by) { nil }
       it "does not save the record" do
         expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
       end
