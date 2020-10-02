@@ -3,6 +3,7 @@ import { Route } from 'react-router';
 import PageRoute from '../../components/PageRoute';
 
 import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
+import { RecommendDocketSwitchContainer } from './recommendDocketSwitch/RecommendDocketSwitchContainer';
 
 const PageRoutes = [
   <PageRoute
@@ -11,8 +12,7 @@ const PageRoutes = [
     }`}
     title={`${TASK_ACTIONS.DOCKET_CHANGE_SEND_TO_JUDGE.label} | Caseflow`}
   >
-    {/* Replace with actual component */}
-    <h2>Send to Judge</h2>
+    <RecommendDocketSwitchContainer />
   </PageRoute>,
 
   <PageRoute
