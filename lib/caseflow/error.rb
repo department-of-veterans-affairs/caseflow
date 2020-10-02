@@ -157,10 +157,10 @@ module Caseflow::Error
 
   class JmrAppealDecisionIssueMismatch < SerializableError
     def initialize(args)
-      @code = args[:code] || 500
-      @decision_issue_ids = args[:decision_issue_ids] || nil
-      @appeal_id = args[:appeal_id] || nil
-      @message = args[:message] || "JMR remands must cover all Appeal Decision Issues."
+      @code = args[:code] || 422
+      @decision_issue_ids = args[:decision_issue_ids]
+      @appeal_id = args[:appeal_id]
+      @message = args[:message] || "JMR remands must include all appeal decision issues."
     end
   end
 

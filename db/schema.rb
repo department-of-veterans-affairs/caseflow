@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_23_200721) do
+ActiveRecord::Schema.define(version: 2020_09_29_170305) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -471,6 +471,22 @@ ActiveRecord::Schema.define(version: 2020_09_23_200721) do
     t.string "status"
     t.datetime "updated_at", null: false
     t.index ["updated_at"], name: "index_distributions_on_updated_at"
+  end
+
+  create_table "docket_changes", comment: "Stores the disposition and associated data for Docket Change motions", force: :cascade do |t|
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.string "disposition", comment: "Possible options are granted, partially_granted, and denied"
+    t.string "docket_type", comment: "The new docket"
+    t.integer "granted_request_issue_ids", comment: "When a docket change is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior request issue IDs.", array: true
+    t.bigint "new_docket_stream_id", comment: "References the new appeal stream with the updated docket; initially null until created by workflow"
+    t.bigint "old_docket_stream_id", null: false, comment: "References the original appeal stream with old docket"
+    t.datetime "receipt_date", null: false
+    t.bigint "task_id", null: false, comment: "The task that triggered the switch"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.index ["created_at"], name: "index_docket_changes_on_created_at"
+    t.index ["new_docket_stream_id"], name: "index_docket_changes_on_new_docket_stream_id"
+    t.index ["old_docket_stream_id"], name: "index_docket_changes_on_old_docket_stream_id"
+    t.index ["task_id"], name: "index_docket_changes_on_task_id"
   end
 
   create_table "docket_snapshots", id: :serial, force: :cascade do |t|
@@ -1159,6 +1175,7 @@ ActiveRecord::Schema.define(version: 2020_09_23_200721) do
     t.text "notes", comment: "Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
     t.string "ramp_claim_id", comment: "If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
     t.datetime "rating_issue_associated_at", comment: "Timestamp when a contention and its contested rating issue are associated in VBMS."
+    t.string "type", default: "RequestIssue", comment: "Determines whether the issue is a rating issue or a nonrating issue"
     t.string "unidentified_issue_text", comment: "User entered description if the request issue is neither a rating or a nonrating issue"
     t.boolean "untimely_exemption", comment: "If the contested issue's decision date was more than a year before the receipt date, it is considered untimely (unless it is a Supplemental Claim). However, an exemption to the timeliness can be requested. If so, it is indicated here."
     t.text "untimely_exemption_notes", comment: "Notes related to the untimeliness exemption requested."
@@ -1530,6 +1547,9 @@ ActiveRecord::Schema.define(version: 2020_09_23_200721) do
   add_foreign_key "certifications", "users"
   add_foreign_key "claims_folder_searches", "users"
   add_foreign_key "dispatch_tasks", "users"
+  add_foreign_key "docket_changes", "appeals", column: "new_docket_stream_id"
+  add_foreign_key "docket_changes", "appeals", column: "old_docket_stream_id"
+  add_foreign_key "docket_changes", "tasks"
   add_foreign_key "document_views", "users"
   add_foreign_key "end_product_establishments", "users"
   add_foreign_key "hearing_days", "users", column: "created_by_id"

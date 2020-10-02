@@ -768,14 +768,19 @@
   "VIRTUAL_HEARING_TIMEZONE_REQUIRED": "Timezone is required to send email notifications.",
   "MISSING_EMAIL_ALERT_MESSAGE": "If you have the %s's email address, enter it in VBMS. The email will be required to send notifications when you schedule the hearing.",
   "CONVERT_HEARING_TYPE_TITLE": "Convert Hearing To %s",
-  "CONVERT_HEARING_TYPE_SUBTITLE": "The hearing request will appear in the scheduling queue for %s.",
+  "CONVERT_HEARING_TYPE_SUBTITLE": "The hearing request will appear in the scheduling queue for the %s.",
   "CONVERT_HEARING_TYPE_SUBTITLE_2": "Review and update the following information in VBMS if needed. Caseflow won't send email notifications until you schedule the hearing.",
-  "CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT": "the appropriate regional office",
+  "CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT": "appropriate regional office",
+  "CONVERT_HEARING_TYPE_SUCCESS": "You have successfully converted %s's hearing to virtual",
+  "CONVERT_HEARING_TYPE_SUCCESS_DETAIL": "The hearing request is in the scheduling queue for the %s",
 
   "JUDGE_TEAM_REMOVE_JUDGE_ERROR": "Cannot remove a judge from their judge team.",
   "JUDGE_TEAM_ATTORNEY_RIGHTS_ERROR": "Cannot edit attorney rights on non-attorneys",
 
   "HEARING_UPDATE_SUCCESSFUL_TITLE": "You have successfully updated %s's hearing.",
+
+  "DEFAULT_UPDATE_ERROR_MESSAGE_TITLE": "Unable to save changes",
+  "DEFAULT_UPDATE_ERROR_MESSAGE_DETAIL": "An unknown error occurred",
 
   "VIRTUAL_HEARING_PROGRESS_ALERTS": {
     "CHANGED_TO_VIRTUAL": {

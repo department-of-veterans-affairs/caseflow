@@ -350,6 +350,17 @@ distributions,started_at,datetime,,,,,,when the Distribution job commenced
 distributions,statistics,json,,,,,,
 distributions,status,string,,,,,,
 distributions,updated_at,datetime ∗,x,,,,x,
+docket_changes,,,,,,,,Stores the disposition and associated data for Docket Change motions
+docket_changes,created_at,datetime ∗,x,,,,x,Standard created_at/updated_at timestamps
+docket_changes,disposition,string ∗,x,,,,,"Possible options are granted, partially_granted, and denied"
+docket_changes,docket_type,string,,,,,,The new docket
+docket_changes,granted_request_issue_ids,integer,,,,,,"When a docket change is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior request issue IDs."
+docket_changes,id,integer (8) PK,x,x,,,,
+docket_changes,new_docket_stream_id,integer (8) FK,,,x,,x,References the new appeal stream with the updated docket; initially null until created by workflow
+docket_changes,old_docket_stream_id,integer (8) ∗ FK,x,,x,,x,References the original appeal stream with old docket
+docket_changes,receipt_date,datetime ∗,x,,,,,
+docket_changes,task_id,integer (8) ∗ FK,x,,x,,x,The task that triggered the switch
+docket_changes,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 docket_snapshots,,,,,,,,
 docket_snapshots,created_at,datetime,,,,,,
 docket_snapshots,docket_count,integer,,,,,,
@@ -892,6 +903,7 @@ request_issues,nonrating_issue_description,string,,,,,,The user entered descript
 request_issues,notes,text,,,,,,"Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
 request_issues,ramp_claim_id,string,,,,,,"If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
 request_issues,rating_issue_associated_at,datetime,,,,,,Timestamp when a contention and its contested rating issue are associated in VBMS.
+request_issues,type,string,,,,,,Determines whether the issue is a rating issue or a nonrating issue
 request_issues,unidentified_issue_text,string,,,,,,User entered description if the request issue is neither a rating or a nonrating issue
 request_issues,untimely_exemption,boolean,,,,,,"If the contested issue's decision date was more than a year before the receipt date, it is considered untimely (unless it is a Supplemental Claim). However, an exemption to the timeliness can be requested. If so, it is indicated here."
 request_issues,untimely_exemption_notes,text,,,,,,Notes related to the untimeliness exemption requested.
