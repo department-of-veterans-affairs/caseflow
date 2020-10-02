@@ -36,10 +36,13 @@ export const AppellantSection = ({
   const showTimezoneField = virtual && !video;
 
   // determine whether to show a missing email underneath readonly email
-  const showMissingAlert = readOnly && showMissingEmailAlert && isUndefined(virtualHearing?.appellantEmail);
+  const showMissingAlert = readOnly && showMissingEmailAlert && !virtualHearing?.appellantEmail;
 
   return (
     <VirtualHearingSection label={appellantTitle} showDivider={showDivider}>
+      {/*
+        * Appellant Name and Address
+        */}
       {showOnlyAppellantName ? (
         <ReadOnly
           label={`${appellantTitle} Name`}
@@ -55,6 +58,9 @@ export const AppellantSection = ({
             addressZip={hearing?.appellantZip}
           />
         )}
+      {/*
+        * Timezone fields
+        */}
       {showTimezoneField && (
         <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
           <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
@@ -71,6 +77,9 @@ export const AppellantSection = ({
           </div>
         </div>
       )}
+      {/*
+        * Email fields
+        */}
       <div id="email-section" className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
           <VirtualHearingEmail
