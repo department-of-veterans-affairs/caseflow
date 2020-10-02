@@ -9,7 +9,7 @@ class CreateCavcRemand < Caseflow::Migration
       t.boolean "represented_by_attorney", null: false, comment: "Whether or not the appellant was represented by an attorney"
       t.string "cavc_judge_full_name", null: false, comment: "CAVC judge that passed the judgement on the remand"
       t.string "cavc_decision_type", null: false, comment: "CAVC decision type. Expecting 'remand', 'straight_reversal', or 'death_dismissal'"
-      t.string "remand_subtype", comment: "Type of remand. If the cavc_decision_type is 'remand', expecting one of 'jmp', 'jmpr', or 'mdr'". Otherwise, this can be null.
+      t.string "remand_subtype", comment: "Type of remand. If the cavc_decision_type is 'remand', expecting one of 'jmp', 'jmpr', or 'mdr'. Otherwise, this can be null."
       t.date "decision_date", null: false, comment: "Date CAVC issued a decision, according to the CAVC"
       t.date "judgement_date", comment: "Date CAVC issued a judgement, according to the CAVC"
       t.date "mandate_date", comment: "Date that CAVC reported the mandate was given"
