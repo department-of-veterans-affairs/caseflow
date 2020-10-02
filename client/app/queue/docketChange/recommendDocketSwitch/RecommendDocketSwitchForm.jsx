@@ -23,6 +23,10 @@ const schema = yup.object().shape({
     oneOf(dispositions).
     required(),
   hyperlink: yup.string(),
+  judge: yup.
+    object().
+    shape({ label: yup.string().required(), value: yup.number().required() }).
+    required(),
 });
 
 const TIMELY_OPTIONS = [
@@ -36,9 +40,9 @@ export const RecommendDocketSwitchForm = ({
   onCancel,
   onSubmit,
 }) => {
-  const { register, handleSubmit, errors, formState, control } = useForm({
+  const { register, handleSubmit, formState, control } = useForm({
     resolver: yupResolver(schema),
-    mode: 'onBlur',
+    mode: 'onChange',
   });
 
   return (
