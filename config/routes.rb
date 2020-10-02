@@ -127,6 +127,7 @@ Rails.application.routes.draw do
       get 'tasks', to: "tasks#for_appeal"
       patch 'update'
       post 'work_mode', to: "work_modes#create"
+      post 'cavc_remand', to: "cavc_remands#create"
     end
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
