@@ -5,8 +5,8 @@
 # IHPs are a chance for VSOs to make final arguments before a case is sent to the Board.
 # BVA typically (but not always) waits for an IHP to be submitted before making a decision.
 #
-# If an appeal is not in the Evidence Submission or Hearing docket, this task is automatically created as a child
-# of DistributionTask if the representing VSO `should_write_ihp?(appeal)` -- see `IhpTasksFactory.create_ihp_tasks!`.
+# If an appeal is in the Direct Review docket, this task is automatically created as a child of DistributionTask if the 
+# representing VSO `should_write_ihp?(appeal)` -- see `IhpTasksFactory.create_ihp_tasks!`.
 #
 # For an Evidence Submission docket, this task is created as the child of DistributionTask
 # after the 90 evidence submission window is complete.

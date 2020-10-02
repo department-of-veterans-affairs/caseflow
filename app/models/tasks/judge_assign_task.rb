@@ -10,8 +10,8 @@
 #
 # Expected parent task: RootTask
 #
-# Expected child task: JudgeAssignTask can have one or more AttorneyTask children,
-# one or more ColocatedTask children, or no child tasks at all.
+# Expected child task: JudgeAssignTask can have one or more ColocatedTask children or no child tasks at all.
+# Historically, it can have one or more AttorneyTask children, but AttorneyTasks should now be under JudgeDecisionReviewTasks.
 
 class JudgeAssignTask < JudgeTask
   def additional_available_actions(_user)
