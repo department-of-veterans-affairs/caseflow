@@ -29,7 +29,7 @@ class CavcRemand < CaseflowRecord
   }
 
   def decision_issue_ids_match_appeal_decision_issues
-    if appeal.decision_issues.map(&:id).to_set != decision_issue_ids.to_set
+    unless (appeal.decision_issues.map(&:id) - decision_issue_ids).empty?
       fail Caseflow::Error::JmrAppealDecisionIssueMismatch, message: "JMR remands must address all decision issues"
     end
   end
