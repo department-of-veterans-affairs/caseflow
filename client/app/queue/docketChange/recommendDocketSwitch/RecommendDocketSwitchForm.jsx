@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import { useForm, Controller } from 'react-hook-form';
@@ -36,14 +36,33 @@ const TIMELY_OPTIONS = [
 
 export const RecommendDocketSwitchForm = ({
   claimantName,
-  judgeOptions,
+  defaultJudgeId,
+  judgeOptions = [],
   onCancel,
   onSubmit,
 }) => {
-  const { register, handleSubmit, formState, control } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState,
+    control,
+    setValue,
+  } = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
   });
+
+  const judgeDefault = useMemo(
+    () =>
+      judgeOptions.find(
+        (opt) => defaultJudgeId && opt.value === defaultJudgeId
+      ),
+    [defaultJudgeId, judgeOptions]
+  );
+
+  useEffect(() => {
+    setValue('judge', judgeDefault);
+  }, [judgeDefault]);
 
   return (
     <form
@@ -88,6 +107,7 @@ export const RecommendDocketSwitchForm = ({
         <Controller
           as={SearchableDropdown}
           control={control}
+          defaultValue={judgeDefault}
           name="judge"
           label="Assign to judge"
           searchable
@@ -124,6 +144,7 @@ export const RecommendDocketSwitchForm = ({
 
 RecommendDocketSwitchForm.propTypes = {
   claimantName: PropTypes.string.isRequired,
+  defaultJudgeId: PropTypes.number,
   judgeOptions: PropTypes.array.isRequired,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func.isRequired,
