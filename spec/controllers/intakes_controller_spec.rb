@@ -133,9 +133,8 @@ RSpec.describe IntakesController, :postgres do
           intake = Intake.new(user_id: current_user.id, started_at: Time.zone.now)
           intake.save!
           allow_any_instance_of(Intake).to receive(:complete!).and_raise(unknown_error)
-          expect do
-            post :complete, params: { id: intake.id }
-          end.to raise_error(Caseflow::Error::EstablishClaimFailedInVBMS)
+          post :complete, params: { id: intake.id }
+          expect(response.status).to eq(500)
         end
       end
 

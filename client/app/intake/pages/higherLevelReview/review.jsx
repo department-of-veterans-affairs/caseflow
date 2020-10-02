@@ -55,7 +55,7 @@ class Review extends React.PureComponent {
     return <div>
       <h1>Review { veteranName }'s { FORM_TYPES.HIGHER_LEVEL_REVIEW.name }</h1>
 
-      { reviewIntakeError && <ErrorAlert /> }
+      { reviewIntakeError && <ErrorAlert {...reviewIntakeError} /> }
       { showInvalidVeteranError && <ErrorAlert errorCode="veteran_not_valid" errorData={veteranInvalidFields} /> }
 
       <BenefitType
@@ -123,7 +123,7 @@ Review.propTypes = {
   sameOfficeError: PropTypes.string,
   legacyOptInApproved: PropTypes.string,
   legacyOptInApprovedError: PropTypes.string,
-  reviewIntakeError: PropTypes.string,
+  reviewIntakeError: PropTypes.object,
   veteranValid: PropTypes.bool,
   veteranInvalidFields: PropTypes.object,
   setBenefitType: PropTypes.func,
