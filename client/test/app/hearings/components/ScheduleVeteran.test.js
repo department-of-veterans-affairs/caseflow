@@ -19,7 +19,6 @@ import { queueWrapper, appealsData } from 'test/data/stores/queueStore';
 import Button from 'app/components/Button';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { formatDateStr } from 'app/util/DateUtil';
-import { HEARING_REQUEST_TYPES } from 'app/hearings/constants';
 import Alert from 'app/components/Alert';
 import { AppellantSection } from 'app/hearings/components/VirtualHearings/AppellantSection';
 import { RepresentativeSection } from 'app/hearings/components/VirtualHearings/RepresentativeSection';
@@ -27,6 +26,8 @@ import { ScheduleVeteranForm } from 'app/hearings/components/ScheduleVeteranForm
 import ApiUtil from 'app/util/ApiUtil';
 
 import * as uiActions from 'app/queue/uiReducer/uiActions';
+
+import { VIDEO_HEARING } from '../../../../app/hearings/constants';
 
 jest.mock('app/queue/uiReducer/uiActions');
 import * as utils from 'app/hearings/utils';
@@ -409,7 +410,7 @@ describe('ScheduleVeteran', () => {
       ),
       title: `You have successfully assigned ${
         amaAppeal.appellantFullName
-      } to a ${HEARING_REQUEST_TYPES.V} hearing on ${formatDateStr(
+      } to a ${VIDEO_HEARING} hearing on ${formatDateStr(
         scheduleHearingDetails.hearingDay.hearingDate,
         'YYYY-MM-DD',
         'MM/DD/YYYY'
