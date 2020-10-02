@@ -80,8 +80,8 @@ RSpec.describe CavcRemandsController, type: :controller do
         subject
 
         expect(response.status).to eq(403)
-        expect(JSON.parse(response.body)["errors"][0]["title"]).to
-        eq("Only Litigation Support users can create CAVC Remands")
+        expect(JSON.parse(response.body)["errors"][0]["title"])
+          .to eq("Only Litigation Support users can create CAVC Remands")
       end
     end
   end
