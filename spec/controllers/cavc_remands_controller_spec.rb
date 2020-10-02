@@ -11,7 +11,6 @@ RSpec.describe CavcRemandsController, type: :controller do
     LitigationSupport.singleton.users.first
   end
 
-
   describe "POST /appeals/:appeal_id/cavc_remands" do
     let(:appeal) { create(:appeal) }
     let(:appeal_id) { appeal.id }
@@ -53,14 +52,13 @@ RSpec.describe CavcRemandsController, type: :controller do
       }
     end
 
-
     subject { post :create, params: params }
 
     context "with a Lit Support User" do
       context "with insufficient parameters" do
         it "does not create the CAVC remand" do
           params.delete(:cavc_docket_number)
-          expect{ subject }.to raise_error do |error|
+          expect { subject }.to raise_error do |error|
             expect(error).to be_a(ActionController::ParameterMissing)
           end
         end
@@ -79,9 +77,11 @@ RSpec.describe CavcRemandsController, type: :controller do
     context "without a Lit Support User" do
       it "does not create the CAVC remand" do
         User.authenticate!(user: create(:user))
-        expect{ subject }.to raise_error do |error|
-          expect(error).to be_a(ActionController::ParameterMissing)
-        end
+        subject
+
+        expect(response.status).to eq(403)
+        expect(JSON.parse(response.body)["errors"][0]["title"]).to
+        eq("Only Litigation Support users can create CAVC Remands")
       end
     end
   end
