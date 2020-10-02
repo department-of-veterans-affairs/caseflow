@@ -31,6 +31,8 @@ export const RadioField = (props) => {
     id,
     className,
     label,
+    inputRef,
+    inputProps,
     name,
     options,
     value,
@@ -91,6 +93,8 @@ export const RadioField = (props) => {
               // eslint-disable-next-line no-undefined
               checked={controlled ? value === option.value : undefined}
               disabled={Boolean(option.disabled)}
+              ref={inputRef}
+              {...inputProps}
             />
             <label
               className={option.disabled ? 'disabled' : ''}
