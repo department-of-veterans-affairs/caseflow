@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { sprintf } from 'sprintf-js';
-import { isUndefined } from 'lodash';
 
 import COPY from '../../../../COPY';
 import Alert from '../../../components/Alert';
