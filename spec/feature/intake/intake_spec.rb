@@ -148,7 +148,6 @@ feature "Intake", :all_dbs do
 
     scenario "Search for a veteran but search throws an unhandled exception" do
       expect_any_instance_of(Intake).to receive(:start!).and_raise("random error")
-      allow(Raven).to receive(:last_event_id).and_return("sentry_event_id")
       visit "/intake"
       select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
       safe_click ".cf-submit.usa-button"
@@ -160,7 +159,7 @@ feature "Intake", :all_dbs do
 
       expect(page).to have_current_path("/intake/search")
       expect(page).to have_content("Something went wrong")
-      expect(page).to have_content("Error code sentry_event_id")
+      expect(page).to have_content("Error code 00000000000000000123456789abcdef")
     end
 
     scenario "Search for a veteran with an incident flash" do

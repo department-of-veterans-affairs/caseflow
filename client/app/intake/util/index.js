@@ -14,8 +14,8 @@ export const getClaimantError = (responseErrorCodes) => {
 };
 
 export const getPageError = (responseErrorPayload) => {
-  if (_.get(responseErrorPayload.responseErrorCodes.other, 0) === 'unknown_error') {
-    return { errorCode: 'default', errorUUID: responseErrorPayload.errorUUID };
+  if (responseErrorPayload.responseErrorCodes.other?.[0] === 'unknown_error') {
+    return { errorCode: null, errorUUID: responseErrorPayload.errorUUID };
   }
 };
 
