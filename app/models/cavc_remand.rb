@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Record to store information captured when processing a cavc remand in caseflow
+# Model to store information captured when processing a form for an appeal remanded by CAVC
 
 class CavcRemand < CaseflowRecord
   belongs_to :created_by, class_name: "User"
@@ -29,7 +29,7 @@ class CavcRemand < CaseflowRecord
 
   def decision_issue_ids_match_appeal_decision_issues
     if appeal.decision_issues.map(&:id).to_set != decision_issue_ids.to_set
-      fail Caseflow::Error::JmrAppealDecisionIssueMismatch, message: "JMR Remands must address all Decision Issues"
+      fail Caseflow::Error::JmrAppealDecisionIssueMismatch, message: "JMR remands must address all decision issues"
     end
   end
 end

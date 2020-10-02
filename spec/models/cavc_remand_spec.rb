@@ -52,7 +52,7 @@ describe CavcRemand do
       params.each_key { |key| expect(subject.send(key)).to eq params[key] }
     end
 
-    context "when missing required attributes" do
+    context "When missing required attributes" do
       let(:created_by) { nil }
 
       it "does not save the record" do
