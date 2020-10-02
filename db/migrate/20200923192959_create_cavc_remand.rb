@@ -12,7 +12,7 @@ class CreateCavcRemand < Caseflow::Migration
       t.string "remand_subtype", comment: "Type of remand. If the cavc_decision_type is 'remand', expecting one of 'jmp', 'jmpr', or 'mdr'". Otherwise, this can be null.
       t.date "decision_date", null: false, comment: "Date CAVC issued a decision, according to the CAVC"
       t.date "judgement_date", comment: "Date CAVC issued a judgement, according to the CAVC"
-      t.date "mandate_date", comment: "Date mandate was ready, according to the CAVC"
+      t.date "mandate_date", comment: "Date that CAVC reported the mandate was given"
       t.bigint "decision_issue_ids", default: [], array: true, comment: "Decision issues being remanded; IDs refer to decision_issues table. For a JMR, all decision issues on the previous appeal will be remanded. For a JMPR, only some"
       t.string "instructions", null: false, comment: "Instructions and context provided upon creation of the remand record"
 
