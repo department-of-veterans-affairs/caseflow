@@ -1,7 +1,7 @@
 class CreateCavcRemand < Caseflow::Migration
   def change
     create_table :cavc_remands do |t|
-      t.bigint "appeal_id", null: false, comment: "Appeal that CAVC is remanding"
+      t.bigint "appeal_id", null: false, comment: "Appeal that CAVC has remanded"
       t.bigint "created_by_id", null: false, comment: "User that created this record"
       t.bigint "updated_by_id", null: false, comment: "User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created."
 
