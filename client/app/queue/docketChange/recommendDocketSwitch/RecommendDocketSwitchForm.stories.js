@@ -2,6 +2,11 @@ import React from 'react';
 
 import { RecommendDocketSwitchForm } from './RecommendDocketSwitchForm';
 
+const judgeOptions = [
+  { value: 1, label: 'Judge 1' },
+  { value: 2, label: 'Judge 2' },
+];
+
 export default {
   title: 'Queue/Docket Change/RecommendDocketSwitchForm',
   component: RecommendDocketSwitchForm,
@@ -9,6 +14,7 @@ export default {
   parameters: {},
   args: {
     claimantName: 'Jane Doe',
+    judgeOptions,
   },
   argTypes: {
     onCancel: { action: 'cancel' },

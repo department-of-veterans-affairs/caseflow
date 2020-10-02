@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 
@@ -12,8 +12,17 @@ export const RecommendDocketSwitchContainer = () => {
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
+  const judges = useSelector((state) => state.queue.judges);
+  const judgeOptions = useMemo(
+    () =>
+      Object.values(judges).map(({ id: value, display_name: label }) => ({
+        label,
+        value,
+      })),
+    [judges]
+  );
 
   const cancelLink = `/queue/appeals/${task.externalAppealId}`;
 
-  return <RecommendDocketSwitchForm cancelLink={cancelLink} />;
+  return <RecommendDocketSwitchForm cancelLink={cancelLink} judgeOptions={judgeOptions} />;
 };

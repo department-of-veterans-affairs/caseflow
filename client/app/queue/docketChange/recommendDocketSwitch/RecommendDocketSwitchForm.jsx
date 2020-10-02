@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers';
 import * as yup from 'yup';
 
@@ -10,8 +10,10 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Button from '../../../components/Button';
 import { sprintf } from 'sprintf-js';
 import { dispositionOptions, dispositions } from '../constants';
+import TextField from '../../../components/TextField';
 import TextareaField from '../../../components/TextareaField';
 import RadioField from '../../../components/RadioField';
+import SearchableDropdown from '../../../components/SearchableDropdown';
 
 const schema = yup.object().shape({
   summary: yup.string(),
@@ -30,10 +32,11 @@ const TIMELY_OPTIONS = [
 
 export const RecommendDocketSwitchForm = ({
   claimantName,
+  judgeOptions,
   onCancel,
   onSubmit,
 }) => {
-  const { register, handleSubmit, errors, formState } = useForm({
+  const { register, handleSubmit, errors, formState, control } = useForm({
     resolver: yupResolver(schema),
     mode: 'onBlur',
   });
@@ -70,6 +73,25 @@ export const RecommendDocketSwitchForm = ({
           strongLabel
           vertical
         />
+
+        <TextField
+          inputRef={register}
+          name="hyperlink"
+          label="Insert hyperlink to draft letter"
+          strongLabel
+        />
+
+        <Controller
+          as={SearchableDropdown}
+          control={control}
+          name="judge"
+          label="Assign to judge"
+          searchable
+          options={judgeOptions}
+          placeholder="Select judge"
+          styling={{ style: { width: '30rem' } }}
+          strongLabel
+        />
       </AppSegment>
       <div className="controls cf-app-segment">
         <Button
@@ -98,6 +120,7 @@ export const RecommendDocketSwitchForm = ({
 
 RecommendDocketSwitchForm.propTypes = {
   claimantName: PropTypes.string.isRequired,
+  judgeOptions: PropTypes.array.isRequired,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func.isRequired,
 };
