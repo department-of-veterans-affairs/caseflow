@@ -83,8 +83,6 @@ describe CavcRemand do
         expect { subject }.to raise_error(Caseflow::Error::JmrAppealDecisionIssueMismatch)
       end
     end
-
-
     shared_examples "works for all remand subtypes" do
       context "when remand subtype is MDR" do
         let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.mdr }
