@@ -333,6 +333,17 @@ distributions,started_at,datetime,,,,,,when the Distribution job commenced
 distributions,statistics,json,,,,,,
 distributions,status,string,,,,,,
 distributions,updated_at,datetime ∗,x,,,,x,
+docket_changes,,,,,,,,Stores the disposition and associated data for Docket Change motions
+docket_changes,created_at,datetime ∗,x,,,,x,Standard created_at/updated_at timestamps
+docket_changes,disposition,string ∗,x,,,,,"Possible options are granted, partially_granted, and denied"
+docket_changes,docket_type,string,,,,,,The new docket
+docket_changes,granted_request_issue_ids,integer,,,,,,"When a docket change is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior request issue IDs."
+docket_changes,id,integer (8) PK,x,x,,,,
+docket_changes,new_docket_stream_id,integer (8) FK,,,x,,x,References the new appeal stream with the updated docket; initially null until created by workflow
+docket_changes,old_docket_stream_id,integer (8) ∗ FK,x,,x,,x,References the original appeal stream with old docket
+docket_changes,receipt_date,datetime ∗,x,,,,,
+docket_changes,task_id,integer (8) ∗ FK,x,,x,,x,The task that triggered the switch
+docket_changes,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 docket_snapshots,,,,,,,,
 docket_snapshots,created_at,datetime,,,,,,
 docket_snapshots,docket_count,integer,,,,,,
@@ -588,7 +599,7 @@ ihp_drafts,appeal_id,integer ∗ FK,x,,x,,x,Appeal id the IHP was written for
 ihp_drafts,appeal_type,string ∗,x,,,,x,Type of appeal the IHP was written for
 ihp_drafts,created_at,datetime ∗,x,,,,,Default created_at/updated_at timestamps
 ihp_drafts,id,integer (8) PK,x,x,,,,
-ihp_drafts,organization_id,integer ∗ FK,x,,x,,x,IHP writing VSO that drafted the IHP
+ihp_drafts,organization_id,integer ∗ FK,x,,x,,x,IHP-writing VSO that drafted the IHP
 ihp_drafts,path,string ∗,x,,,,,Path to the IHP in the VA V: drive
 ihp_drafts,updated_at,datetime ∗,x,,,,,Default created_at/updated_at timestamps
 intakes,,,,,,,,Represents the intake of an form or request made by a veteran.
@@ -883,6 +894,7 @@ request_issues,vacols_id,string,,,,,,The vacols_id of the legacy appeal that had
 request_issues,vacols_sequence_id,integer,,,,,,"The vacols_sequence_id, for the specific issue on the legacy appeal which the Claims Assistant determined to match the request issue on the Decision Review. A combination of the vacols_id (for the legacy appeal), and vacols_sequence_id (for which issue on the legacy appeal), is required to identify the issue being opted-in."
 request_issues,verified_unidentified_issue,boolean,,,,,,"A verified unidentified issue allows an issue whose rating data is missing to be intaken as a regular rating issue. In order to be marked as verified, a VSR needs to confirm that they were able to find the record of the decision for the issue."
 request_issues,veteran_participant_id,string,,,,,,The veteran participant ID. This should be unique in upstream systems and used in the future to reconcile duplicates.
+request_issues,type,string,,,,,,This determines whether the issue is a rating issue or a nonrating issue.
 request_issues_updates,,,,,,,,"Keeps track of edits to request issues on a decision review that happen after the initial intake, such as removing and adding issues.  When the decision review is processed in VBMS, this also tracks whether adding or removing contentions in VBMS for the update has succeeded."
 request_issues_updates,after_request_issue_ids,integer ∗,x,,,,,An array of the active request issue IDs after a user has finished editing a decision review. Used with before_request_issue_ids to determine appropriate actions (such as which contentions need to be added).
 request_issues_updates,attempted_at,datetime,,,,,,Timestamp for when the request issue update processing was last attempted.

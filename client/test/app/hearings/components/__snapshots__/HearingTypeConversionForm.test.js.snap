@@ -92,6 +92,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
       "withdrawn": false,
     }
   }
+  isLoading={false}
   type="Virtual"
 >
   <AppSegment
@@ -109,7 +110,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
       <p
         dangerouslySetInnerHTML={
           Object {
-            "__html": "The hearing request will appear in the scheduling queue for <strong>Nashville Regional office</strong>.",
+            "__html": "The hearing request will appear in the scheduling queue for the <strong>Nashville Regional office</strong>.",
           }
         }
       />
@@ -127,8 +128,10 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
         hearing={
           Object {
             "appellantFullName": "Abellona Valtas",
+            "appellantIsNotVeteran": false,
             "representative": "Attorney McAttorneyFace",
             "representativeType": "Attorney",
+            "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
@@ -234,8 +237,10 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
         hearing={
           Object {
             "appellantFullName": "Abellona Valtas",
+            "appellantIsNotVeteran": false,
             "representative": "Attorney McAttorneyFace",
             "representativeType": "Attorney",
+            "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
@@ -330,7 +335,6 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
       linkStyling={true}
       loading={false}
       name="Cancel"
-      onClick={[Function]}
       styling={
         Object {
           "data-css-14x0t8z": "",
@@ -344,7 +348,6 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
           className="cf-submit cf-btn-link usa-button"
           data-css-14x0t8z=""
           id="button-Cancel"
-          onClick={[Function]}
           type="button"
         >
           Cancel
@@ -472,6 +475,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
       "withdrawn": false,
     }
   }
+  isLoading={false}
   type="Virtual"
 >
   <AppSegment
@@ -507,8 +511,10 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
         hearing={
           Object {
             "appellantFullName": "Abellona Valtas",
+            "appellantIsNotVeteran": false,
             "representative": "Attorney McAttorneyFace",
             "representativeType": "Attorney",
+            "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
@@ -589,8 +595,10 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
         hearing={
           Object {
             "appellantFullName": "Abellona Valtas",
+            "appellantIsNotVeteran": false,
             "representative": "Attorney McAttorneyFace",
             "representativeType": "Attorney",
+            "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
@@ -685,7 +693,6 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
       linkStyling={true}
       loading={false}
       name="Cancel"
-      onClick={[Function]}
       styling={
         Object {
           "data-css-14x0t8z": "",
@@ -699,7 +706,6 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
           className="cf-submit cf-btn-link usa-button"
           data-css-14x0t8z=""
           id="button-Cancel"
-          onClick={[Function]}
           type="button"
         >
           Cancel
@@ -827,6 +833,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
       "withdrawn": false,
     }
   }
+  isLoading={false}
   type="Virtual"
 >
   <AppSegment
@@ -844,7 +851,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
       <p
         dangerouslySetInnerHTML={
           Object {
-            "__html": "The hearing request will appear in the scheduling queue for <strong>Nashville Regional office</strong>.",
+            "__html": "The hearing request will appear in the scheduling queue for the <strong>Nashville Regional office</strong>.",
           }
         }
       />
@@ -862,8 +869,10 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
         hearing={
           Object {
             "appellantFullName": "Abellona Valtas",
+            "appellantIsNotVeteran": false,
             "representative": "Attorney McAttorneyFace",
             "representativeType": "Attorney",
+            "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
@@ -944,8 +953,10 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
         hearing={
           Object {
             "appellantFullName": "Abellona Valtas",
+            "appellantIsNotVeteran": false,
             "representative": "Attorney McAttorneyFace",
             "representativeType": "Attorney",
+            "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
@@ -1040,7 +1051,6 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
       linkStyling={true}
       loading={false}
       name="Cancel"
-      onClick={[Function]}
       styling={
         Object {
           "data-css-14x0t8z": "",
@@ -1054,7 +1064,6 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
           className="cf-submit cf-btn-link usa-button"
           data-css-14x0t8z=""
           id="button-Cancel"
-          onClick={[Function]}
           type="button"
         >
           Cancel
@@ -1182,6 +1191,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
       "withdrawn": false,
     }
   }
+  isLoading={false}
   type="Virtual"
 >
   <AppSegment
@@ -1199,7 +1209,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
       <p
         dangerouslySetInnerHTML={
           Object {
-            "__html": "The hearing request will appear in the scheduling queue for <strong>Nashville Regional office</strong>.",
+            "__html": "The hearing request will appear in the scheduling queue for the <strong>Nashville Regional office</strong>.",
           }
         }
       />
@@ -1217,8 +1227,10 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
         hearing={
           Object {
             "appellantFullName": "Abellona Valtas",
+            "appellantIsNotVeteran": false,
             "representative": "Attorney McAttorneyFace",
             "representativeType": "Attorney",
+            "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
@@ -1299,8 +1311,10 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
         hearing={
           Object {
             "appellantFullName": "Abellona Valtas",
+            "appellantIsNotVeteran": false,
             "representative": "Attorney McAttorneyFace",
             "representativeType": "Attorney",
+            "veteranFullName": "Abellona Valtas",
           }
         }
         readOnly={true}
@@ -1395,7 +1409,6 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
       linkStyling={true}
       loading={false}
       name="Cancel"
-      onClick={[Function]}
       styling={
         Object {
           "data-css-14x0t8z": "",
@@ -1409,7 +1422,6 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
           className="cf-submit cf-btn-link usa-button"
           data-css-14x0t8z=""
           id="button-Cancel"
-          onClick={[Function]}
           type="button"
         >
           Cancel
