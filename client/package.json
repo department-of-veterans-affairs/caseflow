@@ -56,7 +56,7 @@
     "@babel/preset-react": "^7.9.4",
     "@babel/register": "^7.9.0",
     "@babel/runtime-corejs2": "^7.9.2",
-    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#226df5a",
+    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#71ee169",
     "@fortawesome/fontawesome-free": "^5.3.1",
     "@storybook/addon-a11y": "^6.0.7",
     "@storybook/addon-actions": "^6.0.7",

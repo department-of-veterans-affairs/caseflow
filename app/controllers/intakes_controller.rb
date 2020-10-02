@@ -5,6 +5,8 @@ class IntakesController < ApplicationController
 
   before_action :verify_access, :react_routed, :set_application, :check_intake_out_of_service
 
+  attr_accessor :error_id
+
   def index
     no_cache
 
@@ -28,7 +30,7 @@ class IntakesController < ApplicationController
   rescue StandardError => error
     log_error(error)
     # we name the variable error_code to re-use the client error handling.
-    render json: { error_code: error_uuid }, status: :internal_server_error
+    render json: { error_code: error_id }, status: :internal_server_error
   end
 
   def destroy
@@ -47,7 +49,7 @@ class IntakesController < ApplicationController
     log_error(error)
     render json: {
       error_codes: { other: ["unknown_error"] },
-      error_uuid: error_uuid
+      error_uuid: error_id
     }, status: :internal_server_error
   end
 
@@ -64,6 +66,9 @@ class IntakesController < ApplicationController
       error_code: error.error_code,
       error_data: detail.end_product_base_modifier
     }, status: :bad_request
+  rescue StandardError => error
+    log_error(error)
+    render json: { error_code: "default", error_uuid: error_id }, status: :internal_server_error
   end
 
   def attorneys
@@ -81,8 +86,9 @@ class IntakesController < ApplicationController
   private
 
   def log_error(error)
-    Raven.capture_exception(error, extra: { error_uuid: error_uuid })
-    Rails.logger.error("Error UUID #{error_uuid} : #{error}\n" + error.backtrace.join("\n"))
+    Raven.capture_exception(error)
+    self.error_id = Raven.last_event_id || "00000000000000000123456789abcdef"
+    Rails.logger.error("Intake error (Sentry event #{error_id}): #{error}\n" + error.backtrace.join("\n"))
   end
 
   helper_method :index_props

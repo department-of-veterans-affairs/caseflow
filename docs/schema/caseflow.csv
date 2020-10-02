@@ -178,6 +178,23 @@ cached_user_attributes,stafkey,string ∗,x,,,,,
 cached_user_attributes,stitle,string (16),,,,,,
 cached_user_attributes,svlj,string,,,,,,
 cached_user_attributes,updated_at,datetime ∗,x,,,,x,
+cavc_remands,,,,,,,,
+cavc_remands,appeal_id,integer (8) ∗ FK,x,,x,,x,Appeal that CAVC has remanded
+cavc_remands,cavc_decision_type,string ∗,x,,,,,"CAVC decision type. Expecting 'remand', 'straight_reversal', or 'death_dismissal'"
+cavc_remands,cavc_docket_number,string ∗,x,,,,,Docket number of the CAVC judgement
+cavc_remands,cavc_judge_full_name,string ∗,x,,,,,CAVC judge that passed the judgement on the remand
+cavc_remands,created_at,datetime ∗,x,,,,,Default timestamps
+cavc_remands,created_by_id,integer (8) ∗ FK,x,,x,,,User that created this record
+cavc_remands,decision_date,date ∗,x,,,,,"Date CAVC issued a decision, according to the CAVC"
+cavc_remands,decision_issue_ids,integer (8) ∗,x,,,,,"Decision issues being remanded; IDs refer to decision_issues table. For a JMR, all decision issues on the previous appeal will be remanded. For a JMPR, only some"
+cavc_remands,id,integer (8) PK,x,x,,,,
+cavc_remands,instructions,string ∗,x,,,,,Instructions and context provided upon creation of the remand record
+cavc_remands,judgement_date,date ∗,x,,,,,"Date CAVC issued a judgement, according to the CAVC"
+cavc_remands,mandate_date,date ∗,x,,,,,Date that CAVC reported the mandate was given
+cavc_remands,remand_subtype,string ∗,x,,,,,"Type of remand. If the cavc_decision_type is 'remand', expecting one of 'jmp', 'jmpr', or 'mdr'. Otherwise, this can be null."
+cavc_remands,represented_by_attorney,boolean ∗,x,,,,,Whether or not the appellant was represented by an attorney
+cavc_remands,updated_at,datetime ∗,x,,,,,Default timestamps
+cavc_remands,updated_by_id,integer (8) ∗ FK,x,,x,,,"User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created."
 certifications,,,,,,,,
 certifications,already_certified,boolean,,,,,,
 certifications,bgs_rep_address_line_1,string,,,,,,
@@ -886,6 +903,7 @@ request_issues,nonrating_issue_description,string,,,,,,The user entered descript
 request_issues,notes,text,,,,,,"Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
 request_issues,ramp_claim_id,string,,,,,,"If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
 request_issues,rating_issue_associated_at,datetime,,,,,,Timestamp when a contention and its contested rating issue are associated in VBMS.
+request_issues,type,string,,,,,,Determines whether the issue is a rating issue or a nonrating issue
 request_issues,unidentified_issue_text,string,,,,,,User entered description if the request issue is neither a rating or a nonrating issue
 request_issues,untimely_exemption,boolean,,,,,,"If the contested issue's decision date was more than a year before the receipt date, it is considered untimely (unless it is a Supplemental Claim). However, an exemption to the timeliness can be requested. If so, it is indicated here."
 request_issues,untimely_exemption_notes,text,,,,,,Notes related to the untimeliness exemption requested.
@@ -894,7 +912,6 @@ request_issues,vacols_id,string,,,,,,The vacols_id of the legacy appeal that had
 request_issues,vacols_sequence_id,integer,,,,,,"The vacols_sequence_id, for the specific issue on the legacy appeal which the Claims Assistant determined to match the request issue on the Decision Review. A combination of the vacols_id (for the legacy appeal), and vacols_sequence_id (for which issue on the legacy appeal), is required to identify the issue being opted-in."
 request_issues,verified_unidentified_issue,boolean,,,,,,"A verified unidentified issue allows an issue whose rating data is missing to be intaken as a regular rating issue. In order to be marked as verified, a VSR needs to confirm that they were able to find the record of the decision for the issue."
 request_issues,veteran_participant_id,string,,,,,,The veteran participant ID. This should be unique in upstream systems and used in the future to reconcile duplicates.
-request_issues,type,string,,,,,,This determines whether the issue is a rating issue or a nonrating issue.
 request_issues_updates,,,,,,,,"Keeps track of edits to request issues on a decision review that happen after the initial intake, such as removing and adding issues.  When the decision review is processed in VBMS, this also tracks whether adding or removing contentions in VBMS for the update has succeeded."
 request_issues_updates,after_request_issue_ids,integer ∗,x,,,,,An array of the active request issue IDs after a user has finished editing a decision review. Used with before_request_issue_ids to determine appropriate actions (such as which contentions need to be added).
 request_issues_updates,attempted_at,datetime,,,,,,Timestamp for when the request issue update processing was last attempted.

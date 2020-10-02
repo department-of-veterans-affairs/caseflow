@@ -110,7 +110,7 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
       <p
         dangerouslySetInnerHTML={
           Object {
-            "__html": "The hearing request will appear in the scheduling queue for <strong>Nashville Regional office</strong>.",
+            "__html": "The hearing request will appear in the scheduling queue for the <strong>Nashville Regional office</strong>.",
           }
         }
       />
@@ -851,7 +851,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
       <p
         dangerouslySetInnerHTML={
           Object {
-            "__html": "The hearing request will appear in the scheduling queue for <strong>Nashville Regional office</strong>.",
+            "__html": "The hearing request will appear in the scheduling queue for the <strong>Nashville Regional office</strong>.",
           }
         }
       />
@@ -1209,7 +1209,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
       <p
         dangerouslySetInnerHTML={
           Object {
-            "__html": "The hearing request will appear in the scheduling queue for <strong>Nashville Regional office</strong>.",
+            "__html": "The hearing request will appear in the scheduling queue for the <strong>Nashville Regional office</strong>.",
           }
         }
       />
