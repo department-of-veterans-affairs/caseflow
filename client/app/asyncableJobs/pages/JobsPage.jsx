@@ -22,9 +22,8 @@ class AsyncableJobsPage extends React.PureComponent {
     this.state = {
       restarted: 0,
       jobs: this.props.jobs,
-      veteranId: '',
-      isFetchingSearchResults: false,
-      error: false
+      veteranFileNumber: null,
+      isFetchingSearchResults: false
     };
   }
 
@@ -41,43 +40,34 @@ class AsyncableJobsPage extends React.PureComponent {
     return moment(datetime).format(DATE_TIME_FORMAT);
   }
 
-  updateVeteranId = (searchInput) => {
-    this.setState({ veteranId: searchInput });
+  updateVeteranFileNumber = (searchInput) => {
+    this.setState({ veteranFileNumber: searchInput });
   }
 
   handleVeteranIdSearch = () => {
-    const searchTerm = this.state.veteranId;
+    const searchTerm = this.state.veteranFileNumber;
 
     this.setState({ isFetchingSearchResults: true });
 
-    ApiUtil.get('/jobs', { headers: { 'case-search': searchTerm } }).
+    ApiUtil.get('/jobs', { headers: { 'veteran-file-number': searchTerm } }).
       then((response) => {
         const jobs = response.body;
 
         this.setState({
           isFetchingSearchResults: false,
-          jobs });
+          jobs,
+          veteranFileNumber: null
+        });
       }).
       catch(() => {
         this.setState({
-          isFetchingSearchResults: false,
-          error: 'No jobs found for Veteran ID'
+          isFetchingSearchResults: false
         });
       });
   }
 
   render = () => {
     const rowObjects = this.state.jobs;
-
-    if (rowObjects.length === 0) {
-      return <div>
-        <h1>{`Success! There are no pending ${this.props.asyncableJobKlass} jobs.`}</h1>
-        <AsyncModelNav
-          models={this.props.models}
-          fetchedAt={this.props.fetchedAt}
-          asyncableJobKlass={this.props.asyncableJobKlass} />
-      </div>;
-    }
 
     const columns = [
       {
@@ -145,24 +135,37 @@ class AsyncableJobsPage extends React.PureComponent {
       return rowObject.restarted ? 'cf-success' : '';
     };
 
+    let noResultsMessage;
+
+    if (this.state.veteranFileNumber && rowObjects.length === 0) {
+      noResultsMessage = <h2>{`There are no pending ${this.props.asyncableJobKlass} jobs for Veteran file '${this.state.veteran_file_number}'.`}</h2>;
+    } else if (rowObjects.length === 0) {
+      noResultsMessage = <h2>{`There are no pending ${this.props.asyncableJobKlass} jobs.`}</h2>;
+    }
+
     return <div className="cf-asyncable-jobs-table">
       <h1>{this.props.asyncableJobKlass} Jobs</h1>
+      {noResultsMessage}
       <AsyncModelNav
         models={this.props.models}
         fetchedAt={this.props.fetchedAt}
         asyncableJobKlass={this.props.asyncableJobKlass} />
       <SearchBar
+        style={{ marginTop: '.5em' }}
         size="small"
-        title="Search by Veteran ID"
-        value={this.state.veteranId}
-        onChange={this.updateVeteranId}
+        title="Search by Veteran file number"
+        value={this.state.veteranFileNumber}
+        onChange={this.updateVeteranFileNumber}
         onSubmit={this.handleVeteranIdSearch}
         loading={this.state.isFetchingSearchResults}
         submitUsingEnterKey
       />
-      <hr />
-      <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} slowReRendersAreOk />
-      <EasyPagination currentCases={rowObjects.length} pagination={this.props.pagination} />
+      {rowObjects.length > 0 &&
+          <div>
+            <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} slowReRendersAreOk />
+            <EasyPagination currentCases={rowObjects.length} pagination={this.props.pagination} />
+          </div>
+      }
     </div>;
   }
 }

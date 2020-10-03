@@ -771,7 +771,7 @@ ActiveRecord::Schema.define(version: 2020_09_23_004430) do
     t.integer "appeal_id", null: false, comment: "Appeal id the IHP was written for"
     t.string "appeal_type", null: false, comment: "Type of appeal the IHP was written for"
     t.datetime "created_at", null: false, comment: "Default created_at/updated_at timestamps"
-    t.integer "organization_id", null: false, comment: "IHP writing VSO that drafted the IHP"
+    t.integer "organization_id", null: false, comment: "IHP-writing VSO that drafted the IHP"
     t.string "path", null: false, comment: "Path to the IHP in the VA V: drive"
     t.datetime "updated_at", null: false, comment: "Default created_at/updated_at timestamps"
     t.index ["appeal_id", "appeal_type", "organization_id"], name: "index_ihp_drafts_on_appeal_and_organization"
