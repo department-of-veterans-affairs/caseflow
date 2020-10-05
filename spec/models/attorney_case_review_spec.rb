@@ -430,21 +430,26 @@ describe AttorneyCaseReview, :all_dbs do
       let(:decision_issue2) do
         create(:decision_issue, remand_reasons: [remand_reason1, remand_reason2], decision_review: attorney_task.appeal)
       end
-      let!(:request_issue1) { create(:request_issue, decision_review: judge_task.appeal, decision_issues: [decision_issue1]) }
-      let(:request_issue2) { create(:request_issue, decision_review: attorney_task.appeal, decision_issues: [decision_issue2]) }
+      let!(:request_issue1) do
+        create(:request_issue,
+               decision_review: judge_task.appeal, decision_issues: [decision_issue1])
+      end
+      let(:request_issue2) do
+        create(:request_issue,
+               decision_review: attorney_task.appeal, decision_issues: [decision_issue2])
+      end
       let(:issues) do
-        [{ disposition: "allowed", description: "something1",
+        [{ disposition: "allowed", description: "something",
            benefit_type: "compensation", diagnostic_code: "9999",
-           request_issue_ids: [request_issue1.id, request_issue2.id]
-          },
-         { disposition: "remanded", description: "something2",
+           request_issue_ids: [request_issue1.id, request_issue2.id] },
+         { disposition: "remanded", description: "somethingElse",
            benefit_type: "compensation", diagnostic_code: "9999",
            request_issue_ids: [request_issue1.id, request_issue2.id],
            remand_reasons: [
-              { code: "va_records", post_aoj: false },
-              { code: "incorrect_notice_sent", post_aoj: true },
-              { code: "due_process_deficiency", post_aoj: false }
-            ] }]
+             { code: "va_records", post_aoj: false },
+             { code: "incorrect_notice_sent", post_aoj: true },
+             { code: "due_process_deficiency", post_aoj: false }
+           ] }]
       end
       let(:params) do
         {
