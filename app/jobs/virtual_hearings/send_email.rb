@@ -174,7 +174,7 @@ class VirtualHearings::SendEmail
 
                        veteran.first_name
                      else
-                      "appellant"
+                       "Appellant"
                      end
 
     MailRecipient.new(
