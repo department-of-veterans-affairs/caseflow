@@ -2,7 +2,7 @@
 
 ##
 # Task to record on the appeal that the special case movement manually assigned the case outside of automatic
-#   case distribution
+# case distribution
 
 class SpecialCaseMovementTask < Task
   before_create :verify_parent_task_type,
