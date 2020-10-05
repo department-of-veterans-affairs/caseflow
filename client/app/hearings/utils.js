@@ -426,4 +426,8 @@ export const parseVirtualHearingErrors = (msg, hearing) => {
   }), {});
 };
 
+export const regionalOfficeDetails = (key) => REGIONAL_OFFICE_INFORMATION[
+  Object.keys(REGIONAL_OFFICE_INFORMATION).filter((roKey) => roKey === key)[0]
+];
+
 /* eslint-enable camelcase */
