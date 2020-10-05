@@ -103,7 +103,7 @@ class Docket
   end
 
   module Scopes
-    def priority
+    def priority_old
       join_aod_motions
         .where("advance_on_docket_motions.created_at > appeals.established_at")
         .where("advance_on_docket_motions.granted = ?", true)
