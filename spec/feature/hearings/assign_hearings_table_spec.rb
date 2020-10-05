@@ -429,8 +429,9 @@ RSpec.feature "Assign Hearings Table" do
         )
       end
 
+      before { cache_legacy_appeals }
+
       scenario "Verify rows are populated correctly" do
-        cache_legacy_appeals
         visit "hearings/schedule/assign"
         expect(page).to have_content("Regional Office")
         click_dropdown(text: "St. Petersburg")
@@ -442,6 +443,30 @@ RSpec.feature "Assign Hearings Table" do
         expect(table_row).to have_content("Travel")
         table_row = page.find("tr", id: "table-row-2")
         expect(table_row).to have_content("former Travel, Virtual")
+      end
+
+      context "Filter by Hearing Type column" do
+        it "filters are correct, and filter as expected" do
+          step "navigate to St. Petersburg legacy veterans tab" do
+            visit "hearings/schedule/assign"
+            click_dropdown(text: "St. Petersburg")
+            click_button("Legacy Veterans Waiting", exact: true)
+          end
+
+          step "check if the filter options are as expected" do
+            expect(page).to have_content("Hearing Type")
+            expect(page).to have_selector(".unselected-filter-icon-inner", count: 3)
+            page.find_all(".unselected-filter-icon-inner").first.click
+            expect(page).to have_content("Virtual (1)")
+            expect(page).to have_content("Video (1)")
+            expect(page).to have_content("former Travel (1)")
+          end
+
+          step "clicking on a filter reduces the number of results by the expect amount" do
+            page.find("label", text: "former Travel (1)", match: :prefer_exact).click
+            expect(find("tbody").find_all("tr").length).to eq(1)
+          end
+        end
       end
     end
 
