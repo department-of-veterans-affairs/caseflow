@@ -421,5 +421,49 @@ describe AttorneyCaseReview, :all_dbs do
         end
       end
     end
+    context "when ama" do
+      let(:attorney_task) { Task.find(task_id) }
+      let(:judge_task) { attorney_task.parent }
+      let(:remand_reason1) { create(:ama_remand_reason) }
+      let(:remand_reason2) { create(:ama_remand_reason) }
+      let(:decision_issue1) { build(:decision_issue) }
+      let(:decision_issue2) do
+        create(:decision_issue, remand_reasons: [remand_reason1, remand_reason2], decision_review: attorney_task.appeal)
+      end
+      let!(:request_issue1) { create(:request_issue, decision_review: judge_task.appeal, decision_issues: [decision_issue1]) }
+      let(:request_issue2) { create(:request_issue, decision_review: attorney_task.appeal, decision_issues: [decision_issue2]) }
+      let(:issues) do
+        [{ disposition: "allowed", description: "something1",
+           benefit_type: "compensation", diagnostic_code: "9999",
+           request_issue_ids: [request_issue1.id, request_issue2.id]
+          },
+         { disposition: "remanded", description: "something2",
+           benefit_type: "compensation", diagnostic_code: "9999",
+           request_issue_ids: [request_issue1.id, request_issue2.id],
+           remand_reasons: [
+              { code: "va_records", post_aoj: false },
+              { code: "incorrect_notice_sent", post_aoj: true },
+              { code: "due_process_deficiency", post_aoj: false }
+            ] }]
+      end
+      let(:params) do
+        {
+          document_type: document_type,
+          reviewing_judge: judge,
+          work_product: work_product,
+          document_id: padded_document_id,
+          overtime: true,
+          note: note,
+          task_id: task_id,
+          attorney: attorney,
+          issues: issues
+        }
+      end
+      it "updates the assigned_by field to the attorney" do
+        expect(judge_task.assigned_by).not_to eq(attorney)
+        subject
+        expect(judge_task.reload.assigned_by).to eq(attorney)
+      end
+    end
   end
 end
