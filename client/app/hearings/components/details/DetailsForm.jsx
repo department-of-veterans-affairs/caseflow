@@ -71,7 +71,7 @@ const DetailsForm = (props) => {
               enableFullPageConversion={userUseFullPageVideoToVirtual}
               convertHearing={convertHearing}
               virtualHearing={hearing?.virtualHearing}
-              requestType={requestType}
+              originalRequestType={requestType}
               update={update}
               openModal={openVirtualHearingModal}
               readOnly={

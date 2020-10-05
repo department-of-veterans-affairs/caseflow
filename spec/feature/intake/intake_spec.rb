@@ -159,7 +159,7 @@ feature "Intake", :all_dbs do
 
       expect(page).to have_current_path("/intake/search")
       expect(page).to have_content("Something went wrong")
-      expect(page).to have_content(/Error code \w+-\w+-\w+-\w+/)
+      expect(page).to have_content("Error code 00000000000000000123456789abcdef")
     end
 
     scenario "Search for a veteran with an incident flash" do
