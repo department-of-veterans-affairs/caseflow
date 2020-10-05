@@ -78,6 +78,12 @@ export default class AssignHearingsTable extends React.PureComponent {
     return Number(queryParams[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]) || 1;
   }
 
+  getFilterOptionsFromApi = (columnName) => {
+    const { colsFromApi } = this.state;
+
+    return colsFromApi?.find((col) => col.name === columnName)?.filter_options ?? [];
+  }
+
   /*
    * Gets the list of columns to populate the QueueTable with.
    */
@@ -135,9 +141,7 @@ export default class AssignHearingsTable extends React.PureComponent {
         label: 'Filter by hearing request type',
         enableFilter: true,
         anyFiltersAreSet: true,
-        filterOptions: (
-          colsFromApi?.find((col) => col.name === QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME)?.filter_options ?? []
-        )
+        filterOptions: this.getFilterOptionsFromApi(QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME)
       },
       {
         name: 'docketNum',
@@ -162,7 +166,7 @@ export default class AssignHearingsTable extends React.PureComponent {
         filterValueTransform: this.formatSuggestedHearingLocation,
         enableFilter: true,
         anyFiltersAreSet: true,
-        filterOptions: colsFromApi && colsFromApi.find((col) => col.name === 'suggestedLocation').filter_options
+        filterOptions: this.getFilterOptionsFromApi(QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME)
       },
       {
         name: 'veteranState',
@@ -183,7 +187,7 @@ export default class AssignHearingsTable extends React.PureComponent {
         label: 'Filter by Power of Attorney',
         enableFilter: true,
         anyFiltersAreSet: true,
-        filterOptions: colsFromApi && colsFromApi.find((col) => col.name === 'powerOfAttorneyName').filter_options
+        filterOptions: this.getFilterOptionsFromApi(QUEUE_CONFIG.POWER_OF_ATTORNEY_COLUMN_NAME)
       }
     ];
 
