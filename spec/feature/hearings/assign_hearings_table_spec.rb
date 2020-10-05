@@ -323,8 +323,8 @@ RSpec.feature "Assign Hearings Table" do
 
         step "check if the filter options are as expected" do
           expect(page).to have_content("Suggested Location")
-          expect(page).to have_selector(".unselected-filter-icon-inner", count: 2)
-          page.find(".unselected-filter-icon-inner", match: :first).click
+          expect(page).to have_selector(".unselected-filter-icon-inner", count: 3)
+          page.find_all(".unselected-filter-icon-inner")[1].click
           expect(page).to have_content("#{Appeal.first.suggested_hearing_location.formatted_location} (1)")
           expect(page).to have_content("#{Appeal.second.suggested_hearing_location.formatted_location} (1)")
           expect(page).to have_content("#{Appeal.third.suggested_hearing_location.formatted_location} (1)")
@@ -357,8 +357,8 @@ RSpec.feature "Assign Hearings Table" do
 
         step "check if the filter options are as expected" do
           expect(page).to have_content("Power of Attorney (POA)")
-          expect(page).to have_selector(".unselected-filter-icon-inner", count: 2)
-          page.find_all(".unselected-filter-icon-inner")[1].click
+          expect(page).to have_selector(".unselected-filter-icon-inner", count: 3)
+          page.find_all(".unselected-filter-icon-inner").last.click
           expect(page).to have_content("#{Appeal.first.representative_name} (1)")
           expect(page).to have_content("#{Appeal.second.representative_name} (1)")
           expect(page).to have_content("#{Appeal.third.representative_name} (1)")
