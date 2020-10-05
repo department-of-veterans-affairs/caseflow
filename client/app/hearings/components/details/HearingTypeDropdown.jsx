@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { VIDEO_HEARING, VIRTUAL_HEARING } from '../../constants';
+import { VIDEO_HEARING_LABEL, VIRTUAL_HEARING_LABEL } from '../../constants';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 
 /**
@@ -24,7 +24,7 @@ const HearingTypeDropdown = ({
     },
     {
       value: true,
-      label: VIRTUAL_HEARING
+      label: VIRTUAL_HEARING_LABEL
     }
   ];
 
@@ -35,17 +35,17 @@ const HearingTypeDropdown = ({
 
   const onChange = ({ label }) => {
     // Change from virtual if the current label is virtual
-    const type = currentLabel === VIRTUAL_HEARING ? 'change_from_virtual' : 'change_to_virtual';
+    const type = currentLabel === VIRTUAL_HEARING_LABEL ? 'change_from_virtual' : 'change_to_virtual';
 
     // Use the modal if the label is video
-    if ((label === VIDEO_HEARING || currentLabel === VIDEO_HEARING) && !enableFullPageConversion) {
+    if ((label === VIDEO_HEARING_LABEL || currentLabel === VIDEO_HEARING_LABEL) && !enableFullPageConversion) {
       openModal({ type });
     } else if (convertHearing) {
       convertHearing(type);
     }
 
     // If the current value is not virtual, we are cancelling the virtual hearing
-    update('virtualHearing', { requestCancelled: currentLabel === VIRTUAL_HEARING, jobCompleted: false });
+    update('virtualHearing', { requestCancelled: currentLabel === VIRTUAL_HEARING_LABEL, jobCompleted: false });
   };
 
   return (

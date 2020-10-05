@@ -2,8 +2,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  TRAVEL_BOARD_HEARING,
-  VIDEO_HEARING,
+  TRAVEL_BOARD_HEARING_LABEL,
+  VIDEO_HEARING_LABEL,
   HEARING_CONVERSION_TYPES
 } from '../constants';
 import {
@@ -38,15 +38,15 @@ export const ScheduleVeteranForm = ({
   const dynamic = ro !== appeal?.closestRegionalOffice || isEmpty(appeal?.availableHearingLocations);
 
   const getOriginalRequestType = () => {
-    if (appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING) {
+    if (appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING_LABEL) {
     // For COVID-19, travel board appeals can have either a video or virtual hearing scheduled. In this case,
     // we consider a travel board hearing as a video hearing, which enables both video and virtual options in
     // the HearingTypeDropdown
-      return VIDEO_HEARING;
+      return VIDEO_HEARING_LABEL;
     }
 
     // The default is video hearing if the appeal isn't associated with an RO.
-    return appeal?.readableOriginalHearingRequestType ?? VIDEO_HEARING;
+    return appeal?.readableOriginalHearingRequestType ?? VIDEO_HEARING_LABEL;
   };
 
   // Set the hearing request to Video unless the RO is Central

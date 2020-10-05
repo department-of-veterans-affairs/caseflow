@@ -27,7 +27,7 @@ import ApiUtil from 'app/util/ApiUtil';
 
 import * as uiActions from 'app/queue/uiReducer/uiActions';
 
-import { VIDEO_HEARING } from '../../../../app/hearings/constants';
+import { VIDEO_HEARING_LABEL } from 'app/hearings/constants';
 
 jest.mock('app/queue/uiReducer/uiActions');
 import * as utils from 'app/hearings/utils';
@@ -408,7 +408,7 @@ describe('ScheduleVeteran', () => {
       ),
       title: `You have successfully assigned ${
         amaAppeal.appellantFullName
-      } to a ${VIDEO_HEARING} hearing on ${formatDateStr(
+      } to a ${VIDEO_HEARING_LABEL} hearing on ${formatDateStr(
         scheduleHearingDetails.hearingDay.hearingDate,
         'YYYY-MM-DD',
         'MM/DD/YYYY'

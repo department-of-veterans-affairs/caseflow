@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount, shallow } from 'enzyme';
 
-import { VIRTUAL_HEARING } from 'app/hearings/constants';
+import { VIRTUAL_HEARING_LABEL } from 'app/hearings/constants';
 import { ScheduleVeteranForm } from 'app/hearings/components/ScheduleVeteranForm';
 import { SearchableDropdown } from 'app/components/SearchableDropdown';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
@@ -146,7 +146,7 @@ describe('ScheduleVeteranForm', () => {
         appeal={{
           ...legacyAppealForTravelBoard,
           regionalOffice: defaultHearing.regionalOfficeKey,
-          readableHearingRequestType: VIRTUAL_HEARING,
+          readableHearingRequestType: VIRTUAL_HEARING_LABEL,
         }}
         hearing={hearing}
         virtual={false}
@@ -161,7 +161,7 @@ describe('ScheduleVeteranForm', () => {
         .find(HearingTypeDropdown)
         .find(SearchableDropdown)
         .prop('value')
-    ).toEqual({ label: VIRTUAL_HEARING, value: true });
+    ).toEqual({ label: VIRTUAL_HEARING_LABEL, value: true });
     expect(scheduleVeteran).toMatchSnapshot();
   });
 });
