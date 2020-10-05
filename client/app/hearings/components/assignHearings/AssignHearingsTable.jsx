@@ -78,11 +78,13 @@ export default class AssignHearingsTable extends React.PureComponent {
     return Number(queryParams[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]) || 1;
   }
 
+  /* eslint-disable camelcase */
   getFilterOptionsFromApi = (columnName) => {
     const { colsFromApi } = this.state;
 
     return colsFromApi?.find((col) => col.name === columnName)?.filter_options ?? [];
   }
+  /* eslint-enable camelcase */
 
   /*
    * Gets the list of columns to populate the QueueTable with.
