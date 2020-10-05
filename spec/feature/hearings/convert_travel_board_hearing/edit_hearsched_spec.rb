@@ -93,8 +93,8 @@ RSpec.feature "Convert travel board appeal for 'Edit HearSched' (Hearing Coordin
 
         step "confirm virtual type is selected" do
           expect(
-            page.find('.dropdown-hearingType').find('.cf-select__single-value')
-          ).to have_content('Virtual')
+            page.find(".dropdown-hearingType").find(".cf-select__single-value")
+          ).to have_content("Virtual")
         end
       end
     end
