@@ -125,11 +125,18 @@ export default class AssignHearingsTable extends React.PureComponent {
         name: 'hearingRequestType',
         header: 'Hearing Type',
         align: 'left',
+        columnName: 'Hearing Type',
         valueFunction: (row) => (
           <HearingRequestType
             hearingRequestType={row.hearingRequestType}
             isFormerTravel={row.isFormerTravel}
           />
+        ),
+        label: 'Filter by hearing request type',
+        enableFilter: true,
+        anyFiltersAreSet: true,
+        filterOptions: (
+          colsFromApi?.find((col) => col.name === QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME)?.filter_options ?? []
         )
       },
       {
