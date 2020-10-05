@@ -1,7 +1,11 @@
 /* eslint-disable camelcase */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { CENTRAL_OFFICE_HEARING, HEARING_CONVERSION_TYPES } from '../constants';
+import {
+  TRAVEL_BOARD_HEARING_LABEL,
+  VIDEO_HEARING_LABEL,
+  HEARING_CONVERSION_TYPES
+} from '../constants';
 import {
   RegionalOfficeDropdown,
   AppealHearingLocationsDropdown,
@@ -15,50 +19,55 @@ import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
 import { marginTop } from './details/style';
 import { isEmpty, orderBy } from 'lodash';
+import { regionalOfficeDetails } from '../utils';
 
 export const ScheduleVeteranForm = ({
   virtual,
-  requestType,
   appellantTitle,
   appeal,
   hearing,
   errors,
   initialRegionalOffice,
   initialHearingDate,
+  convertToVirtual,
   ...props
 }) => {
   const ro = hearing?.regionalOffice || initialRegionalOffice;
   const location = hearing?.hearingLocation || appeal?.hearingLocation;
-  const video = requestType === 'Video';
   const availableHearingLocations = orderBy(appeal?.availableHearingLocations || [], ['distance'], ['asc']);
   const dynamic = ro !== appeal?.closestRegionalOffice || isEmpty(appeal?.availableHearingLocations);
 
-  const handleChange = () => {
-    if (virtual) {
-      return props.onChange('virtualHearing', null);
+  const getOriginalRequestType = () => {
+    if (appeal?.readableOriginalHearingRequestType === TRAVEL_BOARD_HEARING_LABEL) {
+    // For COVID-19, travel board appeals can have either a video or virtual hearing scheduled. In this case,
+    // we consider a travel board hearing as a video hearing, which enables both video and virtual options in
+    // the HearingTypeDropdown
+      return VIDEO_HEARING_LABEL;
     }
 
-    return props.onChange('virtualHearing', { status: 'pending' });
+    // The default is video hearing if the appeal isn't associated with an RO.
+    return appeal?.readableOriginalHearingRequestType ?? VIDEO_HEARING_LABEL;
   };
+
+  // Set the hearing request to Video unless the RO is Central
+  const video = ro !== 'C';
 
   return (
     <React.Fragment>
       <div className="usa-width-one-half">
         <HearingTypeDropdown
           enableFullPageConversion
-          update={handleChange}
-          requestType={hearing?.requestType}
+          update={convertToVirtual}
+          originalRequestType={getOriginalRequestType()}
           virtualHearing={hearing?.virtualHearing}
         />
       </div>
       <div className="cf-help-divider usa-width-one-whole" />
       {virtual ? (
         <React.Fragment>
-
           <div className="usa-width-one-half">
-            <ReadOnly spacing={0} label="Regional Office" text={CENTRAL_OFFICE_HEARING} />
+            <ReadOnly spacing={0} label="Regional Office" text={regionalOfficeDetails(ro)?.label} />
             <ReadOnly spacing={15} label="Hearing Location" text="Virtual" />
-
             <HearingDateDropdown
               errorMessage={errors?.hearingDay}
               key={`hearingDate__${ro}`}
@@ -154,7 +163,6 @@ export const ScheduleVeteranForm = ({
                 onChange={(scheduledTimeString) => props.onChange('scheduledTimeString', scheduledTimeString)}
                 value={hearing.scheduledTimeString}
               />
-
             </React.Fragment>
           )}
         </div>)}
@@ -172,7 +180,7 @@ ScheduleVeteranForm.propTypes = {
   initialRegionalOffice: PropTypes.string,
   initialHearingDate: PropTypes.string,
   appellantTitle: PropTypes.string,
-  requestType: PropTypes.string
+  convertToVirtual: PropTypes.func
 };
 
 /* eslint-enable camelcase */
