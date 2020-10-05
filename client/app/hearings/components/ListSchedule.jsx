@@ -19,7 +19,7 @@ import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ListScheduleDateSearch from './ListScheduleDateSearch';
 import moment from 'moment';
 
-import { LIST_SCHEDULE_VIEWS, VIDEO_HEARING } from '../constants';
+import { LIST_SCHEDULE_VIEWS, VIDEO_HEARING_LABEL } from '../constants';
 import DropdownButton from '../../components/DropdownButton';
 import WindowUtil from '../../util/WindowUtil';
 
@@ -186,7 +186,7 @@ class ListSchedule extends React.Component {
         enableFilter: true,
         filterValueTransform: (hearingType) => {
           if (hearingType.toLowerCase().startsWith('video')) {
-            return VIDEO_HEARING;
+            return VIDEO_HEARING_LABEL;
           }
 
           return hearingType;
