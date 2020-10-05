@@ -17,12 +17,14 @@ class TaskFilter
       end.compact.join(" AND ")
     end
 
+    private
+
     def create_where_clause(filter)
       clause = "#{table_column_from_name(filter.column)} IN (?)"
       filter_selections = filter.values
       if filter.column == Constants.QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME &&
          filter_selections.include?(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_FORMER_TRAVEL.key)
-         clause = extract_former_travel_clause(filter, clause)
+        clause = extract_former_travel_clause(filter, clause)
       end
       if filter.column == Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name &&
          filter_selections.include?(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
@@ -33,7 +35,7 @@ class TaskFilter
 
     def extract_former_travel_clause(filter, orig_clause)
       is_former_travel_clause = "cached_appeal_attributes.formally_travel = true"
-      filter.values.size == 1 ? is_former_travel_clause : "(#{orig_clause} OR #{is_former_travel_clause})"
+      (filter.values.size == 1) ? is_former_travel_clause : "(#{orig_clause} OR #{is_former_travel_clause})"
     end
 
     def extract_aod_clause(filter, orig_clause)

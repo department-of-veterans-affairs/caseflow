@@ -99,9 +99,9 @@ class AssignHearingTab
 
     if former_travel_count > 0
       label = QueueColumn.format_option_label(
-                Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_FORMER_TRAVEL.key,
-                former_travel_count
-              )
+        Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_FORMER_TRAVEL.key,
+        former_travel_count
+      )
       options.append(QueueColumn.filter_option_hash(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_FORMER_TRAVEL.key, label))
     end
 
