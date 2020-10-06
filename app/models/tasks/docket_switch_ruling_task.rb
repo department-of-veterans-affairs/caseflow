@@ -5,7 +5,7 @@ class DocketSwitchRulingTask < JudgeTask
     actions = []
 
     if assigned_to.is_a?(User) && FeatureToggle.enabled?(:docket_change, user: user)
-      actions.push(Constants.TASK_ACTIONS.DOCKET_CHANGE_JUDGE_RULING.to_h)
+      actions.push(Constants.TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.to_h)
     end
 
     actions

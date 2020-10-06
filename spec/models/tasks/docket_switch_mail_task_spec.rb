@@ -57,7 +57,7 @@ describe DocketSwitchMailTask, :postgres do
         after { FeatureToggle.disable!(:docket_change) }
 
         it "returns the available_actions as defined by Task" do
-          expect(subject).to eq(task_actions + [Constants.TASK_ACTIONS.DOCKET_CHANGE_SEND_TO_JUDGE.to_h])
+          expect(subject).to eq(task_actions + [Constants.TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.to_h])
         end
       end
     end
