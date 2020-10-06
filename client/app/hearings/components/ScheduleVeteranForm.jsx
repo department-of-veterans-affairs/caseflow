@@ -19,7 +19,6 @@ import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
 import { marginTop } from './details/style';
 import { isEmpty, orderBy } from 'lodash';
-import { regionalOfficeDetails } from '../utils';
 
 export const ScheduleVeteranForm = ({
   virtual,
@@ -64,7 +63,7 @@ export const ScheduleVeteranForm = ({
       </div>
       <div className="cf-help-divider usa-width-one-whole" />
       <div className="usa-width-one-half">
-        {virtual ? <ReadOnly spacing={15} label="Hearing Location" text={regionalOfficeDetails(ro)?.label} /> :
+        {virtual ? <ReadOnly spacing={15} label="Hearing Location" text="Virtual" /> :
           <ReadOnly spacing={0} label={`${appellantTitle} Address`} text={
             <AddressLine
               spacing={5}

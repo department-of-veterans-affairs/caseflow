@@ -611,8 +611,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
   end
 
-  shared_examples "scheduling a virtual hearing" do |fill_in_timezones|
-    scenario "can successfully schedule virtual hearing" do
+  shared_examples "scheduling a virtual hearing" do |fill_in_timezones, ro_key|
+    fscenario "can successfully schedule virtual hearing" do
       navigate_to_schedule_veteran
       expect(page).to have_content("Schedule Veteran for a Hearing")
       click_dropdown(name: "hearingType", text: "Virtual")
@@ -639,6 +639,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       # Test the hearing was created correctly with the virtual hearing
       expect(new_hearing.hearing_location).to eq nil
       expect(new_hearing.virtual_hearing).to eq VirtualHearing.first
+      expect(new_hearing.regional_office.key).to eq ro_key
 
       # Test the emails were sent
       events = SentHearingEmailEvent.where(hearing_id: new_hearing.id)
@@ -675,7 +676,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       before { cache_appeals }
 
-      it_behaves_like "scheduling a virtual hearing", true
+      it_behaves_like "scheduling a virtual hearing", true, "C"
     end
 
     context "when changing from Video hearing" do
@@ -683,7 +684,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       before { cache_appeals }
 
-      it_behaves_like "scheduling a virtual hearing", false
+      it_behaves_like "scheduling a virtual hearing", false, legacy_appeal.closest_regional_office
     end
   end
 
