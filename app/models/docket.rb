@@ -129,11 +129,11 @@ class Docket
     end
 
     def join_appeal_specific_aod_motions
-      joins(Arel.sql(<<-SQL))
+      joins(Arel.sql(<<~JOIN_AOD_MOTION_ON_APPEAL_ID))
         LEFT OUTER JOIN advance_on_docket_motions as appeal_aod_motions
         ON appeal_aod_motions.appeal_id = appeals.id
         AND appeal_aod_motions.appeal_type = 'Appeal'
-      SQL
+      JOIN_AOD_MOTION_ON_APPEAL_ID
     end
 
     def ready_for_distribution
