@@ -29,7 +29,7 @@ export const ScheduleVeteranForm = ({
 }) => {
   const ro = hearing?.regionalOffice || initialRegionalOffice;
   const location = hearing?.hearingLocation || appeal?.hearingLocation;
-  const video = requestType === 'Video';
+  const video = ro !== 'C';
   const availableHearingLocations = orderBy(appeal?.availableHearingLocations || [], ['distance'], ['asc']);
   const dynamic = ro !== appeal?.closestRegionalOffice || isEmpty(appeal?.availableHearingLocations);
 
@@ -52,64 +52,8 @@ export const ScheduleVeteranForm = ({
         />
       </div>
       <div className="cf-help-divider usa-width-one-whole" />
-      {virtual ? (
-        <React.Fragment>
-
-          <div className="usa-width-one-half">
-            <ReadOnly spacing={0} label="Regional Office" text={CENTRAL_OFFICE_HEARING} />
-            <ReadOnly spacing={15} label="Hearing Location" text="Virtual" />
-
-            <HearingDateDropdown
-              errorMessage={errors?.hearingDay}
-              key={`hearingDate__${ro}`}
-              regionalOffice={ro}
-              value={hearing?.hearingDay || initialHearingDate}
-              onChange={(hearingDay) => props.onChange('hearingDay', hearingDay)}
-            />
-            <HearingTime
-              vertical
-              errorMessage={errors?.scheduledTimeString}
-              label="Hearing Time"
-              enableZone
-              onChange={(scheduledTimeString) => props.onChange('scheduledTimeString', scheduledTimeString)}
-              value={hearing?.scheduledTimeString}
-            />
-          </div>
-          <div className="usa-width-one-whole" {...marginTop(25)}>
-            <AppellantSection
-              virtual={virtual}
-              errors={errors}
-              video={video}
-              update={(_, virtualHearing) =>
-                props.onChange('virtualHearing', {
-                  ...hearing?.virtualHearing,
-                  ...virtualHearing,
-                })
-              }
-              appellantTitle={appellantTitle}
-              hearing={hearing}
-              virtualHearing={hearing?.virtualHearing}
-              type={HEARING_CONVERSION_TYPES[0]}
-            />
-            <RepresentativeSection
-              virtual={virtual}
-              errors={errors}
-              video={video}
-              update={(_, virtualHearing) =>
-                props.onChange('virtualHearing', {
-                  ...hearing?.virtualHearing,
-                  ...virtualHearing,
-                })
-              }
-              appellantTitle={appellantTitle}
-              hearing={hearing}
-              virtualHearing={hearing?.virtualHearing}
-              type={HEARING_CONVERSION_TYPES[0]}
-            />
-          </div>
-        </React.Fragment>
-      ) : (
-        <div className="usa-width-one-half" >
+      <div className="usa-width-one-half">
+        {virtual ? <ReadOnly spacing={15} label="Hearing Location" text="Virtual" /> :
           <ReadOnly spacing={0} label={`${appellantTitle} Address`} text={
             <AddressLine
               spacing={5}
@@ -119,45 +63,77 @@ export const ScheduleVeteranForm = ({
               addressCity={appeal?.appellantAddress?.city}
               addressZip={appeal?.appellantAddress?.zip}
             />}
-          />
-          <RegionalOfficeDropdown
-            errorMessage={errors?.regionalOffice}
-            onChange={(regionalOffice) => props.onChange('regionalOffice', regionalOffice)}
-            value={ro}
-            validateValueOnMount
-          />
-          {ro && (
-            <React.Fragment>
-              <AppealHearingLocationsDropdown
-                errorMessage={errors?.hearingLocation}
-                key={`hearingLocation__${ro}`}
-                regionalOffice={ro}
-                appealId={appeal.externalId}
-                value={location}
-                onChange={(hearingLocation) => props.onChange('hearingLocation', hearingLocation)}
-                dynamic={dynamic}
-                staticHearingLocations={availableHearingLocations}
-              />
-              <HearingDateDropdown
-                errorMessage={errors?.hearingDay}
-                key={`hearingDate__${ro}`}
-                regionalOffice={ro}
-                value={hearing.hearingDay || initialHearingDate}
-                onChange={(hearingDay) => props.onChange('hearingDay', hearingDay)}
-              />
-              <HearingTime
-                regionalOffice={ro}
-                errorMessage={errors?.scheduledTimeString}
-                vertical
-                label="Hearing Time"
-                enableZone
-                onChange={(scheduledTimeString) => props.onChange('scheduledTimeString', scheduledTimeString)}
-                value={hearing.scheduledTimeString}
-              />
+          /> }
+        <RegionalOfficeDropdown
+          errorMessage={errors?.regionalOffice}
+          onChange={(regionalOffice) => props.onChange('regionalOffice', regionalOffice)}
+          value={ro}
+          validateValueOnMount
+        />
+        {ro && (
+          <React.Fragment>
+            {!virtual && <AppealHearingLocationsDropdown
+              errorMessage={errors?.hearingLocation}
+              key={`hearingLocation__${ro}`}
+              regionalOffice={ro}
+              appealId={appeal.externalId}
+              value={location}
+              onChange={(hearingLocation) => props.onChange('hearingLocation', hearingLocation)}
+              dynamic={dynamic}
+              staticHearingLocations={availableHearingLocations}
+            />}
+            <HearingDateDropdown
+              errorMessage={errors?.hearingDay}
+              key={`hearingDate__${ro}`}
+              regionalOffice={ro}
+              value={hearing.hearingDay || initialHearingDate}
+              onChange={(hearingDay) => props.onChange('hearingDay', hearingDay)}
+            />
+            <HearingTime
+              regionalOffice={ro}
+              errorMessage={errors?.scheduledTimeString}
+              vertical
+              label="Hearing Time"
+              enableZone
+              onChange={(scheduledTimeString) => props.onChange('scheduledTimeString', scheduledTimeString)}
+              value={hearing.scheduledTimeString}
+            />
+          </React.Fragment>
+        )}
 
-            </React.Fragment>
-          )}
-        </div>)}
+      </div>
+      {virtual && <div className="usa-width-one-whole" {...marginTop(25)}>
+        <AppellantSection
+          virtual={virtual}
+          errors={errors}
+          video={video}
+          update={(_, virtualHearing) =>
+            props.onChange('virtualHearing', {
+              ...hearing?.virtualHearing,
+              ...virtualHearing,
+            })
+          }
+          appellantTitle={appellantTitle}
+          hearing={hearing}
+          virtualHearing={hearing?.virtualHearing}
+          type={HEARING_CONVERSION_TYPES[0]}
+        />
+        <RepresentativeSection
+          virtual={virtual}
+          errors={errors}
+          video={video}
+          update={(_, virtualHearing) =>
+            props.onChange('virtualHearing', {
+              ...hearing?.virtualHearing,
+              ...virtualHearing,
+            })
+          }
+          appellantTitle={appellantTitle}
+          hearing={hearing}
+          virtualHearing={hearing?.virtualHearing}
+          type={HEARING_CONVERSION_TYPES[0]}
+        />
+      </div>}
     </React.Fragment>
   );
 };

@@ -34,26 +34,13 @@ exports[`ScheduleVeteranForm Displays Virtual Hearing form fields when type is c
     className="usa-width-one-half"
   >
     <ReadOnly
-      label="Regional Office"
-      spacing={0}
-      text="Central"
-    />
-    <ReadOnly
       label="Hearing Location"
       spacing={15}
       text="Virtual"
     />
-    <Connect(HearingDateDropdown)
-      key="hearingDate__undefined"
+    <Connect(RegionalOfficeDropdown)
       onChange={[Function]}
-    />
-    <HearingTime
-      componentIndex={0}
-      enableZone={true}
-      label="Hearing Time"
-      onChange={[Function]}
-      value="06:00"
-      vertical={true}
+      validateValueOnMount={true}
     />
   </div>
   <div
@@ -164,7 +151,7 @@ exports[`ScheduleVeteranForm Displays Virtual Hearing form fields when type is c
       }
       type="change_to_virtual"
       update={[Function]}
-      video={false}
+      video={true}
       virtual={true}
       virtualHearing={
         Object {
@@ -288,7 +275,7 @@ exports[`ScheduleVeteranForm Displays Virtual Hearing form fields when type is c
       }
       type="change_to_virtual"
       update={[Function]}
-      video={false}
+      video={true}
       virtual={true}
       virtualHearing={
         Object {
