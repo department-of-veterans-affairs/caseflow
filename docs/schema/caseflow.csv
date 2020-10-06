@@ -158,7 +158,7 @@ cached_appeal_attributes,closest_regional_office_key,string,,,,,x,Closest region
 cached_appeal_attributes,created_at,datetime,,,,,,
 cached_appeal_attributes,docket_number,string,,,,,,
 cached_appeal_attributes,docket_type,string,,,,,x,
-cached_appeal_attributes,former_travel,boolean,,,,,x,Determines if the hearing type was formallly travel board; only applicable to Legacy appeals
+cached_appeal_attributes,former_travel,boolean,,,,,x,Determines if the hearing type was formerly travel board; only applicable to Legacy appeals
 cached_appeal_attributes,hearing_request_type,string (10),,,,,x,"Stores hearing type requested by appellant; could be one of nil, 'Video', 'Central', 'Travel', or 'Virtual'"
 cached_appeal_attributes,is_aod,boolean,,,,,x,Whether the case is Advanced on Docket
 cached_appeal_attributes,issue_count,integer,,,,,,Number of issues on the appeal.

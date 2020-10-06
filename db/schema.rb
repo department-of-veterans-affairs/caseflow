@@ -227,7 +227,7 @@ ActiveRecord::Schema.define(version: 2020_09_29_170305) do
     t.datetime "created_at"
     t.string "docket_number"
     t.string "docket_type"
-    t.boolean "former_travel", comment: "Determines if the hearing type was formallly travel board; only applicable to Legacy appeals"
+    t.boolean "former_travel", comment: "Determines if the hearing type was formerly travel board; only applicable to Legacy appeals"
     t.string "hearing_request_type", limit: 10, comment: "Stores hearing type requested by appellant; could be one of nil, 'Video', 'Central', 'Travel', or 'Virtual'"
     t.boolean "is_aod", comment: "Whether the case is Advanced on Docket"
     t.integer "issue_count", comment: "Number of issues on the appeal."
