@@ -236,14 +236,14 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   private
 
   def aod_status_for_appeals(appeals)
-    Appeal.where(id: appeals).joins(
-      "left join claimants on appeals.id = claimants.decision_review_id and claimants.decision_review_type = 'Appeal' "\
-      "left join people on people.participant_id = claimants.participant_id "\
-      "left join advance_on_docket_motions on advance_on_docket_motions.person_id = people.id "
-    ).where(
-      "(advance_on_docket_motions.granted = true and advance_on_docket_motions.created_at > appeals.receipt_date) "\
-      "or people.date_of_birth < (current_date - interval '75 years')"
-    ).pluck(:id)
+    Appeal.where(id: appeals).joins(<<~JOINS_CLAUSE).where(<<~WHERE_CLAUSE).pluck(:id)
+      LEFT JOIN claimants ON appeals.id = claimants.decision_review_id AND claimants.decision_review_type = 'Appeal'
+      LEFT JOIN people ON people.participant_id = claimants.participant_id
+      LEFT JOIN advance_on_docket_motions ON advance_on_docket_motions.person_id = people.id
+    JOINS_CLAUSE
+      (advance_on_docket_motions.granted = true AND advance_on_docket_motions.created_at > appeals.receipt_date)
+      OR people.date_of_birth < (current_date - interval '75 years')
+    WHERE_CLAUSE
   end
 
   # Builds a hash of appeal_id => rep name
