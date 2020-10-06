@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import * as React from 'react';
 import _ from 'lodash';
 
-import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../../hearings/constants';
+import { CENTRAL_OFFICE_HEARING_LABEL, VIDEO_HEARING_LABEL } from '../../hearings/constants';
 import {
   appealWithDetailSelector,
   scheduleHearingTasksForAppeal
@@ -149,7 +149,7 @@ class AssignHearingModal extends React.PureComponent {
   getHearingType = () => {
     const { selectedRegionalOffice } = this.props;
 
-    return selectedRegionalOffice === 'C' ? CENTRAL_OFFICE_HEARING : VIDEO_HEARING;
+    return selectedRegionalOffice === 'C' ? CENTRAL_OFFICE_HEARING_LABEL : VIDEO_HEARING_LABEL;
   }
 
   getSuccessMsg = () => {
