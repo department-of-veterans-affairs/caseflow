@@ -48,6 +48,15 @@ describe Docket, :all_dbs do
              docket_type: Constants.AMA_DOCKETS.evidence_submission)
     end
 
+    # To help with understanding these tests
+    def print_appeals
+      Appeal.all.each do |a|
+        a.treee
+        pp [a.aod?, "=", a.aod_based_on_age, "OR", a.claimant&.advanced_on_docket_motion_granted?(a)]
+        pp AdvanceOnDocketMotion.eligible_motions(a.claimant.person.id, a)
+      end
+    end
+
     context "appeals" do
       context "when no options given" do
         subject { DirectReviewDocket.new.appeals }
