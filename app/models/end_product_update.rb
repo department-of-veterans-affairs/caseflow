@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Keeps track of the request issues to update the claim label in Caseflow
+# This is for updating the claim label for end products established from Caseflow 
 
 class EndProductUpdate < ApplicationRecord
 end
