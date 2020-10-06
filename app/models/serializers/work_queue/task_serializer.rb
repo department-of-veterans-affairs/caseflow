@@ -52,6 +52,20 @@ class WorkQueue::TaskSerializer
     }
   end
 
+  # completed_by indicates who the task was completed by
+  # ChangeHearingRequestType defines a completed_by deriving the data from paper_trail
+  attribute :completed_by do |object|
+    {
+      css_id: object.try(:completed_by).try(:css_id)
+    }
+  end
+
+  # completed_at indicates when the task was set to completed
+  # ChangeHearingRequestType defines a completed_at deriving the data from paper_trail
+  attribute :completed_at do |object|
+    object.try(:completed_at)
+  end
+
   attribute :assignee_name do |object|
     object.assigned_to.is_a?(Organization) ? object.assigned_to.name : object.assigned_to.css_id
   end

@@ -13,8 +13,29 @@ class ChangeHearingRequestTypeTask < Task
     "Change hearing request type"
   end
 
+  # if task is completed, show this on timeline
+  # conditioned to reduce a call to vacols in the absence of a value in `changed_hearing_type` field
+  def timeline_title
+    if completed
+      "Hearing type converted from #{appeal.previous_hearing_request_type} to #{appeal.readable_hearing_request_type}"
+    end
+  end
+
   def self.hide_from_queue_table_view
     true
+  end
+
+  # the creation of paper trail indicates that the time this type was converted at
+  def completed_at
+    if completed
+      appeal.latest_appeal_event.created_at
+    end
+  end
+
+  def completed_by
+    if completed
+      appeal.latest_appeal_event.who
+    end
   end
 
   def default_instructions
@@ -41,6 +62,10 @@ class ChangeHearingRequestTypeTask < Task
     else
       super(params, user)
     end
+  end
+
+  def completed
+    status == Constants.TASK_STATUSES.completed
   end
 
   private
