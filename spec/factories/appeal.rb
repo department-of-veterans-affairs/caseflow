@@ -195,7 +195,8 @@ FactoryBot.define do
       established_at { Time.zone.yesterday }
       after(:create) do |appeal|
         appeal.claimants { [create(:claimant, decision_review: appeal)] }
-        create(:advance_on_docket_motion, person: appeal.claimants.last.person, reason: :other, granted: false, appeal: appeal)
+        create(:advance_on_docket_motion, person: appeal.claimants.last.person,
+                                          reason: :other, granted: false, appeal: appeal)
       end
     end
 

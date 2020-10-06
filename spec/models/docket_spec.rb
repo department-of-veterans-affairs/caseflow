@@ -24,11 +24,6 @@ describe Docket, :all_dbs do
     end
 
     # priority
-    let!(:aod_based_on_age_field_appeal) do
-      create(:appeal,
-             :with_post_intake_tasks,
-             docket_type: Constants.AMA_DOCKETS.direct_review).tap { |a| a.update(aod_based_on_age: true) }
-    end
     let!(:aod_age_appeal) do
       create(:appeal,
              :advanced_on_docket_due_to_age,
@@ -53,6 +48,11 @@ describe Docket, :all_dbs do
              docket_type: Constants.AMA_DOCKETS.direct_review).tap do |a|
         create(:advance_on_docket_motion, reason: :other, granted: true, appeal: a)
       end
+    end
+    let!(:aod_based_on_age_field_appeal) do
+      create(:appeal,
+             :with_post_intake_tasks,
+             docket_type: Constants.AMA_DOCKETS.direct_review).tap { |a| a.update(aod_based_on_age: true) }
     end
 
     let!(:hearing_appeal) do

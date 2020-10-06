@@ -103,7 +103,6 @@ class Docket
   end
 
   module Scopes
-
     def priority
       join_aod_motions.where(aod_based_on_age: true)
         .or(join_aod_motions.where("people.date_of_birth <= ?", 75.years.ago))
