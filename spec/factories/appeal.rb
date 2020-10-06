@@ -154,8 +154,16 @@ FactoryBot.define do
       end
     end
 
+    trait :advanced_on_docket_due_to_age_motion do
+      after(:create) do |appeal|
+        claimant = create(:claimant, decision_review: appeal)
+        create(:advance_on_docket_motion, person: claimant.person, reason: :age, granted: true, appeal: appeal)
+        appeal.claimants = [claimant]
+      end
+    end
+
     trait :advanced_on_docket_due_to_motion do
-      # the appeal has to be established before the motion is created to apply to it.
+      # TO REMOVE: the appeal has to be established before the motion is created to apply to it.
       established_at { Time.zone.now - 1 }
       after(:create) do |appeal|
         # Create an appeal with two claimants, one with a denied AOD motion
@@ -187,7 +195,7 @@ FactoryBot.define do
       established_at { Time.zone.yesterday }
       after(:create) do |appeal|
         appeal.claimants { [create(:claimant, decision_review: appeal)] }
-        create(:advance_on_docket_motion, person: appeal.claimants.last.person, granted: false, appeal: appeal)
+        create(:advance_on_docket_motion, person: appeal.claimants.last.person, reason: :other, granted: false, appeal: appeal)
       end
     end
 

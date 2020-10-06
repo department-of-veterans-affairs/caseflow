@@ -15,7 +15,6 @@ class Docket
 
     if priority == true
       scope = scope.priority
-      puts scope.to_sql
       return scope.ordered_by_distribution_ready_date
     end
 
@@ -104,35 +103,42 @@ class Docket
   end
 
   module Scopes
+    def priority
+      priority_new
+    end
+
     def priority_old
-      join_aod_motions
+      join_aod_motions_old
         .where("advance_on_docket_motions.created_at > appeals.established_at")
         .where("advance_on_docket_motions.granted = ?", true)
-        .or(join_aod_motions
+        .or(join_aod_motions_old
           .where("people.date_of_birth <= ?", 75.years.ago))
         .group("appeals.id")
     end
 
-    def priority
+    def priority_new
       join_aod_motions.where(aod_based_on_age: true)
         .or(join_aod_motions.where("people.date_of_birth <= ?", 75.years.ago))
-        .or(
+        .or( # check AOD motions associated through the claimant
           join_aod_motions
             .where("advance_on_docket_motions.granted = ?", true)
             .where("advance_on_docket_motions.reason = ?", :age)
         )
-        .or(join_aod_motions.where("appeal_aod_motions.granted = ?", true))
+        .or(join_aod_motions.where("appeal_aod_motions.granted = ?", true)) # AOD motions associated with appeal
         .group("appeals.id")
     end
 
-    # rubocop:disable Metrics/LineLength
     def nonpriority
-      join_aod_motions
+      join_aod_motions.where(aod_based_on_age: [nil, false])
         .where("people.date_of_birth > ?", 75.years.ago)
         .group("appeals.id")
-        .having("count(case when advance_on_docket_motions.granted and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
+        .having("count(case when appeal_aod_motions.granted then 1 end) = ?", 0) # AOD motions associated with appeal
     end
-    # rubocop:enable Metrics/LineLength
+
+    def join_aod_motions_old
+      joins(claimants: :person)
+        .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
+    end
 
     def join_aod_motions
       join_appeal_specific_aod_motions

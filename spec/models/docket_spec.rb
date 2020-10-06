@@ -24,9 +24,20 @@ describe Docket, :all_dbs do
     end
 
     # priority
+    let!(:aod_based_on_age_field_appeal) do
+      create(:appeal,
+             :with_post_intake_tasks,
+             docket_type: Constants.AMA_DOCKETS.direct_review).tap { |a| a.update(aod_based_on_age: true) }
+    end
     let!(:aod_age_appeal) do
       create(:appeal,
              :advanced_on_docket_due_to_age,
+             :with_post_intake_tasks,
+             docket_type: Constants.AMA_DOCKETS.direct_review)
+    end
+    let!(:age_aod_motion_appeal) do
+      create(:appeal,
+             :advanced_on_docket_due_to_age_motion,
              :with_post_intake_tasks,
              docket_type: Constants.AMA_DOCKETS.direct_review)
     end
@@ -35,6 +46,13 @@ describe Docket, :all_dbs do
              :advanced_on_docket_due_to_motion,
              :with_post_intake_tasks,
              docket_type: Constants.AMA_DOCKETS.direct_review)
+    end
+    let!(:aod_motion_directly_on_appeal) do
+      create(:appeal,
+             :with_post_intake_tasks,
+             docket_type: Constants.AMA_DOCKETS.direct_review).tap do |a|
+        create(:advance_on_docket_motion, reason: :other, granted: true, appeal: a)
+      end
     end
 
     let!(:hearing_appeal) do
@@ -75,8 +93,11 @@ describe Docket, :all_dbs do
           expect(subject).to_not include appeal
           expect(subject).to_not include denied_aod_motion_appeal
           expect(subject).to_not include inapplicable_aod_motion_appeal
+          expect(subject).to include aod_based_on_age_field_appeal
           expect(subject).to include aod_age_appeal
+          expect(subject).to include age_aod_motion_appeal
           expect(subject).to include aod_motion_appeal
+          expect(subject).to include aod_motion_directly_on_appeal
         end
       end
 
@@ -102,8 +123,11 @@ describe Docket, :all_dbs do
             appeal,
             denied_aod_motion_appeal,
             inapplicable_aod_motion_appeal,
+            aod_based_on_age_field_appeal,
             aod_age_appeal,
-            aod_motion_appeal
+            age_aod_motion_appeal,
+            aod_motion_appeal,
+            aod_motion_directly_on_appeal
           ]
           expect(subject).to match_array(expected_appeals)
         end
@@ -195,7 +219,7 @@ describe Docket, :all_dbs do
       subject { DirectReviewDocket.new.count(priority: priority) }
 
       it "counts appeals" do
-        expect(subject).to eq(5)
+        expect(subject).to eq(8)
       end
 
       context "when looking for nonpriority appeals" do
