@@ -1,0 +1,2 @@
+class EndProductUpdate < ApplicationRecord
+end
