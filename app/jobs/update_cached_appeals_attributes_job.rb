@@ -239,10 +239,14 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     Appeal.where(id: appeals).joins(<<~JOINS_CLAUSE).where(<<~WHERE_CLAUSE).pluck(:id)
       LEFT JOIN claimants ON appeals.id = claimants.decision_review_id AND claimants.decision_review_type = 'Appeal'
       LEFT JOIN people ON people.participant_id = claimants.participant_id
+      LEFT JOIN advance_on_docket_motions AS appeal_aod_motions
+        ON appeal_aod_motions.appeal_id = appeals.id AND appeal_aod_motions.appeal_type = 'Appeal'
       LEFT JOIN advance_on_docket_motions ON advance_on_docket_motions.person_id = people.id
     JOINS_CLAUSE
-      (advance_on_docket_motions.granted = true AND advance_on_docket_motions.created_at > appeals.receipt_date)
-      OR people.date_of_birth < (current_date - interval '75 years')
+      appeals.aod_based_on_age = TRUE
+      OR people.date_of_birth <= (current_date - interval '75 years')
+      OR (advance_on_docket_motions.granted = TRUE AND advance_on_docket_motions.reason = 'age')
+      OR appeal_aod_motions.granted = TRUE
     WHERE_CLAUSE
   end
 
