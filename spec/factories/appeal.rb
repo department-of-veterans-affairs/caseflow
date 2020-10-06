@@ -163,8 +163,6 @@ FactoryBot.define do
     end
 
     trait :advanced_on_docket_due_to_motion do
-      # TO REMOVE: the appeal has to be established before the motion is created to apply to it.
-      established_at { Time.zone.now - 1 }
       after(:create) do |appeal|
         # Create an appeal with two claimants, one with a denied AOD motion
         # and one with a granted motion. The appeal should still be counted as AOD. Appeals only support one claimant,
