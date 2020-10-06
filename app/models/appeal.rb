@@ -519,6 +519,8 @@ class Appeal < DecisionReview
     (closest_regional_office == "C") ? :central : :video
   end
 
+  alias original_hearing_request_type sanitized_hearing_request_type
+
   # Determine type using cloesest_regional_office
   # "Central" if closest_regional_office office is "C", "Video" otherwise
   def readable_hearing_request_type

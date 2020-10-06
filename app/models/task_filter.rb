@@ -17,14 +17,25 @@ class TaskFilter
       end.compact.join(" AND ")
     end
 
+    private
+
     def create_where_clause(filter)
       clause = "#{table_column_from_name(filter.column)} IN (?)"
       filter_selections = filter.values
+      if filter.column == Constants.QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME &&
+         filter_selections.include?(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_FORMER_TRAVEL.key)
+        clause = extract_former_travel_clause(filter, clause)
+      end
       if filter.column == Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name &&
          filter_selections.include?(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
         clause = extract_aod_clause(filter, clause)
       end
       clause
+    end
+
+    def extract_former_travel_clause(filter, orig_clause)
+      is_former_travel_clause = "cached_appeal_attributes.formally_travel = true"
+      (filter.values.size == 1) ? is_former_travel_clause : "(#{orig_clause} OR #{is_former_travel_clause})"
     end
 
     def extract_aod_clause(filter, orig_clause)
@@ -50,6 +61,8 @@ class TaskFilter
         "cached_appeal_attributes.power_of_attorney_name"
       when Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME
         "cached_appeal_attributes.suggested_hearing_location"
+      when Constants.QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME
+        "cached_appeal_attributes.hearing_request_type"
       else
         fail(Caseflow::Error::InvalidTaskTableColumnFilter, column: column_name)
       end

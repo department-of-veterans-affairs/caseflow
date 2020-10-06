@@ -103,7 +103,9 @@ export const appealData = {
   },
   veteranInfo: {
     ...veteranInfo
-  }
+  },
+  readableHearingRequestType: 'Video',
+  readableOriginalHearingRequestType: 'Video'
 };
 
 export const amaAppeal = {
@@ -128,7 +130,8 @@ export const legacyAppealForTravelBoard = {
   powerOfAttorney: {
     ...powerOfAttorney
   },
-  readableHearingRequestType: 'Travel'
+  readableHearingRequestType: 'Travel',
+  readableOriginalHearingRequestType: 'Travel'
 }
 
 export const veteranInfoWithoutEmail = {
