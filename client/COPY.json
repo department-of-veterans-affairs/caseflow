@@ -353,6 +353,8 @@
   "HEARING_TASK_ASSOCIATION_MISSING_MESASAGE": "Hearing task (%s) is missing an associated hearing. This means that either the hearing was deleted in VACOLS or the hearing association has been deleted.",
   "HEARING_TASK_DEFAULT_INSTRUCTIONS": "This task will be auto-completed when all hearing-related tasks have been completed.",
 
+  "CAVC_TASK_DEFAULT_INSTRUCTIONS": "This task will be auto-completed when all CAVC-related tasks have been closed.",
+
   "ASSIGN_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS": "Postpone or cancel a hearing prior to the hearing date. This task will be auto-completed after the hearing's scheduled date.",
 
   "CHANGE_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS": "Change hearing disposition (Held, Canceled, No Show, Postponed) if it was marked in error.",
@@ -766,14 +768,19 @@
   "VIRTUAL_HEARING_TIMEZONE_REQUIRED": "Timezone is required to send email notifications.",
   "MISSING_EMAIL_ALERT_MESSAGE": "If you have the %s's email address, enter it in VBMS. The email will be required to send notifications when you schedule the hearing.",
   "CONVERT_HEARING_TYPE_TITLE": "Convert Hearing To %s",
-  "CONVERT_HEARING_TYPE_SUBTITLE": "The hearing request will appear in the scheduling queue for %s.",
+  "CONVERT_HEARING_TYPE_SUBTITLE": "The hearing request will appear in the scheduling queue for the %s.",
   "CONVERT_HEARING_TYPE_SUBTITLE_2": "Review and update the following information in VBMS if needed. Caseflow won't send email notifications until you schedule the hearing.",
-  "CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT": "the appropriate regional office",
+  "CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT": "appropriate regional office",
+  "CONVERT_HEARING_TYPE_SUCCESS": "You have successfully converted %s's hearing to virtual",
+  "CONVERT_HEARING_TYPE_SUCCESS_DETAIL": "The hearing request is in the scheduling queue for the %s",
 
   "JUDGE_TEAM_REMOVE_JUDGE_ERROR": "Cannot remove a judge from their judge team.",
   "JUDGE_TEAM_ATTORNEY_RIGHTS_ERROR": "Cannot edit attorney rights on non-attorneys",
 
   "HEARING_UPDATE_SUCCESSFUL_TITLE": "You have successfully updated %s's hearing.",
+
+  "DEFAULT_UPDATE_ERROR_MESSAGE_TITLE": "Unable to save changes",
+  "DEFAULT_UPDATE_ERROR_MESSAGE_DETAIL": "An unknown error occurred",
 
   "VIRTUAL_HEARING_PROGRESS_ALERTS": {
     "CHANGED_TO_VIRTUAL": {
@@ -834,5 +841,7 @@
 
   "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s.",
 
-  "PRIORITY_PUSH_WARNING_MESSAGE": "Some cases are ready to distribute but could not be. This could be due to the tied judge being an acting judge or an attorney (`!user.judge_in_vacols?`). These will be handled manually by the board. The tied judge could also have priority distribution turned off and should not be pushed cases (`JudgeTeam.for_judge(user).accepts_priority_pushed_cases?`). There could also be a duplicate distributed case blocking distribution (`DistributedCase.find_by(case_id: case_id`) or our validations for redistributing legacy appeals failed (https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/services/redistributed_case.rb#L26)"
+  "PRIORITY_PUSH_WARNING_MESSAGE": "Some cases are ready to distribute but could not be. This could be due to the tied judge being an acting judge or an attorney (`!user.judge_in_vacols?`). These will be handled manually by the board. The tied judge could also have priority distribution turned off and should not be pushed cases (`JudgeTeam.for_judge(user).accepts_priority_pushed_cases?`). There could also be a duplicate distributed case blocking distribution (`DistributedCase.find_by(case_id: case_id`) or our validations for redistributing legacy appeals failed (https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/services/redistributed_case.rb#L26)",
+
+  "INVALID_IHP_DRAFT_PATH": "Path to IHP is invalid. This path should be of the format '\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\VSO\\902\\VetName 12345.pdf' for legacy appeals and '\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\VSO\\AMA IHPs\\VetName 12345.pdf' for AMA appeals. Hold SHIFT and right click the file to copy the path to the drafted IHP."
 }

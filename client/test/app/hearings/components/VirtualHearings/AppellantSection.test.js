@@ -1,6 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
+import Alert from 'app/components/Alert';
 import { AppellantSection } from 'app/hearings/components/VirtualHearings/AppellantSection';
 import { virtualHearing, defaultHearing } from 'test/data/hearings';
 import { HEARING_CONVERSION_TYPES } from 'app/hearings/constants';
@@ -66,6 +67,46 @@ describe('Appellant', () => {
 
     // Ensure the emails are read-only
     expect(appellantSection.find(Timezone)).toHaveLength(1);
+    expect(appellantSection).toMatchSnapshot();
+  });
+
+  test('Displays email alert when email is null', () => {
+    // Run the test
+    const appellantSection = mount(
+      <AppellantSection
+        virtual
+        appellantTitle="Veteran"
+        virtualHearing={{ appellantEmail: null }}
+        hearing={defaultHearing}
+        type={HEARING_CONVERSION_TYPES[0]}
+        update={updateSpy}
+        readOnly
+        showMissingEmailAlert
+      />
+    );
+
+    // Ensure the alert displays
+    expect(appellantSection.find(Alert)).toHaveLength(1);
+    expect(appellantSection).toMatchSnapshot();
+  });
+
+  test('Displays email alert when email is undefined', () => {
+    // Run the test
+    const appellantSection = mount(
+      <AppellantSection
+        virtual
+        appellantTitle="Veteran"
+        virtualHearing={{}}
+        hearing={defaultHearing}
+        type={HEARING_CONVERSION_TYPES[0]}
+        update={updateSpy}
+        readOnly
+        showMissingEmailAlert
+      />
+    );
+
+    // Ensure the alert displays
+    expect(appellantSection.find(Alert)).toHaveLength(1);
     expect(appellantSection).toMatchSnapshot();
   });
 });

@@ -13,9 +13,10 @@
 # here: https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Hearings#2-schedule-veteran
 #
 # This task also allows coordinators to withdraw hearings. For AMA, this creates an EvidenceSubmissionWindowTask
-# and for legacy this moves the appeal to case storage.
+# and for legacy this moves the appeal to case storage. If the hearing request is withdrawn before the hearing
+# was scheduled, the ScheduleHearingTask is cancelled and the HearingTask is automatically closed.
 #
-# Once completed, an AssignHearingDispositionTask is created.
+# Once completed, an AssignHearingDispositionTask is created as a child of HearingTask.
 
 class ScheduleHearingTask < Task
   before_validation :set_assignee
@@ -99,8 +100,13 @@ class ScheduleHearingTask < Task
     hearing_admin_actions = available_hearing_user_actions(user)
 
     if (assigned_to &.== user) || HearingsManagement.singleton.user_has_access?(user)
+      schedule_hearing_action = if FeatureToggle.enabled?(:schedule_veteran_virtual_hearing, user: user)
+                                  Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE
+                                else
+                                  Constants.TASK_ACTIONS.SCHEDULE_VETERAN
+                                end
       return [
-        Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h,
+        schedule_hearing_action.to_h,
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
         Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
         Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h

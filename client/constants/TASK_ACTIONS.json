@@ -15,7 +15,7 @@
   },
   "CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL": {
     "label": "Convert hearing to virtual",
-    "value": "<placeholder>page/change_hearing_request_type</placeholder>",
+    "value": "change_hearing_request_type_to_virtual",
     "func": "change_hearing_request_type_data"
   },
   "ASSIGN_OMO": {
@@ -80,9 +80,17 @@
     "value": "sign_motion_to_vacate",
     "func": "sign_motion_to_vacate_data"
   },
-  "SWITCH_DOCKET": {
-    "label": "Switch Docket",
-    "value": "switch_docket"
+  "DOCKET_CHANGE_SEND_TO_JUDGE": {
+    "label": "Send to Judge",
+    "value": "docket_change/recommend"
+  },
+  "DOCKET_CHANGE_JUDGE_RULING": {
+    "label": "Send to Judge",
+    "value": "docket_change/ruling"
+  },
+  "DOCKET_CHANGE_CHECKOUT": {
+    "label": "Send to Judge",
+    "value": "docket_change/checkout/review"
   },
   "CANCEL_FOREIGN_VETERANS_CASE_TASK": {
     "label": "Cancel hearing request",
@@ -257,6 +265,11 @@
   "SCHEDULE_VETERAN": {
     "label": "Schedule Veteran",
     "value": "modal/schedule_veteran",
+    "func": "schedule_veteran_data"
+  },
+  "SCHEDULE_VETERAN_V2_PAGE": {
+    "label": "Schedule Veteran",
+    "value": "schedule_veteran",
     "func": "schedule_veteran_data"
   },
   "SEND_TO_SCHEDULE_VETERAN_LIST": {

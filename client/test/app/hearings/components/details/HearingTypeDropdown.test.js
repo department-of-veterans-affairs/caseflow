@@ -3,14 +3,14 @@ import { shallow, mount } from 'enzyme';
 
 import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
 import SearchableDropdown from 'app/components/SearchableDropdown';
-import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING, HEARING_CONVERSION_TYPES } from 'app/hearings/constants';
+import { CENTRAL_OFFICE_HEARING_LABEL, VIDEO_HEARING_LABEL, HEARING_CONVERSION_TYPES } from 'app/hearings/constants';
 import { virtualHearing } from 'test/data/hearings';
 import Select from 'react-select';
 
 // Set the default options
 const centralOpts = [
   {
-    label: CENTRAL_OFFICE_HEARING,
+    label: CENTRAL_OFFICE_HEARING_LABEL,
     value: false
   },
   {
@@ -21,7 +21,7 @@ const centralOpts = [
 
 const videoOpts = [
   {
-    label: VIDEO_HEARING,
+    label: VIDEO_HEARING_LABEL,
     value: false
   },
   centralOpts[1]
@@ -37,7 +37,7 @@ describe('HearingTypeDropdown', () => {
     // Render the address component
     const hearingType = shallow(
       <HearingTypeDropdown
-        requestType={CENTRAL_OFFICE_HEARING}
+        originalRequestType={CENTRAL_OFFICE_HEARING_LABEL}
       />
     );
 
@@ -53,7 +53,7 @@ describe('HearingTypeDropdown', () => {
     // Render the address component
     const hearingType = shallow(
       <HearingTypeDropdown
-        requestType={VIDEO_HEARING}
+        originalRequestType={VIDEO_HEARING_LABEL}
       />
     );
 
@@ -69,7 +69,7 @@ describe('HearingTypeDropdown', () => {
     // Render the address component
     const hearingType = shallow(
       <HearingTypeDropdown
-        requestType={CENTRAL_OFFICE_HEARING}
+        originalRequestType={CENTRAL_OFFICE_HEARING_LABEL}
         virtualHearing={virtualHearing.virtualHearing}
       />
     );
@@ -86,7 +86,7 @@ describe('HearingTypeDropdown', () => {
     // Render the address component
     const hearingType = mount(
       <HearingTypeDropdown
-        requestType={CENTRAL_OFFICE_HEARING}
+        originalRequestType={CENTRAL_OFFICE_HEARING_LABEL}
         convertHearing={convertHearingSpy}
         update={updateSpy}
       />
@@ -115,7 +115,7 @@ describe('HearingTypeDropdown', () => {
     // Render the address component
     const hearingType = mount(
       <HearingTypeDropdown
-        requestType={VIDEO_HEARING}
+        originalRequestType={VIDEO_HEARING_LABEL}
         openModal={openModalSpy}
         update={updateSpy}
       />
@@ -144,7 +144,7 @@ describe('HearingTypeDropdown', () => {
     // Render the address component
     const hearingType = mount(
       <HearingTypeDropdown
-        requestType={CENTRAL_OFFICE_HEARING}
+        originalRequestType={CENTRAL_OFFICE_HEARING_LABEL}
         virtualHearing={virtualHearing.virtualHearing}
         convertHearing={convertHearingSpy}
         update={updateSpy}
@@ -174,7 +174,7 @@ describe('HearingTypeDropdown', () => {
     // Render the address component
     const hearingType = mount(
       <HearingTypeDropdown
-        requestType={VIDEO_HEARING}
+        originalRequestType={VIDEO_HEARING_LABEL}
         virtualHearing={virtualHearing.virtualHearing}
         openModal={openModalSpy}
         update={updateSpy}

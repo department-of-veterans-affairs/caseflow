@@ -7,6 +7,9 @@ class WorkQueue::LegacyAppealSerializer
   attribute :assigned_attorney
   attribute :assigned_judge
   attribute :readable_hearing_request_type
+  attribute :readable_original_hearing_request_type do |object|
+    LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[object.original_hearing_request_type]
+  end
 
   attribute :issues do |object|
     object.issues.map do |issue|
