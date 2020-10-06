@@ -164,6 +164,13 @@ class TaskRows extends React.PureComponent {
       <dd>{canceler}</dd></div> : null;
   }
 
+  hearingRequestTypeConvertedBy = (task) => {
+    const converter = task.completedBy?.cssId;
+
+    return converter ? <div><dt>{COPY.TASK_SNAPSHOT_HEARING_REQUEST_CONVERTER_LABEL}</dt>
+      <dd>{converter}</dd></div> : null;
+  }
+
   taskLabelListItem = (task) => {
     if (task.closedAt) {
       return null;
@@ -225,6 +232,38 @@ class TaskRows extends React.PureComponent {
     };
   }
 
+  hearingRequestTypeConvertedAtListItem = (task) => {
+    return task.completedAt ? <div><dt>{COPY.TASK_SNAPSHOT_HEARING_REQUEST_CONVERTED_ON_LABEL}</dt>
+      <dd>{moment(task.closedAt).format('MM/DD/YYYY')}</dd></div> : null;
+  };
+
+  closedOrCancelledAtListItem = (task) => {
+    if (isCancelled(task)) {
+      return this.cancelledAtListItem(task);
+    }
+
+    return task.type === 'ChangeHearingRequestTypeTask' ?
+      this.hearingRequestTypeConvertedAtListItem(task) : this.closedAtListItem(task);
+
+  }
+
+  showTimelineDescriptionItems = (task) => {
+    if (task.type === 'ChangeHearingRequestTypeTask') {
+      return this.hearingRequestTypeConvertedBy(task);
+    }
+
+    return (
+      <React.Fragment>
+        { this.assignedToListItem(task) }
+        { this.assignedByListItem(task) }
+        { this.cancelledByListItem(task) }
+        { this.taskLabelListItem(task) }
+        { this.taskInstructionsListItem(task) }
+      </React.Fragment>
+    );
+
+  }
+
   taskTemplate = (templateConfig) => {
     const { task, taskList, index, timeline, appeal } = templateConfig;
 
@@ -234,7 +273,7 @@ class TaskRows extends React.PureComponent {
       <td {...taskTimeContainerStyling} className={timeline ? taskTimeTimelineContainerStyling : ''}>
         <CaseDetailsDescriptionList>
           { this.assignedOnListItem(task) }
-          { isCancelled(task) ? this.cancelledAtListItem(task) : this.closedAtListItem(task) }
+          { this.closedOrCancelledAtListItem(task) }
           { !task.closedAt && this.daysWaitingListItem(task) }
         </CaseDetailsDescriptionList>
       </td>
@@ -248,11 +287,7 @@ class TaskRows extends React.PureComponent {
         className={timeline ? 'taskInformationTimelineContainerStyling' : ''}>
         <CaseDetailsDescriptionList>
           { timeline && timelineTitle }
-          { this.assignedToListItem(task) }
-          { this.assignedByListItem(task) }
-          { this.cancelledByListItem(task) }
-          { this.taskLabelListItem(task) }
-          { this.taskInstructionsListItem(task) }
+          { this.showTimelineDescriptionItems(task) }
         </CaseDetailsDescriptionList>
       </td>
       { !timeline && <td className="taskContainerStyling taskActionsContainerStyling">
