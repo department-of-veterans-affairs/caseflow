@@ -13,9 +13,11 @@ export const getClaimantError = (responseErrorCodes) => {
   return CLAIMANT_ERRORS[errorCode];
 };
 
-export const getPageError = (responseErrorCodes) => (
-  _.get(responseErrorCodes.other, 0) === 'unknown_error' ? 'Unknown error.' : null
-);
+export const getPageError = (responseErrorPayload) => {
+  if (responseErrorPayload.responseErrorCodes.other?.[0] === 'unknown_error') {
+    return { errorCode: null, errorUUID: responseErrorPayload.errorUUID };
+  }
+};
 
 // use this conversion to change between rails model and react radio input
 // otherwise we send over a string true/false and reloading turns it into a boolean
