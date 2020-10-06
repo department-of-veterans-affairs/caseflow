@@ -61,7 +61,11 @@ class AsyncableJobsController < ApplicationController
   end
 
   def asyncable_jobs
-    @asyncable_jobs ||= AsyncableJobs.new(page_size: page_size, page: current_page, veteran_file_number: veteran_file_number)
+    @asyncable_jobs ||= AsyncableJobs.new(
+      page_size: page_size,
+      page: current_page,
+      veteran_file_number: veteran_file_number
+    )
   end
 
   def total_jobs

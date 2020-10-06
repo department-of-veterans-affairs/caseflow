@@ -138,7 +138,8 @@ class AsyncableJobsPage extends React.PureComponent {
     let noResultsMessage;
 
     if (this.state.veteranFileNumber && rowObjects.length === 0) {
-      noResultsMessage = <h2>{`There are no pending ${this.props.asyncableJobKlass} jobs for Veteran file '${this.state.veteran_file_number}'.`}</h2>;
+      noResultsMessage = <h2>{`There are no pending ${this.props.asyncableJobKlass}` +
+      `jobs for Veteran file '${this.state.veteran_file_number}'.`}</h2>;
     } else if (rowObjects.length === 0) {
       noResultsMessage = <h2>{`There are no pending ${this.props.asyncableJobKlass} jobs.`}</h2>;
     }
@@ -154,7 +155,6 @@ class AsyncableJobsPage extends React.PureComponent {
         style={{ marginTop: '.5em' }}
         size="small"
         title="Search by Veteran file number"
-        value={this.state.veteranFileNumber}
         onChange={this.updateVeteranFileNumber}
         onSubmit={this.handleVeteranIdSearch}
         loading={this.state.isFetchingSearchResults}
