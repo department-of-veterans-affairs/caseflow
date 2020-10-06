@@ -88,8 +88,38 @@ RSpec.feature "Convert travel board appeal for 'Edit HearSched' (Hearing Coordin
         )
       end
 
-      step "cnofirm schedule veteran task is actionable" do
+      step "confirm schedule veteran task is actionable" do
         click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.label)
+      end
+    end
+
+    context "with schedule veteran page feature toggle enabled" do
+      before do
+        FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
+      end
+
+      after do
+        FeatureToggle.disable!(:schedule_veteran_virtual_hearing)
+      end
+
+      scenario "pre-selects virtual type on schedule veteran page" do
+        visit "queue/appeals/#{legacy_appeal.vacols_id}"
+
+        step "change hearing request type to virtual" do
+          click_dropdown(text: Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.label)
+
+          click_button("Convert Hearing To Virtual")
+        end
+
+        step "work schedule veteran task" do
+          click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.label)
+        end
+
+        step "confirm virtual type is selected" do
+          expect(
+            page.find(".dropdown-hearingType").find(".cf-select__single-value")
+          ).to have_content("Virtual")
+        end
       end
     end
   end

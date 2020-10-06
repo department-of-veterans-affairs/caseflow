@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 ##
-# Task that signals that a case now has a 90-day window for appellant to submit additional evidence.
+# Task that signals that a case now has a 90-day window for appellant to submit additional evidence before
+# their appeal is decided (established by AMA).
+# These tasks serve to block distribution until the evidence submission window is up.
 # The evidence window may be waived by an appellant.
 
 class EvidenceSubmissionWindowTask < Task
