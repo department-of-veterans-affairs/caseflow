@@ -103,20 +103,8 @@ class Docket
   end
 
   module Scopes
+
     def priority
-      priority_new
-    end
-
-    def priority_old
-      join_aod_motions_old
-        .where("advance_on_docket_motions.created_at > appeals.established_at")
-        .where("advance_on_docket_motions.granted = ?", true)
-        .or(join_aod_motions_old
-          .where("people.date_of_birth <= ?", 75.years.ago))
-        .group("appeals.id")
-    end
-
-    def priority_new
       join_aod_motions.where(aod_based_on_age: true)
         .or(join_aod_motions.where("people.date_of_birth <= ?", 75.years.ago))
         .or( # check AOD motions associated through the claimant
@@ -133,11 +121,6 @@ class Docket
         .where("people.date_of_birth > ?", 75.years.ago)
         .group("appeals.id")
         .having("count(case when appeal_aod_motions.granted then 1 end) = ?", 0) # AOD motions associated with appeal
-    end
-
-    def join_aod_motions_old
-      joins(claimants: :person)
-        .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
     end
 
     def join_aod_motions
