@@ -410,14 +410,7 @@ class LegacyAppeal < CaseflowRecord
   #   if a travel board hearing request type was overridden in Caseflow.
   def sanitized_hearing_request_type
     if changed_request_type.present?
-      case changed_request_type
-      when HearingDay::REQUEST_TYPES[:video]
-        return :video
-      when HearingDay::REQUEST_TYPES[:virtual]
-        return :virtual
-      else
-        fail InvalidChangedRequestType, "\"#{changed_request_type}\" is not a valid request type."
-      end
+      return readable_changed_request_type(changed_request_type)
     end
 
     original_hearing_request_type
@@ -935,7 +928,32 @@ class LegacyAppeal < CaseflowRecord
     false
   end
 
+  # Example of diff: {"changed_request_type"=>[nil, "R"]}
+  def previous_hearing_request_type
+    previous_type = latest_appeal_event.diff["changed_request_type"].first
+
+    return readable_changed_request_type(previous_type) if !previous_type.nil?
+
+    readable_original_hearing_request_type
+  end
+
+  # user the paper_trail version on LegacyAppeal
+  def latest_appeal_event
+    TaskEvent.new(version: versions.last)
+  end
+
   private
+
+  def readable_changed_request_type(changed_request_type)
+    case changed_request_type
+    when HearingDay::REQUEST_TYPES[:video]
+      return :video
+    when HearingDay::REQUEST_TYPES[:virtual]
+      return :virtual
+    else
+      fail InvalidChangedRequestType, "\"#{changed_request_type}\" is not a valid request type."
+    end
+  end
 
   def soc_eligible_for_opt_in?(receipt_date:, covid_flag: false)
     return false unless soc_date
