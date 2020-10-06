@@ -1,6 +1,6 @@
 class CreateEndProductUpdate < ActiveRecord::Migration[5.2]
   def change
-    create_table :end_product_updates, comment: "Updates end products on edit ep claim labels" do |t|
+    create_table :end_product_updates, comment: "Keeps track of the request issues to update the claim label in Caseflow" do |t|
       t.integer :user_id, comment: "The ID of the user who edits a decision review."
       t.bigint :end_product_establishment_id, comment: "The ID of the End Product Establishment created for this request issue after user has finished editing a decision review."
       t.bigint :original_decision_review_id, comment: "The original ID of the decision review that this request issue belongs to"

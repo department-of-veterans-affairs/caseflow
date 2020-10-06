@@ -392,6 +392,15 @@ end_product_code_updates,created_at,datetime ∗,x,,,,,
 end_product_code_updates,end_product_establishment_id,integer (8) ∗ FK,x,,x,,x,
 end_product_code_updates,id,integer (8) PK,x,x,,,,
 end_product_code_updates,updated_at,datetime ∗,x,,,,x,
+end_product_updates,,,,,,,, "Keeps track of the request issues to update the claim label in Caseflow."
+end_product_updates,user_id,integer,"The ID of the user who edits a decision review."
+end_product_updates,end_product_establishment_id,bigint,"The ID of the End Product Establishment created for this request issue after user has finished editing a decision review."
+end_product_updates,original_decision_review_id,bigint,"The original ID of the decision review that this request issue belongs to"
+end_product_updates,status,string,"Shows success or error text upon completion of editing a decision review."
+end_product_updates,error,string,"The error captured for the most recent attempt after end product update has failed."
+end_product_updates,original_code,string,"The original end product code after an intake has been established."
+end_product_updates,new_code,string,"This is the new end product code after a user has finished editing a decision review and establishing an end product."
+end_product_updates,active_request_issue_ids,integer,"An array of the active request issue IDs after a user has finished editing a decision review. Used with before_request_issue_ids to determine appropriate actions (such as which contentions need to be added)."
 end_product_establishments,,,,,,,,"Represents end products that have been, or need to be established by Caseflow. Used to track the status of those end products as they are processed in VBMS and/or SHARE."
 end_product_establishments,benefit_type_code,string,,,,,,"1 if the Veteran is alive, and 2 if the Veteran is deceased. Not to be confused with benefit_type, which is unrelated."
 end_product_establishments,claim_date,date,,,,,,The claim_date for end product established.

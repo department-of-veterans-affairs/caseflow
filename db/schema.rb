@@ -564,7 +564,7 @@ ActiveRecord::Schema.define(version: 2020_10_05_190456) do
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
   end
 
-  create_table "end_product_updates", comment: "Updates end products on edit ep claim labels", force: :cascade do |t|
+  create_table "end_product_updates", comment: "Keeps track of the request issues to update the claim label in Caseflow", force: :cascade do |t|
     t.integer "active_request_issue_ids", null: false, comment: "An array of the active request issue IDs after a user has finished editing a decision review. Used with before_request_issue_ids to determine appropriate actions (such as which contentions need to be added).", array: true
     t.datetime "created_at", null: false
     t.bigint "end_product_establishment_id", comment: "The ID of the End Product Establishment created for this request issue after user has finished editing a decision review."
