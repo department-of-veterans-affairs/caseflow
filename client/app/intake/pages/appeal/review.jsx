@@ -53,7 +53,7 @@ class Review extends React.PureComponent {
     return <div>
       <h1>Review { veteranName }'s { FORM_TYPES.APPEAL.name }</h1>
 
-      { reviewIntakeError && <ErrorAlert /> }
+      { reviewIntakeError && <ErrorAlert {...reviewIntakeError} /> }
 
       <DateSelector
         name="receipt-date"
@@ -95,7 +95,7 @@ Review.propTypes = {
   docketTypeError: PropTypes.string,
   legacyOptInApproved: PropTypes.bool,
   legacyOptInApprovedError: PropTypes.string,
-  reviewIntakeError: PropTypes.string,
+  reviewIntakeError: PropTypes.object,
   setDocketType: PropTypes.func,
   setReceiptDate: PropTypes.func,
   setLegacyOptInApproved: PropTypes.func,

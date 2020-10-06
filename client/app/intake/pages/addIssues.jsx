@@ -151,7 +151,9 @@ class AddIssuesPage extends React.Component {
     }
 
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
-    const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
+    const requestErrorCode =
+      intakeData.requestStatus.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
+    const requestErrorUUID = intakeData.requestStatus.completeIntakeErrorUUID;
     const showInvalidVeteranError =
       !intakeData.veteranValid &&
       _.some(
@@ -324,7 +326,9 @@ class AddIssuesPage extends React.Component {
         )}
         <h1 className="cf-txt-c">{messageHeader}</h1>
 
-        {requestState === REQUEST_STATE.FAILED && <ErrorAlert errorCode={requestErrorCode} />}
+        {requestState === REQUEST_STATE.FAILED && (
+          <ErrorAlert errorCode={requestErrorCode} errorUUID={requestErrorUUID} />
+        )}
 
         {showInvalidVeteranError && (
           <ErrorAlert errorCode="veteran_not_valid" errorData={intakeData.veteranInvalidFields} />

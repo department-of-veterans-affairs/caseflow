@@ -172,7 +172,8 @@ class LegacyAppeal < CaseflowRecord
   }.freeze
 
   READABLE_HEARING_REQUEST_TYPES = {
-    central_board: "Central",
+    central_board: "Central", # Equivalent to :central_office
+    central_office: "Central",
     travel_board: "Travel",
     video: "Video",
     virtual: "Virtual"
@@ -1028,7 +1029,14 @@ class LegacyAppeal < CaseflowRecord
 
       fail ActiveRecord::RecordNotFound unless appeal.check_and_load_vacols_data!
 
-      appeal.save
+      # recover if another process has saved a record for this
+      # appeal since this method started
+      begin
+        appeal.save
+      rescue ActiveRecord::RecordNotUnique
+        appeal = find_by!(vacols_id: vacols_id)
+      end
+
       appeal
     end
 

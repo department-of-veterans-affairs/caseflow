@@ -96,7 +96,7 @@ group :test, :development, :demo do
   gem "capybara-screenshot"
   gem "danger", "~> 6.0"
   gem "database_cleaner"
-  gem "factory_bot_rails", "~> 4.8"
+  gem "factory_bot_rails", "~> 5.2"
   gem "faker"
   gem "guard-rspec"
   # Linters

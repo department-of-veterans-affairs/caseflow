@@ -106,6 +106,8 @@ class TasksController < ApplicationController
     render json: {
       tasks: tasks_hash
     }
+  rescue ActiveRecord::RecordInvalid => error
+    invalid_record_error(error.record)
   rescue AssignHearingDispositionTask::HearingAssociationMissing => error
     Raven.capture_exception(error)
     render json: {
@@ -247,6 +249,7 @@ class TasksController < ApplicationController
       :status,
       :assigned_to_id,
       :instructions,
+      :ihp_path,
       reassign: [:assigned_to_id, :assigned_to_type, :instructions],
       business_payloads: [:description, values: {}]
     )
