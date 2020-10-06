@@ -19,6 +19,7 @@ RSpec.feature "Convert travel board appeal for 'Edit HearSched' (Hearing Coordin
   let!(:dispatched_vacols_case) do
     create(
       :case,
+      bfmpro: "HIS",
       bfhr: "2" # Travel Board
     )
   end
