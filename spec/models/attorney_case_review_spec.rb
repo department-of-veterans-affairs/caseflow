@@ -424,19 +424,17 @@ describe AttorneyCaseReview, :all_dbs do
     context "when ama" do
       let(:attorney_task) { Task.find(task_id) }
       let(:judge_task) { attorney_task.parent }
-      let(:remand_reason1) { create(:ama_remand_reason) }
-      let(:remand_reason2) { create(:ama_remand_reason) }
-      let(:decision_issue1) { build(:decision_issue) }
-      let(:decision_issue2) do
-        create(:decision_issue, remand_reasons: [remand_reason1, remand_reason2], decision_review: attorney_task.appeal)
-      end
       let!(:request_issue1) do
         create(:request_issue,
-               decision_review: judge_task.appeal, decision_issues: [decision_issue1])
+               decision_review: judge_task.appeal,
+               decision_issues: [build(:decision_issue)])
       end
       let(:request_issue2) do
         create(:request_issue,
-               decision_review: attorney_task.appeal, decision_issues: [decision_issue2])
+               decision_review: attorney_task.appeal, 
+               decision_issues: [ create(:decision_issue, 
+                                         remand_reasons: [create(:ama_remand_reason), create(:ama_remand_reason)], 
+                                         decision_review: attorney_task.appeal)])
       end
       let(:issues) do
         [{ disposition: "allowed", description: "something",
