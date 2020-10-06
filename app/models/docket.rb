@@ -15,6 +15,7 @@ class Docket
 
     if priority == true
       scope = scope.priority
+      puts scope.to_sql
       return scope.ordered_by_distribution_ready_date
     end
 
@@ -112,6 +113,18 @@ class Docket
         .group("appeals.id")
     end
 
+    def priority
+      join_aod_motions.where(aod_based_on_age: true)
+        .or(join_aod_motions.where("people.date_of_birth <= ?", 75.years.ago))
+        .or(
+          join_aod_motions
+            .where("advance_on_docket_motions.granted = ?", true)
+            .where("advance_on_docket_motions.reason = ?", :age)
+        )
+        .or(join_aod_motions.where("appeal_aod_motions.granted = ?", true))
+        .group("appeals.id")
+    end
+
     # rubocop:disable Metrics/LineLength
     def nonpriority
       join_aod_motions
@@ -122,8 +135,17 @@ class Docket
     # rubocop:enable Metrics/LineLength
 
     def join_aod_motions
-      joins(claimants: :person)
+      join_appeal_specific_aod_motions
+        .joins(claimants: :person)
         .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
+    end
+
+    def join_appeal_specific_aod_motions
+      joins(Arel.sql(<<-SQL))
+        INNER JOIN advance_on_docket_motions as appeal_aod_motions
+        ON appeal_aod_motions.appeal_id = appeals.id
+        AND appeal_aod_motions.appeal_type = 'Appeal'
+      SQL
     end
 
     def ready_for_distribution
