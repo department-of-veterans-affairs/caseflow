@@ -684,7 +684,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       before { cache_appeals }
 
-      it_behaves_like "scheduling a virtual hearing", false, legacy_appeal.closest_regional_office
+      it_behaves_like "scheduling a virtual hearing", false, "RO17"
     end
   end
 
