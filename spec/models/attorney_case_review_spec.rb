@@ -469,6 +469,8 @@ describe AttorneyCaseReview, :all_dbs do
         subject
         expect(judge_task.reload.assigned_by).to eq(attorney)
       end
+      it "should create an AttorneyCaseReview record"
+      it "should check for erroneous AMA states"
     end
   end
 end
