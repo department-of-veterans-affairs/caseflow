@@ -947,9 +947,9 @@ class LegacyAppeal < CaseflowRecord
   def readable_changed_request_type(changed_request_type)
     case changed_request_type
     when HearingDay::REQUEST_TYPES[:video]
-      return :video
+      :video
     when HearingDay::REQUEST_TYPES[:virtual]
-      return :virtual
+      :virtual
     else
       fail InvalidChangedRequestType, "\"#{changed_request_type}\" is not a valid request type."
     end
