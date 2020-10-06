@@ -226,11 +226,9 @@ RSpec.feature "Postpone hearing" do
         find(".cf-form-radio-option", text: "8:30 AM Eastern Time (US & Canada)").click
 
         # Fill in appellant details
-        click_dropdown(name: "appellantTz", index: 1)
         fill_in "Veteran Email", with: fill_in_veteran_email
 
         # Fill in POA/Representative details
-        click_dropdown(name: "representativeTz", index: 1)
         fill_in "POA/Representative Email", with: fill_in_representative_email
 
         click_button("Schedule")
