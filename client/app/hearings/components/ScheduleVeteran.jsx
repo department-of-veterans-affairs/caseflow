@@ -80,6 +80,8 @@ export const ScheduleVeteran = ({
   // Create a hearing object for the form
   const hearing = {
     ...assignHearingForm,
+    regionalOffice: assignHearingForm?.regionalOffice?.key,
+    regionalOfficeTimezone: assignHearingForm?.regionalOffice?.timezone,
     representative: appeal?.powerOfAttorney?.representative_name,
     representativeType: appeal?.powerOfAttorney?.representative_type,
     representativeAddress: {
@@ -375,7 +377,7 @@ ScheduleVeteran.propTypes = {
   showErrorMessage: PropTypes.func,
   onChangeFormData: PropTypes.func,
   showSuccessMessage: PropTypes.func,
-  selectedRegionalOffice: PropTypes.string,
+  selectedRegionalOffice: PropTypes.object,
   error: PropTypes.object,
   scheduledHearing: PropTypes.object,
 };
