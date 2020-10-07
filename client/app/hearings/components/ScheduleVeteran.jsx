@@ -16,7 +16,7 @@ import { showSuccessMessage, showErrorMessage, requestPatch } from '../../queue/
 import { onReceiveAppealDetails } from '../../queue/QueueActions';
 import { formatDateStr } from '../../util/DateUtil';
 import Alert from '../../components/Alert';
-import { marginTop, regionalOfficeSection, saveButton, cancelButton } from './details/style';
+import { margin, marginTop, regionalOfficeSection, saveButton, cancelButton } from './details/style';
 import { find, get } from 'lodash';
 import { getAppellantTitle, processAlerts, parseVirtualHearingErrors } from '../utils';
 import {
@@ -280,13 +280,17 @@ export const ScheduleVeteran = ({
     });
   };
 
+  // Create the header styling based on video/virtual type
+  const headerStyle = virtual ? margin('0 0 0.75rem 0') : margin(0);
+  const helperTextStyle = virtual ? margin('0 0 2rem 0') : margin(0);
+
   return (
     <div {...regionalOfficeSection}>
       <AppSegment filledBackground >
-        <h1>{header}</h1>
+        <h1 {...headerStyle}>{header}</h1>
         {error && <Alert title={error.title} type="error">{error.detail}</Alert>}
         {virtual ?
-          <div {...marginTop(0)}>{COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL}</div> :
+          <div {...helperTextStyle}>{COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL}</div> :
           !fullHearingDay && <div {...marginTop(45)} />}
 
         {fullHearingDay && (
