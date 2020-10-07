@@ -325,4 +325,12 @@ class WorkQueue::TaskColumnSerializer
       css_id: nil
     }
   end
+  attribute :completed_by do
+    {
+      css_id: nil
+    }
+  end
+  attribute :completed_at do
+    nil
+  end
 end
