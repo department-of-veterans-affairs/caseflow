@@ -104,7 +104,7 @@ Request an invite to the [department-of-veterans-affairs](https://github.com/dep
 #### Git 2-factor authentication ##########################################################
 
 We are using 2-factor authentication with Github so, for example, when you access a repository using Git on the command line using commands like git clone, git fetch, git pull or git push with HTTPS URLs, you must provide your GitHub username and your personal access token when prompted for a username and password. Follow directions [here](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) on how to do that.
- 
+  
 
 ### Machine setup #######################################################
 
