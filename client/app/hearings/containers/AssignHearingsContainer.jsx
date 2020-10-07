@@ -38,7 +38,7 @@ class AssignHearingsContainer extends React.PureComponent {
     this.props.setUserCssId(this.props.userCssId);
   }
 
-  onRegionalOfficeChange = (value, label) => {
+  onRegionalOfficeChange = (value) => {
     if (value) {
       const currentQueryParams = getQueryParams(window.location.search);
 
@@ -49,8 +49,7 @@ class AssignHearingsContainer extends React.PureComponent {
       window.history.replaceState('', '', encodeQueryParams(currentQueryParams));
     }
 
-    this.props.onRegionalOfficeChange({ label,
-      value });
+    this.props.onRegionalOfficeChange(value);
   }
 
   loadUpcomingHearingDays = () => {
