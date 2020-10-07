@@ -187,7 +187,7 @@ export const cancelButton = css({ float: 'left', paddingLeft: 0, paddingRight: 0
 
 export const saveButton = css({ float: 'right' });
 
-export const margin = (margin) =>
+export const setMargin = (margin) =>
   css({
     margin
   });
