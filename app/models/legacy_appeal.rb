@@ -391,6 +391,10 @@ class LegacyAppeal < CaseflowRecord
     hearings.select(&:scheduled_pending?)
   end
 
+  def readable_original_hearing_request_type
+    LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[original_hearing_request_type]
+  end
+
   def original_hearing_request_type
     case hearing_request_type
     when :central_office
