@@ -583,15 +583,16 @@ ActiveRecord::Schema.define(version: 2020_10_05_190456) do
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
   end
 
-  create_table "end_product_updates", comment: "Keeps track of the request issues to update the claim label in Caseflow", force: :cascade do |t|
-    t.integer "active_request_issue_ids", null: false, comment: "An array of the active request issue IDs when a user has finished editing a decision review. Used to keep track of which request issues may have been impacted by the update.", array: true
+  create_table "end_product_updates", comment: "Updates the claim label for end products established from Caseflow", force: :cascade do |t|
+    t.integer "active_request_issue_ids", default: [], null: false, comment: "A list of active request issue IDs when a user has finished editing a decision review. Used to keep track of which request issues may have been impacted by the update.", array: true
     t.datetime "created_at", null: false
-    t.bigint "end_product_establishment_id", comment: "This is end product establishment id that Caseflow uses to keep track of the end product that is being updated"
-    t.string "error", comment: "The error captured if end product update has failed."
-    t.string "new_code", comment: "This is a new end product code the user wants to update to."
-    t.string "original_code", comment: "This is an original code before the update was submitted (just in case someone edits an end product twice)"
-    t.bigint "original_decision_review_id", comment: "The original ID of the decision review that this request issue belongs to"
-    t.string "status", comment: "This shows whether the attempt to update the end product was successful or whether it resulted in an error"
+    t.bigint "end_product_establishment_id", comment: "The end product establishment id used to track the end product being updated"
+    t.string "error", null: false, comment: "The error message captured from BGS if the end product update failed."
+    t.string "new_code", comment: "The new end product code the user wants to update to."
+    t.string "original_code", comment: "The original end product code before the update was submitted"
+    t.bigint "original_decision_review_id", null: false, comment: "The original ID of the decision review that this end product update belongs to; has a non-nil value only if a new decision_review was created."
+    t.string "original_decision_review_type", null: false, comment: "The original decision review type that this end product update belongs to"
+    t.string "status", null: false, comment: "Status after an attempt to update the end product; expected values: 'success', 'error', ..."
     t.datetime "updated_at", null: false
     t.integer "user_id", comment: "The ID of the user who makes an end product update."
   end
