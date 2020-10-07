@@ -25,7 +25,6 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
 
     it "creates the correct number of cached appeals" do
       expect(CachedAppeal.all.count).to eq(0)
-
       subject
 
       expect(CachedAppeal.all.count).to eq(open_appeals.length)
@@ -40,6 +39,103 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       subject
 
       expect(CachedAppeal.all.count).to eq(open_appeals.length)
+    end
+
+    context "when AOD appeals exist" do
+      # nonpriority
+      let(:appeal) do
+        create(:appeal,
+               :with_post_intake_tasks,
+               docket_type: Constants.AMA_DOCKETS.direct_review)
+      end
+      let(:denied_aod_motion_appeal) do
+        create(:appeal,
+               :denied_advance_on_docket,
+               :with_post_intake_tasks,
+               docket_type: Constants.AMA_DOCKETS.direct_review)
+      end
+      let(:inapplicable_aod_motion_appeal) do
+        create(:appeal,
+               :inapplicable_aod_motion,
+               :with_post_intake_tasks,
+               docket_type: Constants.AMA_DOCKETS.direct_review)
+      end
+      let!(:hearing_appeal) do
+        create(:appeal,
+               :with_post_intake_tasks,
+               docket_type: Constants.AMA_DOCKETS.hearing)
+      end
+      let!(:evidence_submission_appeal) do
+        create(:appeal,
+               :with_post_intake_tasks,
+               docket_type: Constants.AMA_DOCKETS.evidence_submission)
+      end
+      let(:nonpriority_appeals) do
+        [
+          appeal, denied_aod_motion_appeal, inapplicable_aod_motion_appeal,
+          hearing_appeal, evidence_submission_appeal
+        ]
+      end
+
+      # priority
+      let(:aod_age_appeal) do
+        create(:appeal,
+               :advanced_on_docket_due_to_age,
+               :with_post_intake_tasks,
+               docket_type: Constants.AMA_DOCKETS.direct_review)
+      end
+      let(:age_aod_motion_appeal) do
+        create(:appeal,
+               :advanced_on_docket_due_to_age_motion,
+               :with_post_intake_tasks,
+               docket_type: Constants.AMA_DOCKETS.direct_review)
+      end
+      let(:aod_motion_appeal) do
+        create(:appeal,
+               :advanced_on_docket_due_to_motion,
+               :with_post_intake_tasks,
+               docket_type: Constants.AMA_DOCKETS.direct_review)
+      end
+      let(:aod_motion_directly_on_appeal) do
+        create(:appeal,
+               :with_post_intake_tasks,
+               docket_type: Constants.AMA_DOCKETS.direct_review).tap do |a|
+          create(:advance_on_docket_motion, reason: :other, granted: true, appeal: a)
+        end
+      end
+      let(:aod_based_on_age_field_appeal) do
+        create(:appeal,
+               :with_post_intake_tasks,
+               docket_type: Constants.AMA_DOCKETS.direct_review).tap { |a| a.update(aod_based_on_age: true) }
+      end
+      let(:priority_appeals) do
+        [
+          aod_age_appeal, age_aod_motion_appeal, aod_motion_appeal,
+          aod_motion_directly_on_appeal, aod_based_on_age_field_appeal
+        ]
+      end
+
+      let(:open_appeals) { appeals + legacy_appeals + nonpriority_appeals + priority_appeals }
+
+      it "caches AOD status correctly" do
+        expect(CachedAppeal.all.count).to eq(0)
+
+        nonpriority_appeals.each do |nonpriority_appeal|
+          expect(nonpriority_appeal.aod?).to be_falsey
+        end
+        priority_appeals.each do |priority_appeal|
+          # do not call `aod_based_on_age_field_appeal.aod?` since that will
+          # set `aod_based_on_age` to false due to claimant's age
+          expect(priority_appeal.aod?) unless priority_appeal == aod_based_on_age_field_appeal
+        end
+
+        subject
+        priority_appeal_ids = priority_appeals.map(&:id)
+        CachedAppeal.all.each do |appeal|
+          expect(appeal.is_aod).to be(priority_appeal_ids.include?(appeal.appeal_id))
+        end
+        expect(CachedAppeal.all.count).to eq(open_appeals.length)
+      end
     end
 
     context "Datadog" do
