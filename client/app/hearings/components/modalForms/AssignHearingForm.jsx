@@ -61,7 +61,7 @@ class AssignHearingForm extends React.Component {
 
   onRegionalOfficeChange = (regionalOffice) => {
     const newValues = {
-      regionalOffice: regionalOffice.key,
+      regionalOffice: regionalOffice?.key,
       hearingLocation: null,
       scheduledTimeString: null,
       hearingDay: null
