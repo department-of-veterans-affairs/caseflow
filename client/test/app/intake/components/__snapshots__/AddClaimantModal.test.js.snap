@@ -50,7 +50,7 @@ exports[`AddClaimantModal renders correctly 1`] = `
           >
             <div>
               <p>
-                To add a claimant, select their relationship to the veteran and type to search for their name. 
+                To add a claimant, select their relationship to the Veteran and type to search for their name. 
                 <strong>
                   Please note:
                 </strong>
