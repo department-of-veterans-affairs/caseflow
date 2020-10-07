@@ -22,10 +22,7 @@ export default {
 const defaultArgs = {
   appellantTitle: 'Veteran',
   appeal: amaAppeal,
-  hearing: {
-    ...defaultHearing,
-    requestType: defaultHearing.readableRequestType
-  },
+  hearing: defaultHearing,
 };
 
 const Template = (args) => {
@@ -45,9 +42,9 @@ export const Default = Template.bind({});
 
 export const RegionalOfficeSelected = Template.bind({});
 RegionalOfficeSelected.args = {
-  appeal: {
-    ...amaAppeal,
-    regionalOffice: defaultHearing.regionalOfficeKey
+  hearing: {
+    ...defaultHearing,
+    regionalOffice: defaultHearing.regionalOfficeKey,
   }
 };
 
@@ -55,8 +52,11 @@ export const VideoToVirtualConversion = Template.bind({});
 VideoToVirtualConversion.args = {
   appeal: {
     ...amaAppeal,
-    regionalOffice: defaultHearing.regionalOfficeKey,
     hearingLocation: scheduleHearingDetails.hearingLocation
+  },
+  hearing: {
+    ...defaultHearing,
+    regionalOffice: defaultHearing.regionalOfficeKey,
   },
   virtual: true
 };
@@ -66,20 +66,17 @@ CentralToVirtualConversion.args = {
   virtual: true,
   hearing: {
     ...centralHearing,
-    requestType: centralHearing.readableRequestType,
-  },
+    regionalOffice: centralHearing.regionalOfficeKey,
+  }
 };
 
 export const VideoWithErrors = Template.bind({});
 VideoWithErrors.args = {
   hearing: {
     ...defaultHearing,
-    requestType: defaultHearing.readableRequestType,
+    regionalOffice: defaultHearing.regionalOfficeKey,
   },
-  appeal: {
-    ...amaAppeal,
-    regionalOffice: defaultHearing.regionalOfficeKey
-  },
+  appeal: amaAppeal,
   errors: {
     hearingLocation: 'Unknown Hearing Location',
     hearingDay: 'Cannot find hearing day',
@@ -92,13 +89,10 @@ VirtualWithErrors.args = {
   virtual: true,
   hearing: {
     ...defaultHearing,
-    requestType: defaultHearing.readableRequestType,
+    regionalOffice: defaultHearing.regionalOfficeKey,
     virtualHearing: virtualHearing.virtualHearing
   },
-  appeal: {
-    ...amaAppeal,
-    regionalOffice: defaultHearing.regionalOfficeKey
-  },
+  appeal: amaAppeal,
   errors: {
     hearingDay: 'Cannot find hearing day',
     scheduledTimeString: 'Invalid time selected',
