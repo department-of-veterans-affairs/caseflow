@@ -55,8 +55,7 @@ class AsyncableJobsPage extends React.PureComponent {
 
         this.setState({
           isFetchingSearchResults: false,
-          jobs,
-          veteranFileNumber: null
+          jobs
         });
       }).
       catch(() => {
@@ -138,10 +137,10 @@ class AsyncableJobsPage extends React.PureComponent {
     let noResultsMessage;
 
     if (this.state.veteranFileNumber && rowObjects.length === 0) {
-      noResultsMessage = <h2>{`There are no pending ${this.props.asyncableJobKlass}` +
-      `jobs for Veteran file '${this.state.veteran_file_number}'.`}</h2>;
+      noResultsMessage = <h2>{'There are no pending jobs for ' +
+      `Veteran file '${this.state.veteranFileNumber}'.`}</h2>;
     } else if (rowObjects.length === 0) {
-      noResultsMessage = <h2>{`There are no pending ${this.props.asyncableJobKlass} jobs.`}</h2>;
+      noResultsMessage = <h2>'There are no pending jobs.'</h2>;
     }
 
     return <div className="cf-asyncable-jobs-table">
@@ -152,7 +151,7 @@ class AsyncableJobsPage extends React.PureComponent {
         fetchedAt={this.props.fetchedAt}
         asyncableJobKlass={this.props.asyncableJobKlass} />
       <SearchBar
-        style={{ marginTop: '.5em' }}
+        style={{ marginTop: '0.5em' }}
         size="small"
         title="Search by Veteran file number"
         onChange={this.updateVeteranFileNumber}

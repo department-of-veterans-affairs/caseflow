@@ -32,7 +32,7 @@ class AsyncableJobs
     jobs = expired_jobs.flatten.sort_by(&:sort_by_last_submitted_at)
 
     if veteran_file_number.present?
-      jobs = jobs.select { |job| job.try(:veteran_file_number) == veteran_file_number }
+      jobs = jobs.select { |job| job.try(:veteran).try(:file_number) == veteran_file_number }
     end
 
     return paginated_jobs(jobs) if page_size > 0
