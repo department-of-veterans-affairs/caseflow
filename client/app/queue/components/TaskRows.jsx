@@ -247,8 +247,8 @@ class TaskRows extends React.PureComponent {
 
   }
 
-  showTimelineDescriptionItems = (task) => {
-    if (task.type === 'ChangeHearingRequestTypeTask') {
+  showTimelineDescriptionItems = (task, timeline) => {
+    if (task.type === 'ChangeHearingRequestTypeTask' && timeline) {
       return this.hearingRequestTypeConvertedBy(task);
     }
 
@@ -287,7 +287,7 @@ class TaskRows extends React.PureComponent {
         className={timeline ? 'taskInformationTimelineContainerStyling' : ''}>
         <CaseDetailsDescriptionList>
           { timeline && timelineTitle }
-          { this.showTimelineDescriptionItems(task) }
+          { this.showTimelineDescriptionItems(task, timeline) }
         </CaseDetailsDescriptionList>
       </td>
       { !timeline && <td className="taskContainerStyling taskActionsContainerStyling">
