@@ -100,7 +100,10 @@ AssignHearingsTabs.propTypes = {
     scheduledFor: PropTypes.string,
     totalSlots: PropTypes.number
   }),
+
+  // Selected Regional Office Key
   selectedRegionalOffice: PropTypes.string,
+
   room: PropTypes.string
 };
 
