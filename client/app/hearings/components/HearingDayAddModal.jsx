@@ -307,7 +307,7 @@ class HearingDayAddModal extends React.Component {
         <RegionalOfficeDropdown
           label="Select Regional Office (RO)"
           errorMessage={this.state.roError ? this.getRoErrorMessages() : null}
-          onChange={(value, label) => this.onRegionalOfficeChange(value)}
+          onChange={this.onRegionalOfficeChange}
           value={this.props.selectedRegionalOffice?.key} />
         }
         {(this.state.videoSelected || this.state.centralOfficeSelected) &&
@@ -387,7 +387,10 @@ HearingDayAddModal.propTypes = {
   selectRequestType: PropTypes.func,
   selectVlj: PropTypes.func,
   selectedHearingDay: PropTypes.string,
-  selectedRegionalOffice: PropTypes.object, // See onRegionalOfficeChange
+
+  // Selected Regional Office (See onRegionalOfficeChange).
+  selectedRegionalOffice: PropTypes.object,
+
   setNotes: PropTypes.func,
   userCssId: PropTypes.string,
   userId: PropTypes.number,
