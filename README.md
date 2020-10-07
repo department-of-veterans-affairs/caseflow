@@ -123,7 +123,7 @@ If an error occurs, it is okay to run the scripts multiple times after the error
 **Mac**
 
 Install the Xcode commandline tools
-
+ 
 `xcode-select --install`
 
 Install the base dependencies via Homebrew:
