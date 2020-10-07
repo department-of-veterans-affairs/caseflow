@@ -111,7 +111,7 @@ class HearingDayAddModal extends React.Component {
       errorMessages.push('Please make sure you have entered a Hearing Type');
     }
 
-    if (this.state.videoSelected && !this.props.selectedRegionalOffice.value) {
+    if (this.state.videoSelected && !this.props.selectedRegionalOffice.key) {
       this.setState({ roError: true });
       roErrorMessages.push('Please make sure you select a Regional Office');
     }
@@ -152,10 +152,9 @@ class HearingDayAddModal extends React.Component {
       assign_room: this.props.roomRequired
     };
 
-    if (this.props.selectedRegionalOffice &&
-      this.props.selectedRegionalOffice.value !== '' &&
+    if (this.props.selectedRegionalOffice?.key !== '' &&
       this.props.requestType.value !== 'C') {
-      data.regional_office = this.props.selectedRegionalOffice.value;
+      data.regional_office = this.props.selectedRegionalOffice.key;
     }
 
     ApiUtil.post('/hearings/hearing_day.json', { data }).
@@ -308,11 +307,8 @@ class HearingDayAddModal extends React.Component {
         <RegionalOfficeDropdown
           label="Select Regional Office (RO)"
           errorMessage={this.state.roError ? this.getRoErrorMessages() : null}
-          onChange={(value, label) => this.onRegionalOfficeChange({
-            value,
-            label
-          })}
-          value={this.props.selectedRegionalOffice.value} />
+          onChange={(value, label) => this.onRegionalOfficeChange(value)}
+          value={this.props.selectedRegionalOffice?.key} />
         }
         {(this.state.videoSelected || this.state.centralOfficeSelected) &&
         <React.Fragment>
@@ -391,9 +387,7 @@ HearingDayAddModal.propTypes = {
   selectRequestType: PropTypes.func,
   selectVlj: PropTypes.func,
   selectedHearingDay: PropTypes.string,
-  selectedRegionalOffice: PropTypes.shape({
-    value: PropTypes.string
-  }),
+  selectedRegionalOffice: PropTypes.object, // See onRegionalOfficeChange
   setNotes: PropTypes.func,
   userCssId: PropTypes.string,
   userId: PropTypes.number,

@@ -55,13 +55,12 @@ class AssignHearingsContainer extends React.PureComponent {
 
   loadUpcomingHearingDays = () => {
     const { selectedRegionalOffice } = this.props;
-    const roValue = selectedRegionalOffice ? selectedRegionalOffice.value : null;
 
-    if (!roValue) {
+    if (!selectedRegionalOffice) {
       return;
     }
 
-    const requestUrl = `/hearings/schedule/assign/hearing_days?regional_office=${roValue}`;
+    const requestUrl = `/hearings/schedule/assign/hearing_days?regional_office=${selectedRegionalOffice}`;
 
     return ApiUtil.get(requestUrl, { timeout: { response: getMinutesToMilliseconds(5) } }
     ).then((response) => {
@@ -74,7 +73,6 @@ class AssignHearingsContainer extends React.PureComponent {
 
   render = () => {
     const { selectedRegionalOffice } = this.props;
-    const roValue = selectedRegionalOffice ? selectedRegionalOffice.value : null;
 
     return (
       <AppSegment filledBackground>
@@ -88,13 +86,13 @@ class AssignHearingsContainer extends React.PureComponent {
           <RegionalOfficeDropdown
             onChange={this.onRegionalOfficeChange}
             validateValueOnMount
-            value={roValue || getQueryParams(window.location.search).regional_office_key}
+            value={selectedRegionalOffice || getQueryParams(window.location.search).regional_office_key}
             staticOptions={centralOfficeStaticEntry}
           />
         </section>
-        {roValue &&
+        {selectedRegionalOffice &&
           <LoadingDataDisplay
-            key={roValue || 0}
+            key={selectedRegionalOffice || 0}
             createLoadPromise={this.loadUpcomingHearingDays}
             loadingComponentProps={{
               spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
@@ -102,7 +100,7 @@ class AssignHearingsContainer extends React.PureComponent {
             }}
           >
             <AssignHearings
-              selectedRegionalOffice={this.props.selectedRegionalOffice.value}
+              selectedRegionalOffice={selectedRegionalOffice}
               upcomingHearingDays={this.props.upcomingHearingDays}
               onSelectedHearingDayChange={this.props.onSelectedHearingDayChange}
               selectedHearingDay={this.props.selectedHearingDay}
@@ -123,10 +121,10 @@ AssignHearingsContainer.propTypes = {
     PropTypes.string,
     PropTypes.object
   ]),
-  selectedRegionalOffice: PropTypes.shape({
-    label: PropTypes.string,
-    value: PropTypes.string
-  }),
+
+  // Selected Regional Office Key
+  selectedRegionalOffice: PropTypes.string,
+
   setUserCssId: PropTypes.func,
   upcomingHearingDays: PropTypes.object,
   userCssId: PropTypes.string,
@@ -134,7 +132,7 @@ AssignHearingsContainer.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  selectedRegionalOffice: state.components.selectedRegionalOffice,
+  selectedRegionalOffice: state.components.selectedRegionalOffice?.key,
   upcomingHearingDays: state.hearingSchedule.upcomingHearingDays,
   selectedHearingDay: state.hearingSchedule.selectedHearingDay
 });

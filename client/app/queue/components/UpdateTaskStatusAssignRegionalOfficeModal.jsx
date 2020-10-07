@@ -43,7 +43,7 @@ class UpdateTaskStatusAssignRegionalOfficeModal extends React.Component {
           instructions: notes,
           business_payloads: {
             values: {
-              regional_office_value: regionalOffice
+              regional_office_value: regionalOffice.key
             }
           }
         }
