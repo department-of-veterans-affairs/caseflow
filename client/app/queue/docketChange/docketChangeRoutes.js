@@ -7,9 +7,9 @@ import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
 const PageRoutes = [
   <PageRoute
     path={`/queue/appeals/:appealId/tasks/:taskId/${
-      TASK_ACTIONS.DOCKET_CHANGE_SEND_TO_JUDGE.value
+      TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.value
     }`}
-    title={`${TASK_ACTIONS.DOCKET_CHANGE_SEND_TO_JUDGE.label} | Caseflow`}
+    title={`${TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.label} | Caseflow`}
   >
     {/* Replace with actual component */}
     <h2>Send to Judge</h2>
@@ -17,9 +17,9 @@ const PageRoutes = [
 
   <PageRoute
     path={`/queue/appeals/:appealId/tasks/:taskId/${
-      TASK_ACTIONS.DOCKET_CHANGE_JUDGE_RULING.value
+      TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.value
     }`}
-    title={`${TASK_ACTIONS.DOCKET_CHANGE_JUDGE_RULING.label} | Caseflow`}
+    title={`${TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.label} | Caseflow`}
   >
     {/* Replace with actual component */}
     <h2>Judge Ruling</h2>

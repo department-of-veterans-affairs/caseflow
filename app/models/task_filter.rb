@@ -34,7 +34,7 @@ class TaskFilter
     end
 
     def extract_former_travel_clause(filter, orig_clause)
-      is_former_travel_clause = "cached_appeal_attributes.formally_travel = true"
+      is_former_travel_clause = "cached_appeal_attributes.former_travel = true"
       (filter.values.size == 1) ? is_former_travel_clause : "(#{orig_clause} OR #{is_former_travel_clause})"
     end
 
