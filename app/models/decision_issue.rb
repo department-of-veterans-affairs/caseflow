@@ -9,8 +9,6 @@ class DecisionIssue < CaseflowRecord
 
   with_options if: :appeal? do
     validates :disposition, inclusion: { in: Constants::ISSUE_DISPOSITIONS_BY_ID.keys.map(&:to_s) }
-    validates :diagnostic_code, inclusion: { in: Constants::DIAGNOSTIC_CODE_DESCRIPTIONS.keys.map(&:to_s) },
-                                allow_nil: true
   end
 
   # Attorneys will be entering in a description of the decision manually for appeals

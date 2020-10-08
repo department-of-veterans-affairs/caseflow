@@ -158,7 +158,7 @@ cached_appeal_attributes,closest_regional_office_key,string,,,,,x,Closest region
 cached_appeal_attributes,created_at,datetime,,,,,,
 cached_appeal_attributes,docket_number,string,,,,,,
 cached_appeal_attributes,docket_type,string,,,,,x,
-cached_appeal_attributes,formally_travel,boolean,,,,,x,Determines if the hearing type was formallly travel board; only applicable to Legacy appeals
+cached_appeal_attributes,former_travel,boolean,,,,,x,Determines if the hearing type was formerly travel board; only applicable to Legacy appeals
 cached_appeal_attributes,hearing_request_type,string (10),,,,,x,"Stores hearing type requested by appellant; could be one of nil, 'Video', 'Central', 'Travel', or 'Virtual'"
 cached_appeal_attributes,is_aod,boolean,,,,,x,Whether the case is Advanced on Docket
 cached_appeal_attributes,issue_count,integer,,,,,,Number of issues on the appeal.
@@ -409,6 +409,16 @@ end_product_code_updates,created_at,datetime ∗,x,,,,,
 end_product_code_updates,end_product_establishment_id,integer (8) ∗ FK,x,,x,,x,
 end_product_code_updates,id,integer (8) PK,x,x,,,,
 end_product_code_updates,updated_at,datetime ∗,x,,,,x,
+end_product_updates,,,,,,,, "Updates the claim label for end products established from Caseflow."
+end_product_updates,user_id,integer,"The ID of the user who makes an end product update."
+end_product_updates,end_product_establishment_id,bigint,"The end product establishment id used to track the end product being updated"
+end_product_updates,original_decision_review_id,bigint,"The original ID of the decision review that this end product update belongs to; has a non-nil value only if a new decision_review was created."
+end_product_updates,original_decision_review_type,string,"The original decision review type that this end product update belongs to"
+end_product_updates,status,string,"Status after an attempt to update the end product; expected values: 'success', 'error', ..."
+end_product_updates,error,string,"The error message captured from BGS if the end product update failed."
+end_product_updates,original_code,string,"The original end product code before the update was submitted"
+end_product_updates,new_code,string,"The new end product code the user wants to update to."
+end_product_updates,active_request_issue_ids,integer,"A list of active request issue IDs when a user has finished editing a decision review. Used to keep track of which request issues may have been impacted by the update."
 end_product_establishments,,,,,,,,"Represents end products that have been, or need to be established by Caseflow. Used to track the status of those end products as they are processed in VBMS and/or SHARE."
 end_product_establishments,benefit_type_code,string,,,,,,"1 if the Veteran is alive, and 2 if the Veteran is deceased. Not to be confused with benefit_type, which is unrelated."
 end_product_establishments,claim_date,date,,,,,,The claim_date for end product established.
