@@ -1,6 +1,6 @@
-class CreateEndProductUpdate < ActiveRecord::Migration[5.2]
+class CreateEndProductUpdate < Caseflow::Migration
   disable_ddl_transaction!
-  
+
   def change
     create_table :end_product_updates, comment: "Updates the claim label for end products established from Caseflow" do |t|
       t.string :status, null: false, comment: "Status after an attempt to update the end product; expected values: 'success', 'error', ..."
