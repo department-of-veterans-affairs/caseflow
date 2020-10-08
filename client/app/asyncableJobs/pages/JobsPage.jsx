@@ -140,7 +140,7 @@ class AsyncableJobsPage extends React.PureComponent {
       noResultsMessage = <h2>{'There are no pending jobs for ' +
       `Veteran file '${this.state.veteranFileNumber}'.`}</h2>;
     } else if (rowObjects.length === 0) {
-      noResultsMessage = <h2>'There are no pending jobs.'</h2>;
+      noResultsMessage = <h2>There are no pending jobs.</h2>;
     }
 
     return <div className="cf-asyncable-jobs-table">

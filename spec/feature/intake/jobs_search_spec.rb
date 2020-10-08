@@ -35,12 +35,13 @@ feature "Jobs Page Search", :postgres do
       end
     end
 
-    fcontext "when Veteran file number is not associated with a job" do
+    context "when Veteran file number is not associated with a job" do
       it "page displays message that there are no pending jobs for Veteran file" do
         visit "/jobs"
         find(:css, ".cf-search-input-with-close").set(no_jobs_veteran_file_number)
         click_button(class: "cf-submit usa-button")
-        expect(page).to have_content("There are no pending job for Veteran file number #{no_jobs_veteran_file_number}.")
+        expect(page).to have_content("There are no pending job for Veteran file number' +
+           '#{no_jobs_veteran_file_number}'.")
       end
     end
   end
