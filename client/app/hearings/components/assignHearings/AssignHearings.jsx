@@ -100,7 +100,9 @@ export const AssignHearings = ({
 };
 
 AssignHearings.propTypes = {
+  // Selected Regional Office Key
   selectedRegionalOffice: PropTypes.string,
+
   upcomingHearingDays: PropTypes.object,
   onSelectedHearingDayChange: PropTypes.func,
   selectedHearingDay: PropTypes.oneOfType([
