@@ -23,7 +23,8 @@ class AsyncableJobsPage extends React.PureComponent {
       restarted: 0,
       jobs: this.props.jobs,
       veteranFileNumber: null,
-      isFetchingSearchResults: false
+      isFetchingSearchResults: false,
+      removeClassFilter: false
     };
   }
 
@@ -48,6 +49,7 @@ class AsyncableJobsPage extends React.PureComponent {
     const searchTerm = this.state.veteranFileNumber;
 
     this.setState({ isFetchingSearchResults: true });
+    window.history.replaceState(null, null, '/jobs');
 
     ApiUtil.get('/jobs', { headers: { 'veteran-file-number': searchTerm } }).
       then((response) => {
@@ -55,7 +57,8 @@ class AsyncableJobsPage extends React.PureComponent {
 
         this.setState({
           isFetchingSearchResults: false,
-          jobs
+          jobs,
+          removeClassFilter: true
         });
       }).
       catch(() => {
@@ -144,7 +147,7 @@ class AsyncableJobsPage extends React.PureComponent {
     }
 
     return <div className="cf-asyncable-jobs-table">
-      <h1>{this.props.asyncableJobKlass} Jobs</h1>
+      <h1>{!this.state.removeClassFilter && this.props.asyncableJobKlass} Jobs</h1>
       {noResultsMessage}
       <AsyncModelNav
         models={this.props.models}

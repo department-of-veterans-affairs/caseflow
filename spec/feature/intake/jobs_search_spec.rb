@@ -32,6 +32,7 @@ feature "Jobs Page Search", :postgres do
         find(:css, ".cf-search-input-with-close").set(veteran_file_one)
         click_button(class: "cf-submit usa-button")
         expect(page).to have_content(veteran_file_one)
+        expect(page).to have_current_path("/jobs")
       end
     end
 
@@ -40,8 +41,10 @@ feature "Jobs Page Search", :postgres do
         visit "/jobs"
         find(:css, ".cf-search-input-with-close").set(no_jobs_veteran_file_number)
         click_button(class: "cf-submit usa-button")
-        expect(page).to have_content("There are no pending job for Veteran file number' +
-           '#{no_jobs_veteran_file_number}'.")
+        expect(page).to have_content(
+          "There are no pending job for Veteran file number #{no_jobs_veteran_file_number}'."
+        )
+        expect(page).to have_current_path("/jobs")
       end
     end
   end
