@@ -24301,7 +24301,6 @@ SAN FRANCISCO, CA 94103
       componentIndex={0}
       enableZone={true}
       label="Hearing Time"
-      localZone="America/New_York"
       onChange={[Function]}
       regionalOffice="RO17"
       value="06:00"
@@ -28285,7 +28284,6 @@ exports[`ScheduleVeteranForm Displays Virtual Hearing form fields when type is c
       componentIndex={0}
       enableZone={true}
       label="Hearing Time"
-      localZone="America/New_York"
       onChange={[Function]}
       value="06:00"
       vertical={true}
@@ -28601,7 +28599,6 @@ exports[`ScheduleVeteranForm Displays error messages when errors are present 1`]
       componentIndex={0}
       enableZone={true}
       label="Hearing Time"
-      localZone="America/New_York"
       onChange={[Function]}
       regionalOffice="RO17"
       value="06:00"
@@ -28664,7 +28661,6 @@ exports[`ScheduleVeteranForm Displays hearing form when regional office is selec
       componentIndex={0}
       enableZone={true}
       label="Hearing Time"
-      localZone="America/New_York"
       onChange={[Function]}
       regionalOffice="RO17"
       value="06:00"
