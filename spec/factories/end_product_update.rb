@@ -7,6 +7,6 @@ FactoryBot.define do
     new_code { "031HLRNR" }
     user_id { "BVATWARNER" }
 
-    traits_for_enum(:status, success: "success", error: "error")
+    traits_for_enum { :status }
   end
 end
