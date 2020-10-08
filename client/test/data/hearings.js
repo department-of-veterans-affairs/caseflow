@@ -1,5 +1,5 @@
 /* eslint-disable max-lines */
-import { scheduledHearingTask } from './tasks';
+import { scheduleHearingTask } from './tasks';
 
 export const virtualHearingEmails = {
   emailEvents: [
@@ -461,7 +461,7 @@ export const scheduledHearing = {
 export const scheduleVeteranResponse = {
   body: {
     tasks: {
-      data: [scheduledHearingTask]
+      data: [scheduleHearingTask]
     }
   }
 };
