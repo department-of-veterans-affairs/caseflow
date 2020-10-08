@@ -44,7 +44,7 @@ class AssignHearingsContainer extends React.PureComponent {
 
       // Replace regional_office_key parameter with the new value. Do not overwrite
       // any parameters that are currently set in the query string.
-      currentQueryParams.regional_office_key = value;
+      currentQueryParams.regional_office_key = value?.key;
 
       window.history.replaceState('', '', encodeQueryParams(currentQueryParams));
     }

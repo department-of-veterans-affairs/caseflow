@@ -56,7 +56,7 @@ export default class AssignHearingsTabs extends React.PureComponent {
             {
               label: 'Scheduled Veterans',
               page: <UpcomingHearingsTable
-                selectRegionalOffice={selectedRegionalOffice}
+                selectedRegionalOffice={selectedRegionalOffice}
                 selectedHearingDay={selectedHearingDay}
                 hearings={hearingsForSelected}
               />
