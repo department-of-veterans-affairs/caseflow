@@ -12,6 +12,8 @@ import ApiUtil from '../../util/ApiUtil';
 import Checkbox from '../../components/Checkbox';
 import TextareaField from '../../components/TextareaField';
 
+const ALLOW_UNLISTED_CLAIMANTS = false;
+
 const relationshipOpts = [
   { label: 'Attorney (previously or currently)', value: 'attorney' },
 ];
@@ -124,14 +126,17 @@ export const AddClaimantModal = ({
         debounce={250}
         strongLabel
         isClearable
+        placeholder="Type to search..."
       />
 
-      <Checkbox
-        label="Claimant not listed"
-        name="notListed"
-        onChange={handleNotListed}
-        value={unlistedClaimant}
-      />
+      {ALLOW_UNLISTED_CLAIMANTS && (
+        <Checkbox
+          label="Claimant not listed"
+          name="notListed"
+          onChange={handleNotListed}
+          value={unlistedClaimant}
+        />
+      )}
       {unlistedClaimant && (
         <TextareaField
           label={
