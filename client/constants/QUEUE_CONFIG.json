@@ -109,6 +109,9 @@
   "FILTER_OPTIONS": {
     "IS_AOD": {
       "key": "is_aod"
+    },
+    "IS_FORMER_TRAVEL": {
+      "key": "former Travel"
     }
   }
 }

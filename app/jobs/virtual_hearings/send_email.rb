@@ -168,11 +168,13 @@ class VirtualHearings::SendEmail
   def appellant_recipient
     recipient_name = if appeal.appellant_is_not_veteran
                        appeal.appellant_first_name
-                     else
+                     elsif veteran.present?
                        validate_veteran_deceased
                        validate_veteran_name
 
                        veteran.first_name
+                     else
+                       "Appellant"
                      end
 
     MailRecipient.new(
