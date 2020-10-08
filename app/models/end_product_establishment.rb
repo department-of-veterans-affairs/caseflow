@@ -14,6 +14,7 @@ class EndProductEstablishment < CaseflowRecord
   has_many :request_issues
   has_many :end_product_code_updates
   has_many :effectuations, class_name: "BoardGrantEffectuation"
+  has_many :end_product_updates
 
   # allow @veteran to be assigned to save upstream calls
   attr_writer :veteran
