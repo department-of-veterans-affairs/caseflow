@@ -3,8 +3,8 @@ class CreateEndProductUpdate < Caseflow::Migration
 
   def change
     create_table :end_product_updates, comment: "Updates the claim label for end products established from Caseflow" do |t|
-      t.string :status, null: false, comment: "Status after an attempt to update the end product; expected values: 'success', 'error', ..."
-      t.string :error, null: false, comment: "The error message captured from BGS if the end product update failed."
+      t.string :status, comment: "Status after an attempt to update the end product; expected values: 'success', 'error', ..."
+      t.string :error, comment: "The error message captured from BGS if the end product update failed."
       t.string :original_code, comment: "The original end product code before the update was submitted."
       t.string :new_code, comment: "The new end product code the user wants to update to."
       t.bigint :active_request_issue_ids, null: false, array: true, default: [], comment: "A list of active request issue IDs when a user has finished editing a decision review. Used to keep track of which request issues may have been impacted by the update."
