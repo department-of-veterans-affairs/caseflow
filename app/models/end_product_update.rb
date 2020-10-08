@@ -5,4 +5,6 @@
 class EndProductUpdate < CaseflowRecord
   belongs_to :end_product_establishment
   belongs_to :original_decision_review, polymorphic: true
+
+  enum status: { success: "success", error: "error" }
 end
