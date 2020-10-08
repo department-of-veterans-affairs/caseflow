@@ -80,7 +80,7 @@ export const ScheduleVeteranForm = ({
               errorMessage={errors?.scheduledTimeString}
               label="Hearing Time"
               enableZone
-              localZone={hearing?.regionalOfficeTimezone}
+              localZone={hearing?.hearingDay?.timezone}
               onChange={(scheduledTimeString) => props.onChange('scheduledTimeString', scheduledTimeString)}
               value={hearing?.scheduledTimeString}
             />
@@ -160,7 +160,7 @@ export const ScheduleVeteranForm = ({
                 errorMessage={errors?.scheduledTimeString}
                 vertical
                 label="Hearing Time"
-                localZone={hearing?.regionalOfficeTimezone}
+                localZone={hearing?.hearingDay?.timezone}
                 enableZone
                 onChange={(scheduledTimeString) => props.onChange('scheduledTimeString', scheduledTimeString)}
                 value={hearing.scheduledTimeString}
