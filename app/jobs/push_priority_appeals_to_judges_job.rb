@@ -12,7 +12,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   def perform
     @tied_distributions = distribute_non_genpop_priority_appeals
-    @genpop_distributions = distribute_genpop_priority_appeals
+    distribute_loosely_tied_and_genpop_priority_appeals
     send_job_report
   end
 
@@ -61,10 +61,18 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     end
   end
 
+  def distribute_loosely_tied_and_genpop_priority_appeals
+    targets = eligible_judge_target_distributions_with_leftovers
+
+    # TODO loop once, distribute loosely tied hearings cases, update numbers
+
+    @genpop_distributions = distribute_genpop_priority_appeals(targets)
+  end
+
   # Distribute remaining general population cases while attempting to even out the number of priority cases all judges
   # have received over one month
-  def distribute_genpop_priority_appeals
-    eligible_judge_target_distributions_with_leftovers.map do |judge_id, target|
+  def distribute_genpop_priority_appeals(targets)
+    targets.map do |judge_id, target|
       Distribution.create!(
         judge: User.find(judge_id),
         priority_push: true

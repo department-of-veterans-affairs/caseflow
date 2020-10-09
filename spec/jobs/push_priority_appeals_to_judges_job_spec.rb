@@ -159,7 +159,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         )
     end
 
-    subject { PushPriorityAppealsToJudgesJob.new.distribute_genpop_priority_appeals }
+    subject { PushPriorityAppealsToJudgesJob.new.distribute_genpop_priority_appeals(targets) }
 
     let(:judges) { create_list(:user, 5, :with_vacols_judge_record) }
     let(:judge_distributions_this_month) { (0..4).to_a }
@@ -221,6 +221,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
     end
 
+    let(:targets) { PushPriorityAppealsToJudgesJob.new.eligible_judge_target_distributions_with_leftovers }
     let(:priority_count) { Appeal.count + VACOLS::Case.count }
     let(:priority_target) { (priority_count + judge_distributions_this_month.sum) / judges.count }
 
