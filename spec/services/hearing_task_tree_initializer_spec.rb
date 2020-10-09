@@ -5,6 +5,7 @@ describe HearingTaskTreeInitializer do
     let(:vacols_case) do
       create(
         :case,
+        bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing],
         bfhr: "2"
       )
     end
@@ -33,6 +34,11 @@ describe HearingTaskTreeInitializer do
         ).to eq(true)
       end
 
+      it "changes the vacols location to CASEFLOW" do
+        expect { subject }
+          .to change { vacols_case.reload.bfcurloc }
+          .from(LegacyAppeal::LOCATION_CODES[:schedule_hearing])
+          .to(LegacyAppeal::LOCATION_CODES[:caseflow])
       end
     end
 
