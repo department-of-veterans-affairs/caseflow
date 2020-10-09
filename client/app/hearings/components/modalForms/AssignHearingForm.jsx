@@ -61,7 +61,7 @@ class AssignHearingForm extends React.Component {
 
   onRegionalOfficeChange = (regionalOffice) => {
     const newValues = {
-      regionalOffice,
+      regionalOffice: regionalOffice?.key,
       hearingLocation: null,
       scheduledTimeString: null,
       hearingDay: null
@@ -129,7 +129,10 @@ AssignHearingForm.propTypes = {
     externalId: PropTypes.string
   }),
   initialHearingDate: PropTypes.string,
+
+  // Initial Regional Office Key
   initialRegionalOffice: PropTypes.string,
+
   onChange: PropTypes.func,
   showErrorMessages: PropTypes.bool,
   values: PropTypes.shape({
