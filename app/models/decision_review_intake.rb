@@ -110,12 +110,12 @@ class DecisionReviewIntake < Intake
     epes = EndProductEstablishment.established.where(veteran_file_number: veteran.file_number)
     epes.each do |epe|
       epe.veteran = veteran
-        begin
-          epe.result.present?
-        rescue EstablishedEndProductNotFound => error
-          capture_exception(error: error)
-        else
-          epe.sync!
+      begin
+        epe.result.present?
+      rescue EstablishedEndProductNotFound => error
+        capture_exception(error: error)
+      else
+        epe.sync!
       end
     end
   end
