@@ -42,7 +42,7 @@ feature "Jobs Page Search", :postgres do
         find(:css, ".cf-search-input-with-close").set(no_jobs_veteran_file_number)
         click_button(class: "cf-submit usa-button")
         expect(page).to have_content(
-          "There are no pending job for Veteran file number #{no_jobs_veteran_file_number}'."
+          "There are no pending jobs for Veteran file '#{no_jobs_veteran_file_number}'."
         )
         expect(page).to have_current_path("/jobs")
       end
