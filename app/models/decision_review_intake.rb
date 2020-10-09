@@ -107,18 +107,18 @@ class DecisionReviewIntake < Intake
 
   # run during start!
   def after_validated_pre_start!
-  epes = EndProductEstablishment.established.where(veteran_file_number: veteran.file_number)
-  epes.each do |epe|
-    epe.veteran = veteran
-      begin
-        epe.result.present?
-      rescue EstablishedEndProductNotFound => error
-        capture_exception(error: error)
-        epe.sync!
-      next
+    epes = EndProductEstablishment.established.where(veteran_file_number: veteran.file_number)
+    epes.each do |epe|
+      epe.veteran = veteran
+        begin
+          epe.result.present?
+        rescue EstablishedEndProductNotFound => error
+          capture_exception(error: error)
+        else
+          epe.sync!
+        next
       end
     end
-    byebug
   end
 
   def claimant_class_name
