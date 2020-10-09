@@ -24,11 +24,14 @@ module AutomaticCaseDistribution
     if limit.nil?
       # Distribute priority appeals that are tied to judges (not genpop) with no limit.
       distribute_appeals(:legacy, nil, priority: true, genpop: "not_genpop")
-      distribute_appeals(:hearing, nil, priority: true, genpop: "not_genpop")
     else
-      # Distribute <limit> number of cases, regardless of docket type or genpop, oldest first.
-      # TODO if flag, tied AMA hearing, else all dockets
-      distribute_limited_priority_appeals_from_all_dockets(limit)
+      if affinity.nil?
+        # Distribute <limit> number of cases, regardless of docket type or genpop, oldest first.
+        distribute_limited_priority_appeals_from_all_dockets(limit)
+      else
+        # distribute our affinity cases, up to the judges limit
+        distribute_appeals(:hearing, limit, priority: true, genpop: "not_genpop")
+      end
     end
   end
 
