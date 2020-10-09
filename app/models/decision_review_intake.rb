@@ -114,8 +114,8 @@ class DecisionReviewIntake < Intake
         epe.result.present?
       rescue EstablishedEndProductNotFound => error
         capture_exception(error: error)
+        epe.sync!
       next
-      epe.sync!
       end
     end
     byebug
