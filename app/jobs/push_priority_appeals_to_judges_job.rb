@@ -64,7 +64,10 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   def distribute_loosely_tied_and_genpop_priority_appeals
     targets = eligible_judge_target_distributions_with_leftovers
 
-    # TODO loop once, distribute loosely tied hearings cases, update numbers
+    # TODO step - stop distributing AMA Hearing as tied
+    #   step - priority_push_distribution takes named arg for 'ama hearing'
+    # TODO step - teach AMA Hearing to give me theirs
+    # TODO final -  loop once, distribute loosely tied hearings cases, update numbers
 
     @genpop_distributions = distribute_genpop_priority_appeals(targets)
   end
@@ -76,7 +79,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
       Distribution.create!(
         judge: User.find(judge_id),
         priority_push: true
-      ).tap { |distribution| distribution.distribute!(target) }
+      ).tap { |distribution| distribution.distribute!(limit: target) }
     end
   end
 

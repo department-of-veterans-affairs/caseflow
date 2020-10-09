@@ -17,7 +17,7 @@ module AutomaticCaseDistribution
     @docket_coordinator ||= DocketCoordinator.new
   end
 
-  def priority_push_distribution(limit = nil)
+  def priority_push_distribution(limit: nil, affinity: false)
     @appeals = []
     @rem = 0
 
@@ -26,7 +26,8 @@ module AutomaticCaseDistribution
       distribute_appeals(:legacy, nil, priority: true, genpop: "not_genpop")
       distribute_appeals(:hearing, nil, priority: true, genpop: "not_genpop")
     else
-      # Distribute <limit> number of cases, regardless of docket type, oldest first.
+      # Distribute <limit> number of cases, regardless of docket type or genpop, oldest first.
+      # TODO if flag, tied AMA hearing, else all dockets
       distribute_limited_priority_appeals_from_all_dockets(limit)
     end
   end

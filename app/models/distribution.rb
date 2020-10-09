@@ -28,7 +28,7 @@ class Distribution < CaseflowRecord
     end
   end
 
-  def distribute!(limit = nil)
+  def distribute!(limit: nil)
     return unless %w[pending error].include? status
 
     if status == "error"
@@ -43,7 +43,7 @@ class Distribution < CaseflowRecord
     multi_transaction do
       ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = #{transaction_time_out}"
 
-      priority_push? ? priority_push_distribution(limit) : requested_distribution
+      priority_push? ? priority_push_distribution(limit: limit) : requested_distribution
 
       update!(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
     end

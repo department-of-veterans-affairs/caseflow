@@ -584,7 +584,7 @@ describe Distribution, :all_dbs do
             evidence_submission_cases.last.uuid
           ]
 
-          subject.distribute!(limit)
+          subject.distribute!(limit: limit)
           expect(subject.valid?).to eq(true)
           expect(subject.priority_push).to eq(true)
           expect(subject.status).to eq("completed")
