@@ -3,6 +3,8 @@
 class DecisionReviewIntake < Intake
   include RunAsyncable
 
+  class EstablishedEndProductNotFound < StandardError; end
+
   def ui_hash
     Intake::DecisionReviewIntakeSerializer.new(self).serializable_hash[:data][:attributes]
   rescue Rating::NilRatingProfileListError, PromulgatedRating::LockedRatingError
@@ -105,11 +107,18 @@ class DecisionReviewIntake < Intake
 
   # run during start!
   def after_validated_pre_start!
-    epes = EndProductEstablishment.established.where(veteran_file_number: veteran.file_number)
-    epes.each do |epe|
-      epe.veteran = veteran
+  epes = EndProductEstablishment.established.where(veteran_file_number: veteran.file_number)
+  epes.each do |epe|
+    epe.veteran = veteran
+      begin
+        epe.result.present?
+      rescue EstablishedEndProductNotFound => error
+        capture_exception(error: error)
+      next
       epe.sync!
+      end
     end
+    byebug
   end
 
   def claimant_class_name
