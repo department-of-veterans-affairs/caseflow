@@ -116,7 +116,6 @@ class DecisionReviewIntake < Intake
           capture_exception(error: error)
         else
           epe.sync!
-        next
       end
     end
   end
