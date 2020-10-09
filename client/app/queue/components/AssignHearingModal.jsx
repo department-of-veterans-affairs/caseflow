@@ -261,6 +261,8 @@ AssignHearingModal.propTypes = {
   onReceiveAppealDetails: PropTypes.func,
   requestPatch: PropTypes.func,
   showErrorMessage: PropTypes.func,
+
+  // Selected Regional Office Key
   selectedRegionalOffice: PropTypes.string
 };
 
@@ -272,7 +274,7 @@ const mapStateToProps = (state, ownProps) => ({
   ),
   assignHearingForm: state.components.forms.assignHearing,
   appeal: appealWithDetailSelector(state, ownProps),
-  selectedRegionalOffice: state.components.selectedRegionalOffice,
+  selectedRegionalOffice: state.components.selectedRegionalOffice?.key,
   hearingDay: state.ui.hearingDay
 });
 
