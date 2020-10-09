@@ -14,6 +14,10 @@ module Api
 
         private
 
+        def standin_decision_review
+          fail Caseflow::Error::MustImplementInSubclass
+        end
+
         def serialized_contestable_issues
           contestable_issues.map do |issue|
             Api::V3::ContestableIssueSerializer.new(issue).serializable_hash[:data]
