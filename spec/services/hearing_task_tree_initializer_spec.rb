@@ -32,16 +32,18 @@ describe HearingTaskTreeInitializer do
             .all? { |task| task.assigned_to == Bva.singleton }
         ).to eq(true)
       end
+
+      end
     end
 
-    context "if task tree already exists" do
-      before do
-        described_class.for_appeal_with_pending_travel_board_hearing(appeal)
-      end
+    context "if an open hearing task already exists" do
+      let(:root_task) { create(:root_task, appeal: appeal) }
+      let(:hearing_task) { create(:hearing_task, appeal: appeal, parent: root_task) }
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal, parent: hearing_task) }
 
       it "does not create a duplicate task tree" do
         subject
-        expect(ChangeHearingRequestTypeTask.count).to eq(1)
+        expect(ChangeHearingRequestTypeTask.count).to eq(0)
         expect(ScheduleHearingTask.count).to eq(1)
         expect(HearingTask.count).to eq(1)
       end
