@@ -162,22 +162,22 @@ describe ScheduleHearingTask, :all_dbs do
       context "for legacy appeal" do
         let(:vacols_case) { create(:case) }
         let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
-        let(:veteran_participant_id) { "0000" }
+        let(:veteran_pid) { "0000" }
         let(:schedule_hearing_task) do
           create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_management_user)
         end
-        let(:participant_id) { "1234" }
+        let(:representative_pid) { "1234" }
 
         before do
           allow(BGSService).to receive(:power_of_attorney_records).and_return(
             appeal.veteran_file_number => {
               file_number: appeal.veteran_file_number,
-              ptcpnt_id: veteran_participant_id,
+              ptcpnt_id: veteran_pid,
               power_of_attorney: {
                 legacy_poa_cd: "3QQ",
                 nm: "Clarence Darrow",
                 org_type_nm: "POA Attorney",
-                ptcpnt_id: participant_id
+                ptcpnt_id: representative_pid
               }
             }
           )
@@ -200,15 +200,23 @@ describe ScheduleHearingTask, :all_dbs do
         end
 
         context "with non-VSO representative" do
-          let!(:private_bar) { create(:private_bar, name: "test", participant_id: participant_id) }
+          let!(:private_bar) { create(:private_bar, name: "test", participant_id: representative_pid) }
 
           include_examples "route to case storage location"
+
+          it "has a representative" do
+            expect(appeal.representatives.count).to eq 1
+            expect(appeal.representatives.first).to eq private_bar
+          end
         end
 
         context "with VSO" do
-          let!(:vso) { create(:vso, name: "test", participant_id: participant_id) }
+          let!(:vso) { create(:vso, name: "test", participant_id: representative_pid) }
 
           it "completes the task and updates the location to service organization" do
+            expect(appeal.representatives.count).to eq 1
+            expect(appeal.representatives.first).to eq vso
+
             schedule_hearing_task.update_from_params(update_params, hearings_management_user)
 
             expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.cancelled)
@@ -327,7 +335,7 @@ describe ScheduleHearingTask, :all_dbs do
 
     context "Legacy Appeal" do
       let(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:caseflow]) }
-      let(:veteran_participant_id) { "0000" }
+      let(:veteran_pid) { "0000" }
       let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
       let(:case_hearing_past_disposition) { "P" }
       let(:hearing) { create(:legacy_hearing, appeal: appeal, disposition: case_hearing_past_disposition) }

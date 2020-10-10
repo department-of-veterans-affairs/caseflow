@@ -147,14 +147,7 @@ class ScheduleHearingTask < Task
 
   def withdraw_hearing
     if appeal.is_a?(LegacyAppeal)
-      location = if appeal.representative_is_vso?
-                   LegacyAppeal::LOCATION_CODES[:service_organization]
-                 else
-                   LegacyAppeal::LOCATION_CODES[:case_storage]
-                 end
-
       AppealRepository.withdraw_hearing!(appeal)
-      AppealRepository.update_location!(appeal, location)
     else
       EvidenceSubmissionWindowTask.create!(
         appeal: appeal,
