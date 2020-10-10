@@ -37,7 +37,7 @@ export const HearingTypeConversion = ({
     );
     const detail = sprintf(
       COPY.CONVERT_HEARING_TYPE_SUCCESS_DETAIL,
-      appeal?.closestRegionalOffice || COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT
+      appeal?.closestRegionalOfficeLabel || COPY.CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT
     );
 
     return { title, detail };

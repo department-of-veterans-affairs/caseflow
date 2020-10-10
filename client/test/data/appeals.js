@@ -103,7 +103,9 @@ export const appealData = {
   },
   veteranInfo: {
     ...veteranInfo
-  }
+  },
+  readableHearingRequestType: 'Video',
+  readableOriginalHearingRequestType: 'Video'
 };
 
 export const amaAppeal = {
@@ -128,7 +130,8 @@ export const legacyAppealForTravelBoard = {
   powerOfAttorney: {
     ...powerOfAttorney
   },
-  readableHearingRequestType: 'Travel'
+  readableHearingRequestType: 'Travel',
+  readableOriginalHearingRequestType: 'Travel'
 }
 
 export const veteranInfoWithoutEmail = {
@@ -158,7 +161,18 @@ export const openHearingAppeal = {
 };
 
 export const scheduleHearingDetails = {
-  regionalOffice: 'RO17',
+  regionalOffice: {
+    key: 'RO17',
+    alternate_locations: [
+      'vba_317a', 'vc_0742V', 'vba_317'
+    ],
+    city: 'St. Petersburg',
+    facility_locator_id: 'vba_317',
+    hold_hearings: true,
+    label: 'St. Petersburg regional office',
+    state: 'FL',
+    timezone: 'America/New_York',
+  },
   hearingLocation: {
     name: 'Holdrege VA Clinic',
     address: '1118 Burlington Street, Holdrege NE 68949-1705',

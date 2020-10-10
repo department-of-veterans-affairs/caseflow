@@ -611,20 +611,26 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
   end
 
-  shared_examples "scheduling a virtual hearing" do
+  shared_examples "scheduling a virtual hearing" do |fill_in_timezones|
     scenario "can successfully schedule virtual hearing" do
       navigate_to_schedule_veteran
       expect(page).to have_content("Schedule Veteran for a Hearing")
       click_dropdown(name: "hearingType", text: "Virtual")
       click_dropdown(name: "hearingDate", index: 1)
-      find(".cf-form-radio-option", text: "8:30 AM Eastern Time (US & Canada)").click
+
+      expected_time_radio_text = if fill_in_timezones
+                                   "8:30 AM Eastern Time (US & Canada)"
+                                 else
+                                   "8:30 AM Mountain Time (US & Canada) / 10:30 AM Eastern Time (US & Canada)"
+                                 end
+      find(".cf-form-radio-option", text: expected_time_radio_text).click
 
       # Fill in appellant details
-      click_dropdown(name: "appellantTz", index: 1)
+      click_dropdown(name: "appellantTz", index: 1) if fill_in_timezones
       fill_in "Veteran Email", with: fill_in_veteran_email
 
       # Fill in POA/Representative details
-      click_dropdown(name: "representativeTz", index: 1)
+      click_dropdown(name: "representativeTz", index: 1) if fill_in_timezones
       fill_in "POA/Representative Email", with: fill_in_representative_email
 
       click_button("Schedule")
@@ -675,7 +681,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       before { cache_appeals }
 
-      it_behaves_like "scheduling a virtual hearing"
+      it_behaves_like "scheduling a virtual hearing", true
     end
 
     context "when changing from Video hearing" do
@@ -683,7 +689,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       before { cache_appeals }
 
-      it_behaves_like "scheduling a virtual hearing"
+      it_behaves_like "scheduling a virtual hearing", false
     end
   end
 

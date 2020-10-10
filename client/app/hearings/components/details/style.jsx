@@ -186,3 +186,8 @@ export const spacing = (space, el) => css({
 export const cancelButton = css({ float: 'left', paddingLeft: 0, paddingRight: 0 });
 
 export const saveButton = css({ float: 'right' });
+
+export const setMargin = (margin) =>
+  css({
+    margin
+  });
