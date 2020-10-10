@@ -95,7 +95,7 @@ class AssignHearingTab
       QueueColumn.filter_option_hash(option, label)
     end
 
-    former_travel_count = tasks.with_cached_appeals.where("cached_appeal_attributes.formally_travel = ?", true).count
+    former_travel_count = tasks.with_cached_appeals.where("cached_appeal_attributes.former_travel = ?", true).count
 
     if former_travel_count > 0
       label = QueueColumn.format_option_label(

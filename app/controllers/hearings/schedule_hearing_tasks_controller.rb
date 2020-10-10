@@ -18,7 +18,7 @@ class Hearings::ScheduleHearingTasksController < ApplicationController
     )
 
     # Select `power_of_attorney_name`, `hearing_request_type`, and
-    # `formally_travel` from the `CachedAppeal` table. This is an
+    # `former_travel` from the `CachedAppeal` table. This is an
     # optimization that fetches these values from the `CachedAppeal` table,
     # where they are already cached for filtering. The `TaskColumnSerializer` is
     # "aware" of these optimizations, and will serialize the cached values instead
@@ -29,7 +29,7 @@ class Hearings::ScheduleHearingTasksController < ApplicationController
         "tasks.*,
         #{CachedAppeal.table_name}.power_of_attorney_name,
         #{CachedAppeal.table_name}.hearing_request_type,
-        #{CachedAppeal.table_name}.formally_travel"
+        #{CachedAppeal.table_name}.former_travel"
       )
 
     render json: {

@@ -10,7 +10,6 @@ import LoadingLabel from './LoadingLabel';
 import SearchableDropdown from '../SearchableDropdown';
 
 class RegionalOfficeDropdown extends React.Component {
-
   componentDidMount() {
     setTimeout(this.getRegionalOffices, 0);
   }
@@ -42,7 +41,7 @@ class RegionalOfficeDropdown extends React.Component {
       _.forEach(resp.regionalOffices, (value, key) => {
         regionalOfficeOptions.push({
           label: value.state === 'DC' ? 'Central' : `${value.city}, ${value.state}`,
-          value: key
+          value: { key, ...value }
         });
       });
 
@@ -55,7 +54,7 @@ class RegionalOfficeDropdown extends React.Component {
   getSelectedOption = () => {
     const { value, regionalOffices: { options } } = this.props;
 
-    return _.find(options, (opt) => opt.value === value) ||
+    return _.find(options, (opt) => opt.value.key === value) ||
       {
         value: null,
         label: null
@@ -97,6 +96,8 @@ RegionalOfficeDropdown.propTypes = {
     isFetching: PropTypes.bool
   }),
   validateValueOnMount: PropTypes.bool,
+
+  // Regional Office Key
   value: PropTypes.string
 };
 

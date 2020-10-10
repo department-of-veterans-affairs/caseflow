@@ -185,19 +185,6 @@ describe DecisionIssue, :postgres do
         context "when it is nil" do
           it { is_expected.to be true }
         end
-
-        context "when it is set to an allowed value" do
-          let(:diagnostic_code) { "5000" }
-          it { is_expected.to be true }
-        end
-
-        context "when it is not an allowed value" do
-          let(:diagnostic_code) { "bogus_diagnostic_code" }
-          it "adds an error to diagnostic_code" do
-            is_expected.to be false
-            expect(decision_issue.errors[:diagnostic_code]).to include("is not included in the list")
-          end
-        end
       end
     end
 
