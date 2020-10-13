@@ -2083,8 +2083,8 @@ describe LegacyAppeal, :all_dbs do
     end
   end
 
-  context "#sanitized_hearing_request_type" do
-    subject { appeal.sanitized_hearing_request_type }
+  context "#current_hearing_request_type" do
+    subject { appeal.current_hearing_request_type }
 
     context "when central_office" do
       let(:vacols_case) { create(:case, :video_hearing_requested, :central_office_hearing) }
