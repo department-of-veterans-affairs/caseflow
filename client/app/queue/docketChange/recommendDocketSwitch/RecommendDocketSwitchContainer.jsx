@@ -3,15 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
 import { fetchJudges } from '../../QueueActions';
 
-import { taskById, appealWithDetailSelector } from '../../selectors';
+import { appealWithDetailSelector } from '../../selectors';
 import { RecommendDocketSwitchForm } from './RecommendDocketSwitchForm';
 
 export const RecommendDocketSwitchContainer = () => {
-  const { taskId, appealId } = useParams();
+  const { appealId } = useParams();
   const { goBack } = useHistory();
   const dispatch = useDispatch();
 
-  const task = useSelector((state) => taskById(state, { taskId }));
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
@@ -25,9 +24,18 @@ export const RecommendDocketSwitchContainer = () => {
     [judges]
   );
 
-  // TODO - add logic to pull this from task tree
-  const defaultJudgeId = useMemo(() => 3, [judges, appeal]);
+  // We want to default the judge selection to the VLJ currently assigned to the case, if exists
+  const defaultJudgeId = useMemo(() => {
+    const { assignedJudge } = appeal;
 
+    if (!assignedJudge) {
+      return;
+    }
+
+    return judges.find(({ id }) => id === assignedJudge.id);
+  }, [judges, appeal]);
+
+  // eslint-disable-next-line no-console
   const handleSubmit = (formData) => console.log('handleSubmit', formData);
 
   useEffect(() => {
