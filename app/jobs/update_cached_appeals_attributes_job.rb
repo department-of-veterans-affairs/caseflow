@@ -49,7 +49,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         issue_count: request_issues_to_cache[appeal.id] || 0,
         docket_type: appeal.docket_type,
         docket_number: appeal.docket_number,
-        hearing_request_type: appeal.readable_hearing_request_type,
+        hearing_request_type: appeal.current_hearing_request_type(readable: true),
         is_aod: appeal_aod_status.include?(appeal.id),
         power_of_attorney_name: representative_names[appeal.id],
         suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location,

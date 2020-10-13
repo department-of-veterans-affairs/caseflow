@@ -1187,8 +1187,8 @@ describe Appeal, :all_dbs do
     end
   end
 
-  describe "#readable_hearing_request_type" do
-    subject { appeal.readable_hearing_request_type }
+  describe "readable current_hearing_request_type" do
+    subject { appeal.current_hearing_request_type(readable: true) }
 
     context "no hearings have been scheduled" do
       let(:appeal) { create(:appeal, closest_regional_office: closest_regional_office) }
