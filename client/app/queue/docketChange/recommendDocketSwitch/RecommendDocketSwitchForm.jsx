@@ -41,13 +41,7 @@ export const RecommendDocketSwitchForm = ({
   onCancel,
   onSubmit,
 }) => {
-  const {
-    register,
-    handleSubmit,
-    formState,
-    control,
-    setValue,
-  } = useForm({
+  const { register, handleSubmit, formState, control, setValue } = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
   });
@@ -66,8 +60,9 @@ export const RecommendDocketSwitchForm = ({
 
   return (
     <form
-      className="docket-change-recommendation"
+      className="docket-switch-recommendation"
       onSubmit={handleSubmit(onSubmit)}
+      aria-label="Recommendation on Docket Switch"
     >
       <AppSegment filledBackground>
         <h1>{sprintf(DOCKET_SWITCH_RECOMMENDATION_TITLE, claimantName)}</h1>
@@ -90,7 +85,7 @@ export const RecommendDocketSwitchForm = ({
 
         <RadioField
           name="disposition"
-          label="What is your recommendattion for this request to switch dockets?"
+          label="What is your recommendation for this request to switch dockets?"
           options={dispositionOptions}
           inputRef={register}
           strongLabel
