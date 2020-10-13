@@ -99,18 +99,19 @@ export const RecommendDocketSwitchForm = ({
           strongLabel
         />
 
-        <Controller
-          as={SearchableDropdown}
-          control={control}
-          defaultValue={judgeDefault}
-          name="judge"
-          label="Assign to judge"
-          searchable
-          options={judgeOptions}
-          placeholder="Select judge"
-          styling={{ style: { width: '30rem' } }}
-          strongLabel
-        />
+        <div style={{ maxWidth: '35rem' }}>
+          <Controller
+            as={SearchableDropdown}
+            control={control}
+            defaultValue={judgeDefault}
+            name="judge"
+            label="Assign to judge"
+            searchable
+            options={judgeOptions}
+            placeholder="Select judge"
+            strongLabel
+          />
+        </div>
       </AppSegment>
       <div className="controls cf-app-segment">
         <Button

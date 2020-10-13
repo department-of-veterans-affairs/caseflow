@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { queryByText, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import selectEvent from 'react-select-event';
 
@@ -16,7 +16,7 @@ describe('RecommendDocketSwitchForm', () => {
   const claimantName = 'Claimant 1';
   const defaults = { onSubmit, onCancel, claimantName, judgeOptions };
 
-  afterEach(() => {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
 
@@ -113,14 +113,31 @@ describe('RecommendDocketSwitchForm', () => {
       hyperlink
     );
 
+    await userEvent.click(submit);
+
     waitFor(() => {
       expect(onSubmit).toHaveBeenCalledWith({
         timely: 'yes',
         disposition: 'granted',
-        hyperlink: '',
-        summary: '',
+        hyperlink,
+        summary,
         judge: judgeOptions[1],
       });
     });
+  });
+
+  it('allows setting default judge', async () => {
+    render(
+      <RecommendDocketSwitchForm
+        {...defaults}
+        defaultJudgeId={judgeOptions[1].value}
+      />
+    );
+
+    // This one
+    expect(screen.queryByText(judgeOptions[1].label)).toBeTruthy();
+
+    // Not this one
+    expect(screen.queryByText(judgeOptions[0].label)).not.toBeTruthy();
   });
 });
