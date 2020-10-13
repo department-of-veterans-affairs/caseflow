@@ -17,7 +17,8 @@ class ChangeHearingRequestTypeTask < Task
   # conditioned to reduce a call to vacols in the absence of a value in `changed_hearing_type` field
   def timeline_title
     if completed?
-      "Hearing type converted from #{appeal.previous_hearing_request_type} to #{appeal.readable_hearing_request_type}"
+      "Hearing type converted from #{appeal.previous_hearing_request_type(readable: true)}"\
+        " to #{appeal.current_hearing_request_type(readable: true)}"
     end
   end
 

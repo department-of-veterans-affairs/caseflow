@@ -370,9 +370,19 @@ class LegacyAppeal < CaseflowRecord
     end
   end
 
+  ## BEGIN Hearing specific attributes and methods
+
   attr_writer :hearings
   def hearings
     @hearings ||= HearingRepository.hearings_for_appeal(vacols_id)
+  end
+
+  def hearing_pending?
+    hearing_requested && !hearing_held
+  end
+
+  def hearing_scheduled?
+    !scheduled_hearings.empty?
   end
 
   def completed_hearing_on_previous_appeal?
@@ -391,38 +401,68 @@ class LegacyAppeal < CaseflowRecord
     hearings.select(&:scheduled_pending?)
   end
 
-  def readable_original_hearing_request_type
-    LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[original_hearing_request_type]
-  end
-
-  def original_hearing_request_type
-    case hearing_request_type
-    when :central_office
-      :central_office
-    when :travel_board
-      video_hearing_requested ? :video : :travel_board
+  # Currently changed_request_type can only be stored as 'R' or 'V' because
+  # you can convert a hearing request type to Video or Virtual.
+  # This method returns the sanitized versions of those where 'R' => :virtual and 'V' => :video
+  def sanitized_changed_request_type(changed_request_type: changed_request_type)
+    case changed_request_type
+    when HearingDay::REQUEST_TYPES[:video]
+      :video
+    when HearingDay::REQUEST_TYPES[:virtual]
+      :virtual
+    else
+      fail InvalidChangedRequestType, "\"#{changed_request_type}\" is not a valid request type."
     end
   end
 
   # `hearing_request_type` is a direct mapping from VACOLS and has some unused
   # values. Also, `hearing_request_type` alone can't disambiguate a video hearing
-  # from a travel board hearing. This method cleans all of these issues up.
-  #
+  # from a travel board hearing
+  # This method cleans all of these issues up to return a sanitized version of the original type requested by Appellant.
+  # Flag readable is mostly used by serializers
+  def original_hearing_request_type(readable: false)
+    original_hearing_request_type = case hearing_request_type
+                                    when :central_office
+                                      :central_office
+                                    when :travel_board
+                                      video_hearing_requested ? :video : :travel_board
+                                    end
+    readable ? READABLE_HEARING_REQUEST_TYPES[original_hearing_request_type] : original_hearing_request_type
+  end
+
   # [Sept. 2020]:
   #   In response to COVID, the appellant has the option of changing their hearing
-  #   preference if they were scheduled for a travel board hearing. This method captures
-  #   if a travel board hearing request type was overridden in Caseflow.
-  def sanitized_hearing_request_type
-    if changed_request_type.present?
-      return readable_changed_request_type(changed_request_type)
-    end
-
-    original_hearing_request_type
+  #   preference if they were scheduled for a travel board hearing.
+  #   This method captures if a travel board hearing request type was overridden in Caseflow.
+  # In general, this method returns the current hearing request type which could be dervied
+  # from `change_request_type` or VACOLS `hearing_request_type`
+  # Flag `readable` is mostly used by serializers
+  def current_hearing_request_type(readable: false)
+    current_hearing_request_type = if changed_request_type.present?
+                                     sanitized_changed_request_type
+                                   else
+                                     original_hearing_request_type
+                                   end
+    readable ? READABLE_HEARING_REQUEST_TYPES[current_hearing_request_type] : current_hearing_request_type
   end
 
-  def readable_hearing_request_type
-    READABLE_HEARING_REQUEST_TYPES[sanitized_hearing_request_type]
+  # if `change_hearing_request` is populated meaning the hearing request type was changed, then return what the
+  # previous hearing request type was. Use paper trail event to derive previous type in the case the type was changed
+  # multple times.
+  # Flag `readable` is mostly used `ChangeHearingRequestTypeTask`
+  def previous_hearing_request_type(readable: false)
+    # Example of diff: {"changed_request_type"=>[nil, "R"]}
+    previous_unsanitized_type = latest_appeal_event.diff["changed_request_type"].first
+
+    previous_hearing_request_type = if !previous_unsanitized_type.nil?
+                                      sanitized_changed_request_type(previous_type)
+                                    else
+                                      original_hearing_request_type
+                                    end
+    readable ? READABLE_HEARING_REQUEST_TYPES[previous_hearing_request_type] : previous_hearing_request_type
   end
+
+  ## END Hearing specific attributes and methods
 
   def veteran_is_deceased
     veteran_death_date.present?
@@ -496,14 +536,6 @@ class LegacyAppeal < CaseflowRecord
 
   def task_header
     "&nbsp &#124; &nbsp ".html_safe + "#{veteran_name} (#{sanitized_vbms_id})"
-  end
-
-  def hearing_pending?
-    hearing_requested && !hearing_held
-  end
-
-  def hearing_scheduled?
-    !scheduled_hearings.empty?
   end
 
   def eligible_for_ramp?
@@ -932,32 +964,12 @@ class LegacyAppeal < CaseflowRecord
     false
   end
 
-  # Example of diff: {"changed_request_type"=>[nil, "R"]}
-  def previous_hearing_request_type
-    previous_type = latest_appeal_event.diff["changed_request_type"].first
-
-    return readable_changed_request_type(previous_type) if !previous_type.nil?
-
-    readable_original_hearing_request_type
-  end
-
-  # user the paper_trail version on LegacyAppeal
+  # uses the paper_trail version on LegacyAppeal
   def latest_appeal_event
     TaskEvent.new(version: versions.last)
   end
 
   private
-
-  def readable_changed_request_type(changed_request_type)
-    case changed_request_type
-    when HearingDay::REQUEST_TYPES[:video]
-      :video
-    when HearingDay::REQUEST_TYPES[:virtual]
-      :virtual
-    else
-      fail InvalidChangedRequestType, "\"#{changed_request_type}\" is not a valid request type."
-    end
-  end
 
   def soc_eligible_for_opt_in?(receipt_date:, covid_flag: false)
     return false unless soc_date
