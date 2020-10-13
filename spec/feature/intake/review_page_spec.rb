@@ -326,7 +326,7 @@ feature "Intake Review Page", :postgres do
             expect(page).to have_content("#{attorney.name}, Attorney")
           end
 
-          scenario "when claimant is not listed" do
+          scenario "when claimant is not listed", skip: "Unlisted claimants are disabled for now" do
             appeal, _intake = start_appeal(
               veteran,
               claim_participant_id: claim_participant_id,
@@ -367,7 +367,7 @@ feature "Intake Review Page", :postgres do
             expect(page).to have_content(notes)
           end
 
-          scenario "when veteran has no relationships" do
+          scenario "when veteran has no relationships", skip: "Unlisted claimants are disabled for now" do
             allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return([])
 
             start_appeal(

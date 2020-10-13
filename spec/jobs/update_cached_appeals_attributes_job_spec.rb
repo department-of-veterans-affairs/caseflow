@@ -198,9 +198,9 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     end
   end
 
-  context "caches hearing_request_type and formally_travel correctly" do
+  context "caches hearing_request_type and former_travel correctly" do
     let(:appeal) { create(:appeal, closest_regional_office: "C") } # central
-    let(:legacy_appeal3) do # formally travel, currently virtual
+    let(:legacy_appeal3) do # former travel, currently virtual
       create(
         :legacy_appeal,
         vacols_case: vacols_case3,
@@ -236,15 +236,15 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       expect(CachedAppeal.find_by(appeal_id: legacy_appeal3.id).hearing_request_type).to eq("Virtual")
     end
 
-    it "caches formally_travel correctly", :aggregate_failures do
+    it "caches former_travel correctly", :aggregate_failures do
       subject
 
       # always nil for ama appeal
-      expect(CachedAppeal.find_by(appeal_id: appeal.id).formally_travel).to eq(nil)
+      expect(CachedAppeal.find_by(appeal_id: appeal.id).former_travel).to eq(nil)
 
-      expect(CachedAppeal.find_by(appeal_id: legacy_appeal1.id).formally_travel).to eq(false)
-      expect(CachedAppeal.find_by(appeal_id: legacy_appeal2.id).formally_travel).to eq(false)
-      expect(CachedAppeal.find_by(appeal_id: legacy_appeal3.id).formally_travel).to eq(true)
+      expect(CachedAppeal.find_by(appeal_id: legacy_appeal1.id).former_travel).to eq(false)
+      expect(CachedAppeal.find_by(appeal_id: legacy_appeal2.id).former_travel).to eq(false)
+      expect(CachedAppeal.find_by(appeal_id: legacy_appeal3.id).former_travel).to eq(true)
     end
   end
 end

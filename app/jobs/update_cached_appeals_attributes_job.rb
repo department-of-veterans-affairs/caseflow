@@ -168,7 +168,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
           vacols_id: folder[:vacols_id],
           case_type: vacols_case[:status],
           docket_number: folder[:docket_number],
-          formally_travel: vacols_case[:formally_travel], # true or false
+          former_travel: vacols_case[:former_travel], # true or false
           hearing_request_type: vacols_case[:hearing_request_type],
           issue_count: issue_counts_to_cache[folder[:vacols_id]] || 0,
           is_aod: aod_status_to_cache[folder[:vacols_id]],
@@ -178,7 +178,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
       update_columns = [
         :docket_number,
-        :formally_travel,
+        :former_travel,
         :hearing_request_type,
         :issue_count,
         :veteran_name,
@@ -260,14 +260,14 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def case_fields_for_vacols_ids(vacols_ids)
     # array of arrays will become hash with bfkey as key.
     # [
-    #   [ 123, { location: 57, status: "Original", hearing_request_type: "Video", formally_travel: true} ],
-    #   [ 456, { location: 2, status: "Court Remand", hearing_request_type: "Video", formally_travel: true } ],
+    #   [ 123, { location: 57, status: "Original", hearing_request_type: "Video", former_travel: true} ],
+    #   [ 456, { location: 2, status: "Court Remand", hearing_request_type: "Video", former_travel: true } ],
     #   ...
     # ]
     # becomes
     # {
-    #   123: { location: 57, status: "Original", hearing_request_type: "Video", formally_travel: true },
-    #   456: { location: 2, status: "Court Remand", hearing_request_type: "Video", formally_travel: true },
+    #   123: { location: 57, status: "Original", hearing_request_type: "Video", former_travel: true },
+    #   456: { location: 2, status: "Court Remand", hearing_request_type: "Video", former_travel: true },
     #   ...
     # }
     VACOLS::Case.where(bfkey: vacols_ids).map do |vacols_case|
@@ -279,7 +279,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
           location: vacols_case.bfcurloc,
           status: VACOLS::Case::TYPES[vacols_case.bfac],
           hearing_request_type: legacy_appeal.readable_hearing_request_type,
-          formally_travel: formally_travel?(legacy_appeal)
+          former_travel: former_travel?(legacy_appeal)
         }
       ]
     end.to_h
@@ -308,8 +308,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     end.to_h
   end
 
-  # checks to see if the hearing request type was formally travel
-  def formally_travel?(legacy_appeal)
+  # checks to see if the hearing request type was former_travel
+  def former_travel?(legacy_appeal)
     # the current request type is travel
     if legacy_appeal.readable_hearing_request_type == LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:travel_board]
       return false

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_29_170305) do
+ActiveRecord::Schema.define(version: 2020_10_05_190456) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -227,7 +227,7 @@ ActiveRecord::Schema.define(version: 2020_09_29_170305) do
     t.datetime "created_at"
     t.string "docket_number"
     t.string "docket_type"
-    t.boolean "formally_travel", comment: "Determines if the hearing type was formallly travel board; only applicable to Legacy appeals"
+    t.boolean "former_travel", comment: "Determines if the hearing type was formerly travel board; only applicable to Legacy appeals"
     t.string "hearing_request_type", limit: 10, comment: "Stores hearing type requested by appellant; could be one of nil, 'Video', 'Central', 'Travel', or 'Virtual'"
     t.boolean "is_aod", comment: "Whether the case is Advanced on Docket"
     t.integer "issue_count", comment: "Number of issues on the appeal."
@@ -241,7 +241,7 @@ ActiveRecord::Schema.define(version: 2020_09_29_170305) do
     t.index ["closest_regional_office_city"], name: "index_cached_appeal_attributes_on_closest_regional_office_city"
     t.index ["closest_regional_office_key"], name: "index_cached_appeal_attributes_on_closest_regional_office_key"
     t.index ["docket_type"], name: "index_cached_appeal_attributes_on_docket_type"
-    t.index ["hearing_request_type", "formally_travel"], name: "index_cached_appeal_on_hearing_request_type_and_formally_travel"
+    t.index ["hearing_request_type", "former_travel"], name: "index_cached_appeal_on_hearing_request_type_and_former_travel"
     t.index ["is_aod"], name: "index_cached_appeal_attributes_on_is_aod"
     t.index ["power_of_attorney_name"], name: "index_cached_appeal_attributes_on_power_of_attorney_name"
     t.index ["suggested_hearing_location"], name: "index_cached_appeal_attributes_on_suggested_hearing_location"
@@ -581,6 +581,23 @@ ActiveRecord::Schema.define(version: 2020_09_29_170305) do
     t.index ["updated_at"], name: "index_end_product_establishments_on_updated_at"
     t.index ["user_id"], name: "index_end_product_establishments_on_user_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
+  end
+
+  create_table "end_product_updates", comment: "Updates the claim label for end products established from Caseflow", force: :cascade do |t|
+    t.bigint "active_request_issue_ids", default: [], null: false, comment: "A list of active request issue IDs when a user has finished editing a decision review. Used to keep track of which request issues may have been impacted by the update.", array: true
+    t.datetime "created_at", null: false
+    t.bigint "end_product_establishment_id", null: false, comment: "The end product establishment id used to track the end product being updated."
+    t.string "error", comment: "The error message captured from BGS if the end product update failed."
+    t.string "new_code", comment: "The new end product code the user wants to update to."
+    t.string "original_code", comment: "The original end product code before the update was submitted."
+    t.bigint "original_decision_review_id", comment: "The original decision review that this end product update belongs to; has a non-nil value only if a new decision_review was created."
+    t.string "original_decision_review_type", comment: "The original decision review type that this end product update belongs to"
+    t.string "status", comment: "Status after an attempt to update the end product; expected values: 'success', 'error', ..."
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false, comment: "The ID of the user who makes an end product update."
+    t.index ["end_product_establishment_id"], name: "index_end_product_updates_on_end_product_establishment_id"
+    t.index ["original_decision_review_type", "original_decision_review_id"], name: "index_epupdates_on_decision_review_type_and_decision_review_id"
+    t.index ["user_id"], name: "index_end_product_updates_on_user_id"
   end
 
   create_table "form8s", id: :serial, force: :cascade do |t|
@@ -1552,6 +1569,8 @@ ActiveRecord::Schema.define(version: 2020_09_29_170305) do
   add_foreign_key "docket_changes", "tasks"
   add_foreign_key "document_views", "users"
   add_foreign_key "end_product_establishments", "users"
+  add_foreign_key "end_product_updates", "end_product_establishments"
+  add_foreign_key "end_product_updates", "users"
   add_foreign_key "hearing_days", "users", column: "created_by_id"
   add_foreign_key "hearing_days", "users", column: "updated_by_id"
   add_foreign_key "hearing_views", "users"
