@@ -124,8 +124,9 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
           expect(nonpriority_appeal.aod?).to be_falsey
         end
         priority_appeals.each do |priority_appeal|
-          # do not call `aod_based_on_age_field_appeal.aod?` since that will
-          # set `aod_based_on_age` to false (and result in `aod?` being false) due to claimant's age
+          # Do not call `aod_based_on_age_field_appeal.aod?` since that will
+          # set `aod_based_on_age` to false (and result in `aod?` being false) due to claimant's age.
+          # Skip expect check on `aod_based_on_age_field_appeal` as invoking .aod? will affect the test setup.
           expect(priority_appeal.aod?) unless priority_appeal == aod_based_on_age_field_appeal
         end
 
