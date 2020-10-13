@@ -75,10 +75,6 @@ module VaDotGovAddressValidator::Validations
     appeal.is_a?(LegacyAppeal) && appeal.sanitized_hearing_request_type == :central_office
   end
 
-  def appeal_is_legacy_and_veteran_lives_in_va_or_md?
-    appeal.is_a?(LegacyAppeal) && %w[VA MD].include?(state_code)
-  end
-
   def veteran_lives_in_texas?
     state_code == "TX"
   end
