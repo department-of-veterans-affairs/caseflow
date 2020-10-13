@@ -165,10 +165,10 @@ class TaskRows extends React.PureComponent {
   }
 
   hearingRequestTypeConvertedBy = (task) => {
-    const converter = task.completedBy?.cssId;
+    const converteredBy = task.completedBy?.cssId;
 
-    return converter ? <div><dt>{COPY.TASK_SNAPSHOT_HEARING_REQUEST_CONVERTER_LABEL}</dt>
-      <dd>{converter}</dd></div> : null;
+    return converteredBy ? <div><dt>{COPY.TASK_SNAPSHOT_HEARING_REQUEST_CONVERTER_LABEL}</dt>
+      <dd>{converteredBy}</dd></div> : null;
   }
 
   taskLabelListItem = (task) => {
@@ -233,8 +233,8 @@ class TaskRows extends React.PureComponent {
   }
 
   hearingRequestTypeConvertedAtListItem = (task) => {
-    return task.completedAt ? <div><dt>{COPY.TASK_SNAPSHOT_HEARING_REQUEST_CONVERTED_ON_LABEL}</dt>
-      <dd>{moment(task.closedAt).format('MM/DD/YYYY')}</dd></div> : null;
+    return task.convertedOn ? <div><dt>{COPY.TASK_SNAPSHOT_HEARING_REQUEST_CONVERTED_ON_LABEL}</dt>
+      <dd>{moment(task.convertedOn).format('MM/DD/YYYY')}</dd></div> : null;
   };
 
   closedOrCancelledAtListItem = (task) => {

@@ -52,18 +52,18 @@ class WorkQueue::TaskSerializer
     }
   end
 
-  # completed_by indicates who the task was completed by
-  # ChangeHearingRequestType defines a completed_by deriving the data from paper_trail
-  attribute :completed_by do |object|
+  # only ChangeHearingRequestType defines a convertedBy deriving the data from paper_trail
+  # refers to the conversion of hearing request type
+  attribute :converted_by do |object|
     {
-      css_id: object.try(:completed_by).try(:css_id)
+      css_id: object.try(:converted_by).try(:css_id)
     }
   end
 
-  # completed_at indicates when the task was set to completed
-  # ChangeHearingRequestType defines a completed_at deriving the data from paper_trail
-  attribute :completed_at do |object|
-    object.try(:completed_at)
+  # ChangeHearingRequestType defines a converted_on
+  # refers to when the hearing request type was converted and is equivalent to closed_at
+  attribute :converted_on do |object|
+    object.try(:converted_on)
   end
 
   attribute :assignee_name do |object|

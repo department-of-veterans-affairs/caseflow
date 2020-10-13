@@ -98,10 +98,10 @@ describe.only('ColocatedTaskListView', () => {
       cancelled_by: {
         css_id: null
       },
-      completed_by: {
+      converted_by: {
         css_id: null
       },
-      completed_at: null
+      converted_on: null
     }
   });
 

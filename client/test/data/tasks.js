@@ -64,10 +64,10 @@ const amaTaskData = {
   cancelledBy: {
     cssId: null,
   },
-  completedBy: {
+  convertedBy: {
     cssId: null,
   },
-  completedAt: null,
+  convertedOn: null,
   taskId: null,
   parentId: '1',
   label: null,
@@ -116,8 +116,8 @@ export const changeHearingRequestTypeTask = {
   appealType: 'LegacyAppeal',
   status: 'completed',
   closedAt: '2020-09-08T14:13:33.878-04:00',
-  completedAt: '2020-09-08T14:13:33.878-04:00',
-  completedBy: {
+  convertedOn: '2020-09-08T14:13:33.878-04:00',
+  convertedBy: {
     cssId: 'BVASYELLOW',
   },
   instructions: [
