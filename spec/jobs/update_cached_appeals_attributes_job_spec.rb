@@ -42,7 +42,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     end
 
     context "when AOD appeals exist" do
-      # nonpriority
+      # non AOD
       let(:appeal) do
         create(:appeal,
                :with_post_intake_tasks,
@@ -77,7 +77,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
         ]
       end
 
-      # priority
+      # AOD
       let(:aod_age_appeal) do
         create(:appeal,
                :advanced_on_docket_due_to_age,
@@ -125,7 +125,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
         end
         priority_appeals.each do |priority_appeal|
           # do not call `aod_based_on_age_field_appeal.aod?` since that will
-          # set `aod_based_on_age` to false due to claimant's age
+          # set `aod_based_on_age` to false (and result in `aod?` being false) due to claimant's age
           expect(priority_appeal.aod?) unless priority_appeal == aod_based_on_age_field_appeal
         end
 
