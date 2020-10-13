@@ -165,10 +165,10 @@ class TaskRows extends React.PureComponent {
   }
 
   hearingRequestTypeConvertedBy = (task) => {
-    const converteredBy = task.completedBy?.cssId;
+    const convertedBy = task.convertedBy?.cssId;
 
-    return converteredBy ? <div><dt>{COPY.TASK_SNAPSHOT_HEARING_REQUEST_CONVERTER_LABEL}</dt>
-      <dd>{converteredBy}</dd></div> : null;
+    return convertedBy ? <div><dt>{COPY.TASK_SNAPSHOT_HEARING_REQUEST_CONVERTER_LABEL}</dt>
+      <dd>{convertedBy}</dd></div> : null;
   }
 
   taskLabelListItem = (task) => {

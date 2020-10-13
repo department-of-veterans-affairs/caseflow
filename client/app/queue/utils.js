@@ -102,7 +102,7 @@ const taskAttributesFromRawTask = (task) => {
     convertedBy: {
       cssId: task.attributes.converted_by.css_id,
     },
-    convertedOn: task.attributes.convertedOn,
+    convertedOn: task.attributes.converted_on,
     taskId: task.id,
     parentId: task.attributes.parent_id,
     label: task.attributes.label,
