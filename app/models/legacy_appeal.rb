@@ -404,7 +404,7 @@ class LegacyAppeal < CaseflowRecord
   # Currently changed_request_type can only be stored as 'R' or 'V' because
   # you can convert a hearing request type to Video or Virtual.
   # This method returns the sanitized versions of those where 'R' => :virtual and 'V' => :video
-  def sanitized_changed_request_type(changed_request_type: changed_request_type)
+  def sanitized_changed_request_type(changed_request_type)
     case changed_request_type
     when HearingDay::REQUEST_TYPES[:video]
       :video
@@ -439,7 +439,7 @@ class LegacyAppeal < CaseflowRecord
   # Flag `readable` is mostly used by serializers
   def current_hearing_request_type(readable: false)
     current_hearing_request_type = if changed_request_type.present?
-                                     sanitized_changed_request_type
+                                     sanitized_changed_request_type(changed_request_type)
                                    else
                                      original_hearing_request_type
                                    end
