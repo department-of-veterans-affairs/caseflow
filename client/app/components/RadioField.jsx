@@ -121,6 +121,21 @@ RadioField.propTypes = {
   required: PropTypes.bool,
 
   /**
+   * Pass a ref to the `input` element
+   */
+  inputRef: PropTypes.oneOfType([
+    // Either a function
+    PropTypes.func,
+    // Or the instance of a DOM native element (see the note about SSR)
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  ]),
+
+  /**
+   * Props to be applied to the `input` element
+   */
+  inputProps: PropTypes.object,
+
+  /**
    * Text to display in a `legend` element for the radio group fieldset
    */
   label: PropTypes.node,
@@ -157,21 +172,6 @@ RadioField.propTypes = {
        * Help text to be displayed below the label
        */
       help: PropTypes.string,
-
-      /**
-       * Pass a ref to the `input` element
-       */
-      inputRef: PropTypes.oneOfType([
-        // Either a function
-        PropTypes.func,
-        // Or the instance of a DOM native element (see the note about SSR)
-        PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
-      ]),
-
-      /**
-       * Props to be applied to the `input` element
-       */
-      inputProps: PropTypes.object,
     })
   ),
 
