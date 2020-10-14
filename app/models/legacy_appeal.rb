@@ -382,7 +382,7 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def hearing_scheduled?
-    !scheduled_hearings.empty?
+    scheduled_hearings.any?
   end
 
   def completed_hearing_on_previous_appeal?
