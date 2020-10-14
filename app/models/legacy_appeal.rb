@@ -963,7 +963,7 @@ class LegacyAppeal < CaseflowRecord
 
   # uses the paper_trail version on LegacyAppeal
   def latest_appeal_event
-    TaskEvent.new(version: versions.last) if versions.present?
+    TaskEvent.new(version: versions.last) if versions.any?
   end
 
   private
