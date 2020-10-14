@@ -52,8 +52,8 @@ RSpec.feature "Docket Change", :all_dbs do
   end
 
   describe "attorney recommend docket switch" do
-    let!(:docket_switch_mail_task) do 
-      create(:docket_switch_mail_task, appeal: appeal, parent: root_task, assigned_to: cotb_user) 
+    let!(:docket_switch_mail_task) do
+      create(:docket_switch_mail_task, appeal: appeal, parent: root_task, assigned_to: cotb_user)
     end
 
     let(:summary) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit" }
