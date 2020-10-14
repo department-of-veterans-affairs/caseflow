@@ -2168,7 +2168,7 @@ describe LegacyAppeal, :all_dbs do
   context "#previous_hearing_request_type" do
     subject { appeal.reload.previous_hearing_request_type }
 
-    context "when there's one paper trail event", focus: true do
+    context "when there's one paper trail event" do
       let(:vacols_case) { create(:case, :travel_board_hearing) }
 
       before do
