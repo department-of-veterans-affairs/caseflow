@@ -14,6 +14,7 @@ export const RecommendDocketSwitchContainer = () => {
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
+
   const judges = useSelector((state) => state.queue.judges);
   const judgeOptions = useMemo(
     () =>
@@ -50,6 +51,7 @@ export const RecommendDocketSwitchContainer = () => {
       onSubmit={handleSubmit}
       judgeOptions={judgeOptions}
       defaultJudgeId={defaultJudgeId}
+      appellantName={appeal.appellantFullName}
     />
   );
 };

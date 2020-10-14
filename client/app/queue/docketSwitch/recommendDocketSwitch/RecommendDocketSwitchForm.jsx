@@ -35,7 +35,7 @@ const TIMELY_OPTIONS = [
 ];
 
 export const RecommendDocketSwitchForm = ({
-  claimantName,
+  appellantName,
   defaultJudgeId,
   judgeOptions = [],
   onCancel,
@@ -65,7 +65,7 @@ export const RecommendDocketSwitchForm = ({
       aria-label="Recommendation on Docket Switch"
     >
       <AppSegment filledBackground>
-        <h1>{sprintf(DOCKET_SWITCH_RECOMMENDATION_TITLE, claimantName)}</h1>
+        <h1>{sprintf(DOCKET_SWITCH_RECOMMENDATION_TITLE, appellantName)}</h1>
 
         <TextareaField
           inputRef={register}
@@ -139,7 +139,7 @@ export const RecommendDocketSwitchForm = ({
 };
 
 RecommendDocketSwitchForm.propTypes = {
-  claimantName: PropTypes.string.isRequired,
+  appellantName: PropTypes.string.isRequired,
   defaultJudgeId: PropTypes.number,
   judgeOptions: PropTypes.array.isRequired,
   onCancel: PropTypes.func,
