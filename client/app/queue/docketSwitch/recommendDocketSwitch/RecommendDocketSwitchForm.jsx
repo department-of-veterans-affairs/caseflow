@@ -9,7 +9,7 @@ import { DOCKET_SWITCH_RECOMMENDATION_TITLE } from '../../../../COPY';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../../components/Button';
 import { sprintf } from 'sprintf-js';
-import { dispositionOptions, dispositions } from '../constants';
+import { dispositions } from '../constants';
 import TextField from '../../../components/TextField';
 import TextareaField from '../../../components/TextareaField';
 import RadioField from '../../../components/RadioField';
@@ -20,7 +20,7 @@ const schema = yup.object().shape({
   timely: yup.string().required(),
   disposition: yup.
     mixed().
-    oneOf(dispositions).
+    oneOf(Object.keys(dispositions)).
     required(),
   hyperlink: yup.string(),
   judge: yup.
@@ -53,6 +53,7 @@ export const RecommendDocketSwitchForm = ({
       ),
     [defaultJudgeId, judgeOptions]
   );
+  const dispositionOptions = useMemo(() => Object.values(dispositions), []);
 
   useEffect(() => {
     setValue('judge', judgeDefault);
