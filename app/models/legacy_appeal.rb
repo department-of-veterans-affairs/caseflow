@@ -419,7 +419,6 @@ class LegacyAppeal < CaseflowRecord
   # values. Also, `hearing_request_type` alone can't disambiguate a video hearing
   # from a travel board hearing
   # This method cleans all of these issues up to return a sanitized version of the original type requested by Appellant.
-  # Flag readable is mostly used by serializers
   def original_hearing_request_type(readable: false)
     original_hearing_request_type = case hearing_request_type
                                     when :central_office
