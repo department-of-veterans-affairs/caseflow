@@ -49,7 +49,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         issue_count: request_issues_to_cache[appeal.id] || 0,
         docket_type: appeal.docket_type,
         docket_number: appeal.docket_number,
-        hearing_request_type: appeal.readable_hearing_request_type,
+        hearing_request_type: appeal.current_hearing_request_type(readable: true),
         is_aod: appeal_aod_status.include?(appeal.id),
         power_of_attorney_name: representative_names[appeal.id],
         suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location,
@@ -274,7 +274,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         {
           location: vacols_case.bfcurloc,
           status: VACOLS::Case::TYPES[vacols_case.bfac],
-          hearing_request_type: legacy_appeal.readable_hearing_request_type,
+          hearing_request_type: legacy_appeal.current_hearing_request_type(readable: true),
           former_travel: former_travel?(legacy_appeal)
         }
       ]
@@ -307,7 +307,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   # checks to see if the hearing request type was former_travel
   def former_travel?(legacy_appeal)
     # the current request type is travel
-    if legacy_appeal.readable_hearing_request_type == LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:travel_board]
+    if legacy_appeal.current_hearing_request_type == :travel_board
       return false
     end
 

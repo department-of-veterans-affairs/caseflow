@@ -134,9 +134,9 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       subject
 
       expect(CachedAppeal.find_by(appeal_id: appeal.id).hearing_request_type).to eq("Central")
-      expect(CachedAppeal.find_by(appeal_id: legacy_appeal1.id).hearing_request_type).to eq("Travel")
-      expect(CachedAppeal.find_by(appeal_id: legacy_appeal2.id).hearing_request_type).to eq("Video")
-      expect(CachedAppeal.find_by(appeal_id: legacy_appeal3.id).hearing_request_type).to eq("Virtual")
+      expect(CachedAppeal.find_by(vacols_id: legacy_appeal1.vacols_id).hearing_request_type).to eq("Travel")
+      expect(CachedAppeal.find_by(vacols_id: legacy_appeal2.vacols_id).hearing_request_type).to eq("Video")
+      expect(CachedAppeal.find_by(vacols_id: legacy_appeal3.vacols_id).hearing_request_type).to eq("Virtual")
     end
 
     it "caches former_travel correctly", :aggregate_failures do
@@ -145,9 +145,9 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       # always nil for ama appeal
       expect(CachedAppeal.find_by(appeal_id: appeal.id).former_travel).to eq(nil)
 
-      expect(CachedAppeal.find_by(appeal_id: legacy_appeal1.id).former_travel).to eq(false)
-      expect(CachedAppeal.find_by(appeal_id: legacy_appeal2.id).former_travel).to eq(false)
-      expect(CachedAppeal.find_by(appeal_id: legacy_appeal3.id).former_travel).to eq(true)
+      expect(CachedAppeal.find_by(vacols_id: legacy_appeal1.vacols_id).former_travel).to eq(false)
+      expect(CachedAppeal.find_by(vacols_id: legacy_appeal2.vacols_id).former_travel).to eq(false)
+      expect(CachedAppeal.find_by(vacols_id: legacy_appeal3.vacols_id).former_travel).to eq(true)
     end
   end
 end
