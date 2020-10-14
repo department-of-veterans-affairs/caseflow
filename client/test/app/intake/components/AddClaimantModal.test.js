@@ -65,7 +65,7 @@ describe('AddClaimantModal', () => {
     expect(onCancel).toHaveBeenCalled();
   });
 
-  it('should display notes only if "claimant not listed" is selected', () => {
+  it.skip('should display notes only if "claimant not listed" is selected', () => {
     render(
       <AddClaimantModal
         onSearch={performQuery}
@@ -110,7 +110,7 @@ it('should clear dropdown', async () => {
     expect(screen.queryByText(data[0].name)).not.toBeTruthy();
   });
 
-  describe('changes based on "claimant not listed" selection', () => {
+  describe.skip('changes based on "claimant not listed" selection', () => {
     it('should display notes only if "claimant not listed" is selected', () => {
       render(
         <AddClaimantModal
@@ -189,7 +189,7 @@ it('should clear dropdown', async () => {
       );
     });
 
-    test('with unlisted claimant', async () => {
+    test.skip('with unlisted claimant', async () => {
       render(
         <AddClaimantModal
           onSearch={performQuery}

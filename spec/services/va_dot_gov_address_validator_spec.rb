@@ -232,7 +232,7 @@ describe VaDotGovAddressValidator do
       end
     end
 
-    context "when veteran with legacy appeal requests central office and does not live in DC, MD, or VA" do
+    context "when veteran with legacy appeal requests central office" do
       let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfhr: "1")) }
 
       it "returns DC" do
@@ -246,15 +246,6 @@ describe VaDotGovAddressValidator do
 
       it "adds San Antonio Satellite Office" do
         expect(subject).to match_array %w[vba_349 vba_362 vha_671BY]
-      end
-    end
-
-    context "when veteran with legacy appeal lives in MD" do
-      let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
-      let!(:valid_address_state_code) { "MD" }
-
-      it "adds DC regional office" do
-        expect(subject).to match_array %w[vba_313 vba_372]
       end
     end
   end

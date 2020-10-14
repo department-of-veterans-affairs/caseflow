@@ -277,6 +277,9 @@ AssignHearingsTable.propTypes = {
   selectedHearingDay: PropTypes.shape({
     scheduledFor: PropTypes.string
   }),
+
+  // Selected Regional Office Key
   selectedRegionalOffice: PropTypes.string,
+
   tabName: PropTypes.string
 };

@@ -67,6 +67,10 @@ Virtual.args = {
       forms: {
         assignHearing: {
           ...defaultAssignHearing,
+          regionalOffice: {
+            key: defaultHearing.regionalOfficeKey,
+            timezone: defaultHearing.regionalOfficeTimezone
+          },
           virtualHearing: virtualHearing.virtualHearing
         }
       }
@@ -81,7 +85,10 @@ Video.args = {
       forms: {
         assignHearing: {
           ...defaultAssignHearing,
-          regionalOffice: defaultHearing.regionalOfficeKey,
+          regionalOffice: {
+            key: defaultHearing.regionalOfficeKey,
+            timezone: defaultHearing.regionalOfficeTimezone
+          },
           hearingLocation: scheduleHearingDetails.hearingLocation
         }
       }

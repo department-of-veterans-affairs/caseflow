@@ -126,8 +126,6 @@ class VaDotGovAddressValidator
     # facility ID to the Houston RO.
     facility_ids << "vha_671BY" if veteran_lives_in_texas? # include San Antonio facility id
 
-    facility_ids << "vba_372" if appeal_is_legacy_and_veteran_lives_in_va_or_md?
-
     facility_ids
   end
 
