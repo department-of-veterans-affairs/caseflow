@@ -1,9 +1,9 @@
 import React from 'react';
-import { queryByText, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import selectEvent from 'react-select-event';
 
-import { RecommendDocketSwitchForm } from 'app/queue/docketChange/recommendDocketSwitch/RecommendDocketSwitchForm';
+import { RecommendDocketSwitchForm } from 'app/queue/docketSwitch/recommendDocketSwitch/RecommendDocketSwitchForm';
 
 const judgeOptions = [
   { label: 'VLJ Jane Doe', value: 1 },

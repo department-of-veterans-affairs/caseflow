@@ -26,7 +26,7 @@ const PageRoutes = [
   </PageRoute>,
 
   // This route handles the remaining checkout flow
-  <Route path="/queue/appeals/:appealId/tasks/:taskId/docket_change/checkout">
+  <Route path="/queue/appeals/:appealId/tasks/:taskId/docket_switch/checkout">
     {/* The component here will add additional `Switch` and child routes */}
     <h2>Checkout Container</h2>
   </Route>,
@@ -34,7 +34,7 @@ const PageRoutes = [
 
 const ModalRoutes = [];
 
-export const docketChangeRoutes = {
+export const docketSwitchRoutes = {
   page: PageRoutes,
   modal: ModalRoutes,
 };
