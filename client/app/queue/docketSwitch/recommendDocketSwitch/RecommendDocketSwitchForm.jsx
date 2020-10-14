@@ -46,6 +46,7 @@ export const RecommendDocketSwitchForm = ({
     mode: 'onChange',
   });
 
+  // The `SearchableDropdown` component uses objects as values, so here we determine that if defaultJudgeId is set
   const judgeDefault = useMemo(
     () =>
       judgeOptions.find(
