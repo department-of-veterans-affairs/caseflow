@@ -13,8 +13,8 @@ const judgeOptions = [
 describe('RecommendDocketSwitchForm', () => {
   const onSubmit = jest.fn();
   const onCancel = jest.fn();
-  const claimantName = 'Claimant 1';
-  const defaults = { onSubmit, onCancel, claimantName, judgeOptions };
+  const appellantName = 'Claimant 1';
+  const defaults = { onSubmit, onCancel, appellantName, judgeOptions };
 
   beforeEach(() => {
     jest.clearAllMocks();
