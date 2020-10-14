@@ -452,7 +452,7 @@ class LegacyAppeal < CaseflowRecord
   # Flag `readable` is mostly used `ChangeHearingRequestTypeTask`
   def previous_hearing_request_type(readable: false)
     # Example of diff: {"changed_request_type"=>[nil, "R"]}
-    previous_unsanitized_type = latest_appeal_event.diff["changed_request_type"].first
+    previous_unsanitized_type = latest_appeal_event&.diff["changed_request_type"]&.first
 
     previous_hearing_request_type = if !previous_unsanitized_type.nil?
                                       sanitized_changed_request_type(previous_type)
