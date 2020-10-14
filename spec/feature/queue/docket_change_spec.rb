@@ -83,7 +83,7 @@ RSpec.feature "Docket Change", :all_dbs do
         find("label[for=timely_#{timely}]").click
         find("label[for=disposition_#{disposition}]").click
         fill_in("hyperlink", with: hyperlink)
-        
+
         # The previously assigned judge should be selected
         expect(page).to have_content(judge_assign_task.assigned_to.display_name)
 
