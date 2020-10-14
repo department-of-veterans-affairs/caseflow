@@ -76,6 +76,7 @@ RSpec.feature "Docket Change", :all_dbs do
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.label).click
 
         expect(page).to have_content(format(COPY::DOCKET_SWITCH_RECOMMENDATION_TITLE, appeal.claimant.name))
+        expect(page).to have_content(COPY::DOCKET_SWITCH_RECOMMENDATION_INSTRUCTIONS)
 
         # Fill out form
         fill_in("summary", with: summary)

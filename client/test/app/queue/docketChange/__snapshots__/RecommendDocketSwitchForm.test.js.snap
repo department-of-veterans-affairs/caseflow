@@ -13,6 +13,11 @@ exports[`RecommendDocketSwitchForm renders correctly 1`] = `
       <h1>
         Switch Docket: Send Claimant 1's Request to a Judge
       </h1>
+      <p
+        style="margin-bottom: 30px;"
+      >
+        Add and send your recommendation for this docket switch request to a Veteran's Law Judge.
+      </p>
       <div
         class="cf-form-textarea"
       >

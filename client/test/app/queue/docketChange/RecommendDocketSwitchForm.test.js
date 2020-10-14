@@ -4,6 +4,11 @@ import userEvent from '@testing-library/user-event';
 import selectEvent from 'react-select-event';
 
 import { RecommendDocketSwitchForm } from 'app/queue/docketSwitch/recommendDocketSwitch/RecommendDocketSwitchForm';
+import {
+  DOCKET_SWITCH_RECOMMENDATION_TITLE,
+  DOCKET_SWITCH_RECOMMENDATION_INSTRUCTIONS,
+} from 'COPY';
+import { sprintf } from 'sprintf-js';
 
 const judgeOptions = [
   { label: 'VLJ Jane Doe', value: 1 },
@@ -24,6 +29,9 @@ describe('RecommendDocketSwitchForm', () => {
     const { container } = render(<RecommendDocketSwitchForm {...defaults} />);
 
     expect(container).toMatchSnapshot();
+
+    expect(screen.getByText(sprintf(DOCKET_SWITCH_RECOMMENDATION_TITLE, appellantName))).toBeInTheDocument();
+    expect(screen.getByText(DOCKET_SWITCH_RECOMMENDATION_INSTRUCTIONS)).toBeInTheDocument();
   });
 
   it('fires onCancel', async () => {
