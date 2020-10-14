@@ -520,7 +520,7 @@ class Appeal < DecisionReview
 
     return current_hearing_request_type if !readable
 
-    # Determine type using cloesest_regional_office
+    # Determine type using closest_regional_office
     # "Central" if closest_regional_office office is "C", "Video" otherwise
     case current_hearing_request_type
     when :central
@@ -531,6 +531,7 @@ class Appeal < DecisionReview
   end
 
   alias original_hearing_request_type current_hearing_request_type
+  alias previous_hearing_request_type current_hearing_request_type
 
   private
 

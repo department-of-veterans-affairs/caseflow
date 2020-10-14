@@ -435,7 +435,6 @@ class LegacyAppeal < CaseflowRecord
   #   This method captures if a travel board hearing request type was overridden in Caseflow.
   # In general, this method returns the current hearing request type which could be dervied
   # from `change_request_type` or VACOLS `hearing_request_type`
-  # Flag `readable` is mostly used by serializers
   def current_hearing_request_type(readable: false)
     current_hearing_request_type = if changed_request_type.present?
                                      sanitized_changed_request_type(changed_request_type)
@@ -448,10 +447,9 @@ class LegacyAppeal < CaseflowRecord
   # if `change_hearing_request` is populated meaning the hearing request type was changed, then return what the
   # previous hearing request type was. Use paper trail event to derive previous type in the case the type was changed
   # multple times.
-  # Flag `readable` is mostly used `ChangeHearingRequestTypeTask`
   def previous_hearing_request_type(readable: false)
-    # Example of diff: {"changed_request_type"=>[nil, "R"]}
-    previous_unsanitized_type = latest_appeal_event&.diff["changed_request_type"]&.first
+    diff = latest_appeal_event&.diff || {} # Example of diff: {"changed_request_type"=>[nil, "R"]}
+    previous_unsanitized_type = diff["changed_request_type"]&.first
 
     previous_hearing_request_type = if previous_unsanitized_type.present?
                                       sanitized_changed_request_type(previous_unsanitized_type)
@@ -965,7 +963,7 @@ class LegacyAppeal < CaseflowRecord
 
   # uses the paper_trail version on LegacyAppeal
   def latest_appeal_event
-    TaskEvent.new(version: versions.last)
+    TaskEvent.new(version: versions.last) if versions.present?
   end
 
   private
