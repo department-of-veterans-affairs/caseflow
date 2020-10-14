@@ -5,7 +5,10 @@ import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers';
 import * as yup from 'yup';
 
-import { DOCKET_SWITCH_RECOMMENDATION_TITLE } from '../../../../COPY';
+import {
+  DOCKET_SWITCH_RECOMMENDATION_TITLE,
+  DOCKET_SWITCH_RECOMMENDATION_INSTRUCTIONS,
+} from '../../../../COPY';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../../components/Button';
 import { sprintf } from 'sprintf-js';
@@ -68,6 +71,9 @@ export const RecommendDocketSwitchForm = ({
     >
       <AppSegment filledBackground>
         <h1>{sprintf(DOCKET_SWITCH_RECOMMENDATION_TITLE, appellantName)}</h1>
+        <p style={{ marginBottom: '30px' }}>
+          {DOCKET_SWITCH_RECOMMENDATION_INSTRUCTIONS}
+        </p>
 
         <TextareaField
           inputRef={register}
