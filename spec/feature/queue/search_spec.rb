@@ -210,6 +210,7 @@ feature "Search", :all_dbs do
 
                 it "shows the end product status" do
                   perform_search
+                  expect(page).to have_content("030 Higher-Level Review Rating")
                   expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Canceled")
                   expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Cleared")
                   expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Ready to work")
