@@ -511,28 +511,27 @@ class Appeal < DecisionReview
 
   # Returns the hearing request type.
   #
-  # @note See `LegacyAppeal#sanitized_hearing_request_type` for more information.
+  # @note See `LegacyAppeal#current_hearing_request_type` for more information.
   #   This method is provided for compatibility.
-  def sanitized_hearing_request_type
+  def current_hearing_request_type(readable: false)
     return nil if closest_regional_office.nil?
 
-    (closest_regional_office == "C") ? :central : :video
-  end
+    current_hearing_request_type = (closest_regional_office == "C") ? :central : :video
 
-  alias original_hearing_request_type sanitized_hearing_request_type
+    return current_hearing_request_type if !readable
 
-  # Determine type using cloesest_regional_office
-  # "Central" if closest_regional_office office is "C", "Video" otherwise
-  def readable_hearing_request_type
-    case sanitized_hearing_request_type
-    when nil
-      nil
+    # Determine type using closest_regional_office
+    # "Central" if closest_regional_office office is "C", "Video" otherwise
+    case current_hearing_request_type
     when :central
       Hearing::HEARING_TYPES[:C]
     else
       Hearing::HEARING_TYPES[:V]
     end
   end
+
+  alias original_hearing_request_type current_hearing_request_type
+  alias previous_hearing_request_type current_hearing_request_type
 
   private
 
