@@ -22,7 +22,7 @@ RSpec.feature "Docket Change", :all_dbs do
   end
   let(:root_task) { create(:root_task, :completed, appeal: appeal) }
   let(:cotb_user) { create(:user, full_name: "Clark Bard") }
-  let(:judge) { create(:user, full_name: "Judge the First", css_id: "JUDGE_1") }
+  let(:judge) { create(:user, :with_vacols_judge_record, full_name: "Judge the First", css_id: "JUDGE_1") }
 
   before do
     create(:staff, :judge_role, sdomainid: judge.css_id)
@@ -55,6 +55,10 @@ RSpec.feature "Docket Change", :all_dbs do
     let!(:docket_switch_mail_task) do
       create(:docket_switch_mail_task, appeal: appeal, parent: root_task, assigned_to: cotb_user)
     end
+    let!(:other_judges) do
+      create_list(:user, 3, :with_vacols_judge_record)
+    end
+    let!(:judge_assign_task) { create(:ama_judge_assign_task, assigned_to: judge, parent: root_task) }
 
     let(:summary) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit" }
     let(:hyperlink) { "https://example.com/file.txt" }
@@ -72,11 +76,16 @@ RSpec.feature "Docket Change", :all_dbs do
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.label).click
 
         expect(page).to have_content(format(COPY::DOCKET_SWITCH_RECOMMENDATION_TITLE, appeal.claimant.name))
+
+        # Fill out form
         fill_in("summary", with: summary)
         find("label[for=timely_#{timely}]").click
         find("label[for=disposition_#{disposition}]").click
         fill_in("hyperlink", with: hyperlink)
-        click_dropdown(text: judge.display_name)
+        
+        # The previously assigned judge should be selected
+        expect(page).to have_content(judge_assign_task.assigned_to.display_name)
+
         click_button(text: "Submit")
 
         # Add check to verify new task has been properly created
