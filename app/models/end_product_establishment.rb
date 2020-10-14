@@ -314,7 +314,7 @@ class EndProductEstablishment < CaseflowRecord
   def status
     if committed?
       {
-        ep_code: "#{cached_result.modifier || 'Unknown'} #{Constants::EP_CLAIM_TYPES[code]["offical_label"]}",
+        ep_code: "#{cached_result.modifier || 'Unknown'} #{Constants::EP_CLAIM_TYPES[code]['offical_label']}",
         ep_status: [status_type, sync_status].compact.join(", ")
       }
     else
