@@ -24,7 +24,7 @@ class AsyncableJobsPage extends React.PureComponent {
       jobs: this.props.jobs,
       veteranFileNumber: null,
       isFetchingSearchResults: false,
-      removeClassFilter: false
+      klassFilterRemoved: false
     };
   }
 
@@ -58,7 +58,7 @@ class AsyncableJobsPage extends React.PureComponent {
         this.setState({
           isFetchingSearchResults: false,
           jobs,
-          removeClassFilter: true
+          klassFilterRemoved: true
         });
       }).
       catch(() => {
@@ -139,15 +139,16 @@ class AsyncableJobsPage extends React.PureComponent {
 
     let noResultsMessage;
 
-    if (this.state.veteranFileNumber && rowObjects.length === 0) {
-      noResultsMessage = <h2>{'There are no pending jobs for ' +
-      `Veteran file '${this.state.veteranFileNumber}'.`}</h2>;
-    } else if (rowObjects.length === 0) {
-      noResultsMessage = <h2>There are no pending jobs.</h2>;
+    if (rowObjects.length === 0) {
+      if (this.state.veteranFileNumber) {
+        noResultsMessage = <h2>There are no pending jobs for Veteran file '{this.state.veteranFileNumber}'.</h2>;
+      } else {
+        noResultsMessage = <h2>There are no pending jobs.</h2>;
+      }
     }
 
     return <div className="cf-asyncable-jobs-table">
-      <h1>{!this.state.removeClassFilter && this.props.asyncableJobKlass} Jobs</h1>
+      <h1>{!this.state.klassFilterRemoved && this.props.asyncableJobKlass} Jobs</h1>
       {noResultsMessage}
       <AsyncModelNav
         models={this.props.models}
