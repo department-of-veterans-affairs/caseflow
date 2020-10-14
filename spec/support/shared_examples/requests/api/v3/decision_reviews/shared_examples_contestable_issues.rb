@@ -11,34 +11,68 @@ RSpec.shared_examples "contestable issues index requests" do
     let!(:api_key) { ApiKey.create!(consumer_name: "ApiV3 Test Consumer").key_string }
     let(:veteran) { create(:veteran).unload_bgs_record }
     let(:ssn) { veteran.ssn }
+    let(:file_number) { nil }
     let(:response_data) { JSON.parse(response.body)["data"] }
     let(:receipt_date) { Time.zone.today }
 
     let(:get_issues) do
       benefit_type_url_string = benefit_type ? "/#{benefit_type}" : ""
+
+      headers = {
+        "Authorization" => "Token #{api_key}",
+        "X-VA-Receipt-Date" => receipt_date.try(:strftime, "%F") || receipt_date
+      }
+
+      if file_number.present?
+        headers["X-VA-File-Number"] = file_number
+      elsif ssn.present?
+        headers["X-VA-SSN"] = ssn
+      end
+
       get(
         "/api/v3/decision_reviews/#{decision_review_type}s/contestable_issues#{benefit_type_url_string}",
-        headers: {
-          "Authorization" => "Token #{api_key}",
-          "X-VA-SSN" => ssn,
-          "X-VA-Receipt-Date" => receipt_date.try(:strftime, "%F") || receipt_date
-        }
+        headers: headers
       )
     end
 
-    it "should return a 200 OK" do
-      get_issues
-      expect(response).to have_http_status(:ok)
+    context "when SSN is used" do
+      let(:file_number) { nil }
+      let(:ssn) { veteran.ssn }
+
+      it "should return 200 OK" do
+        get_issues
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "should return a list of issues in JSON:API format" do
+        Generators::PromulgatedRating.build(
+          participant_id: veteran.ptcpnt_id,
+          profile_date: Time.zone.today - 10.days # must be before receipt_date
+        )
+        get_issues
+        expect(response_data).to be_an Array
+        expect(response_data).not_to be_empty
+      end
     end
 
-    it "should return a list of issues in JSON:API format" do
-      Generators::PromulgatedRating.build(
-        participant_id: veteran.ptcpnt_id,
-        profile_date: Time.zone.today - 10.days # must be before receipt_date
-      )
-      get_issues
-      expect(response_data).to be_an Array
-      expect(response_data).not_to be_empty
+    context "when file_number is used" do
+      let(:file_number) { veteran.file_number }
+      let(:ssn) { nil }
+
+      it "should return 200 OK" do
+        get_issues
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "should return a list of issues in JSON:API format" do
+        Generators::PromulgatedRating.build(
+          participant_id: veteran.ptcpnt_id,
+          profile_date: Time.zone.today - 10.days # must be before receipt_date
+        )
+        get_issues
+        expect(response_data).to be_an Array
+        expect(response_data).not_to be_empty
+      end
     end
 
     context "returned issues" do
@@ -292,6 +326,16 @@ RSpec.shared_examples "contestable issues index requests" do
     context do
       let(:receipt_date) { "January 8" }
       it "should return a 422 when the receipt date is not ISO 8601 date format" do
+        get_issues
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+
+    context "when no ssn or file_number is present" do
+      let(:ssn) { nil }
+      let(:file_number) { nil }
+
+      it "should return a 422" do
         get_issues
         expect(response).to have_http_status(:unprocessable_entity)
       end
