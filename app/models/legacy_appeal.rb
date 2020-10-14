@@ -382,7 +382,7 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def hearing_scheduled?
-    !scheduled_hearings.empty?
+    scheduled_hearings.any?
   end
 
   def completed_hearing_on_previous_appeal?
@@ -419,7 +419,6 @@ class LegacyAppeal < CaseflowRecord
   # values. Also, `hearing_request_type` alone can't disambiguate a video hearing
   # from a travel board hearing
   # This method cleans all of these issues up to return a sanitized version of the original type requested by Appellant.
-  # Flag readable is mostly used by serializers
   def original_hearing_request_type(readable: false)
     original_hearing_request_type = case hearing_request_type
                                     when :central_office
@@ -452,7 +451,7 @@ class LegacyAppeal < CaseflowRecord
   # Flag `readable` is mostly used `ChangeHearingRequestTypeTask`
   def previous_hearing_request_type(readable: false)
     # Example of diff: {"changed_request_type"=>[nil, "R"]}
-    previous_unsanitized_type = latest_appeal_event.diff["changed_request_type"].first
+    previous_unsanitized_type = latest_appeal_event&.diff["changed_request_type"]&.first
 
     previous_hearing_request_type = if !previous_unsanitized_type.nil?
                                       sanitized_changed_request_type(previous_type)
