@@ -142,6 +142,6 @@ class WorkQueue::AppealSerializer
     object.current_hearing_request_type(readable: true)
   end
   attribute :readable_original_hearing_request_type do |object|
-    object.current_hearing_request_type(readable: true)
+    object.original_hearing_request_type(readable: true)
   end
 end
