@@ -13,7 +13,7 @@ export default {
   decorators: [],
   parameters: {},
   args: {
-    claimantName: 'Jane Doe',
+    appellantName: 'Jane Doe',
     judgeOptions,
   },
   argTypes: {
@@ -31,4 +31,9 @@ Basic.parameters = {
     storyDescription:
       'Used by attorney at Clerk of the Board office to recommend a ruling to VLJ/Clerk',
   },
+};
+
+export const DefaultJudge = Template.bind({});
+DefaultJudge.args = {
+  defaultJudgeId: 2
 };
