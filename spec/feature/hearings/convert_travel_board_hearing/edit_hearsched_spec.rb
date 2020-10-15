@@ -88,6 +88,16 @@ RSpec.feature "Convert travel board appeal for 'Edit HearSched' (Hearing Coordin
         )
       end
 
+      step "confirm timeline displays relevant info about the completion of ChangeHearingRequestTypeTask" do
+        within("table#case-timeline-table") do
+          expect(page).to have_content(COPY::TASK_SNAPSHOT_HEARING_REQUEST_CONVERTED_ON_LABEL.upcase)
+          expect(page).to have_content(COPY::TASK_SNAPSHOT_HEARING_REQUEST_CONVERTER_LABEL.upcase)
+          expect(page).to have_content(
+            "Hearing type converted from Travel to Virtual"
+          )
+        end
+      end
+
       step "confirm schedule veteran task is actionable" do
         click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.label)
       end

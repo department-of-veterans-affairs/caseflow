@@ -80,17 +80,17 @@
     "value": "sign_motion_to_vacate",
     "func": "sign_motion_to_vacate_data"
   },
-  "DOCKET_CHANGE_SEND_TO_JUDGE": {
+  "DOCKET_SWITCH_SEND_TO_JUDGE": {
     "label": "Send to Judge",
-    "value": "docket_change/recommend"
+    "value": "docket_switch/recommend"
   },
-  "DOCKET_CHANGE_JUDGE_RULING": {
+  "DOCKET_SWITCH_JUDGE_RULING": {
     "label": "Send to Judge",
-    "value": "docket_change/ruling"
+    "value": "docket_switch/ruling"
   },
-  "DOCKET_CHANGE_CHECKOUT": {
+  "DOCKET_SWITCH_CHECKOUT": {
     "label": "Send to Judge",
-    "value": "docket_change/checkout/review"
+    "value": "docket_switch/checkout/review"
   },
   "CANCEL_FOREIGN_VETERANS_CASE_TASK": {
     "label": "Cancel hearing request",

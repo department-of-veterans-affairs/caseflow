@@ -196,10 +196,10 @@ class WorkQueue::TaskColumnSerializer
     columns = [Constants.QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME]
 
     if serialize_attribute?(params, columns)
-      # The `formally_travel` field doesn't exist on the actual model. This
+      # The `former_travel` field doesn't exist on the actual model. This
       # field needs to be added in a select statement and represents the field from
       # the `cached_appeal_attributes` table in `Hearings::ScheduleHearingTasksController`.
-      object&.[](:formally_travel)
+      object&.[](:former_travel)
     end
   end
 
@@ -324,5 +324,13 @@ class WorkQueue::TaskColumnSerializer
     {
       css_id: nil
     }
+  end
+  attribute :converted_by do
+    {
+      css_id: nil
+    }
+  end
+  attribute :converted_on do
+    nil
   end
 end

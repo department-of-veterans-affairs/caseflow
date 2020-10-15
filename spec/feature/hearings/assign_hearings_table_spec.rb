@@ -413,7 +413,7 @@ RSpec.feature "Assign Hearings Table" do
           )
         )
       end
-      let!(:schedule_hearing_task3) do # formally travel, now virtual
+      let!(:schedule_hearing_task3) do # former travel, now virtual
         create(
           :schedule_hearing_task,
           appeal: create(
