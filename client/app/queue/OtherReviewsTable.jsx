@@ -18,7 +18,8 @@ class SubdividedTableRow extends React.PureComponent {
     const styling = {
       boxSizing: 'content-box',
       height: '2.2rem',
-      padding: '1rem 1.5rem'
+      padding: '1rem 1.5rem',
+      width: '95%'
     };
 
     const topBorderStyle = '1px solid #D6D7D9';

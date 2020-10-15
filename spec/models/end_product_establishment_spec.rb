@@ -1370,7 +1370,7 @@ describe EndProductEstablishment, :postgres do
       end
 
       context "if there is no modifier, shows unknown" do
-        it { is_expected.to eq(ep_code: "Unknown Higher-Level Review Rating", ep_status: "") }
+        it { is_expected.to eq(ep_code: " Higher-Level Review Rating", ep_status: "") }
       end
     end
 
