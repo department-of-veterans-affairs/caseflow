@@ -593,6 +593,8 @@
   "VACATE_MOTION_MAIL_TASK_LABEL": "Motion to vacate",
   "REVIEW_MOTION_TO_VACATE_TASK_LABEL": "Review motion to vacate",
 
+  "DOCKET_SWITCH_RECOMMENDATION_TITLE": "Switch Docket: Send %s's Request to a Judge",
+  "DOCKET_SWITCH_RECOMMENDATION_INSTRUCTIONS": "Add and send your recommendation for this docket switch request to a Veteran's Law Judge.",
   "DOCKET_SWITCH_RULING_TASK_LABEL": "Rule on Docket Switch",
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
