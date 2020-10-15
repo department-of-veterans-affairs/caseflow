@@ -325,4 +325,12 @@ class WorkQueue::TaskColumnSerializer
       css_id: nil
     }
   end
+  attribute :converted_by do
+    {
+      css_id: nil
+    }
+  end
+  attribute :converted_on do
+    nil
+  end
 end
