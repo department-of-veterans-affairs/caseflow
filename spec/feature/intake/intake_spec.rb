@@ -66,17 +66,11 @@ feature "Intake", :all_dbs do
     context "when veteran's end products aren't found" do
       before {allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_raise(EndProductEstablishment::EstablishedEndProductNotFound)}
 
-
       let!(:end_product_establishment) do
         create(:end_product_establishment,
            veteran_file_number: veteran.file_number)
-        end  
-
-      # it "skips syncing" do
-      #   expect(end_product_establishment).to receive(:sync!)
-      # end
+      end  
     end
- 
 
     context "when restrict appeal intakes enabled" do
       before { FeatureToggle.enable!(:restrict_appeal_intakes) }
