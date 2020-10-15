@@ -619,9 +619,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_dropdown(name: "hearingDate", index: 1)
 
       expected_time_radio_text = if fill_in_timezones
-                                   "#{time} Eastern Time (US & Canada)"
+                                   "#{time} AM Eastern Time (US & Canada)"
                                  else
-                                   "#{time} Mountain Time (US & Canada) / 10:30 AM Eastern Time (US & Canada)"
+                                   "#{time} AM Mountain Time (US & Canada) / 10:30 AM Eastern Time (US & Canada)"
                                  end
       find(".cf-form-radio-option", text: expected_time_radio_text).click
 
