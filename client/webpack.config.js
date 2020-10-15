@@ -20,7 +20,9 @@ const config = {
     alias: {
       // This does not actually appear to be necessary, but it does silence
       // a warning from superagent-no-cache.
-      ie: 'component-ie'
+      ie: 'component-ie',
+      reader: path.resolve('app/reader'),
+      shared: path.resolve('app/components')
     }
   },
   module: {

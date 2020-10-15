@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ReduxBase from '../components/ReduxBase';
-
-import DecisionReviewer from './DecisionReviewer';
-
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import rootReducer from './reducers';
+
+// Local Dependencies
+import rootReducer from 'reader/reducers';
+import DecisionReviewer from 'reader/DecisionReviewer';
+import ReduxBase from 'shared/ReduxBase';
 
 class Reader extends React.PureComponent {
   constructor() {
