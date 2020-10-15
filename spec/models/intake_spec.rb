@@ -673,6 +673,27 @@ describe Intake, :postgres do
         expect(expired_other_intake.detail).to be_nil
         expect(Claimant.find_by(participant_id: "5382910292")).to be_nil
       end
+
+      context "when veteran has missing end product" do
+        before { allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_raise(EndProductEstablishment::EstablishedEndProductNotFound) }
+
+        let(:end_product_establishment) do
+          create(:end_product_establishment,
+            :active,
+            veteran_file_number: veteran.file_number)
+          end
+
+        fit "creates new intake" do
+          subject 
+
+          expect(intake).to have_attributes(
+            veteran_file_number: veteran_file_number,
+            started_at: Time.zone.now,
+            detail: intake.find_or_build_initial_detail,
+            user: user
+          )
+        end
+      end
     end
   end
 
