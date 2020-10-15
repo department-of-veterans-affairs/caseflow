@@ -474,6 +474,24 @@ describe MailTask, :postgres do
         expect(subject).to eq(LitigationSupport.singleton)
       end
     end
+
+    context "for an DocketSwitchMailTask" do
+      let(:cotb_user) { create(:user) }
+      let(:cotb_team) { ClerkOfTheBoard.singleton }
+      let(:mail_team) { cotb_team }
+
+      let(:task_class) { DocketSwitchMailTask }
+      let(:params) { super().merge(assigned_by: cotb_user) }
+
+      before do
+        cotb_team.add_user(cotb_user)
+        RequestStore[:current_user] = cotb_user
+      end
+
+      it "should route to the user that created it" do
+        expect(subject).to eq(cotb_user)
+      end
+    end
   end
 
   describe ".available_actions" do

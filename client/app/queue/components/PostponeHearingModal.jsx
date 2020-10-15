@@ -18,7 +18,6 @@ import AssignHearingForm from '../../hearings/components/modalForms/AssignHearin
 import ScheduleHearingLaterWithAdminActionForm
   from '../../hearings/components/modalForms/ScheduleHearingLaterWithAdminActionForm';
 import ApiUtil from '../../util/ApiUtil';
-import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
 
 const ACTIONS = {
   RESCHEDULE: 'reschedule',
@@ -171,15 +170,20 @@ class PostponeHearingModal extends React.Component {
 
   submit = () => {
     const { userCanScheduleVirtualHearings, appeal, task } = this.props;
+    const taskData = taskActionData(this.props);
 
     // Determine whether to redirect to the ful page schedule veteran flow
     if (this.state.afterDispositionUpdateAction === ACTIONS.RESCHEDULE && userCanScheduleVirtualHearings) {
       // Change the disposition in the store
       this.props.setScheduledHearing({ disposition: ACTIONS.RESCHEDULE, taskId: task.taskId });
 
-      return this.props.history.push(
-        `/queue/appeals/${appeal.externalId}/tasks/${task.taskId}/${TASK_ACTIONS.SCHEDULE_VETERAN.value}`
+      this.props.history.push(
+        `/queue/appeals/${appeal.externalId}/tasks/${task.taskId}/${taskData.schedule_hearing_action_path}`
       );
+
+      // This is a failed Promise to prevent `QueueFlowModal` from thinking the
+      // request completed successfully, and redirecting back to the `CaseDetails` page.
+      return Promise.reject();
     }
 
     if (this.state.isPosting) {
@@ -286,7 +290,7 @@ PostponeHearingModal.propTypes = {
   }),
   onReceiveAmaTasks: PropTypes.func,
   onReceiveAppealDetails: PropTypes.func,
-  history: PropTypes.func,
+  history: PropTypes.object,
   requestPatch: PropTypes.func,
   scheduleHearingLaterWithAdminAction: PropTypes.shape({
     apiFormattedValues: PropTypes.shape({

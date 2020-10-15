@@ -99,6 +99,10 @@ const taskAttributesFromRawTask = (task) => {
     cancelledBy: {
       cssId: task.attributes.cancelled_by.css_id,
     },
+    convertedBy: {
+      cssId: task.attributes.converted_by.css_id,
+    },
+    convertedOn: task.attributes.converted_on,
     taskId: task.id,
     parentId: task.attributes.parent_id,
     label: task.attributes.label,
@@ -118,11 +122,14 @@ const taskAttributesFromRawTask = (task) => {
     hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
     hideFromCaseTimeline: task.attributes.hide_from_case_timeline,
     availableHearingLocations: task.attributes.available_hearing_locations,
-    // `powerOfAttorneyName` and `suggestedHearingLocation` are only present for
+    // `powerOfAttorneyName`, `suggestedHearingLocation`,
+    // `hearingRequestType`, and `isFormerTravel` are only present for
     // /hearings/scheduled/assign page, and are not returned from the API when
     // requesting the full task.
     powerOfAttorneyName: task.attributes.power_of_attorney_name,
-    suggestedHearingLocation: task.attributes.suggested_hearing_location
+    suggestedHearingLocation: task.attributes.suggested_hearing_location,
+    hearingRequestType: task.attributes.hearing_request_type,
+    isFormerTravel: task.attributes.former_travel
   };
 };
 
@@ -307,6 +314,7 @@ export const prepareAppealForStore = (appeals) => {
       veteranFileNumber: appeal.attributes.veteran_file_number,
       isPaperCase: appeal.attributes.paper_case,
       readableHearingRequestType: appeal.attributes.readable_hearing_request_type,
+      readableOriginalHearingRequestType: appeal.attributes.readable_original_hearing_request_type,
       vacateType: appeal.attributes.vacate_type
     };
 

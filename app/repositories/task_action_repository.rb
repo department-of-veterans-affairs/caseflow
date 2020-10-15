@@ -17,8 +17,8 @@ class TaskActionRepository
       }
     end
 
-    def mail_assign_to_organization_data(task, _user = nil)
-      options = MailTask.subclass_routing_options
+    def mail_assign_to_organization_data(task, user = nil)
+      options = MailTask.subclass_routing_options(user)
       valid_options = task.appeal.outcoded? ? options : options.reject { |opt| opt[:value] == "VacateMotionMailTask" }
       { options: valid_options }
     end
@@ -297,9 +297,16 @@ class TaskActionRepository
       }
     end
 
-    def add_schedule_hearing_task_admin_actions_data(task, _user)
+    def add_schedule_hearing_task_admin_actions_data(task, user)
+      schedule_hearing_action_path = if FeatureToggle.enabled?(:schedule_veteran_virtual_hearing, user: user)
+                                       Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.value
+                                     else
+                                       Constants.TASK_ACTIONS.SCHEDULE_VETERAN.value
+                                     end
+
       {
         redirect_after: "/queue/appeals/#{task.appeal.external_id}",
+        schedule_hearing_action_path: schedule_hearing_action_path,
         message_detail: COPY::ADD_HEARING_ADMIN_TASK_CONFIRMATION_DETAIL,
         selected: nil,
         options: HearingAdminActionTask.subclasses.sort_by(&:label).map do |subclass|

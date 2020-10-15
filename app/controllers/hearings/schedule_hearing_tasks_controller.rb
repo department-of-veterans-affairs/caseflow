@@ -17,14 +17,20 @@ class Hearings::ScheduleHearingTasksController < ApplicationController
       regional_office_key: allowed_params[:regional_office_key]
     )
 
-    # Select `power_of_attorney_name` from the `CachedAppeal` table. This is an
-    # optimization that fetches the POA name from the `CachedAppeal` table,
-    # where it is already cached for filtering. The `TaskColumnSerializer` is
-    # "aware" of this optimization, and will serialize the cached value instead
-    # of getting the value through the `Appeal` instance.
+    # Select `power_of_attorney_name`, `hearing_request_type`, and
+    # `former_travel` from the `CachedAppeal` table. This is an
+    # optimization that fetches these values from the `CachedAppeal` table,
+    # where they are already cached for filtering. The `TaskColumnSerializer` is
+    # "aware" of these optimizations, and will serialize the cached values instead
+    # of getting them through the `Appeal` instance.
     tasks = task_pager
       .paged_tasks
-      .select("tasks.*, #{CachedAppeal.table_name}.power_of_attorney_name")
+      .select(
+        "tasks.*,
+        #{CachedAppeal.table_name}.power_of_attorney_name,
+        #{CachedAppeal.table_name}.hearing_request_type,
+        #{CachedAppeal.table_name}.former_travel"
+      )
 
     render json: {
       tasks: json_tasks(tasks),

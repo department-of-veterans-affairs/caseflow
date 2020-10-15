@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { sprintf } from 'sprintf-js';
 
 import COPY from '../../../../COPY';
+import Alert from '../../../components/Alert';
 import { AddressLine } from '../details/Address';
 import { VirtualHearingSection } from './Section';
 import { HelperText } from './HelperText';
@@ -22,19 +24,29 @@ export const AppellantSection = ({
   showDivider,
   update,
   appellantTitle,
-  showOnlyAppellantName
+  showOnlyAppellantName,
+  showMissingEmailAlert
 }) => {
-  const appellantName = hearing?.appellantFullName ? hearing?.appellantFullName :
-    `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`;
-
+  // Depending on where this component is used, the *FullName fields will be available.
+  // If they aren't, the *FirstName/*LastName fields should be available.
+  const appellantName = hearing?.appellantIsNotVeteran ?
+    (hearing?.appellantFullName || `${hearing?.appellantFirstName} ${hearing?.appellantLastName}`) :
+    (hearing?.veteranFullName || `${hearing?.veteranFirstName} ${hearing?.veteranLastName}`);
   const showTimezoneField = virtual && !video;
+
+  // determine whether to show a missing email underneath readonly email
+  const showMissingAlert = readOnly && showMissingEmailAlert && !virtualHearing?.appellantEmail;
 
   return (
     <VirtualHearingSection label={appellantTitle} showDivider={showDivider}>
+      {/*
+        * Appellant Name and Address
+        */}
       {showOnlyAppellantName ? (
         <ReadOnly
           label={`${appellantTitle} Name`}
-          text={appellantName} />
+          text={appellantName}
+        />
       ) :
         (
           <AddressLine
@@ -45,6 +57,9 @@ export const AppellantSection = ({
             addressZip={hearing?.appellantZip}
           />
         )}
+      {/*
+        * Timezone fields
+        */}
       {showTimezoneField && (
         <div className={classNames('usa-grid', { [marginTop(30)]: true })}>
           <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
@@ -61,6 +76,9 @@ export const AppellantSection = ({
           </div>
         </div>
       )}
+      {/*
+        * Email fields
+        */}
       <div id="email-section" className={classNames('usa-grid', { [marginTop(30)]: true })}>
         <div className={classNames('usa-width-one-half', { [noMaxWidth]: true })} >
           <VirtualHearingEmail
@@ -73,6 +91,15 @@ export const AppellantSection = ({
             type={type}
             update={update}
           />
+          {showMissingAlert && (
+            <div>
+              <Alert
+                message={sprintf(COPY.MISSING_EMAIL_ALERT_MESSAGE, appellantTitle)}
+                type="info"
+                scrollOnAlert={false}
+              />
+            </div>
+          )}
         </div>
       </div>
     </VirtualHearingSection>
@@ -90,5 +117,6 @@ AppellantSection.propTypes = {
   readOnly: PropTypes.bool,
   appellantTitle: PropTypes.string,
   showOnlyAppellantName: PropTypes.bool,
-  showDivider: PropTypes.bool
+  showDivider: PropTypes.bool,
+  showMissingEmailAlert: PropTypes.bool
 };

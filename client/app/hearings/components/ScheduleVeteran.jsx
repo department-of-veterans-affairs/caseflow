@@ -10,12 +10,13 @@ import { sprintf } from 'sprintf-js';
 
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import COPY from '../../../COPY';
+import { CENTRAL_OFFICE_HEARING_LABEL, VIDEO_HEARING_LABEL, VIRTUAL_HEARING_LABEL } from '../constants';
 import { appealWithDetailSelector, scheduleHearingTasksForAppeal } from '../../queue/selectors';
 import { showSuccessMessage, showErrorMessage, requestPatch } from '../../queue/uiReducer/uiActions';
 import { onReceiveAppealDetails } from '../../queue/QueueActions';
 import { formatDateStr } from '../../util/DateUtil';
 import Alert from '../../components/Alert';
-import { marginTop, regionalOfficeSection, saveButton, cancelButton } from './details/style';
+import { setMargin, marginTop, regionalOfficeSection, saveButton, cancelButton } from './details/style';
 import { find, get } from 'lodash';
 import { getAppellantTitle, processAlerts, parseVirtualHearingErrors } from '../utils';
 import {
@@ -26,7 +27,6 @@ import {
   startPollingHearing,
 } from '../../components/common/actions';
 import { ScheduleVeteranForm } from './ScheduleVeteranForm';
-import { HEARING_REQUEST_TYPES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
@@ -67,7 +67,9 @@ export const ScheduleVeteran = ({
 
   // Determine the Request Type for the hearing
   const virtual = assignHearingForm?.virtualHearing;
-  const requestType = selectedHearingDay?.regionalOffice === 'C' ? HEARING_REQUEST_TYPES.C : HEARING_REQUEST_TYPES.V;
+  const requestType = selectedHearingDay?.regionalOffice === 'C' ?
+    CENTRAL_OFFICE_HEARING_LABEL :
+    VIDEO_HEARING_LABEL;
 
   // Determine whether we are rescheduling
   const reschedule = scheduledHearing?.disposition === 'reschedule';
@@ -78,6 +80,8 @@ export const ScheduleVeteran = ({
   // Create a hearing object for the form
   const hearing = {
     ...assignHearingForm,
+    regionalOffice: assignHearingForm?.regionalOffice?.key,
+    regionalOfficeTimezone: assignHearingForm?.regionalOffice?.timezone,
     representative: appeal?.powerOfAttorney?.representative_name,
     representativeType: appeal?.powerOfAttorney?.representative_type,
     representativeAddress: {
@@ -91,7 +95,7 @@ export const ScheduleVeteran = ({
     appellantCity: appeal?.appellantAddress?.city,
     appellantState: appeal?.appellantAddress?.state,
     appellantZip: appeal?.appellantAddress?.zip,
-    requestType
+    veteranFullName: appeal?.veteranFullName,
   };
 
   // Reset the component state
@@ -106,8 +110,14 @@ export const ScheduleVeteran = ({
     props.onChangeFormData('assignHearing', { virtualHearing: null });
   };
 
-  // Initialize the state
-  useEffect(() => () => reset(), []);
+  // Reset the state on unmount
+  useEffect(() => {
+    if (appeal?.readableHearingRequestType === VIRTUAL_HEARING_LABEL) {
+      props.onChangeFormData('assignHearing', { virtualHearing: { status: 'pending' } });
+    }
+
+    return reset;
+  }, []);
 
   const getSuccessMsg = () => {
     // Format the hearing date string
@@ -259,14 +269,30 @@ export const ScheduleVeteran = ({
     }
   };
 
+  // Method to handle changing the form fields when toggling between virtual
+  const convertToVirtual = () => {
+    if (virtual) {
+      return props.onChangeFormData('assignHearing', {
+        virtualHearing: null
+      });
+    }
+
+    return props.onChangeFormData('assignHearing', {
+      virtualHearing: { status: 'pending' }
+    });
+  };
+
+  // Create the header styling based on video/virtual type
+  const headerStyle = virtual ? setMargin('0 0 0.75rem 0') : setMargin(0);
+  const helperTextStyle = virtual ? setMargin('0 0 2rem 0') : setMargin(0);
+
   return (
     <div {...regionalOfficeSection}>
-
       <AppSegment filledBackground >
-        <h1>{header}</h1>
+        <h1 {...headerStyle}>{header}</h1>
         {error && <Alert title={error.title} type="error">{error.detail}</Alert>}
         {virtual ?
-          <div {...marginTop(0)}>{COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL}</div> :
+          <div {...helperTextStyle}>{COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL}</div> :
           !fullHearingDay && <div {...marginTop(45)} />}
 
         {fullHearingDay && (
@@ -287,6 +313,7 @@ export const ScheduleVeteran = ({
             hearing={hearing}
             appellantTitle={appellantTitle}
             onChange={(key, value) => props.onChangeFormData('assignHearing', { [key]: value })}
+            convertToVirtual={convertToVirtual}
           />
         )}
 
@@ -354,7 +381,7 @@ ScheduleVeteran.propTypes = {
   showErrorMessage: PropTypes.func,
   onChangeFormData: PropTypes.func,
   showSuccessMessage: PropTypes.func,
-  selectedRegionalOffice: PropTypes.string,
+  selectedRegionalOffice: PropTypes.object,
   error: PropTypes.object,
   scheduledHearing: PropTypes.object,
 };

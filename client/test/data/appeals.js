@@ -33,6 +33,25 @@ export const powerOfAttorney = {
   representative_email_address: 'tom.brady@caseflow.gov'
 };
 
+export const veteranInfo = {
+  veteran: {
+    full_name: 'Abellona Valtas',
+    gender: 'M',
+    date_of_birth: '01/10/1935',
+    date_of_death: null,
+    email_address: 'Abellona.Valtas@test.com',
+    address: {
+      address_line_1: '1234 Main Street',
+      address_line_2: null,
+      address_line_3: null,
+      city: 'Orlando',
+      state: 'FL',
+      zip: '12345',
+      country: 'USA'
+    }
+  }
+}
+
 export const appealData = {
   docketName: 'hearing',
   withdrawn: false,
@@ -83,25 +102,12 @@ export const appealData = {
     untimely_evidence: null
   },
   veteranInfo: {
-    veteran: {
-      full_name: 'Abellona Valtas',
-      gender: 'M',
-      date_of_birth: '01/10/1935',
-      date_of_death: null,
-      email_address: 'Abellona.Valtas@test.com',
-      address: {
-        address_line_1: '1234 Main Street',
-        address_line_2: null,
-        address_line_3: null,
-        city: 'Orlando',
-        state: 'FL',
-        zip: '12345',
-        country: 'USA'
-      }
-    }
-  }
-
+    ...veteranInfo
+  },
+  readableHearingRequestType: 'Video',
+  readableOriginalHearingRequestType: 'Video'
 };
+
 export const amaAppeal = {
   ...appealData,
   id: '541',
@@ -109,11 +115,31 @@ export const amaAppeal = {
   hearings: [],
 };
 
-export const amaAppealForTravelBoard = {
+export const legacyAppeal = {
   ...appealData,
-  closestRegionalOfficeLabel: "Nashville Regional office",
+  id: '1',
+  externalId: '1234456',
+  docketName: 'Legacy',
+  hearings: [],
+  isLegacyAppeal: true
+}
+
+export const legacyAppealForTravelBoard = {
+  ...legacyAppeal,
+  closestRegionalOfficeLabel: 'Nashville Regional office',
   powerOfAttorney: {
     ...powerOfAttorney
+  },
+  readableHearingRequestType: 'Travel',
+  readableOriginalHearingRequestType: 'Travel'
+}
+
+export const veteranInfoWithoutEmail = {
+  veteranInfo: {
+    veteran: {
+      ...veteranInfo.veteran,
+      email_address: null
+    }
   }
 }
 
@@ -135,7 +161,18 @@ export const openHearingAppeal = {
 };
 
 export const scheduleHearingDetails = {
-  regionalOffice: 'RO17',
+  regionalOffice: {
+    key: 'RO17',
+    alternate_locations: [
+      'vba_317a', 'vc_0742V', 'vba_317'
+    ],
+    city: 'St. Petersburg',
+    facility_locator_id: 'vba_317',
+    hold_hearings: true,
+    label: 'St. Petersburg regional office',
+    state: 'FL',
+    timezone: 'America/New_York',
+  },
   hearingLocation: {
     name: 'Holdrege VA Clinic',
     address: '1118 Burlington Street, Holdrege NE 68949-1705',
@@ -172,11 +209,3 @@ export const scheduleHearingDetails = {
   }
 }
 ;
-
-export const legacyAppeal = {
-  ...appealData,
-  id: '541',
-  externalId: '4afefa82-5736-47c8-a977-0b4b8586f73e',
-  hearings: [],
-  isLegacyAppeal: true
-};

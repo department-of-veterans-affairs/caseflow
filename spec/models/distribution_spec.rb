@@ -68,7 +68,7 @@ describe Distribution, :all_dbs do
     context "priority_push is false" do
       before do
         allow_any_instance_of(HearingRequestDocket)
-          .to receive(:age_of_n_oldest_priority_appeals)
+          .to receive(:age_of_n_oldest_genpop_priority_appeals)
           .and_return([])
 
         allow_any_instance_of(HearingRequestDocket)
@@ -275,12 +275,13 @@ describe Distribution, :all_dbs do
         before do
           @raven_called = false
           distribution = create(:distribution, judge: judge)
-          # illegit because appeal has completed hearing tasks
+          # illegit because appeal has open hearing tasks
           appeal = create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case)
           appeal.tasks.open.where.not(type: RootTask.name).each(&:completed!)
           create_nonpriority_distributed_case(distribution, case_id, legacy_case.bfdloout)
           distribution.update!(status: "completed", completed_at: today)
           allow(Raven).to receive(:capture_exception) { @raven_called = true }
+          allow_any_instance_of(RedistributedCase).to receive(:ok_to_redistribute?).and_return(false)
         end
 
         it "does not create a duplicate distributed_case and sends alert" do

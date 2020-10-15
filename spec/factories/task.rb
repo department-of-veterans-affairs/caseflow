@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+  module FactoryBotHelper
+    def self.find_first_task_or_create(appeal, task_type)
+      (appeal.tasks.open.where(type: task_type.name).first if appeal) ||
+        FactoryBot.create(task_type.name.underscore.to_sym, appeal: appeal)
+    end
+  end
+
   # By default, this task is created in a new Legacy appeal
   factory :task do
     assigned_at { rand(30..35).days.ago }
@@ -290,6 +297,7 @@ FactoryBot.define do
       end
 
       factory :distribution_task, class: DistributionTask do
+        parent { appeal.root_task || create(:root_task, appeal: appeal) }
         assigned_by { nil }
         assigned_to { Bva.singleton }
 
@@ -326,6 +334,11 @@ FactoryBot.define do
         assigned_to { HearingAdmin.singleton }
       end
 
+      factory :changed_hearing_request_type, class: ChangeHearingRequestTypeTask do
+        assigned_to { Bva.singleton }
+        parent { create(:schedule_hearing_task, parent: create(:hearing_task, appeal: appeal)) }
+      end
+
       factory :ama_judge_decision_review_task, class: JudgeDecisionReviewTask do
       end
 
@@ -340,6 +353,10 @@ FactoryBot.define do
       end
 
       factory :translation_task, class: TranslationTask do
+      end
+
+      factory :cavc_task, class: CavcTask do
+        parent { FactoryBotHelper.find_first_task_or_create(appeal, DistributionTask) }
       end
 
       factory :hearing_task, class: HearingTask do
@@ -466,6 +483,11 @@ FactoryBot.define do
       factory :vacate_motion_mail_task, class: VacateMotionMailTask do
         parent { create(:root_task, appeal: appeal) }
         assigned_to { LitigationSupport.singleton }
+      end
+
+      factory :docket_switch_mail_task, class: DocketSwitchMailTask do
+        parent { create(:root_task, appeal: appeal) }
+        assigned_to { ClerkOfTheBoard.singleton }
       end
 
       factory :congressional_interest_mail_task, class: CongressionalInterestMailTask do

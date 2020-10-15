@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_16_150837) do
+ActiveRecord::Schema.define(version: 2020_10_05_190456) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -227,6 +227,8 @@ ActiveRecord::Schema.define(version: 2020_09_16_150837) do
     t.datetime "created_at"
     t.string "docket_number"
     t.string "docket_type"
+    t.boolean "former_travel", comment: "Determines if the hearing type was formerly travel board; only applicable to Legacy appeals"
+    t.string "hearing_request_type", limit: 10, comment: "Stores hearing type requested by appellant; could be one of nil, 'Video', 'Central', 'Travel', or 'Virtual'"
     t.boolean "is_aod", comment: "Whether the case is Advanced on Docket"
     t.integer "issue_count", comment: "Number of issues on the appeal."
     t.string "power_of_attorney_name", comment: "'Firstname Lastname' of power of attorney"
@@ -239,6 +241,7 @@ ActiveRecord::Schema.define(version: 2020_09_16_150837) do
     t.index ["closest_regional_office_city"], name: "index_cached_appeal_attributes_on_closest_regional_office_city"
     t.index ["closest_regional_office_key"], name: "index_cached_appeal_attributes_on_closest_regional_office_key"
     t.index ["docket_type"], name: "index_cached_appeal_attributes_on_docket_type"
+    t.index ["hearing_request_type", "former_travel"], name: "index_cached_appeal_on_hearing_request_type_and_former_travel"
     t.index ["is_aod"], name: "index_cached_appeal_attributes_on_is_aod"
     t.index ["power_of_attorney_name"], name: "index_cached_appeal_attributes_on_power_of_attorney_name"
     t.index ["suggested_hearing_location"], name: "index_cached_appeal_attributes_on_suggested_hearing_location"
@@ -260,6 +263,25 @@ ActiveRecord::Schema.define(version: 2020_09_16_150837) do
     t.datetime "updated_at", null: false
     t.index ["sdomainid"], name: "index_cached_user_attributes_on_sdomainid", unique: true
     t.index ["updated_at"], name: "index_cached_user_attributes_on_updated_at"
+  end
+
+  create_table "cavc_remands", force: :cascade do |t|
+    t.bigint "appeal_id", null: false, comment: "Appeal that CAVC has remanded"
+    t.string "cavc_decision_type", null: false, comment: "CAVC decision type. Expecting 'remand', 'straight_reversal', or 'death_dismissal'"
+    t.string "cavc_docket_number", null: false, comment: "Docket number of the CAVC judgement"
+    t.string "cavc_judge_full_name", null: false, comment: "CAVC judge that passed the judgement on the remand"
+    t.datetime "created_at", null: false, comment: "Default timestamps"
+    t.bigint "created_by_id", null: false, comment: "User that created this record"
+    t.date "decision_date", null: false, comment: "Date CAVC issued a decision, according to the CAVC"
+    t.bigint "decision_issue_ids", default: [], comment: "Decision issues being remanded; IDs refer to decision_issues table. For a JMR, all decision issues on the previous appeal will be remanded. For a JMPR, only some", array: true
+    t.string "instructions", null: false, comment: "Instructions and context provided upon creation of the remand record"
+    t.date "judgement_date", comment: "Date CAVC issued a judgement, according to the CAVC"
+    t.date "mandate_date", comment: "Date that CAVC reported the mandate was given"
+    t.string "remand_subtype", comment: "Type of remand. If the cavc_decision_type is 'remand', expecting one of 'jmp', 'jmpr', or 'mdr'. Otherwise, this can be null."
+    t.boolean "represented_by_attorney", null: false, comment: "Whether or not the appellant was represented by an attorney"
+    t.datetime "updated_at", null: false, comment: "Default timestamps"
+    t.bigint "updated_by_id", null: false, comment: "User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created."
+    t.index ["appeal_id"], name: "index_cavc_remands_on_appeal_id"
   end
 
   create_table "certification_cancellations", id: :serial, force: :cascade do |t|
@@ -451,6 +473,22 @@ ActiveRecord::Schema.define(version: 2020_09_16_150837) do
     t.index ["updated_at"], name: "index_distributions_on_updated_at"
   end
 
+  create_table "docket_changes", comment: "Stores the disposition and associated data for Docket Change motions", force: :cascade do |t|
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.string "disposition", comment: "Possible options are granted, partially_granted, and denied"
+    t.string "docket_type", comment: "The new docket"
+    t.integer "granted_request_issue_ids", comment: "When a docket change is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior request issue IDs.", array: true
+    t.bigint "new_docket_stream_id", comment: "References the new appeal stream with the updated docket; initially null until created by workflow"
+    t.bigint "old_docket_stream_id", null: false, comment: "References the original appeal stream with old docket"
+    t.datetime "receipt_date", null: false
+    t.bigint "task_id", null: false, comment: "The task that triggered the switch"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.index ["created_at"], name: "index_docket_changes_on_created_at"
+    t.index ["new_docket_stream_id"], name: "index_docket_changes_on_new_docket_stream_id"
+    t.index ["old_docket_stream_id"], name: "index_docket_changes_on_old_docket_stream_id"
+    t.index ["task_id"], name: "index_docket_changes_on_task_id"
+  end
+
   create_table "docket_snapshots", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.integer "docket_count"
@@ -543,6 +581,23 @@ ActiveRecord::Schema.define(version: 2020_09_16_150837) do
     t.index ["updated_at"], name: "index_end_product_establishments_on_updated_at"
     t.index ["user_id"], name: "index_end_product_establishments_on_user_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
+  end
+
+  create_table "end_product_updates", comment: "Updates the claim label for end products established from Caseflow", force: :cascade do |t|
+    t.bigint "active_request_issue_ids", default: [], null: false, comment: "A list of active request issue IDs when a user has finished editing a decision review. Used to keep track of which request issues may have been impacted by the update.", array: true
+    t.datetime "created_at", null: false
+    t.bigint "end_product_establishment_id", null: false, comment: "The end product establishment id used to track the end product being updated."
+    t.string "error", comment: "The error message captured from BGS if the end product update failed."
+    t.string "new_code", comment: "The new end product code the user wants to update to."
+    t.string "original_code", comment: "The original end product code before the update was submitted."
+    t.bigint "original_decision_review_id", comment: "The original decision review that this end product update belongs to; has a non-nil value only if a new decision_review was created."
+    t.string "original_decision_review_type", comment: "The original decision review type that this end product update belongs to"
+    t.string "status", comment: "Status after an attempt to update the end product; expected values: 'success', 'error', ..."
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false, comment: "The ID of the user who makes an end product update."
+    t.index ["end_product_establishment_id"], name: "index_end_product_updates_on_end_product_establishment_id"
+    t.index ["original_decision_review_type", "original_decision_review_id"], name: "index_epupdates_on_decision_review_type_and_decision_review_id"
+    t.index ["user_id"], name: "index_end_product_updates_on_user_id"
   end
 
   create_table "form8s", id: :serial, force: :cascade do |t|
@@ -762,6 +817,16 @@ ActiveRecord::Schema.define(version: 2020_09_16_150837) do
     t.index ["updated_at"], name: "index_higher_level_reviews_on_updated_at"
     t.index ["uuid"], name: "index_higher_level_reviews_on_uuid"
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
+  end
+
+  create_table "ihp_drafts", force: :cascade do |t|
+    t.integer "appeal_id", null: false, comment: "Appeal id the IHP was written for"
+    t.string "appeal_type", null: false, comment: "Type of appeal the IHP was written for"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at timestamps"
+    t.integer "organization_id", null: false, comment: "IHP-writing VSO that drafted the IHP"
+    t.string "path", null: false, comment: "Path to the IHP in the VA V: drive"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at timestamps"
+    t.index ["appeal_id", "appeal_type", "organization_id"], name: "index_ihp_drafts_on_appeal_and_organization"
   end
 
   create_table "intakes", id: :serial, comment: "Represents the intake of an form or request made by a veteran.", force: :cascade do |t|
@@ -1127,6 +1192,7 @@ ActiveRecord::Schema.define(version: 2020_09_16_150837) do
     t.text "notes", comment: "Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
     t.string "ramp_claim_id", comment: "If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
     t.datetime "rating_issue_associated_at", comment: "Timestamp when a contention and its contested rating issue are associated in VBMS."
+    t.string "type", default: "RequestIssue", comment: "Determines whether the issue is a rating issue or a nonrating issue"
     t.string "unidentified_issue_text", comment: "User entered description if the request issue is neither a rating or a nonrating issue"
     t.boolean "untimely_exemption", comment: "If the contested issue's decision date was more than a year before the receipt date, it is considered untimely (unless it is a Supplemental Claim). However, an exemption to the timeliness can be requested. If so, it is indicated here."
     t.text "untimely_exemption_notes", comment: "Notes related to the untimeliness exemption requested."
@@ -1498,8 +1564,13 @@ ActiveRecord::Schema.define(version: 2020_09_16_150837) do
   add_foreign_key "certifications", "users"
   add_foreign_key "claims_folder_searches", "users"
   add_foreign_key "dispatch_tasks", "users"
+  add_foreign_key "docket_changes", "appeals", column: "new_docket_stream_id"
+  add_foreign_key "docket_changes", "appeals", column: "old_docket_stream_id"
+  add_foreign_key "docket_changes", "tasks"
   add_foreign_key "document_views", "users"
   add_foreign_key "end_product_establishments", "users"
+  add_foreign_key "end_product_updates", "end_product_establishments"
+  add_foreign_key "end_product_updates", "users"
   add_foreign_key "hearing_days", "users", column: "created_by_id"
   add_foreign_key "hearing_days", "users", column: "updated_by_id"
   add_foreign_key "hearing_views", "users"

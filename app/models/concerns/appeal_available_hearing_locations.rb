@@ -5,12 +5,8 @@ module AppealAvailableHearingLocations
 
   # :nocov:
   def suggested_hearing_location
-    # return the closest hearing location
-    available_hearing_locations&.min_by do |loc|
-      next if loc.distance.nil?
-
-      loc.distance
-    end
+    # return the closest hearing location, rejecting locations with nil distances
+    available_hearing_locations&.reject { |loc| loc.distance.nil? }&.min_by { |loc| loc.distance }
   end
   # :nocov:
 end
