@@ -105,6 +105,7 @@ export const ScheduleVeteranForm = ({
               vertical
               label="Hearing Time"
               enableZone
+              localZone={hearing?.hearingDay?.timezone}
               onChange={(scheduledTimeString) => props.onChange('scheduledTimeString', scheduledTimeString)}
               value={hearing.scheduledTimeString}
             />

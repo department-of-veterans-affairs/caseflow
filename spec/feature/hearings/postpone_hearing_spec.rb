@@ -203,7 +203,10 @@ RSpec.feature "Postpone hearing" do
         expect(page).to_not have_content("Finding hearing locations", wait: 30)
         click_dropdown(name: "appealHearingLocation", index: 0)
         click_dropdown(name: "hearingDate", index: 1)
-        find(".cf-form-radio-option", text: "8:30 AM Eastern Time (US & Canada)").click
+        find(
+          ".cf-form-radio-option",
+          text: "8:30 AM Mountain Time (US & Canada) / 10:30 AM Eastern Time (US & Canada)"
+        ).click
         click_button("Schedule")
 
         expect(page).to have_content("You have successfully assigned")
@@ -223,7 +226,10 @@ RSpec.feature "Postpone hearing" do
         expect(page).to have_content("Schedule Veteran for a Hearing")
         click_dropdown(name: "hearingType", text: "Virtual")
         click_dropdown(name: "hearingDate", index: 1)
-        find(".cf-form-radio-option", text: "8:30 AM Eastern Time (US & Canada)").click
+        find(
+          ".cf-form-radio-option",
+          text: "8:30 AM Mountain Time (US & Canada) / 10:30 AM Eastern Time (US & Canada)"
+        ).click
 
         # Fill in appellant details
         fill_in "Veteran Email", with: fill_in_veteran_email
@@ -275,7 +281,10 @@ RSpec.feature "Postpone hearing" do
         expect(page).to_not have_content("Finding hearing locations", wait: 30)
         click_dropdown(name: "appealHearingLocation", index: 0)
         click_dropdown(name: "hearingDate", index: 1)
-        find(".cf-form-radio-option", text: "8:30 AM Eastern Time (US & Canada)").click
+        find(
+          ".cf-form-radio-option",
+          text: "8:30 AM Mountain Time (US & Canada) / 10:30 AM Eastern Time (US & Canada)"
+        ).click
         click_button("Schedule")
 
         expect(page).to have_content("You have successfully assigned")

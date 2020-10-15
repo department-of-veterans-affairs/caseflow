@@ -69,6 +69,8 @@
   "TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL": "Completed on",
   "TASK_SNAPSHOT_TASK_CANCELLED_DATE_LABEL": "Cancelled on",
   "TASK_SNAPSHOT_TASK_WITHDRAWAL_DATE_LABEL": "withdrawn on",
+  "TASK_SNAPSHOT_HEARING_REQUEST_CONVERTED_ON_LABEL": "Converted on",
+  "TASK_SNAPSHOT_HEARING_REQUEST_CONVERTER_LABEL": "Converted by",
   "TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL": "VLJ",
   "TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL": "Attorney",
   "TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL": "Decision Document ID",
@@ -591,6 +593,10 @@
   "VACATE_MOTION_MAIL_TASK_LABEL": "Motion to vacate",
   "REVIEW_MOTION_TO_VACATE_TASK_LABEL": "Review motion to vacate",
 
+  "DOCKET_SWITCH_RECOMMENDATION_TITLE": "Switch Docket: Send %s's Request to a Judge",
+  "DOCKET_SWITCH_RECOMMENDATION_INSTRUCTIONS": "Add and send your recommendation for this docket switch request to a Veteran's Law Judge.",
+  "DOCKET_SWITCH_RULING_TASK_LABEL": "Rule on Docket Switch",
+
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
   "CORRECT_REQUEST_ISSUES_WITHDRAW": "Withdraw",
   "CORRECT_REQUEST_ISSUES_SAVE": "Save",
@@ -621,7 +627,7 @@
   "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If the claimant is a Veteran's dependant (spouse, child, or parent) and they are not listed or their information needs to be updated, ",
   "CLAIMANT_NOT_FOUND_END": " for assistance. Note: Remember to encrypt any emails that contain PII (such as a veteran or claimant's name, file number or SSN).",
   "ADD_CLAIMANT_MODAL_TITLE": "Add Claimant",
-  "ADD_CLAIMANT_MODAL_DESCRIPTION": "To add a claimant, select their relationship to the veteran and type to search for their name. **Please note:** at this time, you are only able to add attorneys as claimants.\n\n If you are unable to find attorney in the list of names below, select \"Claimant not listed\" and add their name, address, and law firm (if applicable) in the notes section.",
+  "ADD_CLAIMANT_MODAL_DESCRIPTION": "To add a claimant, select their relationship to the Veteran and type to search for their name. **Please note:** at this time, you are only able to add attorneys as claimants.\n\nIf you are unable to find the attorney in the list of names below, please cancel the intake and [email](mailto:VACaseflowIntake@va.gov) for assistance. Remember to encrypt any emails that contain PII.",
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",
   "INTAKE_WITHDRAWN_BANNER": "This review will be withdrawn. You can intake these issues as a different type of decision review, if that was requested.",
   "INTAKE_RATING_MAY_BE_PROCESS": "Rating may be in progress",

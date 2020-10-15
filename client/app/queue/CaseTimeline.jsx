@@ -5,7 +5,7 @@ import { caseTimelineTasksForAppeal } from './selectors';
 import COPY from '../../COPY';
 import TaskRows from './components/TaskRows';
 
-class CaseTimeline extends React.PureComponent {
+export class CaseTimeline extends React.PureComponent {
   render = () => {
     const {
       appeal,

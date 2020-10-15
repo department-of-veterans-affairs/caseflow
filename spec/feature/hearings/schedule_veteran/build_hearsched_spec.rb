@@ -617,7 +617,13 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       expect(page).to have_content("Schedule Veteran for a Hearing")
       click_dropdown(name: "hearingType", text: "Virtual")
       click_dropdown(name: "hearingDate", index: 1)
-      find(".cf-form-radio-option", text: "#{time} AM Eastern Time (US & Canada)").click
+
+      expected_time_radio_text = if fill_in_timezones
+                                  "#{time} Eastern Time (US & Canada)"
+                                 else
+                                  "#{time} Mountain Time (US & Canada) / 10:30 AM Eastern Time (US & Canada)"
+                                 end
+      find(".cf-form-radio-option", text: expected_time_radio_text).click
 
       # Fill in appellant details
       click_dropdown(name: "appellantTz", index: 1) if fill_in_timezones
