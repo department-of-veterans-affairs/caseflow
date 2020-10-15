@@ -7,3 +7,9 @@ export const dispositions = {
   },
   denied: { displayText: 'Deny all issues', value: 'denied' },
 };
+
+export const recommendations = {
+  granted: 'Grant all issues',
+  partially_granted: 'Grant partial docket switch',
+  denied: 'Deny all issues',
+};

@@ -4,10 +4,29 @@ import { useHistory, useParams } from 'react-router';
 import { fetchJudges } from '../../QueueActions';
 
 import { appealWithDetailSelector } from '../../selectors';
+import { recommendations } from '../constants';
 import { RecommendDocketSwitchForm } from './RecommendDocketSwitchForm';
 
+export const formatDocketSwitchRecommendation = ({
+  summary,
+  timely,
+  disposition,
+  hyperlink,
+}) => {
+  const parts = [];
+
+  const timelyCaps = timely[0].toUpperCase() + timely.substring(1);
+
+  parts.push(`**Summary:** ${summary}`);
+  parts.push(`**Is this a timely request:** ${timelyCaps}`);
+  parts.push(`**Recommendation:** ${recommendations[disposition]}`);
+  parts.push(`**Draft letter:** ${hyperlink}`);
+
+  return parts.join('<br><br>');
+};
+
 export const RecommendDocketSwitchContainer = () => {
-  const { appealId } = useParams();
+  const { appealId, taskId } = useParams();
   const { goBack } = useHistory();
   const dispatch = useDispatch();
 
@@ -32,7 +51,23 @@ export const RecommendDocketSwitchContainer = () => {
   }, [judges, appeal]);
 
   // eslint-disable-next-line no-console
-  const handleSubmit = (formData) => console.log('handleSubmit', formData);
+  const handleSubmit = (formData) => {
+    const instructions = formatDocketSwitchRecommendation({ ...formData });
+    const newTask = {
+      parent_id: taskId,
+      type: 'DocketSwitchRulingTask',
+      external_id: appeal.externalId,
+      instructions,
+      assigned_to_id: formData.judge.value,
+      assigned_to_type: 'User',
+    };
+
+    const payload = {
+      tasks: [newTask],
+    };
+
+    console.log('payload', payload);
+  };
 
   useEffect(() => {
     if (!judgeOptions.length) {
