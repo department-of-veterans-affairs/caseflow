@@ -84,7 +84,7 @@ import { FlashAlerts } from '../nonComp/components/Alerts';
 
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
 import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
-import { docketChangeRoutes } from './docketChange/docketChangeRoutes';
+import { docketSwitchRoutes } from './docketSwitch/docketSwitchRoutes';
 import ScheduleVeteran from '../hearings/components/ScheduleVeteran';
 import HearingTypeConversion from '../hearings/components/HearingTypeConversion';
 
@@ -610,7 +610,7 @@ class QueueApp extends React.PureComponent {
 
               {motionToVacateRoutes.page}
 
-              {docketChangeRoutes.page}
+              {docketSwitchRoutes.page}
 
             </Switch>
 

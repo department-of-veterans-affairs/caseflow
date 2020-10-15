@@ -52,6 +52,20 @@ class WorkQueue::TaskSerializer
     }
   end
 
+  # only ChangeHearingRequestType defines a convertedBy deriving the data from paper_trail
+  # refers to the conversion of hearing request type
+  attribute :converted_by do |object|
+    {
+      css_id: object.try(:converted_by).try(:css_id)
+    }
+  end
+
+  # ChangeHearingRequestType defines a converted_on
+  # refers to when the hearing request type was converted and is equivalent to closed_at
+  attribute :converted_on do |object|
+    object.try(:converted_on)
+  end
+
   attribute :assignee_name do |object|
     object.assigned_to.is_a?(Organization) ? object.assigned_to.name : object.assigned_to.css_id
   end
