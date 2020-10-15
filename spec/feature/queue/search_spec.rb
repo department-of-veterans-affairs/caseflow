@@ -144,7 +144,8 @@ feature "Search", :all_dbs do
                   :end_product_establishment,
                   source: higher_level_review,
                   veteran_file_number: appeal.veteran_file_number,
-                  synced_status: "CAN"
+                  synced_status: "CAN",
+                  code: "930AHDENLPMC"
                 )
               end
               let!(:end_product_establishment_2) do
