@@ -43,13 +43,13 @@ app
         └── index.js
 ...
 ```
-- Add webpack aliasing to make it easier to move components around and know exactly where they are located
-- Upgrade some of the outdated packages that belong to Reader including but not limited to the PDFjs package which is currently a full major version behind
-- Lazy load components to reduce the overall size of the webpack bundle and speed up page loads
+- Add webpack aliasing to make it easier to move components around and know exactly where they are located ([#15439](https://github.com/department-of-veterans-affairs/caseflow/issues/15439))
+- Upgrade some of the outdated packages that belong to Reader including but not limited to the PDFjs package which is currently a full major version behind ([#12784](https://github.com/department-of-veterans-affairs/caseflow/issues/12784))
+- Lazy load components to reduce the overall size of the webpack bundle and speed up page loads ([#15435](https://github.com/department-of-veterans-affairs/caseflow/issues/15435))
 
 ## Goals
 
-By implementing the above changes, we believe that we will be able to achieve the following in addition to resolving the underlying Reader bug
+By implementing the above changes, we believe that we will be able to achieve the following in addition to resolving the [underlying Reader bug](https://github.com/department-of-veterans-affairs/caseflow/issues/15173)
 
 - Improve readability of the codebase
 - Improve the performance of the Reader application
@@ -62,3 +62,12 @@ We believe that the above refactor would require the following engineering capac
 
 **Engineers:** 1-2
 **Story Points:** 8-13 (1-2 Sprint)
+
+## Future Work
+
+This work will begin focused on the Reader application, however it could easily be expanded to the rest of the Caseflow applications by taking a few steps within each. All of the high-level caseflow applications including Hearings, Queue, and Intake all have an entry point in and `index.jsx` file which loads the actual frontend application. Because of this, we can insert a feature flag in front of this render that will either continue to render the existing application, or redirect to the refactored version based on which screen the user is attempting to access. In this way, we can provide an incremental adoption approach so that engineers will not be forced to make sweeping changes to the codebase, but rather move over a single screen at a time until the migration is complete.
+
+## Open Questions/Risks
+
+- Risk of losing functionality while moving code around
+  - We believe to have addressed this by isolating the changes behind a feature flag as well as maintaining the existing codebase and refactoring under a new folder structure
