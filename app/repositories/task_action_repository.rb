@@ -174,7 +174,7 @@ class TaskActionRepository
       {}
     end
 
-    def docket_switch_send_to_judge_data(task, _user = nil)
+    def docket_switch_send_to_judge_data(_task, _user = nil)
       {
         type: DocketSwitchRulingTask.name
       }
