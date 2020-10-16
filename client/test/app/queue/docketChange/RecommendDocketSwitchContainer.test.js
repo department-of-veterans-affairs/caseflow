@@ -55,7 +55,7 @@ describe('formatDocketSwitchRecommendation', () => {
       );
       expect(res).toMatch(
         new RegExp(
-          '\\*\\*Recommendation:\\*\\* Grant partial docket switch<br><br>'
+          '\\*\\*Recommendation:\\*\\* Grant a partial switch<br><br>'
         )
       );
       expect(res).toMatch(new RegExp(`\\*\\*Draft letter:\\*\\* ${hyperlink}`));
