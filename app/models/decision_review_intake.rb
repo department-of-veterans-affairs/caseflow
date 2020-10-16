@@ -111,7 +111,6 @@ class DecisionReviewIntake < Intake
       rescue EndProductEstablishment::EstablishedEndProductNotFound => error
         Raven.capture_exception(error: error)
         next
-      end
     end
   end
 
