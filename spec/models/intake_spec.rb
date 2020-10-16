@@ -677,20 +677,31 @@ describe Intake, :postgres do
       context "when veteran has missing end product" do
         before do
           allow_any_instance_of(EndProductEstablishment).to receive(:sync!)
-            .and_raise(EndProductEstablishment::EstablishedEndProductNotFound)
+          .and_raise(EndProductEstablishment::EstablishedEndProductNotFound)
+          allow(Raven).to receive(:capture_exception) { @raven_called = true }
         end
 
-        let(:end_product_establishment) do
+        let!(:end_product_establishment) do
           create(:end_product_establishment, :active, veteran_file_number: veteran.file_number)
+        end
+
+        let(:intake) do
+          HigherLevelReviewIntake.new(
+            veteran_file_number: veteran_file_number,
+            detail: detail,
+            user: user,
+            started_at: 15.minutes.ago,
+            completion_status: completion_status,
+            completion_started_at: completion_started_at
+          )
         end
 
         it "creates new intake" do
           subject
-
+          expect(@raven_called).to eq(true)
           expect(intake).to have_attributes(
             veteran_file_number: veteran_file_number,
             started_at: Time.zone.now,
-            detail: intake.find_or_build_initial_detail,
             user: user
           )
         end

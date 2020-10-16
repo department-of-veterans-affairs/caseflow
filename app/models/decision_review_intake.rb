@@ -107,13 +107,10 @@ class DecisionReviewIntake < Intake
   def after_validated_pre_start!
     epes = EndProductEstablishment.established.where(veteran_file_number: veteran.file_number)
     epes.each do |epe|
-      epe.veteran = veteran
-      begin
-        epe.result.present?
+      epe.sync!
       rescue EndProductEstablishment::EstablishedEndProductNotFound => error
-        capture_exception(error: error)
-      else
-        epe.sync!
+        Raven.capture_exception(error: error)
+        next
       end
     end
   end
