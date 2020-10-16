@@ -17,6 +17,7 @@ class TasksController < ApplicationController
     BlockedSpecialCaseMovementTask: BlockedSpecialCaseMovementTask,
     ChangeHearingDispositionTask: ChangeHearingDispositionTask,
     ColocatedTask: ColocatedTask,
+    DocketSwitchRulingTask: DocketSwitchRulingTask,
     EvidenceSubmissionWindowTask: EvidenceSubmissionWindowTask,
     FoiaTask: FoiaTask,
     HearingAdminActionTask: HearingAdminActionTask,

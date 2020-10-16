@@ -82,7 +82,8 @@
   },
   "DOCKET_SWITCH_SEND_TO_JUDGE": {
     "label": "Send to Judge",
-    "value": "docket_switch/recommend"
+    "value": "docket_switch/recommend",
+    "func": "docket_switch_send_to_judge_data"
   },
   "DOCKET_SWITCH_JUDGE_RULING": {
     "label": "Send to Judge",
