@@ -675,10 +675,10 @@ describe Intake, :postgres do
       end
 
       context "when veteran has missing end product" do
-        before { 
-        allow_any_instance_of(EndProductEstablishment).to receive(:sync!)
-        .and_raise(EndProductEstablishment::EstablishedEndProductNotFound) 
-        }
+        before do
+          allow_any_instance_of(EndProductEstablishment).to receive(:sync!)
+          .and_raise(EndProductEstablishment::EstablishedEndProductNotFound)
+        end
 
         let(:end_product_establishment) do
           create(:end_product_establishment, :active, veteran_file_number: veteran.file_number)
