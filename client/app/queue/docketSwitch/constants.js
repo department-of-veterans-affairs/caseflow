@@ -10,6 +10,6 @@ export const dispositions = {
 
 export const recommendations = {
   granted: 'Grant all issues',
-  partially_granted: 'Grant partial docket switch',
+  partially_granted: 'Grant a partial switch',
   denied: 'Deny all issues',
 };
