@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
+import ApiUtil from '../../../util/ApiUtil';
 import { fetchJudges } from '../../QueueActions';
 
 import { appealWithDetailSelector } from '../../selectors';
@@ -27,7 +28,7 @@ export const formatDocketSwitchRecommendation = ({
 
 export const RecommendDocketSwitchContainer = () => {
   const { appealId, taskId } = useParams();
-  const { goBack } = useHistory();
+  const { goBack, push } = useHistory();
   const dispatch = useDispatch();
 
   const appeal = useSelector((state) =>
@@ -51,7 +52,7 @@ export const RecommendDocketSwitchContainer = () => {
   }, [judges, appeal]);
 
   // eslint-disable-next-line no-console
-  const handleSubmit = (formData) => {
+  const handleSubmit = async (formData) => {
     const instructions = formatDocketSwitchRecommendation({ ...formData });
     const newTask = {
       parent_id: taskId,
@@ -62,11 +63,18 @@ export const RecommendDocketSwitchContainer = () => {
       assigned_to_type: 'User',
     };
 
-    const payload = {
+    const data = {
       tasks: [newTask],
     };
 
-    console.log('payload', payload);
+    try {
+      await ApiUtil.post('/tasks', { data });
+
+      // Add logic for success banner
+      push('/queue');
+    } catch (error) {
+      console.error('Error saving task', error);
+    }
   };
 
   useEffect(() => {
