@@ -869,7 +869,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
             :case,
             :assigned,
             bfcorlid: "0000000000S",
-            bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing],
+            bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]
           )
         end
         let!(:legacy_appeal) do

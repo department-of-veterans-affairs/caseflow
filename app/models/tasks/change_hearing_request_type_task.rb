@@ -74,7 +74,7 @@ class ChangeHearingRequestTypeTask < Task
       appeal.update!(changed_request_type: payload_values[:changed_request_type])
 
       # update location to `CASEFLOW`
-      if (appeal.is_a?(LegacyAppeal))
+      if appeal.is_a?(LegacyAppeal)
         AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
       end
 
