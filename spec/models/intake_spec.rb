@@ -677,8 +677,8 @@ describe Intake, :postgres do
       context "when veteran has missing end product" do
         before do
           allow_any_instance_of(EndProductEstablishment).to receive(:sync!)
-          .and_raise(EndProductEstablishment::EstablishedEndProductNotFound)
-          allow(Raven).to receive(:capture_exception) { @raven_called = true }
+            .and_raise(EndProductEstablishment::EstablishedEndProductNotFound)
+            allow(Raven).to receive(:capture_exception) { @raven_called = true }
         end
 
         let!(:end_product_establishment) do
