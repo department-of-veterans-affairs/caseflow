@@ -70,6 +70,9 @@ class ChangeHearingRequestTypeTask < Task
     multi_transaction do
       appeal.update!(changed_request_type: payload_values[:changed_request_type])
 
+      # update location to `CASEFLOW`
+      AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+
       update!(params)
     end
   end
