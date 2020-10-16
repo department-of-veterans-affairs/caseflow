@@ -8,8 +8,8 @@ This refactor would also include a feature flag to hide the changes behind so th
 
 Below are the changes that we are hoping to make during the refactor that we believe will bring the best value:
 
-- Move the logic that currently exists in individual components into a central Redux store (curently scoped to the Reader code, but that could be expanded upon later)
-- Introduce a new folder structure that can be used for the Reader code at first, but that could be expanded to be used by the entire application in the future (NOTE: this would preserve the existing structure, but add some additional folders that could be migrated to at some point). The proposed structure would be as follows:
+- Move the logic that currently exists in individual components into a central Redux store (currently scoped to the Reader code, but that could be expanded upon later)
+- Introduce a new folder structure that can be used for the Reader code at first, but that could be expanded to be used by the entire application in the future (NOTE: this would preserve the existing structure, but add some additional folders that the rest of the codebase in addition to reader could be migrated to at some point). The proposed structure would be as follows:
 
 **NOTE:** `index.js` files will be used to export all components/functions from a given folder allowing us to also add tree shaking as a performance improvement
 ```
