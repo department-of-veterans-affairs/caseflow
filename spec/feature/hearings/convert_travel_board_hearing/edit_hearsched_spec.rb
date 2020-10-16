@@ -16,6 +16,22 @@ RSpec.feature "Convert travel board appeal for 'Edit HearSched' (Hearing Coordin
     )
   end
 
+  let!(:dispatched_vacols_case) do
+    create(
+      :case,
+      bfmpro: "HIS",
+      bfhr: "2" # Travel Board
+    )
+  end
+  let!(:dispatched_legacy_appeal) do
+    create(
+      :legacy_appeal,
+      :with_veteran,
+      status: "Complete",
+      vacols_case: dispatched_vacols_case
+    )
+  end
+
   before do
     HearingsManagement.singleton.add_user(current_user)
   end
@@ -27,6 +43,14 @@ RSpec.feature "Convert travel board appeal for 'Edit HearSched' (Hearing Coordin
 
     after do
       FeatureToggle.disable!(:convert_travel_board_to_video_or_virtual)
+    end
+
+    scenario "it does not create a ChangeHearingRequestTypeTask for dispatched appeals" do
+      visit "queue/appeals/#{dispatched_legacy_appeal.vacols_id}"
+
+      expect(page).not_to have_content(ScheduleHearingTask.label)
+      expect(page).not_to have_content(ChangeHearingRequestTypeTask.label)
+      expect(ChangeHearingRequestTypeTask.count).to eq(0)
     end
 
     scenario "it creates a ChangeHearingRequestTypeTask" do
@@ -62,6 +86,16 @@ RSpec.feature "Convert travel board appeal for 'Edit HearSched' (Hearing Coordin
         expect(page).to have_content(
           "The hearing request is in the scheduling queue for the appropriate regional office"
         )
+      end
+
+      step "confirm timeline displays relevant info about the completion of ChangeHearingRequestTypeTask" do
+        within("table#case-timeline-table") do
+          expect(page).to have_content(COPY::TASK_SNAPSHOT_HEARING_REQUEST_CONVERTED_ON_LABEL.upcase)
+          expect(page).to have_content(COPY::TASK_SNAPSHOT_HEARING_REQUEST_CONVERTER_LABEL.upcase)
+          expect(page).to have_content(
+            "Hearing type converted from Travel to Virtual"
+          )
+        end
       end
 
       step "confirm schedule veteran task is actionable" do

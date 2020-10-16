@@ -188,7 +188,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       attrs: {
         status: status,
         appeal_external_id: appeal.external_id,
-        hearing_request_type: appeal.sanitized_hearing_request_type
+        hearing_request_type: appeal.current_hearing_request_type
       }
     )
   end

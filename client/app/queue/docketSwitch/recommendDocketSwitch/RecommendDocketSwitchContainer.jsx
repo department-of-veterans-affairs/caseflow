@@ -5,7 +5,7 @@ import ApiUtil from '../../../util/ApiUtil';
 import { fetchJudges } from '../../QueueActions';
 
 import { appealWithDetailSelector } from '../../selectors';
-import { recommendations } from '../constants';
+import { dispositions } from '../constants';
 import { RecommendDocketSwitchForm } from './RecommendDocketSwitchForm';
 
 export const formatDocketSwitchRecommendation = ({
@@ -20,7 +20,7 @@ export const formatDocketSwitchRecommendation = ({
 
   parts.push(`**Summary:** ${summary}`);
   parts.push(`**Is this a timely request:** ${timelyCaps}`);
-  parts.push(`**Recommendation:** ${recommendations[disposition]}`);
+  parts.push(`**Recommendation:** ${dispositions[disposition].displayText}`);
   parts.push(`**Draft letter:** ${hyperlink}`);
 
   return parts.join('<br><br>');
