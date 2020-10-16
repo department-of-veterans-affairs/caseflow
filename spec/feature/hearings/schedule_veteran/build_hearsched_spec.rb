@@ -611,7 +611,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
   end
 
-  shared_examples "scheduling a virtual hearing" do |fill_in_timezones|
+  shared_examples "scheduling a virtual hearing" do |fill_in_timezones, ro_key, time|
     scenario "can successfully schedule virtual hearing" do
       navigate_to_schedule_veteran
       expect(page).to have_content("Schedule Veteran for a Hearing")
@@ -619,9 +619,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_dropdown(name: "hearingDate", index: 1)
 
       expected_time_radio_text = if fill_in_timezones
-                                   "8:30 AM Eastern Time (US & Canada)"
+                                   "#{time} AM Eastern Time (US & Canada)"
                                  else
-                                   "8:30 AM Mountain Time (US & Canada) / 10:30 AM Eastern Time (US & Canada)"
+                                   "#{time} AM Mountain Time (US & Canada) / 10:30 AM Eastern Time (US & Canada)"
                                  end
       find(".cf-form-radio-option", text: expected_time_radio_text).click
 
@@ -645,6 +645,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       # Test the hearing was created correctly with the virtual hearing
       expect(new_hearing.hearing_location).to eq nil
       expect(new_hearing.virtual_hearing).to eq VirtualHearing.first
+      expect(new_hearing.regional_office.key).to eq ro_key
 
       # Test the emails were sent
       events = SentHearingEmailEvent.where(hearing_id: new_hearing.id)
@@ -681,7 +682,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       before { cache_appeals }
 
-      it_behaves_like "scheduling a virtual hearing", true
+      it_behaves_like "scheduling a virtual hearing", true, "C", "9:00"
     end
 
     context "when changing from Video hearing" do
@@ -689,7 +690,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       before { cache_appeals }
 
-      it_behaves_like "scheduling a virtual hearing", false
+      it_behaves_like "scheduling a virtual hearing", false, "RO39", "8:30"
     end
   end
 
