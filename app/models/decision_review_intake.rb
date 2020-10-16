@@ -109,7 +109,7 @@ class DecisionReviewIntake < Intake
     epes.each do |epe|
       epe.sync!
     rescue EndProductEstablishment::EstablishedEndProductNotFound => error
-        Raven.capture_exception(error: error)
+    Raven.capture_exception(error: error)
       next
     end
   end
