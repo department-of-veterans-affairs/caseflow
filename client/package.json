@@ -58,6 +58,7 @@
     "@babel/runtime-corejs2": "^7.9.2",
     "@department-of-veterans-affairs/caseflow-frontend-toolkit": "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#71ee169",
     "@fortawesome/fontawesome-free": "^5.3.1",
+    "@hookform/resolvers": "^0.1.1",
     "@storybook/addon-a11y": "^6.0.7",
     "@storybook/addon-actions": "^6.0.7",
     "@storybook/addon-controls": "^6.0.7",
@@ -100,6 +101,7 @@
     "react-dom": "^16.13.1",
     "react-draft-wysiwyg": "^1.12.11",
     "react-highlight-words": "^0.8.0",
+    "react-hook-form": "^6.8.6",
     "react-hot-loader": "^4.12.18",
     "react-markdown": "^4.2.2",
     "react-on-rails": "11.3.0",
@@ -129,7 +131,8 @@
     "uswds": "^1.6.4",
     "uuid": "^3.0.1",
     "webpack": "^4.42.1",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^3.3.11",
+    "yup": "^0.29.3"
   },
   "devDependencies": {
     "@department-of-veterans-affairs/eslint-config-appeals": "https://github.com/department-of-veterans-affairs/eslint-config-appeals#1e2a2db",
