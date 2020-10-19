@@ -138,3 +138,5 @@ group :test do
   gem "webmock"
 end
 # rubocop:enable Metrics/LineLength
+
+gem "json_schemer", "~> 0.2.16"
