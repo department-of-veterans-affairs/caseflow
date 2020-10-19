@@ -23,7 +23,7 @@ class HearingTaskTreeInitializer
     def for_appeal_with_pending_travel_board_hearing(appeal)
       fail TypeError, "expected a legacy appeal" unless appeal.is_a?(LegacyAppeal)
 
-      return if appeal.tasks.open.where(type: ChangeHearingRequestTypeTask.name).any?
+      return if appeal.tasks.open.where(type: HearingTask.name).any?
 
       ActiveRecord::Base.multi_transaction do
         create_args = { appeal: appeal, assigned_to: Bva.singleton }
@@ -33,6 +33,8 @@ class HearingTaskTreeInitializer
         schedule_hearing_task = ScheduleHearingTask.find_or_create_by!(**create_args, parent: hearing_task)
         ChangeHearingRequestTypeTask.find_or_create_by!(**create_args, parent: schedule_hearing_task)
       end
+
+      AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
 
       appeal.reload
     end

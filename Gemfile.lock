@@ -259,6 +259,8 @@ GEM
       dry-equalizer (~> 0.3)
       dry-inflector (~> 0.1, >= 0.1.2)
       dry-logic (~> 1.0, >= 1.0.2)
+    ecma-re-validator (0.2.1)
+      regexp_parser (~> 1.2)
     erubi (1.9.0)
     execjs (2.7.0)
     factory_bot (5.2.0)
@@ -311,6 +313,7 @@ GEM
       rspec (>= 2.99.0, < 4.0)
     gyoku (1.3.1)
       builder (>= 2.1.2)
+    hana (1.3.6)
     hashdiff (1.0.0)
     heapy (0.1.4)
     holidays (6.6.1)
@@ -335,6 +338,11 @@ GEM
       multi_json (~> 1.0)
       therubyracer (~> 0.12.1)
     json (2.3.0)
+    json_schemer (0.2.16)
+      ecma-re-validator (~> 0.2)
+      hana (~> 1.3)
+      regexp_parser (~> 1.5)
+      uri_template (~> 0.7)
     kaminari (1.2.1)
       activesupport (>= 4.1.0)
       kaminari-actionview (= 1.2.1)
@@ -616,6 +624,7 @@ GEM
     unicode-display_width (1.6.1)
     unicode_utils (1.4.0)
     uniform_notifier (1.12.1)
+    uri_template (0.7.0)
     validates_email_format_of (1.6.3)
       i18n
     wasabi (3.6.1)
@@ -687,6 +696,7 @@ DEPENDENCIES
   holidays (~> 6.4)
   icalendar
   jshint
+  json_schemer (~> 0.2.16)
   kaminari
   meta_request
   moment_timezone-rails
