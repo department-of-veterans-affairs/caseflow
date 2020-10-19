@@ -21,8 +21,13 @@ const config = {
       // This does not actually appear to be necessary, but it does silence
       // a warning from superagent-no-cache.
       ie: 'component-ie',
-      reader: path.resolve('app/reader'),
-      shared: path.resolve('app/components')
+      app: path.resolve('app'),
+      constants: path.resolve('constants'),
+      layouts: path.resolve('app/2.0/layouts'),
+      routes: path.resolve('app/2.0/routes'),
+      store: path.resolve('app/2.0/store'),
+      screens: path.resolve('app/2.0/screens'),
+      components: path.resolve('app/2.0/components'),
     }
   },
   module: {
