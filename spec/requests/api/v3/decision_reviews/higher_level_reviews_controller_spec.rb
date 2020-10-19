@@ -6,12 +6,12 @@ describe Api::V3::DecisionReviews::HigherLevelReviewsController, :all_dbs, type:
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:api_v3)
+    FeatureToggle.enable!(:api_v3_higher_level_reviews)
 
     Timecop.freeze(post_ama_start_date)
   end
 
-  after { FeatureToggle.disable!(:api_v3) }
+  after { FeatureToggle.disable!(:api_v3_higher_level_reviews) }
 
   let!(:rating) do
     promulgation_date = receipt_date - 10.days
@@ -108,6 +108,25 @@ describe Api::V3::DecisionReviews::HigherLevelReviewsController, :all_dbs, type:
     end
     let(:expected_error_json) { expected_error_render_hash[:json].as_json }
     let(:expected_error_status) { expected_error_render_hash[:status] }
+
+    context "when feature toggle is not enabled" do
+      before { FeatureToggle.disable!(:api_v3_higher_level_reviews) }
+
+        it "should return a 501 response" do
+          allow_any_instance_of(HigherLevelReview).to receive(:asyncable_status) { :submitted }
+          post_create
+          expect(response).to have_http_status(:not_implemented)
+        end
+
+        it "should have a jsonapi error response" do
+          allow_any_instance_of(HigherLevelReview).to receive(:asyncable_status) { :submitted }
+          post_create
+          expect { JSON.parse(response.body) }.to_not raise_error
+          parsed_response = JSON.parse(response.body)
+          expect(parsed_response["errors"]).to be_a Array
+          expect(parsed_response["errors"].first).to include("status", "title", "detail")
+        end
+    end
 
     context "good request" do
       it "should return a 202 on success" do
