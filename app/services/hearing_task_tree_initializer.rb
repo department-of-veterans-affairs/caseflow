@@ -34,8 +34,6 @@ class HearingTaskTreeInitializer
         ChangeHearingRequestTypeTask.find_or_create_by!(**create_args, parent: schedule_hearing_task)
       end
 
-      AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
-
       appeal.reload
     end
 

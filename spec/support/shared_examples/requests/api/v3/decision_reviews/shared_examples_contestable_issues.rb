@@ -7,31 +7,15 @@ RSpec.shared_examples "contestable issues index requests" do
     FeatureToggle.disable!(:api_v3)
   end
 
+  include_context "contestable issues request context", include_shared: true
+
   describe "#index" do
-    let!(:api_key) { ApiKey.create!(consumer_name: "ApiV3 Test Consumer").key_string }
-    let(:veteran) { create(:veteran).unload_bgs_record }
-    let(:ssn) { veteran.ssn }
-    let(:file_number) { nil }
-    let(:response_data) { JSON.parse(response.body)["data"] }
-    let(:receipt_date) { Time.zone.today }
+    include_context "contestable issues request index context", include_shared: true
 
-    let(:get_issues) do
-      benefit_type_url_string = benefit_type ? "/#{benefit_type}" : ""
-
-      headers = {
-        "Authorization" => "Token #{api_key}",
-        "X-VA-Receipt-Date" => receipt_date.try(:strftime, "%F") || receipt_date
-      }
-
-      if file_number.present?
-        headers["X-VA-File-Number"] = file_number
-      elsif ssn.present?
-        headers["X-VA-SSN"] = ssn
-      end
-
-      get(
-        "/api/v3/decision_reviews/#{decision_review_type}s/contestable_issues#{benefit_type_url_string}",
-        headers: headers
+    let(:promulgated_ratings) do
+      Generators::PromulgatedRating.build(
+        participant_id: veteran.ptcpnt_id,
+        profile_date: Time.zone.today - 10.days # must be before receipt_date
       )
     end
 
@@ -45,10 +29,7 @@ RSpec.shared_examples "contestable issues index requests" do
       end
 
       it "should return a list of issues in JSON:API format" do
-        Generators::PromulgatedRating.build(
-          participant_id: veteran.ptcpnt_id,
-          profile_date: Time.zone.today - 10.days # must be before receipt_date
-        )
+        promulgated_ratings
         get_issues
         expect(response_data).to be_an Array
         expect(response_data).not_to be_empty
@@ -65,10 +46,7 @@ RSpec.shared_examples "contestable issues index requests" do
       end
 
       it "should return a list of issues in JSON:API format" do
-        Generators::PromulgatedRating.build(
-          participant_id: veteran.ptcpnt_id,
-          profile_date: Time.zone.today - 10.days # must be before receipt_date
-        )
+        promulgated_ratings
         get_issues
         expect(response_data).to be_an Array
         expect(response_data).not_to be_empty

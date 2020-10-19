@@ -77,17 +77,11 @@ module Api
         end
 
         def veteran_ssn
-          @veteran_ssn ||= begin
-            ssn = request.headers["X-VA-SSN"].to_s.strip
-            ssn.empty? ? nil : ssn
-          end
+          @veteran_ssn ||= request.headers["X-VA-SSN"].presence&.strip
         end
 
         def veteran_file_number
-          @veteran_file_number ||= begin
-            file_number = request.headers["X-VA-File-Number"].to_s.strip
-            file_number.empty? ? nil : file_number
-          end
+          @veteran_file_number ||= request.headers["X-VA-File-Number"].presence&.strip
         end
 
         def veteran_identifier
