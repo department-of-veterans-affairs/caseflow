@@ -9,8 +9,4 @@ class CavcLitigationSupport < Organization
     CavcLitigationSupport.first ||
       CavcLitigationSupport.create(name: "CAVC Litigation Support", url: "cavc-lit-support")
   end
-
-  def users_can_create_mail_task?
-    true
-  end
 end

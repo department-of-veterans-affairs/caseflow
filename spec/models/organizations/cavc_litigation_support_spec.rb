@@ -6,10 +6,4 @@ describe CavcLitigationSupport do
       expect(CavcLitigationSupport.singleton).to have_attributes(name: "CAVC Litigation Support")
     end
   end
-
-  describe ".users_can_create_mail_task?" do
-    it "should always be true" do
-      expect(CavcLitigationSupport.singleton.users_can_create_mail_task?).to eq(true)
-    end
-  end
 end
