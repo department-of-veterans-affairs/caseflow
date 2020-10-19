@@ -207,10 +207,20 @@ describe Docket, :all_dbs do
     end
 
     context "age_of_oldest_priority_appeal" do
-      subject { DirectReviewDocket.new.age_of_oldest_priority_appeal }
+      let(:docket) { DirectReviewDocket.new }
+
+      subject { docket.age_of_oldest_priority_appeal }
 
       it "returns the 'ready at' field of the oldest priority appeal that is ready for distribution" do
         expect(subject).to eq(aod_age_appeal.ready_for_distribution_at)
+      end
+
+      context "when there are no ready priority appeals" do
+        let(:docket) { EvidenceSubmissionDocket.new }
+
+        it "returns nil" do
+          expect(subject.nil?).to be true
+        end
       end
     end
 
