@@ -2,13 +2,15 @@
 import React from 'react';
 
 // Internal Dependencies
-import Loadable from 'app/2.0/components/shared/Loadable';
+const DocumentsTable = React.lazy(() => import('app/2.0/screens/reader/DocumentsTable'));
+const Document = React.lazy(() => import('app/2.0/screens/reader/Document'));
 
-const ReaderRoutes = () => {
+const ReaderRoutes = (props) => {
   return (
-    <Loadable>
-      <div />
-    </Loadable>
+    <React.Fragment>
+      <DocumentsTable {...props} />
+      <Document {...props} />
+    </React.Fragment>
   );
 };
 
