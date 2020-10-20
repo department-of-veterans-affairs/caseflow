@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ReduxBase from '../components/ReduxBase';
-
-import DecisionReviewer from './DecisionReviewer';
-
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+
+import ReduxBase from '../components/ReduxBase';
+import DecisionReviewer from './DecisionReviewer';
 import rootReducer from './reducers';
 
 class Reader extends React.PureComponent {
