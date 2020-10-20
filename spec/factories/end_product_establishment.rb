@@ -21,6 +21,7 @@ FactoryBot.define do
 
     trait :active do
       synced_status { "PEND" }
+      established_at { 5.days.ago }
     end
 
     after(:build) do |end_product_establishment, _evaluator|
