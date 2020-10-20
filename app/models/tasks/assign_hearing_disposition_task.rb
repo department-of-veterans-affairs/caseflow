@@ -92,7 +92,7 @@ class AssignHearingDispositionTask < Task
 
     update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
 
-    [evidence_task].flatten
+    [evidence_task].compact
   end
 
   def postpone!
@@ -264,7 +264,7 @@ class AssignHearingDispositionTask < Task
                           )
                         end
 
-    [new_hearing_task, schedule_task, admin_action_task].flatten
+    [new_hearing_task, schedule_task, admin_action_task].compact
   end
 
   def create_transcription_and_maybe_evidence_submission_window_tasks
@@ -278,6 +278,6 @@ class AssignHearingDispositionTask < Task
                       EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: self, assigned_to: MailTeam.singleton)
                     end
 
-    [transcription_task, evidence_task].flatten
+    [transcription_task, evidence_task].compact
   end
 end
