@@ -7,7 +7,7 @@ import { withRouter } from 'react-router-dom';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
 import { sprintf } from 'sprintf-js';
-import { maxBy } from 'lodash';
+import { maxBy, find, get } from 'lodash';
 
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import COPY from '../../../COPY';
@@ -18,7 +18,7 @@ import { onReceiveAppealDetails } from '../../queue/QueueActions';
 import { formatDateStr } from '../../util/DateUtil';
 import Alert from '../../components/Alert';
 import { setMargin, marginTop, regionalOfficeSection, saveButton, cancelButton } from './details/style';
-import { find, get } from 'lodash';
+
 import { getAppellantTitle, processAlerts, parseVirtualHearingErrors } from '../utils';
 import {
   onChangeFormData,
@@ -215,7 +215,7 @@ export const ScheduleVeteran = ({
 
       // Find the most recently created AssignHearingDispositionTask. This task will have the ID of the
       // most recently created hearing.
-      const task = maxBy(
+      const mostRecentTask = maxBy(
         body?.tasks?.data?.filter((task) => task.attributes.type === 'AssignHearingDispositionTask') || [],
         (task) => task.id
       );
@@ -223,7 +223,7 @@ export const ScheduleVeteran = ({
       const alerts = body?.tasks?.alerts;
 
       if (alerts && hearing.virtualHearing) {
-        processAlerts(alerts, props, () => props.startPollingHearing(task?.attributes?.external_hearing_id));
+        processAlerts(alerts, props, () => props.startPollingHearing(mostRecentTask?.attributes?.external_hearing_id));
       } else {
         props.showSuccessMessage(getSuccessMsg());
       }
