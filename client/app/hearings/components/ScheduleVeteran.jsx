@@ -101,9 +101,6 @@ export const ScheduleVeteran = ({
 
   // Reset the component state
   const reset = () => {
-    // Clear the loading state
-    setLoading(false);
-
     // Clear any lingering errors
     setErrors({});
 
@@ -248,9 +245,6 @@ export const ScheduleVeteran = ({
 
         setErrors(errList);
 
-        // Remove the loading state on error
-        setLoading(false);
-
       // Handle errors in the standard format
       } else if (msg?.title) {
         props.showErrorMessage({
@@ -274,6 +268,9 @@ export const ScheduleVeteran = ({
                 'Please contact the Caseflow Team for assistance.',
         });
       }
+    } finally {
+      // Clear the loading state
+      setLoading(false);
     }
   };
 
