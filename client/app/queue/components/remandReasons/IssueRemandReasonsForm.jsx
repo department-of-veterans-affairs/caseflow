@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { flexColumn, flexContainer } from './constants';
-import CheckboxGroup from '../../../components/CheckboxGroup';
-import { LEGACY_REMAND_REASONS } from '../../constants';
+
+import CheckboxGroup from 'app/components/CheckboxGroup';
+import { LEGACY_REMAND_REASONS } from 'app/queue/constants';
 import { IssueRemandReasonCheckbox } from './IssueRemandReasonCheckbox';
+import { flexColumn, flexContainer } from './constants';
 
 export const LegacyCheckboxGroup = () => {
   const getCheckbox = (option, onChange) => <IssueRemandReasonCheckbox option={option} onChange={onChange} isLegacyAppeal />;

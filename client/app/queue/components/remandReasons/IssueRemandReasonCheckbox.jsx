@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import Checkbox from '../../../components/Checkbox';
-import RadioField from '../../../components/RadioField';
 
-import COPY from '../../../../COPY';
 import { css } from 'glamor';
+
+import Checkbox from 'app/components/Checkbox';
+import RadioField from 'app/components/RadioField';
+import COPY from 'app/../COPY';
 import {
   errorNoTopMargin,
   smallBottomMargin,
