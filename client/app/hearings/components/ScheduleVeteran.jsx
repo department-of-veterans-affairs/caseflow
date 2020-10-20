@@ -7,6 +7,7 @@ import { withRouter } from 'react-router-dom';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
 import { sprintf } from 'sprintf-js';
+import { maxBy } from 'lodash';
 
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import COPY from '../../../COPY';
@@ -212,7 +213,12 @@ export const ScheduleVeteran = ({
       // Patch the hearing task with the form data
       const { body } = await ApiUtil.patch(`/tasks/${taskId}`, payload);
 
-      const [task] = body?.tasks?.data?.filter((hearingTask) => hearingTask.id === taskId);
+      // Find the most recently created AssignHearingDispositionTask. This task will have the ID of the
+      // most recently created hearing.
+      const task = maxBy(
+        body?.tasks?.data?.filter((task) => task.attributes.type === 'AssignHearingDispositionTask') || [],
+        (task) => task.id
+      );
 
       const alerts = body?.tasks?.alerts;
 
