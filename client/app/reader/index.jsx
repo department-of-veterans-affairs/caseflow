@@ -31,9 +31,8 @@ class Reader extends React.PureComponent {
 }
 
 Reader.propTypes = {
-  featureToggles: PropTypes.shape({
-    readerVersion2: PropTypes.bool
-  })
+  router: PropTypes.elementType,
+  routerTestProps: PropTypes.object
 };
 
 export default Reader;
