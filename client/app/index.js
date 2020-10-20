@@ -18,7 +18,7 @@ import rootReducer from 'app/reader/reducers';
 // List of container components we render directly in  Rails .erb files
 const Router = React.lazy(() => import('app/2.0/router'));
 const BaseContainer = React.lazy(() => import('app/containers/BaseContainer'));
-const { Certification } = React.lazy(() => import('app/certification/Certification'));
+const Certification = React.lazy(() => import('app/certification/Certification'));
 
 // Dispatch
 const EstablishClaimPage = React.lazy(() => import('app/containers/EstablishClaimPage'));
