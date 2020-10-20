@@ -7,7 +7,7 @@ import { withRouter } from 'react-router-dom';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
 import { sprintf } from 'sprintf-js';
-import { maxBy, find, get } from 'lodash';
+import { maxBy, omit, find, get } from 'lodash';
 
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import COPY from '../../../COPY';
@@ -18,7 +18,6 @@ import { onReceiveAppealDetails } from '../../queue/QueueActions';
 import { formatDateStr } from '../../util/DateUtil';
 import Alert from '../../components/Alert';
 import { setMargin, marginTop, regionalOfficeSection, saveButton, cancelButton } from './details/style';
-
 import { getAppellantTitle, processAlerts, parseVirtualHearingErrors } from '../utils';
 import {
   onChangeFormData,
