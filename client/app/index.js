@@ -79,7 +79,7 @@ const COMPONENTS = {
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
   /* eslint-disable-next-line */
-  const wrapComponent = (Component) => props.featureToggles?.caseflowVersion2 ? (
+  const wrapComponent = (Component) => props.featureToggles?.interfaceVersion2 ? (
     <ReduxBase reducer={rootReducer}>
       <BaseLayout {...props}>
         <Component {...props} />
