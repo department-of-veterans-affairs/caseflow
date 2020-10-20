@@ -44,7 +44,7 @@ class Docket
   end
 
   def age_of_oldest_priority_appeal
-    @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first.ready_for_distribution_at
+    @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
   end
 
   def oldest_priority_appeal_days_waiting
