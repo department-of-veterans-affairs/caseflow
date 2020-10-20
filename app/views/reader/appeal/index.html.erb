@@ -6,6 +6,7 @@
     page: "DecisionReviewer",
     feedbackUrl: feedback_url,
     featureToggles: {
+      readerVersion2: FeatureToggle.enabled?(:reader_version_2, user: current_user),
       windowSlider: FeatureToggle.enabled?(:window_slider, user: current_user),
     },
     pdfWorker: asset_path('pdf.worker.js'),

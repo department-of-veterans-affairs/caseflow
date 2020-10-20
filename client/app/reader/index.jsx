@@ -1,38 +1,16 @@
+// External Dependencies
 import React from 'react';
 import PropTypes from 'prop-types';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
-import ReduxBase from '../components/ReduxBase';
-import DecisionReviewer from './DecisionReviewer';
-import rootReducer from './reducers';
+// Internal Dependencies
+import ReaderAppLegacy from './ReaderApp';
 
-class Reader extends React.PureComponent {
-  constructor() {
-    super();
-    this.routedDecisionReviewer.displayName = 'RoutedDecisionReviewer';
-  }
-
-  routedDecisionReviewer = () => <DecisionReviewer {...this.props} />;
-
-  render = () => {
-
-    return (
-      <ReduxBase reducer={rootReducer}>
-        <BrowserRouter basename="/reader/appeal" {...this.props.routerTestProps}>
-          <Switch>
-            {/* We want access to React Router's match params, so we'll wrap all possible paths in a <Route>. */}
-            <Route path="/:vacolsId/documents" render={this.routedDecisionReviewer} />
-            <Route path="/" render={this.routedDecisionReviewer} />
-          </Switch>
-        </BrowserRouter>
-      </ReduxBase>
-    );
-  };
-}
+const Reader = (props) => !props.featureToggles?.readerVersion2 && <ReaderAppLegacy {...props} />;
 
 Reader.propTypes = {
-  router: PropTypes.elementType,
-  routerTestProps: PropTypes.object
+  featureToggles: PropTypes.objectOf({
+    readerVersion2: PropTypes.bool
+  })
 };
 
 export default Reader;
