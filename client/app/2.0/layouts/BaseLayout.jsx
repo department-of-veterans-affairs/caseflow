@@ -60,7 +60,7 @@ BaseLayout.propTypes = {
   defaultUrl: PropTypes.string,
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = () => ({
   appName: 'Queue',
   message: 'Loading...',
 });
