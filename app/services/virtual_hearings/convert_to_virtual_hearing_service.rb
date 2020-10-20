@@ -21,12 +21,26 @@ class VirtualHearings::ConvertToVirtualHearingService
       form.update
 
       [{ hearing: form.hearing_alerts }, { virtual_hearing: form.virtual_hearing_alert }]
-    rescue StandardError => error
+    rescue ActiveRecord::RecordNotUnique => error
+      raise(
+        Caseflow::Error::VirtualHearingConversionFailed,
+        error_type: error.class,
+        message: COPY::VIRTUAL_HEARING_ALREADY_CREATED,
+        code: 1003
+      )
+    rescue ActiveRecord::RecordInvalid => error
       raise(
         Caseflow::Error::VirtualHearingConversionFailed,
         error_type: error.class,
         message: error.message,
         code: 1002
+      )
+    rescue StandardError => error
+      raise(
+        Caseflow::Error::VirtualHearingConversionFailed,
+        error_type: error.class,
+        message: error.message,
+        code: 1099
       )
     end
   end
