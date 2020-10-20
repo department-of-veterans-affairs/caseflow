@@ -4,7 +4,13 @@ import { IssueRemandReasonsForm } from './IssueRemandReasonsForm';
 
 /* eslint-disable react/prop-types */
 
-const issue = {};
+const issue = {
+  id: 1,
+  benefit_type: 'education',
+  description: 'Lorem ipsum and whatnot',
+  diagnostic_code: '503',
+  disposition: 'remanded'
+};
 
 export default {
   title: 'Queue/Components/Remand Reasons/IssueRemandReasonsForm',
@@ -14,6 +20,8 @@ export default {
   },
   args: {
     issue,
+    issueNumber: 1,
+    issueTotal: 2
   },
   argTypes: {},
 };

@@ -25,7 +25,7 @@ export const IssueRemandReasonCheckbox = ({
   const handleRadioChange = (val) => setState({ ...state, post_aoj: val });
 
   useEffect(() => {
-    onChange?.({ id: option.id, values: state });
+    onChange?.({ code: option.id, checked: state.value, post_aoj: state.post_aoj });
   }, [state.value, state.post_aoj]);
 
   return (
