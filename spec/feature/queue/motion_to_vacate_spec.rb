@@ -596,6 +596,13 @@ RSpec.feature "Motion to vacate", :all_dbs do
       ].join("/")
     end
 
+    let(:remand_reasons_path) do
+      [
+        "/queue/appeals/#{vacate_stream.uuid}/tasks/#{attorney_task.id}",
+        "motion_to_vacate_checkout/remand_reasons"
+      ].join("/")
+    end
+
     let(:admin_actions_path) do
       [
         "/queue/appeals/#{vacate_stream.uuid}/tasks/#{attorney_task.id}",
@@ -707,80 +714,178 @@ RSpec.feature "Motion to vacate", :all_dbs do
     context "Vacate & Readjudicate" do
       let(:vacate_type) { "vacate_and_readjudication" }
 
-      it "correctly handles checkout flow" do
-        User.authenticate!(user: drafting_attorney)
+      context "without remanded decision" do
+        it "correctly handles checkout flow" do
+          User.authenticate!(user: drafting_attorney)
+  
+          visit "/queue/appeals/#{vacate_stream.uuid}"
+  
+          check_cavc_alert
+          verify_cavc_conflict_action
+  
+          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+          find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
+  
+          expect(page.current_path).to eq(review_decisions_path)
+  
+          expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+          expect(page).to have_css(".cf-progress-bar-not-activated", text: "2. Add Decisions")
+          expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
+  
+          safe_click "#button-next-button"
+  
+          expect(page.current_path).to eq(add_decisions_path)
+  
+          safe_click "#button-back-button"
+  
+          expect(page.current_path).to eq(review_decisions_path)
+  
+          safe_click "#button-next-button"
+  
+          expect(page.current_path).to eq(add_decisions_path)
+  
+          expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+          expect(page).to have_css(".cf-progress-bar-activated", text: "2. Add Decisions")
+          expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
+  
+          # Add a first decision issue
+          all("button", text: "+ Add decision", count: 3)[0].click
+          expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+  
+          fill_in "Text Box", with: "test"
+  
+          find(".cf-select__control", text: "Select disposition").click
+          find("div", class: "cf-select__option", text: "Allowed").click
+  
+          click_on "Add Issue"
+  
+          safe_click "#button-next-button"
+  
+          expect(page.current_path).to eq(submit_decisions_path)
+  
+          safe_click "#button-back-button"
+  
+          expect(page.current_path).to eq(add_decisions_path)
+  
+          safe_click "#button-next-button"
+  
+          expect(page.current_path).to eq(submit_decisions_path)
+  
+          expect(page).to have_content("Submit Draft Decision for Review")
+  
+          expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+          expect(page).to have_css(".cf-progress-bar-activated", text: "2. Add Decisions")
+          expect(page).to have_css(".cf-progress-bar-activated", text: "3. Submit Draft Decision for Review")
+  
+          fill_in "Document ID:", with: valid_document_id
+          expect(page).to have_content(judge.full_name)
+          fill_in "notes", with: "all done"
+  
+          click_on "Submit"
+  
+          expect(page).to have_content(
+            "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
+            "sent to #{judge.full_name} for review."
+          )
+  
+          expect(vacate_stream.decision_issues.size).to eq(4)
+        end
+      end
 
-        visit "/queue/appeals/#{vacate_stream.uuid}"
+      context "with remanded decision" do
+        it "correctly handles checkout flow" do
+          User.authenticate!(user: drafting_attorney)
+  
+          visit "/queue/appeals/#{vacate_stream.uuid}"
+  
+          check_cavc_alert
+          verify_cavc_conflict_action
+  
+          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+          find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
+  
+          expect(page.current_path).to eq(review_decisions_path)
+  
+          expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+          expect(page).to have_css(".cf-progress-bar-not-activated", text: "2. Add Decisions")
+          expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
+  
+          safe_click "#button-next-button"
+  
+          expect(page.current_path).to eq(add_decisions_path)
+  
+          safe_click "#button-back-button"
+  
+          expect(page.current_path).to eq(review_decisions_path)
+  
+          safe_click "#button-next-button"
+  
+          expect(page.current_path).to eq(add_decisions_path)
+  
+          expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+          expect(page).to have_css(".cf-progress-bar-activated", text: "2. Add Decisions")
+          expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
+  
+          # Add a first decision issue
+          add_decision_to_issue(0, "Allowed", "test")
 
-        check_cavc_alert
-        verify_cavc_conflict_action
+          # Add a remanded decision issue
+          add_decision_to_issue(1, "Remanded", "remanded test")
 
-        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
+          # Next should be remand reasons 
+          safe_click "#button-next-button"
+  
+          expect(page.current_path).to eq(remand_reasons_path)
 
-        expect(page.current_path).to eq(review_decisions_path)
+          binding.pry
 
-        expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
-        expect(page).to have_css(".cf-progress-bar-not-activated", text: "2. Add Decisions")
-        expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
+          # Add remand reasons
 
-        safe_click "#button-next-button"
+          safe_click "#button-next-button"
+  
+          expect(page.current_path).to eq(submit_decisions_path)
+  
+          safe_click "#button-back-button"
 
-        expect(page.current_path).to eq(add_decisions_path)
+          # Going back should return to add_decisions, not remand_reasons
+  
+          expect(page.current_path).to eq(add_decisions_path)
+  
+          safe_click "#button-next-button"
+  
+          expect(page.current_path).to eq(submit_decisions_path)
+  
+          expect(page).to have_content("Submit Draft Decision for Review")
+  
+          expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+          expect(page).to have_css(".cf-progress-bar-activated", text: "2. Add Decisions")
+          expect(page).to have_css(".cf-progress-bar-activated", text: "3. Submit Draft Decision for Review")
+  
+          fill_in "Document ID:", with: valid_document_id
+          expect(page).to have_content(judge.full_name)
+          fill_in "notes", with: "all done"
+  
+          click_on "Submit"
+  
+          expect(page).to have_content(
+            "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
+            "sent to #{judge.full_name} for review."
+          )
+  
+          expect(vacate_stream.decision_issues.size).to eq(4)
+        end
+      end
 
-        safe_click "#button-back-button"
-
-        expect(page.current_path).to eq(review_decisions_path)
-
-        safe_click "#button-next-button"
-
-        expect(page.current_path).to eq(add_decisions_path)
-
-        expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
-        expect(page).to have_css(".cf-progress-bar-activated", text: "2. Add Decisions")
-        expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
-
-        # Add a first decision issue
-        all("button", text: "+ Add decision", count: 3)[0].click
+      def add_decision_to_issue(idx, disposition, description)
+        all("button", text: "+ Add decision", count: 3)[idx].click
         expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
 
-        fill_in "Text Box", with: "test"
+        fill_in "Text Box", with: description
 
         find(".cf-select__control", text: "Select disposition").click
-        find("div", class: "cf-select__option", text: "Allowed").click
+        find("div", class: "cf-select__option", text: disposition).click
 
         click_on "Add Issue"
-
-        safe_click "#button-next-button"
-
-        expect(page.current_path).to eq(submit_decisions_path)
-
-        safe_click "#button-back-button"
-
-        expect(page.current_path).to eq(add_decisions_path)
-
-        safe_click "#button-next-button"
-
-        expect(page.current_path).to eq(submit_decisions_path)
-
-        expect(page).to have_content("Submit Draft Decision for Review")
-
-        expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
-        expect(page).to have_css(".cf-progress-bar-activated", text: "2. Add Decisions")
-        expect(page).to have_css(".cf-progress-bar-activated", text: "3. Submit Draft Decision for Review")
-
-        fill_in "Document ID:", with: valid_document_id
-        expect(page).to have_content(judge.full_name)
-        fill_in "notes", with: "all done"
-
-        click_on "Submit"
-
-        expect(page).to have_content(
-          "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
-          "sent to #{judge.full_name} for review."
-        )
-
-        expect(vacate_stream.decision_issues.size).to eq(4)
       end
     end
 
