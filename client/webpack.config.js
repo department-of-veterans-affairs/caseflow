@@ -10,7 +10,8 @@ const config = {
   output: {
     filename: 'webpack-bundle.js',
     sourceMapFilename: 'sourcemap-[file].map',
-    path: path.join(__dirname, '../app/assets/javascripts')
+    path: path.join(__dirname, '../app/assets/javascripts'),
+    publicPath: '/assets/'
   },
   plugins: _.compact([
     new webpack.EnvironmentPlugin({ NODE_ENV: 'development' })
