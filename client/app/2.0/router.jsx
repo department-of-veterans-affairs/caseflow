@@ -7,7 +7,7 @@ const ReaderRoutes = React.lazy(() => import('app/2.0/routes/Reader'));
 
 const Router = (props) => {
   return (
-    <BrowserRouter basename="/reader/appeal" >
+    <BrowserRouter>
       <Switch>
         <ReaderRoutes {...props} />
       </Switch>

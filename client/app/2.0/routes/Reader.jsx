@@ -17,15 +17,15 @@ const ReaderRoutes = ({ appeal }) => (
       exact
       title={getClaimsFolderPageTitle(appeal)}
       breadcrumb="Reader"
-      path="/:vacolsId/documents"
-      render={DocumentsTable}
+      path="/reader/appeal/:vacolsId/documents"
+      render={(props) => <DocumentsTable {...props} />}
     />
     <PageRoute
       exact
       title="Document Viewer | Caseflow Reader"
       breadcrumb="Document Viewer"
-      path="/:vacolsId/documents/:docId"
-      render={Document}
+      path="/reader/appeal/:vacolsId/documents/:docId"
+      render={(props) => <Document {...props} />}
     />
   </React.Fragment>
 );
