@@ -31,7 +31,8 @@ class Appeal < DecisionReview
   enum stream_type: {
     "original": "original",
     "vacate": "vacate",
-    "de_novo": "de_novo"
+    "de_novo": "de_novo",
+    "court_remand": "court_remand"
   }
 
   after_create :conditionally_set_aod_based_on_age
@@ -92,6 +93,7 @@ class Appeal < DecisionReview
   def create_stream(stream_type)
     ActiveRecord::Base.transaction do
       Appeal.create!(slice(
+        :aod_based_on_age,
         :receipt_date,
         :veteran_file_number,
         :legacy_opt_in_approved,
@@ -333,13 +335,12 @@ class Appeal < DecisionReview
     veteran_middle_name&.first
   end
 
-  def cavc?
-    false if cavc == "not implemented for AMA"
+  # matches Legacy behavior
+  def cavc
+    court_remand?
   end
 
-  def cavc
-    "not implemented for AMA"
-  end
+  alias cavc? cavc
 
   def status
     @status ||= BVAAppealStatus.new(appeal: self)
