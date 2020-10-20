@@ -70,6 +70,9 @@ class VACOLS::CaseHearing < VACOLS::Record
   after_update :create_or_update_diaries
 
   class << self
+    # Finds all hearings for specific days.
+    #
+    # @deprecated Use {#where}
     def hearings_for_hearing_days(hearing_day_ids)
       select_hearings
         .where(vdkey: hearing_day_ids)
@@ -77,6 +80,9 @@ class VACOLS::CaseHearing < VACOLS::Record
         .where.not(folder_nr: nil)
     end
 
+    # Finds all hearings for specific days that are assigned to a judge.
+    #
+    # @deprecated Use {#where}
     def hearings_for_hearing_days_assigned_to_judge(hearing_day_ids, judge)
       id = connection.quote(judge.css_id.upcase)
 
@@ -87,6 +93,9 @@ class VACOLS::CaseHearing < VACOLS::Record
         .where.not(folder_nr: nil)
     end
 
+    # Finds all hearings for an appeal.
+    #
+    # @deprecated Use {#where}
     def for_appeal(appeal_vacols_id)
       select_hearings.where(folder_nr: appeal_vacols_id)
     end
@@ -101,6 +110,9 @@ class VACOLS::CaseHearing < VACOLS::Record
       end
     end
 
+    # Finds a hearing by ID.
+    #
+    # @deprecated Use {#find}.
     def load_hearing(pkseq)
       select_hearings.find_by(hearing_pkseq: pkseq)
     end
@@ -116,6 +128,11 @@ class VACOLS::CaseHearing < VACOLS::Record
 
     private
 
+    # Selects hearings and associated fields.
+    #
+    # @deprecated Use {#eager_load} when appropriate. This method creates attributes on the model that
+    #   *don't* actually exist on the HEARSCHED table. It is better to load the associated data in a way
+    #   that is idiomatic to Rails.
     def select_hearings
       # VACOLS overloads the HEARSCHED table with other types of hearings
       # that work differently. Filter those out.
