@@ -49,10 +49,21 @@ module Api
             render_missing_headers
             return false
           end
-          unless veteran
+          unless veteran && veteran_matches
             render_veteran_not_found
             return false
           end
+          true
+        end
+
+        def veteran_matches
+          if veteran_ssn && veteran_ssn != veteran.ssn
+            return false
+          end
+          if veteran_file_number && veteran_file_number != veteran.file_number
+            return false
+          end
+
           true
         end
 
