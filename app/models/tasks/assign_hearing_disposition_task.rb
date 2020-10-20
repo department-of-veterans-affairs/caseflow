@@ -151,6 +151,8 @@ class AssignHearingDispositionTask < Task
                         instructions: params["instructions"],
                         after_disposition_update: payload_values[:after_disposition_update]
                       )
+                    else
+                      raise "unknown disposition"
                     end
 
     update_with_instructions(instructions: params[:instructions]) if params[:instructions].present?
