@@ -166,6 +166,8 @@ RSpec.feature "Postpone hearing" do
         expect(page).to have_content("You have successfully assigned")
         expect(LegacyHearing.second.hearing_day.id).to eq hearing_day_earlier.id
         expect(LegacyHearing.first.disposition).to eq "postponed"
+        expect(LegacyHearing.second.disposition).to eq "assigned"
+        expect(LegacyHearing.second.vacols_id).to_not eq LegacyHearing.first.vacols_id
         expect(HearingTask.first.hearing.id).to eq legacy_hearing.id
         expect(HearingTask.second.hearing.id).to eq LegacyHearing.second.id
       end
