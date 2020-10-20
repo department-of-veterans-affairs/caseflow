@@ -248,7 +248,7 @@ export const ScheduleVeteran = ({
       } else if (msg?.title) {
         props.showErrorMessage({
           title: msg?.title,
-          detail: msg?.detail
+          detail: msg?.detail ?? msg?.message
         });
 
       // Handle legacy appeals
