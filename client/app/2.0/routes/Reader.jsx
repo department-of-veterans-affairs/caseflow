@@ -10,7 +10,7 @@ const DecisionReviewer = React.lazy(() => import('app/reader/DecisionReviewer'))
 const ReaderRoutes = (props) => {
   return (
     <Loadable>
-      <Route path="/:vacolsId/documents" render={() => <DecisionReviewer {...props} />} />
+      <div />
     </Loadable>
   );
 };

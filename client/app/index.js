@@ -6,11 +6,17 @@ import ReactOnRails from 'react-on-rails';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import _ from 'lodash';
+
+// Local Dependencies
 import './styles/app.scss';
 import '../node_modules/pdfjs-dist/web/pdf_viewer.css';
+import Loadable from 'app/2.0/components/shared/Loadable';
+import BaseLayout from 'app/2.0/layouts/BaseLayout';
+import ReduxBase from 'app/components/ReduxBase';
+import rootReducer from 'app/reader/reducers';
 
 // List of container components we render directly in  Rails .erb files
-const Root = React.lazy(() => import('app/2.0/root'));
+const Router = React.lazy(() => import('app/2.0/router'));
 const BaseContainer = React.lazy(() => import('app/containers/BaseContainer'));
 const { Certification } = React.lazy(() => import('app/certification/Certification'));
 
@@ -41,7 +47,7 @@ const Inbox = React.lazy(() => import('app/inbox'));
 
 const COMPONENTS = {
   // New Version 2.0 Root Component
-  Root,
+  Router,
   BaseContainer,
   Certification,
   // New SPA wrapper for multiple admin pages
@@ -72,12 +78,23 @@ const COMPONENTS = {
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
+  /* eslint-disable-next-line */
+  const wrapComponent = (Component) => props.featureToggles?.caseflowVersion2 ? (
+    <ReduxBase reducer={rootReducer}>
+      <BaseLayout {...props}>
+        <Component {...props} />
+      </BaseLayout>
+    </ReduxBase>
+  ) : (
+    <Suspense fallback={<div />}>
+      <Component {...props} />
+    </Suspense>
+  );
+
   const renderApp = (Component) => {
     const element = (
       <AppContainer>
-        <Suspense fallback={<div />}>
-          <Component {...props} />
-        </Suspense>
+        {wrapComponent(Component)}
       </AppContainer>
     );
 

@@ -2,16 +2,21 @@
 import React, { Suspense } from 'react';
 import PropTypes from 'prop-types';
 
-const Loadable = ({ children }) => {
+// Local Dependencies
+import LoadingScreen from 'app/components/LoadingScreen';
+
+const Loadable = ({ children, spinnerColor, message }) => {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<LoadingScreen spinnerColor={spinnerColor} message={message} />}>
       {children}
     </Suspense>
   );
 };
 
 Loadable.propTypes = {
-  children: PropTypes.element
+  children: PropTypes.element,
+  spinnerColor: PropTypes.string,
+  message: PropTypes.string
 };
 
 export default Loadable;
