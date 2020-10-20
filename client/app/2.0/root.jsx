@@ -1,7 +1,5 @@
 import React from 'react';
 
-const Root = () => {
+export const Root = () => {
   return <div />;
 };
-
-export default Root;

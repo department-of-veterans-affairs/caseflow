@@ -1,7 +1,6 @@
 import React from 'react';
 
-const ReaderRoutes = () => {
+export const ReaderRoutes = () => {
   return <div />;
 };
 
-export default ReaderRoutes;
