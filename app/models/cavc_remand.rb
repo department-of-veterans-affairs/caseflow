@@ -3,11 +3,12 @@
 # Model to store information captured when processing a form for an appeal remanded by CAVC
 
 class CavcRemand < CaseflowRecord
+  include UpdatedByUserConcern
+
   belongs_to :created_by, class_name: "User"
-  belongs_to :updated_by, class_name: "User"
   belongs_to :appeal
 
-  validates :created_by, :updated_by, :appeal, :cavc_docket_number, :represented_by_attorney, :cavc_judge_full_name,
+  validates :created_by, :appeal, :cavc_docket_number, :represented_by_attorney, :cavc_judge_full_name,
             :cavc_decision_type, :decision_date, :decision_issue_ids, :instructions, presence: true
   validates :remand_subtype, presence: true, if: :remand?
   validates :judgement_date, :mandate_date, presence: true, unless: :mdr?
