@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { css } from 'glamor';
@@ -135,9 +135,10 @@ export const IssueRemandReasonsForm = ({
   certificationDate,
   isLegacyAppeal = false,
   issue,
-  issueNumber,
-  issueTotal,
+  issueNumber = 1,
+  issueTotal = 1,
   highlight,
+  onChange,
 }) => {
   const [fields, setFields] = useState({});
 
@@ -145,15 +146,19 @@ export const IssueRemandReasonsForm = ({
   const handleChange = ({ code, checked, post_aoj }) => {
     setFields({
       ...fields,
-      [code]: { checked, post_aoj },
+      [code]: { code, checked, post_aoj },
     });
   };
-  const checkboxGroupProps = { handleChange, highlight };
+  const checkboxGroupProps = { onChange: handleChange, highlight };
 
   const selected = useMemo(
     () => Object.values(fields).filter((item) => item.checked),
     [fields]
   );
+
+  useEffect(() => {
+    onChange?.(selected);
+  }, [selected]);
 
   return (
     <div key={`remand-reasons-${String(issue.id)}`}>
@@ -205,8 +210,9 @@ export const IssueRemandReasonsForm = ({
 IssueRemandReasonsForm.propTypes = {
   certificationDate: PropTypes.string,
   isLegacyAppeal: PropTypes.bool,
-  issue: PropTypes.object,
+  issue: PropTypes.object.isRequired,
   issueNumber: PropTypes.number,
   issueTotal: PropTypes.number,
   highlight: PropTypes.bool,
+  onChange: PropTypes.func,
 };

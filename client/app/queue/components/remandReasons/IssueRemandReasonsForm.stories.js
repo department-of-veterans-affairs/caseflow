@@ -9,7 +9,7 @@ const issue = {
   benefit_type: 'education',
   description: 'Lorem ipsum and whatnot',
   diagnostic_code: '503',
-  disposition: 'remanded'
+  disposition: 'remanded',
 };
 
 export default {
@@ -21,9 +21,11 @@ export default {
   args: {
     issue,
     issueNumber: 1,
-    issueTotal: 2
+    issueTotal: 2,
   },
-  argTypes: {},
+  argTypes: {
+    onChange: { action: 'onChange' },
+  },
 };
 
 const Template = (args) => <IssueRemandReasonsForm {...args} />;
