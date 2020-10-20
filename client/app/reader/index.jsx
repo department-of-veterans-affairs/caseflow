@@ -1,15 +1,34 @@
-// External Dependencies
 import React from 'react';
 import PropTypes from 'prop-types';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
-// Internal Dependencies
-import ReaderAppLegacy from 'app/reader/ReaderApp';
+import ReduxBase from '../components/ReduxBase';
+import DecisionReviewer from './DecisionReviewer';
+import rootReducer from './reducers';
 
-// Version 2 does not distinguish by sub-application, so just call it Caseflow
-import { Root as Caseflow } from 'app/2.0/root';
+class Reader extends React.PureComponent {
+  constructor() {
+    super();
+    this.routedDecisionReviewer.displayName = 'RoutedDecisionReviewer';
+  }
 
-const Reader = (props) => props.featureToggles?.readerVersion2 ?
-  <Caseflow {...props} /> : <ReaderAppLegacy {...props} />;
+  routedDecisionReviewer = () => <DecisionReviewer {...this.props} />;
+
+  render = () => {
+
+    return (
+      <ReduxBase reducer={rootReducer}>
+        <BrowserRouter basename="/reader/appeal" {...this.props.routerTestProps}>
+          <Switch>
+            {/* We want access to React Router's match params, so we'll wrap all possible paths in a <Route>. */}
+            <Route path="/:vacolsId/documents" render={this.routedDecisionReviewer} />
+            <Route path="/" render={this.routedDecisionReviewer} />
+          </Switch>
+        </BrowserRouter>
+      </ReduxBase>
+    );
+  };
+}
 
 Reader.propTypes = {
   featureToggles: PropTypes.shape({

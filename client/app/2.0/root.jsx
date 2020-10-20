@@ -13,3 +13,5 @@ export const Root = (props) => {
     </ReduxBase>
   );
 };
+
+export default Root;
