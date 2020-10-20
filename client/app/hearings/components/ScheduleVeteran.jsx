@@ -216,7 +216,7 @@ export const ScheduleVeteran = ({
       // Find the most recently created AssignHearingDispositionTask. This task will have the ID of the
       // most recently created hearing.
       const mostRecentTask = maxBy(
-        body?.tasks?.data?.filter((task) => task.attributes.type === 'AssignHearingDispositionTask') || [],
+        body?.tasks?.data?.filter((task) => task.attributes?.type === 'AssignHearingDispositionTask') ?? [],
         (task) => task.id
       );
 
