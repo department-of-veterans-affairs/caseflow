@@ -12,7 +12,7 @@ const Reader = (props) => props.featureToggles?.readerVersion2 ?
   <Caseflow {...props} /> : <ReaderAppLegacy {...props} />;
 
 Reader.propTypes = {
-  featureToggles: PropTypes.objectOf({
+  featureToggles: PropTypes.shape({
     readerVersion2: PropTypes.bool
   })
 };
