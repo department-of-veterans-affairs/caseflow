@@ -11,6 +11,8 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   has_one :staff, foreign_key: :sattyid, primary_key: :board_member
   has_one :brieff, foreign_key: :bfkey, primary_key: :folder_nr, class_name: "Case"
+  has_one :folder, foreign_key: :ticknum, primary_key: :folder_nr
+  has_one :corres, foreign_key: :stafkey, primary_key: :bfcorkey, class_name: "Correspondent"
 
   HEARING_TYPE_LOOKUP = {
     central: "C",
@@ -46,6 +48,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     aod: :aod,
     transcript_requested: :tranreq,
     add_on: :addon,
+    add_time: :addtime,
     representative_name: :repname,
     staff_id: :mduser,
     room: :room,
@@ -115,7 +118,7 @@ class VACOLS::CaseHearing < VACOLS::Record
              :hearing_disp, :hearing_pkseq, :hearing_date, :hearing_type,
              :notes1, :folder_nr, :vdkey, :aod,
              :holddays, :tranreq, :transent,
-             :repname, :addon,  :board_member, :mduser,
+             :repname, :addon, :addtime, :board_member, :mduser,
              :mdtime, :sattyid, :bfregoff, :bfso,
              :bfcorkey, :bfddec, :bfdc, :room, :vdbvapoc,
              "staff.sdomainid as css_id", "brieff.bfac", "staff.slogid",
