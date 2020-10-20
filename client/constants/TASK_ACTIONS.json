@@ -92,6 +92,14 @@
     "label": "Send to Judge",
     "value": "docket_switch/checkout/review"
   },
+  "DENY_DOCKET_SWITCH": {
+    "label": "Send to Judge",
+    "value": "docket_switch/checkout/deny"
+  },
+  "GRANTED_DOCKET_SWITCH": {
+    "label": "Send to Judge",
+    "value": "docket_switch/checkout/grant"
+  },
   "CANCEL_FOREIGN_VETERANS_CASE_TASK": {
     "label": "Cancel hearing request",
     "value": "modal/cancel_task",

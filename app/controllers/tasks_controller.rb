@@ -32,7 +32,9 @@ class TasksController < ApplicationController
     ScheduleHearingTask: ScheduleHearingTask,
     SpecialCaseMovementTask: SpecialCaseMovementTask,
     Task: Task,
-    TranslationTask: TranslationTask
+    TranslationTask: TranslationTask,
+    DocketSwitchDeniedTask: DocketSwitchDeniedTask,
+    DocketSwitchGrantedTask: DocketSwitchGrantedTask
   }.freeze
 
   def set_application
