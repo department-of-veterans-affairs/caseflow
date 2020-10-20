@@ -151,12 +151,14 @@ export const ScheduleVeteran = ({
 
   // Format the payload for the API
   const getPayload = () => {
+    const virtualHearing = omit(hearing.virtualHearing, ['status']);
+
     // Format the shared hearing values
     const hearingValues = {
       scheduled_time_string: hearing.scheduledTimeString,
       hearing_day_id: hearing.hearingDay.hearingId,
       hearing_location: hearing.hearingLocation ? ApiUtil.convertToSnakeCase(hearing.hearingLocation) : null,
-      virtual_hearing_attributes: hearing.virtualHearing ? ApiUtil.convertToSnakeCase(hearing.virtualHearing) : null,
+      virtual_hearing_attributes: virtualHearing ? ApiUtil.convertToSnakeCase(virtualHearing) : null,
     };
 
     // Determine whether to send the reschedule payload
