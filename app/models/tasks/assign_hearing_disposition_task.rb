@@ -69,9 +69,9 @@ class AssignHearingDispositionTask < Task
     payload_values = params.delete(:business_payloads)&.dig(:values)
 
     if params[:status] == Constants.TASK_STATUSES.cancelled && payload_values[:disposition].present?
-      update_hearing_and_self(params: params, payload_values: payload_values)
+      created_tasks = update_hearing_and_self(params: params, payload_values: payload_values)
 
-      [self]
+      [self] + created_tasks
     else
       super(params, user)
     end
@@ -82,15 +82,17 @@ class AssignHearingDispositionTask < Task
       fail HearingDispositionNotCanceled
     end
 
-    if appeal.is_a? Appeal
-      EvidenceSubmissionWindowTask.find_or_create_by!(
-        appeal: appeal,
-        parent: hearing_task.parent,
-        assigned_to: MailTeam.singleton
-      )
-    end
+    evidence_task = if appeal.is_a? Appeal
+                      EvidenceSubmissionWindowTask.find_or_create_by!(
+                        appeal: appeal,
+                        parent: hearing_task.parent,
+                        assigned_to: MailTeam.singleton
+                      )
+                    end
 
     update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
+
+    [evidence_task].flatten
   end
 
   def postpone!
@@ -106,7 +108,7 @@ class AssignHearingDispositionTask < Task
       fail HearingDispositionNotNoShow
     end
 
-    NoShowHearingTask.create_with_hold(self)
+    [NoShowHearingTask.create_with_hold(self)]
   end
 
   def hold!
@@ -116,6 +118,8 @@ class AssignHearingDispositionTask < Task
 
     if appeal.is_a?(LegacyAppeal)
       update!(status: Constants.TASK_STATUSES.completed)
+
+      [] # Not creating any tasks, just updating self
     else
       create_transcription_and_maybe_evidence_submission_window_tasks
     end
@@ -135,21 +139,23 @@ class AssignHearingDispositionTask < Task
   end
 
   def update_hearing_and_self(params:, payload_values:)
-    case payload_values[:disposition]
-    when Constants.HEARING_DISPOSITION_TYPES.cancelled
-      mark_hearing_cancelled
-    when Constants.HEARING_DISPOSITION_TYPES.held
-      mark_hearing_held
-    when Constants.HEARING_DISPOSITION_TYPES.no_show
-      mark_hearing_no_show
-    when Constants.HEARING_DISPOSITION_TYPES.postponed
-      mark_hearing_postponed(
-        instructions: params["instructions"],
-        after_disposition_update: payload_values[:after_disposition_update]
-      )
-    end
+    created_tasks = case payload_values[:disposition]
+                    when Constants.HEARING_DISPOSITION_TYPES.cancelled
+                      mark_hearing_cancelled
+                    when Constants.HEARING_DISPOSITION_TYPES.held
+                      mark_hearing_held
+                    when Constants.HEARING_DISPOSITION_TYPES.no_show
+                      mark_hearing_no_show
+                    when Constants.HEARING_DISPOSITION_TYPES.postponed
+                      mark_hearing_postponed(
+                        instructions: params["instructions"],
+                        after_disposition_update: payload_values[:after_disposition_update]
+                      )
+                    end
 
     update_with_instructions(instructions: params[:instructions]) if params[:instructions].present?
+
+    created_tasks
   end
 
   def update_hearing_disposition(disposition:)
@@ -186,7 +192,7 @@ class AssignHearingDispositionTask < Task
           .convert_hearing_to_virtual(new_hearing, virtual_hearing_attributes)
       end
 
-      self.class.create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)
+      [new_hearing_task, self.class.create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)]
     end
   end
 
@@ -234,6 +240,8 @@ class AssignHearingDispositionTask < Task
         with_admin_action_klass: after_disposition_update[:with_admin_action_klass],
         admin_action_instructions: after_disposition_update[:admin_action_instructions]
       )
+    else
+      raise "unknown disposition action"
     end
   end
 
@@ -245,20 +253,29 @@ class AssignHearingDispositionTask < Task
       instructions: instructions.present? ? [instructions] : nil,
       parent: new_hearing_task
     )
-    if with_admin_action_klass.present?
-      with_admin_action_klass.constantize.create!(
-        appeal: appeal,
-        assigned_to: HearingsManagement.singleton,
-        instructions: admin_action_instructions.present? ? [admin_action_instructions] : nil,
-        parent: schedule_task
-      )
-    end
+    admin_action_task = if with_admin_action_klass.present?
+                          with_admin_action_klass.constantize.create!(
+                            appeal: appeal,
+                            assigned_to: HearingsManagement.singleton,
+                            instructions: admin_action_instructions.present? ? [admin_action_instructions] : nil,
+                            parent: schedule_task
+                          )
+                        end
+
+    [new_hearing_task, schedule_task, admin_action_task].flatten
   end
 
   def create_transcription_and_maybe_evidence_submission_window_tasks
-    TranscriptionTask.create!(appeal: appeal, parent: self, assigned_to: TranscriptionTeam.singleton)
-    unless hearing&.evidence_window_waived
-      EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: self, assigned_to: MailTeam.singleton)
-    end
+    transcription_task = TranscriptionTask.create!(
+      appeal: appeal,
+      parent: self,
+      assigned_to: TranscriptionTeam.singleton
+    )
+    
+    evidence_task = unless hearing&.evidence_window_waived
+                      EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: self, assigned_to: MailTeam.singleton)
+                    end
+
+    [transcription_task, evidence_task].flatten
   end
 end
