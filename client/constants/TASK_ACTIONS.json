@@ -92,12 +92,12 @@
     "label": "Send to Judge",
     "value": "docket_switch/checkout/review"
   },
-  "DENY_DOCKET_SWITCH": {
-    "label": "Send to Judge",
+  "DOCKET_SWITCH_DENIED": {
+    "label": "Deny Docket Switch",
     "value": "docket_switch/checkout/deny"
   },
-  "GRANTED_DOCKET_SWITCH": {
-    "label": "Send to Judge",
+  "DOCKET_SWITCH_GRANTED": {
+    "label": "Grant Docket Switch",
     "value": "docket_switch/checkout/grant"
   },
   "CANCEL_FOREIGN_VETERANS_CASE_TASK": {

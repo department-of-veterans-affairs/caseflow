@@ -17,6 +17,8 @@ class TasksController < ApplicationController
     BlockedSpecialCaseMovementTask: BlockedSpecialCaseMovementTask,
     ChangeHearingDispositionTask: ChangeHearingDispositionTask,
     ColocatedTask: ColocatedTask,
+    DocketSwitchDeniedTask: DocketSwitchDeniedTask,
+    DocketSwitchGrantedTask: DocketSwitchGrantedTask,
     EvidenceSubmissionWindowTask: EvidenceSubmissionWindowTask,
     FoiaTask: FoiaTask,
     HearingAdminActionTask: HearingAdminActionTask,
@@ -32,9 +34,7 @@ class TasksController < ApplicationController
     ScheduleHearingTask: ScheduleHearingTask,
     SpecialCaseMovementTask: SpecialCaseMovementTask,
     Task: Task,
-    TranslationTask: TranslationTask,
-    DocketSwitchDeniedTask: DocketSwitchDeniedTask,
-    DocketSwitchGrantedTask: DocketSwitchGrantedTask
+    TranslationTask: TranslationTask
   }.freeze
 
   def set_application

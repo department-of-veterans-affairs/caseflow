@@ -6,7 +6,7 @@ class DocketSwitchDeniedTask < AttorneyTask
 
     if ClerkOfTheBoard.singleton.user_has_access?(user)
       if assigned_to.is_a?(User) && FeatureToggle.enabled?(:docket_change, user: user)
-        actions.push(Constants.TASK_ACTIONS.DENY_DOCKET_SWITCH.to_h)
+        actions.push(Constants.TASK_ACTIONS.DOCKET_SWITCH_DENIED.to_h)
       end
     end
 
@@ -15,7 +15,7 @@ class DocketSwitchDeniedTask < AttorneyTask
 
   class << self
     def label
-      COPY::DOCKET_DENIED_TASK_LABEL
+      COPY::DOCKET_SWITCH_DENIED_TASK_LABEL
     end
   end
 end
