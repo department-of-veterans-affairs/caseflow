@@ -10,6 +10,7 @@ import './styles/app.scss';
 import '../node_modules/pdfjs-dist/web/pdf_viewer.css';
 
 // List of container components we render directly in  Rails .erb files
+const Root = React.lazy(() => import('app/2.0/root'));
 const BaseContainer = React.lazy(() => import('app/containers/BaseContainer'));
 const { Certification } = React.lazy(() => import('app/certification/Certification'));
 
@@ -39,6 +40,8 @@ const AsyncableJobs = React.lazy(() => import('app/asyncableJobs'));
 const Inbox = React.lazy(() => import('app/inbox'));
 
 const COMPONENTS = {
+  // New Version 2.0 Root Component
+  Root,
   BaseContainer,
   Certification,
   // New SPA wrapper for multiple admin pages
@@ -72,7 +75,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
   const renderApp = (Component) => {
     const element = (
       <AppContainer>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div />}>
           <Component {...props} />
         </Suspense>
       </AppContainer>
