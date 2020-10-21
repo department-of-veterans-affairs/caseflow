@@ -84,7 +84,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
       <ReduxBase reducer={rootReducer}>
         <BrowserRouter>
           <Switch>
-            <BaseLayout appName={props.appName || "Queue"} {...props}>
+            <BaseLayout appName={props.appName} {...props}>
               <Component {...props} />
             </BaseLayout>
           </Switch>

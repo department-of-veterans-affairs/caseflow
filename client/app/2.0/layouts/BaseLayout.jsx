@@ -1,6 +1,7 @@
 // External Dependencies
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 
 // Local dependencies
@@ -18,12 +19,14 @@ export const BaseLayout = ({
   buildDate,
   appName,
   defaultUrl,
+  crumbs
 }) => {
   return (
     <React.Fragment>
       <NavigationBar
         wideApp
         appName={appName}
+        crumbs={crumbs}
         logoProps={{
           accentColor: LOGO_COLORS[appName.toUpperCase()].ACCENT,
           overlapColor: LOGO_COLORS[appName.toUpperCase()].OVERLAP
@@ -33,6 +36,7 @@ export const BaseLayout = ({
         applicationUrls={applicationUrls}
         rightNavElement={<CaseSearchLink />}
         defaultUrl={defaultUrl}
+        outsideCurrentRouter
       >
         <Loadable spinnerColor={LOGO_COLORS[appName.toUpperCase()].ACCENT}>
           {children}
@@ -57,4 +61,20 @@ BaseLayout.propTypes = {
   buildDate: PropTypes.string,
   appName: PropTypes.string,
   defaultUrl: PropTypes.string,
+  crumbs: PropTypes.array,
 };
+
+const mapStateToProps = () => ({
+  // NOTE: This will be loaded from redux in a later PR in this stack
+  crumbs: [
+    {
+      breadcrumb: 'Reader',
+      path: '/reader/appeal/:vacolsId/documents'
+    }
+  ]
+});
+
+export default connect(
+  mapStateToProps,
+  null
+)(BaseLayout);
