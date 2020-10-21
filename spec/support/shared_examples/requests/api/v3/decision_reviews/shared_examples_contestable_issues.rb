@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.shared_examples "contestable issues index requests" do
-  before { FeatureToggle.enable!(:api_v3) }
-  after do
-    User.instance_variable_set(:@api_user, nil)
-    FeatureToggle.disable!(:api_v3)
-  end
-
   include_context "contestable issues request context", include_shared: true
 
   describe "#index" do
