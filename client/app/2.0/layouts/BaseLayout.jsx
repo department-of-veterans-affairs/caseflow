@@ -19,12 +19,14 @@ const BaseLayout = ({
   buildDate,
   appName,
   defaultUrl,
+  crumbs
 }) => {
   return (
     <React.Fragment>
       <NavigationBar
         wideApp
         appName={appName}
+        crumbs={crumbs}
         logoProps={{
           accentColor: LOGO_COLORS[appName.toUpperCase()].ACCENT,
           overlapColor: LOGO_COLORS[appName.toUpperCase()].OVERLAP
@@ -34,6 +36,7 @@ const BaseLayout = ({
         applicationUrls={applicationUrls}
         rightNavElement={<CaseSearchLink />}
         defaultUrl={defaultUrl}
+        outsideCurrentRouter
       >
         <Loadable spinnerColor={LOGO_COLORS[appName.toUpperCase()].ACCENT}>
           {children}
@@ -58,11 +61,16 @@ BaseLayout.propTypes = {
   buildDate: PropTypes.string,
   appName: PropTypes.string,
   defaultUrl: PropTypes.string,
+  crumbs: PropTypes.array,
 };
 
 const mapStateToProps = () => ({
-  appName: 'Queue',
-  message: 'Loading...',
+  crumbs: [
+    {
+      breadcrumb: 'Reader',
+      path: '/:vacolsId/documents'
+    }
+  ]
 });
 
 export default connect(

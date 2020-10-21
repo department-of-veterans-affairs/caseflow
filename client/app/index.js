@@ -78,11 +78,11 @@ const COMPONENTS = {
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
-  /* eslint-disable-next-line */
+  /* eslint-disable */
   const wrapComponent = (Component) => props.featureToggles?.interfaceVersion2 ? (
     <ReduxBase reducer={rootReducer}>
       <BrowserRouter basename="/reader/appeal">
-        <BaseLayout {...props}>
+        <BaseLayout appName={props.appName} {...props}>
           <Component {...props} />
         </BaseLayout>
       </BrowserRouter>
@@ -92,6 +92,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
       <Component {...props} />
     </Suspense>
   );
+  /* eslint-enable */
 
   const renderApp = (Component) => {
     const element = (
