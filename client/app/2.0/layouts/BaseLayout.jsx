@@ -10,7 +10,7 @@ import CaseSearchLink from 'app/components/CaseSearchLink';
 import { LOGO_COLORS } from 'app/constants/AppConstants';
 import Loadable from 'app/2.0/components/shared/Loadable';
 
-export const BaseLayout = ({
+const BaseLayout = ({
   children,
   userDisplayName,
   dropdownUrls,
