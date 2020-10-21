@@ -41,12 +41,10 @@ class AppealActiveTaskCancellation
   end
 
   def no_active_request_issues?
-    binding.pry
     request_issues.active.empty?
   end
 
   def cancel_active_tasks
-    binding.pry
     tasks.each(&:cancel_task_and_child_subtasks)
   end
 end
