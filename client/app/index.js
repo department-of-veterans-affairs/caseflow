@@ -10,7 +10,7 @@ import _ from 'lodash';
 // Local Dependencies
 import './styles/app.scss';
 import '../node_modules/pdfjs-dist/web/pdf_viewer.css';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Switch } from 'react-router-dom';
 import { BaseLayout } from 'app/2.0/layouts/BaseLayout';
 import ReduxBase from 'app/components/ReduxBase';
 import rootReducer from 'app/reader/reducers';
@@ -79,27 +79,26 @@ const COMPONENTS = {
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
   /* eslint-disable */
-  const wrapComponent = (Component) => props.featureToggles?.interfaceVersion2 ? (
-    <ReduxBase reducer={rootReducer}>
-      <BrowserRouter>
-        <BaseLayout appName={props.appName || 'Queue'} {...props}>
-          <Component {...props} />
-        </BaseLayout>
-      </BrowserRouter>
-    </ReduxBase>
-  ) : (
-    <Suspense fallback={<div />}>
-      <Component {...props} />
-    </Suspense>
-  );
+  const wrapComponent = (Component) =>
+    props.featureToggles?.interfaceVersion2 ? (
+      <ReduxBase reducer={rootReducer}>
+        <BrowserRouter>
+          <Switch>
+            <BaseLayout appName={props.appName || "Queue"} {...props}>
+              <Component {...props} />
+            </BaseLayout>
+          </Switch>
+        </BrowserRouter>
+      </ReduxBase>
+    ) : (
+      <Suspense fallback={<div />}>
+        <Component {...props} />
+      </Suspense>
+    );
   /* eslint-enable */
 
   const renderApp = (Component) => {
-    const element = (
-      <AppContainer>
-        {wrapComponent(Component)}
-      </AppContainer>
-    );
+    const element = <AppContainer>{wrapComponent(Component)}</AppContainer>;
 
     render(element, document.getElementById(domNodeId));
   };
