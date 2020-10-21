@@ -10,7 +10,7 @@ import _ from 'lodash';
 // Local Dependencies
 import './styles/app.scss';
 import '../node_modules/pdfjs-dist/web/pdf_viewer.css';
-import Loadable from 'app/2.0/components/shared/Loadable';
+import { BrowserRouter } from 'react-router-dom';
 import BaseLayout from 'app/2.0/layouts/BaseLayout';
 import ReduxBase from 'app/components/ReduxBase';
 import rootReducer from 'app/reader/reducers';
@@ -81,9 +81,11 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
   /* eslint-disable-next-line */
   const wrapComponent = (Component) => props.featureToggles?.interfaceVersion2 ? (
     <ReduxBase reducer={rootReducer}>
-      <BaseLayout {...props}>
-        <Component {...props} />
-      </BaseLayout>
+      <BrowserRouter basename="/reader/appeal">
+        <BaseLayout {...props}>
+          <Component {...props} />
+        </BaseLayout>
+      </BrowserRouter>
     </ReduxBase>
   ) : (
     <Suspense fallback={<div />}>
