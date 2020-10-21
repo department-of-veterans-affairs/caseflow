@@ -152,7 +152,7 @@ class AssignHearingDispositionTask < Task
                         after_disposition_update: payload_values[:after_disposition_update]
                       )
                     else
-                      raise "unknown disposition"
+                      fail "unknown disposition"
                     end
 
     update_with_instructions(instructions: params[:instructions]) if params[:instructions].present?
@@ -243,7 +243,7 @@ class AssignHearingDispositionTask < Task
         admin_action_instructions: after_disposition_update[:admin_action_instructions]
       )
     else
-      raise "unknown disposition action"
+      fail "unknown disposition action"
     end
   end
 
@@ -273,9 +273,13 @@ class AssignHearingDispositionTask < Task
       parent: self,
       assigned_to: TranscriptionTeam.singleton
     )
-    
+
     evidence_task = unless hearing&.evidence_window_waived
-                      EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: self, assigned_to: MailTeam.singleton)
+                      EvidenceSubmissionWindowTask.create!(
+                        appeal: appeal,
+                        parent: self,
+                        assigned_to: MailTeam.singleton
+                      )
                     end
 
     [transcription_task, evidence_task].compact

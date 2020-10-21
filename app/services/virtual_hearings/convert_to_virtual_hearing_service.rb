@@ -22,25 +22,22 @@ class VirtualHearings::ConvertToVirtualHearingService
 
       [{ hearing: form.hearing_alerts }, { virtual_hearing: form.virtual_hearing_alert }]
     rescue ActiveRecord::RecordNotUnique => error
-      raise(
-        Caseflow::Error::VirtualHearingConversionFailed,
-        error_type: error.class,
-        message: COPY::VIRTUAL_HEARING_ALREADY_CREATED,
-        code: 1003
-      )
+      raise wrap_error(error, 1003, COPY::VIRTUAL_HEARING_ALREADY_CREATED)
     rescue ActiveRecord::RecordInvalid => error
-      raise(
-        Caseflow::Error::VirtualHearingConversionFailed,
-        error_type: error.class,
-        message: error.message,
-        code: 1002
-      )
+      raise wrap_error(error, 1002, error.message)
     rescue StandardError => error
-      raise(
-        Caseflow::Error::VirtualHearingConversionFailed,
+      raise wrap_error(error, 1099, error.message)
+    end
+
+    private
+
+    # Wraps an error in the class `Caseflow::Error::VirtualHearingConversionFailed`, allowing
+    # errors thrown by this class to be handled with specialized logic.
+    def wrap_error(error, code, message)
+      Caseflow::Error::VirtualHearingConversionFailed.new(
         error_type: error.class,
-        message: error.message,
-        code: 1099
+        message: message,
+        code: code
       )
     end
   end
