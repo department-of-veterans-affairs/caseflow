@@ -65,6 +65,7 @@ BaseLayout.propTypes = {
 };
 
 const mapStateToProps = () => ({
+  // NOTE: This will be loaded from redux in a later PR in this stack
   crumbs: [
     {
       breadcrumb: 'Reader',
