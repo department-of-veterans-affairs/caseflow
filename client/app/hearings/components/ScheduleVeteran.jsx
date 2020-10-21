@@ -7,7 +7,7 @@ import { withRouter } from 'react-router-dom';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
 import { sprintf } from 'sprintf-js';
-import { maxBy, omit, find, get } from 'lodash';
+import { isNil, maxBy, omit, find, get } from 'lodash';
 
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import COPY from '../../../COPY';
@@ -147,7 +147,12 @@ export const ScheduleVeteran = ({
 
   // Format the payload for the API
   const getPayload = () => {
-    const virtualHearing = omit(hearing.virtualHearing, ['status']);
+    // The API can't accept a payload if the field `status` is provided because it is a generated
+    // (not editable) field.
+    //
+    // `omit` returns an empty object if `null` is provided as an argument, so the `isNil` check here
+    // prevents `omit` from returning an empty object.`
+    const virtualHearing = isNil(hearing.virtualHearing) ? null : omit(hearing.virtualHearing, ['status']);
 
     // Format the shared hearing values
     const hearingValues = {
