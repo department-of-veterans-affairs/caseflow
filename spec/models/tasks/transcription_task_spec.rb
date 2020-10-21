@@ -66,10 +66,10 @@ describe TranscriptionTask, :postgres do
         }
       end
       let(:appeal) { create(:appeal) }
-      let!(:root_task) { create(:root_task, appeal: appeal) }
-      let!(:hearing_task) { create(:hearing_task, parent: root_task) }
+      let(:root_task) { create(:root_task, appeal: appeal) }
+      let(:hearing_task) { create(:hearing_task, parent: root_task) }
       let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task) }
-      let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task.reload) }
+      let(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task.reload) }
       let!(:transcription_task) { create(:transcription_task, parent: disposition_task) }
 
       it "cancels all tasks in the hierarchy and creates a new schedule_hearing_task" do
@@ -88,6 +88,22 @@ describe TranscriptionTask, :postgres do
         expect(new_hearing_task.type).to eq(HearingTask.name)
         expect(new_schedule_hearing_task.open?).to eq(true)
         expect(new_schedule_hearing_task.type).to eq(ScheduleHearingTask.name)
+      end
+
+      context "when created from a missing hearing transcript admin acgtion" do
+        let!(:schedule_hearing_task) { nil }
+        let(:parent_task) { create(:ama_colocated_task, :missing_hearing_transcripts, parent: root_task) }
+        let!(:transcription_task) { parent_task.children.first }
+
+        it "cancels the task but does not recreate a hearing" do
+          transcription_task.update_from_params(update_params, transcription_user)
+
+          expect(transcription_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+          expect(parent_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+
+          new_hearing_task = root_task.children.where.not(status: Constants.TASK_STATUSES.cancelled).first
+          expect(new_hearing_task.nil?).to be true
+        end
       end
     end
 

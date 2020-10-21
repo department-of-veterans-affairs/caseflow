@@ -49,7 +49,7 @@ class TranscriptionTask < Task
     multi_transaction do
       verify_user_can_update!(current_user)
 
-      if params[:status] == Constants.TASK_STATUSES.cancelled
+      if params[:status] == Constants.TASK_STATUSES.cancelled && hearing_task.type == HearingTask.name
         recreate_hearing
       else
         super(params, current_user)
