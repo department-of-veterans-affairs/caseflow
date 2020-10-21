@@ -11,7 +11,7 @@ import _ from 'lodash';
 import './styles/app.scss';
 import '../node_modules/pdfjs-dist/web/pdf_viewer.css';
 import { BrowserRouter } from 'react-router-dom';
-import BaseLayout from 'app/2.0/layouts/BaseLayout';
+import { BaseLayout } from 'app/2.0/layouts/BaseLayout';
 import ReduxBase from 'app/components/ReduxBase';
 import rootReducer from 'app/reader/reducers';
 
@@ -78,11 +78,11 @@ const COMPONENTS = {
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
-  /* eslint-disable-next-line */
+  /* eslint-disable */
   const wrapComponent = (Component) => props.featureToggles?.interfaceVersion2 ? (
     <ReduxBase reducer={rootReducer}>
       <BrowserRouter>
-        <BaseLayout {...props}>
+        <BaseLayout appName={props.appName || 'Queue'} {...props}>
           <Component {...props} />
         </BaseLayout>
       </BrowserRouter>
@@ -92,6 +92,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
       <Component {...props} />
     </Suspense>
   );
+  /* eslint-enable */
 
   const renderApp = (Component) => {
     const element = (

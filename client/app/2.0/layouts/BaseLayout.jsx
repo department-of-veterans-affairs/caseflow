@@ -1,7 +1,6 @@
 // External Dependencies
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 
 // Local dependencies
@@ -10,7 +9,7 @@ import CaseSearchLink from 'app/components/CaseSearchLink';
 import { LOGO_COLORS } from 'app/constants/AppConstants';
 import Loadable from 'app/2.0/components/shared/Loadable';
 
-const BaseLayout = ({
+export const BaseLayout = ({
   children,
   userDisplayName,
   dropdownUrls,
@@ -59,13 +58,3 @@ BaseLayout.propTypes = {
   appName: PropTypes.string,
   defaultUrl: PropTypes.string,
 };
-
-const mapStateToProps = () => ({
-  appName: 'Queue',
-  message: 'Loading...',
-});
-
-export default connect(
-  mapStateToProps,
-  null
-)(BaseLayout);
