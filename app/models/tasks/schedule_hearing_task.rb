@@ -44,24 +44,26 @@ class ScheduleHearingTask < Task
   def update_from_params(params, current_user)
     multi_transaction do
       verify_user_can_update!(current_user)
+
+      created_tasks = []
+
       if params[:status] == Constants.TASK_STATUSES.completed
         task_values = params.delete(:business_payloads)[:values]
 
-        multi_transaction do
-          hearing = create_hearing(task_values)
+        hearing = create_hearing(task_values)
 
-          if task_values[:virtual_hearing_attributes].present?
-            @alerts = VirtualHearings::ConvertToVirtualHearingService
-              .convert_hearing_to_virtual(hearing, task_values[:virtual_hearing_attributes])
-          end
-
-          AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, parent, hearing)
+        if task_values[:virtual_hearing_attributes].present?
+          @alerts = VirtualHearings::ConvertToVirtualHearingService
+            .convert_hearing_to_virtual(hearing, task_values[:virtual_hearing_attributes])
         end
+
+        created_tasks << AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, parent, hearing)
       elsif params[:status] == Constants.TASK_STATUSES.cancelled
-        withdraw_hearing
+        created_tasks << withdraw_hearing
       end
 
-      super(params, current_user) # returns [self]
+      # super returns [self]
+      super(params, current_user) + created_tasks.compact
     end
   end
 
@@ -155,6 +157,7 @@ class ScheduleHearingTask < Task
 
       AppealRepository.withdraw_hearing!(appeal)
       AppealRepository.update_location!(appeal, location)
+      nil
     else
       EvidenceSubmissionWindowTask.create!(
         appeal: appeal,
