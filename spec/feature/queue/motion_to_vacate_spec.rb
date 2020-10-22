@@ -833,7 +833,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
           add_decision_to_issue(1, "Remanded", "remanded test")
           add_decision_to_issue(2, "Remanded", "remanded test 2")
 
-          # Next should be remand reasons 
+          # Next should be remand reasons
           safe_click "#button-next-button"
 
           expect(page.current_path).to eq(remand_reasons_path)
@@ -900,10 +900,10 @@ RSpec.feature "Motion to vacate", :all_dbs do
           remanded2 = vacate_stream.decision_issues[5]
 
           expect(remanded1.remand_reasons.size).to eq(1)
-          expect(remanded1.remand_reasons.first).to have_attributes({code: "service_treatment_records"})
+          expect(remanded1.remand_reasons.first).to have_attributes(code: "service_treatment_records")
 
           expect(remanded2.remand_reasons.size).to eq(1)
-          expect(remanded2.remand_reasons.first).to have_attributes({code: "medical_examinations"})
+          expect(remanded2.remand_reasons.first).to have_attributes(code: "medical_examinations")
         end
       end
 
