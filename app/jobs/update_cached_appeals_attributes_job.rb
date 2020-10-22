@@ -136,7 +136,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     # both representative_name calls can result in BGS connection error
     bgs_poa&.representative_name || appeal.representative_name
   rescue Errno::ECONNRESET => error
-    warning_msgs << "#{appeal.class.name} #{appeal.id}: #{error}"
+    warning_msgs << "#{appeal.class.name} #{appeal.id}: #{error}" if warning_msgs.count < 100
     nil
   end
 
@@ -232,7 +232,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   def log_warning
-    slack_msg = "[WARN] UpdateCachedAppealsAttributesJob warnings: \n#{warning_msgs.join("\n")}"
+    slack_msg = "[WARN] UpdateCachedAppealsAttributesJob first 100 warnings: \n#{warning_msgs.join("\n")}"
     slack_service.send_notification(slack_msg)
   end
 

@@ -167,8 +167,8 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
         job.perform_now
         expect(job.warning_msgs.count).to eq 3
 
-        expected_msg = "\\[WARN\\] UpdateCachedAppealsAttributesJob warnings:.*"
         expect(slack_msg.lines.count).to eq 4
+        expected_msg = "\\[WARN\\] UpdateCachedAppealsAttributesJob .*"
         expect(slack_msg).to match(/#{expected_msg}/)
       end
     end
