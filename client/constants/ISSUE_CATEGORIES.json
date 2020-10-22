@@ -27,11 +27,13 @@
   "compensation": [
     "Unknown issue category",
     "Other non-rated",
+    "Accrued benefits",
     "Active Duty Adjustments",
     "Apportionment",
     "Audit Error Worksheet (DFAS)",
     "Character of discharge determinations",
     "Contested Claims (other than apportionment)",
+    "DIC",
     "Dependency Spouse - Common law marriage",
     "Dependency Spouse - Deemed valid marriage",
     "Dependency Spouse - Inference of marriage",
@@ -42,9 +44,11 @@
     "Incarceration Adjustments",
     "Income/net worth (pension)",
     "Lack of Qualifying Service",
-    "Military Retired Pay"
+    "Military Retired Pay",
+    "SC Death"
   ],
   "pension": [
+    "Accrued benefits",
     "Apportionment",
     "Burial Benefits - NSC Burial",
     "Burial Benefits - Plot or Interment Allowance",
@@ -63,11 +67,13 @@
     "Income/Net Worth | Countable Income",
     "Income/Net Worth | Medical Expense Deductions",
     "Income/Net Worth | Residential Lot Size",
+    "NSC live pension",
     "Overpayment | Validity of debt",
     "Overpayment | Waiver",
     "Penalty Period",
     "Post Award Audit",
-    "Survivors pension eligibility"  
+    "Survivor's pension",
+    "Survivor's pension eligibility"
   ],
   "fiduciary": [
     "Appointment of a Fiduciary (38 CFR 13.100)",
