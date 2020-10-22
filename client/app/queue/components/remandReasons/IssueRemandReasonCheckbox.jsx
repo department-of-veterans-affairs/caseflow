@@ -65,9 +65,10 @@ export const IssueRemandReasonCheckbox = ({
       />
       {state.value && (
         <RadioField
-          errorMessage={highlight && state.post_aoj === null && 'Choose one'}
+          // eslint-disable-next-line no-undefined
+          errorMessage={(highlight && state.post_aoj === null) ? 'Choose one' : undefined}
           styling={css(smallLeftMargin, smallBottomMargin, errorNoTopMargin)}
-          name={`${prefixedId}-postAoj`}
+          name={`${prefixedId}postAoj`}
           vertical
           hideLabel
           options={[
@@ -82,7 +83,7 @@ export const IssueRemandReasonCheckbox = ({
               value: 'true',
             },
           ]}
-          value={state.post_aoj}
+          value={String(state.post_aoj)}
           onChange={handleRadioChange}
         />
       )}

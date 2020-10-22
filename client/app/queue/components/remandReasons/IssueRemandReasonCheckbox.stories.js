@@ -4,9 +4,7 @@ import { IssueRemandReasonCheckbox } from './IssueRemandReasonCheckbox';
 
 /* eslint-disable react/prop-types */
 
-const option = {
-  id: 'option1',
-};
+const option = { id: 'lorem', label: 'Lorem Ipsum' };
 
 export default {
   title: 'Queue/Components/Remand Reasons/IssueRemandReasonCheckbox',
