@@ -57,10 +57,9 @@ describe AssignHearingDispositionTask, :all_dbs do
       end
 
       it "sets the hearing disposition and calls hold!" do
-        expect(disposition_task).to receive(:hold!).exactly(1).times
+        expect(disposition_task).to receive(:hold!).exactly(1).times.and_call_original
 
-        subject
-
+        expect(subject.count).to eq 3
         expect(Hearing.count).to eq 1
         expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.held
       end
@@ -79,10 +78,9 @@ describe AssignHearingDispositionTask, :all_dbs do
       end
 
       it "sets the hearing disposition and calls no_show!" do
-        expect(disposition_task).to receive(:no_show!).exactly(1).times
+        expect(disposition_task).to receive(:no_show!).exactly(1).times.and_call_original
 
-        subject
-
+        expect(subject.count).to eq(2)
         expect(Hearing.count).to eq 1
         expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.no_show
       end

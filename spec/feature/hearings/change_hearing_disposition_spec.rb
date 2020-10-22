@@ -125,7 +125,9 @@ RSpec.shared_examples "Change hearing disposition" do
 
       step "change the hearing disposition to cancelled" do
         expect(Raven).to receive(:capture_exception)
-          .with(AssignHearingDispositionTask::HearingAssociationMissing) { @raven_called = true }
+          .with(AssignHearingDispositionTask::HearingAssociationMissing, any_args) do
+            @raven_called = true
+          end
 
         click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
         click_dropdown({ prompt: "Select", text: "Cancelled" }, find(".cf-modal-body"))
