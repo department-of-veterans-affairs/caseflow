@@ -11,8 +11,20 @@ FactoryBot.define do
     instructions { "Sample CAVC Remand from factory" }
 
     after(:build) do |cavc_remand, evaluator|
+      if evaluator.created_by
+        cavc_remand.created_by = evaluator.created_by
+      else
+        cavc_remand.created_by = User.first
+      end
+
       if evaluator.appeal
         cavc_remand.appeal = evaluator.appeal
+
+        if !evaluator.decision_issue_ids.empty?
+          cavc_remand.decision_issue_ids = evaluator.decision_issue_ids
+        else
+          cavc_remand.decision_issue_ids = evaluator.appeal.decision_issues.pluck(:id)
+        end
       else
         judge = JudgeTeam.first.admins.first
         attorney = JudgeTeam.first.non_admins.first
@@ -34,18 +46,11 @@ FactoryBot.define do
                     notes: notes)
         cavc_remand.appeal = appeal
 
-
         if !evaluator.decision_issue_ids.empty?
           cavc_remand.decision_issue_ids = evaluator.decision_issue_ids
         else
           cavc_remand.decision_issue_ids = cavc_remand.appeal.decision_issues.pluck(:id)
         end
-      end
-
-      if evaluator.created_by
-        cavc_remand.created_by = evaluator.created_by
-      else
-        cavc_remand.created_by = User.first
       end
     end
   end
