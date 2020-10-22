@@ -7,6 +7,7 @@ import { withRouter } from 'react-router-dom';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
 import { sprintf } from 'sprintf-js';
+import { isNil, maxBy, omit, find, get } from 'lodash';
 
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import COPY from '../../../COPY';
@@ -17,7 +18,6 @@ import { onReceiveAppealDetails } from '../../queue/QueueActions';
 import { formatDateStr } from '../../util/DateUtil';
 import Alert from '../../components/Alert';
 import { setMargin, marginTop, regionalOfficeSection, saveButton, cancelButton } from './details/style';
-import { find, get } from 'lodash';
 import { getAppellantTitle, processAlerts, parseVirtualHearingErrors } from '../utils';
 import {
   onChangeFormData,
@@ -100,9 +100,6 @@ export const ScheduleVeteran = ({
 
   // Reset the component state
   const reset = () => {
-    // Clear the loading state
-    setLoading(false);
-
     // Clear any lingering errors
     setErrors({});
 
@@ -150,12 +147,19 @@ export const ScheduleVeteran = ({
 
   // Format the payload for the API
   const getPayload = () => {
+    // The API can't accept a payload if the field `status` is provided because it is a generated
+    // (not editable) field.
+    //
+    // `omit` returns an empty object if `null` is provided as an argument, so the `isNil` check here
+    // prevents `omit` from returning an empty object.`
+    const virtualHearing = isNil(hearing.virtualHearing) ? null : omit(hearing.virtualHearing, ['status']);
+
     // Format the shared hearing values
     const hearingValues = {
       scheduled_time_string: hearing.scheduledTimeString,
       hearing_day_id: hearing.hearingDay.hearingId,
       hearing_location: hearing.hearingLocation ? ApiUtil.convertToSnakeCase(hearing.hearingLocation) : null,
-      virtual_hearing_attributes: hearing.virtualHearing ? ApiUtil.convertToSnakeCase(hearing.virtualHearing) : null,
+      virtual_hearing_attributes: virtualHearing ? ApiUtil.convertToSnakeCase(virtualHearing) : null,
     };
 
     // Determine whether to send the reschedule payload
@@ -212,12 +216,17 @@ export const ScheduleVeteran = ({
       // Patch the hearing task with the form data
       const { body } = await ApiUtil.patch(`/tasks/${taskId}`, payload);
 
-      const [task] = body?.tasks?.data?.filter((hearingTask) => hearingTask.id === taskId);
+      // Find the most recently created AssignHearingDispositionTask. This task will have the ID of the
+      // most recently created hearing.
+      const mostRecentTask = maxBy(
+        body?.tasks?.data?.filter((task) => task.attributes?.type === 'AssignHearingDispositionTask') ?? [],
+        (task) => task.id
+      );
 
       const alerts = body?.tasks?.alerts;
 
       if (alerts && hearing.virtualHearing) {
-        processAlerts(alerts, props, () => props.startPollingHearing(task?.attributes?.external_hearing_id));
+        processAlerts(alerts, props, () => props.startPollingHearing(mostRecentTask?.attributes?.external_hearing_id));
       } else {
         props.showSuccessMessage(getSuccessMsg());
       }
@@ -240,14 +249,11 @@ export const ScheduleVeteran = ({
 
         setErrors(errList);
 
-        // Remove the loading state on error
-        setLoading(false);
-
       // Handle errors in the standard format
       } else if (msg?.title) {
         props.showErrorMessage({
           title: msg?.title,
-          detail: msg?.detail
+          detail: msg?.detail ?? msg?.message
         });
 
       // Handle legacy appeals
@@ -266,6 +272,9 @@ export const ScheduleVeteran = ({
                 'Please contact the Caseflow Team for assistance.',
         });
       }
+    } finally {
+      // Clear the loading state
+      setLoading(false);
     }
   };
 
