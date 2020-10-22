@@ -52,7 +52,7 @@ export const IssueRemandReasonCheckbox = ({
     }
   }, [valueProp]);
 
-  const prefixedId = `${prefix}${option.id}_`;
+  const prefixedId = `${prefix}-${option.id}`;
 
   return (
     <React.Fragment key={prefixedId}>
@@ -68,7 +68,7 @@ export const IssueRemandReasonCheckbox = ({
           // eslint-disable-next-line no-undefined
           errorMessage={(highlight && state.post_aoj === null) ? 'Choose one' : undefined}
           styling={css(smallLeftMargin, smallBottomMargin, errorNoTopMargin)}
-          name={`${prefixedId}postAoj`}
+          name={`${prefixedId}-postAoj`}
           vertical
           hideLabel
           options={[

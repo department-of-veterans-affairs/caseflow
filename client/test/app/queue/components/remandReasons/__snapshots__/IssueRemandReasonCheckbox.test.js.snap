@@ -3,19 +3,19 @@
 exports[`IssueRemandReasonCheckbox AMA hides AOJ choice until checked 1`] = `
 <div>
   <div
-    class="checkbox-wrapper-lorem_"
+    class="checkbox-wrapper--lorem"
   >
     <div
       class="cf-form-checkbox"
     >
       <input
-        aria-label="lorem_"
-        id="lorem_"
-        name="lorem_"
+        aria-label="-lorem"
+        id="-lorem"
+        name="-lorem"
         type="checkbox"
       />
       <label
-        for="lorem_"
+        for="-lorem"
       >
         <span
           class=""
@@ -34,7 +34,7 @@ exports[`IssueRemandReasonCheckbox AMA hides AOJ choice until checked 1`] = `
       class="usa-sr-only"
     >
       <span>
-        lorem_postAoj
+        -lorem-postAoj
          
       </span>
     </legend>
@@ -45,14 +45,14 @@ exports[`IssueRemandReasonCheckbox AMA hides AOJ choice until checked 1`] = `
         class="cf-form-radio-option"
       >
         <input
-          id="lorem-postAoj_false"
-          name="lorem_postAoj"
+          id="-lorem-postAoj_false"
+          name="-lorem-postAoj"
           type="radio"
           value="false"
         />
         <label
           class=""
-          for="lorem-postAoj_false"
+          for="-lorem-postAoj_false"
         >
           Pre AOJ
         </label>
@@ -61,14 +61,14 @@ exports[`IssueRemandReasonCheckbox AMA hides AOJ choice until checked 1`] = `
         class="cf-form-radio-option"
       >
         <input
-          id="lorem-postAoj_true"
-          name="lorem_postAoj"
+          id="-lorem-postAoj_true"
+          name="-lorem-postAoj"
           type="radio"
           value="true"
         />
         <label
           class=""
-          for="lorem-postAoj_true"
+          for="-lorem-postAoj_true"
         >
           Post AOJ
         </label>
@@ -81,19 +81,19 @@ exports[`IssueRemandReasonCheckbox AMA hides AOJ choice until checked 1`] = `
 exports[`IssueRemandReasonCheckbox AMA renders correctly by default 1`] = `
 <div>
   <div
-    class="checkbox-wrapper-lorem_"
+    class="checkbox-wrapper--lorem"
   >
     <div
       class="cf-form-checkbox"
     >
       <input
-        aria-label="lorem_"
-        id="lorem_"
-        name="lorem_"
+        aria-label="-lorem"
+        id="-lorem"
+        name="-lorem"
         type="checkbox"
       />
       <label
-        for="lorem_"
+        for="-lorem"
       >
         <span
           class=""
