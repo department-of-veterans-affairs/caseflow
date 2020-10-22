@@ -1,6 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import { omit } from 'lodash';
 
 import COPY from 'COPY';
 import ScheduleVeteran from 'app/hearings/components/ScheduleVeteran';
@@ -378,7 +379,9 @@ describe('ScheduleVeteran', () => {
               description: 'Update Task',
               values: {
                 ...scheduleHearingDetails.apiFormattedValues,
-                virtual_hearing_attributes: ApiUtil.convertToSnakeCase(virtualHearing.virtualHearing),
+                virtual_hearing_attributes: ApiUtil.convertToSnakeCase(
+                  omit(virtualHearing.virtualHearing, ['status'])
+                ),
                 override_full_hearing_day_validation: false,
               },
             },

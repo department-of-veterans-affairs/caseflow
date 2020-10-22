@@ -57,7 +57,7 @@ class ScheduleHearingTask < Task
             .convert_hearing_to_virtual(hearing, task_values[:virtual_hearing_attributes])
         end
 
-        created_tasks <<  AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, parent, hearing)
+        created_tasks << AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, parent, hearing)
       elsif params[:status] == Constants.TASK_STATUSES.cancelled
         created_tasks << withdraw_hearing
       end
