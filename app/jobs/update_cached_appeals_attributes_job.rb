@@ -269,6 +269,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     VACOLS::Case.where(bfkey: vacols_ids).map do |vacols_case|
       original_request = original_hearing_request_type_for_vacols_case(vacols_case)
       changed_request = changed_hearing_request_type_for_all_vacols_ids[vacols_case.bfkey]
+      # Replicates LegacyAppeal#current_hearing_request_type
       current_request = HearingDay::REQUEST_TYPES.key(changed_request)&.to_sym || original_request
 
       [
@@ -284,6 +285,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   # Gets the symbolic representation of the original type of hearing requested for a vacols case record
+  # Replicates logic in LegacyAppeal#original_hearing_request_type
   def original_hearing_request_type_for_vacols_case(vacols_case)
     request_type = VACOLS::Case::HEARING_REQUEST_TYPES[vacols_case.bfhr]
 
