@@ -150,4 +150,36 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       expect(CachedAppeal.find_by(vacols_id: legacy_appeal3.vacols_id).former_travel).to eq(true)
     end
   end
+
+  context "cached appeal was recently updated" do
+    let(:ama_appeal) { create(:appeal) }
+    let(:future_time) { Time.now.utc + 10.minutes }
+    let!(:legacy_existing_cached_appeal) do
+      create(
+        :cached_appeal,
+        appeal_id: legacy_appeal1.id,
+        appeal_type: LegacyAppeal.name,
+        updated_at: future_time # simulates a possible race condition, but not realistic
+      )
+    end
+    let!(:ama_existing_cached_appeal) do
+      create(
+        :cached_appeal,
+        appeal_id: ama_appeal.id,
+        appeal_type: Appeal.name,
+        updated_at: future_time # simulates a possible race condition, but not realistic
+      )
+    end
+
+    it "does not update appeals that were recently cached" do
+      subject
+
+      legacy_cached_appeal = CachedAppeal.find_by(appeal_id: legacy_appeal1.id, appeal_type: LegacyAppeal.name)
+      ama_cached_appeal = CachedAppeal.find_by(appeal_id: ama_appeal.id, appeal_type: Appeal.name)
+
+      # updated_at shouldn't change
+      expect(legacy_cached_appeal.updated_at.utc).to be_within(1.in_milliseconds).of(future_time)
+      expect(ama_cached_appeal.updated_at.utc).to be_within(1.in_milliseconds).of(future_time)
+    end
+  end
 end
