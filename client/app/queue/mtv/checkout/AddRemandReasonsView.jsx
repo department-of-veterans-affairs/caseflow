@@ -12,7 +12,7 @@ import { IssueRemandReasonsForm } from 'app/queue/components/remandReasons/Issue
 const validateForm = () => true;
 
 export const AddRemandReasonsView = ({ appeal }) => {
-  const [ctx, setCtx] = useContext(MotionToVacateContext);
+  const [ctx] = useContext(MotionToVacateContext);
   const [highlighting, setHighlighting] = useState({});
   const [numIssuesVisible, setNumIssuesVisible] = useState(1);
 

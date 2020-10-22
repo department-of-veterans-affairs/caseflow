@@ -717,77 +717,77 @@ RSpec.feature "Motion to vacate", :all_dbs do
       context "without remanded decision" do
         it "correctly handles checkout flow" do
           User.authenticate!(user: drafting_attorney)
-  
+
           visit "/queue/appeals/#{vacate_stream.uuid}"
-  
+
           check_cavc_alert
           verify_cavc_conflict_action
-  
+
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
           find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
-  
+
           expect(page.current_path).to eq(review_decisions_path)
-  
+
           expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
           expect(page).to have_css(".cf-progress-bar-not-activated", text: "2. Add Decisions")
           expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
-  
+
           safe_click "#button-next-button"
-  
+
           expect(page.current_path).to eq(add_decisions_path)
-  
+
           safe_click "#button-back-button"
-  
+
           expect(page.current_path).to eq(review_decisions_path)
-  
+
           safe_click "#button-next-button"
-  
+
           expect(page.current_path).to eq(add_decisions_path)
-  
+
           expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
           expect(page).to have_css(".cf-progress-bar-activated", text: "2. Add Decisions")
           expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
-  
+
           # Add a first decision issue
           all("button", text: "+ Add decision", count: 3)[0].click
           expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
-  
+
           fill_in "Text Box", with: "test"
-  
+
           find(".cf-select__control", text: "Select disposition").click
           find("div", class: "cf-select__option", text: "Allowed").click
-  
+
           click_on "Add Issue"
-  
+
           safe_click "#button-next-button"
-  
+
           expect(page.current_path).to eq(submit_decisions_path)
-  
+
           safe_click "#button-back-button"
-  
+
           expect(page.current_path).to eq(add_decisions_path)
-  
+
           safe_click "#button-next-button"
-  
+
           expect(page.current_path).to eq(submit_decisions_path)
-  
+
           expect(page).to have_content("Submit Draft Decision for Review")
-  
+
           expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
           expect(page).to have_css(".cf-progress-bar-activated", text: "2. Add Decisions")
           expect(page).to have_css(".cf-progress-bar-activated", text: "3. Submit Draft Decision for Review")
-  
+
           fill_in "Document ID:", with: valid_document_id
           expect(page).to have_content(judge.full_name)
           fill_in "notes", with: "all done"
-  
+
           click_on "Submit"
-  
+
           expect(page).to have_content(
             "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
             "sent to #{judge.full_name} for review."
           )
-  
+
           expect(vacate_stream.decision_issues.size).to eq(4)
         end
       end
@@ -795,37 +795,37 @@ RSpec.feature "Motion to vacate", :all_dbs do
       context "with remanded decision" do
         it "correctly handles checkout flow" do
           User.authenticate!(user: drafting_attorney)
-  
+
           visit "/queue/appeals/#{vacate_stream.uuid}"
-  
+
           check_cavc_alert
           verify_cavc_conflict_action
-  
+
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
           find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
-  
+
           expect(page.current_path).to eq(review_decisions_path)
-  
+
           expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
           expect(page).to have_css(".cf-progress-bar-not-activated", text: "2. Add Decisions")
           expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
-  
+
           safe_click "#button-next-button"
-  
+
           expect(page.current_path).to eq(add_decisions_path)
-  
+
           safe_click "#button-back-button"
-  
+
           expect(page.current_path).to eq(review_decisions_path)
-  
+
           safe_click "#button-next-button"
-  
+
           expect(page.current_path).to eq(add_decisions_path)
-  
+
           expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
           expect(page).to have_css(".cf-progress-bar-activated", text: "2. Add Decisions")
           expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
-  
+
           # Add a first decision issue
           add_decision_to_issue(0, "Allowed", "test")
 
@@ -835,7 +835,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
           # Next should be remand reasons 
           safe_click "#button-next-button"
-  
+
           expect(page.current_path).to eq(remand_reasons_path)
           expect(page).to have_selector(".remand-reasons-form", maximum: 1)
 
@@ -858,37 +858,37 @@ RSpec.feature "Motion to vacate", :all_dbs do
           end
 
           safe_click "#button-next-button"
-  
+
           expect(page.current_path).to eq(submit_decisions_path)
-  
+
           safe_click "#button-back-button"
 
           # Going back should return to add_decisions, not remand_reasons
-  
+
           expect(page.current_path).to eq(add_decisions_path)
 
           safe_click "#button-next-button"
-  
+
           expect(page.current_path).to eq(remand_reasons_path)
-  
+
           # Need to press continue twice, due to two issues
           safe_click "#button-next-button"
           safe_click "#button-next-button"
-  
+
           expect(page.current_path).to eq(submit_decisions_path)
-  
+
           expect(page).to have_content("Submit Draft Decision for Review")
-  
+
           expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
           expect(page).to have_css(".cf-progress-bar-activated", text: "2. Add Decisions")
           expect(page).to have_css(".cf-progress-bar-activated", text: "3. Submit Draft Decision for Review")
-  
+
           fill_in "Document ID:", with: valid_document_id
           expect(page).to have_content(judge.full_name)
           fill_in "notes", with: "all done"
-  
+
           click_on "Submit"
-  
+
           expect(page).to have_content(
             "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
             "sent to #{judge.full_name} for review."
@@ -896,11 +896,14 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
           expect(vacate_stream.decision_issues.size).to eq(6)
 
-          expect(vacate_stream.decision_issues[4].remand_reasons.size).to eq(1)
-          expect(vacate_stream.decision_issues[4].remand_reasons.first).to have_attributes(:code => "service_treatment_records")
+          remanded1 = vacate_stream.decision_issues[4]
+          remanded2 = vacate_stream.decision_issues[5]
 
-          expect(vacate_stream.decision_issues[5].remand_reasons.size).to eq(1)
-          expect(vacate_stream.decision_issues[5].remand_reasons.first).to have_attributes(:code => "medical_examinations")
+          expect(remanded1.remand_reasons.size).to eq(1)
+          expect(remanded1.remand_reasons.first).to have_attributes({code: "service_treatment_records"})
+
+          expect(remanded2.remand_reasons.size).to eq(1)
+          expect(remanded2.remand_reasons.first).to have_attributes({code: "medical_examinations"})
         end
       end
 
