@@ -695,7 +695,7 @@ describe RequestIssuesUpdate, :all_dbs do
         end
         let!(:after_issue) do
           create(:request_issue,
-                 ineligible,
+                 :ineligible,
                  decision_review: review,
                  contention_reference_id: "2")
         end
