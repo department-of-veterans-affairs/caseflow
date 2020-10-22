@@ -1372,6 +1372,12 @@ describe EndProductEstablishment, :postgres do
       context "if there is no modifier, shows unknown" do
         it { is_expected.to eq(ep_code: " Higher-Level Review Rating", ep_status: "") }
       end
+
+      context "if the epe code is not found" do
+        before { epe.update!(code: "NOTFOUND") }
+
+        it { is_expected.to eq(ep_code: " Unknown", ep_status: "") }
+      end
     end
 
     context "if there is not an end product" do
