@@ -274,9 +274,39 @@ FactoryBot.define do
     ## Strongly suggest you provide a judge and attorney.
     trait :at_judge_review do
       at_attorney_drafting
-      after(:create) do |appeal|
-        create(:decision_document, appeal: appeal)
+      after(:create) do |appeal, evaluator|
+        #MISSING: AttorneyCaseReview
         appeal.tasks.where(type: AttorneyTask.name).first.completed!
+      end
+    end
+
+    ## Appeal with a realistic task tree
+    ## The appeal is assigned to a judge at decision review
+    ## Strongly suggest you provide a judge and attorney.
+    trait :at_bva_dispatch do
+      at_judge_review
+      after(:create) do |appeal|
+        #MISSING: JudgeCaseReview
+        BvaDispatchTask.create_from_root_task(appeal.root_task)
+        appeal.tasks.where(type: JudgeDecisionReviewTask.name).first.completed!
+      end
+    end
+
+    ## Appeal with a realistic task tree
+    ## The appeal is assigned to a judge at decision review
+    ## Strongly suggest you provide a judge and attorney.
+    trait :dispatched do
+      at_bva_dispatch
+      after(:create) do |appeal|
+        create(:decision_document,
+               :processed,
+               appeal: appeal,
+               citation_number: "A882#{(appeal.id % 100_000).to_s.rjust(5, '0')}")
+        dispatch = AmaAppealDispatch.new(appeal: appeal, params: {bar: "foo"}, user: User.first)
+        appeal.tasks.where(type: BvaDispatchTask.name, assigned_to_type: "User").first.completed!
+        appeal.root_task.completed!
+        dispatch.send(:close_request_issues_as_decided!)
+        dispatch.send(:store_poa_participant_id)
       end
     end
 
