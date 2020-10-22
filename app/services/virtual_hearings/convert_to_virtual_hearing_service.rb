@@ -22,14 +22,15 @@ class VirtualHearings::ConvertToVirtualHearingService
 
       [{ hearing: form.hearing_alerts }, { virtual_hearing: form.virtual_hearing_alert }]
     rescue ActiveRecord::RecordNotUnique => error
+      # :nocov:
       raise wrap_error(error, 1003, COPY::VIRTUAL_HEARING_ALREADY_CREATED)
+      # :nocov:
     rescue ActiveRecord::RecordInvalid => error
       raise wrap_error(error, 1002, error.message)
-    # Catch all case
-    # :nocov:
     rescue StandardError => error
+      # :nocov:
       raise wrap_error(error, 1099, error.message)
-    # :nocov:
+      # :nocov:
     end
 
     private
