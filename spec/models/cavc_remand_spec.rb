@@ -52,6 +52,12 @@ describe CavcRemand do
       params.each_key { |key| expect(subject.send(key)).to eq params[key] }
     end
 
+    it "creates the new court_remand cavc stream" do
+      expect(Appeal.court_remand.where(stream_docket_number: appeal.docket_number).count).to eq(0)
+      expect { subject }.not_to raise_error
+      expect(Appeal.court_remand.where(stream_docket_number: appeal.docket_number).count).to eq(1)
+    end
+
     context "when missing required attributes" do
       context "for remands mandates" do
         let(:remand_subtype) { nil }
@@ -83,6 +89,7 @@ describe CavcRemand do
         expect { subject }.to raise_error(Caseflow::Error::JmrAppealDecisionIssueMismatch)
       end
     end
+
     shared_examples "works for all remand subtypes" do
       context "when remand subtype is MDR" do
         let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.mdr }

@@ -31,22 +31,24 @@ class CavcRemand < CaseflowRecord
     Constants.CAVC_REMAND_SUBTYPES.mdr.to_sym => Constants.CAVC_REMAND_SUBTYPES.mdr
   }
 
-  def decision_issue_ids_match_appeal_decision_issues
-    unless (appeal.decision_issues.map(&:id) - decision_issue_ids).empty?
-      fail Caseflow::Error::JmrAppealDecisionIssueMismatch, message: "JMR remands must address all decision issues"
-    end
-  end
+  private
 
-  def cavc_remand_form_complete?
-    valid? && !mandate_date.nil? && !judgement_date.nil?
-  end
-
-  def establish_appeal_stream
-    appeal.create_stream(:court_remand).tap do |cavc_appeal|
-      DecisionIssue.find(decision_issue_ids).map do |cavc_remanded_issue|
-        cavc_remanded_issue.create_contesting_request_issue!(cavc_appeal)
+    def decision_issue_ids_match_appeal_decision_issues
+      unless (appeal.decision_issues.map(&:id) - decision_issue_ids).empty?
+        fail Caseflow::Error::JmrAppealDecisionIssueMismatch, message: "JMR remands must address all decision issues"
       end
-      InitialTasksFactory.new(cavc_appeal).create_root_and_sub_tasks!
     end
-  end
+
+    def cavc_remand_form_complete?
+      valid? && !mandate_date.nil? && !judgement_date.nil?
+    end
+
+    def establish_appeal_stream
+      appeal.create_stream(:court_remand).tap do |cavc_appeal|
+        DecisionIssue.find(decision_issue_ids).map do |cavc_remanded_issue|
+          cavc_remanded_issue.create_contesting_request_issue!(cavc_appeal)
+        end
+        InitialTasksFactory.new(cavc_appeal).create_root_and_sub_tasks!
+      end
+    end
 end
