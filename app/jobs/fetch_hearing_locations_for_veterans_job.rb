@@ -62,7 +62,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
         break if job_running_past_expected_end_time?
 
         begin
-          geomatch(appeal)
+          GeomatchService.new(appeal.reload).geomatch # we only selected id and ahl_update_at, reload all columns
 
           current_appeal += 1
         rescue Caseflow::Error::VaDotGovLimitError
@@ -117,79 +117,5 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       .map do |vacols_case|
         AppealRepository.build_appeal(vacols_case, true)
       end
-  end
-
-  # Performs geomatching for an appeal.
-  #
-  # @param appeal  [Appeal, Legacy] the appeal to geomatch
-  #
-  # @raise      [Caseflow::Error::VaDotGovLimitError]
-  #   Re-raises limit error for caller to handle.
-  # @raise      [StandardError]
-  #   Re-raises standard error for caller to handle.
-  def geomatch(appeal)
-    appeal.reload # we only selected id and ahl_update_at, reload all columns
-
-    begin
-      geomatch_result = appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
-      handle_geocode_status(appeal, geomatch_result)
-      record_geomatched_appeal(appeal, geomatch_result[:status])
-    rescue Caseflow::Error::VaDotGovLimitError
-      Rails.logger.error("VA.gov returned a rate limit error")
-      record_geomatched_appeal(appeal, "limit_error")
-      raise
-    rescue StandardError => error
-      capture_exception(error: error, extra: { appeal_external_id: appeal.external_id })
-      record_geomatched_appeal(appeal, "error")
-      raise
-    end
-  end
-
-  # Handles the status from the VaDotGovAddressValidator.
-  #
-  # @param geomatch_result  [Hash] The result from geocoding.
-  def handle_geocode_status(appeal, geomatch_result)
-    case geomatch_result[:status]
-    when VaDotGovAddressValidator::STATUSES[:matched_available_hearing_locations],
-      VaDotGovAddressValidator::STATUSES[:philippines_exception]
-      cancel_admin_actions_for_matched_appeal(appeal)
-    when VaDotGovAddressValidator::STATUSES[:created_verify_address_admin_action],
-      VaDotGovAddressValidator::STATUSES[:created_foreign_veteran_admin_action]
-      create_available_hearing_location_for_errored_appeal(appeal)
-    end
-  end
-
-  def cancel_admin_actions_for_matched_appeal(appeal)
-    tasks_to_cancel = Task.open.where(
-      type: %w[HearingAdminActionVerifyAddressTask HearingAdminActionForeignVeteranCaseTask],
-      appeal: appeal
-    )
-
-    tasks_to_cancel.each { |task| task.update(status: Constants.TASK_STATUSES.cancelled) }
-  end
-
-  def create_available_hearing_location_for_errored_appeal(appeal)
-    # we need a way to flag that we've seen this appeal before/recently
-    if appeal.available_hearing_locations.count == 0
-      AvailableHearingLocations.create(
-        appeal: appeal,
-        veteran_file_number: appeal.veteran_file_number || ""
-      )
-    else
-      appeal.available_hearing_locations.each(&:touch)
-    end
-  end
-
-  def record_geomatched_appeal(appeal, status)
-    DataDogService.increment_counter(
-      app_name: RequestStore[:application],
-      metric_group: "job",
-      metric_name: "geomatched_appeals",
-      attrs: {
-        status: status,
-        appeal_external_id: appeal.external_id,
-        hearing_request_type: appeal.current_hearing_request_type
-      }
-    )
   end
 end
