@@ -151,9 +151,8 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     end
 
     context "when BGS fails" do
-      let(:bgs) { Fakes::BGSService.new }
-
       before do
+        bgs = Fakes::BGSService.new
         allow(Fakes::BGSService).to receive(:new).and_return(bgs)
         allow(bgs).to receive(:fetch_person_by_ssn)
           .and_raise(Errno::ECONNRESET, "mocked error for testing")
