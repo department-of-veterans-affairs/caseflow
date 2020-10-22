@@ -26,6 +26,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   rescue StandardError => error
     log_error(@start_time, error)
+  else
+    log_warning unless warning_msgs.empty?
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -102,8 +104,6 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     legacy_appeals.in_groups_of(POSTGRES_BATCH_SIZE, false) do |batch_legacy_appeals|
       values_to_cache = batch_legacy_appeals.map do |appeal|
         regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
-        # bypass PowerOfAttorney model completely and always prefer BGS cache
-        bgs_poa = fetch_bgs_power_of_attorney_by_file_number(appeal.veteran_file_number)
         {
           vacols_id: appeal.vacols_id,
           appeal_id: appeal.id,
@@ -111,7 +111,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
           closest_regional_office_city: regional_office ? regional_office[:city] : COPY::UNKNOWN_REGIONAL_OFFICE,
           closest_regional_office_key: regional_office ? appeal.closest_regional_office : COPY::UNKNOWN_REGIONAL_OFFICE,
           docket_type: appeal.docket_name, # "legacy"
-          power_of_attorney_name: (bgs_poa&.representative_name || appeal.representative_name),
+          power_of_attorney_name: poa_representative_name_for(appeal),
           suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location
         }
       end
@@ -129,6 +129,16 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     end
   end
   # rubocop:enable Metrics/MethodLength
+
+  # bypass PowerOfAttorney model completely and always prefer BGS cache
+  def poa_representative_name_for(appeal)
+    bgs_poa = fetch_bgs_power_of_attorney_by_file_number(appeal.veteran_file_number)
+    # both representative_name calls can result in BGS connection error
+    bgs_poa&.representative_name || appeal.representative_name
+  rescue Errno::ECONNRESET => error
+    warning_msgs << "#{appeal.class.name} #{appeal.id}: #{error}"
+    nil
+  end
 
   def fetch_bgs_power_of_attorney_by_file_number(file_number)
     return if file_number.blank?
@@ -215,6 +225,15 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         }
       )
     end
+  end
+
+  def warning_msgs
+    @warning_msgs ||= []
+  end
+
+  def log_warning
+    slack_msg = "[WARN] UpdateCachedAppealsAttributesJob warnings: \n#{warning_msgs.join("\n")}"
+    slack_service.send_notification(slack_msg)
   end
 
   def log_error(start_time, err)
