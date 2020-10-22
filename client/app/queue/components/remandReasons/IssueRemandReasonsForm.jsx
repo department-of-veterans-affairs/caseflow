@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { css } from 'glamor';
@@ -26,13 +26,20 @@ import {
 } from '../../utils';
 import { formatDateStr } from '../../../util/DateUtil';
 
-export const LegacyCheckboxGroup = ({ onChange, highlight }) => {
+export const LegacyCheckboxGroup = ({
+  onChange,
+  highlight,
+  prefix = '',
+  values = {},
+}) => {
   const getCheckbox = (option, checkboxChange) => (
     <IssueRemandReasonCheckbox
       option={option}
       onChange={checkboxChange}
       isLegacyAppeal
       highlight={highlight}
+      prefix={prefix}
+      value={values[option.id]}
     />
   );
   const checkboxGroupProps = {
@@ -76,15 +83,29 @@ export const LegacyCheckboxGroup = ({ onChange, highlight }) => {
 LegacyCheckboxGroup.propTypes = {
   highlight: PropTypes.bool,
   onChange: PropTypes.func,
+  prefix: PropTypes.string,
+  values: PropTypes.shape({
+    [PropTypes.string]: PropTypes.shape({
+      code: PropTypes.string.isRequired,
+      checked: PropTypes.bool,
+      post_aoj: PropTypes.bool.isRequired,
+    }),
+  }),
 };
 
-export const AmaCheckboxGroup = ({ onChange, highlight }) => {
+export const AmaCheckboxGroup = ({
+  onChange,
+  highlight,
+  prefix = '',
+  values = {},
+}) => {
   const getCheckbox = (option, checkboxChange) => (
     <IssueRemandReasonCheckbox
       option={option}
       onChange={checkboxChange}
-      isLegacyAppeal
       highlight={highlight}
+      prefix={prefix}
+      value={values[option.id]}
     />
   );
   const checkboxGroupProps = {
@@ -129,6 +150,14 @@ export const AmaCheckboxGroup = ({ onChange, highlight }) => {
 AmaCheckboxGroup.propTypes = {
   highlight: PropTypes.bool,
   onChange: PropTypes.func,
+  prefix: PropTypes.string,
+  values: PropTypes.shape({
+    [PropTypes.string]: PropTypes.shape({
+      code: PropTypes.string.isRequired,
+      checked: PropTypes.bool,
+      post_aoj: PropTypes.bool.isRequired,
+    }),
+  }),
 };
 
 export const IssueRemandReasonsForm = ({
@@ -139,8 +168,26 @@ export const IssueRemandReasonsForm = ({
   issueTotal = 1,
   highlight,
   onChange,
+  values = [],
 }) => {
   const [fields, setFields] = useState({});
+  const firstUpdate = useRef(true);
+
+  // Reformat initial/default values
+  useEffect(() => {
+    if (!values.length) {
+      return;
+    }
+
+    const newFields = {};
+
+    values.forEach(
+      // eslint-disable-next-line camelcase
+      ({ code, post_aoj }) =>
+        (newFields[code] = { code, checked: true, post_aoj })
+    );
+    setFields(newFields);
+  }, [values]);
 
   // eslint-disable-next-line camelcase
   const handleChange = ({ code, checked, post_aoj }) => {
@@ -149,19 +196,35 @@ export const IssueRemandReasonsForm = ({
       [code]: { code, checked, post_aoj },
     });
   };
-  const checkboxGroupProps = { onChange: handleChange, highlight };
+  const checkboxGroupProps = {
+    onChange: handleChange,
+    highlight,
+    prefix: `issue-${issue.id}`,
+    values: fields,
+  };
 
+  // Memoized array of the selected options; used for onChange and validation
   const selected = useMemo(
     () => Object.values(fields).filter((item) => item.checked),
     [fields]
   );
 
   useEffect(() => {
+    // No need to hit callback until something changes
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+
+      return;
+    }
+
     onChange?.(selected);
   }, [selected]);
 
   return (
-    <div key={`remand-reasons-${String(issue.id)}`}>
+    <div
+      className="remand-reasons-form"
+      key={`remand-reasons-${String(issue.id)}`}
+    >
       <h2 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
         Issue {issueNumber} {issueTotal > 1 ? ` of ${issueTotal}` : ''}
       </h2>
@@ -215,4 +278,11 @@ IssueRemandReasonsForm.propTypes = {
   issueTotal: PropTypes.number,
   highlight: PropTypes.bool,
   onChange: PropTypes.func,
+  values: PropTypes.arrayOf(
+    PropTypes.shape({
+      code: PropTypes.string,
+      checked: PropTypes.bool,
+      post_aoj: PropTypes.bool,
+    })
+  ),
 };

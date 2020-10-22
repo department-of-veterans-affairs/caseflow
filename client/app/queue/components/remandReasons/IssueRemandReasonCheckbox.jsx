@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { css } from 'glamor';
@@ -17,21 +17,47 @@ export const IssueRemandReasonCheckbox = ({
   highlight = false,
   option = {},
   onChange,
+  prefix = '',
+  value: valueProp,
 }) => {
   const [state, setState] = useState({ value: false, post_aoj: null });
+  const firstUpdate = useRef(true);
   const copyPrefix = isLegacyAppeal ? 'LEGACY' : 'AMA';
 
   const handleCheckboxChange = (value) => setState({ value, post_aoj: null });
   const handleRadioChange = (val) => setState({ ...state, post_aoj: val });
 
   useEffect(() => {
-    onChange?.({ code: option.id, checked: state.value, post_aoj: state.post_aoj });
+    // No need to hit callback until something changes
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+
+      return;
+    }
+
+    onChange?.({
+      code: option.id,
+      checked: state.value,
+      post_aoj: state.post_aoj,
+    });
   }, [state.value, state.post_aoj]);
 
+  useEffect(() => {
+    if (valueProp) {
+      setState({
+        value: valueProp.checked ?? true,
+        // eslint-disable-next-line camelcase
+        post_aoj: valueProp?.post_aoj?.toString() ?? null,
+      });
+    }
+  }, [valueProp]);
+
+  const prefixedId = `${prefix}${option.id}_`;
+
   return (
-    <React.Fragment key={option.id}>
+    <React.Fragment key={prefixedId}>
       <Checkbox
-        name={option.id}
+        name={prefixedId}
         onChange={handleCheckboxChange}
         value={state.value}
         label={option.label}
@@ -41,7 +67,7 @@ export const IssueRemandReasonCheckbox = ({
         <RadioField
           errorMessage={highlight && state.post_aoj === null && 'Choose one'}
           styling={css(smallLeftMargin, smallBottomMargin, errorNoTopMargin)}
-          name={`${option.id}-postAoj`}
+          name={`${prefixedId}-postAoj`}
           vertical
           hideLabel
           options={[
@@ -71,4 +97,10 @@ IssueRemandReasonCheckbox.propTypes = {
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   }),
   onChange: PropTypes.func,
+  prefix: PropTypes.string,
+  value: PropTypes.shape({
+    code: PropTypes.string.isRequired,
+    checked: PropTypes.bool.isRequired,
+    post_aoj: PropTypes.bool.isRequired,
+  }),
 };

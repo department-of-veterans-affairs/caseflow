@@ -29,3 +29,9 @@ AMA.args = { isLegacyAppeal: false };
 
 export const Legacy = Template.bind({});
 Legacy.args = { isLegacyAppeal: true };
+
+export const DefaultValue = Template.bind({});
+DefaultValue.args = {
+  isLegacyAppeal: false,
+  value: { code: option.id, post_aoj: true },
+};
