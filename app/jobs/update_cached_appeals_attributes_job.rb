@@ -39,6 +39,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     representative_names = representative_names_for_appeals(appeals)
 
     appeals_to_cache = appeals.map do |appeal|
+      start_time = Time.now.utc
       regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
       {
         appeal_id: appeal.id,
@@ -68,9 +69,14 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
                       :power_of_attorney_name,
                       :suggested_hearing_location,
                       :veteran_name]
-    CachedAppeal.import appeals_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
-                                                                     columns: update_columns }
-
+    CachedAppeal.import(
+      appeals_to_cache,
+      on_duplicate_key_update: {
+        conflict_target: [:appeal_id, :appeal_type],
+        condition: conflict_clause(start_time),
+        columns: update_columns
+      }
+    )
     increment_appeal_count(appeals_to_cache.length, Appeal.name)
   end
   # rubocop:enable Metrics/MethodLength
@@ -100,6 +106,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def cache_legacy_appeal_postgres_data(legacy_appeals)
     # this transaction times out so let's try to do this in batches
     legacy_appeals.in_groups_of(POSTGRES_BATCH_SIZE, false) do |batch_legacy_appeals|
+      start_time = Time.now.utc
       values_to_cache = batch_legacy_appeals.map do |appeal|
         regional_office = RegionalOffice::CITIES[appeal.closest_regional_office]
         # bypass PowerOfAttorney model completely and always prefer BGS cache
@@ -116,15 +123,21 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         }
       end
 
-      CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:appeal_id, :appeal_type],
-                                                                      columns: [
-                                                                        :closest_regional_office_city,
-                                                                        :closest_regional_office_key,
-                                                                        :vacols_id,
-                                                                        :docket_type,
-                                                                        :power_of_attorney_name,
-                                                                        :suggested_hearing_location
-                                                                      ] }
+      CachedAppeal.import(
+        values_to_cache,
+        on_duplicate_key_update: {
+          conflict_target: [:appeal_id, :appeal_type],
+          condition: conflict_clause(start_time),
+          columns: [
+            :closest_regional_office_city,
+            :closest_regional_office_key,
+            :vacols_id,
+            :docket_type,
+            :power_of_attorney_name,
+            :suggested_hearing_location
+          ]
+        }
+      )
       increment_appeal_count(batch_legacy_appeals.length, LegacyAppeal.name)
     end
   end
@@ -142,6 +155,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   # rubocop:disable Metrics/AbcSize
   def cache_legacy_appeal_vacols_data(all_vacols_ids)
     all_vacols_ids.in_groups_of(VACOLS_BATCH_SIZE, false).each do |batch_vacols_ids|
+      start_time = Time.now.utc
       vacols_folders = VACOLS::Folder
         .where(ticknum: batch_vacols_ids)
         .pluck(:ticknum, :tinum, :ticorkey)
@@ -185,9 +199,14 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         :case_type,
         :is_aod
       ]
-      CachedAppeal.import values_to_cache, on_duplicate_key_update: { conflict_target: [:vacols_id],
-                                                                      columns: update_columns }
-
+      CachedAppeal.import(
+        values_to_cache,
+        on_duplicate_key_update: {
+          conflict_target: [:vacols_id],
+          condition: conflict_clause(start_time),
+          columns: update_columns
+        }
+      )
       increment_vacols_update_count(batch_vacols_ids.count)
     end
   end
@@ -234,6 +253,10 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   private
+
+  def conflict_clause(start_time)
+    "#{CachedAppeal.table_name}.updated_at < #{ActiveRecord::Base.connection.quote(start_time)}"
+  end
 
   def aod_status_for_appeals(appeals)
     Appeal.where(id: appeals).joins(
