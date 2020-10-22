@@ -33,7 +33,7 @@ export const AddRemandReasonsView = ({ appeal }) => {
     [remandedIssues, numIssuesVisible]
   );
 
-  const handleIssueReasonChange = (issue, reasons) => issue.remandReasons = reasons;
+  const handleIssueReasonChange = (issue, reasons) => issue.remand_reasons = reasons;
 
   const goToNextStep = () => {
     setHighlighting({ ...highlighting, [numIssuesVisible - 1]: true });
