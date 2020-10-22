@@ -8,7 +8,7 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import NavigationBar from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/NavigationBar';
 import CaseSearchLink from 'app/components/CaseSearchLink';
 import { LOGO_COLORS } from 'app/constants/AppConstants';
-import Loadable from 'app/2.0/components/shared/Loadable';
+import Loadable from 'components/shared/Loadable';
 
 const BaseLayout = ({
   children,

@@ -11,7 +11,7 @@ import _ from 'lodash';
 import './styles/app.scss';
 import '../node_modules/pdfjs-dist/web/pdf_viewer.css';
 import { BrowserRouter, Switch } from 'react-router-dom';
-import BaseLayout from 'app/2.0/layouts/BaseLayout';
+import BaseLayout from 'layouts/BaseLayout';
 import ReduxBase from 'app/components/ReduxBase';
 import rootReducer from 'app/reader/reducers';
 

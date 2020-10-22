@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { pick } from 'lodash';
 
 // Internal Dependencies
-import { setAppeal } from 'app/2.0/utils';
+import { setAppeal } from 'utils';
 import { onScrollToComment } from 'app/reader/Pdf/PdfActions';
 import { setCategoryFilter } from 'app/reader/DocumentList/DocumentListActions';
 import { stopPlacingAnnotation } from 'app/reader/AnnotationLayer/AnnotationActions';

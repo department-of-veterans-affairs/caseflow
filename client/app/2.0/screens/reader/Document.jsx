@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 // Internal Dependencies
-import { setAppeal } from 'app/2.0/utils';
+import { setAppeal } from 'utils';
 import { onScrollToComment } from 'app/reader/Pdf/PdfActions';
 import { setCategoryFilter } from 'app/reader/DocumentList/DocumentListActions';
 import { fetchAppealDetails, showSearchBar } from 'app/reader/PdfViewer/PdfViewerActions';
@@ -18,7 +18,7 @@ import {
   closeAnnotationDeleteModal,
   closeAnnotationShareModal
 } from 'app/reader/AnnotationLayer/AnnotationActions';
-import { setDocumentDetails } from 'app/2.0/utils/reader';
+import { setDocumentDetails } from 'utils/reader';
 
 const Document = () => (
   <React.Fragment />

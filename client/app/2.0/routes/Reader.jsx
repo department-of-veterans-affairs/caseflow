@@ -4,11 +4,11 @@ import { Route } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 // Internal Dependencies
-import { getClaimsFolderPageTitle } from 'app/2.0/utils';
+import { getClaimsFolderPageTitle } from 'utils';
 
 // Lazy load screens
-const DocumentsTable = React.lazy(() => import('app/2.0/screens/reader/DocumentsTable'));
-const Document = React.lazy(() => import('app/2.0/screens/reader/Document'));
+const DocumentsTable = React.lazy(() => import('screens/reader/DocumentsTable'));
+const Document = React.lazy(() => import('screens/reader/Document'));
 
 const ReaderRoutes = ({ appeal }) => (
   <React.Fragment>
