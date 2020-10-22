@@ -831,15 +831,31 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
           # Add a remanded decision issue
           add_decision_to_issue(1, "Remanded", "remanded test")
+          add_decision_to_issue(2, "Remanded", "remanded test 2")
 
           # Next should be remand reasons 
           safe_click "#button-next-button"
   
           expect(page.current_path).to eq(remand_reasons_path)
+          expect(page).to have_selector(".remand-reasons-form", maximum: 1)
 
-          binding.pry
+          # Add remand reasons for issue 1
+          within all("div.remand-reasons-form")[0] do
+            find_field("Service treatment records", visible: false).sibling("label").click
+            find_field("Post AOJ", visible: false).sibling("label").click
+          end
 
-          # Add remand reasons
+          safe_click "#button-next-button"
+
+          # Should still be on remand reasons page, but should have added second issue form
+          expect(page.current_path).to eq(remand_reasons_path)
+          expect(page).to have_selector(".remand-reasons-form", minimum: 2)
+
+          # Add remand reasons for issue 2
+          within all("div.remand-reasons-form")[1] do
+            find_field("Medical examinations", visible: false).sibling("label").click
+            find_field("Pre AOJ", visible: false).sibling("label").click
+          end
 
           safe_click "#button-next-button"
   
@@ -850,7 +866,13 @@ RSpec.feature "Motion to vacate", :all_dbs do
           # Going back should return to add_decisions, not remand_reasons
   
           expect(page.current_path).to eq(add_decisions_path)
+
+          safe_click "#button-next-button"
   
+          expect(page.current_path).to eq(remand_reasons_path)
+  
+          # Need to press continue twice, due to two issues
+          safe_click "#button-next-button"
           safe_click "#button-next-button"
   
           expect(page.current_path).to eq(submit_decisions_path)
@@ -871,8 +893,14 @@ RSpec.feature "Motion to vacate", :all_dbs do
             "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
             "sent to #{judge.full_name} for review."
           )
-  
-          expect(vacate_stream.decision_issues.size).to eq(4)
+
+          expect(vacate_stream.decision_issues.size).to eq(6)
+
+          expect(vacate_stream.decision_issues[4].remand_reasons.size).to eq(1)
+          expect(vacate_stream.decision_issues[4].remand_reasons.first).to have_attributes(:code => "service_treatment_records")
+
+          expect(vacate_stream.decision_issues[5].remand_reasons.size).to eq(1)
+          expect(vacate_stream.decision_issues[5].remand_reasons.first).to have_attributes(:code => "medical_examinations")
         end
       end
 
