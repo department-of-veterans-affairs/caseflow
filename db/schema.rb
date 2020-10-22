@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_05_190456) do
+ActiveRecord::Schema.define(version: 2020_10_20_135542) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -280,7 +280,7 @@ ActiveRecord::Schema.define(version: 2020_10_05_190456) do
     t.string "remand_subtype", comment: "Type of remand. If the cavc_decision_type is 'remand', expecting one of 'jmp', 'jmpr', or 'mdr'. Otherwise, this can be null."
     t.boolean "represented_by_attorney", null: false, comment: "Whether or not the appellant was represented by an attorney"
     t.datetime "updated_at", null: false, comment: "Default timestamps"
-    t.bigint "updated_by_id", null: false, comment: "User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created."
+    t.bigint "updated_by_id", comment: "User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created."
     t.index ["appeal_id"], name: "index_cavc_remands_on_appeal_id"
   end
 
