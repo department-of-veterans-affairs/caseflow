@@ -364,8 +364,8 @@ module Caseflow::Error
 
     def initialize(args = {})
       @error_type = args[:error_type]
-      @code = (@error_type == ActiveRecord::RecordNotUnique) ? :conflict : args[:code]
-      @message = (@error_type == ActiveRecord::RecordNotUnique) ? COPY::VIRTUAL_HEARING_ALREADY_CREATED : args[:message]
+      @code = args[:code]
+      @message = args[:message]
     end
   end
 end
