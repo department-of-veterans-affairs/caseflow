@@ -197,7 +197,9 @@ describe InitialTasksFactory, :postgres do
             )
           end
 
-          before { allow_any_instance_of(Representative).to receive(:should_write_ihp?).with(anything).and_return(false) }
+          before do
+            allow_any_instance_of(Representative).to receive(:should_write_ihp?).with(anything).and_return(false)
+          end
 
           it "creates no IHP tasks" do
             InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
