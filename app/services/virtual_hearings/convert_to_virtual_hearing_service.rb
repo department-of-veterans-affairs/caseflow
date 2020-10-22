@@ -25,8 +25,11 @@ class VirtualHearings::ConvertToVirtualHearingService
       raise wrap_error(error, 1003, COPY::VIRTUAL_HEARING_ALREADY_CREATED)
     rescue ActiveRecord::RecordInvalid => error
       raise wrap_error(error, 1002, error.message)
+    # Catch all case
+    # :nocov:
     rescue StandardError => error
       raise wrap_error(error, 1099, error.message)
+    # :nocov:
     end
 
     private
