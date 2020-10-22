@@ -152,7 +152,7 @@ class AssignHearingDispositionTask < Task
                         after_disposition_update: payload_values[:after_disposition_update]
                       )
                     else
-                      fail "unknown disposition"
+                      fail ArgumentError, "unknown disposition"
                     end
 
     update_with_instructions(instructions: params[:instructions]) if params[:instructions].present?
@@ -243,7 +243,7 @@ class AssignHearingDispositionTask < Task
         admin_action_instructions: after_disposition_update[:admin_action_instructions]
       )
     else
-      fail "unknown disposition action"
+      fail ArgumentError, "unknown disposition action"
     end
   end
 
