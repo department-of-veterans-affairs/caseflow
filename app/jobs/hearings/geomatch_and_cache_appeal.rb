@@ -5,7 +5,7 @@ class Hearings::GeomatchAndCacheAppeal < ApplicationJob
   application_attr :hearing_schedule
 
   def perform(appeal_id:)
-    set_appeal(appeal_id)
+    @appeal = LegacyAppeal.find(appeal_id)
 
     GeomatchService.new(appeal).geomatch
   end
@@ -13,8 +13,4 @@ class Hearings::GeomatchAndCacheAppeal < ApplicationJob
   private
 
   attr_reader :appeal
-
-  def set_appeal(appeal_id)
-    appeal = LegacyAppeal.find(appeal_id)
-  end
 end
