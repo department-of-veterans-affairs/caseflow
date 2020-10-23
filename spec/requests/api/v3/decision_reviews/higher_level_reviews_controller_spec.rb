@@ -112,20 +112,20 @@ describe Api::V3::DecisionReviews::HigherLevelReviewsController, :all_dbs, type:
     context "when feature toggle is not enabled" do
       before { FeatureToggle.disable!(:api_v3_higher_level_reviews) }
 
-        it "should return a 501 response" do
-          allow_any_instance_of(HigherLevelReview).to receive(:asyncable_status) { :submitted }
-          post_create
-          expect(response).to have_http_status(:not_implemented)
-        end
+      it "should return a 501 response" do
+        allow_any_instance_of(HigherLevelReview).to receive(:asyncable_status) { :submitted }
+        post_create
+        expect(response).to have_http_status(:not_implemented)
+      end
 
-        it "should have a jsonapi error response" do
-          allow_any_instance_of(HigherLevelReview).to receive(:asyncable_status) { :submitted }
-          post_create
-          expect { JSON.parse(response.body) }.to_not raise_error
-          parsed_response = JSON.parse(response.body)
-          expect(parsed_response["errors"]).to be_a Array
-          expect(parsed_response["errors"].first).to include("status", "title", "detail")
-        end
+      it "should have a jsonapi error response" do
+        allow_any_instance_of(HigherLevelReview).to receive(:asyncable_status) { :submitted }
+        post_create
+        expect { JSON.parse(response.body) }.to_not raise_error
+        parsed_response = JSON.parse(response.body)
+        expect(parsed_response["errors"]).to be_a Array
+        expect(parsed_response["errors"].first).to include("status", "title", "detail")
+      end
     end
 
     context "good request" do
