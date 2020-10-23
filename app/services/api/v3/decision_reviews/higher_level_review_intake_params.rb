@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "./errors/json_api_missing_attribute"
+
 class Api::V3::DecisionReviews::HigherLevelReviewIntakeParams
   class << self
     # (helper for `for_array_at_path_enumerate_types_and_paths`)
@@ -286,14 +288,14 @@ class Api::V3::DecisionReviews::HigherLevelReviewIntakeParams
   end
 
   def validate
-    if !shape_valid?
+    unless shape_valid?
       @intake_errors << Api::V3::DecisionReviews::IntakeError.new(
         :malformed_request, shape_error_message # error code
       )
       return
     end
 
-    if !benefit_type_valid?
+    unless benefit_type_valid?
       @intake_errors << Api::V3::DecisionReviews::IntakeError.new(:invalid_benefit_type) # error code
       return
     end
@@ -302,16 +304,14 @@ class Api::V3::DecisionReviews::HigherLevelReviewIntakeParams
   end
 
   def describe_shape_error
-    return "payload must be an object" unless params?
+    return [{ detail: "payload must be an object" }] unless params?
 
-    validators = types_and_paths.map do |(types, path)|
-      Api::V3::DecisionReviews::HashPathValidator.new(
-        hash: @params,
-        path: path,
-        allowed_values: types
-      )
+    schema = Rails.root.join("app", "services", "api", "v3", "decision_reviews", "200996_schema.json")
+    errors = JSONSchemer.schema(schema).validate(JSON.parse(@params.to_json)).to_a
+
+    unless errors.empty?
+      error = Api::V3::DecisionReviews::Errors::JsonApiMissingAttribute.new(errors)
+      error.all_errors
     end
-
-    validators.find { |validator| !validator.path_is_valid? }&.error_msg
   end
 end
