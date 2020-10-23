@@ -94,11 +94,12 @@ class Appeal < DecisionReview
     ActiveRecord::Base.transaction do
       Appeal.create!(slice(
         :aod_based_on_age,
+        :closest_regional_office,
+        :docket_type,
+        :legacy_opt_in_approved,
         :receipt_date,
         :veteran_file_number,
-        :legacy_opt_in_approved,
-        :veteran_is_not_claimant,
-        :docket_type
+        :veteran_is_not_claimant
       ).merge(
         stream_type: stream_type,
         stream_docket_number: docket_number,
@@ -109,6 +110,7 @@ class Appeal < DecisionReview
           payee_code: claimant.payee_code,
           type: claimant.type
         )
+        stream.set_target_decision_date!
       end
     end
   end
