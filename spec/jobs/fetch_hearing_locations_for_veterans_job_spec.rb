@@ -106,11 +106,12 @@ describe FetchHearingLocationsForVeteransJob do
       subject { FetchHearingLocationsForVeteransJob.new }
 
       it "creates schedule hearing tasks for appeal and records a geomatched result" do
-        expect(subject).to(
-          receive(:record_geomatched_appeal)
-            .with(legacy_appeal, :matched_available_hearing_locations)
-        )
-
+        setup_geomatch_service_mock(legacy_appeal) do |geomatch_service|
+          expect(geomatch_service).to(
+            receive(:record_geomatched_appeal).with(:matched_available_hearing_locations)
+          )
+        end
+        
         subject.perform
 
         expect(legacy_appeal.tasks.count).to eq(3)
@@ -173,27 +174,31 @@ describe FetchHearingLocationsForVeteransJob do
 
           context "and VaDotGovLimitError wait time exceeds the expected end time of the job" do
             it "records a geomatch error once" do
-              allow(subject).to(receive(:job_running_past_expected_end_time?).and_return(false, false, true))
+              expect(subject).to(receive(:job_running_past_expected_end_time?).and_return(false, false, true))
 
-              expect(subject).to(
-                receive(:record_geomatched_appeal).with(legacy_appeal, "limit_error").once
-              )
-
+              setup_geomatch_service_mock(legacy_appeal) do |geomatch_service|
+                expect(geomatch_service).to(
+                  receive(:record_geomatched_appeal).with("limit_error").once
+                )
+              end
+              
               subject.perform
             end
           end
 
           context "and VaDotGovLimitError wait time doesn't immediately exceed the expected end time of the job" do
             before do
-              allow(subject).to(
+              expect(subject).to(
                 receive(:job_running_past_expected_end_time?).and_return(false, false, false, false, true)
               )
             end
 
             it "records multiple geomatch errors" do
-              expect(subject).to(
-                receive(:record_geomatched_appeal).with(legacy_appeal, "limit_error").at_least(:once)
-              )
+              setup_geomatch_service_mock(legacy_appeal) do |geomatch_service|
+                expect(geomatch_service).to(
+                  receive(:record_geomatched_appeal).with("limit_error").at_least(:once)
+                )
+              end
 
               subject.perform
             end
@@ -204,11 +209,14 @@ describe FetchHearingLocationsForVeteransJob do
               let!(:task_2) { create(:schedule_hearing_task, appeal: appeal) }
 
               it "retries the same appeal again" do
-                expect(subject).to(
-                  receive(:record_geomatched_appeal).with(legacy_appeal, "limit_error").at_least(:twice)
-                )
-                expect(subject).not_to(
-                  receive(:record_geomatched_appeal).with(appeal, any_args)
+                setup_geomatch_service_mock(legacy_appeal) do |geomatch_service|
+                  expect(geomatch_service).to(
+                    receive(:record_geomatched_appeal).with("limit_error").at_least(:twice)
+                  )
+                end
+
+                expect(GeomatchService).not_to(
+                  receive(:new).with(appeal: appeal)
                 )
 
                 subject.perform
@@ -233,12 +241,16 @@ describe FetchHearingLocationsForVeteransJob do
 
           context "retries to geomatch" do
             it "retries geomatching hearing locations for appeal" do
-              expect(subject).to(receive(:record_geomatched_appeal).once.with(legacy_appeal, "limit_error"))
-              expect(subject).to(
-                receive(:record_geomatched_appeal)
-                  .once
-                  .with(legacy_appeal, :matched_available_hearing_locations)
-              )
+              setup_geomatch_service_mock(legacy_appeal) do |geomatch_service|
+                expect(geomatch_service).to(
+                  receive(:record_geomatched_appeal).once.with("limit_error")
+                )
+                expect(geomatch_service).to(
+                  receive(:record_geomatched_appeal)
+                    .once
+                    .with(:matched_available_hearing_locations)
+                )
+              end
 
               subject.perform
             end
@@ -254,9 +266,11 @@ describe FetchHearingLocationsForVeteransJob do
         end
 
         it "records a geomatch error" do
-          expect(subject).to(
-            receive(:record_geomatched_appeal).with(legacy_appeal, "error")
-          )
+          setup_geomatch_service_mock(legacy_appeal) do |geomatch_service|
+            expect(geomatch_service).to(
+              receive(:record_geomatched_appeal).with("error")
+            )
+          end
           expect(Raven).to receive(:capture_exception)
 
           subject.perform
@@ -313,5 +327,19 @@ describe FetchHearingLocationsForVeteransJob do
       military_postal_type_code: "99999",
       service: "99999"
     }
+  end
+
+  # Setups a mock for GeomatchService, and creates an expectation that the GeomatchService
+  # will be instantiated.
+  def setup_geomatch_service_mock(geomatching_appeal, &expectations)
+    geomatch_service = GeomatchService.new(appeal: geomatching_appeal)
+    expect(GeomatchService).to(
+      receive(:new)
+        .with(appeal: geomatching_appeal)
+        .at_least(:once)
+        .and_return(geomatch_service)
+    )
+
+    expectations.call(geomatch_service)
   end
 end
