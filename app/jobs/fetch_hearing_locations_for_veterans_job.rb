@@ -62,14 +62,18 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
         break if job_running_past_expected_end_time?
 
         begin
-          GeomatchService.new(appeal.reload).geomatch # we only selected id and ahl_update_at, reload all columns
+          GeomatchService.new(appeal: appeal.reload).geomatch # we only selected id and ahl_update_at, reload all columns
 
           current_appeal += 1
         rescue Caseflow::Error::VaDotGovLimitError
+          Rails.logger.error("VA.gov returned a rate limit error")
+
           sleep_before_retry_on_limit_error
 
           break
-        rescue StandardError
+        rescue StandardError => error
+          capture_exception(error: error, extra: { appeal_external_id: appeal.external_id })
+
           # For unknown errors, we capture the exeception in Sentry. This error could represent
           # a broad range of things, so we just skip geomatching for the appeal, and expect
           # that a developer looks into it.

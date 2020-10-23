@@ -19,11 +19,9 @@ class GeomatchService
       handle_geocode_status(geomatch_result)
       record_geomatched_appeal(geomatch_result[:status])
     rescue Caseflow::Error::VaDotGovLimitError
-      Rails.logger.error("VA.gov returned a rate limit error")
       record_geomatched_appeal("limit_error")
       raise
     rescue StandardError => error
-      capture_exception(error: error, extra: { appeal_external_id: appeal.external_id })
       record_geomatched_appeal("error")
       raise
     end
@@ -40,10 +38,10 @@ class GeomatchService
     case geomatch_result[:status]
     when VaDotGovAddressValidator::STATUSES[:matched_available_hearing_locations],
       VaDotGovAddressValidator::STATUSES[:philippines_exception]
-      cancel_admin_actions_for_matched_appeal(appeal)
+      cancel_admin_actions_for_matched_appeal
     when VaDotGovAddressValidator::STATUSES[:created_verify_address_admin_action],
       VaDotGovAddressValidator::STATUSES[:created_foreign_veteran_admin_action]
-      create_available_hearing_location_for_errored_appeal(appeal)
+      create_available_hearing_location_for_errored_appeal
     end
   end
 
