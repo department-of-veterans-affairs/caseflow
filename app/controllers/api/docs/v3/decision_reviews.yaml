@@ -1141,6 +1141,9 @@ components:
         - Dependency Spouse - Deemed valid marriage
         - Military Retired Pay
         - Lack of Qualifying Service
+        - DIC
+        - SC Death
+        - Accrued benefits
         - Other non-rated
         # for benefit type:  pension
         - Eligibility | Wartime service
@@ -1161,11 +1164,14 @@ components:
         - Overpayment | Validity of debt
         - Overpayment | Waiver
         - Apportionment
-        - Survivors pension eligibility
+        - Survivor's pension eligibility
         - Burial Benefits - NSC Burial
         - Burial Benefits - Plot or Interment Allowance
         - Burial Benefits - Transportation Allowance
         - Burial Benefits - VA Hospitalization Death
+        - NSC live pension
+        - Survivor's pension
+        - Accrued benefits
         # for benefit type:  fiduciary
         - Appointment of a Fiduciary (38 CFR 13.100)
         - Removal of a Fiduciary (38 CFR 13.500)
