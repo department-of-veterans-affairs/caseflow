@@ -6,6 +6,7 @@ import { fetchJudges } from '../../QueueActions';
 
 import { appealWithDetailSelector } from '../../selectors';
 import { dispositions } from '../constants';
+import { createDocketSwitchRulingTask } from './recommendDocketSwitchSlice';
 import { RecommendDocketSwitchForm } from './RecommendDocketSwitchForm';
 
 export const formatDocketSwitchRecommendation = ({
@@ -68,11 +69,12 @@ export const RecommendDocketSwitchContainer = () => {
     };
 
     try {
-      await ApiUtil.post('/tasks', { data });
+      await dispatch(createDocketSwitchRulingTask(data));
 
       // Add logic for success banner
       push('/queue');
     } catch (error) {
+      // Perhaps show an alert that indicates error, advise trying again...?
       console.error('Error saving task', error);
     }
   };
