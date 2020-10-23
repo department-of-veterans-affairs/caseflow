@@ -860,6 +860,18 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         include_examples "returns alerts"
 
         it_behaves_like "request with invalid attributes"
+
+        # See https://github.com/department-of-veterans-affairs/caseflow/issues/15430
+        context "when virtual hearing payload includes virtual hearing status" do
+          let(:virtual_hearing_attributes) do
+            {
+              appellant_email: "valid@caseflow.va.gov",
+              status: "pending"
+            }
+          end
+
+          it_behaves_like "request with invalid attributes"
+        end
       end
 
       context "when task is ChangeHearingRequestTypeTask" do
