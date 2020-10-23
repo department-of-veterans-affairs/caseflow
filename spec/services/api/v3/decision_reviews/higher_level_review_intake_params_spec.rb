@@ -764,8 +764,7 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
       let(:first_contestable_issue_decision_issue_id) { true }
       it do
         is_expected.to eq("The property /included/0/attributes/decisionIssueId did not match the following " \
-"requirements {\"type\"=>\"integer\"}"
-        )
+"requirements {\"type\"=>\"integer\"}")
       end
     end
 
