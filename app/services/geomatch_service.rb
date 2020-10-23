@@ -21,7 +21,7 @@ class GeomatchService
     rescue Caseflow::Error::VaDotGovLimitError
       record_geomatched_appeal("limit_error")
       raise
-    rescue StandardError => error
+    rescue StandardError
       record_geomatched_appeal("error")
       raise
     end

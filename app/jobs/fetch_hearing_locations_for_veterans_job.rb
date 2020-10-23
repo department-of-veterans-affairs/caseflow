@@ -62,7 +62,8 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
         break if job_running_past_expected_end_time?
 
         begin
-          GeomatchService.new(appeal: appeal.reload).geomatch # we only selected id and ahl_update_at, reload all columns
+          # we only selected id and ahl_update_at, reload all columns
+          GeomatchService.new(appeal: appeal.reload).geomatch
 
           current_appeal += 1
         rescue Caseflow::Error::VaDotGovLimitError

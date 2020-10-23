@@ -111,7 +111,7 @@ describe FetchHearingLocationsForVeteransJob do
             receive(:record_geomatched_appeal).with(:matched_available_hearing_locations)
           )
         end
-        
+
         subject.perform
 
         expect(legacy_appeal.tasks.count).to eq(3)
@@ -181,7 +181,7 @@ describe FetchHearingLocationsForVeteransJob do
                   receive(:record_geomatched_appeal).with("limit_error").once
                 )
               end
-              
+
               subject.perform
             end
           end
@@ -331,7 +331,7 @@ describe FetchHearingLocationsForVeteransJob do
 
   # Setups a mock for GeomatchService, and creates an expectation that the GeomatchService
   # will be instantiated.
-  def setup_geomatch_service_mock(geomatching_appeal, &expectations)
+  def setup_geomatch_service_mock(geomatching_appeal)
     geomatch_service = GeomatchService.new(appeal: geomatching_appeal)
     expect(GeomatchService).to(
       receive(:new)
@@ -340,6 +340,6 @@ describe FetchHearingLocationsForVeteransJob do
         .and_return(geomatch_service)
     )
 
-    expectations.call(geomatch_service)
+    yield(geomatch_service)
   end
 end
