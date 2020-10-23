@@ -1240,11 +1240,11 @@ components:
         - VMLI (2106) | Over age 70
         - VMLI (2106) | Death Award
         - VMLI (2106) | Other
-        - Contested death claim | Relationships
-        - Contested death claim | Testamentary Capacity
-        - Contested death claim | Undue Influence
-        - Contested death claim | Intent of Insured
-        - Contested death claim | Other
+        - Contested Death Claim | Relationships
+        - Contested Death Claim | Testamentary Capacity
+        - Contested Death Claim | Undue Influence
+        - Contested Death Claim | Intent of Insured
+        - Contested Death Claim | Other
         - Other
         # for benefit type:  loan_guaranty
         - Basic Eligibility - Certificate of Eligibility (COE) was denied for use of benefit
@@ -1263,7 +1263,7 @@ components:
         - Entitlement | Allied Forces and Non-Citizens
         - Entitlement | Pre-Need
         - Entitlement | Spouse/Surving Spouse
-        - Entitlement | Non-qualifying service
+        - Entitlement | Non-Qualifying service
         - Entitlement | ABMC/Overseas Burial
         - Entitlement | Pre-WWI/Burial Site Unknown
         - Entitlement | Marked Grave (Death prior to 10-18-78)
@@ -1272,7 +1272,7 @@ components:
         - Entitlement | Voided Enlistment
         - Entitlement | Benefit Already Provided
         - Entitlement | Confederate IMO
-        - Entitlement | Cremains not Interred
+        - Entitlement | Cremains Not Interred
         - Entitlement | Historic Marker Deemed Serviceable
         - Entitlement | Medallion (No Grave)
         - Entitlement | Medallion (Unmarked Grave)
