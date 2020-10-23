@@ -182,7 +182,7 @@ class TaskActionRepository
 
     def docket_switch_granted_data(_task, _user = nil)
       {
-        type:DocketSwitchGrantedTask.name
+        type: DocketSwitchGrantedTask.name
       }
     end
 
