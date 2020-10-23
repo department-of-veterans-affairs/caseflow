@@ -128,7 +128,12 @@ class IntakesController < ApplicationController
   end
 
   def verify_access
-    verify_authorized_roles("Mail Intake", "Admin Intake")
+    if current_user.deny_access_svsr
+      binding.pry
+      return false
+    else
+      verify_authorized_roles("Mail Intake", "Admin Intake")
+    end
   end
 
   def check_intake_out_of_service
