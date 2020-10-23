@@ -8,6 +8,8 @@
 # When task is completed, i.e the field `changed_request_type` is passed as payload, the location
 # of LegacyAppeal is moved `CASEFLOW` and the parent `ScheduleHearingTask` is set to be `assigned`
 class ChangeHearingRequestTypeTask < Task
+  include RunAsyncable
+
   validates :parent, presence: true
 
   before_validation :set_assignee
@@ -80,6 +82,8 @@ class ChangeHearingRequestTypeTask < Task
 
       update!(params)
     end
+
+    perform_async_or_inline(Hearings::GeomatchAndCacheAppeal, appeal_id: appeal.id)
   end
 
   def set_assignee
