@@ -75,6 +75,8 @@ describe ScheduleHearingTask, :all_dbs do
   end
 
   describe "#update_from_params" do
+    subject { schedule_hearing_task.update_from_params(update_params, hearings_management_user) }
+
     context "AMA appeal" do
       let(:hearing_day) do
         create(:hearing_day,
@@ -95,19 +97,15 @@ describe ScheduleHearingTask, :all_dbs do
         }
       end
 
-      subject { schedule_hearing_task.update_from_params(update_params, hearings_management_user) }
-
       it "associates a caseflow hearing with the hearing day" do
-        subject
-
+        expect(subject.count).to eq(2)
         expect(Hearing.count).to eq(1)
         expect(Hearing.first.hearing_day).to eq(hearing_day)
         expect(Hearing.first.appeal).to eq(schedule_hearing_task.appeal)
       end
 
       it "creates a AssignHearingDispositionTask and associated object" do
-        subject
-
+        expect(subject.count).to eq(2)
         expect(AssignHearingDispositionTask.count).to eq(1)
         expect(AssignHearingDispositionTask.first.appeal).to eq(schedule_hearing_task.appeal)
         expect(HearingTaskAssociation.count).to eq(1)
@@ -128,8 +126,7 @@ describe ScheduleHearingTask, :all_dbs do
         end
 
         it "converts hearing to virtual hearing", :aggregate_failures do
-          subject
-
+          expect(subject.count).to eq(2)
           expect(Hearing.count).to eq(1)
           expect(Hearing.first.virtual_hearing).not_to eq(nil)
           expect(Hearing.first.virtual?).to eq(true)
@@ -169,8 +166,7 @@ describe ScheduleHearingTask, :all_dbs do
 
         context "with no VSO" do
           it "completes the task and updates the location to case storage" do
-            schedule_hearing_task.update_from_params(update_params, hearings_management_user)
-
+            expect(subject.count).to eq(1)
             expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.cancelled)
             expect(schedule_hearing_task.closed_at).to_not be_nil
             expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:case_storage])
@@ -199,8 +195,7 @@ describe ScheduleHearingTask, :all_dbs do
           end
 
           it "completes the task and updates the location to service organization" do
-            schedule_hearing_task.update_from_params(update_params, hearings_management_user)
-
+            expect(subject.count).to eq(1)
             expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.cancelled)
             expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:service_organization])
             expect(vacols_case.bfha).to eq("5")
@@ -216,8 +211,7 @@ describe ScheduleHearingTask, :all_dbs do
         end
 
         it "completes the task and creates an EvidenceSubmissionWindowTask" do
-          schedule_hearing_task.update_from_params(update_params, hearings_management_user)
-
+          expect(subject.count).to eq(2)
           expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.cancelled)
           expect(appeal.tasks.where(type: EvidenceSubmissionWindowTask.name).count).to eq(1)
         end

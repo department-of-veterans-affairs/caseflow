@@ -4,6 +4,9 @@
 # Task created when a hearing coordinator visits the Case Details page of an appeal with a
 # Travel Board hearing request. Gives the user the option to convert that request to a video
 # or virtual hearing request so it can be scheduled in Caseflow.
+#
+# When task is completed, i.e the field `changed_request_type` is passed as payload, the location
+# of LegacyAppeal is moved `CASEFLOW` and the parent `ScheduleHearingTask` is set to be `assigned`
 class ChangeHearingRequestTypeTask < Task
   validates :parent, presence: true
 
@@ -69,6 +72,11 @@ class ChangeHearingRequestTypeTask < Task
   def update_appeal_and_self(payload_values, params)
     multi_transaction do
       appeal.update!(changed_request_type: payload_values[:changed_request_type])
+
+      # update location to `CASEFLOW`
+      if appeal.is_a?(LegacyAppeal)
+        AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+      end
 
       update!(params)
     end

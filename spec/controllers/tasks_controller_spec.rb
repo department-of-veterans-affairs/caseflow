@@ -860,13 +860,32 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         include_examples "returns alerts"
 
         it_behaves_like "request with invalid attributes"
+
+        # See https://github.com/department-of-veterans-affairs/caseflow/issues/15430
+        context "when virtual hearing payload includes virtual hearing status" do
+          let(:virtual_hearing_attributes) do
+            {
+              appellant_email: "valid@caseflow.va.gov",
+              status: "pending"
+            }
+          end
+
+          it_behaves_like "request with invalid attributes"
+        end
       end
 
       context "when task is ChangeHearingRequestTypeTask" do
         let(:attorney_user) { create(:user) }
+        let(:vacols_case) do
+          create(
+            :case,
+            :assigned,
+            bfcorlid: "0000000000S",
+            bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]
+          )
+        end
         let!(:legacy_appeal) do
-          create(:legacy_appeal,
-                 vacols_case: create(:case, :assigned, bfcorlid: "0000000000S", user: attorney_user))
+          create(:legacy_appeal, vacols_case: vacols_case)
         end
 
         let(:task_type) { :changed_hearing_request_type }
@@ -901,6 +920,13 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
             appeal: legacy_appeal
           ).status).to eq(Constants.TASK_STATUSES.completed)
           expect(ScheduleHearingTask.find_by(appeal: legacy_appeal).status).to eq(Constants.TASK_STATUSES.assigned)
+        end
+
+        it "changes the vacols location to CASEFLOW" do
+          expect { subject }
+            .to change { vacols_case.reload.bfcurloc }
+            .from(LegacyAppeal::LOCATION_CODES[:schedule_hearing])
+            .to(LegacyAppeal::LOCATION_CODES[:caseflow])
         end
       end
     end
