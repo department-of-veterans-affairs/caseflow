@@ -82,6 +82,9 @@ class PromulgatedRating < Rating
     )
     matching_rating = ratings_at_issue.find { |rating| profile_date_matches(rating.profile_date) }
     matching_rating.present? ? matching_rating.rating_profile : {}
+  rescue BGS::ShareError, Rating::NilRatingProfileListError => error
+    Raven.capture_exception(error)
+    {}
   end
 
   # The profile date is used as a key when fetching a rating by profile date.
