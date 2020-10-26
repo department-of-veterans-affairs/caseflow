@@ -1,0 +1,108 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`IssueRemandReasonCheckbox AMA hides AOJ choice until checked 1`] = `
+<div>
+  <div
+    class="checkbox-wrapper--lorem"
+  >
+    <div
+      class="cf-form-checkbox"
+    >
+      <input
+        aria-label="-lorem"
+        id="-lorem"
+        name="-lorem"
+        type="checkbox"
+      />
+      <label
+        for="-lorem"
+      >
+        <span
+          class=""
+        >
+          Lorem Ipsum
+        </span>
+         
+      </label>
+    </div>
+  </div>
+  <fieldset
+    class="usa-fieldset-inputs cf-form-radio "
+    data-css-10hr1g7=""
+  >
+    <legend
+      class="usa-sr-only"
+    >
+      <span>
+        -lorem-postAoj
+         
+      </span>
+    </legend>
+    <div
+      class="cf-form-radio-options"
+    >
+      <div
+        class="cf-form-radio-option"
+      >
+        <input
+          id="-lorem-postAoj_false"
+          name="-lorem-postAoj"
+          type="radio"
+          value="false"
+        />
+        <label
+          class=""
+          for="-lorem-postAoj_false"
+        >
+          Pre AOJ
+        </label>
+      </div>
+      <div
+        class="cf-form-radio-option"
+      >
+        <input
+          id="-lorem-postAoj_true"
+          name="-lorem-postAoj"
+          type="radio"
+          value="true"
+        />
+        <label
+          class=""
+          for="-lorem-postAoj_true"
+        >
+          Post AOJ
+        </label>
+      </div>
+    </div>
+  </fieldset>
+</div>
+`;
+
+exports[`IssueRemandReasonCheckbox AMA renders correctly by default 1`] = `
+<div>
+  <div
+    class="checkbox-wrapper--lorem"
+  >
+    <div
+      class="cf-form-checkbox"
+    >
+      <input
+        aria-label="-lorem"
+        id="-lorem"
+        name="-lorem"
+        type="checkbox"
+      />
+      <label
+        for="-lorem"
+      >
+        <span
+          class=""
+        >
+          Lorem Ipsum
+        </span>
+         
+      </label>
+    </div>
+  </div>
+</div>
+`;
