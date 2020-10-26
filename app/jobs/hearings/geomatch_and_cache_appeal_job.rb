@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Hearings::GeomatchAndCacheAppeal < ApplicationJob
+class Hearings::GeomatchAndCacheAppealJob < ApplicationJob
   queue_with_priority :high_priority
   application_attr :hearing_schedule
 

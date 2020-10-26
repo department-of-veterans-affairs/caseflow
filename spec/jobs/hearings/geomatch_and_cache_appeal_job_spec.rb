@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-describe Hearings::GeomatchAndCacheAppeal do
+describe Hearings::GeomatchAndCacheAppealJob do
   include ActiveJob::TestHelper
 
   describe "#perform" do
-    subject { Hearings::GeomatchAndCacheAppeal.new.perform(appeal_id: appeal.id) }
+    subject { described_class.new.perform(appeal_id: appeal.id) }
 
     context "with AMA appeal" do
       let(:appeal) { create(:appeal) }
