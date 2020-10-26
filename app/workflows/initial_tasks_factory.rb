@@ -9,7 +9,7 @@ class InitialTasksFactory
   def create_root_and_sub_tasks!
     create_vso_tracking_tasks
     ActiveRecord::Base.transaction do
-      create_subtasks! if @appeal.original?
+      create_subtasks! if @appeal.original? || @appeal.cavc?
     end
   end
 
@@ -26,7 +26,9 @@ class InitialTasksFactory
   def create_subtasks!
     distribution_task = DistributionTask.create!(appeal: @appeal, parent: @root_task)
 
-    if @appeal.evidence_submission_docket?
+    if @appeal.cavc?
+      CavcTask.create!(appeal: @appeal, parent: distribution_task)
+    elsif @appeal.evidence_submission_docket?
       EvidenceSubmissionWindowTask.create!(appeal: @appeal, parent: distribution_task)
     elsif @appeal.hearing_docket?
       ScheduleHearingTask.create!(appeal: @appeal, parent: distribution_task)
