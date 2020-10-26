@@ -26,6 +26,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   rescue StandardError => error
     log_error(@start_time, error)
+  else
+    log_warning unless warning_msgs.empty?
   end
 
   def cache_ama_appeals
@@ -59,7 +61,9 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def cache_legacy_appeal_postgres_data(legacy_appeals)
     # this transaction times out so let's try to do this in batches
     legacy_appeals.in_groups_of(POSTGRES_BATCH_SIZE, false) do |batch_legacy_appeals|
-      cached_appeals = CachedAppealService.cache_legacy_appeal_postgres_data(batch_legacy_appeals)
+      cached_appeals, new_warnings = CachedAppealService.cache_legacy_appeal_postgres_data(batch_legacy_appeals)
+
+      self.warning_msgs.concat(new_warnings)
 
       increment_appeal_count(cached_appeals.length, LegacyAppeal.name)
     end
@@ -94,6 +98,15 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
         }
       )
     end
+  end
+
+  def warning_msgs
+    @warning_msgs ||= []
+  end
+
+  def log_warning
+    slack_msg = "[WARN] UpdateCachedAppealsAttributesJob first 100 warnings: \n#{warning_msgs.join("\n")}"
+    slack_service.send_notification(slack_msg)
   end
 
   def log_error(start_time, err)

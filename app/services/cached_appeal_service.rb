@@ -31,22 +31,24 @@ class CachedAppealService
     end
 
     def cache_legacy_appeal_postgres_data(legacy_appeals)
-      import_cached_appeals([:appeal_id, :appeal_type], POSTGRES_LEGACY_CACHED_COLUMNS) do
+      warning_msgs = []
+
+      cached_appeals = import_cached_appeals([:appeal_id, :appeal_type], POSTGRES_LEGACY_CACHED_COLUMNS) do
         legacy_appeals.map do |appeal|
-          # bypass PowerOfAttorney model completely and always prefer BGS cache
-          bgs_poa = fetch_bgs_power_of_attorney_by_file_number(appeal.veteran_file_number)
           {
             vacols_id: appeal.vacols_id,
             appeal_id: appeal.id,
             appeal_type: LegacyAppeal.name,
             docket_type: appeal.docket_name, # "legacy"
-            power_of_attorney_name: (bgs_poa&.representative_name || appeal.representative_name),
+            power_of_attorney_name: poa_representative_name_for(appeal, warning_msgs),
             suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location
           }.merge(
             regional_office_fields_to_cache(appeal)
           )
         end
       end
+
+      [cached_appeals, warning_msgs]
     end
 
     def cache_legacy_appeal_vacols_data(vacols_ids)
@@ -132,6 +134,16 @@ class CachedAppealService
       )
 
       values_to_cache
+    end
+
+    # bypass PowerOfAttorney model completely and always prefer BGS cache
+    def poa_representative_name_for(appeal, warning_msgs)
+      bgs_poa = fetch_bgs_power_of_attorney_by_file_number(appeal.veteran_file_number)
+      # both representative_name calls can result in BGS connection error
+      bgs_poa&.representative_name || appeal.representative_name
+    rescue Errno::ECONNRESET => error
+      warning_msgs << "#{appeal.class.name} #{appeal.id}: #{error}" if warning_msgs.count < 100
+      nil
     end
 
     def fetch_bgs_power_of_attorney_by_file_number(file_number)
