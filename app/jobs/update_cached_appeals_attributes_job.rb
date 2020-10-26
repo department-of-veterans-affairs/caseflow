@@ -63,7 +63,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     legacy_appeals.in_groups_of(POSTGRES_BATCH_SIZE, false) do |batch_legacy_appeals|
       cached_appeals, new_warnings = CachedAppealService.cache_legacy_appeal_postgres_data(batch_legacy_appeals)
 
-      self.warning_msgs.concat(new_warnings)
+      warning_msgs.concat(new_warnings)
 
       increment_appeal_count(cached_appeals.length, LegacyAppeal.name)
     end
