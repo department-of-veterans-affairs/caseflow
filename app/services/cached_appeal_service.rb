@@ -185,6 +185,8 @@ class CachedAppealService
     end
 
     def case_fields_for_vacols_ids(vacols_ids)
+      hearing_request_types_to_vacols_id = changed_hearing_request_type_for_all_vacols_ids
+
       # array of arrays will become hash with bfkey as key.
       # [
       #   [ 123, { location: 57, status: "Original", hearing_request_type: "Video", former_travel: true} ],
@@ -199,7 +201,7 @@ class CachedAppealService
       # }
       VACOLS::Case.where(bfkey: vacols_ids).map do |vacols_case|
         original_request = original_hearing_request_type_for_vacols_case(vacols_case)
-        changed_request = changed_hearing_request_type_for_all_vacols_ids[vacols_case.bfkey]
+        changed_request = hearing_request_types_to_vacols_id[vacols_case.bfkey]
         # Replicates LegacyAppeal#current_hearing_request_type
         current_request = HearingDay::REQUEST_TYPES.key(changed_request)&.to_sym || original_request
 
@@ -238,7 +240,7 @@ class CachedAppealService
 
     # Maps vacols ids to their leagcy appeal's changed hearing request type
     def changed_hearing_request_type_for_all_vacols_ids
-      @changed_hearing_request_type_for_all_vacols_ids ||= LegacyAppeal.pluck(:vacols_id, :changed_request_type).to_h
+      LegacyAppeal.pluck(:vacols_id, :changed_request_type).to_h
     end
 
     def issues_counts_for_vacols_folders(vacols_ids)
