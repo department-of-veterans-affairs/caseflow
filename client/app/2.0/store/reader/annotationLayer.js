@@ -244,7 +244,6 @@ const annotationLayerSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.
-
       addCase(handleSelectCommentIcon, (state, action) => {
         state.selectedAnnotationId = action.payload.scrollToSidebarComment.id;
       }).
