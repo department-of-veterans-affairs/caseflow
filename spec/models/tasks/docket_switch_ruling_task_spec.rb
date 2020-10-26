@@ -3,9 +3,10 @@
 describe DocketSwitchRulingTask, :postgres do
   let(:task_class) { DocketSwitchRulingTask }
   let(:judge) { create(:user) }
+  let(:appeal) { create(:appeal) }
 
   describe ".additional_available_actions" do
-    let(:task) { task_class.create!(appeal: root_task.appeal, assigned_to: judge) }
+    let(:task) { task_class.create!(appeal: appeal, assigned_to: judge) }
 
     subject { task.additional_available_actions(judge) }
 

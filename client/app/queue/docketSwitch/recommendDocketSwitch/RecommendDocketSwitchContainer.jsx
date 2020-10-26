@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
-import ApiUtil from '../../../util/ApiUtil';
 import { fetchJudges } from '../../QueueActions';
 
 import { appealWithDetailSelector } from '../../selectors';
