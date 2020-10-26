@@ -286,6 +286,8 @@ class ExternalApi::BGSService
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
     DBService.release_db_connections
 
+    start_date, end_date = formatted_start_and_end_dates(start_date, end_date)
+
     MetricsService.record("BGS: fetch ratings in range: \
                            participant_id = #{participant_id}, \
                            start_date = #{start_date} \
@@ -314,6 +316,8 @@ class ExternalApi::BGSService
 
   def fetch_rating_profiles_in_range(participant_id:, start_date:, end_date:)
     DBService.release_db_connections
+
+    start_date, end_date = formatted_start_and_end_dates(start_date, end_date)
 
     MetricsService.record("BGS: fetch rating profile in range: \
                            participant_id = #{participant_id}, \
@@ -461,6 +465,14 @@ class ExternalApi::BGSService
       jumpbox_url: ENV["RUBY_BGS_JUMPBOX_URL"],
       log: true
     )
+  end
+
+  def formatted_start_and_end_dates(start_date, end_date)
+    # start_date and end_date should be Dates with different values
+    return_start_date = start_date&.to_date
+    return_end_date = end_date&.to_date
+    return_end_date += 1.day if return_end_date.present? && return_end_date == return_start_date
+    [return_start_date, return_end_date]
   end
   # :nocov:
 end

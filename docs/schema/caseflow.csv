@@ -194,7 +194,7 @@ cavc_remands,mandate_date,date ∗,x,,,,,Date that CAVC reported the mandate w
 cavc_remands,remand_subtype,string ∗,x,,,,,"Type of remand. If the cavc_decision_type is 'remand', expecting one of 'jmp', 'jmpr', or 'mdr'. Otherwise, this can be null."
 cavc_remands,represented_by_attorney,boolean ∗,x,,,,,Whether or not the appellant was represented by an attorney
 cavc_remands,updated_at,datetime ∗,x,,,,,Default timestamps
-cavc_remands,updated_by_id,integer (8) ∗ FK,x,,x,,,"User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created."
+cavc_remands,updated_by_id,integer (8) FK,,,x,,,"User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created."
 certifications,,,,,,,,
 certifications,already_certified,boolean,,,,,,
 certifications,bgs_rep_address_line_1,string,,,,,,
@@ -409,16 +409,6 @@ end_product_code_updates,created_at,datetime ∗,x,,,,,
 end_product_code_updates,end_product_establishment_id,integer (8) ∗ FK,x,,x,,x,
 end_product_code_updates,id,integer (8) PK,x,x,,,,
 end_product_code_updates,updated_at,datetime ∗,x,,,,x,
-end_product_updates,,,,,,,, "Updates the claim label for end products established from Caseflow."
-end_product_updates,user_id,integer,"The ID of the user who makes an end product update."
-end_product_updates,end_product_establishment_id,bigint,"The end product establishment id used to track the end product being updated"
-end_product_updates,original_decision_review_id,bigint,"The original ID of the decision review that this end product update belongs to; has a non-nil value only if a new decision_review was created."
-end_product_updates,original_decision_review_type,string,"The original decision review type that this end product update belongs to"
-end_product_updates,status,string,"Status after an attempt to update the end product; expected values: 'success', 'error', ..."
-end_product_updates,error,string,"The error message captured from BGS if the end product update failed."
-end_product_updates,original_code,string,"The original end product code before the update was submitted"
-end_product_updates,new_code,string,"The new end product code the user wants to update to."
-end_product_updates,active_request_issue_ids,integer,"A list of active request issue IDs when a user has finished editing a decision review. Used to keep track of which request issues may have been impacted by the update."
 end_product_establishments,,,,,,,,"Represents end products that have been, or need to be established by Caseflow. Used to track the status of those end products as they are processed in VBMS and/or SHARE."
 end_product_establishments,benefit_type_code,string,,,,,,"1 if the Veteran is alive, and 2 if the Veteran is deceased. Not to be confused with benefit_type, which is unrelated."
 end_product_establishments,claim_date,date,,,,,,The claim_date for end product established.
@@ -443,6 +433,19 @@ end_product_establishments,synced_status,string,,,,,,"The status of the end prod
 end_product_establishments,updated_at,datetime,,,,,x,
 end_product_establishments,user_id,integer FK,,,x,,x,The ID of the user who performed the decision review intake.
 end_product_establishments,veteran_file_number,string ∗,x,,,,x,The file number of the Veteran submitted when establishing the end product.
+end_product_updates,,,,,,,,Updates the claim label for end products established from Caseflow
+end_product_updates,active_request_issue_ids,integer (8) ∗,x,,,,,A list of active request issue IDs when a user has finished editing a decision review. Used to keep track of which request issues may have been impacted by the update.
+end_product_updates,created_at,datetime ∗,x,,,,,
+end_product_updates,end_product_establishment_id,integer (8) ∗ FK,x,,x,,x,The end product establishment id used to track the end product being updated.
+end_product_updates,error,string,,,,,,The error message captured from BGS if the end product update failed.
+end_product_updates,id,integer (8) PK,x,x,,,,
+end_product_updates,new_code,string,,,,,,The new end product code the user wants to update to.
+end_product_updates,original_code,string,,,,,,The original end product code before the update was submitted.
+end_product_updates,original_decision_review_id,integer (8),,,,,x,The original decision review that this end product update belongs to; has a non-nil value only if a new decision_review was created.
+end_product_updates,original_decision_review_type,string,,,,,x,The original decision review type that this end product update belongs to
+end_product_updates,status,string,,,,,,"Status after an attempt to update the end product; expected values: 'success', 'error', ..."
+end_product_updates,updated_at,datetime ∗,x,,,,,
+end_product_updates,user_id,integer (8) ∗,x,,,,x,The ID of the user who makes an end product update.
 form8s,,,,,,,,
 form8s,_initial_appellant_name,string,,,,,,
 form8s,_initial_appellant_relationship,string,,,,,,
