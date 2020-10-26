@@ -110,7 +110,6 @@ class Appeal < DecisionReview
           payee_code: claimant.payee_code,
           type: claimant.type
         )
-        stream.set_target_decision_date!
       end
     end
   end
