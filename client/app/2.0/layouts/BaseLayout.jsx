@@ -1,7 +1,7 @@
 // External Dependencies
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 
 // Local dependencies
@@ -19,8 +19,16 @@ const BaseLayout = ({
   buildDate,
   appName,
   defaultUrl,
-  crumbs
 }) => {
+  const { crumbs } = useSelector(() => ({
+    crumbs: [
+      {
+        breadcrumb: 'Reader',
+        path: '/reader/appeal/:vacolsId/documents'
+      }
+    ]
+  }));
+
   return (
     <React.Fragment>
       <NavigationBar
@@ -64,17 +72,4 @@ BaseLayout.propTypes = {
   crumbs: PropTypes.array,
 };
 
-const mapStateToProps = () => ({
-  // NOTE: This will be loaded from redux in a later PR in this stack
-  crumbs: [
-    {
-      breadcrumb: 'Reader',
-      path: '/reader/appeal/:vacolsId/documents'
-    }
-  ]
-});
-
-export default connect(
-  mapStateToProps,
-  null
-)(BaseLayout);
+export default BaseLayout;

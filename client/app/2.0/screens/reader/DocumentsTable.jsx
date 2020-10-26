@@ -29,29 +29,4 @@ DocumentsTable.propTypes = {
   setCategoryFilter: PropTypes.func
 };
 
-const mapStateToProps = (state, props) => ({
-  ...pick(state.documentList, 'docFilterCriteria', 'viewingDocumentsOrComments'),
-  documents: getFilteredDocuments(state),
-  caseSelectedAppeal: state.caseSelect.selectedAppeal,
-  manifestVbmsFetchedAt: state.documentList.manifestVbmsFetchedAt,
-  manifestVvaFetchedAt: state.documentList.manifestVvaFetchedAt,
-  queueRedirectUrl: state.documentList.queueRedirectUrl,
-  queueTaskType: state.documentList.queueTaskType,
-  documentFilters: state.documentList.pdfList.filters,
-  storeDocuments: state.documents,
-  isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
-  appeal: setAppeal(state, props)
-});
-
-const mapDispatchToProps = {
-  onReceiveAppealDetails,
-  fetchAppealDetails,
-  onScrollToComment,
-  setCategoryFilter,
-  stopPlacingAnnotation
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(DocumentsTable);
+export default DocumentsTable;

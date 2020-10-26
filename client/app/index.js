@@ -13,7 +13,7 @@ import '../node_modules/pdfjs-dist/web/pdf_viewer.css';
 import { BrowserRouter, Switch } from 'react-router-dom';
 import BaseLayout from 'layouts/BaseLayout';
 import ReduxBase from 'app/components/ReduxBase';
-import rootReducer from 'app/reader/reducers';
+import rootReducer from 'store/root';
 
 // List of container components we render directly in  Rails .erb files
 const Router = React.lazy(() => import('app/2.0/router'));

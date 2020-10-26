@@ -1,10 +1,11 @@
 // External Dependencies
 import React from 'react';
-import { Route } from 'react-router-dom';
+// import { Route } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 // Internal Dependencies
-import { getClaimsFolderPageTitle } from 'utils';
+import PageRoute from 'app/components/PageRoute';
+import { claimsFolderPageTitle } from 'utils';
 
 // Lazy load screens
 const DocumentsTable = React.lazy(() => import('screens/reader/DocumentsTable'));
@@ -12,14 +13,14 @@ const Document = React.lazy(() => import('screens/reader/Document'));
 
 const ReaderRoutes = ({ appeal }) => (
   <React.Fragment>
-    <Route
+    <PageRoute
       exact
-      title={getClaimsFolderPageTitle(appeal)}
+      title={claimsFolderPageTitle(appeal)}
       breadcrumb="Reader"
       path="/reader/appeal/:vacolsId/documents"
       render={(props) => <DocumentsTable {...props} />}
     />
-    <Route
+    <PageRoute
       exact
       title="Document Viewer | Caseflow Reader"
       breadcrumb="Document Viewer"

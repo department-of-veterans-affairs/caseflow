@@ -1,10 +1,9 @@
 // External Dependencies
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 
 // Internal Dependencies
-import { setAppeal } from 'utils';
 import { onScrollToComment } from 'app/reader/Pdf/PdfActions';
 import { setCategoryFilter } from 'app/reader/DocumentList/DocumentListActions';
 import { fetchAppealDetails, showSearchBar } from 'app/reader/PdfViewer/PdfViewerActions';
@@ -18,11 +17,12 @@ import {
   closeAnnotationDeleteModal,
   closeAnnotationShareModal
 } from 'app/reader/AnnotationLayer/AnnotationActions';
-import { setDocumentDetails } from 'utils/reader';
 
-const Document = () => (
-  <React.Fragment />
-);
+const Document = () => {
+  const dispatch = useDispatch();
+
+  return <React.Fragment />;
+};
 
 Document.propTypes = {
   annotations: PropTypes.object,
@@ -58,31 +58,4 @@ Document.propTypes = {
   showPdf: PropTypes.func
 };
 
-const mapStateToProps = (state, props) => ({
-  ...setDocumentDetails(state),
-  documents: getFilteredDocuments(state),
-  annotations: state.annotationLayer.annotations,
-  documentFilters: state.documentList.pdfList.filters,
-  storeDocuments: state.documents,
-  isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
-  appeal: setAppeal(state, props)
-});
-
-const mapDispatchToProps = {
-  fetchAppealDetails,
-  onScrollToComment,
-  setCategoryFilter,
-  stopPlacingAnnotation,
-  showPlaceAnnotationIcon,
-  closeAnnotationShareModal,
-  closeAnnotationDeleteModal,
-  deleteAnnotation,
-  showSearchBar,
-  closeDocumentUpdatedModal,
-  handleSelectCurrentPdf: selectCurrentPdf
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Document);
+export default Document;
