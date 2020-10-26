@@ -25,6 +25,7 @@ const linkButtonStyling = css({
 
 const compReviewButtonStyling = css({
   whiteSpace: 'nowrap',
+  margin: '12px'
 });
 
 const secondaryButtonClassNames = ['usa-button-secondary'];
