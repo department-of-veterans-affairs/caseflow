@@ -30,7 +30,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
   def cache_ama_appeals
     appeals = Appeal.includes(:available_hearing_locations).where(id: open_appeals_from_tasks(Appeal.name))
-    
+
     cached_appeals = CachedAppealService.cache_ama_appeals(appeals)
 
     increment_appeal_count(cached_appeals.length, Appeal.name)
