@@ -37,7 +37,7 @@ class HearingRepository
     end
 
     def create_vacols_hearing(hearing_day, appeal, scheduled_for, hearing_location_attrs)
-      VACOLS::CaseHearing.create_hearing!(
+      vacols_record = VACOLS::CaseHearing.create_hearing!(
         folder_nr: appeal.vacols_id,
         hearing_date: VacolsHelper.format_datetime_with_utc_timezone(scheduled_for),
         vdkey: hearing_day.id,
@@ -47,12 +47,14 @@ class HearingRepository
         vdbvapoc: hearing_day.bva_poc
       )
 
-      vacols_record = VACOLS::CaseHearing.for_appeal(appeal.vacols_id).where(vdkey: hearing_day.id)
-        .order(addtime: :desc).last
+      # Reload the hearing to pull in associated data.
+      # Note: using `load_hearing` here is necessary to load in associated data that is not declared in
+      # the table (see `VACOLS::CaseHearing#select_hearings`).
+      vacols_record = VACOLS::CaseHearing.load_hearing(vacols_record.id)
+
       hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record)
-
-      hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location_attrs.nil?
-
+      hearing.hearing_location_attributes = hearing_location_attrs unless hearing_location_attrs.nil?
+      hearing.save!
       hearing
     end
 

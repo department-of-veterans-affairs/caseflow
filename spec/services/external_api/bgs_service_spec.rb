@@ -287,4 +287,45 @@ describe ExternalApi::BGSService do
       end
     end
   end
+
+  describe "fetch_ratings_in_range" do
+    let!(:veteran) { create(:veteran) }
+    let!(:rating) { double("rating") }
+    let(:start_date) { Time.zone.now - 5.years }
+    let(:start_date_formatted) { start_date.to_date.to_datetime.iso8601 }
+    let(:end_date) { start_date }
+
+    before do
+      allow(bgs_client).to receive(:rating).and_return rating
+    end
+
+    subject do
+      bgs.fetch_ratings_in_range(participant_id: veteran.participant_id, start_date: start_date, end_date: end_date)
+    end
+
+    context "the start and end dates are the same" do
+      let(:end_date_formatted) { (start_date + 1.day).to_date.to_datetime.iso8601 }
+
+      it "formats dates correctly" do
+        expect(rating)
+          .to receive(:find_by_participant_id_and_date_range)
+          .with(veteran.participant_id, start_date_formatted, end_date_formatted)
+
+        subject
+      end
+    end
+
+    context "the start and end dates are different" do
+      let(:end_date) { Time.zone.now }
+      let(:end_date_formatted) { end_date.to_date.to_datetime.iso8601 }
+
+      it "formats dates correctly" do
+        expect(rating)
+          .to receive(:find_by_participant_id_and_date_range)
+          .with(veteran.participant_id, start_date_formatted, end_date_formatted)
+
+        subject
+      end
+    end
+  end
 end
