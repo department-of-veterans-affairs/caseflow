@@ -46,12 +46,8 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def perform
-    RequestStore.store[:current_user] = User.system_user
-
-    @job_expected_end_time = Time.zone.now + JOB_DURATION
+    setup_job
     current_appeal = 0
-
-    create_schedule_hearing_tasks
 
     loop do
       remaining_appeals = appeals[current_appeal..-1]
@@ -87,6 +83,14 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   private
 
   attr_accessor :job_expected_end_time
+
+  def setup_job
+    RequestStore.store[:current_user] = User.system_user
+
+    @job_expected_end_time = Time.zone.now + JOB_DURATION
+
+    create_schedule_hearing_tasks
+  end
 
   # Returns whether or not the job is running beyond the expected end time.
   def job_running_past_expected_end_time?

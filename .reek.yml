@@ -93,6 +93,7 @@ detectors:
       - RequestIssue#find_or_create_decision_issue_from_rating_issue
       - RequestIssue#special_issues
       - RequestIssueReporter#as_csv
+      - RunAsyncable#perform_async_or_inline
       - ScheduleHearingTask#create_hearing
       - Seeds::Hearings
       - Seeds::Tasks#create_colocated_legacy_tasks
