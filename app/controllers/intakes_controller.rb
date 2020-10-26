@@ -129,8 +129,7 @@ class IntakesController < ApplicationController
 
   def verify_access
     if current_user.deny_access_svsr
-      binding.pry
-      return false
+      redirect_to "/unauthorized"
     else
       verify_authorized_roles("Mail Intake", "Admin Intake")
     end
