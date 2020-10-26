@@ -15,12 +15,20 @@ class CavcTask < Task
     "All CAVC-related tasks"
   end
 
+  def available_actions(_user)
+    []
+  end
+
   def default_instructions
     [COPY::CAVC_TASK_DEFAULT_INSTRUCTIONS]
   end
 
-  def available_actions(_user)
-    []
+  def hide_from_case_timeline
+    true
+  end
+
+  def hide_from_task_snapshot
+    true
   end
 
   def verify_org_task_unique
