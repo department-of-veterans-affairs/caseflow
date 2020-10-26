@@ -11,11 +11,11 @@ module RunAsyncable
 
   private
 
-  def perform_async_or_inline(job_class, *args, **kwargs)
+  def perform_async_or_inline(job_class, *args)
     if run_async?
-      job_class.perform_later(*args, **kwargs)
+      job_class.perform_later(*args)
     else
-      job_class.perform_now(*args, **kwargs)
+      job_class.perform_now(*args)
     end
   end
 
