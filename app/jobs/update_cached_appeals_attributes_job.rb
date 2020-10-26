@@ -267,18 +267,34 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     #   ...
     # }
     VACOLS::Case.where(bfkey: vacols_ids).map do |vacols_case|
-      legacy_appeal = AppealRepository.build_appeal(vacols_case) # build non-persisting legacy appeal object
+      original_request = original_hearing_request_type_for_vacols_case(vacols_case)
+      changed_request = changed_hearing_request_type_for_all_vacols_ids[vacols_case.bfkey]
+      # Replicates LegacyAppeal#current_hearing_request_type
+      current_request = HearingDay::REQUEST_TYPES.key(changed_request)&.to_sym || original_request
 
       [
         vacols_case.bfkey,
         {
           location: vacols_case.bfcurloc,
           status: VACOLS::Case::TYPES[vacols_case.bfac],
-          hearing_request_type: legacy_appeal.current_hearing_request_type(readable: true),
-          former_travel: former_travel?(legacy_appeal)
+          hearing_request_type: LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[current_request],
+          former_travel: original_request == :travel_board && current_request != :travel_board
         }
       ]
     end.to_h
+  end
+
+  # Gets the symbolic representation of the original type of hearing requested for a vacols case record
+  # Replicates logic in LegacyAppeal#original_hearing_request_type
+  def original_hearing_request_type_for_vacols_case(vacols_case)
+    request_type = VACOLS::Case::HEARING_REQUEST_TYPES[vacols_case.bfhr]
+
+    (request_type == :travel_board && vacols_case.bfdocind == "V") ? :video : request_type
+  end
+
+  # Maps vacols ids to their leagcy appeal's changed hearing request type
+  def changed_hearing_request_type_for_all_vacols_ids
+    @changed_hearing_request_type_for_all_vacols_ids ||= LegacyAppeal.pluck(:vacols_id, :changed_request_type).to_h
   end
 
   def issues_counts_for_vacols_folders(vacols_ids)
@@ -302,16 +318,5 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
       # Matches how last names are split and sorted on the front end (see: TaskTable.detailsColumn.getSortValue)
       [veteran.file_number, "#{veteran.last_name&.split(' ')&.last}, #{veteran.first_name}"]
     end.to_h
-  end
-
-  # checks to see if the hearing request type was former_travel
-  def former_travel?(legacy_appeal)
-    # the current request type is travel
-    if legacy_appeal.current_hearing_request_type == :travel_board
-      return false
-    end
-
-    # otherwise check if og request type was travel
-    legacy_appeal.original_hearing_request_type == :travel_board
   end
 end
