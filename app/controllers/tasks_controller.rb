@@ -18,6 +18,8 @@ class TasksController < ApplicationController
     ChangeHearingDispositionTask: ChangeHearingDispositionTask,
     ColocatedTask: ColocatedTask,
     DocketSwitchRulingTask: DocketSwitchRulingTask,
+    DocketSwitchDeniedTask: DocketSwitchDeniedTask,
+    DocketSwitchGrantedTask: DocketSwitchGrantedTask,
     EvidenceSubmissionWindowTask: EvidenceSubmissionWindowTask,
     FoiaTask: FoiaTask,
     HearingAdminActionTask: HearingAdminActionTask,
