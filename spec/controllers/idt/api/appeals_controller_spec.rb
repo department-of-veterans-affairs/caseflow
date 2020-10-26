@@ -303,7 +303,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
               expect(response_body["attributes"]["representative_address"]).to eq(nil)
               expect(response_body["attributes"]["aod"]).to eq appeal.advanced_on_docket?
-              expect(response_body["attributes"]["cavc"]).to eq "not implemented for AMA"
+              expect(response_body["attributes"]["cavc"]).to eq false
               expect(response_body["attributes"]["issues"].first["program"]).to eq "Compensation"
               expect(response_body["attributes"]["issues"].second["program"]).to eq "Compensation"
               expect(response_body["attributes"]["status"]).to eq "assigned_to_attorney"
