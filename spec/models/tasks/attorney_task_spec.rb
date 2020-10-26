@@ -151,14 +151,17 @@ describe AttorneyTask, :all_dbs do
   context ".update_from_params" do
     let(:judge) { create(:user, :with_vacols_judge_record) }
     let(:attorney) { create(:user, :with_vacols_attorney_record) }
-    let(:judge_task) { create(:ama_judge_decision_review_task, assigned_to: judge) }
-    let(:attorney_task) do
-      create(:ama_attorney_task, assigned_to: attorney, assigned_by: judge, parent: judge_task)
-    end
+    let(:judge_task_type) { :ama_judge_decision_review_task }
+    let(:attorney_task_type) { :ama_attorney_task }
+    let(:judge_task) { create(judge_task_type, assigned_to: judge) }
+    let(:attorney_task) { create(attorney_task_type, assigned_to: attorney, assigned_by: judge, parent: judge_task) }
+    let(:params) { { status: Constants.TASK_STATUSES.completed } }
+
+    subject { attorney_task.update_from_params(params, attorney) }
 
     context "when cancellation params are not provided" do
       it "does not send_back_to_judge_assign!" do
-        tasks = attorney_task.update_from_params({ status: Constants.TASK_STATUSES.completed }, attorney)
+        tasks = subject
 
         expect(tasks.first.type).to eq AttorneyTask.name
         expect(tasks.first.status).to eq Constants.TASK_STATUSES.completed
@@ -169,8 +172,10 @@ describe AttorneyTask, :all_dbs do
     end
 
     context "when cancellation params are provided" do
+      let(:params) { { status: Constants.TASK_STATUSES.cancelled } }
+
       it "calls send_back_to_judge_assign!" do
-        tasks = attorney_task.update_from_params({ status: Constants.TASK_STATUSES.cancelled }, attorney)
+        tasks = subject
 
         expect(tasks.first.type).to eq AttorneyTask.name
         expect(tasks.first.status).to eq Constants.TASK_STATUSES.cancelled
@@ -183,6 +188,21 @@ describe AttorneyTask, :all_dbs do
         expect(tasks.third.type).to eq JudgeAssignTask.name
         expect(tasks.third.status).to eq Constants.TASK_STATUSES.assigned
         expect(tasks.third.assigned_to).to eq judge
+      end
+
+      context "when the task is an attorney task subtype" do
+        let(:judge_task_type) { :ama_judge_dispatch_return_task }
+        let(:attorney_task_type) { :ama_attorney_dispatch_return_task }
+
+        it "does not send_back_to_judge_assign!" do
+          tasks = subject
+
+          expect(tasks.first.type).to eq AttorneyDispatchReturnTask.name
+          expect(tasks.first.status).to eq Constants.TASK_STATUSES.cancelled
+          expect(tasks.first.closed_at).to_not be nil
+
+          expect(tasks.first.parent.status).to eq Constants.TASK_STATUSES.assigned
+        end
       end
     end
   end

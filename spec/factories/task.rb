@@ -416,7 +416,7 @@ FactoryBot.define do
         parent { create(:ama_judge_decision_review_task, appeal: appeal) }
       end
 
-      factory :ama_judge_dispatch_return_to_attorney_task, class: AttorneyDispatchReturnTask do
+      factory :ama_attorney_dispatch_return_task, class: AttorneyDispatchReturnTask do
         parent { create(:ama_judge_decision_review_task, appeal: appeal) }
       end
 
