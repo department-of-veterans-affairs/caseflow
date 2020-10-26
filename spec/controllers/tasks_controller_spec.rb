@@ -922,7 +922,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
             appeal: legacy_appeal
           ).status).to eq(Constants.TASK_STATUSES.completed)
           expect(ScheduleHearingTask.find_by(appeal: legacy_appeal).status).to eq(Constants.TASK_STATUSES.assigned)
-          expect(CachedAppeal.count).to eq (1)
+          expect(CachedAppeal.count).to eq(1)
           expect(CachedAppeal.first.vacols_id).to eq(legacy_appeal.vacols_id)
           expect(CachedAppeal.first.former_travel).to eq(true)
           expect(CachedAppeal.first.hearing_request_type).to eq("Video")
