@@ -4,6 +4,7 @@ class Hearings::GeomatchAndCacheAppealJob < ApplicationJob
   queue_with_priority :high_priority
   application_attr :hearing_schedule
 
+  # :nocov:
   retry_on(StandardError, wait: 10.seconds, attempts: 10) do |job, exception|
     Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
 
@@ -18,6 +19,7 @@ class Hearings::GeomatchAndCacheAppealJob < ApplicationJob
       Raven.capture_exception(exception, extra: extra)
     end
   end
+  # :nocov:
 
   def perform(appeal_id:)
     @appeal = LegacyAppeal.find(appeal_id)
