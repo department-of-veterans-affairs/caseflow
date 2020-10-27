@@ -20,6 +20,17 @@ describe AssignHearingDispositionTask, :all_dbs do
       RequestStore[:current_user] = user
     end
 
+    shared_examples "virtual hearing is cleaned up" do
+      it "cleans up the virtual hearing before rescheduling", :aggregate_failures do
+        hearing.reload
+
+        subject
+
+        expect(hearing.virtual_hearing.reload.request_cancelled).to eq(true)
+        expect(hearing.virtual_hearing.reload.conference_deleted).to eq(true)
+      end
+    end
+
     describe "hearing disposition of cancelled" do
       let(:params) do
         {
@@ -41,6 +52,13 @@ describe AssignHearingDispositionTask, :all_dbs do
         expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.cancelled
         expect(disposition_task.reload.closed_at).to_not be_nil
         expect(disposition_task.cancelled_by).to eq user
+      end
+
+      context "when hearing is virtual" do
+        # create a virtual hearing association
+        let!(:virtual_hearing) { create(:virtual_hearing, :initialized, :all_emails_sent, hearing: hearing) }
+
+        include_examples "virtual hearing is cleaned up"
       end
     end
 
@@ -225,6 +243,12 @@ describe AssignHearingDispositionTask, :all_dbs do
               expect(hearing.reload.disposition).not_to eq Constants.HEARING_DISPOSITION_TYPES.postponed
             end
           end
+        end
+
+        context "when previous hearing is virtual" do
+          let!(:virtual_hearing) { create(:virtual_hearing, :initialized, :all_emails_sent, hearing: hearing) }
+
+          include_examples "virtual hearing is cleaned up"
         end
       end
     end
