@@ -32,6 +32,38 @@ describe BgsPowerOfAttorney do
         expect(Rails.cache.fetch("bgs-participant-poa-not-found-no-such-pid")).to eq(true)
       end
     end
+
+    context "when concurrent calls cause a race condition" do
+      let(:concurrency) { 4 }
+      let(:pid) { "7108346" }
+      let(:file_number) { "fn" }
+      let(:bgs_record) do
+        {
+          claimant_participant_id: claimant_participant_id,
+          participant_id: pid,
+          file_number: file_number,
+          representative_name: "some",
+          representative_type: "vso"
+        }
+      end
+
+      before do
+        allow(BgsPowerOfAttorney).to receive(:fetch_bgs_poa_by_participant_id) do
+          sleep 1
+          bgs_record
+        end
+      end
+
+      it "does not raise an error on unique constraint violation" do
+        threads = []
+        concurrency.times do
+          threads << Thread.new do
+            BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(claimant_participant_id).poa_participant_id
+          end
+        end
+        expect(threads.map(&:value)).to eq([pid] * concurrency)
+      end
+    end
   end
 
   describe ".find_or_create_by_file_number" do
