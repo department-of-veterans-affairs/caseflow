@@ -1,6 +1,6 @@
 // External Dependencies
 import { createSelector } from 'reselect';
-import { chain, values, memoize } from 'lodash';
+import { chain, values, memoize, find } from 'lodash';
 
 // Local Dependencies
 import { escapeRegExp } from 'utils/reader';
@@ -81,15 +81,6 @@ export const docFilterCriteriaState = (state) => state.documentList.docFilterCri
  * @returns {Object} -- The File State
  */
 export const selectedIndexState = (state) => state.searchAction.matchIndex;
-
-/**
- * Selector for the Selected Index
- * @param {Object} state -- The current Redux Store state
- * @returns {Object} -- The Filtered Documents State
- */
-export const filteredResultState = (state) => {
-
-};
 
 /**
  * Filtered Documents state
@@ -183,3 +174,43 @@ export const currentMatchIndex = createSelector(
   (totalMatchesInFile, selectedIndex) => (selectedIndex + totalMatchesInFile) % totalMatchesInFile
 );
 
+/**
+ * State for the Document List Screen
+ * @param {Object} state -- The current Redux Store state
+ * @returns {Object} -- The Documents List State
+ */
+export const documentListScreen = (state, props) => ({
+  searchCategoryHighlights: state.reader.documentList.searchCategoryHighlights[props.doc.id],
+  tagOptions: state.reader.pdfViewer.tagOptions,
+  annotationsPerDocument: annotationStatePerDocument(state.reader),
+  filterCriteria: state.reader.documentList.docFilterCriteria,
+  documents: filteredDocuments(state.reader),
+  caseSelectedAppeal: state.reader.caseSelect.selectedAppeal,
+  manifestVbmsFetchedAt: state.reader.documentList.manifestVbmsFetchedAt,
+  manifestVvaFetchedAt: state.reader.documentList.manifestVvaFetchedAt,
+  queueRedirectUrl: state.reader.documentList.queueRedirectUrl,
+  queueTaskType: state.reader.documentList.queueTaskType,
+  documentFilters: state.reader.documentList.pdfList.filters,
+  storeDocuments: state.reader.documents,
+  isPlacingAnnotation: state.reader.annotationLayer.isPlacingAnnotation,
+  appeal: props.match && props.match.params.vacolsId ?
+    find(state.reader.caseSelect.assignments, { vacols_id: props.match.params.vacolsId }) :
+    state.reader.pdfViewer.loadedAppeal
+});
+
+/**
+ * State for the Document Screen
+ * @param {Object} state -- The current Redux Store state
+ * @returns {Object} -- The Document State
+ */
+export const documentScreen = (state) => ({
+  documents: filteredDocuments(state.reader),
+  documentFilters: state.reader.documentList.pdfList.filters,
+  storeDocuments: state.reader.documents,
+  isPlacingAnnotation: state.reader.annotationLayer.isPlacingAnnotation,
+  appeal: state.reader.pdfViewer.loadedAppeal,
+  annotations: state.reader.annotationLayer.annotations,
+  pdf: state.reader.pdf,
+  pdfViewer: state.reader.pdf,
+  annotationLayer: state.reader.annotationLayer,
+});

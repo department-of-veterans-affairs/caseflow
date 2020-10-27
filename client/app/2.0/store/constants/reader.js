@@ -104,3 +104,13 @@ export const DOCUMENTS_OR_COMMENTS_ENUM = {
 // Rotation Constants
 export const ROTATION_INCREMENTS = 90;
 export const COMPLETE_ROTATION = 360;
+
+// Documents Table Constants
+export const NUMBER_OF_COLUMNS = 6;
+
+// PDF Viewer Constatns
+export const NUMBER_OF_DIRECTIONS = 4;
+
+// Zoom Constants
+export const ZOOM_RATE = 0.3;
+export const MINIMUM_ZOOM = 0.1;
