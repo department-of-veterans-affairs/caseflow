@@ -419,6 +419,7 @@ class LegacyAppeal < CaseflowRecord
   # values. Also, `hearing_request_type` alone can't disambiguate a video hearing
   # from a travel board hearing
   # This method cleans all of these issues up to return a sanitized version of the original type requested by Appellant.
+  # Replicated in UpdateCachedAppealAttributesJob#original_hearing_request_type_for_vacols_case
   def original_hearing_request_type(readable: false)
     original_hearing_request_type = case hearing_request_type
                                     when :central_office
@@ -435,6 +436,7 @@ class LegacyAppeal < CaseflowRecord
   #   This method captures if a travel board hearing request type was overridden in Caseflow.
   # In general, this method returns the current hearing request type which could be dervied
   # from `change_request_type` or VACOLS `hearing_request_type`
+  # Replicated in UpdateCachedAppealAttributesJob#case_fields_for_vacols_ids
   def current_hearing_request_type(readable: false)
     current_hearing_request_type = if changed_request_type.present?
                                      sanitized_changed_request_type(changed_request_type)
