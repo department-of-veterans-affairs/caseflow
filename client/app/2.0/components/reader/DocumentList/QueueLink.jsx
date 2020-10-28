@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 // Local Dependencies
-import { queueLinkStyles } from 'app/2.0/styles/reader/DocumentList';
+import { queueLinkStyles } from 'styles/reader/DocumentList';
 import { formatRedirectText } from 'utils/format';
 
 /**

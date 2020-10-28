@@ -1,7 +1,3 @@
-/**
- * The JSS Styles for the Document List Screen Components
- */
-
 // External Dependencies
 import { css } from 'glamor';
 
