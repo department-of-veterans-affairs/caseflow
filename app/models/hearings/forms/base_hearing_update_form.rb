@@ -126,7 +126,7 @@ class BaseHearingUpdateForm
 
   def start_async_job
     if start_async_job? && virtual_hearing_cancelled?
-      perform_async_or_inline(VirtualHearings::DeleteConferencesJob)
+      perform_later_or_now(VirtualHearings::DeleteConferencesJob)
     elsif start_async_job?
       start_activate_job
     end
@@ -143,7 +143,7 @@ class BaseHearingUpdateForm
       email_type: only_time_updated_or_timezone_updated? ? "updated_time_confirmation" : "confirmation"
     }
 
-    perform_async_or_inline(VirtualHearings::CreateConferenceJob, job_args)
+    perform_later_or_now(VirtualHearings::CreateConferenceJob, job_args)
   end
 
   def updates_requiring_email?
