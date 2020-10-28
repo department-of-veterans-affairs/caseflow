@@ -253,7 +253,13 @@ class CachedAppealService
 
   # Maps vacols ids to their leagcy appeal's changed hearing request type
   def changed_hearing_request_type_for_all_vacols_ids
-    @changed_hearing_request_type_for_all_vacols_ids ||= LegacyAppeal.pluck(:vacols_id, :changed_request_type).to_h
+    @changed_hearing_request_type_for_all_vacols_ids ||= (
+      LegacyAppeal
+        .where
+        .not(changed_request_type: nil)
+        .pluck(:vacols_id, :changed_request_type)
+        .to_h
+    )
   end
 
   def issues_counts_for_vacols_folders(vacols_ids)
