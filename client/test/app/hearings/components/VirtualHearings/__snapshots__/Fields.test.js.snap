@@ -225,13 +225,16 @@ exports[`Fields Matches snapshot with default props 1`] = `
       >
         <SearchableDropdown
           clearOnSelect={false}
-          clearable={false}
           label="Veteran Timezone"
           loading={false}
           name="appellantTz"
           onChange={[Function]}
           options={
             Array [
+              Object {
+                "label": "",
+                "value": null,
+              },
               Object {
                 "index": -3,
                 "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -1040,7 +1043,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                 <StateManager
                   cache={false}
                   classNamePrefix="cf-select"
-                  clearable={false}
                   defaultInputValue=""
                   defaultMenuIsOpen={false}
                   defaultValue={null}
@@ -1053,6 +1055,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                   onChange={[Function]}
                   options={
                     Array [
+                      Object {
+                        "label": "",
+                        "value": null,
+                      },
                       Object {
                         "index": -3,
                         "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -1830,7 +1836,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                     cache={false}
                     captureMenuScroll={false}
                     classNamePrefix="cf-select"
-                    clearable={false}
                     closeMenuOnScroll={false}
                     closeMenuOnSelect={true}
                     components={Object {}}
@@ -1866,6 +1871,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                     openMenuOnFocus={false}
                     options={
                       Array [
+                        Object {
+                          "label": "",
+                          "value": null,
+                        },
                         Object {
                           "index": -3,
                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -2660,6 +2669,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                       options={
                         Array [
                           Object {
+                            "label": "",
+                            "value": null,
+                          },
+                          Object {
                             "index": -3,
                             "label": "Eastern Time (US & Canada) (8:15 AM)",
                             "value": "America/New_York",
@@ -3429,7 +3442,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                           "cache": false,
                           "captureMenuScroll": false,
                           "classNamePrefix": "cf-select",
-                          "clearable": false,
                           "closeMenuOnScroll": false,
                           "closeMenuOnSelect": true,
                           "components": Object {},
@@ -3442,6 +3454,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                           "getOptionValue": [Function],
                           "inputId": "appellantTz",
                           "inputValue": "",
+                          "isClearable": undefined,
                           "isDisabled": false,
                           "isLoading": false,
                           "isMulti": false,
@@ -3466,6 +3479,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                           "openMenuOnClick": true,
                           "openMenuOnFocus": false,
                           "options": Array [
+                            Object {
+                              "label": "",
+                              "value": null,
+                            },
                             Object {
                               "index": -3,
                               "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -4311,6 +4328,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "",
+                                  "value": null,
+                                },
+                                Object {
                                   "index": -3,
                                   "label": "Eastern Time (US & Canada) (8:15 AM)",
                                   "value": "America/New_York",
@@ -5080,7 +5101,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                 "cache": false,
                                 "captureMenuScroll": false,
                                 "classNamePrefix": "cf-select",
-                                "clearable": false,
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
                                 "components": Object {},
@@ -5093,6 +5113,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                 "getOptionValue": [Function],
                                 "inputId": "appellantTz",
                                 "inputValue": "",
+                                "isClearable": undefined,
                                 "isDisabled": false,
                                 "isLoading": false,
                                 "isMulti": false,
@@ -5117,6 +5138,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                 "openMenuOnClick": true,
                                 "openMenuOnFocus": false,
                                 "options": Array [
+                                  Object {
+                                    "label": "",
+                                    "value": null,
+                                  },
                                   Object {
                                     "index": -3,
                                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -5970,6 +5995,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -6739,7 +6768,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -6752,6 +6780,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "appellantTz",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -6776,6 +6805,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -7616,6 +7649,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                         options={
                                           Array [
                                             Object {
+                                              "label": "",
+                                              "value": null,
+                                            },
+                                            Object {
                                               "index": -3,
                                               "label": "Eastern Time (US & Canada) (8:15 AM)",
                                               "value": "America/New_York",
@@ -8385,7 +8422,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "cache": false,
                                             "captureMenuScroll": false,
                                             "classNamePrefix": "cf-select",
-                                            "clearable": false,
                                             "closeMenuOnScroll": false,
                                             "closeMenuOnSelect": true,
                                             "components": Object {},
@@ -8398,6 +8434,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "getOptionValue": [Function],
                                             "inputId": "appellantTz",
                                             "inputValue": "",
+                                            "isClearable": undefined,
                                             "isDisabled": false,
                                             "isLoading": false,
                                             "isMulti": false,
@@ -8422,6 +8459,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "openMenuOnClick": true,
                                             "openMenuOnFocus": false,
                                             "options": Array [
+                                              Object {
+                                                "label": "",
+                                                "value": null,
+                                              },
                                               Object {
                                                 "index": -3,
                                                 "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -9272,7 +9313,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "cache": false,
                                             "captureMenuScroll": false,
                                             "classNamePrefix": "cf-select",
-                                            "clearable": false,
                                             "closeMenuOnScroll": false,
                                             "closeMenuOnSelect": true,
                                             "components": Object {},
@@ -9285,6 +9325,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "getOptionValue": [Function],
                                             "inputId": "appellantTz",
                                             "inputValue": "",
+                                            "isClearable": undefined,
                                             "isDisabled": false,
                                             "isLoading": false,
                                             "isMulti": false,
@@ -9309,6 +9350,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "openMenuOnClick": true,
                                             "openMenuOnFocus": false,
                                             "options": Array [
+                                              Object {
+                                                "label": "",
+                                                "value": null,
+                                              },
                                               Object {
                                                 "index": -3,
                                                 "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -10230,6 +10275,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -10999,7 +11048,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -11012,6 +11060,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "appellantTz",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -11036,6 +11085,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -11871,6 +11924,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                         options={
                                           Array [
                                             Object {
+                                              "label": "",
+                                              "value": null,
+                                            },
+                                            Object {
                                               "index": -3,
                                               "label": "Eastern Time (US & Canada) (8:15 AM)",
                                               "value": "America/New_York",
@@ -12640,7 +12697,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "cache": false,
                                             "captureMenuScroll": false,
                                             "classNamePrefix": "cf-select",
-                                            "clearable": false,
                                             "closeMenuOnScroll": false,
                                             "closeMenuOnSelect": true,
                                             "components": Object {},
@@ -12653,6 +12709,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "getOptionValue": [Function],
                                             "inputId": "appellantTz",
                                             "inputValue": "",
+                                            "isClearable": undefined,
                                             "isDisabled": false,
                                             "isLoading": false,
                                             "isMulti": false,
@@ -12677,6 +12734,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "openMenuOnClick": true,
                                             "openMenuOnFocus": false,
                                             "options": Array [
+                                              Object {
+                                                "label": "",
+                                                "value": null,
+                                              },
                                               Object {
                                                 "index": -3,
                                                 "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -13523,6 +13584,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                         options={
                                           Array [
                                             Object {
+                                              "label": "",
+                                              "value": null,
+                                            },
+                                            Object {
                                               "index": -3,
                                               "label": "Eastern Time (US & Canada) (8:15 AM)",
                                               "value": "America/New_York",
@@ -14292,7 +14357,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "cache": false,
                                             "captureMenuScroll": false,
                                             "classNamePrefix": "cf-select",
-                                            "clearable": false,
                                             "closeMenuOnScroll": false,
                                             "closeMenuOnSelect": true,
                                             "components": Object {},
@@ -14305,6 +14369,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "getOptionValue": [Function],
                                             "inputId": "appellantTz",
                                             "inputValue": "",
+                                            "isClearable": undefined,
                                             "isDisabled": false,
                                             "isLoading": false,
                                             "isMulti": false,
@@ -14329,6 +14394,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "openMenuOnClick": true,
                                             "openMenuOnFocus": false,
                                             "options": Array [
+                                              Object {
+                                                "label": "",
+                                                "value": null,
+                                              },
                                               Object {
                                                 "index": -3,
                                                 "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -15327,13 +15396,16 @@ exports[`Fields Matches snapshot with default props 1`] = `
       >
         <SearchableDropdown
           clearOnSelect={false}
-          clearable={false}
           label="POA/Representative Timezone"
           loading={false}
           name="representativeTz"
           onChange={[Function]}
           options={
             Array [
+              Object {
+                "label": "",
+                "value": null,
+              },
               Object {
                 "index": -3,
                 "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -16142,7 +16214,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                 <StateManager
                   cache={false}
                   classNamePrefix="cf-select"
-                  clearable={false}
                   defaultInputValue=""
                   defaultMenuIsOpen={false}
                   defaultValue={null}
@@ -16155,6 +16226,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                   onChange={[Function]}
                   options={
                     Array [
+                      Object {
+                        "label": "",
+                        "value": null,
+                      },
                       Object {
                         "index": -3,
                         "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -16932,7 +17007,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                     cache={false}
                     captureMenuScroll={false}
                     classNamePrefix="cf-select"
-                    clearable={false}
                     closeMenuOnScroll={false}
                     closeMenuOnSelect={true}
                     components={Object {}}
@@ -16968,6 +17042,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                     openMenuOnFocus={false}
                     options={
                       Array [
+                        Object {
+                          "label": "",
+                          "value": null,
+                        },
                         Object {
                           "index": -3,
                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -17762,6 +17840,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                       options={
                         Array [
                           Object {
+                            "label": "",
+                            "value": null,
+                          },
+                          Object {
                             "index": -3,
                             "label": "Eastern Time (US & Canada) (8:15 AM)",
                             "value": "America/New_York",
@@ -18531,7 +18613,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                           "cache": false,
                           "captureMenuScroll": false,
                           "classNamePrefix": "cf-select",
-                          "clearable": false,
                           "closeMenuOnScroll": false,
                           "closeMenuOnSelect": true,
                           "components": Object {},
@@ -18544,6 +18625,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                           "getOptionValue": [Function],
                           "inputId": "representativeTz",
                           "inputValue": "",
+                          "isClearable": undefined,
                           "isDisabled": false,
                           "isLoading": false,
                           "isMulti": false,
@@ -18568,6 +18650,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                           "openMenuOnClick": true,
                           "openMenuOnFocus": false,
                           "options": Array [
+                            Object {
+                              "label": "",
+                              "value": null,
+                            },
                             Object {
                               "index": -3,
                               "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -19413,6 +19499,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "",
+                                  "value": null,
+                                },
+                                Object {
                                   "index": -3,
                                   "label": "Eastern Time (US & Canada) (8:15 AM)",
                                   "value": "America/New_York",
@@ -20182,7 +20272,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                 "cache": false,
                                 "captureMenuScroll": false,
                                 "classNamePrefix": "cf-select",
-                                "clearable": false,
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
                                 "components": Object {},
@@ -20195,6 +20284,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                 "getOptionValue": [Function],
                                 "inputId": "representativeTz",
                                 "inputValue": "",
+                                "isClearable": undefined,
                                 "isDisabled": false,
                                 "isLoading": false,
                                 "isMulti": false,
@@ -20219,6 +20309,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                 "openMenuOnClick": true,
                                 "openMenuOnFocus": false,
                                 "options": Array [
+                                  Object {
+                                    "label": "",
+                                    "value": null,
+                                  },
                                   Object {
                                     "index": -3,
                                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -21072,6 +21166,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -21841,7 +21939,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -21854,6 +21951,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "representativeTz",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -21878,6 +21976,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -22718,6 +22820,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                         options={
                                           Array [
                                             Object {
+                                              "label": "",
+                                              "value": null,
+                                            },
+                                            Object {
                                               "index": -3,
                                               "label": "Eastern Time (US & Canada) (8:15 AM)",
                                               "value": "America/New_York",
@@ -23487,7 +23593,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "cache": false,
                                             "captureMenuScroll": false,
                                             "classNamePrefix": "cf-select",
-                                            "clearable": false,
                                             "closeMenuOnScroll": false,
                                             "closeMenuOnSelect": true,
                                             "components": Object {},
@@ -23500,6 +23605,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "getOptionValue": [Function],
                                             "inputId": "representativeTz",
                                             "inputValue": "",
+                                            "isClearable": undefined,
                                             "isDisabled": false,
                                             "isLoading": false,
                                             "isMulti": false,
@@ -23524,6 +23630,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "openMenuOnClick": true,
                                             "openMenuOnFocus": false,
                                             "options": Array [
+                                              Object {
+                                                "label": "",
+                                                "value": null,
+                                              },
                                               Object {
                                                 "index": -3,
                                                 "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -24374,7 +24484,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "cache": false,
                                             "captureMenuScroll": false,
                                             "classNamePrefix": "cf-select",
-                                            "clearable": false,
                                             "closeMenuOnScroll": false,
                                             "closeMenuOnSelect": true,
                                             "components": Object {},
@@ -24387,6 +24496,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "getOptionValue": [Function],
                                             "inputId": "representativeTz",
                                             "inputValue": "",
+                                            "isClearable": undefined,
                                             "isDisabled": false,
                                             "isLoading": false,
                                             "isMulti": false,
@@ -24411,6 +24521,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "openMenuOnClick": true,
                                             "openMenuOnFocus": false,
                                             "options": Array [
+                                              Object {
+                                                "label": "",
+                                                "value": null,
+                                              },
                                               Object {
                                                 "index": -3,
                                                 "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -25332,6 +25446,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -26101,7 +26219,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -26114,6 +26231,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "representativeTz",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -26138,6 +26256,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -26973,6 +27095,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                         options={
                                           Array [
                                             Object {
+                                              "label": "",
+                                              "value": null,
+                                            },
+                                            Object {
                                               "index": -3,
                                               "label": "Eastern Time (US & Canada) (8:15 AM)",
                                               "value": "America/New_York",
@@ -27742,7 +27868,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "cache": false,
                                             "captureMenuScroll": false,
                                             "classNamePrefix": "cf-select",
-                                            "clearable": false,
                                             "closeMenuOnScroll": false,
                                             "closeMenuOnSelect": true,
                                             "components": Object {},
@@ -27755,6 +27880,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "getOptionValue": [Function],
                                             "inputId": "representativeTz",
                                             "inputValue": "",
+                                            "isClearable": undefined,
                                             "isDisabled": false,
                                             "isLoading": false,
                                             "isMulti": false,
@@ -27779,6 +27905,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "openMenuOnClick": true,
                                             "openMenuOnFocus": false,
                                             "options": Array [
+                                              Object {
+                                                "label": "",
+                                                "value": null,
+                                              },
                                               Object {
                                                 "index": -3,
                                                 "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -28625,6 +28755,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                         options={
                                           Array [
                                             Object {
+                                              "label": "",
+                                              "value": null,
+                                            },
+                                            Object {
                                               "index": -3,
                                               "label": "Eastern Time (US & Canada) (8:15 AM)",
                                               "value": "America/New_York",
@@ -29394,7 +29528,6 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "cache": false,
                                             "captureMenuScroll": false,
                                             "classNamePrefix": "cf-select",
-                                            "clearable": false,
                                             "closeMenuOnScroll": false,
                                             "closeMenuOnSelect": true,
                                             "components": Object {},
@@ -29407,6 +29540,7 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "getOptionValue": [Function],
                                             "inputId": "representativeTz",
                                             "inputValue": "",
+                                            "isClearable": undefined,
                                             "isDisabled": false,
                                             "isLoading": false,
                                             "isMulti": false,
@@ -29431,6 +29565,10 @@ exports[`Fields Matches snapshot with default props 1`] = `
                                             "openMenuOnClick": true,
                                             "openMenuOnFocus": false,
                                             "options": Array [
+                                              Object {
+                                                "label": "",
+                                                "value": null,
+                                              },
                                               Object {
                                                 "index": -3,
                                                 "label": "Eastern Time (US & Canada) (8:15 AM)",

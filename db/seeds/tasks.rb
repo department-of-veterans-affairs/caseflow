@@ -145,6 +145,7 @@ module Seeds
       create_ama_tasks
       create_board_grant_tasks
       create_veteran_record_request_tasks
+      create_cavc_appeals
     end
 
     def create_ama_distribution_tasks
@@ -194,6 +195,7 @@ module Seeds
       )
 
       notes = "Pain disorder with 100\% evaluation per examination"
+      notes += ". Created with the inital_tasks factory trait and moved thru"
 
       appeal = create(
         :appeal,
@@ -208,8 +210,7 @@ module Seeds
       )
 
       root_task = appeal.root_task
-      judge = create(:user, station_id: 101, full_name: "Apurva Judge_CaseAtDispatch Wakefield")
-      create(:staff, :judge_role, user: judge)
+      judge = User.find_by(css_id: "BVAAWAKEFIELD")
       judge_task = create(
         :ama_judge_decision_review_task,
         assigned_to: judge,
@@ -217,8 +218,7 @@ module Seeds
         parent: root_task
       )
 
-      atty = create(:user, station_id: 101, full_name: "Andy Attorney_CaseAtDispatch Belanger")
-      create(:staff, :attorney_role, user: atty)
+      atty = User.find_by(css_id: "BVAABELANGER")
       atty_task = create(
         :ama_attorney_task,
         :in_progress,
@@ -227,9 +227,6 @@ module Seeds
         parent: judge_task,
         appeal: appeal
       )
-
-      judge_team = JudgeTeam.create_for_judge(judge)
-      judge_team.add_user(atty)
 
       appeal.request_issues.each do |request_issue|
         create(
@@ -247,6 +244,90 @@ module Seeds
       judge_task.update!(status: Constants.TASK_STATUSES.completed)
 
       BvaDispatchTask.create_from_root_task(root_task)
+
+      # appeals at dispatch
+      5.times do
+        notes = "Pain disorder with 100\% evaluation per examination"
+        notes += ". Created with the at_bva_dispatch factory trait"
+
+        vet = create(
+          :veteran,
+          file_number: Faker::Number.number(digits: 9).to_s,
+          first_name: Faker::Name.first_name,
+          last_name: Faker::Name.last_name
+        )
+
+        attorney = User.find_by(css_id: "BVASCASPER1")
+        judge = User.find_by(css_id: "BVAAABSHIRE")
+
+        appeal = create(
+          :appeal,
+          :at_bva_dispatch,
+          number_of_claimants: 1,
+          veteran_file_number: vet.file_number,
+          docket_type: Constants.AMA_DOCKETS.direct_review,
+          closest_regional_office: "RO17",
+          associated_judge: judge,
+          associated_attorney: attorney,
+          request_issues: create_list(
+            :request_issue, 2, :nonrating, notes: notes
+          )
+        )
+
+        appeal.request_issues.each do |request_issue|
+          create(
+            :decision_issue,
+            :nonrating,
+            disposition: "allowed",
+            decision_review: appeal,
+            request_issues: [request_issue],
+            rating_promulgation_date: 2.months.ago,
+            benefit_type: request_issue.benefit_type
+          )
+        end
+      end
+
+      # dispatched appeals
+      10.times do
+        notes = "Pain disorder with 100\% evaluation per examination"
+        notes += ". Created with the dispatched factory trait"
+
+        vet = create(
+          :veteran,
+          file_number: Faker::Number.number(digits: 9).to_s,
+          first_name: Faker::Name.first_name,
+          last_name: Faker::Name.last_name
+        )
+
+        attorney = User.find_by(css_id: "BVASCASPER1")
+        judge = User.find_by(css_id: "BVAAABSHIRE")
+
+        appeal = create(
+          :appeal,
+          :dispatched,
+          number_of_claimants: 1,
+          veteran_file_number: vet.file_number,
+          docket_type: Constants.AMA_DOCKETS.direct_review,
+          closest_regional_office: "RO17",
+          associated_judge: judge,
+          associated_attorney: attorney,
+          request_issues: create_list(
+            :request_issue, 2, :nonrating, notes: notes
+          )
+        )
+
+        appeal.request_issues.each do |request_issue|
+          create(
+            :decision_issue,
+            :nonrating,
+            disposition: "allowed",
+            decision_review: appeal,
+            request_issues: [request_issue],
+            rating_promulgation_date: 2.months.ago,
+            benefit_type: request_issue.benefit_type
+          )
+        end
+      end
     end
 
     def create_task_at_quality_review(
@@ -641,6 +722,10 @@ module Seeds
           :request_issue, 2, :rating, contested_issue_description: description, notes: notes
         )
       )
+    end
+
+    def create_cavc_appeals
+      9.times { create(:cavc_remand) }
     end
 
     # these really belong in Seeds::Intake but we put them here for now because they rely on Seeds::Facols

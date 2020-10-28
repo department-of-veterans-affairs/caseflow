@@ -31,6 +31,8 @@ export const RadioField = (props) => {
     id,
     className,
     label,
+    inputRef,
+    inputProps,
     name,
     options,
     value,
@@ -91,6 +93,8 @@ export const RadioField = (props) => {
               // eslint-disable-next-line no-undefined
               checked={controlled ? value === option.value : undefined}
               disabled={Boolean(option.disabled)}
+              ref={inputRef}
+              {...inputProps}
             />
             <label
               className={option.disabled ? 'disabled' : ''}
@@ -115,6 +119,21 @@ RadioField.propTypes = {
   id: PropTypes.string,
   className: PropTypes.arrayOf(PropTypes.string),
   required: PropTypes.bool,
+
+  /**
+   * Pass a ref to the `input` element
+   */
+  inputRef: PropTypes.oneOfType([
+    // Either a function
+    PropTypes.func,
+    // Or the instance of a DOM native element (see the note about SSR)
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  ]),
+
+  /**
+   * Props to be applied to the `input` element
+   */
+  inputProps: PropTypes.object,
 
   /**
    * Text to display in a `legend` element for the radio group fieldset
@@ -153,21 +172,6 @@ RadioField.propTypes = {
        * Help text to be displayed below the label
        */
       help: PropTypes.string,
-
-      /**
-       * Pass a ref to the `input` element
-       */
-      inputRef: PropTypes.oneOfType([
-        // Either a function
-        PropTypes.func,
-        // Or the instance of a DOM native element (see the note about SSR)
-        PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
-      ]),
-
-      /**
-       * Props to be applied to the `input` element
-       */
-      inputProps: PropTypes.object,
     })
   ),
 

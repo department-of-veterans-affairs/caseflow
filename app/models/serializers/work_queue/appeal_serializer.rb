@@ -77,6 +77,8 @@ class WorkQueue::AppealSerializer
 
   attribute :closest_regional_office
 
+  attribute :closest_regional_office_label
+
   attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
 
   attribute :external_id, &:uuid
@@ -115,7 +117,7 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :attorney_case_rewrite_details do |object|
-    if FeatureToggle.enabled?(:overtime_revamp)
+    if FeatureToggle.enabled?(:overtime_revamp, user: RequestStore.store[:current_user])
       {
         note_from_attorney: object.latest_attorney_case_review&.note,
         untimely_evidence: object.latest_attorney_case_review&.untimely_evidence
@@ -134,5 +136,12 @@ class WorkQueue::AppealSerializer
       user: params[:user],
       case_review: object.latest_attorney_case_review
     ).editable?
+  end
+
+  attribute :readable_hearing_request_type do |object|
+    object.current_hearing_request_type(readable: true)
+  end
+  attribute :readable_original_hearing_request_type do |object|
+    object.original_hearing_request_type(readable: true)
   end
 end

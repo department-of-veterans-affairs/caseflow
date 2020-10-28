@@ -1,16 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware, compose } from 'redux';
+import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import perfLogger from 'redux-perf-middleware';
-import thunk from 'redux-thunk';
 import { getReduxAnalyticsMiddleware } from '../util/ReduxUtil';
 
-const setupStore = ({ reducer, initialState, analyticsMiddlewareArgs, enhancers }) => {
-  // eslint-disable-next-line no-underscore-dangle
-  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
-  const middleware = [thunk, getReduxAnalyticsMiddleware(...analyticsMiddlewareArgs)];
+const setupStore = ({ reducer, initialState, analyticsMiddlewareArgs }) => {
+  const middleware = [
+    ...getDefaultMiddleware({ immutableCheck: false }),
+    getReduxAnalyticsMiddleware(...analyticsMiddlewareArgs),
+  ];
 
   // Some middleware should be skipped in test scenarios. Normally I wouldn't leave a comment
   // like this, but we had a bug where we accidentally added essential middleware here and it
@@ -20,17 +19,29 @@ const setupStore = ({ reducer, initialState, analyticsMiddlewareArgs, enhancers 
     middleware.push(perfLogger);
   }
 
-  const composedEnhancers = composeEnhancers(applyMiddleware(...middleware), ...enhancers);
-
-  const store = createStore(reducer, initialState, composedEnhancers);
+  const store = configureStore({
+    reducer,
+    preloadedState: initialState,
+    middleware,
+  });
 
   return store;
 };
 
 export default function ReduxBase(props) {
-  const { children, reducer, initialState, enhancers, analyticsMiddlewareArgs, getStoreRef } = props;
+  const {
+    children,
+    reducer,
+    initialState,
+    analyticsMiddlewareArgs,
+    getStoreRef,
+  } = props;
 
-  const store = setupStore({ reducer, initialState, enhancers, analyticsMiddlewareArgs });
+  const store = setupStore({
+    reducer,
+    initialState,
+    analyticsMiddlewareArgs,
+  });
 
   // Dispatch relies on direct access to the store. It would be better to use connect(),
   // but for now, we will expose this to grant that access.
@@ -42,17 +53,18 @@ export default function ReduxBase(props) {
 }
 
 ReduxBase.propTypes = {
-  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]).isRequired,
   reducer: PropTypes.func,
   initialState: PropTypes.object,
-  enhancers: PropTypes.array,
   analyticsMiddlewareArgs: PropTypes.array,
-  getStoreRef: PropTypes.func
+  getStoreRef: PropTypes.func,
 };
 
 ReduxBase.defaultProps = {
   analyticsMiddlewareArgs: [],
   // eslint-disable-next-line no-empty-function
   getStoreRef: () => {},
-  enhancers: []
 };

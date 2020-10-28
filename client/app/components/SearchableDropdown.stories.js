@@ -135,3 +135,10 @@ export const async = () => {
     <SearchableDropdown name="async" label="Select an Option" async={asyncFn} />
   );
 };
+
+export const NoResultsText = Template.bind({});
+NoResultsText.args = {
+  name: 'noResultsText',
+  options: [],
+  noResults: 'Your results are in another castle'
+};

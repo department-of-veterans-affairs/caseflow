@@ -43,7 +43,7 @@ class HearingDayRoomAssignment
 
   def hearing_count_by_room
     @hearing_count_by_room ||= HearingDay
-      .where(scheduled_for: scheduled_for, request_type: request_type)
+      .where(scheduled_for: scheduled_for)
       .group(:room)
       .count
   end

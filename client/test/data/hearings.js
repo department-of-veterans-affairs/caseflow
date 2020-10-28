@@ -1,3 +1,6 @@
+/* eslint-disable max-lines */
+import { scheduleHearingTask } from './tasks';
+
 export const virtualHearingEmails = {
   emailEvents: [
     {
@@ -441,10 +444,26 @@ export const hearingDateOptions = [
       requestType: 'V',
       room: '1',
       roomLabel: '1 (1W200A)',
-      filledSlots: 0,
+      filledSlots: 13,
       totalSlots: 12,
       hearingDate: '2020-10-04'
     }
   }
-]
-;
+];
+
+export const scheduledHearing = {
+  taskId: '123',
+  disposition: null,
+  externalId: '3afefa82-5736-47c8-a977-0b4b8586f73e',
+  polling: false,
+};
+
+export const scheduleVeteranResponse = {
+  body: {
+    tasks: {
+      data: [scheduleHearingTask]
+    }
+  }
+};
+
+/* eslint-enable max-lines */

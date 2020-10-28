@@ -20,35 +20,18 @@ export default {
 };
 
 const defaultArgs = {
+  appellantTitle: 'Veteran',
   appeal: amaAppeal,
   hearing: defaultHearing,
 };
 
 const Template = (args) => {
-  const [storyArgs, updateStoryArgs] = useArgs();
-  const handleChange = (key, value) => {
-    updateStoryArgs({
-      ...defaultArgs,
-      ...storyArgs,
-      [key]: {
-        ...defaultArgs[key],
-        ...storyArgs[key],
-        ...value
-      }
-    });
-  };
-
   return (
     <Wrapper>
       <ScheduleVeteranForm
-        {...args}
         {...defaultArgs}
-        {...storyArgs}
-        onChange={handleChange}
-        /* eslint-disable no-console */
-        submit={() => console.log('Submitted')}
-        goBack={() => console.log('Cancelled')}
-        /* eslint-enable no-console */
+        {...args}
+        onChange={() => console.log('Changed')}
       />
     </Wrapper>
 
@@ -57,16 +40,11 @@ const Template = (args) => {
 
 export const Default = Template.bind({});
 
-export const Loading = Template.bind({});
-Loading.args = {
-  loading: true
-};
-
 export const RegionalOfficeSelected = Template.bind({});
 RegionalOfficeSelected.args = {
-  appeal: {
-    ...amaAppeal,
-    regionalOffice: defaultHearing.regionalOfficeKey
+  hearing: {
+    ...defaultHearing,
+    regionalOffice: defaultHearing.regionalOfficeKey,
   }
 };
 
@@ -74,27 +52,31 @@ export const VideoToVirtualConversion = Template.bind({});
 VideoToVirtualConversion.args = {
   appeal: {
     ...amaAppeal,
+    hearingLocation: scheduleHearingDetails.hearingLocation
+  },
+  hearing: {
+    ...defaultHearing,
     regionalOffice: defaultHearing.regionalOfficeKey,
-    hearingLocation: scheduleHearingDetails.hearingLocation }
+  },
+  virtual: true
 };
 
 export const CentralToVirtualConversion = Template.bind({});
 CentralToVirtualConversion.args = {
+  virtual: true,
   hearing: {
     ...centralHearing,
-  },
+    regionalOffice: centralHearing.regionalOfficeKey,
+  }
 };
 
 export const VideoWithErrors = Template.bind({});
 VideoWithErrors.args = {
   hearing: {
     ...defaultHearing,
-    virtualHearing: virtualHearing.virtualHearing
+    regionalOffice: defaultHearing.regionalOfficeKey,
   },
-  appeal: {
-    ...amaAppeal,
-    regionalOffice: defaultHearing.regionalOfficeKey
-  },
+  appeal: amaAppeal,
   errors: {
     hearingLocation: 'Unknown Hearing Location',
     hearingDay: 'Cannot find hearing day',
@@ -104,14 +86,13 @@ VideoWithErrors.args = {
 
 export const VirtualWithErrors = Template.bind({});
 VirtualWithErrors.args = {
+  virtual: true,
   hearing: {
     ...defaultHearing,
+    regionalOffice: defaultHearing.regionalOfficeKey,
     virtualHearing: virtualHearing.virtualHearing
   },
-  appeal: {
-    ...amaAppeal,
-    regionalOffice: defaultHearing.regionalOfficeKey
-  },
+  appeal: amaAppeal,
   errors: {
     hearingDay: 'Cannot find hearing day',
     scheduledTimeString: 'Invalid time selected',

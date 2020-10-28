@@ -36,7 +36,7 @@ class StartCertificationJob < ApplicationJob
       ssocs_required: @certification.calculate_ssocs_required,
       ssocs_matching_at: @certification.calculcate_ssocs_matching_at,
       form8_started_at: (@certification.certification_status == :started) ? @certification.now : nil,
-      vacols_hearing_preference: @certification.appeal.hearing_request_type,
+      vacols_hearing_preference: @certification.appeal.current_hearing_request_type,
       certifying_office: @certification.appeal.regional_office_name,
       certifying_username: @certification.appeal.regional_office_key,
       certifying_official_name: user ? user.full_name : nil

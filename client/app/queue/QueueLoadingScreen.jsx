@@ -57,7 +57,7 @@ class QueueLoadingScreen extends React.PureComponent {
   };
 
   maybeLoadJudgeData = (chosenUserId) => {
-    if (this.props.userRole !== USER_ROLE_TYPES.judge && !this.props.loadAttorneys) {
+    if (this.props.userRole !== USER_ROLE_TYPES.judge || !this.props.loadAttorneys) {
       return Promise.resolve();
     }
 

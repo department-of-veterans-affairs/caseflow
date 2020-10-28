@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 describe RatingAtIssue do
-  before { FeatureToggle.enable!(:ratings_at_issue) }
-  after { FeatureToggle.disable!(:ratings_at_issue) }
-
   let(:disability_sn) { "1234" }
   let(:diagnostic_code) { "7611" }
   let(:reference_id) { "1555" }

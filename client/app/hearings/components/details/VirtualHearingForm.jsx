@@ -4,7 +4,7 @@ import React, { useContext, useEffect } from 'react';
 import { ContentSection } from '../../../components/ContentSection';
 import { HearingLinks } from './HearingLinks';
 import { HearingsUserContext } from '../../contexts/HearingsUserContext';
-import { getAppellantTitleForHearing } from '../../utils';
+import { getAppellantTitle } from '../../utils';
 import { VirtualHearingFields } from '../VirtualHearings/Fields';
 
 export const VirtualHearingForm = (
@@ -17,7 +17,7 @@ export const VirtualHearingForm = (
   // Hide the virtual hearing fields only when we are scheduling the virtual hearing
   const showFields = (hearing?.isVirtual || hearing?.wasVirtual) && virtualHearing;
   const readOnlyEmails = readOnly || !virtualHearing?.jobCompleted || hearing?.wasVirtual || hearing.scheduledForIsPast;
-  const appellantTitle = getAppellantTitleForHearing(hearing);
+  const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const user = useContext(HearingsUserContext);
 
   useEffect(() => {
@@ -52,9 +52,7 @@ export const VirtualHearingForm = (
           virtualHearing={virtualHearing}
           time={hearing.scheduledTimeString}
           requestType={hearing.readableRequestType}
-          defaultAppellantTz={hearing?.appellantTz}
           initialRepresentativeTz={initialHearing?.virtualHearing?.representativeTz}
-          defaultRepresentativeTz={hearing?.representativeTz}
         />
       )}
     </ContentSection>

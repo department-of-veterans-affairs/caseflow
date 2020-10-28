@@ -128,7 +128,7 @@ class AppealSeries < CaseflowRecord
         location: hearing.request_type_location
       }
     when :pending_hearing_scheduling
-      { type: latest_appeal.sanitized_hearing_request_type }
+      { type: latest_appeal.current_hearing_request_type }
     when :pending_form9, :pending_certification, :pending_certification_ssoc
       {
         last_soc_date: last_soc_date,

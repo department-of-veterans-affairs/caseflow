@@ -56,7 +56,7 @@ export default class AssignHearingsTabs extends React.PureComponent {
             {
               label: 'Scheduled Veterans',
               page: <UpcomingHearingsTable
-                selectRegionalOffice={selectedRegionalOffice}
+                selectedRegionalOffice={selectedRegionalOffice}
                 selectedHearingDay={selectedHearingDay}
                 hearings={hearingsForSelected}
               />
@@ -100,7 +100,10 @@ AssignHearingsTabs.propTypes = {
     scheduledFor: PropTypes.string,
     totalSlots: PropTypes.number
   }),
+
+  // Selected Regional Office Key
   selectedRegionalOffice: PropTypes.string,
+
   room: PropTypes.string
 };
 

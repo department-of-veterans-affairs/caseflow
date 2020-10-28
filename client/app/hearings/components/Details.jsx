@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
-import { isEmpty, isUndefined, get } from 'lodash';
+import { isUndefined, get } from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import React, { useState, useContext, useEffect } from 'react';
@@ -11,11 +11,17 @@ import { HearingConversion } from './HearingConversion';
 import {
   HearingsFormContext,
   updateHearingDispatcher,
-  RESET_HEARING,
-  RESET_VIRTUAL_HEARING
+  RESET_HEARING
 } from '../contexts/HearingsFormContext';
 import { HearingsUserContext } from '../contexts/HearingsUserContext';
-import { deepDiff, pollVirtualHearingData, getChanges, getAppellantTitleForHearing } from '../utils';
+import {
+  deepDiff,
+  getChanges,
+  getAppellantTitle,
+  processAlerts,
+  startPolling,
+  parseVirtualHearingErrors
+} from '../utils';
 import { inputFix } from './details/style';
 import {
   onReceiveAlerts,
@@ -29,6 +35,8 @@ import Button from '../../components/Button';
 import DetailsForm from './details/DetailsForm';
 import UserAlerts from '../../components/UserAlerts';
 import VirtualHearingModal from './VirtualHearingModal';
+
+import COPY from '../../../COPY';
 
 /**
  * Hearing Details Component
@@ -60,13 +68,20 @@ const HearingDetails = (props) => {
   const [virtualHearingModalType, setVirtualHearingModalType] = useState(null);
   const [shouldStartPolling, setShouldStartPolling] = useState(null);
 
+  const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
+
   // Method to reset the state
-  const reset = () => {
+  const resetState = (resetHearingObj) => {
     // Reset the state
     setVirtualHearingErrors({});
     convertHearing('');
     setLoading(false);
     setError(false);
+
+    // reset hearing
+    if (resetHearingObj) {
+      dispatch({ type: RESET_HEARING, payload: resetHearingObj });
+    }
 
     // Focus the top of the page
     window.scrollTo(0, 0);
@@ -96,35 +111,27 @@ const HearingDetails = (props) => {
     };
   };
 
-  const processAlerts = (alerts) => {
-    alerts.forEach((alert) => {
-      if ('hearing' in alert) {
-        props.onReceiveAlerts(alert.hearing);
-      } else if ('virtual_hearing' in alert && !isEmpty(alert.virtual_hearing)) {
-        props.onReceiveTransitioningAlert(alert.virtual_hearing, 'virtualHearing');
-        setShouldStartPolling(true);
-      }
-    });
-  };
-
   const submit = async (editedEmails) => {
     try {
       // Determine the current state and whether to error
       const virtual = hearing.isVirtual || hearing.wasVirtual || converting;
-      const noEmail = !hearing.virtualHearing?.appellantEmail;
+      const noAppellantEmail = !hearing.virtualHearing?.appellantEmail;
       const noRepTimezone = !hearing.virtualHearing?.representativeTz && hearing.virtualHearing?.representativeEmail;
+      const noAppellantTimezone = !hearing.virtualHearing?.appellantTz;
       const emailUpdated = (
         editedEmails?.appellantEmailEdited ||
         (editedEmails?.representativeEmailEdited && hearing.virtualHearing?.representativeEmail)
       );
       const timezoneUpdated = editedEmails?.representativeTzEdited || editedEmails?.appellantTzEdited;
-      const errors = noEmail || (noRepTimezone && hearing.readableRequestType !== 'Video');
+      const errors = noAppellantEmail ||
+                    ((noAppellantTimezone || noRepTimezone) && hearing.readableRequestType !== 'Video');
 
       if (virtual && errors) {
         // Set the Virtual Hearing errors
         setVirtualHearingErrors({
-          [noEmail && 'appellantEmail']: `${getAppellantTitleForHearing(hearing)} email is required`,
-          [noRepTimezone && 'representativeTz']: 'Timezone is required to send email notifications.'
+          [noAppellantEmail && 'appellantEmail']: `${appellantTitle} email is required`,
+          [noRepTimezone && 'representativeTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED,
+          [noAppellantTimezone && 'appellantTz']: COPY.VIRTUAL_HEARING_TIMEZONE_REQUIRED
         });
 
         // Focus to the error
@@ -160,12 +167,11 @@ const HearingDetails = (props) => {
       const alerts = response.body?.alerts;
 
       if (alerts) {
-        processAlerts(alerts);
+        processAlerts(alerts, props, setShouldStartPolling);
       }
 
       // Reset the state
-      reset();
-      dispatch({ type: RESET_HEARING, payload: hearingResp });
+      resetState(hearingResp);
     } catch (respError) {
       const code = get(respError, 'response.body.errors[0].code') || '';
 
@@ -189,15 +195,7 @@ const HearingDetails = (props) => {
           // 1002 is returned with an invalid email. rethrow respError, then re-catch it in VirtualHearingModal
           throw respError;
         } else {
-          // Remove the validation string from th error
-          const messages = msg.split(':')[1];
-
-          // Set inline errors for hearing conversion page
-          const errors = messages.split(',').reduce((list, message) => ({
-            ...list,
-            [(/Representative/).test(message) ? 'representativeEmail' : 'appellantEmail']:
-              message.replace('Appellant', getAppellantTitleForHearing(hearing))
-          }), {});
+          const errors = parseVirtualHearingErrors(msg);
 
           document.getElementById('email-section').scrollIntoView();
 
@@ -209,25 +207,12 @@ const HearingDetails = (props) => {
     }
   };
 
-  const startPolling = () => {
-    return pollVirtualHearingData(hearing?.externalId, (response) => {
-      // response includes jobCompleted, aliasWithHost, guestPin, hostPin,
-      // guestLink, and hostLink
-      const resp = ApiUtil.convertToCamelCase(response);
-
-      if (resp.jobCompleted) {
-        setShouldStartPolling(false);
-
-        // Reset the state with the new details
-        reset();
-        dispatch({ type: RESET_VIRTUAL_HEARING, payload: resp });
-        props.transitionAlert('virtualHearing');
-      }
-
-      // continue polling if return true (opposite of job_completed)
-      return !response.job_completed;
-    });
-  };
+  const poll = () => startPolling(hearing, {
+    resetState,
+    setShouldStartPolling,
+    dispatch,
+    props
+  });
 
   const editedEmails = getEditedEmails();
   const convertLabel = converting === 'change_to_virtual' ?
@@ -240,7 +225,7 @@ const HearingDetails = (props) => {
         <div>
           <Alert
             type="error"
-            title={error === '' ? 'There was an error updating the hearing' : error}
+            title={error === '' ? COPY.FAILED_HEARING_UPDATE : error}
           />
         </div>
       )}
@@ -282,7 +267,7 @@ const HearingDetails = (props) => {
               readOnly={disabled}
               requestType={hearing?.readableRequestType}
             />
-            {shouldStartPolling && startPolling()}
+            {shouldStartPolling && poll()}
           </div>
         </AppSegment>
       )}
@@ -290,7 +275,7 @@ const HearingDetails = (props) => {
         <Button
           name="Cancel"
           linkStyling
-          onClick={converting ? () => reset(initialHearing) : goBack}
+          onClick={converting ? () => resetState(initialHearing) : goBack}
           styling={css({ float: 'left', paddingLeft: 0, paddingRight: 0 })}
         >
           Cancel
@@ -314,7 +299,7 @@ const HearingDetails = (props) => {
           update={updateHearing}
           submit={submit}
           closeModal={closeVirtualHearingModal}
-          reset={() => reset(initialHearing)}
+          reset={() => resetState(initialHearing)}
           type={virtualHearingModalType}
           {...editedEmails}
         />
