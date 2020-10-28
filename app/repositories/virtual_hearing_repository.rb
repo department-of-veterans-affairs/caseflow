@@ -60,6 +60,8 @@ class VirtualHearingRepository
             )
           )
         SQL
+    end
+
     private
 
     def postponed_or_cancelled_vacols_ids
