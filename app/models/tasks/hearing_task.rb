@@ -72,7 +72,7 @@ class HearingTask < Task
   def update_legacy_appeal_location
     location = if hearing&.held?
                  LegacyAppeal::LOCATION_CODES[:transcription]
-               elsif appeal.representative_is_vso?
+               elsif appeal.representative_is_colocated_vso?
                  LegacyAppeal::LOCATION_CODES[:service_organization]
                else
                  LegacyAppeal::LOCATION_CODES[:case_storage]

@@ -96,38 +96,31 @@ describe HearingTask, :postgres do
 
       before do
         allow(LegacyAppealRepresentative).to receive(:new).and_return(lar)
-        allow(lar).to receive(:representatives).and_return([representative])
+      end
+
+      context "hearing is held" do
+        let(:disposition) { "H" }
+
+        it "moves the appeal to transcription" do
+          expect { subject }.to change { vacols_case.reload.bfcurloc }.from(loc_caseflow).to(loc_transcription)
+        end
       end
 
       context "representative is a vso" do
-        let!(:representative) { create(:vso, name: "a VSO", participant_id: representative_pid) }
+        context "representative is not a colocated vso" do
+          it "moves the appeal to case storage" do
+            allow(lar).to receive(:representative_is_colocated_vso?).and_return(false)
 
-        context "hearing is held" do
-          let(:disposition) { "H" }
-
-          it "moves the appeal to transcription" do
-            expect { subject }.to change { vacols_case.reload.bfcurloc }.from(loc_caseflow).to(loc_transcription)
+            expect { subject }.to change { vacols_case.reload.bfcurloc }.from(loc_caseflow).to(loc_case_storage)
           end
         end
 
-        it "moves the appeal to service organization" do
-          allow(lar).to receive(:representative_is_vso?).and_return(true)
+        context "representative is a colocated vso" do
+          it "moves the appeal to service organization" do
+            allow(lar).to receive(:representative_is_colocated_vso?).and_return(true)
 
-          expect(appeal.representatives.count).to eq 1
-          expect(appeal.representatives.first).to eq representative
-          expect { subject }.to change { vacols_case.reload.bfcurloc }.from(loc_caseflow).to(loc_service_org)
-        end
-      end
-
-      context "representative is not a vso" do
-        let!(:representative) { create(:private_bar, name: "a private attorney", participant_id: representative_pid) }
-
-        it "moves the appeal to case storage" do
-          allow(lar).to receive(:representative_is_vso?).and_return(false)
-
-          expect(appeal.representatives.count).to eq 1
-          expect(appeal.representatives.first).to eq representative
-          expect { subject }.to change { vacols_case.reload.bfcurloc }.from(loc_caseflow).to(loc_case_storage)
+            expect { subject }.to change { vacols_case.reload.bfcurloc }.from(loc_caseflow).to(loc_service_org)
+          end
         end
       end
     end
