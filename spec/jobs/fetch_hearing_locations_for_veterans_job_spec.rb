@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe FetchHearingLocationsForVeteransJob do
+  include GeomatchHelper
+
   let!(:job) { FetchHearingLocationsForVeteransJob.new }
 
   before do
@@ -117,25 +119,6 @@ describe FetchHearingLocationsForVeteransJob do
         expect(legacy_appeal.tasks.count).to eq(3)
         expect(legacy_appeal.tasks.open.where(type: "ScheduleHearingTask").count).to eq(1)
         expect(legacy_appeal.tasks.open.where(type: "HearingTask").count).to eq(1)
-      end
-
-      context "when appeal has open admin action" do
-        before do
-          HearingAdminActionVerifyAddressTask.create!(
-            appeal: legacy_appeal,
-            assigned_to: HearingsManagement.singleton,
-            parent: ScheduleHearingTask.create(
-              appeal: legacy_appeal,
-              parent: RootTask.find_or_create_by(appeal: legacy_appeal)
-            )
-          )
-        end
-
-        it "closes admin action" do
-          subject.perform
-
-          expect(HearingAdminActionVerifyAddressTask.first.status).to eq(Constants.TASK_STATUSES.cancelled)
-        end
       end
 
       context "when appeal can't be geomatched" do
@@ -279,32 +262,6 @@ describe FetchHearingLocationsForVeteransJob do
     end
   end
 
-  context "for a travel board appeal in VACOLS" do
-    let!(:vacols_case) do
-      create(
-        :case,
-        bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing],
-        bfhr: "2",
-        bfdocind: nil,
-        bfddec: nil
-      )
-    end
-
-    describe "#perform" do
-      subject { FetchHearingLocationsForVeteransJob.new }
-
-      it "geomatches for the travel board appeal" do
-        subject.perform
-
-        legacy_appeal = LegacyAppeal.find_by(vacols_id: vacols_case.bfkey)
-
-        expect(legacy_appeal).not_to be_nil
-        expect(legacy_appeal.closest_regional_office).not_to be_nil
-        expect(legacy_appeal.available_hearing_locations).not_to be_empty
-      end
-    end
-  end
-
   def veteran_record(file_number:, state: "MA", zip_code: "01002", country: "USA")
     {
       file_number: file_number,
@@ -327,19 +284,5 @@ describe FetchHearingLocationsForVeteransJob do
       military_postal_type_code: "99999",
       service: "99999"
     }
-  end
-
-  # Setups a mock for GeomatchService, and creates an expectation that the GeomatchService
-  # will be instantiated.
-  def setup_geomatch_service_mock(geomatching_appeal)
-    geomatch_service = GeomatchService.new(appeal: geomatching_appeal)
-    expect(GeomatchService).to(
-      receive(:new)
-        .with(appeal: geomatching_appeal)
-        .at_least(:once)
-        .and_return(geomatch_service)
-    )
-
-    yield(geomatch_service)
   end
 end
