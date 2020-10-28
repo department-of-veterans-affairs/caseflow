@@ -4,13 +4,13 @@ describe Hearings::GeomatchAndCacheAppealJob do
   include ActiveJob::TestHelper
 
   describe "#perform" do
-    subject { described_class.new.perform(appeal_id: appeal.id) }
+    subject { described_class.new.perform(appeal_id: appeal.id, appeal_type: appeal.class.name) }
 
     context "with AMA appeal" do
       let(:appeal) { create(:appeal) }
 
       it "throws an error" do
-        expect { subject }.to raise_error ActiveRecord::RecordNotFound
+        expect { subject }.to raise_error ArgumentError
       end
     end
 
@@ -62,32 +62,15 @@ describe Hearings::GeomatchAndCacheAppealJob do
       context "with existing closest regional office, but different from geomatch" do
         let(:closest_regional_office) { "RO02" }
 
-        it "changes the closest regional office field" do
+        it "does not change the closest regional office field" do
           subject
 
           appeal.reload
 
-          expect(appeal.closest_regional_office).to eq("RO17") # RO02 => RO17
+          expect(appeal.closest_regional_office).to eq("RO02")
         end
 
-        it "the cached appeal has the updated RO info" do
-          subject
-
-          expect(CachedAppeal.count).to eq(1)
-
-          cached = CachedAppeal.first
-
-          expect(cached.closest_regional_office_city).to eq("St. Petersburg")
-          expect(cached.closest_regional_office_key).to eq("RO17") # RO02 => RO17
-        end
-      end
-
-      context "with existing closest regional office, but geomatch fails" do
-        let(:closest_regional_office) { "RO02" }
-
-        before { setup_geomatch_service_mock }
-
-        it "still creates cached appeal" do
+        it "the cached appeal has the same RO info" do
           subject
 
           expect(CachedAppeal.count).to eq(1)
@@ -95,7 +78,7 @@ describe Hearings::GeomatchAndCacheAppealJob do
           cached = CachedAppeal.first
 
           expect(cached.closest_regional_office_city).to eq("Togus")
-          expect(cached.closest_regional_office_key).to eq("RO02") # RO02 => RO17
+          expect(cached.closest_regional_office_key).to eq("RO02")
         end
       end
     end
