@@ -189,7 +189,7 @@ describe VirtualHearing do
     end
   end
 
-  context "#status"do
+  context "#status" do
     subject { virtual_hearing.status }
 
     context "cancelled" do

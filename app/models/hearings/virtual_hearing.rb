@@ -13,7 +13,23 @@
 # emails to participants including the link to video conference as well as other details about
 # the hearing. DeleteConferencesJob is kicked off to delete the conference resource
 # when the the virtual hearing is cancelled or after the hearing takes place.
-
+#
+# A note about `status`:
+#   * Status can be `cancelled`, `closed`, `active`, or `pending` *
+#   `cancelled` : Initially virtual hearings could be only created when the hearing coordinator switched the hearing
+#                 type (`Video` or `Central`) to virtual. If that type is switched back to the orginal type,
+#                 this is tracked by `request_cancelled`. Essentially `cancelled` is derived from `request_cancelled`
+#                 and indicates that the hearing type was switched back to original type and **NOT** that
+#                 conference was deleted or hearing was cancelled.
+#
+#   `closed`: We needed a way to distinguish between hearings which types were switched and hearings which were
+#             cancelled or postponed. This is derived from `conference_deleted` which indicates that we deleted the
+#             conference for a cancelled or postponed hearing.
+#
+#   `active`: This indicates that the conference was created for a virtual hearing, derived from presence of `conference_id`
+#
+#   `pending`: This indicates that the conference has yet to be created.
+##
 class VirtualHearing < CaseflowRecord
   include UpdatedByUserConcern
 
