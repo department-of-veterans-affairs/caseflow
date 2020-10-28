@@ -64,6 +64,11 @@ detectors:
       - AssignHearingDispositionTask#reschedule_or_schedule_later
       - AssignJudgeteamRoles#process
       - AsyncableJobsReporter
+      - CachedAppealService#cache_ama_appeals
+      - CachedAppealService#cache_legacy_appeal_postgres_data
+      - CachedAppealService#cache_legacy_appeal_vacols_data
+      - CachedAppealService#poa_representative_name_for
+      - CachedAppealService#case_fields_for_vacols_ids
       - ConvertToVirtualHearing#convert_hearing_to_virtual
       - ClaimReviewAsyncStatsReporter#as_csv
       - DataIntegrityChecksJob
