@@ -29,7 +29,7 @@ class Hearings::GeomatchAndCacheAppealJob < ApplicationJob
     @appeal = LegacyAppeal.find(appeal_id)
 
     begin
-      GeomatchService.new(appeal: appeal).geomatch
+      GeomatchService.new(appeal: appeal).geomatch if appeal.closest_regional_office.nil?
     rescue StandardError
       if appeal.closest_regional_office.nil?
         raise
