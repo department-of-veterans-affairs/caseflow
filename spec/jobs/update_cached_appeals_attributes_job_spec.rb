@@ -149,27 +149,27 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       expect(CachedAppeal.find_by(vacols_id: legacy_appeal2.vacols_id).former_travel).to eq(false)
       expect(CachedAppeal.find_by(vacols_id: legacy_appeal3.vacols_id).former_travel).to eq(true)
     end
-  end
 
-  context "when BGS fails" do
-    before do
-      bgs = Fakes::BGSService.new
-      allow(Fakes::BGSService).to receive(:new).and_return(bgs)
-      allow(bgs).to receive(:fetch_person_by_ssn)
-        .and_raise(Errno::ECONNRESET, "mocked error for testing")
-    end
+    context "when BGS fails" do
+      before do
+        bgs = Fakes::BGSService.new
+        allow(Fakes::BGSService).to receive(:new).and_return(bgs)
+        allow(bgs).to receive(:fetch_person_by_ssn)
+          .and_raise(Errno::ECONNRESET, "mocked error for testing")
+      end
 
-    it "completes and sends warning to Slack" do
-      slack_msg = ""
-      allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+      it "completes and sends warning to Slack" do
+        slack_msg = ""
+        allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
 
-      job = described_class.new
-      job.perform_now
-      expect(job.warning_msgs.count).to eq 3
+        job = described_class.new
+        job.perform_now
+        expect(job.warning_msgs.count).to eq 3
 
-      expect(slack_msg.lines.count).to eq 4
-      expected_msg = "\\[WARN\\] UpdateCachedAppealsAttributesJob .*"
-      expect(slack_msg).to match(/#{expected_msg}/)
+        expect(slack_msg.lines.count).to eq 4
+        expected_msg = "\\[WARN\\] UpdateCachedAppealsAttributesJob .*"
+        expect(slack_msg).to match(/#{expected_msg}/)
+      end
     end
   end
 end
