@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe CachedAppealService, focus: true do
+describe CachedAppealService do
   subject { described_class.new }
 
   context "caches hearing_request_type and former_travel correctly" do
