@@ -116,7 +116,10 @@ class VirtualHearing < CaseflowRecord
     (active? || cancelled?) && all_emails_sent?
   end
 
-  # Determines if the hearing has been cancelled
+  # Determines if the hearing type has been switched to the original type
+  # NOTE: This can only happen from the hearing details page where the hearing coordinator
+  # can switch the type from virtual back to Video or Central. This essentailly cancels
+  # this virtual hearing.
   def cancelled?
     status == :cancelled
   end
@@ -131,11 +134,25 @@ class VirtualHearing < CaseflowRecord
     status == :active
   end
 
+  # Determines if the conference was deleted
+  # NOTE: Even though the conference is deleted for every virtual hearing,
+  # this status helps us distinguish between hearings that had their types
+  # switched back to original type and cancelled and postponed hearings which
+  # require us to delete the conference but not set `request_cancelled`.
+  def closed?
+    status == :closed
+  end
+
   # Determines the status of the Virtual Hearing based on the establishment
   def status
     # Check if the establishment has been cancelled by the user
     if request_cancelled?
       return :cancelled
+    end
+
+    # if the conference has been created the virtual hearing was deleted
+    if conference_id && conference_deleted?
+      return :closed
     end
 
     # If the conference has been created the virtual hearing is active
