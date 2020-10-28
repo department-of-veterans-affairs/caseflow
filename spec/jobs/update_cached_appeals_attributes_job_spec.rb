@@ -149,59 +149,27 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       expect(CachedAppeal.find_by(vacols_id: legacy_appeal2.vacols_id).former_travel).to eq(false)
       expect(CachedAppeal.find_by(vacols_id: legacy_appeal3.vacols_id).former_travel).to eq(true)
     end
-
-    context "when BGS fails" do
-      before do
-        bgs = Fakes::BGSService.new
-        allow(Fakes::BGSService).to receive(:new).and_return(bgs)
-        allow(bgs).to receive(:fetch_person_by_ssn)
-          .and_raise(Errno::ECONNRESET, "mocked error for testing")
-      end
-
-      it "completes and sends warning to Slack" do
-        slack_msg = ""
-        allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
-
-        job = described_class.new
-        job.perform_now
-        expect(job.warning_msgs.count).to eq 3
-
-        expect(slack_msg.lines.count).to eq 4
-        expected_msg = "\\[WARN\\] UpdateCachedAppealsAttributesJob .*"
-        expect(slack_msg).to match(/#{expected_msg}/)
-      end
-    end
   end
 
-  context "cached appeal was recently updated" do
-    let(:ama_appeal) { create(:appeal) }
-    let(:future_time) { Time.now.utc + 10.minutes }
-    let!(:legacy_existing_cached_appeal) do
-      create(
-        :cached_appeal,
-        appeal_id: legacy_appeal1.id,
-        appeal_type: LegacyAppeal.name,
-        updated_at: future_time # simulates a possible race condition, but not realistic
-      )
-    end
-    let!(:ama_existing_cached_appeal) do
-      create(
-        :cached_appeal,
-        appeal_id: ama_appeal.id,
-        appeal_type: Appeal.name,
-        updated_at: future_time # simulates a possible race condition, but not realistic
-      )
+  context "when BGS fails" do
+    before do
+      bgs = Fakes::BGSService.new
+      allow(Fakes::BGSService).to receive(:new).and_return(bgs)
+      allow(bgs).to receive(:fetch_person_by_ssn)
+        .and_raise(Errno::ECONNRESET, "mocked error for testing")
     end
 
-    it "does not update appeals that were recently cached" do
-      subject
+    it "completes and sends warning to Slack" do
+      slack_msg = ""
+      allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
 
-      legacy_cached_appeal = CachedAppeal.find_by(appeal_id: legacy_appeal1.id, appeal_type: LegacyAppeal.name)
-      ama_cached_appeal = CachedAppeal.find_by(appeal_id: ama_appeal.id, appeal_type: Appeal.name)
+      job = described_class.new
+      job.perform_now
+      expect(job.warning_msgs.count).to eq 3
 
-      # updated_at shouldn't change
-      expect(legacy_cached_appeal.updated_at.utc).to be_within(1.in_milliseconds).of(future_time)
-      expect(ama_cached_appeal.updated_at.utc).to be_within(1.in_milliseconds).of(future_time)
+      expect(slack_msg.lines.count).to eq 4
+      expected_msg = "\\[WARN\\] UpdateCachedAppealsAttributesJob .*"
+      expect(slack_msg).to match(/#{expected_msg}/)
     end
   end
 end
