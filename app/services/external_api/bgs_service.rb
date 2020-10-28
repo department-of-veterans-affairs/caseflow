@@ -234,12 +234,12 @@ class ExternalApi::BGSService
                           service: :bgs,
                           name: "common_security.get_security_profile") do
       client.common_security.get_security_profile(
-        username: username, 
+        username: username,
         station_id: stations_id,
-        applications: "CASEFLOW")
+        applications: "CASEFLOW"
+      )
     end
   end
-
 
   def find_address_by_participant_id(participant_id)
     finder = ExternalApi::BgsAddressFinder.new(participant_id: participant_id, client: client)
