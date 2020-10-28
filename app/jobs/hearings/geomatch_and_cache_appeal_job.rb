@@ -42,8 +42,9 @@ class Hearings::GeomatchAndCacheAppealJob < ApplicationJob
     appeal.reload
 
     if appeal.closest_regional_office.present?
-      CachedAppealService.cache_legacy_appeal_postgres_data([appeal])
-      CachedAppealService.cache_legacy_appeal_vacols_data([appeal.vacols_id])
+      cached_appeal_service = CachedAppealService.new
+      cached_appeal_service.cache_legacy_appeal_postgres_data([appeal])
+      cached_appeal_service.cache_legacy_appeal_vacols_data([appeal.vacols_id])
     end
   end
 

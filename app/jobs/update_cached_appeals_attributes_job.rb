@@ -33,7 +33,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def cache_ama_appeals
     appeals = Appeal.includes(:available_hearing_locations).where(id: open_appeals_from_tasks(Appeal.name))
 
-    cached_appeals = CachedAppealService.cache_ama_appeals(appeals)
+    cached_appeals = cached_appeal_service.cache_ama_appeals(appeals)
 
     increment_appeal_count(cached_appeals.length, Appeal.name)
   end
@@ -61,9 +61,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   def cache_legacy_appeal_postgres_data(legacy_appeals)
     # this transaction times out so let's try to do this in batches
     legacy_appeals.in_groups_of(POSTGRES_BATCH_SIZE, false) do |batch_legacy_appeals|
-      cached_appeals, new_warnings = CachedAppealService.cache_legacy_appeal_postgres_data(batch_legacy_appeals)
-
-      warning_msgs.concat(new_warnings)
+      cached_appeals = cached_appeal_service.cache_legacy_appeal_postgres_data(batch_legacy_appeals)
 
       increment_appeal_count(cached_appeals.length, LegacyAppeal.name)
     end
@@ -71,11 +69,15 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
   def cache_legacy_appeal_vacols_data(all_vacols_ids)
     all_vacols_ids.in_groups_of(VACOLS_BATCH_SIZE, false).each do |batch_vacols_ids|
-      cached_appeals = CachedAppealService.cache_legacy_appeal_vacols_data(batch_vacols_ids)
+      cached_appeals = cached_appeal_service.cache_legacy_appeal_vacols_data(batch_vacols_ids)
 
       increment_vacols_update_count(cached_appeals.count)
     end
   end
+
+  delegate :warning_msgs, to: :cached_appeal_service
+
+  private
 
   def increment_vacols_update_count(count)
     count.times do
@@ -100,12 +102,13 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     end
   end
 
-  def warning_msgs
-    @warning_msgs ||= []
+  def cached_appeal_service
+    @cached_appeal_service ||= CachedAppealService.new
   end
 
   def log_warning
-    slack_msg = "[WARN] UpdateCachedAppealsAttributesJob first 100 warnings: \n#{warning_msgs.join("\n")}"
+    slack_msg = "[WARN] UpdateCachedAppealsAttributesJob first 100 warnings:"\
+                "\n#{warning_msgs.join("\n")}"
     slack_service.send_notification(slack_msg)
   end
 
