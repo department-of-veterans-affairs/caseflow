@@ -1,9 +1,9 @@
 // External Dependencies
-import { createSelector } from 'reselect';
-import { chain, values, memoize, find } from 'lodash';
+import { createSelector } from '@reduxjs/toolkit';
+import { mapValues, chain, values, memoize } from 'lodash';
 
 // Local Dependencies
-import { escapeRegExp } from 'utils/reader';
+import { escapeRegExp, loadAppeal, documentsView } from 'utils/reader';
 
 /**
  * Selector for the Filtered Doc IDs
@@ -115,11 +115,7 @@ export const annotationStateByDocId = createSelector(
  */
 export const annotationStatePerDocument = createSelector(
   [filteredDocuments, annotationStateByDocId],
-  (documents, filterAnnotationState) =>
-    chain(documents).
-      keyBy('id').
-      mapValues((doc) => filterAnnotationState(doc.id)).
-      value()
+  (documents, filterAnnotationState) => mapValues(documents, (doc) => filterAnnotationState(doc.id))
 );
 
 /**
@@ -179,10 +175,16 @@ export const currentMatchIndex = createSelector(
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- The Documents List State
  */
-export const documentListScreen = (state, props) => ({
-  searchCategoryHighlights: state.reader.documentList.searchCategoryHighlights[props.doc.id],
+export const documentListScreen = (state) => ({
+  // annotationsPerDocument: annotationStatePerDocument(state.reader),
+  documentsView: documentsView(
+    Object.values(state.reader.documents.list),
+    state.reader.documentList.docFilterCriteria,
+    state.reader.documentList.viewingDocumentsOrComments
+  ),
+  searchCategoryHighlights: state.reader.documentList.searchCategoryHighlights,
+  loadedAppealId: state.reader.pdfViewer.loadedAppealId,
   tagOptions: state.reader.pdfViewer.tagOptions,
-  annotationsPerDocument: annotationStatePerDocument(state.reader),
   filterCriteria: state.reader.documentList.docFilterCriteria,
   documents: filteredDocuments(state.reader),
   caseSelectedAppeal: state.reader.caseSelect.selectedAppeal,
@@ -191,11 +193,13 @@ export const documentListScreen = (state, props) => ({
   queueRedirectUrl: state.reader.documentList.queueRedirectUrl,
   queueTaskType: state.reader.documentList.queueTaskType,
   documentFilters: state.reader.documentList.pdfList.filters,
-  storeDocuments: state.reader.documents,
+  storeDocuments: state.reader.documents.list,
   isPlacingAnnotation: state.reader.annotationLayer.isPlacingAnnotation,
-  appeal: props.match && props.match.params.vacolsId ?
-    find(state.reader.caseSelect.assignments, { vacols_id: props.match.params.vacolsId }) :
+  appeal: loadAppeal(
+    state.reader.caseSelect.assignments,
+    state.reader.pdfViewer.loadedAppealId,
     state.reader.pdfViewer.loadedAppeal
+  )
 });
 
 /**

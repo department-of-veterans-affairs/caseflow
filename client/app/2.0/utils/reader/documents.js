@@ -2,6 +2,7 @@
 import { sortBy, round } from 'lodash';
 
 // Local Dependencies
+import { loadDocuments } from 'store/reader/documents';
 import {
   documentCategories,
   MINIMUM_ZOOM,
@@ -150,5 +151,18 @@ export const fitToScreen = (scale, zoomLevel, dispatch) => {
     dispatch(setZoomLevel(1));
   } else {
     dispatch(setZoomLevel(zoom));
+  }
+};
+
+/**
+ * Helper Method to load documents into the store only when necessary
+ * @param {string} loadedId -- Id of the Appeal in the Store
+ * @param {string} vacolsId -- The New Appeal ID
+ */
+export const fetchDocuments = (loadedId, vacolsId, dispatch) => () => {
+  // Load the Data Needed by the Documents List
+  if (loadedId !== vacolsId) {
+    // Load the new Documents
+    dispatch(loadDocuments(vacolsId));
   }
 };

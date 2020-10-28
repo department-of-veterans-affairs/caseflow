@@ -1,5 +1,5 @@
 // External Dependencies
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, current } from '@reduxjs/toolkit';
 
 // Local Dependencies
 import { addMetaLabel } from 'utils/reader';

@@ -1,7 +1,7 @@
 // External Dependencies
 import querystring from 'querystring';
-import { createSlice, createAction } from '@reduxjs/toolkit';
-import { values, some, find, pickBy } from 'lodash';
+import { createSlice, createAction, current } from '@reduxjs/toolkit';
+import { sortBy, values, some, find, pickBy } from 'lodash';
 
 // Local Dependencies
 import { DOCUMENTS_OR_COMMENTS_ENUM } from 'store/constants/reader';
@@ -218,7 +218,7 @@ const documentListSlice = createSlice({
     builder.
       addMatcher(
         (action) => [
-          selectCurrentPdfLocally
+          selectCurrentPdfLocally.toString()
         ].includes(action.type),
         (state, action) => {
           updateLastReadDoc(state, action.payload.docId);
@@ -226,26 +226,26 @@ const documentListSlice = createSlice({
       ).
       addMatcher(
         (action) => [
-          onReceiveAnnotations,
-          changeSortState,
-          clearCategoryFilters,
-          setCategoryFilter,
-          setTagFilter,
-          clearTagFilters,
-          setSearch,
-          clearSearch,
-          clearAllFilters,
-          loadDocuments.fulfilled
+          onReceiveAnnotations.toString(),
+          changeSortState.toString(),
+          clearCategoryFilters.toString(),
+          setCategoryFilter.toString(),
+          setTagFilter.toString(),
+          clearTagFilters.toString(),
+          setSearch.toString(),
+          clearSearch.toString(),
+          clearAllFilters.toString(),
+          loadDocuments.fulfilled.toString()
         ].includes(action.type),
         (state, action) => {
           // If the Action is loading the documents, also update the manifest
-          if (action.type === loadDocuments.fulfilled) {
+          if (action.type === loadDocuments.fulfilled.toString()) {
             state.manifestVbmsFetchedAt = action.payload.manifestVbmsFetchedAt;
             state.manifestVvaFetchedAt = action.payload.manifestVvaFetchedAt;
           }
 
           // Set the Documents
-          const documents = state.reader.documents.list;
+          const documents = action.payload.appealDocuments;
 
           // Extract the Filter Criteria to process
           const { docFilterCriteria } = state;
@@ -260,30 +260,32 @@ const documentListSlice = createSlice({
           const searchQuery = docFilterCriteria.searchQuery.toLowerCase();
 
           // Set the Filtered IDs
-          const filteredIds = Object.keys(documents).
+          const filteredIds = sortBy(Object.keys(documents).
             filter((doc) =>
               !activeCategoryFilters.length ||
               some(activeCategoryFilters, (categoryFieldName) => documents[doc][categoryFieldName])).
             filter((doc) =>
               !activeTagFilters.length ||
               some(activeTagFilters, (tagText) => find(documents[doc].tags, { text: tagText }))).
-            filter(searchString(searchQuery, state)).
-            sortBy(docFilterCriteria.sort.sortBy).
+            filter(searchString(searchQuery, state)), docFilterCriteria.sort.sortBy).
             map((doc) => documents[doc].id);
 
+          // Check whether there is a search query to locate
+          if (searchQuery) {
           // Loop through all the documents to update category highlights and expanding comments
-          Object.keys(documents).forEach((id) => {
+            Object.keys(documents).forEach((id) => {
             // Set the document
-            const doc = documents[id];
+              const doc = documents[id];
 
-            // Getting all the truthy values from the object
-            const matchesCategories = pickBy(categoryContainsWords(searchQuery, doc));
+              // Getting all the truthy values from the object
+              const matchesCategories = pickBy(categoryContainsWords(searchQuery, doc));
 
-            // Update the state for all the search category highlights
-            if (matchesCategories !== state.searchCategoryHighlights[doc.id]) {
-              state.searchCategoryHighlights[doc.id] = matchesCategories;
-            }
-          });
+              // Update the state for all the search category highlights
+              if (matchesCategories !== state.searchCategoryHighlights[doc.id]) {
+                state.searchCategoryHighlights[doc.id] = matchesCategories;
+              }
+            });
+          }
 
           // Reverse the order of the filteredIds if we are sorting ascending
           if (docFilterCriteria.sort.sortAscending) {

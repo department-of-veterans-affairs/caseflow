@@ -114,3 +114,5 @@ export const NUMBER_OF_DIRECTIONS = 4;
 // Zoom Constants
 export const ZOOM_RATE = 0.3;
 export const MINIMUM_ZOOM = 0.1;
+
+export const LOADING_DATA_MESSAGE = 'Loading claims folder in Reader...';
