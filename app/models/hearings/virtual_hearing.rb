@@ -26,7 +26,8 @@
 #             cancelled or postponed. This is derived from `conference_deleted` which indicates that we deleted the
 #             conference for a cancelled or postponed hearing.
 #
-#   `active`: This indicates that the conference was created for a virtual hearing, derived from presence of `conference_id`
+#   `active`: This indicates that the conference was created for a virtual hearing, derived from presence of
+#             `conference_id`
 #
 #   `pending`: This indicates that the conference has yet to be created.
 ##

@@ -70,6 +70,14 @@ class VACOLS::CaseHearing < VACOLS::Record
   after_update :create_or_update_diaries
 
   class << self
+    def hearings_with_postponed_or_cancelled_disposition
+      VACOLS::CaseHearing.where(
+        hearing_disp: [
+          HEARING_DISPOSITIONS.key(Constants.HEARING_DISPOSITION_TYPES.postponed).to_s,
+          HEARING_DISPOSITIONS.key(Constants.HEARING_DISPOSITION_TYPES.cancelled).to_s
+        ]
+      )
+    end
     # Finds all hearings for specific days.
     #
     # @deprecated Use {#where}
