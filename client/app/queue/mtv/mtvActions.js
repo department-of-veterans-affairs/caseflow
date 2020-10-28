@@ -20,8 +20,8 @@ export const submitMTVAttyReviewError = (error) => ({
   payload: error
 });
 
-export const submitMTVAttyReview = ({ newTask, history }) => {
-  return async (dispatch, getState) => {
+export const submitMTVAttyReview = ({ newTask }) => {
+  return async (dispatch, getState, { history }) => {
     dispatch(submitMTVAttyReviewStarted());
 
     const url = '/tasks';
