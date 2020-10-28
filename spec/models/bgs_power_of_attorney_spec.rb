@@ -71,8 +71,8 @@ describe BgsPowerOfAttorney do
 
     context "db record does not exist" do
       it "creates new db record" do
+        expect { subject }.to change { described_class.count }.by(1)
         expect(subject).to be_a(described_class)
-        expect(described_class.count).to eq(1)
       end
     end
 
@@ -80,8 +80,8 @@ describe BgsPowerOfAttorney do
       let!(:poa) { create(:bgs_power_of_attorney, file_number: file_number) }
 
       it "fetches existing record" do
+        expect { subject }.to change { described_class.count }.by(0)
         expect(subject).to eq(poa)
-        expect(described_class.count).to eq(1)
       end
     end
 
