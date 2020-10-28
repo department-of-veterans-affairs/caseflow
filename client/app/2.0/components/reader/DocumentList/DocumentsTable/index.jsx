@@ -1,0 +1,271 @@
+/* eslint-disable max-lines */
+import React from 'react';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
+
+import { formatDateStr } from 'app/util/DateUtil';
+import Comment from 'app/reader/Comment';
+
+import DocumentCategoryIcons from 'components/reader/DocumentList/DocumentsTable/DocumentCategoryIcons';
+import TagTableColumn from 'components/reader/DocumentList/DocumentsTable/TagTableColumn';
+import CommentIndicator from 'components/reader/DocumentList/DocumentsTable/CommentIndicator';
+import DocCategoryPicker from 'components/reader/DocumentList/DocumentsTable/DocCategoryPicker';
+import DocTagPicker from 'components/reader/DocumentList/DocumentsTable/DocTagPicker';
+import LastReadIndicator from 'components/reader/DocumentList/DocumentsTable/LastReadIndicator';
+import DocTypeColumn from 'components/reader/DocumentList/DocumentsTable/DocTypeColumn';
+
+import Table from 'app/components/Table';
+import Button from 'app/components/Button';
+import DropdownFilter from 'app/components/DropdownFilter';
+import Highlight from 'app/components/Highlight';
+import {
+  setDocListScrollPosition,
+  changeSortState,
+  clearTagFilters,
+  clearCategoryFilters,
+  setTagFilter,
+  setCategoryFilter,
+  toggleDropdownFilterVisibility
+} from 'app/reader/DocumentList/DocumentListActions';
+import { SortArrowUp, SortArrowDown, DoubleArrow } from 'app/components/RenderFunctions';
+import FilterIcon from 'app/components/FilterIcon';
+
+const NUMBER_OF_COLUMNS = 6;
+
+class DocumentsTable extends React.Component {
+  componentDidMount() {
+    if (this.props.pdfList.scrollTop) {
+      this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
+
+      if (this.lastReadIndicatorElem) {
+        const lastReadBoundingRect = this.lastReadIndicatorElem.getBoundingClientRect();
+        const tbodyBoundingRect = this.tbodyElem.getBoundingClientRect();
+        const lastReadIndicatorIsInView = tbodyBoundingRect.top <= lastReadBoundingRect.top &&
+          lastReadBoundingRect.bottom <= tbodyBoundingRect.bottom;
+
+        if (!lastReadIndicatorIsInView) {
+          const rowWithLastRead = _.find(
+            this.tbodyElem.children,
+            (tr) => tr.querySelector(`#${this.lastReadIndicatorElem.id}`)
+          );
+
+          this.tbodyElem.scrollTop += rowWithLastRead.getBoundingClientRect().top - tbodyBoundingRect.top;
+        }
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    this.props.setDocListScrollPosition(this.tbodyElem.scrollTop);
+  }
+
+  getTbodyRef = (elem) => this.tbodyElem = elem
+  getLastReadIndicatorRef = (elem) => this.lastReadIndicatorElem = elem
+  getCategoryFilterIconRef = (categoryFilterIcon) => this.categoryFilterIcon = categoryFilterIcon
+  getTagFilterIconRef = (tagFilterIcon) => this.tagFilterIcon = tagFilterIcon
+  toggleCategoryDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisibility('category')
+  toggleTagDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisibility('tag')
+
+  getKeyForRow = (index, { isComment, id }) => {
+    return isComment ? `${id}-comment` : id;
+  }
+
+  // eslint-disable-next-line max-statements
+  getDocumentColumns = (row) => {
+    const sortArrowIcon = this.props.docFilterCriteria.sort.sortAscending ? <SortArrowUp /> : <SortArrowDown />;
+    const notSortedIcon = <DoubleArrow />;
+
+    const anyFiltersSet = (filterType) => (
+      Boolean(_.some(this.props.docFilterCriteria[filterType]))
+    );
+
+    const anyCategoryFiltersAreSet = anyFiltersSet('category');
+    const anyTagFiltersAreSet = anyFiltersSet('tag');
+
+    // We have blank headers for the comment indicator and label indicator columns.
+    // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
+    // is triggered when a middle mouse button is clicked while onClick isn't.
+    if (row && row.isComment) {
+
+      return [{
+        valueFunction: (doc) => {
+          const comments = _.sortBy(this.props.annotationsPerDocument[doc.id], ['page', 'y']);
+          const commentNodes = comments.map((comment, commentIndex) => {
+            return <Comment
+              key={comment.uuid}
+              id={`comment${doc.id}-${commentIndex}`}
+              selected={false}
+              page={comment.page}
+              onJumpToComment={this.props.onJumpToComment(comment)}
+              uuid={comment.uuid}
+              date={comment.relevant_date}
+              horizontalLayout>
+              {comment.comment}
+            </Comment>;
+          });
+
+          return <ul className="cf-no-styling-list" aria-label="Document comments">
+            {commentNodes}
+          </ul>;
+        },
+        span: _.constant(NUMBER_OF_COLUMNS)
+      }];
+    }
+
+    const isCategoryDropdownFilterOpen =
+      _.get(this.props.pdfList, ['dropdowns', 'category']);
+
+    const isTagDropdownFilterOpen =
+      _.get(this.props.pdfList, ['dropdowns', 'tag']);
+
+    const sortDirectionAriaLabel =
+      `Sorted ${this.props.docFilterCriteria.sort.sortAscending ? 'ascending' : 'descending'}`;
+
+    return [
+      {
+        cellClass: 'last-read-column',
+        valueFunction: (doc) => <LastReadIndicator docId={doc.id} getRef={this.getLastReadIndicatorRef} />
+      },
+      {
+        cellClass: 'categories-column',
+        header: <div
+          id="categories-header">
+          Categories <FilterIcon
+            label="Filter by category"
+            idPrefix="category"
+            getRef={this.getCategoryFilterIconRef}
+            selected={isCategoryDropdownFilterOpen || anyCategoryFiltersAreSet}
+            handleActivate={this.toggleCategoryDropdownFilterVisiblity} />
+
+          {isCategoryDropdownFilterOpen &&
+            <DropdownFilter
+              clearFilters={this.props.clearCategoryFilters}
+              name="category"
+              isClearEnabled={anyCategoryFiltersAreSet}
+              handleClose={this.toggleCategoryDropdownFilterVisiblity}
+              addClearFiltersRow>
+              <DocCategoryPicker
+                categoryToggleStates={this.props.docFilterCriteria.category}
+                handleCategoryToggle={this.props.setCategoryFilter} />
+            </DropdownFilter>
+          }
+
+        </div>,
+        valueFunction: (doc) => <DocumentCategoryIcons doc={doc} />
+      },
+      {
+        cellClass: 'receipt-date-column',
+        header: <Button
+          name="Receipt Date"
+          id="receipt-date-header"
+          classNames={['cf-document-list-button-header']}
+          ariaLabel={`Sort by Receipt Date. ${this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ?
+            sortDirectionAriaLabel :
+            '' }`}
+          onClick={() => this.props.changeSortState('receivedAt')}>
+          Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortArrowIcon : notSortedIcon }
+        </Button>,
+        valueFunction: (doc) => <span className="document-list-receipt-date">
+          <Highlight>
+            {formatDateStr(doc.receivedAt)}
+          </Highlight>
+        </span>
+      },
+      {
+        cellClass: 'doc-type-column',
+        header: <Button id="type-header"
+          name="Document Type"
+          classNames={['cf-document-list-button-header']}
+          ariaLabel={`Sort by Document Type. ${this.props.docFilterCriteria.sort.sortBy === 'type' ?
+            sortDirectionAriaLabel :
+            '' }`}
+          onClick={() => this.props.changeSortState('type')}>
+          Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortArrowIcon : notSortedIcon }
+        </Button>,
+        valueFunction: (doc) => <DocTypeColumn doc={doc}
+          documentPathBase={this.props.documentPathBase} />
+      },
+      {
+        cellClass: 'tags-column',
+        header: <div id="tags-header"
+          className="document-list-header-issue-tags">
+          Issue Tags <FilterIcon
+            label="Filter by tag"
+            idPrefix="tag"
+            getRef={this.getTagFilterIconRef}
+            selected={isTagDropdownFilterOpen || anyTagFiltersAreSet}
+            handleActivate={this.toggleTagDropdownFilterVisiblity}
+          />
+          {isTagDropdownFilterOpen &&
+            <DropdownFilter
+              clearFilters={this.props.clearTagFilters}
+              name="tag"
+              isClearEnabled={anyTagFiltersAreSet}
+              handleClose={this.toggleTagDropdownFilterVisiblity}
+              addClearFiltersRow>
+              <DocTagPicker
+                tags={this.props.tagOptions}
+                tagToggleStates={this.props.docFilterCriteria.tag}
+                handleTagToggle={this.props.setTagFilter} />
+            </DropdownFilter>
+          }
+        </div>,
+        valueFunction: (doc) => {
+          return <TagTableColumn tags={doc.tags} />;
+        }
+      },
+      {
+        cellClass: 'comments-column',
+        header: <div
+          id="comments-header"
+          className="document-list-header-comments">
+          Comments
+        </div>,
+        valueFunction: (doc) => <CommentIndicator docId={doc.id} />
+      }
+    ];
+  }
+
+  render() {
+    const rowObjects = getRowObjects(
+      this.props.documents,
+      this.props.annotationsPerDocument
+    );
+
+    return <div>
+      <Table
+        columns={this.getDocumentColumns}
+        rowObjects={rowObjects}
+        summary="Document list"
+        className="documents-table"
+        headerClassName="cf-document-list-header-row"
+        bodyClassName="cf-document-list-body"
+        rowsPerRowObject={2}
+        tbodyId="documents-table-body"
+        tbodyRef={this.getTbodyRef}
+        getKeyForRow={this.getKeyForRow}
+      />
+    </div>;
+  }
+}
+
+DocumentsTable.propTypes = {
+  documents: PropTypes.arrayOf(PropTypes.object).isRequired,
+  onJumpToComment: PropTypes.func,
+  sortBy: PropTypes.string,
+  pdfList: PropTypes.shape({
+    lastReadDocId: PropTypes.number,
+    scrollTop: PropTypes.number
+  }),
+  changeSortState: PropTypes.func.isRequired,
+  clearCategoryFilters: PropTypes.func,
+  clearTagFilters: PropTypes.func,
+  documentPathBase: PropTypes.string,
+  annotationsPerDocument: PropTypes.object,
+  docFilterCriteria: PropTypes.object,
+  setCategoryFilter: PropTypes.func.isRequired,
+  setTagFilter: PropTypes.func.isRequired,
+  setDocListScrollPosition: PropTypes.func.isRequired,
+  toggleDropdownFilterVisibility: PropTypes.func.isRequired,
+  tagOptions: PropTypes.arrayOf(PropTypes.object).isRequired
+};
