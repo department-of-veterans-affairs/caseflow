@@ -15,8 +15,6 @@
 # The task is marked complete when the children tasks are completed.
 
 class AssignHearingDispositionTask < Task
-  include RunAsyncable
-
   validates :parent, presence: true
   before_create :check_parent_type
   delegate :hearing, to: :hearing_task, allow_nil: true
@@ -162,19 +160,6 @@ class AssignHearingDispositionTask < Task
     created_tasks
   end
 
-  def clean_up_virtual_hearing
-    # need to delete conference for current virtual hearing
-    if hearing.virtual?
-      hearing.virtual_hearing.update!(request_cancelled: true)
-
-      if run_async?
-        VirtualHearings::DeleteConferencesJob.perform_later
-      else
-        VirtualHearings::DeleteConferencesJob.perform_now
-      end
-    end
-  end
-
   def update_hearing_disposition(disposition:)
     # Ensure the hearing exists
     fail HearingAssociationMissing, hearing_task&.id if hearing.nil?
@@ -216,7 +201,6 @@ class AssignHearingDispositionTask < Task
   def mark_hearing_cancelled
     multi_transaction do
       update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
-      clean_up_virtual_hearing # virtual hearing should be indicated as cancelled
       cancel!
     end
   end
@@ -238,7 +222,6 @@ class AssignHearingDispositionTask < Task
   def mark_hearing_postponed(instructions: nil, after_disposition_update: nil)
     multi_transaction do
       update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
-      clean_up_virtual_hearing # virtual hearing should be indicated as cancelled
       reschedule_or_schedule_later(instructions: instructions, after_disposition_update: after_disposition_update)
     end
   end
