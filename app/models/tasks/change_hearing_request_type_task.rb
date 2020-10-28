@@ -83,7 +83,7 @@ class ChangeHearingRequestTypeTask < Task
       update!(params)
     end
 
-    perform_later_or_now(Hearings::GeomatchAndCacheAppealJob, appeal_id: appeal.id)
+    perform_later_or_now(Hearings::GeomatchAndCacheAppealJob, appeal_id: appeal.id, appeal_type: appeal.class.name)
   end
 
   def set_assignee

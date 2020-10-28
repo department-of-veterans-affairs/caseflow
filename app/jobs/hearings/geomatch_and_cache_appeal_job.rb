@@ -19,9 +19,13 @@ class Hearings::GeomatchAndCacheAppealJob < ApplicationJob
       Raven.capture_exception(exception, extra: extra)
     end
   end
+
+  discard_on(ArgumentError)
   # :nocov:
 
-  def perform(appeal_id:)
+  def perform(appeal_id:, appeal_type:)
+    fail ArgumentError, "expected LegacyAppeal type" if appeal_type != LegacyAppeal.name
+
     @appeal = LegacyAppeal.find(appeal_id)
 
     begin
