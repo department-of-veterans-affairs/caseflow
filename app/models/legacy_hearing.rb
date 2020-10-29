@@ -188,6 +188,14 @@ class LegacyHearing < CaseflowRecord
     scheduled_for && !closed?
   end
 
+  def postponed?
+    disposition == Constants.HEARING_DISPOSITION_TYPES.postponed
+  end
+
+  def cancelled?
+    disposition == Constants.HEARING_DISPOSITION_TYPES.cancelled
+  end
+
   def scheduled_for_past?
     # FIXME: scheduled_for date is inconsistent in many places.
     # (https://github.com/department-of-veterans-affairs/caseflow/issues/13273)

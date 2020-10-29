@@ -240,6 +240,14 @@ class Hearing < CaseflowRecord
     end
   end
 
+  def postponed?
+    disposition == Constants.HEARING_DISPOSITION_TYPES.postponed
+  end
+
+  def cancelled?
+    disposition == Constants.HEARING_DISPOSITION_TYPES.cancelled
+  end
+
   private
 
   def assign_created_by_user
