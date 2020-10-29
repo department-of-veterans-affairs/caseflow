@@ -490,6 +490,10 @@ FactoryBot.define do
         assigned_to { ClerkOfTheBoard.singleton }
       end
 
+      factory :docket_switch_ruling_task, class: DocketSwitchRulingTask do
+        parent { create(:docket_switch_mail_task, appeal: appeal) }
+      end
+
       factory :congressional_interest_mail_task, class: CongressionalInterestMailTask do
         parent { create(:root_task, appeal: appeal) }
         assigned_to { MailTeam.singleton }
