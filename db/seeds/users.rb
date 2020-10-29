@@ -74,6 +74,7 @@ module Seeds
       create_aod_user_and_tasks
       create_privacy_user
       create_lit_support_user
+      create_cavc_lit_support_user
       create_pulac_cerullo_user
       create_mail_team_user
       create_clerk_of_the_board_user
@@ -308,6 +309,20 @@ module Seeds
     def create_lit_support_user
       u = User.create!(station_id: 101, css_id: "LIT_SUPPORT_USER", full_name: "Kiran LitigationSupportUser Rider")
       LitigationSupport.singleton.add_user(u)
+    end
+
+    def create_cavc_lit_support_user
+      users = [User.create!(station_id: 101,
+                            css_id: "CAVC_LIT_SUPPORT_ADMIN",
+                            full_name: "Diego CAVCLitigationSupportUser Christiansen"),
+               User.create!(station_id: 101,
+                            css_id: "CAVC_LIT_SUPPORT_USER1",
+                            full_name: "Regina CAVCLitigationSupportUser Lebsack"),
+               User.create!(station_id: 101,
+                            css_id: "CAVC_LIT_SUPPORT_USER2",
+                            full_name: "Tonita CAVCLitigationSupportUser Kuhn ")]
+      users.each { |u| CavcLitigationSupport.singleton.add_user(u) }
+      OrganizationsUser.make_user_admin(users.first, CavcLitigationSupport.singleton)
     end
 
     def create_pulac_cerullo_user
