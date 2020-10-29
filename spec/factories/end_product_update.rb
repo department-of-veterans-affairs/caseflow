@@ -3,7 +3,11 @@
 FactoryBot.define do
   factory :end_product_update do
     user { create(:user) }
-    end_product_establishment { create(:end_product_establishment, code: original_code) }
+    end_product_establishment do
+      create(:end_product_establishment,
+             code: original_code,
+             source_type: original_decision_review_type)
+    end
 
     transient do
       number_of_request_issues { 2 }
