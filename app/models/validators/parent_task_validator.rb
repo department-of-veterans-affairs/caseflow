@@ -16,12 +16,12 @@ class ParentTaskValidator < ActiveModel::Validator
 
   def correct_parent_type?(record)
     if multiple_correct_parent_types?
-      return options[:task_types].map(&:name).include? record.parent&.type
+      return options[:task_types].any? { |task_type| record.parent.is_a? task_type }
     end
 
     return true if options[:task_type].nil?
 
-    record.parent&.type == options[:task_type].name
+    record.parent.is_a? options[:task_type]
   end
 
   def multiple_correct_parent_types?

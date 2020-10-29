@@ -4,7 +4,7 @@ describe ParentTaskValidator, :postgres do
   describe "#validate" do
     shared_examples "valid parent task type" do
       context "and the parent's task type is valid" do
-        let(:parent_task_type) { FoiaTask }
+        let(:parent_task_type) { :foia_task }
 
         it "produces no errors" do
           expect(subject.valid?).to be true
@@ -13,10 +13,10 @@ describe ParentTaskValidator, :postgres do
       end
     end
 
-    let(:parent_task_type) { Task }
+    let(:parent_task_type) { :root_task }
     let(:appeal) { create(:appeal) }
     let(:assigned_to) { create(:user) }
-    let(:parent_task) { create(:task, type: parent_task_type.name, assigned_to: assigned_to, appeal: appeal) }
+    let(:parent_task) { create(parent_task_type, assigned_to: assigned_to, appeal: appeal) }
 
     subject { task_class.new(parent: parent_task, assigned_to: assigned_to, appeal: appeal) }
 
