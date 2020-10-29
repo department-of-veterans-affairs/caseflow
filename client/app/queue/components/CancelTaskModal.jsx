@@ -45,7 +45,7 @@ const CancelTaskModal = (props) => {
         }
       }
     };
-    const hearingScheduleLink = taskData.back_to_hearing_schedule ?
+    const hearingScheduleLink = taskData?.back_to_hearing_schedule ?
       <p>
         <Link href={`/hearings/schedule/assign?regional_office_key=${hearingDay.regionalOffice}`}>
           Back to Hearing Schedule
@@ -69,12 +69,13 @@ const CancelTaskModal = (props) => {
 
   return (
     <QueueFlowModal
-      title={taskData ? taskData.modal_title : ''}
-      pathAfterSubmit={(taskData && taskData.redirect_after) || '/queue'}
+      title={taskData?.modal_title ?? ''}
+      pathAfterSubmit={taskData?.redirect_after ?? '/queue'}
       submit={submit}
       validateForm={validateForm}
     >
-      {taskData && taskData.modal_body &&
+      {taskData?.redirect_after ?? '/queue'}
+      {taskData?.modal_body &&
         <React.Fragment>
           <div>{taskData.modal_body}</div>
           <br />

@@ -236,6 +236,7 @@ class TaskActionRepository
 
     def cancel_convert_hearing_request_type_data(task, _user = nil)
       {
+        redirect_after: "/queue/appeals/#{task.appeal.external_id}",
         modal_title: COPY::CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_MODAL_TITLE,
         message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
         message_detail: COPY::CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_SUCCESS_DETAIL,
