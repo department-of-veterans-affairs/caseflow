@@ -1,9 +1,10 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import { get } from 'lodash';
 
 import {
   taskById,
@@ -19,68 +20,77 @@ import COPY from '../../../COPY';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import QueueFlowModal from './QueueFlowModal';
 
-class CancelTaskModal extends React.Component {
-  constructor(props) {
-    super(props);
+const CancelTaskModal = (props) => {
+  const { task, hearingDay, highlightFormItems, onReceiveAmaTasks, requestPatch } = props;
+  const taskData = taskActionData(props)
 
-    this.state = {
-      instructions: ''
-    };
+  // Show task instructions by default
+  const shouldShowTaskInstructions = get(taskData, 'show_instructions', true);
+
+  const [instructions, setInstructions] = useState('');
+
+  const validateForm = () => {
+    if (!shouldShowTaskInstructions) {
+      return true
+    }
+
+    return instructions.length > 0;
   }
-
-  validateForm = () => this.state.instructions.length;
-
-  submit = () => {
-    const {
-      task,
-      hearingDay
-    } = this.props;
+  const submit = () => {
     const payload = {
       data: {
         task: {
           status: TASK_STATUSES.cancelled,
-          instructions: this.state.instructions
+          instructions
         }
       }
     };
-
-    const hearingScheduleLink = taskActionData(this.props).back_to_hearing_schedule ?
+    const hearingScheduleLink = taskData.back_to_hearing_schedule ?
       <p>
         <Link href={`/hearings/schedule/assign?regional_office_key=${hearingDay.regionalOffice}`}>
           Back to Hearing Schedule
         </Link>
       </p> : null;
     const successMsg = {
-      title: taskActionData(this.props).message_title,
-      detail: <span><span>{taskActionData(this.props).message_detail}</span>{hearingScheduleLink}</span>
+      title: taskData.message_title,
+      detail: (
+        <span>
+          <span>{taskData.message_detail}</span>
+          {hearingScheduleLink}
+        </span>
+      )
     };
 
-    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
+    return requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
-        this.props.onReceiveAmaTasks(resp.body.tasks.data);
+        onReceiveAmaTasks(resp.body.tasks.data);
       });
   }
 
-  render = () => {
-    const taskData = taskActionData(this.props);
-    const { instructions } = this.state;
-    const { highlightFormItems } = this.props;
-
-    return <QueueFlowModal
+  return (
+    <QueueFlowModal
       title={taskData ? taskData.modal_title : ''}
       pathAfterSubmit={(taskData && taskData.redirect_after) || '/queue'}
-      submit={this.submit}
-      validateForm={this.validateForm}
+      submit={submit}
+      validateForm={validateForm}
     >
-      <div>{taskData && taskData.modal_body}</div><br />
-      <TextareaField
-        name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
-        errorMessage={highlightFormItems && instructions.length === 0 ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-        id="taskInstructions"
-        onChange={(value) => this.setState({ instructions: value })}
-        value={instructions} />
-    </QueueFlowModal>;
-  };
+      {taskData && taskData.modal_body &&
+        <React.Fragment>
+          <div>{taskData.modal_body}</div>
+          <br />
+        </React.Fragment>
+      }
+      {get(taskData, 'show_instructions', true) &&
+        <TextareaField
+          name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+          errorMessage={highlightFormItems && instructions.length === 0 ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+          id="taskInstructions"
+          onChange={setInstructions}
+          value={instructions}
+        />
+      }
+    </QueueFlowModal>
+  );
 }
 
 CancelTaskModal.propTypes = {
