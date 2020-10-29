@@ -20,7 +20,6 @@ class AssignHearingDispositionTask < Task
   validates :parent, presence: true, parentTask: { task_type: HearingTask }
   delegate :hearing, to: :hearing_task, allow_nil: true
 
-  
   class HearingDispositionNotCanceled < StandardError; end
   class HearingDispositionNotPostponed < StandardError; end
   class HearingDispositionNotNoShow < StandardError; end
