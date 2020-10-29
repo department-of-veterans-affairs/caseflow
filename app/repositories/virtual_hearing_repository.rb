@@ -65,7 +65,10 @@ class VirtualHearingRepository
     private
 
     def postponed_or_cancelled_vacols_ids
-      VACOLS::CaseHearing.hearings_with_postponed_or_cancelled_disposition.pluck(:hearing_pkseq).map(&:to_s)
+      VACOLS::CaseHearing.by_dispositions([
+        VACOLS::CaseHearing::HEARING_DISPOSITIONS.key("postponed"),
+        VACOLS::CaseHearing::HEARING_DISPOSITIONS.key("cancelled")
+      ]).pluck(:hearing_pkseq).map(&:to_s)
     end
   end
 end

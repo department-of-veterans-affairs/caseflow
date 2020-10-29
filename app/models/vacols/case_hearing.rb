@@ -19,6 +19,8 @@ class VACOLS::CaseHearing < VACOLS::Record
   has_one :folder, foreign_key: :ticknum, primary_key: :folder_nr
   has_one :corres, foreign_key: :stafkey, primary_key: :bfcorkey, class_name: "Correspondent"
 
+  scope :by_dispositions, ->(dispositions) { where(hearing_disp: dispositions) }
+
   HEARING_TYPE_LOOKUP = {
     central: "C",
     travel: "T",
@@ -70,14 +72,6 @@ class VACOLS::CaseHearing < VACOLS::Record
   after_update :create_or_update_diaries
 
   class << self
-    def hearings_with_postponed_or_cancelled_disposition
-      VACOLS::CaseHearing.where(
-        hearing_disp: [
-          HEARING_DISPOSITIONS.key(Constants.HEARING_DISPOSITION_TYPES.postponed).to_s,
-          HEARING_DISPOSITIONS.key(Constants.HEARING_DISPOSITION_TYPES.cancelled).to_s
-        ]
-      )
-    end
     # Finds all hearings for specific days.
     #
     # @deprecated Use {#where}
