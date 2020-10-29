@@ -234,8 +234,17 @@ class TaskActionRepository
       }
     end
 
+    def cancel_convert_hearing_request_type_data(task, _user = nil)
+      {
+        modal_title: COPY::CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_MODAL_TITLE,
+        message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
+        message_detail: COPY::CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_SUCCESS_DETAIL,
+        show_instructions: false
+      }
+    end
+
     def change_hearing_request_type_data(_task, _user = nil)
-      {} # Placeholder function that will be implemented in #15159
+      {}
     end
 
     def change_task_type_data(task, user = nil)
