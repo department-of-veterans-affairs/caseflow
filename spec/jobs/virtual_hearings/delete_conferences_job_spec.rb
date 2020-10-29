@@ -334,5 +334,21 @@ describe VirtualHearings::DeleteConferencesJob do
         include_examples "job is retried", 5
       end
     end
+
+    context "for hearings that are postponed or cancelled" do
+      context "cancelled hearing" do
+        let(:cancelled_hearing) { create(:hearing, disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled) }
+        let!(:virtual_hearing) { create(:virtual_hearing, status: :active, hearing: cancelled_hearing) }
+
+        include_examples "doesn't send any emails"
+      end
+
+      context "postponed hearing" do
+        let(:postponed_hearing) { create(:hearing, disposition: Constants.HEARING_DISPOSITION_TYPES.postponed) }
+        let!(:virtual_hearing) { create(:virtual_hearing, status: :active, hearing: postponed_hearing) }
+
+        include_examples "doesn't send any emails"
+      end
+    end
   end
 end
