@@ -33,7 +33,6 @@ describe VirtualHearingRepository, :all_dbs do
 
       context "that was postponed" do
         let(:ama_disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
-        let(:hearing_date) { Time.zone.now - 1.day }
 
         it "returns the virtual hearing" do
           expect(subject).to eq [virtual_hearing]
@@ -42,7 +41,6 @@ describe VirtualHearingRepository, :all_dbs do
 
       context "that was cancelled" do
         let(:ama_disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
-        let(:hearing_date) { Time.zone.now - 1.day }
 
         it "returns the virtual hearing" do
           expect(subject).to eq [virtual_hearing]
@@ -93,7 +91,6 @@ describe VirtualHearingRepository, :all_dbs do
 
       context "that was postponed" do
         let(:legacy_dispositon) { "P" }
-        let(:hearing_date) { Time.zone.now - 1.day }
 
         it "returns the virtual hearing" do
           expect(subject).to eq [virtual_hearing]
@@ -102,7 +99,6 @@ describe VirtualHearingRepository, :all_dbs do
 
       context "that was cancelled" do
         let(:legacy_dispositon) { "C" }
-        let(:hearing_date) { Time.zone.now - 1.day }
 
         it "returns the virtual hearing" do
           expect(subject).to eq [virtual_hearing]
