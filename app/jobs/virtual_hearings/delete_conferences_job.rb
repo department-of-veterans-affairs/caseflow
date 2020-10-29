@@ -87,8 +87,16 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
     RequestStore.store[:current_user] ||= User.system_user
   end
 
+  def hearing_is_postponed_or_cancelled?(virtual_hearing)
+    return true if virtual_hearing.hearing.postponed? || virtual_hearing.hearing.cancelled?
+
+    false
+  end
+
   def send_cancellation_emails(virtual_hearing)
-    VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
+    if (!hearing_is_postponed_or_cancelled?(virtual_hearing)))
+      VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
+    end
 
     if !virtual_hearing.cancellation_emails_sent?
       fail EmailsFailedToSend # failing so we can log errors
