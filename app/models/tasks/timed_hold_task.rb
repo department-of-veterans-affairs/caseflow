@@ -8,11 +8,11 @@ class TimedHoldTask < Task
   include TimeableTask
 
   validates :parent, presence: true
-  before_create :verify_parent_task_presence
+  validates :days_on_hold, presence: true, inclusion: { in: 1..120 }, on: :create
+
   after_create :cancel_active_siblings
 
   attr_accessor :days_on_hold
-  validates :days_on_hold, presence: true, inclusion: { in: 1..120 }, on: :create
 
   def self.create_from_parent(parent_task, days_on_hold:, assigned_by: nil, instructions: nil)
     multi_transaction do
