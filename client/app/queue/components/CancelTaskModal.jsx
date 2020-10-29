@@ -10,6 +10,7 @@ import {
   taskById,
   appealWithDetailSelector
 } from '../selectors';
+import { onReceiveAmaTasks } from '../QueueActions';
 import {
   requestPatch
 } from '../uiReducer/uiActions';
@@ -20,7 +21,7 @@ import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import QueueFlowModal from './QueueFlowModal';
 
 const CancelTaskModal = (props) => {
-  const { task, hearingDay, highlightFormItems, requestPatch } = props;
+  const { task, hearingDay, highlightFormItems, onReceiveAmaTasks, requestPatch } = props;
   const taskData = taskActionData(props)
 
   // Show task instructions by default
@@ -60,7 +61,10 @@ const CancelTaskModal = (props) => {
       )
     };
 
-    return requestPatch(`/tasks/${task.taskId}`, payload, successMsg);
+    return requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
+      then((resp) => {
+        onReceiveAmaTasks(resp.body.tasks.data);
+      });
   }
 
   return (
@@ -94,6 +98,7 @@ CancelTaskModal.propTypes = {
   hearingDay: PropTypes.shape({
     regionalOffice: PropTypes.string
   }),
+  onReceiveAmaTasks: PropTypes.func,
   requestPatch: PropTypes.func,
   task: PropTypes.shape({
     taskId: PropTypes.string
@@ -110,7 +115,8 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestPatch
+  requestPatch,
+  onReceiveAmaTasks
 }, dispatch);
 
 export default (withRouter(
