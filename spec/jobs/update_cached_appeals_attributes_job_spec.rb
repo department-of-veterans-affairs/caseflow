@@ -134,9 +134,9 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       subject
 
       expect(CachedAppeal.find_by(appeal_id: appeal.id).hearing_request_type).to eq("Central")
-      expect(CachedAppeal.find_by(appeal_id: legacy_appeal1.id).hearing_request_type).to eq("Travel")
-      expect(CachedAppeal.find_by(appeal_id: legacy_appeal2.id).hearing_request_type).to eq("Video")
-      expect(CachedAppeal.find_by(appeal_id: legacy_appeal3.id).hearing_request_type).to eq("Virtual")
+      expect(CachedAppeal.find_by(vacols_id: legacy_appeal1.vacols_id).hearing_request_type).to eq("Travel")
+      expect(CachedAppeal.find_by(vacols_id: legacy_appeal2.vacols_id).hearing_request_type).to eq("Video")
+      expect(CachedAppeal.find_by(vacols_id: legacy_appeal3.vacols_id).hearing_request_type).to eq("Virtual")
     end
 
     it "caches former_travel correctly", :aggregate_failures do
@@ -145,9 +145,31 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       # always nil for ama appeal
       expect(CachedAppeal.find_by(appeal_id: appeal.id).former_travel).to eq(nil)
 
-      expect(CachedAppeal.find_by(appeal_id: legacy_appeal1.id).former_travel).to eq(false)
-      expect(CachedAppeal.find_by(appeal_id: legacy_appeal2.id).former_travel).to eq(false)
-      expect(CachedAppeal.find_by(appeal_id: legacy_appeal3.id).former_travel).to eq(true)
+      expect(CachedAppeal.find_by(vacols_id: legacy_appeal1.vacols_id).former_travel).to eq(false)
+      expect(CachedAppeal.find_by(vacols_id: legacy_appeal2.vacols_id).former_travel).to eq(false)
+      expect(CachedAppeal.find_by(vacols_id: legacy_appeal3.vacols_id).former_travel).to eq(true)
+    end
+
+    context "when BGS fails" do
+      before do
+        bgs = Fakes::BGSService.new
+        allow(Fakes::BGSService).to receive(:new).and_return(bgs)
+        allow(bgs).to receive(:fetch_person_by_ssn)
+          .and_raise(Errno::ECONNRESET, "mocked error for testing")
+      end
+
+      it "completes and sends warning to Slack" do
+        slack_msg = ""
+        allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+
+        job = described_class.new
+        job.perform_now
+        expect(job.warning_msgs.count).to eq 3
+
+        expect(slack_msg.lines.count).to eq 4
+        expected_msg = "\\[WARN\\] UpdateCachedAppealsAttributesJob .*"
+        expect(slack_msg).to match(/#{expected_msg}/)
+      end
     end
   end
 end

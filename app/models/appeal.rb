@@ -31,7 +31,8 @@ class Appeal < DecisionReview
   enum stream_type: {
     "original": "original",
     "vacate": "vacate",
-    "de_novo": "de_novo"
+    "de_novo": "de_novo",
+    "court_remand": "court_remand"
   }
 
   after_create :conditionally_set_aod_based_on_age
@@ -92,11 +93,13 @@ class Appeal < DecisionReview
   def create_stream(stream_type)
     ActiveRecord::Base.transaction do
       Appeal.create!(slice(
+        :aod_based_on_age,
+        :closest_regional_office,
+        :docket_type,
+        :legacy_opt_in_approved,
         :receipt_date,
         :veteran_file_number,
-        :legacy_opt_in_approved,
-        :veteran_is_not_claimant,
-        :docket_type
+        :veteran_is_not_claimant
       ).merge(
         stream_type: stream_type,
         stream_docket_number: docket_number,
@@ -333,13 +336,12 @@ class Appeal < DecisionReview
     veteran_middle_name&.first
   end
 
-  def cavc?
-    false if cavc == "not implemented for AMA"
+  # matches Legacy behavior
+  def cavc
+    court_remand?
   end
 
-  def cavc
-    "not implemented for AMA"
-  end
+  alias cavc? cavc
 
   def status
     @status ||= BVAAppealStatus.new(appeal: self)
@@ -511,28 +513,27 @@ class Appeal < DecisionReview
 
   # Returns the hearing request type.
   #
-  # @note See `LegacyAppeal#sanitized_hearing_request_type` for more information.
+  # @note See `LegacyAppeal#current_hearing_request_type` for more information.
   #   This method is provided for compatibility.
-  def sanitized_hearing_request_type
+  def current_hearing_request_type(readable: false)
     return nil if closest_regional_office.nil?
 
-    (closest_regional_office == "C") ? :central : :video
-  end
+    current_hearing_request_type = (closest_regional_office == "C") ? :central : :video
 
-  alias original_hearing_request_type sanitized_hearing_request_type
+    return current_hearing_request_type if !readable
 
-  # Determine type using cloesest_regional_office
-  # "Central" if closest_regional_office office is "C", "Video" otherwise
-  def readable_hearing_request_type
-    case sanitized_hearing_request_type
-    when nil
-      nil
+    # Determine type using closest_regional_office
+    # "Central" if closest_regional_office office is "C", "Video" otherwise
+    case current_hearing_request_type
     when :central
       Hearing::HEARING_TYPES[:C]
     else
       Hearing::HEARING_TYPES[:V]
     end
   end
+
+  alias original_hearing_request_type current_hearing_request_type
+  alias previous_hearing_request_type current_hearing_request_type
 
   private
 

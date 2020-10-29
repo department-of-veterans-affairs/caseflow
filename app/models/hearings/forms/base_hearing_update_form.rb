@@ -14,7 +14,7 @@ class BaseHearingUpdateForm
   def update
     virtual_hearing_changed = false
 
-    ActiveRecord::Base.transaction do
+    ActiveRecord::Base.multi_transaction do
       update_hearing
       add_update_hearing_alert if show_update_alert?
       if should_create_or_update_virtual_hearing?
@@ -126,17 +126,9 @@ class BaseHearingUpdateForm
 
   def start_async_job
     if start_async_job? && virtual_hearing_cancelled?
-      start_cancel_job
+      perform_later_or_now(VirtualHearings::DeleteConferencesJob)
     elsif start_async_job?
       start_activate_job
-    end
-  end
-
-  def start_cancel_job
-    if run_async?
-      VirtualHearings::DeleteConferencesJob.perform_later
-    else
-      VirtualHearings::DeleteConferencesJob.perform_now
     end
   end
 
@@ -151,11 +143,7 @@ class BaseHearingUpdateForm
       email_type: only_time_updated_or_timezone_updated? ? "updated_time_confirmation" : "confirmation"
     }
 
-    if run_async?
-      VirtualHearings::CreateConferenceJob.perform_later(job_args)
-    else
-      VirtualHearings::CreateConferenceJob.perform_now(job_args)
-    end
+    perform_later_or_now(VirtualHearings::CreateConferenceJob, job_args)
   end
 
   def updates_requiring_email?

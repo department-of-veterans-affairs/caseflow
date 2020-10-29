@@ -1361,7 +1361,7 @@ RSpec.feature "Case details", :all_dbs do
         visit("/queue/appeals/#{id}")
 
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ABOUT_BOX_HEARING_REQUEST_TYPE_LABEL.upcase)
-        expect(page).to have_content(appeal.readable_hearing_request_type)
+        expect(page).to have_content(appeal.current_hearing_request_type(readable: true))
       end
     end
 

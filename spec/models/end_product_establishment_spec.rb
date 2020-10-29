@@ -1330,7 +1330,7 @@ describe EndProductEstablishment, :postgres do
             )
           end
 
-          it { is_expected.to eq(ep_code: "EP 037", ep_status: "Cleared") }
+          it { is_expected.to eq(ep_code: "037 Higher-Level Review Rating", ep_status: "Cleared") }
 
           context "when there are pending request issues to sync" do
             let!(:pending_request_issue) do
@@ -1342,7 +1342,10 @@ describe EndProductEstablishment, :postgres do
               )
             end
 
-            it { is_expected.to eq(ep_code: "EP 037", ep_status: "Cleared, Syncing decisions...") }
+            it {
+              is_expected.to eq(ep_code: "037 Higher-Level Review Rating",
+                                ep_status: "Cleared, Syncing decisions...")
+            }
 
             context "when there are pending request issues to sync with errors" do
               let!(:errored_request_issue) do
@@ -1357,7 +1360,7 @@ describe EndProductEstablishment, :postgres do
 
               it do
                 is_expected.to eq(
-                  ep_code: "EP 037",
+                  ep_code: "037 Higher-Level Review Rating",
                   ep_status: "Cleared, Decisions sync failed. Support notified."
                 )
               end
@@ -1367,7 +1370,13 @@ describe EndProductEstablishment, :postgres do
       end
 
       context "if there is no modifier, shows unknown" do
-        it { is_expected.to eq(ep_code: "EP Unknown", ep_status: "") }
+        it { is_expected.to eq(ep_code: " Higher-Level Review Rating", ep_status: "") }
+      end
+
+      context "if the epe code is not found" do
+        before { epe.update!(code: "NOTFOUND") }
+
+        it { is_expected.to eq(ep_code: " Unknown", ep_status: "") }
       end
     end
 

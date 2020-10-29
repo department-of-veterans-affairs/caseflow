@@ -963,6 +963,24 @@ describe Appeal, :all_dbs do
     end
   end
 
+  context "#cavc?" do
+    subject { appeal.cavc? }
+
+    context "for original appeal" do
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "for cavc stream" do
+      let(:appeal) { create(:appeal, stream_type: "court_remand") }
+
+      it "returns true" do
+        expect(subject).to eq(true)
+      end
+    end
+  end
+
   describe "#status" do
     it "returns BVAAppealStatus object" do
       expect(appeal.status).to be_a(BVAAppealStatus)
@@ -1163,10 +1181,10 @@ describe Appeal, :all_dbs do
     end
   end
 
-  describe "#sanitized_hearing_request_type" do
+  describe "#current_hearing_request_type" do
     let(:appeal) { create(:appeal, closest_regional_office: closest_regional_office) }
 
-    subject { appeal.sanitized_hearing_request_type }
+    subject { appeal.current_hearing_request_type }
 
     context "closest_regional_office is 'C'" do
       let(:closest_regional_office) { "C" }
@@ -1187,8 +1205,8 @@ describe Appeal, :all_dbs do
     end
   end
 
-  describe "#readable_hearing_request_type" do
-    subject { appeal.readable_hearing_request_type }
+  describe "readable current_hearing_request_type" do
+    subject { appeal.current_hearing_request_type(readable: true) }
 
     context "no hearings have been scheduled" do
       let(:appeal) { create(:appeal, closest_regional_office: closest_regional_office) }
