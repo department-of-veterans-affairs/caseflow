@@ -49,6 +49,22 @@ describe VirtualHearingRepository, :all_dbs do
         end
       end
 
+      context "for pending virtual hearing" do
+        let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
+
+        it "does not return the virtual hearing" do
+          expect(subject).to eq []
+        end
+      end
+
+      context "for cancelled virtual hearing" do
+        let(:virtual_hearing) { create(:virtual_hearing, status: :cancelled, hearing: hearing) }
+
+        it "returns the virtual hearing" do
+          expect(subject).to eq [virtual_hearing]
+        end
+      end
+
       context "on the day of" do
         it "does not return the virtual hearing" do
           expect(subject).to eq []
