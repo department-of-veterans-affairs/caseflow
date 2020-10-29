@@ -15,9 +15,12 @@
 # The task is marked complete when the children tasks are completed.
 
 class AssignHearingDispositionTask < Task
+  include RunAsyncable
+
   validates :parent, presence: true, parentTask: { task_type: HearingTask }
   delegate :hearing, to: :hearing_task, allow_nil: true
 
+  
   class HearingDispositionNotCanceled < StandardError; end
   class HearingDispositionNotPostponed < StandardError; end
   class HearingDispositionNotNoShow < StandardError; end
@@ -126,6 +129,12 @@ class AssignHearingDispositionTask < Task
 
   private
 
+  def clean_up_virtual_hearing
+    if hearing.virtual?
+      perform_later_or_now(VirtualHearings::DeleteConferencesJob)
+    end
+  end
+
   def update_children_status_after_closed
     update_args = { status: status }
     update_args[:closed_at] = Time.zone.now unless open?
@@ -190,6 +199,7 @@ class AssignHearingDispositionTask < Task
   def mark_hearing_cancelled
     multi_transaction do
       update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
+      clean_up_virtual_hearing
       cancel!
     end
   end
@@ -211,6 +221,7 @@ class AssignHearingDispositionTask < Task
   def mark_hearing_postponed(instructions: nil, after_disposition_update: nil)
     multi_transaction do
       update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
+      clean_up_virtual_hearing
       reschedule_or_schedule_later(instructions: instructions, after_disposition_update: after_disposition_update)
     end
   end
