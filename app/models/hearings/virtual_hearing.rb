@@ -22,12 +22,13 @@
 #                 and indicates that the hearing type was switched back to original type and **NOT** that
 #                 conference was deleted or hearing was cancelled.
 #
-#   `closed`: We needed a way to distinguish between hearings which types were switched and hearings which were
-#             cancelled or postponed. This is derived from `conference_deleted` which indicates that we deleted the
-#             conference for a cancelled or postponed hearing.
+#   `closed`: This is derived from `conference_deleted` which indicates that we deleted the conference that was created.
+#             Though we delete conferences for every virtual hearing after the schedduled date, this helps us
+#             distinguish between hearings which types were switched and hearings which were cancelled or postponed
+#             because for the latter `request_cancelled` will not be set to `true`.
 #
 #   `active`: This indicates that the conference was created for a virtual hearing, derived from presence of
-#             `conference_id`
+#             `conference_id`.
 #
 #   `pending`: This indicates that the conference has yet to be created.
 ##
