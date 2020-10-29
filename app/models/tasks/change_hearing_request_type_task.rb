@@ -61,7 +61,7 @@ class ChangeHearingRequestTypeTask < Task
   def update_from_params(params, user)
     payload_values = params.delete(:business_payloads)&.dig(:values)
 
-    if payload_values[:changed_request_type].present?
+    if payload_values&.[](:changed_request_type).present?
       update_appeal_and_self(payload_values, params)
 
       [self]
