@@ -21,7 +21,7 @@ import QueueFlowModal from './QueueFlowModal';
 
 const CancelTaskModal = (props) => {
   const { task, hearingDay, highlightFormItems, requestPatch } = props;
-  const taskData = taskActionData(props)
+  const taskData = taskActionData(props);
 
   // Show task instructions by default
   const shouldShowTaskInstructions = get(taskData, 'show_instructions', true);
@@ -30,11 +30,11 @@ const CancelTaskModal = (props) => {
 
   const validateForm = () => {
     if (!shouldShowTaskInstructions) {
-      return true
+      return true;
     }
 
     return instructions.length > 0;
-  }
+  };
   const submit = () => {
     const payload = {
       data: {
@@ -61,7 +61,7 @@ const CancelTaskModal = (props) => {
     };
 
     return requestPatch(`/tasks/${task.taskId}`, payload, successMsg);
-  }
+  };
 
   return (
     <QueueFlowModal
@@ -88,7 +88,7 @@ const CancelTaskModal = (props) => {
       }
     </QueueFlowModal>
   );
-}
+};
 
 CancelTaskModal.propTypes = {
   hearingDay: PropTypes.shape({
