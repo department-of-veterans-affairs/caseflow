@@ -29,6 +29,7 @@ class Hearing < CaseflowRecord
   include HearingLocationConcern
   include HasSimpleAppealUpdatedSince
   include UpdatedByUserConcern
+  include HearingConcern
 
   belongs_to :hearing_day
   belongs_to :appeal
@@ -238,14 +239,6 @@ class Hearing < CaseflowRecord
     email_events.order(sent_at: :desc).map do |event|
       SentEmailEventSerializer.new(event).serializable_hash[:data][:attributes]
     end
-  end
-
-  def postponed?
-    disposition == Constants.HEARING_DISPOSITION_TYPES.postponed
-  end
-
-  def cancelled?
-    disposition == Constants.HEARING_DISPOSITION_TYPES.cancelled
   end
 
   private

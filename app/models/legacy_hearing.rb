@@ -33,6 +33,7 @@ class LegacyHearing < CaseflowRecord
   include HearingLocationConcern
   include HearingTimeConcern
   include UpdatedByUserConcern
+  include HearingConcern
 
   # When these instance variable getters are called, first check if we've
   # fetched the values from VACOLS. If not, first fetch all values and save them
@@ -176,24 +177,8 @@ class LegacyHearing < CaseflowRecord
     !!disposition
   end
 
-  def no_show?
-    disposition == Constants.HEARING_DISPOSITION_TYPES.no_show
-  end
-
-  def held?
-    disposition == Constants.HEARING_DISPOSITION_TYPES.held
-  end
-
   def scheduled_pending?
     scheduled_for && !closed?
-  end
-
-  def postponed?
-    disposition == Constants.HEARING_DISPOSITION_TYPES.postponed
-  end
-
-  def cancelled?
-    disposition == Constants.HEARING_DISPOSITION_TYPES.cancelled
   end
 
   def scheduled_for_past?
