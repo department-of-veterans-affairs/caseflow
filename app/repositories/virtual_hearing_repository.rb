@@ -67,7 +67,7 @@ class VirtualHearingRepository
           VACOLS::CaseHearing::HEARING_DISPOSITIONS.key("postponed"),
           VACOLS::CaseHearing::HEARING_DISPOSITIONS.key("cancelled")
         ]
-      ).pluck(:hearingsing_pkseq).map(&:to_s)
+      ).pluck(:hearing_pkseq).map(&:to_s)
     end
   end
 end
