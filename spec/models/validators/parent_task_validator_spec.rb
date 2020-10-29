@@ -33,7 +33,7 @@ describe ParentTaskValidator, :postgres do
         it "fails validation" do
           expect(subject.valid?).to be false
           expect(subject.errors.count).to eq 1
-          expect(subject.errors.messages[:parent].first).to eq "parent should be a FoiaTask"
+          expect(subject.errors.messages[:parent].first).to eq "should be a FoiaTask"
         end
       end
 
@@ -47,7 +47,7 @@ describe ParentTaskValidator, :postgres do
       end
     end
 
-    fcontext "when there are multiple valid parent task types" do
+    context "when there are multiple valid parent task types" do
       class MultipleParentTypeTask < Task
         validates :parent, presence: true, parentTask: { task_types: [FoiaTask, MailTask] }, on: :create
       end
@@ -58,7 +58,7 @@ describe ParentTaskValidator, :postgres do
         it "fails validation" do
           expect(subject.valid?).to be false
           expect(subject.errors.count).to eq 1
-          expect(subject.errors.messages[:parent].first).to eq "parent should be one of FoiaTask, MailTask"
+          expect(subject.errors.messages[:parent].first).to eq "should be one of FoiaTask, MailTask"
         end
       end
 

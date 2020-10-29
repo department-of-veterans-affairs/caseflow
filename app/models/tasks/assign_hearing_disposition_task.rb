@@ -15,8 +15,7 @@
 # The task is marked complete when the children tasks are completed.
 
 class AssignHearingDispositionTask < Task
-  validates :parent, presence: true
-  before_create :check_parent_type
+  validates :parent, presence: true, parentTask: { task_type: HearingTask }
   delegate :hearing, to: :hearing_task, allow_nil: true
 
   class HearingDispositionNotCanceled < StandardError; end
@@ -168,16 +167,6 @@ class AssignHearingDispositionTask < Task
       hearing.update_caseflow_and_vacols(disposition: disposition)
     else
       hearing.update(disposition: disposition)
-    end
-  end
-
-  def check_parent_type
-    if parent.type != HearingTask.name
-      fail(
-        Caseflow::Error::InvalidParentTask,
-        task_type: self.class.name,
-        assignee_type: assigned_to.class.name
-      )
     end
   end
 

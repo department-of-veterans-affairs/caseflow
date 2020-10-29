@@ -30,9 +30,9 @@ class ParentTaskValidator < ActiveModel::Validator
 
   def error_message
     if multiple_correct_parent_types?
-      return "parent should be one of #{options[:task_types].map(&:name).join(', ')}"
+      return "should be one of #{options[:task_types].map(&:name).join(', ')}"
     end
 
-    "parent should be a #{options[:task_type].name}"
+    "should be a #{options[:task_type].name}"
   end
 end
