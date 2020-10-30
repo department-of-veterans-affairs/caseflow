@@ -151,7 +151,6 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     end
 
     context "when BGS fails" do
-
       shared_examples "rescues error" do
         it "completes and sends warning to Slack" do
           slack_msg = ""
