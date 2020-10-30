@@ -70,7 +70,6 @@ const CancelTaskModal = (props) => {
       submit={submit}
       validateForm={validateForm}
     >
-      {taskData?.redirect_after ?? '/queue'}
       {taskData?.modal_body &&
         <React.Fragment>
           <div>{taskData.modal_body}</div>
