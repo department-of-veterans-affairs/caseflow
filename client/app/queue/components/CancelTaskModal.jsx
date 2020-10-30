@@ -6,13 +6,8 @@ import { withRouter } from 'react-router-dom';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { get } from 'lodash';
 
-import {
-  taskById,
-  appealWithDetailSelector
-} from '../selectors';
-import {
-  requestPatch
-} from '../uiReducer/uiActions';
+import { taskById } from '../selectors';
+import { requestPatch } from '../uiReducer/uiActions';
 import { taskActionData } from '../utils';
 import TextareaField from '../../components/TextareaField';
 import COPY from '../../../COPY';
@@ -102,8 +97,6 @@ CancelTaskModal.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
-  appeal: appealWithDetailSelector(state, ownProps),
-  saveState: state.ui.saveState.savePending,
   hearingDay: state.ui.hearingDay,
   highlightFormItems: state.ui.highlightFormItems
 });
