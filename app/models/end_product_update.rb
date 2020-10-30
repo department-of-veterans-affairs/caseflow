@@ -11,7 +11,7 @@ class EndProductUpdate < CaseflowRecord
 
   def perform!
     transaction do
-      end_product_establishment.update(code: new_code, source_type: original_decision_review_type)
+      end_product_establishment.update(code: new_code)
       update_correction_type
       update_issue_type
     end
@@ -28,9 +28,10 @@ class EndProductUpdate < CaseflowRecord
 
   def update_issue_type
     issue_type = new_code_hash[:issue_type]
+    check_issue_type = (issue_type == "rating") ? "RatingRequestIssue" : "NonratingRequestIssue"
     return if issue_type == old_code_hash[:issue_type]
 
-    end_product_establishment.request_issues.update(type: RatingRequestIssue)
+    end_product_establishment.request_issues.update(type: check_issue_type)
   end
 
   def old_code_hash
