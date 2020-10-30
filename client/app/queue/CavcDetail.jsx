@@ -7,7 +7,7 @@ import { detailListStyling, getDetailField } from './Detail';
 import { DateString } from '../util/DateUtil';
 import BareList from '../components/BareList';
 import COPY from '../../COPY';
-import CAVC_REMAND_SUBTYPES from '../../constants/CAVC_REMAND_SUBTYPES.json';
+import CAVC_REMAND_SUBTYPES from '../../constants/CAVC_REMAND_SUBTYPES';
 
 const CavcDetail = (props) => {
   const {
