@@ -14,8 +14,9 @@ import COPY from '../../../COPY';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import QueueFlowModal from './QueueFlowModal';
 
+/* eslint-disable camelcase */
 const CancelTaskModal = (props) => {
-  const { task, hearingDay, highlightFormItems, requestPatch } = props;
+  const { task, hearingDay, highlightFormItems } = props;
   const taskData = taskActionData(props);
 
   // Show task instructions by default
@@ -55,7 +56,7 @@ const CancelTaskModal = (props) => {
       )
     };
 
-    return requestPatch(`/tasks/${task.taskId}`, payload, successMsg);
+    return props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg);
   };
 
   return (
@@ -83,6 +84,7 @@ const CancelTaskModal = (props) => {
     </QueueFlowModal>
   );
 };
+/* eslint-enable camelcase */
 
 CancelTaskModal.propTypes = {
   hearingDay: PropTypes.shape({
