@@ -166,6 +166,24 @@ class AddIssuesPage extends React.Component {
     const previouslywithdrawnIssues = issues.filter((issue) => issue.withdrawalDate);
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
     const withdrawnIssues = previouslywithdrawnIssues.concat(issuesPendingWithdrawal);
+    const reducer = (result, issue) => accumulator + currentValue;
+    const issuesBySection = issues.reduce(
+      (result, issue, key) => {
+        if (issue.withdrawalDate || issue.withdrawalPending) {
+          (result["withdrawnIssues"] || (result["withdrawnIssues"] = [])).push(issue)
+        } else if (issue.endProductCode) {
+          (result[issue.endProductCode] || (result[issue.endProductCode] = [])).push(issue);
+        } else {
+          (result["requestedIssues"] || (result["requestedIssues"] = [])).push(issue)
+        };
+
+        return result;
+      }, {}
+    );
+
+    console.log("issuesBySection::", issuesBySection);
+
+
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
 
@@ -241,14 +259,22 @@ class AddIssuesPage extends React.Component {
     }
 
     let rowObjects = fieldsForFormType;
+    console.log("requestedIssues::", requestedIssues);
+    const endProducts = _.compact(requestedIssues.map((issue) => issue.endProductCode));
+    console.log("endProducts::", endProducts);
 
-    if (!_.isEmpty(requestedIssues)) {
-      rowObjects = fieldsForFormType.concat({
-        field: 'Requested issues',
+    // End product issues each create the row objects
+    // Remaining issues show in regular requested issues section
+    // Show withdrawn issues
+
+    const rowObjectsForIssues = (issues, fieldTitle) => {
+      return {
+        field: fieldTitle,
         content: (
           <IssueList
             onClickIssueAction={this.onClickIssueAction}
-            issues={requestedIssues}
+            withdrawReview={withdrawReview}
+            issues={issues}
             intakeData={intakeData}
             formType={formType}
             featureToggles={featureToggles}
@@ -256,24 +282,17 @@ class AddIssuesPage extends React.Component {
             editPage={editPage}
           />
         )
-      });
+      };
+    };
+
+
+    if (!_.isEmpty(requestedIssues)) {
+      // endProducts.forEach(endProduct => )
+      rowObjects = fieldsForFormType.concat(rowObjectsForIssues(requestedIssues, 'Requested issues'));
     }
 
     if (!_.isEmpty(withdrawnIssues)) {
-      rowObjects = rowObjects.concat({
-        field: 'Withdrawn issues',
-        content: (
-          <IssueList
-            withdrawReview={withdrawReview}
-            issues={withdrawnIssues}
-            intakeData={intakeData}
-            formType={formType}
-            featureToggles={featureToggles}
-            userCanWithdrawIssues={userCanWithdrawIssues}
-            editPage={editPage}
-          />
-        )
-      });
+      rowObjects = rowObjects.concat(rowObjectsForIssues(withdrawnIssues, 'Withdrawn issues'));
     }
 
     const hideAddIssueButton = intakeData.isDtaError && _.isEmpty(intakeData.contestableIssues);
