@@ -28,10 +28,11 @@ class EndProductUpdate < CaseflowRecord
 
   def update_issue_type
     issue_type = new_code_hash[:issue_type]
-    check_issue_type = (issue_type == "rating") ? "RatingRequestIssue" : "NonratingRequestIssue"
     return if issue_type == old_code_hash[:issue_type]
 
-    end_product_establishment.request_issues.update(type: check_issue_type)
+    type_name = (issue_type == "rating") ? "RatingRequestIssue" : "NonratingRequestIssue"
+
+    end_product_establishment.request_issues.update(type: type_name)
   end
 
   def old_code_hash
