@@ -103,6 +103,27 @@ RSpec.feature "Convert travel board appeal for 'Edit HearSched' (Hearing Coordin
       end
     end
 
+    scenario "user can cancel the ChangeHearingRequestTypeTask" do
+      visit "queue/appeals/#{legacy_appeal.vacols_id}"
+
+      step "select the cancel change hearing request type action" do
+        click_dropdown(text: Constants.TASK_ACTIONS.CANCEL_CONVERT_HEARING_REQUEST_TYPE_TO_VIRTUAL.label)
+      end
+
+      step "submit action" do
+        click_button("Submit")
+      end
+
+      step "confirm page has success message" do
+        expect(page).to have_content(COPY::CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_SUCCESS_DETAIL)
+      end
+
+      step "confirm task was cancelled"do
+        expect(ChangeHearingRequestTypeTask.count).to eq(1)
+        expect(ChangeHearingRequestTypeTask.first.status).to eq(Constants.TASK_STATUSES.cancelled)
+      end
+    end
+
     context "with schedule veteran page feature toggle enabled" do
       before do
         FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
