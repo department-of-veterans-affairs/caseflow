@@ -2,7 +2,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
 import _ from 'lodash';
 import moment from 'moment';
 import { connect } from 'react-redux';
@@ -164,11 +163,7 @@ class AddIssuesPage extends React.Component {
       );
 
     const issues = formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
-    const requestedIssues = issues.filter((issue) => !issue.withdrawalPending && !issue.withdrawalDate);
-    const previouslywithdrawnIssues = issues.filter((issue) => issue.withdrawalDate);
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
-    const withdrawnIssues = previouslywithdrawnIssues.concat(issuesPendingWithdrawal);
-    const reducer = (result, issue) => accumulator + currentValue;
     const issuesBySection = issues.reduce(
       (result, issue, key) => {
         if (issue.withdrawalDate || issue.withdrawalPending) {
@@ -280,30 +275,18 @@ class AddIssuesPage extends React.Component {
       };
     };
 
-    const claimLabelStyling = css({
-      display: 'inline-block'
-    });
-
-    const buttonContainerStyling = css({
-      display: 'inline-block',
-      float: 'right',
-      width: '140px',
-      padding: '0',
-      margin: '0'
-    });
-
     const endProductLabelRow = (endProductCode) => {
       return {
         field: "EP Claim Label",
         content: (
           <div className="claim-label-row" key={`claim-label-${endProductCode}`}>
-            <div className="claim-label" {...claimLabelStyling}>
+            <div className="claim-label">
               <strong>{ EP_CLAIM_TYPES[endProductCode].official_label }</strong>
             </div>
-            <div {...buttonContainerStyling}>
+            <div className='edit-claim-label'>
               <Button
                 onClick={() => console.log('"Edit claim label" clicked!')}
-                classNames={['usa-button-secondary', 'edit-claim-label']}
+                classNames={['usa-button-secondary']}
               >
               Edit claim label
             </Button>
