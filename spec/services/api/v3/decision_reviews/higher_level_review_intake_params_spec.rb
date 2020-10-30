@@ -133,48 +133,48 @@ context Api::V3::DecisionReviews::HigherLevelReviewIntakeParams, :all_dbs do
         type: "ContestableIssue",
         attributes: {
           decisionIssueId: 1,
-          ratingIssueId: "1",
-          ratingDecisionIssueId: "1"
+          ratingIssueReferenceId: "1",
+          ratingDecisionReferenceId: "1"
         }
       },
       {
         type: "ContestableIssue",
         attributes: {
           decisionIssueId: 2,
-          ratingIssueId: "2",
-          ratingDecisionIssueId: "2"
+          ratingIssueReferenceId: "2",
+          ratingDecisionReferenceId: "2"
         }
       },
       {
         type: "ContestableIssue",
         attributes: {
           decisionIssueId: 3,
-          ratingIssueId: "3",
-          ratingDecisionIssueId: "3"
+          ratingIssueReferenceId: "3",
+          ratingDecisionReferenceId: "3"
         }
       },
       {
         type: "ContestableIssue",
         attributes: {
           decisionIssueId: 4,
-          ratingIssueId: "4",
-          ratingDecisionIssueId: "4"
+          ratingIssueReferenceId: "4",
+          ratingDecisionReferenceId: "4"
         }
       },
       {
         type: "ContestableIssue",
         attributes: {
           decisionIssueId: 5,
-          ratingIssueId: "5",
-          ratingDecisionIssueId: "5"
+          ratingIssueReferenceId: "5",
+          ratingDecisionReferenceId: "5"
         }
       },
       {
         type: "ContestableIssue",
         attributes: {
           decisionIssueId: 6,
-          ratingIssueId: "6",
-          ratingDecisionIssueId: "6"
+          ratingIssueReferenceId: "6",
+          ratingDecisionReferenceId: "6"
         }
       }
     ]

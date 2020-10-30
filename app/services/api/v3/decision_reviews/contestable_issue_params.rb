@@ -6,8 +6,8 @@
 #      type: "ContestableIssue",
 #      attributes: {
 #        decisionIssueId: integer,
-#        ratingIssueId: string,
-#        ratingDecisionIssueId: string,
+#        ratingIssueReferenceId: string,
+#        ratingDecisionReferenceId: string,
 #      }
 #    }
 #
