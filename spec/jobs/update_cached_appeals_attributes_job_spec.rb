@@ -151,24 +151,43 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     end
 
     context "when BGS fails" do
-      before do
-        bgs = Fakes::BGSService.new
-        allow(Fakes::BGSService).to receive(:new).and_return(bgs)
-        allow(bgs).to receive(:fetch_person_by_ssn)
-          .and_raise(Errno::ECONNRESET, "mocked error for testing")
+      shared_examples "rescues error" do
+        it "completes and sends warning to Slack" do
+          slack_msg = ""
+          allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+
+          job = described_class.new
+          job.perform_now
+          expect(job.warning_msgs.count).to eq 3
+
+          expect(slack_msg.lines.count).to eq 4
+          expected_msg = "\\[WARN\\] UpdateCachedAppealsAttributesJob .*"
+          expect(slack_msg).to match(/#{expected_msg}/)
+        end
       end
 
-      it "completes and sends warning to Slack" do
-        slack_msg = ""
-        allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+      context "BGSService fails with ECONNRESET" do
+        before do
+          bgs = Fakes::BGSService.new
+          allow(Fakes::BGSService).to receive(:new).and_return(bgs)
+          allow(bgs).to receive(:fetch_person_by_ssn)
+            .and_raise(Errno::ECONNRESET, "mocked error for testing")
+        end
+        include_examples "rescues error"
+      end
+      context "BGSService fails with Savon::HTTPError" do
+        before do
+          bgs = Fakes::BGSService.new
+          allow(Fakes::BGSService).to receive(:new).and_return(bgs)
 
-        job = described_class.new
-        job.perform_now
-        expect(job.warning_msgs.count).to eq 3
-
-        expect(slack_msg.lines.count).to eq 4
-        expected_msg = "\\[WARN\\] UpdateCachedAppealsAttributesJob .*"
-        expect(slack_msg).to match(/#{expected_msg}/)
+          httperror_mock = double("httperror")
+          allow(httperror_mock).to receive(:code).and_return(408)
+          allow(httperror_mock).to receive(:headers).and_return({})
+          allow(httperror_mock).to receive(:body).and_return("stream timeout")
+          allow(bgs).to receive(:fetch_poa_by_file_number)
+            .and_raise(Savon::HTTPError, httperror_mock)
+        end
+        include_examples "rescues error"
       end
     end
   end
