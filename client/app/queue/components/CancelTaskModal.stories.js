@@ -1,7 +1,11 @@
 import React from 'react';
 
 import CancelTaskModal from './CancelTaskModal';
-import { appealData, changeHearingRequestTypeTask } from 'test/data';
+import {
+  appealData,
+  changeHearingRequestTypeTask,
+  changeHearingRequestTypeTaskCancelAction
+} from 'test/data';
 import { queueWrapper as Wrapper } from '../../../test/data/stores/queueStore';
 import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
 
@@ -33,23 +37,7 @@ CancelChangeHearingRequestTypeTask.args = {
   storeArgs: {
     queue: {
       tasks: [
-        {
-          ...changeHearingRequestTypeTask,
-          availableActions: [
-            {
-              label: 'Cancel convert hearing to virtual',
-              func: 'cancel_convert_hearing_request_type_data',
-              value: 'modal/cancel_task',
-              data: {
-                redirect_after: '/queue/appeals/1986897',
-                modal_title: 'Cancel convert hearing to virtual task',
-                message_title: 'Task for Merlin V Langworth\'s case has been cancelled',
-                message_detail: 'You have successfully cancelled the convert hearing to virtual task',
-                show_instructions: false
-              }
-            }
-          ]
-        }
+        changeHearingRequestTypeTaskCancelAction
       ]
     },
     // The test relies on `props.match` to match against one of the available actions.
