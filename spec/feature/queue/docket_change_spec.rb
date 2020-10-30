@@ -89,7 +89,11 @@ RSpec.feature "Docket Change", :all_dbs do
 
         click_button(text: "Submit")
 
-        # Add check to verify new task has been properly created
+        # Return back to user's queue
+        expect(page).to have_current_path("/queue")
+
+        judge_task = DocketSwitchRulingTask.find_by(assigned_to: judge)
+        expect(judge_task).to_not be_nil
       end
     end
   end
