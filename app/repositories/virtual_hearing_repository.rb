@@ -8,8 +8,9 @@ class VirtualHearingRepository
         .joins("INNER JOIN hearings ON hearings.id = virtual_hearings.hearing_id")
         .joins("INNER JOIN hearing_days ON hearing_days.id = hearings.hearing_day_id")
         .where(
-          "hearing_days.scheduled_for < :today OR virtual_hearings.request_cancelled = true",
-          today: Time.zone.today
+          "hearing_days.scheduled_for < :today OR
+          hearings.disposition='postponed' OR hearings.disposition='cancelled' OR
+          virtual_hearings.request_cancelled = true", today: Time.zone.today
         )
 
       virtual_hearings_for_legacy_hearings = VirtualHearing.eligible_for_deletion
@@ -17,8 +18,10 @@ class VirtualHearingRepository
         .joins("INNER JOIN legacy_hearings ON legacy_hearings.id = virtual_hearings.hearing_id")
         .joins("INNER JOIN hearing_days ON hearing_days.id = legacy_hearings.hearing_day_id")
         .where(
-          "hearing_days.scheduled_for < :today OR virtual_hearings.request_cancelled = true",
-          today: Time.zone.today
+          "hearing_days.scheduled_for < :today OR
+          legacy_hearings.vacols_id in (:postponed_or_cancelled_vacols_ids) OR
+          virtual_hearings.request_cancelled = true",
+          postponed_or_cancelled_vacols_ids: postponed_or_cancelled_vacols_ids, today: Time.zone.today
         )
 
       virtual_hearings_for_ama_hearings + virtual_hearings_for_legacy_hearings
@@ -54,6 +57,17 @@ class VirtualHearingRepository
             )
           )
         SQL
+    end
+
+    private
+
+    def postponed_or_cancelled_vacols_ids
+      VACOLS::CaseHearing.by_dispositions(
+        [
+          VACOLS::CaseHearing::HEARING_DISPOSITIONS.key("postponed"),
+          VACOLS::CaseHearing::HEARING_DISPOSITIONS.key("cancelled")
+        ]
+      ).pluck(:hearing_pkseq).map(&:to_s)
     end
   end
 end
