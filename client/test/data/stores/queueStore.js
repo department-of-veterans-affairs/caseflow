@@ -1,3 +1,4 @@
+import { omit } from 'lodash';
 import React from 'react';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
@@ -45,7 +46,7 @@ export const queueWrapper = ({ children, ...props }) => {
   return (
     <Provider store={createStore(reducer, {
       ...initialState,
-      ...props,
+      ...omit(props, ['route']),
       components: {
         ...initialState.components,
         ...props?.components,
