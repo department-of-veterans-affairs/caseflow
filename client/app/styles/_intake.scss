@@ -175,6 +175,21 @@
   td {
     vertical-align: top;
 
+    .claim-label-row {
+      height: 37px;
+      color: $color-gray-dark;
+
+      .claim-label {
+        padding: .5rem 0;
+      }
+
+      button {
+        padding: 1rem;
+        width: 140px;
+        display: block;
+      }
+    }
+
     .issues {
       display: table;
       width: 100%;
@@ -267,9 +282,11 @@
         }
       }
 
-      .issue-container {
+      .issue-container:not(:last-child) {
         border-bottom: 1px solid $color-gray-lighter;
+      }
 
+      .issue-container {
         .cf-form-textarea {
           padding-left: 20px;
           padding-right: 20px;

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'glamor';
 import _ from 'lodash';
 import moment from 'moment';
 import { connect } from 'react-redux';
@@ -285,10 +286,37 @@ class AddIssuesPage extends React.Component {
       };
     };
 
+    const claimLabelStyling = css({
+      display: 'inline-block'
+    });
+
+    const buttonContainerStyling = css({
+      display: 'inline-block',
+      float: 'right',
+      width: '140px',
+      padding: '0',
+      margin: '0'
+    });
+
     const rowObjectForEndProduct = (endProductCode) => {
       return {
         field: "EP Claim Label",
-        content: EP_CLAIM_TYPES[endProductCode].official_label,
+        content: (
+          <div className="claim-label-row" key={`claim-label-${endProductCode}`}>
+            <div className="claim-label" {...claimLabelStyling}>
+              <strong>{ EP_CLAIM_TYPES[endProductCode].official_label }</strong>
+            </div>
+            <div {...buttonContainerStyling}>
+              <Button
+                id="sally"
+                onClick={() => console.log('"Edit claim label" clicked!')}
+                classNames={['usa-button-secondary', 'edit-claim-label']}
+              >
+              Edit claim label
+            </Button>
+            </div>
+          </div>
+        )
       };
     };
 
@@ -296,25 +324,24 @@ class AddIssuesPage extends React.Component {
       return {
         field: "",
         content: (
-          <IssueList
-            onClickIssueAction={this.onClickIssueAction}
-            withdrawReview={withdrawReview}
-            issues={issues}
-            intakeData={intakeData}
-            formType={formType}
-            featureToggles={featureToggles}
-            userCanWithdrawIssues={userCanWithdrawIssues}
-            editPage={editPage}
-          />
+          <div>
+            <span><strong>Requested issues</strong></span>
+            <IssueList
+              onClickIssueAction={this.onClickIssueAction}
+              withdrawReview={withdrawReview}
+              issues={issues}
+              intakeData={intakeData}
+              formType={formType}
+              featureToggles={featureToggles}
+              userCanWithdrawIssues={userCanWithdrawIssues}
+              editPage={editPage}
+            />
+        </div>
         )
       };
     };
 
     Object.keys(issuesBySection).map(function(key, index) {
-      console.log("issuesBySection::", issuesBySection)
-      console.log("issuesBySection2::", issuesBySection["030HLRNR"])
-      console.log("issuesBySection3::", issuesBySection[key])
-      console.log("key::", key)
       const sectionIssues = issuesBySection[key];
       if (key == 'requestedIssues') {
         rowObjects = rowObjects.concat(rowObjectForIssues(sectionIssues, 'Requested issues'));
