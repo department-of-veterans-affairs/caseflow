@@ -22,6 +22,7 @@ import CaseHearingsDetail from './CaseHearingsDetail';
 import CaseTimeline from './CaseTimeline';
 import CaseTitle from './CaseTitle';
 import CaseTitleDetails from './CaseTitleDetails';
+import CavcDetail from './CavcDetail';
 import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
 import StickyNavContentArea from './StickyNavContentArea';
 import TaskSnapshot from './TaskSnapshot';
@@ -52,7 +53,7 @@ export const CaseDetailsView = (props) => {
   const { appealId } = props;
   const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
   const tasks = useSelector((state) => getAllTasksForAppeal(state, { appealId }));
-
+  console.log(appeal.cavc_remand)
   const success = useSelector((state) => state.ui.messages.success);
   const error = useSelector((state) => state.ui.messages.error);
   const veteranCaseListIsVisible = useSelector((state) => state.ui.veteranCaseListIsVisible);
@@ -141,6 +142,8 @@ export const CaseDetailsView = (props) => {
           {!_.isNull(appeal.appellantFullName) && appeal.appellantIsNotVeteran && (
             <AppellantDetail title="About the Appellant" appeal={appeal} />
           )}
+          {!_.isNull(appeal.cavc_remand) && appeal.cavc_remand &&
+          (<CavcDetail title="CAVC Remand" appealId={appealId} />)}
           <CaseTimeline title="Case Timeline" appeal={appeal} />}
         </StickyNavContentArea>
         {props.pollHearing && pollHearing()}
