@@ -51,7 +51,7 @@ const CavcDetail = ({ appeal }) => {
     });
   }
 
-  if (type && procedure !== 'death_dismissal') {
+  if (type && procedure !== 'death_dismissal' && procedure !== 'straight_reversal') {
     details.push({
       label: COPY.CASE_DETAILS_CAVC_TYPE,
       value: (type === 'jmr') ? 'Joint Motion for Remand' :
