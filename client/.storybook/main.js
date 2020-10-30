@@ -20,6 +20,13 @@ module.exports = {
 
     return {
       ...config,
+      resolve: {
+        ...config.resolve,
+        alias: {
+          ...config.resolve.alias,
+          ...custom.resolve.alias
+        }
+      },
       module: {
         ...config.module,
         rules: [...config.module.rules, ...customRules],

@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 class Api::V3::DecisionReviews::HigherLevelReviewsController < Api::V3::BaseController
+  include ApiV3FeatureToggleConcern
+
+  before_action do
+    api_released?(:api_v3_higher_level_reviews)
+  end
+
   SUCCESSFUL_CREATION_HTTP_STATUS = 202
 
   def create

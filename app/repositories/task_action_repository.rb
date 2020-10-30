@@ -174,6 +174,24 @@ class TaskActionRepository
       {}
     end
 
+    def docket_switch_send_to_judge_data(_task, _user = nil)
+      {
+        type: DocketSwitchRulingTask.name
+      }
+    end
+
+    def docket_switch_denied_data(_task, _user = nil)
+      {
+        type: DocketSwitchDeniedTask.name
+      }
+    end
+
+    def docket_switch_granted_data(_task, _user = nil)
+      {
+        type: DocketSwitchGrantedTask.name
+      }
+    end
+
     def assign_to_translation_team_data(_task, _user = nil)
       org = Translation.singleton
 

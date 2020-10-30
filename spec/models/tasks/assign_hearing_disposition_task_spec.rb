@@ -1,6 +1,23 @@
 # frozen_string_literal: true
 
 describe AssignHearingDispositionTask, :all_dbs do
+  shared_examples "virtual hearing is cleaned up" do
+    it "cleans up the virtual hearing", :aggregate_failures do
+      hearing.reload
+
+      subject
+      expect(hearing.virtual_hearing.reload.closed?).to eq(true)
+    end
+  end
+
+  shared_context "when hearing is virtual" do
+    let!(:virtual_hearing) do
+      create(:virtual_hearing, :initialized, :all_emails_sent, status: :active, hearing: hearing)
+    end
+
+    include_examples "virtual hearing is cleaned up"
+  end
+
   describe "#update_from_params for ama appeal" do
     let(:appeal) { create(:appeal) }
     let!(:hearing) { create(:hearing, appeal: appeal) }
@@ -42,6 +59,10 @@ describe AssignHearingDispositionTask, :all_dbs do
         expect(disposition_task.reload.closed_at).to_not be_nil
         expect(disposition_task.cancelled_by).to eq user
       end
+
+      context "when hearing is virtual" do
+        include_context "when hearing is virtual"
+      end
     end
 
     describe "hearing disposition of held" do
@@ -57,10 +78,9 @@ describe AssignHearingDispositionTask, :all_dbs do
       end
 
       it "sets the hearing disposition and calls hold!" do
-        expect(disposition_task).to receive(:hold!).exactly(1).times
+        expect(disposition_task).to receive(:hold!).exactly(1).times.and_call_original
 
-        subject
-
+        expect(subject.count).to eq 3
         expect(Hearing.count).to eq 1
         expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.held
       end
@@ -79,10 +99,9 @@ describe AssignHearingDispositionTask, :all_dbs do
       end
 
       it "sets the hearing disposition and calls no_show!" do
-        expect(disposition_task).to receive(:no_show!).exactly(1).times
+        expect(disposition_task).to receive(:no_show!).exactly(1).times.and_call_original
 
-        subject
-
+        expect(subject.count).to eq(2)
         expect(Hearing.count).to eq 1
         expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.no_show
       end
@@ -227,6 +246,10 @@ describe AssignHearingDispositionTask, :all_dbs do
               expect(hearing.reload.disposition).not_to eq Constants.HEARING_DISPOSITION_TYPES.postponed
             end
           end
+        end
+
+        context "when hearing is virtual" do
+          include_context "when hearing is virtual"
         end
       end
     end

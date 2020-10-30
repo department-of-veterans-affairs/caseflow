@@ -914,10 +914,14 @@ paths:
       parameters:
         - name: X-VA-SSN
           in: header
-          required: true
-          description: The SSN of the veteran.
+          description: The SSN of the veteran. Either SSN or file number must be passed.
           schema:
             type : string
+        - name: X-VA-File-Number
+          in: header
+          description: The file number of the veteran. Either SSN or file number must be passed.
+          schema:
+            type: string
         - name: X-VA-Receipt-Date
           in: header
           required: true
