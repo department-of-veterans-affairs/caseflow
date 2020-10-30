@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::V3::DecisionReviews::Errors::JsonApiMissingAttribute < StandardError
+class Api::V3::DecisionReviews::Errors::SchemerToJsonApiMissingAttribute < StandardError
   attr_accessor :code
   attr_accessor :details
 
@@ -10,8 +10,7 @@ class Api::V3::DecisionReviews::Errors::JsonApiMissingAttribute < StandardError
   end
 
   def all_errors
-    required_errors = details.select { |detail| self.class.required_error?(detail) }
-    other_errors = details.reject { |detail| self.class.required_error?(detail) }
+    required_errors, other_errors = details.partition { |detail| self.class.required_error?(detail) }
     errors = []
     unless required_errors.empty?
       errors.concat(required_errors.map { |error| self.class.build_required_errors(error) }.reduce(:concat))

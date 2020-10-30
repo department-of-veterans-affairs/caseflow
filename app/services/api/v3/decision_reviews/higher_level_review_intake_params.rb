@@ -150,7 +150,7 @@ class Api::V3::DecisionReviews::HigherLevelReviewIntakeParams
     errors = JSONSchemer.schema(schema).validate(JSON.parse(@params.to_json)).to_a
 
     unless errors.empty?
-      error = Api::V3::DecisionReviews::Errors::JsonApiMissingAttribute.new(errors)
+      error = Api::V3::DecisionReviews::Errors::SchemerToJsonApiMissingAttribute.new(errors)
       error.all_errors
     end
   end
