@@ -8,6 +8,7 @@ import _ from 'lodash';
 import LoadingLabel from './LoadingLabel';
 
 import SearchableDropdown from '../SearchableDropdown';
+import COPY from '../../../COPY';
 
 class JudgeDropdown extends React.Component {
 
@@ -76,7 +77,7 @@ JudgeDropdown.propTypes = {
 
 JudgeDropdown.defaultProps = {
   name: 'vlj',
-  label: 'VLJ'
+  label: COPY.DROPDOWN_LABEL_JUDGE
 };
 
 const mapStateToProps = (state) => ({

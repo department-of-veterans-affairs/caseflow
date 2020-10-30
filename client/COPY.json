@@ -115,6 +115,10 @@
   "CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE": "Female",
   "CASE_DETAILS_GENDER_FIELD_VALUE_MALE": "Male",
 
+  "DROPDOWN_LABEL_JUDGE": "VLJ",
+  "DROPDOWN_LABEL_HEARING_COORDINATOR": "Hearing Coordinator",
+  "DROPDOWN_LABEL_HEARING_ROOM": "Hearing Room",
+
   "NEW_FILE_ICON_TOOLTIP": "This case has new documents",
   "NEW_FILE_ALL_ICON_TOOLTIP": "One or more cases has new documents available",
 
