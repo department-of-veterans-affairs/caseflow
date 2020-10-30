@@ -235,8 +235,8 @@ class ExternalApi::BGSService
                           name: "common_security.get_security_profile") do
       client.common_security.get_security_profile(
         username: username,
-        station_id: stations_id,
-        applications: "CASEFLOW"
+        station_id: station_id,
+        application: "CASEFLOW"
       )
     end
   end

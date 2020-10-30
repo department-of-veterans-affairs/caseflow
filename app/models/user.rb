@@ -285,15 +285,15 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       application: "CASEFLOW"
     )
   rescue BGS::ShareError, BGS::PublicError
-    nil
+    {}
   end
 
   def job_title
     security_profile.dig(:job_title)
   end
 
-  def deny_access_svsr
-    job_title == "Senior Veterans Service Representative"
+  def can_intake_decision_reviews?
+    !job_title.include?("Senior Veterans Service Representative")
   end
 
   def user_info_for_idt
