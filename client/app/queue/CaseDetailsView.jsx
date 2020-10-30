@@ -53,7 +53,7 @@ export const CaseDetailsView = (props) => {
   const { appealId } = props;
   const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
   const tasks = useSelector((state) => getAllTasksForAppeal(state, { appealId }));
-  console.log(appeal.cavc_remand)
+
   const success = useSelector((state) => state.ui.messages.success);
   const error = useSelector((state) => state.ui.messages.error);
   const veteranCaseListIsVisible = useSelector((state) => state.ui.veteranCaseListIsVisible);
