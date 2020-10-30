@@ -1,28 +1,23 @@
 /* eslint-disable no-nested-ternary */
-import { connect } from 'react-redux';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { appealWithDetailSelector } from './selectors';
 import { detailListStyling, getDetailField } from './Detail';
 import { DateString } from '../util/DateUtil';
 import BareList from '../components/BareList';
 import COPY from '../../COPY';
 
-const CavcDetail = ({ appeal }) => {
-
+const CavcDetail = (props) => {
   const {
-    cavc_remand: {
-      cavc_docket_number: docketNumber,
-      represented_by_attorney: hasAttorney,
-      cavc_judge_full_name: judgeName,
-      cavc_decision_type: procedure,
-      remand_subtype: type,
-      decision_date: decisionDate,
-      judgement_date: judgementDate,
-      mandate_date: mandateDate
-    }
-  } = appeal;
+    cavc_docket_number: docketNumber,
+    represented_by_attorney: hasAttorney,
+    cavc_judge_full_name: judgeName,
+    cavc_decision_type: procedure,
+    remand_subtype: type,
+    decision_date: decisionDate,
+    judgement_date: judgementDate,
+    mandate_date: mandateDate
+  } = props;
 
   const details = [{
     label: COPY.CASE_DETAILS_CAVC_DOCKET_NUMBER,
@@ -90,12 +85,14 @@ const CavcDetail = ({ appeal }) => {
 };
 
 CavcDetail.propTypes = {
-  appeal: PropTypes.object.isRequired,
-  appealId: PropTypes.string.isRequired
+  cavc_docket_number: PropTypes.string.isRequired,
+  represented_by_attorney: PropTypes.bool.isRequired,
+  cavc_judge_full_name: PropTypes.string.isRequired,
+  cavc_decision_type: PropTypes.string.isRequired,
+  remand_subtype: PropTypes.string,
+  decision_date: PropTypes.string.isRequired,
+  judgement_date: PropTypes.string,
+  mandate_date: PropTypes.string
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId })
-});
-
-export default connect(mapStateToProps)(CavcDetail);
+export default CavcDetail;
