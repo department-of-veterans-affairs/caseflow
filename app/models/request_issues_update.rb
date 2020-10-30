@@ -101,7 +101,7 @@ class RequestIssuesUpdate < CaseflowRecord
   private
 
   def changes?
-    all_updated_issues.any?
+    (all_updated_issues + corrected_issues).any?
   end
 
   def calculate_after_issues
