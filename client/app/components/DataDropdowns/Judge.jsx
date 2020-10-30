@@ -70,6 +70,12 @@ JudgeDropdown.propTypes = {
   label: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
+  onFetchDropdownData: PropTypes.func,
+  onReceiveDropdownData: PropTypes.func.isRequired,
+  judges: PropTypes.shape({
+    options: PropTypes.arrayOf(PropTypes.object),
+    isFetching: PropTypes.bool
+  }),
   readOnly: PropTypes.bool,
   placeholder: PropTypes.string,
   errorMessage: PropTypes.string

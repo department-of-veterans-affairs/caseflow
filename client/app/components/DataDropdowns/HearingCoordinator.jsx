@@ -73,6 +73,12 @@ HearingCoordinatorDropdown.propTypes = {
   label: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
+  onFetchDropdownData: PropTypes.func,
+  onReceiveDropdownData: PropTypes.func.isRequired,
+  hearingCoordinators: PropTypes.shape({
+    options: PropTypes.arrayOf(PropTypes.object),
+    isFetching: PropTypes.bool
+  }),
   readOnly: PropTypes.bool,
   placeholder: PropTypes.string,
   errorMessage: PropTypes.string
