@@ -687,12 +687,6 @@ describe RequestIssuesUpdate, :all_dbs do
 
       context "if remaining issues after update are ineligible" do
         let!(:in_progress_task) { create(:higher_level_review_task, :in_progress, appeal: review) }
-        let!(:before_issue) do
-          create(:request_issue,
-                 :ineligible,
-                 decision_review: review,
-                 contention_reference_id: "1")
-        end
         let!(:after_issue) do
           create(:request_issue,
                  :ineligible,
@@ -704,7 +698,7 @@ describe RequestIssuesUpdate, :all_dbs do
                  :requires_processing,
                  review: review,
                  withdrawn_request_issue_ids: nil,
-                 before_request_issue_ids: [before_issue.id],
+                 before_request_issue_ids: review.request_issues.map(&:id),
                  after_request_issue_ids: [after_issue.id])
         end
 
