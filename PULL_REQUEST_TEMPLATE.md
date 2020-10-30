@@ -37,6 +37,7 @@ Please explain the changes you made here.
 * [ ] Appropriate indexes added (especially for foreign keys, polymorphic columns, unique constraints, and Rails scopes)
 * [ ] DB schema docs updated with `make docs` (after running `make migrate`)
 * [ ] #appeals-schema notified with summary and link to this PR
+* [ ] Any non-obvious semantics or logic useful for interpreting database data is documented at [Caseflow Data Model and Dictionary](https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Data-Model-and-Dictionary)
 
 ### Integrations: Adding endpoints for external APIs
 * [ ] Check that Caseflow's external API code for the endpoint matches the code in the relevant integration repo
