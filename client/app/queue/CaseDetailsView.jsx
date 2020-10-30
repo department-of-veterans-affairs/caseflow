@@ -142,8 +142,8 @@ export const CaseDetailsView = (props) => {
           {!_.isNull(appeal.appellantFullName) && appeal.appellantIsNotVeteran && (
             <AppellantDetail title="About the Appellant" appeal={appeal} />
           )}
-          {!_.isNull(appeal.cavc_remand) && appeal.cavc_remand &&
-          (<CavcDetail title="CAVC Remand" {...appeal.cavc_remand} />)}
+          {!_.isNull(appeal.cavcRemand) && appeal.cavcRemand &&
+          (<CavcDetail title="CAVC Remand" {...appeal.cavcRemand} />)}
           <CaseTimeline title="Case Timeline" appeal={appeal} />}
         </StickyNavContentArea>
         {props.pollHearing && pollHearing()}

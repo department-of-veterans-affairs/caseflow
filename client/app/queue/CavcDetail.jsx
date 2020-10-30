@@ -1,11 +1,13 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 import { detailListStyling, getDetailField } from './Detail';
 import { DateString } from '../util/DateUtil';
 import BareList from '../components/BareList';
 import COPY from '../../COPY';
+import CAVC_REMAND_SUBTYPES from '../../constants/CAVC_REMAND_SUBTYPES.json';
 
 const CavcDetail = (props) => {
   const {
@@ -27,7 +29,12 @@ const CavcDetail = (props) => {
   if (hasAttorney) {
     details.push({
       label: COPY.CASE_DETAILS_CAVC_ATTORNEY,
-      value: hasAttorney === true ? 'Yes' : 'No'
+      value: 'Yes'
+    });
+  } else {
+    details.push({
+      label: COPY.CASE_DETAILS_CAVC_ATTORNEY,
+      value: 'No'
     });
   }
 
@@ -41,16 +48,15 @@ const CavcDetail = (props) => {
   if (procedure) {
     details.push({
       label: COPY.CASE_DETAILS_CAVC_PROCEDURE,
-      value: procedure.charAt(0).toUpperCase() + procedure.slice(1)
-
+      value: _.startCase(procedure)
     });
   }
 
   if (type && procedure !== 'death_dismissal' && procedure !== 'straight_reversal') {
     details.push({
       label: COPY.CASE_DETAILS_CAVC_TYPE,
-      value: (type === 'jmr') ? 'Joint Motion for Remand' :
-        (type === 'jmpr') ? 'Joint Motion Partial Remand' : 'Memorandum Decision on Remand'
+      value: (type === CAVC_REMAND_SUBTYPES.jmr) ? 'Joint Motion for Remand' :
+        (type === CAVC_REMAND_SUBTYPES.jmpr) ? 'Joint Motion Partial Remand' : 'Memorandum Decision on Remand'
     });
   }
 

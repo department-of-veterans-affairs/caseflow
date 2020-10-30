@@ -347,7 +347,7 @@ export const prepareAppealForStore = (appeals) => {
       nodDate: appeal.attributes.nod_date,
       certificationDate: appeal.attributes.certification_date,
       powerOfAttorney: appeal.attributes.power_of_attorney,
-      cavc_remand: appeal.attributes.cavc_remand,
+      cavcRemand: appeal.attributes.cavc_remand,
       regionalOffice: appeal.attributes.regional_office,
       caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
       documentID: appeal.attributes.document_id,
