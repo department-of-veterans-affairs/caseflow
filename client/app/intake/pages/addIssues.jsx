@@ -145,7 +145,7 @@ class AddIssuesPage extends React.Component {
   render() {
     const { intakeForms, formType, veteran, featureToggles, editPage, addingIssue, userCanWithdrawIssues } = this.props;
     const intakeData = intakeForms[formType];
-    const { useAmaActivationDate } = featureToggles;
+    const { useAmaActivationDate, editEpClaimLabels } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
@@ -173,7 +173,7 @@ class AddIssuesPage extends React.Component {
       (result, issue, key) => {
         if (issue.withdrawalDate || issue.withdrawalPending) {
           (result["withdrawnIssues"] || (result["withdrawnIssues"] = [])).push(issue)
-        } else if (issue.endProductCode) {
+        } else if (issue.endProductCode && editEpClaimLabels) {
           (result[issue.endProductCode] || (result[issue.endProductCode] = [])).push(issue);
         } else {
           (result["requestedIssues"] || (result["requestedIssues"] = [])).push(issue)
@@ -182,8 +182,6 @@ class AddIssuesPage extends React.Component {
         return result;
       }, {}
     );
-
-    console.log("issuesBySection::", issuesBySection);
 
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
@@ -260,28 +258,24 @@ class AddIssuesPage extends React.Component {
     }
 
     let rowObjects = fieldsForFormType;
-    console.log("requestedIssues::", requestedIssues);
-    const endProducts = _.compact(requestedIssues.map((issue) => issue.endProductCode));
-    console.log("endProducts::", endProducts);
 
-    // End product issues each create the row objects
-    // Remaining issues show in regular requested issues section
-    // Show withdrawn issues
-
-    const rowObjectForIssues = (issues, fieldTitle) => {
+    const issueSectionRow = (issues, fieldTitle) => {
       return {
         field: fieldTitle,
         content: (
-          <IssueList
-            onClickIssueAction={this.onClickIssueAction}
-            withdrawReview={withdrawReview}
-            issues={issues}
-            intakeData={intakeData}
-            formType={formType}
-            featureToggles={featureToggles}
-            userCanWithdrawIssues={userCanWithdrawIssues}
-            editPage={editPage}
-          />
+          <div>
+            { !fieldTitle.includes("issues") && <span><strong>Requested issues</strong></span> }
+            <IssueList
+              onClickIssueAction={this.onClickIssueAction}
+              withdrawReview={withdrawReview}
+              issues={issues}
+              intakeData={intakeData}
+              formType={formType}
+              featureToggles={featureToggles}
+              userCanWithdrawIssues={userCanWithdrawIssues}
+              editPage={editPage}
+            />
+          </div>
         )
       };
     };
@@ -298,7 +292,7 @@ class AddIssuesPage extends React.Component {
       margin: '0'
     });
 
-    const rowObjectForEndProduct = (endProductCode) => {
+    const endProductLabelRow = (endProductCode) => {
       return {
         field: "EP Claim Label",
         content: (
@@ -308,7 +302,6 @@ class AddIssuesPage extends React.Component {
             </div>
             <div {...buttonContainerStyling}>
               <Button
-                id="sally"
                 onClick={() => console.log('"Edit claim label" clicked!')}
                 classNames={['usa-button-secondary', 'edit-claim-label']}
               >
@@ -320,47 +313,17 @@ class AddIssuesPage extends React.Component {
       };
     };
 
-    const rowObjectForEndProductIssues = (issues) => {
-      return {
-        field: "",
-        content: (
-          <div>
-            <span><strong>Requested issues</strong></span>
-            <IssueList
-              onClickIssueAction={this.onClickIssueAction}
-              withdrawReview={withdrawReview}
-              issues={issues}
-              intakeData={intakeData}
-              formType={formType}
-              featureToggles={featureToggles}
-              userCanWithdrawIssues={userCanWithdrawIssues}
-              editPage={editPage}
-            />
-        </div>
-        )
-      };
-    };
-
-    Object.keys(issuesBySection).map(function(key, index) {
+    Object.keys(issuesBySection).sort().map((key, index) => {
       const sectionIssues = issuesBySection[key];
       if (key == 'requestedIssues') {
-        rowObjects = rowObjects.concat(rowObjectForIssues(sectionIssues, 'Requested issues'));
+        rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Requested issues'));
       } else if (key == 'withdrawnIssues') {
-        rowObjects = rowObjects.concat(rowObjectForIssues(sectionIssues, 'Withdrawn issues'));
+        rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Withdrawn issues'));
       } else {
-        rowObjects = rowObjects.concat(rowObjectForEndProduct(key));
-        rowObjects = rowObjects.concat(rowObjectForEndProductIssues(sectionIssues));
+        rowObjects = rowObjects.concat(endProductLabelRow(key));
+        rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, ' '));
       }
     });
-
-    // if (!_.isEmpty(requestedIssues)) {
-    //   // endProducts.forEach(endProduct => )
-    //   rowObjects = fieldsForFormType.concat(rowObjectForIssues(requestedIssues, 'Requested issues'));
-    // }
-    //
-    // if (!_.isEmpty(withdrawnIssues)) {
-    //   rowObjects = rowObjects.concat(rowObjectForIssues(withdrawnIssues, 'Withdrawn issues'));
-    // }
 
     const hideAddIssueButton = intakeData.isDtaError && _.isEmpty(intakeData.contestableIssues);
 
