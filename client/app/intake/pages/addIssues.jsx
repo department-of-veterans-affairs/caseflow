@@ -17,6 +17,7 @@ import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../constants';
+import EP_CLAIM_TYPES from '../../../constants/EP_CLAIM_TYPES';
 import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 import Table from '../../components/Table';
 import IssueList from '../components/IssueList';
@@ -183,7 +184,6 @@ class AddIssuesPage extends React.Component {
 
     console.log("issuesBySection::", issuesBySection);
 
-
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
 
@@ -267,7 +267,7 @@ class AddIssuesPage extends React.Component {
     // Remaining issues show in regular requested issues section
     // Show withdrawn issues
 
-    const rowObjectsForIssues = (issues, fieldTitle) => {
+    const rowObjectForIssues = (issues, fieldTitle) => {
       return {
         field: fieldTitle,
         content: (
@@ -285,15 +285,55 @@ class AddIssuesPage extends React.Component {
       };
     };
 
+    const rowObjectForEndProduct = (endProductCode) => {
+      return {
+        field: "EP Claim Label",
+        content: EP_CLAIM_TYPES[endProductCode].official_label,
+      };
+    };
 
-    if (!_.isEmpty(requestedIssues)) {
-      // endProducts.forEach(endProduct => )
-      rowObjects = fieldsForFormType.concat(rowObjectsForIssues(requestedIssues, 'Requested issues'));
-    }
+    const rowObjectForEndProductIssues = (issues) => {
+      return {
+        field: "",
+        content: (
+          <IssueList
+            onClickIssueAction={this.onClickIssueAction}
+            withdrawReview={withdrawReview}
+            issues={issues}
+            intakeData={intakeData}
+            formType={formType}
+            featureToggles={featureToggles}
+            userCanWithdrawIssues={userCanWithdrawIssues}
+            editPage={editPage}
+          />
+        )
+      };
+    };
 
-    if (!_.isEmpty(withdrawnIssues)) {
-      rowObjects = rowObjects.concat(rowObjectsForIssues(withdrawnIssues, 'Withdrawn issues'));
-    }
+    Object.keys(issuesBySection).map(function(key, index) {
+      console.log("issuesBySection::", issuesBySection)
+      console.log("issuesBySection2::", issuesBySection["030HLRNR"])
+      console.log("issuesBySection3::", issuesBySection[key])
+      console.log("key::", key)
+      const sectionIssues = issuesBySection[key];
+      if (key == 'requestedIssues') {
+        rowObjects = rowObjects.concat(rowObjectForIssues(sectionIssues, 'Requested issues'));
+      } else if (key == 'withdrawnIssues') {
+        rowObjects = rowObjects.concat(rowObjectForIssues(sectionIssues, 'Withdrawn issues'));
+      } else {
+        rowObjects = rowObjects.concat(rowObjectForEndProduct(key));
+        rowObjects = rowObjects.concat(rowObjectForEndProductIssues(sectionIssues));
+      }
+    });
+
+    // if (!_.isEmpty(requestedIssues)) {
+    //   // endProducts.forEach(endProduct => )
+    //   rowObjects = fieldsForFormType.concat(rowObjectForIssues(requestedIssues, 'Requested issues'));
+    // }
+    //
+    // if (!_.isEmpty(withdrawnIssues)) {
+    //   rowObjects = rowObjects.concat(rowObjectForIssues(withdrawnIssues, 'Withdrawn issues'));
+    // }
 
     const hideAddIssueButton = intakeData.isDtaError && _.isEmpty(intakeData.contestableIssues);
 
