@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "./errors/json_api_missing_attribute"
-
 class Api::V3::DecisionReviews::HigherLevelReviewIntakeParams
   CATEGORIES_BY_BENEFIT_TYPE = Constants::ISSUE_CATEGORIES.slice("compensation")
 
@@ -145,7 +143,10 @@ class Api::V3::DecisionReviews::HigherLevelReviewIntakeParams
   def describe_shape_error
     return [{ detail: "payload must be an object" }] unless params?
 
-    schema = Rails.root.join("app", "services", "api", "v3", "decision_reviews", "200996_schema.json")
+    schema = Rails.root.join(
+      "app", "services", "api", "v3", "decision_reviews", "schemas",
+      "form_200996_request_higher_level_review_schema.json"
+    )
     errors = JSONSchemer.schema(schema).validate(JSON.parse(@params.to_json)).to_a
 
     unless errors.empty?
