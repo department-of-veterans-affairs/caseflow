@@ -1,57 +1,36 @@
+// External Dependencies
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import _ from 'lodash';
+import PropTypes from 'prop-types';
 
-import { makeGetAnnotationsByDocumentId } from './selectors';
-import { ChevronDown, ChevronUp } from '../components/RenderFunctions';
-import Button from '../components/Button';
-import { handleToggleCommentOpened } from '../reader/Documents/DocumentsActions';
+// Local Dependencies
+import { ChevronDown, ChevronUp } from 'app/components/RenderFunctions';
+import Button from 'app/components/Button';
 
-class CommentIndicator extends React.Component {
-  shouldComponentUpdate = (nextProps) => !_.isEqual(this.props, nextProps)
-
-  toggleComments = () => this.props.handleToggleCommentOpened(this.props.docId, this.props.expanded)
-
-  render() {
-    const { annotationsCount, expanded, docId } = this.props;
-    const name = `expand ${annotationsCount} comments`;
-    const commentArrowComponent = expanded ? <ChevronUp /> : <ChevronDown />;
-
-    return <span className="document-list-comments-indicator">
-      {annotationsCount > 0 &&
-        <Button
-          classNames={['cf-btn-link']}
-          href="#"
-          ariaLabel={name}
-          name={name}
-          id={`expand-${docId}-comments-button`}
-          onClick={this.toggleComments}>
-          {annotationsCount}
-          {commentArrowComponent}
-        </Button>
-      }
-    </span>;
-  }
-}
-
-const mapStateToProps = (state, ownProps) => {
-  const doc = state.documents[ownProps.docId];
-
-  return {
-    docId: doc.id,
-    expanded: doc.listComments,
-    annotationsCount: _.size(makeGetAnnotationsByDocumentId(state)(ownProps.docId))
-  };
-};
-
-const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({
-    handleToggleCommentOpened
-  }, dispatch)
+/**
+ * Comment Indicator Component
+ * @param {Object} props -- Contains the annotation count and expanded state
+ */
+export const CommentIndicator = ({ annotationsCount, expanded, docId, toggleComment }) => (
+  <span className="document-list-comments-indicator">
+    {annotationsCount > 0 &&
+      <Button
+        classNames={['cf-btn-link']}
+        href="#"
+        ariaLabel={`expand ${annotationsCount} comments`}
+        name={`expand ${annotationsCount} comments`}
+        id={`expand-${docId}-comments-button`}
+        onClick={() => toggleComment(docId, expanded)}
+      >
+        {annotationsCount}
+        {expanded ? <ChevronUp /> : <ChevronDown />}
+      </Button>
+    }
+  </span>
 );
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CommentIndicator);
+CommentIndicator.propTypes = {
+  annotationsCount: PropTypes.number,
+  expanded: PropTypes.bool,
+  docId: PropTypes.string,
+  toggleComment: PropTypes.func
+};

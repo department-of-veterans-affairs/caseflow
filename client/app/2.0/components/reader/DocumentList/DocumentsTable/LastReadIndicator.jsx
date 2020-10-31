@@ -1,24 +1,25 @@
+// External Dependencies
 import React from 'react';
-import { connect } from 'react-redux';
-import { rightTriangle } from '../components/RenderFunctions';
+import PropTypes from 'prop-types';
 
-class LastReadIndicator extends React.PureComponent {
-  render() {
-    if (!this.props.shouldShow) {
-      return null;
-    }
+// Local Dependencies
+import { rightTriangle } from 'app/components/RenderFunctions';
 
-    return <span
-      id="read-indicator"
-      ref={this.props.getRef}
-      aria-label="Most recently read document indicator">
-      {rightTriangle()}
-    </span>;
-  }
-}
+/**
+ * Last Read Document Indicator component
+ * @param {Object} props -- Contains the React ref and details about the last read document
+ */
+export const LastReadIndicator = ({ lastReadRef, pdfList, docId }) => pdfList.lastReadDocId === docId && (
+  <span
+    id="read-indicator"
+    ref={lastReadRef}
+    aria-label="Most recently read document indicator">
+    {rightTriangle()}
+  </span>
+);
 
-const lastReadIndicatorMapStateToProps = (state, ownProps) => ({
-  shouldShow: state.documentList.pdfList.lastReadDocId === ownProps.docId
-});
-
-export default connect(lastReadIndicatorMapStateToProps)(LastReadIndicator);
+LastReadIndicator.propTypes = {
+  lastReadRef: PropTypes.element,
+  pdfList: PropTypes.object,
+  docId: PropTypes.string
+};
