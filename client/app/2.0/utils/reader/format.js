@@ -1,10 +1,30 @@
 // External Dependencies
 import moment from 'moment';
-import { compact } from 'lodash';
+import { sortBy, compact } from 'lodash';
 
 // Local Dependencies
 import { formatNameShort } from 'app/util/FormatUtil';
-import { CACHE_TIMEOUT_HOURS, CATEGORIES } from 'store/constants/reader';
+import { documentCategories, CACHE_TIMEOUT_HOURS, CATEGORIES } from 'store/constants/reader';
+import { categoryFieldNameOfCategoryName } from 'app/reader/utils';
+
+/**
+ * Helper Method to sort the Categories of a document
+ * @param {Object} document -- Document object from the store
+ */
+export const sortCategories = (filtered, document) => {
+  // Determine whether the categories should be filtered
+  const categories = filtered ?
+    documentCategories.filter((_, name) => document[categoryFieldNameOfCategoryName(name)]) :
+    documentCategories;
+
+  // Return the sorted categories
+  return sortBy(categories, 'renderOrder');
+};
+
+/**
+ * This is a dummy method that will be replaced in a later part of the stack
+ */
+export const formatDocumentRows = () => [];
 
 /**
  * Helper Method to Format the Rows for the comments table
