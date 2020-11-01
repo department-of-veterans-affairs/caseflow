@@ -1,9 +1,27 @@
 // External Dependencies
 import moment from 'moment';
+import { compact } from 'lodash';
 
 // Local Dependencies
 import { formatNameShort } from 'app/util/FormatUtil';
 import { CACHE_TIMEOUT_HOURS, CATEGORIES } from 'store/constants/reader';
+
+/**
+ * Helper Method to format the message for the filters in the document list header
+ * @param {Object} tag -- The tags being filtered
+ * @param {Object} category -- The category being filtered
+ * @returns {string} -- The formatted filter message
+ */
+export const formatFilters = (tag, category) => {
+  // Get the count of categories
+  const catCount = compact(Object.values(category)).length;
+
+  // Get the count of tags
+  const tagCount = compact(Object.values(tag)).length;
+
+  // Return the messages
+  return compact([catCount && `Categories (${catCount})`, tagCount && `Issue tags (${tagCount})`]).join(', ');
+};
 
 /**
  * Helper Method to format the redirect text in the `Back to Queue Link`

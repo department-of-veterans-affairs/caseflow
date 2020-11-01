@@ -4,7 +4,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 
 // Local Dependencies
 import { queueLinkStyles } from 'styles/reader/DocumentList';
-import { formatRedirectText } from 'utils/format';
+import { formatRedirectText } from 'utils/reader';
 
 /**
  * Queue Link Component
