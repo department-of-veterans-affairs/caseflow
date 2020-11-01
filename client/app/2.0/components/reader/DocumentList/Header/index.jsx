@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 
 // Local Dependencies
 import { setSearch, clearSearch } from 'app/reader/DocumentList/DocumentListActions';
-import { recordSearch } from 'utils/search';
+import { recordSearch } from 'utils/reader';
 
 // Additional Components
 import SearchBar from 'app/components/SearchBar';
