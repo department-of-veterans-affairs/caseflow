@@ -104,3 +104,6 @@ export const DOCUMENTS_OR_COMMENTS_ENUM = {
 // Rotation Constants
 export const ROTATION_INCREMENTS = 90;
 export const COMPLETE_ROTATION = 360;
+
+// Set the cache timeout
+export const CACHE_TIMEOUT_HOURS = 3;
