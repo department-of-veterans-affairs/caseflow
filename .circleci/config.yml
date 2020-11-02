@@ -184,7 +184,7 @@ jobs:
 
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.10
-    parallelism: 15
+    parallelism: 12
     resource_class: large
     steps:
       - attach_workspace:
