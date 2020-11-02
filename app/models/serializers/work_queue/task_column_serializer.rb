@@ -248,6 +248,14 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
+  attribute :latest_informal_hearing_presentation_task do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name, Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name]
+
+    if serialize_attribute?(params, columns)
+      object.appeal.latest_informal_hearing_presentation_task
+    end
+  end
+
   # UNUSED
 
   attribute :assignee_name do
