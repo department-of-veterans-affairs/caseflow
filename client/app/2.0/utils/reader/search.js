@@ -38,14 +38,11 @@ export const typeContainsString = (searchQuery, doc) => (doc.type.toLowerCase().
  * @param {Object} doc -- Contains the ID of the document to check comments
  * @returns {boolean} -- Returns whether the comment contains the search string
  */
-export const commentContainsString = (searchQuery, payload, doc) => {
-  console.log('PAYLOAD: ', payload);
-
-};
-//  payload.annotations.filter(note => note.documentId === doc.id).
-//   reduce((acc, annotation) =>
-//     acc || annotation.comment.toLowerCase().includes(searchQuery),
-//   false);
+export const commentContainsString = (searchQuery, payload, doc) =>
+  payload.annotations.filter((note) => note.documentId === doc.id).
+    reduce((acc, annotation) =>
+      acc || annotation.comment.toLowerCase().includes(searchQuery),
+    false);
 
 /**
  * Helper Method that checks if a comment contains the given search word

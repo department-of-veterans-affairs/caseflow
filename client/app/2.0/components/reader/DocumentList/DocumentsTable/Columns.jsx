@@ -8,7 +8,7 @@ import { formatDateStr } from 'app/util/DateUtil';
 import Button from 'app/components/Button';
 import DropdownFilter from 'app/components/DropdownFilter';
 import ViewableItemLink from 'app/components/ViewableItemLink';
-import Highlight from 'app/components/Highlight';
+import { Highlight } from 'components/reader/DocumentList/Highlight';
 import FilterIcon from 'app/components/FilterIcon';
 import { DoubleArrow } from 'app/components/RenderFunctions';
 
@@ -124,13 +124,18 @@ ReceiptDateHeader.propTypes = {
  * Receipt Date Value for Receipt Date Column in Documents table
  * @param {Object} doc -- The document for which to display the receipt date
  */
-export const receiptDateValue = (doc) => (
+export const ReceiptDateCell = ({ doc, filterCriteria }) => (
   <span className="document-list-receipt-date">
-    <Highlight>
+    <Highlight searchQuery={filterCriteria.searchQuery}>
       {formatDateStr(doc.receivedAt)}
     </Highlight>
   </span>
 );
+
+ReceiptDateCell.propTypes = {
+  filterCriteria: PropTypes.object,
+  doc: PropTypes.object,
+};
 
 /**
  * Document Type Header Component
@@ -164,7 +169,7 @@ TypeHeader.propTypes = {
  * Document Type Column component
  * @param {Object} props -- Contains the document and functions to navigate
  */
-export const typeValue = ({ doc, setPdf, documentPathBase }) => (
+export const TypeCell = ({ doc, setPdf, documentPathBase, filterCriteria }) => (
   <div>
     <ViewableItemLink
       boldCondition={!doc.opened_by_current_user}
@@ -174,19 +179,20 @@ export const typeValue = ({ doc, setPdf, documentPathBase }) => (
         'aria-label': doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')
       }}
     >
-      <Highlight>
+      <Highlight searchQuery={filterCriteria.searchQuery}>
         {doc.type}
       </Highlight>
     </ViewableItemLink>
     {doc.description && (
       <p className="document-list-doc-description">
-        <Highlight>{doc.description}</Highlight>
+        <Highlight searchQuery={filterCriteria.searchQuery}>{doc.description}</Highlight>
       </p>
     )}
   </div>
 );
 
-typeValue.propTypes = {
+TypeCell.propTypes = {
+  filterCriteria: PropTypes.object,
   doc: PropTypes.object,
   documentPathBase: PropTypes.string,
   setPdf: PropTypes.func
@@ -198,7 +204,7 @@ typeValue.propTypes = {
  */
 export const TagHeader = ({
   pdfList,
-  docFilterCriteria,
+  filterCriteria,
   tagFilterRef,
   toggleFilter,
   clearTagFilters,
@@ -212,21 +218,21 @@ export const TagHeader = ({
       label="Filter by tag"
       idPrefix="tag"
       getRef={tagFilterRef}
-      selected={pdfList?.dropdowns?.tag || docFilterCriteria?.tag}
+      selected={pdfList?.dropdowns?.tag || filterCriteria?.tag}
       handleActivate={toggleFilter}
     />
     {pdfList?.dropdowns?.tag && (
       <DropdownFilter
         clearFilters={clearTagFilters}
         name="tag"
-        isClearEnabled={docFilterCriteria?.tag}
+        isClearEnabled={filterCriteria?.tag}
         handleClose={toggleFilter}
         addClearFiltersRow
       >
         <TagPicker
           {...props}
           tags={pdfViewer.tagOptions}
-          tagToggleStates={docFilterCriteria?.tag}
+          tagToggleStates={filterCriteria?.tag}
           handleTagToggle={setTagFilter}
         />
       </DropdownFilter>
@@ -236,7 +242,7 @@ export const TagHeader = ({
 
 TagHeader.propTypes = {
   pdfList: PropTypes.object,
-  docFilterCriteria: PropTypes.object,
+  filterCriteria: PropTypes.object,
   pdfViewer: PropTypes.object,
   tagFilterRef: PropTypes.element,
   toggleFilter: PropTypes.func,
@@ -248,12 +254,12 @@ TagHeader.propTypes = {
  * Document Tag Column component
  * @param {Object} props -- Contains the document tags
  */
-export const tagValue = ({ tags }) => (
+export const TagCell = ({ tags, filterCriteria }) => (
   <div className="document-list-issue-tags">
     {tags && tags.map((tag) =>
       <div className="document-list-issue-tag"
         key={tag.id}>
-        <Highlight>
+        <Highlight searchQuery={filterCriteria.searchQuery}>
           {tag.text}
         </Highlight>
       </div>
@@ -261,7 +267,8 @@ export const tagValue = ({ tags }) => (
   </div>
 );
 
-tagValue.propTypes = {
+TagCell.propTypes = {
+  filterCriteria: PropTypes.object,
   tags: PropTypes.arrayOf(PropTypes.object)
 };
 
@@ -279,7 +286,7 @@ export const CommentHeader = () => (
 export const documentHeaders = ({ lastReadIndicatorRef, ...props }) => [
   {
     cellClass: 'last-read-column',
-    valueFunction: (doc) => <LastReadIndicator docId={doc.id} getRef={lastReadIndicatorRef} />
+    valueFunction: (doc) => <LastReadIndicator docId={doc.id} getRef={lastReadIndicatorRef} {...props} />
   },
   {
     cellClass: 'categories-column',
@@ -289,17 +296,17 @@ export const documentHeaders = ({ lastReadIndicatorRef, ...props }) => [
   {
     cellClass: 'receipt-date-column',
     header: <ReceiptDateHeader {...props} />,
-    valueFunction: receiptDateValue
+    valueFunction: (doc) => <ReceiptDateCell doc={doc} {...props} />
   },
   {
     cellClass: 'doc-type-column',
     header: <TypeHeader {...props} />,
-    valueFunction: typeValue
+    valueFunction: (doc) => <TypeCell doc={doc} {...props} />
   },
   {
     cellClass: 'tags-column',
     header: <TagHeader {...props} />,
-    valueFunction: tagValue
+    valueFunction: (doc) => <TagCell doc={doc} {...props} />
   },
   {
     cellClass: 'comments-column',

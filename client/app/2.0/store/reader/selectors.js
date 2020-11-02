@@ -24,15 +24,6 @@ export const documentState = (state) => state.reader.documents.list;
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- The Editing Annotation State
  */
-export const editingAnnotationState = (state) => {
-  console.log('EDITING: ', current(state));
-};
-
-/**
- * Selector for the Editing Annotation State
- * @param {Object} state -- The current Redux Store state
- * @returns {Object} -- The Editing Annotation State
- */
 export const pendingEditingAnnotationState = (state) => state.reader.annotationLayer.pendingEditingAnnotations;
 
 /**
@@ -87,10 +78,8 @@ export const selectedIndexState = (state) => state.searchAction.matchIndex;
 /**
  * Filtered Documents state
  */
-export const filteredDocuments = createSelector(
-  [filteredDocIdState, documentState],
-  (filteredIds, docs) => filteredIds.length ? filteredIds.reduce((list, id) => ({ ...list, [id]: docs[id] }), {}) : docs
-);
+export const filteredDocuments = ({ reader }) =>
+  reader.documentList.filteredDocIds.reduce((list, id) => ({ ...list, [id]: reader.documents.list[id] }), {});
 
 /**
  * Document List Filtered State
@@ -184,35 +173,45 @@ export const documentAnnotations = (state) => {
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- The Documents List State
  */
-export const documentListScreen = (state) => ({
-  // annotationsPerDocument: annotationStatePerDocument(state.reader),
-  documentList: state.reader.documentList,
-  documentAnnotations: documentAnnotations(state),
-  documentsView: documentsView(
-    Object.values(state.reader.documents.list),
-    state.reader.documentList.docFilterCriteria,
-    state.reader.documentList.viewingDocumentsOrComments
-  ),
-  filteredDocIds: filteredDocIdState(state),
-  searchCategoryHighlights: state.reader.documentList.searchCategoryHighlights,
-  loadedAppealId: state.reader.pdfViewer.loadedAppealId,
-  tagOptions: state.reader.pdfViewer.tagOptions,
-  filterCriteria: state.reader.documentList.docFilterCriteria,
-  documents: filteredDocuments(state),
-  caseSelectedAppeal: state.reader.caseSelect.selectedAppeal,
-  manifestVbmsFetchedAt: state.reader.documentList.manifestVbmsFetchedAt,
-  manifestVvaFetchedAt: state.reader.documentList.manifestVvaFetchedAt,
-  queueRedirectUrl: state.reader.documentList.queueRedirectUrl,
-  queueTaskType: state.reader.documentList.queueTaskType,
-  documentFilters: state.reader.documentList.pdfList.filters,
-  storeDocuments: state.reader.documents.list,
-  isPlacingAnnotation: state.reader.annotationLayer.isPlacingAnnotation,
-  appeal: loadAppeal(
-    state.reader.caseSelect.assignments,
-    state.reader.pdfViewer.loadedAppealId,
-    state.reader.pdfViewer.loadedAppeal
-  )
-});
+export const documentListScreen = (state) => {
+  // Set the filtered documents
+  const documents = filteredDocuments(state);
+
+  // Calculate the number of documents
+  const docsCount = state.reader.documentList.filteredDocIds ?
+    state.reader.documentList.filteredDocIds.length :
+    Object.values(documents).length;
+
+  return {
+    documents,
+    docsCount,
+    storeDocuments: state.reader.documents.list,
+    documentList: state.reader.documentList,
+    documentAnnotations: documentAnnotations(state),
+    documentsView: documentsView(
+      Object.values(documents),
+      state.reader.documentList.docFilterCriteria,
+      state.reader.documentList.viewingDocumentsOrComments
+    ),
+    caseSelectedAppeal: state.reader.caseSelect.selectedAppeal,
+    loadedAppealId: state.reader.pdfViewer.loadedAppealId,
+    tagOptions: state.reader.pdfViewer.tagOptions,
+    filterCriteria: state.reader.documentList.docFilterCriteria,
+    filteredDocIds: state.reader.documentList.filteredDocIds,
+    searchCategoryHighlights: state.reader.documentList.searchCategoryHighlights,
+    manifestVbmsFetchedAt: state.reader.documentList.manifestVbmsFetchedAt,
+    manifestVvaFetchedAt: state.reader.documentList.manifestVvaFetchedAt,
+    queueRedirectUrl: state.reader.documentList.queueRedirectUrl,
+    queueTaskType: state.reader.documentList.queueTaskType,
+    documentFilters: state.reader.documentList.pdfList.filters,
+    isPlacingAnnotation: state.reader.annotationLayer.isPlacingAnnotation,
+    appeal: loadAppeal(
+      state.reader.caseSelect.assignments,
+      state.reader.pdfViewer.loadedAppealId,
+      state.reader.pdfViewer.loadedAppeal
+    )
+  };
+};
 
 /**
  * State for the Document Screen

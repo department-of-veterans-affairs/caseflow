@@ -15,9 +15,10 @@ import {
   ClaimsFolderDetails,
   DocumentListHeader,
   LastRetrievalAlert,
-  LastRetrievalInfo
+  LastRetrievalInfo,
+  NoSearchResults,
+  DocumentsTable
 } from 'components/reader/DocumentList';
-import DocumentsTable from 'app/reader/DocumentsTable';
 import CommentsTable from 'app/reader/CommentsTable';
 
 const DocumentList = (props) => {
@@ -48,6 +49,8 @@ const DocumentList = (props) => {
           <ClaimsFolderDetails {...state} />
           <LastRetrievalAlert {...state.documentList} appeal={state.appeal} />
           <DocumentListHeader {...state} {...actions} />
+          <NoSearchResults {...state} {...actions} show={state.documentsView === 'none'} />
+          <DocumentsTable {...state} {...actions} show={state.documentsView === 'documents'} />
         </div>
       </AppSegment>
       <LastRetrievalInfo {...state.documentList} />

@@ -9,12 +9,15 @@ import { sortCategories } from 'utils/reader';
  * @param {Object} props -- Contains search category highlights and the document
  */
 export const CategoryIcons = ({ searchCategoryHighlights, doc }) => {
+  console.log("DOC: ", doc)
   // Sort the Categories by the document and apply a filter
   const categories = sortCategories(true, doc);
+  console.log("CATEGORIES: ", categories)
 
   return categories.length && (
     <ul className="cf-document-category-icons" aria-label="document categories">
       {categories.map((category) => {
+        console.log("CAT: ", category)
         // Set the highlighted value
         const highlighted = searchCategoryHighlights[category.humanName.split(' ')[0].toLowerCase()];
 

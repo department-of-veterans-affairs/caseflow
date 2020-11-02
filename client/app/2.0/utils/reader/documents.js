@@ -43,18 +43,21 @@ export const documentsView = (documents, filter, view) => {
  * @param {array} annotationsPerDocument -- The list of comments for each document
  * @returns {array} -- The list of comment rows for the table
  */
-export const documentRows = (documents, annotationsPerDocument) => documents.reduce((acc, doc) => {
-  acc.push(doc);
-  const docHasComments = annotationsPerDocument[doc.id].length;
+export const documentRows = (documents, annotations) => Object.values(documents).reduce((acc, doc) => {
+  // acc.push(doc);
+  const [docWithComments] = annotations.filter((note) => note.documentId === doc.id);
 
-  if (docHasComments && doc.listComments) {
-    acc.push({
-      ...doc,
-      isComment: true
-    });
+  if (docWithComments && doc.listComments) {
+    return [
+      ...acc,
+      {
+        ...doc,
+        isComment: true
+      }
+    ];
   }
 
-  return acc;
+  return [...acc, doc];
 }, []);
 
 /**
@@ -62,7 +65,7 @@ export const documentRows = (documents, annotationsPerDocument) => documents.red
  * @param {Object} document -- The Document to get categories
  */
 export const categoriesOfDocument = (document) =>
-  sortBy(documentCategories.filter((category, categoryName) =>
+  sortBy(Object.keys(documentCategories).filter((categoryName) =>
     document[formatCategoryName(categoryName)]), 'renderOrder');
 
 /**

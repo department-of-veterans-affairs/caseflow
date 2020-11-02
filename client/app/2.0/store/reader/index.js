@@ -1,9 +1,6 @@
 // External Dependencies
 import { combineReducers } from 'redux';
 
-// Local dependencies
-import { timeFunction } from 'app/util/PerfDebug';
-
 // Reducers
 import pdf from 'store/reader/pdf';
 import pdfSearch from 'store/reader/pdfSearch';
@@ -29,7 +26,4 @@ const readerReducer = combineReducers({
 /**
  * Default export wraps the reducer in an HOC for capturing metrics
  */
-export default timeFunction(
-  readerReducer,
-  (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
-);
+export default readerReducer;
