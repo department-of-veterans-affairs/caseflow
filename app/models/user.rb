@@ -281,8 +281,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   def security_profile
     BGSService.new.get_security_profile(
       username: css_id,
-      station_id: station_id,
-      application: "CASEFLOW"
+      station_id: station_id
     )
   rescue BGS::ShareError, BGS::PublicError
     {}

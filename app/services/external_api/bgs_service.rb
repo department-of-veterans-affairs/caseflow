@@ -228,7 +228,7 @@ class ExternalApi::BGSService
     end
   end
 
-  def get_security_profile(username:, station_id:, application: "CASEFLOW")
+  def get_security_profile(username:, station_id:)
     DBService.release_db_connections
     MetricsService.record("BGS: get security profile",
                           service: :bgs,

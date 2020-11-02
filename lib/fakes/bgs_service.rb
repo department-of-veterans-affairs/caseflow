@@ -360,7 +360,7 @@ class Fakes::BGSService
     ]
   end
 
-  def get_security_profile(username:, station_id:, application: "CASEFLOW")
+  def get_security_profile(username:, station_id:)
     if username == "BVAAABSHIRE"
       { job_title: "Senior Veterans Service Representative" }
     else
