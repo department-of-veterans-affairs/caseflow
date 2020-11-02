@@ -359,6 +359,10 @@ FactoryBot.define do
         parent { FactoryBotHelper.find_first_task_or_create(appeal, DistributionTask) }
       end
 
+      factory :send_cavc_remand_processed_letter_task, class: SendCavcRemandProcessedLetterTask do
+        parent { FactoryBotHelper.find_first_task_or_create(appeal, CavcTask) }
+      end
+
       factory :hearing_task, class: HearingTask do
         assigned_to { Bva.singleton }
         parent { appeal.root_task || create(:root_task, appeal: appeal) }
