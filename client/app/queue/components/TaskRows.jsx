@@ -196,7 +196,7 @@ class TaskRows extends React.PureComponent {
       <React.Fragment key={`${task.uniqueId} fragment`}>
         {task.instructions.map((text) => (
           <React.Fragment key={`${task.uniqueId} div`}>
-            <div key={`${task.uniqueId} instructions`} style={{ marginBottom: '2.4rem' }}>
+            <div key={`${task.uniqueId} instructions`} style={{ marginBottom: '2.4rem' }} className="task-instructions">
               <ReactMarkdown>{formatBreaks(text)}</ReactMarkdown>
             </div>
           </React.Fragment>
