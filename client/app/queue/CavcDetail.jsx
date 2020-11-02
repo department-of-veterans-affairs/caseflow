@@ -7,7 +7,7 @@ import { detailListStyling, getDetailField } from './Detail';
 import { DateString } from '../util/DateUtil';
 import BareList from '../components/BareList';
 import COPY from '../../COPY';
-import CAVC_REMAND_SUBTYPES from '../../constants/CAVC_REMAND_SUBTYPES';
+import CAVC_REMAND_SUBTYPE_NAMES from '../../constants/CAVC_REMAND_SUBTYPE_NAMES';
 
 const CavcDetail = (props) => {
   const {
@@ -21,17 +21,21 @@ const CavcDetail = (props) => {
     mandate_date: mandateDate
   } = props;
 
-  const details = [{
-    label: COPY.CASE_DETAILS_CAVC_DOCKET_NUMBER,
-    value: docketNumber
-  }];
+  const details = [];
 
-  if (hasAttorney) {
+  if (docketNumber) {
+    details.push({
+      label: COPY.CASE_DETAILS_CAVC_DOCKET_NUMBER,
+      value: docketNumber
+    });
+  }
+
+  if (hasAttorney === true) {
     details.push({
       label: COPY.CASE_DETAILS_CAVC_ATTORNEY,
       value: 'Yes'
     });
-  } else {
+  } else if (hasAttorney === false) {
     details.push({
       label: COPY.CASE_DETAILS_CAVC_ATTORNEY,
       value: 'No'
@@ -55,8 +59,7 @@ const CavcDetail = (props) => {
   if (type && procedure !== 'death_dismissal' && procedure !== 'straight_reversal') {
     details.push({
       label: COPY.CASE_DETAILS_CAVC_TYPE,
-      value: (type === CAVC_REMAND_SUBTYPES.jmr) ? 'Joint Motion for Remand' :
-        (type === CAVC_REMAND_SUBTYPES.jmpr) ? 'Joint Motion Partial Remand' : 'Memorandum Decision on Remand'
+      value: CAVC_REMAND_SUBTYPE_NAMES[type]
     });
   }
 
