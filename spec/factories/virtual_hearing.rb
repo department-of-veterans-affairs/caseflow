@@ -28,7 +28,7 @@ FactoryBot.define do
     trait :initialized do
       alias_name { rand(1..9).to_s[0..6] }
       conference_id { rand(1..9) }
-      before(:create, &:generate_conference_pins)
+      after(:build, &:generate_conference_pins)
     end
 
     trait :previously_central do
