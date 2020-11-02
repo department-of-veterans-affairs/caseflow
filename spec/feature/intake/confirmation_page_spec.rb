@@ -18,7 +18,7 @@ feature "Intake Confirmation Page", :postgres do
           visit "/intake"
           click_intake_continue
           click_intake_add_issue
-          
+
           # Add only one ineligible issue, so there will be no eligible issues, and no end product
           add_intake_nonrating_issue(date: before_ama_date.strftime("%m/%d/%Y"))
           add_untimely_exemption_response("No")
