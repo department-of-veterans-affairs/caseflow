@@ -14,11 +14,17 @@ TMP_RSPEC_XML_REPORT = "tmp/rspec.xml"
 FINAL_RSPEC_XML_REPORT = "~/test-results/rspec/rspec.xml"
 
 KnapsackPro::Adapters::RSpecAdapter.bind
-#KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
-#  if File.exist?(TMP_RSPEC_XML_REPORT)
-#    FileUtils.mv(TMP_RSPEC_XML_REPORT, FINAL_RSPEC_XML_REPORT)
-#  end
-#end
+KnapsackPro::Hooks::Queue.after_subset_queue do |queue_id, subset_queue_id|
+  if File.exist?(TMP_RSPEC_XML_REPORT)
+    FileUtils.mv(TMP_RSPEC_XML_REPORT, FINAL_RSPEC_XML_REPORT)
+  end
+end
+
+KnapsackPro::Hooks::Queue.after_queue do |queue_id|
+  if File.exist?(FINAL_RSPEC_XML_REPORT) && ENV['CIRCLE_TEST_REPORTS']
+    FileUtils.cp(FINAL_RSPEC_XML_REPORT, "#{ENV['CIRCLE_TEST_REPORTS']}/rspec.xml")
+  end
+end
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
