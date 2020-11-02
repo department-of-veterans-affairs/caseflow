@@ -224,14 +224,15 @@ const documentsSlice = createSlice({
         state.list[action.payload.doc.id].tags[action.payload.tag.id].pendingRemoval = false;
       }).
       addCase(loadDocuments.fulfilled, (state, action) => {
-        state.list = action.payload.appealDocuments.map((doc) => ({
+        state.list = action.payload.appealDocuments.reduce((list, doc) => ({
+          ...list,
           [doc.id]: {
             ...doc,
             receivedAt: doc.received_at,
             listComments: false,
             wasUpdated: !isNil(doc.previous_document_version_id) && !doc.opened_by_current_user
           }
-        }));
+        }), {});
       }).
       addCase(handleCategoryToggle.fulfilled, {
         reducer: (state, action) => {

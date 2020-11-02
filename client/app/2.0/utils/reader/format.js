@@ -65,7 +65,7 @@ export const formatFilters = (tag, category) => {
  */
 export const formatRedirectText = ({ queueTaskType, veteranFullName, vbmsId }) => {
   // Set the Base text
-  const text = '&lt; Back to ';
+  const text = '< Back to ';
 
   // Set the text to your cases if there is no task type
   if (!queueTaskType) {

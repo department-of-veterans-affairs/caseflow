@@ -51,7 +51,7 @@ export const initialState = {
   queueTaskType: getQueueTaskType(),
   viewingDocumentsOrComments: DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
   searchCategoryHighlights: {},
-  filteredDocIds: null,
+  filteredDocIds: [],
   docFilterCriteria: {
     sort: {
       sortBy: 'receivedAt',

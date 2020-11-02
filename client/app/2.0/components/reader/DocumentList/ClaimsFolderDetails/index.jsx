@@ -18,14 +18,14 @@ export const ClaimsFolderDetails = ({ appeal, documents }) => {
   const noAppeal = isEmpty(appeal);
 
   // Set the Count of documents viewed
-  const docsViewedCount = documents.filter((doc) => doc.opened_by_current_user).length;
+  const docsViewedCount = Object.keys(documents).filter((doc) => documents[doc].opened_by_current_user).length;
 
   return (
     <div>
       <div>
         {!noAppeal && <h1 className="cf-push-left">{appeal.veteran_full_name}'s Claims Folder</h1>}
         <p className="cf-push-right" {...viewedParagraphStyles}>
-          You've viewed {docsViewedCount} out of {documents.length} documents
+          You've viewed {docsViewedCount} out of {Object.values(documents).length} documents
         </p>
       </div>
       <Accordion style="bordered" accordion={false} defaultActiveKey={['Claims Folder details']}>
@@ -44,5 +44,5 @@ export const ClaimsFolderDetails = ({ appeal, documents }) => {
 
 ClaimsFolderDetails.propTypes = {
   appeal: PropTypes.object,
-  documents: PropTypes.array
+  documents: PropTypes.object
 };

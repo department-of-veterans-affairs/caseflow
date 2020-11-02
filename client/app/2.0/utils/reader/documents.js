@@ -1,5 +1,5 @@
 // External Dependencies
-import { sortBy, round } from 'lodash';
+import { sortBy, round, isEmpty } from 'lodash';
 
 // Local Dependencies
 import { loadDocuments } from 'store/reader/documents';
@@ -12,7 +12,7 @@ import {
   INTERACTION_TYPES
 } from 'store/constants/reader';
 import { formatCategoryName } from 'utils/reader/format';
-import { setZoomLevel } from 'store/reader/pdfViewer';
+import { fetchAppealDetails, setZoomLevel } from 'store/reader/pdfViewer';
 import { stopPlacingAnnotation } from 'store/reader/annotationLayer';
 
 /**
@@ -159,10 +159,15 @@ export const fitToScreen = (scale, zoomLevel, dispatch) => {
  * @param {string} loadedId -- Id of the Appeal in the Store
  * @param {string} vacolsId -- The New Appeal ID
  */
-export const fetchDocuments = (loadedId, vacolsId, dispatch) => () => {
+export const fetchDocuments = ({ loadedAppealId, vacolsId, appeal }, dispatch) => () => {
   // Load the Data Needed by the Documents List
-  if (loadedId !== vacolsId) {
+  if (loadedAppealId !== vacolsId) {
     // Load the new Documents
     dispatch(loadDocuments(vacolsId));
+  }
+
+  // Determine whether to load the appeal details
+  if (isEmpty(appeal) || ((appeal.vacols_id || appeal.external_id) !== vacolsId)) {
+    dispatch(fetchAppealDetails(vacolsId));
   }
 };

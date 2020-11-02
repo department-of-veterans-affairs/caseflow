@@ -10,14 +10,14 @@ import { escapeRegExp, loadAppeal, documentsView } from 'utils/reader';
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- The Filtered Doc IDs
  */
-export const filteredDocIdState = (state) => state.documentList.filteredDocIds;
+export const filteredDocIdState = (state) => state.reader.documentList.filteredDocIds;
 
 /**
  * Selector for the Documents
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- The Documents
  */
-export const documentState = (state) => state.documents;
+export const documentState = (state) => state.reader.documents.list;
 
 /**
  * Selector for the Editing Annotation State
@@ -87,7 +87,7 @@ export const selectedIndexState = (state) => state.searchAction.matchIndex;
  */
 export const filteredDocuments = createSelector(
   [filteredDocIdState, documentState],
-  (filteredDocIds, allDocs) => filteredDocIds ? filteredDocIds.map((docId) => allDocs[docId]) : values(allDocs)
+  (filteredIds, docs) => filteredIds.length ? filteredIds.reduce((list, id) => ({ ...list, [id]: docs[id] }), {}) : docs
 );
 
 /**
@@ -182,11 +182,12 @@ export const documentListScreen = (state) => ({
     state.reader.documentList.docFilterCriteria,
     state.reader.documentList.viewingDocumentsOrComments
   ),
+  filteredDocIds: filteredDocIdState(state),
   searchCategoryHighlights: state.reader.documentList.searchCategoryHighlights,
   loadedAppealId: state.reader.pdfViewer.loadedAppealId,
   tagOptions: state.reader.pdfViewer.tagOptions,
   filterCriteria: state.reader.documentList.docFilterCriteria,
-  documents: filteredDocuments(state.reader),
+  documents: filteredDocuments(state),
   caseSelectedAppeal: state.reader.caseSelect.selectedAppeal,
   manifestVbmsFetchedAt: state.reader.documentList.manifestVbmsFetchedAt,
   manifestVvaFetchedAt: state.reader.documentList.manifestVvaFetchedAt,

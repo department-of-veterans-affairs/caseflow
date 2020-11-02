@@ -13,12 +13,12 @@ import Button from 'app/components/Button';
  * Filter Message Component
  * @param {Object} props -- Props include filter criteria
  */
-export const FilterMessage = ({ docFilterCriteria }) => {
+export const FilterMessage = ({ filterCriteria }) => {
   // Create the Dispatcher
   const dispatch = useDispatch();
 
   // Get the filtered categories
-  const filteredCategories = formatFilters(docFilterCriteria.tag, docFilterCriteria.category);
+  const filteredCategories = formatFilters(filterCriteria.tag, filterCriteria.category);
 
   return (
     <p className={filterMessageClass(filteredCategories)}>
@@ -36,5 +36,5 @@ export const FilterMessage = ({ docFilterCriteria }) => {
 };
 
 FilterMessage.propTypes = {
-  docFilterCriteria: PropTypes.object,
+  filterCriteria: PropTypes.object,
 };

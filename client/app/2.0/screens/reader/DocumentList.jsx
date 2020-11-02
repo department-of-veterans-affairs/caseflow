@@ -8,11 +8,9 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import { fetchDocuments } from 'utils/reader/documents';
 import { documentListScreen } from 'store/reader/selectors';
 
-import BackToQueueLink from 'app/reader/BackToQueueLink';
+import { QueueLink, ClaimsFolderDetails, DocumentListHeader } from 'components/reader/DocumentList';
 import LastRetrievalAlert from 'app/reader/LastRetrievalAlert';
 import LastRetrievalInfo from 'app/reader/LastRetrievalInfo';
-import DocumentListHeader from 'app/reader/DocumentListHeader';
-import ClaimsFolderDetails from 'app/reader/ClaimsFolderDetails';
 import DocumentsTable from 'app/reader/DocumentsTable';
 import CommentsTable from 'app/reader/CommentsTable';
 
@@ -24,21 +22,18 @@ const DocumentList = ({ match }) => {
   const dispatch = useDispatch();
 
   // Load the Documents
-  useEffect(fetchDocuments(state.loadedAppealId, match.params.vacolsId, dispatch), []);
+  useEffect(fetchDocuments({ ...state, vacolsId: match.params.vacolsId }, dispatch), []);
 
   return (
     <React.Fragment>
       {state.queueRedirectUrl && (
-        <BackToQueueLink {...state} veteranFullName={state.appeal.veteran_full_name} vbmsId={state.appeal.vbms_id} />
+        <QueueLink {...state} veteranFullName={state.appeal.veteran_full_name} vbmsId={state.appeal.vbms_id} />
       )}
       <AppSegment filledBackground>
         <div className="section--document-list">
           <ClaimsFolderDetails {...state} />
           <LastRetrievalAlert {...state} />
-          {/* <DocumentListHeader
-            documents={documents}
-            noDocuments={documentsView === 'none'}
-          /> */}
+          <DocumentListHeader {...state} noDocuments={state.documentsView === 'none'} />
         </div>
       </AppSegment>
       <LastRetrievalInfo />

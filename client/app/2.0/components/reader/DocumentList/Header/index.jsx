@@ -16,12 +16,12 @@ import { FilterMessage } from 'components/reader/DocumentList/Header/FilterMessa
  * Document List Header Component
  * @param {Object} props -- React props include the appeal ID and filter criteria
  */
-export const DocumentListHeader = ({ loadedAppealId, docFilterCriteria, documentList, documents }) => {
+export const DocumentListHeader = ({ loadedAppealId, filterCriteria, filteredDocIds, documents }) => {
   // Create the Dispatcher
   const dispatch = useDispatch();
 
   // Calculate the number of documents
-  const numberOfDocuments = documentList.filteredDocIds ? documentList.filteredDocIds.length : documents.length;
+  const numberOfDocuments = filteredDocIds ? filteredDocIds.length : documents.length;
 
   return (
     <div>
@@ -34,7 +34,7 @@ export const DocumentListHeader = ({ loadedAppealId, docFilterCriteria, document
             recordSearch={(query) => dispatch(recordSearch(loadedAppealId, query))}
             isSearchAhead
             placeholder="Type to search..."
-            value={docFilterCriteria.searchQuery}
+            value={filterCriteria.searchQuery}
             size="small"
             analyticsCategory="Claims Folder"
           />
@@ -44,14 +44,14 @@ export const DocumentListHeader = ({ loadedAppealId, docFilterCriteria, document
         </div>
         <ToggleViewButton />
       </div>
-      <FilterMessage docFilterCriteria={docFilterCriteria} />
+      <FilterMessage filterCriteria={filterCriteria} />
     </div>
   );
 };
 
 DocumentListHeader.propTypes = {
   loadedAppealId: PropTypes.string,
-  docFilterCriteria: PropTypes.object,
+  filterCriteria: PropTypes.object,
   documents: PropTypes.array,
-  documentList: PropTypes.object
+  filteredDocIds: PropTypes.object
 };
