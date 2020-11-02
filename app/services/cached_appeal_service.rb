@@ -144,7 +144,7 @@ class CachedAppealService
     bgs_poa = fetch_bgs_power_of_attorney_by_file_number(appeal.veteran_file_number)
     # both representative_name calls can result in BGS connection error
     bgs_poa&.representative_name || appeal.representative_name
-  rescue Errno::ECONNRESET => error
+  rescue Errno::ECONNRESET, Savon::HTTPError => error
     warning_msgs << "#{appeal.class.name} #{appeal.id}: #{error}" if warning_msgs.count < 100
     nil
   end
