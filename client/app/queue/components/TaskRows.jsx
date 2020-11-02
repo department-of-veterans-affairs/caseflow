@@ -187,16 +187,26 @@ class TaskRows extends React.PureComponent {
 
     // We aren't allowing ReactMarkdown to do full HTML parsing, so we'll convert any `<br>`
     // or newline characters to the Markdown standard of two spaces followed by \n
-    const formatBreaks = (text) => text.replace(/<br>|(?<! {2})\n/g, '  \n');
+    const formatBreaks = (text = '') => {
+      // Somehow the contents are occasionally an array, at least in tests
+      // Here we'll format the individual items, then just join to ensure we return string
+      if (Array.isArray(text)) {
+        return text.map((item) => item.replace(/<br>|(?<! {2})\n/g, '  \n')).join(' ');
+      }
+
+      // Normally this should just be a string
+      return text.replace(/<br>|(?<! {2})\n/g, '  \n');
+    };
 
     // We specify the same 2.4rem margin-bottom as paragraphs to each set of instructions
     // to ensure a consistent margin between instruction content and the "Hide" button
+    const divStyles = { marginBottom: '2.4rem' };
 
     return (
       <React.Fragment key={`${task.uniqueId} fragment`}>
         {task.instructions.map((text) => (
           <React.Fragment key={`${task.uniqueId} div`}>
-            <div key={`${task.uniqueId} instructions`} style={{ marginBottom: '2.4rem' }} className="task-instructions">
+            <div key={`${task.uniqueId} instructions`} style={divStyles} className="task-instructions">
               <ReactMarkdown>{formatBreaks(text)}</ReactMarkdown>
             </div>
           </React.Fragment>
