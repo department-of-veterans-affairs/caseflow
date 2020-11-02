@@ -8,6 +8,7 @@ import { DateString } from '../util/DateUtil';
 import BareList from '../components/BareList';
 import COPY from '../../COPY';
 import CAVC_REMAND_SUBTYPE_NAMES from '../../constants/CAVC_REMAND_SUBTYPE_NAMES';
+import CAVC_DECISION_TYPES from '../../constants/CAVC_DECISION_TYPES';
 
 const CavcDetail = (props) => {
   const {
@@ -56,7 +57,7 @@ const CavcDetail = (props) => {
     });
   }
 
-  if (type && procedure !== 'death_dismissal' && procedure !== 'straight_reversal') {
+  if (type && procedure === CAVC_DECISION_TYPES.remand) {
     details.push({
       label: COPY.CASE_DETAILS_CAVC_TYPE,
       value: CAVC_REMAND_SUBTYPE_NAMES[type]
