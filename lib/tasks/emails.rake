@@ -42,13 +42,13 @@ namespace :emails do
             virtual_hearing: hearing.virtual_hearing
           )
 
-          if email.html_part.present?
-            File.write(
-              Rails.root.join("tmp", "#{func}_#{recipient.title}.html"),
-              email.html_part.body.decoded,
-              mode: "w"
-            )
-          end
+          next if email.html_part.nil?
+
+          File.write(
+            Rails.root.join("tmp", "#{func}_#{recipient.title}.html"),
+            email.html_part.body.decoded,
+            mode: "w"
+          )
         end
       end
     end
