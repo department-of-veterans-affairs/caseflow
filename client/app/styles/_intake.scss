@@ -173,28 +173,21 @@
   }
 
   td {
-    vertical-align: top;
-
     .claim-label-row {
-      height: 37px;
       color: $color-gray-dark;
 
       .claim-label {
-        display: 'inline-block';
-        padding: .5rem 0;
+        display: inline-block;
+        padding: .75rem 0;
       }
 
       .edit-claim-label {
-        display: 'inline-block';
-        float: 'right';
-        width: '140px';
-        padding: '0';
-        margin: '0';
+        float: right;
+        width: 140px;
 
         button {
           padding: 1rem;
           width: 140px;
-          display: block;
         }
       }
     }
