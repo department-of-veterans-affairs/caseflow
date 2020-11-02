@@ -293,26 +293,25 @@ const documentsSlice = createSlice({
           clearSearch.toString(),
           clearAllFilters.toString(),
           loadDocuments.fulfilled.toString()
-        ].includes(action.type), (state, { payload }) => {
+        ].includes(action.type), (state, { payload, ...action }) => {
           // Format the search query
-          const searchQuery = payload.docFilterCriteria.searchQuery.toLowerCase();
+          const searchQuery = action.type === clearSearch.toString() ?
+            '' :
+            payload.docFilterCriteria.searchQuery.toLowerCase();
 
-          // Check whether there is a search query to locate
-          if (searchQuery) {
-            // Loop through all the documents to update the list comments
-            Object.keys(state.list).forEach((docId) => {
+          // Loop through all the documents to update the list comments
+          Object.keys(state.list).forEach((docId) => {
             // Get the Document
-              const doc = state.list[docId];
+            const doc = state.list[docId];
 
-              // Determine whether the comment contains the search query
-              const containsWords = commentContainsWords(searchQuery, state, doc);
+            // Determine whether the comment contains the search query
+            const containsWords = commentContainsWords(searchQuery, payload, doc);
 
-              // Updating the state of all annotations for expanded comments
-              if (containsWords !== doc.listComments) {
-                state.list[doc.id].listComments = containsWords;
-              }
-            });
-          }
+            // Updating the state of all annotations for expanded comments
+            if (containsWords !== doc.listComments) {
+              state.list[doc.id].listComments = containsWords;
+            }
+          });
         });
   }
 });

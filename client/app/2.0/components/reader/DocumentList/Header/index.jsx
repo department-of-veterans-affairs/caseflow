@@ -1,11 +1,6 @@
 // External Dependencies
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
-
-// Local Dependencies
-import { setSearch, clearSearch } from 'app/reader/DocumentList/DocumentListActions';
-import { recordSearch } from 'utils/reader';
 
 // Additional Components
 import SearchBar from 'app/components/SearchBar';
@@ -16,10 +11,7 @@ import { FilterMessage } from 'components/reader/DocumentList/Header/FilterMessa
  * Document List Header Component
  * @param {Object} props -- React props include the appeal ID and filter criteria
  */
-export const DocumentListHeader = ({ loadedAppealId, filterCriteria, filteredDocIds, documents }) => {
-  // Create the Dispatcher
-  const dispatch = useDispatch();
-
+export const DocumentListHeader = ({ filterCriteria, filteredDocIds, documents, search, clearSearch, recordSearch, ...props }) => {
   // Calculate the number of documents
   const numberOfDocuments = filteredDocIds ? filteredDocIds.length : documents.length;
 
@@ -29,9 +21,9 @@ export const DocumentListHeader = ({ loadedAppealId, filterCriteria, filteredDoc
         <div className="search-bar-and-doc-count cf-search-ahead-parent">
           <SearchBar
             id="searchBar"
-            onChange={(value) => dispatch(setSearch(value))}
-            onClearSearch={() => dispatch(clearSearch())}
-            recordSearch={(query) => dispatch(recordSearch(loadedAppealId, query))}
+            onChange={search}
+            onClearSearch={clearSearch}
+            recordSearch={recordSearch}
             isSearchAhead
             placeholder="Type to search..."
             value={filterCriteria.searchQuery}
@@ -42,7 +34,7 @@ export const DocumentListHeader = ({ loadedAppealId, filterCriteria, filteredDoc
             {numberOfDocuments} Documents
           </div>
         </div>
-        <ToggleViewButton />
+        <ToggleViewButton {...props} />
       </div>
       <FilterMessage filterCriteria={filterCriteria} />
     </div>
@@ -53,5 +45,8 @@ DocumentListHeader.propTypes = {
   loadedAppealId: PropTypes.string,
   filterCriteria: PropTypes.object,
   documents: PropTypes.array,
-  filteredDocIds: PropTypes.object
+  filteredDocIds: PropTypes.object,
+  clearSearch: PropTypes.func,
+  recordSearch: PropTypes.func,
+  search: PropTypes.func
 };

@@ -99,16 +99,6 @@ export const setTagFilter = createAction('documentList/setTagFilter');
 export const clearTagFilters = createAction('documentList/clearTagFilters');
 
 /**
- * Dispatcher to Set the Document List Search
- */
-export const setSearch = createAction('documentList/setSearch');
-
-/**
- * Dispatcher to Clear the Document List Search
- */
-export const clearSearch = createAction('documentList/clearSearch');
-
-/**
  * Dispatcher to Clear All Filters
  */
 export const clearAllFilters = createAction('documentList/clearAllFilters');
@@ -178,17 +168,19 @@ const documentListSlice = createSlice({
       },
       prepare: (scrollTop) => ({ payload: { scrollTop } })
     },
-    [setSearch]: {
+    setSearch: {
       reducer: (state, action) => {
-        state.docFilterCriteria.searchQuery = action.payload.searchQuery;
+        state.docFilterCriteria.searchQuery = action.payload.docFilterCriteria.searchQuery;
       },
-      prepare: (searchQuery) => addMetaLabel('clear-tag-filters', { searchQuery })
+      prepare: (searchQuery, annotations, appealDocuments) =>
+        addMetaLabel('clear-tag-filters', { docFilterCriteria: { searchQuery }, annotations, appealDocuments })
     },
-    [clearSearch]: {
+    clearSearch: {
       reducer: (state) => {
         state.docFilterCriteria.searchQuery = '';
       },
-      prepare: () => addMetaLabel('clear-search')
+      prepare: (docFilterCriteria, annotations, appealDocuments) =>
+        addMetaLabel('clear-search', { docFilterCriteria, annotations, appealDocuments })
     },
     [clearAllFilters]: {
       reducer: (state) => {
@@ -200,10 +192,10 @@ const documentListSlice = createSlice({
     },
     setViewingDocumentsOrComments: {
       reducer: (state, action) => {
-        state.viewingDocumentsOrComments = action.payload.documentsOrComments;
+        state.viewingDocumentsOrComments = action.payload.documentsView;
       },
-      prepare: (documentsOrComments) =>
-        addMetaLabel('set-viewing-documents-or-comments', { documentsOrComments }, documentsOrComments)
+      prepare: (documentsView) =>
+        addMetaLabel('set-viewing-documents-or-comments', { documentsView }, documentsView)
     },
     onReceiveManifests: {
       reducer: (state, action) => {
@@ -226,16 +218,16 @@ const documentListSlice = createSlice({
       ).
       addMatcher(
         (action) => [
+          'documentList/setSearch',
+          'documentList/clearSearch',
           onReceiveAnnotations.toString(),
           changeSortState.toString(),
           clearCategoryFilters.toString(),
           setCategoryFilter.toString(),
           setTagFilter.toString(),
           clearTagFilters.toString(),
-          setSearch.toString(),
-          clearSearch.toString(),
           clearAllFilters.toString(),
-          loadDocuments.fulfilled.toString()
+          loadDocuments.fulfilled.toString(),
         ].includes(action.type),
         (state, action) => {
           // If the Action is loading the documents, also update the manifest
@@ -267,7 +259,7 @@ const documentListSlice = createSlice({
             filter((doc) =>
               !activeTagFilters.length ||
               some(activeTagFilters, (tagText) => find(documents[doc].tags, { text: tagText }))).
-            filter(searchString(searchQuery, state)), docFilterCriteria.sort.sortBy).
+            filter((id) => searchString(searchQuery, action.payload)(documents[id])), docFilterCriteria.sort.sortBy).
             map((doc) => documents[doc].id);
 
           // Check whether there is a search query to locate
@@ -303,7 +295,9 @@ export const {
   toggleDropdownFilterVisibility,
   setDocListScrollPosition,
   setViewingDocumentsOrComments,
-  onReceiveManifests
+  onReceiveManifests,
+  setSearch,
+  clearSearch
 } = documentListSlice.actions;
 
 // Default export the reducer

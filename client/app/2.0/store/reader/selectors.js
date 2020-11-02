@@ -1,6 +1,6 @@
 // External Dependencies
-import { createSelector } from '@reduxjs/toolkit';
-import { mapValues, chain, values, memoize } from 'lodash';
+import { createSelector, current } from '@reduxjs/toolkit';
+import { mapValues, chain, values, memoize, isEmpty, compact, uniqBy } from 'lodash';
 
 // Local Dependencies
 import { escapeRegExp, loadAppeal, documentsView } from 'utils/reader';
@@ -24,42 +24,44 @@ export const documentState = (state) => state.reader.documents.list;
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- The Editing Annotation State
  */
-export const editingAnnotationState = (state) => state.annotationLayer.editingAnnotations;
+export const editingAnnotationState = (state) => {
+  console.log('EDITING: ', current(state));
+};
 
 /**
  * Selector for the Editing Annotation State
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- The Editing Annotation State
  */
-export const pendingEditingAnnotationState = (state) => state.annotationLayer.pendingEditingAnnotations;
+export const pendingEditingAnnotationState = (state) => state.reader.annotationLayer.pendingEditingAnnotations;
 
 /**
  * Selector for the Editing Annotation State
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- The Editing Annotation State
  */
-export const annotationState = (state) => state.annotationLayer.annotations;
+export const annotationState = (state) => state.reader.annotationLayer.annotations;
 
 /**
  * Selector for the Editing Annotation State
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- The Editing Annotation State
  */
-export const pendingAnnotationState = (state) => state.annotationLayer.pendingAnnotations;
+export const pendingAnnotationState = (state) => state.reader.annotationLayer.pendingAnnotations;
 
 /**
  * Selector that returns the text Pages are currently filtered by
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- Returns an Array of Page ids that match the current search :text
  */
-export const searchTermState = (state) => state.searchAction.searchTerm;
+export const searchTermState = (state) => state.reader.searchAction.searchTerm;
 
 /**
  * Selector for the Extracted Text State
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- The Extracted Text State
  */
-export const extractedTextState = (state) => state.searchAction.extractedText;
+export const extractedTextState = (state) => state.reader.searchAction.extractedText;
 
 /**
  * Selector for the File State
@@ -88,34 +90,6 @@ export const selectedIndexState = (state) => state.searchAction.matchIndex;
 export const filteredDocuments = createSelector(
   [filteredDocIdState, documentState],
   (filteredIds, docs) => filteredIds.length ? filteredIds.reduce((list, id) => ({ ...list, [id]: docs[id] }), {}) : docs
-);
-
-/**
- * Annotation State Filtered by Document ID
- */
-export const annotationStateByDocId = createSelector(
-  [editingAnnotationState, pendingEditingAnnotationState, annotationState, pendingAnnotationState],
-  (editingAnnotations, pendingEditingAnnotations, annotations, pendingAnnotations) => memoize((docId) =>
-    chain(editingAnnotations).
-      values().
-      map((annotation) => ({
-        editing: true,
-        ...annotation
-      })).
-      concat(values(pendingEditingAnnotations), values(annotations), values(pendingAnnotations)).
-      uniqBy('id').
-      reject('pendingDeletion').
-      filter({ documentId: docId }).
-      value()
-  )
-);
-
-/**
- * Annotation State for each Document
- */
-export const annotationStatePerDocument = createSelector(
-  [filteredDocuments, annotationStateByDocId],
-  (documents, filterAnnotationState) => mapValues(documents, (doc) => filterAnnotationState(doc.id))
 );
 
 /**
@@ -171,12 +145,49 @@ export const currentMatchIndex = createSelector(
 );
 
 /**
+ * State of the Annotations by Document
+ * @param {Object} state -- The current Redux store state
+ */
+export const documentAnnotations = (state) => {
+  // Set the annotations
+  const annotations = state.reader.annotationLayer;
+
+  // Map the annotation keys to pull out the different annotation types
+  const list = Object.keys(annotations).map((type) => {
+    // Only switch if there are annotations
+    if (isEmpty(annotations[type])) {
+      return null;
+    }
+
+    // Handle the type
+    switch (annotations) {
+    case 'annotations':
+    case 'pendingAnnotations':
+    case 'pendingEditingAnnotations':
+      return annotations[type];
+    case 'editingAnnotations':
+      return {
+        ...annotations[type],
+        editing: true
+      };
+    default:
+      return {};
+    }
+  });
+
+  // Return the formatted document annotations
+  return uniqBy(compact(list), 'id').filter((item) => !item.pendingDeletion);
+};
+
+/**
  * State for the Document List Screen
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- The Documents List State
  */
 export const documentListScreen = (state) => ({
   // annotationsPerDocument: annotationStatePerDocument(state.reader),
+  documentList: state.reader.documentList,
+  documentAnnotations: documentAnnotations(state),
   documentsView: documentsView(
     Object.values(state.reader.documents.list),
     state.reader.documentList.docFilterCriteria,
