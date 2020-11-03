@@ -143,6 +143,7 @@ describe BulkTaskAssignment, :postgres do
         let(:regional_office) { nil }
         let(:task_count) { 20 }
 
+        let(:cavc_appeal) { create(:appeal, :type_cavc_remand) }
         let(:aod_appeal) { create(:appeal, :advanced_on_docket_due_to_motion) }
         let(:cavc_aod_appeal) { create(:appeal, :advanced_on_docket_due_to_motion, :type_cavc_remand) }
         let(:aod_legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, :aod)) }
@@ -150,9 +151,10 @@ describe BulkTaskAssignment, :postgres do
         let(:cavc_aod_legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, :aod, :type_cavc_remand)) }
 
         before do
-          create_no_show_hearing_task_for_appeal(aod_appeal, 3.days.ago)
+          create_no_show_hearing_task_for_appeal(aod_appeal, 2.days.ago)
+          create_no_show_hearing_task_for_appeal(cavc_appeal, 2.days.ago)
           create_no_show_hearing_task_for_appeal(cavc_aod_appeal, 2.days.ago)
-          create_no_show_hearing_task_for_appeal(aod_legacy_appeal, 1.day.ago)
+          create_no_show_hearing_task_for_appeal(aod_legacy_appeal)
           create_no_show_hearing_task_for_appeal(cavc_legacy_appeal)
           create_no_show_hearing_task_for_appeal(cavc_aod_legacy_appeal)
 
@@ -160,14 +162,21 @@ describe BulkTaskAssignment, :postgres do
         end
 
         let(:expected_appeal_ordering) do
-          [cavc_aod_appeal, cavc_aod_legacy_appeal, aod_appeal, aod_legacy_appeal, cavc_legacy_appeal]
+          [
+            cavc_aod_appeal,
+            cavc_aod_legacy_appeal,
+            aod_appeal,
+            aod_legacy_appeal,
+            cavc_appeal,
+            cavc_legacy_appeal
+          ]
         end
 
         subject { BulkTaskAssignment.new(params).process }
 
         it "sorts priority appeals first" do
           prioritized_assigned_tasks = subject
-          expect(prioritized_assigned_tasks.first(5).map(&:appeal)).to eq(expected_appeal_ordering)
+          expect(prioritized_assigned_tasks.first(6).map(&:appeal)).to eq(expected_appeal_ordering)
 
           appeals_of_returned_tasks = prioritized_assigned_tasks.map(&:appeal)
           expect(appeals_of_returned_tasks).to include(no_show_hearing_task1.appeal)
