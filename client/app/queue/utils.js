@@ -131,8 +131,8 @@ const taskAttributesFromRawTask = (task) => {
     hearingRequestType: task.attributes.hearing_request_type,
     isFormerTravel: task.attributes.former_travel,
     latestInformalHearingPresentationTask: {
-      requestedAt: task.attributes.latest_informal_hearing_presentation_task.requested_at,
-      receivedAt: task.attributes.latest_informal_hearing_presentation_task.received_at
+      requestedAt: task.attributes.latest_informal_hearing_presentation_task?.requested_at,
+      receivedAt: task.attributes.latest_informal_hearing_presentation_task?.received_at
     }
   };
 };
@@ -222,7 +222,11 @@ export const prepareLegacyTasksForStore = (tasks) => {
       timelineTitle: task.attributes.timeline_title,
       hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
       hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
-      hideFromCaseTimeline: task.attributes.hide_from_case_timeline
+      hideFromCaseTimeline: task.attributes.hide_from_case_timeline,
+      latestInformalHearingPresentationTask: {
+        requestedAt: task.attributes.latest_informal_hearing_presentation_task?.requested_at,
+        receivedAt: task.attributes.latest_informal_hearing_presentation_task?.received_at
+      }
     };
   });
 
