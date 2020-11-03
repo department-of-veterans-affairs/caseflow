@@ -11,7 +11,16 @@ describe VirtualHearingMailer do
       regional_office: regional_office
     )
   end
-  let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
+  let(:appellant_tz) { nil }
+  let(:representative_tz) { nil }
+  let(:virtual_hearing) do
+    create(
+      :virtual_hearing,
+      hearing: hearing,
+      appellant_tz: appellant_tz,
+      representative_tz: representative_tz
+    )
+  end
   let(:recipient_title) { nil }
   let(:recipient) { MailRecipient.new(name: "LastName", email: "email@test.com", title: recipient_title) }
   let(:pexip_url) { "fake.va.gov" }
@@ -281,10 +290,7 @@ describe VirtualHearingMailer do
         end
 
         describe "appellant_tz is present" do
-          before do
-            virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-            hearing.reload
-          end
+          let(:appellant_tz) { "America/Los_Angeles" }
 
           it "displays pacific standard time (PT)" do
             expect(subject.html_part.body).to include(expected_ama_times[:ro_eastern_recipient_pacific])
@@ -340,10 +346,7 @@ describe VirtualHearingMailer do
         end
 
         describe "appellant_tz is present" do
-          before do
-            virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-            hearing.reload
-          end
+          let(:appellant_tz) { "America/Los_Angeles" }
 
           it "displays pacific standard time (PT)" do
             expect(subject.html_part.body).to include(expected_ama_times[:ro_eastern_recipient_pacific])
@@ -399,10 +402,7 @@ describe VirtualHearingMailer do
         end
 
         describe "appellant_tz is present" do
-          before do
-            virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-            hearing.reload
-          end
+          let(:appellant_tz) { "America/Los_Angeles" }
 
           it "displays pacific standard time (PT)" do
             expect(subject.html_part.body).to include(expected_ama_times[:ro_eastern_recipient_pacific])
@@ -455,10 +455,7 @@ describe VirtualHearingMailer do
         end
 
         describe "appellant_tz is present" do
-          before do
-            virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-            hearing.reload
-          end
+          let(:appellant_tz) { "America/Los_Angeles" }
 
           it "displays pacific standard time (PT)" do
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_eastern_recipient_pacific])
@@ -492,10 +489,7 @@ describe VirtualHearingMailer do
         end
 
         describe "appellant_tz is present" do
-          before do
-            virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-            hearing.reload
-          end
+          let(:appellant_tz) { "America/Los_Angeles" }
 
           it "displays pacific standard time (PT)" do
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_eastern_recipient_pacific])
@@ -529,10 +523,7 @@ describe VirtualHearingMailer do
         end
 
         describe "appellant_tz is present" do
-          before do
-            virtual_hearing.update!(appellant_tz: "America/Los_Angeles")
-            hearing.reload
-          end
+          let(:appellant_tz) { "America/Los_Angeles" }
 
           it "displays pacific standard time (PT)" do
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_eastern_recipient_pacific])
@@ -609,10 +600,7 @@ describe VirtualHearingMailer do
         end
 
         describe "representative_tz is present" do
-          before do
-            virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-            hearing.reload
-          end
+          let(:representative_tz) { "America/Los_Angeles" }
 
           it "displays pacific standard time (PT)" do
             expect(subject.html_part.body).to include(expected_ama_times[:ro_eastern_recipient_pacific])
@@ -668,10 +656,7 @@ describe VirtualHearingMailer do
         end
 
         describe "representative_tz is present" do
-          before do
-            virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-            hearing.reload
-          end
+          let(:representative_tz) { "America/Los_Angeles" }
 
           it "displays pacific standard time (PT)" do
             expect(subject.html_part.body).to include(expected_ama_times[:ro_eastern_recipient_pacific])
@@ -727,10 +712,7 @@ describe VirtualHearingMailer do
         end
 
         describe "representative_tz is present" do
-          before do
-            virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-            hearing.reload
-          end
+          let(:representative_tz) { "America/Los_Angeles" }
 
           it "displays pacific standard time (PT)" do
             expect(subject.html_part.body).to include(expected_ama_times[:ro_eastern_recipient_pacific])
@@ -783,10 +765,7 @@ describe VirtualHearingMailer do
         end
 
         describe "representative_tz is present" do
-          before do
-            virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-            hearing.reload
-          end
+          let(:representative_tz) { "America/Los_Angeles" }
 
           it "displays pacific standard time (PT)" do
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_eastern_recipient_pacific])
@@ -820,10 +799,7 @@ describe VirtualHearingMailer do
         end
 
         describe "representative_tz is present" do
-          before do
-            virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-            hearing.reload
-          end
+          let(:representative_tz) { "America/Los_Angeles" }
 
           it "displays pacific standard time (PT)" do
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_eastern_recipient_pacific])
@@ -857,10 +833,7 @@ describe VirtualHearingMailer do
         end
 
         describe "representative_tz is present" do
-          before do
-            virtual_hearing.update!(representative_tz: "America/Los_Angeles")
-            hearing.reload
-          end
+          let(:representative_tz) { "America/Los_Angeles" }
 
           it "displays pacific standard time (PT)" do
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_eastern_recipient_pacific])
