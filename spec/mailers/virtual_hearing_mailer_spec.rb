@@ -7,6 +7,7 @@ describe VirtualHearingMailer do
   let(:hearing_day) do
     create(
       :hearing_day,
+      scheduled_for: Date.tomorrow, # This is default, but making it explicit for the tests
       request_type: HearingDay::REQUEST_TYPES[:video],
       regional_office: regional_office
     )
@@ -38,7 +39,9 @@ describe VirtualHearingMailer do
 
   shared_context "legacy_hearing" do
     let(:hearing) do
-      hearing_date = Time.use_zone("America/New_York") { Time.zone.now.change(hour: 11, min: 30) }
+      hearing_date = Time.use_zone("America/New_York") do
+        Time.zone.now.change(hour: 11, min: 30) + 1.day # Tomorrow. Matches the AMA hearing scheduled for.
+      end
       case_hearing = create(
         :case_hearing,
         hearing_type: hearing_day.request_type,
