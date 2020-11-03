@@ -41,14 +41,17 @@ namespace :emails do
             mail_recipient: recipient,
             virtual_hearing: hearing.virtual_hearing
           )
+          email_body = if email.body.nil? || email.body.empty?
+                         email.html_part&.decoded
+                       else
+                         email.body
+                       end
 
-          next if email.html_part.nil?
+          next if email_body.nil? || email_body.empty?
 
-          File.write(
-            Rails.root.join("tmp", "#{func}_#{recipient.title}.html"),
-            email.html_part.body.decoded,
-            mode: "w"
-          )
+          output_file = Rails.root.join("tmp", "#{func}_#{recipient.title}.html")
+
+          File.write(output_file, email_body, mode: "w")
         end
       end
     end
