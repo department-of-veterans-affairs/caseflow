@@ -50,7 +50,8 @@ class ChangeHearingRequestTypeTask < Task
   def available_actions(user)
     if user.can_change_hearing_request_type?
       [
-        Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.to_h
+        Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.to_h,
+        Constants.TASK_ACTIONS.CANCEL_CONVERT_HEARING_REQUEST_TYPE_TO_VIRTUAL.to_h
       ]
     else
       []
@@ -60,7 +61,7 @@ class ChangeHearingRequestTypeTask < Task
   def update_from_params(params, user)
     payload_values = params.delete(:business_payloads)&.dig(:values)
 
-    if payload_values[:changed_request_type].present?
+    if payload_values&.[](:changed_request_type).present?
       update_appeal_and_self(payload_values, params)
 
       [self]
