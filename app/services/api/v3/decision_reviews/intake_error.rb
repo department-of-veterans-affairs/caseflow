@@ -53,7 +53,7 @@ class Api::V3::DecisionReviews::IntakeError
       422,
       :contestable_issue_params_must_have_ids,
       "A contestable issue must have at least one of the following: decisionIssueId," \
-        " ratingIssueId, ratingDecisionIssueId"
+        " ratingIssueReferenceId, ratingDecisionReferenceId"
     ],
     [422, :could_not_find_contestable_issue, "Could not find ContestableIssue"],
     [

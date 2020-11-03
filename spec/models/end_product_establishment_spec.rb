@@ -984,6 +984,40 @@ describe EndProductEstablishment, :postgres do
         subject
         expect(end_product_establishment.reload.synced_status).to eq("CAN")
       end
+
+      context "#returns cancel_end_product parameters!" do
+        let!(:modifier) { "030" }
+        let(:benefit_type_code) { Veteran::BENEFIT_TYPE_CODE_LIVE }
+        let(:end_product_establishment) do
+          EndProductEstablishment.new(
+            source: source,
+            veteran_file_number: veteran_file_number,
+            code: code,
+            payee_code: payee_code,
+            claim_date: 2.days.ago,
+            benefit_type_code: benefit_type_code,
+            modifier: modifier,
+            reference_id: "1",
+            synced_status: synced_status,
+            last_synced_at: last_synced_at
+          )
+        end
+
+        let!(:bgs_service) { BGSService.new }
+
+        before do
+          allow(BGSService).to receive(:new) { bgs_service }
+          allow(bgs_service).to receive(:cancel_end_product).and_call_original
+        end
+
+        it do
+          subject
+          expect(bgs_service).to have_received(:cancel_end_product).once.with(veteran_file_number,
+                                                                              code, modifier,
+                                                                              payee_code,
+                                                                              benefit_type_code)
+        end
+      end
     end
 
     context "when source is a RampReview" do
@@ -1119,7 +1153,7 @@ describe EndProductEstablishment, :postgres do
       it "caches the associated rating for the given EPE" do
         expect(Rails.cache.exist?(cache_key)).to eq(false)
         # If caching works, this should only get called once
-        expect(PromulgatedRating).to receive(:fetch_in_range).once.and_call_original
+        expect(RatingAtIssue).to receive(:fetch_in_range).once.and_call_original
         subject
         expect(Rails.cache.exist?(cache_key)).to eq(true)
         # when called a second time, should get from cache
@@ -1296,7 +1330,7 @@ describe EndProductEstablishment, :postgres do
             )
           end
 
-          it { is_expected.to eq(ep_code: "EP 037", ep_status: "Cleared") }
+          it { is_expected.to eq(ep_code: "037 Higher-Level Review Rating", ep_status: "Cleared") }
 
           context "when there are pending request issues to sync" do
             let!(:pending_request_issue) do
@@ -1308,7 +1342,10 @@ describe EndProductEstablishment, :postgres do
               )
             end
 
-            it { is_expected.to eq(ep_code: "EP 037", ep_status: "Cleared, Syncing decisions...") }
+            it {
+              is_expected.to eq(ep_code: "037 Higher-Level Review Rating",
+                                ep_status: "Cleared, Syncing decisions...")
+            }
 
             context "when there are pending request issues to sync with errors" do
               let!(:errored_request_issue) do
@@ -1323,7 +1360,7 @@ describe EndProductEstablishment, :postgres do
 
               it do
                 is_expected.to eq(
-                  ep_code: "EP 037",
+                  ep_code: "037 Higher-Level Review Rating",
                   ep_status: "Cleared, Decisions sync failed. Support notified."
                 )
               end
@@ -1333,7 +1370,13 @@ describe EndProductEstablishment, :postgres do
       end
 
       context "if there is no modifier, shows unknown" do
-        it { is_expected.to eq(ep_code: "EP Unknown", ep_status: "") }
+        it { is_expected.to eq(ep_code: " Higher-Level Review Rating", ep_status: "") }
+      end
+
+      context "if the epe code is not found" do
+        before { epe.update!(code: "NOTFOUND") }
+
+        it { is_expected.to eq(ep_code: " Unknown", ep_status: "") }
       end
     end
 

@@ -133,7 +133,20 @@ describe AppealRepository, :all_dbs do
       )
     end
 
-    context "bfha set to value not represent a held hearing" do
+    context "bfha set to a value representing a held virtual hearing" do
+      let(:case_record) do
+        OpenStruct.new(
+          correspondent: correspondent_record,
+          folder: folder_record,
+          bfha: "7",
+          case_issues: []
+        )
+      end
+
+      it { is_expected.to have_attributes(hearing_held: true) }
+    end
+
+    context "bfha set to a value not representing a held hearing" do
       let(:case_record) do
         OpenStruct.new(
           correspondent: correspondent_record,
@@ -282,80 +295,6 @@ describe AppealRepository, :all_dbs do
       context "when no special issues" do
         it { is_expected.to eq("98") }
       end
-    end
-  end
-
-  context "#create_schedule_hearing_tasks" do
-    context "when missing legacy appeals" do
-      let!(:cases) { create_list(:case, 10, bfcurloc: "57", bfhr: "1") }
-
-      it "creates the legacy appeal and creates schedule hearing tasks", skip: "flake on last expect" do
-        AppealRepository.create_schedule_hearing_tasks
-
-        expect(LegacyAppeal.all.pluck(:vacols_id)).to match_array(cases.pluck(:bfkey))
-        expect(ScheduleHearingTask.all.pluck(:appeal_id)).to match_array(LegacyAppeal.all.pluck(:id))
-        expect(ScheduleHearingTask.first.parent.type).to eq(HearingTask.name)
-        expect(ScheduleHearingTask.first.parent.parent.type).to eq(RootTask.name)
-        expect(VACOLS::Case.all.pluck(:bfcurloc).uniq).to eq([LegacyAppeal::LOCATION_CODES[:caseflow]])
-      end
-    end
-
-    context "when some legacy appeals already have schedule hearing tasks" do
-      let!(:cases) { create_list(:case, 5, bfcurloc: "57", bfhr: "1") }
-
-      it "doesn't duplicate tasks" do
-        AppealRepository.create_schedule_hearing_tasks
-
-        more_cases = create_list(:case, 5, bfcurloc: "57", bfhr: "1")
-        AppealRepository.create_schedule_hearing_tasks
-
-        expect(LegacyAppeal.all.pluck(:vacols_id)).to match_array((cases + more_cases).pluck(:bfkey))
-        expect(ScheduleHearingTask.all.pluck(:appeal_id)).to match_array(LegacyAppeal.all.pluck(:id))
-      end
-    end
-  end
-
-  context "#cases_that_need_hearings" do
-    let!(:case_without_hearing) { create(:case, bfcurloc: "57", bfhr: "1") }
-    let!(:case_with_closed_hearing) do
-      create(
-        :case,
-        bfcurloc: "57",
-        bfhr: "1",
-        case_hearings: [create(:case_hearing, hearing_disp: "H")]
-      )
-    end
-    let!(:case_with_open_hearing) do
-      create(
-        :case,
-        bfcurloc: "57",
-        bfhr: "1",
-        case_hearings: [create(:case_hearing, hearing_disp: nil)]
-      )
-    end
-    let!(:case_with_two_closed_hearings) do
-      create(
-        :case,
-        bfcurloc: "57",
-        bfhr: "1",
-        case_hearings: create_list(:case_hearing, 2, hearing_disp: "H")
-      )
-    end
-    let!(:case_with_two_open_hearings) do
-      create(
-        :case,
-        bfcurloc: "57",
-        bfhr: "1",
-        case_hearings: create_list(:case_hearing, 2, hearing_disp: nil)
-      )
-    end
-
-    it "excludes cases that have open hearings" do
-      expect(AppealRepository.cases_that_need_hearings).to match_array(
-        [
-          case_without_hearing, case_with_closed_hearing, case_with_two_closed_hearings
-        ]
-      )
     end
   end
 

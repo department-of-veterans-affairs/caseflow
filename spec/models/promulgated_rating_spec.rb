@@ -5,17 +5,17 @@
 # In comparison, Ratings at issue return both the rating and rating profile information from the RatingProfile service
 
 describe PromulgatedRating do
+  let(:receipt_date) { Time.zone.today }
+  let!(:rating) do
+    Generators::PromulgatedRating.build(
+      participant_id: "DRAYMOND",
+      promulgation_date: receipt_date - 370.days,
+      profile_date: receipt_date - 370.days
+    )
+  end
+
   context ".fetch_timely" do
-    let(:receipt_date) { Time.zone.today }
-
     subject { PromulgatedRating.fetch_timely(participant_id: "DRAYMOND", from_date: receipt_date) }
-
-    let!(:rating) do
-      Generators::PromulgatedRating.build(
-        participant_id: "DRAYMOND",
-        promulgation_date: receipt_date - 371.days
-      )
-    end
 
     let!(:untimely_rating) do
       Generators::PromulgatedRating.build(
@@ -32,7 +32,7 @@ describe PromulgatedRating do
       let!(:another_rating) do
         Generators::PromulgatedRating.build(
           participant_id: "DRAYMOND",
-          promulgation_date: receipt_date - 370.days
+          promulgation_date: receipt_date - 371.days
         )
       end
 
@@ -65,13 +65,6 @@ describe PromulgatedRating do
     let(:receipt_date) { Time.zone.today - 50.years }
 
     subject { PromulgatedRating.fetch_all("DRAYMOND") }
-
-    let!(:rating) do
-      Generators::PromulgatedRating.build(
-        participant_id: "DRAYMOND",
-        promulgation_date: receipt_date - 370.days
-      )
-    end
 
     let!(:untimely_rating) do
       Generators::PromulgatedRating.build(
@@ -114,6 +107,64 @@ describe PromulgatedRating do
         profile_date: Time.zone.today - 5.days,
         promulgation_date: Time.zone.today - 4.days
       )
+    end
+  end
+
+  context "#rating_profile" do
+    let(:bgs) { Fakes::BGSService.new }
+
+    before do
+      allow(Fakes::BGSService).to receive(:new).and_return(bgs)
+    end
+
+    subject { rating.rating_profile }
+
+    context "BGS throws a Share Error on fetch_rating_profile" do
+      before do
+        allow(bgs).to receive(:fetch_rating_profile)
+          .and_raise(BGS::ShareError, "Veteran does not meet the minimum disability requirements")
+      end
+
+      context "BGS returns a successful response on fetch_rating_profiles_in_range" do
+        before do
+          allow(bgs).to receive(:fetch_rating_profiles_in_range).and_call_original
+        end
+
+        it "Fetches the rating profile using RatingAtIssue" do
+          expect(subject.present?)
+          expect { rating.issues }.to_not raise_error
+          expect(bgs).to have_received(:fetch_rating_profiles_in_range)
+        end
+      end
+
+      context "an error is raised on fetch_rating_profiles_in_range" do
+        let(:error) { nil }
+        let(:message) { "" }
+
+        before do
+          allow(bgs).to receive(:fetch_rating_profiles_in_range)
+            .and_raise(error, message)
+        end
+
+        context "a share error is raised on fetch_rating_profiles_in_range" do
+          let(:error) { BGS::ShareError }
+          let(:message) { "Veteran does not meet the minimum disability requirements" }
+
+          it "captures the exception and returns an empty object" do
+            expect(Raven).to receive(:capture_exception).with error
+            expect(subject).to eq({})
+          end
+        end
+
+        context "a nil rating profile list error is raised on fetch_rating_profiles_in_range" do
+          let(:error) { Rating::NilRatingProfileListError }
+
+          it "captures the exception returns an empty object" do
+            expect(Raven).to receive(:capture_exception).with error
+            expect(subject).to eq({})
+          end
+        end
+      end
     end
   end
 end

@@ -1,6 +1,6 @@
+/* eslint-disable camelcase */
 import React from 'react';
 import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
-import HEARING_TIME_OPTIONS from '../../constants/HEARING_TIME_OPTIONS';
 import moment from 'moment-timezone';
 import _ from 'lodash';
 
@@ -9,6 +9,8 @@ import REGIONAL_OFFICE_INFORMATION from '../../constants/REGIONAL_OFFICE_INFORMA
 // To see how values were determined: https://github.com/department-of-veterans-affairs/caseflow/pull/14556#discussion_r447102582
 import TIMEZONES from '../../constants/TIMEZONES';
 import { COMMON_TIMEZONES, REGIONAL_OFFICE_ZONE_ALIASES } from '../constants/AppConstants';
+import ApiUtil from '../util/ApiUtil';
+import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
 
 export const isPreviouslyScheduledHearing = (hearing) =>
   hearing.disposition === HEARING_DISPOSITION_TYPES.postponed ||
@@ -62,11 +64,13 @@ export const deepDiff = (firstObj, secondObj) => {
     (result, firstVal, key) => {
       const secondVal = secondObj[key];
 
-      if (_.isEqual(firstVal, secondVal)) {
-        result[key] = null;
-      } else if (_.isObject(firstVal) && _.isObject(secondVal)) {
-        result[key] = deepDiff(firstVal, secondVal);
-      } else {
+      if (_.isObject(firstVal) && _.isObject(secondVal)) {
+        const nestedDiff = deepDiff(firstVal, secondVal);
+
+        if (nestedDiff && !_.isEmpty(nestedDiff)) {
+          result[key] = nestedDiff;
+        }
+      } else if (!_.isEqual(firstVal, secondVal)) {
         result[key] = secondVal;
       }
 
@@ -75,7 +79,7 @@ export const deepDiff = (firstObj, secondObj) => {
     {}
   );
 
-  return _.pickBy(changedObject, (val) => val !== null);
+  return changedObject;
 };
 
 export const filterCurrentIssues = (issues) =>
@@ -108,10 +112,10 @@ export const APPELLANT_TITLE = 'Appellant';
 
 /**
  * Gets the title to use for the appellant of a hearing.
- * @param {object} hearing -- A hearing
+ * @param {string} appellantIsNotVeteran -- bool
  */
-export const getAppellantTitleForHearing = (hearing) =>
-  hearing?.appellantIsNotVeteran ? APPELLANT_TITLE : VETERAN_TITLE;
+export const getAppellantTitle = (appellantIsNotVeteran) =>
+  appellantIsNotVeteran ? APPELLANT_TITLE : VETERAN_TITLE;
 
 export const VIRTUAL_HEARING_HOST = 'host';
 export const VIRTUAL_HEARING_GUEST = 'guest';
@@ -320,7 +324,7 @@ export const timezones = (time) => {
   const dateTime = moment(time, 'HH:mm').tz(COMMON_TIMEZONES[0]);
 
   // Map the available timeTIMEZONES to a select options object
-  const options = Object.keys(TIMEZONES).map((zone) => {
+  const unorderedOptions = Object.keys(TIMEZONES).map((zone) => {
     // Default the index to be based on the timezone offset, add 100 to move below the Regional Office zones
     let index = Math.abs(moment.tz(TIMEZONES[zone]).utcOffset()) + 100;
 
@@ -350,5 +354,80 @@ export const timezones = (time) => {
   });
 
   // Return the values and the count of commons
-  return { options: _.orderBy(options, ['index']), commonsCount };
+  const orderedOptions = _.orderBy(unorderedOptions, ['index']);
+
+  // Add null option first to array of timezone options to allow deselecting timezone
+  const options = [{ value: null, label: '' }, ...orderedOptions];
+
+  return { options, commonsCount };
 };
+
+/**
+ * Method to process alerts returned from the API
+ * @param {Array} alerts -- List of alerts tod process
+ * @param {Object} props -- Properties containing functions to receive alerts
+ * @param {Function} poll -- Function to poll the API when alerts are asynchronous
+ */
+export const processAlerts = (alerts, props, poll) => alerts.map((alert) => {
+  // Call the receive alerts function if there are hearing alerts
+  if (alert?.hearing) {
+    return props.onReceiveAlerts(alert.hearing);
+  } else if (alert?.virtual_hearing && !_.isEmpty(alert.virtual_hearing)) {
+    // Call the transition alerts function if there are virtual hearing alerts
+    props.onReceiveTransitioningAlert(alert.virtual_hearing, 'virtualHearing');
+
+    return poll(true);
+  }
+
+  // Default return the alert
+  return alert;
+});
+
+/**
+ * Method to poll the hearings endpoint and update virtual hearing details asynchronously
+ * @param {object} hearing -- Hearing to poll against
+ * @param {object} options -- Functions to handle state change based on new data
+ */
+export const startPolling = (hearing, { setShouldStartPolling, resetState, dispatch, props }) =>
+  pollVirtualHearingData(hearing?.externalId, (response) => {
+    // Parse the API response
+    const resp = ApiUtil.convertToCamelCase(response);
+
+    // Determine if we have finished creating the virtual hearing
+    if (resp.virtualHearing.jobCompleted) {
+      // Remove the polling state
+      setShouldStartPolling(false);
+
+      // Reset the state with the new details
+      resetState();
+
+      // Reset the Virtual Hearing State
+      if (dispatch) {
+        dispatch({ type: RESET_VIRTUAL_HEARING, payload: resp });
+      }
+
+      // Transition the alerts
+      props.transitionAlert('virtualHearing');
+    }
+
+    // continue polling if return true (opposite of jobCompleted)
+    return !resp.virtualHearing.jobCompleted;
+  });
+
+export const parseVirtualHearingErrors = (msg, hearing) => {
+  // Remove the validation string from th error
+  const messages = msg.split(':')[1];
+
+  // Set inline errors for hearing conversion page
+  return messages.split(',').reduce((list, message) => ({
+    ...list,
+    [(/Representative/).test(message) ? 'representativeEmail' : 'appellantEmail']:
+       message.replace('Appellant', getAppellantTitle(hearing?.appellantIsNotVeteran))
+  }), {});
+};
+
+export const regionalOfficeDetails = (key) => REGIONAL_OFFICE_INFORMATION[
+  Object.keys(REGIONAL_OFFICE_INFORMATION).filter((roKey) => roKey === key)[0]
+];
+
+/* eslint-enable camelcase */

@@ -2,7 +2,7 @@
 
 class Distribution < CaseflowRecord
   include ActiveModel::Serializers::JSON
-  include AmaCaseDistribution
+  include AutomaticCaseDistribution
 
   has_many :distributed_cases
   belongs_to :judge, class_name: "User"
@@ -20,13 +20,15 @@ class Distribution < CaseflowRecord
   CASES_PER_ATTORNEY = 3
   ALTERNATIVE_BATCH_SIZE = 15
 
+  scope :priority_pushed, -> { where(priority_push: true) }
+
   class << self
     def pending_for_judge(judge)
       where(status: %w[pending started], judge: judge)
     end
   end
 
-  def distribute!
+  def distribute!(limit = nil)
     return unless %w[pending error].include? status
 
     if status == "error"
@@ -41,7 +43,7 @@ class Distribution < CaseflowRecord
     multi_transaction do
       ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = #{transaction_time_out}"
 
-      ama_distribution
+      priority_push? ? priority_push_distribution(limit) : requested_distribution
 
       update!(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
     end
@@ -123,6 +125,6 @@ class Distribution < CaseflowRecord
   end
 
   def total_batch_size
-    DecisionDraftingAttorney.users.size * CASES_PER_ATTORNEY
+    JudgeTeam.includes(:non_admin_users).flat_map(&:non_admin_users).size * CASES_PER_ATTORNEY
   end
 end

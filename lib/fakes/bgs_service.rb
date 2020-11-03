@@ -135,6 +135,16 @@ class Fakes::BGSService
     format_contentions(contentions)
   end
 
+  # :reek:FeatureEnvy
+  def find_current_rating_profile_by_ptcpnt_id(participant_id)
+    record = get_rating_record(participant_id)
+    fail BGS::ShareError, "No Record Found" if record.blank?
+
+    # We grab the latest promulgated rating, assuming that under the hood BGS also does.
+    rating = record[:ratings].max_by { |rt| rt[:prmlgn_dt] }
+    rating_at_issue_profile_data(rating)
+  end
+
   def format_contentions(contentions)
     { contentions: contentions.map { |contention| format_contention(contention) } }
   end
@@ -162,10 +172,12 @@ class Fakes::BGSService
     self.class.rating_store.fetch_and_inflate(participant_id) || {}
   end
 
-  def cancel_end_product(file_number, end_product_code, end_product_modifier)
+  # benefit_type_code is not available data on end product data we fetch from BGS,
+  # and isn't part of the end product store in fakes
+  def cancel_end_product(file_number, end_product_code, end_product_modifier, payee_code, _benefit_type)
     end_products = get_end_products(file_number)
     matching_eps = end_products.select do |ep|
-      ep[:claim_type_code] == end_product_code && ep[:end_product_type_code] == end_product_modifier
+      ep[:claim_type_code] == end_product_code && ep[:modifier] == end_product_modifier && ep[:payee_code] == payee_code
     end
     matching_eps.each do |ep|
       ep[:status_type_code] = "CAN"
@@ -327,6 +339,27 @@ class Fakes::BGSService
     ]
   end
 
+  def pay_grade_list
+    [
+      { code: "E1", name: "E-1" },
+      { code: "E2", name: "E-2" },
+      { code: "E3", name: "E-3" },
+      { code: "E4", name: "E-4" },
+      { code: "E5", name: "E-5" },
+      { code: "E6", name: "E-6" },
+      { code: "E9", name: "E-9" },
+      { code: "O1", name: "O-1" },
+      { code: "O2", name: "O-2" },
+      { code: "O3", name: "O-3" },
+      { code: "O4", name: "O-4" },
+      { code: "O5", name: "O-5" },
+      { code: "WO1", name: "WO-1" },
+      { code: "WO2", name: "WO-2" },
+      { code: "WO3", name: "WO-3" },
+      { code: "WO4", name: "WO-4" }
+    ]
+  end
+
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
     address = (self.class.address_records || {})[participant_id]
@@ -374,9 +407,12 @@ class Fakes::BGSService
     format_promulgated_rating(build_ratings_in_range(ratings, start_date, end_date))
   end
 
+  def fetch_rating_profile(participant_id:, profile_date:)
+    stored_rating_profile(participant_id: participant_id, profile_date: profile_date)
+  end
+
   def fetch_rating_profiles_in_range(participant_id:, start_date:, end_date:)
     ratings = get_rating_record(participant_id)[:ratings] || []
-
     # Simulate the response if participant doesn't exist or doesn't have any ratings
     if ratings.blank?
       return { response: { response_text: "No Data Found" } }
@@ -401,10 +437,38 @@ class Fakes::BGSService
   end
 
   def format_rating_at_issue(ratings)
+    ratings = Array.wrap(ratings).map do |rating|
+      rating_at_issue_profile_data(rating)
+    end
+
     { rba_profile_list: ratings.empty? ? nil : { rba_profile: ratings } }
   end
 
-  def fetch_rating_profile(participant_id:, profile_date:)
+  def rating_at_issue_profile_data(rating)
+    promulgated_rating_data = rating.dig(:comp_id)
+
+    # If a PromulgatedRating was originally stored in rating_store
+    # convert to be compatible with RatingAtIssue
+    if promulgated_rating_data.present?
+      rating_profile = stored_rating_profile(
+        participant_id: promulgated_rating_data[:ptcpnt_vet_id],
+        profile_date: promulgated_rating_data[:prfil_dt]
+      )
+
+      {
+        prfl_dt: promulgated_rating_data[:prfil_dt],
+        ptcpnt_vet_id: promulgated_rating_data[:ptcpnt_vet_id],
+        prmlgn_dt: rating[:prmlgn_dt],
+        rba_issue_list: { rba_issue: rating_profile[:rating_issues] },
+        disability_list: { disability: rating_profile[:disabilities] },
+        rba_claim_list: { rba_claim: rating_profile[:associated_claims] }
+      }
+    else
+      rating
+    end
+  end
+
+  def stored_rating_profile(participant_id:, profile_date:)
     normed_date_key = Fakes::RatingStore.normed_profile_date_key(profile_date).to_sym
     rating_profile = (get_rating_record(participant_id)[:profiles] || {})[normed_date_key]
 

@@ -129,8 +129,8 @@ describe VACOLS::CaseDocket, :all_dbs do
     end
   end
 
-  context ".age_of_n_oldest_priority_appeals" do
-    subject { VACOLS::CaseDocket.age_of_n_oldest_priority_appeals(2) }
+  context ".age_of_n_oldest_genpop_priority_appeals" do
+    subject { VACOLS::CaseDocket.age_of_n_oldest_genpop_priority_appeals(2) }
     it "returns the sorted ages of the n oldest priority appeals" do
       expect(subject).to eq([aod_ready_case_ready_time, 2.days.ago].map(&:to_date))
     end
@@ -147,6 +147,29 @@ describe VACOLS::CaseDocket, :all_dbs do
 
       it "does not include the hearing appeal" do
         expect(subject).to eq([2.days.ago.to_date])
+      end
+    end
+  end
+
+  context ".age_of_oldest_priority_appeal" do
+    subject { VACOLS::CaseDocket.age_of_oldest_priority_appeal }
+
+    it "returns the oldest priority appeal ready at date" do
+      expect(subject).to eq(aod_ready_case_ready_time.to_date)
+    end
+
+    context "when an appeal is tied to a judge" do
+      let(:original_docket_number) { aod_ready_case_docket_number }
+      let!(:hearing) do
+        create(:case_hearing,
+               :disposition_held,
+               folder_nr: original.bfkey,
+               hearing_date: 5.days.ago.to_date,
+               board_member: judge.vacols_attorney_id)
+      end
+
+      it "does not affect the results of the call" do
+        expect(subject).to eq(aod_ready_case_ready_time.to_date)
       end
     end
   end
@@ -468,6 +491,7 @@ describe VACOLS::CaseDocket, :all_dbs do
     context "when a case is tied to a judge by a hearing on a prior appeal" do
       let(:original_docket_number) { aod_ready_case_docket_number }
       let(:hearing_judge) { judge.vacols_attorney_id }
+      let(:another_hearing_judge) { another_judge.vacols_attorney_id }
       let!(:hearing) do
         create(:case_hearing,
                :disposition_held,
@@ -481,7 +505,7 @@ describe VACOLS::CaseDocket, :all_dbs do
                :disposition_held,
                folder_nr: postcavc_ready_case.bfkey,
                hearing_date: 5.days.ago.to_date,
-               board_member: another_judge.vacols_attorney_id)
+               board_member: another_hearing_judge)
       end
 
       context "when genpop is no" do
@@ -490,6 +514,17 @@ describe VACOLS::CaseDocket, :all_dbs do
           expect(subject.count).to eq(1)
           expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
+        end
+
+        context "when limit is nil" do
+          let(:limit) { nil }
+          let(:another_hearing_judge) { judge.vacols_attorney_id }
+
+          it "distributes all cases tied to the judge" do
+            expect(subject.count).to eq(2)
+            expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+            expect(postcavc_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+          end
         end
       end
 

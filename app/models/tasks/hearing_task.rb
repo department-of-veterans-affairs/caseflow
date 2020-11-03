@@ -4,6 +4,7 @@
 # A task used to track all related hearing subtasks.
 # A hearing task is associated with a hearing record in Caseflow and might have several child tasks to resolve
 # in order to schedule a hearing, hold it, and mark the disposition.
+# If an appeal is in the Hearing docket, a HearingTask is automatically created as a child of DistributionTask.
 
 class HearingTask < Task
   has_one :hearing_task_association
@@ -37,6 +38,8 @@ class HearingTask < Task
   def when_child_task_completed(child_task)
     super
 
+    # do not move forward to change location or create ihp if there are
+    # other open hearing tasks
     return unless appeal.tasks.open.where(type: HearingTask.name).empty?
 
     if appeal.is_a?(LegacyAppeal)

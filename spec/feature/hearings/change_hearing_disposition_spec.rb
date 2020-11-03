@@ -125,16 +125,16 @@ RSpec.shared_examples "Change hearing disposition" do
 
       step "change the hearing disposition to cancelled" do
         expect(Raven).to receive(:capture_exception)
-          .with(AssignHearingDispositionTask::HearingAssociationMissing) { @raven_called = true }
+          .with(AssignHearingDispositionTask::HearingAssociationMissing, any_args) do
+            @raven_called = true
+          end
 
         click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
         click_dropdown({ prompt: "Select", text: "Cancelled" }, find(".cf-modal-body"))
         fill_in "Notes", with: instructions_text
         click_button("Submit")
 
-        expect(page).to have_content("Hearing task (#{change_task.id}) is missing an associated hearing. " \
-        "This means that either the hearing was deleted in VACOLS or " \
-        "the hearing association has been deleted.")
+        expect(page).to have_content(format(COPY::HEARING_TASK_ASSOCIATION_MISSING_MESASAGE, hearing_task.id))
       end
     end
   end

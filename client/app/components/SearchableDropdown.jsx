@@ -95,7 +95,7 @@ export class SearchableDropdown extends React.Component {
       options,
       defaultOptions,
       filterOption,
-      clearable,
+      isClearable,
       loading,
       placeholder,
       errorMessage,
@@ -157,7 +157,7 @@ export class SearchableDropdown extends React.Component {
     // because if the selector filters the options to be [], it will show the "no results found"
     // message. We can get around this by unsetting `noResultsText`.
     const handleNoOptions = () =>
-      noResultsText ?? creatable ? null : NO_RESULTS_TEXT;
+      noResultsText ?? (creatable ? null : NO_RESULTS_TEXT);
 
     const labelContents = (
       <span>
@@ -189,7 +189,7 @@ export class SearchableDropdown extends React.Component {
               placeholder={
                 placeholder === null ? DEFAULT_PLACEHOLDER : placeholder
               }
-              clearable={clearable}
+              isClearable={isClearable}
               noOptionsMessage={handleNoOptions}
               searchable={searchable}
               isDisabled={readOnly}
@@ -219,7 +219,13 @@ const SelectOpts = PropTypes.arrayOf(
 
 SearchableDropdown.propTypes = {
   async: PropTypes.func,
-  clearable: PropTypes.bool,
+
+  /**
+   * If set to true, it will provide an "X" button that allows user to clear the field
+   * This will return `null` to the `onChange` callback
+   * Design suggests enabling this in all instances unless there is no meaningful null/empty selection
+   */
+  isClearable: PropTypes.bool,
   clearOnSelect: PropTypes.bool,
   creatable: PropTypes.bool,
   creatableOptions: PropTypes.shape({
@@ -237,6 +243,10 @@ SearchableDropdown.propTypes = {
   loading: PropTypes.bool,
   multi: PropTypes.bool,
   name: PropTypes.string.isRequired,
+
+  /**
+ * react-select will by default set noResultsText to say "No options" unless the prop is explicitly defined
+ */
   noResultsText: PropTypes.string,
   onChange: PropTypes.func,
   options: SelectOpts,
@@ -251,7 +261,6 @@ SearchableDropdown.propTypes = {
 
 /* eslint-disable no-undefined */
 SearchableDropdown.defaultProps = {
-  clearable: false,
   clearOnSelect: false,
   loading: false,
   filterOption: undefined,

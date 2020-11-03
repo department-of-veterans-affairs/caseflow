@@ -1,6 +1,23 @@
 # frozen_string_literal: true
 
 describe AssignHearingDispositionTask, :all_dbs do
+  shared_examples "virtual hearing is cleaned up" do
+    it "cleans up the virtual hearing", :aggregate_failures do
+      hearing.reload
+
+      subject
+      expect(hearing.virtual_hearing.reload.closed?).to eq(true)
+    end
+  end
+
+  shared_context "when hearing is virtual" do
+    let!(:virtual_hearing) do
+      create(:virtual_hearing, :initialized, :all_emails_sent, status: :active, hearing: hearing)
+    end
+
+    include_examples "virtual hearing is cleaned up"
+  end
+
   describe "#update_from_params for ama appeal" do
     let(:appeal) { create(:appeal) }
     let!(:hearing) { create(:hearing, appeal: appeal) }
@@ -40,6 +57,11 @@ describe AssignHearingDispositionTask, :all_dbs do
         expect(Hearing.count).to eq 1
         expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.cancelled
         expect(disposition_task.reload.closed_at).to_not be_nil
+        expect(disposition_task.cancelled_by).to eq user
+      end
+
+      context "when hearing is virtual" do
+        include_context "when hearing is virtual"
       end
     end
 
@@ -56,10 +78,9 @@ describe AssignHearingDispositionTask, :all_dbs do
       end
 
       it "sets the hearing disposition and calls hold!" do
-        expect(disposition_task).to receive(:hold!).exactly(1).times
+        expect(disposition_task).to receive(:hold!).exactly(1).times.and_call_original
 
-        subject
-
+        expect(subject.count).to eq 3
         expect(Hearing.count).to eq 1
         expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.held
       end
@@ -78,10 +99,9 @@ describe AssignHearingDispositionTask, :all_dbs do
       end
 
       it "sets the hearing disposition and calls no_show!" do
-        expect(disposition_task).to receive(:no_show!).exactly(1).times
+        expect(disposition_task).to receive(:no_show!).exactly(1).times.and_call_original
 
-        subject
-
+        expect(subject.count).to eq(2)
         expect(Hearing.count).to eq 1
         expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.no_show
       end
@@ -113,11 +133,13 @@ describe AssignHearingDispositionTask, :all_dbs do
           expect(Hearing.count).to eq 1
           expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.postponed
           expect(HearingTask.count).to eq 2
-          expect(HearingTask.first.cancelled?).to be_truthy
-          expect(HearingTask.last.on_hold?).to be_truthy
+          expect(HearingTask.order(:id).first.cancelled?).to be_truthy
+          expect(HearingTask.order(:id).first.cancelled_by).to eq user
+          expect(HearingTask.order(:id).last.on_hold?).to be_truthy
           expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
+          expect(AssignHearingDispositionTask.first.cancelled_by).to eq user
           expect(ScheduleHearingTask.count).to eq 1
-          expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.last.id
+          expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.order(:id).last.id
         end
 
         context "when task instructions are passed" do
@@ -153,10 +175,10 @@ describe AssignHearingDispositionTask, :all_dbs do
           expect(Hearing.count).to eq 1
           expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.postponed
           expect(HearingTask.count).to eq 2
-          expect(HearingTask.first.cancelled?).to be_truthy
+          expect(HearingTask.order(:id).first.cancelled?).to be_truthy
           expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
           expect(ScheduleHearingTask.count).to eq 1
-          expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.last.id
+          expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.order(:id).last.id
           expect(HearingAdminActionIncarceratedVeteranTask.count).to eq 1
           expect(HearingAdminActionIncarceratedVeteranTask.last.instructions).to eq [admin_action_instructions]
         end
@@ -182,8 +204,8 @@ describe AssignHearingDispositionTask, :all_dbs do
           expect(Hearing.last.hearing_location.facility_id).to eq "vba_370"
           expect(Hearing.last.scheduled_time.strftime("%I:%M%p")).to eq "12:30PM"
           expect(HearingTask.count).to eq 2
-          expect(HearingTask.first.cancelled?).to be_truthy
-          expect(HearingTask.last.hearing_task_association.hearing.id).to eq Hearing.last.id
+          expect(HearingTask.order(:id).first.cancelled?).to be_truthy
+          expect(HearingTask.order(:id).last.hearing_task_association.hearing.id).to eq Hearing.last.id
           expect(AssignHearingDispositionTask.count).to eq 2
           expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
         end
@@ -224,6 +246,10 @@ describe AssignHearingDispositionTask, :all_dbs do
               expect(hearing.reload.disposition).not_to eq Constants.HEARING_DISPOSITION_TYPES.postponed
             end
           end
+        end
+
+        context "when hearing is virtual" do
+          include_context "when hearing is virtual"
         end
       end
     end
@@ -293,7 +319,8 @@ describe AssignHearingDispositionTask, :all_dbs do
     end
 
     it "fails with missing hearing association error" do
-      expect { subject }.to raise_error(AssignHearingDispositionTask::HearingAssociationMissing)
+      message = format(COPY::HEARING_TASK_ASSOCIATION_MISSING_MESASAGE, hearing_task.id)
+      expect { subject }.to raise_error(AssignHearingDispositionTask::HearingAssociationMissing).with_message(message)
     end
   end
 

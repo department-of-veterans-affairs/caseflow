@@ -7,7 +7,7 @@ exports[`Timezone Can set timezone 1`] = `
     [MockFunction] {
       "calls": Array [
         Array [
-          "America/Chicago",
+          "America/New_York",
         ],
       ],
       "results": Array [
@@ -24,12 +24,15 @@ exports[`Timezone Can set timezone 1`] = `
 >
   <SearchableDropdown
     clearOnSelect={false}
-    clearable={false}
     loading={false}
     name="tz"
     onChange={[Function]}
     options={
       Array [
+        Object {
+          "label": "",
+          "value": null,
+        },
         Object {
           "index": -3,
           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -832,7 +835,6 @@ exports[`Timezone Can set timezone 1`] = `
           <StateManager
             cache={false}
             classNamePrefix="cf-select"
-            clearable={false}
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
@@ -845,6 +847,10 @@ exports[`Timezone Can set timezone 1`] = `
             onChange={[Function]}
             options={
               Array [
+                Object {
+                  "label": "",
+                  "value": null,
+                },
                 Object {
                   "index": -3,
                   "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -1616,9 +1622,9 @@ exports[`Timezone Can set timezone 1`] = `
             }
             value={
               Object {
-                "index": -2,
-                "label": "Central Time (US & Canada) (7:15 AM)",
-                "value": "America/Chicago",
+                "index": -3,
+                "label": "Eastern Time (US & Canada) (8:15 AM)",
+                "value": "America/New_York",
               }
             }
           >
@@ -1628,7 +1634,6 @@ exports[`Timezone Can set timezone 1`] = `
               cache={false}
               captureMenuScroll={false}
               classNamePrefix="cf-select"
-              clearable={false}
               closeMenuOnScroll={false}
               closeMenuOnSelect={true}
               components={Object {}}
@@ -1664,6 +1669,10 @@ exports[`Timezone Can set timezone 1`] = `
               openMenuOnFocus={false}
               options={
                 Array [
+                  Object {
+                    "label": "",
+                    "value": null,
+                  },
                   Object {
                     "index": -3,
                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -2439,9 +2448,9 @@ exports[`Timezone Can set timezone 1`] = `
               tabSelectsValue={true}
               value={
                 Object {
-                  "index": -2,
-                  "label": "Central Time (US & Canada) (7:15 AM)",
-                  "value": "America/Chicago",
+                  "index": -3,
+                  "label": "Eastern Time (US & Canada) (8:15 AM)",
+                  "value": "America/New_York",
                 }
               }
             >
@@ -2463,6 +2472,10 @@ exports[`Timezone Can set timezone 1`] = `
                 isRtl={false}
                 options={
                   Array [
+                    Object {
+                      "label": "",
+                      "value": null,
+                    },
                     Object {
                       "index": -3,
                       "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -3233,7 +3246,6 @@ exports[`Timezone Can set timezone 1`] = `
                     "cache": false,
                     "captureMenuScroll": false,
                     "classNamePrefix": "cf-select",
-                    "clearable": false,
                     "closeMenuOnScroll": false,
                     "closeMenuOnSelect": true,
                     "components": Object {},
@@ -3246,6 +3258,7 @@ exports[`Timezone Can set timezone 1`] = `
                     "getOptionValue": [Function],
                     "inputId": "tz",
                     "inputValue": "",
+                    "isClearable": undefined,
                     "isDisabled": false,
                     "isLoading": false,
                     "isMulti": false,
@@ -3270,6 +3283,10 @@ exports[`Timezone Can set timezone 1`] = `
                     "openMenuOnClick": true,
                     "openMenuOnFocus": false,
                     "options": Array [
+                      Object {
+                        "label": "",
+                        "value": null,
+                      },
                       Object {
                         "index": -3,
                         "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -4042,9 +4059,9 @@ exports[`Timezone Can set timezone 1`] = `
                     "tabIndex": "0",
                     "tabSelectsValue": true,
                     "value": Object {
-                      "index": -2,
-                      "label": "Central Time (US & Canada) (7:15 AM)",
-                      "value": "America/Chicago",
+                      "index": -3,
+                      "label": "Eastern Time (US & Canada) (8:15 AM)",
+                      "value": "America/New_York",
                     },
                   }
                 }
@@ -4118,6 +4135,10 @@ exports[`Timezone Can set timezone 1`] = `
                       menuIsOpen={false}
                       options={
                         Array [
+                          Object {
+                            "label": "",
+                            "value": null,
+                          },
                           Object {
                             "index": -3,
                             "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -4888,7 +4909,6 @@ exports[`Timezone Can set timezone 1`] = `
                           "cache": false,
                           "captureMenuScroll": false,
                           "classNamePrefix": "cf-select",
-                          "clearable": false,
                           "closeMenuOnScroll": false,
                           "closeMenuOnSelect": true,
                           "components": Object {},
@@ -4901,6 +4921,7 @@ exports[`Timezone Can set timezone 1`] = `
                           "getOptionValue": [Function],
                           "inputId": "tz",
                           "inputValue": "",
+                          "isClearable": undefined,
                           "isDisabled": false,
                           "isLoading": false,
                           "isMulti": false,
@@ -4925,6 +4946,10 @@ exports[`Timezone Can set timezone 1`] = `
                           "openMenuOnClick": true,
                           "openMenuOnFocus": false,
                           "options": Array [
+                            Object {
+                              "label": "",
+                              "value": null,
+                            },
                             Object {
                               "index": -3,
                               "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -5697,9 +5722,9 @@ exports[`Timezone Can set timezone 1`] = `
                           "tabIndex": "0",
                           "tabSelectsValue": true,
                           "value": Object {
-                            "index": -2,
-                            "label": "Central Time (US & Canada) (7:15 AM)",
-                            "value": "America/Chicago",
+                            "index": -3,
+                            "label": "Eastern Time (US & Canada) (8:15 AM)",
+                            "value": "America/New_York",
                           },
                         }
                       }
@@ -5781,6 +5806,10 @@ exports[`Timezone Can set timezone 1`] = `
                             isRtl={false}
                             options={
                               Array [
+                                Object {
+                                  "label": "",
+                                  "value": null,
+                                },
                                 Object {
                                   "index": -3,
                                   "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -6551,7 +6580,6 @@ exports[`Timezone Can set timezone 1`] = `
                                 "cache": false,
                                 "captureMenuScroll": false,
                                 "classNamePrefix": "cf-select",
-                                "clearable": false,
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
                                 "components": Object {},
@@ -6564,6 +6592,7 @@ exports[`Timezone Can set timezone 1`] = `
                                 "getOptionValue": [Function],
                                 "inputId": "tz",
                                 "inputValue": "",
+                                "isClearable": undefined,
                                 "isDisabled": false,
                                 "isLoading": false,
                                 "isMulti": false,
@@ -6588,6 +6617,10 @@ exports[`Timezone Can set timezone 1`] = `
                                 "openMenuOnClick": true,
                                 "openMenuOnFocus": false,
                                 "options": Array [
+                                  Object {
+                                    "label": "",
+                                    "value": null,
+                                  },
                                   Object {
                                     "index": -3,
                                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -7360,9 +7393,9 @@ exports[`Timezone Can set timezone 1`] = `
                                 "tabIndex": "0",
                                 "tabSelectsValue": true,
                                 "value": Object {
-                                  "index": -2,
-                                  "label": "Central Time (US & Canada) (7:15 AM)",
-                                  "value": "America/Chicago",
+                                  "index": -3,
+                                  "label": "Eastern Time (US & Canada) (8:15 AM)",
+                                  "value": "America/New_York",
                                 },
                               }
                             }
@@ -7423,9 +7456,9 @@ exports[`Timezone Can set timezone 1`] = `
                                   cx={[Function]}
                                   data={
                                     Object {
-                                      "index": -2,
-                                      "label": "Central Time (US & Canada) (7:15 AM)",
-                                      "value": "America/Chicago",
+                                      "index": -3,
+                                      "label": "Eastern Time (US & Canada) (8:15 AM)",
+                                      "value": "America/New_York",
                                     }
                                   }
                                   getStyles={[Function]}
@@ -7436,6 +7469,10 @@ exports[`Timezone Can set timezone 1`] = `
                                   isRtl={false}
                                   options={
                                     Array [
+                                      Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
                                       Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -8206,7 +8243,6 @@ exports[`Timezone Can set timezone 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -8219,6 +8255,7 @@ exports[`Timezone Can set timezone 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "tz",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -8243,6 +8280,10 @@ exports[`Timezone Can set timezone 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -9015,9 +9056,9 @@ exports[`Timezone Can set timezone 1`] = `
                                       "tabIndex": "0",
                                       "tabSelectsValue": true,
                                       "value": Object {
-                                        "index": -2,
-                                        "label": "Central Time (US & Canada) (7:15 AM)",
-                                        "value": "America/Chicago",
+                                        "index": -3,
+                                        "label": "Eastern Time (US & Canada) (8:15 AM)",
+                                        "value": "America/New_York",
                                       },
                                     }
                                   }
@@ -9076,7 +9117,7 @@ exports[`Timezone Can set timezone 1`] = `
                                     <div
                                       className="cf-select__single-value css-1uccc91-singleValue"
                                     >
-                                      Central Time (US & Canada) (7:15 AM)
+                                      Eastern Time (US & Canada) (8:15 AM)
                                     </div>
                                   </EmotionCssPropInternal>
                                 </SingleValue>
@@ -9101,7 +9142,6 @@ exports[`Timezone Can set timezone 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -9114,6 +9154,7 @@ exports[`Timezone Can set timezone 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "tz",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -9138,6 +9179,10 @@ exports[`Timezone Can set timezone 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -9910,9 +9955,9 @@ exports[`Timezone Can set timezone 1`] = `
                                       "tabIndex": "0",
                                       "tabSelectsValue": true,
                                       "value": Object {
-                                        "index": -2,
-                                        "label": "Central Time (US & Canada) (7:15 AM)",
-                                        "value": "America/Chicago",
+                                        "index": -3,
+                                        "label": "Eastern Time (US & Canada) (8:15 AM)",
+                                        "value": "America/New_York",
                                       },
                                     }
                                   }
@@ -10063,6 +10108,10 @@ exports[`Timezone Can set timezone 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "",
+                                  "value": null,
+                                },
+                                Object {
                                   "index": -3,
                                   "label": "Eastern Time (US & Canada) (8:15 AM)",
                                   "value": "America/New_York",
@@ -10832,7 +10881,6 @@ exports[`Timezone Can set timezone 1`] = `
                                 "cache": false,
                                 "captureMenuScroll": false,
                                 "classNamePrefix": "cf-select",
-                                "clearable": false,
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
                                 "components": Object {},
@@ -10845,6 +10893,7 @@ exports[`Timezone Can set timezone 1`] = `
                                 "getOptionValue": [Function],
                                 "inputId": "tz",
                                 "inputValue": "",
+                                "isClearable": undefined,
                                 "isDisabled": false,
                                 "isLoading": false,
                                 "isMulti": false,
@@ -10869,6 +10918,10 @@ exports[`Timezone Can set timezone 1`] = `
                                 "openMenuOnClick": true,
                                 "openMenuOnFocus": false,
                                 "options": Array [
+                                  Object {
+                                    "label": "",
+                                    "value": null,
+                                  },
                                   Object {
                                     "index": -3,
                                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -11641,9 +11694,9 @@ exports[`Timezone Can set timezone 1`] = `
                                 "tabIndex": "0",
                                 "tabSelectsValue": true,
                                 "value": Object {
-                                  "index": -2,
-                                  "label": "Central Time (US & Canada) (7:15 AM)",
-                                  "value": "America/Chicago",
+                                  "index": -3,
+                                  "label": "Eastern Time (US & Canada) (8:15 AM)",
+                                  "value": "America/New_York",
                                 },
                               }
                             }
@@ -11707,6 +11760,10 @@ exports[`Timezone Can set timezone 1`] = `
                                   isRtl={false}
                                   options={
                                     Array [
+                                      Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
                                       Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -12477,7 +12534,6 @@ exports[`Timezone Can set timezone 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -12490,6 +12546,7 @@ exports[`Timezone Can set timezone 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "tz",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -12514,6 +12571,10 @@ exports[`Timezone Can set timezone 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -13286,9 +13347,9 @@ exports[`Timezone Can set timezone 1`] = `
                                       "tabIndex": "0",
                                       "tabSelectsValue": true,
                                       "value": Object {
-                                        "index": -2,
-                                        "label": "Central Time (US & Canada) (7:15 AM)",
-                                        "value": "America/Chicago",
+                                        "index": -3,
+                                        "label": "Eastern Time (US & Canada) (8:15 AM)",
+                                        "value": "America/New_York",
                                       },
                                     }
                                   }
@@ -13364,6 +13425,10 @@ exports[`Timezone Can set timezone 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -14133,7 +14198,6 @@ exports[`Timezone Can set timezone 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -14146,6 +14210,7 @@ exports[`Timezone Can set timezone 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "tz",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -14170,6 +14235,10 @@ exports[`Timezone Can set timezone 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -14942,9 +15011,9 @@ exports[`Timezone Can set timezone 1`] = `
                                       "tabIndex": "0",
                                       "tabSelectsValue": true,
                                       "value": Object {
-                                        "index": -2,
-                                        "label": "Central Time (US & Canada) (7:15 AM)",
-                                        "value": "America/Chicago",
+                                        "index": -3,
+                                        "label": "Eastern Time (US & Canada) (8:15 AM)",
+                                        "value": "America/New_York",
                                       },
                                     }
                                   }
@@ -15071,12 +15140,15 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
 >
   <SearchableDropdown
     clearOnSelect={false}
-    clearable={false}
     loading={false}
     name="Timezone"
     onChange={[Function]}
     options={
       Array [
+        Object {
+          "label": "",
+          "value": null,
+        },
         Object {
           "index": -3,
           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -15879,7 +15951,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
           <StateManager
             cache={false}
             classNamePrefix="cf-select"
-            clearable={false}
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
@@ -15892,6 +15963,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
             onChange={[Function]}
             options={
               Array [
+                Object {
+                  "label": "",
+                  "value": null,
+                },
                 Object {
                   "index": -3,
                   "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -16669,7 +16744,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
               cache={false}
               captureMenuScroll={false}
               classNamePrefix="cf-select"
-              clearable={false}
               closeMenuOnScroll={false}
               closeMenuOnSelect={true}
               components={Object {}}
@@ -16705,6 +16779,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
               openMenuOnFocus={false}
               options={
                 Array [
+                  Object {
+                    "label": "",
+                    "value": null,
+                  },
                   Object {
                     "index": -3,
                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -17499,6 +17577,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                 options={
                   Array [
                     Object {
+                      "label": "",
+                      "value": null,
+                    },
+                    Object {
                       "index": -3,
                       "label": "Eastern Time (US & Canada) (8:15 AM)",
                       "value": "America/New_York",
@@ -18268,7 +18350,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                     "cache": false,
                     "captureMenuScroll": false,
                     "classNamePrefix": "cf-select",
-                    "clearable": false,
                     "closeMenuOnScroll": false,
                     "closeMenuOnSelect": true,
                     "components": Object {},
@@ -18281,6 +18362,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                     "getOptionValue": [Function],
                     "inputId": "Timezone",
                     "inputValue": "",
+                    "isClearable": undefined,
                     "isDisabled": false,
                     "isLoading": false,
                     "isMulti": false,
@@ -18305,6 +18387,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                     "openMenuOnClick": true,
                     "openMenuOnFocus": false,
                     "options": Array [
+                      Object {
+                        "label": "",
+                        "value": null,
+                      },
                       Object {
                         "index": -3,
                         "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -19150,6 +19236,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                       options={
                         Array [
                           Object {
+                            "label": "",
+                            "value": null,
+                          },
+                          Object {
                             "index": -3,
                             "label": "Eastern Time (US & Canada) (8:15 AM)",
                             "value": "America/New_York",
@@ -19919,7 +20009,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                           "cache": false,
                           "captureMenuScroll": false,
                           "classNamePrefix": "cf-select",
-                          "clearable": false,
                           "closeMenuOnScroll": false,
                           "closeMenuOnSelect": true,
                           "components": Object {},
@@ -19932,6 +20021,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                           "getOptionValue": [Function],
                           "inputId": "Timezone",
                           "inputValue": "",
+                          "isClearable": undefined,
                           "isDisabled": false,
                           "isLoading": false,
                           "isMulti": false,
@@ -19956,6 +20046,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                           "openMenuOnClick": true,
                           "openMenuOnFocus": false,
                           "options": Array [
+                            Object {
+                              "label": "",
+                              "value": null,
+                            },
                             Object {
                               "index": -3,
                               "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -20809,6 +20903,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "",
+                                  "value": null,
+                                },
+                                Object {
                                   "index": -3,
                                   "label": "Eastern Time (US & Canada) (8:15 AM)",
                                   "value": "America/New_York",
@@ -21578,7 +21676,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                 "cache": false,
                                 "captureMenuScroll": false,
                                 "classNamePrefix": "cf-select",
-                                "clearable": false,
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
                                 "components": Object {},
@@ -21591,6 +21688,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                 "getOptionValue": [Function],
                                 "inputId": "Timezone",
                                 "inputValue": "",
+                                "isClearable": undefined,
                                 "isDisabled": false,
                                 "isLoading": false,
                                 "isMulti": false,
@@ -21615,6 +21713,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                 "openMenuOnClick": true,
                                 "openMenuOnFocus": false,
                                 "options": Array [
+                                  Object {
+                                    "label": "",
+                                    "value": null,
+                                  },
                                   Object {
                                     "index": -3,
                                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -22455,6 +22557,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -23224,7 +23330,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -23237,6 +23342,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "Timezone",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -23261,6 +23367,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -24111,7 +24221,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -24124,6 +24233,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "Timezone",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -24148,6 +24258,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -25069,6 +25183,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "",
+                                  "value": null,
+                                },
+                                Object {
                                   "index": -3,
                                   "label": "Eastern Time (US & Canada) (8:15 AM)",
                                   "value": "America/New_York",
@@ -25838,7 +25956,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                 "cache": false,
                                 "captureMenuScroll": false,
                                 "classNamePrefix": "cf-select",
-                                "clearable": false,
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
                                 "components": Object {},
@@ -25851,6 +25968,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                 "getOptionValue": [Function],
                                 "inputId": "Timezone",
                                 "inputValue": "",
+                                "isClearable": undefined,
                                 "isDisabled": false,
                                 "isLoading": false,
                                 "isMulti": false,
@@ -25875,6 +25993,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                 "openMenuOnClick": true,
                                 "openMenuOnFocus": false,
                                 "options": Array [
+                                  Object {
+                                    "label": "",
+                                    "value": null,
+                                  },
                                   Object {
                                     "index": -3,
                                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -26710,6 +26832,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -27479,7 +27605,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -27492,6 +27617,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "Timezone",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -27516,6 +27642,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -28362,6 +28492,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -29131,7 +29265,6 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -29144,6 +29277,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "Timezone",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -29168,6 +29302,10 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -30066,12 +30204,15 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
 >
   <SearchableDropdown
     clearOnSelect={false}
-    clearable={false}
     loading={false}
     name="Timezone"
     onChange={[Function]}
     options={
       Array [
+        Object {
+          "label": "",
+          "value": null,
+        },
         Object {
           "index": -3,
           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -30875,7 +31016,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
           <StateManager
             cache={false}
             classNamePrefix="cf-select"
-            clearable={false}
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
@@ -30888,6 +31028,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
             onChange={[Function]}
             options={
               Array [
+                Object {
+                  "label": "",
+                  "value": null,
+                },
                 Object {
                   "index": -3,
                   "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -31665,7 +31809,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
               cache={false}
               captureMenuScroll={false}
               classNamePrefix="cf-select"
-              clearable={false}
               closeMenuOnScroll={false}
               closeMenuOnSelect={true}
               components={Object {}}
@@ -31701,6 +31844,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
               openMenuOnFocus={false}
               options={
                 Array [
+                  Object {
+                    "label": "",
+                    "value": null,
+                  },
                   Object {
                     "index": -3,
                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -32495,6 +32642,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                 options={
                   Array [
                     Object {
+                      "label": "",
+                      "value": null,
+                    },
+                    Object {
                       "index": -3,
                       "label": "Eastern Time (US & Canada) (8:15 AM)",
                       "value": "America/New_York",
@@ -33264,7 +33415,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                     "cache": false,
                     "captureMenuScroll": false,
                     "classNamePrefix": "cf-select",
-                    "clearable": false,
                     "closeMenuOnScroll": false,
                     "closeMenuOnSelect": true,
                     "components": Object {},
@@ -33277,6 +33427,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                     "getOptionValue": [Function],
                     "inputId": "Timezone",
                     "inputValue": "",
+                    "isClearable": undefined,
                     "isDisabled": true,
                     "isLoading": false,
                     "isMulti": false,
@@ -33301,6 +33452,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                     "openMenuOnClick": true,
                     "openMenuOnFocus": false,
                     "options": Array [
+                      Object {
+                        "label": "",
+                        "value": null,
+                      },
                       Object {
                         "index": -3,
                         "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -34146,6 +34301,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                       options={
                         Array [
                           Object {
+                            "label": "",
+                            "value": null,
+                          },
+                          Object {
                             "index": -3,
                             "label": "Eastern Time (US & Canada) (8:15 AM)",
                             "value": "America/New_York",
@@ -34915,7 +35074,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                           "cache": false,
                           "captureMenuScroll": false,
                           "classNamePrefix": "cf-select",
-                          "clearable": false,
                           "closeMenuOnScroll": false,
                           "closeMenuOnSelect": true,
                           "components": Object {},
@@ -34928,6 +35086,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                           "getOptionValue": [Function],
                           "inputId": "Timezone",
                           "inputValue": "",
+                          "isClearable": undefined,
                           "isDisabled": true,
                           "isLoading": false,
                           "isMulti": false,
@@ -34952,6 +35111,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                           "openMenuOnClick": true,
                           "openMenuOnFocus": false,
                           "options": Array [
+                            Object {
+                              "label": "",
+                              "value": null,
+                            },
                             Object {
                               "index": -3,
                               "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -35805,6 +35968,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "",
+                                  "value": null,
+                                },
+                                Object {
                                   "index": -3,
                                   "label": "Eastern Time (US & Canada) (8:15 AM)",
                                   "value": "America/New_York",
@@ -36574,7 +36741,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                 "cache": false,
                                 "captureMenuScroll": false,
                                 "classNamePrefix": "cf-select",
-                                "clearable": false,
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
                                 "components": Object {},
@@ -36587,6 +36753,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                 "getOptionValue": [Function],
                                 "inputId": "Timezone",
                                 "inputValue": "",
+                                "isClearable": undefined,
                                 "isDisabled": true,
                                 "isLoading": false,
                                 "isMulti": false,
@@ -36611,6 +36778,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                 "openMenuOnClick": true,
                                 "openMenuOnFocus": false,
                                 "options": Array [
+                                  Object {
+                                    "label": "",
+                                    "value": null,
+                                  },
                                   Object {
                                     "index": -3,
                                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -37451,6 +37622,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -38220,7 +38395,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -38233,6 +38407,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "Timezone",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": true,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -38257,6 +38432,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -39149,6 +39328,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "",
+                                  "value": null,
+                                },
+                                Object {
                                   "index": -3,
                                   "label": "Eastern Time (US & Canada) (8:15 AM)",
                                   "value": "America/New_York",
@@ -39918,7 +40101,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                 "cache": false,
                                 "captureMenuScroll": false,
                                 "classNamePrefix": "cf-select",
-                                "clearable": false,
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
                                 "components": Object {},
@@ -39931,6 +40113,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                 "getOptionValue": [Function],
                                 "inputId": "Timezone",
                                 "inputValue": "",
+                                "isClearable": undefined,
                                 "isDisabled": true,
                                 "isLoading": false,
                                 "isMulti": false,
@@ -39955,6 +40138,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                 "openMenuOnClick": true,
                                 "openMenuOnFocus": false,
                                 "options": Array [
+                                  Object {
+                                    "label": "",
+                                    "value": null,
+                                  },
                                   Object {
                                     "index": -3,
                                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -40790,6 +40977,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -41559,7 +41750,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -41572,6 +41762,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "Timezone",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": true,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -41596,6 +41787,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -42442,6 +42637,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -43211,7 +43410,6 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -43224,6 +43422,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "Timezone",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": true,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -43248,6 +43447,10 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -44139,12 +44342,15 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
 exports[`Timezone Matches snapshot with default props 1`] = `
 <SearchableDropdown
   clearOnSelect={false}
-  clearable={false}
   loading={false}
   name="Timezone"
   onChange={[Function]}
   options={
     Array [
+      Object {
+        "label": "",
+        "value": null,
+      },
       Object {
         "index": -3,
         "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -44936,12 +45142,15 @@ exports[`Timezone Respects required prop 1`] = `
 >
   <SearchableDropdown
     clearOnSelect={false}
-    clearable={false}
     loading={false}
     name="Timezone"
     onChange={[Function]}
     options={
       Array [
+        Object {
+          "label": "",
+          "value": null,
+        },
         Object {
           "index": -3,
           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -45750,7 +45959,6 @@ exports[`Timezone Respects required prop 1`] = `
           <StateManager
             cache={false}
             classNamePrefix="cf-select"
-            clearable={false}
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
@@ -45763,6 +45971,10 @@ exports[`Timezone Respects required prop 1`] = `
             onChange={[Function]}
             options={
               Array [
+                Object {
+                  "label": "",
+                  "value": null,
+                },
                 Object {
                   "index": -3,
                   "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -46540,7 +46752,6 @@ exports[`Timezone Respects required prop 1`] = `
               cache={false}
               captureMenuScroll={false}
               classNamePrefix="cf-select"
-              clearable={false}
               closeMenuOnScroll={false}
               closeMenuOnSelect={true}
               components={Object {}}
@@ -46576,6 +46787,10 @@ exports[`Timezone Respects required prop 1`] = `
               openMenuOnFocus={false}
               options={
                 Array [
+                  Object {
+                    "label": "",
+                    "value": null,
+                  },
                   Object {
                     "index": -3,
                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -47370,6 +47585,10 @@ exports[`Timezone Respects required prop 1`] = `
                 options={
                   Array [
                     Object {
+                      "label": "",
+                      "value": null,
+                    },
+                    Object {
                       "index": -3,
                       "label": "Eastern Time (US & Canada) (8:15 AM)",
                       "value": "America/New_York",
@@ -48139,7 +48358,6 @@ exports[`Timezone Respects required prop 1`] = `
                     "cache": false,
                     "captureMenuScroll": false,
                     "classNamePrefix": "cf-select",
-                    "clearable": false,
                     "closeMenuOnScroll": false,
                     "closeMenuOnSelect": true,
                     "components": Object {},
@@ -48152,6 +48370,7 @@ exports[`Timezone Respects required prop 1`] = `
                     "getOptionValue": [Function],
                     "inputId": "Timezone",
                     "inputValue": "",
+                    "isClearable": undefined,
                     "isDisabled": false,
                     "isLoading": false,
                     "isMulti": false,
@@ -48176,6 +48395,10 @@ exports[`Timezone Respects required prop 1`] = `
                     "openMenuOnClick": true,
                     "openMenuOnFocus": false,
                     "options": Array [
+                      Object {
+                        "label": "",
+                        "value": null,
+                      },
                       Object {
                         "index": -3,
                         "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -49021,6 +49244,10 @@ exports[`Timezone Respects required prop 1`] = `
                       options={
                         Array [
                           Object {
+                            "label": "",
+                            "value": null,
+                          },
+                          Object {
                             "index": -3,
                             "label": "Eastern Time (US & Canada) (8:15 AM)",
                             "value": "America/New_York",
@@ -49790,7 +50017,6 @@ exports[`Timezone Respects required prop 1`] = `
                           "cache": false,
                           "captureMenuScroll": false,
                           "classNamePrefix": "cf-select",
-                          "clearable": false,
                           "closeMenuOnScroll": false,
                           "closeMenuOnSelect": true,
                           "components": Object {},
@@ -49803,6 +50029,7 @@ exports[`Timezone Respects required prop 1`] = `
                           "getOptionValue": [Function],
                           "inputId": "Timezone",
                           "inputValue": "",
+                          "isClearable": undefined,
                           "isDisabled": false,
                           "isLoading": false,
                           "isMulti": false,
@@ -49827,6 +50054,10 @@ exports[`Timezone Respects required prop 1`] = `
                           "openMenuOnClick": true,
                           "openMenuOnFocus": false,
                           "options": Array [
+                            Object {
+                              "label": "",
+                              "value": null,
+                            },
                             Object {
                               "index": -3,
                               "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -50680,6 +50911,10 @@ exports[`Timezone Respects required prop 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "",
+                                  "value": null,
+                                },
+                                Object {
                                   "index": -3,
                                   "label": "Eastern Time (US & Canada) (8:15 AM)",
                                   "value": "America/New_York",
@@ -51449,7 +51684,6 @@ exports[`Timezone Respects required prop 1`] = `
                                 "cache": false,
                                 "captureMenuScroll": false,
                                 "classNamePrefix": "cf-select",
-                                "clearable": false,
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
                                 "components": Object {},
@@ -51462,6 +51696,7 @@ exports[`Timezone Respects required prop 1`] = `
                                 "getOptionValue": [Function],
                                 "inputId": "Timezone",
                                 "inputValue": "",
+                                "isClearable": undefined,
                                 "isDisabled": false,
                                 "isLoading": false,
                                 "isMulti": false,
@@ -51486,6 +51721,10 @@ exports[`Timezone Respects required prop 1`] = `
                                 "openMenuOnClick": true,
                                 "openMenuOnFocus": false,
                                 "options": Array [
+                                  Object {
+                                    "label": "",
+                                    "value": null,
+                                  },
                                   Object {
                                     "index": -3,
                                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -52326,6 +52565,10 @@ exports[`Timezone Respects required prop 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -53095,7 +53338,6 @@ exports[`Timezone Respects required prop 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -53108,6 +53350,7 @@ exports[`Timezone Respects required prop 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "Timezone",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -53132,6 +53375,10 @@ exports[`Timezone Respects required prop 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -53982,7 +54229,6 @@ exports[`Timezone Respects required prop 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -53995,6 +54241,7 @@ exports[`Timezone Respects required prop 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "Timezone",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -54019,6 +54266,10 @@ exports[`Timezone Respects required prop 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -54940,6 +55191,10 @@ exports[`Timezone Respects required prop 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "",
+                                  "value": null,
+                                },
+                                Object {
                                   "index": -3,
                                   "label": "Eastern Time (US & Canada) (8:15 AM)",
                                   "value": "America/New_York",
@@ -55709,7 +55964,6 @@ exports[`Timezone Respects required prop 1`] = `
                                 "cache": false,
                                 "captureMenuScroll": false,
                                 "classNamePrefix": "cf-select",
-                                "clearable": false,
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
                                 "components": Object {},
@@ -55722,6 +55976,7 @@ exports[`Timezone Respects required prop 1`] = `
                                 "getOptionValue": [Function],
                                 "inputId": "Timezone",
                                 "inputValue": "",
+                                "isClearable": undefined,
                                 "isDisabled": false,
                                 "isLoading": false,
                                 "isMulti": false,
@@ -55746,6 +56001,10 @@ exports[`Timezone Respects required prop 1`] = `
                                 "openMenuOnClick": true,
                                 "openMenuOnFocus": false,
                                 "options": Array [
+                                  Object {
+                                    "label": "",
+                                    "value": null,
+                                  },
                                   Object {
                                     "index": -3,
                                     "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -56581,6 +56840,10 @@ exports[`Timezone Respects required prop 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -57350,7 +57613,6 @@ exports[`Timezone Respects required prop 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -57363,6 +57625,7 @@ exports[`Timezone Respects required prop 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "Timezone",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -57387,6 +57650,10 @@ exports[`Timezone Respects required prop 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",
@@ -58233,6 +58500,10 @@ exports[`Timezone Respects required prop 1`] = `
                                   options={
                                     Array [
                                       Object {
+                                        "label": "",
+                                        "value": null,
+                                      },
+                                      Object {
                                         "index": -3,
                                         "label": "Eastern Time (US & Canada) (8:15 AM)",
                                         "value": "America/New_York",
@@ -59002,7 +59273,6 @@ exports[`Timezone Respects required prop 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -59015,6 +59285,7 @@ exports[`Timezone Respects required prop 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "Timezone",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -59039,6 +59310,10 @@ exports[`Timezone Respects required prop 1`] = `
                                       "openMenuOnClick": true,
                                       "openMenuOnFocus": false,
                                       "options": Array [
+                                        Object {
+                                          "label": "",
+                                          "value": null,
+                                        },
                                         Object {
                                           "index": -3,
                                           "label": "Eastern Time (US & Canada) (8:15 AM)",

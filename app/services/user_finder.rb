@@ -36,6 +36,8 @@ class UserFinder
       User.list_hearing_coordinators
     when "non_judges"
       User.where.not(id: JudgeTeam.all.map(&:judge).reject(&:nil?).map(&:id))
+    when "non_dvcs"
+      User.where.not(id: DvcTeam.all.map(&:dvc).reject(&:nil?).map(&:id))
     else
       []
     end

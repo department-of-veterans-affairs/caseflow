@@ -30,12 +30,31 @@ class Docket
     appeals(priority: priority, ready: ready).ids.size
   end
 
+  # By default all cases are considered genpop. This can be overridden for specific dockets
+  def genpop_priority_count
+    count(priority: true, ready: true)
+  end
+
   def weight
     count
   end
 
-  def age_of_n_oldest_priority_appeals(num)
+  def age_of_n_oldest_genpop_priority_appeals(num)
     appeals(priority: true, ready: true).limit(num).map(&:ready_for_distribution_at)
+  end
+
+  def age_of_oldest_priority_appeal
+    @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
+  end
+
+  def oldest_priority_appeal_days_waiting
+    return 0 if age_of_oldest_priority_appeal.nil?
+
+    (Time.zone.now.to_date - age_of_oldest_priority_appeal.to_date).to_i
+  end
+
+  def ready_priority_appeal_ids
+    appeals(priority: true, ready: true).pluck(:uuid)
   end
 
   # rubocop:disable Lint/UnusedMethodArgument

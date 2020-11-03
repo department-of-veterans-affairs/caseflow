@@ -11,7 +11,12 @@ module Seeds
       "BVAGSPORER" => { attorneys: %w[BVAOTRANTOW BVAGBOTSFORD BVAJWEHNER1] },
       "BVAEBECKER" => { attorneys: %w[BVAKBLOCK BVACMERTZ BVAHLUETTGEN] },
       "BVARERDMAN" => { attorneys: %w[BVASRITCHIE BVAJSCHIMMEL BVAKROHAN1] },
-      "BVAOSCHOWALT" => { attorneys: %w[BVASCASPER1 BVAOWEHNER BVASFUNK1] }
+      "BVAOSCHOWALT" => { attorneys: %w[BVASCASPER1 BVAOWEHNER BVASFUNK1] },
+      "BVAAWAKEFIELD" => { attorneys: %w[BVAABELANGER] }
+    }.freeze
+
+    DEVELOPMENT_DVC_TEAMS = {
+      "BVATCOLLIER" => %w[BVAAABSHIRE BVAGSPORER BVAEBECKER]
     }.freeze
 
     def seed!
@@ -27,9 +32,12 @@ module Seeds
       User.create(css_id: "BVARERDMAN", station_id: 101, full_name: "Rachael JudgeHasAttorneys_Cases Erdman")
       User.create(css_id: "BVAEBECKER", station_id: 101, full_name: "Elizabeth Judge_CaseToAssign Becker")
       User.create(css_id: "BVAKKEELING", station_id: 101, full_name: "Keith Judge_CaseToAssign_NoTeam Keeling")
+      User.create(css_id: "BVAAWAKEFIELD", station_id: 101, full_name: "Apurva Judge_CaseAtDispatch Wakefield")
+      User.create(css_id: "BVAABELANGER", station_id: 101, full_name: "Andy Attorney_CaseAtDispatch Belanger")
       User.create(css_id: "BVATWARNER", station_id: 101, full_name: "Theresa BuildHearingSchedule Warner")
       User.create(css_id: "BVAGWHITE", station_id: 101, full_name: "George BVADispatchUser_Cases White")
       User.create(css_id: "BVAGGREY", station_id: 101, full_name: "Gina BVADispatchUser_NoCases Grey")
+      User.create(css_id: "BVATCOLLIER", station_id: 101, full_name: "Tonja DVCTeam Collier")
       dispatch_admin = User.create(
         css_id: "BVAGBLACK",
         station_id: 101,
@@ -66,10 +74,13 @@ module Seeds
       create_aod_user_and_tasks
       create_privacy_user
       create_lit_support_user
+      create_cavc_lit_support_user
       create_pulac_cerullo_user
       create_mail_team_user
+      create_clerk_of_the_board_user
       create_case_search_only_user
       create_judge_teams
+      create_dvc_teams
       create_hearings_user
       create_edit_hearings_user
       create_non_admin_hearing_coordinator_user
@@ -160,6 +171,16 @@ module Seeds
         judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
         h[:attorneys].each do |css_id|
           judge_team.add_user(User.find_or_create_by(css_id: css_id, station_id: 101))
+        end
+      end
+    end
+
+    def create_dvc_teams
+      DEVELOPMENT_DVC_TEAMS.each_pair do |dvc_css_id, judges|
+        dvc = User.find_or_create_by(css_id: dvc_css_id, station_id: 101)
+        dvc_team = DvcTeam.for_dvc(dvc) || DvcTeam.create_for_dvc(dvc)
+        judges.each do |css_id|
+          dvc_team.add_user(User.find_or_create_by(css_id: css_id, station_id: 101))
         end
       end
     end
@@ -290,6 +311,20 @@ module Seeds
       LitigationSupport.singleton.add_user(u)
     end
 
+    def create_cavc_lit_support_user
+      users = [User.create!(station_id: 101,
+                            css_id: "CAVC_LIT_SUPPORT_ADMIN",
+                            full_name: "Diego CAVCLitigationSupportUser Christiansen"),
+               User.create!(station_id: 101,
+                            css_id: "CAVC_LIT_SUPPORT_USER1",
+                            full_name: "Regina CAVCLitigationSupportUser Lebsack"),
+               User.create!(station_id: 101,
+                            css_id: "CAVC_LIT_SUPPORT_USER2",
+                            full_name: "Tonita CAVCLitigationSupportUser Kuhn ")]
+      users.each { |u| CavcLitigationSupport.singleton.add_user(u) }
+      OrganizationsUser.make_user_admin(users.first, CavcLitigationSupport.singleton)
+    end
+
     def create_pulac_cerullo_user
       u = User.create!(station_id: 101, css_id: "BVAKSOSNA", full_name: "KATHLEEN PulacCerulloUser SOSNA")
       PulacCerullo.singleton.add_user(u)
@@ -298,6 +333,11 @@ module Seeds
     def create_mail_team_user
       u = User.create!(station_id: 101, css_id: "JOLLY_POSTMAN", full_name: "Huan MailUser Tiryaki")
       MailTeam.singleton.add_user(u)
+    end
+
+    def create_clerk_of_the_board_user
+      u = User.create!(station_id: 101, css_id: "CLERK_OF_THE_BOARD_USER", full_name: "Clark ClerkOfTheBoardUser Bard")
+      ClerkOfTheBoard.singleton.add_user(u)
     end
 
     def create_case_search_only_user

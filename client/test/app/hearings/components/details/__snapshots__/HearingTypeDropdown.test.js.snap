@@ -17,7 +17,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
       ],
     }
   }
-  requestType="Central"
+  originalRequestType="Central"
   update={
     [MockFunction] {
       "calls": Array [
@@ -40,7 +40,6 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
 >
   <SearchableDropdown
     clearOnSelect={false}
-    clearable={false}
     label="Hearing Type"
     loading={false}
     name="hearingType"
@@ -83,7 +82,6 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
           <StateManager
             cache={false}
             classNamePrefix="cf-select"
-            clearable={false}
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
@@ -120,7 +118,6 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
               cache={false}
               captureMenuScroll={false}
               classNamePrefix="cf-select"
-              clearable={false}
               closeMenuOnScroll={false}
               closeMenuOnSelect={true}
               components={Object {}}
@@ -212,7 +209,6 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                     "cache": false,
                     "captureMenuScroll": false,
                     "classNamePrefix": "cf-select",
-                    "clearable": false,
                     "closeMenuOnScroll": false,
                     "closeMenuOnSelect": true,
                     "components": Object {},
@@ -225,6 +221,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                     "getOptionValue": [Function],
                     "inputId": "hearingType",
                     "inputValue": "",
+                    "isClearable": undefined,
                     "isDisabled": false,
                     "isLoading": false,
                     "isMulti": false,
@@ -354,7 +351,6 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                           "cache": false,
                           "captureMenuScroll": false,
                           "classNamePrefix": "cf-select",
-                          "clearable": false,
                           "closeMenuOnScroll": false,
                           "closeMenuOnSelect": true,
                           "components": Object {},
@@ -367,6 +363,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                           "getOptionValue": [Function],
                           "inputId": "hearingType",
                           "inputValue": "",
+                          "isClearable": undefined,
                           "isDisabled": false,
                           "isLoading": false,
                           "isMulti": false,
@@ -504,7 +501,6 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                 "cache": false,
                                 "captureMenuScroll": false,
                                 "classNamePrefix": "cf-select",
-                                "clearable": false,
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
                                 "components": Object {},
@@ -517,6 +513,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                 "getOptionValue": [Function],
                                 "inputId": "hearingType",
                                 "inputValue": "",
+                                "isClearable": undefined,
                                 "isDisabled": false,
                                 "isLoading": false,
                                 "isMulti": false,
@@ -645,7 +642,6 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -658,6 +654,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "hearingType",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -783,7 +780,6 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -796,6 +792,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "hearingType",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -1001,7 +998,6 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                 "cache": false,
                                 "captureMenuScroll": false,
                                 "classNamePrefix": "cf-select",
-                                "clearable": false,
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
                                 "components": Object {},
@@ -1014,6 +1010,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                 "getOptionValue": [Function],
                                 "inputId": "hearingType",
                                 "inputValue": "",
+                                "isClearable": undefined,
                                 "isDisabled": false,
                                 "isLoading": false,
                                 "isMulti": false,
@@ -1133,7 +1130,6 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -1146,6 +1142,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "hearingType",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -1276,7 +1273,6 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -1289,6 +1285,7 @@ exports[`HearingTypeDropdown Can change from central office hearing 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "hearingType",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -1467,7 +1464,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
       ],
     }
   }
-  requestType="Video"
+  originalRequestType="Video"
   update={
     [MockFunction] {
       "calls": Array [
@@ -1501,7 +1498,6 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
 >
   <SearchableDropdown
     clearOnSelect={false}
-    clearable={false}
     label="Hearing Type"
     loading={false}
     name="hearingType"
@@ -1544,7 +1540,6 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
           <StateManager
             cache={false}
             classNamePrefix="cf-select"
-            clearable={false}
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
@@ -1581,7 +1576,6 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
               cache={false}
               captureMenuScroll={false}
               classNamePrefix="cf-select"
-              clearable={false}
               closeMenuOnScroll={false}
               closeMenuOnSelect={true}
               components={Object {}}
@@ -1673,7 +1667,6 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                     "cache": false,
                     "captureMenuScroll": false,
                     "classNamePrefix": "cf-select",
-                    "clearable": false,
                     "closeMenuOnScroll": false,
                     "closeMenuOnSelect": true,
                     "components": Object {},
@@ -1686,6 +1679,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                     "getOptionValue": [Function],
                     "inputId": "hearingType",
                     "inputValue": "",
+                    "isClearable": undefined,
                     "isDisabled": false,
                     "isLoading": false,
                     "isMulti": false,
@@ -1815,7 +1809,6 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                           "cache": false,
                           "captureMenuScroll": false,
                           "classNamePrefix": "cf-select",
-                          "clearable": false,
                           "closeMenuOnScroll": false,
                           "closeMenuOnSelect": true,
                           "components": Object {},
@@ -1828,6 +1821,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                           "getOptionValue": [Function],
                           "inputId": "hearingType",
                           "inputValue": "",
+                          "isClearable": undefined,
                           "isDisabled": false,
                           "isLoading": false,
                           "isMulti": false,
@@ -1965,7 +1959,6 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                 "cache": false,
                                 "captureMenuScroll": false,
                                 "classNamePrefix": "cf-select",
-                                "clearable": false,
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
                                 "components": Object {},
@@ -1978,6 +1971,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                 "getOptionValue": [Function],
                                 "inputId": "hearingType",
                                 "inputValue": "",
+                                "isClearable": undefined,
                                 "isDisabled": false,
                                 "isLoading": false,
                                 "isMulti": false,
@@ -2106,7 +2100,6 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -2119,6 +2112,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "hearingType",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -2244,7 +2238,6 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -2257,6 +2250,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "hearingType",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -2462,7 +2456,6 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                 "cache": false,
                                 "captureMenuScroll": false,
                                 "classNamePrefix": "cf-select",
-                                "clearable": false,
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
                                 "components": Object {},
@@ -2475,6 +2468,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                 "getOptionValue": [Function],
                                 "inputId": "hearingType",
                                 "inputValue": "",
+                                "isClearable": undefined,
                                 "isDisabled": false,
                                 "isLoading": false,
                                 "isMulti": false,
@@ -2594,7 +2588,6 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -2607,6 +2600,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "hearingType",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -2737,7 +2731,6 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -2750,6 +2743,7 @@ exports[`HearingTypeDropdown Can change from video hearing 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "hearingType",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -2933,7 +2927,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
       ],
     }
   }
-  requestType="Central"
+  originalRequestType="Central"
   update={
     [MockFunction] {
       "calls": Array [
@@ -2981,7 +2975,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -2996,7 +2989,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
 >
   <SearchableDropdown
     clearOnSelect={false}
-    clearable={false}
     label="Hearing Type"
     loading={false}
     name="hearingType"
@@ -3039,7 +3031,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
           <StateManager
             cache={false}
             classNamePrefix="cf-select"
-            clearable={false}
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
@@ -3076,7 +3067,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
               cache={false}
               captureMenuScroll={false}
               classNamePrefix="cf-select"
-              clearable={false}
               closeMenuOnScroll={false}
               closeMenuOnSelect={true}
               components={Object {}}
@@ -3168,7 +3158,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                     "cache": false,
                     "captureMenuScroll": false,
                     "classNamePrefix": "cf-select",
-                    "clearable": false,
                     "closeMenuOnScroll": false,
                     "closeMenuOnSelect": true,
                     "components": Object {},
@@ -3181,6 +3170,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                     "getOptionValue": [Function],
                     "inputId": "hearingType",
                     "inputValue": "",
+                    "isClearable": undefined,
                     "isDisabled": false,
                     "isLoading": false,
                     "isMulti": false,
@@ -3310,7 +3300,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                           "cache": false,
                           "captureMenuScroll": false,
                           "classNamePrefix": "cf-select",
-                          "clearable": false,
                           "closeMenuOnScroll": false,
                           "closeMenuOnSelect": true,
                           "components": Object {},
@@ -3323,6 +3312,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                           "getOptionValue": [Function],
                           "inputId": "hearingType",
                           "inputValue": "",
+                          "isClearable": undefined,
                           "isDisabled": false,
                           "isLoading": false,
                           "isMulti": false,
@@ -3460,7 +3450,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                 "cache": false,
                                 "captureMenuScroll": false,
                                 "classNamePrefix": "cf-select",
-                                "clearable": false,
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
                                 "components": Object {},
@@ -3473,6 +3462,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                 "getOptionValue": [Function],
                                 "inputId": "hearingType",
                                 "inputValue": "",
+                                "isClearable": undefined,
                                 "isDisabled": false,
                                 "isLoading": false,
                                 "isMulti": false,
@@ -3601,7 +3591,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -3614,6 +3603,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "hearingType",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -3739,7 +3729,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -3752,6 +3741,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "hearingType",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -3957,7 +3947,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                 "cache": false,
                                 "captureMenuScroll": false,
                                 "classNamePrefix": "cf-select",
-                                "clearable": false,
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
                                 "components": Object {},
@@ -3970,6 +3959,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                 "getOptionValue": [Function],
                                 "inputId": "hearingType",
                                 "inputValue": "",
+                                "isClearable": undefined,
                                 "isDisabled": false,
                                 "isLoading": false,
                                 "isMulti": false,
@@ -4089,7 +4079,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -4102,6 +4091,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "hearingType",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -4232,7 +4222,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -4245,6 +4234,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to central 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "hearingType",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -4432,7 +4422,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
       ],
     }
   }
-  requestType="Video"
+  originalRequestType="Video"
   update={
     [MockFunction] {
       "calls": Array [
@@ -4491,7 +4481,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": null,
       "clientHost": "care.evn.va.gov",
-      "false": "tom.brady@caseflow.gov",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -4506,7 +4495,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
 >
   <SearchableDropdown
     clearOnSelect={false}
-    clearable={false}
     label="Hearing Type"
     loading={false}
     name="hearingType"
@@ -4549,7 +4537,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
           <StateManager
             cache={false}
             classNamePrefix="cf-select"
-            clearable={false}
             defaultInputValue=""
             defaultMenuIsOpen={false}
             defaultValue={null}
@@ -4586,7 +4573,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
               cache={false}
               captureMenuScroll={false}
               classNamePrefix="cf-select"
-              clearable={false}
               closeMenuOnScroll={false}
               closeMenuOnSelect={true}
               components={Object {}}
@@ -4678,7 +4664,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                     "cache": false,
                     "captureMenuScroll": false,
                     "classNamePrefix": "cf-select",
-                    "clearable": false,
                     "closeMenuOnScroll": false,
                     "closeMenuOnSelect": true,
                     "components": Object {},
@@ -4691,6 +4676,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                     "getOptionValue": [Function],
                     "inputId": "hearingType",
                     "inputValue": "",
+                    "isClearable": undefined,
                     "isDisabled": false,
                     "isLoading": false,
                     "isMulti": false,
@@ -4820,7 +4806,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                           "cache": false,
                           "captureMenuScroll": false,
                           "classNamePrefix": "cf-select",
-                          "clearable": false,
                           "closeMenuOnScroll": false,
                           "closeMenuOnSelect": true,
                           "components": Object {},
@@ -4833,6 +4818,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                           "getOptionValue": [Function],
                           "inputId": "hearingType",
                           "inputValue": "",
+                          "isClearable": undefined,
                           "isDisabled": false,
                           "isLoading": false,
                           "isMulti": false,
@@ -4970,7 +4956,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                 "cache": false,
                                 "captureMenuScroll": false,
                                 "classNamePrefix": "cf-select",
-                                "clearable": false,
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
                                 "components": Object {},
@@ -4983,6 +4968,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                 "getOptionValue": [Function],
                                 "inputId": "hearingType",
                                 "inputValue": "",
+                                "isClearable": undefined,
                                 "isDisabled": false,
                                 "isLoading": false,
                                 "isMulti": false,
@@ -5111,7 +5097,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -5124,6 +5109,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "hearingType",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -5249,7 +5235,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -5262,6 +5247,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "hearingType",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -5467,7 +5453,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                 "cache": false,
                                 "captureMenuScroll": false,
                                 "classNamePrefix": "cf-select",
-                                "clearable": false,
                                 "closeMenuOnScroll": false,
                                 "closeMenuOnSelect": true,
                                 "components": Object {},
@@ -5480,6 +5465,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                 "getOptionValue": [Function],
                                 "inputId": "hearingType",
                                 "inputValue": "",
+                                "isClearable": undefined,
                                 "isDisabled": false,
                                 "isLoading": false,
                                 "isMulti": false,
@@ -5599,7 +5585,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -5612,6 +5597,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "hearingType",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -5742,7 +5728,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                       "cache": false,
                                       "captureMenuScroll": false,
                                       "classNamePrefix": "cf-select",
-                                      "clearable": false,
                                       "closeMenuOnScroll": false,
                                       "closeMenuOnSelect": true,
                                       "components": Object {},
@@ -5755,6 +5740,7 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
                                       "getOptionValue": [Function],
                                       "inputId": "hearingType",
                                       "inputValue": "",
+                                      "isClearable": undefined,
                                       "isDisabled": false,
                                       "isLoading": false,
                                       "isMulti": false,
@@ -5917,7 +5903,6 @@ exports[`HearingTypeDropdown Can change from virtual hearing to video 1`] = `
 exports[`HearingTypeDropdown Matches snapshot with default props for central office hearings 1`] = `
 <SearchableDropdown
   clearOnSelect={false}
-  clearable={false}
   label="Hearing Type"
   loading={false}
   name="hearingType"
@@ -5943,7 +5928,6 @@ exports[`HearingTypeDropdown Matches snapshot with default props for central off
 exports[`HearingTypeDropdown Matches snapshot with default props for video hearings 1`] = `
 <SearchableDropdown
   clearOnSelect={false}
-  clearable={false}
   label="Hearing Type"
   loading={false}
   name="hearingType"
@@ -5969,7 +5953,6 @@ exports[`HearingTypeDropdown Matches snapshot with default props for video heari
 exports[`HearingTypeDropdown Matches snapshot with default props for virtual hearings 1`] = `
 <SearchableDropdown
   clearOnSelect={false}
-  clearable={false}
   label="Hearing Type"
   loading={false}
   name="hearingType"

@@ -1,3 +1,6 @@
+/* eslint-disable max-lines */
+import { scheduleHearingTask } from './tasks';
+
 export const virtualHearingEmails = {
   emailEvents: [
     {
@@ -36,7 +39,6 @@ export const virtualHearing = {
     guestLink:
       'https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest',
     jobCompleted: true,
-    false: 'tom.brady@caseflow.gov',
   },
 };
 
@@ -241,6 +243,12 @@ export const defaultHearing = {
   representative: 'PARALYZED VETERANS OF AMERICA, INC.',
   representativeName: null,
   representativeEmailAddress: 'tom.brady@caseflow.gov',
+  representativeAddress: {
+    addressLine1: '9999 MISSION ST',
+    city: 'SAN FRANCISCO',
+    state: 'CA',
+    zip: '94103',
+  },
   room: '1',
   scheduledFor: '2020-07-06T06:00:00.000-04:00',
   scheduledForIsPast: false,
@@ -436,10 +444,26 @@ export const hearingDateOptions = [
       requestType: 'V',
       room: '1',
       roomLabel: '1 (1W200A)',
-      filledSlots: 0,
+      filledSlots: 13,
       totalSlots: 12,
       hearingDate: '2020-10-04'
     }
   }
-]
-;
+];
+
+export const scheduledHearing = {
+  taskId: '123',
+  disposition: null,
+  externalId: '3afefa82-5736-47c8-a977-0b4b8586f73e',
+  polling: false,
+};
+
+export const scheduleVeteranResponse = {
+  body: {
+    tasks: {
+      data: [scheduleHearingTask]
+    }
+  }
+};
+
+/* eslint-enable max-lines */

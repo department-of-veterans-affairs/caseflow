@@ -2,6 +2,11 @@
 
 ##
 # Task for a judge to review decisions.
+# A JudgeDecisionReviewTask implies that there is a decision that needs to be reviewed from an attorney.
+# The case associated with this task appears in the judge's Cases to review view
+# There should only ever be one open JudgeDecisionReviewTask at a time for an appeal.
+# If an AttorneyTask is cancelled, we would want to cancel both it and its parent JudgeDecisionReviewTask
+# and create a new JudgeAssignTask, because another assignment by a judge is needed.
 
 class JudgeDecisionReviewTask < JudgeTask
   before_create :verify_user_task_unique

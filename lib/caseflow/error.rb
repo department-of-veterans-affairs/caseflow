@@ -155,6 +155,15 @@ module Caseflow::Error
     end
   end
 
+  class JmrAppealDecisionIssueMismatch < SerializableError
+    def initialize(args)
+      @code = args[:code] || 422
+      @decision_issue_ids = args[:decision_issue_ids]
+      @appeal_id = args[:appeal_id]
+      @message = args[:message] || "JMR remands must include all appeal decision issues."
+    end
+  end
+
   class BvaDispatchTaskCountMismatch < SerializableError
     # Add attr_accessors for testing
     attr_accessor :user_id, :appeal_id, :tasks
@@ -257,17 +266,19 @@ module Caseflow::Error
     end
   end
 
+  class DuplicateDvcTeam < SerializableError
+    def initialize(args)
+      @user_id = args[:user_id]
+      @code = args[:code] || 400
+      @message = args[:message] || "User #{@user_id} already has a DvcTeam. Cannot create another DvcTeam for user."
+    end
+  end
+
   class DuplicateJudgeTeam < SerializableError
     def initialize(args)
       @user_id = args[:user_id]
       @code = args[:code] || 400
       @message = args[:message] || "User #{@user_id} already has a JudgeTeam. Cannot create another JudgeTeam for user."
-    end
-  end
-
-  class NonexistentJudgeTeam < StandardError
-    def initialize(args)
-      @user_id = args[:user_id]
     end
   end
 
@@ -353,8 +364,8 @@ module Caseflow::Error
 
     def initialize(args = {})
       @error_type = args[:error_type]
-      @code = (@error_type == ActiveRecord::RecordNotUnique) ? :conflict : args[:code]
-      @message = (@error_type == ActiveRecord::RecordNotUnique) ? COPY::VIRTUAL_HEARING_ALREADY_CREATED : args[:message]
+      @code = args[:code]
+      @message = args[:message]
     end
   end
 end

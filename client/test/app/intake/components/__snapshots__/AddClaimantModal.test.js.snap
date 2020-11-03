@@ -50,14 +50,20 @@ exports[`AddClaimantModal renders correctly 1`] = `
           >
             <div>
               <p>
-                To add a claimant, select their relationship to the veteran and type to search for their name. 
+                To add a claimant, select their relationship to the Veteran and type to search for their name. 
                 <strong>
                   Please note:
                 </strong>
                  at this time, you are only able to add attorneys as claimants.
               </p>
               <p>
-                 If you are unable to find attorney in the list of names below, select "Claimant not listed" and add their name, address, and law firm (if applicable) in the notes section.
+                If you are unable to find the attorney in the list of names below, please cancel the intake and 
+                <a
+                  href="mailto:VACaseflowIntake@va.gov"
+                >
+                  email
+                </a>
+                 for assistance. Remember to encrypt any emails that contain PII.
               </p>
             </div>
             <div
@@ -69,7 +75,7 @@ exports[`AddClaimantModal renders correctly 1`] = `
               >
                 <strong>
                   <span>
-                    Claimant's relationship to the veteran
+                    Claimant's relationship to the Veteran
                   </span>
                 </strong>
               </label>
@@ -178,7 +184,7 @@ exports[`AddClaimantModal renders correctly 1`] = `
                         <div
                           class="cf-select__placeholder css-1wa3eu0-placeholder"
                         >
-                          Select...
+                          Type to search...
                         </div>
                         <div
                           class="css-81nyic-Input"
@@ -246,30 +252,6 @@ exports[`AddClaimantModal renders correctly 1`] = `
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div
-              class="checkbox-wrapper-notListed cf-form-checkboxes"
-            >
-              <div
-                class="cf-form-checkbox"
-              >
-                <input
-                  aria-label="notListed"
-                  id="notListed"
-                  name="notListed"
-                  type="checkbox"
-                />
-                <label
-                  for="notListed"
-                >
-                  <span
-                    class=""
-                  >
-                    Claimant not listed
-                  </span>
-                   
-                </label>
               </div>
             </div>
           </div>

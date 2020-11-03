@@ -31,7 +31,8 @@ class Appeal < DecisionReview
   enum stream_type: {
     "original": "original",
     "vacate": "vacate",
-    "de_novo": "de_novo"
+    "de_novo": "de_novo",
+    "court_remand": "court_remand"
   }
 
   after_create :conditionally_set_aod_based_on_age
@@ -92,11 +93,13 @@ class Appeal < DecisionReview
   def create_stream(stream_type)
     ActiveRecord::Base.transaction do
       Appeal.create!(slice(
+        :aod_based_on_age,
+        :closest_regional_office,
+        :docket_type,
+        :legacy_opt_in_approved,
         :receipt_date,
         :veteran_file_number,
-        :legacy_opt_in_approved,
-        :veteran_is_not_claimant,
-        :docket_type
+        :veteran_is_not_claimant
       ).merge(
         stream_type: stream_type,
         stream_docket_number: docket_number,
@@ -269,7 +272,7 @@ class Appeal < DecisionReview
     conditionally_set_aod_based_on_age
     # One of the AOD motion reasons is 'age'. Keep interrogation of any motions separate from `aod_based_on_age`,
     # which reflects `claimant.advanced_on_docket_based_on_age?`.
-    aod_based_on_age || claimant&.advanced_on_docket_motion_granted?(receipt_date)
+    aod_based_on_age || claimant&.advanced_on_docket_motion_granted?(self)
   end
 
   # Prefer aod? over aod going forward, as this function returns a boolean
@@ -333,9 +336,12 @@ class Appeal < DecisionReview
     veteran_middle_name&.first
   end
 
+  # matches Legacy behavior
   def cavc
-    "not implemented for AMA"
+    court_remand?
   end
+
+  alias cavc? cavc
 
   def status
     @status ||= BVAAppealStatus.new(appeal: self)
@@ -504,6 +510,30 @@ class Appeal < DecisionReview
 
     false
   end
+
+  # Returns the hearing request type.
+  #
+  # @note See `LegacyAppeal#current_hearing_request_type` for more information.
+  #   This method is provided for compatibility.
+  def current_hearing_request_type(readable: false)
+    return nil if closest_regional_office.nil?
+
+    current_hearing_request_type = (closest_regional_office == "C") ? :central : :video
+
+    return current_hearing_request_type if !readable
+
+    # Determine type using closest_regional_office
+    # "Central" if closest_regional_office office is "C", "Video" otherwise
+    case current_hearing_request_type
+    when :central
+      Hearing::HEARING_TYPES[:C]
+    else
+      Hearing::HEARING_TYPES[:V]
+    end
+  end
+
+  alias original_hearing_request_type current_hearing_request_type
+  alias previous_hearing_request_type current_hearing_request_type
 
   private
 

@@ -231,8 +231,9 @@ feature "Intake Review Page", :postgres do
             start_higher_level_review(
               veteran,
               benefit_type: benefit_type,
-              claim_participant_id: claim_participant_id
+              no_claimant: true
             )
+
             check_no_relationships_behavior
           end
         end
@@ -242,7 +243,7 @@ feature "Intake Review Page", :postgres do
             start_supplemental_claim(
               veteran,
               benefit_type: benefit_type,
-              claim_participant_id: claim_participant_id
+              no_claimant: true
             )
             check_no_relationships_behavior
           end
@@ -250,7 +251,10 @@ feature "Intake Review Page", :postgres do
 
         context "appeal" do
           it "shows message and does not allow user to continue" do
-            start_appeal(veteran, claim_participant_id: claim_participant_id)
+            start_appeal(
+              veteran,
+              no_claimant: true
+            )
             check_no_relationships_behavior
           end
         end
@@ -322,7 +326,7 @@ feature "Intake Review Page", :postgres do
             expect(page).to have_content("#{attorney.name}, Attorney")
           end
 
-          scenario "when claimant is not listed" do
+          scenario "when claimant is not listed", skip: "Unlisted claimants are disabled for now" do
             appeal, _intake = start_appeal(
               veteran,
               claim_participant_id: claim_participant_id,
@@ -340,7 +344,6 @@ feature "Intake Review Page", :postgres do
             expect(page).to have_content("+ Add Claimant")
 
             notes = "Unlisted claimant: Sandra Smith"
-
             add_unlisted_claimant(notes)
 
             # Verify removal
@@ -362,6 +365,39 @@ feature "Intake Review Page", :postgres do
             )
 
             expect(page).to have_content(notes)
+          end
+
+          scenario "when veteran has no relationships", skip: "Unlisted claimants are disabled for now" do
+            allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return([])
+
+            start_appeal(
+              veteran,
+              claim_participant_id: claim_participant_id,
+              no_claimant: true
+            )
+
+            visit "/intake"
+
+            expect(page).to have_current_path("/intake/review_request")
+
+            within_fieldset("Is the claimant someone other than the Veteran?") do
+              find("label", text: "Yes", match: :prefer_exact).click
+            end
+
+            expect(page).to have_content("+ Add Claimant")
+            expect(page).to have_content("This Veteran currently has no known relationships")
+            expect(page).to have_button("Continue to next step", disabled: true)
+
+            notes = "Unlisted claimant: Sandra Smith"
+            add_unlisted_claimant(notes)
+            expect(page).to have_button("Continue to next step", disabled: false)
+
+            # Verify removal
+            find(".remove-item").click
+            expect(page).to_not have_content(notes)
+
+            # Verify button is disabled.
+            expect(page).to have_button("Continue to next step", disabled: true)
           end
         end
 
@@ -463,6 +499,9 @@ end
 def check_no_relationships_behavior
   # first start the review
   visit "/intake"
+  within_fieldset("Is the claimant someone other than the Veteran?") do
+    find("label", text: "Yes", match: :prefer_exact).click
+  end
   expect(page).to have_content("This Veteran currently has no known relationships.")
   expect(page).to have_button("Continue to next step", disabled: true)
   expect(page).to_not have_content("What is the payee code for this claimant?")

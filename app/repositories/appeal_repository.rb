@@ -210,7 +210,7 @@ class AppealRepository
         hearing_request_type: VACOLS::Case::HEARING_REQUEST_TYPES[case_record.bfhr],
         video_hearing_requested: case_record.bfdocind == "V",
         hearing_requested: (case_record.bfhr == "1" || case_record.bfhr == "2"),
-        hearing_held: %w[1 2 6].include?(case_record.bfha),
+        hearing_held: %w[1 2 6 7].include?(case_record.bfha),
         regional_office_key: case_record.bfregoff,
         certification_date: case_record.bf41stat,
         case_review_date: folder_record.tidktime,
@@ -314,43 +314,6 @@ class AppealRepository
       end
     end
 
-    def cases_that_need_hearings
-      VACOLS::Case.where(bfhr: "1", bfcurloc: "57").or(VACOLS::Case.where(bfhr: "2", bfdocind: "V", bfcurloc: "57"))
-        .joins(:folder).order("folder.tinum")
-        .includes(:correspondent, :case_issues, :case_hearings, folder: [:outcoder]).reject do |case_record|
-          case_record.case_hearings.any? do |hearing|
-            # VACOLS contains non-BVA hearings information, we want to confirm the appeal has no scheduled BVA hearings
-            hearing.hearing_disp.nil? && HearingDay::REQUEST_TYPES.value?(hearing.hearing_type)
-          end
-        end
-    end
-
-    def vacols_ids_with_schedule_tasks
-      ScheduleHearingTask.open.where(appeal_type: LegacyAppeal.name)
-        .joins("LEFT JOIN legacy_appeals ON appeal_id = legacy_appeals.id")
-        .select("legacy_appeals.vacols_id").pluck(:vacols_id).uniq
-    end
-
-    def create_schedule_hearing_tasks
-      # Create legacy appeals where needed
-      ids = cases_that_need_hearings.pluck(:bfkey, :bfcorlid)
-
-      missing_ids = ids - LegacyAppeal.where(vacols_id: ids.map(&:first)).pluck(:vacols_id, :vbms_id)
-      missing_ids.each do |id|
-        LegacyAppeal.find_or_create_by!(vacols_id: id.first) do |appeal|
-          appeal.vbms_id = id.second
-        end
-      end
-
-      # Create the schedule hearing tasks
-      LegacyAppeal.where(vacols_id: ids.map(&:first) - vacols_ids_with_schedule_tasks).each do |appeal|
-        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
-        ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
-
-        update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
-      end
-    end
-
     def withdraw_hearing!(appeal)
       appeal.case_record.update!(bfhr: "5", bfha: "5")
     end
@@ -366,6 +329,10 @@ class AppealRepository
       appeal.case_record.update_vacols_location!(location)
     end
 
+    # Updates the case location for a legacy appeal.
+    #
+    # @param appeal [LegacyAppeal] the appeal to modify
+    # @param location [String] the appeal's new location (see LegacyAppeal::LOCATION_CODES)
     def update_location!(appeal, location)
       appeal.case_record.update_vacols_location!(location)
     end
@@ -738,6 +705,22 @@ class AppealRepository
       end
     end
 
+    def genpop_priority_count
+      MetricsService.record("VACOLS: genpop_priority_count",
+                            name: "genpop_priority_count",
+                            service: :vacols) do
+        VACOLS::CaseDocket.genpop_priority_count
+      end
+    end
+
+    def priority_ready_appeal_vacols_ids
+      MetricsService.record("VACOLS: priority_ready_appeal_vacols_ids",
+                            name: "priority_ready_appeal_vacols_ids",
+                            service: :vacols) do
+        VACOLS::CaseDocket.priority_ready_appeal_vacols_ids
+      end
+    end
+
     def nod_count
       MetricsService.record("VACOLS: nod_count",
                             name: "nod_count",
@@ -772,11 +755,19 @@ class AppealRepository
       end
     end
 
-    def age_of_n_oldest_priority_appeals(num)
-      MetricsService.record("VACOLS: age_of_n_oldest_priority_appeals",
-                            name: "age_of_n_oldest_priority_appeals",
+    def age_of_n_oldest_genpop_priority_appeals(num)
+      MetricsService.record("VACOLS: age_of_n_oldest_genpop_priority_appeals",
+                            name: "age_of_n_oldest_genpop_priority_appeals",
                             service: :vacols) do
-        VACOLS::CaseDocket.age_of_n_oldest_priority_appeals(num)
+        VACOLS::CaseDocket.age_of_n_oldest_genpop_priority_appeals(num)
+      end
+    end
+
+    def age_of_oldest_priority_appeal
+      MetricsService.record("VACOLS: age_of_oldest_priority_appeal",
+                            name: "age_of_oldest_priority_appeal",
+                            service: :vacols) do
+        VACOLS::CaseDocket.age_of_oldest_priority_appeal
       end
     end
 

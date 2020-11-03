@@ -9,7 +9,8 @@ class Organizations::UsersController < OrganizationsController
 
         render json: {
           organization_name: organization.name,
-          judge_team: FeatureToggle.enabled?(:judge_admin_scm) && organization.type == JudgeTeam.name,
+          judge_team: organization.type == JudgeTeam.name,
+          dvc_team: organization.type == DvcTeam.name,
           organization_users: json_administered_users(organization_users)
         }
       end

@@ -11,6 +11,7 @@
   "LEGACY_ASSIGN_HEARINGS_TAB_NAME": "legacyAssignHearingsTab",
   "SUGGESTED_HEARING_LOCATION_COLUMN_NAME": "suggestedLocation",
   "POWER_OF_ATTORNEY_COLUMN_NAME": "powerOfAttorneyName",
+  "HEARING_REQUEST_TYPE_COLUMN_NAME": "hearingRequestType",
 
   "COLUMNS": {
     "APPEAL_TYPE": {
@@ -108,6 +109,9 @@
   "FILTER_OPTIONS": {
     "IS_AOD": {
       "key": "is_aod"
+    },
+    "IS_FORMER_TRAVEL": {
+      "key": "former Travel"
     }
   }
 }

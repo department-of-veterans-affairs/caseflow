@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class JudgeTeam < Organization
-  scope :pushed_priority_cases_allowed, -> { where(accepts_priority_pushed_cases: true) }
+  scope :pushed_priority_cases_allowed, -> { active.where(accepts_priority_pushed_cases: true) }
 
   class << self
     def for_judge(user)
@@ -62,6 +62,10 @@ class JudgeTeam < Organization
 
   def selectable_in_queue?
     false
+  end
+
+  def serialize
+    super.merge(name: judge.full_name.titleize)
   end
 
   private

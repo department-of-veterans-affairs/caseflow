@@ -1,10 +1,12 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 
+import { VIRTUAL_HEARING_LABEL } from 'app/hearings/constants';
 import { ScheduleVeteranForm } from 'app/hearings/components/ScheduleVeteranForm';
+import { SearchableDropdown } from 'app/components/SearchableDropdown';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
-import { amaAppeal, defaultHearing } from 'test/data';
-import { queueWrapper, queueStore } from 'test/data/stores/queueStore';
+import { amaAppeal, defaultHearing, legacyAppealForTravelBoard, virtualHearing } from 'test/data';
+import { queueWrapper } from 'test/data/stores/queueStore';
 import HearingTypeDropdown from 'app/hearings/components/details/HearingTypeDropdown';
 import {
   HearingDateDropdown,
@@ -13,7 +15,9 @@ import {
 } from 'app/components/DataDropdowns';
 import { AddressLine } from 'app/hearings/components/details/Address';
 import { HearingTime } from 'app/hearings/components/modalForms/HearingTime';
-import Button from 'app/components/Button';
+import { AppellantSection } from 'app/hearings/components/VirtualHearings/AppellantSection';
+import { RepresentativeSection } from 'app/hearings/components/VirtualHearings/RepresentativeSection';
+import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 
 // Set the spies
 const changeSpy = jest.fn();
@@ -33,15 +37,10 @@ describe('ScheduleVeteranForm', () => {
       />,
       {
         wrappingComponent: queueWrapper,
-        wrappingComponentProps: { store: queueStore },
       }
     );
 
     // Assertions
-    expect(scheduleVeteran.find(Button).first().
-      prop('name')).toEqual('Cancel');
-    expect(scheduleVeteran.find(Button).at(1).
-      prop('name')).toEqual('Schedule');
     expect(scheduleVeteran.find(ReadOnly)).toHaveLength(1);
     expect(scheduleVeteran.find(ReadOnly).prop('text')).toMatchObject(<AddressLine />);
     expect(scheduleVeteran.find(HearingTypeDropdown)).toHaveLength(1);
@@ -51,7 +50,7 @@ describe('ScheduleVeteranForm', () => {
 
   test('Displays hearing form when regional office is selected', () => {
     // Render the address component
-    const scheduleVeteran = shallow(
+    const scheduleVeteran = mount(
       <ScheduleVeteranForm
         goBack={cancelSpy}
         submit={submitSpy}
@@ -60,11 +59,13 @@ describe('ScheduleVeteranForm', () => {
           ...amaAppeal,
           regionalOffice: defaultHearing.regionalOfficeKey,
         }}
-        hearing={defaultHearing}
+        hearing={{
+          ...defaultHearing,
+          regionalOffice: defaultHearing.regionalOfficeKey,
+        }}
       />,
       {
         wrappingComponent: queueWrapper,
-        wrappingComponentProps: { store: queueStore },
       }
     );
 
@@ -72,13 +73,75 @@ describe('ScheduleVeteranForm', () => {
     expect(scheduleVeteran.find(AppealHearingLocationsDropdown)).toHaveLength(1);
     expect(scheduleVeteran.find(HearingDateDropdown)).toHaveLength(1);
     expect(scheduleVeteran.find(HearingTime)).toHaveLength(1);
+    expect(scheduleVeteran.find(AddressLine)).toHaveLength(1);
+
+    expect(scheduleVeteran.find(AppellantSection)).toHaveLength(0);
+    expect(scheduleVeteran.find(RepresentativeSection)).toHaveLength(0);
+
     expect(scheduleVeteran).toMatchSnapshot();
   });
 
-  test('Can cancel the form', () => {
+  test('Displays Virtual Hearing form fields when type is changed to Virtual', () => {
+    // Render the address component
+    const scheduleVeteran = mount(
+      <ScheduleVeteranForm
+        virtual
+        goBack={cancelSpy}
+        submit={submitSpy}
+        onChange={changeSpy}
+        appeal={{
+          ...amaAppeal,
+        }}
+        hearing={{
+          ...defaultHearing,
+          regionalOffice: defaultHearing.regionalOfficeKey,
+          virtualHearing: virtualHearing.virtualHearing
+        }}
+      />,
+      {
+        wrappingComponent: queueWrapper,
+      }
+    );
+
+    // CHeck for virtual hearing fields
+    expect(scheduleVeteran.find(AppellantSection)).toHaveLength(1);
+    expect(scheduleVeteran.find(RepresentativeSection)).toHaveLength(1);
+
+    // Ensure the Veteran address is not displayed
+    expect(scheduleVeteran.find(ReadOnly).first().
+      find(AddressLine)).toHaveLength(0);
+
+    // Ensure Video-only fields are not displayed
+    expect(scheduleVeteran.find(AppealHearingLocationsDropdown)).toHaveLength(0);
+    expect(scheduleVeteran.find(ReadOnly).first().
+      text()).toEqual('Hearing LocationVirtual');
+
+    // Make sure there are no timezones for non-Central ROs
+    expect(scheduleVeteran.find(Timezone)).toHaveLength(0);
+
+    // Change the regional office to Central
+    scheduleVeteran.setProps({
+      hearing: {
+        ...defaultHearing,
+        regionalOffice: 'C',
+        virtualHearing: virtualHearing.virtualHearing
+      }
+    });
+
+    // Make sure the timezones display after changing to Central
+    expect(scheduleVeteran.find(Timezone)).toHaveLength(2);
+
+    expect(scheduleVeteran).toMatchSnapshot();
+  });
+
+  test('Displays error messages when errors are present', () => {
+    // Setup the test
+    const error = 'Please select hearing day';
+
     // Render the address component
     const scheduleVeteran = shallow(
       <ScheduleVeteranForm
+        errors={{ hearingDay: error }}
         goBack={cancelSpy}
         submit={submitSpy}
         onChange={changeSpy}
@@ -86,47 +149,51 @@ describe('ScheduleVeteranForm', () => {
           ...amaAppeal,
           regionalOffice: defaultHearing.regionalOfficeKey,
         }}
-        hearing={defaultHearing}
+        hearing={{
+          ...defaultHearing,
+          regionalOffice: defaultHearing.regionalOfficeKey,
+        }}
       />,
       {
         wrappingComponent: queueWrapper,
-        wrappingComponentProps: { store: queueStore },
       }
     );
 
-    // Run the test
-    scheduleVeteran.find(Button).first().
-      simulate('click');
-
     // Assertions
-    expect(cancelSpy).toHaveBeenCalledTimes(1);
+    expect(scheduleVeteran.find(HearingDateDropdown).prop('errorMessage')).toEqual(error);
     expect(scheduleVeteran).toMatchSnapshot();
   });
-  test('Can submit the form', () => {
-    // Render the address component
-    const scheduleVeteran = shallow(
+
+  test('Auto-selects virtual if a virtual hearing was requested', () => {
+    const hearing = {
+      ...defaultHearing,
+      virtualHearing: { status: 'pending' }, // Simulate an onChange event
+      regionalOffice: defaultHearing.regionalOfficeKey,
+    };
+    const scheduleVeteran = mount(
       <ScheduleVeteranForm
         goBack={cancelSpy}
         submit={submitSpy}
         onChange={changeSpy}
         appeal={{
-          ...amaAppeal,
+          ...legacyAppealForTravelBoard,
           regionalOffice: defaultHearing.regionalOfficeKey,
+          readableHearingRequestType: VIRTUAL_HEARING_LABEL,
         }}
-        hearing={defaultHearing}
+        hearing={hearing}
+        virtual={false}
       />,
       {
         wrappingComponent: queueWrapper,
-        wrappingComponentProps: { store: queueStore },
       }
     );
 
-    // Run the test
-    scheduleVeteran.find(Button).at(1).
-      simulate('click');
-
-    // Assertions
-    expect(submitSpy).toHaveBeenCalledTimes(1);
+    expect(
+      scheduleVeteran.
+        find(HearingTypeDropdown).
+        find(SearchableDropdown).
+        prop('value')
+    ).toEqual({ label: VIRTUAL_HEARING_LABEL, value: true });
     expect(scheduleVeteran).toMatchSnapshot();
   });
 });

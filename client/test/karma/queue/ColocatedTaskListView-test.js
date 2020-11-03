@@ -13,7 +13,7 @@ import { errorFetchingDocumentCount, setAppealDocCount, setQueueConfig }
 import { setUserCssId } from '../../../app/queue/uiReducer/uiActions';
 import { BrowserRouter } from 'react-router-dom';
 
-describe.only('ColocatedTaskListView', () => {
+describe('ColocatedTaskListView', () => {
   let wrapperColocatedTaskListView = null;
 
   const getWrapperColocatedTaskListView = (store) => {
@@ -97,7 +97,11 @@ describe.only('ColocatedTaskListView', () => {
       available_actions: [],
       cancelled_by: {
         css_id: null
-      }
+      },
+      converted_by: {
+        css_id: null
+      },
+      converted_on: null
     }
   });
 
@@ -300,7 +304,7 @@ describe.only('ColocatedTaskListView', () => {
             name: 'readerLinkColumn'
           }
         ],
-        description: 'Cases completed (last two weeks):',
+        description: 'Cases completed (last 7 days):',
         label: 'Completed',
         name: 'completed_person',
         task_page_count: 0,

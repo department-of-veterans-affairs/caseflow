@@ -199,7 +199,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
           $set: REQUEST_STATE.FAILED
         },
         reviewIntakeError: {
-          $set: getPageError(action.payload.responseErrorCodes)
+          $set: getPageError(action.payload)
         },
         errorUUID: {
           $set: action.payload.errorUUID
@@ -239,6 +239,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         },
         completeIntakeErrorData: {
           $set: action.payload.responseErrorData
+        },
+        completeIntakeErrorUUID: {
+          $set: action.payload.responseErrorUUID
         }
       }
     });
