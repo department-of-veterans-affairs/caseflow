@@ -13,7 +13,7 @@ class HearingRequestCaseDistributor
   def call
     appeals_to_distribute.map do |appeal, genpop_value|
       Distribution.transaction do
-        redistribute_existing_distributed_case(appeal)
+        rename_any_existing_distributed_case(appeal)
         task = create_judge_assign_task_for_appeal(appeal)
         create_distribution_case_for_task(task, genpop_value)
       end

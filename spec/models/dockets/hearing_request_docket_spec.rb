@@ -231,7 +231,7 @@ describe HearingRequestDocket, :all_dbs do
         HearingRequestDocket.new.distribute_appeals(distribution, priority: false, limit: 10, genpop: "any")
       end
 
-      it "does not fail, distributes the legitimate tasks, and redistributes the already distributed appeals" do
+      it "does not fail, renames conflicting already distributed appeals, and distributes the legitimate appeals" do
         number_of_already_distributed_appeals = 1
         total_number_of_appeals = 10
         total_number_of_appeals.times { create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge }
