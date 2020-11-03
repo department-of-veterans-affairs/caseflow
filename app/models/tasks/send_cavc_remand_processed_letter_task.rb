@@ -4,21 +4,35 @@
 # Task for Litigation Support to take necessary action before sending the CAVC-remand-processed letter to an appellant.
 # This task is for CAVC Remand appeal streams.
 # Expected parent: CavcTask
+# Expected assigned_to.type: User
 
 class SendCavcRemandProcessedLetterTask < Task
   validates :parent, presence: true, parentTask: { task_type: CavcTask }, on: :create
 
   before_validation :set_assignee
 
+  USER_ACTIONS = [
+    Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+    Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
+    # Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+  ].freeze
+
+  ADMIN_ACTIONS = [
+    Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h
+  ].freeze
+
   def self.label
-    "Send CAVC-Remand-Processed Letter Task"
+    COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL
   end
 
   def available_actions(user)
-    return [Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h] if CavcLitigationSupport.singleton.user_is_admin?(user)
+    if task_is_assigned_to_users_organization?(user) && CavcLitigationSupport.singleton.user_is_admin?(user)
+      return ADMIN_ACTIONS
+    end
+    # if task_is_assigned_to_user_within_organization?(user) && CavcLitigationSupport.singleton.user_is_admin?(user)
 
-    if CavcLitigationSupport.singleton.user_has_access?(user)
-      return [Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h, Constants.TASK_ACTIONS.MARK_COMPLETE.to_h]
+    if assigned_to == user
+      return USER_ACTIONS
     end
 
     []

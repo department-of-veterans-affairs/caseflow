@@ -14,7 +14,7 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
     it "has expected defaults" do
       new_task = subject
       expect(new_task.assigned_to).to eq CavcLitigationSupport.singleton
-      expect(new_task.label).to eq "Send CAVC-Remand-Processed Letter Task"
+      expect(new_task.label).to eq COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL
       expect(new_task.default_instructions).to be_empty
     end
   end
@@ -57,21 +57,30 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
 
   describe "#available_actions" do
     let(:org_admin) do
-      create(:user).tap do |u|
+      create(:user) do |u|
         CavcLitigationSupport.singleton.add_user(u)
         OrganizationsUser.make_user_admin(u, CavcLitigationSupport.singleton)
       end
     end
-    let(:org_nonadmin) { create(:user).tap { |u| CavcLitigationSupport.singleton.add_user(u) } }
+    let(:org_nonadmin) { create(:user) { |u| CavcLitigationSupport.singleton.add_user(u) } }
     let(:other_user) { create(:user) }
-    let(:send_task) { create(:send_cavc_remand_processed_letter_task) }
-    it "returns Assign to person" do
-      expect(send_task.available_actions(org_admin)).to match_array [Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h]
+    let(:send_task) { create(:send_cavc_remand_processed_letter_task) } #{ |t| t.parent.update(assigned_to: assignee) } }
+    context "task assigned to CavcLitigationSupport admin" do
+      let(:assignee) { org_admin }
+      it "returns admin actions" do
+        expect(send_task.available_actions(org_admin)).to match_array SendCavcRemandProcessedLetterTask::ADMIN_ACTIONS
+      end
+    end
+    context "task assigned to CavcLitigationSupport non-admin" do
+      let(:child_send_task) { create(:send_cavc_remand_processed_letter_task, parent: send_task, assigned_to: org_nonadmin) }
+      it "returns Assign to person" do
+        expect(child_send_task.available_actions(org_nonadmin)).to match_array SendCavcRemandProcessedLetterTask::USER_ACTIONS
 
-      nonadmin_actions = [Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h, Constants.TASK_ACTIONS.MARK_COMPLETE.to_h]
-      expect(send_task.available_actions(org_nonadmin)).to match_array nonadmin_actions
+        # nonadmin_actions = [Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h, Constants.TASK_ACTIONS.MARK_COMPLETE.to_h]
+        # expect(send_task.available_actions(org_nonadmin)).to match_array nonadmin_actions
 
-      expect(send_task.available_actions(other_user)).to be_empty
+        # expect(send_task.available_actions(other_user)).to be_empty
+      end
     end
   end
 end

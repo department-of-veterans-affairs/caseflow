@@ -14,7 +14,7 @@ describe CavcTask, :postgres do
     it "has expected defaults" do
       new_task = subject
       expect(new_task.assigned_to).to eq Bva.singleton
-      expect(new_task.label).to eq "All CAVC-related tasks"
+      expect(new_task.label).to eq COPY::CAVC_TASK_LABEL
       expect(new_task.default_instructions).to eq [COPY::CAVC_TASK_DEFAULT_INSTRUCTIONS]
     end
   end
