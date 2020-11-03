@@ -9,6 +9,7 @@ import CaseDetailsLink from '../CaseDetailsLink';
 import ReaderLink from '../ReaderLink';
 import ContinuousProgressBar from '../../components/ContinuousProgressBar';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
+import IhpDaysWaitingTooltip from './IhpDaysWaitingTooltip';
 
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, regionalOfficeCity, renderAppealType } from '../utils';
 import { DateString } from '../../util/DateUtil';
@@ -228,13 +229,19 @@ export const daysWaitingColumn = (requireDasRecord) => {
         daysSincePlacedOnHold = moment().startOf('day').
           diff(task.placedOnHoldAt, 'days');
 
-      return <React.Fragment>
+      const daysWaiting = <React.Fragment>
         <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>
           {daysSinceAssigned} {pluralize('day', daysSinceAssigned)}
         </span>
         { taskHasCompletedHold(task) &&
           <ContinuousProgressBar level={daysSincePlacedOnHold} limit={task.onHoldDuration} warning /> }
       </React.Fragment>;
+
+      return (
+        task.latestInformalHearingPresentationTask ?
+          <IhpDaysWaitingTooltip {...task.latestInformalHearingPresentationTask}>{daysWaiting}</IhpDaysWaitingTooltip> :
+          <React.Fragment>{daysWaiting}</React.Fragment>
+      );
     },
     backendCanSort: true,
     getSortValue: (task) => moment().startOf('day').

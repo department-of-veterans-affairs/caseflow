@@ -129,7 +129,11 @@ const taskAttributesFromRawTask = (task) => {
     powerOfAttorneyName: task.attributes.power_of_attorney_name,
     suggestedHearingLocation: task.attributes.suggested_hearing_location,
     hearingRequestType: task.attributes.hearing_request_type,
-    isFormerTravel: task.attributes.former_travel
+    isFormerTravel: task.attributes.former_travel,
+    latestInformalHearingPresentationTask: {
+      requestedAt: task.attributes.latest_informal_hearing_presentation_task.requested_at,
+      receivedAt: task.attributes.latest_informal_hearing_presentation_task.received_at
+    }
   };
 };
 
