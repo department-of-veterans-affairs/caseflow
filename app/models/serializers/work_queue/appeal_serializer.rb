@@ -69,6 +69,8 @@ class WorkQueue::AppealSerializer
     object.claimant&.relationship
   end
 
+  attribute :cavc_remand
+
   attribute :veteran_file_number
 
   attribute :veteran_full_name do |object|
