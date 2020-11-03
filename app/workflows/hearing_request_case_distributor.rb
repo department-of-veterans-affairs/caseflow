@@ -17,9 +17,9 @@ class HearingRequestCaseDistributor
         create_distribution_case_for_task(task, genpop_value)
       end
     rescue ActiveRecord::RecordNotUnique
-      error = CannotDistribute.new("DistributedCase already exists")
-      Raven.capture_exception(error, extra: { uuid: appeal.uuid, judge: distribution.judge.css_id })
-      next
+      Raven.capture_message("Redistributing appeal #{appeal.uuid} to #{distribution.judge.css_id }")
+      DistributedCase.find_by(case_id: appeal.uuid).redistribute!
+      retry
     end
   end
 
