@@ -20,11 +20,11 @@ class HearingRequestCaseDistributor
     end
   end
 
-  def redistribute_existing_distributed_case(appeal)
+  def rename_any_existing_distributed_case(appeal)
     existing_case = DistributedCase.find_by(case_id: appeal.uuid)
     if existing_case
       Raven.capture_message("Redistributing appeal #{appeal.uuid} to #{distribution.judge.css_id}")
-      existing_case.redistribute!
+      existing_case.rename_for_redistribution!
     end
   end
 
