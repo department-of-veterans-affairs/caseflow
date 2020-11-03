@@ -344,6 +344,8 @@ class LegacyAppeal < CaseflowRecord
            :representative_to_hash,
            :representative_participant_id,
            :vacols_representatives,
+           :representative_is_vso?,
+           :representative_is_colocated_vso?,
            to: :legacy_appeal_representative
 
   def representative_email_address
