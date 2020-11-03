@@ -244,7 +244,6 @@ describe HearingRequestDocket, :all_dbs do
                                                     limit: number_of_already_distributed_appeals,
                                                     genpop: "any")
         distributed_appeals = DistributionTask.closed.take(number_of_already_distributed_appeals).map(&:appeal)
-        distributed_uuids =
         distributed_appeals.each do |distributed_appeal|
           DistributionTask.create!(appeal: distributed_appeal, parent: distributed_appeal.root_task)
         end

@@ -13,13 +13,18 @@ class HearingRequestCaseDistributor
   def call
     appeals_to_distribute.map do |appeal, genpop_value|
       Distribution.transaction do
+        redistribute_existing_distributed_case(appeal)
         task = create_judge_assign_task_for_appeal(appeal)
         create_distribution_case_for_task(task, genpop_value)
       end
-    rescue ActiveRecord::RecordNotUnique
-      Raven.capture_message("Redistributing appeal #{appeal.uuid} to #{distribution.judge.css_id }")
-      DistributedCase.find_by(case_id: appeal.uuid).redistribute!
-      retry
+    end
+  end
+
+  def redistribute_existing_distributed_case(appeal)
+    existing_case = DistributedCase.find_by(case_id: appeal.uuid)
+    if existing_case
+      Raven.capture_message("Redistributing appeal #{appeal.uuid} to #{distribution.judge.css_id}")
+      existing_case.redistribute!
     end
   end
 
