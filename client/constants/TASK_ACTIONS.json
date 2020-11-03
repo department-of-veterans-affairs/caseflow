@@ -8,6 +8,11 @@
     "label": "Change hearing disposition",
     "value": "modal/change_hearing_disposition"
   },
+  "CANCEL_CONVERT_HEARING_REQUEST_TYPE_TO_VIRTUAL": {
+    "label": "Cancel convert hearing to virtual",
+    "value": "modal/cancel_task",
+    "func": "cancel_convert_hearing_request_type_data"
+  },
   "CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO": {
     "label": "Convert hearing to video",
     "value": "<placeholder>modal/change_hearing_request_type</placeholder>",
@@ -82,16 +87,12 @@
   },
   "DOCKET_SWITCH_SEND_TO_JUDGE": {
     "label": "Send to Judge",
-    "value": "docket_switch/recommend"
+    "value": "docket_switch/recommend",
+    "func": "docket_switch_send_to_judge_data"
   },
   "DOCKET_SWITCH_JUDGE_RULING": {
-    "label": "Send to Judge",
+    "label": "Rule on Docket Switch",
     "value": "docket_switch/ruling"
-  },
-  "DOCKET_SWITCH_CHECKOUT": {
-    "label": "Send to Judge",
-    "value": "docket_switch/checkout/review",
-    "func": "docket_switch_granted_data"
   },
   "DOCKET_SWITCH_DENIED": {
     "label": "Deny Docket Switch",
@@ -100,7 +101,8 @@
   },
   "DOCKET_SWITCH_GRANTED": {
     "label": "Grant Docket Switch",
-    "value": "docket_switch/checkout/grant"
+    "value": "docket_switch/checkout/grant",
+    "func": "docket_switch_granted_data"
   },
   "CANCEL_FOREIGN_VETERANS_CASE_TASK": {
     "label": "Cancel hearing request",

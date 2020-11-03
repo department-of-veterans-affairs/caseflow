@@ -19,6 +19,8 @@ class VACOLS::CaseHearing < VACOLS::Record
   has_one :folder, foreign_key: :ticknum, primary_key: :folder_nr
   has_one :corres, foreign_key: :stafkey, primary_key: :bfcorkey, class_name: "Correspondent"
 
+  scope :by_dispositions, ->(dispositions) { where(hearing_disp: dispositions) }
+
   HEARING_TYPE_LOOKUP = {
     central: "C",
     travel: "T",

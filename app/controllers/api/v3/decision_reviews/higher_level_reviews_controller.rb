@@ -39,7 +39,10 @@ class Api::V3::DecisionReviews::HigherLevelReviewsController < Api::V3::BaseCont
   private
 
   def processor
-    @processor ||= Api::V3::DecisionReviews::HigherLevelReviewIntakeProcessor.new(params, User.api_user)
+    @processor ||= Api::V3::DecisionReviews::HigherLevelReviewIntakeProcessor.new(
+      params.except(:controller, :action),
+      User.api_user
+    )
   end
 
   def intake_status

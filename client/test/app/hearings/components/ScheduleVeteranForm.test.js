@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import { mount } from 'enzyme';
 
 import { VIRTUAL_HEARING_LABEL } from 'app/hearings/constants';
 import { ScheduleVeteranForm } from 'app/hearings/components/ScheduleVeteranForm';
@@ -27,7 +27,7 @@ const cancelSpy = jest.fn();
 describe('ScheduleVeteranForm', () => {
   test('Matches snapshot with default props', () => {
     // Render the address component
-    const scheduleVeteran = shallow(
+    const scheduleVeteran = mount(
       <ScheduleVeteranForm
         goBack={cancelSpy}
         submit={submitSpy}
@@ -41,8 +41,16 @@ describe('ScheduleVeteranForm', () => {
     );
 
     // Assertions
-    expect(scheduleVeteran.find(ReadOnly)).toHaveLength(1);
-    expect(scheduleVeteran.find(ReadOnly).prop('text')).toMatchObject(<AddressLine />);
+    expect(
+      scheduleVeteran.find(ReadOnly).first().prop('text').props
+    ).toMatchObject(
+      {
+        addressLine1: amaAppeal.appellantAddress.address_line_1,
+        addressCity: amaAppeal.appellantAddress.city,
+        addressZip: amaAppeal.appellantAddress.zip,
+        addressState: amaAppeal.appellantAddress.state
+      }
+    );
     expect(scheduleVeteran.find(HearingTypeDropdown)).toHaveLength(1);
     expect(scheduleVeteran.find(RegionalOfficeDropdown)).toHaveLength(1);
     expect(scheduleVeteran).toMatchSnapshot();
@@ -139,7 +147,7 @@ describe('ScheduleVeteranForm', () => {
     const error = 'Please select hearing day';
 
     // Render the address component
-    const scheduleVeteran = shallow(
+    const scheduleVeteran = mount(
       <ScheduleVeteranForm
         errors={{ hearingDay: error }}
         goBack={cancelSpy}
