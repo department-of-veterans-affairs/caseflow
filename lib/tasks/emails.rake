@@ -34,7 +34,8 @@ namespace :emails do
         [
           :confirmation,
           :updated_time_confirmation,
-          :cancellation
+          :cancellation,
+          :reminder
         ].each do |func|
           email = VirtualHearingMailer.send(
             func,
