@@ -22,6 +22,7 @@ import CaseHearingsDetail from './CaseHearingsDetail';
 import CaseTimeline from './CaseTimeline';
 import CaseTitle from './CaseTitle';
 import CaseTitleDetails from './CaseTitleDetails';
+import CavcDetail from './CavcDetail';
 import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
 import StickyNavContentArea from './StickyNavContentArea';
 import TaskSnapshot from './TaskSnapshot';
@@ -141,6 +142,8 @@ export const CaseDetailsView = (props) => {
           {!_.isNull(appeal.appellantFullName) && appeal.appellantIsNotVeteran && (
             <AppellantDetail title="About the Appellant" appeal={appeal} />
           )}
+          {!_.isNull(appeal.cavcRemand) && appeal.cavcRemand &&
+          (<CavcDetail title="CAVC Remand" {...appeal.cavcRemand} />)}
           <CaseTimeline title="Case Timeline" appeal={appeal} />}
         </StickyNavContentArea>
         {props.pollHearing && pollHearing()}

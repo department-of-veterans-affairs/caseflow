@@ -115,6 +115,15 @@
   "CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE": "Female",
   "CASE_DETAILS_GENDER_FIELD_VALUE_MALE": "Male",
 
+  "CASE_DETAILS_CAVC_DOCKET_NUMBER": "Court Docket",
+  "CASE_DETAILS_CAVC_ATTORNEY": "Attorney Representation",
+  "CASE_DETAILS_CAVC_JUDGE": "Name of judge",
+  "CASE_DETAILS_CAVC_PROCEDURE": "Procedure",
+  "CASE_DETAILS_CAVC_TYPE": "Type",
+  "CASE_DETAILS_CAVC_DECISION_DATE": "Court's decision date",
+  "CASE_DETAILS_CAVC_JUDGEMENT_DATE": "Judgement date",
+  "CASE_DETAILS_CAVC_MANDATE_DATE": "Mandate date",
+
   "NEW_FILE_ICON_TOOLTIP": "This case has new documents",
   "NEW_FILE_ALL_ICON_TOOLTIP": "One or more cases has new documents available",
 
