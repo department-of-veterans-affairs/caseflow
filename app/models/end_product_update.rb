@@ -32,7 +32,7 @@ class EndProductUpdate < CaseflowRecord
     issue_type = new_code_hash[:issue_type]
     return if issue_type == old_code_hash[:issue_type]
 
-    issue_type == "rating" ? update_issue_type_to_rating : update_issue_type_to_nonrating
+    (issue_type == "rating") ? update_issue_type_to_rating : update_issue_type_to_nonrating
   end
 
   def update_issue_type_to_nonrating
