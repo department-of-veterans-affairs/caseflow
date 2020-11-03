@@ -21,6 +21,9 @@ const listStyling = css({
   }
 });
 
+// Creates a tool tip that displays information about the status of an appeal's most recent Informal Hearing
+// Presentation task. If the ihp task is not complete, days waiting will show how long it has been since the IHP was
+// requested. If the ihp task is complete, days waiting will show how long took for the IHP task to be received.
 const IhpDaysWaitingTooltip = (props) => {
   const { requestedAt, receivedAt, children } = props;
   const daysWaitingEndDate = receivedAt ? moment(receivedAt).startOf('day') : moment().startOf('day');
