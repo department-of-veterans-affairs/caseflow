@@ -7,7 +7,18 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 // Local Dependencies
 import { fetchDocuments } from 'utils/reader/documents';
 import { documentListScreen } from 'store/reader/selectors';
-import { setSearch, clearSearch as clear, setViewingDocumentsOrComments } from 'store/reader/documentList';
+import {
+  setSearch,
+  clearSearch as clear,
+  setViewingDocumentsOrComments,
+  changeSortState,
+  setCategoryFilter,
+  toggleDropdownFilterVisibility,
+  clearCategoryFilters,
+  clearAllFilters,
+  clearTagFilters,
+  setTagFilter,
+} from 'store/reader/documentList';
 import { recordSearch } from 'utils/reader';
 
 import {
@@ -17,9 +28,9 @@ import {
   LastRetrievalAlert,
   LastRetrievalInfo,
   NoSearchResults,
-  DocumentsTable
+  DocumentsTable,
+  CommentsTable
 } from 'components/reader/DocumentList';
-import CommentsTable from 'app/reader/CommentsTable';
 
 const DocumentList = (props) => {
   // Get the Document List state
@@ -33,10 +44,17 @@ const DocumentList = (props) => {
 
   // Create the dispatchers
   const actions = {
+    clearTagFilters: () => dispatch(clearTagFilters(state)),
+    setTagFilter: (text, checked, tagId) => dispatch(setTagFilter(text, checked, tagId, state)),
+    clearAllFilters: () => dispatch(clearAllFilters(state)),
+    clearCategoryFilters: () => dispatch(clearCategoryFilters(state)),
+    toggleFilter: (val) => dispatch(toggleDropdownFilterVisibility(val)),
+    setCategoryFilter: (categoryName, checked) => dispatch(setCategoryFilter(categoryName, checked, state)),
     changeView: (val) => dispatch(setViewingDocumentsOrComments(val)),
-    search: (val) => dispatch(setSearch(val, state.documentAnnotations, state.storeDocuments)),
-    clearSearch: () => dispatch(clear(state.filterCriteria, state.documentAnnotations, state.storeDocuments)),
+    search: (val) => dispatch(setSearch(val, state.annotations, state.storeDocuments)),
+    clearSearch: () => dispatch(clear(state.filterCriteria, state.annotations, state.storeDocuments)),
     recordSearch: (query) => recordSearch(props.match.params.vacolsId, query),
+    changeSort: (val) => dispatch(changeSortState(val, state)),
   };
 
   return (
@@ -51,6 +69,7 @@ const DocumentList = (props) => {
           <DocumentListHeader {...state} {...actions} />
           <NoSearchResults {...state} {...actions} show={state.documentsView === 'none'} />
           <DocumentsTable {...state} {...actions} show={state.documentsView === 'documents'} />
+          <CommentsTable {...state} {...actions} show={state.documentsView === 'comments'} />
         </div>
       </AppSegment>
       <LastRetrievalInfo {...state.documentList} />
@@ -66,7 +85,7 @@ DocumentList.propTypes = {
   singleDocumentMode: PropTypes.bool,
   match: PropTypes.object,
   loadedAppealId: PropTypes.string,
-  documentAnnotations: PropTypes.array,
+  annotations: PropTypes.array,
 
   // Required actions
   onScrollToComment: PropTypes.func,

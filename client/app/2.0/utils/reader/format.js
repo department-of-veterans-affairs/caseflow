@@ -1,4 +1,5 @@
 // External Dependencies
+import { current } from '@reduxjs/toolkit';
 import moment from 'moment';
 import { sortBy, compact } from 'lodash';
 
@@ -14,15 +15,34 @@ import { documentCategories, CACHE_TIMEOUT_HOURS, CATEGORIES } from 'store/const
 export const formatCategoryName = (categoryName) => `category_${categoryName}`;
 
 /**
+ * Helper Method to format the Filter Criteria
+ * @param {Object} filterCriteria -- The object containing filter criteria
+ */
+export const formatFilterCriteria = (filterCriteria) => {
+  // Create the filter object
+  const filters = {
+    category: Object.keys(filterCriteria.category).filter((cat) => filterCriteria.category[cat] === true).
+      map((key) => formatCategoryName(key)),
+    tag: Object.keys(filterCriteria.tag),
+    searchQuery: filterCriteria.searchQuery.toLowerCase()
+  };
+
+  // Map the active filters
+  const active = Object.keys(filters).filter((activeFilter) => filters[activeFilter].length).
+    map((activeFilter) => filters[activeFilter]);
+
+  // Return the filters and the active filters
+  return { filters, active };
+};
+
+/**
  * Helper Method to sort the Categories of a document
  * @param {Object} document -- Document object from the store
  */
-export const sortCategories = (filtered, document) => {
+export const sortCategories = (document) => {
   // Determine whether the categories should be filtered
-  const categories = filtered ?
-    Object.keys(documentCategories).filter((name) => document[formatCategoryName(name)]).
-      map((cat) => documentCategories[cat]) :
-    Object.values(documentCategories);
+  const categories = Object.keys(documentCategories).filter((name) => document[formatCategoryName(name)]).
+    map((cat) => documentCategories[cat]);
 
   // Return the sorted categories
   return sortBy(categories, 'renderOrder');

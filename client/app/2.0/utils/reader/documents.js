@@ -11,7 +11,7 @@ import {
   ACTION_NAMES,
   INTERACTION_TYPES
 } from 'store/constants/reader';
-import { formatCategoryName } from 'utils/reader/format';
+import { formatCategoryName, formatFilterCriteria, searchString } from 'utils/reader';
 import { fetchAppealDetails, setZoomLevel } from 'store/reader/pdfViewer';
 import { stopPlacingAnnotation } from 'store/reader/annotationLayer';
 
@@ -43,22 +43,24 @@ export const documentsView = (documents, filter, view) => {
  * @param {array} annotationsPerDocument -- The list of comments for each document
  * @returns {array} -- The list of comment rows for the table
  */
-export const documentRows = (documents, annotations) => Object.values(documents).reduce((acc, doc) => {
-  // acc.push(doc);
-  const [docWithComments] = annotations.filter((note) => note.documentId === doc.id);
+export const documentRows = (ids, documents, annotations) => ids.map((id) => {
+  // Set the current document
+  const document = documents[id];
 
-  if (docWithComments && doc.listComments) {
-    return [
-      ...acc,
-      {
-        ...doc,
-        isComment: true
-      }
-    ];
+  // Get the documents with comments
+  const [docWithComments] = annotations.filter((note) => note.documentId === document.id);
+
+  // Apply the comment if present
+  if (docWithComments && document.listComments) {
+    return {
+      ...document,
+      isComment: true
+    };
   }
 
-  return [...acc, doc];
-}, []);
+  // Default to return the document
+  return document;
+});
 
 /**
  * Helper Method to get the Categories for each Document
@@ -173,4 +175,83 @@ export const fetchDocuments = ({ loadedAppealId, vacolsId, appeal }, dispatch) =
   if (isEmpty(appeal) || ((appeal.vacols_id || appeal.external_id) !== vacolsId)) {
     dispatch(fetchAppealDetails(vacolsId));
   }
+};
+
+/**
+ * Helper Method to sort an object by an array of keys
+ * @param {Object} options -- Values to sort the list by and optional direction
+ */
+export const sortKeysBy = ({ keys, list, value, dir }) => keys.sort((first, second) => {
+  // Return the keys if there is no list
+  if (!list[first]) {
+    return keys;
+  }
+
+  // Map fields according to the sort order and value, default to ascending sort
+  const fieldA = dir === 'desc' ? list[second][value] : list[first][value];
+  const fieldB = dir === 'desc' ? list[first][value] : list[second][value];
+
+  // Handle string columns
+  if (typeof fieldA === 'string') {
+    return fieldA.localeCompare(fieldB);
+  }
+
+  // Field A is less than B and not a string
+  if (fieldA < fieldB) {
+    return -1;
+  }
+
+  // Field A is greater than B and not a string
+  if (fieldA > fieldB) {
+    return 1;
+  }
+
+  // Field A is equivalent to B and not a string
+  return 0;
+});
+
+/**
+ * Helper Method to filter documents based on criteria object
+ * @param {Object} criteria -- The criteria to filter on
+ * @param {Object} documents -- The list of documents
+ * @returns {array} -- Contains the IDs of the filtered documents
+ */
+export const filterDocuments = (criteria, documents, state) => {
+  // Get the Filters to apply
+  const { active, filters } = formatFilterCriteria(criteria);
+
+  // Set the Original Documents according to the initial state
+  const docs = state.storeDocuments ? state.storeDocuments : documents;
+
+  // Set the IDs to the store doc IDs or the filtered IDs if active
+  const ids = active.length ? Object.keys(docs).map((doc) => docs[doc].id).
+    filter((id) => {
+      // Initialize whether to show the document
+      let include = true;
+
+      // Set the Current Document
+      const document = docs[id];
+
+      // Apply the Category filters
+      if (!isEmpty(filters.category)) {
+        include = filters.category.filter((name) => document[name] === true).length;
+      }
+
+      // Apply the search filters
+      if (filters.searchQuery) {
+        include = searchString(filters.searchQuery, state)(document);
+      }
+
+      // Default return the object to be truthy
+      return include;
+    }) :
+    Object.keys(docs).map((doc) => docs[doc].id);
+
+  // Return the filtered IDs
+  return sortKeysBy({
+    keys: ids,
+    list: docs,
+    value: criteria.sort.sortBy,
+    dir: !criteria.sort.sortAscending && 'desc'
+  });
 };

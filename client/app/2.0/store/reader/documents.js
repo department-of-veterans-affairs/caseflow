@@ -36,7 +36,12 @@ export const loadDocuments = createAsyncThunk('documents/load', async (vacolsId,
   const { body } = await ApiUtil.get(`/reader/appeal/${vacolsId}/documents?json`, {}, ENDPOINT_NAMES.DOCUMENTS);
 
   // Return the response and attach the Filter Criteria
-  return { ...body, vacolsId, docFilterCriteria: state.reader.documentList.docFilterCriteria };
+  return {
+    ...body,
+    vacolsId,
+    documents: body.appealDocuments,
+    filterCriteria: state.reader.documentList.filterCriteria
+  };
 });
 
 /**
@@ -224,7 +229,7 @@ const documentsSlice = createSlice({
         state.list[action.payload.doc.id].tags[action.payload.tag.id].pendingRemoval = false;
       }).
       addCase(loadDocuments.fulfilled, (state, action) => {
-        state.list = action.payload.appealDocuments.reduce((list, doc) => ({
+        state.list = action.payload.documents.reduce((list, doc) => ({
           ...list,
           [doc.id]: {
             ...doc,
@@ -297,7 +302,7 @@ const documentsSlice = createSlice({
           // Format the search query
           const searchQuery = action.type === clearSearch.toString() ?
             '' :
-            payload.docFilterCriteria.searchQuery.toLowerCase();
+            payload.filterCriteria.searchQuery.toLowerCase();
 
           // Loop through all the documents to update the list comments
           Object.keys(state.list).forEach((docId) => {

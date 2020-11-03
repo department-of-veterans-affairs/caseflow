@@ -1,6 +1,6 @@
 // External Dependencies
 import { createSelector, current } from '@reduxjs/toolkit';
-import { mapValues, chain, values, memoize, isEmpty, compact, uniqBy } from 'lodash';
+import { values, isEmpty, compact, uniqBy } from 'lodash';
 
 // Local Dependencies
 import { escapeRegExp, loadAppeal, documentsView } from 'utils/reader';
@@ -66,7 +66,7 @@ export const fileState = (state, props) => props.file;
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- The File State
  */
-export const docFilterCriteriaState = (state) => state.documentList.docFilterCriteria;
+export const filterCriteriaState = (state) => state.documentList.filterCriteria;
 
 /**
  * Selector for the Selected Index
@@ -85,13 +85,13 @@ export const filteredDocuments = ({ reader }) =>
  * Document List Filtered State
  */
 export const docListIsFiltered = createSelector(
-  [documentState, filteredDocIdState, docFilterCriteriaState],
-  (documents, filteredDocIds, docFilterCriteria) =>
+  [documentState, filteredDocIdState, filterCriteriaState],
+  (documents, filteredDocIds, filterCriteria) =>
     Boolean(
       documents.length !== filteredDocIds.length ||
-      docFilterCriteria.searchQuery ||
-      values(docFilterCriteria.category).some() ||
-      values(docFilterCriteria.tag).some()
+      filterCriteria.searchQuery ||
+      values(filterCriteria.category).some() ||
+      values(filterCriteria.tag).some()
     )
 );
 
@@ -187,16 +187,16 @@ export const documentListScreen = (state) => {
     docsCount,
     storeDocuments: state.reader.documents.list,
     documentList: state.reader.documentList,
-    documentAnnotations: documentAnnotations(state),
+    annotations: documentAnnotations(state),
     documentsView: documentsView(
       Object.values(documents),
-      state.reader.documentList.docFilterCriteria,
+      state.reader.documentList.filterCriteria,
       state.reader.documentList.viewingDocumentsOrComments
     ),
     caseSelectedAppeal: state.reader.caseSelect.selectedAppeal,
     loadedAppealId: state.reader.pdfViewer.loadedAppealId,
     tagOptions: state.reader.pdfViewer.tagOptions,
-    filterCriteria: state.reader.documentList.docFilterCriteria,
+    filterCriteria: state.reader.documentList.filterCriteria,
     filteredDocIds: state.reader.documentList.filteredDocIds,
     searchCategoryHighlights: state.reader.documentList.searchCategoryHighlights,
     manifestVbmsFetchedAt: state.reader.documentList.manifestVbmsFetchedAt,

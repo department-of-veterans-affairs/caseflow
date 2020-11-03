@@ -1,5 +1,5 @@
 import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { random, uniqWith, isEqual, difference } from 'lodash';
+import { random, uniqWith, isEqual, difference, flatten } from 'lodash';
 import { CATEGORIES, ENDPOINT_NAMES, COMMENT_ACCORDION_KEY } from 'store/constants/reader';
 import { deleteAnnotation, moveAnnotation, editAnnotation, stopPlacingAnnotation } from 'store/reader/annotationLayer';
 import { addMetaLabel } from 'utils/reader/format';
@@ -32,7 +32,7 @@ export const initialState = {
   loadedAppealId: null,
   loadedAppeal: {},
   openedAccordionSections: ['Categories', 'Issue tags', COMMENT_ACCORDION_KEY],
-  tagOptions: [],
+  tagOptions: {},
   hidePdfSidebar: false,
   jumpToPageNumber: null,
   scrollTop: 0,
@@ -180,10 +180,13 @@ const pdfViewerSlice = createSlice({
       ].includes(action.type),
       (state, action) => {
         // Set the documents based on the action
-        const documents = action.payload.appealDocuments;
+        const documents = action.payload.documents;
 
         // Update the tag options
-        state.tagOptions = uniqWith(documents.map((doc) => doc.tags || []), isEqual);
+        state.tagOptions = Object.keys(documents).reduce((list, doc) => ({
+          ...list,
+          [documents[doc].tags.length && documents[doc].id]: documents[doc].tags
+        }), {});
 
         // Set the Appeal ID if loading documents
         if (action.type === loadDocuments.fulfilled.toString()) {

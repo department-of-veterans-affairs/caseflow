@@ -1,7 +1,7 @@
 // External Dependencies
 import React from 'react';
 import PropTypes from 'prop-types';
-import { sortBy as sort } from 'lodash';
+import { sortBy as sort, isEmpty } from 'lodash';
 
 // Local Dependencies
 import { formatDateStr } from 'app/util/DateUtil';
@@ -12,7 +12,7 @@ import { Highlight } from 'components/reader/DocumentList/Highlight';
 import FilterIcon from 'app/components/FilterIcon';
 import { DoubleArrow } from 'app/components/RenderFunctions';
 
-import Comment from 'app/reader/Comment';
+import { Comment } from 'components/reader/DocumentList/CommentsTable/Comment';
 import { CommentIndicator } from 'components/reader/DocumentList/DocumentsTable/CommentIndicator';
 import { CategoryPicker } from 'components/reader/DocumentList/DocumentsTable/CategoryPicker';
 import { CategoryIcons } from 'components/reader/DocumentList/DocumentsTable/CategoryIcons';
@@ -48,8 +48,8 @@ export const commentValue = (annotations, jumpToComment) => (doc) => (
  * @param {Object} props -- Contains the category filters and functions to apply/remove them
  */
 export const CategoryHeader = ({
-  pdfList,
-  docFilterCriteria,
+  documentList,
+  filterCriteria,
   catFilterRef,
   toggleFilter,
   clearCategoryFilters,
@@ -62,20 +62,20 @@ export const CategoryHeader = ({
       label="Filter by category"
       idPrefix="category"
       getRef={catFilterRef}
-      selected={pdfList?.dropdowns?.category || docFilterCriteria?.category}
-      handleActivate={toggleFilter}
+      selected={documentList.pdfList?.dropdown?.category || filterCriteria?.category}
+      handleActivate={() => toggleFilter('category')}
     />
-    {pdfList?.dropdowns?.category && (
+    {documentList.pdfList?.dropdown?.category && (
       <DropdownFilter
         clearFilters={clearCategoryFilters}
         name="category"
-        isClearEnabled={docFilterCriteria?.category}
-        handleClose={toggleFilter}
+        isClearEnabled={!isEmpty(filterCriteria?.category)}
+        handleClose={() => toggleFilter('category')}
         addClearFiltersRow
       >
         <CategoryPicker
           {...props}
-          categoryToggleStates={docFilterCriteria?.category}
+          categoryToggleStates={filterCriteria?.category}
           handleCategoryToggle={setCategoryFilter}
         />
       </DropdownFilter>
@@ -84,8 +84,8 @@ export const CategoryHeader = ({
 );
 
 CategoryHeader.propTypes = {
-  pdfList: PropTypes.object,
-  docFilterCriteria: PropTypes.object,
+  documentList: PropTypes.object,
+  filterCriteria: PropTypes.object,
   catFilterRef: PropTypes.element,
   toggleFilter: PropTypes.func,
   clearCategoryFilters: PropTypes.func,
@@ -203,13 +203,13 @@ TypeCell.propTypes = {
  * @param {Object} props -- Contains the tag filters and functions to apply/remove them
  */
 export const TagHeader = ({
-  pdfList,
+  documentList,
   filterCriteria,
   tagFilterRef,
   toggleFilter,
   clearTagFilters,
   setTagFilter,
-  pdfViewer,
+  tagOptions,
   ...props
 }) => (
   <div id="tags-header" className="document-list-header-issue-tags">
@@ -218,20 +218,20 @@ export const TagHeader = ({
       label="Filter by tag"
       idPrefix="tag"
       getRef={tagFilterRef}
-      selected={pdfList?.dropdowns?.tag || filterCriteria?.tag}
-      handleActivate={toggleFilter}
+      selected={documentList.pdfList?.dropdown?.tag || filterCriteria?.tag}
+      handleActivate={() => toggleFilter('tag')}
     />
-    {pdfList?.dropdowns?.tag && (
+    {documentList.pdfList?.dropdown?.tag && (
       <DropdownFilter
         clearFilters={clearTagFilters}
         name="tag"
-        isClearEnabled={filterCriteria?.tag}
-        handleClose={toggleFilter}
+        isClearEnabled={!isEmpty(filterCriteria?.tag)}
+        handleClose={() => toggleFilter('tag')}
         addClearFiltersRow
       >
         <TagPicker
           {...props}
-          tags={pdfViewer.tagOptions}
+          tags={tagOptions}
           tagToggleStates={filterCriteria?.tag}
           handleTagToggle={setTagFilter}
         />
@@ -241,9 +241,9 @@ export const TagHeader = ({
 );
 
 TagHeader.propTypes = {
-  pdfList: PropTypes.object,
+  documentList: PropTypes.object,
   filterCriteria: PropTypes.object,
-  pdfViewer: PropTypes.object,
+  tagOptions: PropTypes.object,
   tagFilterRef: PropTypes.element,
   toggleFilter: PropTypes.func,
   clearTagFilters: PropTypes.func,

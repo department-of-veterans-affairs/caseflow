@@ -7,12 +7,6 @@ import { useDispatch } from 'react-redux';
 import Table from 'app/components/Table';
 import {
   setDocListScrollPosition,
-  changeSortState,
-  clearTagFilters,
-  clearCategoryFilters,
-  setTagFilter,
-  setCategoryFilter,
-  toggleDropdownFilterVisibility
 } from 'app/reader/DocumentList/DocumentListActions';
 import { SortArrowUp, SortArrowDown } from 'app/components/RenderFunctions';
 import { commentHeaders, documentHeaders } from 'components/reader/DocumentList/DocumentsTable/Columns';
@@ -23,7 +17,7 @@ import { selectCurrentPdfLocally, handleToggleCommentOpened } from 'app/reader/D
  * Documents Table Component
  * @param {Object} props -- Props contain documents and additional details from the redux store
  */
-export const DocumentsTable = ({show, ...props}) => {
+export const DocumentsTable = ({ show, ...props }) => {
   // Create the Dispatcher
   const dispatch = useDispatch();
 
@@ -53,16 +47,10 @@ export const DocumentsTable = ({show, ...props}) => {
     catFilterRef,
     tagFilterRef,
     // Sort Functions
-    changeSort: (val) => dispatch(changeSortState(val)),
     sortBy: props.filterCriteria.sort.sortBy,
     sortLabel: `Sorted ${props.filterCriteria.sort.sortAscending ? 'ascending' : 'descending'}`,
     sortIcon: props.filterCriteria.sort.sortAscending ? <SortArrowUp /> : <SortArrowDown />,
     // Filter Functions
-    toggleFilter: (val) => dispatch(toggleDropdownFilterVisibility(val)),
-    clearCategoryFilters: () => dispatch(clearCategoryFilters()),
-    setCategoryFilter: (categoryName, checked) => dispatch(setCategoryFilter(categoryName, checked)),
-    clearTagFilters: () => dispatch(clearTagFilters()),
-    setTagFilter: (text, checked, tagId) => dispatch(setTagFilter(text, checked, tagId)),
     setPdf: (doc) => dispatch(selectCurrentPdfLocally(doc.id)),
     toggleComment: (docId, expanded) => dispatch(handleToggleCommentOpened(docId, expanded))
   };
@@ -72,7 +60,7 @@ export const DocumentsTable = ({show, ...props}) => {
     <div>
       <Table
         columns={(row) => row?.isComment ? commentHeaders(tableProps) : documentHeaders(tableProps)}
-        rowObjects={documentRows(props.documents, props.documentAnnotations)}
+        rowObjects={documentRows(props.filteredDocIds, props.documents, props.annotations)}
         summary="Document list"
         className="documents-table"
         headerClassName="cf-document-list-header-row"
@@ -87,8 +75,10 @@ export const DocumentsTable = ({show, ...props}) => {
 };
 
 DocumentsTable.propTypes = {
+  filteredDocIds: PropTypes.array,
   show: PropTypes.bool,
   documents: PropTypes.object,
+  annotations: PropTypes.array,
   onJumpToComment: PropTypes.func,
   sortBy: PropTypes.string,
   documentList: PropTypes.shape({
@@ -100,9 +90,7 @@ DocumentsTable.propTypes = {
   documentPathBase: PropTypes.string,
   annotationsPerDocument: PropTypes.object,
   filterCriteria: PropTypes.object,
-  setCategoryFilter: PropTypes.func,
   setTagFilter: PropTypes.func,
   setDocListScrollPosition: PropTypes.func,
-  toggleDropdownFilterVisibility: PropTypes.func,
-  tagOptions: PropTypes.arrayOf(PropTypes.object)
+  tagOptions: PropTypes.object
 };

@@ -32,7 +32,7 @@ export const DocumentListHeader = ({ filterCriteria, docsCount, search, clearSea
       </div>
       <ToggleViewButton {...props} />
     </div>
-    <FilterMessage filterCriteria={filterCriteria} />
+    <FilterMessage filterCriteria={filterCriteria} {...props} />
   </div>
 );
 
