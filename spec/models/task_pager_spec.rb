@@ -440,9 +440,10 @@ describe TaskPager, :all_dbs do
 
       let(:legacy_appeal_1) { create(:legacy_appeal, vacols_case: create(:case, :type_original)) }
       let(:legacy_appeal_2) { create(:legacy_appeal, vacols_case: create(:case, :type_post_remand)) }
-      let(:legacy_appeal_3) { create(:legacy_appeal, vacols_case: create(:case, :type_cavc_remand)) }
+      let(:legacy_appeal_3) { create(:legacy_appeal, vacols_case: create(:case, :type_cavc_remand, :aod)) }
       let(:appeal_1) { create(:appeal, :advanced_on_docket_due_to_motion) }
       let(:appeal_2) { create(:appeal) }
+      let(:appeal_3) { create(:appeal, :advanced_on_docket_due_to_motion, :type_cavc_remand) }
 
       before do
         legacy_appeals = [legacy_appeal_1, legacy_appeal_2, legacy_appeal_3]
@@ -453,7 +454,7 @@ describe TaskPager, :all_dbs do
                  appeal_type: LegacyAppeal.name,
                  case_type: appeal.type)
         end
-        appeals = [appeal_1, appeal_2]
+        appeals = [appeal_1, appeal_2, appeal_3]
         appeals.map do |appeal|
           create(:ama_colocated_task, assigned_to: assignee, appeal: appeal)
           create(:cached_appeal,
