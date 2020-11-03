@@ -55,10 +55,11 @@ class VirtualHearingMailer < ActionMailer::Base
 
     # Mon, Oct 19 at 10:30am CDT
     time_format = "%a, %b %-d at %-l:%M%P %Z"
+    formatted_time = virtual_hearing.hearing.time.appellant_time.strftime(time_format)
 
     mail(
       to: recipient.email,
-      subject: "Reminder: Your Board hearing is "
+      subject: "Reminder: Your Board hearing is #{formatted_time}"
     )
   end
 
