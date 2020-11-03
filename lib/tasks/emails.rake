@@ -42,13 +42,13 @@ namespace :emails do
             mail_recipient: recipient,
             virtual_hearing: hearing.virtual_hearing
           )
-          email_body = if email.body.nil? || email.body.empty?
+          email_body = if email.blank?
                          email.html_part&.decoded
                        else
                          email.body
                        end
 
-          next if email_body.nil? || email_body.empty?
+          next if email_body.blank?
 
           output_file = Rails.root.join("tmp", "#{func}_#{recipient.title}.html")
 
