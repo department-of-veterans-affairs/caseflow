@@ -17,6 +17,8 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
       expect(new_task.label).to eq COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL
       expect(new_task.default_instructions).to be_empty
     end
+
+    # TODO: create child_send_task/user_task
   end
 
   describe "FactoryBot.create(:send_cavc_remand_processed_letter_task) with different arguments" do
@@ -64,20 +66,16 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
     end
     let(:org_nonadmin) { create(:user) { |u| CavcLitigationSupport.singleton.add_user(u) } }
     let(:other_user) { create(:user) }
-    let(:send_task) { create(:send_cavc_remand_processed_letter_task) } #{ |t| t.parent.update(assigned_to: assignee) } }
+    let(:send_task) { create(:send_cavc_remand_processed_letter_task) }
     context "task assigned to CavcLitigationSupport admin" do
-      let(:assignee) { org_admin }
       it "returns admin actions" do
         expect(send_task.available_actions(org_admin)).to match_array SendCavcRemandProcessedLetterTask::ADMIN_ACTIONS
       end
     end
     context "task assigned to CavcLitigationSupport non-admin" do
       let(:child_send_task) { create(:send_cavc_remand_processed_letter_task, parent: send_task, assigned_to: org_nonadmin) }
-      it "returns Assign to person" do
+      it "returns non-admin actions" do
         expect(child_send_task.available_actions(org_nonadmin)).to match_array SendCavcRemandProcessedLetterTask::USER_ACTIONS
-
-        # nonadmin_actions = [Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h, Constants.TASK_ACTIONS.MARK_COMPLETE.to_h]
-        # expect(send_task.available_actions(org_nonadmin)).to match_array nonadmin_actions
 
         # expect(send_task.available_actions(other_user)).to be_empty
       end

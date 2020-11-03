@@ -7,18 +7,20 @@
 # Expected assigned_to.type: User
 
 class SendCavcRemandProcessedLetterTask < Task
-  validates :parent, presence: true, parentTask: { task_type: CavcTask }, on: :create
+  validates :parent, presence: true, parentTask: { task_types: [CavcTask, SendCavcRemandProcessedLetterTask] }, on: :create
 
   before_validation :set_assignee
 
   USER_ACTIONS = [
     Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-    Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
-    # Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+    Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+    Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
+    Constants.TASK_ACTIONS.CANCEL_TASK.to_h
   ].freeze
 
   ADMIN_ACTIONS = [
-    Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h
+    Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
+    Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
   ].freeze
 
   def self.label
@@ -41,7 +43,7 @@ class SendCavcRemandProcessedLetterTask < Task
   private
 
   def set_assignee
-    self.assigned_to = CavcLitigationSupport.singleton
+    self.assigned_to = CavcLitigationSupport.singleton if assigned_to.nil?
   end
 
   def cascade_closure_from_child_task?(_child_task)

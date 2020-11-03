@@ -17,7 +17,7 @@ shared_examples_for "task requiring specific parent" do
     it "fails to create task" do
       new_task = subject
       expect(new_task.invalid?)
-      expect(new_task.errors.messages[:parent]).to include("parent should be a #{parent_task_class.name}")
+      expect(new_task.errors.messages[:parent]).to include(/should be .*/)
     end
   end
 
