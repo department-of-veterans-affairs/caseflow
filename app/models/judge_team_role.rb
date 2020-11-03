@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# :nocov:
 class JudgeTeamRole < CaseflowRecord
   belongs_to :organizations_user, class_name: "::OrganizationsUser"
 
@@ -8,11 +7,4 @@ class JudgeTeamRole < CaseflowRecord
   has_one :organization, through: :organizations_user
 
   validates :organizations_user, presence: true
-
-  class << self
-    def users
-      all.map { |role| role.organizations_user.user }
-    end
-  end
 end
-# :nocov:
