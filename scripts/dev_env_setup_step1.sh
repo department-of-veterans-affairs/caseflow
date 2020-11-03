@@ -37,7 +37,11 @@ esac
 # === The rest assumes Mac OS, so there are no case statements.
 
 echo "==> Installing Homebrew"
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+if [ -x /usr/local/bin/brew ] ; then
+  echo "Found existing install"
+else
+  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+fi
 
 echo "==> Installing the base dependencies"
 brew install rbenv nodenv yarn jq
@@ -73,7 +77,11 @@ echo "==> To install PDFtk, enter your password (i.e., the password to unlock yo
 sudo installer -pkg pdftk_server-2.02-mac_osx-10.11-setup.pkg -target /
 
 echo "==> Installing Docker"
-brew cask install docker
+if [ -x /usr/local/bin/docker ]; then
+  echo "Docker is already installed"
+else
+  brew cask install docker
+fi
 
 echo "==> Installing InstantClient"
 brew tap InstantClientTap/instantclient
