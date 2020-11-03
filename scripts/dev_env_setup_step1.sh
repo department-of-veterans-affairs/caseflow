@@ -37,8 +37,8 @@ esac
 # === The rest assumes Mac OS, so there are no case statements.
 
 echo "==> Installing Homebrew"
-if [ -x /usr/local/bin/brew ] ; then
-  echo "Found existing install"
+if which brew > /dev/null; then
+  echo "Homebrew is already installed. Skipping installation."
 else
   /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 fi
@@ -77,8 +77,8 @@ echo "==> To install PDFtk, enter your password (i.e., the password to unlock yo
 sudo installer -pkg pdftk_server-2.02-mac_osx-10.11-setup.pkg -target /
 
 echo "==> Installing Docker"
-if [ -x /usr/local/bin/docker ]; then
-  echo "Docker is already installed"
+if which docker > /dev/null; then
+  echo "Docker is already installed. Skipping installation."
 else
   brew cask install docker
 fi
