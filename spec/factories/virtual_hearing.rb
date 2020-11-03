@@ -42,6 +42,12 @@ FactoryBot.define do
       judge_email_sent { true }
     end
 
+    after(:create) do |virtual_hearing, _evaluator|
+      # Calling reload after create fixes a problem where calling `virtual_hearing.hearing.virtual_hearing`
+      # would return `nil`.
+      virtual_hearing.reload
+    end
+
     after(:create) do |virtual_hearing, evaluator|
       virtual_hearing.establishment = create(
         :virtual_hearing_establishment,
