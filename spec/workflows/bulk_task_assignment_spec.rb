@@ -144,27 +144,30 @@ describe BulkTaskAssignment, :postgres do
         let(:task_count) { 20 }
 
         let(:aod_appeal) { create(:appeal, :advanced_on_docket_due_to_motion) }
-        # Since cavc is not currently supported, ignore CAVC AMA appeals for now; use CAVC legacy appeals for now
+        let(:cavc_aod_appeal) { create(:appeal, :advanced_on_docket_due_to_motion, :type_cavc_remand) }
         let(:aod_legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, :aod)) }
         let(:cavc_legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, :type_cavc_remand)) }
         let(:cavc_aod_legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, :aod, :type_cavc_remand)) }
 
         before do
           create_no_show_hearing_task_for_appeal(aod_appeal, 3.days.ago)
-          create_no_show_hearing_task_for_appeal(aod_legacy_appeal, 2.days.ago)
+          create_no_show_hearing_task_for_appeal(cavc_aod_appeal, 2.days.ago)
+          create_no_show_hearing_task_for_appeal(aod_legacy_appeal, 1.day.ago)
           create_no_show_hearing_task_for_appeal(cavc_legacy_appeal)
           create_no_show_hearing_task_for_appeal(cavc_aod_legacy_appeal)
 
           UpdateCachedAppealsAttributesJob.perform_now
         end
 
-        let(:expected_appeal_ordering) { [cavc_aod_legacy_appeal, aod_appeal, aod_legacy_appeal, cavc_legacy_appeal] }
+        let(:expected_appeal_ordering) do
+          [cavc_aod_appeal, cavc_aod_legacy_appeal, aod_appeal, aod_legacy_appeal, cavc_legacy_appeal]
+        end
 
         subject { BulkTaskAssignment.new(params).process }
 
         it "sorts priority appeals first" do
           prioritized_assigned_tasks = subject
-          expect(prioritized_assigned_tasks.first(4).map(&:appeal)).to eq(expected_appeal_ordering)
+          expect(prioritized_assigned_tasks.first(5).map(&:appeal)).to eq(expected_appeal_ordering)
 
           appeals_of_returned_tasks = prioritized_assigned_tasks.map(&:appeal)
           expect(appeals_of_returned_tasks).to include(no_show_hearing_task1.appeal)
