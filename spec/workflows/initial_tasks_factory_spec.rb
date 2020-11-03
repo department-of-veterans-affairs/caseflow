@@ -214,7 +214,7 @@ describe InitialTasksFactory, :postgres do
 
       let(:appeal) do
         create(:appeal,
-               stream_type: "court_remand",
+               stream_type: Constants.AMA_STREAM_TYPES.court_remand,
                docket_type: Constants.AMA_DOCKETS.direct_review,
                claimants: [
                  create(:claimant, participant_id: participant_id_with_pva),
