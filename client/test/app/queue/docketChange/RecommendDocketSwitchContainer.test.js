@@ -21,13 +21,13 @@ describe('formatDocketSwitchRecommendation', () => {
       });
 
       expect(res).toMatch(
-        new RegExp(`\\*\\*Summary:\\*\\* ${summary}<br><br>`)
+        new RegExp(`\\*\\*Summary:\\*\\* ${summary} {2}\\n {2}\\n`)
       );
       expect(res).toMatch(
-        new RegExp('\\*\\*Is this a timely request:\\*\\* Yes<br><br>')
+        new RegExp('\\*\\*Is this a timely request:\\*\\* Yes {2}\\n {2}\\n')
       );
       expect(res).toMatch(
-        new RegExp('\\*\\*Recommendation:\\*\\* Grant all issues<br><br>')
+        new RegExp('\\*\\*Recommendation:\\*\\* Grant all issues {2}\\n {2}\\n')
       );
       expect(res).toMatch(new RegExp(`\\*\\*Draft letter:\\*\\* ${hyperlink}`));
       expect(res).toMatchSnapshot();
@@ -48,14 +48,14 @@ describe('formatDocketSwitchRecommendation', () => {
       });
 
       expect(res).toMatch(
-        new RegExp(`\\*\\*Summary:\\*\\* ${summary}<br><br>`)
+        new RegExp(`\\*\\*Summary:\\*\\* ${summary} {2}\\n {2}\\n`)
       );
       expect(res).toMatch(
-        new RegExp('\\*\\*Is this a timely request:\\*\\* Yes<br><br>')
+        new RegExp('\\*\\*Is this a timely request:\\*\\* Yes {2}\\n {2}\\n')
       );
       expect(res).toMatch(
         new RegExp(
-          '\\*\\*Recommendation:\\*\\* Grant a partial switch<br><br>'
+          '\\*\\*Recommendation:\\*\\* Grant a partial switch {2}\\n {2}\\n'
         )
       );
       expect(res).toMatch(new RegExp(`\\*\\*Draft letter:\\*\\* ${hyperlink}`));
@@ -77,13 +77,13 @@ describe('formatDocketSwitchRecommendation', () => {
       });
 
       expect(res).toMatch(
-        new RegExp(`\\*\\*Summary:\\*\\* ${summary}<br><br>`)
+        new RegExp(`\\*\\*Summary:\\*\\* ${summary} {2}\\n {2}\\n`)
       );
       expect(res).toMatch(
-        new RegExp('\\*\\*Is this a timely request:\\*\\* Yes<br><br>')
+        new RegExp('\\*\\*Is this a timely request:\\*\\* Yes {2}\\n {2}\\n')
       );
       expect(res).toMatch(
-        new RegExp('\\*\\*Recommendation:\\*\\* Deny all issues<br><br>')
+        new RegExp('\\*\\*Recommendation:\\*\\* Deny all issues {2}\\n {2}\\n')
       );
       expect(res).toMatch(new RegExp(`\\*\\*Draft letter:\\*\\* ${hyperlink}`));
       expect(res).toMatchSnapshot();
