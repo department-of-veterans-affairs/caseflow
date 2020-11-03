@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# :nocov:
 class JudgeTeamRole < CaseflowRecord
   belongs_to :organizations_user, class_name: "::OrganizationsUser"
 
@@ -14,3 +15,4 @@ class JudgeTeamRole < CaseflowRecord
     end
   end
 end
+# :nocov:
