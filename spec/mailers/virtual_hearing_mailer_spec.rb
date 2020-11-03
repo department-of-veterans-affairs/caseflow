@@ -72,6 +72,12 @@ describe VirtualHearingMailer do
     end
   end
 
+  shared_context "reminder_email" do
+    subject do
+      VirtualHearingMailer.reminder(mail_recipient: recipient, virtual_hearing: virtual_hearing)
+    end
+  end
+
   before do
     # Freeze the time to when this fix is made to workaround a potential DST bug.
     Timecop.freeze(Time.utc(2020, 1, 20, 16, 50, 0))
@@ -418,6 +424,48 @@ describe VirtualHearingMailer do
           end
         end
       end
+
+      describe "#reminder" do
+        include_context "reminder_email"
+
+        context "regional office is in eastern timezone" do
+          let(:regional_office) { nyc_ro_eastern }
+
+          it "has the correct subject line" do
+            expect(subject.subject).to eq(
+              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_ama_times[:ro_and_recipient_both_eastern]}"
+            )
+          end
+        end
+
+        context "regional office is in western timezone" do
+          let(:regional_office) { oakland_ro_pacific }
+
+          it "has the correct subject line" do
+            expect(subject.subject).to eq(
+              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_ama_times[:ro_and_recipient_both_pacific]}"
+            )
+          end
+        end
+
+        context "appellant_tz is present" do
+          let(:appellant_tz) { "America/Los_Angeles" }
+
+          it "has the correct subject line" do
+            expect(subject.subject).to eq(
+              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_ama_times[:ro_eastern_recipient_pacific]}"
+            )
+          end
+        end
+
+        context "appellant_tz is not present" do
+          it "has the correct subject line" do
+            expect(subject.subject).to eq(
+              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_ama_times[:ro_and_recipient_both_eastern]}"
+            )
+          end
+        end
+      end
     end
 
     context "with legacy hearing" do
@@ -536,6 +584,48 @@ describe VirtualHearingMailer do
         describe "appellant_tz is not present" do
           it "displays eastern standard time (ET)" do
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
+          end
+        end
+      end
+
+      describe "#reminder" do
+        include_context "reminder_email"
+
+        context "regional office is in eastern timezone" do
+          let(:regional_office) { nyc_ro_eastern }
+
+          it "has the correct subject line" do
+            expect(subject.subject).to eq(
+              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_legacy_times[:ro_and_recipient_both_eastern]}"
+            )
+          end
+        end
+
+        context "regional office is in western timezone" do
+          let(:regional_office) { oakland_ro_pacific }
+
+          it "has the correct subject line" do
+            expect(subject.subject).to eq(
+              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_legacy_times[:ro_and_recipient_both_pacific]}"
+            )
+          end
+        end
+
+        context "appellant_tz is present" do
+          let(:appellant_tz) { "America/Los_Angeles" }
+
+          it "has the correct subject line" do
+            expect(subject.subject).to eq(
+              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_legacy_times[:ro_eastern_recipient_pacific]}"
+            )
+          end
+        end
+
+        context "appellant_tz is not present" do
+          it "has the correct subject line" do
+            expect(subject.subject).to eq(
+              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_legacy_times[:ro_and_recipient_both_eastern]}"
+            )
           end
         end
       end
@@ -728,6 +818,48 @@ describe VirtualHearingMailer do
           end
         end
       end
+
+      describe "#reminder" do
+        include_context "reminder_email"
+
+        context "regional office is in eastern timezone" do
+          let(:regional_office) { nyc_ro_eastern }
+
+          it "has the correct subject line" do
+            expect(subject.subject).to eq(
+              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_ama_times[:ro_and_recipient_both_eastern]}"
+            )
+          end
+        end
+
+        context "regional office is in western timezone" do
+          let(:regional_office) { oakland_ro_pacific }
+
+          it "has the correct subject line" do
+            expect(subject.subject).to eq(
+              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_ama_times[:ro_and_recipient_both_pacific]}"
+            )
+          end
+        end
+
+        context "appellant_tz is present" do
+          let(:appellant_tz) { "America/Los_Angeles" }
+
+          it "has the correct subject line" do
+            expect(subject.subject).to eq(
+              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_ama_times[:ro_eastern_recipient_pacific]}"
+            )
+          end
+        end
+
+        context "appellant_tz is not present" do
+          it "has the correct subject line" do
+            expect(subject.subject).to eq(
+              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_ama_times[:ro_and_recipient_both_eastern]}"
+            )
+          end
+        end
+      end
     end
 
     context "with legacy hearing" do
@@ -846,6 +978,48 @@ describe VirtualHearingMailer do
         describe "representative_tz is not present" do
           it "displays eastern standard time (ET)" do
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
+          end
+        end
+      end
+
+      describe "#reminder" do
+        include_context "reminder_email"
+
+        context "regional office is in eastern timezone" do
+          let(:regional_office) { nyc_ro_eastern }
+
+          it "has the correct subject line" do
+            expect(subject.subject).to eq(
+              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_legacy_times[:ro_and_recipient_both_eastern]}"
+            )
+          end
+        end
+
+        context "regional office is in western timezone" do
+          let(:regional_office) { oakland_ro_pacific }
+
+          it "has the correct subject line" do
+            expect(subject.subject).to eq(
+              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_legacy_times[:ro_and_recipient_both_pacific]}"
+            )
+          end
+        end
+
+        context "appellant_tz is present" do
+          let(:appellant_tz) { "America/Los_Angeles" }
+
+          it "has the correct subject line" do
+            expect(subject.subject).to eq(
+              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_legacy_times[:ro_eastern_recipient_pacific]}"
+            )
+          end
+        end
+
+        context "appellant_tz is not present" do
+          it "has the correct subject line" do
+            expect(subject.subject).to eq(
+              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_legacy_times[:ro_and_recipient_both_eastern]}"
+            )
           end
         end
       end
