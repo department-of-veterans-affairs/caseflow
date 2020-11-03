@@ -188,4 +188,77 @@ describe VirtualHearing do
       it_behaves_like "hearing with existing virtual hearing"
     end
   end
+
+  context "#status" do
+    subject { virtual_hearing.status }
+
+    context "cancelled" do
+      let(:virtual_hearing) do
+        build(
+          :virtual_hearing,
+          :initialized,
+          hearing: build(
+            :hearing,
+            hearing_day: build(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
+          ),
+          request_cancelled: true
+        )
+      end
+
+      it "returns correct status" do
+        expect(subject).to eq(:cancelled)
+      end
+    end
+
+    context "closed" do
+      let(:virtual_hearing) do
+        build(
+          :virtual_hearing,
+          :initialized,
+          hearing: build(
+            :hearing,
+            hearing_day: build(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
+          ),
+          conference_deleted: true
+        )
+      end
+
+      it "returns correct status" do
+        expect(subject).to eq(:closed)
+      end
+    end
+
+    context "active" do
+      let(:virtual_hearing) do
+        build(
+          :virtual_hearing,
+          :initialized,
+          hearing: build(
+            :hearing,
+            hearing_day: build(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
+          )
+        )
+      end
+
+      it "returns correct status" do
+        expect(subject).to eq(:active)
+      end
+    end
+
+    context "pending" do
+      let(:virtual_hearing) do
+        build(
+          :virtual_hearing,
+          hearing: build(
+            :hearing,
+            hearing_day: build(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
+          )
+        )
+      end
+
+      it "returns correct status" do
+        expect(subject).to eq(:pending)
+      end
+    end
+  end
 end
