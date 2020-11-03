@@ -25,7 +25,7 @@
      "issue_type": "nonrating",
      "benefit_type": "compensation",
      "family": "040",
-     "official_label": "Supplemental Claim nonrating"
+     "official_label": "Supplemental Claim Non-Rating"
    },
    "030HLRR": {
      "review_type": "higher_level_review",
@@ -39,14 +39,14 @@
      "issue_type": "nonrating",
      "benefit_type": "compensation",
      "family": "030",
-     "official_label": "Higher-Level Review Non-rating"
+     "official_label": "Higher-Level Review Non-Rating"
    },
    "040SCNRPMC": {
      "review_type": "supplemental_claim",
      "issue_type": "nonrating",
      "benefit_type": "pension",
      "family": "040",
-     "official_label": "PMC Supplemental Claim NonRating"
+     "official_label": "PMC Supplemental Claim Non-Rating"
    },
    "030HLRRPMC": {
      "review_type": "higher_level_review",
@@ -60,7 +60,7 @@
      "issue_type": "nonrating",
      "benefit_type": "pension",
      "family": "030",
-     "official_label": "PMC Higher-Level Review nonrating"
+     "official_label": "PMC Higher-Level Review Non-Rating"
    },
    "040ADONRPMC": {
      "review_type": "supplemental_claim",
@@ -99,7 +99,7 @@
      "issue_type": "nonrating",
      "benefit_type": "compensation",
      "family": "040",
-     "official_label": "Board DTA Error nonrating",
+     "official_label": "Board DTA Error Non-Rating",
      "disposition_type": "board_remand"
    },
    "040BDENRPMC": {
@@ -107,7 +107,7 @@
      "issue_type": "nonrating",
      "benefit_type": "pension",
      "family": "040",
-     "official_label": "PMC Board DTA Error nonrating",
+     "official_label": "PMC Board DTA Error Non-Rating",
      "disposition_type": "board_remand"
    },
    "040BDER": {
@@ -123,7 +123,7 @@
      "issue_type": "nonrating",
      "benefit_type": "compensation",
      "family": "040",
-     "official_label": "HLR DTA Error - nonrating",
+     "official_label": "HLR DTA Error - Non-Rating",
      "disposition_type": "dta_error"
    },
    "040BDERPMC": {
@@ -139,7 +139,7 @@
      "issue_type": "nonrating",
      "benefit_type": "pension",
      "family": "040",
-     "official_label": "PMC HLR DTA Error - nonrating",
+     "official_label": "PMC HLR DTA Error - Non-Rating",
      "disposition_type": "dta_error"
    },
    "040HDER": {
@@ -170,7 +170,7 @@
      "issue_type": "nonrating",
      "benefit_type": "pension",
      "family": "030",
-     "official_label": "PMC Board Grant nonrating",
+     "official_label": "PMC Board Grant Non-Rating",
      "disposition_type": "allowed"
    },
    "030BGR": {
@@ -186,7 +186,7 @@
      "issue_type": "nonrating",
      "benefit_type": "compensation",
      "family": "030",
-     "official_label": "Board Grant nonrating",
+     "official_label": "Board Grant Non-Rating",
      "disposition_type": "allowed"
    },
    "030BGRPMC": {
@@ -202,7 +202,7 @@
      "issue_type": "nonrating",
      "benefit_type": "pension",
      "family": "930",
-     "official_label": "AMA PMC HLR Correction of nonrating LQE",
+     "official_label": "AMA PMC HLR Correction of Non-Rating LQE",
      "correction_type": "local_quality_error"
    },
    "930AHCNRLQE": {
@@ -210,7 +210,7 @@
      "issue_type": "nonrating",
      "benefit_type": "compensation",
      "family": "930",
-     "official_label": "AMA HLR Correction of nonrating LQE",
+     "official_label": "AMA HLR Correction of Non-Rating LQE",
      "correction_type": "local_quality_error"
    },
    "930AHCNRNPMC": {
@@ -218,7 +218,7 @@
      "issue_type": "nonrating",
      "benefit_type": "pension",
      "family": "930",
-     "official_label": "AMA PMC HLR Correction of nonrating NQE",
+     "official_label": "AMA PMC HLR Correction of Non-Rating NQE",
      "correction_type": "national_quality_error"
    },
    "930AHCNRNQE": {
@@ -226,7 +226,7 @@
      "issue_type": "nonrating",
      "benefit_type": "compensation",
      "family": "930",
-     "official_label": "AMA PMC HLR Correction of nonrating NQE",
+     "official_label": "AMA PMC HLR Correction of Non-Rating NQE",
      "correction_type": "national_quality_error"
    },
    "930AHCRLQPMC": {
@@ -268,7 +268,7 @@
      "issue_type": "nonrating",
      "benefit_type": "pension",
      "family": "930",
-     "official_label": "AMA PMC HLR DTA Error nonrating",
+     "official_label": "AMA PMC HLR DTA Error Non-Rating",
      "disposition_type": "dta_error"
    },
    "930AHDERLPMC": {
@@ -302,7 +302,7 @@
      "issue_type": "nonrating",
      "benefit_type": "pension",
      "family": "930",
-     "official_label": "AMA PMC HLR nonrating Control",
+     "official_label": "AMA PMC HLR Non-Rating Control",
      "disposition_type": "difference_of_opinion"
    },
    "930AMADONR": {
@@ -360,7 +360,7 @@
      "issue_type": "nonrating",
      "benefit_type": "compensation",
      "family": "930",
-     "official_label": "AMA HLR DTA Error nonrating",
+     "official_label": "AMA HLR DTA Error Non-Rating",
      "correction_type": "control",
      "disposition_type": "dta_error"
    },
@@ -396,7 +396,7 @@
      "issue_type": "nonrating",
      "benefit_type": "compensation",
      "family": "930",
-     "official_label": "AMA HLR nonrating Control",
+     "official_label": "AMA HLR Non-Rating Control",
      "correction_type": "control"
    },
    "930AMAHRC": {
@@ -420,7 +420,7 @@
      "issue_type": "nonrating",
      "benefit_type": "compensation",
      "family": "930",
-     "official_label": "AMA Remand nonrating Control",
+     "official_label": "AMA Remand Non-Rating Control",
      "correction_type": "control",
      "disposition_type": "board_remand"
    },
@@ -481,7 +481,7 @@
      "issue_type": "nonrating",
      "benefit_type": "compensation",
      "family": "930",
-     "official_label": "AMA Supp nonrating Control",
+     "official_label": "AMA Supp Non-Rating Control",
      "correction_type": "control"
    },
    "930AMASRC": {
@@ -505,7 +505,7 @@
      "issue_type": "nonrating",
      "benefit_type": "pension",
      "family": "930",
-     "official_label": "AMA PMC Remand nonrating Correction of LQE",
+     "official_label": "AMA PMC Remand Non-Rating Correction of LQE",
      "correction_type": "local_quality_error",
      "disposition_type": "board_remand"
    },
@@ -514,7 +514,7 @@
      "issue_type": "nonrating",
      "benefit_type": "compensation",
      "family": "930",
-     "official_label": "AMA Remand nonrating Correction of LQE",
+     "official_label": "AMA Remand Non-Rating Correction of LQE",
      "correction_type": "local_quality_error",
      "disposition_type": "board_remand"
    },
@@ -523,7 +523,7 @@
      "issue_type": "nonrating",
      "benefit_type": "pension",
      "family": "930",
-     "official_label": "AMA PMC Remand nonrating Correction of NQE",
+     "official_label": "AMA PMC Remand Non-Rating Correction of NQE",
      "correction_type": "national_quality_error",
      "disposition_type": "board_remand"
    },
@@ -532,7 +532,7 @@
      "issue_type": "nonrating",
      "benefit_type": "compensation",
      "family": "930",
-     "official_label": "AMA Remand nonrating Correction of NQE",
+     "official_label": "AMA Remand Non-Rating Correction of NQE",
      "correction_type": "national_quality_error",
      "disposition_type": "board_remand"
    },
@@ -541,7 +541,7 @@
      "issue_type": "nonrating",
      "benefit_type": "pension",
      "family": "930",
-     "official_label": "AMA PMC Remand nonrating Control",
+     "official_label": "AMA PMC Remand Non-Rating Control",
      "correction_type": "control",
      "disposition_type": "board_remand"
    },
@@ -568,7 +568,7 @@
      "issue_type": "nonrating",
      "benefit_type": "pension",
      "family": "930",
-     "official_label": "AMA PMC Supp Correction of nonrating LQE",
+     "official_label": "AMA PMC Supp Correction of Non-Rating LQE",
      "correction_type": "local_quality_error"
    },
    "930ASCNRLQE": {
@@ -576,7 +576,7 @@
      "issue_type": "nonrating",
      "benefit_type": "compensation",
      "family": "930",
-     "official_label": "AMA Supp Correction of nonrating LQE",
+     "official_label": "AMA Supp Correction of Non-Rating LQE",
      "correction_type": "local_quality_error"
    },
    "930ASCNRNPMC": {
@@ -584,7 +584,7 @@
      "issue_type": "nonrating",
      "benefit_type": "pension",
      "family": "930",
-     "official_label": "AMA PMC Supp Correction of nonrating NQE",
+     "official_label": "AMA PMC Supp Correction of Non-Rating NQE",
      "correction_type": "national_quality_error"
    },
    "930ASCNRNQE": {
@@ -592,7 +592,7 @@
      "issue_type": "nonrating",
      "benefit_type": "compensation",
      "family": "930",
-     "official_label": "AMA Supp Correction of nonrating NQE",
+     "official_label": "AMA Supp Correction of Non-Rating NQE",
      "correction_type": "national_quality_error"
    },
    "930ASCRLQPMC": {
@@ -616,7 +616,7 @@
      "issue_type": "nonrating",
      "benefit_type": "pension",
      "family": "930",
-     "official_label": "AMA PMC Supp nonrating Control",
+     "official_label": "AMA PMC Supp Non-Rating Control",
      "correction_type": "control"
    }
 }
