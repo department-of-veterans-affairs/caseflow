@@ -520,7 +520,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
     let(:legacy_opt_in_approved) { true }
 
-    it "does not apply untimely check to legacy opt-in" do
+    fit "does not apply untimely check to legacy opt-in" do
       visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
 
       click_intake_add_issue
@@ -537,12 +537,11 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
       click_edit_submit_and_confirm
 
-      expect(page).to have_current_path(
-        "/higher_level_reviews/#{higher_level_review.uuid}/edit/confirmation"
-      )
+      expect(page).to have_current_path("/higher_level_reviews/#{higher_level_review.uuid}/edit/confirmation")
 
-      visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+      click_on "correct the issues"
 
+      expect(page).to have_current_path("/higher_level_reviews/#{higher_level_review.uuid}/edit")
       expect(page).to have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED_EDIT)
     end
   end

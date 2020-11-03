@@ -164,6 +164,7 @@ export default connect(
   (state) => ({
     formType: state.formType,
     veteran: state.veteran,
+    editIssuesUrl: state.editIssuesUrl,
     beforeIssues: state.beforeIssues,
     afterIssues: state.afterIssues,
     updatedIssues: state.updatedIssues,

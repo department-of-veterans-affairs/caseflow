@@ -505,7 +505,8 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       )
 
       # reload to verify that the new issues populate the form
-      visit "supplemental_claims/#{rating_ep_claim_id}/edit"
+      click_on "correct the issues"
+      expect(page).to have_current_path("/supplemental_claims/#{supplemental_claim.uuid}/edit")
       expect(page).to have_content("Left knee granted")
       expect(page).to_not have_content("PTSD denied")
 
