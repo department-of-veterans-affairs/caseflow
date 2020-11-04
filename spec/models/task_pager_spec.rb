@@ -447,19 +447,22 @@ describe TaskPager, :all_dbs do
 
       before do
         legacy_appeals = [legacy_appeal_1, legacy_appeal_2, legacy_appeal_3]
-        legacy_appeals.map do |appeal|
+        legacy_appeals.each_with_index do |appeal, index|
           create(:colocated_task, assigned_to: assignee, appeal: appeal)
           create(:cached_appeal,
                  appeal_id: appeal.id,
                  appeal_type: LegacyAppeal.name,
-                 case_type: appeal.type)
+                 docket_number: index,
+                 case_type: appeal.type,
+                 is_aod: appeal.aod)
         end
         appeals = [appeal_1, appeal_2, appeal_3]
-        appeals.map do |appeal|
+        appeals.each_with_index do |appeal, index|
           create(:ama_colocated_task, assigned_to: assignee, appeal: appeal)
           create(:cached_appeal,
                  appeal_id: appeal.id,
                  appeal_type: Appeal.name,
+                 docket_number: index + legacy_appeals.count,
                  case_type: appeal.type,
                  is_aod: appeal.aod)
         end

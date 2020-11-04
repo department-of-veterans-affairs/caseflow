@@ -142,13 +142,29 @@ describe BulkTaskAssignment, :postgres do
       context "when there are priority appeals" do
         let(:regional_office) { nil }
         let(:task_count) { 20 }
+        let(:ama_receipt_date) { 4.days.ago }
+        let(:legacy_docket_number) { 3.days.ago.strftime("%y%m%d") }
 
-        let(:cavc_appeal) { create(:appeal, :type_cavc_remand) }
-        let(:aod_appeal) { create(:appeal, :advanced_on_docket_due_to_motion) }
-        let(:cavc_aod_appeal) { create(:appeal, :advanced_on_docket_due_to_motion, :type_cavc_remand) }
-        let(:aod_legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, :aod)) }
-        let(:cavc_legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, :type_cavc_remand)) }
-        let(:cavc_aod_legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, :aod, :type_cavc_remand)) }
+        let(:cavc_appeal) { create(:appeal, :type_cavc_remand, receipt_date: ama_receipt_date) }
+        let(:aod_appeal) { create(:appeal, :advanced_on_docket_due_to_motion, receipt_date: ama_receipt_date) }
+        let(:cavc_aod_appeal) do
+          create(:appeal, :advanced_on_docket_due_to_motion, :type_cavc_remand, receipt_date: ama_receipt_date)
+        end
+        let(:aod_legacy_appeal) do
+          create(:legacy_appeal, vacols_case: create(:case, :aod, folder: build(:folder, tinum: legacy_docket_number)))
+        end
+        let(:cavc_legacy_appeal) do
+          create(
+            :legacy_appeal,
+            vacols_case: create(:case, :type_cavc_remand, folder: build(:folder, tinum: legacy_docket_number))
+          )
+        end
+        let(:cavc_aod_legacy_appeal) do
+          create(
+            :legacy_appeal,
+            vacols_case: create(:case, :aod, :type_cavc_remand, folder: build(:folder, tinum: legacy_docket_number))
+          )
+        end
 
         before do
           create_no_show_hearing_task_for_appeal(aod_appeal, 2.days.ago)

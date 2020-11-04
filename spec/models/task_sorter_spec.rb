@@ -295,21 +295,11 @@ describe TaskSorter, :all_dbs do
 
           vacols_case_types = [:type_original, :type_post_remand, :type_cavc_remand]
           vacols_case_types.each_with_index do |case_type, index|
-            appeal = create(
-              :legacy_appeal,
-              vacols_case: create(
-                :case,
-                case_type,
-                folder: build(
-                  :folder,
-                  tinum: index.days.ago.strftime("%y%m%d")
-                )
-              )
-            )
+            appeal = create(:legacy_appeal, vacols_case: create(:case, case_type))
             create(:colocated_task, appeal: appeal, assigned_to: org)
             create(:cached_appeal,
                    appeal_id: appeal.id,
-                   docket_number: appeal.docket_number,
+                   docket_number: index,
                    appeal_type: LegacyAppeal.name,
                    case_type: appeal.type)
           end
@@ -320,11 +310,11 @@ describe TaskSorter, :all_dbs do
             create(:appeal, :type_cavc_remand),
             create(:appeal)
           ]
-          appeals.each do |appeal|
+          appeals.each_with_index do |appeal, index|
             create(:ama_colocated_task, appeal: appeal, assigned_to: org)
             create(:cached_appeal,
                    appeal_id: appeal.id,
-                   docket_number: appeal.docket_number,
+                   docket_number: index + vacols_case_types.count,
                    appeal_type: Appeal.name,
                    case_type: appeal.type,
                    is_aod: appeal.aod)
