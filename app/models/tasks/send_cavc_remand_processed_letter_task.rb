@@ -20,8 +20,7 @@ class SendCavcRemandProcessedLetterTask < Task
   ].freeze
 
   ADMIN_ACTIONS = [
-    Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h # TODO: go back to Team view
-    # Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
+    Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h
   ].freeze
 
   def self.label
@@ -29,14 +28,9 @@ class SendCavcRemandProcessedLetterTask < Task
   end
 
   def available_actions(user)
-    if task_is_assigned_to_users_organization?(user) && CavcLitigationSupport.singleton.user_is_admin?(user)
-      return ADMIN_ACTIONS
-    end
-    # if task_is_assigned_to_user_within_organization?(user) && CavcLitigationSupport.singleton.user_is_admin?(user)
+    return ADMIN_ACTIONS if task_is_assigned_to_users_organization?(user) && CavcLitigationSupport.singleton.user_is_admin?(user)
 
-    if assigned_to == user
-      return USER_ACTIONS
-    end
+    return USER_ACTIONS if assigned_to == user
 
     []
   end
