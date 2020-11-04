@@ -118,9 +118,13 @@ RSpec.feature "Convert travel board appeal for 'Edit HearSched' (Hearing Coordin
         expect(page).to have_content(COPY::CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_SUCCESS_DETAIL)
       end
 
-      step "confirm task was cancelled" do
+      step "confirm hearing tasks were cancelled" do
         expect(ChangeHearingRequestTypeTask.count).to eq(1)
         expect(ChangeHearingRequestTypeTask.first.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(ScheduleHearingTask.count).to eq(1)
+        expect(ScheduleHearingTask.first.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(HearingTask.count).to eq(1)
+        expect(HearingTask.first.status).to eq(Constants.TASK_STATUSES.cancelled)
       end
     end
 

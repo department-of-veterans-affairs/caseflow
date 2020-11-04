@@ -65,12 +65,26 @@ class ChangeHearingRequestTypeTask < Task
       update_appeal_and_self(payload_values, params)
 
       [self]
+
+    elsif params[:status] == Constants.TASK_STATUSES.cancelled
+      cancel_self_and_hearing_task_parents_without_callbacks
     else
       super(params, user)
     end
   end
 
   private
+
+  # If a ChangeHearingRequestTypeTask is being canceled, we want to revert the task tree to an
+  # approximation of the state it was in before it and its parent hearing tasks were created.
+  # This method cancels the task and all of its hearing task ancestors and siblings without
+  # triggering callbacks that might automatically create other tasks or change the appeal's
+  # location in VACOLS.
+  def cancel_self_and_hearing_task_parents_without_callbacks
+    ancestor_task_of_type(HearingTask)&.descendants&.each do |task|
+      task.update_columns(status: Constants.TASK_STATUSES.cancelled)
+    end
+  end
 
   def update_appeal_and_self(payload_values, params)
     multi_transaction do
