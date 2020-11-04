@@ -81,9 +81,7 @@ class ChangeHearingRequestTypeTask < Task
   # triggering callbacks that might automatically create other tasks or change the appeal's
   # location in VACOLS.
   def cancel_self_and_hearing_task_parents_without_callbacks
-    ancestor_task_of_type(HearingTask)&.descendants&.each do |task|
-      task.update_columns(status: Constants.TASK_STATUSES.cancelled)
-    end
+    ancestor_task_of_type(HearingTask)&.cancel_task_and_child_subtasks
   end
 
   def update_appeal_and_self(payload_values, params)
