@@ -18,7 +18,20 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
       expect(new_task.default_instructions).to be_empty
     end
 
-    # TODO: create child_send_task/user_task
+    context "create child task assigned to user" do
+      let!(:parent_task) { create(:send_cavc_remand_processed_letter_task, appeal: appeal) }
+      it "returns non-admin actions" do
+        new_task = subject
+        expect(new_task.valid?)
+        expect(new_task.errors.messages[:parent]).to be_empty
+
+        expect(appeal.tasks).to include new_task
+        expect(parent_task.children).to include new_task
+
+        expect(new_task.label).to eq COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL
+        expect(new_task.default_instructions).to be_empty
+      end
+    end
   end
 
   describe "FactoryBot.create(:send_cavc_remand_processed_letter_task) with different arguments" do
@@ -57,6 +70,7 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
     end
   end
 
+  SendCRPLetterTask = SendCavcRemandProcessedLetterTask
   describe "#available_actions" do
     let(:org_admin) do
       create(:user) do |u|
@@ -69,15 +83,15 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
     let(:send_task) { create(:send_cavc_remand_processed_letter_task) }
     context "task assigned to CavcLitigationSupport admin" do
       it "returns admin actions" do
-        expect(send_task.available_actions(org_admin)).to match_array SendCavcRemandProcessedLetterTask::ADMIN_ACTIONS
+        expect(send_task.available_actions(org_admin)).to match_array SendCRPLetterTask::ADMIN_ACTIONS
+        expect(send_task.available_actions(other_user)).to be_empty
       end
     end
     context "task assigned to CavcLitigationSupport non-admin" do
-      let(:child_send_task) { create(:send_cavc_remand_processed_letter_task, parent: send_task, assigned_to: org_nonadmin) }
+      let(:child_task) { create(:send_cavc_remand_processed_letter_task, parent: send_task, assigned_to: org_nonadmin) }
       it "returns non-admin actions" do
-        expect(child_send_task.available_actions(org_nonadmin)).to match_array SendCavcRemandProcessedLetterTask::USER_ACTIONS
-
-        # expect(send_task.available_actions(other_user)).to be_empty
+        expect(child_task.available_actions(org_nonadmin)).to match_array SendCRPLetterTask::USER_ACTIONS
+        expect(send_task.available_actions(other_user)).to be_empty
       end
     end
   end

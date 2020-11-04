@@ -7,7 +7,9 @@
 # Expected assigned_to.type: User
 
 class SendCavcRemandProcessedLetterTask < Task
-  validates :parent, presence: true, parentTask: { task_types: [CavcTask, SendCavcRemandProcessedLetterTask] }, on: :create
+  validates :parent, presence: true,
+                     parentTask: { task_types: [CavcTask, SendCavcRemandProcessedLetterTask] },
+                     on: :create
 
   before_validation :set_assignee
 
