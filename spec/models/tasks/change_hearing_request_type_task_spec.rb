@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe ChangeHearingRequestTypeTask do
-  let(:task) { create(:changed_hearing_request_type, :assigned) }
+  let(:task) { create(:change_hearing_request_type_task, :assigned) }
   let(:user) { create(:user, roles: ["Edit HearSched"]) }
 
   before { FeatureToggle.enable!(:convert_travel_board_to_video_or_virtual) }
