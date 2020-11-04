@@ -285,7 +285,9 @@ describe AssignHearingDispositionTask, :all_dbs do
       let(:parent) { create(:root_task, appeal: appeal) }
 
       it "should throw an error" do
-        expect { subject }.to raise_error(Caseflow::Error::InvalidParentTask)
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid).with_message(
+          "Validation failed: Parent should be a HearingTask"
+        )
       end
     end
   end
