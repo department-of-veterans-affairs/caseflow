@@ -10,19 +10,20 @@ feature "Intake Confirmation Page", :postgres do
 
   describe "when completing a claim review" do
     describe "Confirmation copy" do
-      context "HRL allows ineligible issues to remain due to untimeliness" do
+      context "When no end product is created" do
         let(:claim_review_type) { :higher_level_review }
 
         it "does not show tracked item if there is no End Product" do
           start_claim_review(claim_review_type)
-
           visit "/intake"
           click_intake_continue
           click_intake_add_issue
-          # Add only one ineligible issue, so there will be no eligible issues
+
+          # Add only one ineligible issue, so there will be no eligible issues, and no end product
           add_intake_nonrating_issue(date: before_ama_date.strftime("%m/%d/%Y"))
-          add_untimely_exemption_response("Yes")
+          add_untimely_exemption_response("No")
           click_intake_finish
+
           expect(page).to have_content("Intake completed")
           expect(page).to have_content("If needed, you may correct the issues")
           expect(page).to_not have_content("Informal Conference Tracked Item")
