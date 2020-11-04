@@ -11,7 +11,16 @@ class LegacyAppealRepresentative
 
   # This references Caseflow organizations table
   def representatives
-    Representative.where(participant_id: [representative_participant_id] - [nil])
+    Representative.where(participant_id: [representative_participant_id].compact)
+  end
+
+  def representative_is_vso?
+    vso_representatives.any?
+  end
+
+  # aka IHP-writing VSOs, National VSOs
+  def representative_is_colocated_vso?
+    vso_representatives.where(type: Vso.name).any?
   end
 
   def representative_participant_id
@@ -47,6 +56,11 @@ class LegacyAppealRepresentative
   private
 
   attr_reader :power_of_attorney, :case_record
+
+  # Returns organizations with types Vso, FieldVso
+  def vso_representatives
+    Vso.where(participant_id: [representative_participant_id].compact)
+  end
 
   def use_representative_info_from_bgs?
     RequestStore.store[:application] == "queue" ||

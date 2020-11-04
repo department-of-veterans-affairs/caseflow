@@ -8,6 +8,11 @@
     "label": "Change hearing disposition",
     "value": "modal/change_hearing_disposition"
   },
+  "CANCEL_CONVERT_HEARING_REQUEST_TYPE_TO_VIRTUAL": {
+    "label": "Cancel convert hearing to virtual",
+    "value": "modal/cancel_task",
+    "func": "cancel_convert_hearing_request_type_data"
+  },
   "CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO": {
     "label": "Convert hearing to video",
     "value": "<placeholder>modal/change_hearing_request_type</placeholder>",
