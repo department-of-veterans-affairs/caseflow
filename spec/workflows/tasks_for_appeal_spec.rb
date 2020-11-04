@@ -32,23 +32,25 @@ describe TasksForAppeal do
         end
       end
 
-      context "the appeal has an open hearing task" do
+      context "the appeal has a hearing task" do
         let(:root_task) { create(:root_task, appeal: appeal) }
         let!(:hearing_task) { create(:hearing_task, appeal: appeal, parent: root_task) }
 
-        it "doesn't call the hearing task tree intitializer" do
-          expect(HearingTaskTreeInitializer).to_not receive(:for_appeal_with_pending_travel_board_hearing)
+        context "the hearing task is open" do
+          it "doesn't call the hearing task tree intitializer" do
+            expect(HearingTaskTreeInitializer).to_not receive(:for_appeal_with_pending_travel_board_hearing)
 
-          subject
+            subject
+          end
         end
 
-        context "the appeal has a closed change hearing request type task" do
+        context "the appeal has a canceled hearing task tree with a change hearing request type task" do
           let(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal, parent: hearing_task) }
           let!(:change_hearing_request_type_task) do
             create(:change_hearing_request_type_task, appeal: appeal, parent: schedule_hearing_task)
           end
 
-          before { change_hearing_request_type_task.update!(status: Constants.TASK_STATUSES.cancelled) }
+          before { hearing_task.cancel_task_and_child_subtasks }
 
           it "doesn't call the hearing task tree intitializer" do
             expect(HearingTaskTreeInitializer).to_not receive(:for_appeal_with_pending_travel_board_hearing)
