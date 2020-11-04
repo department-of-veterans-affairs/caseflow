@@ -8,6 +8,7 @@ import { dispositions } from '../constants';
 import { createDocketSwitchRulingTask } from './recommendDocketSwitchSlice';
 import { RecommendDocketSwitchForm } from './RecommendDocketSwitchForm';
 
+// This takes form data and generates Markdown-formatted text to be saved as task instructions
 export const formatDocketSwitchRecommendation = ({
   summary,
   timely,
@@ -23,7 +24,8 @@ export const formatDocketSwitchRecommendation = ({
   parts.push(`**Recommendation:** ${dispositions[disposition].displayText}`);
   parts.push(`**Draft letter:** ${hyperlink}`);
 
-  return parts.join('<br><br>');
+  // Separate each chunk by two line breaks
+  return parts.join('  \n  \n');
 };
 
 export const RecommendDocketSwitchContainer = () => {

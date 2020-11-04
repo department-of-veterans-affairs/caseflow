@@ -101,8 +101,7 @@ class RequestIssuesUpdate < CaseflowRecord
   private
 
   def changes?
-    review.request_issues.active_or_ineligible.count != @request_issues_data.count || !added_issues.empty? ||
-      withdrawn_issues.any? || edited_issues.any? || corrected_issues.any?
+    (all_updated_issues + corrected_issues).any?
   end
 
   def calculate_after_issues
@@ -133,7 +132,7 @@ class RequestIssuesUpdate < CaseflowRecord
   def validate_before_perform
     if !changes?
       @error_code = :no_changes
-    elsif RequestIssuesUpdate.where(review: review).processable.exists?
+    elsif RequestIssuesUpdate.where(review: review).where.not(id: id).processable.exists?
       @error_code = :previous_update_not_done_processing
     end
 
