@@ -208,7 +208,8 @@ class TasksController < ApplicationController
     additional_task_classes = Hash[
       *MailTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten,
       *HearingAdminActionTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten,
-      *ColocatedTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten
+      *ColocatedTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten,
+      SendCavcRemandProcessedLetterTask.to_s.to_sym, SendCavcRemandProcessedLetterTask
     ]
     TASK_CLASSES_LOOKUP.merge(additional_task_classes)
   end
