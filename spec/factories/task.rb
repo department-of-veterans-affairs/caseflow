@@ -334,7 +334,7 @@ FactoryBot.define do
         assigned_to { HearingAdmin.singleton }
       end
 
-      factory :changed_hearing_request_type, class: ChangeHearingRequestTypeTask do
+      factory :change_hearing_request_type_task, class: ChangeHearingRequestTypeTask do
         assigned_to { Bva.singleton }
         parent { create(:schedule_hearing_task, parent: create(:hearing_task, appeal: appeal)) }
       end
@@ -416,7 +416,7 @@ FactoryBot.define do
         parent { create(:ama_judge_decision_review_task, appeal: appeal) }
       end
 
-      factory :ama_judge_dispatch_return_to_attorney_task, class: AttorneyDispatchReturnTask do
+      factory :ama_attorney_dispatch_return_task, class: AttorneyDispatchReturnTask do
         parent { create(:ama_judge_decision_review_task, appeal: appeal) }
       end
 
@@ -488,6 +488,10 @@ FactoryBot.define do
       factory :docket_switch_mail_task, class: DocketSwitchMailTask do
         parent { create(:root_task, appeal: appeal) }
         assigned_to { ClerkOfTheBoard.singleton }
+      end
+
+      factory :docket_switch_ruling_task, class: DocketSwitchRulingTask do
+        parent { create(:docket_switch_mail_task, appeal: appeal) }
       end
 
       factory :congressional_interest_mail_task, class: CongressionalInterestMailTask do

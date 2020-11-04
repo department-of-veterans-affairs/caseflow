@@ -1000,6 +1000,34 @@ RSpec.feature "Case details", :all_dbs do
         find("button", text: COPY::TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL).click
         expect(page).to_not have_content(instructions_text)
       end
+
+      context "with single line break in instructions" do
+        let(:instructions_text) { "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit" }
+
+        it "displays with <br>" do
+          visit "/queue/appeals/#{appeal.uuid}"
+
+          find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+          div = find("div.task-instructions")
+          div.assert_selector("br", count: 1, visible: false)
+          expect(div).to have_text(instructions_text)
+        end
+      end
+
+      context "with multiple line breaks separating text in instructions" do
+        let(:instructions_text) { "Lorem ipsum dolor sit amet,\n\nconsectetur adipiscing elit" }
+        let(:split) { instructions_text.split(/\n\n/) }
+
+        it "displays with <p> tags" do
+          visit "/queue/appeals/#{appeal.uuid}"
+
+          find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+          div = find("div.task-instructions")
+          div.assert_selector("p", count: 2)
+          expect(div.find_all("p")[0]).to have_text(split[0])
+          expect(div.find_all("p")[1]).to have_text(split[1])
+        end
+      end
     end
     context "multiple tasks" do
       let!(:task2) do
