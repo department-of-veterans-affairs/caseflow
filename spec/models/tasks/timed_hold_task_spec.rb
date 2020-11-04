@@ -19,7 +19,9 @@ describe TimedHoldTask, :postgres do
       let(:args) { initial_args.reject { |key, _| key == :parent } }
 
       it "raises an error" do
-        expect { subject }.to raise_error(Caseflow::Error::InvalidParentTask)
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid).with_message(
+          "Validation failed: Parent can't be blank"
+        )
       end
     end
 
