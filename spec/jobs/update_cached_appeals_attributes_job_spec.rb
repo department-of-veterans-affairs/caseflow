@@ -91,13 +91,16 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
 
     it "sends a message to Slack that includes the error" do
       slack_msg = ""
-      allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+      slack_title = ""
+      allow_any_instance_of(SlackService).to receive(:send_notification) do |_, msg, title|
+        slack_msg = msg
+        slack_title = title
+      end
 
       subject
 
-      expected_msg = "UpdateCachedAppealsAttributesJob failed after running for .*. See Sentry event .*"
-
-      expect(slack_msg).to match(/#{expected_msg}/)
+      expect(slack_title).to match(/\[ERROR\] UpdateCachedAppealsAttributesJob failed after running for .*/)
+      expect(slack_msg).to match(/See Sentry event .*/)
     end
   end
 
@@ -154,15 +157,18 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       shared_examples "rescues error" do
         it "completes and sends warning to Slack" do
           slack_msg = ""
-          allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+          slack_title = ""
+          allow_any_instance_of(SlackService).to receive(:send_notification) do |_, msg, title|
+            slack_msg = msg
+            slack_title = title
+          end
 
           job = described_class.new
           job.perform_now
           expect(job.warning_msgs.count).to eq 3
 
-          expect(slack_msg.lines.count).to eq 4
-          expected_msg = "\\[WARN\\] UpdateCachedAppealsAttributesJob .*"
-          expect(slack_msg).to match(/#{expected_msg}/)
+          expect(slack_msg.lines.count).to eq 3
+          expect(slack_title).to match(/\[WARN\] UpdateCachedAppealsAttributesJob: .*/)
         end
       end
 

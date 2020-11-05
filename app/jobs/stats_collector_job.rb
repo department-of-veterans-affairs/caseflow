@@ -96,7 +96,7 @@ class StatsCollectorJob < CaseflowJob
     msg = "#{self.class.name} completed after running for #{duration}."
     Rails.logger.info(msg)
 
-    slack_service.send_notification("[INFO] #{msg}") # may not need this
+    slack_service.send_notification("[INFO] #{msg}", self.class.to_s) # may not need this
   end
 
   def log_error(collector_name, err)
@@ -107,6 +107,6 @@ class StatsCollectorJob < CaseflowJob
 
     Raven.capture_exception(err, extra: { stats_collector_name: collector_name })
 
-    slack_service.send_notification("[ERROR] #{msg}")
+    slack_service.send_notification("[ERROR] #{msg}", self.class.to_s)
   end
 end
