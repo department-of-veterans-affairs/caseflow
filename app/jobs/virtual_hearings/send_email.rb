@@ -11,8 +11,11 @@ class VirtualHearings::SendEmail
   end
 
   def call
+    return send_appellant_reminder if type == "appellant_reminder"
+    return send_representative_reminder if type == "representative_reminder"
+
     if !virtual_hearing.appellant_email_sent
-      send_appellant_email
+      virtual_hearing.update!(appellant_email_sent: send_email(appellant_recipient))
     end
 
     if should_judge_receive_email?
@@ -20,7 +23,7 @@ class VirtualHearings::SendEmail
     end
 
     if !virtual_hearing.representative_email.nil? && !virtual_hearing.representative_email_sent
-      send_representative_email
+      virtual_hearing.update!(representative_email_sent: send_email(representative_recipient))
     end
   end
 
@@ -30,19 +33,15 @@ class VirtualHearings::SendEmail
   delegate :appeal, to: :hearing
   delegate :veteran, to: :appeal
 
-  def send_appellant_email
-    if type == "reminder"
+  def send_appellant_reminder
+    if send_email(appellant_recipient)
       virtual_hearing.update!(appellant_reminder_sent: Time.zone.now)
-    else
-      virtual_hearing.update!(appellant_email_sent: send_email(appellant_recipient))
     end
   end
 
-  def send_representative_email
-    if type == "reminder"
+  def send_representative_reminder
+    if !virtual_hearing.representative_email.nil? && send_email(representative_recipient)
       virtual_hearing.update!(representative_reminder_sent: Time.zone.now)
-    else
-      virtual_hearing.update!(representative_email_sent: send_email(representative_recipient))
     end
   end
 
@@ -59,7 +58,7 @@ class VirtualHearings::SendEmail
       VirtualHearingMailer.cancellation(**args)
     when "updated_time_confirmation"
       VirtualHearingMailer.updated_time_confirmation(**args)
-    when "reminder"
+    when "appellant_reminder", "representative_reminder"
       VirtualHearingMailer.reminder(**args)
     else
       fail ArgumentError, "Invalid type of email to send: `#{type}`"
@@ -144,7 +143,7 @@ class VirtualHearings::SendEmail
     )
     SentHearingEmailEvent.create!(
       hearing: hearing,
-      email_type: type,
+      email_type: type.ends_with?("reminder") ? "reminder" : type,
       email_address: recipient.email,
       external_message_id: external_id,
       recipient_role: recipient_is_veteran ? "veteran" : recipient.title.downcase,
