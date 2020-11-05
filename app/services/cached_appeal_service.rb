@@ -9,7 +9,7 @@ class CachedAppealService
 
       appeal_aod_status = aod_status_for_appeals(appeals)
       representative_names = representative_names_for_appeals(appeals)
-      sh_appeal_ids = appeal_ids_with_schedule_hearing_tasks(appeals.pluck(:id), Appeal.name)
+      appeal_ids_with_schedule_hearing_tasks(appeals.pluck(:id), Appeal.name)
 
       appeals.map do |appeal|
         {
@@ -33,13 +33,13 @@ class CachedAppealService
 
   def cache_legacy_appeal_postgres_data(legacy_appeals)
     import_cached_appeals([:appeal_id, :appeal_type], POSTGRES_LEGACY_CACHED_COLUMNS) do
-      sh_appeal_ids = appeal_ids_with_schedule_hearing_tasks(legacy_appeals.pluck(:id), LegacyAppeal.name)
+      appeal_ids_with_schedule_hearing_tasks(legacy_appeals.pluck(:id), LegacyAppeal.name)
       legacy_appeals.map do |appeal|
         {
           vacols_id: appeal.vacols_id,
           appeal_id: appeal.id,
           appeal_type: LegacyAppeal.name,
-          docket_type: appeal.docket_name, # "legacy"
+          docket_type: appeal.docket_name # "legacy"
         }.merge(
           legacy_postgres_hearing_fields_to_cache(appeal)
         ).merge(
@@ -50,10 +50,15 @@ class CachedAppealService
   end
 
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def cache_legacy_appeal_vacols_data(legacy_appeals)
     import_cached_appeals([:vacols_id], VACOLS_CACHED_COLUMNS) do
-      vacols_id_to_appeal_id_mapping = vacols_id_to_appeal_id_mapping(legacy_appeals)
+      vacols_id_to_appeal_id_mapping(legacy_appeals)
       vacols_ids = vacols_id_to_appeal_id_mapping.keys
+      appeal_ids_with_schedule_hearing_tasks(
+        vacols_id_to_appeal_ids_mapping.values,
+        LegacyAppeal.name
+      )
 
       vacols_folders = folder_fields_for_vacols_ids(vacols_ids)
       vacols_cases = case_fields_for_vacols_ids(vacols_ids)
@@ -63,11 +68,6 @@ class CachedAppealService
 
       correspondent_ids = vacols_folders.map { |folder| folder[:correspondent_id] }
       veteran_names_to_cache = veteran_names_for_correspondent_ids(correspondent_ids)
-
-      ids_with_sh_task = appeal_ids_with_schedule_hearing_tasks(
-        vacols_id_to_appeal_ids_mapping.values,
-        LegacyAppeal.name
-      )
 
       vacols_folders.map do |folder|
         vacols_case = vacols_cases[folder[:vacols_id]]
@@ -85,6 +85,7 @@ class CachedAppealService
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
 
   def warning_msgs
@@ -212,8 +213,7 @@ class CachedAppealService
   def case_fields_for_vacols_ids(vacols_ids)
     # array of arrays will become hash with bfkey as key.
     # [
-    #   [ 123,{
-    #        location: 57, status: "Original", hearing_request_type: "Video", former_travel: true} ],
+    #   [ 123,{ location: 57, status: "Original", hearing_request_type: "Video", former_travel: true} ],
     #   [ 456, { location: 2, status: "Court Remand", hearing_request_type: "Video", former_travel: true } ],
     #   ...
     # ]
@@ -224,7 +224,6 @@ class CachedAppealService
     #   ...
     # }
     VACOLS::Case.where(bfkey: vacols_ids).map do |vacols_case|
-
       [
         vacols_case.bfkey,
         {
@@ -282,7 +281,7 @@ class CachedAppealService
 
   # get all ids of appeals which have open ScheduleHearingTasks
   def appeal_ids_with_schedule_hearing_tasks(appeal_ids, appeal_type)
-    @sh_appeal_ids ||= Task.open
+    @appeal_ids_with_schedule_hearing_tasks ||= Task.open
       .where(appeal_id: appeal_ids, type: ScheduleHearingTask.name, appeal_type: appeal_type)
       .pluck(:appeal_id)
       .uniq
@@ -294,7 +293,7 @@ class CachedAppealService
   end
 
   def ama_appeal_hearing_fields_to_cache(appeal, representative_names)
-    if sh_appeal_ids.include?(appeal.id)
+    if appeal_ids_with_schedule_hearing_tasks.include?(appeal.id)
       {
         hearing_request_type: appeal.current_hearing_request_type(readable: true),
         power_of_attorney_name: representative_names[appeal.id],
@@ -306,7 +305,7 @@ class CachedAppealService
   end
 
   def legacy_postgres_hearing_fields_to_cache(appeal)
-    if sh_appeal_ids.include?(appeal.id)
+    if appeal_ids_with_schedule_hearing_tasks.include?(appeal.id)
       {
         suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location
       }
@@ -317,7 +316,7 @@ class CachedAppealService
 
   def vacols_hearing_fields_to_cache(vacols_case)
     appeal_id = vacols_id_to_appeal_id_mapping[vacols_case.bfkey]
-    if sh_appeal_ids.include?(appeal_id)
+    if appeal_ids_with_schedule_hearing_tasks.include?(appeal_id)
       original_request = original_hearing_request_type_for_vacols_case(vacols_case)
       changed_request = changed_hearing_request_type_for_all_vacols_ids[vacols_case.bfkey]
       # Replicates LegacyAppeal#current_hearing_request_type
