@@ -38,7 +38,7 @@ describe VirtualHearings::SendReminderEmailsJob do
   describe "#perform" do
     subject { VirtualHearings::SendReminderEmailsJob.new.perform }
 
-    context "hearing date is 7 days out",:aggregate_failures do
+    context "hearing date is 7 days out", :aggregate_failures do
       let(:hearing_date) { Time.zone.now + 7.days }
 
       it "sends reminder emails" do
