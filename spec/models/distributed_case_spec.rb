@@ -14,8 +14,8 @@ describe DistributedCase do
     )
   end
 
-  describe "#redistribute!" do
-    subject { distributed_case.redistribute! }
+  describe "#rename_for_redistribution!" do
+    subject { distributed_case.rename_for_redistribution! }
 
     it "updates the case_id" do
       subject
