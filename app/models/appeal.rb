@@ -348,6 +348,12 @@ class Appeal < DecisionReview
 
   alias cavc? cavc
 
+  def cavc_remand
+    return nil if !cavc?
+
+    CavcRemand.find_by(appeal_id: stream_docket_number.split("-").last)
+  end
+
   def status
     @status ||= BVAAppealStatus.new(appeal: self)
   end

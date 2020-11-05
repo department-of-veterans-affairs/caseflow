@@ -137,9 +137,9 @@ brew cask install chromedriver
 ```
 **Linux**
 
-[Install rbenv](https://github.com/rbenv/rbenv-installer#rbenv-installer`)
-[Install nodenv](https://github.com/nodenv/nodenv-installer#nodenv-installer)
-[Install yarn](https://yarnpkg.com/lang/en/docs/install)
+* [Install rbenv](https://github.com/rbenv/rbenv-installer#rbenv-installer)
+* [Install nodenv](https://github.com/nodenv/nodenv-installer#nodenv-installer)
+* [Install yarn](https://yarnpkg.com/lang/en/docs/install)
 
 Ubuntu specific
 ```

@@ -115,6 +115,19 @@
   "CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE": "Female",
   "CASE_DETAILS_GENDER_FIELD_VALUE_MALE": "Male",
 
+  "CASE_DETAILS_CAVC_DOCKET_NUMBER": "Court Docket",
+  "CASE_DETAILS_CAVC_ATTORNEY": "Attorney Representation",
+  "CASE_DETAILS_CAVC_JUDGE": "Name of judge",
+  "CASE_DETAILS_CAVC_PROCEDURE": "Procedure",
+  "CASE_DETAILS_CAVC_TYPE": "Type",
+  "CASE_DETAILS_CAVC_DECISION_DATE": "Court's decision date",
+  "CASE_DETAILS_CAVC_JUDGEMENT_DATE": "Judgement date",
+  "CASE_DETAILS_CAVC_MANDATE_DATE": "Mandate date",
+
+  "DROPDOWN_LABEL_JUDGE": "VLJ",
+  "DROPDOWN_LABEL_HEARING_COORDINATOR": "Hearing Coordinator",
+  "DROPDOWN_LABEL_HEARING_ROOM": "Hearing Room",
+
   "NEW_FILE_ICON_TOOLTIP": "This case has new documents",
   "NEW_FILE_ALL_ICON_TOOLTIP": "One or more cases has new documents available",
 
@@ -781,6 +794,8 @@
   "CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT": "appropriate regional office",
   "CONVERT_HEARING_TYPE_SUCCESS": "You have successfully converted %s's hearing to virtual",
   "CONVERT_HEARING_TYPE_SUCCESS_DETAIL": "The hearing request is in the scheduling queue for the %s",
+  "CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_MODAL_TITLE": "Cancel convert hearing to virtual",
+  "CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_SUCCESS_DETAIL": "You have successfully cancelled the convert hearing to virtual task",
 
   "JUDGE_TEAM_REMOVE_JUDGE_ERROR": "Cannot remove a judge from their judge team.",
   "JUDGE_TEAM_ATTORNEY_RIGHTS_ERROR": "Cannot edit attorney rights on non-attorneys",
