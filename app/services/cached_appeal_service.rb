@@ -145,16 +145,14 @@ class CachedAppealService
 
     values_to_cache = yield
 
-    ActiveRecord::Base.transaction do
-      CachedAppeal.import(
-        values_to_cache,
-        on_duplicate_key_update: {
-          conflict_target: conflict_columns,
-          condition: conflict_clause(start_time),
-          columns: columns
-        }
-      )
-    end
+    CachedAppeal.import(
+      values_to_cache,
+      on_duplicate_key_update: {
+        conflict_target: conflict_columns,
+        condition: conflict_clause(start_time),
+        columns: columns
+      }
+    )
 
     values_to_cache
   end
