@@ -48,7 +48,8 @@ class EndProductUpdate < CaseflowRecord
   def update_issue_type_to_rating
     request_issues.each do |ri|
       ri.update(
-        type: "RatingRequestIssue"
+        type: "RatingRequestIssue",
+        edited_description: ri.nonrating_issue_description
       )
     end
   end
