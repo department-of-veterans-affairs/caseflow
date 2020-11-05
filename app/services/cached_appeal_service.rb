@@ -77,7 +77,7 @@ class CachedAppealService
           hearing_request_type: vacols_case[:hearing_request_type] if ids_with_sh_task.include?(appeal_id),
           issue_count: issue_counts_to_cache[folder[:vacols_id]] || 0,
           is_aod: aod_status_to_cache[folder[:vacols_id]],
-          power_of_attorney_name: poa_representative_name_for(vacols_case[:veteran_file_number]) if ids_with_sh_task.include?(appeal_id),
+          power_of_attorney_name: poa_representative_name_for(vacols_case[:veteran_file_number], appeal_id) if ids_with_sh_task.include?(appeal_id),
           veteran_name: veteran_names_to_cache[folder[:correspondent_id]].first
         }
       end
@@ -149,12 +149,11 @@ class CachedAppealService
   end
 
   # bypass PowerOfAttorney model completely and always prefer BGS cache
-  def poa_representative_name_for(veteran_file_number)
+  def poa_representative_name_for(veteran_file_number, appeal_id)
     bgs_poa = fetch_bgs_power_of_attorney_by_file_number(veteran_file_number)
-    # both representative_name calls can result in BGS connection error
     bgs_poa&.representative_name
   rescue Errno::ECONNRESET, Savon::HTTPError => error
-    warning_msgs << "#{LegacyAppeal.name} #{veteran_file_number}: #{error}" if warning_msgs.count < 100
+    warning_msgs << "#{LegacyAppeal.name} #{appeal_id}: #{error}" if warning_msgs.count < 100
     nil
   end
 
