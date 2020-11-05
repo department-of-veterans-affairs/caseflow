@@ -7,12 +7,12 @@ class VirtualHearings::SendEmail
 
   def initialize(virtual_hearing:, type:)
     @virtual_hearing = virtual_hearing
-    @type = type
+    @type = type.to_s
   end
 
   def call
     if !virtual_hearing.appellant_email_sent
-      virtual_hearing.update!(appellant_email_sent: send_email(appellant_recipient))
+      send_appellant_email
     end
 
     if should_judge_receive_email?
@@ -20,7 +20,7 @@ class VirtualHearings::SendEmail
     end
 
     if !virtual_hearing.representative_email.nil? && !virtual_hearing.representative_email_sent
-      virtual_hearing.update!(representative_email_sent: send_email(representative_recipient))
+      send_representative_email
     end
   end
 
@@ -30,19 +30,37 @@ class VirtualHearings::SendEmail
   delegate :appeal, to: :hearing
   delegate :veteran, to: :appeal
 
+  def send_appellant_email
+    if type == "reminder"
+      virtual_hearing.update!(appellant_reminder_sent: Time.zone.now)
+    else
+      virtual_hearing.update!(appellant_email_sent: send_email(appellant_recipient))
+    end
+  end
+
+  def send_representative_email
+    if type == "reminder"
+      virtual_hearing.update!(representative_reminder_sent: Time.zone.now)
+    else
+      virtual_hearing.update!(representative_email_sent: send_email(representative_recipient))
+    end
+  end
+
   def email_for_recipient(recipient)
     args = {
       mail_recipient: recipient,
       virtual_hearing: virtual_hearing
     }
 
-    case type.to_s
+    case type
     when "confirmation"
       VirtualHearingMailer.confirmation(**args)
     when "cancellation"
       VirtualHearingMailer.cancellation(**args)
     when "updated_time_confirmation"
       VirtualHearingMailer.updated_time_confirmation(**args)
+    when "reminder"
+      VirtualHearingMailer.reminder(**args)
     else
       fail ArgumentError, "Invalid type of email to send: `#{type}`"
     end
@@ -185,6 +203,8 @@ class VirtualHearings::SendEmail
   end
 
   def should_judge_receive_email?
-    !virtual_hearing.judge_email.nil? && !virtual_hearing.judge_email_sent && type.to_s != "cancellation"
+    !virtual_hearing.judge_email.nil? &&
+      !virtual_hearing.judge_email_sent &&
+      %w[confirmation updated_time_confirmation].include?(type)
   end
 end
