@@ -56,7 +56,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     datadog_report_time_segment(segment: "cache_legacy_appeal_postgres_data", start_time: cache_postgres_data_start)
 
     cache_vacols_data_start = Time.zone.now
-    cache_legacy_appeal_vacols_data(all_vacols_ids)
+    cache_legacy_appeal_vacols_data(legacy_appeals)
     datadog_report_time_segment(segment: "cache_legacy_appeal_vacols_data", start_time: cache_vacols_data_start)
   end
 
@@ -69,9 +69,9 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     end
   end
 
-  def cache_legacy_appeal_vacols_data(all_vacols_ids)
-    all_vacols_ids.in_groups_of(VACOLS_BATCH_SIZE, false).each do |batch_vacols_ids|
-      cached_appeals = cached_appeal_service.cache_legacy_appeal_vacols_data(batch_vacols_ids)
+  def cache_legacy_appeal_vacols_data(legacy_appeals)
+    legacy_appeals.in_groups_of(VACOLS_BATCH_SIZE, false).each do |batch_legacy_appeals|
+      cached_appeals = cached_appeal_service.cache_legacy_appeal_vacols_data(batch_legacy_appeals)
 
       increment_vacols_update_count(cached_appeals.count)
     end
