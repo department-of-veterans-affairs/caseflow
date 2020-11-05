@@ -26,7 +26,7 @@ describe CavcTask, :postgres do
       it "fails to create task" do
         new_task = subject
         expect(new_task.invalid?)
-        expect(new_task.errors.messages[:parent]).to include("parent should be a DistributionTask")
+        expect(new_task.errors.messages[:parent]).to include("should be a DistributionTask")
       end
     end
 

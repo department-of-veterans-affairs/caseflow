@@ -266,7 +266,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     fmtd_query = sanitize_sql_array([query, 1])
 
-    connection.exec_query(fmtd_query).to_hash.first["bfdloout"]
+    connection.exec_query(fmtd_query).to_hash.first&.fetch("bfdloout")
   end
 
   def self.nonpriority_decisions_per_year
