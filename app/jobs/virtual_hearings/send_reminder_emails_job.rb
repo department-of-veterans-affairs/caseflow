@@ -3,41 +3,35 @@
 class VirtualHearings::SendReminderEmailsJob < ApplicationJob
   def perform
     VirtualHearingRepository.maybe_ready_for_reminder_email.each do |virtual_hearing|
-      send_reminder_email(virtual_hearing)
+      send_reminder_emails(virtual_hearing)
     end
   end
 
   private
 
-  def send_reminder_email(virtual_hearing)
-    days_until_hearing = days_until_hearing(virtual_hearing)
-    days_from_hearing_day_to_last_sent_reminder = days_from_hearing_day_to_last_sent_reminder(virtual_hearing)
-    hearing_on_monday = virtual_hearing.hearing.scheduled_for.monday?
+  def send_reminder_emails(virtual_hearing)
+    if should_send_appellant_reminder?(virtual_hearing)
+      VirtualHearings::SendEmail
+        .new(virtual_hearing: virtual_hearing, type: :appellant_reminder)
+        .call
+    end
 
-    send_reminder = (
-      # Send 2-day reminder
-      (days_until_hearing <= 2 && days_from_hearing_day_to_last_sent_reminder > 2) ||
-      # Send 3-day reminder (on Friday) if the hearing is on Monday
-      (days_until_hearing <= 3 && hearing_on_monday) ||
-      # Send 7-day reminder
-      (days_until_hearing <= 7 && days_from_hearing_day_to_last_sent_reminder > 7)
-    )
-
-    # Guard to prevent sending emails if the date of the hearing is already passed (the query)
-    # should prevent this) or we shouldn't send an email because we already sent one recently.
-    return if days_until_hearing < 0 || !send_reminder
-
-    VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :reminder).call
+    if virtual_hearing.representative_email.present? && should_sent_representative_reminder?(virtual_hearing)
+      VirtualHearings::SendEmail
+        .new(virtual_hearing: virtual_hearing, type: :representative_reminder)
+        .call
+    end
   end
 
-  def days_until_hearing(virtual_hearing)
-    (virtual_hearing.hearing.scheduled_for - Time.zone.now.utc) / 1.day
+  def should_send_appellant_reminder?(virtual_hearing)
+    VirtualHearings::ReminderService
+      .new(virtual_hearing, virtual_hearing.appellant_reminder_sent)
+      .should_send_reminder_email?
   end
 
-  def days_from_hearing_day_to_last_sent_reminder(virtual_hearing)
-    # Pick arbitrarily big value if the reminder has never been sent.
-    return 9999 if virtual_hearing.try(:date_reminder_sent).nil?
-
-    (virtual_hearing.hearing.scheduled_for - virtual_hearing.try(:date_reminder_sent)) / 1.day
+  def should_sent_representative_reminder?(virtual_hearing)
+    VirtualHearings::ReminderService
+      .new(virtual_hearing, virtual_hearing.representative_reminder_sent)
+      .should_send_reminder_email?
   end
 end
