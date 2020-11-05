@@ -286,7 +286,7 @@ class CachedAppealService
 
   # get all ids of appeals which have open ScheduleHearingTasks
   def appeal_ids_with_schedule_hearing_tasks(appeal_ids)
-    Task.open.where(appeal_id: appeal_ids, type: ScheduleHearingTask.name).pluck(:appeal_id)
+    Task.open.where(appeal_id: appeal_ids, type: ScheduleHearingTask.name).pluck(:appeal_id).uniq
   end
 
   # vacols_id => appeal_id mapping
