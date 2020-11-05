@@ -53,7 +53,7 @@ class CachedAppealService
   def cache_legacy_appeal_vacols_data(legacy_appeals)
     import_cached_appeals([:vacols_id], VACOLS_CACHED_COLUMNS) do
       vacols_id_to_appeal_id_mapping = vacols_id_to_appeal_id_mapping(legacy_appeals)
-      vacols_ids = vacols_id_to_appeal_ids_mapping.keys
+      vacols_ids = vacols_id_to_appeal_id_mapping.keys
 
       vacols_folders = folder_fields_for_vacols_ids(vacols_ids)
       vacols_cases = case_fields_for_vacols_ids(vacols_ids)
@@ -71,7 +71,6 @@ class CachedAppealService
 
       vacols_folders.map do |folder|
         vacols_case = vacols_cases[folder[:vacols_id]]
-        appeal_id = vacols_id_to_appeal_ids_mapping[folder[:vacols_id]]
         {
           vacols_id: folder[:vacols_id],
           case_type: vacols_case[:status],
@@ -150,12 +149,13 @@ class CachedAppealService
   end
 
   # bypass PowerOfAttorney model completely and always prefer BGS cache
-  def poa_representative_name_for(veteran_file_number, vacols_id)
-    return if !sh_appeal_ids.include?(vacols_id) # no need to cache poa name if there's no open ScheduleHearingTask
+  def poa_representative_name_for(veteran_file_number, appeal_id)
+    return if !sh_appeal_ids.include?(appeal_id) # no need to cache poa name if there's no open ScheduleHearingTask
+
     bgs_poa = fetch_bgs_power_of_attorney_by_file_number(veteran_file_number)
     bgs_poa&.representative_name
   rescue Errno::ECONNRESET, Savon::HTTPError => error
-    warning_msgs << "#{LegacyAppeal.name} #{vacols_id}: #{error}" if warning_msgs.count < 100
+    warning_msgs << "#{LegacyAppeal.name} #{appeal_id}: #{error}" if warning_msgs.count < 100
     nil
   end
 
@@ -229,10 +229,10 @@ class CachedAppealService
         vacols_case.bfkey,
         {
           location: vacols_case.bfcurloc,
-          status: VACOLS::Case::TYPES[vacols_case.bfac],
-          )
-          .merge(vacols_hearing_fields_to_cache(vacols_case))
-        }
+          status: VACOLS::Case::TYPES[vacols_case.bfac]
+        }.merge(
+          vacols_hearing_fields_to_cache(vacols_case)
+        )
       ]
     end.to_h
   end
@@ -300,6 +300,8 @@ class CachedAppealService
         power_of_attorney_name: representative_names[appeal.id],
         suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location
       }
+    else
+      {}
     end
   end
 
@@ -308,11 +310,14 @@ class CachedAppealService
       {
         suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location
       }
+    else
+      {}
     end
   end
 
   def vacols_hearing_fields_to_cache(vacols_case)
-    if sh_appeal_ids.include?(vacols_id_to_appeal_id_mapping[vacols_case.bfkey])
+    appeal_id = vacols_id_to_appeal_id_mapping[vacols_case.bfkey]
+    if sh_appeal_ids.include?(appeal_id)
       original_request = original_hearing_request_type_for_vacols_case(vacols_case)
       changed_request = changed_hearing_request_type_for_all_vacols_ids[vacols_case.bfkey]
       # Replicates LegacyAppeal#current_hearing_request_type
@@ -323,8 +328,10 @@ class CachedAppealService
       {
         hearing_request_type: LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[current_request],
         former_travel: original_request == :travel_board && current_request != :travel_board,
-        power_of_attorney_name: poa_representative_name_for(veteran_file_number, vacols_case.bfkey)
+        power_of_attorney_name: poa_representative_name_for(veteran_file_number, appeal_id)
       }
+    else
+      {}
     end
   end
 end
