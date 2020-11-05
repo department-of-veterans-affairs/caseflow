@@ -19,16 +19,11 @@ class CachedAppealService
           issue_count: request_issues_to_cache[appeal.id] || 0,
           docket_type: appeal.docket_type,
           docket_number: appeal.docket_number,
-          hearing_request_type: (
-            sh_appeal_ids.include?(appeal.id) ?appeal.current_hearing_request_type(readable: true): nil
-          ),
           is_aod: appeal_aod_status.include?(appeal.id),
-          power_of_attorney_name: representative_names[appeal.id] unless !sh_appeal_ids.include?(appeal.id),
-          suggested_hearing_location: (
-            sh_appeal_ids.include?(appeal.id) ? appeal.suggested_hearing_location&.formatted_location : nil
-          ),
           veteran_name: veteran_names_to_cache[appeal.veteran_file_number]
         }.merge(
+          ama_appeal_hearing_fields(appeal, representative_names)
+        ).merge(
           regional_office_fields_to_cache(appeal)
         )
       end
@@ -45,10 +40,9 @@ class CachedAppealService
           appeal_id: appeal.id,
           appeal_type: LegacyAppeal.name,
           docket_type: appeal.docket_name, # "legacy"
-          suggested_hearing_location: (
-            sh_appeal_ids.include?(appeal.id) ? appeal.suggested_hearing_location&.formatted_location : nil
-          ),
         }.merge(
+          legacy_postgres_hearing_fields_to_cache(appeal)
+        ).merge(
           regional_office_fields_to_cache(appeal)
         )
       end
@@ -86,9 +80,7 @@ class CachedAppealService
           hearing_request_type: vacols_case[:hearing_request_type],
           issue_count: issue_counts_to_cache[folder[:vacols_id]] || 0,
           is_aod: aod_status_to_cache[folder[:vacols_id]],
-          power_of_attorney_name: (
-            ids_with_sh_task.include?(appeal_id) ? poa_representative_name_for(vacols_case[:veteran_file_number]) : nil
-          ),
+          power_of_attorney_name: vacols_case[:power_of_attorney_name],
           veteran_name: veteran_names_to_cache[folder[:correspondent_id]].first
         }
       end
@@ -159,6 +151,7 @@ class CachedAppealService
 
   # bypass PowerOfAttorney model completely and always prefer BGS cache
   def poa_representative_name_for(veteran_file_number, vacols_id)
+    return if !sh_appeal_ids.include?(vacols_id) # no need to cache poa name if there's no open ScheduleHearingTask
     bgs_poa = fetch_bgs_power_of_attorney_by_file_number(veteran_file_number)
     bgs_poa&.representative_name
   rescue Errno::ECONNRESET, Savon::HTTPError => error
@@ -231,26 +224,14 @@ class CachedAppealService
     #   ...
     # }
     VACOLS::Case.where(bfkey: vacols_ids).map do |vacols_case|
-      original_request = original_hearing_request_type_for_vacols_case(vacols_case)
-      changed_request = changed_hearing_request_type_for_all_vacols_ids[vacols_case.bfkey]
-      # Replicates LegacyAppeal#current_hearing_request_type
-      current_request = HearingDay::REQUEST_TYPES.key(changed_request)&.to_sym || original_request
-      veteran_file_number = LegacyAppeal.veteran_file_number_from_bfcorlid(vacols_case.bfcorlid)
 
       [
         vacols_case.bfkey,
         {
           location: vacols_case.bfcurloc,
           status: VACOLS::Case::TYPES[vacols_case.bfac],
-          hearing_request_type: (
-            sh_appeal_ids.include?(vacols_case.bfkey) ? LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[current_request] : nil
-          ),
-          former_travel: (
-            sh_appeal_ids.include?(vacols_case.bfkey) ?  original_request == :travel_board && current_request != :travel_board : nil
-          ),
-          power_of_attorney_name: (
-            sh_appeal_ids.include?(vacols_case.bfkey) ? poa_representative_name_for(veteran_file_number, vacols_case.bfkey) : nil
           )
+          .merge(vacols_hearing_fields_to_cache(vacols_case))
         }
       ]
     end.to_h
@@ -309,6 +290,41 @@ class CachedAppealService
 
   # vacols_id => appeal_id mapping
   def vacols_id_to_appeal_id_mapping(legacy_appeals)
-    vacols_id_to_appeal_id_mapping = legacy_appeals.pluck(:vacols_id, :id).to_h
+    @vacols_id_to_appeal_id_mapping ||= legacy_appeals.pluck(:vacols_id, :id).to_h
+  end
+
+  def ama_appeal_hearing_fields_to_cache(appeal, representative_names)
+    if sh_appeal_ids.include?(appeal.id)
+      {
+        hearing_request_type: appeal.current_hearing_request_type(readable: true),
+        power_of_attorney_name: representative_names[appeal.id],
+        suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location
+      }
+    end
+  end
+
+  def legacy_postgres_hearing_fields_to_cache(appeal)
+    if sh_appeal_ids.include?(appeal.id)
+      {
+        suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location
+      }
+    end
+  end
+
+  def vacols_hearing_fields_to_cache(vacols_case)
+    if sh_appeal_ids.include?(vacols_id_to_appeal_id_mapping[vacols_case.bfkey])
+      original_request = original_hearing_request_type_for_vacols_case(vacols_case)
+      changed_request = changed_hearing_request_type_for_all_vacols_ids[vacols_case.bfkey]
+      # Replicates LegacyAppeal#current_hearing_request_type
+      current_request = HearingDay::REQUEST_TYPES.key(changed_request)&.to_sym || original_request
+
+      veteran_file_number = LegacyAppeal.veteran_file_number_from_bfcorlid(vacols_case.bfcorlid)
+
+      {
+        hearing_request_type: LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[current_request],
+        former_travel: original_request == :travel_board && current_request != :travel_board,
+        power_of_attorney_name: poa_representative_name_for(veteran_file_number, vacols_case.bfkey)
+      }
+    end
   end
 end
