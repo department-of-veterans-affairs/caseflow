@@ -9,7 +9,7 @@ class CachedAppealService
 
       appeal_aod_status = aod_status_for_appeals(appeals)
       representative_names = representative_names_for_appeals(appeals)
-      filter_appeals_by_schedule_hearing_tasks(appeals.pluck(:id), Appeal.name)
+      append_appeals_with_open_schedule_hearing_tasks(appeals.pluck(:id), Appeal.name)
 
       appeals.map do |appeal|
         {
@@ -33,7 +33,7 @@ class CachedAppealService
 
   def cache_legacy_appeal_postgres_data(legacy_appeals)
     import_cached_appeals([:appeal_id, :appeal_type], POSTGRES_LEGACY_CACHED_COLUMNS) do
-      filter_appeals_by_schedule_hearing_tasks(legacy_appeals.pluck(:id), LegacyAppeal.name)
+      append_appeals_with_open_schedule_hearing_tasks(legacy_appeals.pluck(:id), LegacyAppeal.name)
 
       legacy_appeals.map do |appeal|
         {
@@ -54,9 +54,9 @@ class CachedAppealService
   # rubocop:disable Metrics/AbcSize
   def cache_legacy_appeal_vacols_data(legacy_appeals)
     import_cached_appeals([:vacols_id], VACOLS_CACHED_COLUMNS) do
-      map_vacols_id_to_appeal_id(legacy_appeals)
+      append_vacols_id_appeal_id_mapping(legacy_appeals)
       vacols_ids = vacols_id_to_appeal_id_mapping.keys
-      filter_appeals_by_schedule_hearing_tasks(
+      append_appeals_with_open_schedule_hearing_tasks(
         vacols_id_to_appeal_id_mapping.values,
         LegacyAppeal.name
       )
