@@ -55,6 +55,7 @@ describe VirtualHearings::SendReminderEmailsJob do
 
         expect(SentHearingEmailEvent.count).to eq(2)
         expect(SentHearingEmailEvent.is_reminder.count).to eq(2)
+        expect(SentHearingEmailEvent.is_reminder.map(&:sent_by)).to all(eq(User.system_user))
       end
 
       context "representative email was already sent" do

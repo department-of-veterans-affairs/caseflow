@@ -156,7 +156,7 @@ class VirtualHearings::SendEmail
       email_address: recipient.email,
       external_message_id: external_id,
       recipient_role: recipient_is_veteran ? "veteran" : recipient.title.downcase,
-      sent_by: virtual_hearing.updated_by
+      sent_by: type.ends_with?("reminder") ? User.system_user : virtual_hearing.updated_by
     )
   rescue StandardError => error
     Raven.capture_exception(error)
