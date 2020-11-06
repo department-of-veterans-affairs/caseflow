@@ -101,7 +101,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     end
   end
 
-  context "caches hearing_request_type and former_travel correctly" do
+  context "caches hearings related field correctly" do
     let(:appeal) { create(:appeal, closest_regional_office: "C") } # central
     let(:legacy_appeal3) do # former travel, currently virtual
       create(
@@ -117,8 +117,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
 
     before do
       open_appeals.each do |appeal|
-        create_list(:bva_dispatch_task, 3, appeal: appeal)
-        create_list(:ama_judge_assign_task, 8, appeal: appeal)
+        create_list(:schedule_hearing_task, 1, appeal: appeal)
       end
     end
 
