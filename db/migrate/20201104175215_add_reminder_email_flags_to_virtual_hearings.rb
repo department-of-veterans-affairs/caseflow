@@ -1,4 +1,4 @@
-class AddReminderEmailFlagsToVirtualHearings < ActiveRecord::Migration[5.2]
+class AddReminderEmailFlagsToVirtualHearings < Caseflow::Migration
   def change
     add_column :virtual_hearings,
                :appellant_reminder_sent,
