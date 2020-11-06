@@ -4,7 +4,7 @@ import { translateX } from 'utils/reader';
 
 // Local Dependencies
 import { COLORS } from 'app/constants/AppConstants';
-import { PAGE_MARGIN, PDF_PAGE_WIDTH } from 'app/reader/constants';
+import { PAGE_MARGIN, PDF_PAGE_WIDTH } from 'store/constants/reader';
 
 const PDF_WRAPPER_SMALL = 1165;
 
