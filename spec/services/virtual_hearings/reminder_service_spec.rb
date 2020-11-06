@@ -63,7 +63,7 @@ describe VirtualHearings::ReminderService do
       end
 
       context "last_sent_reminder is 1 days out" do
-        let(:last_sent_reminder) { hearing_date - 1.days }
+        let(:last_sent_reminder) { hearing_date - 1.day }
 
         it "returns false" do
           expect(subject).to eq(false)
