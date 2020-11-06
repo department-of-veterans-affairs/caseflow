@@ -103,7 +103,8 @@ describe('QueueLoadingScreen', () => {
         type: 'LegacyJudgeTask',
         hideFromQueueTableView: false,
         hideFromCaseTimeline: false,
-        hideFromTaskSnapshot: false
+        hideFromTaskSnapshot: false,
+        latestInformalHearingPresentationTask: {}
       }
     });
   });
