@@ -11,6 +11,10 @@ class VirtualHearings::SendEmail
   end
 
   def call
+    # Assumption: Reminders and confirmation/cancellation/change emails are sent
+    # separately, so this will return early if any reminder emails are sent. If
+    # reminder emails are being sent, we are assuming the other emails have all
+    # already been sent too.
     return if send_reminder
 
     if !virtual_hearing.appellant_email_sent
