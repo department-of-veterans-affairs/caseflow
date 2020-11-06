@@ -65,7 +65,7 @@ describe CachedAppealService do
     end
   end
 
-  context "does not cache hearing related fields in the absence of an open ScheduleHearingTask" do
+  context "in the absence of an open ScheduleHearingTask" do
     context "ama appeal" do
       let(:appeal) { create(:appeal) }
 
