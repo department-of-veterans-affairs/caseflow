@@ -169,7 +169,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
         before do
           bgs = Fakes::BGSService.new
           allow(Fakes::BGSService).to receive(:new).and_return(bgs)
-          allow(bgs).to receive(:fetch_person_by_ssn)
+          allow(bgs).to receive(:fetch_poa_by_file_number)
             .and_raise(Errno::ECONNRESET, "mocked error for testing")
         end
         include_examples "rescues error"
