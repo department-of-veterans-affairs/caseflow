@@ -81,7 +81,7 @@ class CachedAppealService
           issue_count: issue_counts_to_cache[folder[:vacols_id]] || 0,
           is_aod: aod_status_to_cache[folder[:vacols_id]],
           power_of_attorney_name: vacols_case[:power_of_attorney_name],
-          veteran_name: veteran_names_to_cache[folder[:correspondent_id]].first
+          veteran_name: veteran_names_to_cache[folder[:correspondent_id]]
         }
       end
     end
