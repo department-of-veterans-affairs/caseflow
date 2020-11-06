@@ -11,8 +11,7 @@ class VirtualHearings::SendEmail
   end
 
   def call
-    return send_appellant_reminder if type == "appellant_reminder"
-    return send_representative_reminder if type == "representative_reminder"
+    return if send_reminder
 
     if !virtual_hearing.appellant_email_sent
       virtual_hearing.update!(appellant_email_sent: send_email(appellant_recipient))
@@ -33,16 +32,22 @@ class VirtualHearings::SendEmail
   delegate :appeal, to: :hearing
   delegate :veteran, to: :appeal
 
-  def send_appellant_reminder
-    if send_email(appellant_recipient)
+  def send_reminder
+    if type == "appellant_reminder" && send_email(appellant_recipient)
       virtual_hearing.update!(appellant_reminder_sent: Time.zone.now)
-    end
-  end
 
-  def send_representative_reminder
-    if !virtual_hearing.representative_email.nil? && send_email(representative_recipient)
-      virtual_hearing.update!(representative_reminder_sent: Time.zone.now)
+      return true
     end
+
+    if type == "representative_reminder" &&
+       !virtual_hearing.representative_email.nil? &&
+       send_email(representative_recipient)
+      virtual_hearing.update!(representative_reminder_sent: Time.zone.now)
+
+      return true
+    end
+
+    false
   end
 
   def email_for_recipient(recipient)
