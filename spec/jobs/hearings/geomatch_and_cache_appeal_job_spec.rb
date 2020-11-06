@@ -8,6 +8,7 @@ describe Hearings::GeomatchAndCacheAppealJob do
 
     context "with AMA appeal" do
       let(:appeal) { create(:appeal) }
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal)}
 
       it "throws an error" do
         expect { subject }.to raise_error ArgumentError
@@ -25,6 +26,7 @@ describe Hearings::GeomatchAndCacheAppealJob do
           vacols_case: vacols_case
         )
       end
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal)}
 
       context "when closest regional office is not set" do
         it "sets the closest regional office field" do
