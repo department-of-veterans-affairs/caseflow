@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "pdfjs": "npm:pdfjs-dist@2.5.207"
+  }
+}
