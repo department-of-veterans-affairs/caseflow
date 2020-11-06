@@ -38,7 +38,7 @@ class VirtualHearings::ReminderService
   end
 
   def days_until_hearing
-    (virtual_hearing.hearing.scheduled_for - Time.zone.now.utc) / 1.day
+    ((virtual_hearing.hearing.scheduled_for - Time.zone.now.utc) / 1.day).round
   end
 
   def days_from_hearing_day_to_last_sent_reminder
