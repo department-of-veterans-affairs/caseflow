@@ -155,7 +155,7 @@ class CachedAppealService
     bgs_poa = fetch_bgs_power_of_attorney_by_file_number(veteran_file_number)
     bgs_poa&.representative_name
   rescue Errno::ECONNRESET, Savon::HTTPError => error
-    warning_msgs << "#{LegacyAppeal.name} #{appeal_id}: #{error}" if warning_msgs.count < 100
+    warning_msgs << "LegacyAppeal #{appeal_id}: #{error}" if warning_msgs.count < 100
     nil
   end
 
@@ -283,12 +283,12 @@ class CachedAppealService
   end
 
   # get all ids of appeals which have open ScheduleHearingTasks
-  def filter_appeals_by_schedule_hearing_tasks(appeal_ids, appeal_type)
-    appeal_ids_with_schedule_hearing_tasks << Task.open
-      .where(appeal_id: appeal_ids, type: ScheduleHearingTask.name, appeal_type: appeal_type)
+  def append_appeals_with_open_schedule_hearing_tasks(appeal_ids, appeal_type)
+    appeal_ids_with_open_sched_hearing_task = ScheduleHearingTask.open
+      .where(appeal_id: appeal_ids, appeal_type: appeal_type)
       .pluck(:appeal_id)
       .uniq
-    appeal_ids_with_schedule_hearing_tasks.flatten!
+    appeal_ids_with_schedule_hearing_tasks.push(*appeal_ids_with_open_sched_hearing_task)
   end
 
   def vacols_id_to_appeal_id_mapping
@@ -296,7 +296,7 @@ class CachedAppealService
   end
 
   # vacols_id => appeal_id mapping
-  def map_vacols_id_to_appeal_id(legacy_appeals)
+  def append_vacols_id_appeal_id_mapping(legacy_appeals)
     vacols_id_to_appeal_id_mapping.merge!(legacy_appeals.pluck(:vacols_id, :id).to_h)
   end
 
@@ -314,9 +314,7 @@ class CachedAppealService
 
   def legacy_postgres_hearing_fields_to_cache(appeal)
     if appeal_ids_with_schedule_hearing_tasks.include?(appeal.id)
-      {
-        suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location
-      }
+      { suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location }
     else
       {}
     end
