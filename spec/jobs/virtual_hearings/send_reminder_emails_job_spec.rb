@@ -38,10 +38,10 @@ describe VirtualHearings::SendReminderEmailsJob do
   describe "#perform" do
     subject { VirtualHearings::SendReminderEmailsJob.new.perform }
 
-    context "hearing date is 7 days out", :aggregate_failures do
+    context "hearing date is 7 days out" do
       let(:hearing_date) { Time.zone.now + 7.days }
 
-      it "sends reminder emails" do
+      it "sends reminder emails", :aggregate_failures do
         expect(VirtualHearingMailer).to receive(:reminder).twice.and_call_original
 
         subject
@@ -60,7 +60,7 @@ describe VirtualHearings::SendReminderEmailsJob do
       context "representative email was already sent" do
         let(:representative_reminder_sent) { hearing_date - 3.days }
 
-        it "sends reminder email for the appellant" do
+        it "sends reminder email for the appellant", :aggregate_failures do
           expect(VirtualHearingMailer).to receive(:reminder).once.and_call_original
 
           subject
@@ -75,7 +75,7 @@ describe VirtualHearings::SendReminderEmailsJob do
       context "appellant email was already sent" do
         let(:appellant_reminder_sent) { hearing_date - 4.days }
 
-        it "sends reminder email for the representative" do
+        it "sends reminder email for the representative", :aggregate_failures do
           expect(VirtualHearingMailer).to receive(:reminder).once.and_call_original
 
           subject
@@ -90,13 +90,61 @@ describe VirtualHearings::SendReminderEmailsJob do
       context "representative email is nil" do
         let(:representative_email) { nil }
 
-        it "sends reminder email to the appellant only" do
+        it "sends reminder email to the appellant only", :aggregate_failures do
           expect(VirtualHearingMailer).to receive(:reminder).once.and_call_original
 
           subject
           virtual_hearing.reload
           expect(virtual_hearing.appellant_reminder_sent).not_to be_nil
           expect(virtual_hearing.representative_reminder_sent).to be_nil
+        end
+      end
+    end
+
+    context "hearing date is 2 days out" do
+      let(:hearing_date) { Time.zone.now + 2.days }
+
+      context "sent reminder emails 5 days out" do
+        let(:appellant_reminder_sent) { hearing_date - 4.days }
+        let(:representative_reminder_sent) { hearing_date - 4.days }
+
+        it "sends reminder emails", :aggregate_failures do
+          expect(VirtualHearingMailer).to receive(:reminder).twice.and_call_original
+
+          subject
+          virtual_hearing.reload
+          # Expect appellant_reminder_sent and representative_reminder_sent to change
+          # from the value we setup because the emails were sent.
+          expect(virtual_hearing.appellant_reminder_sent).not_to(
+            be_within(1.second).of(appellant_reminder_sent)
+          )
+          expect(virtual_hearing.representative_reminder_sent).not_to(
+            be_within(1.second).of(representative_reminder_sent)
+          )
+        end
+      end
+    end
+
+    context "hearing date is 1 day out" do
+      let(:hearing_date) { Time.zone.now + 1.day }
+
+      context "sent reminder emails 2 days out" do
+        let(:appellant_reminder_sent) { hearing_date - 2.days }
+        let(:representative_reminder_sent) { hearing_date - 2.days }
+
+        it "does not send reminder emails", :aggregate_failures do
+          expect(VirtualHearingMailer).not_to receive(:reminder)
+
+          subject
+          virtual_hearing.reload
+          # Expect appellant_reminder_sent and representative_reminder_sent to remain
+          # the same as the times we setup because the emails weren't sent.
+          expect(virtual_hearing.appellant_reminder_sent).to(
+            be_within(1.second).of(appellant_reminder_sent)
+          )
+          expect(virtual_hearing.representative_reminder_sent).to(
+            be_within(1.second).of(representative_reminder_sent)
+          )
         end
       end
     end
