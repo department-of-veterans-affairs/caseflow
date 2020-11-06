@@ -1,6 +1,6 @@
 // External Dependencies
 import uuid from 'uuid';
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, current } from '@reduxjs/toolkit';
 import { keyBy } from 'lodash';
 
 // Local Dependencies
@@ -341,7 +341,8 @@ const annotationLayerSlice = createSlice({
         state.editingAnnotations[action.payload.annotationId].pendingDeletion = null;
         state.annotations[action.payload.annotationId].pendingDeletion = null;
       }).
-      addMatcher((action) => action.type === loadDocuments.fulfilled, (state, action) => {
+      addMatcher((action) => action.type === loadDocuments.fulfilled.toString(), (state, action) => {
+        // Map the Annotation IDs to keys in the annotations object
         state.annotations = keyBy(
           action.payload.annotations.map((annotation) => ({
             ...annotation,

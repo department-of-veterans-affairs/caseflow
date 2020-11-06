@@ -1,4 +1,4 @@
-import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAction, createAsyncThunk, current } from '@reduxjs/toolkit';
 import { isNil, differenceWith, differenceBy, find, pick } from 'lodash';
 import uuid from 'uuid';
 
@@ -21,18 +21,27 @@ import { addMetaLabel, commentContainsWords, formatCategoryName } from 'utils/re
  * PDF Initial State
  */
 export const initialState = {
+  loading: false,
   list: {}
 };
 
 /**
  * Dispatcher to Load Appeal Documents
  */
-export const loadDocuments = createAsyncThunk('documents/load', async (vacolsId) => {
+export const loadDocuments = createAsyncThunk('documents/load', async (vacolsId, { getState }) => {
+  // Get the current state
+  const state = getState();
+
   // Request the Documents for the Appeal
   const { body } = await ApiUtil.get(`/reader/appeal/${vacolsId}/documents?json`, {}, ENDPOINT_NAMES.DOCUMENTS);
 
-  // Return the response
-  return body;
+  // Return the response and attach the Filter Criteria
+  return {
+    ...body,
+    vacolsId,
+    documents: body.appealDocuments,
+    filterCriteria: state.reader.documentList.filterCriteria
+  };
 });
 
 /**
@@ -154,15 +163,18 @@ const documentsSlice = createSlice({
       prepare: (docId) =>
         addMetaLabel('toggle-comment-list', { docId }, (state) =>
           state.list[docId].listComments ? 'open' : 'close')
-    }
+    },
   },
   extraReducers: (builder) => {
     builder.
-    /* eslint-disable */
-    addCase(selectCurrentPdf.rejected, (state, action) => {
-      console.log('Error marking as read', action.payload.docId, action.payload.errorMessage);
-      /* eslint-enable */
+      addCase(loadDocuments.pending, (state) => {
+        state.loading = true;
       }).
+      /* eslint-disable */
+      addCase(selectCurrentPdf.rejected, (state, action) => {
+        console.log('Error marking as read', action.payload.docId, action.payload.errorMessage);
+      }).
+      /* eslint-enable */
       addCase(saveDocumentDescription.fulfilled, (state, action) => {
         state.list[action.payload.doc.id].description = action.payload.description;
       }).
@@ -213,18 +225,19 @@ const documentsSlice = createSlice({
         delete state.list[action.payload.doc.id].tags[action.payload.tag.id];
       }).
       addCase(removeTag.rejected, (state, action) => {
-      // Reset the pending Removal for the selected tag to false
+        // Reset the pending Removal for the selected tag to false
         state.list[action.payload.doc.id].tags[action.payload.tag.id].pendingRemoval = false;
       }).
       addCase(loadDocuments.fulfilled, (state, action) => {
-        state.list = action.payload.appealDocuments.map((doc) => ({
+        state.list = action.payload.documents.reduce((list, doc) => ({
+          ...list,
           [doc.id]: {
             ...doc,
             receivedAt: doc.received_at,
             listComments: false,
             wasUpdated: !isNil(doc.previous_document_version_id) && !doc.opened_by_current_user
           }
-        }));
+        }), {});
       }).
       addCase(handleCategoryToggle.fulfilled, {
         reducer: (state, action) => {
@@ -248,8 +261,17 @@ const documentsSlice = createSlice({
       }).
       addMatcher(
         (action) => [
-          toggleDocumentCategoryFail,
-          handleCategoryToggle.rejected
+          loadDocuments.fulfilled.toString(),
+          loadDocuments.rejected.toString()
+        ].includes(action.type),
+        (state) => {
+          // Reset the Loading State
+          state.loading = false;
+        }).
+      addMatcher(
+        (action) => [
+          toggleDocumentCategoryFail.toString(),
+          handleCategoryToggle.rejected.toString()
         ].includes(action.type),
         (state, action) => {
           state.list[action.payload.docId][action.payload.categoryKey] = !action.payload.toggleState;
@@ -257,8 +279,8 @@ const documentsSlice = createSlice({
       ).
       addMatcher(
         (action) => [
-          selectCurrentPdf.fulfilled,
-          selectCurrentPdfLocally
+          selectCurrentPdf.fulfilled.toString(),
+          selectCurrentPdfLocally.toString()
         ].includes(action.type),
         (state, action) => {
           state.list[action.payload.docId].opened_by_current_user = true;
@@ -267,25 +289,28 @@ const documentsSlice = createSlice({
 
       addMatcher(
         (action) => [
-          changeSortState,
-          clearCategoryFilters,
-          setCategoryFilter,
-          setTagFilter,
-          clearTagFilters,
-          setSearch,
-          clearSearch,
-          clearAllFilters,
-          loadDocuments.fulfilled
-        ].includes(action.type), (state) => {
-        // Get the document filter Criteria
-          const { docFilterCriteria } = state.reader.documentList;
-
+          changeSortState.toString(),
+          clearCategoryFilters.toString(),
+          setCategoryFilter.toString(),
+          setTagFilter.toString(),
+          clearTagFilters.toString(),
+          setSearch.toString(),
+          clearSearch.toString(),
+          clearAllFilters.toString(),
+          loadDocuments.fulfilled.toString()
+        ].includes(action.type), (state, { payload, ...action }) => {
           // Format the search query
-          const searchQuery = docFilterCriteria.searchQuery.toLowerCase();
+          const searchQuery = action.type === clearSearch.toString() ?
+            '' :
+            payload.filterCriteria.searchQuery.toLowerCase();
 
           // Loop through all the documents to update the list comments
-          state.list.forEach((doc) => {
-            const containsWords = commentContainsWords(searchQuery, state, doc);
+          Object.keys(state.list).forEach((docId) => {
+            // Get the Document
+            const doc = state.list[docId];
+
+            // Determine whether the comment contains the search query
+            const containsWords = commentContainsWords(searchQuery, payload, doc);
 
             // Updating the state of all annotations for expanded comments
             if (containsWords !== doc.listComments) {

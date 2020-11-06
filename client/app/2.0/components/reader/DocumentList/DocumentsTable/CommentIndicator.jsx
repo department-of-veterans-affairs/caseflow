@@ -31,6 +31,6 @@ export const CommentIndicator = ({ annotationsCount, expanded, docId, toggleComm
 CommentIndicator.propTypes = {
   annotationsCount: PropTypes.number,
   expanded: PropTypes.bool,
-  docId: PropTypes.string,
+  docId: PropTypes.number,
   toggleComment: PropTypes.func
 };

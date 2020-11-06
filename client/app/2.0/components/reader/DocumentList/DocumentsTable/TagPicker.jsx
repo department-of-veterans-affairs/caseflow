@@ -16,29 +16,29 @@ export const TagPicker = ({
   handleTagToggle,
   dropdownFilterViewListStyle,
   dropdownFilterViewListItemStyle
-}) => {
-  return <ul {...dropdownFilterViewListStyle} {...tagListStyles}>
-    {tags.map((tag, index) => (
+}) => (
+  <ul {...dropdownFilterViewListStyle} {...tagListStyles}>
+    {Object.keys(tags).map((tag, index) => (
       <li key={index} {...dropdownFilterViewListItemStyle} {...tagListItemStyles}>
         <Checkbox
           label={
             <div className="cf-tag-selector">
-              <span className="cf-tag-name">{tag.text}</span>
+              <span className="cf-tag-name">{tags[tag].text}</span>
             </div>
           }
-          name={tag.text}
-          onChange={(checked) => handleTagToggle(tag.text, checked, tag.id)}
-          value={tagToggleStates[tag.text] || false}
+          name={tags[tag].text}
+          onChange={(checked) => handleTagToggle(tags[tag].text, checked, tags[tag].id)}
+          value={tagToggleStates[tags[tag].text] || false}
         />
       </li>
     ))}
-  </ul>;
-};
+  </ul>
+);
 
 TagPicker.propTypes = {
   tags: PropTypes.array,
   handleTagToggle: PropTypes.func.isRequired,
   tagToggleStates: PropTypes.object,
-  dropdownFilterViewListStyle: PropTypes.string,
-  dropdownFilterViewListItemStyle: PropTypes.string
+  dropdownFilterViewListStyle: PropTypes.object,
+  dropdownFilterViewListItemStyle: PropTypes.object
 };

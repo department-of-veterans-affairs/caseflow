@@ -115,5 +115,7 @@ export const NUMBER_OF_DIRECTIONS = 4;
 export const ZOOM_RATE = 0.3;
 export const MINIMUM_ZOOM = 0.1;
 
+export const LOADING_DATA_MESSAGE = 'Loading claims folder in Reader...';
+
 // Set the cache timeout
 export const CACHE_TIMEOUT_HOURS = 3;

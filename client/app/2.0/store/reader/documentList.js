@@ -1,14 +1,15 @@
 // External Dependencies
 import querystring from 'querystring';
 import { createSlice, createAction } from '@reduxjs/toolkit';
-import { values, some, find, pickBy } from 'lodash';
+import { pickBy } from 'lodash';
 
 // Local Dependencies
 import { DOCUMENTS_OR_COMMENTS_ENUM } from 'store/constants/reader';
-import { formatCategoryName, searchString, categoryContainsWords } from 'utils/reader';
+import { categoryContainsWords } from 'utils/reader';
 import { loadDocuments, selectCurrentPdfLocally } from 'store/reader/documents';
 import { onReceiveAnnotations } from 'store/reader/annotationLayer';
 import { addMetaLabel } from 'utils/reader/format';
+import { filterDocuments } from 'utils/reader/documents';
 
 /**
  * Helper Method to change the Last Read Document
@@ -51,8 +52,8 @@ export const initialState = {
   queueTaskType: getQueueTaskType(),
   viewingDocumentsOrComments: DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
   searchCategoryHighlights: {},
-  filteredDocIds: null,
-  docFilterCriteria: {
+  filteredDocIds: [],
+  filterCriteria: {
     sort: {
       sortBy: 'receivedAt',
       sortAscending: true
@@ -64,7 +65,7 @@ export const initialState = {
   pdfList: {
     scrollTop: null,
     lastReadDocId: null,
-    dropdowns: {
+    dropdown: {
       tag: false,
       category: false
     }
@@ -72,46 +73,6 @@ export const initialState = {
   manifestVbmsFetchedAt: null,
   manifestVvaFetchedAt: null
 };
-
-/**
- * Dispatcher to Update the Document list Sort
- */
-export const changeSortState = createAction('documentList/changeSortState');
-
-/**
- * Dispatcher to Remove Category Filters
- */
-export const clearCategoryFilters = createAction('documentList/clearCategoryFilters');
-
-/**
- * Dispatcher to Set Category Filters
- */
-export const setCategoryFilter = createAction('documentList/setCategoryFilter');
-
-/**
- * Dispatcher to Set Tag Filters
- */
-export const setTagFilter = createAction('documentList/setTagFilter');
-
-/**
- * Dispatcher to Clear Tag Filters
- */
-export const clearTagFilters = createAction('documentList/clearTagFilters');
-
-/**
- * Dispatcher to Set the Document List Search
- */
-export const setSearch = createAction('documentList/setSearch');
-
-/**
- * Dispatcher to Clear the Document List Search
- */
-export const clearSearch = createAction('documentList/clearSearch');
-
-/**
- * Dispatcher to Clear All Filters
- */
-export const clearAllFilters = createAction('documentList/clearAllFilters');
 
 /**
  * Dispatcher to Set the Last Read Document
@@ -125,52 +86,47 @@ const documentListSlice = createSlice({
   name: 'documentList',
   initialState,
   reducers: {
-    [changeSortState]: {
+    changeSortState: {
       reducer: (state, action) => {
-        state.docFilterCriteria.sort.sortBy = action.payload.sortBy;
-        state.docFilterCriteria.sort.sortAscending =
-         !state.docFilterCriteria.sort.sortAscending;
+        state.filterCriteria.sort.sortBy = action.payload.sortBy;
+        state.filterCriteria.sort.sortAscending =
+         !state.filterCriteria.sort.sortAscending;
       },
-      prepare: (sortBy) => addMetaLabel('change-sort-by', { payload: { sortBy } }, (state) => {
-        // Set the sort Direction
-        const direction = state.docFilterCriteria.sort.sortAscending ?
-          'ascending' : 'descending';
-
-        // Return the formatted sort direction
-        return `${sortBy}-${direction}`;
-      })
+      prepare: (sortBy, props) => addMetaLabel('change-sort-by', { sortBy, ...props },
+        `${sortBy}-${props.filterCriteria.sort.sortAscending ? 'ascending' : 'descending'}`
+      )
     },
-    [clearCategoryFilters]: {
+    clearCategoryFilters: {
       reducer: (state) => {
-        state.docFilterCriteria.category = {};
+        state.filterCriteria.category = {};
       },
-      prepare: () => addMetaLabel('clear-category-filters')
+      prepare: (props) => addMetaLabel('clear-category-filters', { ...props })
     },
-    [setCategoryFilter]: {
+    setCategoryFilter: {
       reducer: (state, action) => {
-        state.docFilterCriteria.category[action.payload.categoryName] = action.payload.checked;
+        state.filterCriteria.category[action.payload.categoryName] = action.payload.checked;
       },
-      prepare: (categoryName, checked) =>
-        addMetaLabel(`${checked ? 'select' : 'unselect'}-category-filter`, { categoryName, checked }, categoryName)
+      prepare: (categoryName, checked, props) =>
+        addMetaLabel(`${checked ? 'select' : 'unselect'}-category-filter`, { categoryName, checked, ...props }, categoryName)
     },
     toggleDropdownFilterVisibility: {
       reducer: (state, action) => {
-        state.docFilterCriteria.category[action.payload.categoryName] = action.payload.checked;
+        state.pdfList.dropdown[action.payload.filterName] = !state.pdfList.dropdown[action.payload.filterName];
       },
       prepare: (filterName) => addMetaLabel('toggle-dropdown-filter', { filterName }, filterName)
     },
-    [setTagFilter]: {
+    setTagFilter: {
       reducer: (state, action) => {
-        state.docFilterCriteria.tag[action.payload.text] = action.payload.checked;
+        state.filterCriteria.tag[action.payload.text] = action.payload.checked;
       },
-      prepare: (text, checked, tagId) =>
-        addMetaLabel(`${checked ? 'select' : 'unselect'}-category-filter`, { text, checked }, tagId)
+      prepare: (text, checked, tagId, props) =>
+        addMetaLabel(`${checked ? 'select' : 'unselect'}-category-filter`, { ...props, text, checked }, tagId)
     },
-    [clearTagFilters]: {
+    clearTagFilters: {
       reducer: (state) => {
-        state.docFilterCriteria.tag = {};
+        state.filterCriteria.tag = {};
       },
-      prepare: () => addMetaLabel('clear-tag-filters')
+      prepare: (props) => addMetaLabel('clear-tag-filters', { ...props })
     },
     setDocListScrollPosition: {
       reducer: (state, action) => {
@@ -178,32 +134,32 @@ const documentListSlice = createSlice({
       },
       prepare: (scrollTop) => ({ payload: { scrollTop } })
     },
-    [setSearch]: {
+    setSearch: {
       reducer: (state, action) => {
-        state.docFilterCriteria.searchQuery = action.payload.searchQuery;
+        state.filterCriteria.searchQuery = action.payload.filterCriteria.searchQuery;
       },
-      prepare: (searchQuery) => addMetaLabel('clear-tag-filters', { searchQuery })
+      prepare: (searchQuery, annotations, documents) =>
+        addMetaLabel('clear-tag-filters', { filterCriteria: { searchQuery }, annotations, documents })
     },
-    [clearSearch]: {
+    clearSearch: {
       reducer: (state) => {
-        state.docFilterCriteria.searchQuery = '';
+        state.filterCriteria.searchQuery = '';
       },
-      prepare: () => addMetaLabel('clear-search')
+      prepare: (filterCriteria, annotations, documents) =>
+        addMetaLabel('clear-search', { filterCriteria, annotations, documents })
     },
-    [clearAllFilters]: {
+    clearAllFilters: {
       reducer: (state) => {
-        state.docFilterCriteria.tag = {};
-        state.docFilterCriteria.category = {};
-        state.viewingDocumentsOrComments = DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS;
+        state.filterCriteria = initialState.filterCriteria;
       },
-      prepare: () => addMetaLabel('clear-all-filters')
+      prepare: (props) => addMetaLabel('clear-all-filters', { ...props })
     },
     setViewingDocumentsOrComments: {
       reducer: (state, action) => {
-        state.viewingDocumentsOrComments = action.payload.documentsOrComments;
+        state.viewingDocumentsOrComments = action.payload.documentsView;
       },
-      prepare: (documentsOrComments) =>
-        addMetaLabel('set-viewing-documents-or-comments', { documentsOrComments }, documentsOrComments)
+      prepare: (documentsView) =>
+        addMetaLabel('set-viewing-documents-or-comments', { documentsView }, documentsView)
     },
     onReceiveManifests: {
       reducer: (state, action) => {
@@ -218,7 +174,7 @@ const documentListSlice = createSlice({
     builder.
       addMatcher(
         (action) => [
-          selectCurrentPdfLocally
+          selectCurrentPdfLocally.toString()
         ].includes(action.type),
         (state, action) => {
           updateLastReadDoc(state, action.payload.docId);
@@ -226,72 +182,52 @@ const documentListSlice = createSlice({
       ).
       addMatcher(
         (action) => [
-          onReceiveAnnotations,
-          changeSortState,
-          clearCategoryFilters,
-          setCategoryFilter,
-          setTagFilter,
-          clearTagFilters,
-          setSearch,
-          clearSearch,
-          clearAllFilters,
-          loadDocuments.fulfilled
+          'documentList/setSearch',
+          'documentList/clearSearch',
+          'documentList/changeSortState',
+          'documentList/setCategoryFilter',
+          'documentList/clearCategoryFilters',
+          'documentList/clearAllFilters',
+          'documentList/setTagFilter',
+          'documentList/clearTagFilters',
+          onReceiveAnnotations.toString(),
+          loadDocuments.fulfilled.toString(),
         ].includes(action.type),
         (state, action) => {
           // If the Action is loading the documents, also update the manifest
-          if (action.type === loadDocuments.fulfilled) {
+          if (action.type === loadDocuments.fulfilled.toString()) {
             state.manifestVbmsFetchedAt = action.payload.manifestVbmsFetchedAt;
             state.manifestVvaFetchedAt = action.payload.manifestVvaFetchedAt;
           }
 
           // Set the Documents
-          const documents = state.reader.documents.list;
+          const documents = action.payload.documents;
 
           // Extract the Filter Criteria to process
-          const { docFilterCriteria } = state;
-
-          // Get the currently selected category filters
-          const activeCategoryFilters = values(docFilterCriteria.category).map((key) => formatCategoryName(key));
-
-          // Get the currently selected tag filters
-          const activeTagFilters = values(docFilterCriteria.tag).map((key) => formatCategoryName(key));
+          const { filterCriteria } = state;
 
           // Format the search query
-          const searchQuery = docFilterCriteria.searchQuery.toLowerCase();
+          const searchQuery = filterCriteria.searchQuery.toLowerCase();
 
           // Set the Filtered IDs
-          const filteredIds = Object.keys(documents).
-            filter((doc) =>
-              !activeCategoryFilters.length ||
-              some(activeCategoryFilters, (categoryFieldName) => documents[doc][categoryFieldName])).
-            filter((doc) =>
-              !activeTagFilters.length ||
-              some(activeTagFilters, (tagText) => find(documents[doc].tags, { text: tagText }))).
-            filter(searchString(searchQuery, state)).
-            sortBy(docFilterCriteria.sort.sortBy).
-            map((doc) => documents[doc].id);
+          state.filteredDocIds = filterDocuments(filterCriteria, documents, action.payload);
 
+          // Check whether there is a search query to locate
+          if (searchQuery) {
           // Loop through all the documents to update category highlights and expanding comments
-          Object.keys(documents).forEach((id) => {
+            Object.keys(documents).forEach((id) => {
             // Set the document
-            const doc = documents[id];
+              const doc = documents[id];
 
-            // Getting all the truthy values from the object
-            const matchesCategories = pickBy(categoryContainsWords(searchQuery, doc));
+              // Getting all the truthy values from the object
+              const matchesCategories = pickBy(categoryContainsWords(searchQuery, doc));
 
-            // Update the state for all the search category highlights
-            if (matchesCategories !== state.searchCategoryHighlights[doc.id]) {
-              state.searchCategoryHighlights[doc.id] = matchesCategories;
-            }
-          });
-
-          // Reverse the order of the filteredIds if we are sorting ascending
-          if (docFilterCriteria.sort.sortAscending) {
-            filteredIds.reverse();
+              // Update the state for all the search category highlights
+              if (matchesCategories !== state.searchCategoryHighlights[doc.id]) {
+                state.searchCategoryHighlights[doc.id] = matchesCategories;
+              }
+            });
           }
-
-          // Set the Filtered IDs
-          state.filteredDocIds = filteredIds;
         });
   }
 });
@@ -301,7 +237,15 @@ export const {
   toggleDropdownFilterVisibility,
   setDocListScrollPosition,
   setViewingDocumentsOrComments,
-  onReceiveManifests
+  onReceiveManifests,
+  setSearch,
+  clearSearch,
+  changeSortState,
+  setCategoryFilter,
+  clearCategoryFilters,
+  clearAllFilters,
+  setTagFilter,
+  clearTagFilters
 } = documentListSlice.actions;
 
 // Default export the reducer

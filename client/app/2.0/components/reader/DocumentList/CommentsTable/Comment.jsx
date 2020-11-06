@@ -5,7 +5,7 @@ import moment from 'moment';
 import { noop } from 'lodash';
 
 // Local Dependencies
-import Highlight from 'app/components/Highlight';
+import { Highlight } from 'components/reader/DocumentList/Highlight';
 import { commentsClass } from 'styles/reader/DocumentList/CommentsTable';
 import { useDispatch } from 'react-redux';
 import { ControlButtons } from 'components/reader/DocumentList/CommentsTable/ControlButtons';

@@ -5,22 +5,27 @@ import { constant } from 'lodash';
 
 // Local Dependencies
 import Table from 'app/components/Table';
-import Comment from 'components/reader/DocumentList/CommentsTable/Comment';
+import { Comment } from 'components/reader/DocumentList/CommentsTable/Comment';
 import { formatCommentRows } from 'utils/reader';
+import { documentHeaders } from 'components/reader/DocumentList/DocumentsTable/Columns';
 
 /**
  * Comments Table Component
  * @param {Object} -- Props contain the documents and annotations
  */
-export const CommentsTable = ({ onJumpToComment, documents, annotationsPerDocument, searchQuery }) => {
+export const CommentsTable = ({ onJumpToComment, documents, annotations, searchQuery, show, ...props }) => {
   // Calculate the rows
-  const { rows } = formatCommentRows(documents, annotationsPerDocument, searchQuery);
+  const { rows } = formatCommentRows(documents, annotations, searchQuery);
 
-  return (
+  // Get the row Span for the table
+  const span = documentHeaders(props).length;
+
+  return show && (
     <div>
       <Table
         columns={[
           {
+            span,
             header: 'Sorted by relevant date',
             valueFunction: (comment, idx) => (
               <Comment
@@ -50,8 +55,9 @@ export const CommentsTable = ({ onJumpToComment, documents, annotationsPerDocume
 };
 
 CommentsTable.propTypes = {
-  documents: PropTypes.arrayOf(PropTypes.object).isRequired,
-  onJumpToComment: PropTypes.func.isRequired,
-  annotationsPerDocument: PropTypes.array,
-  searchQuery: PropTypes.string
+  documents: PropTypes.object.isRequired,
+  onJumpToComment: PropTypes.func,
+  annotations: PropTypes.array,
+  searchQuery: PropTypes.string,
+  show: PropTypes.bool
 };

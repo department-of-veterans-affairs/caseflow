@@ -1,5 +1,5 @@
 import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { random, uniqWith, isEqual, difference } from 'lodash';
+import { random, uniqWith, isEqual, difference, flatten } from 'lodash';
 import { CATEGORIES, ENDPOINT_NAMES, COMMENT_ACCORDION_KEY } from 'store/constants/reader';
 import { deleteAnnotation, moveAnnotation, editAnnotation, stopPlacingAnnotation } from 'store/reader/annotationLayer';
 import { addMetaLabel } from 'utils/reader/format';
@@ -32,7 +32,7 @@ export const initialState = {
   loadedAppealId: null,
   loadedAppeal: {},
   openedAccordionSections: ['Categories', 'Issue tags', COMMENT_ACCORDION_KEY],
-  tagOptions: [],
+  tagOptions: {},
   hidePdfSidebar: false,
   jumpToPageNumber: null,
   scrollTop: 0,
@@ -173,90 +173,90 @@ const pdfViewerSlice = createSlice({
         state.didLoadAppealFail = true;
       }).
       addMatcher((action) => [
-        collectAllTags,
-        removeTag.fulfilled,
-        addTag.fulfilled,
-        loadDocuments.fulfilled
+        collectAllTags.toString(),
+        removeTag.fulfilled.toString(),
+        addTag.fulfilled.toString(),
+        loadDocuments.fulfilled.toString()
       ].includes(action.type),
       (state, action) => {
         // Set the documents based on the action
-        const documents = action.type === loadDocuments.fulfilled ?
-          action.payload.documents :
-          state.reader.documents.list;
+        const documents = action.payload.documents;
 
         // Update the tag options
-        state.tagOptions = uniqWith(Object.keys(documents).map((doc) =>
-          documents[doc].tags || []), isEqual);
+        state.tagOptions = Object.keys(documents).reduce((list, doc) => ({
+          ...list,
+          [documents[doc].tags.length && documents[doc].id]: documents[doc].tags
+        }), {});
 
         // Set the Appeal ID if loading documents
-        if (action.type === loadDocuments.fulfilled) {
+        if (action.type === loadDocuments.fulfilled.toString()) {
           state.loadedAppealId = action.payload.vacolsId;
         }
       }).
       // Match any actions that should hide the annotations error messages
       addMatcher(
         (action) => [
-          stopPlacingAnnotation,
-          editAnnotation.pending,
-          editAnnotation.fulfilled,
-          moveAnnotation.pending,
-          moveAnnotation.fulfilled,
-          deleteAnnotation.pending,
-          deleteAnnotation.fulfilled,
+          stopPlacingAnnotation.toString(),
+          editAnnotation.pending.toString(),
+          editAnnotation.fulfilled.toString(),
+          moveAnnotation.pending.toString(),
+          moveAnnotation.fulfilled.toString(),
+          deleteAnnotation.pending.toString(),
+          deleteAnnotation.fulfilled.toString(),
         ].includes(action.type),
         (state) => setErrorMessageState(state, 'annotation', false)
       ).
       // Match any actions that should show the annotations error messages
       addMatcher(
         (action) => [
-          editAnnotation.rejected,
-          moveAnnotation.rejected,
-          deleteAnnotation.rejected
+          editAnnotation.rejected.toString(),
+          moveAnnotation.rejected.toString(),
+          deleteAnnotation.rejected.toString()
         ].includes(action.type),
         (state, action) => setErrorMessageState(state, 'annotation', true, action.payload.errorMessage)).
       // Match any actions that should hide the tag error messages
       addMatcher(
         (action) => [
-          removeTag.fulfilled,
-          removeTag.pending,
-          addTag.fulfilled,
-          addTag.pending
+          removeTag.fulfilled.toString(),
+          removeTag.pending.toString(),
+          addTag.fulfilled.toString(),
+          addTag.pending.toString()
         ].includes(action.type),
         (state) => setErrorMessageState(state, 'tag', false)
       ).
       // Match any actions that should show the tag error messages
       addMatcher(
         (action) => [
-          removeTag.rejected,
-          addTag.rejected
+          removeTag.rejected.toString(),
+          addTag.rejected.toString()
         ].includes(action.type),
         (state, action) => setErrorMessageState(state, 'tag', true, action.payload.errorMessage)).
       // Match any actions that should hide the category error messages
       addMatcher(
         (action) => [
-          handleCategoryToggle.fulfilled
+          handleCategoryToggle.fulfilled.toString()
         ].includes(action.type),
         (state) => setErrorMessageState(state, 'category', false)
       ).
       // Match any actions that should show the category error messages
       addMatcher(
         (action) => [
-          toggleDocumentCategoryFail,
-          handleCategoryToggle.rejected
+          toggleDocumentCategoryFail.toString(),
+          handleCategoryToggle.rejected.toString()
         ].includes(action.type),
         (state, action) => setErrorMessageState(state, 'category', true, action.payload.errorMessage)).
       // Match any actions that should hide the description error messages
       addMatcher(
         (action) => [
-          changePendingDocDescription,
-          resetPendingDocDescription
+          changePendingDocDescription.toString(),
+          resetPendingDocDescription.toString()
         ].includes(action.type),
         (state) => setErrorMessageState(state, 'description', false)
       ).
       // Match any actions that should show the description error messages
       addMatcher(
         (action) => [
-          saveDocumentDescription.rejected
+          saveDocumentDescription.rejected.toString()
         ].includes(action.type),
         (state, action) => setErrorMessageState(state, 'description', true, action.payload.errorMessage))
     ;
