@@ -3,21 +3,15 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import moment from 'moment';
 
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
-
 import Tooltip from '../../components/Tooltip';
 import { DateString } from '../../util/DateUtil';
 
 const listStyling = css({
   listStyle: 'none',
   textAlign: 'left',
-  marginBottom: 0,
   padding: 0,
   '& > li': {
-    marginBottom: 0,
-    '& > strong': {
-      color: COLORS.WHITE
-    }
+    marginBottom: 0
   }
 });
 
@@ -26,6 +20,11 @@ const listStyling = css({
 // requested. If the ihp task is complete, days waiting will show how long took for the IHP task to be received.
 const IhpDaysWaitingTooltip = (props) => {
   const { requestedAt, receivedAt, children } = props;
+
+  if (!requestedAt) {
+    return children;
+  }
+
   const daysWaitingEndDate = receivedAt ? moment(receivedAt).startOf('day') : moment().startOf('day');
   const requestedAtMoment = moment(requestedAt).startOf('day');
   const daysWaiting = `${daysWaitingEndDate.diff(requestedAtMoment, 'days')} days`;
