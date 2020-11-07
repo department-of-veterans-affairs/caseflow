@@ -65,13 +65,14 @@ RSpec.feature "Docket Change", :all_dbs do
     let(:disposition) { "granted" }
     let(:timely) { "yes" }
 
-    context "with docket_change feature toggle" do
+    fcontext "with docket_change feature toggle" do
       before { FeatureToggle.enable!(:docket_change) }
       after { FeatureToggle.disable!(:docket_change) }
 
       it "allows Clerk of the Board attorney to send docket switch recommendation to judge" do
         User.authenticate!(user: cotb_user)
         visit "/queue/appeals/#{appeal.uuid}"
+
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.label).click
 
@@ -86,11 +87,13 @@ RSpec.feature "Docket Change", :all_dbs do
 
         # The previously assigned judge should be selected
         expect(page).to have_content(judge_assign_task.assigned_to.display_name)
-
         click_button(text: "Submit")
 
         # Return back to user's queue
         expect(page).to have_current_path("/queue")
+        # Return back to successs banner
+        expect(page).to have_content(appeal.appellant_name, judge_assign_task.assigned_to.display_name)
+        expect(page).to have_content(COPY::DOCKET_SWITCH_REQUEST_MESSAGE)
 
         judge_task = DocketSwitchRulingTask.find_by(assigned_to: judge)
         expect(judge_task).to_not be_nil
