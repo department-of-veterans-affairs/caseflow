@@ -65,7 +65,7 @@ RSpec.feature "Docket Change", :all_dbs do
     let(:disposition) { "granted" }
     let(:timely) { "yes" }
 
-    fcontext "with docket_change feature toggle" do
+    context "with docket_change feature toggle" do
       before { FeatureToggle.enable!(:docket_change) }
       after { FeatureToggle.disable!(:docket_change) }
 
