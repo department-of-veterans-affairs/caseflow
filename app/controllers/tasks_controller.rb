@@ -33,6 +33,7 @@ class TasksController < ApplicationController
     PulacCerulloTask: PulacCerulloTask,
     QualityReviewTask: QualityReviewTask,
     ScheduleHearingTask: ScheduleHearingTask,
+    SendCavcRemandProcessedLetterTask: SendCavcRemandProcessedLetterTask,
     SpecialCaseMovementTask: SpecialCaseMovementTask,
     Task: Task,
     TranslationTask: TranslationTask
@@ -208,8 +209,7 @@ class TasksController < ApplicationController
     additional_task_classes = Hash[
       *MailTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten,
       *HearingAdminActionTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten,
-      *ColocatedTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten,
-      SendCavcRemandProcessedLetterTask.to_s.to_sym, SendCavcRemandProcessedLetterTask
+      *ColocatedTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten
     ]
     TASK_CLASSES_LOOKUP.merge(additional_task_classes)
   end
