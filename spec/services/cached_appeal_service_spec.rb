@@ -12,17 +12,18 @@ describe CachedAppealService do
         changed_request_type: HearingDay::REQUEST_TYPES[:virtual]
       )
     end
+    let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: legacy_appeal) }
 
     it "caches hearing_request_type correctly", :aggregate_failures do
       subject.cache_legacy_appeal_postgres_data([legacy_appeal])
-      subject.cache_legacy_appeal_vacols_data([vacols_case.bfkey])
+      subject.cache_legacy_appeal_vacols_data([legacy_appeal])
 
       expect(CachedAppeal.find_by(vacols_id: legacy_appeal.vacols_id).hearing_request_type).to eq("Virtual")
     end
 
     it "caches former_travel correctly", :aggregate_failures do
       subject.cache_legacy_appeal_postgres_data([legacy_appeal])
-      subject.cache_legacy_appeal_vacols_data([vacols_case.bfkey])
+      subject.cache_legacy_appeal_vacols_data([legacy_appeal])
 
       expect(CachedAppeal.find_by(vacols_id: legacy_appeal.vacols_id).former_travel).to eq(true)
     end
@@ -53,7 +54,7 @@ describe CachedAppealService do
     it "does not update appeals that were recently cached" do
       subject.cache_ama_appeals([ama_appeal])
       subject.cache_legacy_appeal_postgres_data([legacy_appeal])
-      subject.cache_legacy_appeal_vacols_data([vacols_case.bfkey])
+      subject.cache_legacy_appeal_vacols_data([legacy_appeal])
 
       legacy_cached_appeal = CachedAppeal.find_by(appeal_id: legacy_appeal.id, appeal_type: LegacyAppeal.name)
       ama_cached_appeal = CachedAppeal.find_by(appeal_id: ama_appeal.id, appeal_type: Appeal.name)
@@ -61,6 +62,35 @@ describe CachedAppealService do
       # updated_at shouldn't change
       expect(legacy_cached_appeal.updated_at.utc).to be_within(1.in_milliseconds).of(future_time)
       expect(ama_cached_appeal.updated_at.utc).to be_within(1.in_milliseconds).of(future_time)
+    end
+  end
+
+  context "in the absence of an open ScheduleHearingTask" do
+    context "ama appeal" do
+      let(:appeal) { create(:appeal) }
+
+      it "does not cache hearing related fields", :aggregate_failures do
+        subject.cache_ama_appeals([appeal])
+
+        expect(CachedAppeal.find_by(appeal_id: appeal.id).hearing_request_type).to eq(nil)
+        expect(CachedAppeal.find_by(appeal_id: appeal.id).power_of_attorney_name).to eq(nil)
+        expect(CachedAppeal.find_by(appeal_id: appeal.id).suggested_hearing_location).to eq(nil)
+      end
+    end
+
+    context "legacy appeal" do
+      let(:vacols_case) { create(:case) }
+      let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+
+      it "does not cache hearing realated fields", :aggregate_failures do
+        subject.cache_legacy_appeal_postgres_data([legacy_appeal])
+        subject.cache_legacy_appeal_vacols_data([legacy_appeal])
+
+        expect(CachedAppeal.find_by(vacols_id: legacy_appeal.vacols_id).hearing_request_type).to eq(nil)
+        expect(CachedAppeal.find_by(vacols_id: legacy_appeal.vacols_id).former_travel).to eq(nil)
+        expect(CachedAppeal.find_by(vacols_id: legacy_appeal.vacols_id).power_of_attorney_name).to eq(nil)
+        expect(CachedAppeal.find_by(vacols_id: legacy_appeal.vacols_id).suggested_hearing_location).to eq(nil)
+      end
     end
   end
 end
