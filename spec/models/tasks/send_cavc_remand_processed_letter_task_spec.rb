@@ -45,6 +45,7 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
         expect(DistributionTask.count).to eq 1
         expect(CavcTask.count).to eq 1
         expect(SendCavcRemandProcessedLetterTask.count).to eq 1
+        expect(send_task.parent).to eq cavc_task
       end
     end
     context "parent task is provided" do
@@ -56,6 +57,7 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
         expect(DistributionTask.count).to eq 1
         expect(CavcTask.count).to eq 1
         expect(SendCavcRemandProcessedLetterTask.count).to eq 1
+        expect(send_task.parent).to eq parent_task
       end
     end
     context "nothing is provided" do
@@ -66,6 +68,7 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
         expect(DistributionTask.count).to eq 1
         expect(CavcTask.count).to eq 1
         expect(SendCavcRemandProcessedLetterTask.count).to eq 1
+        expect(send_task.parent).to eq CavcTask.first
       end
     end
   end
@@ -74,7 +77,6 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
   describe "#available_actions" do
     let(:org_admin) do
       create(:user) do |u|
-        CavcLitigationSupport.singleton.add_user(u)
         OrganizationsUser.make_user_admin(u, CavcLitigationSupport.singleton)
       end
     end

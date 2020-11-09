@@ -29,6 +29,7 @@ describe CavcTask, :postgres do
         expect(RootTask.count).to eq 1
         expect(DistributionTask.count).to eq 1
         expect(CavcTask.count).to eq 1
+        expect(cavc_task.parent).to eq parent_task
       end
     end
     context "parent task is provided" do
@@ -39,6 +40,7 @@ describe CavcTask, :postgres do
         expect(RootTask.count).to eq 1
         expect(DistributionTask.count).to eq 1
         expect(CavcTask.count).to eq 1
+        expect(cavc_task.parent).to eq parent_task
       end
     end
     context "nothing is provided" do
@@ -48,6 +50,7 @@ describe CavcTask, :postgres do
         expect(RootTask.count).to eq 1
         expect(DistributionTask.count).to eq 1
         expect(CavcTask.count).to eq 1
+        expect(cavc_task.parent).to eq DistributionTask.first
       end
     end
   end
