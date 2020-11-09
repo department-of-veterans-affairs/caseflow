@@ -928,7 +928,9 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def attorney_case_review
-    task_id = "#{vacols_id}-#{VacolsHelper.day_only_str(vacols_case_review&.created_at)}"
+    return unless vacols_case_review&.created_at
+
+    task_id = "#{vacols_id}-#{VacolsHelper.day_only_str(vacols_case_review.created_at)}"
 
     @attorney_case_review ||= AttorneyCaseReview.find_by(task_id: task_id)
   end
