@@ -38,7 +38,7 @@ class VirtualHearings::SendEmail
 
   def send_reminder
     if type == "appellant_reminder" && send_email(appellant_recipient)
-      virtual_hearing.update!(appellant_reminder_sent: Time.zone.now)
+      virtual_hearing.update!(appellant_reminder_sent_at: Time.zone.now)
 
       return true
     end
@@ -46,7 +46,7 @@ class VirtualHearings::SendEmail
     if type == "representative_reminder" &&
        !virtual_hearing.representative_email.nil? &&
        send_email(representative_recipient)
-      virtual_hearing.update!(representative_reminder_sent: Time.zone.now)
+      virtual_hearing.update!(representative_reminder_sent_at: Time.zone.now)
 
       return true
     end

@@ -25,13 +25,13 @@ class VirtualHearings::SendReminderEmailsJob < ApplicationJob
 
   def should_send_appellant_reminder?(virtual_hearing)
     VirtualHearings::ReminderService
-      .new(virtual_hearing, virtual_hearing.appellant_reminder_sent)
+      .new(virtual_hearing, virtual_hearing.appellant_reminder_sent_at)
       .should_send_reminder_email?
   end
 
   def should_sent_representative_reminder?(virtual_hearing)
     VirtualHearings::ReminderService
-      .new(virtual_hearing, virtual_hearing.representative_reminder_sent)
+      .new(virtual_hearing, virtual_hearing.representative_reminder_sent_at)
       .should_send_reminder_email?
   end
 end
