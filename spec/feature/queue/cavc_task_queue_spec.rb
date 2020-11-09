@@ -3,7 +3,6 @@
 RSpec.feature "CAVC-related tasks queue", :all_dbs do
   let!(:org_admin) do
     create(:user, full_name: "Adminy CacvRemandy") do |u|
-      CavcLitigationSupport.singleton.add_user(u)
       OrganizationsUser.make_user_admin(u, CavcLitigationSupport.singleton)
     end
   end
