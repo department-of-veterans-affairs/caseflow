@@ -32,7 +32,6 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
       visit "queue/appeals/#{send_task.appeal.external_id}"
 
       find(".cf-select__control", text: "Select an action").click
-      expect(page).to have_content Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label
       expect(page).to have_content Constants.TASK_ACTIONS.MARK_COMPLETE.label
       expect(page).to have_content Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.label
 
