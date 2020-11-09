@@ -57,7 +57,7 @@ class CachedAppealService
   # rubocop:disable Metrics/AbcSize
   def cache_legacy_appeal_vacols_data(legacy_appeals)
     import_cached_appeals([:vacols_id], VACOLS_CACHED_COLUMNS) do
-      vacols_id_to_appeal_id_mapping = vacols_id_to_appeal_id_mapping(legacy_appeals)
+      vacols_id_to_appeal_id_mapping = legacy_appeals.pluck(:vacols_id, :id).to_h
       vacols_ids = vacols_id_to_appeal_id_mapping.keys
       appeal_ids_with_schedule_hearing_tasks = appeal_ids_with_schedule_hearing_tasks(
         vacols_id_to_appeal_id_mapping.values,
@@ -292,11 +292,6 @@ class CachedAppealService
       .where(appeal_id: appeal_ids, appeal_type: appeal_type)
       .pluck(:appeal_id)
       .uniq
-  end
-
-  # vacols_id => appeal_id mapping
-  def vacols_id_to_appeal_id_mapping(legacy_appeals)
-    legacy_appeals.pluck(:vacols_id, :id).to_h
   end
 
   def ama_appeal_hearing_fields_to_cache(appeal, representative_names, appeal_ids_with_schedule_hearing_tasks)
