@@ -75,6 +75,7 @@ class TaskActionRepository
 
     def assign_to_user_data(task, user = nil)
       users = potential_task_assignees(task)
+      extras = {}
       extras[:redirect_after] = "/organizations/#{task.assigned_to.url}" if task.assigned_to_type == Organization.name
       # extras = if task.is_a?(HearingAdminActionTask)
       #            {
