@@ -933,7 +933,6 @@ class LegacyAppeal < CaseflowRecord
     @attorney_case_review ||= AttorneyCaseReview.find_by(task_id: task_id)
   end
 
-
   def vacols_case_review
     @vacols_case_review ||= VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
   end
