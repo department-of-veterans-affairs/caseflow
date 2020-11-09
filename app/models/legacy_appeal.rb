@@ -935,7 +935,7 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def vacols_case_review
-    VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
+    @vacols_case_review ||= VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
   end
 
   def death_dismissal!
