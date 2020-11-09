@@ -3039,7 +3039,6 @@ describe LegacyAppeal, :all_dbs do
           expect_any_instance_of(VACOLS::CaseAssignment).not_to receive(:valid_document_id?)
         end
 
-
         it_behaves_like "assumes the case assigned to the user to draft the decision"
       end
 

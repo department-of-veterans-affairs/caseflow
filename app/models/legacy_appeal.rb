@@ -928,11 +928,11 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def attorney_case_review
-    # # Created at date will be nil if there is no decass record created for this appeal yet
-    return unless vacols_case_review&.created_at
+    task_id = "#{vacols_id}-#{VacolsHelper.day_only_str(vacols_case_review&.created_at)}"
 
-    AttorneyCaseReview.find_by(task_id: "#{vacols_id}-#{VacolsHelper.day_only_str(vacols_case_review.created_at)}")
+    @attorney_case_review ||= AttorneyCaseReview.find_by(task_id: task_id)
   end
+
 
   def vacols_case_review
     @vacols_case_review ||= VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
@@ -978,15 +978,13 @@ class LegacyAppeal < CaseflowRecord
   # Hacky logic to determine if an acting judge should see judge actions or attorney actions on a case assigne to them
   # See https://github.com/department-of-veterans-affairs/caseflow/issues/14886  for details
   def assigned_to_acting_judge_as_judge?(acting_judge)
-    recent_review = attorney_case_review
-
-    if recent_review.present?
+    if attorney_case_review.present?
       # If the acting judge was the attorney on this review, this case is very likely assigned to them to redraft the
       # decision.
-      return false if recent_review.attorney_id == acting_judge.id
+      return false if attorney_case_review.attorney_id == acting_judge.id
 
       # if the acting judge was the judge on this review, this case is very likely assigned to them to sign the decision
-      return true if recent_review.reviewing_judge_id == acting_judge.id
+      return true if attorney_case_review.reviewing_judge_id == acting_judge.id
     end
 
     # In case an attorney case review does not exist in caseflow or if this acting judge was neither the judge or
