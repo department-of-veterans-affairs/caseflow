@@ -91,6 +91,7 @@ detectors:
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - FetchHearingLocationsForVeteransJob#sleep_before_retry_on_limit_error
       - HearingSerializerBase
+      - HearingSchedule::GenerateHearingDaysSchedule#generate_co_hearing_days_schedule
       - LegacyDocket#count
       - RedistributedCase#legacy_appeal_relevant_tasks
       - LegacyAppeal#cancel_open_caseflow_tasks!

@@ -344,13 +344,13 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   # pick the first day from fallback days that is valid
   def get_fallback_date_for_co(scheduled_for)
-    cwday = CO_FALLBACK_DAYS_OF_WEEK.detect do |cwday|
+    valid_cwday = CO_FALLBACK_DAYS_OF_WEEK.detect do |cwday|
       date = scheduled_for + (cwday - scheduled_for.cwday)
 
       !weekend?(date) && !holiday?(date) && !co_not_available?(date)
     end
 
-    cwday ? scheduled_for + (cwday - scheduled_for.cwday) : nil
+    valid_cwday ? scheduled_for + (valid_cwday - scheduled_for.cwday) : nil
   end
 
   def valid_day_to_schedule_co(scheduled_for)
