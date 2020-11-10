@@ -1,20 +1,23 @@
 import React from 'react';
 
-import { RecommendDocketSwitchForm } from './RecommendDocketSwitchForm';
+import { DocketSwitchRulingForm } from './DocketSwitchRulingForm';
 
-const judgeOptions = [
-  { value: 1, label: 'Judge 1' },
-  { value: 2, label: 'Judge 2' },
+const attorneyOptions = [
+  { value: 1, label: 'COB Attorney 1' },
+  { value: 2, label: 'COB Attorney 2' },
 ];
 
+const instructions = ["**Summary:** Summary\n\n**Is this a timely request:** Yes\n\n**Recommendation:** Grant all issues\n\n**Draft letter:** http://www.va.gov"];
+
 export default {
-  title: 'Queue/Docket Switch/RecommendDocketSwitchForm',
-  component: RecommendDocketSwitchForm,
+  title: 'Queue/Docket Switch/DocketSwitchRulingForm',
+  component: DocketSwitchRulingForm,
   decorators: [],
   parameters: {},
   args: {
     appellantName: 'Jane Doe',
-    judgeOptions,
+    attorneyOptions,
+    instructions,
   },
   argTypes: {
     onCancel: { action: 'cancel' },
@@ -22,18 +25,18 @@ export default {
   },
 };
 
-const Template = (args) => <RecommendDocketSwitchForm {...args} />;
+const Template = (args) => <DocketSwitchRulingForm {...args} />;
 
 export const Basic = Template.bind({});
 
 Basic.parameters = {
   docs: {
     storyDescription:
-      'Used by attorney at Clerk of the Board office to recommend a ruling to VLJ/Clerk',
+      'Used by a judge to make a ruling on a Docket Switch.',
   },
 };
 
-export const DefaultJudge = Template.bind({});
-DefaultJudge.args = {
-  defaultJudgeId: 2
+export const DefaultAttorney = Template.bind({});
+DefaultAttorney.args = {
+  defaultAttorneyId: 2
 };

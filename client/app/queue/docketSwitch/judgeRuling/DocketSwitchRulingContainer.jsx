@@ -1,16 +1,11 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams, useRouteMatch } from 'react-router';
-
-// import { useRouteMatch, useParams, useHistory } from 'react-router-dom';
-// import { fetchJudges } from '../../QueueActions';
-
-// import { appealWithDetailSelector } from '../../selectors';
 import { taskById, appealWithDetailSelector } from '../../selectors';
-import { dispositions } from '../constants';
-import { createDocketSwitchRulingTask } from './DocketSwitchRulingSlice';
-import { DocketSwitchRulingForm } from './DocketSwitchRulingForm';
 import { taskActionData } from '../../utils';
+import { DISPOSITIONS } from '../constants';
+import { createDocketSwitchGrantedTask, createDocketSwitchDeniedTask } from './docketSwitchRulingSlice';
+import { DocketSwitchRulingForm } from './DocketSwitchRulingForm';
 
 export const formatDocketSwitchRuling = ({
   disposition,
@@ -19,7 +14,7 @@ export const formatDocketSwitchRuling = ({
 }) => {
   const parts = [];
 
-  parts.push(`I am proceeding with a:\n ${dispositions[disposition].displayText}.`);
+  parts.push(`I am proceeding with a:\n ${DISPOSITIONS[disposition].judgeRulingText}.`);
   parts.push(`Signed ruling letter:\n ${hyperlink}`);
   parts.push(`Context/Instructions:\n ${context}`);
 
@@ -35,29 +30,18 @@ export const DocketSwitchRulingContainer = () => {
     appealWithDetailSelector(state, { appealId })
   );
   const match = useRouteMatch();
-  const { selected, options } = taskActionData({ task,
-    match });
-
-  // const attorneyOptions = options.map(({ value, label }) => ({
-  //   label: label,
-  //   value
-  // }));
-  //
-  // const attorneyOptions = useMemo(
-  //   () =>
-  //     Object.values(options).map(({ id: value, display_name: label }) => ({
-  //       label,
-  //       value,
-  //     })),
-  //   [judges]
-  // );
+  const { selected, options } = taskActionData({ task, match });
 
   // eslint-disable-next-line no-console
   const handleSubmit = async (formData) => {
     const instructions = formatDocketSwitchRuling({ ...formData });
+    const { disposition } = formData;
+    const dispositionType = DISPOSITIONS[disposition].dispositionType;
+    const taskType = `DocketSwitch${dispositionType}Task`;
+
     const newTask = {
       parent_id: taskId,
-      type: 'GrantedDocketSwitchTask',
+      type: taskType,
       external_id: appeal.externalId,
       instructions,
       assigned_to_id: selected.value,
@@ -69,7 +53,11 @@ export const DocketSwitchRulingContainer = () => {
     };
 
     try {
-      await dispatch(createDocketSwitchRulingTask(data));
+      if (dispositionType == "Granted") {
+        await dispatch(createDocketSwitchGrantedTask(data));
+      } else if (dispositionType == "Denied") {
+        await dispatch(createDocketSwitchDeniedTask(data));
+      };
 
       // Add logic for success banner
       push('/queue');

@@ -12,17 +12,19 @@ import {
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../../components/Button';
 import { sprintf } from 'sprintf-js';
-import { dispositions } from '../constants';
+import { DISPOSITIONS } from '../constants';
 import TextField from '../../../components/TextField';
 import TextareaField from '../../../components/TextareaField';
 import RadioField from '../../../components/RadioField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 import ReactMarkdown from 'react-markdown';
+import gfm from 'remark-gfm';
+import { css } from 'glamor';
 
 const schema = yup.object().shape({
   disposition: yup.
     mixed().
-    oneOf(Object.keys(dispositions)).
+    oneOf(Object.keys(DISPOSITIONS)).
     required(),
   hyperlink: yup.string(),
   context: yup.string().required(),
@@ -38,36 +40,28 @@ export const DocketSwitchRulingForm = ({
   clerkOfTheBoardAttorneys = [],
   onCancel,
   onSubmit,
-  instructions
+  instructions,
 }) => {
   const { register, handleSubmit, formState, control, setValue } = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
   });
 
-  const attorneyDefault = useMemo(
+  const defaultAttorney = useMemo(
     () =>
       clerkOfTheBoardAttorneys.find(
         (opt) => defaultAttorneyId && opt.value === defaultAttorneyId
       ),
     [defaultAttorneyId, clerkOfTheBoardAttorneys]
   );
-  const dispositionOptions = useMemo(() => Object.values(dispositions), []);
 
-  const formatBreaks = (text = '') => {
-    // Somehow the contents are occasionally an array, at least in tests
-    // Here we'll format the individual items, then just join to ensure we return string
-    if (Array.isArray(text)) {
-      return text.map((item) => item.replace(/<br>|(?<! {2})\n/g, '  \n')).join(' ');
-    }
+  const dispositionOptions = useMemo(() => Object.values(DISPOSITIONS), []);
 
-    // Normally this should just be a string
-    return text.replace(/<br>|(?<! {2})\n/g, '  \n');
-  };
+  const sectionStyle = css({ marginBottom: '24px' });
 
   useEffect(() => {
-    setValue('attorney', attorneyDefault);
-  }, [attorneyDefault]);
+    setValue('attorney', defaultAttorney);
+  }, [defaultAttorney]);
 
   return (
     <form
@@ -77,12 +71,14 @@ export const DocketSwitchRulingForm = ({
     >
       <AppSegment filledBackground>
         <h1>{sprintf(DOCKET_SWITCH_RULING_TITLE, appellantName)}</h1>
-        <p style={{ marginBottom: '30px' }}>
-        <div><ReactMarkdown source={formatBreaks(DOCKET_SWITCH_RULING_INSTRUCTIONS)} /></div>
-        <hr />
-        <div><ReactMarkdown source={formatBreaks(instructions)} /></div>
-        <hr />
+        <p {...sectionStyle}>
+          <ReactMarkdown source={DOCKET_SWITCH_RULING_INSTRUCTIONS} />
         </p>
+        <hr {...sectionStyle} />
+        <p {...sectionStyle}>
+          <ReactMarkdown plugins={[gfm]} source={instructions[0]} linkTarget="_blank" />
+        </p>
+        <hr {...sectionStyle} />
 
         <RadioField
           name="disposition"
@@ -112,7 +108,7 @@ export const DocketSwitchRulingForm = ({
           <Controller
             as={SearchableDropdown}
             control={control}
-            defaultValue={attorneyDefault}
+            defaultValue={defaultAttorney}
             name="attorney"
             label="Assign to Office of the Clerk of the Board"
             searchable
