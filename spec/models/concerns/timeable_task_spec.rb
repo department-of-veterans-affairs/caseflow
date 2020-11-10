@@ -85,7 +85,7 @@ describe TimeableTask, :postgres do
     it_behaves_like "resets the timer"
   end
 
-  fcontext "when the delay is judge barely less than four days in the past" do
+  context "when the delay is judge barely less than four days in the past" do
     let(:task) { EdgeCaseTimedTask.create!(appeal: appeal, assigned_to: Bva.singleton) }
 
     it_behaves_like "resets the timer"
