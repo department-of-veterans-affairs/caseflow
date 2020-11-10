@@ -3,8 +3,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Local Dependencies
-import EditComment from 'components/reader/Document/Sidebar/EditComment';
-import CannotSaveAlert from 'app/reader/CannotSaveAlert';
+import { EditComment } from 'components/reader/Document/Sidebar/EditComment';
+import { CannotSaveAlert } from 'components/reader/Document/CannotSaveAlert';
 import { plusIcon } from 'app/components/RenderFunctions';
 import Button from 'app/components/Button';
 import Comment from 'app/reader/Comment';

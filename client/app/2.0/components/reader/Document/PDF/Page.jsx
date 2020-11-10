@@ -6,7 +6,7 @@ import classNames from 'classnames';
 // Internal Dependencies
 import CommentLayer from 'app/reader/CommentLayer';
 import { pageNumber } from 'utils/reader';
-import { markStyles, pageStyles, pdfPageStyles } from 'styles/reader/Document/PDF';
+import { markStyles, pageStyles, pdfPageStyles } from 'styles/reader/Document/Pdf';
 
 /**
  * PDF Page Component
@@ -30,11 +30,11 @@ export const Page = ({
   isDrawing,
   rotation,
   style,
-  pdfDocument,
+  numPages,
   numColumns,
   rowIndex,
   columnIndex
-}) => pageIndex >= pdfDocument.pdfInfo.numPages ? (
+}) => pageIndex >= numPages ? (
   <div key={(numColumns * rowIndex) + columnIndex} style={style} />
 ) : (
   <div key={pageIndex} style={style}>
@@ -55,7 +55,7 @@ export const Page = ({
         className={classNames({ 'cf-pdf-page-hidden': isDrawing })}
         style={pdfPageStyles(rotation, outerHeight, outerWidth)}
       >
-        <canvas ref={canvasRef} className="canvasWrapper" />
+        <canvas id="pdf-canvas" ref={canvasRef} className="canvasWrapper" />
         <div className="cf-pdf-annotationLayer">
           <CommentLayer
             documentId={documentId}
@@ -90,7 +90,7 @@ Page.propTypes = {
   isDrawing: PropTypes.bool,
   rotation: PropTypes.number,
   style: PropTypes.object,
-  pdfDocument: PropTypes.object,
+  numPages: PropTypes.number,
   numColumns: PropTypes.number,
   rowIndex: PropTypes.number,
   columnIndex: PropTypes.number

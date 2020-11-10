@@ -29,7 +29,7 @@ import {
   LastRetrievalInfo,
   NoSearchResults,
   DocumentsTable,
-  CommentsTable
+  CommentsTable,
 } from 'components/reader/DocumentList';
 
 const DocumentList = (props) => {
@@ -40,7 +40,7 @@ const DocumentList = (props) => {
   const dispatch = useDispatch();
 
   // Load the Documents
-  useEffect(fetchDocuments({ ...state, vacolsId: props.match.params.vacolsId }, dispatch), []);
+  useEffect(fetchDocuments({ ...state, params: props.match.params }, dispatch), []);
 
   // Create the dispatchers
   const actions = {
@@ -68,7 +68,12 @@ const DocumentList = (props) => {
           <LastRetrievalAlert {...state.documentList} appeal={state.appeal} />
           <DocumentListHeader {...state} {...actions} />
           <NoSearchResults {...state} {...actions} show={state.documentsView === 'none'} />
-          <DocumentsTable {...state} {...actions} show={state.documentsView === 'documents'} />
+          <DocumentsTable
+            {...state}
+            {...actions}
+            documentPathBase={`/reader/appeal/${ state.loadedAppealId }/documents`}
+            show={state.documentsView === 'documents'}
+          />
           <CommentsTable {...state} {...actions} show={state.documentsView === 'comments'} />
         </div>
       </AppSegment>
@@ -90,7 +95,7 @@ DocumentList.propTypes = {
   // Required actions
   onScrollToComment: PropTypes.func,
   stopPlacingAnnotation: PropTypes.func,
-  setCategoryFilter: PropTypes.func
+  setCategoryFilter: PropTypes.func,
 };
 
 export default DocumentList;

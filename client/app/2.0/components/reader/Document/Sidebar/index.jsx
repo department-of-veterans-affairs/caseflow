@@ -14,7 +14,7 @@ import { KeyboardInfo } from 'components/reader/Document/Sidebar/KeyboardInfo';
  * Document Sidebar Component
  * @param {Object} props -- Contains details about showing/hiding the sidebar and passes props through
  */
-export const DocumentSidebar = ({ hidePdfSidebar, togglePdfSidebar, modal, ...props }) => (
+export const DocumentSidebar = ({ hidePdfSidebar, togglePdfSidebar, modal, show, ...props }) => show && (
   <div className={classNames('cf-sidebar-wrapper', { 'hidden-sidebar': hidePdfSidebar })} {...sidebarWrapper}>
     <div className="cf-sidebar-header">
       <Button name="hide menu" classNames={['cf-pdf-button']} id="hide-menu-header" onClick={togglePdfSidebar}>
@@ -29,6 +29,7 @@ export const DocumentSidebar = ({ hidePdfSidebar, togglePdfSidebar, modal, ...pr
 );
 
 DocumentSidebar.propTypes = {
+  show: PropTypes.bool,
   hidePdfSidebar: PropTypes.bool,
   togglePdfSidebar: PropTypes.func,
   featureToggles: PropTypes.object,

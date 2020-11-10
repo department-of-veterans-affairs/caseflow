@@ -20,14 +20,8 @@ const BaseLayout = ({
   appName,
   defaultUrl,
 }) => {
-  const { crumbs } = useSelector(() => ({
-    crumbs: [
-      {
-        breadcrumb: 'Reader',
-        path: '/reader/appeal/:vacolsId/documents'
-      }
-    ]
-  }));
+  // Get the Breadcrumbs from the store
+  const { crumbs } = useSelector((state) => ({ crumbs: state.routes.crumbs }));
 
   return (
     <React.Fragment>
@@ -50,12 +44,7 @@ const BaseLayout = ({
           {children}
         </Loadable>
       </NavigationBar>
-      <Footer
-        wideApp
-        appName={appName}
-        feedbackUrl={feedbackUrl}
-        buildDate={buildDate}
-      />
+      <Footer wideApp appName={appName} feedbackUrl={feedbackUrl} buildDate={buildDate} />
     </React.Fragment>
   );
 };

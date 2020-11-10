@@ -3,27 +3,26 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Local Dependencies
-import DocCategoryPicker from 'app/reader/DocCategoryPicker';
-import CannotSaveAlert from 'app/reader/CannotSaveAlert';
+import { CategoryPicker } from 'components/reader/DocumentList/DocumentsTable/CategoryPicker';
+import { CannotSaveAlert } from 'components/reader/Document/CannotSaveAlert';
 
 /**
  * Sidebar Categories Component for Document screen
  * @param {Object} props -- Contains category toggle state
  */
-export const SidebarCategories = ({ doc, error, categoryToggleStates, handleCategoryToggle }) => (
+export const SidebarCategories = ({ error, filterCriteria, setCategoryFilter, ...props }) => (
   <div className="cf-category-sidebar">
     {error.category.visible && <CannotSaveAlert />}
-    <DocCategoryPicker
-      allowReadOnly
-      handleCategoryToggle={() => handleCategoryToggle(doc.id)}
-      categoryToggleStates={categoryToggleStates}
+    <CategoryPicker
+      {...props}
+      categoryToggleStates={filterCriteria?.category}
+      handleCategoryToggle={setCategoryFilter}
     />
   </div>
 );
 
 SidebarCategories.propTypes = {
   error: PropTypes.object,
-  handleCategoryToggle: PropTypes.array,
-  categoryToggleStates: PropTypes.object,
-  doc: PropTypes.object,
+  setCategoryFilter: PropTypes.func,
+  filterCriteria: PropTypes.object,
 };

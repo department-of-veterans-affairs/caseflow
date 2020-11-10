@@ -6,39 +6,43 @@ import { values, isEmpty, compact, uniqBy } from 'lodash';
 import { escapeRegExp, loadAppeal, documentsView } from 'utils/reader';
 
 /**
- * Selector for the Filtered Doc IDs
- * @param {Object} state -- The current Redux Store state
- * @returns {Object} -- The Filtered Doc IDs
- */
-export const filteredDocIdState = (state) => state.reader.documentList.filteredDocIds;
-
-/**
  * Selector for the Documents
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- The Documents
  */
-export const documentState = (state) => state.reader.documents.list;
+export const docState = (state) => state.reader.documents.list;
+
+/**
+ * Selector for the Filtered Doc IDs
+ * @param {Object} state -- The current Redux Store state
+ * @returns {Object} -- The Filtered Doc IDs
+ */
+export const filteredDocIdState = (state) =>
+  state.reader.documentList.filteredDocIds;
 
 /**
  * Selector for the Editing Annotation State
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- The Editing Annotation State
  */
-export const pendingEditingAnnotationState = (state) => state.reader.annotationLayer.pendingEditingAnnotations;
+export const pendingEditingAnnotationState = (state) =>
+  state.reader.annotationLayer.pendingEditingAnnotations;
 
 /**
  * Selector for the Editing Annotation State
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- The Editing Annotation State
  */
-export const annotationState = (state) => state.reader.annotationLayer.annotations;
+export const annotationState = (state) =>
+  state.reader.annotationLayer.annotations;
 
 /**
  * Selector for the Editing Annotation State
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- The Editing Annotation State
  */
-export const pendingAnnotationState = (state) => state.reader.annotationLayer.pendingAnnotations;
+export const pendingAnnotationState = (state) =>
+  state.reader.annotationLayer.pendingAnnotations;
 
 /**
  * Selector that returns the text Pages are currently filtered by
@@ -52,7 +56,8 @@ export const searchTermState = (state) => state.reader.searchAction.searchTerm;
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- The Extracted Text State
  */
-export const extractedTextState = (state) => state.reader.searchAction.extractedText;
+export const extractedTextState = (state) =>
+  state.reader.searchAction.extractedText;
 
 /**
  * Selector for the File State
@@ -79,19 +84,22 @@ export const selectedIndexState = (state) => state.searchAction.matchIndex;
  * Filtered Documents state
  */
 export const filteredDocuments = ({ reader }) =>
-  reader.documentList.filteredDocIds.reduce((list, id) => ({ ...list, [id]: reader.documents.list[id] }), {});
+  reader.documentList.filteredDocIds.reduce(
+    (list, id) => ({ ...list, [id]: reader.documents.list[id] }),
+    {}
+  );
 
 /**
  * Document List Filtered State
  */
 export const docListIsFiltered = createSelector(
-  [documentState, filteredDocIdState, filterCriteriaState],
+  [docState, filteredDocIdState, filterCriteriaState],
   (documents, filteredDocIds, filterCriteria) =>
     Boolean(
       documents.length !== filteredDocIds.length ||
-      filterCriteria.searchQuery ||
-      values(filterCriteria.category).some() ||
-      values(filterCriteria.tag).some()
+        filterCriteria.searchQuery ||
+        values(filterCriteria.category).some() ||
+        values(filterCriteria.tag).some()
     )
 );
 
@@ -100,7 +108,8 @@ export const docListIsFiltered = createSelector(
  */
 export const textForFile = createSelector(
   [extractedTextState, fileState],
-  (extractedText, file) => extractedText.filter((pageText) => pageText.file === file)
+  (extractedText, file) =>
+    extractedText.filter((pageText) => pageText.file === file)
 );
 
 /**
@@ -108,13 +117,16 @@ export const textForFile = createSelector(
  */
 export const matchesPerPage = createSelector(
   [textForFile, searchTermState],
-  (text, searchTerm) => text.
-    map((page) => ({
-      id: page.id,
-      pageIndex: page.pageIndex,
-      matches: (page.text.match(new RegExp(escapeRegExp(searchTerm), 'gi')) || []).length
-    })).
-    filter((page) => page.matches > 0)
+  (text, searchTerm) =>
+    text.
+      map((page) => ({
+        id: page.id,
+        pageIndex: page.pageIndex,
+        matches: (
+          page.text.match(new RegExp(escapeRegExp(searchTerm), 'gi')) || []
+        ).length,
+      })).
+      filter((page) => page.matches > 0)
 );
 
 /**
@@ -130,7 +142,8 @@ export const totalMatches = createSelector(
  */
 export const currentMatchIndex = createSelector(
   [totalMatches, selectedIndexState],
-  (totalMatchesInFile, selectedIndex) => (selectedIndex + totalMatchesInFile) % totalMatchesInFile
+  (totalMatchesInFile, selectedIndex) =>
+    (selectedIndex + totalMatchesInFile) % totalMatchesInFile
 );
 
 /**
@@ -157,7 +170,7 @@ export const documentAnnotations = (state) => {
     case 'editingAnnotations':
       return {
         ...annotations[type],
-        editing: true
+        editing: true,
       };
     default:
       return {};
@@ -169,11 +182,11 @@ export const documentAnnotations = (state) => {
 };
 
 /**
- * State for the Document List Screen
+ * Selector for the Documents
  * @param {Object} state -- The current Redux Store state
- * @returns {Object} -- The Documents List State
+ * @returns {Object} -- The Documents
  */
-export const documentListScreen = (state) => {
+export const documentState = (state) => {
   // Set the filtered documents
   const documents = filteredDocuments(state);
 
@@ -182,9 +195,23 @@ export const documentListScreen = (state) => {
     state.reader.documentList.filteredDocIds.length :
     Object.values(documents).length;
 
+  // Return the Filtered Documents and count
+  return { documents, docsCount };
+};
+
+/**
+ * State for the Document List Screen
+ * @param {Object} state -- The current Redux Store state
+ * @returns {Object} -- The Documents List State
+ */
+export const documentListScreen = (state) => {
+  // Get the filtered documents and count
+  const { documents, docsCount } = documentState(state);
+
   return {
     documents,
     docsCount,
+    currentDocument: state.reader.pdf.currentDocument,
     storeDocuments: state.reader.documents.list,
     documentList: state.reader.documentList,
     annotations: documentAnnotations(state),
@@ -209,7 +236,7 @@ export const documentListScreen = (state) => {
       state.reader.caseSelect.assignments,
       state.reader.pdfViewer.loadedAppealId,
       state.reader.pdfViewer.loadedAppeal
-    )
+    ),
   };
 };
 
@@ -218,14 +245,30 @@ export const documentListScreen = (state) => {
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- The Document State
  */
-export const documentScreen = (state) => ({
-  documents: filteredDocuments(state.reader),
-  documentFilters: state.reader.documentList.pdfList.filters,
-  storeDocuments: state.reader.documents,
-  isPlacingAnnotation: state.reader.annotationLayer.isPlacingAnnotation,
-  appeal: state.reader.pdfViewer.loadedAppeal,
-  annotations: state.reader.annotationLayer.annotations,
-  pdf: state.reader.pdf,
-  pdfViewer: state.reader.pdf,
-  annotationLayer: state.reader.annotationLayer,
-});
+export const documentScreen = (state) => {
+  // Get the filtered documents and count
+  const { documents, docsCount } = documentState(state);
+
+  return {
+    documents,
+    docsCount,
+    filteredDocIds: state.reader.documentList.filteredDocIds,
+    currentDocument: state.reader.pdf.currentDocument,
+    loadedAppealId: state.reader.pdfViewer.loadedAppealId,
+    appeal: loadAppeal(
+      state.reader.caseSelect.assignments,
+      state.reader.pdfViewer.loadedAppealId,
+      state.reader.pdfViewer.loadedAppeal
+    ),
+    searchCategoryHighlights: state.reader.documentList.searchCategoryHighlights,
+    documentFilters: state.reader.documentList.pdfList.filters,
+    storeDocuments: state.reader.documents.list,
+    isPlacingAnnotation: state.reader.annotationLayer.isPlacingAnnotation,
+    annotations: documentAnnotations(state),
+    pdf: state.reader.pdf,
+    pdfViewer: state.reader.pdf,
+    annotationLayer: state.reader.annotationLayer,
+    hidePdfSidebar: state.reader.pdf.hidePdfSidebar,
+    hideSearchBar: state.reader.pdf.hideSearchBar
+  };
+};

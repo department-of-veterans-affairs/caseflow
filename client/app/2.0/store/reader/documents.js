@@ -1,4 +1,4 @@
-import { createSlice, createAction, createAsyncThunk, current } from '@reduxjs/toolkit';
+import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { isNil, differenceWith, differenceBy, find, pick } from 'lodash';
 import uuid from 'uuid';
 
@@ -15,6 +15,7 @@ import {
   clearSearch,
   clearAllFilters
 } from 'store/reader/documentList';
+import { showPdf } from 'store/reader/pdf';
 import { addMetaLabel, commentContainsWords, formatCategoryName } from 'utils/reader';
 
 /**
@@ -28,17 +29,27 @@ export const initialState = {
 /**
  * Dispatcher to Load Appeal Documents
  */
-export const loadDocuments = createAsyncThunk('documents/load', async (vacolsId, { getState }) => {
+export const loadDocuments = createAsyncThunk('documents/load', async (params, { getState, dispatch }) => {
   // Get the current state
   const state = getState();
 
   // Request the Documents for the Appeal
-  const { body } = await ApiUtil.get(`/reader/appeal/${vacolsId}/documents?json`, {}, ENDPOINT_NAMES.DOCUMENTS);
+  const { body } = await ApiUtil.get(`/reader/appeal/${params.vacolsId}/documents?json`, {}, ENDPOINT_NAMES.DOCUMENTS);
+
+  // Load the Document if the Doc ID is present
+  if (params.docId) {
+    dispatch(showPdf({
+      current: params.currentDocument,
+      documents: body.appealDocuments,
+      docId: params.docId,
+      worker: params.worker
+    }));
+  }
 
   // Return the response and attach the Filter Criteria
   return {
     ...body,
-    vacolsId,
+    ...params,
     documents: body.appealDocuments,
     filterCriteria: state.reader.documentList.filterCriteria
   };

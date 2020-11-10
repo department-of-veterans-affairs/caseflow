@@ -173,7 +173,7 @@ export const TypeCell = ({ doc, setPdf, documentPathBase, filterCriteria }) => (
   <div>
     <ViewableItemLink
       boldCondition={!doc.opened_by_current_user}
-      onOpen={(id) => setPdf(id)}
+      // onOpen={(id) => setPdf(id)}
       linkProps={{
         to: `${documentPathBase}/${doc.id}`,
         'aria-label': doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')

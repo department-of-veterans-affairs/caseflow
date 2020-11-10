@@ -25,7 +25,7 @@ export const DocumentSearch = ({
   searchTerm,
   totalMatchesInFile,
   currentMatchIndex
-}) => (
+}) => !hidden && (
   <div className={classNames('cf-search-bar', { hidden })}>
     <SearchBar
       ref={searchBarRef}

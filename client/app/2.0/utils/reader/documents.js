@@ -14,6 +14,42 @@ import {
 import { formatCategoryName, formatFilterCriteria, searchString } from 'utils/reader';
 import { fetchAppealDetails, setZoomLevel } from 'store/reader/pdfViewer';
 import { stopPlacingAnnotation } from 'store/reader/annotationLayer';
+import { navigate } from 'store/routes';
+
+/*
+ * Helper Method to load documents into the store only when necessary
+ * @param {string} loadedId -- Id of the Appeal in the Store
+ * @param {string} vacolsId -- The New Appeal ID
+ */
+export const fetchDocuments = ({ loadedAppealId, appeal, params }, dispatch) => () => {
+  // Set the crumbs for the Reader app
+  const crumbs = [{
+    breadcrumb: 'Reader',
+    path: '/reader/appeal/:vacolsId/documents'
+  }];
+
+  // Update the crumbs if navigating to a document
+  if (params.docId) {
+    crumbs.push({
+      breadcrumb: 'Document Viewer',
+      path: '/reader/appeal/:vacolsId/documents/:docId'
+    });
+  }
+
+  // Load the crumbs into the navbar
+  dispatch(navigate({ crumbs }));
+
+  // Load the Data Needed by the Documents List
+  if (loadedAppealId !== params.vacolsId) {
+    // Load the new Documents
+    dispatch(loadDocuments(params));
+  }
+
+  // Determine whether to load the appeal details
+  if (isEmpty(appeal) || ((appeal.vacols_id || appeal.external_id) !== params.vacolsId)) {
+    dispatch(fetchAppealDetails(params.vacolsId));
+  }
+};
 
 /**
  * Helper Method to Calculate the Documents List View
@@ -188,24 +224,6 @@ export const translateX = (rotation, outerHeight, outerWidth) =>
  */
 export const columnCount = (width, pageWidth, numPages) =>
   Math.min(Math.max(Math.floor(width / pageWidth), 1), numPages);
-
-/*
- * Helper Method to load documents into the store only when necessary
- * @param {string} loadedId -- Id of the Appeal in the Store
- * @param {string} vacolsId -- The New Appeal ID
- */
-export const fetchDocuments = ({ loadedAppealId, vacolsId, appeal }, dispatch) => () => {
-  // Load the Data Needed by the Documents List
-  if (loadedAppealId !== vacolsId) {
-    // Load the new Documents
-    dispatch(loadDocuments(vacolsId));
-  }
-
-  // Determine whether to load the appeal details
-  if (isEmpty(appeal) || ((appeal.vacols_id || appeal.external_id) !== vacolsId)) {
-    dispatch(fetchAppealDetails(vacolsId));
-  }
-};
 
 /**
  * Helper Method to sort an object by an array of keys

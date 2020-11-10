@@ -1,46 +1,86 @@
 // External Dependencies
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
+import classNames from 'classnames';
 
-// Internal Dependencies
+// Local Dependencies
+import { pdfWrapper } from 'styles/reader/Document/Pdf';
+import { fetchDocuments } from 'utils/reader/documents';
+import { documentScreen } from 'store/reader/selectors';
+import { DocumentHeader } from 'components/reader/Document/Header';
+import { DocumentSidebar } from 'components/reader/Document/Sidebar';
+import { DocumentFooter } from 'components/reader/Document/Footer';
+import { DocumentSearch } from 'app/2.0/components/reader/Document/Search';
+import { Pdf } from 'app/2.0/components/reader/Document/PDF';
 
-const Document = () => {
+const Document = (props) => {
+  // Get the Document List state
+  const state = useSelector(documentScreen);
 
-  return <React.Fragment />;
+  // Create the Dispatcher
+  const dispatch = useDispatch();
+
+  // Attach the PDF Worker to the params to setup PDFJS
+  const params = { ...props.match.params, worker: props.pdfWorker, currentDocument: state.currentDocument };
+
+  // Load the Documents
+  useEffect(fetchDocuments({ ...state, params }, dispatch), []);
+
+  // Create the Grid Ref
+  const gridRef = React.createRef().current;
+
+  // Create the dispatchers
+  const actions = {
+
+  };
+
+  return (
+    <div className="cf-pdf-page-container">
+      <div className={classNames('cf-pdf-container', { 'hidden-sidebar': state.hidePdfSidebar })} {...pdfWrapper}>
+        <DocumentHeader
+          {...state}
+          documentPathBase={`/reader/appeal/${ state.loadedAppealId }/documents`}
+          doc={state.currentDocument}
+        />
+        <DocumentSearch {...state} hidden={state.hideSearchBar} />
+        <Pdf
+          {...state}
+          {...props}
+          doc={state.currentDocument}
+          gridRef={gridRef}
+        />
+        <DocumentFooter
+          {...state}
+          {...props}
+          doc={state.currentDocument}
+        />
+      </div>
+      <DocumentSidebar
+        {...state}
+        {...props}
+        show={!state.hidePdfSidebar}
+        comments={state.annotations}
+        doc={state.currentDocument}
+      />
+    </div>
+  );
 };
 
 Document.propTypes = {
-  annotations: PropTypes.object,
   appeal: PropTypes.object,
-  closeAnnotationDeleteModal: PropTypes.func,
-  closeAnnotationShareModal: PropTypes.func,
-  closeDocumentUpdatedModal: PropTypes.func,
-  deleteAnnotation: PropTypes.func,
-  doc: PropTypes.object,
-  documentPathBase: PropTypes.string,
-  featureToggles: PropTypes.object,
-  fetchAppealDetails: PropTypes.func,
-  handleSelectCurrentPdf: PropTypes.func,
-  history: PropTypes.object,
-  isPlacingAnnotation: PropTypes.bool,
-  match: PropTypes.object,
-  onJumpToComment: PropTypes.func,
-  onScrollToComment: PropTypes.func,
-  pageDimensions: PropTypes.object,
   pdfWorker: PropTypes.string,
-  placingAnnotationIconPageCoords: PropTypes.object,
-  scrollToComment: PropTypes.shape({
-    id: PropTypes.number
-  }),
-  showPlaceAnnotationIcon: PropTypes.func,
+  userDisplayName: PropTypes.string,
+  dropdownUrls: PropTypes.array,
+  singleDocumentMode: PropTypes.bool,
+  match: PropTypes.object,
+  loadedAppealId: PropTypes.string,
+  annotations: PropTypes.array,
+
+  // Required actions
+  onScrollToComment: PropTypes.func,
   stopPlacingAnnotation: PropTypes.func,
-  deleteAnnotationModalIsOpenFor: PropTypes.number,
-  shareAnnotationModalIsOpenFor: PropTypes.number,
-  documents: PropTypes.array.isRequired,
-  allDocuments: PropTypes.array.isRequired,
-  selectCurrentPdf: PropTypes.func,
-  hidePdfSidebar: PropTypes.bool,
-  showPdf: PropTypes.func
+  setCategoryFilter: PropTypes.func
 };
 
 export default Document;

@@ -181,6 +181,7 @@ export class PdfFile extends React.PureComponent {
   }
 
   getGrid = (grid) => {
+    console.log('GRID: ', grid);
     this.grid = grid;
 
     if (this.grid) {
