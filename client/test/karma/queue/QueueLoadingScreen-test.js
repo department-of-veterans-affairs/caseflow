@@ -63,6 +63,8 @@ describe('QueueLoadingScreen', () => {
   it('associates queue decisions/appeals and tasks', () => {
     const { tasks } = associateTasksWithAppeals(serverData);
 
+    console.log(tasks)
+    console.log(serverData)
     expect(tasks).to.deep.equal({
       3625593: {
         uniqueId: '3625593',
