@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "faker"
+require_relative "tasks/task_shared_examples.rb"
 
 describe TaskPager, :all_dbs do
   let(:assignee) { create(:organization) }
@@ -435,45 +436,11 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by Appeal Type column" do
+      let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
       let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name }
       let!(:created_tasks) { [] }
 
-      let(:legacy_appeal_1) { create(:legacy_appeal, vacols_case: create(:case, :type_original)) }
-      let(:legacy_appeal_2) { create(:legacy_appeal, vacols_case: create(:case, :type_post_remand)) }
-      let(:legacy_appeal_3) { create(:legacy_appeal, vacols_case: create(:case, :type_cavc_remand, :aod)) }
-      let(:appeal_1) { create(:appeal, :advanced_on_docket_due_to_motion) }
-      let(:appeal_2) { create(:appeal) }
-      let(:appeal_3) { create(:appeal, :advanced_on_docket_due_to_motion, :type_cavc_remand) }
-
-      before do
-        legacy_appeals = [legacy_appeal_1, legacy_appeal_2, legacy_appeal_3]
-        legacy_appeals.each_with_index do |appeal, index|
-          create(:colocated_task, assigned_to: assignee, appeal: appeal)
-          create(:cached_appeal,
-                 appeal_id: appeal.id,
-                 appeal_type: LegacyAppeal.name,
-                 docket_number: index,
-                 case_type: appeal.type,
-                 is_aod: appeal.aod)
-        end
-        appeals = [appeal_1, appeal_2, appeal_3]
-        appeals.each_with_index do |appeal, index|
-          create(:ama_colocated_task, assigned_to: assignee, appeal: appeal)
-          create(:cached_appeal,
-                 appeal_id: appeal.id,
-                 appeal_type: Appeal.name,
-                 docket_number: index + legacy_appeals.count,
-                 case_type: appeal.type,
-                 is_aod: appeal.aod)
-        end
-      end
-
-      it "sorts by AOD status, case type, and docket number" do
-        # postgres ascending sort sorts booleans [true, false] as [false, true]. We want is_aod appeals to show up first
-        # so we sort descending on is_aod
-        expected_order = CachedAppeal.order(is_aod: :desc, case_type: :asc, docket_number: :asc)
-        expect(subject.map(&:appeal_id)).to eq(expected_order.pluck(:appeal_id))
-      end
+      it_behaves_like "sort by Appeal Type column"
     end
   end
 
