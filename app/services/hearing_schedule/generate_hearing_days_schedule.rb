@@ -16,7 +16,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   MAX_NUMBER_OF_DAYS_PER_DATE = 12
   BVA_VIDEO_ROOMS = [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].freeze
 
-  CO_DAYS_OF_WEEK = [1, 2, 3, 4].freeze
+  CO_DAYS_OF_WEEK = [3].freeze # only create 1 Central docket(Wednesday) per week
 
   def initialize(schedule_period)
     @amortized = 0
