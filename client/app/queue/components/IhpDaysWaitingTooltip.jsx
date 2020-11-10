@@ -25,17 +25,23 @@ const IhpDaysWaitingTooltip = (props) => {
     return children;
   }
 
-  const daysWaitingEndDate = receivedAt ? moment(receivedAt).startOf('day') : moment().startOf('day');
-  const requestedAtMoment = moment(requestedAt).startOf('day');
-  const daysWaiting = `${daysWaitingEndDate.diff(requestedAtMoment, 'days')} days`;
+  const today = moment();
+  const daysSinceIhpReceived = receivedAt ? `(${today.diff(moment(receivedAt), 'd')} days)` : '';
+  const daysWaiting = `${(receivedAt ? moment(receivedAt) : today).diff(moment(requestedAt), 'd')} days`;
 
   const tooltipText = (
     <div>
       <strong>This case has an IHP Request associated with it.</strong>
       <ul {...listStyling}>
-        <li><strong>IHP Requested:</strong> <DateString date={requestedAt} /></li>
-        <li><strong>IHP Received:</strong> <DateString date={receivedAt} /></li>
-        <li><strong>On hold for IHP:</strong> {daysWaiting}</li>
+        <li data-testid="ihp-requested">
+          <strong>IHP Requested:</strong> <DateString date={requestedAt} />
+        </li>
+        <li data-testid="ihp-received">
+          <strong>IHP Received:</strong> <DateString date={receivedAt} /> {daysSinceIhpReceived}
+        </li>
+        <li data-testid="ihp-days-waiting">
+          <strong>On hold for IHP:</strong> {daysWaiting}
+        </li>
       </ul>
     </div>
   );
