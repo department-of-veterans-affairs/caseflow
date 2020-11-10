@@ -23,6 +23,7 @@ import CaseTimeline from './CaseTimeline';
 import CaseTitle from './CaseTitle';
 import CaseTitleDetails from './CaseTitleDetails';
 import CavcDetail from './CavcDetail';
+import PostDispatch from './PostDispatch';
 import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
 import StickyNavContentArea from './StickyNavContentArea';
 import TaskSnapshot from './TaskSnapshot';
@@ -57,6 +58,8 @@ export const CaseDetailsView = (props) => {
   const success = useSelector((state) => state.ui.messages.success);
   const error = useSelector((state) => state.ui.messages.error);
   const veteranCaseListIsVisible = useSelector((state) => state.ui.veteranCaseListIsVisible);
+  const isLitSupport = useSelector((state) => state.ui.organizations.some(
+    (organization) => organization.name === 'CAVC Litigation Support'));
   const modalIsOpen = window.location.pathname.includes('modal');
 
   const resetState = () => {
@@ -91,6 +94,10 @@ export const CaseDetailsView = (props) => {
 
   const doPulacCerulloReminder = useMemo(() => needsPulacCerulloAlert(appeal, tasks), [appeal, tasks]);
 
+  const appealIsDispatched = tasks.some((task) => task.type === 'BvaDispatchTask' && task.closedAt !== null);
+
+  const showPostDispatch = appealIsDispatched && isLitSupport;
+
   return (
     <React.Fragment>
       {!modalIsOpen && error && (
@@ -106,6 +113,9 @@ export const CaseDetailsView = (props) => {
             {success.detail}
           </Alert>
         </div>
+      )}
+      {!modalIsOpen && showPostDispatch && props.featureToggles.cavc_remand && (
+        <PostDispatch appealId={appealId} />
       )}
       {(!modalIsOpen || props.userCanScheduleVirtualHearings) && <UserAlerts />}
       <AppSegment filledBackground>
@@ -158,6 +168,7 @@ CaseDetailsView.propTypes = {
   clearAlerts: PropTypes.func,
   tasks: PropTypes.array,
   error: PropTypes.object,
+  featureToggles: PropTypes.object,
   resetErrorMessages: PropTypes.func,
   setHearingDay: PropTypes.func,
   success: PropTypes.object,
@@ -171,7 +182,8 @@ CaseDetailsView.propTypes = {
 
 const mapStateToProps = (state) => ({
   scheduledHearingId: state.components.scheduledHearing.externalId,
-  pollHearing: state.components.scheduledHearing.polling
+  pollHearing: state.components.scheduledHearing.polling,
+  featureToggles: state.ui.featureToggles
 });
 
 const mapDispatchToProps = (dispatch) =>

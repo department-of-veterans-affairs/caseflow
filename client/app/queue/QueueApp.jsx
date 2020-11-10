@@ -36,6 +36,7 @@ import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './caseEvaluation/EvaluateDecisionView';
 import AddColocatedTaskView from './colocatedTasks/AddColocatedTaskView';
 import BlockedAdvanceToJudgeView from './BlockedAdvanceToJudgeView';
+import AddCavcRemandView from './AddCavcRemandView';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
@@ -239,6 +240,10 @@ class QueueApp extends React.PureComponent {
 
   routedBlockedCaseMovement = (props) => (
     <BlockedAdvanceToJudgeView {...props.match.params} />
+  );
+
+  routedAddCavcRemand = (props) => (
+    <AddCavcRemandView {...props.match.params} />
   );
 
   routedAdvancedOnDocketMotion = (props) => (
@@ -585,6 +590,12 @@ class QueueApp extends React.PureComponent {
                 render={this.routedBlockedCaseMovement}
               />
 
+              <PageRoute
+                exact
+                path="/queue/appeals/:appealId/add_cavc_remand"
+                title="Add Cavc Remand | Caseflow"
+                render={this.routedAddCavcRemand}
+              />
               <PageRoute
                 exact
                 path="/organizations/:organization/users"
