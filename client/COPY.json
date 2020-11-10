@@ -614,7 +614,7 @@
   "DOCKET_SWITCH_RECOMMENDATION_TITLE": "Switch Docket: Send %s's Request to a Judge",
   "DOCKET_SWITCH_RECOMMENDATION_INSTRUCTIONS": "Add and send your recommendation for this docket switch request to a Veteran's Law Judge.",
   "DOCKET_SWITCH_RULING_TASK_LABEL": "Rule on Docket Switch",
-  "DOCKET_SWITCH_REQUEST_TITLE": "%s docket switch has been requested by %s",
+  "DOCKET_SWITCH_REQUEST_TITLE": "%s's docket switch has been requested by %s",
   "DOCKET_SWITCH_REQUEST_MESSAGE": "This task will appear on your hold tab until it has been addressed by the VLJ.",
 
 
