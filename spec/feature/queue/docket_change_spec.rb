@@ -89,7 +89,20 @@ RSpec.feature "Docket Change", :all_dbs do
 
         click_button(text: "Submit")
 
-        # Add check to verify new task has been properly created
+        # Return back to user's queue
+        expect(page).to have_current_path("/queue")
+
+        judge_task = DocketSwitchRulingTask.find_by(assigned_to: judge)
+        expect(judge_task).to_not be_nil
+
+        # Switch to judge to verify instructions
+        User.authenticate!(user: judge)
+        visit "/queue/appeals/#{appeal.uuid}"
+        find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+        expect(page).to have_content "Summary: #{summary}"
+        expect(page).to have_content "Is this a timely request: #{timely.capitalize}"
+        expect(page).to have_content "Recommendation: Grant all issues"
+        expect(page).to have_content "Draft letter: #{hyperlink}"
       end
     end
   end

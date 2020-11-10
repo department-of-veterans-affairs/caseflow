@@ -27,11 +27,17 @@ class Appeal < DecisionReview
   has_one :post_decision_motion
   has_many :record_synced_by_job, as: :record
   has_one :work_mode, as: :appeal
+  has_one :latest_informal_hearing_presentation_task, lambda {
+    not_cancelled
+      .order(closed_at: :desc, assigned_at: :desc)
+      .where(type: [InformalHearingPresentationTask.name, IhpColocatedTask.name], appeal_type: Appeal.name)
+  }, class_name: "Task", foreign_key: :appeal_id
 
   enum stream_type: {
     "original": "original",
     "vacate": "vacate",
-    "de_novo": "de_novo"
+    "de_novo": "de_novo",
+    "court_remand": "court_remand"
   }
 
   after_create :conditionally_set_aod_based_on_age
@@ -92,11 +98,13 @@ class Appeal < DecisionReview
   def create_stream(stream_type)
     ActiveRecord::Base.transaction do
       Appeal.create!(slice(
+        :aod_based_on_age,
+        :closest_regional_office,
+        :docket_type,
+        :legacy_opt_in_approved,
         :receipt_date,
         :veteran_file_number,
-        :legacy_opt_in_approved,
-        :veteran_is_not_claimant,
-        :docket_type
+        :veteran_is_not_claimant
       ).merge(
         stream_type: stream_type,
         stream_docket_number: docket_number,
@@ -333,12 +341,17 @@ class Appeal < DecisionReview
     veteran_middle_name&.first
   end
 
-  def cavc?
-    false if cavc == "not implemented for AMA"
+  # matches Legacy behavior
+  def cavc
+    court_remand?
   end
 
-  def cavc
-    "not implemented for AMA"
+  alias cavc? cavc
+
+  def cavc_remand
+    return nil if !cavc?
+
+    CavcRemand.find_by(appeal_id: stream_docket_number.split("-").last)
   end
 
   def status

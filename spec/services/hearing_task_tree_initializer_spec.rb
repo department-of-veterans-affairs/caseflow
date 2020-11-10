@@ -13,7 +13,7 @@ describe HearingTaskTreeInitializer do
 
     subject { described_class.for_appeal_with_pending_travel_board_hearing(appeal) }
 
-    context "if task tree does not already exist" do
+    context "the task tree does not already exist" do
       it "it creates the expected tasks" do
         expect(ChangeHearingRequestTypeTask.count).to eq(0)
         expect(ScheduleHearingTask.count).to eq(0)
@@ -33,25 +33,24 @@ describe HearingTaskTreeInitializer do
             .all? { |task| task.assigned_to == Bva.singleton }
         ).to eq(true)
       end
-
-      it "changes the vacols location to CASEFLOW" do
-        expect { subject }
-          .to change { vacols_case.reload.bfcurloc }
-          .from(LegacyAppeal::LOCATION_CODES[:schedule_hearing])
-          .to(LegacyAppeal::LOCATION_CODES[:caseflow])
-      end
     end
 
-    context "if an open hearing task already exists" do
+    context "there's a closed hearing task on the appeal" do
       let(:root_task) { create(:root_task, appeal: appeal) }
-      let(:hearing_task) { create(:hearing_task, appeal: appeal, parent: root_task) }
-      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal, parent: hearing_task) }
+      let!(:hearing_task) do
+        create(:hearing_task, appeal: appeal, parent: root_task)
+      end
 
-      it "does not create a duplicate task tree" do
-        subject
-        expect(ChangeHearingRequestTypeTask.count).to eq(0)
-        expect(ScheduleHearingTask.count).to eq(1)
+      before do
+        hearing_task.update!(status: Constants.TASK_STATUSES.completed)
+      end
+
+      it "creates a new hearing task parent" do
         expect(HearingTask.count).to eq(1)
+        subject
+        expect(ChangeHearingRequestTypeTask.count).to eq(1)
+        expect(ScheduleHearingTask.count).to eq(1)
+        expect(HearingTask.count).to eq(2)
       end
     end
   end

@@ -12,15 +12,23 @@ class CavcTask < Task
   before_validation :set_assignee
 
   def self.label
-    "All CAVC-related tasks"
+    COPY::CAVC_TASK_LABEL
+  end
+
+  def available_actions(_user)
+    []
   end
 
   def default_instructions
     [COPY::CAVC_TASK_DEFAULT_INSTRUCTIONS]
   end
 
-  def available_actions(_user)
-    []
+  def hide_from_case_timeline
+    true
+  end
+
+  def hide_from_task_snapshot
+    true
   end
 
   def verify_org_task_unique

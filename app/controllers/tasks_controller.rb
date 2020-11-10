@@ -17,6 +17,9 @@ class TasksController < ApplicationController
     BlockedSpecialCaseMovementTask: BlockedSpecialCaseMovementTask,
     ChangeHearingDispositionTask: ChangeHearingDispositionTask,
     ColocatedTask: ColocatedTask,
+    DocketSwitchRulingTask: DocketSwitchRulingTask,
+    DocketSwitchDeniedTask: DocketSwitchDeniedTask,
+    DocketSwitchGrantedTask: DocketSwitchGrantedTask,
     EvidenceSubmissionWindowTask: EvidenceSubmissionWindowTask,
     FoiaTask: FoiaTask,
     HearingAdminActionTask: HearingAdminActionTask,
@@ -30,6 +33,7 @@ class TasksController < ApplicationController
     PulacCerulloTask: PulacCerulloTask,
     QualityReviewTask: QualityReviewTask,
     ScheduleHearingTask: ScheduleHearingTask,
+    SendCavcRemandProcessedLetterTask: SendCavcRemandProcessedLetterTask,
     SpecialCaseMovementTask: SpecialCaseMovementTask,
     Task: Task,
     TranslationTask: TranslationTask
@@ -109,12 +113,13 @@ class TasksController < ApplicationController
   rescue ActiveRecord::RecordInvalid => error
     invalid_record_error(error.record)
   rescue AssignHearingDispositionTask::HearingAssociationMissing => error
-    Raven.capture_exception(error)
+    Raven.capture_exception(error, extra: { application: "hearings" })
+
     render json: {
       "errors": ["title": "Missing Associated Hearing", "detail": error]
     }, status: :bad_request
   rescue Caseflow::Error::VirtualHearingConversionFailed => error
-    Raven.capture_exception(error)
+    Raven.capture_exception(error, extra: { application: "hearings" })
 
     render json: {
       "errors": ["title": COPY::FAILED_HEARING_UPDATE, "message": error.message, "code": error.code]

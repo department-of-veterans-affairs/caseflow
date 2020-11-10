@@ -158,6 +158,20 @@ describe User, :all_dbs do
     end
   end
 
+  context "#job_title" do
+    let!(:user) { create(:user, css_id: "BVAAABSHIRE", station_id: "101") }
+    subject { user.job_title }
+
+    context "when user.job_title is Senior Veterans Service Representative" do
+      it "is expected the job_title is Senior Veterans Service Representative" do
+        expect(subject).to eq("Senior Veterans Service Representative")
+      end
+      it "is expected that user.can_intake_decision_reviews? is false" do
+        expect(user.can_intake_decision_reviews?).to be_falsey
+      end
+    end
+  end
+
   context "#timezone" do
     context "when ro is set" do
       subject { user.timezone }

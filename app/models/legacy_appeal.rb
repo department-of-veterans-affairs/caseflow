@@ -31,6 +31,11 @@ class LegacyAppeal < CaseflowRecord
   has_many :claimants, -> { Claimant.none }
   has_one :cached_vacols_case, class_name: "CachedAppeal", foreign_key: :vacols_id, primary_key: :vacols_id
   has_one :work_mode, as: :appeal
+  has_one :latest_informal_hearing_presentation_task, lambda {
+    not_cancelled
+      .order(closed_at: :desc, assigned_at: :desc)
+      .where(type: [InformalHearingPresentationTask.name, IhpColocatedTask.name], appeal_type: LegacyAppeal.name)
+  }, class_name: "Task", foreign_key: :appeal_id
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   # Add Paper Trail configuration
@@ -344,6 +349,8 @@ class LegacyAppeal < CaseflowRecord
            :representative_to_hash,
            :representative_participant_id,
            :vacols_representatives,
+           :representative_is_vso?,
+           :representative_is_colocated_vso?,
            to: :legacy_appeal_representative
 
   def representative_email_address
@@ -419,6 +426,7 @@ class LegacyAppeal < CaseflowRecord
   # values. Also, `hearing_request_type` alone can't disambiguate a video hearing
   # from a travel board hearing
   # This method cleans all of these issues up to return a sanitized version of the original type requested by Appellant.
+  # Replicated in UpdateCachedAppealAttributesJob#original_hearing_request_type_for_vacols_case
   def original_hearing_request_type(readable: false)
     original_hearing_request_type = case hearing_request_type
                                     when :central_office
@@ -435,6 +443,7 @@ class LegacyAppeal < CaseflowRecord
   #   This method captures if a travel board hearing request type was overridden in Caseflow.
   # In general, this method returns the current hearing request type which could be dervied
   # from `change_request_type` or VACOLS `hearing_request_type`
+  # Replicated in UpdateCachedAppealAttributesJob#case_fields_for_vacols_ids
   def current_hearing_request_type(readable: false)
     current_hearing_request_type = if changed_request_type.present?
                                      sanitized_changed_request_type(changed_request_type)
