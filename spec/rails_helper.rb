@@ -22,7 +22,7 @@ end
 
 KnapsackPro::Hooks::Queue.after_queue do |_queue_id|
   if File.exist?(FINAL_RSPEC_XML_REPORT) && ENV["CIRCLE_TEST_REPORTS"]
-    FileUtils.cp(FINAL_RSPEC_XML_REPORT, "#{ENV["CIRCLE_TEST_REPORTS"]}/rspec.xml")
+    FileUtils.cp(FINAL_RSPEC_XML_REPORT, "#{ENV['CIRCLE_TEST_REPORTS']}/rspec.xml")
   end
 end
 
