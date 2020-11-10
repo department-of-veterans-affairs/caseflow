@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.feature "Docket Change", :all_dbs do
+RSpec.feature "Docket Switch", :all_dbs do
   include QueueHelpers
 
   let(:cotb_org) { ClerkOfTheBoard.singleton }
@@ -32,9 +32,9 @@ RSpec.feature "Docket Change", :all_dbs do
   end
 
   describe "create DocketSwitchMailTask" do
-    context "with docket_change feature toggle" do
-      before { FeatureToggle.enable!(:docket_change) }
-      after { FeatureToggle.disable!(:docket_change) }
+    context "with docket_switch feature toggle" do
+      before { FeatureToggle.enable!(:docket_switch) }
+      after { FeatureToggle.disable!(:docket_switch) }
 
       it "allows Clerk of the Board users to create DocketSwitchMailTask" do
         User.authenticate!(user: cotb_user)
@@ -65,11 +65,11 @@ RSpec.feature "Docket Change", :all_dbs do
     let(:disposition) { "granted" }
     let(:timely) { "yes" }
 
-    context "with docket_change feature toggle" do
-      before { FeatureToggle.enable!(:docket_change) }
-      after { FeatureToggle.disable!(:docket_change) }
+    context "with docket_switch feature toggle" do
+      before { FeatureToggle.enable!(:docket_switch) }
+      after { FeatureToggle.disable!(:docket_switch) }
 
-      it "allows Clerk of the Board attorney to send docket switch recommendation to judge" do
+      fit "allows Clerk of the Board attorney to send docket switch recommendation to judge" do
         User.authenticate!(user: cotb_user)
         visit "/queue/appeals/#{appeal.uuid}"
         find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
@@ -98,6 +98,7 @@ RSpec.feature "Docket Change", :all_dbs do
         # Switch to judge to verify instructions
         User.authenticate!(user: judge)
         visit "/queue/appeals/#{appeal.uuid}"
+        binding.pry
         find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
         expect(page).to have_content "Summary: #{summary}"
         expect(page).to have_content "Is this a timely request: #{timely.capitalize}"

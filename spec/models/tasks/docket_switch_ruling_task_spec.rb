@@ -10,15 +10,15 @@ describe DocketSwitchRulingTask, :postgres do
 
     subject { task.additional_available_actions(judge) }
 
-    context "without docket_change feature toggle" do
+    context "without docket_switch feature toggle" do
       it "returns the available_actions as defined by Task" do
         expect(subject).to eq([])
       end
     end
 
-    context "with docket_change feature toggle" do
-      before { FeatureToggle.enable!(:docket_change) }
-      after { FeatureToggle.disable!(:docket_change) }
+    context "with docket_switch feature toggle" do
+      before { FeatureToggle.enable!(:docket_switch) }
+      after { FeatureToggle.disable!(:docket_switch) }
 
       it "returns the available_actions as defined by Task" do
         expect(subject).to eq([Constants.TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.to_h])

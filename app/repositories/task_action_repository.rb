@@ -180,6 +180,15 @@ class TaskActionRepository
       }
     end
 
+    def docket_switch_ruling_data(task, _user = nil)
+      {
+        selected: task.assigned_by&.id,
+        options: ClerkOfTheBoard.singleton.users.select(&:attorney?).map do |user|
+          { value: user.id, label: user.full_name }
+        end
+      }
+    end
+
     def docket_switch_denied_data(_task, _user = nil)
       {
         type: DocketSwitchDeniedTask.name
