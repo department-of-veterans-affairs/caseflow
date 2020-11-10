@@ -94,27 +94,24 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   def generate_co_hearing_days_schedule
     co_schedule = []
+    co_schedule_args = {
+      request_type: HearingDay::REQUEST_TYPES[:central],
+      room: "2",
+      bva_poc: "CAROL COLEMAN-DEW"
+    }
+
     (@schedule_period.start_date..@schedule_period.end_date).each do |scheduled_for|
       # if CO_DAYS_OF_WEEK falls on a holiday, pick a random day of the week that isn't a holiday
       if CO_DAYS_OF_WEEK.include?(scheduled_for.cwday) && holiday?(scheduled_for)
-        fallback_day_for_co = get_fallback_day_for_co(scheduled_for)
-        if fallback_day_for_co
-          co_schedule.push(
-            scheduled_for: fallback_day_for_co,
-            request_type: HearingDay::REQUEST_TYPES[:central],
-            room: "2",
-            bva_poc: "CAROL COLEMAN-DEW"
-          )
+        fallback_date_for_co = get_fallback_date_for_co(scheduled_for)
+
+        if fallback_date_for_co
+          co_schedule.push(**co_schedule_args, scheduled_for: fallback_date_for_co)
         end
       else
         next unless valid_day_to_schedule_co(scheduled_for)
 
-        co_schedule.push(
-          scheduled_for: scheduled_for,
-          request_type: HearingDay::REQUEST_TYPES[:central],
-          room: "2",
-          bva_poc: "CAROL COLEMAN-DEW"
-        )
+        co_schedule.push(**co_schedule_args, scheduled_for: scheduled_for)
       end
     end
     co_schedule
@@ -345,17 +342,15 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @co_non_availability_days.find { |non_availability_day| non_availability_day.date == day }.present?
   end
 
-  # pick the first day from fallback days that are valid
-  def get_fallback_day_for_co(scheduled_for)
-    day_of_week = CO_FALLBACK_DAYS_OF_WEEK.detect do |day|
-      date = scheduled_for.change(day: day + 1)
+  # pick the first day from fallback days that is valid
+  def get_fallback_date_for_co(scheduled_for)
+    cwday = CO_FALLBACK_DAYS_OF_WEEK.detect do |cwday|
+      date = scheduled_for + (cwday - scheduled_for.cwday)
 
-      !weekend?(date) &&
-      !holiday?(date) &&
-      !co_not_available?(date)
+      !weekend?(date) && !holiday?(date) && !co_not_available?(date)
     end
 
-    day_of_week ? scheduled_for.change(day: day_of_week + 1) : nil
+    cwday ? scheduled_for + (cwday - scheduled_for.cwday) : nil
   end
 
   def valid_day_to_schedule_co(scheduled_for)
