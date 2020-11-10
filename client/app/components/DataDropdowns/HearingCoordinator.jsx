@@ -8,6 +8,7 @@ import _ from 'lodash';
 import LoadingLabel from './LoadingLabel';
 
 import SearchableDropdown from '../SearchableDropdown';
+import COPY from '../../../COPY';
 
 class HearingCoordinatorDropdown extends React.Component {
 
@@ -72,6 +73,12 @@ HearingCoordinatorDropdown.propTypes = {
   label: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
+  onFetchDropdownData: PropTypes.func,
+  onReceiveDropdownData: PropTypes.func.isRequired,
+  hearingCoordinators: PropTypes.shape({
+    options: PropTypes.arrayOf(PropTypes.object),
+    isFetching: PropTypes.bool
+  }),
   readOnly: PropTypes.bool,
   placeholder: PropTypes.string,
   errorMessage: PropTypes.string
@@ -79,7 +86,7 @@ HearingCoordinatorDropdown.propTypes = {
 
 HearingCoordinatorDropdown.defaultProps = {
   name: 'coordinator',
-  label: 'Hearing Coordinator'
+  label: COPY.DROPDOWN_LABEL_HEARING_COORDINATOR
 };
 
 const mapStateToProps = (state) => ({

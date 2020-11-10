@@ -90,18 +90,19 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     end
 
     it "sends a message to Slack that includes the error" do
-      slack_msg = ""
-      allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+      allow_any_instance_of(SlackService).to receive(:send_notification) do |_, msg, title|
+        @slack_msg = msg
+        @slack_title = title
+      end
 
       subject
 
-      expected_msg = "UpdateCachedAppealsAttributesJob failed after running for .*. See Sentry event .*"
-
-      expect(slack_msg).to match(/#{expected_msg}/)
+      expect(@slack_title).to match(/\[ERROR\] UpdateCachedAppealsAttributesJob failed after running for .*/)
+      expect(@slack_msg).to match(/See Sentry event .*/)
     end
   end
 
-  context "caches hearing_request_type and former_travel correctly" do
+  context "caches hearings related field correctly" do
     let(:appeal) { create(:appeal, closest_regional_office: "C") } # central
     let(:legacy_appeal3) do # former travel, currently virtual
       create(
@@ -117,8 +118,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
 
     before do
       open_appeals.each do |appeal|
-        create_list(:bva_dispatch_task, 3, appeal: appeal)
-        create_list(:ama_judge_assign_task, 8, appeal: appeal)
+        create_list(:schedule_hearing_task, 1, appeal: appeal)
       end
     end
 
@@ -153,16 +153,17 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     context "when BGS fails" do
       shared_examples "rescues error" do
         it "completes and sends warning to Slack" do
-          slack_msg = ""
-          allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+          allow_any_instance_of(SlackService).to receive(:send_notification) do |_, msg, title|
+            @slack_msg = msg
+            @slack_title = title
+          end
 
           job = described_class.new
           job.perform_now
           expect(job.warning_msgs.count).to eq 3
 
-          expect(slack_msg.lines.count).to eq 4
-          expected_msg = "\\[WARN\\] UpdateCachedAppealsAttributesJob .*"
-          expect(slack_msg).to match(/#{expected_msg}/)
+          expect(@slack_msg.lines.count).to eq 3
+          expect(@slack_title).to match(/\[WARN\] UpdateCachedAppealsAttributesJob: .*/)
         end
       end
 
@@ -170,7 +171,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
         before do
           bgs = Fakes::BGSService.new
           allow(Fakes::BGSService).to receive(:new).and_return(bgs)
-          allow(bgs).to receive(:fetch_person_by_ssn)
+          allow(bgs).to receive(:fetch_poa_by_file_number)
             .and_raise(Errno::ECONNRESET, "mocked error for testing")
         end
         include_examples "rescues error"
