@@ -113,6 +113,7 @@ group :test, :development, :demo do
   gem "rubocop-performance"
   gem "rubocop-rails"
   gem "scss_lint", require: false
+  gem "selenium-webdriver", "4.0.0.alpha7"
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
   gem "single_cov"
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
