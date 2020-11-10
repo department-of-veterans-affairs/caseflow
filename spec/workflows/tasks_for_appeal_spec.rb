@@ -101,6 +101,10 @@ describe TasksForAppeal do
       context "the appeal has a hearing" do
         let!(:hearing) { create(:legacy_hearing, appeal: appeal, disposition: disposition) }
 
+        before do
+          hearing.vacols_record.update!(folder_nr: vacols_case.bfkey)
+        end
+
         context "hearing was held" do
           let(:disposition) { "H" }
 
