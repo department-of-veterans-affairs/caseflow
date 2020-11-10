@@ -229,19 +229,13 @@ export const daysWaitingColumn = (requireDasRecord) => {
         daysSincePlacedOnHold = moment().startOf('day').
           diff(task.placedOnHoldAt, 'days');
 
-      const daysWaiting = <React.Fragment>
+      return <IhpDaysWaitingTooltip {...task.latestInformalHearingPresentationTask}>
         <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>
           {daysSinceAssigned} {pluralize('day', daysSinceAssigned)}
         </span>
         { taskHasCompletedHold(task) &&
           <ContinuousProgressBar level={daysSincePlacedOnHold} limit={task.onHoldDuration} warning /> }
-      </React.Fragment>;
-
-      return (
-        task.latestInformalHearingPresentationTask ?
-          <IhpDaysWaitingTooltip {...task.latestInformalHearingPresentationTask}>{daysWaiting}</IhpDaysWaitingTooltip> :
-          <React.Fragment>{daysWaiting}</React.Fragment>
-      );
+      </IhpDaysWaitingTooltip>;
     },
     backendCanSort: true,
     getSortValue: (task) => moment().startOf('day').
