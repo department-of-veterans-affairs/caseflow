@@ -2,7 +2,8 @@
 
 RSpec.describe DocketSwitch, type: :model do
   let(:cotb_team) { ClerkOfTheBoard.singleton }
-  let(:judge) { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
+  let(:instructions) { ["**Summary:** Summary\n\n**Is this a timely request:** Yes\n\n**Recommendation:** Grant all issues\n\n**Draft letter:** http://www.va.gov"] }
+  let(:judge) { create(:user, full_name: "Judge User", css_id: "JUDGE_1", instructions: instructions) }
   let(:attorney) { create(:user) }
   let!(:judge_team) do
     JudgeTeam.create_for_judge(judge).tap { |jt| jt.add_user(attorney) }

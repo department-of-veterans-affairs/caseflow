@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams, useRouteMatch } from 'react-router';
 import { taskById, appealWithDetailSelector } from '../../selectors';
@@ -53,11 +53,11 @@ export const DocketSwitchRulingContainer = () => {
     };
 
     try {
-      if (dispositionType == "Granted") {
+      if (dispositionType === 'Granted') {
         await dispatch(createDocketSwitchGrantedTask(data));
-      } else if (dispositionType == "Denied") {
+      } else if (dispositionType === 'Denied') {
         await dispatch(createDocketSwitchDeniedTask(data));
-      };
+      }
 
       // Add logic for success banner
       push('/queue');

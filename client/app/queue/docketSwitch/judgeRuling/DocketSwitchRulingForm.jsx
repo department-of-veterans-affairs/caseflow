@@ -149,4 +149,5 @@ DocketSwitchRulingForm.propTypes = {
   clerkOfTheBoardAttorneys: PropTypes.array.isRequired,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func.isRequired,
+  instructions: PropTypes.array.isRequired
 };
