@@ -4,6 +4,7 @@ require "capybara/rspec"
 require "capybara-screenshot/rspec"
 require "selenium-webdriver"
 require "webdrivers"
+require "webdrivers/edgedriver"
 
 Webdrivers.logger.level = :DEBUG if ENV["DEBUG"]
 
@@ -20,48 +21,48 @@ else
 end
 
 Capybara.register_driver(:parallel_sniffybara) do |app|
-  chrome_options = ::Selenium::WebDriver::Chrome::Options.new
+  browser_options = ::Selenium::WebDriver::Edge::Options.new
 
-  chrome_options.add_preference(:download,
-                                prompt_for_download: false,
-                                default_directory: download_directory)
+  browser_options.add_preference(:download,
+                                 prompt_for_download: false,
+                                 default_directory: download_directory)
 
-  chrome_options.add_preference(:browser,
-                                disk_cache_dir: cache_directory)
+  browser_options.add_preference(:browser,
+                                 disk_cache_dir: cache_directory)
 
   options = {
-    service: ::Selenium::WebDriver::Service.chrome(args: { port: 51_674 }),
-    browser: :chrome,
-    options: chrome_options
+    service: ::Selenium::WebDriver::Service.edge(args: { port: 51_674 }),
+    browser: :edge,
+    options: browser_options
   }
   Sniffybara::Driver.register_specialization(
-    :chrome, Capybara::Selenium::Driver::ChromeDriver
+    :edge, Capybara::Selenium::Driver::EdgeDriver
   )
   Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
 end
 
 Capybara.register_driver(:sniffybara_headless) do |app|
-  chrome_options = ::Selenium::WebDriver::Chrome::Options.new
+  browser_options = ::Selenium::WebDriver::Edge::Options.new
 
-  chrome_options.add_preference(:download,
-                                prompt_for_download: false,
-                                default_directory: download_directory)
+  browser_options.add_preference(:download,
+                                 prompt_for_download: false,
+                                 default_directory: download_directory)
 
-  chrome_options.add_preference(:browser,
-                                disk_cache_dir: cache_directory)
+  browser_options.add_preference(:browser,
+                                 disk_cache_dir: cache_directory)
 
-  chrome_options.args << "--headless"
-  chrome_options.args << "--disable-gpu"
-  chrome_options.args << "--window-size=1200,1200"
+  browser_options.args << "--headless"
+  browser_options.args << "--disable-gpu"
+  browser_options.args << "--window-size=1200,1200"
 
   options = {
-    service: ::Selenium::WebDriver::Service.chrome(args: { port: 51_674 }),
-    browser: :chrome,
-    options: chrome_options
+    service: ::Selenium::WebDriver::Service.edge(args: { port: 51_674 }),
+    browser: :edge,
+    options: browser_options
   }
 
   Sniffybara::Driver.register_specialization(
-    :chrome, Capybara::Selenium::Driver::ChromeDriver
+    :edge, Capybara::Selenium::Driver::EdgeDriver
   )
   Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
 end

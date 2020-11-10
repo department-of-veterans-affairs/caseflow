@@ -82,7 +82,7 @@ RSpec.feature "Certification Stats Dashboard", :postgres, skip: "deprecated" do
     expect(page).to have_content("Form 9\n0 %")
   end
 
-  # The stats tests don't play well with Selenium Chrome
+  # The stats tests don't play well with Selenium
   # The mouseover effect with the stat bars is erratic
   # TODO: Augment stats to disable mouseover for the tests
   scenario "Check missing documents" do
@@ -111,7 +111,7 @@ RSpec.feature "Certification Stats Dashboard", :postgres, skip: "deprecated" do
 
     visit "/certification/stats/daily"
 
-    # Turn mousever events off on the Stats dashboard to not confuse Chrome
+    # Turn mousever events off on the Stats dashboard to not confuse browser
     page.execute_script("window.Dashboard.mouseoverEvents = false;")
 
     expect(page).to have_content("Activity for January 1 (so far)")
@@ -133,7 +133,7 @@ RSpec.feature "Certification Stats Dashboard", :postgres, skip: "deprecated" do
            skip: "Seeing weird Time/Day related test failure" do
     visit "/certification/stats"
 
-    # Turn mouseover events off on the Stats dashboard to not confuse Chrome
+    # Turn mouseover events off on the Stats dashboard to not confuse browser
     page.execute_script("window.Dashboard.mouseoverEvents = false;")
 
     click_on "Daily"
