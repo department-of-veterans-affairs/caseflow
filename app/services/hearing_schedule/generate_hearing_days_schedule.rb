@@ -17,7 +17,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   BVA_VIDEO_ROOMS = [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].freeze
 
   CO_DAYS_OF_WEEK = [3].freeze # only create 1 Central docket(Wednesday) per week
-  CO_FALLBACK_DAYS_OF_WEEK = [1, 2, 4].freeze # if wednesday is a holiday, pick a day randomly
+  CO_FALLBACK_DAYS_OF_WEEK = [1, 2, 4].freeze # if wednesday is a holiday, pick a another non-holiday starting monday
 
   def initialize(schedule_period)
     @amortized = 0
@@ -101,7 +101,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     }
 
     (@schedule_period.start_date..@schedule_period.end_date).each do |scheduled_for|
-      # if CO_DAYS_OF_WEEK falls on a holiday, pick a random day of the week that isn't a holiday
+      # if CO_DAYS_OF_WEEK falls on a holiday, pick a day of the week that isn't a holiday
       if CO_DAYS_OF_WEEK.include?(scheduled_for.cwday) && holiday?(scheduled_for)
         fallback_date_for_co = get_fallback_date_for_co(scheduled_for)
 
