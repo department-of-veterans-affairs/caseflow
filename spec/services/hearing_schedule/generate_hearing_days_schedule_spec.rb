@@ -270,7 +270,9 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       subject { generate_hearing_days_schedule.generate_co_hearing_days_schedule }
 
       it "only allocates 1 docket per week" do
-        expect(subject.count).to eq(25) # 26 wednesdays between 2018-04-01 and 2018-09-30; 1 holiday on Wed, July 4
+        # 26 wednesdays between 2018-04-01 and 2018-09-30; since Wed July 4 is a holiday,
+        # it picks a random day for the week
+        expect(subject.count).to eq(26)
       end
     end
   end
