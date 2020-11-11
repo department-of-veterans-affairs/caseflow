@@ -13,6 +13,8 @@ import OnHoldLabel from '../components/OnHoldLabel';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import DecisionDateTimeLine from '../components/DecisionDateTimeLine';
 import ReactMarkdown from 'react-markdown';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import { EditNODModal } from 'app/queue/components/EditNODModal';
 
 export const grayLineStyling = css({
   width: '5px',
@@ -87,7 +89,8 @@ class TaskRows extends React.PureComponent {
     }
 
     this.state = {
-      taskInstructionsIsVisible: { }
+      taskInstructionsIsVisible: { },
+      showEditNODModal: false
     };
   }
 
@@ -319,6 +322,10 @@ class TaskRows extends React.PureComponent {
     </tr>;
   }
 
+  toggleEditNODModal = () => this.setState((state) => ({ showEditNODModal: !state.showEditNODModal }))
+
+  handleNODDateChange = () => { alert('(TEMP ALERT) EDIT NOD Updated. Will replace with alert') };
+
   render = () => {
     const {
       appeal,
@@ -367,6 +374,19 @@ class TaskRows extends React.PureComponent {
           <GreenCheckmark /></td>
         <td className="taskContainerStyling taskInformationTimelineContainerStyling">
           { COPY.CASE_TIMELINE_NOD_RECEIVED } <br />
+          <p>
+            <Link
+              name="edit-nod"
+              onClick={this.toggleEditNODModal}>
+              {COPY.CASE_DETAILS_EDIT_NOD}
+            </Link>
+          </p>
+          {this.state.showEditNODModal && (
+            <EditNODModal
+              onCancel={this.toggleEditNODModal}
+              onSubmit={this.handleNODDateChange}
+            />
+          )}
         </td>
       </tr> }
     </React.Fragment>;
