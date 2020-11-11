@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import PropTypes from 'prop-types';
 import Modal from 'app/components/Modal';
 import DateSelector from 'app/components/DateSelector';
 import COPY from 'app/../COPY';
 
-export const EditNODModal = ({onCancel, onSubmit}) => {
+export const EditNODModal = ({ onCancel, onSubmit }) => {
   const buttons = [
     {
       classNames: ['cf-modal-link', 'cf-btn-link'],
@@ -12,7 +13,7 @@ export const EditNODModal = ({onCancel, onSubmit}) => {
       onClick: onCancel
     },
     {
-      classNames: [],
+      classNames: ['usa-button', 'usa-button-primary'],
       name: 'Submit',
       onClick: onSubmit
     }
@@ -34,4 +35,9 @@ export const EditNODModal = ({onCancel, onSubmit}) => {
       />
     </Modal>
   );
+};
+
+EditNODModal.propTypes = {
+  onCancel: PropTypes.func,
+  onSubmit: PropTypes.func
 };

@@ -324,7 +324,10 @@ class TaskRows extends React.PureComponent {
 
   toggleEditNODModal = () => this.setState((state) => ({ showEditNODModal: !state.showEditNODModal }))
 
-  handleNODDateChange = () => { alert('(TEMP ALERT) EDIT NOD Updated. Will replace with alert') };
+  handleNODDateChange = () => {
+    this.props.onEditNODChange(true);
+    this.toggleEditNODModal();
+  }
 
   render = () => {
     const {
@@ -397,7 +400,8 @@ TaskRows.propTypes = {
   appeal: PropTypes.object,
   hideDropdown: PropTypes.bool,
   taskList: PropTypes.array,
-  timeline: PropTypes.bool
+  timeline: PropTypes.bool,
+  onEditNODChange: PropTypes.func
 };
 
 export default TaskRows;

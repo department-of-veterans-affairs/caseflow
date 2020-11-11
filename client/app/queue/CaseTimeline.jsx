@@ -4,19 +4,41 @@ import { connect } from 'react-redux';
 import { caseTimelineTasksForAppeal } from './selectors';
 import COPY from '../../COPY';
 import TaskRows from './components/TaskRows';
+import Alert from 'app/components/Alert';
 
 export class CaseTimeline extends React.PureComponent {
+  constructor() {
+    super();
+    this.state = { editNODChangeSuccessful: false };
+  }
+
+  handleEditNODChange = (editNODChangeSuccessful) => {
+    this.setState({ editNODChangeSuccessful });
+    setInterval(() => {
+      this.setState((state) => ({
+        editNODChangeSuccessful: !state.editNODChangeSuccessful
+      }));
+    }, 5000);
+  }
+
   render = () => {
     const {
       appeal,
-      tasks
+      tasks,
     } = this.props;
 
     return <React.Fragment>
       {COPY.CASE_TIMELINE_HEADER}
+      {this.state.editNODChangeSuccessful &&
+        <Alert
+          type="success"
+          title={COPY.EDIT_NOD_SUCCESS_ALERT_TITLE}
+          message={COPY.EDIT_NOD_SUCCESS_ALERT_MESSAGE}
+        />
+      }
       <table id="case-timeline-table" summary="layout table">
         <tbody>
-          <TaskRows appeal={appeal} taskList={tasks} timeline />
+          <TaskRows appeal={appeal} taskList={tasks} onEditNODChange={this.handleEditNODChange} timeline />
         </tbody>
       </table>
     </React.Fragment>;

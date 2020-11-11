@@ -128,6 +128,8 @@
   "EDIT_NOD_MODAL_TITLE": "Edit NOD Date",
   "EDIT_NOD_MODAL_DESCRIPTION": "**Editing NOD date affects the case timeline and may change when the case is assigned for hearing.**",
   "EDIT_NOD_DATE_DROPDOWN_LABEL": "NOD Date",
+  "EDIT_NOD_SUCCESS_ALERT_TITLE": "NOD date has been updated",
+  "EDIT_NOD_SUCCESS_ALERT_MESSAGE": "You have successfully updated the NOD date",
 
   "DROPDOWN_LABEL_JUDGE": "VLJ",
   "DROPDOWN_LABEL_HEARING_COORDINATOR": "Hearing Coordinator",

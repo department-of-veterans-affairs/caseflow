@@ -3,7 +3,7 @@ import React from 'react';
 import { EditNODModal } from './EditNODModal';
 
 export default {
-  title: 'Queue/EditNODModal',
+  title: 'Queue/CaseTimeline/EditNODModal',
   component: EditNODModal,
   decorators: [],
   parameters: {
@@ -28,6 +28,11 @@ export const Basic = Template.bind({});
 Basic.parameters = {
   docs: {
     storyDescription:
-      'This is used to edit NOD for a review',
+      'This is used to edit NOD date for an appeal',
   },
+};
+
+EditNODModal.propTypes = {
+  onCancel: PropTypes.func,
+  onSubmit: PropTypes.func,
 };
