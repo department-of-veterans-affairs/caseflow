@@ -373,7 +373,10 @@
   "HEARING_TASK_ASSOCIATION_MISSING_MESASAGE": "Hearing task (%s) is missing an associated hearing. This means that either the hearing was deleted in VACOLS or the hearing association has been deleted.",
   "HEARING_TASK_DEFAULT_INSTRUCTIONS": "This task will be auto-completed when all hearing-related tasks have been completed.",
 
+  "CAVC_TASK_LABEL": "All CAVC-related tasks",
   "CAVC_TASK_DEFAULT_INSTRUCTIONS": "This task will be auto-completed when all CAVC-related tasks have been closed.",
+
+  "SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL": "Send CAVC-Remand-Processed Letter Task",
 
   "ASSIGN_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS": "Postpone or cancel a hearing prior to the hearing date. This task will be auto-completed after the hearing's scheduled date.",
 
@@ -616,6 +619,9 @@
   "DOCKET_SWITCH_RECOMMENDATION_TITLE": "Switch Docket: Send %s's Request to a Judge",
   "DOCKET_SWITCH_RECOMMENDATION_INSTRUCTIONS": "Add and send your recommendation for this docket switch request to a Veteran's Law Judge.",
   "DOCKET_SWITCH_RULING_TASK_LABEL": "Rule on Docket Switch",
+  "DOCKET_SWITCH_REQUEST_TITLE": "%s's docket switch has been requested by %s",
+  "DOCKET_SWITCH_REQUEST_MESSAGE": "This task will appear on your hold tab until it has been addressed by the VLJ.",
+
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
   "CORRECT_REQUEST_ISSUES_WITHDRAW": "Withdraw",

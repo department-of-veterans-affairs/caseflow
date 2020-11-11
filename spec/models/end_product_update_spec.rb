@@ -25,11 +25,14 @@ describe EndProductUpdate do
       let(:old_code) { "030HLRNR" }
       let(:new_code) { "030HLRR" }
 
-      it "updates issue type on request issues" do
+      it "updates type and attributes on request issues" do
         subject
 
         expect(epu.request_issues).not_to be_empty
-        expect(epu.request_issues).to all have_attributes(type: "RatingRequestIssue")
+        expect(epu.request_issues).to all have_attributes(
+          type: "RatingRequestIssue",
+          description: "nonrating issue description"
+        )
       end
     end
 
