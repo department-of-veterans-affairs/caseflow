@@ -102,7 +102,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     end
   end
 
-  context "caches hearings related field correctly" do
+  context "caches hearing_request_type and former_travel correctly" do
     let(:appeal) { create(:appeal, closest_regional_office: "C") } # central
     let(:legacy_appeal3) do # former travel, currently virtual
       create(
@@ -118,7 +118,8 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
 
     before do
       open_appeals.each do |appeal|
-        create_list(:schedule_hearing_task, 1, appeal: appeal)
+        create_list(:bva_dispatch_task, 3, appeal: appeal)
+        create_list(:ama_judge_assign_task, 8, appeal: appeal)
       end
     end
 
@@ -171,7 +172,7 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
         before do
           bgs = Fakes::BGSService.new
           allow(Fakes::BGSService).to receive(:new).and_return(bgs)
-          allow(bgs).to receive(:fetch_poa_by_file_number)
+          allow(bgs).to receive(:fetch_person_by_ssn)
             .and_raise(Errno::ECONNRESET, "mocked error for testing")
         end
         include_examples "rescues error"
