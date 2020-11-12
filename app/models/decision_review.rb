@@ -350,7 +350,7 @@ class DecisionReview < CaseflowRecord
     issues = request_issues.includes(
       :decision_review, :contested_decision_issue
     )
-    active_issues = issues.active.sort_by{|issue| issue.end_product_establishment&.code }
+    active_issues = issues.active.sort_by { |issue| issue.end_product_establishment&.code }
 
     # Sorts issues in the order that they appear on Add issues page, so that the numbering is sequential
     [active_issues + issues.ineligible + issues.withdrawn].flatten.compact.map(&:serialize)
