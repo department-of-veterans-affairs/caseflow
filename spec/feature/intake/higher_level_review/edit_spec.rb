@@ -327,20 +327,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
       )
     end
 
-    let!(:ri_legacy_issue_eligible) do
-      create(
-        :request_issue,
-        contested_rating_issue_reference_id: "before_ama_ref_id",
-        contested_rating_issue_profile_date: rating_before_ama.profile_date,
-        decision_date: rating_before_ama.promulgation_date,
-        decision_review: higher_level_review,
-        contested_issue_description: "Non-RAMP Issue before AMA Activation legacy",
-        vacols_id: "vacols1",
-        benefit_type: "compensation",
-        vacols_sequence_id: "2"
-      )
-    end
-
     let(:ep_claim_id) do
       EndProductEstablishment.find_by(
         source: higher_level_review,
@@ -348,24 +334,53 @@ feature "Higher Level Review Edit issues", :all_dbs do
       ).reference_id
     end
 
+    let!(:starting_request_issues) do
+      [
+         eligible_request_issue,
+         untimely_request_issue,
+         ri_with_active_previous_review,
+         ri_with_previous_hlr,
+         ri_before_ama,
+         eligible_ri_before_ama,
+         ri_legacy_issue_not_withdrawn,
+         ri_legacy_issue_ineligible
+       ]
+    end
+
     before do
       setup_legacy_opt_in_appeals(veteran.file_number)
       another_higher_level_review.create_issues!([ri_in_review])
-      higher_level_review.create_issues!([
-                                           eligible_request_issue,
-                                           untimely_request_issue,
-                                           ri_with_active_previous_review,
-                                           ri_with_previous_hlr,
-                                           ri_before_ama,
-                                           eligible_ri_before_ama,
-                                           ri_legacy_issue_not_withdrawn,
-                                           ri_legacy_issue_ineligible,
-                                           ri_legacy_issue_eligible
-                                         ])
+      higher_level_review.create_issues!(starting_request_issues)
       higher_level_review.establish!
     end
 
     context "VACOLS issue from before AMA opted in" do
+      let!(:ri_legacy_issue_eligible) do
+        create(
+          :request_issue,
+          contested_rating_issue_reference_id: "before_ama_ref_id",
+          contested_rating_issue_profile_date: rating_before_ama.profile_date,
+          decision_date: rating_before_ama.promulgation_date,
+          decision_review: higher_level_review,
+          contested_issue_description: "Non-RAMP Issue before AMA Activation legacy",
+          vacols_id: "vacols1",
+          benefit_type: "compensation",
+          vacols_sequence_id: "2"
+        )
+      end
+      let!(:starting_request_issues) do
+        [
+           eligible_request_issue,
+           untimely_request_issue,
+           ri_with_active_previous_review,
+           ri_with_previous_hlr,
+           ri_before_ama,
+           eligible_ri_before_ama,
+           ri_legacy_issue_not_withdrawn,
+           ri_legacy_issue_ineligible,
+           ri_legacy_issue_eligible
+         ]
+      end
       let(:legacy_opt_in_approved) { true }
 
       it "shows the Higher-Level Review Edit page with ineligibility messages" do
@@ -493,7 +508,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       expect(page).to have_content(
         "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
       )
-
+binding.pry
       # 7
       ri_before_ama_num = find_intake_issue_number_by_text(ri_before_ama.contention_text)
       expect_ineligible_issue(ri_before_ama_num)
