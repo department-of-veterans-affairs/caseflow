@@ -49,7 +49,8 @@ const serverData = {
           status: 'Assigned',
           hide_from_queue_table_view: false,
           hide_from_case_timeline: false,
-          hide_from_task_snapshot: false
+          hide_from_task_snapshot: false,
+          latest_informal_hearing_presentation_task: {}
         },
         id: '3625593',
         type: 'judge_legacy_tasks'
@@ -103,7 +104,11 @@ describe('QueueLoadingScreen', () => {
         type: 'LegacyJudgeTask',
         hideFromQueueTableView: false,
         hideFromCaseTimeline: false,
-        hideFromTaskSnapshot: false
+        hideFromTaskSnapshot: false,
+        latestInformalHearingPresentationTask: {
+          requestedAt: undefined,
+          receivedAt: undefined
+        }
       }
     });
   });
