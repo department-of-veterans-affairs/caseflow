@@ -92,6 +92,7 @@ detectors:
       - FetchHearingLocationsForVeteransJob#sleep_before_retry_on_limit_error
       - HearingSerializerBase
       - HearingSchedule::GenerateHearingDaysSchedule#generate_co_hearing_days_schedule
+      - HearingSchedule::GenerateHearingDaysSchedule#get_fallback_date_for_co
       - LegacyDocket#count
       - RedistributedCase#legacy_appeal_relevant_tasks
       - LegacyAppeal#cancel_open_caseflow_tasks!
