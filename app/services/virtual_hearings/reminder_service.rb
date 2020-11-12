@@ -11,13 +11,11 @@ class VirtualHearings::ReminderService
   end
 
   def should_send_reminder_email?
-    send_reminder = (
-      should_send_2_day_reminder? ||
+    return false if days_until_hearing <= 0
+    
+    should_send_2_day_reminder? ||
       should_send_3_day_friday_reminder? ||
       should_send_7_day_reminder?
-    )
-
-    days_until_hearing > 0 && send_reminder
   end
 
   private
