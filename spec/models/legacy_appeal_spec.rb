@@ -2995,11 +2995,11 @@ describe LegacyAppeal, :all_dbs do
   end
 
   describe "#assigned_to_acting_judge_as_judge?" do
-    shared_examples "assumes the case assigned to the user to draft the decision" do
+    shared_examples "assumes user is the decision drafter" do
       it { is_expected.to be false }
     end
 
-    shared_examples "assumes the case assigned to the user to sign the decision" do
+    shared_examples "assumes user is the decision signer" do
       it { is_expected.to be true }
     end
 
@@ -3009,14 +3009,14 @@ describe LegacyAppeal, :all_dbs do
     subject { appeal.assigned_to_acting_judge_as_judge?(acting_judge) }
 
     context "when the attorney review process has happened outside of caseflow" do
-      context "a decision has not been written for the case" do
-        it_behaves_like "assumes the case assigned to the user to draft the decision"
+      context "when a decision has not been written for the case" do
+        it_behaves_like "assumes user is the decision drafter"
       end
 
-      context "a decision has been written for the case" do
+      context "when a decision has been written for the case" do
         before { VACOLS::Decass.where(defolder: appeal.vacols_id).update_all(dedocid: "02255-00000002") }
 
-        it_behaves_like "assumes the case assigned to the user to sign the decision"
+        it_behaves_like "assumes user is the decision signer"
       end
     end
 
@@ -3025,7 +3025,7 @@ describe LegacyAppeal, :all_dbs do
       let!(:case_review) { create(:attorney_case_review, task_id: "#{appeal.vacols_id}-#{created_at}") }
 
       context "when the user does not match the judge or attorney on the case review" do
-        it_behaves_like "assumes the case assigned to the user to draft the decision"
+        it_behaves_like "assumes user is the decision drafter"
 
         it "falls back to check the presence of a decision document" do
           expect_any_instance_of(VACOLS::CaseAssignment).to receive(:valid_document_id?).once
@@ -3039,7 +3039,7 @@ describe LegacyAppeal, :all_dbs do
           expect_any_instance_of(VACOLS::CaseAssignment).not_to receive(:valid_document_id?)
         end
 
-        it_behaves_like "assumes the case assigned to the user to draft the decision"
+        it_behaves_like "assumes user is the decision drafter"
       end
 
       context "when the user matches the judge on the case review" do
@@ -3048,7 +3048,7 @@ describe LegacyAppeal, :all_dbs do
           expect_any_instance_of(VACOLS::CaseAssignment).not_to receive(:valid_document_id?)
         end
 
-        it_behaves_like "assumes the case assigned to the user to sign the decision"
+        it_behaves_like "assumes user is the decision signer"
       end
     end
   end
