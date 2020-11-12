@@ -88,7 +88,7 @@ describe VirtualHearings::ReminderService do
             end
           end
 
-          context "today is shutrsday" do
+          context "today is thursday" do
             it "returns false" do
               expect(subject).to eq(false)
             end
