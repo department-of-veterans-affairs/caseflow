@@ -327,6 +327,20 @@ feature "Higher Level Review Edit issues", :all_dbs do
       )
     end
 
+    let!(:ri_legacy_issue_eligible) do
+      create(
+        :request_issue,
+        contested_rating_issue_reference_id: "before_ama_ref_id",
+        contested_rating_issue_profile_date: rating_before_ama.profile_date,
+        decision_date: rating_before_ama.promulgation_date,
+        decision_review: higher_level_review,
+        contested_issue_description: "Non-RAMP Issue before AMA Activation legacy",
+        vacols_id: "vacols1",
+        benefit_type: "compensation",
+        vacols_sequence_id: "2"
+      )
+    end
+
     let(:ep_claim_id) do
       EndProductEstablishment.find_by(
         source: higher_level_review,
@@ -352,20 +366,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
     end
 
     context "VACOLS issue from before AMA opted in" do
-      let!(:ri_legacy_issue_eligible) do
-        create(
-          :request_issue,
-          contested_rating_issue_reference_id: "before_ama_ref_id",
-          contested_rating_issue_profile_date: rating_before_ama.profile_date,
-          decision_date: rating_before_ama.promulgation_date,
-          decision_review: higher_level_review,
-          contested_issue_description: "Non-RAMP Issue before AMA Activation legacy",
-          vacols_id: "vacols1",
-          benefit_type: "compensation",
-          vacols_sequence_id: "2"
-        )
-      end
-
       let(:legacy_opt_in_approved) { true }
 
       it "shows the Higher-Level Review Edit page with ineligibility messages" do
