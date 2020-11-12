@@ -41,7 +41,7 @@ class VirtualHearings::ReminderService
 
   def days_from_hearing_day_to_last_sent_reminder
     # Pick arbitrarily big value if the reminder has never been sent.
-    return 9999 if last_sent_reminder.nil?
+    return Float::INFINITY if last_sent_reminder.nil?
 
     (virtual_hearing.hearing.scheduled_for - last_sent_reminder) / 1.day
   end
