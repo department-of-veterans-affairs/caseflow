@@ -345,7 +345,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
                                            ri_before_ama,
                                            eligible_ri_before_ama,
                                            ri_legacy_issue_not_withdrawn,
-                                           ri_legacy_issue_ineligible
+                                           ri_legacy_issue_ineligible,
+                                           ri_legacy_issue_eligible
                                          ])
       higher_level_review.establish!
     end
@@ -369,6 +370,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
       it "shows the Higher-Level Review Edit page with ineligibility messages" do
         visit "higher_level_reviews/#{ep_claim_id}/edit"
+
         expect(page).to have_content(
           "#{ri_with_previous_hlr.contention_text} #{ineligible.higher_level_review_to_higher_level_review}"
         )
