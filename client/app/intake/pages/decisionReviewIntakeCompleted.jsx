@@ -14,7 +14,7 @@ import { LOGO_COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY';
 import UnidentifiedIssueAlert from '../components/UnidentifiedIssueAlert';
 
-const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, detailEditUrl, completedReview }) => {
+const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIssuesUrl, completedReview }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
 
@@ -27,7 +27,7 @@ const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, detail
   }
 
   leadMessageArr.push(
-    <div>If needed, you may <a href={detailEditUrl}>correct the issues</a>.</div>
+    <div>If needed, you may <a href={editIssuesUrl}>correct the issues</a>.</div>
   );
 
   if (asyncJobUrl) {
@@ -111,7 +111,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       formType,
       intakeStatus,
       asyncJobUrl,
-      detailEditUrl
+      editIssuesUrl
     } = this.props;
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const completedReview = this.props.decisionReviews[selectedForm.key];
@@ -152,7 +152,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       leadMessageList={
         leadMessageList({
           asyncJobUrl,
-          detailEditUrl,
+          editIssuesUrl,
           veteran,
           formName: selectedForm.name,
           requestIssues,
@@ -185,7 +185,7 @@ export default connect(
     veteran: state.intake.veteran,
     formType: state.intake.formType,
     asyncJobUrl: state.intake.asyncJobUrl,
-    detailEditUrl: state.intake.detailEditUrl,
+    editIssuesUrl: state.intake.editIssuesUrl,
     decisionReviews: {
       higher_level_review: state.higherLevelReview,
       supplemental_claim: state.supplementalClaim,

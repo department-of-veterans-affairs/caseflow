@@ -38,6 +38,13 @@ describe SlackService do
       end
     end
 
+    context "message contains error but title contains warning" do
+      it "picks yellow color" do
+        slack_service.send_notification("there was an error", "Really just a warning")
+        expect(@http_params[:body]).to match(/"#ffff00"/)
+      end
+    end
+
     context "message contains error" do
       it "picks red color" do
         slack_service.send_notification("there was an error")
