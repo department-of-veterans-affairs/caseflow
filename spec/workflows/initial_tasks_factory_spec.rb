@@ -226,6 +226,8 @@ describe InitialTasksFactory, :postgres do
         subject
         expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
         expect(CavcTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
+        expect(CavcTask.find_by(appeal: appeal).status).to eq("on_hold")
+        expect(SendCavcRemandProcessedLetterTask.find_by(appeal: appeal).status).to eq("assigned")
         expect(appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
       end
     end

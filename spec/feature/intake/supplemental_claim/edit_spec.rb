@@ -505,12 +505,14 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       )
 
       # reload to verify that the new issues populate the form
-      visit "supplemental_claims/#{rating_ep_claim_id}/edit"
+      click_on "correct the issues"
+      supplemental_claim.reload
+      expect(page).to have_current_path("/supplemental_claims/#{supplemental_claim.uuid}/edit")
       expect(page).to have_content("Left knee granted")
       expect(page).to_not have_content("PTSD denied")
 
       # assert server has updated data
-      new_request_issue = supplemental_claim.reload.request_issues.active.first
+      new_request_issue = supplemental_claim.request_issues.active.first
       expect(new_request_issue.description).to eq("Left knee granted")
       expect(request_issue.reload.decision_review).to_not be_nil
       expect(request_issue.contention_removed_at).to eq(Time.zone.now)

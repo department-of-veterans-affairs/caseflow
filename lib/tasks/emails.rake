@@ -34,21 +34,25 @@ namespace :emails do
         [
           :confirmation,
           :updated_time_confirmation,
-          :cancellation
+          :cancellation,
+          :reminder
         ].each do |func|
           email = VirtualHearingMailer.send(
             func,
             mail_recipient: recipient,
             virtual_hearing: hearing.virtual_hearing
           )
+          email_body = if email.blank?
+                         email.html_part&.decoded
+                       else
+                         email.body
+                       end
 
-          next if email.html_part.nil?
+          next if email_body.blank?
 
-          File.write(
-            Rails.root.join("tmp", "#{func}_#{recipient.title}.html"),
-            email.html_part.body.decoded,
-            mode: "w"
-          )
+          output_file = Rails.root.join("tmp", "#{func}_#{recipient.title}.html")
+
+          File.write(output_file, email_body, mode: "w")
         end
       end
     end
