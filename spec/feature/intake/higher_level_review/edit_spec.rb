@@ -508,7 +508,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       expect(page).to have_content(
         "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
       )
-binding.pry
+
       # 7
       ri_before_ama_num = find_intake_issue_number_by_text(ri_before_ama.contention_text)
       expect_ineligible_issue(ri_before_ama_num)
