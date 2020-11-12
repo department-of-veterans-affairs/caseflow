@@ -977,21 +977,19 @@ class LegacyAppeal < CaseflowRecord
     TaskEvent.new(version: versions.last) if versions.any?
   end
 
-  # Hacky logic to determine if an acting judge should see judge actions or attorney actions on a case assigne to them
+  # Hacky logic to determine if an acting judge should see judge actions or attorney actions on a case assigned to them
   # See https://github.com/department-of-veterans-affairs/caseflow/issues/14886  for details
   def assigned_to_acting_judge_as_judge?(acting_judge)
+    # First try to determine role on the case by inspecting the attorney_case_review, if there is one present.
     if attorney_case_review.present?
-      # If the acting judge was the attorney on this review, this case is very likely assigned to them to redraft the
-      # decision.
       return false if attorney_case_review.attorney_id == acting_judge.id
 
-      # if the acting judge was the judge on this review, this case is very likely assigned to them to sign the decision
       return true if attorney_case_review.reviewing_judge_id == acting_judge.id
     end
 
     # In case an attorney case review does not exist in caseflow or if this acting judge was neither the judge or
     # attorney listed in the review, check to see if a decision has already been written for the appeal. If so, assume
-    # this appeal is assigned to the acting judge as a judge task
+    # this appeal is assigned to the acting judge as a judge task as a best guess
     vacols_case_review.valid_document_id?
   end
 
