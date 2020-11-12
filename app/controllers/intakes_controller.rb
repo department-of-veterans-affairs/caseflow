@@ -129,7 +129,11 @@ class IntakesController < ApplicationController
   end
 
   def verify_access
-    verify_authorized_roles("Mail Intake", "Admin Intake")
+    if !current_user.can_intake_decision_reviews?
+      redirect_to "/unauthorized"
+    else
+      verify_authorized_roles("Mail Intake", "Admin Intake")
+    end
   end
 
   def check_intake_out_of_service

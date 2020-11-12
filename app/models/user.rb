@@ -278,6 +278,23 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     organizations_users.non_admin.where(organization: JudgeTeam.all)
   end
 
+  def security_profile
+    BGSService.new.get_security_profile(
+      username: css_id,
+      station_id: station_id
+    )
+  rescue BGS::ShareError, BGS::PublicError
+    {}
+  end
+
+  def job_title
+    security_profile.dig(:job_title)
+  end
+
+  def can_intake_decision_reviews?
+    !job_title.include?("Senior Veterans Service Representative")
+  end
+
   def user_info_for_idt
     self.class.user_repository.user_info_for_idt(css_id)
   end

@@ -31,7 +31,9 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   def cache_ama_appeals
-    appeals = Appeal.includes(:available_hearing_locations).where(id: open_appeals_from_tasks(Appeal.name))
+    appeals = Appeal.includes(:available_hearing_locations)
+      .where(id: open_appeals_from_tasks(Appeal.name))
+      .order(id: :desc) # cache most created appeals first
 
     cached_appeals = cached_appeal_service.cache_ama_appeals(appeals)
 
@@ -47,14 +49,14 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     # was previously causing this code to insert legacy appeal attributes that corresponded to NULL ID fields.
     legacy_appeals = LegacyAppeal.includes(:available_hearing_locations)
       .where(id: open_appeals_from_tasks(LegacyAppeal.name))
-    all_vacols_ids = legacy_appeals.pluck(:vacols_id).flatten
+      .order(id: :desc) # cache most created appeals first
 
     cache_postgres_data_start = Time.zone.now
     cache_legacy_appeal_postgres_data(legacy_appeals)
     datadog_report_time_segment(segment: "cache_legacy_appeal_postgres_data", start_time: cache_postgres_data_start)
 
     cache_vacols_data_start = Time.zone.now
-    cache_legacy_appeal_vacols_data(all_vacols_ids)
+    cache_legacy_appeal_vacols_data(legacy_appeals)
     datadog_report_time_segment(segment: "cache_legacy_appeal_vacols_data", start_time: cache_vacols_data_start)
   end
 
@@ -67,9 +69,9 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     end
   end
 
-  def cache_legacy_appeal_vacols_data(all_vacols_ids)
-    all_vacols_ids.in_groups_of(VACOLS_BATCH_SIZE, false).each do |batch_vacols_ids|
-      cached_appeals = cached_appeal_service.cache_legacy_appeal_vacols_data(batch_vacols_ids)
+  def cache_legacy_appeal_vacols_data(legacy_appeals)
+    legacy_appeals.in_groups_of(VACOLS_BATCH_SIZE, false).each do |batch_legacy_appeals|
+      cached_appeals = cached_appeal_service.cache_legacy_appeal_vacols_data(batch_legacy_appeals)
 
       increment_vacols_update_count(cached_appeals.count)
     end
@@ -107,9 +109,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   def log_warning
-    slack_msg = "[WARN] UpdateCachedAppealsAttributesJob first 100 warnings:"\
-                "\n#{warning_msgs.join("\n")}"
-    slack_service.send_notification(slack_msg)
+    slack_msg = warning_msgs.join("\n")
+    slack_service.send_notification(slack_msg, "[WARN] UpdateCachedAppealsAttributesJob: first 100 warnings")
   end
 
   def log_error(start_time, err)
@@ -121,9 +122,9 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
     Raven.capture_exception(err)
 
-    slack_msg = "[ERROR] UpdateCachedAppealsAttributesJob failed after running for #{duration}. "\
-                "See Sentry event #{Raven.last_event_id}"
-    slack_service.send_notification(slack_msg) # do not leak PII
+    slack_msg = "See Sentry event #{Raven.last_event_id}"
+    slack_service.send_notification(slack_msg,
+                                    "[ERROR] UpdateCachedAppealsAttributesJob failed after running for #{duration}.")
 
     datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end

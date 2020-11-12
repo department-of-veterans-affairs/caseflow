@@ -75,12 +75,13 @@ class TaskActionRepository
 
     def assign_to_user_data(task, user = nil)
       users = potential_task_assignees(task)
-
       extras = if task.is_a?(HearingAdminActionTask)
                  {
                    redirect_after: "/organizations/#{HearingsManagement.singleton.url}",
                    message_detail: COPY::HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL
                  }
+               elsif task.is_a?(SendCavcRemandProcessedLetterTask) && task.assigned_to_type == "Organization"
+                 { redirect_after: "/organizations/#{CavcLitigationSupport.singleton.url}" }
                else
                  {}
                end
@@ -234,8 +235,18 @@ class TaskActionRepository
       }
     end
 
+    def cancel_convert_hearing_request_type_data(task, _user = nil)
+      {
+        redirect_after: "/queue/appeals/#{task.appeal.external_id}",
+        modal_title: COPY::CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_MODAL_TITLE,
+        message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
+        message_detail: COPY::CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_SUCCESS_DETAIL,
+        show_instructions: false
+      }
+    end
+
     def change_hearing_request_type_data(_task, _user = nil)
-      {} # Placeholder function that will be implemented in #15159
+      {}
     end
 
     def change_task_type_data(task, user = nil)

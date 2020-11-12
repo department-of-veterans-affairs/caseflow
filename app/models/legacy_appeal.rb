@@ -31,6 +31,11 @@ class LegacyAppeal < CaseflowRecord
   has_many :claimants, -> { Claimant.none }
   has_one :cached_vacols_case, class_name: "CachedAppeal", foreign_key: :vacols_id, primary_key: :vacols_id
   has_one :work_mode, as: :appeal
+  has_one :latest_informal_hearing_presentation_task, lambda {
+    not_cancelled
+      .order(closed_at: :desc, assigned_at: :desc)
+      .where(type: [InformalHearingPresentationTask.name, IhpColocatedTask.name], appeal_type: LegacyAppeal.name)
+  }, class_name: "Task", foreign_key: :appeal_id
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   # Add Paper Trail configuration
@@ -344,6 +349,8 @@ class LegacyAppeal < CaseflowRecord
            :representative_to_hash,
            :representative_participant_id,
            :vacols_representatives,
+           :representative_is_vso?,
+           :representative_is_colocated_vso?,
            to: :legacy_appeal_representative
 
   def representative_email_address

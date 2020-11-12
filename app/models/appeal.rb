@@ -27,6 +27,11 @@ class Appeal < DecisionReview
   has_one :post_decision_motion
   has_many :record_synced_by_job, as: :record
   has_one :work_mode, as: :appeal
+  has_one :latest_informal_hearing_presentation_task, lambda {
+    not_cancelled
+      .order(closed_at: :desc, assigned_at: :desc)
+      .where(type: [InformalHearingPresentationTask.name, IhpColocatedTask.name], appeal_type: Appeal.name)
+  }, class_name: "Task", foreign_key: :appeal_id
 
   enum stream_type: {
     "original": "original",
@@ -342,6 +347,12 @@ class Appeal < DecisionReview
   end
 
   alias cavc? cavc
+
+  def cavc_remand
+    return nil if !cavc?
+
+    CavcRemand.find_by(appeal_id: stream_docket_number.split("-").last)
+  end
 
   def status
     @status ||= BVAAppealStatus.new(appeal: self)
