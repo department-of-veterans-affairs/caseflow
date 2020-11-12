@@ -64,7 +64,7 @@ class AppealsWithNoTasksOrAllTasksOnHoldQuery
         .having(
           "count(case when children_tasks.status in (?) then 1 end) = 0",
           Task.open_statuses
-        ).select(:appeal_id))
+        ).select(:appeal_id).distinct)
   end
 
   def tasks_for(klass_name)
