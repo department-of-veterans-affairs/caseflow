@@ -13,8 +13,8 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   attr_reader :available_days, :ros
 
-  MAX_NUMBER_OF_DAYS_PER_DATE = 12
-  BVA_VIDEO_ROOMS = [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].freeze
+  BVA_VIDEO_ROOMS = Constants::HEARING_ROOMS_LIST.keys.map(&:to_i).freeze
+  MAX_NUMBER_OF_DAYS_PER_DATE = BVA_VIDEO_ROOMS.size
 
   CO_DAYS_OF_WEEK = [1, 2, 3, 4].freeze
 
