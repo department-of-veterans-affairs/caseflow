@@ -27,6 +27,8 @@ class VirtualHearings::ReminderService
     days_until_hearing <= 2 && days_from_hearing_day_to_last_sent_reminder > 2
   end
 
+  # The 3 day reminder is a special reminder that is sent on Friday, *only* if the hearing
+  # itself is on Monday.
   def should_send_3_day_friday_reminder?
     days_until_hearing <= 3 && virtual_hearing.hearing.scheduled_for.monday?
   end
