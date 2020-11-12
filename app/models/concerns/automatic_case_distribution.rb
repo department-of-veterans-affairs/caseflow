@@ -9,6 +9,7 @@ module AutomaticCaseDistribution
            :direct_review_due_count,
            :pacesetting_direct_review_proportion,
            :interpolated_minimum_direct_review_proportion,
+           :total_batch_size,
            to: :docket_coordinator
 
   private

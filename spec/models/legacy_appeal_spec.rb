@@ -2987,4 +2987,10 @@ describe LegacyAppeal, :all_dbs do
       end
     end
   end
+
+  describe "#latest_informal_hearing_presentation_task" do
+    let(:appeal) { create(:legacy_appeal) }
+
+    it_behaves_like "latest informal hearing presentation task"
+  end
 end

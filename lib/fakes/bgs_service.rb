@@ -360,6 +360,14 @@ class Fakes::BGSService
     ]
   end
 
+  def get_security_profile(username:, station_id:)
+    if username == "BVAAABSHIRE"
+      { job_title: "Senior Veterans Service Representative" }
+    else
+      { job_title: "Legal Clerk" }
+    end
+  end
+
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
     address = (self.class.address_records || {})[participant_id]

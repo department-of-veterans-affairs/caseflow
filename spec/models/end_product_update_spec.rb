@@ -21,19 +21,30 @@ describe EndProductUpdate do
       end
     end
 
-    context "when issue type changes" do
-      let(:epu) do
-        create(:end_product_update,
-               original_code: "030HLRNR",
-               new_code: "030HLRR")
-      end
+    context "when issue type changes from non-rating to rating" do
+      let(:old_code) { "030HLRNR" }
+      let(:new_code) { "030HLRR" }
 
-      it "updates issue type on request issues" do
+      it "updates type and attributes on request issues" do
         subject
 
-        epe = epu.end_product_establishment
-        expect(epe.request_issues).not_to be_empty
-        expect(epe.request_issues).to all have_attributes(type: "RatingRequestIssue")
+        expect(epu.request_issues).not_to be_empty
+        expect(epu.request_issues).to all have_attributes(
+          type: "RatingRequestIssue",
+          description: "nonrating issue description"
+        )
+      end
+    end
+
+    context "when issue type changes from rating to non-rating" do
+      let(:old_code) { "030HLRR" }
+      let(:new_code) { "030HLRNR" }
+
+      it "updates type and attributes on request issues" do
+        subject
+
+        expect(epu.request_issues).to all have_attributes(type: "NonratingRequestIssue")
+        expect(epu.request_issues).to all have_attributes(nonrating_issue_category: "Unknown issue category")
       end
     end
   end
