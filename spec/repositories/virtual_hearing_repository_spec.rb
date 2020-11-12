@@ -201,19 +201,13 @@ describe VirtualHearingRepository, :all_dbs do
         include_examples "include or exclude hearings depending on the number of days out from the hearing"
       end
 
-      context "postponed virtual hearing" do
-        let(:ama_disposition) { "postponed" }
+      %w[postponed cancelled no_show held].each do |disposition|
+        context "#{disposition} virtual hearing" do
+          let(:ama_disposition) { disposition }
 
-        it "returns nothings" do
-          expect(subject).to be_empty
-        end
-      end
-
-      context "cancelled virtual hearing" do
-        let(:ama_disposition) { "cancelled" }
-
-        it "returns nothing" do
-          expect(subject).to be_empty
+          it "returns nothings" do
+            expect(subject).to be_empty
+          end
         end
       end
     end
@@ -233,19 +227,13 @@ describe VirtualHearingRepository, :all_dbs do
         include_examples "include or exclude hearings depending on the number of days out from the hearing"
       end
 
-      context "postponed virtual hearing" do
-        let(:legacy_dispositon) { "P" }
+      %w[P C N H].each do |disposition_code|
+        context "#{VACOLS::CaseHearing::HEARING_DISPOSITIONS[disposition_code.to_sym]} virtual hearing" do
+          let(:ama_disposition) { disposition_code }
 
-        it "returns nothings" do
-          expect(subject).to be_empty
-        end
-      end
-
-      context "cancelled virtual hearing" do
-        let(:legacy_dispositon) { "C" }
-
-        it "returns nothing" do
-          expect(subject).to be_empty
+          it "returns nothings" do
+            expect(subject).to be_empty
+          end
         end
       end
     end
