@@ -392,6 +392,10 @@ class LegacyAppeal < CaseflowRecord
     scheduled_hearings.any?
   end
 
+  def any_held_hearings?
+    hearings.any?(&:held?)
+  end
+
   def completed_hearing_on_previous_appeal?
     vacols_ids = VACOLS::Case.where(bfcorlid: vbms_id).pluck(:bfkey)
     hearings = HearingRepository.hearings_for_appeals(vacols_ids)
@@ -854,6 +858,10 @@ class LegacyAppeal < CaseflowRecord
 
   def cavc
     type == "Court Remand"
+  end
+
+  def original?
+    type_code == "original"
   end
 
   alias cavc? cavc
