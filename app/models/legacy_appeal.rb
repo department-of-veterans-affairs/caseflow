@@ -392,7 +392,7 @@ class LegacyAppeal < CaseflowRecord
     scheduled_hearings.any?
   end
 
-  def completed_hearing?
+  def any_held_hearings?
     hearings.any?(&:held?)
   end
 

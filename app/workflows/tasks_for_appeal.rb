@@ -64,7 +64,7 @@ class TasksForAppeal
       appeal.current_hearing_request_type == :travel_board &&
       appeal.active? &&
       appeal.original? &&
-      !appeal.completed_hearing?
+      !appeal.any_held_hearings?
   end
 
   def legacy_appeal_tasks
