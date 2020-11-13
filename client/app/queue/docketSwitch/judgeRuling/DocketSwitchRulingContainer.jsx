@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams, useRouteMatch } from 'react-router';
 import { taskById, appealWithDetailSelector } from '../../selectors';
 import { taskActionData } from '../../utils';
-import { DISPOSITIONS } from '../constants';
+import DISPOSITIONS from '../../../../constants/DOCKET_SWITCH';
 import { createDocketSwitchGrantedTask, createDocketSwitchDeniedTask } from './docketSwitchRulingSlice';
 import { DocketSwitchRulingForm } from './DocketSwitchRulingForm';
 
@@ -44,7 +44,7 @@ export const DocketSwitchRulingContainer = () => {
       type: taskType,
       external_id: appeal.externalId,
       instructions,
-      assigned_to_id: selected.value,
+      assigned_to_id: formData.attorney.value,
       assigned_to_type: 'User',
     };
 

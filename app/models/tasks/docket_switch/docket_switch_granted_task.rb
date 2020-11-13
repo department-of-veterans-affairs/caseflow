@@ -17,5 +17,9 @@ class DocketSwitchGrantedTask < AttorneyTask
     def label
       COPY::DOCKET_SWITCH_GRANTED_TASK_LABEL
     end
+
+    def verify_user_can_create!(user, parent)
+      parent.is_a?(DocketSwitchRulingTask) ? true : super(user, parent)
+    end
   end
 end

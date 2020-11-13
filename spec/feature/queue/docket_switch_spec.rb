@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.feature "Docket Switch", :all_dbs do
+RSpec.feature "Docket Switch", :all_dbs, focus:true do
   include QueueHelpers
   before do
     FeatureToggle.enable!(:docket_switch)
@@ -84,6 +84,9 @@ RSpec.feature "Docket Switch", :all_dbs do
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
 
+      # Success banner
+      expect(page).to have_content(COPY::DOCKET_SWITCH_REQUEST_MESSAGE)
+
       judge_task = DocketSwitchRulingTask.find_by(assigned_to: judge)
       expect(judge_task).to_not be_nil
 
@@ -99,7 +102,7 @@ RSpec.feature "Docket Switch", :all_dbs do
     end
   end
 
-  describe "judge ruling" do
+  fdescribe "judge completes docket switch ruling" do
     let!(:docket_switch_ruling_task) do
       create(
         :docket_switch_ruling_task,
@@ -112,42 +115,45 @@ RSpec.feature "Docket Switch", :all_dbs do
     let(:context) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit" }
     let(:hyperlink) { "https://example.com/file.txt" }
 
-    context "when the disposition is granted" do
-      let(:disposition) { "granted" }
+    # Checks granted, partially_granted, and denied dispositions
+    Constants::DOCKET_SWITCH.keys.each do |disposition|
+      context "given disposition #{disposition}" do
+        it "creates the next docket switch task (granted or denied) assigned to a COTB attorney" do
+          User.authenticate!(user: judge)
+          visit "/queue/appeals/#{appeal.uuid}"
+          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+          find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.label).click
 
-      fit "creates a DocketSwitchGrantedTask assigned to a COTB attorney" do
-        User.authenticate!(user: judge)
-        visit "/queue/appeals/#{appeal.uuid}"
-        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.label).click
+          expect(page).to have_content(format(COPY::DOCKET_SWITCH_RULING_TITLE, appeal.claimant.name))
 
-        expect(page).to have_content(format(COPY::DOCKET_SWITCH_RULING_TITLE, appeal.claimant.name))
-        expect(page).to have_content(COPY::DOCKET_SWITCH_RULING_INSTRUCTIONS)
+          # Fill out form
+          fill_in("context", with: context)
+          find("label[for=disposition_#{disposition}]").click
+          fill_in("hyperlink", with: hyperlink)
 
-        # Fill out form
-        fill_in("Context/Instructions", with: context)
-        find("label[for=disposition_#{disposition}]").click
-        fill_in("hyperlink", with: hyperlink)
+          # The previously assigned COTB attorney should be selected
+          expect(page).to have_content(cotb_attorney.full_name)
+          expect(page).to_not have_content(cotb_non_attorney.full_name)
 
-        # The previously assigned judge should be selected
-        expect(page).to have_content(cotb_attorney.display_name)
+          click_button(text: "Submit")
 
-        click_button(text: "Submit")
+          # Return back to user's queue
+          expect(page).to have_current_path("/queue")
 
-        # Return back to user's queue
-        expect(page).to have_current_path("/queue")
+          disposition_type = Constants::DOCKET_SWITCH[disposition]["dispositionType"]
+          next_task = Object.const_get("DocketSwitch#{disposition_type}Task").find_by(assigned_to: cotb_attorney)
+          expect(next_task).to_not be_nil
 
-        judge_task = DocketSwitchRulingTask.find_by(assigned_to: judge)
-        expect(judge_task).to_not be_nil
+          # Check that task got created and shows instructions on Case Details
+          User.authenticate!(user: cotb_attorney)
+          visit "/queue/appeals/#{appeal.uuid}"
+          find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+          judge_ruling_text = Constants::DOCKET_SWITCH[disposition]["judgeRulingText"]
 
-        # Check that task got created
-        User.authenticate!(user: cotb_attorney)
-        visit "/queue/appeals/#{appeal.uuid}"
-        binding.pry
-        find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
-        expect(page).to have_content "I am proceeding with a: full switch"
-        expect(page).to have_content "Signed ruling letter: #{hyperlink}"
-        expect(page).to have_content "Context/Instructions: #{context}"
+          expect(page).to have_content "I am proceeding with a #{judge_ruling_text}"
+          expect(page).to have_content "Signed ruling letter:\n#{hyperlink}"
+          expect(page).to have_content(context)
+        end
       end
     end
   end
