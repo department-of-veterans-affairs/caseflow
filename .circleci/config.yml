@@ -184,7 +184,7 @@ jobs:
 
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.10
-    parallelism: 9
+    parallelism: 12
     resource_class: large
     steps:
       - attach_workspace:
@@ -212,17 +212,17 @@ jobs:
             ~/project/ci-bin/capture-log "bundle exec rake spec:setup_vacols"
 
       - run:
-          name: RSpec
+          name: RSpec via knapsack_pro Queue Mode
           command: |
             mkdir -p ~/test-results/rspec
-            testfiles=$(circleci tests glob "spec/**/*spec.rb" | circleci tests split --split-by=timings)
-            echo $testfiles > ~/project/tmp/testfiles/rspec_testfiles.txt
-            ~/project/ci-bin/capture-log "bundle exec rspec --no-color --format documentation --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}"
-          # Uncomment to profile test performance in CircleCI
-          #environment:
-          #  RDOC: 1
-          #  RD_PROF: 1
-          #  FPROF: 1
+            export RAILS_ENV=test
+            bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"
+          environment:
+            KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
+            # Uncomment to profile test performance in CircleCI
+            #  RDOC: 1
+            #  RD_PROF: 1
+            #  FPROF: 1
 
       - store_test_results:
           name: Store test results as summary
@@ -247,10 +247,6 @@ jobs:
       - store_artifacts:
           name: Store bullet log
           path: ~/project/log/bullet.log
-
-      - store_artifacts:
-          name: Store testfile ordering
-          path: ~/project/tmp/testfiles
 
       - store_artifacts:
           name: Store run logs
