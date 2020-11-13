@@ -147,7 +147,7 @@ class AddIssuesPage extends React.Component {
       selectedEPCode: endProductCode
     });
   }
-  closelEditClaimLabelModal = () => {
+  closeEditClaimLabelModal = () => {
     this.setState({
       showEditClaimLabelModal: false,
       selectedEPCode: null
@@ -157,7 +157,7 @@ class AddIssuesPage extends React.Component {
   handleEditClaimLabel = (newCode) => {
     // TODO: save the updated code
 
-    this.closelEditClaimLabelModal();
+    this.closeEditClaimLabelModal();
   }
 
   render() {
@@ -300,7 +300,7 @@ class AddIssuesPage extends React.Component {
               {this.state.showEditClaimLabelModal && (
                 <EditClaimLabelModal
                   existingEpCode={this.state.selectedEPCode}
-                  onCancel={this.closelEditClaimLabelModal}
+                  onCancel={this.closeEditClaimLabelModal}
                   onSubmit={this.handleEditClaimLabel}
                 />
               )}
