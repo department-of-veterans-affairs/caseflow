@@ -153,8 +153,9 @@ class AddIssuesPage extends React.Component {
       selectedEPCode: null
     });
   }
+  // eslint-disable-next-line no-unused-vars
   handleEditClaimLabel = (newCode) => {
-    // TODO: save the updated code
+    // TODO: save the updated code
 
     this.closelEditClaimLabelModal();
   }
@@ -290,7 +291,10 @@ class AddIssuesPage extends React.Component {
               <strong>{ EP_CLAIM_TYPES[endProductCode].official_label }</strong>
             </div>
             <div className="edit-claim-label">
-              <Button classNames={['usa-button-secondary']} onClick={() => this.openEditClaimLabelModal(endProductCode)}>
+              <Button
+                classNames={['usa-button-secondary']}
+                onClick={() => this.openEditClaimLabelModal(endProductCode)}
+              >
               Edit claim label
               </Button>
               {this.state.showEditClaimLabelModal && (
