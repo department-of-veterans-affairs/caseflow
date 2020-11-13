@@ -16,7 +16,8 @@ class HearingSchedule::GenerateHearingDaysSchedule
   BVA_VIDEO_ROOMS = Constants::HEARING_ROOMS_LIST.keys.map(&:to_i).freeze
   MAX_NUMBER_OF_DAYS_PER_DATE = BVA_VIDEO_ROOMS.size
 
-  CO_DAYS_OF_WEEK = [1, 2, 3, 4].freeze
+  CO_DAYS_OF_WEEK = [3].freeze # only create 1 Central docket(Wednesday) per week
+  CO_FALLBACK_DAYS_OF_WEEK = [1, 2, 4].freeze # if wednesday is a holiday, pick a another non-holiday starting monday
 
   def initialize(schedule_period)
     @amortized = 0
@@ -93,15 +94,26 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   def generate_co_hearing_days_schedule
     co_schedule = []
-    (@schedule_period.start_date..@schedule_period.end_date).each do |scheduled_for|
-      next unless valid_day_to_schedule_co(scheduled_for)
+    co_schedule_args = {
+      request_type: HearingDay::REQUEST_TYPES[:central],
+      room: "2",
+      bva_poc: "CAROL COLEMAN-DEW"
+    }
 
-      co_schedule.push(
-        scheduled_for: scheduled_for,
-        request_type: HearingDay::REQUEST_TYPES[:central],
-        room: "2",
-        bva_poc: "CAROL COLEMAN-DEW"
-      )
+    (@schedule_period.start_date..@schedule_period.end_date).each do |scheduled_for|
+      # if CO_DAYS_OF_WEEK falls on an invalid day, pick a day of the week that is valid
+      if CO_DAYS_OF_WEEK.include?(scheduled_for.cwday) && weekend_or_holiday_or_not_available?(scheduled_for)
+        fallback_date_for_co = get_fallback_date_for_co(
+          scheduled_for, @schedule_period.start_date, @schedule_period.end_date
+        )
+        if fallback_date_for_co
+          co_schedule.push(**co_schedule_args, scheduled_for: fallback_date_for_co)
+        end
+      else
+        next unless valid_day_to_schedule_co(scheduled_for)
+
+        co_schedule.push(**co_schedule_args, scheduled_for: scheduled_for)
+      end
     end
     co_schedule
   end
@@ -331,11 +343,25 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @co_non_availability_days.find { |non_availability_day| non_availability_day.date == day }.present?
   end
 
+  def weekend_or_holiday_or_not_available?(date)
+    weekend?(date) || holiday?(date) || co_not_available?(date)
+  end
+
+  # pick the first day from fallback days that is valid
+  def get_fallback_date_for_co(scheduled_for, start_date, end_date)
+    valid_cwday = CO_FALLBACK_DAYS_OF_WEEK.detect do |cwday|
+      # i.e, if cwday is 1 and since begining of week is always monday, this will evauluate to monday
+      date = scheduled_for.beginning_of_week + (cwday - 1).day
+
+      # fallback date we choose has to valid as well as within the scheduling period range
+      !weekend_or_holiday_or_not_available?(date) && date >= start_date && date <= end_date
+    end
+
+    valid_cwday ? scheduled_for.beginning_of_week + (valid_cwday - 1).day : nil
+  end
+
   def valid_day_to_schedule_co(scheduled_for)
-    CO_DAYS_OF_WEEK.include?(scheduled_for.cwday) &&
-      !weekend?(scheduled_for) &&
-      !holiday?(scheduled_for) &&
-      !co_not_available?(scheduled_for)
+    CO_DAYS_OF_WEEK.include?(scheduled_for.cwday) && !weekend_or_holiday_or_not_available?(scheduled_for)
   end
 
   # Filters out the non-available RO days from the board available days for
