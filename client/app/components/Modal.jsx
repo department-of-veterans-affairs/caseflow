@@ -144,6 +144,7 @@ export default class Modal extends React.Component {
             onClick={closeHandler}
             ref={this.modalCloseFocus}
           >
+            <span className="usa-sr-only">Close</span>
             {closeSymbolHtml()}
           </button>
           <div style={{ display: 'flex' }}>
