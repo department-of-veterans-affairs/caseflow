@@ -173,7 +173,24 @@
   }
 
   td {
-    vertical-align: top;
+    .claim-label-row {
+      color: $color-gray-dark;
+
+      .claim-label {
+        display: inline-block;
+        padding: .75rem 0;
+      }
+
+      .edit-claim-label {
+        float: right;
+        width: 140px;
+
+        button {
+          padding: 1rem;
+          width: 140px;
+        }
+      }
+    }
 
     .issues {
       display: table;
@@ -267,9 +284,11 @@
         }
       }
 
-      .issue-container {
+      .issue-container:not(:last-child) {
         border-bottom: 1px solid $color-gray-lighter;
+      }
 
+      .issue-container {
         .cf-form-textarea {
           padding-left: 20px;
           padding-right: 20px;
