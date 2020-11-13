@@ -5,7 +5,14 @@ describe TasksForAppeal do
     context "for a legacy appeal with a travel board hearing request" do
       let(:user_roles) { ["Build HearSched"] }
       let!(:user) { create(:user, roles: user_roles) }
-      let(:vacols_case) { create(:case, :travel_board_hearing) }
+      let(:appeal_type) { "1" } # Original
+      let(:vacols_case) do
+        create(
+          :case,
+          :travel_board_hearing,
+          bfac: appeal_type
+        )
+      end
       let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
       before { FeatureToggle.enable!(:convert_travel_board_to_video_or_virtual) }
@@ -76,6 +83,36 @@ describe TasksForAppeal do
           expect(HearingTaskTreeInitializer).to_not receive(:for_appeal_with_pending_travel_board_hearing)
 
           subject
+        end
+      end
+
+      VACOLS::Case::TYPES.drop(1).each do |code, readable|
+        context "appeal is #{readable}" do
+          let(:appeal_type) { code }
+
+          it "doesn't call the hearing task tree initializer" do
+            expect(HearingTaskTreeInitializer).to_not receive(:for_appeal_with_pending_travel_board_hearing)
+
+            subject
+          end
+        end
+      end
+
+      context "the appeal has a hearing" do
+        let!(:hearing) { create(:legacy_hearing, appeal: appeal, disposition: disposition) }
+
+        before do
+          hearing.vacols_record.update!(folder_nr: vacols_case.bfkey)
+        end
+
+        context "hearing was held" do
+          let(:disposition) { "H" }
+
+          it "doesn't call the hearing task tree intitializer" do
+            expect(HearingTaskTreeInitializer).to_not receive(:for_appeal_with_pending_travel_board_hearing)
+
+            subject
+          end
         end
       end
     end
