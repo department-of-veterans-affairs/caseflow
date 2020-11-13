@@ -75,12 +75,13 @@ class TaskActionRepository
 
     def assign_to_user_data(task, user = nil)
       users = potential_task_assignees(task)
-
       extras = if task.is_a?(HearingAdminActionTask)
                  {
                    redirect_after: "/organizations/#{HearingsManagement.singleton.url}",
                    message_detail: COPY::HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL
                  }
+               elsif task.is_a?(SendCavcRemandProcessedLetterTask) && task.assigned_to_type == "Organization"
+                 { redirect_after: "/organizations/#{CavcLitigationSupport.singleton.url}" }
                else
                  {}
                end
