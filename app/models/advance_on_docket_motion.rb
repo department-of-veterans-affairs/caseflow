@@ -18,7 +18,7 @@ class AdvanceOnDocketMotion < CaseflowRecord
   # 'age' below is filters to reason: age due to scope+enum Rails magic
   scope :eligible_due_to_age, -> { age }
   scope :for_appeal, ->(appeal) { where(appeal: appeal) }
-  # not(id: age) runs a NOT IN subquery on age:
+  # not(id: age) means to exclude AOD motions with reason="age" provided by the `age` enum
   scope :eligible_due_to_appeal, ->(appeal) { where(appeal: appeal).where.not(id: age) }
   scope :for_person, ->(person_id) { where(person_id: person_id) }
 
