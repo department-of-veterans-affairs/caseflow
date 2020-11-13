@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.feature "Docket Switch", :all_dbs, focus:true do
+RSpec.feature "Docket Switch", :all_dbs do
   include QueueHelpers
   before do
     FeatureToggle.enable!(:docket_switch)
@@ -102,7 +102,7 @@ RSpec.feature "Docket Switch", :all_dbs, focus:true do
     end
   end
 
-  fdescribe "judge completes docket switch ruling" do
+  describe "judge completes docket switch ruling" do
     let!(:docket_switch_ruling_task) do
       create(
         :docket_switch_ruling_task,
@@ -116,7 +116,7 @@ RSpec.feature "Docket Switch", :all_dbs, focus:true do
     let(:hyperlink) { "https://example.com/file.txt" }
 
     # Checks granted, partially_granted, and denied dispositions
-    Constants::DOCKET_SWITCH.keys.each do |disposition|
+    Constants::DOCKET_SWITCH.each_key do |disposition|
       context "given disposition #{disposition}" do
         it "creates the next docket switch task (granted or denied) assigned to a COTB attorney" do
           User.authenticate!(user: judge)
