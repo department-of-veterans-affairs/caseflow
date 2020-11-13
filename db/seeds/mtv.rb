@@ -18,7 +18,7 @@ module Seeds
         :outcoded,
         number_of_claimants: 1,
         veteran_file_number: veteran.file_number,
-        stream_type: "original"
+        stream_type: Constants.AMA_STREAM_TYPES.original
       )
 
       jdr_task = create(:ama_judge_decision_review_task, :completed,
