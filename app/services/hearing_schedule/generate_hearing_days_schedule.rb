@@ -103,7 +103,9 @@ class HearingSchedule::GenerateHearingDaysSchedule
     (@schedule_period.start_date..@schedule_period.end_date).each do |scheduled_for|
       # if CO_DAYS_OF_WEEK falls on an invalid day, pick a day of the week that is valid
       if CO_DAYS_OF_WEEK.include?(scheduled_for.cwday) && weekend_or_holiday_or_not_available?(scheduled_for)
-        fallback_date_for_co = get_fallback_date_for_co(scheduled_for)
+        fallback_date_for_co = get_fallback_date_for_co(
+          scheduled_for, @schedule_period.start_date, @schedule_period.end_date
+        )
         if fallback_date_for_co
           co_schedule.push(**co_schedule_args, scheduled_for: fallback_date_for_co)
         end
@@ -346,11 +348,13 @@ class HearingSchedule::GenerateHearingDaysSchedule
   end
 
   # pick the first day from fallback days that is valid
-  def get_fallback_date_for_co(scheduled_for)
+  def get_fallback_date_for_co(scheduled_for, start_date, end_date)
     valid_cwday = CO_FALLBACK_DAYS_OF_WEEK.detect do |cwday|
+      # i.e, if cwday is 1 and since begining of week is always monday, this will evauluate to monday
       date = scheduled_for.beginning_of_week + (cwday - 1).day
 
-      !weekend_or_holiday_or_not_available?(date)
+      # fallback date we choose has to valid as well as within the scheduling period range
+      !weekend_or_holiday_or_not_available?(date) && date >= start_date && date <= end_date
     end
 
     valid_cwday ? scheduled_for.beginning_of_week + (valid_cwday - 1).day : nil
