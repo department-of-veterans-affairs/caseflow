@@ -168,7 +168,8 @@ exports[`EditClaimLabelModal renders correctly 1`] = `
         </span>
         <span>
           <button
-            class="usa-button usa-button-primary cf-push-right usa-button"
+            class="cf-push-right usa-button-disabled usa-button"
+            disabled=""
             id="Edit-Claim-Label-button-id-1"
             type="button"
           >

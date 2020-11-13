@@ -28,8 +28,8 @@ export const EditClaimLabelModal = ({ existingEpCode, onCancel, onSubmit }) => {
   }, [epClaimTypes, existingEpCode]);
 
   const [newCode, setNewCode] = useState(availableOptions.find((item) => item.label === existingEpCode));
-  const handleChangeLabel = (opt) => setNewCode(opt.label);
-  const isValid = useMemo(() => newCode && newCode !== existingEpCode);
+  const handleChangeLabel = (opt) => setNewCode(opt);
+  const isValid = useMemo(() => newCode?.label !== existingEpCode);
 
   const buttons = [
     {
@@ -40,7 +40,10 @@ export const EditClaimLabelModal = ({ existingEpCode, onCancel, onSubmit }) => {
     {
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Continue',
-      onClick: () => onSubmit?.(newCode),
+      onClick: () => onSubmit?.({
+        oldCode: existingEpCode,
+        newCode: newCode.label
+      }),
       disabled: !isValid,
     },
   ];
