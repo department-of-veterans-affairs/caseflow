@@ -38,6 +38,7 @@ import {
   toggleCorrectionTypeModal
 } from '../actions/addIssues';
 import COPY from '../../../COPY';
+import { EditClaimLabelModal } from '../../intakeEdit/components/EditClaimLabelModal';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -137,6 +138,25 @@ class AddIssuesPage extends React.Component {
       Established {this.establishmentCreditsTimestamp()}
       <span> by <a href={`/intake/manager?user_css_id=${this.props.intakeUser}`}>{this.props.intakeUser}</a></span>
     </div>;
+  }
+
+  // Methods for handling editing of claim label
+  openEditClaimLabelModal = (endProductCode) => {
+    this.setState({
+      showEditClaimLabelModal: true,
+      selectedEPCode: endProductCode
+    });
+  }
+  closelEditClaimLabelModal = () => {
+    this.setState({
+      showEditClaimLabelModal: false,
+      selectedEPCode: null
+    });
+  }
+  handleEditClaimLabel = (newCode) => {
+    // TODO: save the updated code
+
+    this.closelEditClaimLabelModal();
   }
 
   render() {
@@ -270,9 +290,16 @@ class AddIssuesPage extends React.Component {
               <strong>{ EP_CLAIM_TYPES[endProductCode].official_label }</strong>
             </div>
             <div className="edit-claim-label">
-              <Button classNames={['usa-button-secondary']}>
+              <Button classNames={['usa-button-secondary']} onClick={() => this.openEditClaimLabelModal(endProductCode)}>
               Edit claim label
               </Button>
+              {this.state.showEditClaimLabelModal && (
+                <EditClaimLabelModal
+                  existingEpCode={this.state.selectedEPCode}
+                  onCancel={this.closelEditClaimLabelModal}
+                  onSubmit={this.handleEditClaimLabel}
+                />
+              )}
             </div>
           </div>
         )
