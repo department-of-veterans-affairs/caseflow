@@ -21,8 +21,8 @@ class CavcRemandsController < ApplicationController
   end
 
   def validate_cavc_remand_access
-    unless LitigationSupport.singleton.user_has_access?(current_user)
-      msg = "Only Litigation Support users can create CAVC Remands"
+    unless CavcLitigationSupport.singleton.user_has_access?(current_user)
+      msg = "Only CAVC Litigation Support users can create CAVC Remands"
       fail Caseflow::Error::ActionForbiddenError, message: msg
     end
   end

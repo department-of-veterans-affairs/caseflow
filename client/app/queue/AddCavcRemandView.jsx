@@ -1,26 +1,36 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { useSelector, connect } from 'react-redux';
 import { css } from 'glamor';
 import classNames from 'classnames';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import COPY from '../../COPY';
+import CAVC_JUDGE_FULL_NAMES from '../../constants/CAVC_JUDGE_FULL_NAMES';
 
 import QueueFlowPage from './components/QueueFlowPage';
-import { appealWithDetailSelector } from './selectors';
+// import { appealWithDetailSelector } from './selectors';
+import { requestSave } from './uiReducer/uiActions';
 import TextField from '../components/TextField';
 import RadioField from '../components/RadioField';
 import DateSelector from '../components/DateSelector';
 import Checkbox from '../components/Checkbox';
 import CheckboxGroup from '../components/CheckboxGroup';
 import TextareaField from '../components/TextareaField';
-import { JudgeDropdown } from '../components/DataDropdowns';
 import Button from '../components/Button';
 import Alert from '../components/Alert';
-import { submitMTVAttyReview } from './mtv/mtvActions';
+import SearchableDropdown from '../components/SearchableDropdown';
 
 const labelStyling = css({ marginTop: '2.5rem' });
 const buttonStyling = css({ paddingLeft: '0' });
 const alertStyling = css({ width: '52rem' });
+
+const judgeOptions = [].concat(
+  _.map(CAVC_JUDGE_FULL_NAMES, (value) => ({
+    label: value,
+    value: value
+  }))
+);
 
 const attorneyOptions = [
   { displayText: 'Yes',
@@ -56,6 +66,8 @@ const issueOptions = [
 ];
 
 const AddCavcRemandView = (props) => {
+
+  const { appealId, requestSave } = props;
 
   const [docketNumber, setDocketNumber] = useState(null);
   const [attorney, setAttorney] = useState('1');
@@ -107,18 +119,35 @@ const AddCavcRemandView = (props) => {
     setIssues({ ...issues, [evt.target.name]: evt.target.checked });
   };
 
-  // const submit = () => {
-  //   const payload = { 
-  //     data: { 
-  //     judgement_date: judgementDate,
+  const submit = () => {
+    const payload = { 
+      data: { 
+        judgement_date: judgementDate,
+        mandate_date: mandateDate,
+        appeal_id: appealId, 
+        cavc_docket_number: docketNumber, 
+        cavc_judge_full_name: judge.value,
+        cavc_decision_type: type, 
+        decision_date: decisionDate, 
+        instructions: text, 
+        remand_subtype: subType,
+        represented_by_attorney: attorney,
+        decision_issue_ids: issues
+      } };
 
-  //   } };
-  // }
+      console.log(payload)
+      const successMessage = "SUCCESS";
+
+    return requestSave(`/appeals/${appealId}/cavc_remand`, payload, successMessage).
+      then((resp) => {
+        console.log(resp);
+      });
+  };
 
   return (
     <QueueFlowPage
-      appealId={props.appealId}
-      // goToNextStep={submit}
+      appealId={appealId}
+      goToNextStep={submit}
       continueBtnText="Submit"
       hideCancelButton
       // {...otherProps}
@@ -135,11 +164,13 @@ const AddCavcRemandView = (props) => {
         options={attorneyOptions}
         value={attorney}
         onChange={(val) => setAttorney(val)} />
-      <JudgeDropdown
-        label={<h3>{COPY.CAVC_JUDGE_LABEL}</h3>}
+      <SearchableDropdown
         name="judge-dropdown"
+        label={<h3>{COPY.CAVC_JUDGE_LABEL}</h3>}
+        searchable
         value={judge}
-        onChange={(val) => setJudge(val)} />
+        onChange={(val) => setJudge(val)}
+        options={judgeOptions} />
       <RadioField
         label={<h3 {...labelStyling} id="vertical-radio">{COPY.CAVC_TYPE_LABEL}</h3>}
         name="type-options"
@@ -191,8 +222,6 @@ const AddCavcRemandView = (props) => {
         linkStyling
         onClick={toggleIssues} />}
       <CheckboxGroup
-        // label={<h3 id="vertical">{COPY.CAVC_ISSUES_LABEL}</h3>}
-        // name="Rating Issues Checkboxes"
         options={issueOptions}
         values={issues}
         onChange={(val) => onIssueChange(val)}
@@ -211,4 +240,8 @@ AddCavcRemandView.propTypes = {
   appealId: PropTypes.string
 };
 
-export default AddCavcRemandView;
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  requestSave
+}, dispatch);
+
+export default connect(null, mapDispatchToProps)(AddCavcRemandView);
