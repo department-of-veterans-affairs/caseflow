@@ -1,14 +1,13 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { css } from 'glamor';
 import classNames from 'classnames';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import COPY from '../../COPY';
 
 import QueueFlowPage from './components/QueueFlowPage';
 import { appealWithDetailSelector } from './selectors';
 import TextField from '../components/TextField';
-// import SearchableDropdown from '../components/SearchableDropdown';
 import RadioField from '../components/RadioField';
 import DateSelector from '../components/DateSelector';
 import Checkbox from '../components/Checkbox';
@@ -16,10 +15,12 @@ import CheckboxGroup from '../components/CheckboxGroup';
 import TextareaField from '../components/TextareaField';
 import { JudgeDropdown } from '../components/DataDropdowns';
 import Button from '../components/Button';
+import Alert from '../components/Alert';
+import { submitMTVAttyReview } from './mtv/mtvActions';
 
-const labelMargin = css({ marginTop: '2.5rem' });
-
-const buttonPadding = css({ paddingLeft: '0' });
+const labelStyling = css({ marginTop: '2.5rem' });
+const buttonStyling = css({ paddingLeft: '0' });
+const alertStyling = css({ width: '52rem' });
 
 const attorneyOptions = [
   { displayText: 'Yes',
@@ -57,14 +58,15 @@ const issueOptions = [
 const AddCavcRemandView = (props) => {
 
   const [docketNumber, setDocketNumber] = useState(null);
-  const [attorney, setAttorney] = useState(null);
+  const [attorney, setAttorney] = useState('1');
   const [judge, setJudge] = useState(null);
-  const [type, setType] = useState(null);
-  const [subType, setSubType] = useState(null);
+  const [type, setType] = useState('1');
+  const [subType, setSubType] = useState('1');
   const [decisionDate, setDecisionDate] = useState(null);
-  const [judgementChoice, setJudgementChoice] = useState(null);
+  const [judgementSelection, setJudgementSelection] = useState(true);
+  const [judgementDate, setJudgementDate] = useState(null);
+  const [mandateDate, setMandateDate] = useState(null);
   const [issues, setIssues] = useState({});
-  // const [allIssuesSelected, setAllIssuesSelected] = useState(false);
   const [text, setText] = useState(null);
 
   // determines which issues are currently selected
@@ -81,6 +83,9 @@ const AddCavcRemandView = (props) => {
     issueOptions.forEach((item) => newValues[item.id] = checked);
     setIssues(newValues);
   };
+
+  // populate all of our checkboxes on initial render
+  useEffect(() => toggleIssues(), []);
 
   // clears all decision issue checkboxes
   const clearAllIssues = () => {
@@ -102,11 +107,22 @@ const AddCavcRemandView = (props) => {
     setIssues({ ...issues, [evt.target.name]: evt.target.checked });
   };
 
+  // const submit = () => {
+  //   const payload = { 
+  //     data: { 
+  //     judgement_date: judgementDate,
+
+  //   } };
+  // }
+
   return (
     <QueueFlowPage
       appealId={props.appealId}
+      // goToNextStep={submit}
       continueBtnText="Submit"
-      hideCancelButton >
+      hideCancelButton
+      // {...otherProps}
+       >
       <h1>{COPY.ADD_CAVC_PAGE_TITLE}</h1>
       <p>{COPY.ADD_CAVC_DESCRIPTION}</p>
       <TextField
@@ -125,33 +141,53 @@ const AddCavcRemandView = (props) => {
         value={judge}
         onChange={(val) => setJudge(val)} />
       <RadioField
-        label={<h3 {...labelMargin} id="vertical-radio">{COPY.CAVC_TYPE_LABEL}</h3>}
+        label={<h3 {...labelStyling} id="vertical-radio">{COPY.CAVC_TYPE_LABEL}</h3>}
         name="type-options"
         options={typeOptions}
         value={type}
         onChange={(val) => setType(val)} />
       <RadioField
-        label={<h3 {...labelMargin} id="vertical-radio">{COPY.CAVC_SUB_TYPE_LABEL}</h3>}
+        label={<h3 {...labelStyling} id="vertical-radio">{COPY.CAVC_SUB_TYPE_LABEL}</h3>}
         name="sub-type-options"
         options={subTypeOptions}
         value={subType}
         onChange={(val) => checkSubType(val)} />
-      <h4 {...labelMargin}>{COPY.CAVC_COURT_DECISION_DATE}</h4>
+      <h4 {...labelStyling}>{COPY.CAVC_COURT_DECISION_DATE}</h4>
       <DateSelector
         type="date"
         value={decisionDate}
         onChange={(val) => setDecisionDate(val)} />
-      <h3>{COPY.CAVC_JUDGEMENT_DATE}</h3>
+      {subType === '3' &&
+        <Alert
+          type="info"
+          classname="usa-alert-slim"
+          message={COPY.CAVC_MDR_MESSAGE}
+          styling={alertStyling}
+          lowerMargin />}
+      <h3>{COPY.CAVC_JUDGEMENT_DATE_HEADER}</h3>
       <Checkbox
         label={COPY.CAVC_JUDGEMENT_DATE_DESC}
         name="judgement-decision-date"
         vertical
-        value={judgementChoice}
-        onChange={() => setJudgementChoice()} />
+        value={judgementSelection}
+        onChange={(val) => setJudgementSelection(val)} />
+      <h4 {...labelStyling}>{COPY.CAVC_JUDGEMENT_DATE}</h4>
+      {subType === '1' && !judgementSelection &&
+      <>
+        <DateSelector
+          type="date"
+          value={judgementDate}
+          onChange={(val) => setJudgementDate(val)} />
+        <h4 {...labelStyling}>{COPY.CAVC_MANDATE_DATE}</h4>
+        <DateSelector
+          type="date"
+          value={mandateDate}
+          onChange={(val) => setMandateDate(val)} />
+      </> }
       <h3>{COPY.CAVC_ISSUES_LABEL}</h3>
       {subType !== '1' && (!selectedIssues.length || selectedIssues.length === issueOptions.length) && <Button
         name={selectedIssues.length ? 'Unselect all' : 'Select all'}
-        styling={buttonPadding}
+        styling={buttonStyling}
         linkStyling
         onClick={toggleIssues} />}
       <CheckboxGroup
@@ -163,7 +199,7 @@ const AddCavcRemandView = (props) => {
         disableAll={subType === '1'} />
       {subType === '1' && <i>*Joint Motion for Remand (JMR) automatically selects all issues</i>}
       <TextareaField
-        label={<h3 {...labelMargin}>{COPY.CAVC_INSTRUCTIONS_LABEL}</h3>}
+        label={<h3 {...labelStyling}>{COPY.CAVC_INSTRUCTIONS_LABEL}</h3>}
         name="context-and-instructions-textBox"
         value={text}
         onChange={(val) => setText(val)} />
@@ -171,8 +207,8 @@ const AddCavcRemandView = (props) => {
   );
 };
 
-// AddCavcRemandView.propTypes = {
-
-// };
+AddCavcRemandView.propTypes = {
+  appealId: PropTypes.string
+};
 
 export default AddCavcRemandView;
