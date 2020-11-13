@@ -31,9 +31,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   def cache_ama_appeals
-    appeals = Appeal.includes(:available_hearing_locations)
-      .where(id: open_appeals_from_tasks(Appeal.name))
-      .order(id: :desc) # cache most created appeals first
+    appeals = Appeal.includes(:available_hearing_locations).where(id: open_appeals_from_tasks(Appeal.name))
 
     cached_appeals = cached_appeal_service.cache_ama_appeals(appeals)
 
@@ -49,14 +47,14 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     # was previously causing this code to insert legacy appeal attributes that corresponded to NULL ID fields.
     legacy_appeals = LegacyAppeal.includes(:available_hearing_locations)
       .where(id: open_appeals_from_tasks(LegacyAppeal.name))
-      .order(id: :desc) # cache most created appeals first
+    all_vacols_ids = legacy_appeals.pluck(:vacols_id).flatten
 
     cache_postgres_data_start = Time.zone.now
     cache_legacy_appeal_postgres_data(legacy_appeals)
     datadog_report_time_segment(segment: "cache_legacy_appeal_postgres_data", start_time: cache_postgres_data_start)
 
     cache_vacols_data_start = Time.zone.now
-    cache_legacy_appeal_vacols_data(legacy_appeals)
+    cache_legacy_appeal_vacols_data(all_vacols_ids)
     datadog_report_time_segment(segment: "cache_legacy_appeal_vacols_data", start_time: cache_vacols_data_start)
   end
 
@@ -69,9 +67,9 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     end
   end
 
-  def cache_legacy_appeal_vacols_data(legacy_appeals)
-    legacy_appeals.in_groups_of(VACOLS_BATCH_SIZE, false).each do |batch_legacy_appeals|
-      cached_appeals = cached_appeal_service.cache_legacy_appeal_vacols_data(batch_legacy_appeals)
+  def cache_legacy_appeal_vacols_data(all_vacols_ids)
+    all_vacols_ids.in_groups_of(VACOLS_BATCH_SIZE, false).each do |batch_vacols_ids|
+      cached_appeals = cached_appeal_service.cache_legacy_appeal_vacols_data(batch_vacols_ids)
 
       increment_vacols_update_count(cached_appeals.count)
     end
