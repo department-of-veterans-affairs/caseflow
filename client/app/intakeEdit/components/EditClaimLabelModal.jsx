@@ -12,10 +12,6 @@ import {
 import epClaimTypes from 'constants/EP_CLAIM_TYPES';
 
 export const EditClaimLabelModal = ({ existingEpCode, onCancel, onSubmit }) => {
-  const [newCode, setNewCode] = useState(existingEpCode);
-  const handleChangeLabel = (opt) => setNewCode(opt.label);
-  const isValid = useMemo(() => newCode && newCode !== existingEpCode);
-
   // Only EP codes from the same family should be allowed
   const availableOptions = useMemo(() => {
     // Filter out all but the same family (040, 930, etc)
@@ -30,6 +26,10 @@ export const EditClaimLabelModal = ({ existingEpCode, onCancel, onSubmit }) => {
       value,
     }));
   }, [epClaimTypes, existingEpCode]);
+
+  const [newCode, setNewCode] = useState(availableOptions.find((item) => item.label === existingEpCode));
+  const handleChangeLabel = (opt) => setNewCode(opt.label);
+  const isValid = useMemo(() => newCode && newCode !== existingEpCode);
 
   const buttons = [
     {
@@ -54,13 +54,16 @@ export const EditClaimLabelModal = ({ existingEpCode, onCancel, onSubmit }) => {
     >
       <div>
         <strong>
-          {sprintf(
-            EDIT_CLAIM_LABEL_MODAL_SUBHEAD,
-            // eslint-disable-next-line camelcase
+          {
+            /* eslint-disable camelcase */
+            sprintf(
+              EDIT_CLAIM_LABEL_MODAL_SUBHEAD,
             `${epClaimTypes[existingEpCode]?.family} ${
               epClaimTypes[existingEpCode]?.official_label
             }`
-          )}
+            )
+          /* eslint-enable camelcase */
+          }
         </strong>
       </div>
       <p>{EDIT_CLAIM_LABEL_MODAL_NOTE}</p>
