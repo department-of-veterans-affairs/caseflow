@@ -43,4 +43,8 @@ module QueueHelpers
 
     parts.join("\n")
   end
+
+  def format_docket_switch_recommendation_instructions(summary:, disposition:, hyperlink, timely)
+    ["**Summary:**\n\n #{summary}"]
+  end
 end

@@ -101,7 +101,13 @@ RSpec.feature "Docket Switch", :all_dbs do
 
   describe "judge ruling" do
     let!(:docket_switch_ruling_task) do
-      create(:docket_switch_ruling_task, appeal: appeal, parent: root_task, assigned_to: judge, assigned_by: cotb_attorney)
+      create(
+        :docket_switch_ruling_task,
+        appeal: appeal,
+        parent: root_task,
+        assigned_to: judge,
+        assigned_by: cotb_attorney
+      )
     end
     let(:context) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit" }
     let(:hyperlink) { "https://example.com/file.txt" }

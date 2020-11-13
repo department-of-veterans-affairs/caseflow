@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import selectEvent from 'react-select-event';
+import ReactMarkdown from 'react-markdown';
 
 import { DocketSwitchRulingForm } from 'app/queue/docketSwitch/judgeRuling/DocketSwitchRulingForm';
 import {
@@ -10,7 +11,7 @@ import {
 } from 'COPY';
 import { sprintf } from 'sprintf-js';
 
-const attorneyOptions = [
+const clerkOfTheBoardAttorneys = [
   { label: 'Attorney 1', value: 1 },
   { label: 'Attorney 2', value: 2 },
 ];
@@ -20,7 +21,7 @@ describe('DocketSwitchRulingForm', () => {
   const onCancel = jest.fn();
   const appellantName = 'Claimant 1';
   const instructions = ["**Summary:** Summary\n\n**Is this a timely request:** Yes\n\n**Recommendation:** Grant all issues\n\n**Draft letter:** http://www.va.gov"];
-  const defaults = { onSubmit, onCancel, appellantName, attorneyOptions, instructions };
+  const defaults = { onSubmit, onCancel, appellantName, clerkOfTheBoardAttorneys, instructions };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -32,7 +33,11 @@ describe('DocketSwitchRulingForm', () => {
     expect(container).toMatchSnapshot();
 
     expect(screen.getByText(sprintf(DOCKET_SWITCH_RULING_TITLE, appellantName))).toBeInTheDocument();
-    expect(screen.getByText(DOCKET_SWITCH_RULING_INSTRUCTIONS)).toBeInTheDocument();
+    const instructionParts = DOCKET_SWITCH_RULING_INSTRUCTIONS.split("**").join("").split("\n\n");
+    // The markdown formatting in COPY makes it a little tricky to automatically test the instructions
+    // Including first two parts here (but there are more)
+    expect(screen.getByText(instructionParts[0])).toBeInTheDocument();
+    expect(screen.getByText(instructionParts[1])).toBeInTheDocument();
   });
 
   it('fires onCancel', async () => {
@@ -45,6 +50,8 @@ describe('DocketSwitchRulingForm', () => {
 
   describe('form validation', () => {
     it('disables submit until all fields valid', async () => {
+      const context = 'Lorem ipsum';
+
       render(<DocketSwitchRulingForm {...defaults} />);
 
       const submit = screen.getByRole('button', { name: /submit/i });
@@ -64,10 +71,16 @@ describe('DocketSwitchRulingForm', () => {
         screen.getByRole('radio', { name: /grant all issues/i })
       );
 
+      //   Set context
+      await userEvent.type(
+        screen.getByRole('textbox', { name: /context/i }),
+        context
+      );
+
       //   Select an attorney
       await selectEvent.select(
         screen.getByLabelText(/assign to office of the clerk of the board/i),
-        attorneyOptions[1].label
+        clerkOfTheBoardAttorneys[1].label
       );
 
       await waitFor(() => {
@@ -97,7 +110,7 @@ describe('DocketSwitchRulingForm', () => {
     //   Select a attorney
     await selectEvent.select(
       screen.getByLabelText(/assign to office of the clerk of the board/i),
-      attorneyOptions[1].label
+      clerkOfTheBoardAttorneys[1].label
     );
 
     await userEvent.type(
@@ -116,7 +129,7 @@ describe('DocketSwitchRulingForm', () => {
         disposition: 'granted',
         hyperlink,
         context,
-        attorney: attorneyOptions[1],
+        attorney: clerkOfTheBoardAttorneys[1],
       });
     });
   });
@@ -125,14 +138,14 @@ describe('DocketSwitchRulingForm', () => {
     render(
       <DocketSwitchRulingForm
         {...defaults}
-        defaultJudgeId={attorneyOptions[1].value}
+        defaultAttorneyId={clerkOfTheBoardAttorneys[1].value}
       />
     );
 
     // This one
-    expect(screen.queryByText(attorneyOptions[1].label)).toBeTruthy();
+    expect(screen.queryByText(clerkOfTheBoardAttorneys[1].label)).toBeTruthy();
 
     // Not this one
-    expect(screen.queryByText(attorneyOptions[0].label)).not.toBeTruthy();
+    expect(screen.queryByText(clerkOfTheBoardAttorneys[0].label)).not.toBeTruthy();
   });
 });

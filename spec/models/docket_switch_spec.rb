@@ -2,8 +2,24 @@
 
 RSpec.describe DocketSwitch, type: :model do
   let(:cotb_team) { ClerkOfTheBoard.singleton }
-  let(:instructions) { ["**Summary:** Summary\n\n**Is this a timely request:** Yes\n\n**Recommendation:** Grant all issues\n\n**Draft letter:** http://www.va.gov"] }
-  let(:judge) { create(:user, full_name: "Judge User", css_id: "JUDGE_1", instructions: instructions) }
+
+  let(:disposition) { "granted" }
+  let(:summary) { "Summary of the docket switch recommendation" }
+  let(:timely) { true }
+  let(:hyperlink) { "http://www.va.gov" }
+  let(:recommendation_instructions) do
+    format_docket_switch_recommendation_instructions(
+      summary: summary,
+      disposition: disposition,
+      hyperlink: hyperlink,
+      timely: timely
+    )
+  end
+
+  let(:instructions) do
+    ["**Summary:** Summary\n\n**Is this a timely request:** Yes\n\n**Recommendation:** Grant all issues\n\n**Draft letter:** http://www.va.gov"]
+  end
+  let(:judge) { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
   let(:attorney) { create(:user) }
   let!(:judge_team) do
     JudgeTeam.create_for_judge(judge).tap { |jt| jt.add_user(attorney) }

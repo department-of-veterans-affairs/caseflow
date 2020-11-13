@@ -14,9 +14,9 @@ export const formatDocketSwitchRuling = ({
 }) => {
   const parts = [];
 
-  parts.push(`I am proceeding with a:\n ${DISPOSITIONS[disposition].judgeRulingText}.`);
-  parts.push(`Signed ruling letter:\n ${hyperlink}`);
-  parts.push(`Context/Instructions:\n ${context}`);
+  parts.push(`I am proceeding with a ${DISPOSITIONS[disposition].judgeRulingText}.`);
+  parts.push(`Signed ruling letter:  \n${hyperlink}`);
+  parts.push(context);
 
   return parts.join('  \n  \n');
 };

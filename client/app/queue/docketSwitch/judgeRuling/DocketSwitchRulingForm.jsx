@@ -71,13 +71,13 @@ export const DocketSwitchRulingForm = ({
     >
       <AppSegment filledBackground>
         <h1>{sprintf(DOCKET_SWITCH_RULING_TITLE, appellantName)}</h1>
-        <p {...sectionStyle}>
+        <div {...sectionStyle}>
           <ReactMarkdown source={DOCKET_SWITCH_RULING_INSTRUCTIONS} />
-        </p>
+        </div>
         <hr {...sectionStyle} />
-        <p {...sectionStyle}>
+        <div {...sectionStyle}>
           <ReactMarkdown plugins={[gfm]} source={instructions[0]} linkTarget="_blank" />
-        </p>
+        </div>
         <hr {...sectionStyle} />
 
         <RadioField

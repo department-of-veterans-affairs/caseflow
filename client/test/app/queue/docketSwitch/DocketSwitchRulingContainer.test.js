@@ -19,11 +19,11 @@ describe('formatDocketSwitchRuling', () => {
       });
 
       expect(res).toMatch(
-        new RegExp('\\*\\*I am proceeding with a:\\*\\* full switch {2}\\n {2}\\n')
+        new RegExp('I am proceeding with a full switch\\. {2}\\n {2}\\n')
       );
-      expect(res).toMatch(new RegExp(`\\*\\*Signed ruling letter:\\*\\* ${hyperlink}`));
+      expect(res).toMatch(new RegExp(`Signed ruling letter: {2}\\n${hyperlink} {2}\\n {2}\\n`));
       expect(res).toMatch(
-        new RegExp(`\\*\\*Context/Instructions:\\*\\* ${context} {2}\\n {2}\\n`)
+        new RegExp(context)
       );
       expect(res).toMatchSnapshot();
     });
@@ -41,15 +41,16 @@ describe('formatDocketSwitchRuling', () => {
         disposition,
       });
 
-      expect(res).toMatch(
-        new RegExp(`\\*\\*Context/Instructions:\\*\\* ${context} {2}\\n {2}\\n`)
-      );
+
       expect(res).toMatch(
         new RegExp(
-          '\\*\\*I am proceeding with a:\\*\\* partial switch {2}\\n {2}\\n'
+          'I am proceeding with a partial switch\\. {2}\\n {2}\\n'
         )
       );
-      expect(res).toMatch(new RegExp(`\\*\\*Signed ruling letter:\\*\\* ${hyperlink}`));
+      expect(res).toMatch(new RegExp(`Signed ruling letter: {2}\\n${hyperlink} {2}\\n {2}\\n`));
+      expect(res).toMatch(
+        new RegExp(context)
+      );
       expect(res).toMatchSnapshot();
     });
   });
@@ -67,12 +68,12 @@ describe('formatDocketSwitchRuling', () => {
       });
 
       expect(res).toMatch(
-        new RegExp(`\\*\\*Context/Instructions:\\*\\* ${context} {2}\\n {2}\\n`)
+        new RegExp('I am proceeding with a denial\\. {2}\\n {2}\\n')
       );
+      expect(res).toMatch(new RegExp(`Signed ruling letter: {2}\\n${hyperlink} {2}\\n {2}\\n`));
       expect(res).toMatch(
-        new RegExp('\\*\\*I am proceeding with a:\\*\\* denial {2}\\n {2}\\n')
+        new RegExp(context)
       );
-      expect(res).toMatch(new RegExp(`\\*\\*Signed ruling letter:\\*\\* ${hyperlink}`));
       expect(res).toMatchSnapshot();
     });
   });

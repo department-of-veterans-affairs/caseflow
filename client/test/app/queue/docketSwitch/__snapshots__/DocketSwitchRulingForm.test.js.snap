@@ -13,7 +13,7 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
       <h1>
         Switch Docket: Rule on Claimant 1's Request
       </h1>
-      <p
+      <div
         data-css-1sbm5ab=""
       >
         <p>
@@ -36,11 +36,11 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
         <p>
           When you click "Confirm," the task will automatically be returned to the individual who assigned it to you. If you would like to return the task to a different individual, please use the drop down box to select a different name.
         </p>
-      </p>
+      </div>
       <hr
         data-css-1sbm5ab=""
       />
-      <p
+      <div
         data-css-1sbm5ab=""
       >
         <p>
@@ -73,7 +73,7 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
             http://www.va.gov
           </a>
         </p>
-      </p>
+      </div>
       <hr
         data-css-1sbm5ab=""
       />
