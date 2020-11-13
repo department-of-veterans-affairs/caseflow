@@ -13,7 +13,7 @@ export default {
     },
   },
   args: {
-    existingLabel: '040 HLR DTA Error',
+    existingEpCode: '040HDENR',
   },
   argTypes: {
     onCancel: { action: 'cancel' },
