@@ -15,7 +15,10 @@ class AdvanceOnDocketMotion < CaseflowRecord
   }
 
   scope :granted, -> { where(granted: true) }
+  # 'age' below is filters to reason: age due to scope+enum Rails magic
   scope :eligible_due_to_age, -> { age }
+  scope :for_appeal, ->(appeal) { where(appeal: appeal) }
+  # not(id: age) runs a NOT IN subquery on age:
   scope :eligible_due_to_appeal, ->(appeal) { where(appeal: appeal).where.not(id: age) }
   scope :for_person, ->(person_id) { where(person_id: person_id) }
 
@@ -32,10 +35,31 @@ class AdvanceOnDocketMotion < CaseflowRecord
 
     def create_or_update_by_appeal(appeal, attrs)
       person_id = appeal.claimant.person.id
-      motion = eligible_due_to_appeal(appeal).for_person(person_id).first ||
-               create(person_id: person_id, appeal: appeal)
 
-      motion.update(attrs)
+      all_motions = AdvanceOnDocketMotion.for_appeal(appeal).for_person(person_id).order(:id)
+
+      motion =  if age_related_motion?(attrs[:reason]) && all_motions.any? { |m| age_related_motion?(m[:reason]) }
+                  for_appeal(appeal).for_person(person_id).where(reason: attrs[:reason]).order(:id).last
+                elsif non_age_related_motion?(attrs[:reason]) && all_motions.any? { |m| non_age_related_motion?(m[:reason]) }
+                  for_appeal(appeal).for_person(person_id).where(reason: attrs[:reason]).order(:id).last
+                else
+                  for_appeal(appeal).for_person(person_id).first ||
+                    create(person_id: person_id, appeal: appeal)
+                end
+
+      motion.update(attrs) if motion
+    end
+
+    def age_related_motion?(reason)
+      reason == Constants.AOD_REASONS.age
+    end
+
+    def non_age_related_motion?(reason)
+      [
+          Constants.AOD_REASONS.financial_distress,
+          Constants.AOD_REASONS.serious_illness,
+          Constants.AOD_REASONS.other
+      ].include?(reason)
     end
   end
 end

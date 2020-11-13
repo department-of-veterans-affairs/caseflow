@@ -171,6 +171,22 @@ describe AdvanceOnDocketMotion, :postgres do
           expect(motions.second.granted).to be(true)
           expect(motions.second.reason).to eq(attrs[:reason])
         end
+
+        it "only allows one age-related motion per appeal" do
+          subject
+
+          described_class.create_or_update_by_appeal(
+              appeal,
+              reason: reason
+          )
+
+          motions = appeal.claimant.person.advance_on_docket_motions
+          expect(motions.count).to eq 2
+          expect(motions.first.granted).to be(false)
+          expect(motions.first.reason).to eq(described_class.reasons[:age])
+          expect(motions.second.granted).to be(true)
+          expect(motions.second.reason).to eq(attrs[:reason])
+        end
       end
     end
   end
