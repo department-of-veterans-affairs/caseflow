@@ -378,16 +378,18 @@ class TaskRows extends React.PureComponent {
         <td className="taskContainerStyling taskInformationTimelineContainerStyling">
           { COPY.CASE_TIMELINE_NOD_RECEIVED } <br />
           <p>
-            <Link
-              name="edit-nod"
+            <Button
+              type="button"
+              linkStyling
               onClick={this.toggleEditNODModal}>
               {COPY.CASE_DETAILS_EDIT_NOD}
-            </Link>
+            </Button>
           </p>
           {this.state.showEditNODModal && (
             <EditNODModal
               onCancel={this.toggleEditNODModal}
               onSubmit={this.handleNODDateChange}
+              nodDate={appeal.nodDate}
             />
           )}
         </td>

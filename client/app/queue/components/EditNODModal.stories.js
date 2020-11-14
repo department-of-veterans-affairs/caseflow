@@ -12,7 +12,7 @@ export default {
       iframeHeight: 700,
     },
   },
-  args: {},
+  args: {nodDate: '2020-10-01'},
   argTypes: {
     onCancel: { action: 'cancel' },
     onSubmit: { action: 'submit' },
@@ -30,9 +30,4 @@ Basic.parameters = {
     storyDescription:
       'This is used to edit NOD date for an appeal',
   },
-};
-
-EditNODModal.propTypes = {
-  onCancel: PropTypes.func,
-  onSubmit: PropTypes.func,
 };

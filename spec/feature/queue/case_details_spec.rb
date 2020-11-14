@@ -803,7 +803,7 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
-    context "when the current user is not a member of the AOD team" do
+    fcontext "when the current user is not a member of the AOD team" do
       before do
         allow_any_instance_of(AodTeam).to receive(:user_has_access?).with(user2).and_return(false)
         User.authenticate!(user: user2)
