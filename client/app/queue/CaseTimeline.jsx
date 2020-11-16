@@ -38,7 +38,12 @@ export class CaseTimeline extends React.PureComponent {
       }
       <table id="case-timeline-table" summary="layout table">
         <tbody>
-          <TaskRows appeal={appeal} taskList={tasks} onEditNODChange={this.handleEditNODChange} timeline />
+          <TaskRows appeal={appeal}
+            taskList={tasks}
+            onEditNODChange={this.handleEditNODChange}
+            editNodDateEnabled={this.props.featureToggles?.editNodDate}
+            timeline
+          />
         </tbody>
       </table>
     </React.Fragment>;
@@ -47,12 +52,14 @@ export class CaseTimeline extends React.PureComponent {
 
 CaseTimeline.propTypes = {
   appeal: PropTypes.object,
-  tasks: PropTypes.array
+  tasks: PropTypes.array,
+  featureToggles: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    tasks: caseTimelineTasksForAppeal(state, { appealId: ownProps.appeal.externalId })
+    tasks: caseTimelineTasksForAppeal(state, { appealId: ownProps.appeal.externalId }),
+    featureToggles: state.ui.featureToggles
   };
 };
 
