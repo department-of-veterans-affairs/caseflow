@@ -7,6 +7,8 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import COPY from '../../COPY';
 import CAVC_JUDGE_FULL_NAMES from '../../constants/CAVC_JUDGE_FULL_NAMES';
+import CAVC_REMAND_SUBTYPES from '../../constants/CAVC_REMAND_SUBTYPES';
+import CAVC_DECISION_TYPES from '../../constants/CAVC_DECISION_TYPES';
 
 import QueueFlowPage from './components/QueueFlowPage';
 // import { appealWithDetailSelector } from './selectors';
@@ -14,7 +16,7 @@ import { requestSave } from './uiReducer/uiActions';
 import TextField from '../components/TextField';
 import RadioField from '../components/RadioField';
 import DateSelector from '../components/DateSelector';
-import Checkbox from '../components/Checkbox';
+// import Checkbox from '../components/Checkbox';
 import CheckboxGroup from '../components/CheckboxGroup';
 import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
@@ -28,7 +30,7 @@ const alertStyling = css({ width: '52rem' });
 const judgeOptions = [].concat(
   _.map(CAVC_JUDGE_FULL_NAMES, (value) => ({
     label: value,
-    value: value
+    value
   }))
 );
 
@@ -40,20 +42,22 @@ const attorneyOptions = [
 ];
 const typeOptions = [
   { displayText: COPY.CAVC_REMAND,
-    value: '1' },
+    value: CAVC_DECISION_TYPES.remand },
   { displayText: COPY.CAVC_STRAIGHT_REVERSAL,
-    value: '2' },
+    value: CAVC_DECISION_TYPES.straight_reversal },
   { displayText: COPY.CAVC_DEATH_DISMISSAL,
-    value: '3' }
+    value: CAVC_DECISION_TYPES.death_dismissal }
 ];
 const subTypeOptions = [
   { displayText: COPY.CAVC_JMR,
-    value: '1' },
+    value: CAVC_REMAND_SUBTYPES.jmr },
   { displayText: COPY.CAVC_JMPR,
-    value: '2' },
+    value: CAVC_REMAND_SUBTYPES.jmpr },
   { displayText: COPY.CAVC_MDR,
-    value: '3' }
+    value: CAVC_REMAND_SUBTYPES.mdr }
 ];
+
+// need to bring in actual decision issue ids from the appeal
 const issueOptions = [
   { id: 'ratingIssue1',
     label: COPY.CAVC_RATING_ISSUE_1 },
@@ -72,10 +76,10 @@ const AddCavcRemandView = (props) => {
   const [docketNumber, setDocketNumber] = useState(null);
   const [attorney, setAttorney] = useState('1');
   const [judge, setJudge] = useState(null);
-  const [type, setType] = useState('1');
-  const [subType, setSubType] = useState('1');
+  const [type, setType] = useState(CAVC_DECISION_TYPES.remand);
+  const [subType, setSubType] = useState(CAVC_REMAND_SUBTYPES.jmr);
   const [decisionDate, setDecisionDate] = useState(null);
-  const [judgementSelection, setJudgementSelection] = useState(true);
+  // const [judgementSelection, setJudgementSelection] = useState(true);
   const [judgementDate, setJudgementDate] = useState(null);
   const [mandateDate, setMandateDate] = useState(null);
   const [issues, setIssues] = useState({});
@@ -106,7 +110,7 @@ const AddCavcRemandView = (props) => {
 
   // checks if the remand is JMR, if so it checks all decision issue checkboxes
   const checkSubType = (val) => {
-    if (val === '1') {
+    if (val === CAVC_REMAND_SUBTYPES.jmr) {
       toggleIssues();
       setSubType(val);
     } else {
@@ -131,11 +135,10 @@ const AddCavcRemandView = (props) => {
         decision_date: decisionDate, 
         instructions: text, 
         remand_subtype: subType,
-        represented_by_attorney: attorney,
-        decision_issue_ids: issues
+        represented_by_attorney: attorney === '1',
+        decision_issue_ids: []
       } };
 
-      console.log(payload)
       const successMessage = "SUCCESS";
 
     return requestSave(`/appeals/${appealId}/cavc_remand`, payload, successMessage).
@@ -188,7 +191,7 @@ const AddCavcRemandView = (props) => {
         type="date"
         value={decisionDate}
         onChange={(val) => setDecisionDate(val)} />
-      {subType === '3' &&
+      {subType === CAVC_REMAND_SUBTYPES.mdr &&
         <Alert
           type="info"
           classname="usa-alert-slim"
@@ -196,15 +199,16 @@ const AddCavcRemandView = (props) => {
           styling={alertStyling}
           lowerMargin />}
       <h3>{COPY.CAVC_JUDGEMENT_DATE_HEADER}</h3>
-      <Checkbox
+      {/* Holding off on implementation */}
+      {/* <Checkbox
         label={COPY.CAVC_JUDGEMENT_DATE_DESC}
         name="judgement-decision-date"
         vertical
         value={judgementSelection}
-        onChange={(val) => setJudgementSelection(val)} />
-      <h4 {...labelStyling}>{COPY.CAVC_JUDGEMENT_DATE}</h4>
-      {subType === '1' && !judgementSelection &&
+        onChange={(val) => setJudgementSelection(val)} /> */}
+      {subType === CAVC_REMAND_SUBTYPES.jmr &&
       <>
+        <h4 {...labelStyling}>{COPY.CAVC_JUDGEMENT_DATE}</h4>
         <DateSelector
           type="date"
           value={judgementDate}
@@ -216,7 +220,7 @@ const AddCavcRemandView = (props) => {
           onChange={(val) => setMandateDate(val)} />
       </> }
       <h3>{COPY.CAVC_ISSUES_LABEL}</h3>
-      {subType !== '1' && (!selectedIssues.length || selectedIssues.length === issueOptions.length) && <Button
+      {subType !== CAVC_REMAND_SUBTYPES.jmr && (!selectedIssues.length || selectedIssues.length === issueOptions.length) && <Button
         name={selectedIssues.length ? 'Unselect all' : 'Select all'}
         styling={buttonStyling}
         linkStyling
@@ -225,8 +229,8 @@ const AddCavcRemandView = (props) => {
         options={issueOptions}
         values={issues}
         onChange={(val) => onIssueChange(val)}
-        disableAll={subType === '1'} />
-      {subType === '1' && <i>*Joint Motion for Remand (JMR) automatically selects all issues</i>}
+        disableAll={subType === CAVC_REMAND_SUBTYPES.jmr} />
+      {subType === CAVC_REMAND_SUBTYPES.jmr && <i>*Joint Motion for Remand (JMR) automatically selects all issues</i>}
       <TextareaField
         label={<h3 {...labelStyling}>{COPY.CAVC_INSTRUCTIONS_LABEL}</h3>}
         name="context-and-instructions-textBox"
