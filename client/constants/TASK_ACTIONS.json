@@ -295,7 +295,7 @@
     "func": "assign_to_translation_team_blocking_distribution_data"
   },
   "SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION": {
-    "label": "Assign to Hearings Transcription team",
+    "label": "Assign to Hearing Transcripts team",
     "value": "modal/assign_to_transcription_team",
     "func": "assign_to_transciption_team_blocking_distribution_data"
   },
