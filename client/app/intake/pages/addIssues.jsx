@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
@@ -38,6 +39,7 @@ import {
   toggleCorrectionTypeModal
 } from '../actions/addIssues';
 import COPY from '../../../COPY';
+import { EditClaimLabelModal } from '../../intakeEdit/components/EditClaimLabelModal';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -137,6 +139,26 @@ class AddIssuesPage extends React.Component {
       Established {this.establishmentCreditsTimestamp()}
       <span> by <a href={`/intake/manager?user_css_id=${this.props.intakeUser}`}>{this.props.intakeUser}</a></span>
     </div>;
+  }
+
+  // Methods for handling editing of claim label
+  openEditClaimLabelModal = (endProductCode) => {
+    this.setState({
+      showEditClaimLabelModal: true,
+      selectedEPCode: endProductCode
+    });
+  }
+  closeEditClaimLabelModal = () => {
+    this.setState({
+      showEditClaimLabelModal: false,
+      selectedEPCode: null
+    });
+  }
+  // eslint-disable-next-line no-unused-vars
+  handleEditClaimLabel = (newCode) => {
+    // TODO: save the updated code
+
+    this.closeEditClaimLabelModal();
   }
 
   render() {
@@ -270,7 +292,10 @@ class AddIssuesPage extends React.Component {
               <strong>{ EP_CLAIM_TYPES[endProductCode].official_label }</strong>
             </div>
             <div className="edit-claim-label">
-              <Button classNames={['usa-button-secondary']}>
+              <Button
+                classNames={['usa-button-secondary']}
+                onClick={() => this.openEditClaimLabelModal(endProductCode)}
+              >
               Edit claim label
               </Button>
             </div>
@@ -341,6 +366,13 @@ class AddIssuesPage extends React.Component {
               });
               this.props.toggleCorrectionTypeModal();
             }}
+          />
+        )}
+        {this.state.showEditClaimLabelModal && (
+          <EditClaimLabelModal
+            existingEpCode={this.state.selectedEPCode}
+            onCancel={this.closeEditClaimLabelModal}
+            onSubmit={this.handleEditClaimLabel}
           />
         )}
         <h1 className="cf-txt-c">{messageHeader}</h1>
