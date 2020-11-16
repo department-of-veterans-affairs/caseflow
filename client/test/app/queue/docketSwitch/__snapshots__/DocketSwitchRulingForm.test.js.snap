@@ -27,7 +27,7 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
         <p>
           If you have any questions, or need assistance making edits to the ruling letter, please 
           <a
-            href="mailto:Placeholder.Email@va.gov"
+            href="mailto:BVA.Clerk@va.gov"
           >
             email
           </a>
