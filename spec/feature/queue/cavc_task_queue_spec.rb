@@ -13,7 +13,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
   context "when CAVC Lit Support is assigned SendCavcRemandProcessedLetterTask" do
     let!(:send_task) { create(:send_cavc_remand_processed_letter_task) }
 
-    fit "allows admin to assign SendCavcRemandProcessedLetterTask to user" do
+    it "allows admin to assign SendCavcRemandProcessedLetterTask to user" do
       # Logged in as CAVC Lit Support admin
       User.authenticate!(user: org_admin)
       visit "queue/appeals/#{send_task.appeal.external_id}"
