@@ -13,7 +13,7 @@ class HearingsController < HearingsApplicationController
   end
 
   rescue_from ActiveRecord::RecordNotUnique do |_error|
-    render json: { "errors": ["message": "Virtual hearing already exists", code: 1003] }, status: :conflict
+    render json: { "errors": ["message": COPY::VIRTUAL_HEARING_ALREADY_CREATED, code: 1003] }, status: :conflict
   end
 
   rescue_from ActiveRecord::RecordInvalid do |error|
@@ -36,10 +36,10 @@ class HearingsController < HearingsApplicationController
 
     render json: {
       data: form.hearing.to_hash(current_user.id),
-      alerts: {
-        hearing: form.hearing_alerts,
-        virtual_hearing: form.virtual_hearing_alert
-      }
+      alerts: [
+        { hearing: form.hearing_alerts },
+        { virtual_hearing: form.virtual_hearing_alert }
+      ]
     }
   end
 
@@ -59,7 +59,7 @@ class HearingsController < HearingsApplicationController
   def find_closest_hearing_locations
     HearingDayMapper.validate_regional_office(params["regional_office"])
 
-    appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params["appeal_id"])
+    appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(params["appeal_id"])
     facility_ids = RegionalOffice.facility_ids_for_ro(params["regional_office"])
     facility_response = appeal.va_dot_gov_address_validator.get_distance_to_facilities(facility_ids: facility_ids)
 
@@ -73,14 +73,16 @@ class HearingsController < HearingsApplicationController
 
   def virtual_hearing_job_status
     render json: {
-      email_events: hearing.email_events,
-      status: hearing.virtual_hearing&.status,
-      job_completed: hearing.virtual_hearing&.job_completed?,
-      alias_with_host: hearing.virtual_hearing&.formatted_alias_or_alias_with_host,
-      guest_link: hearing.virtual_hearing&.guest_link,
-      host_link: hearing.virtual_hearing&.host_link,
-      guest_pin: hearing.virtual_hearing&.guest_pin,
-      host_pin: hearing.virtual_hearing&.host_pin
+      email_events: hearing.serialized_email_events,
+      virtual_hearing: {
+        status: hearing.virtual_hearing&.status,
+        job_completed: hearing.virtual_hearing&.job_completed?,
+        alias_with_host: hearing.virtual_hearing&.formatted_alias_or_alias_with_host,
+        guest_link: hearing.virtual_hearing&.guest_link,
+        host_link: hearing.virtual_hearing&.host_link,
+        guest_pin: hearing.virtual_hearing&.guest_pin,
+        host_pin: hearing.virtual_hearing&.host_pin
+      }
     }
   end
 

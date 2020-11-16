@@ -36,20 +36,24 @@ class ExternalApi::BGSService
       end
   end
 
-  def cancel_end_product(veteran_file_number, end_product_code, end_product_modifier)
+  def cancel_end_product(veteran_file_number, end_product_code, end_product_modifier, payee_code, benefit_type)
     DBService.release_db_connections
 
     @end_products[veteran_file_number] ||=
       MetricsService.record("BGS: cancel end product by: \
                             file_number = #{veteran_file_number}, \
                             end_product_code = #{end_product_code}, \
-                            modifier = #{end_product_modifier}",
+                            modifier = #{end_product_modifier}
+                            payee_code = #{payee_code}
+                            benefit_type = #{benefit_type}",
                             service: :bgs,
                             name: "claims.cancel_end_product") do
         client.claims.cancel_end_product(
           file_number: veteran_file_number,
           end_product_code: end_product_code,
-          modifier: end_product_modifier
+          modifier: end_product_modifier,
+          payee_code: payee_code,
+          benefit_type: benefit_type
         )
       end
   end
@@ -224,6 +228,19 @@ class ExternalApi::BGSService
     end
   end
 
+  def get_security_profile(username:, station_id:)
+    DBService.release_db_connections
+    MetricsService.record("BGS: get security profile",
+                          service: :bgs,
+                          name: "common_security.get_security_profile") do
+      client.common_security.get_security_profile(
+        username: username,
+        station_id: station_id,
+        application: "CASEFLOW"
+      )
+    end
+  end
+
   def find_address_by_participant_id(participant_id)
     finder = ExternalApi::BgsAddressFinder.new(participant_id: participant_id, client: client)
     @addresses[participant_id] ||= finder.mailing_address || finder.addresses.last
@@ -282,6 +299,8 @@ class ExternalApi::BGSService
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
     DBService.release_db_connections
 
+    start_date, end_date = formatted_start_and_end_dates(start_date, end_date)
+
     MetricsService.record("BGS: fetch ratings in range: \
                            participant_id = #{participant_id}, \
                            start_date = #{start_date} \
@@ -310,6 +329,8 @@ class ExternalApi::BGSService
 
   def fetch_rating_profiles_in_range(participant_id:, start_date:, end_date:)
     DBService.release_db_connections
+
+    start_date, end_date = formatted_start_and_end_dates(start_date, end_date)
 
     MetricsService.record("BGS: fetch rating profile in range: \
                            participant_id = #{participant_id}, \
@@ -405,6 +426,28 @@ class ExternalApi::BGSService
     end
   end
 
+  def find_current_rating_profile_by_ptcpnt_id(participant_id)
+    DBService.release_db_connections
+    MetricsService.record("BGS: find current rating profile for veteran by participant_id #{participant_id}",
+                          service: :bgs,
+                          name: "rating_profile.find_current_rating_profile_by_ptcpnt_id") do
+      client.rating_profile.find_current_rating_profile_by_ptcpnt_id(participant_id, true)
+    end
+  end
+
+  def pay_grade_list
+    DBService.release_db_connections
+
+    @pay_grade_list ||=
+      Rails.cache.fetch("pay_grade_list", expires_in: 1.day) do
+        MetricsService.record("BGS: fetch list of pay grades",
+                              service: :bgs,
+                              name: "share_standard_data.find_pay_grades") do
+          client.share_standard_data.find_pay_grades
+        end
+      end
+  end
+
   private
 
   def current_user
@@ -435,6 +478,14 @@ class ExternalApi::BGSService
       jumpbox_url: ENV["RUBY_BGS_JUMPBOX_URL"],
       log: true
     )
+  end
+
+  def formatted_start_and_end_dates(start_date, end_date)
+    # start_date and end_date should be Dates with different values
+    return_start_date = start_date&.to_date
+    return_end_date = end_date&.to_date
+    return_end_date += 1.day if return_end_date.present? && return_end_date == return_start_date
+    [return_start_date, return_end_date]
   end
   # :nocov:
 end

@@ -12,8 +12,7 @@ export const VirtualHearingFields = ({
   errors,
   appellantTitle,
   requestType,
-  defaultAppellantTz,
-  defaultRepresentativeTz,
+  initialRepresentativeTz,
   virtualHearing,
   readOnly,
   update,
@@ -28,7 +27,8 @@ export const VirtualHearingFields = ({
         <div className="usa-width-one-third">
           <Timezone
             required
-            value={virtualHearing?.appellantTz || defaultAppellantTz}
+            errorMessage={errors?.appellantTz}
+            value={virtualHearing?.appellantTz}
             onChange={(appellantTz) => update('virtualHearing', { appellantTz })}
             readOnly={readOnly}
             time={time}
@@ -55,8 +55,8 @@ export const VirtualHearingFields = ({
         <div className="usa-width-one-third">
           <Timezone
             errorMessage={errors?.representativeTz}
-            required={virtualHearing?.representativeEmail}
-            value={virtualHearing?.representativeTz || defaultRepresentativeTz}
+            required={Boolean(virtualHearing?.representativeEmail)}
+            value={virtualHearing?.representativeTz}
             onChange={(representativeTz) => update('virtualHearing', { representativeTz })}
             readOnly={readOnly || !virtualHearing?.representativeEmail}
             time={time}
@@ -72,7 +72,17 @@ export const VirtualHearingFields = ({
             emailType="representativeEmail"
             email={virtualHearing?.representativeEmail}
             error={errors?.representativeEmail}
-            update={update}
+            update={(key, value) => {
+              // Switch the representative timezone back to the initial value if the
+              // representative email is changed to null. This should prevent `deepDiff``
+              // from trying to send any changes to the representative timezone if the
+              // representative email is being removed.
+              if (!value.representativeEmail) {
+                value.representativeTz = initialRepresentativeTz;
+              }
+
+              update(key, value);
+            }}
           />
         </div>
       </div>
@@ -112,6 +122,5 @@ VirtualHearingFields.propTypes = {
   update: PropTypes.func,
   virtualHearing: PropTypes.object,
   errors: PropTypes.object,
-  defaultAppellantTz: PropTypes.string,
-  defaultRepresentativeTz: PropTypes.string,
+  initialRepresentativeTz: PropTypes.string,
 };

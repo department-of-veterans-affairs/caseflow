@@ -6,12 +6,12 @@ describe Api::V3::DecisionReviews::HigherLevelReviewsController, :all_dbs, type:
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:api_v3)
+    FeatureToggle.enable!(:api_v3_higher_level_reviews)
 
     Timecop.freeze(post_ama_start_date)
   end
 
-  after { FeatureToggle.disable!(:api_v3) }
+  after { FeatureToggle.disable!(:api_v3_higher_level_reviews) }
 
   let!(:rating) do
     promulgation_date = receipt_date - 10.days
@@ -56,7 +56,7 @@ describe Api::V3::DecisionReviews::HigherLevelReviewsController, :all_dbs, type:
   end
 
   let(:receipt_date) { Time.zone.today - 5.days }
-  let(:informal_conference) { true }
+  let(:informal_conference) { false }
   let(:same_office) { false }
   let(:legacy_opt_in_approved) { true }
   let(:benefit_type) { "compensation" }
@@ -66,9 +66,9 @@ describe Api::V3::DecisionReviews::HigherLevelReviewsController, :all_dbs, type:
       {
         type: "ContestableIssue",
         attributes: {
-          ratingIssueId: contestable_issues.first.rating_issue_reference_id,
-          decisionIssueId: contestable_issues.first.decision_issue&.id,
-          ratingDecisionIssueId: contestable_issues.first.rating_decision_reference_id
+          issue: "Left Knee",
+          decisionDate: "2020-04-01",
+          ratingIssueReferenceId: contestable_issues.first.rating_issue_reference_id
         }
       }
     ]
@@ -108,6 +108,25 @@ describe Api::V3::DecisionReviews::HigherLevelReviewsController, :all_dbs, type:
     end
     let(:expected_error_json) { expected_error_render_hash[:json].as_json }
     let(:expected_error_status) { expected_error_render_hash[:status] }
+
+    context "when feature toggle is not enabled" do
+      before { FeatureToggle.disable!(:api_v3_higher_level_reviews) }
+
+      it "should return a 501 response" do
+        allow_any_instance_of(HigherLevelReview).to receive(:asyncable_status) { :submitted }
+        post_create
+        expect(response).to have_http_status(:not_implemented)
+      end
+
+      it "should have a jsonapi error response" do
+        allow_any_instance_of(HigherLevelReview).to receive(:asyncable_status) { :submitted }
+        post_create
+        expect { JSON.parse(response.body) }.to_not raise_error
+        parsed_response = JSON.parse(response.body)
+        expect(parsed_response["errors"]).to be_a Array
+        expect(parsed_response["errors"].first).to include("status", "title", "detail")
+      end
+    end
 
     context "good request" do
       it "should return a 202 on success" do

@@ -115,7 +115,12 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_view_overtime_status?
-    (attorney_in_vacols? || judge_in_vacols?) && FeatureToggle.enabled?(:overtime_revamp)
+    (attorney_in_vacols? || judge_in_vacols?) && FeatureToggle.enabled?(:overtime_revamp, user: self)
+  end
+
+  def can_change_hearing_request_type?
+    (can?("Build HearSched") || can?("Edit HearSched")) &&
+      FeatureToggle.enabled?(:convert_travel_board_to_video_or_virtual, user: self)
   end
 
   def vacols_uniq_id
@@ -273,6 +278,23 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     organizations_users.non_admin.where(organization: JudgeTeam.all)
   end
 
+  def security_profile
+    BGSService.new.get_security_profile(
+      username: css_id,
+      station_id: station_id
+    )
+  rescue BGS::ShareError, BGS::PublicError
+    {}
+  end
+
+  def job_title
+    security_profile.dig(:job_title)
+  end
+
+  def can_intake_decision_reviews?
+    !job_title.include?("Senior Veterans Service Representative")
+  end
+
   def user_info_for_idt
     self.class.user_repository.user_info_for_idt(css_id)
   end
@@ -348,6 +370,18 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def can_act_on_behalf_of_judges?
     member_of_organization?(SpecialCaseMovementTeam.singleton)
+  end
+
+  def can_view_team_management?
+    member_of_organization?(Bva.singleton)
+  end
+
+  def can_view_judge_team_management?
+    DvcTeam.for_dvc(self).present?
+  end
+
+  def can_view_user_management?
+    member_of_organization?(Bva.singleton)
   end
 
   def show_regional_office_in_queue?

@@ -233,7 +233,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
           $set: REQUEST_STATE.FAILED
         },
         reviewIntakeError: {
-          $set: getPageError(action.payload.responseErrorCodes)
+          $set: getPageError(action.payload)
         }
       }
     });
@@ -270,6 +270,9 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         },
         completeIntakeErrorData: {
           $set: action.payload.responseErrorData
+        },
+        completeIntakeErrorUUID: {
+          $set: action.payload.responseErrorUUID
         }
       }
     });

@@ -111,8 +111,10 @@ export const DISPOSITION_OPTIONS = [{ value: 'held',
 { value: 'postponed',
   label: 'Postponed' }];
 
-export const VIDEO_HEARING = 'Video';
-export const CENTRAL_OFFICE_HEARING = 'Central';
+export const VIDEO_HEARING_LABEL = 'Video';
+export const CENTRAL_OFFICE_HEARING_LABEL = 'Central';
+export const TRAVEL_BOARD_HEARING_LABEL = 'Travel';
+export const VIRTUAL_HEARING_LABEL = 'Virtual';
 
 export const LIST_SCHEDULE_VIEWS = {
   DEFAULT_VIEW: 'DEFAULT_VIEW',

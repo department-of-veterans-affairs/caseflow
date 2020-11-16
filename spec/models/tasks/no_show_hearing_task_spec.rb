@@ -61,7 +61,7 @@ describe NoShowHearingTask, :postgres do
         expect(distribution_task.children.open.first.type).to eq(HearingTask.name)
         expect(distribution_task.children.open.first.children.first.type).to eq(ScheduleHearingTask.name)
 
-        expect(distribution_task.ready_for_distribution?).to eq(false)
+        expect(distribution_task.appeal.ready_for_distribution?).to eq(false)
       end
     end
 
@@ -76,7 +76,7 @@ describe NoShowHearingTask, :postgres do
 
         expect(distribution_task.children.count).to eq(1)
 
-        expect(distribution_task.reload.ready_for_distribution?).to eq(false)
+        expect(distribution_task.reload.appeal.ready_for_distribution?).to eq(false)
       end
     end
   end

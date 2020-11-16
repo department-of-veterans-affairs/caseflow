@@ -20,20 +20,6 @@ const email = React.createElement(
   { href: 'mailto:VACaseflowIntake@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database' },
   'email'
 );
-const claimantLabel = React.createElement(
-  'p',
-  { id: 'claimantLabel' },
-  COPY.CLAIMANT_NOT_FOUND_START,
-  email,
-  COPY.CLAIMANT_NOT_FOUND_END
-);
-const noClaimantsCopy = React.createElement(
-  'p',
-  { id: 'noClaimants', className: 'cf-red-text' },
-  COPY.NO_RELATIONSHIPS,
-  email,
-  COPY.CLAIMANT_NOT_FOUND_END
-);
 
 const RemovableRadioLabel = ({ text, onRemove, notes }) => (
   <>
@@ -71,7 +57,7 @@ export const SelectClaimant = (props) => {
     setPayeeCode
   } = props;
 
-  const { attorneyFees } = useSelector((state) => state.featureToggles);
+  const { attorneyFees, establishFiduciaryEps } = useSelector((state) => state.featureToggles);
   const [showClaimantModal, setShowClaimantModal] = useState(false);
   const [newClaimant, setNewClaimant] = useState(null);
   const openAddClaimantModal = () => setShowClaimantModal(true);
@@ -83,6 +69,12 @@ export const SelectClaimant = (props) => {
     veteranIsNotClaimant,
     attorneyFees
   ]);
+
+  const allowFiduciary = useMemo(() => establishFiduciaryEps && benefitType === 'fiduciary', [
+    benefitType,
+    establishFiduciaryEps
+  ]);
+
   const handleVeteranIsNotClaimantChange = (value) => {
     const boolValue = convertStringToBoolean(value);
 
@@ -120,18 +112,45 @@ export const SelectClaimant = (props) => {
   };
   const handlePayeeCodeChange = (event) => setPayeeCode(event ? event.value : null);
   const shouldShowPayeeCode = () => {
-    return formType !== 'appeal' && (benefitType === 'compensation' || benefitType === 'pension');
+    return formType !== 'appeal' && (benefitType === 'compensation' || benefitType === 'pension' || allowFiduciary);
   };
 
   const hasRelationships = relationships.length > 0;
   const showClaimants = ['true', true].includes(veteranIsNotClaimant);
 
+  const claimantLabel = () => {
+    let claimantNotes = props.claimantNotes;
+
+    return (
+      <p id="claimantLabel" style={{ marginTop: '8.95px', marginBottom: '0px' }}>
+        {COPY.CLAIMANT_NOT_FOUND_START}
+        {email}
+        {COPY.CLAIMANT_NOT_FOUND_END}
+        <br />
+        <br />
+        {attorneyFees && formType === 'appeal' && !(claimant || claimantNotes) ? COPY.ADD_CLAIMANT_TEXT : ''}
+      </p>);
+  };
+
+  const noClaimantsCopy = () => {
+    return (
+      <p id="noClaimants" className="cf-red-text">
+        {COPY.NO_RELATIONSHIPS}
+        {COPY.ADD_RELATIONSHIPS}
+        {email}
+        {COPY.CLAIMANT_NOT_FOUND_END}
+        <br />
+        <br />
+        {attorneyFees && formType === 'appeal' ? COPY.ADD_CLAIMANT_TEXT : ''}
+      </p>);
+  };
+
   const claimantOptions = () => {
     return (
-      <div className="cf-claimant-options">
+      <div>
         <RadioField
           name="claimant-options"
-          label={claimantLabel}
+          label={claimantLabel()}
           strongLabel
           vertical
           options={radioOpts}
@@ -166,7 +185,7 @@ export const SelectClaimant = (props) => {
   }
 
   return (
-    <div className="cf-different-claimant">
+    <div className="cf-different-claimant" style={{ marginTop: '18.95px' }}>
       <RadioField
         name="different-claimant-option"
         label="Is the claimant someone other than the Veteran?"
@@ -178,10 +197,10 @@ export const SelectClaimant = (props) => {
         value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant?.toString()}
       />
 
-      {showClaimants && hasRelationships && claimantOptions()}
-      {showClaimants && !hasRelationships && noClaimantsCopy}
+      {showClaimants && (hasRelationships || newClaimant) && claimantOptions()}
+      {showClaimants && !hasRelationships && !newClaimant && noClaimantsCopy()}
 
-      {allowAddClaimant && (
+      {allowAddClaimant && !newClaimant && (
         <>
           <Button
             classNames={['usa-button-secondary', classes.button]}
@@ -212,7 +231,8 @@ SelectClaimant.propTypes = {
   relationships: PropTypes.array,
   payeeCode: PropTypes.string,
   payeeCodeError: PropTypes.string,
-  setPayeeCode: PropTypes.func
+  setPayeeCode: PropTypes.func,
+  claimantNotes: PropTypes.string
 };
 
 export default SelectClaimant;

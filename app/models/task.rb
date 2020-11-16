@@ -19,6 +19,7 @@ class Task < CaseflowRecord
 
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
+  belongs_to :cancelled_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
   has_many :attorney_case_reviews, dependent: :destroy
   has_many :task_timers, dependent: :destroy
@@ -36,6 +37,8 @@ class Task < CaseflowRecord
   after_create :tell_parent_task_child_task_created
 
   before_save :set_timestamp
+
+  before_update :set_cancelled_by_id, if: :task_will_be_cancelled?
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
   after_update :cancel_task_timers, if: :task_just_closed?
@@ -204,6 +207,16 @@ class Task < CaseflowRecord
       "on #{CachedAppeal.table_name}.appeal_id = #{Task.table_name}.appeal_id "\
       "and #{CachedAppeal.table_name}.appeal_type = #{Task.table_name}.appeal_type"
     end
+
+    def order_by_appeal_priority_clause(order: "asc")
+      boolean_order_clause = (order == "asc") ? "0 ELSE 1" : "1 ELSE 0"
+      Arel.sql(
+        "CASE WHEN #{CachedAppeal.table_name}.is_aod = TRUE THEN #{boolean_order_clause} END, "\
+        "CASE WHEN #{CachedAppeal.table_name}.case_type = 'Court Remand' THEN #{boolean_order_clause} END, "\
+        "#{CachedAppeal.table_name}.docket_number #{order}, "\
+        "#{Task.table_name}.created_at #{order}"
+      )
+    end
   end
 
   ########################################################################################
@@ -271,16 +284,22 @@ class Task < CaseflowRecord
     []
   end
 
-  # When a status is "active" we expect properties of the task to change. When a task is not "active" we expect that
-  # properties of the task will not change.
+  # includes on_hold
   def open?
-    !self.class.closed_statuses.include?(status)
+    self.class.open_statuses.include?(status)
+  end
+
+  def closed?
+    self.class.closed_statuses.include?(status)
   end
 
   def open_with_no_children?
     open? && children.empty?
   end
 
+  # When a status is "active" we expect properties of the task to change
+  # When a task is not "active" we expect that properties of the task will not change
+  # on_hold is not included
   def active?
     self.class.active_statuses.include?(status)
   end
@@ -389,8 +408,10 @@ class Task < CaseflowRecord
     type.eql?(task_to_check&.type)
   end
 
-  def cancel_descendants
-    descendants.select(&:open?).each { |desc| desc.update!(status: Constants.TASK_STATUSES.cancelled) }
+  def cancel_descendants(instructions: [])
+    descendants.select(&:open?).each do |desc|
+      desc.update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: instructions)
+    end
   end
 
   def create_twin_of_type(_params)
@@ -421,7 +442,7 @@ class Task < CaseflowRecord
   end
 
   def duplicate_org_task
-    assigned_to.is_a?(Organization) && children.any? do |child_task|
+    assigned_to.is_a?(Organization) && descendants.any? do |child_task|
       User.name == child_task.assigned_to_type && type == child_task.type
     end
   end
@@ -557,6 +578,7 @@ class Task < CaseflowRecord
       tasks.each { |task| task.paper_trail.save_with_version }
       tasks.update_all(
         status: Constants.TASK_STATUSES.cancelled,
+        cancelled_by_id: RequestStore[:current_user]&.id,
         closed_at: Time.zone.now
       )
       tasks.each { |task| task.reload.paper_trail.save_with_version }
@@ -583,20 +605,28 @@ class Task < CaseflowRecord
     open?
   end
 
-  def cancelled_by
-    return nil unless cancelled?
-
-    any_status_matcher = Constants::TASK_STATUSES.keys.join("|")
-    task_cancelled_version_matcher = "%status:\\n- (#{any_status_matcher})\\n- #{Constants.TASK_STATUSES.cancelled}%"
-    record = versions.order(:created_at).where("object_changes SIMILAR TO ?", task_cancelled_version_matcher).last
-
-    return nil unless record
-
-    User.find_by_id(record.whodunnit)
-  end
-
   def reassign_clears_overtime?
     false
+  end
+
+  def serialize_for_cancellation
+    assignee_display_name = if assigned_to.is_a?(Organization)
+                              assigned_to.name
+                            else
+                              "#{assigned_to.full_name.titlecase} (#{assigned_to.css_id})"
+                            end
+
+    {
+      id: id,
+      assigned_to_email: assigned_to.is_a?(Organization) ? assigned_to.admins.first&.email : assigned_to.email,
+      assigned_to_name: assignee_display_name,
+      type: type
+    }
+  end
+
+  # currently only defined by ScheduleHearingTask and AssignHearingDispositionTask for virtual hearing related updates
+  def alerts
+    @alerts ||= []
   end
 
   private
@@ -635,6 +665,10 @@ class Task < CaseflowRecord
     saved_change_to_attribute?("status") && !open?
   end
 
+  def task_will_be_cancelled?
+    status_change_to_be_saved&.last == Constants.TASK_STATUSES.cancelled
+  end
+
   def task_just_closed_and_has_parent?
     task_just_closed? && parent
   end
@@ -667,6 +701,10 @@ class Task < CaseflowRecord
 
   def set_assigned_at
     self.assigned_at = created_at unless assigned_at
+  end
+
+  def set_cancelled_by_id
+    self.cancelled_by_id = RequestStore[:current_user].id if RequestStore[:current_user]&.id
   end
 
   STATUS_TIMESTAMPS = {

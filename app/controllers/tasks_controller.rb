@@ -14,8 +14,12 @@ class TasksController < ApplicationController
     AttorneyQualityReviewTask: AttorneyQualityReviewTask,
     AttorneyRewriteTask: AttorneyRewriteTask,
     AttorneyTask: AttorneyTask,
+    BlockedSpecialCaseMovementTask: BlockedSpecialCaseMovementTask,
     ChangeHearingDispositionTask: ChangeHearingDispositionTask,
     ColocatedTask: ColocatedTask,
+    DocketSwitchRulingTask: DocketSwitchRulingTask,
+    DocketSwitchDeniedTask: DocketSwitchDeniedTask,
+    DocketSwitchGrantedTask: DocketSwitchGrantedTask,
     EvidenceSubmissionWindowTask: EvidenceSubmissionWindowTask,
     FoiaTask: FoiaTask,
     HearingAdminActionTask: HearingAdminActionTask,
@@ -29,6 +33,7 @@ class TasksController < ApplicationController
     PulacCerulloTask: PulacCerulloTask,
     QualityReviewTask: QualityReviewTask,
     ScheduleHearingTask: ScheduleHearingTask,
+    SendCavcRemandProcessedLetterTask: SendCavcRemandProcessedLetterTask,
     SpecialCaseMovementTask: SpecialCaseMovementTask,
     Task: Task,
     TranslationTask: TranslationTask
@@ -95,14 +100,29 @@ class TasksController < ApplicationController
     tasks = task.update_from_params(update_params, current_user)
     tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
-    render json: { tasks: json_tasks(tasks.uniq) }
-  rescue AssignHearingDispositionTask::HearingAssociationMissing => error
-    Raven.capture_exception(error)
+    tasks_hash = json_tasks(tasks.uniq)
+
+    # currently alerts are only returned by ScheduleHearingTask
+    # and AssignHearingDispositionTask for virtual hearing related updates
+    alerts = tasks.reduce([]) { |acc, t| acc + t.alerts }
+    tasks_hash[:alerts] = alerts if alerts # does not add to hash if alerts == []
+
     render json: {
-      "errors": [
-        "title": "Missing Associated Hearing",
-        "detail": error
-      ]
+      tasks: tasks_hash
+    }
+  rescue ActiveRecord::RecordInvalid => error
+    invalid_record_error(error.record)
+  rescue AssignHearingDispositionTask::HearingAssociationMissing => error
+    Raven.capture_exception(error, extra: { application: "hearings" })
+
+    render json: {
+      "errors": ["title": "Missing Associated Hearing", "detail": error]
+    }, status: :bad_request
+  rescue Caseflow::Error::VirtualHearingConversionFailed => error
+    Raven.capture_exception(error, extra: { application: "hearings" })
+
+    render json: {
+      "errors": ["title": COPY::FAILED_HEARING_UPDATE, "message": error.message, "code": error.code]
     }, status: :bad_request
   end
 
@@ -195,7 +215,7 @@ class TasksController < ApplicationController
   end
 
   def appeal
-    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
+    @appeal ||= Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
   end
 
   def invalid_type_error
@@ -217,8 +237,9 @@ class TasksController < ApplicationController
 
   def create_params
     @create_params ||= [params.require("tasks")].flatten.map do |task|
-      appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id])
-      task = task.permit(:type, :instructions, :assigned_to_id,
+      appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id])
+      task = task.merge(instructions: [task[:instructions]].flatten.compact)
+      task = task.permit(:type, { instructions: [] }, :assigned_to_id,
                          :assigned_to_type, :parent_id, business_payloads: [:description, values: {}])
         .merge(assigned_by: current_user)
         .merge(appeal: appeal)
@@ -233,6 +254,7 @@ class TasksController < ApplicationController
       :status,
       :assigned_to_id,
       :instructions,
+      :ihp_path,
       reassign: [:assigned_to_id, :assigned_to_type, :instructions],
       business_payloads: [:description, values: {}]
     )

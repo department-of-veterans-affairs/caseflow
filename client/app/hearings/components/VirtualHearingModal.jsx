@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 
-import { getAppellantTitleForHearing, zoneName } from '../utils';
+import { getAppellantTitle, zoneName } from '../utils';
 import Button from '../../components/Button';
 import COPY from '../../../COPY';
 import Modal from '../../components/Modal';
@@ -71,7 +71,7 @@ export const ReadOnlyEmails = ({
   appellantTzEdited,
   showAllEmails = false,
 }) => {
-  const appellantTitle = getAppellantTitleForHearing(hearing);
+  const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
 
   // Check for appellant edits
   const appellantEdited = appellantTzEdited || appellantEmailEdited ?
@@ -95,9 +95,10 @@ export const ReadOnlyEmails = ({
           {virtualHearing.appellantEmail}
         </p>
       )}
-      {(representativeEmailEdited || showAllEmails) && (
+      {(virtualHearing.representativeEmail &&
+       (representativeEmailEdited || showAllEmails)) && (
         <p>
-          <strong>Representative Email</strong>
+          <strong>POA/Representative Email</strong>
           <br />
           {virtualHearing.representativeEmail}
         </p>
@@ -200,7 +201,7 @@ export const ChangeToVirtual = (props) => {
   const {
     hearing, readOnly, representativeEmailError, update, appellantEmailError, virtualHearing
   } = props;
-  const appellantTitle = getAppellantTitleForHearing(hearing);
+  const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
 
   // Prefill appellant/veteran email address and representative email on mount.
   useEffect(() => {
@@ -326,7 +327,7 @@ const VirtualHearingModal = (props) => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const typeSettings = TYPES[type];
-  const appellantTitle = getAppellantTitleForHearing(hearing);
+  const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const modalTitle = sprintf(
     typeSettings.title({
       representativeEmailEdited,
@@ -359,9 +360,9 @@ const VirtualHearingModal = (props) => {
       ?.then(closeModal)
       ?.catch((error) => {
         // Details.jsx re-throws email invalid error that we catch here.
-        const msg = error.response.body.errors[0].message;
-        const representativeEmailIsValid = msg.indexOf('Representative') === -1;
-        const appellantEmailIsValid = msg.indexOf('Veteran') === -1 && msg.indexOf('Appellant') === -1;
+        const msg = error.response?.body?.errors[0]?.message;
+        const representativeEmailIsValid = msg?.indexOf('Representative') === -1;
+        const appellantEmailIsValid = msg?.indexOf('Veteran') === -1 && msg?.indexOf('Appellant') === -1;
 
         setRepresentativeEmailError(representativeEmailIsValid ? null : INVALID_EMAIL_FORMAT);
         setAppellantEmailError(appellantEmailIsValid ? null : INVALID_EMAIL_FORMAT);

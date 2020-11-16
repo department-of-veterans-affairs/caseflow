@@ -22,6 +22,9 @@ Bundler/OrderedGems:
   Enabled: true
   TreatCommentsAsGroupSeparators: false
 
+Style/AsciiComments:
+  Enabled: false
+
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 

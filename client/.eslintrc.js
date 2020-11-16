@@ -41,6 +41,9 @@ module.exports = {
       version: '16.12',
     },
     'import/resolver': {
+      webpack: {
+        config: './webpack.config.js'
+      },
       node: {
         extensions: ['.js', '.jsx', '.json'],
       },

@@ -1,18 +1,13 @@
 # frozen_string_literal: true
 
 class TeamManagementController < ApplicationController
-  before_action :deny_non_bva_admins
+  before_action :verify_access
 
   def index
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        render json: {
-          judge_teams: JudgeTeam.all.order(:id).map { |jt| serialize_org(jt) },
-          private_bars: PrivateBar.all.order(:id).map { |private_bar| serialize_org(private_bar) },
-          vsos: Vso.all.order(:id).map { |vso| serialize_org(vso) },
-          other_orgs: other_orgs.map { |org| serialize_org(org) }
-        }
+        render json: current_user.can_view_team_management? ? all_teams : judge_teams
       end
     end
   end
@@ -35,6 +30,18 @@ class TeamManagementController < ApplicationController
     Rails.logger.info("Creating JudgeTeam for user: #{user.inspect}")
 
     org = JudgeTeam.create_for_judge(user)
+
+    render json: { org: serialize_org(org) }, status: :ok
+  end
+
+  def create_dvc_team
+    user = User.find(params[:user_id])
+
+    fail(Caseflow::Error::DuplicateDvcTeam, user_id: user.id) if DvcTeam.for_dvc(user)
+
+    Rails.logger.info("Creating DvcTeam for user: #{user.inspect}")
+
+    org = DvcTeam.create_for_dvc(user)
 
     render json: { org: serialize_org(org) }, status: :ok
   end
@@ -66,21 +73,38 @@ class TeamManagementController < ApplicationController
   private
 
   def update_params
-    params.require(:organization).permit(:name, :participant_id, :url)
+    params.require(:organization).permit(:name, :participant_id, :url, :accepts_priority_pushed_cases)
+  end
+
+  def judge_teams
+    {
+      judge_teams: JudgeTeam.order(:name).map { |jt| serialize_org(jt) }
+    }
+  end
+
+  def all_teams
+    judge_teams.merge(
+      dvc_teams: DvcTeam.order(:name).map { |dt| serialize_org(dt) },
+      private_bars: PrivateBar.order(:name).map { |private_bar| serialize_org(private_bar) },
+      vsos: Vso.order(:name).map { |vso| serialize_org(vso) },
+      other_orgs: other_orgs.map { |org| serialize_org(org) }
+    )
   end
 
   def other_orgs
-    Organization.all.order(:id).reject { |org| org.is_a?(JudgeTeam) || org.is_a?(Representative) }
+    Organization.order(:name).reject { |org| org.is_a?(JudgeTeam) || org.is_a?(DvcTeam) || org.is_a?(Representative) }
   end
 
   def serialize_org(org)
-    {
-      id: org.id,
-      name: org.name,
-      participant_id: org.participant_id,
-      type: org.type,
-      url: org.url,
-      user_admin_path: org.user_admin_path
-    }
+    org.serialize.merge(
+      current_user_can_toggle_priority_pushed_cases: current_user.can_view_judge_team_management?,
+      user_admin_path: current_user.can_view_team_management? ? org.user_admin_path : nil
+    )
+  end
+
+  def verify_access
+    unless current_user.can_view_team_management? || current_user.can_view_judge_team_management?
+      redirect_to "/unauthorized"
+    end
   end
 end

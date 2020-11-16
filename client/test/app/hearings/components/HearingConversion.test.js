@@ -13,7 +13,6 @@ import { JudgeDropdown } from 'app/components/DataDropdowns';
 import { Timezone } from 'app/hearings/components/VirtualHearings/Timezone';
 import RadioField from 'app/components/RadioField';
 import { ReadOnly } from 'app/hearings/components/details/ReadOnly';
-import { getAppellantTitleForHearing } from 'app/hearings/utils';
 import { defaultHearing } from 'test/data/hearings';
 import { HearingLocationDropdown } from 'app/hearings/components/dailyDocket/DailyDocketRowInputs';
 import { HearingTime } from 'app/hearings/components/modalForms/HearingTime';
@@ -93,107 +92,4 @@ describe('HearingConversion', () => {
     expect(conversion).toMatchSnapshot();
   });
 
-  test('Shows Representative not present message when no representative', () => {
-    const conversion = mount(
-      <HearingConversion
-        scheduledFor={amaHearing.scheduledFor.toString()}
-        type={HEARING_CONVERSION_TYPES[1]}
-        title={defaultTitle}
-        update={updateSpy}
-        hearing={{
-          ...amaHearing,
-          representative: null
-        }}
-      />
-    );
-
-    // Assertions
-    expect(conversion.find(VirtualHearingSection).at(1).
-      find(VirtualHearingEmail)).toHaveLength(1);
-    expect(conversion.find(VirtualHearingSection).at(1).
-      find(ReadOnly)).toHaveLength(2);
-    expect(conversion.find(AddressLine)).toHaveLength(1);
-    expect(conversion.find(VirtualHearingSection).at(1).
-      find(ReadOnly).
-      first().
-      prop('text')).toEqual(
-      `The ${getAppellantTitleForHearing(amaHearing)} does not have a representative recorded in VBMS`
-    );
-    expect(conversion).toMatchSnapshot();
-  });
-
-  test('Shows Representative name when representative address blank', () => {
-    const conversion = mount(
-      <HearingConversion
-        scheduledFor={amaHearing.scheduledFor.toString()}
-        type={HEARING_CONVERSION_TYPES[1]}
-        title={defaultTitle}
-        update={updateSpy}
-        hearing={{
-          ...amaHearing,
-          representativeAddress: null
-        }}
-      />
-    );
-
-    // Assertions
-    expect(conversion.find(AddressLine)).toHaveLength(2);
-    expect(conversion.find(AddressLine).at(1).
-      text()).toMatch(amaHearing.representativeName);
-    expect(conversion).toMatchSnapshot();
-  });
-
-  describe('Video Hearings', () => {
-    test('Displays regional office time and central office time when converting to virtual', () => {
-      const conversion = mount(
-        <HearingConversion
-          scheduledFor={defaultHearing.scheduledFor.toString()}
-          type={HEARING_CONVERSION_TYPES[0]}
-          title={defaultTitle}
-          update={updateSpy}
-          hearing={defaultHearing}
-        />,
-        {
-          wrappingComponent: hearingDetailsWrapper(
-            userUseFullPageVideoToVirtual,
-            defaultHearing
-          ),
-          wrappingComponentProps: { store: detailsStore },
-        }
-      );
-
-      // Assertions
-      expect(conversion.find(RadioField)).toHaveLength(1);
-      expect(conversion.find(HearingTime).prop('localZone')).toEqual(defaultHearing.regionalOfficeTimezone);
-      // expect(conversion.findWhere((node) => node.prop('label') === 'Regional Office')).toHaveLength(0);
-      expect(conversion.find(HearingLocationDropdown)).toHaveLength(0);
-      expect(conversion).toMatchSnapshot();
-    });
-
-    test('Displays regional office name and hearing location when converting from virtual', () => {
-      const conversion = mount(
-        <HearingConversion
-          scheduledFor={defaultHearing.scheduledFor.toString()}
-          type={HEARING_CONVERSION_TYPES[1]}
-          title={defaultTitle}
-          update={updateSpy}
-          hearing={defaultHearing}
-        />,
-        {
-          wrappingComponent: hearingDetailsWrapper(
-            userUseFullPageVideoToVirtual,
-            defaultHearing
-          ),
-          wrappingComponentProps: { store: detailsStore },
-        }
-      );
-
-      // Assertions
-      expect(conversion.find(RadioField)).toHaveLength(1);
-      expect(conversion.find(HearingTime).prop('localZone')).toEqual(defaultHearing.regionalOfficeTimezone);
-      expect(conversion.findWhere((node) => node.prop('label') === 'Regional Office')).toHaveLength(1);
-      expect(conversion.find(HearingLocationDropdown).prop('regionalOffice')).toEqual(defaultHearing.regionalOfficeKey);
-      expect(conversion).toMatchSnapshot();
-    });
-  });
 });

@@ -1,5 +1,7 @@
 Table,Column,Type,Required,Primary Key,Foreign Key,Unique,Index,Description
 advance_on_docket_motions,,,,,,,,
+advance_on_docket_motions,appeal_id,integer FK,,,x,,,The ID of the appeal this motion is associated with
+advance_on_docket_motions,appeal_type,string,,,,,,The type of appeal this motion is associated with
 advance_on_docket_motions,created_at,datetime ∗,x,,,,,
 advance_on_docket_motions,granted,boolean,,,,,x,"Whether VLJ has determined that there is sufficient cause to fast-track an appeal, i.e. grant or deny the motion to AOD."
 advance_on_docket_motions,id,integer (8) PK,x,x,,,,
@@ -156,6 +158,8 @@ cached_appeal_attributes,closest_regional_office_key,string,,,,,x,Closest region
 cached_appeal_attributes,created_at,datetime,,,,,,
 cached_appeal_attributes,docket_number,string,,,,,,
 cached_appeal_attributes,docket_type,string,,,,,x,
+cached_appeal_attributes,former_travel,boolean,,,,,x,Determines if the hearing type was formerly travel board; only applicable to Legacy appeals
+cached_appeal_attributes,hearing_request_type,string (10),,,,,x,"Stores hearing type requested by appellant; could be one of nil, 'Video', 'Central', 'Travel', or 'Virtual'"
 cached_appeal_attributes,is_aod,boolean,,,,,x,Whether the case is Advanced on Docket
 cached_appeal_attributes,issue_count,integer,,,,,,Number of issues on the appeal.
 cached_appeal_attributes,power_of_attorney_name,string,,,,,x,'Firstname Lastname' of power of attorney
@@ -174,6 +178,23 @@ cached_user_attributes,stafkey,string ∗,x,,,,,
 cached_user_attributes,stitle,string (16),,,,,,
 cached_user_attributes,svlj,string,,,,,,
 cached_user_attributes,updated_at,datetime ∗,x,,,,x,
+cavc_remands,,,,,,,,
+cavc_remands,appeal_id,integer (8) ∗ FK,x,,x,,x,Appeal that CAVC has remanded
+cavc_remands,cavc_decision_type,string ∗,x,,,,,"CAVC decision type. Expecting 'remand', 'straight_reversal', or 'death_dismissal'"
+cavc_remands,cavc_docket_number,string ∗,x,,,,,Docket number of the CAVC judgement
+cavc_remands,cavc_judge_full_name,string ∗,x,,,,,CAVC judge that passed the judgement on the remand
+cavc_remands,created_at,datetime ∗,x,,,,,Default timestamps
+cavc_remands,created_by_id,integer (8) ∗ FK,x,,x,,,User that created this record
+cavc_remands,decision_date,date ∗,x,,,,,"Date CAVC issued a decision, according to the CAVC"
+cavc_remands,decision_issue_ids,integer (8) ∗,x,,,,,"Decision issues being remanded; IDs refer to decision_issues table. For a JMR, all decision issues on the previous appeal will be remanded. For a JMPR, only some"
+cavc_remands,id,integer (8) PK,x,x,,,,
+cavc_remands,instructions,string ∗,x,,,,,Instructions and context provided upon creation of the remand record
+cavc_remands,judgement_date,date ∗,x,,,,,"Date CAVC issued a judgement, according to the CAVC"
+cavc_remands,mandate_date,date ∗,x,,,,,Date that CAVC reported the mandate was given
+cavc_remands,remand_subtype,string ∗,x,,,,,"Type of remand. If the cavc_decision_type is 'remand', expecting one of 'jmp', 'jmpr', or 'mdr'. Otherwise, this can be null."
+cavc_remands,represented_by_attorney,boolean ∗,x,,,,,Whether or not the appellant was represented by an attorney
+cavc_remands,updated_at,datetime ∗,x,,,,,Default timestamps
+cavc_remands,updated_by_id,integer (8) FK,,,x,,,"User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created."
 certifications,,,,,,,,
 certifications,already_certified,boolean,,,,,,
 certifications,bgs_rep_address_line_1,string,,,,,,
@@ -329,6 +350,17 @@ distributions,started_at,datetime,,,,,,when the Distribution job commenced
 distributions,statistics,json,,,,,,
 distributions,status,string,,,,,,
 distributions,updated_at,datetime ∗,x,,,,x,
+docket_changes,,,,,,,,Stores the disposition and associated data for Docket Change motions
+docket_changes,created_at,datetime ∗,x,,,,x,Standard created_at/updated_at timestamps
+docket_changes,disposition,string ∗,x,,,,,"Possible options are granted, partially_granted, and denied"
+docket_changes,docket_type,string,,,,,,The new docket
+docket_changes,granted_request_issue_ids,integer,,,,,,"When a docket change is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior request issue IDs."
+docket_changes,id,integer (8) PK,x,x,,,,
+docket_changes,new_docket_stream_id,integer (8) FK,,,x,,x,References the new appeal stream with the updated docket; initially null until created by workflow
+docket_changes,old_docket_stream_id,integer (8) ∗ FK,x,,x,,x,References the original appeal stream with old docket
+docket_changes,receipt_date,datetime ∗,x,,,,,
+docket_changes,task_id,integer (8) ∗ FK,x,,x,,x,The task that triggered the switch
+docket_changes,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 docket_snapshots,,,,,,,,
 docket_snapshots,created_at,datetime,,,,,,
 docket_snapshots,docket_count,integer,,,,,,
@@ -401,6 +433,19 @@ end_product_establishments,synced_status,string,,,,,,"The status of the end prod
 end_product_establishments,updated_at,datetime,,,,,x,
 end_product_establishments,user_id,integer FK,,,x,,x,The ID of the user who performed the decision review intake.
 end_product_establishments,veteran_file_number,string ∗,x,,,,x,The file number of the Veteran submitted when establishing the end product.
+end_product_updates,,,,,,,,Updates the claim label for end products established from Caseflow
+end_product_updates,active_request_issue_ids,integer (8) ∗,x,,,,,A list of active request issue IDs when a user has finished editing a decision review. Used to keep track of which request issues may have been impacted by the update.
+end_product_updates,created_at,datetime ∗,x,,,,,
+end_product_updates,end_product_establishment_id,integer (8) ∗ FK,x,,x,,x,The end product establishment id used to track the end product being updated.
+end_product_updates,error,string,,,,,,The error message captured from BGS if the end product update failed.
+end_product_updates,id,integer (8) PK,x,x,,,,
+end_product_updates,new_code,string,,,,,,The new end product code the user wants to update to.
+end_product_updates,original_code,string,,,,,,The original end product code before the update was submitted.
+end_product_updates,original_decision_review_id,integer (8),,,,,x,The original decision review that this end product update belongs to; has a non-nil value only if a new decision_review was created.
+end_product_updates,original_decision_review_type,string,,,,,x,The original decision review type that this end product update belongs to
+end_product_updates,status,string,,,,,,"Status after an attempt to update the end product; expected values: 'success', 'error', ..."
+end_product_updates,updated_at,datetime ∗,x,,,,,
+end_product_updates,user_id,integer (8) ∗,x,,,,x,The ID of the user who makes an end product update.
 form8s,,,,,,,,
 form8s,_initial_appellant_name,string,,,,,,
 form8s,_initial_appellant_relationship,string,,,,,,
@@ -579,6 +624,14 @@ higher_level_reviews,updated_at,datetime,,,,,x,
 higher_level_reviews,uuid,uuid ∗,x,,,,x,The universally unique identifier for the Higher Level Review. Can be used to link to the claim after it is completed.
 higher_level_reviews,veteran_file_number,string ∗,x,,,,x,The file number of the Veteran that the Higher Level Review is for.
 higher_level_reviews,veteran_is_not_claimant,boolean,,,,,,"Indicates whether the Veteran is the claimant on the Higher Level Review form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased."
+ihp_drafts,,,,,,,,
+ihp_drafts,appeal_id,integer ∗ FK,x,,x,,x,Appeal id the IHP was written for
+ihp_drafts,appeal_type,string ∗,x,,,,x,Type of appeal the IHP was written for
+ihp_drafts,created_at,datetime ∗,x,,,,,Default created_at/updated_at timestamps
+ihp_drafts,id,integer (8) PK,x,x,,,,
+ihp_drafts,organization_id,integer ∗ FK,x,,x,,x,IHP-writing VSO that drafted the IHP
+ihp_drafts,path,string ∗,x,,,,,Path to the IHP in the VA V: drive
+ihp_drafts,updated_at,datetime ∗,x,,,,,Default created_at/updated_at timestamps
 intakes,,,,,,,,Represents the intake of an form or request made by a veteran.
 intakes,cancel_other,string,,,,,,Notes added if a user canceled an intake for any reason other than the stock set of options.
 intakes,cancel_reason,string,,,,,,"The reason the intake was canceled. Could have been manually canceled by a user, or automatic."
@@ -586,8 +639,8 @@ intakes,completed_at,datetime,,,,,,"Timestamp for when the intake was completed,
 intakes,completion_started_at,datetime,,,,,,Timestamp for when the user submitted the intake to be completed.
 intakes,completion_status,string,,,,,,"Indicates whether the intake was successful, or was closed by being canceled, expired, or due to an error."
 intakes,created_at,datetime,,,,,,
-intakes,detail_id,integer FK,,,x,,,The ID of the record created as a result of the intake.
-intakes,detail_type,string,,,,,,The type of the record created as a result of the intake.
+intakes,detail_id,integer FK,,,x,,x,The ID of the record created as a result of the intake.
+intakes,detail_type,string,,,,,x,The type of the record created as a result of the intake.
 intakes,error_code,string,,,,,,"If the intake was unsuccessful due to a set of known errors, the error code is stored here. An error is also stored here for RAMP elections that are connected to an active end product, even though the intake is a success."
 intakes,id,integer PK,x,x,,,,
 intakes,started_at,datetime,,,,,,"Timestamp for when the intake was created, which happens when a user successfully searches for a Veteran."
@@ -627,8 +680,7 @@ judge_team_roles,type,string,,,,,,
 judge_team_roles,updated_at,datetime ∗,x,,,,x,
 legacy_appeals,,,,,,,,
 legacy_appeals,appeal_series_id,integer (8) FK,,,x,,x,
-legacy_appeals,blue_water,boolean,,,,,,Blue Water
-legacy_appeals,burn_pit,boolean,,,,,,Burn Pit
+legacy_appeals,changed_request_type,string,,,,,,The new hearing type preference for an appellant that had previously requested a travel board hearing
 legacy_appeals,closest_regional_office,string,,,,,,
 legacy_appeals,contaminated_water_at_camp_lejeune,boolean,,,,,,
 legacy_appeals,created_at,datetime,,,,,,
@@ -645,10 +697,8 @@ legacy_appeals,incarcerated_veterans,boolean,,,,,,
 legacy_appeals,insurance,boolean,,,,,,
 legacy_appeals,issues_pulled,boolean,,,,,,
 legacy_appeals,manlincon_compliance,boolean,,,,,,
-legacy_appeals,military_sexual_trauma,boolean,,,,,,Military Sexual Trauma (MST)
 legacy_appeals,mustard_gas,boolean,,,,,,
 legacy_appeals,national_cemetery_administration,boolean,,,,,,
-legacy_appeals,no_special_issues,boolean,,,,,,Affirmative no special issues; column added belatedly
 legacy_appeals,nonrating_issue,boolean,,,,,,
 legacy_appeals,pension_united_states,boolean,,,,,,
 legacy_appeals,private_attorney_or_agent,boolean,,,,,,
@@ -656,7 +706,6 @@ legacy_appeals,radiation,boolean,,,,,,
 legacy_appeals,rice_compliance,boolean,,,,,,
 legacy_appeals,spina_bifida,boolean,,,,,,
 legacy_appeals,updated_at,datetime,,,,,x,
-legacy_appeals,us_court_of_appeals_for_veterans_claims,boolean,,,,,,US Court of Appeals for Veterans Claims (CAVC)
 legacy_appeals,us_territory_claim_american_samoa_guam_northern_mariana_isla,boolean,,,,,,
 legacy_appeals,us_territory_claim_philippines,boolean,,,,,,
 legacy_appeals,us_territory_claim_puerto_rico_and_virgin_islands,boolean,,,,,,
@@ -672,6 +721,7 @@ legacy_hearings,created_by_id,integer (8) FK,,,x,,x,The ID of the user who creat
 legacy_hearings,hearing_day_id,integer (8),,,,,x,The hearing day the hearing will take place on
 legacy_hearings,id,integer (8) PK,x,x,,,,
 legacy_hearings,military_service,string,,,,,,Periods and circumstances of military service
+legacy_hearings,original_vacols_request_type,string,,,,,,"The original request type of the hearing in VACOLS, before it was changed to Virtual"
 legacy_hearings,prepped,boolean,,,,,,Determines whether the judge has checked the hearing as prepped
 legacy_hearings,summary,text,,,,,,Summary of hearing
 legacy_hearings,updated_at,datetime,,,,,x,Timestamp when record was last updated.
@@ -866,6 +916,7 @@ request_issues,nonrating_issue_description,string,,,,,,The user entered descript
 request_issues,notes,text,,,,,,"Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
 request_issues,ramp_claim_id,string,,,,,,"If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
 request_issues,rating_issue_associated_at,datetime,,,,,,Timestamp when a contention and its contested rating issue are associated in VBMS.
+request_issues,type,string,,,,,,Determines whether the issue is a rating issue or a nonrating issue
 request_issues,unidentified_issue_text,string,,,,,,User entered description if the request issue is neither a rating or a nonrating issue
 request_issues,untimely_exemption,boolean,,,,,,"If the contested issue's decision date was more than a year before the receipt date, it is considered untimely (unless it is a Supplemental Claim). However, an exemption to the timeliness can be requested. If so, it is indicated here."
 request_issues,untimely_exemption_notes,text,,,,,,Notes related to the untimeliness exemption requested.
@@ -912,9 +963,9 @@ sent_hearing_email_events,id,integer (8) PK,x,x,,,,
 sent_hearing_email_events,recipient_role,string,,,,,,"The role of the recipient: veteran, representative, judge"
 sent_hearing_email_events,sent_at,datetime ∗,x,,,,,The date and time the email was sent
 sent_hearing_email_events,sent_by_id,integer (8) ∗ FK,x,,x,,x,User who initiated sending the email
-special_issue_lists,,,,,,,,
-special_issue_lists,appeal_id,integer (8) FK,,,x,,x,
-special_issue_lists,appeal_type,string,,,,,x,
+special_issue_lists,,,,,,,,Associates special issues to an AMA or legacy appeal for Caseflow Queue. Caseflow Dispatch uses special issues stored in legacy_appeals. They are intentionally disconnected.
+special_issue_lists,appeal_id,integer (8) FK,,,x,,x,The ID of the appeal associated with this record
+special_issue_lists,appeal_type,string,,,,,x,The type of appeal associated with this record
 special_issue_lists,blue_water,boolean,,,,,,Blue Water
 special_issue_lists,burn_pit,boolean,,,,,,Burn Pit
 special_issue_lists,contaminated_water_at_camp_lejeune,boolean,,,,,,
@@ -978,6 +1029,7 @@ tasks,assigned_at,datetime,,,,,,
 tasks,assigned_by_id,integer FK,,,x,,,
 tasks,assigned_to_id,integer ∗ FK,x,,x,,x,
 tasks,assigned_to_type,string ∗,x,,,,x,
+tasks,cancelled_by_id,integer FK,,,x,,,ID of user that cancelled the task. Backfilled from versions table. Can be nil if task was cancelled before this column was added or if there is no user logged in when the task is cancelled
 tasks,closed_at,datetime,,,,,,
 tasks,created_at,datetime ∗,x,,,,,
 tasks,id,integer (8) PK,x,x,,,,
@@ -988,16 +1040,16 @@ tasks,started_at,datetime,,,,,,
 tasks,status,string ∗,x,,,,x,
 tasks,type,string ∗,x,,,,x,
 tasks,updated_at,datetime ∗,x,,,,x,
-task_timers,,,,,,,,"Task timers allow tasks to be run asynchronously after some future date, like EvidenceSubmissionWindowTask."
-task_timers,attempted_at,datetime,,,,,,Async timestamp for most recent attempt to run.
-task_timers,canceled_at,datetime,,,,,,Timestamp when job was abandoned
+task_timers,,,,,,,,A task timer allows an associated task's (like EvidenceSubmissionWindowTask and TimedHoldTask) `when_timer_ends` method to be run asynchronously after timer expires.
+task_timers,attempted_at,datetime,,,,,,Async timestamp for most recent attempt to run Task#when_timer_ends.
+task_timers,canceled_at,datetime,,,,,,Timestamp when job was abandoned. Associated task is typically cancelled.
 task_timers,created_at,datetime ∗,x,,,,,Automatic timestamp for record creation.
 task_timers,error,string,,,,,,Async any error message from most recent failed attempt to run.
 task_timers,id,integer (8) PK,x,x,,,,
-task_timers,last_submitted_at,datetime,,,,,,Async timestamp for most recent job start.
-task_timers,processed_at,datetime,,,,,,Async timestamp for when the job completes successfully.
+task_timers,last_submitted_at,datetime,,,,,,Async timestamp for most recent job start. Initially set to when timer should expire (Task#timer_ends_at).
+task_timers,processed_at,datetime,,,,,,Async timestamp for when the job completes successfully. Associated task's method Task#when_timer_ends ran successfully.
 task_timers,submitted_at,datetime,,,,,,Async timestamp for initial job start.
-task_timers,task_id,integer (8) ∗ FK,x,,x,,x,ID of the Task to be run.
+task_timers,task_id,integer (8) ∗ FK,x,,x,,x,ID of the associated Task to be run.
 task_timers,updated_at,datetime ∗,x,,,,x,Automatic timestmap for record update.
 team_quotas,,,,,,,,
 team_quotas,created_at,datetime ∗,x,,,,,
@@ -1041,8 +1093,8 @@ user_quotas,team_quota_id,integer ∗ FK,x,,x,,x,
 user_quotas,updated_at,datetime ∗,x,,,,x,
 user_quotas,user_id,integer ∗ FK,x,,x,,x,
 vbms_uploaded_documents,,,,,,,,
-vbms_uploaded_documents,appeal_id,integer (8) ∗ FK,x,,x,,x,
-vbms_uploaded_documents,appeal_type,string,,,,,,'Appeal' or 'LegacyAppeal'
+vbms_uploaded_documents,appeal_id,integer (8) ∗ FK,x,,x,,x,Appeal/LegacyAppeal ID; use as FK to appeals/legacy_appeals
+vbms_uploaded_documents,appeal_type,string ∗,x,,,,x,'Appeal' or 'LegacyAppeal'
 vbms_uploaded_documents,attempted_at,datetime,,,,,,
 vbms_uploaded_documents,canceled_at,datetime,,,,,,Timestamp when job was abandoned
 vbms_uploaded_documents,created_at,datetime ∗,x,,,,,

@@ -443,7 +443,9 @@ describe RequestIssuesUpdate, :all_dbs do
           expect_any_instance_of(Fakes::BGSService).to receive(:cancel_end_product).with(
             veteran.file_number,
             "030HLRNR",
-            "030"
+            "030",
+            "00",
+            "1"
           )
 
           allow_remove_contention
@@ -680,6 +682,29 @@ describe RequestIssuesUpdate, :all_dbs do
           review.reload
           expect(review.request_issues.pluck(:contention_reference_id).compact.uniq.count).to eq(4)
           expect(review.request_issues.active.count).to eq(2)
+        end
+      end
+
+      context "if remaining issues after update are ineligible" do
+        let!(:in_progress_task) { create(:higher_level_review_task, :in_progress, appeal: review) }
+        let!(:after_issue) do
+          create(:request_issue,
+                 :ineligible,
+                 decision_review: review,
+                 contention_reference_id: "2")
+        end
+        let!(:request_issues_update) do
+          create(:request_issues_update,
+                 :requires_processing,
+                 review: review,
+                 withdrawn_request_issue_ids: nil,
+                 before_request_issue_ids: review.request_issues.map(&:id),
+                 after_request_issue_ids: [after_issue.id])
+        end
+
+        it "should cancel tasks" do
+          subject
+          expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
         end
       end
 

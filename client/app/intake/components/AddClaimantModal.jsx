@@ -12,6 +12,8 @@ import ApiUtil from '../../util/ApiUtil';
 import Checkbox from '../../components/Checkbox';
 import TextareaField from '../../components/TextareaField';
 
+const ALLOW_UNLISTED_CLAIMANTS = false;
+
 const relationshipOpts = [
   { label: 'Attorney (previously or currently)', value: 'attorney' },
 ];
@@ -105,7 +107,7 @@ export const AddClaimantModal = ({
       </div>
       <SearchableDropdown
         name="relationship"
-        label="Claimant's relationship to the veteran"
+        label="Claimant's relationship to the Veteran"
         onChange={handleChangeRelationship}
         value={relationship}
         options={relationshipOpts}
@@ -123,14 +125,18 @@ export const AddClaimantModal = ({
         readOnly={unlistedClaimant}
         debounce={250}
         strongLabel
+        isClearable
+        placeholder="Type to search..."
       />
 
-      <Checkbox
-        label="Claimant not listed"
-        name="notListed"
-        onChange={handleNotListed}
-        value={unlistedClaimant}
-      />
+      {ALLOW_UNLISTED_CLAIMANTS && (
+        <Checkbox
+          label="Claimant not listed"
+          name="notListed"
+          onChange={handleNotListed}
+          value={unlistedClaimant}
+        />
+      )}
       {unlistedClaimant && (
         <TextareaField
           label={

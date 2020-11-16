@@ -8,6 +8,8 @@
 #   - changing Power of Attorney
 #   - advance a case on docket (AOD)
 #   - withdrawing an appeal
+# Adding a mail task to an appeal is done by mail team members and will create a task assigned to the mail team. It
+# will also automatically create a child task assigned to the team the task should be routed to.
 
 class MailTask < Task
   # Skip unique verification for mail tasks since multiple mail tasks of each type can be created.
@@ -20,12 +22,13 @@ class MailTask < Task
       false
     end
 
-    def blocking_subclasses
-      MailTask.subclasses.select(&:blocking?).map(&:name)
+    def subclass_routing_options(user = nil)
+      filtered = MailTask.subclasses.select { |sc| sc.allow_creation?(user) }
+      filtered.sort_by(&:label).map { |subclass| { value: subclass.name, label: subclass.label } }
     end
 
-    def subclass_routing_options
-      MailTask.subclasses.sort_by(&:label).map { |subclass| { value: subclass.name, label: subclass.label } }
+    def allow_creation?(_user)
+      true
     end
 
     def parent_if_blocking_task(parent_task)
@@ -48,7 +51,7 @@ class MailTask < Task
             appeal: parent_task.appeal,
             parent_id: parent_if_blocking_task(parent_task).id,
             assigned_to: MailTeam.singleton,
-            instructions: [params[:instructions]]
+            instructions: [params[:instructions]].flatten
           )
         end
 

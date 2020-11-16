@@ -100,7 +100,11 @@ class DocketCoordinator
     @priority_count ||= dockets
       .values
       .map { |docket| docket.count(priority: true, ready: true) }
-      .reduce(0, :+)
+      .sum
+  end
+
+  def genpop_priority_count
+    @genpop_priority_count ||= dockets.values.map(&:genpop_priority_count).sum
   end
 
   def direct_review_due_count
@@ -129,17 +133,17 @@ class DocketCoordinator
     @pacesetting_direct_review_proportion = receipts_per_year.to_f / nonpriority_decisions_per_year
   end
 
-  private
-
   def total_batch_size
-    DecisionDraftingAttorney.users.size * Distribution::CASES_PER_ATTORNEY
+    JudgeTeam.includes(:non_admin_users).flat_map(&:non_admin_users).size * Distribution::CASES_PER_ATTORNEY
   end
+
+  private
 
   def docket_margin_net_of_priority
     [total_batch_size - priority_count, 0].max
   end
 
   def nonpriority_decisions_per_year
-    @nonpriority_decisions_per_year ||= [LegacyAppeal, Docket].map(&:nonpriority_decisions_per_year).reduce(0, :+)
+    @nonpriority_decisions_per_year ||= [LegacyAppeal, Docket].map(&:nonpriority_decisions_per_year).sum
   end
 end

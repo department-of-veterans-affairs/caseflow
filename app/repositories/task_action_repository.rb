@@ -17,8 +17,8 @@ class TaskActionRepository
       }
     end
 
-    def mail_assign_to_organization_data(task, _user = nil)
-      options = MailTask.subclass_routing_options
+    def mail_assign_to_organization_data(task, user = nil)
+      options = MailTask.subclass_routing_options(user)
       valid_options = task.appeal.outcoded? ? options : options.reject { |opt| opt[:value] == "VacateMotionMailTask" }
       { options: valid_options }
     end
@@ -63,14 +63,25 @@ class TaskActionRepository
       }
     end
 
+    def assign_to_hearings_user_data(task, user = nil)
+      users = [HearingsManagement, HearingAdmin, TranscriptionTeam].map { |team| team.singleton.users }.flatten.uniq
+
+      {
+        selected: user,
+        options: users_to_options(users),
+        type: task.type
+      }
+    end
+
     def assign_to_user_data(task, user = nil)
       users = potential_task_assignees(task)
-
       extras = if task.is_a?(HearingAdminActionTask)
                  {
                    redirect_after: "/organizations/#{HearingsManagement.singleton.url}",
                    message_detail: COPY::HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL
                  }
+               elsif task.is_a?(SendCavcRemandProcessedLetterTask) && task.assigned_to_type == "Organization"
+                 { redirect_after: "/organizations/#{CavcLitigationSupport.singleton.url}" }
                else
                  {}
                end
@@ -152,15 +163,34 @@ class TaskActionRepository
 
     def address_motion_to_vacate_data(task, _user = nil)
       attorney = task.appeal.assigned_attorney
+      judge_attorneys = JudgeTeam.for_judge(task.assigned_to)&.attorneys
       {
         selected: attorney,
-        options: users_to_options([JudgeTeam.for_judge(task.assigned_to)&.attorneys, attorney].flatten.compact.uniq),
+        options: users_to_options([judge_attorneys.presence || Attorney.list_all, attorney].flatten.compact.uniq),
         type: PostDecisionMotion.name
       }
     end
 
     def sign_motion_to_vacate_data(_task, _user = nil)
       {}
+    end
+
+    def docket_switch_send_to_judge_data(_task, _user = nil)
+      {
+        type: DocketSwitchRulingTask.name
+      }
+    end
+
+    def docket_switch_denied_data(_task, _user = nil)
+      {
+        type: DocketSwitchDeniedTask.name
+      }
+    end
+
+    def docket_switch_granted_data(_task, _user = nil)
+      {
+        type: DocketSwitchGrantedTask.name
+      }
     end
 
     def assign_to_translation_team_data(_task, _user = nil)
@@ -203,6 +233,20 @@ class TaskActionRepository
           }
         end
       }
+    end
+
+    def cancel_convert_hearing_request_type_data(task, _user = nil)
+      {
+        redirect_after: "/queue/appeals/#{task.appeal.external_id}",
+        modal_title: COPY::CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_MODAL_TITLE,
+        message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
+        message_detail: COPY::CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_SUCCESS_DETAIL,
+        show_instructions: false
+      }
+    end
+
+    def change_hearing_request_type_data(_task, _user = nil)
+      {}
     end
 
     def change_task_type_data(task, user = nil)
@@ -282,9 +326,16 @@ class TaskActionRepository
       }
     end
 
-    def add_schedule_hearing_task_admin_actions_data(task, _user)
+    def add_schedule_hearing_task_admin_actions_data(task, user)
+      schedule_hearing_action_path = if FeatureToggle.enabled?(:schedule_veteran_virtual_hearing, user: user)
+                                       Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.value
+                                     else
+                                       Constants.TASK_ACTIONS.SCHEDULE_VETERAN.value
+                                     end
+
       {
         redirect_after: "/queue/appeals/#{task.appeal.external_id}",
+        schedule_hearing_action_path: schedule_hearing_action_path,
         message_detail: COPY::ADD_HEARING_ADMIN_TASK_CONFIRMATION_DETAIL,
         selected: nil,
         options: HearingAdminActionTask.subclasses.sort_by(&:label).map do |subclass|
@@ -310,6 +361,14 @@ class TaskActionRepository
         modal_title: COPY::SPECIAL_CASE_MOVEMENT_MODAL_TITLE,
         modal_body: COPY::SPECIAL_CASE_MOVEMENT_MODAL_DETAIL,
         modal_selector_placeholder: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER
+      }
+    end
+
+    def blocked_special_case_movement_data(task, _user = nil)
+      {
+        options: users_to_options(Judge.list_all),
+        type: BlockedSpecialCaseMovementTask.name,
+        blocking_tasks: task.visible_blocking_tasks.map(&:serialize_for_cancellation)
       }
     end
 

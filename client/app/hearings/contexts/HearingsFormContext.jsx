@@ -44,11 +44,15 @@ const formatHearing = (hearing) => ({
 });
 
 export const SET_UPDATED = 'setUpdated';
-const setUpdated = (state, value) => ({
-  ...state,
-  hearing: { ...state.hearing, ...value },
-  formsUpdated: !isEmpty(deepDiff(state.initialHearing, { ...state.hearing, ...value }))
-});
+const setUpdated = (state, value) => {
+  const newHearing = { ...state.hearing, ...value };
+
+  return {
+    ...state,
+    hearing: newHearing,
+    formsUpdated: !isEmpty(deepDiff(state.initialHearing, newHearing))
+  };
+};
 
 // Full reset of everything.
 export const RESET_HEARING = 'reset';
@@ -59,25 +63,32 @@ const reset = (state, hearing) => ({
   formsUpdated: false
 });
 
-// Resets only the `virtualHearing` field, and should preserve all other fields.
 export const RESET_VIRTUAL_HEARING = 'resetVirtualHearing';
-const resetVirtualHearing = (state, virtualHearing) => {
+
+// Resets only the `virtualHearing` and `emailEvents` field, and should preserve all other fields.
+// NOTE: Only used for resetting states during polling
+const resetVirtualHearing = (state, payload) => {
+  const newHearing = {
+    ...state.hearing,
+    emailEvents: values(payload.emailEvents),
+    virtualHearing: {
+      ...(state.hearing?.virtualHearing || {}),
+      ...payload.virtualHearing
+    }
+  };
+  const newInitialHearing = {
+    ...state.initialHearing,
+    virtualHearing: {
+      ...(state.initialHearing?.virtualHearing || {}),
+      ...payload.virtualHearing
+    }
+  };
+
   return {
     ...state,
-    initialHearing: {
-      ...state.initialHearing,
-      virtualHearing: {
-        ...(state.initialHearing?.virtualHearing || {}),
-        ...virtualHearing
-      }
-    },
-    hearing: {
-      ...state.hearing,
-      virtualHearing: {
-        ...(state.hearing?.virtualHearing || {}),
-        ...virtualHearing
-      }
-    }
+    initialHearing: newInitialHearing,
+    hearing: newHearing,
+    formsUpdated: !isEmpty(deepDiff(newInitialHearing, newHearing))
   };
 };
 

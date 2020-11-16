@@ -4,11 +4,11 @@ import React, { useContext, useEffect } from 'react';
 import { ContentSection } from '../../../components/ContentSection';
 import { HearingLinks } from './HearingLinks';
 import { HearingsUserContext } from '../../contexts/HearingsUserContext';
-import { getAppellantTitleForHearing } from '../../utils';
+import { getAppellantTitle } from '../../utils';
 import { VirtualHearingFields } from '../VirtualHearings/Fields';
 
 export const VirtualHearingForm = (
-  { hearing, virtualHearing, readOnly, update, errors }
+  { hearing, initialHearing, virtualHearing, readOnly, update, errors }
 ) => {
   if (!hearing?.isVirtual && !hearing?.wasVirtual) {
     return null;
@@ -17,7 +17,7 @@ export const VirtualHearingForm = (
   // Hide the virtual hearing fields only when we are scheduling the virtual hearing
   const showFields = (hearing?.isVirtual || hearing?.wasVirtual) && virtualHearing;
   const readOnlyEmails = readOnly || !virtualHearing?.jobCompleted || hearing?.wasVirtual || hearing.scheduledForIsPast;
-  const appellantTitle = getAppellantTitleForHearing(hearing);
+  const appellantTitle = getAppellantTitle(hearing?.appellantIsNotVeteran);
   const user = useContext(HearingsUserContext);
 
   useEffect(() => {
@@ -52,8 +52,7 @@ export const VirtualHearingForm = (
           virtualHearing={virtualHearing}
           time={hearing.scheduledTimeString}
           requestType={hearing.readableRequestType}
-          defaultAppellantTz={hearing?.appellantTz}
-          defaultRepresentativeTz={hearing?.representativeTz}
+          initialRepresentativeTz={initialHearing?.virtualHearing?.representativeTz}
         />
       )}
     </ContentSection>
@@ -69,6 +68,9 @@ VirtualHearingForm.propTypes = {
     scheduledForIsPast: PropTypes.bool,
     wasVirtual: PropTypes.bool,
     isVirtual: PropTypes.bool
+  }),
+  initialHearing: PropTypes.shape({
+    virtualHearing: PropTypes.object
   }),
   readOnly: PropTypes.bool,
   virtualHearing: PropTypes.shape({

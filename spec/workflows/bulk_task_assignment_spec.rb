@@ -21,7 +21,7 @@ describe BulkTaskAssignment, :postgres do
              created_at: 1.day.ago)
     end
 
-    # Even it is the oldest task, it should skip it becasue it is on hold
+    # Even it is the oldest task, it should skip it because it is on hold
     let!(:no_show_hearing_task4) do
       create(:no_show_hearing_task,
              :on_hold,
@@ -132,6 +132,79 @@ describe BulkTaskAssignment, :postgres do
           expect(task_with_legacy_appeal.assigned_to).to eq assigned_to
           expect(task_with_legacy_appeal.type).to eq "NoShowHearingTask"
           expect(task_with_legacy_appeal.assigned_by).to eq assigned_by
+        end
+      end
+
+      def create_no_show_hearing_task_for_appeal(appeal)
+        create(:no_show_hearing_task, appeal: appeal, assigned_to: organization)
+      end
+
+      context "when there are priority appeals" do
+        let(:regional_office) { nil }
+        let(:task_count) { 20 }
+        let(:ama_receipt_date) { 4.days.ago }
+        let(:legacy_docket_number) { 3.days.ago.strftime("%y%m%d") }
+
+        let(:cavc_appeal) { create(:appeal, :type_cavc_remand, receipt_date: ama_receipt_date) }
+        let(:aod_appeal) { create(:appeal, :advanced_on_docket_due_to_motion, receipt_date: ama_receipt_date) }
+        let(:cavc_aod_appeal) do
+          create(:appeal, :advanced_on_docket_due_to_motion, :type_cavc_remand, receipt_date: ama_receipt_date)
+        end
+        let(:aod_legacy_appeal) do
+          create(:legacy_appeal, vacols_case: create(:case, :aod, folder: build(:folder, tinum: legacy_docket_number)))
+        end
+        let(:cavc_legacy_appeal) do
+          create(
+            :legacy_appeal,
+            vacols_case: create(:case, :type_cavc_remand, folder: build(:folder, tinum: legacy_docket_number))
+          )
+        end
+        let(:cavc_aod_legacy_appeal) do
+          create(
+            :legacy_appeal,
+            vacols_case: create(:case, :aod, :type_cavc_remand, folder: build(:folder, tinum: legacy_docket_number))
+          )
+        end
+
+        before do
+          create_no_show_hearing_task_for_appeal(aod_appeal)
+          create_no_show_hearing_task_for_appeal(cavc_appeal)
+          create_no_show_hearing_task_for_appeal(cavc_aod_appeal)
+          create_no_show_hearing_task_for_appeal(aod_legacy_appeal)
+          create_no_show_hearing_task_for_appeal(cavc_legacy_appeal)
+          create_no_show_hearing_task_for_appeal(cavc_aod_legacy_appeal)
+
+          UpdateCachedAppealsAttributesJob.perform_now
+        end
+
+        let(:expected_appeal_ordering) do
+          [
+            cavc_aod_appeal,
+            cavc_aod_legacy_appeal,
+            aod_appeal,
+            aod_legacy_appeal,
+            cavc_appeal,
+            cavc_legacy_appeal
+          ]
+        end
+
+        subject { BulkTaskAssignment.new(params).process }
+
+        it "sorts priority appeals first" do
+          prioritized_assigned_tasks = subject
+          expect(prioritized_assigned_tasks.first(6).map(&:appeal)).to eq(expected_appeal_ordering)
+
+          appeals_of_returned_tasks = prioritized_assigned_tasks.map(&:appeal)
+          expect(appeals_of_returned_tasks).to include(no_show_hearing_task1.appeal)
+          expect(appeals_of_returned_tasks).to include(no_show_hearing_task2.appeal)
+          expect(appeals_of_returned_tasks).to include(no_show_hearing_task3.appeal)
+        end
+
+        context "when task_count param is less than the number of AOD and CAVC appeals" do
+          let(:task_count) { 2 }
+          it "sorts priority appeals first" do
+            expect(subject.map(&:appeal)).to eq(expected_appeal_ordering.first(task_count))
+          end
         end
       end
     end

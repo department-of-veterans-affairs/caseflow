@@ -474,6 +474,24 @@ describe MailTask, :postgres do
         expect(subject).to eq(LitigationSupport.singleton)
       end
     end
+
+    context "for an DocketSwitchMailTask" do
+      let(:cotb_user) { create(:user) }
+      let(:cotb_team) { ClerkOfTheBoard.singleton }
+      let(:mail_team) { cotb_team }
+
+      let(:task_class) { DocketSwitchMailTask }
+      let(:params) { super().merge(assigned_by: cotb_user) }
+
+      before do
+        cotb_team.add_user(cotb_user)
+        RequestStore[:current_user] = cotb_user
+      end
+
+      it "should route to the user that created it" do
+        expect(subject).to eq(cotb_user)
+      end
+    end
   end
 
   describe ".available_actions" do
@@ -513,6 +531,21 @@ describe MailTask, :postgres do
         it "returns the available_actions as defined by Task" do
           expect(subject).to eq(task_actions)
         end
+      end
+    end
+  end
+
+  describe ".parent_if_blocking_task" do
+    let(:root_task) { appeal.root_task }
+    let(:distrubution_task) { appeal.tasks.find_by(type: DistributionTask.name) }
+    let(:appeal) { create(:appeal, :ready_for_distribution) }
+
+    before { allow(appeal).to receive(:distributed_to_a_judge?).and_return false }
+
+    it "returns the distribution task if it is a blocking task, root task otherwise" do
+      MailTask.subclasses.each do |task_class|
+        expected_parent = task_class.blocking? ? distrubution_task : root_task
+        expect(task_class.parent_if_blocking_task(root_task)).to eq expected_parent
       end
     end
   end

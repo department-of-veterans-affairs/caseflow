@@ -99,6 +99,10 @@ const taskAttributesFromRawTask = (task) => {
     cancelledBy: {
       cssId: task.attributes.cancelled_by.css_id,
     },
+    convertedBy: {
+      cssId: task.attributes.converted_by.css_id,
+    },
+    convertedOn: task.attributes.converted_on,
     taskId: task.id,
     parentId: task.attributes.parent_id,
     label: task.attributes.label,
@@ -118,11 +122,18 @@ const taskAttributesFromRawTask = (task) => {
     hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
     hideFromCaseTimeline: task.attributes.hide_from_case_timeline,
     availableHearingLocations: task.attributes.available_hearing_locations,
-    // `powerOfAttorneyName` and `suggestedHearingLocation` are only present for
+    // `powerOfAttorneyName`, `suggestedHearingLocation`,
+    // `hearingRequestType`, and `isFormerTravel` are only present for
     // /hearings/scheduled/assign page, and are not returned from the API when
     // requesting the full task.
     powerOfAttorneyName: task.attributes.power_of_attorney_name,
-    suggestedHearingLocation: task.attributes.suggested_hearing_location
+    suggestedHearingLocation: task.attributes.suggested_hearing_location,
+    hearingRequestType: task.attributes.hearing_request_type,
+    isFormerTravel: task.attributes.former_travel,
+    latestInformalHearingPresentationTask: {
+      requestedAt: task.attributes.latest_informal_hearing_presentation_task?.requested_at,
+      receivedAt: task.attributes.latest_informal_hearing_presentation_task?.received_at
+    }
   };
 };
 
@@ -211,7 +222,11 @@ export const prepareLegacyTasksForStore = (tasks) => {
       timelineTitle: task.attributes.timeline_title,
       hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
       hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
-      hideFromCaseTimeline: task.attributes.hide_from_case_timeline
+      hideFromCaseTimeline: task.attributes.hide_from_case_timeline,
+      latestInformalHearingPresentationTask: {
+        requestedAt: task.attributes.latest_informal_hearing_presentation_task?.requested_at,
+        receivedAt: task.attributes.latest_informal_hearing_presentation_task?.received_at
+      }
     };
   });
 
@@ -306,7 +321,8 @@ export const prepareAppealForStore = (appeals) => {
       veteranFullName: appeal.attributes.veteran_full_name,
       veteranFileNumber: appeal.attributes.veteran_file_number,
       isPaperCase: appeal.attributes.paper_case,
-      sanitizedHearingRequestType: appeal.attributes.sanitized_hearing_request_type,
+      readableHearingRequestType: appeal.attributes.readable_hearing_request_type,
+      readableOriginalHearingRequestType: appeal.attributes.readable_original_hearing_request_type,
       vacateType: appeal.attributes.vacate_type
     };
 
@@ -330,6 +346,7 @@ export const prepareAppealForStore = (appeals) => {
       veteranGender: appeal.attributes.veteran_gender,
       veteranAddress: appeal.attributes.veteran_address,
       closestRegionalOffice: appeal.attributes.closest_regional_office,
+      closestRegionalOfficeLabel: appeal.attributes.closest_regional_office_label,
       availableHearingLocations: prepareAppealAvailableHearingLocationsForStore(appeal),
       externalId: appeal.attributes.external_id,
       status: appeal.attributes.status,
@@ -338,6 +355,7 @@ export const prepareAppealForStore = (appeals) => {
       nodDate: appeal.attributes.nod_date,
       certificationDate: appeal.attributes.certification_date,
       powerOfAttorney: appeal.attributes.power_of_attorney,
+      cavcRemand: appeal.attributes.cavc_remand,
       regionalOffice: appeal.attributes.regional_office,
       caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
       documentID: appeal.attributes.document_id,

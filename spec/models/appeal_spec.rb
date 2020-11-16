@@ -12,7 +12,7 @@ describe Appeal, :all_dbs do
   let!(:appeal) { create(:appeal) } # must be *after* Timecop.freeze
 
   context "#create_stream" do
-    let(:stream_type) { "vacate" }
+    let(:stream_type) { Constants.AMA_STREAM_TYPES.vacate }
     let!(:appeal) { create(:appeal, number_of_claimants: 1) }
 
     subject { appeal.create_stream(stream_type) }
@@ -34,7 +34,7 @@ describe Appeal, :all_dbs do
     end
 
     context "for de_novo appeal stream" do
-      let(:stream_type) { "de_novo" }
+      let(:stream_type) { Constants.AMA_STREAM_TYPES.de_novo }
 
       it "creates a de_novo appeal stream with data from the original appeal" do
         expect(subject).to have_attributes(
@@ -483,7 +483,7 @@ describe Appeal, :all_dbs do
     end
   end
 
-  context "#find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id" do
+  context "#find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id" do
     context "with a uuid (AMA appeal id)" do
       let(:veteran_file_number) { "64205050" }
 
@@ -492,13 +492,13 @@ describe Appeal, :all_dbs do
       end
 
       it "finds the appeal" do
-        expect(Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal.uuid)).to \
+        expect(Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(appeal.uuid)).to \
           eq(appeal)
       end
 
       it "returns RecordNotFound for a non-existant one" do
         made_up_uuid = "11111111-aaaa-bbbb-CCCC-999999999999"
-        expect { Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(made_up_uuid) }.to \
+        expect { Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(made_up_uuid) }.to \
           raise_exception(ActiveRecord::RecordNotFound, "Couldn't find Appeal")
       end
     end
@@ -512,14 +512,14 @@ describe Appeal, :all_dbs do
 
       it "finds the appeal" do
         legacy_appeal.save
-        expect(Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(legacy_appeal.vacols_id)).to \
+        expect(Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(legacy_appeal.vacols_id)).to \
           eq(legacy_appeal)
       end
 
       it "returns RecordNotFound for a non-existant one" do
         made_up_non_uuid = "9876543"
         expect do
-          Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(made_up_non_uuid)
+          Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(made_up_non_uuid)
         end.to raise_exception(ActiveRecord::RecordNotFound)
       end
     end
@@ -963,6 +963,24 @@ describe Appeal, :all_dbs do
     end
   end
 
+  context "#cavc?" do
+    subject { appeal.cavc? }
+
+    context "for original appeal" do
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "for cavc stream" do
+      let(:appeal) { create(:appeal, stream_type: Constants.AMA_STREAM_TYPES.court_remand) }
+
+      it "returns true" do
+        expect(subject).to eq(true)
+      end
+    end
+  end
+
   describe "#status" do
     it "returns BVAAppealStatus object" do
       expect(appeal.status).to be_a(BVAAppealStatus)
@@ -1032,5 +1050,190 @@ describe Appeal, :all_dbs do
         expect(subject).to be_nil
       end
     end
+  end
+
+  shared_examples "existing BvaDispatchTask" do |status, result|
+    let(:user) { create(:user) }
+
+    before do
+      BvaDispatch.singleton.add_user(user)
+      dispatch_task = BvaDispatchTask.create_from_root_task(appeal.root_task)
+      dispatch_task.descendants.each { |task| task.update_column(:status, status) }
+    end
+
+    it "should return #{result}" do
+      expect(subject).to eq(result)
+    end
+  end
+
+  shared_examples "depends on existing BvaDispatchTask" do
+    context "no existing BvaDispatchTask" do
+      it "should return true" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "existing open BvaDispatchTask" do
+      include_examples "existing BvaDispatchTask",
+                       Constants.TASK_STATUSES.in_progress,
+                       false
+    end
+
+    context "existing complete BvaDispatchTask" do
+      include_examples "existing BvaDispatchTask",
+                       Constants.TASK_STATUSES.completed,
+                       false
+    end
+
+    context "existing cancelled BvaDispatchTask" do
+      include_examples "existing BvaDispatchTask",
+                       Constants.TASK_STATUSES.cancelled,
+                       true
+
+      context "and existing open BvaDispatchTask" do
+        include_examples "existing BvaDispatchTask",
+                         Constants.TASK_STATUSES.assigned,
+                         false
+      end
+
+      context "and existing completed BvaDispatchTask" do
+        include_examples "existing BvaDispatchTask",
+                         Constants.TASK_STATUSES.completed,
+                         false
+      end
+    end
+  end
+
+  describe ".ready_for_bva_dispatch?" do
+    subject { appeal.ready_for_bva_dispatch? }
+
+    context "no complete JudgeDecisionReviewTask" do
+      it "should return false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "has complete JudgeDecisionReviewTask" do
+      let(:appeal) do
+        create(:appeal,
+               :at_judge_review,
+               docket_type: Constants.AMA_DOCKETS.direct_review)
+      end
+      before do
+        JudgeDecisionReviewTask.find_by(appeal: appeal)
+          .update_column(:status, Constants.TASK_STATUSES.completed)
+      end
+
+      context "and an open JudgeDecisionReviewTask" do
+        before do
+          JudgeDecisionReviewTask.create!(appeal: appeal, assigned_to: create(:user), parent: appeal.root_task)
+        end
+
+        it "should return false" do
+          expect(subject).to eq(false)
+        end
+      end
+
+      context "no QualityReviewTask" do
+        include_examples "depends on existing BvaDispatchTask"
+      end
+
+      context "existing open QualityReviewTask" do
+        let(:user) { create(:user) }
+        before do
+          BvaDispatch.singleton.add_user(user)
+          QualityReviewTask.create_from_root_task(appeal.root_task)
+        end
+
+        it "should return false" do
+          expect(subject).to eq(false)
+        end
+      end
+
+      context "existing closed QualityReviewTask" do
+        let(:user) { create(:user) }
+        before do
+          qr_task = QualityReviewTask.create_from_root_task(appeal.root_task)
+          qr_task.descendants.each { |task| task.update_column(:status, Constants.TASK_STATUSES.completed) }
+        end
+
+        include_examples "depends on existing BvaDispatchTask"
+      end
+    end
+  end
+
+  describe ".ready_for_distribution?" do
+    let(:appeal) { create(:appeal) }
+    let(:distribution_task) { create(:distribution_task, appeal: appeal, assigned_to: Bva.singleton) }
+
+    it "is set to assigned and ready for distribution is tracked when all child tasks are completed" do
+      child_task = create(:informal_hearing_presentation_task, parent: distribution_task)
+      expect(appeal.ready_for_distribution?).to eq(false)
+
+      child_task.update!(status: "completed")
+      expect(appeal.ready_for_distribution?).to eq(true)
+
+      another_child_task = create(:informal_hearing_presentation_task, parent: distribution_task)
+      expect(appeal.ready_for_distribution?).to eq(false)
+
+      another_child_task.update!(status: "completed")
+      expect(appeal.ready_for_distribution?).to eq(true)
+    end
+  end
+
+  describe "#current_hearing_request_type" do
+    let(:appeal) { create(:appeal, closest_regional_office: closest_regional_office) }
+
+    subject { appeal.current_hearing_request_type }
+
+    context "closest_regional_office is 'C'" do
+      let(:closest_regional_office) { "C" }
+
+      it { expect(subject).to eq(:central) }
+    end
+
+    context "closest_regional_office is a RO" do
+      let(:closest_regional_office) { "RO39" }
+
+      it { expect(subject).to eq(:video) }
+    end
+
+    context "closest_regional_office is a nil" do
+      let(:closest_regional_office) { nil }
+
+      it { expect(subject).to eq(nil) }
+    end
+  end
+
+  describe "readable current_hearing_request_type" do
+    subject { appeal.current_hearing_request_type(readable: true) }
+
+    context "no hearings have been scheduled" do
+      let(:appeal) { create(:appeal, closest_regional_office: closest_regional_office) }
+
+      context "closest_regional_office is 'C'" do
+        let(:closest_regional_office) { "C" }
+
+        it { expect(subject).to eq("Central") }
+      end
+
+      context "closest_regional_office is a RO" do
+        let(:closest_regional_office) { "RO39" }
+
+        it { expect(subject).to eq("Video") }
+      end
+
+      context "closest_regional_office is a nil" do
+        let(:closest_regional_office) { nil }
+
+        it { expect(subject).to eq(nil) }
+      end
+    end
+  end
+
+  describe "#latest_informal_hearing_presentation_task" do
+    let(:appeal) { create(:appeal) }
+
+    it_behaves_like "latest informal hearing presentation task"
   end
 end

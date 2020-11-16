@@ -124,6 +124,17 @@ module Caseflow::Error
     end
   end
 
+  class IneligibleForBlockedSpecialCaseMovement < SerializableError
+    attr_accessor :appeal_id
+
+    def initialize(args)
+      @code = args[:code] || 500
+      @appeal_id = args[:appeal_id] || nil
+      @title = "This appeal cannot be advanced to a judge"
+      @message = args[:message] || "Appeal #{@appeal_id} must be awaiting distribution be eligible for Case Movement"
+    end
+  end
+
   class IneligibleForSpecialCaseMovement < SerializableError
     attr_accessor :appeal_id
 
@@ -141,6 +152,15 @@ module Caseflow::Error
       @task_type = args[:task_type]
       @code = args[:code] || 500
       @message = args[:message] || "Invalid parent type for task #{@task_type}"
+    end
+  end
+
+  class JmrAppealDecisionIssueMismatch < SerializableError
+    def initialize(args)
+      @code = args[:code] || 422
+      @decision_issue_ids = args[:decision_issue_ids]
+      @appeal_id = args[:appeal_id]
+      @message = args[:message] || "JMR remands must include all appeal decision issues."
     end
   end
 
@@ -246,17 +266,19 @@ module Caseflow::Error
     end
   end
 
+  class DuplicateDvcTeam < SerializableError
+    def initialize(args)
+      @user_id = args[:user_id]
+      @code = args[:code] || 400
+      @message = args[:message] || "User #{@user_id} already has a DvcTeam. Cannot create another DvcTeam for user."
+    end
+  end
+
   class DuplicateJudgeTeam < SerializableError
     def initialize(args)
       @user_id = args[:user_id]
       @code = args[:code] || 400
       @message = args[:message] || "User #{@user_id} already has a JudgeTeam. Cannot create another JudgeTeam for user."
-    end
-  end
-
-  class NonexistentJudgeTeam < StandardError
-    def initialize(args)
-      @user_id = args[:user_id]
     end
   end
 
@@ -336,4 +358,14 @@ module Caseflow::Error
   class PexipMethodNotAllowedError < PexipApiError; end
 
   class WorkModeCouldNotUpdateError < StandardError; end
+
+  class VirtualHearingConversionFailed < SerializableError
+    attr_accessor :code, :message
+
+    def initialize(args = {})
+      @error_type = args[:error_type]
+      @code = args[:code]
+      @message = args[:message]
+    end
+  end
 end

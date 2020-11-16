@@ -8,6 +8,21 @@
     "label": "Change hearing disposition",
     "value": "modal/change_hearing_disposition"
   },
+  "CANCEL_CONVERT_HEARING_REQUEST_TYPE_TO_VIRTUAL": {
+    "label": "Cancel convert hearing to virtual",
+    "value": "modal/cancel_task",
+    "func": "cancel_convert_hearing_request_type_data"
+  },
+  "CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO": {
+    "label": "Convert hearing to video",
+    "value": "<placeholder>modal/change_hearing_request_type</placeholder>",
+    "func": "change_hearing_request_type_data"
+  },
+  "CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL": {
+    "label": "Convert hearing to virtual",
+    "value": "change_hearing_request_type_to_virtual",
+    "func": "change_hearing_request_type_data"
+  },
   "ASSIGN_OMO": {
     "label": "Assign OMO",
     "value": "omo_request/evaluate"
@@ -21,6 +36,11 @@
     "label": "Assign to person",
     "value": "modal/assign_to_hearing_admin_member",
     "func": "assign_to_user_data"
+  },
+  "REASSIGN_TO_HEARINGS_TEAMS_MEMBER": {
+    "label": "Assign to person",
+    "value": "modal/reassign_to_person",
+    "func": "assign_to_hearings_user_data"
   },
   "ASSIGN_TO_MOTIONS_ATTORNEY": {
     "label": "Assign to person",
@@ -64,6 +84,25 @@
     "label": "Sign Motion to Vacate",
     "value": "sign_motion_to_vacate",
     "func": "sign_motion_to_vacate_data"
+  },
+  "DOCKET_SWITCH_SEND_TO_JUDGE": {
+    "label": "Send to Judge",
+    "value": "docket_switch/recommend",
+    "func": "docket_switch_send_to_judge_data"
+  },
+  "DOCKET_SWITCH_JUDGE_RULING": {
+    "label": "Rule on Docket Switch",
+    "value": "docket_switch/ruling"
+  },
+  "DOCKET_SWITCH_DENIED": {
+    "label": "Deny Docket Switch",
+    "value": "docket_switch/checkout/deny",
+    "func": "docket_switch_denied_data"
+  },
+  "DOCKET_SWITCH_GRANTED": {
+    "label": "Grant Docket Switch",
+    "value": "docket_switch/checkout/grant",
+    "func": "docket_switch_granted_data"
   },
   "CANCEL_FOREIGN_VETERANS_CASE_TASK": {
     "label": "Cancel hearing request",
@@ -166,8 +205,13 @@
   },
   "SPECIAL_CASE_MOVEMENT": {
     "label": "Case Movement: Advance to judge",
-    "value": "modal/special_case_movement",
+    "value": "modal/distribute_to_judge",
     "func": "special_case_movement_data"
+  },
+  "BLOCKED_SPECIAL_CASE_MOVEMENT": {
+    "label": "Case Movement: Cancel blocking tasks and advance to judge",
+    "value": "distribute_to_judge",
+    "func": "blocked_special_case_movement_data"
   },
   "TOGGLE_TIMED_HOLD": {
     "func": "toggle_timed_hold"
@@ -233,6 +277,11 @@
   "SCHEDULE_VETERAN": {
     "label": "Schedule Veteran",
     "value": "modal/schedule_veteran",
+    "func": "schedule_veteran_data"
+  },
+  "SCHEDULE_VETERAN_V2_PAGE": {
+    "label": "Schedule Veteran",
+    "value": "schedule_veteran",
     "func": "schedule_veteran_data"
   },
   "SEND_TO_SCHEDULE_VETERAN_LIST": {

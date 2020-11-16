@@ -43,6 +43,10 @@ class BgsPowerOfAttorney < CaseflowRecord
 
     def find_or_create_by_claimant_participant_id(claimant_participant_id)
       find_or_create_by!(claimant_participant_id: claimant_participant_id)
+    rescue ActiveRecord::RecordNotUnique
+      # Handle race conditions similarly to find_or_create_by_file_number.
+      # For an example of this in the wild, see Sentry event 17c302faae0b48bcb0e1816a58e8b7f5.
+      find_by(claimant_participant_id: claimant_participant_id)
     end
 
     def find_or_load_by_file_number(file_number)

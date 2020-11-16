@@ -44,8 +44,8 @@ export default class AssignHearingsTabs extends React.PureComponent {
       <div className="usa-width-three-fourths">
         {!_.isNil(selectedHearingDay) &&
           <h1>
-            {`${moment(selectedHearingDay.scheduledFor).format('ddd M/DD/YYYY')}
-              ${room} (${availableSlots} slots remaining)`}
+            {`${moment(selectedHearingDay.scheduledFor).format('ddd M/DD/YYYY')}  
+              ${room ?? ''} (${availableSlots} slots remaining)`}
           </h1>
         }
         <TabWindow
@@ -56,7 +56,7 @@ export default class AssignHearingsTabs extends React.PureComponent {
             {
               label: 'Scheduled Veterans',
               page: <UpcomingHearingsTable
-                selectRegionalOffice={selectedRegionalOffice}
+                selectedRegionalOffice={selectedRegionalOffice}
                 selectedHearingDay={selectedHearingDay}
                 hearings={hearingsForSelected}
               />
@@ -100,7 +100,10 @@ AssignHearingsTabs.propTypes = {
     scheduledFor: PropTypes.string,
     totalSlots: PropTypes.number
   }),
+
+  // Selected Regional Office Key
   selectedRegionalOffice: PropTypes.string,
+
   room: PropTypes.string
 };
 

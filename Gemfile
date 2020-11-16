@@ -9,7 +9,7 @@ gem "activerecord-import"
 gem "acts_as_tree"
 # BGS
 
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "5b7bedc99caaca3a79cff8b159eb48db0b2ec669"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "128938e80b083588164233b1db91ea7b677a2627"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
@@ -51,11 +51,11 @@ gem "pg", platforms: :ruby
 # We are not yet at version 4.x because we have not tested.
 gem "puma", "~> 3.12.6"
 gem "rack", "~> 2.2.3"
-gem "rails", "5.2.4.3"
+gem "rails", "5.2.4.4"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
-gem "react_on_rails", "8.0.6"
+gem "react_on_rails", "11.3.0"
 gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"
@@ -96,13 +96,14 @@ group :test, :development, :demo do
   gem "capybara-screenshot"
   gem "danger", "~> 6.0"
   gem "database_cleaner"
-  gem "factory_bot_rails", "~> 4.8"
+  gem "factory_bot_rails", "~> 5.2"
   gem "faker"
   gem "guard-rspec"
   # Linters
   gem "jshint", platforms: :ruby
   gem "pry"
   gem "pry-byebug"
+  gem "rails-erd"
   gem "rb-readline"
   gem "rspec"
   gem "rspec-rails"
@@ -128,13 +129,15 @@ group :development do
   gem "fasterer", require: false
   gem "foreman"
   gem "meta_request"
-  gem "rails-erd"
   gem "ruby-prof", "~> 1.4"
 end
 
 group :test do
+  gem "knapsack_pro"
   # For retrying failed feature tests. Read more: https://github.com/NoRedInk/rspec-retry
   gem "rspec-retry"
   gem "webmock"
 end
 # rubocop:enable Metrics/LineLength
+
+gem "json_schemer", "~> 0.2.16"

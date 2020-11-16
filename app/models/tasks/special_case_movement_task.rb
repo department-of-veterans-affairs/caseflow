@@ -2,13 +2,13 @@
 
 ##
 # Task to record on the appeal that the special case movement manually assigned the case outside of automatic
-#   case distribution
+# case distribution
 
 class SpecialCaseMovementTask < Task
-  before_create :verify_parent_task_type,
-                :verify_user_organization,
+  validates :parent, presence: true, parentTask: { task_type: DistributionTask }
+  before_create :verify_user_organization,
                 :verify_appeal_distributable
-  after_create :close_and_create_judge_task
+  after_create :distribute_to_judge
 
   def self.label
     COPY::CASE_MOVEMENT_TASK_LABEL
@@ -16,7 +16,7 @@ class SpecialCaseMovementTask < Task
 
   private
 
-  def close_and_create_judge_task
+  def distribute_to_judge
     Task.transaction do
       JudgeAssignTask.create!(appeal: appeal,
                               parent: appeal.root_task,
@@ -35,15 +35,6 @@ class SpecialCaseMovementTask < Task
   def verify_appeal_distributable
     if !appeal.ready_for_distribution?
       fail(Caseflow::Error::IneligibleForSpecialCaseMovement, appeal_id: appeal.id)
-    end
-  end
-
-  def verify_parent_task_type
-    # For now, we expect the parent to always be the distribution task.
-    #   This may change as we add more 'from' scenarios
-    if !parent.is_a?(DistributionTask)
-      fail(Caseflow::Error::InvalidParentTask,
-           message: "Case Movement task must have a Distribution task parent")
     end
   end
 

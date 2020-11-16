@@ -19,6 +19,7 @@ import TextareaField from '../../../components/TextareaField';
 const DetailsForm = (props) => {
   const {
     hearing,
+    initialHearing,
     update,
     isLegacy,
     openVirtualHearingModal,
@@ -70,7 +71,7 @@ const DetailsForm = (props) => {
               enableFullPageConversion={userUseFullPageVideoToVirtual}
               convertHearing={convertHearing}
               virtualHearing={hearing?.virtualHearing}
-              requestType={requestType}
+              originalRequestType={requestType}
               update={update}
               openModal={openVirtualHearingModal}
               readOnly={
@@ -115,6 +116,7 @@ const DetailsForm = (props) => {
       <VirtualHearingForm
         errors={errors}
         hearing={hearing}
+        initialHearing={initialHearing}
         readOnly={readOnly}
         virtualHearing={hearing?.virtualHearing}
         update={update}
@@ -146,6 +148,9 @@ DetailsForm.propTypes = {
     transcription: PropTypes.object,
     wasVirtual: PropTypes.bool,
     isVirtual: PropTypes.bool,
+  }),
+  initialHearing: PropTypes.shape({
+    virtualHearing: PropTypes.object
   }),
   isLegacy: PropTypes.bool,
   openVirtualHearingModal: PropTypes.func,

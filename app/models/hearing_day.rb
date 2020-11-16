@@ -34,11 +34,7 @@ class HearingDay < CaseflowRecord
 
   class HearingDayHasChildrenRecords < StandardError; end
 
-  REQUEST_TYPES = {
-    video: "V",
-    travel: "T",
-    central: "C"
-  }.freeze
+  REQUEST_TYPES = Constants::HEARING_REQUEST_TYPES.with_indifferent_access.freeze
 
   SLOTS_BY_REQUEST_TYPE = { REQUEST_TYPES[:central] => 10 }.freeze
 

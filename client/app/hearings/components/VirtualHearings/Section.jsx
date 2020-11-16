@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export const VirtualHearingSection = ({ label, children, hide }) =>
+import { marginTop } from '../details/style';
+
+export const VirtualHearingSection = ({ label, children, hide, showDivider }) =>
   !hide && (
     <React.Fragment>
-      <div className="cf-help-divider" />
+      {showDivider ? <div className="cf-help-divider" /> : <div {...marginTop(30)} />}
       <h2>{label}</h2>
       {children}
     </React.Fragment>
@@ -12,11 +14,13 @@ export const VirtualHearingSection = ({ label, children, hide }) =>
 
 VirtualHearingSection.defaultProps = {
   label: '',
-  hide: false
+  hide: false,
+  showDivider: true
 };
 
 VirtualHearingSection.propTypes = {
   children: PropTypes.node.isRequired,
   label: PropTypes.string,
+  showDivider: PropTypes.bool,
   hide: PropTypes.bool,
 };

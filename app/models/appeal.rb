@@ -27,11 +27,17 @@ class Appeal < DecisionReview
   has_one :post_decision_motion
   has_many :record_synced_by_job, as: :record
   has_one :work_mode, as: :appeal
+  has_one :latest_informal_hearing_presentation_task, lambda {
+    not_cancelled
+      .order(closed_at: :desc, assigned_at: :desc)
+      .where(type: [InformalHearingPresentationTask.name, IhpColocatedTask.name], appeal_type: Appeal.name)
+  }, class_name: "Task", foreign_key: :appeal_id
 
   enum stream_type: {
-    "original": "original",
-    "vacate": "vacate",
-    "de_novo": "de_novo"
+    Constants.AMA_STREAM_TYPES.original.to_sym => Constants.AMA_STREAM_TYPES.original,
+    Constants.AMA_STREAM_TYPES.vacate.to_sym => Constants.AMA_STREAM_TYPES.vacate,
+    Constants.AMA_STREAM_TYPES.de_novo.to_sym => Constants.AMA_STREAM_TYPES.de_novo,
+    Constants.AMA_STREAM_TYPES.court_remand.to_sym => Constants.AMA_STREAM_TYPES.court_remand
   }
 
   after_create :conditionally_set_aod_based_on_age
@@ -73,7 +79,7 @@ class Appeal < DecisionReview
   delegate :documents, :manifest_vbms_fetched_at, :number_of_documents,
            :manifest_vva_fetched_at, to: :document_fetcher
 
-  def self.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
+  def self.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(id)
     if UUID_REGEX.match?(id)
       find_by_uuid!(id)
     else
@@ -92,11 +98,13 @@ class Appeal < DecisionReview
   def create_stream(stream_type)
     ActiveRecord::Base.transaction do
       Appeal.create!(slice(
+        :aod_based_on_age,
+        :closest_regional_office,
+        :docket_type,
+        :legacy_opt_in_approved,
         :receipt_date,
         :veteran_file_number,
-        :legacy_opt_in_approved,
-        :veteran_is_not_claimant,
-        :docket_type
+        :veteran_is_not_claimant
       ).merge(
         stream_type: stream_type,
         stream_docket_number: docket_number,
@@ -216,16 +224,7 @@ class Appeal < DecisionReview
   end
 
   def ready_for_distribution?
-    # Appeals are ready for distribution when the DistributionTask is the active task, meaning there are no outstanding
-    #   Evidence Window or Hearing tasks, and when there are no mail tasks that legally restrict the distribution of
-    #   the case, aka blocking mail tasks
-    return false unless tasks.active.where(type: DistributionTask.name).any?
-
-    MailTask.open.where(appeal: self).find_each do |mail_task|
-      return false if mail_task.blocking?
-    end
-
-    true
+    tasks.active.where(type: DistributionTask.name).any?
   end
 
   def ready_for_distribution_at
@@ -278,7 +277,7 @@ class Appeal < DecisionReview
     conditionally_set_aod_based_on_age
     # One of the AOD motion reasons is 'age'. Keep interrogation of any motions separate from `aod_based_on_age`,
     # which reflects `claimant.advanced_on_docket_based_on_age?`.
-    aod_based_on_age || claimant&.advanced_on_docket_motion_granted?(receipt_date)
+    aod_based_on_age || claimant&.advanced_on_docket_motion_granted?(self)
   end
 
   # Prefer aod? over aod going forward, as this function returns a boolean
@@ -342,8 +341,17 @@ class Appeal < DecisionReview
     veteran_middle_name&.first
   end
 
+  # matches Legacy behavior
   def cavc
-    "not implemented for AMA"
+    court_remand?
+  end
+
+  alias cavc? cavc
+
+  def cavc_remand
+    return nil if !cavc?
+
+    CavcRemand.find_by(appeal_id: stream_docket_number.split("-").last)
   end
 
   def status
@@ -496,6 +504,47 @@ class Appeal < DecisionReview
     # Death dismissal processing is only for VACOLs/Legacy appeals
     false
   end
+
+  # We are ready for BVA dispatch if
+  #  - the appeal is not at Quality Review
+  #  - the appeal has not already completed BVA Dispatch
+  #  - the appeal is not already at BVA Dispatch
+  #  - the appeal is not at Judge Decision Review
+  #  - the appeal has a finished Judge Decision Review
+  def ready_for_bva_dispatch?
+    return false if Task.open.where(appeal: self).where("type IN (?, ?, ?)",
+                                                        JudgeDecisionReviewTask.name,
+                                                        QualityReviewTask.name,
+                                                        BvaDispatchTask.name).any?
+    return false if BvaDispatchTask.completed.find_by(appeal: self)
+    return true if JudgeDecisionReviewTask.completed.find_by(appeal: self)
+
+    false
+  end
+
+  # Returns the hearing request type.
+  #
+  # @note See `LegacyAppeal#current_hearing_request_type` for more information.
+  #   This method is provided for compatibility.
+  def current_hearing_request_type(readable: false)
+    return nil if closest_regional_office.nil?
+
+    current_hearing_request_type = (closest_regional_office == "C") ? :central : :video
+
+    return current_hearing_request_type if !readable
+
+    # Determine type using closest_regional_office
+    # "Central" if closest_regional_office office is "C", "Video" otherwise
+    case current_hearing_request_type
+    when :central
+      Hearing::HEARING_TYPES[:C]
+    else
+      Hearing::HEARING_TYPES[:V]
+    end
+  end
+
+  alias original_hearing_request_type current_hearing_request_type
+  alias previous_hearing_request_type current_hearing_request_type
 
   private
 
