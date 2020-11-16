@@ -27,7 +27,7 @@
       "check_name": "SendFile",
       "message": "Model attribute used in file name",
       "file": "app/controllers/hearings/schedule_periods_controller.rb",
-      "line": 59,
+      "line": 56,
       "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
       "code": "send_file(SchedulePeriod.find(params[:schedule_period_id]).spreadsheet_location, :type => \"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\", :disposition => (\"attachment; filename='#{SchedulePeriod.find(params[:schedule_period_id]).file_name}'\"))",
       "render_path": null,
@@ -232,8 +232,28 @@
       "user_input": "sort_order",
       "confidence": "Weak",
       "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "b2bd6bb603baecc6357c6dfb9641be1848b106ecec425bd7659844e27b860bf1",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/task.rb",
+      "line": 216,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "Arel.sql(\"CASE WHEN #{CachedAppeal.table_name}.is_aod = TRUE THEN #{(\"0 ELSE 1\" or \"1 ELSE 0\")} END, CASE WHEN #{CachedAppeal.table_name}.case_type = 'Court Remand' THEN #{(\"0 ELSE 1\" or \"1 ELSE 0\")} END, #{CachedAppeal.table_name}.docket_number #{order}, #{Task.table_name}.created_at #{order}\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Task",
+        "method": "order_by_appeal_priority_clause"
+      },
+      "user_input": "order",
+      "confidence": "Medium",
+      "note": ""
     }
   ],
-  "updated": "2019-08-14 14:17:55 -0400",
-  "brakeman_version": "4.5.1"
+  "updated": "2020-11-03 13:47:15 -0500",
+  "brakeman_version": "4.7.1"
 }
