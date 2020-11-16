@@ -106,7 +106,7 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
     subject { task.available_actions_unwrapper(task.assigned_to) }
 
     before do
-      completed_distribution_task = build(:task, appeal: task.appeal, type: DistributionTask.name )
+      completed_distribution_task = build(:task, appeal: task.appeal, type: DistributionTask.name)
       completed_distribution_task.save!(validate: false)
       completed_distribution_task.completed!
     end
