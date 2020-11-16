@@ -91,4 +91,10 @@ class WorkQueue::LegacyTaskSerializer
   attribute :available_actions do |object, params|
     object.available_actions_unwrapper(params[:user], params[:role])
   end
+
+  attribute :latest_informal_hearing_presentation_task do |object|
+    task = object.appeal.latest_informal_hearing_presentation_task
+
+    task ? { requested_at: task.assigned_at, received_at: task.closed_at } : {}
+  end
 end

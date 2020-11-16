@@ -111,7 +111,8 @@ class IntakesController < ApplicationController
         covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
         verifyUnidentifiedIssue: FeatureToggle.enabled?(:verify_unidentified_issue, user: current_user),
         attorneyFees: FeatureToggle.enabled?(:attorney_fees, user: current_user),
-        establishFiduciaryEps: FeatureToggle.enabled?(:establish_fiduciary_eps, user: current_user)
+        establishFiduciaryEps: FeatureToggle.enabled?(:establish_fiduciary_eps, user: current_user),
+        editEpClaimLabels: FeatureToggle.enabled?(:edit_ep_claim_labels, user: current_user)
       }
     }
   rescue StandardError => error

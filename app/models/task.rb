@@ -208,11 +208,13 @@ class Task < CaseflowRecord
       "and #{CachedAppeal.table_name}.appeal_type = #{Task.table_name}.appeal_type"
     end
 
-    def order_by_appeal_priority_clause
+    def order_by_appeal_priority_clause(order: "asc")
+      boolean_order_clause = (order == "asc") ? "0 ELSE 1" : "1 ELSE 0"
       Arel.sql(
-        "CASE WHEN #{CachedAppeal.table_name}.is_aod = TRUE THEN 0 ELSE 1 END, "\
-        "CASE WHEN #{CachedAppeal.table_name}.case_type = 'Court Remand' THEN 0 ELSE 1 END, "\
-        "#{Task.table_name}.created_at"
+        "CASE WHEN #{CachedAppeal.table_name}.is_aod = TRUE THEN #{boolean_order_clause} END, "\
+        "CASE WHEN #{CachedAppeal.table_name}.case_type = 'Court Remand' THEN #{boolean_order_clause} END, "\
+        "#{CachedAppeal.table_name}.docket_number #{order}, "\
+        "#{Task.table_name}.created_at #{order}"
       )
     end
   end
