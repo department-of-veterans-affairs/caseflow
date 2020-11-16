@@ -64,12 +64,13 @@ class AssignToView extends React.Component {
     const isPulacCerullo = action && action.label === 'Pulac-Cerullo';
 
     const actionData = taskActionData(this.props);
+    const taskType = actionData.type || 'Task';
 
     const payload = {
       data: {
         tasks: [
           {
-            type: actionData.type || 'Task',
+            type: taskType,
             external_id: appeal.externalId,
             parent_id: actionData.parent_id || task.taskId,
             assigned_to_id: this.state.selectedValue,

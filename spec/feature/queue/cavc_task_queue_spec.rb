@@ -13,7 +13,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
   context "when CAVC Lit Support is assigned SendCavcRemandProcessedLetterTask" do
     let!(:send_task) { create(:send_cavc_remand_processed_letter_task) }
 
-    it "allows admin to assign SendCavcRemandProcessedLetterTask to user" do
+    fit "allows admin to assign SendCavcRemandProcessedLetterTask to user" do
       # Logged in as CAVC Lit Support admin
       User.authenticate!(user: org_admin)
       visit "queue/appeals/#{send_task.appeal.external_id}"
@@ -46,6 +46,13 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
       User.authenticate!(user: org_nonadmin2)
       visit "queue/appeals/#{send_task.appeal.external_id}"
 
+      # Assign an admin action that does not block the sending of the 90 day letter
+      click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label)
+      fill_in "taskInstructions", with: "Please translate the documents in spanish"
+      click_on "Submit"
+      expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Translation.singleton.name
+
+      visit "queue/appeals/#{send_task.appeal.external_id}"
       find(".cf-select__control", text: "Select an action").click
       find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
       fill_in "completeTaskInstructions", with: "Letter sent."
