@@ -95,6 +95,6 @@ class WorkQueue::LegacyTaskSerializer
   attribute :latest_informal_hearing_presentation_task do |object|
     task = object.appeal.latest_informal_hearing_presentation_task
 
-    task ? { requested_at: task.assigned_at, recieved_at: task.closed_at } : {}
+    task ? { requested_at: task.assigned_at, received_at: task.closed_at } : {}
   end
 end

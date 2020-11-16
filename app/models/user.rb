@@ -119,7 +119,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_change_hearing_request_type?
-    (can?("Admin Intake") || can?("Build HearSched") || can?("Edit HearSched")) &&
+    (can?("Build HearSched") || can?("Edit HearSched")) &&
       FeatureToggle.enabled?(:convert_travel_board_to_video_or_virtual, user: self)
   end
 

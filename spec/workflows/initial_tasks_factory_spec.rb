@@ -214,7 +214,7 @@ describe InitialTasksFactory, :postgres do
 
       let(:appeal) do
         create(:appeal,
-               stream_type: "court_remand",
+               stream_type: Constants.AMA_STREAM_TYPES.court_remand,
                docket_type: Constants.AMA_DOCKETS.direct_review,
                claimants: [
                  create(:claimant, participant_id: participant_id_with_pva),
@@ -226,6 +226,8 @@ describe InitialTasksFactory, :postgres do
         subject
         expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
         expect(CavcTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
+        expect(CavcTask.find_by(appeal: appeal).status).to eq("on_hold")
+        expect(SendCavcRemandProcessedLetterTask.find_by(appeal: appeal).status).to eq("assigned")
         expect(appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
       end
     end

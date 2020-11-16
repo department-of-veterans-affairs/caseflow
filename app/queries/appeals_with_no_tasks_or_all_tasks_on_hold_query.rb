@@ -7,6 +7,7 @@ class AppealsWithNoTasksOrAllTasksOnHoldQuery
       appeals_with_zero_tasks,
       appeals_with_one_task,
       appeals_with_two_tasks_not_distribution,
+      appeals_with_fully_on_hold_subtree,
       dispatched_appeals_on_hold
     ].flatten.uniq
   end
@@ -52,6 +53,18 @@ class AppealsWithNoTasksOrAllTasksOnHoldQuery
       .joins(:tasks)
       .group("appeals.id")
       .having("count(tasks) = 2 AND count(case when tasks.type = ? then 1 end) = 0", DistributionTask.name)
+  end
+
+  # Confirm that all subtrees have an active task
+  def appeals_with_fully_on_hold_subtree
+    Appeal.where(id:
+      Task.left_outer_joins(:children).on_hold
+        .where.not(type: [RootTask.name, TrackVeteranTask.name, EvidenceSubmissionWindowTask.name, TimedHoldTask.name])
+        .group("tasks.id")
+        .having(
+          "count(case when children_tasks.status in (?) then 1 end) = 0",
+          Task.open_statuses
+        ).select(:appeal_id).distinct)
   end
 
   def tasks_for(klass_name)
