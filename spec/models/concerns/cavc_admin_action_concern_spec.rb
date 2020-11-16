@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe CavcAdminActionConcern, focus: true do
+describe CavcAdminActionConcern do
   class TestTask < Task
     include CavcAdminActionConcern
   end
