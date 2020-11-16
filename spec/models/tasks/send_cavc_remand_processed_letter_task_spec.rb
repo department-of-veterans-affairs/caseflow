@@ -112,15 +112,19 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
     end
 
     it "provides the translation parent id as the open distribution task" do
-      translation_action = subject.detect do |action|
-        action[:label] == Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label
+      admin_actions = subject.select do |action|
+        action[:label] == Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label ||
+          action[:label] == Constants.TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.label
       end
 
-      parent = Task.find(translation_action[:data][:parent_id])
-      expect(parent.type).to eq DistributionTask.name
-      expect(parent.appeal).to eq task.appeal
-      expect(parent.open?).to be true
-      expect(parent).to eq task.parent.parent
+      expect(admin_actions.count).to eq 2
+      admin_actions.each do |action|
+        parent = Task.find(action[:data][:parent_id])
+        expect(parent.type).to eq DistributionTask.name
+        expect(parent.appeal).to eq task.appeal
+        expect(parent.open?).to be true
+        expect(parent).to eq task.parent.parent
+      end
     end
 
     context "when there is no open distribution task on the appeal" do

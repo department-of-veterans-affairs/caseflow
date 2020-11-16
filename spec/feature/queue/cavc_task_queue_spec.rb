@@ -46,11 +46,16 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
       User.authenticate!(user: org_nonadmin2)
       visit "queue/appeals/#{send_task.appeal.external_id}"
 
-      # Assign an admin action that does not block the sending of the 90 day letter
+      # Assign some admin actions that does not block the sending of the 90 day letter
       click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label)
       fill_in "taskInstructions", with: "Please translate the documents in spanish"
       click_on "Submit"
       expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Translation.singleton.name
+
+      click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.label)
+      fill_in "taskInstructions", with: "Please transcribe the hearing on record for this appeal"
+      click_on "Submit"
+      expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % TranscriptionTeam.singleton.name
 
       find(".cf-select__control", text: "Select an action").click
       find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
