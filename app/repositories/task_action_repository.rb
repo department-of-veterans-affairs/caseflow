@@ -193,16 +193,19 @@ class TaskActionRepository
       }
     end
 
-    def assign_to_translation_team_blocking_distribution_data(task, _user = nil)
-      org = Translation.singleton
-
+    def cavc_add_blocking_admin_action_data(task, org, task_type)
       {
         selected: org,
         options: [{ label: org.name, value: org.id }],
-        type: TranslationTask.name,
+        type: task_type.name,
         parent_id: DistributionTask.open.find_by(appeal: task.appeal)&.id,
-        modal_body: COPY::CAVC_SEND_TO_TEAM_NON_BLOCKING_DETAIL % org.name
+        modal_body: COPY::CAVC_SEND_TO_TEAM_NON_BLOCKING_DETAIL % org.name,
+        redirect_after: "/queue/appeals/#{task.appeal.external_id}"
       }
+    end
+
+    def assign_to_translation_team_blocking_distribution_data(task, _user = nil)
+      cavc_add_blocking_admin_action_data(task, Translation.singleton, TranslationTask)
     end
 
     def add_admin_action_data(task, user = nil)

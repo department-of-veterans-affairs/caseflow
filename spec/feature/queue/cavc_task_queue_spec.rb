@@ -52,7 +52,6 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
       click_on "Submit"
       expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Translation.singleton.name
 
-      visit "queue/appeals/#{send_task.appeal.external_id}"
       find(".cf-select__control", text: "Select an action").click
       find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
       fill_in "completeTaskInstructions", with: "Letter sent."
