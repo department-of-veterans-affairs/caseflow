@@ -83,7 +83,10 @@ class VirtualHearings::SendEmail
       DataDogService.increment_counter(
         app_name: Constants.DATADOG_METRICS.HEARINGS.APP_NAME,
         metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
-        metric_name: "emails.submitted"
+        metric_name: "emails.submitted",
+        attrs: {
+          email_type: type
+        }
       )
 
       Rails.logger.info(
@@ -127,7 +130,7 @@ class VirtualHearings::SendEmail
 
     msg = email.deliver_now!
   rescue StandardError, Savon::Error, BGS::ShareError => error
-    # Savon::Error and BGS::ShareError are sometimes thrown when making requests to BGS enpoints
+    # Savon::Error and BGS::ShareError are sometimes thrown when making requests to BGS endpoints
     Raven.capture_exception(error)
 
     Rails.logger.warn("Failed to send #{type} email to #{recipient.title}: #{error}")
