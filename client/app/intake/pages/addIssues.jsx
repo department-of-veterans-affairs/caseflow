@@ -298,13 +298,6 @@ class AddIssuesPage extends React.Component {
               >
               Edit claim label
               </Button>
-              {this.state.showEditClaimLabelModal && (
-                <EditClaimLabelModal
-                  existingEpCode={this.state.selectedEPCode}
-                  onCancel={this.closeEditClaimLabelModal}
-                  onSubmit={this.handleEditClaimLabel}
-                />
-              )}
             </div>
           </div>
         )
@@ -373,6 +366,13 @@ class AddIssuesPage extends React.Component {
               });
               this.props.toggleCorrectionTypeModal();
             }}
+          />
+        )}
+        {this.state.showEditClaimLabelModal && (
+          <EditClaimLabelModal
+            existingEpCode={this.state.selectedEPCode}
+            onCancel={this.closeEditClaimLabelModal}
+            onSubmit={this.handleEditClaimLabel}
           />
         )}
         <h1 className="cf-txt-c">{messageHeader}</h1>
