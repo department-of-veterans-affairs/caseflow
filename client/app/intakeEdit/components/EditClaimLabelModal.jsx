@@ -9,15 +9,15 @@ import {
   EDIT_CLAIM_LABEL_MODAL_NOTE,
 } from 'app/../COPY';
 
-import epClaimTypes from 'constants/EP_CLAIM_TYPES';
+import EP_CLAIM_TYPES from 'constants/EP_CLAIM_TYPES';
 
 export const EditClaimLabelModal = ({ existingEpCode, onCancel, onSubmit }) => {
   // Only EP codes from the same family should be allowed
   const availableOptions = useMemo(() => {
     // Filter out all but the same family (040, 930, etc)
     // eslint-disable-next-line no-unused-vars
-    const filtered = Object.entries(epClaimTypes).filter(([code, type]) => {
-      return type.family === epClaimTypes[existingEpCode]?.family;
+    const filtered = Object.entries(EP_CLAIM_TYPES).filter(([code, type]) => {
+      return type.family === EP_CLAIM_TYPES[existingEpCode]?.family;
     });
 
     // Format suitable for SearchableDropdown
@@ -25,7 +25,7 @@ export const EditClaimLabelModal = ({ existingEpCode, onCancel, onSubmit }) => {
       label,
       value,
     }));
-  }, [epClaimTypes, existingEpCode]);
+  }, [EP_CLAIM_TYPES, existingEpCode]);
 
   const [newCode, setNewCode] = useState(availableOptions.find((item) => item.label === existingEpCode));
   const handleChangeLabel = (opt) => setNewCode(opt);
@@ -61,8 +61,8 @@ export const EditClaimLabelModal = ({ existingEpCode, onCancel, onSubmit }) => {
             /* eslint-disable camelcase */
             sprintf(
               EDIT_CLAIM_LABEL_MODAL_SUBHEAD,
-            `${epClaimTypes[existingEpCode]?.family} ${
-              epClaimTypes[existingEpCode]?.official_label
+            `${EP_CLAIM_TYPES[existingEpCode]?.family} ${
+              EP_CLAIM_TYPES[existingEpCode]?.official_label
             }`
             )
           /* eslint-enable camelcase */
