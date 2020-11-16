@@ -289,10 +289,10 @@
     "value": "modal/send_to_schedule_veterans_list",
     "func": "send_to_schedule_veterans_list"
   },
-  "SEND_TO_TRANSLATION": {
+  "SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION": {
     "label": "Assign to Translation team",
     "value": "modal/assign_to_translation_team",
-    "func": "assign_to_translation_team_data"
+    "func": "assign_to_translation_team_blocking_distribution_data"
   },
   "SUBMIT_OMO_REQUEST_FOR_REVIEW": {
     "label": "Medical Request Ready for Review",

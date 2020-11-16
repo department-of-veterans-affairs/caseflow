@@ -193,13 +193,14 @@ class TaskActionRepository
       }
     end
 
-    def assign_to_translation_team_data(_task, _user = nil)
+    def assign_to_translation_team_blocking_distribution_data(task, _user = nil)
       org = Translation.singleton
 
       {
         selected: org,
         options: [{ label: org.name, value: org.id }],
-        type: TranslationTask.name
+        type: TranslationTask.name,
+        parent_id: DistributionTask.open.find_by(appeal: task.appeal)&.id
       }
     end
 

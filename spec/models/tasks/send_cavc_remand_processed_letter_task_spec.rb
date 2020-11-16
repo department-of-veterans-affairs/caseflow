@@ -83,17 +83,55 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
     let(:org_nonadmin) { create(:user) { |u| CavcLitigationSupport.singleton.add_user(u) } }
     let(:other_user) { create(:user) }
     let(:send_task) { create(:send_cavc_remand_processed_letter_task) }
+
     context "task assigned to CavcLitigationSupport admin" do
       it "returns admin actions" do
         expect(send_task.available_actions(org_admin)).to match_array SendCRPLetterTask::ADMIN_ACTIONS
         expect(send_task.available_actions(other_user)).to be_empty
       end
     end
+
     context "task assigned to CavcLitigationSupport non-admin" do
       let(:child_task) { create(:send_cavc_remand_processed_letter_task, parent: send_task, assigned_to: org_nonadmin) }
       it "returns non-admin actions" do
         expect(child_task.available_actions(org_nonadmin)).to match_array SendCRPLetterTask::USER_ACTIONS
         expect(send_task.available_actions(other_user)).to be_empty
+      end
+    end
+  end
+
+  describe "#available_actions_unwrapper" do
+    let(:task) { create(:send_cavc_remand_processed_letter_task, assigned_to: create(:user)) }
+
+    subject { task.available_actions_unwrapper(task.assigned_to) }
+
+    before do
+      completed_distribution_task = build(:task, appeal: task.appeal, type: DistributionTask.name )
+      completed_distribution_task.save!(validate: false)
+      completed_distribution_task.completed!
+    end
+
+    it "provides the translation parent id as the open distribution task" do
+      translation_action = subject.detect do |action|
+        action[:label] == Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label
+      end
+
+      parent = Task.find(translation_action[:data][:parent_id])
+      expect(parent.type).to eq DistributionTask.name
+      expect(parent.appeal).to eq task.appeal
+      expect(parent.open?).to be true
+      expect(parent).to eq task.parent.parent
+    end
+
+    context "when there is no open distribution task on the appeal" do
+      before { DistributionTask.open.where(appeal: task.appeal).each(&:completed!) }
+
+      it "provides no parent id to the front end" do
+        translation_action = subject.detect do |action|
+          action[:label] == Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label
+        end
+
+        expect(translation_action[:data][:parent_id]).to be nil
       end
     end
   end

@@ -15,7 +15,8 @@ class SendCavcRemandProcessedLetterTask < Task
 
   USER_ACTIONS = [
     Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
-    Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
+    Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
+    Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.to_h
   ].freeze
 
   ADMIN_ACTIONS = [
