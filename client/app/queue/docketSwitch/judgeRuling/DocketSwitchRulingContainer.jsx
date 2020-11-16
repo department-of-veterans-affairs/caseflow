@@ -1,9 +1,9 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams, useRouteMatch } from 'react-router';
-import { taskById, appealWithDetailSelector } from '../../selectors';
-import { taskActionData } from '../../utils';
-import DISPOSITIONS from '../../../../constants/DOCKET_SWITCH';
+import { taskById, appealWithDetailSelector } from 'app/queue/selectors';
+import { taskActionData } from 'app/queue/utils';
+import DISPOSITIONS from 'constants/DOCKET_SWITCH';
 import { createDocketSwitchGrantedTask, createDocketSwitchDeniedTask } from './docketSwitchRulingSlice';
 import { DocketSwitchRulingForm } from './DocketSwitchRulingForm';
 

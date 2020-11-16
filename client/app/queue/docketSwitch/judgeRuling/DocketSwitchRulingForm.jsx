@@ -8,15 +8,15 @@ import * as yup from 'yup';
 import {
   DOCKET_SWITCH_RULING_TITLE,
   DOCKET_SWITCH_RULING_INSTRUCTIONS,
-} from '../../../../COPY';
+} from 'app/../COPY';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Button from '../../../components/Button';
+import Button from 'app/components/Button';
 import { sprintf } from 'sprintf-js';
-import DISPOSITIONS from '../../../../constants/DOCKET_SWITCH';
-import TextField from '../../../components/TextField';
-import TextareaField from '../../../components/TextareaField';
-import RadioField from '../../../components/RadioField';
-import SearchableDropdown from '../../../components/SearchableDropdown';
+import DISPOSITIONS from 'constants/DOCKET_SWITCH';
+import TextField from 'app/components/TextField';
+import TextareaField from 'app/components/TextareaField';
+import RadioField from 'app/components/RadioField';
+import SearchableDropdown from 'app/components/SearchableDropdown';
 import ReactMarkdown from 'react-markdown';
 import gfm from 'remark-gfm';
 import { css } from 'glamor';
