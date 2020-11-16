@@ -200,7 +200,8 @@ class TaskActionRepository
         selected: org,
         options: [{ label: org.name, value: org.id }],
         type: TranslationTask.name,
-        parent_id: DistributionTask.open.find_by(appeal: task.appeal)&.id
+        parent_id: DistributionTask.open.find_by(appeal: task.appeal)&.id,
+        modal_body: COPY::CAVC_SEND_TO_TEAM_NON_BLOCKING_DETAIL % org.name
       }
     end
 

@@ -373,6 +373,8 @@
 
   "SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL": "Send CAVC-Remand-Processed Letter Task",
 
+  "CAVC_SEND_TO_TEAM_NON_BLOCKING_DETAIL": "Send this case to %s. This will not block you from completing this task or sending the 90 letter to the veteran.",
+
   "ASSIGN_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS": "Postpone or cancel a hearing prior to the hearing date. This task will be auto-completed after the hearing's scheduled date.",
 
   "CHANGE_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS": "Change hearing disposition (Held, Canceled, No Show, Postponed) if it was marked in error.",
@@ -636,7 +638,7 @@
   "CORRECT_REQUEST_ISSUES_ESTABLISH_MODAL_TITLE": "Establish 930 EP",
   "CORRECT_REQUEST_ISSUES_ESTABLISH_MODAL_TEXT": "You are now creating a 930 EP in VBMS.",
   "CORRECT_REQUEST_ISSUES_ESTABLISH_MODAL_BUTTON": "Yes, establish",
-  
+
   "NO_RELATIONSHIPS": "This Veteran currently has no known relationships. ",
   "ADD_RELATIONSHIPS": "To add a Veteran's (spouse, child, or parent) to the Corporate Database, please ",
   "ADD_CLAIMANT_TEXT": "If the claimant is an attorney, please click \"Add Claimant\". ",

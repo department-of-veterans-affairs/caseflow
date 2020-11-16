@@ -201,7 +201,7 @@ class AssignToView extends React.Component {
 
     return (
       <QueueFlowModal {...modalProps}>
-        <div>{actionData.modal_body ? actionData.modal_body : ''}</div>
+        <p>{actionData.modal_body ? actionData.modal_body : ''}</p>
         {!assigneeAlreadySelected && (
           <React.Fragment>
             <SearchableDropdown
