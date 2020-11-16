@@ -79,7 +79,6 @@ const AddCavcRemandView = (props) => {
   const [type, setType] = useState(CAVC_DECISION_TYPES.remand);
   const [subType, setSubType] = useState(CAVC_REMAND_SUBTYPES.jmr);
   const [decisionDate, setDecisionDate] = useState(null);
-  // const [judgementSelection, setJudgementSelection] = useState(true);
   const [judgementDate, setJudgementDate] = useState(null);
   const [mandateDate, setMandateDate] = useState(null);
   const [issues, setIssues] = useState({});
@@ -198,14 +197,6 @@ const AddCavcRemandView = (props) => {
           message={COPY.CAVC_MDR_MESSAGE}
           styling={alertStyling}
           lowerMargin />}
-      <h3>{COPY.CAVC_JUDGEMENT_DATE_HEADER}</h3>
-      {/* Holding off on implementation */}
-      {/* <Checkbox
-        label={COPY.CAVC_JUDGEMENT_DATE_DESC}
-        name="judgement-decision-date"
-        vertical
-        value={judgementSelection}
-        onChange={(val) => setJudgementSelection(val)} /> */}
       {subType === CAVC_REMAND_SUBTYPES.jmr &&
       <>
         <h4 {...labelStyling}>{COPY.CAVC_JUDGEMENT_DATE}</h4>
