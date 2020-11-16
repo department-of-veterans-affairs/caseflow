@@ -2,7 +2,7 @@ import React from 'react';
 
 import { DocketSwitchRulingForm } from './DocketSwitchRulingForm';
 
-const attorneyOptions = [
+const clerkOfTheBoardAttorneys = [
   { value: 1, label: 'COB Attorney 1' },
   { value: 2, label: 'COB Attorney 2' },
 ];
@@ -16,7 +16,7 @@ export default {
   parameters: {},
   args: {
     appellantName: 'Jane Doe',
-    attorneyOptions,
+    clerkOfTheBoardAttorneys,
     instructions,
   },
   argTypes: {
