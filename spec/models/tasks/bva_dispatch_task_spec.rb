@@ -46,7 +46,7 @@ describe BvaDispatchTask, :all_dbs do
     let(:user) { create(:user) }
     let(:root_task) { create(:root_task, appeal: appeal) }
     let(:appeal) { create(:appeal, stream_type: stream_type) }
-    let(:stream_type) { "original" }
+    let(:stream_type) { Constants.AMA_STREAM_TYPES.original }
     let(:the_case) { create(:case) }
     let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: the_case) }
     let(:citation_number) { "A18123456" }
@@ -127,7 +127,7 @@ describe BvaDispatchTask, :all_dbs do
       end
 
       context "when de_novo appeal stream" do
-        let(:stream_type) { "vacate" }
+        let(:stream_type) { Constants.AMA_STREAM_TYPES.vacate }
         let!(:task) { create(:ama_judge_decision_review_task, appeal: appeal, assigned_to: judge) }
         let!(:attorney_task) { create(:ama_attorney_task, parent: task, assigned_to: attorney) }
         let!(:post_decision_motion) do
@@ -149,7 +149,9 @@ describe BvaDispatchTask, :all_dbs do
           tasks = BvaDispatchTask.where(appeal: appeal, assigned_to: user)
           expect(tasks.length).to eq(1)
 
-          de_novo_stream = Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "de_novo")
+          de_novo_stream = Appeal.find_by(
+            stream_docket_number: appeal.docket_number, stream_type: Constants.AMA_STREAM_TYPES.de_novo
+          )
 
           expect(de_novo_stream).to_not be_nil
           request_issues = de_novo_stream.request_issues

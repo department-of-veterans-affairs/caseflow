@@ -34,10 +34,10 @@ class Appeal < DecisionReview
   }, class_name: "Task", foreign_key: :appeal_id
 
   enum stream_type: {
-    "original": "original",
-    "vacate": "vacate",
-    "de_novo": "de_novo",
-    "court_remand": "court_remand"
+    Constants.AMA_STREAM_TYPES.original.to_sym => Constants.AMA_STREAM_TYPES.original,
+    Constants.AMA_STREAM_TYPES.vacate.to_sym => Constants.AMA_STREAM_TYPES.vacate,
+    Constants.AMA_STREAM_TYPES.de_novo.to_sym => Constants.AMA_STREAM_TYPES.de_novo,
+    Constants.AMA_STREAM_TYPES.court_remand.to_sym => Constants.AMA_STREAM_TYPES.court_remand
   }
 
   after_create :conditionally_set_aod_based_on_age

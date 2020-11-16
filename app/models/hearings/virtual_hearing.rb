@@ -86,6 +86,7 @@ class VirtualHearing < CaseflowRecord
     HearingDay::REQUEST_TYPES[:central]
   ].freeze
 
+  # Whether or not all non-reminder emails were sent.
   def all_emails_sent?
     appellant_email_sent &&
       (judge_email.nil? || judge_email_sent) &&
