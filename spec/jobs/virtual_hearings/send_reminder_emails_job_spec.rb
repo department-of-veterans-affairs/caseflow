@@ -31,7 +31,8 @@ describe VirtualHearings::SendReminderEmailsJob do
       appellant_reminder_sent_at: appellant_reminder_sent_at,
       representative_email: representative_email,
       representative_reminder_sent_at: representative_reminder_sent_at,
-      hearing: hearing
+      hearing: hearing,
+      created_at: Time.zone.now - 14.days
     )
   end
 

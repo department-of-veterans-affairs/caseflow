@@ -8,7 +8,8 @@ describe VirtualHearings::ReminderService do
       :virtual_hearing,
       :initialized,
       status: :active,
-      hearing: hearing
+      hearing: hearing,
+      created_at: created_at
     )
   end
 
@@ -25,6 +26,7 @@ describe VirtualHearings::ReminderService do
 
     context "hearing date is 7 days out" do
       let(:hearing_date) { Time.zone.now + 7.days }
+      let(:created_at) { hearing_date - 8.days }
 
       context "last_sent_reminder is nil" do
         let(:last_sent_reminder) { nil }
@@ -43,8 +45,25 @@ describe VirtualHearings::ReminderService do
       end
     end
 
+    context "hearing date is 5 days out" do
+      let(:hearing_date) { Time.zone.now + 5.days }
+
+      context "created_at is 6 days from the hearing date" do
+        let(:created_at) { hearing_date - 6.days }
+
+        context "last_sent_reminder is nil" do
+          let(:last_sent_reminder) { nil }
+
+          it "returns false" do
+            expect(subject).to eq(false)
+          end
+        end
+      end
+    end
+
     context "hearing date is 2 days out" do
       let(:hearing_date) { Time.zone.now + 2.days }
+      let(:created_at) { hearing_date - 3.days }
 
       context "last_sent_reminder is nil" do
         let(:last_sent_reminder) { nil }
@@ -56,6 +75,7 @@ describe VirtualHearings::ReminderService do
 
       context "last_sent_reminder is 4 days out" do
         let(:last_sent_reminder) { hearing_date - 4.days }
+        let(:created_at) { hearing_date - 5.days }
 
         it "returns true" do
           expect(subject).to eq(true)
@@ -64,6 +84,7 @@ describe VirtualHearings::ReminderService do
 
       context "last_sent_reminder is 1 days out" do
         let(:last_sent_reminder) { hearing_date - 1.day }
+        let(:created_at) { hearing_date - 2.days }
 
         it "returns false" do
           expect(subject).to eq(false)
@@ -71,7 +92,25 @@ describe VirtualHearings::ReminderService do
       end
     end
 
+    context "hearing date is 1 day out" do
+      let(:hearing_date) { Time.zone.now + 1.day }
+
+      context "created_at is 1.5 days from the hearing date" do
+        let(:created_at) { hearing_date - 1.days - 12.hours }
+
+        context "last_sent_reminder is nil" do
+          let(:last_sent_reminder) { nil }
+
+          it "returns false" do
+            expect(subject).to eq(false)
+          end
+        end
+      end
+    end
+
     context "hearing date is 3 days out" do
+      let(:created_at) { hearing_date - 4.days }
+
       context "hearing date is on a monday" do
         let(:hearing_date) { Time.utc(2020, 11, 9, 12, 0, 0) } # Nov 9, 2020 (Monday)
 
