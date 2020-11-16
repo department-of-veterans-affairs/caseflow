@@ -24,17 +24,20 @@ class VirtualHearings::ReminderService
   attr_reader :last_sent_reminder
 
   def should_send_2_day_reminder?
-    days_between_hearing_and_created_at > 2 && days_until_hearing <= 2 && days_from_hearing_day_to_last_sent_reminder > 2
+    days_between_hearing_and_created_at > 2 &&
+      days_until_hearing <= 2 && days_from_hearing_day_to_last_sent_reminder > 2
   end
 
   # The 3 day reminder is a special reminder that is sent on Friday, *only* if the hearing
   # itself is on Monday.
   def should_send_3_day_friday_reminder?
-    days_between_hearing_and_created_at > 3 && days_until_hearing <= 3 && virtual_hearing.hearing.scheduled_for.monday?
+    days_between_hearing_and_created_at > 3 &&
+      days_until_hearing <= 3 && virtual_hearing.hearing.scheduled_for.monday?
   end
 
   def should_send_7_day_reminder?
-    days_between_hearing_and_created_at > 7 && days_until_hearing <= 7 && days_from_hearing_day_to_last_sent_reminder > 7
+    days_between_hearing_and_created_at > 7 &&
+      days_until_hearing <= 7 && days_from_hearing_day_to_last_sent_reminder > 7
   end
 
   # Determines the date between when the hearing is scheduled, and when the virtual hearing was scheduled.
