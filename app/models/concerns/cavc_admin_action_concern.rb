@@ -10,8 +10,6 @@ module CavcAdminActionConcern
       creating_from_cavc_workflow?(user, parent_task) || super(user, parent_task)
     end
 
-    private
-
     def creating_from_cavc_workflow?(user, parent_task)
       return true if parent_task.type == DistributionTask.name &&
                      SendCavcRemandProcessedLetterTask.open.where(assigned_to: user, appeal: parent_task.appeal).exists?
