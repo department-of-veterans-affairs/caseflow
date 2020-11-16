@@ -28,7 +28,7 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
       video_hearing_days = HearingDay.where(request_type: "V")
       expect(video_hearing_days.count).to eq(allocation_count)
       co_hearing_days = HearingDay.where(request_type: "C")
-      expect(co_hearing_days.count). to eq(84)
+      expect(co_hearing_days.count). to eq(22)
     end
   end
 

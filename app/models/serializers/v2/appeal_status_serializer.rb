@@ -10,6 +10,7 @@ class V2::AppealStatusSerializer
   set_id :appeal_status_id
 
   attribute :appeal_ids, &:linked_review_ids
+  attribute :type
 
   attribute :updated do
     Time.zone.now.in_time_zone("Eastern Time (US & Canada)").round.iso8601
@@ -17,10 +18,6 @@ class V2::AppealStatusSerializer
 
   attribute :incomplete_history do
     false
-  end
-
-  attribute :type do
-    "original"
   end
 
   attribute :active, &:active_status?
