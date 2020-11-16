@@ -13,7 +13,6 @@ import OnHoldLabel from '../components/OnHoldLabel';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import DecisionDateTimeLine from '../components/DecisionDateTimeLine';
 import ReactMarkdown from 'react-markdown';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { EditNODModal } from 'app/queue/components/EditNODModal';
 
 export const grayLineStyling = css({
