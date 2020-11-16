@@ -6,94 +6,83 @@ import { yupResolver } from '@hookform/resolvers';
 import * as yup from 'yup';
 
 import {
-  DOCKET_SWITCH_RECOMMENDATION_TITLE,
-  DOCKET_SWITCH_RECOMMENDATION_INSTRUCTIONS,
-} from '../../../../COPY';
+  DOCKET_SWITCH_RULING_TITLE,
+  DOCKET_SWITCH_RULING_INSTRUCTIONS,
+} from 'app/../COPY';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Button from '../../../components/Button';
+import Button from 'app/components/Button';
 import { sprintf } from 'sprintf-js';
-import DISPOSITIONS from '../../../../constants/DOCKET_SWITCH';
-import TextField from '../../../components/TextField';
-import TextareaField from '../../../components/TextareaField';
-import RadioField from '../../../components/RadioField';
-import SearchableDropdown from '../../../components/SearchableDropdown';
+import DISPOSITIONS from 'constants/DOCKET_SWITCH';
+import TextField from 'app/components/TextField';
+import TextareaField from 'app/components/TextareaField';
+import RadioField from 'app/components/RadioField';
+import SearchableDropdown from 'app/components/SearchableDropdown';
+import ReactMarkdown from 'react-markdown';
+import gfm from 'remark-gfm';
+import { css } from 'glamor';
 
 const schema = yup.object().shape({
-  summary: yup.string(),
-  timely: yup.string().required(),
   disposition: yup.
     mixed().
     oneOf(Object.keys(DISPOSITIONS)).
     required(),
   hyperlink: yup.string(),
-  judge: yup.
+  context: yup.string().required(),
+  attorney: yup.
     object().
     shape({ label: yup.string().required(), value: yup.number().required() }).
     required(),
 });
 
-const TIMELY_OPTIONS = [
-  { displayText: 'Yes', value: 'yes' },
-  { displayText: 'No', value: 'no' },
-];
-
-export const RecommendDocketSwitchForm = ({
+export const DocketSwitchRulingForm = ({
   appellantName,
-  defaultJudgeId,
-  judgeOptions = [],
+  defaultAttorneyId,
+  clerkOfTheBoardAttorneys = [],
   onCancel,
   onSubmit,
+  instructions,
 }) => {
   const { register, handleSubmit, formState, control, setValue } = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
   });
 
-  // The `SearchableDropdown` component uses objects as values, so here we determine that if defaultJudgeId is set
-  const judgeDefault = useMemo(
+  const defaultAttorney = useMemo(
     () =>
-      judgeOptions.find(
-        (opt) => defaultJudgeId && opt.value === defaultJudgeId
+      clerkOfTheBoardAttorneys.find(
+        (opt) => defaultAttorneyId && opt.value === defaultAttorneyId
       ),
-    [defaultJudgeId, judgeOptions]
+    [defaultAttorneyId, clerkOfTheBoardAttorneys]
   );
+
   const dispositionOptions = useMemo(() => Object.values(DISPOSITIONS), []);
 
+  const sectionStyle = css({ marginBottom: '24px' });
+
   useEffect(() => {
-    setValue('judge', judgeDefault);
-  }, [judgeDefault]);
+    setValue('attorney', defaultAttorney);
+  }, [defaultAttorney]);
 
   return (
     <form
-      className="docket-switch-recommendation"
+      className="docket-switch-ruling"
       onSubmit={handleSubmit(onSubmit)}
-      aria-label="Recommendation on Docket Switch"
+      aria-label="Rule on Docket Switch"
     >
       <AppSegment filledBackground>
-        <h1>{sprintf(DOCKET_SWITCH_RECOMMENDATION_TITLE, appellantName)}</h1>
-        <p style={{ marginBottom: '30px' }}>
-          {DOCKET_SWITCH_RECOMMENDATION_INSTRUCTIONS}
-        </p>
-
-        <TextareaField
-          inputRef={register}
-          name="summary"
-          label="Add a summary of the request to switch dockets:"
-          strongLabel
-        />
-
-        <RadioField
-          name="timely"
-          label="Is this request timely?"
-          options={TIMELY_OPTIONS}
-          inputRef={register}
-          strongLabel
-          vertical
-        />
+        <h1>{sprintf(DOCKET_SWITCH_RULING_TITLE, appellantName)}</h1>
+        <div {...sectionStyle}>
+          <ReactMarkdown source={DOCKET_SWITCH_RULING_INSTRUCTIONS} />
+        </div>
+        <hr {...sectionStyle} />
+        <div {...sectionStyle}>
+          <ReactMarkdown plugins={[gfm]} source={instructions[0]} linkTarget="_blank" />
+        </div>
+        <hr {...sectionStyle} />
 
         <RadioField
           name="disposition"
-          label="What is your recommendation for this request to switch dockets?"
+          label="How will you rule on this docket switch?"
           options={dispositionOptions}
           inputRef={register}
           strongLabel
@@ -103,7 +92,15 @@ export const RecommendDocketSwitchForm = ({
         <TextField
           inputRef={register}
           name="hyperlink"
-          label="Insert hyperlink to draft letter"
+          label="Insert hyperlink to signed ruling letter"
+          strongLabel
+          optional
+        />
+
+        <TextareaField
+          inputRef={register}
+          name="context"
+          label="Provide any additional context and instructions"
           strongLabel
         />
 
@@ -111,12 +108,12 @@ export const RecommendDocketSwitchForm = ({
           <Controller
             as={SearchableDropdown}
             control={control}
-            defaultValue={judgeDefault}
-            name="judge"
-            label="Assign to judge"
+            defaultValue={defaultAttorney}
+            name="attorney"
+            label="Assign to Office of the Clerk of the Board"
             searchable
-            options={judgeOptions}
-            placeholder="Select judge"
+            options={clerkOfTheBoardAttorneys}
+            placeholder="Select attorney"
             strongLabel
           />
         </div>
@@ -146,10 +143,11 @@ export const RecommendDocketSwitchForm = ({
   );
 };
 
-RecommendDocketSwitchForm.propTypes = {
+DocketSwitchRulingForm.propTypes = {
   appellantName: PropTypes.string.isRequired,
-  defaultJudgeId: PropTypes.number,
-  judgeOptions: PropTypes.array.isRequired,
+  defaultAttorneyId: PropTypes.number,
+  clerkOfTheBoardAttorneys: PropTypes.array.isRequired,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func.isRequired,
+  instructions: PropTypes.array.isRequired
 };

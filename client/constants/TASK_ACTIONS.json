@@ -92,7 +92,8 @@
   },
   "DOCKET_SWITCH_JUDGE_RULING": {
     "label": "Rule on Docket Switch",
-    "value": "docket_switch/ruling"
+    "value": "docket_switch/ruling",
+    "func": "docket_switch_ruling_data"
   },
   "DOCKET_SWITCH_DENIED": {
     "label": "Deny Docket Switch",
