@@ -36,7 +36,8 @@ const CancelTaskModal = (props) => {
       data: {
         task: {
           status: TASK_STATUSES.cancelled,
-          instructions
+          instructions,
+          business_payloads: taskData?.business_payloads ?? {}
         }
       }
     };
