@@ -21,6 +21,7 @@ import Button from '../components/Button';
 import SearchableDropdown from '../components/SearchableDropdown';
 import StringUtil from '../util/StringUtil';
 import Alert from '../components/Alert';
+import { withRouter } from 'react-router';
 
 const labelStyling = css({ marginTop: '2.5rem' });
 const buttonStyling = css({ paddingLeft: '0' });
@@ -143,7 +144,6 @@ const AddCavcRemandView = (props) => {
     };
 
     requestSave(`/appeals/${appealId}/cavc_remand`, payload, successMsg).
-      // Does not actually work. Need to find a way to redirect to new or old appeal
       then((resp) => history.replace(`/queue/appeals/${resp.body.cavc_appeal.uuid}`)).
       catch((err) => showErrorMessage({ title: 'Error', detail: JSON.parse(err.message).errors[0].detail }));
   };
@@ -288,4 +288,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   showErrorMessage
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddCavcRemandView);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddCavcRemandView));

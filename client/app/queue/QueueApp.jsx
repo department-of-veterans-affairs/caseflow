@@ -243,7 +243,7 @@ class QueueApp extends React.PureComponent {
   );
 
   routedAddCavcRemand = (props) => (
-    <AddCavcRemandView nextStep="/queue" {...props.match.params} />
+    <AddCavcRemandView {...props.match.params} />
   );
 
   routedAdvancedOnDocketMotion = (props) => (
