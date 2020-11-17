@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import COPY from '../../COPY';
 import CAVC_JUDGE_FULL_NAMES from '../../constants/CAVC_JUDGE_FULL_NAMES';
 import CAVC_REMAND_SUBTYPES from '../../constants/CAVC_REMAND_SUBTYPES';
+import CAVC_REMAND_SUBTYPE_NAMES from '../../constants/CAVC_REMAND_SUBTYPE_NAMES';
 import CAVC_DECISION_TYPES from '../../constants/CAVC_DECISION_TYPES';
 
 import QueueFlowPage from './components/QueueFlowPage';
@@ -18,6 +19,7 @@ import CheckboxGroup from '../components/CheckboxGroup';
 import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
 import SearchableDropdown from '../components/SearchableDropdown';
+import StringUtil from '../util/StringUtil';
 
 const labelStyling = css({ marginTop: '2.5rem' });
 const buttonStyling = css({ paddingLeft: '0' });
@@ -36,23 +38,13 @@ const attorneyOptions = [
     value: '2' },
 ];
 
-const typeOptions = [
-  { displayText: COPY.CAVC_REMAND,
-    value: CAVC_DECISION_TYPES.remand },
-  { displayText: COPY.CAVC_STRAIGHT_REVERSAL,
-    value: CAVC_DECISION_TYPES.straight_reversal },
-  { displayText: COPY.CAVC_DEATH_DISMISSAL,
-    value: CAVC_DECISION_TYPES.death_dismissal }
-];
+const typeOptions = _.map(_.keys(CAVC_DECISION_TYPES), (key) => (
+  { displayText: StringUtil.snakeCaseToCapitalized(key), value: key }
+));
 
-const subTypeOptions = [
-  { displayText: COPY.CAVC_JMR,
-    value: CAVC_REMAND_SUBTYPES.jmr },
-  { displayText: COPY.CAVC_JMPR,
-    value: CAVC_REMAND_SUBTYPES.jmpr },
-  { displayText: COPY.CAVC_MDR,
-    value: CAVC_REMAND_SUBTYPES.mdr }
-];
+const subTypeOptions = _.map(_.keys(CAVC_REMAND_SUBTYPE_NAMES), (key) => (
+  { displayText: CAVC_REMAND_SUBTYPE_NAMES[key], value: key }
+));
 
 const AddCavcRemandView = (props) => {
 
@@ -220,6 +212,7 @@ const AddCavcRemandView = (props) => {
     value={text}
     onChange={(val) => setText(val)}
   />;
+
 
   return (
     <QueueFlowPage
