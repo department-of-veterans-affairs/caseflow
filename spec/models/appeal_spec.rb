@@ -443,7 +443,6 @@ describe Appeal, :all_dbs do
       appeal.save!
       expect(appeal.stream_docket_number).to eq("201111-#{appeal.id}")
       appeal.update_receipt_date!(Date.new(2020, 11, 12))
-      expect(appeal.stream_docket_number).to eq("201112-#{appeal.id}")
       appeal.save!
       expect(appeal.stream_docket_number).to eq("201112-#{appeal.id}")
     end
