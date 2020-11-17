@@ -9,7 +9,8 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
   let!(:org_nonadmin) { create(:user, full_name: "Woney Remandy") { |u| CavcLitigationSupport.singleton.add_user(u) } }
   let!(:org_nonadmin2) { create(:user, full_name: "Tooey Remandy") { |u| CavcLitigationSupport.singleton.add_user(u) } }
   let!(:other_user) { create(:user, full_name: "Othery Usery") }
-  let!(:colocated_user) { create(:user) { |user| Colocated.singleton.add_user(user) } }
+
+  before { Colocated.singleton.add_user(create(:user)) }
 
   context "when CAVC Lit Support is assigned SendCavcRemandProcessedLetterTask" do
     let!(:send_task) { create(:send_cavc_remand_processed_letter_task) }

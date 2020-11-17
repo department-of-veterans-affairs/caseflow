@@ -101,31 +101,36 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
   end
 
   describe "#available_actions_unwrapper" do
-    let(:task) { create(:send_cavc_remand_processed_letter_task, assigned_to: create(:user)) }
+    let(:cavc_task) { create(:send_cavc_remand_processed_letter_task, assigned_to: create(:user)) }
 
-    subject { task.available_actions_unwrapper(task.assigned_to) }
+    subject { cavc_task.available_actions_unwrapper(cavc_task.assigned_to) }
 
     before do
-      completed_distribution_task = build(:task, appeal: task.appeal, type: DistributionTask.name)
+      completed_distribution_task = build(:task, appeal: cavc_task.appeal, type: DistributionTask.name)
       completed_distribution_task.save!(validate: false)
       completed_distribution_task.completed!
     end
 
-    it "provides the translation parent id as the open distribution task" do
-      admin_actions = subject.select do |action|
-        action[:label] == Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label ||
-          action[:label] == Constants.TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.label ||
-          action[:label] == Constants.TASK_ACTIONS.SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION.label ||
-          action[:label] == Constants.TASK_ACTIONS.SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION.label
-      end
+    it "provides the parent id as the open distribution task for blocking admin actions" do
+      admin_actions = {
+        SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION: [TranslationTask, Translation],
+        SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION: [TranscriptionTask, TranscriptionTeam],
+        SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION: [PrivacyActTask, PrivacyTeam],
+        SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION: [IhpColocatedTask, Colocated]
+      }
 
-      expect(admin_actions.count).to eq 4
-      admin_actions.each do |action|
-        parent = Task.find(action[:data][:parent_id])
+      admin_actions.each do |admin_action, task_and_org|
+        task_action = subject.detect { |action| action[:label] == Constants::TASK_ACTIONS[admin_action.to_s]["label"] }
+
+        new_task_type, assignee = task_and_org
+        expect(task_action[:data][:type]).to eq new_task_type.name
+        expect(task_action[:data][:selected]).to eq assignee.singleton
+
+        parent = Task.find(task_action[:data][:parent_id])
         expect(parent.type).to eq DistributionTask.name
-        expect(parent.appeal).to eq task.appeal
+        expect(parent.appeal).to eq cavc_task.appeal
         expect(parent.open?).to be true
-        expect(parent).to eq task.parent.parent
+        expect(parent).to eq cavc_task.parent.parent
       end
     end
 
