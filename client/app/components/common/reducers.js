@@ -8,7 +8,15 @@ export const initialState = {
     regionalOffices: {}
   },
   forms: {},
-  alerts: []
+  alerts: [],
+  transitioningAlerts: {},
+  // Used to handle communication between Case Details/ScheduleVeteran
+  scheduledHearing: {
+    taskId: null,
+    disposition: null,
+    externalId: null,
+    polling: false,
+  }
 };
 
 const dropdownsReducer = (state = {}, action = {}) => {
@@ -76,10 +84,46 @@ const commonComponentsReducer = (state = initialState, action = {}) => {
         ]
       }
     });
-  case ACTIONS.REMOVE_ALERTS_WITH_TIMESTAMP:
+  case ACTIONS.RECEIVE_TRANSITIONING_ALERT:
+    return update(state, {
+      alerts: {
+        $set: [
+          ...state.alerts,
+          action.payload.alert
+        ]
+      },
+      transitioningAlerts: {
+        $set: {
+          ...state.transitioningAlerts,
+          [action.payload.key]: action.payload.alert
+        }
+      }
+    });
+  case ACTIONS.TRANSITION_ALERT:
+    return update(state, {
+      alerts: {
+        $set: [
+          ...state.alerts.filter((alert) => alert !== state.transitioningAlerts[action.payload.key]),
+          state.transitioningAlerts[action.payload.key].next
+        ]
+      },
+      transitioningAlerts: {
+        $set: {
+          ...state.transitioningAlerts,
+          ...state.transitioningAlerts[action.payload.key] = state.transitioningAlerts[action.payload.key].next
+        }
+      }
+    });
+  case ACTIONS.REMOVE_ALERTS_WITH_EXPIRATION:
     return update(state, {
       alerts: {
         $set: state.alerts.filter((alert) => action.payload.timestamps.indexOf(alert.timestamp) === -1)
+      }
+    });
+  case ACTIONS.CLEAR_ALERTS:
+    return update(state, {
+      alerts: {
+        $set: []
       }
     });
   case ACTIONS.RECEIVE_REGIONAL_OFFICES:
@@ -114,6 +158,16 @@ const commonComponentsReducer = (state = initialState, action = {}) => {
         $set: formsReducer(state.forms, action)
       }
     });
+  case ACTIONS.SET_SCHEDULE_HEARING_PAYLOAD:
+  case ACTIONS.STOP_POLLING:
+  case ACTIONS.START_POLLING:
+    return {
+      ...state,
+      scheduledHearing: {
+        ...state.scheduledHearing,
+        ...action.payload
+      }
+    };
   default:
     return state;
   }

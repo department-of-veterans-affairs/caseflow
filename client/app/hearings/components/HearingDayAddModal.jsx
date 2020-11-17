@@ -1,37 +1,37 @@
-import React from 'react';
-import { withRouter } from 'react-router-dom';
-import connect from 'react-redux/es/connect/connect';
-import PropTypes from 'prop-types';
-import { debounce } from 'lodash';
+import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Button from '../../components/Button';
-import Modal from '../../components/Modal';
-import { fullWidth } from '../../queue/constants';
+import { debounce } from 'lodash';
+import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import React from 'react';
+import connect from 'react-redux/es/connect/connect';
+
 import {
   RegionalOfficeDropdown,
   HearingCoordinatorDropdown,
   JudgeDropdown
 } from '../../components/DataDropdowns';
-import DateSelector from '../../components/DateSelector';
-import SearchableDropdown from '../../components/SearchableDropdown';
-import TextareaField from '../../components/TextareaField';
-import { bindActionCreators } from 'redux';
-import {
-  selectVlj,
-  selectHearingCoordinator,
-  setNotes
-} from '../actions/dailyDocketActions';
+import { fullWidth } from '../../queue/constants';
+import { onRegionalOfficeChange } from '../../components/common/actions';
 import {
   onSelectedHearingDayChange,
   selectRequestType,
   onAssignHearingRoom,
   onReceiveHearingSchedule
 } from '../actions/hearingScheduleActions';
-import { onRegionalOfficeChange } from '../../components/common/actions';
-import Checkbox from '../../components/Checkbox';
+import {
+  selectVlj,
+  selectHearingCoordinator,
+  setNotes
+} from '../actions/dailyDocketActions';
 import Alert from '../../components/Alert';
 import ApiUtil from '../../util/ApiUtil';
+import Button from '../../components/Button';
+import Checkbox from '../../components/Checkbox';
+import DateSelector from '../../components/DateSelector';
+import Modal from '../../components/Modal';
+import SearchableDropdown from '../../components/SearchableDropdown';
+import TextareaField from '../../components/TextareaField';
 
 const notesFieldStyling = css({
   height: '100px',
@@ -111,7 +111,7 @@ class HearingDayAddModal extends React.Component {
       errorMessages.push('Please make sure you have entered a Hearing Type');
     }
 
-    if (this.state.videoSelected && !this.props.selectedRegionalOffice.value) {
+    if (this.state.videoSelected && !this.props.selectedRegionalOffice.key) {
       this.setState({ roError: true });
       roErrorMessages.push('Please make sure you select a Regional Office');
     }
@@ -152,10 +152,9 @@ class HearingDayAddModal extends React.Component {
       assign_room: this.props.roomRequired
     };
 
-    if (this.props.selectedRegionalOffice &&
-      this.props.selectedRegionalOffice.value !== '' &&
+    if (this.props.selectedRegionalOffice?.key !== '' &&
       this.props.requestType.value !== 'C') {
-      data.regional_office = this.props.selectedRegionalOffice.value;
+      data.regional_office = this.props.selectedRegionalOffice.key;
     }
 
     ApiUtil.post('/hearings/hearing_day.json', { data }).
@@ -308,11 +307,8 @@ class HearingDayAddModal extends React.Component {
         <RegionalOfficeDropdown
           label="Select Regional Office (RO)"
           errorMessage={this.state.roError ? this.getRoErrorMessages() : null}
-          onChange={(value, label) => this.onRegionalOfficeChange({
-            value,
-            label
-          })}
-          value={this.props.selectedRegionalOffice.value} />
+          onChange={this.onRegionalOfficeChange}
+          value={this.props.selectedRegionalOffice?.key} />
         }
         {(this.state.videoSelected || this.state.centralOfficeSelected) &&
         <React.Fragment>
@@ -352,19 +348,16 @@ class HearingDayAddModal extends React.Component {
   };
 
   render() {
-
-    return <AppSegment filledBackground>
-      <div className="cf-modal-scroll">
-        <Modal
-          title="Add Hearing Day"
-          closeHandler={this.onCancelModal}
-          confirmButton={this.modalConfirmButton()}
-          cancelButton={this.modalCancelButton()}
-        >
-          {this.modalMessage()}
-        </Modal>
-      </div>
-    </AppSegment>;
+    return (
+      <Modal
+        title="Add Hearing Day"
+        closeHandler={this.onCancelModal}
+        confirmButton={this.modalConfirmButton()}
+        cancelButton={this.modalCancelButton()}
+      >
+        {this.modalMessage()}
+      </Modal>
+    );
   }
 }
 
@@ -394,9 +387,10 @@ HearingDayAddModal.propTypes = {
   selectRequestType: PropTypes.func,
   selectVlj: PropTypes.func,
   selectedHearingDay: PropTypes.string,
-  selectedRegionalOffice: PropTypes.shape({
-    value: PropTypes.string
-  }),
+
+  // Selected Regional Office (See onRegionalOfficeChange).
+  selectedRegionalOffice: PropTypes.object,
+
   setNotes: PropTypes.func,
   userCssId: PropTypes.string,
   userId: PropTypes.number,

@@ -2,11 +2,13 @@ openapi: 3.0.0
 info:
   title: Decision Reviews
   description: >+
-    The Decision Reviews API allows you to interact with a Veteran’s Decision Review requests, also known as benefit appeals. This API provides a secure and efficient alternative to paper or fax document submissions. Veterans Benefits Administration or Board of Veterans Appeals can begin processing Decision Review requests submitted through this API immediately, which ultimately allows VA to provide Veterans with appeal decisions more quickly.
+    The Decision Reviews API allows you to interact with a veteran’s Decision Reviews. This API provides a secure and efficient alternative to paper or fax document submissions. Veterans Benefits Administration or Board of Veterans Appeals can begin processing Decision Review requests submitted through this API immediately, which ultimately allows VA to provide Veterans with appeal decisions more quickly.
 
-    > * For more information on the Decision Review process, including the different types of Decision Reviews, please see [this informative page on VA.gov](https://www.va.gov/decision-reviews/).
 
-    > * The Decision Reviews API supports the Appeals Modernization Act (AMA) process only. Appeals going through the legacy Appeal process cannot be managed through this API. Learn more about the AMA [here](https://benefits.va.gov/benefits/appeals.asp).
+    For more information on the Decision Review process, including the different types of Decision Reviews, please see [this informative page on VA.gov](https://www.va.gov/decision-reviews/).
+
+
+    The Decision Reviews API supports the Appeals Modernization Act (AMA) process only. Appeals going through the legacy Appeal process cannot be managed through this API. Learn more about the AMA [here](https://benefits.va.gov/benefits/appeals.asp).
 
     ## Technical Summary
 
@@ -18,16 +20,20 @@ info:
 
     * Detailed error messages will be returned to help your application provide meaningful information to the Veteran attempting to make the Decision Review request.
 
-    ### Authorization
+    ## Authorization
 
-    API requests are authorized through a symmetric API token, provided in an HTTP header with name "apikey."
+    API requests are authorized through a token, provided in an HTTP header.
+    Example _curl_ (assuming you're running Caseflow locally, and the `api_v3` feature toggle has been enabled):
+
+    ```
+     curl -v POST http://localhost:3000/api/v3/decision_reviews/higher_level_reviews /
+     -d {{json}} -i -H "Content-Type: application/json" /
+     -H "Authorization: Token token={{yourApiKeyHere}}"
+    ```
+
   version: 3.0.0
 servers:
-  - url: https://dev-api.va.gov/services/appeals/{version}/decision_review
-    description: "VA.gov API development environment"
-    variables:
-      version:
-        default: "v3"
+  - url: '{{CaseflowInstance}}/api/v3/decision_reviews'
 paths:
   /higher_level_reviews:
     post:
@@ -129,14 +135,7 @@ paths:
                           $ref: "#/components/schemas/BenefitType"
                         veteran:
                           type: object
-                          description: >-
-                            The veteran whom this Higher-Level Review concerns.
-                            Use the field ssn to identify the veteran.
-                            Optionally, you can update the veteran's current contact info using the other fields.
-                            If any of these fields are present: [addressLine1, addressLine2, city, stateProvinceCode, zipPostalCode, countryCode],
-                            all of these fields must be present: [addressLine1, addressLine2, city, stateProvinceCode, zipPostalCode].
-                            NOTE: countryCode can be left out, and it will be assumed to be "US".
-
+                          description: The veteran whom this Higher-Level Review concerns.
                           required:
                             - ssn
                           properties:
@@ -148,93 +147,6 @@ paths:
                                 Example: "123456789"
                                 Format: 9 digit characters.
                                 Corresponds to "2. VETERAN'S SOCIAL SECURITY NUMBER" on form 20-0996.
-
-                            addressLine1:
-                              type: string
-                              description: >-
-                                Update a veteran's house number/name and street.
-                                Example: "123 Main St".
-                                Max length: 100 characters.
-                                Corresponds to "9. CURRENT MAILING ADDRESS: No. & Street" on form 20-0996.
-
-                            addressLine2:
-                              type: string
-                              description: >-
-                                Update a veteran's apartment or unit number.
-                                Example: "Apt. 4".
-                                Max length: 100 characters.
-                                Corresponds to "9. CURRENT MAILING ADDRESS: Apt./Unit Number" on form 20-0996.
-
-                            city:
-                              type: string
-                              description: >-
-                                Update a veteran's city.
-                                Example: "Kansas City".
-                                Max length: 100 characters.
-                                Corresponds to "9. CURRENT MAILING ADDRESS: City" on form 20-0996.
-
-                            stateProvinceCode:
-                              type: string
-                              pattern: '^[a-z]{2}$'
-                              description: >-
-                                Update a veteran's state or province.
-                                Example: "CA".
-                                Max length: 2 characters.
-                                Corresponds to "9. CURRENT MAILING ADDRESS: State/Province" on form 20-0996.
-
-                            countryCode:
-                              type: string
-                              pattern: '^[a-z]{2}$'
-                              description: >-
-                                Update a veteran's country.
-                                Example: "US".
-                                NOTE: If not specified, will assume "US".
-                                Max length: 2 characters.
-                                Corresponds to "9. CURRENT MAILING ADDRESS: Country" on form 20-0996.
-
-                            zipPostalCode:
-                              type: string
-                              description: >-
-                                Update a veteran's zip or postal code.
-                                Example: "90210".
-                                NOTE: If countryCode is "US" or not specified, this field, if present, must be a 5 character string of digits.
-                                Corresponds to "9. CURRENT MAILING ADDRESS: Zip Code/Postal Code" on form 20-0996.
-
-                            phoneNumber:
-                              type: string
-                              pattern: '^[0-9]+$'
-                              description: >-
-                                Update a veteran's phone number.
-                                Example: "8446982311".
-                                Format: Include only digit characters. Include area code.
-                                Max length: 14 characters.
-                                Corresponds to "10. TELEPHONE NUMBER" on form 20-0996.
-
-                            phoneNumberCountryCode:
-                              type: string
-                              pattern: '^[0-9]+$'
-                              description: >-
-                                Update a veteran's phone number country code.
-                                Note: If not specified, will assume "1".
-                                Example: "20".
-                                Format: Include only digit characters.
-
-                            phoneNumberExt:
-                              type: string
-                              description: >-
-                                Update a veteran's phone number extension (if needed).
-                                Example: "123".
-                                Max length: 10 characters.
-
-                            emailAddress:
-                              type: string
-                              pattern: '^.+@.+\..+$'
-                              description: >-
-                                Update a veteran's email address.
-                                Example: "linda@example.com".
-                                Max length: 255 characters.
-                                Corresponds to "11. E-MAIL ADDRESS" on form 20-0996.
-
                         claimant:
                           type: object
                           required:
@@ -268,10 +180,10 @@ paths:
                           decisionIssueId:
                             type: integer
                             nullable: true
-                          ratingIssueId:
+                          ratingIssueReferenceId:
                             type: string
                             nullable: true
-                          ratingDecisionIssueId:
+                          ratingDecisionReferenceId:
                             type: string
                             nullable: true
             examples:
@@ -287,13 +199,6 @@ paths:
                       benefitType: compensation
                       veteran:
                         ssn: "123456789"
-                        addressLine1: 123 Street St
-                        addressLine2: Apt 4
-                        city: Chicago
-                        stateProvinceCode: IL
-                        zipPostalCode: "60652"
-                        phoneNumber: "4432924565"
-                        emailAddress: someone@example.com
                       claimant:
                         participantId: "44444444"
                         payeeCode: "10"
@@ -463,7 +368,7 @@ paths:
                     "errors": [
                       {
                         "status": "422",
-                        "title": "A contestable issue must have at least one of the following: decisionIssueId, ratingIssueId, ratingDecisionIssueId",
+                        "title": "A contestable issue must have at least one of the following: decisionIssueId, ratingIssueReferenceId, ratingDecisionReferenceId",
                         "code": "contestable_issue_params_must_have_ids"
                       }
                     ]
@@ -924,14 +829,14 @@ paths:
                                 diagnosticCode:
                                   type: string
                                   nullable: true
-                                ratingIssueId: # rating_issue_reference_id
+                                ratingIssueReferenceId:
                                   type: string
                                   nullable: true
                                 ratingIssueProfileDate:
                                   type: string
                                   format: date
                                   nullable: true
-                                ratingDecisionId:
+                                ratingDecisionReferenceId:
                                   type: string
                                   nullable: true
                                 description:
@@ -1009,10 +914,14 @@ paths:
       parameters:
         - name: X-VA-SSN
           in: header
-          required: true
-          description: The SSN of the veteran.
+          description: The SSN of the veteran. Either SSN or file number must be passed.
           schema:
             type : string
+        - name: X-VA-File-Number
+          in: header
+          description: The file number of the veteran. Either SSN or file number must be passed.
+          schema:
+            type: string
         - name: X-VA-Receipt-Date
           in: header
           required: true
@@ -1045,7 +954,7 @@ paths:
                         attributes:
                           type: object
                           properties:
-                            ratingIssueId:
+                            ratingIssueReferenceId:
                               type: string
                               nullable: true
                               description: "RatingIssue ID"
@@ -1058,7 +967,7 @@ paths:
                               type: string
                               nullable: true
                               description: "RatingIssue diagnostic code"
-                            ratingDecisionId:
+                            ratingDecisionReferenceId:
                               type: string
                               nullable: true
                               description: "The BGS ID for the contested rating decision. This may be populated while ratingIssueId is nil"
@@ -1164,6 +1073,7 @@ components:
       type: string
       enum:
         - compensation
+        - compensation_all
         - pension
         - fiduciary
         - insurance
@@ -1193,6 +1103,31 @@ components:
     NonratingIssueCategory:
       type: string
       enum:
+        # for benefit type:  compensation_all
+        - Unknown issue category
+        - Apportionment
+        - Incarceration Adjustments
+        - Audit Error Worksheet (DFAS)
+        - Active Duty Adjustments
+        - Drill Pay Adjustments
+        - Character of discharge determinations
+        - Contested Claims - Apportionment
+        - Contested Claims - Attorney fees
+        - Contested Claims - Dependents Indemnity Compensation (DIC)
+        - Contested Claims - Insurance
+        - Contested Claims - Loan Guaranty (LGY)
+        - Contested Claims - Veteran death
+        - Income/net worth (pension)
+        - Dependent child - Adopted
+        - Dependent child - Stepchild
+        - Dependent child - Biological
+        - Dependency Spouse - Common law marriage
+        - Dependency Spouse - Inference of marriage
+        - Dependency Spouse - Deemed valid marriage
+        - Military Retired Pay
+        - Contested Claims (other than apportionment)
+        - Lack of Qualifying Service
+        - Other non-rated
         # for benefit type:  compensation
         - Unknown issue category
         - Apportionment
@@ -1209,7 +1144,6 @@ components:
         - Dependency Spouse - Inference of marriage
         - Dependency Spouse - Deemed valid marriage
         - Military Retired Pay
-        - Contested Claims (other than apportionment)
         - Lack of Qualifying Service
         - Other non-rated
         # for benefit type:  pension

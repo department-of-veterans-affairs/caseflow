@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
+##
+# FetchHearingLocationsForVeteransJob creates a list of hearing locations based on the
+# proximity to veteran/appellant's physical location and stores them as
+# AvailableHearingLocations for an appeal. From this list, a hearing coordinator chooses
+# a location to schedule the veteran/appellant for.
+
 class AvailableHearingLocations < CaseflowRecord
+  include HasAppealUpdatedSince
+
   belongs_to :veteran, foreign_key: :file_number, primary_key: :veteran_file_number
   belongs_to :appeal, polymorphic: true
 
@@ -37,7 +45,7 @@ class AvailableHearingLocations < CaseflowRecord
   end
 
   def determine_vba_facility_type
-    (classification&.include?("Regional")) ? "(RO)" : "(VBA)"
+    classification&.include?("Regional") ? "(RO)" : "(VBA)"
   end
 
   def formatted_location

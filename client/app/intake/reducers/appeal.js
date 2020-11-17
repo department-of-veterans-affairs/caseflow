@@ -1,6 +1,5 @@
-import _ from 'lodash';
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
-import { applyCommonReducers } from './common';
+import { applyCommonReducers, commonStateFromServerIntake } from './common';
 import { formatRequestIssues, formatContestableIssues } from '../util/issues';
 import {
   convertStringToBoolean,
@@ -17,75 +16,12 @@ const updateFromServerIntake = (state, serverIntake) => {
     return state;
   }
 
-  const contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
+  const commonState = commonStateFromServerIntake(serverIntake);
 
   return update(state, {
-    isStarted: {
-      $set: Boolean(serverIntake.id)
-    },
+    ...commonState,
     docketType: {
-      $set: serverIntake.docket_type
-    },
-    receiptDate: {
-      $set: serverIntake.receipt_date
-    },
-    veteranIsNotClaimant: {
-      $set: serverIntake.veteran_is_not_claimant
-    },
-
-    // TODO do we need this at all?
-    processedInCaseflow: {
-      $set: true
-    },
-    claimant: {
-      $set: serverIntake.veteran_is_not_claimant ? serverIntake.claimant : null
-    },
-    payeeCode: {
-      $set: serverIntake.payeeCode
-    },
-    legacyOptInApproved: {
-      $set: serverIntake.legacy_opt_in_approved
-    },
-    legacyAppeals: {
-      $set: serverIntake.legacyAppeals
-    },
-    isReviewed: {
-      $set: Boolean(serverIntake.receipt_date)
-    },
-    contestableIssues: {
-      $set: contestableIssues
-    },
-    activeNonratingRequestIssues: {
-      $set: formatRequestIssues(serverIntake.activeNonratingRequestIssues)
-    },
-    requestIssues: {
-      $set: formatRequestIssues(serverIntake.requestIssues, contestableIssues)
-    },
-    isComplete: {
-      $set: Boolean(serverIntake.completed_at)
-    },
-    relationships: {
-      $set: formatRelationships(serverIntake.relationships)
-    },
-    intakeUser: {
-     $set: serverIntake.intakeUser
-    },
-    asyncJobUrl: {
-      $set: serverIntake.asyncJobUrl
-    },
-    processedAt: {
-      $set: serverIntake.processedAt
-    },
-    veteranValid: {
-      $set: serverIntake.veteranValid
-    },
-    veteranInvalidFields: {
-      $set: {
-        veteranMissingFields: _.join(serverIntake.veteranInvalidFields.veteran_missing_fields, ', '),
-        veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long,
-        veteranAddressInvalidFields: serverIntake.veteranInvalidFields.veteran_address_invalid_fields,
-        veteranCityInvalidFields: serverIntake.veteranInvalidFields.veteran_city_invalid_fields
-      }
+      $set: serverIntake.docketType
     }
   });
 };
@@ -105,6 +41,9 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     claimant: null,
     claimantError: null,
     payeeCode: null,
+    claimantName: null,
+    claimantNotes: null,
+    claimantType: null,
     legacyOptInApproved: null,
     legacyOptInApprovedError: null,
     legacyAppeals: [],
@@ -145,7 +84,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
   let veteranIsNotClaimant;
 
   if (action.payload) {
-    veteranIsNotClaimant = convertStringToBoolean(action.payload.veteranIsNotClaimant);
+    veteranIsNotClaimant = action.payload.veteranIsNotClaimant;
   }
 
   switch (action.type) {
@@ -176,6 +115,15 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
     return update(state, {
       claimant: {
         $set: action.payload.claimant
+      },
+      claimantName: {
+        $set: action.payload.claimantName
+      },
+      claimantNotes: {
+        $set: action.payload.claimantNotes
+      },
+      claimantType: {
+        $set: action.payload.claimantType
       }
     });
   case ACTIONS.SET_PAYEE_CODE:
@@ -233,7 +181,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         $set: getReceiptDateError(action.payload.responseErrorCodes, state)
       },
       veteranIsNotClaimantError: {
-        $set: getBlankOptionError(action.payload.responseErrorCodes, 'veteran_is_not_claimant')
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'claimant_type')
       },
       claimantError: {
         $set: getClaimantError(action.payload.responseErrorCodes)
@@ -246,7 +194,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
           $set: REQUEST_STATE.FAILED
         },
         reviewIntakeError: {
-          $set: getPageError(action.payload.responseErrorCodes)
+          $set: getPageError(action.payload)
         }
       }
     });

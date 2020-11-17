@@ -225,7 +225,7 @@ feature "Appeal Intake", :all_dbs do
       detail: appeal
     )
 
-    Claimant.create!(
+    VeteranClaimant.create!(
       decision_review: appeal,
       participant_id: test_veteran.participant_id
     )
@@ -350,6 +350,7 @@ feature "Appeal Intake", :all_dbs do
     expect(page).to have_content("Add / Remove Issues")
     check_row("Review option", "Evidence Submission")
     check_row("Claimant", "Ed Merica")
+    check_row("SOC/SSOC Opt-in", "No")
 
     # clicking the add issues button should bring up the modal
     click_intake_add_issue
@@ -728,6 +729,8 @@ feature "Appeal Intake", :all_dbs do
         start_appeal(veteran, legacy_opt_in_approved: true)
         visit "/intake/add_issues"
 
+        check_row("SOC/SSOC Opt-in", "Yes")
+
         click_intake_add_issue
         expect(page).to have_content("Next")
         add_intake_rating_issue("Left knee granted")
@@ -846,7 +849,7 @@ feature "Appeal Intake", :all_dbs do
              benefit_type: "nca",
              veteran_file_number: veteran_no_ratings.file_number)
     end
-    # decision_issue_date needs to be before reciept date to show up
+    # decision_issue_date needs to be before receipt date to show up
     let(:decision_issue_date) { receipt_date - 2.days }
     let!(:decision_issues) do
       [

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class VACOLS::CaseAssignment < VACOLS::Record
+  include ::LegacyAttorneyCaseReviewDocumentIdValidator
+
   # :nocov:
   self.table_name = "brieff"
 
@@ -24,7 +26,8 @@ class VACOLS::CaseAssignment < VACOLS::Record
     OpenStruct.new(
       first_name: assigned_by_first_name,
       last_name: assigned_by_last_name,
-      pg_id: assigned_by_user_id
+      pg_id: assigned_by_user_id,
+      css_id: assigned_by_css_id
     )
   end
 

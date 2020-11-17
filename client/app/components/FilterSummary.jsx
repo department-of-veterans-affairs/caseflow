@@ -11,7 +11,7 @@ const ALTERNATE_COLUMN_NAMES = {
   readableRequestType: 'Hearing Type',
   regionalOffice: 'Regional Office',
   vlj: 'VLJ',
-  label: 'Task(s)',
+  label: 'Tasks',
   suggestedLocation: 'Suggested Location',
   hearingLocation: 'Hearing Location'
 };

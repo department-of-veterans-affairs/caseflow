@@ -222,34 +222,6 @@ describe Organization, :postgres do
     end
   end
 
-  describe ".use_task_pages_api?" do
-    subject { organization.use_task_pages_api? }
-
-    context "for a generic organization" do
-      let(:organization) { create(:organization) }
-
-      it "does not use the task pages API" do
-        expect(subject).to eq(false)
-      end
-    end
-
-    context "for VLJ Support Staff" do
-      let(:organization) { Colocated.singleton }
-
-      it "uses the task pages API" do
-        expect(subject).to eq(true)
-      end
-    end
-
-    context "for HearingsManagement organization" do
-      let(:organization) { HearingsManagement.singleton }
-
-      it "uses the task pages API" do
-        expect(subject).to eq(true)
-      end
-    end
-  end
-
   describe ".queue_tabs" do
     let(:org) { create(:organization) }
 

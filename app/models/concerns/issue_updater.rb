@@ -44,7 +44,7 @@ module IssueUpdater
         disposition: issue_attrs[:disposition],
         description: issue_attrs[:description],
         benefit_type: issue_attrs[:benefit_type],
-        diagnostic_code: issue_attrs[:diagnostic_code],
+        diagnostic_code: issue_attrs[:diagnostic_code].presence,
         participant_id: appeal.veteran.participant_id,
         decision_review: appeal,
         caseflow_decision_date: appeal.decision_document&.decision_date
@@ -86,8 +86,9 @@ module IssueUpdater
 
   def fail_if_count_mismatch!
     if (issues || []).count != appeal.undecided_issues.count
-      msg = "Number of issues in the request does not match the number in the database"
-      fail Caseflow::Error::AttorneyJudgeCheckoutError, message: msg
+      title = "The issues are out of sync"
+      msg = "The issues on this case have changed. Please refresh the page and submit your decision again."
+      fail Caseflow::Error::AttorneyJudgeCheckoutError, message: msg, title: title
     end
   end
 

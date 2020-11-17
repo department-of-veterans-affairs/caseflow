@@ -1,6 +1,5 @@
-import _ from 'lodash';
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
-import { applyCommonReducers } from './common';
+import { applyCommonReducers, commonStateFromServerIntake } from './common';
 import { formatRequestIssues, formatContestableIssues } from '../util/issues';
 import {
   convertStringToBoolean,
@@ -18,73 +17,11 @@ const updateFromServerIntake = (state, serverIntake) => {
     return state;
   }
 
-  const contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
-
+  const commonState = commonStateFromServerIntake(serverIntake);
   return update(state, {
-    isStarted: {
-      $set: Boolean(serverIntake.id)
-    },
-    receiptDate: {
-      $set: serverIntake.receipt_date
-    },
+    ...commonState,
     benefitType: {
-      $set: serverIntake.benefit_type
-    },
-    processedInCaseflow: {
-      $set: serverIntake.processed_in_caseflow
-    },
-    veteranIsNotClaimant: {
-      $set: serverIntake.veteran_is_not_claimant
-    },
-    claimant: {
-      $set: serverIntake.veteran_is_not_claimant ? serverIntake.claimant : null
-    },
-    payeeCode: {
-      $set: serverIntake.payeeCode
-    },
-    legacyOptInApproved: {
-      $set: serverIntake.legacy_opt_in_approved
-    },
-    legacyAppeals: {
-      $set: serverIntake.legacyAppeals
-    },
-    isReviewed: {
-      $set: Boolean(serverIntake.receipt_date)
-    },
-    contestableIssues: {
-      $set: contestableIssues
-    },
-    activeNonratingRequestIssues: {
-      $set: formatRequestIssues(serverIntake.activeNonratingRequestIssues)
-    },
-    requestIssues: {
-      $set: formatRequestIssues(serverIntake.requestIssues, contestableIssues)
-    },
-    isComplete: {
-      $set: Boolean(serverIntake.completed_at)
-    },
-    relationships: {
-      $set: formatRelationships(serverIntake.relationships)
-    },
-    intakeUser: {
-      $set: serverIntake.intakeUser
-   },
-    asyncJobUrl: {
-      $set: serverIntake.asyncJobUrl
-    },
-    processedAt: {
-      $set: serverIntake.processedAt
-    },
-    veteranValid: {
-      $set: serverIntake.veteranValid
-    },
-    veteranInvalidFields: {
-      $set: {
-        veteranMissingFields: _.join(serverIntake.veteranInvalidFields.veteran_missing_fields, ', '),
-        veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long,
-        veteranAddressInvalidFields: serverIntake.veteranInvalidFields.veteran_address_invalid_fields,
-        veteranCityInvalidFields: serverIntake.veteranInvalidFields.veteran_city_invalid_fields
-      }
+      $set: serverIntake.benefitType
     }
   });
 };
@@ -95,6 +32,7 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     nonRatingRequestIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
     untimelyExemptionModalVisible: false,
+    legacyOptInModalVisible: false,
     removeIssueModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
@@ -148,7 +86,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
   let veteranIsNotClaimant;
 
   if (action.payload) {
-    veteranIsNotClaimant = convertStringToBoolean(action.payload.veteranIsNotClaimant);
+    veteranIsNotClaimant = action.payload.veteranIsNotClaimant;
   }
 
   switch (action.type) {
@@ -182,6 +120,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       },
       payeeCode: {
         $set: getDefaultPayeeCode(state, action.payload.claimant)
+      },
+      claimantType: {
+        $set: action.payload.claimantType
       }
     });
   case ACTIONS.SET_PAYEE_CODE:
@@ -245,7 +186,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')
       },
       veteranIsNotClaimantError: {
-        $set: getBlankOptionError(action.payload.responseErrorCodes, 'veteran_is_not_claimant')
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'claimant_type')
       },
       claimantError: {
         $set: getClaimantError(action.payload.responseErrorCodes)
@@ -258,7 +199,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
           $set: REQUEST_STATE.FAILED
         },
         reviewIntakeError: {
-          $set: getPageError(action.payload.responseErrorCodes)
+          $set: getPageError(action.payload)
         },
         errorUUID: {
           $set: action.payload.errorUUID
@@ -298,6 +239,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         },
         completeIntakeErrorData: {
           $set: action.payload.responseErrorData
+        },
+        completeIntakeErrorUUID: {
+          $set: action.payload.responseErrorUUID
         }
       }
     });

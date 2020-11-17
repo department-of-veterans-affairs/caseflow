@@ -5,12 +5,7 @@ class Reader::DocumentsController < Reader::ApplicationController
     respond_to do |format|
       format.html { return render "reader/appeal/index" }
       format.json do
-        AppealView.find_or_create_by(
-          appeal: appeal,
-          user_id: current_user.id
-        ).tap do |t|
-          t.update!(last_viewed_at: Time.zone.now)
-        end
+        AppealView.find_or_create_by(appeal: appeal, user: current_user).update!(last_viewed_at: Time.zone.now)
         MetricsService.record "Get appeal #{appeal_id} document data" do
           render json: {
             appealDocuments: documents,
@@ -34,7 +29,7 @@ class Reader::DocumentsController < Reader::ApplicationController
   private
 
   def appeal
-    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
+    @appeal ||= Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
   end
   helper_method :appeal
 

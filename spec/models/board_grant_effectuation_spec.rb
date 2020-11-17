@@ -48,7 +48,7 @@ describe BoardGrantEffectuation, :postgres do
     let(:associated_claims) { nil }
 
     let!(:rating) do
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         participant_id: veteran.participant_id,
         promulgation_date: 15.days.ago,
         profile_date: 20.days.ago,
@@ -119,6 +119,16 @@ describe BoardGrantEffectuation, :postgres do
           subject
           expect(board_grant_effectuation.decision_sync_error).to be_nil
         end
+      end
+    end
+
+    context "when syncing a nonrating decision" do
+      let(:rating_or_nonrating) { :nonrating }
+
+      it "does not try to fetch an associated rating" do
+        expect(end_product_establishment).not_to receive(:associated_rating)
+        subject
+        expect(board_grant_effectuation.decision_sync_error).to be_nil
       end
     end
   end

@@ -5,7 +5,7 @@ describe "Contestable Issue Generator", :postgres do
   let(:review) { hlr }
   let(:veteran) { create(:veteran) }
   let!(:past_rating) do
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: review.receipt_date - 1.day,
       profile_date: review.receipt_date - 1.day,
@@ -16,7 +16,7 @@ describe "Contestable Issue Generator", :postgres do
   end
 
   let!(:future_rating) do
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: review.receipt_date + 5.days,
       profile_date: review.receipt_date + 5.days,
@@ -27,7 +27,7 @@ describe "Contestable Issue Generator", :postgres do
   end
 
   let!(:today_rating) do
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: review.receipt_date,
       profile_date: review.receipt_date,

@@ -23,7 +23,7 @@ describe ClaimReview, :postgres do
     )
   end
 
-  let(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
+  let(:receipt_date) { ama_test_start_date + 1 }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
   let(:benefit_type) { "compensation" }
@@ -324,9 +324,9 @@ describe ClaimReview, :postgres do
   context "#serialized_ratings" do
     let(:ratings) do
       [
-        Generators::Rating.build(promulgation_date: Time.zone.today - 30),
-        Generators::Rating.build(promulgation_date: Time.zone.today - 60, issues: [], decisions: decisions),
-        Generators::Rating.build(promulgation_date: Time.zone.today - 400)
+        Generators::PromulgatedRating.build(promulgation_date: Time.zone.today - 30),
+        Generators::PromulgatedRating.build(promulgation_date: Time.zone.today - 60, issues: [], decisions: decisions),
+        Generators::PromulgatedRating.build(promulgation_date: Time.zone.today - 400)
       ]
     end
 

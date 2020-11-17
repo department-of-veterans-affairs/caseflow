@@ -1,15 +1,34 @@
 # frozen_string_literal: true
 
+## Validates an appellant's address, and finds the closest regional office (RO) and
+# available hearing locations (AHLs) based on their address.
+#
+# Note: distance to closest RO and AHLs is driving distance.
+#
+# See `ExternalApi::VADotGovService` for documentation of the external APIs that
+# support this class.
+
 class VaDotGovAddressValidator
   include VaDotGovAddressValidator::Validations
 
   attr_reader :appeal
   delegate :address, to: :appeal
 
+  # The logic for these statuses is determined in `VaDotGovAddressValidator::ErrorHandler`.
+  #
+  # The mixin `VaDotGovAddressValidator::Validations` glues the `VaDotGovAddressValidator`
+  # and `VaDotGovAddressValidator::ErrorHandler`.
   STATUSES = {
+    # Successfully geomatched.
     matched_available_hearing_locations: :matched_available_hearing_locations,
+
+    # Address was in the Philippines, and assigned to RO58.
     philippines_exception: :defaulted_to_philippines_RO58,
+
+    # Foreign addresses need to be handled by an admin.
     created_foreign_veteran_admin_action: :created_foreign_veteran_admin_action,
+
+    # An admin needs to manually handle addresses that can't be verified.
     created_verify_address_admin_action: :created_verify_address_admin_action
   }.freeze
 
@@ -17,6 +36,11 @@ class VaDotGovAddressValidator
     @appeal = appeal
   end
 
+  # Geomatches an appeal to a regional office and discovers nearby locations where
+  # the hearing can be held.
+  #
+  # @return            [Hash]
+  #   A hash with the geocoding status (see `VaDotGovAddressValidator#STATUSES`)
   def update_closest_ro_and_ahls
     return { status: error_status } if error_status.present?
 
@@ -41,20 +65,23 @@ class VaDotGovAddressValidator
 
   def closest_regional_office
     @closest_regional_office ||= begin
-      return unless closest_facility_response.success?
+      return unless closest_ro_response.success?
 
-      VaDotGovAddressValidator::ClosestRegionalOfficeFinder.new(
-        facilities: closest_facility_response.data,
-        closest_facility_id: closest_facility_id
-      ).call
+      # Note: In `ro_facility_ids_to_geomatch`, the San Antonio facility ID is passed
+      # as a valid RO for any veteran living in Texas.
+      return "RO62" if closest_regional_office_facility_id_is_san_antonio?
+
+      RegionalOffice
+        .cities
+        .detect do |ro|
+          ro.facility_id == closest_ro_facility_id
+        end
+        .key
     end
   end
 
   def available_hearing_locations
-    @available_hearing_locations ||= begin
-      ids = RegionalOffice.facility_ids_for_ro(closest_regional_office)
-      closest_facility_response.data.select { |facility| ids.include?(facility[:facility_id]) }
-    end
+    @available_hearing_locations ||= available_hearing_locations_response.data
   end
 
   def assign_ro_and_update_ahls(new_ro)
@@ -81,17 +108,31 @@ class VaDotGovAddressValidator
                                  ids: facility_ids)
   end
 
-  def facility_ids_to_geomatch
+  # Gets a list of RO facility ids to geomatch with.
+  #
+  # @return            [Array<String>]
+  #   An array of RO facility ids that are in the same state as the veteran/appellant.
+  def ro_facility_ids_to_geomatch
     # only match to Central office if veteran requested central office
     return ["vba_372"] if appeal_is_legacy_and_veteran_requested_central_office?
 
-    RegionalOffice.facility_ids
+    facility_ids = RegionalOffice.ro_facility_ids_for_state(state_code)
+
+    # veterans whose closest AHL is San Antonio should have Houston as the RO
+    # even though Waco may be closer. This is a RO/AHL policy quirk.
+    # see https://github.com/department-of-veterans-affairs/caseflow/issues/9858
+    #
+    # Note: In the logic to determine the closest RO, there is logic that maps this
+    # facility ID to the Houston RO.
+    facility_ids << "vha_671BY" if veteran_lives_in_texas? # include San Antonio facility id
+
+    facility_ids
   end
 
   private
 
   def update_closest_regional_office
-    appeal.update(closest_regional_office: closest_regional_office)
+    appeal.update(closest_regional_office: closest_regional_office_with_exceptions)
   end
 
   def destroy_existing_available_hearing_locations!
@@ -124,16 +165,24 @@ class VaDotGovAddressValidator
     @valid_address_response ||= VADotGovService.validate_address(address)
   end
 
-  def closest_facility_response
-    @closest_facility_response ||= VADotGovService.get_distance(
-      ids: facility_ids_to_geomatch,
+  def available_hearing_locations_response
+    @available_hearing_locations_response ||= VADotGovService.get_distance(
+      ids: RegionalOffice.facility_ids_for_ro(closest_regional_office_with_exceptions),
       lat: valid_address[:lat],
       long: valid_address[:long]
     )
   end
 
-  def closest_facility_id
-    closest_facility_response.data[0]&.dig(:facility_id)
+  def closest_ro_response
+    @closest_ro_response ||= VADotGovService.get_distance(
+      ids: ro_facility_ids_to_geomatch,
+      lat: valid_address[:lat],
+      long: valid_address[:long]
+    )
+  end
+
+  def closest_ro_facility_id
+    closest_ro_response.data.first&.dig(:facility_id)
   end
 
   def validate_zip_code

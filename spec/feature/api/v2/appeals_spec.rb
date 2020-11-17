@@ -135,8 +135,12 @@ describe "Appeals API v2", :all_dbs, type: :request do
         "Authorization": "Token token=#{api_key.key_string}"
       }
 
-      allow(ApiKey).to receive(:authorize).and_raise("Much random error")
-      expect(Raven).to receive(:capture_exception)
+      random_error = StandardError.new("Much random error")
+
+      allow(ApiKey).to receive(:authorize).and_raise(random_error)
+      expect(Raven).to receive(:capture_exception).with(
+        random_error, hash_including(extra: hash_including(vbms_id: "444444444S"))
+      )
       expect(Raven).to receive(:last_event_id).and_return("a1b2c3")
 
       get "/api/v2/appeals", headers: headers
@@ -459,7 +463,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
       expect(json["data"][2]["attributes"]["appealIds"].length).to eq(1)
       expect(json["data"][2]["attributes"]["appealIds"].first).to include("A")
       expect(json["data"][2]["attributes"]["updated"]).to eq("2018-11-27T19:00:00-05:00")
-      expect(json["data"][2]["attributes"]["type"]).to eq("original")
+      expect(json["data"][2]["attributes"]["type"]).to eq(Constants.AMA_STREAM_TYPES.original.titleize)
       expect(json["data"][2]["attributes"]["active"]).to eq(true)
       expect(json["data"][2]["attributes"]["incompleteHistory"]).to eq(false)
       expect(json["data"][2]["attributes"]["description"]).to eq("2 issues")

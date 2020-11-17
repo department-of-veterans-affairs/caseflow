@@ -94,12 +94,8 @@ feature "Higher-Level Review", :all_dbs do
 
     expect(page).to have_current_path("/intake/review_request")
 
-    fill_in "What is the Receipt Date of this form?", with: Time.zone.tomorrow.mdY
     click_intake_continue
 
-    expect(page).to have_content(
-      "Receipt date cannot be in the future."
-    )
     expect(page).to have_content(
       "What is the Benefit Type?\nPlease select an option."
     )
@@ -119,8 +115,6 @@ feature "Higher-Level Review", :all_dbs do
     within_fieldset("What is the Benefit Type?") do
       find("label", text: "Fiduciary", match: :prefer_exact).click
     end
-
-    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
     within_fieldset("Was an informal conference requested?") do
       find("label", text: "Yes", match: :prefer_exact).click
@@ -153,10 +147,10 @@ feature "Higher-Level Review", :all_dbs do
     click_intake_continue
 
     expect(page).to have_content(
-      "If you do not see the claimant in the options below or if the claimant's information needs updated,"
+      "If the claimant is a Veteran's dependant (spouse, child, or parent) and they are not listed"
     )
     expect(page).to have_content(
-      "What is the payee code for this claimant?\nPlease select an option."
+      "Please select an option.\nBob Vance, Spouse"
     )
 
     find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
@@ -165,6 +159,16 @@ feature "Higher-Level Review", :all_dbs do
     find("#cf-payee-code").send_keys :enter
 
     select_agree_to_withdraw_legacy_issues(false)
+
+    fill_in "What is the Receipt Date of this form?", with: Time.zone.tomorrow.mdY
+
+    click_intake_continue
+
+    expect(page).to have_content(
+      "Receipt date cannot be in the future."
+    )
+
+    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
     click_intake_continue
 
@@ -448,6 +452,30 @@ feature "Higher-Level Review", :all_dbs do
     )
   end
 
+  context "when disabling claim establishment is enabled" do
+    before { FeatureToggle.enable!(:disable_claim_establishment) }
+    after { FeatureToggle.disable!(:disable_claim_establishment) }
+
+    it "completes intake and prevents edit" do
+      start_higher_level_review(veteran_no_ratings)
+      visit "/intake"
+      click_intake_continue
+      click_intake_add_issue
+      add_intake_nonrating_issue(
+        category: "Active Duty Adjustments",
+        description: "Description for Active Duty Adjustments",
+        date: profile_date.mdY
+      )
+      click_intake_finish
+
+      expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
+
+      click_on "correct the issues"
+
+      expect(page).to have_content("Review not editable")
+    end
+  end
+
   it "Shows a review error when something goes wrong" do
     start_higher_level_review(veteran_no_ratings)
     visit "/intake"
@@ -467,8 +495,7 @@ feature "Higher-Level Review", :all_dbs do
     test_veteran,
     is_comp: true,
     claim_participant_id: nil,
-    legacy_opt_in_approved: false,
-    veteran_is_not_claimant: false
+    legacy_opt_in_approved: false
   )
 
     higher_level_review = HigherLevelReview.create!(
@@ -477,7 +504,7 @@ feature "Higher-Level Review", :all_dbs do
       informal_conference: false, same_office: false,
       benefit_type: is_comp ? "compensation" : "education",
       legacy_opt_in_approved: legacy_opt_in_approved,
-      veteran_is_not_claimant: veteran_is_not_claimant
+      veteran_is_not_claimant: claim_participant_id.present?
     )
 
     intake = HigherLevelReviewIntake.create!(
@@ -486,10 +513,12 @@ feature "Higher-Level Review", :all_dbs do
       detail: higher_level_review
     )
 
-    Claimant.create!(
+    claimant_class = claim_participant_id.present? ? DependentClaimant : VeteranClaimant
+    participant_id = claim_participant_id || test_veteran.participant_id
+    claimant_class.create!(
       decision_review: higher_level_review,
-      participant_id: claim_participant_id || test_veteran.participant_id,
-      payee_code: claim_participant_id ? "02" : "00"
+      participant_id: participant_id,
+      payee_code: claim_participant_id.present? ? "02" : "00"
     )
 
     higher_level_review.start_review!
@@ -585,7 +614,7 @@ feature "Higher-Level Review", :all_dbs do
     let(:another_profile_date) { receipt_date - 50.days }
 
     let!(:another_rating) do
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         participant_id: veteran.participant_id,
         promulgation_date: another_promulgation_date,
         profile_date: another_profile_date,
@@ -719,17 +748,14 @@ feature "Higher-Level Review", :all_dbs do
         relationship_type: "Spouse"
       )
 
-      higher_level_review, = start_higher_level_review(
-        veteran,
-        claim_participant_id: "5382910292",
-        veteran_is_not_claimant: true
-      )
+      higher_level_review, = start_higher_level_review(veteran, claim_participant_id: "5382910292")
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add / Remove Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Bob Vance, Spouse (payee code 02)")
+      check_row("SOC/SSOC Opt-in", "No")
 
       # clicking the add issues button should bring up the modal
       click_intake_add_issue
@@ -756,7 +782,7 @@ feature "Higher-Level Review", :all_dbs do
 
       # removing an issue
       click_remove_intake_issue("1")
-      expect(page).not_to have_content("Left knee granted 2")
+      expect(page.has_no_content?("Left knee granted 2")).to eq(true)
 
       # re-add to proceed
       click_intake_add_issue
@@ -1082,11 +1108,7 @@ feature "Higher-Level Review", :all_dbs do
       end
 
       scenario "the issue is ineligible" do
-        start_higher_level_review(
-          veteran,
-          claim_participant_id: "5382910292",
-          veteran_is_not_claimant: false
-        )
+        start_higher_level_review(veteran)
         visit "/intake/add_issues"
 
         expect(page).to have_content("Add / Remove Issues")
@@ -1273,6 +1295,8 @@ feature "Higher-Level Review", :all_dbs do
           start_higher_level_review(veteran, legacy_opt_in_approved: true)
           visit "/intake/add_issues"
 
+          check_row("SOC/SSOC Opt-in", "Yes")
+
           click_intake_add_issue
           expect(page).to have_content("Next")
           add_intake_rating_issue(/Left knee granted$/)
@@ -1378,6 +1402,47 @@ feature "Higher-Level Review", :all_dbs do
           )
         end
 
+        scenario "vacols issues closed" do
+          start_higher_level_review(veteran, legacy_opt_in_approved: true)
+          visit "/intake/add_issues"
+
+          click_intake_add_issue
+          expect(page).to have_content("Next")
+          add_intake_rating_issue(/Left knee granted$/)
+
+          add_intake_rating_issue("Service connection, limitation of thigh motion (extension)")
+          expect(page).to have_content(
+            "#{COPY::VACOLS_OPTIN_ISSUE_NEW}:\nService connection, limitation of thigh motion (extension)"
+          )
+
+          click_intake_finish
+
+          # confirmation page shows vacols issue closed
+          expect(page).to have_content("VACOLS issue has been closed")
+          expect(page).to have_content("Service connection, limitation of thigh motion (extension)")
+
+          # Go to edit page
+          click_on "correct the issues"
+
+          expect(page).to have_content(
+            "#{COPY::VACOLS_OPTIN_ISSUE_CLOSED_EDIT}:\nService connection, limitation of thigh motion (extension)"
+          )
+
+          click_intake_add_issue
+          expect(page).to have_content("Next")
+          add_intake_rating_issue("Looks like a VACOLS issue")
+          add_intake_rating_issue("Service connection, ankylosis of hip")
+
+          expect(page).to have_content(
+            "#{COPY::VACOLS_OPTIN_ISSUE_NEW}:\nService connection, ankylosis of hip"
+          )
+
+          safe_click("#button-submit-update")
+          safe_click ".confirm"
+          expect(page).to have_content("Claim Issues Saved")
+          expect(page).to have_content("Contention: Looks like a VACOLS issue")
+        end
+
         context "with unidentified issue on legacy opt-in" do
           before do
             FeatureToggle.enable!(:verify_unidentified_issue)
@@ -1406,8 +1471,10 @@ feature "Higher-Level Review", :all_dbs do
 
             # Expect legacy opt in issue modal to show
             expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-            add_intake_rating_issue("impairment of hip")
-            expect(page).to have_content("Service connection, impairment of hip")
+
+            add_intake_rating_issue("ankylosis of hip")
+
+            expect(page).to have_content("Service connection, ankylosis of hip")
           end
 
           scenario "with legacy opt in not approved" do

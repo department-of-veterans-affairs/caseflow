@@ -23,6 +23,8 @@ class WorkQueue::LegacyTaskSerializer
   attribute :work_product
   attribute :appeal_type
   attribute :timeline_title
+  attribute :started_at
+
   attribute :previous_task do |object|
     {
       assigned_on: object.previous_task.try(:assigned_at)
@@ -58,6 +60,10 @@ class WorkQueue::LegacyTaskSerializer
     object.appeal.aod
   end
 
+  attribute :overtime do |object|
+    object.appeal.overtime?
+  end
+
   attribute :external_appeal_id do |object|
     object.appeal.vacols_id
   end
@@ -84,5 +90,11 @@ class WorkQueue::LegacyTaskSerializer
 
   attribute :available_actions do |object, params|
     object.available_actions_unwrapper(params[:user], params[:role])
+  end
+
+  attribute :latest_informal_hearing_presentation_task do |object|
+    task = object.appeal.latest_informal_hearing_presentation_task
+
+    task ? { requested_at: task.assigned_at, received_at: task.closed_at } : {}
   end
 end

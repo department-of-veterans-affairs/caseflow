@@ -67,7 +67,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
 
       BvaDispatch.singleton.add_user(create(:user))
 
-      create(:staff, user: qr_user)
+      create(:staff, user: qr_user, sattyid: nil)
       quality_review_organization.add_user(qr_user)
       User.authenticate!(user: qr_user)
     end
@@ -77,10 +77,10 @@ RSpec.feature "Quality Review workflow", :all_dbs do
 
       step "QR user visits the quality review organization page and assigns the task to themself" do
         visit quality_review_organization.path
-        click_on veteran_full_name
+        click_on "#{veteran_full_name} (#{veteran.file_number})"
 
-        find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
+        find(".cf-select__control", text: "Select an action").click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
 
         fill_in "taskInstructions", with: "Review the quality"
         click_on "Submit"
@@ -93,10 +93,10 @@ RSpec.feature "Quality Review workflow", :all_dbs do
       step "QR user returns the case to a judge" do
         click_on "Caseflow"
 
-        click_on veteran_full_name
+        click_on "#{veteran_full_name} (#{veteran.file_number})"
 
-        find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.QR_RETURN_TO_JUDGE.to_h[:label]).click
+        find(".cf-select__control", text: "Select an action").click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.QR_RETURN_TO_JUDGE.to_h[:label]).click
 
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq judge_user.full_name
         fill_in "taskInstructions", with: qr_instructions
@@ -118,8 +118,12 @@ RSpec.feature "Quality Review workflow", :all_dbs do
 
         expect(page).to have_content(qr_instructions)
 
-        find(".Select-control", text: "Select an action", match: :first).click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.JUDGE_QR_RETURN_TO_ATTORNEY.to_h[:label]).click
+        find(".cf-select__control", text: "Select an action", match: :first).click
+        find(
+          "div",
+          class: "cf-select__option",
+          text: Constants.TASK_ACTIONS.JUDGE_QR_RETURN_TO_ATTORNEY.to_h[:label]
+        ).click
 
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
         click_on "Submit"
@@ -132,20 +136,20 @@ RSpec.feature "Quality Review workflow", :all_dbs do
 
         visit "/queue"
 
-        click_on veteran_full_name
+        click_on "#{veteran_full_name} (#{veteran.file_number})"
 
-        find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h[:label]).click
+        find(".cf-select__control", text: "Select an action").click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h[:label]).click
 
-        expect(page).not_to have_content("Select special issues")
+        expect(page.has_no_content?("Select special issues")).to eq(true)
 
         expect(page).to have_content("Add decisions")
         all("button", text: "+ Add decision", count: 1)[0].click
         expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
 
         fill_in "Text Box", with: "test"
-        find(".Select-control", text: "Select disposition").click
-        find("div", class: "Select-option", text: "Allowed").click
+        find(".cf-select__control", text: "Select disposition").click
+        find("div", class: "cf-select__option", text: "Allowed").click
 
         click_on "Save"
 
@@ -177,8 +181,8 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, match: :first).click
         expect(page).to have_content(qr_instructions)
 
-        find(".Select-control", text: "Select an action", match: :first).click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
+        find(".cf-select__control", text: "Select an action", match: :first).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
         expect(page).to have_content("Mark as complete")
 
@@ -192,11 +196,11 @@ RSpec.feature "Quality Review workflow", :all_dbs do
 
         visit "/queue"
 
-        click_on veteran_full_name
+        click_on "#{veteran_full_name} (#{veteran.file_number})"
 
         expect(page).to have_content(COPY::CASE_TIMELINE_ATTORNEY_TASK)
-        find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
+        find(".cf-select__control", text: "Select an action").click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
         expect(page).to have_content("Mark as complete")
 
@@ -219,7 +223,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
     let(:hold_length) { 30 }
 
     let!(:judge_task) do
-      create(:ama_judge_task, :completed, parent: root_task, assigned_to: judge_user)
+      create(:ama_judge_assign_task, :completed, parent: root_task, assigned_to: judge_user)
     end
     let!(:qr_org_task) { QualityReviewTask.create_from_root_task(root_task) }
 
@@ -259,7 +263,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
       step "return the case to the judge" do
         visit("/queue/appeals/#{appeal.uuid}")
         click_dropdown(text: Constants.TASK_ACTIONS.QR_RETURN_TO_JUDGE.label)
-        fill_in("instructions", with: "returning to judge")
+        fill_in("taskInstructions", with: "returning to judge")
         click_on(COPY::MODAL_SUBMIT_BUTTON)
       end
 

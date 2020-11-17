@@ -3,6 +3,7 @@
 module HearingMapper
   class InvalidHoldOpenError < StandardError; end
   class InvalidAodError < StandardError; end
+  class InvalidRequestTypeError < StandardError; end
   class InvalidDispositionError < StandardError; end
   class InvalidTranscriptRequestedError < StandardError; end
   class InvalidNotesError < StandardError; end
@@ -12,6 +13,7 @@ module HearingMapper
   class << self
     def hearing_fields_to_vacols_codes(hearing_info)
       {
+        request_type: validate_request_type(hearing_info[:request_type], hearing_info.keys),
         scheduled_for: VacolsHelper.format_datetime_with_utc_timezone(hearing_info[:scheduled_for]),
         notes: notes_to_vacols_format(hearing_info[:notes]),
         disposition: disposition_to_vacols_format(hearing_info[:disposition], hearing_info.keys),
@@ -32,13 +34,13 @@ module HearingMapper
 
     def bfha_vacols_code(hearing_record)
       case hearing_record.hearing_disp
-      when "H"
+      when "H" # Held
         code_based_on_request_type(hearing_record.hearing_type.to_sym)
-      when "P"
+      when "P" # Postponed
         nil
-      when "C"
+      when "C" # Canceled
         "5"
-      when "N"
+      when "N" # No Show
         "5"
       end
     end
@@ -46,7 +48,7 @@ module HearingMapper
     # Travel Board and Video hearing datetimes reflect the timezone of
     # the local RO, so we append the timezone based on the regional
     # office location then convert the date to Eastern Time
-    def datetime_based_on_type(datetime:, regional_office_key:, type:)
+    def datetime_based_on_type(datetime:, regional_office:, type:)
       # convert the date to UTC then cast it to Time.zone. In a
       # web process, Time.zone is set based on the session's or user's
       # timezone in ApplicationController.set_timezone
@@ -64,13 +66,10 @@ module HearingMapper
       #     passed time zone.
       # (2) that time is then converted to Eastern Time to get the correct
       #     hearing time for the central office.
-      datetime.asctime.in_time_zone(timezone(regional_office_key)).in_time_zone("Eastern Time (US & Canada)")
-    end
-
-    def timezone(regional_office_key)
-      regional_office = RegionalOffice::CITIES[regional_office_key] ||
-                        RegionalOffice::SATELLITE_OFFICES[regional_office_key] || {}
-      regional_office[:timezone]
+      datetime
+        .asctime
+        .in_time_zone(regional_office&.timezone)
+        .in_time_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE)
     end
 
     private
@@ -79,6 +78,7 @@ module HearingMapper
       return "1" if type == :C
       return "2" if type == :T
       return "6" if type == :V
+      return "7" if type == :R
     end
 
     def representative_name_to_vacols_format(value)
@@ -92,7 +92,19 @@ module HearingMapper
       return if value.nil?
       fail(InvalidNotesError) if !value.is_a?(String)
 
-      value[0, 100]
+      value[0, 1000]
+    end
+
+    def validate_request_type(value, keys)
+      # request_type must be valid
+      blank_value_passed = keys.include?(:request_type) && value.blank?
+      invalid_value_passed = value.present? && VACOLS::CaseHearing::HEARING_TYPES.exclude?(value)
+
+      if blank_value_passed || invalid_value_passed
+        fail InvalidRequestTypeError, "\"#{value}\" is not a valid request type."
+      end
+
+      value
     end
 
     def disposition_to_vacols_format(value, keys)

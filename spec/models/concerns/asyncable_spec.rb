@@ -4,7 +4,7 @@ describe Asyncable do
   class TestAsyncable
     include ActiveModel::Model
 
-    # make Asyncable's has_many association(s) a no-op for these tests
+    # make Asyncable's has_many associations a no-op for these tests
     def self.has_many(*); end
     include Asyncable
 

@@ -283,7 +283,7 @@ class AddEditIssueView extends React.Component {
           errorMessage={errorHighlightConditions.type ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
           value={issue.type} />
       </div>
-      <h3 {...marginTop}>Subsidiary Questions or Other Tracking Identifier(s)</h3>
+      <h3 {...marginTop}>Subsidiary Questions or Other Tracking Identifiers</h3>
       <div {...dropdownMarginTop}>
         <SearchableDropdown
           name="Level 1:"

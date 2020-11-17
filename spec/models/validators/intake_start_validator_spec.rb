@@ -42,9 +42,9 @@ describe IntakeStartValidator, :postgres do
       end
       subject { validate_error_code }
 
-      context "intake user is on the MailTeam" do
+      context "intake user is on the BVA Intake team" do
         it "sets a veteran_not_modifiable error code" do
-          MailTeam.singleton.add_user(user)
+          BvaIntake.singleton.add_user(user)
           is_expected.to eq "veteran_not_modifiable"
         end
       end
@@ -56,9 +56,9 @@ describe IntakeStartValidator, :postgres do
           is_expected.to eq "veteran_not_modifiable"
         end
 
-        context "intake user at Station 101 is also on the MailTeam" do
+        context "intake user at Station 101 is also on the BVA Intake team" do
           it "sets no error_code" do
-            MailTeam.singleton.add_user(user)
+            BvaIntake.singleton.add_user(user)
             is_expected.to be nil
           end
         end

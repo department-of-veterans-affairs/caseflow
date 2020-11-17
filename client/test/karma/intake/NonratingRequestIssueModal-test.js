@@ -12,7 +12,11 @@ describe('NonratingRequestIssueModal', () => {
   context('renders', () => {
     it('renders button text', () => {
       const wrapper = mount(
-        <NonratingRequestIssueModal formType={formType} intakeData={intakeData} onSkip={() => null} />
+        <NonratingRequestIssueModal 
+        formType={formType} 
+        intakeData={intakeData}
+        featureToggles={{attorneyFees: true }}
+        onSkip={() => null} />
       );
 
       const cancelBtn = wrapper.find('.cf-modal-controls .close-modal');
@@ -35,7 +39,12 @@ describe('NonratingRequestIssueModal', () => {
     });
 
     it('skip button only with onSkip prop', () => {
-      const wrapper = mount(<NonratingRequestIssueModal formType={formType} intakeData={intakeData} />);
+      const wrapper = mount(
+       <NonratingRequestIssueModal
+       formType={formType}
+       intakeData={intakeData}
+       featureToggles={{attorneyFees: true }}
+       />);
 
       expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).to.equal(false);
 
@@ -44,7 +53,12 @@ describe('NonratingRequestIssueModal', () => {
     });
 
     it('disables button when nothing selected', () => {
-      const wrapper = mount(<NonratingRequestIssueModal formType={formType} intakeData={intakeData} />);
+      const wrapper = mount(
+        <NonratingRequestIssueModal 
+        formType={formType} 
+        intakeData={intakeData} 
+        featureToggles={{attorneyFees: true }} />
+        );
 
       const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
 

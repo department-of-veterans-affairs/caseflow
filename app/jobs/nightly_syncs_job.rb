@@ -11,6 +11,8 @@ class NightlySyncsJob < CaseflowJob
 
     sync_vacols_users
     sync_vacols_cases
+    sync_decision_review_tasks
+    sync_bgs_attorneys
 
     datadog_report_runtime(metric_group_name: "nightly_syncs_job")
   end
@@ -34,10 +36,23 @@ class NightlySyncsJob < CaseflowJob
       else
         # if we have tasks and no case_record, then we need to cancel all the tasks,
         # but we do not delete the dangling LegacyAppeal record.
-        legacy_appeal.tasks.open.each(&:cancelled!)
+        legacy_appeal.tasks.open.where(parent_id: nil).each(&:cancel_task_and_child_subtasks)
       end
     end
     datadog_report_time_segment(segment: "sync_cases_from_vacols", start_time: start_time)
+  end
+
+  def sync_decision_review_tasks
+    # tasks that went unfinished while the case was completed should be cancelled
+    checker = DecisionReviewTasksForInactiveAppealsChecker.new
+    checker.call
+    checker.buffer.map { |task_id| Task.find(task_id).cancelled! }
+  end
+
+  def sync_bgs_attorneys
+    start_time = Time.zone.now
+    BgsAttorney.sync_bgs_attorneys
+    datadog_report_time_segment(segment: "sync_bgs_attorneys", start_time: start_time)
   end
 
   def dangling_legacy_appeals

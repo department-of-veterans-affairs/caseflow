@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe HearingsController, :all_dbs, type: :controller do
+RSpec.describe HearingsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
   let!(:legacy_hearing) { create(:legacy_hearing) }
@@ -8,6 +8,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
   let(:cheyenne_ro_mountain) { "RO42" }
   let(:oakland_ro_pacific) { "RO43" }
   let(:baltimore_ro_eastern) { "RO13" }
+  let(:timezone) { "America/New_York" }
 
   describe "PATCH update" do
     it "should be successful", :aggregate_failures do
@@ -104,19 +105,22 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           let!(:virtual_hearing) do
             create(
               :virtual_hearing,
+              :initialized,
+              status: :active,
               hearing: hearing,
-              veteran_email: "existing_veteran_email@caseflow.gov",
-              veteran_email_sent: true,
+              appellant_email: "existing_veteran_email@caseflow.gov",
+              appellant_email_sent: true,
               judge_email: "existing_judge_email@caseflow.gov",
-              judge_email_sent: true
+              judge_email_sent: true,
+              representative_email: nil
             )
           end
 
           it "returns expected status and has the expected side effects", :aggregate_failures do
             expect(subject.status).to eq(200)
             virtual_hearing.reload
-            expect(virtual_hearing.veteran_email).to eq("existing_veteran_email@caseflow.gov")
-            expect(virtual_hearing.veteran_email_sent).to eq(true)
+            expect(virtual_hearing.appellant_email).to eq("existing_veteran_email@caseflow.gov")
+            expect(virtual_hearing.appellant_email_sent).to eq(true)
             expect(virtual_hearing.judge_email).to eq("existing_judge_email@caseflow.gov")
             expect(virtual_hearing.judge_email_sent).to eq(true)
             expect(virtual_hearing.representative_email).to eq("new_representative_email@caseflow.gov")
@@ -127,7 +131,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       context "with invalid emails" do
         let(:virtual_hearing_params) do
           {
-            veteran_email: "veteran",
+            appellant_email: "veteran",
             judge_email: "!@#$%",
             representative_email: "representative_email"
           }
@@ -138,10 +142,26 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         end
       end
 
+      context "with emails with whitespaces" do
+        let(:virtual_hearing_params) do
+          {
+            appellant_email: "veteran@email.com     ",
+            representative_email: "        representative@email.com  "
+          }
+        end
+
+        it "returns the expected status and updates the virtual hearing", :aggregate_failures do
+          expect(subject.status).to eq(200)
+
+          expect(VirtualHearing.first.appellant_email).to eq("veteran@email.com")
+          expect(VirtualHearing.first.representative_email).to eq("representative@email.com")
+        end
+      end
+
       context "with all email params" do
         let(:virtual_hearing_params) do
           {
-            veteran_email: "new_veteran_email@caseflow.gov",
+            appellant_email: "new_veteran_email@caseflow.gov",
             representative_email: "new_representative_email@caseflow.gov"
           }
         end
@@ -150,7 +170,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           expect(subject.status).to eq(200)
           expect(VirtualHearing.first).to_not eq(nil)
           expect(VirtualHearing.first.hearing_id).to eq(hearing.id)
-          expect(VirtualHearing.first.veteran_email).to eq("new_veteran_email@caseflow.gov")
+          expect(VirtualHearing.first.appellant_email).to eq("new_veteran_email@caseflow.gov")
           expect(VirtualHearing.first.judge_email).to eq("new_judge_email@caseflow.gov")
           expect(VirtualHearing.first.representative_email).to eq("new_representative_email@caseflow.gov")
         end
@@ -158,9 +178,9 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         it "kicks off CreateConferenceJob and updates virtual_hearing table", :aggregate_failures do
           subject
           expect(VirtualHearing.first.establishment.submitted?).to eq(true)
-          expect(VirtualHearing.first.status).to eq("active")
+          expect(VirtualHearing.first.status).to eq(:active)
           expect(VirtualHearing.first.conference_id).to_not eq(nil)
-          expect(VirtualHearing.first.veteran_email_sent).to eq(true)
+          expect(VirtualHearing.first.appellant_email_sent).to eq(true)
           expect(VirtualHearing.first.judge_email_sent).to eq(true)
           expect(VirtualHearing.first.representative_email_sent).to eq(true)
         end
@@ -171,16 +191,21 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           let!(:virtual_hearing) do
             create(
               :virtual_hearing,
+              :initialized,
+              status: :active,
               hearing: hearing,
-              veteran_email: "existing_veteran_email@caseflow.gov",
-              representative_email: "existing_rep_email@casfelow.gov"
+              appellant_email: "existing_veteran_email@caseflow.gov",
+              appellant_email_sent: true,
+              judge_email: nil,
+              representative_email: "existing_rep_email@casfelow.gov",
+              representative_email_sent: true
             )
           end
 
           it "returns expected status and updates the existing hearing", :aggregate_failures do
             expect(subject.status).to eq(200)
             virtual_hearing.reload
-            expect(virtual_hearing.veteran_email).to eq("new_veteran_email@caseflow.gov")
+            expect(virtual_hearing.appellant_email).to eq("new_veteran_email@caseflow.gov")
             expect(virtual_hearing.representative_email).to eq("new_representative_email@caseflow.gov")
           end
         end
@@ -193,13 +218,14 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           create(
             :virtual_hearing,
             :all_emails_sent,
+            status: :active,
             hearing: hearing,
             conference_id: "000000"
           )
         end
         let(:virtual_hearing_params) do
           {
-            status: "cancelled"
+            request_cancelled: true
           }
         end
 
@@ -207,6 +233,34 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           expect(subject.status).to eq(200)
           virtual_hearing.reload
           expect(virtual_hearing.cancelled?).to eq(true)
+        end
+      end
+
+      context "with valid appellant_tz" do
+        let(:virtual_hearing_params) do
+          {
+            appellant_email: "new_veteran_email@caseflow.gov",
+            appellant_tz: timezone
+          }
+        end
+
+        it "returns expected status and has expected side effects", :aggregate_failures do
+          expect(subject.status).to eq(200)
+          expect(hearing.reload.virtual_hearing.appellant_tz).to eq(timezone)
+        end
+      end
+
+      context "with valid representative_tz" do
+        let(:virtual_hearing_params) do
+          {
+            appellant_email: "new_veteran_email@caseflow.gov",
+            representative_tz: timezone
+          }
+        end
+
+        it "returns expected status and has expected side effects", :aggregate_failures do
+          expect(subject.status).to eq(200)
+          expect(hearing.reload.virtual_hearing.representative_tz).to eq(timezone)
         end
       end
     end
@@ -217,9 +271,11 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       let!(:virtual_hearing) do
         create(
           :virtual_hearing,
+          :initialized,
+          status: :active,
           hearing: hearing,
-          veteran_email: "existing_veteran_email@caseflow.gov",
-          veteran_email_sent: true,
+          appellant_email: "existing_veteran_email@caseflow.gov",
+          appellant_email_sent: true,
           judge_email: "existing_judge_email@caseflow.gov",
           judge_email_sent: true,
           representative_email: "existing_representative_email@caseflow.gov",
@@ -254,7 +310,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         expect(virtual_hearing.judge_email).to eq(new_judge.email)
 
         expect(virtual_hearing.judge_email_sent).to eq(false)
-        expect(virtual_hearing.veteran_email_sent).to eq(true)
+        expect(virtual_hearing.appellant_email_sent).to eq(true)
         expect(virtual_hearing.representative_email_sent).to eq(true)
       end
     end
@@ -276,7 +332,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
           advance_on_docket_motion: {
             user_id: user.id,
             person_id: ama_hearing.appeal.appellant.id,
-            reason: AdvanceOnDocketMotion.reasons[:age],
+            reason: Constants.AOD_REASONS.age,
             granted: true
           },
           hearing: { notes: "Test" }
@@ -285,8 +341,26 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         expect(response.status).to eq 200
         ama_hearing.reload
         expect(ama_hearing.advance_on_docket_motion.person.id).to eq ama_hearing.appeal.appellant.id
-        expect(ama_hearing.advance_on_docket_motion.reason).to eq AdvanceOnDocketMotion.reasons[:age]
+        expect(ama_hearing.advance_on_docket_motion.reason).to eq Constants.AOD_REASONS.age
         expect(ama_hearing.advance_on_docket_motion.granted).to eq true
+      end
+    end
+
+    context "when updating hearing location" do
+      it "should return error if facility_id is not provided" do
+        params = {
+          id: ama_hearing.external_id,
+          hearing: {
+            notes: "Test",
+            hearing_location_attributes: {
+              distance: 50,
+              address: "fake address",
+              city: "fake city"
+            }
+          }
+        }
+        patch :update, as: :json, params: params
+        expect(response.status).to eq 400
       end
     end
 
@@ -302,8 +376,8 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
     # for "America/New_York", "-04:00" or "-05:00" depending on daylight savings time
     let(:utc_offset) do
       hours, minutes = Time.zone.now.in_time_zone(expected_time_zone).utc_offset.divmod(60)[0].divmod(60)
-      hour_string = (hours < 0) ? format("%03i", hours) : format("+%02i", hours)
-      "#{hour_string}:#{format('%02i', minutes)}"
+      hour_string = (hours < 0) ? format("%<hours>03i", hours: hours) : format("+%<hours>02i", hours: hours)
+      "#{hour_string}:#{format('%<minutes>02i', minutes: minutes)}"
     end
 
     subject do
@@ -314,17 +388,19 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
       expect(subject.status).to eq 200
     end
 
-    shared_examples_for "returns the correct hearing time in EST" do
+    shared_examples_for "returns the correct hearing time in EST" do |expected_time|
       it "returns the correct hearing time in EST", :aggregate_failures do
         body = JSON.parse(subject.body)
 
         expect(body["data"]["regional_office_timezone"]).to eq(expected_time_zone)
-        expect(body["data"]["scheduled_time_string"]).to eq("08:30")
-        expect(body["data"]["scheduled_for"]).to eq("#{hearing.hearing_day.scheduled_for}T08:30:00.000#{utc_offset}")
+        expect(body["data"]["scheduled_time_string"]).to eq(expected_time)
+        expect(body["data"]["scheduled_for"]).to eq(
+          "#{hearing.hearing_day.scheduled_for}T#{expected_time}:00.000#{utc_offset}"
+        )
       end
     end
 
-    it_should_behave_like "returns the correct hearing time in EST"
+    it_should_behave_like "returns the correct hearing time in EST", "08:30"
 
     context "for user on west coast" do
       let!(:user) do
@@ -333,7 +409,7 @@ RSpec.describe HearingsController, :all_dbs, type: :controller do
         )
       end
 
-      it_should_behave_like "returns the correct hearing time in EST"
+      it_should_behave_like "returns the correct hearing time in EST", "05:30"
     end
   end
 

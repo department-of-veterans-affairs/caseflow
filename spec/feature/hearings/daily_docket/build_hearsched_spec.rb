@@ -6,10 +6,12 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
 
   context "Daily docket with one legacy hearing" do
     let!(:hearing_day) do
-      create(:hearing_day,
-             request_type: HearingDay::REQUEST_TYPES[:video],
-             regional_office: "RO18",
-             scheduled_for: Date.new(2020, 4, 15))
+      create(
+        :hearing_day,
+        request_type: HearingDay::REQUEST_TYPES[:video],
+        regional_office: "RO18",
+        scheduled_for: Time.zone.today + 1.week
+      )
     end
 
     let!(:vacols_case) { create(:case, bfcorlid: "123456789S") }
@@ -50,7 +52,7 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
       expect(page).to_not have_content("Finding hearing locations", wait: 30)
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       fill_in "Notes", with: "This is a note about the hearing!"
-      find("label", text: "8:30 am").click
+      find("label", text: "8:30 AM Eastern Time (US & Canada)").click
       find("label", text: "Transcript Requested").click
       click_button("Save")
 
@@ -60,7 +62,6 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
       expect(find_field("Transcript Requested", visible: false)).to be_checked
       expect(find_field("8:30", visible: false)).to be_checked
     end
-
     scenario "User can see paper_case notification" do
       visit "hearings/schedule/docket/" + legacy_hearing.hearing_day.id.to_s
       expect(page).to have_content(COPY::IS_PAPER_CASE)
@@ -105,7 +106,7 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
     scenario "User cannot update disposition" do
       hearing_task_association.hearing_task.update(status: :in_progress)
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-      expect(find(".dropdown-#{hearing.external_id}-disposition")).to have_css(".is-disabled")
+      expect(find(".dropdown-#{hearing.external_id}-disposition")).to have_css(".cf-select__control--is-disabled")
     end
   end
 end

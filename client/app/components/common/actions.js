@@ -65,7 +65,7 @@ export const onReceiveAlerts = (alerts) => {
   return {
     type: ACTIONS.RECEIVE_ALERTS,
     payload: {
-      alerts: alerts.map((alert) => ({
+      alerts: (alerts || []).map((alert) => ({
         ...alert,
         timestamp
       }))
@@ -73,9 +73,49 @@ export const onReceiveAlerts = (alerts) => {
   };
 };
 
+export const onReceiveTransitioningAlert = (alert, key) => ({
+  type: ACTIONS.RECEIVE_TRANSITIONING_ALERT,
+  payload: {
+    alert,
+    key
+  }
+});
+
+export const transitionAlert = (key) => ({
+  type: ACTIONS.TRANSITION_ALERT,
+  payload: {
+    key
+  }
+});
+
 export const removeAlertsWithTimestamps = (timestamps) => ({
-  type: ACTIONS.REMOVE_ALERTS_WITH_TIMESTAMP,
+  type: ACTIONS.REMOVE_ALERTS_WITH_EXPIRATION,
   payload: {
     timestamps
   }
+});
+
+export const clearAlerts = () => ({
+  type: ACTIONS.CLEAR_ALERTS,
+});
+
+export const startPollingHearing = (externalId) => ({
+  type: ACTIONS.START_POLLING,
+  payload: {
+    externalId,
+    polling: true
+  }
+});
+
+export const stopPollingHearing = () => ({
+  type: ACTIONS.STOP_POLLING,
+  payload: {
+    externalId: null,
+    polling: false
+  }
+});
+
+export const setScheduledHearing = (payload) => ({
+  type: ACTIONS.SET_SCHEDULE_HEARING_PAYLOAD,
+  payload
 });

@@ -1,7 +1,15 @@
 # frozen_string_literal: true
 
 describe Veteran, :all_dbs do
-  let(:veteran) { Veteran.new(file_number: "44556677", first_name: "June", last_name: "Juniper") }
+  let(:veteran) do
+    Veteran.new(
+      file_number: "44556677",
+      first_name: "June",
+      last_name: "Juniper",
+      name_suffix: name_suffix,
+      date_of_death: date_of_death
+    )
+  end
 
   before do
     Timecop.freeze(Time.utc(2022, 1, 15, 12, 0, 0))
@@ -19,7 +27,7 @@ describe Veteran, :all_dbs do
       first_name: "June",
       middle_name: "Janice",
       last_name: "Juniper",
-      name_suffix: "II",
+      name_suffix: name_suffix,
       ssn: ssn,
       address_line1: "122 Mullberry St.",
       address_line2: "PO BOX 123",
@@ -28,12 +36,14 @@ describe Veteran, :all_dbs do
       state: state,
       country: country,
       date_of_birth: date_of_birth,
+      date_of_death: date_of_death,
       zip_code: zip_code,
       military_post_office_type_code: military_post_office_type_code,
       military_postal_type_code: military_postal_type_code,
       service: service
     }
   end
+  let(:name_suffix) { "II" }
 
   let(:city) { "San Francisco" }
   let(:state) { "CA" }
@@ -42,8 +52,9 @@ describe Veteran, :all_dbs do
   let(:country) { "USA" }
   let(:zip_code) { "94117" }
   let(:address_line3) { "Daisies" }
-  let(:date_of_birth) { "21/12/1989" }
-  let(:service) { [{ branch_of_service: "army" }] }
+  let(:date_of_birth) { "12/21/1989" }
+  let(:service) { [{ branch_of_service: "army", pay_grade: "E4" }] }
+  let(:date_of_death) { "12/31/2019" }
   let(:ssn) { "123456789" }
 
   context ".find_or_create_by_file_number" do
@@ -174,7 +185,8 @@ describe Veteran, :all_dbs do
         city: "San Francisco",
         state: "CA",
         country: "USA",
-        date_of_birth: "21/12/1989",
+        date_of_birth: "12/21/1989",
+        date_of_death: "12/31/2019",
         zip_code: "94117",
         military_post_office_type_code: "DPO",
         military_postal_type_code: "AE",
@@ -222,7 +234,8 @@ describe Veteran, :all_dbs do
         city: "San Francisco",
         state: "CA",
         country: "USA",
-        date_of_birth: "21/12/1989",
+        date_of_birth: "12/21/1989",
+        date_of_death: date_of_death,
         zip_code: "94117",
         military_post_office_type_code: "DPO",
         military_postal_type_code: "AE"
@@ -231,6 +244,7 @@ describe Veteran, :all_dbs do
   end
 
   context "#to_vbms_hash" do
+    let(:date_of_death) { nil }
     subject { veteran.to_vbms_hash }
 
     it "returns the correct values" do
@@ -239,8 +253,8 @@ describe Veteran, :all_dbs do
         sex: "M",
         first_name: "June",
         last_name: "Juniper",
-        name_suffix: nil,
-        service: [{ branch_of_service: "army" }],
+        name_suffix: name_suffix,
+        service: [{ branch_of_service: "army", pay_grade: "E4" }],
         ssn: "123456789",
         address_line1: "122 Mullberry St.",
         address_line2: "PO BOX 123",
@@ -249,7 +263,7 @@ describe Veteran, :all_dbs do
         city: "San Francisco",
         state: "CA",
         country: "USA",
-        date_of_birth: "21/12/1989",
+        date_of_birth: "12/21/1989",
         zip_code: "94117",
         address_type: "",
         email_address: nil
@@ -295,6 +309,21 @@ describe Veteran, :all_dbs do
         let(:military_post_office_type_code) { "DPO" }
 
         it { is_expected.to include(state: "AA", city: "DPO", address_type: "OVR") }
+      end
+    end
+
+    context "when veteran pay grade is invalid" do
+      subject { veteran.validate_veteran_pay_grade }
+      let(:service) do
+        [{ branch_of_service: "Army",
+           entered_on_duty_date: "06282002",
+           released_active_duty_date: "06282003",
+           pay_grade: "not valid",
+           char_of_svc_code: "TBD" }]
+      end
+
+      it "pay grade invalid" do
+        expect(subject).to eq ["invalid_pay_grade"]
       end
     end
   end
@@ -505,10 +534,19 @@ describe Veteran, :all_dbs do
     end
   end
 
+  context "when a zip code is invalid" do
+    let(:zip_code) { "1234" }
+
+    it "zip code has invalid characters" do
+      expect(veteran.validate_zip_code).to eq ["invalid_zip_code"]
+    end
+  end
+
   context "given a military address and nil city & state" do
     let(:military_postal_type_code) { "AA" }
     let(:city) { nil }
     let(:state) { nil }
+    let(:date_of_birth) { nil }
 
     it "is considered a valid veteran from bgs" do
       expect(veteran.valid?(:bgs)).to be true
@@ -522,6 +560,33 @@ describe Veteran, :all_dbs do
 
     it "city is considered invalid" do
       expect(veteran.validate_city).to eq ["invalid_characters"]
+    end
+  end
+
+  context "given date of birth is missing leading zeros" do
+    let(:date_of_birth) { "2/2/1956" }
+
+    it "date_of_birth is considered invalid" do
+      expect(veteran.validate_date_of_birth).to eq ["invalid_date_of_birth"]
+    end
+  end
+
+  context "#validate_name_suffix" do
+    subject { veteran.validate_name_suffix }
+    let(:name_suffix) { "JR." }
+
+    it "name_suffix is considered invalid" do
+      expect(subject).to eq ["invalid_character"]
+      expect(veteran.valid?(:bgs)).to eq false
+    end
+
+    context "name_suffix nil" do
+      let(:name_suffix) { nil }
+
+      it "name_suffix is considered valid" do
+        subject
+        expect(veteran.valid?(:bgs)).to eq true
+      end
     end
   end
 
@@ -623,6 +688,20 @@ describe Veteran, :all_dbs do
       it "fetches based on SSN" do
         expect(described_class.find_or_create_by_file_number_or_ssn(ssn)).to eq(veteran)
       end
+
+      context "veteran saved in Caseflow with SSN as filenumber" do
+        let!(:veteran_by_ssn) { create(:veteran, file_number: ssn, ssn: ssn) }
+
+        before do
+          veteran.destroy! # leaves it in BGS
+        end
+
+        it "finds the veteran based on SSN and does not create a duplicate" do
+          expect(described_class.find_or_create_by_file_number_or_ssn(ssn)).to eq(veteran_by_ssn)
+          expect(described_class.find_or_create_by_file_number_or_ssn(file_number)).to eq(veteran_by_ssn)
+          expect(Veteran.where(ssn: ssn).count).to eq 1
+        end
+      end
     end
 
     context "does not exist in BGS" do
@@ -720,11 +799,13 @@ describe Veteran, :all_dbs do
     let(:middle_name) { "Q" }
     let(:name_suffix) { "Esq" }
     let(:ssn) { "666000000" }
+    let(:date_of_death) { "2019-12-31" }
     let(:bgs_first_name) { first_name }
     let(:bgs_last_name) { last_name }
     let(:bgs_middle_name) { middle_name }
     let(:bgs_name_suffix) { name_suffix }
     let(:bgs_ssn) { ssn }
+    let(:bgs_date_of_death) { date_of_death }
     let!(:veteran) do
       create(
         :veteran,
@@ -733,20 +814,40 @@ describe Veteran, :all_dbs do
         middle_name: middle_name,
         name_suffix: name_suffix,
         ssn: ssn,
+        date_of_death: date_of_death,
         bgs_veteran_record: {
           first_name: bgs_first_name,
           last_name: bgs_last_name,
           middle_name: bgs_middle_name,
           name_suffix: bgs_name_suffix,
-          ssn: bgs_ssn
+          ssn: bgs_ssn,
+          date_of_death: bgs_date_of_death
         }
       )
     end
 
     subject { veteran.stale_attributes? }
 
+    before do
+      veteran.unload_bgs_record # force it to reload from BGS
+    end
+
     context "no difference" do
-      it { is_expected.to eq(false) }
+      it "is false" do
+        is_expected.to eq(false)
+      end
+    end
+
+    context "date_of_death does not match BGS" do
+      let(:bgs_date_of_death) { "2020-01-02" }
+
+      before do
+        Fakes::BGSService.edit_veteran_record(veteran.file_number, :date_of_death, bgs_date_of_death)
+      end
+
+      it "is true" do
+        is_expected.to eq(true)
+      end
     end
 
     context "first_name is nil" do
@@ -794,5 +895,13 @@ describe Veteran, :all_dbs do
 
       it { is_expected.to eq(true) }
     end
+  end
+
+  context "#zip_code" do
+    subject do
+      veteran.zip_code
+    end
+
+    it { is_expected.to eq("94117") }
   end
 end

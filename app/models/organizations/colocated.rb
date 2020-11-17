@@ -8,8 +8,4 @@ class Colocated < Organization
   def next_assignee(options = {})
     ColocatedTaskDistributor.new.next_assignee(options)
   end
-
-  def use_task_pages_api?
-    true
-  end
 end

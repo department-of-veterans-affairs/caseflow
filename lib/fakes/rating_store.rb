@@ -28,7 +28,21 @@ class Fakes::RatingStore < Fakes::PersistentStore
   def store_rating_profile_record(participant_id, profile_date, record)
     ratings = fetch_and_inflate(participant_id) || {}
     ratings[:profiles] ||= {}
-    ratings[:profiles][self.class.normed_profile_date_key(profile_date)] = record
+    date_key = self.class.normed_profile_date_key(profile_date).to_sym
+    ratings[:profiles][date_key] = if ratings[:profiles][date_key] # already exists
+                                     merge_rating_profiles(ratings[:profiles][date_key], record)
+                                   else
+                                     record
+                                   end
     deflate_and_store(participant_id, ratings)
+  end
+
+  def merge_rating_profiles(old, new)
+    # built-in Hash.deep_merge is not smart enough
+    merged = {}
+    [:rating_issues, :associated_claims, :disabilities].each do |top_key|
+      merged[top_key] = [old[top_key]].flatten + [new[top_key]].flatten
+    end
+    merged
   end
 end

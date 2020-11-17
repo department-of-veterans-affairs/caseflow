@@ -5,37 +5,17 @@ import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 
 import { onReceiveAmaTasks } from './QueueActions';
-import ApiUtil from '../util/ApiUtil';
 import COPY from '../../COPY';
-import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import { subHeadTextStyle } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 class CaseDetailsLink extends React.PureComponent {
-  onClick = (...args) => {
-    const { task, userRole } = this.props;
-
-    // when searching for a case, we only load appeal info, no tasks
-    if (task && task.status && task.status === 'assigned' && userRole === USER_ROLE_TYPES.colocated) {
-      const payload = {
-        data: {
-          task: {
-            status: 'in_progress'
-          }
-        }
-      };
-
-      ApiUtil.patch(`/tasks/${task.taskId}`, payload);
-    }
-
-    return this.props.onClick ? this.props.onClick(args) : true;
-  }
+  onClick = (...args) => this.props.onClick ? this.props.onClick(args) : true;
 
   getLinkText = () => {
     const {
       task,
-      appeal,
-      userRole
+      appeal
     } = this.props;
 
     if (this.props.getLinkText) {
@@ -43,7 +23,7 @@ class CaseDetailsLink extends React.PureComponent {
     }
 
     const linkStyling = css({
-      fontWeight: (task.status === 'assigned' && userRole === USER_ROLE_TYPES.colocated) ? 'bold' : null
+      fontWeight: task.startedAt ? null : 'bold'
     });
 
     return <span {...linkStyling} id={`veteran-name-for-task-${task.taskId}`}>

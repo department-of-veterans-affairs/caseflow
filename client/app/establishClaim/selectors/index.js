@@ -12,14 +12,14 @@ export const getStationOfJurisdiction = createSelector(
     let station = ARC_STATION_OF_JURISDICTION;
 
     // Go through the special issues, and for any regional issues, set SOJ to RO
-    specialIssueFilters.regionalSpecialIssues().forEach((issue) => {
+    specialIssueFilters().regionalSpecialIssues().forEach((issue) => {
       if (specialIssues[issue.specialIssue]) {
         station = stationKey;
       }
     });
 
     // Go through all the special issues, this time looking for routed issues
-    specialIssueFilters.routedSpecialIssues().forEach((issue) => {
+    specialIssueFilters().routedSpecialIssues().forEach((issue) => {
       if (specialIssues[issue.specialIssue]) {
         station = issue.stationOfJurisdiction.key;
       }

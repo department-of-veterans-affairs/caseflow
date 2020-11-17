@@ -40,9 +40,11 @@ class BoardGrantEffectuation < CaseflowRecord
     return if processed?
 
     attempted!
-    return unless associated_rating
+    if granted_decision_issue.rating?
+      return unless associated_rating
 
-    update_from_matching_rating_issue!
+      update_from_matching_rating_issue!
+    end
     clear_error!
     processed!
   end
@@ -72,7 +74,9 @@ class BoardGrantEffectuation < CaseflowRecord
       rating_promulgation_date: matching_rating_issue.promulgation_date,
       rating_profile_date: matching_rating_issue.profile_date,
       decision_text: matching_rating_issue.decision_text,
-      rating_issue_reference_id: matching_rating_issue.reference_id
+      rating_issue_reference_id: matching_rating_issue.reference_id,
+      subject_text: matching_rating_issue.subject_text,
+      percent_number: matching_rating_issue.percent_number
     )
   end
 

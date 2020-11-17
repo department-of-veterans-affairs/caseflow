@@ -109,14 +109,6 @@ feature "Supplemental Claim Intake", :all_dbs do
       find("label", text: "Compensation", match: :prefer_exact).click
     end
 
-    fill_in "What is the Receipt Date of this form?", with: (Time.zone.today + 1.day).mdY
-    click_intake_continue
-    expect(page).to have_content(
-      "Receipt date cannot be in the future."
-    )
-
-    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
-
     expect(page).to_not have_content("Please select the claimant listed on the form.")
     within_fieldset("Is the claimant someone other than the Veteran?") do
       find("label", text: "Yes", match: :prefer_exact).click
@@ -132,6 +124,13 @@ feature "Supplemental Claim Intake", :all_dbs do
     find("#cf-payee-code").send_keys :enter
 
     select_agree_to_withdraw_legacy_issues(false)
+
+    fill_in "What is the Receipt Date of this form?", with: (Time.zone.today + 1.day).mdY
+    click_intake_continue
+    expect(page).to have_content(
+      "Receipt date cannot be in the future."
+    )
+    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
     click_intake_continue
 
@@ -367,7 +366,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       detail: supplemental_claim
     )
 
-    Claimant.create!(
+    VeteranClaimant.create!(
       decision_review: supplemental_claim,
       participant_id: test_veteran.participant_id
     )
@@ -468,6 +467,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Ed Merica")
+      check_row("SOC/SSOC Opt-in", "No")
 
       # clicking the add issues button should bring up the modal
       click_intake_add_issue
@@ -489,7 +489,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       expect(page).to_not have_content("Notes:")
 
       click_remove_intake_issue("1")
-      expect(page).not_to have_content("Left knee granted 2")
+      expect(page.has_no_content?("Left knee granted 2")).to eq(true)
 
       # re-add to proceed
       click_intake_add_issue
@@ -819,6 +819,8 @@ feature "Supplemental Claim Intake", :all_dbs do
         scenario "adding issues" do
           start_supplemental_claim(veteran, legacy_opt_in_approved: true)
           visit "/intake/add_issues"
+
+          check_row("SOC/SSOC Opt-in", "Yes")
 
           click_intake_add_issue
           expect(page).to have_content("Next")

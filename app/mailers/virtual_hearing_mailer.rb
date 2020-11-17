@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 class VirtualHearingMailer < ActionMailer::Base
-  default from: "BoardofVeteransAppealsHearings@public.govdelivery.com"
+  default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
   layout "virtual_hearing_mailer"
   helper VirtualHearings::ExternalLinkHelper
-  helper VirtualHearings::VeteranNameHelper
+  helper VirtualHearings::AppellantNameHelper
   helper VirtualHearings::CalendarTemplateHelper
 
   def cancellation(mail_recipient:, virtual_hearing: nil)
+    # Guard to prevent cancellation emails from sending to the judge
     return if mail_recipient.title == MailRecipient::RECIPIENT_TITLES[:judge]
 
     @recipient = mail_recipient
@@ -22,7 +23,7 @@ class VirtualHearingMailer < ActionMailer::Base
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
     @link = link
-    @test_link = test_link
+    @test_link = virtual_hearing&.test_link(mail_recipient.title)
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
 
@@ -33,13 +34,32 @@ class VirtualHearingMailer < ActionMailer::Base
     @recipient = mail_recipient
     @virtual_hearing = virtual_hearing
     @link = link
-    @test_link = test_link
+    @test_link = virtual_hearing&.test_link(mail_recipient.title)
 
     attachments[calendar_invite_name] = confirmation_calendar_invite
 
     mail(
       to: recipient.email,
       subject: "Your Board hearing time has changed"
+    )
+  end
+
+  def reminder(mail_recipient:, virtual_hearing: nil)
+    # Guard to prevent reminder emails from sending to the judge
+    return if mail_recipient.title == MailRecipient::RECIPIENT_TITLES[:judge]
+
+    @recipient = mail_recipient
+    @virtual_hearing = virtual_hearing
+    @link = link
+    @test_link = virtual_hearing&.test_link(mail_recipient.title)
+
+    # Mon, Oct 19 at 10:30am CDT
+    time_format = "%a, %b %-d at %-l:%M%P %Z"
+    formatted_time = virtual_hearing.hearing.time.appellant_time.strftime(time_format)
+
+    mail(
+      to: recipient.email,
+      subject: "Reminder: Your Board hearing is #{formatted_time}"
     )
   end
 
@@ -52,12 +72,12 @@ class VirtualHearingMailer < ActionMailer::Base
   end
 
   def cancellation_calendar_invite
-    VirtualHearings::CalendarService.update_to_video_calendar_invite(virtual_hearing.hearing, recipient)
+    VirtualHearings::CalendarService.update_to_video_calendar_invite(virtual_hearing, recipient)
   end
 
   def calendar_invite_name
     case recipient.title
-    when MailRecipient::RECIPIENT_TITLES[:veteran], MailRecipient::RECIPIENT_TITLES[:representative]
+    when MailRecipient::RECIPIENT_TITLES[:appellant], MailRecipient::RECIPIENT_TITLES[:representative]
       "BoardHearing.ics"
     when MailRecipient::RECIPIENT_TITLES[:judge]
       "VirtualHearing.ics"
@@ -66,7 +86,7 @@ class VirtualHearingMailer < ActionMailer::Base
 
   def confirmation_subject
     case recipient.title
-    when MailRecipient::RECIPIENT_TITLES[:veteran], MailRecipient::RECIPIENT_TITLES[:representative]
+    when MailRecipient::RECIPIENT_TITLES[:appellant], MailRecipient::RECIPIENT_TITLES[:representative]
       "Your Board hearing has been scheduled"
     when MailRecipient::RECIPIENT_TITLES[:judge]
       hearing_date = virtual_hearing.hearing.scheduled_for.to_formatted_s(:short_date)
@@ -79,9 +99,5 @@ class VirtualHearingMailer < ActionMailer::Base
     return virtual_hearing.host_link if recipient.title == MailRecipient::RECIPIENT_TITLES[:judge]
 
     virtual_hearing.guest_link
-  end
-
-  def test_link
-    "https://vc.va.gov/webapp2/conference/test_call?name=Veteran&join=1"
   end
 end

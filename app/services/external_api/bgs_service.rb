@@ -36,20 +36,24 @@ class ExternalApi::BGSService
       end
   end
 
-  def cancel_end_product(veteran_file_number, end_product_code, end_product_modifier)
+  def cancel_end_product(veteran_file_number, end_product_code, end_product_modifier, payee_code, benefit_type)
     DBService.release_db_connections
 
     @end_products[veteran_file_number] ||=
       MetricsService.record("BGS: cancel end product by: \
                             file_number = #{veteran_file_number}, \
                             end_product_code = #{end_product_code}, \
-                            modifier = #{end_product_modifier}",
+                            modifier = #{end_product_modifier}
+                            payee_code = #{payee_code}
+                            benefit_type = #{benefit_type}",
                             service: :bgs,
                             name: "claims.cancel_end_product") do
         client.claims.cancel_end_product(
           file_number: veteran_file_number,
           end_product_code: end_product_code,
-          modifier: end_product_modifier
+          modifier: end_product_modifier,
+          payee_code: payee_code,
+          benefit_type: benefit_type
         )
       end
   end
@@ -84,10 +88,32 @@ class ExternalApi::BGSService
       middle_name: bgs_info[:middle_nm],
       name_suffix: bgs_info[:suffix_nm],
       birth_date: bgs_info[:brthdy_dt],
-      email_address: bgs_info[:email_addr]
+      email_address: bgs_info[:email_addr],
+      file_number: bgs_info[:file_nbr],
+      ssn: bgs_info[:ssn_nbr]
     }
   end
 
+  # Returns hash with keys
+  #   :brthdy_dt                    :last_nm
+  #   :cmptny_decn_type_cd          :last_nm_key
+  #   :cmptny_decn_type_nm          :middle_nm
+  #   :death_hist_ind               :middle_nm_key
+  #   :dep_nbr                      :mlty_person_ind
+  #   :email_addr                   :person_type_nm
+  #   :fid_decn_categy_type_cd      :ptcpnt_dto
+  #   :fid_decn_categy_type_nm      :ptcpnt_id
+  #   :file_nbr                     :sbstnc_amt
+  #   :first_nm                     :serous_emplmt_hndcap_ind
+  #   :first_nm_key                 :spina_bifida_ind
+  #   :gender_cd,                   :ssn_nbr
+  #   :ins_file_nbr                 :ssn_vrfctn_status_type_cd
+  #   :jrn_dt                       :station_of_jurisdiction
+  #   :jrn_lctn_id                  :svc_nbr
+  #   :jrn_obj_id                   :termnl_digit_nbr
+  #   :jrn_person_id                :vet_ind
+  #   :jrn_status_type_cd
+  #   :jrn_user_id
   def fetch_person_by_ssn(ssn)
     DBService.release_db_connections
 
@@ -106,6 +132,31 @@ class ExternalApi::BGSService
   end
 
   def fetch_poa_by_file_number(file_number)
+    if FeatureToggle.enabled?(:use_poa_claimants, user: current_user)
+      fetch_poa_by_file_number_by_claimants(file_number)
+    else
+      fetch_poa_by_file_number_by_org(file_number)
+    end
+  end
+
+  # For Claimant POA via BGS claimants. endpoint
+  def fetch_poa_by_file_number_by_claimants(file_number)
+    DBService.release_db_connections
+
+    unless @poas[file_number]
+      bgs_poa = MetricsService.record("BGS: fetch poa for file number: #{file_number}",
+                                      service: :bgs,
+                                      name: "claimants.find_poa_by_file_number") do
+        client.claimants.find_poa_by_file_number(file_number)
+      end
+      @poas[file_number] = get_claimant_poa_from_bgs_claimants_poa(bgs_poa)
+    end
+
+    @poas[file_number]
+  end
+
+  # For Claimant POA via BGS org. endpoint
+  def fetch_poa_by_file_number_by_org(file_number)
     DBService.release_db_connections
 
     unless @poas[file_number]
@@ -114,12 +165,14 @@ class ExternalApi::BGSService
                                       name: "org.find_poas_by_file_number") do
         client.org.find_poas_by_file_number(file_number)
       end
-      @poas[file_number] = get_poa_from_bgs_poa(bgs_poa[:power_of_attorney])
+      @poas[file_number] = get_claimant_poa_from_bgs_poa(bgs_poa)
     end
 
     @poas[file_number]
   end
 
+  # The participant_id here is for a User, not a Claimant.
+  # I.e. returns the list of VSOs that a User represents.
   def fetch_poas_by_participant_id(participant_id)
     DBService.release_db_connections
 
@@ -135,6 +188,8 @@ class ExternalApi::BGSService
     @poa_by_participant_ids[participant_id]
   end
 
+  # The participant IDs here are for Claimants.
+  # I.e. returns the list of POAs that represent the Claimants.
   def fetch_poas_by_participant_ids(participant_ids)
     DBService.release_db_connections
 
@@ -160,6 +215,32 @@ class ExternalApi::BGSService
     get_limited_poas_hash_from_bgs(bgs_limited_poas)
   end
 
+  def poas_list
+    @poas_list ||= fetch_poas_list
+  end
+
+  def fetch_poas_list
+    DBService.release_db_connections
+    MetricsService.record("BGS: fetch list of poas",
+                          service: :bgs,
+                          name: "data.find_power_of_attorneys") do
+      client.data.find_power_of_attorneys
+    end
+  end
+
+  def get_security_profile(username:, station_id:)
+    DBService.release_db_connections
+    MetricsService.record("BGS: get security profile",
+                          service: :bgs,
+                          name: "common_security.get_security_profile") do
+      client.common_security.get_security_profile(
+        username: username,
+        station_id: station_id,
+        application: "CASEFLOW"
+      )
+    end
+  end
+
   def find_address_by_participant_id(participant_id)
     finder = ExternalApi::BgsAddressFinder.new(participant_id: participant_id, client: client)
     @addresses[participant_id] ||= finder.mailing_address || finder.addresses.last
@@ -172,7 +253,7 @@ class ExternalApi::BGSService
   # We cache at 2 levels: the boolean check per user, and the veteran record itself.
   # The veteran record is so that subsequent calls to fetch_veteran_info can read from cache.
   def can_access?(vbms_id)
-    Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 24.hours) do
+    Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 2.hours) do
       DBService.release_db_connections
 
       MetricsService.record("BGS: can_access? (find_by_file_number): #{vbms_id}",
@@ -218,13 +299,19 @@ class ExternalApi::BGSService
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
     DBService.release_db_connections
 
+    start_date, end_date = formatted_start_and_end_dates(start_date, end_date)
+
     MetricsService.record("BGS: fetch ratings in range: \
                            participant_id = #{participant_id}, \
                            start_date = #{start_date} \
                            end_date = #{end_date}",
                           service: :bgs,
                           name: "rating.find_by_participant_id_and_date_range") do
-      client.rating.find_by_participant_id_and_date_range(participant_id, start_date, end_date)
+      client.rating.find_by_participant_id_and_date_range(
+        participant_id,
+        start_date.to_datetime.iso8601,
+        end_date.to_datetime.iso8601
+      )
     end
   end
 
@@ -237,6 +324,25 @@ class ExternalApi::BGSService
                           service: :bgs,
                           name: "rating_profile.find") do
       client.rating_profile.find(participant_id: participant_id, profile_date: profile_date)
+    end
+  end
+
+  def fetch_rating_profiles_in_range(participant_id:, start_date:, end_date:)
+    DBService.release_db_connections
+
+    start_date, end_date = formatted_start_and_end_dates(start_date, end_date)
+
+    MetricsService.record("BGS: fetch rating profile in range: \
+                           participant_id = #{participant_id}, \
+                           start_date = #{start_date}, \
+                           end_date = #{end_date}",
+                          service: :bgs,
+                          name: "rating_profile.find_in_date_range") do
+      client.rating_profile.find_in_date_range(
+        participant_id: participant_id,
+        start_date: start_date,
+        end_date: end_date
+      )
     end
   end
 
@@ -311,13 +417,35 @@ class ExternalApi::BGSService
     end
   end
 
-  def find_contention_by_claim_id(claim_id)
+  def find_contentions_by_claim_id(claim_id)
     DBService.release_db_connections
     MetricsService.record("BGS: find contentions for veteran by claim_id #{claim_id}",
                           service: :bgs,
                           name: "contention.find_contention_by_claim_id") do
       client.contention.find_contention_by_claim_id(claim_id)
     end
+  end
+
+  def find_current_rating_profile_by_ptcpnt_id(participant_id)
+    DBService.release_db_connections
+    MetricsService.record("BGS: find current rating profile for veteran by participant_id #{participant_id}",
+                          service: :bgs,
+                          name: "rating_profile.find_current_rating_profile_by_ptcpnt_id") do
+      client.rating_profile.find_current_rating_profile_by_ptcpnt_id(participant_id, true)
+    end
+  end
+
+  def pay_grade_list
+    DBService.release_db_connections
+
+    @pay_grade_list ||=
+      Rails.cache.fetch("pay_grade_list", expires_in: 1.day) do
+        MetricsService.record("BGS: fetch list of pay grades",
+                              service: :bgs,
+                              name: "share_standard_data.find_pay_grades") do
+          client.share_standard_data.find_pay_grades
+        end
+      end
   end
 
   private
@@ -350,6 +478,14 @@ class ExternalApi::BGSService
       jumpbox_url: ENV["RUBY_BGS_JUMPBOX_URL"],
       log: true
     )
+  end
+
+  def formatted_start_and_end_dates(start_date, end_date)
+    # start_date and end_date should be Dates with different values
+    return_start_date = start_date&.to_date
+    return_end_date = end_date&.to_date
+    return_end_date += 1.day if return_end_date.present? && return_end_date == return_start_date
+    [return_start_date, return_end_date]
   end
   # :nocov:
 end

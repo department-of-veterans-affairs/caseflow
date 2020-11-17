@@ -9,6 +9,7 @@ import CaseDetailsLink from '../CaseDetailsLink';
 import ReaderLink from '../ReaderLink';
 import ContinuousProgressBar from '../../components/ContinuousProgressBar';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
+import IhpDaysWaitingTooltip from './IhpDaysWaitingTooltip';
 
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, regionalOfficeCity, renderAppealType } from '../utils';
 import { DateString } from '../../util/DateUtil';
@@ -53,6 +54,25 @@ export const docketNumberColumn = (tasks, filterOptions, requireDasRecord) => {
       }
 
       return `${task.appeal.docketName || ''} ${task.appeal.docketNumber}`;
+    }
+  };
+};
+
+export const documentIdColumn = () => {
+  return {
+    header: COPY.CASE_LIST_TABLE_DOCUMENT_ID_COLUMN_TITLE,
+    valueFunction: (task) => {
+      const preparer = task.decisionPreparedBy || task.assignedBy;
+
+      if (!preparer.firstName) {
+        return task.documentId;
+      }
+
+      const nameAbbrev = `${preparer.firstName.substring(0, 1)}. ${preparer.lastName}`;
+
+      return <React.Fragment>
+        {task.documentId}<br />from {nameAbbrev}
+      </React.Fragment>;
     }
   };
 };
@@ -209,13 +229,13 @@ export const daysWaitingColumn = (requireDasRecord) => {
         daysSincePlacedOnHold = moment().startOf('day').
           diff(task.placedOnHoldAt, 'days');
 
-      return <React.Fragment>
+      return <IhpDaysWaitingTooltip {...task.latestInformalHearingPresentationTask}>
         <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>
           {daysSinceAssigned} {pluralize('day', daysSinceAssigned)}
         </span>
         { taskHasCompletedHold(task) &&
           <ContinuousProgressBar level={daysSincePlacedOnHold} limit={task.onHoldDuration} warning /> }
-      </React.Fragment>;
+      </IhpDaysWaitingTooltip>;
     },
     backendCanSort: true,
     getSortValue: (task) => moment().startOf('day').

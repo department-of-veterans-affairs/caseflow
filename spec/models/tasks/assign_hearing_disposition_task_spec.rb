@@ -1,6 +1,23 @@
 # frozen_string_literal: true
 
 describe AssignHearingDispositionTask do
+  shared_examples "virtual hearing is cleaned up" do
+    it "cleans up the virtual hearing", :aggregate_failures do
+      hearing.reload
+
+      subject
+      expect(hearing.virtual_hearing.reload.closed?).to eq(true)
+    end
+  end
+
+  shared_context "when hearing is virtual" do
+    let!(:virtual_hearing) do
+      create(:virtual_hearing, :initialized, :all_emails_sent, status: :active, hearing: hearing)
+    end
+
+    include_examples "virtual hearing is cleaned up"
+  end
+
   describe "#update_from_params for ama appeal" do
     let(:appeal) { create(:appeal) }
     let!(:hearing) { create(:hearing, appeal: appeal) }
@@ -17,6 +34,7 @@ describe AssignHearingDispositionTask do
 
     before do
       HearingsManagement.singleton.add_user(user)
+      RequestStore[:current_user] = user
     end
 
     describe "hearing disposition of cancelled" do
@@ -39,6 +57,11 @@ describe AssignHearingDispositionTask do
         expect(Hearing.count).to eq 1
         expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.cancelled
         expect(disposition_task.reload.closed_at).to_not be_nil
+        expect(disposition_task.cancelled_by).to eq user
+      end
+
+      context "when hearing is virtual" do
+        include_context "when hearing is virtual"
       end
     end
 
@@ -55,10 +78,9 @@ describe AssignHearingDispositionTask do
       end
 
       it "sets the hearing disposition and calls hold!" do
-        expect(disposition_task).to receive(:hold!).exactly(1).times
+        expect(disposition_task).to receive(:hold!).exactly(1).times.and_call_original
 
-        subject
-
+        expect(subject.count).to eq 3
         expect(Hearing.count).to eq 1
         expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.held
       end
@@ -77,10 +99,9 @@ describe AssignHearingDispositionTask do
       end
 
       it "sets the hearing disposition and calls no_show!" do
-        expect(disposition_task).to receive(:no_show!).exactly(1).times
+        expect(disposition_task).to receive(:no_show!).exactly(1).times.and_call_original
 
-        subject
-
+        expect(subject.count).to eq(2)
         expect(Hearing.count).to eq 1
         expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.no_show
       end
@@ -112,11 +133,13 @@ describe AssignHearingDispositionTask do
           expect(Hearing.count).to eq 1
           expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.postponed
           expect(HearingTask.count).to eq 2
-          expect(HearingTask.first.cancelled?).to be_truthy
-          expect(HearingTask.last.on_hold?).to be_truthy
+          expect(HearingTask.order(:id).first.cancelled?).to be_truthy
+          expect(HearingTask.order(:id).first.cancelled_by).to eq user
+          expect(HearingTask.order(:id).last.on_hold?).to be_truthy
           expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
+          expect(AssignHearingDispositionTask.first.cancelled_by).to eq user
           expect(ScheduleHearingTask.count).to eq 1
-          expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.last.id
+          expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.order(:id).last.id
         end
 
         context "when task instructions are passed" do
@@ -152,10 +175,10 @@ describe AssignHearingDispositionTask do
           expect(Hearing.count).to eq 1
           expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.postponed
           expect(HearingTask.count).to eq 2
-          expect(HearingTask.first.cancelled?).to be_truthy
+          expect(HearingTask.order(:id).first.cancelled?).to be_truthy
           expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
           expect(ScheduleHearingTask.count).to eq 1
-          expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.last.id
+          expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.order(:id).last.id
           expect(HearingAdminActionIncarceratedVeteranTask.count).to eq 1
           expect(HearingAdminActionIncarceratedVeteranTask.last.instructions).to eq [admin_action_instructions]
         end
@@ -181,10 +204,52 @@ describe AssignHearingDispositionTask do
           expect(Hearing.last.hearing_location.facility_id).to eq "vba_370"
           expect(Hearing.last.scheduled_time.strftime("%I:%M%p")).to eq "12:30PM"
           expect(HearingTask.count).to eq 2
-          expect(HearingTask.first.cancelled?).to be_truthy
-          expect(HearingTask.last.hearing_task_association.hearing.id).to eq Hearing.last.id
+          expect(HearingTask.order(:id).first.cancelled?).to be_truthy
+          expect(HearingTask.order(:id).last.hearing_task_association.hearing.id).to eq Hearing.last.id
           expect(AssignHearingDispositionTask.count).to eq 2
           expect(AssignHearingDispositionTask.first.cancelled?).to be_truthy
+        end
+
+        context "when params includes virtual_hearing_attributes" do
+          let(:appellant_email) { "fake@email.com" }
+          let(:virtual_hearing_attributes) do
+            {
+              appellant_email: appellant_email
+            }
+          end
+
+          before do
+            after_disposition_update[:new_hearing_attrs][:virtual_hearing_attributes] = virtual_hearing_attributes
+          end
+
+          it "converts hearing to virtual hearing", :aggregate_failures do
+            subject
+
+            expect(Hearing.count).to eq 2
+            expect(AssignHearingDispositionTask.count).to eq(2)
+            expect(Hearing.last.virtual_hearing).not_to eq(nil)
+            expect(Hearing.last.virtual?).to eq(true)
+            expect(Hearing.last.virtual_hearing.appellant_email).to eq(appellant_email)
+          end
+
+          context "with invalid params" do
+            let(:appellant_email) { "blah" }
+
+            it "raises error and does not create a hearing object", :aggregate_failures do
+              expect { subject }
+                .to raise_error(Caseflow::Error::VirtualHearingConversionFailed)
+                .with_message("Validation failed: Appellant email does not appear to be a valid e-mail address")
+
+              # does not create the hearing
+              expect(Hearing.count).to eq(1)
+              expect(AssignHearingDispositionTask.count).to eq(1)
+              expect(hearing.reload.disposition).not_to eq Constants.HEARING_DISPOSITION_TYPES.postponed
+            end
+          end
+        end
+
+        context "when hearing is virtual" do
+          include_context "when hearing is virtual"
         end
       end
     end
@@ -220,14 +285,50 @@ describe AssignHearingDispositionTask do
       let(:parent) { create(:root_task, appeal: appeal) }
 
       it "should throw an error" do
-        expect { subject }.to raise_error(Caseflow::Error::InvalidParentTask)
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid).with_message(
+          "Validation failed: Parent should be a HearingTask"
+        )
       end
+    end
+  end
+
+  context "missing hearing association" do
+    let(:appeal) { create(:appeal) }
+    let(:root_task) { create(:root_task, appeal: appeal) }
+    let(:distribution_task) { create(:distribution_task, parent: root_task) }
+    let(:hearing_task) { create(:hearing_task, parent: distribution_task) }
+
+    let(:hearing) do
+      create(
+        :hearing,
+        appeal: appeal,
+        evidence_window_waived: evidence_window_waived
+      )
+    end
+    let!(:disposition_task) do
+      create(
+        :assign_hearing_disposition_task,
+        :in_progress,
+        parent: hearing_task
+      )
+    end
+
+    subject do
+      disposition_task.send(
+        :update_hearing_disposition,
+        disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled
+      )
+    end
+
+    it "fails with missing hearing association error" do
+      message = format(COPY::HEARING_TASK_ASSOCIATION_MISSING_MESASAGE, hearing_task.id)
+      expect { subject }.to raise_error(AssignHearingDispositionTask::HearingAssociationMissing).with_message(message)
     end
   end
 
   context "disposition updates" do
     let(:disposition) { nil }
-    let(:appeal) { create(:appeal) }
+    let(:appeal) { create(:appeal, docket_type: Constants.AMA_DOCKETS.hearing) }
     let(:root_task) { create(:root_task, appeal: appeal) }
     let(:distribution_task) { create(:distribution_task, parent: root_task) }
     let(:hearing_task) { create(:hearing_task, parent: distribution_task) }
@@ -306,23 +407,25 @@ describe AssignHearingDispositionTask do
             let(:appeal) do
               create(:appeal, claimants: [create(:claimant, participant_id: participant_id_with_pva)])
             end
+            let(:poa) do
+              Fakes::BGSServicePOA.paralyzed_veterans_vso_mapped.tap do |poa|
+                poa[:claimant_participant_id] = participant_id_with_pva
+                poa[:file_number] = appeal.veteran_file_number
+              end
+            end
 
             before do
               Vso.create(
                 name: "Paralyzed Veterans Of America",
                 role: "VSO",
                 url: "paralyzed-veterans-of-america",
-                participant_id: "2452383"
+                participant_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
               )
 
               allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
-                .with([participant_id_with_pva]).and_return(
-                  participant_id_with_pva => {
-                    representative_name: "PARALYZED VETERANS OF AMERICA, INC.",
-                    representative_type: "POA National Organization",
-                    participant_id: "2452383"
-                  }
-                )
+                .with([participant_id_with_pva]).and_return(participant_id_with_pva => poa)
+              allow_any_instance_of(BGSService).to receive(:fetch_poa_by_file_number)
+                .with(appeal.veteran_file_number).and_return(poa)
             end
 
             it "creates an IHP task" do
@@ -352,7 +455,7 @@ describe AssignHearingDispositionTask do
         let(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:caseflow]) }
         let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
         let(:hearing) { create(:legacy_hearing, appeal: appeal, disposition: disposition) }
-        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
+        let(:disposition) { :C }
 
         context "there's no associated VSO" do
           it "updates the case location to case storage (81)" do
@@ -370,6 +473,7 @@ describe AssignHearingDispositionTask do
             allow(BGSService).to receive(:power_of_attorney_records).and_return(
               appeal.veteran_file_number => {
                 file_number: appeal.veteran_file_number,
+                ptcpnt_id: "4567",
                 power_of_attorney: {
                   legacy_poa_cd: "3QQ",
                   nm: "Clarence Darrow",
@@ -521,10 +625,10 @@ describe AssignHearingDispositionTask do
         let!(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:caseflow]) }
         let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
         let(:hearing) { create(:legacy_hearing, appeal: appeal, disposition: disposition) }
-        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
+        let(:disposition) { :C }
 
         context "the task's hearing's disposition is held" do
-          let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.held }
+          let(:disposition) { :H }
 
           it "completes the AssignHearingDispositionTask, closes the HearingTask, and updates the appeal location" do
             expect(disposition_task.in_progress?).to be_truthy

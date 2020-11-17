@@ -2,8 +2,11 @@
 
 describe RequestIssue, :all_dbs do
   before do
-    Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
+    Timecop.freeze(Time.zone.now)
+    FeatureToggle.enable!(:use_ama_activation_date)
   end
+
+  after { FeatureToggle.disable!(:use_ama_activation_date) }
 
   let(:contested_rating_issue_reference_id) { "abc123" }
   let(:contested_rating_decision_reference_id) { nil }
@@ -22,6 +25,7 @@ describe RequestIssue, :all_dbs do
   let(:closed_status) { nil }
   let(:ineligible_reason) { nil }
   let(:edited_description) { nil }
+  let(:covid_timeliness_exempt) { nil }
 
   let(:review) do
     create(
@@ -29,17 +33,21 @@ describe RequestIssue, :all_dbs do
       veteran_file_number: veteran.file_number,
       legacy_opt_in_approved: legacy_opt_in_approved,
       same_office: same_office,
-      benefit_type: benefit_type
+      benefit_type: benefit_type,
+      receipt_date: receipt_date,
+      intake: create(:intake)
     )
   end
 
-  let(:rating_promulgation_date) { (review.receipt_date - 40.days).in_time_zone }
+  let(:receipt_date) { post_ama_start_date }
+
+  let(:rating_promulgation_date) { (receipt_date - 40.days).in_time_zone }
 
   let!(:ratings) do
-    Generators::Rating.build(
+    Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: rating_promulgation_date,
-      profile_date: (review.receipt_date - 50.days).in_time_zone,
+      profile_date: (receipt_date - 50.days).in_time_zone,
       issues: issues,
       decisions: decisions,
       associated_claims: associated_claims
@@ -90,7 +98,8 @@ describe RequestIssue, :all_dbs do
       closed_at: closed_at,
       closed_status: closed_status,
       ineligible_reason: ineligible_reason,
-      edited_description: edited_description
+      edited_description: edited_description,
+      covid_timeliness_exempt: covid_timeliness_exempt
     )
   end
 
@@ -266,6 +275,36 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context "legacy_optin" do
+    let!(:legacy_appeal) do
+      create(:legacy_appeal, vacols_case:
+        create(
+          :case,
+          :status_active,
+          bfkey: vacols_id,
+          bfcorlid: "#{veteran.file_number}S",
+          bfdc: "G",
+          bfddec: 3.days.ago,
+          folder: create(:folder, tidcls: folder_date),
+          case_issues: [
+            create(:case_issue, :ankylosis_of_hip),
+            create(:case_issue, :limitation_of_thigh_motion_extension)
+          ]
+        ))
+    end
+    let(:vacols_id) { "vacols7" }
+    let(:vacols_sequence_id) { 1 }
+    let(:decision_date) { 3.days.ago.to_date }
+    let(:folder_date) { 5.days.ago.to_date }
+    subject { rating_request_issue.handle_legacy_issues! }
+    it "saves legacy appeal disposition and decision date " do
+      subject
+      expect(rating_request_issue.legacy_issue_optin.original_legacy_appeal_disposition_code).to eq "G"
+      expect(rating_request_issue.legacy_issue_optin.original_legacy_appeal_decision_date).to eq(decision_date)
+      expect(rating_request_issue.legacy_issue_optin.folder_decision_date).to eq(folder_date)
+    end
+  end
+
   context "#contention" do
     let(:end_product_establishment) { create(:end_product_establishment, :active) }
     let!(:contention) do
@@ -307,6 +346,81 @@ describe RequestIssue, :all_dbs do
       let(:contention_reference_id) { nil }
 
       it { is_expected.to eq(false) }
+    end
+  end
+
+  context "#editable?" do
+    subject { rating_request_issue.editable? }
+    let(:receipt_date) { 1.month.ago }
+    let(:end_product_establishment) do
+      create(
+        :end_product_establishment,
+        :active,
+        established_at: receipt_date + 5.days,
+        veteran: veteran
+      )
+    end
+
+    it { is_expected.to be true }
+
+    context "when there's a connected rating" do
+      before do
+        Generators::PromulgatedRating.build(
+          participant_id: veteran.participant_id,
+          profile_date: receipt_date + 10.days,
+          promulgation_date: receipt_date + 10.days,
+          issues: [
+            {
+              reference_id: "ref_id1", decision_text: "PTSD denied",
+              contention_reference_id: rating_request_issue.contention_reference_id
+            }
+          ],
+          associated_claims: [{ clm_id: end_product_establishment.reference_id, bnft_clm_tc: "030HLRR" }]
+        )
+      end
+
+      it "returns false" do
+        expect(subject).to eq false
+      end
+    end
+  end
+
+  context "#exam_requested?" do
+    subject { rating_request_issue.exam_requested? }
+    before { FeatureToggle.enable!(:detect_contention_exam) }
+    after { FeatureToggle.disable!(:detect_contention_exam) }
+
+    context "when there is no contention" do
+      let(:contention_reference_id) { nil }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "when there is no end product establishment" do
+      let(:end_product_establishment) { nil }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "when there is a contention" do
+      let(:end_product_establishment) { create(:end_product_establishment, :active) }
+      let(:contention_reference_id) { 1234 }
+      let(:orig_source_type_code) { "APP" }
+      let!(:contention) do
+        Generators::BgsContention.build(
+          reference_id: contention_reference_id,
+          claim_id: end_product_establishment.reference_id,
+          orig_source_type_code: orig_source_type_code
+        )
+      end
+
+      it { is_expected.to be_falsey }
+
+      context "when there is an exam scheduled" do
+        let(:orig_source_type_code) { "EXAM" }
+
+        it { is_expected.to be true }
+      end
     end
   end
 
@@ -672,7 +786,7 @@ describe RequestIssue, :all_dbs do
   context "#ui_hash" do
     context "when there is a previous request issue in active review" do
       let!(:ratings) do
-        Generators::Rating.build(
+        Generators::PromulgatedRating.build(
           participant_id: veteran.participant_id,
           promulgation_date: 10.days.ago,
           profile_date: 20.days.ago,
@@ -927,7 +1041,7 @@ describe RequestIssue, :all_dbs do
       create(
         :higher_level_review,
         veteran_file_number: veteran.file_number,
-        receipt_date: review.receipt_date - 10.days
+        receipt_date: receipt_date - 10.days
       )
     end
 
@@ -1101,7 +1215,6 @@ describe RequestIssue, :all_dbs do
     let(:duplicate_appeal_reference_id) { "xyz555" }
     let(:old_reference_id) { "old123" }
     let(:closed_at) { nil }
-    let(:receipt_date) { review.receipt_date }
     let(:previous_contention_reference_id) { "8888" }
     let(:correction_type) { nil }
 
@@ -1129,7 +1242,7 @@ describe RequestIssue, :all_dbs do
     end
 
     let!(:ratings) do
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         participant_id: veteran.participant_id,
         promulgation_date: rating_promulgation_date,
         profile_date: receipt_date - 50.days,
@@ -1145,7 +1258,7 @@ describe RequestIssue, :all_dbs do
           }
         ]
       )
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         participant_id: veteran.participant_id,
         promulgation_date: receipt_date - 400.days,
         profile_date: receipt_date - 450.days,
@@ -1153,10 +1266,10 @@ describe RequestIssue, :all_dbs do
           { reference_id: old_reference_id, decision_text: "Really old injury" }
         ]
       )
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         participant_id: veteran.participant_id,
-        promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
-        profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
+        promulgation_date: ama_start_date - 5.days,
+        profile_date: ama_start_date - 10.days,
         issues: [
           { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
           { decision_text: "Issue before AMA Activation from RAMP",
@@ -1178,14 +1291,14 @@ describe RequestIssue, :all_dbs do
     end
 
     it "flags nonrating request issue as untimely when decision date is older than receipt_date" do
-      nonrating_request_issue.decision_date = receipt_date - 400
+      nonrating_request_issue.decision_date = receipt_date - 400.days
       nonrating_request_issue.validate_eligibility!
 
       expect(nonrating_request_issue.untimely?).to eq(true)
     end
 
     it "flags unidentified request issue as untimely when decision date is older than receipt_date" do
-      unidentified_issue.decision_date = receipt_date - 450
+      unidentified_issue.decision_date = receipt_date - 450.days
       unidentified_issue.validate_eligibility!
 
       expect(unidentified_issue.untimely?).to eq(true)
@@ -1329,53 +1442,33 @@ describe RequestIssue, :all_dbs do
     end
 
     context "Issues with legacy issues" do
-      before do
-        # Active and eligible
-        create(:legacy_appeal, vacols_case: create(
-          :case,
-          :status_active,
-          bfkey: "vacols1",
-          bfcorlid: "#{veteran.file_number}S",
-          bfdnod: 3.days.ago,
-          bfdsoc: 3.days.ago
-        ))
-        allow(AppealRepository).to receive(:issues).with("vacols1")
-          .and_return(
-            [
-              Generators::Issue.build(id: "vacols1", vacols_sequence_id: 1, codes: %w[02 15 03 5250], disposition: nil),
-              Generators::Issue.build(id: "vacols1", vacols_sequence_id: 2, codes: %w[02 15 03 5251], disposition: nil)
-            ]
-          )
+      let!(:nod_date) { 3.days.ago }
+      let!(:soc_date) { 3.days.ago }
+      let(:vacols_id) { "vacols1" }
+      let(:vacols_sequence_id) { 1 }
 
-        # Active and not eligible
+      before do
         create(:legacy_appeal, vacols_case: create(
           :case,
           :status_active,
-          bfkey: "vacols2",
+          bfkey: vacols_id,
           bfcorlid: "#{veteran.file_number}S",
-          bfdnod: 4.years.ago,
-          bfdsoc: 4.months.ago
+          bfdnod: nod_date,
+          bfdsoc: soc_date
         ))
-        allow(AppealRepository).to receive(:issues).with("vacols2")
+        allow(AppealRepository).to receive(:issues).with(vacols_id)
           .and_return(
             [
-              Generators::Issue.build(id: "vacols2", vacols_sequence_id: 1, codes: %w[02 15 03 5243], disposition: nil),
-              Generators::Issue.build(id: "vacols2", vacols_sequence_id: 2, codes: %w[02 15 03 5242], disposition: nil)
+              Generators::Issue.build(id: vacols_id, vacols_sequence_id: 1, codes: %w[02 15 03 5250], disposition: nil),
+              Generators::Issue.build(id: vacols_id, vacols_sequence_id: 2, codes: %w[02 15 03 5251], disposition: nil)
             ]
           )
       end
 
       context "when legacy opt in is not approved" do
         let(:legacy_opt_in_approved) { false }
+
         it "flags issues with connected issues if legacy opt in is not approved" do
-          nonrating_request_issue.vacols_id = "vacols1"
-          nonrating_request_issue.vacols_sequence_id = "1"
-          nonrating_request_issue.validate_eligibility!
-
-          expect(nonrating_request_issue.ineligible_reason).to eq("legacy_issue_not_withdrawn")
-
-          rating_request_issue.vacols_id = "vacols1"
-          rating_request_issue.vacols_sequence_id = "2"
           rating_request_issue.validate_eligibility!
 
           expect(rating_request_issue.ineligible_reason).to eq("legacy_issue_not_withdrawn")
@@ -1383,28 +1476,73 @@ describe RequestIssue, :all_dbs do
       end
 
       context "when legacy opt in is approved" do
+        let(:receipt_date) { Time.zone.today }
         let(:legacy_opt_in_approved) { true }
-        it "flags issues connected to ineligible appeals if legacy opt in is approved" do
-          nonrating_request_issue.vacols_id = "vacols2"
-          nonrating_request_issue.vacols_sequence_id = "1"
-          nonrating_request_issue.validate_eligibility!
 
-          expect(nonrating_request_issue.ineligible_reason).to eq("legacy_appeal_not_eligible")
+        context "when legacy issue is eligible" do
+          let(:soc_date) { receipt_date - 3.days }
+          let(:nod_date) { receipt_date - 3.days }
 
-          rating_request_issue.vacols_id = "vacols2"
-          rating_request_issue.vacols_sequence_id = "2"
-          rating_request_issue.validate_eligibility!
+          it "does not mark issue ineligible" do
+            rating_request_issue.validate_eligibility!
 
-          expect(rating_request_issue.ineligible_reason).to eq("legacy_appeal_not_eligible")
+            expect(rating_request_issue.ineligible_reason).to be_nil
+          end
+        end
+
+        context "when legacy issue is not eligible" do
+          let(:nod_date) { 4.years.ago }
+          let(:soc_date) { 4.months.ago }
+
+          it "flags issues connected to ineligible appeals if legacy opt in is approved" do
+            rating_request_issue.validate_eligibility!
+
+            expect(rating_request_issue.ineligible_reason).to eq("legacy_appeal_not_eligible")
+          end
+        end
+
+        context "when there is a timeliness exemption" do
+          let(:covid_timeliness_exempt) { true }
+
+          context "NOD date is eligible with exemption" do
+            let(:nod_date) { Constants::DATES["NOD_COVID_ELIGIBLE"].to_date + 1.day }
+            let(:soc_date) { Constants::DATES["SOC_COVID_ELIGIBLE"].to_date - 1.day }
+
+            it "is eligible" do
+              rating_request_issue.validate_eligibility!
+              expect(rating_request_issue.ineligible_reason).to be_nil
+            end
+          end
+
+          context "SOC date is eligible with exemption" do
+            let(:nod_date) { Constants::DATES["NOD_COVID_ELIGIBLE"].to_date - 1.day }
+            let(:soc_date) { Constants::DATES["SOC_COVID_ELIGIBLE"].to_date + 1.day }
+
+            it "is eligible" do
+              rating_request_issue.validate_eligibility!
+              expect(rating_request_issue.ineligible_reason).to be_nil
+            end
+          end
+
+          context "NOD and SOC dates are still ineligible" do
+            let(:nod_date) { Constants::DATES["NOD_COVID_ELIGIBLE"].to_date - 1.day }
+            let(:soc_date) { Constants::DATES["SOC_COVID_ELIGIBLE"].to_date - 3.days }
+
+            it "is not eligible" do
+              rating_request_issue.validate_eligibility!
+              expect(rating_request_issue.ineligible_reason).to eq("legacy_appeal_not_eligible")
+            end
+          end
         end
       end
     end
 
     context "Issues with decision dates before AMA" do
-      let(:profile_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days }
+      let(:receipt_date) { ama_start_date + 5.days }
+      let(:profile_date) { ama_start_date - 5.days }
 
       it "flags nonrating issues before AMA" do
-        nonrating_request_issue.decision_date = Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days
+        nonrating_request_issue.decision_date = ama_start_date - 5.days
         nonrating_request_issue.validate_eligibility!
 
         expect(nonrating_request_issue.ineligible_reason).to eq("before_ama")
@@ -1426,7 +1564,7 @@ describe RequestIssue, :all_dbs do
         end
 
         it "does not apply before AMA checks" do
-          nonrating_request_issue.decision_date = Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days
+          nonrating_request_issue.decision_date = ama_start_date - 5.days
           nonrating_request_issue.validate_eligibility!
 
           expect(nonrating_request_issue.ineligible_reason).to_not eq("before_ama")
@@ -1458,6 +1596,50 @@ describe RequestIssue, :all_dbs do
 
           expect(rating_request_issue.contested_rating_issue).to_not be_nil
           expect(rating_request_issue.ineligible_reason).to be_nil
+        end
+      end
+    end
+  end
+
+  context "#close!" do
+    subject { rating_request_issue.close!(status: new_status) }
+    let(:new_status) { "decided" }
+
+    context "with open request issue" do
+      it "sets the specified closed status" do
+        expect(rating_request_issue.reload.closed_status).to be_nil
+        subject
+        expect(rating_request_issue.reload.closed_status).to eq("decided")
+      end
+    end
+
+    context "with already closed request issue" do
+      let(:closed_status) { "withdrawn" }
+      let(:closed_at) { 1.day.ago }
+
+      it "refrains from updating" do
+        expect(rating_request_issue.reload.closed_status).to eq("withdrawn")
+        subject
+        expect(rating_request_issue.reload.closed_status).to eq("withdrawn")
+      end
+
+      context "when prior status was ineligible" do
+        let(:closed_status) { "ineligible" }
+
+        it "leaves as-is when not removing" do
+          expect(rating_request_issue.reload.closed_status).to eq("ineligible")
+          subject
+          expect(rating_request_issue.reload.closed_status).to eq("ineligible")
+        end
+
+        context "when updating to `removed`" do
+          let(:new_status) { "removed" }
+
+          it "successfully removes the issue" do
+            expect(rating_request_issue.reload.closed_status).to eq("ineligible")
+            subject
+            expect(rating_request_issue.reload.closed_status).to eq("removed")
+          end
         end
       end
     end
@@ -1496,7 +1678,7 @@ describe RequestIssue, :all_dbs do
       it "flags the legacy issue optin for rollback" do
         subject
         expect(rating_request_issue.closed_at).to eq(Time.zone.now)
-        expect(legacy_issue_optin.reload.rollback_created_at).to eq(Time.zone.now)
+        expect(legacy_issue_optin.reload.rollback_created_at).to be_within(1.second).of Time.zone.now
       end
     end
   end
@@ -1540,7 +1722,7 @@ describe RequestIssue, :all_dbs do
       create(:end_product_establishment,
              :active,
              veteran_file_number: veteran.file_number,
-             established_at: review.receipt_date - 100.days,
+             established_at: receipt_date - 100.days,
              code: ep_code)
     end
     subject { rating_request_issue.editable? }
@@ -1590,7 +1772,7 @@ describe RequestIssue, :all_dbs do
         create(:end_product_establishment,
                :cleared,
                veteran_file_number: veteran.file_number,
-               established_at: review.receipt_date - 100.days,
+               established_at: receipt_date - 100.days,
                code: ep_code)
       end
 

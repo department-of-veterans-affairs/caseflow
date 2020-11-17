@@ -8,6 +8,7 @@ FactoryBot.define do
     code { "030HLRR" }
     modifier { "030" }
     payee_code { EndProduct::DEFAULT_PAYEE_CODE }
+    benefit_type_code { Veteran::BENEFIT_TYPE_CODE_LIVE }
     user { create(:user) }
 
     trait :cleared do
@@ -20,6 +21,7 @@ FactoryBot.define do
 
     trait :active do
       synced_status { "PEND" }
+      established_at { 5.days.ago }
     end
 
     after(:build) do |end_product_establishment, _evaluator|

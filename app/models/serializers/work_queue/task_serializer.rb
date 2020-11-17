@@ -17,6 +17,7 @@ class WorkQueue::TaskSerializer
     object.instructions.presence || object.default_instructions.presence || []
   end
   attribute :appeal_type
+  attribute :parent_id
   attribute :timeline_title
   attribute :hide_from_queue_table_view
   attribute :hide_from_case_timeline
@@ -33,14 +34,36 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :assigned_to do |object|
+    assignee = object.assigned_to
+
     {
-      css_id: object.assigned_to.try(:css_id),
-      is_organization: object.assigned_to.is_a?(Organization),
-      name: object.appeal.assigned_to_location,
-      full_name: object.assigned_to.try(:full_name),
-      type: object.assigned_to.class.name,
-      id: object.assigned_to.id
+      css_id: assignee.try(:css_id),
+      full_name: assignee.try(:full_name),
+      is_organization: assignee.is_a?(Organization),
+      name: assignee.is_a?(Organization) ? assignee.name : assignee.css_id,
+      type: assignee.class.name,
+      id: assignee.id
     }
+  end
+
+  attribute :cancelled_by do |object|
+    {
+      css_id: object.cancelled_by.try(:css_id)
+    }
+  end
+
+  # only ChangeHearingRequestType defines a convertedBy deriving the data from paper_trail
+  # refers to the conversion of hearing request type
+  attribute :converted_by do |object|
+    {
+      css_id: object.try(:converted_by).try(:css_id)
+    }
+  end
+
+  # ChangeHearingRequestType defines a converted_on
+  # refers to when the hearing request type was converted and is equivalent to closed_at
+  attribute :converted_on do |object|
+    object.try(:converted_on)
   end
 
   attribute :assignee_name do |object|
@@ -91,8 +114,12 @@ class WorkQueue::TaskSerializer
     object.appeal.try(:advanced_on_docket?)
   end
 
+  attribute :overtime do |object|
+    object.appeal.try(:overtime?)
+  end
+
   attribute :issue_count do |object|
-    object.appeal.number_of_issues
+    object.appeal.is_a?(LegacyAppeal) ? object.appeal.undecided_issues.count : object.appeal.number_of_issues
   end
 
   attribute :external_hearing_id do |object|

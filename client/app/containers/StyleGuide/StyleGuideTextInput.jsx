@@ -41,6 +41,12 @@ export default class StyleGuideTextInput extends React.PureComponent {
         onChange={(value) => {
           this.setState({ value });
         }} />
+      <h3 id="disabled">Disabled Text Input</h3>
+      <TextField
+        name="Disabled Text Input Label"
+        value=""
+        readOnly
+        required={false} />
     </div>;
   }
 }

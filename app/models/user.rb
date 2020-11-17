@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class User < CaseflowRecord
+class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   include BgsService
 
   has_many :dispatch_tasks, class_name: "Dispatch::Task"
@@ -99,11 +99,28 @@ class User < CaseflowRecord
   end
 
   def can_withdraw_issues?
-    BvaIntake.singleton.users.include?(self) || %w[NWQ VACO].exclude?(regional_office)
+    CaseReview.singleton.users.include?(self) || %w[NWQ VACO].exclude?(regional_office)
+  end
+
+  def can_edit_issues?
+    CaseReview.singleton.users.include?(self) || can_intake_appeals?
+  end
+
+  def can_intake_appeals?
+    BvaIntake.singleton.users.include?(self)
   end
 
   def administer_org_users?
-    admin? || granted?("Admin Intake") || roles.include?("Admin Intake")
+    admin? || granted?("Admin Intake") || roles.include?("Admin Intake") || member_of_organization?(Bva.singleton)
+  end
+
+  def can_view_overtime_status?
+    (attorney_in_vacols? || judge_in_vacols?) && FeatureToggle.enabled?(:overtime_revamp, user: self)
+  end
+
+  def can_change_hearing_request_type?
+    (can?("Build HearSched") || can?("Edit HearSched")) &&
+      FeatureToggle.enabled?(:convert_travel_board_to_video_or_virtual, user: self)
   end
 
   def vacols_uniq_id
@@ -141,10 +158,10 @@ class User < CaseflowRecord
   end
 
   def appeal_has_task_assigned_to_user?(appeal)
-    if appeal.class.name == "LegacyAppeal"
+    if appeal.is_a?(LegacyAppeal)
       fail_if_no_access_to_legacy_task!(appeal.vacols_id)
     else
-      appeal.tasks.any? do |task|
+      appeal.tasks.includes(:assigned_to).any? do |task|
         task.assigned_to == self
       end
     end
@@ -245,22 +262,6 @@ class User < CaseflowRecord
     RegionalOffice::STATIONS[station_id]
   end
 
-  def current_case_assignments_with_views
-    appeals = current_case_assignments
-    opened_appeals = viewed_appeals(appeals.map(&:id))
-
-    appeal_streams = LegacyAppeal.fetch_appeal_streams(appeals)
-    appeal_stream_hearings = get_appeal_stream_hearings(appeal_streams)
-
-    appeals.map do |appeal|
-      appeal.to_hash(
-        viewed: opened_appeals[appeal.id],
-        issues: appeal.issues,
-        hearings: appeal_stream_hearings[appeal.id]
-      )
-    end
-  end
-
   def current_case_assignments
     self.class.appeal_repository.load_user_case_assignments_from_vacols(css_id)
   end
@@ -271,6 +272,27 @@ class User < CaseflowRecord
 
   def administered_judge_teams
     administered_teams.select { |team| team.is_a?(JudgeTeam) }
+  end
+
+  def non_administered_judge_teams
+    organizations_users.non_admin.where(organization: JudgeTeam.all)
+  end
+
+  def security_profile
+    BGSService.new.get_security_profile(
+      username: css_id,
+      station_id: station_id
+    )
+  rescue BGS::ShareError, BGS::PublicError
+    {}
+  end
+
+  def job_title
+    security_profile.dig(:job_title)
+  end
+
+  def can_intake_decision_reviews?
+    !job_title.include?("Senior Veterans Service Representative")
   end
 
   def user_info_for_idt
@@ -285,7 +307,7 @@ class User < CaseflowRecord
     judge_team_judges.each do |judge|
       orgs << {
         name: "Assign #{judge.css_id}",
-        url: format("/queue/%s/assign", judge.id)
+        url: "/queue/#{judge.css_id}/assign"
       }
     end
 
@@ -298,6 +320,10 @@ class User < CaseflowRecord
 
   def judge?
     !!JudgeTeam.for_judge(self) || judge_in_vacols?
+  end
+
+  def attorney?
+    non_administered_judge_teams.any? || attorney_in_vacols?
   end
 
   def update_status!(new_status)
@@ -313,10 +339,12 @@ class User < CaseflowRecord
   end
 
   def use_task_pages_api?
-    false
+    FeatureToggle.enabled?(:user_queue_pagination, user: self)
   end
 
   def queue_tabs
+    return [assigned_tasks_tab] if judge_in_vacols? && !attorney_in_vacols?
+
     [
       assigned_tasks_tab,
       on_hold_tasks_tab,
@@ -325,7 +353,7 @@ class User < CaseflowRecord
   end
 
   def self.default_active_tab
-    Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
+    Constants.QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME
   end
 
   def assigned_tasks_tab
@@ -340,16 +368,28 @@ class User < CaseflowRecord
     ::CompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
-  def can_bulk_assign_tasks?
-    false
+  def can_act_on_behalf_of_judges?
+    member_of_organization?(SpecialCaseMovementTeam.singleton)
   end
 
-  def can_act_on_behalf_of_judges?
-    member_of_organization?(SpecialCaseMovementTeam.singleton) && FeatureToggle.enabled?(:scm_view_judge_assign_queue)
+  def can_view_team_management?
+    member_of_organization?(Bva.singleton)
+  end
+
+  def can_view_judge_team_management?
+    DvcTeam.for_dvc(self).present?
+  end
+
+  def can_view_user_management?
+    member_of_organization?(Bva.singleton)
   end
 
   def show_regional_office_in_queue?
     HearingsManagement.singleton.user_has_access?(self)
+  end
+
+  def can_be_assigned_legacy_tasks?
+    judge_in_vacols? || attorney_in_vacols?
   end
 
   def show_reader_link_column?
@@ -392,12 +432,6 @@ class User < CaseflowRecord
     appeal_streams.reduce({}) do |acc, (appeal_id, appeals)|
       acc[appeal_id] = appeal_hearings(appeals.map(&:id))
       acc
-    end
-  end
-
-  def viewed_appeals(appeal_ids)
-    appeal_views.where(appeal_id: appeal_ids).each_with_object({}) do |appeal_view, object|
-      object[appeal_view.appeal_id] = true
     end
   end
 

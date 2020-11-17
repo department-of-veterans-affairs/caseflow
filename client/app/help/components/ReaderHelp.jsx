@@ -36,8 +36,8 @@ class CertificationHelp extends React.Component {
         </a><li><a></a><a href="#open-document-in-separate-tab">9. How do I open a document in a separate tab?</a></li>
         <li><a href="#add-a-comment">10. How do I add a comment to a document in Reader?</a></li>
         <li><a href="#delete-comments-in-reader">11. How do I delete comments in Reader?</a></li>
-        <li><a href="#how-do-issue-tags-work">12. How do issue tag(s) work?</a></li>
-        <li><a href="#sort-by-issue-tags">13. Can I sort documents by issue tag(s)?</a></li>
+        <li><a href="#how-do-issue-tags-work">12. How do issue tags work?</a></li>
+        <li><a href="#sort-by-issue-tags">13. Can I sort documents by issue tags?</a></li>
         <li><a href="#complete-a-case">14. How do I complete a case in Reader?</a></li>
         <li><a href="#complete-a-review">15. What happens if I cannot complete a review in one sitting?</a></li>
         <li><a href="#encounter-problems">16. What should I do if I encounter problems?</a></li>
@@ -100,12 +100,12 @@ class CertificationHelp extends React.Component {
       <p>While reviewing a document, all of the comments are displayed in the Comments section in the Menu on the right-hand side. Each comment has its own "Delete" link above the comment box. Once you click the delete link, a confirmation box will appear. If you click the “Confirm delete” button, your comment box and icon will disappear.
       </p>
 
-      <h2 id="how-do-issue-tags-work">12. How do issue tag(s) work?</h2>
-      <p>You can add issue tags to documents to help you label and filter documents by issue(s) as you review evidence. The first time you create an issue tag, it will appear in the issue tags dropdown menu so you can easily add it to other documents. To add an issue tag to a document, click in the box under the Issue Tags section in the menu on the right-hand side and select an issue from the dropdown list or type an issue and hit Enter. You can delete an individual issue tag within a document by clicking the “X” next to the issue. Issue tags do not persist across cases.
+      <h2 id="how-do-issue-tags-work">12. How do issue tags work?</h2>
+      <p>You can add issue tags to documents to help you label and filter documents by issues as you review evidence. The first time you create an issue tag, it will appear in the issue tags dropdown menu so you can easily add it to other documents. To add an issue tag to a document, click in the box under the Issue Tags section in the menu on the right-hand side and select an issue from the dropdown list or type an issue and hit Enter. You can delete an individual issue tag within a document by clicking the “X” next to the issue. Issue tags do not persist across cases.
       </p>
 
-      <h2 id="sort-by-issue-tags">13. Can I sort documents by issue tag(s)?</h2>
-      <p>You can sort documents by issue tag(s) by clicking on the filter icon next to the "Issue Tags” header on the claims folder page to filter documents by their associated issue(s). Selecting one or more issues tag(s) will filter the documents to only display documents with the selected issues. You can return to the complete claims folder view by unchecking the selected issue tag(s).
+      <h2 id="sort-by-issue-tags">13. Can I sort documents by issue tags?</h2>
+      <p>You can sort documents by issue tags by clicking on the filter icon next to the "Issue Tags” header on the claims folder page to filter documents by their associated issues. Selecting one or more issues tags will filter the documents to only display documents with the selected issues. You can return to the complete claims folder view by unchecking the selected issue tags.
       </p>
 
       <h2 id="complete-a-case">14. How do I complete a case in Reader?</h2>

@@ -14,42 +14,49 @@ describe HearingMapper do
 
     context "when disposition is held and it is central office hearing" do
       let(:hearing_disp) { "H" }
-      let(:hearing_type) { HearingDay::REQUEST_TYPES[:central] }
+      let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:central] }
 
       it { is_expected.to eq "1" }
     end
 
     context "when disposition is held and it is video hearing" do
       let(:hearing_disp) { "H" }
-      let(:hearing_type) { HearingDay::REQUEST_TYPES[:video] }
+      let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:video] }
 
       it { is_expected.to eq "6" }
     end
 
     context "when disposition is held and it is travel board hearing" do
       let(:hearing_disp) { "H" }
-      let(:hearing_type) { HearingDay::REQUEST_TYPES[:travel] }
+      let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:travel] }
 
       it { is_expected.to eq "2" }
     end
 
+    context "when disposition is held and it is a virtual hearing" do
+      let(:hearing_disp) { "H" }
+      let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:virtual] }
+
+      it { is_expected.to eq "7" }
+    end
+
     context "when disposition is postponed" do
       let(:hearing_disp) { "P" }
-      let(:hearing_type) { HearingDay::REQUEST_TYPES[:travel] }
+      let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:travel] }
 
       it { is_expected.to eq nil }
     end
 
     context "when disposition is cancelled" do
       let(:hearing_disp) { "C" }
-      let(:hearing_type) { HearingDay::REQUEST_TYPES[:video] }
+      let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:video] }
 
       it { is_expected.to eq "5" }
     end
 
     context "when disposition is not held" do
       let(:hearing_disp) { "N" }
-      let(:hearing_type) { HearingDay::REQUEST_TYPES[:central] }
+      let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:central] }
 
       it { is_expected.to eq "5" }
     end
@@ -58,16 +65,18 @@ describe HearingMapper do
   context ".datetime_based_on_type" do
     before { Time.zone = "America/Chicago" }
     subject do
-      HearingMapper.datetime_based_on_type(datetime: datetime,
-                                           regional_office_key: regional_office_key,
-                                           type: type)
+      HearingMapper.datetime_based_on_type(
+        datetime: datetime,
+        regional_office: RegionalOffice.find!(regional_office_key),
+        type: type
+      )
     end
     let(:manila_ro_asia_manila) { "RO58" }
     let(:regional_office_key) { manila_ro_asia_manila }
     let(:datetime) { Time.new(2013, 9, 5, 20, 0, 0, "-08:00") }
 
     context "when travel board" do
-      let(:type) { HearingDay::REQUEST_TYPES[:travel] }
+      let(:type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:travel] }
 
       it "uses a regional office timezone to set the zone" do
         expect(subject.day).to eq 5
@@ -77,7 +86,7 @@ describe HearingMapper do
     end
 
     context "when video" do
-      let(:type) { HearingDay::REQUEST_TYPES[:video] }
+      let(:type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:video] }
 
       it "uses a regional office timezone to set the zone" do
         expect(subject.day).to eq 5
@@ -87,7 +96,7 @@ describe HearingMapper do
     end
 
     context "when central_office" do
-      let(:type) { HearingDay::REQUEST_TYPES[:central] }
+      let(:type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:central] }
 
       it "does not use a regional office timezone" do
         expect(subject.day).to eq 6
@@ -98,28 +107,44 @@ describe HearingMapper do
   end
 
   context ".hearing_fields_to_vacols_codes" do
+    let!(:user) { create(:user, :with_vacols_attorney_record) }
+    let(:scheduled_datetime) { Time.zone.now + 2.weeks }
+    let!(:scheduled_datetime_formatted) { VacolsHelper.format_datetime_with_utc_timezone(scheduled_datetime) }
+
     subject { HearingMapper.hearing_fields_to_vacols_codes(info) }
 
     context "when all values are present" do
       let(:info) do
-        { notes: "test notes",
-          aod: "none",
-          transcript_requested: false,
+        { request_type: "V",
+          scheduled_for: scheduled_datetime,
+          notes: "test notes",
           disposition: "postponed",
           hold_open: 60,
+          aod: "none",
           add_on: false,
-          representative_name: "test name" }
+          transcript_requested: false,
+          representative_name: "test name",
+          folder_nr: "1234567",
+          room: "3",
+          bva_poc: "TESTVALUE",
+          judge_id: user.id }
       end
 
       it "should convert to Vacols values" do
         result = subject
+        expect(result[:request_type]).to eq "V"
+        expect(result[:scheduled_for]).to eq scheduled_datetime_formatted
         expect(result[:notes]).to eq "test notes"
-        expect(result[:aod]).to eq :N
-        expect(result[:transcript_requested]).to eq :N
         expect(result[:disposition]).to eq :P
         expect(result[:hold_open]).to eq 60
+        expect(result[:aod]).to eq :N
         expect(result[:add_on]).to eq :N
+        expect(result[:transcript_requested]).to eq :N
         expect(result[:representative_name]).to eq "test name"
+        expect(result[:folder_nr]).to eq "1234567"
+        expect(result[:room]).to eq "3"
+        expect(result[:bva_poc]).to eq "TESTVALUE"
+        expect(result[:judge_id]).to eq user.vacols_attorney_id
       end
     end
 
@@ -164,6 +189,15 @@ describe HearingMapper do
       end
     end
 
+    context "when request_type is not valid" do
+      let(:info) do
+        { request_type: "NOPE" }
+      end
+      it "raises InvalidRequestTypeError error" do
+        expect { subject }.to raise_error(HearingMapper::InvalidRequestTypeError)
+      end
+    end
+
     context "when aod is not valid" do
       let(:info) do
         { aod: :foo }
@@ -197,6 +231,15 @@ describe HearingMapper do
       end
       it "raises InvalidNotesError error" do
         expect { subject }.to raise_error(HearingMapper::InvalidAddOnError)
+      end
+    end
+
+    context "when request_type is empty" do
+      let(:info) do
+        { request_type: nil }
+      end
+      it "raises InvalidRequestTypeError error" do
+        expect { subject }.to raise_error(HearingMapper::InvalidRequestTypeError)
       end
     end
 

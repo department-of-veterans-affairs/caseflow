@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -39,18 +40,26 @@ class SideBarIssueTags extends PureComponent {
       <SearchableDropdown
         key={doc.id}
         name="tags"
-        label="Select or tag issue(s)"
+        label="Select or tag issues"
         multi
+        dropdownStyling={{ position: 'relative' }}
         creatable
         options={generateOptionsFromTags(this.props.tagOptions)}
         placeholder=""
         value={generateOptionsFromTags(doc.tags)}
         onChange={onChange}
-        selfManageValueState
       />
     </div>;
   }
 }
+
+SideBarIssueTags.propTypes = {
+  doc: PropTypes.object,
+  removeTag: PropTypes.func,
+  addNewTag: PropTypes.func,
+  error: PropTypes.object,
+  tagOptions: PropTypes.string
+};
 
 const mapStateToProps = (state) => {
   return {

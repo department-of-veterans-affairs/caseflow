@@ -12,6 +12,10 @@ describe Organizations::UsersController, :postgres, type: :controller do
       User.authenticate!(roles: ["Admin Intake"])
     end
 
+    let(:bva_admin_user) do
+      create(:user).tap { |bva_admin| Bva.singleton.add_user(bva_admin) }
+    end
+
     let(:non_comp_org) { create(:business_line, name: "National Cemetery Administration", url: "nca") }
 
     context "non-admin user" do
@@ -25,10 +29,8 @@ describe Organizations::UsersController, :postgres, type: :controller do
       end
     end
 
-    context "admin user" do
+    shared_examples "can view org" do
       render_views
-
-      before { User.stub = admin_user }
 
       let(:user) { create(:user) }
 
@@ -51,6 +53,18 @@ describe Organizations::UsersController, :postgres, type: :controller do
         expect(org_user["attributes"]["css_id"]).to eq(user.css_id)
         expect(org_user["attributes"]["admin"]).to eq(false)
       end
+    end
+
+    context "admin user" do
+      before { User.stub = admin_user }
+
+      it_behaves_like "can view org"
+    end
+
+    context "bva admin user" do
+      before { User.stub = bva_admin_user }
+
+      it_behaves_like "can view org"
     end
   end
 

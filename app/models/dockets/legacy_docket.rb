@@ -22,12 +22,30 @@ class LegacyDocket
   end
   # rubocop:enable Metrics/CyclomaticComplexity
 
+  def genpop_priority_count
+    LegacyAppeal.repository.genpop_priority_count
+  end
+
   def weight
     count(priority: false) + nod_count * NOD_ADJUSTMENT
   end
 
-  def age_of_n_oldest_priority_appeals(num)
-    LegacyAppeal.repository.age_of_n_oldest_priority_appeals(num)
+  def ready_priority_appeal_ids
+    LegacyAppeal.repository.priority_ready_appeal_vacols_ids
+  end
+
+  def oldest_priority_appeal_days_waiting
+    return 0 if age_of_oldest_priority_appeal.nil?
+
+    (Time.zone.now.to_date - age_of_oldest_priority_appeal.to_date).to_i
+  end
+
+  def age_of_oldest_priority_appeal
+    @age_of_oldest_priority_appeal ||= LegacyAppeal.repository.age_of_oldest_priority_appeal
+  end
+
+  def age_of_n_oldest_genpop_priority_appeals(num)
+    LegacyAppeal.repository.age_of_n_oldest_genpop_priority_appeals(num)
   end
 
   def distribute_priority_appeals(distribution, genpop: "any", limit: 1)
@@ -40,8 +58,12 @@ class LegacyDocket
     end.compact
   end
 
-  def distribute_nonpriority_appeals(distribution, genpop: "any", range: nil, limit: 1)
-    LegacyAppeal.repository.distribute_nonpriority_appeals(distribution.judge, genpop, range, limit).map do |record|
+  def distribute_nonpriority_appeals(distribution, genpop: "any", range: nil, limit: 1, bust_backlog: false)
+    return [] if !range.nil? && range <= 0
+
+    LegacyAppeal.repository.distribute_nonpriority_appeals(
+      distribution.judge, genpop, range, limit, bust_backlog
+    ).map do |record|
       next unless existing_distribution_case_may_be_redistributed(record["bfkey"], distribution)
 
       dist_case = new_distributed_case(distribution, record, docket_type, genpop, false)

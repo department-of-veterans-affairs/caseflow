@@ -6,7 +6,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
     let(:appeal) { create(:appeal) }
     let(:valid_document_type) { "BVA Decision" }
     let(:params) do
-      { appeal_id: appeal.uuid,
+      { appeal_id: appeal.external_id,
         file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW",
         document_type: valid_document_type }
     end
@@ -26,7 +26,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
 
       context "when document_type param is missing" do
         it "throws an error" do
-          post :create, params: { appeal_id: appeal.uuid, file: "foo" }
+          post :create, params: { appeal_id: appeal.external_id, file: "foo" }
           err_msg = JSON.parse(response.body)["message"]
 
           expect(err_msg).to eq "Document type is not recognized"
@@ -36,7 +36,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
 
       context "document_type is blank" do
         it "throws an error" do
-          post :create, params: { appeal_id: appeal.uuid, document_type: "", file: "foo" }
+          post :create, params: { appeal_id: appeal.external_id, document_type: "", file: "foo" }
           err_msg = JSON.parse(response.body)["message"]
 
           expect(err_msg).to eq "Document type is not recognized"
@@ -46,7 +46,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
 
       context "document_type is present but invalid" do
         it "throws an error" do
-          post :create, params: { appeal_id: appeal.uuid, document_type: "foo", file: "foo" }
+          post :create, params: { appeal_id: appeal.external_id, document_type: "foo", file: "foo" }
           err_msg = JSON.parse(response.body)["message"]
 
           expect(err_msg).to eq "Document type is not recognized"
@@ -56,7 +56,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
 
       context "file param is missing" do
         it "throws an error" do
-          post :create, params: { appeal_id: appeal.uuid, document_type: valid_document_type }
+          post :create, params: { appeal_id: appeal.external_id, document_type: valid_document_type }
           err_msg = JSON.parse(response.body)["message"]
 
           expect(err_msg).to eq "File can't be blank"
@@ -66,7 +66,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
 
       context "file param is blank" do
         it "throws an error" do
-          post :create, params: { appeal_id: appeal.uuid, document_type: valid_document_type, file: "" }
+          post :create, params: { appeal_id: appeal.external_id, document_type: valid_document_type, file: "" }
           err_msg = JSON.parse(response.body)["message"]
 
           expect(err_msg).to eq "File can't be blank"
@@ -86,29 +86,41 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
       end
 
       context "all parameters are valid" do
-        it "returns a successful message and creates a new VbmsUploadedDocument" do
-          expect { post :create, params: params }.to change(VbmsUploadedDocument, :count).by(1)
-
-          success_message = JSON.parse(response.body)["message"]
-
-          expect(success_message).to eq "Document successfully queued for upload."
-          expect(response.status).to eq(200)
-        end
-
-        it "queues the document for upload to VBMS" do
-          uploaded_document = instance_double(VbmsUploadedDocument, id: 1)
-          document_params = {
+        let(:uploaded_document) { instance_double(VbmsUploadedDocument, id: 1) }
+        let(:document_params) do
+          {
             appeal_id: appeal.id,
+            appeal_type: appeal.class.name,
             document_type: params[:document_type],
             file: params[:file]
           }
+        end
 
-          expect(VbmsUploadedDocument).to receive(:create).with(document_params).and_return(uploaded_document)
-          expect(UploadDocumentToVbmsJob)
-            .to receive(:perform_later).with(document_id: uploaded_document.id)
-          expect(uploaded_document).to receive(:cache_file)
+        shared_examples "success_with_valid_parameters" do
+          it "returns a successful message and creates a new VbmsUploadedDocument" do
+            expect { post :create, params: params }.to change(VbmsUploadedDocument, :count).by(1)
 
-          post :create, params: params
+            success_message = JSON.parse(response.body)["message"]
+
+            expect(success_message).to eq "Document successfully queued for upload."
+            expect(response.status).to eq(200)
+          end
+
+          it "queues the document for upload to VBMS" do
+            expect(VbmsUploadedDocument).to receive(:create).with(document_params).and_return(uploaded_document)
+            expect(UploadDocumentToVbmsJob).to receive(:perform_later).with(document_id: uploaded_document.id)
+            expect(uploaded_document).to receive(:cache_file)
+
+            post :create, params: params
+          end
+        end
+
+        it_behaves_like "success_with_valid_parameters"
+
+        context "the appeal is a LegacyAppeal" do
+          let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+
+          it_behaves_like "success_with_valid_parameters"
         end
       end
     end

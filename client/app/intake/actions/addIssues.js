@@ -112,6 +112,7 @@ export const addContestableIssue = (args) => (dispatch) => {
       vacolsId: args.vacolsId,
       vacolsSequenceId: args.vacolsSequenceId,
       eligibleForSocOptIn: args.eligibleForSocOptIn,
+      eligibleForSocOptInWithExemption: args.eligibleForSocOptInWithExemption,
       correctionType: args.correctionType,
       editable: true
     }
@@ -133,6 +134,7 @@ export const addNonratingRequestIssue = (args) => (dispatch) => {
       vacolsId: args.vacolsId,
       vacolsSequenceId: args.vacolsSequenceId,
       eligibleForSocOptIn: args.eligibleForSocOptIn,
+      eligibleForSocOptInWithExemption: args.eligibleForSocOptInWithExemption,
       ineligibleDueToId: args.ineligibleDueToId,
       ineligibleReason: args.ineligibleReason,
       decisionReviewTitle: args.decisionReviewTitle,

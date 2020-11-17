@@ -8,6 +8,10 @@ body {
   background: $cf-background;
 }
 
+pre {
+  font-family: inherit;
+}
+
 .content {
   min-height: calc(100vh - 125px);
   padding-bottom: 30px;
@@ -770,6 +774,7 @@ form {
   }
 
   &.usa-button-disabled {
+    background-color: $color-white;
     color: $color-gray-light;
   }
 
@@ -838,10 +843,6 @@ input {
   }
 }
 
-[type='checkbox']:disabled + label {
-  color: $color-gray-dark;
-}
-
 .cf-inline-form {
   line-height: 4em;
   @include clearfix;
@@ -871,7 +872,7 @@ input {
 }
 
 .cf-required {
-  color: $color-secondary;
+  color: $color-gray;
   float: right;
   font-style: italic;
   margin-left: 0.25em;

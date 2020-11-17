@@ -2,7 +2,7 @@
 
 module DateTimeHelper
   def post_ama_start_date
-    ama_start_date + 100.days
+    Time.zone.today.in_time_zone
   end
 
   def ama_start_date
@@ -27,6 +27,10 @@ module DateTimeHelper
 
   def post_ramp_start_date
     Time.new(2017, 12, 8).in_time_zone
+  end
+
+  def check_for_federal_holiday(date)
+    Holidays.on(date, :federal_reserve, :observed).any?
   end
 end
 

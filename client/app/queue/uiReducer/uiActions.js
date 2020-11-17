@@ -13,6 +13,13 @@ export const setCanEditAod = (canEditAod) => ({
   }
 });
 
+export const setCanViewOvertimeStatus = (canViewOvertimeStatus) => ({
+  type: ACTIONS.SET_CAN_VIEW_OVERTIME_STATUS,
+  payload: {
+    canViewOvertimeStatus
+  }
+});
+
 export const showErrorMessage = (errorMessage) => ({
   type: ACTIONS.SHOW_ERROR_MESSAGE,
   payload: {
@@ -65,19 +72,17 @@ const saveFailure = (err) => (dispatch) => {
   let uiErrorMessage;
 
   try {
-    uiErrorMessage = response.body;
+    uiErrorMessage = response.body.errors[0];
   } catch (ex) {
     // the default case if there is no `text` node in the response (ie the backend did not return sufficient info)
     uiErrorMessage = {
-      errors: [{
-        title: 'Error',
-        detail: 'There was an error processing your request. ' +
-        'Please retry your action and contact support if errors persist.'
-      }]
+      title: 'Error',
+      detail: 'There was an error processing your request. ' +
+      'Please retry your action and contact support if errors persist.'
     };
   }
 
-  dispatch(showErrorMessage(uiErrorMessage.errors[0]));
+  dispatch(showErrorMessage(uiErrorMessage));
   dispatch({ type: ACTIONS.SAVE_FAILURE });
   // the promise rejection below is also uncaught
   // but this seems to be by design since that's the same as the frontend handling and throwing an error
@@ -148,12 +153,13 @@ export const setOrganizations = (organizations) => ({
   payload: { organizations }
 });
 
-export const setActiveOrganization = (id, name, isVso) => ({
+export const setActiveOrganization = (id, name, isVso, userCanBulkAssign) => ({
   type: ACTIONS.SET_ACTIVE_ORGANIZATION,
   payload: {
     id,
     name,
-    isVso
+    isVso,
+    userCanBulkAssign
   }
 });
 
@@ -162,9 +168,9 @@ export const setUserId = (userId) => ({
   payload: { userId }
 });
 
-export const setTargetUserCssId = (targetUserCssId) => ({
-  type: ACTIONS.SET_TARGET_USER_CSS_ID,
-  payload: { targetUserCssId }
+export const setTargetUser = (targetUser) => ({
+  type: ACTIONS.SET_TARGET_USER,
+  payload: { targetUser }
 });
 
 export const setUserIsVsoEmployee = (userIsVsoEmployee) => ({
@@ -189,6 +195,10 @@ export const setSelectedAssigneeSecondary = ({ assigneeId }) => ({
   payload: {
     assigneeId
   }
+});
+
+export const resetAssignees = () => ({
+  type: ACTIONS.RESET_ASSIGNEES
 });
 
 export const toggleVeteranCaseList = () => ({

@@ -196,7 +196,7 @@ module Asyncable
 
   def sanitized_error
     # keep PII out of output
-    (self[self.class.error_column] || "none").gsub(/\s.+/s, "")
+    (self[self.class.error_column] || "none").gsub(/\s.+/m, "")
   end
 
   def expired_without_processing?

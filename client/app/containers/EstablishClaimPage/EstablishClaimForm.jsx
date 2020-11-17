@@ -8,7 +8,6 @@ import DateSelector from '../../components/DateSelector';
 
 import { formattedStationOfJurisdiction } from '../../establishClaim/util';
 import * as Constants from '../../establishClaim/constants';
-import { getStationOfJurisdiction } from '../../establishClaim/selectors';
 
 import { connect } from 'react-redux';
 
@@ -126,7 +125,9 @@ EstablishClaimForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   stationKey: PropTypes.string.isRequired,
   regionalOfficeKey: PropTypes.string.isRequired,
-  regionalOfficeCities: PropTypes.object.isRequired
+  regionalOfficeCities: PropTypes.object.isRequired,
+  stationOfJurisdiction: PropTypes.object.isRequired,
+  loading: PropTypes.bool.isRequired
 };
 
 /*
@@ -134,12 +135,8 @@ EstablishClaimForm.propTypes = {
  * application state should be passed in as props to
  * the rendered component.
  */
-const mapStateToProps = (state, ownProps) => ({
-  establishClaimForm: state.establishClaimForm,
-  stationOfJurisdiction: getStationOfJurisdiction(
-    state.specialIssues,
-    ownProps.stationKey
-  )
+const mapStateToProps = (state) => ({
+  establishClaimForm: state.establishClaimForm
 });
 
 const mapDispatchToProps = (dispatch) => ({

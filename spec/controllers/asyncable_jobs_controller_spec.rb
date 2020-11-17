@@ -31,7 +31,7 @@ describe AsyncableJobsController, :postgres, type: :controller do
   end
 
   describe "#index" do
-    context "user is not Admin Intake" do
+    context "user is not Admin Intake or Manage Claim Establishment" do
       let(:user) { create(:default_user) }
 
       it "returns unauthorized" do
@@ -83,6 +83,16 @@ describe AsyncableJobsController, :postgres, type: :controller do
 
         records = response.body.strip.split("\n")[1..-1]
         expect(records.length).to be > page_size
+      end
+    end
+
+    context "user is Manage Claim Establishment" do
+      let(:user) { User.authenticate!(roles: ["Manage Claim Establishment"]) }
+
+      it "allows access" do
+        get :index
+
+        expect(response.status).to eq 200
       end
     end
 

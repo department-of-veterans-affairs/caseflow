@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 class DecisionIssue < CaseflowRecord
+  include HasDecisionReviewUpdatedSince
+
   validates :benefit_type, inclusion: { in: Constants::BENEFIT_TYPES.keys.map(&:to_s) }
   validates :disposition, presence: true
   validates :end_product_last_action_date, presence: true, unless: :processed_in_caseflow?
 
   with_options if: :appeal? do
     validates :disposition, inclusion: { in: Constants::ISSUE_DISPOSITIONS_BY_ID.keys.map(&:to_s) }
-    validates :diagnostic_code, inclusion: { in: Constants::DIAGNOSTIC_CODE_DESCRIPTIONS.keys.map(&:to_s) },
-                                allow_nil: true
   end
 
   # Attorneys will be entering in a description of the decision manually for appeals
@@ -232,7 +232,7 @@ class DecisionIssue < CaseflowRecord
   end
 
   def dta_payee_code
-    decision_review.payee_code || prior_payee_code || decision_review.claimant.bgs_payee_code
+    decision_review.payee_code || prior_payee_code || decision_review.claimant&.bgs_payee_code
   end
 
   def find_remand_supplemental_claim
@@ -259,7 +259,8 @@ class DecisionIssue < CaseflowRecord
 
     sc.create_claimant!(
       participant_id: decision_review.claimant_participant_id,
-      payee_code: dta_payee_code
+      payee_code: dta_payee_code,
+      type: decision_review.claimant.type
     )
 
     sc

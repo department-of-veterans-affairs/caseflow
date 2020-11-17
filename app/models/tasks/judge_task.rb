@@ -18,6 +18,11 @@ class JudgeTask < Task
         Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
         additional_available_actions(user)
       ].flatten
+    elsif user&.can_act_on_behalf_of_judges?
+      [
+        Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
+        additional_available_actions(user)
+      ].flatten
     else
       []
     end
@@ -35,5 +40,9 @@ class JudgeTask < Task
 
   def previous_task
     children_attorney_tasks.order(:assigned_at).last
+  end
+
+  def reassign_clears_overtime?
+    true
   end
 end

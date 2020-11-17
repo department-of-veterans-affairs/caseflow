@@ -185,19 +185,6 @@ describe DecisionIssue, :postgres do
         context "when it is nil" do
           it { is_expected.to be true }
         end
-
-        context "when it is set to an allowed value" do
-          let(:diagnostic_code) { "5000" }
-          it { is_expected.to be true }
-        end
-
-        context "when it is not an allowed value" do
-          let(:diagnostic_code) { "bogus_diagnostic_code" }
-          it "adds an error to diagnostic_code" do
-            is_expected.to be false
-            expect(decision_issue.errors[:diagnostic_code]).to include("is not included in the list")
-          end
-        end
       end
     end
 
@@ -364,7 +351,14 @@ describe DecisionIssue, :postgres do
 
       context "when no supplemental claim matches decision issue" do
         let(:veteran) { create(:veteran) }
-        let(:decision_review) { create(:appeal, number_of_claimants: 1, veteran_file_number: veteran.file_number) }
+        let(:decision_review) do
+          create(
+            :appeal,
+            number_of_claimants: 1,
+            veteran_file_number: veteran.file_number,
+            veteran_is_not_claimant: true
+          )
+        end
         let!(:decision_document) { create(:decision_document, decision_date: decision_date, appeal: decision_review) }
 
         context "when there is a prior claim by the same claimant on the same veteran" do
@@ -390,7 +384,7 @@ describe DecisionIssue, :postgres do
 
         context "when there is no prior claim by the claimant" do
           context "when there is a bgs payee code" do
-            before { allow_any_instance_of(Claimant).to receive(:bgs_payee_code).and_return("12") }
+            before { allow_any_instance_of(DependentClaimant).to receive(:bgs_payee_code).and_return("12") }
 
             it "creates a new supplemental claim" do
               expect(subject).to have_attributes(
@@ -408,7 +402,7 @@ describe DecisionIssue, :postgres do
           end
 
           context "when there is no bgs payee code" do
-            before { allow_any_instance_of(Claimant).to receive(:bgs_payee_code).and_return(nil) }
+            before { allow_any_instance_of(DependentClaimant).to receive(:bgs_payee_code).and_return(nil) }
 
             it "raises an error" do
               expect { subject }.to raise_error(DecisionIssue::AppealDTAPayeeCodeError)

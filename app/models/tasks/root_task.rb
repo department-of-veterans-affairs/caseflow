@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 ##
+# Caseflow Intake establishes the appeal. Once the appeal is established, Caseflow Queue automatically
+# creates a Root Task for other tasks to attach to, depending on the Veteran's situation.
 # Root task that tracks an appeal all the way through the appeal lifecycle.
 # This task is closed when an appeal has been completely resolved.
+# There should only be one RootTask per appeal.
 
 class RootTask < Task
   before_create :verify_root_task_unique
@@ -25,21 +28,32 @@ class RootTask < Task
 
   def self.creatable_tasks_types_when_on_hold
     [
-      # Expect mail to be received for dispatched or cancelled appeals.
-      ReturnedUndeliverableCorrespondenceMailTask.name,
       # Expect TrackVeteranTasks to occasionally be created for closed RootTasks because of timing complications
       # described in https://github.com/department-of-veterans-affairs/caseflow/issues/12574#issuecomment-549463832
       TrackVeteranTask.name
     ]
   end
 
+  def self.allowed_creation_when_appeal_not_open(child_task)
+    return true if creatable_tasks_types_when_on_hold.include?(child_task.type)
+
+    # Expect mail to be received for dispatched or cancelled appeals.
+    # CreateMailTaskDialog.jsx allows potentially all MailTask subclasses to be created
+    # See `task_action_repository.rb: mail_assign_to_organization_data`
+    return true if child_task.class < MailTask
+
+    false
+  end
+
   # Do not change the status of closed or on_hold RootTasks when child tasks are created for them.
   def when_child_task_created(child_task)
     if active?
       update!(status: :on_hold)
-    elsif !self.class.creatable_tasks_types_when_on_hold.include?(child_task.type) && !on_hold?
-      Raven.capture_message("Created child task #{child_task&.id} for RootTask #{id} " \
-        "but did not update RootTask status")
+    elsif !on_hold? && !self.class.allowed_creation_when_appeal_not_open(child_task)
+      Raven.capture_message("Created child task #{child_task&.type} #{child_task&.id} for RootTask #{id} " \
+        "but did not update RootTask status. " \
+        "If #{child_task&.type} is expected and #{status} RootTask does not require updating, " \
+        "then add task type to RootTask.creatable_tasks_types_when_on_hold.")
     end
   end
 
@@ -92,10 +106,9 @@ class RootTask < Task
     ).any?
       fail(
         Caseflow::Error::DuplicateOrgTask,
-        appeal_id: appeal.id,
+        docket_number: appeal.docket_number,
         task_type: self.class.name,
-        assignee_type: assigned_to.class.name,
-        parent_id: parent&.id
+        assignee_type: assigned_to.class.name
       )
     end
   end

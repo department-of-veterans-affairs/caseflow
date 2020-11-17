@@ -27,7 +27,8 @@ class LegacyOptInModal extends React.Component {
       vacolsId: null,
       vacolsSequenceId: null,
       radioVal: '',
-      eligibleForSocOptIn: null
+      eligibleForSocOptIn: null,
+      eligibleForSocOptInWithExemption: null
     };
   }
 
@@ -37,8 +38,9 @@ class LegacyOptInModal extends React.Component {
     if (value === 'no_match') {
       this.setState({
         vacolsId: null,
+        vacolsSequenceId: null,
         eligibleForSocOptIn: null,
-        vacolsSequenceId: null
+        eligibleForSocOptInWithExemption: null
       });
     } else {
       const legacyValues = value.split('-');
@@ -46,12 +48,15 @@ class LegacyOptInModal extends React.Component {
       const legacyAppeal = this.props.intakeData.legacyAppeals.find((appeal) => appeal.vacols_id === legacyValues[0]);
 
       if (vacolsSequenceId) {
-        let vacolsIssue = legacyAppeal.issues.find((i) => i.vacols_sequence_id === parseInt(vacolsSequenceId, 10));
+        const vacolsIssue = legacyAppeal.issues.find((i) => i.vacols_sequence_id === parseInt(vacolsSequenceId, 10));
+        const eligibleWithExemption = legacyAppeal.eligible_for_soc_opt_in_with_exemption &&
+          vacolsIssue.eligible_for_soc_opt_in_with_exemption;
 
         this.setState({
           vacolsId: legacyValues[0],
+          vacolsSequenceId,
           eligibleForSocOptIn: legacyAppeal.eligible_for_soc_opt_in && vacolsIssue.eligible_for_soc_opt_in,
-          vacolsSequenceId
+          eligibleForSocOptInWithExemption: eligibleWithExemption
         });
       }
     }
@@ -76,7 +81,8 @@ class LegacyOptInModal extends React.Component {
     this.props.onSubmit({
       vacolsId: this.state.vacolsId,
       vacolsSequenceId: this.state.vacolsSequenceId,
-      eligibleForSocOptIn: this.state.eligibleForSocOptIn
+      eligibleForSocOptIn: this.state.eligibleForSocOptIn,
+      eligibleForSocOptInWithExemption: this.state.eligibleForSocOptInWithExemption
     });
   };
 

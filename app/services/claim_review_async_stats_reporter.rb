@@ -107,7 +107,7 @@ class ClaimReviewAsyncStatsReporter
   # rubocop:enable Metrics/MethodLength
 
   def established_within_seven_days(completion_times)
-    completion_times.select { |span| span.fdiv(86_400).to_i < 7 }.count
+    completion_times.count { |span| span.fdiv(86_400).to_i < 7 }
   end
 
   def percent_established_within_seven_days(completion_times, total)

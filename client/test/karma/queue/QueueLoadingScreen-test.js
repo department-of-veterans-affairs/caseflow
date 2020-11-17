@@ -39,6 +39,7 @@ const serverData = {
           previous_task: {
             assigned_on: '2018-08-02T17:37:03.000Z'
           },
+          started_at: '2018-08-02T17:37:03.000Z',
           task_id: '3625593-2018-07-11',
           label: 'Review',
           user_id: 'BVANKUVALIS',
@@ -48,7 +49,8 @@ const serverData = {
           status: 'Assigned',
           hide_from_queue_table_view: false,
           hide_from_case_timeline: false,
-          hide_from_task_snapshot: false
+          hide_from_task_snapshot: false,
+          latest_informal_hearing_presentation_task: {}
         },
         id: '3625593',
         type: 'judge_legacy_tasks'
@@ -78,6 +80,7 @@ describe('QueueLoadingScreen', () => {
           // eslint-disable-next-line no-undefined
           isOrganization: undefined
         },
+        assigneeName: undefined,
         // eslint-disable-next-line no-undefined
         availableActions: undefined,
         // eslint-disable-next-line no-undefined
@@ -95,12 +98,17 @@ describe('QueueLoadingScreen', () => {
         },
         workProduct: 'OTD',
         previousTaskAssignedOn: '2018-08-02T17:37:03.000Z',
+        startedAt: '2018-08-02T17:37:03.000Z',
         status: 'Assigned',
         decisionPreparedBy: null,
         type: 'LegacyJudgeTask',
         hideFromQueueTableView: false,
         hideFromCaseTimeline: false,
-        hideFromTaskSnapshot: false
+        hideFromTaskSnapshot: false,
+        latestInformalHearingPresentationTask: {
+          requestedAt: undefined,
+          receivedAt: undefined
+        }
       }
     });
   });

@@ -6,6 +6,7 @@
 # which went into effect Feb 19, 2019.
 
 class Appeal < DecisionReview
+  include AppealConcern
   include BgsService
   include Taskable
   include PrintsTaskTree
@@ -25,12 +26,21 @@ class Appeal < DecisionReview
   has_one :special_issue_list
   has_one :post_decision_motion
   has_many :record_synced_by_job, as: :record
+  has_one :work_mode, as: :appeal
+  has_one :latest_informal_hearing_presentation_task, lambda {
+    not_cancelled
+      .order(closed_at: :desc, assigned_at: :desc)
+      .where(type: [InformalHearingPresentationTask.name, IhpColocatedTask.name], appeal_type: Appeal.name)
+  }, class_name: "Task", foreign_key: :appeal_id
 
   enum stream_type: {
-    "original": "original",
-    "vacate": "vacate",
-    "de_novo": "de_novo"
+    Constants.AMA_STREAM_TYPES.original.to_sym => Constants.AMA_STREAM_TYPES.original,
+    Constants.AMA_STREAM_TYPES.vacate.to_sym => Constants.AMA_STREAM_TYPES.vacate,
+    Constants.AMA_STREAM_TYPES.de_novo.to_sym => Constants.AMA_STREAM_TYPES.de_novo,
+    Constants.AMA_STREAM_TYPES.court_remand.to_sym => Constants.AMA_STREAM_TYPES.court_remand
   }
+
+  after_create :conditionally_set_aod_based_on_age
 
   after_save :set_original_stream_data
 
@@ -69,7 +79,7 @@ class Appeal < DecisionReview
   delegate :documents, :manifest_vbms_fetched_at, :number_of_documents,
            :manifest_vva_fetched_at, to: :document_fetcher
 
-  def self.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
+  def self.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(id)
     if UUID_REGEX.match?(id)
       find_by_uuid!(id)
     else
@@ -88,17 +98,23 @@ class Appeal < DecisionReview
   def create_stream(stream_type)
     ActiveRecord::Base.transaction do
       Appeal.create!(slice(
+        :aod_based_on_age,
+        :closest_regional_office,
+        :docket_type,
+        :legacy_opt_in_approved,
         :receipt_date,
         :veteran_file_number,
-        :legacy_opt_in_approved,
-        :veteran_is_not_claimant,
-        :docket_type
+        :veteran_is_not_claimant
       ).merge(
         stream_type: stream_type,
         stream_docket_number: docket_number,
         established_at: Time.zone.now
       )).tap do |stream|
-        stream.create_claimant!(participant_id: claimant.participant_id, payee_code: claimant.payee_code)
+        stream.create_claimant!(
+          participant_id: claimant.participant_id,
+          payee_code: claimant.payee_code,
+          type: claimant.type
+        )
       end
     end
   end
@@ -126,13 +142,9 @@ class Appeal < DecisionReview
     decorated_with_status.fetch_status.to_s.titleize
   end
 
-  def program
-    decorated_with_status.program
-  end
+  delegate :program, to: :decorated_with_status
 
-  def distributed_to_a_judge?
-    decorated_with_status.distributed_to_a_judge?
-  end
+  delegate :distributed_to_a_judge?, to: :decorated_with_status
 
   def decorated_with_status
     AppealStatusApiDecorator.new(self)
@@ -212,29 +224,11 @@ class Appeal < DecisionReview
   end
 
   def ready_for_distribution?
-    # Appeals are ready for distribution when the DistributionTask is the active task, meaning there are no outstanding
-    #   Evidence Window or Hearing tasks, and when there are no mail tasks that legally restrict the distribution of
-    #   the case, aka blocking mail tasks
-    return false unless tasks.active.where(type: DistributionTask.name).any?
-
-    MailTask.open.where(appeal: self).find_each do |mail_task|
-      return false if mail_task.blocking?
-    end
-
-    true
+    tasks.active.where(type: DistributionTask.name).any?
   end
 
   def ready_for_distribution_at
     tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
-  end
-
-  def veteran_name
-    # For consistency with LegacyAppeal.veteran_name
-    veteran&.name&.formatted(:form)
-  end
-
-  def veteran_middle_initial
-    veteran&.name&.middle_initial
   end
 
   def veteran_is_deceased
@@ -270,12 +264,20 @@ class Appeal < DecisionReview
     veteran_if_exists&.available_hearing_locations
   end
 
-  def regional_office
+  def regional_office_key
     nil
   end
 
+  def conditionally_set_aod_based_on_age
+    updated_aod_based_on_age = claimant&.advanced_on_docket_based_on_age?
+    update(aod_based_on_age: updated_aod_based_on_age) if aod_based_on_age != updated_aod_based_on_age
+  end
+
   def advanced_on_docket?
-    claimant&.advanced_on_docket?(receipt_date)
+    conditionally_set_aod_based_on_age
+    # One of the AOD motion reasons is 'age'. Keep interrogation of any motions separate from `aod_based_on_age`,
+    # which reflects `claimant.advanced_on_docket_based_on_age?`.
+    aod_based_on_age || claimant&.advanced_on_docket_motion_granted?(self)
   end
 
   # Prefer aod? over aod going forward, as this function returns a boolean
@@ -283,26 +285,73 @@ class Appeal < DecisionReview
   alias aod advanced_on_docket?
 
   delegate :first_name,
+           :middle_name,
            :last_name,
            :name_suffix, to: :veteran, prefix: true, allow_nil: true
 
   alias appellant claimant
 
   delegate :first_name,
-           :last_name,
            :middle_name,
+           :last_name,
            :name_suffix,
            :address_line_1,
            :city,
            :zip,
-           :state, to: :appellant, prefix: true, allow_nil: true
+           :state,
+           :email_address, to: :appellant, prefix: true, allow_nil: true
+
+  def appellant_tz
+    return if address.blank?
+
+    # Use an address object if this is a hash
+    appellant_address = address.is_a?(Hash) ? Address.new(address) : address
+
+    begin
+      TimezoneService.address_to_timezone(appellant_address).identifier
+    rescue StandardError => error
+      Raven.capture_exception(error)
+      nil
+    end
+  end
+
+  def representative_tz
+    return if representative_address.blank?
+
+    # Use an address object if this is a hash
+    rep_address = representative_address.is_a?(Hash) ? Address.new(representative_address) : representative_address
+
+    begin
+      TimezoneService.address_to_timezone(rep_address).identifier
+    rescue StandardError => error
+      Raven.capture_exception(error)
+      nil
+    end
+  end
+
+  def appellant_middle_initial
+    appellant_middle_name&.first
+  end
 
   def appellant_is_not_veteran
     !!veteran_is_not_claimant
   end
 
+  def veteran_middle_initial
+    veteran_middle_name&.first
+  end
+
+  # matches Legacy behavior
   def cavc
-    "not implemented for AMA"
+    court_remand?
+  end
+
+  alias cavc? cavc
+
+  def cavc_remand
+    return nil if !cavc?
+
+    CavcRemand.find_by(appeal_id: stream_docket_number.split("-").last)
   end
 
   def status
@@ -331,7 +380,12 @@ class Appeal < DecisionReview
     return stream_docket_number if stream_docket_number
     return "Missing Docket Number" unless receipt_date && persisted?
 
-    "#{receipt_date.strftime('%y%m%d')}-#{id}"
+    default_docket_number_from_receipt_date
+  end
+
+  def update_receipt_date!(receipt_date)
+    update!(receipt_date: receipt_date)
+    update!(stream_docket_number: default_docket_number_from_receipt_date)
   end
 
   # Currently AMA only supports one claimant per decision review
@@ -346,11 +400,11 @@ class Appeal < DecisionReview
            to: :power_of_attorney, allow_nil: true
 
   def power_of_attorneys
-    claimants.map(&:power_of_attorney)
+    claimants.map(&:power_of_attorney).compact
   end
 
   def representatives
-    vso_participant_ids = power_of_attorneys.map(&:participant_id) - [nil]
+    vso_participant_ids = power_of_attorneys.map(&:participant_id).compact.uniq
     Representative.where(participant_id: vso_participant_ids)
   end
 
@@ -427,11 +481,13 @@ class Appeal < DecisionReview
   def finalized_decision_issues_before_receipt_date
     return [] unless receipt_date
 
-    DecisionIssue.includes(:decision_review).where(participant_id: veteran.participant_id)
-      .select(&:finalized?)
-      .select do |issue|
-        issue.approx_decision_date && issue.approx_decision_date < receipt_date
-      end
+    @finalized_decision_issues_before_receipt_date ||= begin
+      DecisionIssue.includes(:decision_review).where(participant_id: veteran.participant_id)
+        .select(&:finalized?)
+        .select do |issue|
+          issue.approx_decision_date && issue.approx_decision_date < receipt_date
+        end
+    end
   end
 
   def create_business_line_tasks!
@@ -460,6 +516,47 @@ class Appeal < DecisionReview
     false
   end
 
+  # We are ready for BVA dispatch if
+  #  - the appeal is not at Quality Review
+  #  - the appeal has not already completed BVA Dispatch
+  #  - the appeal is not already at BVA Dispatch
+  #  - the appeal is not at Judge Decision Review
+  #  - the appeal has a finished Judge Decision Review
+  def ready_for_bva_dispatch?
+    return false if Task.open.where(appeal: self).where("type IN (?, ?, ?)",
+                                                        JudgeDecisionReviewTask.name,
+                                                        QualityReviewTask.name,
+                                                        BvaDispatchTask.name).any?
+    return false if BvaDispatchTask.completed.find_by(appeal: self)
+    return true if JudgeDecisionReviewTask.completed.find_by(appeal: self)
+
+    false
+  end
+
+  # Returns the hearing request type.
+  #
+  # @note See `LegacyAppeal#current_hearing_request_type` for more information.
+  #   This method is provided for compatibility.
+  def current_hearing_request_type(readable: false)
+    return nil if closest_regional_office.nil?
+
+    current_hearing_request_type = (closest_regional_office == "C") ? :central : :video
+
+    return current_hearing_request_type if !readable
+
+    # Determine type using closest_regional_office
+    # "Central" if closest_regional_office office is "C", "Video" otherwise
+    case current_hearing_request_type
+    when :central
+      Hearing::HEARING_TYPES[:C]
+    else
+      Hearing::HEARING_TYPES[:V]
+    end
+  end
+
+  alias original_hearing_request_type current_hearing_request_type
+  alias previous_hearing_request_type current_hearing_request_type
+
   private
 
   def business_lines_needing_assignment
@@ -483,5 +580,9 @@ class Appeal < DecisionReview
   ensure
     distribution_task = tasks.open.find_by(type: DistributionTask.name)
     TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
+  end
+
+  def default_docket_number_from_receipt_date
+    "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 end

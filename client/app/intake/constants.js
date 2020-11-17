@@ -170,6 +170,43 @@ export const REVIEW_OPTIONS = {
   }
 };
 
+export const REVIEW_DATA_FIELDS = {
+  appeal: {
+    docket_type: { key: 'docketType', required: true },
+    receipt_date: { key: 'receiptDate', required: true },
+    claimant: { key: 'claimant' },
+    claimant_notes: { key: 'claimantNotes' },
+    claimant_type: { key: 'claimantType', required: true },
+    payee_code: { key: 'payeeCode' },
+    legacy_opt_in_approved: { key: 'legacyOptInApproved', required: true },
+  },
+  supplementalClaim: {
+    benefit_type: { key: 'benefitType', required: true },
+    receipt_date: { key: 'receiptDate', required: true },
+    claimant: { key: 'claimant' },
+    claimant_type: { key: 'claimantType', required: true },
+    payee_code: { key: 'payeeCode' },
+    legacy_opt_in_approved: { key: 'legacyOptInApproved', required: true },
+  },
+  higherLevelReview: {
+    informal_conference: { key: 'informalConference', required: true },
+    same_office: { key: 'sameOffice', required: true },
+    benefit_type: { key: 'benefitType', required: true },
+    receipt_date: { key: 'receiptDate', required: true },
+    claimant: { key: 'claimant' },
+    claimant_type: { key: 'claimantType', required: true },
+    payee_code: { key: 'payeeCode' },
+    legacy_opt_in_approved: { key: 'legacyOptInApproved', required: true },
+  },
+};
+
+export const CLAIMANT_ERRORS = {
+  blank: 'Please select an option.',
+  claimant_address_required: "Please supply the claimant's address in VBMS.",
+  claimant_address_invalid: "Please update the claimant's address in VBMS to be valid.",
+  claimant_city_invalid: "Please update the claimant's city in VBMS to be valid."
+};
+
 export const ENDPOINT_NAMES = {
   START_INTAKE: 'start-intake',
   REVIEW_INTAKE: 'review-intake',

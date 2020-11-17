@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import _ from 'lodash';
-import { getDecisionTypeDisplay, buildCaseReviewPayload, validateWorkProductTypeAndId, nullToFalse } from './utils';
+import { getDecisionTypeDisplay, buildCaseReviewPayload, validateWorkProductTypeAndId } from './utils';
 
 import { setDecisionOptions, deleteAppeal } from './QueueActions';
 import { requestSave } from './uiReducer/uiActions';
@@ -35,6 +35,7 @@ class SubmitDecisionView extends React.PureComponent {
   componentDidMount = () => {
     this.extendedDecision = this.setInitialDecisionOptions(
       this.props.decision,
+      this.props.appeal,
       this.props.appeal && this.props.appeal.attorneyCaseRewriteDetails
     );
 
@@ -49,25 +50,19 @@ class SubmitDecisionView extends React.PureComponent {
   // and it comes from this.props.appeal.attorneyCaseRewriteDetails instead
   // if you don't do this you will get validation errors and a 400 for a missing document_id
   // this is also needed to keep the onChange values in sync
-  setInitialDecisionOptions = (decision, attorneyCaseRewriteDetails) => {
+  setInitialDecisionOptions = (decision, appeal, attorneyCaseRewriteDetails) => {
+    const overtime = this.props.featureToggles.overtime_revamp ?
+      appeal.overtime : _.get(attorneyCaseRewriteDetails, 'overtime', false);
     const decisionOptsWithAttorneyCheckoutInfo = _.merge(decision.opts, {
       document_id: _.get(this.props, 'appeal.documentID'),
       note: _.get(attorneyCaseRewriteDetails, 'note_from_attorney'),
-      overtime: _.get(attorneyCaseRewriteDetails, 'overtime', false),
-      untimely_evidence: _.get(attorneyCaseRewriteDetails, 'untimely_evidence', false),
+      overtime: overtime || false,
+      untimely_evidence: _.get(attorneyCaseRewriteDetails, 'untimely_evidence', false) || false,
       reviewing_judge_id: _.get(this.props, 'task.assignedBy.pgId')
     });
     const extendedDecision = { ...decision };
 
     extendedDecision.opts = decisionOptsWithAttorneyCheckoutInfo;
-
-    if (extendedDecision.opts) {
-      const possibleNullKeys = ['overtime', 'untimely_evidence'];
-
-      possibleNullKeys.forEach((key) => {
-        extendedDecision.opts = nullToFalse(key, extendedDecision.opts);
-      });
-    }
 
     return extendedDecision;
   };
@@ -99,7 +94,7 @@ class SubmitDecisionView extends React.PureComponent {
     return prevPath;
   };
 
-  goToNextStep = () => {
+  goToNextStep = async () => {
     const {
       task: { taskId },
       appeal: { issues, decisionIssues, veteranFullName, externalId: appealId, isLegacyAppeal },
@@ -119,14 +114,16 @@ class SubmitDecisionView extends React.PureComponent {
     const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's
     been sent to ${fields.judge} for review.`;
 
-    this.props.
-      requestSave(`/case_reviews/${taskId}/complete`, payload, { title: successMsg }).
-      then(() => {
-        this.props.deleteAppeal(appealId);
-      }).
-      catch(() => {
-        // handle the error from the frontend
-      });
+    try {
+      const res = await this.props.requestSave(`/case_reviews/${taskId}/complete`, payload, { title: successMsg });
+
+      // Perform onSuccess hook, if exists
+      await this.props.onSuccess?.(res);
+
+      this.props.deleteAppeal(appealId);
+    } catch (error) {
+      // handle the error from the frontend
+    }
   };
 
   getJudgeValueForSuccessMessage = (judges, decision) => {
@@ -152,6 +149,7 @@ class SubmitDecisionView extends React.PureComponent {
     const {
       highlightFormItems,
       error,
+      featureToggles,
       checkoutFlow,
       decision: { opts: decisionOpts },
       ...otherProps
@@ -214,13 +212,13 @@ class SubmitDecisionView extends React.PureComponent {
           styling={marginTop(4)}
           maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
         />
-        <Checkbox
+        {featureToggles.overtime_revamp || <Checkbox
           name="overtime"
           label="This work product is overtime"
           onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
           value={decisionOpts.overtime || false}
           styling={css(marginBottom(1), marginTop(1))}
-        />
+        /> }
         {!this.props.appeal.isLegacyAppeal && (
           <div>
             <Checkbox
@@ -254,6 +252,7 @@ const mapStateToProps = (state, ownProps) => {
       }
     },
     ui: {
+      featureToggles,
       highlightFormItems,
       messages: { error }
     }
@@ -265,19 +264,20 @@ const mapStateToProps = (state, ownProps) => {
     task: taskById(state, { taskId: ownProps.taskId }),
     decision,
     error,
+    featureToggles,
     highlightFormItems
   };
 };
 
 SubmitDecisionView.propTypes = {
   taskId: PropTypes.string,
-  appealId: PropTypes.string,
   task: PropTypes.shape({
     taskId: PropTypes.string,
     assignedBy: PropTypes.object,
     isLegacy: PropTypes.bool,
     addedByCssId: PropTypes.string
   }),
+  appealId: PropTypes.string,
   appeal: PropTypes.shape({
     issues: PropTypes.array,
     decisionIssues: PropTypes.array,
@@ -288,13 +288,15 @@ SubmitDecisionView.propTypes = {
   }),
   checkoutFlow: PropTypes.string,
   decision: PropTypes.shape({ opts: PropTypes.object }),
-  judges: PropTypes.array,
-  highlightFormItems: PropTypes.bool,
+  deleteAppeal: PropTypes.func,
   error: PropTypes.object,
+  featureToggles: PropTypes.object,
+  highlightFormItems: PropTypes.bool,
+  judges: PropTypes.array,
+  onSuccess: PropTypes.func,
   prevUrl: PropTypes.string,
-  setDecisionOptions: PropTypes.func,
   requestSave: PropTypes.func,
-  deleteAppeal: PropTypes.func
+  setDecisionOptions: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) =>

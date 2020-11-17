@@ -30,7 +30,7 @@ feature "AmaQueue", :all_dbs do
 
       step "views their case details which does not have the view docs link" do
         expect(page).to have_content("#{veteran.first_name} #{veteran.last_name}")
-        expect(page).to_not have_content("Veteran Documents")
+        expect(page).to_not have_content(COPY::TASK_SNAPSHOT_ABOUT_BOX_DOCUMENTS_LABEL)
       end
     end
   end
@@ -65,7 +65,8 @@ feature "AmaQueue", :all_dbs do
         appeals.first.claimant.participant_id => {
           representative_name: poa_name,
           representative_type: "POA Attorney",
-          participant_id: participant_id
+          participant_id: participant_id,
+          file_number: appeals.first.veteran_file_number
         }
       )
     end
@@ -74,7 +75,7 @@ feature "AmaQueue", :all_dbs do
     let(:participant_id) { "600153863" }
     let!(:root_task) { create(:root_task, appeal: appeals.first) }
     let!(:parent_task) do
-      create(:ama_judge_task, assigned_to: judge_user, parent: root_task)
+      create(:ama_judge_assign_task, assigned_to: judge_user, parent: root_task)
     end
 
     let(:poa_name) { "Test POA" }
@@ -187,20 +188,20 @@ feature "AmaQueue", :all_dbs do
 
         click_on "Edit"
 
-        find(".Select-control", text: "Select grant or deny").click
-        find("div", class: "Select-option", text: "Grant").click
+        find(".cf-select__control", text: "Select grant or deny").click
+        find("div", class: "cf-select__option", text: "Grant").click
 
-        find(".Select-control", text: "Select a type").click
-        find("div", class: "Select-option", text: "Serious illness").click
+        find(".cf-select__control", text: "Select a type").click
+        find("div", class: "cf-select__option", text: "Serious illness").click
 
         click_on "Submit"
 
-        expect(page).to have_content("AOD status updated")
+        expect(page).to have_content("AOD status has been granted due to Serious illness")
         expect(page).to have_content("AOD")
         motion = appeals.first.claimant.person.advance_on_docket_motions.first
 
         expect(motion.granted).to eq(true)
-        expect(motion.reason).to eq("serious_illness")
+        expect(motion.reason).to eq(Constants.AOD_REASONS.serious_illness)
       end
 
       context "when there is an error loading addresses" do
@@ -250,11 +251,11 @@ feature "AmaQueue", :all_dbs do
 
         click_on "Pal Smith"
 
-        find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
+        find(".cf-select__control", text: "Select an action").click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
 
-        find(".Select-control", text: user.full_name).click
-        find("div", class: "Select-option", text: other_user.full_name).click
+        find(".cf-select__control", text: user.full_name).click
+        find("div", class: "cf-select__option", text: other_user.full_name).click
 
         expect(page).to have_content(existing_instruction)
         click_on "Submit"
@@ -266,8 +267,8 @@ feature "AmaQueue", :all_dbs do
         click_on "Assigned"
         click_on "Pal Smith"
 
-        find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h[:label]).click
+        find(".cf-select__control", text: "Select an action").click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h[:label]).click
 
         fill_in "taskInstructions", with: instructions
         click_on "Submit"
@@ -288,11 +289,11 @@ feature "AmaQueue", :all_dbs do
           expect(page).to have_content(existing_instruction)
         end
 
-        find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]).click
+        find(".cf-select__control", text: "Select an action").click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]).click
 
-        find(".Select-control", text: "Select a team").click
-        find("div", class: "Select-option", text: other_organization.name).click
+        find(".cf-select__control", text: "Select a team").click
+        find("div", class: "cf-select__option", text: other_organization.name).click
         fill_in "taskInstructions", with: instructions
 
         click_on "Submit"
@@ -404,7 +405,7 @@ feature "AmaQueue", :all_dbs do
     end
   end
 
-  context "Judge has a case to assign to an attorney" do
+  shared_examples "Judge has a case to assign to an attorney" do
     let(:veteran_first_name) { "Monica" }
     let(:veteran_last_name) { "Valencia" }
     let(:veteran_full_name) { "#{veteran_first_name} #{veteran_last_name}" }
@@ -413,6 +414,7 @@ feature "AmaQueue", :all_dbs do
     let(:judge_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Anna Juarez") }
     let!(:judge_staff) { create(:staff, :judge_role, user: judge_user) }
     let!(:judgeteam) { JudgeTeam.create_for_judge(judge_user) }
+    let(:overtime) { false }
 
     let(:attorney_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Steven Ahr") }
     let!(:attorney_staff) { create(:staff, :attorney_role, user: attorney_user) }
@@ -435,7 +437,7 @@ feature "AmaQueue", :all_dbs do
     end
     let!(:root_task) { create(:root_task, appeal: appeal) }
     let!(:judge_task) do
-      create(:ama_judge_task, parent: root_task, assigned_to: judge_user, status: :assigned)
+      create(:ama_judge_assign_task, parent: root_task, assigned_to: judge_user, status: :assigned)
     end
 
     before do
@@ -453,21 +455,17 @@ feature "AmaQueue", :all_dbs do
     end
 
     def judge_assign_to_attorney
-      visit "/queue"
-      expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
-
-      find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
-      expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id))
-      click_on format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id)
+      visit "/queue/#{judge_user.css_id}/assign"
 
       click_on veteran_full_name
 
       click_dropdown(prompt: "Select an action", text: "Assign to attorney")
       click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
+      fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
 
       click_on "Submit"
 
-      expect(page).to have_content("Assigned 1 case")
+      expect(page).to have_content("Assigned 1 task to #{attorney_user.full_name}")
     end
 
     it "judge can return report to attorney for corrections" do
@@ -483,7 +481,7 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).not_to have_content("Select special issues")
+        expect(page.has_no_content?("Select special issues")).to eq(true)
 
         expect(page).to have_content("Add decisions")
 
@@ -493,8 +491,8 @@ feature "AmaQueue", :all_dbs do
 
         fill_in "Text Box", with: "test"
 
-        find(".Select-control", text: "Select disposition").click
-        find("div", class: "Select-option", text: "Allowed").click
+        find(".cf-select__control", text: "Select disposition").click
+        find("div", class: "cf-select__option", text: "Allowed").click
 
         click_on "Save"
 
@@ -505,11 +503,11 @@ feature "AmaQueue", :all_dbs do
 
         fill_in "Text Box", with: "test"
 
-        find(".Select-control", text: "Select disposition").click
-        find("div", class: "Select-option", text: "Remanded").click
+        find(".cf-select__control", text: "Select disposition").click
+        find("div", class: "cf-select__option", text: "Remanded").click
 
         click_on "Save"
-        expect(page).not_to have_content("This field is required")
+        expect(page.has_no_content?("This field is required")).to eq(true)
         click_on "Continue"
 
         expect(page).to have_content("Select Remand Reasons")
@@ -528,6 +526,8 @@ feature "AmaQueue", :all_dbs do
           "Thank you for drafting #{veteran_full_name}'s decision. It's been "\
           "sent to #{judge_user.full_name} for review."
         )
+
+        expect(appeal.latest_attorney_case_review.overtime).to be(overtime)
       end
 
       step "judge returns case to attorney for corrections" do
@@ -555,7 +555,7 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).not_to have_content("Select special issues")
+        expect(page.has_no_content?("Select special issues")).to eq(true)
 
         expect(page).to have_content("Add decisions")
         expect(page).to have_content("Allowed")
@@ -602,7 +602,7 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).not_to have_content("Select special issues")
+        expect(page.has_no_content?("Select special issues")).to eq(true)
 
         expect(page).to have_content("Add decisions")
 
@@ -612,8 +612,8 @@ feature "AmaQueue", :all_dbs do
 
         fill_in "Text Box", with: "test"
 
-        find(".Select-control", text: "Select disposition").click
-        find("div", class: "Select-option", text: "Allowed").click
+        find(".cf-select__control", text: "Select disposition").click
+        find("div", class: "cf-select__option", text: "Allowed").click
 
         click_on "Save"
 
@@ -623,8 +623,8 @@ feature "AmaQueue", :all_dbs do
 
         fill_in "Text Box", with: "test"
 
-        find(".Select-control", text: "Select disposition").click
-        find("div", class: "Select-option", text: "Remanded").click
+        find(".cf-select__control", text: "Select disposition").click
+        find("div", class: "cf-select__option", text: "Remanded").click
 
         click_on "Save"
         click_on "Continue"
@@ -673,7 +673,7 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).not_to have_content("Select special issues")
+        expect(page.has_no_content?("Select special issues")).to eq(true)
 
         expect(page).to have_content("Add decisions")
         click_on "Continue"
@@ -717,7 +717,7 @@ feature "AmaQueue", :all_dbs do
       it "judge can reassign the assign task to another judge" do
         step "judge reviews case and reassigns to another judge" do
           visit "/queue"
-          expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
+          expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
 
           find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
           expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id))
@@ -736,7 +736,7 @@ feature "AmaQueue", :all_dbs do
         step "judge2 has the case in their queue" do
           User.authenticate!(user: judge_user2)
           visit "/queue"
-          expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
+          expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
 
           find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
           expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user2.css_id))
@@ -749,7 +749,7 @@ feature "AmaQueue", :all_dbs do
       it "judge can reassign the review judge tasks to another judge" do
         step "judge reviews case and assigns a task to an attorney" do
           visit "/queue"
-          expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
+          expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
 
           find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
           expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id))
@@ -762,10 +762,11 @@ feature "AmaQueue", :all_dbs do
 
           click_dropdown(prompt: "Select an action", text: "Assign to attorney")
           click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
+          fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
 
           click_on "Submit"
 
-          expect(page).to have_content("Assigned 1 case")
+          expect(page).to have_content("Assigned 1 task to #{attorney_user.full_name}")
         end
 
         step "attorney completes task and returns the case to the judge" do
@@ -776,7 +777,7 @@ feature "AmaQueue", :all_dbs do
 
           click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-          expect(page).not_to have_content("Select special issues")
+          expect(page.has_no_content?("Select special issues")).to eq(true)
 
           expect(page).to have_content("Add decisions")
 
@@ -786,8 +787,8 @@ feature "AmaQueue", :all_dbs do
 
           fill_in "Text Box", with: "test"
 
-          find(".Select-control", text: "Select disposition").click
-          find("div", class: "Select-option", text: "Allowed").click
+          find(".cf-select__control", text: "Select disposition").click
+          find("div", class: "cf-select__option", text: "Allowed").click
 
           click_on "Save"
 
@@ -798,11 +799,11 @@ feature "AmaQueue", :all_dbs do
 
           fill_in "Text Box", with: "test"
 
-          find(".Select-control", text: "Select disposition").click
-          find("div", class: "Select-option", text: "Remanded").click
+          find(".cf-select__control", text: "Select disposition").click
+          find("div", class: "cf-select__option", text: "Remanded").click
 
           click_on "Save"
-          expect(page).not_to have_content("This field is required")
+          expect(page.has_no_content?("This field is required")).to eq(true)
           click_on "Continue"
 
           expect(page).to have_content("Select Remand Reasons")
@@ -826,7 +827,7 @@ feature "AmaQueue", :all_dbs do
         step "judge reviews case and reassigns to another judge" do
           User.authenticate!(user: judge_user)
           visit "/queue"
-          expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "1"))
+          expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
 
           click_on veteran_full_name
 
@@ -842,11 +843,25 @@ feature "AmaQueue", :all_dbs do
         step "judge2 has the case in their queue" do
           User.authenticate!(user: judge_user2)
           visit "/queue"
-          expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "1"))
+          expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
 
           click_on veteran_full_name
         end
       end
+    end
+  end
+
+  it_behaves_like "Judge has a case to assign to an attorney"
+
+  context "overtime_revamp feature enabled with different overtime values" do
+    before { FeatureToggle.enable!(:overtime_revamp) }
+    after { FeatureToggle.disable!(:overtime_revamp) }
+    it_behaves_like "Judge has a case to assign to an attorney" do
+      let(:overtime) { true }
+      before { appeal.overtime = overtime }
+    end
+    it_behaves_like "Judge has a case to assign to an attorney" do
+      let(:overtime) { false }
     end
   end
 

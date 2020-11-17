@@ -7,26 +7,27 @@ import {
   MOTIONS_ATTORNEY_REVIEW_MTV_DESCRIPTION,
   MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_SELECT_LABEL,
   MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL,
-  MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL,
   MOTIONS_ATTORNEY_REVIEW_MTV_ASSIGN_JUDGE_LABEL
 } from '../../../COPY';
 import { MTVDispositionSelection } from './MTVDispositionSelection';
 import TextareaField from '../../components/TextareaField';
 import SearchableDropdown from '../../components/SearchableDropdown';
-import TextField from '../../components/TextField';
 import Button from '../../components/Button';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { css } from 'glamor';
 import { MTVTaskHeader } from './MTVTaskHeader';
-import { DISPOSITION_TEXT } from '../../../constants/MOTION_TO_VACATE';
-import { dispositionStrings } from './mtvConstants';
+import { DISPOSITION_TEXT, DISPOSITION_RECOMMENDATIONS } from '../../../constants/MOTION_TO_VACATE';
 import { sprintf } from 'sprintf-js';
+import { DecisionHyperlinks } from './forms/DecisionHyperlinks';
 
-const formatReviewAttyInstructions = ({ disposition, hyperlink, instructions }) => {
-  const parts = [`I recommend ${DISPOSITION_TEXT[disposition]}.`, instructions];
+const formatReviewAttyInstructions = ({ disposition, hyperlinks, instructions }) => {
+  const parts = [DISPOSITION_RECOMMENDATIONS[disposition], instructions];
 
-  if (hyperlink) {
-    parts.push(`Here is the hyperlink to the draft of the denial:\n${hyperlink}`);
+  // Add any hyperlinks that might exist
+  for (const item of hyperlinks) {
+    if (item.link) {
+      parts.push(`\nHere is the hyperlink to the ${sprintf(item.type, DISPOSITION_TEXT[disposition])}:\n${item.link}`);
+    }
   }
 
   return parts.join('\n');
@@ -36,15 +37,19 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
   const cancelLink = `/queue/appeals/${task.externalAppealId}`;
 
   const [disposition, setDisposition] = useState(null);
-  const [hyperlink, setHyperlink] = useState(null);
+  const [hyperlinks, setHyperlinks] = useState([]);
   const [instructions, setInstructions] = useState('');
   const [judgeId, setJudgeId] = useState(selectedJudge ? selectedJudge.id : null);
 
   const handleSubmit = () => {
+    const formattedInstructions = formatReviewAttyInstructions({
+      disposition,
+      hyperlinks,
+      instructions
+    });
+
     const newTask = {
-      instructions: formatReviewAttyInstructions({ disposition,
-        hyperlink,
-        instructions }),
+      instructions: formattedInstructions,
       assigned_to_id: judgeId
     };
 
@@ -52,12 +57,21 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
   };
 
   const valid = () => {
-    if (!disposition || !judgeId) {
+    if (!disposition || !judgeId || !hyperlinks[0]?.link) {
+      return false;
+    }
+
+    if (['denied', 'dismissed'].includes(disposition) && !hyperlinks[1]?.link) {
       return false;
     }
 
     return true;
   };
+
+  const instructionsLabel = sprintf(
+    MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL,
+    disposition || 'granted'
+  ).replace('_', ' ');
 
   return (
     <div className="address-motion-to-vacate">
@@ -76,7 +90,7 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
 
         <TextareaField
           name="instructions"
-          label={sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_NOTES_LABEL, disposition || 'granted')}
+          label={instructionsLabel}
           onChange={(val) => setInstructions(val)}
           value={instructions}
           className={['mtv-review-instructions']}
@@ -84,17 +98,7 @@ export const MotionsAttorneyDisposition = ({ judges, selectedJudge, task, appeal
           strongLabel
         />
 
-        {disposition && disposition === 'denied' && (
-          <TextField
-            name="hyperlink"
-            label={sprintf(MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_LABEL, dispositionStrings[disposition])}
-            value={hyperlink}
-            onChange={(val) => setHyperlink(val)}
-            optional
-            strongLabel
-            className={['mtv-review-hyperlink', 'cf-margin-bottom-2rem']}
-          />
-        )}
+        {disposition && <DecisionHyperlinks onChange={(values) => setHyperlinks(values)} disposition={disposition} />}
 
         <SearchableDropdown
           name="judge"

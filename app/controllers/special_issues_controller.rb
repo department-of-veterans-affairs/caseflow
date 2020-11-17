@@ -28,7 +28,7 @@ class SpecialIssuesController < ApplicationController
   end
 
   def appeal
-    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
+    @appeal ||= Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
   end
 
   def validate_access_to_appeal
@@ -48,7 +48,9 @@ class SpecialIssuesController < ApplicationController
               :foreign_pension_dic_all_other_foreign_countries,
               :foreign_pension_dic_mexico_central_and_south_america_caribb,
               :us_territory_claim_american_samoa_guam_northern_mariana_isla,
-              :us_territory_claim_puerto_rico_and_virgin_islands)
+              :us_territory_claim_puerto_rico_and_virgin_islands,
+              :burn_pit, :military_sexual_trauma, :blue_water,
+              :us_court_of_appeals_for_veterans_claims, :no_special_issues)
   end
 
   def record_not_found

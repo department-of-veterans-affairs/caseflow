@@ -61,9 +61,49 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       )
     end
 
+    context "when special_issues_revamp feature is enabled" do
+      before { FeatureToggle.enable!(:special_issues_revamp, users: [attorney_user.css_id]) }
+      after { FeatureToggle.disable!(:special_issues_revamp) }
+      scenario "submits draft decision" do
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+
+        # Ensure the issue is on the case details screen
+        expect(page).to have_content(issue_description)
+        expect(page).to have_content(issue_note)
+        expect(page).to have_content("Diagnostic code: #{diagnostic_code}")
+        expect(page).to have_content "Correct issues"
+
+        click_dropdown(text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.label)
+
+        # Special Issues page
+        expect(page).to have_content("Select special issues")
+
+        expect(page.find("label[for=no_special_issues]")).to have_content("No Special Issues")
+
+        expect(page).to have_content("Blue Water")
+        expect(page).to have_content("Burn Pit")
+        expect(page).to have_content("Military Sexual Trauma (MST)")
+        expect(page).to have_content("US Court of Appeals for Veterans Claims (CAVC)")
+        find("label", text: "Blue Water").click
+        expect(page.find("#blue_water", visible: false).checked?).to eq true
+        find("label", text: "No Special Issues").click
+        expect(page.find("#blue_water", visible: false).checked?).to eq false
+        expect(page.find("#blue_water", visible: false).disabled?).to eq true
+        find("label", text: "No Special Issues").click
+        expect(page.find("#blue_water", visible: false).checked?).to eq false
+        find("label", text: "Blue Water").click
+        click_on "Continue"
+
+        click_on "Continue"
+        # Ensure the issue is on the select disposition screen
+        expect(page).to have_content(issue_description)
+      end
+    end
+
     scenario "submits draft decision" do
       visit "/queue"
-      click_on "(#{appeal.veteran_file_number})"
+      click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
       # Ensure the issue is on the case details screen
       expect(page).to have_content(issue_description)
@@ -71,7 +111,22 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       expect(page).to have_content("Diagnostic code: #{diagnostic_code}")
       expect(page).to have_content "Correct issues"
 
-      click_dropdown(index: 0)
+      click_dropdown(text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.label)
+
+      # Remove the conditional once the feature is permanently enabled
+      if FeatureToggle.enabled?(:special_issues_revamp)
+        # Special Issues page
+        expect(page).to have_content("Select special issues")
+
+        expect(page.find("label[for=no_special_issues]")).to have_content("No Special Issues")
+
+        expect(page).to have_content("Blue Water")
+        expect(page).to have_content("Burn Pit")
+        expect(page).to have_content("Military Sexual Trauma (MST)")
+        expect(page).to have_content("US Court of Appeals for Veterans Claims (CAVC)")
+        find("label", text: "Blue Water").click
+        click_on "Continue"
+      end
 
       click_on "Continue"
 
@@ -93,14 +148,14 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       expect(page).to have_content "This field is required"
       fill_in "Text Box", with: decision_issue_text
 
-      find(".Select-control", text: "Select disposition").click
-      find("div", class: "Select-option", text: decision_issue_disposition).click
+      find(".cf-select__control", text: "Select disposition").click
+      find("div", class: "cf-select__option", text: decision_issue_disposition).click
 
-      find(".Select-control", text: old_benefit_type).click
-      find("div", class: "Select-option", text: benefit_type).click
+      find(".cf-select__control", text: old_benefit_type).click
+      find("div", class: "cf-select__option", text: benefit_type).click
 
-      find(".Select-control", text: diagnostic_code).click
-      find("div", class: "Select-option", text: new_diagnostic_code).click
+      find(".cf-select__control", text: diagnostic_code).click
+      find("div", class: "cf-select__option", text: new_diagnostic_code).click
 
       click_on "Save"
 
@@ -110,11 +165,11 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
       fill_in "Text Box", with: other_issue_text
 
-      find(".Select-control", text: "Select disposition").click
-      find("div", class: "Select-option", text: decision_issue_disposition).click
+      find(".cf-select__control", text: "Select disposition").click
+      find("div", class: "cf-select__option", text: decision_issue_disposition).click
 
-      find(".Select-control", text: old_benefit_type).click
-      find("div", class: "Select-option", text: benefit_type).click
+      find(".cf-select__control", text: old_benefit_type).click
+      find("div", class: "cf-select__option", text: benefit_type).click
 
       click_on "Save"
 
@@ -124,14 +179,14 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
       fill_in "Text Box", with: allowed_issue_text
 
-      find(".Select-control", text: "Select disposition").click
-      find("div", class: "Select-option", text: "Allowed").click
+      find(".cf-select__control", text: "Select disposition").click
+      find("div", class: "cf-select__option", text: "Allowed").click
 
-      find(".Select-control", text: old_benefit_type).click
-      find("div", class: "Select-option", text: benefit_type).click
+      find(".cf-select__control", text: old_benefit_type).click
+      find("div", class: "cf-select__option", text: benefit_type).click
 
-      find(".Select-control", text: "Select issues").click
-      find("div", class: "Select-option", text: "Tinnitus").click
+      find(".cf-select__control", text: "Select issues").click
+      find("div", class: "cf-select__option", text: "Tinnitus").click
 
       click_on "Save"
 
@@ -152,14 +207,14 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
       fill_in "Text Box", with: allowed_issue_text
 
-      find(".Select-control", text: "Select disposition").click
-      find("div", class: "Select-option", text: "Allowed").click
+      find(".cf-select__control", text: "Select disposition").click
+      find("div", class: "cf-select__option", text: "Allowed").click
 
-      find(".Select-control", text: old_benefit_type).click
-      find("div", class: "Select-option", text: benefit_type).click
+      find(".cf-select__control", text: old_benefit_type).click
+      find("div", class: "cf-select__option", text: benefit_type).click
 
-      find(".Select-control", text: "Select issues").click
-      find("div", class: "Select-option", text: "Tinnitus").click
+      find(".cf-select__control", text: "Select issues").click
+      find("div", class: "cf-select__option", text: "Tinnitus").click
 
       click_on "Save"
 
@@ -177,8 +232,8 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       # Re-add linked issue
       all("button", text: "Edit", count: 3)[2].click
 
-      find(".Select-control", text: "Select issues").click
-      find("div", class: "Select-option", text: "Tinnitus").click
+      find(".cf-select__control", text: "Select issues").click
+      find("div", class: "cf-select__option", text: "Tinnitus").click
 
       click_on "Save"
 
@@ -243,7 +298,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       User.authenticate!(user: judge_user)
       visit "/queue"
 
-      click_on "(#{appeal.veteran_file_number})"
+      click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
       # ensure decision issues show up on case details page
       expect(page).to have_content "Correct issues"
@@ -253,6 +308,21 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       expect(page).to have_content("Added to 2 issues", count: 2)
 
       click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
+
+      # Remove the conditional once the feature is permanently enabled
+      if FeatureToggle.enabled?(:special_issues_revamp)
+        # Special Issues page
+        expect(page).to have_content("Select special issues")
+
+        expect(page.find("label[for=no_special_issues]")).to have_content("No Special Issues")
+
+        expect(page).to have_content("Blue Water")
+        expect(page).to have_content("Burn Pit")
+        expect(page).to have_content("Military Sexual Trauma (MST)")
+        expect(page).to have_content("US Court of Appeals for Veterans Claims (CAVC)")
+        find("label", text: "Burn Pit").click
+        click_on "Continue"
+      end
 
       expect(page).to have_content("Added to 2 issues", count: 2)
 
@@ -382,7 +452,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       let(:case_issues) { create_list(:case_issue, 4, with_notes: true) }
 
       context "when :special_issues_revamp feature enabled" do
-        before { FeatureToggle.enable!(:special_issues_revamp) }
+        before { FeatureToggle.enable!(:special_issues_revamp, users: [attorney_user.css_id]) }
         after { FeatureToggle.disable!(:special_issues_revamp) }
 
         scenario "no special issue chosen" do
@@ -442,19 +512,23 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
         click_on "Continue"
 
-        issue_dispositions = page.find_all(".Select-control", text: "Select disposition", count: appeal.issues.length)
+        issue_dispositions = page.find_all(
+          ".cf-select__control",
+          text: "Select disposition",
+          count: appeal.issues.length
+        )
 
         issue_dispositions[0].click
-        page.find("div", class: "Select-option", text: "Remanded").click
+        page.find("div", class: "cf-select__option", text: "Remanded").click
 
         issue_dispositions[1].click
-        page.find("div", class: "Select-option", text: "Remanded").click
+        page.find("div", class: "cf-select__option", text: "Remanded").click
 
         issue_dispositions[2].click
-        page.find("div", class: "Select-option", text: "Allowed").click
+        page.find("div", class: "cf-select__option", text: "Allowed").click
 
         issue_dispositions[3].click
-        page.find("div", class: "Select-option", text: "Stay").click
+        page.find("div", class: "cf-select__option", text: "Stay").click
 
         click_on "Continue"
 
@@ -537,7 +611,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         expect(page).to have_content(COPY::FORM_ERROR_FIELD_INVALID)
         fill_in "document_id", with: "V1234567.1234"
         click_on "Continue"
-        expect(page).not_to have_content(COPY::FORM_ERROR_FIELD_INVALID)
+        expect(page.has_no_content?(COPY::FORM_ERROR_FIELD_INVALID)).to eq(true)
 
         dummy_note = generate_words 100
         fill_in "notes", with: dummy_note
@@ -595,21 +669,21 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           # Issue level 2 and diagnostic code dropdowns render based on earlier
           # values, so we have to re-get elements per loop. There are at most 5
           # dropdowns rendered: Program, Type, Levels 1, 2, Diagnostic Code
-          field_options = page.find_all ".Select--single"
+          field_options = page.find_all ".cf-select"
           row = field_options[row_idx]
 
           next unless row
 
-          row.find(".Select-control").click
+          row.find(".cf-select__control").click
 
           if opts[row_idx].eql? "*"
             # there're about 800 diagnostic code options, but getting the count
-            # of '.Select-option's from the DOM takes a while
-            row.find("div[id$='--option-#{rand(800)}']").click
+            # of '.cf-select__option's from the DOM takes a while
+            row.find("div[id$='-option-#{rand(800)}']").click
           elsif opts[row_idx].is_a? String
-            row.find("div[id$='--option-#{opts[row_idx]}']").click
+            row.find("div[id$='-option-#{opts[row_idx]}']").click
           end
-          row.find(".Select-value-label").text
+          row.find(".cf-select__single-value").text
         end
       end
 
@@ -625,14 +699,14 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         first("a", text: "Edit Issue").click
         expect(page).to have_content("Edit Issue")
 
-        enabled_fields = page.find_all(".Select--single:not(.is-disabled)")
+        enabled_fields = page.find_all(".cf-select__control:not(.cf_select__control--is-disabled)")
 
         field_values = enabled_fields.map do |row|
           # changing options at the top of the form affects what options are enabled further down
-          next if row.matches_css? ".is-disabled"
+          next if row.matches_css? ".cf-select__control--is-disabled"
 
-          click_dropdown({ index: 1 }, row)
-          row.find(".Select-value-label").text
+          click_dropdown({ index: 1 }, row.ancestor(".cf-select"))
+          row.ancestor(".cf-select").find(".cf-select__single-value").text
         end
         fill_in "Notes:", with: "this is the note"
 
@@ -688,14 +762,14 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         issue = "Motions"
         level = "Rule 608 motion to withdraw"
 
-        find(".Select-control", text: "Select program").click
-        find("div", class: "Select-option", text: program).click
+        find(".cf-select__control", text: "Select program").click
+        find("div", class: "cf-select__option", text: program).click
 
-        find(".Select-control", text: "Select issue").click
-        find("div", class: "Select-option", text: issue).click
+        find(".cf-select__control", text: "Select issue").click
+        find("div", class: "cf-select__option", text: issue).click
 
-        find(".Select-control", text: "Select level 1").click
-        find("div", class: "Select-option", text: level).click
+        find(".cf-select__control", text: "Select level 1").click
+        find("div", class: "cf-select__option", text: level).click
 
         fill_in "Notes:", with: "added issue"
 

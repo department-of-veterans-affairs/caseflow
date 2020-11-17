@@ -19,6 +19,11 @@
       "value": "granted"
     },
     {
+      "displayText": "Grant partial vacatur",
+      "value": "partially_granted",
+      "help": "e.g. if you do not want to vacate all the issues the veteran is requesting"
+    },
+    {
       "displayText": "Deny all issues for vacatur",
       "value": "denied"
     },
@@ -28,15 +33,16 @@
       "help": "e.g. if the veteran has passed away or has withdrawn their motion"
     }
   ],
-  "PARTIAL_GRANT_OPTION": {
-    "displayText": "Grant partial vacatur",
-    "value": "partially_granted",
-    "help": "e.g. if you do not want to vacate all the issues the veteran is requesting"
-  },
   "DISPOSITION_TEXT": {
     "granted": "grant or partial vacatur",
     "partially_granted": "partial vacatur",
     "denied": "denial of all issues for vacatur",
     "dismissed": "dismissal"
+  },
+  "DISPOSITION_RECOMMENDATIONS": {
+    "granted": "I recommend granting a vacatur.",
+    "partially_granted": "I recommend granting a partial vacatur.",
+    "denied": "I recommend denial of all issues for vacatur.",
+    "dismissed": "I recommend dismissal."
   }
 }

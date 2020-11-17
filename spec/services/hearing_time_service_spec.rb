@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 describe HearingTimeService, :all_dbs do
-  context "with a legacy hearing and a hearing scheduled for 12:00pm PT" do
-    let!(:hearing) { create(:hearing, regional_office: "RO43", scheduled_time: "12:00") }
+  shared_context "legacy_hearing" do
     let!(:legacy_hearing) do
       # vacols requires us to pass a time set in ET even though it reflects local time
       # and is stored UTC
@@ -12,6 +11,12 @@ describe HearingTimeService, :all_dbs do
         scheduled_for: Time.use_zone("America/New_York") { Time.zone.now.change(hour: 12, min: 0) }
       )
     end
+  end
+
+  context "with a legacy hearing and a hearing scheduled for 12:00pm PT" do
+    include_context "legacy_hearing"
+
+    let!(:hearing) { create(:hearing, regional_office: "RO43", scheduled_time: "12:00") }
 
     describe "#build_params_with_time" do
       let!(:params) do
@@ -76,6 +81,85 @@ describe HearingTimeService, :all_dbs do
       it "changes to central office timezone (ET)" do
         expect(hearing.time.central_office_time_string).to eq("15:00")
         expect(LegacyHearing.first.time.central_office_time_string).to eq("15:00")
+      end
+    end
+
+    context "hearing is virtual" do
+      shared_examples_for "returns normalized timezone" do
+        context "timezone is present" do
+          before do
+            virtual_hearing.update!(appellant_tz: timezone, representative_tz: timezone)
+          end
+
+          it "changes to Appellant timezone (CT)" do
+            expect(hearing.time.appellant_time).to eq(expected_time)
+          end
+
+          it "changes to Representative timezone (CT)" do
+            expect(hearing.time.poa_time).to eq(expected_time)
+          end
+        end
+
+        context "timezone is not present" do
+          it "changes to local time (PT) for Appellant" do
+            expect(hearing.time.appellant_time).to eq(expected_local)
+          end
+
+          it "changes to local time (PT) for Representative" do
+            expect(hearing.time.poa_time).to eq(expected_local)
+          end
+        end
+
+        context "timezone is invalid" do
+          before do
+            virtual_hearing.update!(appellant_tz: invalid_tz, representative_tz: invalid_tz)
+          end
+
+          it "throws an ArgumentError for Appellant" do
+            expect { hearing.time.appellant_time }.to raise_error ArgumentError
+          end
+
+          it "throws an ArgumentError for Representative" do
+            expect { hearing.time.poa_time }.to raise_error ArgumentError
+          end
+        end
+      end
+
+      let(:timezone) { "America/Chicago" }
+      let(:invalid_tz) { "123" }
+      let(:expected_local) { Time.use_zone("America/Los_Angeles") { Time.zone.now.change(hour: 12, min: 0) } }
+      let(:expected_time) { Time.use_zone(timezone) { Time.zone.now.change(hour: 14, min: 0) } }
+
+      describe "hearing" do
+        let!(:virtual_hearing) do
+          create(
+            :virtual_hearing,
+            hearing: hearing
+          )
+        end
+
+        before do
+          hearing.reload
+        end
+
+        it_behaves_like "returns normalized timezone"
+      end
+
+      describe "legacy hearing" do
+        include_context "legacy_hearing"
+
+        let!(:virtual_hearing) do
+          create(
+            :virtual_hearing,
+            hearing: hearing
+          )
+        end
+
+        before do
+          hearing.reload
+        end
+
+        it_behaves_like "returns normalized timezone"
       end
     end
   end

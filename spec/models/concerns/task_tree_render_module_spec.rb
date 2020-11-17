@@ -3,7 +3,7 @@
 describe TaskTreeRenderModule do
   let(:appeal) { create(:appeal, :with_post_intake_tasks) }
   let(:root_task) { appeal.root_task }
-  let!(:ama_judge_task) { create(:ama_judge_task, parent: root_task, created_at: 1.day.ago.round) }
+  let!(:ama_judge_assign_task) { create(:ama_judge_assign_task, parent: root_task, created_at: 1.day.ago.round) }
   let!(:ama_attorney_task) { create(:ama_attorney_task, parent: root_task) }
   let!(:ama_attorney_task_no_parent) { create(:ama_attorney_task, appeal: appeal) }
 
@@ -120,7 +120,7 @@ describe TaskTreeRenderModule do
       initial_count = appeal.tasks.count + 3
       expect(appeal.tree.lines.count).to eq initial_count
 
-      create(:ama_judge_task, appeal: appeal, parent: nil, created_at: 1.day.ago.round)
+      create(:ama_judge_assign_task, appeal: appeal, parent: nil, created_at: 1.day.ago.round)
       appeal.reload
       expect(appeal.tree.lines.count).to eq initial_count + 1
     end

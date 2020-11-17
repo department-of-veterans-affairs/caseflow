@@ -11,6 +11,11 @@ class WorkQueue::AdministeredUserSerializer < WorkQueue::UserSerializer
       params[:organization].judge&.eql?(object)
     end
   end
+  attribute :dvc do |object, params|
+    if params[:organization].type == DvcTeam.name
+      params[:organization].dvc&.eql?(object)
+    end
+  end
   attribute :attorney do |object, params|
     if params[:organization].type == JudgeTeam.name
       params[:organization].attorneys&.include?(object)

@@ -2,6 +2,11 @@
 
 class SlackService
   DEFAULT_CHANNEL = "#appeals-job-alerts"
+  COLORS = {
+    error: "#ff0000",
+    info: "#cccccc",
+    warn: "#ffff00"
+  }.freeze
 
   def initialize(url:)
     @url = url
@@ -21,11 +26,31 @@ class SlackService
   private
 
   def http_service
-    HTTPClient.new
+    @http_service ||= begin
+      # we do not want the self-signed cert normally part of the HTTPClient CA chain.
+      client = HTTPClient.new
+      client.ssl_config.clear_cert_store
+      client.ssl_config.add_trust_ca(ENV["SSL_CERT_FILE"])
+      client
+    end
+  end
+
+  def pick_color(title, msg)
+    if /error/i.match?(title)
+      COLORS[:error]
+    elsif /warn/i.match?(title)
+      COLORS[:warn]
+    elsif /error/i.match?(msg)
+      COLORS[:error]
+    elsif /warn/i.match?(msg)
+      COLORS[:warn]
+    else
+      COLORS[:info]
+    end
   end
 
   def format_slack_msg(msg, title, channel)
-    channel.prepend("#") unless channel =~ /^#/
+    channel.prepend("#") unless channel.match?(/^#/)
 
     {
       username: "Caseflow (#{aws_env})",
@@ -33,7 +58,7 @@ class SlackService
       attachments: [
         {
           title: title,
-          color: "#ccc",
+          color: pick_color(title, msg),
           text: msg
         }
       ]

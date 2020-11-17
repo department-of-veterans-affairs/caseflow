@@ -11,9 +11,20 @@ import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import COPY from '../../COPY';
 import PropTypes from 'prop-types';
 
+import {
+  resetErrorMessages,
+  resetSuccessMessages,
+  resetSaveState
+} from './uiReducer/uiActions';
 import { onReceiveAppealDetails, onReceiveTasks, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
 
-class CaseDetailLoadingScreen extends React.PureComponent {
+class CaseDetailsLoadingScreen extends React.PureComponent {
+  componentWillUnmount = () => {
+    this.props.resetSaveState();
+    this.props.resetSuccessMessages();
+    this.props.resetErrorMessages();
+  }
+
   loadActiveAppealAndTask = () => {
     const {
       appealId,
@@ -110,10 +121,13 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveTasks,
   onReceiveAppealDetails,
   setAttorneysOfJudge,
-  fetchAllAttorneys
+  fetchAllAttorneys,
+  resetErrorMessages,
+  resetSuccessMessages,
+  resetSaveState
 }, dispatch);
 
-CaseDetailLoadingScreen.propTypes = {
+CaseDetailsLoadingScreen.propTypes = {
   children: PropTypes.array,
   appealId: PropTypes.string,
   userId: PropTypes.number,
@@ -122,7 +136,10 @@ CaseDetailLoadingScreen.propTypes = {
   appealDetails: PropTypes.object,
   onReceiveAppealDetails: PropTypes.func,
   setAttorneysOfJudge: PropTypes.func,
-  fetchAllAttorneys: PropTypes.func
+  fetchAllAttorneys: PropTypes.func,
+  resetErrorMessages: PropTypes.func,
+  resetSuccessMessages: PropTypes.func,
+  resetSaveState: PropTypes.func
 };
 
-export default (connect(mapStateToProps, mapDispatchToProps)(CaseDetailLoadingScreen));
+export default (connect(mapStateToProps, mapDispatchToProps)(CaseDetailsLoadingScreen));

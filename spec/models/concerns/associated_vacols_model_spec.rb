@@ -143,6 +143,7 @@ describe AssociatedVacolsModel do
 
     context "when VACOLS load fails" do
       before { TestVacolsModelRepository.fail_load_vacols_data = true }
+      after { TestVacolsModelRepository.fail_load_vacols_data = false }
 
       it "returns false and only attempts VACOLS load once" do
         is_expected.to eq(false)

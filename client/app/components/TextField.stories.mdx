@@ -1,21 +1,22 @@
 import { useState } from 'react';
 
-import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
-import { action } from '@storybook/addon-actions';
-import {
-  withKnobs,
-  text,
-  array,
-  boolean,
-  select
-} from '@storybook/addon-knobs';
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs/blocks';
+
+import * as TextFieldStories from './TextField.stories';
 
 import TextField from './TextField';
 import Button from './Button';
 
-export const defaultProps = {};
+export const typeOpts = ['text', 'number', 'email', 'url', 'tel', 'date'];
+export const argTypes = {
+  type: { control: { type: 'select', options: typeOpts } },
+};
 
-<Meta title="Commons/Components/Form Fields/TextField" component={TextField} />
+<Meta
+  title="Commons/Components/Form Fields/TextField"
+  component={TextField}
+  argTypes={argTypes}
+/>
 
 # Text Input
 
@@ -23,63 +24,26 @@ A text input field in a form that allows the user to enter requested information
 
 Text inputs appear in 3 different formats depending on the status of the user's input:
 
-Text Input label (no highlight) indicates that no action has been taken in the text field
-Text Input Focused (light blue-gray highlight) indicates that the user has selected the input field
-Text Input Error (red highlight) indicates that the user has made an error when entering their text
+- Text Input label (no highlight) indicates that no action has been taken in the text field
+- Text Input Focused (light blue-gray highlight) indicates that the user has selected the input field
+- Text Input Error (red highlight) indicates that the user has made an error when entering their text
 
-<Story name="knobs" parameters={{ docs: { disable: true } }}>
-  {() => {
-    const [value, setValue] = useState('');
-    return (
-      <TextField
-        name={text('Name', 'knobs', 'knobs')}
-        label={text('Label', 'Text Input Label', 'knobs')}
-        onChange={val => setValue(val)}
-        value={value}
-        type={select(
-          'Type',
-          ['text', 'number', 'email', 'url', 'tel', 'date'],
-          'text',
-          'knobs'
-        )}
-        dateErrorMessage={text('Date Error Message', '', 'knobs')}
-        errorMessage={text('Error Message', '', 'knobs')}
-        className={array('Class Names', [], ' ', 'knobs')}
-        invisible={boolean('Invisible', false, 'knobs')}
-        useAriaLabel={boolean('Use ARIA label', false, 'knobs')}
-        placeholder={text('Placeholder', 'Placeholder text...', 'knobs')}
-        readonly={boolean('Read-Only', false, 'knobs')}
-        fixedInput={boolean('Fixed Input', false, 'knobs')}
-        required={boolean('Required', false, 'knobs')}
-        optional={boolean('Optional', false, 'knobs')}
-        validationError={text('Validation Error', '', 'knobs')}
-      />
-    );
-  }}
-</Story>
+<Story story={TextFieldStories.Uncontrolled} />
 
-<Preview>
-  <Story name="normal">
-    {() => {
-      const [value, setValue] = useState('');
-      return (
-        <TextField
-          name="text2"
-          label="Text Input Label"
-          onChange={val => setValue(val)}
-          value={value}
-        />
-      );
-    }}
-  </Story>
-</Preview>
+## Controlled
+
+A controlled input means the updating of the value is handled external to the component
+
+<Story story={TextFieldStories.Controlled} />
+
+<ArgsTable of={TextField} />
 
 ### Text Input Error
 
 Similar to the USWDS we mark fields with a “required” or “optional” label to the top fight of the form input type. Our required text is secondary as we’ve done research showing that this makes the demarcation more noticeable. Similarly, prompting questions have the “required” text immediately following the text.
 
-<Preview>
-  <Story name="errorMsg">
+<Canvas>
+  <Story name="Error Message">
     {() => {
       const [value, setValue] = useState('');
       const [errorMsg, setErrorMsg] = useState('');
@@ -93,7 +57,7 @@ Similar to the USWDS we mark fields with a “required” or “optional” labe
             name="text1"
             label="Text Input Label"
             required
-            onChange={val => setValue(val)}
+            onChange={(val) => setValue(val)}
             value={value}
             errorMessage={errorMsg}
           />
@@ -102,6 +66,4 @@ Similar to the USWDS we mark fields with a “required” or “optional” labe
       );
     }}
   </Story>
-</Preview>
-
-<Props of={TextField} />
+</Canvas>

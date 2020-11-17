@@ -33,6 +33,10 @@ const StringUtil = {
       });
   },
 
+  capitalizeFirst(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  },
+
   leftPad(string, width, padding = '0') {
     let padded = '';
 
@@ -51,19 +55,22 @@ const StringUtil = {
   },
 
   // https://coderwall.com/p/iprsng/convert-snake-case-to-camelcase
-  snakeCaseToCamelCase(variable) {
+  snakeCaseToCamelCase(variable = '') {
     // convert key from camelCase to snake_case
-    return variable.replace(/(_\w)/g, (found) => found[1].toUpperCase());
+    return variable?.replace(/(_\w)/g, (found) => found[1].toUpperCase()) ?? '';
   },
+
   // convert snake_case to Capitalized Words
-  snakeCaseToCapitalized(variable) {
-    return variable.
-      replace(/_/g, ' ').
-      split(' ').
-      map((word) => {
-        return word[0].toUpperCase() + word.substr(1);
-      }).
-      join(' ');
+  snakeCaseToCapitalized(variable = '') {
+    return (
+      variable
+        ?.replace(/_/g, ' ')
+        .split(' ')
+        .map((word) => {
+          return word[0].toUpperCase() + word.substr(1);
+        })
+        .join(' ') ?? ''
+    );
   },
 
   // convert snake_case to a sentence with the first letter capitalized
@@ -82,12 +89,28 @@ const StringUtil = {
     return str.toLowerCase().replace(/\W+/g, '_');
   },
 
+  /**
+   * Parses an input string to wrap URLs in HTML anchor tags
+   * @param {string} str input string
+   * @param {object} options allows setting of target
+   */
   parseLinks(str = '', { target = '_blank' } = {}) {
-    // From https://code.tutsplus.com/tutorials/8-regular-expressions-you-should-know--net-6149
-    // eslint-disable-next-line no-useless-escape
-    const regex = /(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/gi;
+    // Original regex from https://code.tutsplus.com/tutorials/8-regular-expressions-you-should-know--net-6149
+    // Modified by @nanotone to better deal with whitespace:
+    // https://github.com/department-of-veterans-affairs/caseflow/pull/14788
+    // eslint-disable-next-line
+    const regex = /(https?:\/\/|\b)[-\da-z.]+\.[a-z]{2,6}\/\S*/gi;
 
-    return DOMPurify.sanitize(str.replace(regex, `<a href="$&" ${target ? `target="${target}"` : ''}>$&</a>`));
+    // Add anchor tags
+    const replaced = str.replace(
+      regex,
+      `<a href="$&" ${target ? `target="${target}"` : ''}>$&</a>`
+    );
+
+    // Sanitize, but ensure we allow `target` attribute
+    return DOMPurify.sanitize(replaced, {
+      ADD_ATTR: ['target'],
+    });
   },
 
   // Replace newline ("\n") characters with React-friendly <br /> elements
@@ -106,7 +129,7 @@ const StringUtil = {
         </React.Fragment>
       );
     });
-  }
+  },
 };
 
 export default StringUtil;

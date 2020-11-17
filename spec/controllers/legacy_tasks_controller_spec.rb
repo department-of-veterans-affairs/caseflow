@@ -16,18 +16,20 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
     context "user is an attorney" do
       let(:role) { :attorney_role }
 
-      it "should process the request succesfully" do
+      it "should return status 308 and redirect" do
         get :index, params: { user_id: user.id }
-        expect(response.status).to eq 200
+        expect(response.status).to eq 308
+        expect(response).to redirect_to("/queue/#{user.css_id}")
       end
     end
 
     context "user is a judge" do
       let(:role) { :judge_role }
 
-      it "should process the request succesfully" do
+      it "should return status 308 and redirect" do
         get :index, params: { user_id: user.id }
-        expect(response.status).to eq 200
+        expect(response.status).to eq 308
+        expect(response).to redirect_to("/queue/#{user.css_id}")
       end
     end
 
@@ -49,9 +51,49 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
         expect(response.status).to eq(400)
       end
 
-      it "should return a valid response when we explicitly pass the role as a parameter" do
+      it "should return status 308 and redirect when we explicitly pass the role as a parameter" do
         get :index, params: { user_id: caseflow_only_user.id, role: "attorney" }
-        expect(response.status).to eq(200)
+        expect(response.status).to eq(308)
+        expect(response).to redirect_to("/queue/#{caseflow_only_user.css_id}?role=attorney")
+      end
+    end
+  end
+
+  context "GET :user_id/assign" do
+    let(:user) { create(:user) }
+    before do
+      create(:staff, sdomainid: user.css_id)
+      User.authenticate!(user: user)
+    end
+
+    context "CSS_ID in URL is valid" do
+      it "returns 200" do
+        get :index, params: { user_id: user.css_id, rest: "/assign" }
+        expect(response.status).to eq 200
+      end
+    end
+    context "CSS_ID in URL is invalid" do
+      it "returns 404" do
+        [-1, "BAD_CSS_ID", ""].each do |user_id_path|
+          get :index, params: { user_id: user_id_path, rest: "/assign" }
+          expect(response.status).to eq 404
+        end
+      end
+    end
+    context "CSS_ID in URL is in mixed case" do
+      it "returns status 308 and redirects to a CSS_ID" do
+        [user.css_id.downcase, "Bad_Css_id"].each do |user_id_path|
+          get :index, params: { user_id: user_id_path, rest: "/assign" }
+          expect(response.status).to eq 308
+          expect(response).to redirect_to("/queue/#{user_id_path.upcase}/assign")
+        end
+      end
+    end
+    context "User is using USER_ID in the url" do
+      it "returns status 308 and redirects to a CSS_ID" do
+        get :index, params: { user_id: user.id, rest: "/assign" }
+        expect(response.status).to eq 308
+        expect(response).to redirect_to("/queue/#{user.css_id}/assign")
       end
     end
   end
@@ -81,6 +123,41 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       end
     end
 
+    context "when the user is an SCM team member" do
+      let(:role) { :judge_role }
+      let(:params) do
+        {
+          "appeal_id": appeal.id,
+          "assigned_to_id": attorney.id
+        }
+      end
+
+      before do
+        current_user = create(:user).tap { |scm_user| SpecialCaseMovementTeam.singleton.add_user(scm_user) }
+        User.stub = current_user
+        @appeal = create(:legacy_appeal, vacols_case: create(:case, staff: @staff_user))
+      end
+
+      it "should be successful" do
+        params = {
+          "appeal_id": @appeal.id,
+          "assigned_to_id": attorney.id,
+          "judge_id": user.id
+        }
+        allow(QueueRepository).to receive(:assign_case_to_attorney!).with(
+          assigned_by: current_user,
+          judge: user,
+          attorney: attorney,
+          vacols_id: @appeal.vacols_id
+        ).and_return(true)
+
+        post :create, params: { tasks: params }
+        expect(response.status).to eq 200
+        body = JSON.parse(response.body)
+        expect(body["task"]["data"]["attributes"]["assigned_to"]["id"]).to eq attorney.id
+      end
+    end
+
     context "when current user is a judge" do
       let(:role) { :judge_role }
       let(:params) do
@@ -99,6 +176,7 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
           "assigned_to_id": attorney.id
         }
         allow(QueueRepository).to receive(:assign_case_to_attorney!).with(
+          assigned_by: user,
           judge: user,
           attorney: attorney,
           vacols_id: @appeal.vacols_id
@@ -192,8 +270,12 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       let(:role) { :attorney_role }
       let(:params) do
         {
-          "assigned_to_id": user.id
+          "assigned_to_id": user.id,
+          "appeal_id": @appeal.id
         }
+      end
+      before do
+        @appeal = create(:legacy_appeal, vacols_case: create(:case, staff: @staff_user))
       end
 
       it "fails because the current user is not a judge" do
@@ -206,12 +288,16 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       let(:role) { :judge_role }
       let(:params) do
         {
-          "assigned_to_id": attorney.id
+          "assigned_to_id": attorney.id,
+          "appeal_id": @appeal.id
         }
       end
       before do
+        FeatureToggle.enable!(:overtime_revamp)
         @appeal = create(:legacy_appeal, vacols_case: create(:case, staff: @staff_user))
+        @appeal.update!(overtime: true)
       end
+      after { FeatureToggle.disable!(:overtime_revamp) }
 
       it "should be successful" do
         allow(QueueRepository).to receive(:reassign_case_to_attorney!).with(
@@ -221,14 +307,17 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
           created_in_vacols_date: "2018-04-18".to_date
         ).and_return(true)
 
+        expect(@appeal.overtime?).to be true
         patch :update, params: { tasks: params, id: "#{@appeal.vacols_id}-2018-04-18" }
+        expect(@appeal.reload.overtime?).to be false
         expect(response.status).to eq 200
       end
 
       context "when attorney is not found" do
         let(:params) do
           {
-            "assigned_to_id": 7_777_777_777
+            "assigned_to_id": 7_777_777_777,
+            "appeal_id": @appeal.id
           }
         end
 
@@ -351,14 +440,47 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       User.stub = assigning_judge
     end
 
-    it "should be successful" do
-      allow(QueueRepository).to receive(:update_location_to_judge).with(
-        appeal.vacols_id,
-        assignee_judge
-      ).and_return(true)
+    shared_examples "judge reassigns case" do
+      it "should be successful" do
+        expect(VACOLS::Case.find_by(bfkey: appeal.vacols_id).bfcurloc).to eq assigning_judge.vacols_uniq_id
+        patch :assign_to_judge, params: { tasks: params }
+        expect(response.status).to eq 200
+        expect(VACOLS::Case.find_by(bfkey: appeal.vacols_id).bfcurloc).to eq assignee_judge.vacols_uniq_id
+      end
+    end
 
-      patch :assign_to_judge, params: { tasks: params }
-      expect(response.status).to eq 200
+    it_behaves_like "judge reassigns case"
+
+    context "when the reassigner is an scm team member" do
+      before do
+        User.stub = create(:user).tap { |scm_user| SpecialCaseMovementTeam.singleton.add_user(scm_user) }
+      end
+      it_behaves_like "judge reassigns case"
+    end
+
+    context "When the appeal has not been marked for overtime" do
+      before { FeatureToggle.enable!(:overtime_revamp) }
+      after { FeatureToggle.disable!(:overtime_revamp) }
+
+      it "does not create a new work mode for the appeal" do
+        expect(appeal.work_mode.nil?).to be true
+        patch :assign_to_judge, params: { tasks: params }
+        expect(appeal.work_mode.nil?).to be true
+      end
+    end
+
+    context "when the appeal has been marked for overtime" do
+      before do
+        FeatureToggle.enable!(:overtime_revamp)
+        appeal.overtime = true
+      end
+      after { FeatureToggle.disable!(:overtime_revamp) }
+
+      it "removes the overtime status of the appeal" do
+        expect(appeal.overtime?).to be true
+        patch :assign_to_judge, params: { tasks: params }
+        expect(appeal.reload.overtime?).to be false
+      end
     end
   end
 end

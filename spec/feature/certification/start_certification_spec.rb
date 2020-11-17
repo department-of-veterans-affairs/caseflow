@@ -226,7 +226,7 @@ RSpec.feature "Start Certification", :all_dbs do
       expect(page).to_not have_content "We've detected technical issues in our system"
       User.unauthenticate!
       visit "certifications/new/#{appeal_ready.vacols_id}"
-      expect(page).not_to have_content "We've detected technical issues in our system"
+      expect(page.has_no_content?("We've detected technical issues in our system")).to eq(true)
     end
   end
 end

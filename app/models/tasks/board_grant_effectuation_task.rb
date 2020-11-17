@@ -3,7 +3,7 @@
 ##
 # A task to track when the Board grants a benefit that is not compensation or pension,
 # like education or a loan guaranty, otherwise known as an "effectuation task".
-# This task is created for the appropriate business line(s) based on the benefit type(s) of the decision issue(s).
+# This task is created for the appropriate business lines based on the benefit types of the decision issues.
 
 class BoardGrantEffectuationTask < DecisionReviewTask
   include BusinessLineTask

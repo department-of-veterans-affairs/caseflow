@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class AppealsController < ApplicationController
+  include ValidationConcern
+
   before_action :react_routed
   before_action :set_application, only: [:document_count, :power_of_attorney]
   # Only whitelist endpoints VSOs should have access to.
@@ -48,7 +50,9 @@ class AppealsController < ApplicationController
   end
 
   def document_count
-    render json: { document_count: EFolderService.document_count(appeal.veteran_file_number, current_user) }
+    doc_count = EFolderService.document_count(appeal.veteran_file_number, current_user)
+    status = (doc_count == ::ExternalApi::EfolderService::DOCUMENT_COUNT_DEFERRED) ? 202 : 200
+    render json: { document_count: doc_count }, status: status
   rescue Caseflow::Error::EfolderAccessForbidden => error
     render(error.serialize_response)
   rescue StandardError => error
@@ -95,6 +99,8 @@ class AppealsController < ApplicationController
           MetricsService.record("Get appeal information for ID #{id}",
                                 service: :queue,
                                 name: "AppealsController.show") do
+            appeal.appeal_views.find_or_create_by(user: current_user).update!(last_viewed_at: Time.zone.now)
+
             render json: { appeal: json_appeals(appeal)[:data] }
           end
         else
@@ -104,10 +110,15 @@ class AppealsController < ApplicationController
     end
   end
 
+  def edit
+    # only AMA appeals may call /edit
+    return not_found if appeal.is_a?(LegacyAppeal)
+  end
+
   helper_method :appeal, :url_appeal_uuid
 
   def appeal
-    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
+    @appeal ||= Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
   end
 
   def url_appeal_uuid
@@ -125,6 +136,13 @@ class AppealsController < ApplicationController
       }
     else
       render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
+    end
+  end
+
+  validates :update_nod_date, using: AppealsSchemas.update_nod_date
+  def update_nod_date
+    if params[:receipt_date]
+      appeal.update_receipt_date!(receipt_date: params[:receipt_date])
     end
   end
 
@@ -220,7 +238,7 @@ class AppealsController < ApplicationController
   end
 
   def access_error_message
-    (appeal.veteran&.multiple_phone_numbers?) ? COPY::DUPLICATE_PHONE_NUMBER_TITLE : COPY::ACCESS_DENIED_TITLE
+    appeal.veteran&.multiple_phone_numbers? ? COPY::DUPLICATE_PHONE_NUMBER_TITLE : COPY::ACCESS_DENIED_TITLE
   end
 
   def docket_number?(search)

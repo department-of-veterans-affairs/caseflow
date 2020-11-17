@@ -9,20 +9,36 @@ class ContestableIssueGenerator
   delegate :receipt_date, to: :review
 
   def contestable_issues
-    return contestable_decision_issues unless review.can_contest_rating_issues?
-
     contestable_rating_issues + contestable_decision_issues + contestable_rating_decisions
+  end
+
+  def contestable_rating_issues
+    return [] unless review.can_contest_rating_issues?
+
+    from_ratings.reject { |contestable_issue| decision_issue_duplicate_exists?(contestable_issue) }
+  end
+
+  def contestable_decision_issues
+    issues = []
+    issues += finalized_decision_issues_before_receipt_date unless review.try(:decision_review_remanded?)
+
+    # If correction support enabled, we include all decision issues for the issue
+    if FeatureToggle.enabled?(:correct_claim_reviews, user: RequestStore[:current_user])
+      issues += review.decision_issues.select(&:finalized?)
+    end
+
+    @contestable_decision_issues ||= issues.map do |decision_issue|
+      ContestableIssue.from_decision_issue(decision_issue, review)
+    end
   end
 
   private
 
   attr_reader :review
 
-  def contestable_rating_issues
-    from_ratings.reject { |contestable_issue| decision_issue_duplicate_exists?(contestable_issue) }
-  end
-
   def contestable_rating_decisions
+    return [] unless review.can_contest_rating_issues?
+    return from_rating_decisions if FeatureToggle.enabled?(:disability_issue_test, user: RequestStore[:current_user])
     return [] unless FeatureToggle.enabled?(:contestable_rating_decisions, user: RequestStore[:current_user])
 
     from_rating_decisions.reject { |contestable_issue| decision_issue_duplicate_exists?(contestable_issue) }
@@ -40,22 +56,12 @@ class ContestableIssueGenerator
     issues.map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, review) }
   end
 
-  def contestable_decision_issues
-    issues = []
-    issues += finalized_decision_issues_before_receipt_date unless review.try(:decision_review_remanded?)
-
-    # If correction support enabled, we include all decision issues for the issue
-    if FeatureToggle.enabled?(:correct_claim_reviews, user: RequestStore[:current_user])
-      issues += review.decision_issues.select(&:finalized?)
-    end
-
-    @contestable_decision_issues ||= issues.map do |decision_issue|
-      ContestableIssue.from_decision_issue(decision_issue, review)
-    end
-  end
-
   def from_rating_decisions
     return [] unless receipt_date
+
+    if FeatureToggle.enabled?(:disability_issue_test, user: RequestStore[:current_user])
+      return rating_decisions.map { |rating_decision| ContestableIssue.from_rating_decision(rating_decision, review) }
+    end
 
     # rating decisions are a superset of every disability ever recorded for a veteran,
     # so filter out any that are duplicates of a rating issue or that are not related to their parent rating.

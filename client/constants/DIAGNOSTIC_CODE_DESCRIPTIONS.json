@@ -131,6 +131,22 @@
     "staff_description": "Other musculoskeletal disease",
     "status_description": "musculoskeletal disease"
   },
+  "5100": {
+    "staff_description": "Anatomical loss of hands and feet",
+    "status_description": "Anatomical loss of hands and feet"
+  },
+  "5101": {
+    "staff_description": "Loss of Use of Hands and Feet",
+    "status_description": "Loss of Use of Hands and Feet"
+  },
+  "5102": {
+    "staff_description": "Anatomical loss of both hands and one foot",
+    "status_description": "Anatomical loss of both hands and one foot"
+  },
+  "5103": {
+    "staff_description": "Anatomical loss of both feet and one hand",
+    "status_description": "Anatomical loss of both feet and one hand"
+  },
   "5104": {
     "staff_description": "Anatomical loss of one hand and loss of use of one foot",
     "status_description": "loss of hand and loss of use of foot"
@@ -359,6 +375,10 @@
     "staff_description": "Toes, three or four, amputation of, without metatarsal involvement",
     "status_description": "amputation of toes"
   },
+  "5174": {
+    "staff_description": "Hip prosthesis",
+    "status_description": "Hip prosthesis"
+  },
   "5199": {
     "staff_description": "Other amputations",
     "status_description": "amputation"
@@ -574,6 +594,10 @@
   "5263": {
     "staff_description": "Genu recurvatum",
     "status_description": "knee hyperextension"
+  },
+  "5264": {
+    "staff_description": "Prosthesis for knee",
+    "status_description": "Prosthesis for knee"
   },
   "5270": {
     "staff_description": "Ankle, ankylosis of",
@@ -959,6 +983,70 @@
     "staff_description": "Keratoconus",
     "status_description": "keratoconus"
   },
+  "6036": {
+    "staff_description": "Status Post Corneal Transplant",
+    "status_description": "Status Post Corneal Transplant"
+  },
+  "6037": {
+    "staff_description": "Pinguecula, Spot On White of Eye",
+    "status_description": "Pinguecula, Spot On White of Eye"
+  },
+  "6040": {
+    "staff_description": "Diabetic retinopathy",
+    "status_description": "Diabetic retinopathy"
+  },
+  "6042": {
+    "staff_description": "Retinal dystrophy",
+    "status_description": "Retinal dystrophy"
+  },
+  "6046": {
+    "staff_description": "Post-chiasmal disorders",
+    "status_description": "Post-chiasmal disorders"
+  },
+  "6050": {
+    "staff_description": "(Covered by SMC Codes)",
+    "status_description": "(Covered by SMC Codes)"
+  },
+  "6051": {
+    "staff_description": "(Covered by SMC Codes)",
+    "status_description": "(Covered by SMC Codes)"
+  },
+  "6052": {
+    "staff_description": "(Covered by SMC Codes)",
+    "status_description": "(Covered by SMC Codes)"
+  },
+  "6053": {
+    "staff_description": "(Covered by SMC Codes)",
+    "status_description": "(Covered by SMC Codes)"
+  },
+  "6054": {
+    "staff_description": "(Covered by SMC Codes)",
+    "status_description": "(Covered by SMC Codes)"
+  },
+  "6055": {
+    "staff_description": "(Covered by SMC Codes)",
+    "status_description": "(Covered by SMC Codes)"
+  },
+  "6056": {
+    "staff_description": "(Covered by SMC Codes)",
+    "status_description": "(Covered by SMC Codes)"
+  },
+  "6057": {
+    "staff_description": "(Covered by SMC Codes)",
+    "status_description": "(Covered by SMC Codes)"
+  },
+  "6058": {
+    "staff_description": "(Covered by SMC Codes)",
+    "status_description": "(Covered by SMC Codes)"
+  },
+  "6059": {
+    "staff_description": "(Covered by SMC Codes)",
+    "status_description": "(Covered by SMC Codes)"
+  },
+  "6060": {
+    "staff_description": "(Covered by SMC Codes)",
+    "status_description": "(Covered by SMC Codes)"
+  },
   "6061": {
     "staff_description": "Anatomical loss both eyes",
     "status_description": "loss of both eyes"
@@ -1063,6 +1151,46 @@
     "staff_description": "Hearing loss",
     "status_description": "hearing loss"
   },
+  "6101": {
+    "staff_description": "Hearing loss",
+    "status_description": "Hearing loss"
+  },
+  "6102": {
+    "staff_description": "Hearing loss",
+    "status_description": "Hearing loss"
+  },
+  "6103": {
+    "staff_description": "Hearing loss",
+    "status_description": "Hearing loss"
+  },
+  "6104": {
+    "staff_description": "Hearing loss",
+    "status_description": "Hearing loss"
+  },
+  "6105": {
+    "staff_description": "Hearing loss",
+    "status_description": "Hearing loss"
+  },
+  "6106": {
+    "staff_description": "Hearing loss",
+    "status_description": "Hearing loss"
+  },
+  "6107": {
+    "staff_description": "Hearing loss",
+    "status_description": "Hearing loss"
+  },
+  "6108": {
+    "staff_description": "Hearing loss",
+    "status_description": "Hearing loss"
+  },
+  "6109": {
+    "staff_description": "Hearing loss",
+    "status_description": "Hearing loss"
+  },
+  "6110": {
+    "staff_description": "Hearing loss",
+    "status_description": "Hearing loss"
+  },
   "6199": {
     "staff_description": "Other hearing loss",
     "status_description": "hearing loss"
@@ -1079,13 +1207,21 @@
     "staff_description": "Otosclerosis",
     "status_description": "otosclerosis"
   },
+  "6203": {
+    "staff_description": "Otitis interna",
+    "status_description": "Otitis interna"
+  },
   "6204": {
     "staff_description": "Peripheral vestibular disorders",
     "status_description": "inner ear or vestibular nerve disorder"
   },
   "6205": {
     "staff_description": "Meniere's syndrome",
-    "status_description": "M\u00e9ni\u00e8re's disease"
+    "status_description": "Ménière's disease"
+  },
+  "6206": {
+    "staff_description": "Mastoiditis",
+    "status_description": "Mastoiditis"
   },
   "6207": {
     "staff_description": "Auricle, loss or deformity",
@@ -1107,9 +1243,57 @@
     "staff_description": "Tympanic membrane, perforation of",
     "status_description": "perforation of tympanic membrane"
   },
+  "6250": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6251": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6252": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6253": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6254": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6255": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6256": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6257": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6258": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
   "6260": {
     "staff_description": "Tinnitus, recurrent",
     "status_description": "tinnitus"
+  },
+  "6261": {
+    "staff_description": "Ear condition",
+    "status_description": "Ear condition"
+  },
+  "6262": {
+    "staff_description": "Ear condition",
+    "status_description": "Ear condition"
+  },
+  "6263": {
+    "staff_description": "Ear condition",
+    "status_description": "Ear condition"
   },
   "6275": {
     "staff_description": "Loss of sense of smell, complete",
@@ -1118,6 +1302,90 @@
   "6276": {
     "staff_description": "Loss of sense of taste, complete",
     "status_description": "loss of sense of taste"
+  },
+  "6277": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6278": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6279": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6280": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6281": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6282": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6283": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6284": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6285": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6286": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6287": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6288": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6289": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6290": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6291": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6292": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6293": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6294": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6295": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6296": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
+  },
+  "6297": {
+    "staff_description": "Impaired hearing",
+    "status_description": "Impaired hearing"
   },
   "6299": {
     "staff_description": "Other sense organ disability",
@@ -1167,6 +1435,10 @@
     "staff_description": "Tuberculosis, miliary",
     "status_description": "miliary tuberculosis"
   },
+  "6312": {
+    "staff_description": "Nontuberculosis mycobacterium infection",
+    "status_description": "Nontuberculosis mycobacterium infection"
+  },
   "6313": {
     "staff_description": "Avitaminosis",
     "status_description": "avitaminosis"
@@ -1199,6 +1471,38 @@
     "staff_description": "Parasitic diseases otherwise not specified",
     "status_description": "parasitic disease"
   },
+  "6325": {
+    "staff_description": "Disseminated Strongyloidiasis",
+    "status_description": "Disseminated Strongyloidiasis"
+  },
+  "6326": {
+    "staff_description": "Schistosomiasis",
+    "status_description": "Schistosomiasis"
+  },
+  "6329": {
+    "staff_description": "Dengue",
+    "status_description": "Dengue"
+  },
+  "6330": {
+    "staff_description": "Campylobacter jejuni infection",
+    "status_description": "Campylobacter jejuni infection"
+  },
+  "6331": {
+    "staff_description": "Coxiella burnetii infection (Q fever)",
+    "status_description": "Coxiella burnetii infection (Q fever)"
+  },
+  "6333": {
+    "staff_description": "Nontyphoid Salmonella infections",
+    "status_description": "Nontyphoid Salmonella infections"
+  },
+  "6334": {
+    "staff_description": "Shigella infections",
+    "status_description": "Shigella infections"
+  },
+  "6335": {
+    "staff_description": "West Nile virus infection",
+    "status_description": "West Nile virus infection"
+  },
   "6350": {
     "staff_description": "Lupus erythematosus, systemic (disseminated)",
     "status_description": "lupus"
@@ -1207,6 +1511,14 @@
     "staff_description": "HIV-Related Illness",
     "status_description": "HIV-related illness"
   },
+  "6352": {
+    "staff_description": "Aids related complex",
+    "status_description": "Aids related complex"
+  },
+  "6353": {
+    "staff_description": "Positive blood test for AIDS antibody",
+    "status_description": "Positive blood test for AIDS antibody"
+  },
   "6354": {
     "staff_description": "Chronic Fatigue Syndrome (CFS)",
     "status_description": "chronic fatigue syndrome"
@@ -1214,6 +1526,10 @@
   "6399": {
     "staff_description": "Other infectious disease, immune disorder, or nutritional deficiency",
     "status_description": "infectious disease immune disorder or nutritional deficiency"
+  },
+  "6501": {
+    "staff_description": "Rhinitis",
+    "status_description": "Rhinitis"
   },
   "6502": {
     "staff_description": "Septum, nasal, deviation of",
@@ -1250,6 +1566,10 @@
   "6516": {
     "staff_description": "Laryngitis, chronic",
     "status_description": "chronic laryngitis"
+  },
+  "6517": {
+    "staff_description": "Residuals of injured larynx",
+    "status_description": "Residuals of injured larynx"
   },
   "6518": {
     "staff_description": "Laryngectomy, total",
@@ -1323,6 +1643,46 @@
     "staff_description": "Tuberculosis, pulmonary, chronic, active, advancement unspecified [entitled 8/19/68]",
     "status_description": "pulmonary tuberculosis"
   },
+  "6705": {
+    "staff_description": "Lung Condition",
+    "status_description": "Lung Condition"
+  },
+  "6706": {
+    "staff_description": "Lung Condition",
+    "status_description": "Lung Condition"
+  },
+  "6707": {
+    "staff_description": "Active Pulmonary Tuberculosis",
+    "status_description": "Active Pulmonary Tuberculosis"
+  },
+  "6708": {
+    "staff_description": "Active Pulmonary Tuberculosis",
+    "status_description": "Active Pulmonary Tuberculosis"
+  },
+  "6709": {
+    "staff_description": "Active Pulmonary Tuberculosis",
+    "status_description": "Active Pulmonary Tuberculosis"
+  },
+  "6710": {
+    "staff_description": "Active Pulmonary Tuberculosis",
+    "status_description": "Active Pulmonary Tuberculosis"
+  },
+  "6711": {
+    "staff_description": "Lung condition",
+    "status_description": "Lung condition"
+  },
+  "6712": {
+    "staff_description": "Lung condition",
+    "status_description": "Lung condition"
+  },
+  "6713": {
+    "staff_description": "Lung condition",
+    "status_description": "Lung condition"
+  },
+  "6714": {
+    "staff_description": "Lung condition",
+    "status_description": "Lung condition"
+  },
   "6721": {
     "staff_description": "Tuberculosis, pulmonary, chronic, far advanced, inactive [entitled 8/19/68]",
     "status_description": "pulmonary tuberculosis"
@@ -1338,6 +1698,22 @@
   "6724": {
     "staff_description": "Tuberculosis, pulmonary, chronic, inactive, advancement unspecified [entitled 8/19/68]",
     "status_description": "pulmonary tuberculosis"
+  },
+  "6725": {
+    "staff_description": "Inactive Pulmonary Tuberculosis",
+    "status_description": "Inactive Pulmonary Tuberculosis"
+  },
+  "6726": {
+    "staff_description": "Inactive Pulmonary Tuberculosis",
+    "status_description": "Inactive Pulmonary Tuberculosis"
+  },
+  "6727": {
+    "staff_description": "Inactive Pulmonary Tuberculosis",
+    "status_description": "Inactive Pulmonary Tuberculosis"
+  },
+  "6728": {
+    "staff_description": "Inactive Pulmonary Tuberculosis",
+    "status_description": "Inactive Pulmonary Tuberculosis"
   },
   "6730": {
     "staff_description": "Tuberculosis, pulmonary, chronic, active [after 8/19/68]",
@@ -1355,9 +1731,81 @@
     "staff_description": "Other tuberculous disease of lungs and/or pleura",
     "status_description": "tuberculous disease"
   },
+  "6800": {
+    "staff_description": "Anthracosis",
+    "status_description": "Anthracosis"
+  },
+  "6801": {
+    "staff_description": "Silicosis",
+    "status_description": "Silicosis"
+  },
+  "6802": {
+    "staff_description": "Pneumoconiosis, unspecified",
+    "status_description": "Pneumoconiosis, unspecified"
+  },
+  "6803": {
+    "staff_description": "Actinomycosis of Lung",
+    "status_description": "Actinomycosis of Lung"
+  },
+  "6804": {
+    "staff_description": "Streptotrichosis of Lung",
+    "status_description": "Streptotrichosis of Lung"
+  },
+  "6805": {
+    "staff_description": "Blastomycosis of Lung",
+    "status_description": "Blastomycosis of Lung"
+  },
+  "6806": {
+    "staff_description": "Sporotrichosis of Lung",
+    "status_description": "Sporotrichosis of Lung"
+  },
+  "6807": {
+    "staff_description": "Spergillosis of Lung",
+    "status_description": "Spergillosis of Lung"
+  },
+  "6808": {
+    "staff_description": "Mycosis of Lung",
+    "status_description": "Mycosis of Lung"
+  },
+  "6809": {
+    "staff_description": "Abcess of Lung",
+    "status_description": "Abcess of Lung"
+  },
+  "6810": {
+    "staff_description": "Pleurisy",
+    "status_description": "Pleurisy"
+  },
+  "6811": {
+    "staff_description": "Pleurisy",
+    "status_description": "Pleurisy"
+  },
+  "6812": {
+    "staff_description": "Fistula of Lung",
+    "status_description": "Fistula of Lung"
+  },
+  "6813": {
+    "staff_description": "Collapsed Lung",
+    "status_description": "Collapsed Lung"
+  },
+  "6814": {
+    "staff_description": "Spontaneous Collapsed Lung",
+    "status_description": "Spontaneous Collapsed Lung"
+  },
+  "6815": {
+    "staff_description": "Removal of Lung",
+    "status_description": "Removal of Lung"
+  },
+  "6816": {
+    "staff_description": "Partial Removal of Lung",
+    "status_description": "Partial Removal of Lung"
+  },
   "6817": {
     "staff_description": "Pulmonary Vascular Disease",
     "status_description": "pulmonary vascular disease"
+  },
+  "6818": {
+    "staff_description": "Residuals of lung injury",
+    "status_description": "Residuals of lung injury"
   },
   "6819": {
     "staff_description": "Neoplasms, malignant, any specified part of respiratory system exclusive of skin growths",
@@ -1366,6 +1814,10 @@
   "6820": {
     "staff_description": "Neoplasms, benign, any specified part of respiratory system",
     "status_description": "benign neoplasm of the respiratory system"
+  },
+  "6821": {
+    "staff_description": "Infection of the Lung",
+    "status_description": "Infection of the Lung"
   },
   "6822": {
     "staff_description": "Actinomycosis",
@@ -1519,6 +1971,18 @@
     "staff_description": "Ventricular arrhythmias (sustained)",
     "status_description": "ventricular arrhythmias"
   },
+  "7012": {
+    "staff_description": "Heart Condition",
+    "status_description": "Heart Condition"
+  },
+  "7013": {
+    "staff_description": "Heart Condition",
+    "status_description": "Heart Condition"
+  },
+  "7014": {
+    "staff_description": "Rapid pulse of the heart",
+    "status_description": "Rapid pulse of the heart"
+  },
   "7015": {
     "staff_description": "Atrioventricular block",
     "status_description": "atrioventricular block"
@@ -1547,6 +2011,10 @@
     "staff_description": "Other heart disease",
     "status_description": "heart disease"
   },
+  "7100": {
+    "staff_description": "Arteriosclerosis",
+    "status_description": "Arteriosclerosis"
+  },
   "7101": {
     "staff_description": "Hypertensive vascular disease (hypertension and isolated systolic hypertension)",
     "status_description": "hypertensive vascular disease"
@@ -1574,6 +2042,10 @@
   "7115": {
     "staff_description": "Thrombo-angiitis obliterans (Buerger's Disease)",
     "status_description": "Buerger's disease"
+  },
+  "7116": {
+    "staff_description": "Claudication",
+    "status_description": "Claudication"
   },
   "7117": {
     "staff_description": "Raynaud's syndrome",
@@ -1639,6 +2111,10 @@
     "staff_description": "Peritoneum, adhesions of",
     "status_description": "peritoneal adhesions"
   },
+  "7302": {
+    "staff_description": "Ulcer condition",
+    "status_description": "Ulcer condition"
+  },
   "7304": {
     "staff_description": "Ulcer, gastric",
     "status_description": "ulcer"
@@ -1702,6 +2178,10 @@
   "7319": {
     "staff_description": "Irritable colon syndrome (spastic colitis, mucous colitis, etc.)",
     "status_description": "irritable bowel syndrome"
+  },
+  "7320": {
+    "staff_description": "Intestinal condition",
+    "status_description": "Intestinal condition"
   },
   "7321": {
     "staff_description": "Amebiasis",
@@ -1783,6 +2263,10 @@
     "staff_description": "Hernia, femoral",
     "status_description": "femoral hernia"
   },
+  "7341": {
+    "staff_description": "Residuals of abdominal wounds",
+    "status_description": "Residuals of abdominal wounds"
+  },
   "7342": {
     "staff_description": "Visceroptosis, symptomatic, marked",
     "status_description": "visceroptosis"
@@ -1835,6 +2319,10 @@
     "staff_description": "Nephritis, chronic",
     "status_description": "chronic nephritis"
   },
+  "7503": {
+    "staff_description": "Pyelitis",
+    "status_description": "Pyelitis"
+  },
   "7504": {
     "staff_description": "Pyelonephritis, chronic",
     "status_description": "chronic pyelonephritis"
@@ -1842,6 +2330,10 @@
   "7505": {
     "staff_description": "Kidney, tuberculosis of",
     "status_description": "tuberculosis of the kidney"
+  },
+  "7506": {
+    "staff_description": "Kidney condition",
+    "status_description": "Kidney condition"
   },
   "7507": {
     "staff_description": "Nephrosclerosis, arteriolar",
@@ -1866,6 +2358,14 @@
   "7512": {
     "staff_description": "Cystitis, chronic, includes interstitial and all etiologies, infectious and non-infectious",
     "status_description": "chornic cystitis"
+  },
+  "7513": {
+    "staff_description": "Cystitis",
+    "status_description": "Cystitis"
+  },
+  "7514": {
+    "staff_description": "Tuberculosis of the bladder",
+    "status_description": "Tuberculosis of the bladder"
   },
   "7515": {
     "staff_description": "Bladder, calculus in, with symptoms interfering with function",
@@ -1910,6 +2410,10 @@
   "7525": {
     "staff_description": "Epididymo-orchitis, chronic only",
     "status_description": "chronic epididymo-orchitis"
+  },
+  "7526": {
+    "staff_description": "Removal of the prostate gland",
+    "status_description": "Removal of the prostate gland"
   },
   "7527": {
     "staff_description": "Prostate gland injuries, infections, hypertrophy, postoperative residuals",
@@ -2055,6 +2559,18 @@
     "staff_description": "Endometriosis",
     "status_description": "endometriosis"
   },
+  "7630": {
+    "staff_description": "Malignant neoplasms of the breast",
+    "status_description": "Malignant neoplasms of the breast"
+  },
+  "7631": {
+    "staff_description": "Benign neoplasms of the breast",
+    "status_description": "Benign neoplasms of the breast"
+  },
+  "7632": {
+    "staff_description": "Female Sexual Arousal Disorder (FSAD)",
+    "status_description": "female sexual arousal disorder"
+  },
   "7699": {
     "staff_description": "Other gynecological or breast disability",
     "status_description": "gynecological or breast disability"
@@ -2062,6 +2578,10 @@
   "7700": {
     "staff_description": "Anemia, hypochromic-microcytic and megaloblastic",
     "status_description": "microcytic or megaloblastic anemia"
+  },
+  "7701": {
+    "staff_description": "Secondary Anemia",
+    "status_description": "Secondary Anemia"
   },
   "7702": {
     "staff_description": "Agranulocytosis, acute",
@@ -2095,9 +2615,17 @@
     "staff_description": "Adenitis, tuberculous, active or inactive",
     "status_description": "tuberculous lymphadenitis"
   },
+  "7711": {
+    "staff_description": "Axillary adenitis",
+    "status_description": "Axillary adenitis"
+  },
   "7712": {
     "staff_description": "Inguinal adenitis",
     "status_description": "multiple myeloma"
+  },
+  "7713": {
+    "staff_description": "Secondary adenitis",
+    "status_description": "Secondary adenitis"
   },
   "7714": {
     "staff_description": "Sickle cell anemia",
@@ -2110,6 +2638,42 @@
   "7716": {
     "staff_description": "Aplastic anemia",
     "status_description": "aplastic anemia"
+  },
+  "7717": {
+    "staff_description": "Primary (AL) amyloidosis",
+    "status_description": "Primary (AL) amyloidosis"
+  },
+  "7718": {
+    "staff_description": "Essential thrombocythemia/Primary myelofibrosis",
+    "status_description": "Essential thrombocythemia/Primary myelofibrosis"
+  },
+  "7719": {
+    "staff_description": "Chronic Myelogenous Leukemia (CML)",
+    "status_description": "Chronic Myelogenous Leukemia (CML)"
+  },
+  "7720": {
+    "staff_description": "Iron Deficiency Anemia",
+    "status_description": "Iron Deficiency Anemia"
+  },
+  "7721": {
+    "staff_description": "Folic Acid Deficiency",
+    "status_description": "Folic Acid Deficiency"
+  },
+  "7722": {
+    "staff_description": "Pernicious Anemia/Vitamin B12 Deficiency Anemia",
+    "status_description": "Pernicious Anemia/Vitamin B12 Deficiency Anemia"
+  },
+  "7723": {
+    "staff_description": "Acquired Hemolytic Anemia",
+    "status_description": "Acquired Hemolytic Anemia"
+  },
+  "7724": {
+    "staff_description": "Solitary Plasmacytoma",
+    "status_description": "Solitary Plasmacytoma"
+  },
+  "7725": {
+    "staff_description": "Myelodysplastic Syndromes",
+    "status_description": "Myelodysplastic Syndromes"
   },
   "7799": {
     "staff_description": "Other hemic or lymphatic system disability",
@@ -2279,6 +2843,10 @@
     "staff_description": "Hypoparathyroidism",
     "status_description": "hypoparathyroidism"
   },
+  "7906": {
+    "staff_description": "Thyroiditis",
+    "status_description": "Thyroiditis"
+  },
   "7907": {
     "staff_description": "Cushing's syndrome",
     "status_description": "Cushing's syndrome"
@@ -2290,6 +2858,10 @@
   "7909": {
     "staff_description": "Diabetes insipidus",
     "status_description": "diabetes insipidus"
+  },
+  "7910": {
+    "staff_description": "Adrenal condition",
+    "status_description": "Adrenal condition"
   },
   "7911": {
     "staff_description": "Addison's disease (Adrenal Cortical Hypofunction)",
@@ -2334,6 +2906,10 @@
   "8000": {
     "staff_description": "Encephalitis, epidemic, chronic",
     "status_description": "chronic epidemic encephalitis"
+  },
+  "8001": {
+    "staff_description": "Condition of the brain",
+    "status_description": "Condition of the brain"
   },
   "8002": {
     "staff_description": "Brain, new growth of, malignant",
@@ -2422,6 +2998,10 @@
   "8025": {
     "staff_description": "Myasthenia gravis",
     "status_description": "myasthenia gravis"
+  },
+  "8026": {
+    "staff_description": "Brain condition",
+    "status_description": "Brain condition"
   },
   "8045": {
     "staff_description": "Brain disease due to trauma",
@@ -2959,6 +3539,18 @@
     "staff_description": "Undiagnosed condition, dental and oral",
     "status_description": "undiagnosed dental or oral condition"
   },
+  "8900": {
+    "staff_description": "Seizure disorder",
+    "status_description": "Seizure disorder"
+  },
+  "8901": {
+    "staff_description": "- Seizure disorder",
+    "status_description": "- Seizure disorder"
+  },
+  "8902": {
+    "staff_description": "- Seizure disorder",
+    "status_description": "- Seizure disorder"
+  },
   "8910": {
     "staff_description": "Epilepsy, grand mal",
     "status_description": "epilepsy"
@@ -2983,6 +3575,282 @@
     "staff_description": "Other epilepsy",
     "status_description": "epilepsy"
   },
+  "9000": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9001": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9002": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9003": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9004": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9005": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9006": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9007": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9008": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9009": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9010": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9011": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9012": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9013": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9014": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9015": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9016": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9017": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9018": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9019": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9020": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9021": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9022": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9023": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9024": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9025": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9026": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9027": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9028": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9029": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9030": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9031": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9032": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9033": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9034": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9035": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9036": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9037": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9038": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9039": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9040": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9041": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9042": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9043": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9044": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9045": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9046": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9047": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9048": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9049": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9050": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9051": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9052": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9053": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9054": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9055": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9099": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
+  "9100": {
+    "staff_description": "Neurosis",
+    "status_description": "Neurosis"
+  },
+  "9101": {
+    "staff_description": "Neurosis",
+    "status_description": "Neurosis"
+  },
+  "9102": {
+    "staff_description": "Neurosis",
+    "status_description": "Neurosis"
+  },
+  "9103": {
+    "staff_description": "Neurosis",
+    "status_description": "Neurosis"
+  },
+  "9104": {
+    "staff_description": "Neurosis",
+    "status_description": "Neurosis"
+  },
+  "9105": {
+    "staff_description": "Neurosis",
+    "status_description": "Neurosis"
+  },
+  "9106": {
+    "staff_description": "Neurosis",
+    "status_description": "Neurosis"
+  },
+  "9110": {
+    "staff_description": "Psychophysiologic heart disorder",
+    "status_description": "Psychophysiologic heart disorder"
+  },
+  "9111": {
+    "staff_description": "Psychophysiologic heart disorder",
+    "status_description": "Psychophysiologic heart disorder"
+  },
+  "9112": {
+    "staff_description": "Psychophysiologic stomach disorder",
+    "status_description": "Psychophysiologic stomach disorder"
+  },
+  "9199": {
+    "staff_description": "Nervous condition",
+    "status_description": "Nervous condition"
+  },
+  "9200": {
+    "staff_description": "Psychosis",
+    "status_description": "Psychosis"
+  },
   "9201": {
     "staff_description": "Schizophrenia, disorganized type",
     "status_description": "schizophrenia"
@@ -3003,9 +3871,21 @@
     "staff_description": "Schizophrenia, residual type; other and unspecified types",
     "status_description": "schizophrenia"
   },
+  "9206": {
+    "staff_description": "Bipolar disorder",
+    "status_description": "Bipolar disorder"
+  },
+  "9207": {
+    "staff_description": "Depression with psychotic features",
+    "status_description": "Depression with psychotic features"
+  },
   "9208": {
     "staff_description": "Delusional disorder",
     "status_description": "delusional disorder"
+  },
+  "9209": {
+    "staff_description": "Depression with melancholia",
+    "status_description": "Depression with melancholia"
   },
   "9210": {
     "staff_description": "Psychotic disorder, not otherwise specified (atypical psychosis)",
@@ -3027,6 +3907,14 @@
     "staff_description": "Dementia due to infection (see code for list)",
     "status_description": "dementia"
   },
+  "9302": {
+    "staff_description": "Dementia associated with intracranial infections",
+    "status_description": "Dementia associated with intracranial infections"
+  },
+  "9303": {
+    "staff_description": "Dementia associated with alcoholism",
+    "status_description": "Dementia associated with alcoholism"
+  },
   "9304": {
     "staff_description": "Dementia due to head trauma",
     "status_description": "dementia"
@@ -3035,13 +3923,85 @@
     "staff_description": "Vascular dementia",
     "status_description": "vascular dementia"
   },
+  "9306": {
+    "staff_description": "Multi-infarct dementia",
+    "status_description": "Multi-infarct dementia"
+  },
+  "9307": {
+    "staff_description": "Dementia associated with convulsive disorder",
+    "status_description": "Dementia associated with convulsive disorder"
+  },
+  "9308": {
+    "staff_description": "Dementia associated with metabolic disorder",
+    "status_description": "Dementia associated with metabolic disorder"
+  },
+  "9309": {
+    "staff_description": "Dementia associated with brain tumor",
+    "status_description": "Dementia associated with brain tumor"
+  },
   "9310": {
     "staff_description": "Dementia of unknown etiology",
     "status_description": "dementia"
   },
+  "9311": {
+    "staff_description": "Dementia due to undiagnosed cause",
+    "status_description": "Dementia due to undiagnosed cause"
+  },
   "9312": {
     "staff_description": "Dementia of the Alzheimer's type",
     "status_description": "Alzheimer's disease"
+  },
+  "9313": {
+    "staff_description": "Brain syndrome",
+    "status_description": "Brain syndrome"
+  },
+  "9314": {
+    "staff_description": "Brain syndrome",
+    "status_description": "Brain syndrome"
+  },
+  "9315": {
+    "staff_description": "Dementia associated with epidemic encephalitis",
+    "status_description": "Dementia associated with epidemic encephalitis"
+  },
+  "9316": {
+    "staff_description": "Brain syndrome",
+    "status_description": "Brain syndrome"
+  },
+  "9317": {
+    "staff_description": "Brain syndrome",
+    "status_description": "Brain syndrome"
+  },
+  "9318": {
+    "staff_description": "Brain syndrome",
+    "status_description": "Brain syndrome"
+  },
+  "9319": {
+    "staff_description": "Brain syndrome",
+    "status_description": "Brain syndrome"
+  },
+  "9320": {
+    "staff_description": "Brain syndrome",
+    "status_description": "Brain syndrome"
+  },
+  "9321": {
+    "staff_description": "Brain syndrome",
+    "status_description": "Brain syndrome"
+  },
+  "9322": {
+    "staff_description": "Dementia associated with endocrine disorder",
+    "status_description": "Dementia associated with endocrine disorder"
+  },
+  "9323": {
+    "staff_description": "Brain syndrome",
+    "status_description": "Brain syndrome"
+  },
+  "9324": {
+    "staff_description": "Dementia associated with systemic infection",
+    "status_description": "Dementia associated with systemic infection"
+  },
+  "9325": {
+    "staff_description": "Brain Syndrome",
+    "status_description": "Brain Syndrome"
   },
   "9326": {
     "staff_description": "Dementia due to other neurologic or general medical conditions, or substance- induced",
@@ -3051,9 +4011,21 @@
     "staff_description": "Organic mental disorder, other (inc. personality change due to a general medical condition)",
     "status_description": "organic mental disorder"
   },
+  "9399": {
+    "staff_description": "Cognitive disorders - general",
+    "status_description": "Cognitive disorders - general"
+  },
   "9400": {
     "staff_description": "Generalized anxiety disorder",
     "status_description": "generalized anxiety disorder"
+  },
+  "9401": {
+    "staff_description": "Neurosis",
+    "status_description": "Neurosis"
+  },
+  "9402": {
+    "staff_description": "Neurosis",
+    "status_description": "Neurosis"
   },
   "9403": {
     "staff_description": "Specific (simple) phobia; social phobia",
@@ -3062,6 +4034,26 @@
   "9404": {
     "staff_description": "Obsessive compulsive disorder",
     "status_description": "obsessive compulsive disorder"
+  },
+  "9405": {
+    "staff_description": "Depressive Reaction",
+    "status_description": "Depressive Reaction"
+  },
+  "9406": {
+    "staff_description": "Neurosis",
+    "status_description": "Neurosis"
+  },
+  "9407": {
+    "staff_description": "Neurosis",
+    "status_description": "Neurosis"
+  },
+  "9408": {
+    "staff_description": "Neurosis",
+    "status_description": "Neurosis"
+  },
+  "9409": {
+    "staff_description": "Neurosis",
+    "status_description": "Neurosis"
   },
   "9410": {
     "staff_description": "Other and unspecified neurosis",
@@ -3135,6 +4127,54 @@
     "staff_description": "Other nonpsychotic emotional illness",
     "status_description": "nonpsychotic emotional illness"
   },
+  "9500": {
+    "staff_description": "Psychological factors affecting skin",
+    "status_description": "Psychological factors affecting skin"
+  },
+  "9501": {
+    "staff_description": "Psychological factors affecting cardiovascular",
+    "status_description": "Psychological factors affecting cardiovascular"
+  },
+  "9502": {
+    "staff_description": "Psychological factors affecting gastrointestinal",
+    "status_description": "Psychological factors affecting gastrointestinal"
+  },
+  "9503": {
+    "staff_description": "Nervous Condition",
+    "status_description": "Nervous Condition"
+  },
+  "9504": {
+    "staff_description": "Nervous Condition",
+    "status_description": "Nervous Condition"
+  },
+  "9505": {
+    "staff_description": "Psychological factors affecting musculoskeletal",
+    "status_description": "Psychological factors affecting musculoskeletal"
+  },
+  "9506": {
+    "staff_description": "Psychological factors affecting respiratory",
+    "status_description": "Psychological factors affecting respiratory"
+  },
+  "9507": {
+    "staff_description": "Psychological factors affecting hemic/lymphatic",
+    "status_description": "Psychological factors affecting hemic/lymphatic"
+  },
+  "9508": {
+    "staff_description": "Psychological factors affecting genitourinary",
+    "status_description": "Psychological factors affecting genitourinary"
+  },
+  "9509": {
+    "staff_description": "Psychological factors affecting endocrine",
+    "status_description": "Psychological factors affecting endocrine"
+  },
+  "9510": {
+    "staff_description": "Psychological factors affecting organ of sense",
+    "status_description": "Psychological factors affecting organ of sense"
+  },
+  "9511": {
+    "staff_description": "Psychological factors affecting physical condition",
+    "status_description": "Psychological factors affecting physical condition"
+  },
   "9520": {
     "staff_description": "Anorexia nervosa",
     "status_description": "anorexia"
@@ -3186,6 +4226,10 @@
   "9909": {
     "staff_description": "Coronoid process, loss of",
     "status_description": "partial loss of lower jaw"
+  },
+  "9910": {
+    "staff_description": "Loss of maxilla",
+    "status_description": "Loss of maxilla"
   },
   "9911": {
     "staff_description": "Hard palate, loss of half or more",

@@ -36,11 +36,25 @@ class AppealDocumentCount extends React.PureComponent {
 
     this.props.loadAppealDocCount(this.props.externalId);
 
-    ApiUtil.get(`/appeals/${this.props.externalId}/document_count`, requestOptions).then((response) => {
-      this.props.setAppealDocCount(this.props.externalId, response.body.document_count);
-    }, () => {
-      this.props.errorFetchingDocumentCount(this.props.externalId);
-    });
+    const tryFetchingDocumentCount = () => {
+      ApiUtil.get(`/appeals/${this.props.externalId}/document_count`, requestOptions).then((response) => {
+        const docCount = response.body.document_count;
+
+        // if we were told "try again later" then do do.
+        if (response.status === 202 && parseInt(docCount, 10) === -1) {
+          // try again in 30 seconds
+          setTimeout(tryFetchingDocumentCount, 30000);
+
+          return;
+        }
+
+        this.props.setAppealDocCount(this.props.externalId, docCount);
+      }, () => {
+        this.props.errorFetchingDocumentCount(this.props.externalId);
+      });
+    };
+
+    tryFetchingDocumentCount();
   }
 
   render = () => {

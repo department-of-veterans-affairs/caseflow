@@ -51,6 +51,39 @@ describe NightlySyncsJob, :all_dbs do
           expect(legacy_appeal.reload.tasks.open).to be_empty
         end
       end
+
+      context "with open hearing tasks" do
+        let!(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks) }
+
+        it "cancels all open tasks and leaves the legacy appeal intact without throwing an error" do
+          subject
+
+          expect(legacy_appeal.reload).to_not be_nil
+          expect(legacy_appeal.reload.tasks.open).to be_empty
+        end
+      end
+    end
+
+    context "open DecisionReviewTasks" do
+      let(:education) { create(:business_line, url: "education") }
+      let(:veteran) { create(:veteran) }
+      let(:hlr) do
+        create(:higher_level_review, benefit_type: "education", veteran_file_number: veteran.file_number)
+      end
+      let!(:request_issue) { create(:request_issue, :removed, decision_review: hlr) }
+      let!(:task) { create(:higher_level_review_task, appeal: hlr, assigned_to: education) }
+      let!(:board_grant_effectuation_task) do
+        create(:board_grant_effectuation_task, appeal: hlr, assigned_to: education)
+      end
+
+      it "cancels any for completed cases" do
+        expect(task.reload).to be_assigned
+
+        subject
+
+        expect(task.reload).to be_cancelled
+        expect(board_grant_effectuation_task.reload).to be_assigned
+      end
     end
   end
 end

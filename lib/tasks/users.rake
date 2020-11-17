@@ -24,7 +24,7 @@ namespace :users do
     reporter.report.each { |ln| puts ln }
   end
 
-  desc "find duplicates and suggest which one(s) to delete"
+  desc "find duplicates and suggest which ones to delete"
   task dedupe: :environment do
     users = User.all
     css_ids = users.map(&:css_id).map(&:upcase)

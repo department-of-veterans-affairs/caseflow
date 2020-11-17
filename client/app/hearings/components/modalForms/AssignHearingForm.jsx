@@ -1,18 +1,17 @@
-import React from 'react';
-import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import React from 'react';
+import _ from 'lodash';
 
-import ApiUtil from '../../../util/ApiUtil';
-
+import { HearingTime } from './HearingTime';
 import {
   RegionalOfficeDropdown,
   AppealHearingLocationsDropdown,
   HearingDateDropdown
 } from '../../../components/DataDropdowns';
-import HearingTime from './HearingTime';
-
 import { onChangeFormData } from '../../../components/common/actions';
+import ApiUtil from '../../../util/ApiUtil';
 
 class AssignHearingForm extends React.Component {
   getErrorMessages = (newValues) => {
@@ -22,16 +21,20 @@ class AssignHearingForm extends React.Component {
     };
 
     const errorMessages = {
-      hearingDay: values.hearingDay && values.hearingDay.hearingId ?
-        false : 'Please select a hearing date',
-      hearingLocation: values.hearingLocation ? false : 'Please select a hearing location',
-      scheduledTimeString: values.scheduledTimeString ? false : 'Please select a hearing time'
+      hearingDay: (values.hearingDay && values.hearingDay.hearingId) ?
+        null :
+        'Please select a hearing date',
+      hearingLocation: values.hearingLocation ? null : 'Please select a hearing location',
+      scheduledTimeString: values.scheduledTimeString ? null : 'Please select a hearing time'
     };
 
     return {
       ...errorMessages,
-      hasErrorMessages: (errorMessages.hearingDay || errorMessages.hearingLocation ||
-        errorMessages.scheduledTimeString) !== false
+      hasErrorMessages: !(
+        _.isNull(errorMessages.hearingDay) &&
+        _.isNull(errorMessages.hearingLocation) &&
+        _.isNull(errorMessages.scheduledTimeString)
+      )
     };
   }
 
@@ -58,7 +61,7 @@ class AssignHearingForm extends React.Component {
 
   onRegionalOfficeChange = (regionalOffice) => {
     const newValues = {
-      regionalOffice,
+      regionalOffice: regionalOffice?.key,
       hearingLocation: null,
       scheduledTimeString: null,
       hearingDay: null
@@ -105,7 +108,6 @@ class AssignHearingForm extends React.Component {
             regionalOffice={regionalOffice}
             value={hearingDay || initialHearingDate}
             onChange={(value) => this.onChange({ hearingDay: value })}
-            validateValueOnMount
           />
           <HearingTime
             errorMessage={this.getErrorMessage('scheduledTimeString')}
@@ -119,6 +121,28 @@ class AssignHearingForm extends React.Component {
     );
   }
 }
+
+AssignHearingForm.propTypes = {
+  appeal: PropTypes.shape({
+    availableHearingLocations: PropTypes.arrayOf(PropTypes.object),
+    closestRegionalOffice: PropTypes.string,
+    externalId: PropTypes.string
+  }),
+  initialHearingDate: PropTypes.string,
+
+  // Initial Regional Office Key
+  initialRegionalOffice: PropTypes.string,
+
+  onChange: PropTypes.func,
+  showErrorMessages: PropTypes.bool,
+  values: PropTypes.shape({
+    errorMessages: PropTypes.object,
+    hearingDay: PropTypes.object,
+    hearingLocation: PropTypes.object,
+    regionalOffice: PropTypes.string,
+    scheduledTimeString: PropTypes.string
+  })
+};
 
 const mapStateToProps = (state) => ({
   values: state.components.forms.assignHearing || {}

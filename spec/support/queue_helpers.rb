@@ -9,14 +9,24 @@ module QueueHelpers
     mtv_const.DISPOSITION_TEXT.to_h
   end
 
+  def recommendation_text
+    mtv_const.DISPOSITION_RECOMMENDATIONS.to_h
+  end
+
   def vacate_types
     mtv_const.VACATE_TYPE_OPTIONS.map { |opt| [opt["value"].to_sym, opt["displayText"]] }.to_h
   end
 
-  def format_mtv_attorney_instructions(notes:, disposition:, hyperlink: nil)
-    parts = ["I recommend #{disposition_text[disposition.to_sym]}.", notes]
+  def format_mtv_attorney_instructions(notes:, disposition:, hyperlinks: [])
+    parts = [recommendation_text[disposition.to_sym], notes]
 
-    parts += ["Here is the hyperlink to the draft of the denial:", hyperlink] if hyperlink
+    hyperlinks.each do |item|
+      next if item[:link].empty?
+
+      parts += [
+        "\nHere is the hyperlink to the #{format(item[:type], disposition_text[disposition.to_sym])}:\n#{item[:link]}"
+      ]
+    end
 
     parts.join("\n")
   end

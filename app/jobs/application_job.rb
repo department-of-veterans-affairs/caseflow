@@ -21,7 +21,7 @@ class ApplicationJob < ActiveJob::Base
     attr_reader :app_name
   end
 
-  rescue_from VBMS::ClientError, BGS::ShareError do |error|
+  rescue_from Caseflow::Error::TransientError, VBMS::ClientError, BGS::ShareError do |error|
     capture_exception(error: error)
   end
 

@@ -68,11 +68,13 @@ class ClaimReview < DecisionReview
   def finalized_decision_issues_before_receipt_date
     return [] unless receipt_date
 
-    DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
-      .select(&:finalized?)
-      .select do |issue|
-        issue.approx_decision_date && issue.approx_decision_date < receipt_date
-      end
+    @finalized_decision_issues_before_receipt_date ||= begin
+      DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
+        .select(&:finalized?)
+        .select do |issue|
+          issue.approx_decision_date && issue.approx_decision_date < receipt_date
+        end
+    end
   end
 
   # Save issues and assign it the appropriate end product establishment.
@@ -249,7 +251,7 @@ class ClaimReview < DecisionReview
   end
 
   def can_contest_rating_issues?
-    processed_in_vbms? && !try(:decision_review_remanded?)
+    processed_in_vbms? && benefit_type != "fiduciary" && !try(:decision_review_remanded?)
   end
 
   def cleared_rating_ep?

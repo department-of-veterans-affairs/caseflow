@@ -11,6 +11,11 @@ class DistributedCase < CaseflowRecord
   validates :docket_index, presence: true, if: :legacy_nonpriority
   validates :priority, inclusion: [true, false]
 
+  def rename_for_redistribution!
+    ymd = Time.zone.today.strftime("%F")
+    update!(case_id: "#{case_id}-redistributed-#{ymd}")
+  end
+
   private
 
   def docket_has_hearing_option

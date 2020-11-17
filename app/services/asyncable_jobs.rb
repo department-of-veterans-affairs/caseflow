@@ -2,7 +2,7 @@
 
 class AsyncableJobs
   attr_accessor :jobs
-  attr_reader :page, :page_size, :total_jobs, :total_pages
+  attr_reader :page, :page_size, :total_jobs, :total_pages, :veteran_file_number
 
   def self.models
     ActiveRecord::Base.descendants
@@ -10,9 +10,10 @@ class AsyncableJobs
       .reject(&:abstract_class?)
   end
 
-  def initialize(page: 1, page_size: 50)
+  def initialize(page: 1, page_size: 50, veteran_file_number: nil)
     @page = page
     @page_size = page_size
+    @veteran_file_number = veteran_file_number
     @jobs = gather_jobs
   end
 
@@ -29,6 +30,10 @@ class AsyncableJobs
       expired_jobs << klass.potentially_stuck
     end
     jobs = expired_jobs.flatten.sort_by(&:sort_by_last_submitted_at)
+
+    if veteran_file_number.present?
+      jobs = jobs.select { |job| job.try(:veteran).try(:file_number) == veteran_file_number }
+    end
 
     return paginated_jobs(jobs) if page_size > 0
 

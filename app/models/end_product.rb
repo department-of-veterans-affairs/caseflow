@@ -81,6 +81,12 @@ class EndProduct
     "930AHCNRNQE" => "AMA HLR Correction of Non-Rating NQE",
     "930AHCRLQPMC" => "AMA PMC HLR Correction of Rating LQE",
     "930AHCRNQPMC" => "AMA PMC HLR Correction of Rating NQE",
+    "930AHDENLPMC" => "AMA PMC HLR DTA Error NR - Correction of LQE",
+    "930AHDENNPMC" => "AMA PMC HLR DTA Error NR - Correction of NQE",
+    "930AHDENRPMC" => "AMA PMC HLR DTA Error Non-Rating",
+    "930AHDERLPMC" => "AMA PMC HLR DTA Error Rating - Correction of LQE",
+    "930AHDERNPMC" => "AMA PMC HLR DTA Error Rating - Correction of NQE",
+    "930AHDERPMC" => "AMA PMC HLR DTA Error Rating",
     "930AHNRCPMC" => "AMA PMC HLR Non-Rating Control",
     "930AMABDENCL" => "AMA Board DTA Error NR - Correction of LQE",
     "930AMABDENCN" => "AMA Board DTA Error NR - Correction of NQE",
@@ -158,6 +164,11 @@ class EndProduct
     "070RMBVAGPMC" => "PMC Remand with BVA Grant"
   }.freeze
 
+  FIDUCIARY_CODES = {
+    "030HLRFID" => "FID-Higher Level Review",
+    "040SCRFID" => "FID-Supplemental Claim Review"
+  }.freeze
+
   CODES = DISPATCH_CODES
     .merge(CORRECTION_REVIEW_CODES)
     .merge(DIFFERENCE_OF_OPINION_CODES)
@@ -166,6 +177,7 @@ class EndProduct
     .merge(DTA_CODES)
     .merge(RAMP_CODES)
     .merge(REMAND_CODES)
+    .merge(FIDUCIARY_CODES)
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 
@@ -292,6 +304,16 @@ class EndProduct
 
   def contentions
     @contentions ||= claim_id ? VBMSService.fetch_contentions(claim_id: claim_id) : nil
+  end
+
+  def bgs_contentions
+    @bgs_contentions ||= begin
+      if claim_id && FeatureToggle.enabled?(:detect_contention_exam, user: RequestStore.store[:current_user])
+        BgsContention.fetch_all(claim_id)
+      else
+        []
+      end
+    end
   end
 
   def limited_poa

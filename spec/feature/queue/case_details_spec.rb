@@ -180,7 +180,7 @@ RSpec.feature "Case details", :all_dbs do
         visit "/queue"
         find_table_cell(appeal.vacols_id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
           .click_link
-        expect(page).not_to have_content("Hearing preference")
+        expect(page.has_no_content?("Hearing preference")).to eq(true)
       end
     end
   end
@@ -205,19 +205,25 @@ RSpec.feature "Case details", :all_dbs do
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         expect(page).to have_content("About the Veteran")
-        expect(page).not_to have_content("About the Appellant")
+        expect(page.has_no_content?("About the Appellant")).to eq(true)
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to have_content("1/10/1935")
         expect(page).to have_content(appeal.veteran_address_line_1)
         expect(page).to_not have_content("Regional Office")
       end
 
-      scenario "when there is no POA" do
-        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
-        visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
-        expect(page).to have_content("Power of Attorney")
-        expect(page).to have_content(COPY::CASE_DETAILS_NO_POA)
+      context "when there is no POA" do
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(nil)
+        end
+
+        scenario "contains message for no POA" do
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+          expect(page).to have_content("Power of Attorney")
+          expect(page).to have_content(COPY::CASE_DETAILS_NO_POA)
+        end
       end
     end
 
@@ -244,13 +250,14 @@ RSpec.feature "Case details", :all_dbs do
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         expect(page).to have_content("About the Veteran")
-        expect(page).not_to have_content("About the Appellant")
+        expect(page.has_no_content?("About the Appellant")).to eq(true)
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to_not have_content("1/10/1935")
         expect(page).to_not have_content("5/25/2016")
         expect(page).to_not have_content("Regional Office")
       end
     end
+
     context "when veteran is in BGS" do
       let!(:appeal) do
         create(
@@ -299,6 +306,36 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
+    context "when appellant is an attorney or unlisted claimant" do
+      let(:bgs_atty) { create(:bgs_attorney) }
+      let(:appeal) do
+        create(
+          :appeal,
+          associated_judge: judge_user,
+          associated_attorney: attorney_user,
+          number_of_claimants: 0,
+          veteran_is_not_claimant: true
+        )
+      end
+
+      %w[Attorney Other].each do |claimant_type|
+        scenario "details view informs us that appellant's relationship to Veteran is #{claimant_type}" do
+          create(
+            :claimant,
+            decision_review: appeal,
+            type: "#{claimant_type}Claimant",
+            participant_id: bgs_atty.participant_id,
+            notes: (claimant_type == "Other") ? "sample notes" : nil
+          )
+          visit "/queue/appeals/#{appeal.uuid}"
+
+          expect(page).to have_content("About the Veteran")
+          expect(page).to have_content("About the Appellant")
+          expect(page).to have_content("Relation to Veteran: #{claimant_type}")
+        end
+      end
+    end
+
     context "when attorney has a case assigned in VACOLS without a DECASS record" do
       let!(:appeal) do
         create(
@@ -317,7 +354,7 @@ RSpec.feature "Case details", :all_dbs do
 
         # Expect to find content we know to be on the page so that we wait for the page to load.
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
-        expect(page).not_to have_content("Select an action")
+        expect(page.has_no_content?("Select an action")).to eq(true)
       end
     end
 
@@ -494,6 +531,25 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
+  context "when an appeal has been cancelled" do
+    let!(:appeal) do
+      create(:appeal, :at_judge_review, associated_judge: judge_user, associated_attorney: attorney_user)
+    end
+
+    it "does not show assigned attorney or judge" do
+      visit "/queue/appeals/#{appeal.uuid}"
+      expect(page).to have_content(judge_user.full_name)
+      expect(page).to have_content(attorney_user.full_name)
+
+      appeal.tasks.open.update_all(status: Constants.TASK_STATUSES.cancelled)
+
+      visit "/queue/appeals/#{appeal.uuid}"
+      expect(page).to have_content(COPY::TASK_SNAPSHOT_NO_ACTIVE_LABEL)
+      expect(page).to have_no_content(judge_user.full_name)
+      expect(page).to have_no_content(attorney_user.full_name)
+    end
+  end
+
   context "loads judge task detail views" do
     let!(:vacols_case) do
       create(
@@ -616,9 +672,9 @@ RSpec.feature "Case details", :all_dbs do
         visit "/queue/appeals/#{appeal.external_id}"
 
         case_timeline = page.find("table#case-timeline-table")
-        expect(case_timeline).not_to have_content(transcript_task.class.name)
-        expect(case_timeline).not_to have_content(translation_task.class.name)
-        expect(case_timeline).not_to have_content(foia_task.class.name)
+        expect(case_timeline.has_no_content?(transcript_task.class.name)).to eq(true)
+        expect(case_timeline.has_no_content?(translation_task.class.name)).to eq(true)
+        expect(case_timeline.has_no_content?(foia_task.class.name)).to eq(true)
         expect(case_timeline).to have_content(transcript_task.children.first.class.name)
         expect(case_timeline).to have_content(translation_task.children.first.class.name)
         expect(case_timeline).to have_content(foia_task.children.first.class.name)
@@ -683,7 +739,7 @@ RSpec.feature "Case details", :all_dbs do
         assigner_name = on_hold_task.assigned_by_display_name
 
         click_on "On hold (1)"
-        click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
+        click_on "#{vet_name} (#{on_hold_task.appeal.veteran_file_number})"
 
         expect(page).to have_content("TASK\n#{on_hold_task.label}")
         find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
@@ -703,8 +759,7 @@ RSpec.feature "Case details", :all_dbs do
         )
       end
 
-      scenario "displays task bold in queue",
-               skip: "https://circleci.com/gh/department-of-veterans-affairs/caseflow/65218, bat team investigated" do
+      scenario "displays task bold in queue" do
         visit "/queue"
         vet_name = assigned_task.appeal.veteran_full_name
         fontweight_new = get_computed_styles("#veteran-name-for-task-#{assigned_task.id}", "font-weight")
@@ -777,8 +832,8 @@ RSpec.feature "Case details", :all_dbs do
       it "marking task as complete works" do
         visit "/queue/appeals/#{task.appeal.uuid}"
 
-        find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
+        find(".cf-select__control", text: "Select an action").click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
 
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
@@ -840,7 +895,7 @@ RSpec.feature "Case details", :all_dbs do
       let!(:appeal) { create(:appeal) }
       let!(:appeal2) { create(:appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
-      let!(:assign_task) { create(:ama_judge_task, assigned_to: user, parent: root_task) }
+      let!(:assign_task) { create(:ama_judge_assign_task, assigned_to: user, parent: root_task) }
       let!(:judge_task) do
         create(
           :ama_judge_decision_review_task,
@@ -879,7 +934,7 @@ RSpec.feature "Case details", :all_dbs do
 
       it "should NOT display judge & attorney tasks" do
         visit "/queue/appeals/#{appeal2.uuid}"
-        expect(page).not_to have_content(COPY::CASE_TIMELINE_JUDGE_TASK)
+        expect(page.has_no_content?(COPY::CASE_TIMELINE_JUDGE_TASK)).to eq(true)
       end
     end
   end
@@ -944,6 +999,34 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to have_content(instructions_text)
         find("button", text: COPY::TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL).click
         expect(page).to_not have_content(instructions_text)
+      end
+
+      context "with single line break in instructions" do
+        let(:instructions_text) { "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit" }
+
+        it "displays with <br>" do
+          visit "/queue/appeals/#{appeal.uuid}"
+
+          find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+          div = find("div.task-instructions")
+          div.assert_selector("br", count: 1, visible: false)
+          expect(div).to have_text(instructions_text)
+        end
+      end
+
+      context "with multiple line breaks separating text in instructions" do
+        let(:instructions_text) { "Lorem ipsum dolor sit amet,\n\nconsectetur adipiscing elit" }
+        let(:split) { instructions_text.split(/\n\n/) }
+
+        it "displays with <p> tags" do
+          visit "/queue/appeals/#{appeal.uuid}"
+
+          find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+          div = find("div.task-instructions")
+          div.assert_selector("p", count: 2)
+          expect(div.find_all("p")[0]).to have_text(split[0])
+          expect(div.find_all("p")[1]).to have_text(split[1])
+        end
       end
     end
     context "multiple tasks" do
@@ -1196,7 +1279,7 @@ RSpec.feature "Case details", :all_dbs do
       let(:user) { create(:user) }
 
       before do
-        BvaIntake.singleton.add_user(user)
+        CaseReview.singleton.add_user(user)
         User.authenticate!(user: user)
       end
 
@@ -1206,6 +1289,7 @@ RSpec.feature "Case details", :all_dbs do
         prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
         text = Constants.TASK_ACTIONS.CANCEL_TASK.label
         click_dropdown(prompt: prompt, text: text)
+        fill_in "taskInstructions", with: "Cancelling task"
         click_button("Submit")
 
         expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name))
@@ -1221,7 +1305,7 @@ RSpec.feature "Case details", :all_dbs do
 
         new_task = new_tasks.first
         expect(new_task.status).to eq Constants.TASK_STATUSES.cancelled
-        expect(appeal_withdrawal_bva_task.assigned_to).to eq(BvaIntake.singleton)
+        expect(appeal_withdrawal_bva_task.assigned_to).to eq(CaseReview.singleton)
         expect(appeal_withdrawal_bva_task.parent.assigned_to).to eq(MailTeam.singleton)
       end
     end
@@ -1293,6 +1377,45 @@ RSpec.feature "Case details", :all_dbs do
             expect(page).to have_current_path(case_details_page_path)
           end
         end
+      end
+    end
+  end
+
+  describe "case title details" do
+    shared_examples "show hearing request type" do
+      it "displays hearing request type" do
+        id = appeal.is_a?(Appeal) ? appeal.uuid : appeal.vacols_id
+
+        visit("/queue/appeals/#{id}")
+
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_ABOUT_BOX_HEARING_REQUEST_TYPE_LABEL.upcase)
+        expect(page).to have_content(appeal.current_hearing_request_type(readable: true))
+      end
+    end
+
+    context "ama appeal" do
+      context "hearing docket" do
+        let!(:appeal) do
+          create(:appeal, :hearing_docket, closest_regional_office: "C")
+        end
+
+        include_examples "show hearing request type"
+      end
+    end
+
+    context "legacy appeal" do
+      context "hearing docket" do
+        let!(:appeal) do
+          create(
+            :legacy_appeal,
+            vacols_case: create(
+              :case,
+              :travel_board_hearing
+            )
+          )
+        end
+
+        include_examples "show hearing request type"
       end
     end
   end

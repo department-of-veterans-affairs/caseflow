@@ -1,6 +1,6 @@
-import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 import { MODIFIER_OPTIONS } from '../constants';
 import ROUTING_INFORMATION from '../../constants/Routing';
+import { enabledSpecialIssues } from '../../constants/SpecialIssueEnabler.js';
 
 /*
  * This function returns a nicely formatted string for the station of jurisdiction
@@ -15,7 +15,7 @@ export const formattedStationOfJurisdiction = (
 ) => {
   let suffix;
 
-  SPECIAL_ISSUES.forEach((issue) => {
+  enabledSpecialIssues().forEach((issue) => {
     let issueKey = issue.stationOfJurisdiction && issue.stationOfJurisdiction.key;
 
     // If the assigned stationOfJurisdiction matches a routed special issue, use the

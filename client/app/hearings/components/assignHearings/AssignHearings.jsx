@@ -32,30 +32,40 @@ const roSelectionStyling = css({ marginTop: '10px' });
 const UpcomingHearingDaysNav = ({
   upcomingHearingDays, selectedHearingDay,
   onSelectedHearingDayChange
-}) => (
-  <div className="usa-width-one-fourth" {...roSelectionStyling}>
-    <h3>Hearings to Schedule</h3>
-    <h4>Available Hearing Days</h4>
-    <ul className="usa-sidenav-list" {...sectionNavigationListStyling}>
-      {_.orderBy(Object.values(upcomingHearingDays), (hearingDay) => hearingDay.scheduledFor, 'asc').
-        map((hearingDay) => {
-          const dateSelected = selectedHearingDay &&
-          (selectedHearingDay.scheduledFor === hearingDay.scheduledFor &&
-             selectedHearingDay.room === hearingDay.room);
+}) => {
+  const orderedHearingDays = _.orderBy(
+    Object.values(upcomingHearingDays),
+    (hearingDay) => hearingDay.scheduledFor, 'asc'
+  );
 
-          return <li key={hearingDay.id} >
-            <Button
-              styling={dateSelected ? buttonColorSelected : {}}
-              onClick={() => onSelectedHearingDayChange(hearingDay)}
-              linkStyling>
-              {`${moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}
-              ${hearingDay.room}`}
-            </Button>
-          </li>;
-        })}
-    </ul>
-  </div>
-);
+  return (
+    <div className="usa-width-one-fourth" {...roSelectionStyling}>
+      <h3>Hearings to Schedule</h3>
+      <h4>Available Hearing Days</h4>
+      <ul className="usa-sidenav-list" {...sectionNavigationListStyling}>
+        {
+          orderedHearingDays.map(
+            (hearingDay) => {
+              const dateSelected = selectedHearingDay?.id === hearingDay?.id;
+
+              return (
+                <li key={hearingDay.id} >
+                  <Button
+                    styling={dateSelected ? buttonColorSelected : {}}
+                    onClick={() => onSelectedHearingDayChange(hearingDay)}
+                    linkStyling>
+                    {`${moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}  
+                      ${hearingDay.room ?? ''}`}
+                  </Button>
+                </li>
+              );
+            }
+          )
+        }
+      </ul>
+    </div>
+  );
+};
 
 UpcomingHearingDaysNav.propTypes = {
   upcomingHearingDays: PropTypes.object,
@@ -66,52 +76,33 @@ UpcomingHearingDaysNav.propTypes = {
   onSelectedHearingDayChange: PropTypes.func
 };
 
-export default class AssignHearings extends React.Component {
+export const AssignHearings = ({
+  upcomingHearingDays, selectedHearingDay, selectedRegionalOffice, onSelectedHearingDayChange
+}) => {
 
-  room = () => {
-    const { selectedRegionalOffice, selectedHearingDay } = this.props;
-
-    // St. Petersburg, FL or Winston-Salem, NC
-    if (selectedRegionalOffice === 'RO17' || selectedRegionalOffice === 'RO18') {
-      if (selectedHearingDay) {
-        return selectedHearingDay.room;
-      }
-    }
-
-    return '';
-  };
-
-  render() {
-    const {
-      upcomingHearingDays,
-      selectedHearingDay,
-      selectedRegionalOffice,
-      onSelectedHearingDayChange
-    } = this.props;
-    const room = this.room();
-
-    if (_.isEmpty(upcomingHearingDays)) {
-      return <NoUpcomingHearingDayMessage />;
-    }
-
-    return (
-      <React.Fragment>
-        <UpcomingHearingDaysNav
-          upcomingHearingDays={upcomingHearingDays}
-          selectedHearingDay={selectedHearingDay}
-          onSelectedHearingDayChange={onSelectedHearingDayChange} />
-        <AssignHearingsTabs
-          selectedRegionalOffice={selectedRegionalOffice}
-          selectedHearingDay={selectedHearingDay}
-          room={room}
-        />
-      </React.Fragment>
-    );
+  if (_.isEmpty(upcomingHearingDays)) {
+    return <NoUpcomingHearingDayMessage />;
   }
-}
+
+  return (
+    <React.Fragment>
+      <UpcomingHearingDaysNav
+        upcomingHearingDays={upcomingHearingDays}
+        selectedHearingDay={selectedHearingDay}
+        onSelectedHearingDayChange={onSelectedHearingDayChange} />
+      <AssignHearingsTabs
+        selectedRegionalOffice={selectedRegionalOffice}
+        selectedHearingDay={selectedHearingDay}
+        room={selectedHearingDay?.room}
+      />
+    </React.Fragment>
+  );
+};
 
 AssignHearings.propTypes = {
+  // Selected Regional Office Key
   selectedRegionalOffice: PropTypes.string,
+
   upcomingHearingDays: PropTypes.object,
   onSelectedHearingDayChange: PropTypes.func,
   selectedHearingDay: PropTypes.oneOfType([

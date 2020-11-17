@@ -312,7 +312,11 @@ describe EndProductEstablishment, :postgres do
         allow(end_product_establishment.veteran).to receive(:end_products).and_return([orphaned_end_product])
         subject
         expect(Fakes::VBMSService).not_to have_received(:establish_claim!)
-        expect(end_product_establishment.reference_id).to eq(orphaned_end_product.claim_id)
+        expect(end_product_establishment).to have_attributes(
+          reference_id: orphaned_end_product.claim_id,
+          established_at: Time.zone.now,
+          modifier: orphaned_end_product.modifier
+        )
       end
     end
 
@@ -980,6 +984,40 @@ describe EndProductEstablishment, :postgres do
         subject
         expect(end_product_establishment.reload.synced_status).to eq("CAN")
       end
+
+      context "#returns cancel_end_product parameters!" do
+        let!(:modifier) { "030" }
+        let(:benefit_type_code) { Veteran::BENEFIT_TYPE_CODE_LIVE }
+        let(:end_product_establishment) do
+          EndProductEstablishment.new(
+            source: source,
+            veteran_file_number: veteran_file_number,
+            code: code,
+            payee_code: payee_code,
+            claim_date: 2.days.ago,
+            benefit_type_code: benefit_type_code,
+            modifier: modifier,
+            reference_id: "1",
+            synced_status: synced_status,
+            last_synced_at: last_synced_at
+          )
+        end
+
+        let!(:bgs_service) { BGSService.new }
+
+        before do
+          allow(BGSService).to receive(:new) { bgs_service }
+          allow(bgs_service).to receive(:cancel_end_product).and_call_original
+        end
+
+        it do
+          subject
+          expect(bgs_service).to have_received(:cancel_end_product).once.with(veteran_file_number,
+                                                                              code, modifier,
+                                                                              payee_code,
+                                                                              benefit_type_code)
+        end
+      end
     end
 
     context "when source is a RampReview" do
@@ -1023,7 +1061,7 @@ describe EndProductEstablishment, :postgres do
     let(:promulgation_date) { end_product_establishment.established_at + 1.day }
 
     let!(:rating) do
-      Generators::Rating.build(
+      Generators::PromulgatedRating.build(
         participant_id: veteran.participant_id,
         promulgation_date: promulgation_date,
         associated_claims: associated_claims
@@ -1062,7 +1100,8 @@ describe EndProductEstablishment, :postgres do
 
       context "when rating is before established_at date" do
         let!(:another_rating) do
-          Generators::Rating.build(
+          Generators::PromulgatedRating.build(
+            profile_date: end_product_establishment.established_at + 1.day,
             participant_id: veteran.participant_id,
             promulgation_date: end_product_establishment.established_at + 1.day,
             associated_claims: []
@@ -1071,6 +1110,54 @@ describe EndProductEstablishment, :postgres do
         let(:promulgation_date) { end_product_establishment.established_at - 1.day }
 
         it { is_expected.to eq(nil) }
+      end
+    end
+
+    context "when many potential ratings" do
+      let(:reference_id) { "reference-id" }
+      let(:other_epe) do
+        create(
+          :end_product_establishment,
+          veteran_file_number: veteran_file_number,
+          established_at: end_product_establishment.established_at + 2.days,
+          code: "040SCR"
+        )
+      end
+
+      let(:associated_claims) do
+        [
+          { clm_id: "09123", bnft_clm_tc: end_product_establishment.code },
+          { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code },
+          { clm_id: "09321", bnft_clm_tc: other_epe.code },
+          { clm_id: other_epe.reference_id, bnft_clm_tc: other_epe.code }
+        ]
+      end
+
+      let(:ratings) do
+        [
+          rating,
+          Generators::PromulgatedRating.build(
+            participant_id: veteran.participant_id,
+            promulgation_date: promulgation_date + 2.days,
+            associated_claims: associated_claims
+          )
+        ]
+      end
+
+      let(:cache_key) { end_product_establishment.associated_rating_cache_key }
+
+      before do
+        end_product_establishment.save!
+      end
+
+      it "caches the associated rating for the given EPE" do
+        expect(Rails.cache.exist?(cache_key)).to eq(false)
+        # If caching works, this should only get called once
+        expect(RatingAtIssue).to receive(:fetch_in_range).once.and_call_original
+        subject
+        expect(Rails.cache.exist?(cache_key)).to eq(true)
+        # when called a second time, should get from cache
+        subject
       end
     end
   end
@@ -1164,7 +1251,7 @@ describe EndProductEstablishment, :postgres do
     context "when decision issues are all synced" do
       context "when source is a higher level review" do
         let!(:claimant) do
-          Claimant.create!(
+          VeteranClaimant.create!(
             decision_review: source,
             participant_id: veteran.participant_id,
             payee_code: "10"
@@ -1243,7 +1330,7 @@ describe EndProductEstablishment, :postgres do
             )
           end
 
-          it { is_expected.to eq(ep_code: "EP 037", ep_status: "Cleared") }
+          it { is_expected.to eq(ep_code: "037 Higher-Level Review Rating", ep_status: "Cleared") }
 
           context "when there are pending request issues to sync" do
             let!(:pending_request_issue) do
@@ -1255,7 +1342,10 @@ describe EndProductEstablishment, :postgres do
               )
             end
 
-            it { is_expected.to eq(ep_code: "EP 037", ep_status: "Cleared, Syncing decisions...") }
+            it {
+              is_expected.to eq(ep_code: "037 Higher-Level Review Rating",
+                                ep_status: "Cleared, Syncing decisions...")
+            }
 
             context "when there are pending request issues to sync with errors" do
               let!(:errored_request_issue) do
@@ -1270,7 +1360,7 @@ describe EndProductEstablishment, :postgres do
 
               it do
                 is_expected.to eq(
-                  ep_code: "EP 037",
+                  ep_code: "037 Higher-Level Review Rating",
                   ep_status: "Cleared, Decisions sync failed. Support notified."
                 )
               end
@@ -1280,7 +1370,13 @@ describe EndProductEstablishment, :postgres do
       end
 
       context "if there is no modifier, shows unknown" do
-        it { is_expected.to eq(ep_code: "EP Unknown", ep_status: "") }
+        it { is_expected.to eq(ep_code: " Higher-Level Review Rating", ep_status: "") }
+      end
+
+      context "if the epe code is not found" do
+        before { epe.update!(code: "NOTFOUND") }
+
+        it { is_expected.to eq(ep_code: " Unknown", ep_status: "") }
       end
     end
 

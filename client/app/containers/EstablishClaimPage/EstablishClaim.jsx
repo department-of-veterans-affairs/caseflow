@@ -147,15 +147,17 @@ export class EstablishClaim extends React.Component {
   }
 
   containsRoutedSpecialIssues = () => {
-    return specialIssueFilters.routedSpecialIssues().some((issue) => {
-      return this.props.specialIssues[issue.specialIssue];
-    });
+    return specialIssueFilters().routedSpecialIssues().
+      some((issue) => {
+        return this.props.specialIssues[issue.specialIssue];
+      });
   };
 
   containsRoutedOrRegionalOfficeSpecialIssues = () => {
-    return specialIssueFilters.routedOrRegionalSpecialIssues().some((issue) => {
-      return this.props.specialIssues[issue.specialIssue || issue];
-    });
+    return specialIssueFilters().routedOrRegionalSpecialIssues().
+      some((issue) => {
+        return this.props.specialIssues[issue.specialIssue || issue];
+      });
   };
 
   componentDidMount() {
@@ -219,11 +221,13 @@ export class EstablishClaim extends React.Component {
       },
       (error) => {
         this.props.performEstablishClaimFailure();
-        const errorMessage = CREATE_EP_ERRORS[error.response.body?.error_code] || CREATE_EP_ERRORS.default;
+        // eslint-disable-next-line
+        const errorMessage = CREATE_EP_ERRORS[error.response?.body?.error_code] || CREATE_EP_ERRORS.default;
 
         const nextModifier = this.validModifiers()[1];
 
-        if (error.response.body?.error_code === 'duplicate_ep' && nextModifier) {
+        // eslint-disable-next-line
+        if (error.response?.body?.error_code === 'duplicate_ep' && nextModifier) {
           this.props.onDuplicateEP(nextModifier);
         }
 
@@ -237,7 +241,10 @@ export class EstablishClaim extends React.Component {
   };
 
   getRoutingType = () => {
-    let stationOfJurisdiction = getStationOfJurisdiction(this.props.specialIssues, this.props.task.appeal.station_key);
+    let stationOfJurisdiction = getStationOfJurisdiction(
+      this.props.specialIssues,
+      this.props.task.appeal.station_key
+    );
 
     return stationOfJurisdiction === '397' ? 'ARC' : 'Routed';
   };
@@ -327,6 +334,7 @@ export class EstablishClaim extends React.Component {
         this.props.submitDecisionPageSuccess();
       },
       (error) => {
+        // eslint-disable-next-line
         const errorMessage = CREATE_EP_ERRORS[error.response.body?.error_code] || CREATE_EP_ERRORS.default;
 
         this.setState({
@@ -422,16 +430,17 @@ export class EstablishClaim extends React.Component {
       return;
     }
 
-    specialIssueFilters.unhandledSpecialIssues().forEach((issue) => {
-      if (this.props.specialIssues[issue.specialIssue]) {
-        this.setState({
+    specialIssueFilters().unhandledSpecialIssues().
+      forEach((issue) => {
+        if (this.props.specialIssues[issue.specialIssue]) {
+          this.setState({
           // If there are multiple unhandled special issues, we'll route
           // to the email address for the last one.
-          specialIssuesEmail: issue.unhandled.emailAddress,
-          specialIssuesRegionalOffice: issue.unhandled.regionalOffice
-        });
-      }
-    });
+            specialIssuesEmail: issue.unhandled.emailAddress,
+            specialIssuesRegionalOffice: issue.unhandled.regionalOffice
+          });
+        }
+      });
   };
 
   // This returns true if the flow will create an EP or assign to an existing EP
@@ -444,11 +453,12 @@ export class EstablishClaim extends React.Component {
       return true;
     }
 
-    specialIssueFilters.unhandledSpecialIssues().forEach((issue) => {
-      if (this.props.specialIssues[issue.specialIssue]) {
-        willCreateEndProduct = false;
-      }
-    });
+    specialIssueFilters().unhandledSpecialIssues().
+      forEach((issue) => {
+        if (this.props.specialIssues[issue.specialIssue]) {
+          willCreateEndProduct = false;
+        }
+      });
 
     return willCreateEndProduct;
   }
@@ -498,6 +508,10 @@ export class EstablishClaim extends React.Component {
             regionalOfficeKey={this.props.task.appeal.regional_office_key}
             regionalOfficeCities={this.props.regionalOfficeCities}
             stationKey={this.props.task.appeal.station_key}
+            stationOfJurisdiction={getStationOfJurisdiction(
+              this.props.specialIssues,
+              this.props.task.appeal.station_key
+            )}
           />
         )}
         {this.isNotePage() && (

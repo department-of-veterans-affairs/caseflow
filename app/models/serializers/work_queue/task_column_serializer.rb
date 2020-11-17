@@ -62,11 +62,19 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
+  attribute :started_at do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name]
+
+    if serialize_attribute?(params, columns)
+      object.started_at
+    end
+  end
+
   attribute :issue_count do |object, params|
     columns = [Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name]
 
     if serialize_attribute?(params, columns)
-      object.appeal.number_of_issues
+      object.appeal.is_a?(LegacyAppeal) ? object.appeal.undecided_issues.count : object.appeal.number_of_issues
     end
   end
 
@@ -111,7 +119,10 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :status do |object, params|
-    columns = [Constants.QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name]
+    columns = [
+      Constants.QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name,
+      Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name
+    ]
 
     if serialize_attribute?(params, columns)
       object.status
@@ -136,14 +147,15 @@ class WorkQueue::TaskColumnSerializer
 
   attribute :assigned_to do |object, params|
     columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]
+    assignee = object.assigned_to
 
     if serialize_attribute?(params, columns)
       {
-        css_id: object.assigned_to.try(:css_id),
-        is_organization: object.assigned_to.is_a?(Organization),
-        name: object.appeal.assigned_to_location,
-        type: object.assigned_to.class.name,
-        id: object.assigned_to.id
+        css_id: assignee.try(:css_id),
+        is_organization: assignee.is_a?(Organization),
+        name: assignee.is_a?(Organization) ? assignee.name : assignee.css_id,
+        type: assignee.class.name,
+        id: assignee.id
       }
     else
       {
@@ -166,13 +178,39 @@ class WorkQueue::TaskColumnSerializer
   end
 
   # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
+  attribute :hearing_request_type do |object, params|
+    columns = [Constants.QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME]
+
+    if serialize_attribute?(params, columns)
+      # The `hearing_request_type` field doesn't exist on the actual model. This
+      # field needs to be added in a select statement and represents the field from
+      # the `cached_appeal_attributes` table in `Hearings::ScheduleHearingTasksController`.
+      object&.[](:hearing_request_type)
+    end
+  end
+
+  # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
+  # former_travel technically isn't it's own column, it's part of
+  # hearing request type column
+  attribute :former_travel do |object, params|
+    columns = [Constants.QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME]
+
+    if serialize_attribute?(params, columns)
+      # The `former_travel` field doesn't exist on the actual model. This
+      # field needs to be added in a select statement and represents the field from
+      # the `cached_appeal_attributes` table in `Hearings::ScheduleHearingTasksController`.
+      object&.[](:former_travel)
+    end
+  end
+
+  # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
   attribute :power_of_attorney_name do |object, params|
     columns = [Constants.QUEUE_CONFIG.POWER_OF_ATTORNEY_COLUMN_NAME]
 
     if serialize_attribute?(params, columns)
       # The `power_of_attorney_name` field doesn't exist on the actual model. This
       # field needs to be added in a select statement and represents the field from
-      # the `cached_appeal_attributes` table.
+      # the `cached_appeal_attributes` table in `Hearings::ScheduleHearingTasksController`.
       object&.[](:power_of_attorney_name)
     end
   end
@@ -183,6 +221,40 @@ class WorkQueue::TaskColumnSerializer
 
     if serialize_attribute?(params, columns)
       object.appeal.suggested_hearing_location&.to_hash
+    end
+  end
+
+  attribute :overtime do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
+
+    if serialize_attribute?(params, columns)
+      object.appeal.try(:overtime?)
+    end
+  end
+
+  attribute :document_id do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_ID.name]
+
+    if serialize_attribute?(params, columns)
+      object.latest_attorney_case_review&.document_id
+    end
+  end
+
+  attribute :decision_prepared_by do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_ID.name]
+
+    if serialize_attribute?(params, columns)
+      object.prepared_by_display_name || { first_name: nil, last_name: nil }
+    end
+  end
+
+  attribute :latest_informal_hearing_presentation_task do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name, Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name]
+
+    if serialize_attribute?(params, columns)
+      task = object.appeal.latest_informal_hearing_presentation_task
+
+      task ? { requested_at: task.assigned_at, received_at: task.closed_at } : {}
     end
   end
 
@@ -201,10 +273,6 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :appeal_id do
-    nil
-  end
-
-  attribute :started_at do
     nil
   end
 
@@ -258,18 +326,21 @@ class WorkQueue::TaskColumnSerializer
     }
   end
 
-  attribute :document_id do
-    nil
-  end
-
-  attribute :decision_prepared_by do
-    {
-      first_name: nil,
-      last_name: nil
-    }
-  end
-
   attribute :available_actions do
     []
+  end
+
+  attribute :cancelled_by do
+    {
+      css_id: nil
+    }
+  end
+  attribute :converted_by do
+    {
+      css_id: nil
+    }
+  end
+  attribute :converted_on do
+    nil
   end
 end

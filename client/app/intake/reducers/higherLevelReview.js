@@ -1,14 +1,11 @@
-import _ from 'lodash';
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
-import { applyCommonReducers } from './common';
-import { formatRequestIssues, formatContestableIssues } from '../util/issues';
+import { applyCommonReducers, commonStateFromServerIntake } from './common';
 import {
   convertStringToBoolean,
   getReceiptDateError,
   getBlankOptionError,
   getClaimantError,
   getPageError,
-  formatRelationships,
   getDefaultPayeeCode
 } from '../util';
 import { update } from '../../util/ReducerUtil';
@@ -18,79 +15,18 @@ const updateFromServerIntake = (state, serverIntake) => {
     return state;
   }
 
-  const contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
+  const commonState = commonStateFromServerIntake(serverIntake);
 
   return update(state, {
-    isStarted: {
-      $set: Boolean(serverIntake.id)
-    },
+    ...commonState,
     informalConference: {
-      $set: serverIntake.informal_conference
+      $set: serverIntake.informalConference
     },
     sameOffice: {
-      $set: serverIntake.same_office
-    },
-    receiptDate: {
-      $set: serverIntake.receipt_date
+      $set: serverIntake.sameOffice
     },
     benefitType: {
-      $set: serverIntake.benefit_type
-    },
-    veteranIsNotClaimant: {
-      $set: serverIntake.veteran_is_not_claimant
-    },
-    claimant: {
-      $set: serverIntake.veteran_is_not_claimant ? serverIntake.claimant : null
-    },
-    payeeCode: {
-      $set: serverIntake.payeeCode
-    },
-    processedInCaseflow: {
-      $set: serverIntake.processed_in_caseflow
-    },
-    legacyOptInApproved: {
-      $set: serverIntake.legacy_opt_in_approved
-    },
-    legacyAppeals: {
-      $set: serverIntake.legacyAppeals
-    },
-    isReviewed: {
-      $set: Boolean(serverIntake.receipt_date)
-    },
-    contestableIssues: {
-      $set: contestableIssues
-    },
-    activeNonratingRequestIssues: {
-      $set: formatRequestIssues(serverIntake.activeNonratingRequestIssues)
-    },
-    requestIssues: {
-      $set: formatRequestIssues(serverIntake.requestIssues, contestableIssues)
-    },
-    isComplete: {
-      $set: Boolean(serverIntake.completed_at)
-    },
-    relationships: {
-      $set: formatRelationships(serverIntake.relationships)
-    },
-    intakeUser: {
-      $set: serverIntake.intakeUser
-    },
-    asyncJobUrl: {
-      $set: serverIntake.asyncJobUrl
-    },
-    processedAt: {
-      $set: serverIntake.processedAt
-    },
-    veteranValid: {
-      $set: serverIntake.veteranValid
-    },
-    veteranInvalidFields: {
-      $set: {
-        veteranMissingFields: _.join(serverIntake.veteranInvalidFields.veteran_missing_fields, ', '),
-        veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long,
-        veteranAddressInvalidFields: serverIntake.veteranInvalidFields.veteran_address_invalid_fields,
-        veteranCityInvalidFields: serverIntake.veteranInvalidFields.veteran_city_invalid_fields
-      }
+      $set: serverIntake.benefitType
     }
   });
 };
@@ -101,6 +37,7 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     nonRatingRequestIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
     untimelyExemptionModalVisible: false,
+    legacyOptInModalVisible: false,
     removeIssueModalVisible: false,
     correctIssueModalVisible: false,
     receiptDate: null,
@@ -114,6 +51,7 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     veteranIsNotClaimant: null,
     veteranIsNotClaimantError: null,
     claimant: null,
+    claimantType: null,
     claimantError: null,
     payeeCode: null,
     payeeCodeError: null,
@@ -158,7 +96,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
   let veteranIsNotClaimant;
 
   if (action.payload) {
-    veteranIsNotClaimant = convertStringToBoolean(action.payload.veteranIsNotClaimant);
+    veteranIsNotClaimant = action.payload.veteranIsNotClaimant;
   }
 
   switch (action.type) {
@@ -204,6 +142,9 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       },
       payeeCode: {
         $set: getDefaultPayeeCode(state, action.payload.claimant)
+      },
+      claimantType: {
+        $set: action.payload.claimantType
       }
     });
   case ACTIONS.SET_PAYEE_CODE:
@@ -276,7 +217,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')
       },
       veteranIsNotClaimantError: {
-        $set: getBlankOptionError(action.payload.responseErrorCodes, 'veteran_is_not_claimant')
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'claimant_type')
       },
       claimantError: {
         $set: getClaimantError(action.payload.responseErrorCodes)
@@ -292,7 +233,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
           $set: REQUEST_STATE.FAILED
         },
         reviewIntakeError: {
-          $set: getPageError(action.payload.responseErrorCodes)
+          $set: getPageError(action.payload)
         }
       }
     });
@@ -329,6 +270,9 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         },
         completeIntakeErrorData: {
           $set: action.payload.responseErrorData
+        },
+        completeIntakeErrorUUID: {
+          $set: action.payload.responseErrorUUID
         }
       }
     });

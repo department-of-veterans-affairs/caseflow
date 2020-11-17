@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class JudgeTeam < Organization
+  scope :pushed_priority_cases_allowed, -> { active.where(accepts_priority_pushed_cases: true) }
+
   class << self
     def for_judge(user)
       if use_judge_team_roles?
@@ -16,7 +18,7 @@ class JudgeTeam < Organization
     def create_for_judge(user)
       fail(Caseflow::Error::DuplicateJudgeTeam, user_id: user.id) if JudgeTeam.for_judge(user)
 
-      create!(name: user.css_id, url: user.css_id.downcase).tap do |org|
+      create!(name: user.css_id, url: user.css_id.downcase, accepts_priority_pushed_cases: true).tap do |org|
         # make_user_admin invokes add_user, which handles adding the JudgeTeamLead JudgeTeamRole
         OrganizationsUser.make_user_admin(user, org)
       end
@@ -39,7 +41,7 @@ class JudgeTeam < Organization
 
   def judge
     if use_judge_team_roles?
-      judge_team_roles.detect { |role| role.is_a?(JudgeTeamLead) }.organizations_user.user
+      judge_team_roles.includes(:organizations_user, :user).detect { |role| role.is_a?(JudgeTeamLead) }.user
     else
       admins.first
     end
@@ -60,6 +62,10 @@ class JudgeTeam < Organization
 
   def selectable_in_queue?
     false
+  end
+
+  def serialize
+    super.merge(name: judge.full_name.titleize)
   end
 
   private

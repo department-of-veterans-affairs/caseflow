@@ -161,6 +161,14 @@ class Issue
     disposition == :merged
   end
 
+  def opted_into_ama?
+    disposition == :ama_soc_ssoc_opt_in
+  end
+
+  def advance_failure_to_respond?
+    disposition == :advance_failure_to_respond
+  end
+
   # "New Material" (and "Non new material") are the exact
   # terms used internally by attorneys/judges. These mean the issue
   # was allowing/denying new material (such as medical evidence) to be used
@@ -204,6 +212,7 @@ class Issue
       vacols_id: id,
       vacols_sequence_id: vacols_sequence_id,
       eligible_for_soc_opt_in: eligible_for_opt_in?,
+      eligible_for_soc_opt_in_with_exemption: eligible_for_opt_in?(covid_flag: true),
       description: friendly_description,
       disposition: disposition,
       close_date: close_date,
@@ -216,10 +225,12 @@ class Issue
     @remand_reasons ||= self.class.remand_repository.load_remands_from_vacols(id, vacols_sequence_id)
   end
 
-  def eligible_for_opt_in?
+  def eligible_for_opt_in?(covid_flag: false)
+    return true if active?
+    return disposition_is_failure_to_respond? if covid_flag
     return disposition_date_after_legacy_appeal_soc? if disposition_is_failure_to_respond?
 
-    active?
+    false
   end
 
   def legacy_appeal

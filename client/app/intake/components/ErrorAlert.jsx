@@ -1,3 +1,4 @@
+
 import React, { Fragment } from 'react';
 import Alert from '../../components/Alert';
 import BareList from '../../components/BareList';
@@ -5,16 +6,19 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { ERROR_ADDRESS_LINE_INVALID_CHARACTERS,
   ERROR_CITY_INVALID_CHARACTERS,
-  ERROR_ADDRESS_TOO_LONG } from '../../../COPY';
+  ERROR_ADDRESS_TOO_LONG, INTAKE_VETERAN_DATE_OF_BIRTH_ERROR,
+  INTAKE_VETERAN_NAME_SUFFIX_ERROR,
+  ERROR_INVALID_ZIP_CODE,
+  INTAKE_VETERAN_PAY_GRADE_INVALID } from '../../../COPY';
 import { css } from 'glamor';
 
 const missingFieldsMessage = (fields) => <p>
-  Please fill in the following field(s) in the Veteran's profile in VBMS or the corporate database,
+  Please fill in the following fields in the Veteran's profile in VBMS or the corporate database,
   then retry establishing the EP in Caseflow: {fields}.
 </p>;
 
 const addressTips = [
-  () => <Fragment>Do: move the last word(s) of the street address down to an another street address field</Fragment>,
+  () => <Fragment>Do: move the last words of the street address down to an another street address field</Fragment>,
   () => <Fragment>Do: abbreviate to St. Ave. Rd. Blvd. Dr. Ter. Pl. Ct.</Fragment>,
   () => <Fragment>Don't: edit street names or numbers</Fragment>,
   () => <Fragment>Don't: use invalid characters such as *%$Ð</Fragment>
@@ -27,22 +31,42 @@ const veteranAddressTips = <Fragment>
 </Fragment>;
 
 export const invalidVeteranCharacters = (searchErrorData) => {
+  let errorMessage;
+
   if (searchErrorData.veteranAddressInvalidFields) {
-    return <Fragment>
+    errorMessage = <Fragment>
       <p>{ERROR_ADDRESS_LINE_INVALID_CHARACTERS}</p>
       <span>{veteranAddressTips}</span>
     </Fragment>;
   } else if (searchErrorData.veteranCityInvalidFields) {
-    return <Fragment>
+    errorMessage = <Fragment>
       <p>{ERROR_CITY_INVALID_CHARACTERS}</p>
       <span>{veteranAddressTips}</span>
     </Fragment>;
   } else if (searchErrorData.veteranAddressTooLong) {
-    return <Fragment>
+    errorMessage = <Fragment>
       <p>{ERROR_ADDRESS_TOO_LONG}</p>
       <span>{veteranAddressTips}</span>
     </Fragment>;
+  } else if (searchErrorData.veteranDateOfBirthInvalid) {
+    errorMessage = <Fragment>
+      <p>{INTAKE_VETERAN_DATE_OF_BIRTH_ERROR}</p>
+    </Fragment>;
+  } else if (searchErrorData.veteranNameSuffixInvalid) {
+    errorMessage = <Fragment>
+      <p>{INTAKE_VETERAN_NAME_SUFFIX_ERROR}</p>
+    </Fragment>;
+  } else if (searchErrorData.veteranZipCodeInvalid) {
+    errorMessage = <Fragment>
+      <p>{ERROR_INVALID_ZIP_CODE}</p>
+    </Fragment>;
+  } else if (searchErrorData.veteranPayGradeInvalid) {
+    errorMessage = <Fragment>
+      <p>{INTAKE_VETERAN_PAY_GRADE_INVALID}</p>
+    </Fragment>;
   }
+
+  return errorMessage;
 };
 
 export const invalidVeteranInstructions = (searchErrorData) => {
@@ -93,7 +117,7 @@ export default class ErrorAlert extends React.PureComponent {
         )
       },
       veteran_not_valid: {
-        title: "The Veteran's profile has missing or invalid information required to create an EP.",
+        title: 'Check the Veteran\'s profile for invalid information',
         body: invalidVeteranInstructions(this.props.errorData)
       }
     }[this.props.errorCode || 'default'];

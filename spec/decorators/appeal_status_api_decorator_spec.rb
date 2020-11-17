@@ -129,7 +129,7 @@ describe AppealStatusApiDecorator, :all_dbs do
   end
 
   context "#events" do
-    let(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
+    let(:receipt_date) { ama_test_start_date + 1 }
     let!(:appeal) { create(:appeal, receipt_date: receipt_date) }
     let!(:decision_date) { receipt_date + 130.days }
     let!(:decision_document) { create(:decision_document, appeal: appeal, decision_date: decision_date) }
@@ -330,6 +330,10 @@ describe AppealStatusApiDecorator, :all_dbs do
     context "has an open evidence submission task" do
       let!(:evidence_submission_task) do
         create(:evidence_submission_window_task, :in_progress, appeal: appeal, assigned_to: Bva.singleton)
+      end
+
+      before do
+        appeal.update(docket_type: Constants.AMA_DOCKETS.evidence_submission)
       end
 
       it "has an evidentiary_period alert" do

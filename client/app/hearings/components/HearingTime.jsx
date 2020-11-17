@@ -2,19 +2,37 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { getDisplayTime } from '../../util/DateUtil';
+import { zoneName } from '../utils';
+import moment from 'moment-timezone';
 
 const firstParagraphStyle = css({ marginTop: 0 });
 
 export const HearingTime = (
   { hearing, showIssueCount, showRegionalOfficeName, showRequestType }
 ) => {
-  const localTime = getDisplayTime(
+  // Default to using EST for all times before conversion
+  moment.tz.setDefault(hearing.regionalOfficeTimezone || 'America/New_York');
+
+  // Determine whether to display the appellant timezone
+  const repTimezone = hearing.virtualHearing?.appellantTz === hearing.regionalOfficeTimezone &&
+    hearing.regionalOfficeTimezone === 'America/New_York' ?
+    '' :
+    hearing.virtualHearing?.appellantTz || hearing.regionalOfficeTimezone;
+
+  // Determine what timezone to use; always use RO timezone for video/formerly-video hearings
+  const timezone = (hearing.isVirtual && hearing.readableRequestType !== 'Video') ?
+    repTimezone :
+    hearing.regionalOfficeTimezone || 'America/New_York';
+
+  // Calculate the local time based on either Regional Office or Representative for Virtual hearings
+  const localTime = zoneName(
     hearing.scheduledTimeString,
-    hearing.regionalOfficeTimezone || 'America/New_York'
+    timezone,
+    'z'
   );
-  const coTime = getDisplayTime(hearing.centralOfficeTimeString, 'America/New_York');
-  const isCentralOffice = hearing.readableRequestType === 'Central';
+
+  // Calculate the central office time
+  const coTime = zoneName(hearing.scheduledTimeString, 'America/New_York', 'z');
 
   return (
     <div>
@@ -25,14 +43,14 @@ export const HearingTime = (
       }
       <p>
         {coTime}
-        {!isCentralOffice &&
+        {coTime !== localTime &&
           <>{' /'}<br />{localTime}</>
         }
         {showRegionalOfficeName &&
           <><br />{hearing.regionalOfficeName}</>
         }
       </p>
-      {!isCentralOffice && showIssueCount &&
+      {showIssueCount &&
         <p>{hearing.currentIssueCount} issues</p>
       }
     </div>
@@ -47,6 +65,7 @@ HearingTime.defaultProps = {
 
 HearingTime.propTypes = {
   hearing: PropTypes.shape({
+    virtualHearing: PropTypes.object,
     currentIssueCount: PropTypes.number,
     scheduledTimeString: PropTypes.string.isRequired,
     readableRequestType: PropTypes.string.isRequired,

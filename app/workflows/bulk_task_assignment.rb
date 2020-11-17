@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+# Assign multiple cases, which are selected based on parameters.
+# Cases are prioritized in the following order:
+#   - CAVC AOD Cases
+#   - AOD Cases
+#   - CAVC Cases
+#   - remaining cases
 class BulkTaskAssignment
   include ActiveModel::Model
 
@@ -9,8 +15,7 @@ class BulkTaskAssignment
   validate :organization_exists
   validate :regional_office_is_valid
   validate :assigned_to_part_of_organization
-  validate :assigned_by_part_of_organization
-  validate :organization_can_bulk_assign
+  validate :assigned_by_admin_of_organization
 
   attr_accessor :assigned_to_id, :assigned_by, :organization_url, :task_type, :regional_office, :task_count
 
@@ -38,15 +43,17 @@ class BulkTaskAssignment
 
   def tasks_to_be_assigned
     @tasks_to_be_assigned ||= begin
-      tasks = task_type.constantize
-        .active.where(assigned_to_id: organization.id)
-        .limit(task_count).order(:created_at)
+      tasks = task_type.constantize.active
+        .where(assigned_to_id: organization.id)
+        .limit(task_count)
+        .with_cached_appeals.order(Task.order_by_appeal_priority_clause)
       if regional_office
-        tasks = tasks.joins(
-          "INNER JOIN appeals ON appeals.id = appeal_id AND appeal_type = '#{Appeal.name}'"
-        ).where("closest_regional_office = ?", regional_office) +
-                tasks.joins("INNER JOIN legacy_appeals ON legacy_appeals.id = appeal_id \
-                  AND appeal_type = '#{LegacyAppeal.name}'").where("closest_regional_office = ?", regional_office)
+        tasks = tasks.joins("INNER JOIN appeals ON appeals.id = #{Task.table_name}.appeal_id "\
+                      "AND #{Task.table_name}.appeal_type = '#{Appeal.name}'")
+          .where("closest_regional_office = ?", regional_office) +
+                tasks.joins("INNER JOIN legacy_appeals ON legacy_appeals.id = #{Task.table_name}.appeal_id "\
+                      "AND #{Task.table_name}.appeal_type = '#{LegacyAppeal.name}'")
+          .where("closest_regional_office = ?", regional_office)
       end
       tasks
     end
@@ -92,15 +99,9 @@ class BulkTaskAssignment
     errors.add(:assigned_to, "does not belong to organization with url #{organization_url}")
   end
 
-  def assigned_by_part_of_organization
-    return if organization&.users&.include?(assigned_by)
+  def assigned_by_admin_of_organization
+    return if organization&.admins&.include?(assigned_by)
 
-    errors.add(:assigned_by, "does not belong to organization with url #{organization_url}")
-  end
-
-  def organization_can_bulk_assign
-    return if organization&.can_bulk_assign_tasks?
-
-    errors.add(:organization, "with url #{organization_url} cannot bulk assign tasks")
+    errors.add(:assigned_by, "is not admin of organization with url #{organization_url}")
   end
 end

@@ -12,7 +12,7 @@ import SmallLoader from '../../components/SmallLoader';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import END_PRODUCT_CODES from '../../../constants/END_PRODUCT_CODES';
 
-const leadMessageList = ({ veteran, formName, requestIssues, addedIssues, detailEditUrl }) => {
+const leadMessageList = ({ veteran, formName, requestIssues, addedIssues, editIssuesUrl }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
 
@@ -28,7 +28,7 @@ const leadMessageList = ({ veteran, formName, requestIssues, addedIssues, detail
 
   const leadMessageArr = [
     `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been ${editMessage()}.`,
-    <div>If needed, you may <a href={detailEditUrl}>correct the issues</a>.</div>
+    <div>If needed, you may <a href={editIssuesUrl}>correct the issues</a>.</div>
   ];
 
   if (eligibleRequestIssues.length !== 0 && unidentifiedIssues.length > 0) {
@@ -65,7 +65,7 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
       afterIssues,
       updatedIssues,
       addedIssues,
-      detailEditUrl,
+      editIssuesUrl,
       redirectTo
     } = this.props;
 
@@ -109,7 +109,7 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
         type="success"
         leadMessageList={
           leadMessageList({
-            detailEditUrl,
+            editIssuesUrl,
             veteran,
             formName: selectedForm.name,
             requestIssues: afterIssues,
@@ -164,6 +164,7 @@ export default connect(
   (state) => ({
     formType: state.formType,
     veteran: state.veteran,
+    editIssuesUrl: state.editIssuesUrl,
     beforeIssues: state.beforeIssues,
     afterIssues: state.afterIssues,
     updatedIssues: state.updatedIssues,

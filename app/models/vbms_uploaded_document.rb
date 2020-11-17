@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 class VbmsUploadedDocument < CaseflowRecord
-  belongs_to :appeal, optional: false
+  include HasAppealUpdatedSince
+
+  belongs_to :appeal, polymorphic: true
   validates :document_type, presence: true
 
   attribute :file, :string

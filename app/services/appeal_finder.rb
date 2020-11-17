@@ -8,13 +8,12 @@ class AppealFinder
       MetricsService.record("VACOLS: Get appeal information for file_numbers #{file_numbers}",
                             service: :queue,
                             name: "VeteranFinderQuery.find_appeals_with_file_numbers") do
-        appeals = Appeal.established.where(veteran_file_number: file_numbers).reject(&:removed?).to_a
-        # rubocop:disable Lint/HandleExceptions
+        appeals = Appeal.established.where(veteran_file_number: file_numbers).to_a
         begin
           appeals.concat(LegacyAppeal.fetch_appeals_by_file_number(*file_numbers))
         rescue ActiveRecord::RecordNotFound
+          # file number could not be found. don't raise exception and not return, just ignore.
         end
-        # rubocop:enable Lint/HandleExceptions
         appeals
       end
     end
@@ -34,7 +33,7 @@ class AppealFinder
 
         appeal
       rescue ArgumentError
-        return nil
+        nil
       end
     end
   end

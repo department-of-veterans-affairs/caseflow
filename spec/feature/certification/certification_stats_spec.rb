@@ -159,26 +159,26 @@ RSpec.feature "Certification Stats Dashboard", :postgres, skip: "deprecated" do
     # Unauthenticated access
     User.unauthenticate!
     visit "/certification/stats"
-    expect(page).not_to have_content("Activity for")
-    expect(page).not_to have_content("Certification Rate")
-    expect(page).not_to have_content("Time to Certify")
-    expect(page).not_to have_content("Missing Documents")
+    expect(page.has_no_content?("Activity for")).to eq(true)
+    expect(page.has_no_content?("Certification Rate")).to eq(true)
+    expect(page.has_no_content?("Time to Certify")).to eq(true)
+    expect(page.has_no_content?("Missing Documents")).to eq(true)
 
     # Authenticated access with System Admin CSS role
     User.tester!(roles: ["System Admin"])
     visit "/certification/stats"
-    expect(page).not_to have_content("Activity for")
-    expect(page).not_to have_content("Certification Rate")
-    expect(page).not_to have_content("Time to Certify")
-    expect(page).not_to have_content("Missing Documents")
+    expect(page.has_no_content?("Activity for")).to eq(true)
+    expect(page.has_no_content?("Certification Rate")).to eq(true)
+    expect(page.has_no_content?("Time to Certify")).to eq(true)
+    expect(page.has_no_content?("Missing Documents")).to eq(true)
 
     # Authenticated access without System Admin role
     User.authenticate!
     visit "/certification/stats"
-    expect(page).not_to have_content("Activity for")
-    expect(page).not_to have_content("Certification Rate")
-    expect(page).not_to have_content("Time to Certify")
-    expect(page).not_to have_content("Missing Documents")
+    expect(page.has_no_content?("Activity for")).to eq(true)
+    expect(page.has_no_content?("Certification Rate")).to eq(true)
+    expect(page.has_no_content?("Time to Certify")).to eq(true)
+    expect(page.has_no_content?("Missing Documents")).to eq(true)
 
     expect(page).to have_content("You aren't authorized to use this part of Caseflow yet.")
     expect(page).to have_content("Unauthorized")

@@ -40,11 +40,11 @@ class Metrics::CertificationUsage < Metrics::Base
   end
 
   def certified_paperless
-    @certified_paperless ||= certifications.select(&:paperless?).count
+    @certified_paperless ||= certifications.count(&:paperless?)
   end
 
   def certified_with_caseflow
-    @certified_with_caseflow ||= certifications.select(&:certified_with_caseflow?).count
+    @certified_with_caseflow ||= certifications.count(&:certified_with_caseflow?)
   end
 
   # currently unused, but leaving here in case we need/want to report by RO.

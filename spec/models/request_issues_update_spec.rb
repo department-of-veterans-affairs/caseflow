@@ -443,7 +443,9 @@ describe RequestIssuesUpdate, :all_dbs do
           expect_any_instance_of(Fakes::BGSService).to receive(:cancel_end_product).with(
             veteran.file_number,
             "030HLRNR",
-            "030"
+            "030",
+            "00",
+            "1"
           )
 
           allow_remove_contention
@@ -566,7 +568,7 @@ describe RequestIssuesUpdate, :all_dbs do
           expect(rating_end_product_establishment.reload.synced_status).to eq(nil)
         end
 
-        context "when an issue is withdrawn" do
+        context "when an issue is withdrawn and there are active tasks" do
           let(:request_issues_data) do
             [{ request_issue_id: existing_legacy_opt_in_request_issue.id, withdrawal_date: Time.zone.now }]
           end
@@ -595,6 +597,37 @@ describe RequestIssuesUpdate, :all_dbs do
             end
           end
         end
+
+        context "when remove_contention raises VBMS service error and is re-tried" do
+          let(:request_issues_data) do
+            [{ request_issue_id: existing_legacy_opt_in_request_issue.id, withdrawal_date: Time.zone.now }]
+          end
+
+          it "saves error message, logs error and removes contention on re-attempt" do
+            capture_raven_log
+            raise_error_on_remove_contention
+
+            subject
+
+            expect(request_issues_update.error).to eq(vbms_error.inspect)
+            expect(@raven_called).to eq(true)
+
+            withdrawn_issue = request_issues_update.withdrawn_issues.first
+
+            expect(withdrawn_issue).to_not be_nil
+            expect(withdrawn_issue).to have_attributes(
+              closed_status: "withdrawn",
+              closed_at: Time.zone.now,
+              contention_removed_at: nil
+            )
+
+            allow_remove_contention
+            DecisionReviewProcessJob.perform_now(request_issues_update)
+
+            expect(request_issues_update.processed_at).to eq Time.zone.now
+            expect(withdrawn_issue.reload.contention_removed_at).to eq Time.zone.now
+          end
+        end
       end
 
       context "when create_contentions raises VBMS service error" do
@@ -603,20 +636,6 @@ describe RequestIssuesUpdate, :all_dbs do
         it "saves error message and logs error" do
           capture_raven_log
           raise_error_on_create_contentions
-
-          subject
-
-          expect(request_issues_update.error).to eq(vbms_error.inspect)
-          expect(@raven_called).to eq(true)
-        end
-      end
-
-      context "when remove_contention raises VBMS service error" do
-        let(:request_issues_data) { [{ request_issue_id: existing_request_issue.id }] }
-
-        it "saves error message and logs error" do
-          capture_raven_log
-          raise_error_on_remove_contention
 
           subject
 
@@ -666,6 +685,29 @@ describe RequestIssuesUpdate, :all_dbs do
         end
       end
 
+      context "if remaining issues after update are ineligible" do
+        let!(:in_progress_task) { create(:higher_level_review_task, :in_progress, appeal: review) }
+        let!(:after_issue) do
+          create(:request_issue,
+                 :ineligible,
+                 decision_review: review,
+                 contention_reference_id: "2")
+        end
+        let!(:request_issues_update) do
+          create(:request_issues_update,
+                 :requires_processing,
+                 review: review,
+                 withdrawn_request_issue_ids: nil,
+                 before_request_issue_ids: review.request_issues.map(&:id),
+                 after_request_issue_ids: [after_issue.id])
+        end
+
+        it "should cancel tasks" do
+          subject
+          expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        end
+      end
+
       def capture_raven_log
         allow(Raven).to receive(:capture_exception) { @raven_called = true }
       end
@@ -681,6 +723,10 @@ describe RequestIssuesUpdate, :all_dbs do
       def raise_error_on_remove_contention
         allow(Fakes::VBMSService).to receive(:remove_contention!).and_raise(vbms_error)
       end
+
+      def allow_remove_contention
+        allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
+      end
     end
   end
 
@@ -691,10 +737,11 @@ describe RequestIssuesUpdate, :all_dbs do
       create(
         :request_issue_with_epe,
         decision_review: review,
-        contention_reference_id: "3",
+        contention_reference_id: edited_issue_contention_id,
         edited_description: edited_description
       )
     end
+    let(:edited_issue_contention_id) { "3" }
 
     let!(:riu) do
       create(:request_issues_update, :requires_processing,
@@ -725,7 +772,7 @@ describe RequestIssuesUpdate, :all_dbs do
       Generators::Contention.build(
         claim_id: edited_issue.end_product_establishment.reference_id,
         text: "old request issue description",
-        id: "3",
+        id: edited_issue_contention_id,
         start_date: Time.zone.now,
         submit_date: 5.days.ago
       )
@@ -748,6 +795,17 @@ describe RequestIssuesUpdate, :all_dbs do
       expect(review.end_product_establishments.map(&:user)).to_not include(riu.user)
       subject
       expect(review.end_product_establishments.map(&:user).uniq).to eq([riu.user])
+    end
+
+    context "when the request issue doesn't have a contention" do
+      let(:edited_issue_contention) { nil }
+      let(:edited_issue) { create(:request_issue, decision_review: review, edited_description: edited_description) }
+
+      it "does not try to update the contention in VBMS" do
+        expect(subject).to be_truthy
+        expect(Fakes::VBMSService).to_not have_received(:update_contention!)
+        expect(edited_issue.reload.contention_updated_at).to be nil
+      end
     end
   end
 
