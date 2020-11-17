@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`formatDocketSwitchRecommendation with denied disposition properly formats 1`] = `"**Summary:** Lorem ipsum dolor sit amet, consectetur adipiscing elit...<br><br>**Is this a timely request:** Yes<br><br>**Recommendation:** Deny all issues<br><br>**Draft letter:** https://example.com/file.txt"`;
-
-exports[`formatDocketSwitchRecommendation with granted disposition properly formats 1`] = `"**Summary:** Lorem ipsum dolor sit amet, consectetur adipiscing elit...<br><br>**Is this a timely request:** Yes<br><br>**Recommendation:** Grant all issues<br><br>**Draft letter:** https://example.com/file.txt"`;
-
-exports[`formatDocketSwitchRecommendation with partially_granted disposition properly formats 1`] = `"**Summary:** Lorem ipsum dolor sit amet, consectetur adipiscing elit...<br><br>**Is this a timely request:** Yes<br><br>**Recommendation:** Grant a partial switch<br><br>**Draft letter:** https://example.com/file.txt"`;

@@ -265,5 +265,15 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
 
       it { expect { subject }.to raise_error(HearingSchedule::GenerateHearingDaysSchedule::NoDaysAvailableForRO) }
     end
+
+    context "allocated days to Central Office" do
+      subject { generate_hearing_days_schedule.generate_co_hearing_days_schedule }
+
+      it "only allocates 1 docket per week" do
+        # 26 wednesdays between 2018-04-01 and 2018-09-30; since Wed July 4 is a holiday,
+        # it picks another day
+        expect(subject.count).to eq(26)
+      end
+    end
   end
 end

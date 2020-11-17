@@ -8,6 +8,7 @@ class VirtualHearingMailer < ActionMailer::Base
   helper VirtualHearings::CalendarTemplateHelper
 
   def cancellation(mail_recipient:, virtual_hearing: nil)
+    # Guard to prevent cancellation emails from sending to the judge
     return if mail_recipient.title == MailRecipient::RECIPIENT_TITLES[:judge]
 
     @recipient = mail_recipient
@@ -40,6 +41,25 @@ class VirtualHearingMailer < ActionMailer::Base
     mail(
       to: recipient.email,
       subject: "Your Board hearing time has changed"
+    )
+  end
+
+  def reminder(mail_recipient:, virtual_hearing: nil)
+    # Guard to prevent reminder emails from sending to the judge
+    return if mail_recipient.title == MailRecipient::RECIPIENT_TITLES[:judge]
+
+    @recipient = mail_recipient
+    @virtual_hearing = virtual_hearing
+    @link = link
+    @test_link = virtual_hearing&.test_link(mail_recipient.title)
+
+    # Mon, Oct 19 at 10:30am CDT
+    time_format = "%a, %b %-d at %-l:%M%P %Z"
+    formatted_time = virtual_hearing.hearing.time.appellant_time.strftime(time_format)
+
+    mail(
+      to: recipient.email,
+      subject: "Reminder: Your Board hearing is #{formatted_time}"
     )
   end
 

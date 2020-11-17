@@ -107,9 +107,8 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   def log_warning
-    slack_msg = "[WARN] UpdateCachedAppealsAttributesJob first 100 warnings:"\
-                "\n#{warning_msgs.join("\n")}"
-    slack_service.send_notification(slack_msg)
+    slack_msg = warning_msgs.join("\n")
+    slack_service.send_notification(slack_msg, "[WARN] UpdateCachedAppealsAttributesJob: first 100 warnings")
   end
 
   def log_error(start_time, err)
@@ -121,9 +120,9 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
     Raven.capture_exception(err)
 
-    slack_msg = "[ERROR] UpdateCachedAppealsAttributesJob failed after running for #{duration}. "\
-                "See Sentry event #{Raven.last_event_id}"
-    slack_service.send_notification(slack_msg) # do not leak PII
+    slack_msg = "See Sentry event #{Raven.last_event_id}"
+    slack_service.send_notification(slack_msg,
+                                    "[ERROR] UpdateCachedAppealsAttributesJob failed after running for #{duration}.")
 
     datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end

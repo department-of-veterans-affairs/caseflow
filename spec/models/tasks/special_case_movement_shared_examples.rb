@@ -39,7 +39,9 @@ shared_examples "wrong parent task type provided" do
     end
 
     it "should error with wrong parent type" do
-      expect { subject }.to raise_error(Caseflow::Error::InvalidParentTask)
+      expect { subject }.to raise_error(ActiveRecord::RecordInvalid).with_message(
+        "Validation failed: Parent should be a DistributionTask"
+      )
     end
   end
 end

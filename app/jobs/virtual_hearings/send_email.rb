@@ -7,10 +7,16 @@ class VirtualHearings::SendEmail
 
   def initialize(virtual_hearing:, type:)
     @virtual_hearing = virtual_hearing
-    @type = type
+    @type = type.to_s
   end
 
   def call
+    # Assumption: Reminders and confirmation/cancellation/change emails are sent
+    # separately, so this will return early if any reminder emails are sent. If
+    # reminder emails are being sent, we are assuming the other emails have all
+    # already been sent too.
+    return if send_reminder
+
     if !virtual_hearing.appellant_email_sent
       virtual_hearing.update!(appellant_email_sent: send_email(appellant_recipient))
     end
@@ -30,19 +36,39 @@ class VirtualHearings::SendEmail
   delegate :appeal, to: :hearing
   delegate :veteran, to: :appeal
 
+  def send_reminder
+    if type == "appellant_reminder" && send_email(appellant_recipient)
+      virtual_hearing.update!(appellant_reminder_sent_at: Time.zone.now)
+
+      return true
+    end
+
+    if type == "representative_reminder" &&
+       !virtual_hearing.representative_email.nil? &&
+       send_email(representative_recipient)
+      virtual_hearing.update!(representative_reminder_sent_at: Time.zone.now)
+
+      return true
+    end
+
+    false
+  end
+
   def email_for_recipient(recipient)
     args = {
       mail_recipient: recipient,
       virtual_hearing: virtual_hearing
     }
 
-    case type.to_s
+    case type
     when "confirmation"
       VirtualHearingMailer.confirmation(**args)
     when "cancellation"
       VirtualHearingMailer.cancellation(**args)
     when "updated_time_confirmation"
       VirtualHearingMailer.updated_time_confirmation(**args)
+    when "appellant_reminder", "representative_reminder"
+      VirtualHearingMailer.reminder(**args)
     else
       fail ArgumentError, "Invalid type of email to send: `#{type}`"
     end
@@ -57,7 +83,10 @@ class VirtualHearings::SendEmail
       DataDogService.increment_counter(
         app_name: Constants.DATADOG_METRICS.HEARINGS.APP_NAME,
         metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
-        metric_name: "emails.submitted"
+        metric_name: "emails.submitted",
+        attrs: {
+          email_type: type
+        }
       )
 
       Rails.logger.info(
@@ -101,7 +130,7 @@ class VirtualHearings::SendEmail
 
     msg = email.deliver_now!
   rescue StandardError, Savon::Error, BGS::ShareError => error
-    # Savon::Error and BGS::ShareError are sometimes thrown when making requests to BGS enpoints
+    # Savon::Error and BGS::ShareError are sometimes thrown when making requests to BGS endpoints
     Raven.capture_exception(error)
 
     Rails.logger.warn("Failed to send #{type} email to #{recipient.title}: #{error}")
@@ -126,11 +155,11 @@ class VirtualHearings::SendEmail
     )
     SentHearingEmailEvent.create!(
       hearing: hearing,
-      email_type: type,
+      email_type: type.ends_with?("reminder") ? "reminder" : type,
       email_address: recipient.email,
       external_message_id: external_id,
       recipient_role: recipient_is_veteran ? "veteran" : recipient.title.downcase,
-      sent_by: virtual_hearing.updated_by
+      sent_by: type.ends_with?("reminder") ? User.system_user : virtual_hearing.updated_by
     )
   rescue StandardError => error
     Raven.capture_exception(error)
@@ -185,6 +214,8 @@ class VirtualHearings::SendEmail
   end
 
   def should_judge_receive_email?
-    !virtual_hearing.judge_email.nil? && !virtual_hearing.judge_email_sent && type.to_s != "cancellation"
+    !virtual_hearing.judge_email.nil? &&
+      !virtual_hearing.judge_email_sent &&
+      %w[confirmation updated_time_confirmation].include?(type)
   end
 end

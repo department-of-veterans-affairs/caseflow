@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DocketChange < CaseflowRecord
+class DocketSwitch < CaseflowRecord
   belongs_to :old_docket_stream, class_name: "Appeal", optional: false
   belongs_to :new_docket_stream, class_name: "Appeal"
   belongs_to :task, optional: false
