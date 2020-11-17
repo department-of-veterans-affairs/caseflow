@@ -15,7 +15,7 @@ class AdvanceOnDocketMotion < CaseflowRecord
   }
 
   scope :granted, -> { where(granted: true) }
-  # 'age' below is filters to reason: age due to scope+enum Rails magic
+  # 'age' below filters to reason: age due to scope+enum Rails magic
   scope :eligible_due_to_age, -> { age }
   scope :for_appeal, ->(appeal) { where(appeal: appeal) }
   # not(id: age) means to exclude AOD motions with reason="age" provided by the `age` enum
@@ -36,18 +36,24 @@ class AdvanceOnDocketMotion < CaseflowRecord
     def create_or_update_by_appeal(appeal, attrs)
       person_id = appeal.claimant.person.id
 
-      all_motions = AdvanceOnDocketMotion.for_appeal(appeal).for_person(person_id).order(:id)
+      existing_motions = AdvanceOnDocketMotion.for_appeal(appeal).for_person(person_id).order(:id)
 
-      motion =  if age_related_motion?(attrs[:reason]) && all_motions.any? { |m| age_related_motion?(m[:reason]) }
-                  for_appeal(appeal).for_person(person_id).where(reason: attrs[:reason]).order(:id).last
-                elsif non_age_related_motion?(attrs[:reason]) && all_motions.any? { |m| non_age_related_motion?(m[:reason]) }
-                  for_appeal(appeal).for_person(person_id).where(reason: attrs[:reason]).order(:id).last
-                else
-                  for_appeal(appeal).for_person(person_id).first ||
-                    create(person_id: person_id, appeal: appeal)
-                end
-
-      motion.update(attrs) if motion
+      motion = for_appeal(appeal).for_person(person_id).where(reason: attrs[:reason]).order(:id).last
+      if motion
+        motion.update(attrs)
+      elsif age_related_motion?(attrs[:reason])
+        # There is only one age-related reason, so if the above didn't find it, there are none.
+        create(person_id: person_id, appeal: appeal).update(attrs)
+      else
+        # However, there are multiple non-age-related reasons, and can only be one.
+        if existing_motions.any? { |m| non_age_related_motion?(m[:reason])}
+          # This would be a duplicate, so update the latest one with our parameters:
+          motion = existing_motions.select { |m| non_age_related_motion?(m[:reason]) }.last
+          motion.update(attrs)
+        else
+          create(person_id: person_id, appeal: appeal).update(attrs)
+        end
+      end
     end
 
     def age_related_motion?(reason)

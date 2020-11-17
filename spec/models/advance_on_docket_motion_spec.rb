@@ -177,7 +177,7 @@ describe AdvanceOnDocketMotion, :postgres do
 
           described_class.create_or_update_by_appeal(
               appeal,
-              reason: reason
+              reason: described_class.reasons[:age]
           )
 
           motions = appeal.claimant.person.advance_on_docket_motions
@@ -187,7 +187,66 @@ describe AdvanceOnDocketMotion, :postgres do
           expect(motions.second.granted).to be(true)
           expect(motions.second.reason).to eq(attrs[:reason])
         end
+
+        it "only allows one non-age-related motion per appeal" do
+          subject
+
+          described_class.create_or_update_by_appeal(
+              appeal,
+              reason: described_class.reasons[:serious_illness]
+          )
+
+          motions = appeal.claimant.person.advance_on_docket_motions
+          expect(motions.count).to eq 2
+          expect(motions.first.granted).to be(false)
+          expect(motions.first.reason).to eq(described_class.reasons[:age])
+          expect(motions.second.granted).to be(true)
+          expect(motions.second.reason).to eq(described_class.reasons[:serious_illness])
+        end
+
       end
     end
   end
+
+  describe "#age_related_motion?" do
+    subject { described_class.age_related_motion?(reason) }
+
+    context "when the reason is 'age'" do
+      let(:reason) { described_class.reasons[:age] }
+      it { is_expected.to be true }
+    end
+
+    [
+        described_class.reasons[:serious_illness],
+        described_class.reasons[:financial_distress],
+        described_class.reasons[:other]
+    ].each do |reason|
+      context "When the reason is '#{reason}'" do
+        let(:reason) { reason }
+        it { is_expected.to be false }
+      end
+    end
+  end
+
+  describe "#non_age_related_motion?" do
+    subject { described_class.non_age_related_motion?(reason) }
+
+    context "when the reason is 'age'" do
+      let(:reason) { described_class.reasons[:age] }
+      it { is_expected.to be false }
+    end
+
+    [
+        described_class.reasons[:serious_illness],
+        described_class.reasons[:financial_distress],
+        described_class.reasons[:other]
+    ].each do |reason|
+      context "When the reason is '#{reason}'" do
+        let(:reason) { reason }
+        it { is_expected.to be true }
+      end
+    end
+
+  end
+
 end
