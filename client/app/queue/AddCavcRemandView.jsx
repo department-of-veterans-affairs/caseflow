@@ -55,7 +55,9 @@ const AddCavcRemandView = (props) => {
     decisionIssues,
     error,
     highlightInvalid,
+    // eslint-disable-next-line no-shadow
     requestSave,
+    // eslint-disable-next-line no-shadow
     showErrorMessage,
     history,
     ...otherProps
