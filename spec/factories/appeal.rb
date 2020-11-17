@@ -315,6 +315,7 @@ FactoryBot.define do
     end
 
     trait :with_straight_vacate_stream do
+      dispatched
       after(:create) do |appeal, evaluator|
         mail_task = create(
           :vacate_motion_mail_task,
@@ -335,6 +336,7 @@ FactoryBot.define do
           assigned_to_id: evaluator.associated_attorney.id
         }
         PostDecisionMotionUpdater.new(addr_task, params).process
+        mail_task.completed!
       end
     end
   end
