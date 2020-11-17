@@ -291,22 +291,22 @@
     "func": "send_to_schedule_veterans_list"
   },
   "SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION": {
-    "label": "Assign to Translation team",
+    "label": "Assign Translation Task to Translation team",
     "value": "modal/assign_to_translation_team",
     "func": "assign_to_translation_team_blocking_distribution_data"
   },
   "SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION": {
-    "label": "Assign to Hearing Transcripts team",
+    "label": "Assign Hearing Transcription Task to Transcription team",
     "value": "modal/assign_to_transcription_team",
     "func": "assign_to_transciption_team_blocking_distribution_data"
   },
   "SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION": {
-    "label": "Assign to Privacy team",
+    "label": "Assign FOIA Task to Privacy team",
     "value": "modal/assign_to_privacy_team",
     "func": "assign_to_privacy_team_blocking_distribution_data"
   },
   "SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION": {
-    "label": "Assign IHP task to Colocated team",
+    "label": "Assign IHP task to VLJ Support team",
     "value": "modal/assign_ihp_to_colocated_team",
     "func": "assign_ihp_to_colocated_blocking_distribution_data"
   },

@@ -208,7 +208,7 @@ class TaskActionRepository
         options: [{ label: org.name, value: org.id }],
         type: task_type.name,
         parent_id: DistributionTask.open.find_by(appeal: task.appeal)&.id,
-        modal_body: COPY::CAVC_SEND_TO_TEAM_NON_BLOCKING_DETAIL % org.name,
+        modal_body: format(COPY::CAVC_SEND_TO_TEAM_NON_BLOCKING_DETAIL, task_type.label, org.name),
         redirect_after: "/queue/appeals/#{task.appeal.external_id}"
       }
     end

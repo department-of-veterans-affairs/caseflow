@@ -373,7 +373,7 @@
 
   "SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL": "Send CAVC-Remand-Processed Letter Task",
 
-  "CAVC_SEND_TO_TEAM_NON_BLOCKING_DETAIL": "Send this case to the %s team. This will not block you from completing this task or sending the 90-day letter to the veteran.",
+  "CAVC_SEND_TO_TEAM_NON_BLOCKING_DETAIL": "Create a %s assigned to the %s team. This will not block you from completing this task or sending the 90-day letter to the veteran.",
 
   "ASSIGN_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS": "Postpone or cancel a hearing prior to the hearing date. This task will be auto-completed after the hearing's scheduled date.",
 
