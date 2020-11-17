@@ -19,7 +19,7 @@ export const EditNODModal = ({ onCancel, nodDate }) => {
     };
 
     dispatch(showSuccessMessage(successMessage));
-    setInterval(() => dispatch(resetSuccessMessages()), 5000);
+    setTimeout(() => dispatch(resetSuccessMessages()), 5000);
     onCancel();
   };
 
