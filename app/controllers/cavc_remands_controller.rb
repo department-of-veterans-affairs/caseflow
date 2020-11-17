@@ -28,13 +28,24 @@ class CavcRemandsController < ApplicationController
   end
 
   def create_params
-    permitted = params.permit(:judgement_date, :mandate_date, :appeal_id, :cavc_docket_number, :cavc_judge_full_name,
-                              :cavc_decision_type, :decision_date, :instructions, :remand_subtype,
-                              :represented_by_attorney)
-      .merge(params.permit(decision_issue_ids: []))
-      .merge(created_by: current_user, updated_by: current_user)
-    permitted.require([:appeal_id, :cavc_docket_number, :cavc_judge_full_name, :cavc_decision_type, :decision_date,
-                       :decision_issue_ids, :instructions, :remand_subtype, :represented_by_attorney])
-    permitted
+    params.merge!(created_by_id: current_user.id, updated_by_id: current_user.id, appeal_id: appeal.id)
+    params.require(required_params)
+    params.permit(required_params).merge(params.permit(decision_issue_ids: []))
+  end
+
+  def required_params
+    [
+      :appeal_id,
+      :cavc_decision_type,
+      :cavc_docket_number,
+      :cavc_judge_full_name,
+      :created_by_id,
+      :decision_date,
+      :decision_issue_ids,
+      :instructions,
+      :remand_subtype,
+      :represented_by_attorney,
+      :updated_by_id
+    ]
   end
 end
