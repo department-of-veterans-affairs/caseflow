@@ -621,9 +621,12 @@
   "DOCKET_SWITCH_RECOMMENDATION_TITLE": "Switch Docket: Send %s's Request to a Judge",
   "DOCKET_SWITCH_RECOMMENDATION_INSTRUCTIONS": "Add and send your recommendation for this docket switch request to a Veteran's Law Judge.",
   "DOCKET_SWITCH_RULING_TASK_LABEL": "Rule on Docket Switch",
-  "DOCKET_SWITCH_REQUEST_TITLE": "%s's docket switch has been requested by %s",
+  "DOCKET_SWITCH_REQUEST_TITLE": "%s's docket switch request has been sent to %s",
   "DOCKET_SWITCH_REQUEST_MESSAGE": "This task will appear on your hold tab until it has been addressed by the VLJ.",
-
+  "DOCKET_SWITCH_RULING_TITLE": "Switch Docket: Rule on %s's Request",
+  "DOCKET_SWITCH_RULING_INSTRUCTIONS": "**Provided below is a summary of the pertinent facts used by the Office of the Clerk of the Board to prepare a docket switch ruling. Determine how you would like to rule on this request to switch dockets and select the corresponding button below.**\n\nThe hyperlink takes you to a draft ruling letter based on the recommended ruling. Please feel free to make any necessary edits to the ruling letter. You may then sign the letter. Inserting a hyperlink to a signed ruling letter is recommended, but optional.\n\nIf you have any questions, or need assistance making edits to the ruling letter, please [email](mailto:BVA.Clerk@va.gov) the Office of the Clerk of the Board or use the text box below to provide any additional context or instructions.\n\nWhen you click \"Confirm,\" the task will automatically be returned to the individual who assigned it to you. If you would like to return the task to a different individual, please use the drop down box to select a different name.",
+  "DENIED_DOCKET_SWITCH_TASK_LABEL": "Denied Docket Switch",
+  "GRANTED_DOCKET_SWITCH_TASK_LABEL": "Granted Docket Switch",
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
   "CORRECT_REQUEST_ISSUES_WITHDRAW": "Withdraw",
@@ -643,7 +646,7 @@
   "CORRECT_REQUEST_ISSUES_ESTABLISH_MODAL_TITLE": "Establish 930 EP",
   "CORRECT_REQUEST_ISSUES_ESTABLISH_MODAL_TEXT": "You are now creating a 930 EP in VBMS.",
   "CORRECT_REQUEST_ISSUES_ESTABLISH_MODAL_BUTTON": "Yes, establish",
-  
+
   "NO_RELATIONSHIPS": "This Veteran currently has no known relationships. ",
   "ADD_RELATIONSHIPS": "To add a Veteran's (spouse, child, or parent) to the Corporate Database, please ",
   "ADD_CLAIMANT_TEXT": "If the claimant is an attorney, please click \"Add Claimant\". ",
@@ -714,6 +717,10 @@
   "INTAKE_VETERAN_NOT_FOUND": "Note: If you are certain the Veteran ID or SSN is correct, the claimant may not exist in the VBA Corporate Database. If you have access, please add claimant to the Corporate Database to continue processing this intake. If you do not have access, please",
   "NON_COMP_ADDRESS_MESSAGE": "The Veteran/appellant has filed a Notice of Disagreement at the Board of Veterans' Appeals. In order to decide that appeal, the Board will need the complete records from",
   "INTAKE_EDIT_TITLE": "Edit contention title",
+
+  "EDIT_CLAIM_LABEL_MODAL_TITLE": "Edit Claim Label",
+  "EDIT_CLAIM_LABEL_MODAL_SUBHEAD": "You are editing a %s claim",
+  "EDIT_CLAIM_LABEL_MODAL_NOTE": "Please note: you will only be able to select claim labels within the same EP family (e.g. 040, 030). If you need to switch to another EP family, please cancel and re-establish the claim.",
 
   "INTAKE_CORRECTION_TYPE_MODAL_TITLE": "Set Correction Type",
   "INTAKE_CORRECTION_TYPE_MODAL_COPY": "This issue will be added to a 930 EP for correction. If a mistake was found during quality review, please select whether it was discovered by the local or national quality review team. Otherwise, select control.",
