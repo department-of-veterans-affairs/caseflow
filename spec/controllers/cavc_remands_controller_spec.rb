@@ -65,14 +65,22 @@ RSpec.describe CavcRemandsController, type: :controller do
       end
 
       context "with correct parameters" do
-        it "creates the CAVC remand" do
+        it "creates the CAVC remand and new appeal" do
+          remand_count = CavcRemand.count
+          cavc_count = Appeal.court_remand.count
           subject
 
           expect(response.status).to eq(201)
-          response_body = JSON.parse(response.body)["cavc_remand"]
+          response_body = JSON.parse(response.body)
 
-          expect(response_body["appeal_id"]).to eq(appeal.id)
-          expect(response_body["decision_issue_ids"]).to match_array(decision_issue_ids)
+          expect(response_body["cavc_remand"]["appeal_id"]).to eq(appeal.id)
+          expect(response_body["cavc_remand"]["decision_issue_ids"]).to match_array(decision_issue_ids)
+          expect(CavcRemand.count).to eq(remand_count + 1)
+
+          expect(response_body["cavc_appeal"]["appeal_id"]).not_to eq(appeal.id)
+          expect(response_body["cavc_appeal"]["stream_docket_number"]).to eq(appeal.docket_number)
+          expect(response_body["cavc_appeal"]["stream_type"]).to eq(Appeal.stream_types["court_remand"])
+          expect(Appeal.court_remand.count).to eq(cavc_count + 1)
         end
       end
     end

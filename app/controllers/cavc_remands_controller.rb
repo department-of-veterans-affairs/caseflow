@@ -6,8 +6,9 @@ class CavcRemandsController < ApplicationController
   before_action :validate_cavc_remand_access
 
   def create
-    cavc_remand = CavcRemand.create(create_params)
-    render json: { cavc_remand: cavc_remand }, status: :created
+    cavc_remand = CavcRemand.create!(create_params)
+    cavc_appeal = Appeal.court_remand.find_by(stream_docket_number: appeal.docket_number)
+    render json: { cavc_remand: cavc_remand, cavc_appeal: cavc_appeal }, status: :created
   end
 
   #  def update
@@ -43,6 +44,8 @@ class CavcRemandsController < ApplicationController
       :decision_date,
       :decision_issue_ids,
       :instructions,
+      :judgement_date,
+      :mandate_date,
       :remand_subtype,
       :represented_by_attorney,
       :updated_by_id
