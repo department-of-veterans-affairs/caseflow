@@ -48,7 +48,7 @@ const subTypeOptions = _.map(_.keys(CAVC_REMAND_SUBTYPE_NAMES), (key) => (
 
 const AddCavcRemandView = (props) => {
 
-  const { decisionIssues, appealId, requestSave, ...otherProps } = props;
+  const { decisionIssues, appealId, requestSave, highlightInvalid, ...otherProps } = props;
 
   const [docketNumber, setDocketNumber] = useState(null);
   const [attorney, setAttorney] = useState('1');
@@ -59,7 +59,7 @@ const AddCavcRemandView = (props) => {
   const [judgementDate, setJudgementDate] = useState(null);
   const [mandateDate, setMandateDate] = useState(null);
   const [issues, setIssues] = useState({});
-  const [text, setText] = useState(null);
+  const [instructions, setInstructions] = useState(null);
 
   const issueOptions = () => {
     const issueList = [];
@@ -98,6 +98,18 @@ const AddCavcRemandView = (props) => {
     setIssues({ ...issues, [evt.target.name]: evt.target.checked });
   };
 
+  const validDocketNumber = () => (/^\d{2}-\d{1,5}$/).exec(docketNumber);
+  const validJudge = () => Boolean(judge);
+  const validDecisionDate = () => Boolean(decisionDate);
+  const validJudgementDate = () => Boolean(judgementDate);
+  const validMandateDate = () => Boolean(mandateDate);
+  const validInstructions = () => instructions && instructions.length > 0;
+
+  const validateForm = () => {
+    return validDocketNumber() && validJudge() && validDecisionDate() && validJudgementDate() && validMandateDate() &&
+      validInstructions();
+  };
+
   const submit = () => {
     const payload = {
       data: {
@@ -108,10 +120,10 @@ const AddCavcRemandView = (props) => {
         cavc_judge_full_name: judge.value,
         cavc_decision_type: type,
         decision_date: decisionDate,
-        instructions: text,
         remand_subtype: subType,
         represented_by_attorney: attorney === '1',
-        decision_issue_ids: decisionIssues.map((decisionIssue) => decisionIssue.id)
+        decision_issue_ids: decisionIssues.map((decisionIssue) => decisionIssue.id),
+        instructions
       } };
 
     const successMsg = {
@@ -129,6 +141,7 @@ const AddCavcRemandView = (props) => {
     name={<h3>{COPY.CAVC_DOCKET_NUMBER_LABEL}</h3>}
     value={docketNumber}
     onChange={setDocketNumber}
+    errorMessage={highlightInvalid && !validDocketNumber() ? COPY.CAVC_DOCKET_NUMBER_ERROR : null}
   />;
 
   const representedField = <RadioField
@@ -146,6 +159,7 @@ const AddCavcRemandView = (props) => {
     value={judge}
     onChange={(val) => setJudge(val)}
     options={judgeOptions}
+    errorMessage={highlightInvalid && !validJudge() ? COPY.CAVC_JUDGE_ERROR : null}
   />;
 
   const typeField = <RadioField
@@ -170,6 +184,7 @@ const AddCavcRemandView = (props) => {
       type="date"
       value={decisionDate}
       onChange={(val) => setDecisionDate(val)}
+      errorMessage={highlightInvalid && !validDecisionDate() ? COPY.CAVC_DECISION_DATE_ERROR : null}
     />
   </React.Fragment>;
 
@@ -179,6 +194,7 @@ const AddCavcRemandView = (props) => {
       type="date"
       value={judgementDate}
       onChange={(val) => setJudgementDate(val)}
+      errorMessage={highlightInvalid && !validJudgementDate() ? COPY.CAVC_JUDGEMENT_DATE_ERROR : null}
     />
   </React.Fragment>;
 
@@ -188,6 +204,7 @@ const AddCavcRemandView = (props) => {
       type="date"
       value={mandateDate}
       onChange={(val) => setMandateDate(val)}
+      errorMessage={highlightInvalid && !validMandateDate() ? COPY.CAVC_MANDATE_DATE_ERROR : null}
     />
   </React.Fragment>;
 
@@ -209,15 +226,16 @@ const AddCavcRemandView = (props) => {
   const instructionsField = <TextareaField
     label={<h3 {...labelStyling}>{COPY.CAVC_INSTRUCTIONS_LABEL}</h3>}
     name="context-and-instructions-textBox"
-    value={text}
-    onChange={(val) => setText(val)}
+    value={instructions}
+    onChange={(val) => setInstructions(val)}
+    errorMessage={highlightInvalid && !validInstructions() ? COPY.CAVC_INSTRUCTIONS_ERROR : null}
   />;
-
 
   return (
     <QueueFlowPage
       appealId={appealId}
       goToNextStep={submit}
+      validateForm={validateForm}
       continueBtnText="Submit"
       hideCancelButton
       {...otherProps} >
@@ -244,7 +262,8 @@ AddCavcRemandView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  decisionIssues: state.queue.appealDetails[ownProps.appealId].decisionIssues
+  decisionIssues: state.queue.appealDetails[ownProps.appealId].decisionIssues,
+  highlightInvalid: state.ui.highlightFormItems
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
