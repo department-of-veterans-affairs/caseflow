@@ -124,6 +124,8 @@ const AddCavcRemandView = (props) => {
     setIssues({ ...issues, [evt.target.name]: evt.target.checked });
   };
 
+  const decisionIssueIds = decisionIssues.map((decisionIssue) => decisionIssue.id);
+
   const submit = () => {
     const payload = {
       data: {
@@ -137,7 +139,7 @@ const AddCavcRemandView = (props) => {
         instructions: text,
         remand_subtype: subType,
         represented_by_attorney: attorney === '1',
-        decision_issue_ids: decisionIssues.map((decisionIssue) => decisionIssue.id)
+        decision_issue_ids: decisionIssueIds
       } };
 
     const successMsg = {
