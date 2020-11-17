@@ -431,6 +431,24 @@ describe Appeal, :all_dbs do
     end
   end
 
+  context "#update_receipt_date!" do
+    let(:appeal) { Appeal.new(veteran_file_number: "1234") }
+    let(:receipt_date) { Date.new(2020, 11, 11) }
+
+    it "persists a new stream_docket_number to the database when receipt date is changed" do
+      appeal.save!
+      expect(appeal.stream_docket_number).to be_nil
+      appeal.receipt_date = receipt_date
+      expect(appeal.docket_number).to eq("201111-#{appeal.id}")
+      appeal.save!
+      expect(appeal.stream_docket_number).to eq("201111-#{appeal.id}")
+      appeal.update_receipt_date!(Date.new(2020, 11, 12))
+      expect(appeal.stream_docket_number).to eq("201112-#{appeal.id}")
+      appeal.save!
+      expect(appeal.stream_docket_number).to eq("201112-#{appeal.id}")
+    end
+  end
+
   context "#set_stream_docket_number_and_stream_type" do
     let(:appeal) { Appeal.new(veteran_file_number: "1234") }
     let(:receipt_date) { Date.new(2020, 1, 24) }
