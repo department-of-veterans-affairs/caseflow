@@ -11,7 +11,7 @@ import CAVC_REMAND_SUBTYPE_NAMES from '../../constants/CAVC_REMAND_SUBTYPE_NAMES
 import CAVC_DECISION_TYPES from '../../constants/CAVC_DECISION_TYPES';
 
 import QueueFlowPage from './components/QueueFlowPage';
-import { requestSave } from './uiReducer/uiActions';
+import { requestSave, showErrorMessage } from './uiReducer/uiActions';
 import TextField from '../components/TextField';
 import RadioField from '../components/RadioField';
 import DateSelector from '../components/DateSelector';
@@ -20,6 +20,7 @@ import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
 import SearchableDropdown from '../components/SearchableDropdown';
 import StringUtil from '../util/StringUtil';
+import Alert from '../components/Alert';
 
 const labelStyling = css({ marginTop: '2.5rem' });
 const buttonStyling = css({ paddingLeft: '0' });
@@ -48,7 +49,7 @@ const subTypeOptions = _.map(_.keys(CAVC_REMAND_SUBTYPE_NAMES), (key) => (
 
 const AddCavcRemandView = (props) => {
 
-  const { decisionIssues, appealId, requestSave, highlightInvalid, ...otherProps } = props;
+  const { decisionIssues, appealId, requestSave, highlightInvalid, showErrorMessage, error, ...otherProps } = props;
 
   const [docketNumber, setDocketNumber] = useState(null);
   const [attorney, setAttorney] = useState('1');
@@ -122,7 +123,7 @@ const AddCavcRemandView = (props) => {
         decision_date: decisionDate,
         remand_subtype: subType,
         represented_by_attorney: attorney === '1',
-        decision_issue_ids: decisionIssues.map((decisionIssue) => decisionIssue.id),
+        decision_issue_ids: selectedIssues,
         instructions
       } };
 
@@ -134,7 +135,9 @@ const AddCavcRemandView = (props) => {
     return requestSave(`/appeals/${appealId}/cavc_remand`, payload, successMsg).
       then((resp) => {
         console.log(resp);
-      });
+        // this.props.history.replace(`/queue/appeals/${resp.body.cavc_appeal.uuid}`);
+      }).
+      catch((err) => showErrorMessage({ title: 'Error', detail: err }));
   };
 
   const docketNumberField = <TextField
@@ -241,6 +244,7 @@ const AddCavcRemandView = (props) => {
       {...otherProps} >
       <h1>{COPY.ADD_CAVC_PAGE_TITLE}</h1>
       <p>{COPY.ADD_CAVC_DESCRIPTION}</p>
+      {error && <Alert title={error.title} type="error">{error.detail}</Alert>}
       {docketNumberField}
       {representedField}
       {judgeField}
@@ -258,16 +262,20 @@ const AddCavcRemandView = (props) => {
 AddCavcRemandView.propTypes = {
   appealId: PropTypes.string,
   decisionIssues: PropTypes.array,
-  requestSave: PropTypes.func
+  requestSave: PropTypes.func,
+  showErrorMessage: PropTypes.func,
+  error: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({
   decisionIssues: state.queue.appealDetails[ownProps.appealId].decisionIssues,
-  highlightInvalid: state.ui.highlightFormItems
+  highlightInvalid: state.ui.highlightFormItems,
+  error: state.ui.messages.error
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestSave
+  requestSave,
+  showErrorMessage
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddCavcRemandView);
