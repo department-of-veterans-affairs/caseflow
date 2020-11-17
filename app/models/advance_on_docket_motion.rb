@@ -22,6 +22,14 @@ class AdvanceOnDocketMotion < CaseflowRecord
   scope :eligible_due_to_appeal, ->(appeal) { where(appeal: appeal).where.not(id: age) }
   scope :for_person, ->(person_id) { where(person_id: person_id) }
 
+  def non_age_related_motion?
+    [
+      Constants.AOD_REASONS.financial_distress,
+      Constants.AOD_REASONS.serious_illness,
+      Constants.AOD_REASONS.other
+    ].include?(reason)
+  end
+
   class << self
     def granted_for_person?(person_id, appeal)
       eligible_motions(person_id, appeal).granted.any?
@@ -41,31 +49,16 @@ class AdvanceOnDocketMotion < CaseflowRecord
       motion = for_appeal(appeal).for_person(person_id).where(reason: attrs[:reason]).order(:id).last
       if motion
         motion.update(attrs)
-      elsif age_related_motion?(attrs[:reason])
+      elsif Constants.AOD_REASONS.age == attrs[:reason]
         # There is only one age-related reason, so if the above didn't find it, there are none.
         create(person_id: person_id, appeal: appeal).update(attrs)
+      elsif existing_motions.any?(&:non_age_related_motion?)
+        # There are multiple age-related reasons, though, and only one is allowed. Use the latest.
+        motion = existing_motions.reverse.find(&:non_age_related_motion?)
+        motion.update(attrs)
       else
-        # However, there are multiple non-age-related reasons, and can only be one.
-        if existing_motions.any? { |m| non_age_related_motion?(m[:reason])}
-          # This would be a duplicate, so update the latest one with our parameters:
-          motion = existing_motions.select { |m| non_age_related_motion?(m[:reason]) }.last
-          motion.update(attrs)
-        else
-          create(person_id: person_id, appeal: appeal).update(attrs)
-        end
+        create(person_id: person_id, appeal: appeal).update(attrs)
       end
-    end
-
-    def age_related_motion?(reason)
-      reason == Constants.AOD_REASONS.age
-    end
-
-    def non_age_related_motion?(reason)
-      [
-          Constants.AOD_REASONS.financial_distress,
-          Constants.AOD_REASONS.serious_illness,
-          Constants.AOD_REASONS.other
-      ].include?(reason)
     end
   end
 end
