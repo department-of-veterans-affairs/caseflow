@@ -324,14 +324,33 @@ class TaskActionRepository
       }
     end
 
+    # Cancel the underlying task, and cancels the hearing or hearing request.
+    #
+    # @note This task action can be called for either the AssignHearingDispositionTask or the ScheduleHearingTask.
+    #   The main difference between those contexts is that a hearing will exist for an AssignHearingDispositionTask,
+    #   but not for a ScheduleHearingTask.
     def withdraw_hearing_data(task, _user)
+      copy = select_withdraw_hearing_copy(task.appeal)
+      assign_hearing_disposition_task = task.is_a?(AssignHearingDispositionTask)
+
       {
         redirect_after: "/queue/appeals/#{task.appeal.external_id}",
         modal_title: COPY::WITHDRAW_HEARING_MODAL_TITLE,
-        modal_body: COPY::WITHDRAW_HEARING_MODAL_BODY,
+        modal_body: copy["MODAL_BODY"],
         message_title: format(COPY::WITHDRAW_HEARING_SUCCESS_MESSAGE_TITLE, task.appeal.veteran_full_name),
-        message_detail: format(COPY::WITHDRAW_HEARING_SUCCESS_MESSAGE_BODY, task.appeal.veteran_full_name),
-        back_to_hearing_schedule: true
+        message_detail: format(copy["SUCCESS_MESSAGE"], task.appeal.veteran_full_name),
+        # If a hearing has already been scheduled, the cancel task should also cancel the hearing. To do that
+        # it will need to provide the cancelled disposition to the API.
+        business_payloads: if assign_hearing_disposition_task
+                             {
+                               values: {
+                                 disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled
+                               }
+                             }
+                           end,
+        # If a hearing was already scheduled and is being withdrawn, it doesn't make sense to
+        # return back to the hearing schedule, so don't show the link in that case.
+        back_to_hearing_schedule: assign_hearing_disposition_task ? false : true
       }
     end
 
@@ -405,6 +424,22 @@ class TaskActionRepository
       end
 
       Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h
+    end
+
+    def select_withdraw_hearing_copy(appeal)
+      if appeal.is_a?(Appeal)
+        COPY::WITHDRAW_HEARING["AMA"]
+      elsif appeal.representative_is_colocated_vso?
+        COPY::WITHDRAW_HEARING["LEGACY_COLOCATED_POA"]
+      elsif appeal.representative_is_organization?
+        COPY::WITHDRAW_HEARING["LEGACY_NON_COLOCATED_ORGANIZATION"]
+      elsif appeal.representative_is_agent?
+        COPY::WITHDRAW_HEARING["LEGACY_NON_COLOCATED_PRIVATE_ATTORNEY"]
+      else
+        # Assumption: the above Legacy POA cases are comprehensive meaning the catch-all
+        #             case will only happen if there is no POA.
+        COPY::WITHDRAW_HEARING["LEGACY_NO_POA"]
+      end
     end
 
     def task_assigner_name(task)
