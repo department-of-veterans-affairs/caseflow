@@ -36,6 +36,7 @@ class TasksController < ApplicationController
     SendCavcRemandProcessedLetterTask: SendCavcRemandProcessedLetterTask,
     SpecialCaseMovementTask: SpecialCaseMovementTask,
     Task: Task,
+    TranscriptionTask: TranscriptionTask,
     TranslationTask: TranslationTask
   }.freeze
 

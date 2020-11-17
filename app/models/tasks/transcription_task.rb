@@ -13,10 +13,13 @@
 # This task is only only applicable to AMA appeals in caseflow
 
 class TranscriptionTask < Task
+  include CavcAdminActionConcern
+
   VALID_PARENT_TYPES = [
     AssignHearingDispositionTask,
     MissingHearingTranscriptsColocatedTask,
-    TranscriptionTask
+    TranscriptionTask,
+    DistributionTask
   ].freeze
 
   validates :parent, presence: true, parentTask: { task_types: VALID_PARENT_TYPES }
