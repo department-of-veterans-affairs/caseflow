@@ -216,6 +216,10 @@ class TaskActionRepository
       cavc_add_blocking_admin_action_data(task, PrivacyTeam.singleton, PrivacyActTask)
     end
 
+    def assign_ihp_to_colocated_blocking_distribution_data(task, _user = nil)
+      cavc_add_blocking_admin_action_data(task, Colocated.singleton, IhpColocatedTask)
+    end
+
     def add_admin_action_data(task, user = nil)
       if task.is_a? ScheduleHearingTask
         schedule_hearing_task_add_admin_action_data(task, user)
