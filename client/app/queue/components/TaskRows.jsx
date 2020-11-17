@@ -321,12 +321,7 @@ class TaskRows extends React.PureComponent {
     </tr>;
   }
 
-  toggleEditNODModal = () => this.setState((state) => ({ showEditNODModal: !state.showEditNODModal }))
-
-  handleNODDateChange = () => {
-    this.props.onEditNODChange(true);
-    this.toggleEditNODModal();
-  }
+  toggleEditNODModal = () => this.setState((state) => ({ showEditNODModal: !state.showEditNODModal }));
 
   render = () => {
     const {
@@ -376,7 +371,7 @@ class TaskRows extends React.PureComponent {
           <GreenCheckmark /></td>
         <td className="taskContainerStyling taskInformationTimelineContainerStyling">
           { COPY.CASE_TIMELINE_NOD_RECEIVED } <br />
-          {this.props.editNodEnabled && (
+          {this.props.editNodDateEnabled && (
             <React.Fragment>
               <p>
                 <Button
@@ -389,7 +384,6 @@ class TaskRows extends React.PureComponent {
               {this.state.showEditNODModal && (
                 <EditNODModal
                   onCancel={this.toggleEditNODModal}
-                  onSubmit={this.handleNODDateChange}
                   nodDate={appeal.nodDate}
                 />
               )}
@@ -403,9 +397,8 @@ class TaskRows extends React.PureComponent {
 
 TaskRows.propTypes = {
   appeal: PropTypes.object,
-  editNodEnabled: PropTypes.bool,
+  editNodDateEnabled: PropTypes.bool,
   hideDropdown: PropTypes.bool,
-  onEditNODChange: PropTypes.func,
   taskList: PropTypes.array,
   timeline: PropTypes.bool
 };
