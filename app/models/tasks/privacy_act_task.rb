@@ -4,6 +4,8 @@
 # Task to track when an appeal has been assigned to Privacy Team
 
 class PrivacyActTask < Task
+  include CavcAdminActionConcern
+
   def available_actions(user)
     return [] unless user
 

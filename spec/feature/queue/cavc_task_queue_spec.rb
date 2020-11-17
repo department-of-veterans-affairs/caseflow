@@ -9,6 +9,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
   let!(:org_nonadmin) { create(:user, full_name: "Woney Remandy") { |u| CavcLitigationSupport.singleton.add_user(u) } }
   let!(:org_nonadmin2) { create(:user, full_name: "Tooey Remandy") { |u| CavcLitigationSupport.singleton.add_user(u) } }
   let!(:other_user) { create(:user, full_name: "Othery Usery") }
+  let!(:colocated_user) { create(:user) { |user| Colocated.singleton.add_user(user) } }
 
   context "when CAVC Lit Support is assigned SendCavcRemandProcessedLetterTask" do
     let!(:send_task) { create(:send_cavc_remand_processed_letter_task) }
@@ -56,6 +57,16 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
       fill_in "taskInstructions", with: "Please transcribe the hearing on record for this appeal"
       click_on "Submit"
       expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % TranscriptionTeam.singleton.name
+
+      click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION.label)
+      fill_in "taskInstructions", with: "Please handle the freedom of intformation act request for this appeal"
+      click_on "Submit"
+      expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % PrivacyTeam.singleton.name
+
+      click_dropdown(text: Constants.TASK_ACTIONS.SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION.label)
+      fill_in "taskInstructions", with: "Have veteran's POA write an informal hearing presentation for this appeal"
+      click_on "Submit"
+      expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Colocated.singleton.name
 
       find(".cf-select__control", text: "Select an action").click
       find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
