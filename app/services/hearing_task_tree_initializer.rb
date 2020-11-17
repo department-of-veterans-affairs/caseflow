@@ -65,7 +65,15 @@ class HearingTaskTreeInitializer
     # @return       [Array<VACOLS::Case>]
     #   An array of VACOLS cases that need to have a hearing scheduled.
     def cases_that_need_hearings
-      VACOLS::Case.where(bfhr: "1", bfcurloc: "57").or(VACOLS::Case.where(bfhr: "2", bfdocind: "V", bfcurloc: "57"))
+      VACOLS::Case
+        .where(bfhr: "1", bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing])
+        .or(
+          VACOLS::Case.where(
+            bfhr: "2",
+            bfdocind: "V",
+            bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]
+          )
+        )
         .joins(:folder).order("folder.tinum")
         .includes(:correspondent, :case_issues, :case_hearings, folder: [:outcoder]).reject do |case_record|
           case_record.case_hearings.any? do |hearing|
