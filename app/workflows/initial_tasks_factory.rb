@@ -27,7 +27,8 @@ class InitialTasksFactory
     distribution_task = DistributionTask.create!(appeal: @appeal, parent: @root_task)
 
     if @appeal.cavc?
-      CavcTask.create!(appeal: @appeal, parent: distribution_task)
+      cavc_task = CavcTask.create!(appeal: @appeal, parent: distribution_task)
+      SendCavcRemandProcessedLetterTask.create!(appeal: @appeal, parent: cavc_task)
     elsif @appeal.evidence_submission_docket?
       EvidenceSubmissionWindowTask.create!(appeal: @appeal, parent: distribution_task)
     elsif @appeal.hearing_docket?

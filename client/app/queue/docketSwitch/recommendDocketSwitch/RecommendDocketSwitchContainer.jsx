@@ -4,9 +4,16 @@ import { useHistory, useParams } from 'react-router';
 import { fetchJudges } from '../../QueueActions';
 
 import { appealWithDetailSelector } from '../../selectors';
-import { dispositions } from '../constants';
+import DISPOSITIONS from '../../../../constants/DOCKET_SWITCH';
 import { createDocketSwitchRulingTask } from './recommendDocketSwitchSlice';
 import { RecommendDocketSwitchForm } from './RecommendDocketSwitchForm';
+import {
+  DOCKET_SWITCH_REQUEST_TITLE,
+  DOCKET_SWITCH_REQUEST_MESSAGE,
+} from '../../../../COPY';
+
+import { sprintf } from 'sprintf-js';
+import { showSuccessMessage } from '../../uiReducer/uiActions';
 
 // This takes form data and generates Markdown-formatted text to be saved as task instructions
 export const formatDocketSwitchRecommendation = ({
@@ -21,7 +28,7 @@ export const formatDocketSwitchRecommendation = ({
 
   parts.push(`**Summary:** ${summary}`);
   parts.push(`**Is this a timely request:** ${timelyCaps}`);
-  parts.push(`**Recommendation:** ${dispositions[disposition].displayText}`);
+  parts.push(`**Recommendation:** ${DISPOSITIONS[disposition].displayText}`);
   parts.push(`**Draft letter:** ${hyperlink}`);
 
   // Separate each chunk by two line breaks
@@ -55,6 +62,7 @@ export const RecommendDocketSwitchContainer = () => {
 
   // eslint-disable-next-line no-console
   const handleSubmit = async (formData) => {
+
     const instructions = formatDocketSwitchRecommendation({ ...formData });
     const newTask = {
       parent_id: taskId,
@@ -69,10 +77,15 @@ export const RecommendDocketSwitchContainer = () => {
       tasks: [newTask],
     };
 
+    const successMessage = {
+      title: sprintf(DOCKET_SWITCH_REQUEST_TITLE, appeal.appellantFullName, formData.judge.label),
+      detail: DOCKET_SWITCH_REQUEST_MESSAGE,
+    };
+
     try {
       await dispatch(createDocketSwitchRulingTask(data));
 
-      // Add logic for success banner
+      dispatch(showSuccessMessage(successMessage));
       push('/queue');
     } catch (error) {
       // Perhaps show an alert that indicates error, advise trying again...?

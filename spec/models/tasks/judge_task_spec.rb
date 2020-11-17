@@ -14,7 +14,7 @@ describe JudgeTask, :all_dbs do
   describe ".available_actions" do
     let(:user) { judge }
     let(:appeal) { create(:appeal, stream_type: stream_type) }
-    let(:stream_type) { "original" }
+    let(:stream_type) { Constants.AMA_STREAM_TYPES.original }
     let(:subject_task) do
       create(:ama_judge_assign_task, assigned_to: judge, appeal: appeal)
     end
@@ -138,7 +138,7 @@ describe JudgeTask, :all_dbs do
     context "when it is a vacate type appeal" do
       let(:judge3) { create(:user) }
       let!(:user) { judge3 }
-      let(:stream_type) { "vacate" }
+      let(:stream_type) { Constants.AMA_STREAM_TYPES.vacate }
       let!(:task) do
         create(:ama_judge_decision_review_task,
                appeal: appeal,

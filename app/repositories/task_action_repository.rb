@@ -75,12 +75,13 @@ class TaskActionRepository
 
     def assign_to_user_data(task, user = nil)
       users = potential_task_assignees(task)
-
       extras = if task.is_a?(HearingAdminActionTask)
                  {
                    redirect_after: "/organizations/#{HearingsManagement.singleton.url}",
                    message_detail: COPY::HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL
                  }
+               elsif task.is_a?(SendCavcRemandProcessedLetterTask) && task.assigned_to_type == "Organization"
+                 { redirect_after: "/organizations/#{CavcLitigationSupport.singleton.url}" }
                else
                  {}
                end
@@ -177,6 +178,15 @@ class TaskActionRepository
     def docket_switch_send_to_judge_data(_task, _user = nil)
       {
         type: DocketSwitchRulingTask.name
+      }
+    end
+
+    def docket_switch_ruling_data(task, _user = nil)
+      {
+        selected: task.assigned_by&.id,
+        options: ClerkOfTheBoard.singleton.users.select(&:attorney?).map do |user|
+          { value: user.id, label: user.full_name }
+        end
       }
     end
 
