@@ -43,7 +43,7 @@ class TaskSorter
   def order_clause
     case column.name
     when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
-      Arel.sql(appeal_type_order_clause)
+      Task.order_by_appeal_priority_clause(order: sort_order)
     when Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name
       Arel.sql(task_type_order_clause)
     when Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name
@@ -71,12 +71,6 @@ class TaskSorter
     task_types_sorted_by_label = Task.descendants.sort_by(&:label).map(&:name)
     task_type_sort_position = "tasks.type in '#{task_types_sorted_by_label.join(',')}'"
     "position(#{task_type_sort_position}) #{sort_order}"
-  end
-
-  def appeal_type_order_clause
-    "cached_appeal_attributes.is_aod DESC, "\
-    "cached_appeal_attributes.case_type #{sort_order}, "\
-    "cached_appeal_attributes.docket_number #{sort_order}"
   end
 
   def assigner_order_clause
