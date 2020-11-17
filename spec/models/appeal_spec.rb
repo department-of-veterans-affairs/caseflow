@@ -12,7 +12,7 @@ describe Appeal, :all_dbs do
   let!(:appeal) { create(:appeal) } # must be *after* Timecop.freeze
 
   context "#create_stream" do
-    let(:stream_type) { "vacate" }
+    let(:stream_type) { Constants.AMA_STREAM_TYPES.vacate }
     let!(:appeal) { create(:appeal, number_of_claimants: 1) }
 
     subject { appeal.create_stream(stream_type) }
@@ -34,7 +34,7 @@ describe Appeal, :all_dbs do
     end
 
     context "for de_novo appeal stream" do
-      let(:stream_type) { "de_novo" }
+      let(:stream_type) { Constants.AMA_STREAM_TYPES.de_novo }
 
       it "creates a de_novo appeal stream with data from the original appeal" do
         expect(subject).to have_attributes(
@@ -991,7 +991,7 @@ describe Appeal, :all_dbs do
     end
 
     context "for cavc stream" do
-      let(:appeal) { create(:appeal, stream_type: "court_remand") }
+      let(:appeal) { create(:appeal, stream_type: Constants.AMA_STREAM_TYPES.court_remand) }
 
       it "returns true" do
         expect(subject).to eq(true)
