@@ -20,6 +20,8 @@ FactoryBot.define do
     association :updated_by, factory: :user
     establishment { build(:virtual_hearing_establishment) }
     guest_pin_long { nil }
+    created_at { Time.zone.now }
+    updated_at { Time.zone.now }
 
     transient do
       status { nil }

@@ -8,7 +8,7 @@ const judgeOptions = [
 ];
 
 export default {
-  title: 'Queue/Docket Change/RecommendDocketSwitchForm',
+  title: 'Queue/Docket Switch/RecommendDocketSwitchForm',
   component: RecommendDocketSwitchForm,
   decorators: [],
   parameters: {},

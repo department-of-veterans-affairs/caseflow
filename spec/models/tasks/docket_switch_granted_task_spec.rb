@@ -32,7 +32,7 @@ describe DocketSwitchGrantedTask, :postgres do
 
     context "when the current user is not a member of the Clerk of the Board team" do
       before { allow_any_instance_of(ClerkOfTheBoard).to receive(:user_has_access?).and_return(false) }
-      context "without docket_change feature toggle" do
+      context "without docket_switch feature toggle" do
         it "returns the correct label" do
           expect(DocketSwitchGrantedTask.new.label).to eq(
             COPY::DOCKET_SWITCH_GRANTED_TASK_LABEL
@@ -40,9 +40,9 @@ describe DocketSwitchGrantedTask, :postgres do
         end
       end
 
-      context "with docket_change feature toggle" do
-        before { FeatureToggle.enable!(:docket_change) }
-        after { FeatureToggle.disable!(:docket_change) }
+      context "with docket_switch feature toggle" do
+        before { FeatureToggle.enable!(:docket_switch) }
+        after { FeatureToggle.disable!(:docket_switch) }
 
         it "returns the available_actions as defined by Task" do
           expect(subject).to eq(task_actions)
@@ -51,15 +51,15 @@ describe DocketSwitchGrantedTask, :postgres do
     end
 
     context "when the current user is a member of the Clerk of the Board team" do
-      context "without docket_change feature toggle" do
+      context "without docket_switch feature toggle" do
         it "returns the available_actions as defined by Task" do
           expect(subject).to eq(task_actions)
         end
       end
 
-      context "with docket_change feature toggle" do
-        before { FeatureToggle.enable!(:docket_change) }
-        after { FeatureToggle.disable!(:docket_change) }
+      context "with docket_switch feature toggle" do
+        before { FeatureToggle.enable!(:docket_switch) }
+        after { FeatureToggle.disable!(:docket_switch) }
 
         it "returns the available_actions as defined by Task" do
           expect(subject).to eq(task_actions + [Constants.TASK_ACTIONS.DOCKET_SWITCH_GRANTED.to_h])

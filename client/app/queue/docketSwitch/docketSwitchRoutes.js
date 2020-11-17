@@ -4,6 +4,7 @@ import PageRoute from '../../components/PageRoute';
 
 import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
 import { RecommendDocketSwitchContainer } from './recommendDocketSwitch/RecommendDocketSwitchContainer';
+import { DocketSwitchRulingContainer } from './judgeRuling/DocketSwitchRulingContainer';
 
 const PageRoutes = [
   <PageRoute
@@ -21,8 +22,7 @@ const PageRoutes = [
     }`}
     title={`${TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.label} | Caseflow`}
   >
-    {/* Replace with actual component */}
-    <h2>Judge Ruling</h2>
+    <DocketSwitchRulingContainer />
   </PageRoute>,
 
   // This route handles the remaining checkout flow
