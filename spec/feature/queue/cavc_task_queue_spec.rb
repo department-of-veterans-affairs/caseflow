@@ -57,6 +57,11 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
       click_on "Submit"
       expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % TranscriptionTeam.singleton.name
 
+      click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION.label)
+      fill_in "taskInstructions", with: "Please handle the freedom of intformation act request for this appeal"
+      click_on "Submit"
+      expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % PrivacyTeam.singleton.name
+
       find(".cf-select__control", text: "Select an action").click
       find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
       fill_in "completeTaskInstructions", with: "Letter sent."

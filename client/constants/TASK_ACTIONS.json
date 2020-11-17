@@ -299,6 +299,11 @@
     "value": "modal/assign_to_transcription_team",
     "func": "assign_to_transciption_team_blocking_distribution_data"
   },
+  "SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION": {
+    "label": "Assign to Privacy team",
+    "value": "modal/assign_to_privacy_team",
+    "func": "assign_to_privacy_team_blocking_distribution_data"
+  },
   "SUBMIT_OMO_REQUEST_FOR_REVIEW": {
     "label": "Medical Request Ready for Review",
     "value": "omo_request/submit"
