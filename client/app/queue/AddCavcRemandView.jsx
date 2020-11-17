@@ -49,7 +49,16 @@ const subTypeOptions = _.map(_.keys(CAVC_REMAND_SUBTYPE_NAMES), (key) => (
 
 const AddCavcRemandView = (props) => {
 
-  const { decisionIssues, appealId, requestSave, highlightInvalid, showErrorMessage, error, ...otherProps } = props;
+  const {
+    appealId,
+    decisionIssues,
+    error,
+    highlightInvalid,
+    requestSave,
+    showErrorMessage,
+    history,
+    ...otherProps
+  } = props;
 
   const [docketNumber, setDocketNumber] = useState(null);
   const [attorney, setAttorney] = useState('1');
@@ -132,12 +141,10 @@ const AddCavcRemandView = (props) => {
       detail: COPY.CAVC_REMAND_CREATED_DETAIL
     };
 
-    return requestSave(`/appeals/${appealId}/cavc_remand`, payload, successMsg).
-      then((resp) => {
-        console.log(resp);
-        // this.props.history.replace(`/queue/appeals/${resp.body.cavc_appeal.uuid}`);
-      }).
-      catch((err) => showErrorMessage({ title: 'Error', detail: err }));
+    requestSave(`/appeals/${appealId}/cavc_remand`, payload, successMsg).
+      // Does not actually work. Need to find a way to redirect to new or old appeal
+      then((resp) => history.replace(`/queue/appeals/${resp.body.cavc_appeal.uuid}`)).
+      catch((err) => showErrorMessage({ title: 'Error', detail: JSON.parse(err.message).errors[0].detail }));
   };
 
   const docketNumberField = <TextField
@@ -264,7 +271,9 @@ AddCavcRemandView.propTypes = {
   decisionIssues: PropTypes.array,
   requestSave: PropTypes.func,
   showErrorMessage: PropTypes.func,
-  error: PropTypes.object
+  error: PropTypes.object,
+  highlightInvalid: PropTypes.bool,
+  history: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({
