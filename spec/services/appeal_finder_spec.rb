@@ -25,7 +25,7 @@ describe AppealFinder, :all_dbs do
       let(:docket_number) { invalid_docket_number }
 
       it "returns nil" do
-        expect(subject).to be_nil
+        expect(subject).to eq([])
       end
     end
 
@@ -33,7 +33,7 @@ describe AppealFinder, :all_dbs do
       let(:docket_number) { unknown_docket_number }
 
       it "returns nil" do
-        expect(subject).to be_nil
+        expect(subject).to eq([])
       end
     end
 
@@ -48,7 +48,6 @@ describe AppealFinder, :all_dbs do
         expect(subject.second.stream_docket_number).to eq(subject.first.stream_docket_number)
       end
     end
-
   end
 
   describe ".find_appeals_with_file_numbers" do

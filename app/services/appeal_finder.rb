@@ -34,7 +34,7 @@ class AppealFinder
           receipt_date, id, docket_number
         )
       rescue ArgumentError
-        nil
+        []
       end
     end
   end
