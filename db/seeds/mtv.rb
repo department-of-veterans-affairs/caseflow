@@ -127,6 +127,8 @@ module Seeds
       end
     end
 
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
     def vacate_at_attorney_review(mtv_judge, drafting_attorney, lit_support_user)
       # These are ready to be reviewed by the decision drafting attorney on the vacate stream
       ("000100022".."000100024").each do |file_number|
@@ -169,7 +171,10 @@ module Seeds
         judge_addresses_mtv(jam_task, "granted", "vacate_and_de_novo", drafting_attorney)
       end
     end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
 
+    # rubocop:disable Metrics/MethodLength
     def fully_processed_vacate_appeal(mtv_judge, drafting_attorney, lit_support_user)
       ("000100037".."000100039").each do |file_number|
         original_stream = create_decided_appeal(file_number, mtv_judge, drafting_attorney)
@@ -196,6 +201,7 @@ module Seeds
         BvaDispatchTask.outcode(vacate_stream.reload, outcode_params, dispatch_user)
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     def setup_motion_to_vacate_appeals
       lit_support_user = User.find_by(css_id: "LIT_SUPPORT_USER")
