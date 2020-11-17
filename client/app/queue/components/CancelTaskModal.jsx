@@ -50,7 +50,7 @@ const CancelTaskModal = (props) => {
       title: taskData.message_title,
       detail: (
         <span>
-          <span>{taskData.message_detail}</span>
+          <span dangerouslySetInnerHTML={{ __html: taskData.message_detail }} />
           {hearingScheduleLink}
         </span>
       )
@@ -68,7 +68,7 @@ const CancelTaskModal = (props) => {
     >
       {taskData?.modal_body &&
         <React.Fragment>
-          <div>{taskData.modal_body}</div>
+          <div dangerouslySetInnerHTML={{ __html: taskData.modal_body }} />
           <br />
         </React.Fragment>
       }
