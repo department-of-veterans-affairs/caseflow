@@ -304,6 +304,11 @@
     "value": "modal/assign_to_privacy_team",
     "func": "assign_to_privacy_team_blocking_distribution_data"
   },
+  "SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION": {
+    "label": "Assign IHP task to Colocated team",
+    "value": "modal/assign_ihp_to_colocated_team",
+    "func": "assign_ihp_to_colocated_blocking_distribution_data"
+  },
   "SUBMIT_OMO_REQUEST_FOR_REVIEW": {
     "label": "Medical Request Ready for Review",
     "value": "omo_request/submit"

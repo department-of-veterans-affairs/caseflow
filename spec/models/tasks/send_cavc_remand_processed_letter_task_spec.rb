@@ -115,10 +115,11 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
       admin_actions = subject.select do |action|
         action[:label] == Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label ||
           action[:label] == Constants.TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.label ||
-          action[:label] == Constants.TASK_ACTIONS.SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION.label
+          action[:label] == Constants.TASK_ACTIONS.SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION.label ||
+          action[:label] == Constants.TASK_ACTIONS.SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION.label
       end
 
-      expect(admin_actions.count).to eq 3
+      expect(admin_actions.count).to eq 4
       admin_actions.each do |action|
         parent = Task.find(action[:data][:parent_id])
         expect(parent.type).to eq DistributionTask.name
