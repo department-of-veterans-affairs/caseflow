@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { bindActionCreators } from 'redux';
-import { useSelector, connect } from 'react-redux';
+import { connect } from 'react-redux';
 import { css } from 'glamor';
-import classNames from 'classnames';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import COPY from '../../COPY';
@@ -11,12 +10,10 @@ import CAVC_REMAND_SUBTYPES from '../../constants/CAVC_REMAND_SUBTYPES';
 import CAVC_DECISION_TYPES from '../../constants/CAVC_DECISION_TYPES';
 
 import QueueFlowPage from './components/QueueFlowPage';
-// import { appealWithDetailSelector } from './selectors';
 import { requestSave } from './uiReducer/uiActions';
 import TextField from '../components/TextField';
 import RadioField from '../components/RadioField';
 import DateSelector from '../components/DateSelector';
-// import Checkbox from '../components/Checkbox';
 import CheckboxGroup from '../components/CheckboxGroup';
 import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
@@ -40,6 +37,7 @@ const attorneyOptions = [
   { displayText: 'No',
     value: '2' },
 ];
+
 const typeOptions = [
   { displayText: COPY.CAVC_REMAND,
     value: CAVC_DECISION_TYPES.remand },
@@ -48,6 +46,7 @@ const typeOptions = [
   { displayText: COPY.CAVC_DEATH_DISMISSAL,
     value: CAVC_DECISION_TYPES.death_dismissal }
 ];
+
 const subTypeOptions = [
   { displayText: COPY.CAVC_JMR,
     value: CAVC_REMAND_SUBTYPES.jmr },
@@ -57,21 +56,9 @@ const subTypeOptions = [
     value: CAVC_REMAND_SUBTYPES.mdr }
 ];
 
-// need to bring in actual decision issue ids from the appeal
-const issueOptions = [
-  { id: 'ratingIssue1',
-    label: COPY.CAVC_RATING_ISSUE_1 },
-  { id: 'ratingIssue2',
-    label: COPY.CAVC_RATING_ISSUE_2 },
-  { id: 'nonRatingIssue1',
-    label: COPY.CAVC_NON_RATING_ISSUE_1 },
-  { id: 'nonRatingIssue2',
-    label: COPY.CAVC_NON_RATING_ISSUE_2 }
-];
-
 const AddCavcRemandView = (props) => {
 
-  const { appealId, requestSave } = props;
+  const { decisionIssues, appealId, requestSave, ...otherProps } = props;
 
   const [docketNumber, setDocketNumber] = useState(null);
   const [attorney, setAttorney] = useState('1');
@@ -84,33 +71,48 @@ const AddCavcRemandView = (props) => {
   const [issues, setIssues] = useState({});
   const [text, setText] = useState(null);
 
+  const issueOptions = () => {
+    const issueList = [];
+
+    decisionIssues.map((decisionIssue) => {
+      const issue = {
+        id: decisionIssue.id,
+        label: decisionIssue.description
+      };
+
+      return issueList.push(issue);
+    });
+
+    return issueList;
+  };
+
   // determines which issues are currently selected
   const selectedIssues = useMemo(() => {
     return Object.entries(issues).filter((item) => item[1]).
       flatMap((item) => item[0]);
   }, [issues]);
 
-  // populates all checkboxes when either JMR remand or Select all button is selected
-  const toggleIssues = () => {
+  // populates all checkboxes
+  const selectAllIssues = () => {
     const checked = selectedIssues.length === 0;
     const newValues = {};
 
-    issueOptions.forEach((item) => newValues[item.id] = checked);
+    issueOptions().forEach((item) => newValues[item.id] = checked);
     setIssues(newValues);
   };
 
   // populate all of our checkboxes on initial render
-  useEffect(() => toggleIssues(), []);
+  useEffect(() => selectAllIssues(), []);
 
   // clears all decision issue checkboxes
   const clearAllIssues = () => {
     setIssues({});
   };
 
-  // checks if the remand is JMR, if so it checks all decision issue checkboxes
+  // if the subType is JMR check all decision issue checkboxes
   const checkSubType = (val) => {
     if (val === CAVC_REMAND_SUBTYPES.jmr) {
-      toggleIssues();
+      selectAllIssues();
       setSubType(val);
     } else {
       clearAllIssues();
@@ -123,24 +125,27 @@ const AddCavcRemandView = (props) => {
   };
 
   const submit = () => {
-    const payload = { 
-      data: { 
+    const payload = {
+      data: {
         judgement_date: judgementDate,
         mandate_date: mandateDate,
-        appeal_id: appealId, 
-        cavc_docket_number: docketNumber, 
+        appeal_id: appealId,
+        cavc_docket_number: docketNumber,
         cavc_judge_full_name: judge.value,
-        cavc_decision_type: type, 
-        decision_date: decisionDate, 
-        instructions: text, 
+        cavc_decision_type: type,
+        decision_date: decisionDate,
+        instructions: text,
         remand_subtype: subType,
         represented_by_attorney: attorney === '1',
-        decision_issue_ids: []
+        decision_issue_ids: decisionIssues.map((decisionIssue) => decisionIssue.id)
       } };
 
-      const successMessage = "SUCCESS";
+    const successMsg = {
+      title: COPY.CAVC_REMAND_CREATED_TITLE,
+      detail: COPY.CAVC_REMAND_CREATED_DETAIL
+    };
 
-    return requestSave(`/appeals/${appealId}/cavc_remand`, payload, successMessage).
+    return requestSave(`/appeals/${appealId}/cavc_remand`, payload, successMsg).
       then((resp) => {
         console.log(resp);
       });
@@ -152,8 +157,7 @@ const AddCavcRemandView = (props) => {
       goToNextStep={submit}
       continueBtnText="Submit"
       hideCancelButton
-      // {...otherProps}
-       >
+      {...otherProps} >
       <h1>{COPY.ADD_CAVC_PAGE_TITLE}</h1>
       <p>{COPY.ADD_CAVC_DESCRIPTION}</p>
       <TextField
@@ -179,12 +183,13 @@ const AddCavcRemandView = (props) => {
         options={typeOptions}
         value={type}
         onChange={(val) => setType(val)} />
+      {type === CAVC_DECISION_TYPES.remand &&
       <RadioField
         label={<h3 {...labelStyling} id="vertical-radio">{COPY.CAVC_SUB_TYPE_LABEL}</h3>}
         name="sub-type-options"
         options={subTypeOptions}
         value={subType}
-        onChange={(val) => checkSubType(val)} />
+        onChange={(val) => checkSubType(val)} /> }
       <h4 {...labelStyling}>{COPY.CAVC_COURT_DECISION_DATE}</h4>
       <DateSelector
         type="date"
@@ -197,7 +202,6 @@ const AddCavcRemandView = (props) => {
           message={COPY.CAVC_MDR_MESSAGE}
           styling={alertStyling}
           lowerMargin />}
-      {subType === CAVC_REMAND_SUBTYPES.jmr &&
       <>
         <h4 {...labelStyling}>{COPY.CAVC_JUDGEMENT_DATE}</h4>
         <DateSelector
@@ -209,18 +213,19 @@ const AddCavcRemandView = (props) => {
           type="date"
           value={mandateDate}
           onChange={(val) => setMandateDate(val)} />
-      </> }
+      </>
       <h3>{COPY.CAVC_ISSUES_LABEL}</h3>
-      {subType !== CAVC_REMAND_SUBTYPES.jmr && (!selectedIssues.length || selectedIssues.length === issueOptions.length) && <Button
+      {subType !== CAVC_REMAND_SUBTYPES.jmr && (!selectedIssues.length ||
+       selectedIssues.length === issueOptions.length) && <Button
         name={selectedIssues.length ? 'Unselect all' : 'Select all'}
         styling={buttonStyling}
         linkStyling
-        onClick={toggleIssues} />}
+        onClick={selectAllIssues} />}
       <CheckboxGroup
-        options={issueOptions}
+        options={issueOptions()}
         values={issues}
         onChange={(val) => onIssueChange(val)}
-        disableAll={subType === CAVC_REMAND_SUBTYPES.jmr} />
+        disableAll={type === CAVC_DECISION_TYPES.remand && subType === CAVC_REMAND_SUBTYPES.jmr} />
       {subType === CAVC_REMAND_SUBTYPES.jmr && <i>*Joint Motion for Remand (JMR) automatically selects all issues</i>}
       <TextareaField
         label={<h3 {...labelStyling}>{COPY.CAVC_INSTRUCTIONS_LABEL}</h3>}
@@ -232,11 +237,17 @@ const AddCavcRemandView = (props) => {
 };
 
 AddCavcRemandView.propTypes = {
-  appealId: PropTypes.string
+  appealId: PropTypes.string,
+  decisionIssues: PropTypes.array,
+  requestSave: PropTypes.func
 };
+
+const mapStateToProps = (state, ownProps) => ({
+  decisionIssues: state.queue.appealDetails[ownProps.appealId].decisionIssues
+});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave
 }, dispatch);
 
-export default connect(null, mapDispatchToProps)(AddCavcRemandView);
+export default connect(mapStateToProps, mapDispatchToProps)(AddCavcRemandView);
