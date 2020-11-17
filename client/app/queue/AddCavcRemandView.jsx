@@ -134,7 +134,8 @@ const AddCavcRemandView = (props) => {
         represented_by_attorney: attorney === '1',
         decision_issue_ids: selectedIssues,
         instructions
-      } };
+      }
+    };
 
     const successMsg = {
       title: COPY.CAVC_REMAND_CREATED_TITLE,
