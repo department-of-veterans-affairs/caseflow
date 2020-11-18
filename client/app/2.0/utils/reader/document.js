@@ -2,7 +2,7 @@
 import { sortBy, round, isEmpty } from 'lodash';
 
 // Local Dependencies
-import { loadDocuments } from 'store/reader/document';
+import { loadDocuments } from 'store/reader/documentList';
 import {
   documentCategories,
   MINIMUM_ZOOM,

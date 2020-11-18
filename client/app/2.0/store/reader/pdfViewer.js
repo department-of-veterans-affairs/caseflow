@@ -5,7 +5,6 @@ import { deleteAnnotation, moveAnnotation, editAnnotation, stopPlacingAnnotation
 import { addMetaLabel } from 'utils/reader/format';
 import ApiUtil from 'app/util/ApiUtil';
 import {
-  loadDocuments,
   removeTag,
   addTag,
   saveDocumentDescription,
@@ -14,6 +13,7 @@ import {
   toggleDocumentCategoryFail,
   handleCategoryToggle
 } from 'store/reader/document';
+import { loadDocuments } from 'store/reader/documentList';
 
 /**
  * PDF SideBar Error State

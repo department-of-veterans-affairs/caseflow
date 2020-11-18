@@ -1,24 +1,15 @@
 // External Dependencies
 import querystring from 'querystring';
-import { createSlice, createAction } from '@reduxjs/toolkit';
-import { pickBy } from 'lodash';
+import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { isNil, pickBy } from 'lodash';
 
 // Local Dependencies
-import { DOCUMENTS_OR_COMMENTS_ENUM } from 'store/constants/reader';
-import { categoryContainsWords } from 'utils/reader';
-import { loadDocuments, selectCurrentPdfLocally } from 'store/reader/document';
+import ApiUtil from 'app/util/ApiUtil';
+import { ENDPOINT_NAMES, DOCUMENTS_OR_COMMENTS_ENUM } from 'store/constants/reader';
+import { filterDocuments, addMetaLabel, commentContainsWords, categoryContainsWords } from 'utils/reader';
+import { selectCurrentPdfLocally } from 'store/reader/document';
 import { onReceiveAnnotations } from 'store/reader/annotationLayer';
-import { addMetaLabel } from 'utils/reader/format';
-import { filterDocuments } from 'utils/reader/document';
-
-/**
- * Helper Method to change the Last Read Document
- * @param {Object} state -- The current Redux Store State
- * @param {string} docId -- The ID of the Document to set as the last Read
- */
-export const updateLastReadDoc = (state, docId) => {
-  state.pdfList.lastReadDocId = docId;
-};
+import { showPdf } from 'store/reader/pdf';
 
 /**
  * Helper Method to Parse the Queue Redirect URL from the window
@@ -48,6 +39,8 @@ export const getQueueTaskType = () => {
  * PDF Initial State
  */
 export const initialState = {
+  loading: false,
+  documents: {},
   queueRedirectUrl: getQueueRedirectUrl(),
   queueTaskType: getQueueTaskType(),
   viewingDocumentsOrComments: DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
@@ -73,6 +66,45 @@ export const initialState = {
   manifestVbmsFetchedAt: null,
   manifestVvaFetchedAt: null
 };
+
+/**
+ * Helper Method to change the Last Read Document
+ * @param {Object} state -- The current Redux Store State
+ * @param {string} docId -- The ID of the Document to set as the last Read
+ */
+export const updateLastReadDoc = (state, docId) => {
+  state.pdfList.lastReadDocId = docId;
+};
+
+/**
+ * Dispatcher to Load Appeal Documents
+ */
+export const loadDocuments = createAsyncThunk('documents/load', async (params, { getState, dispatch }) => {
+  // Get the current state
+  const state = getState();
+
+  // Request the Documents for the Appeal
+  const { body } = await ApiUtil.get(`/reader/appeal/${params.vacolsId}/documents?json`, {}, ENDPOINT_NAMES.DOCUMENTS);
+
+  // Load the Document if the Doc ID is present
+  if (params.docId) {
+    dispatch(showPdf({
+      current: params.currentDocument,
+      documents: body.appealDocuments,
+      docId: params.docId,
+      worker: params.worker,
+      scale: params.scale
+    }));
+  }
+
+  // Return the response and attach the Filter Criteria
+  return {
+    ...body,
+    ...params,
+    documents: body.appealDocuments,
+    filterCriteria: state.reader.documentList.filterCriteria
+  };
+});
 
 /**
  * Dispatcher to Set the Last Read Document
@@ -172,6 +204,29 @@ const documentListSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.
+      addCase(loadDocuments.pending, (state) => {
+        state.loading = true;
+      }).
+      addCase(loadDocuments.fulfilled, (state, action) => {
+        state.documents = action.payload.documents.reduce((list, doc) => ({
+          ...list,
+          [doc.id]: {
+            ...doc,
+            receivedAt: doc.received_at,
+            listComments: false,
+            wasUpdated: !isNil(doc.previous_document_version_id) && !doc.opened_by_current_user
+          }
+        }), {});
+      }).
+      addMatcher(
+        (action) => [
+          loadDocuments.fulfilled.toString(),
+          loadDocuments.rejected.toString()
+        ].includes(action.type),
+        (state) => {
+          // Reset the Loading State
+          state.loading = false;
+        }).
       addMatcher(
         (action) => [
           selectCurrentPdfLocally.toString()
@@ -225,6 +280,14 @@ const documentListSlice = createSlice({
               // Update the state for all the search category highlights
               if (matchesCategories !== state.searchCategoryHighlights[doc.id]) {
                 state.searchCategoryHighlights[doc.id] = matchesCategories;
+              }
+
+              // Determine whether the comment contains the search query
+              const containsWords = commentContainsWords(searchQuery, action.payload, doc);
+
+              // Updating the state of all annotations for expanded comments
+              if (containsWords !== doc.listComments) {
+                state.documents[doc.id].listComments = containsWords;
               }
             });
           }

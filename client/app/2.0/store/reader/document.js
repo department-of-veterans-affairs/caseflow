@@ -1,5 +1,5 @@
 import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { isNil, differenceWith, differenceBy, find, pick } from 'lodash';
+import { differenceWith, differenceBy, find, pick } from 'lodash';
 import uuid from 'uuid';
 
 // Local Dependencies
@@ -13,48 +13,16 @@ import {
   clearTagFilters,
   setSearch,
   clearSearch,
-  clearAllFilters
+  clearAllFilters,
+  loadDocuments
 } from 'store/reader/documentList';
-import { showPdf } from 'store/reader/pdf';
-import { addMetaLabel, commentContainsWords, formatCategoryName } from 'utils/reader';
+import { addMetaLabel, formatCategoryName } from 'utils/reader';
 
 /**
  * PDF Initial State
  */
 export const initialState = {
-  loading: false,
-  list: {}
 };
-
-/**
- * Dispatcher to Load Appeal Documents
- */
-export const loadDocuments = createAsyncThunk('documents/load', async (params, { getState, dispatch }) => {
-  // Get the current state
-  const state = getState();
-
-  // Request the Documents for the Appeal
-  const { body } = await ApiUtil.get(`/reader/appeal/${params.vacolsId}/documents?json`, {}, ENDPOINT_NAMES.DOCUMENTS);
-
-  // Load the Document if the Doc ID is present
-  if (params.docId) {
-    dispatch(showPdf({
-      current: params.currentDocument,
-      documents: body.appealDocuments,
-      docId: params.docId,
-      worker: params.worker,
-      scale: params.scale
-    }));
-  }
-
-  // Return the response and attach the Filter Criteria
-  return {
-    ...body,
-    ...params,
-    documents: body.appealDocuments,
-    filterCriteria: state.reader.documentList.filterCriteria
-  };
-});
 
 /**
  * Dispatcher to Remove Tags from a Document
@@ -179,9 +147,6 @@ const documentsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.
-      addCase(loadDocuments.pending, (state) => {
-        state.loading = true;
-      }).
       /* eslint-disable */
       addCase(selectCurrentPdf.rejected, (state, action) => {
         console.log('Error marking as read', action.payload.docId, action.payload.errorMessage);
@@ -240,17 +205,7 @@ const documentsSlice = createSlice({
         // Reset the pending Removal for the selected tag to false
         state.list[action.payload.doc.id].tags[action.payload.tag.id].pendingRemoval = false;
       }).
-      addCase(loadDocuments.fulfilled, (state, action) => {
-        state.list = action.payload.documents.reduce((list, doc) => ({
-          ...list,
-          [doc.id]: {
-            ...doc,
-            receivedAt: doc.received_at,
-            listComments: false,
-            wasUpdated: !isNil(doc.previous_document_version_id) && !doc.opened_by_current_user
-          }
-        }), {});
-      }).
+
       addCase(handleCategoryToggle.fulfilled, {
         reducer: (state, action) => {
           state.list[action.payload.docId][action.payload.categoryKey] = action.payload.toggleState;
@@ -273,15 +228,6 @@ const documentsSlice = createSlice({
       }).
       addMatcher(
         (action) => [
-          loadDocuments.fulfilled.toString(),
-          loadDocuments.rejected.toString()
-        ].includes(action.type),
-        (state) => {
-          // Reset the Loading State
-          state.loading = false;
-        }).
-      addMatcher(
-        (action) => [
           toggleDocumentCategoryFail.toString(),
           handleCategoryToggle.rejected.toString()
         ].includes(action.type),
@@ -297,39 +243,7 @@ const documentsSlice = createSlice({
         (state, action) => {
           state.list[action.payload.docId].opened_by_current_user = true;
         }
-      ).
-
-      addMatcher(
-        (action) => [
-          changeSortState.toString(),
-          clearCategoryFilters.toString(),
-          setCategoryFilter.toString(),
-          setTagFilter.toString(),
-          clearTagFilters.toString(),
-          setSearch.toString(),
-          clearSearch.toString(),
-          clearAllFilters.toString(),
-          loadDocuments.fulfilled.toString()
-        ].includes(action.type), (state, { payload, ...action }) => {
-          // Format the search query
-          const searchQuery = action.type === clearSearch.toString() ?
-            '' :
-            payload.filterCriteria.searchQuery.toLowerCase();
-
-          // Loop through all the documents to update the list comments
-          Object.keys(state.list).forEach((docId) => {
-            // Get the Document
-            const doc = state.list[docId];
-
-            // Determine whether the comment contains the search query
-            const containsWords = commentContainsWords(searchQuery, payload, doc);
-
-            // Updating the state of all annotations for expanded comments
-            if (containsWords !== doc.listComments) {
-              state.list[doc.id].listComments = containsWords;
-            }
-          });
-        });
+      );
   }
 });
 

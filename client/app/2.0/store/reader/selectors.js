@@ -10,7 +10,7 @@ import { escapeRegExp, loadAppeal, documentsView } from 'utils/reader';
  * @param {Object} state -- The current Redux Store state
  * @returns {Object} -- The Documents
  */
-export const docState = (state) => state.reader.document.list;
+export const docState = (state) => state.reader.documentList.documents;
 
 /**
  * Selector for the Filtered Doc IDs
@@ -85,7 +85,7 @@ export const selectedIndexState = (state) => state.searchAction.matchIndex;
  */
 export const filteredDocuments = ({ reader }) =>
   reader.documentList.filteredDocIds.reduce(
-    (list, id) => ({ ...list, [id]: reader.document.list[id] }),
+    (list, id) => ({ ...list, [id]: reader.documentList.documents[id] }),
     {}
   );
 
@@ -212,7 +212,7 @@ export const documentListScreen = (state) => {
     documents,
     docsCount,
     currentDocument: state.reader.pdf.currentDocument,
-    storeDocuments: state.reader.document.list,
+    storeDocuments: state.reader.documentList.documents,
     documentList: state.reader.documentList,
     annotations: documentAnnotations(state),
     documentsView: documentsView(
@@ -263,7 +263,7 @@ export const documentScreen = (state) => {
     ),
     searchCategoryHighlights: state.reader.documentList.searchCategoryHighlights,
     documentFilters: state.reader.documentList.pdfList.filters,
-    storeDocuments: state.reader.document.list,
+    storeDocuments: state.reader.documentList.documents,
     isPlacingAnnotation: state.reader.annotationLayer.isPlacingAnnotation,
     annotations: documentAnnotations(state),
     pdf: state.reader.pdf,

@@ -20,7 +20,7 @@ const ReaderRoutes = (props) => {
 
   // Get the Reader Loading Status
   const { loading } = useSelector((state) => ({
-    loading: state.reader.document.loading
+    loading: state.reader.documentList.loading
   }));
 
   // Return the list of routes
