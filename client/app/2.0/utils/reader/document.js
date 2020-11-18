@@ -12,7 +12,7 @@ import {
   INTERACTION_TYPES
 } from 'store/constants/reader';
 import { formatCategoryName, formatFilterCriteria, searchString } from 'utils/reader';
-import { setZoomLevel } from 'store/reader/pdfViewer';
+import { setZoomLevel } from 'store/reader/documentViewer';
 import { fetchAppealDetails } from 'store/reader/appeal';
 import { stopPlacingAnnotation } from 'store/reader/annotationLayer';
 import { navigate } from 'store/routes';

@@ -3,7 +3,7 @@ import { createSelector, current } from '@reduxjs/toolkit';
 import { values, isEmpty, compact, uniqBy } from 'lodash';
 
 // Local Dependencies
-import { escapeRegExp, loadAppeal, documentsView } from 'utils/reader';
+import { escapeRegExp, documentsView } from 'utils/reader';
 
 /**
  * Selector for the Documents
@@ -211,7 +211,7 @@ export const documentListScreen = (state) => {
   return {
     documents,
     docsCount,
-    currentDocument: state.reader.pdf.currentDocument,
+    currentDocument: state.reader.documentViewer.selected,
     storeDocuments: state.reader.documentList.documents,
     documentList: state.reader.documentList,
     annotations: documentAnnotations(state),
@@ -220,7 +220,7 @@ export const documentListScreen = (state) => {
       state.reader.documentList.filterCriteria,
       state.reader.documentList.view
     ),
-    tagOptions: state.reader.pdfViewer.tagOptions,
+    tagOptions: state.reader.documentViewer.tagOptions,
     filterCriteria: state.reader.documentList.filterCriteria,
     filteredDocIds: state.reader.documentList.filteredDocIds,
     searchCategoryHighlights: state.reader.documentList.searchCategoryHighlights,
@@ -231,7 +231,7 @@ export const documentListScreen = (state) => {
     documentFilters: state.reader.documentList.pdfList.filters,
     isPlacingAnnotation: state.reader.annotationLayer.isPlacingAnnotation,
     appeal: state.reader.appeal.selected,
-    scale: state.reader.pdfViewer.scale
+    scale: state.reader.documentViewer.scale
   };
 };
 
@@ -247,19 +247,17 @@ export const documentScreen = (state) => {
   return {
     documents,
     docsCount,
+    currentDocument: state.reader.documentViewer.selected,
     filteredDocIds: state.reader.documentList.filteredDocIds,
-    currentDocument: state.reader.pdf.currentDocument,
     appeal: state.reader.appeal.selected,
     searchCategoryHighlights: state.reader.documentList.searchCategoryHighlights,
     documentFilters: state.reader.documentList.pdfList.filters,
     storeDocuments: state.reader.documentList.documents,
     isPlacingAnnotation: state.reader.annotationLayer.isPlacingAnnotation,
     annotations: documentAnnotations(state),
-    pdf: state.reader.pdf,
-    pdfViewer: state.reader.pdf,
     annotationLayer: state.reader.annotationLayer,
-    hidePdfSidebar: state.reader.pdf.hidePdfSidebar,
-    hideSearchBar: state.reader.pdf.hideSearchBar,
-    scale: state.reader.pdfViewer.scale
+    hidePdfSidebar: state.reader.documentViewer.hidePdfSidebar,
+    hideSearchBar: state.reader.documentViewer.hideSearchBar,
+    scale: state.reader.documentViewer.scale
   };
 };

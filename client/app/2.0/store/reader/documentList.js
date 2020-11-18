@@ -13,9 +13,8 @@ import {
   getQueueRedirectUrl,
   getQueueTaskType
 } from 'utils/reader';
-import { selectCurrentPdfLocally } from 'store/reader/documentViewer';
+import { showPdf, selectCurrentPdfLocally } from 'store/reader/documentViewer';
 import { onReceiveAnnotations } from 'store/reader/annotationLayer';
-import { showPdf } from 'store/reader/pdf';
 
 /**
  * PDF Initial State

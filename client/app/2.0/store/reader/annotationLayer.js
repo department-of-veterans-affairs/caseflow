@@ -4,7 +4,7 @@ import { createSlice, createAsyncThunk, current } from '@reduxjs/toolkit';
 import { keyBy } from 'lodash';
 
 // Local Dependencies
-import { handleSelectCommentIcon } from 'store/reader/pdfViewer';
+import { handleSelectCommentIcon } from 'store/reader/documentViewer';
 import { loadDocuments } from 'store/reader/documentList';
 import { addMetaLabel } from 'utils/reader';
 import { ENDPOINT_NAMES } from 'store/constants/reader';

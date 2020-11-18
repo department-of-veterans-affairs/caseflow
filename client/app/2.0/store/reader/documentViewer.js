@@ -1,22 +1,147 @@
 import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { differenceWith, differenceBy, find, pick } from 'lodash';
+import { differenceWith, differenceBy, find, pick, random, range } from 'lodash';
 import uuid from 'uuid';
+import * as PDF from 'pdfjs';
 
 // Local Dependencies
 import ApiUtil from 'app/util/ApiUtil';
-import { ENDPOINT_NAMES, ROTATION_INCREMENTS, COMPLETE_ROTATION } from 'store/constants/reader';
+import { ENDPOINT_NAMES, ROTATION_INCREMENTS, COMPLETE_ROTATION, COMMENT_ACCORDION_KEY } from 'store/constants/reader';
 import { addMetaLabel, formatCategoryName } from 'utils/reader';
+
+/**
+ * PDF SideBar Error State
+ */
+const initialPdfSidebarErrorState = {
+  tag: { visible: false, message: null },
+  category: { visible: false, message: null },
+  annotation: { visible: false, message: null },
+  description: { visible: false, message: null }
+};
 
 /**
  * PDF Initial State
  */
 export const initialState = {
+  hideSearchBar: true,
+  hidePdfSidebar: false,
+  scrollToComment: null,
+  pageDimensions: {},
+  documentErrors: {},
+  text: [],
+  selected: {},
+  loading: false,
+  openedAccordionSections: ['Categories', 'Issue tags', COMMENT_ACCORDION_KEY],
+  tagOptions: {},
+  jumpToPageNumber: null,
+  scrollTop: 0,
+  pdfSideBarError: initialPdfSidebarErrorState,
+  scrollToSidebarComment: null,
+  scale: 1,
+  windowingOverscan: random(5, 10),
+  search: {
+    matchIndex: 0,
+    indexToHighlight: null,
+    relativeIndex: 0,
+    pageIndexWithMatch: null,
+    extractedText: {},
+    searchIsLoading: false
+  }
 };
+
+/**
+ * Method for Extracting text from PDF Documents
+ */
+export const getDocumentText = createAsyncThunk('pdfSearch/documentText', async ({ pdfDocument, file }) => {
+  // Create a function to extract text
+  const extractText = (index) => pdfDocument.getPage(index + 1).then((page) => page.getTextContent());
+
+  // Map the Extract to promises
+  const textPromises = range(pdfDocument.pdfInfo.numPages).map((index) => extractText(index));
+
+  // Wait for the search to complete
+  const pages = await Promise.all(textPromises);
+
+  // Reduce the Pages to an object containing the matches
+  return pages.
+    reduce((acc, page, pageIndex) => ({
+      ...acc,
+      [`${file}-${pageIndex}`]: {
+        id: `${file}-${pageIndex}`,
+        file,
+        text: page.items.map((row) => row.str).join(' '),
+        pageIndex
+      }
+    }),
+    {});
+});
+
+export const showPage = createAsyncThunk('documentViewer/changePage', async(params) => {
+  // Convert the Array Buffer to a PDF
+  const pdf = await PDF.getDocument({ data: params.data }).promise;
+
+  console.log('PDF INFO: ', pdf.numPages);
+
+  // Get the first page
+  const page = await pdf.getPage(1);
+
+  console.log('PAGE: ', page);
+
+  // Select the canvas element to draw
+  const canvas = document.getElementById('pdf-canvas');
+
+  // Draw the PDF to the canvas
+  await page.render({
+    canvasContext: canvas.getContext('2d', { alpha: false }),
+    viewport: page.getViewport(params.scale)
+  }).promise;
+
+  // Update the store with the PDF Pages
+  return {
+    docId: params.docId,
+    numPages: pdf.numPages
+  };
+});
+
+/**
+ * Dispatcher to show the selected PDF
+ */
+export const showPdf = createAsyncThunk('documentViewer/show', async ({
+  current,
+  documents,
+  docId,
+  worker,
+  scale
+}, { dispatch }) => {
+  // Attach the Service Worker if not already attached
+  if (PDF.GlobalWorkerOptions.workerSrc !== worker) {
+    PDF.GlobalWorkerOptions.workerSrc = worker;
+  }
+
+  // Get the Selected Document
+  const [currentDocument] = documents.filter((doc) => doc.id.toString() === docId);
+
+  // Request the Document if it is not loaded
+  if (current.id !== currentDocument.id) {
+  // Request the PDF document from eFolder
+    const { body } = await ApiUtil.get(currentDocument.content_url, {
+      cache: true,
+      withCredentials: true,
+      timeout: true,
+      responseType: 'arraybuffer'
+    });
+
+    // Set the Page
+    dispatch(showPage({ scale, data: body, docId: currentDocument.id }));
+  }
+
+  // Return the Document Buffer
+  return { selected: currentDocument };
+});
 
 /**
  * Dispatcher to Remove Tags from a Document
  */
-export const removeTag = createAsyncThunk('documents/removeTag', async({ doc, tag }) => {
+export const removeTag = createAsyncThunk('documentViewer/removeTag', async({ doc, tag }) => {
   // Request the deletion of the selected tag
   await ApiUtil.delete(`/document/${doc.id}/tag/${tag.id}`, {}, ENDPOINT_NAMES.TAG);
 
@@ -27,7 +152,7 @@ export const removeTag = createAsyncThunk('documents/removeTag', async({ doc, ta
 /**
  * Dispatcher to Add Tags for a Document
  */
-export const addTag = createAsyncThunk('documents/addTag', async({ doc, newTags }) => {
+export const addTag = createAsyncThunk('documentViewer/addTag', async({ doc, newTags }) => {
   // Request the addition of the selected tags
   const { body } = await ApiUtil.post(`/document/${doc.id}/tag`, { data: { tags: newTags } }, ENDPOINT_NAMES.TAG);
 
@@ -38,7 +163,7 @@ export const addTag = createAsyncThunk('documents/addTag', async({ doc, newTags 
 /**
  * Dispatcher to Save Description for a Document
  */
-export const saveDocumentDescription = createAsyncThunk('documents/saveDescription', async({ docId, description }) => {
+export const saveDocumentDescription = createAsyncThunk('documentViewer/saveDescription', async({ docId, description }) => {
   // Request the addition of the selected tags
   await ApiUtil.patch(`/document/${docId}`, { data: { description } });
 
@@ -49,7 +174,7 @@ export const saveDocumentDescription = createAsyncThunk('documents/saveDescripti
 /**
  * Dispatcher to Remove Tags from a Document
  */
-export const selectCurrentPdf = createAsyncThunk('documents/saveDescription', async({ docId }) => {
+export const selectCurrentPdf = createAsyncThunk('documentViewer/saveDescription', async({ docId }) => {
   // Request the addition of the selected tags
   await ApiUtil.patch(`/document/${docId}/mark-as-read`, {}, ENDPOINT_NAMES.MARK_DOC_AS_READ);
 
@@ -60,17 +185,17 @@ export const selectCurrentPdf = createAsyncThunk('documents/saveDescription', as
 /**
  * Dispatcher to Set the PDF as Opened
  */
-export const selectCurrentPdfLocally = createAction('documents/selectCurrentPdfLocally');
+export const selectCurrentPdfLocally = createAction('documentViewer/selectCurrentPdfLocally');
 
 /**
  * Dispatcher to Set the PDF as Opened
  */
-export const toggleDocumentCategoryFail = createAction('documents/toggleDocumentCategoryFail');
+export const toggleDocumentCategoryFail = createAction('documentViewer/toggleDocumentCategoryFail');
 
 /**
  * Dispatcher to Remove Tags from a Document
  */
-export const handleCategoryToggle = createAsyncThunk('documents/handleCategoryToggle', async({
+export const handleCategoryToggle = createAsyncThunk('documentViewer/handleCategoryToggle', async({
   docId,
   categoryKey,
   toggleState
@@ -93,6 +218,66 @@ const documentViewerSlice = createSlice({
   name: 'documentViewer',
   initialState,
   reducers: {
+    updateSearchIndex: {
+      reducer: (state, action) => {
+        // Increment or Decrement the match index based on the payload
+        state.matchIndex = action.payload.increment ?
+          state.matchIndex + 1 :
+          state.matchIndex - 1;
+      },
+      prepare: (increment) => ({ payload: { increment } })
+    },
+    setSearchIndex: {
+      reducer: (state, action) => {
+        // Update the Search Index
+        state.matchIndex = action.payload.index;
+      },
+      prepare: (index) => ({ payload: { index } })
+    },
+    setSearchIndexToHighlight: {
+      reducer: (state, action) => {
+        // Update the Search Index
+        state.matchIndex = action.payload.index;
+      },
+      prepare: (index) => ({ payload: { index } })
+    },
+    updateSearchIndexPage: {
+      reducer: (state, action) => {
+        // Update the Page Index
+        state.pageIndexWithMatch = action.payload.index;
+      },
+      prepare: (index) => ({ payload: { index } })
+    },
+    updateSearchRelativeIndex: {
+      reducer: (state, action) => {
+        // Update the Relative Index
+        state.relativeIndex = action.payload.index;
+      },
+      prepare: (index) => ({ payload: { index } })
+    },
+    searchText: {
+      reducer: (state, action) => {
+        // Update the Search Term
+        state.searchTerm = action.payload.searchTerm;
+
+        // Set the search index to 0
+        state.matchIndex = 0;
+      },
+      prepare: (searchTerm) => ({ payload: { searchTerm } })
+    },
+    setSearchIsLoading: {
+      reducer: (state, action) => {
+        // Update the Search Term
+        state.searchIsLoading = action.payload.searchIsLoading;
+      },
+      prepare: (searchIsLoading) => ({ payload: { searchIsLoading } })
+    },
+    handleSelectCommentIcon: {
+      reducer: (state, action) => {
+        state.scrollToSidebarComment = action.payload.scrollToSidebarComment;
+      },
+      prepare: (comment) => ({ payload: { scrollToSidebarComment: comment } })
+    },
     changePendingDocDescription: {
       reducer: (state, action) => {
         state.list[action.payload.docId].pendingDescription = action.payload.description;
@@ -136,6 +321,13 @@ const documentViewerSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.
+      addCase(showPdf.pending, (state) => {
+        state.loading = true;
+      }).
+      addCase(showPage.fulfilled, (state, action) => {
+      // Add the PDF data to the store
+        state.selected = action.payload;
+      }).
       /* eslint-disable */
       addCase(selectCurrentPdf.rejected, (state, action) => {
         console.log('Error marking as read', action.payload.docId, action.payload.errorMessage);
@@ -242,7 +434,10 @@ export const {
   resetPendingDocDescription,
   rotateDocument,
   closeDocumentUpdatedModal,
-  handleToggleCommentOpened
+  handleToggleCommentOpened,
+  handleSelectCommentIcon,
+  onScrollToComment,
+  setZoomLevel
 } = documentViewerSlice.actions;
 
 // Default export the reducer

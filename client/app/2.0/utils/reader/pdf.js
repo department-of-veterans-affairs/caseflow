@@ -5,7 +5,7 @@ import { memoize } from 'lodash';
 import { getQueryParams } from 'app/util/QueryParamsUtil';
 import { CATEGORIES } from 'store/constants/reader';
 import { stopPlacingAnnotation } from 'store/reader/annotationLayer';
-import { onScrollToComment } from 'store/reader/pdf';
+import { onScrollToComment } from 'store/reader/documentViewer';
 import { setCategoryFilter } from 'store/reader/documentList';
 
 /**
