@@ -10,12 +10,17 @@ import AddCavcRemandView from './AddCavcRemandView';
 export default {
   title: 'Queue/AddCavcRemandView',
   component: AddCavcRemandView,
+  parameters: {
+    controls: { expanded: true },
+  },
+  argTypes: {
+    highlightInvalid: { control: { type: 'boolean' } },
+    error: { control: { type: 'text' } },
+  },
 };
 
 const appealId = '1234';
 const decisionIssues = [{ description: 'This is the description of the decision issue.' }];
-const highlightFormItems = false;
-const backEndError = null;
 const initialState = {
   queue: {
     appealDetails: {
@@ -28,9 +33,9 @@ const initialState = {
     }
   },
   ui: {
-    highlightFormItems,
+    highlightFormItems: false,
     messages: {
-      error: backEndError
+      error: null
     },
     modals: {
       cancelCheckout: false
@@ -45,12 +50,18 @@ const initialState = {
   }
 };
 
-const Template = (args) => (
-  <BrowserRouter>
+const Template = (args) => {
+  initialState.ui.highlightFormItems = args.highlightInvalid;
+  initialState.ui.messages.error = args.error;
+
+  return <BrowserRouter>
     <ReduxBase initialState={initialState} store={createStore(reducer, initialState)} reducer={reducer}>
       <AddCavcRemandView appealId={appealId} {...args} />
     </ReduxBase>
-  </BrowserRouter>
-);
+  </BrowserRouter>;
+};
 
 export const Default = Template.bind({});
+
+export const ServerError = Template.bind({});
+ServerError.args = { error: { title: 'Error', detail: 'We could not complete your request' } };
