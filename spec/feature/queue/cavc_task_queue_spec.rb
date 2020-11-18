@@ -64,7 +64,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
       end
       after { FeatureToggle.disable!(:cavc_remand) }
 
-      it "allows admin to assign SendCavcRemandProcessedLetterTask to user" do
+      it "allows the user to intake a cavc remand" do
         visit "queue/appeals/#{appeal.external_id}"
         page.find("button", text: "+ Add CAVC Remand").click
 
