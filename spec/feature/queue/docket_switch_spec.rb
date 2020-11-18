@@ -157,4 +157,40 @@ RSpec.feature "Docket Switch", :all_dbs do
       end
     end
   end
+
+  describe "COTB attorney completes docket switch denial" do
+    let!(:docket_switch_denied_task) do
+      create(
+        :docket_switch_denied_task,
+        appeal: appeal,
+        # parent: root_task,
+        assigned_to: cotb_attorney,
+        assigned_by: judge
+      )
+    end
+    let(:receipt_date) { Time.zone.today - 5.days }
+    let(:context) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit" }
+
+    it "allows attorney to complete the docket switch denial" do
+      User.authenticate!(user: cotb_attorney)
+      visit "/queue/appeals/#{appeal.uuid}"
+      find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_SWITCH_DENIED.label).click
+
+      expect(page).to have_content(format(COPY::DOCKET_SWITCH_DENIAL_TITLE, appeal.claimant.name))
+      expect(page).to have_content(COPY::DOCKET_SWITCH_DENIAL_INSTRUCTIONS)
+
+      fill_in "What is the Receipt Date of the docket switch request?", with: receipt_date
+      fill_in("context", with: context)
+
+      click_button(text: "Continue")
+
+      # Return back to user's queue
+      expect(page).to have_current_path("/queue")
+
+      # Verify correct success alert
+
+      # Verify that denial completed correctly
+    end
+  end
 end
