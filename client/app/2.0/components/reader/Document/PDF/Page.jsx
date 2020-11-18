@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 // Internal Dependencies
-import CommentLayer from 'app/reader/CommentLayer';
+import { Comments } from 'components/reader/Document/Comments';
 import { pageNumber } from 'utils/reader';
 import { markStyles, pageStyles, pdfPageStyles } from 'styles/reader/Document/Pdf';
 
@@ -27,50 +27,52 @@ export const Page = ({
   file,
   innerWidth,
   innerHeight,
-  isDrawing,
   rotation,
   style,
   numPages,
   numColumns,
   rowIndex,
-  columnIndex
-}) => pageIndex >= numPages ? (
-  <div key={(numColumns * rowIndex) + columnIndex} style={style} />
-) : (
-  <div key={pageIndex} style={style}>
-    <div
-      id={isVisible ? `pageContainer${pageNumber(pageIndex)}` : null}
-      className={classNames({
-        page: true,
-        'cf-pdf-pdfjs-container': true,
-        'cf-pdf-placing-comment': isPlacingAnnotation
-      })}
-      style={pageStyles({ width: outerWidth, height: outerHeight, scale, visible: isVisible })}
-      onClick={onClick}
-      ref={pageRef}
-      {...markStyles}
-    >
+  columnIndex,
+  ...props
+}) => {
+  return pageIndex >= numPages ? (
+    <div key={(numColumns * rowIndex) + columnIndex} style={style} />
+  ) : (
+    <div key={pageIndex} style={style}>
       <div
-        id={isVisible && `rotationDiv${pageNumber(pageIndex)}`}
-        className={classNames({ 'cf-pdf-page-hidden': isDrawing })}
-        style={pdfPageStyles(rotation, outerHeight, outerWidth)}
+        id={isVisible ? `pageContainer${pageNumber(pageIndex)}` : null}
+        className={classNames({
+          page: true,
+          'cf-pdf-pdfjs-container': true,
+          'cf-pdf-placing-comment': isPlacingAnnotation
+        })}
+        // style={pageStyles({ width: outerWidth, height: outerHeight, scale, visible: true })}
+        onClick={onClick}
+        ref={pageRef}
+        {...markStyles}
       >
-        <canvas id="pdf-canvas" ref={canvasRef} className="canvasWrapper" />
-        <div className="cf-pdf-annotationLayer">
-          <CommentLayer
-            documentId={documentId}
-            pageIndex={pageIndex}
-            scale={scale}
-            getTextLayerRef={textLayerRef}
-            file={file}
-            dimensions={{ width: innerWidth, height: innerHeight }}
-            isVisible={isVisible}
-          />
+        <div
+          id={isVisible && `rotationDiv${pageNumber(pageIndex)}`}
+          style={pdfPageStyles(rotation, outerHeight, outerWidth)}
+        >
+          <canvas id="pdf-canvas" ref={canvasRef} className="canvasWrapper" />
+          <div className="cf-pdf-annotationLayer">
+            <Comments
+              {...props}
+              documentId={documentId}
+              pageIndex={pageIndex}
+              scale={scale}
+              getTextLayerRef={textLayerRef}
+              file={file}
+              dimensions={{ width: innerWidth, height: innerHeight }}
+              isVisible={isVisible}
+            />
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 Page.propTypes = {
   isVisible: PropTypes.bool,

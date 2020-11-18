@@ -35,8 +35,8 @@ export const pdfStyles = {
 
 export const fileContainerStyles = { position: 'relative', width: '100%', height: '100%' };
 
-export const gridStyles = (isVisible) => ({
-  visibility: `${isVisible ? 'visible' : 'hidden'}`,
+export const gridStyles = () => ({
+  visibility: 'visible',
   margin: '0 auto',
   marginBottom: `-${PAGE_MARGIN}px`
 });

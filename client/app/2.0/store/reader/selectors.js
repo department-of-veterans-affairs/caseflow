@@ -237,6 +237,7 @@ export const documentListScreen = (state) => {
       state.reader.pdfViewer.loadedAppealId,
       state.reader.pdfViewer.loadedAppeal
     ),
+    scale: state.reader.pdfViewer.scale
   };
 };
 
@@ -269,6 +270,7 @@ export const documentScreen = (state) => {
     pdfViewer: state.reader.pdf,
     annotationLayer: state.reader.annotationLayer,
     hidePdfSidebar: state.reader.pdf.hidePdfSidebar,
-    hideSearchBar: state.reader.pdf.hideSearchBar
+    hideSearchBar: state.reader.pdf.hideSearchBar,
+    scale: state.reader.pdfViewer.scale
   };
 };

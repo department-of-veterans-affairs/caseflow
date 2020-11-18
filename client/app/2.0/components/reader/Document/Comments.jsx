@@ -22,8 +22,7 @@ export const Comments = ({
   isVisible,
   annotations,
   onDrag,
-  position,
-  rotation,
+  currentDocument,
   selected,
   textLayerRef,
   dimensions,
@@ -42,7 +41,8 @@ export const Comments = ({
   >
     {isVisible && annotations.map((comment) => (
       <div
-        style={{ left: position.x, top: position.y, transform: `rotate(${rotation}deg)` }}
+        key={comment.uuid}
+        style={{ left: comment.x, top: comment.y, transform: `rotate(${currentDocument.rotation}deg)` }}
         data-placing-annotation-icon={comment.isPlacingAnnotationIcon}
         className="commentIcon-container"
         id={`commentIcon-container-${comment.uuid}`}
@@ -69,7 +69,7 @@ Comments.propTypes = {
   isVisible: PropTypes.bool,
   onDrag: PropTypes.func,
   position: PropTypes.number,
-  rotation: PropTypes.number,
+  currentDocument: PropTypes.object,
   selected: PropTypes.bool,
   textLayerRef: PropTypes.element,
   scale: PropTypes.number,

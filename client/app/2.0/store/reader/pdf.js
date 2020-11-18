@@ -17,9 +17,11 @@ export const initialState = {
   loading: false
 };
 
-export const showPage = createAsyncThunk('pdf/changePage', async(data) => {
+export const showPage = createAsyncThunk('pdf/changePage', async(params) => {
   // Convert the Array Buffer to a PDF
-  const pdf = await PDF.getDocument({ data }).promise;
+  const pdf = await PDF.getDocument({ data: params.data }).promise;
+
+  console.log('PDF INFO: ', pdf.numPages);
 
   // Get the first page
   const page = await pdf.getPage(1);
@@ -27,17 +29,31 @@ export const showPage = createAsyncThunk('pdf/changePage', async(data) => {
   console.log('PAGE: ', page);
 
   // Select the canvas element to draw
-  // const canvas = document.getElementById('pdf-canvas');
-
-  // console.log('CANVAS: ', canvas);
+  const canvas = document.getElementById('pdf-canvas');
 
   // Draw the PDF to the canvas
+  await page.render({
+    canvasContext: canvas.getContext('2d', { alpha: false }),
+    viewport: page.getViewport(params.scale)
+  }).promise;
+
+  // Update the store with the PDF Pages
+  return {
+    docId: params.docId,
+    numPages: pdf.numPages
+  };
 });
 
 /**
  * Dispatcher to show the selected PDF
  */
-export const showPdf = createAsyncThunk('pdf/show', async ({ current, documents, docId, worker }, { dispatch }) => {
+export const showPdf = createAsyncThunk('pdf/show', async ({
+  current,
+  documents,
+  docId,
+  worker,
+  scale
+}, { dispatch }) => {
   // Attach the Service Worker if not already attached
   if (PDF.GlobalWorkerOptions.workerSrc !== worker) {
     PDF.GlobalWorkerOptions.workerSrc = worker;
@@ -57,7 +73,7 @@ export const showPdf = createAsyncThunk('pdf/show', async ({ current, documents,
     });
 
     // Set the Page
-    dispatch(showPage(body));
+    dispatch(showPage({ scale, data: body, docId: currentDocument.id }));
   }
 
   // Return the Document Buffer
@@ -111,6 +127,12 @@ const pdfSlice = createSlice({
     builder.
       addCase(showPdf.pending, (state) => {
         state.loading = true;
+      }).
+      addCase(showPage.fulfilled, (state, action) => {
+        // Add the PDF data to the store
+        state.pdfDocuments[action.payload.docId] = {
+          numPages: action.payload.numPages,
+        };
       });
   }
 });

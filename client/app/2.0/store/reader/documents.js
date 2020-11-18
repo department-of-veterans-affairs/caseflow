@@ -42,7 +42,8 @@ export const loadDocuments = createAsyncThunk('documents/load', async (params, {
       current: params.currentDocument,
       documents: body.appealDocuments,
       docId: params.docId,
-      worker: params.worker
+      worker: params.worker,
+      scale: params.scale
     }));
   }
 
