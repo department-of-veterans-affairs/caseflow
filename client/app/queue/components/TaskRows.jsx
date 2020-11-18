@@ -323,6 +323,11 @@ class TaskRows extends React.PureComponent {
 
   toggleEditNODModal = () => this.setState((state) => ({ showEditNODModal: !state.showEditNODModal }));
 
+  handleNODDateChange = () => {
+    this.props.onEditNodDateChange();
+    this.toggleEditNODModal();
+  }
+
   render = () => {
     const {
       appeal,
@@ -384,6 +389,7 @@ class TaskRows extends React.PureComponent {
               {this.state.showEditNODModal && (
                 <EditNODModal
                   onCancel={this.toggleEditNODModal}
+                  onSubmit={this.props.onEditNodDateChange}
                   nodDate={appeal.nodDate}
                 />
               )}
@@ -400,7 +406,8 @@ TaskRows.propTypes = {
   editNodDateEnabled: PropTypes.bool,
   hideDropdown: PropTypes.bool,
   taskList: PropTypes.array,
-  timeline: PropTypes.bool
+  timeline: PropTypes.bool,
+  onEditNodDateChange: PropTypes.func
 };
 
 export default TaskRows;

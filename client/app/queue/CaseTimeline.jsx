@@ -1,35 +1,44 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { caseTimelineTasksForAppeal } from './selectors';
 import COPY from '../../COPY';
 import TaskRows from './components/TaskRows';
+import { showSuccessMessage, resetSuccessMessages } from './uiReducer/uiActions';
 
-export class CaseTimeline extends React.PureComponent {
-  constructor() {
-    super();
-    this.state = { editNODChangeSuccessful: false };
-  }
-
-  render = () => {
+function CaseTimeline (props) {
+  const handleEditNodDateChange = () => {
     const {
       appeal,
-      tasks,
-    } = this.props;
+      tasks
+    } = props;
 
-    return <React.Fragment>
+    const dispatch = useDispatch();
+
+    const successMessage = {
+      title: COPY.EDIT_NOD_DATE_SUCCESS_ALERT_TITLE,
+      detail: COPY.EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE,
+    };
+
+    dispatch(showSuccessMessage(successMessage));
+    setTimeout(() => dispatch(resetSuccessMessages()), 5000);
+  }
+
+  return (
+    <React.Fragment>
       {COPY.CASE_TIMELINE_HEADER}
       <table id="case-timeline-table" summary="layout table">
         <tbody>
           <TaskRows appeal={appeal}
             taskList={tasks}
             editNodDateEnabled={this.props.featureToggles?.editNodDate}
+            onEditNodDateChange={this.handleEditNodDateChange}
             timeline
           />
         </tbody>
       </table>
-    </React.Fragment>;
-  }
+    </React.Fragment>
+  );
 }
 
 CaseTimeline.propTypes = {
