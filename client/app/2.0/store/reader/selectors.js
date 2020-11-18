@@ -220,8 +220,6 @@ export const documentListScreen = (state) => {
       state.reader.documentList.filterCriteria,
       state.reader.documentList.viewingDocumentsOrComments
     ),
-    caseSelectedAppeal: state.reader.caseSelect.selectedAppeal,
-    loadedAppealId: state.reader.pdfViewer.loadedAppealId,
     tagOptions: state.reader.pdfViewer.tagOptions,
     filterCriteria: state.reader.documentList.filterCriteria,
     filteredDocIds: state.reader.documentList.filteredDocIds,
@@ -232,11 +230,7 @@ export const documentListScreen = (state) => {
     queueTaskType: state.reader.documentList.queueTaskType,
     documentFilters: state.reader.documentList.pdfList.filters,
     isPlacingAnnotation: state.reader.annotationLayer.isPlacingAnnotation,
-    appeal: loadAppeal(
-      state.reader.caseSelect.assignments,
-      state.reader.pdfViewer.loadedAppealId,
-      state.reader.pdfViewer.loadedAppeal
-    ),
+    appeal: state.reader.appeal.selected,
     scale: state.reader.pdfViewer.scale
   };
 };
@@ -255,12 +249,7 @@ export const documentScreen = (state) => {
     docsCount,
     filteredDocIds: state.reader.documentList.filteredDocIds,
     currentDocument: state.reader.pdf.currentDocument,
-    loadedAppealId: state.reader.pdfViewer.loadedAppealId,
-    appeal: loadAppeal(
-      state.reader.caseSelect.assignments,
-      state.reader.pdfViewer.loadedAppealId,
-      state.reader.pdfViewer.loadedAppeal
-    ),
+    appeal: state.reader.appeal.selected,
     searchCategoryHighlights: state.reader.documentList.searchCategoryHighlights,
     documentFilters: state.reader.documentList.pdfList.filters,
     storeDocuments: state.reader.documentList.documents,

@@ -1,9 +1,8 @@
-import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { random, uniqWith, isEqual, difference, flatten } from 'lodash';
-import { CATEGORIES, ENDPOINT_NAMES, COMMENT_ACCORDION_KEY } from 'store/constants/reader';
+import { createSlice, createAction } from '@reduxjs/toolkit';
+import { random, difference } from 'lodash';
+import { CATEGORIES, COMMENT_ACCORDION_KEY } from 'store/constants/reader';
 import { deleteAnnotation, moveAnnotation, editAnnotation, stopPlacingAnnotation } from 'store/reader/annotationLayer';
 import { addMetaLabel } from 'utils/reader/format';
-import ApiUtil from 'app/util/ApiUtil';
 import {
   removeTag,
   addTag,
@@ -13,7 +12,6 @@ import {
   toggleDocumentCategoryFail,
   handleCategoryToggle
 } from 'store/reader/document';
-import { loadDocuments } from 'store/reader/documentList';
 
 /**
  * PDF SideBar Error State
@@ -30,7 +28,6 @@ const initialPdfSidebarErrorState = {
  */
 export const initialState = {
   loadedAppealId: null,
-  loadedAppeal: {},
   openedAccordionSections: ['Categories', 'Issue tags', COMMENT_ACCORDION_KEY],
   tagOptions: {},
   hidePdfSidebar: false,
@@ -38,7 +35,6 @@ export const initialState = {
   scrollTop: 0,
   hideSearchBar: true,
   pdfSideBarError: initialPdfSidebarErrorState,
-  didLoadAppealFail: false,
   scrollToSidebarComment: null,
   scale: 1,
   windowingOverscan: random(5, 10)
@@ -57,17 +53,6 @@ export const setErrorMessageState = (state, errorType, isVisible, errorMsg = nul
     message: isVisible ? errorMsg : null
   };
 };
-
-/**
- * Appeal Details State
- */
-export const fetchAppealDetails = createAsyncThunk('pdfViewer/fetchAppeal', async (vacolsId) => {
-  // Request the Appeal
-  const { body } = await ApiUtil.get(`/reader/appeal/${vacolsId}?json`, {}, ENDPOINT_NAMES.APPEAL_DETAILS);
-
-  // Return the Body containing the appeal details
-  return body;
-});
 
 /**
  * Dispatcher for collecting all tags
@@ -166,17 +151,10 @@ const pdfViewerSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.
-      addCase(fetchAppealDetails.fulfilled, (state, action) => {
-        state.loadedAppeal = action.payload.appeal.data.attributes;
-      }).
-      addCase(fetchAppealDetails.rejected, (state) => {
-        state.didLoadAppealFail = true;
-      }).
       addMatcher((action) => [
         collectAllTags.toString(),
         removeTag.fulfilled.toString(),
         addTag.fulfilled.toString(),
-        loadDocuments.fulfilled.toString()
       ].includes(action.type),
       (state, action) => {
         // Set the documents based on the action
@@ -187,11 +165,6 @@ const pdfViewerSlice = createSlice({
           ...list,
           [documents[doc].tags.length && documents[doc].id]: documents[doc].tags
         }), {});
-
-        // Set the Appeal ID if loading documents
-        if (action.type === loadDocuments.fulfilled.toString()) {
-          state.loadedAppealId = action.payload.vacolsId;
-        }
       }).
       // Match any actions that should hide the annotations error messages
       addMatcher(

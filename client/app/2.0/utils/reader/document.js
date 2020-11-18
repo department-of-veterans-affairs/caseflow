@@ -12,7 +12,8 @@ import {
   INTERACTION_TYPES
 } from 'store/constants/reader';
 import { formatCategoryName, formatFilterCriteria, searchString } from 'utils/reader';
-import { fetchAppealDetails, setZoomLevel } from 'store/reader/pdfViewer';
+import { setZoomLevel } from 'store/reader/pdfViewer';
+import { fetchAppealDetails } from 'store/reader/appeal';
 import { stopPlacingAnnotation } from 'store/reader/annotationLayer';
 import { navigate } from 'store/routes';
 
@@ -21,7 +22,7 @@ import { navigate } from 'store/routes';
  * @param {string} loadedId -- Id of the Appeal in the Store
  * @param {string} vacolsId -- The New Appeal ID
  */
-export const fetchDocuments = ({ loadedAppealId, appeal, params }, dispatch) => () => {
+export const fetchDocuments = ({ appeal, params }, dispatch) => () => {
   // Set the crumbs for the Reader app
   const crumbs = [{
     breadcrumb: 'Reader',
@@ -40,7 +41,7 @@ export const fetchDocuments = ({ loadedAppealId, appeal, params }, dispatch) => 
   dispatch(navigate({ crumbs }));
 
   // Load the Data Needed by the Documents List
-  if (loadedAppealId !== params.vacolsId) {
+  if (appeal.id !== params.vacolsId) {
     // Load the new Documents
     dispatch(loadDocuments(params));
   }

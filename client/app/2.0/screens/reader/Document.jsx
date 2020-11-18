@@ -40,7 +40,7 @@ const Document = (props) => {
       <div className={classNames('cf-pdf-container', { 'hidden-sidebar': state.hidePdfSidebar })} {...pdfWrapper}>
         <DocumentHeader
           {...state}
-          documentPathBase={`/reader/appeal/${ state.loadedAppealId }/documents`}
+          documentPathBase={`/reader/appeal/${ state.appeal.id }/documents`}
           doc={state.currentDocument}
         />
         <DocumentSearch {...state} hidden={state.hideSearchBar} />
@@ -74,7 +74,6 @@ Document.propTypes = {
   dropdownUrls: PropTypes.array,
   singleDocumentMode: PropTypes.bool,
   match: PropTypes.object,
-  loadedAppealId: PropTypes.string,
   annotations: PropTypes.array,
 
   // Required actions

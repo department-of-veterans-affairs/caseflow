@@ -71,7 +71,7 @@ const DocumentList = (props) => {
           <DocumentsTable
             {...state}
             {...actions}
-            documentPathBase={`/reader/appeal/${ state.loadedAppealId }/documents`}
+            documentPathBase={`/reader/appeal/${ state.appeal.id }/documents`}
             show={state.documentsView === 'documents'}
           />
           <CommentsTable {...state} {...actions} show={state.documentsView === 'comments'} />
@@ -89,7 +89,6 @@ DocumentList.propTypes = {
   dropdownUrls: PropTypes.array,
   singleDocumentMode: PropTypes.bool,
   match: PropTypes.object,
-  loadedAppealId: PropTypes.string,
   annotations: PropTypes.array,
 
   // Required actions
