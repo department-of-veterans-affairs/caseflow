@@ -19,9 +19,15 @@ const titleStyling = css({
   marginBottom: '1.25rem'
 });
 
+/**
+ *
+ * @param {Object} props
+ *  - @param {string} appealId The external id of the dispatched appeal we are taking action on
+ *  - @param {Object} history  Provided with react router to be able to route to another page
+ */
 const CaseDetailsPostDispatchActions = (props) => {
 
-  const changeRoute = () => {
+  const routeToCavcRemand = () => {
     const { history, appealId } = props;
 
     history.push(`/queue/appeals/${appealId}/add_cavc_remand`);
@@ -30,7 +36,7 @@ const CaseDetailsPostDispatchActions = (props) => {
   return (
     <div {...containerStyling}>
       <h2 {...titleStyling}>{COPY.POST_DISPATCH_TITLE}</h2>
-      <Button name={COPY.ADD_CAVC_BUTTON} onClick={changeRoute} />
+      <Button name={COPY.ADD_CAVC_BUTTON} onClick={routeToCavcRemand} />
     </div>
   );
 };

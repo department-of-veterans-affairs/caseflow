@@ -48,8 +48,16 @@ const subTypeOptions = _.map(_.keys(CAVC_REMAND_SUBTYPE_NAMES), (key) => ({
   value: key
 }));
 
+/**
+ * @param {Object} props
+ *  - @param {string}   appealId         The id of the appeal we are creating this cavc remand for. Used to grab
+ *                                       associated decision issues on the appeal from state
+ *  - @param {Object[]} decisionIssues   Issues pulled from state to allow the user to select which are being remanded
+ *  - @param {Object}   error            Error sent from the back end upon submit to be displayed rather than submitting
+ *  - @param {boolean}  highlightInvalid Whether or not to show field validation, set to true upon submit
+ *  - @param {Object}   history          Provided with react router to be able to route to another page upon success
+ */
 const AddCavcRemandView = (props) => {
-
   const { appealId, decisionIssues, error, highlightInvalid, history, ...otherProps } = props;
 
   const [docketNumber, setDocketNumber] = useState(null);
