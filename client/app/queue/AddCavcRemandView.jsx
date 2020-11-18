@@ -122,7 +122,7 @@ const AddCavcRemandView = (props) => {
         cavc_judge_full_name: judge.value,
         cavc_decision_type: type,
         decision_date: decisionDate,
-        remand_subtype: subType,
+        remand_subtype: type === CAVC_DECISION_TYPES.remand ? subType : null,
         represented_by_attorney: attorney === '1',
         decision_issue_ids: selectedIssues,
         instructions
