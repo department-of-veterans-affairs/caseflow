@@ -6,10 +6,10 @@ import { pickBy } from 'lodash';
 // Local Dependencies
 import { DOCUMENTS_OR_COMMENTS_ENUM } from 'store/constants/reader';
 import { categoryContainsWords } from 'utils/reader';
-import { loadDocuments, selectCurrentPdfLocally } from 'store/reader/documents';
+import { loadDocuments, selectCurrentPdfLocally } from 'store/reader/document';
 import { onReceiveAnnotations } from 'store/reader/annotationLayer';
 import { addMetaLabel } from 'utils/reader/format';
-import { filterDocuments } from 'utils/reader/documents';
+import { filterDocuments } from 'utils/reader/document';
 
 /**
  * Helper Method to change the Last Read Document

@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 // Local Dependencies
-import { fetchDocuments } from 'utils/reader/documents';
+import { fetchDocuments } from 'utils/reader/document';
 import { documentListScreen } from 'store/reader/selectors';
 import {
   setSearch,

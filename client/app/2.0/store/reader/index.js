@@ -7,7 +7,7 @@ import pdfSearch from 'store/reader/pdfSearch';
 import caseSelect from 'store/reader/caseSelect';
 import documentList from 'store/reader/documentList';
 import pdfViewer from 'store/reader/pdfViewer';
-import documents from 'store/reader/documents';
+import document from 'store/reader/document';
 import annotationLayer from 'store/reader/annotationLayer';
 
 /**
@@ -17,7 +17,7 @@ const readerReducer = combineReducers({
   caseSelect,
   pdf,
   pdfSearch,
-  documents,
+  document,
   documentList,
   pdfViewer,
   annotationLayer

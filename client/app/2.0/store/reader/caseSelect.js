@@ -5,7 +5,7 @@ import { createSlice, createAsyncThunk, current } from '@reduxjs/toolkit';
 import { addMetaLabel } from 'utils/reader';
 import { ENDPOINT_NAMES } from 'store/constants/reader';
 import ApiUtil from 'app/util/ApiUtil';
-import { loadDocuments } from 'store/reader/documents';
+import { loadDocuments } from 'store/reader/document';
 
 /**
  * Case Select Initial State

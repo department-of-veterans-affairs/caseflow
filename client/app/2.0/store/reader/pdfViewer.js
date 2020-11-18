@@ -13,7 +13,7 @@ import {
   resetPendingDocDescription,
   toggleDocumentCategoryFail,
   handleCategoryToggle
-} from 'store/reader/documents';
+} from 'store/reader/document';
 
 /**
  * PDF SideBar Error State

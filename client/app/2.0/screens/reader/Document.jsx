@@ -6,7 +6,7 @@ import classNames from 'classnames';
 
 // Local Dependencies
 import { pdfWrapper } from 'styles/reader/Document/Pdf';
-import { fetchDocuments } from 'utils/reader/documents';
+import { fetchDocuments } from 'utils/reader/document';
 import { documentScreen } from 'store/reader/selectors';
 import { DocumentHeader } from 'components/reader/Document/Header';
 import { DocumentSidebar } from 'components/reader/Document/Sidebar';
