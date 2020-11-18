@@ -19,7 +19,7 @@ const titleStyling = css({
   marginBottom: '1.25rem'
 });
 
-const PostDispatch = (props) => {
+const CaseDetailsPostDispatchActions = (props) => {
 
   const changeRoute = () => {
     const { history, appealId } = props;
@@ -35,11 +35,11 @@ const PostDispatch = (props) => {
   );
 };
 
-PostDispatch.propTypes = {
+CaseDetailsPostDispatchActions.propTypes = {
   appealId: PropTypes.string.isRequired,
   history: PropTypes.object
 };
 
 export default withRouter(
-  (PostDispatch)
+  (CaseDetailsPostDispatchActions)
 );

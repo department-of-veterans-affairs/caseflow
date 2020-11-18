@@ -23,7 +23,7 @@ import CaseTimeline from './CaseTimeline';
 import CaseTitle from './CaseTitle';
 import CaseTitleDetails from './CaseTitleDetails';
 import CavcDetail from './CavcDetail';
-import PostDispatch from './PostDispatch';
+import CaseDetailsPostDispatchActions from './CaseDetailsPostDispatchActions';
 import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
 import StickyNavContentArea from './StickyNavContentArea';
 import TaskSnapshot from './TaskSnapshot';
@@ -113,7 +113,7 @@ export const CaseDetailsView = (props) => {
           </Alert>
         </div>
       )}
-      {!modalIsOpen && showPostDispatch && <PostDispatch appealId={appealId} />}
+      {!modalIsOpen && showPostDispatch && <CaseDetailsPostDispatchActions appealId={appealId} />}
       {(!modalIsOpen || props.userCanScheduleVirtualHearings) && <UserAlerts />}
       <AppSegment filledBackground>
         <CaseTitle appeal={appeal} />
