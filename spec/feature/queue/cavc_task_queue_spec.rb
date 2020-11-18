@@ -10,6 +10,120 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
   let!(:org_nonadmin2) { create(:user, full_name: "Tooey Remandy") { |u| CavcLitigationSupport.singleton.add_user(u) } }
   let!(:other_user) { create(:user, full_name: "Othery Usery") }
 
+  context "when intaking a cavc remand" do
+    before { BvaDispatch.singleton.add_user(create(:user)) }
+
+    let(:appeal) { create(:appeal, :dispatched) }
+
+    let(:notes) { "Pain disorder with 100\% evaluation per examination" }
+    let(:description) { "Service connection for pain disorder is granted at 70\% effective May 1 2011" }
+    let!(:decision_issues) do
+      create_list(
+        :decision_issue,
+        3,
+        :rating,
+        decision_review: appeal,
+        disposition: "denied",
+        description: description,
+        decision_text: notes
+      )
+    end
+
+    let(:docket_number) { "12-1234" }
+    let(:date) { "11/11/2020" }
+    let(:judge_name) { Constants::CAVC_JUDGE_FULL_NAMES.first }
+    let(:decision_type) { Constants.CAVC_DECISION_TYPES.remand.titleize }
+
+    shared_examples "does not display the add remand button" do
+      it "does not display the add remand button" do
+        visit "queue/appeals/#{appeal.external_id}"
+        expect(page).to have_no_content "+ Add CAVC Remand"
+      end
+    end
+
+    context "when feature toggle is not on" do
+      before { User.authenticate!(user: org_admin) }
+
+      it_behaves_like "does not display the add remand button"
+    end
+
+    context "when the signed in user is not on cavc litigation support" do
+      before do
+        User.authenticate!(user: create(:user))
+        FeatureToggle.enable!(:cavc_remand)
+      end
+      after { FeatureToggle.disable!(:cavc_remand) }
+
+      it_behaves_like "does not display the add remand button"
+    end
+
+    context "when the signed in user is not on cavc litigation support and the feature toggle is on" do
+      before do
+        FeatureToggle.enable!(:cavc_remand)
+        User.authenticate!(user: org_admin)
+      end
+      after { FeatureToggle.disable!(:cavc_remand) }
+
+      it "allows admin to assign SendCavcRemandProcessedLetterTask to user" do
+        visit "queue/appeals/#{appeal.external_id}"
+        page.find("button", text: "+ Add CAVC Remand").click
+
+        # Field validation
+        page.find("button", text: "Submit").click
+        expect(page).to have_content COPY::CAVC_DOCKET_NUMBER_ERROR
+        expect(page).to have_content COPY::CAVC_JUDGE_ERROR
+        expect(page).to have_content COPY::CAVC_DECISION_DATE_ERROR
+        expect(page).to have_content COPY::CAVC_JUDGEMENT_DATE_ERROR
+        expect(page).to have_content COPY::CAVC_MANDATE_DATE_ERROR
+        expect(page).to have_content COPY::CAVC_INSTRUCTIONS_ERROR
+
+        fill_in "docket-number", with: "bad docket number"
+        expect(page).to have_content COPY::CAVC_DOCKET_NUMBER_ERROR
+
+        fill_in "docket-number", with: docket_number
+        expect(page).to have_no_content COPY::CAVC_DOCKET_NUMBER_ERROR
+
+        click_dropdown(text: judge_name)
+        expect(page).to have_no_content COPY::CAVC_JUDGE_ERROR
+
+        page.find("label", text: Constants.CAVC_DECISION_TYPES.death_dismissal.titleize).click
+        expect(page).to have_no_content COPY::CAVC_SUB_TYPE_LABEL
+        page.find("label", text: decision_type).click
+        expect(page).to have_content COPY::CAVC_SUB_TYPE_LABEL
+
+        fill_in "decision-date", with: date
+        fill_in "judgement-date", with: date
+        fill_in "mandate-date", with: date
+        expect(page).to have_no_content COPY::CAVC_DECISION_DATE_ERROR
+        expect(page).to have_no_content COPY::CAVC_JUDGEMENT_DATE_ERROR
+        expect(page).to have_no_content COPY::CAVC_MANDATE_DATE_ERROR
+
+        3.times { |id| expect(find_field(description, id: (id + 1).to_s, visible: false)).to be_checked }
+
+        fill_in "context-and-instructions-textBox", with: "Please process this remand"
+        expect(page).to have_no_content COPY::CAVC_INSTRUCTIONS_ERROR
+
+        page.find("button", text: "Submit").click
+
+        expect(page).to have_content COPY::CAVC_REMAND_CREATED_TITLE
+        expect(page).to have_content COPY::CAVC_REMAND_CREATED_DETAIL
+
+        expect(page).to have_content "APPEAL STREAM TYPE\nCAVC"
+        expect(page).to have_content "DOCKET\nE\n#{appeal.docket_number}"
+
+        expect(page).to have_content "CAVC Remand"
+        expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DOCKET_NUMBER}: #{docket_number}"
+        expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_ATTORNEY}: Yes"
+        expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGE}: #{judge_name}"
+        expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_PROCEDURE}: #{decision_type}"
+        expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_TYPE}: Joint Motion for Remand (JMR)"
+        expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DECISION_DATE}: #{date}"
+        expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}: #{date}"
+        expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_MANDATE_DATE}: #{date}"
+      end
+    end
+  end
+
   context "when CAVC Lit Support is assigned SendCavcRemandProcessedLetterTask" do
     let!(:send_task) { create(:send_cavc_remand_processed_letter_task) }
 

@@ -23,7 +23,7 @@ import StringUtil from '../util/StringUtil';
 import Alert from '../components/Alert';
 import { withRouter } from 'react-router';
 
-const labelStyling = css({ marginTop: '2.5rem' });
+const radioLabelStyling = css({ marginTop: '2.5rem' });
 const buttonStyling = css({ paddingLeft: '0' });
 
 const judgeOptions = [].concat(
@@ -151,78 +151,86 @@ const AddCavcRemandView = (props) => {
   };
 
   const docketNumberField = <TextField
-    name={<h3>{COPY.CAVC_DOCKET_NUMBER_LABEL}</h3>}
+    label={COPY.CAVC_DOCKET_NUMBER_LABEL}
+    name="docket-number"
     value={docketNumber}
     onChange={setDocketNumber}
     errorMessage={highlightInvalid && !validDocketNumber() ? COPY.CAVC_DOCKET_NUMBER_ERROR : null}
+    strongLabel
   />;
 
   const representedField = <RadioField
-    label={<h3 id="horizontal-radio">{COPY.CAVC_ATTORNEY_LABEL}</h3>}
+    label={COPY.CAVC_ATTORNEY_LABEL}
     name="attorney-options"
     options={attorneyOptions}
     value={attorney}
     onChange={(val) => setAttorney(val)}
+    strongLabel
   />;
 
   const judgeField = <SearchableDropdown
     name="judge-dropdown"
-    label={<h3>{COPY.CAVC_JUDGE_LABEL}</h3>}
+    label={COPY.CAVC_JUDGE_LABEL}
     searchable
     value={judge}
     onChange={(val) => setJudge(val)}
     options={judgeOptions}
     errorMessage={highlightInvalid && !validJudge() ? COPY.CAVC_JUDGE_ERROR : null}
+    strongLabel
   />;
 
   const typeField = <RadioField
-    label={<h3 {...labelStyling} id="vertical-radio">{COPY.CAVC_TYPE_LABEL}</h3>}
+    styling={radioLabelStyling}
+    label={COPY.CAVC_TYPE_LABEL}
     name="type-options"
     options={typeOptions}
     value={type}
     onChange={(val) => setType(val)}
+    strongLabel
   />;
 
   const remandTypeField = <RadioField
-    label={<h3 {...labelStyling} id="vertical-radio">{COPY.CAVC_SUB_TYPE_LABEL}</h3>}
+    styling={radioLabelStyling}
+    label={COPY.CAVC_SUB_TYPE_LABEL}
     name="sub-type-options"
     options={subTypeOptions}
     value={subType}
     onChange={(val) => setSubType(val)}
+    strongLabel
   />;
 
-  const decisionField = <React.Fragment>
-    <h3 {...labelStyling}>{COPY.CAVC_COURT_DECISION_DATE}</h3>
-    <DateSelector
-      type="date"
-      value={decisionDate}
-      onChange={(val) => setDecisionDate(val)}
-      errorMessage={highlightInvalid && !validDecisionDate() ? COPY.CAVC_DECISION_DATE_ERROR : null}
-    />
-  </React.Fragment>;
+  const decisionField = <DateSelector
+    label={COPY.CAVC_COURT_DECISION_DATE}
+    type="date"
+    name="decision-date"
+    value={decisionDate}
+    onChange={(val) => setDecisionDate(val)}
+    errorMessage={highlightInvalid && !validDecisionDate() ? COPY.CAVC_DECISION_DATE_ERROR : null}
+    strongLabel
+  />;
 
-  const judgementField = <React.Fragment>
-    <h3 {...labelStyling}>{COPY.CAVC_JUDGEMENT_DATE}</h3>
-    <DateSelector
-      type="date"
-      value={judgementDate}
-      onChange={(val) => setJudgementDate(val)}
-      errorMessage={highlightInvalid && !validJudgementDate() ? COPY.CAVC_JUDGEMENT_DATE_ERROR : null}
-    />
-  </React.Fragment>;
+  const judgementField = <DateSelector
+    label={COPY.CAVC_JUDGEMENT_DATE}
+    type="date"
+    name="judgement-date"
+    value={judgementDate}
+    onChange={(val) => setJudgementDate(val)}
+    errorMessage={highlightInvalid && !validJudgementDate() ? COPY.CAVC_JUDGEMENT_DATE_ERROR : null}
+    strongLabel
+  />;
 
-  const mandateField = <React.Fragment>
-    <h3 {...labelStyling}>{COPY.CAVC_MANDATE_DATE}</h3>
-    <DateSelector
-      type="date"
-      value={mandateDate}
-      onChange={(val) => setMandateDate(val)}
-      errorMessage={highlightInvalid && !validMandateDate() ? COPY.CAVC_MANDATE_DATE_ERROR : null}
-    />
-  </React.Fragment>;
+  const mandateField = <DateSelector
+    label={COPY.CAVC_MANDATE_DATE}
+    type="date"
+    name="mandate-date"
+    value={mandateDate}
+    onChange={(val) => setMandateDate(val)}
+    errorMessage={highlightInvalid && !validMandateDate() ? COPY.CAVC_MANDATE_DATE_ERROR : null}
+    strongLabel
+  />;
 
   const issuesField = <React.Fragment>
-    <h3>{COPY.CAVC_ISSUES_LABEL}</h3>
+    <h4>{COPY.CAVC_ISSUES_LABEL}</h4>
     <Button
       name={selectedIssues.length ? 'Unselect all' : 'Select all'}
       styling={buttonStyling}
@@ -237,11 +245,12 @@ const AddCavcRemandView = (props) => {
   </React.Fragment>;
 
   const instructionsField = <TextareaField
-    label={<h3 {...labelStyling}>{COPY.CAVC_INSTRUCTIONS_LABEL}</h3>}
+    label={COPY.CAVC_INSTRUCTIONS_LABEL}
     name="context-and-instructions-textBox"
     value={instructions}
     onChange={(val) => setInstructions(val)}
     errorMessage={highlightInvalid && !validInstructions() ? COPY.CAVC_INSTRUCTIONS_ERROR : null}
+    strongLabel
   />;
 
   return (
@@ -251,7 +260,8 @@ const AddCavcRemandView = (props) => {
       validateForm={validateForm}
       continueBtnText="Submit"
       hideCancelButton
-      {...otherProps} >
+      {...otherProps}
+    >
       <h1>{COPY.ADD_CAVC_PAGE_TITLE}</h1>
       <p>{COPY.ADD_CAVC_DESCRIPTION}</p>
       {error && <Alert title={error.title} type="error">{error.detail}</Alert>}
