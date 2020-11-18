@@ -169,11 +169,11 @@ TypeHeader.propTypes = {
  * Document Type Column component
  * @param {Object} props -- Contains the document and functions to navigate
  */
-export const TypeCell = ({ doc, setPdf, documentPathBase, filterCriteria }) => (
+export const TypeCell = ({ doc, showPdf, documentPathBase, filterCriteria }) => (
   <div>
     <ViewableItemLink
       boldCondition={!doc.opened_by_current_user}
-      // onOpen={(id) => setPdf(id)}
+      onOpen={() => showPdf(doc.id)}
       linkProps={{
         to: `${documentPathBase}/${doc.id}`,
         'aria-label': doc.type + (doc.opened_by_current_user ? ' opened' : ' unopened')
@@ -195,7 +195,7 @@ TypeCell.propTypes = {
   filterCriteria: PropTypes.object,
   doc: PropTypes.object,
   documentPathBase: PropTypes.string,
-  setPdf: PropTypes.func
+  showPdf: PropTypes.func
 };
 
 /**

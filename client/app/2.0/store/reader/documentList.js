@@ -70,9 +70,7 @@ export const loadDocuments = createAsyncThunk('documentList/load', async (params
   // Load the Document if the Doc ID is present
   if (params.docId) {
     dispatch(showPdf({
-      current: params.currentDocument,
-      documents: body.appealDocuments,
-      docId: params.docId,
+      currentDocument: body.appealDocuments.filter((doc) => doc.id === parseInt(params.docId, 10))[0],
       worker: params.worker,
       scale: params.scale
     }));

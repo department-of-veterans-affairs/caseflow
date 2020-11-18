@@ -3,8 +3,10 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import { isEmpty } from 'lodash';
 
 // Local Dependencies
+import { showPdf } from 'store/reader/documentViewer';
 import { fetchDocuments } from 'utils/reader/document';
 import { documentListScreen } from 'store/reader/selectors';
 import {
@@ -55,6 +57,11 @@ const DocumentList = (props) => {
     clearSearch: () => dispatch(clear(state.filterCriteria, state.annotations, state.storeDocuments)),
     recordSearch: (query) => recordSearch(props.match.params.vacolsId, query),
     changeSort: (val) => dispatch(changeSortState(val, state)),
+    showPdf: (docId) => dispatch(showPdf({
+      currentDocument: state.documents[docId],
+      worker: props.pdfWorker,
+      scale: state.scale
+    }))
   };
 
   return (

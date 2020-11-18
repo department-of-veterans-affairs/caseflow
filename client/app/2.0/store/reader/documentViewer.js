@@ -106,9 +106,7 @@ export const showPage = createAsyncThunk('documentViewer/changePage', async(para
  * Dispatcher to show the selected PDF
  */
 export const showPdf = createAsyncThunk('documentViewer/show', async ({
-  current,
-  documents,
-  docId,
+  currentDocument,
   worker,
   scale
 }, { dispatch }) => {
@@ -118,21 +116,21 @@ export const showPdf = createAsyncThunk('documentViewer/show', async ({
   }
 
   // Get the Selected Document
-  const [currentDocument] = documents.filter((doc) => doc.id.toString() === docId);
+  // const [currentDocument] = documents.filter((doc) => doc.id.toString() === docId);
 
   // Request the Document if it is not loaded
-  if (current.id !== currentDocument.id) {
+  // if (current.id !== currentDocument.id) {
   // Request the PDF document from eFolder
-    const { body } = await ApiUtil.get(currentDocument.content_url, {
-      cache: true,
-      withCredentials: true,
-      timeout: true,
-      responseType: 'arraybuffer'
-    });
+  const { body } = await ApiUtil.get(currentDocument.content_url, {
+    cache: true,
+    withCredentials: true,
+    timeout: true,
+    responseType: 'arraybuffer'
+  });
 
-    // Set the Page
-    dispatch(showPage({ scale, data: body, docId: currentDocument.id }));
-  }
+  // Set the Page
+  dispatch(showPage({ scale, data: body, docId: currentDocument.id }));
+  // }
 
   // Return the Document Buffer
   return { selected: currentDocument };
