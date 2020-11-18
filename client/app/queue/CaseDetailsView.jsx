@@ -58,7 +58,7 @@ export const CaseDetailsView = (props) => {
   const success = useSelector((state) => state.ui.messages.success);
   const error = useSelector((state) => state.ui.messages.error);
   const veteranCaseListIsVisible = useSelector((state) => state.ui.veteranCaseListIsVisible);
-  const isLitSupport = useSelector((state) => state.ui.organizations.some(
+  const currentUserIsOnCavcLitSupport = useSelector((state) => state.ui.organizations.some(
     (organization) => organization.name === 'CAVC Litigation Support'));
   const modalIsOpen = window.location.pathname.includes('modal');
 
@@ -94,9 +94,8 @@ export const CaseDetailsView = (props) => {
 
   const doPulacCerulloReminder = useMemo(() => needsPulacCerulloAlert(appeal, tasks), [appeal, tasks]);
 
-  const appealIsDispatched = tasks.some((task) => task.type === 'BvaDispatchTask' && task.closedAt !== null);
-
-  const showPostDispatch = appealIsDispatched && isLitSupport;
+  const appealIsDispached = appeal.status === 'dispatched';
+  const showPostDispatch = appealIsDispached && currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand;
 
   return (
     <React.Fragment>
@@ -114,9 +113,7 @@ export const CaseDetailsView = (props) => {
           </Alert>
         </div>
       )}
-      {!modalIsOpen && showPostDispatch && props.featureToggles.cavc_remand && (
-        <PostDispatch appealId={appealId} />
-      )}
+      {!modalIsOpen && showPostDispatch && <PostDispatch appealId={appealId} />}
       {(!modalIsOpen || props.userCanScheduleVirtualHearings) && <UserAlerts />}
       <AppSegment filledBackground>
         <CaseTitle appeal={appeal} />
