@@ -3589,6 +3589,11 @@ exports[`VirtualHearingModal Displays ChangeEmailOrTimezone component when type 
             onClick={[Function]}
             type="button"
           >
+            <span
+              className="usa-sr-only"
+            >
+              Close
+            </span>
             <svg
               className="cf-icon-close"
               height="55"
@@ -4168,6 +4173,11 @@ exports[`VirtualHearingModal Displays ChangeFromVirtual component when type is c
             onClick={[Function]}
             type="button"
           >
+            <span
+              className="usa-sr-only"
+            >
+              Close
+            </span>
             <svg
               className="cf-icon-close"
               height="55"
@@ -4904,6 +4914,11 @@ exports[`VirtualHearingModal Displays ChangeHearingTime component when type is c
             onClick={[Function]}
             type="button"
           >
+            <span
+              className="usa-sr-only"
+            >
+              Close
+            </span>
             <svg
               className="cf-icon-close"
               height="55"
@@ -5640,6 +5655,11 @@ exports[`VirtualHearingModal Matches snapshot with default props 1`] = `
             onClick={[Function]}
             type="button"
           >
+            <span
+              className="usa-sr-only"
+            >
+              Close
+            </span>
             <svg
               className="cf-icon-close"
               height="55"
