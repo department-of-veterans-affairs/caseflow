@@ -1,18 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect, useDispatch } from 'react-redux';
-import { caseTimelineTasksForAppeal } from './selectors';
+import { useDispatch } from 'react-redux';
 import COPY from '../../COPY';
 import TaskRows from './components/TaskRows';
 import { showSuccessMessage, resetSuccessMessages } from './uiReducer/uiActions';
 
-function CaseTimeline (props) {
+export const CaseTimeline = ({ appeal, tasks, featureToggles }) => {
   const handleEditNodDateChange = () => {
-    const {
-      appeal,
-      tasks
-    } = props;
-
     const dispatch = useDispatch();
 
     const successMessage = {
@@ -22,7 +16,7 @@ function CaseTimeline (props) {
 
     dispatch(showSuccessMessage(successMessage));
     setTimeout(() => dispatch(resetSuccessMessages()), 5000);
-  }
+  };
 
   return (
     <React.Fragment>
@@ -31,27 +25,18 @@ function CaseTimeline (props) {
         <tbody>
           <TaskRows appeal={appeal}
             taskList={tasks}
-            editNodDateEnabled={this.props.featureToggles?.editNodDate}
-            onEditNodDateChange={this.handleEditNodDateChange}
+            editNodDateEnabled={featureToggles?.editNodDate}
+            onEditNodDateChange={handleEditNodDateChange}
             timeline
           />
         </tbody>
       </table>
     </React.Fragment>
   );
-}
+};
 
 CaseTimeline.propTypes = {
   appeal: PropTypes.object,
   tasks: PropTypes.array,
   featureToggles: PropTypes.object
 };
-
-const mapStateToProps = (state, ownProps) => {
-  return {
-    tasks: caseTimelineTasksForAppeal(state, { appealId: ownProps.appeal.externalId }),
-    featureToggles: state.ui.featureToggles
-  };
-};
-
-export default connect(mapStateToProps)(CaseTimeline);

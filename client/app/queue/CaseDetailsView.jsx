@@ -19,7 +19,7 @@ import AppellantDetail from './AppellantDetail';
 import COPY from '../../COPY';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import CaseHearingsDetail from './CaseHearingsDetail';
-import CaseTimeline from './CaseTimeline';
+import { CaseTimeline } from './CaseTimeline';
 import CaseTitle from './CaseTitle';
 import CaseTitleDetails from './CaseTitleDetails';
 import CavcDetail from './CavcDetail';
