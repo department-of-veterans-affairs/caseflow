@@ -98,7 +98,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         expect(page).to have_no_content COPY::CAVC_JUDGEMENT_DATE_ERROR
         expect(page).to have_no_content COPY::CAVC_MANDATE_DATE_ERROR
 
-        3.times { |id| expect(find_field(description, id: (id + 1).to_s, visible: false)).to be_checked }
+        decision_issues.each { |issue| expect(find_field(description, id: issue.id, visible: false)).to be_checked }
 
         fill_in "context-and-instructions-textBox", with: "Please process this remand"
         expect(page).to have_no_content COPY::CAVC_INSTRUCTIONS_ERROR
@@ -110,13 +110,15 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
 
         expect(page).to have_content "APPEAL STREAM TYPE\nCAVC"
         expect(page).to have_content "DOCKET\nE\n#{appeal.docket_number}"
+        expect(page).to have_content "TASK\n#{SendCavcRemandProcessedLetterTask.label}"
+        expect(page).to have_content "ASSIGNED TO\n#{CavcLitigationSupport.singleton.name}"
 
         expect(page).to have_content "CAVC Remand"
         expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DOCKET_NUMBER}: #{docket_number}"
         expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_ATTORNEY}: Yes"
         expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGE}: #{judge_name}"
         expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_PROCEDURE}: #{decision_type}"
-        expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_TYPE}: Joint Motion for Remand (JMR)"
+        expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_TYPE}: #{Constants.CAVC_REMAND_SUBTYPE_NAMES.jmr}"
         expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DECISION_DATE}: #{date}"
         expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}: #{date}"
         expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_MANDATE_DATE}: #{date}"
