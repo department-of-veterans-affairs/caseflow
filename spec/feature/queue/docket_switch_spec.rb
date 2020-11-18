@@ -183,7 +183,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       fill_in "What is the Receipt Date of the docket switch request?", with: receipt_date
       fill_in("context", with: context)
 
-      click_button(text: "Continue")
+      click_button(text: "Confirm")
 
       # Return back to user's queue
       expect(page).to have_current_path("/queue")
