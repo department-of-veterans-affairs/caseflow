@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 // Internal Dependencies
-import { Comments } from 'components/reader/Document/Comments';
+import { Comments } from 'components/reader/DocumentViewer/Comments';
 import { pageNumber } from 'utils/reader';
 import { markStyles, pageStyles, pdfPageStyles } from 'styles/reader/Document/Pdf';
 

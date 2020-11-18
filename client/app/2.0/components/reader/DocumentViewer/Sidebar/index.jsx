@@ -7,8 +7,8 @@ import classNames from 'classnames';
 import Button from 'app/components/Button';
 import { sidebarWrapper } from 'styles/reader/Document/Sidebar';
 
-import { DocumentAccordion } from 'components/reader/Document/Sidebar/Accordion';
-import { KeyboardInfo } from 'components/reader/Document/Sidebar/KeyboardInfo';
+import { DocumentAccordion } from 'components/reader/DocumentViewer/Sidebar/Accordion';
+import { KeyboardInfo } from 'components/reader/DocumentViewer/Sidebar/KeyboardInfo';
 
 /**
  * Document Sidebar Component

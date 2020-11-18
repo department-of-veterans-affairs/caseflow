@@ -8,13 +8,13 @@ import classNames from 'classnames';
 import { pdfWrapper } from 'styles/reader/Document/Pdf';
 import { fetchDocuments } from 'utils/reader/document';
 import { documentScreen } from 'store/reader/selectors';
-import { DocumentHeader } from 'components/reader/Document/Header';
-import { DocumentSidebar } from 'components/reader/Document/Sidebar';
-import { DocumentFooter } from 'components/reader/Document/Footer';
-import { DocumentSearch } from 'app/2.0/components/reader/Document/Search';
-import { Pdf } from 'app/2.0/components/reader/Document/PDF';
+import { DocumentHeader } from 'components/reader/DocumentViewer/Header';
+import { DocumentSidebar } from 'components/reader/DocumentViewer/Sidebar';
+import { DocumentFooter } from 'components/reader/DocumentViewer/Footer';
+import { DocumentSearch } from 'app/2.0/components/reader/DocumentViewer/Search';
+import { Pdf } from 'app/2.0/components/reader/DocumentViewer/PDF';
 
-const Document = (props) => {
+const DocumentViewer = (props) => {
   // Get the Document List state
   const state = useSelector(documentScreen);
 
@@ -67,7 +67,7 @@ const Document = (props) => {
   );
 };
 
-Document.propTypes = {
+DocumentViewer.propTypes = {
   appeal: PropTypes.object,
   pdfWorker: PropTypes.string,
   userDisplayName: PropTypes.string,
@@ -82,4 +82,4 @@ Document.propTypes = {
   setCategoryFilter: PropTypes.func
 };
 
-export default Document;
+export default DocumentViewer;

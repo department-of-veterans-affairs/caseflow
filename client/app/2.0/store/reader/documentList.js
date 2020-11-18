@@ -1,39 +1,21 @@
 // External Dependencies
-import querystring from 'querystring';
 import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { isNil, pickBy } from 'lodash';
 
 // Local Dependencies
 import ApiUtil from 'app/util/ApiUtil';
 import { ENDPOINT_NAMES, DOCUMENTS_OR_COMMENTS_ENUM } from 'store/constants/reader';
-import { filterDocuments, addMetaLabel, commentContainsWords, categoryContainsWords } from 'utils/reader';
-import { selectCurrentPdfLocally } from 'store/reader/document';
+import {
+  filterDocuments,
+  addMetaLabel,
+  commentContainsWords,
+  categoryContainsWords,
+  getQueueRedirectUrl,
+  getQueueTaskType
+} from 'utils/reader';
+import { selectCurrentPdfLocally } from 'store/reader/documentViewer';
 import { onReceiveAnnotations } from 'store/reader/annotationLayer';
 import { showPdf } from 'store/reader/pdf';
-
-/**
- * Helper Method to Parse the Queue Redirect URL from the window
- * @returns {string|null} -- The Parsed Queue Redirect URL
- */
-export const getQueueRedirectUrl = () => {
-  // Parse the Redirect URL string from the URL bar
-  const query = querystring.parse(window.location.search.slice(1));
-
-  // Return either the parsed URL or null
-  return query.queue_redirect_url ? decodeURIComponent(query.queue_redirect_url) : null;
-};
-
-/**
- * Helper Method to Parse the Task Type from the window
- * @returns {string|null} -- The Parsed Queue Task Type
- */
-export const getQueueTaskType = () => {
-  // Parse the Task Type string from the URL bar
-  const query = querystring.parse(window.location.search.slice(1));
-
-  // Return either the parsed Task Type or null
-  return query.queue_task_type ? decodeURIComponent(query.queue_task_type) : null;
-};
 
 /**
  * PDF Initial State
@@ -43,7 +25,7 @@ export const initialState = {
   documents: {},
   queueRedirectUrl: getQueueRedirectUrl(),
   queueTaskType: getQueueTaskType(),
-  viewingDocumentsOrComments: DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
+  view: DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
   searchCategoryHighlights: {},
   filteredDocIds: [],
   filterCriteria: {
@@ -79,7 +61,7 @@ export const updateLastReadDoc = (state, docId) => {
 /**
  * Dispatcher to Load Appeal Documents
  */
-export const loadDocuments = createAsyncThunk('documents/load', async (params, { getState, dispatch }) => {
+export const loadDocuments = createAsyncThunk('documentList/load', async (params, { getState, dispatch }) => {
   // Get the current state
   const state = getState();
 
@@ -186,9 +168,9 @@ const documentListSlice = createSlice({
       },
       prepare: (props) => addMetaLabel('clear-all-filters', { ...props })
     },
-    setViewingDocumentsOrComments: {
+    changeView: {
       reducer: (state, action) => {
-        state.viewingDocumentsOrComments = action.payload.documentsView;
+        state.view = action.payload.documentsView;
       },
       prepare: (documentsView) =>
         addMetaLabel('set-viewing-documents-or-comments', { documentsView }, documentsView)
@@ -299,7 +281,7 @@ const documentListSlice = createSlice({
 export const {
   toggleDropdownFilterVisibility,
   setDocListScrollPosition,
-  setViewingDocumentsOrComments,
+  changeView,
   onReceiveManifests,
   setSearch,
   clearSearch,

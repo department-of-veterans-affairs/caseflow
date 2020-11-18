@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Internal Dependencies
-import { File } from 'components/reader/Document/PDF/File';
+import { File } from 'components/reader/DocumentViewer/PDF/File';
 import { pdfStyles, fileContainerStyles } from 'styles/reader/Document/Pdf';
 import StatusMessage from 'app/components/StatusMessage';
 

@@ -218,7 +218,7 @@ export const documentListScreen = (state) => {
     documentsView: documentsView(
       Object.values(documents),
       state.reader.documentList.filterCriteria,
-      state.reader.documentList.viewingDocumentsOrComments
+      state.reader.documentList.view
     ),
     tagOptions: state.reader.pdfViewer.tagOptions,
     filterCriteria: state.reader.documentList.filterCriteria,

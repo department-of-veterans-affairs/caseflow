@@ -5,17 +5,6 @@ import uuid from 'uuid';
 // Local Dependencies
 import ApiUtil from 'app/util/ApiUtil';
 import { ENDPOINT_NAMES, ROTATION_INCREMENTS, COMPLETE_ROTATION } from 'store/constants/reader';
-import {
-  changeSortState,
-  clearCategoryFilters,
-  setCategoryFilter,
-  setTagFilter,
-  clearTagFilters,
-  setSearch,
-  clearSearch,
-  clearAllFilters,
-  loadDocuments
-} from 'store/reader/documentList';
 import { addMetaLabel, formatCategoryName } from 'utils/reader';
 
 /**
@@ -100,8 +89,8 @@ export const handleCategoryToggle = createAsyncThunk('documents/handleCategoryTo
 /**
  * PDF Combined Reducer/Action creators
  */
-const documentsSlice = createSlice({
-  name: 'documents',
+const documentViewerSlice = createSlice({
+  name: 'documentViewer',
   initialState,
   reducers: {
     changePendingDocDescription: {
@@ -254,8 +243,8 @@ export const {
   rotateDocument,
   closeDocumentUpdatedModal,
   handleToggleCommentOpened
-} = documentsSlice.actions;
+} = documentViewerSlice.actions;
 
 // Default export the reducer
-export default documentsSlice.reducer;
+export default documentViewerSlice.reducer;
 

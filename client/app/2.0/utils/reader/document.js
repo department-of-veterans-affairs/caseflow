@@ -56,7 +56,7 @@ export const fetchDocuments = ({ appeal, params }, dispatch) => () => {
  * Helper Method to Calculate the Documents List View
  * @param {array} documents -- List of documents for the selected appeal
  * @param {Object} filter -- The Document Filter Criteria
- * @param {string} view -- The Currently selected view `viewingDocumentsOrComments`
+ * @param {string} view -- The Currently selected view
  * @returns {string} -- The type of view to load in the documents list
  */
 export const documentsView = (documents, filter, view) => {

@@ -8,11 +8,11 @@ import Alert from 'app/components/Alert';
 import { Accordion } from 'app/components/Accordion';
 import { COMMENT_ACCORDION_KEY } from 'app/reader/PdfViewer/actionTypes';
 
-import { SidebarCategories } from 'components/reader/Document/Sidebar/Categories';
-import { SidebarComments } from 'components/reader/Document/Sidebar/Comments';
-import { DocumentInformation } from 'components/reader/Document/Sidebar/DocumentInformation';
-import { IssueTags } from 'components/reader/Document/Sidebar/IssueTags';
-import { WindowSlider } from 'components/reader/Document/Sidebar/WindowSlider';
+import { SidebarCategories } from 'components/reader/DocumentViewer/Sidebar/Categories';
+import { SidebarComments } from 'components/reader/DocumentViewer/Sidebar/Comments';
+import { DocumentInformation } from 'components/reader/DocumentViewer/Sidebar/DocumentInformation';
+import { IssueTags } from 'components/reader/DocumentViewer/Sidebar/IssueTags';
+import { WindowSlider } from 'components/reader/DocumentViewer/Sidebar/WindowSlider';
 
 /**
  * Document Accordion Section component

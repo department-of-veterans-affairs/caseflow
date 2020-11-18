@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux';
 
 // Lazy load screens
 const DocumentList = React.lazy(() => import('screens/reader/DocumentList'));
-const Document = React.lazy(() => import('screens/reader/Document'));
+const DocumentViewer = React.lazy(() => import('screens/reader/DocumentViewer'));
 
 const ReaderRoutes = (props) => {
   // Override The App Name here for the page routes
@@ -41,7 +41,7 @@ const ReaderRoutes = (props) => {
         loadingMessage={LOADING_DATA_MESSAGE}
         title="Document Viewer | Caseflow Reader"
         path="/reader/appeal/:vacolsId/documents/:docId"
-        render={(routeProps) => <Document {...props} {...routeProps} />}
+        render={(routeProps) => <DocumentViewer {...props} {...routeProps} />}
         appName={appName}
       />
     </AppFrame>

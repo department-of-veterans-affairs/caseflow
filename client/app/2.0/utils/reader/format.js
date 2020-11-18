@@ -1,5 +1,5 @@
 // External Dependencies
-import { current } from '@reduxjs/toolkit';
+import querystring from 'querystring';
 import moment from 'moment';
 import { sortBy, compact } from 'lodash';
 
@@ -191,3 +191,27 @@ export const addMetaLabel = (action, payload, label = '', meta = true) => ({
     }
   }
 });
+
+/**
+ * Helper Method to Parse the Queue Redirect URL from the window
+ * @returns {string|null} -- The Parsed Queue Redirect URL
+ */
+export const getQueueRedirectUrl = () => {
+  // Parse the Redirect URL string from the URL bar
+  const query = querystring.parse(window.location.search.slice(1));
+
+  // Return either the parsed URL or null
+  return query.queue_redirect_url ? decodeURIComponent(query.queue_redirect_url) : null;
+};
+
+/**
+ * Helper Method to Parse the Task Type from the window
+ * @returns {string|null} -- The Parsed Queue Task Type
+ */
+export const getQueueTaskType = () => {
+  // Parse the Task Type string from the URL bar
+  const query = querystring.parse(window.location.search.slice(1));
+
+  // Return either the parsed Task Type or null
+  return query.queue_task_type ? decodeURIComponent(query.queue_task_type) : null;
+};

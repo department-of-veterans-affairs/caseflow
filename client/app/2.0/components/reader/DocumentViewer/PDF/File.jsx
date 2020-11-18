@@ -5,7 +5,7 @@ import { Grid, AutoSizer } from 'react-virtualized';
 
 // Internal Dependencies
 import { PAGE_MARGIN } from 'app/reader/constants';
-import { Page } from 'components/reader/Document/PDF/Page';
+import { Page } from 'components/reader/DocumentViewer/PDF/Page';
 import { gridStyles } from 'styles/reader/Document/Pdf';
 import { columnCount } from 'utils/reader';
 

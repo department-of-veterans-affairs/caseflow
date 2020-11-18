@@ -10,7 +10,7 @@ import { documentListScreen } from 'store/reader/selectors';
 import {
   setSearch,
   clearSearch as clear,
-  setViewingDocumentsOrComments,
+  changeView,
   changeSortState,
   setCategoryFilter,
   toggleDropdownFilterVisibility,
@@ -50,7 +50,7 @@ const DocumentList = (props) => {
     clearCategoryFilters: () => dispatch(clearCategoryFilters(state)),
     toggleFilter: (val) => dispatch(toggleDropdownFilterVisibility(val)),
     setCategoryFilter: (categoryName, checked) => dispatch(setCategoryFilter(categoryName, checked, state)),
-    changeView: (val) => dispatch(setViewingDocumentsOrComments(val)),
+    changeView: (val) => dispatch(changeView(val)),
     search: (val) => dispatch(setSearch(val, state.annotations, state.storeDocuments)),
     clearSearch: () => dispatch(clear(state.filterCriteria, state.annotations, state.storeDocuments)),
     recordSearch: (query) => recordSearch(props.match.params.vacolsId, query),

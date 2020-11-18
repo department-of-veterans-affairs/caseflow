@@ -11,7 +11,7 @@ import {
   resetPendingDocDescription,
   toggleDocumentCategoryFail,
   handleCategoryToggle
-} from 'store/reader/document';
+} from 'store/reader/documentViewer';
 
 /**
  * PDF SideBar Error State
