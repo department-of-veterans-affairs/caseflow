@@ -50,18 +50,7 @@ const subTypeOptions = _.map(_.keys(CAVC_REMAND_SUBTYPE_NAMES), (key) => (
 
 const AddCavcRemandView = (props) => {
 
-  const {
-    appealId,
-    decisionIssues,
-    error,
-    highlightInvalid,
-    // eslint-disable-next-line no-shadow
-    requestSave,
-    // eslint-disable-next-line no-shadow
-    showErrorMessage,
-    history,
-    ...otherProps
-  } = props;
+  const { appealId, decisionIssues, error, highlightInvalid, history, ...otherProps } = props;
 
   const [docketNumber, setDocketNumber] = useState(null);
   const [attorney, setAttorney] = useState('1');
@@ -145,9 +134,9 @@ const AddCavcRemandView = (props) => {
       detail: COPY.CAVC_REMAND_CREATED_DETAIL
     };
 
-    requestSave(`/appeals/${appealId}/cavc_remand`, payload, successMsg).
+    props.requestSave(`/appeals/${appealId}/cavc_remand`, payload, successMsg).
       then((resp) => history.replace(`/queue/appeals/${resp.body.cavc_appeal.uuid}`)).
-      catch((err) => showErrorMessage({ title: 'Error', detail: JSON.parse(err.message).errors[0].detail }));
+      catch((err) => props.showErrorMessage({ title: 'Error', detail: JSON.parse(err.message).errors[0].detail }));
   };
 
   const docketNumberField = <TextField
