@@ -26,12 +26,10 @@ import { withRouter } from 'react-router';
 const radioLabelStyling = css({ marginTop: '2.5rem' });
 const buttonStyling = css({ paddingLeft: '0' });
 
-const judgeOptions = [].concat(
-  _.map(CAVC_JUDGE_FULL_NAMES, (value) => ({
-    label: value,
-    value
-  }))
-);
+const judgeOptions = _.map(CAVC_JUDGE_FULL_NAMES, (value) => ({
+  label: value,
+  value
+}));
 
 const attorneyOptions = [
   { displayText: 'Yes',
@@ -40,13 +38,15 @@ const attorneyOptions = [
     value: '2' },
 ];
 
-const typeOptions = _.map(_.keys(CAVC_DECISION_TYPES), (key) => (
-  { displayText: StringUtil.snakeCaseToCapitalized(key), value: key }
-));
+const typeOptions = _.map(_.keys(CAVC_DECISION_TYPES), (key) => ({
+  displayText: StringUtil.snakeCaseToCapitalized(key),
+  value: key
+}));
 
-const subTypeOptions = _.map(_.keys(CAVC_REMAND_SUBTYPE_NAMES), (key) => (
-  { displayText: CAVC_REMAND_SUBTYPE_NAMES[key], value: key }
-));
+const subTypeOptions = _.map(_.keys(CAVC_REMAND_SUBTYPE_NAMES), (key) => ({
+  displayText: CAVC_REMAND_SUBTYPE_NAMES[key],
+  value: key
+}));
 
 const AddCavcRemandView = (props) => {
 
@@ -63,20 +63,10 @@ const AddCavcRemandView = (props) => {
   const [issues, setIssues] = useState({});
   const [instructions, setInstructions] = useState(null);
 
-  const issueOptions = () => {
-    const issueList = [];
-
-    decisionIssues.map((decisionIssue) => {
-      const issue = {
-        id: decisionIssue.id,
-        label: decisionIssue.description
-      };
-
-      return issueList.push(issue);
-    });
-
-    return issueList;
-  };
+  const issueOptions = () => decisionIssues.map((decisionIssue) => ({
+    id: decisionIssue.id,
+    label: decisionIssue.description
+  }));
 
   // determines which issues are currently selected
   const selectedIssues = useMemo(() => {
