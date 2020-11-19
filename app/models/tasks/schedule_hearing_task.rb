@@ -59,10 +59,6 @@ class ScheduleHearingTask < Task
 
         created_tasks << AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, parent, hearing)
       elsif params[:status] == Constants.TASK_STATUSES.cancelled
-        # the frontend now passes a business_payloads which is used by AssignHearingDispositionTask
-        # to provide a disposition but it is not needed here
-        params.delete(:business_payloads)
-
         created_tasks << withdraw_hearing
       end
 
