@@ -1,11 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import COPY from '../../COPY';
 import TaskRows from './components/TaskRows';
 import { showSuccessMessage, resetSuccessMessages } from './uiReducer/uiActions';
+import { caseTimelineTasksForAppeal } from './selectors';
 
-export const CaseTimeline = ({ appeal, tasks, featureToggles }) => {
+export const CaseTimeline = ({ appeal }) => {
+  const tasks = useSelector((state) => caseTimelineTasksForAppeal(state, { appealId: appeal.externalId }));
+  const featureToggles = useSelector((state) => state.ui.featureToggles);
   const handleEditNodDateChange = () => {
     const dispatch = useDispatch();
 
@@ -36,7 +39,5 @@ export const CaseTimeline = ({ appeal, tasks, featureToggles }) => {
 };
 
 CaseTimeline.propTypes = {
-  appeal: PropTypes.object,
-  tasks: PropTypes.array,
-  featureToggles: PropTypes.object
+  appeal: PropTypes.object
 };
