@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+##
+# JudgeSchedulePeriod represents a schedule period for assigning judges to hearing days.
+##
 class JudgeSchedulePeriod < SchedulePeriod
   validate :validate_spreadsheet, on: :create
   after_create :import_spreadsheet

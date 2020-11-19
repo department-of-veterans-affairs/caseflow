@@ -29,6 +29,7 @@ class Hearings::SchedulePeriodsController < HearingsApplicationController
     render_error_for_show_action(error)
   end
 
+  # Route to create a hearing schedule
   def create
     file_name = params["schedule_period"]["type"] + Time.zone.now.to_s + ".xlsx"
     uploaded_file = Base64Service.to_file(params["schedule_period"]["file"], file_name)
@@ -40,6 +41,7 @@ class Hearings::SchedulePeriodsController < HearingsApplicationController
     render json: { error: error.message }
   end
 
+  # Route to finalize and confirm a hearing schedule
   def update
     if schedule_period.can_be_finalized?
       schedule_period.schedule_confirmed(schedule_period.algorithm_assignments)
@@ -49,6 +51,7 @@ class Hearings::SchedulePeriodsController < HearingsApplicationController
     end
   end
 
+  # Route to download uploaded spreadsheets
   def download
     schedule_period = SchedulePeriod.find(params[:schedule_period_id])
     schedule_period.spreadsheet
