@@ -402,7 +402,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   def filter_travel_board_hearing_days(start_date, end_date)
     travel_board_hearing_days = TravelBoardScheduleRepository.load_tb_days_for_range(start_date, end_date)
     tb_hearing_days = TravelBoardScheduleMapper.convert_from_vacols_format(travel_board_hearing_days)
-    tb_hearing_days = []
+
     tb_hearing_days.select { |tb_hearing_day| @ros.key?(tb_hearing_day[:ro]) }
       .map do |tb_hearing_day|
         tb_days = (tb_hearing_day[:start_date]..tb_hearing_day[:end_date]).to_a # travel days have start and end date
