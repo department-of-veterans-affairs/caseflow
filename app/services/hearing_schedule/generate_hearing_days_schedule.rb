@@ -111,7 +111,6 @@ class HearingSchedule::GenerateHearingDaysSchedule
   # (i.e. the most "booked" ROs)
   def sort_ros_by_rooms_and_allocated_days
     @ros.sort_by do |_k, v|
-      puts [_k, v[:allocated_days].to_f / v[:num_of_rooms] / v[:available_days].count]
       v[:allocated_days].to_f / v[:num_of_rooms] / v[:available_days].count
     end.reverse.to_h
   end
