@@ -283,7 +283,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   # Sample @ros[ro_key][:allocated_dates] -> {[1, 2018]=> {Thu, 04 Jan 2018=>[], Tue, 02 Jan 2018=>[]}}
   #
   def allocate_hearing_days_to_individual_ro(ro_key, monthly_allocations, date_index)
-    grouped_shuffled_monthly_dates = @ros[ro_key][:allocated_dates]  # not actually shuffled!
+    grouped_shuffled_monthly_dates = @ros[ro_key][:allocated_dates] # not actually shuffled!
 
     # looping through all the monthly allocations
     # and assigning rooms to the dates
@@ -291,8 +291,8 @@ class HearingSchedule::GenerateHearingDaysSchedule
       # go to next month if this month has nil instead of an array (not possible?) or no allocations for the month
       next if allocation_not_possible?(grouped_shuffled_monthly_dates, monthly_allocations, month)
 
-      allocated_days = monthly_allocations[month]  # number of days to allocate for this month
-      monthly_date_keys = (grouped_shuffled_monthly_dates[month] || {}).keys  # available dates in month to allocate to
+      allocated_days = monthly_allocations[month] # number of days to allocate for this month
+      monthly_date_keys = (grouped_shuffled_monthly_dates[month] || {}).keys # available dates in month to allocate to
       num_of_rooms = @ros[ro_key][:num_of_rooms]
 
       # both conditions are always true b/c allocation_not_possible checks both.........
@@ -301,7 +301,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
         @date_allocated[monthly_date_keys[date_index]] ||= 0
         # how many rooms can we allocate for this date
-        rooms_to_allocate = get_num_of_rooms_to_allocate(monthly_date_keys[date_index],  # date at date_index
+        rooms_to_allocate = get_num_of_rooms_to_allocate(monthly_date_keys[date_index], # date at date_index
                                                          num_of_rooms, allocated_days,
                                                          grouped_shuffled_monthly_dates[month])
         # assign room numbers for number of rooms [docket days] we can allocate on this date

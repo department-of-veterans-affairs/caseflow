@@ -104,9 +104,9 @@ module HearingSchedule::RoAllocation
       allocation_keys = allocated_days.keys
 
       j = 0
-      while j < (allocated_days.size * num_of_rooms)  # ?? number of months * number of rooms
+      while j < (allocated_days.size * num_of_rooms) # number of months * number of rooms
         i = 0
-        until i >= (allocation_keys.size - 1)  # while i < (allocated_days.size - 1)
+        until i >= (allocation_keys.size - 1) # while i < (allocated_days.size - 1)
           # iterate over months in pairs
           month = allocation_keys[i]
           next_month = allocation_keys[i + 1]
@@ -122,7 +122,7 @@ module HearingSchedule::RoAllocation
             allocated_days[next_month] -= 1
             i += 2
           else
-            i += 1  # ELSE proceed to next month pair without re-allocating
+            i += 1 # ELSE proceed to next month pair without re-allocating
           end
         end
         j += 1
