@@ -105,7 +105,7 @@ class HearingSchedule::AssignJudgesToHearingDays
     # hearing day  is a blackout day for judge OR
     # hearing is already assigned OR
     # judge was assigned for this hearing day OR
-    # hearing_day is a CO docket and judge was already assigned to it
+    # hearing_day is a CO docket and judge was already assigned to one CO hearing day
     problems = @judges[css_id][:non_availabilities].include?(scheduled_for) ||
                hearing_day_already_assigned?(current_hearing_day.id) ||
                judge_already_assigned_on_date?(judge_id, scheduled_for) ||

@@ -2,6 +2,8 @@
 
 ##
 # JudgeSchedulePeriod represents a schedule period for assigning judges to hearing days.
+# This record is created after user uploads JudgeAssignment spreadsheet for a schedule period.
+# Once created, it creates JudgeNonAvailability records with the blackout dates for each judge.
 ##
 class JudgeSchedulePeriod < SchedulePeriod
   validate :validate_spreadsheet, on: :create
