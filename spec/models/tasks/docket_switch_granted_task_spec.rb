@@ -10,8 +10,8 @@ describe DocketSwitchGrantedTask, :postgres do
 
   let(:task_actions) do
     [
-     Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-     Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
+      Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+      Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
     ]
   end
 
@@ -45,8 +45,8 @@ describe DocketSwitchGrantedTask, :postgres do
         before { FeatureToggle.enable!(:docket_switch) }
         after { FeatureToggle.disable!(:docket_switch) }
 
-        it "returns the available_actions as defined by Task" do
-          expect(subject).to eq(task_actions)
+        it "returns no task actions" do
+          expect(subject).to eq([])
         end
       end
     end

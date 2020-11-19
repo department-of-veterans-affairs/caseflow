@@ -5,7 +5,7 @@ class DocketSwitchDeniedTask < AttorneyTask
     actions = []
 
     if ClerkOfTheBoard.singleton.user_has_access?(user)
-      actions = actions + default_actions
+      actions += default_actions
       if assigned_to.is_a?(User) && FeatureToggle.enabled?(:docket_switch, user: user)
         actions.push(Constants.TASK_ACTIONS.DOCKET_SWITCH_DENIED.to_h)
       end

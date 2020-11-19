@@ -31,7 +31,7 @@ describe DocketSwitchMailTask, :postgres do
 
       context "without docket_switch feature toggle" do
         it "returns the available_actions as defined by Task" do
-          expect(subject).to eq(task_actions)
+          expect(subject).to eq([])
         end
       end
 
@@ -39,8 +39,8 @@ describe DocketSwitchMailTask, :postgres do
         before { FeatureToggle.enable!(:docket_switch) }
         after { FeatureToggle.disable!(:docket_switch) }
 
-        it "returns the available_actions as defined by Task" do
-          expect(subject).to eq(task_actions)
+        it "returns no task actions" do
+          expect(subject).to eq([])
         end
       end
     end
