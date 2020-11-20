@@ -798,19 +798,19 @@ RSpec.feature "Case details", :all_dbs do
           click_on("Search")
 
           click_on(appeal.docket_number)
-          expect(page).to have_content("Edit")
+          expect(find("#caseTitleDetailsSubheader")).to have_content("Edit")
         end
       end
     end
 
-    fcontext "when the current user is not a member of the AOD team" do
+    context "when the current user is not a member of the AOD team" do
       before do
         allow_any_instance_of(AodTeam).to receive(:user_has_access?).with(user2).and_return(false)
         User.authenticate!(user: user2)
         visit("/queue/appeals/#{appeal.uuid}")
       end
       it "should not display the edit link" do
-        expect(page).to_not have_content("Edit")
+        expect(find("#caseTitleDetailsSubheader")).to_not have_content("Edit")
       end
     end
   end
