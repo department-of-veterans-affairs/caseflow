@@ -25,7 +25,6 @@ describe('AddCavcRemandView', () => {
     expect(cavcForm).toMatchSnapshot();
   });
 
-  // TODO: break out testing from feature test
   // describe('form validations', () => {});
   // describe('deselecting "remand" hides remand subtypes', () => {});
 });
