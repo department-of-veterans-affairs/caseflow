@@ -16,7 +16,7 @@ exports[`DocketSwitchDenialForm renders correctly 1`] = `
       <div
         data-css-1sbm5ab=""
       >
-        Add the date and add any context for the denial of this switch
+        Add the date and add any context for the denial of this switch.
       </div>
       <div
         class="cf-form-textinput   "
