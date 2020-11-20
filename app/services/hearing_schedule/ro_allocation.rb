@@ -140,7 +140,7 @@ module HearingSchedule::RoAllocation
     #    1
     #
     # returns:
-    #
+    #  { [1, 2021] => 18, [3, 2021] => 18, [2, 2021] => 18 }
     #
     def validate_and_evenly_distribute_monthly_allocations(grouped_monthly_avail_dates,
                                                            monthly_allocated_days, num_of_rooms)
