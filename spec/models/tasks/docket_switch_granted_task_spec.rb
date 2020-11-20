@@ -46,7 +46,7 @@ describe DocketSwitchGrantedTask, :postgres do
         after { FeatureToggle.disable!(:docket_switch) }
 
         it "returns no task actions" do
-          expect(subject).to eq([])
+          expect(subject).to be_empty
         end
       end
     end

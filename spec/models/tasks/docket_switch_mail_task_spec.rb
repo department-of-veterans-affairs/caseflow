@@ -31,7 +31,7 @@ describe DocketSwitchMailTask, :postgres do
 
       context "without docket_switch feature toggle" do
         it "returns no task actions" do
-          expect(subject).to eq([])
+          expect(subject).to be_empty
         end
       end
 
@@ -40,7 +40,7 @@ describe DocketSwitchMailTask, :postgres do
         after { FeatureToggle.disable!(:docket_switch) }
 
         it "returns no task actions" do
-          expect(subject).to eq([])
+          expect(subject).to be_empty
         end
       end
     end
