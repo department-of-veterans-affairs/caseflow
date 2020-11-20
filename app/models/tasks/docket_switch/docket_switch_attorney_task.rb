@@ -8,13 +8,15 @@ class DocketSwitchAttorneyTask < AttorneyTask
     if assigned_to.is_a?(User) && FeatureToggle.enabled?(:docket_switch, user: user)
       actions.push(self.class.task_action.to_h)
     end
-   
+
     actions
   end
 
   class << self
     # Implement in subclass
     def label; end
+
+    # Implement in subclass
     def task_action; end
 
     def verify_user_can_create!(user, parent)
