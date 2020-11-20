@@ -40,7 +40,7 @@ describe AppealFinder, :all_dbs do
     context "stream docket number is provided" do
       let(:docket_number) { second_appeal.stream_docket_number }
 
-      it "returns two object" do
+      it "returns two appeals" do
         expect(subject.count).to eq(2)
         expect(subject.first.id).to eq(appeal.id)
         expect(subject.second.id).to eq(second_appeal.id)

@@ -19,23 +19,7 @@ class AppealFinder
     end
 
     def find_appeals_by_docket_number(docket_number)
-      return [] unless docket_number
-
-      # Take the first six digits as date, remaining as ID
-      parsed = docket_number.split("-")
-
-      # If we can't parse a valid date from search, return no results
-      begin
-        receipt_date = Date.strptime(parsed[0], "%y%m%d")
-
-        id = parsed[1]
-        Appeal.where(
-          "(receipt_date = ? AND id = ?) OR stream_docket_number = ?",
-          receipt_date, id, docket_number
-        )
-      rescue ArgumentError
-        []
-      end
+      Appeal.where(stream_docket_number: docket_number)
     end
   end
 
