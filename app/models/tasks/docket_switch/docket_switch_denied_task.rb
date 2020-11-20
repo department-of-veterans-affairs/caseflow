@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DocketSwitchDeniedTask < AttorneyTask
+class DocketSwitchDeniedTask < DocketSwitchAttorneyTask
   class << self
     def label
       COPY::DOCKET_SWITCH_DENIED_TASK_LABEL
