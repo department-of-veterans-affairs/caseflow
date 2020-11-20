@@ -672,7 +672,7 @@
   "VACOLS_OPTIN_ISSUE_CLOSED_EDIT": "This issue has automatically closed the VACOLS issue",
   "VACOLS_OPTIN_ISSUE_CLOSED": "VACOLS issue has been closed",
 
-  "WITHDRAW_HEARING_MODAL_TITLE": "Confirm withdraw hearing",
+  "WITHDRAW_HEARING_MODAL_TITLE": "Withdraw hearing",
   "WITHDRAW_HEARING_SUCCESS_MESSAGE_TITLE": "You have successfully withdrawn %s's hearing request",
   "WITHDRAW_HEARING": {
     "AMA": {
