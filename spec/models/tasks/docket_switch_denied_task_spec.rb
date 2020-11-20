@@ -20,7 +20,7 @@ describe DocketSwitchDeniedTask, :postgres do
   end
 
   describe ".available_actions" do
-    let(:attonery_task) do
+    let(:attorney_task) do
       task_class.create!(
         appeal: root_task.appeal,
         parent_id: root_task.id,
@@ -29,7 +29,7 @@ describe DocketSwitchDeniedTask, :postgres do
       )
     end
 
-    subject { attonery_task.available_actions(attorney) }
+    subject { attorney_task.available_actions(attorney) }
 
     context "when the current user is not a member of the Clerk of the Board team" do
       before { allow_any_instance_of(ClerkOfTheBoard).to receive(:user_has_access?).and_return(false) }
