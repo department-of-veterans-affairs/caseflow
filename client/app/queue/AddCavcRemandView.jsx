@@ -217,7 +217,7 @@ const AddCavcRemandView = (props) => {
   />;
 
   const issuesField = <React.Fragment>
-    <h4>{COPY.CAVC_ISSUES_LABEL}</h4>
+    <legend><strong>{COPY.CAVC_ISSUES_LABEL}</strong></legend>
     <Button
       name={selectedIssues.length ? 'Unselect all' : 'Select all'}
       styling={buttonStyling}
