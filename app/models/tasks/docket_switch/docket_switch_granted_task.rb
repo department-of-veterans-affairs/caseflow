@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DocketSwitchGrantedTask < DocketSwitchAttorneyTask
+class DocketSwitchGrantedTask < DocketSwitchAbstractAttorneyTask
   class << self
     def label
       COPY::DOCKET_SWITCH_GRANTED_TASK_LABEL

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DocketSwitchAttorneyTask < AttorneyTask
+class DocketSwitchAbstractAttorneyTask < AttorneyTask
   def available_actions(user)
     return [] unless ClerkOfTheBoard.singleton.user_has_access?(user)
 
