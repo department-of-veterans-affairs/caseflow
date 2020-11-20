@@ -18,9 +18,9 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
       expect(new_task.default_instructions).to be_empty
     end
 
-    context "create child task assigned to user" do
+    context "creation of child task assigned to user" do
       let!(:parent_task) { create(:send_cavc_remand_processed_letter_task, appeal: appeal) }
-      it "returns non-admin actions" do
+      it "creates child task with defaults" do
         new_task = subject
         expect(new_task.valid?)
         expect(new_task.errors.messages[:parent]).to be_empty
@@ -93,7 +93,7 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
       let(:child_task) { create(:send_cavc_remand_processed_letter_task, parent: send_task, assigned_to: org_nonadmin) }
       it "returns non-admin actions" do
         expect(child_task.available_actions(org_nonadmin)).to match_array SendCRPLetterTask::USER_ACTIONS
-        expect(send_task.available_actions(other_user)).to be_empty
+        expect(child_task.available_actions(other_user)).to be_empty
       end
     end
   end

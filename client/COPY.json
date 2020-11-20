@@ -375,6 +375,7 @@
   "SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_COMPLETE_MODAL_BODY": "Marking this task complete will put this case on hold for 90 days to allow the appellant to respond.",
 
   "CAVC_REMAND_PROCESSED_LETTER_RESP_WINDOW_TASK_LABEL": "CAVC-Remand-Processed Letter Response Window Task",
+  "CAVC_REMAND_PROCESSED_LETTER_RESP_WINDOW_TASK_DEFAULT_INSTRUCTIONS": "This response window task will return to the CAVC Teams queue after 90 days or when manually ended early.",
 
   "ASSIGN_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS": "Postpone or cancel a hearing prior to the hearing date. This task will be auto-completed after the hearing's scheduled date.",
 

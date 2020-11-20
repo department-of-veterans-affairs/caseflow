@@ -11,9 +11,7 @@
 # Expected assigned_to.type: CavcLitigationSupport
 
 class CavcRemandProcessedLetterResponseWindowTask < Task
-  validates :parent, presence: true,
-                     parentTask: { task_type: CavcTask },
-                     on: :create
+  validates :parent, presence: true, parentTask: { task_type: CavcTask }, on: :create
 
   before_validation :set_assignee
 
@@ -25,9 +23,11 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
           days_on_hold: 90,
           instructions: ["This case is on hold for 90 days to allow the appellant to respond."]
         )
-      end
     end
+  rescue ActiveRecord::RecordInvalid
+    errors.add(:parent, "should be a CavcTask")
   end
+end
 
   USER_ACTIONS = [
     Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
@@ -37,8 +37,12 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
     COPY::CAVC_REMAND_PROCESSED_LETTER_RESP_WINDOW_TASK_LABEL
   end
 
-  def available_actions(user)
-    return USER_ACTIONS
+  def default_instructions
+    [COPY::CAVC_TASK_DEFAULT_INSTRUCTIONS]
+  end
+
+  def available_actions(_user)
+    USER_ACTIONS
   end
 
   private
@@ -46,5 +50,4 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
   def set_assignee
     self.assigned_to = CavcLitigationSupport.singleton if assigned_to.nil?
   end
-
 end
