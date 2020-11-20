@@ -428,7 +428,7 @@ workflows:
       - rspec:
           requires:
             - build_workspace
-      - rspec_feature_tests_chrome
+      - rspec_feature_tests_chrome:
           requires:
             - build_workspace
           filters:
