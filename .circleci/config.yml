@@ -480,7 +480,7 @@ workflows:
             - build_workspace
           filters:
             branches:
-              only:
-                - develop
+              ignore:
+                - master
       - js_tests
       - lint
