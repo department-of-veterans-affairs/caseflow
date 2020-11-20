@@ -23,15 +23,9 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
           days_on_hold: 90,
           instructions: ["This case is on hold for 90 days to allow the appellant to respond."]
         )
+      end
     end
-  rescue ActiveRecord::RecordInvalid
-    errors.add(:parent, "should be a CavcTask")
   end
-end
-
-  USER_ACTIONS = [
-    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
-  ].freeze
 
   def self.label
     COPY::CAVC_REMAND_PROCESSED_LETTER_RESP_WINDOW_TASK_LABEL
@@ -40,6 +34,10 @@ end
   def default_instructions
     [COPY::CAVC_TASK_DEFAULT_INSTRUCTIONS]
   end
+
+  USER_ACTIONS = [
+    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
+  ].freeze
 
   def available_actions(_user)
     USER_ACTIONS

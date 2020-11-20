@@ -17,6 +17,7 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
       expect(new_task.label).to eq COPY::CAVC_REMAND_PROCESSED_LETTER_RESP_WINDOW_TASK_LABEL
       expect(new_task.default_instructions).to eq [COPY::CAVC_TASK_DEFAULT_INSTRUCTIONS]
     end
+
     describe ".create_with_hold" do
       subject { described_class.create_with_hold(parent_task) }
 
@@ -24,12 +25,14 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
         new_task = subject
         expect(new_task.valid?)
         expect(new_task.assigned_to).to eq CavcLitigationSupport.singleton
+        expect(new_task.status).to eq "on_hold"
 
         expect(appeal.tasks).to include new_task
         expect(parent_task.children).to include new_task
         child_tasks = new_task.children.where(type: :TimedHoldTask)
         expect(child_tasks.count).to eq 1
         expect(child_tasks.first.assigned_to).to eq CavcLitigationSupport.singleton
+        expect(child_tasks.first.status).to eq "assigned"
 
         expect(new_task.label).to eq COPY::CAVC_REMAND_PROCESSED_LETTER_RESP_WINDOW_TASK_LABEL
         expect(new_task.default_instructions).to eq [COPY::CAVC_TASK_DEFAULT_INSTRUCTIONS]
@@ -87,21 +90,16 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
     let(:org_nonadmin) { create(:user) { |u| CavcLitigationSupport.singleton.add_user(u) } }
     let(:other_user) { create(:user) }
     let(:send_task) { create(:send_cavc_remand_processed_letter_task) }
-    # context "task assigned to CavcLitigationSupport admin" do
-    #   it "returns admin actions" do
-    #     expect(send_task.available_actions(org_admin)).to match_array SendCRPLetterTask::ADMIN_ACTIONS
-    #     expect(send_task.available_actions(other_user)).to be_empty
-    #   end
-    # end
-    context "task assigned to CavcLitigationSupport non-admin" do
+
+    context "window task created after SendCRPLetterTask completed" do
       let(:user_task) { create(:send_cavc_remand_processed_letter_task, parent: send_task, assigned_to: org_nonadmin) }
       let(:window_task) do
         user_task.update_from_params({ status: "completed" }, org_nonadmin)
         user_task.appeal.tasks.where(type: CRPLRWindowTask.name).first
       end
-      it "returns non-admin actions" do
+      it "returns available actions" do
         expect(user_task.available_actions(org_nonadmin)).to match_array SendCRPLetterTask::USER_ACTIONS
-        expect(window_task.available_actions(org_nonadmin)).to match_array CRPLRWindowTask::USER_ACTIONS
+        expect(window_task.available_actions(org_nonadmin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
       end
     end
   end
