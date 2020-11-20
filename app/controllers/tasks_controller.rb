@@ -9,18 +9,20 @@ class TasksController < ApplicationController
   before_action :verify_task_access, only: [:create]
   skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
+  # for user-created tasks -- see taskactionrepository
   TASK_CLASSES_LOOKUP = {
     AttorneyDispatchReturnTask: AttorneyDispatchReturnTask,
     AttorneyQualityReviewTask: AttorneyQualityReviewTask,
     AttorneyRewriteTask: AttorneyRewriteTask,
     AttorneyTask: AttorneyTask,
     BlockedSpecialCaseMovementTask: BlockedSpecialCaseMovementTask,
+    # CavcRemandProcessedLetterResponseWindowTask: CavcRemandProcessedLetterResponseWindowTask,
     ChangeHearingDispositionTask: ChangeHearingDispositionTask,
     ColocatedTask: ColocatedTask,
     DocketSwitchRulingTask: DocketSwitchRulingTask,
     DocketSwitchDeniedTask: DocketSwitchDeniedTask,
     DocketSwitchGrantedTask: DocketSwitchGrantedTask,
-    EvidenceSubmissionWindowTask: EvidenceSubmissionWindowTask,
+    # TODO check creation: EvidenceSubmissionWindowTask: EvidenceSubmissionWindowTask, 
     FoiaTask: FoiaTask,
     HearingAdminActionTask: HearingAdminActionTask,
     InformalHearingPresentationTask: InformalHearingPresentationTask,
@@ -35,6 +37,7 @@ class TasksController < ApplicationController
     ScheduleHearingTask: ScheduleHearingTask,
     SendCavcRemandProcessedLetterTask: SendCavcRemandProcessedLetterTask,
     SpecialCaseMovementTask: SpecialCaseMovementTask,
+    # Investigate prod first; TODO check creation `type:` and `options:`: 
     Task: Task,
     TranslationTask: TranslationTask
   }.freeze

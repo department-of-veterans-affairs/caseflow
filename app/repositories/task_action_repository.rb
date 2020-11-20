@@ -272,6 +272,8 @@ class TaskActionRepository
                               COPY::NO_SHOW_HEARING_TASK_COMPLETE_MODAL_BODY
                             elsif task.is_a? HearingAdminActionTask
                               COPY::HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL
+                            elsif task.is_a? SendCavcRemandProcessedLetterTask
+                              COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_COMPLETE_MODAL_BODY
                             else
                               COPY::MARK_TASK_COMPLETE_COPY
                             end
