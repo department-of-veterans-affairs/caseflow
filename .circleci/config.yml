@@ -271,11 +271,8 @@ jobs:
           name: Store final coverage
           path: ~/coverage/combined
 
-  rspec-feature-tests-in-chrome:
-    filters:
-      branches:
-        only:
-          - master
+  # only run rspec features tests (using Chrome)
+  rspec_feature_tests_chrome:
     docker:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
@@ -431,5 +428,12 @@ workflows:
       - rspec:
           requires:
             - build_workspace
+      - rspec_feature_tests_chrome
+          requires:
+            - build_workspace
+          filters:
+            branches:
+              only:
+                - master
       - js_tests
       - lint
