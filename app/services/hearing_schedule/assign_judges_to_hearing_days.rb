@@ -6,8 +6,10 @@ require "set"
 ##
 # AssignJudgesToHearingDays is used to assign judges to hearing days for a schedule period while filtering out
 # blackout days for the judges. Full details of the algorithm can be
-# found `HearingSchedule.md` in Appeals-team repo. This class analogous to `GenerateHearingDaysSchedule`
-# which is the algo that creates hearing days prior to this point.
+# found `HearingSchedule.md` in Appeals-team repo(link: https://github.com/department-of-veterans-affairs/appeals-team
+# /blob/master/Project%20Folders/Caseflow%20Projects/Hearings/Hearing%20Schedule/Tech%20Specs/HearingSchedule.md.).
+# WIKI: https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Hearings#build-hearing-schedule
+# This class analogous to `GenerateHearingDaysSchedule` which is the algo that creates hearing days prior to this point.
 ##
 class HearingSchedule::AssignJudgesToHearingDays
   attr_reader :judges, :video_co_hearing_days
