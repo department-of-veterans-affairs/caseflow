@@ -34,7 +34,10 @@ export const initialState = {
   },
   queue: {
     appeals: appealsData,
-    appealDetails: appealsData
+    appealDetails: appealsData,
+    stagedChanges: {
+      appeals: {}
+    }
   }
 };
 

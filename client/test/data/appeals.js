@@ -70,7 +70,15 @@ export const appealData = {
   vacateType: null,
   completedHearingOnPreviousAppeal: false,
   issues: [],
-  decisionIssues: [],
+  decisionIssues: [
+    {
+      id: 1,
+      description: 'This is a description of the decision'
+    }, {
+      id: 2,
+      description: 'This is a description of another decision'
+    }
+  ],
   canEditRequestIssues: false,
   appellantIsNotVeteran: false,
   appellantFullName: 'Abellona Valtas',
