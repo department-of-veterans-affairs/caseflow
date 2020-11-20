@@ -21,14 +21,6 @@ describe AppealFinder, :all_dbs do
       end
     end
 
-    context "docket number is invalid format" do
-      let(:docket_number) { invalid_docket_number }
-
-      it "returns nil" do
-        expect(subject).to eq([])
-      end
-    end
-
     context "docket number cannot be found" do
       let(:docket_number) { unknown_docket_number }
 
@@ -37,7 +29,7 @@ describe AppealFinder, :all_dbs do
       end
     end
 
-    context "stream docket number is provided" do
+    context "stream docket number matches two appeals" do
       let(:docket_number) { second_appeal.stream_docket_number }
 
       it "returns two appeals" do
