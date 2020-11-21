@@ -13,8 +13,10 @@ class DocketSwitchAbstractAttorneyTask < AttorneyTask
   end
 
   class << self
-    # Implement in subclass
-    def label; end
+    # Necessary to have here to avoid bugs, but must implement in subclass
+    def label
+      "Abstract Docket Switch Attorney Task"
+    end
 
     # Implement in subclass
     def task_action; end
