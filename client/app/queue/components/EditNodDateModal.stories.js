@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { EditNODModal } from './EditNODModal';
+import { EditNodDateModal } from './EditNodDateModal';
 
 export default {
-  title: 'Queue/CaseTimeline/EditNODModal',
-  component: EditNODModal,
+  title: 'Queue/CaseTimeline/EditNodDateModal',
+  component: EditNodDateModal,
   decorators: [],
   parameters: {
     docs: {
@@ -20,7 +20,7 @@ export default {
 };
 
 const Template = (args) => (
-  <EditNODModal {...args} />
+  <EditNodDateModal {...args} />
 );
 
 export const Basic = Template.bind({});
@@ -28,6 +28,6 @@ export const Basic = Template.bind({});
 Basic.parameters = {
   docs: {
     storyDescription:
-      'This is used to edit NOD date for an appeal',
+      'This is used to edit the NOD date for an appeal',
   },
 };

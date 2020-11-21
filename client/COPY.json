@@ -110,7 +110,7 @@
   "CASE_DETAILS_POA_VSO": "Veteran Service Organization",
   "CASE_DETAILS_POA_AGENT": "Private Agent",
   "CASE_DETAILS_POA_ATTORNEY": "Private Attorney",
-  "CASE_DETAILS_EDIT_NOD": "Edit NOD",
+  "CASE_DETAILS_EDIT_NOD_DATE_LINK_COPYO": "Edit NOD Date",
 
   "CASE_DETAILS_GENDER_FIELD_LABEL": "Gender",
   "CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE": "Female",
@@ -127,7 +127,7 @@
 
   "EDIT_NOD_DATE_MODAL_TITLE": "Edit NOD Date",
   "EDIT_NOD_DATE_MODAL_DESCRIPTION": "**Editing NOD date affects the case timeline and may change when the case is assigned for hearing.**",
-  "EDIT_NOD_DATE_DROPDOWN_LABEL": "NOD Date",
+  "EDIT_NOD_DATE_LABEL": "NOD Date",
   "EDIT_NOD_DATE_SUCCESS_ALERT_TITLE": "NOD date has been updated",
   "EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE": "You have successfully updated the NOD date",
 

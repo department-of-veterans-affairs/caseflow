@@ -13,7 +13,7 @@ import OnHoldLabel from '../components/OnHoldLabel';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import DecisionDateTimeLine from '../components/DecisionDateTimeLine';
 import ReactMarkdown from 'react-markdown';
-import { EditNODModal } from 'app/queue/components/EditNODModal';
+import { EditNodDateModalContainer } from './EditNodDateModal';
 
 export const grayLineStyling = css({
   width: '5px',
@@ -89,7 +89,7 @@ class TaskRows extends React.PureComponent {
 
     this.state = {
       taskInstructionsIsVisible: { },
-      showEditNODModal: false
+      showEditNodDateModal: false
     };
   }
 
@@ -321,11 +321,11 @@ class TaskRows extends React.PureComponent {
     </tr>;
   }
 
-  toggleEditNODModal = () => this.setState((state) => ({ showEditNODModal: !state.showEditNODModal }));
+  toggleEditNodDateModal = () => this.setState((state) => ({ showEditNodDateModal: !state.showEditNodDateModal }));
 
   handleNODDateChange = () => {
-    this.props.onEditNodDateChange();
-    this.toggleEditNODModal();
+    // this.props.onEditNodDateChange();
+    this.toggleEditNodDateModal();
   }
 
   render = () => {
@@ -382,14 +382,14 @@ class TaskRows extends React.PureComponent {
                 <Button
                   type="button"
                   linkStyling
-                  onClick={this.toggleEditNODModal}>
-                  {COPY.CASE_DETAILS_EDIT_NOD}
+                  onClick={this.toggleEditNodDateModal}>
+                  {COPY.CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY}
                 </Button>
               </p>
-              {this.state.showEditNODModal && (
-                <EditNODModal
-                  onCancel={this.toggleEditNODModal}
-                  onSubmit={this.props.onEditNodDateChange}
+              {this.state.showEditNodDateModal && (
+                <EditNodDateModalContainer
+                  onCancel={this.toggleEditNodDateModal}
+                  onSubmit={this.toggleEditNodDateModal}
                   nodDate={appeal.nodDate}
                 />
               )}

@@ -4,8 +4,33 @@ import PropTypes from 'prop-types';
 import Modal from 'app/components/Modal';
 import DateSelector from 'app/components/DateSelector';
 import COPY from 'app/../COPY';
+import { useDispatch } from 'react-redux';
+import { resetSuccessMessages, showSuccessMessage } from '../uiReducer/uiActions';
 
-export const EditNODModal = ({ onCancel, onSubmit, nodDate }) => {
+export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate }) => {
+  const dispatch = useDispatch();
+
+  const handleSubmit = () => {
+    const successMessage = {
+      title: COPY.EDIT_NOD_DATE_SUCCESS_ALERT_TITLE,
+      detail: COPY.EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE,
+    };
+
+    dispatch(showSuccessMessage(successMessage));
+    setTimeout(() => dispatch(resetSuccessMessages()), 5000);
+    onSubmit?.();
+  };
+
+  return (
+    <EditNodDateModal
+      onCancel={onCancel}
+      onSubmit={handleSubmit}
+      nodDate={nodDate}
+    />
+  );
+};
+
+export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
   const [receiptDate, setReceiptDate] = useState(nodDate);
 
   const buttons = [
@@ -17,7 +42,7 @@ export const EditNODModal = ({ onCancel, onSubmit, nodDate }) => {
     {
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Submit',
-      onClick: () => onSubmit()
+      onClick: () => onSubmit(receiptDate)
     }
   ];
 
@@ -34,7 +59,7 @@ export const EditNODModal = ({ onCancel, onSubmit, nodDate }) => {
         <ReactMarkdown source={COPY.EDIT_NOD_DATE_MODAL_DESCRIPTION} />
       </div>
       <DateSelector
-        name={COPY.EDIT_NOD_DATE_DROPDOWN_LABEL}
+        name={COPY.EDIT_NOD_DATE_LABEL}
         strongLabel
         type="date"
         value={receiptDate}
@@ -44,7 +69,13 @@ export const EditNODModal = ({ onCancel, onSubmit, nodDate }) => {
   );
 };
 
-EditNODModal.propTypes = {
+EditNodDateModalContainer.propTypes = {
+  onCancel: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  nodDate: PropTypes.string.isRequired
+};
+
+EditNodDateModal.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   nodDate: PropTypes.string.isRequired
