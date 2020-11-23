@@ -718,7 +718,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         end
       end
 
-      shared_examples "withdrawing legacy hearing" do |scheduled=false|
+      shared_examples "withdrawing legacy hearing" do |scheduled = false|
         scenario "Withdraw Veteran's hearing request" do
           visit "queue/appeals/#{legacy_appeal.vacols_id}"
 
