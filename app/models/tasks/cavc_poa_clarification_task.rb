@@ -6,4 +6,8 @@ class CavcPoaClarificationTask < Task
   def self.label
     COPY::CAVC_POA_TASK_LABEL
   end
+
+  def available_actions(user)
+    super(user) - [Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h]
+  end
 end
