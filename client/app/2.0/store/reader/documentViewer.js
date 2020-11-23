@@ -5,7 +5,14 @@ import * as PDF from 'pdfjs';
 
 // Local Dependencies
 import ApiUtil from 'app/util/ApiUtil';
-import { ENDPOINT_NAMES, ROTATION_INCREMENTS, COMPLETE_ROTATION, COMMENT_ACCORDION_KEY } from 'store/constants/reader';
+import {
+  PDF_PAGE_HEIGHT,
+  PDF_PAGE_WIDTH,
+  ENDPOINT_NAMES,
+  ROTATION_INCREMENTS,
+  COMPLETE_ROTATION,
+  COMMENT_ACCORDION_KEY
+} from 'store/constants/reader';
 import { addMetaLabel, formatCategoryName } from 'utils/reader';
 
 /**
@@ -38,6 +45,8 @@ export const initialState = {
   scrollToSidebarComment: null,
   scale: 1,
   windowingOverscan: random(5, 10),
+  deleteCommentId: null,
+  shareCommentId: null,
   search: {
     matchIndex: 0,
     indexToHighlight: null,
@@ -75,51 +84,48 @@ export const getDocumentText = createAsyncThunk('pdfSearch/documentText', async 
     {});
 });
 
-export const showPage = createAsyncThunk('documentViewer/changePage', async(params) => {
-  // Convert the Array Buffer to a PDF
-  const pdf = await PDF.getDocument({ data: params.data }).promise;
-
-  console.log('PDF INFO: ', pdf.numPages);
-
+export const showPage = async(params) => {
   // Get the first page
-  const page = await pdf.getPage(1);
+  const page = await params.pdf.getPage(params.currentPage);
 
-  console.log('PAGE: ', page);
+  // Calculate the Viewport
+  const viewport = page.getViewport({ scale: params.scale });
 
   // Select the canvas element to draw
-  const canvas = document.getElementById('pdf-canvas');
+  const canvas = document.getElementById(`pdf-canvas-${params.pageIndex || 0}`);
+
+  // Update the Canvas
+  canvas.height = viewport.height || PDF_PAGE_HEIGHT;
+  canvas.width = viewport.width || PDF_PAGE_WIDTH;
 
   // Draw the PDF to the canvas
   await page.render({
     canvasContext: canvas.getContext('2d', { alpha: false }),
-    viewport: page.getViewport(params.scale)
+    viewport
   }).promise;
-
-  // Update the store with the PDF Pages
-  return {
-    docId: params.docId,
-    numPages: pdf.numPages
-  };
-});
+};
 
 /**
  * Dispatcher to show the selected PDF
  */
 export const showPdf = createAsyncThunk('documentViewer/show', async ({
+  rotation,
+  pageIndex,
+  pageNumber,
   currentDocument,
   worker,
   scale
-}, { dispatch }) => {
+}) => {
   // Attach the Service Worker if not already attached
   if (PDF.GlobalWorkerOptions.workerSrc !== worker) {
     PDF.GlobalWorkerOptions.workerSrc = worker;
   }
+  // Calculate the page rotation
+  const documentRotation = rotation !== undefined ? (rotation + ROTATION_INCREMENTS) % COMPLETE_ROTATION : 0;
 
-  // Get the Selected Document
-  // const [currentDocument] = documents.filter((doc) => doc.id.toString() === docId);
+  // Set the Current Page
+  const currentPage = parseInt(pageNumber, 10) || 1;
 
-  // Request the Document if it is not loaded
-  // if (current.id !== currentDocument.id) {
   // Request the PDF document from eFolder
   const { body } = await ApiUtil.get(currentDocument.content_url, {
     cache: true,
@@ -128,12 +134,22 @@ export const showPdf = createAsyncThunk('documentViewer/show', async ({
     responseType: 'arraybuffer'
   });
 
+  // Convert the Array Buffer to a PDF
+  const pdf = await PDF.getDocument({ data: body }).promise;
+
   // Set the Page
-  dispatch(showPage({ scale, data: body, docId: currentDocument.id }));
-  // }
+  showPage({ scale, data: body, docId: currentDocument.id, currentPage, pageIndex, pdf, rotation });
 
   // Return the Document Buffer
-  return { selected: currentDocument };
+  return {
+    currentDocument: {
+      ...currentDocument,
+      numPages: pdf.numPages
+    },
+    currentPage,
+    rotation: documentRotation,
+    scale
+  };
 });
 
 /**
@@ -161,18 +177,18 @@ export const addTag = createAsyncThunk('documentViewer/addTag', async({ doc, new
 /**
  * Dispatcher to Save Description for a Document
  */
-export const saveDocumentDescription = createAsyncThunk('documentViewer/saveDescription', async({ docId, description }) => {
+export const saveDescription = createAsyncThunk('documentViewer/saveDescription', async({ docId, description }) => {
   // Request the addition of the selected tags
   await ApiUtil.patch(`/document/${docId}`, { data: { description } });
 
   // Return the selected document and tag to the next Dispatcher
-  return { docId, description };
+  return { description };
 });
 
 /**
  * Dispatcher to Remove Tags from a Document
  */
-export const selectCurrentPdf = createAsyncThunk('documentViewer/saveDescription', async({ docId }) => {
+export const selectCurrentPdf = createAsyncThunk('documentViewer/selectCurrentPdf', async({ docId }) => {
   // Request the addition of the selected tags
   await ApiUtil.patch(`/document/${docId}/mark-as-read`, {}, ENDPOINT_NAMES.MARK_DOC_AS_READ);
 
@@ -198,15 +214,18 @@ export const handleCategoryToggle = createAsyncThunk('documentViewer/handleCateg
   categoryKey,
   toggleState
 }) => {
+  // Format the Category Key
+  const category = formatCategoryName(categoryKey);
+
   // Request the addition of the selected tags
   await ApiUtil.patch(
     `/document/${docId}`,
-    { data: { [categoryKey]: toggleState } },
+    { data: { [category]: toggleState } },
     ENDPOINT_NAMES.DOCUMENT
   );
 
   // Return the selected document and tag to the next Dispatcher
-  return { docId };
+  return { docId, category, toggleState };
 });
 
 /**
@@ -216,6 +235,27 @@ const documentViewerSlice = createSlice({
   name: 'documentViewer',
   initialState,
   reducers: {
+    changeDescription: (state, action) => {
+      state.selected.pendingDescription = action.payload;
+    },
+    resetDescription: (state) => {
+      state.selected.pendingDescription = null;
+    },
+    setOverscanValue: (state, action) => {
+      state.windowingOverscan = action.payload;
+    },
+    toggleShareModal: (state, action) => {
+      state.shareCommentId = action.payload;
+    },
+    toggleDeleteModal: (state, action) => {
+      state.deleteCommentId = action.payload;
+    },
+    setOpenedAccordionSections: (state, action) => {
+      state.openedAccordionSections = action.payload;
+    },
+    togglePdfSideBar: (state) => {
+      state.hidePdfSidebar = !state.hidePdfSidebar;
+    },
     updateSearchIndex: {
       reducer: (state, action) => {
         // Increment or Decrement the match index based on the payload
@@ -322,17 +362,22 @@ const documentViewerSlice = createSlice({
       addCase(showPdf.pending, (state) => {
         state.loading = true;
       }).
-      addCase(showPage.fulfilled, (state, action) => {
+      addCase(showPdf.fulfilled, (state, action) => {
       // Add the PDF data to the store
-        state.selected = action.payload;
+        state.selected = action.payload.currentDocument;
+        // Add the PDF data to the store
+        state.selected.rotation = action.payload.rotation;
+        state.selected.currentPage = action.payload.currentPage;
+        state.scale = action.payload.scale;
       }).
       /* eslint-disable */
       addCase(selectCurrentPdf.rejected, (state, action) => {
         console.log('Error marking as read', action.payload.docId, action.payload.errorMessage);
       }).
       /* eslint-enable */
-      addCase(saveDocumentDescription.fulfilled, (state, action) => {
-        state.list[action.payload.doc.id].description = action.payload.description;
+      addCase(saveDescription.fulfilled, (state, action) => {
+        state.selected.pendingDescription = null;
+        state.selected.description = action.payload.description;
       }).
       addCase(addTag.pending, {
         reducer: (state, action) => {
@@ -384,36 +429,10 @@ const documentViewerSlice = createSlice({
         // Reset the pending Removal for the selected tag to false
         state.list[action.payload.doc.id].tags[action.payload.tag.id].pendingRemoval = false;
       }).
-
-      addCase(handleCategoryToggle.fulfilled, {
-        reducer: (state, action) => {
-          state.list[action.payload.docId][action.payload.categoryKey] = action.payload.toggleState;
-        },
-        prepare: (payload) =>
-          addMetaLabel(`${payload.toggleState ? 'set' : 'unset'} document category`, payload, payload.categoryName)
+      addCase(handleCategoryToggle.fulfilled, (state, action) => {
+        // Apply the Category toggle
+        state.selected[action.payload.category] = action.payload.toggleState;
       }).
-      addCase(handleCategoryToggle.pending, {
-        prepare: (docId, categoryName, toggleState) => {
-          const categoryKey = formatCategoryName(categoryName);
-
-          return {
-            payload: {
-              docId,
-              categoryKey,
-              toggleState
-            }
-          };
-        }
-      }).
-      addMatcher(
-        (action) => [
-          toggleDocumentCategoryFail.toString(),
-          handleCategoryToggle.rejected.toString()
-        ].includes(action.type),
-        (state, action) => {
-          state.list[action.payload.docId][action.payload.categoryKey] = !action.payload.toggleState;
-        }
-      ).
       addMatcher(
         (action) => [
           selectCurrentPdf.fulfilled.toString(),
@@ -435,7 +454,14 @@ export const {
   handleToggleCommentOpened,
   handleSelectCommentIcon,
   onScrollToComment,
-  setZoomLevel
+  setZoomLevel,
+  togglePdfSideBar,
+  setOpenedAccordionSections,
+  toggleDeleteModal,
+  toggleShareModal,
+  setOverscanValue,
+  changeDescription,
+  resetDescription
 } = documentViewerSlice.actions;
 
 // Default export the reducer

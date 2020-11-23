@@ -13,7 +13,7 @@ import {
   getQueueRedirectUrl,
   getQueueTaskType
 } from 'utils/reader';
-import { showPdf, selectCurrentPdfLocally } from 'store/reader/documentViewer';
+import { showPdf, selectCurrentPdfLocally, handleCategoryToggle } from 'store/reader/documentViewer';
 import { onReceiveAnnotations } from 'store/reader/annotationLayer';
 
 /**
@@ -185,6 +185,9 @@ const documentListSlice = createSlice({
     builder.
       addCase(loadDocuments.pending, (state) => {
         state.loading = true;
+      }).
+      addCase(handleCategoryToggle.fulfilled, (state, action) => {
+        state.documents[action.payload.docId][action.payload.category] = action.payload.toggleState;
       }).
       addCase(loadDocuments.fulfilled, (state, action) => {
         state.documents = action.payload.documents.reduce((list, doc) => ({

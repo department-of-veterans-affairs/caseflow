@@ -10,19 +10,20 @@ import { CannotSaveAlert } from 'components/reader/DocumentViewer/CannotSaveAler
  * Sidebar Categories Component for Document screen
  * @param {Object} props -- Contains category toggle state
  */
-export const SidebarCategories = ({ error, filterCriteria, setCategoryFilter, ...props }) => (
+export const SidebarCategories = ({ error, categories, handleCategoryToggle, ...props }) => (
   <div className="cf-category-sidebar">
-    {error.category.visible && <CannotSaveAlert />}
+    {error?.category?.visible && <CannotSaveAlert />}
     <CategoryPicker
       {...props}
-      categoryToggleStates={filterCriteria?.category}
-      handleCategoryToggle={setCategoryFilter}
+      allowReadOnly
+      categoryToggleStates={categories}
+      handleCategoryToggle={handleCategoryToggle}
     />
   </div>
 );
 
 SidebarCategories.propTypes = {
   error: PropTypes.object,
-  setCategoryFilter: PropTypes.func,
-  filterCriteria: PropTypes.object,
+  handleCategoryToggle: PropTypes.func,
+  categories: PropTypes.array,
 };

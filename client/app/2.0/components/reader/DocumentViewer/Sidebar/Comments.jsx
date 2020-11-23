@@ -7,7 +7,7 @@ import { EditComment } from 'components/reader/DocumentViewer/Sidebar/EditCommen
 import { CannotSaveAlert } from 'components/reader/DocumentViewer/CannotSaveAlert';
 import { plusIcon } from 'app/components/RenderFunctions';
 import Button from 'app/components/Button';
-import Comment from 'app/reader/Comment';
+import { Comment } from 'components/reader/DocumentViewer/Sidebar/Comment';
 
 /**
  * Sidebar Comment Component for Document Screen
@@ -26,8 +26,9 @@ export const SidebarComments = ({
   requestEditAnnotation,
   handleClick,
   commentRef,
-  startEditAnnotation,
-  selectedAnnotationId
+  selectedAnnotationId,
+  currentDocument,
+  ...props
 }) => (
   <div>
     <span className="cf-right-side cf-add-comment-button">
@@ -37,7 +38,7 @@ export const SidebarComments = ({
     </span>
     <div style={{ clear: 'both' }}></div>
     <div className="cf-comment-wrapper">
-      {error.annotation.visible && <CannotSaveAlert message={error.annotation.message} />}
+      {error?.annotation?.visible && <CannotSaveAlert message={error.annotation.message} />}
       <div className="cf-pdf-comment-list">
         {placedButUnsavedAnnotation && (
           <EditComment
@@ -51,7 +52,7 @@ export const SidebarComments = ({
           />
         )}
         {comments.map((comment, index) => (
-          <React.Fragment>
+          <React.Fragment key={index}>
             {comment.editing ? (
               <EditComment
                 id={`editCommentBox-${comment.temporaryId || comment.id}`}
@@ -67,12 +68,13 @@ export const SidebarComments = ({
               <div ref={commentRef} key={comment.temporaryId || comment.id}>
                 <Comment
                   id={`comment${index}`}
-                  onEditComment={startEditAnnotation}
-                  uuid={comment.uuid}
+                  comment={comment}
                   selected={comment.id === selectedAnnotationId}
-                  onClick={handleClick}
+                  handleClick={handleClick}
                   page={comment.page}
                   date={comment.relevant_date}
+                  currentDocument={currentDocument}
+                  {...props}
                 >
                   {comment.comment}
                 </Comment>
@@ -86,6 +88,7 @@ export const SidebarComments = ({
 );
 
 SidebarComments.propTypes = {
+  currentDocument: PropTypes.object,
   comments: PropTypes.array,
   addComment: PropTypes.func,
   placedButUnsavedAnnotation: PropTypes.func,

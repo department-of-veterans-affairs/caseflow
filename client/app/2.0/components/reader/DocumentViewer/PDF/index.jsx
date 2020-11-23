@@ -30,6 +30,7 @@ export const Pdf = ({ doc, ...props }) => (
           key={`${doc.content_url}`}
           file={doc.content_url}
           documentType={doc.type}
+          currentDocument={doc}
           {...props}
         />
       )}

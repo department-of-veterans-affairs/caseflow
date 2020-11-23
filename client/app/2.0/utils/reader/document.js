@@ -1,5 +1,5 @@
 // External Dependencies
-import { sortBy, round, isEmpty } from 'lodash';
+import { sortBy, round, isEmpty, range } from 'lodash';
 
 // Local Dependencies
 import { loadDocuments } from 'store/reader/documentList';
@@ -9,7 +9,10 @@ import {
   DOCUMENTS_OR_COMMENTS_ENUM,
   CATEGORIES,
   ACTION_NAMES,
-  INTERACTION_TYPES
+  INTERACTION_TYPES,
+  PDF_PAGE_WIDTH,
+  PDF_PAGE_HEIGHT,
+  PAGE_MARGIN
 } from 'store/constants/reader';
 import { formatCategoryName, formatFilterCriteria, searchString } from 'utils/reader';
 import { setZoomLevel } from 'store/reader/documentViewer';
@@ -303,4 +306,58 @@ export const filterDocuments = (criteria, documents, state) => {
     value: criteria.sort.sortBy,
     dir: !criteria.sort.sortAscending && 'desc'
   });
+};
+
+export const rowHeight = ({ scale, numColumns, dimensions, horizontal }) => ({ index }) => {
+  // Return the default width if there are no pages yet
+  if (!numColumns) {
+    return PDF_PAGE_HEIGHT;
+  }
+
+  // Calculate the Starting Index of the page
+  const start = index * numColumns;
+
+  // Get the list of page heights
+  const heights = range(start, start + numColumns).map(() => {
+    // Return the page width if Horizontal
+    if (horizontal) {
+      return dimensions?.width || PDF_PAGE_WIDTH;
+    }
+
+    // Default to return the page height
+    return dimensions?.height || PDF_PAGE_HEIGHT;
+  });
+
+  // Return the Max height of the pages as the row height
+  return (Math.max(...heights) + PAGE_MARGIN) * scale;
+};
+
+export const columnWidth = ({ numPages, scale, dimensions, horizontal }) => {
+  // Return the default width if there are no pages yet
+  if (!numPages) {
+    return PDF_PAGE_WIDTH;
+  }
+
+  // Calculate the max width
+  const widths = range(0, numPages).map(() => {
+    // Default to return the page height
+    if (horizontal) {
+      return dimensions?.height || PDF_PAGE_HEIGHT;
+    }
+
+    // Return the page width if Horizontal
+    return dimensions?.width || PDF_PAGE_WIDTH;
+  });
+
+  // Return the width based on the current scale
+  return (Math.max(...widths) + PAGE_MARGIN) * scale;
+};
+
+export const dimensions = (scale, rotation) => {
+  // Set the height based on the rotation
+  const height = rotation === 90 || rotation === 270 ? scale * PDF_PAGE_HEIGHT : scale * PDF_PAGE_WIDTH;
+  const width = rotation === 90 || rotation === 270 ? scale * PDF_PAGE_WIDTH : scale * PDF_PAGE_HEIGHT;
+
+  // Return the calculated dimensions
+  return { height, width };
 };

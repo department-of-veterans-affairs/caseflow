@@ -3,6 +3,8 @@ import { createSelector, current } from '@reduxjs/toolkit';
 import { values, isEmpty, compact, uniqBy } from 'lodash';
 
 // Local Dependencies
+import { documentCategories } from 'store/constants/reader';
+import { formatCategoryName } from 'app/2.0/utils/reader/format';
 import { escapeRegExp, documentsView } from 'utils/reader';
 
 /**
@@ -243,10 +245,27 @@ export const documentListScreen = (state) => {
 export const documentScreen = (state) => {
   // Get the filtered documents and count
   const { documents, docsCount } = documentState(state);
+  const categories = Object.keys(documentCategories).reduce((list, key) => {
+    // Set the current Category
+    const cat = state.reader.documentViewer.selected[formatCategoryName(key)] ? key : '';
+
+    // Return the Categories Object
+    return {
+      ...list,
+      [cat]: true
+    };
+  }, {});
 
   return {
     documents,
     docsCount,
+    categories,
+    windowingOverscan: state.reader.documentViewer.windowingOverscan,
+    comments: documentAnnotations(state),
+    deleteCommentId: state.reader.documentViewer.deleteCommentId,
+    shareCommentId: state.reader.documentViewer.shareCommentId,
+    filterCriteria: state.reader.documentList.filterCriteria,
+    openSections: state.reader.documentViewer.openedAccordionSections,
     currentDocument: state.reader.documentViewer.selected,
     filteredDocIds: state.reader.documentList.filteredDocIds,
     appeal: state.reader.appeal.selected,

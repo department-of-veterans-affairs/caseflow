@@ -4,64 +4,54 @@ import PropTypes from 'prop-types';
 import { Grid, AutoSizer } from 'react-virtualized';
 
 // Internal Dependencies
-import { PAGE_MARGIN } from 'app/reader/constants';
 import { Page } from 'components/reader/DocumentViewer/PDF/Page';
 import { gridStyles } from 'styles/reader/Document/Pdf';
-import { columnCount } from 'utils/reader';
+import { columnWidth, rowHeight, columnCount } from 'utils/reader';
+import { PAGE_MARGIN } from 'app/2.0/store/constants/reader';
 
 /**
  * PDF File Component
  * @param {Object} props
  */
-export const File = ({
-  clientHeight,
-  clientWidth,
-  gridRef,
-  overscanIndices,
-  pageHeight,
-  windowingOverscan,
-  scrollPage,
-  rowHeight,
-  columnWidth,
-  ...props
-}) => (
+export const File = ({ gridRef, overscanIndices, windowingOverscan, scrollPage, ...props }) => (
   <AutoSizer>
     {({ width, height }) => {
-      console.log('SCALE: ', props.scale);
+      // Set the Page Width
+      const pageWidth = columnWidth({ scale: props.scale, numPages: props.currentDocument.numPages });
 
       // Calculate the column count
-      const numColumns = columnCount(width, props.pageWidth, props.numPages);
+      const numColumns = columnCount(width, pageWidth, props.currentDocument.numPages) || 1;
+
+      // Calculate the count of rows
+      const rowCount = Math.ceil(props.currentDocument.numPages / numColumns) || 1;
 
       return (
         <Grid
-          // ref={gridRef}
-          scrollTop={0}
-          scrollLeft={0}
+          ref={gridRef}
           containerStyle={gridStyles(props.isVisible)}
-          // overscanIndicesGetter={overscanIndices}
-          // estimatedRowSize={1}
-          // overscanRowCount={Math.floor(windowingOverscan / numColumns)}
-          // onScroll={scrollPage}
+          overscanIndicesGetter={overscanIndices}
+          estimatedRowSize={(0 + PAGE_MARGIN) * props.scale}
+          overscanRowCount={Math.floor(windowingOverscan / numColumns)}
+          onScroll={scrollPage}
           height={height}
-          rowCount={1}
-          rowHeight={100}
+          rowCount={rowCount}
+          rowHeight={rowHeight({ scale: props.scale, numColumns })}
           cellRenderer={(cellProps) => (
             <Page
               outerHeight={height}
               outerWidth={width}
               numColumns={numColumns}
+              rotation={props.currentDocument.rotation}
               {...cellProps}
               {...props}
             />
           )}
-          // scrollToAlignment="start"
-          // width={100}
+          scrollToAlignment="start"
           width={width}
-          columnWidth={100}
-          numColumns={numColumns}
-          columnCount={1}
-          // scale={props.scale}
-          // tabIndex={props.isVisible ? 0 : -1}
+          columnWidth={pageWidth}
+          columnCount={numColumns}
+          scale={props.scale}
+          tabIndex={props.isVisible ? 0 : -1}
         />
       );
     }}
@@ -71,10 +61,10 @@ export const File = ({
 File.propTypes = {
   clientHeight: PropTypes.number,
   clientWidth: PropTypes.number,
-  gridRef: PropTypes.element,
-  overscanIndices: PropTypes.number,
+  gridRef: PropTypes.object,
+  overscanIndices: PropTypes.func,
   pageHeight: PropTypes.func,
-  windowingOverscan: PropTypes.number,
+  windowingOverscan: PropTypes.string,
   scrollPage: PropTypes.func,
   rowHeight: PropTypes.number,
   columnWidth: PropTypes.number,
@@ -82,4 +72,5 @@ File.propTypes = {
   isVisible: PropTypes.bool,
   numPages: PropTypes.number,
   pageWidth: PropTypes.number,
+  currentDocument: PropTypes.object,
 };

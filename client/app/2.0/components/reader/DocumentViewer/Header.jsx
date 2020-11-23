@@ -73,10 +73,10 @@ export const DocumentHeader = ({
     </span>
     <span {...toolbarStyles.toolbar} {...toolbarStyles.toolbarRight}>
       <span className="cf-pdf-button-text">Zoom:</span>
-      <Button name="zoomOut" classNames={pdfButtonStyle} onClick={() => zoom(-ZOOM_RATE)} ariaLabel="zoom out" >
+      <Button name="zoomOut" classNames={pdfButtonStyle} onClick={() => zoom('out')} ariaLabel="zoom out" >
         <i className="fa fa-minus" aria-hidden="true" />
       </Button>
-      <Button name="zoomIn" classNames={pdfButtonStyle} onClick={() => zoom(ZOOM_RATE)} ariaLabel="zoom in" >
+      <Button name="zoomIn" classNames={pdfButtonStyle} onClick={() => zoom('in')} ariaLabel="zoom in" >
         <i className="fa fa-plus" aria-hidden="true" />
       </Button>
       <Button name="fit" classNames={pdfButtonStyle} onClick={fitToScreen} ariaLabel="fit to screen" >
@@ -123,7 +123,7 @@ DocumentHeader.propTypes = {
   loadError: PropTypes.string,
   docsFiltered: PropTypes.bool,
   filteredDocIds: PropTypes.array,
-  nextDoc: PropTypes.number,
+  nextDoc: PropTypes.func,
   numPages: PropTypes.number,
   setPageNumber: PropTypes.func,
   handleKeyPress: PropTypes.func,

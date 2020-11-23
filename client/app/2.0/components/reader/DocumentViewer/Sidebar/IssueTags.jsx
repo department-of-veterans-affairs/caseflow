@@ -12,7 +12,7 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
  */
 export const IssueTags = ({ error, doc, onChange, tagOptions, tags }) => (
   <div className="cf-issue-tag-sidebar">
-    {error.tag.visible && <CannotSaveAlert />}
+    {error?.tag?.visible && <CannotSaveAlert />}
     <SearchableDropdown
       key={doc.id}
       name="tags"

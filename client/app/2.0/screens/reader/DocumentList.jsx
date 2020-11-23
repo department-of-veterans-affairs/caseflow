@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import { isEmpty } from 'lodash';
 
 // Local Dependencies
 import { showPdf } from 'store/reader/documentViewer';

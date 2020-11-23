@@ -17,12 +17,11 @@ export const markStyles = css({
   }
 });
 
-export const pageStyles = ({ width, height, scale, visible }) => ({
+export const pageStyles = ({ width, height, scale }) => ({
   marginBottom: `${PAGE_MARGIN * scale}px`,
   width: `${width}px`,
   height: `${height}px`,
   verticalAlign: 'top',
-  display: visible ? '' : 'none'
 });
 
 export const pdfStyles = {

@@ -28,7 +28,7 @@ export const DocumentAccordion = ({
   ...props
 }) => (
   <div className="cf-sidebar-accordion" id="cf-sidebar-accordion" ref={commentListRef}>
-    {featureToggles.windowSlider && <WindowSlider />}
+    {featureToggles.windowSlider && <WindowSlider {...props} />}
     <Accordion style="outline" onChange={toggleAccordion} activeKey={openSections}>
       <AccordionSection title="Document information">
         {didLoadAppealFail ? (
@@ -38,7 +38,7 @@ export const DocumentAccordion = ({
           </Alert>
         ) : (
           <DocumentInformation {...props} />
-        ) }
+        )}
       </AccordionSection>
       <AccordionSection title="Categories">
         <SidebarCategories {...props} />
