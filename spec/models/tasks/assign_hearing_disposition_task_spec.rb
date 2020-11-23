@@ -298,7 +298,7 @@ describe AssignHearingDispositionTask, :all_dbs do
     context "legacy appeal" do
       let(:vacols_case) { create(:case) }
       let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
-      let!(:hearing) { create(:legacy_hearing, appeal: appeal)}
+      let!(:hearing) { create(:legacy_hearing, appeal: appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal) }
 
       describe "hearing disposition of cancelled" do

@@ -688,7 +688,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         click_button("Schedule", exact: true)
       end
 
-      shared_examples "withdrawing ama hearing" do |scheduled=false|
+      shared_examples "withdrawing ama hearing" do |scheduled = false|
         scenario "Withdraw Veteran's hearing request" do
           visit "queue/appeals/#{appeal.uuid}"
 
