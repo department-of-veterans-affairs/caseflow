@@ -50,8 +50,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         User.authenticate!(user: org_nonadmin2)
         visit "queue/appeals/#{send_task.appeal.external_id}"
 
-        find(".cf-select__control", text: "Select an action").click
-        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
+        click_dropdown(text: Constants.TASK_ACTIONS.MARK_COMPLETE.label)
         fill_in "completeTaskInstructions", with: "Letter sent."
         click_on COPY::MARK_TASK_COMPLETE_BUTTON
         expect(page).to have_content COPY::MARK_TASK_COMPLETE_CONFIRMATION % vet_name
@@ -67,8 +66,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         expect(page).to have_content send_task.appeal.docket_number
         # Check that org_admin has option to End hold early
         visit "queue/appeals/#{send_task.appeal.external_id}"
-        find(".cf-select__control", text: "Select an action").click
-        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label).click
+        click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
         click_on "Cancel"
       end
 
@@ -76,8 +74,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         # Actually "End hold early" as org_nonadmin this time
         User.authenticate!(user: org_nonadmin2)
         visit "queue/appeals/#{send_task.appeal.external_id}"
-        find(".cf-select__control", text: "Select an action").click
-        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label).click
+        click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
         click_on "Submit"
         expect(page).to have_content COPY::END_HOLD_SUCCESS_MESSAGE_TITLE
       end
@@ -113,8 +110,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
 
         # Check case details page has action to place on hold
         visit "queue/appeals/#{send_task.appeal.external_id}"
-        find(".cf-select__control", text: "Select an action").click
-        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label).click
+        click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
         click_on "Cancel"
       end
     end
