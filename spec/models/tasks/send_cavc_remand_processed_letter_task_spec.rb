@@ -135,7 +135,7 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
     end
 
     context "when there is no open distribution task on the appeal" do
-      before { DistributionTask.open.where(appeal: task.appeal).each(&:completed!) }
+      before { DistributionTask.open.where(appeal: cavc_task.appeal).each(&:completed!) }
 
       it "provides no parent id to the front end" do
         translation_action = subject.detect do |action|
