@@ -28,11 +28,11 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
   end
 
   def self.label
-    COPY::CAVC_REMAND_PROCESSED_LETTER_RESP_WINDOW_TASK_LABEL
+    COPY::CRP_LETTER_RESP_WINDOW_TASK_LABEL
   end
 
   def default_instructions
-    [COPY::CAVC_TASK_DEFAULT_INSTRUCTIONS]
+    [COPY::CRP_LETTER_RESP_WINDOW_TASK_DEFAULT_INSTRUCTIONS]
   end
 
   USER_ACTIONS = [

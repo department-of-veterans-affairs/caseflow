@@ -17,8 +17,8 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
     it "has expected defaults" do
       new_task = subject
       expect(new_task.assigned_to).to eq CavcLitigationSupport.singleton
-      expect(new_task.label).to eq COPY::CAVC_REMAND_PROCESSED_LETTER_RESP_WINDOW_TASK_LABEL
-      expect(new_task.default_instructions).to eq [COPY::CAVC_TASK_DEFAULT_INSTRUCTIONS]
+      expect(new_task.label).to eq COPY::CRP_LETTER_RESP_WINDOW_TASK_LABEL
+      expect(new_task.default_instructions).to eq [COPY::CRP_LETTER_RESP_WINDOW_TASK_DEFAULT_INSTRUCTIONS]
     end
 
     describe ".create_with_hold" do
@@ -37,8 +37,8 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
         expect(child_timed_hold_tasks.first.assigned_to).to eq CavcLitigationSupport.singleton
         expect(child_timed_hold_tasks.first.status).to eq Constants.TASK_STATUSES.assigned
 
-        expect(new_task.label).to eq COPY::CAVC_REMAND_PROCESSED_LETTER_RESP_WINDOW_TASK_LABEL
-        expect(new_task.default_instructions).to eq [COPY::CAVC_TASK_DEFAULT_INSTRUCTIONS]
+        expect(new_task.label).to eq COPY::CRP_LETTER_RESP_WINDOW_TASK_LABEL
+        expect(new_task.default_instructions).to eq [COPY::CRP_LETTER_RESP_WINDOW_TASK_DEFAULT_INSTRUCTIONS]
       end
     end
   end
