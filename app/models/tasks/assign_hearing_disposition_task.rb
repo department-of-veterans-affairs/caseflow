@@ -75,6 +75,11 @@ class AssignHearingDispositionTask < Task
     if params[:status] == Constants.TASK_STATUSES.cancelled && payload_values[:disposition].present?
       created_tasks = update_hearing_and_self(params: params, payload_values: payload_values)
 
+      # if hearing is being withdrawn
+      if payload_values[:action] == Constants.TASK_ACTIONS.WITHDRAW_HEARING.value
+        withdraw_hearing
+      end
+
       [self] + created_tasks
     else
       super(params, user)
@@ -285,5 +290,11 @@ class AssignHearingDispositionTask < Task
                     end
 
     [transcription_task, evidence_task].compact
+  end
+
+  def withdraw_hearing
+    if appeal.is_a?(LegacyAppeal)
+      AppealRepository.withdraw_hearing!(appeal)
+    end
   end
 end

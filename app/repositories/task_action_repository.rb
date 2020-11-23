@@ -340,11 +340,12 @@ class TaskActionRepository
         message_title: format(COPY::WITHDRAW_HEARING_SUCCESS_MESSAGE_TITLE, task.appeal.veteran_full_name),
         message_detail: format(copy["SUCCESS_MESSAGE"], task.appeal.veteran_full_name),
         # If a hearing has already been scheduled, the cancel task should also cancel the hearing. To do that
-        # it will need to provide the cancelled disposition to the API.
+        # it will need to provide the cancelled disposition and action to the API.
         business_payloads: if assign_hearing_disposition_task
                              {
                                values: {
-                                 disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled
+                                 disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled,
+                                 action: Constants.TASK_ACTIONS.WITHDRAW_HEARING.value
                                }
                              }
                            end,
