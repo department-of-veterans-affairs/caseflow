@@ -121,6 +121,7 @@
     "redux-perf-middleware": "^1.2.2",
     "redux-thunk": "^2.3.0",
     "regenerator-runtime": "^0.13.5",
+    "remark-gfm": "^1.0.0",
     "reselect": "^4.0.0",
     "sass-loader": "^8.0.0",
     "sprintf-js": "^1.1.2",

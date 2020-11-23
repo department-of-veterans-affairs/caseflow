@@ -390,6 +390,11 @@ exports[`CancelTaskModal for cancel change hearing request type action 1`] = `
                     onClick={[Function]}
                     type="button"
                   >
+                    <span
+                      className="usa-sr-only"
+                    >
+                      Close
+                    </span>
                     <svg
                       className="cf-icon-close"
                       height="55"

@@ -4,7 +4,7 @@ import { useHistory, useParams } from 'react-router';
 import { fetchJudges } from '../../QueueActions';
 
 import { appealWithDetailSelector } from '../../selectors';
-import { dispositions } from '../constants';
+import DISPOSITIONS from '../../../../constants/DOCKET_SWITCH';
 import { createDocketSwitchRulingTask } from './recommendDocketSwitchSlice';
 import { RecommendDocketSwitchForm } from './RecommendDocketSwitchForm';
 import {
@@ -28,7 +28,7 @@ export const formatDocketSwitchRecommendation = ({
 
   parts.push(`**Summary:** ${summary}`);
   parts.push(`**Is this a timely request:** ${timelyCaps}`);
-  parts.push(`**Recommendation:** ${dispositions[disposition].displayText}`);
+  parts.push(`**Recommendation:** ${DISPOSITIONS[disposition].displayText}`);
   parts.push(`**Draft letter:** ${hyperlink}`);
 
   // Separate each chunk by two line breaks

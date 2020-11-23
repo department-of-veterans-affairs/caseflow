@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DocketSwitchDenialForm renders correctly 1`] = `
+<div>
+  <form
+    aria-label="Deny Docket Switch"
+    class="docket-switch-denial"
+  >
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <h1>
+        Switch Docket: Deny Claimant 1's Request
+      </h1>
+      <div
+        data-css-1sbm5ab=""
+      >
+        Add the date and add any context for the denial of this switch.
+      </div>
+      <div
+        class="cf-form-textinput   "
+      >
+        <label
+          for="receiptDate"
+        >
+          <strong>
+            <span>
+              What is the Receipt Date of the docket switch request?
+            </span>
+          </strong>
+        </label>
+        <input
+          class="cf-form-textinput"
+          id="receiptDate"
+          max="9999-12-31"
+          name="receiptDate"
+          placeholder="mm/dd/yyyy"
+          type="date"
+          value=""
+        />
+      </div>
+      <div
+        class="cf-form-textarea"
+      >
+        <label
+          class="question-label"
+          for="context"
+        >
+          <strong>
+            <span>
+              Provide context for this denial (this will be visible in the Case Timeline)
+            </span>
+          </strong>
+        </label>
+        <textarea
+          id="context"
+          name="context"
+        />
+      </div>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <span>
+        <button
+          class="cf-right-side usa-button"
+          id="submit-submit"
+          type="submit"
+        >
+          Confirm
+        </button>
+      </span>
+      <span>
+        <button
+          class="cf-right-side usa-button-secondary usa-button"
+          id="button-Cancel"
+          style="margin-right: 1rem;"
+          type="button"
+        >
+          Cancel
+        </button>
+      </span>
+    </div>
+  </form>
+</div>
+`;
