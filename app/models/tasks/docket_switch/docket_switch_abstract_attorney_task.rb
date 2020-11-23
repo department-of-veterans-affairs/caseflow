@@ -15,7 +15,7 @@ class DocketSwitchAbstractAttorneyTask < AttorneyTask
   class << self
     # Necessary to have here to avoid bugs, but must implement in subclass
     def label
-      "Abstract Docket Switch Attorney Task"
+      "Docket Switch Abstract Attorney Task"
     end
 
     # Implement in subclass
