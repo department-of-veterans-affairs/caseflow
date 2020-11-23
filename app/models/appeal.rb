@@ -380,7 +380,12 @@ class Appeal < DecisionReview
     return stream_docket_number if stream_docket_number
     return "Missing Docket Number" unless receipt_date && persisted?
 
-    "#{receipt_date.strftime('%y%m%d')}-#{id}"
+    default_docket_number_from_receipt_date
+  end
+
+  def update_receipt_date!(receipt_date)
+    update!(receipt_date: receipt_date)
+    update!(stream_docket_number: default_docket_number_from_receipt_date)
   end
 
   # Currently AMA only supports one claimant per decision review
@@ -569,5 +574,9 @@ class Appeal < DecisionReview
   ensure
     distribution_task = tasks.open.find_by(type: DistributionTask.name)
     TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
+  end
+
+  def default_docket_number_from_receipt_date
+    "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 end
