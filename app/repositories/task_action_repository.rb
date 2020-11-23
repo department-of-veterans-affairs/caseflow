@@ -345,7 +345,7 @@ class TaskActionRepository
                              {
                                values: {
                                  disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled,
-                                 action: Constants.TASK_ACTIONS.WITHDRAW_HEARING.value
+                                 action: "withdraw_hearing"
                                }
                              }
                            end,
