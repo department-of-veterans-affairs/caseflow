@@ -28,6 +28,7 @@ module Asyncable
   # These column names can be overridden in consuming classes as needed.
   class_methods do
     REQUIRES_PROCESSING_WINDOW_DAYS = 4
+    EXPIRATION_WINDOW_BUFFER_HOURS = 1
     DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 3
     PROCESS_DELAY_VBMS_OFFSET_HOURS = 7
 
@@ -205,7 +206,7 @@ module Asyncable
     last_submitted = self[self.class.last_submitted_at_column]
     return false unless last_submitted
 
-    last_submitted < self.class.requires_processing_until
+    last_submitted < (self.class.requires_processing_until + self.class::EXPIRATION_WINDOW_BUFFER_HOURS.hours)
   end
 
   def submitted_and_ready?
