@@ -18,6 +18,11 @@ class AppealFinder
       end
     end
 
+    # All Appeals have stream_docket_number populated either with their own
+    # docket number (original appeals), or with the original appeal's docket
+    # number (new appeal streams). This will thus return both the original
+    # and all appeal streams off of it. Docket number of appeal streams is
+    # never shown and thus the inability to search for it is OK.
     def find_appeals_by_docket_number(docket_number)
       Appeal.where(stream_docket_number: docket_number)
     end
