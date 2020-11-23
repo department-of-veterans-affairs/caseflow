@@ -324,7 +324,6 @@ class TaskRows extends React.PureComponent {
   toggleEditNodDateModal = () => this.setState((state) => ({ showEditNodDateModal: !state.showEditNodDateModal }));
 
   handleNODDateChange = () => {
-    // this.props.onEditNodDateChange();
     this.toggleEditNodDateModal();
   }
 
@@ -406,8 +405,7 @@ TaskRows.propTypes = {
   editNodDateEnabled: PropTypes.bool,
   hideDropdown: PropTypes.bool,
   taskList: PropTypes.array,
-  timeline: PropTypes.bool,
-  onEditNodDateChange: PropTypes.func
+  timeline: PropTypes.bool
 };
 
 export default TaskRows;
