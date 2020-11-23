@@ -54,12 +54,4 @@ class AppealFinder
       end
     end
   end
-
-  def filter_appeals_for_vso_user(appeals:, veterans:)
-    allowed_appeal_ids = find_appeals_for_vso_user(veterans: veterans).map(&:id)
-
-    appeals.select do |appeal|
-      allowed_appeal_ids.include?(appeal.id)
-    end
-  end
 end
