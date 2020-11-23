@@ -39,8 +39,8 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
     Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
   ].freeze
 
-  def available_actions(_user)
-    USER_ACTIONS
+  def available_actions(user)
+    assigned_to.user_has_access?(user) ? USER_ACTIONS : []
   end
 
   private

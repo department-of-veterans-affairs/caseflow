@@ -2,6 +2,9 @@
 
 describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
   require_relative "task_shared_examples.rb"
+  let(:org_admin) { create(:user) { |u| OrganizationsUser.make_user_admin(u, CavcLitigationSupport.singleton) } }
+  let(:org_nonadmin) { create(:user) { |u| CavcLitigationSupport.singleton.add_user(u) } }
+  let(:other_user) { create(:user) }
 
   describe ".create" do
     subject { described_class.create(parent: parent_task, appeal: appeal) }
@@ -43,14 +46,6 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
   SendCRPLetterTask = SendCavcRemandProcessedLetterTask
   CRPLRWindowTask = CavcRemandProcessedLetterResponseWindowTask
   describe "#available_actions" do
-    Timecop.travel(17.days.ago)
-    let(:org_admin) do
-      create(:user) do |u|
-        OrganizationsUser.make_user_admin(u, CavcLitigationSupport.singleton)
-      end
-    end
-    let(:org_nonadmin) { create(:user) { |u| CavcLitigationSupport.singleton.add_user(u) } }
-    let(:other_user) { create(:user) }
     let(:send_task) { create(:send_cavc_remand_processed_letter_task) }
 
     context "window task created after SendCRPLetterTask completed" do
@@ -63,22 +58,13 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
         expect(user_task.available_actions(org_nonadmin)).to match_array SendCRPLetterTask::USER_ACTIONS
         expect(window_task.available_actions(org_nonadmin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
         expect(window_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
+        expect(window_task.available_actions(other_user)).to be_empty
 
         Timecop.travel(Time.zone.now + 90.days + 1.hour)
         TaskTimerJob.perform_now
         child_timed_hold_tasks = window_task.children.where(type: :TimedHoldTask)
         expect(child_timed_hold_tasks.first.status).to eq Constants.TASK_STATUSES.completed
         expect(window_task.reload.status).to eq Constants.TASK_STATUSES.assigned
-      end
-
-      context "when user_task cannot be marked complete" do
-        before { allow(user_task).to receive(:update_from_params).and_raise(StandardError) }
-        it "does not create window_task" do
-          expect(user_task.available_actions(org_nonadmin)).to match_array SendCRPLetterTask::USER_ACTIONS
-          expect { window_task }.to raise_error(StandardError)
-          expect(user_task.appeal.tasks.where(type: CRPLRWindowTask.name).count).to eq 0
-          expect(user_task.status).to eq Constants.TASK_STATUSES.assigned
-        end
       end
     end
   end

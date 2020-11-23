@@ -2,6 +2,11 @@
 
 describe SendCavcRemandProcessedLetterTask, :postgres do
   require_relative "task_shared_examples.rb"
+  SendCRPLetterTask = SendCavcRemandProcessedLetterTask
+
+  let(:org_admin) { create(:user) { |u| OrganizationsUser.make_user_admin(u, CavcLitigationSupport.singleton) } }
+  let(:org_nonadmin) { create(:user) { |u| CavcLitigationSupport.singleton.add_user(u) } }
+  let(:other_user) { create(:user) }
 
   describe ".create" do
     subject { described_class.create(appeal: appeal, parent: parent_task) }
@@ -73,27 +78,42 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
     end
   end
 
-  SendCRPLetterTask = SendCavcRemandProcessedLetterTask
   describe "#available_actions" do
-    let(:org_admin) do
-      create(:user) do |u|
-        OrganizationsUser.make_user_admin(u, CavcLitigationSupport.singleton)
-      end
-    end
-    let(:org_nonadmin) { create(:user) { |u| CavcLitigationSupport.singleton.add_user(u) } }
-    let(:other_user) { create(:user) }
     let(:send_task) { create(:send_cavc_remand_processed_letter_task) }
-    context "task assigned to CavcLitigationSupport admin" do
+    let(:child_task) { create(:send_cavc_remand_processed_letter_task, parent: send_task, assigned_to: org_nonadmin) }
+
+    context "task assigned to CavcLitigationSupport (aka org-task)" do
       it "returns admin actions" do
+        expect(send_task.assigned_to).to eq CavcLitigationSupport.singleton
         expect(send_task.available_actions(org_admin)).to match_array SendCRPLetterTask::ADMIN_ACTIONS
         expect(send_task.available_actions(other_user)).to be_empty
       end
     end
-    context "task assigned to CavcLitigationSupport non-admin" do
-      let(:child_task) { create(:send_cavc_remand_processed_letter_task, parent: send_task, assigned_to: org_nonadmin) }
+
+    context "task assigned to CavcLitigationSupport non-admin (aka user-task)" do
       it "returns non-admin actions" do
+        expect(child_task.assigned_to).to eq org_nonadmin
         expect(child_task.available_actions(org_nonadmin)).to match_array SendCRPLetterTask::USER_ACTIONS
         expect(child_task.available_actions(other_user)).to be_empty
+      end
+    end
+
+    context "when SendCRPLetterTask completed" do
+      let(:user_task) { child_task }
+      subject { user_task.update_from_params({ status: Constants.TASK_STATUSES.completed }, org_nonadmin) }
+
+      it "status is updated to be completed" do
+        expect { subject }.to_not raise_error(StandardError)
+        expect(user_task.status).to eq Constants.TASK_STATUSES.completed
+      end
+
+      context "when user_task cannot be marked complete" do
+        before { allow(user_task).to receive(:update_from_params).and_raise(StandardError) }
+        it "does not create CavcRemandProcessedLetterResponseWindowTask" do
+          expect(user_task.available_actions(org_nonadmin)).to match_array SendCRPLetterTask::USER_ACTIONS
+          expect { subject }.to raise_error(StandardError)
+          expect(user_task.status).to eq Constants.TASK_STATUSES.assigned
+        end
       end
     end
   end
