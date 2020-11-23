@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class VirtualHearings::SendReminderEmailsJob < ApplicationJob
+  queue_with_priority :low_priority
+  application_attr :hearing_schedule
+
   def perform
     VirtualHearingRepository.maybe_ready_for_reminder_email.each do |virtual_hearing|
       send_reminder_emails(virtual_hearing)
