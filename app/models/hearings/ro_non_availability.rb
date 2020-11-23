@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+##
+# RoNonAvailability records represents Non-Available days for ROs for a SchedulePeriod. These records are created when
+# user uploads RoAssignment spreadsheet after it passes all validations.
+##
 class RoNonAvailability < NonAvailability
   class << self
     def import_ro_non_availability(schedule_period)
