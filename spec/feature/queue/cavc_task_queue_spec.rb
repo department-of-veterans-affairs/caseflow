@@ -69,6 +69,29 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
       click_on "Submit"
       expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Colocated.singleton.name
 
+      # Assign an admin action that DOES block the sending of the 90 day letter
+      click_dropdown(text: Constants.TASK_ACTIONS.CLARIFY_POA_BLOCKING_CAVC.label)
+      fill_in "taskInstructions", with: "Please find out the POA for this veteran"
+      click_on "Submit"
+      expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % CavcLitigationSupport.singleton.name
+
+      # Ensure there are no actions on the send letter task as it is blocked by poa clarification
+      active_task_rows = page.find("#currently-active-tasks").find_all("tr")
+      poa_task_row = active_task_rows[0]
+      send_task_row = active_task_rows[-2]
+      expect(poa_task_row).to have_content("TASK\n#{COPY::CAVC_POA_TASK_LABEL}")
+      expect(poa_task_row.find(".taskActionsContainerStyling").all("*", wait: false).length).to be > 0
+      expect(send_task_row).to have_content("TASK\n#{COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL}")
+      expect(send_task_row.find(".taskActionsContainerStyling").all("*", wait: false).length).to be 0
+
+      # Complete the task to unblock
+      click_dropdown(text: Constants.TASK_ACTIONS.MARK_COMPLETE.label)
+      fill_in "completeTaskInstructions", with: "POA verified"
+      click_on COPY::MARK_TASK_COMPLETE_BUTTON
+      visit "queue/appeals/#{send_task.appeal.external_id}"
+      send_task_row = page.find("#currently-active-tasks").find_all("tr")[-2]
+      expect(send_task_row.find(".taskActionsContainerStyling").all("*", wait: false).length).to be > 0
+
       find(".cf-select__control", text: "Select an action").click
       find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
       fill_in "completeTaskInstructions", with: "Letter sent."

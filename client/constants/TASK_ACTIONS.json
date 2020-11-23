@@ -310,6 +310,11 @@
     "value": "modal/assign_ihp_to_colocated_team",
     "func": "assign_ihp_to_colocated_blocking_distribution_data"
   },
+  "CLARIFY_POA_BLOCKING_CAVC": {
+    "label": "Assign POA Clarification task to CAVC team",
+    "value": "modal/assign_poa_to_cavc_team",
+    "func": "assign_poa_to_cavc_blocking_cavc_data"
+  },
   "SUBMIT_OMO_REQUEST_FOR_REVIEW": {
     "label": "Medical Request Ready for Review",
     "value": "omo_request/submit"

@@ -674,6 +674,12 @@ class QueueApp extends React.PureComponent {
               />
               <Route
                 path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CLARIFY_POA_BLOCKING_CAVC.value
+                }`}
+                render={this.routedAssignToSingleTeam}
+              />
+              <Route
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.RESCHEDULE_NO_SHOW_HEARING.value
                 }`}
                 render={this.routedPostponeHearingTaskModal}

@@ -119,6 +119,10 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
         SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION: [IhpColocatedTask, Colocated]
       }
 
+      blocking_admin_actions = {
+        CLARIFY_POA_BLOCKING_CAVC: [CavcPoaClarificationTask, CavcLitigationSupport]
+      }
+
       admin_actions.each do |admin_action, task_and_org|
         task_action = subject.detect { |action| action[:label] == Constants::TASK_ACTIONS[admin_action.to_s]["label"] }
 
@@ -131,6 +135,20 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
         expect(parent.appeal).to eq cavc_task.appeal
         expect(parent.open?).to be true
         expect(parent).to eq cavc_task.parent.parent
+      end
+
+      blocking_admin_actions.each do |admin_action, task_and_org|
+        task_action = subject.detect { |action| action[:label] == Constants::TASK_ACTIONS[admin_action.to_s]["label"] }
+
+        new_task_type, assignee = task_and_org
+        expect(task_action[:data][:type]).to eq new_task_type.name
+        expect(task_action[:data][:selected]).to eq assignee.singleton
+
+        parent = Task.find(task_action[:data][:parent_id])
+        expect(parent.type).to eq SendCavcRemandProcessedLetterTask.name
+        expect(parent.appeal).to eq cavc_task.appeal
+        expect(parent.open?).to be true
+        expect(parent).to eq cavc_task
       end
     end
 
