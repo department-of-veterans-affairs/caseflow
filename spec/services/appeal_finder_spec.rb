@@ -15,7 +15,7 @@ describe AppealFinder, :all_dbs do
     context "valid docket number" do
       let(:docket_number) { appeal.docket_number }
 
-      it "returns a result upon valid input" do
+      it "returns only the matching appeal" do
         expect(subject.count).to eq(1)
         expect(subject.first.id).to eq(appeal.id)
       end
@@ -24,7 +24,7 @@ describe AppealFinder, :all_dbs do
     context "docket number cannot be found" do
       let(:docket_number) { unknown_docket_number }
 
-      it "returns nil" do
+      it "returns an empty array" do
         expect(subject).to eq([])
       end
     end
