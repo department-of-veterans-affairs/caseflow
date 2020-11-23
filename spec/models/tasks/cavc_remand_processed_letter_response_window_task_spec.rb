@@ -40,45 +40,6 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
     end
   end
 
-  # describe "FactoryBot.create(:send_cavc_remand_processed_letter_task) with different arguments" do
-  #   context "appeal is provided" do
-  #     let(:appeal) { create(:appeal) }
-  #     let!(:cavc_task) { create(:cavc_task, appeal: appeal) }
-  #     let!(:send_task) { create(:send_cavc_remand_processed_letter_task, appeal: appeal) }
-  #     it "finds existing parent_task to use as parent" do
-  #       expect(Appeal.count).to eq 1
-  #       expect(RootTask.count).to eq 1
-  #       expect(DistributionTask.count).to eq 1
-  #       expect(CavcTask.count).to eq 1
-  #       expect(SendCavcRemandProcessedLetterTask.count).to eq 1
-  #       expect(send_task.parent).to eq cavc_task
-  #     end
-  #   end
-  #   context "parent task is provided" do
-  #     let!(:parent_task) { create(:cavc_task) }
-  #     let!(:send_task) { create(:send_cavc_remand_processed_letter_task, parent: parent_task) }
-  #     it "uses existing parent_task" do
-  #       expect(Appeal.count).to eq 1
-  #       expect(RootTask.count).to eq 1
-  #       expect(DistributionTask.count).to eq 1
-  #       expect(CavcTask.count).to eq 1
-  #       expect(SendCavcRemandProcessedLetterTask.count).to eq 1
-  #       expect(send_task.parent).to eq parent_task
-  #     end
-  #   end
-  #   context "nothing is provided" do
-  #     let!(:send_task) { create(:send_cavc_remand_processed_letter_task) }
-  #     it "creates realistic task tree" do
-  #       expect(Appeal.count).to eq 1
-  #       expect(RootTask.count).to eq 1
-  #       expect(DistributionTask.count).to eq 1
-  #       expect(CavcTask.count).to eq 1
-  #       expect(SendCavcRemandProcessedLetterTask.count).to eq 1
-  #       expect(send_task.parent).to eq CavcTask.first
-  #     end
-  #   end
-  # end
-
   SendCRPLetterTask = SendCavcRemandProcessedLetterTask
   CRPLRWindowTask = CavcRemandProcessedLetterResponseWindowTask
   describe "#available_actions" do
