@@ -76,7 +76,7 @@ class AssignHearingDispositionTask < Task
       created_tasks = update_hearing_and_self(params: params, payload_values: payload_values)
 
       # if hearing is being withdrawn
-      if payload_values[:action] == Constants.TASK_ACTIONS.WITHDRAW_HEARING.value
+      if payload_values[:action] == "withdraw_hearing"
         withdraw_hearing
       end
 
