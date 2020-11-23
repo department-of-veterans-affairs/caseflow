@@ -9,7 +9,7 @@ describe CavcAdminActionConcern do
   let(:user) { create(:user).tap { |new_user| CavcLitigationSupport.singleton.add_user(new_user) } }
   let!(:cavc_task) { create(:send_cavc_remand_processed_letter_task, assigned_to: user, appeal: parent_task.appeal) }
 
-  fdescribe ".creating_from_cavc_workflow?" do
+  describe ".creating_from_cavc_workflow?" do
     subject { TestTask.creating_from_cavc_workflow?(user, parent_task) }
 
     it { is_expected.to be true }
