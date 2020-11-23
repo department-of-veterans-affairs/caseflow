@@ -344,8 +344,7 @@ class TaskActionRepository
         business_payloads: if assign_hearing_disposition_task
                              {
                                values: {
-                                 disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled,
-                                 action: "withdraw_hearing"
+                                 disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled
                                }
                              }
                            end,

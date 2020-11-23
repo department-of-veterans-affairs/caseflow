@@ -36,32 +36,6 @@ describe AssignHearingDispositionTask, :all_dbs do
       end
     end
 
-    shared_context "when hearing is withdrawn" do
-      let(:values) do
-        {
-          disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled,
-          action: "withdraw_hearing"
-        }
-      end
-
-      it "withdraws hearing" do
-        subject
-
-        expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.cancelled
-
-        if appeal.is_a? Appeal
-          expect(Hearing.count).to eq 1
-          expect(EvidenceSubmissionWindowTask.first.status).to eq(Constants.TASK_STATUSES.assigned)
-          # no representatives for appeal, so ihp task is not created
-          expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq 0
-        else
-          expect(LegacyHearing.count).to eq 1
-          expect(appeal.case_record.bfhr).to eq("5")
-          expect(appeal.case_record.bfha).to eq("5")
-        end
-      end
-    end
-
     shared_examples "sets cancelled disposition" do
       it "sets the hearing disposition and calls cancel!", :aggregate_failures do
         expect(disposition_task).to receive(:cancel!).exactly(1).times.and_call_original
@@ -74,8 +48,13 @@ describe AssignHearingDispositionTask, :all_dbs do
 
         if appeal.is_a? Appeal
           expect(Hearing.count).to eq 1
+          expect(EvidenceSubmissionWindowTask.first.status).to eq(Constants.TASK_STATUSES.assigned)
+          # no representatives for appeal, so ihp task is not created
+          expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq 0
         else
           expect(LegacyHearing.count).to eq 1
+          expect(appeal.case_record.bfhr).to eq("5")
+          expect(appeal.case_record.bfha).to eq("5")
         end
       end
     end
@@ -150,10 +129,6 @@ describe AssignHearingDispositionTask, :all_dbs do
 
         context "when hearing is virtual" do
           include_context "when hearing is virtual"
-        end
-
-        context "when hearing is withdrawn" do
-          include_context "when hearing is withdrawn"
         end
       end
 
@@ -340,10 +315,6 @@ describe AssignHearingDispositionTask, :all_dbs do
 
         context "when hearing is virtual" do
           include_context "when hearing is virtual"
-        end
-
-        context "when hearing is withdrawn" do
-          include_context "when hearing is withdrawn"
         end
       end
 

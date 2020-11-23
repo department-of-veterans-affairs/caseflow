@@ -75,11 +75,6 @@ class AssignHearingDispositionTask < Task
     if params[:status] == Constants.TASK_STATUSES.cancelled && payload_values[:disposition].present?
       created_tasks = update_hearing_and_self(params: params, payload_values: payload_values)
 
-      # if hearing is being withdrawn
-      if payload_values[:action] == "withdraw_hearing"
-        withdraw_hearing
-      end
-
       [self] + created_tasks
     else
       super(params, user)
@@ -91,17 +86,11 @@ class AssignHearingDispositionTask < Task
       fail HearingDispositionNotCanceled
     end
 
-    evidence_task = if appeal.is_a? Appeal
-                      EvidenceSubmissionWindowTask.find_or_create_by!(
-                        appeal: appeal,
-                        parent: hearing_task.parent,
-                        assigned_to: MailTeam.singleton
-                      )
-                    end
+    maybe_evidence_task = withdraw_hearing
 
     update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
 
-    [evidence_task].compact
+    [maybe_evidence_task].compact
   end
 
   def postpone!
@@ -295,6 +284,13 @@ class AssignHearingDispositionTask < Task
   def withdraw_hearing
     if appeal.is_a?(LegacyAppeal)
       AppealRepository.withdraw_hearing!(appeal)
+      nil
+    else
+      EvidenceSubmissionWindowTask.find_or_create_by!(
+        appeal: appeal,
+        parent: hearing_task.parent,
+        assigned_to: MailTeam.singleton
+      )
     end
   end
 end
