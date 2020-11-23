@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+##
+# CoNonAvailability records represents Non-Available days for CO for a SchedulePeriod. These records are created when
+# user uploads RoAssignment spreadsheet after it passes all validations.
+##
 class CoNonAvailability < NonAvailability
   class << self
     def import_co_non_availability(schedule_period)
