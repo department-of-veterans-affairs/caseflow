@@ -40,6 +40,7 @@ class AppealRequestIssuesPolicy
   end
 
   def cavc_task_open?
-    appeal.tasks.open.where(type: :CavcTask).count > 0
+    CavcLitigationSupport.singleton.users.include?(user) &&
+      appeal.tasks.open.where(type: :CavcTask).any?
   end
 end
