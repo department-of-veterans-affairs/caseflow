@@ -10,6 +10,14 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
   let!(:org_nonadmin2) { create(:user, full_name: "Tooey Remandy") { |u| CavcLitigationSupport.singleton.add_user(u) } }
   let!(:other_user) { create(:user, full_name: "Othery Usery") }
 
+  describe "when CAVC Lit Support has a CAVC Remand case" do
+    it "allows CAVC Team users to correct issues" do
+      step "check 'Correct issues' link appears" do
+
+      end
+    end
+  end
+
   describe "when CAVC Lit Support is assigned SendCavcRemandProcessedLetterTask" do
     let!(:send_task) { create(:send_cavc_remand_processed_letter_task) }
     let(:vet_name) { send_task.appeal.veteran_full_name }
