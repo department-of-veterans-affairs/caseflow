@@ -40,6 +40,7 @@ import {
 } from '../actions/addIssues';
 import COPY from '../../../COPY';
 import { EditClaimLabelModal } from '../../intakeEdit/components/EditClaimLabelModal';
+import { ConfirmClaimLabelModal } from '../../intakeEdit/components/ConfirmClaimLabelModal';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -145,20 +146,35 @@ class AddIssuesPage extends React.Component {
   openEditClaimLabelModal = (endProductCode) => {
     this.setState({
       showEditClaimLabelModal: true,
-      selectedEPCode: endProductCode
+      selectedEpCode: endProductCode
     });
   }
   closeEditClaimLabelModal = () => {
     this.setState({
       showEditClaimLabelModal: false,
-      selectedEPCode: null
+      showConfirmClaimLabelModal: false,
+      previousEpCode: null,
+      selectedEpCode: null
     });
   }
-  // eslint-disable-next-line no-unused-vars
-  handleEditClaimLabel = (newCode) => {
-    // TODO: save the updated code
 
-    this.closeEditClaimLabelModal();
+  // eslint-disable-next-line no-unused-vars
+  handleEditClaimLabel = (data) => {
+    this.setState({
+      showEditClaimLabelModal: false,
+      showConfirmClaimLabelModal: true,
+      previousEpCode: data.oldCode,
+      selectedEpCode: data.newCode
+    });
+  }
+
+  submitClaimLabelEdit = () => {
+    console.log(`Submitting request to switch from ${this.state.previousEpCode} to ${this.state.selectedEpCode}...`);
+    this.setState({
+      showConfirmClaimLabelModal: false,
+      previousEpCode: null,
+      selectedEpCode: null
+    });
   }
 
   render() {
@@ -370,9 +386,17 @@ class AddIssuesPage extends React.Component {
         )}
         {this.state.showEditClaimLabelModal && (
           <EditClaimLabelModal
-            existingEpCode={this.state.selectedEPCode}
+            selectedEpCode={this.state.selectedEpCode}
             onCancel={this.closeEditClaimLabelModal}
             onSubmit={this.handleEditClaimLabel}
+          />
+        )}
+        {this.state.showConfirmClaimLabelModal && (
+          <ConfirmClaimLabelModal
+            previousEpCode={this.state.previousEpCode}
+            newEpCode={this.state.selectedEpCode}
+            onCancel={this.closeEditClaimLabelModal}
+            onSubmit={this.submitClaimLabelEdit}
           />
         )}
         <h1 className="cf-txt-c">{messageHeader}</h1>
