@@ -31,7 +31,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         click_on "Submit"
         expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin.full_name
       end
-      
+
       step "assigned user reassigns SendCavcRemandProcessedLetterTask" do
         # Logged in as first user assignee
         User.authenticate!(user: org_nonadmin)
@@ -48,12 +48,12 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         click_on "Submit"
         expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin2.full_name
       end
-      
+
       step "assigned user adds admin actions" do
         # Logged in as second user assignee (due to reassignment)
         User.authenticate!(user: org_nonadmin2)
         visit "queue/appeals/#{send_task.appeal.external_id}"
-        
+
         click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label)
         fill_in "taskInstructions", with: "Please translate the documents in spanish"
         click_on "Submit"
