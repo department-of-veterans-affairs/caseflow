@@ -47,6 +47,6 @@ export const ConfirmClaimLabelModal = ({ previousEpCode, newEpCode, onCancel, on
 ConfirmClaimLabelModal.propTypes = {
   previousEpCode: PropTypes.string.isRequired,
   newEpCode: PropTypes.string.isRequired,
-  onCancel: PropTypes.func,
+  onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
 };
