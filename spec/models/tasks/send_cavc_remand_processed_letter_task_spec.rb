@@ -106,6 +106,7 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
     subject { cavc_task.available_actions_unwrapper(cavc_task.assigned_to) }
 
     before do
+      # Create completed distribution task to make sure we're picking the correct (open) parent
       completed_distribution_task = build(:task, appeal: cavc_task.appeal, type: DistributionTask.name)
       completed_distribution_task.save!(validate: false)
       completed_distribution_task.completed!
