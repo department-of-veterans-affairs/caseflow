@@ -136,7 +136,7 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
       completed_distribution_task.completed!
     end
 
-    it "provides the parent id as the open distribution task for blocking admin actions" do
+    it "uses the open distribution task as the parent for blocking admin action tasks" do
       admin_actions = {
         SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION: [TranslationTask, Translation],
         SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION: [TranscriptionTask, TranscriptionTeam],
