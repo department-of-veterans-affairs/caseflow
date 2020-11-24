@@ -202,31 +202,31 @@ class TaskActionRepository
       }
     end
 
-    def cavc_add_blocking_admin_action_data(task, org, task_type)
+    def cavc_add_blocking_distrbution_admin_action_data(task, org, task_type)
       {
         selected: org,
         options: [{ label: org.name, value: org.id }],
         type: task_type.name,
         parent_id: DistributionTask.open.find_by(appeal: task.appeal)&.id,
-        modal_body: format(COPY::CAVC_SEND_TO_TEAM_NON_BLOCKING_DETAIL, task_type.label, org.name),
+        modal_body: format(COPY::CAVC_SEND_TO_TEAM_BLOCKING_DISTRIBUTION_DETAIL, task_type.label, org.name),
         redirect_after: "/queue/appeals/#{task.appeal.external_id}"
       }
     end
 
     def assign_to_translation_team_blocking_distribution_data(task, _user = nil)
-      cavc_add_blocking_admin_action_data(task, Translation.singleton, TranslationTask)
+      cavc_add_blocking_distrbution_admin_action_data(task, Translation.singleton, TranslationTask)
     end
 
     def assign_to_transciption_team_blocking_distribution_data(task, _user = nil)
-      cavc_add_blocking_admin_action_data(task, TranscriptionTeam.singleton, TranscriptionTask)
+      cavc_add_blocking_distrbution_admin_action_data(task, TranscriptionTeam.singleton, TranscriptionTask)
     end
 
     def assign_to_privacy_team_blocking_distribution_data(task, _user = nil)
-      cavc_add_blocking_admin_action_data(task, PrivacyTeam.singleton, PrivacyActTask)
+      cavc_add_blocking_distrbution_admin_action_data(task, PrivacyTeam.singleton, PrivacyActTask)
     end
 
     def assign_ihp_to_colocated_blocking_distribution_data(task, _user = nil)
-      cavc_add_blocking_admin_action_data(task, Colocated.singleton, IhpColocatedTask)
+      cavc_add_blocking_distrbution_admin_action_data(task, Colocated.singleton, IhpColocatedTask)
     end
 
     def add_admin_action_data(task, user = nil)
