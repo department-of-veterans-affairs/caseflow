@@ -32,6 +32,7 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate }) => {
 
 export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
   const [receiptDate, setReceiptDate] = useState(nodDate);
+  const [futureDate, setFutureDate] = useState(false);
 
   const buttons = [
     {
@@ -42,11 +43,27 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
     {
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Submit',
+      disabled: futureDate,
       onClick: () => onSubmit(receiptDate)
     }
   ];
 
-  const handleDateChange = (value) => setReceiptDate(value);
+  const isFutureDate = (newDate) => {
+    const today = new Date().getTime();
+    const date = new Date(newDate).getTime();
+
+    return (today - date) < 0;
+  };
+
+  const handleDateChange = (value) => {
+    if (isFutureDate(value)) {
+      setFutureDate(true);
+      setReceiptDate(value);
+    } else {
+      setReceiptDate(value);
+      setFutureDate(false);
+    }
+  };
 
   return (
     <Modal
@@ -60,6 +77,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
       </div>
       <DateSelector
         name={COPY.EDIT_NOD_DATE_LABEL}
+        errorMessage={futureDate ? COPY.EDIT_NOD_DATE_ERROR_ALERT_MESSAGE : null}
         strongLabel
         type="date"
         value={receiptDate}
