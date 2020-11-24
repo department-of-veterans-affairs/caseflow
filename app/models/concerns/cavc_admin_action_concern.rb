@@ -11,8 +11,10 @@ module CavcAdminActionConcern
     end
 
     def creating_from_cavc_workflow?(user, parent_task)
-      return true if parent_task&.type == DistributionTask.name &&
+      return true if parent_task&.type == DistributionTask.name && (
+                     CavcLitigationSupport.singleton.user_is_admin?(user) ||
                      SendCavcRemandProcessedLetterTask.open.where(assigned_to: user, appeal: parent_task.appeal).exists?
+      )
 
       false
     end
