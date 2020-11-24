@@ -6,6 +6,7 @@ import DateSelector from 'app/components/DateSelector';
 import COPY from 'app/../COPY';
 import { useDispatch } from 'react-redux';
 import { resetSuccessMessages, showSuccessMessage } from '../uiReducer/uiActions';
+import moment from 'moment';
 
 export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate }) => {
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate }) => {
 export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
   const [receiptDate, setReceiptDate] = useState(nodDate);
   const [futureDate, setFutureDate] = useState(false);
+  const [disableButton, setDisableButton] = useState(false);
 
   const buttons = [
     {
@@ -43,24 +45,28 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
     {
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Submit',
-      disabled: futureDate,
+      // For future disable use cases
+      disabled: disableButton,
       onClick: () => onSubmit(receiptDate)
     }
   ];
 
   const isFutureDate = (newDate) => {
-    const today = new Date().getTime();
-    const date = new Date(newDate).getTime();
+    const today = new Date();
+    const todaysDate = moment(today.toISOString());
+    const date = moment(newDate);
 
-    return (today - date) < 0;
+    return (date > todaysDate);
   };
 
   const handleDateChange = (value) => {
     if (isFutureDate(value)) {
       setFutureDate(true);
+      setDisableButton(true);
       setReceiptDate(value);
     } else {
       setReceiptDate(value);
+      setDisableButton(false);
       setFutureDate(false);
     }
   };
