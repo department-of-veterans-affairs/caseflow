@@ -23,6 +23,8 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         visit "queue/appeals/#{send_task.appeal.external_id}"
 
         find(".cf-select__control", text: "Select an action").click
+        expect(page).to have_content Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label
+        expect(page).to have_content Constants.TASK_ACTIONS.CLARIFY_POA_BLOCKING_CAVC.label
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label).click
 
         find(".cf-select__control", text: org_admin.full_name).click
@@ -74,7 +76,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         click_on "Submit"
         expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Colocated.singleton.name
       end
-      
+
       step "assigned user adds blocking admin action" do
         # Assign an admin action that DOES block the sending of the 90 day letter
         click_dropdown(text: Constants.TASK_ACTIONS.CLARIFY_POA_BLOCKING_CAVC.label)
