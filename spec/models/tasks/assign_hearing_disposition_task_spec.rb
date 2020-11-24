@@ -303,11 +303,6 @@ describe AssignHearingDispositionTask, :all_dbs do
 
       describe "hearing disposition of cancelled" do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
-        let(:values) do
-          {
-            disposition: disposition
-          }
-        end
 
         include_context "params"
 
