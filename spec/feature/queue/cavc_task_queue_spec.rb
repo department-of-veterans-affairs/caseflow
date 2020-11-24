@@ -48,7 +48,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         click_on "Submit"
         expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin2.full_name
       end
-      
+
       step "assigned user adds admin actions" do
         # Logged in as second user assignee (due to reassignment)
         User.authenticate!(user: org_nonadmin2)
