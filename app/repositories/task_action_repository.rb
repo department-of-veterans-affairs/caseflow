@@ -292,15 +292,15 @@ class TaskActionRepository
       end
     end
 
+    COMPLETE_TASK_MODAL_BODY_HASH = {
+      NoShowHearingTask: COPY::NO_SHOW_HEARING_TASK_COMPLETE_MODAL_BODY,
+      HearingAdminActionTask: COPY::HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL,
+      SendCavcRemandProcessedLetterTask: COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_COMPLETE_MODAL_BODY
+    }.freeze
+
     def complete_data(task, _user = nil)
-      params = {}
-      params[:modal_body] = if task.is_a? NoShowHearingTask
-                              COPY::NO_SHOW_HEARING_TASK_COMPLETE_MODAL_BODY
-                            elsif task.is_a? HearingAdminActionTask
-                              COPY::HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL
-                            else
-                              COPY::MARK_TASK_COMPLETE_COPY
-                            end
+      params = { modal_body: COMPLETE_TASK_MODAL_BODY_HASH[task.type.to_sym] }
+      params[:modal_body] = COPY::MARK_TASK_COMPLETE_COPY if params[:modal_body].nil?
 
       if defined? task.completion_contact
         params[:contact] = task.completion_contact

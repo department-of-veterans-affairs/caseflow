@@ -18,23 +18,13 @@ class AppealFinder
       end
     end
 
-    def find_appeal_by_docket_number(docket_number)
-      return [] unless docket_number
-
-      # Take the first six digits as date, remaining as ID
-      parsed = docket_number.split("-")
-
-      # If we can't parse a valid date from search, return no results
-      begin
-        receipt_date = Date.strptime(parsed[0], "%y%m%d")
-
-        id = parsed[1]
-        appeal = Appeal.find_by(id: id, receipt_date: receipt_date)
-
-        appeal
-      rescue ArgumentError
-        nil
-      end
+    # All Appeals have stream_docket_number populated either with their own
+    # docket number (original appeals), or with the original appeal's docket
+    # number (new appeal streams). This will thus return both the original
+    # and all appeal streams off of it. Docket number of appeal streams is
+    # never shown and thus the inability to search for it is OK.
+    def find_appeals_by_docket_number(docket_number)
+      Appeal.where(stream_docket_number: docket_number)
     end
   end
 
@@ -67,14 +57,6 @@ class AppealFinder
       veterans.flat_map do |vet|
         AppealsForPOA.new(veteran_file_number: vet.file_number, poa_participant_ids: vso_participant_ids).call
       end
-    end
-  end
-
-  def filter_appeals_for_vso_user(appeals:, veterans:)
-    allowed_appeal_ids = find_appeals_for_vso_user(veterans: veterans).map(&:id)
-
-    appeals.select do |appeal|
-      allowed_appeal_ids.include?(appeal.id)
     end
   end
 end

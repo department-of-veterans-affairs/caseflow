@@ -372,6 +372,10 @@
   "CAVC_TASK_DEFAULT_INSTRUCTIONS": "This task will be auto-completed when all CAVC-related tasks have been closed.",
 
   "SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL": "Send CAVC-Remand-Processed Letter Task",
+  "SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_COMPLETE_MODAL_BODY": "Marking this task complete will put this case on hold for 90 days to allow the appellant to respond.",
+
+  "CRP_LETTER_RESP_WINDOW_TASK_LABEL": "CAVC-Remand-Processed-Letter Response Window Task",
+  "CRP_LETTER_RESP_WINDOW_TASK_DEFAULT_INSTRUCTIONS": "The response window task will return to the CAVC Teams queue after 90 days or when manually ended early.",
 
   "CAVC_SEND_TO_TEAM_NON_BLOCKING_DETAIL": "Create a %s assigned to the %s team. This will not block you from completing this task or sending the 90-day letter to the veteran.",
   "CAVC_SEND_TO_TEAM_BLOCKING_CAVC_DETAIL": "Create a %s task assigned to the %s team. This will block you from sending the 90-day letter to the veteran until the new task is completed.",
