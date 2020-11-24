@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'app/components/Modal';
 import {
@@ -19,12 +19,13 @@ export const ConfirmClaimLabelModal = ({ previousEpCode, newEpCode, onCancel, on
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Confirm',
       onClick: () => onSubmit?.({
-        previousEpCode: previousEpCode,
-        newEpCode: newEpCode
+        previousEpCode,
+        newEpCode
       }),
     },
   ];
 
+  /* eslint-disable camelcase */
   return (
     <Modal
       title={CONFIRM_CLAIM_LABEL_MODAL_TITLE}
@@ -32,6 +33,7 @@ export const ConfirmClaimLabelModal = ({ previousEpCode, newEpCode, onCancel, on
       closeHandler={onCancel}
       id="confirm-claim-label-modal"
     >
+
       <div style={{ marginBottom: '24px' }}>
         <strong>
           Previous label: {EP_CLAIM_TYPES[previousEpCode]?.official_label}
@@ -42,6 +44,7 @@ export const ConfirmClaimLabelModal = ({ previousEpCode, newEpCode, onCancel, on
       <p>{CONFIRM_CLAIM_LABEL_MODAL_BODY}</p>
     </Modal>
   );
+  /* eslint-enable camelcase */
 };
 
 ConfirmClaimLabelModal.propTypes = {

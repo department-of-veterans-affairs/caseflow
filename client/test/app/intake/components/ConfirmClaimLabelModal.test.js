@@ -45,6 +45,7 @@ describe('ConfirmClaimLabelModal', () => {
     // const newLabel = EP_CLAIM_TYPES[defaults.newEpCode].official_label;
     // expect(screen.queryByText(oldLabel)).toBeTruthy();
     expect(screen.getByText(COPY.EDIT_CLAIM_LABEL_MODAL_NOTE)).toBeInTheDocument();
+    expect(screen.queryByText(COPY.EDIT_CLAIM_LABEL_MODAL_NOTE)).toBeInTheDocument();
     // expect(screen.getByText('Higher')).toBeInTheDocument();
     // expect(screen.getByText(`New label: ${newLabel}`)).toBeInTheDocument();
   });
