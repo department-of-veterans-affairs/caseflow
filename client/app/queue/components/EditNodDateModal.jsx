@@ -6,18 +6,24 @@ import DateSelector from 'app/components/DateSelector';
 import COPY from 'app/../COPY';
 import { useDispatch } from 'react-redux';
 import { resetSuccessMessages, showSuccessMessage } from '../uiReducer/uiActions';
+import ApiUtil from '../../util/ApiUtil';
 
-export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate }) => {
+export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealId }) => {
   const dispatch = useDispatch();
 
-  const handleSubmit = () => {
+  const handleSubmit = (receiptDate) => {
     const successMessage = {
       title: COPY.EDIT_NOD_DATE_SUCCESS_ALERT_TITLE,
       detail: COPY.EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE,
     };
 
-    dispatch(showSuccessMessage(successMessage));
-    setTimeout(() => dispatch(resetSuccessMessages()), 5000);
+    ApiUtil.patch(`/appeals/${appealId}/update_nod_date`, { data: { receipt_date: receiptDate } }).then(() => {
+      dispatch(showSuccessMessage(successMessage));
+    },
+    (error) => {
+      console.log(error);
+    });
+
     onSubmit?.();
   };
 
@@ -26,11 +32,12 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate }) => {
       onCancel={onCancel}
       onSubmit={handleSubmit}
       nodDate={nodDate}
+      appealId={appealId}
     />
   );
 };
 
-export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
+export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, appealId }) => {
   const [receiptDate, setReceiptDate] = useState(nodDate);
 
   const buttons = [
@@ -72,11 +79,13 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
 EditNodDateModalContainer.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  nodDate: PropTypes.string.isRequired
+  nodDate: PropTypes.string.isRequired,
+  appealId: PropTypes.string.isRequired
 };
 
 EditNodDateModal.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  nodDate: PropTypes.string.isRequired
+  nodDate: PropTypes.string.isRequired,
+  appealId: PropTypes.string.isRequired
 };
