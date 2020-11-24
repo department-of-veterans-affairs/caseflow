@@ -102,9 +102,13 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
       let(:user_task) { child_task }
       subject { user_task.update_from_params({ status: Constants.TASK_STATUSES.completed }, org_nonadmin) }
 
-      it "status is updated to be completed" do
-        expect { subject }.to_not raise_error(StandardError)
+      it "status is updated to be completed and 90-day window task is created" do
+        expect { subject }.to_not raise_error
         expect(user_task.status).to eq Constants.TASK_STATUSES.completed
+
+        window_task = user_task.appeal.tasks.where(type: CavcRemandProcessedLetterResponseWindowTask.name).first
+        child_timed_hold_tasks = window_task.children.where(type: :TimedHoldTask)
+        expect(child_timed_hold_tasks.first.timer_end_time.to_date).to eq(Time.zone.now.to_date + 90.days)
       end
 
       context "when user_task cannot be marked complete" do
