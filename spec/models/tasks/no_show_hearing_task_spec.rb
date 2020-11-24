@@ -46,6 +46,35 @@ describe NoShowHearingTask, :postgres do
     end
   end
 
+  context "create a new NoShowHearingTask with hold" do
+    subject { NoShowHearingTask.create_with_hold(disposition_task) }
+
+    shared_examples "creates task and timed hold task" do
+      it "creates NoShowHearingTask and TimedHoldTask as child", :aggregate_failures do
+        subject
+
+        timed_hold_task = TimedHoldTask.first
+        task_timer = timed_hold_task.task_timers.first
+
+        expect(subject.status).to eq(Constants.TASK_STATUSES.on_hold)
+        expect(timed_hold_task.parent).to eq(subject)
+        expect(task_timer.task).to eq(timed_hold_task)
+      end
+    end
+
+    context "ama appeal" do
+      include_examples "creates task and timed hold task"
+
+      context "when timer ends"
+    end
+
+    context "legacy appeal" do
+      let(:appeal) { create(:legacy_appeal) }
+
+      include_examples "creates task and timed hold task"
+    end
+  end
+
   describe ".reschedule_hearing" do
     context "when all operations succeed" do
       it "closes existing tasks and creates new HearingTask and ScheduleHearingTask" do
