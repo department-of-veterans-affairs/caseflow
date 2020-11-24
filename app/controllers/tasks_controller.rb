@@ -9,6 +9,9 @@ class TasksController < ApplicationController
   before_action :verify_task_access, only: [:create]
   skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
+  # Tasks that are allowed to be created by a user.
+  # If a task type is not sent to the frontend via TaskActionRepository's `type` or `options` parameters,
+  # then it doesn't need to be included here.
   TASK_CLASSES_LOOKUP = {
     AttorneyDispatchReturnTask: AttorneyDispatchReturnTask,
     AttorneyQualityReviewTask: AttorneyQualityReviewTask,
@@ -20,7 +23,6 @@ class TasksController < ApplicationController
     DocketSwitchRulingTask: DocketSwitchRulingTask,
     DocketSwitchDeniedTask: DocketSwitchDeniedTask,
     DocketSwitchGrantedTask: DocketSwitchGrantedTask,
-    EvidenceSubmissionWindowTask: EvidenceSubmissionWindowTask,
     FoiaTask: FoiaTask,
     HearingAdminActionTask: HearingAdminActionTask,
     InformalHearingPresentationTask: InformalHearingPresentationTask,
@@ -35,7 +37,7 @@ class TasksController < ApplicationController
     ScheduleHearingTask: ScheduleHearingTask,
     SendCavcRemandProcessedLetterTask: SendCavcRemandProcessedLetterTask,
     SpecialCaseMovementTask: SpecialCaseMovementTask,
-    Task: Task,
+    Task: Task, # Consider for removal, after cleaning up occurrences in prod
     TranscriptionTask: TranscriptionTask,
     TranslationTask: TranslationTask
   }.freeze
