@@ -10,7 +10,7 @@ class NoShowHearingTask < Task
       create!(parent: parent_task, appeal: parent_task.appeal).tap do |no_show_hearing_task|
         TimedHoldTask.create_from_parent(
           no_show_hearing_task,
-          days_on_hold: 25,
+          days_on_hold: 30,
           instructions: ["Mail must be received within 14 days of the original hearing date."]
         )
       end
