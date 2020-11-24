@@ -17,18 +17,21 @@ class SendCavcRemandProcessedLetterTask < Task
 
   before_validation :set_assignee
 
-  USER_ACTIONS = [
-    Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
-    Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
+  ADD_TASK_ACTIONS = [
     Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.to_h,
     Constants.TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.to_h,
     Constants.TASK_ACTIONS.SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION.to_h,
     Constants.TASK_ACTIONS.SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION.to_h
   ].freeze
 
+  USER_ACTIONS = [
+    Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+    Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
+  ].concat(ADD_TASK_ACTIONS).freeze
+
   ADMIN_ACTIONS = [
     Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h
-  ].freeze
+  ].concat(ADD_TASK_ACTIONS).freeze
 
   def self.label
     COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL
