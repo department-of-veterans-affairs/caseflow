@@ -8,7 +8,7 @@ class AppealRequestIssuesPolicy
 
   def editable?
     editable_by_case_review_team_member? || case_is_in_active_review_by_current_user? ||
-      hearing_is_assigned_to_judge_user
+      hearing_is_assigned_to_judge_user? || cavc_task_open?
   end
 
   private
@@ -27,7 +27,7 @@ class AppealRequestIssuesPolicy
     Task.where(appeal: appeal, type: "AttorneyTask").empty?
   end
 
-  def hearing_is_assigned_to_judge_user
+  def hearing_is_assigned_to_judge_user?
     appeal.hearings.last&.judge == user
   end
 
@@ -37,5 +37,9 @@ class AppealRequestIssuesPolicy
       assigned_to: user,
       status: [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
     ).select { |task| task.is_a?(JudgeTask) || task.is_a?(AttorneyTask) }.any?
+  end
+
+  def cavc_task_open?
+    appeal.tasks.open.where(type: :CavcTask).count > 0
   end
 end
