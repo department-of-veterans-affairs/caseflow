@@ -11,9 +11,16 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
   let!(:other_user) { create(:user, full_name: "Othery Usery") }
 
   describe "when CAVC Lit Support has a CAVC Remand case" do
+    let!(:cavc_task) { create(:cavc_task) }
     it "allows CAVC Team users to correct issues" do
       step "check 'Correct issues' link appears" do
+        User.authenticate!(user: org_nonadmin)
+        visit "queue/appeals/#{cavc_task.appeal.external_id}"
+        expect(page).to have_content "Correct issues"
 
+        User.authenticate!(user: other_user)
+        visit "queue/appeals/#{cavc_task.appeal.external_id}"
+        expect(page).to_not have_content "Correct issues"
       end
     end
   end
