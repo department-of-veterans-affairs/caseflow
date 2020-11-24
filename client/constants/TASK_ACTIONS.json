@@ -301,7 +301,7 @@
     "func": "assign_to_transciption_team_blocking_distribution_data"
   },
   "SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION": {
-    "label": "Assign FOIA Task to Privacy team",
+    "label": "Assign Privacy Act Task to Privacy team",
     "value": "modal/assign_to_privacy_team",
     "func": "assign_to_privacy_team_blocking_distribution_data"
   },
