@@ -158,7 +158,6 @@ class AddIssuesPage extends React.Component {
     });
   }
 
-  // eslint-disable-next-line no-unused-vars
   handleEditClaimLabel = (data) => {
     this.setState({
       showEditClaimLabelModal: false,
