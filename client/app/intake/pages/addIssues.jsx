@@ -136,8 +136,12 @@ class AddIssuesPage extends React.Component {
 
   establishmentCredits() {
     return <div className="cf-intake-establish-credits">
-      Established {this.establishmentCreditsTimestamp()}
-      <span> by <a href={`/intake/manager?user_css_id=${this.props.intakeUser}`}>{this.props.intakeUser}</a></span>
+      Established at {this.establishmentCreditsTimestamp()}
+      { this.props.intakeUser &&
+        <span>
+          by <a href={`/intake/manager?user_css_id=${this.props.intakeUser}`}>{this.props.intakeUser}</a>
+        </span>
+      }
     </div>;
   }
 
