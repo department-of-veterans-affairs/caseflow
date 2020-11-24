@@ -232,7 +232,7 @@ class TaskActionRepository
     def assign_poa_to_cavc_blocking_cavc_data(task, _user = nil)
       org = CavcLitigationSupport.singleton
       task_type = CavcPoaClarificationTask
-      cavc_add_blocking_admin_action_data(task, org, task_type).merge(
+      cavc_add_blocking_distrbution_admin_action_data(task, org, task_type).merge(
         modal_body: format(COPY::CAVC_SEND_TO_TEAM_BLOCKING_CAVC_DETAIL, task_type.label, org.name),
         parent_id: task.id
       )
