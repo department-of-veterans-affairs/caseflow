@@ -5,7 +5,7 @@
 class NoShowHearingTask < Task
   before_validation :set_assignee
 
-  DAYS_ON_HOLD = 30.freeze
+  DAYS_ON_HOLD = 30
 
   def self.create_with_hold(parent_task)
     multi_transaction do
@@ -47,6 +47,11 @@ class NoShowHearingTask < Task
   end
 
   private
+
+  # ensures this task gets completed when child TimedHoldTask is completed after 30 days
+  def cascade_closure_from_child_task?(child_task)
+    true
+  end
 
   def set_assignee
     self.assigned_to ||= HearingsManagement.singleton

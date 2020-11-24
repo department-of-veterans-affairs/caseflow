@@ -45,7 +45,15 @@ class HearingTask < Task
     if appeal.is_a?(LegacyAppeal)
       update_legacy_appeal_location
     else
-      IhpTasksFactory.new(parent).create_ihp_tasks!
+      if hearing&.no_show?
+        EvidenceSubmissionWindowTask.create!(
+          appeal: appeal,
+          parent: self,
+          assigned_to: MailTeam.singleton
+        )
+      else
+        IhpTasksFactory.new(parent).create_ihp_tasks!
+      end
     end
   end
 
