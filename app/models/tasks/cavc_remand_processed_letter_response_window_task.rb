@@ -21,7 +21,7 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
         TimedHoldTask.create_from_parent(
           window_task,
           days_on_hold: 90,
-          instructions: ["This case is on hold for 90 days to allow the appellant to respond."]
+          instructions: [COPY::CRP_LETTER_RESP_WINDOW_TASK_DEFAULT_INSTRUCTIONS]
         )
       end
     end
