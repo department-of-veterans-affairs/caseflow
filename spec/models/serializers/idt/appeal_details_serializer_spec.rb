@@ -4,7 +4,7 @@ describe Idt::V1::AppealDetailsSerializer, :postgres do
   let(:appeal) { create(:appeal, veteran_is_not_claimant: true) }
   let(:include_addresses) { true }
   let(:base_url) { "va.gov" }
-  let(:params) { { include_addresses: include_addresses, base_url: base_url} }
+  let(:params) { { include_addresses: include_addresses, base_url: base_url } }
 
   subject { described_class.new(appeal, params: params) }
 
