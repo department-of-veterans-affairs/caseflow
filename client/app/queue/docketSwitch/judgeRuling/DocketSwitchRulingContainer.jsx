@@ -71,7 +71,6 @@ export const DocketSwitchRulingContainer = () => {
         await dispatch(createDocketSwitchDeniedTask(data));
       }
 
-      // Add logic for success banner
       dispatch(showSuccessMessage(successMessage));
       push('/queue');
     } catch (error) {
