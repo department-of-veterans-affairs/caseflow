@@ -40,9 +40,14 @@ class NoShowHearingTask < Task
 
   def reschedule_hearing
     multi_transaction do
-      update!(status: Constants.TASK_STATUSES.completed)
+      # NOTE: the order of the next two lines is important because if we run the 2nd line first,
+      # the logic in HearingTask#when_child_task_completed will execute eventhough we mean to
+      # create another ScheduleHearingTask
+
       # Attach the new task to the same parent as the previous HearingTask.
       ScheduleHearingTask.create!(appeal: appeal, parent: ancestor_task_of_type(HearingTask)&.parent)
+
+      update!(status: Constants.TASK_STATUSES.completed)
     end
   end
 
