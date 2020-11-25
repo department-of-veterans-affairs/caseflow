@@ -68,8 +68,8 @@ class TaskSorter
   # Sort tasks by their labels, rather than by type. Constructs a string of all task types sorted by their labels for
   # postgres to use as a reference for sorting as a task's label is not stored in the database.
   def task_type_order_clause
-    task_types_sorted_by_label = Task.descendants.sort_by(&:label).map(&:name).to_json.tr('"', "'")
-    task_types_sql_array = "array#{task_types_sorted_by_label}::varchar[]"
+    task_types_sorted_by_label = Task.descendants.sort_by(&:label).map(&:name)
+    task_types_sql_array = "array#{task_types_sorted_by_label}::varchar[]".tr('"', "'")
     task_type_sort_position = "#{task_types_sql_array}, tasks.type"
     "array_position(#{task_type_sort_position}) #{sort_order}"
   end
