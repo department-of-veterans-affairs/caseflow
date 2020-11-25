@@ -5,7 +5,6 @@ require "console_tree_renderer"
 # Usage instructions at https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render
 # :nocov:
 module TaskTreeRenderModule
-
   DOCKET_ABBREVIATION = {
     Constants.AMA_DOCKETS.direct_review => "D",
     Constants.AMA_DOCKETS.evidence_submission => "E",
