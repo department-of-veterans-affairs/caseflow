@@ -16,6 +16,7 @@
 
 class AssignHearingDispositionTask < Task
   include RunAsyncable
+  include HearingTasksConcern
 
   validates :parent, presence: true, parentTask: { task_type: HearingTask }
   delegate :hearing, to: :hearing_task, allow_nil: true
@@ -86,7 +87,7 @@ class AssignHearingDispositionTask < Task
       fail HearingDispositionNotCanceled
     end
 
-    maybe_evidence_task = withdraw_hearing
+    maybe_evidence_task = withdraw_hearing(hearing_task.parent)
 
     update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
 
@@ -279,18 +280,5 @@ class AssignHearingDispositionTask < Task
                     end
 
     [transcription_task, evidence_task].compact
-  end
-
-  def withdraw_hearing
-    if appeal.is_a?(LegacyAppeal)
-      AppealRepository.withdraw_hearing!(appeal)
-      nil
-    else
-      EvidenceSubmissionWindowTask.find_or_create_by!(
-        appeal: appeal,
-        parent: hearing_task.parent,
-        assigned_to: MailTeam.singleton
-      )
-    end
   end
 end

@@ -754,12 +754,13 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         end
       end
 
+      before { cache_appeals }
+
       context "Scheduled hearing" do
         context "AMA appeal" do
           include_context "ama_hearing"
 
           before do
-            cache_appeals
             schedule_hearing("queue/appeals/#{appeal.uuid}")
           end
 
@@ -780,7 +781,6 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           end
 
           before do
-            cache_appeals
             schedule_hearing("queue/appeals/#{legacy_appeal.vacols_id}")
           end
 
@@ -791,8 +791,6 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       context "Unscheduled hearing" do
         context "AMA appeal" do
           include_context "ama_hearing"
-
-          before { cache_appeals }
 
           it_behaves_like "withdrawing ama hearing"
         end
@@ -809,8 +807,6 @@ RSpec.feature "Schedule Veteran For A Hearing" do
               room: "1"
             )
           end
-
-          before { cache_appeals }
 
           it_behaves_like "withdrawing legacy hearing"
         end

@@ -19,6 +19,8 @@
 # Once completed, an AssignHearingDispositionTask is created as a child of HearingTask.
 
 class ScheduleHearingTask < Task
+  include HearingTasksConcern
+
   before_validation :set_assignee
   before_create :create_parent_hearing_task
   delegate :hearing, to: :parent, allow_nil: true
@@ -59,7 +61,7 @@ class ScheduleHearingTask < Task
 
         created_tasks << AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, parent, hearing)
       elsif params[:status] == Constants.TASK_STATUSES.cancelled
-        created_tasks << withdraw_hearing
+        created_tasks << withdraw_hearing(parent)
       end
 
       # super returns [self]
@@ -145,18 +147,5 @@ class ScheduleHearingTask < Task
 
   def set_assignee
     self.assigned_to ||= Bva.singleton
-  end
-
-  def withdraw_hearing
-    if appeal.is_a?(LegacyAppeal)
-      AppealRepository.withdraw_hearing!(appeal)
-      nil
-    else
-      EvidenceSubmissionWindowTask.create!(
-        appeal: appeal,
-        parent: parent,
-        assigned_to: MailTeam.singleton
-      )
-    end
   end
 end

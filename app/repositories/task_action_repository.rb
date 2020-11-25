@@ -331,7 +331,7 @@ class TaskActionRepository
     #   but not for a ScheduleHearingTask.
     def withdraw_hearing_data(task, _user)
       copy = select_withdraw_hearing_copy(task.appeal)
-      assign_hearing_disposition_task = task.is_a?(AssignHearingDispositionTask)
+      is_an_assign_hearing_disposition_task = task.is_a?(AssignHearingDispositionTask)
 
       {
         redirect_after: "/queue/appeals/#{task.appeal.external_id}",
@@ -341,7 +341,7 @@ class TaskActionRepository
         message_detail: format(copy["SUCCESS_MESSAGE"], task.appeal.veteran_full_name),
         # If a hearing has already been scheduled, the cancel task should also cancel the hearing. To do that
         # it will need to provide the cancelled disposition and action to the API.
-        business_payloads: if assign_hearing_disposition_task
+        business_payloads: if is_an_assign_hearing_disposition_task
                              {
                                values: {
                                  disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled
@@ -350,7 +350,7 @@ class TaskActionRepository
                            end,
         # If a hearing was already scheduled and is being withdrawn, it doesn't make sense to
         # return back to the hearing schedule, so don't show the link in that case.
-        back_to_hearing_schedule: assign_hearing_disposition_task ? false : true
+        back_to_hearing_schedule: is_an_assign_hearing_disposition_task ? false : true
       }
     end
 
