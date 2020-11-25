@@ -49,6 +49,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         click_edit_submit_and_confirm
         expect(page).to have_content "Edit Completed"
         expect(page).to have_content "You have successfully added 1 issue."
+        expect(page).to have_content new_issue_description
         expect(appeal.request_issues.count).to eq 2
       end
 
@@ -58,6 +59,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         click_edit_submit_and_confirm
         expect(page).to have_content "Edit Completed"
         expect(page).to have_content "You have successfully removed 1 issue."
+        expect(page).to_not have_content new_issue_description
         expect(appeal.request_issues.where(closed_status: nil).count).to eq 1
       end
     end
