@@ -3,16 +3,13 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 import COPY from 'COPY';
-import EP_CLAIM_TYPES from 'constants/EP_CLAIM_TYPES';
 
 import { ConfirmClaimLabelModal } from 'app/intakeEdit/components/ConfirmClaimLabelModal';
-
 
 describe('ConfirmClaimLabelModal', () => {
   const onSubmit = jest.fn();
   const onCancel = jest.fn();
   const defaults = { onCancel, onSubmit, previousEpCode: '030HLRR', newEpCode: "030HLRNR" };
-  // const oldLabel = EP_CLAIM_TYPES[defaults.previousEpCode].official_label;
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -41,13 +38,9 @@ describe('ConfirmClaimLabelModal', () => {
 
   it('shows the previous and new selected claim label', async () => {
     render(<ConfirmClaimLabelModal {...defaults} />);
-
-    // const newLabel = EP_CLAIM_TYPES[defaults.newEpCode].official_label;
-    // expect(screen.queryByText(oldLabel)).toBeTruthy();
-    expect(screen.getByText(COPY.EDIT_CLAIM_LABEL_MODAL_NOTE)).toBeInTheDocument();
-    expect(screen.queryByText(COPY.EDIT_CLAIM_LABEL_MODAL_NOTE)).toBeInTheDocument();
-    // expect(screen.getByText('Higher')).toBeInTheDocument();
-    // expect(screen.getByText(`New label: ${newLabel}`)).toBeInTheDocument();
+    expect(screen.getByText((/previous label: higher-level review rating*/i))).toBeInTheDocument();
+    expect(screen.getByText((/new label: higher-level review non-rating*/i))).toBeInTheDocument();
+    expect(screen.getByText(COPY.CONFIRM_CLAIM_LABEL_MODAL_BODY)).toBeInTheDocument();
   });
 
   describe('submission', () => {
