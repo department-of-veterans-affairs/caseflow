@@ -139,7 +139,7 @@ RSpec.feature "Docket Switch", :all_dbs do
           # Return back to user's queue
           expect(page).to have_current_path("/queue")
           # Success banner
-          expect(page).to have_content(dispositionType, appeal.appellant_name)
+          expect(page).to have_content(disposition_type, appeal.appellant_name)
           expect(page).to have_content(COPY::DOCKET_SWITCH_RULING_ALERT_TITLE)
 
           disposition_type = Constants::DOCKET_SWITCH[disposition]["dispositionType"]
