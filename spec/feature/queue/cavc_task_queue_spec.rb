@@ -89,7 +89,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         # Ensure there are no actions on the send letter task as it is blocked by poa clarification
         active_task_rows = page.find("#currently-active-tasks").find_all("tr")
         poa_task_row = active_task_rows[0]
-        send_task_row = active_task_rows[-2]
+        send_task_row = active_task_rows[-3]
         expect(poa_task_row).to have_content("TASK\n#{COPY::CAVC_POA_TASK_LABEL}")
         expect(poa_task_row.find(".taskActionsContainerStyling").all("*", wait: false).length).to be > 0
         expect(send_task_row).to have_content("TASK\n#{COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL}")
@@ -100,7 +100,8 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         fill_in "completeTaskInstructions", with: "POA verified"
         click_on COPY::MARK_TASK_COMPLETE_BUTTON
         visit "queue/appeals/#{send_task.appeal.external_id}"
-        send_task_row = page.find("#currently-active-tasks").find_all("tr")[-2]
+        send_task_row = page.find("#currently-active-tasks").find_all("tr")[-3]
+        expect(send_task_row).to have_content("TASK\n#{COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL}")
         expect(send_task_row.find(".taskActionsContainerStyling").all("*", wait: false).length).to be > 0
       end
 
