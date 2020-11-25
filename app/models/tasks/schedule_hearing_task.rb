@@ -6,18 +6,22 @@
 # When this task is created, HearingTask is created as the parent task in the appeal tree.
 #
 # For AMA appeals, task is created by the intake process for any appeal electing to have a hearing.
-# For Legacy appeals, Geomatching is resposnible for finding all appeals in VACOLS ready to be scheduled
+# For Legacy appeals, Geomatching is responsible for finding all appeals in VACOLS ready to be scheduled
 # and creating a ScheduleHearingTask for each of them.
 #
 # A coordinator can block this task by creating a HearingAdminActionTask for some reasons listed
 # here: https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Hearings#2-schedule-veteran
 #
-# This task also allows coordinators to withdraw hearings. For AMA, this creates an EvidenceSubmissionWindowTask
-# and for legacy this moves the appeal to case storage. If the hearing request is withdrawn before the hearing
-# was scheduled, the ScheduleHearingTask is cancelled and the HearingTask is automatically closed.
+# This task also allows coordinators to withdraw unscheduled hearings (i.e cancel this task)
+# For AMA, this creates an EvidenceSubmissionWindowTask as child of parent HearingTask and for legacy appeal,
+# vacols field `bfha` and `bfhr` are updated.
 #
-# Once completed, an AssignHearingDispositionTask is created as a child of HearingTask.
-
+# If cancelled, the parent HearingTask is automatically closed. If this task is the last closed task for the
+# hearing subtree and there are no more open HearingTasks, the logic in HearingTask#when_child_task_completed
+# properly handles routing or creating ihp task.
+#
+# If completed, an AssignHearingDispositionTask is created as a child of HearingTask.
+##
 class ScheduleHearingTask < Task
   include HearingTasksConcern
 

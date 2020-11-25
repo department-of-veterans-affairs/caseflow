@@ -429,7 +429,7 @@ class TaskActionRepository
     def select_withdraw_hearing_copy(appeal)
       if appeal.is_a?(Appeal)
         COPY::WITHDRAW_HEARING["AMA"]
-      elsif appeal.representative_is_colocated_vso?
+      elsif appeal.representative_is_colocated_vso? # a colocated vso is also part of `Service Organization`
         COPY::WITHDRAW_HEARING["LEGACY_COLOCATED_POA"]
       elsif appeal.representative_is_organization?
         COPY::WITHDRAW_HEARING["LEGACY_NON_COLOCATED_ORGANIZATION"]

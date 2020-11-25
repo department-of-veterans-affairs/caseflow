@@ -7,13 +7,18 @@
 # When the associated hearing's disposition is set, the appropriate tasks are set as children
 #   - held: For legacy, task is set to be completed; for AMA, TranscriptionTask is created as child and
 #         EvidenceSubmissionWindowTask is also created as child unless the veteran/appellant has waived
-#         the 90 day evidence hold
-#   - Cancelled: Task is cancelled and EvidenceWindowSubmissionWindow task is created as a child of RootTask
+#         the 90 day evidence hold.
+#   - Cancelled: Task is cancelled and hearing is withdrawn where if appeal is AMA, EvidenceWindowSubmissionWindow
+#                task is created as a child of RootTask if it does not exist and if appeal is legacy, vacols field
+#                `bfha` and `bfhr` are updated.
 #   - No show: NoShowHearingTask is created as a child of this task
-#   - Postponed: 2 options: Schedule new hearing or cancel HearingTask tree and create new ScheduleHearingTask
+#   - Postponed: 2 options: Schedule new hearing or cancel HearingTask tree and create new ScheduleHearingTask.
 #
 # The task is marked complete when the children tasks are completed.
-
+#
+# If this task is the last closed task for the hearing subtree and there are no more open HearingTasks,
+# the logic in HearingTask#when_child_task_completed properly handles routing or creating ihp task.
+##
 class AssignHearingDispositionTask < Task
   include RunAsyncable
   include HearingTasksConcern
