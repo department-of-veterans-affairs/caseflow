@@ -55,7 +55,7 @@ exports[`EditClaimLabelModal renders correctly 1`] = `
           >
             <div>
               <strong>
-                You are editing a undefined undefined claim
+                You are editing a 040 HLR DTA Error - Non-Rating claim
               </strong>
             </div>
             <p>
@@ -87,12 +87,12 @@ exports[`EditClaimLabelModal renders correctly 1`] = `
                       class="cf-select__control css-yk16xz-control"
                     >
                       <div
-                        class="cf-select__value-container css-g1d714-ValueContainer"
+                        class="cf-select__value-container cf-select__value-container--has-value css-g1d714-ValueContainer"
                       >
                         <div
-                          class="cf-select__placeholder css-1wa3eu0-placeholder"
+                          class="cf-select__single-value css-1uccc91-singleValue"
                         >
-                          Select...
+                          040HDENR
                         </div>
                         <div
                           class="css-81nyic-Input"
