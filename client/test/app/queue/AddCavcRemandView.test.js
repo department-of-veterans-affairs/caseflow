@@ -5,6 +5,7 @@ import { queueWrapper } from 'test/data/stores/queueStore';
 import { amaAppeal } from 'test/data/appeals';
 
 import AddCavcRemandView from 'app/queue/AddCavcRemandView';
+import { SearchableDropdown } from 'app/components/SearchableDropdown';
 
 import COPY from 'COPY';
 
@@ -51,6 +52,89 @@ describe('AddCavcRemandView', () => {
         cavcForm.find('#docket-number').simulate('change', { target: { value: 'bad docket number' } });
 
         expect(validationErrorShows(cavcForm, error)).toBeTruthy();
+      });
+
+      it('does not show error on correctly formatted docket number', () => {
+        const cavcForm = setup({ appealId });
+
+        cavcForm.find('input#docket-number').simulate('change', { target: { value: '20-39283' } });
+
+        expect(validationErrorShows(cavcForm, error)).toBeFalsy();
+      });
+    });
+
+    describe('judge name validations', () => {
+      const error = COPY.CAVC_JUDGE_ERROR;
+
+      it('shows error on no selected judge', () => {
+        const cavcForm = setup({ appealId });
+
+        expect(validationErrorShows(cavcForm, error)).toBeTruthy();
+      });
+
+      it('does not show error on selected judge', () => {
+        const cavcForm = setup({ appealId });
+        const dropdown = cavcForm.find(SearchableDropdown);
+
+        // Select the first judge and press enter!
+        dropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
+        dropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
+
+        expect(validationErrorShows(cavcForm, error)).toBeFalsy();
+      });
+    });
+
+    describe('decision date validations', () => {
+      const error = COPY.CAVC_DECISION_DATE_ERROR;
+
+      it('shows error on no selected date', () => {
+        const cavcForm = setup({ appealId });
+
+        expect(validationErrorShows(cavcForm, error)).toBeTruthy();
+      });
+
+      it('does not show error on selected date', () => {
+        const cavcForm = setup({ appealId });
+
+        cavcForm.find('input#decision-date').simulate('change', { target: { value: '2020-11-11' } });
+
+        expect(validationErrorShows(cavcForm, error)).toBeFalsy();
+      });
+    });
+
+    describe('judgement date validations', () => {
+      const error = COPY.CAVC_JUDGEMENT_DATE_ERROR;
+
+      it('shows error on no selected date', () => {
+        const cavcForm = setup({ appealId });
+
+        expect(validationErrorShows(cavcForm, error)).toBeTruthy();
+      });
+
+      it('does not show error on selected date', () => {
+        const cavcForm = setup({ appealId });
+
+        cavcForm.find('input#judgement-date').simulate('change', { target: { value: '2020-11-11' } });
+
+        expect(validationErrorShows(cavcForm, error)).toBeFalsy();
+      });
+    });
+
+    describe('mandate date validations', () => {
+      const error = COPY.CAVC_MANDATE_DATE_ERROR;
+
+      it('shows error on no selected date', () => {
+        const cavcForm = setup({ appealId });
+
+        expect(validationErrorShows(cavcForm, error)).toBeTruthy();
+      });
+
+      it('does not show error on selected date', () => {
+        const cavcForm = setup({ appealId });
+
+        cavcForm.find('input#mandate-date').simulate('change', { target: { value: '2020-11-11' } });
+
+        expect(validationErrorShows(cavcForm, error)).toBeFalsy();
       });
     });
   });
