@@ -154,11 +154,11 @@ describe AdvanceOnDocketMotion, :postgres do
         # Because we're mostly testing updates, create an initial AOD motion first:
         before do
           described_class.create!(
-              person_id: claimant.person.id,
-              granted: false,
-              reason: described_class.reasons[:other],
-              user_id: user_id,
-              appeal: appeal_on_motion
+            person_id: claimant.person.id,
+            granted: false,
+            reason: described_class.reasons[:other],
+            user_id: user_id,
+            appeal: appeal_on_motion
           )
         end
 
@@ -174,7 +174,6 @@ describe AdvanceOnDocketMotion, :postgres do
             expect(motions.second.granted).to eq(true)
             expect(motions.second.reason).to eq(described_class.reasons[:age])
           end
-
         end
 
         context "when called with a non-age-related motion" do
@@ -188,24 +187,22 @@ describe AdvanceOnDocketMotion, :postgres do
             expect(motions.first.reason).to eq(described_class.reasons[:serious_illness])
           end
         end
-
-
       end
 
       context "when the previous motion reason is age" do
         # Because we're mostly testing updates, create an initial AOD motion first:
         before do
           described_class.create!(
-              person_id: claimant.person.id,
-              granted: false,
-              reason: described_class.reasons[:age],
-              user_id: user_id,
-              appeal: appeal_on_motion
+            person_id: claimant.person.id,
+            granted: false,
+            reason: described_class.reasons[:age],
+            user_id: user_id,
+            appeal: appeal_on_motion
           )
         end
 
         context "when called with an age-related motion" do
-          let(:reason) {described_class.reasons[:age] }
+          let(:reason) { described_class.reasons[:age] }
 
           it "only allows one age-related motion per appeal" do
             subject
@@ -217,7 +214,7 @@ describe AdvanceOnDocketMotion, :postgres do
         end
 
         context "when called with a non-age-related motion" do
-          let(:reason) {described_class.reasons[:other] }
+          let(:reason) { described_class.reasons[:other] }
 
           it "creates the non-age-related motion" do
             subject
