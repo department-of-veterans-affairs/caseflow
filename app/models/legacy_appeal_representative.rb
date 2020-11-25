@@ -19,7 +19,7 @@ class LegacyAppealRepresentative
   end
 
   def representative_is_organization?
-    representative_type == "Service Organization"
+    representative_type == "Service Organization" || representative_type == "ORGANIZATION"
   end
 
   def representative_is_vso?

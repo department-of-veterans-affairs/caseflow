@@ -93,9 +93,6 @@ describe AssignHearingDispositionTask, :all_dbs do
       end
     end
 
-    shared_examples "sets postponed disposition" do
-    end
-
     let(:after_disposition_update) { nil }
     let(:user) { create(:user) }
     let(:params) { nil }
