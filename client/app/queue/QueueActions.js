@@ -206,7 +206,7 @@ export const resetDecisionOptions = () => ({
   type: ACTIONS.RESET_DECISION_OPTIONS
 });
 
-const editAppeal = (appealId, attributes) => ({
+export const editAppeal = (appealId, attributes) => ({
   type: ACTIONS.EDIT_APPEAL,
   payload: {
     appealId,
