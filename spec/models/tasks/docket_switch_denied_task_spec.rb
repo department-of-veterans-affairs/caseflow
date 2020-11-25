@@ -9,9 +9,10 @@ describe DocketSwitchDeniedTask, :postgres do
   let(:attorney) { create(:user, :with_vacols_attorney_record) }
 
   let(:task_actions) do
-    [Constants.TASK_ACTIONS.REVIEW_DECISION_DRAFT.to_h,
-     Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-     Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h]
+    [
+      Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+      Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
+    ]
   end
 
   before do
@@ -19,7 +20,7 @@ describe DocketSwitchDeniedTask, :postgres do
   end
 
   describe ".available_actions" do
-    let(:attonery_task) do
+    let(:attorney_task) do
       task_class.create!(
         appeal: root_task.appeal,
         parent_id: root_task.id,
@@ -28,7 +29,7 @@ describe DocketSwitchDeniedTask, :postgres do
       )
     end
 
-    subject { attonery_task.available_actions(attorney) }
+    subject { attorney_task.available_actions(attorney) }
 
     context "when the current user is not a member of the Clerk of the Board team" do
       before { allow_any_instance_of(ClerkOfTheBoard).to receive(:user_has_access?).and_return(false) }
@@ -44,8 +45,8 @@ describe DocketSwitchDeniedTask, :postgres do
         before { FeatureToggle.enable!(:docket_switch) }
         after { FeatureToggle.disable!(:docket_switch) }
 
-        it "returns the available_actions as defined by Task" do
-          expect(subject).to eq(task_actions)
+        it "returns no task actions" do
+          expect(subject).to be_empty
         end
       end
     end
