@@ -12,7 +12,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
 
   include IntakeHelpers
   describe "when CAVC Lit Support has a CAVC Remand case" do
-    let!(:cavc_task) { create(:cavc_task) }
+    let(:cavc_task) { create(:cavc_task) }
     let!(:appeal) { cavc_task.appeal }
     let(:decision_issue) { create(:decision_issue, description: "decision 1", decision_review: appeal) }
     let!(:request_issue) do
