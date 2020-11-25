@@ -150,13 +150,6 @@ describe LegacyAppealRepresentative do
       end
     end
 
-    context "representative is a colocated vso" do
-      it "is false" do
-        expect(lar.representatives.count).to eq 1
-        expect(lar.representative_is_organization?).to eq false
-      end
-    end
-
     context "representative is a private attorney" do
       let(:poa_type) { "Attorney" }
 
