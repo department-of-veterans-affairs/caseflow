@@ -163,7 +163,7 @@ describe TaskSorter, :all_dbs do
           # Used to ensure sort by label still works when a task name contain another task name as a substring
           class TestAttorneyTask < AttorneyTask
             def self.label
-              "Alphabetically superior to AttorneyTask"
+              "Alphabetically superior to Draft decision (label for Attorney Task)"
             end
           end
         end
