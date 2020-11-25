@@ -48,7 +48,7 @@ class Idt::V1::AppealDetailsSerializer
           first_name: claimant.first_name,
           middle_name: claimant.middle_name,
           last_name: claimant.last_name,
-          full_name: claimant.first_name.present? ? nil : claimant.name&.upcase,
+          full_name: claimant.last_name.present? ? nil : claimant.name&.upcase,
           name_suffix: "",
           address: address,
           representative: claimant.representative_name ? representative : nil
