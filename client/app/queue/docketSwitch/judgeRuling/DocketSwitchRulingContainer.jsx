@@ -72,7 +72,7 @@ export const DocketSwitchRulingContainer = () => {
       }
 
       // Add logic for success banner
-      dispatch(showSuccessMessage(successMessage))
+      dispatch(showSuccessMessage(successMessage));
       push('/queue');
     } catch (error) {
       // Perhaps show an alert that indicates error, advise trying again...?
