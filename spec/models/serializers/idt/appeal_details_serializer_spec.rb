@@ -24,7 +24,7 @@ describe Idt::V1::AppealDetailsSerializer, :postgres do
     end
 
     context "when the claimant is missing last name, but has full name" do
-      fit "populates full name in appellant attributes" do
+      it "populates full name in appellant attributes" do
         allow_any_instance_of(Claimant).to receive(:name).and_return("Full Name")
         allow_any_instance_of(Claimant).to receive(:last_name).and_return(nil)
 
