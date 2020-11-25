@@ -5,6 +5,14 @@ require "console_tree_renderer"
 # Usage instructions at https://github.com/department-of-veterans-affairs/caseflow/wiki/Task-Tree-Render
 # :nocov:
 module TaskTreeRenderModule
+
+  DOCKET_ABBREVIATION = {
+    Constants.AMA_DOCKETS.direct_review => "D",
+    Constants.AMA_DOCKETS.evidence_submission => "E",
+    Constants.AMA_DOCKETS.hearing => "H",
+    "legacy" => "L"
+  }.freeze
+
   def self.new_renderer # rubocop:disable all
     ConsoleTreeRenderer::ConsoleRenderer.new.tap do |ttr|
       ttr.config.value_funcs_hash.merge!(
@@ -29,9 +37,12 @@ module TaskTreeRenderModule
       )
       ttr.config.default_atts = [:id, :status, :ASGN_BY, :ASGN_TO, :updated_at]
       ttr.config.heading_label_template = lambda { |appeal|
-        docket = (defined?(appeal.docket_type) && appeal.docket_type) ||
-                 (defined?(appeal.docket_name) && appeal.docket_name)
-        "#{appeal.class.name} #{appeal.id} (#{docket}) "
+        docket = (appeal.docket_type if defined?(appeal.docket_type)) ||
+                 (appeal.docket_name if defined?(appeal.docket_name))
+        docket = DOCKET_ABBREVIATION[docket] if DOCKET_ABBREVIATION[docket]
+        stream_type = appeal.stream_type if defined?(appeal.stream_type)
+        parenthetical = [docket, appeal.docket_number, stream_type].compact.join(" ")
+        "#{appeal.class.name} #{appeal.id} (#{parenthetical}) "
       }
       ttr.config.custom["show_all_tasks"] = true
     end
