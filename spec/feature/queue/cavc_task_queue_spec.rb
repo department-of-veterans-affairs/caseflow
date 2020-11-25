@@ -17,11 +17,18 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
     let(:vet_name) { send_task.appeal.veteran_full_name }
 
     it "allows users to assign and process tasks" do
-      step "admin assigns SendCavcRemandProcessedLetterTask to user" do
+      step "admin adds admin actions" do
         # Logged in as CAVC Lit Support admin
         User.authenticate!(user: org_admin)
         visit "queue/appeals/#{send_task.appeal.external_id}"
 
+        click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label)
+        fill_in "taskInstructions", with: "Please translate the documents in spanish"
+        click_on "Submit"
+        expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Translation.singleton.name
+      end
+
+      step "admin assigns SendCavcRemandProcessedLetterTask to user" do
         find(".cf-select__control", text: "Select an action").click
         expect(page).to have_content Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label
         expect(page).to have_content Constants.TASK_ACTIONS.CLARIFY_POA_BLOCKING_CAVC.label
@@ -55,11 +62,6 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         # Logged in as second user assignee (due to reassignment)
         User.authenticate!(user: org_nonadmin2)
         visit "queue/appeals/#{send_task.appeal.external_id}"
-
-        click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label)
-        fill_in "taskInstructions", with: "Please translate the documents in spanish"
-        click_on "Submit"
-        expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Translation.singleton.name
 
         click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.label)
         fill_in "taskInstructions", with: "Please transcribe the hearing on record for this appeal"
