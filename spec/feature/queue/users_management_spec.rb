@@ -50,7 +50,6 @@ RSpec.feature "Users management page", :postgres do
       end
 
       step "user searches for an existant user" do
-        find(".cf-select").click
         fill_in COPY::USER_MANAGEMENT_FIND_USER_DROPDOWN_NAME, with: active_user.css_id
         expect(page).to have_content(active_user.full_name)
 
