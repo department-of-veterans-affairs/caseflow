@@ -5,10 +5,10 @@ import Modal from 'app/components/Modal';
 import DateSelector from 'app/components/DateSelector';
 import COPY from 'app/../COPY';
 import { useDispatch } from 'react-redux';
-import { resetSuccessMessages, showSuccessMessage } from '../uiReducer/uiActions';
+import { requestPatch, resetSuccessMessages, showSuccessMessage } from '../uiReducer/uiActions';
 import ApiUtil from '../../util/ApiUtil';
 
-export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealId }) => {
+export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealId, requestPatch }) => {
   const dispatch = useDispatch();
 
   const handleSubmit = (receiptDate) => {
@@ -19,12 +19,12 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
 
     ApiUtil.patch(`/appeals/${appealId}/update_nod_date`, { data: { receipt_date: receiptDate } }).then(() => {
       dispatch(showSuccessMessage(successMessage));
+      onSubmit?.();
     },
     (error) => {
+      console.log(receiptDate);
       console.log(error);
     });
-
-    onSubmit?.();
   };
 
   return (

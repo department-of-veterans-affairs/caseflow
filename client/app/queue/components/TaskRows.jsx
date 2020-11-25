@@ -390,7 +390,7 @@ class TaskRows extends React.PureComponent {
                   onCancel={this.toggleEditNodDateModal}
                   onSubmit={this.toggleEditNodDateModal}
                   nodDate={appeal.nodDate}
-                  appealId={appeal.id}
+                  appealId={appeal.externalId}
                 />
               )}
             </React.Fragment>
