@@ -38,6 +38,11 @@ export const initialState = {
     stagedChanges: {
       appeals: {}
     }
+  },
+  ui: {
+    messages: {},
+    saveState: {},
+    modals: {}
   }
 };
 
@@ -69,6 +74,10 @@ export const queueWrapper = ({ children, ...props }) => {
       queue: {
         ...initialState.queue,
         ...props?.queue
+      },
+      ui: {
+        ...initialState.ui,
+        ...props?.ui
       },
     })}>
       <MemoryRouter
