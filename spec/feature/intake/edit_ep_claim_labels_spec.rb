@@ -108,13 +108,13 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
       nr_label = Constants::EP_CLAIM_TYPES[nonrating_request_issue.end_product_establishment.code]["official_label"]
       nr_row = page.find("tr", text: nr_label, match: :prefer_exact)
       expect(nr_row).to have_button("Edit claim label")
-      nr_next_row = nr_row.first(:xpath, './following-sibling::tr')
+      nr_next_row = nr_row.first(:xpath, "./following-sibling::tr")
       expect(nr_next_row).to have_content(/Requested issues\n1. #{nonrating_request_issue.description}/i)
 
       r_label = Constants::EP_CLAIM_TYPES[rating_request_issue.end_product_establishment.code]["official_label"]
       r_row = page.find("tr", text: r_label, match: :prefer_exact)
       expect(r_row).to have_button("Edit claim label")
-      r_next_row = r_row.first(:xpath, './following-sibling::tr')
+      r_next_row = r_row.first(:xpath, "./following-sibling::tr")
       expect(r_next_row).to have_content(/Requested issues\n2. #{rating_request_issue.description}/i)
 
       # Shows issues not on end products (single row)
