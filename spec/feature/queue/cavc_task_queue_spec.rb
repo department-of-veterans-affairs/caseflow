@@ -69,40 +69,14 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           visit "queue/appeals/#{appeal.external_id}"
           page.find("button", text: "+ Add CAVC Remand").click
 
-          # Field validation
-          page.find("button", text: "Submit").click
-          expect(page).to have_content COPY::CAVC_DOCKET_NUMBER_ERROR
-          expect(page).to have_content COPY::CAVC_JUDGE_ERROR
-          expect(page).to have_content COPY::CAVC_DECISION_DATE_ERROR
-          expect(page).to have_content COPY::CAVC_JUDGEMENT_DATE_ERROR
-          expect(page).to have_content COPY::CAVC_MANDATE_DATE_ERROR
-          expect(page).to have_content COPY::CAVC_INSTRUCTIONS_ERROR
-
-          fill_in "docket-number", with: "bad docket number"
-          expect(page).to have_content COPY::CAVC_DOCKET_NUMBER_ERROR
-
+          # Fill in all of our fields!
           fill_in "docket-number", with: docket_number
-          expect(page).to have_no_content COPY::CAVC_DOCKET_NUMBER_ERROR
-
           click_dropdown(text: judge_name)
-          expect(page).to have_no_content COPY::CAVC_JUDGE_ERROR
-
-          page.find("label", text: Constants.CAVC_DECISION_TYPES.death_dismissal.titleize).click
-          expect(page).to have_no_content COPY::CAVC_SUB_TYPE_LABEL
           page.find("label", text: decision_type).click
-          expect(page).to have_content COPY::CAVC_SUB_TYPE_LABEL
-
           fill_in "decision-date", with: date
           fill_in "judgement-date", with: date
           fill_in "mandate-date", with: date
-          expect(page).to have_no_content COPY::CAVC_DECISION_DATE_ERROR
-          expect(page).to have_no_content COPY::CAVC_JUDGEMENT_DATE_ERROR
-          expect(page).to have_no_content COPY::CAVC_MANDATE_DATE_ERROR
-
-          decision_issues.each { |issue| expect(find_field(description, id: issue.id, visible: false)).to be_checked }
-
           fill_in "context-and-instructions-textBox", with: "Please process this remand"
-          expect(page).to have_no_content COPY::CAVC_INSTRUCTIONS_ERROR
 
           page.find("button", text: "Submit").click
 
