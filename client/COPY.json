@@ -678,10 +678,30 @@
   "VACOLS_OPTIN_ISSUE_CLOSED_EDIT": "This issue has automatically closed the VACOLS issue",
   "VACOLS_OPTIN_ISSUE_CLOSED": "VACOLS issue has been closed",
 
-  "WITHDRAW_HEARING_MODAL_TITLE": "Confirm withdraw hearing",
-  "WITHDRAW_HEARING_MODAL_BODY": "Sending to Schedule Veteran will place this case in the list of Veterans to be scheduled.",
+  "WITHDRAW_HEARING_MODAL_TITLE": "Withdraw hearing",
   "WITHDRAW_HEARING_SUCCESS_MESSAGE_TITLE": "You have successfully withdrawn %s's hearing request",
-  "WITHDRAW_HEARING_SUCCESS_MESSAGE_BODY": "%s has been removed from the hearing schedule and has been sent to the next appropriate location",
+  "WITHDRAW_HEARING": {
+    "AMA": {
+      "MODAL_BODY": "The appeal will be held open for a 90-day evidence submission period before distribution to a judge.",
+      "SUCCESS_MESSAGE": "The appeal will be held open for a 90-day evidence submission period before distribution to a judge."
+    },
+    "LEGACY_NON_COLOCATED_ORGANIZATION": {
+      "MODAL_BODY": "The appeal will be sent to <strong>Location 81</strong> (Case Storage) to await distribution to a judge because the representative is not a co-located organization.",
+      "SUCCESS_MESSAGE": "The appeal was sent to <strong>Location 81</strong> (Case Storage) to await distribution to a judge because the representative is not a co-located organization."
+    },
+    "LEGACY_NON_COLOCATED_PRIVATE_ATTORNEY": {
+      "MODAL_BODY": "The appeal will be sent to <strong>Location 81</strong> (Case Storage) to await distribution to a judge because the representative is a private attorney.",
+      "SUCCESS_MESSAGE": "The appeal was sent to <strong>Location 81</strong> (Case Storage) to await distribution to a judge because the representative is a private attorney."
+    },
+    "LEGACY_NO_POA": {
+      "MODAL_BODY": "The appeal will be sent to <strong>Location 81</strong> (Case Storage) to await distribution to a judge because the [Veteran / appellant] does not have a representative.",
+      "SUCCESS_MESSAGE": "The appeal was sent to <strong>Location 81</strong> (Case Storage) to await distribution to a judge because the [Veteran / appellant] does not have a representative."
+    },
+    "LEGACY_COLOCATED_POA": {
+      "MODAL_BODY": "The appeal will be sent to <strong>Location 55</strong> for the representative to write an Informal Hearing Presentation (IHP) because they are a co-located organization.",
+      "SUCCESS_MESSAGE": "The appeal was sent to <strong>Location 55</strong> for the representative to write an Informal Hearing Presentation (IHP) because they are a co-located organization."
+    }
+  },
 
   "RETURN_CASE_TO_HEARINGS_MANAGEMENT_TITLE": "Schedule new hearing",
   "RETURN_CASE_TO_HEARINGS_MANAGEMENT_BODY": "This will place the case in the list of veterans to be scheduled for a hearing.",
