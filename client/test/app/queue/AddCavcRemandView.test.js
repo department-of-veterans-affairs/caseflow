@@ -6,6 +6,7 @@ import { amaAppeal } from 'test/data/appeals';
 
 import AddCavcRemandView from 'app/queue/AddCavcRemandView';
 import { SearchableDropdown } from 'app/components/SearchableDropdown';
+import CheckboxGroup from 'app/components/CheckboxGroup';
 
 import COPY from 'COPY';
 
@@ -26,6 +27,22 @@ describe('AddCavcRemandView', () => {
     const cavcForm = setup({ appealId });
 
     expect(cavcForm).toMatchSnapshot();
+  });
+
+  it('hides remand subtypes if decision type is not "remand"', () => {
+    const cavcForm = setup({ appealId });
+
+    expect(cavcForm.find('#sub-type-options_jmr').length).toBe(1);
+    cavcForm.find('#type-options_straight_reversal').simulate('change', { target: { checked: true } });
+    expect(cavcForm.find('#sub-type-options_jmr').length).toBe(0);
+  });
+
+  it('selects all issues on page load', () => {
+    const cavcForm = setup({ appealId });
+    const decisionIssues = cavcForm.find(CheckboxGroup).props().values;
+
+    expect(Object.keys(decisionIssues).length).toBe(2);
+    expect(Object.values(decisionIssues).every((checked) => checked === true)).toBeTruthy();
   });
 
   describe('form validations', () => {
@@ -138,7 +155,4 @@ describe('AddCavcRemandView', () => {
       });
     });
   });
-
-  // describe('deselecting "remand" hides remand subtypes', () => {});
-  // describe('all issues are selected on page load', () => {});
 });
