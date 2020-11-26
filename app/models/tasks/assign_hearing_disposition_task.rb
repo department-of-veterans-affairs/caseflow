@@ -21,7 +21,6 @@
 ##
 class AssignHearingDispositionTask < Task
   include RunAsyncable
-  include HearingTasksConcern
 
   validates :parent, presence: true, parentTask: { task_type: HearingTask }
   delegate :hearing, to: :hearing_task, allow_nil: true
