@@ -2,9 +2,11 @@
 
 class DocketSwitchMailTask < MailTask
   def available_actions(user)
-    actions = super(user)
+    default_actions = super(user)
+    actions = []
 
     if ClerkOfTheBoard.singleton.user_has_access?(user)
+      actions += default_actions
       if assigned_to.is_a?(User) && FeatureToggle.enabled?(:docket_switch, user: user)
         actions.push(Constants.TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.to_h)
       end
