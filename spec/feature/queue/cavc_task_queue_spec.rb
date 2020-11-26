@@ -72,7 +72,6 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           # Fill in all of our fields!
           fill_in "docket-number", with: docket_number
           click_dropdown(text: judge_name)
-          page.find("label", text: decision_type).click
           fill_in "decision-date", with: date
           fill_in "judgement-date", with: date
           fill_in "mandate-date", with: date
