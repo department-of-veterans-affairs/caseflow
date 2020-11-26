@@ -10,6 +10,61 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
   let!(:org_nonadmin2) { create(:user, full_name: "Tooey Remandy") { |u| CavcLitigationSupport.singleton.add_user(u) } }
   let!(:other_user) { create(:user, full_name: "Othery Usery") }
 
+  include IntakeHelpers
+  describe "when CAVC Lit Support has a CAVC Remand case" do
+    let(:cavc_task) { create(:cavc_task) }
+    let!(:appeal) { cavc_task.appeal }
+    let(:decision_issue) { create(:decision_issue, description: "decision 1", decision_review: appeal) }
+    let!(:request_issue) do
+      create(:request_issue, :rating, decision_review: appeal,
+                                      contested_issue_description: "issue description",
+                                      notes: "notes from NOD",
+                                      decision_issues: [decision_issue])
+    end
+
+    let!(:new_issue_description) { "Some description for new issue" }
+
+    it "allows CAVC Team users to correct issues" do
+      step "check 'Correct issues' link does not appear for users not in the CAVC Team" do
+        User.authenticate!(user: other_user)
+        visit "queue/appeals/#{appeal.external_id}"
+        expect(page).to_not have_content "Correct issues"
+      end
+
+      step "check 'Correct issues' link appears" do
+        User.authenticate!(user: org_nonadmin)
+        visit "queue/appeals/#{appeal.external_id}"
+        expect(page).to have_content "Correct issues"
+      end
+
+      step "add an issue" do
+        click_on "Correct issues"
+        expect(appeal.request_issues.count).to eq 1
+        click_on "+ Add issue"
+        add_intake_nonrating_issue(
+          category: "Unknown issue category",
+          description: new_issue_description,
+          date: (Time.zone.now - 100.days).mdY
+        )
+        click_edit_submit_and_confirm
+        expect(page).to have_content "Edit Completed"
+        expect(page).to have_content "You have successfully added 1 issue."
+        expect(page).to have_content new_issue_description
+        expect(appeal.request_issues.count).to eq 2
+      end
+
+      step "remove an issue" do
+        click_link "Correct issues"
+        click_remove_intake_issue_dropdown(new_issue_description)
+        click_edit_submit_and_confirm
+        expect(page).to have_content "Edit Completed"
+        expect(page).to have_content "You have successfully removed 1 issue."
+        expect(page).to_not have_content new_issue_description
+        expect(appeal.request_issues.where(closed_status: nil).count).to eq 1
+      end
+    end
+  end
+
   describe "when CAVC Lit Support is assigned SendCavcRemandProcessedLetterTask" do
     let!(:send_task) { create(:send_cavc_remand_processed_letter_task) }
     let(:vet_name) { send_task.appeal.veteran_full_name }
