@@ -38,11 +38,11 @@ describe('AddCavcRemandView', () => {
   });
 
   it('selects all issues on page load', () => {
+    const descisionIssues = amaAppeal.decisionIssues;
     const cavcForm = setup({ appealId });
-    const decisionIssues = cavcForm.find(CheckboxGroup).props().values;
+    const decisionIssueChecks = cavcForm.find(CheckboxGroup).props().values;
 
-    expect(Object.keys(decisionIssues).length).toBe(2);
-    expect(Object.values(decisionIssues).every((checked) => checked === true)).toBeTruthy();
+    expect(descisionIssues.map((issue) => issue.id).every((id) => decisionIssueChecks[id])).toBeTruthy();
   });
 
   describe('form validations', () => {
