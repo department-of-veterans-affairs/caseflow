@@ -14,6 +14,14 @@ class LegacyAppealRepresentative
     Representative.where(participant_id: [representative_participant_id].compact)
   end
 
+  def representative_is_agent?
+    representative_type == "Agent" || representative_type == "Attorney"
+  end
+
+  def representative_is_organization?
+    representative_type == "Service Organization" || representative_type == "ORGANIZATION"
+  end
+
   def representative_is_vso?
     vso_representatives.any?
   end
