@@ -2,7 +2,7 @@
 
 RSpec.feature "CAVC-related tasks queue", :all_dbs do
   include IntakeHelpers
-  
+
   let!(:org_admin) do
     create(:user, full_name: "Adminy CacvRemandy") do |u|
       OrganizationsUser.make_user_admin(u, CavcLitigationSupport.singleton)
@@ -101,6 +101,9 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}: #{date}"
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_MANDATE_DATE}: #{date}"
         end
+      end
+    end
+  end
 
   describe "when CAVC Lit Support has a CAVC Remand case" do
     let(:cavc_task) { create(:cavc_task) }
