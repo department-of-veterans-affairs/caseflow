@@ -372,6 +372,10 @@
   "CAVC_TASK_DEFAULT_INSTRUCTIONS": "This task will be auto-completed when all CAVC-related tasks have been closed.",
 
   "SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL": "Send CAVC-Remand-Processed Letter Task",
+  "SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_COMPLETE_MODAL_BODY": "Marking this task complete will put this case on hold for 90 days to allow the appellant to respond.",
+
+  "CRP_LETTER_RESP_WINDOW_TASK_LABEL": "CAVC-Remand-Processed-Letter Response Window Task",
+  "CRP_LETTER_RESP_WINDOW_TASK_DEFAULT_INSTRUCTIONS": "The response window task will return to the CAVC Teams queue after 90 days or when manually ended early.",
 
   "ASSIGN_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS": "Postpone or cancel a hearing prior to the hearing date. This task will be auto-completed after the hearing's scheduled date.",
 
@@ -618,6 +622,8 @@
   "DOCKET_SWITCH_REQUEST_MESSAGE": "This task will appear on your hold tab until it has been addressed by the VLJ.",
   "DOCKET_SWITCH_RULING_TITLE": "Switch Docket: Rule on %s's Request",
   "DOCKET_SWITCH_RULING_INSTRUCTIONS": "**Provided below is a summary of the pertinent facts used by the Office of the Clerk of the Board to prepare a docket switch ruling. Determine how you would like to rule on this request to switch dockets and select the corresponding button below.**\n\nThe hyperlink takes you to a draft ruling letter based on the recommended ruling. Please feel free to make any necessary edits to the ruling letter. You may then sign the letter. Inserting a hyperlink to a signed ruling letter is recommended, but optional.\n\nIf you have any questions, or need assistance making edits to the ruling letter, please [email](mailto:BVA.Clerk@va.gov) the Office of the Clerk of the Board or use the text box below to provide any additional context or instructions.\n\nWhen you click \"Confirm,\" the task will automatically be returned to the individual who assigned it to you. If you would like to return the task to a different individual, please use the drop down box to select a different name.",
+  "DOCKET_SWITCH_DENIAL_TITLE": "Switch Docket: Deny %s's Request",
+  "DOCKET_SWITCH_DENIAL_INSTRUCTIONS": "Add the date and add any context for the denial of this switch.",
   "DENIED_DOCKET_SWITCH_TASK_LABEL": "Denied Docket Switch",
   "GRANTED_DOCKET_SWITCH_TASK_LABEL": "Granted Docket Switch",
 

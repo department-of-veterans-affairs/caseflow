@@ -131,6 +131,7 @@ Rails.application.routes.draw do
       patch 'update'
       post 'work_mode', to: "work_modes#create"
       post 'cavc_remand', to: "cavc_remands#create"
+      patch 'update_nod_date'
     end
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]

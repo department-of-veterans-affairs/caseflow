@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+##
+# Allocation represents the desired allocated days for each RO for a SchedulePeriod. These records are created when
+# user uploads RoAssignment spreadsheet after it passes all validations.
+##
 class Allocation < CaseflowRecord
   belongs_to :schedule_period
 
