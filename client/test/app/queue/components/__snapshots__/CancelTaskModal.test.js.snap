@@ -61,12 +61,6 @@ exports[`CancelTaskModal for cancel change hearing request type action 1`] = `
     taskId="2"
   >
     <CancelTaskModal
-      hearingDay={
-        Object {
-          "hearingDate": null,
-          "regionalOffice": null,
-        }
-      }
       highlightFormItems={false}
       history={
         Object {
@@ -271,7 +265,6 @@ exports[`CancelTaskModal for cancel change hearing request type action 1`] = `
         >
           <QueueFlowModal
             button="Submit"
-            error={null}
             highlightInvalidFormItems={[Function]}
             history={
               Object {
@@ -321,10 +314,8 @@ exports[`CancelTaskModal for cancel change hearing request type action 1`] = `
             }
             pathAfterSubmit="/queue/appeals/1986897"
             resetSaveState={[Function]}
-            saveSuccessful={null}
             submit={[Function]}
             submitDisabled={false}
-            success={null}
             title="Cancel convert hearing to virtual task"
             validateForm={[Function]}
           >

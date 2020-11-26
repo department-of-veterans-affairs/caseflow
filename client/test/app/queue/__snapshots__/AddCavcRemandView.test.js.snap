@@ -67,7 +67,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
           },
         ]
       }
-      error={null}
       highlightInvalid={false}
       history={
         Object {
@@ -203,7 +202,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
             checkoutStagedAppeal={[Function]}
             continueBtnText="Submit"
             disableNext={false}
-            featureToggles={Object {}}
             getNextStepUrl={null}
             getPrevStepUrl={null}
             goToNextStep={[Function]}
@@ -259,8 +257,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
             }
             requestSave={[Function]}
             resetDecisionOptions={[Function]}
-            savePending={false}
-            saveSuccessful={null}
             showErrorMessage={[Function]}
             showModal={[Function]}
             stagedAppeals={Array []}
@@ -3647,7 +3643,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     ],
                     "disabled": false,
                     "displayText": "Submit",
-                    "loading": false,
+                    "loading": undefined,
                     "loadingText": "Submitting...",
                     "name": "next-button",
                     "styling": Object {
