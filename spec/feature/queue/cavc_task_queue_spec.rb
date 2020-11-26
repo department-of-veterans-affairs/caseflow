@@ -2,7 +2,7 @@
 
 RSpec.feature "CAVC-related tasks queue", :all_dbs do
   include IntakeHelpers
-  
+
   let!(:org_admin) do
     create(:user, full_name: "Adminy CacvRemandy") do |u|
       OrganizationsUser.make_user_admin(u, CavcLitigationSupport.singleton)
