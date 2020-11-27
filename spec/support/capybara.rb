@@ -75,7 +75,9 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
 end
 
 Capybara.register_driver(:sniffybara_headless) do |app|
-  browser_options = webdriver_options_class.new
+  browser_options = webdriver_options_class.new(
+    args: ['headless', 'disable-gpu', 'window-size=1200,1200']
+  )
 
   puts browser_options
 
@@ -85,13 +87,6 @@ Capybara.register_driver(:sniffybara_headless) do |app|
 
   browser_options.add_preference(:browser,
                                  disk_cache_dir: cache_directory)
-
-  puts browser_options
-  puts browser_options.args
-
-  browser_options.args << "--headless"
-  browser_options.args << "--disable-gpu"
-  browser_options.args << "--window-size=1200,1200"
 
   options = {
     service: webdriver_service_builder.call(args: { port: 51_674 }),
