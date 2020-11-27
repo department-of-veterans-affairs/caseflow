@@ -362,7 +362,8 @@ feature "Intake Add Issues Page", :all_dbs do
       add_untimely_exemption_response("No")
       expect(page).to have_content("Unidentified issue")
       click_on "Establish EP"
-      expect(page).to have_content("Unidentified issue")
+
+      expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
 
       unidentified_issue = RequestIssue.where(
         unidentified_issue_text: "Unidentified issue",
