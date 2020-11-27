@@ -60,7 +60,7 @@ export const DocketSwitchRulingContainer = () => {
     };
 
     const successMessage = {
-      title: sprintf(DOCKET_SWITCH_RULING_SUCCESS_TITLE, dispositionType, appeal.appellantFullName),
+      title: sprintf(DOCKET_SWITCH_RULING_SUCCESS_TITLE, dispositionType.toLowerCase(), appeal.appellantFullName),
       detail: DOCKET_SWITCH_RULING_SUCCESS_MESSAGE,
     };
 
