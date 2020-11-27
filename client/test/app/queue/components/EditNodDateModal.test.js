@@ -1,21 +1,21 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
 import { EditNodDateModal } from 'app/queue/components/EditNodDateModal';
-import { DateSelector } from 'app/components/DateSelector';
-// import moment from 'moment';
+import { render } from '@testing-library/react';
 import Enzyme, { mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 
-Enzyme.configure({adapter: new Adapter() });
+Enzyme.configure({ adapter: new Adapter() });
 
 describe('EditNodDateModal', () => {
   const onSubmit = jest.fn();
   const onCancel = jest.fn();
+  // const onChange = jest.fn();
   const defaultNodDate = '2020-10-31';
-  const futureDate = true;
+  const futureDate = '2020-12-25';
+  const defaultNewNodDate = '2020-10-15';
 
   const setupEditNodDateModal = () => {
-    return render(
+    return mount(
       <EditNodDateModal
         onCancel={onCancel}
         onSubmit={onSubmit}
@@ -29,54 +29,51 @@ describe('EditNodDateModal', () => {
   });
 
   it('renders correctly', () => {
-    const container = setupEditNodDateModal();
+    const component = () => {
+      return render(<EditNodDateModal
+        onCancel={onCancel}
+        onSubmit={onSubmit}
+        nodDate={defaultNodDate}
+      />
+      );
+    };
 
-    expect(container).toMatchSnapshot();
+    expect(component).toMatchSnapshot();
   });
 
   it('should fire cancel event', () => {
-    setupEditNodDateModal();
-    fireEvent.click(screen.getByText('Cancel'));
+    const component = setupEditNodDateModal();
+    const cancelLink = component.find('button#Edit-NOD-Date-button-id-0');
+
+    cancelLink.simulate('click');
     expect(onCancel).toHaveBeenCalled();
   });
 
   it('should submit event', async() => {
-    setupEditNodDateModal();
+    const component = setupEditNodDateModal();
+    const dateInput = component.find('input[type="date"]');
+    const submitButton = component.find('button#Edit-NOD-Date-button-id-1');
 
-    fireEvent.click(screen.getByText('Submit'));
-    expect(onSubmit).toHaveBeenCalled();
+    dateInput.simulate('change', { target: { value: defaultNewNodDate } });
+
+    submitButton.simulate('click');
+
+    expect(onSubmit).toHaveBeenCalledWith(defaultNewNodDate);
   });
 
   it('should give error when future date is given', () => {
-    // const enteredDate = moment(futureDate);
-    const msg = "The new NOD date cannot be after today's date";
-    const modal = mount(
-      <EditNodDateModal
-        onCancel={onCancel}
-        onSubmit={onSubmit}
-        nodDate={defaultNodDate}
-      />);
+    const component = setupEditNodDateModal();
+    const dateInput = component.find('input[type="date"]');
+    const errorMsg = "The new NOD date cannot be after today's date";
 
-    console.log(modal.debug({ verbose: true }));
-    // console.log(DateSelector.debug({ verbose: true }));
+    dateInput.simulate('change', { target: { value: futureDate } });
+    component.update();
+
     // Assertions
-    expect(modal.find('#nodDate').prop('errorMessage')).toEqual(msg);
+    expect(component.find('input[type="date"]').props().value).
+      toEqual(futureDate);
 
-    modal.setProps({ errorMessage: null });
-    expect(modal.props().errorMessage).toEqual(null);
-    expect(modal).toMatchSnapshot();
-
-    modal.setProps({ errorMessage: msg });
-    expect(modal.props().errorMessage).toEqual(msg);
-    expect(modal).toMatchSnapshot();
-
-    // modal.setProps({ value: futureDate });
-    // // eslint-disable-next-line jest/valid-expect
-    // expect(modal.props().errorMessage).toEqual(msg);
-
-    // expect(modal.find({ errorMessage: null })).toEqual(null);
-    // modal.setProps({ errorMessage: msg });
-    // modal.update();
-    // expect(modal.props().errorMessage).toEqual(msg);
+    component.setProps({ errorMessage: errorMsg });
+    expect(component.props().errorMessage).toEqual(errorMsg);
   });
 });

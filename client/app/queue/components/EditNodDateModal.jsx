@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import PropTypes from 'prop-types';
 import Modal from 'app/components/Modal';
@@ -11,6 +11,10 @@ import moment from 'moment';
 export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate }) => {
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(resetSuccessMessages());
+  }, []);
+
   const handleSubmit = () => {
     const successMessage = {
       title: COPY.EDIT_NOD_DATE_SUCCESS_ALERT_TITLE,
@@ -18,8 +22,8 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate }) => {
     };
 
     dispatch(showSuccessMessage(successMessage));
-    setTimeout(() => dispatch(resetSuccessMessages()), 5000);
     onSubmit?.();
+    window.scrollTo(0, 0);
   };
 
   return (
@@ -82,8 +86,9 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
         <ReactMarkdown source={COPY.EDIT_NOD_DATE_MODAL_DESCRIPTION} />
       </div>
       <DateSelector
-        name={COPY.EDIT_NOD_DATE_LABEL}
+        name="nodDate"
         errorMessage={futureDate ? COPY.EDIT_NOD_DATE_ERROR_ALERT_MESSAGE : null}
+        label={COPY.EDIT_NOD_DATE_LABEL}
         strongLabel
         type="date"
         value={receiptDate}

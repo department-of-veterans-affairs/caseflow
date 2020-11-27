@@ -3,8 +3,12 @@
 ##
 # Task for Litigation Support to take necessary action before sending the CAVC-remand-processed letter to an appellant.
 # This task is for CAVC Remand appeal streams.
-# Expected parent: CavcTask
-# Expected assigned_to.type: User
+# If this task is assigned to an org (i.e., CavcLitigationSupport), then:
+# - Expected parent: CavcTask
+# - Expected assigned_to: CavcLitigationSupport
+# If this task is assigned to a user (i.e., a member of CavcLitigationSupport), then:
+# - Expected parent: SendCavcRemandProcessedLetterTask that is assigned to CavcLitigationSupport
+# - Expected assigned_to.type: User
 
 class SendCavcRemandProcessedLetterTask < Task
   validates :parent, presence: true,
@@ -34,6 +38,17 @@ class SendCavcRemandProcessedLetterTask < Task
     return USER_ACTIONS if assigned_to == user
 
     []
+  end
+
+  def update_from_params(params, current_user)
+    if params[:status] == "completed"
+      # Create ResponseWindowTask before completing this task so that parent CavcTask is remains on-hold
+      CavcRemandProcessedLetterResponseWindowTask.create_with_hold(ancestor_task_of_type(CavcTask))
+    end
+
+    super(params, current_user)
+
+    [self]
   end
 
   private

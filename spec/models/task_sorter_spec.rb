@@ -159,6 +159,13 @@ describe TaskSorter, :all_dbs do
         before do
           Colocated.singleton.add_user(create(:user))
           tasks.each_with_index { |task, index| task.update!(type: task_types[index].name) }
+
+          # Used to ensure sort by label still works when a task name contain another task name as a substring
+          class TestAttorneyTask < AttorneyTask
+            def self.label
+              "Alphabetically superior to Draft decision (label for Attorney Task)"
+            end
+          end
         end
 
         it "sorts ColocatedTasks by label" do

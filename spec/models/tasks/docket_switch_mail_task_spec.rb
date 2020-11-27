@@ -30,8 +30,8 @@ describe DocketSwitchMailTask, :postgres do
       before { allow_any_instance_of(ClerkOfTheBoard).to receive(:user_has_access?).and_return(false) }
 
       context "without docket_switch feature toggle" do
-        it "returns the available_actions as defined by Task" do
-          expect(subject).to eq(task_actions)
+        it "returns no task actions" do
+          expect(subject).to be_empty
         end
       end
 
@@ -39,8 +39,8 @@ describe DocketSwitchMailTask, :postgres do
         before { FeatureToggle.enable!(:docket_switch) }
         after { FeatureToggle.disable!(:docket_switch) }
 
-        it "returns the available_actions as defined by Task" do
-          expect(subject).to eq(task_actions)
+        it "returns no task actions" do
+          expect(subject).to be_empty
         end
       end
     end
