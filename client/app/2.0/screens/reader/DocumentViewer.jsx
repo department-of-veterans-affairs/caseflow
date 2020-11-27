@@ -19,6 +19,7 @@ import { DeleteComment } from 'app/2.0/components/reader/DocumentViewer/modals/D
 import {
   showPdf,
   togglePdfSideBar,
+  toggleSearchBar,
   toggleAccordion,
   toggleShareModal,
   toggleDeleteModal,
@@ -27,7 +28,8 @@ import {
   changeDescription,
   resetDescription,
   handleCategoryToggle,
-  setPageNumber
+  setPageNumber,
+  searchText
 } from 'store/reader/documentViewer';
 
 const DocumentViewer = (props) => {
@@ -60,6 +62,7 @@ const DocumentViewer = (props) => {
 
   // Create the dispatchers
   const actions = {
+    searchText: (searchTerm) => dispatch(searchText({ searchTerm, docId: state.currentDocument.id })),
     saveDescription: (description) => dispatch(saveDescription({ docId: state.currentDocument.id, description })),
     changeDescription: (description) => dispatch(changeDescription(description)),
     resetDescription: () => dispatch(resetDescription()),
@@ -75,6 +78,7 @@ const DocumentViewer = (props) => {
     deleteComment: (id) => dispatch(toggleDeleteModal(id)),
     toggleAccordion: (sections) => dispatch(toggleAccordion(sections)),
     togglePdfSidebar: () => dispatch(togglePdfSideBar()),
+    toggleSearchBar: () => dispatch(toggleSearchBar()),
     download: () => openDownloadLink(state.currentDocument.content_url, state.currentDocument.type),
     scrollPage: ({ clientHeight, ...options }) => {
       // Assign the Canvas Elements
@@ -158,7 +162,7 @@ const DocumentViewer = (props) => {
           documentPathBase={`/reader/appeal/${ state.appeal.id }/documents`}
           doc={state.currentDocument}
         />
-        <DocumentSearch {...state} doc={state.currentDocument} hidden={state.hideSearchBar} />
+        <DocumentSearch {...actions} {...state.search} doc={state.currentDocument} hidden={state.hideSearchBar} />
         <Pdf
           {...state}
           {...props}

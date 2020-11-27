@@ -17,14 +17,13 @@ import { LOGO_COLORS } from 'app/constants/AppConstants';
 export const DocumentSearch = ({
   hidden,
   searchBarRef,
-  onChange,
+  searchText,
   onKeyPress,
-  searchIsLoading,
   prevMatch,
   nextMatch,
   searchTerm,
   totalMatchesInFile,
-  currentMatchIndex
+  matchIndex
 }) => !hidden && (
   <div className={classNames('cf-search-bar', { hidden })}>
     <SearchBar
@@ -33,10 +32,9 @@ export const DocumentSearch = ({
       size="small"
       id="search-ahead"
       placeholder="Type to search..."
-      onChange={onChange}
+      onChange={searchText}
       onKeyPress={onKeyPress}
-      internalText={formatSearchText(searchTerm, totalMatchesInFile, currentMatchIndex)}
-      loading={searchIsLoading}
+      internalText={formatSearchText(searchTerm, totalMatchesInFile, matchIndex)}
       spinnerColor={LOGO_COLORS.READER.ACCENT}
     />
     <Button classNames={['cf-increment-search-match', 'cf-prev-match']} onClick={prevMatch} >
@@ -57,12 +55,12 @@ export const DocumentSearch = ({
 DocumentSearch.propTypes = {
   hidden: PropTypes.bool,
   searchBarRef: PropTypes.element,
-  onChange: PropTypes.func,
+  searchText: PropTypes.func,
   onKeyPress: PropTypes.func,
   searchIsLoading: PropTypes.bool,
   prevMatch: PropTypes.func,
   nextMatch: PropTypes.func,
   searchTerm: PropTypes.string,
   totalMatchesInFile: PropTypes.number,
-  currentMatchIndex: PropTypes.number,
+  matchIndex: PropTypes.number,
 };

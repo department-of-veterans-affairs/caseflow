@@ -52,40 +52,42 @@ export const initialState = {
   deleteCommentId: null,
   shareCommentId: null,
   search: {
+    searchTerm: '',
     matchIndex: 0,
     indexToHighlight: null,
     relativeIndex: 0,
     pageIndexWithMatch: null,
     extractedText: {},
-    searchIsLoading: false
+    totalMatchesInFile: 0
   }
 };
 
 /**
- * Method for Extracting text from PDF Documents
+ * Dispatcher for Extracting text from PDF Documents and searching
  */
-export const getDocumentText = createAsyncThunk('pdfSearch/documentText', async ({ pdfDocument, file }) => {
-  // Create a function to extract text
-  const extractText = (index) => pdfDocument.getPage(index + 1).then((page) => page.getTextContent());
-
+export const searchText = createAsyncThunk('documentViewer/search', async ({
+  searchTerm,
+  docId
+}) => {
   // Map the Extract to promises
-  const textPromises = range(pdfDocument.pdfInfo.numPages).map((index) => extractText(index));
+  const textPromises = range(pdfDocuments[docId].numPages).map((index) =>
+    pdfDocuments[docId].getPage(index + 1).then((page) => page.getTextContent()));
 
   // Wait for the search to complete
   const pages = await Promise.all(textPromises);
 
+  // Create the Regex Match
+  const regex = new RegExp(searchTerm ? searchTerm.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&') : null, 'gi');
+
+  // Calculate the Search Matches
+  const match = (page) => (page.items.map((row) => row.str).join(' ').
+    match(regex) || []).length;
+
   // Reduce the Pages to an object containing the matches
-  return pages.
-    reduce((acc, page, pageIndex) => ({
-      ...acc,
-      [`${file}-${pageIndex}`]: {
-        id: `${file}-${pageIndex}`,
-        file,
-        text: page.items.map((row) => row.str).join(' '),
-        pageIndex
-      }
-    }),
-    {});
+  const matches = pages.reduce((count, page) => count + match(page), 0);
+
+  // Return the new state
+  return { searchTerm, matches };
 });
 
 export const showPage = async(params) => {
@@ -257,6 +259,9 @@ const documentViewerSlice = createSlice({
     togglePdfSideBar: (state) => {
       state.hidePdfSidebar = !state.hidePdfSidebar;
     },
+    toggleSearchBar: (state) => {
+      state.hideSearchBar = !state.hideSearchBar;
+    },
     updateSearchIndex: {
       reducer: (state, action) => {
         // Increment or Decrement the match index based on the payload
@@ -276,7 +281,7 @@ const documentViewerSlice = createSlice({
     setSearchIndexToHighlight: {
       reducer: (state, action) => {
         // Update the Search Index
-        state.matchIndex = action.payload.index;
+        state.search.matchIndex = action.payload.index;
       },
       prepare: (index) => ({ payload: { index } })
     },
@@ -294,20 +299,10 @@ const documentViewerSlice = createSlice({
       },
       prepare: (index) => ({ payload: { index } })
     },
-    searchText: {
-      reducer: (state, action) => {
-        // Update the Search Term
-        state.searchTerm = action.payload.searchTerm;
-
-        // Set the search index to 0
-        state.matchIndex = 0;
-      },
-      prepare: (searchTerm) => ({ payload: { searchTerm } })
-    },
     setSearchIsLoading: {
       reducer: (state, action) => {
         // Update the Search Term
-        state.searchIsLoading = action.payload.searchIsLoading;
+        state.search.searchIsLoading = action.payload.searchIsLoading;
       },
       prepare: (searchIsLoading) => ({ payload: { searchIsLoading } })
     },
@@ -339,6 +334,16 @@ const documentViewerSlice = createSlice({
     builder.
       addCase(showPdf.pending, (state) => {
         state.loading = true;
+      }).
+      addCase(searchText.fulfilled, (state, action) => {
+        // Update the Search Term
+        state.search.searchTerm = action.payload.searchTerm;
+
+        // Update the Total matches
+        state.search.totalMatchesInFile = action.payload.matches;
+
+        // Set the search index to 0
+        state.search.matchIndex = 0;
       }).
       addCase(showPdf.fulfilled, (state, action) => {
         // Add the PDF data to the store
@@ -444,13 +449,14 @@ export const {
   onScrollToComment,
   setZoomLevel,
   togglePdfSideBar,
+  toggleSearchBar,
   toggleAccordion,
   toggleDeleteModal,
   toggleShareModal,
   setOverscanValue,
   changeDescription,
   resetDescription,
-  setPageNumber
+  setPageNumber,
 } = documentViewerSlice.actions;
 
 // Default export the reducer
