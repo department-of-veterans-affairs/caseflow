@@ -13,20 +13,21 @@ import { DocumentSidebar } from 'components/reader/DocumentViewer/Sidebar';
 import { DocumentFooter } from 'components/reader/DocumentViewer/Footer';
 import { DocumentSearch } from 'app/2.0/components/reader/DocumentViewer/Search';
 import { Pdf } from 'app/2.0/components/reader/DocumentViewer/PDF';
-import { ZOOM_RATE, MINIMUM_ZOOM, CATEGORIES } from 'app/2.0/store/constants/reader';
+import { ZOOM_RATE, MINIMUM_ZOOM, CATEGORIES, PDF_PAGE_HEIGHT } from 'app/2.0/store/constants/reader';
 import { ShareComment } from 'app/2.0/components/reader/DocumentViewer/modals/Share';
 import { DeleteComment } from 'app/2.0/components/reader/DocumentViewer/modals/Delete';
 import {
   showPdf,
   togglePdfSideBar,
-  setOpenedAccordionSections,
+  toggleAccordion,
   toggleShareModal,
   toggleDeleteModal,
   setOverscanValue,
   saveDescription,
   changeDescription,
   resetDescription,
-  handleCategoryToggle
+  handleCategoryToggle,
+  setPageNumber
 } from 'store/reader/documentViewer';
 
 const DocumentViewer = (props) => {
@@ -72,11 +73,30 @@ const DocumentViewer = (props) => {
     closeDeleteModal: () => dispatch(toggleDeleteModal(null)),
     shareComment: (id) => dispatch(toggleShareModal(id)),
     deleteComment: (id) => dispatch(toggleDeleteModal(id)),
-    toggleAccordion: (sections) => dispatch(setOpenedAccordionSections(sections)),
+    toggleAccordion: (sections) => dispatch(toggleAccordion(sections)),
     togglePdfSidebar: () => dispatch(togglePdfSideBar()),
     download: () => openDownloadLink(state.currentDocument.content_url, state.currentDocument.type),
-    scrollPage: ({ scrollTop, scrollLeft }) => {
-      gridRef.current?.scrollToPosition({ scrollLeft, scrollTop });
+    scrollPage: ({ clientHeight, ...options }) => {
+      // Assign the Canvas Elements
+      const elements = Array.from(document.getElementsByClassName('canvasWrapper'));
+
+      // Calculate the Page Offset
+      const offset = Math.floor(options.scrollTop / PDF_PAGE_HEIGHT);
+
+      // Set the Current page number
+      const pageNumber = offset + 1;
+
+      // Update the Pages if the client height and canvas list have changed
+      if (clientHeight > 0 && state.canvasList.length !== elements.length) {
+        dispatch(showPdf({
+          pageNumber,
+          currentDocument: state.currentDocument,
+          worker: props.pdfWorker,
+          scale: state.scale
+        }));
+      } else if (pageNumber !== state.currentDocument.currentPage) {
+        dispatch(setPageNumber(pageNumber));
+      }
     },
     overscanIndices: ({ cellCount, overscanCellsCount, startIndex, stopIndex }) => ({
       overscanStartIndex: Math.max(0, startIndex - Math.ceil(overscanCellsCount / 2)),
@@ -110,13 +130,9 @@ const DocumentViewer = (props) => {
 
       dispatch(showPdf({ currentDocument: state.currentDocument, worker: props.pdfWorker, scale }));
     },
-    setPageNumber: (pageNumber) => dispatch(showPdf({
-      pageNumber,
-      pageIndex: pageNumber - 1,
-      currentDocument: state.currentDocument,
-      worker: props.pdfWorker,
-      scale: state.scale
-    })),
+    setPageNumber: (pageNumber) => {
+      gridRef.current?.scrollToPosition({ scrollTop: (pageNumber - 1) * PDF_PAGE_HEIGHT });
+    },
     prevDoc: () => {
       const doc = state.documents[docs.prev];
 

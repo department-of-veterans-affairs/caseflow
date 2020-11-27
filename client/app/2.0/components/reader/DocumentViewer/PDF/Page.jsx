@@ -55,7 +55,7 @@ export const Page = ({
           id={`rotationDiv${pageNumber(pageIndex)}`}
           style={pdfPageStyles(rotation, height, width)}
         >
-          <canvas id={`pdf-canvas-${pageIndex}`} ref={canvasRef} className="canvasWrapper" />
+          <canvas id={`pdf-canvas-${currentDocument.id}-${pageIndex}`} ref={canvasRef} className="canvasWrapper" />
           <div className="cf-pdf-annotationLayer">
             {/* <Comments
               {...props}

@@ -15,6 +15,9 @@ import {
 } from 'store/constants/reader';
 import { addMetaLabel, formatCategoryName } from 'utils/reader';
 
+// Create a place in-memory to store the downloaded PDF documents
+const pdfDocuments = {};
+
 /**
  * PDF SideBar Error State
  */
@@ -29,6 +32,7 @@ const initialPdfSidebarErrorState = {
  * PDF Initial State
  */
 export const initialState = {
+  canvasList: [],
   hideSearchBar: true,
   hidePdfSidebar: false,
   scrollToComment: null,
@@ -92,25 +96,24 @@ export const showPage = async(params) => {
   const viewport = page.getViewport({ scale: params.scale });
 
   // Select the canvas element to draw
-  const canvas = document.getElementById(`pdf-canvas-${params.pageIndex || 0}`);
+  const canvas = document.getElementById(`pdf-canvas-${params.docId}-${params.pageIndex}`);
 
-  // Update the Canvas
-  canvas.height = viewport.height || PDF_PAGE_HEIGHT;
-  canvas.width = viewport.width || PDF_PAGE_WIDTH;
+  // Only Update the Canvas if it is present
+  if (canvas) {
+    // Update the Canvas
+    canvas.height = viewport.height || PDF_PAGE_HEIGHT;
+    canvas.width = viewport.width || PDF_PAGE_WIDTH;
 
-  // Draw the PDF to the canvas
-  await page.render({
-    canvasContext: canvas.getContext('2d', { alpha: false }),
-    viewport
-  }).promise;
+    // Draw the PDF to the canvas
+    await page.render({ canvasContext: canvas.getContext('2d', { alpha: false }), viewport }).promise;
+  }
 };
 
 /**
  * Dispatcher to show the selected PDF
  */
 export const showPdf = createAsyncThunk('documentViewer/show', async ({
-  rotation,
-  pageIndex,
+  rotation = null,
   pageNumber,
   currentDocument,
   worker,
@@ -120,35 +123,30 @@ export const showPdf = createAsyncThunk('documentViewer/show', async ({
   if (PDF.GlobalWorkerOptions.workerSrc !== worker) {
     PDF.GlobalWorkerOptions.workerSrc = worker;
   }
-  // Calculate the page rotation
-  const documentRotation = rotation !== undefined ? (rotation + ROTATION_INCREMENTS) % COMPLETE_ROTATION : 0;
-
-  // Set the Current Page
-  const currentPage = parseInt(pageNumber, 10) || 1;
 
   // Request the PDF document from eFolder
-  const { body } = await ApiUtil.get(currentDocument.content_url, {
-    cache: true,
-    withCredentials: true,
-    timeout: true,
-    responseType: 'arraybuffer'
-  });
+  if (!pdfDocuments[currentDocument.id]) {
+    const { body } = await ApiUtil.get(currentDocument.content_url, {
+      cache: true,
+      withCredentials: true,
+      timeout: true,
+      responseType: 'arraybuffer'
+    });
 
-  // Convert the Array Buffer to a PDF
-  const pdf = await PDF.getDocument({ data: body }).promise;
+    // Store the Document in-memory so that we do not serialize through Redux, but still persist
+    pdfDocuments[currentDocument.id] = await PDF.getDocument({ data: body }).promise;
+  }
 
-  // Set the Page
-  showPage({ scale, data: body, docId: currentDocument.id, currentPage, pageIndex, pdf, rotation });
-
-  // Return the Document Buffer
+  // Return the new Document state
   return {
+    scale,
+    canvasList: Array.from(document.getElementsByClassName('canvasWrapper')).map((canvas) => canvas.id),
     currentDocument: {
       ...currentDocument,
-      numPages: pdf.numPages
+      rotation: rotation === null ? 0 : (rotation + ROTATION_INCREMENTS) % COMPLETE_ROTATION,
+      currentPage: parseInt(pageNumber, 10) || 1,
+      numPages: pdfDocuments[currentDocument.id].numPages
     },
-    currentPage,
-    rotation: documentRotation,
-    scale
   };
 });
 
@@ -235,6 +233,9 @@ const documentViewerSlice = createSlice({
   name: 'documentViewer',
   initialState,
   reducers: {
+    setPageNumber: (state, action) => {
+      state.selected.currentPage = action.payload;
+    },
     changeDescription: (state, action) => {
       state.selected.pendingDescription = action.payload;
     },
@@ -250,7 +251,7 @@ const documentViewerSlice = createSlice({
     toggleDeleteModal: (state, action) => {
       state.deleteCommentId = action.payload;
     },
-    setOpenedAccordionSections: (state, action) => {
+    toggleAccordion: (state, action) => {
       state.openedAccordionSections = action.payload;
     },
     togglePdfSideBar: (state) => {
@@ -316,29 +317,6 @@ const documentViewerSlice = createSlice({
       },
       prepare: (comment) => ({ payload: { scrollToSidebarComment: comment } })
     },
-    changePendingDocDescription: {
-      reducer: (state, action) => {
-        state.list[action.payload.docId].pendingDescription = action.payload.description;
-      },
-      prepare: (docId, description) => ({ payload: { docId, description } })
-    },
-    resetPendingDocDescription: {
-      reducer: (state, action) => {
-        delete state.list[action.payload.docId].pendingDescription;
-      },
-      prepare: (docId, description) => ({ payload: { docId, description } })
-    },
-    rotateDocument: {
-      reducer: (state, action) => {
-        // Calculate the rotation Based on the Rotation Increments
-        const rotation =
-         (state.list[action.payload.docId].rotation + ROTATION_INCREMENTS) % COMPLETE_ROTATION;
-
-        // Update the rotation of the document
-        state.list[action.payload.docId].rotation = rotation;
-      },
-      prepare: (docId) => ({ payload: { docId } })
-    },
     closeDocumentUpdatedModal: {
       reducer: (state, action) => {
         // Update the rotation of the document
@@ -363,12 +341,22 @@ const documentViewerSlice = createSlice({
         state.loading = true;
       }).
       addCase(showPdf.fulfilled, (state, action) => {
-      // Add the PDF data to the store
-        state.selected = action.payload.currentDocument;
         // Add the PDF data to the store
-        state.selected.rotation = action.payload.rotation;
-        state.selected.currentPage = action.payload.currentPage;
+        state.selected = action.payload.currentDocument;
+
+        // Add the PDF data to the store
         state.scale = action.payload.scale;
+        state.canvasList = action.payload.canvasList;
+
+        // Display the PDF Pages
+        range(0, pdfDocuments[action.payload.currentDocument.id].numPages).map((pageIndex) => showPage({
+          pageIndex,
+          scale: action.payload.scale,
+          rotation: action.payload.rotation,
+          docId: action.payload.currentDocument.id,
+          currentPage: pageIndex + 1,
+          pdf: pdfDocuments[action.payload.currentDocument.id],
+        }));
       }).
       /* eslint-disable */
       addCase(selectCurrentPdf.rejected, (state, action) => {
@@ -456,12 +444,13 @@ export const {
   onScrollToComment,
   setZoomLevel,
   togglePdfSideBar,
-  setOpenedAccordionSections,
+  toggleAccordion,
   toggleDeleteModal,
   toggleShareModal,
   setOverscanValue,
   changeDescription,
-  resetDescription
+  resetDescription,
+  setPageNumber
 } = documentViewerSlice.actions;
 
 // Default export the reducer

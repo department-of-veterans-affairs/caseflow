@@ -260,6 +260,7 @@ export const documentScreen = (state) => {
     documents,
     docsCount,
     categories,
+    canvasList: state.reader.documentViewer.canvasList,
     windowingOverscan: state.reader.documentViewer.windowingOverscan,
     comments: documentAnnotations(state),
     deleteCommentId: state.reader.documentViewer.deleteCommentId,
