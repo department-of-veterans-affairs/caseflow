@@ -87,6 +87,7 @@ Capybara.register_driver(:sniffybara_headless) do |app|
                                  disk_cache_dir: cache_directory)
 
   puts browser_options
+  puts browser_options.args
 
   browser_options.args << "--headless"
   browser_options.args << "--disable-gpu"
