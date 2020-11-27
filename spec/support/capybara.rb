@@ -31,19 +31,20 @@ end
 #   export CASEFLOW_WEBDRIVER=chrome
 #
 webdriver_name = ENV.fetch("CASEFLOW_WEBDRIVER", "edge")
+puts "USING #{webdriver_name}"
 webdriver_options_class = case webdriver_name
                           when "edge"
                             ::Selenium::WebDriver::Edge::Options
                           when "chrome"
                             ::Selenium::WebDriver::Chrome::Options
                           else
-                            raise "Unknown Webdriver"
+                            fail "Unknown Webdriver"
                           end
 webdriver_service_builder = case webdriver_name
                             when "edge"
-                              Proc.new { |args| ::Selenium::WebDriver::Service.edge(args) }
+                              proc { |args| ::Selenium::WebDriver::Service.edge(args) }
                             when "chrome"
-                              Proc.new { |args| ::Selenium::WebDriver::Service.chrome(args) }
+                              proc { |args| ::Selenium::WebDriver::Service.chrome(args) }
                             end
 webdriver_selenium_driver = case webdriver_name
                             when "edge"
@@ -76,12 +77,16 @@ end
 Capybara.register_driver(:sniffybara_headless) do |app|
   browser_options = webdriver_options_class.new
 
+  puts browser_options
+
   browser_options.add_preference(:download,
                                  prompt_for_download: false,
                                  default_directory: download_directory)
 
   browser_options.add_preference(:browser,
                                  disk_cache_dir: cache_directory)
+
+  puts browser_options
 
   browser_options.args << "--headless"
   browser_options.args << "--disable-gpu"
