@@ -7,8 +7,8 @@ import DISPOSITIONS from 'constants/DOCKET_SWITCH';
 import { createDocketSwitchGrantedTask, createDocketSwitchDeniedTask } from './docketSwitchRulingSlice';
 import { DocketSwitchRulingForm } from './DocketSwitchRulingForm';
 import {
-  DOCKET_SWITCH_RULING_ALERT_TITLE,
-  DOCKET_SWITCH_RULING_ALERT_MESSAGE,
+  DOCKET_SWITCH_RULING_SUCCESS_TITLE,
+  DOCKET_SWITCH_RULING_SUCCESS_MESSAGE,
 } from '../../../../COPY';
 
 import { sprintf } from 'sprintf-js';
@@ -60,8 +60,8 @@ export const DocketSwitchRulingContainer = () => {
     };
 
     const successMessage = {
-      title: sprintf(DOCKET_SWITCH_RULING_ALERT_TITLE, dispositionType, appeal.appellantFullName),
-      detail: DOCKET_SWITCH_RULING_ALERT_MESSAGE,
+      title: sprintf(DOCKET_SWITCH_RULING_SUCCESS_TITLE, DISPOSITIONS[disposition].value, appeal.appellantFullName),
+      detail: DOCKET_SWITCH_RULING_SUCCESS_MESSAGE,
     };
 
     try {
