@@ -22,8 +22,8 @@ const subHeaderContainerStyling = css({
   padding: '0 0 0 2rem'
 });
 
-export const TitleDetailsSubheader = ({ columns, children }) => (
-  <div {...subHeaderContainerStyling}>
+export const TitleDetailsSubheader = ({ columns, children, id }) => (
+  <div {...subHeaderContainerStyling} id={id || ''}>
     <div {...listStyling}>
       {columns && columns.map((col, i) => (
         <TitleDetailsSubheaderSection key={i} title={col.label}>
@@ -44,5 +44,6 @@ TitleDetailsSubheader.propTypes = {
       label: PropTypes.string,
       value: PropTypes.any
     })
-  )
+  ),
+  id: PropTypes.string
 };

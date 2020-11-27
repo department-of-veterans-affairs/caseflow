@@ -19,7 +19,7 @@ import AppellantDetail from './AppellantDetail';
 import COPY from '../../COPY';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import CaseHearingsDetail from './CaseHearingsDetail';
-import CaseTimeline from './CaseTimeline';
+import { CaseTimeline } from './CaseTimeline';
 import CaseTitle from './CaseTitle';
 import CaseTitleDetails from './CaseTitleDetails';
 import CavcDetail from './CavcDetail';
@@ -144,7 +144,7 @@ export const CaseDetailsView = (props) => {
           )}
           {!_.isNull(appeal.cavcRemand) && appeal.cavcRemand &&
           (<CavcDetail title="CAVC Remand" {...appeal.cavcRemand} />)}
-          <CaseTimeline title="Case Timeline" appeal={appeal} />}
+          <CaseTimeline title="Case Timeline" appeal={appeal} />
         </StickyNavContentArea>
         {props.pollHearing && pollHearing()}
       </AppSegment>
