@@ -139,10 +139,11 @@ RSpec.feature "Docket Switch", :all_dbs do
           # Return back to user's queue
           expect(page).to have_current_path("/queue")
           # Success banner
-          expect(page).to have_content(COPY::DOCKET_SWITCH_RULING_SUCCESS_TITLE.sub("%s", disposition).sub("%s", 
-          veteran.name))
-
           disposition_type = Constants::DOCKET_SWITCH[disposition]["dispositionType"]
+          expect(page).to have_content(
+            COPY::DOCKET_SWITCH_RULING_SUCCESS_TITLE.sub("%s", disposition_type).sub("%s", appeal.appellant_name)
+          )
+
           next_task = Object.const_get("DocketSwitch#{disposition_type}Task").find_by(assigned_to: cotb_attorney)
           expect(next_task).to_not be_nil
 
