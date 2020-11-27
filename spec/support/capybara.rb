@@ -4,9 +4,11 @@ require "capybara/rspec"
 require "capybara-screenshot/rspec"
 require "selenium-webdriver"
 require "webdrivers"
-require "webdrivers/edgedriver"
 
 Webdrivers.logger.level = :DEBUG if ENV["DEBUG"]
+
+# Pinned Edge version. Most recent version (88.0.705.0) seems to be deleted.
+Webdrivers::Edgedriver.required_version   = "88.0.702.0"
 
 Sniffybara::Driver.run_configuration_file = File.expand_path("VA-axe-run-configuration.json", __dir__)
 
@@ -20,8 +22,38 @@ else
   Dir.mkdir cache_directory
 end
 
+# Using Edge as your webdriver to run feature tests (DEFAULT):
+#
+#   export CASEFLOW_WEBDRIVER=edge
+#
+# Using Chrome as your webdriver to run feature tests:
+#
+#   export CASEFLOW_WEBDRIVER=chrome
+#
+webdriver_name = ENV.fetch("CASEFLOW_WEBDRIVER", "edge")
+webdriver_options_class = case webdriver_name
+                          when "edge"
+                            ::Selenium::WebDriver::Edge::Options
+                          when "chrome"
+                            ::Selenium::WebDriver::Chrome::Options
+                          else
+                            raise "Unknown Webdriver"
+                          end
+webdriver_service_builder = case webdriver_name
+                            when "edge"
+                              Proc.new { |args| ::Selenium::WebDriver::Service.edge(args) }
+                            when "chrome"
+                              Proc.new { |args| ::Selenium::WebDriver::Service.chrome(args) }
+                            end
+webdriver_selenium_driver = case webdriver_name
+                            when "edge"
+                              Capybara::Selenium::Driver::EdgeDriver
+                            when "chrome"
+                              Capybara::Selenium::Driver::ChromeDriver
+                            end
+
 Capybara.register_driver(:parallel_sniffybara) do |app|
-  browser_options = ::Selenium::WebDriver::Edge::Options.new
+  browser_options = webdriver_options_class.new
 
   browser_options.add_preference(:download,
                                  prompt_for_download: false,
@@ -31,18 +63,18 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
                                  disk_cache_dir: cache_directory)
 
   options = {
-    service: ::Selenium::WebDriver::Service.edge(args: { port: 51_674 }),
-    browser: :edge,
+    service: webdriver_service_builder.call(args: { port: 51_674 }),
+    browser: webdriver_name.to_sym,
     options: browser_options
   }
   Sniffybara::Driver.register_specialization(
-    :edge, Capybara::Selenium::Driver::EdgeDriver
+    webdriver_name.to_sym, webdriver_selenium_driver
   )
   Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
 end
 
 Capybara.register_driver(:sniffybara_headless) do |app|
-  browser_options = ::Selenium::WebDriver::Edge::Options.new
+  browser_options = webdriver_options_class.new
 
   browser_options.add_preference(:download,
                                  prompt_for_download: false,
@@ -56,13 +88,13 @@ Capybara.register_driver(:sniffybara_headless) do |app|
   browser_options.args << "--window-size=1200,1200"
 
   options = {
-    service: ::Selenium::WebDriver::Service.edge(args: { port: 51_674 }),
-    browser: :edge,
+    service: webdriver_service_builder.call(args: { port: 51_674 }),
+    browser: webdriver_name.to_sym,
     options: browser_options
   }
 
   Sniffybara::Driver.register_specialization(
-    :edge, Capybara::Selenium::Driver::EdgeDriver
+    webdriver_name.to_sym, webdriver_selenium_driver
   )
   Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
 end
