@@ -141,7 +141,7 @@ RSpec.feature "Docket Switch", :all_dbs do
           # Success banner
           disposition_type = Constants::DOCKET_SWITCH[disposition]["dispositionType"]
           expect(page).to have_content(
-            COPY::DOCKET_SWITCH_RULING_SUCCESS_TITLE.sub("%s", disposition_type.downcase).sub("%s", appeal.claimant.name)
+            format(COPY::DOCKET_SWITCH_RULING_SUCCESS_TITLE, disposition_type.downcase, appeal.claimant.name)
           )
 
           next_task = Object.const_get("DocketSwitch#{disposition_type}Task").find_by(assigned_to: cotb_attorney)
