@@ -27,6 +27,7 @@ export const File = ({ gridRef, overscanIndices, windowingOverscan, scrollPage, 
 
       return (
         <Grid
+          id="canvas-grid"
           ref={gridRef}
           containerStyle={gridStyles(props.isVisible)}
           overscanIndicesGetter={overscanIndices}
@@ -38,6 +39,7 @@ export const File = ({ gridRef, overscanIndices, windowingOverscan, scrollPage, 
           rowHeight={rowHeight({ scale: props.scale, numColumns })}
           cellRenderer={(cellProps) => (
             <Page
+              gridRef={gridRef}
               outerHeight={height}
               outerWidth={width}
               numColumns={numColumns}

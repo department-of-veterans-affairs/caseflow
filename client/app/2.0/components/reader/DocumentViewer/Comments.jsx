@@ -1,5 +1,5 @@
 // External Dependencies
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 
@@ -25,42 +25,56 @@ export const Comments = ({
   currentDocument,
   selected,
   textLayerRef,
-  dimensions,
-  scale,
   startDrag,
-  selectCommentIcon
-}) => (
-  <div
-    id={`comment-layer-${pageIndex}-${file}`}
-    style={commentStyles}
-    onDragOver={dragOverPage}
-    onDrop={dropComment}
-    onClick={clickPage}
-    onMouseMove={moveMouse}
-    ref={commentsRef}
-  >
-    {isVisible && annotations.map((comment) => (
+  selectCommentIcon,
+  ...props
+}) => {
+  useEffect(() => {
+    if (props.search.scrollPosition) {
+      props.gridRef.current?.scrollToPosition({ scrollTop: props.search.scrollPosition });
+    }
+
+  }, [props.search.scrollPosition]);
+
+  return (
+    <div
+      key={pageIndex}
+      id={`comment-layer-${pageIndex}-${file}`}
+      style={commentStyles}
+      onDragOver={dragOverPage}
+      onDrop={dropComment}
+      onClick={clickPage}
+      onMouseMove={moveMouse}
+      ref={commentsRef}
+    >
+      {isVisible && annotations.map((comment) => (
+        <div
+          key={comment.uuid}
+          style={{ left: comment.x, top: comment.y, transform: `rotate(${currentDocument.rotation}deg)` }}
+          data-placing-annotation-icon={comment.isPlacingAnnotationIcon}
+          className="commentIcon-container"
+          id={`commentIcon-container-${comment.uuid}`}
+          onClick={comment.isPlacingAnnotationIcon ? noop : selectCommentIcon}
+          draggable={onDrag !== null}
+          onDragStart={startDrag}
+        >
+          {commentIcon(selected, comment.uuid)}
+        </div>
+      ))}
       <div
-        key={comment.uuid}
-        style={{ left: comment.x, top: comment.y, transform: `rotate(${currentDocument.rotation}deg)` }}
-        data-placing-annotation-icon={comment.isPlacingAnnotationIcon}
-        className="commentIcon-container"
-        id={`commentIcon-container-${comment.uuid}`}
-        onClick={comment.isPlacingAnnotationIcon ? noop : selectCommentIcon}
-        draggable={onDrag !== null}
-        onDragStart={startDrag}
-      >
-        {commentIcon(selected, comment.uuid)}
-      </div>
-    ))}
-    <div {...selectionStyles} style={textLayerStyles(dimensions, scale)} ref={textLayerRef} className="textLayer" />
-  </div>
-);
+        {...selectionStyles}
+        id={`text-${pageIndex}`}
+        ref={textLayerRef}
+        className="cf-pdf-pdfjs-textLayer"
+      />
+    </div>
+  );
+};
 
 Comments.propTypes = {
   annotations: PropTypes.array,
   pageIndex: PropTypes.number,
-  file: PropTypes.object,
+  file: PropTypes.string,
   dragOverPage: PropTypes.func,
   dropComment: PropTypes.func,
   moveMouse: PropTypes.func,

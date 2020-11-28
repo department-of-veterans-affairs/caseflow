@@ -154,7 +154,7 @@ export const currentMatchIndex = createSelector(
  */
 export const documentAnnotations = (state) => {
   // Set the annotations
-  const annotations = state.reader.annotationLayer;
+  const annotations = state.reader.annotationLayer.annotations;
 
   // Map the annotation keys to pull out the different annotation types
   const list = Object.keys(annotations).map((type) => {

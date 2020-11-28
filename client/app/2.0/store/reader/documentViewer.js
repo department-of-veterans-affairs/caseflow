@@ -2,6 +2,7 @@ import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { differenceWith, differenceBy, find, pick, random, range } from 'lodash';
 import uuid from 'uuid';
 import * as PDF from 'pdfjs';
+import Mark from 'mark.js';
 
 // Local Dependencies
 import ApiUtil from 'app/util/ApiUtil';
@@ -48,10 +49,11 @@ export const initialState = {
   pdfSideBarError: initialPdfSidebarErrorState,
   scrollToSidebarComment: null,
   scale: 1,
-  windowingOverscan: random(5, 10),
+  windowingOverscan: random(5, 10).toString(),
   deleteCommentId: null,
   shareCommentId: null,
   search: {
+    scrollPosition: null,
     searchTerm: '',
     matchIndex: 0,
     indexToHighlight: null,
@@ -66,12 +68,16 @@ export const initialState = {
  * Dispatcher for Extracting text from PDF Documents and searching
  */
 export const searchText = createAsyncThunk('documentViewer/search', async ({
+  matchIndex,
   searchTerm,
   docId
 }) => {
+  // Create the list of text layer containers
+  const layers = [];
+
   // Map the Extract to promises
-  const textPromises = range(pdfDocuments[docId].numPages).map((index) =>
-    pdfDocuments[docId].getPage(index + 1).then((page) => page.getTextContent()));
+  const textPromises = range(pdfDocuments[docId].pdf.numPages).map((index) =>
+    pdfDocuments[docId].pdf.getPage(index + 1).then((page) => page.getTextContent()));
 
   // Wait for the search to complete
   const pages = await Promise.all(textPromises);
@@ -86,8 +92,54 @@ export const searchText = createAsyncThunk('documentViewer/search', async ({
   // Reduce the Pages to an object containing the matches
   const matches = pages.reduce((count, page) => count + match(page), 0);
 
+  // Render the text layer
+  const pageList = pages.map((page, index) => {
+    // Retrieve the text layer element
+    layers[index] = document.getElementById(`text-${index}`);
+
+    // Reset the container contents
+    layers[index].innerHTML = '';
+
+    return PDF.renderTextLayer({
+      container: layers[index],
+      textContent: page,
+      viewport: pdfDocuments[docId].viewport,
+      textDivs: []
+    }).promise;
+  });
+
+  // Resolve all of the text rendering
+  await Promise.all(pageList);
+
+  // Map over the layers to mark any matched search text
+  const marks = new Promise((resolve) => layers.map((layer) => {
+    // Create the mark instance
+    const mark = new Mark(layer);
+
+    // Mark the text
+    mark.mark(searchTerm, {
+      separateWordSearch: false,
+      done: () => {
+        const list = layer.getElementsByTagName('mark');
+
+        if (list[matchIndex]) {
+          list[matchIndex].classList.add('highlighted');
+
+          // Send the New Match Position
+          resolve(parseFloat(list[matchIndex].parentElement.style.top));
+        }
+
+        // Default to resolve null
+        resolve(null);
+      }
+    });
+  }));
+
+  // Get the new scroll position
+  const scrollPosition = await marks;
+
   // Return the new state
-  return { searchTerm, matches };
+  return { searchTerm, matches, scrollPosition, matchIndex };
 });
 
 export const showPage = async(params) => {
@@ -96,6 +148,9 @@ export const showPage = async(params) => {
 
   // Calculate the Viewport
   const viewport = page.getViewport({ scale: params.scale });
+
+  // Update the Page viewport
+  pdfDocuments[params.docId].viewport = viewport;
 
   // Select the canvas element to draw
   const canvas = document.getElementById(`pdf-canvas-${params.docId}-${params.pageIndex}`);
@@ -108,6 +163,15 @@ export const showPage = async(params) => {
 
     // Draw the PDF to the canvas
     await page.render({ canvasContext: canvas.getContext('2d', { alpha: false }), viewport }).promise;
+
+    const text = await page.getTextContent();
+
+    await PDF.renderTextLayer({
+      container: document.getElementById(`text-${params.pageIndex}`),
+      textContent: text,
+      viewport,
+      textDivs: []
+    }).promise;
   }
 };
 
@@ -125,7 +189,6 @@ export const showPdf = createAsyncThunk('documentViewer/show', async ({
   if (PDF.GlobalWorkerOptions.workerSrc !== worker) {
     PDF.GlobalWorkerOptions.workerSrc = worker;
   }
-
   // Request the PDF document from eFolder
   if (!pdfDocuments[currentDocument.id]) {
     const { body } = await ApiUtil.get(currentDocument.content_url, {
@@ -136,7 +199,7 @@ export const showPdf = createAsyncThunk('documentViewer/show', async ({
     });
 
     // Store the Document in-memory so that we do not serialize through Redux, but still persist
-    pdfDocuments[currentDocument.id] = await PDF.getDocument({ data: body }).promise;
+    pdfDocuments[currentDocument.id] = { pdf: await PDF.getDocument({ data: body }).promise };
   }
 
   // Return the new Document state
@@ -147,7 +210,7 @@ export const showPdf = createAsyncThunk('documentViewer/show', async ({
       ...currentDocument,
       rotation: rotation === null ? 0 : (rotation + ROTATION_INCREMENTS) % COMPLETE_ROTATION,
       currentPage: parseInt(pageNumber, 10) || 1,
-      numPages: pdfDocuments[currentDocument.id].numPages
+      numPages: pdfDocuments[currentDocument.id].pdf.numPages
     },
   };
 });
@@ -343,7 +406,9 @@ const documentViewerSlice = createSlice({
         state.search.totalMatchesInFile = action.payload.matches;
 
         // Set the search index to 0
-        state.search.matchIndex = 0;
+        state.search.matchIndex = action.payload.matchIndex || 0;
+
+        state.search.scrollPosition = action.payload.scrollPosition;
       }).
       addCase(showPdf.fulfilled, (state, action) => {
         // Add the PDF data to the store
@@ -354,13 +419,13 @@ const documentViewerSlice = createSlice({
         state.canvasList = action.payload.canvasList;
 
         // Display the PDF Pages
-        range(0, pdfDocuments[action.payload.currentDocument.id].numPages).map((pageIndex) => showPage({
+        range(0, pdfDocuments[action.payload.currentDocument.id].pdf.numPages).map((pageIndex) => showPage({
           pageIndex,
           scale: action.payload.scale,
           rotation: action.payload.rotation,
           docId: action.payload.currentDocument.id,
           currentPage: pageIndex + 1,
-          pdf: pdfDocuments[action.payload.currentDocument.id],
+          pdf: pdfDocuments[action.payload.currentDocument.id].pdf,
         }));
       }).
       /* eslint-disable */

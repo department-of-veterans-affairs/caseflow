@@ -32,18 +32,18 @@ export const DocumentSearch = ({
       size="small"
       id="search-ahead"
       placeholder="Type to search..."
-      onChange={searchText}
+      onChange={(term) => searchText(term, matchIndex)}
       onKeyPress={onKeyPress}
       internalText={formatSearchText(searchTerm, totalMatchesInFile, matchIndex)}
       spinnerColor={LOGO_COLORS.READER.ACCENT}
     />
-    <Button classNames={['cf-increment-search-match', 'cf-prev-match']} onClick={prevMatch} >
+    <Button classNames={['cf-increment-search-match', 'cf-prev-match']} onClick={() => searchText(searchTerm, matchIndex - 1)} >
       <div style={{ transform: 'translateY(5px) translateX(-0.5rem)' }}>
         <LeftChevron />
         <span className="usa-sr-only">Previous Match</span>
       </div>
     </Button>
-    <Button classNames={['cf-increment-search-match', 'cf-next-match']} onClick={nextMatch} >
+    <Button classNames={['cf-increment-search-match', 'cf-next-match']} onClick={() => searchText(searchTerm, matchIndex + 1)} >
       <div style={{ transform: 'translateY(5px) translateX(-0.5rem)' }}>
         <RightChevron />
         <span className="usa-sr-only">Next Match</span>

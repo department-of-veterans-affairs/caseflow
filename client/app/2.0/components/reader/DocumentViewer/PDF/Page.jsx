@@ -1,12 +1,12 @@
 // External Dependencies
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 // Internal Dependencies
 import { Comments } from 'components/reader/DocumentViewer/Comments';
 import { pageNumber } from 'utils/reader';
-import { markStyles, pageStyles, pdfPageStyles } from 'styles/reader/Document/Pdf';
+import { markStyles, pdfPageStyles } from 'styles/reader/Document/Pdf';
 import { dimensions } from 'app/2.0/utils/reader/document';
 
 /**
@@ -20,7 +20,6 @@ export const Page = ({
   pageRef,
   canvasRef,
   currentDocument,
-  setPageNumber,
   rotation,
   style,
   numPages,
@@ -38,7 +37,7 @@ export const Page = ({
   return pageIndex >= numPages ? (
     <div key={(numColumns * rowIndex) + columnIndex} style={style} />
   ) : (
-    <div key={pageIndex} style={style}>
+    <div key={pageIndex} style={pdfPageStyles(rotation, height, width)}>
       <div
         id={`pageContainer${pageNumber(pageIndex)}`}
         className={classNames({
@@ -46,26 +45,23 @@ export const Page = ({
           'cf-pdf-pdfjs-container': true,
           'cf-pdf-placing-comment': isPlacingAnnotation
         })}
-        style={pageStyles({ width, height, scale })}
         onClick={onClick}
         ref={pageRef}
         {...markStyles}
       >
         <div
           id={`rotationDiv${pageNumber(pageIndex)}`}
-          style={pdfPageStyles(rotation, height, width)}
         >
           <canvas id={`pdf-canvas-${currentDocument.id}-${pageIndex}`} ref={canvasRef} className="canvasWrapper" />
           <div className="cf-pdf-annotationLayer">
-            {/* <Comments
+            <Comments
               {...props}
-              documentId={documentId}
+              currentDocument={currentDocument}
+              documentId={currentDocument.id}
               pageIndex={pageIndex}
               scale={scale}
-              getTextLayerRef={textLayerRef}
-              dimensions={{ width: innerWidth, height: innerHeight }}
-              isVisible={isVisible}
-            /> */}
+              dimensions={{ width, height }}
+            />
           </div>
         </div>
       </div>

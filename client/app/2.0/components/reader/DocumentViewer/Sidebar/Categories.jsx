@@ -25,5 +25,5 @@ export const SidebarCategories = ({ error, categories, handleCategoryToggle, ...
 SidebarCategories.propTypes = {
   error: PropTypes.object,
   handleCategoryToggle: PropTypes.func,
-  categories: PropTypes.array,
+  categories: PropTypes.object,
 };

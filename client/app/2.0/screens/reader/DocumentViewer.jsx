@@ -62,7 +62,13 @@ const DocumentViewer = (props) => {
 
   // Create the dispatchers
   const actions = {
-    searchText: (searchTerm) => dispatch(searchText({ searchTerm, docId: state.currentDocument.id })),
+    searchText: (searchTerm, index) => {
+      // Calculate the match index
+      const maxIndex = index >= state.search.totalMatchesInFile ? 0 : index;
+      const matchIndex = index < 0 ? state.search.totalMatchesInFile - 1 : maxIndex;
+
+      dispatch(searchText({ searchTerm, docId: state.currentDocument.id, matchIndex }));
+    },
     saveDescription: (description) => dispatch(saveDescription({ docId: state.currentDocument.id, description })),
     changeDescription: (description) => dispatch(changeDescription(description)),
     resetDescription: () => dispatch(resetDescription()),
