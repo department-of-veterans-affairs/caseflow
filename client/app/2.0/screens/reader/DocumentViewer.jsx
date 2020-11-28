@@ -7,6 +7,7 @@ import classNames from 'classnames';
 // Local Dependencies
 import { pdfWrapper } from 'styles/reader/Document/Pdf';
 import { fetchDocuments, openDownloadLink } from 'utils/reader/document';
+import { focusComment } from 'utils/reader/comments';
 import { documentScreen } from 'store/reader/selectors';
 import { DocumentHeader } from 'components/reader/DocumentViewer/Header';
 import { DocumentSidebar } from 'components/reader/DocumentViewer/Sidebar';
@@ -31,6 +32,7 @@ import {
   setPageNumber,
   searchText
 } from 'store/reader/documentViewer';
+import { selectComment, startEdit, updateComment, saveComment } from 'store/reader/annotationLayer';
 
 const DocumentViewer = (props) => {
   // Get the Document List state
@@ -62,6 +64,20 @@ const DocumentViewer = (props) => {
 
   // Create the dispatchers
   const actions = {
+    saveComment: (comment) => dispatch(saveComment(comment)),
+    updateComment: (comment) => dispatch(updateComment(comment)),
+    editComment: (commentId) => dispatch(startEdit(commentId)),
+    resetEdit: () => {
+      dispatch(updateComment({}));
+      dispatch(startEdit(null));
+    },
+    selectComment: (comment) => {
+      // Scroll to the comment location
+      focusComment(comment);
+
+      // Update the store with the selected component
+      dispatch(selectComment(comment));
+    },
     searchText: (searchTerm, index) => {
       // Calculate the match index
       const maxIndex = index >= state.search.totalMatchesInFile ? 0 : index;

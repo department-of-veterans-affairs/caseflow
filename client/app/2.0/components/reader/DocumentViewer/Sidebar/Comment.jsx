@@ -26,7 +26,7 @@ export const JumpToComment = ({ show, jumpToComment, uuid }) => show && (
 JumpToComment.propTypes = {
   show: PropTypes.bool,
   jumpToComment: PropTypes.func,
-  uuid: PropTypes.string
+  uuid: PropTypes.number
 };
 
 /**
@@ -38,7 +38,6 @@ export const Comment = ({
   selected,
   jumpToComment,
   date,
-  children,
   page,
   currentDocument,
   comment,
@@ -71,12 +70,12 @@ export const Comment = ({
       </div>
       <div
         className={classes}
-        key={children.toString()}
+        key={comment.comment.toString()}
         id={comment.id}
         onClick={handleClick}
       >
         <Highlight>
-          {children}
+          {comment.comment}
         </Highlight>
       </div>
     </div>
@@ -84,43 +83,43 @@ export const Comment = ({
     <div>
       <div className="comment-control-button-container">
         <h4>
-          Page {page} <JumpToComment uuid={comment.uuid} show={Boolean(jumpToComment)} jumpToComment={jumpToComment} />
+          Page {page} <JumpToComment uuid={comment.id} show={Boolean(jumpToComment)} jumpToComment={jumpToComment} />
         </h4>
         <span>
           <div>
             <Button
-              name={`delete-comment-${comment.uuid}`}
+              name={`delete-comment-${comment.id}`}
               classNames={['cf-btn-link comment-control-button']}
-              onClick={() => deleteComment(comment.uuid)}
+              onClick={() => deleteComment(comment.id)}
             >
               Delete
             </Button>
             <span className="comment-control-button-divider"> | </span>
             <Button
-              name={`edit-comment-${comment.uuid}`}
+              name={`edit-comment-${comment.id}`}
               classNames={['cf-btn-link comment-control-button']}
-              onClick={() => editComment(comment.uuid)}
+              onClick={() => editComment(comment.id)}
             >
               Edit
             </Button>
             <span className="comment-control-button-divider"> | </span>
             <Button
-              name={`share-comment-${comment.uuid}`}
+              name={`share-comment-${comment.id}`}
               classNames={['cf-btn-link comment-control-button']}
-              onClick={() => shareComment(comment.uuid)}
+              onClick={() => shareComment(comment.id)}
             >
               Share
             </Button>
           </div>
         </span>
       </div>
-      <div className={classes} id={comment.id} onClick={handleClick}>
+      <div className={classes} id={`comment-${comment.id}`} onClick={handleClick}>
         {date ? (
           <div>
-            <strong>{moment(date).format('MM/DD/YYYY')}</strong> - {children}
+            <strong>{moment(date).format('MM/DD/YYYY')}</strong> - {comment.comment}
           </div>
         ) : (
-          children
+          comment.comment
         )}
       </div>
     </div>
@@ -133,7 +132,7 @@ Comment.propTypes = {
   jumpToComment: PropTypes.func,
   date: PropTypes.string,
   children: PropTypes.element,
-  page: PropTypes.string,
+  page: PropTypes.number,
   currentDocument: PropTypes.object,
   comment: PropTypes.object,
   handleClick: PropTypes.func,

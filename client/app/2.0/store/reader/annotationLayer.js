@@ -14,7 +14,9 @@ import ApiUtil from 'app/util/ApiUtil';
  * Annotation Layer Initial State
  */
 export const initialState = {
-  annotations: {},
+  comments: [],
+  selected: {},
+  errors: {},
   placingAnnotationIconPageCoords: null,
   pendingAnnotations: {},
   pendingEditingAnnotations: {},
@@ -23,6 +25,7 @@ export const initialState = {
   shareAnnotationModalIsOpenFor: null,
   placedButUnsavedAnnotation: null,
   isPlacingAnnotation: false,
+  saving: false,
 
   /**
    * `editingAnnotations` is an object of annotations that are currently being edited.
@@ -83,7 +86,7 @@ export const moveAnnotation = createAsyncThunk('annotations/move', async (annota
  * Edit Annotation Dispatcher
  * NOTE: This dispatcher is async so we export separately
  */
-export const editAnnotation = createAsyncThunk('annotations/edit', async (annotation) => {
+export const saveComment = createAsyncThunk('annotations/save', async (annotation) => {
   // If the user removed all text content in the annotation (or if only whitespace characters remain),
   // ask the user if they're intending to delete it.
   if (!annotation.comment.trim()) {
@@ -95,7 +98,7 @@ export const editAnnotation = createAsyncThunk('annotations/edit', async (annota
 
   // Patch the Selected Annotation
   await ApiUtil.patch(
-    `/document/${annotation.documentId}/annotation/${annotation.id}`,
+    `/document/${annotation.document_id}/annotation/${annotation.id}`,
     { data },
     ENDPOINT_NAMES.ANNOTATION
   );
@@ -133,6 +136,19 @@ const annotationLayerSlice = createSlice({
   name: 'annotationLayer',
   initialState,
   reducers: {
+    startEdit: (state, action) => {
+      state.comments = state.comments.map((comment) => ({
+        ...comment,
+        editing: comment.id === action.payload
+      }));
+    },
+    updateComment: (state, action) => {
+      state.comments = state.comments.map((comment) => ({
+        ...comment,
+        pendingDate: comment.id === action.payload.id ? action.payload.pendingDate : null,
+        pendingComment: comment.id === action.payload.id ? action.payload.pendingComment : null
+      }));
+    },
     openAnnotationDeleteModal: {
       reducer: (state, action) => toggleAnnotationDeleteModal(state, action.payload.annotationId),
       prepare: (annotationId, label) => addMetaLabel('open-annotation-delete-modal', { annotationId }, label)
@@ -149,11 +165,11 @@ const annotationLayerSlice = createSlice({
       reducer: (state) => toggleAnnotationShareModal(state, null),
       prepare: (includeMetrics = true) => addMetaLabel('close-annotation-share-modal', null, '', includeMetrics)
     },
-    selectAnnotation: {
+    selectComment: {
       reducer: (state, action) => {
-        state.selectedAnnotationId = action.payload.annotationId;
+        state.selected = action.payload.comment;
       },
-      prepare: (annotationId) => addMetaLabel('select-annotation', { annotationId })
+      prepare: (comment) => addMetaLabel('select-annotation', { comment })
     },
     startPlacingAnnotation: {
       reducer: (state) => {
@@ -244,8 +260,30 @@ const annotationLayerSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.
-      addCase(handleSelectCommentIcon, (state, action) => {
-        state.selectedAnnotationId = action.payload.scrollToSidebarComment.id;
+      addCase(saveComment.rejected, (state, action) => {
+        // Reset the save state
+        state.saving = false;
+
+        // Update the error messages
+        state.errors.comment = {
+          ...action.error,
+          visible: true
+        };
+      }).
+      addCase(saveComment.pending, (state) => {
+        state.saving = true;
+      }).
+      addCase(saveComment.fulfilled, (state, action) => {
+        // Reset the state
+        state.saving = false;
+
+        // Update the comments list
+        state.comments = state.comments.map((comment) => ({
+          ...comment,
+          relevant_date: action.payload.relevant_date,
+          comment: action.payload.comment,
+          editing: null
+        }));
       }).
       addCase(createAnnotation.pending, (state, action) => {
         // Remove the unsaved annotation
@@ -274,33 +312,6 @@ const annotationLayerSlice = createSlice({
 
         // Update the Pending Annotation State
         state.pendingAnnotations[state.tempId] = null;
-      }).
-      addCase(editAnnotation.pending, (state, action) => {
-        if (action.payload.annotation.comment.trim()) {
-          // Unset this annotation from the list of Editing Annotations
-          state.editingAnnotations[action.payload.annotation.id] = null;
-
-          // Update the list of pending annotation edits
-          state.pendingEditingAnnotations[action.payload.annotation.id] =
-           action.payload.annotation;
-        } else {
-          // Open the Delete Annotation Modal if the comment is empty
-          state.deleteAnnotationModalIsOpenFor = action.payload.annotation.id;
-        }
-      }).
-      addCase(editAnnotation.fulfilled, (state, action) => {
-        // Unset the pending Editing Annotations
-        state.pendingEditingAnnotations[action.payload.annotation.id] = null;
-
-        // Update the annotations with the new values
-        state.annotations[action.payload.annotation.id] = action.payload.annotation;
-      }).
-      addCase(editAnnotation.rejected, (state, action) => {
-        // Unset the pending Editing Annotations
-        state.pendingEditingAnnotations[action.payload.annotation.id] = null;
-
-        // Move the annotation back the editing annotations state
-        state.editingAnnotations[action.payload.annotation.id] = action.payload.annotation;
       }).
       addCase(moveAnnotation.pending, {
         reducer: (state, action) => {
@@ -342,15 +353,8 @@ const annotationLayerSlice = createSlice({
         state.annotations[action.payload.annotationId].pendingDeletion = null;
       }).
       addMatcher((action) => action.type === loadDocuments.fulfilled.toString(), (state, action) => {
-        // Map the Annotation IDs to keys in the annotations object
-        state.annotations = keyBy(
-          action.payload.annotations.map((annotation) => ({
-            ...annotation,
-            documentId: annotation.document_id,
-            uuid: annotation.id
-          })),
-          'id'
-        );
+        // Map the Annotations to the comments array
+        state.comments = action.payload.annotations;
       });
   }
 });
@@ -361,7 +365,7 @@ export const {
   closeAnnotationDeleteModal,
   openAnnotationShareModal,
   closeAnnotationShareModal,
-  selectAnnotation,
+  selectComment,
   startPlacingAnnotation,
   stopPlacingAnnotation,
   onReceiveAnnotations,
@@ -372,7 +376,9 @@ export const {
   updateAnnotationContent,
   updateAnnotationRelevantDate,
   updateNewAnnotationContent,
-  updateNewAnnotationRelevantDate
+  updateNewAnnotationRelevantDate,
+  startEdit,
+  updateComment
 } = annotationLayerSlice.actions;
 
 // Default export the reducer

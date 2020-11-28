@@ -20,18 +20,18 @@ export const Comments = ({
   clickPage,
   commentsRef,
   isVisible,
-  annotations,
+  comments,
   onDrag,
   currentDocument,
   selected,
   textLayerRef,
   startDrag,
-  selectCommentIcon,
+  selectComment,
   ...props
 }) => {
   useEffect(() => {
     if (props.search.scrollPosition) {
-      props.gridRef.current?.scrollToPosition({ scrollTop: props.search.scrollPosition });
+       props.gridRef.current?.scrollToPosition({ scrollTop: props.search.scrollPosition });
     }
 
   }, [props.search.scrollPosition]);
@@ -47,14 +47,19 @@ export const Comments = ({
       onMouseMove={moveMouse}
       ref={commentsRef}
     >
-      {isVisible && annotations.map((comment) => (
+      {isVisible && comments.map((comment) => (
         <div
-          key={comment.uuid}
-          style={{ left: comment.x, top: comment.y, transform: `rotate(${currentDocument.rotation}deg)` }}
+          key={comment.id}
+          style={{
+            left: comment.x,
+            top: comment.y,
+            transform: `rotate(${currentDocument.rotation}deg)`,
+            cursor: 'pointer'
+          }}
           data-placing-annotation-icon={comment.isPlacingAnnotationIcon}
           className="commentIcon-container"
           id={`commentIcon-container-${comment.uuid}`}
-          onClick={comment.isPlacingAnnotationIcon ? noop : selectCommentIcon}
+          onClick={() => selectComment(comment)}
           draggable={onDrag !== null}
           onDragStart={startDrag}
         >
@@ -72,7 +77,7 @@ export const Comments = ({
 };
 
 Comments.propTypes = {
-  annotations: PropTypes.array,
+  comments: PropTypes.array,
   pageIndex: PropTypes.number,
   file: PropTypes.string,
   dragOverPage: PropTypes.func,
@@ -92,5 +97,5 @@ Comments.propTypes = {
     height: PropTypes.number
   }),
   startDrag: PropTypes.func,
-  selectCommentIcon: PropTypes.func
+  selectComment: PropTypes.func
 };

@@ -16,18 +16,17 @@ import { Comment } from 'components/reader/DocumentViewer/Sidebar/Comment';
 export const SidebarComments = ({
   comments,
   addComment,
-  placedButUnsavedAnnotation,
-  error,
+  droppedComment,
+  errors,
   createAnnotation,
-  updateAnnotationContent,
-  updateAnnotationRelevantDate,
+  updateComment,
   stopPlacingAnnotation,
   cancelEditAnnotation,
-  requestEditAnnotation,
   handleClick,
   commentRef,
-  selectedAnnotationId,
+  selectedComment,
   currentDocument,
+  saveComment,
   ...props
 }) => (
   <div>
@@ -38,15 +37,16 @@ export const SidebarComments = ({
     </span>
     <div style={{ clear: 'both' }}></div>
     <div className="cf-comment-wrapper">
-      {error?.annotation?.visible && <CannotSaveAlert message={error.annotation.message} />}
+      {errors?.comments?.comment?.visible && <CannotSaveAlert message={errors.comments.comment.message} />}
       <div className="cf-pdf-comment-list">
-        {placedButUnsavedAnnotation && (
+        {droppedComment && (
           <EditComment
-            comment={placedButUnsavedAnnotation}
+            {...props}
+            comment={droppedComment}
             id="addComment"
             disableOnEmpty
-            onChange={updateAnnotationContent}
-            onChangeDate={updateAnnotationRelevantDate}
+            onChange={(val) => updateComment({ ...droppedComment, pendingComment: val })}
+            changeDate={(val) => updateComment({ ...droppedComment, pendingDate: val })}
             onCancelCommentEdit={stopPlacingAnnotation}
             onSaveCommentEdit={createAnnotation}
           />
@@ -55,29 +55,32 @@ export const SidebarComments = ({
           <React.Fragment key={index}>
             {comment.editing ? (
               <EditComment
+                {...props}
                 id={`editCommentBox-${comment.temporaryId || comment.id}`}
+                saveComment={() => saveComment({
+                  ...comment,
+                  relevant_date: comment.pendingDate || comment.relevant_date,
+                  comment: comment.pendingComment || comment.comment
+                })}
                 comment={comment}
                 onCancelCommentEdit={cancelEditAnnotation}
-                onChange={updateAnnotationContent}
-                onChangeDate={updateAnnotationRelevantDate}
+                onChange={(val) => updateComment({ ...comment, pendingComment: val })}
+                changeDate={(val) => updateComment({ ...comment, pendingDate: val })}
                 value={comment.comment}
-                onSaveCommentEdit={requestEditAnnotation}
                 key={comment.temporaryId || comment.id}
               />
             ) : (
               <div ref={commentRef} key={comment.temporaryId || comment.id}>
                 <Comment
+                  {...props}
                   id={`comment${index}`}
                   comment={comment}
-                  selected={comment.id === selectedAnnotationId}
+                  selected={comment.id === selectedComment.id}
                   handleClick={handleClick}
                   page={comment.page}
                   date={comment.relevant_date}
                   currentDocument={currentDocument}
-                  {...props}
-                >
-                  {comment.comment}
-                </Comment>
+                />
               </div>
             )}
           </React.Fragment>
@@ -91,16 +94,16 @@ SidebarComments.propTypes = {
   currentDocument: PropTypes.object,
   comments: PropTypes.array,
   addComment: PropTypes.func,
-  placedButUnsavedAnnotation: PropTypes.func,
-  error: PropTypes.object,
+  droppedComment: PropTypes.object,
+  errors: PropTypes.object,
   createAnnotation: PropTypes.func,
-  updateAnnotationContent: PropTypes.func,
-  updateAnnotationRelevantDate: PropTypes.func,
+  updateComment: PropTypes.func,
+  updateCommentDate: PropTypes.func,
   stopPlacingAnnotation: PropTypes.func,
   cancelEditAnnotation: PropTypes.func,
   requestEditAnnotation: PropTypes.func,
   handleClick: PropTypes.func,
   commentRef: PropTypes.element,
   startEditAnnotation: PropTypes.func,
-  selectedAnnotationId: PropTypes.number,
+  selectedComment: PropTypes.object,
 };
