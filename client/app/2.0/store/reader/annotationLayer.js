@@ -77,12 +77,15 @@ export const moveComment = createAsyncThunk('annotations/move', async (annotatio
   // Format the data to send to the API
   const data = ApiUtil.convertToSnakeCase({ annotation });
 
+  if (annotation.id !== 'placing-annotation-icon') {
   // Patch the Selected Annotation
-  await ApiUtil.patch(
+    await ApiUtil.patch(
     `/document/${annotation.document_id}/annotation/${annotation.id}`,
     { data },
     ENDPOINT_NAMES.ANNOTATION
-  );
+    );
+
+  }
 
   return annotation;
 });

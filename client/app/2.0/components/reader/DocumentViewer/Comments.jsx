@@ -49,8 +49,8 @@ export const Comments = ({
           draggable
           key={comment.id}
           style={{
-            left: comment.x,
-            top: comment.y,
+            left: comment.x * props.scale,
+            top: comment.y * props.scale,
             transform: `rotate(${currentDocument.rotation}deg)`,
             cursor: 'pointer',
           }}
