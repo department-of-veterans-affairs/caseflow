@@ -12,24 +12,24 @@ import { commentStyles, selectionStyles } from 'styles/reader/Document/Comments'
  */
 export const Comments = ({
   pageIndex,
-  file,
-  dropComment,
+  movingComment,
   moveMouse,
   onClick,
   commentsRef,
-  isVisible,
   comments,
-  onDrag,
+  handleDrop,
   currentDocument,
   selected,
   textLayerRef,
-  startDrag,
+  startMove,
   selectComment,
   ...props
 }) => {
   useEffect(() => {
     if (props.search.scrollPosition) {
-       props.gridRef.current?.scrollToPosition({ scrollTop: props.search.scrollPosition });
+      props.gridRef.current?.scrollToPosition({
+        scrollTop: props.search.scrollPosition,
+      });
     }
   }, [props.search.scrollPosition]);
 
@@ -39,26 +39,26 @@ export const Comments = ({
       id={`comment-layer-${pageIndex}`}
       style={commentStyles}
       onDragOver={(event) => event.preventDefault()}
-      onDrop={dropComment}
       onClick={onClick}
       onMouseMove={moveMouse}
       ref={commentsRef}
+      onDrop={handleDrop}
     >
       {comments.map((comment) => (
         <div
+          draggable
           key={comment.id}
           style={{
             left: comment.x,
             top: comment.y,
             transform: `rotate(${currentDocument.rotation}deg)`,
-            cursor: 'pointer'
+            cursor: 'pointer',
           }}
           data-placing-annotation-icon={comment.dropping}
           className="commentIcon-container"
           id={`commentIcon-container-${comment.id}`}
-          onClick={() => selectComment(comment)}
-          draggable={onDrag !== null}
-          onDragStart={startDrag}
+          onClick={movingComment ? null : () => selectComment(comment)}
+          onDragStart={() => startMove(comment.id)}
         >
           {commentIcon(selected, comment.id)}
         </div>
@@ -91,9 +91,9 @@ Comments.propTypes = {
   scale: PropTypes.number,
   dimensions: PropTypes.shape({
     width: PropTypes.number,
-    height: PropTypes.number
+    height: PropTypes.number,
   }),
-  startDrag: PropTypes.func,
+  startMove: PropTypes.func,
   selectComment: PropTypes.func,
   search: PropTypes.object,
   gridRef: PropTypes.object,

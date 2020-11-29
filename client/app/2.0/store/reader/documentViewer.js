@@ -15,6 +15,7 @@ import {
   COMMENT_ACCORDION_KEY
 } from 'store/constants/reader';
 import { addMetaLabel, formatCategoryName } from 'utils/reader';
+import { removeComment } from 'store/reader/annotationLayer';
 
 // Create a place in-memory to store the downloaded PDF documents
 const pdfDocuments = {};
@@ -498,6 +499,13 @@ const documentViewerSlice = createSlice({
         ].includes(action.type),
         (state, action) => {
           state.list[action.payload.docId].opened_by_current_user = true;
+        }
+      ).
+      addMatcher(
+        (action) => action.type === removeComment.fulfilled.toString(),
+        (state) => {
+        // Remove the modal state
+          state.deleteCommentId = null;
         }
       );
   }

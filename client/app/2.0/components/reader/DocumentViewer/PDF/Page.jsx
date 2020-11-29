@@ -28,6 +28,8 @@ export const Page = ({
   rowIndex,
   columnIndex,
   dropComment,
+  movingComment,
+  moveComment,
   ...props
 }) => {
   // Calculate the Page Index
@@ -59,8 +61,24 @@ export const Page = ({
     }
   };
 
+  const handleDrop = (event) => {
+    const coords = getPageCoordinatesOfMouseEvent(
+      event,
+      document.getElementById(`comment-layer-${pageIndex}`).getBoundingClientRect(),
+      scale,
+      currentDocument.rotation
+    );
+
+    moveComment({
+      document_id: currentDocument.id,
+      id: movingComment,
+      x: coords.x,
+      y: coords.y,
+    });
+  };
+
   const moveMouse = (event) => {
-    if (addingComment) {
+    if (addingComment || movingComment) {
       const coords = getPageCoordinatesOfMouseEvent(
         event,
         document.getElementById(`comment-layer-${pageIndex}`).getBoundingClientRect(),
@@ -69,7 +87,9 @@ export const Page = ({
       );
 
       // Move the cursor icon
-      const cursor = document.getElementById('canvas-cursor');
+      const cursor = movingComment ?
+        document.getElementById(`commentIcon-container-${movingComment}`) :
+        document.getElementById('canvas-cursor');
 
       // Update the coordinates
       cursor.style.left = `${coords.x}px`;
@@ -99,6 +119,9 @@ export const Page = ({
           <div className="cf-pdf-annotationLayer">
             <Comments
               {...props}
+              handleDrop={handleDrop}
+              dropComment={dropComment}
+              movingComment={movingComment}
               moveMouse={moveMouse}
               onClick={handleClick}
               currentDocument={currentDocument}

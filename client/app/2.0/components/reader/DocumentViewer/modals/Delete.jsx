@@ -9,7 +9,7 @@ import Modal from 'app/components/Modal';
  * Delete Comment Modal Component
  * @param {Object} props
  */
-export const DeleteComment = ({ closeDeleteModal, deleteComment, show }) => show && (
+export const DeleteComment = ({ closeDeleteModal, removeComment, pendingDeletion, show }) => show && (
   <Modal
     title="Delete Comment"
     closeHandler={closeDeleteModal}
@@ -17,12 +17,14 @@ export const DeleteComment = ({ closeDeleteModal, deleteComment, show }) => show
       {
         classNames: ['cf-modal-link', 'cf-btn-link'],
         name: 'Cancel',
-        onClick: closeDeleteModal
+        onClick: closeDeleteModal,
+        disabled: pendingDeletion
       },
       {
         classNames: ['usa-button', 'usa-button-secondary'],
         name: 'Confirm delete',
-        onClick: deleteComment
+        onClick: removeComment,
+        disabled: pendingDeletion
       }
     ]}
   >
@@ -32,6 +34,7 @@ export const DeleteComment = ({ closeDeleteModal, deleteComment, show }) => show
 
 DeleteComment.propTypes = {
   show: PropTypes.bool,
-  deleteComment: PropTypes.func,
+  pendingDeletion: PropTypes.bool,
+  removeComment: PropTypes.func,
   closeDeleteModal: PropTypes.func
 };

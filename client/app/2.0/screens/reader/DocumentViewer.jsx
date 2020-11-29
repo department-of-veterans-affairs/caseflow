@@ -40,7 +40,10 @@ import {
   addComment,
   cancelDrop,
   dropComment,
-  createComment
+  createComment,
+  removeComment,
+  startMove,
+  moveComment
 } from 'store/reader/annotationLayer';
 
 const DocumentViewer = (props) => {
@@ -73,6 +76,8 @@ const DocumentViewer = (props) => {
 
   // Create the dispatchers
   const actions = {
+    moveComment: (comment) => dispatch(moveComment(comment)),
+    startMove: (commentId) => dispatch(startMove(commentId)),
     createComment: (comment) => dispatch(createComment(comment)),
     dropComment: (comment) => dispatch(dropComment(comment)),
     clickPage: (event) => {
@@ -121,6 +126,7 @@ const DocumentViewer = (props) => {
     closeDeleteModal: () => dispatch(toggleDeleteModal(null)),
     shareComment: (id) => dispatch(toggleShareModal(id)),
     deleteComment: (id) => dispatch(toggleDeleteModal(id)),
+    removeComment: () => dispatch(removeComment({ commentId: state.deleteCommentId, docId: state.currentDocument.id })),
     toggleAccordion: (sections) => dispatch(toggleAccordion(sections)),
     togglePdfSidebar: () => dispatch(togglePdfSideBar()),
     toggleSearchBar: () => dispatch(toggleSearchBar()),

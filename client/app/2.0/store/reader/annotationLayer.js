@@ -26,7 +26,9 @@ export const initialState = {
   isPlacingAnnotation: false,
   saving: false,
   dropping: false,
+  moving: false,
   droppedComment: null,
+  pendingDeletion: false,
 
   /**
    * `editingAnnotations` is an object of annotations that are currently being edited.
@@ -59,28 +61,30 @@ export const toggleAnnotationShareModal = (state, annotationId) => {
  * Delete Annotation dispatcher
  * NOTE: This dispatcher is async so we export separately
  */
-export const deleteAnnotation = createAsyncThunk('annotations/delete', async ({ docId, annotationId }) => {
+export const removeComment = createAsyncThunk('annotations/delete', async ({ docId, commentId }) => {
   // Send the Delete Request
-  await ApiUtil.delete(`/document/${docId}/annotation/${annotationId}`, {}, ENDPOINT_NAMES.ANNOTATION);
+  await ApiUtil.delete(`/document/${docId}/annotation/${commentId}`, {}, ENDPOINT_NAMES.ANNOTATION);
 
   // Return the Annotation ID
-  return annotationId;
+  return commentId;
 });
 
 /**
  * Move Annotation Dispatcher
  * NOTE: This dispatcher is async so we export separately
  */
-export const moveAnnotation = createAsyncThunk('annotations/move', async (annotation) => {
+export const moveComment = createAsyncThunk('annotations/move', async (annotation) => {
   // Format the data to send to the API
   const data = ApiUtil.convertToSnakeCase({ annotation });
 
   // Patch the Selected Annotation
   await ApiUtil.patch(
-    `/document/${annotation.documentId}/annotation/${annotation.id}`,
+    `/document/${annotation.document_id}/annotation/${annotation.id}`,
     { data },
     ENDPOINT_NAMES.ANNOTATION
   );
+
+  return annotation;
 });
 
 /**
@@ -109,7 +113,7 @@ export const saveComment = createAsyncThunk('annotations/save', async (annotatio
 });
 
 /**
- * Move Annotation Dispatcher
+ * Create Annotation Dispatcher
  * NOTE: This dispatcher is async so we export separately
  */
 export const createComment = createAsyncThunk('annotations/create', async (annotation) => {
@@ -125,8 +129,8 @@ export const createComment = createAsyncThunk('annotations/create', async (annot
 
   // Add the request body to the annotation
   return {
+    ...annotation,
     ...body,
-    ...annotation
   };
 });
 
@@ -137,6 +141,9 @@ const annotationLayerSlice = createSlice({
   name: 'annotationLayer',
   initialState,
   reducers: {
+    startMove: (state, action) => {
+      state.moving = action.payload;
+    },
     addComment: (state) => {
       state.dropping = true;
     },
@@ -346,44 +353,40 @@ const annotationLayerSlice = createSlice({
           visible: true
         };
       }).
-      addCase(moveAnnotation.pending, {
-        reducer: (state, action) => {
-          state.pendingEditingAnnotations[action.payload.annotation.id] =
-           action.payload.annotation;
-        },
-        prepare: (annotation) => addMetaLabel('request-move-annotation', { annotation }, '')
-      }).
-      addCase(moveAnnotation.fulfilled, (state, action) => {
-        // Unset the pending Editing Annotations
-        state.pendingEditingAnnotations[action.payload.annotation.id] = null;
+      addCase(moveComment.fulfilled, (state, action) => {
+        // Reset the moving state
+        state.moving = false;
 
-        // Set the Annotations
-        state.annotations[action.payload.annotation.id] = action.payload.annotation;
+        // Update the comments list
+        state.comments = state.comments.map((comment) => ({
+          ...comment,
+          ...(comment.id === action.payload.id ? action.payload : {})
+        }));
       }).
-      addCase(moveAnnotation.rejected, (state, action) => {
-        // Unset the pending Editing Annotations
-        state.pendingEditingAnnotations[action.payload.annotation.id] = null;
-      }).
-      addCase(deleteAnnotation.pending, {
-        reducer: (state, action) => {
-          // Toggle the delete modal off
-          state.deleteAnnotationModalIsOpenFor = null;
+      addCase(moveComment.rejected, (state, action) => {
+        // Update the error messages
+        state.errors.comment = {
+          ...action.error,
+          visible: true
+        };
 
-          // Update the delete status to pending
-          state.editingAnnotations[action.payload.annotationId].pendingDeletion = true;
-          state.annotations[action.payload.annotationId].pendingDeletion = true;
-        },
-        prepare: ({ annotationId }) => addMetaLabel('request-delete-annotation', { annotationId }, '', false)
+        // Reset the moving state
+        state.moving = false;
       }).
-      addCase(deleteAnnotation.fulfilled, (state, action) => {
-        // Remove the Annotations on success from the API
-        state.editingAnnotations[action.payload.annotationId] = null;
-        state.annotations[action.payload.annotationId] = null;
+      addCase(removeComment.pending, (state) => {
+        // Set the pending deletion to disable the modal buttons
+        state.pendingDeletion = true;
       }).
-      addCase(deleteAnnotation.rejected, (state, action) => {
-        // Remove the pending deletion if we fail to delete
-        state.editingAnnotations[action.payload.annotationId].pendingDeletion = null;
-        state.annotations[action.payload.annotationId].pendingDeletion = null;
+      addCase(removeComment.fulfilled, (state, action) => {
+        // Reset the state
+        state.pendingDeletion = false;
+
+        // Update the comments list
+        state.comments = state.comments.filter((comment) => comment.id !== action.payload);
+      }).
+      addCase(removeComment.rejected, (state) => {
+        // Reset the state
+        state.pendingDeletion = false;
       }).
       addMatcher((action) => action.type === loadDocuments.fulfilled.toString(), (state, action) => {
         // Map the Annotations to the comments array
@@ -414,7 +417,8 @@ export const {
   updateComment,
   addComment,
   dropComment,
-  cancelDrop
+  cancelDrop,
+  startMove
 } = annotationLayerSlice.actions;
 
 // Default export the reducer
