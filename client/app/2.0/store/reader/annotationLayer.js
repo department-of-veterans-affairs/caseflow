@@ -1,5 +1,4 @@
 // External Dependencies
-import uuid from 'uuid';
 import { createSlice, createAsyncThunk, current } from '@reduxjs/toolkit';
 import { keyBy } from 'lodash';
 
@@ -77,6 +76,7 @@ export const moveComment = createAsyncThunk('annotations/move', async (annotatio
   // Format the data to send to the API
   const data = ApiUtil.convertToSnakeCase({ annotation });
 
+  // Don't update the temporary comment
   if (annotation.id !== 'placing-annotation-icon') {
   // Patch the Selected Annotation
     await ApiUtil.patch(

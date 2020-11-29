@@ -78,7 +78,7 @@ export const Page = ({
   };
 
   const moveMouse = (event) => {
-    if (addingComment || movingComment) {
+    if (addingComment) {
       const coords = getPageCoordinatesOfMouseEvent(
         event,
         document.getElementById(`comment-layer-${pageIndex}`).getBoundingClientRect(),
@@ -87,9 +87,7 @@ export const Page = ({
       );
 
       // Move the cursor icon
-      const cursor = movingComment ?
-        document.getElementById(`commentIcon-container-${movingComment}`) :
-        document.getElementById('canvas-cursor');
+      const cursor = document.getElementById('canvas-cursor');
 
       // Update the coordinates
       cursor.style.left = `${coords.x}px`;

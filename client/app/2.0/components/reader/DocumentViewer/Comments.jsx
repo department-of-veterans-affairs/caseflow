@@ -1,10 +1,12 @@
 // External Dependencies
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import querystring from 'querystring';
 
 // Internal Dependencies
 import { commentIcon } from 'app/components/RenderFunctions';
 import { commentStyles, selectionStyles } from 'styles/reader/Document/Comments';
+import { getPageCoordinatesOfMouseEvent } from 'utils/reader';
 
 /**
  * Comments component for the Document Screen
@@ -26,10 +28,39 @@ export const Comments = ({
   ...props
 }) => {
   useEffect(() => {
+    // Handle document search position
     if (props.search.scrollPosition) {
       props.gridRef.current?.scrollToPosition({
         scrollTop: props.search.scrollPosition,
       });
+    }
+
+    // Parse the query to determine if there is an annotation selected
+    const query = querystring.parse(window.location.search)['?annotation'];
+
+    // Parse the annotation ID
+    const annotationId = query ? parseInt(query, 10) : null;
+
+    // Handle Comment selection position
+    if (comments.length && annotationId) {
+      // Get the comment from the list
+      const [comment] = comments.filter((item) => item.id === annotationId);
+
+      // Calculate the coordinates of the comment to jump
+      const coords = getPageCoordinatesOfMouseEvent(
+        { pageX: comment.x, pageY: comment.y },
+        document.getElementById(`comment-layer-${comment.page - 1}`).getBoundingClientRect(),
+        props.scale,
+        currentDocument.rotation
+      );
+
+      // Scroll to the comment
+      props.gridRef.current?.scrollToPosition({
+        scrollTop: coords.y
+      });
+
+      // Update the store with the selected comment
+      selectComment(comment);
     }
   }, [props.search.scrollPosition]);
 
