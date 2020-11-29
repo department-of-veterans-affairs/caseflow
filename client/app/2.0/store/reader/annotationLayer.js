@@ -4,7 +4,6 @@ import { createSlice, createAsyncThunk, current } from '@reduxjs/toolkit';
 import { keyBy } from 'lodash';
 
 // Local Dependencies
-import { handleSelectCommentIcon } from 'store/reader/documentViewer';
 import { loadDocuments } from 'store/reader/documentList';
 import { addMetaLabel } from 'utils/reader';
 import { ENDPOINT_NAMES } from 'store/constants/reader';
@@ -26,6 +25,8 @@ export const initialState = {
   placedButUnsavedAnnotation: null,
   isPlacingAnnotation: false,
   saving: false,
+  dropping: false,
+  droppedComment: null,
 
   /**
    * `editingAnnotations` is an object of annotations that are currently being edited.
@@ -111,21 +112,21 @@ export const saveComment = createAsyncThunk('annotations/save', async (annotatio
  * Move Annotation Dispatcher
  * NOTE: This dispatcher is async so we export separately
  */
-export const createAnnotation = createAsyncThunk('annotations/create', async (annotation) => {
+export const createComment = createAsyncThunk('annotations/create', async (annotation) => {
   // Format the data to send to the API
   const data = ApiUtil.convertToSnakeCase({ annotation });
 
   // Patch the Selected Annotation
   const { body } = await ApiUtil.post(
-    `/document/${annotation.documentId}/annotation`,
+    `/document/${annotation.document_id}/annotation`,
     { data },
     ENDPOINT_NAMES.ANNOTATION
   );
 
   // Add the request body to the annotation
   return {
-    ...annotation,
-    ...body
+    ...body,
+    ...annotation
   };
 });
 
@@ -136,6 +137,32 @@ const annotationLayerSlice = createSlice({
   name: 'annotationLayer',
   initialState,
   reducers: {
+    addComment: (state) => {
+      state.dropping = true;
+    },
+    dropComment: (state, action) => {
+      // Reset the dropping state
+      state.dropping = false;
+
+      // Set the dropped comment
+      state.droppedComment = action.payload;
+
+      // Update the comments with the temporary comment
+      state.comments = [...state.comments, action.payload];
+    },
+    cancelDrop: (state) => {
+      // Reset the dropping state
+      state.dropping = false;
+
+      // Update the comments with the temporary comment
+      state.comments = state.comments.filter((comment) => comment.id !== 'placing-annotation-icon');
+
+      // Remove the dropped comment
+      state.droppedComment = null;
+
+      // Remove the error state
+      state.errors = initialState.errors;
+    },
     startEdit: (state, action) => {
       state.comments = state.comments.map((comment) => ({
         ...comment,
@@ -143,6 +170,14 @@ const annotationLayerSlice = createSlice({
       }));
     },
     updateComment: (state, action) => {
+      if (state.droppedComment) {
+        state.droppedComment = {
+          ...state.droppedComment,
+          pendingComment: action.payload.pendingComment,
+          pendingDate: action.payload.pendingDate
+        };
+      }
+
       state.comments = state.comments.map((comment) => ({
         ...comment,
         pendingDate: comment.id === action.payload.id ? action.payload.pendingDate : null,
@@ -276,42 +311,40 @@ const annotationLayerSlice = createSlice({
       addCase(saveComment.fulfilled, (state, action) => {
         // Reset the state
         state.saving = false;
+        state.droppedComment = null;
+
+        // Update the comment state
+        state.comments = [
+          ...state.comments.filter((comment) => !comment.editing),
+          {
+            ...action.payload,
+            editing: null
+          }
+        ];
+      }).
+      addCase(createComment.pending, (state) => {
+        state.saving = true;
+      }).
+      addCase(createComment.fulfilled, (state, action) => {
+        // Reset the state
+        state.saving = false;
+        state.droppedComment = null;
 
         // Update the comments list
-        state.comments = state.comments.map((comment) => ({
-          ...comment,
-          relevant_date: action.payload.relevant_date,
-          comment: action.payload.comment,
-          editing: null
-        }));
+        state.comments = [
+          ...state.comments.filter((comment) => comment.id !== 'placing-annotation-icon'),
+          action.payload
+        ];
       }).
-      addCase(createAnnotation.pending, (state, action) => {
-        // Remove the unsaved annotation
-        state.placedButUnsavedAnnotation = null;
+      addCase(createComment.rejected, (state, action) => {
+        // Reset the save state
+        state.saving = false;
 
-        // Create a temporary ID that will be used while saving
-        state.tempId = uuid.v4();
-
-        // Update the Pending Annotation State
-        state.pendingAnnotations[state.tempId] = action.payload.annotation;
-      }).
-      addCase(createAnnotation.fulfilled, (state, action) => {
-        // Update the Pending Annotation State
-        state.pendingAnnotations[state.tempId] = null;
-
-        // Add the new Annotation to the state
-        state.annotations[action.payload.annotation.id] = {
-          ...action.payload.annotation,
-          document_id: action.payload.annotation.documentId,
-          uuid: action.payload.annotation.id
+        // Update the error messages
+        state.errors.comment = {
+          ...action.error,
+          visible: true
         };
-      }).
-      addCase(createAnnotation.rejected, (state) => {
-        // Set the Unsaved Annotation to what it was before
-        state.placedButUnsavedAnnotation = state.tempId;
-
-        // Update the Pending Annotation State
-        state.pendingAnnotations[state.tempId] = null;
       }).
       addCase(moveAnnotation.pending, {
         reducer: (state, action) => {
@@ -378,7 +411,10 @@ export const {
   updateNewAnnotationContent,
   updateNewAnnotationRelevantDate,
   startEdit,
-  updateComment
+  updateComment,
+  addComment,
+  dropComment,
+  cancelDrop
 } = annotationLayerSlice.actions;
 
 // Default export the reducer

@@ -98,6 +98,8 @@ export const documentScreen = (state) => {
     docsCount,
     categories,
     comments,
+    droppedComment: state.reader.annotationLayer.droppedComment,
+    addingComment: state.reader.annotationLayer.dropping,
     savingComment: state.reader.annotationLayer.saving,
     selectedComment: state.reader.annotationLayer.selected,
     search: state.reader.documentViewer.search,

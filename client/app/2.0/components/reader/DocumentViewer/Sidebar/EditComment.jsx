@@ -38,7 +38,7 @@ export const EditComment = ({
       value={comment.pendingComment || comment.comment}
       onCancelClick={resetEdit}
       onSaveClick={saveComment}
-      disabled={savingComment || (disableOnEmpty && !comment.comment.trim())}
+      disabled={savingComment || (disableOnEmpty && !comment.pendingComment.trim())}
     />
   </div>
 );

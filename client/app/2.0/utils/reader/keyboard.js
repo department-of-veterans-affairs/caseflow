@@ -17,7 +17,7 @@ import { stopPlacingAnnotation, showPlaceAnnotationIcon } from 'store/reader/ann
  */
 export const annotationListener = ({
   placingAnnotationIconPageCoords,
-  isPlacingAnnotation,
+  addingComment,
   pageDimensions,
   showPdf,
   documents,
@@ -50,7 +50,7 @@ export const annotationListener = ({
   }[event.key];
 
   // Update the store if placing annotations and do not recognize keyboard input
-  if (isPlacingAnnotation && placingAnnotationIconPageCoords && direction >= 0) {
+  if (addingComment && placingAnnotationIconPageCoords && direction >= 0) {
     const { pageIndex, ...origCoords } = placingAnnotationIconPageCoords;
     const constrainedCoords = nextPageCoords(
       direction,

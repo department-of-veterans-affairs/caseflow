@@ -5,16 +5,17 @@ import classNames from 'classnames';
 
 // Internal Dependencies
 import { Comments } from 'components/reader/DocumentViewer/Comments';
-import { pageNumber } from 'utils/reader';
+import { pageNumber, getPageCoordinatesOfMouseEvent } from 'utils/reader';
 import { markStyles, pdfPageStyles } from 'styles/reader/Document/Pdf';
 import { dimensions } from 'app/2.0/utils/reader/document';
+import { commentIcon } from 'app/components/RenderFunctions';
 
 /**
  * PDF Page Component
  * @param {Object} props -- Contains the PDF Page props and functions to manipulate the rotation/scale/dimensions
  */
 export const Page = ({
-  isPlacingAnnotation,
+  addingComment,
   scale,
   onClick,
   pageRef,
@@ -26,6 +27,7 @@ export const Page = ({
   numColumns,
   rowIndex,
   columnIndex,
+  dropComment,
   ...props
 }) => {
   // Calculate the Page Index
@@ -34,28 +36,71 @@ export const Page = ({
   // Calculate the page dimensions
   const { height, width } = dimensions(scale, rotation);
 
+  // Create the Click handler for dropping comments
+  const handleClick = (event) => {
+    event.stopPropagation();
+    const coords = getPageCoordinatesOfMouseEvent(
+      event,
+      document.getElementById(`comment-layer-${pageIndex}`).getBoundingClientRect(),
+      scale,
+      currentDocument.rotation
+    );
+
+    // Drop the comment at the coordinates
+    if (addingComment) {
+      dropComment({
+        document_id: currentDocument.id,
+        pendingComment: '',
+        id: 'placing-annotation-icon',
+        page: pageIndex + 1,
+        x: coords.x,
+        y: coords.y,
+      });
+    }
+  };
+
+  const moveMouse = (event) => {
+    if (addingComment) {
+      const coords = getPageCoordinatesOfMouseEvent(
+        event,
+        document.getElementById(`comment-layer-${pageIndex}`).getBoundingClientRect(),
+        scale,
+        currentDocument.rotation
+      );
+
+      // Move the cursor icon
+      const cursor = document.getElementById('canvas-cursor');
+
+      // Update the coordinates
+      cursor.style.left = `${coords.x}px`;
+      cursor.style.top = `${coords.y}px`;
+
+    }
+  };
+
   return pageIndex >= numPages ? (
     <div key={(numColumns * rowIndex) + columnIndex} style={style} />
   ) : (
-    <div key={pageIndex} style={pdfPageStyles(rotation, height, width)}>
+    <div key={pageIndex} style={pdfPageStyles(rotation, height, width)} >
       <div
         id={`pageContainer${pageNumber(pageIndex)}`}
         className={classNames({
           page: true,
           'cf-pdf-pdfjs-container': true,
-          'cf-pdf-placing-comment': isPlacingAnnotation
+          'cf-pdf-placing-comment': addingComment
         })}
         onClick={onClick}
         ref={pageRef}
         {...markStyles}
       >
-        <div
-          id={`rotationDiv${pageNumber(pageIndex)}`}
-        >
+        <div id={`rotationDiv${pageNumber(pageIndex)}`} >
           <canvas id={`pdf-canvas-${currentDocument.id}-${pageIndex}`} ref={canvasRef} className="canvasWrapper" />
+          {addingComment && <div id="canvas-cursor" style={{ position: 'absolute' }}>{commentIcon()}</div>}
           <div className="cf-pdf-annotationLayer">
             <Comments
               {...props}
+              moveMouse={moveMouse}
+              onClick={handleClick}
               currentDocument={currentDocument}
               documentId={currentDocument.id}
               pageIndex={pageIndex}
@@ -72,7 +117,7 @@ export const Page = ({
 Page.propTypes = {
   isVisible: PropTypes.bool,
   pageIndex: PropTypes.number,
-  isPlacingAnnotation: PropTypes.bool,
+  addingComment: PropTypes.bool,
   textLayerRef: PropTypes.element,
   outerWidth: PropTypes.number,
   outerHeight: PropTypes.number,

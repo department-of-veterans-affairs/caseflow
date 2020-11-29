@@ -32,7 +32,16 @@ import {
   setPageNumber,
   searchText
 } from 'store/reader/documentViewer';
-import { selectComment, startEdit, updateComment, saveComment } from 'store/reader/annotationLayer';
+import {
+  selectComment,
+  startEdit,
+  updateComment,
+  saveComment,
+  addComment,
+  cancelDrop,
+  dropComment,
+  createComment
+} from 'store/reader/annotationLayer';
 
 const DocumentViewer = (props) => {
   // Get the Document List state
@@ -64,6 +73,20 @@ const DocumentViewer = (props) => {
 
   // Create the dispatchers
   const actions = {
+    createComment: (comment) => dispatch(createComment(comment)),
+    dropComment: (comment) => dispatch(dropComment(comment)),
+    clickPage: (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      if (state.addingComment) {
+        dispatch(cancelDrop());
+      }
+    },
+    cancelDrop: () => dispatch(cancelDrop()),
+    addComment: (event) => {
+      event.stopPropagation();
+      dispatch(addComment());
+    },
     saveComment: (comment) => dispatch(saveComment(comment)),
     updateComment: (comment) => dispatch(updateComment(comment)),
     editComment: (commentId) => dispatch(startEdit(commentId)),
@@ -176,7 +199,7 @@ const DocumentViewer = (props) => {
   };
 
   return (
-    <div className="cf-pdf-page-container">
+    <div id="document-viewer" className="cf-pdf-page-container" onClick={state.addingComment === true ? actions.clickPage : null}>
       <div className={classNames('cf-pdf-container', { 'hidden-sidebar': state.hidePdfSidebar })} {...pdfWrapper}>
         <DocumentHeader
           {...state}

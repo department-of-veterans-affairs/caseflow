@@ -65,7 +65,7 @@ export const Comment = ({
         )}
         <h4>Page {page}</h4>
         <strong>
-          <JumpToComment uuid={comment.uuid} show={Boolean(jumpToComment)} jumpToComment={jumpToComment} />
+          <JumpToComment uuid={comment.id} show={Boolean(jumpToComment)} jumpToComment={jumpToComment} />
         </strong>
       </div>
       <div

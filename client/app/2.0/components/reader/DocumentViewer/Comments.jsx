@@ -1,11 +1,10 @@
 // External Dependencies
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 // Internal Dependencies
 import { commentIcon } from 'app/components/RenderFunctions';
-import { commentStyles, selectionStyles, textLayerStyles } from 'styles/reader/Document/Comments';
+import { commentStyles, selectionStyles } from 'styles/reader/Document/Comments';
 
 /**
  * Comments component for the Document Screen
@@ -14,10 +13,9 @@ import { commentStyles, selectionStyles, textLayerStyles } from 'styles/reader/D
 export const Comments = ({
   pageIndex,
   file,
-  dragOverPage,
   dropComment,
   moveMouse,
-  clickPage,
+  onClick,
   commentsRef,
   isVisible,
   comments,
@@ -33,21 +31,20 @@ export const Comments = ({
     if (props.search.scrollPosition) {
        props.gridRef.current?.scrollToPosition({ scrollTop: props.search.scrollPosition });
     }
-
   }, [props.search.scrollPosition]);
 
   return (
     <div
       key={pageIndex}
-      id={`comment-layer-${pageIndex}-${file}`}
+      id={`comment-layer-${pageIndex}`}
       style={commentStyles}
-      onDragOver={dragOverPage}
+      onDragOver={(event) => event.preventDefault()}
       onDrop={dropComment}
-      onClick={clickPage}
+      onClick={onClick}
       onMouseMove={moveMouse}
       ref={commentsRef}
     >
-      {isVisible && comments.map((comment) => (
+      {comments.map((comment) => (
         <div
           key={comment.id}
           style={{
@@ -56,14 +53,14 @@ export const Comments = ({
             transform: `rotate(${currentDocument.rotation}deg)`,
             cursor: 'pointer'
           }}
-          data-placing-annotation-icon={comment.isPlacingAnnotationIcon}
+          data-placing-annotation-icon={comment.dropping}
           className="commentIcon-container"
-          id={`commentIcon-container-${comment.uuid}`}
+          id={`commentIcon-container-${comment.id}`}
           onClick={() => selectComment(comment)}
           draggable={onDrag !== null}
           onDragStart={startDrag}
         >
-          {commentIcon(selected, comment.uuid)}
+          {commentIcon(selected, comment.id)}
         </div>
       ))}
       <div
@@ -83,7 +80,7 @@ Comments.propTypes = {
   dragOverPage: PropTypes.func,
   dropComment: PropTypes.func,
   moveMouse: PropTypes.func,
-  clickPage: PropTypes.func,
+  onClick: PropTypes.func,
   commentsRef: PropTypes.element,
   isVisible: PropTypes.bool,
   onDrag: PropTypes.func,
@@ -97,5 +94,7 @@ Comments.propTypes = {
     height: PropTypes.number
   }),
   startDrag: PropTypes.func,
-  selectComment: PropTypes.func
+  selectComment: PropTypes.func,
+  search: PropTypes.object,
+  gridRef: PropTypes.object,
 };

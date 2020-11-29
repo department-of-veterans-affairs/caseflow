@@ -27,11 +27,13 @@ export const SidebarComments = ({
   selectedComment,
   currentDocument,
   saveComment,
+  cancelDrop,
+  createComment,
   ...props
 }) => (
   <div>
     <span className="cf-right-side cf-add-comment-button">
-      <Button name="AddComment" onClick={addComment} >
+      <Button name="AddComment" onClick={addComment} disabled={Boolean(droppedComment)} >
         <span>{plusIcon()}&nbsp; Add a comment</span>
       </Button>
     </span>
@@ -42,16 +44,21 @@ export const SidebarComments = ({
         {droppedComment && (
           <EditComment
             {...props}
+            resetEdit={cancelDrop}
             comment={droppedComment}
             id="addComment"
             disableOnEmpty
             onChange={(val) => updateComment({ ...droppedComment, pendingComment: val })}
             changeDate={(val) => updateComment({ ...droppedComment, pendingDate: val })}
             onCancelCommentEdit={stopPlacingAnnotation}
-            onSaveCommentEdit={createAnnotation}
+            saveComment={() => createComment({
+              ...droppedComment,
+              relevant_date: droppedComment.pendingDate || droppedComment.relevant_date,
+              comment: droppedComment.pendingComment || droppedComment.comment
+            })}
           />
         )}
-        {comments.map((comment, index) => (
+        {comments.map((comment, index) => comment.id !== droppedComment?.id && (
           <React.Fragment key={index}>
             {comment.editing ? (
               <EditComment
