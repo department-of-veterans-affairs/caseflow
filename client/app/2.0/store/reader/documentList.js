@@ -214,10 +214,10 @@ const documentListSlice = createSlice({
         }).
       addMatcher(
         (action) => [
-          selectCurrentPdfLocally.toString()
+          showPdf.fulfilled.toString()
         ].includes(action.type),
         (state, action) => {
-          updateLastReadDoc(state, action.payload.docId);
+          updateLastReadDoc(state, action.payload.currentDocument.id);
         }
       ).
       addMatcher(

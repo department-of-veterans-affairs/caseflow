@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import querystring from 'querystring';
+import { isEmpty } from 'lodash';
 
 // Internal Dependencies
 import { commentIcon } from 'app/components/RenderFunctions';
@@ -21,7 +22,7 @@ export const Comments = ({
   comments,
   handleDrop,
   currentDocument,
-  selected,
+  selectedComment,
   textLayerRef,
   startMove,
   selectComment,
@@ -33,36 +34,28 @@ export const Comments = ({
       props.gridRef.current?.scrollToPosition({
         scrollTop: props.search.scrollPosition,
       });
-    }
+    } else {
+    // Parse the query to determine if there is an annotation selectedComment
+      const query = querystring.parse(window.location.search)['?annotation'];
 
-    // Parse the query to determine if there is an annotation selected
-    const query = querystring.parse(window.location.search)['?annotation'];
+      // Parse the annotation ID
+      const annotationId = query ? parseInt(query, 10) : null;
 
-    // Parse the annotation ID
-    const annotationId = query ? parseInt(query, 10) : null;
-
-    // Handle Comment selection position
-    if (comments.length && annotationId) {
+      // Handle Comment selection position
+      if (comments.length && annotationId) {
       // Get the comment from the list
-      const [comment] = comments.filter((item) => item.id === annotationId);
+        const [comment] = comments.filter((item) => item.id === annotationId);
 
-      // Ensure the comment exists
-      if (comment) {
-        // Calculate the coordinates of the comment to jump
-        const coords = getPageCoordinatesOfMouseEvent(
-          { pageX: comment.x, pageY: comment.y },
-          document.getElementById(`comment-layer-${comment.page - 1}`).getBoundingClientRect(),
-          props.scale,
-          currentDocument.rotation
-        );
+        // Ensure the comment exists
+        if (comment) {
+        // Update the store with the selectedComment comment
+          selectComment(comment);
 
-        // Scroll to the comment
-        props.gridRef.current?.scrollToPosition({
-          scrollTop: coords.y
-        });
-
-        // Update the store with the selected comment
-        selectComment(comment);
+          // Scroll to the comment
+          props.gridRef.current?.scrollToPosition({
+            scrollTop: comment.y
+          });
+        }
       }
     }
   }, [props.search.scrollPosition]);
@@ -78,7 +71,7 @@ export const Comments = ({
       ref={commentsRef}
       onDrop={handleDrop}
     >
-      {comments.map((comment) => (
+      {comments.filter((comment) => comment.page === pageIndex + 1).map((comment) => (
         <div
           draggable
           key={comment.id}
@@ -94,7 +87,7 @@ export const Comments = ({
           onClick={movingComment ? null : () => selectComment(comment)}
           onDragStart={() => startMove(comment.id)}
         >
-          {commentIcon(selected, comment.id)}
+          {commentIcon(selectedComment.id === comment.id, comment.id)}
         </div>
       ))}
       <div
@@ -120,7 +113,7 @@ Comments.propTypes = {
   onDrag: PropTypes.func,
   position: PropTypes.number,
   currentDocument: PropTypes.object,
-  selected: PropTypes.bool,
+  selectedComment: PropTypes.object,
   textLayerRef: PropTypes.element,
   scale: PropTypes.number,
   dimensions: PropTypes.shape({

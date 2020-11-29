@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash';
 
 // Local Dependencies
 import { pdfWrapper } from 'styles/reader/Document/Pdf';
@@ -142,7 +143,7 @@ const DocumentViewer = (props) => {
       const pageNumber = offset + 1;
 
       // Update the Pages if the client height and canvas list have changed
-      if (clientHeight > 0 && state.canvasList.length !== elements.length) {
+      if (clientHeight > 0 && state.canvasList.length !== elements.length && isEmpty(state.selectedComment)) {
         dispatch(showPdf({
           pageNumber,
           currentDocument: state.currentDocument,
