@@ -52,15 +52,15 @@ export const DocumentsTable = ({ show, ...props }) => {
     sortIcon: props.filterCriteria.sort.sortAscending ? <SortArrowUp /> : <SortArrowDown />,
     // Filter Functions
     setPdf: (doc) => dispatch(selectCurrentPdfLocally(doc.id)),
-    toggleComment: (docId, expanded) => dispatch(handleToggleCommentOpened(docId, expanded))
   };
 
   // Render The Table component
   return show && (
     <div>
       <Table
+        {...tableProps}
         columns={(row) => row?.isComment ? commentHeaders(tableProps) : documentHeaders(tableProps)}
-        rowObjects={documentRows(props.filteredDocIds, props.documents, props.annotations)}
+        rowObjects={documentRows(props.filteredDocIds, props.documents, props.comments)}
         summary="Document list"
         className="documents-table"
         headerClassName="cf-document-list-header-row"
@@ -78,7 +78,7 @@ DocumentsTable.propTypes = {
   filteredDocIds: PropTypes.array,
   show: PropTypes.bool,
   documents: PropTypes.object,
-  annotations: PropTypes.array,
+  comments: PropTypes.array,
   onJumpToComment: PropTypes.func,
   sortBy: PropTypes.string,
   documentList: PropTypes.shape({

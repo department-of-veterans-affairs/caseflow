@@ -83,24 +83,22 @@ export const documentsView = (documents, filter, view) => {
  * @param {array} annotationsPerDocument -- The list of comments for each document
  * @returns {array} -- The list of comment rows for the table
  */
-export const documentRows = (ids, documents, annotations) => ids.map((id) => {
-  // Set the current document
-  const document = documents[id];
+export const documentRows = (ids, documents, annotations) => ids.reduce((rows, id) => {
+  // Add the current document
+  rows.push(documents[id]);
 
   // Get the documents with comments
-  const [docWithComments] = annotations.filter((note) => note.documentId === document.id);
+  const [docWithComments] = annotations.filter((note) => note.document_id === id);
 
   // Apply the comment if present
-  if (docWithComments && document.listComments) {
-    return {
-      ...document,
-      isComment: true
-    };
+  if (docWithComments && documents[id].listComments) {
+    // Add the comment to the list
+    rows.push({ ...documents[id], isComment: true });
   }
 
   // Default to return the document
-  return document;
-});
+  return rows;
+}, []);
 
 /**
  * Helper Method to get the Categories for each Document
@@ -286,12 +284,12 @@ export const filterDocuments = (criteria, documents, state) => {
 
       // Apply the Category filters
       if (!isEmpty(filters.category)) {
-        include = filters.category.filter((name) => document[name] === true).length;
+        include = include && filters.category.filter((name) => document[name] === true).length;
       }
 
       // Apply the search filters
       if (filters.searchQuery) {
-        include = searchString(filters.searchQuery, state)(document);
+        include = include && searchString(filters.searchQuery, state)(document);
       }
 
       // Default return the object to be truthy

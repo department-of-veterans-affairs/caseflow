@@ -46,21 +46,24 @@ export const Comments = ({
       // Get the comment from the list
       const [comment] = comments.filter((item) => item.id === annotationId);
 
-      // Calculate the coordinates of the comment to jump
-      const coords = getPageCoordinatesOfMouseEvent(
-        { pageX: comment.x, pageY: comment.y },
-        document.getElementById(`comment-layer-${comment.page - 1}`).getBoundingClientRect(),
-        props.scale,
-        currentDocument.rotation
-      );
+      // Ensure the comment exists
+      if (comment) {
+        // Calculate the coordinates of the comment to jump
+        const coords = getPageCoordinatesOfMouseEvent(
+          { pageX: comment.x, pageY: comment.y },
+          document.getElementById(`comment-layer-${comment.page - 1}`).getBoundingClientRect(),
+          props.scale,
+          currentDocument.rotation
+        );
 
-      // Scroll to the comment
-      props.gridRef.current?.scrollToPosition({
-        scrollTop: coords.y
-      });
+        // Scroll to the comment
+        props.gridRef.current?.scrollToPosition({
+          scrollTop: coords.y
+        });
 
-      // Update the store with the selected comment
-      selectComment(comment);
+        // Update the store with the selected comment
+        selectComment(comment);
+      }
     }
   }, [props.search.scrollPosition]);
 

@@ -97,6 +97,9 @@ const documentListSlice = createSlice({
   name: 'documentList',
   initialState,
   reducers: {
+    toggleComment: (state, action) => {
+      state.documents[action.payload.docId].listComments = !action.payload.expanded;
+    },
     changeSortState: {
       reducer: (state, action) => {
         state.filterCriteria.sort.sortBy = action.payload.sortBy;
@@ -149,8 +152,8 @@ const documentListSlice = createSlice({
       reducer: (state, action) => {
         state.filterCriteria.searchQuery = action.payload.filterCriteria.searchQuery;
       },
-      prepare: (searchQuery, annotations, documents) =>
-        addMetaLabel('clear-tag-filters', { filterCriteria: { searchQuery }, annotations, documents })
+      prepare: (searchQuery, comments, documents) =>
+        addMetaLabel('clear-tag-filters', { filterCriteria: { searchQuery }, comments, documents })
     },
     clearSearch: {
       reducer: (state) => {
@@ -268,9 +271,7 @@ const documentListSlice = createSlice({
               const containsWords = commentContainsWords(searchQuery, action.payload, doc);
 
               // Updating the state of all annotations for expanded comments
-              if (containsWords !== doc.listComments) {
-                state.documents[doc.id].listComments = containsWords;
-              }
+              state.documents[doc.id].listComments = Boolean(containsWords);
             });
           }
         });
@@ -290,7 +291,8 @@ export const {
   clearCategoryFilters,
   clearAllFilters,
   setTagFilter,
-  clearTagFilters
+  clearTagFilters,
+  toggleComment
 } = documentListSlice.actions;
 
 // Default export the reducer

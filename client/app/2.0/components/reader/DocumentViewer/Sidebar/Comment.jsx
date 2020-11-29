@@ -6,27 +6,27 @@ import classNames from 'classnames';
 
 // Internal Dependencies
 import Button from 'app/components/Button';
-import Highlight from 'app/components/Highlight';
+import { Highlight } from 'components/reader/DocumentList/Highlight';
+import { Link } from 'react-router-dom';
 
 /**
  * Jump to Comment Component
  * @param {Object} props -- Contains whether to show the button and its function
  */
-export const JumpToComment = ({ show, jumpToComment, uuid }) => show && (
-  <Button
-    name="jumpToComment"
-    id={`jumpToComment${uuid}`}
-    classNames={['cf-btn-link comment-control-button horizontal']}
-    onClick={jumpToComment}
+export const JumpToComment = ({ documentPathBase, currentDocument, comment, showPdf }) => (
+  <Link
+    onClick={() => showPdf(currentDocument.id)}
+    className={classNames('cf-btn-link', { 'comment-control-button': true, horizontal: true })}
+    to={`${documentPathBase}/${currentDocument.id}?annotation=${comment.id}`}
   >
     Jump to section
-  </Button>
+  </Link>
 );
 
 JumpToComment.propTypes = {
-  show: PropTypes.bool,
-  jumpToComment: PropTypes.func,
-  uuid: PropTypes.number
+  documentPathBase: PropTypes.string,
+  currentDocument: PropTypes.object,
+  comment: PropTypes.object
 };
 
 /**
@@ -36,15 +36,15 @@ JumpToComment.propTypes = {
 export const Comment = ({
   horizontalLayout,
   selected,
-  jumpToComment,
   date,
   page,
-  currentDocument,
   comment,
   handleClick,
   deleteComment,
   editComment,
-  shareComment
+  shareComment,
+  filterCriteria,
+  ...props
 }) => {
   // Set the Classes for the component
   const classes = classNames('comment-container', {
@@ -58,15 +58,15 @@ export const Comment = ({
         {date && <strong>{moment(date).format('MM/DD/YYYY')}</strong>}
       </div>
       <div className="comment-page-number">
-        {currentDocument.type && (
+        {comment.docType && (
           <span>
-            <Highlight>{currentDocument.type}</Highlight>
+            <Highlight searchQuery={filterCriteria?.searchQuery}>
+              {comment.docType}
+            </Highlight>
           </span>
         )}
         <h4>Page {page}</h4>
-        <strong>
-          <JumpToComment uuid={comment.id} show={Boolean(jumpToComment)} jumpToComment={jumpToComment} />
-        </strong>
+        <JumpToComment comment={comment} {...props} />
       </div>
       <div
         className={classes}
@@ -74,7 +74,7 @@ export const Comment = ({
         id={comment.id}
         onClick={handleClick}
       >
-        <Highlight>
+        <Highlight searchQuery={filterCriteria?.searchQuery}>
           {comment.comment}
         </Highlight>
       </div>
@@ -83,7 +83,7 @@ export const Comment = ({
     <div>
       <div className="comment-control-button-container">
         <h4>
-          Page {page} <JumpToComment uuid={comment.id} show={Boolean(jumpToComment)} jumpToComment={jumpToComment} />
+          Page {page}
         </h4>
         <span>
           <div>

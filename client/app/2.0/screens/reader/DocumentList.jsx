@@ -19,6 +19,7 @@ import {
   clearAllFilters,
   clearTagFilters,
   setTagFilter,
+  toggleComment,
 } from 'store/reader/documentList';
 import { recordSearch } from 'utils/reader';
 
@@ -45,6 +46,7 @@ const DocumentList = (props) => {
 
   // Create the dispatchers
   const actions = {
+    toggleComment: (docId, expanded) => dispatch(toggleComment({ docId, expanded })),
     clearTagFilters: () => dispatch(clearTagFilters(state)),
     setTagFilter: (text, checked, tagId) => dispatch(setTagFilter(text, checked, tagId, state)),
     clearAllFilters: () => dispatch(clearAllFilters(state)),
@@ -52,8 +54,8 @@ const DocumentList = (props) => {
     toggleFilter: (val) => dispatch(toggleDropdownFilterVisibility(val)),
     setCategoryFilter: (categoryName, checked) => dispatch(setCategoryFilter(categoryName, checked, state)),
     changeView: (val) => dispatch(changeView(val)),
-    search: (val) => dispatch(setSearch(val, state.annotations, state.storeDocuments)),
-    clearSearch: () => dispatch(clear(state.filterCriteria, state.annotations, state.storeDocuments)),
+    search: (val) => dispatch(setSearch(val, state.comments, state.storeDocuments)),
+    clearSearch: () => dispatch(clear(state.filterCriteria, state.comments, state.storeDocuments)),
     recordSearch: (query) => recordSearch(props.match.params.vacolsId, query),
     changeSort: (val) => dispatch(changeSortState(val, state)),
     showPdf: (docId) => dispatch(showPdf({
@@ -80,7 +82,12 @@ const DocumentList = (props) => {
             documentPathBase={`/reader/appeal/${ state.appeal.id }/documents`}
             show={state.documentsView === 'documents'}
           />
-          <CommentsTable {...state} {...actions} show={state.documentsView === 'comments'} />
+          <CommentsTable
+            {...state}
+            {...actions}
+            documentPathBase={`/reader/appeal/${ state.appeal.id }/documents`}
+            show={state.documentsView === 'comments'}
+          />
         </div>
       </AppSegment>
       <LastRetrievalInfo {...state.documentList} />

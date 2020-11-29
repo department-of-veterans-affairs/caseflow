@@ -49,7 +49,7 @@ export const documentListScreen = (state) => {
     currentDocument: state.reader.documentViewer.selected,
     storeDocuments: state.reader.documentList.documents,
     documentList: state.reader.documentList,
-    annotations: state.reader.annotationLayer.comments,
+    comments: state.reader.annotationLayer.comments,
     documentsView: documentsView(
       Object.values(documents),
       state.reader.documentList.filterCriteria,

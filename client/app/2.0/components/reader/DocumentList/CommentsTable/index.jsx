@@ -5,20 +5,19 @@ import { constant } from 'lodash';
 
 // Local Dependencies
 import Table from 'app/components/Table';
-import { Comment } from 'components/reader/DocumentList/CommentsTable/Comment';
-import { formatCommentRows } from 'utils/reader';
+import { Comment } from 'components/reader/DocumentViewer/Sidebar/Comment';
 import { documentHeaders } from 'components/reader/DocumentList/DocumentsTable/Columns';
 
 /**
  * Comments Table Component
  * @param {Object} -- Props contain the documents and annotations
  */
-export const CommentsTable = ({ onJumpToComment, documents, annotations, searchQuery, show, ...props }) => {
-  // Calculate the rows
-  const { rows } = formatCommentRows(documents, annotations, searchQuery);
+export const CommentsTable = ({ showPdf, documents, comments, filterCriteria, show, documentPathBase, ...props }) => {
+  // Filter the rows
+  const rows = filterCriteria?.searchQuery ? comments.filter((item) => item.comment.includes(filterCriteria?.searchQuery)) : comments;
 
   // Get the row Span for the table
-  const span = documentHeaders(props).length;
+  const span = () => documentHeaders(props).length;
 
   return show && (
     <div>
@@ -27,20 +26,26 @@ export const CommentsTable = ({ onJumpToComment, documents, annotations, searchQ
           {
             span,
             header: 'Sorted by relevant date',
-            valueFunction: (comment, idx) => (
-              <Comment
-                key={comment.uuid}
-                id={`comment-${idx}`}
-                page={comment.page}
-                onJumpToComment={() => onJumpToComment(comment)}
-                uuid={comment.uuid}
-                date={comment.relevant_date}
-                docType={comment.docType}
-                horizontalLayout
-              >
-                {comment.comment}
-              </Comment>
-            )
+            valueFunction: (comment, index) => {
+              // Get the Comment document
+              const doc = documents[comment.document_id];
+
+              return (
+                <Comment
+                  showPdf={showPdf}
+                  documentPathBase={documentPathBase}
+                  currentDocument={doc}
+                  comment={comment}
+                  key={index}
+                  id={`comment${doc?.id}-${index}`}
+                  selected={false}
+                  page={comment?.page}
+                  date={comment?.relevant_date}
+                  horizontalLayout
+                  {...props}
+                />
+              );
+            }
           }
         ]}
         rowObjects={rows}
@@ -55,9 +60,9 @@ export const CommentsTable = ({ onJumpToComment, documents, annotations, searchQ
 };
 
 CommentsTable.propTypes = {
-  documents: PropTypes.object.isRequired,
-  onJumpToComment: PropTypes.func,
-  annotations: PropTypes.array,
-  searchQuery: PropTypes.string,
+  documents: PropTypes.array.isRequired,
+  showPdf: PropTypes.func,
+  comments: PropTypes.array,
+  filterCriteria: PropTypes.object,
   show: PropTypes.bool
 };

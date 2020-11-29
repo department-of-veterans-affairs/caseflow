@@ -12,7 +12,7 @@ import { Highlight } from 'components/reader/DocumentList/Highlight';
 import FilterIcon from 'app/components/FilterIcon';
 import { DoubleArrow } from 'app/components/RenderFunctions';
 
-import { Comment } from 'components/reader/DocumentList/CommentsTable/Comment';
+import { Comment } from 'components/reader/DocumentViewer/Sidebar/Comment';
 import { CommentIndicator } from 'components/reader/DocumentList/DocumentsTable/CommentIndicator';
 import { CategoryPicker } from 'components/reader/DocumentList/DocumentsTable/CategoryPicker';
 import { CategoryIcons } from 'components/reader/DocumentList/DocumentsTable/CategoryIcons';
@@ -24,21 +24,22 @@ import { TagPicker } from 'components/reader/DocumentList/DocumentsTable/TagPick
  * @param {Object} annotations -- Object containing all annotations per document
  * @param {Function} jumpToComment -- Function to jump to the clicked comment
  */
-export const commentValue = (annotations, jumpToComment) => (doc) => (
+export const commentValue = ({ comments, documentPathBase, showPdf, ...props }) => (doc) => (
   <ul className="cf-no-styling-list" aria-label="Document comments">
-    {sort(annotations[doc.id], ['page', 'y']).map((comment, index) => (
+    {sort(comments.filter((comment) => comment.document_id === doc.id), ['page', 'y']).map((comment, index) => (
       <Comment
-        key={comment.uuid}
+        {...props}
+        showPdf={showPdf}
+        documentPathBase={documentPathBase}
+        currentDocument={doc}
+        comment={comment}
+        key={comment.id}
         id={`comment${doc.id}-${index}`}
         selected={false}
         page={comment.page}
-        onJumpToComment={jumpToComment(comment)}
-        uuid={comment.uuid}
         date={comment.relevant_date}
         horizontalLayout
-      >
-        {comment.comment}
-      </Comment>
+      />
     ))}
   </ul>
 );
@@ -311,7 +312,7 @@ export const documentHeaders = ({ lastReadIndicatorRef, ...props }) => [
   {
     cellClass: 'comments-column',
     header: <CommentHeader {...props} />,
-    valueFunction: (doc) => <CommentIndicator docId={doc.id} {...props} />
+    valueFunction: (doc) => <CommentIndicator doc={doc} {...props} />
   }
 ];
 
@@ -321,7 +322,7 @@ export const documentHeaders = ({ lastReadIndicatorRef, ...props }) => [
  */
 export const commentHeaders = (props) => [
   {
-    valueFunction: commentValue(props.annotationsPerDocument, props.jumpToComment),
-    span: documentHeaders(props).length
+    valueFunction: commentValue(props),
+    span: () => documentHeaders(props).length
   }
 ];
