@@ -20,7 +20,7 @@ FactoryBot.define do
     scheduled_for { hearing_day&.scheduled_for }
 
     transient do
-      disposition { nil }
+      disposition { disposition }
       case_hearing do
         create(
           :case_hearing,
