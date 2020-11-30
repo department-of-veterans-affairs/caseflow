@@ -44,7 +44,7 @@ class HearingTask < Task
 
     if appeal.is_a?(LegacyAppeal)
       update_legacy_appeal_location
-    else
+    elsif appeal.is_a?(Appeal)
       create_evidence_or_ihp_task
     end
   end
