@@ -144,20 +144,4 @@ describe NoShowHearingTask, :postgres do
       end
     end
   end
-
-  describe "completing a child HearingAdminActionTask" do
-    let!(:hearing_admin_action_task) do
-      HearingAdminActionVerifyPoaTask.create!(
-        appeal: appeal,
-        parent: no_show_hearing_task,
-        assigned_to: HearingsManagement.singleton
-      )
-    end
-
-    it "sets the status of the parent NoShowHearingTask to assigned" do
-      expect(no_show_hearing_task.status).to eq(Constants.TASK_STATUSES.on_hold)
-      hearing_admin_action_task.update!(status: Constants.TASK_STATUSES.completed)
-      expect(no_show_hearing_task.status).to eq(Constants.TASK_STATUSES.assigned)
-    end
-  end
 end
