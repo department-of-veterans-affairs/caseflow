@@ -41,7 +41,7 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
   );
 };
 
-export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, appealId }) => {
+export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
   const [receiptDate, setReceiptDate] = useState(nodDate);
 
   const buttons = [

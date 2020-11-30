@@ -107,7 +107,7 @@ exports[`EditNodDateModal renders correctly 1`] = `
             >
               <div>
                 <ReactMarkdown
-                  source="**Editing NOD date affects the case timeline and may change when the case is assigned for hearing.**"
+                  source="**Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.**"
                   transformLinkUri={[Function]}
                 >
                   <Root
@@ -122,9 +122,9 @@ exports[`EditNodDateModal renders correctly 1`] = `
                                   Object {
                                     "position": Object {
                                       "end": Object {
-                                        "column": 99,
+                                        "column": 102,
                                         "line": 1,
-                                        "offset": 98,
+                                        "offset": 101,
                                       },
                                       "start": Object {
                                         "column": 3,
@@ -133,14 +133,14 @@ exports[`EditNodDateModal renders correctly 1`] = `
                                       },
                                     },
                                     "type": "text",
-                                    "value": "Editing NOD date affects the case timeline and may change when the case is assigned for hearing.",
+                                    "value": "Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.",
                                   },
                                 ],
                                 "position": Object {
                                   "end": Object {
-                                    "column": 101,
+                                    "column": 104,
                                     "line": 1,
-                                    "offset": 100,
+                                    "offset": 103,
                                   },
                                   "start": Object {
                                     "column": 1,
@@ -153,9 +153,9 @@ exports[`EditNodDateModal renders correctly 1`] = `
                             ],
                             "position": Object {
                               "end": Object {
-                                "column": 101,
+                                "column": 104,
                                 "line": 1,
-                                "offset": 100,
+                                "offset": 103,
                               },
                               "start": Object {
                                 "column": 1,
@@ -168,9 +168,9 @@ exports[`EditNodDateModal renders correctly 1`] = `
                         ],
                         "position": Object {
                           "end": Object {
-                            "column": 101,
+                            "column": 104,
                             "line": 1,
-                            "offset": 100,
+                            "offset": 103,
                           },
                           "start": Object {
                             "column": 1,
@@ -194,9 +194,9 @@ exports[`EditNodDateModal renders correctly 1`] = `
                             Object {
                               "position": Object {
                                 "end": Object {
-                                  "column": 99,
+                                  "column": 102,
                                   "line": 1,
-                                  "offset": 98,
+                                  "offset": 101,
                                 },
                                 "start": Object {
                                   "column": 3,
@@ -205,13 +205,13 @@ exports[`EditNodDateModal renders correctly 1`] = `
                                 },
                               },
                               "type": "text",
-                              "value": "Editing NOD date affects the case timeline and may change when the case is assigned for hearing.",
+                              "value": "Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.",
                             }
                           }
                           nodeKey="text-1-3-0"
-                          value="Editing NOD date affects the case timeline and may change when the case is assigned for hearing."
+                          value="Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal."
                         >
-                          Editing NOD date affects the case timeline and may change when the case is assigned for hearing.
+                          Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.
                         </TextRenderer>
                       </strong>
                     </p>
