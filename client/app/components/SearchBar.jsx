@@ -235,7 +235,7 @@ SearchBar.propTypes = {
   submitUsingEnterKey: PropTypes.bool,
 
   /**
-   * Text to show on the inside of the search bar, justified right
+   * Text to show on the inside of the search bar, justified right. Only supported with size 'small'
    */
   internalText: PropTypes.string,
 

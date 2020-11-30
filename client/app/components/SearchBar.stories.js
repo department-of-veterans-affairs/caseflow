@@ -8,7 +8,9 @@ const handleSearchClick = (setLoadingFn) => {
   setTimeout(() => setLoadingFn(false), 2000);
 };
 
-const Template = (args) => {
+const Template = (args) => <span className={args.parentClassName} ><SearchBar {...args} /></span>;
+
+const Controlled = (args) => {
   const [val, setVal] = useState('');
   const [loading, setLoading] = useState(false);
   const handleClick = () => handleSearchClick(setLoading);
@@ -22,26 +24,25 @@ const Template = (args) => {
       onClearSearch={clearVal}
       loading={loading}
       value={val}
-      placeholder="Type to search..."
-      submitUsingEnterKey
     />
   </span>);
 };
 
 export const Big = Template.bind({});
-Big.args = { id: 'search-big', title: 'Search Big', size: 'big' };
 
 export const Small = Template.bind({});
-Small.args = { id: 'search-small', title: 'Search Small', size: 'small' };
+Small.args = { size: 'small' };
+
+export const Label = Template.bind({});
+Label.args = { title: 'This is a title' };
 
 export const Internal = Template.bind({});
-Internal.args = { id: 'search-internal', size: 'small', internalText: 'Text' };
+Internal.args = { size: 'small', internalText: 'Text' };
+
+export const Loading = Template.bind({});
+Loading.args = { loading: true };
 
 export const SearchAhead = Template.bind({});
-SearchAhead.args = {
-  id: 'search-ahead',
-  title: 'Search Ahead',
-  size: 'small',
-  isSearchAhead: true,
-  parentClassName: ' cf-search-ahead-parent'
-};
+SearchAhead.args = { isSearchAhead: true, parentClassName: ' cf-search-ahead-parent' };
+
+export const Callbacks = Controlled.bind({});
