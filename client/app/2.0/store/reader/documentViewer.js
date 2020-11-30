@@ -43,6 +43,7 @@ export const initialState = {
   text: [],
   selected: {},
   loading: false,
+  keyboardInfoOpen: false,
   openedAccordionSections: ['Categories', 'Issue tags', COMMENT_ACCORDION_KEY],
   tagOptions: {},
   jumpToPageNumber: null,
@@ -299,6 +300,9 @@ const documentViewerSlice = createSlice({
   name: 'documentViewer',
   initialState,
   reducers: {
+    toggleKeyboardInfo: (state, action) => {
+      state.keyboardInfoOpen = action.payload;
+    },
     setPageNumber: (state, action) => {
       state.selected.currentPage = action.payload;
     },
@@ -530,6 +534,7 @@ export const {
   changeDescription,
   resetDescription,
   setPageNumber,
+  toggleKeyboardInfo
 } = documentViewerSlice.actions;
 
 // Default export the reducer

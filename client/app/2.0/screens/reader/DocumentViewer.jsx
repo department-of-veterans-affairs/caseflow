@@ -31,7 +31,8 @@ import {
   resetDescription,
   handleCategoryToggle,
   setPageNumber,
-  searchText
+  searchText,
+  toggleKeyboardInfo
 } from 'store/reader/documentViewer';
 import {
   selectComment,
@@ -46,6 +47,7 @@ import {
   startMove,
   moveComment
 } from 'store/reader/annotationLayer';
+import { KeyboardInfo } from 'app/2.0/components/reader/DocumentViewer/modals/KeyboardInfo';
 
 const DocumentViewer = (props) => {
   // Get the Document List state
@@ -77,6 +79,7 @@ const DocumentViewer = (props) => {
 
   // Create the dispatchers
   const actions = {
+    toggleKeyboardInfo: (val) => dispatch(toggleKeyboardInfo(val)),
     moveComment: (comment) => dispatch(moveComment(comment)),
     startMove: (commentId) => dispatch(startMove(commentId)),
     createComment: (comment) => dispatch(createComment(comment)),
@@ -241,6 +244,7 @@ const DocumentViewer = (props) => {
       />
       <ShareComment {...state} {...actions} show={state.shareCommentId !== null} commentId={state.shareCommentId} />
       <DeleteComment {...state} {...actions} show={state.deleteCommentId !== null} />
+      <KeyboardInfo {...state} {...actions} show={state.keyboardInfoOpen} />
     </div>
   );
 };

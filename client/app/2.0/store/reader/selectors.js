@@ -98,6 +98,7 @@ export const documentScreen = (state) => {
     docsCount,
     categories,
     comments,
+    keyboardInfoOpen: state.reader.documentViewer.keyboardInfoOpen,
     pendingDeletion: state.reader.annotationLayer.pendingDeletion,
     droppedComment: state.reader.annotationLayer.droppedComment,
     addingComment: state.reader.annotationLayer.dropping,
