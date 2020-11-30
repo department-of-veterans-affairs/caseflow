@@ -34,6 +34,9 @@ Big.args = { id: 'search-big', title: 'Search Big', size: 'big' };
 export const Small = Template.bind({});
 Small.args = { id: 'search-small', title: 'Search Small', size: 'small' };
 
+export const Internal = Template.bind({});
+Internal.args = { id: 'search-internal', size: 'small', internalText: 'Text' };
+
 export const SearchAhead = Template.bind({});
 SearchAhead.args = {
   id: 'search-ahead',
