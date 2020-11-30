@@ -70,7 +70,7 @@ const DocumentViewer = (props) => {
   };
 
   // Load the Documents
-  useEffect(fetchDocuments({ ...state, params }, dispatch), []);
+  useEffect(fetchDocuments({ ...state, params }, dispatch), [params.docId]);
 
   // Create the Grid Ref
   const gridRef = React.createRef();

@@ -32,7 +32,8 @@ export const CommentsTable = ({ showPdf, documents, comments, filterCriteria, sh
 
               return (
                 <Comment
-                  showPdf={showPdf}
+                  {...props}
+                  showPdf={() => showPdf(doc.id)}
                   documentPathBase={documentPathBase}
                   currentDocument={doc}
                   comment={comment}
@@ -42,7 +43,6 @@ export const CommentsTable = ({ showPdf, documents, comments, filterCriteria, sh
                   page={comment?.page}
                   date={comment?.relevant_date}
                   horizontalLayout
-                  {...props}
                 />
               );
             }
@@ -51,7 +51,7 @@ export const CommentsTable = ({ showPdf, documents, comments, filterCriteria, sh
         rowObjects={rows}
         className="documents-table full-width"
         bodyClassName="cf-document-list-body"
-        getKeyForRow={(_, row) => row.uuid}
+        getKeyForRow={(_, row) => row.id}
         headerClassName="comments-table-header"
         rowClassNames={constant('borderless')}
       />
@@ -60,7 +60,7 @@ export const CommentsTable = ({ showPdf, documents, comments, filterCriteria, sh
 };
 
 CommentsTable.propTypes = {
-  documents: PropTypes.array.isRequired,
+  documents: PropTypes.object.isRequired,
   showPdf: PropTypes.func,
   comments: PropTypes.array,
   filterCriteria: PropTypes.object,
