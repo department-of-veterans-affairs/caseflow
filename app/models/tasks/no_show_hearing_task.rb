@@ -54,7 +54,7 @@ class NoShowHearingTask < Task
   private
 
   # ensures this task gets completed when child TimedHoldTask is completed after 30 days
-  def cascade_closure_from_child_task?
+  def cascade_closure_from_child_task?(_child_task)
     true
   end
 
