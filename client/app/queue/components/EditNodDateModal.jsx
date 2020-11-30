@@ -6,7 +6,7 @@ import DateSelector from 'app/components/DateSelector';
 import COPY from 'app/../COPY';
 import { useDispatch } from 'react-redux';
 import { resetSuccessMessages, showSuccessMessage } from '../uiReducer/uiActions';
-import { editAppeal } from '../QueueActions.js';
+import { editAppeal } from '../QueueActions';
 import ApiUtil from '../../util/ApiUtil';
 
 export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealId }) => {
@@ -16,7 +16,7 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
     dispatch(resetSuccessMessages());
   }, []);
 
-  const handleSubmit = () => {
+  const handleSubmit = (receiptDate) => {
     const successMessage = {
       title: COPY.EDIT_NOD_DATE_SUCCESS_ALERT_TITLE,
       detail: COPY.EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE,
