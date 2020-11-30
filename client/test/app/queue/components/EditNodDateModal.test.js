@@ -1,6 +1,5 @@
 import React from 'react';
 import { EditNodDateModal } from 'app/queue/components/EditNodDateModal';
-import { render } from '@testing-library/react';
 import Enzyme, { mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 
@@ -9,7 +8,6 @@ Enzyme.configure({ adapter: new Adapter() });
 describe('EditNodDateModal', () => {
   const onSubmit = jest.fn();
   const onCancel = jest.fn();
-  // const onChange = jest.fn();
   const defaultNodDate = '2020-10-31';
   const futureDate = '2020-12-25';
   const defaultNewNodDate = '2020-10-15';
@@ -29,14 +27,7 @@ describe('EditNodDateModal', () => {
   });
 
   it('renders correctly', () => {
-    const component = () => {
-      return render(<EditNodDateModal
-        onCancel={onCancel}
-        onSubmit={onSubmit}
-        nodDate={defaultNodDate}
-      />
-      );
-    };
+    const component = setupEditNodDateModal();
 
     expect(component).toMatchSnapshot();
   });
