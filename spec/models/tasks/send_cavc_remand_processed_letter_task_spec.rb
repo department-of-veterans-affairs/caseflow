@@ -136,26 +136,28 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
       completed_distribution_task.completed!
     end
 
-    it "uses the open distribution task as the parent for blocking admin action tasks" do
-      admin_actions = {
-        SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION: [TranslationTask, Translation],
-        SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION: [TranscriptionTask, TranscriptionTeam],
-        SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION: [PrivacyActTask, PrivacyTeam],
-        SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION: [IhpColocatedTask, Colocated]
-      }
+    it "provides the correct parent id for blocking and non blocking admin actions" do
+      admin_actions = [
+        [:SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION, TranslationTask, Translation],
+        [:SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION, TranscriptionTask, TranscriptionTeam],
+        [:SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION, PrivacyActTask, PrivacyTeam],
+        [:SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION, IhpColocatedTask, Colocated],
+        [:CLARIFY_POA_BLOCKING_CAVC, CavcPoaClarificationTask, CavcLitigationSupport, true]
+      ]
 
-      admin_actions.each do |admin_action, task_and_org|
+      admin_actions.each do |admin_action, new_task_type, assignee, blocks_cavc_task|
         task_action = subject.detect { |action| action[:label] == Constants::TASK_ACTIONS[admin_action.to_s]["label"] }
 
-        new_task_type, assignee = task_and_org
         expect(task_action[:data][:type]).to eq new_task_type.name
         expect(task_action[:data][:selected]).to eq assignee.singleton
 
         parent = Task.find(task_action[:data][:parent_id])
-        expect(parent.type).to eq DistributionTask.name
+        expected_parent = blocks_cavc_task ? cavc_task : cavc_task.parent.parent
+        expected_parent_type = blocks_cavc_task ? SendCavcRemandProcessedLetterTask : DistributionTask
+        expect(parent.type).to eq expected_parent_type.name
+        expect(parent).to eq expected_parent
         expect(parent.appeal).to eq cavc_task.appeal
         expect(parent.open?).to be true
-        expect(parent).to eq cavc_task.parent.parent
       end
     end
 
