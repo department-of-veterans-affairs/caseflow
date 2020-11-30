@@ -13,6 +13,7 @@ import OnHoldLabel from '../components/OnHoldLabel';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import DecisionDateTimeLine from '../components/DecisionDateTimeLine';
 import ReactMarkdown from 'react-markdown';
+import { EditNodDateModalContainer } from './EditNodDateModal';
 
 export const grayLineStyling = css({
   width: '5px',
@@ -87,7 +88,8 @@ class TaskRows extends React.PureComponent {
     }
 
     this.state = {
-      taskInstructionsIsVisible: { }
+      taskInstructionsIsVisible: { },
+      showEditNodDateModal: false
     };
   }
 
@@ -319,6 +321,12 @@ class TaskRows extends React.PureComponent {
     </tr>;
   }
 
+  toggleEditNodDateModal = () => this.setState((state) => ({ showEditNodDateModal: !state.showEditNodDateModal }));
+
+  handleNODDateChange = () => {
+    this.toggleEditNodDateModal();
+  }
+
   render = () => {
     const {
       appeal,
@@ -367,6 +375,25 @@ class TaskRows extends React.PureComponent {
           <GreenCheckmark /></td>
         <td className="taskContainerStyling taskInformationTimelineContainerStyling">
           { COPY.CASE_TIMELINE_NOD_RECEIVED } <br />
+          {this.props.editNodDateEnabled && (
+            <React.Fragment>
+              <p>
+                <Button
+                  type="button"
+                  linkStyling
+                  onClick={this.toggleEditNodDateModal}>
+                  {COPY.CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY}
+                </Button>
+              </p>
+              {this.state.showEditNodDateModal && (
+                <EditNodDateModalContainer
+                  onCancel={this.toggleEditNodDateModal}
+                  onSubmit={this.toggleEditNodDateModal}
+                  nodDate={appeal.nodDate}
+                />
+              )}
+            </React.Fragment>
+          )}
         </td>
       </tr> }
     </React.Fragment>;
@@ -375,6 +402,7 @@ class TaskRows extends React.PureComponent {
 
 TaskRows.propTypes = {
   appeal: PropTypes.object,
+  editNodDateEnabled: PropTypes.bool,
   hideDropdown: PropTypes.bool,
   taskList: PropTypes.array,
   timeline: PropTypes.bool
