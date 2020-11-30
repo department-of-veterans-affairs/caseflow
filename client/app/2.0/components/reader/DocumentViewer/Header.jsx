@@ -16,9 +16,6 @@ import {
 } from 'app/components/RenderFunctions';
 import { CategoryIcons } from 'components/reader/DocumentList/DocumentsTable/CategoryIcons';
 
-// TODO: Move to constants in later part of the stack
-const ZOOM_RATE = 0.3;
-
 /**
  * Document Header displays the PDF navigation controls
  * @param {Object} props -- Contains details about the PDF navigation and sidebar

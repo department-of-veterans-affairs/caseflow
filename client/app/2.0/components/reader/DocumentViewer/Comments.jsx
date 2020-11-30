@@ -2,12 +2,10 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import querystring from 'querystring';
-import { isEmpty } from 'lodash';
 
 // Internal Dependencies
 import { commentIcon } from 'app/components/RenderFunctions';
 import { commentStyles, selectionStyles } from 'styles/reader/Document/Comments';
-import { getPageCoordinatesOfMouseEvent } from 'utils/reader';
 
 /**
  * Comments component for the Document Screen
@@ -104,8 +102,8 @@ Comments.propTypes = {
   comments: PropTypes.array,
   pageIndex: PropTypes.number,
   file: PropTypes.string,
-  dragOverPage: PropTypes.func,
-  dropComment: PropTypes.func,
+  movingComment: PropTypes.func,
+  handleDrop: PropTypes.func,
   moveMouse: PropTypes.func,
   onClick: PropTypes.func,
   commentsRef: PropTypes.element,

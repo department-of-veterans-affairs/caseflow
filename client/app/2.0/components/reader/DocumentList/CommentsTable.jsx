@@ -14,7 +14,9 @@ import { documentHeaders } from 'components/reader/DocumentList/DocumentsTable/C
  */
 export const CommentsTable = ({ showPdf, documents, comments, filterCriteria, show, documentPathBase, ...props }) => {
   // Filter the rows
-  const rows = filterCriteria?.searchQuery ? comments.filter((item) => item.comment.includes(filterCriteria?.searchQuery)) : comments;
+  const rows = filterCriteria?.searchQuery ?
+    comments.filter((item) => item.comment.includes(filterCriteria?.searchQuery)) :
+    comments;
 
   // Get the row Span for the table
   const span = () => documentHeaders(props).length;
@@ -41,6 +43,7 @@ export const CommentsTable = ({ showPdf, documents, comments, filterCriteria, sh
                   id={`comment${doc?.id}-${index}`}
                   selected={false}
                   page={comment?.page}
+                  // eslint-disable-next-line
                   date={comment?.relevant_date}
                   horizontalLayout
                 />
@@ -61,6 +64,7 @@ export const CommentsTable = ({ showPdf, documents, comments, filterCriteria, sh
 
 CommentsTable.propTypes = {
   documents: PropTypes.object.isRequired,
+  documentPathBase: PropTypes.string,
   showPdf: PropTypes.func,
   comments: PropTypes.array,
   filterCriteria: PropTypes.object,

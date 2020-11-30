@@ -18,10 +18,7 @@ export const SidebarComments = ({
   addComment,
   droppedComment,
   errors,
-  createAnnotation,
   updateComment,
-  stopPlacingAnnotation,
-  cancelEditAnnotation,
   handleClick,
   commentRef,
   selectedComment,
@@ -50,7 +47,6 @@ export const SidebarComments = ({
             disableOnEmpty
             onChange={(val) => updateComment({ ...droppedComment, pendingComment: val })}
             changeDate={(val) => updateComment({ ...droppedComment, pendingDate: val })}
-            onCancelCommentEdit={stopPlacingAnnotation}
             saveComment={() => createComment({
               ...droppedComment,
               relevant_date: droppedComment.pendingDate || droppedComment.relevant_date,
@@ -70,7 +66,6 @@ export const SidebarComments = ({
                   comment: comment.pendingComment || comment.comment
                 })}
                 comment={comment}
-                onCancelCommentEdit={cancelEditAnnotation}
                 onChange={(val) => updateComment({ ...comment, pendingComment: val })}
                 changeDate={(val) => updateComment({ ...comment, pendingDate: val })}
                 value={comment.comment}
@@ -103,14 +98,12 @@ SidebarComments.propTypes = {
   addComment: PropTypes.func,
   droppedComment: PropTypes.object,
   errors: PropTypes.object,
-  createAnnotation: PropTypes.func,
+  saveComment: PropTypes.func,
+  cancelDrop: PropTypes.func,
+  createComment: PropTypes.func,
   updateComment: PropTypes.func,
   updateCommentDate: PropTypes.func,
-  stopPlacingAnnotation: PropTypes.func,
-  cancelEditAnnotation: PropTypes.func,
-  requestEditAnnotation: PropTypes.func,
   handleClick: PropTypes.func,
   commentRef: PropTypes.element,
-  startEditAnnotation: PropTypes.func,
   selectedComment: PropTypes.object,
 };

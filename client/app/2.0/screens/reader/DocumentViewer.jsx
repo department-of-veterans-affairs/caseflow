@@ -209,7 +209,11 @@ const DocumentViewer = (props) => {
   };
 
   return (
-    <div id="document-viewer" className="cf-pdf-page-container" onClick={state.addingComment === true ? actions.clickPage : null}>
+    <div
+      id="document-viewer"
+      className="cf-pdf-page-container"
+      onClick={state.addingComment === true ? actions.clickPage : null}
+    >
       <div className={classNames('cf-pdf-container', { 'hidden-sidebar': state.hidePdfSidebar })} {...pdfWrapper}>
         <DocumentHeader
           {...state}

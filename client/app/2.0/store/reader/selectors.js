@@ -1,7 +1,3 @@
-// External Dependencies
-import { createSelector } from '@reduxjs/toolkit';
-import { isEmpty, compact, uniqBy } from 'lodash';
-
 // Local Dependencies
 import { documentCategories } from 'store/constants/reader';
 import { formatCategoryName } from 'app/2.0/utils/reader/format';

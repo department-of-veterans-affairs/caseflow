@@ -3,10 +3,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // Internal Dependencies
-import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Keyboard } from 'app/components/RenderFunctions';
+import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'app/components/RenderFunctions';
 import Modal from 'app/components/Modal';
 import Table from 'app/components/Table';
-import Button from 'app/components/Button';
 
 /**
  * Scroll Keyboard Shortcuts Columns

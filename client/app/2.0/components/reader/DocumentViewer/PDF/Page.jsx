@@ -136,20 +136,16 @@ export const Page = ({
 };
 
 Page.propTypes = {
-  isVisible: PropTypes.bool,
   pageIndex: PropTypes.number,
   addingComment: PropTypes.bool,
-  textLayerRef: PropTypes.element,
-  outerWidth: PropTypes.number,
-  outerHeight: PropTypes.number,
+  dropComment: PropTypes.func,
+  movingComment: PropTypes.func,
+  moveComment: PropTypes.func,
   scale: PropTypes.number,
   onClick: PropTypes.func,
   pageRef: PropTypes.element,
   canvasRef: PropTypes.element,
   currentDocument: PropTypes.object,
-  innerWidth: PropTypes.number,
-  innerHeight: PropTypes.number,
-  isDrawing: PropTypes.bool,
   rotation: PropTypes.number,
   style: PropTypes.object,
   numPages: PropTypes.number,

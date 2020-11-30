@@ -11,7 +11,7 @@ import {
 import { SortArrowUp, SortArrowDown } from 'app/components/RenderFunctions';
 import { commentHeaders, documentHeaders } from 'components/reader/DocumentList/DocumentsTable/Columns';
 import { documentRows, focusElement } from 'utils/reader';
-import { selectCurrentPdfLocally, handleToggleCommentOpened } from 'app/reader/Documents/DocumentsActions';
+import { selectCurrentPdfLocally } from 'app/reader/Documents/DocumentsActions';
 
 /**
  * Documents Table Component

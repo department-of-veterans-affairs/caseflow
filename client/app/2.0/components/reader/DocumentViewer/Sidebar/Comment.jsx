@@ -26,7 +26,8 @@ export const JumpToComment = ({ documentPathBase, currentDocument, comment, show
 JumpToComment.propTypes = {
   documentPathBase: PropTypes.string,
   currentDocument: PropTypes.object,
-  comment: PropTypes.object
+  comment: PropTypes.object,
+  showPdf: PropTypes.func,
 };
 
 /**
@@ -129,7 +130,7 @@ export const Comment = ({
 Comment.propTypes = {
   horizontalLayout: PropTypes.bool,
   selected: PropTypes.bool,
-  jumpToComment: PropTypes.func,
+  filterCriteria: PropTypes.object,
   date: PropTypes.string,
   children: PropTypes.element,
   page: PropTypes.number,
