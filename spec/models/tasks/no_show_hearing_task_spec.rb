@@ -46,10 +46,10 @@ describe NoShowHearingTask, :postgres do
     end
   end
 
-  context "create a new NoShowHearingTask with hold" do
-    subject { NoShowHearingTask.create_with_hold(disposition_task) }
-
+  context "create a new NoShowHearingTask with hold", focus: true do
     shared_examples "creates task and timed hold task" do
+      subject { NoShowHearingTask.create_with_hold(disposition_task) }
+
       it "creates NoShowHearingTask and TimedHoldTask as child", :aggregate_failures do
         subject
 
@@ -62,16 +62,51 @@ describe NoShowHearingTask, :postgres do
       end
     end
 
+    shared_examples "closes NoShowHearingtask" do
+      before { NoShowHearingTask.create_with_hold(disposition_task) }
+
+      subject do
+        task_timer = TimedHoldTask.first.task_timers.first
+        TaskTimerJob.new.send(:process, task_timer)
+      end
+
+      it "closes task and routes correctly", :aggregate_failures do
+        subject
+
+        expect(NoShowHearingTask.first.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(TimedHoldTask.first.status).to eq(Constants.TASK_STATUSES.completed)
+
+        if appeal.is_a? (Appeal)
+          expect(EvidenceSubmissionWindowTask.first.status).to eq(Constants.TASK_STATUSES.assigned)
+        else
+          expect(appeal.location_code).to eq(LegacyAppeal::LOCATION_CODES[:case_storage])
+        end
+      end
+    end
+
     context "ama appeal" do
+      let!(:hearing) { create(:hearing, :no_show, appeal: appeal) }
+      let!(:association) { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
+
       include_examples "creates task and timed hold task"
 
-      context "when timer ends"
+      context "when timer ends" do
+        include_examples "closes NoShowHearingtask"
+      end
     end
 
     context "legacy appeal" do
-      let(:appeal) { create(:legacy_appeal) }
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+      let!(:hearing) do
+        create(:legacy_hearing, appeal: appeal, disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS.key("no_show"))
+      end
+      let!(:association) { create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
 
       include_examples "creates task and timed hold task"
+
+      context "when timer ends" do
+        include_examples "closes NoShowHearingtask"
+      end
     end
   end
 
