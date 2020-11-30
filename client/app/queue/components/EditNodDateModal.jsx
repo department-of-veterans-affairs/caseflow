@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import PropTypes from 'prop-types';
 import Modal from 'app/components/Modal';
@@ -12,18 +12,22 @@ import ApiUtil from '../../util/ApiUtil';
 export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealId }) => {
   const dispatch = useDispatch();
 
-  const handleSubmit = (receiptDate) => {
+  useEffect(() => {
+    dispatch(resetSuccessMessages());
+  }, []);
+
+  const handleSubmit = () => {
     const successMessage = {
       title: COPY.EDIT_NOD_DATE_SUCCESS_ALERT_TITLE,
       detail: COPY.EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE,
     };
-
     const payload = { data: { receipt_date: receiptDate } };
 
     ApiUtil.patch(`/appeals/${appealId}/update_nod_date`, payload).then(() => {
       dispatch(editAppeal(appealId, { nodDate: receiptDate }));
       dispatch(showSuccessMessage(successMessage));
       onSubmit?.();
+      window.scrollTo(0, 0);
     });
   };
 
@@ -66,7 +70,8 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, appealId }) => {
         <ReactMarkdown source={COPY.EDIT_NOD_DATE_MODAL_DESCRIPTION} />
       </div>
       <DateSelector
-        name={COPY.EDIT_NOD_DATE_LABEL}
+        label={COPY.EDIT_NOD_DATE_LABEL}
+        name="nodDate"
         strongLabel
         type="date"
         value={receiptDate}

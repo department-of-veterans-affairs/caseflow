@@ -101,6 +101,27 @@ describe VirtualHearings::SendReminderEmailsJob do
           expect(virtual_hearing.representative_reminder_sent_at).to be_nil
         end
       end
+
+      it "doesn't double send the email" do
+        expect(VirtualHearingMailer).to receive(:reminder).twice.and_call_original
+
+        subject # First Send
+
+        virtual_hearing.reload
+        expect(virtual_hearing.appellant_reminder_sent_at).not_to be_nil
+        expect(virtual_hearing.representative_reminder_sent_at).not_to be_nil
+
+        appellant_reminder_sent_at = virtual_hearing.appellant_reminder_sent_at
+        representative_reminder_sent_at = virtual_hearing.representative_reminder_sent_at
+
+        Timecop.travel(Time.zone.now + 10.hours)
+
+        VirtualHearings::SendReminderEmailsJob.new.perform # Second Send (subject is memoized)
+
+        virtual_hearing.reload
+        expect(virtual_hearing.appellant_reminder_sent_at).to eq(appellant_reminder_sent_at)
+        expect(virtual_hearing.representative_reminder_sent_at).to eq(representative_reminder_sent_at)
+      end
     end
 
     context "hearing date is 2 days out" do

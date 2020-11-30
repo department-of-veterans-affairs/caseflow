@@ -29,9 +29,9 @@ module TaskTreeRenderModule
       )
       ttr.config.default_atts = [:id, :status, :ASGN_BY, :ASGN_TO, :updated_at]
       ttr.config.heading_label_template = lambda { |appeal|
-        docket = (defined?(appeal.docket_type) && appeal.docket_type) ||
-                 (defined?(appeal.docket_name) && appeal.docket_name)
-        "#{appeal.class.name} #{appeal.id} (#{docket}) "
+        docket = appeal.docket_name.first.titleize
+        parenthetical = [docket, appeal.docket_number, appeal.type].compact.join(" ")
+        "#{appeal.class.name} #{appeal.id} (#{parenthetical}) "
       }
       ttr.config.custom["show_all_tasks"] = true
     end
