@@ -46,7 +46,7 @@ describe NoShowHearingTask, :postgres do
     end
   end
 
-  context "create a new NoShowHearingTask with hold", focus: true do
+  context "create a new NoShowHearingTask with hold" do
     shared_examples "creates task and timed hold task" do
       subject { NoShowHearingTask.create_with_hold(disposition_task) }
 
