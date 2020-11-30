@@ -1,0 +1,43 @@
+import { useState } from 'react';
+
+import { Meta, Story, ArgsTable } from '@storybook/addon-docs/blocks';
+
+import * as SearchBarStories from './SearchBar.stories';
+
+import SearchBar from './SearchBar';
+
+<Meta
+  title='Commons/Components/SearchBar'
+  component={SearchBar}
+/>
+
+# Search Bar
+
+Search bars are a block that allows users to search for specific content
+if they know what search terms to use or can’t find desired content in the main navigation.
+In Caseflow they serve as a vital UI component that allows users to
+find information necessary in completing their tasks.
+
+Based on the app there are two sizes: big and small.
+There is also a unique Caseflow search behavior that displays a spinning logo to indicate load times.
+
+**Technical notes:** In the "Search Big" and the "Search Small" examples below,
+click on the Search buttons to activate the loading spinner for a 2 second
+period. For any search ahead search bars, the class `cf-search-ahead-parent`
+must be applied to the parent element.
+
+## Big
+
+<Story story={SearchBarStories.Big} />
+
+## Small
+
+<Story story={SearchBarStories.Small} />
+
+## Search Ahead
+
+<Story story={SearchBarStories.SearchAhead} />
+
+## Args
+
+<ArgsTable of={SearchBar} />
