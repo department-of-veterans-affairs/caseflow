@@ -63,7 +63,8 @@ class AssignToView extends React.Component {
     const action = getAction(this.props);
     const isPulacCerullo = action && action.label === 'Pulac-Cerullo';
 
-    const taskType = taskActionData(this.props).type ? taskActionData(this.props).type : 'Task';
+    const actionData = taskActionData(this.props);
+    const taskType = actionData.type || 'Task';
 
     const payload = {
       data: {
@@ -71,7 +72,7 @@ class AssignToView extends React.Component {
           {
             type: taskType,
             external_id: appeal.externalId,
-            parent_id: task.taskId,
+            parent_id: actionData.parent_id || task.taskId,
             assigned_to_id: this.state.selectedValue,
             assigned_to_type: isTeamAssign ? 'Organization' : 'User',
             instructions: this.state.instructions
@@ -200,7 +201,7 @@ class AssignToView extends React.Component {
 
     return (
       <QueueFlowModal {...modalProps}>
-        <div>{actionData.modal_body ? actionData.modal_body : ''}</div>
+        <p>{actionData.modal_body ? actionData.modal_body : ''}</p>
         {!assigneeAlreadySelected && (
           <React.Fragment>
             <SearchableDropdown

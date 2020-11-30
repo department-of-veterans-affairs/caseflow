@@ -91,6 +91,8 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
     end
 
     context "task assigned to CavcLitigationSupport non-admin (aka user-task)" do
+      let(:child_task) { create(:send_cavc_remand_processed_letter_task, parent: send_task, assigned_to: org_nonadmin) }
+
       it "returns non-admin actions" do
         expect(child_task.assigned_to).to eq org_nonadmin
         expect(child_task.available_actions(org_nonadmin)).to match_array SendCRPLetterTask::USER_ACTIONS
@@ -118,6 +120,56 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
           expect { subject }.to raise_error(StandardError)
           expect(user_task.status).to eq Constants.TASK_STATUSES.assigned
         end
+      end
+    end
+  end
+
+  describe "#available_actions_unwrapper" do
+    let(:cavc_task) { create(:send_cavc_remand_processed_letter_task, assigned_to: create(:user)) }
+
+    subject { cavc_task.available_actions_unwrapper(cavc_task.assigned_to) }
+
+    before do
+      # Create completed distribution task to make sure we're picking the correct (open) parent
+      completed_distribution_task = build(:task, appeal: cavc_task.appeal, type: DistributionTask.name)
+      completed_distribution_task.save!(validate: false)
+      completed_distribution_task.completed!
+    end
+
+    it "provides the correct parent id for blocking and non blocking admin actions" do
+      admin_actions = [
+        [:SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION, TranslationTask, Translation],
+        [:SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION, TranscriptionTask, TranscriptionTeam],
+        [:SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION, PrivacyActTask, PrivacyTeam],
+        [:SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION, IhpColocatedTask, Colocated],
+        [:CLARIFY_POA_BLOCKING_CAVC, CavcPoaClarificationTask, CavcLitigationSupport, true]
+      ]
+
+      admin_actions.each do |admin_action, new_task_type, assignee, blocks_cavc_task|
+        task_action = subject.detect { |action| action[:label] == Constants::TASK_ACTIONS[admin_action.to_s]["label"] }
+
+        expect(task_action[:data][:type]).to eq new_task_type.name
+        expect(task_action[:data][:selected]).to eq assignee.singleton
+
+        parent = Task.find(task_action[:data][:parent_id])
+        expected_parent = blocks_cavc_task ? cavc_task : cavc_task.parent.parent
+        expected_parent_type = blocks_cavc_task ? SendCavcRemandProcessedLetterTask : DistributionTask
+        expect(parent.type).to eq expected_parent_type.name
+        expect(parent).to eq expected_parent
+        expect(parent.appeal).to eq cavc_task.appeal
+        expect(parent.open?).to be true
+      end
+    end
+
+    context "when there is no open distribution task on the appeal" do
+      before { DistributionTask.open.where(appeal: cavc_task.appeal).each(&:completed!) }
+
+      it "provides no parent id to the front end" do
+        translation_action = subject.detect do |action|
+          action[:label] == Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label
+        end
+
+        expect(translation_action[:data][:parent_id]).to be nil
       end
     end
   end

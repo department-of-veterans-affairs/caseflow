@@ -20,6 +20,7 @@ class TasksController < ApplicationController
     BlockedSpecialCaseMovementTask: BlockedSpecialCaseMovementTask,
     ChangeHearingDispositionTask: ChangeHearingDispositionTask,
     ColocatedTask: ColocatedTask,
+    CavcPoaClarificationTask: CavcPoaClarificationTask,
     DocketSwitchRulingTask: DocketSwitchRulingTask,
     DocketSwitchDeniedTask: DocketSwitchDeniedTask,
     DocketSwitchGrantedTask: DocketSwitchGrantedTask,
@@ -38,6 +39,7 @@ class TasksController < ApplicationController
     SendCavcRemandProcessedLetterTask: SendCavcRemandProcessedLetterTask,
     SpecialCaseMovementTask: SpecialCaseMovementTask,
     Task: Task, # Consider for removal, after cleaning up occurrences in prod
+    TranscriptionTask: TranscriptionTask,
     TranslationTask: TranslationTask
   }.freeze
 
