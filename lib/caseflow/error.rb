@@ -255,7 +255,7 @@ module Caseflow::Error
   class ChildTaskAssignedToSameUser < SerializableError
     def initialize
       @code = 500
-      @message = "A task cannot be assigned to the same user as the parent."
+      @message = "A task of the same type as the parent task cannot be assigned to the same user."
     end
   end
 

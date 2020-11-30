@@ -17,14 +17,25 @@ class SendCavcRemandProcessedLetterTask < Task
 
   before_validation :set_assignee
 
+  # Administrative tasks to be assigned to another team
+  ADD_TASK_ACTIONS = [
+    Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.to_h,
+    Constants.TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.to_h,
+    Constants.TASK_ACTIONS.SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION.to_h,
+    Constants.TASK_ACTIONS.SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION.to_h,
+    Constants.TASK_ACTIONS.CLARIFY_POA_BLOCKING_CAVC.to_h
+  ].freeze
+
+  # Actions a user can take on a task assigned to them
   USER_ACTIONS = [
     Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
     Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
-  ].freeze
+  ].concat(ADD_TASK_ACTIONS).freeze
 
+  # Actions an admin of the organization can take on a task assigned to their organization
   ADMIN_ACTIONS = [
     Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h
-  ].freeze
+  ].concat(ADD_TASK_ACTIONS).freeze
 
   def self.label
     COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL
@@ -35,7 +46,7 @@ class SendCavcRemandProcessedLetterTask < Task
       return ADMIN_ACTIONS
     end
 
-    return USER_ACTIONS if assigned_to == user
+    return USER_ACTIONS if assigned_to == user || CavcLitigationSupport.singleton.user_is_admin?(user)
 
     []
   end

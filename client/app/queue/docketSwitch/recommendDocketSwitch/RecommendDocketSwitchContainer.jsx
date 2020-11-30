@@ -8,8 +8,8 @@ import DISPOSITIONS from '../../../../constants/DOCKET_SWITCH';
 import { createDocketSwitchRulingTask } from './recommendDocketSwitchSlice';
 import { RecommendDocketSwitchForm } from './RecommendDocketSwitchForm';
 import {
-  DOCKET_SWITCH_REQUEST_TITLE,
-  DOCKET_SWITCH_REQUEST_MESSAGE,
+  DOCKET_SWITCH_RECOMMENDATION_SUCCESS_TITLE,
+  DOCKET_SWITCH_RECOMMENDATION_SUCCESS_MESSAGE,
 } from '../../../../COPY';
 
 import { sprintf } from 'sprintf-js';
@@ -78,8 +78,8 @@ export const RecommendDocketSwitchContainer = () => {
     };
 
     const successMessage = {
-      title: sprintf(DOCKET_SWITCH_REQUEST_TITLE, appeal.appellantFullName, formData.judge.label),
-      detail: DOCKET_SWITCH_REQUEST_MESSAGE,
+      title: sprintf(DOCKET_SWITCH_RECOMMENDATION_SUCCESS_TITLE, appeal.appellantFullName, formData.judge.label),
+      detail: DOCKET_SWITCH_RECOMMENDATION_SUCCESS_MESSAGE,
     };
 
     try {
