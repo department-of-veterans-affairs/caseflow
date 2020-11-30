@@ -202,14 +202,40 @@ class TaskActionRepository
       }
     end
 
-    def assign_to_translation_team_data(_task, _user = nil)
-      org = Translation.singleton
-
+    def cavc_add_blocking_distrbution_admin_action_data(task, org, task_type)
       {
         selected: org,
         options: [{ label: org.name, value: org.id }],
-        type: TranslationTask.name
+        type: task_type.name,
+        parent_id: DistributionTask.open.find_by(appeal: task.appeal)&.id,
+        modal_body: format(COPY::CAVC_SEND_TO_TEAM_BLOCKING_DISTRIBUTION_DETAIL, task_type.label, org.name),
+        redirect_after: "/queue/appeals/#{task.appeal.external_id}"
       }
+    end
+
+    def assign_to_translation_team_blocking_distribution_data(task, _user = nil)
+      cavc_add_blocking_distrbution_admin_action_data(task, Translation.singleton, TranslationTask)
+    end
+
+    def assign_to_transciption_team_blocking_distribution_data(task, _user = nil)
+      cavc_add_blocking_distrbution_admin_action_data(task, TranscriptionTeam.singleton, TranscriptionTask)
+    end
+
+    def assign_to_privacy_team_blocking_distribution_data(task, _user = nil)
+      cavc_add_blocking_distrbution_admin_action_data(task, PrivacyTeam.singleton, PrivacyActTask)
+    end
+
+    def assign_ihp_to_colocated_blocking_distribution_data(task, _user = nil)
+      cavc_add_blocking_distrbution_admin_action_data(task, Colocated.singleton, IhpColocatedTask)
+    end
+
+    def assign_poa_to_cavc_blocking_cavc_data(task, _user = nil)
+      org = CavcLitigationSupport.singleton
+      task_type = CavcPoaClarificationTask
+      cavc_add_blocking_distrbution_admin_action_data(task, org, task_type).merge(
+        modal_body: format(COPY::CAVC_SEND_TO_TEAM_BLOCKING_CAVC_DETAIL, task_type.label, org.name),
+        parent_id: task.id
+      )
     end
 
     def add_admin_action_data(task, user = nil)
