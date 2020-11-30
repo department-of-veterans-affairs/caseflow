@@ -76,7 +76,7 @@ describe NoShowHearingTask, :postgres do
         expect(NoShowHearingTask.first.status).to eq(Constants.TASK_STATUSES.completed)
         expect(TimedHoldTask.first.status).to eq(Constants.TASK_STATUSES.completed)
 
-        if appeal.is_a? (Appeal)
+        if appeal.is_a? Appeal
           expect(EvidenceSubmissionWindowTask.first.status).to eq(Constants.TASK_STATUSES.assigned)
         else
           expect(appeal.location_code).to eq(LegacyAppeal::LOCATION_CODES[:case_storage])
