@@ -16,6 +16,7 @@ module.exports = function(api) {
     '@babel/plugin-syntax-dynamic-import',
     '@babel/plugin-syntax-import-meta',
     '@babel/plugin-proposal-class-properties',
+    '@babel/plugin-proposal-private-methods',
     '@babel/plugin-proposal-json-strings',
     [
       '@babel/plugin-proposal-decorators',
