@@ -6,7 +6,8 @@ namespace :sql do
     puts "TODO: query Metabase queries"
     query_dir = "tmp/railsSqlComparison"
     puts "TODO: populate query_dir with relevant queries"
-    diff_queries = ValidateSqlQueries.process(query_dir)
+    output_dir = "tmp/query_results"
+    diff_queries = ValidateSqlQueries.process(query_dir, output_dir)
     puts "Diffs: #{diff_queries}"
   end
 end
