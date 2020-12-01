@@ -375,7 +375,7 @@ class TaskRows extends React.PureComponent {
           <GreenCheckmark /></td>
         <td className="taskContainerStyling taskInformationTimelineContainerStyling">
           { COPY.CASE_TIMELINE_NOD_RECEIVED } <br />
-          {(this.props.userCanViewEditNodDate) && (this.props.editNodDateEnabled) && (
+          {(this.props.editNodDateEnabled) && (
             <React.Fragment>
               <p>
                 <Button
@@ -403,7 +403,6 @@ class TaskRows extends React.PureComponent {
 TaskRows.propTypes = {
   appeal: PropTypes.object,
   editNodDateEnabled: PropTypes.bool,
-  userCanViewEditNodDate: PropTypes.bool,
   hideDropdown: PropTypes.bool,
   taskList: PropTypes.array,
   timeline: PropTypes.bool

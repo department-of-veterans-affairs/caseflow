@@ -7,7 +7,7 @@ import { caseTimelineTasksForAppeal } from './selectors';
 
 export const CaseTimeline = ({ appeal }) => {
   const tasks = useSelector((state) => caseTimelineTasksForAppeal(state, { appealId: appeal.externalId }));
-  const featureToggles = useSelector((state) => state.ui.featureToggles);
+  const canEditNodDate = useSelector((state) => state.ui.canEditNodDate);
 
   return (
     <React.Fragment>
@@ -16,8 +16,7 @@ export const CaseTimeline = ({ appeal }) => {
         <tbody>
           <TaskRows appeal={appeal}
             taskList={tasks}
-            userCanViewEditNodDate={false}
-            editNodDateEnabled={featureToggles?.editNodDate}
+            editNodDateEnabled={canEditNodDate}
             timeline
           />
         </tbody>
