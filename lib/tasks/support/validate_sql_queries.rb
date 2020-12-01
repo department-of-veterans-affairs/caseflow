@@ -24,31 +24,43 @@ class ValidateSqlQueries
       output_dir = File.expand_path(output_dir)
 
       Dir.chdir(query_dir)
-      filebasenames = list_query_filebasenames.sort
-      puts "Found #{filebasenames.size} #{'query'.pluralize(filebasenames.size)} in #{query_dir}: #{filebasenames}"
+      filenames = list_query_filenames
+      puts "  Found #{filenames.size} #{'query'.pluralize(filenames.size)} in #{query_dir}: #{filenames}"
 
-      run_queries_and_save_output(filebasenames, output_dir)
+      run_queries_and_save_output(filenames, output_dir)
       Dir.chdir(output_dir)
       compare_output_files(output_dir)
     end
 
-    def list_query_filebasenames
-      rails_filebasenames = Dir["*.rb"].map { |fn| File.basename(fn, File.extname(fn)) }
-      sql_filebasenames = Dir["*.sql"].map { |fn| File.basename(fn, File.extname(fn)) }
-      rails_filebasenames & sql_filebasenames
+    def list_query_filenames
+      Dir["*.sql"].sort
     end
 
-    def run_queries_and_save_output(filebasenames, output_dir)
-      filebasenames.each do |basename|
-        puts "  Processing '#{basename}'..."
-        puts "    Executing Rails query in #{basename}.rb and saving results"
-        run_rails_query("#{basename}.rb").tap { |result| save_result(result, "#{output_dir}/#{basename}.rb-out") }
-        puts "    Executing SQL query in #{basename}.sql and saving results"
-        run_sql_query("#{basename}.sql").tap { |result| save_result(result, "#{output_dir}/#{basename}.sql-out") }
-      rescue StandardError => error
-        puts error.inspect
-        puts error.backtrace
-        puts "^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+    def run_queries_and_save_output(filenames, output_dir)
+      puts "  Output files will be saved to '#{output_dir}'"
+      filenames.each do |filename|
+        puts "  Processing '#{filename}'..."
+        rails_query, sql_query, postprocess_cmds = read_queries_from_file(filename)
+        # puts "== #{rails_query} \n=== #{sql_query}\n==== #{postprocess_cmds}"
+        if rails_query.present?
+          basename = File.basename(filename, File.extname(filename))
+
+          output_filename = "#{output_dir}/#{basename}.rb-out"
+          puts "    Executing Rails query and saving output to #{basename}.rb-out"
+          result, rescued_error = run_rails_query(rails_query)
+          save_result(result, output_filename)
+          fail rescued_error if rescued_error
+
+          output_filename = "#{output_dir}/#{basename}.sql-out"
+          puts "    Executing SQL query and saving output to #{basename}.sql-out"
+          result, rescued_error = run_sql_query(sql_query, postprocess_cmds)
+          save_result(result, output_filename)
+          fail rescued_error if rescued_error
+        end
+      rescue ScriptError, StandardError => error
+        puts "! Skipping due to error when executing query (see #{output_filename}): #{error.message.lines.first}"
+        # puts error.backtrace
+        # puts "^^^^^^^^^^^^^^^^^^^^^^^^^^^"
       end
     end
 
@@ -61,26 +73,36 @@ class ValidateSqlQueries
     def wrap_in_rollback_transaction
       # TODO: open read-only connection to database
       suppress_sql_logging do
+        rescued_error = nil
         result = nil
         ActiveRecord::Base.transaction do
           result = yield if block_given?
         rescue ScriptError, StandardError => error
           # puts error.message
           # puts error.backtrace
-          # puts "^^^^^^^^^^^^^^^^^^^^^^^^^^^"
-          result = "ERROR with Rails query:\n#{query}\n--------\n#{error.message}\n#{error.backtrace.join("\n")}"
+          # puts "    ^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+          result = "ERROR with query:\n#{error.message}\n\n#{error.backtrace.join("\n")}"
+          rescued_error = error
         ensure
           fail ActiveRecord::Rollback
         end
-        result
+
+        # Could not reraise the error within rescue block above, so reraising it here
+        # fail rescued_error if rescued_error
+
+        [result, rescued_error]
       end
     end
 
     def suppress_sql_logging
       orig_log_level = ActiveRecord::Base.logger.level
-      ActiveRecord::Base.logger.level = :warn
-      result = yield
-      ActiveRecord::Base.logger.level = orig_log_level
+      result = nil
+      begin
+        ActiveRecord::Base.logger.level = :warn
+        result = yield
+      ensure
+        ActiveRecord::Base.logger.level = orig_log_level
+      end
       result
     end
 
@@ -105,47 +127,44 @@ class ValidateSqlQueries
 
     ### Rails
 
-    def run_rails_query(in_filename)
-      query = read_rails_query_from_file(in_filename)
-      safely_eval_rails_query(query) || "Problem evaluating Rails: #{query}"
+    def run_rails_query(query)
+      safely_eval_rails_query(query)
     end
 
-    def read_rails_query_from_file(in_filename)
-      contents = IO.read(in_filename)
-      validate_rails_query(contents)
+    ### SQL
+
+    def run_sql_query(query, postprocess_cmds)
+      postprocess_cmds = 'each_row.map{|r| r.to_s}.join("\n")' if postprocess_cmds.blank?
+
+      init_result, rescued_error = wrap_in_rollback_transaction { ActiveRecord::Base.connection.execute(query) }
+      result, rescued_error = safely_eval_rails_query("@result.#{postprocess_cmds}", init_result) unless rescued_error
+      result ||= init_result || "(No SQL result)"
+      [result, rescued_error]
+    end
+
+    RAILS_EQUIV_PREFIX = "-- RAILS_EQUIV:"
+    POSTPROC_SQL_RESULT_PREFIX = "-- POSTPROC_SQL_RESULT:"
+
+    def read_queries_from_file(in_filename)
+      rails_query = ""
+      sql_query = ""
+      postprocess_cmds = ""
+      File.open(in_filename).each_line do |line|
+        line.strip!
+        if line.start_with?(RAILS_EQUIV_PREFIX)
+          rails_query += "\n" + line.sub(RAILS_EQUIV_PREFIX, "").strip
+        elsif line.start_with?(POSTPROC_SQL_RESULT_PREFIX)
+          postprocess_cmds += "\n" + line.sub(POSTPROC_SQL_RESULT_PREFIX, "").strip
+        else
+          sql_query += "\n" + line
+        end
+      end
+      [validate_rails_query(rails_query), validate_sql_query(sql_query), validate_rails_query(postprocess_cmds)]
     end
 
     def validate_rails_query(query)
       # To-do: filter query to make it as safe as possible
       query.strip
-    end
-
-    ### SQL
-
-    POSTPROC_SQL_RESULT_PREFIX = "-- POSTPROC_SQL_RESULT:"
-
-    def run_sql_query(in_filename)
-      query, postprocess_cmds = read_sql_query_from_file(in_filename)
-      postprocess_cmds = 'each_row.map{|r| r.to_s}.join("\n")' if postprocess_cmds.blank?
-
-      init_result = wrap_in_rollback_transaction { ActiveRecord::Base.connection.execute(query) }
-      result = safely_eval_rails_query("@result.#{postprocess_cmds}", init_result)
-      result ||= init_result || "Some SQL result"
-      result
-    end
-
-    def read_sql_query_from_file(in_filename)
-      query = ""
-      postprocess_cmds = ""
-      File.open(in_filename).each_line do |line|
-        line.strip!
-        if line.start_with?(POSTPROC_SQL_RESULT_PREFIX)
-          postprocess_cmds += "\n" + line.sub(POSTPROC_SQL_RESULT_PREFIX, "").strip
-        else
-          query += "\n" + line
-        end
-      end
-      [validate_sql_query(query), validate_rails_query(postprocess_cmds)]
     end
 
     def validate_sql_query(query)
