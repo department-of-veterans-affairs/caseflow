@@ -160,8 +160,7 @@ class Task < CaseflowRecord
 
     def create_from_params(params, user)
       parent_task = Task.find(params[:parent_id])
-      fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_task.assigned_to_id == params[:assigned_to_id] &&
-                                                           parent_task.assigned_to_type == params[:assigned_to_type]
+      fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_of_same_type_has_same_assignee(parent_task, params)
 
       verify_user_can_create!(user, parent_task)
 
@@ -169,6 +168,12 @@ class Task < CaseflowRecord
       child = create_child_task(parent_task, user, params)
       parent_task.update!(status: params[:status]) if params[:status]
       child
+    end
+
+    def parent_of_same_type_has_same_assignee(parent_task, params)
+      parent_task.assigned_to_id == params[:assigned_to_id] &&
+        parent_task.assigned_to_type == params[:assigned_to_type] &&
+        parent_task.type == params[:type]
     end
 
     def create_child_task(parent, current_user, params)
