@@ -23,5 +23,6 @@ Shoryuken.configure_server do |config|
   config.server_middleware do |chain|
     chain.add JobMonitoringMiddleware
     chain.add JobRequestStoreMiddleware
+    chain.add JobSentryScopeMiddleware
   end
 end
