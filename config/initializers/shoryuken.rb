@@ -1,5 +1,6 @@
-require "#{Rails.root}/app/jobs/middleware/job_monitoring_middleware.rb"
+require "#{Rails.root}/app/jobs/middleware/job_monitoring_middleware"
 require "#{Rails.root}/app/jobs/middleware/job_request_store_middleware"
+require "#{Rails.root}/app/jobs/middleware/job_sentry_scope_middleware"
 
 # set up default exponential backoff parameters
 ActiveJob::QueueAdapters::ShoryukenAdapter::JobWrapper
