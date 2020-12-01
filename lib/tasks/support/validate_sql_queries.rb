@@ -6,7 +6,6 @@ require "fileutils"
 # Class to validate that SQL queries return the same results as the corresponding Rails query.
 
 class ValidateSqlQueries
-
   # Attempt to minimize exposure of environment when calling eval
   class EvalEnvironment
     def initialize(result)
@@ -53,24 +52,35 @@ class ValidateSqlQueries
       end
     end
 
-    def safely_eval_query(query)
-      new_result = nil
+    def safely_eval_rails_query(query, init_result = nil)
+      wrap_in_rollback_transaction do
+        EvalEnvironment.new(init_result).eval_query(query)
+      end
+    end
+
+    def wrap_in_rollback_transaction
+      suppress_sql_logging do
+        result = nil
+        ActiveRecord::Base.transaction do
+          result = yield if block_given?
+        rescue Exception => error # Exception includes SyntaxError and StandardError
+          # puts error.message
+          # puts error.backtrace
+          # puts "^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+          result = "ERROR with Rails query:\n#{query}\n--------\n#{error.message}\n#{error.backtrace.join("\n")}"
+        ensure
+          fail ActiveRecord::Rollback
+        end
+        result
+      end
+    end
+
+    def suppress_sql_logging
       orig_log_level = ActiveRecord::Base.logger.level
       ActiveRecord::Base.logger.level = :warn
-      ActiveRecord::Base.transaction do
-        result = nil
-        result = yield if block_given?
-        new_result = EvalEnvironment.new(result).eval_query(query)
-      rescue StandardError => error
-        # puts error.inspect
-        # puts error.backtrace
-        # puts "^^^^^^^^^^^^^^^^^^^^^^^^^^^"
-        new_result = "ERROR with query:\n#{query}\n--------\n#{error.message}\n#{error.backtrace.join("\n")}"
-      ensure
-        fail ActiveRecord::Rollback
-      end
+      result = yield
       ActiveRecord::Base.logger.level = orig_log_level
-      new_result
+      result
     end
 
     def save_result(results, out_filename)
@@ -98,7 +108,7 @@ class ValidateSqlQueries
       query = read_rails_query_from_file(in_filename)
       # TODO: open read-only connection to database
       # conn = ActiveRecord::Base.connection
-      result = safely_eval_query(query)
+      result = safely_eval_rails_query(query)
       result ||= "Some Rails result"
       # puts "      Result: #{result}"
       result
@@ -116,13 +126,16 @@ class ValidateSqlQueries
 
     ### SQL
 
-    POST_SQL_PREFIX = "-- POST_SQL_RESULTS:"
+    POSTPROC_SQL_RESULT_PREFIX = "-- POSTPROC_SQL_RESULT:"
 
     def run_sql_query(in_filename)
       query, postprocess_cmds = read_sql_query_from_file(in_filename)
+      postprocess_cmds = 'each_row.map{|r| r.to_s}.join("\n")' if postprocess_cmds.blank?
+
       # TODO: open read-only connection to database
-      result = safely_eval_query("@result.to_a.#{postprocess_cmds}") { ActiveRecord::Base.connection.execute(query) } unless postprocess_cmds.strip.empty?
-      result ||= "Some SQL result"
+      init_result = wrap_in_rollback_transaction { ActiveRecord::Base.connection.execute(query) }
+      result = safely_eval_rails_query("@result.#{postprocess_cmds}", init_result)
+      result ||= init_result || "Some SQL result"
       # puts "      Result: #{result}"
       result
     end
@@ -132,17 +145,18 @@ class ValidateSqlQueries
       postprocess_cmds = ""
       File.open(in_filename).each_line do |line|
         line.strip!
-        if line.start_with?(POST_SQL_PREFIX)
-          postprocess_cmds += "\n" + line.sub(POST_SQL_PREFIX, "").strip
+        if line.start_with?(POSTPROC_SQL_RESULT_PREFIX)
+          postprocess_cmds += "\n" + line.sub(POSTPROC_SQL_RESULT_PREFIX, "").strip
         else
           query += "\n" + line
         end
       end
-      [validate_sql_query(query), postprocess_cmds]
+      [validate_sql_query(query), validate_rails_query(postprocess_cmds)]
     end
 
     def validate_sql_query(query)
       # To-do: filter query to make it as safe as possible
+      # puts "SQL query: #{query.strip}"
       query.strip
     end
   end
