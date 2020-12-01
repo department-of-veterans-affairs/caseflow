@@ -63,9 +63,8 @@ class ValidateSqlQueries
       suppress_sql_logging do
         result = nil
         ActiveRecord::Base.transaction do
-          result = yield if block_given?        
-        # Exception includes SyntaxError and StandardError
-        rescue Exception => error # rubocop:disable Lint/RescueException
+          result = yield if block_given?
+        rescue ScriptError, StandardError => error
           # puts error.message
           # puts error.backtrace
           # puts "^^^^^^^^^^^^^^^^^^^^^^^^^^^"
