@@ -2,6 +2,7 @@
 
 exports[`EditNodDateModal renders correctly 1`] = `
 <EditNodDateModal
+  appealId="tb78ti7in77n"
   nodDate="2020-10-31"
   onCancel={[MockFunction]}
   onSubmit={[MockFunction]}
@@ -22,6 +23,7 @@ exports[`EditNodDateModal renders correctly 1`] = `
             "usa-button",
             "usa-button-primary",
           ],
+          "disabled": false,
           "name": "Submit",
           "onClick": [Function],
         },
@@ -219,6 +221,7 @@ exports[`EditNodDateModal renders correctly 1`] = `
                 </ReactMarkdown>
               </div>
               <DateSelector
+                errorMessage={null}
                 label="NOD Date"
                 name="nodDate"
                 onChange={[Function]}
@@ -232,6 +235,7 @@ exports[`EditNodDateModal renders correctly 1`] = `
                       "cf-form-textinput",
                     ]
                   }
+                  errorMessage={null}
                   label="NOD Date"
                   max="9999-12-31"
                   name="nodDate"
@@ -325,6 +329,7 @@ exports[`EditNodDateModal renders correctly 1`] = `
                 "cf-push-right",
               ]
             }
+            disabled={false}
             id="Edit-NOD-Date-button-id-1"
             key="1"
             linkStyling={false}
@@ -337,6 +342,7 @@ exports[`EditNodDateModal renders correctly 1`] = `
             <span>
               <button
                 className="usa-button usa-button-primary cf-push-right usa-button"
+                disabled={false}
                 id="Edit-NOD-Date-button-id-1"
                 onClick={[Function]}
                 type="button"
