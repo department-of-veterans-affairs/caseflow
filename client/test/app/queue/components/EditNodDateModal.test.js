@@ -15,6 +15,7 @@ describe('EditNodDateModal', () => {
   const setupEditNodDateModal = () => {
     return mount(
       <EditNodDateModal
+        appealId="tb78ti7in77n"
         onCancel={onCancel}
         onSubmit={onSubmit}
         nodDate={defaultNodDate}

@@ -2,6 +2,7 @@
 
 exports[`EditNodDateModal renders correctly 1`] = `
 <EditNodDateModal
+  appealId="tb78ti7in77n"
   nodDate="2020-10-31"
   onCancel={[MockFunction]}
   onSubmit={[MockFunction]}
