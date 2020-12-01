@@ -18,7 +18,7 @@ class JobSentryScopeMiddleware
     )
 
     tags = {
-      app_name: job_class.try(:app_name)
+      application: job_class.try(:app_name)
     }
     # Note: job class and job id are already sent to Sentry by default.
     context = {
