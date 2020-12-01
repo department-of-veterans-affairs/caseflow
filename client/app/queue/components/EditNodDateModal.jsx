@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { resetSuccessMessages, showSuccessMessage } from '../uiReducer/uiActions';
 import { editAppeal } from '../QueueActions';
 import ApiUtil from '../../util/ApiUtil';
+import moment from 'moment';
 
 export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealId }) => {
   const dispatch = useDispatch();
@@ -43,6 +44,8 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
 
 export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
   const [receiptDate, setReceiptDate] = useState(nodDate);
+  const [futureDate, setFutureDate] = useState(false);
+  const [disableButton, setDisableButton] = useState(false);
 
   const buttons = [
     {
@@ -53,11 +56,31 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
     {
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Submit',
+      // For future disable use cases
+      disabled: disableButton,
       onClick: () => onSubmit(receiptDate)
     }
   ];
 
-  const handleDateChange = (value) => setReceiptDate(value);
+  const isFutureDate = (newDate) => {
+    const today = new Date();
+    const todaysDate = moment(today.toISOString());
+    const date = moment(newDate);
+
+    return (date > todaysDate);
+  };
+
+  const handleDateChange = (value) => {
+    if (isFutureDate(value)) {
+      setFutureDate(true);
+      setDisableButton(true);
+      setReceiptDate(value);
+    } else {
+      setReceiptDate(value);
+      setDisableButton(false);
+      setFutureDate(false);
+    }
+  };
 
   return (
     <Modal
@@ -70,8 +93,9 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
         <ReactMarkdown source={COPY.EDIT_NOD_DATE_MODAL_DESCRIPTION} />
       </div>
       <DateSelector
-        label={COPY.EDIT_NOD_DATE_LABEL}
         name="nodDate"
+        errorMessage={futureDate ? COPY.EDIT_NOD_DATE_ERROR_ALERT_MESSAGE : null}
+        label={COPY.EDIT_NOD_DATE_LABEL}
         strongLabel
         type="date"
         value={receiptDate}
