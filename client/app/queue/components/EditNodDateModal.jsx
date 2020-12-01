@@ -6,23 +6,29 @@ import DateSelector from 'app/components/DateSelector';
 import COPY from 'app/../COPY';
 import { useDispatch } from 'react-redux';
 import { resetSuccessMessages, showSuccessMessage } from '../uiReducer/uiActions';
+import { editAppeal } from '../QueueActions';
+import ApiUtil from '../../util/ApiUtil';
 
-export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate }) => {
+export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealId }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(resetSuccessMessages());
   }, []);
 
-  const handleSubmit = () => {
+  const handleSubmit = (receiptDate) => {
     const successMessage = {
       title: COPY.EDIT_NOD_DATE_SUCCESS_ALERT_TITLE,
       detail: COPY.EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE,
     };
+    const payload = { data: { receipt_date: receiptDate } };
 
-    dispatch(showSuccessMessage(successMessage));
-    onSubmit?.();
-    window.scrollTo(0, 0);
+    ApiUtil.patch(`/appeals/${appealId}/update_nod_date`, payload).then(() => {
+      dispatch(editAppeal(appealId, { nodDate: receiptDate }));
+      dispatch(showSuccessMessage(successMessage));
+      onSubmit?.();
+      window.scrollTo(0, 0);
+    });
   };
 
   return (
@@ -30,6 +36,7 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate }) => {
       onCancel={onCancel}
       onSubmit={handleSubmit}
       nodDate={nodDate}
+      appealId={appealId}
     />
   );
 };
@@ -77,11 +84,13 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
 EditNodDateModalContainer.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  nodDate: PropTypes.string.isRequired
+  nodDate: PropTypes.string.isRequired,
+  appealId: PropTypes.string.isRequired
 };
 
 EditNodDateModal.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  nodDate: PropTypes.string.isRequired
+  nodDate: PropTypes.string.isRequired,
+  appealId: PropTypes.string.isRequired
 };

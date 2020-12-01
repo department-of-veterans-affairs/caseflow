@@ -384,7 +384,7 @@ class Appeal < DecisionReview
   end
 
   def update_receipt_date!(receipt_date)
-    update!(receipt_date: receipt_date)
+    update!(receipt_date)
     update!(stream_docket_number: default_docket_number_from_receipt_date)
   end
 
