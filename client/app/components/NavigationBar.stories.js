@@ -1,49 +1,33 @@
 import React from 'react';
-
-import Alert from './Alert';
-
-/* eslint-disable react/prop-types */
-
-const alertTypes = ['success', 'error', 'warning', 'info'];
+import { MemoryRouter } from 'react-router';
+import NavigationBar from './NavigationBar';
+import PerformanceDegradationBanner from './PerformanceDegradationBanner';
+import { LOGO_COLORS } from '../constants/AppConstants';
 
 export default {
-  title: 'Commons/Components/Alert',
-  component: Alert,
-  parameters: {
-    controls: { expanded: true },
-  },
-  args: {
-    message: 'This is the message of the alert',
-    title: 'Sample Alert',
-    type: 'success',
-  },
-  argTypes: {
-    type: {
-      control: { type: 'select', options: alertTypes },
-    },
-    styling: { control: { type: 'object' } },
-  },
+  title: 'Commons/Components/Layout/NavigationBar',
+  component: NavigationBar,
+  decorators: [() => (<MemoryRouter><NavigationBar /></MemoryRouter>)]
 };
 
-const Template = (args) => <Alert {...args} />;
+const Template = (args) => <NavigationBar {...args} />;
 
-export const Success = Template.bind({});
-Success.args = { type: 'success' };
-
-export const Error = Template.bind({});
-Error.args = { type: 'error' };
-
-export const Warning = Template.bind({});
-Warning.args = { type: 'warning' };
-
-export const Info = Template.bind({});
-Info.args = { type: 'info' };
-
-export const Slim = Template.bind({});
-Slim.args = { title: '' };
-
-Slim.parameters = {
-  docs: {
-    storyDescription: 'The "slim" alert will be used if title prop is empty',
+export const Basic = Template.bind({});
+Basic.args = {
+  appName: 'Caseflow App Name',
+  key: '/queue',
+  extraBanner: <PerformanceDegradationBanner showBanner={false} />,
+  logoProps: {
+    accentColor: LOGO_COLORS.INTAKE.ACCENT,
+    overlapColor: LOGO_COLORS.INTAKE.OVERLAP
   },
+  userDisplayName: 'Rick Sanchez',
+  dropdownUrls: [{
+    title: 'Queue',
+    link: '/queue',
+    target: '#top',
+    border: false
+  }],
+  topMessage: null,
+  defaultUrl: '/'
 };
