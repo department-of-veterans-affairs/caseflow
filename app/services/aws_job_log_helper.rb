@@ -45,9 +45,10 @@ class AwsJobLogHelper
     def editor_string
       <<~EOF
         fields @timestamp, @message
-        | parse "* * * ActiveJob/*/*/* *: *" as timestamp, pid, thread_id, job_class, queue_name, job_id, level, message
-        | sort @timestamp desc
-        | filter (job_class="#{job_class}" and job_id="#{job_id}")
+        | parse "* * * ActiveJob/*/*/* *: *" as timestamp, pid, thread_id, job_class, queue_name, msg_id, level, message
+        | sort @timestamp asc
+        | filter (job_class="#{job_class}" and msg_id="#{msg_id}")
+        | display level, message
       EOF
     end
 
