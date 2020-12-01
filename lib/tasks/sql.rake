@@ -8,6 +8,6 @@ namespace :sql do
     puts "TODO: populate query_dir with relevant queries"
     output_dir = "tmp/query_results"
     diff_queries = ValidateSqlQueries.process(query_dir, output_dir)
-    puts "Diffs: #{diff_queries}"
+    puts "Diffs: #{diff_queries.count}"
   end
 end
