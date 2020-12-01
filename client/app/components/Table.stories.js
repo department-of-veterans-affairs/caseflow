@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 
 import Table from './Table';
 
@@ -24,6 +25,16 @@ const columns = [
   }
 ];
 
+const columnsWithAction = _.concat(columns, [
+  {
+    header: 'Poke',
+    align: 'right',
+    valueFunction: (person, rowNumber) => {
+      return <a href={`#poke-${rowNumber}`}>Poke {person.name} »</a>;
+    }
+  }
+]);
+
 const rowObjects = [
   {
     name: 'Shane',
@@ -47,19 +58,25 @@ export default {
   component: Table,
 };
 
-const Template = (args) => {
-
+export const Basic = (args) => {
   const setRowClassNames = (rowObject) => {
     return rowObject.likesSports ? 'cf-success' : '';
   };
 
   return <Table {...args} rowClassNames={setRowClassNames} />;
 };
-
-export const Basic = Template.bind({});
 Basic.args = {
   columns,
   rowObjects,
-  summary: 'Example styleguide table',
+  summary: 'Example table',
+  slowReRendersAreOk: true
+}
+
+export const Queue = (args) => <Table {...args} />
+Queue.args = {
+  columnsWithAction, //doesn't work
+  //columns, //works
+  rowObjects,
+  summary: 'Example queue table',
   slowReRendersAreOk: true
 }
