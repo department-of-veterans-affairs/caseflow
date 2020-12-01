@@ -14,11 +14,17 @@ class AwsJobLogHelper
 
   # Describes an ActiveJob.
   class JobInfo
-    attr_reader :job_class, :job_id, :start_time, :end_time
+    attr_reader :job_class, :msg_id, :start_time, :end_time
 
-    def initialize(job_class, job_id, start_time: (Time.zone.now - 1.day), end_time: Time.zone.now)
+    # @param job_class  [Class, String] Name of the ActiveJob class.
+    # @param msg_id     [String] SQS message ID. This is the ID that appears in the log, and is unique per
+    #                            message in the queue. This differs from the job ID, which can be different
+    #                            for each time that a worker tries to process a message.
+    # @param start_time [DateTime] Start of the datetime range to search (default is within the last day).
+    # @param end_time   [DateTime] End of the datetime range to search.
+    def initialize(job_class, msg_id, start_time: (Time.zone.now - 1.day), end_time: (Time.zone.now + 5.days))
       @job_class = job_class    # REQUIRED: Class of the Job
-      @job_id = job_id          # REQUIRED: Unique ActiveJob ID
+      @msg_id = msg_id          # REQUIRED: Unique SQS Message ID
       @start_time = start_time
       @end_time = end_time
     end
@@ -29,15 +35,6 @@ class AwsJobLogHelper
 
     def end_time_ms
       (end_time.to_f * 1000).to_i
-    end
-
-    # Builds a JobInfo instance from any ActiveJob instance.
-    #
-    # @param job [ActiveJob] Any instance of an ActiveJob.
-    #
-    # @return [JobInfo] A new JobInfo instance that describes the ActiveJob.
-    def self.from_active_job(job, start_time: (Time.zone.now - 1.day), end_time: Time.zone.now)
-      JobInfo.new(job.class, job.job_id, start_time, end_time)
     end
 
     # Builds the filter string to find the described job in AWS.
@@ -52,6 +49,38 @@ class AwsJobLogHelper
         | sort @timestamp desc
         | filter (job_class="#{job_class}" and job_id="#{job_id}")
       EOF
+    end
+
+    # Gets an AWS CloudWatch URL to find logs for an ActiveJob.
+    #
+    # @example With a SQS message ID
+    #   puts AwsJobLogHelper::JobInfo.new(VirtualHearings::DeleteConferencesJob, "msg_id").url
+    #
+    # @param job_info [JobInfo] A JobInfo instance describing the job.
+    #
+    # @return [String] An AWS CloudWatch URL that finds logging for the job.
+    def url
+      render_query_with_renderer(UrlRenderer)
+    end
+
+    # Gets an AWS CLI command to find logs for an ActiveJob.
+    #
+    # @example With a SQS message ID
+    #   puts AwsJobLogHelper::JobInfo.new(VirtualHearings::DeleteConferencesJob, "msg_id").command
+    #
+    # @param job [JobInfo] A JobInfo instance describing the job.
+    #
+    # @return [String] An AWS CLI command that starts a query to find logs for the job.
+    #   The returned command also generates a secondary command that you can use to get
+    #   the results for the query.
+    def command
+      render_query_with_renderer(CommandRenderer)
+    end
+
+    private
+
+    def render_query_with_renderer(renderer)
+      renderer.render(self)
     end
   end
 
@@ -156,72 +185,6 @@ class AwsJobLogHelper
           | jq -r '. | "Get Results: [ aws logs get-query-results --query-id \\(.queryId) ]"'
         EOF
       end
-    end
-  end
-
-  class << self
-    # Gets an AWS CloudWatch URL to find logs for an ActiveJob.
-    #
-    # @example Using an ActiveJob (by default this will search for logs in the past day)
-    #   job = VirtualHearings::DeleteConferencesJob.new
-    #   job.perform_now
-    #   puts AwsJobLogHelper.url_for_job_logs(job)
-    #
-    # @example Using a JobInfo
-    #   start_time = Time.zone.now
-    #   job = VirtualHearings::DeleteConferencesJob.new
-    #   job.perform_now
-    #   job_info = AwsJobLogHelper::JobInfo.from_active_job(job, start_time: start_time)
-    #   puts AwsJobLogHelper.url_for_job_logs(job_info)
-    #
-    # @example With a job ID
-    #   job_info = AwsJobLogHelper::JobInfo.new(VirtualHearings::DeleteConferencesJob, "id")
-    #   puts AwsJobLogHelper.url_for_job_logs(job_info)
-    #
-    # @param job [ActiveJob, JobInfo] An ActiveJob or a JobInfo instance describing the job.
-    #
-    # @return [String] An AWS CloudWatch URL that finds logging for the job.
-    def url_for_job_logs(job)
-      render_query_with_renderer(job, UrlRenderer)
-    end
-
-    # Gets an AWS CLI command to find logs for an ActiveJob.
-    #
-    # @example Using an ActiveJob (by default this will search for logs in the past day)
-    #   job = VirtualHearings::DeleteConferencesJob.new
-    #   job.perform_now
-    #   puts AwsJobLogHelper.command_for_job_logs(job)
-    #
-    # @example Using a JobInfo
-    #   start_time = Time.zone.now
-    #   job = VirtualHearings::DeleteConferencesJob.new
-    #   job.perform_now
-    #   job_info = AwsJobLogHelper::JobInfo.from_active_job(job, start_time: start_time)
-    #   puts AwsJobLogHelper.command_for_job_logs(job_info)
-    #
-    # @example With a job ID
-    #   job_info = AwsJobLogHelper::JobInfo.new(VirtualHearings::DeleteConferencesJob, "id")
-    #   puts AwsJobLogHelper.command_for_job_logs(job_info)
-    #
-    # @param job [ActiveJob, JobInfo] An ActiveJob or a JobInfo instance describing the job.
-    #
-    # @return [String] An AWS CLI command that starts a query to find logs for the job.
-    #   The returned command also generates a secondary command that you can use to get
-    #   the results for the query.
-    def command_for_job_logs(job)
-      render_query_with_renderer(job, CommandRenderer)
-    end
-
-    private
-
-    def render_query_with_renderer(job, renderer)
-      job_info = if job.is_a?(JobInfo)
-                   job
-                 else
-                   JobInfo.from_active_job(job)
-                 end
-
-      renderer.render(job_info)
     end
   end
 end
