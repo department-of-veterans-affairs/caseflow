@@ -8,7 +8,12 @@ const handleSearchClick = (setLoadingFn) => {
   setTimeout(() => setLoadingFn(false), 2000);
 };
 
-const Template = (args) => <span className={args.parentClassName} ><SearchBar {...args} /></span>;
+// eslint-disable-next-line react/prop-types
+const Template = ({ parentClassName, ...searchBarArgs }) => (
+  <span className={parentClassName} >
+    <SearchBar {...searchBarArgs} />
+  </span>
+);
 
 const Controlled = (args) => {
   const [val, setVal] = useState('');
@@ -16,16 +21,14 @@ const Controlled = (args) => {
   const handleClick = () => handleSearchClick(setLoading);
   const clearVal = () => setVal('');
 
-  return (<span className={args.parentClassName} >
-    <SearchBar
-      {...args}
-      onChange={setVal}
-      onSubmit={handleClick}
-      onClearSearch={clearVal}
-      loading={loading}
-      value={val}
-    />
-  </span>);
+  return <SearchBar
+    {...args}
+    onChange={setVal}
+    onSubmit={handleClick}
+    onClearSearch={clearVal}
+    loading={loading}
+    value={val}
+  />;
 };
 
 export const Big = Template.bind({});
