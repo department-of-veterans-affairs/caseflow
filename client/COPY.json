@@ -110,6 +110,7 @@
   "CASE_DETAILS_POA_VSO": "Veteran Service Organization",
   "CASE_DETAILS_POA_AGENT": "Private Agent",
   "CASE_DETAILS_POA_ATTORNEY": "Private Attorney",
+  "CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY": "Edit NOD Date",
 
   "CASE_DETAILS_GENDER_FIELD_LABEL": "Gender",
   "CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE": "Female",
@@ -123,6 +124,12 @@
   "CASE_DETAILS_CAVC_DECISION_DATE": "Court's decision date",
   "CASE_DETAILS_CAVC_JUDGEMENT_DATE": "Judgement date",
   "CASE_DETAILS_CAVC_MANDATE_DATE": "Mandate date",
+
+  "EDIT_NOD_DATE_MODAL_TITLE": "Edit NOD Date",
+  "EDIT_NOD_DATE_MODAL_DESCRIPTION": "**Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.**",
+  "EDIT_NOD_DATE_LABEL": "NOD Date",
+  "EDIT_NOD_DATE_SUCCESS_ALERT_TITLE": "NOD date has been updated",
+  "EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE": "You have successfully updated the NOD date",
 
   "DROPDOWN_LABEL_JUDGE": "VLJ",
   "DROPDOWN_LABEL_HEARING_COORDINATOR": "Hearing Coordinator",
