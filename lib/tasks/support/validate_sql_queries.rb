@@ -13,7 +13,7 @@ class ValidateSqlQueries
     end
 
     def eval_query(query)
-      binding.eval(query)
+      binding.eval(query) # rubocop:disable Security/Eval
     end
   end
 
@@ -62,8 +62,9 @@ class ValidateSqlQueries
       suppress_sql_logging do
         result = nil
         ActiveRecord::Base.transaction do
-          result = yield if block_given?
-        rescue Exception => error # Exception includes SyntaxError and StandardError
+          result = yield if block_given?        
+        # Exception includes SyntaxError and StandardError
+        rescue Exception => error # rubocop:disable Lint/RescueException
           # puts error.message
           # puts error.backtrace
           # puts "^^^^^^^^^^^^^^^^^^^^^^^^^^^"
