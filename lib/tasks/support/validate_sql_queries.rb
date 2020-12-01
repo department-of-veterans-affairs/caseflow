@@ -59,6 +59,7 @@ class ValidateSqlQueries
     end
 
     def wrap_in_rollback_transaction
+      # TODO: open read-only connection to database
       suppress_sql_logging do
         result = nil
         ActiveRecord::Base.transaction do
@@ -107,17 +108,12 @@ class ValidateSqlQueries
 
     def run_rails_query(in_filename)
       query = read_rails_query_from_file(in_filename)
-      # TODO: open read-only connection to database
-      # conn = ActiveRecord::Base.connection
-      result = safely_eval_rails_query(query)
-      result ||= "Some Rails result"
-      # puts "      Result: #{result}"
-      result
+      safely_eval_rails_query(query) || "Problem evaluating Rails: #{query}"
     end
 
     def read_rails_query_from_file(in_filename)
       contents = IO.read(in_filename)
-      validate_sql_query(contents)
+      validate_rails_query(contents)
     end
 
     def validate_rails_query(query)
@@ -133,11 +129,9 @@ class ValidateSqlQueries
       query, postprocess_cmds = read_sql_query_from_file(in_filename)
       postprocess_cmds = 'each_row.map{|r| r.to_s}.join("\n")' if postprocess_cmds.blank?
 
-      # TODO: open read-only connection to database
       init_result = wrap_in_rollback_transaction { ActiveRecord::Base.connection.execute(query) }
       result = safely_eval_rails_query("@result.#{postprocess_cmds}", init_result)
       result ||= init_result || "Some SQL result"
-      # puts "      Result: #{result}"
       result
     end
 
