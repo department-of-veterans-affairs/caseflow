@@ -18,7 +18,7 @@
 class NoShowHearingTask < Task
   before_validation :set_assignee
 
-  DAYS_ON_HOLD = 30
+  DAYS_ON_HOLD = 15
 
   def self.create_with_hold(parent_task)
     multi_transaction do
