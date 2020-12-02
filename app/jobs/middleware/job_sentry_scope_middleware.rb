@@ -27,6 +27,9 @@ class JobSentryScopeMiddleware
       start_time: job_start_time
     }
 
+    Rails.logger.info("Tags: #{tags}")
+    Rails.logger.info("Context: #{context}")
+
     Raven.tags_context(tags) do
       Raven.extra_context(context) { yield }
     end
