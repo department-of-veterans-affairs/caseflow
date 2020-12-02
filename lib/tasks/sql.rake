@@ -36,7 +36,8 @@ namespace :sql do
     puts "Found #{filtered_cards.count} cards to be validated out of #{cards.count} cards total"
 
     filtered_cards.sort_by { |obj| [obj["database_id"], obj["id"]] }.each do |obj|
-      puts "  Card #{obj['id']} by #{obj['creator']['common_name']} (collection #{obj['collection']['id']}): '#{obj['name']}'"
+      creator_name = obj["creator"]["common_name"]
+      puts "  Card #{obj['id']} by #{creator_name} (collection #{obj['collection']['id']}): '#{obj['name']}'"
       query_string = obj["dataset_query"]["native"]["query"]
       output_filename = "db#{obj['database_id'].to_s.rjust(2, '0')}_c#{obj['id'].to_s.rjust(4, '0')}.sql"
       puts "    Saving SQL to #{output_filename}"

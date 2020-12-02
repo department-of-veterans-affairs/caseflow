@@ -17,8 +17,8 @@ class ValidateSqlQueries
       puts "  Output files will be saved to '#{output_dir}'"
       filenames.each { |filename| run_queries_and_save_output(filename, output_dir) }
 
-      diff_basenames = compare_output_files(output_dir)
-      [filenames.size, diff_basenames]
+      nonequivalent_basenames = compare_output_files(output_dir)
+      [filenames.size, nonequivalent_basenames]
     end
 
     def list_query_filenames(query_dir)
@@ -36,19 +36,19 @@ class ValidateSqlQueries
       end
     rescue ScriptError, StandardError => error
       warn "    !Skipping due to error when executing query: #{error.message.lines.first}"
-      # warn "#{error.backtrace}\n^^^^^^^^^^^^^^^^^^^^^^^^^^^"
     end
 
+    # :reek:RepeatedConditional
     def run_queries(rails_query:, sql_query:, rails_sql_postproc:)
       if rails_query.present?
         # Execute Rails query
         result, rescued_error = eval_rails_query(rails_query)
-        yield("rb", result) if block_given?
+        yield("rb", result, rescued_error) if block_given?
         fail rescued_error if rescued_error
 
         # Execute SQL query
         result, rescued_error = eval_sql_query(sql_query, rails_sql_postproc)
-        yield("sql", result) if block_given?
+        yield("sql", result, rescued_error) if block_given?
         fail rescued_error if rescued_error
       end
     end
@@ -124,7 +124,6 @@ class ValidateSqlQueries
 
     def validate_sql_query(query)
       # To-do: filter query to make it as safe as possible
-      # puts "SQL query: #{query.strip}"
       query.strip
     end
 
@@ -137,15 +136,13 @@ class ValidateSqlQueries
     end
 
     def wrap_in_rollback_transaction
-      # TODO: open read-only connection to database
+      # To-do: open read-only connection to database
       suppress_sql_logging do
         rescued_error = nil
         result = nil
         ActiveRecord::Base.transaction do
           result = yield if block_given?
         rescue ScriptError, StandardError => error
-          # puts error.message
-          # puts "#{error.backtrace}\n^^^^^^^^^^^^^^^^^^^^^^^^^^^"
           result = "ERROR with query:\n#{error.message}\n\n#{error.backtrace.join("\n")}"
           rescued_error = error
         ensure
