@@ -375,12 +375,13 @@ class TaskRows extends React.PureComponent {
           <GreenCheckmark /></td>
         <td className="taskContainerStyling taskInformationTimelineContainerStyling">
           { COPY.CASE_TIMELINE_NOD_RECEIVED } <br />
-          {(this.props.editNodDateEnabled) && (
+          {this.props.editNodDateEnabled && (
             <React.Fragment>
               <p>
                 <Button
                   type="button"
                   linkStyling
+                  styling={css({ 'padding-left': '0' })}
                   onClick={this.toggleEditNodDateModal}>
                   {COPY.CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY}
                 </Button>
@@ -390,6 +391,7 @@ class TaskRows extends React.PureComponent {
                   onCancel={this.toggleEditNodDateModal}
                   onSubmit={this.toggleEditNodDateModal}
                   nodDate={appeal.nodDate}
+                  appealId={appeal.externalId}
                 />
               )}
             </React.Fragment>
