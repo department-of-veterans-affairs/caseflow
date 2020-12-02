@@ -1,0 +1,103 @@
+import { Meta, Story, ArgsTable } from '@storybook/addon-docs/blocks';
+
+import * as Stories from './EditableField.stories';
+
+import EditableField from './EditableField';
+
+<Meta
+  title='Commons/Components/Form Fields/EditableField'
+  component={EditableField}
+  parameters={{
+    controls: { expanded: true }
+  }}
+  args={{
+    label: 'Label',
+    value: 'Value'
+  }}
+  argTypes={{
+    errorMessage: { control: { type: 'text' } },
+    label: { control: { type: 'text' } },
+    maxLength: { control: { type: 'number' } },
+    placeholder: { control: { type: 'text' } },
+    title: { control: { type: 'text' } },
+    type: {
+      control: {
+        type: 'select',
+        options: [
+          'button',
+          'checkbox',
+          'color',
+          'date',
+          'datetime-local',
+          'email',
+          'file',
+          'hidden',
+          'image',
+          'month',
+          'number',
+          'password',
+          'radio',
+          'range',
+          'reset',
+          'search',
+          'submit',
+          'tel',
+          'text',
+          'time',
+          'url',
+          'week',
+        ]
+      }
+    },
+  }}
+/>
+
+# Editable Field
+
+An editable field shows the current value of a field. The value can be changed by clicking "Edit". After the user is
+done editing the field, they can cancel or save their changes.
+
+## Default
+
+<Story story={Stories.Default} />
+
+## Error
+
+When an error message is provided, the field will be stylized as invalid.
+
+<Story story={Stories.Error} />
+
+## Label
+
+Labels can be set with the `label` property.
+
+<Story story={Stories.Label} />
+
+## Max Length
+
+The length of the string input into the text field can be restricted. The default for this is 524288.
+
+<Story story={Stories.MaxLength} />
+
+## Placeholder
+
+Placeholder text can be set to display when the input is empty. This can be used to provide the user with additional
+context or instructions.
+
+<Story story={Stories.Placeholder} />
+
+## Title
+
+A title can be set to provide extra information to the user when they hover over the label or input field
+
+<Story story={Stories.Title} />
+
+## Type
+
+Type can be used to control the type of data to input
+
+<Story story={Stories.Type} />
+
+## Args
+
+<ArgsTable of={EditableField} />

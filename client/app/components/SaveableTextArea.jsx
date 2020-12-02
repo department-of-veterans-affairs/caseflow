@@ -68,7 +68,7 @@ SaveableTextArea.propTypes = {
   name: PropTypes.string.isRequired,
 
   /**
-   * Callback to perform when the cancel button is clicked
+   * Callback fired when the cancel button is clicked
    */
   onCancelClick: PropTypes.func,
 

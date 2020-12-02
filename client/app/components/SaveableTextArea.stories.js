@@ -14,9 +14,9 @@ export default {
     label: 'Label'
   },
   argTypes: {
-    disabled: { control: 'boolean' },
-    hideLabel: { control: 'boolean' },
-    label: { control: 'text' }
+    disabled: { control: { type: 'boolean' } },
+    hideLabel: { control: { type: 'boolean' } },
+    label: { control: { type: 'text' } }
   }
 };
 
