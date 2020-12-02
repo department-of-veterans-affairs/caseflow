@@ -20,10 +20,10 @@ end
 Shoryuken.configure_server do |config|
   # Configure loggers in Shoryuken.
   #
-  # Note: `Rails.logger` is an `ActiveSupport::TaggedLogging` logger in production. You can't
-  #   override the logger format because tagged logger formatters need a method called `tagged`.
-  Rails.logger = Shoryuken.logger
-  ActiveRecord::Base.logger.formatter = Shoryuken.logger.formatter
+  # Note: `Rails.logger` and `ActiveRecord::Base.logger` are different in production. This only
+  #   changes the formatter here to preserve the logging level of each logger.
+  Rails.logger.formatter = Shoryuken.logger.formatter.dup.extend(ActiveSupport::TaggedLogging::Formatter)
+  ActiveRecord::Base.logger.formatter = Shoryuken.logger.formatter.dup.extend(ActiveSupport::TaggedLogging::Formatter)
 
   # register all shoryuken middleware
   config.server_middleware do |chain|
