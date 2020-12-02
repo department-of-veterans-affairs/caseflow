@@ -36,7 +36,7 @@ const EditableField = (props) => {
 
   const saveOnEnter = (event) => {
     if (event.key === 'Enter') {
-      onSave();
+      onSave(value);
     }
   };
 
