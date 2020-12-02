@@ -17,7 +17,8 @@ class ValidateSqlQueries
       puts "  Output files will be saved to '#{output_dir}'"
       filenames.each { |filename| run_queries_and_save_output(filename, output_dir) }
 
-      compare_output_files(output_dir)
+      diff_basenames = compare_output_files(output_dir)
+      [filenames.size, diff_basenames]
     end
 
     def list_query_filenames(query_dir)
