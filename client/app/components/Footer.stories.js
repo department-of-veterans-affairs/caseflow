@@ -40,13 +40,22 @@ export default {
   },
   args: {
     appName: '',
-    buildDate: '',
+    buildDate: '12/25/2020',
     feedbackUrl: ''
   },
   argTypes: {
-    appName: { control: 'text' },
-    buildDate: { control: 'text' },
-    feedbackUrl: { control: 'text' }
+    appName: {
+      description: 'All of Caseflow Apps feature a minimal footer that contains the text “Built with ♡ by the Digital Service at the VA.”',
+      control: null
+    },
+    buildDate: {
+      description: 'Conveniently, if a developer hovers over the word “Built” they’ll see a tooltip showing the build date of the app that they are viewing. In styleguide footer, recent build date is based off of “date” in `build_version.yml`.',
+      control: 'text'
+    },
+    feedbackUrl: {
+      description: '“Send Feedback” link.',
+      control: null
+    }
   },
   decorators: [RouterDecorator, ReduxDecorator],
 };
