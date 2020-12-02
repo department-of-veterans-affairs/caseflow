@@ -34,15 +34,15 @@ const EditableField = (props) => {
     startEditing();
   }
 
-  const saveOnEnter = (event) => {
-    if (event.key === 'Enter') {
-      onSave(value);
-    }
-  };
-
   const onSaveClick = () => {
     stopEditing();
     onSave(value);
+  };
+
+  const saveOnEnter = (event) => {
+    if (event.key === 'Enter') {
+      onSaveClick();
+    }
   };
 
   const onCancelClick = () => {
