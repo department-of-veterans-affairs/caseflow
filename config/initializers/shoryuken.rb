@@ -18,7 +18,12 @@ if Rails.application.config.sqs_create_queues
 end
 
 Shoryuken.configure_server do |config|
-  ActiveRecord::Base.logger = Shoryuken.logger
+  # Configure loggers in Shoryuken.
+  #
+  # Note: `Rails.logger` and `ActiveRecord::Base.logger` are different in production. This only
+  #   changes the formatter here to preserve the logging level of each logger.
+  Rails.logger.formatter = Shoryuken.logger.formatter
+  ActiveRecord::Base.logger.formatter = Shoryuken.logger.formatter
 
   # register all shoryuken middleware
   config.server_middleware do |chain|
