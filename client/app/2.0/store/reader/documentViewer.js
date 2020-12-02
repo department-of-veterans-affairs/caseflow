@@ -34,6 +34,10 @@ const initialPdfSidebarErrorState = {
  * PDF Initial State
  */
 export const initialState = {
+  viewport: {
+    height: PDF_PAGE_HEIGHT,
+    width: PDF_PAGE_WIDTH,
+  },
   canvasList: [],
   hideSearchBar: true,
   hidePdfSidebar: false,
@@ -175,6 +179,8 @@ export const showPage = async(params) => {
       textDivs: []
     }).promise;
   }
+
+  return { viewport };
 };
 
 /**
@@ -201,12 +207,27 @@ export const showPdf = createAsyncThunk('documentViewer/show', async ({
     });
 
     // Store the Document in-memory so that we do not serialize through Redux, but still persist
-    pdfDocuments[currentDocument.id] = { pdf: await PDF.getDocument({ data: body }).promise };
+    pdfDocuments[currentDocument.id] = {
+      pdf: await PDF.getDocument({ data: body }).promise
+    };
+
+    // Store the pages for the PDF
+    pdfDocuments[currentDocument.id].pages = await Promise.all(
+      range(0, pdfDocuments[currentDocument.id].pdf.numPages).map((pageIndex) =>
+        pdfDocuments[currentDocument.id].pdf.getPage(pageIndex + 1))
+    );
   }
+
+  // Store the Viewport
+  pdfDocuments[currentDocument.id].viewport = pdfDocuments[currentDocument.id].pages.reduce((viewport, page) => ({
+    height: Math.max(viewport.height, page.getViewport({ scale }).height),
+    width: Math.max(viewport.width, page.getViewport({ scale }).width)
+  }), { height: 0, width: 0 });
 
   // Return the new Document state
   return {
     scale,
+    viewport: pdfDocuments[currentDocument.id].viewport,
     canvasList: Array.from(document.getElementsByClassName('canvasWrapper')).map((canvas) => canvas.id),
     currentDocument: {
       ...currentDocument,
@@ -422,6 +443,7 @@ const documentViewerSlice = createSlice({
         // Add the PDF data to the store
         state.scale = action.payload.scale;
         state.canvasList = action.payload.canvasList;
+        state.viewport = action.payload.viewport;
 
         // Display the PDF Pages
         range(0, pdfDocuments[action.payload.currentDocument.id].pdf.numPages).map((pageIndex) => showPage({

@@ -99,7 +99,7 @@ export const Page = ({
   return pageIndex >= numPages ? (
     <div key={(numColumns * rowIndex) + columnIndex} style={style} />
   ) : (
-    <div key={pageIndex} style={pdfPageStyles(rotation, height, width)} >
+    <div key={pageIndex} style={style} >
       <div
         id={`pageContainer${pageNumber(pageIndex)}`}
         className={classNames({
@@ -111,7 +111,7 @@ export const Page = ({
         ref={pageRef}
         {...markStyles}
       >
-        <div id={`rotationDiv${pageNumber(pageIndex)}`} >
+        <div id={`rotationDiv${pageNumber(pageIndex)}`} style={pdfPageStyles(rotation, height, width)}>
           <canvas id={`pdf-canvas-${currentDocument.id}-${pageIndex}`} ref={canvasRef} className="canvasWrapper" />
           {addingComment && <div id="canvas-cursor" style={{ position: 'absolute' }}>{commentIcon()}</div>}
           <div className="cf-pdf-annotationLayer">
@@ -139,7 +139,7 @@ Page.propTypes = {
   pageIndex: PropTypes.number,
   addingComment: PropTypes.bool,
   dropComment: PropTypes.func,
-  movingComment: PropTypes.func,
+  movingComment: PropTypes.bool,
   moveComment: PropTypes.func,
   scale: PropTypes.number,
   onClick: PropTypes.func,

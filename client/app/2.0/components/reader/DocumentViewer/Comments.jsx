@@ -102,7 +102,7 @@ Comments.propTypes = {
   comments: PropTypes.array,
   pageIndex: PropTypes.number,
   file: PropTypes.string,
-  movingComment: PropTypes.func,
+  movingComment: PropTypes.bool,
   handleDrop: PropTypes.func,
   moveMouse: PropTypes.func,
   onClick: PropTypes.func,
