@@ -30,9 +30,9 @@ class JobSentryScopeMiddleware
     Rails.logger.info("Tags: #{tags}")
     ActiveRecord::Base.logger.info("Context: #{context}")
 
-    Raven.tags_context(tags) do
-      Raven.extra_context(context) { yield }
-    end
+    Raven.tags_context(tags)
+    Raven.extra_context(context)
+    yield
   end
   # :nocov:
 end
