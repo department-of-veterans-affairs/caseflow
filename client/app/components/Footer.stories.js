@@ -45,11 +45,14 @@ export default {
   },
   argTypes: {
     appName: {
-      description: 'All of Caseflow Apps feature a minimal footer that contains the text “Built with ♡ by the Digital Service at the VA.”',
+      description: `All of Caseflow Apps feature a minimal footer that contains the text
+                    “Built with ♡ by the Digital Service at the VA.”`,
       control: null
     },
     buildDate: {
-      description: 'Conveniently, if a developer hovers over the word “Built” they’ll see a tooltip showing the build date of the app that they are viewing. In styleguide footer, recent build date is based off of “date” in `build_version.yml`.',
+      description: `Conveniently, if a developer hovers over the word “Built”
+                they’ll see a tooltip showing the build date of the app that they are viewing.
+                In styleguide footer,recent build date is based off of “date” in ${'`build_version.yml`'}.`,
       control: 'text'
     },
     feedbackUrl: {
