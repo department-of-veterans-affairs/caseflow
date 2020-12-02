@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "fileutils"
-
 ##
 # Class to validate that SQL queries return the same results as the corresponding Rails query.
 
