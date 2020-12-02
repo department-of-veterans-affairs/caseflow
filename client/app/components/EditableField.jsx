@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Button from './Button';
 
+/**
+ * A field that displays a value that can be edited and saved
+ */
 const EditableField = (props) => {
   const {
     errorMessage,
