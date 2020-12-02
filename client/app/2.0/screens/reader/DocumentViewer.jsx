@@ -15,7 +15,7 @@ import { DocumentSidebar } from 'components/reader/DocumentViewer/Sidebar';
 import { DocumentFooter } from 'components/reader/DocumentViewer/Footer';
 import { DocumentSearch } from 'app/2.0/components/reader/DocumentViewer/Search';
 import { Pdf } from 'app/2.0/components/reader/DocumentViewer/PDF';
-import { ZOOM_RATE, MINIMUM_ZOOM, CATEGORIES, PDF_PAGE_HEIGHT } from 'app/2.0/store/constants/reader';
+import { ZOOM_RATE, MINIMUM_ZOOM, CATEGORIES, PAGE_MARGIN } from 'app/2.0/store/constants/reader';
 import { ShareComment } from 'app/2.0/components/reader/DocumentViewer/modals/Share';
 import { DeleteComment } from 'app/2.0/components/reader/DocumentViewer/modals/Delete';
 import {
@@ -72,13 +72,19 @@ const DocumentViewer = (props) => {
   };
 
   // Load the Documents
-  useEffect(fetchDocuments({ ...state, params }, dispatch), [params.docId]);
+  useEffect(fetchDocuments({ ...state, params }, dispatch), []);
 
   // Create the Grid Ref
   const gridRef = React.createRef();
 
   // Create the dispatchers
   const actions = {
+    showPdf: (currentPage, currentDocument) => dispatch(showPdf({
+      currentDocument,
+      pageNumber: currentPage,
+      worker: props.pdfWorker,
+      scale: state.scale
+    })),
     toggleKeyboardInfo: (val) => dispatch(toggleKeyboardInfo(val)),
     moveComment: (comment) => dispatch(moveComment(comment)),
     startMove: (commentId) => dispatch(startMove(commentId)),
@@ -133,28 +139,37 @@ const DocumentViewer = (props) => {
     removeComment: () => dispatch(removeComment({ commentId: state.deleteCommentId, docId: state.currentDocument.id })),
     toggleAccordion: (sections) => dispatch(toggleAccordion(sections)),
     togglePdfSidebar: () => dispatch(togglePdfSideBar()),
-    toggleSearchBar: () => dispatch(toggleSearchBar()),
+    toggleSearchBar: () => {
+      // Toggle the Search
+      dispatch(toggleSearchBar());
+
+      // Clear the term
+      dispatch(searchText({ searchTerm: '', docId: state.currentDocument.id, matchIndex: 0 }));
+    },
     download: () => openDownloadLink(state.currentDocument.content_url, state.currentDocument.type),
     scrollPage: ({ clientHeight, ...options }) => {
       // Assign the Canvas Elements
       const elements = Array.from(document.getElementsByClassName('canvasWrapper'));
 
       // Calculate the Page Offset
-      const offset = Math.floor(options.scrollTop / PDF_PAGE_HEIGHT);
+      const offset = Math.floor(options.scrollTop / state.viewport.height);
 
       // Set the Current page number
       const pageNumber = offset + 1;
 
+      // Calculate the current page
+      const currentPage = pageNumber > gridRef.current?.props?.rowCount ? gridRef.current?.props?.rowCount : pageNumber;
+
       // Update the Pages if the client height and canvas list have changed
       if (clientHeight > 0 && state.canvasList.length !== elements.length && isEmpty(state.selectedComment)) {
         dispatch(showPdf({
-          pageNumber,
+          pageNumber: currentPage,
           currentDocument: state.currentDocument,
           worker: props.pdfWorker,
           scale: state.scale
         }));
       } else if (pageNumber !== state.currentDocument.currentPage) {
-        dispatch(setPageNumber(pageNumber));
+        dispatch(setPageNumber(currentPage));
       }
     },
     overscanIndices: ({ cellCount, overscanCellsCount, startIndex, stopIndex }) => ({
@@ -190,7 +205,12 @@ const DocumentViewer = (props) => {
       dispatch(showPdf({ currentDocument: state.currentDocument, worker: props.pdfWorker, scale }));
     },
     setPageNumber: (pageNumber) => {
-      gridRef.current?.scrollToPosition({ scrollTop: (pageNumber - 1) * PDF_PAGE_HEIGHT });
+      // Calculate the page number
+      const number = pageNumber - 1;
+      const page = number >= gridRef.current?.props?.rowCount ? gridRef.current?.props?.rowCount - 1 : number;
+
+      // Scroll to the page
+      gridRef.current?.scrollToPosition({ scrollTop: page * (state.viewport.height + PAGE_MARGIN) });
     },
     prevDoc: () => {
       const doc = state.documents[docs.prev];
@@ -212,7 +232,7 @@ const DocumentViewer = (props) => {
     <div
       id="document-viewer"
       className="cf-pdf-page-container"
-      onClick={state.addingComment === true ? actions.clickPage : null}
+      onClick={state.addingComment === false ? actions.clickPage : null}
     >
       <div className={classNames('cf-pdf-container', { 'hidden-sidebar': state.hidePdfSidebar })} {...pdfWrapper}>
         <DocumentHeader

@@ -122,7 +122,6 @@ DocumentHeader.propTypes = {
   filteredDocIds: PropTypes.array,
   nextDoc: PropTypes.func,
   numPages: PropTypes.number,
-  setPageNumber: PropTypes.func,
   handleKeyPress: PropTypes.func,
   pageNumber: PropTypes.number,
   docsCount: PropTypes.number,
