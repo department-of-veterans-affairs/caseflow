@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 /**
  * Wrapper to display both labels and input fields inline
  */
-const InlineForm = ({ children }) => (
+export const InlineForm = ({ children }) => (
   <div className="usa-grid-half cf-inline-form">
     {Children.map(children, (child) => {
       return (<div className="cf-push-left">

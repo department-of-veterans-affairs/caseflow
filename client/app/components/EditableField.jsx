@@ -6,33 +6,31 @@ import Button from './Button';
 /**
  * A field that displays a value that can be edited and saved
  */
-const EditableField = (props) => {
+export const EditableField = (props) => {
   const {
-    errorMessage,
     className,
+    errorMessage,
+    inputRef,
     label,
+    maxLength,
     name,
-    type,
-    value: initialValue,
-    onChange,
     onCancel,
+    onChange,
     onSave,
     placeholder,
     title,
-    maxLength
+    type,
+    value: initialValue
   } = props;
   const buttonClasses = ['cf-btn-link', 'editable-field-btn-link'];
   let actionLinks, textDisplay;
 
-  const [editing, setEditing] = useState(false);
+  // Initialize with the editable field displayed if these is an error
+  const [editing, setEditing] = useState(errorMessage && errorMessage.length);
   const [value, setvalue] = useState(initialValue);
 
   const startEditing = () => setEditing(true);
   const stopEditing = () => setEditing(false);
-
-  if (errorMessage && !editing) {
-    startEditing();
-  }
 
   const onSaveClick = () => {
     stopEditing();
@@ -65,6 +63,7 @@ const EditableField = (props) => {
       </Button>
     </span>;
     textDisplay = <input
+      ref={inputRef}
       className={className}
       name={name}
       id={name}
@@ -85,12 +84,14 @@ const EditableField = (props) => {
     textDisplay = <span id={name}>{value}</span>;
   }
 
-  return <div className={classNames(className, { 'usa-input-error': errorMessage })}>
-    <strong>{label}</strong>
-    {actionLinks}<br />
-    {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
-    {textDisplay}
-  </div>;
+  return (
+    <div className={classNames(className, { 'usa-input-error': errorMessage })}>
+      <strong>{label}</strong>
+      {actionLinks}<br />
+      {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
+      {textDisplay}
+    </div>
+  );
 };
 
 EditableField.defaultProps = {
@@ -109,6 +110,16 @@ EditableField.propTypes = {
    * Error string to show. Will style entire component as invalid if defined
    */
   errorMessage: PropTypes.string,
+
+  /**
+   * Pass a ref to the `input` element
+   */
+  inputRef: PropTypes.oneOfType([
+    // Either a function
+    PropTypes.func,
+    // Or the instance of a DOM native element (see the note about SSR)
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  ]),
 
   /**
    * Text (or other node) to display in associated `label` element

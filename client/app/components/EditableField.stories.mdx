@@ -1,4 +1,4 @@
-import { Meta, Story, ArgsTable } from '@storybook/addon-docs/blocks';
+import { Meta, Story, ArgsTable, Canvas } from '@storybook/addon-docs/blocks';
 
 import * as Stories from './EditableField.stories';
 
@@ -65,38 +65,50 @@ done editing the field, they can cancel or save their changes.
 
 When an error message is provided, the field will be stylized as invalid.
 
-<Story story={Stories.Error} />
+<Canvas>
+  <Story story={Stories.Error} />
+</Canvas>
 
 ## Label
 
 Labels can be set with the `label` property.
 
-<Story story={Stories.Label} />
+<Canvas>
+  <Story story={Stories.Label} />
+</Canvas>
 
 ## Max Length
 
 The length of the string input into the text field can be restricted. The default for this is 524288.
 
-<Story story={Stories.MaxLength} />
+<Canvas>
+  <Story story={Stories.MaxLength} />
+</Canvas>
 
 ## Placeholder
 
 Placeholder text can be set to display when the input is empty. This can be used to provide the user with additional
 context or instructions.
 
-<Story story={Stories.Placeholder} />
+<Canvas>
+  <Story story={Stories.Placeholder} />
+</Canvas>
 
 ## Title
 
 A title can be set to provide extra information to the user when they hover over the label or input field
 
-<Story story={Stories.Title} />
+<Canvas>
+  <Story story={Stories.Title} />
+</Canvas>
 
 ## Type
 
 Type can be used to control the type of data to input
 
-<Story story={Stories.Type} />
+<Canvas>
+  <Story story={Stories.Type} />
+</Canvas>
 
 ## Args
 

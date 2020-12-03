@@ -7,19 +7,15 @@ import TextareaField from './TextareaField';
 /**
  * A long text field with accompanying save and cancel buttons. Props 'name' and 'onChange' are required
  */
-const SaveableTextArea = (props) => {
-  const { disabled, hideLabel, id, label, name, onChange, onCancelClick, onKeyDown, onSaveClick, value } = props;
+export const SaveableTextArea = (props) => {
+  const { disabled, id, name, onCancelClick, onSaveClick, ...textAreaProps } = props;
 
   return <div className="comment-size-container">
     <TextareaField
-      label={label}
       name={name}
-      hideLabel={hideLabel}
       aria-label={name}
-      onChange={onChange}
-      onKeyDown={onKeyDown}
       id={id || name}
-      value={value}
+      {...textAreaProps}
     />
     <div className="comment-save-button-container">
       <span className="cf-right-side">
