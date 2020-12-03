@@ -164,13 +164,6 @@ class CachedAppealService
     ).pluck(:id)
   end
 
-  # Builds a hash of appeal_id => rep name
-  def representative_names_for_appeals(appeals)
-    Claimant.where(decision_review_id: appeals, decision_review_type: Appeal.name).joins(
-      "LEFT JOIN bgs_power_of_attorneys ON bgs_power_of_attorneys.claimant_participant_id = claimants.participant_id"
-    ).pluck("claimants.decision_review_id, bgs_power_of_attorneys.representative_name").to_h
-  end
-
   def case_fields_for_vacols_ids(vacols_ids)
     # array of arrays will become hash with bfkey as key.
     # [

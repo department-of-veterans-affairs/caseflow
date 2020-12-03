@@ -26,8 +26,6 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   rescue StandardError => error
     log_error(@start_time, error)
-  else
-    log_warning unless warning_msgs.empty?
   end
 
   def cache_ama_appeals
@@ -78,8 +76,6 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     end
   end
 
-  delegate :warning_msgs, to: :cached_appeal_service
-
   private
 
   def increment_vacols_update_count(count)
@@ -107,11 +103,6 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
   def cached_appeal_service
     @cached_appeal_service ||= CachedAppealService.new
-  end
-
-  def log_warning
-    slack_msg = warning_msgs.join("\n")
-    slack_service.send_notification(slack_msg, "[WARN] UpdateCachedAppealsAttributesJob: first 100 warnings")
   end
 
   def log_error(start_time, err)

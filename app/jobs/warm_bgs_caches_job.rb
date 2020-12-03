@@ -19,6 +19,10 @@ class WarmBgsCachesJob < CaseflowJob
 
   private
 
+  def warning_msgs
+    @warning_msgs ||= []
+  end
+
   CACHED_APPEALS_BGS_POA_COLUMNS = [
     :power_of_attorney_name
   ].freeze
@@ -43,6 +47,8 @@ class WarmBgsCachesJob < CaseflowJob
     warm_poa_and_cache_for_ama_appeals_with_hearings
     warm_poa_and_cache_ama_appeals_for_oldest_claimants
     warm_poa_for_oldest_cached_records
+
+    log_warning unless warning_msgs.empty?
   end
 
   def warm_poa_and_cache_for_legacy_appeals_with_hearings
@@ -141,6 +147,14 @@ class WarmBgsCachesJob < CaseflowJob
         power_of_attorney_name: bgs_poa&.representative_name
       }
     end
+  rescue Errno::ECONNRESET, Savon::HTTPError => error
+    warning_msgs << "#{appeal_type} #{appeal_id}: #{error}" if warning_msgs.count < 100
+    nil
+  end
+
+  def log_warning
+    slack_msg = warning_msgs.join("\n")
+    slack_service.send_notification(slack_msg, "[WARN] WarmBgsCachesJob: first 100 warnings")
   end
 
   def legacy_appeal_ids_with_hearings
