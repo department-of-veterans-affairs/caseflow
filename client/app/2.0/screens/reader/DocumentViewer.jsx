@@ -177,14 +177,7 @@ const DocumentViewer = (props) => {
       const currentPage = pageNumber > gridRef.current?.props?.rowCount ? gridRef.current?.props?.rowCount : pageNumber;
 
       // Update the Pages if the client height and canvas list have changed
-      if (clientHeight > 0 && state.canvasList.length !== elements.length && isEmpty(state.selectedComment)) {
-        // dispatch(showPdf({
-        //   pageNumber: currentPage,
-        //   currentDocument: state.currentDocument,
-        //   worker: props.pdfWorker,
-        //   scale: state.scale
-        // }));
-      } else if (pageNumber !== state.currentDocument.currentPage) {
+      if (pageNumber !== state.currentDocument.currentPage) {
         dispatch(setPageNumber(currentPage));
       }
     },
