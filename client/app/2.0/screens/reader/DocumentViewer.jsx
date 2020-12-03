@@ -125,6 +125,7 @@ const DocumentViewer = (props) => {
       );
 
       dispatch(moveComment({
+        page: pageIndex + 1,
         document_id: state.currentDocument.id,
         id: state.movingComment,
         x: coords.x,
@@ -141,11 +142,17 @@ const DocumentViewer = (props) => {
         );
 
         // Move the cursor icon
-        const cursor = document.getElementById('canvas-cursor');
+        const cursor = document.getElementById(`canvas-cursor-${pageIndex}`);
+
+        // Hide all the other cursors
+        Array.from(document.getElementsByClassName('canvas-cursor')).forEach((canvas) => {
+          canvas.style.display = 'none';
+        });
 
         // Update the coordinates
         cursor.style.left = `${coords.x}px`;
         cursor.style.top = `${coords.y}px`;
+        cursor.style.display = 'block';
       }
     },
     showPdf: (currentPage, currentDocument, scale) => dispatch(showPdf({

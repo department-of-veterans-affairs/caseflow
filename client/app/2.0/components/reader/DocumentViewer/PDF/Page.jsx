@@ -29,6 +29,7 @@ export const Page = ({
   movingComment,
   moveComment,
   match,
+  moveMouse,
   ...props
 }) => {
   // Calculate the Page Index
@@ -63,14 +64,22 @@ export const Page = ({
       >
         <div id={`rotationDiv${pageNumber(pageIndex)}`} style={pdfPageStyles(rotation, style.height, style.width)}>
           <canvas id={`pdf-canvas-${currentDocument.id}-${pageIndex}`} ref={canvasRef} className="canvasWrapper" />
-          {addingComment && <div id="canvas-cursor" style={{ position: 'absolute' }}>{commentIcon()}</div>}
+          {addingComment && (
+            <div
+              id={`canvas-cursor-${pageIndex}`}
+              className="canvas-cursor"
+              style={{ position: 'absolute', display: 'none' }}
+            >
+              {commentIcon()}
+            </div>
+          )}
           <div className="cf-pdf-annotationLayer">
             <Comments
               {...props}
               handleDrop={(event) => moveComment(event, pageIndex)}
               dropComment={dropComment}
               movingComment={movingComment}
-              moveMouse={(event) => props.moveMouse(event, pageIndex)}
+              moveMouse={(event) => moveMouse(event, pageIndex)}
               currentDocument={currentDocument}
               documentId={currentDocument.id}
               pageIndex={pageIndex}
@@ -102,5 +111,6 @@ Page.propTypes = {
   numColumns: PropTypes.number,
   rowIndex: PropTypes.number,
   columnIndex: PropTypes.number,
-  setPageNumber: PropTypes.func
+  setPageNumber: PropTypes.func,
+  moveMouse: PropTypes.func,
 };
