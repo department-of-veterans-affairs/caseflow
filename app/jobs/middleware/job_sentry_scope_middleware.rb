@@ -2,7 +2,7 @@
 
 class JobSentryScopeMiddleware
   # :nocov:
-  def call(_worker, _queue, sqs_msg, body)
+  def call(_worker, queue, sqs_msg, body)
     # The structure for the `body` is described here:
     #
     #   https://github.com/phstc/shoryuken/wiki/Sending-a-message
@@ -16,12 +16,16 @@ class JobSentryScopeMiddleware
       start_time: job_start_time,
       end_time: job_start_time + 1.day # Assume the job will complete in a day
     )
+    application = job_class.try(:app_name)
 
     tags = {
-      application: job_class.try(:app_name)
+      application: application,
+      job: job_class.name,
+      queue: queue
     }
     # Note: job class and job id are already sent to Sentry by default.
     context = {
+      application: application,
       aws_log_url: job_info.url,
       msg_id: msg_id,
       start_time: job_start_time
