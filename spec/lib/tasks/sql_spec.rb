@@ -103,7 +103,7 @@ describe "sql", :postgres do
             expect(error).to be_nil
           end
         end
-        expect(results.first).to eq results.second
+        expect(results.first).not_to eq results.second
       end
     end
     context "empty Rails query" do
