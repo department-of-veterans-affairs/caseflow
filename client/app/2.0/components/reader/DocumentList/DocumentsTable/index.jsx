@@ -29,14 +29,13 @@ export const DocumentsTable = ({ show, ...props }) => {
 
   // Check the scroll position on mount
   useEffect(() => {
-    // Only scroll if the scroll is set
-    if (props.documentList.pdfList.scrollTop) {
-      // Update the table body scroll position to the Last Read Row
-      tbodyRef.scrollTop = focusElement(lastReadRef, tbodyRef);
-    }
+    // Get the last Read Indicator
+    const lastRead = document.getElementById('read-indicator');
 
-    // Reset the scroll position on Un-mount
-    return () => dispatch(setDocListScrollPosition(tbodyRef?.scrollTop));
+    // Focus the last read if present
+    if (lastRead) {
+      lastRead.scrollIntoView();
+    }
   }, []);
 
   // Create the Table Props to pass to the columns
