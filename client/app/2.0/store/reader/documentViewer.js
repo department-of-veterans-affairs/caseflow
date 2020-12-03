@@ -155,6 +155,9 @@ export const showPage = async(params) => {
   // Calculate the Viewport
   const viewport = page ? page.getViewport({ scale: params.scale }) : initialState.viewport;
 
+  // Set the viewport
+  pdfDocuments[params.docId].viewport = viewport;
+
   // Select the canvas element to draw
   const canvas = document.getElementById(`pdf-canvas-${params.docId}-${params.pageIndex}`);
 
