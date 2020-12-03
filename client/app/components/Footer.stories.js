@@ -32,19 +32,19 @@ const ReduxDecorator = (storyFn) => (
   </ReduxBase>
 );
 
+const styleDocs = 'All of Caseflow Apps feature a minimal footer that contains the text ' +
+                  '“Built with ♡ by the Digital Service at the VA.” and a “Send Feedback” link. Conveniently, ' +
+                  'if a developer hovers over the word “Built” they’ll see a tooltip showing the build date of the ' +
+                  'app that they are viewing. In styleguide footer, recent build date is based off of “date” in ' +
+                  '`build_version.yml`.';
+
 export default {
   title: 'Commons/Components/Layout/Footer',
   component: Footer,
   parameters: {
     controls: { expanded: true },
     docs: {
-      storyDescription: `
-      All of Caseflow Apps feature a minimal footer that contains the text
-      “Built with ♡ by the Digital Service at the VA.” and a “Send Feedback” link.
-      Conveniently, if a developer hovers over the word “Built”
-      they’ll see a tooltip showing the build date of the app that they are viewing.
-      In styleguide footer,recent build date is based off of “date” in ${'`build_version.yml`'}.
-      `,
+      storyDescription: styleDocs
     },
   },
   args: {
