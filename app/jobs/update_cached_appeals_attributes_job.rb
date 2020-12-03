@@ -31,7 +31,9 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   def cache_ama_appeals
-    appeals = Appeal.includes(:available_hearing_locations).where(id: open_appeals_from_tasks(Appeal.name))
+    appeals = Appeal.includes(:available_hearing_locations)
+      .where(id: open_appeals_from_tasks(Appeal.name))
+      .order(updated_at: :desc)
 
     cached_appeals = cached_appeal_service.cache_ama_appeals(appeals)
 
@@ -47,6 +49,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     # was previously causing this code to insert legacy appeal attributes that corresponded to NULL ID fields.
     legacy_appeals = LegacyAppeal.includes(:available_hearing_locations)
       .where(id: open_appeals_from_tasks(LegacyAppeal.name))
+      .order(updated_at: :desc)
     all_vacols_ids = legacy_appeals.pluck(:vacols_id).flatten
 
     cache_postgres_data_start = Time.zone.now
