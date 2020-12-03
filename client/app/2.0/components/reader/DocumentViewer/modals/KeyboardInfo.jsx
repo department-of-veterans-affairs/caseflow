@@ -105,7 +105,7 @@ export const searchInstructions = () => {
 /**
  * Document Keyboard Shortcut Instructions
  */
-export const documentsInstructions = [
+export const docInstructions = [
   {
     documentsInstruction: 'Scroll page up',
     shortcut: <span><code>shift</code> + <code>space</code></span>
@@ -164,9 +164,9 @@ export const KeyboardInfo = ({ toggleKeyboardInfo, show, ...props }) => show && 
       noDivider
     >
       <div className="cf-keyboard-modal-scroll">
-        <Table columns={documentsColumns} rowObjects={documentsInstructions} {...props} />
-        <Table columns={searchColumns} rowObjects={searchInstructions()} {...props} />
-        <Table columns={commentColumns} rowObjects={commentInstructions} {...props} />
+        <Table columns={documentsColumns} rowObjects={docInstructions} getKeyForRow={(index) => index} {...props} />
+        <Table columns={searchColumns} rowObjects={searchInstructions()} getKeyForRow={(index) => index} {...props} />
+        <Table columns={commentColumns} rowObjects={commentInstructions} getKeyForRow={(index) => index} {...props} />
       </div>
     </Modal>
   </div>

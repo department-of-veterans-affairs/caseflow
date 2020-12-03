@@ -78,7 +78,6 @@ const DocumentViewer = (props) => {
 
     // Load the PDF
     if (currentDocument?.id) {
-      console.log('VIEWER DOC: ', currentDocument);
       dispatch(showPdf({
         currentDocument,
         worker: props.pdfWorker,

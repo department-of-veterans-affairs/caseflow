@@ -36,9 +36,6 @@ export const Page = ({
   // Calculate the Page Index
   const pageIndex = (numColumns * rowIndex) + columnIndex;
 
-  // Calculate the page dimensions
-  const { height, width } = dimensions(scale, rotation);
-
   // Create the Click handler for dropping comments
   const handleClick = (event) => {
     event.stopPropagation();
@@ -108,7 +105,7 @@ export const Page = ({
       });
 
     }
-  }, [currentDocument?.id]);
+  }, [currentDocument?.id, scale, currentDocument?.rotation]);
 
   return pageIndex >= currentDocument.numPages ? (
     <div key={(numColumns * rowIndex) + columnIndex} style={style} />
@@ -125,7 +122,7 @@ export const Page = ({
         ref={pageRef}
         {...markStyles}
       >
-        <div id={`rotationDiv${pageNumber(pageIndex)}`} style={pdfPageStyles(rotation, height, width)}>
+        <div id={`rotationDiv${pageNumber(pageIndex)}`} style={pdfPageStyles(rotation, style.height, style.width)}>
           <canvas id={`pdf-canvas-${currentDocument.id}-${pageIndex}`} ref={canvasRef} className="canvasWrapper" />
           {addingComment && <div id="canvas-cursor" style={{ position: 'absolute' }}>{commentIcon()}</div>}
           <div className="cf-pdf-annotationLayer">
@@ -140,7 +137,7 @@ export const Page = ({
               documentId={currentDocument.id}
               pageIndex={pageIndex}
               scale={scale}
-              dimensions={{ width, height }}
+              dimensions={{ width: style.width, height: style.height }}
             />
           </div>
         </div>
@@ -152,6 +149,7 @@ export const Page = ({
 Page.propTypes = {
   pageIndex: PropTypes.number,
   addingComment: PropTypes.bool,
+  isVisible: PropTypes.bool,
   dropComment: PropTypes.func,
   movingComment: PropTypes.bool,
   moveComment: PropTypes.func,

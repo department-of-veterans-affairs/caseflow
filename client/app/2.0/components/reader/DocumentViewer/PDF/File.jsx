@@ -18,7 +18,7 @@ export const File = ({ gridRef, overscanIndices, windowingOverscan, scrollPage, 
     {({ width, height }) => {
       // Set the Page Width
       const pageWidth = columnWidth({
-        scale: props.scale,
+        horizontal: [90, 270].includes(props.currentDocument.rotation),
         numPages: props.currentDocument.numPages,
         dimensions: viewport
       });
@@ -28,6 +28,13 @@ export const File = ({ gridRef, overscanIndices, windowingOverscan, scrollPage, 
 
       // Calculate the count of rows
       const rowCount = Math.ceil(props.currentDocument.numPages / numColumns) || 1;
+
+      // Calculate the page height
+      const pageHeight = rowHeight({
+        horizontal: [90, 270].includes(props.currentDocument.rotation),
+        dimensions: viewport,
+        numPages: props.currentDocument.numPages
+      });
 
       return (
         <Grid
@@ -40,7 +47,7 @@ export const File = ({ gridRef, overscanIndices, windowingOverscan, scrollPage, 
           onScroll={scrollPage}
           height={height}
           rowCount={rowCount}
-          rowHeight={rowHeight({ scale: props.scale, dimensions: viewport, numColumns })}
+          rowHeight={pageHeight}
           cellRenderer={(cellProps) => cellProps.isVisible && (
             <Page
               {...cellProps}
@@ -54,7 +61,7 @@ export const File = ({ gridRef, overscanIndices, windowingOverscan, scrollPage, 
           )}
           scrollToAlignment="start"
           width={width}
-          columnWidth={() => pageWidth}
+          columnWidth={pageWidth}
           columnCount={numColumns}
           scale={props.scale}
           tabIndex={props.isVisible ? 0 : -1}

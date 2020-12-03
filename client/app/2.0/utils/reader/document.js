@@ -306,17 +306,14 @@ export const filterDocuments = (criteria, documents, state) => {
   });
 };
 
-export const rowHeight = ({ scale, numColumns, dimensions, horizontal }) => ({ index }) => {
+export const rowHeight = ({ numPages, dimensions, horizontal }) => {
   // Return the default width if there are no pages yet
-  if (!numColumns) {
+  if (!numPages) {
     return PDF_PAGE_HEIGHT;
   }
 
-  // Calculate the Starting Index of the page
-  const start = index * numColumns;
-
   // Get the list of page heights
-  const heights = range(start, start + numColumns).map(() => {
+  const heights = range(0, numPages).map(() => {
     // Return the page width if Horizontal
     if (horizontal) {
       return dimensions?.width || PDF_PAGE_WIDTH;
@@ -327,10 +324,10 @@ export const rowHeight = ({ scale, numColumns, dimensions, horizontal }) => ({ i
   });
 
   // Return the Max height of the pages as the row height
-  return (Math.max(...heights) + PAGE_MARGIN) * scale;
+  return (Math.max(...heights) + PAGE_MARGIN);
 };
 
-export const columnWidth = ({ numPages, scale, dimensions, horizontal }) => {
+export const columnWidth = ({ numPages, dimensions, horizontal }) => {
   // Return the default width if there are no pages yet
   if (!numPages) {
     return PDF_PAGE_WIDTH;
@@ -348,14 +345,5 @@ export const columnWidth = ({ numPages, scale, dimensions, horizontal }) => {
   });
 
   // Return the width based on the current scale
-  return (Math.max(...widths) + PAGE_MARGIN) * scale;
-};
-
-export const dimensions = (scale, rotation) => {
-  // Set the height based on the rotation
-  const height = rotation === 90 || rotation === 270 ? scale * PDF_PAGE_HEIGHT : scale * PDF_PAGE_WIDTH;
-  const width = rotation === 90 || rotation === 270 ? scale * PDF_PAGE_WIDTH : scale * PDF_PAGE_HEIGHT;
-
-  // Return the calculated dimensions
-  return { height, width };
+  return (Math.max(...widths) + PAGE_MARGIN);
 };

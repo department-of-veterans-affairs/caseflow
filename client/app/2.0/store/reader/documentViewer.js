@@ -158,8 +158,6 @@ export const showPage = async(params) => {
   // Select the canvas element to draw
   const canvas = document.getElementById(`pdf-canvas-${params.docId}-${params.pageIndex}`);
 
-  console.log('RENDER: ', pdfDocuments[params.docId].pdf);
-
   // Only Update the Canvas if it is present
   if (canvas) {
     // Update the Canvas
@@ -227,7 +225,6 @@ export const showPdf = createAsyncThunk('documentViewer/show', async ({
   return {
     scale,
     viewport: pdfDocuments[currentDocument.id].viewport,
-    canvasList: Array.from(document.getElementsByClassName('canvasWrapper')).map((canvas) => canvas.id),
     currentDocument: {
       ...currentDocument,
       rotation: rotation === null ? 0 : (rotation + ROTATION_INCREMENTS) % COMPLETE_ROTATION,
@@ -441,18 +438,7 @@ const documentViewerSlice = createSlice({
 
         // Add the PDF data to the store
         state.scale = action.payload.scale;
-        state.canvasList = action.payload.canvasList;
         state.viewport = action.payload.viewport;
-
-        // Display the PDF Pages
-        // range(0, pdfDocuments[action.payload.currentDocument.id].pdf.numPages).map((pageIndex) => showPage({
-        //   pageIndex,
-        //   scale: action.payload.scale,
-        //   rotation: action.payload.rotation,
-        //   docId: action.payload.currentDocument.id,
-        //   currentPage: pageIndex + 1,
-        //   pdf: pdfDocuments[action.payload.currentDocument.id].pdf,
-        // }));
       }).
       /* eslint-disable */
       addCase(selectCurrentPdf.rejected, (state, action) => {
