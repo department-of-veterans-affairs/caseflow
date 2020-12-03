@@ -23,6 +23,7 @@ client/junit.xml
 /tmp
 /coverage
 /reports/*
+!/reports/sql_queries
 !/reports/.keep
 
 # Ignore vim swap and tag files
