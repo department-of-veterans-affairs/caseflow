@@ -4,14 +4,6 @@
 # Generates a pre-filtered AWS URL or AWS command to find logs for a Caseflow job
 
 class AwsJobLogHelper
-  # AWS Region in Production
-  AWS_REGION = "us-gov-west-1"
-
-  AWS_CONSOLE_BASE_URL = "console.amazonaws-us-gov.com"
-
-  # AWS Cloudwatch Log group name for all Caseflow Jobs
-  LOG_GROUP = "dsva-appeals-certification-prod/opt/caseflow-certification/src/log/caseflow-certification-sqs-worker.out"
-
   # Describes an ActiveJob.
   class JobInfo
     attr_reader :job_class, :msg_id, :start_time, :end_time
@@ -85,8 +77,25 @@ class AwsJobLogHelper
     end
   end
 
+  class Renderer
+    # AWS Region in Production
+    AWS_REGION = "us-gov-west-1"
+
+    AWS_CONSOLE_BASE_URL = "console.amazonaws-us-gov.com"
+
+    # AWS Cloudwatch Log group name for all Caseflow Jobs
+    LOG_GROUP = {
+      prod: "dsva-appeals-certification-prod/opt/caseflow-certification/src/log/caseflow-certification-sqs-worker.out",
+      uat: "dsva-appeals-certification-uat/opt/caseflow-certification/src/log/caseflow-certification-sqs-worker.out"
+    }
+
+    def self.environment_log_group
+      LOG_GROUP[Rails.deploy_env] || LOG_GROUP[:uat]
+    end
+  end
+
   # Renders a AWS CloudWatch URL to find logs for an ActiveJob.
-  class UrlRenderer
+  class UrlRenderer < Renderer
     class << self
       def render(job_info)
         # The URL fragment contains info about the query for logs. See `UrlRenderer#build_query_detail`
@@ -95,9 +104,9 @@ class AwsJobLogHelper
 
         URI::HTTPS
           .build(
-            host: AwsJobLogHelper::AWS_CONSOLE_BASE_URL,
+            host: Renderer::AWS_CONSOLE_BASE_URL,
             path: "/cloudwatch/home",
-            query: { region: AwsJobLogHelper::AWS_REGION }.to_query,
+            query: { region: Renderer::AWS_REGION }.to_query,
             fragment: "logsV2:logs-insights#{query_detail}"
           )
           .to_s
@@ -120,7 +129,7 @@ class AwsJobLogHelper
           tz: "UTC",
           editorString: job_info.editor_string,
           isLiveTail: false,
-          source: AwsJobLogHelper::LOG_GROUP
+          source: environment_log_group
         }
 
         query.reduce("") do |query_detail, (key, value)|
@@ -167,7 +176,7 @@ class AwsJobLogHelper
   end
 
   # Renders a AWS CLI command to find logs for an ActiveJob.
-  class CommandRenderer
+  class CommandRenderer < Renderer
     class << self
       # @note This renderer renders a set of two commands. The first one starts a log query, and
       #   returns a query ID that can be used to get the results of the query. The renderer
@@ -179,7 +188,7 @@ class AwsJobLogHelper
       def render(job_info)
         <<~EOF
           aws logs start-query \\
-            --log-group-name '#{AwsJobLogHelper::LOG_GROUP}' \\
+            --log-group-name '#{environment_log_group}' \\
             --start-time #{job_info.start_time_ms} \\
             --end-time #{job_info.end_time_ms} \\
             --query-string '#{job_info.editor_string}' \\
