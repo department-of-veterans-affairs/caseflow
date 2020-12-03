@@ -1,5 +1,5 @@
 // External Dependencies
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -9,6 +9,7 @@ import { pageNumber, getPageCoordinatesOfMouseEvent } from 'utils/reader';
 import { markStyles, pdfPageStyles } from 'styles/reader/Document/Pdf';
 import { dimensions } from 'app/2.0/utils/reader/document';
 import { commentIcon } from 'app/components/RenderFunctions';
+import { showPage } from 'store/reader/documentViewer';
 
 /**
  * PDF Page Component
@@ -23,13 +24,13 @@ export const Page = ({
   currentDocument,
   rotation,
   style,
-  numPages,
   numColumns,
   rowIndex,
   columnIndex,
   dropComment,
   movingComment,
   moveComment,
+  match,
   ...props
 }) => {
   // Calculate the Page Index
@@ -96,7 +97,20 @@ export const Page = ({
     }
   };
 
-  return pageIndex >= numPages ? (
+  useEffect(() => {
+    if (currentDocument?.id && props.isVisible) {
+      showPage({
+        pageIndex,
+        scale,
+        rotation: currentDocument.rotation,
+        docId: match.params.docId,
+        currentPage: pageIndex + 1,
+      });
+
+    }
+  }, [currentDocument?.id]);
+
+  return pageIndex >= currentDocument.numPages ? (
     <div key={(numColumns * rowIndex) + columnIndex} style={style} />
   ) : (
     <div key={pageIndex} style={style} >
@@ -148,6 +162,7 @@ Page.propTypes = {
   currentDocument: PropTypes.object,
   rotation: PropTypes.number,
   style: PropTypes.object,
+  match: PropTypes.object,
   numPages: PropTypes.number,
   numColumns: PropTypes.number,
   rowIndex: PropTypes.number,

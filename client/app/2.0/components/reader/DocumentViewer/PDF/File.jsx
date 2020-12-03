@@ -41,7 +41,7 @@ export const File = ({ gridRef, overscanIndices, windowingOverscan, scrollPage, 
           height={height}
           rowCount={rowCount}
           rowHeight={rowHeight({ scale: props.scale, dimensions: viewport, numColumns })}
-          cellRenderer={(cellProps) => (
+          cellRenderer={(cellProps) => cellProps.isVisible && (
             <Page
               {...cellProps}
               {...props}

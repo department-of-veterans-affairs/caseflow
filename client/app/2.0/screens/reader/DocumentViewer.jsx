@@ -72,18 +72,34 @@ const DocumentViewer = (props) => {
   };
 
   // Load the Documents
-  useEffect(fetchDocuments({ ...state, params }, dispatch), []);
+  useEffect(() => {
+    // Get the Current document
+    const currentDocument = state.documents[params.docId];
+
+    // Load the PDF
+    if (currentDocument?.id) {
+      console.log('VIEWER DOC: ', currentDocument);
+      dispatch(showPdf({
+        currentDocument,
+        worker: props.pdfWorker,
+        scale: state.scale
+      }));
+    } else {
+      // Load the Documents
+      fetchDocuments({ ...state, params }, dispatch)();
+    }
+  }, [params.docId]);
 
   // Create the Grid Ref
   const gridRef = React.createRef();
 
   // Create the dispatchers
   const actions = {
-    showPdf: (currentPage, currentDocument) => dispatch(showPdf({
+    showPdf: (currentPage, currentDocument, scale) => dispatch(showPdf({
       currentDocument,
       pageNumber: currentPage,
       worker: props.pdfWorker,
-      scale: state.scale
+      scale
     })),
     toggleKeyboardInfo: (val) => dispatch(toggleKeyboardInfo(val)),
     moveComment: (comment) => dispatch(moveComment(comment)),
@@ -162,12 +178,12 @@ const DocumentViewer = (props) => {
 
       // Update the Pages if the client height and canvas list have changed
       if (clientHeight > 0 && state.canvasList.length !== elements.length && isEmpty(state.selectedComment)) {
-        dispatch(showPdf({
-          pageNumber: currentPage,
-          currentDocument: state.currentDocument,
-          worker: props.pdfWorker,
-          scale: state.scale
-        }));
+        // dispatch(showPdf({
+        //   pageNumber: currentPage,
+        //   currentDocument: state.currentDocument,
+        //   worker: props.pdfWorker,
+        //   scale: state.scale
+        // }));
       } else if (pageNumber !== state.currentDocument.currentPage) {
         dispatch(setPageNumber(currentPage));
       }
@@ -217,14 +233,14 @@ const DocumentViewer = (props) => {
 
       props.history.push(`/reader/appeal/${params.vacolsId}/documents/${doc.id}`);
 
-      dispatch(showPdf({ currentDocument: doc, worker: props.pdfWorker, scale: state.scale }));
+      // dispatch(showPdf({ currentDocument: doc, worker: props.pdfWorker, scale: state.scale }));
     },
     nextDoc: () => {
       const doc = state.documents[docs.next];
 
       props.history.push(`/reader/appeal/${params.vacolsId}/documents/${doc.id}`);
 
-      dispatch(showPdf({ currentDocument: doc, worker: props.pdfWorker, scale: state.scale }));
+      // dispatch(showPdf({ currentDocument: doc, worker: props.pdfWorker, scale: state.scale }));
     }
   };
 

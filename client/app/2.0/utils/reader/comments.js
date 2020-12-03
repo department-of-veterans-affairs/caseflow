@@ -51,13 +51,15 @@ export const focusComment = (comment) => {
   // Set the Parent component
   const parent = document.getElementById('cf-sidebar-accordion');
 
-  // Get the position from the top for the comment component
-  const commentTop = commentComponent.getBoundingClientRect().top;
+  // Focus the comment if found
+  if (commentComponent) {
+    // Get the position from the top for the comment component
+    const commentTop = commentComponent.getBoundingClientRect().top;
 
-  // Get the position from the top for the parent component
-  const parentTop = parent.getBoundingClientRect().top;
+    // Get the position from the top for the parent component
+    const parentTop = parent.getBoundingClientRect().top;
 
-  // Update the Scroll position according to the parent and base scroll from the top
-  parent.scrollTop = parent.scrollTop + commentTop - parentTop - COMMENT_SCROLL_FROM_THE_TOP;
-}
-;
+    // Update the Scroll position according to the parent and base scroll from the top
+    parent.scrollTop = parent.scrollTop + commentTop - parentTop - COMMENT_SCROLL_FROM_THE_TOP;
+  }
+};

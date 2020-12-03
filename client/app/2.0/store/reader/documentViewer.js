@@ -150,16 +150,15 @@ export const searchText = createAsyncThunk('documentViewer/search', async ({
 
 export const showPage = async(params) => {
   // Get the first page
-  const page = await params.pdf.getPage(params.currentPage);
+  const page = pdfDocuments[params.docId].pages[params.pageIndex];
 
   // Calculate the Viewport
-  const viewport = page.getViewport({ scale: params.scale });
-
-  // Update the Page viewport
-  pdfDocuments[params.docId].viewport = viewport;
+  const viewport = page ? page.getViewport({ scale: params.scale }) : initialState.viewport;
 
   // Select the canvas element to draw
   const canvas = document.getElementById(`pdf-canvas-${params.docId}-${params.pageIndex}`);
+
+  console.log('RENDER: ', pdfDocuments[params.docId].pdf);
 
   // Only Update the Canvas if it is present
   if (canvas) {
@@ -446,14 +445,14 @@ const documentViewerSlice = createSlice({
         state.viewport = action.payload.viewport;
 
         // Display the PDF Pages
-        range(0, pdfDocuments[action.payload.currentDocument.id].pdf.numPages).map((pageIndex) => showPage({
-          pageIndex,
-          scale: action.payload.scale,
-          rotation: action.payload.rotation,
-          docId: action.payload.currentDocument.id,
-          currentPage: pageIndex + 1,
-          pdf: pdfDocuments[action.payload.currentDocument.id].pdf,
-        }));
+        // range(0, pdfDocuments[action.payload.currentDocument.id].pdf.numPages).map((pageIndex) => showPage({
+        //   pageIndex,
+        //   scale: action.payload.scale,
+        //   rotation: action.payload.rotation,
+        //   docId: action.payload.currentDocument.id,
+        //   currentPage: pageIndex + 1,
+        //   pdf: pdfDocuments[action.payload.currentDocument.id].pdf,
+        // }));
       }).
       /* eslint-disable */
       addCase(selectCurrentPdf.rejected, (state, action) => {
