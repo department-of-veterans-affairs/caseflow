@@ -35,10 +35,11 @@ namespace :sql do
         card["dataset_query"]["native"]["query"]&.include?(ValidateSqlQueries::RAILS_EQUIV_PREFIX)
     end
     puts "Found #{filtered_cards.count} cards to be validated out of #{cards.count} cards total"
+    puts "Metabase SQL queries will be saved to '#{File.expand_path(args[:query_dir])}'"
 
     filtered_cards.sort_by { |obj| [obj["database_id"], obj["id"]] }.each do |obj|
       creator_name = obj["creator"]["common_name"]
-      puts "  Card #{obj['id']} by #{creator_name} (collection #{obj['collection']['id']}): '#{obj['name']}'"
+      puts "  Card/Question #{obj['id']} by #{creator_name} (collection #{obj['collection']['id']}): '#{obj['name']}'"
       query_string = obj["dataset_query"]["native"]["query"]
       output_filename = "db#{obj['database_id'].to_s.rjust(2, '0')}_c#{obj['id'].to_s.rjust(4, '0')}.sql"
       puts "    Saving SQL to #{output_filename}"
