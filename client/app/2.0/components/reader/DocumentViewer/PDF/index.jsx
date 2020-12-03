@@ -11,9 +11,9 @@ import StatusMessage from 'app/components/StatusMessage';
  * PDF Container for the Document view
  * @param {Object} props -- Contains PDF file and file list and functions to change
  */
-export const Pdf = ({ doc, ...props }) => (
+export const Pdf = ({ doc, clickPage, ...props }) => (
   <div className="cf-pdf-scroll-view">
-    <div id={doc.content_url} style={fileContainerStyles}>
+    <div id={doc.content_url} style={fileContainerStyles} onClick={clickPage}>
       {doc.loadError ? (
         <div>
           <div style={pdfStyles} >
@@ -42,5 +42,6 @@ Pdf.propTypes = {
   doc: PropTypes.object,
   files: PropTypes.array,
   documentType: PropTypes.string,
-  loadError: PropTypes.string
+  loadError: PropTypes.string,
+  clickPage: PropTypes.func
 };
