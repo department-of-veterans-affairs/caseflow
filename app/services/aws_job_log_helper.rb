@@ -22,7 +22,7 @@ class AwsJobLogHelper
     #                            for each time that a worker tries to process a message.
     # @param start_time [DateTime] Start of the datetime range to search (default is within the last day).
     # @param end_time   [DateTime] End of the datetime range to search.
-    def initialize(job_class, msg_id, start_time: (Time.zone.now - 1.day), end_time: (Time.zone.now + 5.days))
+    def initialize(job_class, msg_id, start_time: (Time.zone.now - 1.day), end_time: Time.zone.now)
       @job_class = job_class    # REQUIRED: Class of the Job
       @msg_id = msg_id          # REQUIRED: Unique SQS Message ID
       @start_time = start_time
