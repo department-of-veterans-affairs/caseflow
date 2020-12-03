@@ -15,7 +15,7 @@ export const Comments = ({
   pageIndex,
   movingComment,
   moveMouse,
-  onClick,
+  dropComment,
   commentsRef,
   comments,
   handleDrop,
@@ -60,30 +60,30 @@ export const Comments = ({
 
   return (
     <div
-      key={pageIndex}
       id={`comment-layer-${pageIndex}`}
+      key={pageIndex}
       style={commentStyles}
       onDragOver={(event) => event.preventDefault()}
-      onClick={onClick}
+      onClick={(event) => dropComment(event, pageIndex)}
       onMouseMove={moveMouse}
       ref={commentsRef}
       onDrop={handleDrop}
     >
       {comments.filter((comment) => comment.page === pageIndex + 1).map((comment) => (
         <div
-          draggable
+          id={`commentIcon-container-${comment.id}`}
+          className="commentIcon-container"
           key={comment.id}
+          data-placing-annotation-icon={comment.dropping}
+          onClick={movingComment ? null : () => selectComment(comment)}
+          onDragStart={() => startMove(comment.id)}
           style={{
             left: comment.x * props.scale,
             top: comment.y * props.scale,
             transform: `rotate(${currentDocument.rotation}deg)`,
-            cursor: 'pointer',
+            cursor: movingComment === comment.id ? 'grabbing' : 'pointer',
           }}
-          data-placing-annotation-icon={comment.dropping}
-          className="commentIcon-container"
-          id={`commentIcon-container-${comment.id}`}
-          onClick={movingComment ? null : () => selectComment(comment)}
-          onDragStart={() => startMove(comment.id)}
+          draggable
         >
           {commentIcon(selectedComment.id === comment.id, comment.id)}
         </div>
@@ -102,10 +102,10 @@ Comments.propTypes = {
   comments: PropTypes.array,
   pageIndex: PropTypes.number,
   file: PropTypes.string,
-  movingComment: PropTypes.bool,
+  movingComment: PropTypes.number,
   handleDrop: PropTypes.func,
   moveMouse: PropTypes.func,
-  onClick: PropTypes.func,
+  dropComment: PropTypes.func,
   commentsRef: PropTypes.element,
   isVisible: PropTypes.bool,
   onDrag: PropTypes.func,

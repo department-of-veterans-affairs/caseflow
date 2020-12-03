@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
 // Local Dependencies
+import { getPageCoordinatesOfMouseEvent } from 'utils/reader';
 import { pdfWrapper } from 'styles/reader/Document/Pdf';
 import { fetchDocuments, openDownloadLink } from 'utils/reader/document';
 import { focusComment } from 'utils/reader/comments';
@@ -94,6 +95,59 @@ const DocumentViewer = (props) => {
 
   // Create the dispatchers
   const actions = {
+    dropComment: (event, pageIndex) => {
+      event.stopPropagation();
+      const coords = getPageCoordinatesOfMouseEvent(
+        event,
+        document.getElementById(`comment-layer-${pageIndex}`).getBoundingClientRect(),
+        state.scale,
+        state.currentDocument.rotation
+      );
+
+      // Drop the comment at the coordinates
+      if (state.addingComment) {
+        dispatch(dropComment({
+          document_id: state.currentDocument.id,
+          pendingComment: '',
+          id: 'placing-annotation-icon',
+          page: pageIndex + 1,
+          x: coords.x,
+          y: coords.y,
+        }));
+      }
+    },
+    moveComment: (event, pageIndex) => {
+      const coords = getPageCoordinatesOfMouseEvent(
+        event,
+        document.getElementById(`comment-layer-${pageIndex}`).getBoundingClientRect(),
+        state.scale,
+        state.currentDocument.rotation
+      );
+
+      dispatch(moveComment({
+        document_id: state.currentDocument.id,
+        id: state.movingComment,
+        x: coords.x,
+        y: coords.y,
+      }));
+    },
+    moveMouse: (event, pageIndex) => {
+      if (state.addingComment) {
+        const coords = getPageCoordinatesOfMouseEvent(
+          event,
+          document.getElementById(`comment-layer-${pageIndex}`).getBoundingClientRect(),
+          state.scale,
+          state.currentDocument.rotation
+        );
+
+        // Move the cursor icon
+        const cursor = document.getElementById('canvas-cursor');
+
+        // Update the coordinates
+        cursor.style.left = `${coords.x}px`;
+        cursor.style.top = `${coords.y}px`;
+      }
+    },
     showPdf: (currentPage, currentDocument, scale) => dispatch(showPdf({
       currentDocument,
       pageNumber: currentPage,
@@ -101,10 +155,8 @@ const DocumentViewer = (props) => {
       scale
     })),
     toggleKeyboardInfo: (val) => dispatch(toggleKeyboardInfo(val)),
-    moveComment: (comment) => dispatch(moveComment(comment)),
     startMove: (commentId) => dispatch(startMove(commentId)),
     createComment: (comment) => dispatch(createComment(comment)),
-    dropComment: (comment) => dispatch(dropComment(comment)),
     clickPage: (event) => {
       event.stopPropagation();
       event.preventDefault();

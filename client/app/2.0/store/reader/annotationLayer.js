@@ -25,7 +25,7 @@ export const initialState = {
   isPlacingAnnotation: false,
   saving: false,
   dropping: false,
-  moving: false,
+  moving: 0,
   droppedComment: null,
   pendingDeletion: false,
 
@@ -358,7 +358,7 @@ const annotationLayerSlice = createSlice({
       }).
       addCase(moveComment.fulfilled, (state, action) => {
         // Reset the moving state
-        state.moving = false;
+        state.moving = 0;
 
         // Update the comments list
         state.comments = state.comments.map((comment) => ({
