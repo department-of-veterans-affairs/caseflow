@@ -87,7 +87,7 @@ class AwsJobLogHelper
     LOG_GROUP = {
       prod: "dsva-appeals-certification-prod/opt/caseflow-certification/src/log/caseflow-certification-sqs-worker.out",
       uat: "dsva-appeals-certification-uat/opt/caseflow-certification/src/log/caseflow-certification-sqs-worker.out"
-    }
+    }.freeze
 
     def self.environment_log_group
       LOG_GROUP[Rails.deploy_env] || LOG_GROUP[:uat]
