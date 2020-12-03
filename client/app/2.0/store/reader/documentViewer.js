@@ -118,7 +118,7 @@ export const searchText = createAsyncThunk('documentViewer/search', async ({
   await Promise.all(pageList);
 
   // Map over the layers to mark any matched search text
-  const marks = new Promise((resolve) => layers.map((layer) => {
+  const marks = layers.map((layer) => new Promise((resolve) => {
     // Create the mark instance
     const mark = new Mark(layer);
 
@@ -128,26 +128,37 @@ export const searchText = createAsyncThunk('documentViewer/search', async ({
       done: () => {
         const list = layer.getElementsByTagName('mark');
 
-        if (list[matchIndex]) {
-          list[matchIndex].classList.add('highlighted');
-
-          // Send the New Match Position
-          resolve(parseFloat(list[matchIndex].parentElement.style.top));
-        }
-
         // Default to resolve null
-        resolve(null);
+        resolve(list);
       }
     });
   }));
 
-  // Get the new scroll position
-  const scrollPosition = await marks;
+  // Resolve the list of marks
+  const list = await Promise.all(marks);
+
+  // Get the new scroll position by matching the list of marks to the matchIndex
+  const scrollPosition = list.reduce((markList, item) => [...markList, ...item], []).reduce((scroll, item, index) => {
+    // Highlight the selected mark in the document
+    if (index === matchIndex) {
+      item.classList.add('highlighted');
+
+      // Send the New Match Position
+      return parseFloat(item.parentElement.style.top);
+    }
+
+    // Default to returning null for the scroll position
+    return scroll;
+  }, null);
 
   // Return the new state
   return { searchTerm, matches, scrollPosition, matchIndex };
 });
 
+/**
+ * Method to render the PDF page
+ * @param {Object} params -- Contains the document and page details for rendering
+ */
 export const showPage = async(params) => {
   // Get the first page
   const page = pdfDocuments[params.docId].pages[params.pageIndex];
