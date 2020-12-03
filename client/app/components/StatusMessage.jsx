@@ -103,10 +103,6 @@ StatusMessage.propTypes = {
    * The type of message to show. Determines the styling of the heading.
    */
   type: PropTypes.oneOf(['alert', 'status', 'success', 'warning']),
-
-  /**
-   * TODO:
-   */
   wrapInAppSegment: PropTypes.bool
 };
 
