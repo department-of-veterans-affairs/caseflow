@@ -53,9 +53,9 @@ class ValidateSqlQueries
         fail rescued_error if rescued_error
 
         # Execute SQL query
-        result, rescued_error = eval_sql_query(sql_query, rails_sql_postproc)
-        yield("sql", result, rescued_error) if block_given?
-        fail rescued_error if rescued_error
+        result, rescued_sql_error = eval_sql_query(sql_query, rails_sql_postproc)
+        yield("sql", result, rescued_sql_error) if block_given?
+        fail rescued_sql_error if rescued_sql_error
       elsif sql_query == SKIP_VALIDATION_STRING
         puts "    Skipping validation."
       else

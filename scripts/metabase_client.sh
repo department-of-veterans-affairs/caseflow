@@ -63,6 +63,11 @@ getAllCards(){
 if [ "$1" = "cards" ]; then
 	echo "Using base curl command: $CURL_CMD $METABASE_URL/..."
 	getAllCards "$2"
+elif [ "$1" = "downloadAndVerify" ]; then
+	echo "Using base curl command: $CURL_CMD $METABASE_URL/..."
+	getAllCards "${2:-cards.json}"
+	bundle exec rake 'sql:extract_queries_from[cards.json,sql_queries]'
+	bundle exec rake 'sql:validate[sql_queries,queries_output]'
 else
 	echo "Usage: $0 cards <output_filename>"
 fi
