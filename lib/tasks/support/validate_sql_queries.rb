@@ -4,6 +4,10 @@
 # Class to validate that SQL queries return the same results as the corresponding Rails query.
 
 class ValidateSqlQueries
+  RAILS_EQUIV_PREFIX = "/* RAILS_EQUIV"
+  POSTPROC_SQL_RESULT_PREFIX = "/* POSTPROC_SQL_RESULT:"
+  SKIP_VALIDATION_STRING = "IGNORE_RAILS_VALIDATION"
+
   class << self
     def process(query_dir, output_dir)
       puts "Examining queries in directory: #{query_dir}"
@@ -29,7 +33,7 @@ class ValidateSqlQueries
       puts "  Processing '#{filename}' ..."
       basename = File.basename(filename, File.extname(filename))
       # Run the queries from the file and save each output to different files for comparison
-      run_queries(**read_queries_from_file(filename)) do |result_key, result|
+      run_queries(**read_queries_from_file(filename)) do |result_key, result, _error|
         output_filename = "#{basename}.#{result_key}-out"
         puts "    Saving output to #{output_filename}"
         save_result(result, "#{output_dir}/#{output_filename}")
@@ -38,6 +42,8 @@ class ValidateSqlQueries
       warn "    !Skipping due to error when executing query: #{error.message.lines.first}"
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
     # :reek:RepeatedConditional
     def run_queries(rails_query:, sql_query:, rails_sql_postproc:)
       if rails_query.present?
@@ -50,8 +56,14 @@ class ValidateSqlQueries
         result, rescued_error = eval_sql_query(sql_query, rails_sql_postproc)
         yield("sql", result, rescued_error) if block_given?
         fail rescued_error if rescued_error
+      elsif sql_query == SKIP_VALIDATION_STRING
+        puts "    Skipping validation."
+      else
+        warn "    !No Rails query found in the SQL -- skipping."
       end
     end
+    # rubocop:enable Metrics/PerceivedComplexity
+    # rubocop:enable Metrics/CyclomaticComplexity
 
     def save_result(results, out_filename)
       File.open(out_filename, "w") { |file| file.puts results.to_s }
@@ -79,12 +91,15 @@ class ValidateSqlQueries
     ### Rails
 
     def eval_rails_query(query)
+      # Default postprocessing to split results into separate lines
+      query += "\n array_output.map{|r| r.to_s}.join('\n')" if query.include?("array_output")
       safely_eval_rails_query(query)
     end
 
     ### SQL
 
     def eval_sql_query(query, postprocess_cmds)
+      # Default postprocessing commands to transform SQL results into reasonable output
       postprocess_cmds = 'each_row.map{|r| r.to_s}.join("\n")' if postprocess_cmds.blank?
 
       init_result, rescued_error = wrap_in_rollback_transaction { ActiveRecord::Base.connection.execute(query) }
@@ -93,19 +108,31 @@ class ValidateSqlQueries
       [result, rescued_error]
     end
 
-    RAILS_EQUIV_PREFIX = "-- RAILS_EQUIV:"
-    POSTPROC_SQL_RESULT_PREFIX = "-- POSTPROC_SQL_RESULT:"
-
+    # To-do: Improve parsing of query
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
+    # rubocop:disable Metrics/MethodLength
     def read_queries_from_file(in_filename)
       rails_query = ""
       sql_query = ""
       postprocess_cmds = ""
+      rails_equiv_mode = false
+      postproc_mode = false
       File.open(in_filename).each_line do |line|
         line.strip!
-        if line.start_with?(RAILS_EQUIV_PREFIX)
+        if line.start_with?("*/")
+          rails_equiv_mode = false
+          postproc_mode = false
+        elsif line.include?(SKIP_VALIDATION_STRING)
+          rails_query = ""
+          sql_query = SKIP_VALIDATION_STRING
+          break
+        elsif rails_equiv_mode || line.start_with?(RAILS_EQUIV_PREFIX)
           rails_query += "\n" + line.sub(RAILS_EQUIV_PREFIX, "").strip
-        elsif line.start_with?(POSTPROC_SQL_RESULT_PREFIX)
+          rails_equiv_mode = true
+        elsif postproc_mode || line.start_with?(POSTPROC_SQL_RESULT_PREFIX)
           postprocess_cmds += "\n" + line.sub(POSTPROC_SQL_RESULT_PREFIX, "").strip
+          rails_equiv_mode = true
         else
           sql_query += "\n" + line
         end
@@ -116,6 +143,9 @@ class ValidateSqlQueries
         rails_sql_postproc: validate_rails_query(postprocess_cmds)
       }
     end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
+    # rubocop:enable Metrics/CyclomaticComplexity
 
     def validate_rails_query(query)
       # To-do: filter query to make it as safe as possible

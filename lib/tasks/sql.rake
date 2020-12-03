@@ -16,8 +16,6 @@
 #     bundle exec rake 'sql:validate[sql_queries,queries_output]'
 
 namespace :sql do
-  VALIDATE_SQL_TRIGGER_STRING = "-- VALIDATE_SQL"
-
   desc "extract SQL queries from JSON file containing cards from Metabase"
   task :extract_queries_from, [:inputfile, :query_dir] => [:environment] do |_t, args|
     if args[:inputfile].nil? || args[:query_dir].nil?
@@ -31,7 +29,7 @@ namespace :sql do
     filtered_cards = cards.select do |card|
       card["archived"] == false &&
         card["query_type"] == "native" &&
-        card["dataset_query"]["native"]["query"]&.include?(VALIDATE_SQL_TRIGGER_STRING)
+        card["dataset_query"]["native"]["query"]&.include?(ValidateSqlQueries::RAILS_EQUIV_PREFIX)
     end
     puts "Found #{filtered_cards.count} cards to be validated out of #{cards.count} cards total"
 
@@ -53,7 +51,7 @@ namespace :sql do
     end
 
     sql_file_count, diff_basenames = ValidateSqlQueries.process(args[:query_dir], args[:output_dir])
-    puts "Diffs: #{diff_basenames}"
-    puts "#{diff_basenames.count} out of #{sql_file_count} queries are different!"
+    puts "Queries with different output: #{diff_basenames}"
+    puts "SUMMARY: #{diff_basenames.count} out of #{sql_file_count} queries are different."
   end
 end
