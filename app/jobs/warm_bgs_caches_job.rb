@@ -19,6 +19,10 @@ class WarmBgsCachesJob < CaseflowJob
 
   private
 
+  CACHED_APPEALS_BGS_POA_COLUMNS = [
+    :power_of_attorney_name
+  ].freeze
+
   def warm_poa_caches
     # We do 2 passes to update our POA cache (bgs_power_of_attorney table).
     # 1. Look at the 1000 oldest cached records and update them.
@@ -35,9 +39,67 @@ class WarmBgsCachesJob < CaseflowJob
     # UpdateCachedAppealsAttributesJob cares about.
     # assuming we have 40k open appeals/claimants at any given time,
     # we want to check about 1400 a day to cycle through them all once a month.
-
-    warm_poa_for_oldest_claimants
+    warm_poa_and_cache_for_legacy_appeals_with_hearings
+    warm_poa_and_cache_for_ama_appeals_with_hearings
+    warm_poa_and_cache_ama_appeals_for_oldest_claimants
     warm_poa_for_oldest_cached_records
+  end
+
+  def warm_poa_and_cache_for_legacy_appeals_with_hearings
+    start_time = Time.zone.now
+
+    appeals_to_cache = legacy_appeal_ids_to_file_numbers(1000).map do |appeal_id, file_number|
+      bgs_poa = fetch_bgs_power_of_attorney_by_file_number(file_number)
+
+      # [{:appeal_id=>1, :appeal_type=>"LegacyAppeal", :power_of_attorney_name=>"Clarence Darrow"}, ...]
+      warm_bgs_poa_and_return_cache_data(bgs_poa, appeal_id, LegacyAppeal.name)
+    end.compact
+
+    CachedAppeal.import appeals_to_cache, on_duplicate_key_update: {
+      conflict_target: [:appeal_id, :appeal_type], columns: CACHED_APPEALS_BGS_POA_COLUMNS
+    }
+
+    datadog_report_time_segment(segment: "warm_poa_bgs_and_cache_legacy", start_time: start_time)
+  end
+
+  def warm_poa_and_cache_for_ama_appeals_with_hearings
+    start_time = Time.zone.now
+
+    # only process the first 1000 appeals
+    appeal_ids = appeal_ids_with_hearings.first(1000)
+    claimants_for_hearing = Claimant.where(decision_review_type: Appeal.name, decision_review_id: appeal_ids)
+
+    appeals_to_cache = claimants_for_hearing.map do |claimant|
+      bgs_poa = claimant.power_of_attorney
+      claimant.update!(updated_at: Time.zone.now)
+
+      # [{:appeal_id=>1, :appeal_type=>"Appeal", :power_of_attorney_name=>"Clarence Darrow"}, ...]
+      warm_bgs_poa_and_return_cache_data(bgs_poa, claimant.decision_review_id, Appeal.name)
+    end.compact
+
+    CachedAppeal.import appeals_to_cache, on_duplicate_key_update: {
+      conflict_target: [:appeal_id, :appeal_type], columns: CACHED_APPEALS_BGS_POA_COLUMNS
+    }
+
+    datadog_report_time_segment(segment: "warm_poa_bgs_and_cache_ama", start_time: start_time)
+  end
+
+  def warm_poa_and_cache_ama_appeals_for_oldest_claimants
+    start_time = Time.zone.now
+
+    appeals_to_cache = oldest_claimants_with_poa.map do |claimant|
+      bgs_poa = claimant.power_of_attorney
+      claimant.update!(updated_at: Time.zone.now)
+
+      # [{:appeal_id=>1, :appeal_type=>"Appeal", :power_of_attorney_name=>"Clarence Darrow"}, ...]
+      warm_bgs_poa_and_return_cache_data(bgs_poa, claimant.decision_review_id, Appeal.name)
+    end.compact
+
+    CachedAppeal.import appeals_to_cache, on_duplicate_key_update: {
+      conflict_target: [:appeal_id, :appeal_type], columns: CACHED_APPEALS_BGS_POA_COLUMNS
+    }
+
+    datadog_report_time_segment(segment: "warm_poa_claimants_and_cache_ama", start_time: start_time)
   end
 
   def warm_poa_for_oldest_cached_records
@@ -45,25 +107,65 @@ class WarmBgsCachesJob < CaseflowJob
     oldest_bgs_poa_records.limit(1000).each do |bgs_poa|
       bgs_poa.save_with_updated_bgs_record! if bgs_poa.stale_attributes?
     end
-    datadog_report_time_segment(segment: "warm_poa_bgs", start_time: start_time)
+    datadog_report_time_segment(segment: "warm_poa_bgs_oldest", start_time: start_time)
   end
 
-  def warm_poa_for_oldest_claimants
-    start_time = Time.zone.now
-    oldest_claimants_with_poa.each do |claimant|
-      bgs_poa = claimant.power_of_attorney
-      bgs_poa.save_with_updated_bgs_record! if bgs_poa.stale_attributes?
-      claimant.update!(updated_at: Time.zone.now)
+  def legacy_appeal_ids_to_file_numbers(limit)
+    # This block of code helps get file numbers associated with appeals in order to fetch poa
+    appeals = LegacyAppeal.where(id: legacy_appeal_ids_with_hearings.first(limit))
+    # => { "2096907"=>1, ...}
+    vacols_ids_to_appeal_ids = appeals.pluck(:vacols_id, :id).to_h
+    # => [["2096907", "543248948"],...]
+    vacols_ids_to_bfcorlids = VACOLS::Case.where(bfkey: vacols_ids_to_appeal_ids.keys).pluck(:bfkey, :bfcorlid)
+    # => {1=>"543248948", ...}
+    vacols_ids_to_bfcorlids.map do |vacols_id, bfcorlid|
+      [vacols_ids_to_appeal_ids[vacols_id], LegacyAppeal.veteran_file_number_from_bfcorlid(bfcorlid)]
+    end.to_h
+  end
+
+  def fetch_bgs_power_of_attorney_by_file_number(file_number)
+    return if file_number.blank?
+
+    BgsPowerOfAttorney.find_or_create_by_file_number(file_number)
+  rescue ActiveRecord::RecordInvalid # not found at BGS
+    BgsPowerOfAttorney.new(file_number: file_number)
+  end
+
+  def warm_bgs_poa_and_return_cache_data(bgs_poa, appeal_id, appeal_type)
+    if bgs_poa.stale_attributes?
+      bgs_poa.save_with_updated_bgs_record!
+
+      {
+        appeal_id: appeal_id,
+        appeal_type: appeal_type,
+        power_of_attorney_name: bgs_poa&.representative_name
+      }
     end
-    datadog_report_time_segment(segment: "warm_poa_claimants", start_time: start_time)
   end
 
-  def oldest_claimants_with_poa
-    oldest_claimants_for_open_appeals.limit(1400).select { |claimant| claimant.power_of_attorney.present? }
+  def legacy_appeal_ids_with_hearings
+    sorted_active_schedule_hearing_tasks(LegacyAppeal.name).pluck(:appeal_id).uniq
+  end
+
+  def appeal_ids_with_hearings
+    sorted_active_schedule_hearing_tasks(Appeal.name).pluck(:appeal_id).uniq
+  end
+
+  def sorted_active_schedule_hearing_tasks(appeal_type)
+    tasks = active_schedule_hearing_tasks(appeal_type)
+    tasks.order(Task.order_by_cached_appeal_priority_clause)
+  end
+
+  def active_schedule_hearing_tasks(appeal_type)
+    ScheduleHearingTask.active.with_cached_appeals.where(appeal_type: appeal_type)
   end
 
   def claimants_for_open_appeals
     Claimant.where(decision_review_type: Appeal.name, decision_review_id: open_appeals_from_tasks)
+  end
+
+  def oldest_claimants_with_poa
+    oldest_claimants_for_open_appeals.limit(1400).select { |claimant| claimant.power_of_attorney.present? }
   end
 
   def oldest_claimants_for_open_appeals
