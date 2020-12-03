@@ -44,18 +44,17 @@ class ValidateSqlQueries
 
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
-    # :reek:RepeatedConditional
     def run_queries(rails_query:, sql_query:, rails_sql_postproc:)
       if rails_query.present?
         # Execute Rails query
-        result, rescued_error = eval_rails_query(rails_query)
-        yield("rb", result, rescued_error) if block_given?
-        fail rescued_error if rescued_error
+        rails_result, rails_error = eval_rails_query(rails_query)
+        yield("rb", rails_result, rails_error) if block_given?
+        fail rails_error if rails_error
 
         # Execute SQL query
-        result, rescued_sql_error = eval_sql_query(sql_query, rails_sql_postproc)
-        yield("sql", result, rescued_sql_error) if block_given?
-        fail rescued_sql_error if rescued_sql_error
+        sql_result, sql_error = eval_sql_query(sql_query, rails_sql_postproc)
+        yield("sql", sql_result, sql_error) if block_given?
+        fail sql_error if sql_error
       elsif sql_query == SKIP_VALIDATION_STRING
         puts "    Skipping validation."
       else

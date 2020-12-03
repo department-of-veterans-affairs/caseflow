@@ -9,6 +9,9 @@
 #    bundle exec rake 'sql:extract_queries_from[cards.json,sql_queries]'
 #    bundle exec rake 'sql:validate[sql_queries,queries_output]'
 #
+#    # Shortcut: Both of Steps 1 and 2 can be performed by running a single command:
+#    scripts/metabase_client.sh downloadAndValidate
+#
 #    # 3. After examining differences, clean up directories
 #    rm -rf sql_queries/ queries_output/
 #
