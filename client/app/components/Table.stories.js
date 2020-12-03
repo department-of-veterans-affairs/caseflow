@@ -1,5 +1,5 @@
 import React from 'react';
-import _ from 'lodash';
+import { concat } from 'lodash';
 
 import Table from './Table';
 
