@@ -130,7 +130,7 @@
   "EDIT_NOD_DATE_LABEL": "NOD Date",
   "EDIT_NOD_DATE_SUCCESS_ALERT_TITLE": "NOD date has been updated",
   "EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE": "You have successfully updated the NOD date",
-
+  "EDIT_NOD_DATE_ERROR_ALERT_MESSAGE": "The new NOD date cannot be after today's date",
   "DROPDOWN_LABEL_JUDGE": "VLJ",
   "DROPDOWN_LABEL_HEARING_COORDINATOR": "Hearing Coordinator",
   "DROPDOWN_LABEL_HEARING_ROOM": "Hearing Room",
