@@ -103,8 +103,10 @@ export const searchText = createAsyncThunk('documentViewer/search', async ({
     // Retrieve the text layer element
     layers[index] = document.getElementById(`text-${index}`);
 
-    // Reset the container contents
-    layers[index].innerHTML = '';
+    // Reset the container contents if present
+    if (layers[index]) {
+      layers[index].innerHTML = '';
+    }
 
     return PDF.renderTextLayer({
       container: layers[index],
@@ -126,7 +128,7 @@ export const searchText = createAsyncThunk('documentViewer/search', async ({
     mark.mark(searchTerm, {
       separateWordSearch: false,
       done: () => {
-        const list = layer.getElementsByTagName('mark');
+        const list = layer ? layer.getElementsByTagName('mark') : [];
 
         // Default to resolve null
         resolve(list);

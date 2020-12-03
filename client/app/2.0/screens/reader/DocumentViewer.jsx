@@ -162,12 +162,9 @@ const DocumentViewer = (props) => {
       dispatch(searchText({ searchTerm: '', docId: state.currentDocument.id, matchIndex: 0 }));
     },
     download: () => openDownloadLink(state.currentDocument.content_url, state.currentDocument.type),
-    scrollPage: ({ clientHeight, ...options }) => {
-      // Assign the Canvas Elements
-      const elements = Array.from(document.getElementsByClassName('canvasWrapper'));
-
+    scrollPage: ({ scrollTop }) => {
       // Calculate the Page Offset
-      const offset = Math.floor(options.scrollTop / state.viewport.height);
+      const offset = Math.floor(scrollTop / state.viewport.height);
 
       // Set the Current page number
       const pageNumber = offset + 1;
