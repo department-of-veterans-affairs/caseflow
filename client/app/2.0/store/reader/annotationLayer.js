@@ -4,6 +4,7 @@ import { keyBy } from 'lodash';
 
 // Local Dependencies
 import { loadDocuments } from 'store/reader/documentList';
+import { setPageNumber } from 'store/reader/documentViewer';
 import { addMetaLabel } from 'utils/reader';
 import { ENDPOINT_NAMES } from 'store/constants/reader';
 import ApiUtil from 'app/util/ApiUtil';
@@ -390,6 +391,10 @@ const annotationLayerSlice = createSlice({
       addCase(removeComment.rejected, (state) => {
         // Reset the state
         state.pendingDeletion = false;
+      }).
+      addMatcher((action) => action.type === setPageNumber.toString(), (state, action) => {
+        // Reset the selected state on scroll or changing page
+        state.selected = {};
       }).
       addMatcher((action) => action.type === loadDocuments.fulfilled.toString(), (state, action) => {
         // Map the Annotations to the comments array

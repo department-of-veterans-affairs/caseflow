@@ -50,8 +50,9 @@ export const Comments = ({
           selectComment(comment);
 
           // Scroll to the comment
+          // document.getElementById(`commentIcon-container-${comment.id}`).scrollIntoView();
           props.gridRef.current?.scrollToPosition({
-            scrollTop: comment.y
+            scrollTop: comment.y * comment.page
           });
         }
       }
