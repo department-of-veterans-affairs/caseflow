@@ -27,12 +27,17 @@ class Appeal < DecisionReview
   has_one :post_decision_motion
   has_many :record_synced_by_job, as: :record
   has_one :work_mode, as: :appeal
+  has_one :latest_informal_hearing_presentation_task, lambda {
+    not_cancelled
+      .order(closed_at: :desc, assigned_at: :desc)
+      .where(type: [InformalHearingPresentationTask.name, IhpColocatedTask.name], appeal_type: Appeal.name)
+  }, class_name: "Task", foreign_key: :appeal_id
 
   enum stream_type: {
-    "original": "original",
-    "vacate": "vacate",
-    "de_novo": "de_novo",
-    "court_remand": "court_remand"
+    Constants.AMA_STREAM_TYPES.original.to_sym => Constants.AMA_STREAM_TYPES.original,
+    Constants.AMA_STREAM_TYPES.vacate.to_sym => Constants.AMA_STREAM_TYPES.vacate,
+    Constants.AMA_STREAM_TYPES.de_novo.to_sym => Constants.AMA_STREAM_TYPES.de_novo,
+    Constants.AMA_STREAM_TYPES.court_remand.to_sym => Constants.AMA_STREAM_TYPES.court_remand
   }
 
   after_create :conditionally_set_aod_based_on_age
@@ -343,6 +348,12 @@ class Appeal < DecisionReview
 
   alias cavc? cavc
 
+  def cavc_remand
+    return nil if !cavc?
+
+    CavcRemand.find_by(appeal_id: stream_docket_number.split("-").last)
+  end
+
   def status
     @status ||= BVAAppealStatus.new(appeal: self)
   end
@@ -369,7 +380,12 @@ class Appeal < DecisionReview
     return stream_docket_number if stream_docket_number
     return "Missing Docket Number" unless receipt_date && persisted?
 
-    "#{receipt_date.strftime('%y%m%d')}-#{id}"
+    default_docket_number_from_receipt_date
+  end
+
+  def update_receipt_date!(receipt_date)
+    update!(receipt_date)
+    update!(stream_docket_number: default_docket_number_from_receipt_date)
   end
 
   # Currently AMA only supports one claimant per decision review
@@ -558,5 +574,9 @@ class Appeal < DecisionReview
   ensure
     distribution_task = tasks.open.find_by(type: DistributionTask.name)
     TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
+  end
+
+  def default_docket_number_from_receipt_date
+    "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 end

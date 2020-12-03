@@ -34,6 +34,14 @@ RSpec.describe Api::V1::JobsController, :postgres, type: :controller do
     end
   end
 
+  context "for all jobs" do
+    Api::V1::JobsController::SUPPORTED_JOBS.each_value do |job_class|
+      it "#{job_class.name} is not queued in default queue" do
+        expect(job_class.queue_name).not_to eq("default")
+      end
+    end
+  end
+
   def response_body
     JSON.parse(response.body)
   end

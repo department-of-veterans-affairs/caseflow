@@ -29,6 +29,7 @@ class Hearing < CaseflowRecord
   include HearingLocationConcern
   include HasSimpleAppealUpdatedSince
   include UpdatedByUserConcern
+  include HearingConcern
 
   belongs_to :hearing_day
   belongs_to :appeal
