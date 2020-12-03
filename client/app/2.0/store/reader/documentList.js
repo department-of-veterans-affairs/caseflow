@@ -13,7 +13,7 @@ import {
   getQueueRedirectUrl,
   getQueueTaskType
 } from 'utils/reader';
-import { showPdf, selectCurrentPdfLocally, handleCategoryToggle } from 'store/reader/documentViewer';
+import { showPdf, handleCategoryToggle } from 'store/reader/documentViewer';
 import { onReceiveAnnotations } from 'store/reader/annotationLayer';
 
 /**
@@ -60,21 +60,12 @@ export const updateLastReadDoc = (state, docId) => {
 /**
  * Dispatcher to Load Appeal Documents
  */
-export const loadDocuments = createAsyncThunk('documentList/load', async (params, { getState, dispatch }) => {
+export const loadDocuments = createAsyncThunk('documentList/load', async (params, { getState }) => {
   // Get the current state
   const state = getState();
 
   // Request the Documents for the Appeal
   const { body } = await ApiUtil.get(`/reader/appeal/${params.vacolsId}/documents?json`, {}, ENDPOINT_NAMES.DOCUMENTS);
-
-  // Load the Document if the Doc ID is present
-  if (params.docId) {
-    // dispatch(showPdf({
-    //   currentDocument: body.appealDocuments.filter((doc) => doc.id === parseInt(params.docId, 10))[0],
-    //   worker: params.worker,
-    //   scale: params.scale
-    // }));
-  }
 
   // Return the response and attach the Filter Criteria
   return {
@@ -83,6 +74,17 @@ export const loadDocuments = createAsyncThunk('documentList/load', async (params
     documents: body.appealDocuments,
     filterCriteria: state.reader.documentList.filterCriteria
   };
+});
+
+/**
+ * Dispatcher to Remove Tags from a Document
+ */
+export const markDocAsRead = createAsyncThunk('documentList/markRead', async({ docId }) => {
+  // Request the addition of the selected tags
+  await ApiUtil.patch(`/document/${docId}/mark-as-read`, {}, ENDPOINT_NAMES.MARK_DOC_AS_READ);
+
+  // Return the selected document and tag to the next Dispatcher
+  return { docId };
 });
 
 /**
@@ -203,6 +205,19 @@ const documentListSlice = createSlice({
           }
         }), {});
       }).
+      /* eslint-disable */
+      addCase(markDocAsRead.rejected, (state, action) => {
+        console.log('Error marking as read', action.payload.docId, action.payload.errorMessage);
+      }).
+      /* eslint-enable */
+      addMatcher(
+        (action) => [
+          markDocAsRead.fulfilled.toString(),
+        ].includes(action.type),
+        (state, action) => {
+          state.documents[action.payload.docId].opened_by_current_user = true;
+        }
+      ).
       addMatcher(
         (action) => [
           loadDocuments.fulfilled.toString(),

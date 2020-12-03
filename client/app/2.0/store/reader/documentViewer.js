@@ -16,6 +16,7 @@ import {
 } from 'store/constants/reader';
 import { addMetaLabel, formatCategoryName } from 'utils/reader';
 import { removeComment } from 'store/reader/annotationLayer';
+import { markDocAsRead } from 'store/reader/documentList';
 
 // Create a place in-memory to store the downloaded PDF documents
 const pdfDocuments = {};
@@ -205,11 +206,17 @@ export const showPdf = createAsyncThunk('documentViewer/show', async ({
   currentDocument,
   worker,
   scale
-}) => {
+}, { dispatch }) => {
   // Attach the Service Worker if not already attached
   if (PDF.GlobalWorkerOptions.workerSrc !== worker) {
     PDF.GlobalWorkerOptions.workerSrc = worker;
   }
+
+  // Update the Document as read if not already
+  if (!currentDocument.opened_by_current_user) {
+    dispatch(markDocAsRead({ docId: currentDocument.id }));
+  }
+
   // Request the PDF document from eFolder
   if (!pdfDocuments[currentDocument.id]) {
     const { body } = await ApiUtil.get(currentDocument.content_url, {
@@ -282,22 +289,6 @@ export const saveDescription = createAsyncThunk('documentViewer/saveDescription'
   // Return the selected document and tag to the next Dispatcher
   return { description };
 });
-
-/**
- * Dispatcher to Remove Tags from a Document
- */
-export const selectCurrentPdf = createAsyncThunk('documentViewer/selectCurrentPdf', async({ docId }) => {
-  // Request the addition of the selected tags
-  await ApiUtil.patch(`/document/${docId}/mark-as-read`, {}, ENDPOINT_NAMES.MARK_DOC_AS_READ);
-
-  // Return the selected document and tag to the next Dispatcher
-  return { docId };
-});
-
-/**
- * Dispatcher to Set the PDF as Opened
- */
-export const selectCurrentPdfLocally = createAction('documentViewer/selectCurrentPdfLocally');
 
 /**
  * Dispatcher to Set the PDF as Opened
@@ -456,11 +447,6 @@ const documentViewerSlice = createSlice({
         state.scale = action.payload.scale;
         state.viewport = action.payload.viewport;
       }).
-      /* eslint-disable */
-      addCase(selectCurrentPdf.rejected, (state, action) => {
-        console.log('Error marking as read', action.payload.docId, action.payload.errorMessage);
-      }).
-      /* eslint-enable */
       addCase(saveDescription.fulfilled, (state, action) => {
         state.selected.pendingDescription = null;
         state.selected.description = action.payload.description;
@@ -519,15 +505,6 @@ const documentViewerSlice = createSlice({
         // Apply the Category toggle
         state.selected[action.payload.category] = action.payload.toggleState;
       }).
-      addMatcher(
-        (action) => [
-          selectCurrentPdf.fulfilled.toString(),
-          selectCurrentPdfLocally.toString()
-        ].includes(action.type),
-        (state, action) => {
-          state.list[action.payload.docId].opened_by_current_user = true;
-        }
-      ).
       addMatcher(
         (action) => action.type === removeComment.fulfilled.toString(),
         (state) => {

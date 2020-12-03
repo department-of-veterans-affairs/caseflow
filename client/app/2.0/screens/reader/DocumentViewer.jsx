@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
-import { isEmpty } from 'lodash';
 
 // Local Dependencies
 import { getPageCoordinatesOfMouseEvent } from 'utils/reader';

@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 // Local Dependencies
-import { showPdf } from 'store/reader/documentViewer';
 import { fetchDocuments } from 'utils/reader/document';
 import { documentListScreen } from 'store/reader/selectors';
 import {
@@ -20,6 +19,7 @@ import {
   clearTagFilters,
   setTagFilter,
   toggleComment,
+  markDocAsRead,
 } from 'store/reader/documentList';
 import { recordSearch } from 'utils/reader';
 
@@ -58,11 +58,14 @@ const DocumentList = (props) => {
     clearSearch: () => dispatch(clear(state.filterCriteria, state.comments, state.storeDocuments)),
     recordSearch: (query) => recordSearch(props.match.params.vacolsId, query),
     changeSort: (val) => dispatch(changeSortState(val, state)),
-    showPdf: (docId) => dispatch(showPdf({
-      currentDocument: state.documents[docId],
-      worker: props.pdfWorker,
-      scale: state.scale
-    }))
+    showPdf: (docId) => {
+      // const currentDocument = state.documents[docId];
+
+      // // Update the Document as read if not already
+      // if (!currentDocument.opened_by_current_user) {
+      //   dispatch(markDocAsRead({ docId }));
+      // }
+    }
   };
 
   return (
