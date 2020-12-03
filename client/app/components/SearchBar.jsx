@@ -90,6 +90,7 @@ export default class SearchBar extends React.Component {
   render() {
     const {
       id = uuid.v4(),
+      inputProps,
       value,
       loading,
       onClearSearch,
@@ -146,6 +147,7 @@ export default class SearchBar extends React.Component {
           }
           placeholder={placeholder}
           value={value}
+          {...inputProps}
         />
         {hasInternalText && (
           <div>
