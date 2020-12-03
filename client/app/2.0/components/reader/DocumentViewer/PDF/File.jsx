@@ -7,7 +7,7 @@ import { Grid, AutoSizer } from 'react-virtualized';
 import { Page } from 'components/reader/DocumentViewer/PDF/Page';
 import { gridStyles } from 'styles/reader/Document/Pdf';
 import { columnWidth, rowHeight, columnCount } from 'utils/reader';
-import { PAGE_MARGIN, PDF_PAGE_HEIGHT } from 'app/2.0/store/constants/reader';
+import { PAGE_MARGIN } from 'app/2.0/store/constants/reader';
 
 /**
  * PDF File Component

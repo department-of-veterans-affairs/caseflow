@@ -150,8 +150,8 @@ const DocumentViewer = (props) => {
         });
 
         // Update the coordinates
-        cursor.style.left = `${coords.x}px`;
-        cursor.style.top = `${coords.y}px`;
+        cursor.style.left = `${coords.x * state.scale}px`;
+        cursor.style.top = `${coords.y * state.scale}px`;
         cursor.style.display = 'block';
       }
     },
@@ -280,24 +280,16 @@ const DocumentViewer = (props) => {
       const doc = state.documents[docs.prev];
 
       props.history.push(`/reader/appeal/${params.vacolsId}/documents/${doc.id}`);
-
-      // dispatch(showPdf({ currentDocument: doc, worker: props.pdfWorker, scale: state.scale }));
     },
     nextDoc: () => {
       const doc = state.documents[docs.next];
 
       props.history.push(`/reader/appeal/${params.vacolsId}/documents/${doc.id}`);
-
-      // dispatch(showPdf({ currentDocument: doc, worker: props.pdfWorker, scale: state.scale }));
     }
   };
 
   return (
-    <div
-      id="document-viewer"
-      className="cf-pdf-page-container"
-      onClick={state.addingComment === false ? actions.clickPage : null}
-    >
+    <div id="document-viewer" className="cf-pdf-page-container" >
       <div className={classNames('cf-pdf-container', { 'hidden-sidebar': state.hidePdfSidebar })} {...pdfWrapper}>
         <DocumentHeader
           {...state}
