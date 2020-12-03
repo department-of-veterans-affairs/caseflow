@@ -10,6 +10,7 @@ export const EditableField = (props) => {
   const {
     className,
     errorMessage,
+    inputProps,
     inputRef,
     label,
     maxLength,
@@ -74,6 +75,7 @@ export const EditableField = (props) => {
       placeholder={placeholder}
       title={title}
       maxLength={maxLength}
+      {...inputProps}
     />;
   } else {
     actionLinks = <span>
@@ -110,6 +112,11 @@ EditableField.propTypes = {
    * Error string to show. Will style entire component as invalid if defined
    */
   errorMessage: PropTypes.string,
+
+  /**
+   * Props to be applied to the `input` element
+   */
+  inputProps: PropTypes.object,
 
   /**
    * Pass a ref to the `input` element
