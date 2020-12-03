@@ -47,8 +47,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: d466d7d3da01b1a96e867bf1064fc0b4c8de2b7d
-  ref: d466d7d3da01b1a96e867bf1064fc0b4c8de2b7d
+  revision: 76ef58c10fff0bb496999aeae40f0af58de46bb6
+  ref: 76ef58c10fff0bb496999aeae40f0af58de46bb6
   specs:
     bgs (0.2)
       httpclient
