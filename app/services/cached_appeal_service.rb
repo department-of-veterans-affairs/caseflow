@@ -8,8 +8,6 @@ class CachedAppealService
       veteran_names_to_cache = veteran_names_for_file_numbers(appeals.pluck(:veteran_file_number))
 
       appeal_aod_status = aod_status_for_appeals(appeals)
-      representative_names = representative_names_for_appeals(appeals)
-
       appeals.map do |appeal|
         {
           appeal_id: appeal.id,
@@ -20,7 +18,6 @@ class CachedAppealService
           docket_number: appeal.docket_number,
           hearing_request_type: appeal.current_hearing_request_type(readable: true),
           is_aod: appeal_aod_status.include?(appeal.id),
-          power_of_attorney_name: representative_names[appeal.id],
           suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location,
           veteran_name: veteran_names_to_cache[appeal.veteran_file_number]
         }.merge(
@@ -39,7 +36,6 @@ class CachedAppealService
           appeal_id: appeal.id,
           appeal_type: LegacyAppeal.name,
           docket_type: appeal.docket_name, # "legacy"
-          power_of_attorney_name: poa_representative_name_for(appeal),
           suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location
         }.merge(
           regional_office_fields_to_cache(appeal)
@@ -78,10 +74,6 @@ class CachedAppealService
   end
   # rubocop:enable Metrics/MethodLength
 
-  def warning_msgs
-    @warning_msgs ||= []
-  end
-
   private
 
   AMA_CACHED_COLUMNS = [
@@ -93,7 +85,6 @@ class CachedAppealService
     :hearing_request_type,
     :is_aod,
     :issue_count,
-    :power_of_attorney_name,
     :suggested_hearing_location,
     :veteran_name
   ].freeze
@@ -102,7 +93,6 @@ class CachedAppealService
     :closest_regional_office_key,
     :vacols_id,
     :docket_type,
-    :power_of_attorney_name,
     :suggested_hearing_location
   ].freeze
   VACOLS_CACHED_COLUMNS = [
@@ -137,24 +127,6 @@ class CachedAppealService
     )
 
     values_to_cache
-  end
-
-  # bypass PowerOfAttorney model completely and always prefer BGS cache
-  def poa_representative_name_for(appeal)
-    bgs_poa = fetch_bgs_power_of_attorney_by_file_number(appeal.veteran_file_number)
-    # both representative_name calls can result in BGS connection error
-    bgs_poa&.representative_name || appeal.representative_name
-  rescue Errno::ECONNRESET, Savon::HTTPError => error
-    warning_msgs << "#{appeal.class.name} #{appeal.id}: #{error}" if warning_msgs.count < 100
-    nil
-  end
-
-  def fetch_bgs_power_of_attorney_by_file_number(file_number)
-    return if file_number.blank?
-
-    BgsPowerOfAttorney.find_or_create_by_file_number(file_number)
-  rescue ActiveRecord::RecordInvalid # not found at BGS
-    BgsPowerOfAttorney.new(file_number: file_number)
   end
 
   def request_issue_counts_for_appeal_ids(appeal_ids)
