@@ -65,7 +65,7 @@ export default {
   },
   args: {
     appName: 'Navigation Bar Demo',
-    userDisplayName: 'Rick Sanchez',
+    userDisplayName: 'Tom Brady',
     logoProps: {
       accentColor: LOGO_COLORS.QUEUE.ACCENT,
       overlapColor: LOGO_COLORS.QUEUE.OVERLAP
