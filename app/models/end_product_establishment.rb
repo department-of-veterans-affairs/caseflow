@@ -315,7 +315,7 @@ class EndProductEstablishment < CaseflowRecord
     ep_code = Constants::EP_CLAIM_TYPES[code]
     if committed?
       {
-        ep_code: "#{modifier} #{ep_code ? ep_code['offical_label'] : 'Unknown'}",
+        ep_code: "#{modifier} #{ep_code ? ep_code['official_label'] : 'Unknown'}",
         ep_status: [status_type, sync_status].compact.join(", ")
       }
     else

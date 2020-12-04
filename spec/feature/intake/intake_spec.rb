@@ -43,6 +43,19 @@ feature "Intake", :all_dbs do
     end
   end
 
+  context "As a user with Senior Veterans Service Representative job_title" do
+    let!(:svsr_user) { create(:user, css_id: "BVAAABSHIRE", station_id: "101") }
+
+    before do
+      User.authenticate!(user: svsr_user)
+    end
+
+    scenario "Attempts to view establish claim pages" do
+      visit "/intake"
+      expect(page).to have_content("You aren't authorized")
+    end
+  end
+
   context "As a user with Admin Intake role" do
     let!(:current_user) do
       User.authenticate!(roles: ["Admin Intake"])

@@ -160,8 +160,7 @@ class Task < CaseflowRecord
 
     def create_from_params(params, user)
       parent_task = Task.find(params[:parent_id])
-      fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_task.assigned_to_id == params[:assigned_to_id] &&
-                                                           parent_task.assigned_to_type == params[:assigned_to_type]
+      fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_of_same_type_has_same_assignee(parent_task, params)
 
       verify_user_can_create!(user, parent_task)
 
@@ -169,6 +168,12 @@ class Task < CaseflowRecord
       child = create_child_task(parent_task, user, params)
       parent_task.update!(status: params[:status]) if params[:status]
       child
+    end
+
+    def parent_of_same_type_has_same_assignee(parent_task, params)
+      parent_task.assigned_to_id == params[:assigned_to_id] &&
+        parent_task.assigned_to_type == params[:assigned_to_type] &&
+        parent_task.type == params[:type]
     end
 
     def create_child_task(parent, current_user, params)
@@ -208,11 +213,13 @@ class Task < CaseflowRecord
       "and #{CachedAppeal.table_name}.appeal_type = #{Task.table_name}.appeal_type"
     end
 
-    def order_by_appeal_priority_clause
+    def order_by_appeal_priority_clause(order: "asc")
+      boolean_order_clause = (order == "asc") ? "0 ELSE 1" : "1 ELSE 0"
       Arel.sql(
-        "CASE WHEN #{CachedAppeal.table_name}.is_aod = TRUE THEN 0 ELSE 1 END, "\
-        "CASE WHEN #{CachedAppeal.table_name}.case_type = 'Court Remand' THEN 0 ELSE 1 END, "\
-        "#{Task.table_name}.created_at"
+        "CASE WHEN #{CachedAppeal.table_name}.is_aod = TRUE THEN #{boolean_order_clause} END, "\
+        "CASE WHEN #{CachedAppeal.table_name}.case_type = 'Court Remand' THEN #{boolean_order_clause} END, "\
+        "#{CachedAppeal.table_name}.docket_number #{order}, "\
+        "#{Task.table_name}.created_at #{order}"
       )
     end
   end

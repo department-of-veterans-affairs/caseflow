@@ -445,26 +445,6 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       expect(page).to have_content("There are no schedulable veterans")
     end
 
-    scenario "Withdraw Veteran's hearing request" do
-      visit "hearings/schedule/assign"
-      expect(page).to have_content("Regional Office")
-      click_dropdown(text: "Denver")
-      click_button("AMA Veterans Waiting", exact: true)
-      click_on "Bob Smith"
-
-      click_dropdown(text: Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h[:label])
-      fill_in "taskInstructions", with: "Withdrawing hearing"
-
-      click_on "Submit"
-
-      expect(page).to have_content("You have successfully withdrawn")
-      expect(appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(Constants.TASK_STATUSES.cancelled)
-      expect(appeal.tasks.where(type: EvidenceSubmissionWindowTask.name).count).to eq(1)
-
-      click_on "Back to Hearing Schedule"
-      expect(page).to have_content("Denver")
-    end
-
     context "and room is null" do
       let(:room) { nil }
 
@@ -691,6 +671,146 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       before { cache_appeals }
 
       it_behaves_like "scheduling a virtual hearing", false, "RO39", "8:30"
+    end
+
+    context "withdraw hearing" do
+      def schedule_hearing(appeal_link)
+        visit appeal_link
+        click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
+        find(".cf-form-radio-option", text: "8:30").click
+        click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
+
+        room_label = HearingRooms.find!(hearing_day.room)&.label
+        click_dropdown(
+          text: "#{hearing_day.scheduled_for.to_formatted_s(:short_date)} (0/#{hearing_day.total_slots}) #{room_label}",
+          name: "hearingDate"
+        )
+        click_button("Schedule", exact: true)
+      end
+
+      shared_examples "withdrawing ama hearing" do |scheduled = false|
+        scenario "Withdraw Veteran's hearing request" do
+          visit "queue/appeals/#{appeal.uuid}"
+
+          click_dropdown(text: Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h[:label])
+          expect(page).to have_content(COPY::WITHDRAW_HEARING["AMA"]["MODAL_BODY"])
+          fill_in "taskInstructions", with: "Withdrawing hearing"
+
+          click_on "Submit"
+
+          expect(page).to have_content("You have successfully withdrawn")
+          expect(page).to have_content(COPY::WITHDRAW_HEARING["AMA"]["SUCCESS_MESSAGE"])
+          expect(appeal.tasks.where(type: EvidenceSubmissionWindowTask.name).count).to eq(1)
+
+          if scheduled
+            expect(appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(
+              Constants.TASK_STATUSES.completed
+            )
+            expect(appeal.tasks.where(type: AssignHearingDispositionTask.name).first.status).to eq(
+              Constants.TASK_STATUSES.cancelled
+            )
+            expect(appeal.hearings.last.cancelled?).to eq(true)
+          else
+            expect(appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(
+              Constants.TASK_STATUSES.cancelled
+            )
+          end
+        end
+      end
+
+      shared_examples "withdrawing legacy hearing" do |scheduled = false|
+        scenario "Withdraw Veteran's hearing request" do
+          visit "queue/appeals/#{legacy_appeal.vacols_id}"
+
+          click_dropdown(text: Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h[:label])
+          expect(page.html).to include(
+            COPY::WITHDRAW_HEARING["LEGACY_NON_COLOCATED_PRIVATE_ATTORNEY"]["MODAL_BODY"]
+          )
+          fill_in "taskInstructions", with: "Withdrawing hearing"
+
+          click_on "Submit"
+
+          expect(page).to have_content("You have successfully withdrawn")
+          expect(page.html).to include(
+            COPY::WITHDRAW_HEARING["LEGACY_NON_COLOCATED_PRIVATE_ATTORNEY"]["SUCCESS_MESSAGE"]
+          )
+
+          expect(legacy_appeal.case_record.bfhr).to eq("5")
+          expect(legacy_appeal.case_record.bfha).to eq("5")
+
+          if scheduled
+            expect(legacy_appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(
+              Constants.TASK_STATUSES.completed
+            )
+            expect(legacy_appeal.tasks.where(type: AssignHearingDispositionTask.name).first.status).to eq(
+              Constants.TASK_STATUSES.cancelled
+            )
+            expect(legacy_appeal.hearings.last.cancelled?).to eq(true)
+          else
+            expect(legacy_appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(
+              Constants.TASK_STATUSES.cancelled
+            )
+          end
+        end
+      end
+
+      before { cache_appeals }
+
+      context "Scheduled hearing" do
+        context "AMA appeal" do
+          include_context "ama_hearing"
+
+          before do
+            schedule_hearing("queue/appeals/#{appeal.uuid}")
+          end
+
+          it_behaves_like "withdrawing ama hearing", true
+        end
+
+        context "Legacy appeal" do
+          include_context "legacy_hearing"
+
+          let!(:hearing_day) do
+            create(
+              :hearing_day,
+              request_type: HearingDay::REQUEST_TYPES[:video],
+              scheduled_for: Time.zone.today + 160,
+              regional_office: regional_office,
+              room: "1"
+            )
+          end
+
+          before do
+            schedule_hearing("queue/appeals/#{legacy_appeal.vacols_id}")
+          end
+
+          it_behaves_like "withdrawing legacy hearing", true
+        end
+      end
+
+      context "Unscheduled hearing" do
+        context "AMA appeal" do
+          include_context "ama_hearing"
+
+          it_behaves_like "withdrawing ama hearing"
+        end
+
+        context "Legacy appeal" do
+          include_context "legacy_hearing"
+
+          let!(:hearing_day) do
+            create(
+              :hearing_day,
+              request_type: HearingDay::REQUEST_TYPES[:video],
+              scheduled_for: Time.zone.today + 160,
+              regional_office: regional_office,
+              room: "1"
+            )
+          end
+
+          it_behaves_like "withdrawing legacy hearing"
+        end
+      end
     end
   end
 

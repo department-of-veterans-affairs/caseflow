@@ -881,14 +881,16 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
             :case,
             :assigned,
             bfcorlid: "0000000000S",
-            bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]
+            bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing],
+            bfhr: VACOLS::Case::HEARING_PREFERENCE_TYPES_V2[:TRAVEL_BOARD][:vacols_value],
+            bfdocind: nil
           )
         end
         let!(:legacy_appeal) do
           create(:legacy_appeal, vacols_case: vacols_case)
         end
 
-        let(:task_type) { :changed_hearing_request_type }
+        let(:task_type) { :change_hearing_request_type_task }
         let(:action) do
           create(task_type, appeal: legacy_appeal, assigned_by: assigned_by_user, assigned_to: assigned_to_user)
         end
@@ -920,6 +922,11 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
             appeal: legacy_appeal
           ).status).to eq(Constants.TASK_STATUSES.completed)
           expect(ScheduleHearingTask.find_by(appeal: legacy_appeal).status).to eq(Constants.TASK_STATUSES.assigned)
+          expect(CachedAppeal.count).to eq(1)
+          expect(CachedAppeal.first.vacols_id).to eq(legacy_appeal.vacols_id)
+          expect(CachedAppeal.first.former_travel).to eq(true)
+          expect(CachedAppeal.first.hearing_request_type).to eq("Video")
+          expect(CachedAppeal.first.closest_regional_office_key).to eq("RO17") # Default RO based on address geomatch
         end
 
         it "changes the vacols location to CASEFLOW" do

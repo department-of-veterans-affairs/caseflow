@@ -121,13 +121,18 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
     end
 
     context "when the appeal is a LegacyAppeal" do
-      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+      let(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:caseflow]) }
+      let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+      let(:lar) { double("LegacyAppealRepresentative") }
       let(:hearing_task_parent) { root_task }
 
-      context "when the appellant is represented by a VSO" do
+      before do
+        allow(LegacyAppealRepresentative).to receive(:new).and_return(lar)
+      end
+
+      context "when the appellant is represented by a colocated VSO" do
         before do
-          create(:vso)
-          allow_any_instance_of(LegacyAppeal).to receive(:representatives) { Representative.all }
+          allow(lar).to receive(:representative_is_colocated_vso?).and_return(true)
         end
 
         it "marks all Caseflow tasks complete and sets the VACOLS location correctly" do
@@ -144,7 +149,11 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
         end
       end
 
-      context "when the appellant is not represented by a VSO" do
+      context "when the appellant is not represented by a colocated VSO" do
+        before do
+          allow(lar).to receive(:representative_is_colocated_vso?).and_return(false)
+        end
+
         it "marks all Caseflow tasks complete and sets the VACOLS location correctly" do
           caseflow_task_count_before = Task.count
 

@@ -445,7 +445,7 @@ end_product_updates,original_decision_review_id,integer (8),,,,,x,The original d
 end_product_updates,original_decision_review_type,string,,,,,x,The original decision review type that this end product update belongs to
 end_product_updates,status,string,,,,,,"Status after an attempt to update the end product; expected values: 'success', 'error', ..."
 end_product_updates,updated_at,datetime ∗,x,,,,,
-end_product_updates,user_id,integer (8) ∗,x,,,,x,The ID of the user who makes an end product update.
+end_product_updates,user_id,integer (8) ∗ FK,x,,x,,x,The ID of the user who makes an end product update.
 form8s,,,,,,,,
 form8s,_initial_appellant_name,string,,,,,,
 form8s,_initial_appellant_relationship,string,,,,,,
@@ -1124,6 +1124,7 @@ virtual_hearings,alias,string,,,,,x,Alias for conference in Pexip
 virtual_hearings,alias_with_host,string,,,,,,Alias for conference in pexip with client_host
 virtual_hearings,appellant_email,string ∗,x,,,,,Appellant's email address
 virtual_hearings,appellant_email_sent,boolean ∗,x,,,,,Determines whether or not a notification email was sent to the appellant
+virtual_hearings,appellant_reminder_sent_at,datetime,,,,,,The datetime the last reminder email was sent to the appellant.
 virtual_hearings,appellant_tz,string (50),,,,,,Stores appellant timezone
 virtual_hearings,conference_deleted,boolean ∗,x,,,,,Whether or not the conference was deleted from Pexip
 virtual_hearings,conference_id,integer,,,,,x,ID of conference from Pexip
@@ -1140,6 +1141,7 @@ virtual_hearings,judge_email,string,,,,,,Judge's email address
 virtual_hearings,judge_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the judge
 virtual_hearings,representative_email,string,,,,,,Veteran's representative's email address
 virtual_hearings,representative_email_sent,boolean ∗,x,,,,,Whether or not a notification email was sent to the veteran's representative
+virtual_hearings,representative_reminder_sent_at,datetime,,,,,,The datetime the last reminder email was sent to the representative.
 virtual_hearings,representative_tz,string (50),,,,,,Stores representative timezone
 virtual_hearings,request_cancelled,boolean,,,,,,Determines whether the user has cancelled the virtual hearing request
 virtual_hearings,updated_at,datetime ∗,x,,,,x,Automatic timestamp of when virtual hearing was updated
