@@ -270,6 +270,12 @@ RSpec.feature "Assign Hearings Table" do
           claimant_participant_id: appeal.claimant.participant_id,
           representative_name: "Attorney #{idx}"
         )
+        create(
+          :cached_appeal,
+          appeal_id: appeal.id,
+          appeal_type: Appeal.name,
+          power_of_attorney_name: appeal.reload.representative_name
+        )
       end
     end
 
