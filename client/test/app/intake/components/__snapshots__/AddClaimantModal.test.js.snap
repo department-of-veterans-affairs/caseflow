@@ -19,6 +19,11 @@ exports[`AddClaimantModal renders correctly 1`] = `
         id="Add-Claimant-button-id-close"
         type="button"
       >
+        <span
+          class="usa-sr-only"
+        >
+          Close
+        </span>
         <svg
           class="cf-icon-close"
           height="55"

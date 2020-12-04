@@ -29,9 +29,16 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
     scenario "User can update fields" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
-      click_dropdown(name: "judgeDropdown", index: 0, wait: 30)
-      click_dropdown(name: "hearingCoordinatorDropdown", index: 0, wait: 30)
-      click_dropdown(name: "hearingRoomDropdown", index: 0, wait: 30)
+      # wait until the label displays before trying to interact with the dropdown
+      find("div", class: "dropdown-judgeDropdown", text: COPY::DROPDOWN_LABEL_JUDGE)
+      click_dropdown(name: "judgeDropdown", index: 0)
+
+      find("div", class: "dropdown-hearingCoordinatorDropdown", text: COPY::DROPDOWN_LABEL_HEARING_COORDINATOR)
+      click_dropdown(name: "hearingCoordinatorDropdown", index: 0)
+
+      find("div", class: "dropdown-hearingRoomDropdown", text: COPY::DROPDOWN_LABEL_HEARING_ROOM)
+      click_dropdown(name: "hearingRoomDropdown", index: 0)
+
       find("label", text: "Yes, Waive 90 Day Evidence Hold").click
 
       fill_in "Notes", with: generate_words(10)

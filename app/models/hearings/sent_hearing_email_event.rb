@@ -28,7 +28,8 @@ class SentHearingEmailEvent < CaseflowRecord
     {
       confirmation: "confirmation",
       cancellation: "cancellation",
-      updated_time_confirmation: "updated_time_confirmation"
+      updated_time_confirmation: "updated_time_confirmation",
+      reminder: "reminder"
     }
   ), _prefix: :is
 
