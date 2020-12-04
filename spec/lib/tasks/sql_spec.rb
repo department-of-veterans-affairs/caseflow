@@ -15,7 +15,7 @@ describe "sql", :postgres do
 
     context "using queries in reports/sql_queries" do
       it "completes validation" do
-        expect { subject }.to_not raise_error
+        expect { subject }.to output(/SUMMARY:/).to_stdout
       end
     end
   end

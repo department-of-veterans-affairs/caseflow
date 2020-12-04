@@ -35,10 +35,30 @@ class ValidateSqlQueries
       run_queries(**extract_queries(IO.read(filename))) do |result_key, result, _error|
         output_filename = "#{basename}.#{result_key}-out"
         puts "    Saving output to #{output_filename}"
-        save_result(result, "#{output_dir}/#{output_filename}")
+        File.open("#{output_dir}/#{output_filename}", "w") { |file| file.puts result.to_s }
       end
     rescue ScriptError, StandardError => error
       warn "    !Skipping due to error when executing query: #{error.message.lines.first}"
+    end
+
+    def extract_queries(file_contents)
+      parser = SqlQueryParser.new(file_contents)
+      parser.extract_queries
+      {
+        rails_query: validate_rails_query(parser.rails_query),
+        sql_query: validate_sql_query(parser.sql_query),
+        rails_sql_postproc: validate_rails_query(parser.postprocess_cmds)
+      }
+    end
+
+    def validate_rails_query(query)
+      # To-do: filter query to make it as safe as possible
+      query.strip
+    end
+
+    def validate_sql_query(query)
+      # To-do: filter query to make it as safe as possible
+      query.strip
     end
 
     def run_queries(rails_query:, sql_query:, rails_sql_postproc:)
@@ -55,10 +75,6 @@ class ValidateSqlQueries
       else
         warn "    !No Rails query found in the SQL -- skipping."
       end
-    end
-
-    def save_result(results, out_filename)
-      File.open(out_filename, "w") { |file| file.puts results.to_s }
     end
 
     def compare_output_files(output_dir)
@@ -80,76 +96,46 @@ class ValidateSqlQueries
       end
     end
 
-    ### Rails
-
     def eval_rails_query(query)
       # Default postprocessing to split results into separate lines
       query += "\n array_output.map{|r| r.to_s}.join('\n')" if query.include?("array_output")
       safely_eval_rails_query(query)
     end
 
-    ### SQL
-
     def eval_sql_query(query, postprocess_cmds)
+      init_result, rescued_error = EvalEnvironment.wrap_in_rollback_transaction do
+        ActiveRecord::Base.connection.execute(query)
+      end
+
       # Default postprocessing commands to transform SQL results into reasonable output
       postprocess_cmds = "each_row.map{|r| r.to_s}.join('\n')" if postprocess_cmds.blank?
-
-      init_result, rescued_error = wrap_in_rollback_transaction { ActiveRecord::Base.connection.execute(query) }
       result, rescued_error = safely_eval_rails_query("@result.#{postprocess_cmds}", init_result) unless rescued_error
+
       result ||= init_result || "(No SQL result)"
       [result, rescued_error]
     end
 
-    # To-do: Improve parsing of query
-    # rubocop:disable Metrics/MethodLength
-    def extract_queries(file_contents)
-      rails_query = ""
-      sql_query = ""
-      postprocess_cmds = ""
-      rails_equiv_mode = false
-      postproc_mode = false
-      file_contents.each_line do |line|
-        line.strip!
-        if line.start_with?("*/")
-          rails_equiv_mode = false
-          postproc_mode = false
-        elsif rails_equiv_mode || line.start_with?(RAILS_EQUIV_PREFIX)
-          rails_query += "\n" + line.sub(RAILS_EQUIV_PREFIX, "").strip
-          rails_equiv_mode = true
-        elsif postproc_mode || line.start_with?(POSTPROC_SQL_RESULT_PREFIX)
-          postprocess_cmds += "\n" + line.sub(POSTPROC_SQL_RESULT_PREFIX, "").strip
-          postproc_mode = true
-        else
-          sql_query += "\n" + line
-        end
-      end
-      {
-        rails_query: validate_rails_query(rails_query),
-        sql_query: validate_sql_query(sql_query),
-        rails_sql_postproc: validate_rails_query(postprocess_cmds)
-      }
-    end
-    # rubocop:enable Metrics/MethodLength
-
-    def validate_rails_query(query)
-      # To-do: filter query to make it as safe as possible
-      query.strip
-    end
-
-    def validate_sql_query(query)
-      # To-do: filter query to make it as safe as possible
-      query.strip
-    end
-
-    ### Methods supporting safe evaluation of queries
-
     def safely_eval_rails_query(query, init_result = nil)
-      wrap_in_rollback_transaction do
-        EvalEnvironment.new(init_result).eval_query(query)
-      end
+      EvalEnvironment.new(init_result).eval_query_within_rollback_transaction(query)
+    end
+  end
+
+  # Attempt to minimize exposure of environment when calling eval
+  class EvalEnvironment
+    def initialize(result)
+      # @result is available for use in query when eval_query is called
+      @result = result
     end
 
-    def wrap_in_rollback_transaction
+    def eval_query(query)
+      binding.eval(query) # rubocop:disable Security/Eval
+    end
+
+    def eval_query_within_rollback_transaction(query)
+      self.class.wrap_in_rollback_transaction { eval_query(query) }
+    end
+
+    def self.wrap_in_rollback_transaction
       # To-do: open read-only connection to database
       suppress_sql_logging do
         rescued_error = nil
@@ -167,7 +153,7 @@ class ValidateSqlQueries
       end
     end
 
-    def suppress_sql_logging
+    def self.suppress_sql_logging
       orig_log_level = ActiveRecord::Base.logger.level
       result = nil
       begin
@@ -180,14 +166,35 @@ class ValidateSqlQueries
     end
   end
 
-  # Attempt to minimize exposure of environment when calling eval
-  class EvalEnvironment
-    def initialize(result)
-      @result = result
+  class SqlQueryParser
+    attr_reader :rails_query, :sql_query, :postprocess_cmds
+
+    def initialize(file_contents)
+      @contents = file_contents
+      @rails_query = ""
+      @sql_query = ""
+      @postprocess_cmds = ""
     end
 
-    def eval_query(query)
-      binding.eval(query) # rubocop:disable Security/Eval
+    # To-do: Improve parsing of query
+    def extract_queries
+      rails_equiv_mode = false
+      postproc_mode = false
+      @contents.each_line do |line|
+        line.strip!
+        if line.start_with?("*/")
+          rails_equiv_mode = false
+          postproc_mode = false
+        elsif rails_equiv_mode || line.start_with?(RAILS_EQUIV_PREFIX)
+          @rails_query += "\n" + line.sub(RAILS_EQUIV_PREFIX, "").strip
+          rails_equiv_mode = true
+        elsif postproc_mode || line.start_with?(POSTPROC_SQL_RESULT_PREFIX)
+          @postprocess_cmds += "\n" + line.sub(POSTPROC_SQL_RESULT_PREFIX, "").strip
+          postproc_mode = true
+        else
+          @sql_query += "\n" + line
+        end
+      end
     end
   end
 end
