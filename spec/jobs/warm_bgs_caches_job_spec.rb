@@ -122,4 +122,45 @@ describe WarmBgsCachesJob, :all_dbs do
       end
     end
   end
+
+  context "Warm POA cache and cache appeals" do
+    shared_examples "warms poa and caches in CachedAppeal table" do
+      it "warms poa and caches in CachedAppeal table", :aggregate_failures do
+        subject
+
+        expect(BgsPowerOfAttorney.all.count).to eq(1)
+        expect(CachedAppeal.first.power_of_attorney_name).to eq(BgsPowerOfAttorney.first.representative_name)
+      end
+    end
+
+    context "Legacy appeal with open ScheduleHearingTask" do
+      before { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
+
+      subject { described_class.new.send(:warm_poa_and_cache_for_legacy_appeals_with_hearings) }
+
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal)}
+
+      include_examples "warms poa and caches in CachedAppeal table"
+    end
+
+    context "AMA appeal with open ScheduleHearingTask" do
+      before { UpdateCachedAppealsAttributesJob.new.cache_ama_appeals }
+
+      subject { described_class.new.send(:warm_poa_and_cache_for_ama_appeals_with_hearings) }
+
+      let(:appeal) { create(:appeal) }
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal)}
+
+      include_examples "warms poa and caches in CachedAppeal table"
+    end
+
+    context "Oldest Claimant" do
+      subject { described_class.new.send(:warm_poa_and_cache_ama_appeals_for_oldest_claimants) }
+
+      let!(:appeal) { create(:appeal, :with_post_intake_tasks) }
+
+      include_examples "warms poa and caches in CachedAppeal table"
+    end
+  end
 end
