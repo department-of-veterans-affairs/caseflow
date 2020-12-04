@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+##
+# RoSchedulePeriod represents a schedule period for bulk assigning hearing days.
+# This record is created when user uploads a RO Assignment spreadsheet for a date range if it passes spreadsheet
+# validation. Once created, it creates NonAvailibility records for ROs and CO which are used for generating
+# the schedule. The generated hearing schedule is cached for 4 days. When user confirms the
+# the schedule, HearingDay records are created.
+##
 class RoSchedulePeriod < SchedulePeriod
   validate :validate_spreadsheet, on: :create
   after_create :import_spreadsheet
@@ -8,17 +15,20 @@ class RoSchedulePeriod < SchedulePeriod
     generate_ro_hearing_schedule
   end
 
+  # Run various validations on the uploaded spreadsheet and record errors
   def validate_spreadsheet
     validate_spreadsheet = HearingSchedule::ValidateRoSpreadsheet.new(spreadsheet, start_date, end_date)
     errors[:base] << validate_spreadsheet.validate
   end
 
+  # Create NonAvailibility records for ROs and CO and Allocation records for each RO
   def import_spreadsheet
     RoNonAvailability.import_ro_non_availability(self)
     CoNonAvailability.import_co_non_availability(self)
     Allocation.import_allocation(self)
   end
 
+  # When user confirms the schedule, try to create hearing days
   def schedule_confirmed(hearing_schedule)
     RoSchedulePeriod.transaction do
       start_confirming_schedule
@@ -37,7 +47,7 @@ class RoSchedulePeriod < SchedulePeriod
 
   private
 
-  # Video hearings master records reflect 8:30 am start time.
+  # Validate fields for each video hearing day
   def format_ro_data(ro_allocations)
     ro_allocations.reduce([]) do |acc, (ro_key, ro_info)|
       ro_info[:allocated_dates].each_value do |dates|
@@ -56,6 +66,7 @@ class RoSchedulePeriod < SchedulePeriod
     end
   end
 
+  # Generate hearing days for ROs and CO based on non-availibility days and allocated days
   def generate_ro_hearing_schedule
     generate_hearings_days = HearingSchedule::GenerateHearingDaysSchedule.new(self)
     video_hearing_days = format_ro_data(generate_hearings_days.allocate_hearing_days_to_ros)
