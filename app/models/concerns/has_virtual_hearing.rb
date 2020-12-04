@@ -7,10 +7,13 @@ module HasVirtualHearing
     has_one :virtual_hearing, -> { order(id: :desc) }, as: :hearing
   end
 
+  # NOTE: A hearing is virtual unless the hearing type was switched back to original
+  # indicated by status `cancelled`
   def virtual?
     [
       :pending,
-      :active
+      :active,
+      :closed
     ].include? virtual_hearing&.status
   end
 

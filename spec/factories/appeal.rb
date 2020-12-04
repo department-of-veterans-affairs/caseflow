@@ -100,6 +100,10 @@ FactoryBot.define do
       end
     end
 
+    trait :type_cavc_remand do
+      stream_type { Constants.AMA_STREAM_TYPES.court_remand }
+    end
+
     trait :hearing_docket do
       docket_type { Constants.AMA_DOCKETS.hearing }
     end
