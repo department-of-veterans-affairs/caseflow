@@ -917,6 +917,7 @@ QueueApp.propTypes = {
   buildDate: PropTypes.string,
   setCanEditAod: PropTypes.func,
   setCanViewOvertimeStatus: PropTypes.func,
+  setCanEditNodDate: PropTypes.func,
   canEditAod: PropTypes.bool,
   setFeatureToggles: PropTypes.func,
   featureToggles: PropTypes.object,
