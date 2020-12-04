@@ -3,6 +3,8 @@
 # This job will create a conference for a hearing
 # that is switched to virtual hearing.
 class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
+  include VirtualHearings::EnsureCurrentUserIsSet
+
   queue_with_priority :high_priority
   application_attr :hearing_schedule
 
@@ -115,10 +117,6 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
   def create_conference_datadog_tags
     datadog_metric_info.merge(attrs: { hearing_id: virtual_hearing.hearing_id })
-  end
-
-  def ensure_current_user_is_set
-    RequestStore.store[:current_user] ||= User.system_user
   end
 
   def create_conference
