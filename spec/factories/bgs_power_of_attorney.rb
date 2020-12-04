@@ -11,11 +11,11 @@ FactoryBot.define do
       transient do
         appeal { nil }
       end
-      after(:create) do |bgs_power_of_attorney, _evaluator|
+      after(:create) do |bgs_power_of_attorney, evaluator|
         CachedAppeal.create!(
-          appeal_id: _evaluator.appeal.id,
-          appeal_type: _evaluator.appeal.class.name,
-          power_of_attorney_name: _evaluator.appeal.reload.representative_name
+          appeal_id: evaluator.appeal.id,
+          appeal_type: evaluator.appeal.class.name,
+          power_of_attorney_name: bgs_power_of_attorney.representative_name
         )
       end
     end
