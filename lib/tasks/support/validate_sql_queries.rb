@@ -43,23 +43,24 @@ class ValidateSqlQueries
       parser.extract_queries
 
       {
-        rails_query: validate_rails_query(parser.rails_query),
-        sql_query: validate_sql_query(parser.sql_query),
-        rails_sql_postproc: validate_rails_query(parser.postprocess_cmds),
-        db_connection_string: validate_rails_query(parser.db_connection)
+        rails_query: declaw_rails_query(parser.rails_query),
+        sql_query: declaw_sql_query(parser.sql_query),
+        rails_sql_postproc: declaw_rails_query(parser.postprocess_cmds),
+        db_connection_string: declaw_rails_query(parser.db_connection)
       }
     end
 
-    def validate_rails_query(query)
+    def declaw_rails_query(query)
       # To-do: filter query to make it as safe as possible
       query.strip unless query.blank?
     end
 
-    def validate_sql_query(query)
+    def declaw_sql_query(query)
       # To-do: filter query to make it as safe as possible
       query.strip
     end
 
+    # :reek:LongParameterList
     def run_queries(rails_query:, sql_query:, rails_sql_postproc: "", db_connection_string: nil)
       if rails_query.present?
         # Execute Rails query
@@ -98,7 +99,7 @@ class ValidateSqlQueries
     MAP_TO_STRING = "map{|r| r.to_s}.join('\n')"
 
     def eval_rails_query(query)
-      # Default postprocessing to split results into separate lines
+      # Use default postprocessing to split results into separate lines if "array_output" appears in query
       query += "\n array_output.#{MAP_TO_STRING}" if query.include?("array_output")
       safely_eval_rails_query(query)
     end
@@ -179,6 +180,7 @@ class ValidateSqlQueries
     end
   end
 
+  # :reek:TooManyInstanceVariables
   class SqlQueryParser
     # identifies Rails code that is equivalent to the SQL query
     RAILS_EQUIV_PREFIX = "/* RAILS_EQUIV"

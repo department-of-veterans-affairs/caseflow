@@ -33,7 +33,10 @@ https://query.prod.appeals.va.gov/question/<card_id>
 To include a new SQL query for validation, add the incantations below in
 SQL comments.  See `sql_spec.rb` and the other `*.sql` files for examples.
 
-- `RAILS_EQUIV`: identifies Rails code that is equivalent to the SQL query
+- `RAILS_EQUIV`: identifies Rails code that is equivalent to the SQL query.
+  If `array_output` appears in the query, the validator will automatically
+  map the array into separate lines in the output file so that it will match 
+  the output from the executing the SQL query.
 - `POSTPROC_SQL_RESULT` (optional): identifies Rails code to postprocess SQL
   query results
 - `SQL_DB_CONNECTION` (optional): identifies the class on which to call

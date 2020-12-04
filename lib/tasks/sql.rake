@@ -17,6 +17,8 @@
 #
 #  To validate your own SQL, save your SQL in sql_queries then run
 #     bundle exec rake 'sql:validate[sql_queries,queries_output]'
+#
+#  See reports/sql_queries/README.md for more specific instructions.
 
 namespace :sql do
   desc "extract SQL queries from JSON file containing cards from Metabase"
