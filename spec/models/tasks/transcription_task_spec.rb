@@ -28,8 +28,9 @@ describe TranscriptionTask, :postgres do
     end
 
     it "throws an error because parent task type is invalid" do
-      expect { subject }.to raise_error(Caseflow::Error::InvalidParentTask, "TranscriptionTask parents must be " \
-        "AssignHearingDispositionTask or MissingHearingTranscriptsColocatedTask or TranscriptionTask")
+      expect { subject }.to raise_error(ActiveRecord::RecordInvalid).with_message("Validation failed: Parent should " \
+        "be one of AssignHearingDispositionTask, MissingHearingTranscriptsColocatedTask, TranscriptionTask, " \
+        "DistributionTask")
       expect(parent_task.children.length).to eq 0
     end
 

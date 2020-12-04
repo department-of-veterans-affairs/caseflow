@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_20_135542) do
+ActiveRecord::Schema.define(version: 2020_11_10_021033) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -473,28 +473,28 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.index ["updated_at"], name: "index_distributions_on_updated_at"
   end
 
-  create_table "docket_changes", comment: "Stores the disposition and associated data for Docket Change motions", force: :cascade do |t|
-    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
-    t.string "disposition", comment: "Possible options are granted, partially_granted, and denied"
-    t.string "docket_type", comment: "The new docket"
-    t.integer "granted_request_issue_ids", comment: "When a docket change is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior request issue IDs.", array: true
-    t.bigint "new_docket_stream_id", comment: "References the new appeal stream with the updated docket; initially null until created by workflow"
-    t.bigint "old_docket_stream_id", null: false, comment: "References the original appeal stream with old docket"
-    t.datetime "receipt_date", null: false
-    t.bigint "task_id", null: false, comment: "The task that triggered the switch"
-    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
-    t.index ["created_at"], name: "index_docket_changes_on_created_at"
-    t.index ["new_docket_stream_id"], name: "index_docket_changes_on_new_docket_stream_id"
-    t.index ["old_docket_stream_id"], name: "index_docket_changes_on_old_docket_stream_id"
-    t.index ["task_id"], name: "index_docket_changes_on_task_id"
-  end
-
   create_table "docket_snapshots", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.integer "docket_count"
     t.date "latest_docket_month"
     t.datetime "updated_at"
     t.index ["updated_at"], name: "index_docket_snapshots_on_updated_at"
+  end
+
+  create_table "docket_switches", comment: "Stores the disposition and associated data for Docket Switch motions.", force: :cascade do |t|
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.string "disposition", comment: "Possible options are granted, partially_granted, and denied"
+    t.string "docket_type", comment: "The new docket"
+    t.integer "granted_request_issue_ids", comment: "When a docket switch is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior request issue IDs.", array: true
+    t.bigint "new_docket_stream_id", comment: "References the new appeal stream with the updated docket; initially null until created by workflow"
+    t.bigint "old_docket_stream_id", null: false, comment: "References the original appeal stream with old docket"
+    t.datetime "receipt_date", null: false
+    t.bigint "task_id", null: false, comment: "The task that triggered the switch"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.index ["created_at"], name: "index_docket_switches_on_created_at"
+    t.index ["new_docket_stream_id"], name: "index_docket_switches_on_new_docket_stream_id"
+    t.index ["old_docket_stream_id"], name: "index_docket_switches_on_old_docket_stream_id"
+    t.index ["task_id"], name: "index_docket_switches_on_task_id"
   end
 
   create_table "docket_tracers", id: :serial, force: :cascade do |t|
@@ -1491,6 +1491,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.string "alias_with_host", comment: "Alias for conference in pexip with client_host"
     t.string "appellant_email", comment: "Appellant's email address"
     t.boolean "appellant_email_sent", default: false, null: false, comment: "Determines whether or not a notification email was sent to the appellant"
+    t.datetime "appellant_reminder_sent_at", comment: "The datetime the last reminder email was sent to the appellant."
     t.string "appellant_tz", limit: 50, comment: "Stores appellant timezone"
     t.boolean "conference_deleted", default: false, null: false, comment: "Whether or not the conference was deleted from Pexip"
     t.integer "conference_id", comment: "ID of conference from Pexip"
@@ -1506,6 +1507,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.boolean "judge_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the judge"
     t.string "representative_email", comment: "Veteran's representative's email address"
     t.boolean "representative_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran's representative"
+    t.datetime "representative_reminder_sent_at", comment: "The datetime the last reminder email was sent to the representative."
     t.string "representative_tz", limit: 50, comment: "Stores representative timezone"
     t.boolean "request_cancelled", default: false, comment: "Determines whether the user has cancelled the virtual hearing request"
     t.datetime "updated_at", null: false, comment: "Automatic timestamp of when virtual hearing was updated"
@@ -1564,9 +1566,9 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
   add_foreign_key "certifications", "users"
   add_foreign_key "claims_folder_searches", "users"
   add_foreign_key "dispatch_tasks", "users"
-  add_foreign_key "docket_changes", "appeals", column: "new_docket_stream_id"
-  add_foreign_key "docket_changes", "appeals", column: "old_docket_stream_id"
-  add_foreign_key "docket_changes", "tasks"
+  add_foreign_key "docket_switches", "appeals", column: "new_docket_stream_id"
+  add_foreign_key "docket_switches", "appeals", column: "old_docket_stream_id"
+  add_foreign_key "docket_switches", "tasks"
   add_foreign_key "document_views", "users"
   add_foreign_key "end_product_establishments", "users"
   add_foreign_key "end_product_updates", "end_product_establishments"
