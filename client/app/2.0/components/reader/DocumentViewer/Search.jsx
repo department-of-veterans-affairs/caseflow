@@ -25,6 +25,7 @@ export const DocumentSearch = ({
 }) => !hidden && (
   <div className={classNames('cf-search-bar', { hidden })}>
     <SearchBar
+      inputProps={{ autoFocus: true }}
       ref={searchBarRef}
       isSearchAhead
       size="small"

@@ -30,6 +30,13 @@ export const EditComment = ({
       strongLabel
     />
     <SaveableTextArea
+      inputProps={{
+        autoFocus: true,
+        onFocus: (event) => {
+          // Reset the value to focus the cursor at the end
+          event.target.selectionStart = event.target.value.length;
+        }
+      }}
       name="Edit comment"
       hideLabel
       onKeyDown={keyListener}
