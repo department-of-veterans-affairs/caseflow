@@ -111,6 +111,7 @@ describe "sql", :postgres do
       it "skips validation" do
         ValidateSqlQueries.run_queries(extracted_queries) { |_result_key, _result, _error| fail "Should not happen" }
         expect { |b| ValidateSqlQueries.run_queries(extracted_queries, &b) }.not_to yield_control
+        expect { ValidateSqlQueries.run_queries(extracted_queries) }.to output(/No Rails query found/).to_stderr
       end
     end
     context "invalid Rails query" do

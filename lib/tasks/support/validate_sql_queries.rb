@@ -177,6 +177,7 @@ class ValidateSqlQueries
     end
 
     # To-do: Improve parsing of query
+    # :reek:FeatureEnvy
     def extract_queries
       rails_equiv_mode = false
       postproc_mode = false
