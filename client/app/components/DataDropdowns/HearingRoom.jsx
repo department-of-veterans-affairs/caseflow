@@ -4,6 +4,7 @@ import _ from 'lodash';
 
 import { HEARING_ROOM_OPTIONS } from './constants';
 import SearchableDropdown from '../SearchableDropdown';
+import COPY from '../../../COPY';
 
 export const HearingRoomDropdown = (
   { name, label, value, onChange, readOnly, errorMessage, placeholder }
@@ -41,5 +42,5 @@ HearingRoomDropdown.propTypes = {
 
 HearingRoomDropdown.defaultProps = {
   name: 'room',
-  label: 'Hearing Room'
+  label: COPY.DROPDOWN_LABEL_HEARING_ROOM
 };

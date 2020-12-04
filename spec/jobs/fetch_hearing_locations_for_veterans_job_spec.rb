@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe FetchHearingLocationsForVeteransJob do
+  include GeomatchHelper
+
   let!(:job) { FetchHearingLocationsForVeteransJob.new }
 
   before do
@@ -106,35 +108,17 @@ describe FetchHearingLocationsForVeteransJob do
       subject { FetchHearingLocationsForVeteransJob.new }
 
       it "creates schedule hearing tasks for appeal and records a geomatched result" do
-        expect(subject).to(
-          receive(:record_geomatched_appeal)
-            .with(legacy_appeal, :matched_available_hearing_locations)
-        )
+        setup_geomatch_service_mock(legacy_appeal) do |geomatch_service|
+          expect(geomatch_service).to(
+            receive(:record_geomatched_appeal).with(:matched_available_hearing_locations)
+          )
+        end
 
         subject.perform
 
         expect(legacy_appeal.tasks.count).to eq(3)
         expect(legacy_appeal.tasks.open.where(type: "ScheduleHearingTask").count).to eq(1)
         expect(legacy_appeal.tasks.open.where(type: "HearingTask").count).to eq(1)
-      end
-
-      context "when appeal has open admin action" do
-        before do
-          HearingAdminActionVerifyAddressTask.create!(
-            appeal: legacy_appeal,
-            assigned_to: HearingsManagement.singleton,
-            parent: ScheduleHearingTask.create(
-              appeal: legacy_appeal,
-              parent: RootTask.find_or_create_by(appeal: legacy_appeal)
-            )
-          )
-        end
-
-        it "closes admin action" do
-          subject.perform
-
-          expect(HearingAdminActionVerifyAddressTask.first.status).to eq(Constants.TASK_STATUSES.cancelled)
-        end
       end
 
       context "when appeal can't be geomatched" do
@@ -173,11 +157,13 @@ describe FetchHearingLocationsForVeteransJob do
 
           context "and VaDotGovLimitError wait time exceeds the expected end time of the job" do
             it "records a geomatch error once" do
-              allow(subject).to(receive(:job_running_past_expected_end_time?).and_return(false, false, true))
+              expect(subject).to(receive(:job_running_past_expected_end_time?).and_return(false, false, true))
 
-              expect(subject).to(
-                receive(:record_geomatched_appeal).with(legacy_appeal, "limit_error").once
-              )
+              setup_geomatch_service_mock(legacy_appeal) do |geomatch_service|
+                expect(geomatch_service).to(
+                  receive(:record_geomatched_appeal).with("limit_error").once
+                )
+              end
 
               subject.perform
             end
@@ -185,15 +171,17 @@ describe FetchHearingLocationsForVeteransJob do
 
           context "and VaDotGovLimitError wait time doesn't immediately exceed the expected end time of the job" do
             before do
-              allow(subject).to(
+              expect(subject).to(
                 receive(:job_running_past_expected_end_time?).and_return(false, false, false, false, true)
               )
             end
 
             it "records multiple geomatch errors" do
-              expect(subject).to(
-                receive(:record_geomatched_appeal).with(legacy_appeal, "limit_error").at_least(:once)
-              )
+              setup_geomatch_service_mock(legacy_appeal) do |geomatch_service|
+                expect(geomatch_service).to(
+                  receive(:record_geomatched_appeal).with("limit_error").at_least(:once)
+                )
+              end
 
               subject.perform
             end
@@ -204,11 +192,14 @@ describe FetchHearingLocationsForVeteransJob do
               let!(:task_2) { create(:schedule_hearing_task, appeal: appeal) }
 
               it "retries the same appeal again" do
-                expect(subject).to(
-                  receive(:record_geomatched_appeal).with(legacy_appeal, "limit_error").at_least(:twice)
-                )
-                expect(subject).not_to(
-                  receive(:record_geomatched_appeal).with(appeal, any_args)
+                setup_geomatch_service_mock(legacy_appeal) do |geomatch_service|
+                  expect(geomatch_service).to(
+                    receive(:record_geomatched_appeal).with("limit_error").at_least(:twice)
+                  )
+                end
+
+                expect(GeomatchService).not_to(
+                  receive(:new).with(appeal: appeal)
                 )
 
                 subject.perform
@@ -233,12 +224,16 @@ describe FetchHearingLocationsForVeteransJob do
 
           context "retries to geomatch" do
             it "retries geomatching hearing locations for appeal" do
-              expect(subject).to(receive(:record_geomatched_appeal).once.with(legacy_appeal, "limit_error"))
-              expect(subject).to(
-                receive(:record_geomatched_appeal)
-                  .once
-                  .with(legacy_appeal, :matched_available_hearing_locations)
-              )
+              setup_geomatch_service_mock(legacy_appeal) do |geomatch_service|
+                expect(geomatch_service).to(
+                  receive(:record_geomatched_appeal).once.with("limit_error")
+                )
+                expect(geomatch_service).to(
+                  receive(:record_geomatched_appeal)
+                    .once
+                    .with(:matched_available_hearing_locations)
+                )
+              end
 
               subject.perform
             end
@@ -254,39 +249,15 @@ describe FetchHearingLocationsForVeteransJob do
         end
 
         it "records a geomatch error" do
-          expect(subject).to(
-            receive(:record_geomatched_appeal).with(legacy_appeal, "error")
-          )
+          setup_geomatch_service_mock(legacy_appeal) do |geomatch_service|
+            expect(geomatch_service).to(
+              receive(:record_geomatched_appeal).with("error")
+            )
+          end
           expect(Raven).to receive(:capture_exception)
 
           subject.perform
         end
-      end
-    end
-  end
-
-  context "for a travel board appeal in VACOLS" do
-    let!(:vacols_case) do
-      create(
-        :case,
-        bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing],
-        bfhr: "2",
-        bfdocind: nil,
-        bfddec: nil
-      )
-    end
-
-    describe "#perform" do
-      subject { FetchHearingLocationsForVeteransJob.new }
-
-      it "geomatches for the travel board appeal" do
-        subject.perform
-
-        legacy_appeal = LegacyAppeal.find_by(vacols_id: vacols_case.bfkey)
-
-        expect(legacy_appeal).not_to be_nil
-        expect(legacy_appeal.closest_regional_office).not_to be_nil
-        expect(legacy_appeal.available_hearing_locations).not_to be_empty
       end
     end
   end

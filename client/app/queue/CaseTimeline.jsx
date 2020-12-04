@@ -1,37 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { caseTimelineTasksForAppeal } from './selectors';
+import { useSelector } from 'react-redux';
 import COPY from '../../COPY';
 import TaskRows from './components/TaskRows';
+import { caseTimelineTasksForAppeal } from './selectors';
 
-export class CaseTimeline extends React.PureComponent {
-  render = () => {
-    const {
-      appeal,
-      tasks
-    } = this.props;
+export const CaseTimeline = ({ appeal }) => {
+  const tasks = useSelector((state) => caseTimelineTasksForAppeal(state, { appealId: appeal.externalId }));
+  const featureToggles = useSelector((state) => state.ui.featureToggles);
 
-    return <React.Fragment>
+  return (
+    <React.Fragment>
       {COPY.CASE_TIMELINE_HEADER}
       <table id="case-timeline-table" summary="layout table">
         <tbody>
-          <TaskRows appeal={appeal} taskList={tasks} timeline />
+          <TaskRows appeal={appeal}
+            taskList={tasks}
+            editNodDateEnabled={featureToggles?.editNodDate}
+            timeline
+          />
         </tbody>
       </table>
-    </React.Fragment>;
-  }
-}
+    </React.Fragment>
+  );
+};
 
 CaseTimeline.propTypes = {
-  appeal: PropTypes.object,
-  tasks: PropTypes.array
+  appeal: PropTypes.object
 };
-
-const mapStateToProps = (state, ownProps) => {
-  return {
-    tasks: caseTimelineTasksForAppeal(state, { appealId: ownProps.appeal.externalId })
-  };
-};
-
-export default connect(mapStateToProps)(CaseTimeline);
