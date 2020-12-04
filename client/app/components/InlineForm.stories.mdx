@@ -1,0 +1,23 @@
+import { Meta, Story, ArgsTable, Canvas } from '@storybook/addon-docs/blocks';
+
+import * as Stories from './InlineForm.stories';
+
+import InlineForm from './InlineForm';
+
+<Meta
+  title='Commons/Components/Form Fields/InlineForm'
+  component={InlineForm}
+/>
+
+# Inline Form
+
+Inline forms give designers and developers the liberty to customize the width and spacing of each field in a row.
+Input fields can be found placed after labels and descriptions to provide users context and actionable steps.
+
+<Canvas>
+  <Story story={Stories.Default} />
+</Canvas>
+
+## Args
+
+<ArgsTable of={InlineForm} />
