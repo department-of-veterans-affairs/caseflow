@@ -28,6 +28,8 @@ describe "sql", :postgres do
           [Appeal.count, LegacyAppeal.count]
         */
 
+        -- SQL_DB_CONNECTION: Appeal
+
         WITH
           ama_appeals AS (SELECT * FROM appeals),
           leg_appeals AS (SELECT * FROM legacy_appeals)
@@ -51,6 +53,7 @@ describe "sql", :postgres do
       sql_rails_query = <<~SQL_QUERY
         -- Total appeal counts in Caseflow
 
+        
         WITH
           ama_appeals AS (SELECT * FROM appeals),
           leg_appeals AS (SELECT * FROM legacy_appeals)
@@ -66,18 +69,17 @@ describe "sql", :postgres do
         end
       RAILS_QUERY
       expect(queries_hash[:rails_sql_postproc]).to eql expected_rails_sql_postproc.lines.map(&:strip).join("\n").chomp
+      expect(queries_hash[:db_connection_string]).to eql "Appeal"
     end
   end
 
   describe "ValidateSqlQueries.run_queries" do
     let(:rails_query) { "[Appeal.count]" }
     let(:sql_query) { "SELECT COUNT(*) FROM appeals" }
-    let(:rails_sql_postproc) { "" }
     let(:extracted_queries) do
       {
         rails_query: rails_query,
-        sql_query: sql_query,
-        rails_sql_postproc: rails_sql_postproc
+        sql_query: sql_query
       }
     end
 
@@ -144,7 +146,7 @@ describe "sql", :postgres do
       end
     end
     context "invalid rails_sql_postproc query" do
-      let(:rails_sql_postproc) { "each_row.mapZZ{|r| r.to_s}" }
+      before { extracted_queries[:rails_sql_postproc] = "each_row.mapZZ{|r| r.to_s}" }
       it "raises an error" do
         results = {}
         expect do

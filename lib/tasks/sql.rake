@@ -32,7 +32,7 @@ namespace :sql do
     filtered_cards = cards.select do |card|
       card["archived"] == false &&
         card["query_type"] == "native" &&
-        card["dataset_query"]["native"]["query"]&.include?(ValidateSqlQueries::RAILS_EQUIV_PREFIX)
+        card["dataset_query"]["native"]["query"]&.include?(ValidateSqlQueries::SqlQueryParser::RAILS_EQUIV_PREFIX)
     end
     puts "Found #{filtered_cards.count} cards to be validated out of #{cards.count} cards total"
     puts "Metabase SQL queries will be saved to '#{File.expand_path(args[:query_dir])}'"

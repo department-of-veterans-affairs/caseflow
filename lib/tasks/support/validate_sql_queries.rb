@@ -4,9 +4,6 @@
 # Class to validate that SQL queries return the same results as the corresponding Rails query.
 
 class ValidateSqlQueries
-  RAILS_EQUIV_PREFIX = "/* RAILS_EQUIV"
-  POSTPROC_SQL_RESULT_PREFIX = "/* POSTPROC_SQL_RESULT"
-
   class << self
     def process(query_dir, output_dir)
       puts "Examining queries in directory: #{query_dir}"
@@ -44,16 +41,18 @@ class ValidateSqlQueries
     def extract_queries(file_contents)
       parser = SqlQueryParser.new(file_contents)
       parser.extract_queries
+
       {
         rails_query: validate_rails_query(parser.rails_query),
         sql_query: validate_sql_query(parser.sql_query),
-        rails_sql_postproc: validate_rails_query(parser.postprocess_cmds)
+        rails_sql_postproc: validate_rails_query(parser.postprocess_cmds),
+        db_connection_string: validate_rails_query(parser.db_connection)
       }
     end
 
     def validate_rails_query(query)
       # To-do: filter query to make it as safe as possible
-      query.strip
+      query.strip unless query.blank?
     end
 
     def validate_sql_query(query)
@@ -61,7 +60,7 @@ class ValidateSqlQueries
       query.strip
     end
 
-    def run_queries(rails_query:, sql_query:, rails_sql_postproc:)
+    def run_queries(rails_query:, sql_query:, rails_sql_postproc: "", db_connection_string: nil)
       if rails_query.present?
         # Execute Rails query
         rails_result, rails_error = eval_rails_query(rails_query)
@@ -69,7 +68,7 @@ class ValidateSqlQueries
         fail rails_error if rails_error
 
         # Execute SQL query
-        sql_result, sql_error = eval_sql_query(sql_query, rails_sql_postproc)
+        sql_result, sql_error = eval_sql_query(sql_query, rails_sql_postproc, db_connection_string)
         yield("sql", sql_result, sql_error) if block_given?
         fail sql_error if sql_error
       else
@@ -96,23 +95,37 @@ class ValidateSqlQueries
       end
     end
 
+    MAP_TO_STRING = "map{|r| r.to_s}.join('\n')"
+
     def eval_rails_query(query)
       # Default postprocessing to split results into separate lines
-      query += "\n array_output.map{|r| r.to_s}.join('\n')" if query.include?("array_output")
+      query += "\n array_output.#{MAP_TO_STRING}" if query.include?("array_output")
       safely_eval_rails_query(query)
     end
 
-    def eval_sql_query(query, postprocess_cmds)
+    def eval_sql_query(query, postprocess_cmds, db_connection_string = nil)
       init_result, rescued_error = EvalEnvironment.wrap_in_rollback_transaction do
-        ActiveRecord::Base.connection.execute(query)
+        conn = db_connection(db_connection_string)
+        query = revise_vacols_query(query) if db_connection_string.present? && db_connection_string.include?("VACOLS::")
+        conn.exec_query(query)
       end
 
       # Default postprocessing commands to transform SQL results into reasonable output
-      postprocess_cmds = "each_row.map{|r| r.to_s}.join('\n')" if postprocess_cmds.blank?
+      postprocess_cmds = "rows.#{MAP_TO_STRING}" if postprocess_cmds.blank?
       result, rescued_error = safely_eval_rails_query("@result.#{postprocess_cmds}", init_result) unless rescued_error
 
       result ||= init_result || "(No SQL result)"
       [result, rescued_error]
+    end
+
+    def db_connection(db_connection_string)
+      return ActiveRecord::Base.connection if db_connection_string.blank?
+
+      db_connection_string.constantize.connection
+    end
+
+    def revise_vacols_query(query)
+      query.gsub(/VACOLS\./i, "")
     end
 
     def safely_eval_rails_query(query, init_result = nil)
@@ -167,25 +180,45 @@ class ValidateSqlQueries
   end
 
   class SqlQueryParser
-    attr_reader :rails_query, :sql_query, :postprocess_cmds
+    # identifies Rails code that is equivalent to the SQL query
+    RAILS_EQUIV_PREFIX = "/* RAILS_EQUIV"
+
+    # identifies Rails code to postprocess SQL query results
+    POSTPROC_SQL_RESULT_PREFIX = "/* POSTPROC_SQL_RESULT"
+
+    # identifies the class on which to call `.connection` to execute the SQL query
+    DATABASE_CONNECTION = "-- SQL_DB_CONNECTION:"
+
+    attr_reader :rails_query, :sql_query, :postprocess_cmds, :db_connection
 
     def initialize(file_contents)
       @contents = file_contents
       @rails_query = ""
       @sql_query = ""
       @postprocess_cmds = ""
+      @db_connection = nil
     end
 
     # To-do: Improve parsing of query
     # :reek:FeatureEnvy
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
+    # rubocop:disable Metrics/MethodLength
     def extract_queries
       rails_equiv_mode = false
       postproc_mode = false
       @contents.each_line do |line|
         line.strip!
+
         if line.start_with?("*/")
           rails_equiv_mode = false
           postproc_mode = false
+          line = line.sub("*/", "").strip
+          next if line.blank?
+        end
+
+        if line.start_with?(DATABASE_CONNECTION)
+          @db_connection = line.sub(DATABASE_CONNECTION, "").strip
         elsif rails_equiv_mode || line.start_with?(RAILS_EQUIV_PREFIX)
           @rails_query += "\n" + line.sub(RAILS_EQUIV_PREFIX, "").strip
           rails_equiv_mode = true
@@ -197,5 +230,8 @@ class ValidateSqlQueries
         end
       end
     end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
+    # rubocop:enable Metrics/CyclomaticComplexity
   end
 end
