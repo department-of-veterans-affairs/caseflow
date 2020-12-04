@@ -55,7 +55,7 @@ class WarmBgsCachesJob < CaseflowJob
     start_time = Time.zone.now
 
     appeals_to_cache = legacy_appeal_ids_to_file_numbers(1000).map do |appeal_id, file_number|
-      bgs_poa = fetch_bgs_power_of_attorney_by_file_number(file_number)
+      bgs_poa = fetch_bgs_power_of_attorney_by_file_number(file_number, appeal_id)
 
       # [{:appeal_id=>1, :appeal_type=>"LegacyAppeal", :power_of_attorney_name=>"Clarence Darrow"}, ...]
       warm_bgs_poa_and_return_cache_data(bgs_poa, appeal_id, LegacyAppeal.name)
@@ -129,16 +129,19 @@ class WarmBgsCachesJob < CaseflowJob
     end.to_h
   end
 
-  def fetch_bgs_power_of_attorney_by_file_number(file_number)
+  def fetch_bgs_power_of_attorney_by_file_number(file_number, appeal_id)
     return if file_number.blank?
 
     BgsPowerOfAttorney.find_or_create_by_file_number(file_number)
   rescue ActiveRecord::RecordInvalid # not found at BGS
     BgsPowerOfAttorney.new(file_number: file_number)
+  rescue Errno::ECONNRESET, Savon::HTTPError => error
+    warning_msgs << "#{LegacyAppeal.name} #{appeal_id}: #{error}" if warning_msgs.count < 100
+    nil
   end
 
   def warm_bgs_poa_and_return_cache_data(bgs_poa, appeal_id, appeal_type)
-    if bgs_poa.stale_attributes?
+    if bgs_poa && bgs_poa.stale_attributes?
       bgs_poa.save_with_updated_bgs_record!
 
       {

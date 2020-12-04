@@ -123,7 +123,9 @@ describe WarmBgsCachesJob, :all_dbs do
     end
   end
 
-  context "Warm POA cache and cache appeals" do
+  context "Warm POA and cache appeals" do
+    let(:job) { described_class.new }
+
     shared_examples "warms poa and caches in CachedAppeal table" do
       it "warms poa and caches in CachedAppeal table", :aggregate_failures do
         subject
@@ -136,7 +138,7 @@ describe WarmBgsCachesJob, :all_dbs do
     context "Legacy appeal with open ScheduleHearingTask" do
       before { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
 
-      subject { described_class.new.send(:warm_poa_and_cache_for_legacy_appeals_with_hearings) }
+      subject { job.send(:warm_poa_and_cache_for_legacy_appeals_with_hearings) }
 
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
       let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal)}
@@ -147,7 +149,7 @@ describe WarmBgsCachesJob, :all_dbs do
     context "AMA appeal with open ScheduleHearingTask" do
       before { UpdateCachedAppealsAttributesJob.new.cache_ama_appeals }
 
-      subject { described_class.new.send(:warm_poa_and_cache_for_ama_appeals_with_hearings) }
+      subject { job.send(:warm_poa_and_cache_for_ama_appeals_with_hearings) }
 
       let(:appeal) { create(:appeal) }
       let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal)}
@@ -156,11 +158,55 @@ describe WarmBgsCachesJob, :all_dbs do
     end
 
     context "Oldest Claimant" do
-      subject { described_class.new.send(:warm_poa_and_cache_ama_appeals_for_oldest_claimants) }
+      subject { job.send(:warm_poa_and_cache_ama_appeals_for_oldest_claimants) }
 
       let!(:appeal) { create(:appeal, :with_post_intake_tasks) }
 
       include_examples "warms poa and caches in CachedAppeal table"
+    end
+
+    context "when BGS fails" do
+      let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: legacy_appeal)}
+
+      shared_examples "rescues error" do
+        it "completes and sends warning to Slack" do
+          allow_any_instance_of(SlackService).to receive(:send_notification) do |_, msg, title|
+            @slack_msg = msg
+            @slack_title = title
+          end
+
+          job.perform_now
+
+          expect(job.send(:warning_msgs).count).to eq 1
+          expect(@slack_msg.lines.count).to eq 1
+          expect(@slack_title).to match(/\[WARN\] #{described_class}: .*/)
+        end
+      end
+
+      context "BGSService fails with ECONNRESET" do
+        before do
+          bgs = Fakes::BGSService.new
+          allow(Fakes::BGSService).to receive(:new).and_return(bgs)
+          allow(bgs).to receive(:fetch_poa_by_file_number)
+            .and_raise(Errno::ECONNRESET, "mocked error for testing")
+        end
+        include_examples "rescues error"
+      end
+      context "BGSService fails with Savon::HTTPError" do
+        before do
+          bgs = Fakes::BGSService.new
+          allow(Fakes::BGSService).to receive(:new).and_return(bgs)
+
+          httperror_mock = double("httperror")
+          allow(httperror_mock).to receive(:code).and_return(408)
+          allow(httperror_mock).to receive(:headers).and_return({})
+          allow(httperror_mock).to receive(:body).and_return("stream timeout")
+          allow(bgs).to receive(:fetch_poa_by_file_number)
+            .and_raise(Savon::HTTPError, httperror_mock)
+        end
+        include_examples "rescues error"
+      end
     end
   end
 end
