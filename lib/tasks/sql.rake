@@ -50,12 +50,38 @@ namespace :sql do
   desc "validate SQL queries against Rails queries"
   task :validate, [:query_dir, :output_dir] => [:environment] do |_t, args|
     if args[:query_dir].nil? || args[:output_dir].nil?
-      puts "Usage example: rake 'sql:validate[sql_queries,queries_output]'"
+      puts "Usage example: rake 'sql:validate[reports/sql_queries,reports/queries_output]'"
       exit 3
     end
 
     sql_file_count, diff_basenames = ValidateSqlQueries.process(args[:query_dir], args[:output_dir])
     puts "Queries with different output: #{diff_basenames}"
     puts "SUMMARY: #{diff_basenames.count} out of #{sql_file_count} queries are different."
+  end
+
+  desc "validate a single SQL query file"
+  task :validate_file, [:sql_filename, :output_dir] => [:environment] do |_t, args|
+    if args[:sql_filename].nil? || args[:output_dir].nil?
+      puts "Usage example: rake 'sql:validate_file[for_testing.sql,tmp]'"
+      exit 3
+    end
+
+    sql_filename = args[:sql_filename]
+    output_dir = args[:output_dir]
+    ValidateSqlQueries.run_queries_and_save_output(sql_filename, output_dir)
+
+    basename = File.basename(sql_filename, File.extname(sql_filename))
+    rb_out_file = "#{output_dir}/#{basename}.rb-out"
+    sql_out_file = "#{output_dir}/#{basename}.sql-out"
+    puts "Comparing query output files: #{rb_out_file} and #{sql_out_file}"
+    diff = if File.exist?(sql_out_file)
+             files_are_same = FileUtils.identical?(rb_out_file, sql_out_file)
+             warn "  Different: #{rb_out_file} #{sql_out_file}" unless files_are_same
+             basename unless files_are_same
+           else
+             warn "  No associated SQL output found for #{rb_out_file} "
+             basename
+           end
+    puts "Output is the same -- Hooray!" if diff.nil?
   end
 end

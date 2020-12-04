@@ -15,7 +15,7 @@ describe "sql", :postgres do
 
     context "using queries in reports/sql_queries" do
       it "completes validation" do
-        expect { subject }.to output(/SUMMARY:/).to_stdout
+        expect { subject }.to output(/SUMMARY: 0 out of [0-9]* queries are different./).to_stdout
       end
     end
   end
@@ -53,7 +53,7 @@ describe "sql", :postgres do
       sql_rails_query = <<~SQL_QUERY
         -- Total appeal counts in Caseflow
 
-        
+
         WITH
           ama_appeals AS (SELECT * FROM appeals),
           leg_appeals AS (SELECT * FROM legacy_appeals)
