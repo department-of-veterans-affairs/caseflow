@@ -13,22 +13,16 @@
 # This task is only only applicable to AMA appeals in caseflow
 
 class TranscriptionTask < Task
-  before_create :check_parent_type
+  include CavcAdminActionConcern
 
   VALID_PARENT_TYPES = [
     AssignHearingDispositionTask,
     MissingHearingTranscriptsColocatedTask,
-    TranscriptionTask
+    TranscriptionTask,
+    DistributionTask
   ].freeze
 
-  def check_parent_type
-    unless VALID_PARENT_TYPES.any? { |type| parent.is_a?(type) }
-      fail(
-        Caseflow::Error::InvalidParentTask,
-        message: "TranscriptionTask parents must be #{VALID_PARENT_TYPES.map(&:name).join(' or ')}"
-      )
-    end
-  end
+  validates :parent, presence: true, parentTask: { task_types: VALID_PARENT_TYPES }
 
   def available_actions(user)
     hearing_admin_actions = available_hearing_user_actions(user)

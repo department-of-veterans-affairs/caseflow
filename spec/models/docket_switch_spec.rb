@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe DocketChange, type: :model do
+RSpec.describe DocketSwitch, type: :model do
   let(:cotb_team) { ClerkOfTheBoard.singleton }
   let(:judge) { create(:user, full_name: "Judge User", css_id: "JUDGE_1") }
   let(:attorney) { create(:user) }
@@ -21,9 +21,9 @@ RSpec.describe DocketChange, type: :model do
   let(:disposition) { nil }
   let(:assigned_to_id) { nil }
   let(:granted_request_issue_ids) { appeal.request_issues.map(&:id) }
-  let(:docket_change) do
+  let(:docket_switch) do
     create(
-      :docket_change,
+      :docket_switch,
       old_docket_stream: appeal,
       task: docket_switch_mail_task,
       disposition: disposition,
@@ -38,20 +38,20 @@ RSpec.describe DocketChange, type: :model do
 
   context "#move_granted_request_issues" do
     let(:disposition) { "granted" }
-    subject { docket_change.move_granted_request_issues }
+    subject { docket_switch.move_granted_request_issues }
 
     it "updates the appeal stream for every selected request issue" do
-      expect(docket_change.old_docket_stream.request_issues.size).to eq 3
-      expect(docket_change.new_docket_stream.request_issues.size).to eq 0
+      expect(docket_switch.old_docket_stream.request_issues.size).to eq 3
+      expect(docket_switch.new_docket_stream.request_issues.size).to eq 0
       subject
-      expect(docket_change.new_docket_stream.reload.request_issues.size).to eq 3
-      expect(docket_change.old_docket_stream.reload.request_issues.size).to eq 0
+      expect(docket_switch.new_docket_stream.reload.request_issues.size).to eq 3
+      expect(docket_switch.old_docket_stream.reload.request_issues.size).to eq 0
     end
   end
 
   context "#request_issues_for_switch" do
     let(:disposition) { "granted" }
-    subject { docket_change.request_issues_for_switch }
+    subject { docket_switch.request_issues_for_switch }
 
     it "returns the correct request issues" do
       expect(subject.size).to eq(granted_request_issue_ids.size)
@@ -61,7 +61,7 @@ RSpec.describe DocketChange, type: :model do
   context "#granted_issues_present_if_partial" do
     subject do
       build(
-        :docket_change,
+        :docket_switch,
         old_docket_stream: appeal,
         task: docket_switch_mail_task,
         disposition: disposition,

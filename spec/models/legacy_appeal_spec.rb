@@ -2987,4 +2987,69 @@ describe LegacyAppeal, :all_dbs do
       end
     end
   end
+
+  describe "#latest_informal_hearing_presentation_task" do
+    let(:appeal) { create(:legacy_appeal) }
+
+    it_behaves_like "latest informal hearing presentation task"
+  end
+
+  describe "#assigned_to_acting_judge_as_judge?" do
+    shared_examples "assumes user is the decision drafter" do
+      it { is_expected.to be false }
+    end
+
+    shared_examples "assumes user is the decision signer" do
+      it { is_expected.to be true }
+    end
+
+    let(:acting_judge) { create(:user, :with_vacols_acting_judge_record) }
+    let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case, :assigned, user: acting_judge)) }
+
+    subject { appeal.assigned_to_acting_judge_as_judge?(acting_judge) }
+
+    context "when the attorney review process has happened outside of caseflow" do
+      context "when a decision has not been written for the case" do
+        it_behaves_like "assumes user is the decision drafter"
+      end
+
+      context "when a decision has been written for the case" do
+        before { VACOLS::Decass.where(defolder: appeal.vacols_id).update_all(dedocid: "02255-00000002") }
+
+        it_behaves_like "assumes user is the decision signer"
+      end
+    end
+
+    context "when the attorney review process has happened within caseflow" do
+      let(:created_at) { VACOLS::Decass.where(defolder: appeal.vacols_id).first.deadtim }
+      let!(:case_review) { create(:attorney_case_review, task_id: "#{appeal.vacols_id}-#{created_at}") }
+
+      context "when the user does not match the judge or attorney on the case review" do
+        it_behaves_like "assumes user is the decision drafter"
+
+        it "falls back to check the presence of a decision document" do
+          expect_any_instance_of(VACOLS::CaseAssignment).to receive(:valid_document_id?).once
+          subject
+        end
+      end
+
+      context "when the user matches the attorney on the case review" do
+        before do
+          case_review.update!(attorney: acting_judge)
+          expect_any_instance_of(VACOLS::CaseAssignment).not_to receive(:valid_document_id?)
+        end
+
+        it_behaves_like "assumes user is the decision drafter"
+      end
+
+      context "when the user matches the judge on the case review" do
+        before do
+          case_review.update!(reviewing_judge: acting_judge)
+          expect_any_instance_of(VACOLS::CaseAssignment).not_to receive(:valid_document_id?)
+        end
+
+        it_behaves_like "assumes user is the decision signer"
+      end
+    end
+  end
 end
