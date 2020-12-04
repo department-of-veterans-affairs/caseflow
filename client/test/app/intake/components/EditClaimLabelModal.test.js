@@ -10,7 +10,7 @@ import { select } from 'glamor';
 describe('EditClaimLabelModal', () => {
   const onSubmit = jest.fn();
   const onCancel = jest.fn();
-  const defaults = { onCancel, onSubmit, existingEpCode: '040HDENR' };
+  const defaults = { onCancel, onSubmit, selectedEpCode: '040HDENR' };
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -41,7 +41,7 @@ describe('EditClaimLabelModal', () => {
     render(<EditClaimLabelModal {...defaults} />);
 
     // Preselected, the code should show on screen
-    expect(screen.getByText(defaults.existingEpCode)).toBeInTheDocument();
+    expect(screen.getByText(defaults.selectedEpCode)).toBeInTheDocument();
   });
 
   describe('correctly filters by EP code family', () => {
@@ -57,7 +57,7 @@ describe('EditClaimLabelModal', () => {
     });
 
     it('displays only codes from 030 family', async () => {
-      render(<EditClaimLabelModal {...defaults} existingEpCode="030HLRFID" />);
+      render(<EditClaimLabelModal {...defaults} selectedEpCode="030HLRFID" />);
 
       const input = screen.getByLabelText(/select the correct ep claim label/i);
 
@@ -69,7 +69,7 @@ describe('EditClaimLabelModal', () => {
 
     it('displays only codes from 930 family', async () => {
       render(
-        <EditClaimLabelModal {...defaults} existingEpCode="930AHCNRLPMC" />
+        <EditClaimLabelModal {...defaults} selectedEpCode="930AHCNRLPMC" />
       );
 
       const input = screen.getByLabelText(/select the correct ep claim label/i);
@@ -115,7 +115,7 @@ describe('EditClaimLabelModal', () => {
       await selectEvent.select(dropdown, newCode);
       userEvent.click(submit);
 
-      expect(onSubmit).toHaveBeenCalledWith({ oldCode: defaults.existingEpCode, newCode });
+      expect(onSubmit).toHaveBeenCalledWith({ oldCode: defaults.selectedEpCode, newCode });
     });
   });
 

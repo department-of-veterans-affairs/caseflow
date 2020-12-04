@@ -11,13 +11,13 @@ import {
 
 import EP_CLAIM_TYPES from 'constants/EP_CLAIM_TYPES';
 
-export const EditClaimLabelModal = ({ existingEpCode, onCancel, onSubmit }) => {
+export const EditClaimLabelModal = ({ selectedEpCode, onCancel, onSubmit }) => {
   // Only EP codes from the same family should be allowed
   const availableOptions = useMemo(() => {
     // Filter out all but the same family (040, 930, etc)
     // eslint-disable-next-line no-unused-vars
     const filtered = Object.entries(EP_CLAIM_TYPES).filter(([code, type]) => {
-      return type.family === EP_CLAIM_TYPES[existingEpCode]?.family;
+      return type.family === EP_CLAIM_TYPES[selectedEpCode]?.family;
     });
 
     // Format suitable for SearchableDropdown
@@ -25,11 +25,11 @@ export const EditClaimLabelModal = ({ existingEpCode, onCancel, onSubmit }) => {
       label,
       value,
     }));
-  }, [EP_CLAIM_TYPES, existingEpCode]);
+  }, [EP_CLAIM_TYPES, selectedEpCode]);
 
-  const [newCode, setNewCode] = useState(availableOptions.find((item) => item.label === existingEpCode));
+  const [newCode, setNewCode] = useState(availableOptions.find((item) => item.label === selectedEpCode));
   const handleChangeLabel = (opt) => setNewCode(opt);
-  const isValid = useMemo(() => newCode?.label !== existingEpCode);
+  const isValid = useMemo(() => newCode?.label !== selectedEpCode);
 
   const buttons = [
     {
@@ -41,7 +41,7 @@ export const EditClaimLabelModal = ({ existingEpCode, onCancel, onSubmit }) => {
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Continue',
       onClick: () => onSubmit?.({
-        oldCode: existingEpCode,
+        oldCode: selectedEpCode,
         newCode: newCode.label
       }),
       disabled: !isValid,
@@ -53,7 +53,7 @@ export const EditClaimLabelModal = ({ existingEpCode, onCancel, onSubmit }) => {
       title={EDIT_CLAIM_LABEL_MODAL_TITLE}
       buttons={buttons}
       closeHandler={onCancel}
-      id="add_claimant_modal"
+      id="edit-claim-label-modal"
     >
       <div>
         <strong>
@@ -61,8 +61,8 @@ export const EditClaimLabelModal = ({ existingEpCode, onCancel, onSubmit }) => {
             /* eslint-disable camelcase */
             sprintf(
               EDIT_CLAIM_LABEL_MODAL_SUBHEAD,
-            `${EP_CLAIM_TYPES[existingEpCode]?.family} ${
-              EP_CLAIM_TYPES[existingEpCode]?.official_label
+            `${EP_CLAIM_TYPES[selectedEpCode]?.family} ${
+              EP_CLAIM_TYPES[selectedEpCode]?.official_label
             }`
             )
           /* eslint-enable camelcase */
@@ -71,7 +71,7 @@ export const EditClaimLabelModal = ({ existingEpCode, onCancel, onSubmit }) => {
       </div>
       <p>{EDIT_CLAIM_LABEL_MODAL_NOTE}</p>
       <SearchableDropdown
-        name="claimLabel"
+        name="select-claim-label"
         label="Select the correct EP claim label"
         onChange={handleChangeLabel}
         value={newCode}
@@ -87,7 +87,7 @@ EditClaimLabelModal.propTypes = {
   /**
    * The claim label that the user wants to change
    */
-  existingEpCode: PropTypes.string.isRequired,
+  selectedEpCode: PropTypes.string.isRequired,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func.isRequired,
 };

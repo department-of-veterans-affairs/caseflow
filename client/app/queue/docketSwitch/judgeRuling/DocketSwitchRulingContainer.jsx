@@ -6,6 +6,13 @@ import { taskActionData } from 'app/queue/utils';
 import DISPOSITIONS from 'constants/DOCKET_SWITCH';
 import { createDocketSwitchGrantedTask, createDocketSwitchDeniedTask } from './docketSwitchRulingSlice';
 import { DocketSwitchRulingForm } from './DocketSwitchRulingForm';
+import {
+  DOCKET_SWITCH_RULING_SUCCESS_TITLE,
+  DOCKET_SWITCH_RULING_SUCCESS_MESSAGE,
+} from '../../../../COPY';
+
+import { sprintf } from 'sprintf-js';
+import { showSuccessMessage } from '../../uiReducer/uiActions';
 
 export const formatDocketSwitchRuling = ({
   disposition,
@@ -52,6 +59,11 @@ export const DocketSwitchRulingContainer = () => {
       tasks: [newTask],
     };
 
+    const successMessage = {
+      title: sprintf(DOCKET_SWITCH_RULING_SUCCESS_TITLE, dispositionType.toLowerCase(), appeal.appellantFullName),
+      detail: DOCKET_SWITCH_RULING_SUCCESS_MESSAGE,
+    };
+
     try {
       if (dispositionType === 'Granted') {
         await dispatch(createDocketSwitchGrantedTask(data));
@@ -59,7 +71,7 @@ export const DocketSwitchRulingContainer = () => {
         await dispatch(createDocketSwitchDeniedTask(data));
       }
 
-      // Add logic for success banner
+      dispatch(showSuccessMessage(successMessage));
       push('/queue');
     } catch (error) {
       // Perhaps show an alert that indicates error, advise trying again...?
