@@ -141,7 +141,7 @@ describe WarmBgsCachesJob, :all_dbs do
       subject { job.send(:warm_poa_and_cache_for_legacy_appeals_with_hearings) }
 
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
-      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal)}
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal) }
 
       include_examples "warms poa and caches in CachedAppeal table"
     end
@@ -152,7 +152,7 @@ describe WarmBgsCachesJob, :all_dbs do
       subject { job.send(:warm_poa_and_cache_for_ama_appeals_with_hearings) }
 
       let(:appeal) { create(:appeal) }
-      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal)}
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal) }
 
       include_examples "warms poa and caches in CachedAppeal table"
     end
@@ -167,7 +167,7 @@ describe WarmBgsCachesJob, :all_dbs do
 
     context "when BGS fails" do
       let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
-      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: legacy_appeal)}
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: legacy_appeal) }
 
       shared_examples "rescues error" do
         it "completes and sends warning to Slack" do

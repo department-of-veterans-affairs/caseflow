@@ -141,7 +141,7 @@ class WarmBgsCachesJob < CaseflowJob
   end
 
   def warm_bgs_poa_and_return_cache_data(bgs_poa, appeal_id, appeal_type)
-    if bgs_poa && bgs_poa.stale_attributes?
+    if bgs_poa&.stale_attributes?
       bgs_poa.save_with_updated_bgs_record!
 
       {
