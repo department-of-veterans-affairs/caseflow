@@ -1,21 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
+import { map } from 'lodash';
 import classNamesFn from 'classnames';
 
 export const StatusMessage = (props) => {
   const {
     checklist,
+    checklistClassNames,
     leadMessageList,
     messageText,
     title,
     wrapInAppSegment,
     children,
     type
-  } = props;
-
-  let {
-    checklistClassNames,
   } = props;
 
   let getClassNames = () => {
@@ -43,7 +40,7 @@ export const StatusMessage = (props) => {
       <h2 className="cf-msg-screen-deck">
         {children}
       </h2> :
-      _.map(leadMessageList, (listValue, i) =>
+      map(leadMessageList, (listValue, i) =>
         <h2 className="cf-msg-screen-deck" key={i}>
           {listValue}
         </h2>)
@@ -71,9 +68,9 @@ StatusMessage.propTypes = {
   checklist: PropTypes.array,
 
   /**
-   * Classes to apply to the checklist `ul` element
+   * Class or classes to apply to the checklist `ul` element
    */
-  checklistClassNames: PropTypes.array,
+  checklistClassNames: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
   /**
    * Child nodes to show in the message. `leadMessageList` will be used if not defined.
