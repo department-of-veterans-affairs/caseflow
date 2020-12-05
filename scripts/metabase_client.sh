@@ -45,7 +45,7 @@ checkOrGetSessionId(){
 		echo ""
 
 		if [ -z "$METABASE_USER" ] || [ -z "$METABASE_PWD" ]; then
-			>&2 echo "! Please set METABASE_USER and METABASE_PWD environment variables."
+			>&2 echo "! Please export METABASE_USER and METABASE_PWD environment variables."
 			exit 2
 		fi
 
@@ -68,7 +68,12 @@ getAllCards(){
 	fi
 }
 
-if [ "$1" = "cards" ]; then
+if [ "$1" = "session" ]; then
+	METABASE_SESS_ID=`checkOrGetSessionId` || exit 11
+	echo "export METABASE_SESS_ID=\"$METABASE_SESS_ID\""
+	echo "alias curl_metabase=\"$CURL_CMD -H 'X-Metabase-Session: $METABASE_SESS_ID'\""
+	echo "$CURL_CMD $METABASE_URL/..."
+elif [ "$1" = "cards" ]; then
 	echo "Using base curl command: $CURL_CMD $METABASE_URL/..."
 	getAllCards "$2"
 elif [ "$1" = "downloadAndValidate" ]; then
