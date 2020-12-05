@@ -27,11 +27,13 @@ class WarmBgsCachesJob < CaseflowJob
     :power_of_attorney_name
   ].freeze
 
-  PRIORITY_LIMIT = 1_000
-  MOST_RECENT_LIMIT = 500
-  OLDEST_CLAIMANT_LIMIT = 1_400
-  OLDEST_CACHED_LIMIT = 1_000
-  PEOPLE_LIMIT = 12_000
+  LIMITS = {
+    PRIORITY: 1_000,
+    MOST_RECENT: 500,
+    OLDEST_CLAIMANT: 1_400,
+    OLDEST_CACHED: 1_000,
+    PEOPLE: 12_000
+  }.freeze
 
   def warm_poa_caches
     # We do 4 passes to update our POA cache (bgs_power_of_attorney table).
@@ -62,14 +64,14 @@ class WarmBgsCachesJob < CaseflowJob
 
   def warm_poa_and_cache_for_appeals_for_hearings_priority
     legacy_start_time = Time.zone.now
-    legacy_appeals = LegacyAppeal.where(id: priority_appeal_ids(LegacyAppeal.name).limit(PRIORITY_LIMIT))
+    legacy_appeals = LegacyAppeal.where(id: priority_appeal_ids(LegacyAppeal.name).limit(LIMITS[:PRIORITY]))
     legacy_datadog_segment = "warm_poa_bgs_and_cache_legacy_priority"
     warm_poa_and_cache_for_legacy_appeals(legacy_appeals, legacy_start_time, legacy_datadog_segment)
 
     ama_start_time = Time.zone.now
     claimants_for_hearing = Claimant.where(
       decision_review_type: Appeal.name,
-      decision_review_id: most_recent_appeal_ids(Appeal.name).limit(PRIORITY_LIMIT)
+      decision_review_id: most_recent_appeal_ids(Appeal.name).limit(LIMITS[:PRIORITY])
     )
     ama_datadog_segment = "warm_poa_bgs_and_cache_ama_priority"
     warm_poa_and_cache_for_ama_appeals(claimants_for_hearing, ama_start_time, ama_datadog_segment)
@@ -77,14 +79,14 @@ class WarmBgsCachesJob < CaseflowJob
 
   def warm_poa_and_cache_for_appeals_for_hearings_most_recent
     legacy_start_time = Time.zone.now
-    legacy_appeals = LegacyAppeal.where(id: most_recent_appeal_ids(LegacyAppeal.name).limit(MOST_RECENT_LIMIT))
+    legacy_appeals = LegacyAppeal.where(id: most_recent_appeal_ids(LegacyAppeal.name).limit(LIMITS[:MOST_RECENT]))
     legacy_datadog_segment = "warm_poa_bgs_and_cache_legacy_recent"
     warm_poa_and_cache_for_legacy_appeals(legacy_appeals, legacy_start_time, legacy_datadog_segment)
 
     ama_start_time = Time.zone.now
     claimants_for_hearing = Claimant.where(
       decision_review_type: Appeal.name,
-      decision_review_id: most_recent_appeal_ids(Appeal.name).limit(MOST_RECENT_LIMIT)
+      decision_review_id: most_recent_appeal_ids(Appeal.name).limit(LIMITS[:MOST_RECENT])
     )
     ama_datadog_segment = "warm_poa_bgs_and_cache_ama_recent"
     warm_poa_and_cache_for_ama_appeals(claimants_for_hearing, ama_start_time, ama_datadog_segment)
@@ -98,7 +100,7 @@ class WarmBgsCachesJob < CaseflowJob
 
   def warm_poa_for_oldest_cached_records
     start_time = Time.zone.now
-    oldest_bgs_poa_records.limit(OLDEST_CACHED_LIMIT).each do |bgs_poa|
+    oldest_bgs_poa_records.limit(LIMITS[:OLDEST_CACHED]).each do |bgs_poa|
       bgs_poa.save_with_updated_bgs_record! if bgs_poa.stale_attributes?
     end
     datadog_report_time_segment(segment: "warm_poa_bgs_oldest", start_time: start_time)
@@ -200,7 +202,7 @@ class WarmBgsCachesJob < CaseflowJob
   end
 
   def oldest_claimants_with_poa
-    oldest_claimants_for_open_appeals.limit(OLDEST_CLAIMANT_LIMIT)
+    oldest_claimants_for_open_appeals.limit(LIMITS[:OLDEST_CLAIMANT])
       .select { |claimant| claimant.power_of_attorney.present? }
   end
 
