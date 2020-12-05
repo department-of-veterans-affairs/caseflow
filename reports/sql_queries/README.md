@@ -3,13 +3,15 @@ This directory contains SQL queries to be validated by running:
 ```
 > bundle exec rake 'sql:validate[reports/sql_queries,reports/queries_output]'
 ```
-which runs queries specified in the reports/sql_queries/`*.sql` files and
-saves the output to reports/queries_output for comparison and diagnostics.
+which runs queries specified in the `reports/sql_queries/*.sql` files and
+saves the output to `reports/queries_output` for comparison and diagnostics.
+
+For Rake tasks, arguments are passed in using brackets -- see [How To Use Arguments In a Rake Task](https://thoughtbot.com/blog/how-to-use-arguments-in-a-rake-task).
 
 ## Background
 
 See code comments in lib/tasks/sql.rake for more detail.
-RSpec file spec/lib/tasks/sql_spec.rb also validates all the queries in this
+RSpec file `spec/lib/tasks/sql_spec.rb` also validates all the queries in this
 directory against data in the `test` database. This ensures the *.sql files
 are syntactically ready for use in query result validation.
 

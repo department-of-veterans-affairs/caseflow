@@ -15,7 +15,7 @@ if [ "$USE_SOCKS" = "true" ]; then
 	>&2 echo "Using socks proxy: $CF_SOCKS_URI"
 	>&2 echo "  To not use socks (when you're running within the VA network), run 'unset USE_SOCKS'."
 	>&2 echo "  To use a different proxy, run something like 'export CF_SOCKS_URI=proxy.hostname.or.ip:2001'."
-	# Why --insecure? Skip verifying certificate -- see https://curl.se/docs/sslcerts.html
+	# Why --insecure? To skip verifying SSL certificate -- see https://curl.se/docs/sslcerts.html
 	CURL_CMD="$CURL_CMD --insecure --socks5-hostname $CF_SOCKS_URI"
 fi
 
