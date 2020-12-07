@@ -56,9 +56,10 @@ const subTypeOptions = _.map(_.keys(CAVC_REMAND_SUBTYPE_NAMES), (key) => ({
  *  - @param {Object}   error            Error sent from the back end upon submit to be displayed rather than submitting
  *  - @param {boolean}  highlightInvalid Whether or not to show field validation, set to true upon submit
  *  - @param {Object}   history          Provided with react router to be able to route to another page upon success
+ *  - @param {Object}   featureToggles   Which cavc decision types and remand subtypes are supported
  */
 const AddCavcRemandView = (props) => {
-  const { appealId, decisionIssues, error, highlightInvalid, history, ...otherProps } = props;
+  const { appealId, decisionIssues, error, highlightInvalid, history, featureToggles, ...otherProps } = props;
 
   const [docketNumber, setDocketNumber] = useState(null);
   const [attorney, setAttorney] = useState('1');
@@ -70,6 +71,20 @@ const AddCavcRemandView = (props) => {
   const [mandateDate, setMandateDate] = useState(null);
   const [issues, setIssues] = useState({});
   const [instructions, setInstructions] = useState(null);
+
+  const supportedDecisionTypes = {
+    [CAVC_DECISION_TYPES.remand]: featureToggles.cavc_remand,
+    [CAVC_DECISION_TYPES.straight_reversal]: featureToggles.reversal_cavc_remand,
+    [CAVC_DECISION_TYPES.death_dismissal]: featureToggles.dismissal_cavc_remand
+  };
+  const filteredDecisionTypes = typeOptions.filter((typeOption) => supportedDecisionTypes[typeOption.value]);
+
+  const supportedRemandTypes = {
+    [CAVC_REMAND_SUBTYPES.jmr]: featureToggles.cavc_remand,
+    [CAVC_REMAND_SUBTYPES.jmpr]: featureToggles.cavc_remand,
+    [CAVC_REMAND_SUBTYPES.mdr]: featureToggles.mdr_cavc_remand
+  };
+  const filteredRemandTypes = subTypeOptions.filter((subTypeOption) => supportedRemandTypes[subTypeOption.value]);
 
   const issueOptions = () => decisionIssues.map((decisionIssue) => ({
     id: decisionIssue.id,
@@ -170,7 +185,7 @@ const AddCavcRemandView = (props) => {
     styling={radioLabelStyling}
     label={COPY.CAVC_TYPE_LABEL}
     name="type-options"
-    options={typeOptions}
+    options={filteredDecisionTypes}
     value={type}
     onChange={(val) => setType(val)}
     strongLabel
@@ -180,7 +195,7 @@ const AddCavcRemandView = (props) => {
     styling={radioLabelStyling}
     label={COPY.CAVC_SUB_TYPE_LABEL}
     name="sub-type-options"
-    options={subTypeOptions}
+    options={filteredRemandTypes}
     value={subType}
     onChange={(val) => setSubType(val)}
     strongLabel
@@ -272,6 +287,12 @@ AddCavcRemandView.propTypes = {
   requestSave: PropTypes.func,
   showErrorMessage: PropTypes.func,
   error: PropTypes.object,
+  featureToggles: PropTypes.shape({
+    cavc_remand: PropTypes.bool,
+    mdr_cavc_remand: PropTypes.bool,
+    reversal_cavc_remand: PropTypes.bool,
+    dismissal_cavc_remand: PropTypes.bool
+  }),
   highlightInvalid: PropTypes.bool,
   history: PropTypes.object
 };
@@ -279,7 +300,8 @@ AddCavcRemandView.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   decisionIssues: state.queue.appealDetails[ownProps.appealId].decisionIssues,
   highlightInvalid: state.ui.highlightFormItems,
-  error: state.ui.messages.error
+  error: state.ui.messages.error,
+  featureToggles: state.ui.featureToggles
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
