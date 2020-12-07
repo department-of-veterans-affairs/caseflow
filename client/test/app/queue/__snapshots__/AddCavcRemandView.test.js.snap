@@ -67,6 +67,14 @@ exports[`AddCavcRemandView renders correctly 1`] = `
           },
         ]
       }
+      featureToggles={
+        Object {
+          "cavc_remand": true,
+          "dismissal_cavc_remand": undefined,
+          "mdr_cavc_remand": undefined,
+          "reversal_cavc_remand": undefined,
+        }
+      }
       highlightInvalid={false}
       history={
         Object {
@@ -202,6 +210,14 @@ exports[`AddCavcRemandView renders correctly 1`] = `
             checkoutStagedAppeal={[Function]}
             continueBtnText="Submit"
             disableNext={false}
+            featureToggles={
+              Object {
+                "cavc_remand": true,
+                "dismissal_cavc_remand": undefined,
+                "mdr_cavc_remand": undefined,
+                "reversal_cavc_remand": undefined,
+              }
+            }
             getNextStepUrl={null}
             getPrevStepUrl={null}
             goToNextStep={[Function]}
@@ -3078,15 +3094,21 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   options={
                     Array [
                       Object {
+                        "disabled": false,
                         "displayText": "Remand",
+                        "title": "",
                         "value": "remand",
                       },
                       Object {
+                        "disabled": true,
                         "displayText": "Straight Reversal",
+                        "title": "Support for this option is currently in development",
                         "value": "straight_reversal",
                       },
                       Object {
+                        "disabled": true,
                         "displayText": "Death Dismissal",
+                        "title": "Support for this option is currently in development",
                         "value": "death_dismissal",
                       },
                     ]
@@ -3099,6 +3121,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     }
                   }
                   value="remand"
+                  vertical={true}
                 >
                   <fieldset
                     className="usa-fieldset-inputs cf-form-radio "
@@ -3133,6 +3156,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                         <label
                           className=""
                           htmlFor="type-options_remand"
+                          title=""
                         >
                           Remand
                         </label>
@@ -3143,7 +3167,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                       >
                         <input
                           checked={false}
-                          disabled={false}
+                          disabled={true}
                           id="type-options_straight_reversal"
                           name="type-options"
                           onChange={[Function]}
@@ -3151,8 +3175,9 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           value="straight_reversal"
                         />
                         <label
-                          className=""
+                          className="disabled"
                           htmlFor="type-options_straight_reversal"
+                          title="Support for this option is currently in development"
                         >
                           Straight Reversal
                         </label>
@@ -3163,7 +3188,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                       >
                         <input
                           checked={false}
-                          disabled={false}
+                          disabled={true}
                           id="type-options_death_dismissal"
                           name="type-options"
                           onChange={[Function]}
@@ -3171,8 +3196,9 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           value="death_dismissal"
                         />
                         <label
-                          className=""
+                          className="disabled"
                           htmlFor="type-options_death_dismissal"
+                          title="Support for this option is currently in development"
                         >
                           Death Dismissal
                         </label>
@@ -3192,14 +3218,17 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   options={
                     Array [
                       Object {
+                        "disabled": false,
                         "displayText": "Joint Motion for Remand (JMR)",
                         "value": "jmr",
                       },
                       Object {
+                        "disabled": false,
                         "displayText": "Joint Motion for Partial Remand (JMPR)",
                         "value": "jmpr",
                       },
                       Object {
+                        "disabled": true,
                         "displayText": "Memorandum Decision on Remand (MDR)",
                         "value": "mdr",
                       },
@@ -3213,6 +3242,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     }
                   }
                   value="jmr"
+                  vertical={true}
                 >
                   <fieldset
                     className="usa-fieldset-inputs cf-form-radio "
@@ -3277,7 +3307,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                       >
                         <input
                           checked={false}
-                          disabled={false}
+                          disabled={true}
                           id="sub-type-options_mdr"
                           name="sub-type-options"
                           onChange={[Function]}
@@ -3285,7 +3315,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           value="mdr"
                         />
                         <label
-                          className=""
+                          className="disabled"
                           htmlFor="sub-type-options_mdr"
                         >
                           Memorandum Decision on Remand (MDR)
