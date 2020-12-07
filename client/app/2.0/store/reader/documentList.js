@@ -14,7 +14,6 @@ import {
   getQueueTaskType
 } from 'utils/reader';
 import { showPdf, handleCategoryToggle } from 'store/reader/documentViewer';
-import { onReceiveAnnotations } from 'store/reader/annotationLayer';
 
 /**
  * PDF Initial State
@@ -245,7 +244,6 @@ const documentListSlice = createSlice({
           'documentList/clearAllFilters',
           'documentList/setTagFilter',
           'documentList/clearTagFilters',
-          onReceiveAnnotations.toString(),
           loadDocuments.fulfilled.toString(),
         ].includes(action.type),
         (state, action) => {

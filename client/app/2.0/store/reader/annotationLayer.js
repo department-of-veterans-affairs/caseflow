@@ -1,6 +1,5 @@
 // External Dependencies
-import { createSlice, createAsyncThunk, current } from '@reduxjs/toolkit';
-import { keyBy } from 'lodash';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // Local Dependencies
 import { loadDocuments } from 'store/reader/documentList';
@@ -16,45 +15,11 @@ export const initialState = {
   comments: [],
   selected: {},
   errors: {},
-  placingAnnotationIconPageCoords: null,
-  pendingAnnotations: {},
-  pendingEditingAnnotations: {},
-  selectedAnnotationId: null,
-  deleteAnnotationModalIsOpenFor: null,
-  shareAnnotationModalIsOpenFor: null,
-  placedButUnsavedAnnotation: null,
-  isPlacingAnnotation: false,
   saving: false,
   dropping: false,
   moving: 0,
   droppedComment: null,
   pendingDeletion: false,
-
-  /**
-   * `editingAnnotations` is an object of annotations that are currently being edited.
-   * When a user starts editing an annotation, we copy it from `annotations` to `editingAnnotations`.
-   * To commit the edits, we copy from `editingAnnotations` back into `annotations`.
-   * To discard the edits, we delete from `editingAnnotations`.
-   */
-  editingAnnotations: {}
-};
-
-/**
- * Method to change the Annotation ID within the Redux Store
- * @param {Object} state -- The store state that we are changing
- * @param {Object} action -- Contains the payload with the new Annotation ID
- */
-export const toggleAnnotationDeleteModal = (state, annotationId) => {
-  state.deleteAnnotationModalIsOpenFor = annotationId;
-};
-
-/**
- * Method to toggle whether the Annotation Share Modal is open
- * @param {Object} state -- The current Redux store state
- * @param {string} annotationId -- The ID of the annotation to show/hide the share modal
- */
-export const toggleAnnotationShareModal = (state, annotationId) => {
-  state.shareAnnotationModalIsOpenFor = annotationId;
 };
 
 /**
@@ -205,114 +170,12 @@ const annotationLayerSlice = createSlice({
         pendingComment: comment.id === action.payload.id ? action.payload.pendingComment : null
       }));
     },
-    openAnnotationDeleteModal: {
-      reducer: (state, action) => toggleAnnotationDeleteModal(state, action.payload.annotationId),
-      prepare: (annotationId, label) => addMetaLabel('open-annotation-delete-modal', { annotationId }, label)
-    },
-    closeAnnotationDeleteModal: {
-      reducer: (state) => toggleAnnotationDeleteModal(state, null),
-      prepare: (includeMetrics = true) => addMetaLabel('close-annotation-delete-modal', null, '', includeMetrics)
-    },
-    openAnnotationShareModal: {
-      reducer: (state, action) => toggleAnnotationShareModal(state, action.payload.annotationId),
-      prepare: (annotationId, label) => addMetaLabel('open-annotation-share-modal', { annotationId }, label)
-    },
-    closeAnnotationShareModal: {
-      reducer: (state) => toggleAnnotationShareModal(state, null),
-      prepare: (includeMetrics = true) => addMetaLabel('close-annotation-share-modal', null, '', includeMetrics)
-    },
     selectComment: {
       reducer: (state, action) => {
         state.selected = action.payload.comment;
       },
       prepare: (comment) => addMetaLabel('select-annotation', { comment })
     },
-    startPlacingAnnotation: {
-      reducer: (state) => {
-        state.isPlacingAnnotation = true;
-      },
-      prepare: (interactionType) => addMetaLabel('start-placing-annotation', null, interactionType)
-    },
-    stopPlacingAnnotation: {
-      reducer: (state) => {
-        state.placingAnnotationIconPageCoords = null;
-        state.placedButUnsavedAnnotation = null;
-        state.isPlacingAnnotation = false;
-      },
-      prepare: (interactionType) => addMetaLabel('stop-placing-annotation', null, interactionType)
-    },
-    onReceiveAnnotations: (state, action) => {
-      state.annotations = keyBy(
-        action.payload.annotations.map((annotation) => ({
-          ...annotation,
-          documentId: annotation.document_id,
-          uuid: annotation.id
-        })),
-        'id'
-      );
-    },
-    placeAnnotation: {
-      reducer: (state, action) => {
-        state.placedButUnsavedAnnotation = {
-          ...action.payload,
-          class: 'Annotation',
-          type: 'point'
-        };
-        state.isPlacingAnnotation = false;
-      },
-      prepare: (pageNumber, coordinates, documentId) => ({
-        payload: {
-          page: pageNumber,
-          x: coordinates.xPosition,
-          y: coordinates.yPosition,
-          documentId
-        }
-      })
-    },
-    showPlaceAnnotationIcon: (state, action) => {
-      state.placingAnnotationIconPageCoords = {
-        ...action.payload.pageCoords,
-        pageIndex: action.payload.pageIndex,
-      };
-    },
-    startEditAnnotation: {
-      reducer: (state, action) => {
-        state.editingAnnotations[action.payload.annotationId] =
-         state.annotations[action.payload.annotationId];
-      },
-      prepare: (annotationId) => addMetaLabel('start-edit-annotation', { annotationId })
-    },
-    cancelEditAnnotation: {
-      reducer: (state, action) => {
-        state.editingAnnotations[action.payload.annotationId] = null;
-      },
-      prepare: (annotationId) => addMetaLabel('cancel-edit-annotation', { annotationId })
-    },
-    updateAnnotationContent: {
-      reducer: (state, action) => {
-        state.editingAnnotations[action.payload.annotationId].comment = action.payload.content;
-      },
-      prepare: (annotationId, content) => addMetaLabel('edit-annotation-content-locally', { annotationId, content })
-    },
-    updateAnnotationRelevantDate: {
-      reducer: (state, action) => {
-        state.editingAnnotations[action.payload.annotationId].relevant_date =
-         action.payload.relevantDate;
-      },
-      prepare: (relevantDate, annotationId) => addMetaLabel('', { annotationId, relevantDate })
-    },
-    updateNewAnnotationContent: {
-      reducer: (state, action) => {
-        state.placedButUnsavedAnnotation.comment = action.payload.content;
-      },
-      prepare: (content) => addMetaLabel('', { content })
-    },
-    updateNewAnnotationRelevantDate: {
-      reducer: (state, action) => {
-        state.placedButUnsavedAnnotation.relevant_date = action.payload.relevantDate;
-      },
-      prepare: (relevantDate) => addMetaLabel('', { relevantDate })
-    }
   },
   extraReducers: (builder) => {
     builder.
@@ -415,22 +278,7 @@ const annotationLayerSlice = createSlice({
 
 // Export the Reducer actions
 export const {
-  openAnnotationDeleteModal,
-  closeAnnotationDeleteModal,
-  openAnnotationShareModal,
-  closeAnnotationShareModal,
   selectComment,
-  startPlacingAnnotation,
-  stopPlacingAnnotation,
-  onReceiveAnnotations,
-  placeAnnotation,
-  showPlaceAnnotationIcon,
-  startEditAnnotation,
-  cancelEditAnnotation,
-  updateAnnotationContent,
-  updateAnnotationRelevantDate,
-  updateNewAnnotationContent,
-  updateNewAnnotationRelevantDate,
   startEdit,
   updateComment,
   addComment,
