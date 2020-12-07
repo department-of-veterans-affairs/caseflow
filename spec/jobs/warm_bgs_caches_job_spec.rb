@@ -138,12 +138,18 @@ describe WarmBgsCachesJob, :all_dbs do
     context "Legacy appeal with open ScheduleHearingTask" do
       before { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
 
-      subject { job.send(:warm_poa_and_cache_for_legacy_appeals_with_hearings) }
-
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
       let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal) }
 
-      include_examples "warms poa and caches in CachedAppeal table"
+      context "priority" do
+        subject { job.send(:warm_poa_and_cache_for_appeals_for_hearings_priority) }
+        include_examples "warms poa and caches in CachedAppeal table"
+      end
+
+      context "most recently assigned" do
+        subject { job.send(:warm_poa_and_cache_for_appeals_for_hearings_most_recent) }
+        include_examples "warms poa and caches in CachedAppeal table"
+      end
     end
 
     context "AMA appeal with open ScheduleHearingTask" do
@@ -154,7 +160,15 @@ describe WarmBgsCachesJob, :all_dbs do
       let(:appeal) { create(:appeal) }
       let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal) }
 
-      include_examples "warms poa and caches in CachedAppeal table"
+      context "priority" do
+        subject { job.send(:warm_poa_and_cache_for_appeals_for_hearings_priority) }
+        include_examples "warms poa and caches in CachedAppeal table"
+      end
+
+      context "most recently assigned" do
+        subject { job.send(:warm_poa_and_cache_for_appeals_for_hearings_most_recent) }
+        include_examples "warms poa and caches in CachedAppeal table"
+      end
     end
 
     context "Oldest Claimant" do
@@ -178,8 +192,8 @@ describe WarmBgsCachesJob, :all_dbs do
 
           job.perform_now
 
-          expect(job.send(:warning_msgs).count).to eq 1
-          expect(@slack_msg.lines.count).to eq 1
+          expect(job.send(:warning_msgs).count).to eq 2
+          expect(@slack_msg.lines.count).to eq 2
           expect(@slack_title).to match(/\[WARN\] #{described_class}: .*/)
         end
       end

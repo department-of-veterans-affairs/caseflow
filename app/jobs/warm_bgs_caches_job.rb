@@ -41,7 +41,7 @@ class WarmBgsCachesJob < CaseflowJob
     # 2. Look at 1000 poa (legacy + ama) record appeals with most recently assigned ScheduleHearingTask and
     #    update and cache in CachedAppeal
     # 3. Look at 14,00 Claimants w/o POA associated record and create cached record and cache in CachedAppeal
-    # 4. Look at the 1000 oldest cached records and update and
+    # 4. Look at the 1000 oldest cached records and update them
 
     # we average about 10k Claimant rows created a week.
     # we very rarely update the Claimant record after we create it.
@@ -62,42 +62,51 @@ class WarmBgsCachesJob < CaseflowJob
     log_warning unless warning_msgs.empty?
   end
 
+  # Warm POA and cache 2000(legacy + ama) appeals with active ScheduleHearingTask in the priority
+  # they're displayed in the Assign Hearings table.
   def warm_poa_and_cache_for_appeals_for_hearings_priority
     legacy_start_time = Time.zone.now
-    legacy_appeals = LegacyAppeal.where(id: priority_appeal_ids(LegacyAppeal.name).limit(LIMITS[:PRIORITY]))
+    legacy_appeals = LegacyAppeal.where(id: priority_appeal_ids(LegacyAppeal.name).first(LIMITS[:PRIORITY]))
     legacy_datadog_segment = "warm_poa_bgs_and_cache_legacy_priority"
     warm_poa_and_cache_for_legacy_appeals(legacy_appeals, legacy_start_time, legacy_datadog_segment)
 
     ama_start_time = Time.zone.now
     claimants_for_hearing = Claimant.where(
       decision_review_type: Appeal.name,
-      decision_review_id: most_recent_appeal_ids(Appeal.name).limit(LIMITS[:PRIORITY])
+      decision_review_id: most_recent_appeal_ids(Appeal.name).first(LIMITS[:PRIORITY])
     )
     ama_datadog_segment = "warm_poa_bgs_and_cache_ama_priority"
     warm_poa_and_cache_for_ama_appeals(claimants_for_hearing, ama_start_time, ama_datadog_segment)
   end
 
+  # Warm POA and cache 1000(legacy + ama) appeals with active ScheduleHearingTask that have
+  # most recently been assigned. This ensures that we're caching poa names for all the new
+  # tasks that are coming into the table. Data shows that about on average a total of 200
+  # ScheduleHearingTasks are assigned daily so 1000 gives enough padding.
   def warm_poa_and_cache_for_appeals_for_hearings_most_recent
     legacy_start_time = Time.zone.now
-    legacy_appeals = LegacyAppeal.where(id: most_recent_appeal_ids(LegacyAppeal.name).limit(LIMITS[:MOST_RECENT]))
+    legacy_appeals = LegacyAppeal.where(id: most_recent_appeal_ids(LegacyAppeal.name).first(LIMITS[:MOST_RECENT]))
     legacy_datadog_segment = "warm_poa_bgs_and_cache_legacy_recent"
     warm_poa_and_cache_for_legacy_appeals(legacy_appeals, legacy_start_time, legacy_datadog_segment)
 
     ama_start_time = Time.zone.now
     claimants_for_hearing = Claimant.where(
       decision_review_type: Appeal.name,
-      decision_review_id: most_recent_appeal_ids(Appeal.name).limit(LIMITS[:MOST_RECENT])
+      decision_review_id: most_recent_appeal_ids(Appeal.name).first(LIMITS[:MOST_RECENT])
     )
     ama_datadog_segment = "warm_poa_bgs_and_cache_ama_recent"
     warm_poa_and_cache_for_ama_appeals(claimants_for_hearing, ama_start_time, ama_datadog_segment)
   end
 
+  # Warm POA for claimants that haven't been updated in a while and since we're warming, let's
+  # also cache the appeal.
   def warm_poa_and_cache_ama_appeals_for_oldest_claimants
     start_time = Time.zone.now
     datadog_segment = "warm_poa_claimants_and_cache_ama"
     warm_poa_and_cache_for_ama_appeals(oldest_claimants_with_poa, start_time, datadog_segment)
   end
 
+  # Warm POA records that haven't been synced in a while.
   def warm_poa_for_oldest_cached_records
     start_time = Time.zone.now
     oldest_bgs_poa_records.limit(LIMITS[:OLDEST_CACHED]).each do |bgs_poa|
@@ -180,21 +189,13 @@ class WarmBgsCachesJob < CaseflowJob
     slack_service.send_notification(slack_msg, "[WARN] WarmBgsCachesJob: first 100 warnings")
   end
 
-  def active_schedule_hearing_tasks(appeal_type)
-    ScheduleHearingTask.active.with_cached_appeals.where(appeal_type: appeal_type)
-  end
-
-  def sorted_active_schedule_hearing_tasks(appeal_type)
-    tasks = active_schedule_hearing_tasks(appeal_type)
-    tasks.order(Task.order_by_cached_appeal_priority_clause)
-  end
-
   def priority_appeal_ids(appeal_type)
-    sorted_active_schedule_hearing_tasks(appeal_type).pluck(:appeal_id).uniq
+    tasks = ScheduleHearingTask.active.with_cached_appeals.where(appeal_type: appeal_type)
+    tasks.order(Task.order_by_cached_appeal_priority_clause).pluck(:appeal_id).uniq
   end
 
   def most_recent_appeal_ids(appeal_type)
-    active_schedule_hearing_tasks(appeal_type).order(assigned_at: :desc).pluck(:appeal_id).uniq
+    ScheduleHearingTask.active.where(appeal_type: appeal_type).order(assigned_at: :desc).pluck(:appeal_id).uniq
   end
 
   def claimants_for_open_appeals
