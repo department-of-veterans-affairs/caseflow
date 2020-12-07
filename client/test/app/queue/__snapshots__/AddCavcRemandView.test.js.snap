@@ -3094,22 +3094,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   options={
                     Array [
                       Object {
-                        "disabled": false,
                         "displayText": "Remand",
-                        "title": "",
                         "value": "remand",
-                      },
-                      Object {
-                        "disabled": true,
-                        "displayText": "Straight Reversal",
-                        "title": "Support for this option is currently in development",
-                        "value": "straight_reversal",
-                      },
-                      Object {
-                        "disabled": true,
-                        "displayText": "Death Dismissal",
-                        "title": "Support for this option is currently in development",
-                        "value": "death_dismissal",
                       },
                     ]
                   }
@@ -3156,51 +3142,8 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                         <label
                           className=""
                           htmlFor="type-options_remand"
-                          title=""
                         >
                           Remand
-                        </label>
-                      </div>
-                      <div
-                        className="cf-form-radio-option"
-                        key="type-options-straight_reversal-1"
-                      >
-                        <input
-                          checked={false}
-                          disabled={true}
-                          id="type-options_straight_reversal"
-                          name="type-options"
-                          onChange={[Function]}
-                          type="radio"
-                          value="straight_reversal"
-                        />
-                        <label
-                          className="disabled"
-                          htmlFor="type-options_straight_reversal"
-                          title="Support for this option is currently in development"
-                        >
-                          Straight Reversal
-                        </label>
-                      </div>
-                      <div
-                        className="cf-form-radio-option"
-                        key="type-options-death_dismissal-2"
-                      >
-                        <input
-                          checked={false}
-                          disabled={true}
-                          id="type-options_death_dismissal"
-                          name="type-options"
-                          onChange={[Function]}
-                          type="radio"
-                          value="death_dismissal"
-                        />
-                        <label
-                          className="disabled"
-                          htmlFor="type-options_death_dismissal"
-                          title="Support for this option is currently in development"
-                        >
-                          Death Dismissal
                         </label>
                       </div>
                     </div>
@@ -3218,19 +3161,12 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   options={
                     Array [
                       Object {
-                        "disabled": false,
                         "displayText": "Joint Motion for Remand (JMR)",
                         "value": "jmr",
                       },
                       Object {
-                        "disabled": false,
                         "displayText": "Joint Motion for Partial Remand (JMPR)",
                         "value": "jmpr",
-                      },
-                      Object {
-                        "disabled": true,
-                        "displayText": "Memorandum Decision on Remand (MDR)",
-                        "value": "mdr",
                       },
                     ]
                   }
@@ -3299,26 +3235,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           htmlFor="sub-type-options_jmpr"
                         >
                           Joint Motion for Partial Remand (JMPR)
-                        </label>
-                      </div>
-                      <div
-                        className="cf-form-radio-option"
-                        key="sub-type-options-mdr-2"
-                      >
-                        <input
-                          checked={false}
-                          disabled={true}
-                          id="sub-type-options_mdr"
-                          name="sub-type-options"
-                          onChange={[Function]}
-                          type="radio"
-                          value="mdr"
-                        />
-                        <label
-                          className="disabled"
-                          htmlFor="sub-type-options_mdr"
-                        >
-                          Memorandum Decision on Remand (MDR)
                         </label>
                       </div>
                     </div>

@@ -60,13 +60,13 @@ describe('AddCavcRemandView', () => {
       it('hides mdr when not toggled', () => {
         const cavcForm = setup({ appealId, mdrToggled: false });
 
-        expect(cavcForm.find('#sub-type-options_mdr').props().disabled).toBeTruthy();
+        expect(cavcForm.find('#sub-type-options_mdr').length).toBe(0);
       });
 
       it('shows mdr when toggled', () => {
         const cavcForm = setup({ appealId, mdrToggled: true });
 
-        expect(cavcForm.find('#sub-type-options_mdr').props().disabled).toBeFalsy();
+        expect(cavcForm.find('#sub-type-options_mdr').length).toBe(1);
       });
     });
 
@@ -74,13 +74,13 @@ describe('AddCavcRemandView', () => {
       it('hides reversal when not toggled', () => {
         const cavcForm = setup({ appealId, reversalToggled: false });
 
-        expect(cavcForm.find('#type-options_straight_reversal').props().disabled).toBeTruthy();
+        expect(cavcForm.find('#type-options_straight_reversal').length).toBe(0);
       });
 
       it('shows reversal when toggled', () => {
         const cavcForm = setup({ appealId, reversalToggled: true });
 
-        expect(cavcForm.find('#type-options_straight_reversal').props().disabled).toBeFalsy();
+        expect(cavcForm.find('#type-options_straight_reversal').length).toBe(1);
       });
     });
 
@@ -88,13 +88,13 @@ describe('AddCavcRemandView', () => {
       it('hides dismissal when not toggled', () => {
         const cavcForm = setup({ appealId, dismissalToggled: false });
 
-        expect(cavcForm.find('#type-options_death_dismissal').props().disabled).toBeTruthy();
+        expect(cavcForm.find('#type-options_death_dismissal').length).toBe(0);
       });
 
       it('shows dismissal when toggled', () => {
         const cavcForm = setup({ appealId, dismissalToggled: true });
 
-        expect(cavcForm.find('#type-options_death_dismissal').props().disabled).toBeFalsy();
+        expect(cavcForm.find('#type-options_death_dismissal').length).toBe(1);
       });
     });
   });

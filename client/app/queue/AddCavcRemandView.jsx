@@ -82,15 +82,8 @@ const AddCavcRemandView = (props) => {
     [CAVC_REMAND_SUBTYPES.jmpr]: featureToggles.cavc_remand,
     [CAVC_REMAND_SUBTYPES.mdr]: featureToggles.mdr_cavc_remand
   };
-
-  typeOptions.forEach((typeOption) => {
-    typeOption.disabled = !supportedDecisionTypes[typeOption.value];
-    typeOption.title = supportedDecisionTypes[typeOption.value] ? '' : COPY.CAVC_TYPE_NOT_SUPPORTED;
-  });
-  subTypeOptions.forEach((subTypeOption) => {
-    subTypeOption.disabled = !supportedRemandTypes[subTypeOption.value];
-    subTypeOption.title = supportedRemandTypes[subTypeOption.value] ? '' : COPY.CAVC_TYPE_NOT_SUPPORTED;
-  });
+  const filteredDecisionTypes = typeOptions.filter((typeOption) => supportedDecisionTypes[typeOption.value]);
+  const filteredRemandTypes = subTypeOptions.filter((subTypeOption) => supportedRemandTypes[subTypeOption.value]);
 
   const issueOptions = () => decisionIssues.map((decisionIssue) => ({
     id: decisionIssue.id,
@@ -191,7 +184,7 @@ const AddCavcRemandView = (props) => {
     styling={radioLabelStyling}
     label={COPY.CAVC_TYPE_LABEL}
     name="type-options"
-    options={typeOptions}
+    options={filteredDecisionTypes}
     value={type}
     onChange={(val) => setType(val)}
     strongLabel
@@ -202,7 +195,7 @@ const AddCavcRemandView = (props) => {
     styling={radioLabelStyling}
     label={COPY.CAVC_SUB_TYPE_LABEL}
     name="sub-type-options"
-    options={subTypeOptions}
+    options={filteredRemandTypes}
     value={subType}
     onChange={(val) => setSubType(val)}
     strongLabel

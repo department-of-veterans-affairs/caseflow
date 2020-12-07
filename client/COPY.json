@@ -129,7 +129,6 @@
   "ADD_CAVC_BUTTON": "+ Add CAVC Remand",
   "ADD_CAVC_PAGE_TITLE": "Add a Court remand",
   "ADD_CAVC_DESCRIPTION": "Complete the details below to intake this Court remand for further processing",
-  "CAVC_TYPE_NOT_SUPPORTED": "Support for this option is currently in development",
   "CAVC_DOCKET_NUMBER_LABEL": "What is the court docket number?",
   "CAVC_DOCKET_NUMBER_ERROR": "Please enter a valid docket number provided by CAVC (12-3456).",
   "CAVC_ATTORNEY_LABEL": "Was the appellant represented by an attorney?",
