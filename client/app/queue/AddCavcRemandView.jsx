@@ -77,14 +77,17 @@ const AddCavcRemandView = (props) => {
     [CAVC_DECISION_TYPES.straight_reversal]: featureToggles.reversal_cavc_remand,
     [CAVC_DECISION_TYPES.death_dismissal]: featureToggles.dismissal_cavc_remand
   };
-  const filteredDecisionTypes = typeOptions.filter((typeOption) => supportedDecisionTypes[typeOption.value]);
-
   const supportedRemandTypes = {
     [CAVC_REMAND_SUBTYPES.jmr]: featureToggles.cavc_remand,
     [CAVC_REMAND_SUBTYPES.jmpr]: featureToggles.cavc_remand,
     [CAVC_REMAND_SUBTYPES.mdr]: featureToggles.mdr_cavc_remand
   };
-  const filteredRemandTypes = subTypeOptions.filter((subTypeOption) => supportedRemandTypes[subTypeOption.value]);
+
+  typeOptions.forEach((typeOption) => {
+    typeOption.disabled = !supportedDecisionTypes[typeOption.value];
+    typeOption.title = supportedDecisionTypes[typeOption.value] ? '' : COPY.CAVC_TYPE_NOT_SUPPORTED;
+  });
+  subTypeOptions.forEach((subTypeOption) => subTypeOption.disabled = !supportedRemandTypes[subTypeOption.value]);
 
   const issueOptions = () => decisionIssues.map((decisionIssue) => ({
     id: decisionIssue.id,
@@ -185,20 +188,22 @@ const AddCavcRemandView = (props) => {
     styling={radioLabelStyling}
     label={COPY.CAVC_TYPE_LABEL}
     name="type-options"
-    options={filteredDecisionTypes}
+    options={typeOptions}
     value={type}
     onChange={(val) => setType(val)}
     strongLabel
+    vertical
   />;
 
   const remandTypeField = <RadioField
     styling={radioLabelStyling}
     label={COPY.CAVC_SUB_TYPE_LABEL}
     name="sub-type-options"
-    options={filteredRemandTypes}
+    options={subTypeOptions}
     value={subType}
     onChange={(val) => setSubType(val)}
     strongLabel
+    vertical
   />;
 
   const decisionField = <DateSelector

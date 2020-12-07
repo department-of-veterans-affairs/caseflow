@@ -99,6 +99,7 @@ export const RadioField = (props) => {
             <label
               className={option.disabled ? 'disabled' : ''}
               htmlFor={`${idPart}_${option.value}`}
+              title={option.title}
             >
               {option.displayText || option.displayElem}
             </label>
@@ -172,6 +173,11 @@ RadioField.propTypes = {
        * Help text to be displayed below the label
        */
       help: PropTypes.string,
+
+      /**
+       * Help text to be displayed when hovering over the label
+       */
+      title: PropTypes.string,
     })
   ),
 
