@@ -87,7 +87,10 @@ const AddCavcRemandView = (props) => {
     typeOption.disabled = !supportedDecisionTypes[typeOption.value];
     typeOption.title = supportedDecisionTypes[typeOption.value] ? '' : COPY.CAVC_TYPE_NOT_SUPPORTED;
   });
-  subTypeOptions.forEach((subTypeOption) => subTypeOption.disabled = !supportedRemandTypes[subTypeOption.value]);
+  subTypeOptions.forEach((subTypeOption) => {
+    subTypeOption.disabled = !supportedRemandTypes[subTypeOption.value];
+    subTypeOption.title = supportedRemandTypes[subTypeOption.value] ? '' : COPY.CAVC_TYPE_NOT_SUPPORTED;
+  });
 
   const issueOptions = () => decisionIssues.map((decisionIssue) => ({
     id: decisionIssue.id,
