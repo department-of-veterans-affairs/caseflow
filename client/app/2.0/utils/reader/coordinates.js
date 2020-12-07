@@ -84,10 +84,8 @@ export const getPageCoordinatesOfMouseEvent = (event, container, scale, rotation
 
 /**
  * Helper Method to Calculate the Page Coordinates
- * @param {number} direction -- The direction of the PDF
  * @param {Object} pageCoords -- The current page coordinates
- * @param {Object} pageDimensions -- The current page dimensions
- * @param {Object} file -- The file whose page coordinates are being updated
+ * @param {number} direction -- The direction of the PDF
  * @param {number} rotation -- The rotation amount
  */
 export const nextPageCoords = (pageCoords, direction, rotation = 0) => {
@@ -114,25 +112,10 @@ export const nextPageCoords = (pageCoords, direction, rotation = 0) => {
     MOVE_ANNOTATION_ICON_DIRECTION_ARRAY[transform]
   ) ? 'y' : 'x';
 
-  console.log('DIMENSION: ', moveDimension);
-  console.log('COORDS: ', pageCoords);
-  console.log('TRANSFORM: ', transform);
-  // // Apply the new coordinates to the page
-  const coords = {
+  // Return the new icon coordinates
+  return {
     ...pageCoords,
     [moveDimension]: pageCoords[moveDimension] + (moveAmount * moveDirection)
   };
 
-  console.log('PAGE COORDS: ', coords);
-
-  // // Update the page boundaries
-  // const pageCoordsBounds = pageDimensions[file][pageIndex];
-
-  // This calculation is not quite right, because we are not using the scale
-  // to correct ANNOTATION_ICON_SIDE_LENGTH. This leads to the outer edge of where
-  // you're able to place the annotation with the keyboard looking progressively
-  // weirder as you get further from zoom level 0. I am not going to fix this issue
-  // now, because `scale` is stored in the state of `PdfUI`, and this PR is already
-  // too massive. This can be a follow-up issue.
-  return coords;
 };

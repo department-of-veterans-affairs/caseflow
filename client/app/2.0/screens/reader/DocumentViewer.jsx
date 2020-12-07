@@ -49,6 +49,10 @@ import {
 } from 'store/reader/annotationLayer';
 import { KeyboardInfo } from 'app/2.0/components/reader/DocumentViewer/modals/KeyboardInfo';
 
+/**
+ * Document Viewer Screen Component
+ * @param {Object} props -- Contains the route props and PDF web worker
+ */
 const DocumentViewer = (props) => {
   // Get the Document List state
   const state = useSelector(documentScreen);
