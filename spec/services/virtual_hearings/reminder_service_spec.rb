@@ -62,7 +62,7 @@ describe VirtualHearings::ReminderService do
     end
 
     context "hearing date is 2 days out" do
-      let(:hearing_date) { Time.zone.now + 1.days } # some hours less than 2
+      let(:hearing_date) { Time.zone.now + 1.day } # some hours less than 2
       let(:created_at) { hearing_date - 3.days }
 
       context "last_sent_reminder is nil" do
