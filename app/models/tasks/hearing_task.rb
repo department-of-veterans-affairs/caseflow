@@ -44,8 +44,8 @@ class HearingTask < Task
 
     if appeal.is_a?(LegacyAppeal)
       update_legacy_appeal_location
-    else
-      IhpTasksFactory.new(parent).create_ihp_tasks!
+    elsif appeal.is_a?(Appeal)
+      create_evidence_or_ihp_task
     end
   end
 
@@ -79,6 +79,18 @@ class HearingTask < Task
                end
 
     AppealRepository.update_location!(appeal, location)
+  end
+
+  def create_evidence_or_ihp_task
+    if hearing&.no_show?
+      EvidenceSubmissionWindowTask.create!(
+        appeal: appeal,
+        parent: self,
+        assigned_to: MailTeam.singleton
+      )
+    else
+      IhpTasksFactory.new(parent).create_ihp_tasks!
+    end
   end
 
   def cascade_closure_from_child_task?(_child_task)
