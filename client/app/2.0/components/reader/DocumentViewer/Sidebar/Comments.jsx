@@ -25,7 +25,6 @@ export const SidebarComments = ({
   currentDocument,
   saveComment,
   cancelDrop,
-  createComment,
   ...props
 }) => (
   <div>
@@ -47,7 +46,7 @@ export const SidebarComments = ({
             disableOnEmpty
             onChange={(val) => updateComment({ ...droppedComment, pendingComment: val })}
             changeDate={(val) => updateComment({ ...droppedComment, pendingDate: val })}
-            saveComment={() => createComment(droppedComment)}
+            saveComment={() => saveComment(droppedComment, 'create')}
           />
         )}
         {comments.map((comment, index) => comment.id !== droppedComment?.id && (
@@ -92,7 +91,6 @@ SidebarComments.propTypes = {
   errors: PropTypes.object,
   saveComment: PropTypes.func,
   cancelDrop: PropTypes.func,
-  createComment: PropTypes.func,
   updateComment: PropTypes.func,
   updateCommentDate: PropTypes.func,
   handleClick: PropTypes.func,

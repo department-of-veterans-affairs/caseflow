@@ -143,13 +143,6 @@ const DocumentViewer = (props) => {
     })),
     toggleKeyboardInfo: (val) => dispatch(toggleKeyboardInfo(val)),
     startMove: (commentId) => dispatch(startMove(commentId)),
-    createComment: (comment) => {
-      dispatch(createComment({
-        ...comment,
-        relevant_date: comment.pendingDate || comment.relevant_date,
-        comment: comment.pendingComment || comment.comment
-      }));
-    },
     clickPage: (event) => {
       event.stopPropagation();
       event.preventDefault();
@@ -311,23 +304,12 @@ const DocumentViewer = (props) => {
   return (
     <div id="document-viewer" className="cf-pdf-page-container" >
       <div className={classNames('cf-pdf-container', { 'hidden-sidebar': state.hidePdfSidebar })} {...pdfWrapper}>
-        <DocumentHeader
-          {...props}
-          {...state}
-          {...actions}
-          doc={state.currentDocument}
-        />
+        <DocumentHeader {...props} {...state} {...actions} doc={state.currentDocument} />
         <DocumentSearch {...actions} {...state.search} doc={state.currentDocument} hidden={state.hideSearchBar} />
-        <Pdf
-          {...state}
-          {...props}
-          {...actions}
-          doc={state.currentDocument}
-          gridRef={gridRef}
-        />
+        <Pdf {...props} {...state}{...actions} doc={state.currentDocument} gridRef={gridRef} />
         <DocumentFooter
-          {...state}
           {...props}
+          {...state}
           {...actions}
           nextDocId={docs.next > 0 ? docs.next : 0}
           prevDocId={docs.prev > 0 ? docs.prev : 0}
@@ -335,13 +317,7 @@ const DocumentViewer = (props) => {
           doc={state.currentDocument}
         />
       </div>
-      <DocumentSidebar
-        {...state}
-        {...props}
-        {...actions}
-        show={!state.hidePdfSidebar}
-        doc={state.currentDocument}
-      />
+      <DocumentSidebar {...props} {...state} {...actions} show={!state.hidePdfSidebar} doc={state.currentDocument} />
       <ShareComment {...state} {...actions} show={state.shareCommentId !== null} commentId={state.shareCommentId} />
       <DeleteComment {...state} {...actions} show={state.deleteCommentId !== null} />
       <KeyboardInfo {...state} {...actions} show={state.keyboardInfoOpen} />
