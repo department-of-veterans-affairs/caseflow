@@ -48,7 +48,7 @@ const DocumentList = (props) => {
   const actions = {
     toggleComment: (docId, expanded) => dispatch(toggleComment({ docId, expanded })),
     clearTagFilters: () => dispatch(clearTagFilters(state)),
-    setTagFilter: (text, checked, tagId) => dispatch(setTagFilter(text, checked, tagId, state)),
+    setTagFilter: (text, checked) => dispatch(setTagFilter(text, checked, state)),
     clearAllFilters: () => dispatch(clearAllFilters(state)),
     clearCategoryFilters: () => dispatch(clearCategoryFilters(state)),
     toggleFilter: (val) => dispatch(toggleDropdownFilterVisibility(val)),

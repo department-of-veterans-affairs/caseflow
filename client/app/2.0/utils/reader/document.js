@@ -287,6 +287,12 @@ export const filterDocuments = (criteria, documents, state) => {
         include = include && filters.category.filter((name) => document[name] === true).length;
       }
 
+      // Apply the Tag filters
+      if (!isEmpty(filters.tag)) {
+        // include = include && filters.tag.filter((name) => document[name] === true).length;
+        include = include && document.tags.some((tag) => filters.tag.includes(tag.text));
+      }
+
       // Apply the search filters
       if (filters.searchQuery) {
         include = include && searchString(filters.searchQuery, state)(document);

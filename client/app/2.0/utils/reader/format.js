@@ -23,7 +23,7 @@ export const formatFilterCriteria = (filterCriteria) => {
   const filters = {
     category: Object.keys(filterCriteria.category).filter((cat) => filterCriteria.category[cat] === true).
       map((key) => formatCategoryName(key)),
-    tag: Object.keys(filterCriteria.tag),
+    tag: Object.keys(filterCriteria.tag).filter((tag) => filterCriteria.tag[tag] === true),
     searchQuery: filterCriteria.searchQuery.toLowerCase()
   };
 

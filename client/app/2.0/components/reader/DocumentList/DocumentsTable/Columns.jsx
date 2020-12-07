@@ -307,7 +307,7 @@ export const documentHeaders = ({ lastReadIndicatorRef, ...props }) => [
   {
     cellClass: 'tags-column',
     header: <TagHeader {...props} />,
-    valueFunction: (doc) => <TagCell doc={doc} {...props} />
+    valueFunction: (doc) => <TagCell doc={doc} tags={doc.tags} {...props} />
   },
   {
     cellClass: 'comments-column',

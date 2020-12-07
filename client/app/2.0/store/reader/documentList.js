@@ -135,8 +135,8 @@ const documentListSlice = createSlice({
       reducer: (state, action) => {
         state.filterCriteria.tag[action.payload.text] = action.payload.checked;
       },
-      prepare: (text, checked, tagId, props) =>
-        addMetaLabel(`${checked ? 'select' : 'unselect'}-category-filter`, { ...props, text, checked }, tagId)
+      prepare: (text, checked, props) =>
+        addMetaLabel(`${checked ? 'select' : 'unselect'}-category-filter`, { ...props, text, checked })
     },
     clearTagFilters: {
       reducer: (state) => {

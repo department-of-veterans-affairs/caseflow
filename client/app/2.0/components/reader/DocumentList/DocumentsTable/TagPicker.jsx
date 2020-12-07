@@ -18,17 +18,17 @@ export const TagPicker = ({
   dropdownFilterViewListItemStyle
 }) => (
   <ul {...dropdownFilterViewListStyle} {...tagListStyles}>
-    {Object.keys(tags).map((tag, index) => (
+    {tags.map((tag, index) => (
       <li key={index} {...dropdownFilterViewListItemStyle} {...tagListItemStyles}>
         <Checkbox
           label={
             <div className="cf-tag-selector">
-              <span className="cf-tag-name">{tags[tag].text}</span>
+              <span className="cf-tag-name">{tag.text}</span>
             </div>
           }
-          name={tags[tag].text}
-          onChange={(checked) => handleTagToggle(tags[tag].text, checked, tags[tag].id)}
-          value={tagToggleStates[tags[tag].text] || false}
+          name={tag.text}
+          onChange={(checked) => handleTagToggle(tag.text, checked, tag.id)}
+          value={tagToggleStates[tag.text] || false}
         />
       </li>
     ))}

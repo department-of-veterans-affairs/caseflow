@@ -39,9 +39,15 @@ export const documentListScreen = (state) => {
   // Get the filtered documents and count
   const { documents, docsCount } = documentState(state);
 
+  // Calculate the Tag Options
+  const tagOptions = Object.keys(state.reader.documentList.documents).
+    map((doc) => state.reader.documentList.documents[doc].tags).
+    reduce((list, item) => list.includes(item) ? list : [...list, ...item], []);
+
   return {
     documents,
     docsCount,
+    tagOptions,
     currentDocument: state.reader.documentViewer.selected,
     storeDocuments: state.reader.documentList.documents,
     documentList: state.reader.documentList,
@@ -51,7 +57,6 @@ export const documentListScreen = (state) => {
       state.reader.documentList.filterCriteria,
       state.reader.documentList.view
     ),
-    tagOptions: state.reader.documentViewer.tagOptions,
     filterCriteria: state.reader.documentList.filterCriteria,
     filteredDocIds: state.reader.documentList.filteredDocIds,
     searchCategoryHighlights: state.reader.documentList.searchCategoryHighlights,
