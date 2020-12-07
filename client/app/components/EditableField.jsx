@@ -21,14 +21,13 @@ export const EditableField = (props) => {
     placeholder,
     title,
     type,
-    value: initialValue
+    value
   } = props;
   const buttonClasses = ['cf-btn-link', 'editable-field-btn-link'];
   let actionLinks, textDisplay;
 
   // Initialize with the editable field displayed if these is an error
   const [editing, setEditing] = useState(errorMessage && errorMessage.length);
-  const [value, setvalue] = useState(initialValue);
 
   const startEditing = () => setEditing(true);
   const stopEditing = () => setEditing(false);
@@ -50,7 +49,6 @@ export const EditableField = (props) => {
   };
 
   const onValueChange = (event) => {
-    setvalue(event.target.value);
     onChange(event.target.value);
   };
 
