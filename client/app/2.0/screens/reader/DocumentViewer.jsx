@@ -80,14 +80,13 @@ const DocumentViewer = (props) => {
 
   // Create the dispatchers
   const actions = {
-    dropComment: (event, pageIndex) => {
-      const coords = getPageCoordinatesOfMouseEvent(
-        event,
-        document.getElementById(`comment-layer-${pageIndex}`).getBoundingClientRect(),
-        state.scale,
-        state.currentDocument.rotation
-      );
-
+    getCoords: (event, pageIndex) => getPageCoordinatesOfMouseEvent(
+      event,
+      document.getElementById(`comment-layer-${pageIndex}`).getBoundingClientRect(),
+      state.scale,
+      state.currentDocument.rotation
+    ),
+    dropComment: (coords, pageIndex) => {
       // Drop the comment at the coordinates
       if (state.addingComment) {
         dispatch(dropComment({
@@ -100,14 +99,7 @@ const DocumentViewer = (props) => {
         }));
       }
     },
-    moveComment: (event, pageIndex) => {
-      const coords = getPageCoordinatesOfMouseEvent(
-        event,
-        document.getElementById(`comment-layer-${pageIndex}`).getBoundingClientRect(),
-        state.scale,
-        state.currentDocument.rotation
-      );
-
+    moveComment: (coords, pageIndex) => {
       dispatch(moveComment({
         page: pageIndex + 1,
         document_id: state.currentDocument.id,
@@ -116,15 +108,8 @@ const DocumentViewer = (props) => {
         y: coords.y,
       }));
     },
-    moveMouse: (event, pageIndex) => {
+    moveMouse: (coords, pageIndex) => {
       if (state.addingComment) {
-        const coords = getPageCoordinatesOfMouseEvent(
-          event,
-          document.getElementById(`comment-layer-${pageIndex}`).getBoundingClientRect(),
-          state.scale,
-          state.currentDocument.rotation
-        );
-
         // Move the cursor icon
         const cursor = document.getElementById(`canvas-cursor-${pageIndex}`);
 

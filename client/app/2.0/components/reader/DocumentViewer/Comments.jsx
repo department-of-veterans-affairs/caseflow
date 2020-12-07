@@ -24,6 +24,7 @@ export const Comments = ({
   textLayerRef,
   startMove,
   selectComment,
+  getCoords,
   ...props
 }) => {
   useEffect(() => {
@@ -64,7 +65,13 @@ export const Comments = ({
       key={pageIndex}
       style={commentStyles}
       onDragOver={(event) => event.preventDefault()}
-      onClick={(event) => dropComment(event, pageIndex)}
+      onClick={(event) => {
+        // Prevent the drop comment from bubbling events
+        event.stopPropagation();
+
+        // Drop the comment
+        dropComment(getCoords(event, pageIndex), pageIndex);
+      }}
       onMouseMove={moveMouse}
       ref={commentsRef}
       onDrop={handleDrop}
@@ -106,6 +113,7 @@ Comments.propTypes = {
   handleDrop: PropTypes.func,
   moveMouse: PropTypes.func,
   dropComment: PropTypes.func,
+  getCoords: PropTypes.func,
   commentsRef: PropTypes.element,
   isVisible: PropTypes.bool,
   onDrag: PropTypes.func,

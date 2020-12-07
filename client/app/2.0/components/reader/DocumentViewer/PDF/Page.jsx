@@ -25,11 +25,10 @@ export const Page = ({
   numColumns,
   rowIndex,
   columnIndex,
-  dropComment,
-  movingComment,
   moveComment,
   match,
   moveMouse,
+  getCoords,
   ...props
 }) => {
   // Calculate the Page Index
@@ -81,10 +80,9 @@ export const Page = ({
           <div className="cf-pdf-annotationLayer">
             <Comments
               {...props}
-              handleDrop={(event) => moveComment(event, pageIndex)}
-              dropComment={dropComment}
-              movingComment={movingComment}
-              moveMouse={(event) => moveMouse(event, pageIndex)}
+              getCoords={getCoords}
+              handleDrop={(event) => moveComment(getCoords(event, pageIndex), pageIndex)}
+              moveMouse={(event) => moveMouse(getCoords(event, pageIndex), pageIndex)}
               currentDocument={currentDocument}
               documentId={currentDocument.id}
               pageIndex={pageIndex}
@@ -102,8 +100,7 @@ Page.propTypes = {
   pageIndex: PropTypes.number,
   addingComment: PropTypes.bool,
   isVisible: PropTypes.bool,
-  dropComment: PropTypes.func,
-  movingComment: PropTypes.number,
+  getCoords: PropTypes.func,
   moveComment: PropTypes.func,
   scale: PropTypes.number,
   pageRef: PropTypes.element,

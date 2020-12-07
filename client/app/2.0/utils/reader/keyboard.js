@@ -41,7 +41,7 @@ export const keyHandler = (event, props) => {
         );
 
         // Move the cursor
-        props.moveMouse({ pageX: coords.x, pageY: coords.y }, 0);
+        props.moveMouse(props.getCoords({ pageX: coords.x, pageY: coords.y }, 0), 0);
       // Ignore arrow keys when editing search fields
       } else if (!['search-ahead', 'commentEditBox'].includes(event.target.id)) {
         // Handle the next doc shortcut
@@ -146,10 +146,10 @@ export const keyHandler = (event, props) => {
           const [cursor] = document.getElementsByClassName('canvas-cursor');
 
           // Drop the comment
-          props.dropComment({
+          props.dropComment(props.getCoords({
             pageX: cursor.getBoundingClientRect().left,
             pageY: cursor.getBoundingClientRect().top,
-          }, 0);
+          }, 0), 0);
         }
       }
       break;
