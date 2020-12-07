@@ -121,9 +121,6 @@ const DocumentViewer = (props) => {
           state.currentDocument.rotation
         );
 
-        console.log('COORDS: ', coords);
-        console.log('EVENT: ', event);
-
         // Move the cursor icon
         const cursor = document.getElementById(`canvas-cursor-${pageIndex}`);
 
