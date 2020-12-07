@@ -13,7 +13,7 @@ class VirtualHearings::SendReminderEmailsJob < ApplicationJob
       begin
         send_reminder_emails(virtual_hearing)
       rescue StandardError => error # rescue any error and allow job to continue
-        capture_exception(error)
+        capture_exception(error: error)
       end
     end
   end
