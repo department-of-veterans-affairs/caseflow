@@ -23,7 +23,7 @@ class VirtualHearings::ReminderService
 
   def log_reminder_type(type)
     Rails.logger.info(
-      "Send #{type} reminder emails:( "\
+      "Send #{type} reminder emails: ( "\
       "Last sent reminder: #{last_sent_reminder}, \n " \
       "Days until hearing: #{days_until_hearing}, \n" \
       "Days from hearing day to last reminder sent: #{days_from_hearing_day_to_last_sent_reminder}, \n" \
