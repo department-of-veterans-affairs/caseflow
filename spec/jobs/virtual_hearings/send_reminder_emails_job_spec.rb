@@ -171,5 +171,22 @@ describe VirtualHearings::SendReminderEmailsJob do
         end
       end
     end
+
+    context "Encountered error" do
+      let(:hearing_date) { Time.zone.now + 7.days }
+
+      before do
+        allow_any_instance_of(VirtualHearings::SendEmail)
+          .to receive(:send_email)
+          .and_raise(VirtualHearings::SendEmail::RecipientIsDeceasedVeteran)
+      end
+
+      it "captures error and continues without failing" do
+        expect(Raven).to receive(:capture_exception)
+          .with(VirtualHearings::SendEmail::RecipientIsDeceasedVeteran, any_args)
+
+        subject
+      end
+    end
   end
 end
