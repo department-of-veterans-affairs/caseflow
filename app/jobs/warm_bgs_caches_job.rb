@@ -222,7 +222,7 @@ class WarmBgsCachesJob < CaseflowJob
   def warm_people_caches
     Person.where(first_name: nil, last_name: nil)
       .order(created_at: :desc)
-      .limit(PEOPLE_LIMIT)
+      .limit(LIMITS[:PEOPLE])
       .each(&:update_cached_attributes!)
   rescue StandardError => error
     Raven.capture_exception(error)
