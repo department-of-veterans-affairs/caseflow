@@ -186,9 +186,16 @@ const annotationLayerSlice = createSlice({
       console.log('PAYLOAD: ', action.payload);
     },
     updateComment: (state, action) => {
+      // Update the state of the dropped comment otherwise update the selected comment
       if (state.droppedComment) {
         state.droppedComment = {
           ...state.droppedComment,
+          pendingComment: action.payload.pendingComment,
+          pendingDate: action.payload.pendingDate
+        };
+      } else {
+        state.selected = {
+          ...state.selected,
           pendingComment: action.payload.pendingComment,
           pendingDate: action.payload.pendingDate
         };

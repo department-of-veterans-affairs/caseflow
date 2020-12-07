@@ -90,7 +90,7 @@ export const getPageCoordinatesOfMouseEvent = (event, container, scale, rotation
  * @param {Object} file -- The file whose page coordinates are being updated
  * @param {number} rotation -- The rotation amount
  */
-export const nextPageCoords = (direction, pageCoords, pageDimensions, file, rotation = 0) => {
+export const nextPageCoords = (pageCoords, direction, rotation = 0) => {
   // There are four valid rotations: 0, 90, 180, 270. We transform those values to 0, -1, -2, -3.
   // We then use that value to rotate the direction. I.E. Hitting up (value 0) on the
   // keyboard when rotated 90 degrees corresponds to moving left (value 3) on the document.
@@ -104,21 +104,29 @@ export const nextPageCoords = (direction, pageCoords, pageDimensions, file, rota
 
   // Calculate the direction of the movement
   const moveDirection = includes(
-    [MOVE_ANNOTATION_ICON_DIRECTIONS.UP, MOVE_ANNOTATION_ICON_DIRECTIONS.LEFT],
+    [MOVE_ANNOTATION_ICON_DIRECTIONS.ArrowUp, MOVE_ANNOTATION_ICON_DIRECTIONS.ArrowLeft],
     MOVE_ANNOTATION_ICON_DIRECTION_ARRAY[transform]
   ) ? -1 : 1;
 
   // Calculate the dimension of the movement (`x` || `y`)
   const moveDimension = includes(
-    [MOVE_ANNOTATION_ICON_DIRECTIONS.UP, MOVE_ANNOTATION_ICON_DIRECTIONS.DOWN],
+    [MOVE_ANNOTATION_ICON_DIRECTIONS.ArrowUp, MOVE_ANNOTATION_ICON_DIRECTIONS.ArrowDown],
     MOVE_ANNOTATION_ICON_DIRECTION_ARRAY[transform]
   ) ? 'y' : 'x';
 
-  // Apply the new coordinates to the page
-  const { pageIndex, ...coords } = pageCoords[moveDimension].map((coord) => coord + (moveAmount * moveDirection));
+  console.log('DIMENSION: ', moveDimension);
+  console.log('COORDS: ', pageCoords);
+  console.log('TRANSFORM: ', transform);
+  // // Apply the new coordinates to the page
+  const coords = {
+    ...pageCoords,
+    [moveDimension]: pageCoords[moveDimension] + (moveAmount * moveDirection)
+  };
 
-  // Update the page boundaries
-  const pageCoordsBounds = pageDimensions[file][pageIndex];
+  console.log('PAGE COORDS: ', coords);
+
+  // // Update the page boundaries
+  // const pageCoordsBounds = pageDimensions[file][pageIndex];
 
   // This calculation is not quite right, because we are not using the scale
   // to correct ANNOTATION_ICON_SIDE_LENGTH. This leads to the outer edge of where
@@ -126,8 +134,5 @@ export const nextPageCoords = (direction, pageCoords, pageDimensions, file, rota
   // weirder as you get further from zoom level 0. I am not going to fix this issue
   // now, because `scale` is stored in the state of `PdfUI`, and this PR is already
   // too massive. This can be a follow-up issue.
-  return {
-    x: clamp(coords.x, 0, pageCoordsBounds.width - ANNOTATION_ICON_SIDE_LENGTH),
-    y: clamp(coords.y, 0, pageCoordsBounds.height - ANNOTATION_ICON_SIDE_LENGTH)
-  };
+  return coords;
 };

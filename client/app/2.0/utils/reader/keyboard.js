@@ -1,5 +1,5 @@
 // External Dependencies
-import { isEqual, findIndex } from 'lodash';
+import { isEqual, findIndex, isEmpty } from 'lodash';
 
 // Local Dependencies
 import {
@@ -24,17 +24,41 @@ export const keyHandler = (event, props) => {
 
     // Handle keys by code
     switch (event.code) {
-    case 'ArrowRight':
-      // Don't change docs if in the search
-      if (!['search-ahead', 'commentEditBox'].includes(event.target.id)) {
-        props.nextDoc();
-      }
-
-      break;
+    case 'ArrowDown':
     case 'ArrowLeft':
-      // Don't change docs if in the search
-      if (!['search-ahead', 'commentEditBox'].includes(event.target.id)) {
-        props.prevDoc();
+    case 'ArrowUp':
+    case 'ArrowRight':
+      // Prevent the default handling of keys
+      event.preventDefault();
+
+      // Override arrows when commenting
+      if (props.addingComment) {
+        // Get the cursor so we can update the position
+        const [cursor] = document.getElementsByClassName('canvas-cursor');
+
+        // Calculate the move amount
+        const coords = nextPageCoords(
+          {
+            x: cursor.getBoundingClientRect().left,
+            y: cursor.getBoundingClientRect().top,
+          },
+          MOVE_ANNOTATION_ICON_DIRECTIONS[event.code],
+          props.currentDocument.rotation
+        );
+
+        // Move the cursor
+        props.moveMouse({ pageX: coords.x, pageY: coords.y }, 0);
+      // Ignore arrow keys when editing search fields
+      } else if (!['search-ahead', 'commentEditBox'].includes(event.target.id)) {
+        // Handle the next doc shortcut
+        if (event.code === 'ArrowRight') {
+          props.nextDoc();
+        }
+
+        // Handle the previous doc shortcut
+        if (event.code === 'ArrowLeft') {
+          props.prevDoc();
+        }
       }
 
       break;
@@ -43,7 +67,21 @@ export const keyHandler = (event, props) => {
       event.preventDefault();
 
       // Hide the search bar if open
-      return props.toggleSearchBar(true);
+      if (!props.hideSearchBar) {
+        props.toggleSearchBar(true);
+      }
+
+      // Stop dropping if we are dropping a comment
+      if (props.addingComment) {
+        props.cancelDrop();
+      }
+
+      // Remove the selected comment if we hit escape
+      if (!isEmpty(props.selectedComment)) {
+        props.selectComment({});
+      }
+
+      break;
     case 'KeyF':
       // If the meta key is pressed open the search bar
       if (event[metaKey]) {
@@ -72,6 +110,14 @@ export const keyHandler = (event, props) => {
         props.togglePdfSidebar();
       }
       break;
+    case 'KeyC':
+      // If the alt key is pressed start dropping a comment
+      if (event.altKey) {
+        // Prevent the default handling of keys
+        event.preventDefault();
+        props.addComment();
+      }
+      break;
     case 'Backspace':
       // If the alt key is pressed navigate back to the document list
       if (event.altKey) {
@@ -90,9 +136,27 @@ export const keyHandler = (event, props) => {
 
         // Save the comment if editing
         if (event.target.id === 'commentEditBox') {
+          // Set the comment based on whether dropping or editing
+          const comment = props.droppedComment ? props.droppedComment : props.selectedComment;
+
+          // Set the action based on whether the comment was dropped
+          const action = props.droppedComment ? 'create' : 'save';
+
+          // Save the selected comment
+          props.saveComment(comment, action);
+        }
+
+        // Drop the comment if in add comment mode
+        if (props.addingComment) {
           console.log('PROPS: ', props);
-          // props.saveComment()
-        } else {
+          // Get the cursor so we can update the position
+          const [cursor] = document.getElementsByClassName('canvas-cursor');
+
+          // Drop the comment
+          props.dropComment({
+            pageX: cursor.getBoundingClientRect().left,
+            pageY: cursor.getBoundingClientRect().top,
+          }, 0);
         }
       }
       break;

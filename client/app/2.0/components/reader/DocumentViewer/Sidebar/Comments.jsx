@@ -47,11 +47,7 @@ export const SidebarComments = ({
             disableOnEmpty
             onChange={(val) => updateComment({ ...droppedComment, pendingComment: val })}
             changeDate={(val) => updateComment({ ...droppedComment, pendingDate: val })}
-            saveComment={() => createComment({
-              ...droppedComment,
-              relevant_date: droppedComment.pendingDate || droppedComment.relevant_date,
-              comment: droppedComment.pendingComment || droppedComment.comment
-            })}
+            saveComment={() => createComment(droppedComment)}
           />
         )}
         {comments.map((comment, index) => comment.id !== droppedComment?.id && (
@@ -60,11 +56,7 @@ export const SidebarComments = ({
               <EditComment
                 {...props}
                 id={`editCommentBox-${comment.temporaryId || comment.id}`}
-                saveComment={() => saveComment({
-                  ...comment,
-                  relevant_date: comment.pendingDate || comment.relevant_date,
-                  comment: comment.pendingComment || comment.comment
-                })}
+                saveComment={() => saveComment(comment)}
                 comment={comment}
                 onChange={(val) => updateComment({ ...comment, pendingComment: val })}
                 changeDate={(val) => updateComment({ ...comment, pendingDate: val })}

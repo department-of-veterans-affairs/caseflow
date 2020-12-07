@@ -68,7 +68,12 @@ export const Page = ({
             <div
               id={`canvas-cursor-${pageIndex}`}
               className="canvas-cursor"
-              style={{ position: 'absolute', display: 'none' }}
+              style={{
+                position: 'absolute',
+                display: pageIndex === 0 ? 'block' : 'none',
+                left: '50%',
+                top: '50%'
+              }}
             >
               {commentIcon()}
             </div>

@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 
 // Local Dependencies
-import { getPageCoordinatesOfMouseEvent, keyHandler } from 'utils/reader';
+import { getPageCoordinatesOfMouseEvent } from 'utils/reader';
 import { pdfWrapper } from 'styles/reader/Document/Pdf';
 import { fetchDocuments, openDownloadLink } from 'utils/reader/document';
 import { focusComment } from 'utils/reader/comments';
@@ -77,7 +77,6 @@ const DocumentViewer = (props) => {
   // Create the dispatchers
   const actions = {
     dropComment: (event, pageIndex) => {
-      event.stopPropagation();
       const coords = getPageCoordinatesOfMouseEvent(
         event,
         document.getElementById(`comment-layer-${pageIndex}`).getBoundingClientRect(),
@@ -122,6 +121,9 @@ const DocumentViewer = (props) => {
           state.currentDocument.rotation
         );
 
+        console.log('COORDS: ', coords);
+        console.log('EVENT: ', event);
+
         // Move the cursor icon
         const cursor = document.getElementById(`canvas-cursor-${pageIndex}`);
 
@@ -144,7 +146,13 @@ const DocumentViewer = (props) => {
     })),
     toggleKeyboardInfo: (val) => dispatch(toggleKeyboardInfo(val)),
     startMove: (commentId) => dispatch(startMove(commentId)),
-    createComment: (comment) => dispatch(createComment(comment)),
+    createComment: (comment) => {
+      dispatch(createComment({
+        ...comment,
+        relevant_date: comment.pendingDate || comment.relevant_date,
+        comment: comment.pendingComment || comment.comment
+      }));
+    },
     clickPage: (event) => {
       event.stopPropagation();
       event.preventDefault();
@@ -153,11 +161,21 @@ const DocumentViewer = (props) => {
       }
     },
     cancelDrop: () => dispatch(cancelDrop()),
-    addComment: (event) => {
-      event.stopPropagation();
-      dispatch(addComment());
+    addComment: () => dispatch(addComment()),
+    saveComment: (comment, action = 'save') => {
+      // Calculate the comment data to update/create
+      const data = {
+        ...comment,
+        relevant_date: comment.pendingDate || comment.relevant_date,
+        comment: comment.pendingComment || comment.comment
+      };
+
+      // Determine whether to save or create the comment
+      const dispatcher = action === 'create' ? createComment : saveComment;
+
+      // Update the store to either save or create the comment
+      dispatch(dispatcher(data));
     },
-    saveComment: (comment) => dispatch(saveComment(comment)),
     updateComment: (comment) => dispatch(updateComment(comment)),
     editComment: (commentId) => dispatch(startEdit(commentId)),
     resetEdit: () => {

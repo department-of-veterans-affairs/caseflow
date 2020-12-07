@@ -22,7 +22,14 @@ export const Pdf = ({ doc, clickPage, ...props }) => {
 
     // Remove the key listener when the component is unmounted
     return () => document.removeEventListener('keydown', listener);
-  }, [props.currentDocument?.id, props.search, props.selectedComment]);
+  }, [
+    props.currentDocument?.id,
+    props.search,
+    props.selectedComment,
+    props.hideSearchBar,
+    props.addingComment,
+    props.droppedComment
+  ]);
 
   return (
     <div className="cf-pdf-scroll-view">
