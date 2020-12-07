@@ -31,16 +31,6 @@ export const clearPlacingAnnotation = (isPlacing, dispatch) =>
   isPlacing && dispatch(stopPlacingAnnotation('from-click-outside-doc'));
 
 /**
- * Helper Method to Add the Click event listener to the window
- */
-export const setAnnotationEvent = () => window.addEventListener('click', clearPlacingAnnotation);
-
-/**
- * Helper Method to Clear the Click event listener to the window
- */
-export const clearAnnotationEvent = () => window.removeEventListener('click', clearPlacingAnnotation);
-
-/**
  * Method to set the Comment and Scroll position of the PDF
  * @param {Object} history -- The Browser Router History Object
  * @param {number} vacolsId -- The ID of the Appeal in VACOLS

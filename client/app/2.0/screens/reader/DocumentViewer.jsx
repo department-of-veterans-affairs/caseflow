@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 
 // Local Dependencies
-import { getPageCoordinatesOfMouseEvent } from 'utils/reader';
+import { getPageCoordinatesOfMouseEvent, keyHandler } from 'utils/reader';
 import { pdfWrapper } from 'styles/reader/Document/Pdf';
 import { fetchDocuments, openDownloadLink } from 'utils/reader/document';
 import { focusComment } from 'utils/reader/comments';
@@ -70,24 +70,6 @@ const DocumentViewer = (props) => {
     current: state.filteredDocIds.indexOf(state.currentDocument.id),
     next: state.filteredDocIds[state.filteredDocIds.indexOf(state.currentDocument.id) + 1],
   };
-
-  // Load the Documents
-  useEffect(() => {
-    // Get the Current document
-    const currentDocument = state.documents[params.docId];
-
-    // Load the PDF
-    if (currentDocument?.id) {
-      dispatch(showPdf({
-        currentDocument,
-        worker: props.pdfWorker,
-        scale: state.scale
-      }));
-    } else {
-      // Load the Documents
-      fetchDocuments({ ...state, params }, dispatch)();
-    }
-  }, [params.docId]);
 
   // Create the Grid Ref
   const gridRef = React.createRef();
@@ -211,10 +193,10 @@ const DocumentViewer = (props) => {
     deleteComment: (id) => dispatch(toggleDeleteModal(id)),
     removeComment: () => dispatch(removeComment({ commentId: state.deleteCommentId, docId: state.currentDocument.id })),
     toggleAccordion: (sections) => dispatch(toggleAccordion(sections)),
-    togglePdfSidebar: () => dispatch(togglePdfSideBar()),
-    toggleSearchBar: () => {
+    togglePdfSidebar: (open = null) => dispatch(togglePdfSideBar(open)),
+    toggleSearchBar: (open = null) => {
       // Toggle the Search
-      dispatch(toggleSearchBar());
+      dispatch(toggleSearchBar(open));
 
       // Clear the term
       dispatch(searchText({ searchTerm: '', docId: state.currentDocument.id, matchIndex: 0 }));
@@ -278,22 +260,46 @@ const DocumentViewer = (props) => {
     prevDoc: () => {
       const doc = state.documents[docs.prev];
 
-      props.history.push(`/reader/appeal/${params.vacolsId}/documents/${doc.id}`);
+      // Load the previous doc if found
+      if (doc) {
+        props.history.push(`/reader/appeal/${params.vacolsId}/documents/${doc.id}`);
+      }
     },
     nextDoc: () => {
       const doc = state.documents[docs.next];
 
-      props.history.push(`/reader/appeal/${params.vacolsId}/documents/${doc.id}`);
+      // Load the next doc if found
+      if (doc) {
+        props.history.push(`/reader/appeal/${params.vacolsId}/documents/${doc.id}`);
+      }
     }
   };
+
+  // Load the Documents
+  useEffect(() => {
+    // Get the Current document
+    const currentDocument = state.documents[params.docId];
+
+    // Load the PDF
+    if (currentDocument?.id) {
+      dispatch(showPdf({
+        currentDocument,
+        worker: props.pdfWorker,
+        scale: state.scale
+      }));
+    } else {
+      // Load the Documents
+      fetchDocuments({ ...state, params }, dispatch)();
+    }
+  }, [params.docId]);
 
   return (
     <div id="document-viewer" className="cf-pdf-page-container" >
       <div className={classNames('cf-pdf-container', { 'hidden-sidebar': state.hidePdfSidebar })} {...pdfWrapper}>
         <DocumentHeader
+          {...props}
           {...state}
           {...actions}
-          documentPathBase={`/reader/appeal/${ state.appeal.id }/documents`}
           doc={state.currentDocument}
         />
         <DocumentSearch {...actions} {...state.search} doc={state.currentDocument} hidden={state.hideSearchBar} />

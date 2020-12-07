@@ -96,13 +96,13 @@ export const DocumentHeader = ({
         classNames={['cf-pdf-button cf-pdf-search usa-search usa-search-small']}
         ariaLabel="search text"
         type="submit"
-        onClick={toggleSearchBar}
+        onClick={() => toggleSearchBar()}
       >
         <SearchIcon />
       </Button>
       {hidePdfSidebar && (
         <span {...toolbarStyles.openSidebarMenu}>
-          <Button name="open sidebar menu" classNames={['cf-pdf-button']} onClick={togglePdfSidebar}>
+          <Button name="open sidebar menu" classNames={['cf-pdf-button']} onClick={() => togglePdfSidebar(false)}>
             <strong>
               Open menu
             </strong>

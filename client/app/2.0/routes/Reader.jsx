@@ -41,7 +41,13 @@ const ReaderRoutes = (props) => {
         loadingMessage={LOADING_DATA_MESSAGE}
         title="Document Viewer | Caseflow Reader"
         path="/reader/appeal/:vacolsId/documents/:docId"
-        render={(routeProps) => <DocumentViewer {...props} {...routeProps} />}
+        render={(routeProps) => (
+          <DocumentViewer
+            {...props}
+            {...routeProps}
+            documentPathBase={`/reader/appeal/${ routeProps.match.params.vacolsId }/documents`}
+          />
+        )}
         appName={appName}
       />
     </AppFrame>

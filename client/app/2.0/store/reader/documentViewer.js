@@ -348,11 +348,11 @@ const documentViewerSlice = createSlice({
     toggleAccordion: (state, action) => {
       state.openedAccordionSections = action.payload;
     },
-    togglePdfSideBar: (state) => {
-      state.hidePdfSidebar = !state.hidePdfSidebar;
+    togglePdfSideBar: (state, action) => {
+      state.hidePdfSidebar = action.payload === null ? !state.hidePdfSidebar : action.payload;
     },
-    toggleSearchBar: (state) => {
-      state.hideSearchBar = !state.hideSearchBar;
+    toggleSearchBar: (state, action) => {
+      state.hideSearchBar = action.payload === null ? !state.hideSearchBar : action.payload;
     },
     updateSearchIndex: {
       reducer: (state, action) => {

@@ -12,6 +12,97 @@ import { nextPageCoords, isUserEditingText } from 'utils/reader';
 import { stopPlacingAnnotation, showPlaceAnnotationIcon } from 'store/reader/annotationLayer';
 
 /**
+ * Method to map keyboard shortcuts to redux actions
+ * @param {Object} event -- The key event being handled
+ * @param {Object} props -- Current Document Viewer props
+ */
+export const keyHandler = (event, props) => {
+  // Do not listen to key events if editing
+  if (props.currentDocument.id) {
+    // Calculate the meta key
+    const metaKey = navigator.appVersion.includes('Win') ? 'ctrlKey' : 'metaKey';
+
+    // Handle keys by code
+    switch (event.code) {
+    case 'ArrowRight':
+      // Don't change docs if in the search
+      if (!['search-ahead', 'commentEditBox'].includes(event.target.id)) {
+        props.nextDoc();
+      }
+
+      break;
+    case 'ArrowLeft':
+      // Don't change docs if in the search
+      if (!['search-ahead', 'commentEditBox'].includes(event.target.id)) {
+        props.prevDoc();
+      }
+
+      break;
+    case 'Escape':
+      // Prevent the default handling of keys
+      event.preventDefault();
+
+      // Hide the search bar if open
+      return props.toggleSearchBar(true);
+    case 'KeyF':
+      // If the meta key is pressed open the search bar
+      if (event[metaKey]) {
+        event.preventDefault();
+        props.toggleSearchBar(false);
+      }
+      break;
+    case 'KeyG':
+      // If the meta key is pressed Navigate the search results
+      if (event[metaKey]) {
+        // Prevent the default handling of keys
+        event.preventDefault();
+
+        // Calculate the next index based on whether the shift key is down
+        const index = event.shiftKey ? props.search.matchIndex - 1 : props.search.matchIndex + 1;
+
+        // Update the search index
+        props.searchText(props.search.searchTerm, index);
+      }
+      break;
+    case 'KeyM':
+      // If the alt key is pressed toggle the Sidebar
+      if (event.altKey) {
+        // Prevent the default handling of keys
+        event.preventDefault();
+        props.togglePdfSidebar();
+      }
+      break;
+    case 'Backspace':
+      // If the alt key is pressed navigate back to the document list
+      if (event.altKey) {
+        // Prevent the default handling of keys
+        event.preventDefault();
+
+        // Go back to the document list
+        props.history.push(props.documentPathBase);
+      }
+      break;
+    case 'Enter':
+      // If the alt key is pressed navigate back to the document list
+      if (event.altKey) {
+        // Prevent the default handling of keys
+        event.preventDefault();
+
+        // Save the comment if editing
+        if (event.target.id === 'commentEditBox') {
+          console.log('PROPS: ', props);
+          // props.saveComment()
+        } else {
+        }
+      }
+      break;
+    default:
+      break;
+    }
+  }
+};
+
+/**
  * Helper Method to gather keyboard input from the user
  * @param {Object} state -- The Current Redux Store State
  */

@@ -179,6 +179,11 @@ const annotationLayerSlice = createSlice({
         ...comment,
         editing: comment.id === action.payload
       }));
+
+      // Update the selected comment
+      state.selected = state.comments.filter((comment) => comment.id === action.payload)[0];
+      console.log('STATE: ', current(state).selected);
+      console.log('PAYLOAD: ', action.payload);
     },
     updateComment: (state, action) => {
       if (state.droppedComment) {

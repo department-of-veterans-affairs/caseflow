@@ -85,7 +85,7 @@ export const Comments = ({
           }}
           draggable
         >
-          {commentIcon(selectedComment.id === comment.id, comment.id)}
+          {commentIcon(selectedComment?.id === comment?.id, comment?.id)}
         </div>
       ))}
       <div

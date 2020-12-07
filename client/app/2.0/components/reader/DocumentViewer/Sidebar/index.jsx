@@ -17,7 +17,12 @@ import { KeyboardInfo } from 'components/reader/DocumentViewer/Sidebar/KeyboardI
 export const DocumentSidebar = ({ hidePdfSidebar, togglePdfSidebar, modal, show, ...props }) => show && (
   <div className={classNames('cf-sidebar-wrapper', { 'hidden-sidebar': hidePdfSidebar })} {...sidebarWrapper}>
     <div className="cf-sidebar-header">
-      <Button name="hide menu" classNames={['cf-pdf-button']} id="hide-menu-header" onClick={togglePdfSidebar}>
+      <Button
+        name="hide menu"
+        classNames={['cf-pdf-button']}
+        id="hide-menu-header"
+        onClick={() => togglePdfSidebar(true)}
+      >
         <h2 className="cf-non-stylized-header">
           Hide menu <i className="fa fa-chevron-right" aria-hidden="true"></i>
         </h2>

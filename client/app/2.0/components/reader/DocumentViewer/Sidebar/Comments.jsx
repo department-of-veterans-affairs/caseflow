@@ -77,7 +77,7 @@ export const SidebarComments = ({
                   {...props}
                   id={`comment${index}`}
                   comment={comment}
-                  selected={comment.id === selectedComment.id}
+                  selected={comment?.id === selectedComment?.id}
                   handleClick={handleClick}
                   page={comment.page}
                   date={comment.relevant_date}
