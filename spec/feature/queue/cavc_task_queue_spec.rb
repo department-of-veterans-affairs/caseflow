@@ -12,6 +12,99 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
   let!(:org_nonadmin2) { create(:user, full_name: "Tooey Remandy") { |u| CavcLitigationSupport.singleton.add_user(u) } }
   let!(:other_user) { create(:user, full_name: "Othery Usery") }
 
+  describe "when intaking a cavc remand" do
+    before { BvaDispatch.singleton.add_user(create(:user)) }
+
+    let(:appeal) { create(:appeal, :dispatched) }
+
+    let(:notes) { "Pain disorder with 100\% evaluation per examination" }
+    let(:description) { "Service connection for pain disorder is granted at 70\% effective May 1 2011" }
+    let!(:decision_issues) do
+      create_list(
+        :decision_issue,
+        3,
+        :rating,
+        decision_review: appeal,
+        disposition: "denied",
+        description: description,
+        decision_text: notes
+      )
+    end
+
+    let(:docket_number) { "12-1234" }
+    let(:date) { "11/11/2020" }
+    let(:judge_name) { Constants::CAVC_JUDGE_FULL_NAMES.first }
+    let(:decision_type) { Constants.CAVC_DECISION_TYPES.remand.titleize }
+
+    shared_examples "does not display the add remand button" do
+      it "does not display the add remand button" do
+        visit "queue/appeals/#{appeal.external_id}"
+        expect(page).to have_no_content "+ Add CAVC Remand"
+      end
+    end
+
+    context "when feature toggle is not on" do
+      before { User.authenticate!(user: org_admin) }
+
+      it_behaves_like "does not display the add remand button"
+    end
+
+    context "when the signed in user is not on cavc litigation support" do
+      before do
+        User.authenticate!(user: create(:user))
+        FeatureToggle.enable!(:cavc_remand)
+      end
+      after { FeatureToggle.disable!(:cavc_remand) }
+
+      it_behaves_like "does not display the add remand button"
+    end
+
+    context "when the signed in user is on cavc litigation support and the feature toggle is on" do
+      before do
+        FeatureToggle.enable!(:cavc_remand)
+        User.authenticate!(user: org_admin)
+      end
+      after { FeatureToggle.disable!(:cavc_remand) }
+
+      it "allows the user to intake a cavc remand" do
+        step "cavc user inputs cavc data" do
+          visit "queue/appeals/#{appeal.external_id}"
+          page.find("button", text: "+ Add CAVC Remand").click
+
+          # Fill in all of our fields!
+          fill_in "docket-number", with: docket_number
+          click_dropdown(text: judge_name)
+          fill_in "decision-date", with: date
+          fill_in "judgement-date", with: date
+          fill_in "mandate-date", with: date
+          fill_in "context-and-instructions-textBox", with: "Please process this remand"
+
+          page.find("button", text: "Submit").click
+
+          expect(page).to have_content COPY::CAVC_REMAND_CREATED_TITLE
+          expect(page).to have_content COPY::CAVC_REMAND_CREATED_DETAIL
+        end
+
+        step "cavc user confirms data on case details page" do
+          expect(page).to have_content "APPEAL STREAM TYPE\nCAVC"
+          expect(page).to have_content "DOCKET\nE\n#{appeal.docket_number}"
+          expect(page).to have_content "TASK\n#{SendCavcRemandProcessedLetterTask.label}"
+          expect(page).to have_content "ASSIGNED TO\n#{CavcLitigationSupport.singleton.name}"
+
+          expect(page).to have_content "CAVC Remand"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DOCKET_NUMBER}: #{docket_number}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_ATTORNEY}: Yes"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGE}: #{judge_name}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_PROCEDURE}: #{decision_type}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_TYPE}: #{Constants.CAVC_REMAND_SUBTYPE_NAMES.jmr}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DECISION_DATE}: #{date}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}: #{date}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_MANDATE_DATE}: #{date}"
+        end
+      end
+    end
+  end
+
   before { Colocated.singleton.add_user(create(:user)) }
 
   describe "when CAVC Lit Support has a CAVC Remand case" do
