@@ -8,6 +8,9 @@ import { addMetaLabel } from 'utils/reader';
 import { ENDPOINT_NAMES } from 'store/constants/reader';
 import ApiUtil from 'app/util/ApiUtil';
 
+// Extract the Annotation Endpoint
+const { ANNOTATION } = ENDPOINT_NAMES;
+
 /**
  * Annotation Layer Initial State
  */
@@ -28,7 +31,7 @@ export const initialState = {
  */
 export const removeComment = createAsyncThunk('annotations/delete', async ({ docId, commentId }) => {
   // Send the Delete Request
-  await ApiUtil.delete(`/document/${docId}/annotation/${commentId}`, {}, ENDPOINT_NAMES.ANNOTATION);
+  await ApiUtil.delete(`/document/${docId}/annotation/${commentId}`, {}, ANNOTATION);
 
   // Return the Annotation ID
   return commentId;
@@ -45,11 +48,7 @@ export const moveComment = createAsyncThunk('annotations/move', async (annotatio
   // Don't update the temporary comment
   if (annotation.id !== 'placing-annotation-icon') {
   // Patch the Selected Annotation
-    await ApiUtil.patch(
-    `/document/${annotation.document_id}/annotation/${annotation.id}`,
-    { data },
-    ENDPOINT_NAMES.ANNOTATION
-    );
+    await ApiUtil.patch(`/document/${annotation.document_id}/annotation/${annotation.id}`, { data }, ANNOTATION);
 
   }
 
@@ -71,11 +70,7 @@ export const saveComment = createAsyncThunk('annotations/save', async (annotatio
   const data = ApiUtil.convertToSnakeCase({ annotation });
 
   // Patch the Selected Annotation
-  await ApiUtil.patch(
-    `/document/${annotation.document_id}/annotation/${annotation.id}`,
-    { data },
-    ENDPOINT_NAMES.ANNOTATION
-  );
+  await ApiUtil.patch(`/document/${annotation.document_id}/annotation/${annotation.id}`, { data }, ANNOTATION);
 
   // Return the Annotation to update the state
   return annotation;
@@ -90,11 +85,7 @@ export const createComment = createAsyncThunk('annotations/create', async (annot
   const data = ApiUtil.convertToSnakeCase({ annotation });
 
   // Patch the Selected Annotation
-  const { body } = await ApiUtil.post(
-    `/document/${annotation.document_id}/annotation`,
-    { data },
-    ENDPOINT_NAMES.ANNOTATION
-  );
+  const { body } = await ApiUtil.post(`/document/${annotation.document_id}/annotation`, { data }, ANNOTATION);
 
   // Add the request body to the annotation
   return {
