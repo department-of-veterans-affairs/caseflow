@@ -10,7 +10,12 @@ class VirtualHearings::SendReminderEmailsJob < ApplicationJob
     ensure_current_user_is_set
 
     VirtualHearingRepository.maybe_ready_for_reminder_email.each do |virtual_hearing|
-      send_reminder_emails(virtual_hearing)
+      begin
+        send_reminder_emails(virtual_hearing)
+      rescue StandardError => error # rescue any error and allow job to continue
+        Raven.capture_exception(error)
+        next
+      end
     end
   end
 
