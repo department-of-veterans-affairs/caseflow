@@ -798,7 +798,7 @@ RSpec.feature "Case details", :all_dbs do
           click_on("Search")
 
           click_on(appeal.docket_number)
-          expect(page).to have_content("Edit")
+          expect(find("#caseTitleDetailsSubheader")).to have_content("Edit")
         end
       end
     end
@@ -810,7 +810,7 @@ RSpec.feature "Case details", :all_dbs do
         visit("/queue/appeals/#{appeal.uuid}")
       end
       it "should not display the edit link" do
-        expect(page).to_not have_content("Edit")
+        expect(find("#caseTitleDetailsSubheader")).to_not have_content("Edit")
       end
     end
   end

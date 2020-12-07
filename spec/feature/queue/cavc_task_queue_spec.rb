@@ -105,6 +105,8 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
     end
   end
 
+  before { Colocated.singleton.add_user(create(:user)) }
+
   describe "when CAVC Lit Support has a CAVC Remand case" do
     let(:cavc_task) { create(:cavc_task) }
     let!(:appeal) { cavc_task.appeal }
@@ -164,12 +166,21 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
     let(:vet_name) { send_task.appeal.veteran_full_name }
 
     it "allows users to assign and process tasks" do
-      step "allows admin to assign SendCavcRemandProcessedLetterTask to user" do
+      step "admin adds admin actions" do
         # Logged in as CAVC Lit Support admin
         User.authenticate!(user: org_admin)
         visit "queue/appeals/#{send_task.appeal.external_id}"
 
+        click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label)
+        fill_in "taskInstructions", with: "Please translate the documents in spanish"
+        click_on "Submit"
+        expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Translation.singleton.name
+      end
+
+      step "admin assigns SendCavcRemandProcessedLetterTask to user" do
         find(".cf-select__control", text: "Select an action").click
+        expect(page).to have_content Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label
+        expect(page).to have_content Constants.TASK_ACTIONS.CLARIFY_POA_BLOCKING_CAVC.label
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label).click
 
         find(".cf-select__control", text: org_admin.full_name).click
@@ -177,7 +188,9 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         fill_in "taskInstructions", with: "Confirm info and send letter to Veteran."
         click_on "Submit"
         expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin.full_name
+      end
 
+      step "assigned user reassigns SendCavcRemandProcessedLetterTask" do
         # Logged in as first user assignee
         User.authenticate!(user: org_nonadmin)
         visit "queue/appeals/#{send_task.appeal.external_id}"
@@ -194,11 +207,54 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin2.full_name
       end
 
-      step "assigned user completes task" do
+      step "assigned user adds admin actions" do
         # Logged in as second user assignee (due to reassignment)
         User.authenticate!(user: org_nonadmin2)
         visit "queue/appeals/#{send_task.appeal.external_id}"
 
+        click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.label)
+        fill_in "taskInstructions", with: "Please transcribe the hearing on record for this appeal"
+        click_on "Submit"
+        expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % TranscriptionTeam.singleton.name
+
+        click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION.label)
+        fill_in "taskInstructions", with: "Please handle the freedom of intformation act request for this appeal"
+        click_on "Submit"
+        expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % PrivacyTeam.singleton.name
+
+        click_dropdown(text: Constants.TASK_ACTIONS.SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION.label)
+        fill_in "taskInstructions", with: "Have veteran's POA write an informal hearing presentation for this appeal"
+        click_on "Submit"
+        expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Colocated.singleton.name
+      end
+
+      step "assigned user adds blocking admin action" do
+        # Assign an admin action that DOES block the sending of the 90 day letter
+        click_dropdown(text: Constants.TASK_ACTIONS.CLARIFY_POA_BLOCKING_CAVC.label)
+        fill_in "taskInstructions", with: "Please find out the POA for this veteran"
+        click_on "Submit"
+        expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % CavcLitigationSupport.singleton.name
+
+        # Ensure there are no actions on the send letter task as it is blocked by poa clarification
+        active_task_rows = page.find("#currently-active-tasks").find_all("tr")
+        poa_task_row = active_task_rows[0]
+        send_task_row = active_task_rows[-3]
+        expect(poa_task_row).to have_content("TASK\n#{COPY::CAVC_POA_TASK_LABEL}")
+        expect(poa_task_row.find(".taskActionsContainerStyling").all("*", wait: false).length).to be > 0
+        expect(send_task_row).to have_content("TASK\n#{COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL}")
+        expect(send_task_row.find(".taskActionsContainerStyling").all("*", wait: false).length).to be 0
+
+        # Complete the task to unblock
+        click_dropdown(text: Constants.TASK_ACTIONS.MARK_COMPLETE.label)
+        fill_in "completeTaskInstructions", with: "POA verified"
+        click_on COPY::MARK_TASK_COMPLETE_BUTTON
+        visit "queue/appeals/#{send_task.appeal.external_id}"
+        send_task_row = page.find("#currently-active-tasks").find_all("tr")[-3]
+        expect(send_task_row).to have_content("TASK\n#{COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL}")
+        expect(send_task_row.find(".taskActionsContainerStyling").all("*", wait: false).length).to be > 0
+      end
+
+      step "assigned user completes task" do
         click_dropdown(text: Constants.TASK_ACTIONS.MARK_COMPLETE.label)
         fill_in "completeTaskInstructions", with: "Letter sent."
         click_on COPY::MARK_TASK_COMPLETE_BUTTON

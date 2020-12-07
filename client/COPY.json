@@ -110,6 +110,7 @@
   "CASE_DETAILS_POA_VSO": "Veteran Service Organization",
   "CASE_DETAILS_POA_AGENT": "Private Agent",
   "CASE_DETAILS_POA_ATTORNEY": "Private Attorney",
+  "CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY": "Edit NOD Date",
 
   "CASE_DETAILS_GENDER_FIELD_LABEL": "Gender",
   "CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE": "Female",
@@ -148,6 +149,13 @@
   "CAVC_INSTRUCTIONS_ERROR": "Please provide context and instructions for the remand",
   "CAVC_REMAND_CREATED_TITLE": "You have successfully created a CAVC remand case",
   "CAVC_REMAND_CREATED_DETAIL": "This has generated a 90-day letter task in your team's queue",
+
+  "EDIT_NOD_DATE_MODAL_TITLE": "Edit NOD Date",
+  "EDIT_NOD_DATE_MODAL_DESCRIPTION": "**Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.**",
+  "EDIT_NOD_DATE_LABEL": "NOD Date",
+  "EDIT_NOD_DATE_SUCCESS_ALERT_TITLE": "NOD date has been updated",
+  "EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE": "You have successfully updated the NOD date",
+  "EDIT_NOD_DATE_ERROR_ALERT_MESSAGE": "The new NOD date cannot be after today's date",
 
   "DROPDOWN_LABEL_JUDGE": "VLJ",
   "DROPDOWN_LABEL_HEARING_COORDINATOR": "Hearing Coordinator",
@@ -402,6 +410,11 @@
   "CRP_LETTER_RESP_WINDOW_TASK_LABEL": "CAVC-Remand-Processed-Letter Response Window Task",
   "CRP_LETTER_RESP_WINDOW_TASK_DEFAULT_INSTRUCTIONS": "The response window task will return to the CAVC Teams queue after 90 days or when manually ended early.",
 
+  "CAVC_SEND_TO_TEAM_BLOCKING_DISTRIBUTION_DETAIL": "Create a %s assigned to the %s team. This will not block you from completing your task to send the 90-day letter to the veteran.",
+  "CAVC_SEND_TO_TEAM_BLOCKING_CAVC_DETAIL": "Create a %s task assigned to the %s team. This will block you from sending the 90-day letter to the veteran until the new task is completed.",
+
+  "CAVC_POA_TASK_LABEL": "Clarify Power of Attorney",
+
   "ASSIGN_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS": "Postpone or cancel a hearing prior to the hearing date. This task will be auto-completed after the hearing's scheduled date.",
 
   "CHANGE_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS": "Change hearing disposition (Held, Canceled, No Show, Postponed) if it was marked in error.",
@@ -643,14 +656,17 @@
   "DOCKET_SWITCH_RECOMMENDATION_TITLE": "Switch Docket: Send %s's Request to a Judge",
   "DOCKET_SWITCH_RECOMMENDATION_INSTRUCTIONS": "Add and send your recommendation for this docket switch request to a Veteran's Law Judge.",
   "DOCKET_SWITCH_RULING_TASK_LABEL": "Rule on Docket Switch",
-  "DOCKET_SWITCH_REQUEST_TITLE": "%s's docket switch request has been sent to %s",
-  "DOCKET_SWITCH_REQUEST_MESSAGE": "This task will appear on your hold tab until it has been addressed by the VLJ.",
+  "DOCKET_SWITCH_RECOMMENDATION_SUCCESS_TITLE": "%s's docket switch request has been sent to %s",
+  "DOCKET_SWITCH_RECOMMENDATION_SUCCESS_MESSAGE": "This task will appear on your hold tab until it has been addressed by the VLJ.",
   "DOCKET_SWITCH_RULING_TITLE": "Switch Docket: Rule on %s's Request",
   "DOCKET_SWITCH_RULING_INSTRUCTIONS": "**Provided below is a summary of the pertinent facts used by the Office of the Clerk of the Board to prepare a docket switch ruling. Determine how you would like to rule on this request to switch dockets and select the corresponding button below.**\n\nThe hyperlink takes you to a draft ruling letter based on the recommended ruling. Please feel free to make any necessary edits to the ruling letter. You may then sign the letter. Inserting a hyperlink to a signed ruling letter is recommended, but optional.\n\nIf you have any questions, or need assistance making edits to the ruling letter, please [email](mailto:BVA.Clerk@va.gov) the Office of the Clerk of the Board or use the text box below to provide any additional context or instructions.\n\nWhen you click \"Confirm,\" the task will automatically be returned to the individual who assigned it to you. If you would like to return the task to a different individual, please use the drop down box to select a different name.",
+  "DOCKET_SWITCH_RULING_SUCCESS_TITLE": "You have %s %s's request to switch dockets",
+  "DOCKET_SWITCH_RULING_SUCCESS_MESSAGE": "This will be sent to the assigned member of the Office of the Clerk of the Board.",
   "DOCKET_SWITCH_DENIAL_TITLE": "Switch Docket: Deny %s's Request",
   "DOCKET_SWITCH_DENIAL_INSTRUCTIONS": "Add the date and add any context for the denial of this switch.",
   "DENIED_DOCKET_SWITCH_TASK_LABEL": "Denied Docket Switch",
   "GRANTED_DOCKET_SWITCH_TASK_LABEL": "Granted Docket Switch",
+
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
   "CORRECT_REQUEST_ISSUES_WITHDRAW": "Withdraw",

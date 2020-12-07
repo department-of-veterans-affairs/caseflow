@@ -442,7 +442,7 @@ describe Appeal, :all_dbs do
       end
 
       it "updates the stream docket number if receipt_date changes" do
-        appeal.update_receipt_date!(Date.new(2020, 11, 12))
+        appeal.update_receipt_date!(receipt_date: Date.new(2020, 11, 12))
         expect(appeal.stream_docket_number).to eq("201112-#{appeal.id}")
       end
     end
