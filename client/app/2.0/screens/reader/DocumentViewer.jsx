@@ -348,10 +348,6 @@ DocumentViewer.propTypes = {
   singleDocumentMode: PropTypes.bool,
   match: PropTypes.object,
   annotations: PropTypes.array,
-
-  // Required actions
-  onScrollToComment: PropTypes.func,
-  stopPlacingAnnotation: PropTypes.func,
 };
 
 export default DocumentViewer;

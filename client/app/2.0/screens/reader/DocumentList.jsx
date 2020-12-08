@@ -108,8 +108,6 @@ DocumentList.propTypes = {
   annotations: PropTypes.array,
 
   // Required actions
-  onScrollToComment: PropTypes.func,
-  stopPlacingAnnotation: PropTypes.func,
   setCategoryFilter: PropTypes.func,
 };
 

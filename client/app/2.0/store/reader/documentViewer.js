@@ -27,7 +27,6 @@ const pdfDocuments = {};
 const initialErrorState = {
   tag: { visible: false, message: null },
   category: { visible: false, message: null },
-  annotation: { visible: false, message: null },
   description: { visible: false, message: null }
 };
 
@@ -356,73 +355,6 @@ const documentViewerSlice = createSlice({
     toggleSearchBar: (state, action) => {
       state.hideSearchBar = action.payload === null ? !state.hideSearchBar : action.payload;
     },
-    updateSearchIndex: {
-      reducer: (state, action) => {
-        // Increment or Decrement the match index based on the payload
-        state.matchIndex = action.payload.increment ?
-          state.matchIndex + 1 :
-          state.matchIndex - 1;
-      },
-      prepare: (increment) => ({ payload: { increment } })
-    },
-    setSearchIndex: {
-      reducer: (state, action) => {
-        // Update the Search Index
-        state.matchIndex = action.payload.index;
-      },
-      prepare: (index) => ({ payload: { index } })
-    },
-    setSearchIndexToHighlight: {
-      reducer: (state, action) => {
-        // Update the Search Index
-        state.search.matchIndex = action.payload.index;
-      },
-      prepare: (index) => ({ payload: { index } })
-    },
-    updateSearchIndexPage: {
-      reducer: (state, action) => {
-        // Update the Page Index
-        state.pageIndexWithMatch = action.payload.index;
-      },
-      prepare: (index) => ({ payload: { index } })
-    },
-    updateSearchRelativeIndex: {
-      reducer: (state, action) => {
-        // Update the Relative Index
-        state.relativeIndex = action.payload.index;
-      },
-      prepare: (index) => ({ payload: { index } })
-    },
-    setSearchIsLoading: {
-      reducer: (state, action) => {
-        // Update the Search Term
-        state.search.searchIsLoading = action.payload.searchIsLoading;
-      },
-      prepare: (searchIsLoading) => ({ payload: { searchIsLoading } })
-    },
-    handleSelectCommentIcon: {
-      reducer: (state, action) => {
-        state.scrollToSidebarComment = action.payload.scrollToSidebarComment;
-      },
-      prepare: (comment) => ({ payload: { scrollToSidebarComment: comment } })
-    },
-    closeDocumentUpdatedModal: {
-      reducer: (state, action) => {
-        // Update the rotation of the document
-        state.list[action.payload.docId].wasUpdated = false;
-      },
-      prepare: (docId) => ({ payload: { docId } })
-    },
-    handleToggleCommentOpened: {
-      reducer: (state, action) => {
-        // Update the rotation of the document
-        state.list[action.payload.docId].listComments =
-          !state.list[action.payload.docId].listComments;
-      },
-      prepare: (docId) =>
-        addMetaLabel('toggle-comment-list', { docId }, (state) =>
-          state.list[docId].listComments ? 'open' : 'close')
-    },
   },
   extraReducers: (builder) => {
     builder.
@@ -449,6 +381,13 @@ const documentViewerSlice = createSlice({
         state.scale = action.payload.scale;
         state.viewport = action.payload.viewport;
       }).
+      addCase(saveDescription.rejected, (state, action) => {
+        // Set the error state
+        state.errors.description = {
+          visible: true,
+          message: action.error.message
+        };
+      }).
       addCase(saveDescription.fulfilled, (state, action) => {
         state.selected.pendingDescription = null;
         state.selected.description = action.payload.description;
@@ -474,6 +413,9 @@ const documentViewerSlice = createSlice({
         state.pendingTag = true;
       }).
       addCase(removeTag.fulfilled, (state, action) => {
+        // Reset the state on success
+        state.pendingTag = false;
+
         // Filter out the removed text
         state.selected.tags = state.selected.tags.filter((tag) => tag.text !== action.payload.tag.text);
       }).
@@ -487,9 +429,18 @@ const documentViewerSlice = createSlice({
       addCase(handleCategoryToggle.pending, (state) => {
         state.pendingCategory = true;
       }).
+      addCase(handleCategoryToggle.rejected, (state, action) => {
+        state.pendingCategory = false;
+
+        // Set the error state
+        state.errors.category = {
+          visible: true,
+          message: action.error.message
+        };
+      }).
       addCase(handleCategoryToggle.fulfilled, (state, action) => {
         // Reset the state
-        state.pendingCategory = true;
+        state.pendingCategory = false;
 
         // Apply the Category toggle
         state.selected[action.payload.category] = action.payload.toggleState;
@@ -506,13 +457,7 @@ const documentViewerSlice = createSlice({
 
 // Export the Reducer actions
 export const {
-  changePendingDocDescription,
-  resetPendingDocDescription,
   rotateDocument,
-  closeDocumentUpdatedModal,
-  handleToggleCommentOpened,
-  handleSelectCommentIcon,
-  onScrollToComment,
   setZoomLevel,
   togglePdfSideBar,
   toggleSearchBar,

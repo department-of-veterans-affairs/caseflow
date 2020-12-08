@@ -11,11 +11,12 @@ import { formatTagValue } from 'utils/reader';
  * Issue Tags Component for searching Document Issue Tags
  * @param {Object} props -- Contains details to search for document tags
  */
-export const IssueTags = ({ errors, doc, changeTags, tagOptions, currentDocument }) => (
+export const IssueTags = ({ errors, pendingTag, changeTags, tagOptions, currentDocument }) => (
   <div className="cf-issue-tag-sidebar">
     {errors?.tag?.visible && <CannotSaveAlert />}
     <SearchableDropdown
-      key={doc.id}
+      readOnly={pendingTag}
+      key={currentDocument.id}
       name="tags"
       label="Select or tag issues"
       multi
@@ -30,7 +31,7 @@ export const IssueTags = ({ errors, doc, changeTags, tagOptions, currentDocument
 );
 
 IssueTags.propTypes = {
-  doc: PropTypes.object,
+  pendingTag: PropTypes.bool,
   changeTags: PropTypes.func,
   errors: PropTypes.object,
   tagOptions: PropTypes.array,
