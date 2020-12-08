@@ -42,7 +42,7 @@ export const EditComment = ({
       onKeyDown={keyListener}
       id={nodeId}
       onChange={onChange}
-      value={comment.pendingComment || comment.comment}
+      value={comment.pendingComment === null ? comment.comment : comment.pendingComment}
       onCancelClick={resetEdit}
       onSaveClick={saveComment}
       disabled={savingComment || (disableOnEmpty && !comment.pendingComment.trim())}

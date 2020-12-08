@@ -133,6 +133,7 @@ const annotationLayerSlice = createSlice({
     startEdit: (state, action) => {
       state.comments = state.comments.map((comment) => ({
         ...comment,
+        pendingComment: comment.comment,
         editing: comment.id === action.payload
       }));
 

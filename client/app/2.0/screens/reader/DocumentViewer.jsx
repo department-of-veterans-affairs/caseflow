@@ -88,6 +88,7 @@ const DocumentViewer = (props) => {
         // Pull the value to delete out of the list
         const [tag] = deleted;
 
+        // Request the removal of the selected tags
         dispatch(removeTag({
           doc: state.currentDocument,
           tag: state.currentDocument.tags.reduce((list, item) => item.text === tag.label ? item : list, {})
@@ -167,6 +168,10 @@ const DocumentViewer = (props) => {
     cancelDrop: () => dispatch(cancelDrop()),
     addComment: () => dispatch(addComment()),
     saveComment: (comment, action = 'save') => {
+      // Handle empty comments
+      if (comment.pendingComment === '' && action === 'save') {
+        return dispatch(toggleDeleteModal(comment.id));
+      }
       // Calculate the comment data to update/create
       const data = {
         ...comment,
