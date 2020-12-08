@@ -131,8 +131,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
  * Wrapper for veteran components that handles requesting veteran information from the back end, displaying a loading
  * icon while waiting, an error if it exists, and finally the wrapped component
  *
- * @param {Object} veteran An object containing information about the veteran, including their adress and state.
- *
  * Uses this pattern for higher order components: https://reactjs.org/docs/higher-order-components.html
  */
 const wrapVeteranDetailComponent = (WrappedComponent) => (
