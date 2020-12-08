@@ -125,7 +125,7 @@ describe VirtualHearings::SendReminderEmailsJob do
     end
 
     context "hearing date is 2 days out" do
-      let(:hearing_date) { Time.zone.now + 1.days } # at most 2 days out
+      let(:hearing_date) { Time.zone.now + 1.day } # at most 2 days out
 
       context "sent reminder emails 5 days out" do
         let(:appellant_reminder_sent_at) { hearing_date - 4.days }
