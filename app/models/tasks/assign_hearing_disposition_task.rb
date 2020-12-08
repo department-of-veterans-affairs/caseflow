@@ -137,10 +137,7 @@ class AssignHearingDispositionTask < Task
   end
 
   def update_children_status_after_closed
-    update_args = { status: status }
-    update_args[:closed_at] = Time.zone.now unless open?
-    update_args[:cancelled_by_id] = RequestStore[:current_user]&.id if cancelled?
-    children.open.update_all(update_args)
+    children.open.each { |task| task.update!(status: status) }
   end
 
   def cascade_closure_from_child_task?(_child_task)

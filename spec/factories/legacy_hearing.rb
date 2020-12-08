@@ -4,6 +4,7 @@ FactoryBot.define do
   factory :legacy_hearing do
     transient do
       regional_office { nil }
+      disposition { nil }
       hearing_day do
         create(:hearing_day,
                regional_office: regional_office,
@@ -20,7 +21,6 @@ FactoryBot.define do
     scheduled_for { hearing_day&.scheduled_for }
 
     transient do
-      disposition { nil }
       case_hearing do
         create(
           :case_hearing,
