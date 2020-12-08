@@ -34,7 +34,7 @@ export const EditableField = (props) => {
 
   const onSaveClick = () => {
     stopEditing();
-    onSave(value);
+    onSave?.(value);
   };
 
   const saveOnEnter = (event) => {
@@ -45,12 +45,10 @@ export const EditableField = (props) => {
 
   const onCancelClick = () => {
     stopEditing();
-    onCancel();
+    onCancel?.();
   };
 
-  const onValueChange = (event) => {
-    onChange(event.target.value);
-  };
+  const onValueChange = (event) => onChange?.(event.target.value);
 
   if (editing) {
     actionLinks = <span>
