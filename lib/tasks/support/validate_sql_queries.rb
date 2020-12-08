@@ -73,6 +73,7 @@ class ValidateSqlQueries
       fail rails_error if rails_error
     end
 
+    # :reek:LongParameterList
     def run_sql_query(sql_query:, rails_sql_postproc: "", db_connection_string: nil, **_other_keys)
       sql_result, sql_error = eval_sql_query(sql_query, rails_sql_postproc, db_connection_string)
       yield("sql", sql_result, sql_error) if block_given?
