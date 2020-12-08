@@ -14,7 +14,7 @@ import {
   COMPLETE_ROTATION,
   COMMENT_ACCORDION_KEY
 } from 'store/constants/reader';
-import { addMetaLabel, formatCategoryName } from 'utils/reader';
+import { addMetaLabel, formatCategoryName, formatTagValue } from 'utils/reader';
 import { removeComment } from 'store/reader/annotationLayer';
 import { markDocAsRead } from 'store/reader/documentList';
 
@@ -24,7 +24,7 @@ const pdfDocuments = {};
 /**
  * PDF SideBar Error State
  */
-const initialPdfSidebarErrorState = {
+const initialErrorState = {
   tag: { visible: false, message: null },
   category: { visible: false, message: null },
   annotation: { visible: false, message: null },
@@ -35,6 +35,8 @@ const initialPdfSidebarErrorState = {
  * PDF Initial State
  */
 export const initialState = {
+  pendingTag: false,
+  pendingCategory: false,
   viewport: {
     height: PDF_PAGE_HEIGHT,
     width: PDF_PAGE_WIDTH,
@@ -46,14 +48,14 @@ export const initialState = {
   pageDimensions: {},
   documentErrors: {},
   text: [],
+  tags: [],
   selected: {},
   loading: false,
   keyboardInfoOpen: false,
   openedAccordionSections: ['Categories', 'Issue tags', COMMENT_ACCORDION_KEY],
-  tagOptions: {},
   jumpToPageNumber: null,
   scrollTop: 0,
-  pdfSideBarError: initialPdfSidebarErrorState,
+  errors: initialErrorState,
   scrollToSidebarComment: null,
   scale: 1,
   windowingOverscan: random(5, 10).toString(),
@@ -271,12 +273,12 @@ export const removeTag = createAsyncThunk('documentViewer/removeTag', async({ do
 /**
  * Dispatcher to Add Tags for a Document
  */
-export const addTag = createAsyncThunk('documentViewer/addTag', async({ doc, newTags }) => {
+export const addTag = createAsyncThunk('documentViewer/addTag', async({ doc, tags }) => {
   // Request the addition of the selected tags
-  const { body } = await ApiUtil.post(`/document/${doc.id}/tag`, { data: { tags: newTags } }, ENDPOINT_NAMES.TAG);
+  const { body } = await ApiUtil.post(`/document/${doc.id}/tag`, { data: { tags } }, ENDPOINT_NAMES.TAG);
 
   // Return the selected document and tag to the next Dispatcher
-  return { doc, newTags, ...body };
+  return { doc, ...body };
 });
 
 /**
@@ -451,57 +453,44 @@ const documentViewerSlice = createSlice({
         state.selected.pendingDescription = null;
         state.selected.description = action.payload.description;
       }).
-      addCase(addTag.pending, {
-        reducer: (state, action) => {
-        // Set the tags that are being created
-          state.list[action.payload.doc.id].tags.push(action.payload.newTags);
-        },
-        prepare: (doc, tags) => {
-        // Calculate the new Tags
-          const newTags = differenceWith(doc.tags, tags, (tag, currentTag) =>
-            tag.value === currentTag.text).map((tag) => ({ text: tag.label, id: uuid.v4(), temporaryId: true }));
-
-          // Return the formatted payload
-          return {
-            payload: {
-              newTags,
-              doc
-            }
-          };
-        }
+      addCase(addTag.pending, (state) => {
+        state.pendingTag = true;
       }).
       addCase(addTag.fulfilled, (state, action) => {
-        state.list[action.payload.doc.id].tags = state.list[action.payload.doc.id].tags.map((tag) => {
-          // Locate the created tag
-          const createdTag = find(action.payload.tags, pick(tag, 'text'));
+        // Reset the state
+        state.pendingTag = false;
 
-          // If there is a created Tag, return that
-          if (createdTag) {
-            return createdTag;
-          }
-
-          // Default to return the original tag
-          return tag;
-        });
+        // Update the tags
+        state.selected.tags = action.payload.tags;
       }).
       addCase(addTag.rejected, (state, action) => {
-      // Remove the tags that were attempted to be added
-        state.list[action.payload.doc.id].tags =
-        differenceBy(state.list[action.payload.doc.id].tags, action.payload.newTags, 'text');
+        // Set the error state
+        state.errors.tag = {
+          visible: true,
+          message: action.error.message
+        };
       }).
-      addCase(removeTag.pending, (state, action) => {
-      // Set the pending Removal for the selected tag to true
-        state.list[action.payload.doc.id].tags[action.payload.tag.id].pendingRemoval = true;
+      addCase(removeTag.pending, (state) => {
+        state.pendingTag = true;
       }).
       addCase(removeTag.fulfilled, (state, action) => {
-      // Remove the tag from the list
-        delete state.list[action.payload.doc.id].tags[action.payload.tag.id];
+        // Filter out the removed text
+        state.selected.tags = state.selected.tags.filter((tag) => tag.text !== action.payload.tag.text);
       }).
       addCase(removeTag.rejected, (state, action) => {
-        // Reset the pending Removal for the selected tag to false
-        state.list[action.payload.doc.id].tags[action.payload.tag.id].pendingRemoval = false;
+        // Set the error state
+        state.errors.tag = {
+          visible: true,
+          message: action.error.message
+        };
+      }).
+      addCase(handleCategoryToggle.pending, (state) => {
+        state.pendingCategory = true;
       }).
       addCase(handleCategoryToggle.fulfilled, (state, action) => {
+        // Reset the state
+        state.pendingCategory = true;
+
         // Apply the Category toggle
         state.selected[action.payload.category] = action.payload.toggleState;
       }).

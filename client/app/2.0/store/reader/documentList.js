@@ -13,7 +13,7 @@ import {
   getQueueRedirectUrl,
   getQueueTaskType
 } from 'utils/reader';
-import { showPdf, handleCategoryToggle } from 'store/reader/documentViewer';
+import { showPdf, handleCategoryToggle, addTag, removeTag } from 'store/reader/documentViewer';
 
 /**
  * PDF Initial State
@@ -26,6 +26,7 @@ export const initialState = {
   view: DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS,
   searchCategoryHighlights: {},
   filteredDocIds: [],
+  tagOptions: [],
   filterCriteria: {
     sort: {
       sortBy: 'receivedAt',
@@ -194,6 +195,7 @@ const documentListSlice = createSlice({
         state.documents[action.payload.docId][action.payload.category] = action.payload.toggleState;
       }).
       addCase(loadDocuments.fulfilled, (state, action) => {
+        // Apply the documents to the store
         state.documents = action.payload.documents.reduce((list, doc) => ({
           ...list,
           [doc.id]: {
@@ -203,6 +205,11 @@ const documentListSlice = createSlice({
             wasUpdated: !isNil(doc.previous_document_version_id) && !doc.opened_by_current_user
           }
         }), {});
+
+        // Map the unique document tags to an array of tag options
+        state.tagOptions = action.payload.documents.
+          map((doc) => doc.tags).
+          reduce((list, item) => list.includes(item) ? list : [...list, ...item], []);
       }).
       /* eslint-disable */
       addCase(markDocAsRead.rejected, (state, action) => {
@@ -232,6 +239,23 @@ const documentListSlice = createSlice({
         ].includes(action.type),
         (state, action) => {
           updateLastReadDoc(state, action.payload.currentDocument.id);
+        }
+      ).
+      addMatcher(
+        (action) => [
+          removeTag.fulfilled.toString()
+        ].includes(action.type),
+        (state, action) => {
+          state.documents[action.payload.doc.id].tags =
+            action.payload.doc.tags.filter((tag) => tag.text !== action.payload.tag.text);
+        }
+      ).
+      addMatcher(
+        (action) => [
+          addTag.fulfilled.toString()
+        ].includes(action.type),
+        (state, action) => {
+          state.documents[action.payload.doc.id].tags = action.payload.tags;
         }
       ).
       addMatcher(

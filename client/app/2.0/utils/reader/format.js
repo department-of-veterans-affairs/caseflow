@@ -215,3 +215,21 @@ export const getQueueTaskType = () => {
   // Return either the parsed Task Type or null
   return query.queue_task_type ? decodeURIComponent(query.queue_task_type) : null;
 };
+
+/**
+ * Helper Method to map tags to appropriate options in the SearchableDropdown
+ * @param {Array} tags -- List of tags to be formatted
+ */
+export const formatTagValue = (tags) => tags.map((tag) => ({
+  value: tag.text,
+  label: tag.text,
+  tagId: tag.id
+}));
+
+/**
+ * Helper Method to map tags to appropriate options in the SearchableDropdown
+ * @param {Array} tags -- List of tags to be formatted
+ */
+export const formatTagOptions = (documents) => Object.keys(documents).
+  map((doc) => documents[doc].tags).
+  reduce((list, item) => list.includes(item) ? list : [...list, ...item], []);

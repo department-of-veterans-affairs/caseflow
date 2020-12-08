@@ -1,7 +1,6 @@
 // Local Dependencies
 import { documentCategories } from 'store/constants/reader';
-import { formatCategoryName } from 'app/2.0/utils/reader/format';
-import { documentsView } from 'utils/reader';
+import { documentsView, formatTagOptions, formatTagValue, formatCategoryName } from 'utils/reader';
 
 /**
  * Filtered Documents state
@@ -39,15 +38,10 @@ export const documentListScreen = (state) => {
   // Get the filtered documents and count
   const { documents, docsCount } = documentState(state);
 
-  // Calculate the Tag Options
-  const tagOptions = Object.keys(state.reader.documentList.documents).
-    map((doc) => state.reader.documentList.documents[doc].tags).
-    reduce((list, item) => list.includes(item) ? list : [...list, ...item], []);
-
   return {
     documents,
     docsCount,
-    tagOptions,
+    tagOptions: formatTagOptions(state.reader.documentList.documents),
     currentDocument: state.reader.documentViewer.selected,
     storeDocuments: state.reader.documentList.documents,
     documentList: state.reader.documentList,
@@ -64,8 +58,6 @@ export const documentListScreen = (state) => {
     manifestVvaFetchedAt: state.reader.documentList.manifestVvaFetchedAt,
     queueRedirectUrl: state.reader.documentList.queueRedirectUrl,
     queueTaskType: state.reader.documentList.queueTaskType,
-    documentFilters: state.reader.documentList.pdfList.filters,
-    isPlacingAnnotation: state.reader.annotationLayer.isPlacingAnnotation,
     appeal: state.reader.appeal.selected,
     scale: state.reader.documentViewer.scale
   };
@@ -99,6 +91,10 @@ export const documentScreen = (state) => {
     docsCount,
     categories,
     comments,
+    pendingTag: state.reader.documentViewer.pendingTag,
+    pendingCategory: state.reader.documentViewer.pendingCategory,
+    documentTags: state.reader.documentViewer.tags,
+    tagOptions: formatTagValue(formatTagOptions(state.reader.documentList.documents)),
     viewport: state.reader.documentViewer.viewport,
     keyboardInfoOpen: state.reader.documentViewer.keyboardInfoOpen,
     pendingDeletion: state.reader.annotationLayer.pendingDeletion,
@@ -118,15 +114,14 @@ export const documentScreen = (state) => {
     filteredDocIds: state.reader.documentList.filteredDocIds,
     appeal: state.reader.appeal.selected,
     searchCategoryHighlights: state.reader.documentList.searchCategoryHighlights,
-    documentFilters: state.reader.documentList.pdfList.filters,
     storeDocuments: state.reader.documentList.documents,
-    isPlacingAnnotation: state.reader.annotationLayer.isPlacingAnnotation,
     annotationLayer: state.reader.annotationLayer,
     hidePdfSidebar: state.reader.documentViewer.hidePdfSidebar,
     hideSearchBar: state.reader.documentViewer.hideSearchBar,
     scale: state.reader.documentViewer.scale,
     errors: {
-      comments: state.reader.annotationLayer.errors
+      ...state.reader.documentViewer.errors,
+      comments: state.reader.annotationLayer.errors,
     },
   };
 };

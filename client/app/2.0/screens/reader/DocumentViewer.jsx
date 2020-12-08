@@ -32,7 +32,9 @@ import {
   handleCategoryToggle,
   setPageNumber,
   searchText,
-  toggleKeyboardInfo
+  toggleKeyboardInfo,
+  addTag,
+  removeTag
 } from 'store/reader/documentViewer';
 import {
   selectComment,
@@ -80,6 +82,29 @@ const DocumentViewer = (props) => {
 
   // Create the dispatchers
   const actions = {
+    changeTags: (values, deleted) => {
+      // Delete tags if there are any removed
+      if (deleted) {
+        // Pull the value to delete out of the list
+        const [tag] = deleted;
+
+        dispatch(removeTag({
+          doc: state.currentDocument,
+          tag: state.currentDocument.tags.reduce((list, item) => item.text === tag.label ? item : list, {})
+        }));
+      } else if (values?.length) {
+        // Set the tags to create
+        const tags = values.
+          filter((value) => !state.currentDocument.tags.map((tag) => tag.text).includes(value.label)).
+          map((tag) => ({ text: tag.label }));
+
+        // Request the creation of the new tags
+        dispatch(addTag({
+          doc: state.currentDocument,
+          tags
+        }));
+      }
+    },
     getCoords: (event, pageIndex) => getPageCoordinatesOfMouseEvent(
       event,
       document.getElementById(`comment-layer-${pageIndex}`).getBoundingClientRect(),
