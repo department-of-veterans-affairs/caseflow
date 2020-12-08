@@ -37,11 +37,13 @@ class WarmBgsCachesJob < CaseflowJob
 
   def warm_poa_caches
     # We do 4 passes to update our POA cache (bgs_power_of_attorney table).
-    # 1. Look at 2000 poa (legacy + ama) record in a hearings priority order and update and cache in CachedAppeal
-    # 2. Look at 1000 poa (legacy + ama) record appeals with most recently assigned ScheduleHearingTask and
+    # 1. Look at 2000 poa (LIMITS[:PRIORITY] for legacy + ama) record in a hearings priority order and
     #    update and cache in CachedAppeal
-    # 3. Look at 14,00 Claimants w/o POA associated record and create cached record and cache in CachedAppeal
-    # 4. Look at the 1000 oldest cached records and update them
+    # 2. Look at 1000 poa (LIMITS[:MOST_RECENT] for legacy + ama) record appeals with most recently
+    #    assigned ScheduleHearingTask and update and cache in CachedAppeal
+    # 3. Look at 1400 (LIMITS[:OLDEST_CLAIMANT]) Claimants w/o POA associated record and create
+    #    cached record and cache in CachedAppeal
+    # 4. Look at the 1000 LIMITS[:OLDEST_CACHED]) oldest cached records and update them
 
     # we average about 10k Claimant rows created a week.
     # we very rarely update the Claimant record after we create it.
@@ -58,7 +60,9 @@ class WarmBgsCachesJob < CaseflowJob
     warm_poa_and_cache_for_appeals_for_hearings_most_recent
     warm_poa_and_cache_ama_appeals_for_oldest_claimants
     warm_poa_for_oldest_cached_records
-
+  rescue StandardError => error
+    capture_exception(error)
+  else
     log_warning unless warning_msgs.empty?
   end
 
@@ -110,7 +114,9 @@ class WarmBgsCachesJob < CaseflowJob
   def warm_poa_for_oldest_cached_records
     start_time = Time.zone.now
     oldest_bgs_poa_records.limit(LIMITS[:OLDEST_CACHED]).each do |bgs_poa|
-      bgs_poa.save_with_updated_bgs_record! if bgs_poa.stale_attributes?
+      begin
+        bgs_poa.save_with_updated_bgs_record! if bgs_poa.stale_attributes?
+      rescue Errno::ECONNRESET, Savon::HTTPError => error; end
     end
     datadog_report_time_segment(segment: "warm_poa_bgs_oldest", start_time: start_time)
   end
