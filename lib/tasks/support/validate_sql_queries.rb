@@ -28,12 +28,17 @@ class ValidateSqlQueries
     def run_queries_and_save_output(filename, output_dir)
       puts "  Processing '#{filename}' ..."
       basename = File.basename(filename, File.extname(filename))
-      # Run the queries from the file and save each output to different files for comparison
-      run_queries(**extract_queries(IO.read(filename))) do |result_key, result, _error|
+      queries = extract_queries(IO.read(filename))
+      save_results = lambda do |result_key, result, _error|
         output_filename = "#{basename}.#{result_key}-out"
         puts "    Saving output to #{output_filename}"
         File.open("#{output_dir}/#{output_filename}", "w") { |file| file.puts result.to_s }
       end
+
+      run_rails_query(**queries, &save_results) unless File.exist?("#{output_dir}/#{basename}.rb-out")
+
+      # If Metabase's query results exists, then don't need to run the SQL query
+      run_sql_query(**queries, &save_results) unless File.exist?("#{output_dir}/#{basename}.mb-out")
     rescue ScriptError, StandardError => error
       warn "    !Skipping due to error when executing query: #{error.message.lines.first}"
     end
@@ -60,43 +65,52 @@ class ValidateSqlQueries
       query.strip
     end
 
-    # :reek:LongParameterList
-    def run_queries(rails_query:, sql_query:, rails_sql_postproc: "", db_connection_string: nil)
-      if rails_query.present?
-        # Execute Rails query
-        rails_result, rails_error = eval_rails_query(rails_query)
-        yield("rb", rails_result, rails_error) if block_given?
-        fail rails_error if rails_error
+    def run_rails_query(rails_query:, **_other_keys)
+      fail "No Rails query found in the SQL!" if rails_query.blank?
 
-        # Execute SQL query
-        sql_result, sql_error = eval_sql_query(sql_query, rails_sql_postproc, db_connection_string)
-        yield("sql", sql_result, sql_error) if block_given?
-        fail sql_error if sql_error
-      else
-        warn "    !No Rails query found in the SQL -- skipping."
-      end
+      rails_result, rails_error = eval_rails_query(rails_query)
+      yield("rb", rails_result, rails_error) if block_given?
+      fail rails_error if rails_error
+    end
+
+    def run_sql_query(sql_query:, rails_sql_postproc: "", db_connection_string: nil, **_other_keys)
+      sql_result, sql_error = eval_sql_query(sql_query, rails_sql_postproc, db_connection_string)
+      yield("sql", sql_result, sql_error) if block_given?
+      fail sql_error if sql_error
     end
 
     def compare_output_files(output_dir)
-      puts "Comparing query output files in #{output_dir} ..."
       Dir.chdir(output_dir) do
-        diffs = Dir["*.rb-out"].sort.map do |rb_out_file|
+        rb_out_files = Dir["*.rb-out"].sort
+        puts "Comparing query output files in #{output_dir} for #{rb_out_files.count} files..."
+
+        diffs = rb_out_files.map do |rb_out_file|
           basename = File.basename(rb_out_file, File.extname(rb_out_file))
-          sql_out_file = "#{basename}.sql-out"
-          if File.exist?(sql_out_file)
-            files_are_same = FileUtils.identical?(rb_out_file, sql_out_file)
-            warn "  Different: #{rb_out_file} #{sql_out_file}" unless files_are_same
-            basename unless files_are_same
-          else
-            warn "  No associated SQL output found for #{rb_out_file} "
-            basename
+          sql_out_file = ["#{basename}.mb-out", "#{basename}.sql-out"].find { |out_file| File.exist?(out_file) }
+          unless sql_out_file
+            warn "  No associated SQL output found for #{rb_out_file}"
+            next basename
           end
+
+          unless files_are_same?(rb_out_file, sql_out_file)
+            warn "  Results don't match: #{rb_out_file}"
+            next basename
+          end
+
+          nil
         end.compact
         diffs
       end
     end
 
-    MAP_TO_STRING = "map{|r| r.to_s}.join('\n')"
+    # When comparing Metabase output, Metabase returns Date fields with a time component --
+    # see https://github.com/metabase/metabase/issues/5859
+    # So the SQL query should covert date columns to strings for comparison.
+    def files_are_same?(rb_out_file, out_file)
+      FileUtils.identical?(rb_out_file, out_file)
+    end
+
+    MAP_TO_STRING = "map{|r| r.map(&:inspect).join(',')}.join('\n')"
 
     def eval_rails_query(query)
       # Use default postprocessing to split results into separate lines if "array_output" appears in query

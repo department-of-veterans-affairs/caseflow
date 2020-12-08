@@ -6,7 +6,12 @@ describe "sql", :postgres do
   include_context "rake"
 
   describe "sql:validate" do
+    # Same as: bundle exec rake 'sql:validate[reports/sql_queries,reports/queries_output]'
     let(:args) { ["reports/sql_queries", "reports/queries_output"] }
+
+    before do
+      FileUtils.rm_rf("reports/queries_output")
+    end
 
     subject do
       Rake::Task["sql:validate"].reenable
@@ -14,8 +19,8 @@ describe "sql", :postgres do
     end
 
     context "using queries in reports/sql_queries" do
-      it "completes validation" do
-        expect { subject }.to output(/SUMMARY: 0 out of [0-9]* queries are different./).to_stdout
+      it "completes validation with possible errors noted in console" do
+        expect { subject }.to output(/SUMMARY: [0-9]* out of [0-9]* queries are different./).to_stdout
       end
     end
   end
@@ -73,8 +78,8 @@ describe "sql", :postgres do
     end
   end
 
-  describe "ValidateSqlQueries.run_queries" do
-    let(:rails_query) { "[Appeal.count]" }
+  describe "ValidateSqlQueries.run_*_queries" do
+    let(:rails_query) { "Appeal.count" }
     let(:sql_query) { "SELECT COUNT(*) FROM appeals" }
     let(:extracted_queries) do
       {
@@ -83,12 +88,17 @@ describe "sql", :postgres do
       }
     end
 
+    def run_queries(queries, &check_results)
+      ValidateSqlQueries.run_rails_query(**queries, &check_results)
+      ValidateSqlQueries.run_sql_query(**queries, &check_results)
+    end
+
     context "valid queries" do
       it "executes queries without error" do
         aggregate_failures do
-          ValidateSqlQueries.run_queries(extracted_queries) do |result_key, result, error|
+          run_queries(extracted_queries) do |result_key, result, error|
             expect(%w[rb sql].include?(result_key))
-            expect(result.to_s).to eq "[0]"
+            expect(result.to_s).to eq "0"
             expect(error).to be_nil
           end
         end
@@ -99,7 +109,7 @@ describe "sql", :postgres do
       it "presents results that don't match" do
         results = []
         aggregate_failures do
-          ValidateSqlQueries.run_queries(extracted_queries) do |result_key, result, error|
+          run_queries(extracted_queries) do |result_key, result, error|
             expect(%w[rb sql].include?(result_key))
             results << result.to_s
             expect(error).to be_nil
@@ -110,18 +120,16 @@ describe "sql", :postgres do
     end
     context "empty Rails query" do
       let(:rails_query) { "" }
-      it "skips validation" do
-        ValidateSqlQueries.run_queries(extracted_queries) { |_result_key, _result, _error| fail "Should not happen" }
-        expect { |b| ValidateSqlQueries.run_queries(extracted_queries, &b) }.not_to yield_control
-        expect { ValidateSqlQueries.run_queries(extracted_queries) }.to output(/No Rails query found/).to_stderr
+      it "raises error" do
+        expect { run_queries(extracted_queries) }.to raise_error(RuntimeError, /No Rails query found/)
       end
     end
     context "invalid Rails query" do
-      let(:rails_query) { "[Appeal.countZZ]" }
+      let(:rails_query) { "Appeal.countZZ" }
       it "raises an error" do
         result_error = nil
         expect do
-          ValidateSqlQueries.run_queries(extracted_queries) { |_result_key, _result, error| result_error = error }
+          run_queries(extracted_queries) { |_result_key, _result, error| result_error = error }
         end.to raise_error(NoMethodError)
         expect(result_error.class).to eq NoMethodError
       end
@@ -131,13 +139,13 @@ describe "sql", :postgres do
       it "raises StatementInvalid error" do
         results = {}
         expect do
-          ValidateSqlQueries.run_queries(extracted_queries) do |result_key, result, error|
+          run_queries(extracted_queries) do |result_key, result, error|
             results[result_key] = { result: result, error: error }
           end
         end.to raise_error(ActiveRecord::StatementInvalid)
 
         # rails_query runs correctly
-        expect(results["rb"][:result].to_s).to eq "[0]"
+        expect(results["rb"][:result].to_s).to eq "0"
         expect(results["rb"][:error]).to be_nil
 
         # but sql_query fails
@@ -150,13 +158,13 @@ describe "sql", :postgres do
       it "raises an error" do
         results = {}
         expect do
-          ValidateSqlQueries.run_queries(extracted_queries) do |result_key, result, error|
+          run_queries(extracted_queries) do |result_key, result, error|
             results[result_key] = { result: result, error: error }
           end
         end.to raise_error(NoMethodError)
 
         # rails_query runs correctly
-        expect(results["rb"][:result].to_s).to eq "[0]"
+        expect(results["rb"][:result].to_s).to eq "0"
         expect(results["rb"][:error]).to be_nil
 
         # but rails_sql_postproc fails

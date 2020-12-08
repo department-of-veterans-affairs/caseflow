@@ -42,7 +42,7 @@ checkOrGetSessionId(){
 	else
 		[ "$METABASE_USER" ] || read -p "Enter your Metabase username (email address): " METABASE_USER
 		[ "$METABASE_PWD" ] || read -s -p "Enter your Metabase password: " METABASE_PWD
-		echo ""
+		>&2 echo ""
 
 		if [ -z "$METABASE_USER" ] || [ -z "$METABASE_PWD" ]; then
 			>&2 echo "! Please export METABASE_USER and METABASE_PWD environment variables."
@@ -56,11 +56,15 @@ checkOrGetSessionId(){
 	echo "$METABASE_SESS_ID"
 }
 
-getAllCards(){
+getCurlSessionCommand(){
 	METABASE_SESS_ID=`checkOrGetSessionId` || exit 3
+	echo "$CURL_CMD -H 'X-Metabase-Session: $METABASE_SESS_ID'"
+}
+
+getAllCards(){
+	CURL_SESS_CMD=`getCurlSessionCommand` || exit 12
 	echo "## Retrieving all Metabase cards (aka questions and queries)"
-	CURL_SESS_CMD="$CURL_CMD -X GET -H 'X-Metabase-Session: $METABASE_SESS_ID'"
-	if eval $CURL_SESS_CMD "$METABASE_URL/api/card" > "$1"; then
+	if eval $CURL_SESS_CMD -X GET "$METABASE_URL/api/card" > "$1"; then
 		echo -e "Downloaded cards to $1 \n"
 	else
 		echo "!! Unsuccesful!"
@@ -68,18 +72,76 @@ getAllCards(){
 	fi
 }
 
+checkOrInstallJq(){
+	if ! `which jq > /dev/null`; then
+		echo "Attempting to install jq using yum"
+		yum -y install jq || { >&2 echo "Could not install jq!"; exit 30; }
+	fi
+}
+
+extractQueries(){
+	checkOrInstallJq
+
+	CARDS_JSON_FILE=`realpath "$1"`
+
+	[ -d "$2" ] || mkdir -p "$2"
+	pushd $2 || { >&2 echo "Cannot change to directory: $2"; exit 21; }
+
+	echo "Reading from $CARDS_JSON_FILE; writing to $OUTPUT_DIR"
+	JQ_SCRIPT='.[] | select(.query_type=="native" and .archived==false and (.dataset_query.native.query|test("RAILS_EQUIV"))) | (.database_id|tostring)+" "+(.id|tostring), .dataset_query'
+	jq -cr "$JQ_SCRIPT" $CARDS_JSON_FILE | awk 'NR%2{f=sprintf("db%02i_c%04i-metabase-payload.json",$1,$2);next} {print >f;close(f)}'
+	popd
+}
+
+getResultsForQueries(){
+	[ -d "$1" ] || { >&2 echo "Cannot find directory: $1"; exit 22; }
+	CURL_SESS_CMD=`getCurlSessionCommand` || exit 12
+
+	for PAYLOAD_FILE in "$1"/*-metabase-payload.json; do
+		if [ -f "$PAYLOAD_FILE" ]; then
+			FILE_BASENAME="${PAYLOAD_FILE%-metabase-payload.json}"
+			METABASE_RESPONSE_FILE="$FILE_BASENAME-metabase-response.json"
+			if eval $CURL_SESS_CMD -d "@$PAYLOAD_FILE" "$METABASE_URL/api/dataset" > "$METABASE_RESPONSE_FILE"; then
+				echo "### Saved query result to $METABASE_RESPONSE_FILE and $FILE_BASENAME.mb-out"
+				jq -cr '.data.rows | .[] | @csv' "$METABASE_RESPONSE_FILE" > "$FILE_BASENAME.mb-out"
+			else
+				echo "!! Unsuccesful getting query result for @$1/$PAYLOAD_FILE"
+				exit 23
+			fi
+		else
+			echo "Skipping: Not a file: $PAYLOAD_FILE"
+		fi
+	done
+}
+
 if [ "$1" = "session" ]; then
 	METABASE_SESS_ID=`checkOrGetSessionId` || exit 11
 	echo "export METABASE_SESS_ID=\"$METABASE_SESS_ID\""
 	echo "alias curl_metabase=\"$CURL_CMD -H 'X-Metabase-Session: $METABASE_SESS_ID'\""
-	echo "$CURL_CMD $METABASE_URL/..."
+elif [ "$1" = "queryResults" ]; then
+	METABASE_SESS_ID=`checkOrGetSessionId` || exit 11
+
+	: ${CARDS_JSON_FILE:=${2:-'cards.json'}}
+	: ${OUTPUT_DIR:=${3:-'reports/queries_output'}}
+	extractQueries "$CARDS_JSON_FILE" "$OUTPUT_DIR"
+	getResultsForQueries "$OUTPUT_DIR"
 elif [ "$1" = "cards" ]; then
-	echo "Using base curl command: $CURL_CMD $METABASE_URL/..."
-	getAllCards "$2"
+	: ${OUTPUT_JSON_FILE:=${2:-cards.json}}
+	echo "Will write to $OUTPUT_JSON_FILE"
+	# echo "Using base curl command: $CURL_CMD $METABASE_URL/..."
+	getAllCards "$OUTPUT_JSON_FILE"
 elif [ "$1" = "downloadAndValidate" ]; then
-	getAllCards "${2:-cards.json}" || exit 10
+	: ${CARDS_JSON_FILE:=${2:-'cards.json'}}
+	getAllCards "$CARDS_JSON_FILE" || exit 10
+
+	: ${OUTPUT_DIR:=${3:-'reports/queries_output'}}
+	echo "## Getting Metabase's SQL query results and saving results"
+	extractQueries "$CARDS_JSON_FILE" "$OUTPUT_DIR"
+	getResultsForQueries "$OUTPUT_DIR"
+
+	: ${QUERIES_DIR:=${4:-'reports/sql_queries'}}
 	echo "## Running Rake tasks to extract_queries_from cards.json and validate queries"
-	bundle exec rake 'sql:extract_queries_from[cards.json,sql_queries]' 'sql:validate[sql_queries,queries_output]'
+	bundle exec rake "sql:extract_queries_from[cards.json,$QUERIES_DIR]" "sql:validate[$QUERIES_DIR,$OUTPUT_DIR]"
 else
 	echo "Usage: $0 cards <output_filename>"
 fi

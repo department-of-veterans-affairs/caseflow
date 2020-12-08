@@ -1,5 +1,5 @@
 /* RAILS_EQUIV
-[JudgeTeam.active.map(&:users).flatten.uniq.count]
+JudgeTeam.active.map(&:users).flatten.uniq.count
 */
 
 WITH judge_teams AS (
