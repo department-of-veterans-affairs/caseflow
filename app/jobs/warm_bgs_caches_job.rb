@@ -116,7 +116,9 @@ class WarmBgsCachesJob < CaseflowJob
     oldest_bgs_poa_records.limit(LIMITS[:OLDEST_CACHED]).each do |bgs_poa|
       begin
         bgs_poa.save_with_updated_bgs_record! if bgs_poa.stale_attributes?
-      rescue Errno::ECONNRESET, Savon::HTTPError => error; end
+      rescue Errno::ECONNRESET, Savon::HTTPError
+        # no nothing
+      end
     end
     datadog_report_time_segment(segment: "warm_poa_bgs_oldest", start_time: start_time)
   end
