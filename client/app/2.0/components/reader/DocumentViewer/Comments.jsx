@@ -6,6 +6,7 @@ import querystring from 'querystring';
 // Internal Dependencies
 import { commentIcon } from 'app/components/RenderFunctions';
 import { commentStyles, selectionStyles } from 'styles/reader/Document/Comments';
+import { formatCommentQuery } from 'utils/reader';
 
 /**
  * Comments component for the Document Screen
@@ -33,29 +34,6 @@ export const Comments = ({
       props.gridRef.current?.scrollToPosition({
         scrollTop: props.search.scrollPosition,
       });
-    } else {
-    // Parse the query to determine if there is an annotation selectedComment
-      const query = querystring.parse(window.location.search)['?annotation'];
-
-      // Parse the annotation ID
-      const annotationId = query ? parseInt(query, 10) : null;
-
-      // Handle Comment selection position
-      if (comments.length && annotationId) {
-      // Get the comment from the list
-        const [comment] = comments.filter((item) => item.id === annotationId);
-
-        // Ensure the comment exists
-        if (comment) {
-        // Update the store with the selectedComment comment
-          selectComment(comment);
-
-          // Scroll to the comment
-          props.gridRef.current?.scrollToPosition({
-            scrollTop: comment.y * comment.page
-          });
-        }
-      }
     }
   }, [props.search.scrollPosition]);
 

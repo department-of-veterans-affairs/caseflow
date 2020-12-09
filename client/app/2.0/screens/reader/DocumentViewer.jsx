@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 
 // Local Dependencies
-import { getPageCoordinatesOfMouseEvent } from 'utils/reader';
+import { getPageCoordinatesOfMouseEvent, formatCommentQuery } from 'utils/reader';
 import { pdfWrapper } from 'styles/reader/Document/Pdf';
 import { fetchDocuments, openDownloadLink } from 'utils/reader/document';
 import { focusComment } from 'utils/reader/comments';
@@ -126,12 +126,24 @@ const DocumentViewer = (props) => {
       }
     },
     moveComment: (coords, pageIndex) => {
+      // Assign the current icon component
+      const icon = document.getElementById(`commentIcon-container-${state.movingComment}`);
+
+      // Calculate the x and y offset by the icon height and width
+      const x = (coords.x * state.scale);
+      const y = (coords.y * state.scale);
+
+      // Move the Comment in the UI immediately
+      icon.style.left = `${x}px`;
+      icon.style.top = `${y}px`;
+
+      // Request the move, if failed the comment will revert otherwise it will catch up
       dispatch(moveComment({
         page: pageIndex + 1,
         document_id: state.currentDocument.id,
         id: state.movingComment,
-        x: coords.x,
-        y: coords.y,
+        x,
+        y,
       }));
     },
     moveMouse: (coords, pageIndex) => {
@@ -243,6 +255,7 @@ const DocumentViewer = (props) => {
       if (pageNumber !== state.currentDocument.currentPage) {
         dispatch(setPageNumber(currentPage));
       }
+
     },
     overscanIndices: ({ cellCount, overscanCellsCount, startIndex, stopIndex }) => ({
       overscanStartIndex: Math.max(0, startIndex - Math.ceil(overscanCellsCount / 2)),

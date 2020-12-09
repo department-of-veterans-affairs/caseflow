@@ -257,10 +257,6 @@ const annotationLayerSlice = createSlice({
         // Reset the state
         state.pendingDeletion = false;
       }).
-      addMatcher((action) => action.type === setPageNumber.toString(), (state, action) => {
-        // Reset the selected state on scroll or changing page
-        state.selected = {};
-      }).
       addMatcher((action) => action.type === loadDocuments.fulfilled.toString(), (state, action) => {
         // Map the Annotations to the comments array
         state.comments = action.payload.annotations;

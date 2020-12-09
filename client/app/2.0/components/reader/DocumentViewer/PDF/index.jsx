@@ -1,12 +1,13 @@
 // External Dependencies
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { isEmpty } from 'lodash';
 
 // Internal Dependencies
 import { File } from 'components/reader/DocumentViewer/PDF/File';
 import { pdfStyles, fileContainerStyles } from 'styles/reader/Document/Pdf';
 import StatusMessage from 'app/components/StatusMessage';
-import { keyHandler } from 'utils/reader';
+import { keyHandler, formatCommentQuery } from 'utils/reader';
 
 /**
  * PDF Container for the Document view
@@ -14,6 +15,23 @@ import { keyHandler } from 'utils/reader';
  */
 export const Pdf = ({ doc, clickPage, ...props }) => {
   useEffect(() => {
+    // Parse the annotation ID
+    const commentId = formatCommentQuery();
+
+    // Handle Comment selection position
+    if (props.comments.length && commentId && isEmpty(props.selectedComment)) {
+      // Get the comment from the list
+      const [comment] = props.comments.filter((item) => item.id === commentId);
+
+      // Ensure the comment exists
+      if (comment) {
+        props.setPageNumber(comment.page - 1);
+
+        // Update the store with the selectedComment comment
+        props.selectComment(comment);
+      }
+    }
+
     // Create the Keyboard Listener
     const listener = (event) => keyHandler(event, props);
 
@@ -61,8 +79,16 @@ export const Pdf = ({ doc, clickPage, ...props }) => {
 
 Pdf.propTypes = {
   doc: PropTypes.object,
-  files: PropTypes.array,
+  currentDocument: PropTypes.object,
+  selectedComment: PropTypes.object,
   documentType: PropTypes.string,
   loadError: PropTypes.string,
-  clickPage: PropTypes.func
+  clickPage: PropTypes.func,
+  selectComment: PropTypes.func,
+  setPageNumber: PropTypes.func,
+  search: PropTypes.object,
+  hideSearchBar: PropTypes.bool,
+  addingComment: PropTypes.bool,
+  droppedComment: PropTypes.object,
+  comments: PropTypes.array,
 };

@@ -60,6 +60,6 @@ export const focusComment = (comment) => {
     const parentTop = parent.getBoundingClientRect().top;
 
     // Update the Scroll position according to the parent and base scroll from the top
-    parent.scrollTop = parent.scrollTop + commentTop - parentTop - COMMENT_SCROLL_FROM_THE_TOP;
+    // parent.scrollTop = parent.scrollTop + commentTop - parentTop - COMMENT_SCROLL_FROM_THE_TOP;
   }
 };

@@ -217,6 +217,18 @@ export const getQueueTaskType = () => {
 };
 
 /**
+ * Helper Method to Parse the Task Type from the window
+ * @returns {string|null} -- The Parsed Queue Task Type
+ */
+export const formatCommentQuery = () => {
+  // Parse the Task Type string from the URL bar
+  const query = querystring.parse(window.location.search.slice(0))['?annotation'];
+
+  // Convert to Int or null and return
+  return query ? parseInt(query, 10) : null;
+};
+
+/**
  * Helper Method to map tags to appropriate options in the SearchableDropdown
  * @param {Array} tags -- List of tags to be formatted
  */
