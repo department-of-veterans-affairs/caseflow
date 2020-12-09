@@ -13,27 +13,10 @@ import BareList from '../components/BareList';
 import COPY from '../../COPY';
 
 /**
- * A component to display the state a veteran resides in.
- *
- * @param {Object} veteran An object containing information about the veteran, including their adress and state.
- */
-const VeteranState = ({ veteran }) => {
-  const state = veteran?.address?.state;
-
-  if (state) {
-    return <>{state}</>;
-  }
-
-  return null;
-};
-
-/**
  * A component to display various details about the veteran including name, gender, date of birth, date of death,
  * address and email.
- *
- * @param {Object} veteran An object containing information about the veteran, including their adress and state.
  */
-const VeteranDetail = ({ veteran }) => {
+const VeteranDetail = ({ veteran, stateOnly }) => {
   const {
     address,
     full_name: fullName,
@@ -42,6 +25,10 @@ const VeteranDetail = ({ veteran }) => {
     date_of_death: dod,
     email_address: email
   } = veteran;
+
+  if (stateOnly) {
+    return <>{address?.state}</>;
+  }
 
   const details = [{
     label: 'Name',
@@ -94,7 +81,11 @@ const VeteranDetail = ({ veteran }) => {
   );
 };
 
-VeteranState.propTypes = VeteranDetail.propTypes = {
+VeteranDetail.propTypes = {
+
+  /**
+   * Veteran object returned from the back end
+   */
   veteran: PropTypes.shape({
     address: PropTypes.shape({
       state: PropTypes.string
@@ -104,7 +95,12 @@ VeteranState.propTypes = VeteranDetail.propTypes = {
     email_address: PropTypes.string,
     full_name: PropTypes.string,
     gender: PropTypes.string
-  })
+  }),
+
+  /**
+   * Whether or not to display only the veteran's state of residence
+   */
+  stateOnly: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -140,11 +136,12 @@ const wrapVeteranDetailComponent = (WrappedComponent) => (
       error: PropTypes.object,
       getAppealValue: PropTypes.func,
       loading: PropTypes.bool,
-      veteranInfo: PropTypes.object
+      veteranInfo: PropTypes.object,
+      stateOnly: PropTypes.bool
     }
 
     componentDidMount = () => {
-      if (!this.props.veteranInfo && this.props.getAppealValue) {
+      if (!this.props.veteranInfo) {
         this.props.getAppealValue(this.props.appealId, 'veteran', 'veteranInfo');
       }
     }
@@ -162,13 +159,10 @@ const wrapVeteranDetailComponent = (WrappedComponent) => (
         return null;
       }
 
-      return <WrappedComponent {...this.props.veteranInfo} />;
+      return <WrappedComponent stateOnly={this.props.stateOnly} {...this.props.veteranInfo} />;
     }
   }
 );
 
-export const UnconnectedVeteranState = wrapVeteranDetailComponent(VeteranState);
 export const UnconnectedVeteranDetail = wrapVeteranDetailComponent(VeteranDetail);
-
-export const VeteranStateDetail = connect(mapStateToProps, mapDispatchToProps)(UnconnectedVeteranState);
 export default connect(mapStateToProps, mapDispatchToProps)(UnconnectedVeteranDetail);
