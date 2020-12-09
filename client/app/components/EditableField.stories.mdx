@@ -5,14 +5,14 @@ import * as Stories from './EditableField.stories';
 import EditableField from './EditableField';
 
 <Meta
-  title='Commons/Components/Form Fields/EditableField'
+  title="Commons/Components/Form Fields/EditableField"
   component={EditableField}
   parameters={{
-    controls: { expanded: true }
+    controls: { expanded: true },
   }}
   args={{
     label: 'Label',
-    value: 'Value'
+    value: 'Value',
   }}
   argTypes={{
     errorMessage: { control: { type: 'text' } },
@@ -20,6 +20,7 @@ import EditableField from './EditableField';
     maxLength: { control: { type: 'number' } },
     placeholder: { control: { type: 'text' } },
     title: { control: { type: 'text' } },
+    onSave: { action: 'onSave' },
     type: {
       control: {
         type: 'select',
@@ -46,8 +47,8 @@ import EditableField from './EditableField';
           'time',
           'url',
           'week',
-        ]
-      }
+        ],
+      },
     },
   }}
 />
@@ -59,7 +60,9 @@ done editing the field, they can cancel or save their changes.
 
 ## Default
 
-<Story story={Stories.Default} />
+<Canvas>
+  <Story story={Stories.Default} />
+</Canvas>
 
 ## Error
 
