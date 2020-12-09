@@ -267,6 +267,8 @@ RSpec.feature "Assign Hearings Table" do
       Appeal.all.each_with_index do |appeal, idx|
         create(
           :bgs_power_of_attorney,
+          :with_name_cached,
+          appeal: appeal,
           claimant_participant_id: appeal.claimant.participant_id,
           representative_name: "Attorney #{idx}"
         )
