@@ -2,7 +2,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
-import _ from 'lodash';
+import { get } from 'lodash';
 
 import { DateString } from '../util/DateUtil';
 import { appealWithDetailSelector } from './selectors';
@@ -108,7 +108,7 @@ VeteranState.propTypes = VeteranDetail.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const loadingVeteranInfo = _.get(state.queue.loadingAppealDetail[ownProps.appealId], 'veteranInfo');
+  const loadingVeteranInfo = get(state.queue.loadingAppealDetail[ownProps.appealId], 'veteranInfo');
 
   if (loadingVeteranInfo?.loading) {
     return { loading: true };
@@ -170,12 +170,5 @@ const wrapVeteranDetailComponent = (WrappedComponent) => (
 export const UnconnectedVeteranState = wrapVeteranDetailComponent(VeteranState);
 export const UnconnectedVeteranDetail = wrapVeteranDetailComponent(VeteranDetail);
 
-export const VeteranStateDetail = _.flow(
-  UnconnectedVeteranState,
-  connect(mapStateToProps, mapDispatchToProps)
-);
-
-export default _.flow(
-  UnconnectedVeteranDetail,
-  connect(mapStateToProps, mapDispatchToProps)
-);
+export const VeteranStateDetail = connect(mapStateToProps, mapDispatchToProps)(UnconnectedVeteranState);
+export default connect(mapStateToProps, mapDispatchToProps)(UnconnectedVeteranDetail);
