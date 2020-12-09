@@ -1,6 +1,5 @@
 import { createSlice, createAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { differenceWith, differenceBy, find, pick, random, range } from 'lodash';
-import uuid from 'uuid';
+import { random, range } from 'lodash';
 import * as PDF from 'pdfjs';
 import Mark from 'mark.js';
 
@@ -14,7 +13,7 @@ import {
   COMPLETE_ROTATION,
   COMMENT_ACCORDION_KEY
 } from 'store/constants/reader';
-import { addMetaLabel, formatCategoryName, formatTagValue } from 'utils/reader';
+import { addMetaLabel, formatCategoryName } from 'utils/reader';
 import { removeComment } from 'store/reader/annotationLayer';
 import { markDocAsRead } from 'store/reader/documentList';
 
@@ -36,6 +35,7 @@ const initialErrorState = {
 export const initialState = {
   pendingTag: false,
   pendingCategory: false,
+  currentPageIndex: 0,
   viewport: {
     height: PDF_PAGE_HEIGHT,
     width: PDF_PAGE_WIDTH,
@@ -325,6 +325,9 @@ const documentViewerSlice = createSlice({
   name: 'documentViewer',
   initialState,
   reducers: {
+    setPageIndex: (state, action) => {
+      state.currentPageIndex = action.payload;
+    },
     toggleKeyboardInfo: (state, action) => {
       state.keyboardInfoOpen = action.payload;
     },
@@ -468,7 +471,8 @@ export const {
   changeDescription,
   resetDescription,
   setPageNumber,
-  toggleKeyboardInfo
+  toggleKeyboardInfo,
+  setPageIndex
 } = documentViewerSlice.actions;
 
 // Default export the reducer

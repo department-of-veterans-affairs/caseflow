@@ -41,6 +41,7 @@ export const Pdf = ({ doc, clickPage, ...props }) => {
     // Remove the key listener when the component is unmounted
     return () => document.removeEventListener('keydown', listener);
   }, [
+    props.currentPageIndex,
     props.currentDocument?.id,
     props.search,
     props.selectedComment,

@@ -34,7 +34,8 @@ import {
   searchText,
   toggleKeyboardInfo,
   addTag,
-  removeTag
+  removeTag,
+  setPageIndex
 } from 'store/reader/documentViewer';
 import {
   selectComment,
@@ -82,6 +83,7 @@ const DocumentViewer = (props) => {
 
   // Create the dispatchers
   const actions = {
+    setPageIndex: (index) => dispatch(setPageIndex(index)),
     changeTags: (values, deleted) => {
       // Delete tags if there are any removed
       if (deleted) {

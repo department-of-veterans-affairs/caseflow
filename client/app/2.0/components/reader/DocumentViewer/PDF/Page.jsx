@@ -29,6 +29,7 @@ export const Page = ({
   match,
   moveMouse,
   getCoords,
+  currentPageIndex,
   ...props
 }) => {
   // Calculate the Page Index
@@ -69,7 +70,7 @@ export const Page = ({
               className="canvas-cursor"
               style={{
                 position: 'absolute',
-                display: pageIndex === 0 ? 'block' : 'none',
+                display: pageIndex === currentPageIndex ? 'block' : 'none',
                 left: '50%',
                 top: '50%'
               }}
@@ -97,6 +98,7 @@ export const Page = ({
 };
 
 Page.propTypes = {
+  currentPageIndex: PropTypes.number,
   pageIndex: PropTypes.number,
   addingComment: PropTypes.bool,
   isVisible: PropTypes.bool,

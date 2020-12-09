@@ -27,21 +27,43 @@ export const keyHandler = (event, props) => {
 
       // Override arrows when commenting
       if (props.addingComment) {
+
         // Get the cursor so we can update the position
-        const [cursor] = document.getElementsByClassName('canvas-cursor');
+        const cursorList = document.getElementsByClassName('canvas-cursor');
+        const [cursor] = Array.from(cursorList).map((element, index) => ({ element, index })).
+          filter((item) => item.element.style.display === 'block');
 
         // Calculate the move amount
         const coords = nextPageCoords(
           {
-            x: cursor.getBoundingClientRect().left,
-            y: cursor.getBoundingClientRect().top,
+            x: cursor.element.getBoundingClientRect().left,
+            y: cursor.element.getBoundingClientRect().top,
           },
           MOVE_ANNOTATION_ICON_DIRECTIONS[event.code],
           props.currentDocument.rotation
         );
 
+        // Calculate the page coordinates offset by the icon
+        const current = props.getCoords({ pageX: coords.x, pageY: coords.y }, cursor.index);
+
+        // Instantiate the page Index
+        let pageIndex = cursor.index;
+
+        // Calculate the Icon coordinates
+        const iconX = current.x + 40;
+
+        // Handle changing page right
+        if (iconX >= Math.floor(props.viewport.width)) {
+          pageIndex += 1;
+        }
+
+        // Handle changing page left
+        if (current.x <= 0) {
+          pageIndex -= 1;
+        }
+
         // Move the cursor
-        props.moveMouse(props.getCoords({ pageX: coords.x, pageY: coords.y }, 0), 0);
+        props.moveMouse(props.getCoords({ pageX: coords.x, pageY: coords.y }, pageIndex), pageIndex);
       // Ignore arrow keys when editing search fields
       } else if (!['search-ahead', 'commentEditBox'].includes(event.target.id)) {
         // Handle the next doc shortcut

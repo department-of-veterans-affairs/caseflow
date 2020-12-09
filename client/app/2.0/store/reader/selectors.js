@@ -91,6 +91,7 @@ export const documentScreen = (state) => {
     docsCount,
     categories,
     comments,
+    currentPageIndex: state.reader.documentViewer.currentPageIndex,
     pendingTag: state.reader.documentViewer.pendingTag,
     pendingCategory: state.reader.documentViewer.pendingCategory,
     documentTags: state.reader.documentViewer.tags,
