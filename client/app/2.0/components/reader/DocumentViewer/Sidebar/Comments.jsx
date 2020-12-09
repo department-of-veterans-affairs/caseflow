@@ -19,7 +19,7 @@ export const SidebarComments = ({
   droppedComment,
   errors,
   updateComment,
-  handleClick,
+  selectComment,
   commentRef,
   selectedComment,
   currentDocument,
@@ -69,7 +69,14 @@ export const SidebarComments = ({
                   id={`comment${index}`}
                   comment={comment}
                   selected={comment?.id === selectedComment?.id}
-                  handleClick={handleClick}
+                  handleClick={(event) => {
+                    event.stopPropagation();
+
+                    props.setPageNumber(comment.page - 1);
+
+                    selectComment(comment);
+
+                  }}
                   page={comment.page}
                   date={comment.relevant_date}
                   currentDocument={currentDocument}
@@ -93,7 +100,7 @@ SidebarComments.propTypes = {
   cancelDrop: PropTypes.func,
   updateComment: PropTypes.func,
   updateCommentDate: PropTypes.func,
-  handleClick: PropTypes.func,
+  selectComment: PropTypes.func,
   commentRef: PropTypes.element,
   selectedComment: PropTypes.object,
 };

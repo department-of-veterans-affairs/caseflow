@@ -173,8 +173,13 @@ const DocumentViewer = (props) => {
     clickPage: (event) => {
       event.stopPropagation();
       event.preventDefault();
+
       if (state.addingComment) {
         dispatch(cancelDrop());
+      }
+
+      if (state.selectedComment) {
+        dispatch(selectComment({}));
       }
     },
     cancelDrop: () => dispatch(cancelDrop()),
@@ -209,6 +214,11 @@ const DocumentViewer = (props) => {
 
       // Update the store with the selected component
       dispatch(selectComment(comment));
+    },
+    deselectComment: () => {
+      if (state.selectedComment) {
+        dispatch(selectComment({}));
+      }
     },
     searchText: (searchTerm, index) => {
       // Calculate the match index
@@ -334,7 +344,7 @@ const DocumentViewer = (props) => {
   }, [params.docId]);
 
   return (
-    <div id="document-viewer" className="cf-pdf-page-container" >
+    <div id="document-viewer" className="cf-pdf-page-container" onClick={actions.deselectComment} >
       <div className={classNames('cf-pdf-container', { 'hidden-sidebar': state.hidePdfSidebar })} {...pdfWrapper}>
         <DocumentHeader {...props} {...state} {...actions} doc={state.currentDocument} />
         <DocumentSearch {...actions} {...state.search} doc={state.currentDocument} hidden={state.hideSearchBar} />
