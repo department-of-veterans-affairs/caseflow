@@ -10,7 +10,7 @@ import {
   HearingRequestType
 } from './AssignHearingsFields';
 import { NoVeteransToAssignMessage } from './Messages';
-import { VeteranDetail } from '../../../queue/VeteranDetail';
+import VeteranDetail from '../../../queue/VeteranDetail';
 import { docketCutoffLineStyle } from './AssignHearingsDocketLine';
 import {
   encodeQueryParams,
