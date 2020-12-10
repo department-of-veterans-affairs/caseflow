@@ -225,6 +225,7 @@ class WarmBgsCachesJob < CaseflowJob
   def claimant_poa(claimant)
     claimant.power_of_attorney
   rescue Errno::ECONNRESET, Savon::HTTPError => error
+    warning_msgs << "#{Appeal.name} #{claimant.decision_review_id}: #{error}" if warning_msgs.count < 100
     nil
   end
 
