@@ -2,7 +2,6 @@ import React from 'react';
 import COPY from '../../../COPY';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
-import _ from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import RadioField from '../../components/RadioField';
