@@ -226,7 +226,7 @@ class WarmBgsCachesJob < CaseflowJob
     claimant.power_of_attorney
   rescue StandardError => error
     warning_msgs << "#{Appeal.name} #{claimant.decision_review_id}: #{error}"
-    nil
+    nil # returning nil here to allow job to continue; this does not mean that claimant is missing POA
   end
 
   def oldest_bgs_poa_records
