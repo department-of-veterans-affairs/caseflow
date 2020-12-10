@@ -60,10 +60,10 @@ class WarmBgsCachesJob < CaseflowJob
     warm_poa_and_cache_for_appeals_for_hearings_most_recent
     warm_poa_and_cache_ama_appeals_for_oldest_claimants
     warm_poa_for_oldest_cached_records
+
+    log_warning unless warning_msgs.empty?
   rescue StandardError => error
     capture_exception(error: error)
-  else
-    log_warning unless warning_msgs.empty?
   end
 
   # Warm POA and cache 2000(legacy + ama) appeals with active ScheduleHearingTask in the priority
@@ -116,7 +116,7 @@ class WarmBgsCachesJob < CaseflowJob
     oldest_bgs_poa_records.limit(LIMITS[:OLDEST_CACHED]).each do |bgs_poa|
       begin
         bgs_poa.save_with_updated_bgs_record! if bgs_poa.stale_attributes?
-      rescue Errno::ECONNRESET, Savon::HTTPError
+      rescue
         # no nothing
       end
     end
@@ -175,7 +175,7 @@ class WarmBgsCachesJob < CaseflowJob
     BgsPowerOfAttorney.find_or_create_by_file_number(file_number)
   rescue ActiveRecord::RecordInvalid # not found at BGS
     BgsPowerOfAttorney.new(file_number: file_number)
-  rescue Errno::ECONNRESET, Savon::HTTPError => error
+  rescue StandardError, BGS::ShareError => error
     warning_msgs << "#{LegacyAppeal.name} #{appeal_id}: #{error}" if warning_msgs.count < 100
     nil
   end
@@ -190,7 +190,7 @@ class WarmBgsCachesJob < CaseflowJob
         power_of_attorney_name: bgs_poa&.representative_name
       }
     end
-  rescue Errno::ECONNRESET, Savon::HTTPError => error
+  rescue StandardError, BGS::ShareError => error
     warning_msgs << "#{appeal_type} #{appeal_id}: #{error}" if warning_msgs.count < 100
     nil
   end
@@ -224,7 +224,7 @@ class WarmBgsCachesJob < CaseflowJob
 
   def claimant_poa(claimant)
     claimant.power_of_attorney
-  rescue Errno::ECONNRESET, Savon::HTTPError => error
+  rescue StandardError, BGS::ShareError => error
     warning_msgs << "#{Appeal.name} #{claimant.decision_review_id}: #{error}" if warning_msgs.count < 100
     nil
   end
