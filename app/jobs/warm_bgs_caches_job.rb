@@ -61,7 +61,7 @@ class WarmBgsCachesJob < CaseflowJob
     warm_poa_and_cache_ama_appeals_for_oldest_claimants
     warm_poa_for_oldest_cached_records
   rescue StandardError => error
-    capture_exception(error)
+    capture_exception(error: error)
   else
     log_warning unless warning_msgs.empty?
   end
@@ -140,11 +140,14 @@ class WarmBgsCachesJob < CaseflowJob
 
   def warm_poa_and_cache_for_ama_appeals(claimants, start_time, datadog_segment)
     appeals_to_cache = claimants.map do |claimant|
-      bgs_poa = claimant.power_of_attorney
-      claimant.update!(updated_at: Time.zone.now)
+      bgs_poa = claimant_poa(claimant)
+      next unless bgs_poa
 
       # [{:appeal_id=>1, :appeal_type=>"Appeal", :power_of_attorney_name=>"Clarence Darrow"}, ...]
-      warm_bgs_poa_and_return_cache_data(bgs_poa, claimant.decision_review_id, Appeal.name)
+      cache_data = warm_bgs_poa_and_return_cache_data(bgs_poa, claimant.decision_review_id, Appeal.name)
+      claimant.update!(updated_at: Time.zone.now) if cache_data
+
+      cache_data
     end.compact
 
     CachedAppeal.import appeals_to_cache, on_duplicate_key_update: {
@@ -212,11 +215,17 @@ class WarmBgsCachesJob < CaseflowJob
 
   def oldest_claimants_with_poa
     oldest_claimants_for_open_appeals.limit(LIMITS[:OLDEST_CLAIMANT])
-      .select { |claimant| claimant.power_of_attorney.present? }
+      .select { |claimant| claimant_poa(claimant).present? }
   end
 
   def oldest_claimants_for_open_appeals
     claimants_for_open_appeals.order(updated_at: :asc)
+  end
+
+  def claimant_poa(claimant)
+    claimant.power_of_attorney
+  rescue Errno::ECONNRESET, Savon::HTTPError => error
+    nil
   end
 
   def oldest_bgs_poa_records
