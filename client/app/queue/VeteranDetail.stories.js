@@ -1,9 +1,8 @@
 import React from 'react';
 
-import VeteranDetail from './VeteranDetail';
+import { UnconnectedVeteranDetail as VeteranDetail } from './VeteranDetail';
 
 import { amaAppeal, veteranInfo } from '../../test/data/appeals';
-import { queueWrapper as Wrapper } from '../../test/data/stores/queueStore';
 
 export default {
   title: 'Queue/VeteranDetail',
@@ -26,30 +25,7 @@ export default {
   },
 };
 
-const Template = ({ error, loading, veteranInfo, ...args }) => {
-  const storeArgs = {
-    queue: {
-      appealDetails: {
-        [amaAppeal.externalId]: {
-          ...amaAppeal,
-          veteranInfo
-        }
-      },
-      loadingAppealDetail: {
-        [amaAppeal.externalId]: {
-          loading,
-          error
-        }
-      }
-    }
-  };
-
-  return (
-    <Wrapper {...storeArgs}>
-      <VeteranDetail {...args} />
-    </Wrapper>
-  );
-};
+const Template = (args) => <VeteranDetail {...args} />;
 
 export const Default = Template.bind({});
 
