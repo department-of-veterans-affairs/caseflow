@@ -95,7 +95,7 @@ class ValidateSqlQueries
 
           puts "  Comparing: #{rb_out_file} and #{sql_out_file}"
           unless files_are_same?(rb_out_file, sql_out_file)
-            warn "    Results don't match: #{rb_out_file}"
+            warn "    Results don't match: diff #{rb_out_file} #{sql_out_file}"
             next basename
           end
 
