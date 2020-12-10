@@ -17,8 +17,7 @@ class ValidateSqlQueries
       puts "  Output files will be saved to '#{output_dir}'"
       filenames.each { |filename| run_queries_and_save_output(filename, output_dir) }
 
-      nonequivalent_basenames = compare_output_files(output_dir)
-      [filenames.size, nonequivalent_basenames]
+      compare_output_files(output_dir)
     end
 
     def list_query_filenames(query_dir)
@@ -88,13 +87,15 @@ class ValidateSqlQueries
         diffs = rb_out_files.map do |rb_out_file|
           basename = File.basename(rb_out_file, File.extname(rb_out_file))
           sql_out_file = ["#{basename}.mb-out", "#{basename}.sql-out"].find { |out_file| File.exist?(out_file) }
+
           unless sql_out_file
             warn "  No associated SQL output found for #{rb_out_file}"
             next basename
           end
 
+          puts "  Comparing: #{rb_out_file} and #{sql_out_file}"
           unless files_are_same?(rb_out_file, sql_out_file)
-            warn "  Results don't match: #{rb_out_file}"
+            warn "    Results don't match: #{rb_out_file}"
             next basename
           end
 

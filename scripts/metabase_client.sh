@@ -62,7 +62,7 @@ getCurlSessionCommand(){
 }
 
 getAllCards(){
-	CURL_SESS_CMD=`getCurlSessionCommand` || exit 12
+	[ "$CURL_SESS_CMD" ] || CURL_SESS_CMD=`getCurlSessionCommand` || exit 12
 	echo "## Retrieving all Metabase cards (aka questions and queries)"
 	if eval $CURL_SESS_CMD -X GET "$METABASE_URL/api/card" > "$1"; then
 		echo -e "Downloaded cards to $1 \n"
@@ -95,7 +95,7 @@ extractQueries(){
 
 getResultsForQueries(){
 	[ -d "$1" ] || { >&2 echo "Cannot find directory: $1"; exit 22; }
-	CURL_SESS_CMD=`getCurlSessionCommand` || exit 12
+	[ "$CURL_SESS_CMD" ] || CURL_SESS_CMD=`getCurlSessionCommand` || exit 12
 
 	for PAYLOAD_FILE in "$1"/*-metabase-payload.json; do
 		if [ -f "$PAYLOAD_FILE" ]; then
@@ -131,6 +131,8 @@ elif [ "$1" = "cards" ]; then
 	# echo "Using base curl command: $CURL_CMD $METABASE_URL/..."
 	getAllCards "$OUTPUT_JSON_FILE"
 elif [ "$1" = "downloadAndValidate" ]; then
+	[ "$CURL_SESS_CMD" ] || CURL_SESS_CMD=`getCurlSessionCommand` || exit 12
+
 	: ${CARDS_JSON_FILE:=${2:-'cards.json'}}
 	getAllCards "$CARDS_JSON_FILE" || exit 10
 

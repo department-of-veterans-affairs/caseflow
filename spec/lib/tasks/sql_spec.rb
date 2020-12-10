@@ -20,7 +20,7 @@ describe "sql", :postgres do
 
     context "using queries in reports/sql_queries" do
       it "completes validation with possible errors noted in console" do
-        expect { subject }.to output(/SUMMARY: [0-9]* out of [0-9]* queries are different./).to_stdout
+        expect { subject }.to output(/SUMMARY: [0-9]* differenc/).to_stdout
       end
     end
   end

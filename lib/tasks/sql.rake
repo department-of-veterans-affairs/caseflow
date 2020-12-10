@@ -58,9 +58,9 @@ namespace :sql do
       exit 3
     end
 
-    sql_file_count, diff_basenames = ValidateSqlQueries.process(args[:query_dir], args[:output_dir])
+    diff_basenames = ValidateSqlQueries.process(args[:query_dir], args[:output_dir])
     puts "Queries with different output: #{diff_basenames}"
-    puts "SUMMARY: #{diff_basenames.count} out of #{sql_file_count} queries are different."
+    puts "SUMMARY: #{diff_basenames.count} #{'difference'.pluralize(diff_basenames.count)}."
   end
 
   desc "validate a single SQL query file"
