@@ -1,7 +1,7 @@
 
 This directory contains SQL queries to be validated by running:
 ```
-> bundle exec rake 'sql:validate[reports/sql_queries,reports/queries_output]'
+> bundle exec rake 'sql:validate[ reports/sql_queries, reports/queries_output]'
 ```
 which runs queries specified in the `reports/sql_queries/*.sql` files and
 saves the output to `reports/queries_output` for comparison and diagnostics.
@@ -29,7 +29,7 @@ are syntactically ready for use in query result validation.
 
 Files with the format `db<database_id>_c<card_id>.sql` were created by:
 ```
-> bundle exec rake 'sql:extract_queries_from[cards.json,reports/sql_queries]'
+> bundle exec rake 'sql:extract_queries_from[ cards.json, reports/sql_queries]'
 ```
 
 which extracts SQL queries from `cards.json`, which was created by running:
@@ -67,12 +67,12 @@ To test the incantations locally as you develop them:
 
 1. Create a file, such as `for_testing.sql` in `reports/sql_queries`.
 2. Add the incantations mentioned above.
-3. Run `bundle exec rake 'sql:validate[reports/sql_queries,reports/queries_output]'`
+3. Run `bundle exec rake 'sql:validate[ reports/sql_queries, reports/queries_output]'`
    and check the console output and `reports/queries_output/for_testing.*.out`.
    The output files must match exactly.
 
 To validate your `sql` file individually, run:
 ```
-> bundle exec rake 'sql:validate_file[reports/sql_queries/for_testing.sql,tmp]'
+> bundle exec rake 'sql:validate_file[ reports/sql_queries/for_testing.sql, tmp]'
 ```
 and check the output in the `tmp` subdirectory.
