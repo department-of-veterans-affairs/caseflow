@@ -5,13 +5,14 @@
 #    # 0. Clean up directories (from previous runs)
 #    rm -rf sql_queries/ queries_output/
 #
-#    # 1.a Get cards from Metabase and save to cards.json
+#    # 1.a. Get cards from Metabase and save to cards.json
 #    scripts/metabase_client.sh cards cards.json
-#    # 1.b Get Metabase's SQL query results using cards.json and saving results to queries_output
+#    # 1.b. Get Metabase's SQL query results using cards.json and save results to queries_output
 #    scripts/metabase_client.sh queryResults cards.json queries_output
 #
-#    # 2. Extract queries from cards.json into sql_queries
+#    # 2.a. Extract queries from cards.json into sql_queries
 #    bundle exec rake 'sql:extract_queries_from[cards.json,sql_queries]'
+#    # 2.b. Validate the queries in sql_queries and save query results to queries_output
 #    bundle exec rake 'sql:validate[sql_queries,queries_output]'
 #
 #    # Shortcut: Both of Steps 1 and 2 can be performed by running a single command:
@@ -19,6 +20,8 @@
 #
 #  To validate your own SQL, save your SQL in sql_queries then run
 #     bundle exec rake 'sql:validate[sql_queries,queries_output]'
+#  Or validate a single sql file
+#     bundle exec rake 'sql:validate_file[sql_queries/your.sql,queries_output]'
 #
 #  See reports/sql_queries/README.md for more specific instructions.
 
