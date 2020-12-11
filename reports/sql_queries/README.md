@@ -8,9 +8,9 @@ saves the output to `reports/queries_output` for comparison and diagnostics.
 
 For Rake tasks, arguments are passed in using brackets -- see [How To Use Arguments In a Rake Task](https://thoughtbot.com/blog/how-to-use-arguments-in-a-rake-task).
 
-## Background
+## Details
 
-See code comments in lib/tasks/sql.rake for more detail.
+See code comments in `lib/tasks/sql.rake` for more detail.
 RSpec file `spec/lib/tasks/sql_spec.rb` also validates all the queries in this
 directory against data in the `test` database. This ensures the *.sql files
 are syntactically ready for use in query result validation.
@@ -53,10 +53,9 @@ They should be added directly to the query in Metabase (for later retrieval by
 
 To test the incantations locally as you develop them:
 
-1. Create a file, such as `for_testing.sql` in `reports/sql_queries` alongside
-   the other `*.sql` files.
+1. Create a file, such as `for_testing.sql` in `reports/sql_queries`.
 2. Add the incantations mentioned above.
-3. Run `bundle exec rake 'sql:validate[reports/sql_queries,reports/queries_output]'
+3. Run `bundle exec rake 'sql:validate[reports/sql_queries,reports/queries_output]'`
    and check the console output and `reports/queries_output/for_testing.*.out`.
    The output files must match exactly.
 
