@@ -10,6 +10,23 @@ import Button from './Button';
   parameters={{
     controls: { expanded: true }
   }}
+  args={{
+    children: 'Click Me',
+    disabled: false,
+    linkStyling: false,
+    loading: false,
+    type: 'button',
+    name: 'myButton',
+  }}
+  argTypes={{
+    classNames: { control: { type: 'array' } },
+    type: {
+      control: { type: 'select', options: ['button', 'submit', 'reset'] },
+    },
+    loading: { control: { type: 'boolean' } },
+    onClick: { action: 'clicked' },
+    styling: { control: { type: 'object' } },
+  }}
 />
 
 Primary actions are visually prioritized by being solid blue `usa-button` style.
