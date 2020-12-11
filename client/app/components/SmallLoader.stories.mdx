@@ -1,0 +1,24 @@
+import { Meta, Story, Canvas } from '@storybook/addon-docs/blocks';
+
+import * as SmallLoaderStories from './SmallLoader.stories';
+
+import SmallLoader from './SmallLoader';
+
+<Meta
+  title="Commons/Components/Loaders/SmallLoader"
+  component={SmallLoader}
+  parameters={{
+    controls: { expanded: true }
+  }}
+/>
+
+# Small Loader
+
+The small loading indicator can be used when information is still being pulled
+for a specific section on a page. Designers are responsible to indicate what the
+message should say and which application logo to use in the acceptance criteria.
+
+<Canvas>
+  <Story story={SmallLoaderStories.Loader} />
+</Canvas>
+
