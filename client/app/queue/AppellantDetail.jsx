@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { boldText } from './constants';
-import { detailListStyling } from './Detail';
+import { detailListStyling, getDetailField } from './Detail';
 import Address from './components/Address';
 import BareList from '../components/BareList';
 
@@ -35,10 +34,6 @@ export const AppellantDetail = ({ appeal }) => {
       value: <Address address={appellantAddress} />
     });
   }
-
-  const getDetailField = ({ label, value }) => () => <React.Fragment>
-    <span {...boldText}>{label}:</span> {value}
-  </React.Fragment>;
 
   return (
     <ul {...detailListStyling}>
