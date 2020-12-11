@@ -8,6 +8,18 @@ saves the output to `reports/queries_output` for comparison and diagnostics.
 
 For Rake tasks, arguments are passed in using brackets -- see [How To Use Arguments In a Rake Task](https://thoughtbot.com/blog/how-to-use-arguments-in-a-rake-task).
 
+## Quickstart
+
+To download and validate the most recent cards (a.k.a. queries and questions) 
+from Metabase, run:
+```
+> scripts/metabase_client.sh downloadAndValidate
+```
+
+This will save Metabase query results in `reports/queries_output` and
+compare those against results from running the extracted Rails query on 
+the database in your current environment.
+
 ## Details
 
 See code comments in `lib/tasks/sql.rake` for more detail.

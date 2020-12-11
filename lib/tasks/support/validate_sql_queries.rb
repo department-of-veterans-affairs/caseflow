@@ -14,7 +14,7 @@ class ValidateSqlQueries
       puts "  Found #{filenames.size} #{'query'.pluralize(filenames.size)} in #{query_dir}"
 
       # Run queries in each file and save output
-      puts "  Output files will be saved to '#{output_dir}'"
+      puts "  Query execution output will be saved to '#{output_dir}'"
       filenames.each { |filename| run_queries_and_save_output(filename, output_dir) }
 
       compare_output_files(output_dir)
