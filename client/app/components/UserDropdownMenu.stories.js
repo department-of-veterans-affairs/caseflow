@@ -1,32 +1,35 @@
 import React from 'react';
+import DropdownMenu from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/DropdownMenu';
 
 export default {
-  title: 'Commons/Components/Layout/UserDropdownMenu'
+  title: 'Commons/Components/Layout/User Dropdown Menu',
+  parameters: {
+    docs: {
+      inlineStories: false,
+      iframeHeight: 300,
+    },
+  },
+  args: {
+    label: 'BVACHANE at 101 - Candida H Hane',
+    options: [
+      { title: 'Help', link: '#' },
+      { title: 'Send Feedback', link: '#' },
+      { title: 'Release History', link: '#' },
+      { title: 'Sign Out', link: '#', border: true }
+    ]
+  },
+  argTypes: {
+    onClick: { action: 'onClick' },
+    onBlur: { action: 'onBlur' },
+  }
 };
 
-const Template = () => (
-  <div className="cf-nav cf-dropdown">
-    <a href="#menu" className="cf-dropdown-trigger" id="menu-trigger">
-      BVACHANE at 101 - Candida H Hane
-    </a>
-
-    <ul id="menu" className="cf-dropdown-menu" aria-labelledby="menu-trigger">
-      <li>
-        <a>Help</a>
-      </li>
-      <li>
-        <a>Send Feedback</a>
-      </li>
-      <li>
-        <a>Switch User</a>
-      </li>
-
-      <li>
-        <div className="dropdown-border"></div>
-        <a>Sign out</a>
-      </li>
-    </ul>
-  </div>
+const Template = (args) => (
+  <DropdownMenu {...args}
+  />
 );
+
+// Mock analyticsEvent sent by window in DropdownMenu component
+window.analyticsEvent = (...args) => {};
 
 export const UserDropdownMenu = Template.bind({});
