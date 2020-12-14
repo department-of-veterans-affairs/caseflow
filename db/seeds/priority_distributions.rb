@@ -347,7 +347,7 @@ module Seeds
       end
     end
 
-    def create_non_ready_cavc_genpop_cases
+    def create_nonready_cavc_genpop_cases
       rand(50).times do
         create(
           :appeal,
