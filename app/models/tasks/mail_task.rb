@@ -119,6 +119,7 @@ end
 require_dependency "address_change_mail_task"
 require_dependency "aod_motion_mail_task"
 require_dependency "appeal_withdrawal_mail_task"
+require_dependency "cavc_correspondence_mail_task"
 require_dependency "clear_and_unmistakeable_error_mail_task"
 require_dependency "congressional_interest_mail_task"
 require_dependency "controlled_correspondence_mail_task"
