@@ -110,13 +110,12 @@ export class BuildScheduleUploadContainer extends React.Component {
           response.body.errors.map((error) => error.details) :
           ['ValidationError::UnspecifiedError'];
 
-        // Set the error handler
-        const errorHandler = this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value ?
-          this.props.updateRoCoUploadFormErrors :
-          this.props.updateJudgeUploadFormErrors;
-
-        // Set the errors
-        errorHandler(errors);
+        // Display the errors based on the spreadsheet type
+        if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
+          this.props.updateRoCoUploadFormErrors(errors);
+        } else if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
+          this.props.updateJudgeUploadFormErrors(errors);
+        }
 
         // Toggle the continue upload
         this.props.toggleUploadContinueLoading();
