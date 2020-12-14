@@ -72,11 +72,6 @@ class MailTask < Task
       end
     end
 
-    def outstanding_cavc_tasks?(_parent)
-      # We don't yet create CAVC tasks so this will always return false for now.
-      false
-    end
-
     def pending_hearing_task?(parent)
       parent.appeal.tasks.open.any? { |task| task.is_a?(HearingTask) }
     end
