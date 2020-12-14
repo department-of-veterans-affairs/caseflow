@@ -314,6 +314,11 @@
     "value": "modal/assign_ihp_to_colocated_team",
     "func": "assign_ihp_to_colocated_blocking_distribution_data"
   },
+  "SEND_TO_HEARINGS_BLOCKING_DISTRIBUTION": {
+    "label": "Assign Schedule Hearing task to Hearings team",
+    "value": "modal/assign_schedule_hearing_to_hearings_team",
+    "func": "assign_schedule_hearing_to_hearings_blocking_distribution_data"
+  },
   "CLARIFY_POA_BLOCKING_CAVC": {
     "label": "Assign POA Clarification task to CAVC team",
     "value": "modal/assign_poa_to_cavc_team",

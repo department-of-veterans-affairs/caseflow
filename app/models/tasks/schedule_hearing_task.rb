@@ -23,7 +23,10 @@
 # If completed, an AssignHearingDispositionTask is created as a child of HearingTask.
 ##
 class ScheduleHearingTask < Task
+  include CavcAdminActionConcern
+
   before_validation :set_assignee
+  before_create :verify_org_task_unique
   before_create :create_parent_hearing_task
   delegate :hearing, to: :parent, allow_nil: true
 
@@ -120,6 +123,21 @@ class ScheduleHearingTask < Task
     end
 
     hearing_admin_actions
+  end
+
+  # Use the existence of an organization-level schedule hearing task to prevent duplicates since there should only ever
+  # be one schedule hearing task active at a time for a single appeal.
+  def verify_org_task_unique
+    return if !open?
+
+    if assigned_to.is_a?(Organization) && appeal.tasks.open.where(type: type, assigned_to: assigned_to).any?
+      fail(
+        Caseflow::Error::DuplicateOrgTask,
+        docket_number: appeal.docket_number,
+        task_type: self.class.name,
+        assignee_type: assigned_to.class.name
+      )
+    end
   end
 
   private
