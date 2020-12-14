@@ -90,6 +90,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     can?("RO ViewHearSched") && !can?("Build HearSched") && !can?("Edit HearSched")
   end
 
+  def can_view_edit_nod_date?
+    (BvaIntake.singleton.users.include?(self) || ClerkOfTheBoard.singleton.users.include?(self)) &&
+      FeatureToggle.enabled?(:edit_nod_date, user: self)
+  end
+
   def can_vso_hearing_schedule?
     can?("VSO") && !can?("RO ViewHearSched") && !can?("Build HearSched") && !can?("Edit HearSched")
   end
