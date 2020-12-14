@@ -12,6 +12,7 @@ import StringUtil from '../util/StringUtil';
 
 import {
   setCanEditAod,
+  setCanEditNodDate,
   setCanViewOvertimeStatus,
   setFeatureToggles,
   setUserRole,
@@ -92,6 +93,7 @@ import HearingTypeConversion from '../hearings/components/HearingTypeConversion'
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
+    this.props.setCanEditNodDate(this.props.userCanViewEditNodDate);
     this.props.setCanViewOvertimeStatus(this.props.userCanViewOvertimeStatus);
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
@@ -926,6 +928,7 @@ QueueApp.propTypes = {
   buildDate: PropTypes.string,
   setCanEditAod: PropTypes.func,
   setCanViewOvertimeStatus: PropTypes.func,
+  setCanEditNodDate: PropTypes.func,
   canEditAod: PropTypes.bool,
   setFeatureToggles: PropTypes.func,
   featureToggles: PropTypes.object,
@@ -943,6 +946,7 @@ QueueApp.propTypes = {
   reviewActionType: PropTypes.string,
   userCanViewHearingSchedule: PropTypes.bool,
   userCanViewOvertimeStatus: PropTypes.bool,
+  userCanViewEditNodDate: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
@@ -953,6 +957,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       setCanEditAod,
+      setCanEditNodDate,
       setCanViewOvertimeStatus,
       setFeatureToggles,
       setUserRole,
