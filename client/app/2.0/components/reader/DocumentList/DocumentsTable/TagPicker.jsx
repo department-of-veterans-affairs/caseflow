@@ -11,14 +11,14 @@ import { tagListStyles, tagListItemStyles } from 'styles/reader/DocumentList/Doc
  * @param {Object} props -- Contains tag details and state as well as state manipulation functions
  */
 export const TagPicker = ({
-  tags,
+  tagOptions,
   tagToggleStates,
   handleTagToggle,
   dropdownFilterViewListStyle,
   dropdownFilterViewListItemStyle
 }) => (
   <ul {...dropdownFilterViewListStyle} {...tagListStyles}>
-    {tags.map((tag, index) => (
+    {tagOptions.map((tag, index) => (
       <li key={index} {...dropdownFilterViewListItemStyle} {...tagListItemStyles}>
         <Checkbox
           label={
@@ -36,7 +36,7 @@ export const TagPicker = ({
 );
 
 TagPicker.propTypes = {
-  tags: PropTypes.array,
+  tagOptions: PropTypes.array,
   handleTagToggle: PropTypes.func.isRequired,
   tagToggleStates: PropTypes.object,
   dropdownFilterViewListStyle: PropTypes.object,

@@ -210,7 +210,6 @@ export const TagHeader = ({
   toggleFilter,
   clearTagFilters,
   setTagFilter,
-  tagOptions,
   ...props
 }) => (
   <div id="tags-header" className="document-list-header-issue-tags">
@@ -232,7 +231,6 @@ export const TagHeader = ({
       >
         <TagPicker
           {...props}
-          tags={tagOptions}
           tagToggleStates={filterCriteria?.tag}
           handleTagToggle={setTagFilter}
         />

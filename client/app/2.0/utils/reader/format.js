@@ -242,6 +242,6 @@ export const formatTagValue = (tags) => tags.map((tag) => ({
  * Helper Method to map tags to appropriate options in the SearchableDropdown
  * @param {Array} tags -- List of tags to be formatted
  */
-export const formatTagOptions = (documents) => Object.keys(documents).
-  map((doc) => documents[doc].tags).
-  reduce((list, item) => list.includes(item) ? list : [...list, ...item], []);
+export const formatTagOptions = (documents) => Object.values(documents).
+  reduce((list, doc) => [...list, ...doc.tags], []).
+  filter((tag, index, list) => list.findIndex((item) => item.text === tag.text) === index);
