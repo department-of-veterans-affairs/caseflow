@@ -160,8 +160,7 @@ class Task < CaseflowRecord
 
     def create_from_params(params, user)
       parent_task = Task.find(params[:parent_id])
-      fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_task.assigned_to_id == params[:assigned_to_id] &&
-                                                           parent_task.assigned_to_type == params[:assigned_to_type]
+      fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_of_same_type_has_same_assignee(parent_task, params)
 
       verify_user_can_create!(user, parent_task)
 
@@ -169,6 +168,12 @@ class Task < CaseflowRecord
       child = create_child_task(parent_task, user, params)
       parent_task.update!(status: params[:status]) if params[:status]
       child
+    end
+
+    def parent_of_same_type_has_same_assignee(parent_task, params)
+      parent_task.assigned_to_id == params[:assigned_to_id] &&
+        parent_task.assigned_to_type == params[:assigned_to_type] &&
+        parent_task.type == params[:type]
     end
 
     def create_child_task(parent, current_user, params)
@@ -216,6 +221,19 @@ class Task < CaseflowRecord
         "#{CachedAppeal.table_name}.docket_number #{order}, "\
         "#{Task.table_name}.created_at #{order}"
       )
+    end
+
+    # Sorting tasks by docket number within each category of appeal: case type, aod, docket number
+    # Used by ScheduleHearingTaskPager and WarmBgsCachedJob to sort ScheduleHearingTasks
+    def order_by_cached_appeal_priority_clause
+      Arel.sql(<<-SQL)
+        (CASE
+          WHEN cached_appeal_attributes.case_type = 'Court Remand' THEN 1
+          ELSE 0
+        END) DESC,
+        cached_appeal_attributes.is_aod DESC,
+        cached_appeal_attributes.docket_number ASC
+      SQL
     end
   end
 

@@ -85,7 +85,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(page).to have_current_path("/queue")
 
       # Success banner
-      expect(page).to have_content(COPY::DOCKET_SWITCH_REQUEST_MESSAGE)
+      expect(page).to have_content(COPY::DOCKET_SWITCH_RECOMMENDATION_SUCCESS_MESSAGE)
 
       judge_task = DocketSwitchRulingTask.find_by(assigned_to: judge)
       expect(judge_task).to_not be_nil
@@ -134,13 +134,16 @@ RSpec.feature "Docket Switch", :all_dbs do
           # The previously assigned COTB attorney should be selected
           expect(page).to have_content(cotb_attorney.full_name)
           expect(page).to_not have_content(cotb_non_attorney.full_name)
-
           click_button(text: "Submit")
 
           # Return back to user's queue
           expect(page).to have_current_path("/queue")
-
+          # Success banner
           disposition_type = Constants::DOCKET_SWITCH[disposition]["dispositionType"]
+          expect(page).to have_content(
+            format(COPY::DOCKET_SWITCH_RULING_SUCCESS_TITLE, disposition_type.downcase, appeal.claimant.name)
+          )
+
           next_task = Object.const_get("DocketSwitch#{disposition_type}Task").find_by(assigned_to: cotb_attorney)
           expect(next_task).to_not be_nil
 

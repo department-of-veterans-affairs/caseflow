@@ -798,7 +798,7 @@ RSpec.feature "Case details", :all_dbs do
           click_on("Search")
 
           click_on(appeal.docket_number)
-          expect(page).to have_content("Edit")
+          expect(find("#caseTitleDetailsSubheader")).to have_content("Edit")
         end
       end
     end
@@ -810,7 +810,7 @@ RSpec.feature "Case details", :all_dbs do
         visit("/queue/appeals/#{appeal.uuid}")
       end
       it "should not display the edit link" do
-        expect(page).to_not have_content("Edit")
+        expect(find("#caseTitleDetailsSubheader")).to_not have_content("Edit")
       end
     end
   end
@@ -1228,6 +1228,78 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to_not have_css(".gray-dot")
 
         expect(page).to have_content(COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA)
+      end
+    end
+
+    context "when a NOD exists and user can edit NOD date display Edit NOD Date link" do
+      before { FeatureToggle.enable!(:edit_nod_date) }
+      after { FeatureToggle.disable!(:edit_nod_date) }
+
+      let(:appeal) { create(:appeal) }
+      let(:veteran) do
+        create(:veteran,
+               first_name: "Bobby",
+               last_name: "Winters",
+               file_number: "55555456")
+      end
+
+      let!(:appeal) do
+        create(:appeal,
+               :with_post_intake_tasks,
+               veteran_file_number: veteran.file_number,
+               docket_type: Constants.AMA_DOCKETS.direct_review,
+               receipt_date: 10.months.ago.to_date.mdY)
+      end
+
+      let(:cob_user) { create(:user, css_id: "COB_USER", station_id: "101") }
+
+      before do
+        ClerkOfTheBoard.singleton.add_user(cob_user)
+        User.authenticate!(user: cob_user)
+      end
+
+      it "displays Edit NOD Date link" do
+        visit("/queue/appeals/#{appeal.uuid}")
+
+        expect(appeal.nod_date).to_not be_nil
+        expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
+        expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+      end
+    end
+
+    context "when a NOD exists and user cannot edit NOD date do not display Edit NOD Date link" do
+      before { FeatureToggle.enable!(:edit_nod_date) }
+      after { FeatureToggle.disable!(:edit_nod_date) }
+
+      let(:appeal) { create(:appeal) }
+      let(:veteran) do
+        create(:veteran,
+               first_name: "Bobby",
+               last_name: "Winters",
+               file_number: "55555456")
+      end
+
+      let!(:appeal) do
+        create(:appeal,
+               :with_post_intake_tasks,
+               veteran_file_number: veteran.file_number,
+               docket_type: Constants.AMA_DOCKETS.direct_review,
+               receipt_date: 10.months.ago.to_date.mdY)
+      end
+
+      let(:not_cob_user) { create(:user, css_id: "BVAAABSHIRE", station_id: "101") }
+
+      before do
+        BvaDispatch.singleton.add_user(not_cob_user)
+        User.authenticate!(user: not_cob_user)
+      end
+
+      it "displays Edit NOD Date link" do
+        visit("/queue/appeals/#{appeal.uuid}")
+
+        expect(appeal.nod_date).to_not be_nil
+        expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
+        expect(page).to_not have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
       end
     end
   end

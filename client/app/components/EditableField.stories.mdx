@@ -1,0 +1,118 @@
+import { Meta, Story, ArgsTable, Canvas } from '@storybook/addon-docs/blocks';
+
+import * as Stories from './EditableField.stories';
+
+import EditableField from './EditableField';
+
+<Meta
+  title="Commons/Components/Form Fields/EditableField"
+  component={EditableField}
+  parameters={{
+    controls: { expanded: true },
+  }}
+  args={{
+    label: 'Label',
+    value: 'Value',
+  }}
+  argTypes={{
+    errorMessage: { control: { type: 'text' } },
+    label: { control: { type: 'text' } },
+    maxLength: { control: { type: 'number' } },
+    placeholder: { control: { type: 'text' } },
+    title: { control: { type: 'text' } },
+    onSave: { action: 'onSave' },
+    type: {
+      control: {
+        type: 'select',
+        options: [
+          'button',
+          'checkbox',
+          'color',
+          'date',
+          'datetime-local',
+          'email',
+          'file',
+          'hidden',
+          'image',
+          'month',
+          'number',
+          'password',
+          'radio',
+          'range',
+          'reset',
+          'search',
+          'submit',
+          'tel',
+          'text',
+          'time',
+          'url',
+          'week',
+        ],
+      },
+    },
+  }}
+/>
+
+# Editable Field
+
+An editable field shows the current value of a field. The value can be changed by clicking "Edit". After the user is
+done editing the field, they can cancel or save their changes.
+
+## Default
+
+<Canvas>
+  <Story story={Stories.Default} />
+</Canvas>
+
+## Error
+
+When an error message is provided, the field will be stylized as invalid.
+
+<Canvas>
+  <Story story={Stories.Error} />
+</Canvas>
+
+## Label
+
+Labels can be set with the `label` property.
+
+<Canvas>
+  <Story story={Stories.Label} />
+</Canvas>
+
+## Max Length
+
+The length of the string input into the text field can be restricted. The default for this is 524288.
+
+<Canvas>
+  <Story story={Stories.MaxLength} />
+</Canvas>
+
+## Placeholder
+
+Placeholder text can be set to display when the input is empty. This can be used to provide the user with additional
+context or instructions.
+
+<Canvas>
+  <Story story={Stories.Placeholder} />
+</Canvas>
+
+## Title
+
+A title can be set to provide extra information to the user when they hover over the label or input field
+
+<Canvas>
+  <Story story={Stories.Title} />
+</Canvas>
+
+## Type
+
+Type can be used to control the type of data to input
+
+<Canvas>
+  <Story story={Stories.Type} />
+</Canvas>
+
+## Args
+
+<ArgsTable of={EditableField} />
