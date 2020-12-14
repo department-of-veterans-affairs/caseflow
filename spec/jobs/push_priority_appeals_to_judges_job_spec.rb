@@ -143,7 +143,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
   end
 
-  context ".distribute_genpop_priority_appeals" do
+  fcontext ".distribute_genpop_priority_appeals" do
     before do
       allow_any_instance_of(DirectReviewDocket)
         .to receive(:nonpriority_receipts_per_year)
@@ -201,10 +201,9 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     let!(:ready_priority_evidence_cases) do
       (1..5).map do |i|
         appeal = create(:appeal,
-                        :with_post_intake_tasks,
-                        :advanced_on_docket_due_to_age,
+                        :type_cavc_remand,
+                        :ready_for_distribution,
                         docket_type: Constants.AMA_DOCKETS.evidence_submission)
-        appeal.tasks.find_by(type: EvidenceSubmissionWindowTask.name).completed!
         appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.month.ago)
         appeal
       end
