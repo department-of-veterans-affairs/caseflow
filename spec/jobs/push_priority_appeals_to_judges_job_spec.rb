@@ -143,7 +143,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
   end
 
-  fcontext ".distribute_genpop_priority_appeals" do
+  context ".distribute_genpop_priority_appeals" do
     before do
       allow_any_instance_of(DirectReviewDocket)
         .to receive(:nonpriority_receipts_per_year)
