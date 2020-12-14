@@ -107,8 +107,8 @@ class Docket
       join_aod_motions
         .where("advance_on_docket_motions.created_at > appeals.established_at")
         .where("advance_on_docket_motions.granted = ?", true)
-        .or(join_aod_motions
-          .where("people.date_of_birth <= ?", 75.years.ago))
+        .or(join_aod_motions.where("people.date_of_birth <= ?", 75.years.ago))
+        .or(join_aod_motions.where("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand))
         .group("appeals.id")
     end
 
@@ -116,6 +116,7 @@ class Docket
     def nonpriority
       join_aod_motions
         .where("people.date_of_birth > ?", 75.years.ago)
+        .where.not("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand)
         .group("appeals.id")
         .having("count(case when advance_on_docket_motions.granted and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
     end
