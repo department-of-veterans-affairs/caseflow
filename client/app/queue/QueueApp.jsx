@@ -89,6 +89,7 @@ import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
 import { docketSwitchRoutes } from './docketSwitch/docketSwitchRoutes';
 import ScheduleVeteran from '../hearings/components/ScheduleVeteran';
 import HearingTypeConversion from '../hearings/components/HearingTypeConversion';
+import CavcReviewExtensionRequestModal from './components/CavcReviewExtensionRequestModal';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -419,6 +420,10 @@ class QueueApp extends React.PureComponent {
   routedStartHoldModal = (props) => <StartHoldModal {...props.match.params} />;
 
   routedEndHoldModal = (props) => <EndHoldModal {...props.match.params} />;
+
+  routedCavcExtensionRequest = (props) => (
+    <CavcReviewExtensionRequestModal {...props.match.params} onCancel={() => props.history.goBack()} />
+  );
 
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
@@ -774,6 +779,12 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.value
                 }`}
                 render={this.routedAssignToUser}
+              />
+              <Route
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CAVC_EXTENSION_REQUEST.value
+                }`}
+                render={this.routedCavcExtensionRequest}
               />
 
               <PageRoute

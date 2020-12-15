@@ -204,6 +204,10 @@
     "label": "End hold early",
     "value": "modal/end_hold"
   },
+  "CAVC_EXTENSION_REQUEST": {
+    "label": "Extension request",
+    "value": "modal/cavc_extension_request"
+  },
   "SPECIAL_CASE_MOVEMENT": {
     "label": "Case Movement: Advance to judge",
     "value": "modal/distribute_to_judge",
