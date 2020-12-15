@@ -77,7 +77,7 @@ export const CavcReviewExtensionRequestModal = ({ onCancel, onSubmit }) => {
     label={COPY.CAVC_EXTENSION_REQUEST_DECISION_LABEL}
     errorMessage={highlightFormItems && !validDecision() ? 'Choose one' : null}
     value={decision}
-    onChange={(val) => setDecision(val)}
+    onChange={setDecision}
     options={decisionOptions}
     strongLabel
   />;
@@ -88,7 +88,7 @@ export const CavcReviewExtensionRequestModal = ({ onCancel, onSubmit }) => {
     placeholder={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
     errorMessage={highlightFormItems && !validHoldDuration() ? 'Choose one' : null}
     value={holdDuration}
-    onChange={(val) => setHoldDuration(val)}
+    onChange={setHoldDuration}
     options={COLOCATED_HOLD_DURATIONS.map((value) => ({
       label: Number(value) ? `${value} days` : value,
       value
@@ -100,7 +100,7 @@ export const CavcReviewExtensionRequestModal = ({ onCancel, onSubmit }) => {
     label={COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY}
     type="number"
     value={customHoldDuration}
-    onChange={(val) => setCustomHoldDuration(val)}
+    onChange={setCustomHoldDuration}
     errorMessage={highlightFormItems && !validCustomHoldDuration() ?
       COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_INVALID_VALUE : null
     }
@@ -112,7 +112,7 @@ export const CavcReviewExtensionRequestModal = ({ onCancel, onSubmit }) => {
     label={COPY.CAVC_INSTRUCTIONS_LABEL}
     errorMessage={highlightFormItems && !validInstructions() ? COPY.CAVC_INSTRUCTIONS_ERROR : null}
     value={instructions}
-    onChange={(val) => setInstructions(val)}
+    onChange={setInstructions}
   />;
 
   return (
