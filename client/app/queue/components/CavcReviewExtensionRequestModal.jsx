@@ -6,8 +6,9 @@ import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
+import TextField from '../../components/TextField';
 
-import { COLOCATED_HOLD_DURATIONS } from '../constants';
+import { COLOCATED_HOLD_DURATIONS, CUSTOM_HOLD_DURATION_TEXT } from '../constants';
 import COPY from '../../../COPY';
 
 const decisions = [
@@ -32,20 +33,27 @@ const decisionOptions = decisions.map((value) => (
 export const CavcReviewExtensionRequestModal = ({ onCancel, onSubmit }) => {
   const [decision, setDecision] = useState();
   const [holdDuration, setHoldDuration] = useState();
+  const [customHoldDuration, setCustomHoldDuration] = useState();
   const [instructions, setInstructions] = useState();
   const [highlightFormItems, setHighlightFormItems] = useState(false);
 
   const granted = () => decision === decisions[0];
+  const usingCustomHold = () => holdDuration?.value === CUSTOM_HOLD_DURATION_TEXT;
 
   const validDecision = () => Boolean(decision);
+  // Don't need to validate on hold duration if going deny route
   const validHoldDuration = () => !granted() || Boolean(holdDuration?.value);
+  // Don't need to validate custom on hold duration if going deny route or if using a pre-selected hold value
+  const validCustomHoldDuration = () => !granted() || !usingCustomHold() || customHoldDuration > 0;
   const validInstructions = () => Boolean(instructions);
-  const validateForm = () => validDecision() && validHoldDuration() && validInstructions();
+  const validateForm = () => validDecision() && validHoldDuration() && validCustomHoldDuration() && validInstructions();
 
   const cancel = () => onCancel;
   const submit = () => {
     if (validateForm()) {
-      onSubmit(decision, instructions, granted() ? holdDuration.value : null);
+      const selectedHoldDuration = usingCustomHold() ? customHoldDuration : holdDuration.value;
+
+      onSubmit(decision, instructions, granted() ? selectedHoldDuration : null);
     } else {
       setHighlightFormItems(true);
     }
@@ -92,6 +100,17 @@ export const CavcReviewExtensionRequestModal = ({ onCancel, onSubmit }) => {
     onChange={setInstructions}
   />;
 
+  const customHoldField = <TextField
+    name={COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY}
+    type="number"
+    value={customHoldDuration}
+    onChange={setCustomHoldDuration}
+    errorMessage={highlightFormItems && !validCustomHoldDuration() ?
+      COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_INVALID_VALUE : null
+    }
+    inputProps={{ min: 1 }}
+  />;
+
   return (
     <Modal
       title={COPY.CAVC_EXTENSION_REQUEST_TITLE}
@@ -99,6 +118,7 @@ export const CavcReviewExtensionRequestModal = ({ onCancel, onSubmit }) => {
     >
       { decisionField }
       { granted() && holdDurationField }
+      { granted() && usingCustomHold() && customHoldField }
       { instructionsField }
     </Modal>
   );
