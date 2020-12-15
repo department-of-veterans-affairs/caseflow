@@ -791,7 +791,7 @@ describe User, :all_dbs do
               expect(user.selectable_organizations.length).to eq 2
             end
 
-            expect(judge_team.admins).to include user
+            expect(judge_team.admin).to eq user
             expect(user.organizations.size).to eq 3
             expect(subject).to eq true
             expect(user.reload.status).to eq status
