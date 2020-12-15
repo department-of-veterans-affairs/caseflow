@@ -1,41 +1,57 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { css } from 'glamor';
+import _ from 'lodash';
+import { DateString } from '../../util/DateUtil';
 
 import { COLORS } from '../../constants/AppConstants';
 import Badge from './Badge';
+
 
 /**
  * Component to display a FNOD badge if Veteran.date_of_death is not null and 
  * the Veteran is the appellant.
  */
 
+const listStyling = css({
+    listStyle: 'none',
+    textAlign: 'left',
+    marginBottom: 0,
+    padding: 0,
+    '& > li': {
+      marginBottom: 0,
+      '& > strong': {
+        color: COLORS.WHITE
+      }
+    }
+  });
+
 class FnodBadge extends React.PureComponent {
   render = () => {
-    const appeal = this.props;
+    const { appeal } = this.props;
 
-    // if (!appeal.overtime || !canViewOvertimeStatus) {
-    //   return null;
-    // }
+    //added a call here for testing purposes, actual logic to come later
+    if (!appeal.veteran_is_deceased) {
+      //commenting out the next line will make FNOD badge show everywhere
+      return null;
+    }
 
-    // if (!fnod) {
-    //   return null;
-    // }
-
+    //left tooltip here but without data because the badge.jsx component is expecting a tooltip
     const tooltipText = <div>
-      First Notice of Death
+      <strong>First Notice of Death</strong>
       <ul {...listStyling}>
-        <li>Source: <strong>BGS</strong></li>
-        {/* <li>Date of Death: <strong>DateString date=(veteran.date_of_death)</strong></li> */}
+        <li><strong>Source: </strong>BGS</li>
+        <li><strong>Date of Death: </strong></li>
+        <li><strong>Reported on: </strong></li>
       </ul>
     </div>;
-    
-    //will need to modify this line for fnod
+
     return <Badge name="fnod" displayName="FNOD" color={COLORS.RED} tooltipText={tooltipText} id={appeal.id} />;
   }
 }
 
 FnodBadge.propTypes = {
-  appeal: PropTypes.object,
-  task: PropTypes.object
+  appeal: PropTypes.object
 };
+
+export default FnodBadge;
