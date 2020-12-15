@@ -313,16 +313,15 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
       let(:vet_name) { task.appeal.veteran_full_name }
 
       it "automatically ends the timer in 90 days" do
-        step "travel 90+ days into the future to trigger TimedHoldTask to expire" do
-          Timecop.travel(Time.zone.now + 90.days + 1.hour)
-          TaskTimerJob.perform_now
+        # travel 90+ days into the future to trigger TimedHoldTask to expire
+        Timecop.travel(Time.zone.now + 90.days + 1.hour)
+        TaskTimerJob.perform_now
 
-          # Logged in as CAVC Lit Support admin
-          User.authenticate!(user: org_admin)
-          visit "organizations/cavc-lit-support"
-          find(".cf-tab", text: "Unassigned").click
-          expect(page).to have_content task.appeal.docket_number
-        end
+        # Logged in as CAVC Lit Support admin
+        User.authenticate!(user: org_admin)
+        visit "organizations/cavc-lit-support"
+        find(".cf-tab", text: "Unassigned").click
+        expect(page).to have_content task.appeal.docket_number
       end
 
       it_behaves_like "assign and reassign"
