@@ -42,16 +42,15 @@ class AdvanceOnDocketMotion < CaseflowRecord
 
     def create_or_update_by_appeal(appeal, attrs)
       person_id = appeal.claimant.person.id
-      existing_motions = AdvanceOnDocketMotion.for_appeal(appeal).for_person(person_id).order(:id)
 
       motion = for_appeal(appeal).for_person(person_id).where(reason: attrs[:reason]).order(:id).last
       if motion
         # We found an existing motion; update it
         motion.update(attrs)
-      elsif another_non_age_motion_exists_in(existing_motions) && reason_is_not_age(attrs[:reason])
+      elsif another_non_age_motion_exists_in(existing_motions(appeal, person_id)) && reason_is_not_age(attrs[:reason])
         # There is an existing non-age-related motion, but it is not what was passed to us.
         # Only one non-age-related motion (and one age-related motion) is allowed, so update an existing one:
-        motion = existing_motions.reverse.find(&:non_age_related_motion?)
+        motion = existing_motions(appeal, person_id).reverse.find(&:non_age_related_motion?)
         motion.update(attrs)
       else
         # No existing motion of this type (age-related or non-age-related) exists, so create a new one:
@@ -67,6 +66,10 @@ class AdvanceOnDocketMotion < CaseflowRecord
 
     def another_non_age_motion_exists_in(motions)
       motions.any?(&:non_age_related_motion?)
+    end
+
+    def existing_motions(appeal, person_id)
+      @existing_motions ||= AdvanceOnDocketMotion.for_appeal(appeal).for_person(person_id).order(:id)
     end
   end
 end

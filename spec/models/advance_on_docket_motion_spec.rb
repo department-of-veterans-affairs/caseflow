@@ -150,19 +150,20 @@ describe AdvanceOnDocketMotion, :postgres do
     context "when there is an existing motion for the appeal" do
       let(:appeal_on_motion) { appeal }
 
-      context "when the previous motion reason is not age" do
-        # Because we're mostly testing updates, create an initial AOD motion first:
-        before do
-          described_class.create!(
+      # Because we're mostly testing updates, create an initial AOD motion first:
+      before do
+        described_class.create!(
             person_id: claimant.person.id,
             granted: false,
-            reason: described_class.reasons[:other],
+            reason: initial_reason,
             user_id: user_id,
             appeal: appeal_on_motion
-          )
-        end
+        )
+      end
 
-        context "when called with an age-related motion" do
+      context "whose previous motion reason is not age" do
+        let(:initial_reason) { described_class.reasons[:other] }
+        context "creating an age-related motion" do
           let(:reason) { described_class.reasons[:age] }
 
           it "creates a new age-related motion" do
@@ -176,10 +177,10 @@ describe AdvanceOnDocketMotion, :postgres do
           end
         end
 
-        context "when called with a non-age-related motion" do
+        context "creating a non-age-related motion" do
           let(:reason) { described_class.reasons[:serious_illness] }
 
-          it "updates the previous motion" do
+          it "updates the existing motion" do
             subject
             motions = appeal.claimant.person.advance_on_docket_motions
             expect(motions.count).to eq 1
@@ -189,22 +190,13 @@ describe AdvanceOnDocketMotion, :postgres do
         end
       end
 
-      context "when the previous motion reason is age" do
-        # Because we're mostly testing updates, create an initial AOD motion first:
-        before do
-          described_class.create!(
-            person_id: claimant.person.id,
-            granted: false,
-            reason: described_class.reasons[:age],
-            user_id: user_id,
-            appeal: appeal_on_motion
-          )
-        end
+      context "whose reason is age" do
+        let(:initial_reason) { described_class.reasons[:age] }
 
-        context "when called with an age-related motion" do
+        context "creating an age-related motion" do
           let(:reason) { described_class.reasons[:age] }
 
-          it "only allows one age-related motion per appeal" do
+          it "updates the existing motion" do
             subject
             motions = appeal.claimant.person.advance_on_docket_motions
             expect(motions.count).to eq 1
@@ -213,10 +205,10 @@ describe AdvanceOnDocketMotion, :postgres do
           end
         end
 
-        context "when called with a non-age-related motion" do
+        context "creating a non-age-related motion" do
           let(:reason) { described_class.reasons[:other] }
 
-          it "creates the non-age-related motion" do
+          it "creates a non-age-related motion" do
             subject
             motions = appeal.claimant.person.advance_on_docket_motions
             expect(motions.count).to eq 2
