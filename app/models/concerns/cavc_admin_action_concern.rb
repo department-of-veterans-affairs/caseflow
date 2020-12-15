@@ -19,4 +19,19 @@ module CavcAdminActionConcern
       false
     end
   end
+
+  # Use the existence of an organization-level task to prevent duplicates since there should only ever be one org-level
+  # task active at a time for a single appeal.
+  def verify_org_task_unique
+    return super unless self.class.creating_from_cavc_workflow?(assigned_by, parent)
+
+    if assigned_to.is_a?(Organization) && appeal.tasks.open.where(type: type, assigned_to: assigned_to).any?
+      fail(
+        Caseflow::Error::DuplicateOrgTask,
+        docket_number: appeal.docket_number,
+        task_type: self.class.name,
+        assignee_type: assigned_to.class.name
+      )
+    end
+  end
 end
