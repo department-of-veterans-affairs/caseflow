@@ -32,4 +32,27 @@ describe CavcAdminActionConcern do
       it { is_expected.to be false }
     end
   end
+
+  describe "#verify_org_task_uniq" do
+    context "ScheduleHearingTask" do
+      subject { ScheduleHearingTask.create!(assigned_by: user, appeal: parent_task.appeal, parent: parent_task) }
+
+      before { ScheduleHearingTask.create!(assigned_by: user, appeal: parent_task.appeal, parent: parent_task) }
+
+      context "when creating from a cavc workflow" do
+        it "fails validation" do
+          expect { subject }.to raise_error(Caseflow::Error::DuplicateOrgTask)
+        end
+      end
+
+      context "when creating from a non cavc workflow" do
+        let(:user) { create(:user) }
+        let(:parent_task) { create(:distribution_task) }
+
+        it "does not fail validation" do
+          expect { subject }.to_not raise_error
+        end
+      end
+    end
+  end
 end

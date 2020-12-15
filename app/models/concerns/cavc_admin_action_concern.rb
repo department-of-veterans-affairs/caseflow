@@ -5,6 +5,11 @@
 module CavcAdminActionConcern
   extend ActiveSupport::Concern
 
+  CAVC_USER_TASK_TYPES = [
+    SendCavcRemandProcessedLetterTask.name,
+    CavcRemandProcessedLetterResponseWindowTask.name
+  ]
+
   class_methods do
     def verify_user_can_create!(user, parent_task)
       creating_from_cavc_workflow?(user, parent_task) || super(user, parent_task)
@@ -13,7 +18,7 @@ module CavcAdminActionConcern
     def creating_from_cavc_workflow?(user, parent_task)
       return true if parent_task&.type == DistributionTask.name && (
                      CavcLitigationSupport.singleton.user_is_admin?(user) ||
-                     SendCavcRemandProcessedLetterTask.open.where(assigned_to: user, appeal: parent_task.appeal).exists?
+                     parent_task.appeal.tasks.open.where(type: CAVC_USER_TASK_TYPES, assigned_to: user).exists?
                    )
 
       false
