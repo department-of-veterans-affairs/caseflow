@@ -35,10 +35,27 @@ describe OrganizationsUser, :postgres do
   end
 
   describe ".make_user_admin" do
-    subject { OrganizationsUser.make_user_admin(user, organization) }
+    context "when the organization is not a judge team" do
+      before { OrganizationsUser.make_user_admin(user, organization) }
+      it "makes the user an admin" do
+        expect(organization.admins.count).to eq(1)
+      end
+    end
 
-    it "returns an instance of OrganizationsUser" do
-      expect(subject).to be_a(OrganizationsUser)
+    context "when the organization is a new judge team" do
+      let(:judge_team) { JudgeTeam.create_for_judge(user) }
+      it "makes the user an admin" do
+        expect(judge_team.admin).to eq(user)
+      end
+    end
+
+    context "when the organization is a previously created judge team" do
+      let(:judge_team) { JudgeTeam.create_for_judge(user) }
+      let(:new_team_member) { create(:user) }
+      it "does not make the user an admin" do
+        expect { OrganizationsUser.make_user_admin(new_team_member, judge_team) }
+          .to raise_error(Caseflow::Error::ActionForbiddenError).with_message(COPY::JUDGE_TEAM_ADMIN_ERROR)
+      end
     end
   end
 
