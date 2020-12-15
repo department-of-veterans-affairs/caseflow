@@ -6,9 +6,15 @@ export default {
   title: 'Queue/Components/CavcReviewExtensionRequestModal',
   component: CavcReviewExtensionRequestModal,
   argTypes: {
-    onSubmit: { action: 'submitted' },
-    onCancel: { action: 'cancelled' }
-  }
+    onSubmit: { action: 'onSubmit' },
+    onCancel: { action: 'onCancel' }
+  },
+  parameters: {
+    docs: {
+      inlineStories: false,
+      iframeHeight: 800,
+    },
+  },
 };
 
 const Template = (args) => (

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { startCase } from 'lodash';
 
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
@@ -9,92 +10,115 @@ import TextareaField from '../../components/TextareaField';
 import { COLOCATED_HOLD_DURATIONS } from '../constants';
 import COPY from '../../../COPY';
 
-export const CavcReviewExtensionRequestModal = (props) => {
+const decisions = [
+  COPY.CAVC_EXTENSION_REQUEST_GRANT,
+  COPY.CAVC_EXTENSION_REQUEST_DENY
+];
+const helpText = {
+  [COPY.CAVC_EXTENSION_REQUEST_GRANT]: COPY.CAVC_EXTENSION_REQUEST_GRANT_HELP_TEXT,
+  [COPY.CAVC_EXTENSION_REQUEST_DENY]: COPY.CAVC_EXTENSION_REQUEST_DENY_HELP_TEXT
+};
+const decisionOptions = decisions.map((value) => (
+  {
+    value,
+    displayText: startCase(value),
+    help: helpText[value]
+  }
+));
+
+/**
+ * Modal to allow a user to grant or deny a cavc remand extension request. All fields are required.
+ */
+export const CavcReviewExtensionRequestModal = ({ onCancel, onSubmit }) => {
   const [decision, setDecision] = useState();
   const [holdDuration, setHoldDuration] = useState();
   const [instructions, setInstructions] = useState();
   const [highlightFormItems, setHighlightFormItems] = useState(false);
 
+  const granted = () => decision === decisions[0];
+
   const validDecision = () => Boolean(decision);
-  const validHoldDuration = () => decision === 'Deny' || Boolean(holdDuration?.value);
+  const validHoldDuration = () => !granted() || Boolean(holdDuration?.value);
   const validInstructions = () => Boolean(instructions);
   const validateForm = () => validDecision() && validHoldDuration() && validInstructions();
 
-  const onSubmit = () => {
-    if (!validateForm()) {
+  const cancel = () => onCancel;
+  const submit = () => {
+    if (validateForm()) {
+      onSubmit(decision, instructions, granted() ? holdDuration.value : null);
+    } else {
       setHighlightFormItems(true);
-
-      return;
     }
-
-    props.onSubmit(decision, instructions, holdDuration?.value);
   };
 
-  const radioOptions = [
-    {
-      value: 'Grant',
-      displayText: 'Grant',
-      help: 'Task will be go on hold for selected number of days'
-    },
-    {
-      value: 'Deny',
-      displayText: 'Deny',
-      help: 'Task will be marked completed and sent to case distribution'
-    }
-  ];
-
-  const buttons = [
+  const modalButtons = [
     {
       classNames: ['cf-modal-link', 'cf-btn-link'],
       name: 'Cancel',
-      onClick: props.onCancel,
+      onClick: cancel,
     },
     {
       classNames: ['usa-button', 'usa-button-secondary'],
       name: 'Confirm',
-      onClick: onSubmit,
+      onClick: submit,
     },
   ];
 
+  const decisionField = <RadioField
+    name={COPY.CAVC_EXTENSION_REQUEST_DECISION_LABEL}
+    errorMessage={highlightFormItems && !validDecision() ? 'Choose one' : null}
+    value={decision}
+    onChange={setDecision}
+    options={decisionOptions}
+    strongLabel
+  />;
+
+  const holdDurationField = <SearchableDropdown
+    name={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
+    placeholder={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
+    errorMessage={highlightFormItems && !validHoldDuration() ? 'Choose one' : null}
+    value={holdDuration}
+    onChange={setHoldDuration}
+    options={COLOCATED_HOLD_DURATIONS.map((value) => ({
+      label: Number(value) ? `${value} days` : value,
+      value
+    }))}
+  />;
+
+  const instructionsField = <TextareaField
+    name={COPY.CAVC_INSTRUCTIONS_LABEL}
+    errorMessage={highlightFormItems && !validInstructions() ? COPY.CAVC_INSTRUCTIONS_ERROR : null}
+    value={instructions}
+    onChange={setInstructions}
+  />;
+
   return (
     <Modal
-      title="Review extension request"
-      buttons={buttons}
-      {...props}
+      title={COPY.CAVC_EXTENSION_REQUEST_TITLE}
+      buttons={modalButtons}
     >
-      <RadioField
-        options={radioOptions}
-        label="How will you proceed?"
-        name="grant-or-deny"
-        value={decision}
-        onChange={setDecision}
-        errorMessage={highlightFormItems && !validDecision() ? 'Choose one' : null}
-        strongLabel
-      />
-      { decision === 'Grant' && <SearchableDropdown
-        name={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
-        searchable={false}
-        errorMessage={highlightFormItems && !validHoldDuration() ? 'Choose one' : null}
-        placeholder={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
-        value={holdDuration}
-        onChange={setHoldDuration}
-        options={COLOCATED_HOLD_DURATIONS.map((value) => ({
-          label: Number(value) ? `${value} days` : value,
-          value
-        }))} /> }
-      <TextareaField
-        label={COPY.CAVC_INSTRUCTIONS_LABEL}
-        name="extensionInstructions"
-        value={instructions}
-        onChange={setInstructions}
-        errorMessage={highlightFormItems && !validInstructions() ? 'Please enter context for this action' : null}
-      />
+      { decisionField }
+      { granted() && holdDurationField }
+      { instructionsField }
     </Modal>
   );
 };
 
 CavcReviewExtensionRequestModal.propTypes = {
+
+  /**
+   * Callback for when the user presses the confirm button and the form is valid. Will be passed the following params
+   *
+   * @param {string} decision     The decision the user has made, one of "grant" or "deny"
+   * @param {string} instructions The instructions provided with the decision
+   * @param {number} holdDuration The number of days to grant an extension for. Will be null if the extension request is
+   *                              denied
+   */
   onSubmit: PropTypes.func,
+
+  /**
+   * Callback for when the user presses the cancel button
+   */
   onCancel: PropTypes.func
 };
 
