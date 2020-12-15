@@ -48,7 +48,7 @@ export const CavcReviewExtensionRequestModal = ({ onCancel, onSubmit }) => {
   const validInstructions = () => Boolean(instructions);
   const validateForm = () => validDecision() && validHoldDuration() && validCustomHoldDuration() && validInstructions();
 
-  const cancel = () => onCancel;
+  const cancel = () => onCancel();
   const submit = () => {
     if (validateForm()) {
       const selectedHoldDuration = usingCustomHold() ? customHoldDuration : holdDuration.value;
@@ -73,42 +73,46 @@ export const CavcReviewExtensionRequestModal = ({ onCancel, onSubmit }) => {
   ];
 
   const decisionField = <RadioField
-    name={COPY.CAVC_EXTENSION_REQUEST_DECISION_LABEL}
+    name="decision"
+    label={COPY.CAVC_EXTENSION_REQUEST_DECISION_LABEL}
     errorMessage={highlightFormItems && !validDecision() ? 'Choose one' : null}
     value={decision}
-    onChange={setDecision}
+    onChange={(val) => setDecision(val)}
     options={decisionOptions}
     strongLabel
   />;
 
   const holdDurationField = <SearchableDropdown
-    name={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
+    name="duration"
+    label={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
     placeholder={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
     errorMessage={highlightFormItems && !validHoldDuration() ? 'Choose one' : null}
     value={holdDuration}
-    onChange={setHoldDuration}
+    onChange={(val) => setHoldDuration(val)}
     options={COLOCATED_HOLD_DURATIONS.map((value) => ({
       label: Number(value) ? `${value} days` : value,
       value
     }))}
   />;
 
-  const instructionsField = <TextareaField
-    name={COPY.CAVC_INSTRUCTIONS_LABEL}
-    errorMessage={highlightFormItems && !validInstructions() ? COPY.CAVC_INSTRUCTIONS_ERROR : null}
-    value={instructions}
-    onChange={setInstructions}
-  />;
-
   const customHoldField = <TextField
-    name={COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY}
+    name="customDuration"
+    label={COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY}
     type="number"
     value={customHoldDuration}
-    onChange={setCustomHoldDuration}
+    onChange={(val) => setCustomHoldDuration(val)}
     errorMessage={highlightFormItems && !validCustomHoldDuration() ?
       COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_INVALID_VALUE : null
     }
     inputProps={{ min: 1 }}
+  />;
+
+  const instructionsField = <TextareaField
+    name="instructions"
+    label={COPY.CAVC_INSTRUCTIONS_LABEL}
+    errorMessage={highlightFormItems && !validInstructions() ? COPY.CAVC_INSTRUCTIONS_ERROR : null}
+    value={instructions}
+    onChange={(val) => setInstructions(val)}
   />;
 
   return (
