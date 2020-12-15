@@ -31,10 +31,6 @@ class HearingTask < Task
     hearing_task
   end
 
-  def verify_org_task_unique
-    true
-  end
-
   def when_child_task_completed(child_task)
     super
 
