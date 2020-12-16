@@ -4,6 +4,9 @@ class DocketSwitch < CaseflowRecord
   belongs_to :old_docket_stream, class_name: "Appeal", optional: false
   belongs_to :new_docket_stream, class_name: "Appeal"
   belongs_to :task, optional: false
+  after_save :process!
+
+  attr_reader :context
 
   validates :disposition, presence: true
   validate :granted_issues_present_if_partial
@@ -15,6 +18,10 @@ class DocketSwitch < CaseflowRecord
     partially_granted: "partially_granted",
     denied: "denied"
   }
+
+  def process!
+    process_denial! if denied?
+  end
 
   def request_issues_for_switch
     return [] unless granted_request_issue_ids
@@ -37,5 +44,9 @@ class DocketSwitch < CaseflowRecord
         "is required for partially_granted disposition"
       )
     end
+  end
+
+  def process_denial!
+    task.update(status: Constants.TASK_STATUSES.completed)
   end
 end
