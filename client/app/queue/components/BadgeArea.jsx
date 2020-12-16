@@ -25,13 +25,13 @@ class BadgeArea extends React.PureComponent {
 
     if (appeal) {
       badges = <React.Fragment>
-        <FnodBadge appeal={appeal} />
+        if (appeal.veteran_is_deceased && !appeal.appellant_is_not_veteran) <FnodBadge appeal={appeal} />
         <HearingBadge hearing={mostRecentHeldHearingForAppeal(appeal)} />
         <OvertimeBadge appeal={appeal} />
       </React.Fragment>;
     } else {
       badges = <React.Fragment>
-        <FnodBadge appeal={task.appeal} />
+         if (appeal.veteran_is_deceased && !appeal.appellant_is_not_veteran) <FnodBadge appeal={appeal} />
         <HearingBadge task={task} />
         <OvertimeBadge appeal={task.appeal} />
       </React.Fragment>;
