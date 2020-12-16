@@ -15,8 +15,12 @@ class OrganizationsUser < CaseflowRecord
 
   def self.make_user_admin(user, organization)
     organization_user = OrganizationsUser.existing_record(user, organization) || organization.add_user(user)
-    organization_user.tap do |org_user|
-      org_user.update!(admin: true)
+    if OrganizationsUser.judge_team_has_admin?(organization)
+      fail(Caseflow::Error::ActionForbiddenError, message: COPY::JUDGE_TEAM_ADMIN_ERROR)
+    else
+      organization_user.tap do |org_user|
+        org_user.update!(admin: true)
+      end
     end
   end
 
@@ -54,5 +58,9 @@ class OrganizationsUser < CaseflowRecord
     else
       org_user.judge_team_role.update!(type: nil)
     end
+  end
+
+  def self.judge_team_has_admin?(organization)
+    organization.is_a?(JudgeTeam) && !!organization.admin
   end
 end
