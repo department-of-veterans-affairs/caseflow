@@ -19,7 +19,7 @@ RSpec.feature "Docket Switch", :all_dbs do
     3.times do |idx|
       create(
         :decision_issue,
-        :rating,
+        # :rating,
         decision_review: appeal,
         disposition: "denied",
         description: "Decision issue description #{idx}",
@@ -27,6 +27,34 @@ RSpec.feature "Docket Switch", :all_dbs do
       )
     end
   end
+
+  let(:profile_date) { 10.days.ago }
+  # let(:promulgation_date) { 9.days.ago.to_date }
+  # let!(:rating) do
+  #   Generators::RatingAtIssue.build(
+  #     # participant_id: veteran.participant_id,
+  #     promulgation_date: promulgation_date,
+  #     profile_date: profile_date,
+  #     issues: [
+  #       { reference_id: "abc123", decision_text: "Left knee granted" },
+  #       { reference_id: "def456", decision_text: "PTSD denied" },
+  #       { reference_id: "abcdef", decision_text: "Back pain" }
+  #     ]
+  #   )
+  # end
+
+  let(:rating_request_issue_attributes) do
+    {
+      decision_review: appeal,
+      contested_rating_issue_reference_id: "def456",
+      contested_rating_issue_profile_date: profile_date,
+      contested_issue_description: "PTSD denied",
+      contention_reference_id: "4567"
+    }
+  end
+
+  let!(:rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
+
   let(:root_task) { create(:root_task, :completed, appeal: appeal) }
   let(:cotb_attorney) { create(:user, :with_vacols_attorney_record, full_name: "Clark Bard") }
   let!(:cotb_non_attorney) { create(:user, full_name: "Aang Bender") }
@@ -210,9 +238,10 @@ RSpec.feature "Docket Switch", :all_dbs do
     let(:receipt_date) { Time.zone.today - 5.days }
     let(:context) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit" }
 
-    it "allows attorney to complete the docket switch grant" do
+    fit "allows attorney to complete the docket switch grant" do
       User.authenticate!(user: cotb_attorney)
       visit "/queue/appeals/#{appeal.uuid}"
+      binding.pry
       find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
       find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_SWITCH_GRANTED.label).click
 
