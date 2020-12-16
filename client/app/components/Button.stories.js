@@ -6,7 +6,7 @@ const Template = (args) => (
   <Button {...args}>
     Click Me
   </Button >
-)
+);
 
 export const Primary = Template.bind({});
 
@@ -38,3 +38,7 @@ Loading.args = {
   id: 'btn-crt',
   loadingText: 'Loading...',
 };
+
+export const Destructive = Template.bind({});
+Destructive.args = { redStyling: true };
+

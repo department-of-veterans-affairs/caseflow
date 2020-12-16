@@ -17,6 +17,7 @@ import Button from './Button';
     loading: false,
     type: 'button',
     name: 'myButton',
+    redStyling: false
   }}
   argTypes={{
     classNames: { control: { type: 'array' } },
@@ -24,6 +25,7 @@ import Button from './Button';
       control: { type: 'select', options: ['button', 'submit', 'reset'] },
     },
     loading: { control: { type: 'boolean' } },
+    redStyling: { control: { type: 'boolean' } },
     onClick: { action: 'clicked' },
     styling: { control: { type: 'object' } },
   }}
@@ -78,3 +80,10 @@ beside a spinning icon.
 <Canvas>
   <Story story={ButtonStories.Loading} />
 </Canvas>
+
+### Destructive
+
+<Canvas>
+  <Story story={ButtonStories.Destructive} />
+</Canvas>
+
