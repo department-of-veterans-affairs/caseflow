@@ -86,7 +86,10 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
     end
 
     it "returns an error for an invalid spreadsheet" do
-      error = "The RO non-availability template was not followed. Redownload the template and try again."
+      # Define a template error for the RO spreadsheet
+      template_error = "The RO non-availability template was not followed. Redownload the template and try again."
+
+      # Format and send the request
       base64_header = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,"
       post :create, params: {
         schedule_period: {
@@ -97,9 +100,21 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
           file: base64_header + Base64.encode64(File.open("spec/support/roTemplateNotFollowed.xlsx").read)
         }
       }
-      expect(response.status).to eq 200
+
+      # Expect an error response
+      expect(response.status).to eq 400
+
+      # Parse the response body
       response_body = JSON.parse(response.body)
-      expect(response_body["error"]).to include error
+
+      # Parse the error out of the body
+      response_errors = response_body["errors"]
+
+      # Parse the error details (always the first error in the list)
+      error = response_errors.first
+
+      # Expect the template error
+      expect(error["details"]).to include template_error
     end
   end
 
