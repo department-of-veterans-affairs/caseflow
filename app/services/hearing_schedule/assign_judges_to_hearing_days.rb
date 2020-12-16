@@ -109,6 +109,7 @@ class HearingSchedule::AssignJudgesToHearingDays
     # hearing_day is a CO docket and judge was already assigned to one CO hearing day
     problems = @judges[css_id][:non_availabilities].include?(scheduled_for) ||
                hearing_day_already_assigned?(current_hearing_day.id) ||
+               judge_already_assigned_on_date?(judge_id, current_hearing_day) ||
                (current_hearing_day.central_office? && judge_already_assigned_to_co?(judge_id))
 
     !problems
@@ -116,6 +117,12 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   def hearing_day_already_assigned?(id)
     @assigned_hearing_days.any? { |day| day.id == id }
+  end
+
+  def judge_already_assigned_on_date?(judge_id, date)
+    @assigned_hearing_days.any? do |day|
+      day.judge_id.to_s == judge_id.to_s && day.scheduled_for_as_date == date
+    end
   end
 
   def judge_already_assigned_to_co?(judge_id)
