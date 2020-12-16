@@ -121,7 +121,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   def judge_already_assigned_on_date?(judge_id, date)
     @assigned_hearing_days.any? do |day|
-      day.judge_id.to_s == judge_id.to_s && day.scheduled_for_as_date == date
+      day.judge_id.to_s == judge_id.to_s && day.scheduled_for_as_date == date.scheduled_for_as_date
     end
   end
 
