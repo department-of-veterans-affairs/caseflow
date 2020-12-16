@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_10_021033) do
+ActiveRecord::Schema.define(version: 2020_12_15_215458) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -993,6 +993,16 @@ ActiveRecord::Schema.define(version: 2020_11_10_021033) do
     t.integer "user_id", null: false, comment: "The user for whom the message is intended"
     t.index ["detail_type", "detail_id"], name: "index_messages_on_detail_type_and_detail_id"
     t.index ["updated_at"], name: "index_messages_on_updated_at"
+  end
+
+  create_table "nod_date_edits", force: :cascade do |t|
+    t.bigint "appeal_id", null: false, comment: "Appeal that NOD date is being edited for"
+    t.string "change_reason", null: false, comment: "Reason for change"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at timestamps"
+    t.bigint "created_by_id", null: false, comment: "User that created this record"
+    t.date "new_value", null: false, comment: "Value after update"
+    t.date "old_value", null: false, comment: "Value before update"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at timestamps"
   end
 
   create_table "non_availabilities", force: :cascade do |t|
