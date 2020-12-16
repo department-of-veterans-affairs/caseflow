@@ -348,13 +348,12 @@ describe User, :all_dbs do
     end
 
     context "when the user is a judge team admin" do
-      let(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
-      let!(:judge) { judge_team.judge }
+      let(:judge_team) { JudgeTeam.create_for_judge(user) }
+      let!(:judge) { judge_team.admin }
 
       before do
-        OrganizationsUser.make_user_admin(user, judge_team)
-        allow(JudgeTeam).to receive(:for_judge).with(user).and_return(nil)
-        allow(user).to receive(:judge_in_vacols?).and_return(false)
+        allow(JudgeTeam).to receive(:for_judge).with(judge).and_return(nil)
+        allow(judge).to receive(:judge_in_vacols?).and_return(false)
       end
 
       it "does not return assigned cases link for judge" do
