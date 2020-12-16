@@ -2,11 +2,7 @@ import React from 'react';
 
 import Button from './Button';
 
-const Template = (args) => (
-  <Button {...args}>
-    Click Me
-  </Button >
-);
+const Template = (args) => <Button {...args} />;
 
 export const Primary = Template.bind({});
 
@@ -40,5 +36,5 @@ Loading.args = {
 };
 
 export const Destructive = Template.bind({});
-Destructive.args = { redStyling: true };
+Destructive.args = { redStyling: true, children: 'Danger' };
 
