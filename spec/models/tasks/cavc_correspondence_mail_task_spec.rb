@@ -13,36 +13,126 @@ describe CavcCorrespondenceMailTask do
   # TK: Org and User tasks
   describe ".available_actions" do
     let(:appeal) { create(:appeal, :type_cavc_remand, :with_post_intake_tasks) }
-    let(:mail_task) { described_class.create_from_params({appeal: appeal, parent_id: appeal.root_task.id}, mail_user) }
-
-    subject do
-      expect(mail_task.available_actions(user)).to eq(expected_actions)
-      expect(mail_task.parent.available_actions(user)).to eq(expected_actions)
+    let(:mail_task) do
+      described_class.create_from_params({ appeal: appeal, parent_id: appeal.root_task.id }, mail_user)
     end
 
-    context "mail team user" do
-      let(:user) { mail_user }
-      let(:expected_actions) { [] }
+    let(:mail_task_actions) do
+      [
+        Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
+        Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
+        Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
+        Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+      ]
+    end
 
-      it "has no actions" do
-        subject
+    let(:mail_task_user_actions) do
+      [
+        Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
+        Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
+        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
+        Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
+        Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+      ]
+    end
+
+    context "assigned to Organizations" do
+      subject do
+        expect(mail_task.available_actions(user)).to eq(expected_actions)
+        expect(mail_task.parent.available_actions(user)).to eq(expected_actions)
       end
-    end
 
-    context "CAVC Litigation Support team member" do
-      context "CAVC Litigation Support team admin" do
-        let(:user) { cavc_lit_user }
+      context "mail team user" do
+        let(:user) { mail_user }
         let(:expected_actions) { [] }
 
-        before do
-          OrganizationsUser.make_user_admin(user, CavcLitigationSupport.singleton)
+        it "has no actions" do
+          subject
         end
-
-        it "has actions"
       end
 
-      context "CAVC Litigation Support team admin" do
-        it "has no actions"
+      context "CAVC Litigation Support team member" do
+        let(:user) { cavc_lit_user }
+
+        context "CAVC Litigation Support team admin" do
+          let(:expected_actions) { mail_task_actions }
+
+          before { OrganizationsUser.make_user_admin(user, CavcLitigationSupport.singleton) }
+
+          it "has actions" do
+            subject
+          end
+        end
+
+        context "CAVC Litigation Support team member" do
+          let(:expected_actions) { [] }
+
+          it "has no actions" do
+            subject
+          end
+        end
+      end
+    end
+    context "assigned to a User" do
+      let(:mail_user_task) do
+        described_class.create_from_params({ appeal: appeal,
+                                             parent_id: mail_task.id,
+                                             assigned_to: cavc_lit_user2 },
+                                           cavc_lit_user)
+      end
+
+      let(:cavc_lit_user2) { create(:user) }
+
+      before do
+        CavcLitigationSupport.singleton.add_user(cavc_lit_user2)
+        OrganizationsUser.make_user_admin(cavc_lit_user, CavcLitigationSupport.singleton)
+      end
+
+      subject { expect(mail_user_task.available_actions(user)).to eq(expected_actions) }
+
+      context "mail team user" do
+        let(:user) { mail_user }
+        let(:expected_actions) { [] }
+
+        it "has no actions" do
+          subject
+        end
+      end
+
+      context "CAVC Litigation Support team member" do
+        let(:user) { cavc_lit_user }
+
+        context "CAVC Litigation Support team admin" do
+          let(:expected_actions) { mail_task_user_actions }
+
+          it "has actions" do
+            subject
+          end
+        end
+
+        context "CAVC Litigation Support team member" do
+          context "assigned the task" do
+            let(:user) { cavc_lit_user2 }
+            let(:expected_actions) { mail_task_user_actions }
+
+            it "has actions" do
+              subject
+            end
+          end
+
+          context "not assigned the task" do
+            let(:expected_actions) { [] }
+            let(:user) { create(:user) }
+
+            before { CavcLitigationSupport.singleton.add_user(user) }
+
+            it "has no actions" do
+              subject
+            end
+          end
+        end
       end
     end
   end
@@ -67,7 +157,7 @@ describe CavcCorrespondenceMailTask do
 
       context "without a CAVC task" do
         let(:appeal) { create(:appeal, :type_cavc_remand) }
-        let(:root_task) { RootTask.create!(appeal: appeal)  }
+        let(:root_task) { RootTask.create!(appeal: appeal) }
 
         it "fails to create the task" do
           expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError)

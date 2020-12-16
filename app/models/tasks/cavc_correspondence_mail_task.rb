@@ -12,28 +12,66 @@ class CavcCorrespondenceMailTask < MailTask
     CavcLitigationSupport.singleton
   end
 
-
   def available_actions(user)
     return [] unless CavcLitigationSupport.singleton.user_has_access?(user)
 
-    super
+    return organization_task_actions if org_task_and_admin_user
+
+    return user_task_actions if user_task_and_admin_or_assigned_to_user
+
+    []
   end
 
   private
 
   def cavc_appeal_stream
     if !appeal.cavc?
-      fail Caseflow::Error::ActionForbiddenError, message: "CAVC Correspondence can only be added to Court Remand Appeals."
+      fail Caseflow::Error::ActionForbiddenError,
+           message: "CAVC Correspondence can only be added to Court Remand Appeals."
     end
   end
 
   def appeal_at_cavc_lit_support
     if !open_cavc_task
-      fail Caseflow::Error::ActionForbiddenError, message: "CAVC Correspondence can only be added while the appeal is with CAVC Litigation Support."
+      fail Caseflow::Error::ActionForbiddenError,
+           message: "CAVC Correspondence can only be added while the appeal is with CAVC Litigation Support."
     end
   end
 
   def open_cavc_task
     CavcTask.open.where(appeal_id: appeal.id).any?
+  end
+
+  def organization_task_actions
+    [
+      Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
+      Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
+      Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
+      Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+      Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+    ]
+  end
+
+  def user_task_actions
+    [
+      Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
+      Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
+      Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
+      Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
+      Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+      Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+    ]
+  end
+
+  def org_task_and_admin_user
+    assigned_to_type == "Organization" && CavcLitigationSupport.singleton.user_is_admin?(user)
+  end
+
+  def user_task_and_admin_or_assigned_to_user
+    assigned_to_type == "User" && (assigned_to == user || cavc_lit_admin)
+  end
+
+  def cavc_lit_admin
+    CavcLitigationSupport.singleton.user_is_admin?(user)
   end
 end
