@@ -156,6 +156,10 @@
   "CAVC_EXTENSION_REQUEST_GRANT_HELP_TEXT": "Task will be go on hold for selected number of days",
   "CAVC_EXTENSION_REQUEST_DENY": "deny",
   "CAVC_EXTENSION_REQUEST_DENY_HELP_TEXT": "Task will be marked completed and sent to case distribution",
+  "CAVC_EXTENSION_REQUEST_GRANT_SUCCESS_TITLE": "This case has been put on hold for %s days",
+  "CAVC_EXTENSION_REQUEST_GRANT_SUCCESS_DETAIL": "You can find this case in the on hold tab of you team's queue",
+  "CAVC_EXTENSION_REQUEST_DENY_SUCCESS_TITLE": "You have denied extension",
+  "CAVC_EXTENSION_REQUEST_DENY_SUCCESS_DETAIL": "This task can be completed to distribute to a judge for further processing",
 
   "EDIT_NOD_DATE_MODAL_TITLE": "Edit NOD Date",
   "EDIT_NOD_DATE_MODAL_DESCRIPTION": "**Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.**",

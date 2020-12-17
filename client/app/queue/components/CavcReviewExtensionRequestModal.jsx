@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { startCase } from 'lodash';
 
@@ -7,6 +8,9 @@ import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
 import TextField from '../../components/TextField';
+
+import ApiUtil from '../../util/ApiUtil';
+import { showSuccessMessage } from '../uiReducer/uiActions';
 
 import { COLOCATED_HOLD_DURATIONS, CUSTOM_HOLD_DURATION_TEXT } from '../constants';
 import COPY from '../../../COPY';
@@ -151,7 +155,49 @@ CavcReviewExtensionRequestModalUnconnected.propTypes = {
   /**
    * Callback for when the user presses the cancel button
    */
-  onCancel: PropTypes.func
+  onCancel: PropTypes.func,
+
+  /**
+   * Any errors to display in the modal. Automatically set if the request was not successful
+   */
+  error: PropTypes.shape({
+    title: PropTypes.string,
+    detail: PropTypes.string
+  })
+};
+
+const CavcReviewExtensionRequestModal = ({ closeModal, taskId }) => {
+  const dispatch = useDispatch();
+  const [error, setError] = useState();
+
+  const onCancel = () => closeModal();
+  const onSubmit = (decision, instructions, holdDuration) => {
+    ApiUtil.post(`/tasks/${taskId}/cavc_extension_request/${decision}`, { instructions, holdDuration }).then(() => {
+      dispatch(showSuccessMessage(COPY.EXTENSION_REQUEST_SUCCESS_MESSAGE % holdDuration));
+      closeModal();
+    }, (err) => {
+      setError({ title: err.response.statusText, detail: err.response.text });
+    });
+  };
+
+  return <CavcReviewExtensionRequestModalUnconnected
+    onCancel={onCancel}
+    onSubmit={onSubmit}
+    error={error}
+  />;
+};
+
+CavcReviewExtensionRequestModal.propTypes = {
+
+  /**
+   * Callback to close the modal and return to the previous page
+   */
+  closeModal: PropTypes.func,
+
+  /**
+   * The id of the CavcRemandProcessedLetterResponseWindowTask the extension request is for
+   */
+  taskId: PropTypes.string
 };
 
 export default CavcReviewExtensionRequestModal;

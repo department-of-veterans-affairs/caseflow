@@ -422,7 +422,7 @@ class QueueApp extends React.PureComponent {
   routedEndHoldModal = (props) => <EndHoldModal {...props.match.params} />;
 
   routedCavcExtensionRequest = (props) => (
-    <CavcReviewExtensionRequestModal {...props.match.params} onCancel={() => props.history.goBack()} />
+    <CavcReviewExtensionRequestModal {...props.match.params} closeModal={() => props.history.goBack()} />
   );
 
   queueName = () =>
