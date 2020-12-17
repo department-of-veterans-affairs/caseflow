@@ -130,6 +130,7 @@ export const CavcReviewExtensionRequestModalUnconnected = ({ onCancel, onSubmit,
     <Modal
       title={COPY.CAVC_EXTENSION_REQUEST_TITLE}
       buttons={modalButtons}
+      closeHandler={onCancel}
     >
       { errorAlert() }
       { decisionField }
@@ -172,11 +173,21 @@ const CavcReviewExtensionRequestModal = ({ closeModal, taskId }) => {
 
   const onCancel = () => closeModal();
   const onSubmit = (decision, instructions, holdDuration) => {
-    ApiUtil.post(`/tasks/${taskId}/cavc_extension_request/${decision}`, { instructions, holdDuration }).then(() => {
+    const payload = {
+      data: {
+        task: {
+          days_on_hold: holdDuration,
+          instructions,
+          decision
+        }
+      }
+    };
+
+    ApiUtil.post(`/tasks/${taskId}/extension_request/`, payload).then(() => {
       dispatch(showSuccessMessage(COPY.EXTENSION_REQUEST_SUCCESS_MESSAGE % holdDuration));
       closeModal();
     }, (err) => {
-      setError({ title: err.response.statusText, detail: err.response.text });
+      setError(err.response.body.errors[0]);
     });
   };
 
