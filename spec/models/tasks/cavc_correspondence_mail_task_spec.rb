@@ -10,7 +10,6 @@ describe CavcCorrespondenceMailTask do
     CavcLitigationSupport.singleton.add_user(cavc_lit_user)
   end
 
-  # TK: Org and User tasks
   describe ".available_actions" do
     let(:appeal) { create(:appeal, :type_cavc_remand, :with_post_intake_tasks) }
     let(:mail_task) do
@@ -38,13 +37,13 @@ describe CavcCorrespondenceMailTask do
       ]
     end
 
-    context "assigned to Organizations" do
+    context "when assigned to an Organization" do
       subject do
         expect(mail_task.available_actions(user)).to eq(expected_actions)
         expect(mail_task.parent.available_actions(user)).to eq(expected_actions)
       end
 
-      context "mail team user" do
+      context "a mail team user" do
         let(:user) { mail_user }
         let(:expected_actions) { [] }
 
@@ -53,10 +52,10 @@ describe CavcCorrespondenceMailTask do
         end
       end
 
-      context "CAVC Litigation Support team member" do
+      context "a CAVC Litigation Support team user" do
         let(:user) { cavc_lit_user }
 
-        context "CAVC Litigation Support team admin" do
+        context "who is a team admin" do
           let(:expected_actions) { mail_task_actions }
 
           before { OrganizationsUser.make_user_admin(user, CavcLitigationSupport.singleton) }
@@ -66,7 +65,7 @@ describe CavcCorrespondenceMailTask do
           end
         end
 
-        context "CAVC Litigation Support team member" do
+        context "who is a team member" do
           let(:expected_actions) { [] }
 
           it "has no actions" do
@@ -75,7 +74,7 @@ describe CavcCorrespondenceMailTask do
         end
       end
     end
-    context "assigned to a User" do
+    context "when assigned to a User" do
       let(:mail_user_task) do
         described_class.create_from_params({ appeal: appeal,
                                              parent_id: mail_task.id,
@@ -92,7 +91,7 @@ describe CavcCorrespondenceMailTask do
 
       subject { expect(mail_user_task.available_actions(user)).to eq(expected_actions) }
 
-      context "mail team user" do
+      context "a mail team user" do
         let(:user) { mail_user }
         let(:expected_actions) { [] }
 
@@ -101,10 +100,10 @@ describe CavcCorrespondenceMailTask do
         end
       end
 
-      context "CAVC Litigation Support team member" do
+      context "a CAVC Litigation Support team member" do
         let(:user) { cavc_lit_user }
 
-        context "CAVC Litigation Support team admin" do
+        context "who is a team admin" do
           let(:expected_actions) { mail_task_user_actions }
 
           it "has actions" do
@@ -112,8 +111,8 @@ describe CavcCorrespondenceMailTask do
           end
         end
 
-        context "CAVC Litigation Support team member" do
-          context "assigned the task" do
+        context "who is not an admin" do
+          context "and is assigned the task" do
             let(:user) { cavc_lit_user2 }
             let(:expected_actions) { mail_task_user_actions }
 
@@ -122,7 +121,7 @@ describe CavcCorrespondenceMailTask do
             end
           end
 
-          context "not assigned the task" do
+          context "and is not assigned the task" do
             let(:expected_actions) { [] }
             let(:user) { create(:user) }
 
