@@ -90,6 +90,7 @@ module Seeds
 
     def create_cavc_genpop_cases
       create_ready_cavc_genpop_cases
+      create_ready_cavc_aod_genpop_cases
       create_nonready_cavc_genpop_cases
     end
 
@@ -343,6 +344,17 @@ module Seeds
           :appeal,
           :type_cavc_remand,
           :ready_for_distribution
+        )
+      end
+    end
+
+    def create_ready_cavc_aod_genpop_cases
+      rand(10).times do
+        create(
+          :appeal,
+          :type_cavc_remand,
+          :ready_for_distribution,
+          :advanced_on_docket_due_to_age
         )
       end
     end

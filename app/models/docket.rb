@@ -104,17 +104,17 @@ class Docket
 
   module Scopes
     def priority
-      join_aod_motions
+      include_aod_motions
         .where("advance_on_docket_motions.created_at > appeals.established_at")
         .where("advance_on_docket_motions.granted = ?", true)
-        .or(join_aod_motions.where("people.date_of_birth <= ?", 75.years.ago))
-        .or(join_aod_motions.where("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand))
+        .or(include_aod_motions.where("people.date_of_birth <= ?", 75.years.ago))
+        .or(include_aod_motions.where("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand))
         .group("appeals.id")
     end
 
     # rubocop:disable Metrics/LineLength
     def nonpriority
-      join_aod_motions
+      include_aod_motions
         .where("people.date_of_birth > ?", 75.years.ago)
         .where.not("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand)
         .group("appeals.id")
@@ -122,7 +122,7 @@ class Docket
     end
     # rubocop:enable Metrics/LineLength
 
-    def join_aod_motions
+    def include_aod_motions
       joins(claimants: :person)
         .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
     end
