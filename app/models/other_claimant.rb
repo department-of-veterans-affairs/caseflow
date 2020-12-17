@@ -9,6 +9,10 @@ class OtherClaimant < Claimant
   validate { |claimant| OtherClaimantValidator.new(claimant).validate }
 
   def relationship
-    "Other"
+    unrecognized_appellant&.relationship || "Other"
+  end
+
+  def unrecognized_appellant
+    @unrecognized_appellant ||= UnrecognizedAppellant.find_by(claimant_id: id)
   end
 end
