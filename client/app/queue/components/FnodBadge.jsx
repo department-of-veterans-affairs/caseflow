@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import { css } from 'glamor';
+import { css, nthLastChild } from 'glamor';
 import _ from 'lodash';
 import { DateString } from '../../util/DateUtil';
 
@@ -27,29 +27,41 @@ const listStyling = css({
     }
   });
 
-class FnodBadge extends React.PureComponent {
-  render = () => {
-    const { appeal } = this.props;
-    
-      //added a call here for testing purposes, actual logic to come later
-      if (!appeal.veteran_is_deceased) {
-        //commenting out the next line will make FNOD badge show everywhere
-        //return null;
-      }
+// class FnodBadge extends React.PureComponent {
+//   render = () => {
+//     const { appeal } = this.props;
+//     console.log('PROPS', this.props)
 
-      //left tooltip here but without data because the badge.jsx component is expecting a tooltip
-      const tooltipText = <div>
-        <strong>Date of Death Reported</strong>
-        {/* <ul {...listStyling}>
-          <li><strong>Source: </strong>BGS</li>
-          <li><strong>Date of Death: </strong></li>
-          <li><strong>Reported on: </strong></li>
-        </ul> */}
-      </div>;
+//     const tooltipText = <div>
+//       <strong>First Notice of Death</strong>
+//       <ul {...listStyling}>
+//         <li><strong>Source: </strong>BGS</li>
+//         <li><strong>Date of Death: </strong>{appeal.date_of_death}</li>
+//       </ul>
+//     </div>;
 
-      return <Badge name="fnod" displayName="FNOD" color={COLORS.RED} tooltipText={tooltipText} id={appeal.id} />;
+//     return <Badge name="fnod" displayName="FNOD" color={COLORS.RED} tooltipText={tooltipText} id={appeal.id} />;
+//   }
+// }
+const FnodBadge = (props) => {
+  const { appeal } = props;
+
+  console.log('PROPS', props);
+
+  if (!appeal.veteran_appellant_deceased) {
+    return null
   }
-}
+
+  const tooltipText = <div>
+    <strong>First Notice of Death</strong>
+    <ul {...listStyling}>
+      <li><strong>Source: </strong>BGS</li>
+      <li><strong>Date of Death: </strong>{appeal.date_of_death}</li>
+    </ul>
+  </div>;
+
+  return <Badge name="fnod" displayName="FNOD" color={COLORS.RED} tooltipText={tooltipText} id={appeal.id} />;
+};
 
 FnodBadge.propTypes = {
   appeal: PropTypes.object

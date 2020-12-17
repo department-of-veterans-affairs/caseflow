@@ -341,6 +341,10 @@ class Appeal < DecisionReview
     veteran_middle_name&.first
   end
 
+  def veteran_appellant_deceased?
+    veteran_is_deceased && !appellant_is_not_veteran
+  end
+
   # matches Legacy behavior
   def cavc
     court_remand?
