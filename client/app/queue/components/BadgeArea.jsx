@@ -21,17 +21,18 @@ import { mostRecentHeldHearingForAppeal } from '../utils';
 class BadgeArea extends React.PureComponent {
   render = () => {
     const { appeal, isHorizontal, task } = this.props;
+    console.log('BADGE AREA PROPS', this.props);
     let badges;
 
     if (appeal) {
       badges = <React.Fragment>
-        if (appeal.veteran_is_deceased && !appeal.appellant_is_not_veteran) <FnodBadge appeal={appeal} />
+        { appeal.veteran_is_deceased && !appeal.appellant_is_not_veteran && <FnodBadge appeal={appeal} /> }
         <HearingBadge hearing={mostRecentHeldHearingForAppeal(appeal)} />
         <OvertimeBadge appeal={appeal} />
       </React.Fragment>;
     } else {
       badges = <React.Fragment>
-         if (appeal.veteran_is_deceased && !appeal.appellant_is_not_veteran) <FnodBadge appeal={appeal} />
+        { appeal.veteran_is_deceased && !appeal.appellant_is_not_veteran && <FnodBadge appeal={task.appeal} /> }
         <HearingBadge task={task} />
         <OvertimeBadge appeal={task.appeal} />
       </React.Fragment>;

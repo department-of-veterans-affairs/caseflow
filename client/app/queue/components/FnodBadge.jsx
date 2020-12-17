@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import { css } from 'glamor';
+import { css, nthLastChild } from 'glamor';
 import _ from 'lodash';
 import { DateString } from '../../util/DateUtil';
 
@@ -26,22 +26,37 @@ const listStyling = css({
     }
   });
 
-class FnodBadge extends React.PureComponent {
-  render = () => {
-    const { appeal } = this.props;
+// class FnodBadge extends React.PureComponent {
+//   render = () => {
+//     const { appeal } = this.props;
+//     console.log('PROPS', this.props)
 
-    const tooltipText = <div>
-      <strong>First Notice of Death</strong>
-      <ul {...listStyling}>
-        <li><strong>Source: </strong>BGS</li>
-        <li><strong>Date of Death: </strong>{appeal.date_of_death}</li>
-      </ul>
-    </div>;
-    console.log(appeal);
+//     const tooltipText = <div>
+//       <strong>First Notice of Death</strong>
+//       <ul {...listStyling}>
+//         <li><strong>Source: </strong>BGS</li>
+//         <li><strong>Date of Death: </strong>{appeal.date_of_death}</li>
+//       </ul>
+//     </div>;
 
-    return <Badge name="fnod" displayName="FNOD" color={COLORS.RED} tooltipText={tooltipText} id={appeal.id} />;
-  }
-}
+//     return <Badge name="fnod" displayName="FNOD" color={COLORS.RED} tooltipText={tooltipText} id={appeal.id} />;
+//   }
+// }
+const FnodBadge = (props) => {
+  const { appeal } = props;
+
+  console.log('PROPS', props);
+
+  const tooltipText = <div>
+    <strong>First Notice of Death</strong>
+    <ul {...listStyling}>
+      <li><strong>Source: </strong>BGS</li>
+      <li><strong>Date of Death: </strong>{appeal.date_of_death}</li>
+    </ul>
+  </div>;
+
+  return <Badge name="fnod" displayName="FNOD" color={COLORS.RED} tooltipText={tooltipText} id={appeal.id} />;
+};
 
 FnodBadge.propTypes = {
   appeal: PropTypes.object
