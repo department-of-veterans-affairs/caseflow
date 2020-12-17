@@ -23,7 +23,8 @@ export const DocketSwitchDenialContainer = () => {
       disposition: "denied",
       receipt_date: formData.receiptDate,
       context: formData.context,
-      task_id: taskId
+      task_id: taskId,
+      old_docket_stream_id: appeal.id
     };
 
     try {

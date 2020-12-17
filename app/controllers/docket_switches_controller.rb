@@ -7,7 +7,6 @@ before_action :verify_task_access, only: [:create]
 
   def create
     docket_switch = DocketSwitch.new(*docket_switch_params)
-    binding.pry
     if docket_switch.errors.present?
       render json: { errors: [detail: docket_switch.errors.full_messages.join(", ")] }, status: :bad_request
       return
@@ -26,6 +25,10 @@ before_action :verify_task_access, only: [:create]
 
   def task
     @task ||= Task.find(docket_switch_params[:task_id])
+  end
+
+  def old_docket_stream
+  	Appeal.find(docket_switch_params[:old_docket_stream_id])
   end
 
   def docket_switch_params

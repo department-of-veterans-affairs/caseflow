@@ -47,6 +47,7 @@ class DocketSwitch < CaseflowRecord
   end
 
   def process_denial!
-    task.update(status: Constants.TASK_STATUSES.completed)
+    new_instructions = task.instructions.push(context)
+    task.update(status: Constants.TASK_STATUSES.completed, instructions: new_instructions)
   end
 end
