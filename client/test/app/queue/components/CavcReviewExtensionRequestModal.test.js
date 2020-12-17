@@ -178,7 +178,7 @@ describe('CavcReviewExtensionRequestModal', () => {
         expect(validationErrorShows(extensionModal, error)).toBeTruthy();
       });
 
-      it('does not show error on selected date', () => {
+      it('does not show error on valida custum hold duration', () => {
         const extensionModal = setup();
 
         selectGrant(extensionModal);
@@ -192,13 +192,13 @@ describe('CavcReviewExtensionRequestModal', () => {
     describe('instruction validations', () => {
       const error = COPY.CAVC_INSTRUCTIONS_ERROR;
 
-      it('shows error on no selected date', () => {
+      it('shows error on no provided instructions', () => {
         const extensionModal = setup();
 
         expect(validationErrorShows(extensionModal, error)).toBeTruthy();
       });
 
-      it('does not show error on selected date', () => {
+      it('does not show error on provided instructions', () => {
         const extensionModal = setup();
 
         populateInstructions(extensionModal, 'here are some instructions');
