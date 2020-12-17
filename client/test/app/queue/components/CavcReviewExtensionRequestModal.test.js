@@ -23,8 +23,8 @@ describe('CavcReviewExtensionRequestModal', () => {
 
   const clickSubmit = (modal) => modal.find('button#Review-extension-request-button-id-1').simulate('click');
   const clickCancel = (modal) => modal.find('button#Review-extension-request-button-id-0').simulate('click');
-  const selectGrant = (modal) => modal.find('#decision_grant').simulate('change', { target: { checked: true } });
-  const selectDeny = (modal) => modal.find('#decision_deny').simulate('change', { target: { checked: true } });
+  const selectGrant = (modal) => modal.find('#decision_grant').simulate('change', { target: { value: 'grant' } });
+  const selectDeny = (modal) => modal.find('#decision_deny').simulate('change', { target: { value: 'deny' } });
   const select15DayDuration = (modal) => {
     const dropdown = modal.find(SearchableDropdown);
 
@@ -55,25 +55,25 @@ describe('CavcReviewExtensionRequestModal', () => {
   it('shows hold duration selector only when decision is grant', () => {
     const extensionModal = setup();
 
-    expect(extensionModal.find('#duration').length).toBe(0);
+    expect(extensionModal.find('input#duration').length).toBe(0);
     selectGrant(extensionModal);
-    expect(extensionModal.find('#duration').length).toBe(1);
+    expect(extensionModal.find('input#duration').length).toBe(1);
     selectDeny(extensionModal);
-    expect(extensionModal.find('#duration').length).toBe(0);
+    expect(extensionModal.find('input#duration').length).toBe(0);
   });
 
   it('shows custom hold duration selector when only decision is grant and duration is custom', () => {
     const extensionModal = setup();
 
-    expect(extensionModal.find('#duration').length).toBe(0);
+    expect(extensionModal.find('input#customDuration').length).toBe(0);
     selectGrant(extensionModal);
-    expect(extensionModal.find('#duration').length).toBe(0);
+    expect(extensionModal.find('input#customDuration').length).toBe(0);
     select15DayDuration(extensionModal);
-    expect(extensionModal.find('#duration').length).toBe(0);
+    expect(extensionModal.find('input#customDuration').length).toBe(0);
     selectCustomDuration(extensionModal);
-    expect(extensionModal.find('#duration').length).toBe(1);
+    expect(extensionModal.find('input#customDuration').length).toBe(1);
     select15DayDuration(extensionModal);
-    expect(extensionModal.find('#duration').length).toBe(0);
+    expect(extensionModal.find('input#customDuration').length).toBe(0);
   });
 
   it('calls onSubmit with selected values when "Confirm" is pressed and form is valid', () => {

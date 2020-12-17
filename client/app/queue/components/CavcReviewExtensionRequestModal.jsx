@@ -51,7 +51,7 @@ export const CavcReviewExtensionRequestModal = ({ onCancel, onSubmit }) => {
   const cancel = () => onCancel();
   const submit = () => {
     if (validateForm()) {
-      const selectedHoldDuration = usingCustomHold() ? customHoldDuration : holdDuration.value;
+      const selectedHoldDuration = usingCustomHold() ? customHoldDuration : holdDuration?.value;
 
       onSubmit(decision, instructions, granted() ? selectedHoldDuration : null);
     } else {
