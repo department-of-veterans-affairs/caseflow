@@ -10,19 +10,6 @@ import Badge from './Badge';
  * the Veteran is the appellant.
  */
 
-const listStyling = css({
-  listStyle: 'none',
-  textAlign: 'left',
-  marginBottom: 0,
-  padding: 0,
-  '& > li': {
-    marginBottom: 0,
-    '& > strong': {
-      color: COLORS.WHITE
-    }
-  }
-});
-
 const FnodBadge = (props) => {
   const { appeal } = props;
 
