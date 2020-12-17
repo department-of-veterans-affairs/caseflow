@@ -5,6 +5,6 @@
 
 class CavcGrantedExtensionRequestTask < CavcExtensionRequestTask
   def self.label
-    COPY.CAVC_GRANTED_EXTENSION_TASK_LABEL
+    COPY::CAVC_GRANTED_EXTENSION_TASK_LABEL
   end
 end

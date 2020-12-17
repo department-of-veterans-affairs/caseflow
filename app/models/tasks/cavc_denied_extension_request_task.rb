@@ -5,6 +5,6 @@
 
 class CavcDeniedExtensionRequestTask < CavcExtensionRequestTask
   def self.label
-    COPY.CAVC_DENIED_EXTENSION_TASK_LABEL
+    COPY::CAVC_DENIED_EXTENSION_TASK_LABEL
   end
 end

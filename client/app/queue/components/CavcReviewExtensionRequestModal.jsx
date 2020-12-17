@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { startCase } from 'lodash';
+import { sprintf } from 'sprintf-js';
 
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
@@ -184,7 +185,16 @@ const CavcReviewExtensionRequestModal = ({ closeModal, taskId }) => {
     };
 
     ApiUtil.post(`/tasks/${taskId}/extension_request/`, payload).then(() => {
-      dispatch(showSuccessMessage(COPY.EXTENSION_REQUEST_SUCCESS_MESSAGE % holdDuration));
+      const successMessage = decision === 'grant' ?
+        {
+          title: sprintf(COPY.CAVC_EXTENSION_REQUEST_GRANT_SUCCESS_TITLE, holdDuration),
+          detail: COPY.CAVC_EXTENSION_REQUEST_GRANT_SUCCESS_DETAIL
+        } : {
+          title: COPY.CAVC_EXTENSION_REQUEST_DENY_SUCCESS_TITLE,
+          detail: COPY.CAVC_EXTENSION_REQUEST_DENY_SUCCESS_DETAIL
+        };
+
+      dispatch(showSuccessMessage(successMessage));
       closeModal();
     }, (err) => {
       setError(err.response.body.errors[0]);
