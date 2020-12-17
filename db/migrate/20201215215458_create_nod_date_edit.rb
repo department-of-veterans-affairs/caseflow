@@ -9,5 +9,7 @@ class CreateNodDateEdit < ActiveRecord::Migration[5.2]
 
       t.timestamps null: false, comment: "Default created_at/updated_at timestamps"
     end
+
+    add_index :appeals, :appeal_id, algorithm: :concurrently
   end
 end
