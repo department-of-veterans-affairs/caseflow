@@ -10,6 +10,7 @@ import TextField from '../../components/TextField';
 
 import { COLOCATED_HOLD_DURATIONS, CUSTOM_HOLD_DURATION_TEXT } from '../constants';
 import COPY from '../../../COPY';
+import Alert from '../../components/Alert';
 
 const decisions = [
   COPY.CAVC_EXTENSION_REQUEST_GRANT,
@@ -30,7 +31,7 @@ const decisionOptions = decisions.map((value) => (
 /**
  * Modal to allow a user to grant or deny a cavc remand extension request. All fields are required.
  */
-export const CavcReviewExtensionRequestModal = ({ onCancel, onSubmit }) => {
+export const CavcReviewExtensionRequestModalUnconnected = ({ onCancel, onSubmit, error }) => {
   const [decision, setDecision] = useState();
   const [holdDuration, setHoldDuration] = useState();
   const [customHoldDuration, setCustomHoldDuration] = useState();
@@ -119,11 +120,14 @@ export const CavcReviewExtensionRequestModal = ({ onCancel, onSubmit }) => {
     onChange={setInstructions}
   />;
 
+  const errorAlert = () => error?.title ? <Alert title={error.title} message={error?.detail} type="error" /> : null;
+
   return (
     <Modal
       title={COPY.CAVC_EXTENSION_REQUEST_TITLE}
       buttons={modalButtons}
     >
+      { errorAlert() }
       { decisionField }
       { holdDurationField() }
       { customHoldField() }
@@ -132,7 +136,7 @@ export const CavcReviewExtensionRequestModal = ({ onCancel, onSubmit }) => {
   );
 };
 
-CavcReviewExtensionRequestModal.propTypes = {
+CavcReviewExtensionRequestModalUnconnected.propTypes = {
 
   /**
    * Callback for when the user presses the confirm button and the form is valid. Will be passed the following params

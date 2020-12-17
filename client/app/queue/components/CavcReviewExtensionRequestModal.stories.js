@@ -1,13 +1,15 @@
 import React from 'react';
 
-import { CavcReviewExtensionRequestModal } from './CavcReviewExtensionRequestModal';
+import { CavcReviewExtensionRequestModalUnconnected } from './CavcReviewExtensionRequestModal';
 
 export default {
   title: 'Queue/Components/CavcReviewExtensionRequestModal',
-  component: CavcReviewExtensionRequestModal,
+  component: CavcReviewExtensionRequestModalUnconnected,
   argTypes: {
     onSubmit: { action: 'onSubmit' },
-    onCancel: { action: 'onCancel' }
+    onCancel: { action: 'onCancel' },
+    errorTitle: { type: 'text' },
+    errorDetails: { type: 'text' }
   },
   parameters: {
     docs: {
@@ -17,8 +19,10 @@ export default {
   },
 };
 
-const Template = (args) => (
-  <CavcReviewExtensionRequestModal {...args} />
-);
+const Template = ({ errorTitle, errorDetails, ...args }) => {
+  const error = errorTitle ? { title: errorTitle, detail: errorDetails } : null;
+
+  return <CavcReviewExtensionRequestModalUnconnected error={error} {...args} />;
+};
 
 export const Default = Template.bind({});

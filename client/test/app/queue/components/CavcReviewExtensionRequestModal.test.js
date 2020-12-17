@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
-import CavcReviewExtensionRequestModal from 'app/queue/components/CavcReviewExtensionRequestModal';
+import { CavcReviewExtensionRequestModalUnconnected } from 'app/queue/components/CavcReviewExtensionRequestModal';
 import { SearchableDropdown } from 'app/components/SearchableDropdown';
 
 import COPY from 'COPY';
@@ -12,11 +12,12 @@ describe('CavcReviewExtensionRequestModal', () => {
   const onSubmit = jest.fn();
   const onCancel = jest.fn();
 
-  const setup = () => {
+  const setup = (args = {}) => {
     return mount(
-      <CavcReviewExtensionRequestModal
+      <CavcReviewExtensionRequestModalUnconnected
         onCancel={onCancel}
         onSubmit={onSubmit}
+        {...args}
       />
     );
   };
@@ -74,6 +75,16 @@ describe('CavcReviewExtensionRequestModal', () => {
     expect(extensionModal.find('input#customDuration').length).toBe(1);
     select15DayDuration(extensionModal);
     expect(extensionModal.find('input#customDuration').length).toBe(0);
+  });
+
+  it('displays an error if provided', () => {
+    const title = 'Error title';
+    const detail = 'Error message';
+    const extensionModal = setup({ error: { title, detail } });
+
+    expect(extensionModal.find('.usa-alert-error').length).toBe(1);
+    expect(extensionModal.find('.usa-alert-heading').props().children).toBe(title);
+    expect(extensionModal.find('.usa-alert-text').props().children).toBe(detail);
   });
 
   it('calls onSubmit with selected values when "Confirm" is pressed and form is valid', () => {
