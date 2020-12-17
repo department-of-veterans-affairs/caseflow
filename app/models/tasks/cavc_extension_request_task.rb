@@ -9,10 +9,6 @@ class CavcExtensionRequestTask < Task
   before_create :verify_user_organization
   after_create :completed!
 
-  def self.label
-    fail "subclass #{self} must implement label method"
-  end
-
   private
 
   def verify_user_organization
