@@ -27,6 +27,7 @@ exports[`CavcReviewExtensionRequestModal renders correctly 1`] = `
       ]
     }
     className=""
+    closeHandler={[MockFunction]}
     scrollLock={true}
     title="Review extension request"
   >
@@ -60,6 +61,7 @@ exports[`CavcReviewExtensionRequestModal renders correctly 1`] = `
         <button
           className="cf-modal-close"
           id="Review-extension-request-button-id-close"
+          onClick={[MockFunction]}
           type="button"
         >
           <span
