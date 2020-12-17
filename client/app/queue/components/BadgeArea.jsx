@@ -21,7 +21,7 @@ import { mostRecentHeldHearingForAppeal } from '../utils';
 class BadgeArea extends React.PureComponent {
   render = () => {
     const { appeal, isHorizontal, task } = this.props;
-    console.log('BADGE AREA PROPS', this.props);
+
     let badges;
 
     if (appeal) {
