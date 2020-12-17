@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import { css } from 'glamor';
 
 import { COLORS } from '../../constants/AppConstants';
 import Badge from './Badge';
