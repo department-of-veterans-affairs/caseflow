@@ -230,6 +230,17 @@ FactoryBot.define do
     end
 
     ## Appeal with a realistic task tree
+    ## The appeal is waiting for CAVC Response
+    trait :cavc_response_window_open do
+      type_cavc_remand
+      with_post_intake_tasks
+      after(:create) do |appeal, _evaluator|
+        send_letter_task = appeal.tasks.select { |task| task.is_a?(SendCavcRemandProcessedLetterTask) }.first
+        send_letter_task.update_from_params({status: 'completed'}, CavcLitigationSupport.singleton.admins.first)
+      end
+    end
+
+    ## Appeal with a realistic task tree
     ## The appeal would be ready for distribution by the ACD except there is a blocking mail task
     trait :mail_blocking_distribution do
       ready_for_distribution
