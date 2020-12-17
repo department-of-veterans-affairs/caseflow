@@ -30,13 +30,7 @@ const FnodBadge = (props) => {
     return null;
   }
 
-  const tooltipText = <div>
-    <strong>First Notice of Death</strong>
-    <ul {...listStyling}>
-      <li><strong>Source: </strong>BGS</li>
-      <li><strong>Date of Death: </strong>{appeal.date_of_death}</li>
-    </ul>
-  </div>;
+  const tooltipText = 'Date of Death Reported';
 
   return <Badge name="fnod" displayName="FNOD" color={COLORS.RED} tooltipText={tooltipText} id={`fnod-${appeal.id}`} />;
 };
