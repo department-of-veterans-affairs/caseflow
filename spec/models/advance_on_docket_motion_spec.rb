@@ -153,11 +153,11 @@ describe AdvanceOnDocketMotion, :postgres do
       # Because we're mostly testing updates, create an initial AOD motion first:
       before do
         described_class.create!(
-            person_id: claimant.person.id,
-            granted: false,
-            reason: initial_reason,
-            user_id: user_id,
-            appeal: appeal_on_motion
+          person_id: claimant.person.id,
+          granted: false,
+          reason: initial_reason,
+          user_id: user_id,
+          appeal: appeal_on_motion
         )
       end
 
