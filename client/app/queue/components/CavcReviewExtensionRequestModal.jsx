@@ -82,30 +82,34 @@ export const CavcReviewExtensionRequestModal = ({ onCancel, onSubmit }) => {
     strongLabel
   />;
 
-  const holdDurationField = <SearchableDropdown
-    name="duration"
-    label={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
-    placeholder={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
-    errorMessage={highlightFormItems && !validHoldDuration() ? 'Choose one' : null}
-    value={holdDuration}
-    onChange={setHoldDuration}
-    options={COLOCATED_HOLD_DURATIONS.map((value) => ({
-      label: Number(value) ? `${value} days` : value,
-      value
-    }))}
-  />;
+  const holdDurationField = () => (
+    granted() ? <SearchableDropdown
+      name="duration"
+      label={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
+      placeholder={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
+      errorMessage={highlightFormItems && !validHoldDuration() ? 'Choose one' : null}
+      value={holdDuration}
+      onChange={setHoldDuration}
+      options={COLOCATED_HOLD_DURATIONS.map((value) => ({
+        label: Number(value) ? `${value} days` : value,
+        value
+      }))}
+    /> : null
+  );
 
-  const customHoldField = <TextField
-    name="customDuration"
-    label={COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY}
-    type="number"
-    value={customHoldDuration}
-    onChange={setCustomHoldDuration}
-    errorMessage={highlightFormItems && !validCustomHoldDuration() ?
-      COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_INVALID_VALUE : null
-    }
-    inputProps={{ min: 1 }}
-  />;
+  const customHoldField = () => (
+    granted() && usingCustomHold() ? <TextField
+      name="customDuration"
+      label={COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY}
+      type="number"
+      value={customHoldDuration}
+      onChange={setCustomHoldDuration}
+      errorMessage={highlightFormItems && !validCustomHoldDuration() ?
+        COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_INVALID_VALUE : null
+      }
+      inputProps={{ min: 1 }}
+    /> : null
+  );
 
   const instructionsField = <TextareaField
     name="instructions"
@@ -121,8 +125,8 @@ export const CavcReviewExtensionRequestModal = ({ onCancel, onSubmit }) => {
       buttons={modalButtons}
     >
       { decisionField }
-      { granted() && holdDurationField }
-      { granted() && usingCustomHold() && customHoldField }
+      { holdDurationField() }
+      { customHoldField() }
       { instructionsField }
     </Modal>
   );
