@@ -4,11 +4,9 @@ import { css } from 'glamor';
 
 import { COLORS } from '../../constants/AppConstants';
 import Badge from './Badge';
-import { setFeatureToggles } from '../uiReducer/uiActions';
-
 
 /**
- * Component to display a FNOD badge if Veteran.date_of_death is not null and 
+ * Component to display a FNOD badge if Veteran.date_of_death is not null and
  * the Veteran is the appellant.
  */
 
@@ -29,7 +27,7 @@ const FnodBadge = (props) => {
   const { appeal } = props;
 
   if (!appeal.veteran_appellant_deceased) {
-    return null
+    return null;
   }
 
   const tooltipText = <div>
