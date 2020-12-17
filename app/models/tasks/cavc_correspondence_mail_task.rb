@@ -53,7 +53,6 @@ class CavcCorrespondenceMailTask < MailTask
   def organization_task_actions
     [
       Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
-      Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
       Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
       Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
       Constants.TASK_ACTIONS.CANCEL_TASK.to_h
@@ -63,7 +62,6 @@ class CavcCorrespondenceMailTask < MailTask
   def user_task_actions
     [
       Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
-      Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
       Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
       Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
       Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
