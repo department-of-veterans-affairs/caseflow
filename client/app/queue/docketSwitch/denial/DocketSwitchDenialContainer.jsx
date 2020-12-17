@@ -5,10 +5,10 @@ import { DocketSwitchDenialForm } from './DocketSwitchDenialForm';
 import { completeDocketSwitchDenial } from './docketSwitchDenialSlice';
 import { appealWithDetailSelector } from '../../selectors';
 import DISPOSITIONS from '../../../../constants/DOCKET_SWITCH';
-import { createDocketSwitchRulingTask } from './docketSwitchDenialSlice';
+
 
 export const DocketSwitchDenialContainer = () => {
-  const { appealId } = useParams();
+  const { appealId, taskId } = useParams();
   const { goBack, push } = useHistory();
   const dispatch = useDispatch();
 
@@ -18,12 +18,22 @@ export const DocketSwitchDenialContainer = () => {
 
   const handleCancel = () => goBack();
   const handleSubmit = async (formData) => {
-    await dispatch(completeDocketSwitchDenial(formData));
 
-    // Add success alert
+    const docketSwitch = {
+      disposition: "denied",
+      receipt_date: formData.receiptDate,
+      context: formData.context,
+      task_id: taskId
+    };
 
-    // Redirect to user's queue
-    push('/queue');
+    try {
+      await dispatch(completeDocketSwitchDenial(docketSwitch));
+
+      push('/queue');
+    } catch (error) {
+      // Perhaps show an alert that indicates error, advise trying again...?
+      console.error('Error Denying Docket Switch', error);
+    }
   };
 
   return <DocketSwitchDenialForm

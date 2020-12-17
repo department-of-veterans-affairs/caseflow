@@ -7,7 +7,7 @@ before_action :verify_task_access, only: [:create]
 
   def create
     docket_switch = DocketSwitch.new(*docket_switch_params)
-
+    byebug
     if docket_switch.errors.present?
       render json: { errors: [detail: docket_switch.errors.full_messages.join(", ")] }, status: :bad_request
       return
