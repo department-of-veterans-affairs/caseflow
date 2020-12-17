@@ -61,7 +61,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       end
 
       context "and user is a mail intake" do
-        let(:user) { User.find_by(css_id: "ID1234") }
+        let(:user) { User.find_by_css_id("ID1234") }
         before do
           User.authenticate!(roles: ["Mail Intake"], css_id: "ID1234")
           request.headers["TOKEN"] = token
@@ -77,7 +77,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       end
 
       context "and the user is intake" do
-        let(:user) { User.find_by(css_id: "ID1234") }
+        let(:user) { User.find_by_css_id("ID1234") }
         let(:appeal) { create(:appeal, number_of_claimants: 1) }
         let(:params) { { appeal_id: appeal.uuid } }
 
