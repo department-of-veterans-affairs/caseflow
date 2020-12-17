@@ -36,8 +36,7 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
   end
 
   USER_ACTIONS = [
-    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
-    Constants.TASK_ACTIONS.CAVC_EXTENSION_REQUEST.to_h
+    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
   ].freeze
 
   def available_actions(user)
