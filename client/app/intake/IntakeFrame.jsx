@@ -102,7 +102,7 @@ export const IntakeFrame = (props) => {
             path={PAGE_PATHS.ADD_ISSUES}
             title="Add / Remove Issues | Caseflow Intake"
           >
-            <IntakeLayout buttons={<FinishButtons />}>
+            <IntakeLayout buttons={<FinishButtons history={history} />}>
               <IntakeAddIssuesPage featureToggles={props.featureToggles} />
             </IntakeLayout>
           </PageRoute>
@@ -112,8 +112,8 @@ export const IntakeFrame = (props) => {
             path={PAGE_PATHS.FINISH}
             title="Finish Processing | Caseflow Intake"
           >
-            <IntakeLayout buttons={<FinishButtons />}>
-              <FinishPage />
+            <IntakeLayout buttons={<FinishButtons history={history} />}>
+              <FinishPage history={history} />
             </IntakeLayout>
           </PageRoute>
 
@@ -122,8 +122,8 @@ export const IntakeFrame = (props) => {
             path={PAGE_PATHS.COMPLETED}
             title="Confirmation | Caseflow Intake"
           >
-            <IntakeLayout buttons={<CompletedNextButton />}>
-              <CompletedPage />
+            <IntakeLayout buttons={<CompletedNextButton history={history} />}>
+              <CompletedPage history={history} />
             </IntakeLayout>
           </PageRoute>
         </AppFrame>
