@@ -6,6 +6,7 @@ import { DateString } from '../../util/DateUtil';
 
 import { COLORS } from '../../constants/AppConstants';
 import Badge from './Badge';
+import { setFeatureToggles } from '../uiReducer/uiActions';
 
 
 /**
@@ -29,24 +30,24 @@ const listStyling = css({
 class FnodBadge extends React.PureComponent {
   render = () => {
     const { appeal } = this.props;
+    
+      //added a call here for testing purposes, actual logic to come later
+      if (!appeal.veteran_is_deceased) {
+        //commenting out the next line will make FNOD badge show everywhere
+        //return null;
+      }
 
-    //added a call here for testing purposes, actual logic to come later
-    if (!appeal.veteran_is_deceased) {
-      //commenting out the next line will make FNOD badge show everywhere
-      return null;
-    }
+      //left tooltip here but without data because the badge.jsx component is expecting a tooltip
+      const tooltipText = <div>
+        <strong>Date of Death Reported</strong>
+        {/* <ul {...listStyling}>
+          <li><strong>Source: </strong>BGS</li>
+          <li><strong>Date of Death: </strong></li>
+          <li><strong>Reported on: </strong></li>
+        </ul> */}
+      </div>;
 
-    //left tooltip here but without data because the badge.jsx component is expecting a tooltip
-    const tooltipText = <div>
-      <strong>First Notice of Death</strong>
-      <ul {...listStyling}>
-        <li><strong>Source: </strong>BGS</li>
-        <li><strong>Date of Death: </strong></li>
-        <li><strong>Reported on: </strong></li>
-      </ul>
-    </div>;
-
-    return <Badge name="fnod" displayName="FNOD" color={COLORS.RED} tooltipText={tooltipText} id={appeal.id} />;
+      return <Badge name="fnod" displayName="FNOD" color={COLORS.RED} tooltipText={tooltipText} id={appeal.id} />;
   }
 }
 
