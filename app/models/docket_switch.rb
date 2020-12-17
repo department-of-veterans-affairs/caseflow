@@ -6,7 +6,7 @@ class DocketSwitch < CaseflowRecord
   belongs_to :task, optional: false
   after_save :process!
 
-  attr_reader :context
+  attr_accessor :context
 
   validates :disposition, presence: true
   validate :granted_issues_present_if_partial
