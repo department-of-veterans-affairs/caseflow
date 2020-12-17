@@ -40,7 +40,7 @@ const FnodBadge = (props) => {
     </ul>
   </div>;
 
-  return <Badge name="fnod" displayName="FNOD" color={COLORS.RED} tooltipText={tooltipText} id={appeal.id} />;
+  return <Badge name="fnod" displayName="FNOD" color={COLORS.RED} tooltipText={tooltipText} id={`fnod-${appeal.id}`} />;
 };
 
 FnodBadge.propTypes = {

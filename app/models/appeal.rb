@@ -342,7 +342,7 @@ class Appeal < DecisionReview
   end
 
   def veteran_appellant_deceased?
-    veteran_is_deceased && !appellant_is_not_veteran
+    (veteran_is_deceased && !appellant_is_not_veteran) && FeatureToggle.enabled?(:fnod_badge, user: self)
   end
 
   # matches Legacy behavior

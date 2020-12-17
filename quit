@@ -1,0 +1,13 @@
+=> [32m#<Veteran:0x0000000010df6ca8[0m
+ id: [1;34m1032[0m,
+ closest_regional_office: [1;36mnil[0m,
+ created_at: [1;34;4mThu[0m, [1;34m17[0m [1;34;4mDec[0m [1;34m2020[0m [1;34m18[0m:[1;34m21[0m:[1;34m38[0m [1;34;4mUTC[0m [1;34m+00[0m:[1;34m00[0m,
+ date_of_death: [1;36mnil[0m,
+ file_number: [31m[1;31m"[0m[31m686623298[1;31m"[0m[31m[0m,
+ first_name: [31m[1;31m"[0m[31mGrace[1;31m"[0m[31m[0m,
+ last_name: [31m[1;31m"[0m[31mVanBuren[1;31m"[0m[31m[0m,
+ middle_name: [31m[1;31m"[0m[31mE[1;31m"[0m[31m[0m,
+ name_suffix: [1;36mnil[0m,
+ participant_id: [31m[1;31m"[0m[31m713358[1;31m"[0m[31m[0m,
+ ssn: [31m[1;31m"[0m[31m203265129[1;31m"[0m[31m[0m,
+ updated_at: [1;34;4mThu[0m, [1;34m17[0m [1;34;4mDec[0m [1;34m2020[0m [1;34m18[0m:[1;34m21[0m:[1;34m38[0m [1;34;4mUTC[0m [1;34m+00[0m:[1;34m00[0m[32m>[0m
