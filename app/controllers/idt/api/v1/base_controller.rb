@@ -44,7 +44,7 @@ class Idt::Api::V1::BaseController < ActionController::Base
 
   def user
     @user ||= begin
-      user = User.find_by(css_id: css_id)
+      user = User.find_by_css_id(css_id)
       RequestStore.store[:current_user] = user
       user
     end
