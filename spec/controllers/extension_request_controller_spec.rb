@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe ExtensionRequestController, :postgres, type: :controller do
-  fdescribe "POST tasks/:id/extension_request" do
+  describe "POST tasks/:id/extension_request" do
     let(:user) { create(:user).tap { |cavc_user| CavcLitigationSupport.singleton.add_user(cavc_user) } }
 
     let(:response_window_task) { create(:cavc_remand_processed_letter_response_window_task) }
