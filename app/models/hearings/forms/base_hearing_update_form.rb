@@ -151,24 +151,25 @@ class BaseHearingUpdateForm
   end
 
   # Send appellant email if cancelling, updating time or updating either appellant email or appellant timezone
-  # Note: Don't set flag if hearing disposition is cancelled or postponed
   def appellant_email_sent_flag
+     # Note: Don't set flag if hearing disposition is cancelled or postponed
+    return true if !hearing.postponed_or_cancelled?
+
     should_send_email = updates_requiring_email? ||
                         virtual_hearing_attributes&.key?(:appellant_email) ||
                         virtual_hearing_attributes&.key?(:appellant_tz) ||
-                        !hearing.cancelled? ||
-                        !hearing.postponed?
     !should_send_email
   end
 
   # Send rep email if cancelling, updating time or updating either rep email or rep timezone
-  # Note: Don't set flag if hearing disposition is cancelled or postponed
   def representative_email_sent_flag
+    # Note: Don't set flag if hearing disposition is cancelled or postponed
+    return true if !hearing.postponed_or_cancelled?
+
     should_send_email = updates_requiring_email? ||
                         virtual_hearing_attributes&.fetch(:representative_email, nil).present? ||
                         virtual_hearing_attributes&.key?(:representative_tz) ||
-                        !hearing.cancelled? ||
-                        !hearing.postponed?
+
     !should_send_email
   end
 

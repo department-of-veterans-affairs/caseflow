@@ -25,4 +25,8 @@ module HearingConcern
   def held?
     disposition == Constants.HEARING_DISPOSITION_TYPES.held
   end
+
+  def postponed_or_cancelled?
+    postponed? || cancelled?
+  end
 end
