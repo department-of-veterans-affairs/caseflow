@@ -92,9 +92,9 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
   end
 
   def send_cancellation_emails(virtual_hearing)
-    if !hearing_is_postponed_or_cancelled?(virtual_hearing)
-      VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
-    end
+    return if hearing_is_postponed_or_cancelled?(virtual_hearing)
+
+    VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
 
     if !virtual_hearing.cancellation_emails_sent?
       fail EmailsFailedToSend # failing so we can log errors
