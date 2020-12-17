@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 class UnrecognizedEntityDetail < CaseflowRecord
-
   enum entity_type: {
     organization: "organization",
-    person: "person",
+    person: "person"
   }
 
   def first_name
