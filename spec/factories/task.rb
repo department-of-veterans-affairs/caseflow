@@ -508,6 +508,10 @@ FactoryBot.define do
         parent { create(:docket_switch_ruling_task, appeal: appeal) }
       end
 
+      factory :docket_switch_granted_task, class: DocketSwitchGrantedTask do
+        parent { create(:docket_switch_ruling_task, appeal: appeal) }
+      end
+
       factory :congressional_interest_mail_task, class: CongressionalInterestMailTask do
         parent { create(:root_task, appeal: appeal) }
         assigned_to { MailTeam.singleton }
