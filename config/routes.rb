@@ -265,7 +265,7 @@ Rails.application.routes.draw do
     end
     resources(:place_hold, only: [:create], controller: 'tasks/place_hold')
     resources(:end_hold, only: [:create], controller: 'tasks/end_hold')
-    resources(:extension_request, only: [:create], controller: 'tasks/extension_request')
+    resources(:extension_request, only: [:create], controller: 'extension_request')
   end
 
   resources :judge_assign_tasks, only: [:create]

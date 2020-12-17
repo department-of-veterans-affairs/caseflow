@@ -177,7 +177,7 @@ const CavcReviewExtensionRequestModal = ({ closeModal, taskId }) => {
       data: {
         task: {
           days_on_hold: holdDuration,
-          instructions,
+          instructions: [instructions],
           decision
         }
       }
