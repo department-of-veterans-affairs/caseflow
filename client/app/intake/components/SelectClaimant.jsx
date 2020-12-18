@@ -57,7 +57,7 @@ export const SelectClaimant = (props) => {
     setPayeeCode
   } = props;
 
-  const { attorneyFees, establishFiduciaryEps } = useSelector((state) => state.featureToggles);
+  const { attorneyFees, establishFiduciaryEps, deceasedAppellants } = useSelector((state) => state.featureToggles);
   const [showClaimantModal, setShowClaimantModal] = useState(false);
   const [newClaimant, setNewClaimant] = useState(null);
   const openAddClaimantModal = () => setShowClaimantModal(true);
@@ -176,8 +176,9 @@ export const SelectClaimant = (props) => {
   };
 
   let veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS;
+  let allowDeceasedAppellants = deceasedAppellants && formType === "appeal";
 
-  if (isVeteranDeceased) {
+  if (isVeteranDeceased && !allowDeceasedAppellants) {
     // disable veteran claimant option if veteran is deceased
     veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE;
     // set claimant value to someone other than the veteran
