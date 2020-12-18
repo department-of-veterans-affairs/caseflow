@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 ##
-# Task created by the mail team when mail arrives for a CAVC Appeal is in processing with the CAVC Litigation Support
+# Task created by the mail team when mail arrives for a CAVC Appeal which is in processing with the CAVC Litigation Support
 # team. May or not end up being related to CAVC response.
 #
-# Expoected Parent Task: RootTask
+# Expected Parent Task: RootTask
 #
 # Expected Child Task: CavcCorrespondenceMailTask
 
