@@ -25,7 +25,7 @@ class MailTask < Task
     def subclass_routing_options(user = nil)
       filtered = MailTask.subclasses.select { |sc| sc.allow_creation?(user) }
       sorted = filtered.sort_by(&:label).map { |subclass| { value: subclass.name, label: subclass.label } }
-      if ! FeatureToggle.enabled?(:cavc_remand, user: user)
+      if !FeatureToggle.enabled?(:cavc_remand, user: user)
         sorted.reject { |task| task[:label] == CavcCorrespondenceMailTask.label }
       else
         sorted
