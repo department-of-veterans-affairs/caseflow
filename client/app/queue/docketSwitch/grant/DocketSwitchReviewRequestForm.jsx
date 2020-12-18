@@ -23,9 +23,9 @@ const schema = yup.object().shape({
 
 const grantOptions = [
   { displayText: 'Grant all issues',
-    value: 'Grant all issues' },
+    value: 'granted' },
   { displayText: 'Grant a partial switch',
-    value: 'Grant a partial switch',
+    value: 'partially_granted',
     help: 'e.g. if the Board is only granting a few issues'
   }
 ];
@@ -45,7 +45,7 @@ export const DocketSwitchReviewRequestForm = ({
   appellantName,
   appeal
 }) => {
-  const { register, handleSubmit, formState } = useForm({
+  const { register, handleSubmit, formState, watch } = useForm({
     // add yup validation, etc
     // See DocketSwitchDenialForm for inspiration
     resolver: yupResolver(schema),
@@ -56,6 +56,8 @@ export const DocketSwitchReviewRequestForm = ({
     id: issue.id,
     label: `${idx + 1}. ${issue.description}`
   }));
+
+  const watchDisposition = watch('disposition');
 
   return (
     <form
@@ -78,28 +80,33 @@ export const DocketSwitchReviewRequestForm = ({
         />
 
         <RadioField
-          name="timely"
+          name="disposition"
           label="How are you proceeding with this request to switch dockets?"
           options={grantOptions}
           inputRef={register}
           strongLabel
           vertical
         />
+        { watchDisposition === 'partially_granted' &&
+         <CheckboxGroup
+           name="roomRequired"
+           label="Select the issue(s) that are switching dockets:"
+           strongLabel
+           options={issueOptions()}
+         />
+        }
 
-        <CheckboxGroup
-          name="roomRequired"
-          label="Select the issue(s) that are switching dockets:"
-          strongLabel
-          options={issueOptions()}
-        />
-        <RadioField
-          name="timely"
-          label="Which docket will the issue(s) be switched to?"
-          options={docketTypeRadioOptions}
-          inputRef={register}
-          strongLabel
-          vertical
-        />
+        { watchDisposition &&
+         <RadioField
+           name="timely"
+           label="Which docket will the issue(s) be switched to?"
+           options={docketTypeRadioOptions}
+           inputRef={register}
+           strongLabel
+           vertical
+         />
+        }
+
       </AppSegment>
       <div className="controls cf-app-segment">
         <CheckoutButtons
