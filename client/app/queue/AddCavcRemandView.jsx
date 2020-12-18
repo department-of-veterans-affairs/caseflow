@@ -83,7 +83,7 @@ const AddCavcRemandView = (props) => {
     [CAVC_REMAND_SUBTYPES.mdr]: featureToggles.mdr_cavc_remand
   };
   const filteredDecisionTypes = typeOptions.filter((typeOption) => supportedDecisionTypes[typeOption.value]);
-// filter out options that do not have a corresponding feature toggle toggled on
+  // filter out options that do not have a corresponding feature toggle toggled on
   const filteredRemandTypes = subTypeOptions.filter((subTypeOption) => supportedRemandTypes[subTypeOption.value]);
 
   const issueOptions = () => decisionIssues.map((decisionIssue) => ({
