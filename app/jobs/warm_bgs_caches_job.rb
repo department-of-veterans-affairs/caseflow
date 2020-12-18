@@ -116,8 +116,10 @@ class WarmBgsCachesJob < CaseflowJob
     oldest_bgs_poa_records.limit(LIMITS[:OLDEST_CACHED]).each do |bgs_poa|
       begin
         bgs_poa.save_with_updated_bgs_record! if bgs_poa.stale_attributes?
-      rescue StandardError
-        # no nothing
+      rescue Errno::ECONNRESET, Savon::HTTPError
+        # do nothing
+      rescue StandardError => error
+        capture_exception(error: error)
       end
     end
     datadog_report_time_segment(segment: "warm_poa_bgs_oldest", start_time: start_time)
@@ -173,7 +175,7 @@ class WarmBgsCachesJob < CaseflowJob
   rescue ActiveRecord::RecordInvalid # not found at BGS
     BgsPowerOfAttorney.new(file_number: file_number)
   rescue StandardError => error
-    warning_msgs << "#{LegacyAppeal.name} #{appeal_id}: #{error}"
+    add_warning_msg("#{LegacyAppeal.name} #{appeal_id}: #{error}")
     nil
   end
 
@@ -186,12 +188,16 @@ class WarmBgsCachesJob < CaseflowJob
       power_of_attorney_name: bgs_poa&.representative_name
     }
   rescue StandardError => error
-    warning_msgs << "#{appeal_type} #{appeal_id}: #{error}"
+    add_warning_msg("#{appeal_type} #{appeal_id}: #{error}")
     nil
   end
 
+  def add_warning_msg(msg)
+    warning_msgs << msg if warning_msgs.count < 100
+  end
+
   def log_warning
-    slack_msg = warning_msgs.first(100).join("\n")
+    slack_msg = warning_msgs.join("\n")
     slack_service.send_notification(slack_msg, "[WARN] WarmBgsCachesJob: first 100 warnings")
   end
 
@@ -220,7 +226,7 @@ class WarmBgsCachesJob < CaseflowJob
   def claimant_poa_or_nil(claimant)
     claimant.power_of_attorney
   rescue StandardError => error
-    warning_msgs << "#{Appeal.name} #{claimant.decision_review_id}: #{error}"
+    add_warning_msg("#{Appeal.name} #{claimant.decision_review_id}: #{error}")
     nil # returning nil here to allow job to continue; this does not mean that claimant is missing POA
   end
 
