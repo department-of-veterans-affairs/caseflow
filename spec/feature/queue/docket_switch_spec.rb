@@ -188,11 +188,13 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       click_button(text: "Confirm")
 
-      # Return back to user's queue
-      expect(page).to have_current_path("/queue")
+      # Redirect to Case Details Page
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
       # Verify correct success alert
-
+       expect(page).to have_content(
+            format(COPY::DOCKET_SWITCH_DENIAL_SUCCESS_TITLE, appeal.claimant.name)
+          )
       # Verify that denial completed correctly
     end
   end
