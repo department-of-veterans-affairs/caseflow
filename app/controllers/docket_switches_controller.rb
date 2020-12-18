@@ -27,10 +27,6 @@ before_action :verify_task_access, only: [:create]
     @task ||= Task.find(docket_switch_params[:task_id])
   end
 
-  def old_docket_stream
-  	Appeal.find(docket_switch_params[:old_docket_stream_id])
-  end
-
   def docket_switch_params
     params.permit(:disposition, :task_id, :receipt_date, :context, :old_docket_stream_id)
   end
