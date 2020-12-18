@@ -312,6 +312,10 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
       let!(:task) { create(:cavc_remand_processed_letter_response_window_task) }
       let(:vet_name) { task.appeal.veteran_full_name }
 
+      it_behaves_like "assign and reassign"
+      it_behaves_like "admin creates admin actions"
+      it_behaves_like "assignee adds admin actions"
+
       it "automatically ends the timer in 90 days" do
         # travel 90+ days into the future to trigger TimedHoldTask to expire
         Timecop.travel(Time.zone.now + 90.days + 1.hour)
@@ -323,10 +327,6 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         find(".cf-tab", text: "Unassigned").click
         expect(page).to have_content task.appeal.docket_number
       end
-
-      it_behaves_like "assign and reassign"
-      it_behaves_like "admin creates admin actions"
-      it_behaves_like "assignee adds admin actions"
 
       it "allows users to process CavcRemandProcessedLetterResponseWindowTask" do
         task.update!(assigned_to: org_nonadmin)

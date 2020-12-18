@@ -6,11 +6,13 @@ describe CavcAdminActionConcern do
   end
 
   let(:parent_task) { create(:distribution_task) }
-  let(:user) { create(:user).tap { |new_user| CavcLitigationSupport.singleton.add_user(new_user) } }
-  let!(:cavc_task) { create(:send_cavc_remand_processed_letter_task, assigned_to: user, appeal: parent_task.appeal) }
+  let(:cavc_user) { create(:user).tap { |new_user| CavcLitigationSupport.singleton.add_user(new_user) } }
+  let!(:cavc_task) do
+    create(:send_cavc_remand_processed_letter_task, assigned_to: cavc_user, appeal: parent_task.appeal)
+  end
 
   describe ".creating_from_cavc_workflow?" do
-    subject { TestTask.creating_from_cavc_workflow?(user, parent_task) }
+    subject { TestTask.creating_from_cavc_workflow?(cavc_user, parent_task) }
 
     it { is_expected.to be true }
 
@@ -35,9 +37,11 @@ describe CavcAdminActionConcern do
 
   describe "#verify_org_task_uniq" do
     context "ScheduleHearingTask" do
-      subject { ScheduleHearingTask.create!(assigned_by: user, appeal: parent_task.appeal, parent: parent_task) }
+      let(:assigner) { cavc_user }
 
-      before { ScheduleHearingTask.create!(assigned_by: user, appeal: parent_task.appeal, parent: parent_task) }
+      subject { ScheduleHearingTask.create!(assigned_by: assigner, appeal: parent_task.appeal, parent: parent_task) }
+
+      before { ScheduleHearingTask.create!(assigned_by: assigner, appeal: parent_task.appeal, parent: parent_task) }
 
       context "when creating from a cavc workflow" do
         it "fails validation" do
@@ -46,8 +50,7 @@ describe CavcAdminActionConcern do
       end
 
       context "when creating from a non cavc workflow" do
-        let(:user) { create(:user) }
-        let(:parent_task) { create(:distribution_task) }
+        let(:assigner) { create(:user) }
 
         it "does not fail validation" do
           expect { subject }.to_not raise_error
