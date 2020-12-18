@@ -161,7 +161,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
     end
   end
 
-  fdescribe "when CAVC Lit Support is assigned tasks" do
+  describe "when CAVC Lit Support is assigned tasks" do
     shared_examples "assign and reassign" do
       it "users can assign and reassign tasks" do
         step "admin can assign task to user" do
@@ -170,7 +170,6 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           visit "queue/appeals/#{task.appeal.external_id}"
           find(".cf-select__control", text: "Select an action").click
           expect(page).to have_content Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label
-          expect(page).to have_content Constants.TASK_ACTIONS.CLARIFY_POA_BLOCKING_CAVC.label
           find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label).click
 
           find(".cf-select__control", text: org_admin.full_name).click
@@ -214,8 +213,9 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
 
     shared_examples "assignee adds admin actions" do
       it "assigned user can add admin actions" do
-        # Logged in as second user assignee (due to reassignment)
-        User.authenticate!(user: org_nonadmin2)
+        task.update!(assigned_to: org_nonadmin)
+        # Logged in as assignee (due to reassignment)
+        User.authenticate!(user: org_nonadmin)
         visit "queue/appeals/#{task.appeal.external_id}"
 
         click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.label)
@@ -260,7 +260,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           # Ensure there are no actions on the send letter task as it is blocked by poa clarification
           active_task_rows = page.find("#currently-active-tasks").find_all("tr")
           poa_task_row = active_task_rows[0]
-          send_task_row = active_task_rows[-3]
+          send_task_row = active_task_rows[1]
           expect(poa_task_row).to have_content("TASK\n#{COPY::CAVC_POA_TASK_LABEL}")
           expect(poa_task_row.find(".taskActionsContainerStyling").all("*", wait: false).length).to be > 0
           expect(send_task_row).to have_content("TASK\n#{COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL}")
@@ -271,7 +271,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           fill_in "completeTaskInstructions", with: "POA verified"
           click_on COPY::MARK_TASK_COMPLETE_BUTTON
           visit "queue/appeals/#{task.appeal.external_id}"
-          send_task_row = page.find("#currently-active-tasks").find_all("tr")[-3]
+          send_task_row = page.find("#currently-active-tasks").find_all("tr")[0]
           expect(send_task_row).to have_content("TASK\n#{COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL}")
           expect(send_task_row.find(".taskActionsContainerStyling").all("*", wait: false).length).to be > 0
         end
@@ -339,7 +339,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_HEARINGS_BLOCKING_DISTRIBUTION.label)
           fill_in "taskInstructions", with: "Please transcribe the hearing on record for this appeal"
           click_on "Submit"
-          expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % HearingTask.singleton.name
+          expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Bva.singleton.name
         end
 
         step "assigned user completes task" do
