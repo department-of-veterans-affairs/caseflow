@@ -107,7 +107,7 @@ class ValidateSqlQueries
 
     # When comparing Metabase output, Metabase returns Date fields with a time component --
     # see https://github.com/metabase/metabase/issues/5859
-    # So the SQL query should covert date columns to strings for comparison.
+    # So the SQL query should convert date columns to strings for comparison.
     def files_are_same?(rb_out_file, out_file)
       FileUtils.identical?(rb_out_file, out_file)
     end
