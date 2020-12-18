@@ -29,6 +29,9 @@ const updateFromServerFeatures = (state, featureToggles) => {
     establishFiduciaryEps: {
       $set: Boolean(featureToggles.establishFiduciaryEps)
     },
+    deceasedAppellants: {
+      $set: Boolean(featureToggles.deceasedAppellants)
+    },
     editEpClaimLabels: {
       $set: Boolean(featureToggles.editEpClaimLabels)
     },
@@ -45,7 +48,8 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
       verifyUnidentifiedIssue: false,
       restrictAppealIntakes: false,
       establishFiduciaryEps: false,
-      editEpClaimLabels: false
+      editEpClaimLabels: false,
+      deceasedAppellants: true
     },
     data.featureToggles
   );
