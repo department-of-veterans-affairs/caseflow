@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DocketSwitchDenialForm } from './DocketSwitchDenialForm';
 import { completeDocketSwitchDenial } from './docketSwitchDenialSlice';
 import { appealWithDetailSelector } from '../../selectors';
-import DISPOSITIONS from '../../../../constants/DOCKET_SWITCH';
 import {
   DOCKET_SWITCH_DENIAL_SUCCESS_TITLE,
   DOCKET_SWITCH_DENIAL_SUCCESS_MESSAGE,
@@ -25,7 +24,7 @@ export const DocketSwitchDenialContainer = () => {
   const handleSubmit = async (formData) => {
 
     const docketSwitch = {
-      disposition: "denied",
+      disposition: 'denied',
       receipt_date: formData.receiptDate,
       context: formData.context,
       task_id: taskId,
