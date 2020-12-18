@@ -46,6 +46,7 @@ RSpec.describe ExtensionRequestController, :postgres, type: :controller do
           expect(response_window_task.children.count).to eq(2)
 
           extension_request_task = response_window_task.children.find_by(type: CavcGrantedExtensionRequestTask.name)
+          expect(extension_request_task.label).to eq COPY::CAVC_GRANTED_EXTENSION_TASK_LABEL
           expect(extension_request_task.instructions).to eq(instructions)
           expect(extension_request_task.assigned_by).to eq(user)
           expect(extension_request_task.assigned_to).to eq(user)
@@ -73,6 +74,7 @@ RSpec.describe ExtensionRequestController, :postgres, type: :controller do
 
         extension_request_task = response_window_task.children.first
         expect(extension_request_task).to be_a(CavcDeniedExtensionRequestTask)
+        expect(extension_request_task.label).to eq COPY::CAVC_DENIED_EXTENSION_TASK_LABEL
         expect(extension_request_task.instructions).to eq(instructions)
         expect(extension_request_task.assigned_by).to eq(user)
         expect(extension_request_task.assigned_to).to eq(user)
