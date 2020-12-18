@@ -342,7 +342,50 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Bva.singleton.name
         end
 
+        step "assigned user adds denied extension request" do
+          click_dropdown(text: Constants.TASK_ACTIONS.CAVC_EXTENSION_REQUEST.label)
+          page.find("#decision_deny", visible: false).sibling("label").click
+          fill_in "instructions", with: "Denying extension request"
+          click_on "Confirm"
+
+          expect(page).to have_content COPY::CAVC_EXTENSION_REQUEST_DENY_SUCCESS_TITLE
+          expect(page).to have_content COPY::CAVC_EXTENSION_REQUEST_DENY_SUCCESS_DETAIL
+
+          # Ensure there are still actions on the response window task (it is assigned, not on hold)
+          response_window_task_row = page.find("#currently-active-tasks").find_all("tr")[2]
+          expect(response_window_task_row).to have_content("TASK\n#{COPY::CRP_LETTER_RESP_WINDOW_TASK_LABEL}")
+          expect(response_window_task_row.find(".taskActionsContainerStyling").all("*", wait: false).length).to be > 0
+
+          # Ensure we recorded the denial
+          scroll_to("#case-timeline-table")
+          expect(page).to have_content "#{CavcDeniedExtensionRequestTask.name} completed"
+        end
+
+        step "assigned user adds granted extension request" do
+          click_dropdown(text: Constants.TASK_ACTIONS.CAVC_EXTENSION_REQUEST.label)
+          page.find("#decision_grant", visible: false).sibling("label").click
+          click_dropdown(prompt: "Select number of days", text: "Custom")
+          fill_in "customDuration", with: 91
+          fill_in "instructions", with: "Granting extension request, putting on hold for 91 days"
+          click_on "Confirm"
+
+          expect(page).to have_content COPY::CAVC_EXTENSION_REQUEST_GRANT_SUCCESS_TITLE % 91
+          expect(page).to have_content COPY::CAVC_EXTENSION_REQUEST_GRANT_SUCCESS_DETAIL
+
+          # Ensure there is only 1 action on the response window task (end hold early as it is on hold)
+          response_window_task_row = page.find("#currently-active-tasks").find_all("tr")[2]
+          expect(response_window_task_row).to have_content("TASK\n#{COPY::CRP_LETTER_RESP_WINDOW_TASK_LABEL}")
+          find(".cf-select__control", text: "Select an action").click
+          expect(response_window_task_row.find_all(".cf-select__option").length).to eq 1
+
+          # Ensure we recorded the grant
+          scroll_to("#case-timeline-table")
+          expect(page).to have_content "#{CavcGrantedExtensionRequestTask.name} completed"
+        end
+
         step "assigned user completes task" do
+          click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
+          click_on "Submit"
           click_dropdown(text: Constants.TASK_ACTIONS.MARK_COMPLETE.label)
           fill_in "completeTaskInstructions", with: "Response processed"
           click_on COPY::MARK_TASK_COMPLETE_BUTTON
