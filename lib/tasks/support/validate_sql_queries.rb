@@ -141,6 +141,10 @@ class ValidateSqlQueries
       db_connection_string.constantize.connection
     end
 
+    # Currently in Metabase, we query Redshift for VACOLS data, so we have to prefix VACOLS tables with "VACOLS.". 
+    # We have no connection to Redshift from the Caseflow application (where the Rails query is running), 
+    # hence we can't use the query as it.
+    # This method removes that prefix since we have a direct connection to VACOLS in the Rails environment.
     def revise_vacols_query(query)
       query.gsub(/VACOLS\./i, "")
     end
