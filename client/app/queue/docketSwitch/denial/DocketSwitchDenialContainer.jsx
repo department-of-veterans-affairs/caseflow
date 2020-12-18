@@ -5,7 +5,12 @@ import { DocketSwitchDenialForm } from './DocketSwitchDenialForm';
 import { completeDocketSwitchDenial } from './docketSwitchDenialSlice';
 import { appealWithDetailSelector } from '../../selectors';
 import DISPOSITIONS from '../../../../constants/DOCKET_SWITCH';
-
+import {
+  DOCKET_SWITCH_DENIAL_SUCCESS_TITLE,
+  DOCKET_SWITCH_DENIAL_SUCCESS_MESSAGE,
+} from '../../../../COPY';
+import { sprintf } from 'sprintf-js';
+import { showSuccessMessage } from '../../uiReducer/uiActions';
 
 export const DocketSwitchDenialContainer = () => {
   const { appealId, taskId } = useParams();
@@ -27,10 +32,16 @@ export const DocketSwitchDenialContainer = () => {
       old_docket_stream_id: appeal.id
     };
 
+    const successMessage = {
+      title: sprintf(DOCKET_SWITCH_DENIAL_SUCCESS_TITLE, appeal.appellantFullName),
+      detail: DOCKET_SWITCH_DENIAL_SUCCESS_MESSAGE,
+    };
+
     try {
       await dispatch(completeDocketSwitchDenial(docketSwitch));
 
-      push('/queue');
+      dispatch(showSuccessMessage(successMessage));
+      push(`/queue/appeals/${appealId}`);
     } catch (error) {
       // Perhaps show an alert that indicates error, advise trying again...?
       console.error('Error Denying Docket Switch', error);

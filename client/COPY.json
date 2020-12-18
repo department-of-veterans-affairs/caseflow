@@ -666,6 +666,8 @@
   "DOCKET_SWITCH_DENIAL_INSTRUCTIONS": "Add the date and add any context for the denial of this switch.",
   "DENIED_DOCKET_SWITCH_TASK_LABEL": "Denied Docket Switch",
   "GRANTED_DOCKET_SWITCH_TASK_LABEL": "Granted Docket Switch",
+  "DOCKET_SWITCH_DENIAL_SUCCESS_TITLE": "You have marked %s's request to switch dockets as denied",
+  "DOCKET_SWITCH_DENIAL_SUCCESS_MESSAGE": "This will be recorded in the Case Timeline for future context.",
 
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
