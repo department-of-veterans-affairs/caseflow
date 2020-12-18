@@ -140,14 +140,11 @@ class WarmBgsCachesJob < CaseflowJob
 
   def warm_poa_and_cache_for_ama_appeals(claimants, start_time, datadog_segment)
     appeals_to_cache = claimants.map do |claimant|
-      bgs_poa = claimant_poa(claimant)
-      next unless bgs_poa
+      bgs_poa = claimant_poa_or_nil(claimant)
+      claimant.update!(updated_at: Time.zone.now)
 
       # [{:appeal_id=>1, :appeal_type=>"Appeal", :power_of_attorney_name=>"Clarence Darrow"}, ...]
-      cache_data = warm_bgs_poa_and_return_cache_data(bgs_poa, claimant.decision_review_id, Appeal.name)
-      claimant.update!(updated_at: Time.zone.now) if cache_data
-
-      cache_data
+      warm_bgs_poa_and_return_cache_data(bgs_poa, claimant.decision_review_id, Appeal.name)
     end.compact
 
     CachedAppeal.import appeals_to_cache, on_duplicate_key_update: {
@@ -181,15 +178,13 @@ class WarmBgsCachesJob < CaseflowJob
   end
 
   def warm_bgs_poa_and_return_cache_data(bgs_poa, appeal_id, appeal_type)
-    if bgs_poa&.stale_attributes?
-      bgs_poa.save_with_updated_bgs_record!
+    bgs_poa.save_with_updated_bgs_record! if bgs_poa&.stale_attributes?
 
-      {
-        appeal_id: appeal_id,
-        appeal_type: appeal_type,
-        power_of_attorney_name: bgs_poa&.representative_name
-      }
-    end
+    {
+      appeal_id: appeal_id,
+      appeal_type: appeal_type,
+      power_of_attorney_name: bgs_poa&.representative_name
+    }
   rescue StandardError => error
     warning_msgs << "#{appeal_type} #{appeal_id}: #{error}"
     nil
@@ -215,14 +210,14 @@ class WarmBgsCachesJob < CaseflowJob
 
   def oldest_claimants_with_poa
     oldest_claimants_for_open_appeals.limit(LIMITS[:OLDEST_CLAIMANT])
-      .select { |claimant| claimant_poa(claimant).present? }
+      .select { |claimant| claimant_poa_or_nil(claimant).present? }
   end
 
   def oldest_claimants_for_open_appeals
     claimants_for_open_appeals.order(updated_at: :asc)
   end
 
-  def claimant_poa(claimant)
+  def claimant_poa_or_nil(claimant)
     claimant.power_of_attorney
   rescue StandardError => error
     warning_msgs << "#{Appeal.name} #{claimant.decision_review_id}: #{error}"
