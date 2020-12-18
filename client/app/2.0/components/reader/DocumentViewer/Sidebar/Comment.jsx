@@ -13,11 +13,11 @@ import { Link } from 'react-router-dom';
  * Jump to Comment Component
  * @param {Object} props -- Contains whether to show the button and its function
  */
-export const JumpToComment = ({ documentPathBase, currentDocument, comment, showPdf }) => (
+export const JumpToComment = ({ documentPathBase, currentDocument, comment, selectComment }) => (
   <Link
-    onClick={() => showPdf(currentDocument.id)}
+    onClick={() => selectComment(comment)}
     className={classNames('cf-btn-link', { 'comment-control-button': true, horizontal: true })}
-    to={`${documentPathBase}/${currentDocument.id}?annotation=${comment.id}`}
+    to={`${documentPathBase}/${currentDocument.id}`}
   >
     Jump to section
   </Link>

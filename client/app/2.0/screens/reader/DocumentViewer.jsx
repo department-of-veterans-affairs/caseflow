@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 
 // Local Dependencies
-import { getPageCoordinatesOfMouseEvent, formatCommentQuery } from 'utils/reader';
+import { getPageCoordinatesOfMouseEvent } from 'utils/reader';
 import { pdfWrapper } from 'styles/reader/Document/Pdf';
 import { fetchDocuments, openDownloadLink } from 'utils/reader/document';
 import { focusComment } from 'utils/reader/comments';
@@ -212,7 +212,7 @@ const DocumentViewer = (props) => {
     },
     selectComment: (comment) => {
       // Scroll to the comment location
-      focusComment(comment);
+      // focusComment(comment);
 
       // Update the store with the selected component
       dispatch(selectComment(comment));

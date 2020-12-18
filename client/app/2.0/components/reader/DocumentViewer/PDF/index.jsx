@@ -7,7 +7,7 @@ import { isEmpty } from 'lodash';
 import { File } from 'components/reader/DocumentViewer/PDF/File';
 import { pdfStyles, fileContainerStyles } from 'styles/reader/Document/Pdf';
 import StatusMessage from 'app/components/StatusMessage';
-import { keyHandler, formatCommentQuery } from 'utils/reader';
+import { keyHandler, formatCommentQuery, focusComment } from 'utils/reader';
 
 /**
  * PDF Container for the Document view
@@ -18,18 +18,24 @@ export const Pdf = ({ doc, clickPage, ...props }) => {
     // Parse the annotation ID
     const commentId = formatCommentQuery();
 
-    // Handle Comment selection position
-    if (props.comments.length && commentId && isEmpty(props.selectedComment)) {
-      // Get the comment from the list
-      const [comment] = props.comments.filter((item) => item.id === commentId);
+    // Determine if there is a comment in the URL
+    const commentQuery = props.comments.length && commentId;
 
-      // Ensure the comment exists
-      if (comment) {
-        props.setPageNumber(comment.page - 1);
+    // Instantiate the comment object
+    const selectedComment = commentQuery ?
+      props.comments.filter((item) => item.id === commentId)[0] :
+      props.selectedComment;
 
-        // Update the store with the selectedComment comment
-        props.selectComment(comment);
-      }
+    // Handle the `JumpToComment` feature
+    if (!isEmpty(selectedComment)) {
+      // Scroll the DOM to the selected comment
+      focusComment(selectedComment);
+
+      // Update the Page number so that `react-virtualized` resizes the window
+      props.setPageNumber(selectedComment.page - 1);
+
+      // Ensure the comment is selected in the store
+      props.selectComment(selectedComment);
     }
 
     // Create the Keyboard Listener

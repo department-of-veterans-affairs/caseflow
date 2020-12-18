@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 // Local Dependencies
-import { fetchDocuments } from 'utils/reader/document';
+import { recordSearch, fetchDocuments, focusComment } from 'utils/reader';
 import { documentListScreen } from 'store/reader/selectors';
 import {
   setSearch,
@@ -19,9 +19,7 @@ import {
   clearTagFilters,
   setTagFilter,
   toggleComment,
-  markDocAsRead,
 } from 'store/reader/documentList';
-import { recordSearch } from 'utils/reader';
 
 import {
   QueueLink,
@@ -33,6 +31,7 @@ import {
   DocumentsTable,
   CommentsTable,
 } from 'components/reader/DocumentList';
+import { selectComment } from 'store/reader/annotationLayer';
 
 const DocumentList = (props) => {
   // Get the Document List state
@@ -58,13 +57,12 @@ const DocumentList = (props) => {
     clearSearch: () => dispatch(clear(state.filterCriteria, state.comments, state.storeDocuments)),
     recordSearch: (query) => recordSearch(props.match.params.vacolsId, query),
     changeSort: (val) => dispatch(changeSortState(val, state)),
-    showPdf: (docId) => {
-      // const currentDocument = state.documents[docId];
+    selectComment: (comment) => {
+      // Scroll to the comment location
+      // focusComment(comment);
 
-      // // Update the Document as read if not already
-      // if (!currentDocument.opened_by_current_user) {
-      //   dispatch(markDocAsRead({ docId }));
-      // }
+      // Update the store with the selected component
+      dispatch(selectComment(comment));
     }
   };
 

@@ -3,7 +3,6 @@ import { sortBy } from 'lodash';
 
 // Local Dependencies
 import { escapeRegExp } from 'utils/reader/format';
-import { COMMENT_SCROLL_FROM_THE_TOP } from 'app/2.0/store/constants/reader';
 
 /**
  * Helper Method to Calculate the Comment Rows
@@ -44,22 +43,23 @@ export const commentRows = (documents, annotationsPerDocument, searchQuery = '')
   );
 };
 
+/**
+ * Method to scroll the DOM to focus the comment details
+ * @param {Object} comment -- The comment to focus
+ */
 export const focusComment = (comment) => {
   // Set the comment component
   const commentComponent = document.getElementById(`comment-${comment.id}`);
-
-  // Set the Parent component
-  const parent = document.getElementById('cf-sidebar-accordion');
+  const commentIcon = document.getElementById(`commentIcon-container-${comment.id}`);
 
   // Focus the comment if found
   if (commentComponent) {
-    // Get the position from the top for the comment component
-    const commentTop = commentComponent.getBoundingClientRect().top;
+    // Scroll the comment into view
+    commentComponent.scrollIntoView();
+  }
 
-    // Get the position from the top for the parent component
-    const parentTop = parent.getBoundingClientRect().top;
-
-    // Update the Scroll position according to the parent and base scroll from the top
-    // parent.scrollTop = parent.scrollTop + commentTop - parentTop - COMMENT_SCROLL_FROM_THE_TOP;
+  if (commentIcon) {
+    // Scroll the comment into view
+    commentIcon.scrollIntoView();
   }
 };
