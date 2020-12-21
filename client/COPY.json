@@ -944,6 +944,7 @@
   "REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL": "Virtual Hearing Link",
   "VLJ_VIRTUAL_HEARINGS_LINK_TEXT": "Start Virtual Hearing",
   "GUEST_VIRTUAL_HEARINGS_LINK_TEXT": "Join Virtual Hearing",
+  "PIN_KEY_MISSING_ERROR_MESSAGE": "Cannot generate a virtual hearing URL without a valid PIN key",
 
   "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s.",
 
