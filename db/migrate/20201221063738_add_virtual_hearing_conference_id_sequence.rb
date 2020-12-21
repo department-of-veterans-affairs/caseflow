@@ -20,7 +20,7 @@ class AddVirtualHearingConferenceIdSequence < Caseflow::Migration
   def down
     safety_assured do
       execute <<-SQL
-        DROP SEQUENCE virtual_hearing_conference_id_seq;
+        DROP SEQUENCE IF EXISTS virtual_hearing_conference_id_seq;
       SQL
     end
   end
