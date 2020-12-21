@@ -1,0 +1,174 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SelectClaimant renders correctly 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <div
+        class="cf-different-claimant"
+        style="margin-top: 18.95px;"
+      >
+        <fieldset
+          class="usa-fieldset-inputs cf-form-radio "
+        >
+          <legend
+            class=""
+          >
+            <strong>
+              <span>
+                Is the claimant someone other than the Veteran?
+                 
+              </span>
+            </strong>
+          </legend>
+          <div
+            class="cf-form-radio-options"
+          >
+            <div
+              class="cf-form-radio-option"
+            >
+              <input
+                id="different-claimant-option_false"
+                name="different-claimant-option"
+                type="radio"
+                value="false"
+              />
+              <label
+                class=""
+                for="different-claimant-option_false"
+              >
+                No
+              </label>
+            </div>
+            <div
+              class="cf-form-radio-option"
+            >
+              <input
+                id="different-claimant-option_true"
+                name="different-claimant-option"
+                type="radio"
+                value="true"
+              />
+              <label
+                class=""
+                for="different-claimant-option_true"
+              >
+                Yes
+              </label>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="cf-different-claimant"
+      style="margin-top: 18.95px;"
+    >
+      <fieldset
+        class="usa-fieldset-inputs cf-form-radio "
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Is the claimant someone other than the Veteran?
+               
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="cf-form-radio-options"
+        >
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="different-claimant-option_false"
+              name="different-claimant-option"
+              type="radio"
+              value="false"
+            />
+            <label
+              class=""
+              for="different-claimant-option_false"
+            >
+              No
+            </label>
+          </div>
+          <div
+            class="cf-form-radio-option"
+          >
+            <input
+              id="different-claimant-option_true"
+              name="different-claimant-option"
+              type="radio"
+              value="true"
+            />
+            <label
+              class=""
+              for="different-claimant-option_true"
+            >
+              Yes
+            </label>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
