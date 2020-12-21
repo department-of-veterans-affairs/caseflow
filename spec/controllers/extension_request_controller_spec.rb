@@ -20,7 +20,7 @@ RSpec.describe ExtensionRequestController, :postgres, type: :controller do
       let(:decision) { "undecided" }
 
       it "returns an error" do
-        expect { subject }.to raise_error
+        expect { subject }.to raise_error(NoMethodError)
       end
     end
 
