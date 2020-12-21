@@ -884,6 +884,7 @@
   "JUDGE_TEAM_REMOVE_JUDGE_ERROR": "Cannot remove a judge from their judge team.",
   "JUDGE_TEAM_ATTORNEY_RIGHTS_ERROR": "Cannot edit attorney rights on non-attorneys",
   "JUDGE_TEAM_ADMIN_ERROR": "Cannot add more than one admin to a judge team",
+  "JUDGE_TEAM_DEADMIN_JUDGE_ERROR": "Cannot remove adminship from a judge on their team",
 
   "HEARING_UPDATE_SUCCESSFUL_TITLE": "You have successfully updated %s's hearing.",
 

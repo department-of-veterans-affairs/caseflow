@@ -14,7 +14,7 @@ describe OrganizationsUser, :postgres do
       end
     end
 
-    context "when user a member of the organization" do
+    context "when user is a member of the organization" do
       before { organization.add_user(user) }
 
       it "does nothing" do
@@ -23,7 +23,7 @@ describe OrganizationsUser, :postgres do
       end
     end
 
-    context "when user an admin of the organization" do
+    context "when user is an admin of the organization but not a judge" do
       before { OrganizationsUser.make_user_admin(user, organization) }
 
       it "removes admin rights from the user" do
@@ -32,6 +32,44 @@ describe OrganizationsUser, :postgres do
         expect(organization.admins.count).to eq(0)
       end
     end
+
+    context "when user is the admin (judge) of a JudgeTeam" do
+      let(:organization) { JudgeTeam.create_for_judge(user) }
+
+      it "does not allow them to be removed" do
+        expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError)
+          .with_message "Cannot remove adminship from a judge on their team"
+      end
+    end
+  end
+
+  describe ".remove_user_from_organization" do
+    subject { OrganizationsUser.remove_user_from_organization(user, organization) }
+
+    context "when the user is not part of the organization" do
+      it "it does nothing" do
+        expect { subject }.to_not raise_error
+      end
+    end
+
+    context "when the user is an ordinary user" do
+      before { organization.add_user(user) }
+
+      it "removes the user" do
+        expect(organization.users.count).to eq(1)
+        subject
+        expect(organization.users.count).to eq(0)
+      end
+    end
+
+    context "when the user is a judge in a JudgeTeam" do
+      let(:organization) { JudgeTeam.create_for_judge(user) }
+
+      it "does not remove them" do
+        expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError)
+      end
+    end
+
   end
 
   describe ".make_user_admin" do
