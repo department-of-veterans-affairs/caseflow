@@ -157,6 +157,12 @@ FactoryBot.define do
       claimants { [create(:claimant, :advanced_on_docket_due_to_age, decision_review: nil)] }
     end
 
+    trait :active do
+      before(:create) do |appeal, _evaluator|
+        RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+      end
+    end
+
     trait :advanced_on_docket_due_to_motion do
       # the appeal has to be established before the motion is created to apply to it.
       established_at { Time.zone.now - 1 }
