@@ -28,6 +28,7 @@ class OrganizationsUser < CaseflowRecord
     if removing_judge_from_their_judgeteam?(user, organization)
       fail Caseflow::Error::ActionForbiddenError, message: COPY::JUDGE_TEAM_DEADMIN_JUDGE_ERROR
     end
+
     existing_record(user, organization)&.update!(admin: false)
   end
 
@@ -36,6 +37,7 @@ class OrganizationsUser < CaseflowRecord
     if removing_judge_from_their_judgeteam?(user, organization)
       fail Caseflow::Error::ActionForbiddenError, message: COPY::JUDGE_TEAM_REMOVE_JUDGE_ERROR
     end
+
     existing_record(user, organization)&.destroy
   end
 
@@ -66,8 +68,6 @@ class OrganizationsUser < CaseflowRecord
   def self.judge_team_has_admin?(organization)
     organization.is_a?(JudgeTeam) && !!organization.admin
   end
-
-  private
 
   def self.removing_judge_from_their_judgeteam?(user, organization)
     organization.is_a?(JudgeTeam) && organization.judge.eql?(user)

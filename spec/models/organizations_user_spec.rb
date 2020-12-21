@@ -69,7 +69,6 @@ describe OrganizationsUser, :postgres do
         expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError)
       end
     end
-
   end
 
   describe ".make_user_admin" do
