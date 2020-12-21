@@ -17,6 +17,7 @@ class AdvanceOnDocketMotion < CaseflowRecord
   scope :granted, -> { where(granted: true) }
   scope :eligible_due_to_age, -> { age }
   scope :for_appeal, ->(appeal) { where(appeal: appeal) }
+  scope :for_appeal_and_person, ->(appeal, person) { where(appeal: appeal).where(person: person) }
   # not(id: age) means to exclude AOD motions with reason="age" provided by the `age` enum
   scope :eligible_due_to_appeal, ->(appeal) { where(appeal: appeal).where.not(id: age) }
   scope :for_person, ->(person_id) { where(person_id: person_id) }
@@ -56,6 +57,18 @@ class AdvanceOnDocketMotion < CaseflowRecord
       else
         # No existing motion of this type (age-related or non-age-related) exists, so create a new one:
         create(person_id: person_id, appeal: appeal).update(attrs)
+      end
+    end
+
+    def copy_to_appeal(src_appeal, dst_appeal)
+      person = src_appeal.claimant.person
+      fail "Claimants on appeals are expected to be the same" unless person == dst_appeal.claimant.person
+
+      where(person_id: person, appeal: src_appeal).map do |aod_motion|
+        aod_motion.dup.tap { |motion_copy|
+          motion_copy.appeal_id = dst_appeal.id
+          motion_copy.save!
+        }
       end
     end
 

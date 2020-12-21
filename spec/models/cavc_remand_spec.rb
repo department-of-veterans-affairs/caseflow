@@ -69,17 +69,32 @@ describe CavcRemand do
     context "when source appeal is AOD" do
       context "source appeal is AOD due to veteran's age" do
         let(:appeal) { create(:appeal, :with_schedule_hearing_tasks, :advanced_on_docket_due_to_age) }
-        it "new CAVC remand is AOD due to age" do
-          # binding.pry
-          expect(appeal.aod_based_on_age).to be true
+        it "new CAVC remand appeal is AOD due to age" do
+          appeal.aod? # not sure why this is needed
+          expect(appeal.reload.aod_based_on_age).to be true # reload may not be needed
           cavc_remand = subject
           cavc_appeal = last_cavc_appeal(cavc_remand)
+          cavc_appeal.aod? # not sure why this is needed
           expect(cavc_appeal.aod_based_on_age).to eq cavc_remand.appeal.aod_based_on_age
         end
       end
       context "source appeal has non-age-related AOD Motion" do
-        let(:motion_aod_appeal) { create(:appeal, :with_schedule_hearing_tasks, :advanced_on_docket_due_to_motion) }
-        it "copies AOD motions to new CAVC remand" do
+        let(:appeal) { create(:appeal, :with_schedule_hearing_tasks, :advanced_on_docket_due_to_motion) }
+        it "copies AOD motions to new CAVC remand appeal" do
+          expect(appeal.aod?).to be true
+          person = appeal.claimant.person
+          expect(AdvanceOnDocketMotion.granted_for_person?(person, appeal)).to be true
+          aod_motions_count = AdvanceOnDocketMotion.for_appeal_and_person(appeal, person).count
+          cavc_remand = subject
+          cavc_appeal = last_cavc_appeal(cavc_remand)
+          expect(cavc_remand.appeal.claimant.person).to eq person
+          expect(cavc_appeal.claimant.person).to eq person
+          expect(AdvanceOnDocketMotion.for_appeal_and_person(appeal, person).count).to eq aod_motions_count
+          expect(AdvanceOnDocketMotion.for_appeal_and_person(cavc_appeal, person).count).to eq aod_motions_count
+
+          pp [cavc_appeal.aod?, cavc_remand.appeal.aod?] # not sure why this is needed
+          expect(AdvanceOnDocketMotion.granted_for_person?(cavc_appeal.claimant.person, cavc_appeal)).to be true
+          expect(cavc_appeal.aod?).to eq cavc_remand.appeal.aod?
         end
       end
     end

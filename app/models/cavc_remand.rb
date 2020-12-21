@@ -49,6 +49,7 @@ class CavcRemand < CaseflowRecord
       DecisionIssue.find(decision_issue_ids).map do |cavc_remanded_issue|
         cavc_remanded_issue.create_contesting_request_issue!(cavc_appeal)
       end
+      AdvanceOnDocketMotion.copy_to_appeal(appeal, cavc_appeal)
       InitialTasksFactory.new(cavc_appeal).create_root_and_sub_tasks!
     end
   end
