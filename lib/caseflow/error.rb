@@ -147,6 +147,8 @@ module Caseflow::Error
     end
   end
 
+  class IneligibleForCavcCorrespondence < SerializableError; end
+
   class InvalidParentTask < SerializableError
     def initialize(args)
       @task_type = args[:task_type]
