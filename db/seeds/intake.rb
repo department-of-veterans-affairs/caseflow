@@ -6,11 +6,11 @@ module Seeds
   class Intake < Base
     def seed!
       create_intake_users
-      create_deceased_intake_user
       create_higher_level_review_tasks
       create_higher_level_reviews_and_supplemental_claims
       create_inbox_messages
       create_bgs_attorneys
+      create_deceased_intake_user
     end
 
     private
@@ -28,7 +28,7 @@ module Seeds
 
     def create_deceased_intake_user
       veteran_file_number="45454545"
-      User.create(file_number: veteran_file_number,
+      Veteran.create(file_number: veteran_file_number,
                                     first_name: "Ed",
                                     last_name: "Deceased",
                                     date_of_death: Time.zone.today - 1.day)
