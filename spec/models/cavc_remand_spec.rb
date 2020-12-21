@@ -63,18 +63,16 @@ describe CavcRemand do
       expect(appeal.aod_based_on_age).not_to be true
       expect { subject }.not_to raise_error
       expect(Appeal.court_remand.where(stream_docket_number: appeal.docket_number).count).to eq(1)
-      expect(last_cavc_appeal(subject).aod_based_on_age).to eq subject.appeal.aod_based_on_age
+      expect(last_cavc_appeal(subject).aod_based_on_age).not_to be true
     end
 
     context "when source appeal is AOD" do
       context "source appeal is AOD due to veteran's age" do
         let(:appeal) { create(:appeal, :with_schedule_hearing_tasks, :advanced_on_docket_due_to_age) }
         it "new CAVC remand appeal is AOD due to age" do
-          appeal.aod? # not sure why this is needed
-          expect(appeal.reload.aod_based_on_age).to be true # reload may not be needed
+          expect(appeal.aod_based_on_age).to be true
           cavc_remand = subject
           cavc_appeal = last_cavc_appeal(cavc_remand)
-          cavc_appeal.aod? # not sure why this is needed
           expect(cavc_appeal.aod_based_on_age).to eq cavc_remand.appeal.aod_based_on_age
         end
       end

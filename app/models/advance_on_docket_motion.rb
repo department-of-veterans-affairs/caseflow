@@ -65,10 +65,10 @@ class AdvanceOnDocketMotion < CaseflowRecord
       fail "Claimants on appeals are expected to be the same" unless person == dst_appeal.claimant.person
 
       where(person_id: person, appeal: src_appeal).map do |aod_motion|
-        aod_motion.dup.tap { |motion_copy|
+        aod_motion.dup.tap do |motion_copy|
           motion_copy.appeal_id = dst_appeal.id
           motion_copy.save!
-        }
+        end
       end
     end
 

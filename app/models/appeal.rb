@@ -115,6 +115,7 @@ class Appeal < DecisionReview
           payee_code: claimant.payee_code,
           type: claimant.type
         )
+        stream.conditionally_set_aod_based_on_age
       end
     end
   end
