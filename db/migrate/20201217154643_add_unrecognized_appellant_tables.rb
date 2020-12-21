@@ -38,7 +38,7 @@ class AddUnrecognizedAppellantTables < Caseflow::Migration
       t.references :unrecognized_power_of_attorney,
                    foreign_key: true,
                    index: { name: :index_unrecognized_appellants_on_power_of_attorney_id },
-                   comment: "Appellant's POA, if they aren't in POA."
+                   comment: "Appellant's POA, if they aren't in CorpDB."
 
       t.timestamps null: false
     end
