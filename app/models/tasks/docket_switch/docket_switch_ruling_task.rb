@@ -4,7 +4,7 @@ class DocketSwitchRulingTask < JudgeTask
   after_save :process!
 
   def process!
-    close_parent_task if active?
+    close_mail_task if active?
   end
 
   def additional_available_actions(user)
@@ -23,7 +23,7 @@ class DocketSwitchRulingTask < JudgeTask
 
   private
 
-  def close_parent_task
+  def close_mail_task
     parent.update(status: Constants.TASK_STATUSES.completed)
   end
 end
