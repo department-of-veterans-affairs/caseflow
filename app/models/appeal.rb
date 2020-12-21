@@ -115,7 +115,6 @@ class Appeal < DecisionReview
           payee_code: claimant.payee_code,
           type: claimant.type
         )
-        stream.conditionally_set_aod_based_on_age
       end
     end
   end
@@ -270,6 +269,8 @@ class Appeal < DecisionReview
   end
 
   def conditionally_set_aod_based_on_age
+    return unless claimant # do not update if claimant is not yet set, i.e., when create_stream is called
+
     updated_aod_based_on_age = claimant&.advanced_on_docket_based_on_age?
     update(aod_based_on_age: updated_aod_based_on_age) if aod_based_on_age != updated_aod_based_on_age
   end
