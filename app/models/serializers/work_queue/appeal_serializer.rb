@@ -49,6 +49,8 @@ class WorkQueue::AppealSerializer
 
   attribute :overtime, &:overtime?
 
+  attribute :veteran_appellant_deceased, &:veteran_appellant_deceased?
+
   attribute :assigned_to_location
 
   attribute :completed_hearing_on_previous_appeal? do
