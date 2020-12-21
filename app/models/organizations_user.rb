@@ -10,9 +10,6 @@ class OrganizationsUser < CaseflowRecord
 
   scope :admin, -> { where(admin: true) }
 
-  # Deprecated: add_user_to_organization(user, organization)
-  # Use instead: organization.add_user(user)
-
   def self.make_user_admin(user, organization)
     organization_user = OrganizationsUser.existing_record(user, organization) || organization.add_user(user)
     if OrganizationsUser.judge_team_has_admin?(organization)
