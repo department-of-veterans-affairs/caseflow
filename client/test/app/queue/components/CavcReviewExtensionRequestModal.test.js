@@ -189,7 +189,7 @@ describe('CavcReviewExtensionRequestModal', () => {
         expect(validationErrorShows(extensionModal, error)).toBeTruthy();
       });
 
-      it('does not show error on valida custum hold duration', () => {
+      it('does not show error on valid custom hold duration', () => {
         const extensionModal = setup();
 
         selectGrant(extensionModal);
