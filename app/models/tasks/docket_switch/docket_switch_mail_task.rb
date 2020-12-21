@@ -24,7 +24,7 @@ class DocketSwitchMailTask < MailTask
       parent_task = Task.find(params[:parent_id])
 
       verify_user_can_create!(user, parent_task)
-
+      
       transaction do
         if parent_task.is_a?(RootTask)
           # Create a task assigned to the mail team with a child task so we can track how that child was created.
