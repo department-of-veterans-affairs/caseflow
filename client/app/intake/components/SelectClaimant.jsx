@@ -40,6 +40,15 @@ RemovableRadioLabel.propTypes = {
   notes: PropTypes.string
 };
 
+function trySpread(object) {
+  let array;
+  try {
+    array = [...object];
+  } catch(error) {
+    // console.log('Spread Err:', error);
+  }
+}
+
 export const SelectClaimant = (props) => {
   const {
     formType,
@@ -62,7 +71,7 @@ export const SelectClaimant = (props) => {
   const [newClaimant, setNewClaimant] = useState(null);
   const openAddClaimantModal = () => setShowClaimantModal(true);
   const radioOpts = useMemo(() => {
-    return [...relationships, ...(newClaimant ? [newClaimant] : [])];
+    return [trySpread(relationships), trySpread(...(newClaimant ? [newClaimant] : []))];
   }, [newClaimant, relationships]);
   const allowAddClaimant = useMemo(() => formType === 'appeal' && attorneyFees && veteranIsNotClaimant, [
     formType,
