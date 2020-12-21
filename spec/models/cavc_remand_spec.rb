@@ -52,10 +52,36 @@ describe CavcRemand do
       params.each_key { |key| expect(subject.send(key)).to eq params[key] }
     end
 
+    def last_cavc_appeal(cavc_remand)
+      # To-do: remove assumption that the last appeal with the same document number is the created appeal
+      # We should be able to get the cavc_appeal from cavc_remand in case there are multiple found
+      Appeal.court_remand.where(stream_docket_number: cavc_remand.appeal.docket_number).order(:id).last
+    end
+
     it "creates the new court_remand cavc stream" do
       expect(Appeal.court_remand.where(stream_docket_number: appeal.docket_number).count).to eq(0)
+      expect(appeal.aod_based_on_age).not_to be true
       expect { subject }.not_to raise_error
       expect(Appeal.court_remand.where(stream_docket_number: appeal.docket_number).count).to eq(1)
+      expect(last_cavc_appeal(subject).aod_based_on_age).to eq subject.appeal.aod_based_on_age
+    end
+
+    context "when source appeal is AOD" do
+      context "source appeal is AOD due to veteran's age" do
+        let(:appeal) { create(:appeal, :with_schedule_hearing_tasks, :advanced_on_docket_due_to_age) }
+        it "new CAVC remand is AOD due to age" do
+          # binding.pry
+          expect(appeal.aod_based_on_age).to be true
+          cavc_remand = subject
+          cavc_appeal = last_cavc_appeal(cavc_remand)
+          expect(cavc_appeal.aod_based_on_age).to eq cavc_remand.appeal.aod_based_on_age
+        end
+      end
+      context "source appeal has non-age-related AOD Motion" do
+        let(:motion_aod_appeal) { create(:appeal, :with_schedule_hearing_tasks, :advanced_on_docket_due_to_motion) }
+        it "copies AOD motions to new CAVC remand" do
+        end
+      end
     end
 
     context "when missing required attributes" do
