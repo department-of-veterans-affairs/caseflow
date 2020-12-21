@@ -22,11 +22,6 @@ class AddUnrecognizedAppellantTables < Caseflow::Migration
       t.timestamps null: false
     end
 
-    create_table :unrecognized_power_of_attorneys, comment: "Unrecognized POAs for unrecognized appellants" do |t|
-      t.references :unrecognized_entity_detail, null: false, foreign_key: true, index: false, comment: "Contact details"
-      t.timestamps null: false
-    end
-
     create_table :unrecognized_appellants, comment: "Unrecognized non-veteran appellants" do |t|
       t.string :relationship, null: false, comment: "Relationship to veteran. Allowed values: attorney, child, spouse, other"
       t.string :poa_participant_id, comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
@@ -36,7 +31,7 @@ class AddUnrecognizedAppellantTables < Caseflow::Migration
 
       # override index name because the default is over the 63-char limit
       t.references :unrecognized_power_of_attorney,
-                   foreign_key: true,
+                   foreign_key: {to_table: :unrecognized_entity_details},
                    index: { name: :index_unrecognized_appellants_on_power_of_attorney_id },
                    comment: "Appellant's POA, if they aren't in CorpDB."
 
