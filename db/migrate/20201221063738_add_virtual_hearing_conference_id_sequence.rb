@@ -6,7 +6,7 @@ class AddVirtualHearingConferenceIdSequence < Caseflow::Migration
   def up
     safety_assured do
       execute <<-SQL
-        CREATE SEQUENCE virtual_hearing_conference_id_seq
+        CREATE SEQUENCE IF NOT EXISTS virtual_hearing_conference_id_seq
           START WITH 1
           INCREMENT BY 1
           MINVALUE 1

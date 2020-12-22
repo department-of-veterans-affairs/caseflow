@@ -17,9 +17,10 @@ describe VirtualHearings::SequenceConferenceId do
 
     it "cycles when the last number is reached" do
       sequence_name = VirtualHearings::SequenceConferenceId::SEQUENCE_NAME
-      ActiveRecord::Base.connection.execute "SELECT setval('#{sequence_name}', 9999998)"
+      max_value = VirtualHearings::SequenceConferenceId::MAXIMUM_VALUE
+      ActiveRecord::Base.connection.execute "SELECT setval('#{sequence_name}', #{max_value - 1})"
       first_value = described_class.next
-      expect(first_value).to eq "9999999"
+      expect(first_value).to eq max_value.to_s
       second_value = described_class.next
       expect(second_value).to eq "0000001"
     end
