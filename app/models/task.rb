@@ -343,8 +343,8 @@ class Task < CaseflowRecord
   def actions_allowable?(user)
     return false if !open?
 
-    # Users who are assigned a subtask of an organization don't have actions on the organizational task.
-    return false if assigned_to.is_a?(Organization) && children.any? { |child| child.assigned_to == user }
+    # Users who are assigned an open subtask of an organization don't have actions on the organizational task.
+    return false if assigned_to.is_a?(Organization) && children.open.any? { |child| child.assigned_to == user }
 
     true
   end
