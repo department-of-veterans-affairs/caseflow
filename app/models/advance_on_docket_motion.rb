@@ -60,11 +60,11 @@ class AdvanceOnDocketMotion < CaseflowRecord
       end
     end
 
-    def copy_to_appeal(src_appeal, dst_appeal)
+    def copy_granted_motions_to_appeal(src_appeal, dst_appeal)
       person = src_appeal.claimant.person
       fail "Claimants on appeals are expected to be the same" unless person == dst_appeal.claimant.person
 
-      where(person_id: person, appeal: src_appeal).map do |aod_motion|
+      where(person_id: person, appeal: src_appeal).granted.map do |aod_motion|
         aod_motion.dup.tap do |motion_copy|
           motion_copy.appeal_id = dst_appeal.id
           motion_copy.save!
