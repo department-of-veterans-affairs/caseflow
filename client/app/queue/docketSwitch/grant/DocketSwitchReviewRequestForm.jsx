@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 
@@ -15,20 +15,15 @@ import { css } from 'glamor';
 import DateSelector from 'app/components/DateSelector';
 import RadioField from '../../../components/RadioField';
 import CheckboxGroup from '../../../components/CheckboxGroup';
+import DISPOSITIONS from 'constants/DOCKET_SWITCH';
 
 const schema = yup.object().shape({
   receiptDate: yup.date().required(),
-  context: yup.string().required(),
+  disposition: yup.
+    mixed().
+    oneOf(Object.keys(DISPOSITIONS)).
+    required()
 });
-
-const grantOptions = [
-  { displayText: 'Grant all issues',
-    value: 'granted' },
-  { displayText: 'Grant a partial switch',
-    value: 'partially_granted',
-    help: 'e.g. if the Board is only granting a few issues'
-  }
-];
 
 const docketTypeRadioOptions = [
   { value: 'direct_review',
@@ -57,6 +52,8 @@ export const DocketSwitchReviewRequestForm = ({
     label: `${idx + 1}. ${issue.description}`
   }));
 
+  const dispositionOptions = useMemo(() => Object.values(DISPOSITIONS).filter((item) => item.value !== 'denied'), []);
+
   const watchDisposition = watch('disposition');
 
   return (
@@ -82,23 +79,24 @@ export const DocketSwitchReviewRequestForm = ({
         <RadioField
           name="disposition"
           label="How are you proceeding with this request to switch dockets?"
-          options={grantOptions}
+          options={dispositionOptions}
           inputRef={register}
           strongLabel
           vertical
         />
+
         { watchDisposition === 'partially_granted' &&
          <CheckboxGroup
-           name="roomRequired"
+           name="issues"
            label="Select the issue(s) that are switching dockets:"
            strongLabel
            options={issueOptions()}
          />
         }
 
-        { watchDisposition &&
+        {watchDisposition &&
          <RadioField
-           name="timely"
+           name="docketType"
            label="Which docket will the issue(s) be switched to?"
            options={docketTypeRadioOptions}
            inputRef={register}
