@@ -49,7 +49,7 @@ describe CavcAdminActionConcern do
         end
       end
 
-      context "when creating from a non cavc workflow" do
+      context "when creating from a non-cavc workflow" do
         let(:assigner) { create(:user) }
 
         it "does not fail validation" do
