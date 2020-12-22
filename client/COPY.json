@@ -419,12 +419,13 @@
   "SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_COMPLETE_MODAL_BODY": "Marking this task complete will put this case on hold for 90 days to allow the appellant to respond.",
 
   "CRP_LETTER_RESP_WINDOW_TASK_LABEL": "CAVC-Remand-Processed-Letter Response Window Task",
-  "CRP_LETTER_RESP_WINDOW_TASK_DEFAULT_INSTRUCTIONS": "The response window task will return to the CAVC Teams queue after 90 days or when manually ended early.",
+  "CRP_LETTER_RESP_WINDOW_TASK_DEFAULT_INSTRUCTIONS": "The response window task will return to the CAVC Team's queue after 90 days or when manually ended early.",
+  "CAVC_REMAND_LETTER_RESPONSE_TASK_COMPLETE_MODAL_BODY": "Complete this task to make the case available to be distributed to a judge. You will no longer be able to access this case.",
 
   "CAVC_GRANTED_EXTENSION_TASK_LABEL": "Granted extension",
   "CAVC_DENIED_EXTENSION_TASK_LABEL": "Denied extension",
 
-  "CAVC_SEND_TO_TEAM_BLOCKING_DISTRIBUTION_DETAIL": "Create a %s assigned to the %s team. This will not block you from completing your task to send the 90-day letter to the veteran.",
+  "CAVC_SEND_TO_TEAM_BLOCKING_DISTRIBUTION_DETAIL": "Create a %s assigned to the %s team. Your task will remain open to add more actions or be marked complete.",
   "CAVC_SEND_TO_TEAM_BLOCKING_CAVC_DETAIL": "Create a %s task assigned to the %s team. This will block you from sending the 90-day letter to the veteran until the new task is completed.",
 
   "CAVC_POA_TASK_LABEL": "Clarify Power of Attorney",
