@@ -196,6 +196,8 @@ RSpec.feature "Docket Switch", :all_dbs do
             format(COPY::DOCKET_SWITCH_DENIAL_SUCCESS_TITLE, appeal.claimant.name)
           )
       # Verify that denial completed correctly
+      docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
+      expect(docket_switch).to_not be_nil
     end
   end
 end
