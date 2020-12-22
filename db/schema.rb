@@ -1004,7 +1004,7 @@ ActiveRecord::Schema.define(version: 2020_12_15_215458) do
     t.datetime "updated_at", null: false, comment: "Default created_at/updated_at timestamps"
     t.bigint "user_id", null: false, comment: "User that created this record"
     t.index ["appeal_id"], name: "index_nod_date_updates_on_appeal_id"
-    t.index ["user_id"], name: "index_nod_date_updatess_on_user_id"
+    t.index ["user_id"], name: "index_nod_date_updates_on_user_id"
   end
 
   create_table "non_availabilities", force: :cascade do |t|
