@@ -116,12 +116,12 @@ exports[`CavcReviewExtensionRequestModal renders correctly 1`] = `
                   Array [
                     Object {
                       "displayText": "Grant",
-                      "help": "Task will be go on hold for selected number of days",
+                      "help": "Task will go on hold for selected number of days",
                       "value": "grant",
                     },
                     Object {
                       "displayText": "Deny",
-                      "help": "Task will be marked completed and sent to case distribution",
+                      "help": "Marks the extension request as denied",
                       "value": "deny",
                     },
                   ]
@@ -164,12 +164,12 @@ exports[`CavcReviewExtensionRequestModal renders correctly 1`] = `
                         Grant
                       </label>
                       <RadioFieldHelpText
-                        help="Task will be go on hold for selected number of days"
+                        help="Task will go on hold for selected number of days"
                       >
                         <div
                           className="cf-form-radio-help helpText"
                         >
-                          Task will be go on hold for selected number of days
+                          Task will go on hold for selected number of days
                         </div>
                       </RadioFieldHelpText>
                     </div>
@@ -192,12 +192,12 @@ exports[`CavcReviewExtensionRequestModal renders correctly 1`] = `
                         Deny
                       </label>
                       <RadioFieldHelpText
-                        help="Task will be marked completed and sent to case distribution"
+                        help="Marks the extension request as denied"
                       >
                         <div
                           className="cf-form-radio-help helpText"
                         >
-                          Task will be marked completed and sent to case distribution
+                          Marks the extension request as denied
                         </div>
                       </RadioFieldHelpText>
                     </div>
