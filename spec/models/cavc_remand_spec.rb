@@ -27,7 +27,7 @@ describe CavcRemand do
       )
     end
     let(:decision_issue_ids) { decision_issues.map(&:id) }
-    let(:instructions) { "Intructions!" }
+    let(:instructions) { "Instructions!" }
 
     let(:params) do
       {
