@@ -11,7 +11,7 @@ describe DocketSwitchDeniedTask, :postgres do
   let(:task_actions) do
     [
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-      Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
+      Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h,
     ]
   end
 

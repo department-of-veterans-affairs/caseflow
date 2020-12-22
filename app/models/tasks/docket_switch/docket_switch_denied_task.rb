@@ -3,11 +3,11 @@
 class DocketSwitchDeniedTask < DocketSwitchAbstractAttorneyTask
   after_save :process!
 
-  class << self
-    def process!
-      close_ruling_task if active?
-    end
+  def process!
+	close_ruling_task if active?
+  end
 
+  class << self
     def label
       COPY::DOCKET_SWITCH_DENIED_TASK_LABEL
     end
