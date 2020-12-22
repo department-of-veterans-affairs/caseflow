@@ -1,7 +1,7 @@
 class CreateNodDateEdit < Caseflow::Migration
   def change
     create_table :nod_date_edits do |t|
-      t.references "appeal", null: false, foreign_key: true, comment: "Appeal that NOD date is being edited for"
+      t.references "appeal", null: false, foreign_key: true, comment: "Appeal for which the NOD date is being edited"
       t.date "old_date", null: false, comment: "Date before update"
       t.date "new_date", null: false, comment: "Date after update"
       t.references "user", null: false, foreign_key: true, comment: "User that created this record"
