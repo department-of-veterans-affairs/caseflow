@@ -11,12 +11,11 @@ assignees: ''
 
 ## Impact
 <!--
-Describe what completing this ticket would enable engineers to do
-1. Complete a user story
-2. Easier of debugging
-3. Maintain codebase
-4. Deliver future features quicker
-5. Etc
+Describe what completing this ticket would enable engineers to do, such as:
+- Complete a user story
+- Ease debugging
+- Maintain/cleanup codebase for clarity or ease of comprehension
+- Deliver future features quicker
 -->
 
 ## Out of scope
