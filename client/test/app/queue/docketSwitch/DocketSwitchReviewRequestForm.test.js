@@ -66,7 +66,6 @@ describe('DocketSwitchReviewRequestForm', () => {
         expect(onSubmit).toHaveBeenCalledWith({
           receiptDate,
           disposition,
-
         });
       });
     });
