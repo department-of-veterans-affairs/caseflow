@@ -22,7 +22,7 @@ class OrganizationsUser < CaseflowRecord
   end
 
   def self.remove_admin_rights_from_user(user, organization)
-    if removing_judge_from_their_judgeteam?(user, organization)
+    if user_is_judge_of_team?(user, organization)
       fail Caseflow::Error::ActionForbiddenError, message: COPY::JUDGE_TEAM_DEADMIN_JUDGE_ERROR
     end
 
@@ -30,8 +30,7 @@ class OrganizationsUser < CaseflowRecord
   end
 
   def self.remove_user_from_organization(user, organization)
-    # mwagner - Won't this prevent BVA from removing extra judges right now?
-    if removing_judge_from_their_judgeteam?(user, organization)
+    if user_is_judge_of_team?(user, organization)
       fail Caseflow::Error::ActionForbiddenError, message: COPY::JUDGE_TEAM_REMOVE_JUDGE_ERROR
     end
 
@@ -66,7 +65,7 @@ class OrganizationsUser < CaseflowRecord
     organization.is_a?(JudgeTeam) && !!organization.admin
   end
 
-  def self.removing_judge_from_their_judgeteam?(user, organization)
+  def self.user_is_judge_of_team?(user, organization)
     organization.is_a?(JudgeTeam) && organization.judge.eql?(user)
   end
 end
