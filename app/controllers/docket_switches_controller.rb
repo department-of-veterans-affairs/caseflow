@@ -29,4 +29,3 @@ class DocketSwitchesController < ApplicationController
     params.permit(:disposition, :task_id, :receipt_date, :context, :old_docket_stream_id)
   end
 end
-
