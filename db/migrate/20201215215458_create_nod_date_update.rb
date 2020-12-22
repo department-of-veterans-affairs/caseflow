@@ -1,4 +1,4 @@
-class CreateNodDateEdit < Caseflow::Migration
+class CreateNodDateUpdate < Caseflow::Migration
   def change
     create_table :nod_date_updates do |t|
       t.references "appeal", null: false, foreign_key: true, comment: "Appeal for which the NOD date is being edited"

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class NodDateEdit < CaseflowRecord
+class NodDateUpdate < CaseflowRecord
   belongs_to :appeal
   belongs_to :user
 
