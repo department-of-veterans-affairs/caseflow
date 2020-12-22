@@ -105,7 +105,7 @@ export const SelectClaimant = (props) => {
       // Conditionally include "Claimant not listed" option
       ...(enableAddClaimant ? [claimantNotListedOpt] : []),
     ];
-  }, [newClaimant, relationships]);
+  }, [newClaimant, relationships, enableAddClaimant]);
 
   const allowFiduciary = useMemo(
     () => establishFiduciaryEps && benefitType === 'fiduciary',

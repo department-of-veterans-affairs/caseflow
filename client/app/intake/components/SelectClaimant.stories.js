@@ -21,7 +21,7 @@ export default {
   parameters: {},
   args: {
     appellantName: 'Jane Doe',
-    benefitType: 'appeal',
+    formType: 'appeal',
     isVeteranDeceased: false,
     veteranIsNotClaimant: true,
     enableAddClaimant: true,
