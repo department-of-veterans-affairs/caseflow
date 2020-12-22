@@ -4,7 +4,7 @@ class DocketSwitchDeniedTask < DocketSwitchAbstractAttorneyTask
   after_save :process!
 
   def process!
-	close_ruling_task if active?
+    close_ruling_task if active?
   end
 
   class << self
