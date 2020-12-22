@@ -1231,7 +1231,7 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
-    fcontext "when a NOD exists and user can edit NOD date display Edit NOD Date link" do
+    context "when a NOD exists and user can edit NOD date display Edit NOD Date link" do
       before { FeatureToggle.enable!(:edit_nod_date) }
       after { FeatureToggle.disable!(:edit_nod_date) }
 
@@ -1318,7 +1318,7 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
-    fcontext "when a NOD exists and user cannot edit NOD date do not display Edit NOD Date link" do
+    context "when a NOD exists and user cannot edit NOD date do not display Edit NOD Date link" do
       before { FeatureToggle.enable!(:edit_nod_date) }
       after { FeatureToggle.disable!(:edit_nod_date) }
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class User < CaseflowRecord
+class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   include BgsService
 
   has_many :dispatch_tasks, class_name: "Dispatch::Task"
