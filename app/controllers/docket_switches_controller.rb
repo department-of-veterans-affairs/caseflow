@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DocketSwitchesController < ApplicationController
   before_action :verify_task_access, only: [:create]
 
