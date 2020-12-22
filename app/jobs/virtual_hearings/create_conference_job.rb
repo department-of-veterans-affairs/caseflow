@@ -210,7 +210,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       )
     rescue StandardError => error
       capture_exception(error: error)
-      fail VirtualHearingLinkGenerationFailed
+      raise VirtualHearingLinkGenerationFailed
     end
   end
 end

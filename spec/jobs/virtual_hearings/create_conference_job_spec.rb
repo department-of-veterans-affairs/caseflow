@@ -289,8 +289,10 @@ describe VirtualHearings::CreateConferenceJob do
           expected_alias_with_host = "BVA#{expected_conference_id}@#{URL_HOST}"
           expected_guest_pin = "7470125694"
           expected_host_pin = "3998472"
-          expected_host_link = "https://#{URL_HOST}#{URL_PATH}/?conference=#{expected_alias_with_host}&name=Judge&pin=#{expected_host_pin}&callType=video&join=1"
-          expected_guest_link = "https://#{URL_HOST}#{URL_PATH}/?conference=#{expected_alias_with_host}&name=Guest&pin=#{expected_guest_pin}&callType=video&join=1"
+          expected_host_link = "https://#{URL_HOST}#{URL_PATH}/?conference=#{expected_alias_with_host}"\
+            "&name=Judge&pin=#{expected_host_pin}&callType=video&join=1"
+          expected_guest_link = "https://#{URL_HOST}#{URL_PATH}/?conference=#{expected_alias_with_host}"\
+            "&name=Guest&pin=#{expected_guest_pin}&callType=video&join=1"
 
           virtual_hearing.reload
           expect(virtual_hearing.host_link).to eq(expected_host_link)
