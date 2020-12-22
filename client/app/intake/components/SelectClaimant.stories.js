@@ -9,9 +9,18 @@ const relationships = [
 ];
 
 const featureToggles = {
-  attorneyFees: true,
-  establishFiduciaryEps: true,
-  nonVeteranClaimants: true,
+  attorneyFees: false,
+  establishFiduciaryEps: false,
+  nonVeteranClaimants: false,
+};
+const defaultArgs = {
+  appellantName: 'Jane Doe',
+  formType: 'appeal',
+  isVeteranDeceased: false,
+  veteranIsNotClaimant: true,
+  enableAddClaimant: true,
+  relationships,
+  featureToggles,
 };
 
 export default {
@@ -19,15 +28,7 @@ export default {
   component: SelectClaimant,
   decorators: [],
   parameters: {},
-  args: {
-    appellantName: 'Jane Doe',
-    formType: 'appeal',
-    isVeteranDeceased: false,
-    veteranIsNotClaimant: true,
-    enableAddClaimant: true,
-    relationships,
-    featureToggles,
-  },
+  args: defaultArgs,
   argTypes: {
     veteranIsNotClaimant: { control: 'boolean' },
   },
@@ -56,5 +57,21 @@ Basic.parameters = {
   docs: {
     storyDescription:
       'Used during intake process to select a claimant with some sort of relationship to the veteran',
+  },
+};
+
+export const WithAttorneyFees = Template.bind({});
+WithAttorneyFees.args = {
+  ...defaultArgs,
+  featureToggles: {
+    attorneyFees: true,
+  },
+};
+
+export const WithNonVeteranClaimants = Template.bind({});
+WithNonVeteranClaimants.args = {
+  ...defaultArgs,
+  featureToggles: {
+    nonVeteranClaimants: true,
   },
 };
