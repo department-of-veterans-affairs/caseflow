@@ -15,6 +15,10 @@ class VirtualHearings::LinkService
   JUDGE_NAME = "Judge"
   GUEST_NAME = "Guest"
 
+  def initialize
+    @conference_id = nil
+  end
+
   def host_link
     link(host_pin, JUDGE_NAME)
   end
