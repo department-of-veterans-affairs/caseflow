@@ -69,7 +69,8 @@ class VirtualHearing < CaseflowRecord
         lambda {
           joins(:establishment)
             .where("
-              conference_deleted = false AND (
+              conference_deleted = false AND
+              conference_id IS NOT NULL AND (
               request_cancelled = true OR
               virtual_hearing_establishments.processed_at IS NOT NULL
             )")
