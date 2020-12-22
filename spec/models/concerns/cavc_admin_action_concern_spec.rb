@@ -44,16 +44,20 @@ describe CavcAdminActionConcern do
       before { ScheduleHearingTask.create!(assigned_by: assigner, appeal: parent_task.appeal, parent: parent_task) }
 
       context "when creating from a cavc workflow" do
-        it "fails validation" do
+        it "fails validation and does not create another schedule hearing task" do
+          previous_schedule_hearing_task_count = ScheduleHearingTask.count
           expect { subject }.to raise_error(Caseflow::Error::DuplicateOrgTask)
+          expect(ScheduleHearingTask.count).to eq previous_schedule_hearing_task_count
         end
       end
 
       context "when creating from a non-cavc workflow" do
         let(:assigner) { create(:user) }
 
-        it "does not fail validation" do
+        it "does not fail validation and creates a schedule hearing task" do
+          previous_schedule_hearing_task_count = ScheduleHearingTask.count
           expect { subject }.to_not raise_error
+          expect(ScheduleHearingTask.count).to eq previous_schedule_hearing_task_count + 1
         end
       end
     end
