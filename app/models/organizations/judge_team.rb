@@ -43,7 +43,7 @@ class JudgeTeam < Organization
     if use_judge_team_roles?
       judge_team_roles.includes(:organizations_user, :user).detect { |role| role.is_a?(JudgeTeamLead) }.user
     else
-      admins.first
+      admin
     end
   end
 
@@ -54,6 +54,10 @@ class JudgeTeam < Organization
     else
       non_admins
     end
+  end
+
+  def admin
+    admins.first
   end
 
   def can_receive_task?(_task)
