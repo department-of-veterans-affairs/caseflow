@@ -41,8 +41,6 @@ export const DocketSwitchReviewRequestForm = ({
   appeal
 }) => {
   const { register, handleSubmit, formState, watch } = useForm({
-    // add yup validation, etc
-    // See DocketSwitchDenialForm for inspiration
     resolver: yupResolver(schema),
     mode: 'onChange',
   });
