@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
+class User < CaseflowRecord
   include BgsService
 
   has_many :dispatch_tasks, class_name: "Dispatch::Task"
@@ -91,8 +91,8 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_view_edit_nod_date?
-    (BvaIntake.singleton.users.include?(self) || ClerkOfTheBoard.singleton.users.include?(self)) &&
-      FeatureToggle.enabled?(:edit_nod_date, user: self)
+    (attorney? || judge? || BvaIntake.singleton.users.include?(self) ||
+      ClerkOfTheBoard.singleton.users.include?(self)) && FeatureToggle.enabled?(:edit_nod_date, user: self)
   end
 
   def can_vso_hearing_schedule?
