@@ -7,6 +7,8 @@ require "digest"
 ##
 class VirtualHearings::LinkService
   class PINKeyMissingError < StandardError; end
+  class URLHostMissingError < StandardError; end
+  class URLPathMissingError < StandardError; end
   class PINMustBePresentError < StandardError; end
   class NameMustBePresentError < StandardError; end
 
@@ -42,8 +44,8 @@ class VirtualHearings::LinkService
     "0x#{Digest::SHA256.hexdigest(seed)}".to_i(16).to_s
   end
 
-  def pin_key
-    ENV["VIRTUAL_HEARING_PIN_KEY"] || fail(PINKeyMissingError, message: COPY::PIN_KEY_MISSING_ERROR_MESSAGE)
+  def base_url
+    "https://#{host}#{path}"
   end
 
   def conference_id
@@ -51,15 +53,15 @@ class VirtualHearings::LinkService
     @conference_id
   end
 
-  def base_url
-    "https://#{host}#{path}"
+  def pin_key
+    ENV["VIRTUAL_HEARING_PIN_KEY"] || fail(PINKeyMissingError, message: COPY::PIN_KEY_MISSING_ERROR_MESSAGE)
   end
 
   def host
-    ENV["VIRTUAL_HEARING_URL_HOST"] || "vc.va.gov"
+    ENV["VIRTUAL_HEARING_URL_HOST"] || fail(URLHostMissingError, COPY::URL_HOST_MISSING_ERROR_MESSAGE)
   end
 
   def path
-    ENV["VIRTUAL_HEARING_URL_PATH"] || "/webapp"
+    ENV["VIRTUAL_HEARING_URL_PATH"] || fail(URLPathMissingError, COPY::URL_PATH_MISSING_ERROR_MESSAGE)
   end
 end
