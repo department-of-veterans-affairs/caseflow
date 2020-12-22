@@ -87,17 +87,25 @@ export const SelectClaimant = (props) => {
   const [showClaimantModal, setShowClaimantModal] = useState(false);
   const [newClaimant, setNewClaimant] = useState(null);
   const openAddClaimantModal = () => setShowClaimantModal(true);
+
+  const enableAddClaimantModal = useMemo(
+    () => formType === 'appeal' && attorneyFees && veteranIsNotClaimant,
+    [formType, veteranIsNotClaimant, attorneyFees]
+  );
+
+  const enableAddClaimant = useMemo(
+    () => formType === 'appeal' && nonVeteranClaimants && veteranIsNotClaimant,
+    [formType, veteranIsNotClaimant, nonVeteranClaimants]
+  );
+
   const radioOpts = useMemo(() => {
     return [
       ...relationships,
       ...(newClaimant ? [newClaimant] : []),
-      ...(nonVeteranClaimants ? [claimantNotListedOpt] : []),
+      // Conditionally include "Claimant not listed" option
+      ...(enableAddClaimant ? [claimantNotListedOpt] : []),
     ];
   }, [newClaimant, relationships]);
-  const allowAddClaimant = useMemo(
-    () => formType === 'appeal' && attorneyFees && veteranIsNotClaimant,
-    [formType, veteranIsNotClaimant, attorneyFees]
-  );
 
   const allowFiduciary = useMemo(
     () => establishFiduciaryEps && benefitType === 'fiduciary',
@@ -271,7 +279,7 @@ export const SelectClaimant = (props) => {
       {showClaimants && (hasRelationships || newClaimant) && claimantOptions()}
       {showClaimants && !hasRelationships && !newClaimant && noClaimantsCopy()}
 
-      {allowAddClaimant && !newClaimant && (
+      {enableAddClaimantModal && !newClaimant && (
         <>
           <Button
             classNames={['usa-button-secondary', classes.button]}

@@ -24,6 +24,7 @@ export default {
     benefitType: 'appeal',
     isVeteranDeceased: false,
     veteranIsNotClaimant: true,
+    enableAddClaimant: true,
     relationships,
     featureToggles,
   },
@@ -37,7 +38,16 @@ const Template = (args) => {
   const handleSetClaimant = ({ claimant, claimantType }) =>
     updateArgs({ claimant, claimantType });
 
-  return <SelectClaimant {...args} setClaimant={handleSetClaimant} />;
+  const setVeteranIsNotClaimant = (veteranIsNotClaimant) =>
+    updateArgs({ veteranIsNotClaimant });
+
+  return (
+    <SelectClaimant
+      {...args}
+      setClaimant={handleSetClaimant}
+      setVeteranIsNotClaimant={setVeteranIsNotClaimant}
+    />
+  );
 };
 
 export const Basic = Template.bind({});
