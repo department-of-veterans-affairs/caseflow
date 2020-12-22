@@ -153,8 +153,13 @@ FactoryBot.define do
     end
 
     trait :advanced_on_docket_due_to_age do
-      after(:create) do |appeal, _evaluator|
-        appeal.claimants = [create(:claimant, :advanced_on_docket_due_to_age, decision_review: appeal)]
+      # set claimant.decision_review to nil so that it isn't created by the Claimant factorybot
+      claimants { [create(:claimant, :advanced_on_docket_due_to_age, decision_review: nil)] }
+    end
+
+    trait :active do
+      before(:create) do |appeal, _evaluator|
+        RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
       end
     end
 
