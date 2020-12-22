@@ -17,10 +17,16 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   # at the time this job is started.
   class VirtualHearingNotCreatedError < StandardError; end
 
+  class VirtualHearingLinkGenerationFailed < StandardError; end
+
   discard_on(VirtualHearingRequestCancelled) do |job, _exception|
     Rails.logger.warn(
       "Discarding #{job.class.name} (#{job.job_id}) because virtual hearing request was cancelled"
     )
+  end
+
+  retry_on(VirtualHearingLinkGenerationFailed, attempts: 10, wait: :exponentially_longer) do |job, exception|
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
   end
 
   retry_on(IncompleteError, attempts: 10, wait: :exponentially_longer) do |job, exception|
@@ -120,32 +126,36 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   end
 
   def create_conference
-    assign_virtual_hearing_alias_and_pins if should_initialize_alias_and_pins?
+    if FeatureToggle.enabled?(:use_new_virtual_hearing_links, user: RequestStore.store[:current_user])
+      generate_links_and_pins
+    else
+      assign_virtual_hearing_alias_and_pins if should_initialize_alias_and_pins?
 
-    Rails.logger.info(
-      "Trying to create conference for hearing (#{virtual_hearing.hearing_type} " \
-      "[#{virtual_hearing.hearing_id}])..."
-    )
+      Rails.logger.info(
+        "Trying to create conference for hearing (#{virtual_hearing.hearing_type} " \
+        "[#{virtual_hearing.hearing_id}])..."
+      )
 
-    pexip_response = create_pexip_conference
+      pexip_response = create_pexip_conference
 
-    Rails.logger.info("Pexip response: #{pexip_response.inspect}")
+      Rails.logger.info("Pexip response: #{pexip_response.inspect}")
 
-    if pexip_response.error
-      error_display = pexip_error_display(pexip_response)
+      if pexip_response.error
+        error_display = pexip_error_display(pexip_response)
 
-      Rails.logger.error("CreateConferenceJob failed: #{error_display}")
+        Rails.logger.error("CreateConferenceJob failed: #{error_display}")
 
-      virtual_hearing.establishment.update_error!(error_display)
+        virtual_hearing.establishment.update_error!(error_display)
 
-      DataDogService.increment_counter(metric_name: "created_conference.failed", **create_conference_datadog_tags)
+        DataDogService.increment_counter(metric_name: "created_conference.failed", **create_conference_datadog_tags)
 
-      fail pexip_response.error
+        fail pexip_response.error
+      end
+
+      DataDogService.increment_counter(metric_name: "created_conference.successful", **create_conference_datadog_tags)
+
+      virtual_hearing.update(conference_id: pexip_response.data[:conference_id])
     end
-
-    DataDogService.increment_counter(metric_name: "created_conference.successful", **create_conference_datadog_tags)
-
-    virtual_hearing.update(conference_id: pexip_response.data[:conference_id])
   end
 
   def send_emails(email_type)
@@ -181,6 +191,26 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       virtual_hearing.alias_with_host = VirtualHearing.formatted_alias(conference_alias)
       virtual_hearing.generate_conference_pins
       virtual_hearing.save!
+    end
+  end
+
+  def generate_links_and_pins
+    Rails.logger.info(
+      "Trying to create virtual hearings links (#{virtual_hearing.hearing_type} " \
+      "[#{virtual_hearing.hearing_id}])..."
+    )
+    begin
+      link_service = VirtualHearings::LinkService.new
+      virtual_hearing.update!(
+        host_link: link_service.host_link,
+        guest_link: link_service.guest_link,
+        host_pin_long: link_service.host_pin,
+        guest_pin_long: link_service.guest_pin,
+        alias_with_host: link_service.alias_for_conference
+      )
+    rescue StandardError => error
+      capture_exception(error: error)
+      fail VirtualHearingLinkGenerationFailed
     end
   end
 end
