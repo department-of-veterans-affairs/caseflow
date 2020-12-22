@@ -63,6 +63,14 @@ describe VirtualHearingRepository, :all_dbs do
         end
       end
 
+      context "for a virtual hearing created with new link generation" do
+        let(:virtual_hearing) { create(:virtual_hearing, :link_generation_initialized, hearing: hearing) }
+
+        it "does not return the virtual hearing" do
+          expect(subject).to eq []
+        end
+      end
+
       context "on the day of" do
         it "does not return the virtual hearing" do
           expect(subject).to eq []
@@ -115,6 +123,14 @@ describe VirtualHearingRepository, :all_dbs do
 
       context "for pending virtual hearing" do
         let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
+
+        it "does not return the virtual hearing" do
+          expect(subject).to eq []
+        end
+      end
+
+      context "for a virtual hearing created with new link generation" do
+        let(:virtual_hearing) { create(:virtual_hearing, :link_generation_initialized, hearing: hearing) }
 
         it "does not return the virtual hearing" do
           expect(subject).to eq []

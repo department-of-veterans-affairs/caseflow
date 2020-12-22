@@ -44,6 +44,20 @@ FactoryBot.define do
       judge_email_sent { true }
     end
 
+    trait :link_generation_initialized do
+      alias_with_host { "BVA0000001@example.va.gov" }
+      host_pin_long { "3998472" }
+      guest_pin_long { "7470125694" }
+      host_link {
+        "https://example.va.gov/sample/?conference=#{alias_with_host}" \
+          "&name=Judge&pin=#{host_pin_long}&callType=video&join=1"
+      }
+      guest_link {
+        "https://example.va.gov/sample/?conference=#{alias_with_host}" \
+        "&name=Guest&pin=#{guest_pin_long}&callType=video&join=1"
+      }
+    end
+
     after(:create) do |virtual_hearing, _evaluator|
       # Calling reload after create fixes a problem where calling `virtual_hearing.hearing.virtual_hearing`
       # would return `nil`.
