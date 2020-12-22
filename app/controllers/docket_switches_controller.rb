@@ -1,5 +1,5 @@
 class DocketSwitchesController < ApplicationController
-before_action :verify_task_access, only: [:create]
+  before_action :verify_task_access, only: [:create]
 
   def set_application
     RequestStore.store[:application] = "queue"
