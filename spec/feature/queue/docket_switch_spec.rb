@@ -212,7 +212,7 @@ RSpec.feature "Docket Switch", :all_dbs do
     end
   end
 
-  describe "COTB attorney completes docket switch grant" do
+  fdescribe "COTB attorney completes docket switch grant" do
     let!(:docket_switch_granted_task) do
       create(
         :docket_switch_granted_task,

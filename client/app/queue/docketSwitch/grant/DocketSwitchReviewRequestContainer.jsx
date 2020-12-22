@@ -15,6 +15,7 @@ export const DocketSwitchReviewRequestContainer = () => {
   );
 
   const handleCancel = () => goBack();
+
   const handleSubmit = () => {
     // Add stuff to redux store
 

@@ -217,10 +217,3 @@ export const scheduleHearingDetails = {
   }
 }
 ;
-
-export const appealIssues = {
-  issues: [
-    { id: 1, program: 'compensation', description: 'PTSD denied' },
-    { id: 2, program: 'compensation', description: 'Left  knee denied' },
-  ],
-};

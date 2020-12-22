@@ -151,7 +151,7 @@ module Seeds
         )
       )
 
-      user = User.find_by(css_id: "BVATWARNER")
+      user = User.find_by_css_id("BVATWARNER")
       HearingDay.create(
         regional_office: "RO17",
         request_type: "V",
