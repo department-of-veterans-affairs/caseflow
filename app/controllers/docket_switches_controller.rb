@@ -1,10 +1,6 @@
 class DocketSwitchesController < ApplicationController
   before_action :verify_task_access, only: [:create]
 
-  def set_application
-    RequestStore.store[:application] = "queue"
-  end
-
   def create
     docket_switch = DocketSwitch.new(*docket_switch_params)
     if docket_switch.errors.present?

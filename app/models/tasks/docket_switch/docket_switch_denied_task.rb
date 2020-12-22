@@ -6,7 +6,7 @@ class DocketSwitchDeniedTask < DocketSwitchAbstractAttorneyTask
   class << self
     def process!
 	  close_ruling_task if active?
-	end
+    end
 
     def label
       COPY::DOCKET_SWITCH_DENIED_TASK_LABEL
@@ -19,7 +19,7 @@ class DocketSwitchDeniedTask < DocketSwitchAbstractAttorneyTask
 
   private
 
-    def close_ruling_task
-      parent.update(status: Constants.TASK_STATUSES.completed)
-  	end
+  def close_ruling_task
+    parent.update(status: Constants.TASK_STATUSES.completed)
+  end
 end
