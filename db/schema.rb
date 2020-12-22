@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_21_063738) do
+ActiveRecord::Schema.define(version: 2020_12_22_171313) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1497,10 +1497,12 @@ ActiveRecord::Schema.define(version: 2020_12_21_063738) do
     t.integer "conference_id", comment: "ID of conference from Pexip"
     t.datetime "created_at", null: false, comment: "Automatic timestamp of when virtual hearing was created"
     t.bigint "created_by_id", null: false, comment: "User who created the virtual hearing"
+    t.string "guest_link", comment: "Link used by appellants and/or representatives to join virtual hearing conference"
     t.integer "guest_pin", comment: "PIN number for guests of Pexip conference"
     t.string "guest_pin_long", limit: 11, comment: "Change the guest pin to store a longer pin with the # sign trailing"
     t.bigint "hearing_id", comment: "Associated hearing"
     t.string "hearing_type", comment: "'Hearing' or 'LegacyHearing'"
+    t.string "host_link", comment: "Link used by judges to join virtual hearing conference"
     t.integer "host_pin", comment: "PIN number for host of Pexip conference"
     t.string "host_pin_long", limit: 8, comment: "Change the host pin to store a longer pin with the # sign trailing"
     t.string "judge_email", comment: "Judge's email address"
