@@ -1,6 +1,6 @@
 class CreateNodDateUpdate < Caseflow::Migration
   def change
-    create_table :nod_date_updates do |t|
+    create_table :nod_date_updates, comment: "Tracks changes to an AMA appeal's receipt date (aka, NOD date)" do |t|
       t.references "appeal", null: false, foreign_key: true, comment: "Appeal for which the NOD date is being edited"
       t.date "old_date", null: false, comment: "Date before update"
       t.date "new_date", null: false, comment: "Date after update"
