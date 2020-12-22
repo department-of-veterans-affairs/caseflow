@@ -5,7 +5,7 @@ class DocketSwitchDeniedTask < DocketSwitchAbstractAttorneyTask
 
   class << self
     def process!
-	  close_ruling_task if active?
+      close_ruling_task if active?
     end
 
     def label

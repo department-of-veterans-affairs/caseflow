@@ -191,10 +191,10 @@ RSpec.feature "Docket Switch", :all_dbs do
       # Redirect to Case Details Page
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
-       # Verify correct success alert
+      # Verify correct success alert
       expect(page).to have_content(
        format(COPY::DOCKET_SWITCH_DENIAL_SUCCESS_TITLE, appeal.claimant.name)
-      )
+       )
       # Verify that denial completed correctly
       docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
       expect(docket_switch).to_not be_nil
