@@ -8,7 +8,7 @@ module CavcAdminActionConcern
   CAVC_USER_TASK_TYPES = [
     SendCavcRemandProcessedLetterTask.name,
     CavcRemandProcessedLetterResponseWindowTask.name
-].freeze
+  ].freeze
 
   class_methods do
     def verify_user_can_create!(user, parent_task)
