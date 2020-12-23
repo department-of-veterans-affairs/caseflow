@@ -10,7 +10,7 @@ module Seeds
       create_higher_level_reviews_and_supplemental_claims
       create_inbox_messages
       create_bgs_attorneys
-      create_deceased_intake_user
+      create_deceased_veteran
     end
 
     private
@@ -26,12 +26,13 @@ module Seeds
       end
     end
 
-    def create_deceased_intake_user
+    def create_deceased_veteran
       veteran_file_number = "45454545"
-      Veteran.create(file_number: veteran_file_number,
-                     first_name: "Ed",
-                     last_name: "Deceased",
-                     date_of_death: Time.zone.today - 1.day)
+      create(:veteran,
+             file_number: veteran_file_number,
+             first_name: "Ed",
+             last_name: "Deceased",
+             date_of_death: Time.zone.today - 1.day)
     end
 
     def create_higher_level_review_tasks
