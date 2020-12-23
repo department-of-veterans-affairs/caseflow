@@ -10,8 +10,8 @@ import {
 } from '../constants';
 import { convertStringToBoolean } from '../util';
 import COPY from '../../../COPY';
-import { useSelector } from 'react-redux';
 import Button from '../../components/Button';
+import Alert from '../../components/Alert';
 import classes from './SelectClaimant.module.scss';
 import { AddClaimantModal } from './AddClaimantModal';
 
@@ -176,6 +176,15 @@ export const SelectClaimant = (props) => {
     );
   };
 
+  const deceasedVeteranAlert = () => {
+    return (
+      <Alert
+        type="warning"
+        message={`${COPY.DECEASED_CLAIMANT_TITLE} ${COPY.DECEASED_CLAIMANT_MESSAGE}`}
+      />
+    );
+  };
+
   let veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS;
   let allowDeceasedAppellants = deceasedAppellants && formType === 'appeal';
 
@@ -199,6 +208,7 @@ export const SelectClaimant = (props) => {
         value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant?.toString()}
       />
 
+      {isVeteranDeceased && allowDeceasedAppellants && deceasedVeteranAlert()}
       {showClaimants && (hasRelationships || newClaimant) && claimantOptions()}
       {showClaimants && !hasRelationships && !newClaimant && noClaimantsCopy()}
 
