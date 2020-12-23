@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe VirtualHearing do
-  shared_context "all test link behaviors" do
+  shared_examples "all test link behaviors" do
     it "returns representative link when title is 'Representative'" do
       recipient = "Representative"
       expect(virtual_hearing.test_link(recipient)).to eq link(recipient)
@@ -57,7 +57,7 @@ describe VirtualHearing do
       end
 
       include_context "virtual hearing created with new link generation"
-      include_context "all test link behaviors"
+      include_examples "all test link behaviors"
     end
 
     context "vh not created with new link generation" do
@@ -66,7 +66,7 @@ describe VirtualHearing do
       end
 
       include_context "virtual hearing not created with new link generation"
-      include_context "all test link behaviors"
+      include_examples "all test link behaviors"
     end
   end
 
@@ -263,12 +263,12 @@ describe VirtualHearing do
 
     context "active" do
       context "vh created with new link generation" do
-        include_examples "virtual hearing created with new link generation"
+        include_context "virtual hearing created with new link generation"
         include_examples "returns correct status", :active
       end
 
       context "vh not created with new link generation" do
-        include_examples "virtual hearing not created with new link generation"
+        include_context "virtual hearing not created with new link generation"
         include_examples "returns correct status", :active
       end
     end
