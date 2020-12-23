@@ -121,6 +121,14 @@ describe('SelectClaimant', () => {
         expect(radioNo).toBeEnabled();
         expect(setVeteranisNotClaimant).toBeCalledTimes(0);
       });
+
+      it('renders deceasedVeteranAlert', () => {
+        setupDeceasedAppellants(setupProps);
+
+        const alert = screen.getByRole('alert');
+
+        expect(alert).toBeInTheDocument();
+      });
     });
   });
 
