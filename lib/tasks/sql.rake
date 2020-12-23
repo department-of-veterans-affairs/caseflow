@@ -44,11 +44,11 @@ namespace :sql do
     puts "Found #{filtered_cards.count} cards to be validated out of #{cards.count} cards total"
     puts "  Metabase queries will be saved verbatim to '#{File.expand_path(args[:query_dir])}' for validation"
 
-    filtered_cards.sort_by { |obj| [obj["database_id"], obj["id"]] }.each do |obj|
-      creator_name = obj["creator"]["common_name"]
-      puts "  Card #{obj['id']} by #{creator_name} (collection #{obj['collection']['id']}): '#{obj['name']}'"
-      query_string = obj["dataset_query"]["native"]["query"]
-      output_filename = "db#{obj['database_id'].to_s.rjust(2, '0')}_c#{obj['id'].to_s.rjust(4, '0')}.sql"
+    filtered_cards.sort_by { |card| [card["database_id"], card["id"]] }.each do |card|
+      creator_name = card["creator"]["common_name"]
+      puts "  Card #{card['id']} by #{creator_name} (collection #{card['collection']['id']}): '#{card['name']}'"
+      query_string = card["dataset_query"]["native"]["query"]
+      output_filename = "db#{card['database_id'].to_s.rjust(2, '0')}_c#{card['id'].to_s.rjust(4, '0')}.sql"
       puts "    Saving query to #{output_filename}"
       File.open("#{args[:query_dir]}/#{output_filename}", "w") { |file| file.puts query_string }
     end
