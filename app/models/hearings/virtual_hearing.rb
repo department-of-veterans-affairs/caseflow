@@ -133,7 +133,11 @@ class VirtualHearing < CaseflowRecord
   end
 
   def test_link(title)
-    "https://care.va.gov/webapp2/conference/test_call?name=#{email_recipient_name(title)}&join=1"
+    if guest_hearing_link && host_hearing_link
+      "https://vc.va.gov/webapp2/conference/test_call?name=#{email_recipient_name(title)}&join=1"
+    else
+      "https://care.va.gov/webapp2/conference/test_call?name=#{email_recipient_name(title)}&join=1"
+    end
   end
 
   def job_completed?
