@@ -111,6 +111,14 @@ export const SelectClaimant = (props) => {
     () => establishFiduciaryEps && benefitType === 'fiduciary',
     [benefitType, establishFiduciaryEps]
   );
+  const shouldShowPayeeCode = useMemo(() => {
+    return (
+      formType !== 'appeal' &&
+      (benefitType === 'compensation' ||
+        benefitType === 'pension' ||
+        allowFiduciary)
+    );
+  }, [formType, benefitType, allowFiduciary]);
 
   const handleVeteranIsNotClaimantChange = (value) => {
     const boolValue = convertStringToBoolean(value);
@@ -171,14 +179,6 @@ export const SelectClaimant = (props) => {
   };
   const handlePayeeCodeChange = (event) =>
     setPayeeCode(event ? event.value : null);
-  const shouldShowPayeeCode = () => {
-    return (
-      formType !== 'appeal' &&
-      (benefitType === 'compensation' ||
-        benefitType === 'pension' ||
-        allowFiduciary)
-    );
-  };
 
   const hasRelationships = relationships.length > 0;
   const showClaimants = ['true', true].includes(veteranIsNotClaimant);
@@ -232,7 +232,7 @@ export const SelectClaimant = (props) => {
           errorMessage={claimantError}
         />
 
-        {shouldShowPayeeCode() && (
+        {shouldShowPayeeCode && (
           <SearchableDropdown
             name="cf-payee-code"
             strongLabel
