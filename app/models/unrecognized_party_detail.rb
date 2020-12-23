@@ -20,7 +20,7 @@ class UnrecognizedPartyDetail < CaseflowRecord
   def name
     return self[:name] if organization?
 
-    %w[name middle_name last_name suffix].map { |key| self[key].presence }.compact.join(" ")
+    FullName.new(first_name, middle_name, last_name).formatted(:readable_full)
   end
 
   # return a hash in the same format that BgsAddressService uses
