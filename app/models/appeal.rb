@@ -23,6 +23,8 @@ class Appeal < DecisionReview
   has_many :vbms_uploaded_documents
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
+  has_many :nod_date_updates, as: :appeal
+
   has_one :special_issue_list
   has_one :post_decision_motion
   has_many :record_synced_by_job, as: :record
@@ -269,6 +271,8 @@ class Appeal < DecisionReview
   end
 
   def conditionally_set_aod_based_on_age
+    return unless claimant # do not update if claimant is not yet set, i.e., when create_stream is called
+
     updated_aod_based_on_age = claimant&.advanced_on_docket_based_on_age?
     update(aod_based_on_age: updated_aod_based_on_age) if aod_based_on_age != updated_aod_based_on_age
   end
@@ -339,6 +343,10 @@ class Appeal < DecisionReview
 
   def veteran_middle_initial
     veteran_middle_name&.first
+  end
+
+  def veteran_appellant_deceased?
+    (veteran_is_deceased && !appellant_is_not_veteran) && FeatureToggle.enabled?(:fnod_badge, user: self)
   end
 
   # matches Legacy behavior

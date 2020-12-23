@@ -222,6 +222,19 @@ class Task < CaseflowRecord
         "#{Task.table_name}.created_at #{order}"
       )
     end
+
+    # Sorting tasks by docket number within each category of appeal: case type, aod, docket number
+    # Used by ScheduleHearingTaskPager and WarmBgsCachedJob to sort ScheduleHearingTasks
+    def order_by_cached_appeal_priority_clause
+      Arel.sql(<<-SQL)
+        (CASE
+          WHEN cached_appeal_attributes.case_type = 'Court Remand' THEN 1
+          ELSE 0
+        END) DESC,
+        cached_appeal_attributes.is_aod DESC,
+        cached_appeal_attributes.docket_number ASC
+      SQL
+    end
   end
 
   ########################################################################################
@@ -330,8 +343,8 @@ class Task < CaseflowRecord
   def actions_allowable?(user)
     return false if !open?
 
-    # Users who are assigned a subtask of an organization don't have actions on the organizational task.
-    return false if assigned_to.is_a?(Organization) && children.any? { |child| child.assigned_to == user }
+    # Users who are assigned an open subtask of an organization don't have actions on the organizational task.
+    return false if assigned_to.is_a?(Organization) && children.open.any? { |child| child.assigned_to == user }
 
     true
   end

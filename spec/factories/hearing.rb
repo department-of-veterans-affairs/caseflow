@@ -34,6 +34,10 @@ FactoryBot.define do
       disposition { Constants.HEARING_DISPOSITION_TYPES.held }
     end
 
+    trait :no_show do
+      disposition { Constants.HEARING_DISPOSITION_TYPES.no_show }
+    end
+
     trait :with_tasks do
       after(:create) do |hearing, _evaluator|
         create(:hearing_task_association,

@@ -23,6 +23,7 @@ import { CaseTimeline } from './CaseTimeline';
 import CaseTitle from './CaseTitle';
 import CaseTitleDetails from './CaseTitleDetails';
 import CavcDetail from './CavcDetail';
+import CaseDetailsPostDispatchActions from './CaseDetailsPostDispatchActions';
 import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
 import StickyNavContentArea from './StickyNavContentArea';
 import TaskSnapshot from './TaskSnapshot';
@@ -57,6 +58,8 @@ export const CaseDetailsView = (props) => {
   const success = useSelector((state) => state.ui.messages.success);
   const error = useSelector((state) => state.ui.messages.error);
   const veteranCaseListIsVisible = useSelector((state) => state.ui.veteranCaseListIsVisible);
+  const currentUserIsOnCavcLitSupport = useSelector((state) => state.ui.organizations.some(
+    (organization) => organization.name === 'CAVC Litigation Support'));
   const modalIsOpen = window.location.pathname.includes('modal');
 
   const resetState = () => {
@@ -91,6 +94,9 @@ export const CaseDetailsView = (props) => {
 
   const doPulacCerulloReminder = useMemo(() => needsPulacCerulloAlert(appeal, tasks), [appeal, tasks]);
 
+  const appealIsDispached = appeal.status === 'dispatched';
+  const showPostDispatch = appealIsDispached && currentUserIsOnCavcLitSupport && props.featureToggles.cavc_remand;
+
   return (
     <React.Fragment>
       {!modalIsOpen && error && (
@@ -107,6 +113,7 @@ export const CaseDetailsView = (props) => {
           </Alert>
         </div>
       )}
+      {!modalIsOpen && showPostDispatch && <CaseDetailsPostDispatchActions appealId={appealId} />}
       {(!modalIsOpen || props.userCanScheduleVirtualHearings) && <UserAlerts />}
       <AppSegment filledBackground>
         <CaseTitle appeal={appeal} />
@@ -144,7 +151,7 @@ export const CaseDetailsView = (props) => {
           )}
           {!_.isNull(appeal.cavcRemand) && appeal.cavcRemand &&
           (<CavcDetail title="CAVC Remand" {...appeal.cavcRemand} />)}
-          <CaseTimeline title="Case Timeline" appeal={appeal} />}
+          <CaseTimeline title="Case Timeline" appeal={appeal} />
         </StickyNavContentArea>
         {props.pollHearing && pollHearing()}
       </AppSegment>
@@ -158,6 +165,7 @@ CaseDetailsView.propTypes = {
   clearAlerts: PropTypes.func,
   tasks: PropTypes.array,
   error: PropTypes.object,
+  featureToggles: PropTypes.object,
   resetErrorMessages: PropTypes.func,
   setHearingDay: PropTypes.func,
   success: PropTypes.object,
@@ -171,7 +179,8 @@ CaseDetailsView.propTypes = {
 
 const mapStateToProps = (state) => ({
   scheduledHearingId: state.components.scheduledHearing.externalId,
-  pollHearing: state.components.scheduledHearing.polling
+  pollHearing: state.components.scheduledHearing.polling,
+  featureToggles: state.ui.featureToggles
 });
 
 const mapDispatchToProps = (dispatch) =>

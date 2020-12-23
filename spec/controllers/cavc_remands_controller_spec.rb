@@ -7,13 +7,13 @@ RSpec.describe CavcRemandsController, type: :controller do
   end
 
   let!(:lit_support_user) do
-    LitigationSupport.singleton.add_user(create(:user))
-    LitigationSupport.singleton.users.first
+    CavcLitigationSupport.singleton.add_user(create(:user))
+    CavcLitigationSupport.singleton.users.first
   end
 
   describe "POST /appeals/:appeal_id/cavc_remands" do
     let(:appeal) { create(:appeal) }
-    let(:appeal_id) { appeal.id }
+    let(:appeal_id) { appeal.uuid }
     let(:cavc_docket_number) { "123-1234567" }
     let(:represented_by_attorney) { true }
     let(:cavc_judge_full_name) { Constants::CAVC_JUDGE_FULL_NAMES.first }
@@ -56,8 +56,8 @@ RSpec.describe CavcRemandsController, type: :controller do
 
     context "with a Lit Support User" do
       context "with insufficient parameters" do
+        let(:cavc_docket_number) { nil }
         it "does not create the CAVC remand" do
-          params.delete(:cavc_docket_number)
           expect { subject }.to raise_error do |error|
             expect(error).to be_a(ActionController::ParameterMissing)
           end
@@ -65,11 +65,22 @@ RSpec.describe CavcRemandsController, type: :controller do
       end
 
       context "with correct parameters" do
-        it "creates the CAVC remand" do
+        it "creates the CAVC remand and new appeal" do
+          remand_count = CavcRemand.count
+          cavc_count = Appeal.court_remand.count
           subject
 
-          expect(JSON.parse(response.body)["cavc_remand"]["appeal_id"]).to eq(appeal_id)
           expect(response.status).to eq(201)
+          response_body = JSON.parse(response.body)
+
+          expect(response_body["cavc_remand"]["appeal_id"]).to eq(appeal.id)
+          expect(response_body["cavc_remand"]["decision_issue_ids"]).to match_array(decision_issue_ids)
+          expect(CavcRemand.count).to eq(remand_count + 1)
+
+          expect(response_body["cavc_appeal"]["appeal_id"]).not_to eq(appeal.id)
+          expect(response_body["cavc_appeal"]["stream_docket_number"]).to eq(appeal.docket_number)
+          expect(response_body["cavc_appeal"]["stream_type"]).to eq(Appeal.stream_types["court_remand"])
+          expect(Appeal.court_remand.count).to eq(cavc_count + 1)
         end
       end
     end
@@ -81,7 +92,7 @@ RSpec.describe CavcRemandsController, type: :controller do
 
         expect(response.status).to eq(403)
         expect(JSON.parse(response.body)["errors"][0]["title"])
-          .to eq("Only Litigation Support users can create CAVC Remands")
+          .to eq("Only CAVC Litigation Support users can create CAVC Remands")
       end
     end
   end
