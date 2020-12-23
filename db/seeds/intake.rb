@@ -27,12 +27,12 @@ module Seeds
     end
 
     def create_deceased_intake_user
-      veteran_file_number="45454545"
+      veteran_file_number = "45454545"
       Veteran.create(file_number: veteran_file_number,
-                                    first_name: "Ed",
-                                    last_name: "Deceased",
-                                    date_of_death: Time.zone.today - 1.day)
-    end 
+                      first_name: "Ed",
+                      last_name: "Deceased",
+                      date_of_death: Time.zone.today - 1.day)
+    end
 
     def create_higher_level_review_tasks
       6.times do
