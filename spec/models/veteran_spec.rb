@@ -235,7 +235,7 @@ describe Veteran, :all_dbs do
         state: "CA",
         country: "USA",
         date_of_birth: "12/21/1989",
-        date_of_death: date_of_death,
+        date_of_death: Date.new(2019, 12, 31),
         zip_code: "94117",
         military_post_office_type_code: "DPO",
         military_postal_type_code: "AE"
