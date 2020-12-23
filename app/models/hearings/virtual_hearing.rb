@@ -28,7 +28,7 @@
 #             because for the latter `request_cancelled` will not be set to `true`.
 #
 #   `active`: This indicates that the conference was created for a virtual hearing, derived from presence of
-#             `conference_id` or presence of `host_link` and `guest_link`
+#             `conference_id` or presence of `host_hearing_link` and `guest_hearing_link`
 #
 #   `pending`: This indicates that the conference has yet to be created.
 ##
@@ -180,7 +180,7 @@ class VirtualHearing < CaseflowRecord
     end
 
     # If the conference has been created the virtual hearing is active
-    if conference_id || (self[:guest_link] && self[:host_link])
+    if conference_id || (host_hearing_link && guest_hearing_link)
       return :active
     end
 

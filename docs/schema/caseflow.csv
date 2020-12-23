@@ -1130,12 +1130,12 @@ virtual_hearings,conference_deleted,boolean ∗,x,,,,,Whether or not the confe
 virtual_hearings,conference_id,integer,,,,,x,ID of conference from Pexip
 virtual_hearings,created_at,datetime ∗,x,,,,,Automatic timestamp of when virtual hearing was created
 virtual_hearings,created_by_id,integer (8) ∗ FK,x,,x,,x,User who created the virtual hearing
-virtual_hearings,guest_link,string,,,,,,Link used by appellants and/or representatives to join virtual hearing conference
+virtual_hearings,guest_hearing_link,string,,,,,,Link used by appellants and/or representatives to join virtual hearing conference
 virtual_hearings,guest_pin,integer,,,,,,PIN number for guests of Pexip conference
 virtual_hearings,guest_pin_long,string (11),,,,,,Change the guest pin to store a longer pin with the # sign trailing
 virtual_hearings,hearing_id,integer (8) FK,,,x,,x,Associated hearing
 virtual_hearings,hearing_type,string,,,,,x,'Hearing' or 'LegacyHearing'
-virtual_hearings,host_link,string,,,,,,Link used by judges to join virtual hearing conference
+virtual_hearings,host_hearing_link,string,,,,,,Link used by judges to join virtual hearing conference
 virtual_hearings,host_pin,integer,,,,,,PIN number for host of Pexip conference
 virtual_hearings,host_pin_long,string (8),,,,,,Change the host pin to store a longer pin with the # sign trailing
 virtual_hearings,id,integer (8) PK,x,x,,,,
