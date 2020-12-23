@@ -56,6 +56,18 @@ feature "Appeal Intake", :all_dbs do
       create(:appeal, veteran_file_number: veteran.file_number)
       check_deceased_veteran_claimant(AppealIntake.new(veteran_file_number: veteran.file_number, user: current_user))
     end
+
+    context "when the deceased appellants toggle is enabled" do
+      before { FeatureToggle.enable!(:deceased_appellants) }
+      after { FeatureToggle.disable!(:deceased_appellants) }
+
+      scenario "veteran can be claimant" do
+        # save the veteran first, otherwise creating an appeal will create a new veteran
+        veteran.save!
+        create(:appeal, veteran_file_number: veteran.file_number)
+        check_deceased_veteran_claimant(AppealIntake.new(veteran_file_number: veteran.file_number, user: current_user))
+      end
+    end
   end
 
   it "cancels an intake in progress when there is a NilRatingProfileListError" do

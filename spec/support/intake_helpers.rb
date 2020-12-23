@@ -824,7 +824,16 @@ module IntakeHelpers
   def check_deceased_veteran_claimant(intake)
     intake.start!
     visit "/intake"
-    expect(page).to have_css("input[disabled][id=different-claimant-option_false]", visible: false)
+    if intake.detail.is_a?(Appeal) && FeatureToggle.enabled?(:deceased_appellants)
+      expect(page).to have_css("input[id=different-claimant-option_false]", visible: false)
+      within_fieldset("Is the claimant someone other than the Veteran?") do
+        find("label", text: "No", match: :prefer_exact).click
+      end
+      expect(page).to have_content(COPY::DECEASED_CLAIMANT_TITLE)
+    else
+      expect(page).to have_css("input[disabled][id=different-claimant-option_false]", visible: false)
+      expect(page).to_not have_content(COPY::DECEASED_CLAIMANT_TITLE)
+    end
   end
 
   # rubocop:disable Metrics/AbcSize
