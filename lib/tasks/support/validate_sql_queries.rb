@@ -231,6 +231,8 @@ class ValidateSqlQueries
       @contents.each_line do |line|
         return line.sub(DATABASE_CONNECTION, "").strip if line.strip.start_with?(DATABASE_CONNECTION)
       end
+
+      nil
     end
 
     private
