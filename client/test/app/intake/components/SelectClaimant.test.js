@@ -86,17 +86,12 @@ describe('SelectClaimant', () => {
         expect(results).toHaveNoViolations();
       });
 
-      it('disables different-claimant-option_false radio button', () => {
+      it('disables different-claimant-option_false radio button and fires off setVeteranIsNotClaimant', () => {
         setupDeceasedAppellants(formType);
 
         const radioNo = screen.getByRole('radio', { name: /no/i });
 
         expect(radioNo).toBeDisabled();
-      });
-
-      it('fires off setVeteranIsNotClaimant', () => {
-        setupDeceasedAppellants(formType);
-
         expect(setVeteranisNotClaimant).toHaveBeenCalled();
       });
     });
@@ -118,17 +113,12 @@ describe('SelectClaimant', () => {
         expect(results).toHaveNoViolations();
       });
 
-      it('disables different-claimant-option_false radio button', () => {
+      it('disables different-claimant-option_false radio button and does NOT fire off setVeteranIsNotClaimant', () => {
         setupDeceasedAppellants(setupProps);
 
         const radioNo = screen.getByRole('radio', { name: /no/i });
 
         expect(radioNo).toBeEnabled();
-      });
-
-      it('fires off setVeteranIsNotClaimant', () => {
-        setupDeceasedAppellants(setupProps);
-
         expect(setVeteranisNotClaimant).toBeCalledTimes(0);
       });
     });
@@ -150,17 +140,12 @@ describe('SelectClaimant', () => {
         expect(results).toHaveNoViolations();
       });
 
-      it('does disable different-claimant-option_false radio button', () => {
+      it('does disable different-claimant-option_false radio button and fires off setVeteranIsNotClaimant', () => {
         setupDeceasedAppellants();
 
         const radioNo = screen.getByRole('radio', { name: /no/i });
 
         expect(radioNo).toBeDisabled();
-      });
-
-      it('fires off setVeteranIsNotClaimant', () => {
-        setupDeceasedAppellants();
-
         expect(setVeteranisNotClaimant).toHaveBeenCalled();
       });
     });
@@ -182,17 +167,12 @@ describe('SelectClaimant', () => {
         expect(results).toHaveNoViolations();
       });
 
-      it('disables different-claimant-option_false radio button', () => {
+      it('disables different-claimant-option_false radio button & fires off setVeteranIsNotClaimant', () => {
         setupDeceasedAppellants(setupProps);
 
         const radioNo = screen.getByRole('radio', { name: /no/i });
 
         expect(radioNo).toBeDisabled();
-      });
-
-      it('fires off setVeteranIsNotClaimant', () => {
-        setupDeceasedAppellants(setupProps);
-
         expect(setVeteranisNotClaimant).toBeCalled();
       });
     });
