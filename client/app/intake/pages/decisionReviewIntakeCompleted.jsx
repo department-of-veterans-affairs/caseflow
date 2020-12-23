@@ -12,6 +12,7 @@ import IneligibleIssuesList from '../components/IneligibleIssuesList';
 import SmallLoader from '../../components/SmallLoader';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY';
+import Alert from '../../components/Alert';
 import UnidentifiedIssueAlert from '../components/UnidentifiedIssueAlert';
 
 const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIssuesUrl, completedReview }) => {
@@ -146,6 +147,20 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       return <SmallLoader message="Creating task..." spinnerColor={LOGO_COLORS.CERTIFICATION.ACCENT} />;
     }
 
+    const deceasedVeteranAlert = () => {
+      return (
+        <Alert
+          type="warning"
+          message={COPY.DECEASED_CLAIMANT_MESSAGE}
+          title={COPY.DECEASED_CLAIMANT_TITLE}
+        />
+      );
+    };
+
+    const allowDeceasedAppellants = deceasedAppellants && formType === 'appeal';
+    const showDeceasedVeteranAlert = veteran.isDeceased &&
+      allowDeceasedAppellants && !completedReview.veteranIsNotClaimant;
+
     return <div><StatusMessage
       title="Intake completed"
       type="success"
@@ -175,6 +190,9 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
           You will receive a message in your Caseflow Inbox if the establishment fails or is delayed.
       </h2>)
     }
+    {
+      showDeceasedVeteranAlert && deceasedVeteranAlert()
+    }
     </div>
     ;
   }
@@ -191,6 +209,7 @@ export default connect(
       supplemental_claim: state.supplementalClaim,
       appeal: state.appeal
     },
-    intakeStatus: getIntakeStatus(state)
+    intakeStatus: getIntakeStatus(state),
+    deceasedAppellants: state.featureToggles.deceasedAppellants
   })
 )(DecisionReviewIntakeCompleted);
