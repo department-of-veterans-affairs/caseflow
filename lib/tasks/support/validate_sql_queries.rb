@@ -14,7 +14,7 @@ class ValidateSqlQueries
       puts "  Found #{filenames.size} #{'query'.pluralize(filenames.size)} in #{query_dir}"
 
       puts "  Query execution output will be saved to '#{output_dir}'"
-      filenames.each do |filename| 
+      filenames.each do |filename|
         run_queries_and_save_output(filename, output_dir)
       end
 
@@ -45,11 +45,9 @@ class ValidateSqlQueries
 
     def extract_queries(file_contents)
       parser = SqlQueryParser.new(file_contents)
-      parser.extract_queries
-
       {
         rails_query: declaw_rails_query(parser.rails_query),
-        sql_query: declaw_sql_query(parser.sql_query),
+        sql_query: declaw_sql_query(parser.contents), # treat entire file as SQL
         rails_sql_postproc: declaw_rails_query(parser.postprocess_cmds),
         db_connection_string: declaw_rails_query(parser.db_connection)
       }
@@ -142,8 +140,8 @@ class ValidateSqlQueries
       db_connection_string.constantize.connection
     end
 
-    # Currently in Metabase, we query Redshift for VACOLS data, so we have to prefix VACOLS tables with "VACOLS.". 
-    # We have no connection to Redshift from the Caseflow application (where the Rails query is running), 
+    # Currently in Metabase, we query Redshift for VACOLS data, so we have to prefix VACOLS tables with "VACOLS.".
+    # We have no connection to Redshift from the Caseflow application (where the Rails query is running),
     # hence we can't use the query as it.
     # This method removes that prefix since we have a direct connection to VACOLS in the Rails environment.
     def revise_vacols_query(query)
@@ -163,6 +161,7 @@ class ValidateSqlQueries
     end
 
     def eval_query(query)
+      # binding.eval limits the variables accessible to the query
       binding.eval(query) # rubocop:disable Security/Eval
     end
 
@@ -181,6 +180,7 @@ class ValidateSqlQueries
           result = "ERROR with query:\n#{error.message}\n\n#{error.backtrace.join("\n")}"
           rescued_error = error
         ensure
+          # Always rollback the transaction so that query has no side-effect on the database
           fail ActiveRecord::Rollback
         end
 
@@ -201,7 +201,6 @@ class ValidateSqlQueries
     end
   end
 
-  # :reek:TooManyInstanceVariables
   class SqlQueryParser
     # identifies Rails code that is equivalent to the SQL query
     RAILS_EQUIV_PREFIX = "/* RAILS_EQUIV"
@@ -212,49 +211,56 @@ class ValidateSqlQueries
     # identifies the class on which to call `.connection` to execute the SQL query
     DATABASE_CONNECTION = "-- SQL_DB_CONNECTION:"
 
-    attr_reader :rails_query, :sql_query, :postprocess_cmds, :db_connection
+    attr_reader :contents
 
     def initialize(file_contents)
       @contents = file_contents
-      @rails_query = ""
-      @sql_query = ""
-      @postprocess_cmds = ""
-      @db_connection = nil
     end
 
-    # To-do: Improve parsing of query
-    # :reek:FeatureEnvy
-    # rubocop:disable Metrics/CyclomaticComplexity
-    # rubocop:disable Metrics/PerceivedComplexity
-    # rubocop:disable Metrics/MethodLength
-    def extract_queries
-      rails_equiv_mode = false
-      postproc_mode = false
+    def db_connection
+      @contents.each_line do |line|
+        return line.sub(DATABASE_CONNECTION, "").strip if line.start_with?(DATABASE_CONNECTION)
+      end
+    end
+
+    def rails_query
+      rails_query = ""
+      in_rails_equiv_block = false
+
       @contents.each_line do |line|
         line.strip!
 
-        if line.start_with?("*/")
-          rails_equiv_mode = false
-          postproc_mode = false
-          line = line.sub("*/", "").strip
-          next if line.blank?
-        end
+        return rails_query if in_rails_equiv_block && line.start_with?("*/")
 
-        if line.start_with?(DATABASE_CONNECTION)
-          @db_connection = line.sub(DATABASE_CONNECTION, "").strip
-        elsif rails_equiv_mode || line.start_with?(RAILS_EQUIV_PREFIX)
-          @rails_query += "\n" + line.sub(RAILS_EQUIV_PREFIX, "").strip
-          rails_equiv_mode = true
-        elsif postproc_mode || line.start_with?(POSTPROC_SQL_RESULT_PREFIX)
-          @postprocess_cmds += "\n" + line.sub(POSTPROC_SQL_RESULT_PREFIX, "").strip
-          postproc_mode = true
-        else
-          @sql_query += "\n" + line
+        if in_rails_equiv_block
+          rails_query += "\n" + line
+        elsif line.start_with?(RAILS_EQUIV_PREFIX)
+          rails_query += "\n" + line.sub(RAILS_EQUIV_PREFIX, "").strip
+          in_rails_equiv_block = true
         end
       end
+
+      fail "Expecting '*/' to end RAILS_EQUIV block"
     end
-    # rubocop:enable Metrics/MethodLength
-    # rubocop:enable Metrics/PerceivedComplexity
-    # rubocop:enable Metrics/CyclomaticComplexity
+
+    def postprocess_cmds
+      postprocess_cmds = ""
+      in_postproc_block = false
+
+      @contents.each_line do |line|
+        line.strip!
+
+        return postprocess_cmds if in_postproc_block && line.start_with?("*/")
+
+        if in_postproc_block
+          postprocess_cmds += "\n" + line
+        elsif line.start_with?(POSTPROC_SQL_RESULT_PREFIX)
+          postprocess_cmds += "\n" + line.sub(POSTPROC_SQL_RESULT_PREFIX, "").strip
+          in_postproc_block = true
+        end
+      end
+
+      fail "Expecting '*/' to end POSTPROC_SQL_RESULT block"
+    end
   end
 end

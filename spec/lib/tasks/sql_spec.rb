@@ -56,18 +56,14 @@ describe "sql", :postgres do
       RAILS_QUERY
       expect(queries_hash[:rails_query]).to eql expected_rails_query.chomp
       sql_rails_query = <<~SQL_QUERY
-        -- Total appeal counts in Caseflow
-
-
         WITH
           ama_appeals AS (SELECT * FROM appeals),
           leg_appeals AS (SELECT * FROM legacy_appeals)
         SELECT COUNT(*) FROM ama_appeals
         UNION ALL
         SELECT COUNT(*) FROM leg_appeals
-
       SQL_QUERY
-      expect(queries_hash[:sql_query]).to eql sql_rails_query.lines.map(&:strip).join("\n").chomp
+      expect(queries_hash[:sql_query]).to include sql_rails_query
       expected_rails_sql_postproc = <<~RAILS_QUERY
         to_a.map do |r|
           r["count"]
