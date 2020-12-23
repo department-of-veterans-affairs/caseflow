@@ -761,6 +761,15 @@ messages,read_at,datetime,,,,,,When the message was read
 messages,text,string,,,,,,The message
 messages,updated_at,datetime ∗,x,,,,x,
 messages,user_id,integer ∗ FK,x,,x,,,The user for whom the message is intended
+nod_date_updates,,,,,,,,
+nod_date_updates,appeal_id,integer (8) ∗ FK,x,,x,,x,Appeal for which the NOD date is being edited
+nod_date_updates,change_reason,string ∗,x,,,,,Reason for change - entry_error or new_info
+nod_date_updates,created_at,datetime ∗,x,,,,,Default created_at/updated_at timestamps
+nod_date_updates,id,integer (8) PK,x,x,,,,
+nod_date_updates,new_date,date ∗,x,,,,,Date after update
+nod_date_updates,old_date,date ∗,x,,,,,Date before update
+nod_date_updates,updated_at,datetime ∗,x,,,,,Default created_at/updated_at timestamps
+nod_date_updates,user_id,integer (8) ∗ FK,x,,x,,x,User that created this record
 non_availabilities,,,,,,,,
 non_availabilities,created_at,datetime ∗,x,,,,,
 non_availabilities,date,date,,,,,,

@@ -995,6 +995,18 @@ ActiveRecord::Schema.define(version: 2020_12_21_063738) do
     t.index ["updated_at"], name: "index_messages_on_updated_at"
   end
 
+  create_table "nod_date_updates", comment: "Tracks changes to an AMA appeal's receipt date (aka, NOD date)", force: :cascade do |t|
+    t.bigint "appeal_id", null: false, comment: "Appeal for which the NOD date is being edited"
+    t.string "change_reason", null: false, comment: "Reason for change: entry_error or new_info"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at timestamps"
+    t.date "new_date", null: false, comment: "Date after update"
+    t.date "old_date", null: false, comment: "Date before update"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at timestamps"
+    t.bigint "user_id", null: false, comment: "User that updated the NOD date"
+    t.index ["appeal_id"], name: "index_nod_date_updates_on_appeal_id"
+    t.index ["user_id"], name: "index_nod_date_updates_on_user_id"
+  end
+
   create_table "non_availabilities", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date"
@@ -1585,6 +1597,8 @@ ActiveRecord::Schema.define(version: 2020_12_21_063738) do
   add_foreign_key "legacy_hearings", "users", column: "created_by_id"
   add_foreign_key "legacy_hearings", "users", column: "updated_by_id"
   add_foreign_key "legacy_issue_optins", "legacy_issues"
+  add_foreign_key "nod_date_updates", "appeals"
+  add_foreign_key "nod_date_updates", "users"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "post_decision_motions", "appeals"
   add_foreign_key "post_decision_motions", "tasks"
