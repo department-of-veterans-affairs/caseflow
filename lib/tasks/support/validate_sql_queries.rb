@@ -156,7 +156,7 @@ class ValidateSqlQueries
   # Attempt to minimize exposure of environment when calling eval
   class EvalEnvironment
     def initialize(result)
-      # @result is available for use in query when eval_query is called
+      # @result is available for use in the query when eval_query is called
       @result = result
     end
 
@@ -170,7 +170,8 @@ class ValidateSqlQueries
     end
 
     def self.wrap_in_rollback_transaction
-      # To-do: open read-only connection to database
+      # Ideally, would like to open a read-only connection to the database
+      # but using rollbacks for simplicity
       suppress_sql_logging do
         rescued_error = nil
         result = nil
@@ -208,6 +209,20 @@ class ValidateSqlQueries
       @contents = file_contents
     end
 
+    # identifies block of Rails code that is equivalent to the SQL query
+    RAILS_EQUIV_PREFIX = "RAILS_EQUIV"
+
+    def rails_query
+      extract_block_contents(RAILS_EQUIV_PREFIX)
+    end
+
+    # identifies block of Rails code to postprocess SQL query results
+    POSTPROC_SQL_RESULT_PREFIX = "POSTPROC_SQL_RESULT"
+
+    def postprocess_cmds
+      extract_block_contents(POSTPROC_SQL_RESULT_PREFIX)
+    end
+
     # identifies the class on which to call `.connection` to execute the SQL query
     DATABASE_CONNECTION = "-- SQL_DB_CONNECTION:"
 
@@ -216,20 +231,6 @@ class ValidateSqlQueries
       @contents.each_line do |line|
         return line.sub(DATABASE_CONNECTION, "").strip if line.strip.start_with?(DATABASE_CONNECTION)
       end
-    end
-
-    # identifies Rails code that is equivalent to the SQL query
-    RAILS_EQUIV_PREFIX = "RAILS_EQUIV"
-
-    def rails_query
-      extract_block_contents(RAILS_EQUIV_PREFIX)
-    end
-
-    # identifies Rails code to postprocess SQL query results
-    POSTPROC_SQL_RESULT_PREFIX = "POSTPROC_SQL_RESULT"
-
-    def postprocess_cmds
-      extract_block_contents(POSTPROC_SQL_RESULT_PREFIX)
     end
 
     private
