@@ -202,65 +202,58 @@ class ValidateSqlQueries
   end
 
   class SqlQueryParser
-    # identifies Rails code that is equivalent to the SQL query
-    RAILS_EQUIV_PREFIX = "/* RAILS_EQUIV"
-
-    # identifies Rails code to postprocess SQL query results
-    POSTPROC_SQL_RESULT_PREFIX = "/* POSTPROC_SQL_RESULT"
-
-    # identifies the class on which to call `.connection` to execute the SQL query
-    DATABASE_CONNECTION = "-- SQL_DB_CONNECTION:"
-
     attr_reader :contents
 
     def initialize(file_contents)
       @contents = file_contents
     end
 
+    # identifies the class on which to call `.connection` to execute the SQL query
+    DATABASE_CONNECTION = "-- SQL_DB_CONNECTION:"
+
+    # :reek:FeatureEnvy
     def db_connection
       @contents.each_line do |line|
-        return line.sub(DATABASE_CONNECTION, "").strip if line.start_with?(DATABASE_CONNECTION)
+        return line.sub(DATABASE_CONNECTION, "").strip if line.strip.start_with?(DATABASE_CONNECTION)
       end
     end
+
+    # identifies Rails code that is equivalent to the SQL query
+    RAILS_EQUIV_PREFIX = "RAILS_EQUIV"
 
     def rails_query
-      rails_query = ""
-      in_rails_equiv_block = false
-
-      @contents.each_line do |line|
-        line.strip!
-
-        return rails_query if in_rails_equiv_block && line.start_with?("*/")
-
-        if in_rails_equiv_block
-          rails_query += "\n" + line
-        elsif line.start_with?(RAILS_EQUIV_PREFIX)
-          rails_query += "\n" + line.sub(RAILS_EQUIV_PREFIX, "").strip
-          in_rails_equiv_block = true
-        end
-      end
-
-      fail "Expecting '*/' to end RAILS_EQUIV block"
+      extract_block_contents(RAILS_EQUIV_PREFIX)
     end
 
-    def postprocess_cmds
-      postprocess_cmds = ""
-      in_postproc_block = false
+    # identifies Rails code to postprocess SQL query results
+    POSTPROC_SQL_RESULT_PREFIX = "POSTPROC_SQL_RESULT"
 
+    def postprocess_cmds
+      extract_block_contents(POSTPROC_SQL_RESULT_PREFIX)
+    end
+
+    private
+
+    # :reek:FeatureEnvy
+    def extract_block_contents(block_keyword)
+      block_prefix = "/* #{block_keyword}"
+
+      block_contents = ""
+      in_block = false
       @contents.each_line do |line|
         line.strip!
 
-        return postprocess_cmds if in_postproc_block && line.start_with?("*/")
+        return block_contents if in_block && line.start_with?("*/")
 
-        if in_postproc_block
-          postprocess_cmds += "\n" + line
-        elsif line.start_with?(POSTPROC_SQL_RESULT_PREFIX)
-          postprocess_cmds += "\n" + line.sub(POSTPROC_SQL_RESULT_PREFIX, "").strip
-          in_postproc_block = true
+        if in_block
+          block_contents += "\n" + line
+        elsif line.start_with?(block_prefix)
+          block_contents += "\n" + line.sub(block_prefix, "").strip
+          in_block = true
         end
       end
 
-      fail "Expecting '*/' to end POSTPROC_SQL_RESULT block"
+      fail "Expecting '*/' to end #{block_prefix} block"
     end
   end
 end
