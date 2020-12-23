@@ -167,7 +167,7 @@ describe VirtualHearingRepository, :all_dbs do
     end
   end
 
-  context ".hearings_with_pending_conference_or_pending_emails", focus: true do
+  context ".hearings_with_pending_conference_or_pending_emails" do
     subject { VirtualHearingRepository.hearings_with_pending_conference_or_pending_emails }
 
     context "virtual hearings created with new link generation" do
