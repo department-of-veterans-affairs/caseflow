@@ -55,7 +55,7 @@ const VeteranDetail = ({ veteran, stateOnly }) => {
   if (dod) {
     details.push({
       label: 'Date of death',
-      value: <DateString date={dod} inputFormat="MM/DD/YYYY" dateFormat="M/D/YYYY" />
+      value: <DateString date={dod} inputFormat="YYYY-MM-DD" dateFormat="M/D/YYYY" />
     });
   }
 
