@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class DocketSwitchRulingTask < JudgeTask
-  
+
   def additional_available_actions(user)
     actions = []
 
