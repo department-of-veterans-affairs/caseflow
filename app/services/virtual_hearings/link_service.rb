@@ -45,7 +45,7 @@ class VirtualHearings::LinkService
     fail PINMustBePresentError if pin.blank?
     fail NameMustBePresentError if name.blank?
 
-    "#{base_url}/?conference=#{alias_for_conference}&name=#{name}&pin=#{pin}&callType=video&join=1"
+    "#{base_url}/?conference=#{alias_with_host}&name=#{name}&pin=#{pin}&callType=video&join=1"
   end
 
   def pin_hash(seed)

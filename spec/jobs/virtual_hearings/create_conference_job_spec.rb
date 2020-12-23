@@ -72,6 +72,19 @@ describe VirtualHearings::CreateConferenceJob do
       end
     end
 
+    shared_examples "does not retry job" do
+      it "does not retry job" do
+        expect do
+          perform_enqueued_jobs do
+            VirtualHearings::CreateConferenceJob.perform_later(subject.arguments.first)
+          end
+        end.to(
+          have_performed_job(VirtualHearings::CreateConferenceJob)
+            .exactly(:once)
+        )
+      end
+    end
+
     it "creates a conference", :aggregate_failures do
       subject.perform_now
 
@@ -207,16 +220,7 @@ describe VirtualHearings::CreateConferenceJob do
 
       shared_examples "raises error", VirtualHearings::CreateConferenceJob::VirtualHearingRequestCancelled
 
-      it "does not retry job" do
-        expect do
-          perform_enqueued_jobs do
-            VirtualHearings::CreateConferenceJob.perform_later(subject.arguments.first)
-          end
-        end.to(
-          have_performed_job(VirtualHearings::CreateConferenceJob)
-            .exactly(:once)
-        )
-      end
+      shared_examples "does not retry job"
     end
 
     context "for a legacy hearings" do
@@ -311,7 +315,8 @@ describe VirtualHearings::CreateConferenceJob do
       end
 
       context "when all required env variables are not set" do
-        include_examples "raises error", StandardError
+        include_examples "raises error", VirtualHearings::CreateConferenceJob::VirtualHearingLinkGenerationFailed
+        include_examples "does not retry job"
       end
     end
   end

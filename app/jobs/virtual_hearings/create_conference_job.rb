@@ -17,6 +17,14 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   # at the time this job is started.
   class VirtualHearingNotCreatedError < StandardError; end
 
+  class VirtualHearingLinkGenerationFailed < StandardError; end
+
+  discard_on(VirtualHearingLinkGenerationFailed) do |job, _exception|
+    Rails.logger.warn(
+      "Discarding #{job.class.name} (#{job.job_id}) because links could not be generated"
+    )
+  end
+
   discard_on(VirtualHearingRequestCancelled) do |job, _exception|
     Rails.logger.warn(
       "Discarding #{job.class.name} (#{job.job_id}) because virtual hearing request was cancelled"
@@ -204,6 +212,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       )
     rescue StandardError => error
       capture_exception(error: error)
+      raise VirtualHearingLinkGenerationFailed
     end
   end
 end
