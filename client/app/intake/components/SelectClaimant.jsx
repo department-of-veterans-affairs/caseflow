@@ -179,6 +179,8 @@ export const SelectClaimant = (props) => {
   const deceasedVeteranAlert = () => {
     return (
       <Alert
+        lowerMargin
+        styling="max-width: 463px"
         type="warning"
         message={`${COPY.DECEASED_CLAIMANT_TITLE} ${COPY.DECEASED_CLAIMANT_MESSAGE}`}
       />
@@ -208,7 +210,7 @@ export const SelectClaimant = (props) => {
         value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant?.toString()}
       />
 
-      {isVeteranDeceased && allowDeceasedAppellants && deceasedVeteranAlert()}
+      {isVeteranDeceased && !veteranIsNotClaimant && allowDeceasedAppellants && deceasedVeteranAlert()}
       {showClaimants && (hasRelationships || newClaimant) && claimantOptions()}
       {showClaimants && !hasRelationships && !newClaimant && noClaimantsCopy()}
 
