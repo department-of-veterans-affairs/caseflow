@@ -166,7 +166,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       create(
         :docket_switch_denied_task,
         appeal: appeal,
-        parent: root_task,
+        # parent: root_task,
         assigned_to: cotb_attorney,
         assigned_by: judge
       )
