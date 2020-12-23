@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-# UnrecognizedEntityDetail encapsulates contact information for entities that are not recognized by
+# UnrecognizedPartyDetail encapsulates contact information for entities that are not recognized by
 # any external system of record, and therefore live in Caseflow as the source of truth.
 #
-# An entity may be an organization or a person, as per the entity_type column. The only difference is
+# A party may be an organization or a person, as per the party_type column. The only difference is
 # that person names have separate optional fields for middle, last, and suffix.
 
-class UnrecognizedEntityDetail < CaseflowRecord
+class UnrecognizedPartyDetail < CaseflowRecord
   # This polymorphism is extremely lightweight, so we opt for vanilla Ruby over STI.
-  enum entity_type: {
+  enum party_type: {
     organization: "organization",
     person: "person"
   }

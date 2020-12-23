@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class UnrecognizedAppellant < CaseflowRecord
-  include HasUnrecognizedEntityDetail
+  include HasUnrecognizedPartyDetail
 
-  belongs_to :unrecognized_entity_detail
+  belongs_to :unrecognized_party_detail
 
   def power_of_attorney
     @power_of_attorney ||= begin

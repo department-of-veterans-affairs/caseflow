@@ -4,8 +4,8 @@ class AddUnrecognizedAppellantTables < Caseflow::Migration
   end
 
   def change
-    create_table :unrecognized_entity_details, comment: "Name and contact details for an unrecognized person or organization" do |t|
-      t.string :entity_type, null: false, comment: "The type of this entity. Allowed values: person, organization"
+    create_table :unrecognized_party_details, comment: "Name and contact details for an unrecognized person or organization" do |t|
+      t.string :party_type, null: false, comment: "The type of this party. Allowed values: person, organization"
       t.string :name, null: false, comment: "Name of organization, or first name or mononym of person"
       t.string :middle_name
       t.string :last_name
@@ -27,11 +27,11 @@ class AddUnrecognizedAppellantTables < Caseflow::Migration
       t.string :poa_participant_id, comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
 
       t.references :claimant, foreign_key: true, null: false, comment: "The OtherClaimant record associating this appellant to a DecisionReview"
-      t.references :unrecognized_entity_detail, foreign_key: true, comment: "Contact details"
+      t.references :unrecognized_party_detail, foreign_key: true, comment: "Contact details"
 
       # override index name because the default is over the 63-char limit
       t.references :unrecognized_power_of_attorney,
-                   foreign_key: {to_table: :unrecognized_entity_details},
+                   foreign_key: {to_table: :unrecognized_party_details},
                    index: { name: :index_unrecognized_appellants_on_power_of_attorney_id },
                    comment: "Appellant's POA, if they aren't in CorpDB."
 
