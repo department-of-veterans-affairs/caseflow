@@ -49,7 +49,7 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
       restrictAppealIntakes: false,
       establishFiduciaryEps: false,
       editEpClaimLabels: false,
-      deceasedAppellants: true
+      deceasedAppellants: false
     },
     data.featureToggles
   );
