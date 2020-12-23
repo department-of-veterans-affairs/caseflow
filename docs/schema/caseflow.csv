@@ -350,23 +350,23 @@ distributions,started_at,datetime,,,,,,when the Distribution job commenced
 distributions,statistics,json,,,,,,
 distributions,status,string,,,,,,
 distributions,updated_at,datetime ∗,x,,,,x,
-docket_changes,,,,,,,,Stores the disposition and associated data for Docket Change motions
-docket_changes,created_at,datetime ∗,x,,,,x,Standard created_at/updated_at timestamps
-docket_changes,disposition,string ∗,x,,,,,"Possible options are granted, partially_granted, and denied"
-docket_changes,docket_type,string,,,,,,The new docket
-docket_changes,granted_request_issue_ids,integer,,,,,,"When a docket change is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior request issue IDs."
-docket_changes,id,integer (8) PK,x,x,,,,
-docket_changes,new_docket_stream_id,integer (8) FK,,,x,,x,References the new appeal stream with the updated docket; initially null until created by workflow
-docket_changes,old_docket_stream_id,integer (8) ∗ FK,x,,x,,x,References the original appeal stream with old docket
-docket_changes,receipt_date,datetime ∗,x,,,,,
-docket_changes,task_id,integer (8) ∗ FK,x,,x,,x,The task that triggered the switch
-docket_changes,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 docket_snapshots,,,,,,,,
 docket_snapshots,created_at,datetime,,,,,,
 docket_snapshots,docket_count,integer,,,,,,
 docket_snapshots,id,integer PK,x,x,,,,
 docket_snapshots,latest_docket_month,date,,,,,,
 docket_snapshots,updated_at,datetime,,,,,x,
+docket_switches,,,,,,,,Stores the disposition and associated data for Docket Switch motions.
+docket_switches,created_at,datetime ∗,x,,,,x,Standard created_at/updated_at timestamps
+docket_switches,disposition,string ∗,x,,,,,"Possible options are granted, partially_granted, and denied"
+docket_switches,docket_type,string,,,,,,The new docket
+docket_switches,granted_request_issue_ids,integer,,,,,,"When a docket switch is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior request issue IDs."
+docket_switches,id,integer (8) PK,x,x,,,,
+docket_switches,new_docket_stream_id,integer (8) FK,,,x,,x,References the new appeal stream with the updated docket; initially null until created by workflow
+docket_switches,old_docket_stream_id,integer (8) ∗ FK,x,,x,,x,References the original appeal stream with old docket
+docket_switches,receipt_date,datetime ∗,x,,,,,
+docket_switches,task_id,integer (8) ∗ FK,x,,x,,x,The task that triggered the switch
+docket_switches,updated_at,datetime ∗,x,,,,,Standard created_at/updated_at timestamps
 docket_tracers,,,,,,,,
 docket_tracers,ahead_and_ready_count,integer,,,,,,
 docket_tracers,ahead_count,integer,,,,,,
