@@ -133,7 +133,7 @@ class VirtualHearing < CaseflowRecord
   end
 
   def test_link(title)
-    if guest_hearing_link && host_hearing_link
+    if guest_hearing_link.present? && host_hearing_link.present?
       "https://vc.va.gov/webapp2/conference/test_call?name=#{email_recipient_name(title)}&join=1"
     else
       "https://care.va.gov/webapp2/conference/test_call?name=#{email_recipient_name(title)}&join=1"
@@ -149,7 +149,8 @@ class VirtualHearing < CaseflowRecord
   # can switch the type from virtual back to Video or Central. This essentailly cancels
   # this virtual hearing.
   def cancelled?
-    status == :cancelled
+    # the establishment has been cancelled by the user
+    request_cancelled?
   end
 
   # Hearings are pending if the conference is not created and it is not cancelled
@@ -159,7 +160,8 @@ class VirtualHearing < CaseflowRecord
 
   # Determines if the hearing conference has been created
   def active?
-    status == :active
+    # the conference has been created the virtual hearing is active
+    conference_id.present? || (guest_hearing_link.present? && host_hearing_link.present?)
   end
 
   # Determines if the conference was deleted
@@ -168,27 +170,17 @@ class VirtualHearing < CaseflowRecord
   # switched back to original type and cancelled and postponed hearings which
   # require us to delete the conference but not set `request_cancelled`.
   def closed?
-    status == :closed
+    # the conference has been created the virtual hearing was deleted
+    conference_id.present? && conference_deleted?
   end
 
   # Determines the status of the Virtual Hearing based on the establishment
   def status
-    # Check if the establishment has been cancelled by the user
-    if request_cancelled?
-      return :cancelled
-    end
+    return :cancelled if cancelled?
+    return :closed if closed?
+    return :active if active?
 
-    # if the conference has been created the virtual hearing was deleted
-    if conference_id && conference_deleted?
-      return :closed
-    end
-
-    # If the conference has been created the virtual hearing is active
-    if conference_id || (host_hearing_link && guest_hearing_link)
-      return :active
-    end
-
-    # If the establishment is not active or cancelled it is pending
+    # If the establishment is not active, closed, or cancelled it is pending
     :pending
   end
 
