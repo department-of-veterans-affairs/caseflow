@@ -253,7 +253,7 @@ class ValidateSqlQueries
         end
       end
 
-      fail "Expecting '*/' to end #{block_prefix} block"
+      fail "Expecting '*/' to end #{block_keyword} block" if in_block
     end
   end
 end
