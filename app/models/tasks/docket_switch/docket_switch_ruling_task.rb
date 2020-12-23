@@ -1,12 +1,7 @@
 # frozen_string_literal: true
 
 class DocketSwitchRulingTask < JudgeTask
-  after_save :process!
-
-  def process!
-    close_mail_task if active?
-  end
-
+  
   def additional_available_actions(user)
     actions = []
 
@@ -19,11 +14,5 @@ class DocketSwitchRulingTask < JudgeTask
 
   def self.label
     COPY::DOCKET_SWITCH_RULING_TASK_LABEL
-  end
-
-  private
-
-  def close_mail_task
-    parent.update(status: Constants.TASK_STATUSES.completed)
   end
 end
