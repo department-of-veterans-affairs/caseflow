@@ -4,7 +4,7 @@ class AddUnrecognizedAppellantTables < Caseflow::Migration
   end
 
   def change
-    create_table :unrecognized_party_details, comment: "Name and contact details for an unrecognized person or organization" do |t|
+    create_table :unrecognized_party_details, comment: "For an appellant or POA, name and contact details for an unrecognized person or organization" do |t|
       t.string :party_type, null: false, comment: "The type of this party. Allowed values: person, organization"
       t.string :name, null: false, comment: "Name of organization, or first name or mononym of person"
       t.string :middle_name
