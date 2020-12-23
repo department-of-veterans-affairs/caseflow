@@ -1345,7 +1345,7 @@ RSpec.feature "Case details", :all_dbs do
         User.authenticate!(user: not_cob_user)
       end
 
-      it "displays Edit NOD Date link" do
+      it "does not display the Edit NOD Date link" do
         visit("/queue/appeals/#{appeal.uuid}")
 
         expect(appeal.nod_date).to_not be_nil
