@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DocketSwitchesController < ApplicationController  
+class DocketSwitchesController < ApplicationController
   def create
     docket_switch = DocketSwitch.new(*docket_switch_params)
     if docket_switch.errors.present?
