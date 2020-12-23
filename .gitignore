@@ -24,6 +24,7 @@ client/junit.xml
 /coverage
 /reports/*
 !/reports/.keep
+credstash.log
 
 # Ignore vim swap and tag files
 *.swp

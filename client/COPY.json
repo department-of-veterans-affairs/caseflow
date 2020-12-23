@@ -166,7 +166,8 @@
   "EDIT_NOD_DATE_LABEL": "NOD Date",
   "EDIT_NOD_DATE_SUCCESS_ALERT_TITLE": "NOD date has been updated",
   "EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE": "You have successfully updated the NOD date",
-  "EDIT_NOD_DATE_ERROR_ALERT_MESSAGE": "The new NOD date cannot be after today's date",
+  "EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE": "The new NOD date cannot be after today's date",
+  "EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE": "New NOD date cannot be before 02/19/2019",
 
   "DROPDOWN_LABEL_JUDGE": "VLJ",
   "DROPDOWN_LABEL_HEARING_COORDINATOR": "Hearing Coordinator",
@@ -898,6 +899,8 @@
 
   "JUDGE_TEAM_REMOVE_JUDGE_ERROR": "Cannot remove a judge from their judge team.",
   "JUDGE_TEAM_ATTORNEY_RIGHTS_ERROR": "Cannot edit attorney rights on non-attorneys",
+  "JUDGE_TEAM_ADMIN_ERROR": "Cannot add more than one admin to a judge team",
+  "JUDGE_TEAM_DEADMIN_JUDGE_ERROR": "Cannot remove adminship from a judge on their team",
 
   "HEARING_UPDATE_SUCCESSFUL_TITLE": "You have successfully updated %s's hearing.",
 
@@ -960,6 +963,9 @@
   "REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL": "Virtual Hearing Link",
   "VLJ_VIRTUAL_HEARINGS_LINK_TEXT": "Start Virtual Hearing",
   "GUEST_VIRTUAL_HEARINGS_LINK_TEXT": "Join Virtual Hearing",
+  "PIN_KEY_MISSING_ERROR_MESSAGE": "Cannot generate a virtual hearing URL without a valid PIN key",
+  "URL_HOST_MISSING_ERROR_MESSAGE": "Cannot generate a virtual hearing URL without a valid URL host",
+  "URL_PATH_MISSING_ERROR_MESSAGE": "Cannot generate a virtual hearing URL without a valid URL path",
 
   "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s.",
 
