@@ -166,7 +166,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       create(
         :docket_switch_denied_task,
         appeal: appeal,
-        # parent: root_task,
+        parent: root_task,
         assigned_to: cotb_attorney,
         assigned_by: judge
       )
@@ -194,6 +194,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       # Verify correct success alert
       expect(page).to have_content(format(COPY::DOCKET_SWITCH_DENIAL_SUCCESS_TITLE, appeal.claimant.name))
       # Verify that denial completed correctly
+      expect(docket_switch_denied_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
       docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
       expect(docket_switch).to_not be_nil
     end
