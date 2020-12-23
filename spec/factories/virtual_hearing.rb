@@ -7,7 +7,9 @@ FactoryBot.define do
     conference_id { nil }
     conference_deleted { false }
     guest_pin { nil }
+    guest_hearing_link { nil }
     host_pin { nil }
+    host_hearing_link { nil }
     judge_email { "caseflow-judge@test.com" }
     judge_email_sent { false }
     appellant_email { "caseflow-veteran@test.com" }
