@@ -40,15 +40,6 @@ RemovableRadioLabel.propTypes = {
   notes: PropTypes.string
 };
 
-function trySpread(object) {
-  let array;
-  try {
-    array = [...object];
-  } catch(error) {
-    // console.log('Spread Err:', error);
-  }
-}
-
 export const SelectClaimant = (props) => {
   const {
     formType,
@@ -63,15 +54,16 @@ export const SelectClaimant = (props) => {
     relationships,
     payeeCode,
     payeeCodeError,
-    setPayeeCode
+    setPayeeCode,
+    featureToggles
   } = props;
 
-  const { attorneyFees, establishFiduciaryEps, deceasedAppellants } = useSelector((state) => state.featureToggles);
+  const { attorneyFees, establishFiduciaryEps, deceasedAppellants } = featureToggles;
   const [showClaimantModal, setShowClaimantModal] = useState(false);
   const [newClaimant, setNewClaimant] = useState(null);
   const openAddClaimantModal = () => setShowClaimantModal(true);
   const radioOpts = useMemo(() => {
-    return [trySpread(relationships), trySpread(...(newClaimant ? [newClaimant] : []))];
+    return [...relationships, ...(newClaimant ? [newClaimant] : [])];
   }, [newClaimant, relationships]);
   const allowAddClaimant = useMemo(() => formType === 'appeal' && attorneyFees && veteranIsNotClaimant, [
     formType,
@@ -185,7 +177,7 @@ export const SelectClaimant = (props) => {
   };
 
   let veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS;
-  let allowDeceasedAppellants = deceasedAppellants && formType === "appeal";
+  let allowDeceasedAppellants = deceasedAppellants && formType === 'appeal';
 
   if (isVeteranDeceased && !allowDeceasedAppellants) {
     // disable veteran claimant option if veteran is deceased
@@ -242,7 +234,8 @@ SelectClaimant.propTypes = {
   payeeCode: PropTypes.string,
   payeeCodeError: PropTypes.string,
   setPayeeCode: PropTypes.func,
-  claimantNotes: PropTypes.string
+  claimantNotes: PropTypes.string,
+  featureToggles: PropTypes.object
 };
 
 export default SelectClaimant;
