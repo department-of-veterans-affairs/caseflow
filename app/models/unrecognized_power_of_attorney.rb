@@ -10,7 +10,15 @@ class UnrecognizedPowerOfAttorney
 
   attr_reader :unrecognized_entity_detail
 
+  alias representative_name name
+  alias representative_address address
+  alias representative_email_address email_address
+
   def initialize(unrecognized_entity_detail_id)
     @unrecognized_entity_detail = UnrecognizedEntityDetail.find(unrecognized_entity_detail_id)
+  end
+
+  def representative_type
+    "Unrecognized representative"
   end
 end

@@ -9,9 +9,10 @@ module HasUnrecognizedEntityDetail
 
   included do
     delegate :name, :first_name, :middle_name, :last_name, :suffix,
-             :street_address_1, :street_address_2, :street_address_3,
-             :city, :state, :zipcode, :country,
-             :phone_number, :email,
-             to: :unrecognized_entity_detail
+             :address, :address_line_1, :address_line_2, :address_line_3,
+             :city, :state, :zip, :country,
+             :phone_number, :email_address,
+             to: :unrecognized_entity_detail,
+             allow_nil: true
   end
 end

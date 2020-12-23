@@ -7,6 +7,7 @@
 # that person names have separate optional fields for middle, last, and suffix.
 
 class UnrecognizedEntityDetail < CaseflowRecord
+  # This polymorphism is extremely lightweight, so we opt for vanilla Ruby over STI.
   enum entity_type: {
     organization: "organization",
     person: "person"
@@ -20,5 +21,11 @@ class UnrecognizedEntityDetail < CaseflowRecord
     return self[:name] if organization?
 
     %w[name middle_name last_name suffix].map { |key| self[key].presence }.compact.join(" ")
+  end
+
+  # return a hash in the same format that BgsAddressService uses
+  def address
+    fields = %w[address_line_1 address_line_2 address_line_3 city state zip country]
+    Hash[fields.collect { |field| [field, send(field)] }]
   end
 end

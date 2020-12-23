@@ -10,15 +10,15 @@ class AddUnrecognizedAppellantTables < Caseflow::Migration
       t.string :middle_name
       t.string :last_name
       t.string :suffix
-      t.string :street_address_1, null: false
-      t.string :street_address_2
-      t.string :street_address_3
+      t.string :address_line_1, null: false
+      t.string :address_line_2
+      t.string :address_line_3
       t.string :city, null: false
       t.string :state, null: false
-      t.string :zipcode, null: false
+      t.string :zip, null: false
       t.string :country, null: false
       t.string :phone_number
-      t.string :email
+      t.string :email_address
       t.timestamps null: false
     end
 
@@ -27,7 +27,7 @@ class AddUnrecognizedAppellantTables < Caseflow::Migration
       t.string :poa_participant_id, comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
 
       t.references :claimant, foreign_key: true, null: false, comment: "The OtherClaimant record associating this appellant to a DecisionReview"
-      t.references :unrecognized_entity_detail, null: false, foreign_key: true, index: false, comment: "Contact details"
+      t.references :unrecognized_entity_detail, foreign_key: true, comment: "Contact details"
 
       # override index name because the default is over the 63-char limit
       t.references :unrecognized_power_of_attorney,
