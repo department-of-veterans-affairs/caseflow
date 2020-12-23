@@ -117,7 +117,7 @@ class VirtualHearing < CaseflowRecord
   end
 
   def guest_link
-    return self[:guest_link] if self[:guest_link].present?
+    return guest_hearing_link if guest_hearing_link.present?
 
     "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
     "conference=#{formatted_alias_or_alias_with_host}&" \
@@ -125,7 +125,7 @@ class VirtualHearing < CaseflowRecord
   end
 
   def host_link
-    return self[:host_link] if self[:host_link].present?
+    return host_hearing_link if host_hearing_link.present?
 
     "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
     "conference=#{formatted_alias_or_alias_with_host}&" \

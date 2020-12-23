@@ -17,16 +17,10 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   # at the time this job is started.
   class VirtualHearingNotCreatedError < StandardError; end
 
-  class VirtualHearingLinkGenerationFailed < StandardError; end
-
   discard_on(VirtualHearingRequestCancelled) do |job, _exception|
     Rails.logger.warn(
       "Discarding #{job.class.name} (#{job.job_id}) because virtual hearing request was cancelled"
     )
-  end
-
-  retry_on(VirtualHearingLinkGenerationFailed, attempts: 10, wait: :exponentially_longer) do |job, exception|
-    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
   end
 
   retry_on(IncompleteError, attempts: 10, wait: :exponentially_longer) do |job, exception|
@@ -126,7 +120,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   end
 
   def create_conference
-    if FeatureToggle.enabled?(:use_new_virtual_hearing_links, user: RequestStore.store[:current_user])
+    if FeatureToggle.enabled?(:virtual_hearings_use_new_links, user: RequestStore.store[:current_user])
       generate_links_and_pins
     else
       assign_virtual_hearing_alias_and_pins if should_initialize_alias_and_pins?
@@ -202,15 +196,14 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     begin
       link_service = VirtualHearings::LinkService.new
       virtual_hearing.update!(
-        host_link: link_service.host_link,
-        guest_link: link_service.guest_link,
+        host_hearing_link: link_service.host_link,
+        guest_hearing_link: link_service.guest_link,
         host_pin_long: link_service.host_pin,
         guest_pin_long: link_service.guest_pin,
-        alias_with_host: link_service.alias_for_conference
+        alias_with_host: link_service.alias_with_host
       )
     rescue StandardError => error
       capture_exception(error: error)
-      raise VirtualHearingLinkGenerationFailed
     end
   end
 end

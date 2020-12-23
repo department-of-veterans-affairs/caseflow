@@ -268,7 +268,7 @@ describe VirtualHearings::CreateConferenceJob do
 
     context "when feature toggle is enabled" do
       before do
-        FeatureToggle.enable!(:use_new_virtual_hearing_links)
+        FeatureToggle.enable!(:virtual_hearings_use_new_links)
         allow(ENV).to receive(:[]).and_call_original
         allow(ENV).to receive(:fetch).and_call_original
       end
@@ -295,8 +295,8 @@ describe VirtualHearings::CreateConferenceJob do
             "&name=Guest&pin=#{expected_guest_pin}&callType=video&join=1"
 
           virtual_hearing.reload
-          expect(virtual_hearing.host_link).to eq(expected_host_link)
-          expect(virtual_hearing.guest_link).to eq(expected_guest_link)
+          expect(virtual_hearing.host_hearing_link).to eq(expected_host_link)
+          expect(virtual_hearing.guest_hearing_link).to eq(expected_guest_link)
           expect(virtual_hearing.conference_id).to eq(nil)
           expect(virtual_hearing.status).to eq(:active)
           expect(virtual_hearing.alias_with_host).to eq(expected_alias_with_host)
@@ -311,9 +311,7 @@ describe VirtualHearings::CreateConferenceJob do
       end
 
       context "when all required env variables are not set" do
-        include_examples "raises error", VirtualHearings::CreateConferenceJob::VirtualHearingLinkGenerationFailed
-
-        include_examples "job is retried"
+        include_examples "raises error", StandardError
       end
     end
   end

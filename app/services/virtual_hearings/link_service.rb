@@ -35,7 +35,7 @@ class VirtualHearings::LinkService
     pin_hash("#{conference_id}#{pin_key}")[0..9]
   end
 
-  def alias_for_conference
+  def alias_with_host
     "BVA#{conference_id}@#{host}"
   end
 

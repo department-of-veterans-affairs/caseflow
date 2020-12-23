@@ -48,11 +48,11 @@ FactoryBot.define do
       alias_with_host { "BVA0000001@example.va.gov" }
       host_pin_long { "3998472" }
       guest_pin_long { "7470125694" }
-      host_link do
+      host_hearing_link do
         "https://example.va.gov/sample/?conference=#{alias_with_host}" \
           "&name=Judge&pin=#{host_pin_long}&callType=video&join=1"
       end
-      guest_link do
+      guest_hearing_link do
         "https://example.va.gov/sample/?conference=#{alias_with_host}" \
         "&name=Guest&pin=#{guest_pin_long}&callType=video&join=1"
       end
