@@ -494,7 +494,6 @@ feature "Intake Review Page", :postgres do
       end
 
       context "adding a new claimant" do
-
         context "without non_veteran_claimants feature toggle" do
           it "doesn't allow adding new claimants" do
             start_appeal(veteran, claim_participant_id: claim_participant_id)
