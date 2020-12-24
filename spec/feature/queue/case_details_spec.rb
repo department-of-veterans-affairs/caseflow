@@ -320,8 +320,9 @@ RSpec.feature "Case details", :all_dbs do
 
       %w[Attorney Other].each do |claimant_type|
         scenario "details view informs us that appellant's relationship to Veteran is #{claimant_type}" do
-          create(
+          claimant = create(
             :claimant,
+            :with_unrecognized_appellant_detail,
             decision_review: appeal,
             type: "#{claimant_type}Claimant",
             participant_id: bgs_atty.participant_id,
@@ -331,7 +332,7 @@ RSpec.feature "Case details", :all_dbs do
 
           expect(page).to have_content("About the Veteran")
           expect(page).to have_content("About the Appellant")
-          expect(page).to have_content("Relation to Veteran: #{claimant_type}")
+          expect(page).to have_content("Relation to Veteran: #{claimant.relationship}")
         end
       end
     end

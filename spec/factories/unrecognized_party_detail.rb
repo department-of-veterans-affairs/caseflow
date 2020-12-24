@@ -3,7 +3,8 @@
 FactoryBot.define do
   factory :unrecognized_party_detail do
     party_type { "person" }
-    name { "Jake" }
+    name { "Jane" }
+    last_name { "Smith" }
     address_line_1 { "123 Park Ave" }
     city { "Springfield" }
     state { "NY" }
