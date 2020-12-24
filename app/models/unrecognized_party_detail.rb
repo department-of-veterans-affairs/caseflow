@@ -26,6 +26,6 @@ class UnrecognizedPartyDetail < CaseflowRecord
   # return a hash in the same format that BgsAddressService uses
   def address
     fields = %w[address_line_1 address_line_2 address_line_3 city state zip country]
-    Hash[fields.collect { |field| [field, send(field)] }]
+    Hash[fields.collect { |field| [field.to_sym, send(field)] }]
   end
 end

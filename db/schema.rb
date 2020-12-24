@@ -1421,7 +1421,7 @@ ActiveRecord::Schema.define(version: 2020_12_21_063738) do
     t.index ["unrecognized_power_of_attorney_id"], name: "index_unrecognized_appellants_on_power_of_attorney_id"
   end
 
-  create_table "unrecognized_party_details", comment: "Name and contact details for an unrecognized person or organization", force: :cascade do |t|
+  create_table "unrecognized_party_details", comment: "For an appellant or POA, name and contact details for an unrecognized person or organization", force: :cascade do |t|
     t.string "address_line_1", null: false
     t.string "address_line_2"
     t.string "address_line_3"

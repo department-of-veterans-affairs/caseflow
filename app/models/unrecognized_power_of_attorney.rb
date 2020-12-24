@@ -14,8 +14,8 @@ class UnrecognizedPowerOfAttorney
   alias representative_address address
   alias representative_email_address email_address
 
-  def initialize(unrecognized_party_detail_id)
-    @unrecognized_party_detail = UnrecognizedPartyDetail.find(unrecognized_party_detail_id)
+  def initialize(unrecognized_party_detail)
+    @unrecognized_party_detail = unrecognized_party_detail
   end
 
   def representative_type
