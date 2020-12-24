@@ -18,8 +18,10 @@ export const AddClaimantPage = () => {
     handleSubmit,
   } = methods;
   const onSubmit = (formData) => {
+    // Update this to...
     // Add claimant info to Redux
     // Probably handle submission of both claimant and remaining intake info (from Review step)
+    return formData;
   };
   const handleBack = () => goBack();
 
