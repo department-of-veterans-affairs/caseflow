@@ -89,8 +89,8 @@ export const SelectClaimant = (props) => {
   const openAddClaimantModal = () => setShowClaimantModal(true);
 
   const enableAddClaimantModal = useMemo(
-    () => formType === 'appeal' && attorneyFees && veteranIsNotClaimant,
-    [formType, veteranIsNotClaimant, attorneyFees]
+    () => formType === 'appeal' && attorneyFees && veteranIsNotClaimant && !nonVeteranClaimants,
+    [formType, veteranIsNotClaimant, attorneyFees, nonVeteranClaimants]
   );
 
   const enableAddClaimant = useMemo(
