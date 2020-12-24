@@ -178,7 +178,7 @@ exports[`SelectClaimant with formType 'appeal' deceasedAppellants toggled ON ren
       </div>
     </fieldset>
     <div
-      class="usa-alert usa-alert-warning usa-alert-slim"
+      class="usa-alert usa-alert-warning usa-alert-slim cf-margin-bottom-2rem"
       role="alert"
     >
       <div

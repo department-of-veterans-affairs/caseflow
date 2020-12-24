@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'glamor';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import {
@@ -176,11 +177,15 @@ export const SelectClaimant = (props) => {
     );
   };
 
+  const alertStyling = css({
+    width: '463px'
+  });
+
   const deceasedVeteranAlert = () => {
     return (
       <Alert
         lowerMargin
-        styling="max-width: 463px"
+        styling={alertStyling}
         type="warning"
         message={`${COPY.DECEASED_CLAIMANT_TITLE} ${COPY.DECEASED_CLAIMANT_MESSAGE}`}
       />

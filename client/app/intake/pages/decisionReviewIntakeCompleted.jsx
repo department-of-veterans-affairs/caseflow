@@ -112,7 +112,8 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       formType,
       intakeStatus,
       asyncJobUrl,
-      editIssuesUrl
+      editIssuesUrl,
+      deceasedAppellants
     } = this.props;
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const completedReview = this.props.decisionReviews[selectedForm.key];
@@ -149,11 +150,13 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
 
     const deceasedVeteranAlert = () => {
       return (
-        <Alert
-          type="warning"
-          message={COPY.DECEASED_CLAIMANT_MESSAGE}
-          title={COPY.DECEASED_CLAIMANT_TITLE}
-        />
+        <div className="cf-msg-screen-deck">
+          <Alert
+            type="warning"
+            message={COPY.DECEASED_CLAIMANT_MESSAGE}
+            title={COPY.DECEASED_CLAIMANT_TITLE}
+          />
+        </div>
       );
     };
 
@@ -190,9 +193,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
           You will receive a message in your Caseflow Inbox if the establishment fails or is delayed.
       </h2>)
     }
-    {
-      showDeceasedVeteranAlert && deceasedVeteranAlert()
-    }
+    {showDeceasedVeteranAlert && deceasedVeteranAlert()}
     </div>
     ;
   }
