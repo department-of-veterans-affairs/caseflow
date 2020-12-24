@@ -11,7 +11,6 @@ export const CaseTimeline = ({ appeal }) => {
 
   return (
     <React.Fragment>
-      {COPY.CASE_TIMELINE_HEADER}
       <table id="case-timeline-table" summary="layout table">
         <tbody>
           <TaskRows appeal={appeal}
