@@ -20,7 +20,7 @@ class OtherClaimant < Claimant
     :advanced_on_docket?,
     :advanced_on_docket_based_on_age?,
     :advanced_on_docket_motion_granted?
-  ]
+  ].freeze
   NIL_ATTRIBUTES.each do |attribute|
     define_method attribute do
       nil

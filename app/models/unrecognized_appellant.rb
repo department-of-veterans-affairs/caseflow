@@ -10,8 +10,9 @@ class UnrecognizedAppellant < CaseflowRecord
   def power_of_attorney
     @power_of_attorney ||= begin
       if poa_participant_id
-        # TODO: ephemeral model that hits BGS and provides a compatible POA interface
-        BgsAttorney.find_by(participant_id: poa_participant_id)
+        # Return an ephemeral model that hits BGS with poa_participant_id and provides a
+        # compatible POA interface
+        fail NotImplementedError
       elsif unrecognized_power_of_attorney_id
         UnrecognizedPowerOfAttorney.new(unrecognized_power_of_attorney)
       end

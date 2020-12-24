@@ -14,7 +14,7 @@ describe UnrecognizedAppellant do
         expect(subject).to have_attributes(
           first_name: "Jane",
           last_name: "Smith",
-          representative_name: "Jane Smith",
+          representative_name: "Jane Smith"
         )
       end
     end
