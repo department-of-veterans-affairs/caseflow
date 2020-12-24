@@ -94,7 +94,7 @@ feature "Intake Review Page", :postgres do
       let(:veteran) do
         Generators::Veteran.build(file_number: "123121234", date_of_death: 1.month.ago)
       end
-      let(:intake)  { create(:intake, veteran_file_number: veteran.file_number, user: current_user, detail: detail) }
+      let(:intake) { create(:intake, veteran_file_number: veteran.file_number, user: current_user, detail: detail) }
       let(:receipt_date) { 2.months.ago }
       let(:decision_date) { 3.months.ago.mdY }
 
@@ -584,7 +584,8 @@ end
 def check_deceased_veteran_claimant(intake)
   visit "/intake"
 
-  if intake.detail.is_a?(Appeal) && FeatureToggle.enabled?(:deceased_appellants)
+  allow_deceased_appellants = intake.detail.is_a?(Appeal) && FeatureToggle.enabled?(:deceased_appellants)
+  if allow_deceased_appellants
     # ability to select veteran claimant is enabled
     expect(page).to have_css("input[id=different-claimant-option_false]", visible: false)
 
@@ -593,32 +594,26 @@ def check_deceased_veteran_claimant(intake)
     end
 
     expect(page).to have_content(COPY::DECEASED_CLAIMANT_TITLE)
-
-    click_intake_continue
-
-    expect(page).to have_content("Add Issues")
-
-    click_intake_add_issue
-    add_intake_nonrating_issue(date: decision_date)
-    click_intake_finish
-
-    expect(page).to have_current_path("/intake/completed")
-    expect(page).to have_content(COPY::DECEASED_CLAIMANT_TITLE)
   else
-    # ability to select veteran claimant is enabled
+    # ability to select veteran claimant is disabled
     expect(page).to have_css("input[disabled][id=different-claimant-option_false]", visible: false)
     expect(page).to_not have_content(COPY::DECEASED_CLAIMANT_TITLE)
 
     find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
-    click_intake_continue
+  end
 
-    expect(page).to have_content("Add Issues")
+  click_intake_continue
 
-    click_intake_add_issue
-    add_intake_nonrating_issue(date: decision_date)
-    click_intake_finish
+  expect(page).to have_content("Add Issues")
 
-    expect(page).to have_current_path("/intake/completed")
+  click_intake_add_issue
+  add_intake_nonrating_issue(date: decision_date)
+  click_intake_finish
+
+  expect(page).to have_current_path("/intake/completed")
+  if allow_deceased_appellants
+    expect(page).to have_content(COPY::DECEASED_CLAIMANT_TITLE)
+  else
     expect(page).to_not have_content(COPY::DECEASED_CLAIMANT_TITLE)
   end
 end
