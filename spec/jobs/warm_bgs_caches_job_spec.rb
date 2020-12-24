@@ -108,18 +108,6 @@ describe WarmBgsCachesJob, :all_dbs do
           expect(@raven_called).to eq true
         end
       end
-
-      context "bgs POA error" do
-        before do
-          error = BGS::ShareError.new("error!")
-          allow_any_instance_of(BgsPowerOfAttorney).to receive(:fetch_bgs_record).and_raise(error)
-        end
-
-        it "captures exceptions" do
-          expect { described_class.perform_now }.to_not raise_error
-          expect(@raven_called).to eq true
-        end
-      end
     end
   end
 
@@ -219,6 +207,15 @@ describe WarmBgsCachesJob, :all_dbs do
           allow(bgs).to receive(:fetch_poa_by_file_number)
             .and_raise(Savon::HTTPError, httperror_mock)
         end
+        include_examples "rescues error"
+      end
+
+      context "BGSService fails with BGS::ShareError" do
+        before do
+          error = BGS::ShareError.new("error!")
+          allow_any_instance_of(BgsPowerOfAttorney).to receive(:fetch_bgs_record).and_raise(error)
+        end
+
         include_examples "rescues error"
       end
     end

@@ -66,6 +66,8 @@ class VirtualHearingRepository
         .where(<<-SQL)
           (
             virtual_hearings.conference_id IS null
+            AND virtual_hearings.host_hearing_link IS null
+            AND virtual_hearings.guest_hearing_link IS null
             OR (
               #{pending_appellant_or_rep_emails_sql}
               OR (

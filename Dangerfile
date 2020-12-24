@@ -125,3 +125,15 @@ if contains_new_index.any?
     "See https://github.com/department-of-veterans-affairs/caseflow/wiki/Writing-DB-migrations#index-creation-should-go-in-its-own-migration-file"
   )
 end
+
+# Check for `User.find_by(css_id:`
+result = git.diff.flat_map do |chunk|
+  chunk.patch.lines.grep(/^\+\s*\w/).select { |added_line| added_line.match?(/User.find_by\(css_id:/) }
+end
+
+if !result.empty?
+  warn(
+    "This PR uses `User.find_by(css_id:`, which uses a sequential scan on the DB. " \
+    "Instead, use `User.find_by_css_id` to use the `index_users_unique_css_id` index."
+  )
+end
