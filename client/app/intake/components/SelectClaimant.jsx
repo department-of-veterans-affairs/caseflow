@@ -193,7 +193,8 @@ export const SelectClaimant = (props) => {
   };
 
   let veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS;
-  let allowDeceasedAppellants = deceasedAppellants && formType === 'appeal';
+  const allowDeceasedAppellants = deceasedAppellants && formType === 'appeal';
+  const showDeceasedVeteranAlert = isVeteranDeceased && veteranIsNotClaimant === false && allowDeceasedAppellants;
 
   if (isVeteranDeceased && !allowDeceasedAppellants) {
     // disable veteran claimant option if veteran is deceased
@@ -215,7 +216,7 @@ export const SelectClaimant = (props) => {
         value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant?.toString()}
       />
 
-      {isVeteranDeceased && !veteranIsNotClaimant && allowDeceasedAppellants && deceasedVeteranAlert()}
+      {showDeceasedVeteranAlert && deceasedVeteranAlert()}
       {showClaimants && (hasRelationships || newClaimant) && claimantOptions()}
       {showClaimants && !hasRelationships && !newClaimant && noClaimantsCopy()}
 

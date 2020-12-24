@@ -91,6 +91,9 @@ feature "Intake Review Page", :postgres do
     end
 
     context "when veteran is deceased" do
+      # before do
+      #   allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return([])
+      # end
       let(:veteran) do
         Generators::Veteran.build(file_number: "123121234", date_of_death: 1.month.ago)
       end
@@ -588,6 +591,7 @@ def check_deceased_veteran_claimant(intake)
   if allow_deceased_appellants
     # ability to select veteran claimant is enabled
     expect(page).to have_css("input[id=different-claimant-option_false]", visible: false)
+    expect(page).to_not have_content(COPY::DECEASED_CLAIMANT_TITLE)
 
     within_fieldset("Is the claimant someone other than the Veteran?") do
       find("label", text: "No", match: :prefer_exact).click
@@ -611,6 +615,7 @@ def check_deceased_veteran_claimant(intake)
   click_intake_finish
 
   expect(page).to have_current_path("/intake/completed")
+
   if allow_deceased_appellants
     expect(page).to have_content(COPY::DECEASED_CLAIMANT_TITLE)
   else

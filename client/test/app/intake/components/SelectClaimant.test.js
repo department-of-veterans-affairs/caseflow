@@ -4,6 +4,7 @@ import {
   render
 } from '@testing-library/react';
 import { axe } from 'jest-axe';
+import userEvent from '@testing-library/user-event';
 
 import { SelectClaimant } from 'app/intake/components/SelectClaimant';
 
@@ -49,6 +50,7 @@ describe('SelectClaimant', () => {
         relationships={defaultRelationships}
         formType={props.formType}
         setVeteranIsNotClaimant={setVeteranisNotClaimant}
+        veteranIsNotClaimant={props.veteranIsNotClaimant}
       />);
   };
 
@@ -123,7 +125,7 @@ describe('SelectClaimant', () => {
       });
 
       it('renders deceasedVeteranAlert', () => {
-        setupDeceasedAppellants(setupProps);
+        setupDeceasedAppellants({...setupProps, veteranIsNotClaimant: false});
 
         const alert = screen.getByRole('alert');
 
@@ -186,4 +188,3 @@ describe('SelectClaimant', () => {
     });
   });
 });
-
