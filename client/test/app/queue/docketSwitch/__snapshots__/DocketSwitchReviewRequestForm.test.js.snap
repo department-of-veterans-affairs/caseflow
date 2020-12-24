@@ -113,8 +113,8 @@ exports[`DocketSwitchReviewRequestForm renders correctly 1`] = `
           </button>
         </span>
         <button
-          class="cf-right-side cf-prev-step usa-button-secondary usa-button"
-          id="button-back-button"
+          class="cf-btn-link cf-right-side usa-button"
+          id="button-cancel-button"
           type="button"
         >
           Cancel
