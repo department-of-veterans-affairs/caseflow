@@ -35,13 +35,17 @@ class VirtualHearings::LinkService
     pin_hash("#{conference_id}#{pin_key}")[0..9]
   end
 
+  def alias_with_host
+    "BVA#{conference_id}@#{host}"
+  end
+
   private
 
   def link(pin, name)
     fail PINMustBePresentError if pin.blank?
     fail NameMustBePresentError if name.blank?
 
-    "#{base_url}/?conference=BVA#{conference_id}@#{host}&name=#{name}&pin=#{pin}&callType=video&join=1"
+    "#{base_url}/?conference=#{alias_with_host}&name=#{name}&pin=#{pin}&callType=video&join=1"
   end
 
   def pin_hash(seed)

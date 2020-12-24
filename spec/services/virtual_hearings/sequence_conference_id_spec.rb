@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe VirtualHearings::SequenceConferenceId do
+  before { VirtualHearings::SequenceConferenceId.send(:create_sequence_if_not_exists) }
+
   context ".next" do
     it "returns values in sequence" do
       first_value = described_class.next
