@@ -226,9 +226,6 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
                     <div
                       className="usa-alert-body"
                     >
-                      <h2
-                        className="usa-alert-heading"
-                      />
                       <div
                         className="usa-alert-text"
                       >

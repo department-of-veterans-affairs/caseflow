@@ -691,6 +691,8 @@
   "ADD_RELATIONSHIPS": "To add a Veteran's (spouse, child, or parent) to the Corporate Database, please ",
   "ADD_CLAIMANT_TEXT": "If the claimant is an attorney, please click \"Add Claimant\". ",
   "CLAIMANT_INFORMATION": "If you do not see the claimant in the options below or if the claimant's information needs to be updated, please ",
+  "DECEASED_CLAIMANT_TITLE": "This Veteran may be deceased.",
+  "DECEASED_CLAIMANT_MESSAGE": "Please confirm before sending a notice letter.",
   "DUPLICATE_PHONE_NUMBER_TITLE": "Veteran Record Alert",
   "DUPLICATE_PHONE_NUMBER_MESSAGE": "Please contact VLJ Support to request that this veteran's information be updated to remove duplicate phone numbers currently on file to resolve this error.",
   "INCIDENT_FLASH_ERROR_START": "Please send an encrypted email to the ",
