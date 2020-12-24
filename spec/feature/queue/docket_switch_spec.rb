@@ -15,32 +15,25 @@ RSpec.feature "Docket Switch", :all_dbs do
   let(:appeal) do
     create(:appeal, receipt_date: receipt_date)
   end
-  let(:decision_issues) do
+
+  let!(:request_issues) do
     3.times do |idx|
-      create(
-        :decision_issue,
-        # :rating,
+      request_issue = create(
+        :request_issue,
+        :rating,
         decision_review: appeal,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: 10.days.ago,
+        contested_issue_description: "PTSD denied"
+      )
+      request_issue.create_decision_issue_from_params(
         disposition: "denied",
         description: "Decision issue description #{idx}",
+        decision_date: 10.days.ago,
         decision_text: "decision issue"
       )
     end
   end
-
-  let(:profile_date) { 10.days.ago }
-
-  let(:rating_request_issue_attributes) do
-    {
-      decision_review: appeal,
-      contested_rating_issue_reference_id: "def456",
-      contested_rating_issue_profile_date: profile_date,
-      contested_issue_description: "PTSD denied",
-      contention_reference_id: "4567"
-    }
-  end
-
-  let!(:rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
 
   let(:root_task) { create(:root_task, :completed, appeal: appeal) }
   let(:cotb_attorney) { create(:user, :with_vacols_attorney_record, full_name: "Clark Bard") }
@@ -243,6 +236,12 @@ RSpec.feature "Docket Switch", :all_dbs do
       end
 
       expect(page).to have_content("Which docket will the issue(s) be switched to?")
+      expect(page).to have_button("Continue", disabled: true)
+
+      # select docket type
+      within_fieldset("Which docket will the issue(s) be switched to?") do
+        find("label", text: "Direct Review").click
+      end
       expect(page).to have_button("Continue", disabled: false)
 
       # select partial grants
@@ -250,6 +249,12 @@ RSpec.feature "Docket Switch", :all_dbs do
         find("label", text: "Grant a partial switch").click
       end
       expect(page).to have_content("PTSD denied")
+
+      # select issues
+      within_fieldset("Select the issue(s) that are switching dockets:") do
+        find("label", text: "1. PTSD denied").click
+      end
+      expect(page).to have_button("Continue", disabled: false)
 
       click_button(text: "Cancel")
       # Return back to user's queue
