@@ -32,7 +32,7 @@ module Seeds
              file_number: veteran_file_number,
              first_name: "Ed",
              last_name: "Deceased",
-             date_of_death: Time.zone.today - 1.day)
+             date_of_death: Time.zone.yesterday)
     end
 
     def create_higher_level_review_tasks
