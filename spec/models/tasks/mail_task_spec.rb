@@ -101,12 +101,6 @@ describe MailTask, :postgres do
     end
   end
 
-  describe ".outstanding_cavc_tasks?" do
-    it "should always return false since we do not yet have CAVC tasks" do
-      expect(MailTask.outstanding_cavc_tasks?(root_task)).to eq(false)
-    end
-  end
-
   describe ".pending_hearing_task?" do
     let(:root_task) { create(:root_task) }
     let(:appeal) { root_task.appeal }

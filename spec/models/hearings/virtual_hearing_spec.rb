@@ -1,21 +1,7 @@
 # frozen_string_literal: true
 
 describe VirtualHearing do
-  def link(name)
-    "https://care.va.gov/webapp2/conference/test_call?name=#{name}&join=1"
-  end
-
-  context "#test_link" do
-    let(:virtual_hearing) do
-      build(
-        :virtual_hearing,
-        hearing: build(
-          :hearing,
-          hearing_day: build(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
-        )
-      )
-    end
-
+  shared_examples "all test link behaviors" do
     it "returns representative link when title is 'Representative'" do
       recipient = "Representative"
       expect(virtual_hearing.test_link(recipient)).to eq link(recipient)
@@ -35,6 +21,52 @@ describe VirtualHearing do
     it "returns veteran link when title is not rep and appellant is the veteran" do
       recipient = "Something"
       expect(virtual_hearing.test_link(recipient)).to eq link("Veteran")
+    end
+  end
+
+  shared_context "virtual hearing created with new link generation" do
+    let(:virtual_hearing) do
+      build(
+        :virtual_hearing,
+        :link_generation_initialized,
+        hearing: build(
+          :hearing,
+          hearing_day: build(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
+        )
+      )
+    end
+  end
+
+  shared_context "virtual hearing not created with new link generation" do
+    let(:virtual_hearing) do
+      build(
+        :virtual_hearing,
+        :initialized,
+        hearing: build(
+          :hearing,
+          hearing_day: build(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
+        )
+      )
+    end
+  end
+
+  context "#test_link" do
+    context "vh created with new link generation" do
+      def link(name)
+        "https://vc.va.gov/webapp2/conference/test_call?name=#{name}&join=1"
+      end
+
+      include_context "virtual hearing created with new link generation"
+      include_examples "all test link behaviors"
+    end
+
+    context "vh not created with new link generation" do
+      def link(name)
+        "https://care.va.gov/webapp2/conference/test_call?name=#{name}&join=1"
+      end
+
+      include_context "virtual hearing not created with new link generation"
+      include_examples "all test link behaviors"
     end
   end
 
@@ -190,6 +222,11 @@ describe VirtualHearing do
   end
 
   context "#status" do
+    shared_examples "returns correct status" do |status|
+      it "returns correct status" do
+        expect(subject).to eq(status)
+      end
+    end
     subject { virtual_hearing.status }
 
     context "cancelled" do
@@ -205,9 +242,7 @@ describe VirtualHearing do
         )
       end
 
-      it "returns correct status" do
-        expect(subject).to eq(:cancelled)
-      end
+      include_examples "returns correct status", :cancelled
     end
 
     context "closed" do
@@ -223,25 +258,18 @@ describe VirtualHearing do
         )
       end
 
-      it "returns correct status" do
-        expect(subject).to eq(:closed)
-      end
+      include_examples "returns correct status", :closed
     end
 
     context "active" do
-      let(:virtual_hearing) do
-        build(
-          :virtual_hearing,
-          :initialized,
-          hearing: build(
-            :hearing,
-            hearing_day: build(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
-          )
-        )
+      context "vh created with new link generation" do
+        include_context "virtual hearing created with new link generation"
+        include_examples "returns correct status", :active
       end
 
-      it "returns correct status" do
-        expect(subject).to eq(:active)
+      context "vh not created with new link generation" do
+        include_context "virtual hearing not created with new link generation"
+        include_examples "returns correct status", :active
       end
     end
 
@@ -256,9 +284,7 @@ describe VirtualHearing do
         )
       end
 
-      it "returns correct status" do
-        expect(subject).to eq(:pending)
-      end
+      include_examples "returns correct status", :pending
     end
   end
 end

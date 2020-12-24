@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_10_021033) do
+ActiveRecord::Schema.define(version: 2020_12_22_171313) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -995,6 +995,18 @@ ActiveRecord::Schema.define(version: 2020_11_10_021033) do
     t.index ["updated_at"], name: "index_messages_on_updated_at"
   end
 
+  create_table "nod_date_updates", comment: "Tracks changes to an AMA appeal's receipt date (aka, NOD date)", force: :cascade do |t|
+    t.bigint "appeal_id", null: false, comment: "Appeal for which the NOD date is being edited"
+    t.string "change_reason", null: false, comment: "Reason for change: entry_error or new_info"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at timestamps"
+    t.date "new_date", null: false, comment: "Date after update"
+    t.date "old_date", null: false, comment: "Date before update"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at timestamps"
+    t.bigint "user_id", null: false, comment: "User that updated the NOD date"
+    t.index ["appeal_id"], name: "index_nod_date_updates_on_appeal_id"
+    t.index ["user_id"], name: "index_nod_date_updates_on_user_id"
+  end
+
   create_table "non_availabilities", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date"
@@ -1497,10 +1509,12 @@ ActiveRecord::Schema.define(version: 2020_11_10_021033) do
     t.integer "conference_id", comment: "ID of conference from Pexip"
     t.datetime "created_at", null: false, comment: "Automatic timestamp of when virtual hearing was created"
     t.bigint "created_by_id", null: false, comment: "User who created the virtual hearing"
+    t.string "guest_hearing_link", comment: "Link used by appellants and/or representatives to join virtual hearing conference"
     t.integer "guest_pin", comment: "PIN number for guests of Pexip conference"
     t.string "guest_pin_long", limit: 11, comment: "Change the guest pin to store a longer pin with the # sign trailing"
     t.bigint "hearing_id", comment: "Associated hearing"
     t.string "hearing_type", comment: "'Hearing' or 'LegacyHearing'"
+    t.string "host_hearing_link", comment: "Link used by judges to join virtual hearing conference"
     t.integer "host_pin", comment: "PIN number for host of Pexip conference"
     t.string "host_pin_long", limit: 8, comment: "Change the host pin to store a longer pin with the # sign trailing"
     t.string "judge_email", comment: "Judge's email address"
@@ -1585,6 +1599,8 @@ ActiveRecord::Schema.define(version: 2020_11_10_021033) do
   add_foreign_key "legacy_hearings", "users", column: "created_by_id"
   add_foreign_key "legacy_hearings", "users", column: "updated_by_id"
   add_foreign_key "legacy_issue_optins", "legacy_issues"
+  add_foreign_key "nod_date_updates", "appeals"
+  add_foreign_key "nod_date_updates", "users"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "post_decision_motions", "appeals"
   add_foreign_key "post_decision_motions", "tasks"
