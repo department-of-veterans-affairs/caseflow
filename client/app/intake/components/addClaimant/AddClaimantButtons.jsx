@@ -10,7 +10,7 @@ const BackButton = ({ onClick }) => (
     name="go-back"
     onClick={onClick}
     classNames={['usa-button-secondary']}
-    styling={{style: {marginRight: '1em'}}}
+    styling={{ style: { marginRight: '1em' } }}
   >
     Back
   </Button>
@@ -36,7 +36,10 @@ NextButton.propTypes = {
 export const AddClaimantButtons = ({ onBack, onSubmit, isValid }) => {
   return (
     <div>
-      <CancelButton classNames={['cf-btn-link']} styling={{ style: { float: 'left', paddingLeft: 0 } }} />
+      <CancelButton
+        classNames={['cf-btn-link']}
+        styling={{ style: { float: 'left', paddingLeft: 0 } }}
+      />
       <BackButton onClick={() => onBack?.()} />
       <NextButton
         onClick={onSubmit}
