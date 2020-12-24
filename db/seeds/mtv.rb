@@ -55,8 +55,8 @@ module Seeds
     end
 
     def create_motion_to_vacate_mail_task(appeal)
-      lit_support_user = User.find_by(css_id: "LIT_SUPPORT_USER")
-      mail_user = User.find_by(css_id: "JOLLY_POSTMAN")
+      lit_support_user = User.find_by_css_id("LIT_SUPPORT_USER")
+      mail_user = User.find_by_css_id("JOLLY_POSTMAN")
       mail_team_task = create(
         :vacate_motion_mail_task,
         :on_hold,
@@ -98,10 +98,10 @@ module Seeds
 
     # rubocop:disable Metrics/AbcSize
     def setup_motion_to_vacate
-      lit_support_user = User.find_by(css_id: "LIT_SUPPORT_USER")
-      mtv_judge = User.find_by(css_id: "BVAAABSHIRE")
-      drafting_attorney = User.find_by(css_id: "BVAEERDMAN")
-      u = User.find_by(css_id: "BVAGWHITE")
+      lit_support_user = User.find_by_css_id("LIT_SUPPORT_USER")
+      mtv_judge = User.find_by_css_id("BVAAABSHIRE")
+      drafting_attorney = User.find_by_css_id("BVAEERDMAN")
+      u = User.find_by_css_id("BVAGWHITE")
       BvaDispatch.singleton.add_user(u) unless BvaDispatch.singleton.users.include? u
 
       # MTV file numbers with a decided appeal

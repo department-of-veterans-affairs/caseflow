@@ -268,6 +268,25 @@ describe JudgeTeam, :postgres do
     end
   end
 
+  describe ".admin" do
+    let(:judge_team) { JudgeTeam.create_for_judge(judge) }
+
+    context "when the user is the judge" do
+      it "judge is the admin" do
+        expect(judge_team.admin).to eq(judge)
+      end
+    end
+
+    context "when the user is an attorney" do
+      let(:attorney) { create(:user) }
+      before { judge_team.add_user(attorney) }
+
+      it "judge is still the admin" do
+        expect(judge_team.admin).not_to eq(attorney)
+      end
+    end
+  end
+
   private
 
   # Create a JudgeTeam with a JudgeTeamLead admin, a DecisionDraftingAttorney admin, and several
