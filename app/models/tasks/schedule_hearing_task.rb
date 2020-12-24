@@ -23,6 +23,8 @@
 # If completed, an AssignHearingDispositionTask is created as a child of HearingTask.
 ##
 class ScheduleHearingTask < Task
+  include CavcAdminActionConcern
+
   before_validation :set_assignee
   before_create :create_parent_hearing_task
   delegate :hearing, to: :parent, allow_nil: true

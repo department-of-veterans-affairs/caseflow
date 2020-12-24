@@ -137,6 +137,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       distributed_cases = DistributedCase.where(distribution: subject)
       expect(distributed_cases.count).to eq 2
       expect(distributed_cases.map(&:case_id)).to match_array [ready_priority_bfkey, ready_priority_uuid]
+      # Ensure all docket types cases are distributed, including the 5 cavc evidence submission cases
       expect(distributed_cases.map(&:docket)).to match_array ["legacy", Constants.AMA_DOCKETS.hearing]
       expect(distributed_cases.map(&:priority).uniq).to match_array [true]
       expect(distributed_cases.map(&:genpop).uniq).to match_array [false]
@@ -201,10 +202,9 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     let!(:ready_priority_evidence_cases) do
       (1..5).map do |i|
         appeal = create(:appeal,
-                        :with_post_intake_tasks,
-                        :advanced_on_docket_due_to_age,
+                        :type_cavc_remand,
+                        :ready_for_distribution,
                         docket_type: Constants.AMA_DOCKETS.evidence_submission)
-        appeal.tasks.find_by(type: EvidenceSubmissionWindowTask.name).completed!
         appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.month.ago)
         appeal
       end
