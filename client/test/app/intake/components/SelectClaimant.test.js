@@ -49,8 +49,8 @@ describe('SelectClaimant', () => {
           deceasedAppellants: props.toggled }}
         relationships={defaultRelationships}
         formType={props.formType}
-        setVeteranIsNotClaimant={setVeteranisNotClaimant}
         veteranIsNotClaimant={props.veteranIsNotClaimant}
+        setVeteranIsNotClaimant={setVeteranisNotClaimant}
       />);
   };
 
