@@ -17,7 +17,10 @@ export const AddClaimantPage = () => {
     formState: { isValid },
     handleSubmit,
   } = methods;
-  const onSubmit = (formData) => console.log('onSubmit', formData);
+  const onSubmit = (formData) => {
+    // Add claimant info to Redux
+    // Probably handle submission of both claimant and remaining intake info (from Review step)
+  };
   const handleBack = () => goBack();
 
   return (

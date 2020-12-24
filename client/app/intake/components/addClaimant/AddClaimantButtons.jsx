@@ -15,6 +15,7 @@ const BackButton = ({ onClick }) => (
     Back
   </Button>
 );
+
 BackButton.propTypes = {
   onClick: PropTypes.func,
 };
