@@ -310,18 +310,4 @@ describe Document, :postgres do
       expect(document.default_path).to match(%r{.*\/tmp\/pdfs\/.*123})
     end
   end
-
-  context "versioning" do
-    it "saves new version on update description" do
-      document.save
-      expect(document.versions.length).to eq 0
-      expect(document.description).to eq("Document description")
-
-      document.description = "Updated description"
-      document.save
-
-      expect(document.versions.length).to eq 1
-      expect(document.reload.description).to eq("Updated description")
-    end
-  end
 end
