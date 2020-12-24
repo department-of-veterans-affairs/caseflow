@@ -1,11 +1,27 @@
 import React from 'react';
+import { FormProvider } from 'react-hook-form';
 
 import { AddClaimantForm } from './AddClaimantForm';
+import { useAddClaimantForm } from './utils';
+
+const FormWrapper = ({ children }) => {
+  const methods = useAddClaimantForm();
+
+  return <FormProvider {...methods}>{children}</FormProvider>;
+};
 
 export default {
   title: 'Intake/Add Claimant/AddClaimantForm',
   component: AddClaimantForm,
-  decorators: [],
+  decorators: [
+    (Story) => {
+      return (
+        <FormWrapper>
+          <Story />
+        </FormWrapper>
+      );
+    },
+  ],
   parameters: {},
   argTypes: {
     onCancel: { action: 'cancel' },
