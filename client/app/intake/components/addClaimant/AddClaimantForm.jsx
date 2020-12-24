@@ -23,6 +23,7 @@ export const AddClaimantForm = ({ onSubmit }) => {
         label="Relationship to the Veteran"
         options={relationshipOpts}
         control={control}
+        strongLabel
       />
     </form>
   );
