@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, StaticRouter } from 'react-router';
+import { Route, MemoryRouter } from 'react-router';
 
 import { AddClaimantPage } from './AddClaimantPage';
 
@@ -8,11 +8,9 @@ import ReduxBase from 'app/components/ReduxBase';
 import { reducer, generateInitialState } from 'app/intake';
 
 const RouterDecorator = (Story) => (
-  <StaticRouter location={{ pathname: PAGE_PATHS.ADD_CLAIMANT }}>
-    <Route path={PAGE_PATHS.ADD_CLAIMANT}>
-      <Story />
-    </Route>
-  </StaticRouter>
+  <MemoryRouter initialEntries={['/']}>
+    <Story />
+  </MemoryRouter>
 );
 
 const ReduxDecorator = (Story) => (
