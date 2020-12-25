@@ -56,7 +56,7 @@ export const DocketSwitchReviewRequestForm = ({
 
   const issueOptions = useMemo(() =>
     issues && issues.map((issue, idx) => ({
-      id: issue.id,
+      id: issue.id.toString(),
       label: `${idx + 1}. ${issue.description}`,
     })), [issues]
   );
@@ -151,5 +151,5 @@ DocketSwitchReviewRequestForm.propTypes = {
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
   appellantName: PropTypes.string.isRequired,
-  issues: PropTypes.object
+  issues: PropTypes.array
 };
