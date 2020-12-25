@@ -203,7 +203,7 @@ export const SelectClaimant = (props) => {
 
         <br />
         <br />
-        {attorneyFees && formType === 'appeal' && !(claimant || claimantNotes) ?
+        {enableAddClaimantModal && formType === 'appeal' && !(claimant || claimantNotes) ?
           ADD_CLAIMANT_TEXT :
           ''}
       </p>
@@ -219,7 +219,7 @@ export const SelectClaimant = (props) => {
         {CLAIMANT_NOT_FOUND_END}
         <br />
         <br />
-        {attorneyFees && formType === 'appeal' ? ADD_CLAIMANT_TEXT : ''}
+        {enableAddClaimantModal && formType === 'appeal' ? ADD_CLAIMANT_TEXT : ''}
       </p>
     );
   };
