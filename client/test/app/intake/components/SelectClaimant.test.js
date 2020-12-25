@@ -58,6 +58,7 @@ describe('SelectClaimant', () => {
         }}
         relationships={defaultRelationships}
         formType={props.formType}
+        veteranIsNotClaimant={props.veteranIsNotClaimant}
         setVeteranIsNotClaimant={setVeteranisNotClaimant}
       />
     );
@@ -82,65 +83,65 @@ describe('SelectClaimant', () => {
   describe("with formType 'appeal'", () => {
     const formType = { formType: 'appeal' };
 
-    // describe('deceasedAppellants toggled OFF', () => {
-    //   it('renders correctly', () => {
-    //     const { container } = setupDeceasedAppellants(formType);
+    describe('deceasedAppellants toggled OFF', () => {
+      it('renders correctly', () => {
+        const { container } = setupDeceasedAppellants(formType);
 
-    //     expect(container).toMatchSnapshot();
-    //   });
+        expect(container).toMatchSnapshot();
+      });
 
-    //   it('passes a11y testing', async () => {
-    //     const { container } = setupDeceasedAppellants(formType);
+      it('passes a11y testing', async () => {
+        const { container } = setupDeceasedAppellants(formType);
 
-    //     const results = await axe(container);
+        const results = await axe(container);
 
-    //     expect(results).toHaveNoViolations();
-    //   });
+        expect(results).toHaveNoViolations();
+      });
 
-    //   it('disables different-claimant-option_false radio button and fires off setVeteranIsNotClaimant', () => {
-    //     setupDeceasedAppellants(formType);
+      it('disables different-claimant-option_false radio button and fires off setVeteranIsNotClaimant', () => {
+        setupDeceasedAppellants(formType);
 
-    //     const radioNo = screen.getByRole('radio', { name: /no/i });
+        const radioNo = screen.getByRole('radio', { name: /no/i });
 
-    //     expect(radioNo).toBeDisabled();
-    //     expect(setVeteranisNotClaimant).toHaveBeenCalled();
-    //   });
-    // });
+        expect(radioNo).toBeDisabled();
+        expect(setVeteranisNotClaimant).toHaveBeenCalled();
+      });
+    });
 
-    // describe('deceasedAppellants toggled ON', () => {
-    //   const setupProps = { ...formType, toggled: true };
+    describe('deceasedAppellants toggled ON', () => {
+      const setupProps = { ...formType, toggled: true };
 
-    //   it('renders correctly', () => {
-    //     const { container } = setupDeceasedAppellants(setupProps);
+      it('renders correctly', () => {
+        const { container } = setupDeceasedAppellants(setupProps);
 
-    //     expect(container).toMatchSnapshot();
-    //   });
+        expect(container).toMatchSnapshot();
+      });
 
-    //   it('passes a11y testing', async () => {
-    //     const { container } = setupDeceasedAppellants(setupProps);
+      it('passes a11y testing', async () => {
+        const { container } = setupDeceasedAppellants(setupProps);
 
-    //     const results = await axe(container);
+        const results = await axe(container);
 
-    //     expect(results).toHaveNoViolations();
-    //   });
+        expect(results).toHaveNoViolations();
+      });
 
-    //   it('disables different-claimant-option_false radio button and does NOT fire off setVeteranIsNotClaimant', () => {
-    //     setupDeceasedAppellants(setupProps);
+      it('disables different-claimant-option_false radio button and does NOT fire off setVeteranIsNotClaimant', () => {
+        setupDeceasedAppellants(setupProps);
 
-    //     const radioNo = screen.getByRole('radio', { name: /no/i });
+        const radioNo = screen.getByRole('radio', { name: /no/i });
 
-    //     expect(radioNo).toBeEnabled();
-    //     expect(setVeteranisNotClaimant).toBeCalledTimes(0);
-    //   });
+        expect(radioNo).toBeEnabled();
+        expect(setVeteranisNotClaimant).toBeCalledTimes(0);
+      });
 
-    //   it('renders deceasedVeteranAlert', () => {
-    //     setupDeceasedAppellants(setupProps);
+      it('renders deceasedVeteranAlert', () => {
+        setupDeceasedAppellants({ ...setupProps, veteranIsNotClaimant: false });
 
-    //     const alert = screen.getByRole('alert');
+        const alert = screen.getByRole('alert');
 
-    //     expect(alert).toBeInTheDocument();
-    //   });
-    // });
+        expect(alert).toBeInTheDocument();
+      });
+    });
 
     describe('nonVeteranClaimants enabled', () => {
       const featureToggles = {
@@ -185,57 +186,57 @@ describe('SelectClaimant', () => {
     });
   });
 
-  // describe("with formType not 'appeal'", () => {
-  //   describe('deceasedAppellants toggled OFF', () => {
-  //     it('renders correctly', () => {
-  //       const { container } = setupDeceasedAppellants();
+  describe("with formType not 'appeal'", () => {
+    describe('deceasedAppellants toggled OFF', () => {
+      it('renders correctly', () => {
+        const { container } = setupDeceasedAppellants();
 
-  //       expect(container).toMatchSnapshot();
-  //     });
+        expect(container).toMatchSnapshot();
+      });
 
-  //     it('passes a11y testing', async () => {
-  //       const { container } = setupDeceasedAppellants();
+      it('passes a11y testing', async () => {
+        const { container } = setupDeceasedAppellants();
 
-  //       const results = await axe(container);
+        const results = await axe(container);
 
-  //       expect(results).toHaveNoViolations();
-  //     });
+        expect(results).toHaveNoViolations();
+      });
 
-  //     it('does disable different-claimant-option_false radio button and fires off setVeteranIsNotClaimant', () => {
-  //       setupDeceasedAppellants();
+      it('does disable different-claimant-option_false radio button and fires off setVeteranIsNotClaimant', () => {
+        setupDeceasedAppellants();
 
-  //       const radioNo = screen.getByRole('radio', { name: /no/i });
+        const radioNo = screen.getByRole('radio', { name: /no/i });
 
-  //       expect(radioNo).toBeDisabled();
-  //       expect(setVeteranisNotClaimant).toHaveBeenCalled();
-  //     });
-  //   });
+        expect(radioNo).toBeDisabled();
+        expect(setVeteranisNotClaimant).toHaveBeenCalled();
+      });
+    });
 
-  //   describe('deceasedAppellants toggled ON', () => {
-  //     const setupProps = { toggled: true };
+    describe('deceasedAppellants toggled ON', () => {
+      const setupProps = { toggled: true };
 
-  //     it('renders correctly', () => {
-  //       const { container } = setupDeceasedAppellants(setupProps);
+      it('renders correctly', () => {
+        const { container } = setupDeceasedAppellants(setupProps);
 
-  //       expect(container).toMatchSnapshot();
-  //     });
+        expect(container).toMatchSnapshot();
+      });
 
-  //     it('passes a11y testing', async () => {
-  //       const { container } = setupDeceasedAppellants(setupProps);
+      it('passes a11y testing', async () => {
+        const { container } = setupDeceasedAppellants(setupProps);
 
-  //       const results = await axe(container);
+        const results = await axe(container);
 
-  //       expect(results).toHaveNoViolations();
-  //     });
+        expect(results).toHaveNoViolations();
+      });
 
-  //     it('disables different-claimant-option_false radio button & fires off setVeteranIsNotClaimant', () => {
-  //       setupDeceasedAppellants(setupProps);
+      it('disables different-claimant-option_false radio button & fires off setVeteranIsNotClaimant', () => {
+        setupDeceasedAppellants(setupProps);
 
-  //       const radioNo = screen.getByRole('radio', { name: /no/i });
+        const radioNo = screen.getByRole('radio', { name: /no/i });
 
-  //       expect(radioNo).toBeDisabled();
-  //       expect(setVeteranisNotClaimant).toBeCalled();
-  //     });
-  //   });
-  // });
+        expect(radioNo).toBeDisabled();
+        expect(setVeteranisNotClaimant).toBeCalled();
+      });
+    });
+  });
 });
