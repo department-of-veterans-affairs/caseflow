@@ -17,8 +17,8 @@ RSpec.feature "Docket Switch", :all_dbs do
   end
 
   let!(:request_issues) do
-    3.times do |idx|
-      request_issue = create(
+    3.times do
+      create(
         :request_issue,
         :rating,
         decision_review: appeal,
