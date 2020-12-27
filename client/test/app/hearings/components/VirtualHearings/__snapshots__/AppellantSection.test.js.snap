@@ -15268,9 +15268,6 @@ SAN FRANCISCO, CA 94103
               <div
                 className="usa-alert-body"
               >
-                <h2
-                  className="usa-alert-heading"
-                />
                 <div
                   className="usa-alert-text"
                 >
@@ -30549,9 +30546,6 @@ SAN FRANCISCO, CA 94103
               <div
                 className="usa-alert-body"
               >
-                <h2
-                  className="usa-alert-heading"
-                />
                 <div
                   className="usa-alert-text"
                 >
