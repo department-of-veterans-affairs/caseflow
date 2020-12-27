@@ -14,6 +14,7 @@ export const DocketSwitchReviewRequestContainer = () => {
     appealWithDetailSelector(state, { appealId })
   );
 
+  // Reminder to add code to clear docketSwitch redux store when we go back.
   const handleCancel = () => goBack();
 
   const handleSubmit = () => {
