@@ -26,12 +26,6 @@ RSpec.feature "Docket Switch", :all_dbs do
         contested_rating_issue_profile_date: 10.days.ago,
         contested_issue_description: "PTSD denied"
       )
-      request_issue.create_decision_issue_from_params(
-        disposition: "denied",
-        description: "Decision issue description #{idx}",
-        decision_date: 10.days.ago,
-        decision_text: "decision issue"
-      )
     end
   end
 
