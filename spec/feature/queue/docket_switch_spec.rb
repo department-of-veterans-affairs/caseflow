@@ -243,6 +243,7 @@ RSpec.feature "Docket Switch", :all_dbs do
         find("label", text: "Grant a partial switch").click
       end
       expect(page).to have_content("PTSD denied")
+      expect(page).to have_button("Continue", disabled: true)
 
       # select issues
       within_fieldset("Select the issue(s) that are switching dockets:") do
