@@ -44,8 +44,8 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
 
 export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
   const [receiptDate, setReceiptDate] = useState(nodDate);
-  const [futureDate, setFutureDate] = useState(false);
   const [disableButton, setDisableButton] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const buttons = [
     {
@@ -70,15 +70,26 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
     return (date > todaysDate);
   };
 
+  const isPreAmaDate = (newDate) => {
+    const formattedNewDate = moment(newDate);
+    const amaDate = moment('2019-02-19');
+
+    return (formattedNewDate < amaDate);
+  };
+
   const handleDateChange = (value) => {
     if (isFutureDate(value)) {
-      setFutureDate(true);
+      setErrorMessage(COPY.EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE);
+      setDisableButton(true);
+      setReceiptDate(value);
+    } else if (isPreAmaDate(value)) {
+      setErrorMessage(COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE);
       setDisableButton(true);
       setReceiptDate(value);
     } else {
+      setErrorMessage(null);
       setReceiptDate(value);
       setDisableButton(false);
-      setFutureDate(false);
     }
   };
 
@@ -94,7 +105,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
       </div>
       <DateSelector
         name="nodDate"
-        errorMessage={futureDate ? COPY.EDIT_NOD_DATE_ERROR_ALERT_MESSAGE : null}
+        errorMessage={errorMessage}
         label={COPY.EDIT_NOD_DATE_LABEL}
         strongLabel
         type="date"
