@@ -2,12 +2,10 @@ import React from 'react';
 
 import { DocketSwitchReviewRequestForm } from './DocketSwitchReviewRequestForm';
 
-const appeal = {
-  issues: [
-    { id: 1, program: 'compensation', description: 'PTSD denied' },
-    { id: 2, program: 'compensation', description: 'Left  knee denied' },
-  ],
-};
+const issues = [
+  { id: 1, program: 'compensation', description: 'PTSD denied' },
+  { id: 2, program: 'compensation', description: 'Left  knee denied' },
+];
 
 export default {
   title: 'Queue/Docket Switch/DocketSwitchReviewRequestForm',
@@ -19,7 +17,7 @@ export default {
   parameters: {},
   args: {
   appellantName: 'Jane Doe',
-  appeal
+  issues
   },
   argTypes: {
     onCancel: { action: 'cancel' },
