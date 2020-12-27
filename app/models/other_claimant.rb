@@ -30,8 +30,4 @@ class OtherClaimant < Claimant
   def relationship
     unrecognized_appellant&.relationship || "Other"
   end
-
-  def unrecognized_appellant
-    @unrecognized_appellant ||= UnrecognizedAppellant.find_by(claimant_id: id)
-  end
 end
