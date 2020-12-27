@@ -7,7 +7,9 @@ FactoryBot.define do
     conference_id { nil }
     conference_deleted { false }
     guest_pin { nil }
+    guest_hearing_link { nil }
     host_pin { nil }
+    host_hearing_link { nil }
     judge_email { "caseflow-judge@test.com" }
     judge_email_sent { false }
     appellant_email { "caseflow-veteran@test.com" }
@@ -42,6 +44,20 @@ FactoryBot.define do
       appellant_email_sent { true }
       representative_email_sent { true }
       judge_email_sent { true }
+    end
+
+    trait :link_generation_initialized do
+      alias_with_host { "BVA0000001@example.va.gov" }
+      host_pin_long { "3998472" }
+      guest_pin_long { "7470125694" }
+      host_hearing_link do
+        "https://example.va.gov/sample/?conference=#{alias_with_host}" \
+          "&name=Judge&pin=#{host_pin_long}&callType=video&join=1"
+      end
+      guest_hearing_link do
+        "https://example.va.gov/sample/?conference=#{alias_with_host}" \
+        "&name=Guest&pin=#{guest_pin_long}&callType=video&join=1"
+      end
     end
 
     after(:create) do |virtual_hearing, _evaluator|
