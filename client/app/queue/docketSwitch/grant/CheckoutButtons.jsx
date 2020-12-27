@@ -38,6 +38,7 @@ export const CheckoutButtons = ({
     // Only display "Back" button if applicable
     ...(onBack ? [backBtn] : []),
   ]);
+
   return <DecisionViewFooter buttons={buttons} />;
 };
 CheckoutButtons.propTypes = {

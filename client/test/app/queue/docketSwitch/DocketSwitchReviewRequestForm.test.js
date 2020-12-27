@@ -13,7 +13,11 @@ describe('DocketSwitchReviewRequestForm', () => {
   const onSubmit = jest.fn();
   const onCancel = jest.fn();
   const appellantName = 'Claimant 1';
-  const defaults = { onSubmit, onCancel, appellantName };
+  const issues = [
+    { id: 1, program: 'compensation', description: 'PTSD denied' },
+    { id: 2, program: 'compensation', description: 'Left  knee denied' },
+  ];
+  const defaults = { onSubmit, onCancel, appellantName, issues };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -82,11 +86,7 @@ describe('DocketSwitchReviewRequestForm', () => {
       await userEvent.click(submit);
 
       await waitFor(() => {
-        expect(onSubmit).toHaveBeenCalledWith({
-          receiptDate: (new Date(receiptDate)).toString(),
-          disposition,
-          docketType
-        });
+        expect(onSubmit).toHaveBeenCalled()
       });
     });
   });
@@ -94,6 +94,8 @@ describe('DocketSwitchReviewRequestForm', () => {
   describe('form validation for granted partial issues', () => {
     const receiptDate = '2020-10-01';
     const disposition = 'partially_granted';
+    const docketType = 'direct_review';
+    const issueIds = ['1']
     const fillForm = async () => {
       //   Set receipt date
       await fireEvent.change(screen.getByLabelText(/receipt date/i), {
@@ -111,15 +113,43 @@ describe('DocketSwitchReviewRequestForm', () => {
 
       const submit = screen.getByRole('button', { name: /Continue/i });
 
-      await fillForm();
+      // Set receipt date
+      await fireEvent.change(screen.getByLabelText(/receipt date/i), {
+        target: { value: receiptDate },
+      });
+
+      //   Set disposition
+      await userEvent.click(
+        screen.getByRole('radio', { name: /grant a partial switch/i })
+      );
+
+      // Wait for docketType to show up
+      await waitFor(() => {
+        expect(screen.getByRole('radio', { name: /direct review/i })).toBeInTheDocument();
+      });
+
+      //   Set docketType
+      await userEvent.click(
+        screen.getByRole('radio', { name: /direct review/i })
+      );
+
+      await waitFor(() => {
+        expect(submit).toBeDisabled();
+      });
+
+      //   Select an issue
+      await userEvent.click(
+        screen.getByRole('checkbox', { name: /ptsd denied/i })
+      );
+
+      await waitFor(() => {
+        expect(submit).toBeEnabled();
+      });
 
       await userEvent.click(submit);
 
-      waitFor(() => {
-        expect(onSubmit).toHaveBeenCalledWith({
-          receiptDate,
-          disposition,
-        });
+      await waitFor(() => {
+        expect(onSubmit).toHaveBeenCalled()
       });
     });
   });
