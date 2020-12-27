@@ -10,7 +10,7 @@ export const CheckoutButtons = ({
   disabled = false,
 }) => {
   const cancelBtn = {
-    classNames: cx('cf-btn-link', { 'cf-right-side': !onBack }),
+    classNames: [cx('cf-btn-link', { 'cf-right-side': !onBack })],
     callback: onCancel,
     name: 'cancel-button',
     displayText: 'Cancel',
