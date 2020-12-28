@@ -21,9 +21,9 @@ class DocketSwitchesController < ApplicationController
     end
   end
 
-  def task
-    @task ||= Task.find(docket_switch_params[:task_id])
-  end
+  # def task
+  #   @task ||= Task.find(docket_switch_params[:task_id])
+  # end
 
   def docket_switch_params
     params.permit(:disposition, :task_id, :receipt_date, :context, :old_docket_stream_id)
