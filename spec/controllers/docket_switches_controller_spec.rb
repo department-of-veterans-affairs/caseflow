@@ -40,7 +40,7 @@ RSpec.describe DocketSwitchesController, :postgres, type: :controller do
          )
       end
       it "should create docket switch" do
-        get :create, params: params,
+        get :create, params: params
         expect(response.status).to eq 200
         response_body=JSON.parse(response.body)
         expect(response_body.count).to eq 1
