@@ -4,11 +4,12 @@ import { useSelector } from 'react-redux';
 import COPY from '../../COPY';
 import TaskRows from './components/TaskRows';
 import { caseTimelineTasksForAppeal } from './selectors';
+import { renderLegacyAppealType } from './utils';
 
 export const CaseTimeline = ({ appeal }) => {
   const tasks = useSelector((state) => caseTimelineTasksForAppeal(state, { appealId: appeal.externalId }));
   const canEditNodDate = useSelector((state) => state.ui.canEditNodDate);
-
+  
   return (
     <React.Fragment>
       {COPY.CASE_TIMELINE_HEADER}
@@ -16,7 +17,7 @@ export const CaseTimeline = ({ appeal }) => {
         <tbody>
           <TaskRows appeal={appeal}
             taskList={tasks}
-            editNodDateEnabled={canEditNodDate}
+            editNodDateEnabled={!appeal.isLegacyAppeal && canEditNodDate}
             timeline
           />
         </tbody>
