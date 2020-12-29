@@ -8,11 +8,11 @@ RSpec.describe DocketSwitchesController, :postgres, type: :controller do
       create(:staff, :judge_role, sdomainid: judge.css_id)
     end
     after { FeatureToggle.disable!(:docket_switch) }
-    
+
     let(:cotb_org) { ClerkOfTheBoard.singleton }
     let(:receipt_date) { Time.zone.today - 20 }
     let(:appeal) do
-	  create(:appeal, receipt_date: receipt_date)
+      create(:appeal, receipt_date: receipt_date)
     end
 
     let(:root_task) { create(:root_task, :completed, appeal: appeal) }
@@ -23,22 +23,22 @@ RSpec.describe DocketSwitchesController, :postgres, type: :controller do
 
     context "when attorney has been assigned docket switch denied task" do
       let(:params) do
-        {
+      	{
           old_docket_stream_id: appeal.id,
           task_id: docket_switch_denied_task.id,
           disposition: "denied",
           receipt_date: receipt_date
         }
-	  end
+      end
       let!(:docket_switch_denied_task) do
-        create(
+      	create(
           :docket_switch_denied_task,
           appeal: appeal,
           # parent: root_task,
           assigned_to: cotb_attorney,
           assigned_by: judge
-	    )
-	  end
+        )
+      end
       it "should create docket switch" do
         get :create, params: params
         expect(response.status).to eq 200
