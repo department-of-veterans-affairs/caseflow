@@ -10,7 +10,7 @@ class DocketSwitchesController < ApplicationController
       return
     end
     docket_switch.save
-    render json: {}
+    render json: {docket_switch: docket_switch}
   end
 
   private
