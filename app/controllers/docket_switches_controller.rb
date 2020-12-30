@@ -5,6 +5,12 @@ class DocketSwitchesController < ApplicationController
 
   def create
     docket_switch = DocketSwitch.new(*docket_switch_params)
+    # :nocov:
+    if docket_switch.errors.present?
+      render json: { errors: [detail: docket_switch.errors.full_messages.join(", ")] }, status: :bad_request
+      return
+    end
+    # :nocov:
 
     docket_switch.save
     render json: { docket_switch: docket_switch }
