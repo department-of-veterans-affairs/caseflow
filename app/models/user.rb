@@ -519,6 +519,8 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
     # case-insensitive search
     def find_by_css_id(css_id)
+      # this query uses the index_users_unique_css_id
+      # find_by(css_id: css_id) does a slower seq scan
       find_by("UPPER(css_id)=UPPER(?)", css_id)
     end
 

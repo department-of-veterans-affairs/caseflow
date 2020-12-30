@@ -458,9 +458,6 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                           <div
                             className="usa-alert-body"
                           >
-                            <h2
-                              className="usa-alert-heading"
-                            />
                             <div
                               className="usa-alert-text"
                             >

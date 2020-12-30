@@ -37,8 +37,16 @@ class Hearings::SchedulePeriodsController < HearingsApplicationController
     schedule_period = SchedulePeriod.create!(schedule_period_params.merge(user_id: current_user.id,
                                                                           file_name: file_name))
     render json: { id: schedule_period.id }
-  rescue ActiveRecord::RecordInvalid => error
-    render json: { error: error.message }
+  rescue StandardError => error
+    render(
+      json: {
+        errors: [
+          title: error.class.to_s,
+          details: error.message
+        ]
+      },
+      status: :bad_request
+    )
   end
 
   # Route to finalize and confirm a hearing schedule
@@ -47,7 +55,15 @@ class Hearings::SchedulePeriodsController < HearingsApplicationController
       schedule_period.schedule_confirmed(schedule_period.algorithm_assignments)
       render json: { id: schedule_period.id }
     else
-      render json: { error: "This schedule period cannot be finalized." }, status: :unprocessable_entity
+      render(
+        json: {
+          errors: [
+            title: "Finalize Schedule Period",
+            details: "This schedule period cannot be finalized."
+          ]
+        },
+        status: :unprocessable_entity
+      )
     end
   end
 
@@ -75,7 +91,11 @@ class Hearings::SchedulePeriodsController < HearingsApplicationController
   def render_error_for_show_action(error)
     render(
       json: {
-        error: error.message, details: error.details, type: schedule_period.type
+        errors: [
+          title: error.message,
+          details: error.details,
+          type: schedule_period.type
+        ]
       },
       status: :unprocessable_entity
     )
