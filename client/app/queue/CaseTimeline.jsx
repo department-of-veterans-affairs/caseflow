@@ -7,7 +7,8 @@ import { caseTimelineTasksForAppeal } from './selectors';
 
 export const CaseTimeline = ({ appeal }) => {
   const tasks = useSelector((state) => caseTimelineTasksForAppeal(state, { appealId: appeal.externalId }));
-  const canEditNodDate = useSelector((state) => state.ui.canEditNodDate);  
+  const canEditNodDate = useSelector((state) => state.ui.canEditNodDate);
+  
   return (
     <React.Fragment>
       {COPY.CASE_TIMELINE_HEADER}
