@@ -5,7 +5,7 @@ class DocketSwitchesController < ApplicationController
 
   def create
     docket_switch = DocketSwitch.new(*docket_switch_params)
-    
+
     docket_switch.save
     render json: { docket_switch: docket_switch }
   end
