@@ -4,23 +4,38 @@ import PropTypes from 'prop-types';
 import Modal from 'app/components/Modal';
 import DateSelector from 'app/components/DateSelector';
 import COPY from 'app/../COPY';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { resetSuccessMessages, showSuccessMessage } from '../uiReducer/uiActions';
 import { editAppeal } from '../QueueActions';
 import ApiUtil from '../../util/ApiUtil';
 import moment from 'moment';
+import { sprintf } from 'sprintf-js';
+import { formatDateStr } from '../../util/DateUtil';
+import { appealWithDetailSelector } from '../selectors';
 
 export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealId }) => {
   const dispatch = useDispatch();
+
+  const appeal = useSelector((state) =>
+    appealWithDetailSelector(state, { appealId })
+  );
 
   useEffect(() => {
     dispatch(resetSuccessMessages());
   }, []);
 
   const handleSubmit = (receiptDate) => {
+    
+    const appellantName = (appeal.appellantFullName);
+    const nodDateStr = formatDateStr(nodDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
+    const receiptDateStr = formatDateStr(receiptDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
+
+    const title = COPY.EDIT_NOD_DATE_SUCCESS_ALERT_TITLE;
+    const detail = sprintf(COPY.EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE, appellantName, nodDateStr, receiptDateStr);
+
     const successMessage = {
-      title: COPY.EDIT_NOD_DATE_SUCCESS_ALERT_TITLE,
-      detail: COPY.EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE,
+      title,
+      detail,
     };
     const payload = { data: { receipt_date: receiptDate } };
 
@@ -38,6 +53,7 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
       onSubmit={handleSubmit}
       nodDate={nodDate}
       appealId={appealId}
+      appellantName={appeal.appellantFullName}
     />
   );
 };

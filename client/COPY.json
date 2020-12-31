@@ -165,7 +165,7 @@
   "EDIT_NOD_DATE_MODAL_DESCRIPTION": "**Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.**",
   "EDIT_NOD_DATE_LABEL": "NOD Date",
   "EDIT_NOD_DATE_SUCCESS_ALERT_TITLE": "NOD date has been updated",
-  "EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE": "You have successfully updated the NOD date",
+  "EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE": "The NOD date for %s's case has been updated from %s to %s. There have been no changes to the timeliness of issues.",
   "EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE": "The new NOD date cannot be after today's date",
   "EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE": "New NOD date cannot be before 02/19/2019",
 
