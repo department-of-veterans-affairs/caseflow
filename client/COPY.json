@@ -683,7 +683,8 @@
   "DOCKET_SWITCH_DENIAL_INSTRUCTIONS": "Add the date and add any context for the denial of this switch.",
   "DENIED_DOCKET_SWITCH_TASK_LABEL": "Denied Docket Switch",
   "GRANTED_DOCKET_SWITCH_TASK_LABEL": "Granted Docket Switch",
-
+  "DOCKET_SWITCH_GRANTED_REQUEST_LABEL": "Switch Docket: Review %s's Request",
+  "DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS": "Add the information based on how you are proceeding with this docket switch and the claimant's form.",
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
   "CORRECT_REQUEST_ISSUES_WITHDRAW": "Withdraw",
@@ -708,6 +709,8 @@
   "ADD_RELATIONSHIPS": "To add a Veteran's (spouse, child, or parent) to the Corporate Database, please ",
   "ADD_CLAIMANT_TEXT": "If the claimant is an attorney, please click \"Add Claimant\". ",
   "CLAIMANT_INFORMATION": "If you do not see the claimant in the options below or if the claimant's information needs to be updated, please ",
+  "DECEASED_CLAIMANT_TITLE": "This Veteran may be deceased.",
+  "DECEASED_CLAIMANT_MESSAGE": "Please confirm before sending a notice letter.",
   "DUPLICATE_PHONE_NUMBER_TITLE": "Veteran Record Alert",
   "DUPLICATE_PHONE_NUMBER_MESSAGE": "Please contact VLJ Support to request that this veteran's information be updated to remove duplicate phone numbers currently on file to resolve this error.",
   "INCIDENT_FLASH_ERROR_START": "Please send an encrypted email to the ",

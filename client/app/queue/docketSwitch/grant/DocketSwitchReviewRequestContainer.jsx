@@ -1,15 +1,22 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { stepForward } from '../docketSwitchSlice';
 import { DocketSwitchReviewRequestForm } from './DocketSwitchReviewRequestForm';
+import { useHistory, useParams } from 'react-router';
+import { appealWithDetailSelector } from '../../selectors';
 
 export const DocketSwitchReviewRequestContainer = () => {
   const dispatch = useDispatch();
+  const { appealId } = useParams();
+  const { goBack } = useHistory();
 
-  const handleCancel = () => {
-    // Add code to clear docketSwitch redux store
-    // You can utilize useHistory() react-router hook to go back to the case details page
-  };
+  const appeal = useSelector((state) =>
+    appealWithDetailSelector(state, { appealId })
+  );
+
+  // Reminder to add code to clear docketSwitch redux store when we go back.
+  const handleCancel = () => goBack();
+
   const handleSubmit = () => {
     // Add stuff to redux store
 
@@ -24,6 +31,8 @@ export const DocketSwitchReviewRequestContainer = () => {
       <DocketSwitchReviewRequestForm
         onCancel={handleCancel}
         onSubmit={handleSubmit}
+        appellantName={appeal.appellantFullName}
+        issues={appeal.issues}
       />
     </>
   );
