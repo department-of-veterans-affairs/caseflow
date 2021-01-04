@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'glamor';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import {
@@ -10,8 +11,8 @@ import {
 } from '../constants';
 import { convertStringToBoolean } from '../util';
 import COPY from '../../../COPY';
-import { useSelector } from 'react-redux';
 import Button from '../../components/Button';
+import Alert from '../../components/Alert';
 import classes from './SelectClaimant.module.scss';
 import { AddClaimantModal } from './AddClaimantModal';
 
@@ -54,10 +55,11 @@ export const SelectClaimant = (props) => {
     relationships,
     payeeCode,
     payeeCodeError,
-    setPayeeCode
+    setPayeeCode,
+    featureToggles
   } = props;
 
-  const { attorneyFees, establishFiduciaryEps } = useSelector((state) => state.featureToggles);
+  const { attorneyFees, establishFiduciaryEps, deceasedAppellants } = featureToggles;
   const [showClaimantModal, setShowClaimantModal] = useState(false);
   const [newClaimant, setNewClaimant] = useState(null);
   const openAddClaimantModal = () => setShowClaimantModal(true);
@@ -175,9 +177,26 @@ export const SelectClaimant = (props) => {
     );
   };
 
-  let veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS;
+  const alertStyling = css({
+    width: '463px'
+  });
 
-  if (isVeteranDeceased) {
+  const deceasedVeteranAlert = () => {
+    return (
+      <Alert
+        lowerMargin
+        styling={alertStyling}
+        type="warning"
+        message={`${COPY.DECEASED_CLAIMANT_TITLE} ${COPY.DECEASED_CLAIMANT_MESSAGE}`}
+      />
+    );
+  };
+
+  let veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS;
+  const allowDeceasedAppellants = deceasedAppellants && formType === 'appeal';
+  const showDeceasedVeteranAlert = isVeteranDeceased && veteranIsNotClaimant === false && allowDeceasedAppellants;
+
+  if (isVeteranDeceased && !allowDeceasedAppellants) {
     // disable veteran claimant option if veteran is deceased
     veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE;
     // set claimant value to someone other than the veteran
@@ -197,6 +216,7 @@ export const SelectClaimant = (props) => {
         value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant?.toString()}
       />
 
+      {showDeceasedVeteranAlert && deceasedVeteranAlert()}
       {showClaimants && (hasRelationships || newClaimant) && claimantOptions()}
       {showClaimants && !hasRelationships && !newClaimant && noClaimantsCopy()}
 
@@ -232,7 +252,8 @@ SelectClaimant.propTypes = {
   payeeCode: PropTypes.string,
   payeeCodeError: PropTypes.string,
   setPayeeCode: PropTypes.func,
-  claimantNotes: PropTypes.string
+  claimantNotes: PropTypes.string,
+  featureToggles: PropTypes.object
 };
 
 export default SelectClaimant;
