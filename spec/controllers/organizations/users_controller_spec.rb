@@ -68,6 +68,28 @@ describe Organizations::UsersController, :postgres, type: :controller do
     end
   end
 
+  describe "GET /organizations/:org_url/users" do
+    subject { get :index, params: { organization_url: dvc_team.url }, format: :json }
+
+    context "DvcTeam admin user" do
+      let(:user) { create(:user) }
+      let(:dvc_team) { DvcTeam.create_for_dvc(user) }
+
+      before do
+        User.authenticate!(user: user)
+      end
+
+      it "includes admin field for users in organization" do
+        subject
+        resp = JSON.parse(response.body)
+        org_user = resp["organization_users"]["data"].first
+        expect(org_user["attributes"]["css_id"]).to eq(user.css_id)
+        expect(org_user["attributes"]["admin"]).to eq(true)
+        expect(org_user["attributes"]["dvc"]).to eq(true)
+      end
+    end
+  end
+
   describe "PATCH /organizations/:org_url/users/:user_id" do
     subject { patch(:update, params: params, as: :json) }
     context "when the param is admin" do
