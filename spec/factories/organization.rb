@@ -24,7 +24,8 @@ FactoryBot.define do
 
       # Note:
       # OrganizationsUser.make_user_admin(user, org) will call
-      # org.add_user(user).
+      # org.add_user(user) and since org is a JudgeTeam,
+      # this triggers the first user to be an admin.
 
       # for creating error state; error b/c lead should also be admin
       trait :incorrectly_has_nonadmin_judge_team_lead do

@@ -4,8 +4,6 @@ class OrganizationsUser < CaseflowRecord
   belongs_to :organization
   belongs_to :user
 
-  # has_one :judge_team_role, class_name: "::JudgeTeamRole", dependent: :destroy
-
   scope :non_admin, -> { where(admin: false) }
 
   scope :admin, -> { where(admin: true) }
@@ -39,13 +37,6 @@ class OrganizationsUser < CaseflowRecord
 
   def self.existing_record(user, organization)
     find_by(organization_id: organization.id, user_id: user.id)
-  end
-
-  # UI needs updating?
-  def self.enable_decision_drafting(user, organization)
-  end
-
-  def self.disable_decision_drafting(user, organization)
   end
 
   def self.judge_team_has_admin?(organization)
