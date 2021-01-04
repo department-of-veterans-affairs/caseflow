@@ -4,7 +4,7 @@ class DocketSwitchesController < ApplicationController
   before_action :verify_task_access, only: [:create]
 
   def create
-    docket_switch = DocketSwitch.new(*docket_switch_params)
+    docket_switch = DocketSwitch.create(*docket_switch_params)
     # :nocov:
     if docket_switch.errors.present?
       render json: { errors: [detail: docket_switch.errors.full_messages.join(", ")] }, status: :bad_request
@@ -12,7 +12,6 @@ class DocketSwitchesController < ApplicationController
     end
     # :nocov:
 
-    docket_switch.save
     render json: { docket_switch: docket_switch }
   end
 
