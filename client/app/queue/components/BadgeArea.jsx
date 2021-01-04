@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import * as React from 'react';
 
+import FnodBadge from './FnodBadge';
 import HearingBadge from './HearingBadge';
 import OvertimeBadge from './OvertimeBadge';
 import { mostRecentHeldHearingForAppeal } from '../utils';
@@ -20,15 +21,18 @@ import { mostRecentHeldHearingForAppeal } from '../utils';
 class BadgeArea extends React.PureComponent {
   render = () => {
     const { appeal, isHorizontal, task } = this.props;
+
     let badges;
 
     if (appeal) {
       badges = <React.Fragment>
+        <FnodBadge appeal={appeal} />
         <HearingBadge hearing={mostRecentHeldHearingForAppeal(appeal)} />
         <OvertimeBadge appeal={appeal} />
       </React.Fragment>;
     } else {
       badges = <React.Fragment>
+        <FnodBadge appeal={task.appeal} />
         <HearingBadge task={task} />
         <OvertimeBadge appeal={task.appeal} />
       </React.Fragment>;
