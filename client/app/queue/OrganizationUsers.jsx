@@ -242,7 +242,7 @@ export default class OrganizationUsers extends React.PureComponent {
 
       return <React.Fragment>
         <li key={user.id} {...style}>{this.formatName(user)}
-          { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_admin_LABEL} )</strong> }
+          { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
           { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
           { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
           { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }

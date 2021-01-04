@@ -26,6 +26,10 @@ class Organizations::UsersController < OrganizationsController
   def update
     no_cache
 
+    if params.key?(:admin)
+      adjust_admin_rights
+    end
+
     render json: { users: json_administered_users([user_to_modify]) }, status: :ok
   end
 
@@ -51,6 +55,14 @@ class Organizations::UsersController < OrganizationsController
 
   def user_to_modify
     @user_to_modify ||= User.find(params.require(:id))
+  end
+
+  def adjust_admin_rights
+    if params[:admin] == true
+      OrganizationsUser.make_user_admin(user_to_modify, organization)
+    else
+      OrganizationsUser.remove_admin_rights_from_user(user_to_modify, organization)
+    end
   end
 
   def organization_url
