@@ -8,7 +8,6 @@ import classNames from 'classnames';
 import { getPageCoordinatesOfMouseEvent } from 'utils/reader';
 import { pdfWrapper } from 'styles/reader/Document/Pdf';
 import { fetchDocuments, openDownloadLink } from 'utils/reader/document';
-import { focusComment } from 'utils/reader/comments';
 import { documentScreen } from 'store/reader/selectors';
 import { DocumentHeader } from 'components/reader/DocumentViewer/Header';
 import { DocumentSidebar } from 'components/reader/DocumentViewer/Sidebar';
@@ -210,13 +209,7 @@ const DocumentViewer = (props) => {
       dispatch(updateComment({}));
       dispatch(startEdit(null));
     },
-    selectComment: (comment) => {
-      // Scroll to the comment location
-      // focusComment(comment);
-
-      // Update the store with the selected component
-      dispatch(selectComment(comment));
-    },
+    selectComment: (comment) => dispatch(selectComment(comment)),
     deselectComment: () => {
       if (state.selectedComment) {
         dispatch(selectComment({}));

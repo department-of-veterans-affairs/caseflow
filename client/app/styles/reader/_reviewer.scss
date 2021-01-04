@@ -416,6 +416,7 @@
   overflow: hidden;
   line-height: 1;
 
+  // Needed to correctly render the Text Layer
   span {
     position: absolute;
     color: transparent;
