@@ -10,26 +10,31 @@ class OrganizationsUser < CaseflowRecord
 
   scope :admin, -> { where(admin: true) }
 
-  # Deprecated: add_user_to_organization(user, organization)
-  # Use instead: organization.add_user(user)
-
   def self.make_user_admin(user, organization)
     organization_user = OrganizationsUser.existing_record(user, organization) || organization.add_user(user)
-    organization_user.tap do |org_user|
-      org_user.update!(admin: true)
+    if OrganizationsUser.judge_team_has_admin?(organization)
+      fail(Caseflow::Error::ActionForbiddenError, message: COPY::JUDGE_TEAM_ADMIN_ERROR)
+    else
+      organization_user.tap do |org_user|
+        org_user.update!(admin: true)
+      end
     end
   end
 
   def self.remove_admin_rights_from_user(user, organization)
+    if user_is_judge_of_team?(user, organization)
+      fail Caseflow::Error::ActionForbiddenError, message: COPY::JUDGE_TEAM_DEADMIN_JUDGE_ERROR
+    end
+
     existing_record(user, organization)&.update!(admin: false)
   end
 
   def self.remove_user_from_organization(user, organization)
-    if organization.is_a?(JudgeTeam) && organization.judge.eql?(user)
+    if user_is_judge_of_team?(user, organization)
       fail Caseflow::Error::ActionForbiddenError, message: COPY::JUDGE_TEAM_REMOVE_JUDGE_ERROR
     end
 
-    existing_record(user, organization).destroy
+    existing_record(user, organization)&.destroy
   end
 
   def self.existing_record(user, organization)
@@ -54,5 +59,13 @@ class OrganizationsUser < CaseflowRecord
     else
       org_user.judge_team_role.update!(type: nil)
     end
+  end
+
+  def self.judge_team_has_admin?(organization)
+    organization.is_a?(JudgeTeam) && !!organization.admin
+  end
+
+  def self.user_is_judge_of_team?(user, organization)
+    organization.is_a?(JudgeTeam) && organization.judge.eql?(user)
   end
 end
