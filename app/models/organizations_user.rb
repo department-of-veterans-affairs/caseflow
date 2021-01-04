@@ -4,7 +4,7 @@ class OrganizationsUser < CaseflowRecord
   belongs_to :organization
   belongs_to :user
 
-  has_one :judge_team_role, class_name: "::JudgeTeamRole", dependent: :destroy
+  # has_one :judge_team_role, class_name: "::JudgeTeamRole", dependent: :destroy
 
   scope :non_admin, -> { where(admin: false) }
 
@@ -41,24 +41,11 @@ class OrganizationsUser < CaseflowRecord
     find_by(organization_id: organization.id, user_id: user.id)
   end
 
+  # UI needs updating?
   def self.enable_decision_drafting(user, organization)
-    org_user = existing_record(user, organization)
-    return nil unless org_user&.judge_team_role && FeatureToggle.enabled?(:judge_admin_scm)
-    if org_user.judge_team_role.is_a?(JudgeTeamLead)
-      fail Caseflow::Error::ActionForbiddenError, message: COPY::JUDGE_TEAM_ATTORNEY_RIGHTS_ERROR
-    else
-      org_user.judge_team_role.update!(type: DecisionDraftingAttorney)
-    end
   end
 
   def self.disable_decision_drafting(user, organization)
-    org_user = existing_record(user, organization)
-    return nil unless org_user&.judge_team_role && FeatureToggle.enabled?(:judge_admin_scm)
-    if org_user.judge_team_role.is_a?(JudgeTeamLead)
-      fail Caseflow::Error::ActionForbiddenError, message: COPY::JUDGE_TEAM_ATTORNEY_RIGHTS_ERROR
-    else
-      org_user.judge_team_role.update!(type: nil)
-    end
   end
 
   def self.judge_team_has_admin?(organization)

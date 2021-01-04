@@ -69,12 +69,8 @@ class Organizations::UsersController < OrganizationsController
     end
   end
 
+  # Delete references to this
   def adjust_decision_drafting_ability
-    if params[:attorney] == true
-      OrganizationsUser.enable_decision_drafting(user_to_modify, organization)
-    else
-      OrganizationsUser.disable_decision_drafting(user_to_modify, organization)
-    end
   end
 
   def organization_url
