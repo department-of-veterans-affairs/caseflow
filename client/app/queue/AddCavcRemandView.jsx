@@ -113,11 +113,12 @@ const AddCavcRemandView = (props) => {
     setIssues({ ...issues, [evt.target.name]: evt.target.checked });
   };
 
+  const mdrSubtype = () => subType === CAVC_REMAND_SUBTYPES.mdr;
   const validDocketNumber = () => (/^\d{2}-\d{1,5}$/).exec(docketNumber);
   const validJudge = () => Boolean(judge);
   const validDecisionDate = () => Boolean(decisionDate);
-  const validJudgementDate = () => Boolean(judgementDate);
-  const validMandateDate = () => Boolean(mandateDate);
+  const validJudgementDate = () => Boolean(judgementDate) || mdrSubtype();
+  const validMandateDate = () => Boolean(mandateDate) || mdrSubtype();
   const validInstructions = () => instructions && instructions.length > 0;
 
   const validateForm = () => {
@@ -144,7 +145,7 @@ const AddCavcRemandView = (props) => {
 
     const successMsg = {
       title: COPY.CAVC_REMAND_CREATED_TITLE,
-      detail: COPY.CAVC_REMAND_CREATED_DETAIL
+      detail: mdrSubtype() ? COPY.CAVC_REMAND_MDR_CREATED_DETAIL : COPY.CAVC_REMAND_CREATED_DETAIL
     };
 
     props.requestSave(`/appeals/${appealId}/cavc_remand`, payload, successMsg).
@@ -213,6 +214,8 @@ const AddCavcRemandView = (props) => {
     strongLabel
   />;
 
+  const mdrBanner =<Alert type="info" title="">{COPY.MDR_SELECTION_ALERT_BANNER}</Alert>
+
   const judgementField = <DateSelector
     label={COPY.CAVC_JUDGEMENT_DATE}
     type="date"
@@ -275,6 +278,7 @@ const AddCavcRemandView = (props) => {
       {typeField}
       {type === CAVC_DECISION_TYPES.remand && remandTypeField }
       {decisionField}
+      {type === CAVC_DECISION_TYPES.remand && mdrSubtype() && mdrBanner }
       {judgementField}
       {mandateField}
       {issuesField}
