@@ -162,7 +162,6 @@ detectors:
     exclude:
       - BgsPowerOfAttorney
       - HearingLocation
-      - JudgeTeam
       - LegacyAppeal
       - Person
       - QueueConfig

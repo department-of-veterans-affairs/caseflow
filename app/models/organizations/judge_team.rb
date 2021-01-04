@@ -5,7 +5,8 @@ class JudgeTeam < Organization
 
   class << self
     def for_judge(user)
-      user.administered_teams.detect { |team| team.is_a?(JudgeTeam) && team.judge.eql?(user) }
+      # This could be replaced with user.administered_judge_teams.first
+      user.administered_judge_teams.detect { |team| team.judge.eql?(user) }
     end
 
     def create_for_judge(user)
