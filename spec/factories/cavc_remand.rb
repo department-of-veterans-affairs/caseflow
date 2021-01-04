@@ -24,7 +24,7 @@ FactoryBot.define do
                                            evaluator.appeal.decision_issues.pluck(:id)
                                          end
       else
-        judge = JudgeTeam.first.admins.first
+        judge = JudgeTeam.first.admin
         attorney = JudgeTeam.first.non_admins.first
         veteran = Veteran.first
 

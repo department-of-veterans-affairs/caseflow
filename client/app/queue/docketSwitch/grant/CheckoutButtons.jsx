@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
-
+import cx from 'classnames';
 import DecisionViewFooter from 'app/queue/components/DecisionViewFooter';
-
 export const CheckoutButtons = ({
   onCancel,
   onBack,
@@ -11,14 +10,13 @@ export const CheckoutButtons = ({
   disabled = false,
 }) => {
   const cancelBtn = {
-    classNames: ['cf-btn-link'],
+    classNames: [cx('cf-btn-link', { 'cf-right-side': !onBack })],
     callback: onCancel,
     name: 'cancel-button',
     displayText: 'Cancel',
     willNeverBeLoading: true,
   };
-
-  const backBtn = {
+  const submitBtn = {
     classNames: ['cf-right-side'],
     callback: onSubmit,
     name: 'next-button',
@@ -26,21 +24,19 @@ export const CheckoutButtons = ({
     displayText: 'Continue',
     styling: css({ marginLeft: '1rem' }),
   };
-
-  const submitBtn = {
+  const backBtn = {
     classNames: ['cf-right-side', 'cf-prev-step', 'usa-button-secondary'],
-    callback: onBack ?? onCancel,
+    callback: onBack,
     name: 'back-button',
-    displayText: onBack ? 'Back' : 'Cancel',
+    displayText: 'Back',
     willNeverBeLoading: true,
   };
-
   // Button layout from QueueFlowPage
   const buttons = useMemo(() => [
-    // Only display left-side cancel if we have a back button
-    ...(onBack ? [cancelBtn] : []),
-    backBtn,
     submitBtn,
+    cancelBtn,
+    // Only display "Back" button if applicable
+    ...(onBack ? [backBtn] : []),
   ]);
 
   return <DecisionViewFooter buttons={buttons} />;
@@ -51,5 +47,4 @@ CheckoutButtons.propTypes = {
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
 };
-
 export default CheckoutButtons;
