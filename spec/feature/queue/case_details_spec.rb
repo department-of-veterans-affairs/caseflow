@@ -320,8 +320,9 @@ RSpec.feature "Case details", :all_dbs do
 
       %w[Attorney Other].each do |claimant_type|
         scenario "details view informs us that appellant's relationship to Veteran is #{claimant_type}" do
-          create(
+          claimant = create(
             :claimant,
+            :with_unrecognized_appellant_detail,
             decision_review: appeal,
             type: "#{claimant_type}Claimant",
             participant_id: bgs_atty.participant_id,
@@ -331,7 +332,7 @@ RSpec.feature "Case details", :all_dbs do
 
           expect(page).to have_content("About the Veteran")
           expect(page).to have_content("About the Appellant")
-          expect(page).to have_content("Relation to Veteran: #{claimant_type}")
+          expect(page).to have_content("Relation to Veteran: #{claimant.relationship}")
         end
       end
     end
@@ -1251,19 +1252,70 @@ RSpec.feature "Case details", :all_dbs do
                receipt_date: 10.months.ago.to_date.mdY)
       end
 
-      let(:cob_user) { create(:user, css_id: "COB_USER", station_id: "101") }
+      context "when the user is a COB_USER" do
+        let(:cob_user) { create(:user, css_id: "COB_USER", station_id: "101") }
 
-      before do
-        ClerkOfTheBoard.singleton.add_user(cob_user)
-        User.authenticate!(user: cob_user)
+        before do
+          ClerkOfTheBoard.singleton.add_user(cob_user)
+          User.authenticate!(user: cob_user)
+        end
+
+        it "displays Edit NOD Date link" do
+          visit("/queue/appeals/#{appeal.uuid}")
+
+          expect(appeal.nod_date).to_not be_nil
+          expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
+          expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+        end
       end
 
-      it "displays Edit NOD Date link" do
-        visit("/queue/appeals/#{appeal.uuid}")
+      context "when the user is an attorney" do
+        let(:attorney_user) { create(:user, css_id: "BVASCASPER1", station_id: "101") }
 
-        expect(appeal.nod_date).to_not be_nil
-        expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
-        expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+        before do
+          User.authenticate!(user: attorney_user)
+        end
+
+        it "displays Edit NOD Date link" do
+          visit("/queue/appeals/#{appeal.uuid}")
+
+          expect(appeal.nod_date).to_not be_nil
+          expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
+          expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+        end
+      end
+
+      context "when the user is a judge" do
+        let(:judge_user) { create(:user, css_id: "BVAOSHOWALT", station_id: "101") }
+
+        before do
+          User.authenticate!(user: judge_user)
+        end
+
+        it "displays Edit NOD Date link" do
+          visit("/queue/appeals/#{appeal.uuid}")
+
+          expect(appeal.nod_date).to_not be_nil
+          expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
+          expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+        end
+      end
+
+      context "when the user is an Intake User" do
+        let(:intake_user) { create(:user, css_id: "BVAISHAW", station_id: "101") }
+
+        before do
+          BvaIntake.singleton.add_user(intake_user)
+          User.authenticate!(user: intake_user)
+        end
+
+        it "displays Edit NOD Date link" do
+          visit("/queue/appeals/#{appeal.uuid}")
+
+          expect(appeal.nod_date).to_not be_nil
+          expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
+          expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+        end
       end
     end
 
@@ -1294,7 +1346,7 @@ RSpec.feature "Case details", :all_dbs do
         User.authenticate!(user: not_cob_user)
       end
 
-      it "displays Edit NOD Date link" do
+      it "does not display the Edit NOD Date link" do
         visit("/queue/appeals/#{appeal.uuid}")
 
         expect(appeal.nod_date).to_not be_nil

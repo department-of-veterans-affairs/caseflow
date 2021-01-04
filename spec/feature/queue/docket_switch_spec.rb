@@ -15,18 +15,20 @@ RSpec.feature "Docket Switch", :all_dbs do
   let(:appeal) do
     create(:appeal, receipt_date: receipt_date)
   end
-  let(:decision_issues) do
-    3.times do |idx|
+
+  let!(:request_issues) do
+    3.times do
       create(
-        :decision_issue,
+        :request_issue,
         :rating,
         decision_review: appeal,
-        disposition: "denied",
-        description: "Decision issue description #{idx}",
-        decision_text: "decision issue"
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: 10.days.ago,
+        contested_issue_description: "PTSD denied"
       )
     end
   end
+
   let(:root_task) { create(:root_task, :completed, appeal: appeal) }
   let(:cotb_attorney) { create(:user, :with_vacols_attorney_record, full_name: "Clark Bard") }
   let!(:cotb_non_attorney) { create(:user, full_name: "Aang Bender") }
@@ -217,23 +219,45 @@ RSpec.feature "Docket Switch", :all_dbs do
     it "allows attorney to complete the docket switch grant" do
       User.authenticate!(user: cotb_attorney)
       visit "/queue/appeals/#{appeal.uuid}"
+
       find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
       find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_SWITCH_GRANTED.label).click
 
-      # expect(page).to have_content(format(COPY::DOCKET_SWITCH_GRANT_TITLE, appeal.claimant.name))
-      # expect(page).to have_content(COPY::DOCKET_SWITCH_GRANT_INSTRUCTIONS)
+      expect(page).to have_content(format(COPY::DOCKET_SWITCH_GRANTED_REQUEST_LABEL, appeal.claimant.name))
+      expect(page).to have_content(COPY::DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS)
 
-      # fill_in "What is the Receipt Date of the docket switch request?", with: receipt_date
-      # fill_in("context", with: context)
+      fill_in "What is the Receipt Date of the docket switch request?", with: receipt_date
 
-      # click_button(text: "Confirm")
+      # select full grants
+      within_fieldset("How are you proceeding with this request to switch dockets?") do
+        find("label", text: "Grant all issues").click
+      end
 
-      # # Return back to user's queue
-      # expect(page).to have_current_path("/queue")
+      expect(page).to have_content("Which docket will the issue(s) be switched to?")
+      expect(page).to have_button("Continue", disabled: true)
 
-      # Verify correct success alert
+      # select docket type
+      within_fieldset("Which docket will the issue(s) be switched to?") do
+        find("label", text: "Direct Review").click
+      end
+      expect(page).to have_button("Continue", disabled: false)
 
-      # Verify that denial completed correctly
+      # select partial grants
+      within_fieldset("How are you proceeding with this request to switch dockets?") do
+        find("label", text: "Grant a partial switch").click
+      end
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_button("Continue", disabled: true)
+
+      # select issues
+      within_fieldset("Select the issue(s) that are switching dockets:") do
+        find("label", text: "1. PTSD denied").click
+      end
+      expect(page).to have_button("Continue", disabled: false)
+
+      click_button(text: "Cancel")
+      # Return back to user's queue
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
     end
   end
 end
