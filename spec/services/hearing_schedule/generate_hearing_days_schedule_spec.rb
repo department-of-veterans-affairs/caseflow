@@ -187,7 +187,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       HearingSchedule::GenerateHearingDaysSchedule.new(schedule_period)
     end
 
-    subject { generate_hearing_days_schedule.allocate_hearing_days_to_ros }
+    subject { generate_hearing_days_schedule.allocate_hearing_days_to_ros(:video) }
 
     context "allocated days to ros" do
       it "assigned as rooms" do
