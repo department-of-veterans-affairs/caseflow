@@ -23,6 +23,7 @@ client/junit.xml
 /tmp
 /coverage
 /reports/*
+!/reports/sql_queries
 !/reports/.keep
 credstash.log
 
