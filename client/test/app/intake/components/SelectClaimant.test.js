@@ -1,27 +1,28 @@
 import React from 'react';
-import {
-  screen,
-  render
-} from '@testing-library/react';
+import { screen, render } from '@testing-library/react';
 import { axe } from 'jest-axe';
-import userEvent from '@testing-library/user-event';
+
+import COPY from 'app/../COPY';
 
 import { SelectClaimant } from 'app/intake/components/SelectClaimant';
 
-const defaultRelationships = [{
-  value: 'CLAIMANT_WITH_PVA_AS_VSO',
-  displayText: 'Bob Vance, Spouse',
-  defaultPayeeCode: '10'
-}, {
-  value: '1129318238',
-  displayText: 'Cathy Smith, Child',
-  defaultPayeeCode: '11'
-}];
+const defaultRelationships = [
+  {
+    value: 'CLAIMANT_WITH_PVA_AS_VSO',
+    displayText: 'Bob Vance, Spouse',
+    defaultPayeeCode: '10',
+  },
+  {
+    value: '1129318238',
+    displayText: 'Cathy Smith, Child',
+    defaultPayeeCode: '11',
+  },
+];
 
 const defaultFeatureToggles = {
   attorneyFees: false,
   establishFiduciaryEps: false,
-  deceasedAppellants: false
+  deceasedAppellants: false,
 };
 
 describe('SelectClaimant', () => {
@@ -29,29 +30,38 @@ describe('SelectClaimant', () => {
     jest.clearAllMocks();
   });
 
-  const setVeteranisNotClaimant = jest.fn();
+  const setVeteranIsNotClaimant = jest.fn();
 
-  const setupDefault = () => {
-    return render(
-      <SelectClaimant
-        relationships={defaultRelationships}
-        featureToggles={defaultFeatureToggles}
-      />);
+  const defaultProps = {
+    formType: 'appeal',
+    relationships: defaultRelationships,
+    featureToggles: defaultFeatureToggles,
+    setVeteranIsNotClaimant,
   };
 
-  const setupDeceasedAppellants = (props = {
-    toggled: false, formType: '' }) => {
+  const setupDefault = (props = { ...defaultProps }) => {
+    return render(<SelectClaimant {...props} />);
+  };
 
+  const setupDeceasedAppellants = (
+    props = {
+      toggled: false,
+      formType: '',
+    }
+  ) => {
     return render(
       <SelectClaimant
         isVeteranDeceased
-        featureToggles={{ ...defaultFeatureToggles,
-          deceasedAppellants: props.toggled }}
+        featureToggles={{
+          ...defaultFeatureToggles,
+          deceasedAppellants: props.toggled,
+        }}
         relationships={defaultRelationships}
         formType={props.formType}
         veteranIsNotClaimant={props.veteranIsNotClaimant}
-        setVeteranIsNotClaimant={setVeteranisNotClaimant}
-      />);
+        setVeteranIsNotClaimant={setVeteranIsNotClaimant}
+      />
+    );
   };
 
   describe('with default value props', () => {
@@ -94,7 +104,7 @@ describe('SelectClaimant', () => {
         const radioNo = screen.getByRole('radio', { name: /no/i });
 
         expect(radioNo).toBeDisabled();
-        expect(setVeteranisNotClaimant).toHaveBeenCalled();
+        expect(setVeteranIsNotClaimant).toHaveBeenCalled();
       });
     });
 
@@ -121,15 +131,57 @@ describe('SelectClaimant', () => {
         const radioNo = screen.getByRole('radio', { name: /no/i });
 
         expect(radioNo).toBeEnabled();
-        expect(setVeteranisNotClaimant).toBeCalledTimes(0);
+        expect(setVeteranIsNotClaimant).toBeCalledTimes(0);
       });
 
       it('renders deceasedVeteranAlert', () => {
-        setupDeceasedAppellants({...setupProps, veteranIsNotClaimant: false});
+        setupDeceasedAppellants({ ...setupProps, veteranIsNotClaimant: false });
 
         const alert = screen.getByRole('alert');
 
         expect(alert).toBeInTheDocument();
+      });
+    });
+
+    describe('nonVeteranClaimants enabled', () => {
+      const featureToggles = {
+        ...defaultFeatureToggles,
+        nonVeteranClaimants: true,
+      };
+
+      it('renders correctly', async () => {
+        // Component only differs when veteranIsNotClaimant is set
+        const veteranIsNotClaimant = true;
+        const { container } = setupDefault({
+          ...defaultProps,
+          featureToggles,
+          veteranIsNotClaimant,
+        });
+
+        // Ensure it's rendering the additional content
+        expect(
+          screen.queryByText(COPY.CLAIMANT_NOT_FOUND_START)
+        ).not.toBeInTheDocument();
+        expect(
+          screen.queryByText(COPY.CLAIMANT_NOT_FOUND_END)
+        ).not.toBeInTheDocument();
+
+        expect(
+          screen.queryByText(COPY.SELECT_CLAIMANT_LABEL)
+        ).toBeInTheDocument();
+        expect(
+          screen.queryByRole('radio', { name: /claimant not listed/i })
+        ).toBeInTheDocument();
+
+        expect(container).toMatchSnapshot();
+      });
+
+      it('passes a11y testing', async () => {
+        const { container } = setupDefault({ ...defaultProps, featureToggles });
+
+        const results = await axe(container);
+
+        expect(results).toHaveNoViolations();
       });
     });
   });
@@ -156,7 +208,7 @@ describe('SelectClaimant', () => {
         const radioNo = screen.getByRole('radio', { name: /no/i });
 
         expect(radioNo).toBeDisabled();
-        expect(setVeteranisNotClaimant).toHaveBeenCalled();
+        expect(setVeteranIsNotClaimant).toHaveBeenCalled();
       });
     });
 
@@ -183,7 +235,7 @@ describe('SelectClaimant', () => {
         const radioNo = screen.getByRole('radio', { name: /no/i });
 
         expect(radioNo).toBeDisabled();
-        expect(setVeteranisNotClaimant).toBeCalled();
+        expect(setVeteranIsNotClaimant).toBeCalled();
       });
     });
   });
