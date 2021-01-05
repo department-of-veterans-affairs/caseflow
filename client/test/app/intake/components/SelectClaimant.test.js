@@ -30,13 +30,13 @@ describe('SelectClaimant', () => {
     jest.clearAllMocks();
   });
 
-  const setVeteranisNotClaimant = jest.fn();
+  const setVeteranIsNotClaimant = jest.fn();
 
   const defaultProps = {
     formType: 'appeal',
     relationships: defaultRelationships,
     featureToggles: defaultFeatureToggles,
-    setVeteranisNotClaimant,
+    setVeteranIsNotClaimant,
   };
 
   const setupDefault = (props = { ...defaultProps }) => {
@@ -59,7 +59,7 @@ describe('SelectClaimant', () => {
         relationships={defaultRelationships}
         formType={props.formType}
         veteranIsNotClaimant={props.veteranIsNotClaimant}
-        setVeteranIsNotClaimant={setVeteranisNotClaimant}
+        setVeteranIsNotClaimant={setVeteranIsNotClaimant}
       />
     );
   };
@@ -104,7 +104,7 @@ describe('SelectClaimant', () => {
         const radioNo = screen.getByRole('radio', { name: /no/i });
 
         expect(radioNo).toBeDisabled();
-        expect(setVeteranisNotClaimant).toHaveBeenCalled();
+        expect(setVeteranIsNotClaimant).toHaveBeenCalled();
       });
     });
 
@@ -131,7 +131,7 @@ describe('SelectClaimant', () => {
         const radioNo = screen.getByRole('radio', { name: /no/i });
 
         expect(radioNo).toBeEnabled();
-        expect(setVeteranisNotClaimant).toBeCalledTimes(0);
+        expect(setVeteranIsNotClaimant).toBeCalledTimes(0);
       });
 
       it('renders deceasedVeteranAlert', () => {
@@ -208,7 +208,7 @@ describe('SelectClaimant', () => {
         const radioNo = screen.getByRole('radio', { name: /no/i });
 
         expect(radioNo).toBeDisabled();
-        expect(setVeteranisNotClaimant).toHaveBeenCalled();
+        expect(setVeteranIsNotClaimant).toHaveBeenCalled();
       });
     });
 
@@ -235,7 +235,7 @@ describe('SelectClaimant', () => {
         const radioNo = screen.getByRole('radio', { name: /no/i });
 
         expect(radioNo).toBeDisabled();
-        expect(setVeteranisNotClaimant).toBeCalled();
+        expect(setVeteranIsNotClaimant).toBeCalled();
       });
     });
   });
