@@ -103,10 +103,10 @@ class HearingSchedule::GenerateHearingDaysSchedule
     end.to_h
   end
 
-  # Starting place of the algo to assign hearing days to RO
-  def allocate_hearing_days_to_ros
+  # Starting place of the algo to assign Virtual/Video hearing days to RO
+  def allocate_hearing_days_to_ros(request_type)
     @ros = sort_ros_by_rooms_and_allocated_days
-    do_allocate_hearing_days
+    do_allocate_hearing_days(request_type)
   end
 
   # Sort ROs in descending order of the highest ratio of allocated days to rooms and available days
@@ -146,7 +146,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   private
 
   # Method that encapsulates the allocation of hearing days to ROs
-  def do_allocate_hearing_days
+  def do_allocate_hearing_days(request_type)
     @date_allocated = {}
     @amortized = 0
 
@@ -166,14 +166,14 @@ class HearingSchedule::GenerateHearingDaysSchedule
     end
 
     ros = @ros.each_key do |ro_key|
-      allocate_all_ro_monthly_hearing_days(ro_key)
+      allocate_all_ro_monthly_hearing_days(ro_key, request_type)
     end
 
     ros
   end
 
   # Allocate RO for each month within the schedule period
-  def allocate_all_ro_monthly_hearing_days(ro_key)
+  def allocate_all_ro_monthly_hearing_days(ro_key, request_type)
     # Ex, {[1, 2021]=>[Tue, 05 Jan 2021, Wed, 06 Jan 2021...], [2, 2021]=> [Mon, 01 Feb 2021, Tue, 02 Feb 2021,..]}
     grouped_monthly_avail_dates = group_dates_by_month(@ros[ro_key][:available_days])
 
@@ -191,11 +191,11 @@ class HearingSchedule::GenerateHearingDaysSchedule
       end]
     end.to_h
 
-    assign_hearing_days(ro_key)
+    assign_hearing_days(ro_key, request_type)
     add_allocated_days_and_format(ro_key) # sort dates chronologically per month (restore order from before above^ sort)
   end
 
-  def assign_hearing_days(ro_key)
+  def assign_hearing_days(ro_key, request_type)
     # date_index and i are always the same...
     # i is only used as a counter
     # date_index is passed to allocate_hearing_days_to_individual_ro
@@ -203,7 +203,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     date_index = 0
 
     # {[4, 2018]=>20, [9, 2018]=>20..}
-    monthly_allocations = allocations_by_month(ro_key)
+    monthly_allocations = allocations_by_month(ro_key, request_type)
 
     # iterate over each day starting from the first of the month till the 31st (max day a month can have)
     # Allocate max number of days for the 1st of each month based on remaining monthly allocations for that month
@@ -223,13 +223,13 @@ class HearingSchedule::GenerateHearingDaysSchedule
     end
   end
 
-  def allocated_days_for_ro(ro_key)
-    @ros[ro_key][:allocated_days].ceil
+  def allocated_days_for_ro(ro_key, request_type)
+    (request_type == :video) ? @ros[ro_key][:allocated_days].ceil : @ros[ro_key][:allocated_virtual_days].ceil
   end
 
-  def allocations_by_month(ro_key)
+  def allocations_by_month(ro_key, request_type)
     # raise error if there are not enough available days
-    verify_total_available_days(ro_key)
+    verify_total_available_days(ro_key, request_type)
 
     # returns allocations for each month for the RO
     #   Ex, { [1, 2021] => 18, [3, 2021] => 18, [2, 2021] => 18 }
@@ -241,7 +241,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     #
     self.class.validate_and_evenly_distribute_monthly_allocations(
       @ros[ro_key][:allocated_dates],
-      monthly_distributed_days(allocated_days_for_ro(ro_key)),
+      monthly_distributed_days(allocated_days_for_ro(ro_key, request_type)),
       @ros[ro_key][:num_of_rooms]
     )
   end
@@ -250,10 +250,10 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @ros[ro_key][:available_days].count * @ros[ro_key][:num_of_rooms]
   end
 
-  def verify_total_available_days(ro_key)
+  def verify_total_available_days(ro_key, request_type)
     max_allocation = get_max_hearing_days_assignments(ro_key)
 
-    unless allocated_days_for_ro(ro_key).to_i <= max_allocation
+    unless allocated_days_for_ro(ro_key, request_type).to_i <= max_allocation
       fail HearingSchedule::Errors::NotEnoughAvailableDays.new(
         "#{ro_key} can only hold #{max_allocation} hearing days.",
         ro_key: ro_key, max_allocation: max_allocation
@@ -383,6 +383,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     ro_allocations.reduce({}) do |acc, allocation|
       acc[allocation.regional_office] = ro_cities[allocation.regional_office].merge(
         allocated_days: allocation.allocated_days,
+        allocated_virtual_days: allocation.allocated_virtual_days,
         available_days: @available_days,
         num_of_rooms: get_num_of_rooms(allocation.regional_office)
       )
