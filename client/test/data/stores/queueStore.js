@@ -42,7 +42,8 @@ export const initialState = {
   ui: {
     messages: {},
     saveState: {},
-    modals: {}
+    modals: {},
+    featureToggles: {}
   }
 };
 
