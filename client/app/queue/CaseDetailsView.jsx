@@ -31,7 +31,7 @@ import UserAlerts from '../components/UserAlerts';
 import VeteranCasesView from './VeteranCasesView';
 import VeteranDetail from './VeteranDetail';
 import { startPolling } from '../hearings/utils';
-import { FnodBanner } from './components/FnodBanner';
+import FnodBanner from './components/FnodBanner';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
