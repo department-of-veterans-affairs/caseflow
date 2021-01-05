@@ -56,10 +56,18 @@ describe VirtualHearingRepository, :all_dbs do
       end
 
       context "for cancelled virtual hearing" do
-        let(:virtual_hearing) { create(:virtual_hearing, status: :cancelled, hearing: hearing) }
+        let(:virtual_hearing) { create(:virtual_hearing, :initialized, status: :cancelled, hearing: hearing) }
 
         it "returns the virtual hearing" do
           expect(subject).to eq [virtual_hearing]
+        end
+      end
+
+      context "for a virtual hearing created with new link generation" do
+        let(:virtual_hearing) { create(:virtual_hearing, :link_generation_initialized, hearing: hearing) }
+
+        it "does not return the virtual hearing" do
+          expect(subject).to eq []
         end
       end
 
@@ -106,7 +114,7 @@ describe VirtualHearingRepository, :all_dbs do
       end
 
       context "for cancelled virtual hearing" do
-        let(:virtual_hearing) { create(:virtual_hearing, status: :cancelled, hearing: hearing) }
+        let(:virtual_hearing) { create(:virtual_hearing, :initialized, status: :cancelled, hearing: hearing) }
 
         it "returns the virtual hearing" do
           expect(subject).to eq [virtual_hearing]
@@ -115,6 +123,14 @@ describe VirtualHearingRepository, :all_dbs do
 
       context "for pending virtual hearing" do
         let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
+
+        it "does not return the virtual hearing" do
+          expect(subject).to eq []
+        end
+      end
+
+      context "for a virtual hearing created with new link generation" do
+        let(:virtual_hearing) { create(:virtual_hearing, :link_generation_initialized, hearing: hearing) }
 
         it "does not return the virtual hearing" do
           expect(subject).to eq []
@@ -154,22 +170,40 @@ describe VirtualHearingRepository, :all_dbs do
   context ".hearings_with_pending_conference_or_pending_emails" do
     subject { VirtualHearingRepository.hearings_with_pending_conference_or_pending_emails }
 
-    let!(:vh_with_pending_conference) do
-      create(:virtual_hearing, hearing: hearing)
+    context "virtual hearings created with new link generation" do
+      let!(:vh_with_pending_link) { create(:virtual_hearing, hearing: hearing) }
+      let!(:vh_with_all_pending_emails) do
+        create(:virtual_hearing, :link_generation_initialized, status: :active, hearing: hearing)
+      end
+      let!(:vh_in_good_state) do
+        create(:virtual_hearing, :link_generation_initialized, :all_emails_sent, hearing: hearing)
+      end
+
+      it "returns correct virtual hearings" do
+        expect(subject.map(&:id)).to contain_exactly(
+          vh_with_pending_link.id, vh_with_all_pending_emails.id
+        )
+      end
     end
 
-    let!(:vh_with_all_pending_emails) do
-      create(:virtual_hearing, :initialized, status: :active, hearing: hearing)
-    end
+    context "virtual hearings not created with new link generation" do
+      let!(:vh_with_pending_conference) do
+        create(:virtual_hearing, hearing: hearing)
+      end
 
-    let!(:vh_in_good_state) do
-      create(:virtual_hearing, :initialized, :all_emails_sent, status: :active, hearing: hearing)
-    end
+      let!(:vh_with_all_pending_emails) do
+        create(:virtual_hearing, :initialized, status: :active, hearing: hearing)
+      end
 
-    it "returns correct virtual hearings" do
-      expect(subject.map(&:id)).to contain_exactly(
-        vh_with_pending_conference.id, vh_with_all_pending_emails.id
-      )
+      let!(:vh_in_good_state) do
+        create(:virtual_hearing, :initialized, :all_emails_sent, status: :active, hearing: hearing)
+      end
+
+      it "returns correct virtual hearings" do
+        expect(subject.map(&:id)).to contain_exactly(
+          vh_with_pending_conference.id, vh_with_all_pending_emails.id
+        )
+      end
     end
   end
 

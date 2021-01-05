@@ -20,6 +20,8 @@ class DvcTeam < Organization
     admins.first
   end
 
+  alias admin dvc
+
   def judges
     non_admins
   end
