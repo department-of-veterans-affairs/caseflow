@@ -47,12 +47,12 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: 128938e80b083588164233b1db91ea7b677a2627
-  ref: 128938e80b083588164233b1db91ea7b677a2627
+  revision: 7d7c67f7bad5e5aa03e257f0d8e57a4aa1a6cbbf
+  ref: 7d7c67f7bad5e5aa03e257f0d8e57a4aa1a6cbbf
   specs:
     bgs (0.2)
       httpclient
-      nokogiri (~> 1.10.8)
+      nokogiri (>= 1.11.0.rc4)
       savon (~> 2.12)
 
 GIT
@@ -386,7 +386,7 @@ GEM
     mime-types-data (3.2019.1009)
     mimemagic (0.3.5)
     mini_mime (1.0.2)
-    mini_portile2 (2.4.0)
+    mini_portile2 (2.5.0)
     minitest (5.14.2)
     moment_timezone-rails (0.5.0)
     momentjs-rails (2.20.1)
@@ -405,8 +405,9 @@ GEM
     newrelic_rpm (6.5.0.357)
     nio4r (2.5.3)
     no_proxy_fix (0.1.2)
-    nokogiri (1.10.10)
-      mini_portile2 (~> 2.4.0)
+    nokogiri (1.11.0)
+      mini_portile2 (~> 2.5.0)
+      racc (~> 1.4)
     nori (2.6.0)
     notiffany (0.1.1)
       nenv (~> 0.1)
@@ -435,6 +436,7 @@ GEM
       pry (~> 0.10)
     public_suffix (3.1.1)
     puma (3.12.6)
+    racc (1.5.2)
     rack (2.2.3)
     rack-contrib (2.1.0)
       rack (~> 2.0)
@@ -705,7 +707,7 @@ DEPENDENCIES
   moment_timezone-rails
   multiverse
   newrelic_rpm
-  nokogiri (~> 1.10.8)
+  nokogiri (>= 1.11.0.rc4)
   paper_trail (~> 10)
   parallel
   paranoia (~> 2.2)
