@@ -7,9 +7,9 @@ end
 class RegionalOffice
   class NotFoundError < StandardError; end
 
-  MULTIPLE_ROOM_ROS = %w[RO17 RO18].freeze
-  MULTIPLE_NUM_OF_RO_ROOMS = 2
-  DEFAULT_NUM_OF_RO_ROOMS = 1
+  TRIPLE_RO_ROOM_COUNT = 3
+  DOUBLE_RO_ROOM_COUNT = 2
+  DEFAULT_RO_ROOM_COUNT = 1
 
   # Maps CSS Station # to RO id
   STATIONS = convert_top_level_key_to_string(Constants.REGIONAL_OFFICE_FOR_CSS_STATION.to_h).freeze
@@ -86,6 +86,14 @@ class RegionalOffice
 
   def valid?
     !!location_hash[:city]
+  end
+
+  # these ROs have been added manually as needed
+  def rooms
+    return TRIPLE_RO_ROOM_COUNT if %w[RO16 RO17 RO62].include?(key)
+    return DOUBLE_RO_ROOM_COUNT if %w[RO18 RO19 RO22 RO25 RO49].include?(key)
+
+    1
   end
 
   private
