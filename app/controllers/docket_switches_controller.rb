@@ -12,6 +12,8 @@ class DocketSwitchesController < ApplicationController
     end
     # :nocov:
 
+    docket_switch.process!
+
     render json: { docket_switch: docket_switch }
   end
 
