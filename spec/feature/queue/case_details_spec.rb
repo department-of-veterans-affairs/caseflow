@@ -1232,6 +1232,32 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
+    context "when a NOD exists and the case is a legacy case, do not display Edit NOD Date link" do
+      before { FeatureToggle.enable!(:edit_nod_date) }
+      after { FeatureToggle.disable!(:edit_nod_date) }
+
+      let(:judge_user) { create(:user, css_id: "BVAAABSHIRE", station_id: "101") }
+      let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+      let!(:vacols_case) do
+        create(
+          :case,
+          bfdnod: 2.days.ago,
+          bfd19: 1.day.ago
+        )
+      end
+
+      before do
+        User.authenticate!(user: judge_user)
+      end
+
+      it "displays case timeline and does not display Edit NOD Date link for legacy cases" do
+        visit "/queue/appeals/#{appeal.external_id}"
+        expect(appeal.nod_date).to_not be_nil
+        expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
+        expect(page).to_not have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+      end
+    end
+
     context "when a NOD exists and user can edit NOD date display Edit NOD Date link" do
       before { FeatureToggle.enable!(:edit_nod_date) }
       after { FeatureToggle.disable!(:edit_nod_date) }
