@@ -14,7 +14,7 @@ const progressBarSections = [
   },
   {
     title: '3. Review',
-    paths: [PAGE_PATHS.REVIEW],
+    paths: [PAGE_PATHS.REVIEW, PAGE_PATHS.ADD_CLAIMANT],
   },
   {
     title: '4. Add Issues',
