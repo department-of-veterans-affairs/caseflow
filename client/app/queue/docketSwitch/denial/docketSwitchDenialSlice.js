@@ -6,7 +6,7 @@ export const completeDocketSwitchDenial = createAsyncThunk(
   async (data) => {
     try {
       // Update this to conform to submission endpoint expectations
-      const res = await ApiUtil.post('/docket_switch', { data });
+      const res = await ApiUtil.post('/docket_switches', { data });
       const result = res.body?.data;
 
       return result;

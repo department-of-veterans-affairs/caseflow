@@ -55,6 +55,11 @@ class ReviewNextButton extends React.PureComponent {
   }
 
   handleClick = (selectedForm, intakeData) => {
+    // If adding new claimant, we won't submit to backend yet
+    if (intakeData?.claimant === 'claimant_not_listed') {
+      return this.props.history.push('/add_claimant');
+    }
+
     this.submitReview(selectedForm, intakeData).then(
       () => selectedForm.category === 'decisionReview' ?
         this.props.history.push('/add_issues') :

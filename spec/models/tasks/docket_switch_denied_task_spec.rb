@@ -21,7 +21,8 @@ describe DocketSwitchDeniedTask, :postgres do
 
   describe ".available_actions" do
     let(:attorney_task) do
-      task_class.create!(
+      create(
+        task_class.name.underscore.to_sym,
         appeal: root_task.appeal,
         parent_id: root_task.id,
         assigned_to: attorney,

@@ -151,12 +151,24 @@
   "CAVC_REMAND_CREATED_TITLE": "You have successfully created a CAVC remand case",
   "CAVC_REMAND_CREATED_DETAIL": "This has generated a 90-day letter task in your team's queue",
 
+  "CAVC_EXTENSION_REQUEST_TITLE": "Review extension request",
+  "CAVC_EXTENSION_REQUEST_DECISION_LABEL": "How will you proceed?",
+  "CAVC_EXTENSION_REQUEST_GRANT": "grant",
+  "CAVC_EXTENSION_REQUEST_GRANT_HELP_TEXT": "Task will go on hold for selected number of days",
+  "CAVC_EXTENSION_REQUEST_DENY": "deny",
+  "CAVC_EXTENSION_REQUEST_DENY_HELP_TEXT": "Marks the extension request as denied",
+  "CAVC_EXTENSION_REQUEST_GRANT_SUCCESS_TITLE": "This case has been put on hold for %s days",
+  "CAVC_EXTENSION_REQUEST_GRANT_SUCCESS_DETAIL": "You can find this case in the on hold tab of you team's queue",
+  "CAVC_EXTENSION_REQUEST_DENY_SUCCESS_TITLE": "You have denied extension",
+  "CAVC_EXTENSION_REQUEST_DENY_SUCCESS_DETAIL": "This task can be completed to distribute to a judge for further processing",
+
   "EDIT_NOD_DATE_MODAL_TITLE": "Edit NOD Date",
   "EDIT_NOD_DATE_MODAL_DESCRIPTION": "**Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.**",
   "EDIT_NOD_DATE_LABEL": "NOD Date",
   "EDIT_NOD_DATE_SUCCESS_ALERT_TITLE": "NOD date has been updated",
   "EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE": "You have successfully updated the NOD date",
-  "EDIT_NOD_DATE_ERROR_ALERT_MESSAGE": "The new NOD date cannot be after today's date",
+  "EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE": "The new NOD date cannot be after today's date",
+  "EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE": "New NOD date cannot be before 02/19/2019",
 
   "DROPDOWN_LABEL_JUDGE": "VLJ",
   "DROPDOWN_LABEL_HEARING_COORDINATOR": "Hearing Coordinator",
@@ -409,9 +421,13 @@
   "SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_COMPLETE_MODAL_BODY": "Marking this task complete will put this case on hold for 90 days to allow the appellant to respond.",
 
   "CRP_LETTER_RESP_WINDOW_TASK_LABEL": "CAVC-Remand-Processed-Letter Response Window Task",
-  "CRP_LETTER_RESP_WINDOW_TASK_DEFAULT_INSTRUCTIONS": "The response window task will return to the CAVC Teams queue after 90 days or when manually ended early.",
+  "CRP_LETTER_RESP_WINDOW_TASK_DEFAULT_INSTRUCTIONS": "The response window task will return to the CAVC Team's queue after 90 days or when manually ended early.",
+  "CAVC_REMAND_LETTER_RESPONSE_TASK_COMPLETE_MODAL_BODY": "Complete this task to make the case available to be distributed to a judge. You will no longer be able to access this case.",
 
-  "CAVC_SEND_TO_TEAM_BLOCKING_DISTRIBUTION_DETAIL": "Create a %s assigned to the %s team. This will not block you from completing your task to send the 90-day letter to the veteran.",
+  "CAVC_GRANTED_EXTENSION_TASK_LABEL": "Granted extension",
+  "CAVC_DENIED_EXTENSION_TASK_LABEL": "Denied extension",
+
+  "CAVC_SEND_TO_TEAM_BLOCKING_DISTRIBUTION_DETAIL": "Create a %s assigned to the %s team. Your task will remain open to add more actions or be marked complete.",
   "CAVC_SEND_TO_TEAM_BLOCKING_CAVC_DETAIL": "Create a %s task assigned to the %s team. This will block you from sending the 90-day letter to the veteran until the new task is completed.",
 
   "CAVC_POA_TASK_LABEL": "Clarify Power of Attorney",
@@ -633,6 +649,7 @@
   "ADDRESS_CHANGE_MAIL_TASK_LABEL": "Change of address",
   "AOD_MOTION_MAIL_TASK_LABEL": "Motion to Advance on Docket",
   "APPEAL_WITHDRAWAL_MAIL_TASK_LABEL": "Withdrawal of appeal",
+  "CAVC_CORRESPONDENCE_MAIL_TASK_LABEL": "CAVC Correspondence",
   "CLEAR_AND_UNMISTAKABLE_ERROR_MAIL_TASK_LABEL": "CUE-related",
   "CONGRESSIONAL_INTEREST_MAIL_TASK_LABEL": "Congressional interest",
   "CONTROLLED_CORRESPONDENCE_MAIL_TASK_LABEL": "Controlled correspondence",
@@ -667,7 +684,10 @@
   "DOCKET_SWITCH_DENIAL_INSTRUCTIONS": "Add the date and add any context for the denial of this switch.",
   "DENIED_DOCKET_SWITCH_TASK_LABEL": "Denied Docket Switch",
   "GRANTED_DOCKET_SWITCH_TASK_LABEL": "Granted Docket Switch",
-
+  "DOCKET_SWITCH_DENIAL_SUCCESS_TITLE": "You have marked %s's request to switch dockets as denied",
+  "DOCKET_SWITCH_DENIAL_SUCCESS_MESSAGE": "This will be recorded in the Case Timeline for future context.",
+  "DOCKET_SWITCH_GRANTED_REQUEST_LABEL": "Switch Docket: Review %s's Request",
+  "DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS": "Add the information based on how you are proceeding with this docket switch and the claimant's form.",
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
   "CORRECT_REQUEST_ISSUES_WITHDRAW": "Withdraw",
@@ -700,6 +720,8 @@
   "INCIDENT_FLASH_ERROR_END": " with the Veteran's SSN.  Request to temporarily unlock the flash, wait for confirmation, and try again.",
   "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If the claimant is a Veteran's dependant (spouse, child, or parent) and they are not listed or their information needs to be updated, ",
   "CLAIMANT_NOT_FOUND_END": " for assistance. Note: Remember to encrypt any emails that contain PII (such as a veteran or claimant's name, file number or SSN).",
+  "SELECT_CLAIMANT_LABEL": "Please select the claimant listed on the form. If the claimant is not listed, please select \"Claimant not listed\" and add their information in the next step.",
+  "ADD_CLAIMANT_PAGE_DESCRIPTION" : "You are adding a claimant who is not listed in Caseflow. Please select the claimant’s relationship to the Veteran and add their information accordingly. If the claimant has indicated a representative, you can add their information in the next step.",
   "ADD_CLAIMANT_MODAL_TITLE": "Add Claimant",
   "ADD_CLAIMANT_MODAL_DESCRIPTION": "To add a claimant, select their relationship to the Veteran and type to search for their name. **Please note:** at this time, you are only able to add attorneys as claimants.\n\nIf you are unable to find the attorney in the list of names below, please cancel the intake and [email](mailto:VACaseflowIntake@va.gov) for assistance. Remember to encrypt any emails that contain PII.",
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",
@@ -885,6 +907,8 @@
 
   "JUDGE_TEAM_REMOVE_JUDGE_ERROR": "Cannot remove a judge from their judge team.",
   "JUDGE_TEAM_ATTORNEY_RIGHTS_ERROR": "Cannot edit attorney rights on non-attorneys",
+  "JUDGE_TEAM_ADMIN_ERROR": "Cannot add more than one admin to a judge team",
+  "JUDGE_TEAM_DEADMIN_JUDGE_ERROR": "Cannot remove adminship from a judge on their team",
 
   "HEARING_UPDATE_SUCCESSFUL_TITLE": "You have successfully updated %s's hearing.",
 
@@ -947,6 +971,9 @@
   "REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL": "Virtual Hearing Link",
   "VLJ_VIRTUAL_HEARINGS_LINK_TEXT": "Start Virtual Hearing",
   "GUEST_VIRTUAL_HEARINGS_LINK_TEXT": "Join Virtual Hearing",
+  "PIN_KEY_MISSING_ERROR_MESSAGE": "Cannot generate a virtual hearing URL without a valid PIN key",
+  "URL_HOST_MISSING_ERROR_MESSAGE": "Cannot generate a virtual hearing URL without a valid URL host",
+  "URL_PATH_MISSING_ERROR_MESSAGE": "Cannot generate a virtual hearing URL without a valid URL path",
 
   "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s.",
 
