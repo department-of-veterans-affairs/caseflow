@@ -182,7 +182,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
     end
   end
 
-  fcontext "RO hearing days allocation" do
+  context "RO hearing days allocation" do
     let(:generate_hearing_days_schedule) do
       HearingSchedule::GenerateHearingDaysSchedule.new(schedule_period)
     end
@@ -272,6 +272,16 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       subject { generate_hearing_days_schedule.allocate_hearing_days_to_ros(:virtual) }
 
       context "allocated days to ros" do
+        it "allocates hearing days based on allocated_virtual_days" do
+          # Reduce the schedule period allocations into the allocated virtual days (roomless days)
+          allocations = schedule_period.allocations.reduce({}) do |acc, ro|
+            acc[ro.regional_office] = ro.allocated_virtual_days
+            acc
+          end
+
+          # Assert that the allocation was applied based on the virtual days
+          expect(subject.keys.sort).to eq(allocations.keys.sort)
+        end
       end
     end
 
