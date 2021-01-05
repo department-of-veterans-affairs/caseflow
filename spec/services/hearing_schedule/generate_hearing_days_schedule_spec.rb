@@ -182,88 +182,97 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
     end
   end
 
-  context "RO hearing days allocation" do
+  fcontext "RO hearing days allocation" do
     let(:generate_hearing_days_schedule) do
       HearingSchedule::GenerateHearingDaysSchedule.new(schedule_period)
     end
 
-    subject { generate_hearing_days_schedule.allocate_hearing_days_to_ros(:video) }
+    context "with an associated room" do
+      subject { generate_hearing_days_schedule.allocate_hearing_days_to_ros(:video) }
 
-    context "allocated days to ros" do
-      it "assigned as rooms" do
-        allocations = schedule_period.allocations.reduce({}) do |acc, ro|
-          acc[ro.regional_office] = ro.allocated_days
-          acc
-        end
-
-        expect(subject.keys.sort).to eq(allocations.keys.sort)
-
-        subject.each_key do |ro_key|
-          rooms = subject[ro_key][:allocated_dates].reduce({}) do |acc, (k, v)|
-            acc[k] = acc[k] || 0
-            acc[k] += v.values.map(&:size).inject(:+)
+      context "allocated days to ros" do
+        it "assigned as rooms" do
+          allocations = schedule_period.allocations.reduce({}) do |acc, ro|
+            acc[ro.regional_office] = ro.allocated_days
             acc
           end
 
-          # making sure rooms are filled
-          if subject[ro_key][:allocated_days].ceil % subject[ro_key][:num_of_rooms] == 0
-            expect(rooms.map { |_key, num| num % subject[ro_key][:num_of_rooms] == 0 }.all?).to eq(true)
-          else
-            expect(rooms.map { |_key, num| num % subject[ro_key][:num_of_rooms] == 0 }.count(false)).to eq(1)
+          expect(subject.keys.sort).to eq(allocations.keys.sort)
+
+          subject.each_key do |ro_key|
+            rooms = subject[ro_key][:allocated_dates].reduce({}) do |acc, (k, v)|
+              acc[k] = acc[k] || 0
+              acc[k] += v.values.map(&:size).inject(:+)
+              acc
+            end
+
+            # making sure rooms are filled
+            if subject[ro_key][:allocated_days].ceil % subject[ro_key][:num_of_rooms] == 0
+              expect(rooms.map { |_key, num| num % subject[ro_key][:num_of_rooms] == 0 }.all?).to eq(true)
+            else
+              expect(rooms.map { |_key, num| num % subject[ro_key][:num_of_rooms] == 0 }.count(false)).to eq(1)
+            end
+
+            expect(rooms.values.inject(:+)).to eq(allocations[ro_key].ceil)
           end
-
-          expect(rooms.values.inject(:+)).to eq(allocations[ro_key].ceil)
-        end
-      end
-    end
-
-    context "too many allocated days for an RO with multiple rooms", skip: "This test is failing intermittently" do
-      let!(:ro_allocations) do
-        [
-          create(:allocation, regional_office: "RO17", allocated_days: 255, schedule_period: schedule_period)
-        ]
-      end
-      it { expect { subject }.to raise_error(HearingSchedule::Errors::NotEnoughAvailableDays) }
-    end
-
-    context "too many allocated days for an RO with one room", skip: "This test is failing intermittently" do
-      let!(:ro_allocations) do
-        [
-          create(:allocation, regional_office: "RO16", allocated_days: 128, schedule_period: schedule_period)
-        ]
-      end
-      it { expect { subject }.to raise_error(HearingSchedule::Errors::NotEnoughAvailableDays) }
-    end
-
-    context "too many ro non-availability days" do
-      let!(:ro_non_availability_days) do
-        {
-          "RO17" => get_unique_dates_for_ro_between("RO17", schedule_period, 127)
-        }
-      end
-      let!(:ro_allocations) do
-        [
-          create(:allocation, regional_office: "RO17", allocated_days: 1, schedule_period: schedule_period)
-        ]
-      end
-
-      it { expect { subject }.to raise_error(HearingSchedule::GenerateHearingDaysSchedule::NoDaysAvailableForRO) }
-    end
-
-    context "too many co non-availability days" do
-      let!(:co_non_availability_days) do
-        get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, 127).map do |date|
-          create(:co_non_availability, date: date, schedule_period_id: schedule_period.id)
         end
       end
 
-      let!(:ro_allocations) do
-        [
-          create(:allocation, regional_office: "RO17", allocated_days: 1, schedule_period: schedule_period)
-        ]
+      context "too many allocated days for an RO with multiple rooms", skip: "This test is failing intermittently" do
+        let!(:ro_allocations) do
+          [
+            create(:allocation, regional_office: "RO17", allocated_days: 255, schedule_period: schedule_period)
+          ]
+        end
+        it { expect { subject }.to raise_error(HearingSchedule::Errors::NotEnoughAvailableDays) }
       end
 
-      it { expect { subject }.to raise_error(HearingSchedule::GenerateHearingDaysSchedule::NoDaysAvailableForRO) }
+      context "too many allocated days for an RO with one room", skip: "This test is failing intermittently" do
+        let!(:ro_allocations) do
+          [
+            create(:allocation, regional_office: "RO16", allocated_days: 128, schedule_period: schedule_period)
+          ]
+        end
+        it { expect { subject }.to raise_error(HearingSchedule::Errors::NotEnoughAvailableDays) }
+      end
+
+      context "too many ro non-availability days" do
+        let!(:ro_non_availability_days) do
+          {
+            "RO17" => get_unique_dates_for_ro_between("RO17", schedule_period, 127)
+          }
+        end
+        let!(:ro_allocations) do
+          [
+            create(:allocation, regional_office: "RO17", allocated_days: 1, schedule_period: schedule_period)
+          ]
+        end
+
+        it { expect { subject }.to raise_error(HearingSchedule::GenerateHearingDaysSchedule::NoDaysAvailableForRO) }
+      end
+
+      context "too many co non-availability days" do
+        let!(:co_non_availability_days) do
+          get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, 127).map do |date|
+            create(:co_non_availability, date: date, schedule_period_id: schedule_period.id)
+          end
+        end
+
+        let!(:ro_allocations) do
+          [
+            create(:allocation, regional_office: "RO17", allocated_days: 1, schedule_period: schedule_period)
+          ]
+        end
+
+        it { expect { subject }.to raise_error(HearingSchedule::GenerateHearingDaysSchedule::NoDaysAvailableForRO) }
+      end
+    end
+
+    context "without an associated room (currently Virtual)" do
+      subject { generate_hearing_days_schedule.allocate_hearing_days_to_ros(:virtual) }
+
+      context "allocated days to ros" do
+      end
     end
 
     context "allocated days to Central Office" do
