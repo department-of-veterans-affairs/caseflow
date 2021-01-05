@@ -821,12 +821,6 @@ module IntakeHelpers
     ).to_not be_nil
   end
 
-  def check_deceased_veteran_claimant(intake)
-    intake.start!
-    visit "/intake"
-    expect(page).to have_css("input[disabled][id=different-claimant-option_false]", visible: false)
-  end
-
   # rubocop:disable Metrics/AbcSize
   def verify_decision_issues_can_be_added_and_removed(page_url,
                                                       original_request_issue,

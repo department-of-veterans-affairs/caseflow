@@ -2,6 +2,11 @@ import React from 'react';
 
 import { DocketSwitchReviewRequestForm } from './DocketSwitchReviewRequestForm';
 
+const issues = [
+  { id: 1, program: 'compensation', description: 'PTSD denied' },
+  { id: 2, program: 'compensation', description: 'Left  knee denied' },
+];
+
 export default {
   title: 'Queue/Docket Switch/DocketSwitchReviewRequestForm',
   component: DocketSwitchReviewRequestForm,
@@ -10,7 +15,10 @@ export default {
     (storyFn) => <div className="cf-content-inside">{storyFn()}</div>,
   ],
   parameters: {},
-  args: {},
+  args: {
+  appellantName: 'Jane Doe',
+  issues
+  },
   argTypes: {
     onCancel: { action: 'cancel' },
     onSubmit: { action: 'submit' },
@@ -23,6 +31,6 @@ export const Basic = Template.bind({});
 
 Basic.parameters = {
   docs: {
-    storyDescription: 'Step 1 in docket switch grant checkout flow',
+    storyDescription: 'Used by attorney in Clerk of the Board office to complete a grant of a docket switch checkout flow ',
   },
 };

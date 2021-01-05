@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_21_063738) do
+ActiveRecord::Schema.define(version: 2020_12_22_171313) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1408,6 +1408,38 @@ ActiveRecord::Schema.define(version: 2020_12_21_063738) do
     t.index ["updated_at"], name: "index_transcriptions_on_updated_at"
   end
 
+  create_table "unrecognized_appellants", comment: "Unrecognized non-veteran appellants", force: :cascade do |t|
+    t.bigint "claimant_id", null: false, comment: "The OtherClaimant record associating this appellant to a DecisionReview"
+    t.datetime "created_at", null: false
+    t.string "poa_participant_id", comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
+    t.string "relationship", null: false, comment: "Relationship to veteran. Allowed values: attorney, child, spouse, other"
+    t.bigint "unrecognized_party_detail_id", comment: "Contact details"
+    t.bigint "unrecognized_power_of_attorney_id", comment: "Appellant's POA, if they aren't in CorpDB."
+    t.datetime "updated_at", null: false
+    t.index ["claimant_id"], name: "index_unrecognized_appellants_on_claimant_id"
+    t.index ["unrecognized_party_detail_id"], name: "index_unrecognized_appellants_on_unrecognized_party_detail_id"
+    t.index ["unrecognized_power_of_attorney_id"], name: "index_unrecognized_appellants_on_power_of_attorney_id"
+  end
+
+  create_table "unrecognized_party_details", comment: "For an appellant or POA, name and contact details for an unrecognized person or organization", force: :cascade do |t|
+    t.string "address_line_1", null: false
+    t.string "address_line_2"
+    t.string "address_line_3"
+    t.string "city", null: false
+    t.string "country", null: false
+    t.datetime "created_at", null: false
+    t.string "email_address"
+    t.string "last_name"
+    t.string "middle_name"
+    t.string "name", null: false, comment: "Name of organization, or first name or mononym of person"
+    t.string "party_type", null: false, comment: "The type of this party. Allowed values: person, organization"
+    t.string "phone_number"
+    t.string "state", null: false
+    t.string "suffix"
+    t.datetime "updated_at", null: false
+    t.string "zip", null: false
+  end
+
   create_table "user_quotas", id: :serial, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "locked_task_count"
@@ -1509,10 +1541,12 @@ ActiveRecord::Schema.define(version: 2020_12_21_063738) do
     t.integer "conference_id", comment: "ID of conference from Pexip"
     t.datetime "created_at", null: false, comment: "Automatic timestamp of when virtual hearing was created"
     t.bigint "created_by_id", null: false, comment: "User who created the virtual hearing"
+    t.string "guest_hearing_link", comment: "Link used by appellants and/or representatives to join virtual hearing conference"
     t.integer "guest_pin", comment: "PIN number for guests of Pexip conference"
     t.string "guest_pin_long", limit: 11, comment: "Change the guest pin to store a longer pin with the # sign trailing"
     t.bigint "hearing_id", comment: "Associated hearing"
     t.string "hearing_type", comment: "'Hearing' or 'LegacyHearing'"
+    t.string "host_hearing_link", comment: "Link used by judges to join virtual hearing conference"
     t.integer "host_pin", comment: "PIN number for host of Pexip conference"
     t.string "host_pin_long", limit: 8, comment: "Change the host pin to store a longer pin with the # sign trailing"
     t.string "judge_email", comment: "Judge's email address"
@@ -1606,6 +1640,9 @@ ActiveRecord::Schema.define(version: 2020_12_21_063738) do
   add_foreign_key "ramp_election_rollbacks", "users"
   add_foreign_key "request_issues_updates", "users"
   add_foreign_key "schedule_periods", "users"
+  add_foreign_key "unrecognized_appellants", "claimants"
+  add_foreign_key "unrecognized_appellants", "unrecognized_party_details"
+  add_foreign_key "unrecognized_appellants", "unrecognized_party_details", column: "unrecognized_power_of_attorney_id"
   add_foreign_key "user_quotas", "users"
   add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
 end
