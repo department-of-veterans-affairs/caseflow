@@ -15,7 +15,7 @@ describe ClerkOfTheBoard do
 
   describe ".can_receive_task?" do
     it "returns false because the COB hasn't started using Queue yet" do
-      expect(dvc_team.can_receive_task?(nil)).to eq(false)
+      expect(ClerkOfTheBoard.singleton.can_receive_task?(nil)).to eq(false)
     end
   end
 end
