@@ -91,6 +91,9 @@ feature "Intake Review Page", :postgres do
     end
 
     context "when veteran is deceased" do
+      # before do
+      #   allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return([])
+      # end
       let(:veteran) do
         create(:veteran, file_number: "123121234", date_of_death: 1.month.ago)
       end
