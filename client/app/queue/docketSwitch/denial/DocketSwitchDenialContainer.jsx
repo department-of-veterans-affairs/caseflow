@@ -7,7 +7,7 @@ import { appealWithDetailSelector } from '../../selectors';
 import {
   DOCKET_SWITCH_DENIAL_SUCCESS_TITLE,
   DOCKET_SWITCH_DENIAL_SUCCESS_MESSAGE,
-} from '../../../../COPY';
+} from 'app/../COPY';
 import { sprintf } from 'sprintf-js';
 import { showSuccessMessage } from '../../uiReducer/uiActions';
 
