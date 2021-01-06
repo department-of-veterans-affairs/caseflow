@@ -11,7 +11,7 @@ const FnodBanner = ({ appeal }) => {
     padding: '5px',
   });
   const fnodBannerMessage = <div>
-    <strong>Source:</strong> SSA  <span {...fnodBannerInfoPadding}>|</span>
+    <strong>Source:</strong> {COPY.FNOD_SOURCE} <span {...fnodBannerInfoPadding}>|</span>
     <strong> Date of Death:</strong> {formattedDeathDate} <span {...fnodBannerInfoPadding}>|</span>
     <strong> Veteran Name:</strong> {appeal.veteranFullName}
   </div>;
