@@ -92,13 +92,11 @@ describe DocumentFetcher, :postgres do
           doc.attributes.each do |key, value|
             next if IGNORED_ATTRIBUTES.include?(key)
 
-            puts "#{key}: #{value}"
             expect(returned_docs_by_vbms_id[doc.vbms_document_id][key]).to eq(value)
           end
 
-          # These non-database attributes are not included in doc.attributes
+          # These non-database attributes are not included in doc.attributes, so check them explicitly
           NONDB_ATTRIBUTES.each do |attrib|
-            puts "#{attrib}: #{doc.send(attrib)}"
             expect(doc.send(attrib)).not_to be_nil
             expect(returned_docs_by_vbms_id[doc.vbms_document_id].send(attrib)).to eq(doc.send(attrib))
           end
@@ -177,8 +175,8 @@ describe DocumentFetcher, :postgres do
 
         expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
 
-        expect(Document.first.type).to eq("Form 9")
-        expect(Document.second.type).to eq("NOD")
+        expect(Document.first.type).to eq(saved_documents.first.type)
+        expect(Document.second.type).to eq(saved_documents.second.type)
         expect(Document.third.type).to eq(returned_documents.first.type)
         expect(Document.fourth.type).to eq(returned_documents.second.type)
       end
