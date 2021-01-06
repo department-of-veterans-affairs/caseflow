@@ -83,9 +83,19 @@ describe DocumentFetcher, :postgres do
     shared_examples "has non-database attributes" do
       it "sets non-database attributes" do
         returned_documents = document_service.find_or_create_documents!
-        NONDB_ATTRIBUTES.each do |attrib|
-          expect(returned_documents.map(&attrib)).to eq(documents.map(&attrib))
-          puts "#{attrib}: #{documents.map(&attrib)}"
+
+        returned_docs_by_vbms_id = returned_documents.index_by(&:vbms_document_id)
+        documents.each do |doc|
+          doc.attributes.each do |key, value|
+            expect(returned_docs_by_vbms_id[doc.vbms_document_id][key]).to eq(value)
+          end
+
+          # These non-database attributes are not included in doc.attributes
+          NONDB_ATTRIBUTES.each do |attrib|
+            puts "#{attrib}: #{doc.send(attrib)}"
+            expect(doc.send(attrib)).not_to be_nil
+            expect(returned_docs_by_vbms_id[doc.vbms_document_id].send(attrib)).to eq(doc.send(attrib))
+          end
         end
       end
     end
@@ -136,6 +146,7 @@ describe DocumentFetcher, :postgres do
         returned_documents = document_service.find_or_create_documents!
         expect(returned_documents.first.reload.annotations.count).to eq(0)
       end
+      
       it_behaves_like "has non-database attributes"
     end
 

@@ -181,7 +181,7 @@ class Document < CaseflowRecord
     # alt_types: doc_struct.alt_types,   # comes from vbms_document.alt_doc_types; used by type?(type) method
     #    type?(type) is used to help match documents
     # filename: doc_struct.filename      # comes from vbms_document.filename;
-    binding.pry
+    # binding.pry
     document.assign_attributes(
       efolder_id: efolder_id,
       type: type,
