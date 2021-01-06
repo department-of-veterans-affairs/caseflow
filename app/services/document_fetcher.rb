@@ -58,7 +58,8 @@ class DocumentFetcher
     series_id_docs = Document.where(vbms_document_id: docs_to_create.select(&:series_id).pluck(:vbms_document_id))
     copy_metadata_from_document(series_id_docs, vbms_doc_ver_ids)
 
-    created_docs = Document.where(vbms_document_id: docs_to_create.pluck(:vbms_document_id))
+    created_docs = retrieve_created_docs_with_nondb_attributes(docs_to_create)
+
     updated_docs + created_docs
   end
 
@@ -76,6 +77,15 @@ class DocumentFetcher
       # update the DB for each doc individually; this could be optimized if needed
       previous_documents = series_id_hash[document.series_id]&.sort_by(&:id)
       document.copy_metadata_from_document(previous_documents.last) if previous_documents.present?
+    end
+  end
+
+  def retrieve_created_docs_with_nondb_attributes(docs_to_create)
+    docs_to_create_hash = docs_to_create.index_by(&:vbms_document_id)
+    created_docs = Document.where(vbms_document_id: docs_to_create.pluck(:vbms_document_id))
+    created_docs.map do |doc|
+      fetched_doc = docs_to_create_hash[doc.vbms_document_id]
+      doc.assign_nondatabase_attributes(fetched_doc)
     end
   end
 

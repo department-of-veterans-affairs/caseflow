@@ -210,13 +210,17 @@ class Document < CaseflowRecord
     doc_struct_hash = document_structs.index_by(&:vbms_document_id)
     Document.where(vbms_document_id: document_structs.pluck(:vbms_document_id)).map do |document|
       doc_struct = doc_struct_hash[document.vbms_document_id]
-      document.assign_attributes(
-        efolder_id: doc_struct.efolder_id, # doesn't seem to be used; comes from from efolder
-        alt_types: doc_struct.alt_types,   # used by type?(type)
-        filename: doc_struct.filename      # sent to the frontend
-      )
-      document
+      document.assign_nondatabase_attributes(doc_struct)
     end
+  end
+
+  def assign_nondatabase_attributes(source_document)
+    assign_attributes(
+      efolder_id: source_document.efolder_id, # doesn't seem to be used; comes from from efolder
+      alt_types: source_document.alt_types,   # used by type?(type)
+      filename: source_document.filename      # sent to the frontend
+    )
+    self
   end
 
   def category_case_summary

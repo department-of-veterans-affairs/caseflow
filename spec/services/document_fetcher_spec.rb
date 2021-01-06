@@ -102,6 +102,11 @@ describe DocumentFetcher, :postgres do
 
           # These non-database attributes are not included in doc.attributes, so check them explicitly
           NONDB_ATTRIBUTES.each do |attrib|
+            if returned_docs_by_vbms_id[doc.vbms_document_id].send(attrib) != doc.send(attrib)
+              puts "#{attrib}: #{returned_docs_by_vbms_id[doc.vbms_document_id].send(attrib)} != #{doc.send(attrib)}"
+              binding.pry
+            end
+
             expect(doc.send(attrib)).not_to be_nil
             expect(returned_docs_by_vbms_id[doc.vbms_document_id].send(attrib)).to eq(doc.send(attrib))
           end
@@ -174,7 +179,6 @@ describe DocumentFetcher, :postgres do
         expect(Document.count).to eq(2)
         expect(Document.first.type).to eq(saved_documents.first.type)
         expect(Document.second.type).to eq(saved_documents.second.type)
-        binding.pry
 
         returned_documents = document_fetcher.find_or_create_documents!
         expect(returned_documents.count).to eq(2)
@@ -317,8 +321,8 @@ describe DocumentFetcher, :postgres do
           # Uncomment the following to see a count of SQL queries
           # pp query_data.values.pluck(:sql, :count)
           doc_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents\"") }
-          # This expected count of 25 is bad and will be fixed in another PR
-          expect(doc_insert_queries.pluck(:count).max).to eq 25
+          expect(doc_insert_queries.pluck(:count).max).to eq 1
+          expect(query_data.values.select { |o| o[:sql].start_with?("UPDATE") }).to be_empty
         end
       end
     end
