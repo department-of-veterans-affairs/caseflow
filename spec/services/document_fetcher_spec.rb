@@ -72,11 +72,22 @@ describe DocumentFetcher, :postgres do
     end
   end
 
+  NONDB_ATTRIBUTES = [:efolder_id, :alt_types, :filename].freeze
   context "#find_or_create_documents!" do
-    let(:series_id) { "TEST_SERIES_ID" }
+    # let(:series_id) { "TEST_SERIES_ID" }
 
     let(:documents) do
       [Generators::Document.build(type: "NOD", series_id: series_id), Generators::Document.build(type: "SOC")]
+    end
+
+    shared_examples "has non-database attributes" do
+      it "sets non-database attributes" do
+        returned_documents = document_service.find_or_create_documents!
+        NONDB_ATTRIBUTES.each do |attrib|
+          expect(returned_documents.map(&attrib)).to eq(documents.map(&attrib))
+          puts "#{attrib}: #{documents.map(&attrib)}"
+        end
+      end
     end
 
     context "when there is no existing document" do
@@ -88,6 +99,7 @@ describe DocumentFetcher, :postgres do
         expect(Document.first.type).to eq(documents[0].type)
         expect(Document.first.received_at).to eq(documents[0].received_at)
       end
+      it_behaves_like "has non-database attributes"
     end
 
     context "when the series id is nil" do
@@ -124,6 +136,7 @@ describe DocumentFetcher, :postgres do
         returned_documents = document_service.find_or_create_documents!
         expect(returned_documents.first.reload.annotations.count).to eq(0)
       end
+      it_behaves_like "has non-database attributes"
     end
 
     context "when there are documents with same series_id" do
@@ -234,6 +247,7 @@ describe DocumentFetcher, :postgres do
           expect(Document.first.type).to eq("NOD")
         end
       end
+      it_behaves_like "has non-database attributes"
     end
 
     context "when there is a document with no series_id" do
@@ -288,6 +302,7 @@ describe DocumentFetcher, :postgres do
         expect(Document.first.series_id).to eq(series_id)
         expect(Document.count).to eq(3)
       end
+      it_behaves_like "has non-database attributes"
     end
   end
 end
