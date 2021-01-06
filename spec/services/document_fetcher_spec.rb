@@ -72,7 +72,12 @@ describe DocumentFetcher, :postgres do
     end
   end
 
+  # Ignore these attributes when comparing document_fetcher.returned_documents with document_service.documents
+  IGNORED_ATTRIBUTES = %w[id created_at updated_at file_number].freeze
+
+  # These attributes are not saved in the database and must be compared explicitly
   NONDB_ATTRIBUTES = [:efolder_id, :alt_types, :filename].freeze
+
   context "#find_or_create_documents!" do
     let(:documents) do
       [Generators::Document.build(type: "NOD", series_id: series_id), Generators::Document.build(type: "SOC")]
@@ -85,6 +90,9 @@ describe DocumentFetcher, :postgres do
         returned_docs_by_vbms_id = returned_documents.index_by(&:vbms_document_id)
         documents.each do |doc|
           doc.attributes.each do |key, value|
+            next if IGNORED_ATTRIBUTES.include?(key)
+
+            puts "#{key}: #{value}"
             expect(returned_docs_by_vbms_id[doc.vbms_document_id][key]).to eq(value)
           end
 
@@ -156,17 +164,23 @@ describe DocumentFetcher, :postgres do
         ]
       end
 
+      it_behaves_like "has non-database attributes"
+
       it "adds new retrieved documents" do
         expect(Document.count).to eq(2)
         expect(Document.first.type).to eq(saved_documents.first.type)
         expect(Document.second.type).to eq(saved_documents.second.type)
 
         returned_documents = document_fetcher.find_or_create_documents!
+        expect(returned_documents.count).to eq(2)
+        expect(Document.count).to eq(4)
+
         expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
 
-        expect(Document.count).to eq(4)
         expect(Document.first.type).to eq("Form 9")
         expect(Document.second.type).to eq("NOD")
+        expect(Document.third.type).to eq(returned_documents.first.type)
+        expect(Document.fourth.type).to eq(returned_documents.second.type)
       end
 
       context "when existing document has comments, tags, and categories" do
@@ -201,6 +215,8 @@ describe DocumentFetcher, :postgres do
             )
           ]
         end
+
+        it_behaves_like "has non-database attributes"
 
         it "copies metdata to new document" do
           expect(Annotation.count).to eq(2)
@@ -246,6 +262,9 @@ describe DocumentFetcher, :postgres do
             vbms_document_id: documents[0].vbms_document_id
           )
         end
+
+        it_behaves_like "has non-database attributes"
+
         it "updates existing document" do
           expect(Document.count).to eq(1)
           expect(Document.first.type).to eq(saved_documents.type)
@@ -257,8 +276,6 @@ describe DocumentFetcher, :postgres do
           expect(Document.first.type).to eq("NOD")
         end
       end
-
-      it_behaves_like "has non-database attributes"
     end
 
     context "when there is a document with no series_id" do
@@ -301,6 +318,8 @@ describe DocumentFetcher, :postgres do
         )
       end
 
+      it_behaves_like "has non-database attributes"
+
       it "adds series_id" do
         expect(Document.count).to eq(1)
         expect(Document.first.type).to eq(saved_document.type)
@@ -313,8 +332,6 @@ describe DocumentFetcher, :postgres do
         expect(Document.first.series_id).to eq(series_id)
         expect(Document.count).to eq(3)
       end
-
-      it_behaves_like "has non-database attributes"
     end
   end
 end
