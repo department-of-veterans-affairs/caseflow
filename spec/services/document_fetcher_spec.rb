@@ -19,7 +19,8 @@ describe DocumentFetcher, :postgres do
   let!(:efolder_fetched_at_format) { "%FT%T.%LZ" }
   let(:doc_struct) do
     {
-      documents: documents,
+      # create duplicate documents so as not to modify the original documents used in expect statements
+      documents: documents.map(&:dup),
       manifest_vbms_fetched_at: service_manifest_vbms_fetched_at.utc.strftime(efolder_fetched_at_format),
       manifest_vva_fetched_at: service_manifest_vva_fetched_at.utc.strftime(efolder_fetched_at_format)
     }
@@ -73,7 +74,7 @@ describe DocumentFetcher, :postgres do
   end
 
   # Ignore these attributes when comparing document_fetcher.returned_documents with document_service.documents
-  IGNORED_ATTRIBUTES = %w[id created_at updated_at file_number].freeze
+  IGNORED_ATTRIBUTES = %w[id created_at updated_at file_number previous_document_version_id].freeze
 
   # These attributes are not saved in the database and must be compared explicitly
   NONDB_ATTRIBUTES = [:efolder_id, :alt_types, :filename].freeze
@@ -83,15 +84,19 @@ describe DocumentFetcher, :postgres do
       [Generators::Document.build(type: "NOD", series_id: series_id), Generators::Document.build(type: "SOC")]
     end
 
-    shared_examples "has non-database attributes" do
+    shared_examples "has non-database attributes" do |skip_attribs = []|
       it "sets non-database attributes" do
         returned_documents = document_fetcher.find_or_create_documents!
 
         returned_docs_by_vbms_id = returned_documents.index_by(&:vbms_document_id)
         documents.each do |doc|
           doc.attributes.each do |key, value|
-            next if IGNORED_ATTRIBUTES.include?(key)
+            next if IGNORED_ATTRIBUTES.include?(key) || skip_attribs.include?(key)
 
+            if returned_docs_by_vbms_id[doc.vbms_document_id][key] != value
+              puts "#{key}: #{value}"
+              binding.pry
+            end
             expect(returned_docs_by_vbms_id[doc.vbms_document_id][key]).to eq(value)
           end
 
@@ -113,7 +118,8 @@ describe DocumentFetcher, :postgres do
         expect(Document.first.type).to eq(documents[0].type)
         expect(Document.first.received_at).to eq(documents[0].received_at)
       end
-      it_behaves_like "has non-database attributes"
+
+      include_examples "has non-database attributes"
     end
 
     context "when the series id is nil" do
@@ -151,7 +157,7 @@ describe DocumentFetcher, :postgres do
         expect(returned_documents.first.reload.annotations.count).to eq(0)
       end
 
-      it_behaves_like "has non-database attributes"
+      include_examples "has non-database attributes"
     end
 
     context "when there are documents with same series_id" do
@@ -162,7 +168,7 @@ describe DocumentFetcher, :postgres do
         ]
       end
 
-      it_behaves_like "has non-database attributes"
+      include_examples "has non-database attributes", ["category_medical"]
 
       it "adds new retrieved documents" do
         expect(Document.count).to eq(2)
@@ -179,6 +185,14 @@ describe DocumentFetcher, :postgres do
         expect(Document.second.type).to eq(saved_documents.second.type)
         expect(Document.third.type).to eq(returned_documents.first.type)
         expect(Document.fourth.type).to eq(returned_documents.second.type)
+
+        # According to DocumentFetcher.create_new_document!,
+        # since returned_documents.first has the same series_id as the 2 saved_documents,
+        # it should have the same categories as the latest saved_document with the same series_id.
+        expect(Document.third.series_id).to eq(series_id)
+        expect(Document.third.series_id).to eq(saved_documents.first.series_id)
+        expect(Document.third.series_id).to eq(saved_documents.second.series_id)
+        expect(Document.third.category_medical).to eq(saved_documents.second.category_medical)
       end
 
       context "when existing document has comments, tags, and categories" do
@@ -214,7 +228,7 @@ describe DocumentFetcher, :postgres do
           ]
         end
 
-        it_behaves_like "has non-database attributes"
+        include_examples "has non-database attributes", ["category_medical"]
 
         it "copies metdata to new document" do
           expect(Annotation.count).to eq(2)
@@ -261,7 +275,7 @@ describe DocumentFetcher, :postgres do
           )
         end
 
-        it_behaves_like "has non-database attributes"
+        include_examples "has non-database attributes"
 
         it "updates existing document" do
           expect(Document.count).to eq(1)
@@ -316,7 +330,7 @@ describe DocumentFetcher, :postgres do
         )
       end
 
-      it_behaves_like "has non-database attributes"
+      include_examples "has non-database attributes"
 
       it "adds series_id" do
         expect(Document.count).to eq(1)
