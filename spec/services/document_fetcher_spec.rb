@@ -2,7 +2,7 @@
 
 describe DocumentFetcher, :postgres do
   let(:appeal) { Generators::LegacyAppeal.build }
-  let(:document_service) { DocumentFetcher.new(appeal: appeal, use_efolder: true) }
+  let(:document_fetcher) { DocumentFetcher.new(appeal: appeal, use_efolder: true) }
   let(:series_id) { "TEST_SERIES_ID" }
 
   let!(:documents) do
@@ -32,7 +32,7 @@ describe DocumentFetcher, :postgres do
   end
 
   context "#documents" do
-    subject { document_service.documents }
+    subject { document_fetcher.documents }
 
     it "returns a list of documents" do
       expect(subject.count).to eq(2)
@@ -42,14 +42,14 @@ describe DocumentFetcher, :postgres do
 
     context "when called multiple times" do
       it "EFolderService is only called once" do
-        document_service.documents
-        document_service.documents
+        document_fetcher.documents
+        document_fetcher.documents
       end
     end
   end
 
   context "#number_of_documents" do
-    subject { document_service.number_of_documents }
+    subject { document_fetcher.number_of_documents }
 
     it "returns the number of documents" do
       expect(subject).to eq(2)
@@ -57,7 +57,7 @@ describe DocumentFetcher, :postgres do
   end
 
   context "#manifest_vbms_fetched_at" do
-    subject { document_service.manifest_vbms_fetched_at }
+    subject { document_fetcher.manifest_vbms_fetched_at }
 
     it "returns the correct timestamp" do
       expect(subject).to eq(service_manifest_vbms_fetched_at.strftime(fetched_at_format))
@@ -65,7 +65,7 @@ describe DocumentFetcher, :postgres do
   end
 
   context "#manifest_vva_fetched_at" do
-    subject { document_service.manifest_vva_fetched_at }
+    subject { document_fetcher.manifest_vva_fetched_at }
 
     it "returns the correct timestamp" do
       expect(subject).to eq(service_manifest_vva_fetched_at.strftime(fetched_at_format))
@@ -74,15 +74,13 @@ describe DocumentFetcher, :postgres do
 
   NONDB_ATTRIBUTES = [:efolder_id, :alt_types, :filename].freeze
   context "#find_or_create_documents!" do
-    # let(:series_id) { "TEST_SERIES_ID" }
-
     let(:documents) do
       [Generators::Document.build(type: "NOD", series_id: series_id), Generators::Document.build(type: "SOC")]
     end
 
     shared_examples "has non-database attributes" do
       it "sets non-database attributes" do
-        returned_documents = document_service.find_or_create_documents!
+        returned_documents = document_fetcher.find_or_create_documents!
 
         returned_docs_by_vbms_id = returned_documents.index_by(&:vbms_document_id)
         documents.each do |doc|
@@ -102,7 +100,7 @@ describe DocumentFetcher, :postgres do
 
     context "when there is no existing document" do
       it "saves retrieved documents" do
-        returned_documents = document_service.find_or_create_documents!
+        returned_documents = document_fetcher.find_or_create_documents!
         expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
 
         expect(Document.count).to eq(documents.count)
@@ -143,7 +141,7 @@ describe DocumentFetcher, :postgres do
         expect(Document.count).to eq(2)
         expect(Document.first.type).to eq(saved_documents[0].type)
 
-        returned_documents = document_service.find_or_create_documents!
+        returned_documents = document_fetcher.find_or_create_documents!
         expect(returned_documents.first.reload.annotations.count).to eq(0)
       end
 
@@ -160,11 +158,10 @@ describe DocumentFetcher, :postgres do
 
       it "adds new retrieved documents" do
         expect(Document.count).to eq(2)
-        expect(Document.first.type).to eq(saved_documents[0].type)
-        expect(Document.first.type).to eq("Form 9")
-        expect(Document.second.type).to eq("NOD")
+        expect(Document.first.type).to eq(saved_documents.first.type)
+        expect(Document.second.type).to eq(saved_documents.second.type)
 
-        returned_documents = document_service.find_or_create_documents!
+        returned_documents = document_fetcher.find_or_create_documents!
         expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
 
         expect(Document.count).to eq(4)
@@ -210,7 +207,7 @@ describe DocumentFetcher, :postgres do
           expect(Annotation.second.comment).to eq(comment)
           expect(DocumentsTag.count).to eq(2)
 
-          document_service.find_or_create_documents!
+          document_fetcher.find_or_create_documents!
 
           expect(Annotation.count).to eq(3)
           expect(Document.second.annotations.first.comment).to eq(comment)
@@ -234,7 +231,7 @@ describe DocumentFetcher, :postgres do
           end
 
           it "copies metadata from the most recently saved document not returned by the API" do
-            document_service.find_or_create_documents!
+            document_fetcher.find_or_create_documents!
 
             expect(Document.third.annotations.first.comment).to eq(older_comment)
           end
@@ -253,13 +250,14 @@ describe DocumentFetcher, :postgres do
           expect(Document.count).to eq(1)
           expect(Document.first.type).to eq(saved_documents.type)
 
-          returned_documents = document_service.find_or_create_documents!
+          returned_documents = document_fetcher.find_or_create_documents!
           expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
 
           expect(Document.count).to eq(2)
           expect(Document.first.type).to eq("NOD")
         end
       end
+
       it_behaves_like "has non-database attributes"
     end
 
@@ -308,13 +306,14 @@ describe DocumentFetcher, :postgres do
         expect(Document.first.type).to eq(saved_document.type)
         expect(Document.first.series_id).to eq(nil)
 
-        returned_documents = document_service.find_or_create_documents!
+        returned_documents = document_fetcher.find_or_create_documents!
         expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
 
         # Adds series id to existing document
         expect(Document.first.series_id).to eq(series_id)
         expect(Document.count).to eq(3)
       end
+
       it_behaves_like "has non-database attributes"
     end
   end

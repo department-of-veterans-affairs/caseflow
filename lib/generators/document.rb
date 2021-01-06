@@ -17,7 +17,7 @@ class Generators::Document
         # The following are provided by VBMS or EFolder Express, but not saved to Caseflow's DB
         efolder_id: generate_external_id,
         filename: "filename-#{vbms_doc_version_id}.pdf",
-        alt_types: Array.new(2).map { ["Form 8", "Form 9", "NOD", "SOC", "SSOC"].sample }
+        alt_types: Array.new(Random.rand(3).to_int).map { ["Form 8", "Form 9", "NOD", "SOC", "SSOC"].sample }.uniq
       }
     end
 
