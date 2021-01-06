@@ -106,29 +106,7 @@ RSpec.describe DocketSwitch, type: :model do
     end
   end
 
-  context "#copy_granted_request_issues!" do
-    let(:disposition) { "granted" }
-    subject { docket_switch.copy_granted_request_issues! }
-
-    it "updates the appeal stream for every selected request issue" do
-      expect(docket_switch.old_docket_stream.request_issues.size).to eq 3
-      expect(docket_switch.new_docket_stream.request_issues.size).to eq 0
-      subject
-      expect(docket_switch.new_docket_stream.reload.request_issues.size).to eq 3
-      expect(docket_switch.old_docket_stream.reload.request_issues.size).to eq 0
-    end
-  end
-
-  context "#request_issues_for_switch" do
-    let(:disposition) { "granted" }
-    subject { docket_switch.request_issues_for_switch }
-
-    it "returns the correct request issues" do
-      expect(subject.size).to eq(granted_request_issue_ids.size)
-    end
-  end
-
-  context "#granted_issues_present_if_partial" do
+  context "#valid?" do
     subject do
       build(
         :docket_switch,

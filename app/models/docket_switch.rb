@@ -21,8 +21,6 @@ class DocketSwitch < CaseflowRecord
   def process!
     process_denial! if denied?
     process_granted! if task.is_a?(DocketSwitchGrantedTask)
-
-    self
   end
 
   private
