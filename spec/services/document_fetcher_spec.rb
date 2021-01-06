@@ -146,7 +146,7 @@ describe DocumentFetcher, :postgres do
         returned_documents = document_service.find_or_create_documents!
         expect(returned_documents.first.reload.annotations.count).to eq(0)
       end
-      
+
       it_behaves_like "has non-database attributes"
     end
 
@@ -161,6 +161,8 @@ describe DocumentFetcher, :postgres do
       it "adds new retrieved documents" do
         expect(Document.count).to eq(2)
         expect(Document.first.type).to eq(saved_documents[0].type)
+        expect(Document.first.type).to eq("Form 9")
+        expect(Document.second.type).to eq("NOD")
 
         returned_documents = document_service.find_or_create_documents!
         expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
