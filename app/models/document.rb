@@ -172,7 +172,16 @@ class Document < CaseflowRecord
     serializable_hash
   end
 
+  # When is this called?
+  # - by document_fetcher.save!
+  # - when legacy_appeal references nod, soc, or form9 documents (created in memory and not saved to the DB)
   def merge_into(document)
+    # Why set these non-database attributes? Maybe they are retrieved and set every time the UI needs them.
+    # efolder_id: doc_struct.efolder_id, # id from efolder; doesn't seem to be used
+    # alt_types: doc_struct.alt_types,   # comes from vbms_document.alt_doc_types; used by type?(type) method
+    #    type?(type) is used to help match documents
+    # filename: doc_struct.filename      # comes from vbms_document.filename;
+    binding.pry
     document.assign_attributes(
       efolder_id: efolder_id,
       type: type,
@@ -237,6 +246,7 @@ class Document < CaseflowRecord
       RequestStore.store[:application] == "reader"
   end
 
+  # match and MERGE (but not save to DB)
   def match_vbms_document_using(vbms_documents)
     match = vbms_documents.detect do |doc|
       yield(doc) && doc.type?(type)
