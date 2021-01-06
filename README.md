@@ -133,7 +133,7 @@ brew install rbenv nodenv yarn
 brew tap ouchxp/nodenv
 brew install nodenv-nvmrc
 brew tap caskroom/cask
-brew cask install chromedriver
+brew install --cask chromedriver
 ```
 **Linux**
 
@@ -245,7 +245,7 @@ You probably have to create an Oracle account to download these.
 Install Docker on your machine via Homebrew:
 
 ```
-    brew cask install docker
+    brew install --cask docker
 ```
 
 Once Docker's installed, run the application and go into advanced preferences to limit Docker's resources in order to keep FACOLS from consuming your Macbook.  Recommended settings are 4 CPUs, 8 GiB of internal memory, and 512 MiB of swap.
@@ -289,7 +289,7 @@ Allows the feature tests to run locally.
 
 **Mac**
 ```
-brew cask install chromedriver
+brew install --cask chromedriver
 chromedriver --version
 ```
 
