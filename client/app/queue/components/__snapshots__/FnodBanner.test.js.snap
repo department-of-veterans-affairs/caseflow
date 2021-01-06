@@ -18,7 +18,9 @@ exports[`FnodBanner renders correctly 1`] = `
           <strong>
             Source:
           </strong>
-           SSA  
+           
+          CorpDB (BGS)
+           
           <span
             data-css-tn55bb=""
           >
@@ -43,7 +45,7 @@ exports[`FnodBanner renders correctly 1`] = `
         </div>
       }
       scrollOnAlert={true}
-      title="Date of Death Reported"
+      title="Veteran Date of Death Reported"
       type="info"
     >
       <div
@@ -56,7 +58,7 @@ exports[`FnodBanner renders correctly 1`] = `
           <h2
             className="usa-alert-heading"
           >
-            Date of Death Reported
+            Veteran Date of Death Reported
           </h2>
           <div
             className="usa-alert-text"
@@ -65,7 +67,9 @@ exports[`FnodBanner renders correctly 1`] = `
               <strong>
                 Source:
               </strong>
-               SSA  
+               
+              CorpDB (BGS)
+               
               <span
                 data-css-tn55bb=""
               >
