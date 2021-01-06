@@ -20,19 +20,38 @@ class DocketSwitch < CaseflowRecord
 
   def process!
     process_denial! if denied?
-  end
+    process_granted! if task.is_a?(DocketSwitchGrantedTask)
 
-  def request_issues_for_switch
-    return [] unless granted_request_issue_ids
-
-    RequestIssue.find(granted_request_issue_ids)
-  end
-
-  def move_granted_request_issues
-    request_issues_for_switch.map { |ri| ri.update!(decision_review: new_docket_stream) }
+    self
   end
 
   private
+
+  def process_denial!
+    new_instructions = task.instructions.push(context)
+    task.update(status: Constants.TASK_STATUSES.completed, instructions: new_instructions)
+  end
+
+  def process_granted!
+    transaction do
+      update!(new_docket_stream: old_docket_stream.create_stream(:original))
+      copy_granted_request_issues!
+      task.update(status: Constants.TASK_STATUSES.completed)
+    end
+  end
+
+  def request_issues_for_switch
+    return if denied?
+
+    issue_ids = granted_request_issue_ids || old_docket_stream.request_issues.map(&:id)
+    RequestIssue.find(issue_ids)
+  end
+
+  def copy_granted_request_issues!
+    request_issues_for_switch.each do |ri|
+      ri.move_stream!(new_appeal_stream: new_docket_stream, closed_status: "docket_switch")
+    end
+  end
 
   def granted_issues_present_if_partial
     return unless partially_granted?
@@ -43,10 +62,5 @@ class DocketSwitch < CaseflowRecord
         "is required for partially_granted disposition"
       )
     end
-  end
-
-  def process_denial!
-    new_instructions = task.instructions.push(context)
-    task.update(status: Constants.TASK_STATUSES.completed, instructions: new_instructions)
   end
 end
