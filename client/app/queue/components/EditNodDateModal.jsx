@@ -72,7 +72,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
     {
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Submit',
-      // For future disable use cases
+      //For future disable use cases
       disabled: disableButton,
       onClick: () => onSubmit(receiptDate)
     }
