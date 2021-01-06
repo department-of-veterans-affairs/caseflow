@@ -683,6 +683,9 @@
   "DOCKET_SWITCH_DENIAL_INSTRUCTIONS": "Add the date and add any context for the denial of this switch.",
   "DENIED_DOCKET_SWITCH_TASK_LABEL": "Denied Docket Switch",
   "GRANTED_DOCKET_SWITCH_TASK_LABEL": "Granted Docket Switch",
+
+  "DOCKET_SWITCH_DENIAL_SUCCESS_TITLE": "You have marked %s's request to switch dockets as denied",
+  "DOCKET_SWITCH_DENIAL_SUCCESS_MESSAGE": "This will be recorded in the Case Timeline for future context.",
   "DOCKET_SWITCH_GRANTED_REQUEST_LABEL": "Switch Docket: Review %s's Request",
   "DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS": "Add the information based on how you are proceeding with this docket switch and the claimant's form.",
   "DOCKET_SWITCH_GRANTED_ADD_TASK_LABEL": "Switch Docket: Add/Remove Tasks",
@@ -722,6 +725,7 @@
   "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If the claimant is a Veteran's dependant (spouse, child, or parent) and they are not listed or their information needs to be updated, ",
   "CLAIMANT_NOT_FOUND_END": " for assistance. Note: Remember to encrypt any emails that contain PII (such as a veteran or claimant's name, file number or SSN).",
   "SELECT_CLAIMANT_LABEL": "Please select the claimant listed on the form. If the claimant is not listed, please select \"Claimant not listed\" and add their information in the next step.",
+  "ADD_CLAIMANT_PAGE_DESCRIPTION" : "You are adding a claimant who is not listed in Caseflow. Please select the claimant’s relationship to the Veteran and add their information accordingly. If the claimant has indicated a representative, you can add their information in the next step.",
   "ADD_CLAIMANT_MODAL_TITLE": "Add Claimant",
   "ADD_CLAIMANT_MODAL_DESCRIPTION": "To add a claimant, select their relationship to the Veteran and type to search for their name. **Please note:** at this time, you are only able to add attorneys as claimants.\n\nIf you are unable to find the attorney in the list of names below, please cancel the intake and [email](mailto:VACaseflowIntake@va.gov) for assistance. Remember to encrypt any emails that contain PII.",
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",

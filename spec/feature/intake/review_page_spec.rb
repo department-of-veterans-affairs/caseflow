@@ -91,6 +91,9 @@ feature "Intake Review Page", :postgres do
     end
 
     context "when veteran is deceased" do
+      # before do
+      #   allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return([])
+      # end
       let(:veteran) do
         create(:veteran, file_number: "123121234", date_of_death: 1.month.ago)
       end
@@ -590,7 +593,6 @@ feature "Intake Review Page", :postgres do
 
           it "allows selecting claimant not listed" do
             start_appeal(veteran, claim_participant_id: claim_participant_id)
-
             visit "/intake"
 
             expect(page).to have_current_path("/intake/review_request")
@@ -600,11 +602,14 @@ feature "Intake Review Page", :postgres do
             end
 
             expect(page).to have_selector("label[for=claimant-options_claimant_not_listed]")
+
             within_fieldset(COPY::SELECT_CLAIMANT_LABEL) do
               find("label", text: "Claimant not listed", match: :prefer_exact).click
             end
+            click_intake_continue
 
-            # Add remaining steps of Add Claimant flow
+            expect(page).to have_current_path("/intake/add_claimant")
+            expect(page).to have_content("Add Claimant")
           end
         end
       end
