@@ -384,17 +384,9 @@ class HearingSchedule::GenerateHearingDaysSchedule
       acc[allocation.regional_office] = ro_cities[allocation.regional_office].merge(
         allocated_days: allocation.allocated_days,
         available_days: @available_days,
-        num_of_rooms: get_num_of_rooms(allocation.regional_office)
+        num_of_rooms: RegionalOffice.new(allocation.regional_office).rooms
       )
       acc
-    end
-  end
-
-  def get_num_of_rooms(regional_office)
-    if RegionalOffice::MULTIPLE_ROOM_ROS.include?(regional_office)
-      RegionalOffice::MULTIPLE_NUM_OF_RO_ROOMS
-    else
-      RegionalOffice::DEFAULT_NUM_OF_RO_ROOMS
     end
   end
 
