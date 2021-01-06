@@ -7,6 +7,8 @@ end
 class RegionalOffice
   class NotFoundError < StandardError; end
 
+  TRIPLE_ROOM_ROS = %w[RO16 RO17 RO62].freeze
+  DOUBLE_ROOM_ROS = %w[RO18 RO19 RO22 RO25 RO49].freeze
   TRIPLE_RO_ROOM_COUNT = 3
   DOUBLE_RO_ROOM_COUNT = 2
   DEFAULT_RO_ROOM_COUNT = 1
@@ -90,10 +92,10 @@ class RegionalOffice
 
   # these ROs have been added manually as needed
   def rooms
-    return TRIPLE_RO_ROOM_COUNT if %w[RO16 RO17 RO62].include?(key)
-    return DOUBLE_RO_ROOM_COUNT if %w[RO18 RO19 RO22 RO25 RO49].include?(key)
+    return TRIPLE_RO_ROOM_COUNT if TRIPLE_ROOM_ROS.include?(key)
+    return DOUBLE_RO_ROOM_COUNT if DOUBLE_ROOM_ROS.include?(key)
 
-    1
+    DEFAULT_RO_ROOM_COUNT
   end
 
   private
