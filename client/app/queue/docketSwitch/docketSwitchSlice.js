@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   step: 0,
+  step: 1,
 
   /**
    * This will hold receipt date, disposition, selected issue IDs, etc
