@@ -11,7 +11,7 @@ export default {
   parameters: { controls: { expanded: true } },
   args: {
     cavcRemandToggled: true,
-    mdrToggled: false,
+    mdrToggled: true,
     reversalToggled: false,
     dismissalToggled: false,
   },
@@ -43,4 +43,7 @@ const Template = ({ cavcRemandToggled, mdrToggled, reversalToggled, dismissalTog
 };
 
 export const Default = Template.bind({});
-Default.args = { cavcRemandToggled: true };
+Default.args = {
+  cavcRemandToggled: true,
+  mdrToggled: true
+};
