@@ -214,7 +214,7 @@ const AddCavcRemandView = (props) => {
     strongLabel
   />;
 
-  const mdrBanner =<Alert type="info" title="">{COPY.MDR_SELECTION_ALERT_BANNER}</Alert>
+  const mdrBanner = <Alert type="info" scrollOnAlert={false}>{COPY.MDR_SELECTION_ALERT_BANNER}</Alert>;
 
   const judgementField = <DateSelector
     label={COPY.CAVC_JUDGEMENT_DATE}
