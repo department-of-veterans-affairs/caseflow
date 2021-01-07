@@ -18,6 +18,10 @@ class DocketSwitch < CaseflowRecord
     denied: "denied"
   }
 
+  scope :updated_since_for_appeals, lambda { |since|
+    select(:old_docket_stream_id).where("#{table_name}.updated_at >= ?", since)
+  }
+
   def process!
     process_denial! if denied?
     process_granted! if task.is_a?(DocketSwitchGrantedTask)
