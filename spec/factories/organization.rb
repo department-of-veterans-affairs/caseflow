@@ -22,15 +22,10 @@ FactoryBot.define do
     factory :judge_team, class: JudgeTeam do
       type { JudgeTeam.name }
 
-      # Designed behavior:
-      # The first user added to a JudgeTeam will be a JudgeTeamLead role.
-      # Subsequent added users will be the DecisionDraftingAttorney role.
-      # As a result, on non-zero-size JudgeTeams, there will always be only one JudgeTeamLead.
-
       # Note:
       # OrganizationsUser.make_user_admin(user, org) will call
       # org.add_user(user) and since org is a JudgeTeam,
-      # this triggers the first user to be a JudgeTeamLead.
+      # this triggers the first user to be an admin.
 
       # for creating error state; error b/c lead should also be admin
       trait :incorrectly_has_nonadmin_judge_team_lead do

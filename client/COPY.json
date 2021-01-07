@@ -111,6 +111,8 @@
   "CASE_DETAILS_POA_AGENT": "Private Agent",
   "CASE_DETAILS_POA_ATTORNEY": "Private Attorney",
   "CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY": "Edit NOD Date",
+  "CASE_DETAILS_FNOD_BANNER_TITLE": "Veteran Date of Death Reported",
+  "FNOD_SOURCE": "CorpDB (BGS)",
 
   "CASE_DETAILS_GENDER_FIELD_LABEL": "Gender",
   "CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE": "Female",
@@ -906,7 +908,6 @@
   "CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_SUCCESS_DETAIL": "You have successfully cancelled the convert hearing to virtual task",
 
   "JUDGE_TEAM_REMOVE_JUDGE_ERROR": "Cannot remove a judge from their judge team.",
-  "JUDGE_TEAM_ATTORNEY_RIGHTS_ERROR": "Cannot edit attorney rights on non-attorneys",
   "JUDGE_TEAM_ADMIN_ERROR": "Cannot add more than one admin to a judge team",
   "JUDGE_TEAM_DEADMIN_JUDGE_ERROR": "Cannot remove adminship from a judge on their team",
 
