@@ -8,7 +8,9 @@ import {
   DOCKET_SWITCH_GRANTED_ADD_TASK_LABEL,
   DOCKET_SWITCH_GRANTED_ADD_TASK_INSTRUCTIONS,
   DOCKET_SWITCH_GRANTED_ADD_TASK_TEXT,
-  DOCKET_SWITCH_GRANTED_ADD_TASK_BUTTON
+  DOCKET_SWITCH_GRANTED_ADD_TASK_BUTTON,
+  DOCKET_SWITCH_GRANTED_MODAL_TITLE,
+  DOCKET_SWITCH_GRANTED_MODAL_INSTRUCTION
 } from 'app/../COPY';
 import { sprintf } from 'sprintf-js';
 import { yupResolver } from '@hookform/resolvers';
@@ -18,9 +20,10 @@ import ReactMarkdown from 'react-markdown';
 import CheckboxGroup from 'app/components/CheckboxGroup';
 import Button from '../../../components/Button';
 import _ from 'lodash';
+import Modal from '../../../components/Modal';
 
 const schema = yup.object().shape({
-  taskIds: yup.string().required()
+  taskList: yup.array(yup.string()).required()
 });
 
 export const DocketSwitchAddTaskForm = ({
@@ -35,19 +38,20 @@ export const DocketSwitchAddTaskForm = ({
   });
 
   const [tasks, setTasks] = useState({});
+  const [disableButton, setDisableButton] = useState(false);
 
   const sectionStyle = css({ marginBottom: '24px' });
 
-  const actionOptions = useMemo(() => {
+  const taskOptions = useMemo(() => {
     return taskListing && taskListing.map((task) =>
       ({ label: task.label,
         id: task.taskId.toString() }));
   }, [taskListing]);
 
   const selectedIssues = useMemo(() => {
-    return actionOptions && actionOptions.filter((item) => item[1]).
+    return Object.entries(tasks).filter((item) => item[1]).
       flatMap((item) => item[0]);
-  }, [actionOptions]);
+  }, [tasks]);
 
   console.log('selected', selectedIssues);
 
@@ -55,16 +59,37 @@ export const DocketSwitchAddTaskForm = ({
     const checked = selectedIssues.length === 0;
     const newValues = {};
 
-    actionOptions.forEach((item) => newValues[item.label] = checked);
+    taskOptions.forEach((item) => newValues[item.label] = checked);
     setTasks(newValues);
   };
 
   // populate all of our checkboxes on initial render
   useEffect(() => selectAllIssues(), []);
 
-  const onIssueChange = (evt) => {
-    setTasks({ ...tasks, [evt.target.name]: evt.target.checked });
-  };
+  const handleChange = (evt) => setTasks({ ...tasks, [evt.target.name]: evt.target.checked });
+
+  // const onIssueChange = (evt) => {
+  //   setTasks({ ...tasks, [evt.target.name]: evt.target.checked });
+  // };
+
+  const watchTasks = watch('taskList', false);
+
+  console.log('watch', watchTasks);
+
+  const buttons = [
+    {
+      classNames: ['cf-modal-link', 'cf-btn-link'],
+      name: 'Cancel',
+      onClick: onCancel
+    },
+    {
+      classNames: ['usa-button', 'usa-button-primary'],
+      name: 'Confirm',
+      // For future disable use cases
+      disabled: disableButton,
+      onClick: () => onSubmit(tasks)
+    }
+  ];
 
   return (
     <form
@@ -80,24 +105,31 @@ export const DocketSwitchAddTaskForm = ({
           />
         </div>
         <div><ReactMarkdown source={DOCKET_SWITCH_GRANTED_ADD_TASK_TEXT} /></div>
-        <Controller
-          name="taskIds"
-          control={control}
-          defaultValue={[]}
-          render={({ onChange: onCheckChange }) => {
-            return (
-              <CheckboxGroup
-                name="issues"
-                label="Please unselect any tasks you would like to remove:"
-                strongLabel
-                options={actionOptions}
-                onChange={(event) => onCheckChange(onIssueChange(event))}
-                styling={css({ marginBottom: '0' })}
-                values={tasks}
-              />
-            );
-          }}
+
+        <CheckboxGroup
+          name="taskList"
+          label="Please unselect any tasks you would like to remove:"
+          strongLabel
+          options={taskOptions}
+          onChange={handleChange}
+          styling={css({ marginBottom: '0' })}
+          values={tasks}
+          inputRef={register}
         />
+
+        { watchTasks && handleChange && (
+          <Modal
+            title={DOCKET_SWITCH_GRANTED_MODAL_TITLE}
+            onCancel={onCancel}
+            onSubmit={onSubmit}
+            closeHandler={onCancel}
+            buttons={buttons}>
+            <div>
+              <ReactMarkdown source={DOCKET_SWITCH_GRANTED_MODAL_INSTRUCTION} />
+            </div>
+          </Modal>
+        )
+        }
 
         <React.Fragment>
           <h3 {...css({ marginBottom: '0' })}>
