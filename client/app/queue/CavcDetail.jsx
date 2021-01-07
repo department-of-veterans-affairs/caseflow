@@ -20,7 +20,7 @@ const CavcDetail = (props) => {
     decision_date: decisionDate,
     judgement_date: judgementDate,
     mandate_date: mandateDate,
-    instructions: instructions
+    instructions: instructionText
   } = props;
 
   const details = [];
@@ -86,10 +86,10 @@ const CavcDetail = (props) => {
     });
   }
 
-  if (instructions) {
+  if (instructionText) {
     details.push({
       label: COPY.CASE_DETAILS_CAVC_REMAND_INSTRUCTIONS,
-      value: instructions
+      value: instructionText
     });
   }
 
