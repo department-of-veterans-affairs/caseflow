@@ -5,7 +5,6 @@ class Organization < CaseflowRecord
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
   has_many :users, through: :organizations_users
-  has_many :judge_team_roles, through: :organizations_users
   has_many :non_admin_users, -> { non_admin }, class_name: "OrganizationsUser"
   require_dependency "dvc_team"
 
