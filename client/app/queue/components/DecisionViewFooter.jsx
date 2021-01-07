@@ -17,10 +17,7 @@ const DecisionViewFooter = ({ buttons }) => (
 DecisionViewFooter.propTypes = {
   buttons: PropTypes.arrayOf(
     PropTypes.shape({
-      classNames: PropTypes.oneOf(
-        PropTypes.string,
-        PropTypes.arrayOf(PropTypes.string)
-      ),
+      classNames: PropTypes.arrayOf(PropTypes.string),
       callback: PropTypes.func,
       name: PropTypes.string,
       displayText: PropTypes.string,

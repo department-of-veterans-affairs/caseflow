@@ -271,7 +271,12 @@ class Veteran < CaseflowRecord
   end
 
   def date_of_death
-    super || (bgs_record_found? ? bgs_record[:date_of_death] : nil)
+    super || begin
+               dod = bgs_record[:date_of_death] if bgs_record_found?
+               dod && Date.strptime(dod, "%m/%d/%Y")
+             rescue ArgumentError
+               nil
+             end
   end
 
   def address
