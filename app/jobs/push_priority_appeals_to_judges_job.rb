@@ -147,4 +147,11 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   def priority_distributions_this_month
     Distribution.priority_pushed.completed.where(completed_at: 30.days.ago..Time.zone.now)
   end
+
+  def warm_veteran_attr_for_priority_distributions
+    non_genpop_distro_case_ids = DistributedCase.where(distribution_id: @tied_distributions.pluck(:id)).pluck(:case_id)
+    warm_veteran_cache_for_appeals(non_genpop_distro_case_ids)
+    genpop_distro_case_ids = DistributedCase.find_by(distribution_id: @genpop_distributions.pluck(:id)).pluck(:case_id)
+    warm_veteran_cache_for_appeals(genpop_distro_case_ids)
+  end
 end
