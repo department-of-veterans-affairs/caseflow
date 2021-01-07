@@ -951,7 +951,7 @@ describe RequestIssue, :all_dbs do
 
       request_issue_copy = new_appeal_stream.reload.request_issues.first
 
-      expect(request_issue_copy.description).to eq "Moved issue"
+      expect(request_issue_copy.nonrating_issue_description).to eq "Moved issue"
       expect(request_issue_copy.created_at).to be_within(1.second).of Time.zone.now
     end
 
