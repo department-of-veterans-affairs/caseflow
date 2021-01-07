@@ -24,8 +24,7 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
     dispatch(resetSuccessMessages());
   }, []);
 
-  const handleSubmit = (receiptDate) => {
-    
+  const handleSubmit = (receiptDate) => {   
     const appellantName = (appeal.appellantFullName);
     const nodDateStr = formatDateStr(nodDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
     const receiptDateStr = formatDateStr(receiptDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
@@ -72,7 +71,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
     {
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Submit',
-      //For future disable use cases
+      // For future disable use cases
       disabled: disableButton,
       onClick: () => onSubmit(receiptDate)
     }
