@@ -23,6 +23,7 @@ import { PAGE_PATHS } from './constants';
 import { toggleCancelModal, submitCancel } from './actions/intake';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { IntakeLayout } from './components/IntakeLayout';
+import { AddClaimantPage } from './components/addClaimant/AddClaimantPage';
 
 export const IntakeFrame = (props) => {
   const history = useHistory();
@@ -95,6 +96,14 @@ export const IntakeFrame = (props) => {
             <IntakeLayout buttons={<ReviewButtons history={history} />}>
               <ReviewPage featureToggles={props.featureToggles} />
             </IntakeLayout>
+          </PageRoute>
+
+          <PageRoute
+            exact
+            path={PAGE_PATHS.ADD_CLAIMANT}
+            title="Add Claimant | Caseflow Intake"
+          >
+            <AddClaimantPage />
           </PageRoute>
 
           <PageRoute
