@@ -7,8 +7,8 @@ import { useHistory, useParams } from 'react-router';
 
 export const DocketSwitchAddTaskContainer = () => {
   const dispatch = useDispatch();
-  const { appealId } = useParams();
-  // const { goBack, push } = useHistory();
+  const { appealId, taskId } = useParams();
+  const { goBack, push } = useHistory();
 
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
@@ -22,6 +22,9 @@ export const DocketSwitchAddTaskContainer = () => {
     // Add code to clear docketSwitch redux store
     // You can utilize useHistory() react-router hook to go back to the case details page
   };
+
+  const handleCancelModal = () => goBack();
+
   const handleSubmit = () => {
     // Add stuff to redux store
 
@@ -38,6 +41,7 @@ export const DocketSwitchAddTaskContainer = () => {
         onSubmit={handleSubmit}
         docketName={appeal.docketName}
         taskListing={tasks}
+        closeModal={ handleCancelModal}
       />
     </>
   );

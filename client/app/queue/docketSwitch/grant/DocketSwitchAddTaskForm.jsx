@@ -30,7 +30,8 @@ export const DocketSwitchAddTaskForm = ({
   onSubmit,
   onCancel,
   docketName,
-  taskListing
+  taskListing,
+  closeModal
 }) => {
   const { register, handleSubmit, control, formState, watch } = useForm({
     resolver: yupResolver(schema),
@@ -38,8 +39,6 @@ export const DocketSwitchAddTaskForm = ({
   });
 
   const [tasks, setTasks] = useState({});
-  const [disableButton, setDisableButton] = useState(false);
-
   const sectionStyle = css({ marginBottom: '24px' });
 
   const taskOptions = useMemo(() => {
@@ -52,8 +51,6 @@ export const DocketSwitchAddTaskForm = ({
     return Object.entries(tasks).filter((item) => item[1]).
       flatMap((item) => item[0]);
   }, [tasks]);
-
-  console.log('selected', selectedIssues);
 
   const selectAllIssues = () => {
     const checked = selectedIssues.length === 0;
@@ -80,13 +77,11 @@ export const DocketSwitchAddTaskForm = ({
     {
       classNames: ['cf-modal-link', 'cf-btn-link'],
       name: 'Cancel',
-      onClick: onCancel
+      onClick: closeModal
     },
     {
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Confirm',
-      // For future disable use cases
-      disabled: disableButton,
       onClick: () => onSubmit(tasks)
     }
   ];
@@ -117,7 +112,7 @@ export const DocketSwitchAddTaskForm = ({
           inputRef={register}
         />
 
-        { watchTasks && handleChange && (
+        { handleChange && (
           <Modal
             title={DOCKET_SWITCH_GRANTED_MODAL_TITLE}
             onCancel={onCancel}
@@ -158,5 +153,6 @@ DocketSwitchAddTaskForm.propTypes = {
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
   docketName: PropTypes.string,
+  closeModal: PropTypes.func,
   taskListing: PropTypes.array
 };
