@@ -93,10 +93,6 @@ describe DocumentFetcher, :postgres do
           doc.attributes.each do |key, value|
             next if IGNORED_ATTRIBUTES.include?(key) || skip_attribs.include?(key)
 
-            if returned_docs_by_vbms_id[doc.vbms_document_id][key] != value
-              puts "#{key}: #{value}"
-              binding.pry
-            end
             expect(returned_docs_by_vbms_id[doc.vbms_document_id][key]).to eq(value)
           end
 
