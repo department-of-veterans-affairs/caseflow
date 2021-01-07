@@ -24,7 +24,7 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
     dispatch(resetSuccessMessages());
   }, []);
 
-  const handleSubmit = (receiptDate) => {   
+  const handleSubmit = (receiptDate) => {
     const appellantName = (appeal.appellantFullName);
     const nodDateStr = formatDateStr(nodDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
     const receiptDateStr = formatDateStr(receiptDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
