@@ -17,7 +17,7 @@ class DocumentFetcher
     documents.size
   end
 
-  # update or create
+  # Fetch documents, then updates or creates them
   def find_or_create_documents!
     @find_or_create_documents ||= save!
   end
@@ -54,11 +54,12 @@ class DocumentFetcher
 
     # Create new docs that don't exist
     Document.import(docs_to_create)
-    # For newly created documents that have a series_id, copy over the metadata from the latest version of the document
+    # For newly created documents that have a series_id, copy over the metadata (annotations, tags, category labels)
+    # from the latest version of the document (i.e., the latest id having the same series_id) in Caseflow.
+    # The created document then becomes the latest version among the documents with the same series_id.
     series_id_docs = Document.where(vbms_document_id: docs_to_create.select(&:series_id).pluck(:vbms_document_id))
     copy_metadata_from_document(series_id_docs, vbms_doc_ver_ids)
-
-    created_docs = retrieve_created_docs_with_nondb_attributes(docs_to_create)
+    created_docs = retrieve_created_docs_including_nondb_attributes(docs_to_create)
 
     updated_docs + created_docs
   end
@@ -80,7 +81,7 @@ class DocumentFetcher
     end
   end
 
-  def retrieve_created_docs_with_nondb_attributes(docs_to_create)
+  def retrieve_created_docs_including_nondb_attributes(docs_to_create)
     docs_to_create_hash = docs_to_create.index_by(&:vbms_document_id)
     created_docs = Document.where(vbms_document_id: docs_to_create.pluck(:vbms_document_id))
     created_docs.map do |doc|

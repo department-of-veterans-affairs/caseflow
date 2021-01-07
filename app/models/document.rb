@@ -176,7 +176,8 @@ class Document < CaseflowRecord
     serializable_hash
   end
 
-  # used when LegacyAppeal references nod, soc, or form9 documents (created in memory and is not saved to the DB)
+  # Indirectly called when LegacyAppeal references nod, soc, or form9 Documents
+  # (which are created in memory and not saved to the DB)
   def merge_into(document)
     document.assign_attributes(
       efolder_id: efolder_id,
@@ -192,6 +193,8 @@ class Document < CaseflowRecord
     document
   end
 
+  # These database attributes are used by merge_into(), which was originally used by DocumentFetcher.
+  # The optimized version uses bulk_merge_and_save() and assign_nondatabase_attributes() instead.
   COLUMNS_TO_MERGE = [
     :type,
     :received_at,

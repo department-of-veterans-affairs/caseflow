@@ -102,11 +102,6 @@ describe DocumentFetcher, :postgres do
 
           # These non-database attributes are not included in doc.attributes, so check them explicitly
           NONDB_ATTRIBUTES.each do |attrib|
-            if returned_docs_by_vbms_id[doc.vbms_document_id].send(attrib) != doc.send(attrib)
-              puts "#{attrib}: #{returned_docs_by_vbms_id[doc.vbms_document_id].send(attrib)} != #{doc.send(attrib)}"
-              binding.pry
-            end
-
             expect(doc.send(attrib)).not_to be_nil
             expect(returned_docs_by_vbms_id[doc.vbms_document_id].send(attrib)).to eq(doc.send(attrib))
           end
