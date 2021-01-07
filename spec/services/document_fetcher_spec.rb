@@ -284,6 +284,37 @@ describe DocumentFetcher, :postgres do
           expect(Document.first.type).to eq("NOD")
         end
       end
+
+      context "when API returns many documents" do
+        # Increase the size of the array to test scalability; 20000 works but takes a minute or so
+        let(:documents) { Array.new(50) { Generators::Document.build }.uniq(&:vbms_document_id) }
+        let!(:saved_documents) do
+          Array.new(documents.size / 2) do |i|
+            # have every other document already exists to test that all CREATEs and UPDATEs are each done at most once
+            fetched_document = documents[i * 2]
+            Generators::Document.create(
+              type: "Form 9",
+              series_id: fetched_document.series_id,
+              vbms_document_id: fetched_document.vbms_document_id
+            )
+          end
+        end
+        it "efficiently creates and updates documents" do
+          expect(Document.distinct.pluck(:type)).to eq(["Form 9"])
+
+          # Uncomment the following to see all SQL queries made
+          # ActiveRecord::Base.logger = Logger.new(STDOUT)
+          query_data = SqlTracker.track do
+            document_fetcher.find_or_create_documents!
+          end
+
+          # Uncomment the following to see a count of SQL queries
+          pp query_data.values.pluck(:sql, :count)
+          doc_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents\"") }
+          # This expected count of 25 is bad and will be fixed in another PR
+          expect(doc_insert_queries.pluck(:count).max).to eq 25
+        end
+      end
     end
 
     context "when there is a document with no series_id" do
