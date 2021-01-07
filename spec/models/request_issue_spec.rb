@@ -948,10 +948,11 @@ describe RequestIssue, :all_dbs do
       subject
       expect(request_issue.closed_status).to eq closed_status
       expect(request_issue.closed_at).to eq Time.zone.now
-      expect(new_appeal_stream.reload.request_issues.first).to have_attributes(
-        nonrating_issue_description: "Moved issue",
-        created_at: Time.zone.now
-      )
+
+      request_issue_copy = new_appeal_stream.reload.request_issues.first
+
+      expect(request_issue_copy.description).to eq "Moved issue"
+      expect(request_issue_copy.created_at).to be_within(1.second).of Time.zone.now
     end
 
     context "the request issue's decision review is not an appeal" do

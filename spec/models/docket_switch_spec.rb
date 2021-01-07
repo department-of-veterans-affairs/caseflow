@@ -18,7 +18,7 @@ RSpec.describe DocketSwitch, type: :model do
   end
   let(:new_docket_stream) { appeal.create_stream(:switched_docket) }
   let(:docket_switch_task) do
-    task_class_type = disposition == "denied" ? "denied" : "granted"
+    task_class_type = (disposition == "denied") ? "denied" : "granted"
     create("docket_switch_#{task_class_type}_task".to_sym, appeal: appeal, assigned_to: cotb_user, assigned_by: judge)
   end
   let(:disposition) { nil }
