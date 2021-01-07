@@ -17,7 +17,7 @@ describe DocumentFetcher, :postgres do
 
   let(:fetched_at_format) { "%D %l:%M%P %Z %z" }
   let!(:efolder_fetched_at_format) { "%FT%T.%LZ" }
-  let(:doc_struct) do
+  let(:fetched_doc_struct) do
     {
       # create duplicate documents so as not to modify the original documents used in expect statements
       documents: documents.map(&:dup),
@@ -29,7 +29,7 @@ describe DocumentFetcher, :postgres do
   let(:user) { create(:user) }
 
   before do
-    expect(EFolderService).to receive(:fetch_documents_for).and_return(doc_struct).once
+    expect(EFolderService).to receive(:fetch_documents_for).and_return(fetched_doc_struct).once
   end
 
   context "#documents" do
@@ -81,7 +81,10 @@ describe DocumentFetcher, :postgres do
 
   context "#find_or_create_documents!" do
     let(:documents) do
-      [Generators::Document.build(type: "NOD", series_id: series_id), Generators::Document.build(type: "SOC")]
+      [
+        Generators::Document.build(id: 201, type: "NOD", series_id: series_id),
+        Generators::Document.build(id: 202, type: "SOC")
+      ]
     end
 
     shared_examples "has non-database attributes" do |skip_attribs = []|
@@ -309,7 +312,7 @@ describe DocumentFetcher, :postgres do
           end
 
           # Uncomment the following to see a count of SQL queries
-          pp query_data.values.pluck(:sql, :count)
+          # pp query_data.values.pluck(:sql, :count)
           doc_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents\"") }
           # This expected count of 25 is bad and will be fixed in another PR
           expect(doc_insert_queries.pluck(:count).max).to eq 25
