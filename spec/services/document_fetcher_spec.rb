@@ -281,7 +281,6 @@ describe DocumentFetcher, :postgres do
           expect(Document.count).to eq(1)
           expect(Document.first.type).to eq(saved_documents.type)
 
-          # ActiveRecord::Base.logger = Logger.new(STDOUT)
           returned_documents = document_fetcher.find_or_create_documents!
           expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
 
