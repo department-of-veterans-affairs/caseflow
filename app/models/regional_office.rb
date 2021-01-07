@@ -8,7 +8,7 @@ class RegionalOffice
   class NotFoundError < StandardError; end
 
   MULTIPLE_ROOM_ROS = %w[RO17 RO18].freeze
-  MULTIPLE_NUM_OF_RO_ROOMS = 2
+  MULTIPLE_NUM_OF_RO_ROOMS = 1
   DEFAULT_NUM_OF_RO_ROOMS = 1
 
   # Maps CSS Station # to RO id

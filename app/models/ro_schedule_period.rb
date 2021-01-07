@@ -72,10 +72,16 @@ class RoSchedulePeriod < SchedulePeriod
     generate_hearings_days = HearingSchedule::GenerateHearingDaysSchedule.new(self)
 
     # Distribute the available Video hearing days per RO
-    video_hearing_days = format_ro_hearing_data(generate_hearings_days.allocate_hearing_days_to_ros(:video), :video)
+    video_hearing_days = format_ro_hearing_data(
+      generate_hearings_days.allocate_hearing_days_to_ros(:video),
+      :video
+    )
 
     # Distribute the available Virtual hearing days per RO
-    virtual_hearing_days = format_ro_hearing_data(generate_hearings_days.allocate_hearing_days_to_ros(:virtual), :virtual)
+    virtual_hearing_days = format_ro_hearing_data(
+      generate_hearings_days.allocate_hearing_days_to_ros(:virtual),
+      :virtual
+    )
 
     # Distribute the available Central Office hearing days
     co_hearing_days = generate_hearings_days.generate_co_hearing_days_schedule
