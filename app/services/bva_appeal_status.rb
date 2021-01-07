@@ -191,7 +191,7 @@ class BVAAppealStatus
   end
 
   def moved_to_new_stream?
-    # TODO this should be updated to check that there are no active tasks once the task handling is implemented
+    # TODO: this should be updated to check that there are no active tasks once the task handling is implemented
     completed_tasks.any? { |task| task.is_a?(DocketSwitchGrantedTask) }
   end
 

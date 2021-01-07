@@ -17,9 +17,10 @@ RSpec.describe DocketSwitch, type: :model do
     )
   end
   let(:new_docket_stream) { appeal.create_stream(:switched_docket) }
-  let(:granted_docket_switch_task) { create(:docket_switch_granted_task, appeal: appeal, assigned_to: cotb_user, assigned_by: judge) }
-  let(:denied_docket_switch_task) { create(:docket_switch_denied_task, appeal: appeal, assigned_to: cotb_user, assigned_by: judge) }
-  let(:docket_switch_task) { granted_docket_switch_task }
+  let(:docket_switch_task) do
+    task_class_type = disposition == "denied" ? "denied" : "granted"
+    create("docket_switch_#{task_class_type}_task".to_sym, appeal: appeal, assigned_to: cotb_user, assigned_by: judge)
+  end
   let(:disposition) { nil }
   let(:assigned_to_id) { nil }
   let(:granted_request_issue_ids) { appeal.request_issues.map(&:id) }
@@ -44,7 +45,6 @@ RSpec.describe DocketSwitch, type: :model do
 
     context "disposition is denied" do
       let(:disposition) { "denied" }
-      let(:docket_switch_task) { denied_docket_switch_task }
 
       it "closes the DocketSwitchDeniedTask" do
         expect(docket_switch_task).to be_assigned
@@ -56,8 +56,6 @@ RSpec.describe DocketSwitch, type: :model do
     end
 
     context "disposition is granted or partially granted" do
-      let(:docket_switch_task) { granted_docket_switch_task }
-
       context "when disposition is granted (full grant)" do
         let(:disposition) { "granted" }
         let(:granted_request_issue_ids) { nil }
@@ -71,7 +69,7 @@ RSpec.describe DocketSwitch, type: :model do
           expect(docket_switch.new_docket_stream.request_issues.count).to eq appeal.request_issues.count
 
           # all old request issues closed
-          expect(appeal.request_issues.map{ |ri| ri.reload.closed_status }.uniq).to eq ["docket_switch"]
+          expect(appeal.request_issues.map { |ri| ri.reload.closed_status }.uniq).to eq ["docket_switch"]
 
           # Docket switch task gets completed
           expect(docket_switch_task).to be_completed
@@ -94,7 +92,7 @@ RSpec.describe DocketSwitch, type: :model do
           expect(docket_switch.new_docket_stream.request_issues.count).to eq 2
 
           # granted old request issues closed
-          expect(appeal.request_issues.map{ |ri| ri.reload.closed_status }.compact.uniq).to eq ["docket_switch"]
+          expect(appeal.request_issues.map { |ri| ri.reload.closed_status }.compact.uniq).to eq ["docket_switch"]
           expect(appeal.request_issues.active.count).to eq 1
 
           # Docket switch task gets completed

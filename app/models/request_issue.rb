@@ -472,8 +472,10 @@ class RequestIssue < CaseflowRecord
   end
 
   def move_stream!(new_appeal_stream:, closed_status:)
+    return unless decision_review.is_a?(Appeal)
+    
     transaction do
-      new_issue_attributes = attributes.reject{ |attr| ["id", "created_at", "updated_at"].include?(attr) }
+      new_issue_attributes = attributes.reject { |attr| %w[id created_at updated_at].include?(attr) }
       new_issue_attributes["decision_review_id"] = new_appeal_stream.id
       self.class.create!(new_issue_attributes)
       close!(status: closed_status)
