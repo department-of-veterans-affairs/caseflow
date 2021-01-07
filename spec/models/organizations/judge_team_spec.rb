@@ -215,7 +215,6 @@ describe JudgeTeam, :postgres do
       expect(judge_team.users.first).to eq(judge)
       expect(judge_team.users.second).to eq(attorney)
 
-      # Make sure that the user we just added has the JudgeTeamRole of DecisionDraftingAttorney for the judge team.
       expect(attorney.organizations_users.length).to eq(1)
       expect(attorney.organizations_users.first.organization).to eq(judge_team)
     end
