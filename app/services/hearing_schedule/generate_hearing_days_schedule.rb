@@ -459,7 +459,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     ro_allocations.reduce({}) do |acc, allocation|
       acc[allocation.regional_office] = ro_cities[allocation.regional_office].merge(
         allocated_days: allocation.allocated_days,
-        allocated_virtual_days: allocation.allocated_virtual_days,
+        allocated_days_without_rooms: allocation.allocated_virtual_days,
         available_days: @available_days,
         num_of_rooms: RegionalOffice.new(allocation.regional_office).rooms
       )
