@@ -9,6 +9,8 @@
 # to be assigned and acted upon.
 # Expected parent: CavcTask
 # Expected assigned_to.type: CavcLitigationSupport
+#
+# CAVC Remands Overview: https://github.com/department-of-veterans-affairs/caseflow/wiki/CAVC-Remands
 
 class CavcRemandProcessedLetterResponseWindowTask < Task
   VALID_PARENT_TYPES = [

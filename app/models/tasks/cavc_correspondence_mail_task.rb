@@ -7,6 +7,8 @@
 # Expected Parent Task: RootTask
 #
 # Expected Child Task: CavcCorrespondenceMailTask
+#
+# CAVC Remands Overview: https://github.com/department-of-veterans-affairs/caseflow/wiki/CAVC-Remands
 
 class CavcCorrespondenceMailTask < MailTask
   validate :cavc_appeal_stream, on: :create
