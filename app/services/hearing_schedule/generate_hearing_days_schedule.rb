@@ -307,7 +307,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   def allocations_by_month(ro_key, with_rooms)
     # Ignore room constraints if specified
     if with_rooms == false
-      monthly_distributed_days(@ros[ro_key][:allocated_virtual_days].ceil)
+      monthly_distributed_days(@ros[ro_key][:allocated_days_without_rooms].ceil)
     else
       # raise error if there are not enough available video days
       verify_total_available_days(ro_key)
