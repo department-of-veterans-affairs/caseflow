@@ -1258,6 +1258,8 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
+    
+
     context "when a NOD exists and user can edit NOD date display Edit NOD Date link" do
       before { FeatureToggle.enable!(:edit_nod_date) }
       after { FeatureToggle.disable!(:edit_nod_date) }
@@ -1292,6 +1294,23 @@ RSpec.feature "Case details", :all_dbs do
           expect(appeal.nod_date).to_not be_nil
           expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
           expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+        end
+
+        it "success alert displays after submitting NOD date change successfully" do
+          visit("/queue/appeals/#{appeal.uuid}")
+
+          find("button", text: COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY).click
+          fill_in COPY::EDIT_NOD_DATE_LABEL, with: Date.today.mdY
+          safe_click "#Edit-NOD-Date-button-id-1"
+
+          expect(page).to have_content(
+            sprintf(COPY::EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE.gsub("(", "{").gsub(")s", "}"),
+              {
+                appellantName: appeal.claimant.name,
+                nodDateStr: appeal.receipt_date.mdY,
+                receiptDateStr: Date.today.mdY
+              })
+          )
         end
       end
 
