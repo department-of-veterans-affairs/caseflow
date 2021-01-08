@@ -101,7 +101,7 @@ class HearingSchedule::GetSpreadsheetData
     allocated_days_without_rooms = allocation_sheet.column(5).drop(3)
 
     # Map the data to the hearing allocation days
-    ro_names.zip(ro_codes, allocated_days, allocated_virtual_days).each do |row|
+    ro_names.zip(ro_codes, allocated_days, allocated_days_without_rooms).each do |row|
       hearing_allocation_days.push("ro_code" => row[1].strip,
                                    "ro_city" => row[0].split(", ")[0].strip,
                                    "ro_state" => row[0].split(", ")[1].strip,
