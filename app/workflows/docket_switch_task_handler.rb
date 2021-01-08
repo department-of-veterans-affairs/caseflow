@@ -17,7 +17,6 @@ class DocketSwitchTaskHandler
   delegate :old_docket_stream, :new_docket_stream, :disposition, to: :docket_switch
 
   def call
-    # binding.pry
     return if disposition == "denied"
 
     copy_persistent_tasks!
@@ -42,7 +41,11 @@ class DocketSwitchTaskHandler
 
   def create_new_tasks!
     new_docket_stream.create_tasks_on_intake_success!
-    ColocatedTask.create_many_from_params(new_admin_actions, attorney_user)
+    params_array = new_admin_actions.map do |task|
+      task.merge(appeal: new_docket_stream, parent_id: new_docket_stream.root_task.id, assigned_to: attorney_user)
+    end
+
+    ColocatedTask.create_many_from_params(params_array, attorney_user)
   end
 
   def attorney_user

@@ -54,8 +54,7 @@ class ColocatedTask < Task
         begin
           super(user, parent)
         rescue Caseflow::Error::ActionForbiddenError => error
-          # We want to allow task creation if done from attorney checkout on a vacate & de novo
-          raise error unless de_novo_atty_checkout?(user, parent)
+          raise error unless allow_creation_exception?(user, parent)
 
           true
         end
@@ -64,8 +63,11 @@ class ColocatedTask < Task
       end
     end
 
-    def de_novo_atty_checkout?(user, parent)
-      (parent.appeal.vacate_type == "vacate_and_de_novo") && user.attorney_in_vacols?
+    # We want to allow task creation if done from attorney checkout on a vacate & de novo or if a task is being added during a docket switch
+    def allow_creation_exception?(user, parent)
+      return unless user.attorney_in_vacols?
+
+      (parent.appeal.vacate_type == "vacate_and_de_novo") || parent.appeal.docket_switch.present?
     end
 
     def default_assignee
