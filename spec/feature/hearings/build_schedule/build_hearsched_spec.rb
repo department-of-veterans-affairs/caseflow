@@ -63,7 +63,7 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
       expect(hearing_days_with_rooms.count).to eq(allocation_with_room_count + allocation_without_room_count)
     end
 
-    scenario "RO Virtual-only assignment process" do
+    scenario "RO assignment without rooms process" do
       assignment_process("validRoVirtualOnlySpreadsheet.xlsx")
 
       # Check the allocation virtual count
