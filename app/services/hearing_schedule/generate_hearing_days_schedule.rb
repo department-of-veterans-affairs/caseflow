@@ -103,10 +103,10 @@ class HearingSchedule::GenerateHearingDaysSchedule
     end.to_h
   end
 
-  # Starting place of the algo to assign Virtual/Video hearing days to RO
-  def allocate_hearing_days_to_ros(request_type)
+  # Starting place of the algo to assign hearing days to RO taking into account whether to constrain by room
+  def allocate_hearing_days_to_ros(with_rooms = true)
     @ros = sort_ros_by_rooms_and_allocated_days
-    do_allocate_hearing_days(request_type)
+    do_allocate_hearing_days(with_rooms)
   end
 
   # Sort ROs in descending order of the highest ratio of allocated days to rooms and available days
@@ -146,7 +146,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   private
 
   # Method that encapsulates the allocation of hearing days to ROs
-  def do_allocate_hearing_days(request_type)
+  def do_allocate_hearing_days(with_rooms)
     @date_allocated = {}
     @amortized = 0
 
@@ -166,14 +166,14 @@ class HearingSchedule::GenerateHearingDaysSchedule
     end
 
     ros = @ros.each_key do |ro_key|
-      allocate_all_ro_monthly_hearing_days(ro_key, request_type)
+      allocate_all_ro_monthly_hearing_days(ro_key, with_rooms)
     end
 
     ros
   end
 
   # Allocate RO for each month within the schedule period
-  def allocate_all_ro_monthly_hearing_days(ro_key, request_type)
+  def allocate_all_ro_monthly_hearing_days(ro_key, with_rooms)
     # Ex, {[1, 2021]=>[Tue, 05 Jan 2021, Wed, 06 Jan 2021...], [2, 2021]=> [Mon, 01 Feb 2021, Tue, 02 Feb 2021,..]}
     grouped_monthly_avail_dates = group_dates_by_month(@ros[ro_key][:available_days])
 
@@ -191,11 +191,11 @@ class HearingSchedule::GenerateHearingDaysSchedule
       end]
     end.to_h
 
-    assign_hearing_days(ro_key, request_type)
+    assign_hearing_days(ro_key, with_rooms)
     add_allocated_days_and_format(ro_key) # sort dates chronologically per month (restore order from before above^ sort)
   end
 
-  def assign_hearing_days(ro_key, request_type)
+  def assign_hearing_days(ro_key, with_rooms)
     # date_index and i are always the same...
     # i is only used as a counter
     # date_index is passed to allocate_hearing_days_to_individual_ro
@@ -203,10 +203,10 @@ class HearingSchedule::GenerateHearingDaysSchedule
     date_index = 0
 
     # {[4, 2018]=>20, [9, 2018]=>20..}
-    monthly_allocations = allocations_by_month(ro_key, request_type)
+    monthly_allocations = allocations_by_month(ro_key, with_rooms)
 
-    # Assign rooms differently for virtual hearings
-    if request_type == :virtual
+    # Assign rooms differently if we are not constraining by room
+    if with_rooms == false
       assign_virtual_hearing_days_to_individual_ro(ro_key, monthly_allocations)
     else
       # iterate over each day starting from the first of the month till the 31st (max day a month can have)
@@ -228,7 +228,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     end
   end
 
-  # Method to assign hearing days for each virtual hearing requested
+  # Method to assign hearing days for each roomless hearing day requested
   def assign_virtual_hearing_days_to_individual_ro(ro_key, monthly_allocations)
     # Loop the available alocations for this RO
     monthly_allocations.each do |allocation|
@@ -248,20 +248,20 @@ class HearingSchedule::GenerateHearingDaysSchedule
       allocation.last.times do |index|
         # Determine whether there are fewer requested days than available so we can distribute evenly
         if allocation.last <= available_days.count
-          # Calculate the new index with the offset
+          # Calculate the offset date index
           calculated_index = get_index_for_hearing_day(available_days.count, offset, index)
 
-          # Add a new hearing day
+          # Add a new hearing day at the date offset by the available days/requested to prevent bunching
           available_days[available_days.keys[calculated_index]].push(room_num: nil)
         # Determine whether the current index has exceeded our available days
         elsif index >= available_days.count
-          # Calculate the new index with the offset
+          # Calculate the offset date index based on the remaining requested days
           calculated_index = get_index_offset_for_hearing_day(available_days.count, remaining, index)
 
-          # Add a new hearing day
+          # Add a new hearing day offset by the available days/remaining to prevent bunching
           available_days[available_days.keys[calculated_index]].push(room_num: nil)
         else
-          # Add a new hearing day
+          # Add a new hearing day for each date of the available_days
           available_days[available_days.keys[index]].push(room_num: nil)
         end
       end
@@ -304,9 +304,9 @@ class HearingSchedule::GenerateHearingDaysSchedule
   #   Schedule period of (2021-Jan-01, 2021-Mar-31), allocated_days of (54.0) ->
   #      {[1, 2021]=>18, [2, 2021]=>18, [3, 2021]=>18}
   #
-  def allocations_by_month(ro_key, request_type)
-    # Ignore room constraints for virtual hearing days
-    if request_type == :virtual
+  def allocations_by_month(ro_key, with_rooms)
+    # Ignore room constraints if specified
+    if with_rooms == false
       monthly_distributed_days(@ros[ro_key][:allocated_virtual_days].ceil)
     else
       # raise error if there are not enough available video days

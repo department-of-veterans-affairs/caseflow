@@ -50,13 +50,17 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
     scenario "RO assignment process" do
       assignment_process("validRoSpreadsheet.xlsx")
 
-      # Check the allocation video count
-      allocation_count = Allocation.all.map(&:allocated_days).inject(:+).ceil
-      expect(allocation_count).to eq(343)
+      # Check the allocation for hearing days without rooms
+      allocation_with_room_count = Allocation.all.map(&:allocated_days).inject(:+).ceil
+      expect(allocation_with_room_count).to eq(343)
+
+      # Check the allocation for hearing days with rooms
+      allocation_without_room_count = Allocation.all.map(&:allocated_virtual_days).inject(:+).ceil
+      expect(allocation_without_room_count).to eq(343)
 
       # Compare the Video hearing days
-      video_hearing_days = HearingDay.where(request_type: "V")
-      expect(video_hearing_days.count).to eq(allocation_count)
+      hearing_days_with_rooms = HearingDay.where(request_type: "V")
+      expect(hearing_days_with_rooms.count).to eq(allocation_with_room_count + allocation_without_room_count)
     end
 
     scenario "RO Virtual-only assignment process" do
@@ -66,13 +70,12 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
       allocation_count = Allocation.all.map(&:allocated_virtual_days).inject(:+).ceil
       expect(allocation_count).to eq(1981)
 
-      # Compare the Video hearing days
-      virtual_hearing_days = HearingDay.where(request_type: "R")
-      expect(virtual_hearing_days.count).to eq(allocation_count)
+      # Compare the roomless hearing days
+      hearing_days_without_rooms = HearingDay.where(request_type: "V")
+      expect(hearing_days_without_rooms.count).to eq(allocation_count)
 
-      # Compare the Video hearing days
-      video_hearing_days = HearingDay.where(request_type: "V")
-      expect(video_hearing_days.count).to eq(0)
+      # Confirm that no rooms were assigned
+      expect(hearing_days_without_rooms.map(&:room).any?).to eq(false)
     end
   end
 
