@@ -22,7 +22,12 @@ describe DocketSwitchTaskHandler, :all_dbs do
 
   let!(:docket_switch_task) do
     task_class_type = (disposition == "denied") ? "denied" : "granted"
-    create("docket_switch_#{task_class_type}_task".to_sym, appeal: old_docket_stream, assigned_to: cotb_attorney, assigned_by: judge)
+    create(
+      "docket_switch_#{task_class_type}_task".to_sym,
+      appeal: old_docket_stream,
+      assigned_to: cotb_attorney,
+      assigned_by: judge
+    )
   end
 
   let(:docket_switch) do
@@ -46,14 +51,18 @@ describe DocketSwitchTaskHandler, :all_dbs do
 
   let(:new_admin_actions) do
     [
-      { assigned_by: cotb_attorney, type: AojColocatedTask.name},
+      { assigned_by: cotb_attorney, type: AojColocatedTask.name },
       { assigned_by: cotb_attorney, type: PoaClarificationColocatedTask.name }
     ]
   end
 
   let!(:request_issues) { 3.times { create(:request_issue, decision_review: old_docket_stream) } }
   let(:docket_switch_task_handler) do
-    described_class.new(docket_switch: docket_switch, task_selection: task_selection, new_admin_actions: new_admin_actions)
+    described_class.new(
+      docket_switch: docket_switch,
+      task_selection: task_selection,
+      new_admin_actions: new_admin_actions
+    )
   end
 
   let(:colocated_org) { Colocated.singleton }

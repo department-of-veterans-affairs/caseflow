@@ -63,7 +63,7 @@ class ColocatedTask < Task
       end
     end
 
-    # We want to allow task creation if done from attorney checkout on a vacate & de novo or if a task is being added during a docket switch
+    # We want to allow task creation if done from attorney checkout on a vacate & de novo or during a docket switch
     def allow_creation_exception?(user, parent)
       return unless user.attorney_in_vacols?
 

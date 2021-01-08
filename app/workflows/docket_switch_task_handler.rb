@@ -48,11 +48,11 @@ class DocketSwitchTaskHandler
   end
 
   def old_tasks
-    old_docket_stream.tasks.select{|task| task_selection.keys.include?(task.type.to_sym) }
+    old_docket_stream.tasks.select { |task| task_selection.key?(task.type.to_sym) }
   end
 
   def persistent_tasks
-    old_tasks.select{ |task| task_selection[task.type.to_sym] }
+    old_tasks.select { |task| task_selection[task.type.to_sym] }
   end
 
   def attorney_user
