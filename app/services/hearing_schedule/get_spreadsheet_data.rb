@@ -106,7 +106,7 @@ class HearingSchedule::GetSpreadsheetData
                                    "ro_city" => row[0].split(", ")[0].strip,
                                    "ro_state" => row[0].split(", ")[1].strip,
                                    "allocated_days" => row[2],
-                                   "allocated_virtual_days" => row[3])
+                                   "allocated_days_without_rooms" => row[3])
     end
 
     # Return the list of allocated hearing days
