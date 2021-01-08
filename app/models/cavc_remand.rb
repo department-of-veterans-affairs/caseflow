@@ -2,7 +2,7 @@
 
 # Model to store information captured when processing a form for an appeal remanded by CAVC
 #
-# Cavc Remands Overview: https://github.com/department-of-veterans-affairs/caseflow/wiki/CAVC-Remands
+# CAVC Remands Overview: https://github.com/department-of-veterans-affairs/caseflow/wiki/CAVC-Remands
 
 class CavcRemand < CaseflowRecord
   include UpdatedByUserConcern

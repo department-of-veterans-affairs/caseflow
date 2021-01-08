@@ -10,7 +10,7 @@
 # - Expected parent: SendCavcRemandProcessedLetterTask that is assigned to CavcLitigationSupport
 # - Expected assigned_to.type: User
 #
-# Cavc Remands Overview: https://github.com/department-of-veterans-affairs/caseflow/wiki/CAVC-Remands
+# CAVC Remands Overview: https://github.com/department-of-veterans-affairs/caseflow/wiki/CAVC-Remands
 
 class SendCavcRemandProcessedLetterTask < Task
   validates :parent, presence: true,

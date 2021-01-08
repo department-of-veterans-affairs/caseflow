@@ -10,7 +10,7 @@
 # Expected parent: CavcTask
 # Expected assigned_to.type: CavcLitigationSupport
 #
-# Cavc Remands Overview: https://github.com/department-of-veterans-affairs/caseflow/wiki/CAVC-Remands
+# CAVC Remands Overview: https://github.com/department-of-veterans-affairs/caseflow/wiki/CAVC-Remands
 
 class CavcRemandProcessedLetterResponseWindowTask < Task
   VALID_PARENT_TYPES = [
