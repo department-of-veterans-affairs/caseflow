@@ -172,6 +172,9 @@ client-build-demo client-demo: ## Builds webpack for local server
 
 client-build-all client-all: client-test client-demo ## Builds webpack for both tests and local server
 
+jest: ## Run jest tests
+	cd client && yarn jest
+
 one-test:  ## run the test passed in
 	bundle exec rspec $$T
 
