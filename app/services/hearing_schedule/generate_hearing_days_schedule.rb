@@ -229,7 +229,8 @@ class HearingSchedule::GenerateHearingDaysSchedule
   end
 
   # Method to assign hearing days for each roomless hearing day requested
-  def assign_virtual_hearing_days_to_individual_ro(ro_key, monthly_allocations)
+  def assign_hearing_days_without_rooms_to_individual_ro(ro_key, monthly_allocations)
+``
     # Loop the available alocations for this RO
     monthly_allocations.each do |allocation|
       # Get the available days for this RO this month
