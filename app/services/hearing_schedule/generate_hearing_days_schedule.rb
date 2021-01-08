@@ -207,7 +207,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
     # Assign rooms differently if we are not constraining by room
     if with_rooms == false
-      assign_virtual_hearing_days_to_individual_ro(ro_key, monthly_allocations)
+      assign_hearing_days_without_rooms_to_individual_ro(ro_key, monthly_allocations)
     else
       # iterate over each day starting from the first of the month till the 31st (max day a month can have)
       # Allocate max number of days for the 1st of each month based on remaining monthly allocations for that month
