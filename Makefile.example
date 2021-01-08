@@ -42,6 +42,15 @@
 #
 .DEFAULT_GOAL := help
 
+# https://stackoverflow.com/a/14061796/2237879
+#
+# This hack allows you to run make commands with any set of arguments.
+#
+# For example, these lines are the same:
+#   > make one-test spec/path/here.rb
+#   > bundle exec rspec spec/path/here.rb
+RUN_ARGS := $(wordlist 2, $(words $(MAKECMDGOALS)), $(MAKECMDGOALS))
+
 whats-next:  ## TODO
 	scripts/whats-next
 
@@ -172,8 +181,14 @@ client-build-demo client-demo: ## Builds webpack for local server
 
 client-build-all client-all: client-test client-demo ## Builds webpack for both tests and local server
 
-one-test:  ## run the test passed in
-	bundle exec rspec $$T
+one-test:  ## run the rspec test passed in
+	bundle exec rspec $(RUN_ARGS)
+
+jest: ## Run jest tests
+	cd client && yarn jest
+
+one-jest:  ## run the jest test passed in (leave off client/)
+	cd client && yarn jest $(RUN_ARGS)
 
 unsafe:  ## TODO
 	mv .git/hooks/pre-commit .git/hooks/pre-commit-linter

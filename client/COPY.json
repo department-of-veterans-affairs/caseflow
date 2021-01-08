@@ -111,6 +111,8 @@
   "CASE_DETAILS_POA_AGENT": "Private Agent",
   "CASE_DETAILS_POA_ATTORNEY": "Private Attorney",
   "CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY": "Edit NOD Date",
+  "CASE_DETAILS_FNOD_BANNER_TITLE": "Veteran Date of Death Reported",
+  "FNOD_SOURCE": "CorpDB (BGS)",
 
   "CASE_DETAILS_GENDER_FIELD_LABEL": "Gender",
   "CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE": "Female",
@@ -124,6 +126,7 @@
   "CASE_DETAILS_CAVC_DECISION_DATE": "Court's decision date",
   "CASE_DETAILS_CAVC_JUDGEMENT_DATE": "Judgement date",
   "CASE_DETAILS_CAVC_MANDATE_DATE": "Mandate date",
+  "CASE_DETAILS_CAVC_REMAND_INSTRUCTIONS": "Remand Instructions",
 
   "POST_DISPATCH_TITLE": "Post-dispatch actions",
   "ADD_CAVC_BUTTON": "+ Add CAVC Remand",
@@ -139,6 +142,7 @@
   "CAVC_SUB_TYPE_LABEL": "What type of remand is this?",
   "CAVC_COURT_DECISION_DATE": "What is the Court's decision date?",
   "CAVC_DECISION_DATE_ERROR": "Please select the date of the court's decision",
+  "MDR_SELECTION_ALERT_BANNER": "Choosing MDR will set a 90-day hold on this case starting from the Court's decision date listed above. The hold is to wait for the Court's judgement and mandate dates. This remand case will be accessible in your organization's Assigned tab and will return to the team's Unassigned tab when the 90 days are over or the hold is manually ended, at which point the judgement and mandate dates can be entered.",
   "CAVC_JUDGEMENT_DATE_HEADER": "Judgement and mandate date",
   "CAVC_JUDGEMENT_DATE": "What is the Court's judgement date?",
   "CAVC_JUDGEMENT_DATE_ERROR": "Please select the date of judgement",
@@ -149,6 +153,18 @@
   "CAVC_INSTRUCTIONS_ERROR": "Please provide context and instructions for the remand",
   "CAVC_REMAND_CREATED_TITLE": "You have successfully created a CAVC remand case",
   "CAVC_REMAND_CREATED_DETAIL": "This has generated a 90-day letter task in your team's queue",
+  "CAVC_REMAND_MDR_CREATED_DETAIL": "This has generated an MDR task in your team's Assigned tab and will return to the Unassigned tab after 90 days from the court decision date",
+
+  "CAVC_EXTENSION_REQUEST_TITLE": "Review extension request",
+  "CAVC_EXTENSION_REQUEST_DECISION_LABEL": "How will you proceed?",
+  "CAVC_EXTENSION_REQUEST_GRANT": "grant",
+  "CAVC_EXTENSION_REQUEST_GRANT_HELP_TEXT": "Task will go on hold for selected number of days",
+  "CAVC_EXTENSION_REQUEST_DENY": "deny",
+  "CAVC_EXTENSION_REQUEST_DENY_HELP_TEXT": "Marks the extension request as denied",
+  "CAVC_EXTENSION_REQUEST_GRANT_SUCCESS_TITLE": "This case has been put on hold for %s days",
+  "CAVC_EXTENSION_REQUEST_GRANT_SUCCESS_DETAIL": "You can find this case in the on hold tab of you team's queue",
+  "CAVC_EXTENSION_REQUEST_DENY_SUCCESS_TITLE": "You have denied extension",
+  "CAVC_EXTENSION_REQUEST_DENY_SUCCESS_DETAIL": "This task can be completed to distribute to a judge for further processing",
 
   "CAVC_EXTENSION_REQUEST_TITLE": "Review extension request",
   "CAVC_EXTENSION_REQUEST_DECISION_LABEL": "How will you proceed?",
@@ -165,7 +181,7 @@
   "EDIT_NOD_DATE_MODAL_DESCRIPTION": "**Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.**",
   "EDIT_NOD_DATE_LABEL": "NOD Date",
   "EDIT_NOD_DATE_SUCCESS_ALERT_TITLE": "NOD date has been updated",
-  "EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE": "You have successfully updated the NOD date",
+  "EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE": "The NOD date for %(appellantName)s's case has been updated from %(nodDateStr)s to %(receiptDateStr)s. There have been no changes to the timeliness of issues.",
   "EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE": "The new NOD date cannot be after today's date",
   "EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE": "New NOD date cannot be before 02/19/2019",
 
@@ -361,7 +377,7 @@
   "MARK_TASK_COMPLETE_TITLE": "Mark as complete",
   "MARK_TASK_COMPLETE_COPY": "You can find this case in the completed tab of your queue.",
   "MARK_TASK_COMPLETE_BUTTON": "Mark complete",
-  "MARK_TASK_COMPLETE_CONFIRMATION": "%s's case has been marked complete",
+  "MARK_TASK_COMPLETE_CONFIRMATION": "The task for %s's case has been marked complete",
   "MARK_TASK_COMPLETE_CONFIRMATION_DETAIL": "If you have made a mistake, please email %s to manage any changes.",
 
   "MODAL_SUBMIT_BUTTON": "Submit",
@@ -682,7 +698,10 @@
   "DOCKET_SWITCH_DENIAL_INSTRUCTIONS": "Add the date and add any context for the denial of this switch.",
   "DENIED_DOCKET_SWITCH_TASK_LABEL": "Denied Docket Switch",
   "GRANTED_DOCKET_SWITCH_TASK_LABEL": "Granted Docket Switch",
-
+  "DOCKET_SWITCH_DENIAL_SUCCESS_TITLE": "You have marked %s's request to switch dockets as denied",
+  "DOCKET_SWITCH_DENIAL_SUCCESS_MESSAGE": "This will be recorded in the Case Timeline for future context.",
+  "DOCKET_SWITCH_GRANTED_REQUEST_LABEL": "Switch Docket: Review %s's Request",
+  "DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS": "Add the information based on how you are proceeding with this docket switch and the claimant's form.",
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
   "CORRECT_REQUEST_ISSUES_WITHDRAW": "Withdraw",
@@ -715,6 +734,8 @@
   "INCIDENT_FLASH_ERROR_END": " with the Veteran's SSN.  Request to temporarily unlock the flash, wait for confirmation, and try again.",
   "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If the claimant is a Veteran's dependant (spouse, child, or parent) and they are not listed or their information needs to be updated, ",
   "CLAIMANT_NOT_FOUND_END": " for assistance. Note: Remember to encrypt any emails that contain PII (such as a veteran or claimant's name, file number or SSN).",
+  "SELECT_CLAIMANT_LABEL": "Please select the claimant listed on the form. If the claimant is not listed, please select \"Claimant not listed\" and add their information in the next step.",
+  "ADD_CLAIMANT_PAGE_DESCRIPTION" : "You are adding a claimant who is not listed in Caseflow. Please select the claimant’s relationship to the Veteran and add their information accordingly. If the claimant has indicated a representative, you can add their information in the next step.",
   "ADD_CLAIMANT_MODAL_TITLE": "Add Claimant",
   "ADD_CLAIMANT_MODAL_DESCRIPTION": "To add a claimant, select their relationship to the Veteran and type to search for their name. **Please note:** at this time, you are only able to add attorneys as claimants.\n\nIf you are unable to find the attorney in the list of names below, please cancel the intake and [email](mailto:VACaseflowIntake@va.gov) for assistance. Remember to encrypt any emails that contain PII.",
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",
@@ -898,8 +919,9 @@
   "CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_MODAL_TITLE": "Cancel convert hearing to virtual",
   "CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_SUCCESS_DETAIL": "You have successfully cancelled the convert hearing to virtual task",
 
-  "JUDGE_TEAM_REMOVE_JUDGE_ERROR": "Cannot remove a judge from their judge team.",
+  "JUDGE_TEAM_REMOVE_JUDGE_ERROR": "Cannot remove a judge from their judge team.<<< meckila/remove-case-timeline-header
   "JUDGE_TEAM_ATTORNEY_RIGHTS_ERROR": "Cannot edit attorney rights on non-attorneys",
+
   "JUDGE_TEAM_ADMIN_ERROR": "Cannot add more than one admin to a judge team",
   "JUDGE_TEAM_DEADMIN_JUDGE_ERROR": "Cannot remove adminship from a judge on their team",
 

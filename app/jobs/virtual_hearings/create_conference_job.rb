@@ -128,7 +128,8 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   end
 
   def create_conference
-    if FeatureToggle.enabled?(:virtual_hearings_use_new_links, user: RequestStore.store[:current_user])
+
+    if FeatureToggle.enabled?(:virtual_hearings_use_new_links, user: virtual_hearing.updated_by)
       generate_links_and_pins
     else
       assign_virtual_hearing_alias_and_pins if should_initialize_alias_and_pins?

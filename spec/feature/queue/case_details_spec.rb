@@ -320,8 +320,9 @@ RSpec.feature "Case details", :all_dbs do
 
       %w[Attorney Other].each do |claimant_type|
         scenario "details view informs us that appellant's relationship to Veteran is #{claimant_type}" do
-          create(
+          claimant = create(
             :claimant,
+            :with_unrecognized_appellant_detail,
             decision_review: appeal,
             type: "#{claimant_type}Claimant",
             participant_id: bgs_atty.participant_id,
@@ -331,7 +332,7 @@ RSpec.feature "Case details", :all_dbs do
 
           expect(page).to have_content("About the Veteran")
           expect(page).to have_content("About the Appellant")
-          expect(page).to have_content("Relation to Veteran: #{claimant_type}")
+          expect(page).to have_content("Relation to Veteran: #{claimant.relationship}")
         end
       end
     end
@@ -1231,6 +1232,32 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
+    context "when a NOD exists and the case is a legacy case, do not display Edit NOD Date link" do
+      before { FeatureToggle.enable!(:edit_nod_date) }
+      after { FeatureToggle.disable!(:edit_nod_date) }
+
+      let(:judge_user) { create(:user, css_id: "BVAAABSHIRE", station_id: "101") }
+      let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+      let!(:vacols_case) do
+        create(
+          :case,
+          bfdnod: 2.days.ago,
+          bfd19: 1.day.ago
+        )
+      end
+
+      before do
+        User.authenticate!(user: judge_user)
+      end
+
+      it "displays case timeline and does not display Edit NOD Date link for legacy cases" do
+        visit "/queue/appeals/#{appeal.external_id}"
+        expect(appeal.nod_date).to_not be_nil
+        expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
+        expect(page).to_not have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+      end
+    end
+
     context "when a NOD exists and user can edit NOD date display Edit NOD Date link" do
       before { FeatureToggle.enable!(:edit_nod_date) }
       after { FeatureToggle.disable!(:edit_nod_date) }
@@ -1265,6 +1292,21 @@ RSpec.feature "Case details", :all_dbs do
           expect(appeal.nod_date).to_not be_nil
           expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
           expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+        end
+
+        it "success alert displays after submitting NOD date change successfully" do
+          visit("/queue/appeals/#{appeal.uuid}")
+
+          find("button", text: COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY).click
+          fill_in COPY::EDIT_NOD_DATE_LABEL, with: Time.zone.today.mdY
+          safe_click "#Edit-NOD-Date-button-id-1"
+
+          expect(page).to have_content(
+            format(COPY::EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE.tr("(", "{").gsub(")s", "}"),
+                   appellantName: appeal.claimant.name,
+                   nodDateStr: appeal.receipt_date.mdY,
+                   receiptDateStr: Time.zone.today.mdY)
+          )
         end
       end
 
