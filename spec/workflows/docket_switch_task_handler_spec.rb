@@ -35,10 +35,12 @@ describe DocketSwitchTaskHandler, :all_dbs do
   let(:new_admin_actions) { [] }
 
   let!(:request_issues) { 3.times { create(:request_issue, decision_review: old_docket_stream) } }
-
+  let(:docket_switch_task_handler) do
+    described_class.new(docket_switch: docket_switch, old_tasks: old_tasks, new_admin_actions: new_admin_actions)
+  end
 
   describe "#call" do
-    subject { described_class.new(docket_switch: docket_switch, old_tasks: old_tasks, new_admin_actions: new_admin_actions).call }
+    subject { docket_switch_task_handler.call }
 
     context "When the disposition is granted" do
       let(:disposition) { "granted" }
@@ -51,7 +53,7 @@ describe DocketSwitchTaskHandler, :all_dbs do
 
         subject
 
-        expect(old_docket_stream).to_not be_active
+        expect(old_docket_stream.reload).to_not be_active
         expect(old_docket_stream.tasks.active).to be_empty
         expect(docket_task.reload).to be_cancelled
       end
@@ -69,7 +71,7 @@ describe DocketSwitchTaskHandler, :all_dbs do
 
         subject
 
-        expect(old_docket_stream).to be_active
+        expect(old_docket_stream.reload).to be_active
         expect(old_docket_stream.tasks.active).not_to be_empty
         expect(docket_task.reload).to be_active
       end
