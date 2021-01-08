@@ -818,7 +818,7 @@ describe User, :all_dbs do
             expect(user.selectable_organizations.length).to eq 1
           end
 
-          context "when judge is a non-JudgeTeamLead in another JudgeTeam" do
+          context "when judge is a non-admin in another JudgeTeam" do
             let(:judge_team2) { JudgeTeam.create_for_judge(create(:user)) }
             before { allow(user).to receive(:judge_in_vacols?).and_return(true) }
             before { judge_team2.add_user(user) }

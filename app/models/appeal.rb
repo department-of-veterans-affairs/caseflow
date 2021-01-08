@@ -27,6 +27,7 @@ class Appeal < DecisionReview
 
   has_one :special_issue_list
   has_one :post_decision_motion
+  has_one :docket_switch, as: :new_docket_stream
   has_many :record_synced_by_job, as: :record
   has_one :work_mode, as: :appeal
   has_one :latest_informal_hearing_presentation_task, lambda {
