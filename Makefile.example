@@ -181,11 +181,14 @@ client-build-demo client-demo: ## Builds webpack for local server
 
 client-build-all client-all: client-test client-demo ## Builds webpack for both tests and local server
 
-one-jest:  ## run the jest test passed in (leave off client/)
-	cd client && yarn jest $(RUN_ARGS)
-
 one-test:  ## run the rspec test passed in
 	bundle exec rspec $(RUN_ARGS)
+
+jest: ## Run jest tests
+	cd client && yarn jest
+
+one-jest:  ## run the jest test passed in (leave off client/)
+	cd client && yarn jest $(RUN_ARGS)
 
 unsafe:  ## TODO
 	mv .git/hooks/pre-commit .git/hooks/pre-commit-linter
