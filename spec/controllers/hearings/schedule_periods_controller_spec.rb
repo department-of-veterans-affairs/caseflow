@@ -20,10 +20,11 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
 
-      ro_allocated_count = ro_schedule_period.allocations.map(&:allocated_days).inject(:+).ceil
+      ro_allocated_with_room_count = ro_schedule_period.allocations.map(&:allocated_days).inject(:+).ceil
+      ro_allocated_without_room_count = ro_schedule_period.allocations.map(&:allocated_virtual_days).inject(:+).ceil
       co_hearing_days_count = HearingSchedule::GenerateHearingDaysSchedule.new(ro_schedule_period)
         .generate_co_hearing_days_schedule.size
-      allocated_count = ro_allocated_count + co_hearing_days_count
+      allocated_count = ro_allocated_with_room_count + co_hearing_days_count + ro_allocated_without_room_count
       expect(response_body["schedule_period"]["hearing_days"].count).to eq allocated_count
       expect(response_body["schedule_period"]["file_name"]).to eq "validRoSpreadsheet.xlsx"
       expect(response_body["schedule_period"]["start_date"]).to eq "2018-01-01"
