@@ -36,7 +36,14 @@ describe DocketSwitchTaskHandler, :all_dbs do
   end
   let(:disposition) { "granted" }
   let(:granted_request_issue_ids) { [] }
-  let(:old_tasks) { [] }
+  let!(:old_docket_stream_tasks) do
+    [
+      create(:translation_task, appeal: old_docket_stream), create(:foia_task, appeal: old_docket_stream)
+    ]
+  end
+
+  let(:task_selection) { { "TranslationTask": true, "FoiaTask": false } }
+
   let(:new_admin_actions) do
     [
       { assigned_by: cotb_attorney, type: AojColocatedTask.name},
@@ -46,7 +53,7 @@ describe DocketSwitchTaskHandler, :all_dbs do
 
   let!(:request_issues) { 3.times { create(:request_issue, decision_review: old_docket_stream) } }
   let(:docket_switch_task_handler) do
-    described_class.new(docket_switch: docket_switch, old_tasks: old_tasks, new_admin_actions: new_admin_actions)
+    described_class.new(docket_switch: docket_switch, task_selection: task_selection, new_admin_actions: new_admin_actions)
   end
 
   let(:colocated_org) { Colocated.singleton }
@@ -54,11 +61,12 @@ describe DocketSwitchTaskHandler, :all_dbs do
   describe "#call" do
     subject { docket_switch_task_handler.call }
 
+    before { docket_switch.reload.send(:copy_granted_request_issues!) }
+
     context "When the disposition is granted" do
-      before { docket_switch.reload.send(:copy_granted_request_issues!) }
       let(:disposition) { "granted" }
 
-      it "Cancels the original appeal stream and creates tasks on new stream" do
+      it "Cancels the original appeal stream and creates selected and docket-related tasks on new stream" do
         docket_task = old_docket_stream.reload.tasks.find { |task| task.type == "EvidenceSubmissionWindowTask" }
 
         expect(old_docket_stream).to be_active
@@ -72,10 +80,14 @@ describe DocketSwitchTaskHandler, :all_dbs do
         expect(docket_task.reload).to be_cancelled
 
         new_docket_task = new_docket_stream.reload.tasks.find { |task| task.type == "ScheduleHearingTask" }
-
-        new_admin_action = new_docket_stream.tasks.find { |task| task.type == "AojColocatedTask" && task.assigned_to_type == "User" }
+        persistent_task_copy = new_docket_stream.tasks.find { |task| task.type == "TranslationTask" }
+        new_admin_action = new_docket_stream.tasks.find do |task|
+          task.type == "AojColocatedTask" && task.assigned_to_type == "User"
+        end
 
         expect(new_docket_task).to be_active
+        expect(persistent_task_copy).to be_active
+        expect(new_docket_stream.tasks.find { |task| task.type == "FoiaTask" }).to be nil
         expect(new_admin_action).to be_active
       end
     end
@@ -84,7 +96,7 @@ describe DocketSwitchTaskHandler, :all_dbs do
       let(:disposition) { "partially_granted" }
       let(:granted_request_issue_ids) { [old_docket_stream.reload.request_issues.first.id] }
 
-      it "Cancels old optional tasks but not docket tasks or the appeal stream" do
+      it "Moves selected tasks and creates docket tasks for new stream, only remove indicated tasks from old stream" do
         docket_task = old_docket_stream.tasks.find { |task| task.type == "EvidenceSubmissionWindowTask" }
 
         expect(old_docket_stream).to be_active
@@ -95,6 +107,17 @@ describe DocketSwitchTaskHandler, :all_dbs do
         expect(old_docket_stream.reload).to be_active
         expect(old_docket_stream.tasks.active).not_to be_empty
         expect(docket_task.reload).to be_active
+
+        new_docket_task = new_docket_stream.reload.tasks.find { |task| task.type == "ScheduleHearingTask" }
+        persistent_task_copy = new_docket_stream.tasks.find { |task| task.type == "TranslationTask" }
+        new_admin_action = new_docket_stream.tasks.find do |task|
+          task.type == "AojColocatedTask" && task.assigned_to_type == "User"
+        end
+
+        expect(new_docket_task).to be_active
+        expect(persistent_task_copy).to be_active
+        expect(new_docket_stream.tasks.find { |task| task.type == "FoiaTask" }).to be nil
+        expect(new_admin_action).to be_active
       end
     end
   end

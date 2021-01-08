@@ -6,12 +6,12 @@
 class DocketSwitchTaskHandler
   include ActiveModel::Model
 
-  attr_reader :docket_switch, :old_tasks, :new_admin_actions
+  attr_reader :docket_switch, :task_selection, :new_admin_actions
 
-  def initialize(docket_switch:, old_tasks:, new_admin_actions:)
+  def initialize(docket_switch:, task_selection:, new_admin_actions:)
     @docket_switch = docket_switch
-    @old_tasks = old_tasks
-    @new_admin_actions = new_admin_actions
+    @task_selection = task_selection ||= {}
+    @new_admin_actions = new_admin_actions ||= []
   end
 
   delegate :old_docket_stream, :new_docket_stream, :disposition, to: :docket_switch
@@ -27,7 +27,6 @@ class DocketSwitchTaskHandler
   private
 
   def copy_persistent_tasks!
-    persistent_tasks = old_tasks.select { |task| task == true }
     persistent_tasks.each { |task| task.copy_to_new_stream!(new_docket_stream) }
   end
 
@@ -46,6 +45,14 @@ class DocketSwitchTaskHandler
     end
 
     ColocatedTask.create_many_from_params(params_array, attorney_user)
+  end
+
+  def old_tasks
+    old_docket_stream.tasks.select{|task| task_selection.keys.include?(task.type.to_sym) }
+  end
+
+  def persistent_tasks
+    old_tasks.select{ |task| task_selection[task.type.to_sym] }
   end
 
   def attorney_user
