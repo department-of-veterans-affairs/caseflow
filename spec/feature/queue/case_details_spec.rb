@@ -1257,7 +1257,7 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to_not have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
       end
     end
-    
+
     context "when a NOD exists and user can edit NOD date display Edit NOD Date link" do
       before { FeatureToggle.enable!(:edit_nod_date) }
       after { FeatureToggle.disable!(:edit_nod_date) }
