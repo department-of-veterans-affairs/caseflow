@@ -217,6 +217,7 @@ class Document < CaseflowRecord
     end
   end
 
+  # :reek:FeatureEnvy
   def assign_nondatabase_attributes(source_document)
     assign_attributes(
       efolder_id: source_document.efolder_id, # doesn't seem to be used; comes from from efolder
