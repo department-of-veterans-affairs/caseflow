@@ -33,12 +33,14 @@ export const DocketSwitchAddTaskForm = ({
   taskListing,
   closeModal
 }) => {
-  const { register, handleSubmit, control, formState, watch } = useForm({
+  const { register, handleSubmit, control, formState } = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
   });
 
   const [tasks, setTasks] = useState({});
+  const [showModal, setShowModal] = useState(false);
+
   const sectionStyle = css({ marginBottom: '24px' });
 
   const taskOptions = useMemo(() => {
@@ -47,31 +49,29 @@ export const DocketSwitchAddTaskForm = ({
         id: task.taskId.toString() }));
   }, [taskListing]);
 
-  const selectedIssues = useMemo(() => {
-    return Object.entries(tasks).filter((item) => item[1]).
-      flatMap((item) => item[0]);
-  }, [tasks]);
+  const selectedIssues = _.omitBy(tasks, false);
 
   const selectAllIssues = () => {
     const checked = selectedIssues.length === 0;
     const newValues = {};
 
-    taskOptions.forEach((item) => newValues[item.label] = checked);
+    taskListing.forEach((item) => newValues[item.label] === true);
     setTasks(newValues);
   };
+
+  console.log('selectedIssues', selectedIssues);
+  console.log('taskList', taskListing);
+  console.log('task', tasks);
 
   // populate all of our checkboxes on initial render
   useEffect(() => selectAllIssues(), []);
 
-  const handleChange = (evt) => setTasks({ ...tasks, [evt.target.name]: evt.target.checked });
+  const handleChange = (evt) => {
+    const taskLabel = _.find(taskListing, { id: evt.target.name.toString() });
 
-  // const onIssueChange = (evt) => {
-  //   setTasks({ ...tasks, [evt.target.name]: evt.target.checked });
-  // };
-
-  const watchTasks = watch('taskList', false);
-
-  console.log('watch', watchTasks);
+    setTasks({ ...tasks, [taskLabel]: evt.target.checked });
+    setShowModal(!showModal);
+  };
 
   const buttons = [
     {
@@ -100,19 +100,27 @@ export const DocketSwitchAddTaskForm = ({
           />
         </div>
         <div><ReactMarkdown source={DOCKET_SWITCH_GRANTED_ADD_TASK_TEXT} /></div>
-
-        <CheckboxGroup
-          name="taskList"
-          label="Please unselect any tasks you would like to remove:"
-          strongLabel
-          options={taskOptions}
-          onChange={handleChange}
-          styling={css({ marginBottom: '0' })}
-          values={tasks}
-          inputRef={register}
+        <Controller
+          name="issueIds"
+          control={control}
+          defaultValue={[]}
+          render={({ onChange: onCheckChange }) => {
+            return (
+              <CheckboxGroup
+                name="taskList"
+                label="Please unselect any tasks you would like to remove:"
+                strongLabel
+                options={taskOptions}
+                onChange={(event) => onCheckChange(handleChange(event))}
+                styling={css({ marginBottom: '0' })}
+                values={tasks}
+                inputRef={register}
+              />
+            );
+          }}
         />
 
-        { handleChange && (
+        { showModal && (
           <Modal
             title={DOCKET_SWITCH_GRANTED_MODAL_TITLE}
             onCancel={onCancel}

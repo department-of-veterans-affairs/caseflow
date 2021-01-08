@@ -7,7 +7,7 @@ import { useHistory, useParams } from 'react-router';
 
 export const DocketSwitchAddTaskContainer = () => {
   const dispatch = useDispatch();
-  const { appealId, taskId } = useParams();
+  const { appealId } = useParams();
   const { goBack, push } = useHistory();
 
   const appeal = useSelector((state) =>
@@ -41,7 +41,7 @@ export const DocketSwitchAddTaskContainer = () => {
         onSubmit={handleSubmit}
         docketName={appeal.docketName}
         taskListing={tasks}
-        closeModal={ handleCancelModal}
+        closeModal={handleCancelModal}
       />
     </>
   );
