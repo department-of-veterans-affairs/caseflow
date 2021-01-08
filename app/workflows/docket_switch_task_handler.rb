@@ -14,39 +14,40 @@ class DocketSwitchTaskHandler
     @new_admin_actions = new_admin_actions
   end
 
-  delegate :old_appeal_stream, :new_appeal_stream, :disposition, to: :docket_switch
+  delegate :old_docket_stream, :new_docket_stream, :disposition, to: :docket_switch
 
-  def process!
-    transaction do
-      copy_persistent_tasks!
-      cancel_old_tasks!
-      create_new_tasks!
-      append_instructions!
-    end
+  def call
+    # binding.pry
+    return if disposition == "denied"
+
+    copy_persistent_tasks!
+    cancel_old_tasks!
+    create_new_tasks!
   end
 
   private
 
   def copy_persistent_tasks!
-    persistent_tasks = old_tasks.select { |task| task.checked == true }
-    persistent_tasks.each{ |task| task.copy_to_new_stream!(new_appeal_stream) }
+    persistent_tasks = old_tasks.select { |task| task == true }
+    persistent_tasks.each { |task| task.copy_to_new_stream!(new_docket_stream) }
   end
 
   def cancel_old_tasks!
     if disposition == "granted"
-      AppealActiveTaskCancellation.new(old_appeal_stream).call
+      old_docket_stream.cancel_active_tasks
     else
       old_tasks.each(&:cancel_task_and_child_subtasks)
     end
   end
 
   def create_new_tasks!
-    new_appeal_stream.create_tasks_on_intake_success!
+    new_docket_stream.create_tasks_on_intake_success!
     ColocatedTask.create_many_from_params(new_admin_actions, attorney_user)
   end
 
   def attorney_user
-    granted_task = docket_switch.tasks.find { |task| task.is_a?(DocketSwitchGrantedTask) }
-    granted_task.assigned_to
+    granted_task = old_docket_stream.tasks.find { |task| task.is_a?(DocketSwitchGrantedTask) }
+
+    granted_task&.assigned_to
   end
 end

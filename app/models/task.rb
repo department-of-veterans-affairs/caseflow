@@ -563,7 +563,7 @@ class Task < CaseflowRecord
 
   def copy_to_new_stream!(new_appeal_stream)
     transaction do
-      new_task_attributes = attributes.reject { |attr| %w[id created_at updated_at, ].include?(attr) }
+      new_task_attributes = attributes.reject { |attr| %w[id created_at updated_at].include?(attr) }
       new_task_attributes["appeal_id"] = new_appeal_stream.id
       self.class.create!(new_task_attributes)
     end

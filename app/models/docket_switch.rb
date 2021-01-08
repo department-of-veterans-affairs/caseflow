@@ -5,7 +5,7 @@ class DocketSwitch < CaseflowRecord
   belongs_to :new_docket_stream, class_name: "Appeal"
   belongs_to :task, optional: false
 
-  attr_accessor :context, :old_tasks, :new_task_types
+  attr_accessor :context, :old_tasks, :new_admin_actions
 
   validates :disposition, presence: true
   validate :granted_issues_present_if_partial
@@ -38,7 +38,7 @@ class DocketSwitch < CaseflowRecord
     transaction do
       update!(new_docket_stream: old_docket_stream.create_stream(:original))
       copy_granted_request_issues!
-      DocketSwitchTaskHandler.new(docket_switch: self, old_tasks: old_tasks, new_task_types: new_task_types).process!
+      DocketSwitchTaskHandler.new(docket_switch: self, old_tasks: old_tasks, new_admin_actions: new_admin_actions).call
       task.update(status: Constants.TASK_STATUSES.completed)
     end
   end

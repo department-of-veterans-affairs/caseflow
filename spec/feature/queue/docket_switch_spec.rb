@@ -29,6 +29,12 @@ RSpec.feature "Docket Switch", :all_dbs do
     end
   end
 
+  let!(:request_issues)do
+    3.times do
+      create(:request_issue, decision_review: old_docket_stream)
+    end
+  end
+
   let(:root_task) { create(:root_task, :completed, appeal: appeal) }
   let(:cotb_attorney) { create(:user, :with_vacols_attorney_record, full_name: "Clark Bard") }
   let!(:cotb_non_attorney) { create(:user, full_name: "Aang Bender") }
