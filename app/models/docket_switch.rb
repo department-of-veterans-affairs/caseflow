@@ -45,7 +45,7 @@ class DocketSwitch < CaseflowRecord
         task_selection: task_selection,
         new_admin_actions: new_admin_actions
       ).call
-      
+
       task.update(status: Constants.TASK_STATUSES.completed)
     end
   end
