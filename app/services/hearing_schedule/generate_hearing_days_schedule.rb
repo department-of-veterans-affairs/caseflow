@@ -231,65 +231,43 @@ class HearingSchedule::GenerateHearingDaysSchedule
   # Method to assign hearing days for each roomless hearing day requested
   def assign_virtual_hearing_days_to_individual_ro(ro_key, monthly_allocations)
     # Loop the available alocations for this RO
-    monthly_allocations.each do |allocation|
+    monthly_allocations.each do |month, allocated_days|
       # Get the available days for this RO this month
-      available_days = @ros[ro_key][:allocated_dates][allocation.first]
+      available_days = @ros[ro_key][:allocated_dates][month]
 
       # Skip if there are no requested days or available days
-      next if available_days.count == 0 || allocation.last == 0
+      next if available_days.count == 0 || allocated_days == 0
 
       # Determine the difference between the requested and available to use as an offset when requested is greater
-      remaining = allocation.last % available_days.count
+      remaining = allocated_days % available_days.count
 
-      # Determine whether there is an offset by dividing available by requested
-      offset = available_days.count / allocation.last
+      # Determine the divisor to use with the offset calculation
+      offset_divisor = (allocated_days < available_days.count) ? allocated_days : remaining
+
+      # Determine whether there is an offset by dividing available by the above calculation
+      offset = (remaining == 0) ? 0 : available_days.count / offset_divisor
+
+      # Initialize the calculated index
+      offset_index = 0
 
       # Loop through the requested number to distribute the hearing days evenly
-      allocation.last.times do |index|
-        # Determine whether there are fewer requested days than available so we can distribute evenly
-        if allocation.last <= available_days.count
-          # Calculate the offset date index
-          calculated_index = get_index_for_hearing_day(available_days.count, offset, index)
+      allocated_days.times do
+        # Determine the index of the date on which we should assign this hearing day
+        offset_index = get_index_for_hearing_day(available_days.count, offset, offset_index)
 
-          # Add a new hearing day at the date offset by the available days/requested to prevent bunching
-          available_days[available_days.keys[calculated_index]].push(room_num: nil)
-        # Determine whether the current index has exceeded our available days
-        elsif index >= available_days.count
-          # Calculate the offset date index based on the remaining requested days
-          calculated_index = get_index_offset_for_hearing_day(available_days.count, remaining, index)
-
-          # Add a new hearing day offset by the available days/remaining to prevent bunching
-          available_days[available_days.keys[calculated_index]].push(room_num: nil)
-        else
-          # Add a new hearing day for each date of the available_days
-          available_days[available_days.keys[index]].push(room_num: nil)
-        end
+        # Add a new hearing day at the index that was calcualted above
+        available_days[available_days.keys[offset_index]].push(room_num: nil)
       end
     end
   end
 
   # Gets the hearing day index ensuring an even spread of hearing days
-  def get_index_for_hearing_day(count, distribution_offset, index)
+  def get_index_for_hearing_day(available_days, distribution_offset, index)
     # Calculate the offset based on the distribution offset and the current index
-    offset = distribution_offset * index
-
-    # Apply the offset to the index
-    offset_index = index + offset
+    offset = distribution_offset + index
 
     # Calculate the new index with the offset accounting for when the offset exceeds the available days
-    (offset_index >= count) ? offset_index - count : offset_index
-  end
-
-  # Method to calculate the day offset to evenly spread hearing days
-  def get_index_offset_for_hearing_day(count, remaining, index)
-    # Calculate the offset
-    offset = (count / remaining) * (index - count)
-
-    # Calculate the new index with the offset
-    offset_index = (index - count) + offset
-
-    # Calculate the new index with the offset
-    (offset_index >= count) ? offset_index - count : offset_index
+    (offset >= available_days) ? offset - available_days : offset
   end
 
   def allocated_days_for_ro(ro_key)
@@ -307,6 +285,13 @@ class HearingSchedule::GenerateHearingDaysSchedule
   def allocations_by_month(ro_key, with_rooms)
     # Ignore room constraints if specified
     if with_rooms == false
+      if @ros[ro_key][:available_days].count == 0
+        fail HearingSchedule::Errors::NotEnoughAvailableDays.new(
+          "No available hearing days for #{ro_key}",
+          ro_key: ro_key
+        )
+      end
+
       monthly_distributed_days(@ros[ro_key][:allocated_virtual_days].ceil)
     else
       # raise error if there are not enough available video days

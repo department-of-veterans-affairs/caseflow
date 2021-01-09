@@ -6,7 +6,7 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
   end
 
   # rubocop:disable Metrics/AbcSize
-  def assignment_process(file)
+  def assignment_process(file, start_date, end_date)
     # Navigate to the build hearings schedule screen
     visit "hearings/schedule/build"
 
@@ -18,15 +18,13 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
     attach_file("ro_co_file_upload", Rails.root + "spec/support/" + file, visible: false)
 
     # Fill in the required firleds to continue
-    fill_in "startDate", with: "01012018"
-    fill_in "endDate", with: "05312018"
+    fill_in "startDate", with: start_date.tr("/", "")
+    fill_in "endDate", with: end_date.tr("/", "")
     click_on "Continue"
 
     # Ensure the page has the expected content
     expect(page).to have_content("We have assigned your video hearings", wait: 30)
     expect(SchedulePeriod.count).to eq(1)
-    expect(RoNonAvailability.count).to eq(216)
-    expect(CoNonAvailability.count).to eq(4)
     expect(Allocation.count).to eq(55)
 
     # Confirm the assignments and upload the document
@@ -36,19 +34,21 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
     # Ensure a successful upload
     expect(page).not_to have_content("We are uploading to VACOLS.", wait: 30)
     expect(page).to have_content(
-      "You have successfully assigned hearings between 01/01/2018 and 05/31/2018",
+      "You have successfully assigned hearings between #{start_date} and #{end_date}",
       wait: 60
     )
-
-    # Compare the Central Office hearing days
-    co_hearing_days = HearingDay.where(request_type: "C")
-    expect(co_hearing_days.count). to eq(22)
   end
   # rubocop:enable Metrics/AbcSize
 
   context "Build RO Hearing Schedule" do
     scenario "RO assignment process" do
-      assignment_process("validRoSpreadsheet.xlsx")
+      assignment_process("validRoSpreadsheet.xlsx", "01/01/2018", "05/31/2018")
+      expect(RoNonAvailability.count).to eq(216)
+      expect(CoNonAvailability.count).to eq(4)
+
+      # Compare the Central Office hearing days
+      co_hearing_days = HearingDay.where(request_type: "C")
+      expect(co_hearing_days.count). to eq(22)
 
       # Check the allocation for hearing days without rooms
       allocation_with_room_count = Allocation.all.map(&:allocated_days).inject(:+).ceil
@@ -64,7 +64,13 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
     end
 
     scenario "RO Virtual-only assignment process" do
-      assignment_process("validRoVirtualOnlySpreadsheet.xlsx")
+      assignment_process("validRoNoRoomsSpreadsheet.xlsx", "04/01/2021", "06/30/2021")
+      expect(RoNonAvailability.count).to eq(164)
+      expect(CoNonAvailability.count).to eq(3)
+
+      # Compare the Central Office hearing days
+      co_hearing_days = HearingDay.where(request_type: "C")
+      expect(co_hearing_days.count). to eq(13)
 
       # Check the allocation virtual count
       allocation_count = Allocation.all.map(&:allocated_virtual_days).inject(:+).ceil
