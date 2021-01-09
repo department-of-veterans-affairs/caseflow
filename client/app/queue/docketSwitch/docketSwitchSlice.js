@@ -7,7 +7,12 @@ const initialState = {
   /**
    * This will hold receipt date, disposition, selected issue IDs, etc
    */
-  formData: null,
+  formData: {
+   disposition: null,
+   receiptDate: null,
+   docketType: null,
+   issueId: {} 
+  },
 };
 
 const docketSwitchSlice = createSlice({
@@ -27,14 +32,14 @@ const docketSwitchSlice = createSlice({
         ...state.formData,
         ...updates,
       };
-    },
+    }
   },
 });
 
 export const {
   stepForward,
   stepBack,
-  updateDocketSwitch,
+  updateDocketSwitch
 } = docketSwitchSlice.actions;
 
 export default docketSwitchSlice.reducer;

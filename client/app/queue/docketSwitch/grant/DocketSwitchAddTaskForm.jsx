@@ -30,8 +30,7 @@ export const DocketSwitchAddTaskForm = ({
   onSubmit,
   onCancel,
   docketName,
-  taskListing,
-  closeModal
+  taskListing
 }) => {
   const { register, handleSubmit, control, formState } = useForm({
     resolver: yupResolver(schema),
@@ -55,13 +54,9 @@ export const DocketSwitchAddTaskForm = ({
     const checked = selectedIssues.length === 0;
     const newValues = {};
 
-    taskListing.forEach((item) => newValues[item.label] === true);
+    taskListing.forEach((item) => newValues[item.label] === checked);
     setTasks(newValues);
   };
-
-  console.log('selectedIssues', selectedIssues);
-  console.log('taskList', taskListing);
-  console.log('task', tasks);
 
   // populate all of our checkboxes on initial render
   useEffect(() => selectAllIssues(), []);
@@ -73,11 +68,15 @@ export const DocketSwitchAddTaskForm = ({
     setShowModal(!showModal);
   };
 
+  const handleCloseModal = () => {
+    setShowModal(!showModal);
+  };
+
   const buttons = [
     {
       classNames: ['cf-modal-link', 'cf-btn-link'],
       name: 'Cancel',
-      onClick: closeModal
+      onClick: (event) => handleCloseModal(event)
     },
     {
       classNames: ['usa-button', 'usa-button-primary'],
@@ -123,9 +122,8 @@ export const DocketSwitchAddTaskForm = ({
         { showModal && (
           <Modal
             title={DOCKET_SWITCH_GRANTED_MODAL_TITLE}
-            onCancel={onCancel}
             onSubmit={onSubmit}
-            closeHandler={onCancel}
+            closeHandler={(event) => handleCloseModal(event)}
             buttons={buttons}>
             <div>
               <ReactMarkdown source={DOCKET_SWITCH_GRANTED_MODAL_INSTRUCTION} />
@@ -161,6 +159,5 @@ DocketSwitchAddTaskForm.propTypes = {
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
   docketName: PropTypes.string,
-  closeModal: PropTypes.func,
   taskListing: PropTypes.array
 };

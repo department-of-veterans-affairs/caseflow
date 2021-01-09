@@ -1,9 +1,9 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateDocketSwitch } from '../docketSwitchSlice';
 import { DocketSwitchReviewRequestForm } from './DocketSwitchReviewRequestForm';
 import { useHistory, useParams } from 'react-router';
 import { appealWithDetailSelector } from '../../selectors';
+import { completeDocketSwitchGranted } from './docketSwitchGrantedSlice';
 
 export const DocketSwitchReviewRequestContainer = () => {
   const dispatch = useDispatch();
@@ -17,13 +17,21 @@ export const DocketSwitchReviewRequestContainer = () => {
   // Reminder to add code to clear docketSwitch redux store when we go back.
   const handleCancel = () => goBack();
 
-  const handleSubmit = async (formaData) => {
+  const handleSubmit = async (formData) => {
 
-    // Add stuff to redux store
-    // Call stepForward redux action
-    // dispatch(stepForward());
+    const data = {
+      parent_id: taskId,
+      type: 'DocketSwitchGrantedTask',
+      external_id: appeal.externalId,
+      assigned_to_type: 'User',
+      docket_name: appeal.docketName,
+      reciept_date: formData.receiptDate,
+      issues: appeal.issues,
+      appeallant_name: appeal.appellantFullName
+    };
+
     try {
-      await dispatch(updateDocketSwitch(formaData));
+      await dispatch(completeDocketSwitchGranted(data));
 
       push(`/queue/appeals/${appealId}/tasks/${taskId}/docket_switch/checkout/grant/tasks`);
     } catch (error) {
