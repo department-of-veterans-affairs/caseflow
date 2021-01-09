@@ -268,7 +268,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule, :all_dbs do
       end
     end
 
-    context "without an associated room (currently Virtual)" do
+    context "without an associated room (currently used as Virtual)" do
       subject { generate_hearing_days_schedule.allocate_hearing_days_to_ros(:virtual) }
 
       context "allocated days to ros" do

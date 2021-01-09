@@ -207,7 +207,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
     # Assign rooms differently if we are not constraining by room
     if with_rooms == false
-      assign_virtual_hearing_days_to_individual_ro(ro_key, monthly_allocations)
+      assign_hearing_days_without_rooms_to_individual_ro(ro_key, monthly_allocations)
     else
       # iterate over each day starting from the first of the month till the 31st (max day a month can have)
       # Allocate max number of days for the 1st of each month based on remaining monthly allocations for that month
@@ -229,7 +229,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   end
 
   # Method to assign hearing days for each roomless hearing day requested
-  def assign_virtual_hearing_days_to_individual_ro(ro_key, monthly_allocations)
+  def assign_hearing_days_without_rooms_to_individual_ro(ro_key, monthly_allocations)
     # Loop the available alocations for this RO
     monthly_allocations.each do |month, allocated_days|
       # Get the available days for this RO this month
@@ -443,7 +443,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     ro_allocations.reduce({}) do |acc, allocation|
       acc[allocation.regional_office] = ro_cities[allocation.regional_office].merge(
         allocated_days: allocation.allocated_days,
-        allocated_virtual_days: allocation.allocated_virtual_days,
+        allocated_days_without_rooms: allocation.allocated_virtual_days,
         available_days: @available_days,
         num_of_rooms: RegionalOffice.new(allocation.regional_office).rooms
       )
