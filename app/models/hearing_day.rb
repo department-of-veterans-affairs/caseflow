@@ -36,7 +36,10 @@ class HearingDay < CaseflowRecord
 
   REQUEST_TYPES = Constants::HEARING_REQUEST_TYPES.with_indifferent_access.freeze
 
-  SLOTS_BY_REQUEST_TYPE = { REQUEST_TYPES[:central] => 10 }.freeze
+  SLOTS_BY_REQUEST_TYPE = {
+    REQUEST_TYPES[:central] => 10,
+    REQUEST_TYPES[:virtual] => 8 # TBD. Dummy value for testing until we know more.
+  }.freeze
 
   SLOTS_BY_TIMEZONE = {
     "America/New_York" => 12,
@@ -59,13 +62,13 @@ class HearingDay < CaseflowRecord
   # Validates if the judge id maps to an actual record.
   validates :judge, presence: true, if: -> { judge_id.present? }
 
-  validates :regional_office, absence: true, if: :central_office?
+  validates :regional_office, absence: true, if: :central_office_or_virtual?
   validates :regional_office,
             inclusion: {
               in: RegionalOffice.all.map(&:key),
               message: "key (%<value>s) is invalid"
             },
-            unless: :central_office?
+            unless: :central_office_or_virtual?
 
   validates :request_type,
             inclusion: {
@@ -73,8 +76,8 @@ class HearingDay < CaseflowRecord
               message: "is invalid"
             }
 
-  def central_office?
-    request_type == REQUEST_TYPES[:central]
+  def central_office_or_virtual?
+    [REQUEST_TYPES[:central], REQUEST_TYPES[:virtual]].include?(request_type)
   end
 
   def scheduled_for_as_date
@@ -136,9 +139,7 @@ class HearingDay < CaseflowRecord
   end
 
   def total_slots
-    if request_type == REQUEST_TYPES[:central]
-      return SLOTS_BY_REQUEST_TYPE[request_type]
-    end
+    return SLOTS_BY_REQUEST_TYPE[request_type] if central_office_or_virtual?
 
     SLOTS_BY_TIMEZONE[RegionalOffice.find!(regional_office).timezone]
   end
