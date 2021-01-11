@@ -4,7 +4,7 @@ describe HearingDayRange, :all_dbs do
   describe ".load_days" do
     let(:start_date) { Time.zone.today }
     let(:end_date) { Time.zone.today + 2.days }
-    
+
     subject { HearingDayRange.new(start_date, end_date, regional_office_key).load_days }
 
     context "load Video days for a range date" do
@@ -20,7 +20,7 @@ describe HearingDayRange, :all_dbs do
           create(
             :hearing_day,
             :video,
-            regional_office: regional_office_key, 
+            regional_office: regional_office_key,
             scheduled_for: Time.zone.today + 1.day
           )
         ]

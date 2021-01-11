@@ -36,10 +36,7 @@ class AssignHearingTab
   def ama_tasks(tasks)
     case regional_office_key
     when HearingDay::REQUEST_TYPES[:virtual]
-      tasks.where(
-        "cached_appeal_attributes.hearing_request_type = ?",
-        LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:virtual]
-      )
+      self.class.virtual_hearing_request_tasks(tasks)
     else
       tasks.where("cached_appeal_attributes.closest_regional_office_key = ?", regional_office_key)
     end
@@ -56,10 +53,7 @@ class AssignHearingTab
     when HearingDay::REQUEST_TYPES[:central]
       tasks.where("cached_appeal_attributes.appeal_id IN (?)", central_office_legacy_appeal_ids)
     when HearingDay::REQUEST_TYPES[:virtual]
-      tasks.where(
-        "cached_appeal_attributes.hearing_request_type = ?",
-        LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:virtual]
-      )
+      self.class.virtual_hearing_request_tasks(tasks)
     else
       tasks_by_ro = tasks.where("cached_appeal_attributes.closest_regional_office_key = ?", regional_office_key)
 
@@ -70,6 +64,13 @@ class AssignHearingTab
         tasks_by_ro.where("cached_appeal_attributes.appeal_id NOT IN (?)", central_office_legacy_appeal_ids)
       end
     end
+  end
+
+  def self.virtual_hearing_request_tasks(tasks)
+    tasks.where(
+      "cached_appeal_attributes.hearing_request_type = ?",
+      LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:virtual]
+    )
   end
 
   def to_hash

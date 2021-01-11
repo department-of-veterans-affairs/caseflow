@@ -32,7 +32,7 @@ module HearingDayMapper
       return if regional_office.nil?
 
       if [HearingDay::REQUEST_TYPES[:central], HearingDay::REQUEST_TYPES[:virtual]].include?(regional_office)
-        return regional_office 
+        return regional_office
       end
 
       ro = begin
