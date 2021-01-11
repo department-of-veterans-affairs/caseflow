@@ -4,6 +4,8 @@ import { DocketSwitchReviewRequestForm } from './DocketSwitchReviewRequestForm';
 import { useHistory, useParams } from 'react-router';
 import { appealWithDetailSelector } from '../../selectors';
 import { completeDocketSwitchGranted } from './docketSwitchGrantedSlice';
+import { taskActionData } from 'app/queue/utils';
+
 
 export const DocketSwitchReviewRequestContainer = () => {
   const dispatch = useDispatch();
@@ -29,7 +31,7 @@ export const DocketSwitchReviewRequestContainer = () => {
       issues: appeal.issues,
       appeallant_name: appeal.appellantFullName
     };
-
+    
     try {
       await dispatch(completeDocketSwitchGranted(data));
 

@@ -30,7 +30,8 @@ export const DocketSwitchAddTaskForm = ({
   onSubmit,
   onCancel,
   docketName,
-  taskListing
+  taskListing,
+  onBack
 }) => {
   const { register, handleSubmit, control, formState } = useForm({
     resolver: yupResolver(schema),
@@ -38,6 +39,9 @@ export const DocketSwitchAddTaskForm = ({
   });
 
   const [tasks, setTasks] = useState({});
+  const [docketTypes, setDocketType] = useState({});
+  console.log("taskLabel", tasks);
+
   const [showModal, setShowModal] = useState(false);
 
   const sectionStyle = css({ marginBottom: '24px' });
@@ -58,17 +62,21 @@ export const DocketSwitchAddTaskForm = ({
     setTasks(newValues);
   };
 
+  // const isOther = _.map(taskListing, 'label');
+
   // populate all of our checkboxes on initial render
   useEffect(() => selectAllIssues(), []);
 
   const handleChange = (evt) => {
-    const taskLabel = _.find(taskListing, { id: evt.target.name.toString() });
+    // const taskLabel = _.find(taskListing, { id: evt.target.name.toString() });
+    // setTasks({ ...tasks, [taskLabel]: evt.target.checked });
 
-    setTasks({ ...tasks, [taskLabel]: evt.target.checked });
+    setTasks({ ...taskListing, [evt.target.name.toString()] : evt.target.checked });
     setShowModal(!showModal);
   };
 
-  const handleCloseModal = () => {
+  const handleCloseModal = (evt) => {
+    setTasks({ ...taskListing, [evt.target.name]: !evt.target.checked });
     setShowModal(!showModal);
   };
 
@@ -149,6 +157,7 @@ export const DocketSwitchAddTaskForm = ({
         <CheckoutButtons
           disabled={!formState.isValid}
           onCancel={onCancel}
+          onBack={onBack}
           onSubmit={handleSubmit(onSubmit)}
         />
       </div>
@@ -159,5 +168,6 @@ DocketSwitchAddTaskForm.propTypes = {
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
   docketName: PropTypes.string,
-  taskListing: PropTypes.array
+  taskListing: PropTypes.array,
+  onBack: PropTypes.func
 };
