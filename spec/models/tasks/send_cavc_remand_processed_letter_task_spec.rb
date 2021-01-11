@@ -173,4 +173,34 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
       end
     end
   end
+
+  describe "child task closes" do
+    let(:send_task) { create(:send_cavc_remand_processed_letter_task) }
+    let!(:child_task) { create(:cavc_poa_clarification_task, parent: send_task, assigned_by: org_admin) }
+
+    let(:new_status) { :completed }
+    subject { child_task.update(status: new_status) }
+
+    context "when completing non-SendCavcRemandProcessedLetterTask child task" do
+      it "assigns this parent task" do
+        expect(send_task.status).to eq("on_hold")
+        expect(child_task.status).to eq("assigned")
+
+        subject
+        expect(child_task.status).to eq("completed")
+        expect(send_task.status).to eq("assigned")
+      end
+    end
+    context "when cancelling non-SendCavcRemandProcessedLetterTask child task" do
+      let(:new_status) { :cancelled }
+      it "assigns this parent task" do
+        expect(send_task.status).to eq("on_hold")
+        expect(child_task.status).to eq("assigned")
+
+        subject
+        expect(child_task.status).to eq("cancelled")
+        expect(send_task.status).to eq("assigned")
+      end
+    end
+  end
 end
