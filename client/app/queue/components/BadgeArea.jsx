@@ -8,7 +8,7 @@ import OvertimeBadge from './OvertimeBadge';
 import { mostRecentHeldHearingForAppeal } from '../utils';
 
 /**
- * Component to display a set of badges, currently limited to hearing and overtime badges. Each badge should
+ * Component to display a set of badges, currently limited to hearing, overtime badges, and FNOD badges. Each badge should
  * individually handle whether or not they should be displayed.
  * This component can accept either an Appeal object or a Task object. An appeal object should be passed in places where
  * we are strictly showing an appeal (in case details or case search). A Task object should be passed in places we do

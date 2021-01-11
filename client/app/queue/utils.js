@@ -154,7 +154,7 @@ const appealAttributesFromRawTask = (task) => ({
   caseType: task.attributes.case_type,
   isAdvancedOnDocket: task.attributes.aod,
   overtime: task.attributes.overtime,
-  veteran_appellant_deceased: task.attributes.veteran_appellant_deceased,
+  veteranAppellantDeceased: task.attributes.veteran_appellant_deceased,
   issueCount: task.attributes.issue_count,
   docketNumber: task.attributes.docket_number,
   veteranFullName: task.attributes.veteran_full_name,
@@ -164,6 +164,7 @@ const appealAttributesFromRawTask = (task) => ({
 
 const extractAppealsFromTasks = (tasks) => {
   return tasks.reduce((accumulator, task) => {
+    console.log(task);
     if (!accumulator[task.attributes.external_appeal_id]) {
       accumulator[task.attributes.external_appeal_id] = appealAttributesFromRawTask(task);
     }
@@ -311,7 +312,7 @@ export const prepareAppealForStore = (appeals) => {
       withdrawn: appeal.attributes.withdrawn,
       removed: appeal.attributes.removed,
       overtime: appeal.attributes.overtime,
-      veteran_appellant_deceased: appeal.attributes.veteran_appellant_deceased,
+      veteranAppellantDeceased: appeal.attributes.veteran_appellant_deceased,
       withdrawalDate: formatDateStrUtc(appeal.attributes.withdrawal_date),
       isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
       caseType: appeal.attributes.type,
