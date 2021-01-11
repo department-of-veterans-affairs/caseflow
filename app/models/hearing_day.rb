@@ -76,6 +76,10 @@ class HearingDay < CaseflowRecord
               message: "is invalid"
             }
 
+  def central_office?
+    request_type == REQUEST_TYPES[:central]
+  end
+
   def central_office_or_virtual?
     [REQUEST_TYPES[:central], REQUEST_TYPES[:virtual]].include?(request_type)
   end
