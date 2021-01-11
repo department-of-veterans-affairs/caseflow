@@ -23,7 +23,7 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
     click_on "Continue"
 
     # Ensure the page has the expected content
-    expect(page).to have_content("We have assigned your video hearings", wait: 30)
+    expect(page).to have_content("We have assigned your hearings days", wait: 30)
     expect(SchedulePeriod.count).to eq(1)
     expect(Allocation.count).to eq(55)
 
