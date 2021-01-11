@@ -143,8 +143,8 @@ describe Document, :postgres do
     subject { vacols_document.match_vbms_document_from(documents) }
 
     let(:vacols_document) { Document.new(type: "SOC", vacols_date: Time.zone.today + 2.days) }
-    let(:date_mismatch) { Generators::Document.build(type: "SOC", received_at: 1.day.from_now) }
-    let(:type_mismatch) { Generators::Document.build(type: "NOD", received_at: 2.days.from_now) }
+    let(:date_mismatch) { Generators::Document.build(type: "SOC", received_at: 1.day.from_now, alt_types: nil) }
+    let(:type_mismatch) { Generators::Document.build(type: "NOD", received_at: 2.days.from_now, alt_types: nil) }
     let(:match) { Generators::Document.build(type: "SOC", received_at: 2.days.from_now) }
 
     context "when there is a match" do

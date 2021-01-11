@@ -118,6 +118,7 @@ group :test, :development, :demo do
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
   gem "single_cov"
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
+  gem "sql_tracker"
   gem "test-prof"
   gem "timecop"
   gem "webdrivers"

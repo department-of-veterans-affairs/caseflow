@@ -27,6 +27,7 @@ class Appeal < DecisionReview
 
   has_one :special_issue_list
   has_one :post_decision_motion
+  has_one :docket_switch, as: :new_docket_stream
   has_many :record_synced_by_job, as: :record
   has_one :work_mode, as: :appeal
   has_one :latest_informal_hearing_presentation_task, lambda {
@@ -341,12 +342,18 @@ class Appeal < DecisionReview
     !!veteran_is_not_claimant
   end
 
+  def appellant_is_veteran
+    !veteran_is_not_claimant
+  end
+
   def veteran_middle_initial
     veteran_middle_name&.first
   end
 
   def veteran_appellant_deceased?
-    (veteran_is_deceased && !appellant_is_not_veteran) && FeatureToggle.enabled?(:fnod_badge, user: self)
+    return (veteran_is_deceased && appellant_is_veteran) if FeatureToggle.enabled?(:fnod_badge, user: self)
+
+    false
   end
 
   # matches Legacy behavior

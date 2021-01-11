@@ -55,7 +55,7 @@ class CaseListTable extends React.PureComponent {
     ];
 
     const anyAppealsHaveFnod = Boolean(
-      _.find(this.props.appeals, (appeal) => appeal.veteran_appellant_deceased)
+      _.find(this.props.appeals, (appeal) => appeal.veteranAppellantDeceased)
     );
 
     const anyAppealsHaveHeldHearings = Boolean(
