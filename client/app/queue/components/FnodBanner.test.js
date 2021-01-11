@@ -36,7 +36,6 @@ describe('FnodBanner', () => {
     const component = setupFnodBanner();
 
     const alertText = component.find('.usa-alert-text');
-    // console.log(alertText.text());
 
     expect(alertText.text()).toContain(defaultAppeal.veteranFullName);
   });
