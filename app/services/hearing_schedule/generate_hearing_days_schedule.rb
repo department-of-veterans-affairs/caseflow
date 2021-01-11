@@ -270,7 +270,12 @@ class HearingSchedule::GenerateHearingDaysSchedule
     offset = distribution_offset + index
 
     # Calculate the new index with the offset accounting for when the offset exceeds the available days
-    offset_index = get_index_offset(available_days.count, offset)
+    get_index_offset(available_days, offset)
+  end
+
+  # Method to get the index offset for an array ensuring we go around the array instead of getting out of bounds
+  def get_index_offset(available_days, offset)
+    offset_index = (offset >= available_days.count) ? offset - available_days.count : offset
 
     # Set the current date
     date = available_days[available_days.keys[offset_index]]
@@ -281,16 +286,14 @@ class HearingSchedule::GenerateHearingDaysSchedule
       @number_to_allocate = date.count + 1
     end
 
-    # Get the new offset index
-    updated_offset = (date.count == @number_to_allocate) ? offset_index + 1 : offset_index
-
-    # Return the index offset ensuring that we go around the available_days set
-    get_index_offset(available_days.count, updated_offset)
-  end
-
-  # Method to get the index offset for an array ensuring we go around the array instead of getting out of bounds
-  def get_index_offset(count, offset)
-    (offset >= count) ? offset - count : offset
+    # Check if there is a hearing day already allocated
+    if available_days[available_days.keys[offset_index]].count == @number_to_allocate
+      # Recursively get the index offset adding 1 until we find a date with fewer hearing days than number to allocate
+      get_index_offset(available_days, offset_index + 1)
+    else
+      # Once we have found an index that has fewer days than needed, return that index
+      offset_index
+    end
   end
 
   def allocated_days_for_ro(ro_key)
