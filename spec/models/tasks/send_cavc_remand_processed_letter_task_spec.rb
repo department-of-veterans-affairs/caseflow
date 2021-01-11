@@ -178,28 +178,41 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
     let(:send_task) { create(:send_cavc_remand_processed_letter_task) }
     let!(:child_task) { create(:cavc_poa_clarification_task, parent: send_task, assigned_by: org_admin) }
 
-    let(:new_status) { :completed }
-    subject { child_task.update(status: new_status) }
+    let(:new_child_status) { :completed }
+    subject { child_task.update(status: new_child_status) }
+    let(:expected_parent_status) { :assigned }
 
-    context "when completing non-SendCavcRemandProcessedLetterTask child task" do
-      it "assigns this parent task" do
+    shared_examples "update parent task's status" do
+      it "set correct parent task status" do
         expect(send_task.status).to eq("on_hold")
         expect(child_task.status).to eq("assigned")
 
         subject
-        expect(child_task.status).to eq("completed")
-        expect(send_task.status).to eq("assigned")
+        expect(child_task.status).to eq(new_child_status.to_s)
+        binding.pry if send_task.status != expected_parent_status.to_s
+        expect(send_task.status).to eq(expected_parent_status.to_s)
       end
     end
-    context "when cancelling non-SendCavcRemandProcessedLetterTask child task" do
-      let(:new_status) { :cancelled }
-      it "assigns this parent task" do
-        expect(send_task.status).to eq("on_hold")
-        expect(child_task.status).to eq("assigned")
 
-        subject
-        expect(child_task.status).to eq("cancelled")
-        expect(send_task.status).to eq("assigned")
+    context "when completing non-SendCavcRemandProcessedLetterTask child task" do
+      include_examples "update parent task's status"
+    end
+    context "when cancelling non-SendCavcRemandProcessedLetterTask child task" do
+      let(:new_child_status) { :cancelled }
+      include_examples "update parent task's status"
+    end
+
+    context "when closing SendCavcRemandProcessedLetterTask child task" do
+      let(:child_task) { create(:send_cavc_remand_processed_letter_task, parent: send_task, assigned_by: org_admin) }
+
+      context "when completing SendCavcRemandProcessedLetterTask child task" do
+        let(:expected_parent_status) { :completed }
+        include_examples "update parent task's status"
+      end
+      context "when cancelling child task" do
+        let(:new_child_status) { :cancelled }
+        let(:expected_parent_status) { :cancelled }
+        include_examples "update parent task's status"
       end
     end
   end
