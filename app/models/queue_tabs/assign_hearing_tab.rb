@@ -29,8 +29,20 @@ class AssignHearingTab
       if appeal_type == "LegacyAppeal"
         legacy_tasks(tasks)
       else
-        tasks.where("cached_appeal_attributes.closest_regional_office_key = ?", regional_office_key)
+        ama_tasks(tasks)
       end
+  end
+
+  def ama_tasks(tasks)
+    case regional_office_key
+    when HearingDay::REQUEST_TYPES[:virtual]
+      tasks.where(
+        "cached_appeal_attributes.hearing_request_type = ?",
+        LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:virtual]
+      )
+    else
+      tasks.where("cached_appeal_attributes.closest_regional_office_key = ?", regional_office_key)
+    end
   end
 
   # For legacy appeals, we need to only provide a central office hearing if they explicitly
@@ -40,8 +52,14 @@ class AssignHearingTab
     central_office_ids = VACOLS::Case.where(bfhr: 1, bfcurloc: "CASEFLOW").pluck(:bfkey)
     central_office_legacy_appeal_ids = LegacyAppeal.where(vacols_id: central_office_ids).pluck(:id)
 
-    if regional_office_key == "C"
+    case regional_office_key
+    when HearingDay::REQUEST_TYPES[:central]
       tasks.where("cached_appeal_attributes.appeal_id IN (?)", central_office_legacy_appeal_ids)
+    when HearingDay::REQUEST_TYPES[:virtual]
+      tasks.where(
+        "cached_appeal_attributes.hearing_request_type = ?",
+        LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:virtual]
+      )
     else
       tasks_by_ro = tasks.where("cached_appeal_attributes.closest_regional_office_key = ?", regional_office_key)
 
