@@ -38,12 +38,23 @@ class RegionalOfficeDropdown extends React.Component {
 
       let regionalOfficeOptions = [];
 
-      _.forEach(resp.regionalOffices, (value, key) => {
-        regionalOfficeOptions.push({
-          label: value.state === 'DC' ? 'Central' : `${value.city}, ${value.state}`,
-          value: { key, ...value }
-        });
-      });
+      _.forEach(
+        resp.regionalOffices,
+        (value, key) => {
+          let label;
+
+          if (!value.state && !value.city) {
+            label = value.label;
+          } else {
+            label = value.state === 'DC' ? 'Central' : `${value.city}, ${value.state}`;
+          }
+
+          regionalOfficeOptions.push({
+            label,
+            value: { key, ...value }
+          });
+        }
+      );
 
       regionalOfficeOptions.sort((first, second) => (first.label < second.label ? -1 : 1));
 
