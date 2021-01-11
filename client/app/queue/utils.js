@@ -164,7 +164,6 @@ const appealAttributesFromRawTask = (task) => ({
 
 const extractAppealsFromTasks = (tasks) => {
   return tasks.reduce((accumulator, task) => {
-    console.log(task);
     if (!accumulator[task.attributes.external_appeal_id]) {
       accumulator[task.attributes.external_appeal_id] = appealAttributesFromRawTask(task);
     }
