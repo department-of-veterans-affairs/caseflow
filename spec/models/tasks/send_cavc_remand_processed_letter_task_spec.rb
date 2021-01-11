@@ -189,7 +189,6 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
 
         subject
         expect(child_task.status).to eq(new_child_status.to_s)
-        binding.pry if send_task.status != expected_parent_status.to_s
         expect(send_task.status).to eq(expected_parent_status.to_s)
       end
     end
