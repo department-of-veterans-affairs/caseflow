@@ -87,7 +87,7 @@ class RegionalOffice
   end
 
   def valid?
-    !!location_hash[:city]
+    !!location_hash[:timezone] # the timezone field is currently set for all ROs
   end
 
   # these ROs have been added manually as needed
