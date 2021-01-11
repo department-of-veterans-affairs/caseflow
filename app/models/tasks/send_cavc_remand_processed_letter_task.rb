@@ -70,7 +70,7 @@ class SendCavcRemandProcessedLetterTask < Task
     self.assigned_to = CavcLitigationSupport.singleton if assigned_to.nil?
   end
 
-  def cascade_closure_from_child_task?(_child_task)
-    true
+  def cascade_closure_from_child_task?(child_task)
+    child_task.type == "SendCavcRemandProcessedLetterTask"
   end
 end
