@@ -55,8 +55,8 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
       expect(allocation_with_room_count).to eq(343)
 
       # Check the allocation for hearing days with rooms
-      allocation_without_room_count = Allocation.all.map(&:allocated_virtual_days).inject(:+).ceil
-      expect(allocation_without_room_count).to eq(343)
+      allocation_without_room_count = Allocation.all.map(&:allocated_days_without_room).inject(:+).ceil
+      expect(allocation_without_room_count).to eq(580)
 
       # Compare the Video hearing days
       hearing_days_with_rooms = HearingDay.where(request_type: "V")
@@ -73,7 +73,7 @@ RSpec.feature "Build Hearing Schedule for Build HearSched", :all_dbs do
       expect(co_hearing_days.count). to eq(13)
 
       # Check the allocation virtual count
-      allocation_count = Allocation.all.map(&:allocated_virtual_days).inject(:+).ceil
+      allocation_count = Allocation.all.map(&:allocated_days_without_room).inject(:+).ceil
       expect(allocation_count).to eq(1981)
 
       # Compare the roomless hearing days

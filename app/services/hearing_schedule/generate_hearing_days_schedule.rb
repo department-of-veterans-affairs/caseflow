@@ -105,8 +105,14 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   # Starting place of the algo to assign hearing days to RO taking into account whether to constrain by room
   def allocate_hearing_days_to_ros(with_rooms = true)
+    # Define an instance variable to flag whether to add the room constraint per hearing day
+    @with_rooms = with_rooms
+
+    # Sort the ROs by the number of rooms and allocated days
     @ros = sort_ros_by_rooms_and_allocated_days
-    do_allocate_hearing_days(with_rooms)
+
+    # Perform the hearing day distribution algorithm
+    do_allocate_hearing_days
   end
 
   # Sort ROs in descending order of the highest ratio of allocated days to rooms and available days
@@ -146,7 +152,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   private
 
   # Method that encapsulates the allocation of hearing days to ROs
-  def do_allocate_hearing_days(with_rooms)
+  def do_allocate_hearing_days
     @date_allocated = {}
     @amortized = 0
 
@@ -166,14 +172,14 @@ class HearingSchedule::GenerateHearingDaysSchedule
     end
 
     ros = @ros.each_key do |ro_key|
-      allocate_all_ro_monthly_hearing_days(ro_key, with_rooms)
+      allocate_all_ro_monthly_hearing_days(ro_key)
     end
 
     ros
   end
 
   # Allocate RO for each month within the schedule period
-  def allocate_all_ro_monthly_hearing_days(ro_key, with_rooms)
+  def allocate_all_ro_monthly_hearing_days(ro_key)
     # Ex, {[1, 2021]=>[Tue, 05 Jan 2021, Wed, 06 Jan 2021...], [2, 2021]=> [Mon, 01 Feb 2021, Tue, 02 Feb 2021,..]}
     grouped_monthly_avail_dates = group_dates_by_month(@ros[ro_key][:available_days])
 
@@ -191,11 +197,11 @@ class HearingSchedule::GenerateHearingDaysSchedule
       end]
     end.to_h
 
-    assign_hearing_days(ro_key, with_rooms)
+    assign_hearing_days(ro_key)
     add_allocated_days_and_format(ro_key) # sort dates chronologically per month (restore order from before above^ sort)
   end
 
-  def assign_hearing_days(ro_key, with_rooms)
+  def assign_hearing_days(ro_key)
     # date_index and i are always the same...
     # i is only used as a counter
     # date_index is passed to allocate_hearing_days_to_individual_ro
@@ -203,10 +209,10 @@ class HearingSchedule::GenerateHearingDaysSchedule
     date_index = 0
 
     # {[4, 2018]=>20, [9, 2018]=>20..}
-    monthly_allocations = allocations_by_month(ro_key, with_rooms)
+    monthly_allocations = allocations_by_month(ro_key)
 
     # Assign rooms differently if we are not constraining by room
-    if with_rooms == false
+    if @with_rooms == false
       assign_hearing_days_without_rooms_to_individual_ro(ro_key, monthly_allocations)
     else
       # iterate over each day starting from the first of the month till the 31st (max day a month can have)
@@ -305,9 +311,9 @@ class HearingSchedule::GenerateHearingDaysSchedule
   #   Schedule period of (2021-Jan-01, 2021-Mar-31), allocated_days of (54.0) ->
   #      {[1, 2021]=>18, [2, 2021]=>18, [3, 2021]=>18}
   #
-  def allocations_by_month(ro_key, with_rooms)
+  def allocations_by_month(ro_key)
     # Ignore room constraints if specified
-    if with_rooms == false
+    if @with_rooms == false
       if @ros[ro_key][:available_days].count == 0
         fail HearingSchedule::Errors::NotEnoughAvailableDays.new(
           "No available hearing days for #{ro_key}",
@@ -315,7 +321,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
         )
       end
 
-      monthly_distributed_days(@ros[ro_key][:allocated_days_without_rooms].ceil)
+      monthly_distributed_days(@ros[ro_key][:allocated_days_without_room].ceil)
     else
       # raise error if there are not enough available video days
       verify_total_available_days(ro_key)
@@ -466,7 +472,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     ro_allocations.reduce({}) do |acc, allocation|
       acc[allocation.regional_office] = ro_cities[allocation.regional_office].merge(
         allocated_days: allocation.allocated_days,
-        allocated_days_without_rooms: allocation.allocated_virtual_days,
+        allocated_days_without_room: allocation.allocated_days_without_room,
         available_days: @available_days,
         num_of_rooms: RegionalOffice.new(allocation.regional_office).rooms
       )

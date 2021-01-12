@@ -21,7 +21,7 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
       response_body = JSON.parse(response.body)
 
       ro_allocated_with_room_count = ro_schedule_period.allocations.map(&:allocated_days).inject(:+).ceil
-      ro_allocated_without_room_count = ro_schedule_period.allocations.map(&:allocated_virtual_days).inject(:+).ceil
+      ro_allocated_without_room_count = ro_schedule_period.allocations.map(&:allocated_days_without_room).inject(:+).ceil
       co_hearing_days_count = HearingSchedule::GenerateHearingDaysSchedule.new(ro_schedule_period)
         .generate_co_hearing_days_schedule.size
       allocated_count = ro_allocated_with_room_count + co_hearing_days_count + ro_allocated_without_room_count
