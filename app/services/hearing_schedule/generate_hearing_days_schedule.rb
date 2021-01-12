@@ -294,7 +294,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   # Method to get the index offset for an array ensuring we go around the array instead of getting out of bounds
   def get_index_offset(available_days, offset)
-    offset_index = (offset >= available_days.count) ? offset - available_days.count : offset
+    offset_index = offset % available_days.length
 
     # Check if there is a hearing day already allocated
     if available_days[available_days.keys[offset_index]].count == @number_to_allocate
