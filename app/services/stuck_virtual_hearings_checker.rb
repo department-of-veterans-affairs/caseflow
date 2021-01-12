@@ -15,6 +15,8 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
   private
 
   def stuck_virtual_hearings
+    rerun_jobs
+
     VirtualHearingRepository.hearings_with_pending_conference_or_pending_emails.select do |virtual_hearing|
       virtual_hearing.updated_at < Time.zone.now - 2.hours
     end
@@ -33,5 +35,15 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
 
     add_to_report "If a virtual hearing is in this state, Caseflow may not be displaying the information that " \
       "users need to prepare for the hearing, and notification emails may not have been sent."
+  end
+
+  # rerun jobs for those virtual hearings never got run
+  def rerun_jobs
+    VirtualHearing
+      .where(conference_id: nil)
+      .pluck(:hearing_id, :hearing_type)
+      .each do |hearing_id, hearing_type|
+        VirtualHearings::CreateConferenceJob.perform_now(hearing_id: hearing_id, hearing_type: hearing_type)
+      end
   end
 end
