@@ -31,9 +31,21 @@ export class SearchableDropdown extends React.Component {
     this.setState({ value: nextProps.value });
   };
 
+  handleChangeClaimant = (value) => {
+    if (value === 'child' || value === 'spouse') {
+      this.props.setRenderForm(true);
+    } else {
+      this.props.setRenderForm(false);
+    }
+  }
+
   onChange = (value) => {
     let newValue = value;
     let deletedValue = null;
+
+    if (this.props.addClaimantForm) {
+      this.handleChangeClaimant(value.value);
+    }
 
     /*
      * this is a temp fix for react-select value backspace
@@ -89,6 +101,7 @@ export class SearchableDropdown extends React.Component {
     return Select;
   };
 
+  // ASK JC ABOUT THIS DECONSTRUCTION NESTED IN OLDER REACT STATE CONSTRUCTOR (?)
   render() {
     const {
       async,
@@ -110,7 +123,7 @@ export class SearchableDropdown extends React.Component {
       creatable,
       creatableOptions,
       searchable,
-      styling,
+      styling
     } = this.props;
 
     const dropdownStyling = css(styling, {
@@ -257,6 +270,8 @@ SearchableDropdown.propTypes = {
   selfManageValueState: PropTypes.bool,
   styling: PropTypes.object,
   value: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+  setRenderForm: PropTypes.func,
+  addClaimantForm: PropTypes.bool
 };
 
 /* eslint-disable no-undefined */
