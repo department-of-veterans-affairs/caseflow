@@ -32,10 +32,10 @@ FactoryBot.define do
         description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
         notes = "Pain disorder with 100\% evaluation per examination"
         source_appeal = create(:appeal,
-                        :dispatched,
-                        veteran_file_number: veteran.file_number,
-                        associated_judge: judge,
-                        associated_attorney: attorney)
+                               :dispatched,
+                               veteran_file_number: veteran.file_number,
+                               associated_judge: judge,
+                               associated_attorney: attorney)
         create_list(:request_issue, 2,
                     :rating,
                     :with_rating_decision_issue,
