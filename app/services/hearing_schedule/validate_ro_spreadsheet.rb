@@ -66,10 +66,10 @@ class HearingSchedule::ValidateRoSpreadsheet
 
     # Right now, exclude virtual regional offices since they can't be added to the RO spreadsheet.
     all_ro_keys = RegionalOffice
-                    .ros_with_hearings
-                    .keys
-                    .reject { |ro_key| ro_key == HearingDay::REQUEST_TYPES[:virtual] }
-                    .sort
+      .ros_with_hearings
+      .keys
+      .reject { |ro_key| ro_key == HearingDay::REQUEST_TYPES[:virtual] }
+      .sort
     spreadsheet_ro_keys = spreadsheet_data.collect { |ro| ro["ro_code"] }.uniq.sort
     all_ro_keys_appear = all_ro_keys == spreadsheet_ro_keys
 
