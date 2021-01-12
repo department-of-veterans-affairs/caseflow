@@ -131,6 +131,7 @@ const AddCavcRemandView = (props) => {
       data: {
         judgement_date: judgementDate,
         mandate_date: mandateDate,
+        appeal_id: appealId,
         source_appeal_id: appealId,
         cavc_docket_number: docketNumber,
         cavc_judge_full_name: judge.value,

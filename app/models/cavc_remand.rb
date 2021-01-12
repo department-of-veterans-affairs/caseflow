@@ -10,7 +10,7 @@ class CavcRemand < CaseflowRecord
 
   belongs_to :created_by, class_name: "User"
   belongs_to :appeal, class_name: "Appeal"
-  belongs_to :source_appeal, class_name: "Appeal"
+  belongs_to :source_source_appeal, class_name: "Appeal"
 
   validates :created_by, :source_appeal, :cavc_docket_number, :cavc_judge_full_name, :cavc_decision_type, :decision_date,
             :decision_issue_ids, :instructions, presence: true
