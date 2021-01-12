@@ -262,7 +262,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
       # Loop through the requested number to distribute the hearing days evenly
       allocated_days.times do
         # Check whether we have allocated the number to allocate for each day
-        if available_days.values.count { |x| x.count == @number_to_allocate } == available_days.count
+        if available_days.values.count { |day| day.count == @number_to_allocate } == available_days.count
           # Update the number to allocate
           @number_to_allocate += 1
         end
