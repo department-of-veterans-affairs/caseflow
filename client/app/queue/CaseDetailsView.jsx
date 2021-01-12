@@ -118,7 +118,7 @@ export const CaseDetailsView = (props) => {
       {(!modalIsOpen || props.userCanScheduleVirtualHearings) && <UserAlerts />}
       <AppSegment filledBackground>
         <CaseTitle appeal={appeal} />
-        { appeal.veteran_appellant_deceased && <FnodBanner appeal={appeal} /> }
+        { appeal.veteranDateOfDeath && props.featureToggles.fnod_banner && <FnodBanner appeal={appeal} /> }
         <CaseTitleDetails
           appealId={appealId}
           redirectUrl={window.location.pathname}
