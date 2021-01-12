@@ -26,7 +26,8 @@
       reversal_cavc_remand: FeatureToggle.enabled?(:reversal_cavc_remand, user: current_user),
       dismissal_cavc_remand: FeatureToggle.enabled?(:dismissal_cavc_remand, user: current_user),
       editNodDate: FeatureToggle.enabled?(:edit_nod_date, user: current_user),
-      fnod_badge: FeatureToggle.enabled?(:fnod_badge, user: current_user)
+      fnod_badge: FeatureToggle.enabled?(:fnod_badge, user: current_user),
+      fnod_banner: FeatureToggle.enabled?(:fnod_banner, user: current_user)
     }
   }) %>
 <% end %>
