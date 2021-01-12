@@ -12,7 +12,7 @@ import Badge from './Badge';
 const FnodBadge = (props) => {
   const { appeal } = props;
 
-  if (!appeal.veteran_appellant_deceased) {
+  if (!appeal.veteranAppellantDeceased) {
     return null;
   }
 

@@ -23,10 +23,16 @@ class HearingSchedule::GenerateHearingDaysSchedule
   CO_FALLBACK_DAYS_OF_WEEK = [1, 2, 4].freeze # if wednesday is a holiday, pick a another non-holiday starting monday
 
   def initialize(schedule_period)
-    @amortized = 0
-    @co_non_availability_days = []
-    @ro_non_available_days = {}
     @schedule_period = schedule_period
+
+    @amortized = 0
+    @availability_coocurrence = {}
+    @co_non_availability_days = []
+    @date_allocated = {}
+    @number_to_allocate = 1
+    @ro_non_available_days = {}
+    @ros = {}
+
     extract_non_available_days
 
     @holidays = Holidays.between(schedule_period.start_date, schedule_period.end_date, :federal_reserve)
@@ -256,13 +262,13 @@ class HearingSchedule::GenerateHearingDaysSchedule
       # Initialize the calculated index
       offset_index = 0
 
-      # Set the nmber allocated to 0 initially
+      # Set the number allocated to 1 initially
       @number_to_allocate = 1
 
       # Loop through the requested number to distribute the hearing days evenly
       allocated_days.times do
         # Check whether we have allocated the number to allocate for each day
-        if available_days.values.count { |x| x.count == @number_to_allocate } == available_days.count
+        if available_days.values.count { |day| day.count == @number_to_allocate } == available_days.count
           # Update the number to allocate
           @number_to_allocate += 1
         end
