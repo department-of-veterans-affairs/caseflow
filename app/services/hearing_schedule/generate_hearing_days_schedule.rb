@@ -32,6 +32,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @number_to_allocate = 1
     @ro_non_available_days = {}
     @ros = {}
+    @with_rooms = true
 
     extract_non_available_days
 

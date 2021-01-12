@@ -125,7 +125,6 @@ detectors:
       - Api::V3::DecisionReviews::HigherLevelReviewIntakeProcessor
       - ETL::Syncer
       - User
-      - HearingSchedule::GenerateHearingDaysSchedule
   IrresponsibleModule:
     enabled: false
   LongParameterList:
