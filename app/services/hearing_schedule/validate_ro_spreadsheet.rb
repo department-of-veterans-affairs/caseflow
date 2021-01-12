@@ -68,7 +68,7 @@ class HearingSchedule::ValidateRoSpreadsheet
     all_ro_keys = RegionalOffice
       .ros_with_hearings
       .keys
-      .reject { |ro_key| ro_key == HearingDay::REQUEST_TYPES[:virtual] }
+      .reject { |ro_key| ro_key == HearingDay::REQUEST_TYPES[:virtual] } # Remove for CASEFLOW-408
       .sort
     spreadsheet_ro_keys = spreadsheet_data.collect { |ro| ro["ro_code"] }.uniq.sort
     all_ro_keys_appear = all_ro_keys == spreadsheet_ro_keys
