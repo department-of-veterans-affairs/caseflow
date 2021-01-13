@@ -180,6 +180,7 @@ cached_user_attributes,stitle,string (16),,,,,,
 cached_user_attributes,svlj,string,,,,,,
 cached_user_attributes,updated_at,datetime ∗,x,,,,x,
 cavc_remands,,,,,,,,
+cavc_remands,appeal_id,integer (8) ∗ FK,x,,x,,x,Appeal that CAVC has remanded
 cavc_remands,cavc_decision_type,string ∗,x,,,,,"CAVC decision type. Expecting 'remand', 'straight_reversal', or 'death_dismissal'"
 cavc_remands,cavc_docket_number,string ∗,x,,,,,Docket number of the CAVC judgement
 cavc_remands,cavc_judge_full_name,string ∗,x,,,,,CAVC judge that passed the judgement on the remand
@@ -191,7 +192,6 @@ cavc_remands,id,integer (8) PK,x,x,,,,
 cavc_remands,instructions,string ∗,x,,,,,Instructions and context provided upon creation of the remand record
 cavc_remands,judgement_date,date ∗,x,,,,,"Date CAVC issued a judgement, according to the CAVC"
 cavc_remands,mandate_date,date ∗,x,,,,,Date that CAVC reported the mandate was given
-cavc_remands,remand_appeal_id,integer (8),,,,,x,Court remand appeal created by this entry
 cavc_remands,remand_subtype,string ∗,x,,,,,"Type of remand. If the cavc_decision_type is 'remand', expecting one of 'jmp', 'jmpr', or 'mdr'. Otherwise, this can be null."
 cavc_remands,represented_by_attorney,boolean ∗,x,,,,,Whether or not the appellant was represented by an attorney
 cavc_remands,source_appeal_id,integer (8) ∗ FK,x,,x,,x,Appeal that CAVC has remanded
