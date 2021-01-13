@@ -11,6 +11,7 @@ advance_on_docket_motions,updated_at,datetime ∗,x,,,,x,
 advance_on_docket_motions,user_id,integer (8) FK,,,x,,x,
 allocations,,,,,,,,
 allocations,allocated_days,float ∗,x,,,,,
+allocations,allocated_days_without_room,float,,,,,,Number of Hearing Days Allocated with no Rooms
 allocations,created_at,datetime ∗,x,,,,,
 allocations,id,integer (8) PK,x,x,,,,
 allocations,regional_office,string ∗,x,,,,,
@@ -190,6 +191,7 @@ cavc_remands,id,integer (8) PK,x,x,,,,
 cavc_remands,instructions,string ∗,x,,,,,Instructions and context provided upon creation of the remand record
 cavc_remands,judgement_date,date ∗,x,,,,,"Date CAVC issued a judgement, according to the CAVC"
 cavc_remands,mandate_date,date ∗,x,,,,,Date that CAVC reported the mandate was given
+cavc_remands,remand_appeal_id,integer (8),,,,,x,Court remand appeal created by this entry
 cavc_remands,remand_subtype,string ∗,x,,,,,"Type of remand. If the cavc_decision_type is 'remand', expecting one of 'jmp', 'jmpr', or 'mdr'. Otherwise, this can be null."
 cavc_remands,represented_by_attorney,boolean ∗,x,,,,,Whether or not the appellant was represented by an attorney
 cavc_remands,source_appeal_id,integer (8) ∗ FK,x,,x,,x,Appeal that CAVC has remanded
