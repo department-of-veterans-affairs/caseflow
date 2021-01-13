@@ -76,6 +76,7 @@ export const ScheduleVeteranForm = ({
           /> }
         <RegionalOfficeDropdown
           errorMessage={errors?.regionalOffice}
+          excludeVirtualHearingsOption
           onChange={(regionalOffice) => props.onChange('regionalOffice', regionalOffice)}
           value={ro}
           validateValueOnMount
