@@ -176,7 +176,7 @@ module Seeds
 
     def create_former_travel_currently_virtual_requested_legacy_appeals
       closest_regional_office = "RO17"
-      16.times.each do |i|
+      [1..16].each do |id|
         create(
           :schedule_hearing_task,
           appeal: create(
@@ -184,9 +184,9 @@ module Seeds
             vacols_case: create(
               :case,
               :travel_board_hearing,
-              bfkey: "1234#{i+1}",
-              bfcorkey: "1234#{i+1}",
-              correspondent: create(:correspondent, stafkey: "1234#{i+1}")
+              bfkey: "1234#{id}",
+              bfcorkey: "5678#{id}",
+              correspondent: create(:correspondent, stafkey: "5678#{id}")
             ),
             closest_regional_office: closest_regional_office,
             changed_request_type: "R"
