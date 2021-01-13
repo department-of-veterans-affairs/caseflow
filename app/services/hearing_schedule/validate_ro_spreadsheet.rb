@@ -12,7 +12,7 @@ class HearingSchedule::ValidateRoSpreadsheet
   CO_SPREADSHEET_EMPTY_COLUMN = [nil].freeze
 
   HEARING_ALLOCATION_SHEET_TITLE = "Allocation of Regional Office Video Hearings"
-  HEARING_ALLOCATION_SHEET_EXAMPLE_ROW = ["Example", "Ithaca, NY", "RO00", 10].freeze
+  HEARING_ALLOCATION_SHEET_EXAMPLE_ROW = ["Example", "Ithaca, NY", "RO00", 10, 50].freeze
   HEARING_ALLOCATION_SHEET_EMPTY_COLUMN = [nil].freeze
 
   class RoDatesNotUnique < StandardError; end

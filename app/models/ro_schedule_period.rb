@@ -48,7 +48,7 @@ class RoSchedulePeriod < SchedulePeriod
   private
 
   # Validate fields for each video hearing day
-  def format_ro_data(ro_allocations)
+  def format_ro_hearing_data(ro_allocations)
     ro_allocations.reduce([]) do |acc, (ro_key, ro_info)|
       ro_info[:allocated_dates].each_value do |dates|
         dates.each do |date, rooms|
@@ -68,10 +68,20 @@ class RoSchedulePeriod < SchedulePeriod
 
   # Generate hearing days for ROs and CO based on non-availibility days and allocated days
   def generate_ro_hearing_schedule
+    # Initialize the hearing day schedule
     generate_hearings_days = HearingSchedule::GenerateHearingDaysSchedule.new(self)
-    video_hearing_days = format_ro_data(generate_hearings_days.allocate_hearing_days_to_ros)
+
+    # Distribute the requested days adding the room constraint per RO
+    hearing_days_with_room = format_ro_hearing_data(generate_hearings_days.allocate_hearing_days_to_ros(true))
+
+    # Distribute the requested days without the room constraint per RO
+    hearing_days_without_room = format_ro_hearing_data(generate_hearings_days.allocate_hearing_days_to_ros(false))
+
+    # Distribute the available Central Office hearing days
     co_hearing_days = generate_hearings_days.generate_co_hearing_days_schedule
-    hearing_days = video_hearing_days + co_hearing_days
+
+    # Combine the available hearing days
+    hearing_days = hearing_days_with_room + co_hearing_days + hearing_days_without_room
     hearing_days.sort_by { |day| day[:scheduled_for] }
   end
 end
