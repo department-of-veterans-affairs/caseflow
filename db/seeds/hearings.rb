@@ -187,7 +187,6 @@ module Seeds
         first_name: Faker::Name.first_name,
         last_name: Faker::Name.last_name,
         file_number: veteran_file_number,
-        email_address: Faker::Internet.email,
         bgs_veteran_record: {
           date_of_birth: Faker::Date.birthday(min_age: 35, max_age: 80).strftime("%m/%d/%Y"),
           date_of_death: nil,
