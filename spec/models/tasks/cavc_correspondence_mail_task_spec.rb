@@ -67,9 +67,9 @@ describe CavcCorrespondenceMailTask do
         end
 
         context "who is a team member" do
-          let(:expected_actions) { [] }
+          let(:expected_actions) { mail_task_user_actions }
 
-          it "has no actions" do
+          it "has actions" do
             subject
           end
         end

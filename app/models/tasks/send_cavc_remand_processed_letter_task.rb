@@ -50,6 +50,8 @@ class SendCavcRemandProcessedLetterTask < Task
 
     return USER_ACTIONS if assigned_to == user || CavcLitigationSupport.singleton.user_is_admin?(user)
 
+    return USER_ACTIONS if task_is_assigned_to_users_organization?(user)
+
     []
   end
 

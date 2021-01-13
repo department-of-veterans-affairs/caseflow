@@ -27,7 +27,7 @@ class CavcCorrespondenceMailTask < MailTask
 
     return organization_task_actions if org_task_and_admin_user(user)
 
-    return user_task_actions if user_task_and_admin_or_assigned_to_user(user)
+    return user_task_actions if user_task_and_admin_or_assigned_to_user(user) || org_task_and_team_member(user)
 
     []
   end
@@ -73,6 +73,10 @@ class CavcCorrespondenceMailTask < MailTask
 
   def org_task_and_admin_user(user)
     assigned_to_type == "Organization" && CavcLitigationSupport.singleton.user_is_admin?(user)
+  end
+
+  def org_task_and_team_member(user)
+    assigned_to_type == "Organization" && CavcLitigationSupport.singleton.user_has_access?(user)
   end
 
   def user_task_and_admin_or_assigned_to_user(user)
