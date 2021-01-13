@@ -158,6 +158,45 @@ RSpec.feature "Convert travel board appeal for 'Edit HearSched' (Hearing Coordin
         end
       end
     end
+
+    context "with national virtual hearing queue feature toggle enabled" do
+      before do
+        FeatureToggle.enable!(:national_vh_queue)
+      end
+
+      after do
+        FeatureToggle.disable!(:national_vh_queue)
+      end
+
+      let!(:hearing_days) do
+        [
+          create(:hearing_day, :virtual, scheduled_for: Time.zone.today + 7.days),
+          create(:hearing_day, :virtual, scheduled_for: Time.zone.today + 8.days)
+        ]
+      end
+
+      scenario "appears in virtual hearings national queue" do
+        visit "queue/appeals/#{legacy_appeal.vacols_id}"
+
+        step "change hearing request type to virtual" do
+          click_dropdown(text: Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.label)
+
+          click_button("Convert Hearing To Virtual")
+        end
+
+        step "go to schedule veterans page" do
+          visit "hearings/schedule/assign"
+
+          click_dropdown(text: "Virtual Hearings")
+        end
+
+        step "go to legacy hearings tab" do
+          click_button("Legacy Veterans Waiting")
+
+          expect(page).to have_content(legacy_appeal.docket_number)
+        end
+      end
+    end
   end
 
   context "without FeatureToggle enabled" do
