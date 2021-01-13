@@ -52,7 +52,7 @@ class RegionalOfficeDropdown extends React.Component {
             label = value.state === 'DC' ? 'Central' : `${value.city}, ${value.state}`;
           }
 
-          if (key === HEARING_REQUEST_TYPES['virtual'] && excludeVirtualHearingsOption) {
+          if (key === HEARING_REQUEST_TYPES.virtual && excludeVirtualHearingsOption) {
             return;
           }
 
