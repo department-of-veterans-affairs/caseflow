@@ -6,7 +6,7 @@ import { onReceiveDropdownData, onFetchDropdownData } from '../common/actions';
 import ApiUtil from '../../util/ApiUtil';
 import _ from 'lodash';
 import LoadingLabel from './LoadingLabel';
-
+import HEARING_REQUEST_TYPES from '../../../constants/HEARING_REQUEST_TYPES';
 import SearchableDropdown from '../SearchableDropdown';
 
 class RegionalOfficeDropdown extends React.Component {
@@ -25,7 +25,10 @@ class RegionalOfficeDropdown extends React.Component {
   }
 
   getRegionalOffices = () => {
-    const { regionalOffices: { options, isFetching } } = this.props;
+    const {
+      excludeVirtualHearingsOption,
+      regionalOffices: { options, isFetching }
+    } = this.props;
 
     if (options || isFetching) {
       return;
@@ -47,6 +50,10 @@ class RegionalOfficeDropdown extends React.Component {
             label = value.label;
           } else {
             label = value.state === 'DC' ? 'Central' : `${value.city}, ${value.state}`;
+          }
+
+          if (key === HEARING_REQUEST_TYPES['virtual'] && excludeVirtualHearingsOption) {
+            return;
           }
 
           regionalOfficeOptions.push({
@@ -95,6 +102,10 @@ class RegionalOfficeDropdown extends React.Component {
 
 RegionalOfficeDropdown.propTypes = {
   errorMessage: PropTypes.string,
+
+  // Whether or not to hide the "Virtual Hearings" option from the dropdown.
+  excludeVirtualHearingsOption: PropTypes.bool,
+
   label: PropTypes.string,
   name: PropTypes.string,
   onChange: PropTypes.func.isRequired,
@@ -113,6 +124,7 @@ RegionalOfficeDropdown.propTypes = {
 };
 
 RegionalOfficeDropdown.defaultProps = {
+  excludeVirtualHearingsOption: false,
   name: 'regionalOffice',
   label: 'Regional Office'
 };
