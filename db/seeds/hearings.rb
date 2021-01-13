@@ -9,6 +9,7 @@ module Seeds
       RequestStore[:current_user] = created_by_user
       create_hearing_days
       create_ama_hearing_appeals
+      create_former_travel_currently_virtual_requested_legacy_appeals
       RequestStore[:current_user] = prev_user
     end
 
@@ -171,6 +172,27 @@ module Seeds
                 appeal.hearings.map(&:disposition).include?(:held)
 
       create(:case_hearing, :disposition_held, user: user, folder_nr: appeal.vacols_id)
+    end
+
+    def create_former_travel_currently_virtual_requested_legacy_appeals
+      closest_regional_office = "RO17"
+      16.times.each do |i|
+        create(
+          :schedule_hearing_task,
+          appeal: create(
+            :legacy_appeal,
+            vacols_case: create(
+              :case,
+              :travel_board_hearing,
+              bfkey: "1234#{i+1}",
+              bfcorkey: "1234#{i+1}",
+              correspondent: create(:correspondent, stafkey: "1234#{i+1}")
+            ),
+            closest_regional_office: closest_regional_office,
+            changed_request_type: "R"
+          )
+        )
+      end
     end
   end
 end
