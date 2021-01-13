@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { FnodBanner } from './FnodBanner';
+import FnodBanner from './FnodBanner';
 
 export default {
   title: 'Queue/FNOD Banner',
