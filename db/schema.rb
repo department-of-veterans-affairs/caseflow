@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_22_171313) do
+ActiveRecord::Schema.define(version: 2021_01_04_195741) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 2020_12_22_171313) do
 
   create_table "allocations", force: :cascade do |t|
     t.float "allocated_days", null: false
+    t.float "allocated_days_without_room", comment: "Number of Hearing Days Allocated with no Rooms"
     t.datetime "created_at", null: false
     t.string "regional_office", null: false
     t.bigint "schedule_period_id", null: false

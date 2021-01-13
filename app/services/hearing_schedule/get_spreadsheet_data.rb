@@ -86,21 +86,30 @@ class HearingSchedule::GetSpreadsheetData
     {
       title: allocation_sheet.row(1)[0],
       example_row: allocation_sheet.row(3).uniq,
-      empty_column: allocation_sheet.column(5).uniq
+      empty_column: allocation_sheet.column(6).uniq
     }
   end
 
   def allocation_data
+    # Instantiate the hearing allocation days to be filled by data from the spreadsheet
     hearing_allocation_days = []
+
+    # Extract the RO Name, Code, allocated days and Virtual Hearing Days
     ro_names = allocation_sheet.column(2).drop(3)
     ro_codes = allocation_sheet.column(3).drop(3)
     allocated_days = allocation_sheet.column(4).drop(3)
-    ro_names.zip(ro_codes, allocated_days).each do |row|
+    allocated_days_without_room = allocation_sheet.column(5).drop(3)
+
+    # Map the data to the hearing allocation days
+    ro_names.zip(ro_codes, allocated_days, allocated_days_without_room).each do |row|
       hearing_allocation_days.push("ro_code" => row[1].strip,
                                    "ro_city" => row[0].split(", ")[0].strip,
                                    "ro_state" => row[0].split(", ")[1].strip,
-                                   "allocated_days" => row[2])
+                                   "allocated_days" => row[2],
+                                   "allocated_days_without_room" => row[3])
     end
+
+    # Return the list of allocated hearing days
     hearing_allocation_days
   end
 end
