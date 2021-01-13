@@ -187,6 +187,8 @@ module Seeds
           :schedule_hearing_task,
           appeal: create(
             :legacy_appeal,
+            :with_veteran,
+            :with_veteran_address,
             vacols_case: create(
               :case,
               :travel_board_hearing,
