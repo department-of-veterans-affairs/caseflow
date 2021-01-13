@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { Controller, useFormContext } from 'react-hook-form';
 
+import TextField from 'app/components/TextField';
 import SearchableDropdown from 'app/components/SearchableDropdown';
-import { render } from 'react-dom';
 
 const relationshipOpts = [
   { label: 'Attorney (previously or currently)', value: 'attorney' },
@@ -30,7 +30,29 @@ export const AddClaimantForm = ({ onSubmit }) => {
         addClaimantForm
       />
       {
-        renderForm && <h1>HI</h1>
+        renderForm && (<div style={{ marginTop: '20px' }}>
+          <br />
+          <TextField
+            name="First name"
+            strongLabel
+          />
+          <TextField
+            name="Middle name/Initial"
+            strongLabel
+            optional
+          />
+          <TextField
+            name="Last name"
+            strongLabel
+            optional
+          />
+          <TextField
+            name="Suffix"
+            strongLabel
+            optional
+          />
+
+        </div>)
       }
     </form>
   );
