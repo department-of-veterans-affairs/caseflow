@@ -176,7 +176,8 @@ module Seeds
     end
 
     def create_virtual_hearing_day
-      # Take an existing hearing day for st. petes and change it to a Virtual hearing day
+      # Take an existing hearing day change it to a Virtual hearing day to get around
+      # validations
       HearingDay.last.dup.update!(request_type: "R", regional_office: nil)
     end
 
