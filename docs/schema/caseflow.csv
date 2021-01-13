@@ -194,6 +194,7 @@ cavc_remands,judgement_date,date ∗,x,,,,,"Date CAVC issued a judgement, acco
 cavc_remands,mandate_date,date ∗,x,,,,,Date that CAVC reported the mandate was given
 cavc_remands,remand_subtype,string ∗,x,,,,,"Type of remand. If the cavc_decision_type is 'remand', expecting one of 'jmp', 'jmpr', or 'mdr'. Otherwise, this can be null."
 cavc_remands,represented_by_attorney,boolean ∗,x,,,,,Whether or not the appellant was represented by an attorney
+cavc_remands,source_appeal_id,integer (8) ∗ FK,x,,x,,x,Appeal that CAVC has remanded
 cavc_remands,updated_at,datetime ∗,x,,,,,Default timestamps
 cavc_remands,updated_by_id,integer (8) FK,,,x,,,"User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created."
 certifications,,,,,,,,
