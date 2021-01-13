@@ -31,7 +31,8 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
 
     add_to_report "Found #{stuck_count} stuck #{'virtual hearing'.pluralize(stuck_count)}: "
     stuck_virtual_hearings.each do |stuck_vh|
-      add_to_report "`VirtualHearing.find(#{stuck_vh.id})` last attempted at: #{stuck_vh.establishment.attempted_at}, " \
+      add_to_report "`VirtualHearing.find(#{stuck_vh.id})` " \
+        "last attempted at: #{stuck_vh.establishment.attempted_at}, " \
         "scheduled for: #{stuck_vh.hearing.scheduled_for}, updated by: #{stuck_vh.updated_by.css_id}, " \
         "#{uuid_or_vacols_id_of_hearing(stuck_vh)}"
     end
