@@ -1,11 +1,9 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, useEffect } from 'react-redux';
 import { DocketSwitchReviewRequestForm } from './DocketSwitchReviewRequestForm';
 import { useHistory, useParams } from 'react-router';
 import { appealWithDetailSelector } from '../../selectors';
-import { completeDocketSwitchGranted } from './docketSwitchGrantedSlice';
-import { taskActionData } from 'app/queue/utils';
-
+import { updateDocketSwitch, stepForward } from '../docketSwitchSlice'
 
 export const DocketSwitchReviewRequestContainer = () => {
   const dispatch = useDispatch();
@@ -22,19 +20,17 @@ export const DocketSwitchReviewRequestContainer = () => {
   const handleSubmit = async (formData) => {
 
     const data = {
-      parent_id: taskId,
-      type: 'DocketSwitchGrantedTask',
-      external_id: appeal.externalId,
-      assigned_to_type: 'User',
-      docket_name: appeal.docketName,
-      reciept_date: formData.receiptDate,
-      issues: appeal.issues,
-      appeallant_name: appeal.appellantFullName
-    };
+      formData: {
+      disposition: formData.disposition,
+      docketType: formData.docketType,
+      receiptDate: formData.receiptDate,
+      issueIds: formData.issueIds
+     }
+    }
     
     try {
-      await dispatch(completeDocketSwitchGranted(data));
-
+      await dispatch(updateDocketSwitch(data));
+      dispatch(stepForward());
       push(`/queue/appeals/${appealId}/tasks/${taskId}/docket_switch/checkout/grant/tasks`);
     } catch (error) {
       // Perhaps show an alert that indicates error, advise trying again...?

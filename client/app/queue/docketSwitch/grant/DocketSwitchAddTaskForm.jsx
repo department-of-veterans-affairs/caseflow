@@ -21,6 +21,7 @@ import CheckboxGroup from 'app/components/CheckboxGroup';
 import Button from '../../../components/Button';
 import _ from 'lodash';
 import Modal from '../../../components/Modal';
+import StringUtil from '../../../util/StringUtil';
 
 const schema = yup.object().shape({
   taskList: yup.array(yup.string()).required()
@@ -29,9 +30,10 @@ const schema = yup.object().shape({
 export const DocketSwitchAddTaskForm = ({
   onSubmit,
   onCancel,
-  docketName,
+  appeal,
   taskListing,
-  onBack
+  onBack,
+  docketType
 }) => {
   const { register, handleSubmit, control, formState } = useForm({
     resolver: yupResolver(schema),
@@ -39,9 +41,6 @@ export const DocketSwitchAddTaskForm = ({
   });
 
   const [tasks, setTasks] = useState({});
-  const [docketTypes, setDocketType] = useState({});
-  console.log("taskLabel", tasks);
-
   const [showModal, setShowModal] = useState(false);
 
   const sectionStyle = css({ marginBottom: '24px' });
@@ -93,6 +92,12 @@ export const DocketSwitchAddTaskForm = ({
     }
   ];
 
+  const title = sprintf(
+      DOCKET_SWITCH_GRANTED_ADD_TASK_INSTRUCTIONS,
+      StringUtil.snakeCaseToCapitalized(appeal.docketName),
+      StringUtil.snakeCaseToCapitalized(docketType)
+    );
+
   return (
     <form
       className="docket-switch-granted-add"
@@ -103,7 +108,7 @@ export const DocketSwitchAddTaskForm = ({
         <h1>{DOCKET_SWITCH_GRANTED_ADD_TASK_LABEL}</h1>
         <div {...sectionStyle}>
           <ReactMarkdown
-            source={sprintf(DOCKET_SWITCH_GRANTED_ADD_TASK_INSTRUCTIONS, _.startCase(_.toLower(docketName)))}
+            source={title}
           />
         </div>
         <div><ReactMarkdown source={DOCKET_SWITCH_GRANTED_ADD_TASK_TEXT} /></div>
@@ -169,5 +174,9 @@ DocketSwitchAddTaskForm.propTypes = {
   onSubmit: PropTypes.func,
   docketName: PropTypes.string,
   taskListing: PropTypes.array,
-  onBack: PropTypes.func
+  onBack: PropTypes.func,
+  docketType: PropTypes.string,
+  appeal: PropTypes.shape({
+    docketName: PropTypes.string
+  }),
 };

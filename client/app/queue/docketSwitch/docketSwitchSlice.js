@@ -1,8 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { ACTIONS } from '../constants';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import ApiUtil from '../../util/ApiUtil';
 
 const initialState = {
   step: 0,
-  step: 1,
 
   /**
    * This will hold receipt date, disposition, selected issue IDs, etc
@@ -11,7 +13,7 @@ const initialState = {
    disposition: null,
    receiptDate: null,
    docketType: null,
-   issueId: {} 
+   issueIds: []
   },
 };
 
@@ -35,6 +37,23 @@ const docketSwitchSlice = createSlice({
     }
   },
 });
+
+
+const completeDocketSwitchGranted = createAsyncThunk(
+  'docketSwitch/grant',
+  async (data) => {
+    try {
+      // Update this to conform to submission endpoint expectations
+      const res = await ApiUtil.post('/docket_switches', { data });
+      const result = res.body?.data;
+
+      return result;
+    } catch (error) {
+      console.error('Error granting docket switch', error);
+      throw error;
+    }
+  }
+);
 
 export const {
   stepForward,

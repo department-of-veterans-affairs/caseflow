@@ -2,7 +2,8 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DocketSwitchAddTaskForm } from './DocketSwitchAddTaskForm';
 import { appealWithDetailSelector, getAllTasksForAppeal } from '../../selectors';
-import { useHistory, useParams } from 'react-router';
+import { useHistory, useParams,  useRouteMatch } from 'react-router';
+import { updateDocketSwitch } from '../docketSwitchSlice'
 
 export const DocketSwitchAddTaskContainer = () => {
   const dispatch = useDispatch();
@@ -16,6 +17,9 @@ export const DocketSwitchAddTaskContainer = () => {
   const tasks = useSelector((state) =>
     getAllTasksForAppeal(state, { appealId })
   );
+
+  const docketType = useSelector((state) => 
+    state.docketSwitch.formData.formData.docketType);
 
   const handleCancel = () => {
     // Add code to clear docketSwitch redux store
@@ -38,9 +42,10 @@ export const DocketSwitchAddTaskContainer = () => {
       <DocketSwitchAddTaskForm
         onCancel={handleCancel}
         onSubmit={handleSubmit}
-        docketName={appeal.docketName}
+        appeal={appeal}
         taskListing={tasks}
         onBack={handleBack}
+        docketType={docketType}
       />
     </>
   );
