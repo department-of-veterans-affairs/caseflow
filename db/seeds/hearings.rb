@@ -9,6 +9,7 @@ module Seeds
       RequestStore[:current_user] = created_by_user
       create_hearing_days
       create_ama_hearing_appeals
+      create_virtual_hearing_day
       create_former_travel_currently_virtual_requested_legacy_appeals
       RequestStore[:current_user] = prev_user
     end
@@ -174,8 +175,13 @@ module Seeds
       create(:case_hearing, :disposition_held, user: user, folder_nr: appeal.vacols_id)
     end
 
+    def create_virtual_hearing_day
+      # Take an existing hearing day for st. petes and change it to a Virtual hearing day
+      HearingDay.last.dup.update!(request_type: "R", regional_office: nil)
+    end
+
     def create_former_travel_currently_virtual_requested_legacy_appeals
-      closest_regional_office = "RO17"
+      ro_key = "R" # virtual
       (1..16).each do |id|
         create(
           :schedule_hearing_task,
@@ -188,7 +194,7 @@ module Seeds
               bfcorkey: "5678#{id}",
               correspondent: create(:correspondent, stafkey: "5678#{id}")
             ),
-            closest_regional_office: closest_regional_office,
+            closest_regional_office: ro_key,
             changed_request_type: "R"
           )
         )
