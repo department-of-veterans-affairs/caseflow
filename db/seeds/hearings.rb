@@ -176,7 +176,7 @@ module Seeds
 
     def create_former_travel_currently_virtual_requested_legacy_appeals
       closest_regional_office = "RO17"
-      [1..16].each do |id|
+      (1..16).each do |id|
         create(
           :schedule_hearing_task,
           appeal: create(
