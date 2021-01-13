@@ -60,17 +60,26 @@ class HearingSchedule::ValidateRoSpreadsheet
   # and that every RO key appears in the spreadsheet data.
   def validate_ros_with_hearings(spreadsheet_data)
     city_state_match = spreadsheet_data.all? do |row|
-      ro = RegionalOffice.find!(row["ro_code"])
-      ro.state == row["ro_state"].rstrip && ro.city == row["ro_city"].rstrip
+      ro_code = (row["ro_code"] == "NVHQ") ? HearingDay::REQUEST_TYPES[:virtual] : row["ro_code"]
+      ro = RegionalOffice.find!(ro_code)
+
+      if ro.virtual?
+        row["ro_state"].nil? && row["ro_city"].nil?
+      else
+        ro.state == row["ro_state"].rstrip && ro.city == row["ro_city"].rstrip
+      end
     end
 
     # Right now, exclude virtual regional offices since they can't be added to the RO spreadsheet.
     all_ro_keys = RegionalOffice
       .ros_with_hearings
       .keys
-      .reject { |ro_key| ro_key == HearingDay::REQUEST_TYPES[:virtual] } # Remove for CASEFLOW-408
       .sort
-    spreadsheet_ro_keys = spreadsheet_data.collect { |ro| ro["ro_code"] }.uniq.sort
+
+    spreadsheet_ro_keys = spreadsheet_data.collect do |ro|
+      (ro["ro_code"] == "NVHQ") ? HearingDay::REQUEST_TYPES[:virtual] : ro["ro_code"]
+    end.uniq.sort
+
     all_ro_keys_appear = all_ro_keys == spreadsheet_ro_keys
 
     city_state_match && all_ro_keys_appear

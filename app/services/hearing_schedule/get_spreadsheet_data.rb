@@ -53,9 +53,13 @@ class HearingSchedule::GetSpreadsheetData
     ro_codes.zip(ro_names).each_with_index do |row, index|
       dates = ro_non_availability_sheet.column(index + 3).drop(3).compact
       dates.each do |date|
+        # Get the RO city/state accounting for the Nation Virtual Hearings Queue
+        ro_city = get_ro_city_state(row[0].strip, row[1])[0]
+        ro_state = get_ro_city_state(row[0].strip, row[1])[1]
+
         non_availability_dates.push("ro_code" => row[0].strip,
-                                    "ro_city" => row[1].split(", ")[0].strip,
-                                    "ro_state" => row[1].split(", ")[1].strip,
+                                    "ro_city" => ro_city,
+                                    "ro_state" => ro_state,
                                     "date" => date)
       end
     end
@@ -102,14 +106,26 @@ class HearingSchedule::GetSpreadsheetData
 
     # Map the data to the hearing allocation days
     ro_names.zip(ro_codes, allocated_days, allocated_days_without_room).each do |row|
+      # Get the RO city/state accounting for the Nation Virtual Hearings Queue
+      ro_city = get_ro_city_state(row[1].strip, row[0])[0]
+      ro_state = get_ro_city_state(row[1].strip, row[0])[1]
+
       hearing_allocation_days.push("ro_code" => row[1].strip,
-                                   "ro_city" => row[0].split(", ")[0].strip,
-                                   "ro_state" => row[0].split(", ")[1].strip,
+                                   "ro_city" => ro_city,
+                                   "ro_state" => ro_state,
                                    "allocated_days" => row[2],
                                    "allocated_days_without_room" => row[3])
     end
 
     # Return the list of allocated hearing days
     hearing_allocation_days
+  end
+
+  def get_ro_city_state(ro_key, ro_location)
+    if ro_key == "NVHQ"
+      []
+    else
+      ro_location.split(", ").map(&:strip)
+    end
   end
 end
