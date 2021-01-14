@@ -11,6 +11,7 @@ advance_on_docket_motions,updated_at,datetime ∗,x,,,,x,
 advance_on_docket_motions,user_id,integer (8) FK,,,x,,x,
 allocations,,,,,,,,
 allocations,allocated_days,float ∗,x,,,,,
+allocations,allocated_days_without_room,float,,,,,,Number of Hearing Days Allocated with no Rooms
 allocations,created_at,datetime ∗,x,,,,,
 allocations,id,integer (8) PK,x,x,,,,
 allocations,regional_office,string ∗,x,,,,,
@@ -179,7 +180,6 @@ cached_user_attributes,stitle,string (16),,,,,,
 cached_user_attributes,svlj,string,,,,,,
 cached_user_attributes,updated_at,datetime ∗,x,,,,x,
 cavc_remands,,,,,,,,
-cavc_remands,appeal_id,integer (8) ∗ FK,x,,x,,x,Appeal that CAVC has remanded
 cavc_remands,cavc_decision_type,string ∗,x,,,,,"CAVC decision type. Expecting 'remand', 'straight_reversal', or 'death_dismissal'"
 cavc_remands,cavc_docket_number,string ∗,x,,,,,Docket number of the CAVC judgement
 cavc_remands,cavc_judge_full_name,string ∗,x,,,,,CAVC judge that passed the judgement on the remand
@@ -193,6 +193,7 @@ cavc_remands,judgement_date,date ∗,x,,,,,"Date CAVC issued a judgement, acco
 cavc_remands,mandate_date,date ∗,x,,,,,Date that CAVC reported the mandate was given
 cavc_remands,remand_subtype,string ∗,x,,,,,"Type of remand. If the cavc_decision_type is 'remand', expecting one of 'jmp', 'jmpr', or 'mdr'. Otherwise, this can be null."
 cavc_remands,represented_by_attorney,boolean ∗,x,,,,,Whether or not the appellant was represented by an attorney
+cavc_remands,source_appeal_id,integer (8) ∗ FK,x,,x,,x,Appeal that CAVC has remanded
 cavc_remands,updated_at,datetime ∗,x,,,,,Default timestamps
 cavc_remands,updated_by_id,integer (8) FK,,,x,,,"User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created."
 certifications,,,,,,,,
@@ -672,12 +673,6 @@ judge_case_reviews,positive_feedback,text,,,,,,
 judge_case_reviews,quality,string ∗,x,,,,,
 judge_case_reviews,task_id,string ∗ FK,x,,x,,,
 judge_case_reviews,updated_at,datetime ∗,x,,,,x,
-judge_team_roles,,,,,,,,Defines roles for individual members of judge teams
-judge_team_roles,created_at,datetime ∗,x,,,,,
-judge_team_roles,id,integer (8) PK,x,x,,,,
-judge_team_roles,organizations_user_id,integer FK,,,x,,x,
-judge_team_roles,type,string,,,,,,
-judge_team_roles,updated_at,datetime ∗,x,,,,x,
 legacy_appeals,,,,,,,,
 legacy_appeals,appeal_series_id,integer (8) FK,,,x,,x,
 legacy_appeals,changed_request_type,string,,,,,,The new hearing type preference for an appellant that had previously requested a travel board hearing
@@ -761,15 +756,15 @@ messages,read_at,datetime,,,,,,When the message was read
 messages,text,string,,,,,,The message
 messages,updated_at,datetime ∗,x,,,,x,
 messages,user_id,integer ∗ FK,x,,x,,,The user for whom the message is intended
-nod_date_updates,,,,,,,,
+nod_date_updates,,,,,,,,"Tracks changes to an AMA appeal's receipt date (aka, NOD date)"
 nod_date_updates,appeal_id,integer (8) ∗ FK,x,,x,,x,Appeal for which the NOD date is being edited
-nod_date_updates,change_reason,string ∗,x,,,,,Reason for change - entry_error or new_info
+nod_date_updates,change_reason,string ∗,x,,,,,Reason for change: entry_error or new_info
 nod_date_updates,created_at,datetime ∗,x,,,,,Default created_at/updated_at timestamps
 nod_date_updates,id,integer (8) PK,x,x,,,,
 nod_date_updates,new_date,date ∗,x,,,,,Date after update
 nod_date_updates,old_date,date ∗,x,,,,,Date before update
 nod_date_updates,updated_at,datetime ∗,x,,,,,Default created_at/updated_at timestamps
-nod_date_updates,user_id,integer (8) ∗ FK,x,,x,,x,User that created this record
+nod_date_updates,user_id,integer (8) ∗ FK,x,,x,,x,User that updated the NOD date
 non_availabilities,,,,,,,,
 non_availabilities,created_at,datetime ∗,x,,,,,
 non_availabilities,date,date,,,,,,
@@ -1080,6 +1075,33 @@ transcriptions,task_number,string,,,,,,Number associated with transcription
 transcriptions,transcriber,string,,,,,,"Contractor who will transcribe the recording; i.e, 'Genesis Government Solutions, Inc.', 'Jamison Professional Services', etc"
 transcriptions,updated_at,datetime,,,,,x,Automatic timestamp of when transcription was updated
 transcriptions,uploaded_to_vbms_date,date,,,,,,Date when the hearing transcription was uploaded to VBMS
+unrecognized_appellants,,,,,,,,Unrecognized non-veteran appellants
+unrecognized_appellants,claimant_id,integer (8) ∗ FK,x,,x,,x,The OtherClaimant record associating this appellant to a DecisionReview
+unrecognized_appellants,created_at,datetime ∗,x,,,,,
+unrecognized_appellants,id,integer (8) PK,x,x,,,,
+unrecognized_appellants,poa_participant_id,string,,,,,,"Identifier of the appellant's POA, if they have a CorpDB participant_id"
+unrecognized_appellants,relationship,string ∗,x,,,,,"Relationship to veteran. Allowed values: attorney, child, spouse, other"
+unrecognized_appellants,unrecognized_party_detail_id,integer (8) FK,,,x,,x,Contact details
+unrecognized_appellants,unrecognized_power_of_attorney_id,integer (8) FK,,,x,,x,"Appellant's POA, if they aren't in CorpDB."
+unrecognized_appellants,updated_at,datetime ∗,x,,,,,
+unrecognized_party_details,,,,,,,,"For an appellant or POA, name and contact details for an unrecognized person or organization"
+unrecognized_party_details,address_line_1,string ∗,x,,,,,
+unrecognized_party_details,address_line_2,string,,,,,,
+unrecognized_party_details,address_line_3,string,,,,,,
+unrecognized_party_details,city,string ∗,x,,,,,
+unrecognized_party_details,country,string ∗,x,,,,,
+unrecognized_party_details,created_at,datetime ∗,x,,,,,
+unrecognized_party_details,email_address,string,,,,,,
+unrecognized_party_details,id,integer (8) PK,x,x,,,,
+unrecognized_party_details,last_name,string,,,,,,
+unrecognized_party_details,middle_name,string,,,,,,
+unrecognized_party_details,name,string ∗,x,,,,,"Name of organization, or first name or mononym of person"
+unrecognized_party_details,party_type,string ∗,x,,,,,"The type of this party. Allowed values: person, organization"
+unrecognized_party_details,phone_number,string,,,,,,
+unrecognized_party_details,state,string ∗,x,,,,,
+unrecognized_party_details,suffix,string,,,,,,
+unrecognized_party_details,updated_at,datetime ∗,x,,,,,
+unrecognized_party_details,zip,string ∗,x,,,,,
 users,,,,,,,,
 users,created_at,datetime,,,,,,
 users,css_id,string ∗,x,,,,,

@@ -364,7 +364,7 @@ class Appeal < DecisionReview
   def cavc_remand
     return nil if !cavc?
 
-    CavcRemand.find_by(appeal_id: stream_docket_number.split("-").last)
+    CavcRemand.find_by(source_appeal_id: stream_docket_number.split("-").last)
   end
 
   def status
