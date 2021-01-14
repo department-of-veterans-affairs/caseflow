@@ -121,6 +121,8 @@ class HearingSchedule::GetSpreadsheetData
     hearing_allocation_days
   end
 
+  private
+
   def get_ro_city_state(ro_key, ro_location)
     if ro_key == "NVHQ"
       []

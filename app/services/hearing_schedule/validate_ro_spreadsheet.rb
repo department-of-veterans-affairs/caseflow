@@ -59,17 +59,6 @@ class HearingSchedule::ValidateRoSpreadsheet
   # Verifies that the spreadsheet city and state data all match for the respective ROs,
   # and that every RO key appears in the spreadsheet data.
   def validate_ros_with_hearings(spreadsheet_data)
-    city_state_match = spreadsheet_data.all? do |row|
-      ro_code = (row["ro_code"] == "NVHQ") ? HearingDay::REQUEST_TYPES[:virtual] : row["ro_code"]
-      ro = RegionalOffice.find!(ro_code)
-
-      if ro.virtual?
-        row["ro_state"].nil? && row["ro_city"].nil?
-      else
-        ro.state == row["ro_state"].rstrip && ro.city == row["ro_city"].rstrip
-      end
-    end
-
     # Right now, exclude virtual regional offices since they can't be added to the RO spreadsheet.
     all_ro_keys = RegionalOffice
       .ros_with_hearings
@@ -82,7 +71,7 @@ class HearingSchedule::ValidateRoSpreadsheet
 
     all_ro_keys_appear = all_ro_keys == spreadsheet_ro_keys
 
-    city_state_match && all_ro_keys_appear
+    city_state_match(spreadsheet_data) && all_ro_keys_appear
   end
 
   def validate_ro_non_availability_template
@@ -206,5 +195,20 @@ class HearingSchedule::ValidateRoSpreadsheet
     validate_hearing_allocation_template
     validate_hearing_allocation_days
     @errors
+  end
+
+  private
+
+  def city_state_match(spreadsheet_data)
+    spreadsheet_data.all? do |row|
+      ro_code = (row["ro_code"] == "NVHQ") ? HearingDay::REQUEST_TYPES[:virtual] : row["ro_code"]
+      ro = RegionalOffice.find!(ro_code)
+
+      if ro.virtual?
+        row["ro_state"].nil? && row["ro_city"].nil?
+      else
+        ro.state == row["ro_state"].rstrip && ro.city == row["ro_city"].rstrip
+      end
+    end
   end
 end
