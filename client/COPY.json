@@ -354,7 +354,7 @@
   "FORM_ERROR_FIELD_REQUIRED": "This field is required",
   "FORM_ERROR_FIELD_INVALID": "This field is invalid",
 
-  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_ROCO": "We have assigned your video hearings",
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_ROCO": "We have assigned your hearings days",
   "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_JUDGE": "We have assigned your judges",
   "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_MESSAGE_ROCO": "Please review the following assignments for any errors. You can confirm the schedule to upload this to Caseflow or use go back to upload another file.",
   "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_MESSAGE_JUDGE": "Please review the following assignments for any errors. You can confirm the schedule to upload this to Caseflow or use go back to upload another file.",

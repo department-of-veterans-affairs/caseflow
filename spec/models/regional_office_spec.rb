@@ -82,14 +82,6 @@ describe RegionalOffice do
   end
 
   context ".rooms" do
-    describe "triple room ROs get three rooms" do
-      RegionalOffice::TRIPLE_ROOM_ROS.each do |ro|
-        it "regional office (#{ro}) gets three rooms" do
-          expect(RegionalOffice.new(ro).rooms).to eq 3
-        end
-      end
-    end
-
     describe "double room ROs get two rooms" do
       RegionalOffice::DOUBLE_ROOM_ROS.each do |ro|
         it "regional office (#{ro}) gets two rooms" do
@@ -101,7 +93,6 @@ describe RegionalOffice do
     describe "all other ROs get the default room count" do
       (RegionalOffice::CITIES.keys +
         RegionalOffice::SATELLITE_OFFICES.keys -
-        RegionalOffice::TRIPLE_ROOM_ROS -
         RegionalOffice::DOUBLE_ROOM_ROS).each do |ro|
         it "regional office (#{ro}) gets one room" do
           expect(RegionalOffice.new(ro).rooms).to eq 1

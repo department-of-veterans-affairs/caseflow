@@ -364,6 +364,11 @@ FactoryBot.define do
         parent { FactoryBotHelper.find_first_task_or_create(appeal, CavcTask) }
       end
 
+      factory :cavc_poa_clarification_task, class: CavcPoaClarificationTask do
+        assigned_to { CavcLitigationSupport.singleton }
+        parent { FactoryBotHelper.find_first_task_or_create(appeal, SendCavcRemandProcessedLetterTask) }
+      end
+
       factory :cavc_remand_processed_letter_response_window_task, class: CavcRemandProcessedLetterResponseWindowTask do
         assigned_to { CavcLitigationSupport.singleton }
         parent { FactoryBotHelper.find_first_task_or_create(appeal, CavcTask) }
