@@ -428,6 +428,12 @@ class Appeal < DecisionReview
     maybe_create_translation_task
   end
 
+  # Stream change tasks indicate tasks that _may_ be moved to another appeal stream during a docket switch
+  # This includes open children tasks with no children, excluding docket related tasks
+  def stream_change_tasks
+    tasks.select(&:can_move_on_docket_switch?)
+  end
+
   def establish!
     attempted!
 
@@ -449,6 +455,10 @@ class Appeal < DecisionReview
 
   def root_task
     RootTask.find_by(appeal: self)
+  end
+
+  def distribution_task
+    tasks.open.find_by(type: DistributionTask.name)
   end
 
   def processed_in_caseflow?
@@ -582,7 +592,6 @@ class Appeal < DecisionReview
   rescue Caseflow::Error::VaDotGovAPIError
     state_code = veteran_state_code
   ensure
-    distribution_task = tasks.open.find_by(type: DistributionTask.name)
     TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
   end
 

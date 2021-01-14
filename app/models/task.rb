@@ -288,6 +288,7 @@ class Task < CaseflowRecord
       fail(
         Caseflow::Error::DuplicateOrgTask,
         docket_number: appeal.docket_number,
+        docket_type: appeal.docket_type,
         task_type: self.class.name,
         assignee_type: assigned_to.class.name
       )
@@ -561,11 +562,34 @@ class Task < CaseflowRecord
     [sibling, self, sibling.children].flatten
   end
 
+  def can_move_on_docket_switch?
+    return false unless open_with_no_children?
+    return false if type.include?("DocketSwitch")
+    return false if ["RootTask", "DistributionTask", "HearingTask", "EvidenceSubmissionWindowTask"].include?(type)
+    return false if ancestor_task_of_type(HearingTask).present?
+    return false if ancestor_task_of_type(EvidenceSubmissionWindowTask).present?
+
+    true
+  end
+
+  # This method is for copying tasks, and it's ancestors to a new appeal stream
+  # It recurses until the parent's task type is already present on the new stream, such as the root or distribution task
   def copy_to_new_stream!(new_appeal_stream)
-    new_task_attributes = attributes.reject { |attr| %w[id created_at updated_at].include?(attr) }
+    return unless parent
+
+    new_task_attributes = attributes.reject { |attr| %w[id created_at updated_at parent_id].include?(attr) }
     new_task_attributes["appeal_id"] = new_appeal_stream.id
 
-    self.class.create!(new_task_attributes)
+    existing_new_parent = new_appeal_stream.tasks.find { |task| task.type == parent.type }
+    new_parent = existing_new_parent ||= parent.copy_to_new_stream!(new_appeal_stream)
+
+    new_task_attributes["parent_id"] = new_parent.id
+
+    task_to_create = self.class.new(new_task_attributes)
+    task_to_create.save(validate: false)
+
+    task_to_create
+    # Caseflow::Error::InvalidStatusOnTaskCreate
   end
 
   def root_task(task_id = nil)

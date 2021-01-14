@@ -43,11 +43,14 @@ describe DocketSwitchTaskHandler, :all_dbs do
   let(:granted_request_issue_ids) { [] }
   let!(:old_docket_stream_tasks) do
     [
-      create(:translation_task, appeal: old_docket_stream), create(:foia_task, appeal: old_docket_stream)
+      create(:translation_task, appeal: old_docket_stream, parent: create(:translation_task, appeal: old_docket_stream, parent: old_docket_stream.root_task, assigned_to: translation_organization)),
+      create(:foia_task, appeal: old_docket_stream, parent: create(:translation_task, parent: old_docket_stream.distribution_task, assigned_to: other_organization))
     ]
   end
+  let!(:translation_organization) { Translation.singleton }
+  let!(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
 
-  let(:task_selection) { { "TranslationTask": true, "FoiaTask": false } }
+  let(:selected_task_ids) { [old_docket_stream_tasks.first.id] }
 
   let(:new_admin_actions) do
     [
@@ -60,7 +63,7 @@ describe DocketSwitchTaskHandler, :all_dbs do
   let(:docket_switch_task_handler) do
     described_class.new(
       docket_switch: docket_switch,
-      task_selection: task_selection,
+      selected_task_ids: selected_task_ids,
       new_admin_actions: new_admin_actions
     )
   end
