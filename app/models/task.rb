@@ -288,7 +288,6 @@ class Task < CaseflowRecord
       fail(
         Caseflow::Error::DuplicateOrgTask,
         docket_number: appeal.docket_number,
-        docket_type: appeal.docket_type,
         task_type: self.class.name,
         assignee_type: assigned_to.class.name
       )
@@ -572,24 +571,24 @@ class Task < CaseflowRecord
     true
   end
 
-  # This method is for copying tasks, and its ancestors to a new appeal stream
-  def copy_to_new_stream!(new_appeal_stream)
+  # This method is for copying a task and its ancestors to a new appeal stream
+  def copy_with_ancestors_to_stream(new_appeal_stream)
     return unless parent
 
     new_task_attributes = attributes.reject { |attr| %w[id created_at updated_at appeal_id parent_id].include?(attr) }
     new_task_attributes["appeal_id"] = new_appeal_stream.id
 
     # This method recurses until the parent is nil or a task of its type is already present on the new stream
-    # For example, if the parent is the root or distribution task
-    # This assumes one task type would not have more than an Organization/User pair on the new appeal stream
     existing_new_parent = new_appeal_stream.tasks.find { |task| task.type == parent.type }
-    new_parent = existing_new_parent || parent.copy_to_new_stream!(new_appeal_stream)
+    new_parent = existing_new_parent || parent.copy_with_ancestors_to_stream(new_appeal_stream)
+
+    # Do not copy orphaned branches
+    return unless new_parent
 
     new_task_attributes["parent_id"] = new_parent.id
 
-    new_stream_task = self.class.new(new_task_attributes)
-
     # Skip validation since these are not new tasks (and don't need to have a status of assigned, for example)
+    new_stream_task = self.class.new(new_task_attributes)
     new_stream_task.save(validate: false)
 
     new_stream_task

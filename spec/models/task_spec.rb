@@ -1747,6 +1747,82 @@ describe Task, :all_dbs do
     end
   end
 
+  describe "#copy_with_ancestors_to_stream" do
+    subject { selected_task.copy_with_ancestors_to_stream(new_stream) }
+
+    let!(:old_stream) { create(:appeal, :evidence_submission_docket, :with_post_intake_tasks) }
+    let!(:new_stream) { create(:appeal, :hearing_docket, :with_post_intake_tasks) }
+    let!(:organization) { Organization.create!(name: "Other organization", url: "other") }
+    let!(:selected_task) do
+      create(
+        :foia_task,
+        appeal: old_stream,
+        parent: parent_task
+      )
+    end
+    let(:parent_task) { create(:foia_task, appeal: old_stream, parent: parent_of_parent, assigned_to: organization) }
+
+    context "branch is off of root task" do
+      let(:parent_of_parent) { old_stream.root_task }
+
+      it "copies branch and connects to new root task" do
+        expect { subject }.to change(new_stream.tasks, :count).by(2)
+
+        new_stream.reload
+        task_copy = new_stream.tasks.find { |task| task.type == selected_task.type && task.assigned_to.is_a?(User) }
+        parent_copy = task_copy.parent
+
+        expect(parent_copy.appeal_id).to eq new_stream.id
+        expect(parent_copy.parent).to eq new_stream.root_task
+      end
+    end
+
+    context "branch is off of distribution task" do
+      let(:parent_of_parent) { old_stream.root_task }
+
+      it "copies branch and connects to new distribution task" do
+        expect { subject }.to change(new_stream.tasks, :count).by(2)
+
+        new_stream_distribution_task = new_stream.reload.tasks.open.find_by(type: DistributionTask.name)
+        task_copy = new_stream.tasks.find { |task| task.type == selected_task.type && task.assigned_to.is_a?(User) }
+        parent_copy = task_copy.parent
+
+        expect(parent_copy.appeal_id).to eq new_stream.id
+        expect(parent_copy.parent).to eq new_stream_distribution_task
+      end
+    end
+
+    context "branch has multiple layers" do
+      let(:parent_of_parent) do
+        create(
+          :colocated_task,
+          assigned_to: create(:user),
+          appeal: old_stream,
+          parent: create(:colocated_task, parent: old_stream.root_task, assigned_to: create(:organization))
+        )
+      end
+
+      it "copies the entire branch" do
+        expect { subject }.to change(new_stream.tasks, :count).by(4)
+
+        new_stream.reload
+
+        task_copy = new_stream.tasks.find { |task| task.type == selected_task.type && task.assigned_to.is_a?(User) }
+        root_task_child = new_stream.root_task.children.find { |task| task.same_task_type?(parent_of_parent.parent) }
+
+        expect(root_task_child.descendants).to include(task_copy)
+      end
+    end
+
+    context "parent of parent is nil, branch is orphaned (not connected to a root or other task)" do
+      let(:parent_of_parent) { nil }
+
+      it "does not copy tasks" do
+        expect { subject }.to change(new_stream.tasks, :count).by(0)
+      end
+    end
+  end
+
   describe "hearings teams admin available actions" do
     let(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
     let(:parent) { appeal.tasks.detect { |task| task.type == HearingTask.name } }

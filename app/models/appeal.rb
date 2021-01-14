@@ -430,7 +430,7 @@ class Appeal < DecisionReview
 
   # Stream change tasks indicate tasks that _may_ be moved to another appeal stream during a docket switch
   # This includes open children tasks with no children, excluding docket related tasks
-  def stream_change_tasks
+  def docket_switchable_tasks
     tasks.select(&:can_move_on_docket_switch?)
   end
 
