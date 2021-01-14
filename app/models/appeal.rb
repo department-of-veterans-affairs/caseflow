@@ -351,9 +351,7 @@ class Appeal < DecisionReview
   end
 
   def veteran_appellant_deceased?
-    return (veteran_is_deceased && appellant_is_veteran)
-
-    false
+    veteran_is_deceased && appellant_is_veteran
   end
 
   # matches Legacy behavior
