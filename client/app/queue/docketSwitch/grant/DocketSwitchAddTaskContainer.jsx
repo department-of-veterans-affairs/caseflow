@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { DocketSwitchAddTaskForm } from './DocketSwitchAddTaskForm';
 import { appealWithDetailSelector, getAllTasksForAppeal } from '../../selectors';
 import { useHistory, useParams } from 'react-router';
-// import { updateDocketSwitch } from '../docketSwitchSlice';
 
 export const DocketSwitchAddTaskContainer = () => {
   const { appealId } = useParams();
@@ -41,7 +40,7 @@ export const DocketSwitchAddTaskContainer = () => {
       <DocketSwitchAddTaskForm
         onCancel={handleCancel}
         onSubmit={handleSubmit}
-        appeal={appeal}
+        docketName={appeal.docketName}
         taskListing={tasks}
         onBack={handleBack}
         docketType={docketType}

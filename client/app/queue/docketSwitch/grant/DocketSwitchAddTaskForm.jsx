@@ -23,24 +23,27 @@ import Modal from '../../../components/Modal';
 import StringUtil from '../../../util/StringUtil';
 
 const schema = yup.object().shape({
-  taskList: yup.array(yup.string()).required()
+  taskIds: yup.array(yup.string())
 });
 
 export const DocketSwitchAddTaskForm = ({
   onSubmit,
   onCancel,
-  appeal,
-  taskListing,
-  onBack,
-  docketType
+  docketName,
+  docketType,
+  taskListing = [],
+  onBack
 }) => {
-  const { register, handleSubmit, control, formState } = useForm({
+  const { handleSubmit, control, formState, setValue } = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
+    defaultValues: {
+      taskIds: taskListing.map((task) => task.id),
+    },
   });
 
   const [tasks, setTasks] = useState({});
-  const [showModal, setShowModal] = useState(false);
+  const [activeTaskId, setActiveTaskId] = useState(null);
 
   const sectionStyle = css({ marginBottom: '24px' });
 
@@ -50,51 +53,56 @@ export const DocketSwitchAddTaskForm = ({
         id: task.taskId.toString() }));
   }, [taskListing]);
 
-  const selectedIssues = useMemo(() => {
-    return Object.entries(tasks).filter((item) => item[1]).
-      flatMap((item) => item[0]);
-  }, [tasks]);
-
-  const selectAllIssues = () => {
-    const checked = selectedIssues.length === 0;
+  const selectAllTasks = () => {
     const newValues = {};
 
-    taskListing.forEach((item) => newValues[item.label] === checked);
+    taskListing.forEach((item) => (newValues[item.taskId] = true));
     setTasks(newValues);
+
+    setValue('taskIds', taskListing.map((task) => task.taskId));
   };
 
   // populate all of our checkboxes on initial render
-  useEffect(() => selectAllIssues(), []);
+  useEffect(() => selectAllTasks(), []);
 
-  const handleChange = (evt) => {
-    // const taskLabel = _.find(taskListing, { id: evt.target.name.toString() });
-    // setTasks({ ...tasks, [taskLabel]: evt.target.checked });
-
-    setTasks({ ...taskListing, [evt.target.name.toString()]: evt.target.checked });
-    setShowModal(!showModal);
+  const handleTaskChange = (evt) => {
+    setActiveTaskId(evt.target.name.toString());
   };
 
-  const handleCloseModal = (evt) => {
-    setTasks({ ...taskListing, [evt.target.name]: !evt.target.checked });
-    setShowModal(!showModal);
+  const updateTaskSelections = () => {
+    const newSelections = {
+      ...tasks,
+      [activeTaskId]: !tasks[activeTaskId],
+    };
+
+    setTasks(newSelections);
+    setActiveTaskId(null);
+    setValue(
+      'taskIds',
+      Object.keys(newSelections).filter((key) => newSelections[key])
+    );
+  };
+
+  const handleCancel = () => {
+    setActiveTaskId(null);
   };
 
   const buttons = [
     {
       classNames: ['cf-modal-link', 'cf-btn-link'],
       name: 'Cancel',
-      onClick: (event) => handleCloseModal(event)
+      onClick: handleCancel,
     },
     {
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Confirm',
-      onClick: () => onSubmit(tasks)
+      onClick: updateTaskSelections,
     }
   ];
 
   const title = sprintf(
     DOCKET_SWITCH_GRANTED_ADD_TASK_INSTRUCTIONS,
-    StringUtil.snakeCaseToCapitalized(appeal.docketName),
+    StringUtil.snakeCaseToCapitalized(docketName),
     StringUtil.snakeCaseToCapitalized(docketType)
   );
 
@@ -113,30 +121,28 @@ export const DocketSwitchAddTaskForm = ({
         </div>
         <div><ReactMarkdown source={DOCKET_SWITCH_GRANTED_ADD_TASK_TEXT} /></div>
         <Controller
-          name="issueIds"
+          name="taskIds"
           control={control}
-          defaultValue={[]}
-          render={({ onChange: onCheckChange }) => {
+          render={({ name, onChange: onCheckChange }) => {
             return (
               <CheckboxGroup
-                name="taskList"
+                name={name}
                 label="Please unselect any tasks you would like to remove:"
                 strongLabel
                 options={taskOptions}
-                onChange={(event) => onCheckChange(handleChange(event))}
+                onChange={(event) => onCheckChange(handleTaskChange(event))}
                 styling={css({ marginBottom: '0' })}
                 values={tasks}
-                inputRef={register}
               />
             );
           }}
         />
 
-        { showModal && (
+        { activeTaskId && (
           <Modal
             title={DOCKET_SWITCH_GRANTED_MODAL_TITLE}
             onSubmit={onSubmit}
-            closeHandler={(event) => handleCloseModal(event)}
+            closeHandler={handleCancel}
             buttons={buttons}>
             <div>
               <ReactMarkdown source={DOCKET_SWITCH_GRANTED_MODAL_INSTRUCTION} />
@@ -148,8 +154,9 @@ export const DocketSwitchAddTaskForm = ({
         <React.Fragment>
           <h3 {...css({ marginBottom: '0' })}>
             <br />
-            <strong>Would you like to add any additional tasks?
-            </strong><br /></h3>
+            <strong>Would you like to add any additional tasks?</strong>
+            <br />
+          </h3>
           <Button
             willNeverBeLoading
             dangerStyling
@@ -173,10 +180,7 @@ DocketSwitchAddTaskForm.propTypes = {
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
   docketName: PropTypes.string,
-  taskListing: PropTypes.array,
-  onBack: PropTypes.func,
   docketType: PropTypes.string,
-  appeal: PropTypes.shape({
-    docketName: PropTypes.string
-  }),
+  taskListing: PropTypes.array,
+  onBack: PropTypes.func
 };

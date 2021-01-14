@@ -33,9 +33,8 @@ const docketSwitchSlice = createSlice({
       updates.receiptDate = updates.receiptDate?.toISOString() ?? undefined;
       updates.disposition = updates.disposition?.toString() ?? undefined;
       updates.docketType = updates.docketType?.toString() ?? undefined;
-      updates.issueIds = updates.issueIds?.toString() ?? undefined
-    
-    
+      updates.issueIds = updates.issueIds?.toString() ?? undefined    
+
       state.formData = {
         ...state.formData,
         ...updates,
