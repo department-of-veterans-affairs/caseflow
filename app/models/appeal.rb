@@ -457,10 +457,6 @@ class Appeal < DecisionReview
     RootTask.find_by(appeal: self)
   end
 
-  def distribution_task
-    tasks.open.find_by(type: DistributionTask.name)
-  end
-
   def processed_in_caseflow?
     true
   end
@@ -592,6 +588,7 @@ class Appeal < DecisionReview
   rescue Caseflow::Error::VaDotGovAPIError
     state_code = veteran_state_code
   ensure
+    distribution_task = tasks.open.find_by(type: DistributionTask.name)
     TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
   end
 

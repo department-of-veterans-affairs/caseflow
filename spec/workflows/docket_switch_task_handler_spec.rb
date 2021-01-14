@@ -44,7 +44,7 @@ describe DocketSwitchTaskHandler, :all_dbs do
   let!(:old_docket_stream_tasks) do
     [
       create(:translation_task, appeal: old_docket_stream, parent: create(:translation_task, appeal: old_docket_stream, parent: old_docket_stream.root_task, assigned_to: translation_organization)),
-      create(:foia_task, appeal: old_docket_stream, parent: create(:translation_task, parent: old_docket_stream.distribution_task, assigned_to: other_organization))
+      create(:foia_task, appeal: old_docket_stream, parent: create(:translation_task, parent: old_docket_stream.root_task, assigned_to: other_organization))
     ]
   end
   let!(:translation_organization) { Translation.singleton }

@@ -6,20 +6,25 @@
 class DocketSwitchTaskHandler
   include ActiveModel::Model
 
-  attr_reader :docket_switch, :selected_task_ids, :new_admin_actions
+  validates :docket_switch, presence: true
 
-  def initialize(docket_switch:, selected_task_ids:, new_admin_actions:)
-    @docket_switch = docket_switch
-    @selected_task_ids = selected_task_ids ||= []
-    @new_admin_actions = new_admin_actions ||= []
+  attr_accessor :docket_switch, :selected_task_ids, :new_admin_actions
+
+  def initialize(args)
+    super
+
+    @selected_task_ids ||= []
+    @new_admin_actions ||= []
+
+    fail(Caseflow::Error::MissingRequiredProperty, message: errors.full_messages.join(", ")) unless valid?
   end
 
   delegate :old_docket_stream, :new_docket_stream, :disposition, to: :docket_switch
   delegate :stream_change_tasks, to: :old_docket_stream
 
-  # For this call method, new tasks are created first so that the new root and distribution tasks are available
-  # as parents when copying the persistent tasks. Then copying happens before cancelling the old tasks
-  # in order to preserve the current state of the task when moving it.
+  # New tasks are created on the new stream first so that the new root and distribution tasks are available
+  # parents when copying the persistent tasks to the new stream.
+  # Copying persistent tasks happens before cancelling the old tasks in order to preserve the current state of the task
   def call
     return if disposition == "denied"
 
@@ -30,12 +35,15 @@ class DocketSwitchTaskHandler
 
   private
 
+  # The persistent tasks are the subset of open tasks with no children the user selected to move to the new stream
+  # This copies each task and its ancestors, eventually connecting the branch to the new distribution or root task
   def copy_persistent_tasks!
-    return unless persistent_tasks.any?
-
     persistent_tasks.each { |task| task.copy_to_new_stream!(new_docket_stream) }
   end
 
+  # For full grants, cancel all tasks on the original stream
+  # For partial grants, some tasks remain open such as root, distribution and tasks related to the original docket
+  # Other tasks can be closed or moved to the new stream (as selected by the user)
   def cancel_old_tasks!
     if disposition == "granted"
       old_docket_stream.cancel_active_tasks
@@ -49,14 +57,14 @@ class DocketSwitchTaskHandler
   def create_new_tasks!
     new_docket_stream.create_tasks_on_intake_success!
     params_array = new_admin_actions.map do |task|
-      task.merge(appeal: new_docket_stream, parent_id: new_docket_stream.root_task.id)
+      task.merge(appeal: new_docket_stream, parent: new_docket_stream.root_task)
     end
 
     ColocatedTask.create_many_from_params(params_array, attorney_user)
   end
 
   def persistent_tasks
-    stream_change_tasks.select { |task| selected_task_ids.include?(task.id) }
+    @persistent_tasks ||= stream_change_tasks.select { |task| selected_task_ids.include?(task.id) }
   end
 
   def attorney_user
