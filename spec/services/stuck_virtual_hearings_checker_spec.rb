@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 describe StuckVirtualHearingsChecker, :postgres do
+  it "reports to correct slack channel" do
+    subject.call
+
+    expect(subject.slack_channel).to eq("#appeals-tango")
+  end
+
   context "there are no stuck virtual hearings" do
     let!(:virtual_hearing) do
       create(
