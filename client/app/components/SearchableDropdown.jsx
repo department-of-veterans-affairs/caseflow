@@ -31,20 +31,23 @@ export class SearchableDropdown extends React.Component {
     this.setState({ value: nextProps.value });
   };
 
-  handleChangeClaimant = (value) => {
-    if (value === 'child' || value === 'spouse') {
-      this.props.setRenderForm(true);
-    } else {
-      this.props.setRenderForm(false);
-    }
-  }
-
   onChange = (value) => {
     let newValue = value;
-    let deletedValue = null;
+    let deletedValue;
+    let {
+      clearOnSelect,
+      multi,
+      onChange,
+      selfManageValueState,
+      setRelationship
+    } = this.props;
 
-    if (this.props.addClaimantForm) {
-      this.handleChangeClaimant(value.value);
+    // (?) ASK JC why sending 'setRelationship' as 'onChange' prop would not trigger my useEffect in parent. Tried passing it as:
+    // * onChange={(val) => setRelationship(val)}
+    // * onChange={(val) => setRelationship(val.value)}
+    // * onChange={setRelationsip}
+    if (setRelationship) {
+      setRelationship(newValue.value);
     }
 
     /*
@@ -54,15 +57,15 @@ export class SearchableDropdown extends React.Component {
      * using the backspace.
      * https://github.com/JedWatson/react-select/pull/773
      */
-    if (!this.props.multi && Array.isArray(value) && value.length <= 0) {
+    if (!multi && Array.isArray(value) && value.length <= 0) {
       newValue = null;
-    } else if (this.props.multi && value === null) {
+    } else if (multi && value === null) {
       // Fix for https://github.com/JedWatson/react-select/issues/3632
       newValue = [];
     }
     // don't set value in state if creatable is true
-    if (!this.props.selfManageValueState) {
-      this.setState({ value: this.props.clearOnSelect ? null : newValue });
+    if (!selfManageValueState) {
+      this.setState({ value: clearOnSelect ? null : newValue });
     }
 
     if (
@@ -74,8 +77,8 @@ export class SearchableDropdown extends React.Component {
     ) {
       deletedValue = _.differenceWith(this.state.value, newValue, _.isEqual);
     }
-    if (this.props.onChange) {
-      this.props.onChange(newValue, deletedValue);
+    if (onChange) {
+      onChange(newValue, deletedValue);
     }
   };
 
@@ -101,7 +104,6 @@ export class SearchableDropdown extends React.Component {
     return Select;
   };
 
-  // ASK JC ABOUT THIS DECONSTRUCTION NESTED IN OLDER REACT STATE CONSTRUCTOR (?)
   render() {
     const {
       async,
@@ -262,6 +264,7 @@ SearchableDropdown.propTypes = {
  */
   noResultsText: PropTypes.string,
   onChange: PropTypes.func,
+  setRelationship: PropTypes.func,
   options: SelectOpts,
   placeholder: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   readOnly: PropTypes.bool,
@@ -269,9 +272,7 @@ SearchableDropdown.propTypes = {
   searchable: PropTypes.bool,
   selfManageValueState: PropTypes.bool,
   styling: PropTypes.object,
-  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-  setRenderForm: PropTypes.func,
-  addClaimantForm: PropTypes.bool
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
 };
 
 /* eslint-disable no-undefined */
