@@ -28,8 +28,14 @@ const docketSwitchSlice = createSlice({
     },
     stepBack: (state) => ({ ...state, step: state.step ? state.step - 1 : 0 }),
     updateDocketSwitch: (state, action) => {
-      const updates = action.payload;
 
+      const { formData: updates } = action.payload;
+      updates.receiptDate = updates.receiptDate?.toISOString() ?? undefined;
+      updates.disposition = updates.disposition?.toString() ?? undefined;
+      updates.docketType = updates.docketType?.toString() ?? undefined;
+      updates.issueIds = updates.issueIds?.toString() ?? undefined
+    
+    
       state.formData = {
         ...state.formData,
         ...updates,

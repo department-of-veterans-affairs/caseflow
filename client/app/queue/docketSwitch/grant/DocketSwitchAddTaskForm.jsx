@@ -19,7 +19,6 @@ import { css } from 'glamor';
 import ReactMarkdown from 'react-markdown';
 import CheckboxGroup from 'app/components/CheckboxGroup';
 import Button from '../../../components/Button';
-import _ from 'lodash';
 import Modal from '../../../components/Modal';
 import StringUtil from '../../../util/StringUtil';
 
@@ -51,7 +50,10 @@ export const DocketSwitchAddTaskForm = ({
         id: task.taskId.toString() }));
   }, [taskListing]);
 
-  const selectedIssues = _.omitBy(tasks, false);
+  const selectedIssues = useMemo(() => {
+    return Object.entries(tasks).filter((item) => item[1]).
+      flatMap((item) => item[0]);
+  }, [tasks]);
 
   const selectAllIssues = () => {
     const checked = selectedIssues.length === 0;
@@ -61,8 +63,6 @@ export const DocketSwitchAddTaskForm = ({
     setTasks(newValues);
   };
 
-  // const isOther = _.map(taskListing, 'label');
-
   // populate all of our checkboxes on initial render
   useEffect(() => selectAllIssues(), []);
 
@@ -70,7 +70,7 @@ export const DocketSwitchAddTaskForm = ({
     // const taskLabel = _.find(taskListing, { id: evt.target.name.toString() });
     // setTasks({ ...tasks, [taskLabel]: evt.target.checked });
 
-    setTasks({ ...taskListing, [evt.target.name.toString()] : evt.target.checked });
+    setTasks({ ...taskListing, [evt.target.name.toString()]: evt.target.checked });
     setShowModal(!showModal);
   };
 
@@ -93,10 +93,10 @@ export const DocketSwitchAddTaskForm = ({
   ];
 
   const title = sprintf(
-      DOCKET_SWITCH_GRANTED_ADD_TASK_INSTRUCTIONS,
-      StringUtil.snakeCaseToCapitalized(appeal.docketName),
-      StringUtil.snakeCaseToCapitalized(docketType)
-    );
+    DOCKET_SWITCH_GRANTED_ADD_TASK_INSTRUCTIONS,
+    StringUtil.snakeCaseToCapitalized(appeal.docketName),
+    StringUtil.snakeCaseToCapitalized(docketType)
+  );
 
   return (
     <form

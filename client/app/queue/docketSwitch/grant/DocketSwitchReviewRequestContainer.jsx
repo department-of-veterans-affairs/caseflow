@@ -1,9 +1,9 @@
 import React from 'react';
-import { useDispatch, useSelector, useEffect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { DocketSwitchReviewRequestForm } from './DocketSwitchReviewRequestForm';
 import { useHistory, useParams } from 'react-router';
 import { appealWithDetailSelector } from '../../selectors';
-import { updateDocketSwitch, stepForward } from '../docketSwitchSlice'
+import { updateDocketSwitch, stepForward } from '../docketSwitchSlice';
 
 export const DocketSwitchReviewRequestContainer = () => {
   const dispatch = useDispatch();
@@ -19,17 +19,8 @@ export const DocketSwitchReviewRequestContainer = () => {
 
   const handleSubmit = async (formData) => {
 
-    const data = {
-      formData: {
-      disposition: formData.disposition,
-      docketType: formData.docketType,
-      receiptDate: formData.receiptDate,
-      issueIds: formData.issueIds
-     }
-    }
-    
     try {
-      await dispatch(updateDocketSwitch(data));
+      await dispatch(updateDocketSwitch({ formData }));
       dispatch(stepForward());
       push(`/queue/appeals/${appealId}/tasks/${taskId}/docket_switch/checkout/grant/tasks`);
     } catch (error) {
