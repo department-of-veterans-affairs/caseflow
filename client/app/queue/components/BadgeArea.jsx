@@ -20,19 +20,19 @@ import { mostRecentHeldHearingForAppeal } from '../utils';
  */
 class BadgeArea extends React.PureComponent {
   render = () => {
-    const { appeal, isHorizontal, task } = this.props;
+    const { appeal, isHorizontal, task, featureToggles } = this.props;
 
     let badges;
 
     if (appeal) {
       badges = <React.Fragment>
-        <FnodBadge appeal={appeal} />
+        <FnodBadge featureToggles={featureToggles} appeal={appeal} />
         <HearingBadge hearing={mostRecentHeldHearingForAppeal(appeal)} />
         <OvertimeBadge appeal={appeal} />
       </React.Fragment>;
     } else {
       badges = <React.Fragment>
-        <FnodBadge appeal={task.appeal} />
+        <FnodBadge featureToggles={featureToggles} appeal={task.appeal} />
         <HearingBadge task={task} />
         <OvertimeBadge appeal={task.appeal} />
       </React.Fragment>;
@@ -49,7 +49,8 @@ class BadgeArea extends React.PureComponent {
 BadgeArea.propTypes = {
   appeal: PropTypes.object,
   task: PropTypes.object,
-  isHorizontal: PropTypes.bool
+  isHorizontal: PropTypes.bool,
+  featureToggles: PropTypes.object
 };
 
 export default BadgeArea;
