@@ -20,6 +20,7 @@ const tableStyling = css({
 
 /* eslint-disable id-length */
 const REQUEST_TYPE_LABELS = {
+  R: 'Virtual',
   V: 'Video',
   C: 'Central',
   T: 'Travel'

@@ -95,6 +95,10 @@ class RegionalOffice
     DEFAULT_RO_ROOM_COUNT
   end
 
+  def virtual?
+    key == HearingDay::REQUEST_TYPES[:virtual]
+  end
+
   private
 
   def location_hash
