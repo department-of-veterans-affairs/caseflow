@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { Controller, useFormContext } from 'react-hook-form';
 
-import TextField from 'app/components/TextField';
 import SearchableDropdown from 'app/components/SearchableDropdown';
+import DependantForm from './DependantForm';
 
 const relationshipOpts = [
   { label: 'Attorney (previously or currently)', value: 'attorney' },
@@ -13,46 +13,30 @@ const relationshipOpts = [
   { label: 'Other', value: 'other' },
 ];
 
+const dependants = ['spouse', 'child'];
+
 export const AddClaimantForm = ({ onSubmit }) => {
   const { control, handleSubmit } = useFormContext();
-  const [renderForm, setRenderForm] = useState(false);
+  const [relationship, setRelationship] = useState(null);
+
+  useEffect(() => {
+    console.log("RELATIONSHIP", relationship);
+  }, [relationship]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Controller
         as={SearchableDropdown}
-        name="relationship"
-        label="Relationship to the Veteran"
-        options={relationshipOpts}
         control={control}
+        label="Relationship to the Veteran"
+        name="relationship"
+        setRelationship={setRelationship}
+        options={relationshipOpts}
         strongLabel
-        setRenderForm={setRenderForm}
-        addClaimantForm
+        value={relationship}
       />
       {
-        renderForm && (<div style={{ marginTop: '20px' }}>
-          <br />
-          <TextField
-            name="First name"
-            strongLabel
-          />
-          <TextField
-            name="Middle name/Initial"
-            strongLabel
-            optional
-          />
-          <TextField
-            name="Last name"
-            strongLabel
-            optional
-          />
-          <TextField
-            name="Suffix"
-            strongLabel
-            optional
-          />
-
-        </div>)
+        dependants.includes(relationship) && <DependantForm />
       }
     </form>
   );
