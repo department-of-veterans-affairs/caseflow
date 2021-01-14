@@ -17,7 +17,6 @@ FactoryBot.define do
 
       if evaluator.source_appeal
         cavc_remand.source_appeal = evaluator.source_appeal
-        cavc_remand.appeal = evaluator.source_appeal
 
         cavc_remand.decision_issue_ids = if !evaluator.decision_issue_ids.empty?
                                            evaluator.decision_issue_ids
@@ -44,7 +43,6 @@ FactoryBot.define do
                     contested_issue_description: description,
                     notes: notes)
         cavc_remand.source_appeal = source_appeal
-        cavc_remand.appeal = source_appeal
 
         cavc_remand.decision_issue_ids = if !evaluator.decision_issue_ids.empty?
                                            evaluator.decision_issue_ids
