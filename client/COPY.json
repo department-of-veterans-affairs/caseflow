@@ -126,6 +126,7 @@
   "CASE_DETAILS_CAVC_DECISION_DATE": "Court's decision date",
   "CASE_DETAILS_CAVC_JUDGEMENT_DATE": "Judgement date",
   "CASE_DETAILS_CAVC_MANDATE_DATE": "Mandate date",
+  "CASE_DETAILS_CAVC_REMAND_INSTRUCTIONS": "Remand Instructions",
 
   "POST_DISPATCH_TITLE": "Post-dispatch actions",
   "ADD_CAVC_BUTTON": "+ Add CAVC Remand",
@@ -141,6 +142,7 @@
   "CAVC_SUB_TYPE_LABEL": "What type of remand is this?",
   "CAVC_COURT_DECISION_DATE": "What is the Court's decision date?",
   "CAVC_DECISION_DATE_ERROR": "Please select the date of the court's decision",
+  "MDR_SELECTION_ALERT_BANNER": "Choosing MDR will set a 90-day hold on this case starting from the Court's decision date listed above. The hold is to wait for the Court's judgement and mandate dates. This remand case will be accessible in your organization's Assigned tab and will return to the team's Unassigned tab when the 90 days are over or the hold is manually ended, at which point the judgement and mandate dates can be entered.",
   "CAVC_JUDGEMENT_DATE_HEADER": "Judgement and mandate date",
   "CAVC_JUDGEMENT_DATE": "What is the Court's judgement date?",
   "CAVC_JUDGEMENT_DATE_ERROR": "Please select the date of judgement",
@@ -151,6 +153,7 @@
   "CAVC_INSTRUCTIONS_ERROR": "Please provide context and instructions for the remand",
   "CAVC_REMAND_CREATED_TITLE": "You have successfully created a CAVC remand case",
   "CAVC_REMAND_CREATED_DETAIL": "This has generated a 90-day letter task in your team's queue",
+  "CAVC_REMAND_MDR_CREATED_DETAIL": "This has generated an MDR task in your team's Assigned tab and will return to the Unassigned tab after 90 days from the court decision date",
 
   "CAVC_EXTENSION_REQUEST_TITLE": "Review extension request",
   "CAVC_EXTENSION_REQUEST_DECISION_LABEL": "How will you proceed?",
@@ -167,7 +170,7 @@
   "EDIT_NOD_DATE_MODAL_DESCRIPTION": "**Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.**",
   "EDIT_NOD_DATE_LABEL": "NOD Date",
   "EDIT_NOD_DATE_SUCCESS_ALERT_TITLE": "NOD date has been updated",
-  "EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE": "You have successfully updated the NOD date",
+  "EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE": "The NOD date for %(appellantName)s's case has been updated from %(nodDateStr)s to %(receiptDateStr)s. There have been no changes to the timeliness of issues.",
   "EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE": "The new NOD date cannot be after today's date",
   "EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE": "New NOD date cannot be before 02/19/2019",
 
@@ -351,7 +354,7 @@
   "FORM_ERROR_FIELD_REQUIRED": "This field is required",
   "FORM_ERROR_FIELD_INVALID": "This field is invalid",
 
-  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_ROCO": "We have assigned your video hearings",
+  "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_ROCO": "We have assigned your hearings days",
   "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_JUDGE": "We have assigned your judges",
   "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_MESSAGE_ROCO": "Please review the following assignments for any errors. You can confirm the schedule to upload this to Caseflow or use go back to upload another file.",
   "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_MESSAGE_JUDGE": "Please review the following assignments for any errors. You can confirm the schedule to upload this to Caseflow or use go back to upload another file.",
@@ -363,7 +366,7 @@
   "MARK_TASK_COMPLETE_TITLE": "Mark as complete",
   "MARK_TASK_COMPLETE_COPY": "You can find this case in the completed tab of your queue.",
   "MARK_TASK_COMPLETE_BUTTON": "Mark complete",
-  "MARK_TASK_COMPLETE_CONFIRMATION": "%s's case has been marked complete",
+  "MARK_TASK_COMPLETE_CONFIRMATION": "The task for %s's case has been marked complete",
   "MARK_TASK_COMPLETE_CONFIRMATION_DETAIL": "If you have made a mistake, please email %s to manage any changes.",
 
   "MODAL_SUBMIT_BUTTON": "Submit",

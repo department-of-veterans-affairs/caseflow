@@ -73,6 +73,8 @@ class WorkQueue::AppealSerializer
 
   attribute :cavc_remand
 
+  attribute :veteran_death_date
+
   attribute :veteran_file_number
 
   attribute :veteran_full_name do |object|

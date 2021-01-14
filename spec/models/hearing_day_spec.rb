@@ -344,7 +344,7 @@ describe HearingDay, :all_dbs do
       subject { HearingDayRange.new(schedule_period.start_date, schedule_period.end_date).load_days }
 
       it do
-        expect(subject.size).to eql(365)
+        expect(subject.size).to eql(945)
       end
     end
   end

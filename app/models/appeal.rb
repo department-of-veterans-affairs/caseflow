@@ -342,12 +342,18 @@ class Appeal < DecisionReview
     !!veteran_is_not_claimant
   end
 
+  def appellant_is_veteran
+    !veteran_is_not_claimant
+  end
+
   def veteran_middle_initial
     veteran_middle_name&.first
   end
 
   def veteran_appellant_deceased?
-    (veteran_is_deceased && !appellant_is_not_veteran) && FeatureToggle.enabled?(:fnod_badge, user: self)
+    return (veteran_is_deceased && appellant_is_veteran) if FeatureToggle.enabled?(:fnod_badge, user: self)
+
+    false
   end
 
   # matches Legacy behavior
@@ -360,7 +366,7 @@ class Appeal < DecisionReview
   def cavc_remand
     return nil if !cavc?
 
-    CavcRemand.find_by(appeal_id: stream_docket_number.split("-").last)
+    CavcRemand.find_by(source_appeal_id: stream_docket_number.split("-").last)
   end
 
   def status
