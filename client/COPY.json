@@ -428,6 +428,9 @@
   "CRP_LETTER_RESP_WINDOW_TASK_DEFAULT_INSTRUCTIONS": "The response window task will return to the CAVC Team's queue after 90 days or when manually ended early.",
   "CAVC_REMAND_LETTER_RESPONSE_TASK_COMPLETE_MODAL_BODY": "Complete this task to make the case available to be distributed to a judge. You will no longer be able to access this case.",
 
+  "MDR_TASK_LABEL": "CAVC MDR Remand Task",
+  "MDR_WINDOW_TASK_DEFAULT_INSTRUCTIONS": "The MDR task will return to the CAVC Team's queue after 90 days or when manually ended early.",
+
   "CAVC_GRANTED_EXTENSION_TASK_LABEL": "Granted extension",
   "CAVC_DENIED_EXTENSION_TASK_LABEL": "Denied extension",
 
