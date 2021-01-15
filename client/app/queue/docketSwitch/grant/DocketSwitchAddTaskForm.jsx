@@ -1,16 +1,13 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useForm, Controller } from 'react-hook-form';
-
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { CheckoutButtons } from './CheckoutButtons';
 import {
   DOCKET_SWITCH_GRANTED_ADD_TASK_LABEL,
   DOCKET_SWITCH_GRANTED_ADD_TASK_INSTRUCTIONS,
   DOCKET_SWITCH_GRANTED_ADD_TASK_TEXT,
-  DOCKET_SWITCH_GRANTED_ADD_TASK_BUTTON,
-  DOCKET_SWITCH_GRANTED_MODAL_TITLE,
-  DOCKET_SWITCH_GRANTED_MODAL_INSTRUCTION
+  DOCKET_SWITCH_GRANTED_ADD_TASK_BUTTON
 } from 'app/../COPY';
 import { sprintf } from 'sprintf-js';
 import { yupResolver } from '@hookform/resolvers';
@@ -19,8 +16,8 @@ import { css } from 'glamor';
 import ReactMarkdown from 'react-markdown';
 import CheckboxGroup from 'app/components/CheckboxGroup';
 import Button from '../../../components/Button';
-import Modal from '../../../components/Modal';
 import StringUtil from '../../../util/StringUtil';
+import DocketSwitchAddTaskModal from './DocketSwitchAddTaskModal';
 
 const schema = yup.object().shape({
   taskIds: yup.array(yup.string())
@@ -62,6 +59,12 @@ export const DocketSwitchAddTaskForm = ({
     setValue('taskIds', taskListing.map((task) => task.taskId));
   };
 
+  const activeTaskLabel = useMemo(() => {
+    return activeTaskId ? taskListing.find((task) => task.id === activeTaskId) : null;
+  }, [activeTaskId]);
+
+  console.log('Label', activeTaskLabel);
+
   // populate all of our checkboxes on initial render
   useEffect(() => selectAllTasks(), []);
 
@@ -86,19 +89,6 @@ export const DocketSwitchAddTaskForm = ({
   const handleCancel = () => {
     setActiveTaskId(null);
   };
-
-  const buttons = [
-    {
-      classNames: ['cf-modal-link', 'cf-btn-link'],
-      name: 'Cancel',
-      onClick: handleCancel,
-    },
-    {
-      classNames: ['usa-button', 'usa-button-primary'],
-      name: 'Confirm',
-      onClick: updateTaskSelections,
-    }
-  ];
 
   const title = sprintf(
     DOCKET_SWITCH_GRANTED_ADD_TASK_INSTRUCTIONS,
@@ -139,15 +129,13 @@ export const DocketSwitchAddTaskForm = ({
         />
 
         { activeTaskId && (
-          <Modal
-            title={DOCKET_SWITCH_GRANTED_MODAL_TITLE}
+          <DocketSwitchAddTaskModal
             onSubmit={onSubmit}
-            closeHandler={handleCancel}
-            buttons={buttons}>
-            <div>
-              <ReactMarkdown source={DOCKET_SWITCH_GRANTED_MODAL_INSTRUCTION} />
-            </div>
-          </Modal>
+            onCancel={handleCancel}
+            taskId= {activeTaskId}
+            taskLabel= {activeTaskLabel}
+            onConfirm={updateTaskSelections}
+          />
         )
         }
 
