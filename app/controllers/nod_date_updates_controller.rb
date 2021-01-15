@@ -28,7 +28,7 @@ class NodDateUpdatesController < ApplicationController
   end
 
   def existing_nod_date_update
-    @existing_nod_date_update ||= NodDateUpdate.find_by(appeal_id: appeal.id)
+    @existing_nod_date_update ||= NodDateUpdate.includes(:appeal).find_by(appeal_id: appeal.id)
   end
   
   def updated_params
@@ -37,9 +37,7 @@ class NodDateUpdatesController < ApplicationController
       appeal_id: appeal.id, 
       old_date: appeal.receipt_date, 
       new_date: params["receipt_date"],
-      change_reason: "entry_error",
-      created_at: current_user.created_at,
-      updated_at: current_user.updated_at
+      change_reason: "entry_error"
     )
     params.permit(required_params)
   end

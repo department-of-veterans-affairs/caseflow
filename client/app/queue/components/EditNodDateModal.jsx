@@ -20,12 +20,12 @@ const changeReasons = [
   { label: 'Data Entry Error', value: 'entry_error'},
 ];
 
-const changeReasonOptions = changeReasons.map((value) => (
-  {
-    value,
-    displayText: startCase(value),
-  }
-));
+// const changeReasonOptions = changeReasons.map((value) => (
+//   {
+//     value,
+//     displayText: startCase(value),
+//   }
+// ));
 
 export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealId, reason }) => {
   const dispatch = useDispatch();
@@ -164,7 +164,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
         searchable={false}
         placeholder="Select the reason..."
         value={changeReason}
-        options={changeReasonOptions}
+        options={changeReasons}
         onChange={handleChangeReason}
         isClearable
         debounce={250}
