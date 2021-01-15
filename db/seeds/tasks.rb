@@ -725,7 +725,13 @@ module Seeds
     end
 
     def create_cavc_appeals
-      9.times { create(:cavc_remand) }
+      9.times do
+        create(:cavc_remand,
+               judge: JudgeTeam.first.admin,
+               attorney: JudgeTeam.first.non_admins.first,
+               veteran: Veteran.first
+        )
+      end
     end
 
     # these really belong in Seeds::Intake but we put them here for now because they rely on Seeds::Facols
