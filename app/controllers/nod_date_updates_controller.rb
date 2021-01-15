@@ -3,7 +3,6 @@
 # Controller to edit NOD dates and store the related info in the nod_date_updates table
 
 class NodDateUpdatesController < ApplicationController
-  #before_action :validate_access
   
   def create
     nod_date_update = NodDateUpdate.create!(updated_params)
@@ -28,7 +27,7 @@ class NodDateUpdatesController < ApplicationController
   end
 
   def existing_nod_date_update
-    @existing_nod_date_update ||= NodDateUpdate.includes(:appeal).find_by(appeal_id: appeal.id)
+    @existing_nod_date_update ||= NodDateUpdate.find_by(appeal_id: appeal.id)
   end
   
   def updated_params
@@ -37,7 +36,7 @@ class NodDateUpdatesController < ApplicationController
       appeal_id: appeal.id, 
       old_date: appeal.receipt_date, 
       new_date: params["receipt_date"],
-      change_reason: "entry_error"
+      change_reason: params["change_reason"]["value"]
     )
     params.permit(required_params)
   end

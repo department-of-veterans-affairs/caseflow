@@ -13,19 +13,11 @@ import { sprintf } from 'sprintf-js';
 import { formatDateStr } from '../../util/DateUtil';
 import { appealWithDetailSelector } from '../selectors';
 import SearchableDropdown from '../../components/SearchableDropdown';
-import { startCase } from 'lodash';
 
 const changeReasons = [
   { label: 'New Form/Information Received', value: 'new_info' },
   { label: 'Data Entry Error', value: 'entry_error'},
 ];
-
-// const changeReasonOptions = changeReasons.map((value) => (
-//   {
-//     value,
-//     displayText: startCase(value),
-//   }
-// ));
 
 export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealId, reason }) => {
   const dispatch = useDispatch();
@@ -59,7 +51,7 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
     };
 
     ApiUtil.patch(`/appeals/${appealId}/nod_date_update`, payload).then(() => {
-      dispatch(editAppeal(appealId, { nodDate: receiptDate, reason: changeReason}));
+      dispatch(editAppeal(appealId, { nodDate: receiptDate, reason: changeReason }));
       dispatch(showSuccessMessage(successMessage));
       onSubmit?.();
       window.scrollTo(0, 0);
