@@ -85,7 +85,7 @@ class RegionalOffice
   end
 
   def valid?
-    !!location_hash[:city]
+    !!location_hash[:timezone] # the timezone field is currently set for all ROs
   end
 
   # these ROs have been added manually as needed
@@ -93,6 +93,10 @@ class RegionalOffice
     return DOUBLE_RO_ROOM_COUNT if DOUBLE_ROOM_ROS.include?(key)
 
     DEFAULT_RO_ROOM_COUNT
+  end
+
+  def virtual?
+    key == HearingDay::REQUEST_TYPES[:virtual]
   end
 
   private
