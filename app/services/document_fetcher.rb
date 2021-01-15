@@ -17,7 +17,7 @@ class DocumentFetcher
     documents.size
   end
 
-  # Fetch documents, then updates or creates them
+  # Fetch documents, then update and/or create them in the DB
   def find_or_create_documents!
     @find_or_create_documents ||= save!
   end
@@ -120,6 +120,7 @@ class DocumentFetcher
     extra = { application: "reader",
               docs_duplicated: dups_hash.count,
               docs_as_csv: docs_as_csv.join("") }
-    Raven.capture_exception(RuntimeError.new("Warning: Unexpected duplicate document records: #{warning_message}"), extra: extra)
+    Raven.capture_exception(RuntimeError.new("Warning: Unexpected duplicate document records: #{warning_message}"),
+                            extra: extra)
   end
 end
