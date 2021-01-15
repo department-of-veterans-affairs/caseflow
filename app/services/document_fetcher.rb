@@ -105,6 +105,7 @@ class DocumentFetcher
     self.manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].try(:in_time_zone)
   end
 
+  # :reek:FeatureEnvy
   def deduplicate(docs, warning_message)
     dups_hash = docs.group_by(&:vbms_document_id).select { |_id, array| array.count > 1 }
     return docs if dups_hash.empty?
@@ -115,7 +116,14 @@ class DocumentFetcher
   end
 
   def warn_about_duplicates(warning_message, dups_hash)
-    puts "Found duplicates: #{warning_message}: #{dups_hash}"
-    puts "For analysis: #{dups_hash.map { |_id, array| array.map { |doc| doc.to_hash.values.to_csv } }.flatten}"
+    slack_msg = "Found duplicates: #{warning_message}: #{dups_hash}"
+    slack_msg += "\nFor analysis: #{dups_hash.map { |_id, array| array.map { |doc| doc.to_hash.values.to_csv } }.flatten}"
+    puts slack_msg
+    # Raven.capture_exception(error, extra: extra)
+    slack_service.send_notification(slack_msg, "Warning: Unexpected duplicate document records", "#appeals-reader")
+  end
+
+  def slack_service
+    @slack_service ||= SlackService.new(url: ENV["SLACK_DISPATCH_ALERT_URL"])
   end
 end
