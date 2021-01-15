@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_12_211054) do
+ActiveRecord::Schema.define(version: 2021_01_12_213248) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -267,7 +267,6 @@ ActiveRecord::Schema.define(version: 2021_01_12_211054) do
   end
 
   create_table "cavc_remands", force: :cascade do |t|
-    t.bigint "appeal_id", null: false, comment: "Appeal that CAVC has remanded"
     t.string "cavc_decision_type", null: false, comment: "CAVC decision type. Expecting 'remand', 'straight_reversal', or 'death_dismissal'"
     t.string "cavc_docket_number", null: false, comment: "Docket number of the CAVC judgement"
     t.string "cavc_judge_full_name", null: false, comment: "CAVC judge that passed the judgement on the remand"
@@ -283,7 +282,6 @@ ActiveRecord::Schema.define(version: 2021_01_12_211054) do
     t.bigint "source_appeal_id", null: false, comment: "Appeal that CAVC has remanded"
     t.datetime "updated_at", null: false, comment: "Default timestamps"
     t.bigint "updated_by_id", comment: "User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created."
-    t.index ["appeal_id"], name: "index_cavc_remands_on_appeal_id"
     t.index ["source_appeal_id"], name: "index_cavc_remands_on_source_appeal_id"
   end
 

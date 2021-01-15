@@ -33,7 +33,6 @@ describe CavcRemand do
       {
         created_by: created_by,
         updated_by: updated_by,
-        appeal: source_appeal,
         source_appeal: source_appeal,
         cavc_docket_number: cavc_docket_number,
         represented_by_attorney: represented_by_attorney,
