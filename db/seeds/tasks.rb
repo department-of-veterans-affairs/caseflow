@@ -729,8 +729,7 @@ module Seeds
         create(:cavc_remand,
                judge: JudgeTeam.first.admin,
                attorney: JudgeTeam.first.non_admins.first,
-               veteran: Veteran.first
-        )
+               veteran: Veteran.first)
       end
     end
 
