@@ -3,9 +3,9 @@
 class AppealsSchemas
   class << self
     def update_nod_date
-      ControllerSchema.json do
-        string :appeal_id
-        date :receipt_date
+      ControllerSchema.json do |schema|
+        schema.string :appeal_id
+        schema.date :receipt_date
       end
     end
   end
