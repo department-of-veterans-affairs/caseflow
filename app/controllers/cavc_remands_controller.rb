@@ -30,7 +30,7 @@ class CavcRemandsController < ApplicationController
 
   def create_params
     params.merge!(created_by_id: current_user.id, updated_by_id: current_user.id, source_appeal_id: source_appeal.id)
-    params.require(required_params)
+    params.require(required_params_by_subtype)
     params.permit(required_params << :remand_subtype).merge(params.permit(decision_issue_ids: []))
   end
 
@@ -49,5 +49,13 @@ class CavcRemandsController < ApplicationController
       :represented_by_attorney,
       :updated_by_id
     ]
+  end
+
+  def required_params_by_subtype
+    if params["remand_subtype"] == Constants.CAVC_REMAND_SUBTYPES.mdr
+      required_params - [:judgement_date, :mandate_date]
+    else
+      required_params
+    end
   end
 end
