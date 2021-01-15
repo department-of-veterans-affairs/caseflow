@@ -260,7 +260,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
     end
 
-    fit "allows attorney to procced to the add task page" do
+    it "allows attorney to procced to the add task page" do
       User.authenticate!(user: cotb_attorney)
       visit "/queue/appeals/#{appeal.uuid}"
 
@@ -298,7 +298,6 @@ RSpec.feature "Docket Switch", :all_dbs do
         find("label", text: "1. PTSD denied").click
       end
       expect(page).to have_button("Continue", disabled: false)
-      binding.pry
       click_button(text: "Continue")
 
       # Takes user to add task page
@@ -309,8 +308,13 @@ RSpec.feature "Docket Switch", :all_dbs do
       within_fieldset("Please unselect any tasks you would like to remove:") do
         find("label", text: "Root Task").click
       end
-
+      
       expect(page).to have_content("Confirm removing task")
+      expect(page).to have_content("Root Task")
+      click_button(text: "Cancel")
+
+      # Return back to user's queue
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/tasks/docket_switch/checkout/grant/tasks")
     end
   end
 end

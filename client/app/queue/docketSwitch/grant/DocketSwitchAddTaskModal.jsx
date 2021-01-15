@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
 import ReactMarkdown from 'react-markdown';
 
-export const DocketSwitchAddTaskModal = ({onConfirm, onSubmit, onCancel, taskId, taskLabel }) => (
+export const DocketSwitchAddTaskModal = ({ onConfirm, onSubmit, onCancel, taskLabel }) => (
   <div>
     <Modal
       title={DOCKET_SWITCH_GRANTED_MODAL_TITLE}
@@ -23,13 +23,13 @@ export const DocketSwitchAddTaskModal = ({onConfirm, onSubmit, onCancel, taskId,
           classNames: ['usa-button', 'usa-button-primary'],
           name: 'Confirm',
           onClick: onConfirm,
-         }
-        ]}
-       >
+        }
+      ]}
+    >
       <div>
-        <ReactMarkdown 
-        source={sprintf(DOCKET_SWITCH_GRANTED_MODAL_INSTRUCTION, taskLabel)} />
-       </div>
+        <ReactMarkdown
+          source={sprintf(DOCKET_SWITCH_GRANTED_MODAL_INSTRUCTION, taskLabel)} />
+      </div>
     </Modal>
   </div>
 );
@@ -38,10 +38,8 @@ DocketSwitchAddTaskModal.propTypes = {
   onSubmit: PropTypes.func,
   onCancel: PropTypes.func,
   onConfirm: PropTypes.func,
-  taskLabel: PropTypes.string,
-  taskId: PropTypes.string
+  taskLabel: PropTypes.string
 };
 
 export default DocketSwitchAddTaskModal;
-
 
