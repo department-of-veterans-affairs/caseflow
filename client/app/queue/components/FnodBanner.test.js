@@ -1,12 +1,12 @@
 import React from 'react';
 import FnodBanner from 'app/queue/components/FnodBanner';
 import { mount } from 'enzyme';
-import moment from 'moment';
+import { formatDateStr } from 'app/util/DateUtil';
 
 describe('FnodBanner', () => {
   const defaultAppeal = {
     veteran_appellant_deceased: true,
-    date_of_death: '2019-03-17',
+    veteranDateOfDeath: '2019-03-17',
     veteranFullName: 'Jane Doe'
   };
 
@@ -29,7 +29,7 @@ describe('FnodBanner', () => {
 
     const alertText = component.find('.usa-alert-text');
 
-    expect(alertText.html()).toContain(moment(defaultAppeal.date_of_death).format('MM/DD/YYYY'));
+    expect(alertText.html()).toContain(formatDateStr(defaultAppeal.veteranDateOfDeath));
   });
 
   it('displays Veteran appellant\'s full name', () => {
@@ -37,6 +37,6 @@ describe('FnodBanner', () => {
 
     const alertText = component.find('.usa-alert-text');
 
-    expect(alertText.html()).toContain(defaultAppeal.veteranFullName);
+    expect(alertText.text()).toContain(defaultAppeal.veteranFullName);
   });
 });

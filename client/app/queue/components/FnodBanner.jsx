@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import COPY from 'app/../COPY';
-import moment from 'moment';
 import Alert from 'app/components/Alert';
+import { formatDateStr } from 'app/util/DateUtil';
 
 const FnodBanner = ({ appeal }) => {
-  const formattedDeathDate = moment(appeal.date_of_death).format('MM/DD/YYYY');
+  const formattedDeathDate = formatDateStr(appeal.veteranDateOfDeath);
   const fnodBannerInfoPadding = css({
     padding: '5px',
   });
