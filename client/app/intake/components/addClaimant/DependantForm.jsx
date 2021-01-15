@@ -3,6 +3,7 @@ import * as Constants from '../../constants';
 
 import RadioField from 'app/components/RadioField';
 import TextField from 'app/components/TextField';
+import AddressForm from 'app/components/AddressForm'
 
 export const DependantForm = () => {
 
@@ -32,7 +33,7 @@ export const DependantForm = () => {
         optional
         strongLabel
       />
-      {/* ADDRESS HERE */}
+      {<AddressForm />}
       <TextField
         name="email"
         label="Claimant email"

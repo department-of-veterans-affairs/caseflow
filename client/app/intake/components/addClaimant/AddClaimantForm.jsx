@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import SearchableDropdown from 'app/components/SearchableDropdown';
-import DependantForm from './DependantForm';
+import DependantForm from './DependantForm'
+import RadioField from 'app/components/RadioField';;
 
 const relationshipOpts = [
   { label: 'Attorney (previously or currently)', value: 'attorney' },
@@ -35,9 +36,7 @@ export const AddClaimantForm = ({ onSubmit }) => {
         strongLabel
         value={relationship}
       />
-      {
-        dependants.includes(relationship) && <DependantForm />
-      }
+      {dependants.includes(relationship) && <DependantForm />}
     </form>
   );
 };
