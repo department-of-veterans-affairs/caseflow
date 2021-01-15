@@ -39,6 +39,7 @@ describe CavcCorrespondenceMailTask do
     end
 
     context "when assigned to an Organization" do
+      # mawagner - This multi-line subject feels weird. Can we make this a shared example?
       subject do
         expect(mail_task.available_actions(user)).to eq(expected_actions)
         expect(mail_task.parent.available_actions(user)).to eq(expected_actions)
@@ -67,10 +68,9 @@ describe CavcCorrespondenceMailTask do
         end
 
         context "who is a team member" do
-          let(:expected_actions) { mail_task_user_actions }
+          let(:expected_actions) { mail_task_actions }
 
           it "has actions" do
-            # I don't understand right now how I broke this.
             subject
           end
         end
