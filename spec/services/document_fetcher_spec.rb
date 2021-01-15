@@ -112,7 +112,7 @@ describe DocumentFetcher, :postgres do
     context "when there is no existing document" do
       it "saves retrieved documents" do
         returned_documents = document_fetcher.find_or_create_documents!
-        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
+        expect(returned_documents.map(&:type)).to match_array(documents.map(&:type))
 
         expect(Document.count).to eq(documents.count)
         expect(Document.first.type).to eq(documents[0].type)
@@ -179,7 +179,7 @@ describe DocumentFetcher, :postgres do
         expect(returned_documents.count).to eq(2)
         expect(Document.count).to eq(4)
 
-        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
+        expect(returned_documents.map(&:type)).to match_array(documents.map(&:type))
 
         expect(Document.first.type).to eq(saved_documents.first.type)
         expect(Document.second.type).to eq(saved_documents.second.type)
