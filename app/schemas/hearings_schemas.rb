@@ -248,11 +248,11 @@ class HearingsSchemas
                       doc: "The email address of the appellant/veteran"
         schema.string :judge_email,
                       optional: true,
-                      nullable: false,
+                      nullable: true,
                       doc: "The email address of the judge"
         schema.string :representative_email,
                       optional: true,
-                      nullable: false,
+                      nullable: true,
                       doc: "The email address of the representative"
         schema.bool :request_cancelled,
                     optional: true,
