@@ -117,7 +117,7 @@ export const CaseDetailsView = (props) => {
       {!modalIsOpen && showPostDispatch && <CaseDetailsPostDispatchActions appealId={appealId} />}
       {(!modalIsOpen || props.userCanScheduleVirtualHearings) && <UserAlerts />}
       <AppSegment filledBackground>
-        <CaseTitle appeal={appeal} />
+        <CaseTitle featureToggles={props.featureToggles} appeal={appeal} />
         { appeal.veteranDateOfDeath && props.featureToggles.fnod_banner && <FnodBanner appeal={appeal} /> }
         <CaseTitleDetails
           appealId={appealId}
