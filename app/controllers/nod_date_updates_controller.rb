@@ -6,18 +6,19 @@ class NodDateUpdatesController < ApplicationController
   #before_action :validate_access
   
   def create
-    binding.pry
-    nod_date_update = NodDateUpdate.create!(create_params) 
+    nod_date_update = NodDateUpdate.create!(updated_params)
+    appeal.update_receipt_date!(receipt_date: params[:receipt_date]) 
     render json: { nod_date_update: nod_date_update }, status: :created
   end
   
-  #validates :update_nod_date, using: AppealsSchemas.update_nod_date
   def update
-    binding.pry
-    if params[:receipt_date]
+    if existing_nod_date_update
+      nod_date_update = NodDateUpdate.update(updated_params)
       appeal.update_receipt_date!(receipt_date: params[:receipt_date])
+      render json: { nod_date_update: nod_date_update }, status: :ok
+    else
+      create
     end
-    create
   end
   
   private
@@ -25,18 +26,30 @@ class NodDateUpdatesController < ApplicationController
   def appeal
     @appeal ||= Appeal.find_by_uuid(params[:appeal_id])
   end
+
+  def existing_nod_date_update
+    @existing_nod_date_update ||= NodDateUpdate.find_by(appeal_id: appeal.id)
+  end
   
-  def create_params
-    params.merge!(user_id: current_user.id, appeal_id: appeal.id)
-    params.require(required_params)
+  def updated_params
+    params.merge!(
+      user_id: current_user.id, 
+      appeal_id: appeal.id, 
+      old_date: appeal.receipt_date, 
+      new_date: params["receipt_date"],
+      change_reason: "entry_error",
+      created_at: current_user.created_at,
+      updated_at: current_user.updated_at
+    )
+    params.permit(required_params)
   end
   
   def required_params
       [
+        :user_id,
         :appeal_id,
         :old_date,
         :new_date,
-        :user_id,
         :change_reason,
         :created_at,
         :updated_at
