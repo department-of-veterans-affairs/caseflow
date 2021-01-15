@@ -1778,7 +1778,7 @@ describe Task, :all_dbs do
     end
 
     context "branch is off of distribution task" do
-      let(:parent_of_parent) { old_stream.root_task }
+      let(:parent_of_parent) { old_stream.tasks.find_by(type: DistributionTask.name) }
 
       it "copies branch and connects to new distribution task" do
         expect { subject }.to change(new_stream.tasks, :count).by(2)

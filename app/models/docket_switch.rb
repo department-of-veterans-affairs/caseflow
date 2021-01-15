@@ -51,9 +51,9 @@ class DocketSwitch < CaseflowRecord
   end
 
   def request_issues_for_switch
-    return if denied?
+    return [] if denied?
 
-    issue_ids = granted_request_issue_ids.presence || old_docket_stream.request_issues.map(&:id)
+    issue_ids = [*granted_request_issue_ids].presence || old_docket_stream.request_issues.map(&:id)
     RequestIssue.find(issue_ids)
   end
 

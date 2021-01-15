@@ -128,9 +128,17 @@ describe DocketSwitchTaskHandler, :all_dbs do
 
         expect(new_docket_task).to be_active
         expect(persistent_task_copy).to be_active
-        expect(new_docket_stream.tasks.find { |task| task.type == "FoiaTask" }).to be nil
+        removed_task = old_docket_stream_tasks.find { |task| !selected_task_ids.include?(task.id) }
+        expect(new_docket_stream.tasks.find { |task| task.type == removed_task.type }).to be nil
         expect(new_admin_action).to be_active
       end
+    end
+
+    context "when disposition is denied" do
+      let(:disposition) { "denied" }
+      let(:granted_request_issue_ids) { nil }
+
+      it { is_expected.to be_falsey }
     end
   end
 end
