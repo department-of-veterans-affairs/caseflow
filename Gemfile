@@ -9,7 +9,7 @@ gem "activerecord-import"
 gem "acts_as_tree"
 # BGS
 
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "128938e80b083588164233b1db91ea7b677a2627"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "7d7c67f7bad5e5aa03e257f0d8e57a4aa1a6cbbf"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
@@ -35,7 +35,9 @@ gem "newrelic_rpm"
 # https://github.com/sparklemotion/nokogiri/issues/1915
 # nokogiri 1.10.4 is vulnerable to CVE-2019-13117, CVE-2019-13118, CVE-2019-18197.
 # https://github.com/sparklemotion/nokogiri/issues/1943
-gem "nokogiri", "~> 1.10.8"
+# Nokogiri <= 1.10.10 vulnerable to CVE-2020-26247
+# https://github.com/sparklemotion/nokogiri/security/advisories/GHSA-vr8q-g5c7-m54m
+gem "nokogiri", ">= 1.11.0.rc4"
 gem "paper_trail", "~> 10"
 # Used to speed up reporting
 gem "parallel"
@@ -117,6 +119,7 @@ group :test, :development, :demo do
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
   gem "single_cov"
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
+  gem "sql_tracker"
   gem "test-prof"
   gem "timecop"
   gem "webdrivers"

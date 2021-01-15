@@ -13,6 +13,13 @@ export const setCanEditAod = (canEditAod) => ({
   }
 });
 
+export const setCanEditNodDate = (canEditNodDate) => ({
+  type: ACTIONS.SET_CAN_EDIT_NOD_DATE,
+  payload: {
+    canEditNodDate
+  }
+});
+
 export const setCanViewOvertimeStatus = (canViewOvertimeStatus) => ({
   type: ACTIONS.SET_CAN_VIEW_OVERTIME_STATUS,
   payload: {

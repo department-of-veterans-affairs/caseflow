@@ -5,7 +5,7 @@ describe Allocation, :postgres do
 
   context ".import_allocation" do
     it "imports allocations" do
-      expect(Allocation.where(schedule_period: ro_schedule_period).count).to eq(55)
+      expect(Allocation.where(schedule_period: ro_schedule_period).count).to eq(56)
     end
   end
 end

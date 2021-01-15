@@ -6,7 +6,7 @@ describe CavcRemand do
 
     let(:created_by) { create(:user) }
     let(:updated_by) { create(:user) }
-    let(:appeal) { create(:appeal) }
+    let(:source_appeal) { create(:appeal) }
     let(:cavc_docket_number) { "123-1234567" }
     let(:represented_by_attorney) { true }
     let(:cavc_judge_full_name) { Constants::CAVC_JUDGE_FULL_NAMES.first }
@@ -20,20 +20,20 @@ describe CavcRemand do
         :decision_issue,
         3,
         :rating,
-        decision_review: appeal,
+        decision_review: source_appeal,
         disposition: "denied",
         description: "Decision issue description",
         decision_text: "decision issue"
       )
     end
     let(:decision_issue_ids) { decision_issues.map(&:id) }
-    let(:instructions) { "Intructions!" }
+    let(:instructions) { "Instructions!" }
 
     let(:params) do
       {
         created_by: created_by,
         updated_by: updated_by,
-        appeal: appeal,
+        source_appeal: source_appeal,
         cavc_docket_number: cavc_docket_number,
         represented_by_attorney: represented_by_attorney,
         cavc_judge_full_name: cavc_judge_full_name,
@@ -52,10 +52,50 @@ describe CavcRemand do
       params.each_key { |key| expect(subject.send(key)).to eq params[key] }
     end
 
+    def last_cavc_appeal(cavc_remand)
+      # To-do: remove assumption that the last appeal with the same document number is the created appeal
+      # We should be able to get the cavc_appeal from cavc_remand in case there are multiple found
+      Appeal.court_remand.where(stream_docket_number: cavc_remand.source_appeal.docket_number).order(:id).last
+    end
+
     it "creates the new court_remand cavc stream" do
-      expect(Appeal.court_remand.where(stream_docket_number: appeal.docket_number).count).to eq(0)
+      expect(Appeal.court_remand.where(stream_docket_number: source_appeal.docket_number).count).to eq(0)
+      expect(source_appeal.aod_based_on_age).not_to be true
       expect { subject }.not_to raise_error
-      expect(Appeal.court_remand.where(stream_docket_number: appeal.docket_number).count).to eq(1)
+      expect(Appeal.court_remand.where(stream_docket_number: source_appeal.docket_number).count).to eq(1)
+      expect(last_cavc_appeal(subject).aod_based_on_age).not_to be true
+    end
+
+    context "when source appeal is AOD" do
+      context "source appeal is AOD due to claimant's age" do
+        let(:source_appeal) { create(:appeal, :active, :advanced_on_docket_due_to_age) }
+        it "creates new CAVC remand appeal with AOD due to age" do
+          expect(source_appeal.aod_based_on_age).to be true
+
+          cavc_remand = subject
+          cavc_appeal = last_cavc_appeal(cavc_remand)
+          expect(cavc_appeal.aod_based_on_age).to eq cavc_remand.source_appeal.aod_based_on_age
+        end
+      end
+      context "source appeal has non-age-related AOD Motion" do
+        let(:source_appeal) { create(:appeal, :active, :advanced_on_docket_due_to_motion) }
+        it "copies AOD motions to new CAVC remand appeal" do
+          person = source_appeal.claimant.person
+          expect(AdvanceOnDocketMotion.granted_for_person?(person, source_appeal)).to be true
+          aod_motions_count = AdvanceOnDocketMotion.for_appeal_and_person(source_appeal, person).count
+          expect(source_appeal.aod?).to be true
+
+          cavc_remand = subject
+          cavc_appeal = last_cavc_appeal(cavc_remand)
+          expect(cavc_remand.source_appeal.claimant.person).to eq person
+          expect(cavc_appeal.claimant.person).to eq person
+          expect(AdvanceOnDocketMotion.for_appeal_and_person(source_appeal, person).count).to eq aod_motions_count
+          expect(AdvanceOnDocketMotion.for_appeal_and_person(cavc_appeal, person).count).to eq aod_motions_count
+
+          expect(AdvanceOnDocketMotion.granted_for_person?(cavc_appeal.claimant.person, cavc_appeal)).to be true
+          expect(cavc_appeal.aod?).to be true
+        end
+      end
     end
 
     context "when missing required attributes" do

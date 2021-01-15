@@ -25,7 +25,8 @@ describe SchedulePeriod, :postgres do
     it do
       total_allocation_days = HearingSchedule::GenerateHearingDaysSchedule.new(schedule_period)
         .generate_co_hearing_days_schedule.size +
-                              Allocation.where(schedule_period: schedule_period).sum(:allocated_days)
+                              Allocation.where(schedule_period: schedule_period).sum(:allocated_days) +
+                              Allocation.where(schedule_period: schedule_period).sum(:allocated_days_without_room)
       assignments = schedule_period.algorithm_assignments
 
       expect(assignments.count).to eq(total_allocation_days)

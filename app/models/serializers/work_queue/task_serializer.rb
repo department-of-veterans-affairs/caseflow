@@ -118,6 +118,10 @@ class WorkQueue::TaskSerializer
     object.appeal.try(:overtime?)
   end
 
+  attribute :veteran_appellant_deceased do |object|
+    object.appeal.try(:veteran_appellant_deceased?)
+  end
+
   attribute :issue_count do |object|
     object.appeal.is_a?(LegacyAppeal) ? object.appeal.undecided_issues.count : object.appeal.number_of_issues
   end

@@ -265,6 +265,7 @@ Rails.application.routes.draw do
     end
     resources(:place_hold, only: [:create], controller: 'tasks/place_hold')
     resources(:end_hold, only: [:create], controller: 'tasks/end_hold')
+    resources(:extension_request, only: [:create], controller: 'extension_request')
   end
 
   resources :judge_assign_tasks, only: [:create]
@@ -315,6 +316,7 @@ Rails.application.routes.draw do
   post "post_decision_motions/return", to: "post_decision_motions#return_to_lit_support"
   post "post_decision_motions/return_to_judge", to: "post_decision_motions#return_to_judge"
   post "post_decision_motions", to: "post_decision_motions#create"
+  post "docket_switches", to: "docket_switches#create"
 
   # :nocov:
   namespace :test do

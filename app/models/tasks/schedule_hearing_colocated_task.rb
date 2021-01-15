@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+##
+# This task is used to either confirm that a hearing has been scheduled
+# or create a ScheduleHearingTask indicating that a hearing needs to be scheduled.
+
 class ScheduleHearingColocatedTask < ColocatedTask
   after_update :send_to_hearings_branch, if: :just_completed_ama_organization_task?
 
