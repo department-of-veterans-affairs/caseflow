@@ -327,12 +327,17 @@ describe DocumentFetcher, :postgres do
             # docs.second does not exist in the DB and hence should be CREATED
             docs + [docs.first.dup, docs.second.dup]
           end
-          it "deduplicates and does not fail bulk upsert" do
+          it "deduplicates, sends warning to Sentry, and does not fail bulk upsert" do
             expect(documents.map(&:vbms_document_id).count).to eq(52)
             expect(documents.map(&:vbms_document_id).uniq.count).to eq(50)
             expect(Document.count).to eq 20
             expect(Document.find_by(vbms_document_id: documents.first.vbms_document_id)).not_to be_nil
             expect(Document.find_by(vbms_document_id: documents.second.vbms_document_id)).to be_nil
+
+            expect(Raven).to receive(:capture_exception).with(
+              RuntimeError.new("Warning: Unexpected duplicate document records: fetched_documents"),
+              hash_including(extra: hash_including(application: "reader", docs_duplicated: 2))
+            )
 
             query_data = SqlTracker.track do
               document_fetcher.find_or_create_documents!

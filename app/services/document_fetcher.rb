@@ -116,14 +116,10 @@ class DocumentFetcher
   end
 
   def warn_about_duplicates(warning_message, dups_hash)
-    slack_msg = "Found duplicates: #{warning_message}: #{dups_hash}"
-    slack_msg += "\nFor analysis: #{dups_hash.map { |_id, array| array.map { |doc| doc.to_hash.values.to_csv } }.flatten}"
-    puts slack_msg
-    # Raven.capture_exception(error, extra: extra)
-    slack_service.send_notification(slack_msg, "Warning: Unexpected duplicate document records", "#appeals-reader")
-  end
-
-  def slack_service
-    @slack_service ||= SlackService.new(url: ENV["SLACK_DISPATCH_ALERT_URL"])
+    docs_as_csv = dups_hash.map { |_id, array| array.map { |doc| doc.to_hash.values.to_csv } }.flatten
+    extra = { application: "reader",
+              docs_duplicated: dups_hash.count,
+              docs_as_csv: docs_as_csv.join("") }
+    Raven.capture_exception(RuntimeError.new("Warning: Unexpected duplicate document records: #{warning_message}"), extra: extra)
   end
 end
