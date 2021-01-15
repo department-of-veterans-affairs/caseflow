@@ -122,14 +122,14 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
     }
   };
 
-  const handleChangeReason = (value) => {
-    if (value) {
-      //setDisableButton(false);
-      setChangeReason(value);
-    } else {
-      //setDisableButton(true);
-    }
-  };
+  // const handleChangeReason = (value) => {
+  //   if (value) {
+  //     setDisableButton(false);
+  //     setChangeReason(value);
+  //   } else {
+  //     setDisableButton(true);
+  //   }
+  // };
 
   return (
     <Modal
@@ -157,7 +157,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
         placeholder="Select the reason..."
         value={changeReason}
         options={changeReasons}
-        onChange={handleChangeReason}
+        onChange={setChangeReason}
         isClearable
         debounce={250}
         strongLabel
@@ -170,7 +170,6 @@ EditNodDateModalContainer.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   nodDate: PropTypes.string.isRequired,
-  reason: PropTypes.string.isRequired,
   appealId: PropTypes.string.isRequired
 };
 
@@ -178,6 +177,5 @@ EditNodDateModal.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   nodDate: PropTypes.string.isRequired,
-  reason: PropTypes.string.isRequired,
   appealId: PropTypes.string.isRequired
 };
