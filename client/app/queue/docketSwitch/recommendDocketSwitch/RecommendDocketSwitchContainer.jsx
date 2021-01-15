@@ -4,12 +4,12 @@ import { useHistory, useParams } from 'react-router';
 import { fetchJudges } from '../../QueueActions';
 
 import { appealWithDetailSelector } from '../../selectors';
-import { dispositions } from '../constants';
+import DISPOSITIONS from '../../../../constants/DOCKET_SWITCH';
 import { createDocketSwitchRulingTask } from './recommendDocketSwitchSlice';
 import { RecommendDocketSwitchForm } from './RecommendDocketSwitchForm';
 import {
-  DOCKET_SWITCH_REQUEST_TITLE,
-  DOCKET_SWITCH_REQUEST_MESSAGE,
+  DOCKET_SWITCH_RECOMMENDATION_SUCCESS_TITLE,
+  DOCKET_SWITCH_RECOMMENDATION_SUCCESS_MESSAGE,
 } from '../../../../COPY';
 
 import { sprintf } from 'sprintf-js';
@@ -28,7 +28,7 @@ export const formatDocketSwitchRecommendation = ({
 
   parts.push(`**Summary:** ${summary}`);
   parts.push(`**Is this a timely request:** ${timelyCaps}`);
-  parts.push(`**Recommendation:** ${dispositions[disposition].displayText}`);
+  parts.push(`**Recommendation:** ${DISPOSITIONS[disposition].displayText}`);
   parts.push(`**Draft letter:** ${hyperlink}`);
 
   // Separate each chunk by two line breaks
@@ -78,8 +78,8 @@ export const RecommendDocketSwitchContainer = () => {
     };
 
     const successMessage = {
-      title: sprintf(DOCKET_SWITCH_REQUEST_TITLE, appeal.appellantFullName, formData.judge.label),
-      detail: DOCKET_SWITCH_REQUEST_MESSAGE,
+      title: sprintf(DOCKET_SWITCH_RECOMMENDATION_SUCCESS_TITLE, appeal.appellantFullName, formData.judge.label),
+      detail: DOCKET_SWITCH_RECOMMENDATION_SUCCESS_MESSAGE,
     };
 
     try {

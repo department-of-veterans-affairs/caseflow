@@ -5,12 +5,6 @@ class Document < CaseflowRecord
   has_many :document_views
   has_many :documents_tags
   has_many :tags, through: :documents_tags
-  has_paper_trail only: [:description,
-                         :category_case_summary,
-                         :category_medical,
-                         :category_other,
-                         :category_procedural],
-                  on: [:update, :destroy], save_changes: false
 
   self.inheritance_column = nil
 
@@ -64,7 +58,11 @@ class Document < CaseflowRecord
   DECISION_TYPES = ["BVA Decision", "Remand BVA or CAVC"].freeze
   FUZZY_MATCH_DAYS = 4.days.freeze
 
-  attr_accessor :efolder_id, :alt_types, :filename, :vacols_date
+  # comes from DocumentFetcher
+  attr_accessor :efolder_id, :alt_types, :filename
+
+  # comes from VACOLS DB and set by LegacyAppeal when it references NOD, SOC, or Form9 documents
+  attr_accessor :vacols_date
 
   def type?(type)
     (self.type == type) || (alt_types || []).include?(type)
@@ -75,11 +73,11 @@ class Document < CaseflowRecord
   end
 
   def match_vbms_document_from(vbms_documents)
-    match_vbms_document_using(vbms_documents) { |doc| doc.receipt_date == vacols_date }
+    sync_with_vbms_document_using(vbms_documents) { |doc| doc.receipt_date == vacols_date }
   end
 
   def fuzzy_match_vbms_document_from(vbms_documents)
-    match_vbms_document_using(vbms_documents) { |doc| fuzzy_date_match?(doc) }
+    sync_with_vbms_document_using(vbms_documents) { |doc| fuzzy_date_match?(doc) }
   end
 
   # If a document was created with a vacols_date and merged with a matching vbms
@@ -178,6 +176,9 @@ class Document < CaseflowRecord
     serializable_hash
   end
 
+  # Called
+  # - by document_fetcher.save!
+  # - when legacy_appeal references nod, soc, or form9 documents (created in memory and not saved to the DB)
   def merge_into(document)
     document.assign_attributes(
       efolder_id: efolder_id,
@@ -243,7 +244,8 @@ class Document < CaseflowRecord
       RequestStore.store[:application] == "reader"
   end
 
-  def match_vbms_document_using(vbms_documents)
+  # match and merge (but does not save to DB)
+  def sync_with_vbms_document_using(vbms_documents)
     match = vbms_documents.detect do |doc|
       yield(doc) && doc.type?(type)
     end

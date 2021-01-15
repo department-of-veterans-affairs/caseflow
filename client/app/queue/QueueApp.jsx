@@ -12,6 +12,7 @@ import StringUtil from '../util/StringUtil';
 
 import {
   setCanEditAod,
+  setCanEditNodDate,
   setCanViewOvertimeStatus,
   setFeatureToggles,
   setUserRole,
@@ -36,6 +37,7 @@ import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './caseEvaluation/EvaluateDecisionView';
 import AddColocatedTaskView from './colocatedTasks/AddColocatedTaskView';
 import BlockedAdvanceToJudgeView from './BlockedAdvanceToJudgeView';
+import AddCavcRemandView from './AddCavcRemandView';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
@@ -87,10 +89,12 @@ import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
 import { docketSwitchRoutes } from './docketSwitch/docketSwitchRoutes';
 import ScheduleVeteran from '../hearings/components/ScheduleVeteran';
 import HearingTypeConversion from '../hearings/components/HearingTypeConversion';
+import CavcReviewExtensionRequestModal from './components/CavcReviewExtensionRequestModal';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
+    this.props.setCanEditNodDate(this.props.userCanViewEditNodDate);
     this.props.setCanViewOvertimeStatus(this.props.userCanViewOvertimeStatus);
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
@@ -239,6 +243,10 @@ class QueueApp extends React.PureComponent {
 
   routedBlockedCaseMovement = (props) => (
     <BlockedAdvanceToJudgeView {...props.match.params} />
+  );
+
+  routedAddCavcRemand = (props) => (
+    <AddCavcRemandView {...props.match.params} />
   );
 
   routedAdvancedOnDocketMotion = (props) => (
@@ -412,6 +420,10 @@ class QueueApp extends React.PureComponent {
   routedStartHoldModal = (props) => <StartHoldModal {...props.match.params} />;
 
   routedEndHoldModal = (props) => <EndHoldModal {...props.match.params} />;
+
+  routedCavcExtensionRequest = (props) => (
+    <CavcReviewExtensionRequestModal {...props.match.params} closeModal={() => props.history.goBack()} />
+  );
 
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
@@ -587,6 +599,12 @@ class QueueApp extends React.PureComponent {
 
               <PageRoute
                 exact
+                path="/queue/appeals/:appealId/add_cavc_remand"
+                title="Add Cavc Remand | Caseflow"
+                render={this.routedAddCavcRemand}
+              />
+              <PageRoute
+                exact
                 path="/organizations/:organization/users"
                 title="Organization Users | Caseflow"
                 render={this.routedOrganizationUsers}
@@ -656,7 +674,31 @@ class QueueApp extends React.PureComponent {
               />
               <Route
                 path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.SEND_TO_TRANSLATION.value
+                  TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.value
+                }`}
+                render={this.routedAssignToSingleTeam}
+              />
+              <Route
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.value
+                }`}
+                render={this.routedAssignToSingleTeam}
+              />
+              <Route
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION.value
+                }`}
+                render={this.routedAssignToSingleTeam}
+              />
+              <Route
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.SEND_TO_HEARINGS_BLOCKING_DISTRIBUTION.value
+                }`}
+                render={this.routedAssignToSingleTeam}
+              />
+              <Route
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CLARIFY_POA_BLOCKING_CAVC.value
                 }`}
                 render={this.routedAssignToSingleTeam}
               />
@@ -743,6 +785,12 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.value
                 }`}
                 render={this.routedAssignToUser}
+              />
+              <Route
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CAVC_EXTENSION_REQUEST.value
+                }`}
+                render={this.routedCavcExtensionRequest}
               />
 
               <PageRoute
@@ -897,6 +945,7 @@ QueueApp.propTypes = {
   buildDate: PropTypes.string,
   setCanEditAod: PropTypes.func,
   setCanViewOvertimeStatus: PropTypes.func,
+  setCanEditNodDate: PropTypes.func,
   canEditAod: PropTypes.bool,
   setFeatureToggles: PropTypes.func,
   featureToggles: PropTypes.object,
@@ -914,6 +963,7 @@ QueueApp.propTypes = {
   reviewActionType: PropTypes.string,
   userCanViewHearingSchedule: PropTypes.bool,
   userCanViewOvertimeStatus: PropTypes.bool,
+  userCanViewEditNodDate: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
@@ -924,6 +974,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       setCanEditAod,
+      setCanEditNodDate,
       setCanViewOvertimeStatus,
       setFeatureToggles,
       setUserRole,

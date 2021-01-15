@@ -34,7 +34,16 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
       "closestRegionalOfficeLabel": "Nashville Regional office",
       "completedHearingOnPreviousAppeal": false,
       "decisionDate": null,
-      "decisionIssues": Array [],
+      "decisionIssues": Array [
+        Object {
+          "description": "This is a description of the decision",
+          "id": 1,
+        },
+        Object {
+          "description": "This is a description of another decision",
+          "id": 2,
+        },
+      ],
       "docketName": "Legacy",
       "docketNumber": "200805-541",
       "documentID": null,
@@ -217,9 +226,6 @@ exports[`HearingTypeConversionForm Display missing email alert 1`] = `
                     <div
                       className="usa-alert-body"
                     >
-                      <h2
-                        className="usa-alert-heading"
-                      />
                       <div
                         className="usa-alert-text"
                       >
@@ -420,7 +426,16 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
       "closestRegionalOfficeLabel": null,
       "completedHearingOnPreviousAppeal": false,
       "decisionDate": null,
-      "decisionIssues": Array [],
+      "decisionIssues": Array [
+        Object {
+          "description": "This is a description of the decision",
+          "id": 1,
+        },
+        Object {
+          "description": "This is a description of another decision",
+          "id": 2,
+        },
+      ],
       "docketName": "Legacy",
       "docketNumber": "200805-541",
       "documentID": null,
@@ -779,7 +794,16 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
       "closestRegionalOfficeLabel": "Nashville Regional office",
       "completedHearingOnPreviousAppeal": false,
       "decisionDate": null,
-      "decisionIssues": Array [],
+      "decisionIssues": Array [
+        Object {
+          "description": "This is a description of the decision",
+          "id": 1,
+        },
+        Object {
+          "description": "This is a description of another decision",
+          "id": 2,
+        },
+      ],
       "docketName": "Legacy",
       "docketNumber": "200805-541",
       "documentID": null,
@@ -1138,7 +1162,16 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
       "closestRegionalOfficeLabel": "Nashville Regional office",
       "completedHearingOnPreviousAppeal": false,
       "decisionDate": null,
-      "decisionIssues": Array [],
+      "decisionIssues": Array [
+        Object {
+          "description": "This is a description of the decision",
+          "id": 1,
+        },
+        Object {
+          "description": "This is a description of another decision",
+          "id": 2,
+        },
+      ],
       "docketName": "Legacy",
       "docketNumber": "200805-541",
       "documentID": null,

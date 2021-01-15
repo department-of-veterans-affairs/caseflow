@@ -306,6 +306,7 @@ class HearingDayAddModal extends React.Component {
         {this.state.videoSelected &&
         <RegionalOfficeDropdown
           label="Select Regional Office (RO)"
+          excludeVirtualHearingsOption
           errorMessage={this.state.roError ? this.getRoErrorMessages() : null}
           onChange={this.onRegionalOfficeChange}
           value={this.props.selectedRegionalOffice?.key} />

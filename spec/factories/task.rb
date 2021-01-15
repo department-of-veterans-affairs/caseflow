@@ -364,6 +364,16 @@ FactoryBot.define do
         parent { FactoryBotHelper.find_first_task_or_create(appeal, CavcTask) }
       end
 
+      factory :cavc_poa_clarification_task, class: CavcPoaClarificationTask do
+        assigned_to { CavcLitigationSupport.singleton }
+        parent { FactoryBotHelper.find_first_task_or_create(appeal, SendCavcRemandProcessedLetterTask) }
+      end
+
+      factory :cavc_remand_processed_letter_response_window_task, class: CavcRemandProcessedLetterResponseWindowTask do
+        assigned_to { CavcLitigationSupport.singleton }
+        parent { FactoryBotHelper.find_first_task_or_create(appeal, CavcTask) }
+      end
+
       factory :hearing_task, class: HearingTask do
         assigned_to { Bva.singleton }
         parent { appeal.root_task || create(:root_task, appeal: appeal) }
@@ -497,6 +507,14 @@ FactoryBot.define do
 
       factory :docket_switch_ruling_task, class: DocketSwitchRulingTask do
         parent { create(:docket_switch_mail_task, appeal: appeal) }
+      end
+
+      factory :docket_switch_denied_task, class: DocketSwitchDeniedTask do
+        parent { create(:docket_switch_ruling_task, appeal: appeal) }
+      end
+
+      factory :docket_switch_granted_task, class: DocketSwitchGrantedTask do
+        parent { create(:docket_switch_ruling_task, appeal: appeal) }
       end
 
       factory :congressional_interest_mail_task, class: CongressionalInterestMailTask do

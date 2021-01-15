@@ -349,6 +349,8 @@ class LegacyAppeal < CaseflowRecord
            :representative_to_hash,
            :representative_participant_id,
            :vacols_representatives,
+           :representative_is_agent?,
+           :representative_is_organization?,
            :representative_is_vso?,
            :representative_is_colocated_vso?,
            to: :legacy_appeal_representative
@@ -936,14 +938,16 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def attorney_case_review
-    # # Created at date will be nil if there is no decass record created for this appeal yet
+    # Created at date will be nil if there is no decass record created for this appeal yet
     return unless vacols_case_review&.created_at
 
-    AttorneyCaseReview.find_by(task_id: "#{vacols_id}-#{VacolsHelper.day_only_str(vacols_case_review.created_at)}")
+    task_id = "#{vacols_id}-#{VacolsHelper.day_only_str(vacols_case_review.created_at)}"
+
+    @attorney_case_review ||= AttorneyCaseReview.find_by(task_id: task_id)
   end
 
   def vacols_case_review
-    VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
+    @vacols_case_review ||= VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
   end
 
   def death_dismissal!
@@ -981,6 +985,22 @@ class LegacyAppeal < CaseflowRecord
   # uses the paper_trail version on LegacyAppeal
   def latest_appeal_event
     TaskEvent.new(version: versions.last) if versions.any?
+  end
+
+  # Hacky logic to determine if an acting judge should see judge actions or attorney actions on a case assigned to them
+  # See https://github.com/department-of-veterans-affairs/caseflow/issues/14886  for details
+  def assigned_to_acting_judge_as_judge?(acting_judge)
+    # First try to determine role on the case by inspecting the attorney_case_review, if there is one present.
+    if attorney_case_review.present?
+      return false if attorney_case_review.attorney_id == acting_judge.id
+
+      return true if attorney_case_review.reviewing_judge_id == acting_judge.id
+    end
+
+    # In case an attorney case review does not exist in caseflow or if this acting judge was neither the judge or
+    # attorney listed in the review, check to see if a decision has already been written for the appeal. If so, assume
+    # this appeal is assigned to the acting judge as a judge task as a best guess
+    vacols_case_review.valid_document_id?
   end
 
   private

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
@@ -38,6 +39,8 @@ import {
   toggleCorrectionTypeModal
 } from '../actions/addIssues';
 import COPY from '../../../COPY';
+import { EditClaimLabelModal } from '../../intakeEdit/components/EditClaimLabelModal';
+import { ConfirmClaimLabelModal } from '../../intakeEdit/components/ConfirmClaimLabelModal';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -135,8 +138,45 @@ class AddIssuesPage extends React.Component {
   establishmentCredits() {
     return <div className="cf-intake-establish-credits">
       Established {this.establishmentCreditsTimestamp()}
-      <span> by <a href={`/intake/manager?user_css_id=${this.props.intakeUser}`}>{this.props.intakeUser}</a></span>
+      { this.props.intakeUser &&
+        <span> by <a href={`/intake/manager?user_css_id=${this.props.intakeUser}`}>{this.props.intakeUser}</a></span>
+      }
     </div>;
+  }
+
+  // Methods for handling editing of claim label
+  openEditClaimLabelModal = (endProductCode) => {
+    this.setState({
+      showEditClaimLabelModal: true,
+      selectedEpCode: endProductCode
+    });
+  }
+  closeEditClaimLabelModal = () => {
+    this.setState({
+      showEditClaimLabelModal: false,
+      showConfirmClaimLabelModal: false,
+      previousEpCode: null,
+      selectedEpCode: null
+    });
+  }
+
+  handleEditClaimLabel = (data) => {
+    this.setState({
+      showEditClaimLabelModal: false,
+      showConfirmClaimLabelModal: true,
+      previousEpCode: data.oldCode,
+      selectedEpCode: data.newCode
+    });
+  }
+
+  submitClaimLabelEdit = () => {
+    // eslint-disable-next-line no-console
+    console.log(`Submitting request to switch from ${this.state.previousEpCode} to ${this.state.selectedEpCode}...`);
+    this.setState({
+      showConfirmClaimLabelModal: false,
+      previousEpCode: null,
+      selectedEpCode: null
+    });
   }
 
   render() {
@@ -270,7 +310,10 @@ class AddIssuesPage extends React.Component {
               <strong>{ EP_CLAIM_TYPES[endProductCode].official_label }</strong>
             </div>
             <div className="edit-claim-label">
-              <Button classNames={['usa-button-secondary']}>
+              <Button
+                classNames={['usa-button-secondary']}
+                onClick={() => this.openEditClaimLabelModal(endProductCode)}
+              >
               Edit claim label
               </Button>
             </div>
@@ -341,6 +384,21 @@ class AddIssuesPage extends React.Component {
               });
               this.props.toggleCorrectionTypeModal();
             }}
+          />
+        )}
+        {this.state.showEditClaimLabelModal && (
+          <EditClaimLabelModal
+            selectedEpCode={this.state.selectedEpCode}
+            onCancel={this.closeEditClaimLabelModal}
+            onSubmit={this.handleEditClaimLabel}
+          />
+        )}
+        {this.state.showConfirmClaimLabelModal && (
+          <ConfirmClaimLabelModal
+            previousEpCode={this.state.previousEpCode}
+            newEpCode={this.state.selectedEpCode}
+            onCancel={this.closeEditClaimLabelModal}
+            onSubmit={this.submitClaimLabelEdit}
           />
         )}
         <h1 className="cf-txt-c">{messageHeader}</h1>

@@ -103,19 +103,19 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
     it "shows each established end product label" do
       visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
 
-      # First shows issues on end products, in ascending order by EP code
-      # Note for these, there's a row for the EP, and another for the issues
-      row = find("#table-row-8")
-      label = Constants::EP_CLAIM_TYPES[nonrating_request_issue.end_product_establishment.code]["official_label"]
-      expect(row).to have_content(label)
-      expect(row).to have_button("Edit claim label")
-      expect(find("#table-row-9")).to have_content(/Requested issues\n1. #{nonrating_request_issue.description}/i)
+      # First shows issues on end products, in ascending order by EP code (nonrating before rating)
+      # Note for these, there's a row for the EP label, and a subsequent row for the issues
+      nr_label = Constants::EP_CLAIM_TYPES[nonrating_request_issue.end_product_establishment.code]["official_label"]
+      nr_row = page.find("tr", text: nr_label, match: :prefer_exact)
+      expect(nr_row).to have_button("Edit claim label")
+      nr_next_row = nr_row.first(:xpath, "./following-sibling::tr")
+      expect(nr_next_row).to have_content(/Requested issues\n1. #{nonrating_request_issue.description}/i)
 
-      label = Constants::EP_CLAIM_TYPES[rating_request_issue.end_product_establishment.code]["official_label"]
-      row = find("#table-row-10")
-      expect(row).to have_content(label)
-      expect(row).to have_button("Edit claim label")
-      expect(find("#table-row-11")).to have_content(/Requested issues\n2. #{rating_request_issue.description}/i)
+      r_label = Constants::EP_CLAIM_TYPES[rating_request_issue.end_product_establishment.code]["official_label"]
+      r_row = page.find("tr", text: r_label, match: :prefer_exact)
+      expect(r_row).to have_button("Edit claim label")
+      r_next_row = r_row.first(:xpath, "./following-sibling::tr")
+      expect(r_next_row).to have_content(/Requested issues\n2. #{rating_request_issue.description}/i)
 
       # Shows issues not on end products (single row)
       row = find("#table-row-12")
@@ -126,6 +126,25 @@ feature "Intake Edit EP Claim Labels", :all_dbs do
       expect(row).to have_content(
         /Withdrawn issues\n4. #{withdrawn_request_issue.description}/i
       )
+
+      # Edit nonrating label to rating
+      nr_row.find("button", text: "Edit claim label").click
+      expect(page).to have_content(COPY::EDIT_CLAIM_LABEL_MODAL_NOTE)
+      click_on "Cancel"
+
+      expect(page).to_not have_content(COPY::EDIT_CLAIM_LABEL_MODAL_NOTE)
+
+      nr_row.find("button", text: "Edit claim label").click
+      safe_click ".cf-select"
+      fill_in "Select the correct EP claim label", with: "030HLRR"
+      find("#select-claim-label").send_keys :enter
+      find("button", text: "Continue").click
+
+      expect(page).to have_content(COPY::CONFIRM_CLAIM_LABEL_MODAL_TITLE)
+      expect(page).to have_content("Previous label: #{nr_label}")
+      expect(page).to have_content("New label: #{r_label}")
+
+      find("button", text: "Confirm").click
     end
   end
 end

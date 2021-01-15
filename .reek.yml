@@ -65,7 +65,6 @@ detectors:
       - AppealTaskHistory#build_events
       - ApplicationRecord#as_hash
       - AssignHearingDispositionTask#reschedule_or_schedule_later
-      - AssignJudgeteamRoles#process
       - AsyncableJobsReporter
       - CachedAppealService#cache_ama_appeals
       - CachedAppealService#cache_legacy_appeal_postgres_data
@@ -168,7 +167,6 @@ detectors:
       - BgsPowerOfAttorney
       - ControllerSchema
       - HearingLocation
-      - JudgeTeam
       - LegacyAppeal
       - Person
       - QueueConfig
