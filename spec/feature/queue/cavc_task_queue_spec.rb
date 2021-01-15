@@ -170,6 +170,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           visit "queue/appeals/#{task.appeal.external_id}"
           find(".cf-select__control", text: "Select an action").click
           expect(page).to have_content Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label
+          # mawagner - Oh, interesting -- this changed from 'reassign' to 'assign' I infer?
           find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label).click
 
           find(".cf-select__control", text: org_admin.full_name).click

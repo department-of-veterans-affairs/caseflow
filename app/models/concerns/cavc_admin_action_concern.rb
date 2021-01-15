@@ -18,14 +18,19 @@ module CavcAdminActionConcern
     def creating_from_cavc_workflow?(user, parent_task)
       parent_task&.type == DistributionTask.name && (
         CavcLitigationSupport.singleton.user_is_admin?(user) ||
-        parent_task_assigned_to_cavc_lit_team_and_user_is_on_team(parent_task, user) ||
+        parent_task_assigned_to_cavc_lit_teammate(user, parent_task) ||
         parent_task.appeal.tasks.open.where(type: CAVC_USER_TASK_TYPES, assigned_to: user).exists?
       )
     end
 
-    def parent_task_assigned_to_cavc_lit_team_and_user_is_on_team(parent_task, user)
+    private
+
+    def parent_task_assigned_to_cavc_lit_teammate(user, parent_task)
       CavcLitigationSupport.singleton.user_has_access?(user) &&
-        parent_task.appeal.tasks.open.where(type: CAVC_USER_TASK_TYPES).exists? # This is too vague, I think. Can we scope this to the lit support team in general?
+        parent_task.appeal.tasks.open.where(
+          type: CAVC_USER_TASK_TYPES,
+          assigned_to: CavcLitigationSupport.singleton.users
+        ).exists?
     end
   end
 

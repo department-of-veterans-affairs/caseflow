@@ -27,7 +27,7 @@ class CavcCorrespondenceMailTask < MailTask
 
     return organization_task_actions if org_task_and_admin_user(user)
 
-    return user_task_actions if user_task_and_admin_or_assigned_to_user(user) || org_task_and_team_member(user)
+    return user_task_actions if user_task_and_admin_or_assigned_to_user(user)
 
     []
   end
@@ -75,12 +75,13 @@ class CavcCorrespondenceMailTask < MailTask
     assigned_to_type == "Organization" && CavcLitigationSupport.singleton.user_is_admin?(user)
   end
 
-  def org_task_and_team_member(user)
-    assigned_to_type == "Organization" && CavcLitigationSupport.singleton.user_has_access?(user)
+  def user_task_and_admin_or_assigned_to_user(user)
+    # mawagner: I think we can get rid of cavc_lit_admin here
+    assigned_to_type == "User" && (assigned_to == user || cavc_lit_admin(user) || assigned_to_cavc_lit_team_member)
   end
 
-  def user_task_and_admin_or_assigned_to_user(user)
-    assigned_to_type == "User" && (assigned_to == user || cavc_lit_admin(user))
+  def assigned_to_cavc_lit_team_member
+    CavcLitigationSupport.singleton.users.include?(assigned_to)
   end
 
   def cavc_lit_admin(user)
