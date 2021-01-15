@@ -20,8 +20,6 @@ FactoryBot.define do
     end
 
     after(:build) do |cavc_remand, evaluator|
-      cavc_remand.created_by = (evaluator.created_by || User.first)
-
       if evaluator.source_appeal
         cavc_remand.source_appeal = evaluator.source_appeal
 
