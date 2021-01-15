@@ -293,8 +293,9 @@ describe DocumentFetcher, :postgres do
         # Increase the size of the array to test scalability; 20000 works but takes a minute or so
         let(:documents) { Array.new(50) { Generators::Document.build }.uniq(&:vbms_document_id) }
         let!(:saved_documents) do
-          Array.new(documents.size / 2) do |i|
-            # have every other document already exists to test that all CREATEs and UPDATEs are each done at most once
+          Array.new(20) do |i|
+            # to test that all CREATEs and UPDATEs are each done at most once,
+            # have every other document already exists (up to 20 records)
             fetched_document = documents[i * 2]
             Generators::Document.create(
               type: "Form 9",
@@ -317,6 +318,31 @@ describe DocumentFetcher, :postgres do
           doc_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents\"") }
           expect(doc_insert_queries.pluck(:count).max).to eq 1
           expect(query_data.values.select { |o| o[:sql].start_with?("UPDATE") }).to be_empty
+        end
+
+        context "when there are duplicate documents returned from document_service" do
+          let(:documents) do
+            docs = Array.new(50) { Generators::Document.build }.uniq(&:vbms_document_id)
+            # docs.first will already exist in the DB and hence will be UPDATED
+            # docs.second does not exist in the DB and hence should be CREATED
+            docs + [docs.first.dup, docs.second.dup]
+          end
+          it "deduplicates and does not fail bulk upsert" do
+            expect(documents.map(&:vbms_document_id).count).to eq(52)
+            expect(documents.map(&:vbms_document_id).uniq.count).to eq(50)
+            expect(Document.count).to eq 20
+            expect(Document.find_by(vbms_document_id: documents.first.vbms_document_id)).not_to be_nil
+            expect(Document.find_by(vbms_document_id: documents.second.vbms_document_id)).to be_nil
+
+            query_data = SqlTracker.track do
+              document_fetcher.find_or_create_documents!
+            end
+
+            # pp query_data.values.pluck(:sql, :count)
+            doc_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents\"") }
+            expect(doc_insert_queries.pluck(:count).max).to eq 1
+            expect(query_data.values.select { |o| o[:sql].start_with?("UPDATE") }).to be_empty
+          end
         end
       end
     end

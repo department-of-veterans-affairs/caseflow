@@ -50,10 +50,13 @@ class DocumentFetcher
     docs_to_update, docs_to_create = split_docs(documents, existing_vbms_doc_ver_ids)
 
     # Update existing docs
+    docs_to_update = deduplicate(docs_to_update, "docs_to_update") # To-do: remove after seeing no duplicate warnings
     updated_docs = Document.bulk_merge_and_save(docs_to_update)
 
     # Create new docs that don't exist
+    docs_to_create = deduplicate(docs_to_create, "docs_to_create") # To-do: remove after seeing no duplicate warnings
     Document.import(docs_to_create)
+
     # For newly created documents that have a series_id, copy over the metadata (annotations, tags, category labels)
     # from the latest version of the document (i.e., the latest id having the same series_id) in Caseflow.
     # The created document then becomes the latest version among the documents with the same series_id.
@@ -97,8 +100,22 @@ class DocumentFetcher
   def fetch_documents_from_service!
     doc_struct = document_service.fetch_documents_for(appeal, RequestStore.store[:current_user])
 
-    self.documents = doc_struct[:documents]
+    self.documents = deduplicate(doc_struct[:documents], "fetched_documents")
     self.manifest_vbms_fetched_at = doc_struct[:manifest_vbms_fetched_at].try(:in_time_zone)
     self.manifest_vva_fetched_at = doc_struct[:manifest_vva_fetched_at].try(:in_time_zone)
+  end
+
+  def deduplicate(docs, warning_message)
+    dups_hash = docs.group_by(&:vbms_document_id).select { |_id, array| array.count > 1 }
+    return docs if dups_hash.empty?
+
+    warn_about_duplicates(warning_message, dups_hash)
+    docs_to_remove = dups_hash.map { |_id, array| array.drop(1) }.flatten
+    docs - docs_to_remove
+  end
+
+  def warn_about_duplicates(warning_message, dups_hash)
+    puts "Found duplicates: #{warning_message}: #{dups_hash}"
+    puts "For analysis: #{dups_hash.map { |_id, array| array.map { |doc| doc.to_hash.values.to_csv } }.flatten}"
   end
 end
