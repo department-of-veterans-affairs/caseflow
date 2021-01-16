@@ -21,7 +21,7 @@ const actionOptions = Object.entries(colocatedAdminActions).map(
   ([value, label]) => ({ label, value })
 );
 
-export const DocketSwitchAddAdminTaskForm = ({ baseName, onRemove }) => {
+export const DocketSwitchAddAdminTaskForm = ({ baseName, item, onRemove }) => {
   const { control, errors, register } = useFormContext();
 
   const handleRemove = () => onRemove();
@@ -32,6 +32,7 @@ export const DocketSwitchAddAdminTaskForm = ({ baseName, onRemove }) => {
         <Controller
           name={`${baseName}.type`}
           control={control}
+          defaultValue={item?.type || ''}
           render={({ name, onChange: onSelectChange }) => {
             return (
               <SearchableDropdown
@@ -51,6 +52,7 @@ export const DocketSwitchAddAdminTaskForm = ({ baseName, onRemove }) => {
             errors?.[baseName]?.instructions ? FORM_ERROR_FIELD_REQUIRED : null
           }
           name={`${baseName}.instructions`}
+          defaultValue={item?.instructions || ''}
           label={ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
           inputRef={register}
         />
@@ -66,5 +68,9 @@ export const DocketSwitchAddAdminTaskForm = ({ baseName, onRemove }) => {
 
 DocketSwitchAddAdminTaskForm.propTypes = {
   baseName: PropTypes.string.isRequired,
+  item: PropTypes.shape({
+    type: PropTypes.string,
+    instructions: PropTypes.string,
+  }),
   onRemove: PropTypes.func.isRequired,
 };
