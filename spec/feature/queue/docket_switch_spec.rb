@@ -308,13 +308,23 @@ RSpec.feature "Docket Switch", :all_dbs do
       within_fieldset("Please unselect any tasks you would like to remove:") do
         find("label", text: "Root Task").click
       end
-      
+
       expect(page).to have_content("Confirm removing task")
       expect(page).to have_content("Root Task")
       click_button(text: "Cancel")
 
-      # Return back to user's queue
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}/tasks/docket_switch/checkout/grant/tasks")
+      # Return back to add task
+      within_fieldset("Please unselect any tasks you would like to remove:") do
+        expect(find_field("Root Task", visible: false)).to be_checked
+      end
+
+      # select task
+      within_fieldset("Please unselect any tasks you would like to remove:") do
+        find("label", text: "Root Task").click
+      end
+
+      click_button(text: "Confirm")
+      expect(page).to have_field("Root Task", checked: false, visible: false)
     end
   end
 end
