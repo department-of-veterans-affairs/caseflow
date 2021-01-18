@@ -235,7 +235,7 @@ describe Veteran, :all_dbs do
         state: "CA",
         country: "USA",
         date_of_birth: "12/21/1989",
-        date_of_death: Date.new(2019, 12, 31),
+        date_of_death: date_of_death,
         zip_code: "94117",
         military_post_office_type_code: "DPO",
         military_postal_type_code: "AE"
@@ -903,5 +903,77 @@ describe Veteran, :all_dbs do
     end
 
     it { is_expected.to eq("94117") }
+  end
+
+  describe "#warm_veteran_cache_for_appeals" do
+    let(:first_name) { "Bob" }
+    let(:last_name) { "Boberson" }
+    let(:middle_name) { "B" }
+    let(:name_suffix) { "Esq" }
+    let(:ssn) { "666000000" }
+    let(:date_of_death) { "2021-1-12" }
+    let(:bgs_first_name) { first_name }
+    let(:bgs_last_name) { last_name }
+    let(:bgs_middle_name) { middle_name }
+    let(:bgs_name_suffix) { name_suffix }
+    let(:bgs_ssn) { ssn }
+    let(:bgs_date_of_death) { date_of_death }
+    let(:veteranBob) do
+      create(
+        :veteran,
+        first_name: first_name,
+        last_name: last_name,
+        middle_name: middle_name,
+        name_suffix: name_suffix,
+        ssn: ssn,
+        date_of_death: date_of_death,
+        bgs_veteran_record: {
+          first_name: bgs_first_name,
+          last_name: bgs_last_name,
+          middle_name: bgs_middle_name,
+          name_suffix: bgs_name_suffix,
+          ssn: bgs_ssn,
+          date_of_death: bgs_date_of_death
+        }
+      )
+    end
+
+    before do
+      veteranBob.unload_bgs_record # force it to reload from BGS
+    end
+    context "#update veteran" do
+      let(:appeal) { create(:appeal, veteran_file_number: veteranBob.file_number) }
+      let(:appeal2) { create(:appeal) }
+      let(:appeal_ids) {[appeal.uuid, appeal2.uuid]}
+      let(:date_of_death) { nil }
+
+      subject { veteranBob.warm_veteran_cache_for_appeals(appeal_ids) }
+
+      # Mock updating veteran DOD using warm method
+      context ".warm_veteran_cache_for_appeals" do
+        before do
+          Fakes::BGSService.edit_veteran_record(veteranBob.file_number, :date_of_death, "2021-1-13")
+        end
+        it "updates our veteran_records date_of_death" do
+          expect { subject }.not_to raise_error
+
+          expect(veteranBob.reload.date_of_death).to eq(Date.parse("2021-1-13"))
+        end
+      end
+
+      # Expect update veteran info to match bgs info
+      context ".warm_veteran_cache_for_appeal" do
+        subject { veteranBob.warm_veteran_cache_for_appeal(appeal.uuid) }
+
+        before do
+          Fakes::BGSService.edit_veteran_record(veteranBob.file_number, :date_of_death, "2021-1-13")
+        end
+        it "updates our veteran_records date_of_death" do
+          expect { subject }.not_to raise_error
+
+          expect(veteranBob.reload.date_of_death).to eq(Date.parse("2021-1-13"))
+        end
+      end
+    end
   end
 end

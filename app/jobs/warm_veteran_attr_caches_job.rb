@@ -7,8 +7,7 @@ class WarmVeteranAttrCachesJob < CaseflowJob
       RequestStore.store[:current_user] = User.system_user
       RequestStore.store[:application] = "queue"
 
-      warm_veteran_attr_caches_for_ready_ama_appeals
-      warm_veteran_for_appeals_distributed_today
+
 
       datadog_report_runtime(metric_group_name: "warm_veteran_attr_caches_job")
     end
