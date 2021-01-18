@@ -9,6 +9,8 @@
 # If this task is assigned to a user (i.e., a member of CavcLitigationSupport), then:
 # - Expected parent: SendCavcRemandProcessedLetterTask that is assigned to CavcLitigationSupport
 # - Expected assigned_to.type: User
+#
+# CAVC Remands Overview: https://github.com/department-of-veterans-affairs/caseflow/wiki/CAVC-Remands
 
 class SendCavcRemandProcessedLetterTask < Task
   validates :parent, presence: true,
@@ -68,7 +70,9 @@ class SendCavcRemandProcessedLetterTask < Task
     self.assigned_to = CavcLitigationSupport.singleton if assigned_to.nil?
   end
 
-  def cascade_closure_from_child_task?(_child_task)
-    true
+  def cascade_closure_from_child_task?(child_task)
+    # If child_task is a SendCavcRemandProcessedLetterTask (assigned to a user),
+    # then close this task (assigned to the org). Otherwise, don't close this task.
+    child_task.type == "SendCavcRemandProcessedLetterTask"
   end
 end

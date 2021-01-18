@@ -1293,6 +1293,21 @@ RSpec.feature "Case details", :all_dbs do
           expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
           expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
         end
+
+        it "success alert displays after submitting NOD date change successfully" do
+          visit("/queue/appeals/#{appeal.uuid}")
+
+          find("button", text: COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY).click
+          fill_in COPY::EDIT_NOD_DATE_LABEL, with: Time.zone.today.mdY
+          safe_click "#Edit-NOD-Date-button-id-1"
+
+          expect(page).to have_content(
+            format(COPY::EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE.tr("(", "{").gsub(")s", "}"),
+                   appellantName: appeal.claimant.name,
+                   nodDateStr: appeal.receipt_date.mdY,
+                   receiptDateStr: Time.zone.today.mdY)
+          )
+        end
       end
 
       context "when the user is an attorney" do

@@ -10,29 +10,29 @@ export default {
   component: AddCavcRemandView,
   parameters: { controls: { expanded: true } },
   args: {
-    cavcRemandToggled: true,
-    mdrToggled: false,
-    reversalToggled: false,
-    dismissalToggled: false,
+    cavcRemandFeature: true,
+    mdrFeature: true,
+    reversalFeature: false,
+    dismissalFeature: false,
   },
   argTypes: {
-    cavcRemandToggled: { control: { type: 'boolean' } },
-    mdrToggled: { control: { type: 'boolean' } },
-    reversalToggled: { control: { type: 'boolean' } },
-    dismissalToggled: { control: { type: 'boolean' } },
+    cavcRemandFeature: { control: { type: 'boolean' } },
+    mdrFeature: { control: { type: 'boolean' } },
+    reversalFeature: { control: { type: 'boolean' } },
+    dismissalFeature: { control: { type: 'boolean' } },
   }
 };
 
 const appealId = amaAppeal.externalId;
 
-const Template = ({ cavcRemandToggled, mdrToggled, reversalToggled, dismissalToggled, ...componentArgs }) => {
+const Template = ({ cavcRemandFeature, mdrFeature, reversalFeature, dismissalFeature, ...componentArgs }) => {
   const storeArgs = {
     ui: {
       featureToggles: {
-        cavc_remand: cavcRemandToggled,
-        mdr_cavc_remand: mdrToggled,
-        reversal_cavc_remand: reversalToggled,
-        dismissal_cavc_remand: dismissalToggled
+        cavc_remand: cavcRemandFeature,
+        mdr_cavc_remand: mdrFeature,
+        reversal_cavc_remand: reversalFeature,
+        dismissal_cavc_remand: dismissalFeature
       }
     }
   };
@@ -43,4 +43,3 @@ const Template = ({ cavcRemandToggled, mdrToggled, reversalToggled, dismissalTog
 };
 
 export const Default = Template.bind({});
-Default.args = { cavcRemandToggled: true };

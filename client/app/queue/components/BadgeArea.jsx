@@ -8,8 +8,8 @@ import OvertimeBadge from './OvertimeBadge';
 import { mostRecentHeldHearingForAppeal } from '../utils';
 
 /**
- * Component to display a set of badges, currently limited to hearing and overtime badges. Each badge should
- * individually handle whether or not they should be displayed.
+ * Component to display a set of badges, currently limited to hearing, overtime badges, and FNOD badges.
+ * Each badge should individually handle whether or not they should be displayed.
  * This component can accept either an Appeal object or a Task object. An appeal object should be passed in places where
  * we are strictly showing an appeal (in case details or case search). A Task object should be passed in places we do
  * have a task rather than an appeal (in queue task lists)
@@ -20,19 +20,19 @@ import { mostRecentHeldHearingForAppeal } from '../utils';
  */
 class BadgeArea extends React.PureComponent {
   render = () => {
-    const { appeal, isHorizontal, task } = this.props;
+    const { appeal, isHorizontal, task, featureToggles } = this.props;
 
     let badges;
 
     if (appeal) {
       badges = <React.Fragment>
-        <FnodBadge appeal={appeal} />
+        <FnodBadge featureToggles={featureToggles} appeal={appeal} />
         <HearingBadge hearing={mostRecentHeldHearingForAppeal(appeal)} />
         <OvertimeBadge appeal={appeal} />
       </React.Fragment>;
     } else {
       badges = <React.Fragment>
-        <FnodBadge appeal={task.appeal} />
+        <FnodBadge featureToggles={featureToggles} appeal={task.appeal} />
         <HearingBadge task={task} />
         <OvertimeBadge appeal={task.appeal} />
       </React.Fragment>;
@@ -49,7 +49,8 @@ class BadgeArea extends React.PureComponent {
 BadgeArea.propTypes = {
   appeal: PropTypes.object,
   task: PropTypes.object,
-  isHorizontal: PropTypes.bool
+  isHorizontal: PropTypes.bool,
+  featureToggles: PropTypes.object
 };
 
 export default BadgeArea;

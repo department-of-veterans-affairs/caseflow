@@ -31,6 +31,7 @@ import UserAlerts from '../components/UserAlerts';
 import VeteranCasesView from './VeteranCasesView';
 import VeteranDetail from './VeteranDetail';
 import { startPolling } from '../hearings/utils';
+import FnodBanner from './components/FnodBanner';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -116,7 +117,8 @@ export const CaseDetailsView = (props) => {
       {!modalIsOpen && showPostDispatch && <CaseDetailsPostDispatchActions appealId={appealId} />}
       {(!modalIsOpen || props.userCanScheduleVirtualHearings) && <UserAlerts />}
       <AppSegment filledBackground>
-        <CaseTitle appeal={appeal} />
+        <CaseTitle featureToggles={props.featureToggles} appeal={appeal} />
+        { appeal.veteranDateOfDeath && props.featureToggles.fnod_banner && <FnodBanner appeal={appeal} /> }
         <CaseTitleDetails
           appealId={appealId}
           redirectUrl={window.location.pathname}

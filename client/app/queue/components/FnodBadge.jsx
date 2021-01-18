@@ -10,9 +10,9 @@ import Badge from './Badge';
  */
 
 const FnodBadge = (props) => {
-  const { appeal } = props;
+  const { appeal, featureToggles } = props;
 
-  if (!appeal.veteran_appellant_deceased) {
+  if (!appeal.veteranAppellantDeceased || !featureToggles.fnod_badge) {
     return null;
   }
 
@@ -22,7 +22,8 @@ const FnodBadge = (props) => {
 };
 
 FnodBadge.propTypes = {
-  appeal: PropTypes.object
+  appeal: PropTypes.object,
+  featureToggles: PropTypes.object
 };
 
 export default FnodBadge;
