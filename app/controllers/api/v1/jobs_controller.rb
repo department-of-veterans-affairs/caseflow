@@ -32,7 +32,6 @@ class Api::V1::JobsController < Api::ApplicationController
     "update_appellant_representation_job" => UpdateAppellantRepresentationJob,
     "hearing_disposition_change_job" => HearingDispositionChangeJob,
     "warm_bgs_caches_job" => WarmBgsCachesJob,
-    "warm_veteran_attr_caches_job" => WarmVeteranAttrCachesJob,
     "update_cached_appeals_attributes_job" => UpdateCachedAppealsAttributesJob
   }.freeze
 
