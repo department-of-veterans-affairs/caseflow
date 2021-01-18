@@ -6,9 +6,8 @@ describe VirtualHearings::SendReminderEmailsJob do
   let(:hearing_day) do
     create(
       :hearing_day,
-      regional_office: "RO42",
-      scheduled_for: hearing_date,
-      request_type: HearingDay::REQUEST_TYPES[:virtual]
+      :virtual,
+      scheduled_for: hearing_date
     )
   end
   let(:hearing) do

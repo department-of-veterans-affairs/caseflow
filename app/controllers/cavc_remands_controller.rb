@@ -7,7 +7,7 @@ class CavcRemandsController < ApplicationController
 
   def create
     cavc_remand = CavcRemand.create!(create_params)
-    cavc_appeal = Appeal.court_remand.find_by(stream_docket_number: appeal.docket_number)
+    cavc_appeal = Appeal.court_remand.find_by(stream_docket_number: source_appeal.docket_number)
     render json: { cavc_remand: cavc_remand, cavc_appeal: cavc_appeal }, status: :created
   end
 
@@ -17,8 +17,8 @@ class CavcRemandsController < ApplicationController
 
   private
 
-  def appeal
-    @appeal ||= Appeal.find_by_uuid(params[:appeal_id])
+  def source_appeal
+    @source_appeal ||= Appeal.find_by_uuid(params[:source_appeal_id])
   end
 
   def validate_cavc_remand_access
@@ -29,14 +29,14 @@ class CavcRemandsController < ApplicationController
   end
 
   def create_params
-    params.merge!(created_by_id: current_user.id, updated_by_id: current_user.id, appeal_id: appeal.id)
+    params.merge!(created_by_id: current_user.id, updated_by_id: current_user.id, source_appeal_id: source_appeal.id)
     params.require(required_params)
     params.permit(required_params << :remand_subtype).merge(params.permit(decision_issue_ids: []))
   end
 
   def required_params
     [
-      :appeal_id,
+      :source_appeal_id,
       :cavc_decision_type,
       :cavc_docket_number,
       :cavc_judge_full_name,

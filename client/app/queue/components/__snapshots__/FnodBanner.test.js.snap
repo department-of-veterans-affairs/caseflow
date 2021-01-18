@@ -4,7 +4,7 @@ exports[`FnodBanner renders correctly 1`] = `
 <FnodBanner
   appeal={
     Object {
-      "date_of_death": "2019-03-17",
+      "veteranDateOfDeath": "2019-03-17",
       "veteranFullName": "Jane Doe",
       "veteran_appellant_deceased": true,
     }
