@@ -125,6 +125,7 @@ class DocumentFetcher
     dups_hash.partition { |_id, docs| docs.map(&:to_hash).uniq.size == 1 }
   end
 
+  # :reek:FeatureEnvy
   def warn_about_same_vbms_document_id(warning_message, nonexact_dups_hash)
     docs_as_csv = nonexact_dups_hash.map { |_id, docs| docs.map { |doc| doc.to_hash.values.to_csv } }.flatten
     extra = { application: "reader",
