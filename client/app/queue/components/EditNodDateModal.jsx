@@ -121,7 +121,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
 
   const handleChangeReason = (value) => {
     if (!value === null) {
-      //value is null, keep submit button disabled 
+      // value is null, keep submit button disabled
     } else {
       setDisableButton(false);
       setChangeReason(value);
@@ -166,6 +166,7 @@ EditNodDateModalContainer.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   nodDate: PropTypes.string.isRequired,
+  reason: PropTypes.string,
   appealId: PropTypes.string.isRequired
 };
 
@@ -173,5 +174,6 @@ EditNodDateModal.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   nodDate: PropTypes.string.isRequired,
+  reason: PropTypes.string,
   appealId: PropTypes.string.isRequired
 };
