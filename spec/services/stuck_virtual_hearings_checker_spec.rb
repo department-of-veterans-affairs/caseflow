@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 describe StuckVirtualHearingsChecker, :postgres do
+  it "reports to correct slack channel" do
+    subject.call
+
+    expect(subject.slack_channel).to eq("#appeals-tango")
+  end
+
   context "there are no stuck virtual hearings" do
     let!(:virtual_hearing) do
       create(
@@ -48,16 +54,29 @@ describe StuckVirtualHearingsChecker, :postgres do
       )
     end
 
-    it "builds a report containing only pending virtual hearing" do
-      subject.call
+    context "reruns the job for each stuck virtual hearing" do
+      it "does not generate a report" do
+        subject.call
+        expect(subject.report?).to be_falsey
+      end
+    end
 
-      report_lines = subject.report.split("\n")
-      expect(report_lines).to include("Found 1 stuck virtual hearing: ")
-      expect(report_lines).to include(
-        "`VirtualHearing.find(#{virtual_hearing_pending.id})` " \
-        "last attempted at #{virtual_hearing_pending.establishment.attempted_at}, " \
-        "scheduled for #{virtual_hearing_pending.hearing.scheduled_for}"
-      )
+    context "rerunning the job also results in stuck virtual hearing" do
+      before { allow_any_instance_of(described_class).to receive(:rerun_jobs).and_return(nil) }
+
+      it "builds a report containing only pending virtual hearing" do
+        subject.call
+
+        report_lines = subject.report.split("\n")
+        expect(report_lines).to include("Found 1 stuck virtual hearing: ")
+        expect(report_lines).to include(
+          "`VirtualHearing.find(#{virtual_hearing_pending.id})` " \
+          "last attempted at: #{virtual_hearing_pending.establishment.attempted_at}, " \
+          "scheduled for: #{virtual_hearing_pending.hearing.scheduled_for}, " \
+          "updated by: #{virtual_hearing_pending.updated_by.css_id}, " \
+          "UUID: #{virtual_hearing_pending.hearing.uuid}"
+        )
+      end
     end
   end
 
@@ -84,8 +103,10 @@ describe StuckVirtualHearingsChecker, :postgres do
       expect(report_lines).to include("Found 1 stuck virtual hearing: ")
       expect(report_lines).to include(
         "`VirtualHearing.find(#{virtual_hearing_no_emails.id})` " \
-        "last attempted at #{virtual_hearing_no_emails.establishment.attempted_at}, " \
-        "scheduled for #{virtual_hearing_no_emails.hearing.scheduled_for}"
+        "last attempted at: #{virtual_hearing_no_emails.establishment.attempted_at}, " \
+        "scheduled for: #{virtual_hearing_no_emails.hearing.scheduled_for}, " \
+        "updated by: #{virtual_hearing_no_emails.updated_by.css_id}, " \
+        "UUID: #{virtual_hearing_no_emails.hearing.uuid}"
       )
     end
   end
@@ -115,22 +136,19 @@ describe StuckVirtualHearingsChecker, :postgres do
       )
     end
 
-    it "builds a report containing one virtual hearing with pending conference and one where all emails haven't sent" do
+    it "builds a report containing one where all emails haven't sent" do
       virtual_hearing_pending.establishment.attempted!
 
       subject.call
 
       report_lines = subject.report.split("\n")
-      expect(report_lines).to include("Found 2 stuck virtual hearings: ")
-      expect(report_lines).to include(
-        "`VirtualHearing.find(#{virtual_hearing_pending.id})` " \
-        "last attempted at #{virtual_hearing_pending.establishment.attempted_at}, " \
-        "scheduled for #{virtual_hearing.hearing.scheduled_for}"
-      )
+      expect(report_lines).to include("Found 1 stuck virtual hearing: ")
       expect(report_lines).to include(
         "`VirtualHearing.find(#{virtual_hearing_no_emails.id})` " \
-        "last attempted at #{virtual_hearing_no_emails.establishment.attempted_at}, " \
-        "scheduled for #{virtual_hearing_no_emails.hearing.scheduled_for}"
+        "last attempted at: #{virtual_hearing_no_emails.establishment.attempted_at}, " \
+        "scheduled for: #{virtual_hearing_no_emails.hearing.scheduled_for}, " \
+        "updated by: #{virtual_hearing_no_emails.updated_by.css_id}, " \
+        "UUID: #{virtual_hearing_no_emails.hearing.uuid}"
       )
     end
   end

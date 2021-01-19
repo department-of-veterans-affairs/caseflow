@@ -237,14 +237,14 @@ export default class OrganizationUsers extends React.PureComponent {
     const judgeTeam = this.state.judgeTeam;
     const dvcTeam = this.state.dvcTeam;
     const listOfUsers = this.state.organizationUsers.map((user, i) => {
-      const { judge, dvc, attorney, admin } = user.attributes;
+      const { dvc, admin } = user.attributes;
       const style = i === 0 ? topUserStyle : userStyle;
 
       return <React.Fragment>
         <li key={user.id} {...style}>{this.formatName(user)}
-          { judgeTeam && judge && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
+          { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
           { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
-          { judgeTeam && attorney && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
+          { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
           { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
         </li>
         { (judgeTeam || dvcTeam) && admin ?
