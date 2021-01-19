@@ -132,6 +132,9 @@ class DocumentFetcher
               nonexact_dup_docs_count: nonexact_dups_hash.count,
               nonexact_dups_hash: nonexact_dups_hash,
               docs_as_csv: docs_as_csv.join("") }
-    Raven.capture_message("Document records with duplicate vbms_document_id: #{warning_message}", extra: extra)
+    Raven.capture_exception(DuplicateVbmsDocumentIdError.new("Document records with duplicate vbms_document_id: #{warning_message}"), 
+                            extra: extra)
   end
+
+  class DuplicateVbmsDocumentIdError < RuntimeError; end
 end
