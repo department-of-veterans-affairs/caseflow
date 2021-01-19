@@ -14,8 +14,11 @@ FactoryBot.define do
     created_by { User.first || create(:user) }
 
     transient do
-      judge { JudgeTeam.first.admin || create(:user).tap { |u| create(:staff, :judge_role, user: u) } }
-      attorney { JudgeTeam.first.non_admins.first || create(:user).tap { |u| create(:staff, :attorney_role, user: u) } }
+      judge { JudgeTeam.first&.admin || create(:user).tap { |u| create(:staff, :judge_role, user: u) } }
+      attorney do
+        JudgeTeam.first&.non_admins&.first ||
+          create(:user).tap { |u| create(:staff, :attorney_role, user: u) }
+      end
       veteran { Veteran.first || create(:veteran) }
     end
 
