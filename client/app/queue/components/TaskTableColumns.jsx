@@ -77,11 +77,11 @@ export const documentIdColumn = () => {
   };
 };
 
-export const badgesColumn = () => {
+export const badgesColumn = (tasks, featureToggles) => {
   return {
     header: '',
     name: QUEUE_CONFIG.COLUMNS.BADGES.name,
-    valueFunction: (task) => <BadgeArea task={task} />
+    valueFunction: (task) => <BadgeArea featureToggles={featureToggles} task={task} />
   };
 };
 
