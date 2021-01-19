@@ -67,7 +67,7 @@ class CaseListTable extends React.PureComponent {
     );
 
     const badgeColumn = {
-      valueFunction: (appeal) => <BadgeArea featureToggles={this.props.featureToggles} appeal={appeal} />
+      valueFunction: (appeal) => <BadgeArea appeal={appeal} />
     };
 
     if (anyAppealsHaveHeldHearings || anyAppealsHaveOvertimeStatus || anyAppealsHaveFnod) {
@@ -99,14 +99,12 @@ CaseListTable.propTypes = {
   styling: PropTypes.object,
   clearCaseListSearch: PropTypes.func,
   userRole: PropTypes.string,
-  userCssId: PropTypes.string,
-  featureToggles: PropTypes.object
+  userCssId: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
   userCssId: state.ui.userCssId,
-  userRole: state.ui.userRole,
-  featureToggles: state.ui.featureToggles
+  userRole: state.ui.userRole
 });
 
 const mapDispatchToProps = (dispatch) =>
