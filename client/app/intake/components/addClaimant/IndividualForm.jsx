@@ -5,7 +5,7 @@ import RadioField from 'app/components/RadioField';
 import TextField from 'app/components/TextField';
 import AddressForm from 'app/components/AddressForm'
 
-export const DependantForm = () => {
+export const IndividualForm = () => {
 
   return (
     <form>
@@ -57,4 +57,4 @@ export const DependantForm = () => {
   );
 };
 
-export default DependantForm;
+export default IndividualForm;
