@@ -998,7 +998,7 @@ describe Appeal, :all_dbs do
     end
   end
 
-  describe ".cavc_remand" do
+  describe "#cavc_remand" do
     subject { appeal.cavc_remand }
 
     context "an original appeal" do
