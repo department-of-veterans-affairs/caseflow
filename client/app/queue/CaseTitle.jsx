@@ -46,7 +46,7 @@ const viewCasesStyling = css({
 
 class CaseTitle extends React.PureComponent {
   render = () => {
-    const { appeal, veteranCaseListIsVisible, featureToggles } = this.props;
+    const { appeal, veteranCaseListIsVisible } = this.props;
 
     return (
       <CaseTitleScaffolding heading={appeal.veteranFullName}>
@@ -58,7 +58,7 @@ class CaseTitle extends React.PureComponent {
         <span {...viewCasesStyling}>
           <Link onClick={this.props.toggleVeteranCaseList}>{veteranCaseListIsVisible ? 'Hide' : 'View'} all cases</Link>
         </span>
-        <BadgeArea featureToggles={featureToggles} appeal={appeal} isHorizontal />
+        <BadgeArea appeal={appeal} isHorizontal />
       </CaseTitleScaffolding>
     );
   };
@@ -69,8 +69,7 @@ CaseTitle.propTypes = {
   taskType: PropTypes.string,
   analyticsSource: PropTypes.string,
   veteranCaseListIsVisible: PropTypes.bool,
-  toggleVeteranCaseList: PropTypes.func,
-  featureToggles: PropTypes.object
+  toggleVeteranCaseList: PropTypes.func
 };
 
 CaseTitle.defaultProps = {
@@ -101,8 +100,7 @@ CaseTitleScaffolding.propTypes = {
 
 const mapStateToProps = (state) => ({
   veteranCaseListIsVisible: state.ui.veteranCaseListIsVisible,
-  userIsVsoEmployee: state.ui.userIsVsoEmployee,
-  featureToggles: state.ui.featureToggles
+  userIsVsoEmployee: state.ui.userIsVsoEmployee
 });
 
 const mapDispatchToProps = (dispatch) =>
