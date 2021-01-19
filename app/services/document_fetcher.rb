@@ -121,21 +121,12 @@ class DocumentFetcher
   end
 
   # identify hash entries with an array consisting of the exact same document
-  # :reek:FeatureEnvy
   def split_exact_dups(dups_hash)
-    dups_hash.partition do |_id, array|
-      first_doc = array.first
-      array.drop(1).reject { |doc| same_attributes?(first_doc, doc) }.empty?
-    end
+    dups_hash.partition { |_id, docs| docs.map(&:to_hash).uniq.size == 1 }
   end
 
-  def same_attributes?(first_doc, doc)
-    first_doc.to_hash == doc.to_hash
-  end
-
-  # :reek:FeatureEnvy
   def warn_about_same_vbms_document_id(warning_message, nonexact_dups_hash)
-    docs_as_csv = nonexact_dups_hash.map { |_id, array| array.map { |doc| doc.to_hash.values.to_csv } }.flatten
+    docs_as_csv = nonexact_dups_hash.map { |_id, docs| docs.map { |doc| doc.to_hash.values.to_csv } }.flatten
     extra = { application: "reader",
               nonexact_dup_docs_count: nonexact_dups_hash.count,
               nonexact_dups_hash: nonexact_dups_hash,
