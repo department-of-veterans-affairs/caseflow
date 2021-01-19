@@ -55,6 +55,7 @@ describe CavcRemand do
     it "creates the new court_remand cavc stream" do
       expect(Appeal.court_remand.where(stream_docket_number: source_appeal.docket_number).count).to eq(0)
       expect(source_appeal.aod_based_on_age).not_to be true
+
       cavc_remand = subject
       expect(cavc_remand.remand_appeal_id).not_to be(nil)
       cavc_appeal = Appeal.find(cavc_remand.remand_appeal_id)

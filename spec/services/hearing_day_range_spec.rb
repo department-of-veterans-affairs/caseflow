@@ -2,13 +2,29 @@
 
 describe HearingDayRange, :all_dbs do
   describe ".load_days" do
-    context "load Video days for a range date" do
-      let!(:hearings) do
-        [create(:hearing_day, request_type: "V", regional_office: "RO13", scheduled_for: Time.zone.today),
-         create(:hearing_day, request_type: "V", regional_office: "RO13", scheduled_for: Time.zone.today + 1.day)]
-      end
+    let(:start_date) { Time.zone.today }
+    let(:end_date) { Time.zone.today + 2.days }
 
-      subject { HearingDayRange.new(Time.zone.today, Time.zone.today + 1.day, "RO13").load_days }
+    subject { HearingDayRange.new(start_date, end_date, regional_office_key).load_days }
+
+    context "load Video days for a range date" do
+      let(:regional_office_key) { "RO13" }
+      let!(:hearing_days) do
+        [
+          create(
+            :hearing_day,
+            :video,
+            regional_office: regional_office_key,
+            scheduled_for: Time.zone.today
+          ),
+          create(
+            :hearing_day,
+            :video,
+            regional_office: regional_office_key,
+            scheduled_for: Time.zone.today + 1.day
+          )
+        ]
+      end
 
       it "gets hearings for a date range" do
         expect(subject.size).to eq 2
@@ -16,14 +32,13 @@ describe HearingDayRange, :all_dbs do
     end
 
     context "load Central Office days for a range date" do
-      let!(:hearings) do
-        [create(:hearing_day, scheduled_for: Time.zone.today),
-         create(:hearing_day, scheduled_for: Time.zone.today + 1.day),
-         create(:hearing_day, scheduled_for: Time.zone.today + 2.days)]
-      end
-
-      subject do
-        HearingDayRange.new(Time.zone.today, Time.zone.today + 2.days, HearingDay::REQUEST_TYPES[:central]).load_days
+      let(:regional_office_key) { HearingDay::REQUEST_TYPES[:central] }
+      let!(:hearing_days) do
+        [
+          create(:hearing_day, scheduled_for: Time.zone.today),
+          create(:hearing_day, scheduled_for: Time.zone.today + 1.day),
+          create(:hearing_day, scheduled_for: Time.zone.today + 2.days)
+        ]
       end
 
       it "should load all three hearing days" do
@@ -31,6 +46,40 @@ describe HearingDayRange, :all_dbs do
       end
     end
 
+    context "load Virtual days for a range date" do
+      let(:regional_office_key) { HearingDay::REQUEST_TYPES[:virtual] }
+
+      context "only virtual hearing days" do
+        let!(:hearing_days) do
+          [
+            create(:hearing_day, :virtual, scheduled_for: Time.zone.today),
+            create(:hearing_day, :virtual, scheduled_for: Time.zone.today + 1.day),
+            create(:hearing_day, :virtual, scheduled_for: Time.zone.today + 2.days)
+          ]
+        end
+
+        it "should load all three hearing days" do
+          expect(subject.size).to eq 3
+        end
+      end
+
+      context "mix of virtual and video hearing days" do
+        let!(:hearing_days) do
+          [
+            create(:hearing_day, :virtual, scheduled_for: Time.zone.today),
+            create(:hearing_day, :virtual, scheduled_for: Time.zone.today + 1.day),
+            create(:hearing_day, :video, scheduled_for: Time.zone.today + 2.days)
+          ]
+        end
+
+        it "should only load 2 hearing days" do
+          expect(subject.size).to eq 2
+        end
+      end
+    end
+  end
+
+  describe ".open_hearing_days_with_hearings_hash" do
     context "Video Hearing parent and child rows for a date range" do
       let(:vacols_case) do
         create(

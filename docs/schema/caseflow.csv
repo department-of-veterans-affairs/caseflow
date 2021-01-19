@@ -11,6 +11,7 @@ advance_on_docket_motions,updated_at,datetime ∗,x,,,,x,
 advance_on_docket_motions,user_id,integer (8) FK,,,x,,x,
 allocations,,,,,,,,
 allocations,allocated_days,float ∗,x,,,,,
+allocations,allocated_days_without_room,float,,,,,,Number of Hearing Days Allocated with no Rooms
 allocations,created_at,datetime ∗,x,,,,,
 allocations,id,integer (8) PK,x,x,,,,
 allocations,regional_office,string ∗,x,,,,,
