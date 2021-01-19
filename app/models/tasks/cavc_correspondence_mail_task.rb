@@ -71,10 +71,6 @@ class CavcCorrespondenceMailTask < MailTask
     ]
   end
 
-  def org_task_and_org_member(user)
-    assigned_to_type == "Organization" && CavcLitigationSupport.singleton.user_has_access?(user)
-  end
-
   def user_task_and_admin_or_assigned_to_user
     assigned_to_type == "User" && assigned_to_cavc_lit_team_member
   end
