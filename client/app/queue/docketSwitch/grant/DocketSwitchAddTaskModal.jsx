@@ -2,7 +2,9 @@ import Modal from '../../../components/Modal';
 import React from 'react';
 import {
   DOCKET_SWITCH_GRANTED_MODAL_TITLE,
-  DOCKET_SWITCH_GRANTED_MODAL_INSTRUCTION
+  DOCKET_SWITCH_GRANTED_MODAL_INSTRUCTION,
+  MODAL_CANCEL_BUTTON,
+  MODAL_CONFIRM_BUTTON
 } from 'app/../COPY';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
@@ -16,12 +18,12 @@ export const DocketSwitchAddTaskModal = ({ onConfirm, onSubmit, onCancel, taskLa
       onSubmit={onSubmit}
       buttons={[
         { classNames: ['cf-modal-link', 'cf-btn-link'],
-          name: 'Cancel',
+          name: MODAL_CANCEL_BUTTON,
           onClick: onCancel,
         },
         {
           classNames: ['usa-button', 'usa-button-primary'],
-          name: 'Confirm',
+          name: MODAL_CONFIRM_BUTTON,
           onClick: onConfirm,
         }
       ]}

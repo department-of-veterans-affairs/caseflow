@@ -313,32 +313,32 @@ RSpec.feature "Docket Switch", :all_dbs do
       end
       expect(page).to have_button("Continue", disabled: false)
       click_button(text: "Continue")
-      binding.pry
       # Takes user to add task page
       expect(page).to have_content("Switch Docket: Add/Remove Tasks")
       expect(page).to have_content("You are switching from Evidence Submission to Direct Review")
 
       # select task
       within_fieldset("Please unselect any tasks you would like to remove:") do
-        find("label", text: "Root Task").click
+        find("label", text: "IHP").click
       end
 
       expect(page).to have_content("Confirm removing task")
-      expect(page).to have_content("Root Task")
-      click_button(text: "Cancel")
+      expect(page).to have_content("IHP")
+
+      safe_click ".cf-modal-link"
 
       # Return back to add task
       within_fieldset("Please unselect any tasks you would like to remove:") do
-        expect(find_field("Root Task", visible: false)).to be_checked
+        expect(find_field("IHP", visible: false)).to be_checked
       end
 
       # select task
       within_fieldset("Please unselect any tasks you would like to remove:") do
-        find("label", text: "Root Task").click
+        find("label", text: "IHP").click
       end
 
-      click_button(text: "Confirm")
-      expect(page).to have_field("Root Task", checked: false, visible: false)
+      click_button(COPY::MODAL_CONFIRM_BUTTON)
+      expect(page).to have_field("IHP", checked: false, visible: false)
     end
   end
 end
