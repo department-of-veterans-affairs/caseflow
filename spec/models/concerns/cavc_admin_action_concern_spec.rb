@@ -32,8 +32,6 @@ describe CavcAdminActionConcern do
     context "when the cavc task is assigned to someone not on the cavc lit support team" do
       before { cavc_task.update!(assigned_to: create(:user)) }
 
-      # mawagner - So, I wonder about this. As coded now, CAVC Lit has access to all CAVC lit tasks,
-      # regardless of assignee. Does that fit the request, or is this too permissive?
       it { is_expected.to be true }
     end
 
