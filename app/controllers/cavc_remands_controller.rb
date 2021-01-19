@@ -7,9 +7,7 @@ class CavcRemandsController < ApplicationController
 
   def create
     cavc_remand = CavcRemand.create!(create_params)
-    # todo - find by the new field on cavc_remand
-    cavc_appeal = Appeal.court_remand.find_by(stream_docket_number: source_appeal.docket_number)
-    render json: { cavc_remand: cavc_remand, cavc_appeal: cavc_appeal }, status: :created
+    render json: { cavc_remand: cavc_remand, cavc_appeal: cavc_remand.remand_appeal }, status: :created
   end
 
   #  def update

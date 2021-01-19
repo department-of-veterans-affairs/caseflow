@@ -998,6 +998,23 @@ describe Appeal, :all_dbs do
     end
   end
 
+  describe ".cavc_remand" do
+    subject { appeal.cavc_remand }
+
+    context "an original appeal" do
+      let(:appeal) { create(:appeal) }
+      it "returns nil" do
+        expect(subject).to be_nil
+      end
+    end
+
+    context "a remand appeal" do
+      #let(:cavc_remand) { create(:cavc_remand) }
+      #let(:appeal) { cavc_remand.source_appeal }
+      it "returns the CavcRemand"
+    end
+  end
+
   describe "#status" do
     it "returns BVAAppealStatus object" do
       expect(appeal.status).to be_a(BVAAppealStatus)
