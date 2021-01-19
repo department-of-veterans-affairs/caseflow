@@ -50,11 +50,9 @@ class DocumentFetcher
     docs_to_update, docs_to_create = split_docs(documents, existing_vbms_doc_ver_ids)
 
     # Update existing docs
-    docs_to_update = deduplicate(docs_to_update, "docs_to_update") # To-do: remove after seeing no duplicate warnings
     updated_docs = Document.bulk_merge_and_save(docs_to_update)
 
     # Create new docs that don't exist
-    docs_to_create = deduplicate(docs_to_create, "docs_to_create") # To-do: remove after seeing no duplicate warnings
     Document.import(docs_to_create)
 
     # For newly created documents that have a series_id, copy over the metadata (annotations, tags, category labels)
@@ -108,19 +106,41 @@ class DocumentFetcher
   # :reek:FeatureEnvy
   def deduplicate(docs, warning_message)
     dups_hash = docs.group_by(&:vbms_document_id).select { |_id, array| array.count > 1 }
-    return docs if dups_hash.empty?
+    exact_dups_hash, nonexact_dups_hash = split_exact_dups(dups_hash)
 
-    warn_about_duplicates(warning_message, dups_hash)
-    docs_to_remove = dups_hash.map { |_id, array| array.drop(1) }.flatten
+    # Remove docs that are exact duplicates
+    docs_to_remove = exact_dups_hash.map { |_id, array| array.drop(1) }.flatten
+    docs -= docs_to_remove
+    return docs if nonexact_dups_hash.empty?
+
+    # Remove docs that are nonexact duplicates but have the same vbms_document_id
+    # and also send a warning for investigation
+    warn_about_same_vbms_document_id(warning_message, nonexact_dups_hash)
+    docs_to_remove = nonexact_dups_hash.map { |_id, array| array.drop(1) }.flatten
     docs - docs_to_remove
   end
 
-  def warn_about_duplicates(warning_message, dups_hash)
-    docs_as_csv = dups_hash.map { |_id, array| array.map { |doc| doc.to_hash.values.to_csv } }.flatten
+  # identify hash entries with an array consisting of the exact same document
+  # :reek:FeatureEnvy
+  def split_exact_dups(dups_hash)
+    dups_hash.partition do |_id, array|
+      first_doc = array.first
+      array.drop(1).reject { |doc| same_attributes?(first_doc, doc) }.empty?
+    end
+  end
+
+  def same_attributes?(first_doc, doc)
+    first_doc.to_hash == doc.to_hash
+  end
+
+  # :reek:FeatureEnvy
+  def warn_about_same_vbms_document_id(warning_message, nonexact_dups_hash)
+    docs_as_csv = nonexact_dups_hash.map { |_id, array| array.map { |doc| doc.to_hash.values.to_csv } }.flatten
     extra = { application: "reader",
-              docs_duplicated: dups_hash.count,
+              nonexact_dup_docs_count: nonexact_dups_hash.count,
+              nonexact_dups_hash: nonexact_dups_hash,
               docs_as_csv: docs_as_csv.join("") }
-    Raven.capture_exception(RuntimeError.new("Warning: Unexpected duplicate document records: #{warning_message}"),
+    Raven.capture_exception(RuntimeError.new("Document records with duplicate vbms_document_id: #{warning_message}"),
                             extra: extra)
   end
 end

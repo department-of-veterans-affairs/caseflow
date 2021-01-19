@@ -323,20 +323,23 @@ describe DocumentFetcher, :postgres do
         context "when there are duplicate documents returned from document_service" do
           let(:documents) do
             docs = Array.new(50) { Generators::Document.build }.uniq(&:vbms_document_id)
-            # docs.first will already exist in the DB and hence will be UPDATED
-            # docs.second does not exist in the DB and hence should be CREATED
-            docs + [docs.first.dup, docs.second.dup]
+            # docs.first.dup will already exist in the DB and hence will be UPDATED
+            # docs.second.dup does not exist in the DB and hence should be CREATED
+            # docs.third.dup will already exist in the DB but since it has different attributes, causes a Sentry alert
+            doc_with_diff_attrib = docs.third.dup.tap { |doc| doc.type = "Diff doc" }
+            docs + [docs.first.dup, docs.second.dup, doc_with_diff_attrib]
           end
           it "deduplicates, sends warning to Sentry, and does not fail bulk upsert" do
-            expect(documents.map(&:vbms_document_id).count).to eq(52)
+            expect(documents.map(&:vbms_document_id).count).to eq(53)
             expect(documents.map(&:vbms_document_id).uniq.count).to eq(50)
             expect(Document.count).to eq 20
             expect(Document.find_by(vbms_document_id: documents.first.vbms_document_id)).not_to be_nil
             expect(Document.find_by(vbms_document_id: documents.second.vbms_document_id)).to be_nil
+            expect(Document.find_by(vbms_document_id: documents.third.vbms_document_id)).not_to be_nil
 
             expect(Raven).to receive(:capture_exception).with(
-              RuntimeError.new("Warning: Unexpected duplicate document records: fetched_documents"),
-              hash_including(extra: hash_including(application: "reader", docs_duplicated: 2))
+              RuntimeError.new("Document records with duplicate vbms_document_id: fetched_documents"),
+              hash_including(extra: hash_including(application: "reader", nonexact_dup_docs_count: 1))
             )
 
             query_data = SqlTracker.track do
