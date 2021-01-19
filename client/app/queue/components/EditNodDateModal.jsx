@@ -49,7 +49,7 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
         change_reason: changeReason
       }
     };
-    
+
     ApiUtil.patch(`/appeals/${appealId}/nod_date_update`, payload).then(() => {
       dispatch(editAppeal(appealId, { nodDate: receiptDate, reason: changeReason }));
       dispatch(showSuccessMessage(successMessage));
@@ -121,7 +121,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
 
   const handleChangeReason = (value) => {
     if (!value === null) {
-      //value is null, keep submit button disabled
+      //value is null, keep submit button disabled 
     } else {
       setDisableButton(false);
       setChangeReason(value);
