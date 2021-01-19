@@ -16,7 +16,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 
 const changeReasons = [
   { label: 'New Form/Information Received', value: 'new_info' },
-  { label: 'Data Entry Error', value: 'entry_error'},
+  { label: 'Data Entry Error', value: 'entry_error' },
 ];
 
 export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealId, reason }) => {
@@ -43,13 +43,13 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
       title,
       detail,
     };
-    const payload = { 
-      data: { 
+    const payload = {
+      data: {
         receipt_date: receiptDate,
         change_reason: changeReason
       }
     };
-
+    
     ApiUtil.patch(`/appeals/${appealId}/nod_date_update`, payload).then(() => {
       dispatch(editAppeal(appealId, { nodDate: receiptDate, reason: changeReason }));
       dispatch(showSuccessMessage(successMessage));
@@ -120,8 +120,8 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
   };
 
   const handleChangeReason = (value) => {
-    if (value == null) {
-      setErrorMessage1("Must select a date and a reason")
+    if (!value === null) {
+      //value is null, keep submit button disabled
     } else {
       setDisableButton(false);
       setChangeReason(value);
@@ -150,13 +150,11 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
       <SearchableDropdown
         name="reason"
         label="Reason for edit"
-        errorMessage={errorMessage}
         searchable={false}
         placeholder="Select the reason..."
         value={changeReason}
         options={changeReasons}
         onChange={handleChangeReason}
-        isClearable
         debounce={250}
         strongLabel
       />
