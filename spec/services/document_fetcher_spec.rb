@@ -337,8 +337,8 @@ describe DocumentFetcher, :postgres do
             expect(Document.find_by(vbms_document_id: documents.second.vbms_document_id)).to be_nil
             expect(Document.find_by(vbms_document_id: documents.third.vbms_document_id)).not_to be_nil
 
-            expect(Raven).to receive(:capture_exception).with(
-              RuntimeError.new("Document records with duplicate vbms_document_id: fetched_documents"),
+            expect(Raven).to receive(:capture_message).with(
+              "Document records with duplicate vbms_document_id: fetched_documents",
               hash_including(extra: hash_including(application: "reader", nonexact_dup_docs_count: 1))
             )
 

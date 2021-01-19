@@ -128,10 +128,10 @@ class DocumentFetcher
   def warn_about_same_vbms_document_id(warning_message, nonexact_dups_hash)
     docs_as_csv = nonexact_dups_hash.map { |_id, docs| docs.map { |doc| doc.to_hash.values.to_csv } }.flatten
     extra = { application: "reader",
+              backtrace: caller,
               nonexact_dup_docs_count: nonexact_dups_hash.count,
               nonexact_dups_hash: nonexact_dups_hash,
               docs_as_csv: docs_as_csv.join("") }
-    Raven.capture_exception(RuntimeError.new("Document records with duplicate vbms_document_id: #{warning_message}"),
-                            extra: extra)
+    Raven.capture_message("Document records with duplicate vbms_document_id: #{warning_message}", extra: extra)
   end
 end
