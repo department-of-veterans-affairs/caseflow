@@ -1009,9 +1009,12 @@ describe Appeal, :all_dbs do
     end
 
     context "a remand appeal" do
-      #let(:cavc_remand) { create(:cavc_remand) }
-      #let(:appeal) { cavc_remand.source_appeal }
-      it "returns the CavcRemand"
+      let(:cavc_remand) { create(:cavc_remand) }
+      let(:appeal) { cavc_remand.remand_appeal }
+
+      it "returns the CavcRemand" do
+        expect(subject).to eq(cavc_remand)
+      end
     end
   end
 
