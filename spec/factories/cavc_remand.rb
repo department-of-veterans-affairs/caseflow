@@ -14,9 +14,9 @@ FactoryBot.define do
     created_by { User.first || create(:user) }
 
     transient do
-      judge { create(:user).tap { |u| create(:staff, :judge_role, user: u) } }
-      attorney { create(:user).tap { |u| create(:staff, :attorney_role, user: u) } }
-      veteran { create(:veteran) }
+      judge { JudgeTeam.first.admin || create(:user).tap { |u| create(:staff, :judge_role, user: u) } }
+      attorney { JudgeTeam.first.non_admins.first || create(:user).tap { |u| create(:staff, :attorney_role, user: u) } }
+      veteran { Veteran.first || create(:veteran) }
     end
 
     after(:build) do |cavc_remand, evaluator|
