@@ -1,12 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`FnodBadge renders correctly 1`] = `
-<FnodBadge
-  appeal={
+<Provider
+  store={
     Object {
-      "date_of_death": "2019-03-17",
-      "veteran_appellant_deceased": true,
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(observable): [Function],
     }
   }
-/>
+>
+  <Connect(FnodBadge)
+    appeal={
+      Object {
+        "date_of_death": "2019-03-17",
+        "veteran_appellant_deceased": true,
+      }
+    }
+  >
+    <FnodBadge
+      appeal={
+        Object {
+          "date_of_death": "2019-03-17",
+          "veteran_appellant_deceased": true,
+        }
+      }
+      dispatch={[Function]}
+      featureToggles={Object {}}
+    />
+  </Connect(FnodBadge)>
+</Provider>
 `;
