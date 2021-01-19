@@ -7,7 +7,8 @@ class CavcRemandsController < ApplicationController
 
   def create
     cavc_remand = CavcRemand.create!(create_params)
-    render json: { cavc_remand: cavc_remand, cavc_appeal: cavc_remand.remand_appeal }, status: :created
+    cavc_appeal = cavc_remand.remand_appeal.reload
+    render json: { cavc_remand: cavc_remand, cavc_appeal: cavc_appeal }, status: :created
   end
 
   #  def update
