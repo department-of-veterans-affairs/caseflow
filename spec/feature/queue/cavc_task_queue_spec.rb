@@ -62,11 +62,9 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
     context "when the signed in user is on cavc litigation support and the feature toggle is on" do
       before do
         FeatureToggle.enable!(:cavc_remand)
-        FeatureToggle.enable!(:mdr_cavc_remand)
         User.authenticate!(user: org_admin)
       end
       after { FeatureToggle.disable!(:cavc_remand) }
-      after { FeatureToggle.disable!(:mdr_cavc_remand) }
 
       it "allows the user to intake a cavc remand" do
         step "cavc user inputs cavc data" do
@@ -76,7 +74,6 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           # Fill in all of our fields!
           fill_in "docket-number", with: docket_number
           click_dropdown(text: judge_name)
-          byebug
           fill_in "decision-date", with: date
           fill_in "judgement-date", with: date
           fill_in "mandate-date", with: date
