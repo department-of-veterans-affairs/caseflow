@@ -213,6 +213,20 @@ RSpec.feature "Docket Switch", :all_dbs do
         assigned_by: judge
       )
     end
+
+    let(:colocated_user) { create(:user) }
+    let!(:colocated_staff) { create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
+
+    let!(:admin_action) do
+      create(
+        :ama_colocated_task,
+        :ihp,
+        appeal: appeal,
+        parent: root_task,
+        assigned_to: colocated_user
+      )
+    end
+
     let(:receipt_date) { Time.zone.today - 5.days }
     let(:context) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit" }
 
@@ -260,7 +274,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
     end
 
-    it "allows attorney to procced to the add task page" do
+    fit "allows attorney to procced to the add task page" do
       User.authenticate!(user: cotb_attorney)
       visit "/queue/appeals/#{appeal.uuid}"
 
@@ -299,7 +313,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       end
       expect(page).to have_button("Continue", disabled: false)
       click_button(text: "Continue")
-
+      binding.pry
       # Takes user to add task page
       expect(page).to have_content("Switch Docket: Add/Remove Tasks")
       expect(page).to have_content("You are switching from Evidence Submission to Direct Review")
