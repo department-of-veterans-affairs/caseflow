@@ -39,7 +39,6 @@ describe CavcCorrespondenceMailTask do
     end
 
     context "when assigned to an Organization" do
-      # mawagner - This multi-line subject feels weird. Can we make this a shared example?
       subject do
         expect(mail_task.available_actions(user)).to eq(expected_actions)
         expect(mail_task.parent.available_actions(user)).to eq(expected_actions)
