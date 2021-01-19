@@ -73,7 +73,7 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
 export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
   const [receiptDate, setReceiptDate] = useState(nodDate);
   const [changeReason, setChangeReason] = useState(reason);
-  const [disableButton, setDisableButton] = useState(false);
+  const [disableButton, setDisableButton] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
 
   const buttons = [
@@ -109,27 +109,24 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
   const handleDateChange = (value) => {
     if (isFutureDate(value)) {
       setErrorMessage(COPY.EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE);
-      setDisableButton(true);
       setReceiptDate(value);
     } else if (isPreAmaDate(value)) {
       setErrorMessage(COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE);
-      setDisableButton(true);
       setReceiptDate(value);
     } else {
       setErrorMessage(null);
       setReceiptDate(value);
-      setDisableButton(false);
     }
   };
 
-  // const handleChangeReason = (value) => {
-  //   if (value) {
-  //     setDisableButton(false);
-  //     setChangeReason(value);
-  //   } else {
-  //     setDisableButton(true);
-  //   }
-  // };
+  const handleChangeReason = (value) => {
+    if (value == null) {
+      setErrorMessage1("Must select a date and a reason")
+    } else {
+      setDisableButton(false);
+      setChangeReason(value);
+    }
+  };
 
   return (
     <Modal
@@ -153,11 +150,12 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
       <SearchableDropdown
         name="reason"
         label="Reason for edit"
+        errorMessage={errorMessage}
         searchable={false}
         placeholder="Select the reason..."
         value={changeReason}
         options={changeReasons}
-        onChange={setChangeReason}
+        onChange={handleChangeReason}
         isClearable
         debounce={250}
         strongLabel
