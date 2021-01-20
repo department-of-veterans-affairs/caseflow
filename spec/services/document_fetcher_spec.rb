@@ -404,7 +404,7 @@ describe DocumentFetcher, :postgres do
         expect(Document.first.series_id).to eq(nil)
 
         returned_documents = document_fetcher.find_or_create_documents!
-        expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
+        expect(returned_documents.map(&:type)).to match_array(documents.map(&:type))
 
         # Adds series id to existing document
         expect(Document.first.series_id).to eq(series_id)
