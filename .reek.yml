@@ -234,6 +234,9 @@ directories:
   "app/controllers":
     InstanceVariableAssumption:
       enabled: false
+  "app/helpers":
+    UtilityFunction:
+      enabled: false
   "app/jobs":
     UtilityFunction:
       enabled: false
