@@ -282,7 +282,7 @@ describe DocumentFetcher, :postgres do
           expect(Document.first.type).to eq(saved_documents.type)
 
           returned_documents = document_fetcher.find_or_create_documents!
-          expect(returned_documents.map(&:type)).to eq(documents.map(&:type))
+          expect(returned_documents.map(&:type)).to match_array(documents.map(&:type))
 
           expect(Document.count).to eq(2)
           expect(Document.first.type).to eq("NOD")
