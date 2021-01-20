@@ -13,6 +13,7 @@ import { sprintf } from 'sprintf-js';
 import { formatDateStr } from '../../util/DateUtil';
 import { appealWithDetailSelector } from '../selectors';
 import SearchableDropdown from 'app/components/SearchableDropdown';
+import { useHistory } from 'react-router';
 
 const changeReasons = [
   { label: 'New Form/Information Received', value: 'new_info' },
@@ -21,6 +22,7 @@ const changeReasons = [
 
 export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealId, reason }) => {
   const dispatch = useDispatch();
+  const { goBack } = useHistory();
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
@@ -28,6 +30,8 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
   useEffect(() => {
     dispatch(resetSuccessMessages());
   }, []);
+
+  const handleCancel = () => onCancel();
 
   const handleSubmit = (receiptDate, changeReason) => {
     const alertInfo = {
@@ -60,7 +64,7 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
 
   return (
     <EditNodDateModal
-      onCancel={onCancel}
+      onCancel={handleCancel}
       onSubmit={handleSubmit}
       nodDate={nodDate}
       reason={reason}
