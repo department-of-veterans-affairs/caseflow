@@ -612,7 +612,7 @@ describe AssignHearingDispositionTask, :all_dbs do
           expect(no_show_hearing_task).to_not be_nil
           expect(no_show_hearing_task.placed_on_hold_at).to_not be_nil
           expect(no_show_hearing_task.reload.on_hold?).to be_truthy
-          expect(no_show_hearing_task.calculated_on_hold_duration).to eq 25
+          expect(no_show_hearing_task.calculated_on_hold_duration).to eq NoShowHearingTask::DAYS_ON_HOLD
           instructions_text = "Mail must be received within 14 days of the original hearing date."
           expect(no_show_hearing_task.instructions).to eq [instructions_text]
         end

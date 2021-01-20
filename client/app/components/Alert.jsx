@@ -30,7 +30,7 @@ export default class Alert extends React.Component {
     return (
       <div role="alert" className={className} {...styling}>
         <div className="usa-alert-body">
-          <h2 className="usa-alert-heading">{title}</h2>
+          {title && <h2 className="usa-alert-heading">{title}</h2>}
           {this.messageDiv()}
         </div>
       </div>

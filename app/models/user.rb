@@ -90,6 +90,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     can?("RO ViewHearSched") && !can?("Build HearSched") && !can?("Edit HearSched")
   end
 
+  def can_view_edit_nod_date?
+    (attorney? || judge? || BvaIntake.singleton.users.include?(self) ||
+      ClerkOfTheBoard.singleton.users.include?(self)) && FeatureToggle.enabled?(:edit_nod_date, user: self)
+  end
+
   def can_vso_hearing_schedule?
     can?("VSO") && !can?("RO ViewHearSched") && !can?("Build HearSched") && !can?("Edit HearSched")
   end
@@ -514,6 +519,8 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
     # case-insensitive search
     def find_by_css_id(css_id)
+      # this query uses the index_users_unique_css_id
+      # find_by(css_id: css_id) does a slower seq scan
       find_by("UPPER(css_id)=UPPER(?)", css_id)
     end
 

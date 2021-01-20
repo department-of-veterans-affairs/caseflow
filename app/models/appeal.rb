@@ -23,8 +23,12 @@ class Appeal < DecisionReview
   has_many :vbms_uploaded_documents
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
+  has_many :nod_date_updates, as: :appeal
+
   has_one :special_issue_list
   has_one :post_decision_motion
+  has_one :docket_switch, class_name: "DocketSwitch", foreign_key: :new_docket_stream_id
+
   has_many :record_synced_by_job, as: :record
   has_one :work_mode, as: :appeal
   has_one :latest_informal_hearing_presentation_task, lambda {
@@ -269,6 +273,8 @@ class Appeal < DecisionReview
   end
 
   def conditionally_set_aod_based_on_age
+    return unless claimant # do not update if claimant is not yet set, i.e., when create_stream is called
+
     updated_aod_based_on_age = claimant&.advanced_on_docket_based_on_age?
     update(aod_based_on_age: updated_aod_based_on_age) if aod_based_on_age != updated_aod_based_on_age
   end
@@ -337,8 +343,18 @@ class Appeal < DecisionReview
     !!veteran_is_not_claimant
   end
 
+  def appellant_is_veteran
+    !veteran_is_not_claimant
+  end
+
   def veteran_middle_initial
     veteran_middle_name&.first
+  end
+
+  def veteran_appellant_deceased?
+    return (veteran_is_deceased && appellant_is_veteran) if FeatureToggle.enabled?(:fnod_badge, user: self)
+
+    false
   end
 
   # matches Legacy behavior
@@ -351,7 +367,7 @@ class Appeal < DecisionReview
   def cavc_remand
     return nil if !cavc?
 
-    CavcRemand.find_by(appeal_id: stream_docket_number.split("-").last)
+    CavcRemand.find_by(remand_appeal: self)
   end
 
   def status
@@ -416,6 +432,12 @@ class Appeal < DecisionReview
     InitialTasksFactory.new(self).create_root_and_sub_tasks!
     create_business_line_tasks!
     maybe_create_translation_task
+  end
+
+  # Stream change tasks indicate tasks that _may_ be moved to another appeal stream during a docket switch
+  # This includes open children tasks with no children, excluding docket related tasks
+  def docket_switchable_tasks
+    tasks.select(&:can_move_on_docket_switch?)
   end
 
   def establish!

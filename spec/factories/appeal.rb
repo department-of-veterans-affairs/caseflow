@@ -153,8 +153,13 @@ FactoryBot.define do
     end
 
     trait :advanced_on_docket_due_to_age do
-      after(:create) do |appeal, _evaluator|
-        appeal.claimants = [create(:claimant, :advanced_on_docket_due_to_age, decision_review: appeal)]
+      # set claimant.decision_review to nil so that it isn't created by the Claimant factorybot
+      claimants { [create(:claimant, :advanced_on_docket_due_to_age, decision_review: nil)] }
+    end
+
+    trait :active do
+      before(:create) do |appeal, _evaluator|
+        RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
       end
     end
 
@@ -230,6 +235,17 @@ FactoryBot.define do
     end
 
     ## Appeal with a realistic task tree
+    ## The appeal is waiting for CAVC Response
+    trait :cavc_response_window_open do
+      type_cavc_remand
+      with_post_intake_tasks
+      after(:create) do |appeal, _evaluator|
+        send_letter_task = appeal.tasks.find { |task| task.is_a?(SendCavcRemandProcessedLetterTask) }
+        send_letter_task.update_from_params({ status: "completed" }, CavcLitigationSupport.singleton.admins.first)
+      end
+    end
+
+    ## Appeal with a realistic task tree
     ## The appeal would be ready for distribution by the ACD except there is a blocking mail task
     trait :mail_blocking_distribution do
       ready_for_distribution
@@ -291,6 +307,8 @@ FactoryBot.define do
       at_judge_review
       after(:create) do |appeal|
         # MISSING: JudgeCaseReview
+        # BvaDispatchTask.create_from_root_task will autoassign, so need to have a non-empty BvaDispatch org
+        BvaDispatch.singleton.add_user(create(:user)) if BvaDispatch.singleton.users.empty?
         BvaDispatchTask.create_from_root_task(appeal.root_task)
         appeal.tasks.where(type: JudgeDecisionReviewTask.name).first.completed!
       end

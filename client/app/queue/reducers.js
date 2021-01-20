@@ -13,6 +13,7 @@ import teamManagementReducer from './teamManagement/reducers';
 
 import commonComponentsReducer from '../components/common/reducers';
 import mtvReducer from './mtv/reducers';
+import docketSwitchReducer from './docketSwitch/docketSwitchSlice';
 
 // TODO: Remove this when we move entirely over to the appeals search.
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
@@ -743,6 +744,7 @@ const rootReducer = combineReducers({
   teamManagement: teamManagementReducer,
   ui: uiReducer,
   components: commonComponentsReducer,
+  docketSwitch: docketSwitchReducer,
   mtv: mtvReducer
 });
 
