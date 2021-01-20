@@ -37,6 +37,22 @@ class Appeal < DecisionReview
       .where(type: [InformalHearingPresentationTask.name, IhpColocatedTask.name], appeal_type: Appeal.name)
   }, class_name: "Task", foreign_key: :appeal_id
 
+  # Add Paper Trail configuration
+  has_paper_trail only: [:changed_request_type], on: [:update]
+
+  validates :changed_request_type,
+            inclusion: {
+              in: [
+                HearingDay::REQUEST_TYPES[:central],
+                HearingDay::REQUEST_TYPES[:video],
+                HearingDay::REQUEST_TYPES[:virtual]
+              ],
+              message: "changed request type (%<value>s) is invalid"
+            },
+            allow_nil: true
+
+  class InvalidChangedRequestType < StandardError; end
+
   enum stream_type: {
     Constants.AMA_STREAM_TYPES.original.to_sym => Constants.AMA_STREAM_TYPES.original,
     Constants.AMA_STREAM_TYPES.vacate.to_sym => Constants.AMA_STREAM_TYPES.vacate,
@@ -551,25 +567,48 @@ class Appeal < DecisionReview
   #
   # @note See `LegacyAppeal#current_hearing_request_type` for more information.
   #   This method is provided for compatibility.
-  def current_hearing_request_type(readable: false)
-    return nil if closest_regional_office.nil?
+  def original_hearing_request_type(readable: false)
+    return "" if closest_regional_office.nil?
 
-    current_hearing_request_type = (closest_regional_office == "C") ? :central : :video
+    current_hearing_request_type = (closest_regional_office == "C") ? closest_regional_office.to_sym : :V
 
     return current_hearing_request_type if !readable
 
     # Determine type using closest_regional_office
     # "Central" if closest_regional_office office is "C", "Video" otherwise
-    case current_hearing_request_type
-    when :central
-      Hearing::HEARING_TYPES[:C]
-    else
-      Hearing::HEARING_TYPES[:V]
-    end
+    Hearing::HEARING_TYPES[current_hearing_request_type.to_sym]
   end
 
-  alias original_hearing_request_type current_hearing_request_type
-  alias previous_hearing_request_type current_hearing_request_type
+  def current_hearing_request_type(readable: false)
+    request_type = if changed_request_type.present?
+                     changed_request_type.to_sym
+                   else
+                     original_hearing_request_type
+                   end
+
+    readable ? Hearing::HEARING_TYPES[request_type] : request_type
+  end
+
+  # uses the paper_trail version on LegacyAppeal
+  def latest_appeal_event
+    TaskEvent.new(version: versions.last) if versions.any?
+  end
+
+  # # if `change_hearing_request` is populated meaning the hearing request type was changed, then return what the
+  # # previous hearing request type was. Use paper trail event to derive previous type in the case the type was changed
+  # # multple times.
+  def previous_hearing_request_type(readable: false)
+    diff = latest_appeal_event&.diff || {} # Example of diff: {"changed_request_type"=>[nil, "R"]}
+    previous_hearing_request_type = diff["changed_request_type"]&.first
+
+    request_type = if previous_hearing_request_type.present?
+                     previous_hearing_request_type.to_sym
+                   else
+                     original_hearing_request_type
+                   end
+
+    readable ? Hearing::HEARING_TYPES[request_type] : request_type
+  end
 
   private
 

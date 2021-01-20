@@ -44,6 +44,7 @@ class LegacyAppeal < CaseflowRecord
   validates :changed_request_type,
             inclusion: {
               in: [
+                HearingDay::REQUEST_TYPES[:central],
                 HearingDay::REQUEST_TYPES[:video],
                 HearingDay::REQUEST_TYPES[:virtual]
               ],
@@ -419,6 +420,8 @@ class LegacyAppeal < CaseflowRecord
   # This method returns the sanitized versions of those where 'R' => :virtual and 'V' => :video
   def sanitized_changed_request_type(changed_request_type)
     case changed_request_type
+    when HearingDay::REQUEST_TYPES[:central]
+      :central
     when HearingDay::REQUEST_TYPES[:video]
       :video
     when HearingDay::REQUEST_TYPES[:virtual]
