@@ -49,8 +49,6 @@ class AwsJobLogHelper
     # @example With a SQS message ID
     #   puts AwsJobLogHelper::JobInfo.new(VirtualHearings::DeleteConferencesJob, "msg_id").url
     #
-    # @param job_info [JobInfo] A JobInfo instance describing the job.
-    #
     # @return [String] An AWS CloudWatch URL that finds logging for the job.
     def url
       render_query_with_renderer(UrlRenderer)
@@ -60,8 +58,6 @@ class AwsJobLogHelper
     #
     # @example With a SQS message ID
     #   puts AwsJobLogHelper::JobInfo.new(VirtualHearings::DeleteConferencesJob, "msg_id").command
-    #
-    # @param job [JobInfo] A JobInfo instance describing the job.
     #
     # @return [String] An AWS CLI command that starts a query to find logs for the job.
     #   The returned command also generates a secondary command that you can use to get
