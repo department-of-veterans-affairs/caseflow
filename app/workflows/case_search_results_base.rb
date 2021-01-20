@@ -50,7 +50,7 @@ class CaseSearchResultsBase
     ama_appeals, legacy_appeals = appeals.partition { |appeal| appeal.is_a?(Appeal) }
 
     ama_hash = WorkQueue::AppealSerializer.new(
-      ama_appeals, is_collection: true, params: { user: user }
+      ama_appeals, is_collection: true, params: { user: user, ignore_bgs_errors: true }
     ).serializable_hash
 
     legacy_hash = WorkQueue::LegacyAppealSerializer.new(

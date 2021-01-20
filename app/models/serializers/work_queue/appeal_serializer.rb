@@ -49,7 +49,17 @@ class WorkQueue::AppealSerializer
 
   attribute :overtime, &:overtime?
 
-  attribute :veteran_appellant_deceased, &:veteran_appellant_deceased?
+  attribute :veteran_appellant_deceased do |appeal, params|
+    begin
+      appeal.veteran_appellant_deceased?
+    rescue BGS::PowerOfAttorneyFolderDenied => error
+      # See https://github.com/department-of-veterans-affairs/caseflow/pull/15804
+      raise unless params[:ignore_bgs_errors]
+
+      Raven.capture_exception(error)
+      nil
+    end
+  end
 
   attribute :assigned_to_location
 
@@ -73,7 +83,17 @@ class WorkQueue::AppealSerializer
 
   attribute :cavc_remand
 
-  attribute :veteran_death_date
+  attribute :veteran_death_date do |appeal, params|
+    begin
+      appeal.veteran_death_date
+    rescue BGS::PowerOfAttorneyFolderDenied => error
+      # See https://github.com/department-of-veterans-affairs/caseflow/pull/15804
+      raise unless params[:ignore_bgs_errors]
+
+      Raven.capture_exception(error)
+      nil
+    end
+  end
 
   attribute :veteran_file_number
 
