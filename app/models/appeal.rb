@@ -570,12 +570,13 @@ class Appeal < DecisionReview
   def original_hearing_request_type(readable: false)
     return nil if closest_regional_office.nil?
 
+    # Determine type using closest_regional_office
+    # "Central" if closest_regional_office office is "C", "Video" otherwise
     current_hearing_request_type = (closest_regional_office == "C") ? :central : :video
 
     return current_hearing_request_type if !readable
 
-    # Determine type using closest_regional_office
-    # "Central" if closest_regional_office office is "C", "Video" otherwise
+    # Return the readable version of either the Central Office or Video request type
     Hearing::HEARING_TYPES[HearingDay::REQUEST_TYPES[current_hearing_request_type.to_s].to_sym]
   end
 
@@ -586,6 +587,7 @@ class Appeal < DecisionReview
                      HearingDay::REQUEST_TYPES[original_hearing_request_type.to_s].to_sym
                    end
 
+    # Either use the symbol to get the readable hearing type or use the Hearing Day request type symbol
     readable ? Hearing::HEARING_TYPES[request_type] : HearingDay::REQUEST_TYPES[request_type.to_s].to_sym
   end
 
@@ -607,6 +609,7 @@ class Appeal < DecisionReview
                      HearingDay::REQUEST_TYPES[original_hearing_request_type.to_s].to_sym
                    end
 
+    # Either use the symbol to get the readable hearing type or use the Hearing Day request type symbol
     readable ? Hearing::HEARING_TYPES[request_type] : HearingDay::REQUEST_TYPES[request_type.to_s].to_sym
   end
 
