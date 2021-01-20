@@ -389,6 +389,29 @@ describe VirtualHearingMailer do
             expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
+
+        describe "internal use section" do
+          it "has veteran's state of residence" do
+            # FL is the default veteran's state of residence
+            expect(subject.html_part.body.decoded).to include("For internal Board use:\r\n  FL")
+          end
+
+          context "veteran is not appellant" do
+            let(:appeal) do
+              create(
+                :appeal,
+                :hearing_docket,
+                number_of_claimants: 1,
+                veteran_is_not_claimant: true
+              )
+            end
+
+            it "has appellant's state of residence" do
+              # CA is the default appellant's state of residence
+              expect(subject.html_part.body.decoded).to include("For internal Board use:\r\n  CA")
+            end
+          end
+        end
       end
 
       describe "#updated_time_confirmation" do
@@ -576,6 +599,39 @@ describe VirtualHearingMailer do
         describe "appellant_tz is not present" do
           it "displays eastern standard time (ET)" do
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
+          end
+        end
+
+        describe "internal use section" do
+          it "has veteran's state of residence" do
+            # FL is the default veteran's state of residence
+            expect(subject.html_part.body.decoded).to include("For internal Board use:\r\n  FL")
+          end
+
+          context "veteran is not appellant" do
+            let(:correspondent) do
+              create(
+                :correspondent,
+                appellant_first_name: "Sirref",
+                appellant_last_name: "Test",
+                ssn: "333224444"
+              )
+            end
+            let(:appellant_address) do
+              {
+                addrs_one_txt: "9001 FAKE ST",
+                addrs_two_txt: "APT 2",
+                addrs_three_txt: nil,
+                city_nm: "BROOKLYN",
+                postal_cd: "NY",
+                cntry_nm: nil,
+                zip_prefix_nbr: "11222"
+              }
+            end
+
+            it "has appellant's state of residence" do
+              expect(subject.html_part.body.decoded).to include("For internal Board use:\r\n  NY")
+            end
           end
         end
       end
