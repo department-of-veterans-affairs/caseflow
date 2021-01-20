@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { DocketSwitchAddTaskForm } from './DocketSwitchAddTaskForm';
 import { appealWithDetailSelector, getAllTasksForAppeal } from '../../selectors';
@@ -26,6 +26,10 @@ export const DocketSwitchAddTaskContainer = () => {
 
   const handleBack = () => goBack();
 
+  const switchableTasks = useMemo(() => {
+    return tasks.filter((task) => task.canMoveOnDocketSwitch);
+  }, [tasks]);
+
   const handleSubmit = () => {
     // Add stuff to redux store
 
@@ -41,7 +45,7 @@ export const DocketSwitchAddTaskContainer = () => {
         onCancel={handleCancel}
         onSubmit={handleSubmit}
         docketName={appeal.docketName}
-        taskListing={tasks}
+        taskListing={switchableTasks}
         onBack={handleBack}
         docketType={docketType}
       />

@@ -60,10 +60,8 @@ export const DocketSwitchAddTaskForm = ({
   };
 
   const activeTaskLabel = useMemo(() => {
-    return activeTaskId ? taskListing.find((task) => task.id === activeTaskId) : null;
+    return activeTaskId ? taskListing.find((task) => task.taskId === activeTaskId)?.['label'] : null;
   }, [activeTaskId]);
-
-  console.log('Label', activeTaskLabel);
 
   // populate all of our checkboxes on initial render
   useEffect(() => selectAllTasks(), []);
@@ -132,7 +130,6 @@ export const DocketSwitchAddTaskForm = ({
           <DocketSwitchAddTaskModal
             onSubmit={onSubmit}
             onCancel={handleCancel}
-            taskId= {activeTaskId}
             taskLabel= {activeTaskLabel}
             onConfirm={updateTaskSelections}
           />

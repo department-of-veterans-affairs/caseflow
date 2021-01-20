@@ -213,6 +213,20 @@ RSpec.feature "Docket Switch", :all_dbs do
         assigned_by: judge
       )
     end
+
+    let(:colocated_user) { create(:user) }
+    let!(:colocated_staff) { create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
+
+    let!(:admin_action) do
+      create(
+        :ama_colocated_task,
+        :ihp,
+        appeal: appeal,
+        parent: root_task,
+        assigned_to: colocated_user
+      )
+    end
+
     let(:receipt_date) { Time.zone.today - 5.days }
     let(:context) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit" }
 
@@ -298,19 +312,33 @@ RSpec.feature "Docket Switch", :all_dbs do
         find("label", text: "1. PTSD denied").click
       end
       expect(page).to have_button("Continue", disabled: false)
-      binding.pry
       click_button(text: "Continue")
-
       # Takes user to add task page
       expect(page).to have_content("Switch Docket: Add/Remove Tasks")
       expect(page).to have_content("You are switching from Evidence Submission to Direct Review")
 
       # select task
       within_fieldset("Please unselect any tasks you would like to remove:") do
-        find("label", text: "Root Task").click
+        find("label", text: "IHP").click
       end
 
       expect(page).to have_content("Confirm removing task")
+      expect(page).to have_content("IHP")
+
+      safe_click ".cf-modal-link"
+
+      # Return back to add task
+      within_fieldset("Please unselect any tasks you would like to remove:") do
+        expect(find_field("IHP", visible: false)).to be_checked
+      end
+
+      # select task
+      within_fieldset("Please unselect any tasks you would like to remove:") do
+        find("label", text: "IHP").click
+      end
+
+      click_button(COPY::MODAL_CONFIRM_BUTTON)
+      expect(page).to have_field("IHP", checked: false, visible: false)
     end
   end
 end
