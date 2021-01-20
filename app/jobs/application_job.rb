@@ -44,7 +44,7 @@ class ApplicationJob < ActiveJob::Base
   end
   # :nocov:
 
-  before_perform do |job|
+  before_perform do
     if self.class.app_name.present?
       RequestStore.store[:application] = "#{self.class.app_name}_job"
     end
