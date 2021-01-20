@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { onReceiveDropdownData, onFetchDropdownData } from '../common/actions';
 import ApiUtil from '../../util/ApiUtil';
-import _ from 'lodash';
+import { filter, isEqual, forEach, find } from 'lodash';
 import LoadingLabel from './LoadingLabel';
 import HEARING_REQUEST_TYPES from '../../../constants/HEARING_REQUEST_TYPES';
 import SearchableDropdown from '../SearchableDropdown';
@@ -17,7 +17,7 @@ class RegionalOfficeDropdown extends React.Component {
   componentDidUpdate(prevProps) {
     const { regionalOffices: { options }, validateValueOnMount, onChange } = this.props;
 
-    if (!_.isEqual(prevProps.regionalOffices.options, options) && validateValueOnMount) {
+    if (!isEqual(prevProps.regionalOffices.options, options) && validateValueOnMount) {
       const option = this.getSelectedOption();
 
       onChange(option.value, option.label);
@@ -26,7 +26,6 @@ class RegionalOfficeDropdown extends React.Component {
 
   getRegionalOffices = () => {
     const {
-      excludeVirtualHearingsOption,
       regionalOffices: { options, isFetching }
     } = this.props;
 
@@ -41,7 +40,7 @@ class RegionalOfficeDropdown extends React.Component {
 
       let regionalOfficeOptions = [];
 
-      _.forEach(
+      forEach(
         resp.regionalOffices,
         (value, key) => {
           let label;
@@ -50,10 +49,6 @@ class RegionalOfficeDropdown extends React.Component {
             label = value.label;
           } else {
             label = value.state === 'DC' ? 'Central' : `${value.city}, ${value.state}`;
-          }
-
-          if (key === HEARING_REQUEST_TYPES.virtual && excludeVirtualHearingsOption) {
-            return;
           }
 
           regionalOfficeOptions.push({
@@ -72,18 +67,26 @@ class RegionalOfficeDropdown extends React.Component {
   getSelectedOption = () => {
     const { value, regionalOffices: { options } } = this.props;
 
-    return _.find(options, (opt) => opt.value.key === value) ||
+    return find(options, (opt) => opt.value.key === value) ||
       {
         value: null,
         label: null
       };
   }
 
+  filterOptions = (options, excludeVirtualHearingsOption) => {
+    if (excludeVirtualHearingsOption) {
+      return filter(options, (option) => option?.value.key !== HEARING_REQUEST_TYPES.virtual);
+    }
+
+    return options;
+  }
+
   render() {
     const {
       name, label, onChange,
       regionalOffices: { options, isFetching },
-      readOnly, errorMessage, placeholder } = this.props;
+      readOnly, errorMessage, placeholder, excludeVirtualHearingsOption } = this.props;
 
     return (
       <SearchableDropdown
@@ -93,7 +96,7 @@ class RegionalOfficeDropdown extends React.Component {
         readOnly={readOnly}
         value={this.getSelectedOption()}
         onChange={(option) => onChange((option || {}).value, (option || {}).label)}
-        options={options}
+        options={this.filterOptions(options, excludeVirtualHearingsOption)}
         errorMessage={errorMessage}
         placeholder={placeholder} />
     );
