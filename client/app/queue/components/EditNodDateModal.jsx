@@ -106,7 +106,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
 
     return (formattedNewDate < amaDate);
   };
-  
+
   const handleDateChange = (value) => {
     if (isFutureDate(value)) {
       setErrorMessage(COPY.EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE);
@@ -126,12 +126,11 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
   const handleChangeReason = (value) => {
     if (!value === null) {
       setBadReason(true);
-    } else{
+    } else {
       setChangeReason(value);
       setBadReason(null);
     }
   };
-
 
   return (
     <Modal
