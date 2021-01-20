@@ -9,7 +9,7 @@ import {
   DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS
 } from 'app/../COPY';
 import { sprintf } from 'sprintf-js';
-import { yupResolver } from '@hookform/resolvers';
+import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { css } from 'glamor';
 import DateSelector from 'app/components/DateSelector';

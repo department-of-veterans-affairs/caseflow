@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers';
+import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 import {
