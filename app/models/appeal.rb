@@ -27,7 +27,8 @@ class Appeal < DecisionReview
 
   has_one :special_issue_list
   has_one :post_decision_motion
-  has_one :docket_switch, as: :new_docket_stream
+  has_one :docket_switch, class_name: "DocketSwitch", foreign_key: :new_docket_stream_id
+
   has_many :record_synced_by_job, as: :record
   has_one :work_mode, as: :appeal
   has_one :latest_informal_hearing_presentation_task, lambda {
@@ -366,7 +367,7 @@ class Appeal < DecisionReview
   def cavc_remand
     return nil if !cavc?
 
-    CavcRemand.find_by(source_appeal_id: stream_docket_number.split("-").last)
+    CavcRemand.find_by(remand_appeal: self)
   end
 
   def status
@@ -431,6 +432,12 @@ class Appeal < DecisionReview
     InitialTasksFactory.new(self).create_root_and_sub_tasks!
     create_business_line_tasks!
     maybe_create_translation_task
+  end
+
+  # Stream change tasks indicate tasks that _may_ be moved to another appeal stream during a docket switch
+  # This includes open children tasks with no children, excluding docket related tasks
+  def docket_switchable_tasks
+    tasks.select(&:can_move_on_docket_switch?)
   end
 
   def establish!

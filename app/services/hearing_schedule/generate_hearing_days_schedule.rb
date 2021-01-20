@@ -477,11 +477,13 @@ class HearingSchedule::GenerateHearingDaysSchedule
   # Initialize allocated_days, available_days, and num_of_rooms for each RO
   def assign_ro_hearing_day_allocations(ro_cities, ro_allocations)
     ro_allocations.reduce({}) do |acc, allocation|
-      acc[allocation.regional_office] = ro_cities[allocation.regional_office].merge(
+      ro_key = (allocation.regional_office == "NVHQ") ? HearingDay::REQUEST_TYPES[:virtual] : allocation.regional_office
+
+      acc[allocation.regional_office] = ro_cities[ro_key].merge(
         allocated_days: allocation.allocated_days,
         allocated_days_without_room: allocation.allocated_days_without_room,
         available_days: @available_days,
-        num_of_rooms: RegionalOffice.new(allocation.regional_office).rooms
+        num_of_rooms: RegionalOffice.new(ro_key).rooms
       )
       acc
     end
