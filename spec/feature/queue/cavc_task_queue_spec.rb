@@ -137,8 +137,8 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_PROCEDURE}: #{decision_type}"
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_TYPE}: #{Constants.CAVC_REMAND_SUBTYPE_NAMES.mdr}"
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DECISION_DATE}: #{date}"
-          expect(page).not_to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}:"
-          expect(page).not_to have_content "#{COPY::CASE_DETAILS_CAVC_MANDATE_DATE}:"
+          expect(page.has_no_content?("#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}:")).to eq(true)
+          expect(page.has_no_content?("#{COPY::CASE_DETAILS_CAVC_MANDATE_DATE}:")).to eq(true)
         end
       end
     end

@@ -45,7 +45,7 @@ class CavcRemand < CaseflowRecord
 
   def cavc_remand_form_complete?
     return valid? if mdr?
-    
+
     valid? && !mandate_date.nil? && !judgement_date.nil?
   end
 
