@@ -1,6 +1,6 @@
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import { debounce, pickBy, isEmpty } from 'lodash';
+import { debounce, pickBy, isEmpty, filter } from 'lodash';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
@@ -74,7 +74,7 @@ const requestTypeOptions = [
 
 export const HearingDayAddModal = ({
   requestType, selectedHearingDay, vlj, coordinator, notes, roomRequired, selectedRegionalOffice,
-  hearingSchedule, closeModal, cancelModal, ...props
+  hearingSchedule, closeModal, cancelModal, user, ...props
 }) => {
   const [selectedRequestType, setSelectedRequestType] = useState(null);
   const [serverError, setServerError] = useState(false);
@@ -203,6 +203,14 @@ export const HearingDayAddModal = ({
       </ul></div>;
   };
 
+  const filteredRequestTypeOptions = (options) => {
+    if (user.userCanAddVirtualHearingDays) {
+      return options;
+    }
+
+    return filter(options, (option) => option.value !== HEARING_REQUEST_TYPES.virtual);
+  };
+
   return (
     <Modal
       title="Add Hearing Day"
@@ -237,7 +245,7 @@ export const HearingDayAddModal = ({
             errorMessage={!dateError && errorMessages.requestType ? getErrorMessage() : null}
             value={requestType}
             onChange={onRequestTypeChange}
-            options={requestTypeOptions} />
+            options={filteredRequestTypeOptions(requestTypeOptions)} />
           {(selectedVideo || selectedVirtual) &&
           <RegionalOfficeDropdown
             label="Select Regional Office (RO)"
@@ -293,9 +301,6 @@ HearingDayAddModal.propTypes = {
   onReceiveHearingSchedule: PropTypes.func,
   onRegionalOfficeChange: PropTypes.func,
   onSelectedHearingDayChange: PropTypes.func,
-  regionalOffices: PropTypes.shape({
-    options: PropTypes.arrayOf(PropTypes.object)
-  }),
   requestType: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.shape({
@@ -312,17 +317,15 @@ HearingDayAddModal.propTypes = {
   selectedRegionalOffice: PropTypes.object,
 
   setNotes: PropTypes.func,
-  userCssId: PropTypes.string,
-  userId: PropTypes.number,
   vlj: PropTypes.shape({
     value: PropTypes.string
-  })
+  }),
+  user: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
   hearingSchedule: state.hearingSchedule.hearingSchedule,
   selectedRegionalOffice: state.components.selectedRegionalOffice || {},
-  regionalOffices: state.components.regionalOffices,
   selectedHearingDay: state.hearingSchedule.selectedHearingDay,
   requestType: state.hearingSchedule.requestType,
   vlj: state.hearingSchedule.vlj || {},
