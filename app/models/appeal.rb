@@ -570,18 +570,18 @@ class Appeal < DecisionReview
   def original_hearing_request_type(readable: false)
     return "" if closest_regional_office.nil?
 
-    current_hearing_request_type = (closest_regional_office == "C") ? closest_regional_office.to_sym : :V
+    current_hearing_request_type = (closest_regional_office == "C") ? :central : :video
 
     return current_hearing_request_type if !readable
 
     # Determine type using closest_regional_office
     # "Central" if closest_regional_office office is "C", "Video" otherwise
-    Hearing::HEARING_TYPES[current_hearing_request_type.to_sym]
+    HearingDay::REQUEST_TYPES[current_hearing_request_type]
   end
 
   def current_hearing_request_type(readable: false)
     request_type = if changed_request_type.present?
-                     changed_request_type.to_sym
+                     sanitized_changed_request_type(changed_request_type)
                    else
                      original_hearing_request_type
                    end
@@ -602,7 +602,7 @@ class Appeal < DecisionReview
     previous_hearing_request_type = diff["changed_request_type"]&.first
 
     request_type = if previous_hearing_request_type.present?
-                     previous_hearing_request_type.to_sym
+                     sanitized_changed_request_type(previous_hearing_request_type)
                    else
                      original_hearing_request_type
                    end
@@ -611,6 +611,22 @@ class Appeal < DecisionReview
   end
 
   private
+
+  # Currently changed_request_type can only be stored as 'R' or 'V' because
+  # you can convert a hearing request type to Video or Virtual.
+  # This method returns the sanitized versions of those where 'R' => :virtual and 'V' => :video
+  def sanitized_changed_request_type(changed_request_type)
+    case changed_request_type
+    when HearingDay::REQUEST_TYPES[:central]
+      :central
+    when HearingDay::REQUEST_TYPES[:video]
+      :video
+    when HearingDay::REQUEST_TYPES[:virtual]
+      :virtual
+    else
+      fail InvalidChangedRequestType, "\"#{changed_request_type}\" is not a valid request type."
+    end
+  end
 
   def business_lines_needing_assignment
     request_issues.select(&:requires_record_request_task?).map(&:business_line).uniq
