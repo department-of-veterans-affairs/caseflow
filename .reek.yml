@@ -206,8 +206,6 @@ detectors:
       - Fakes::PexipService
       - HearingAdminActionVerifyAddressTask#available_hearing_admin_actions
       - HearingDispositionChangeJob
-      - Helpers::AppealHearingHelper#available_hearing_locations
-      - Helpers::AppealHearingHelper#hearings
       - JudgeLegacyDecisionReviewTask#review_action
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
       - LegacyDocket#age_of_n_oldest_genpop_priority_appeals
@@ -221,9 +219,6 @@ detectors:
       - Reporter#percent
       - ScheduleHearingTaskPager#sorted_tasks
       - VBMSCaseflowLogger#log
-      - VirtualHearings::AppellantNameHelper#formatted_appellant_name
-      - VirtualHearings::ExternalLinkHelper#external_link
-      - VirtualHearings::ExternalLinkHelper#phone_link
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.
