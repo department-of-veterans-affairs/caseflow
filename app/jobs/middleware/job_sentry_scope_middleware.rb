@@ -7,7 +7,6 @@ class JobSentryScopeMiddleware
     #
     #   https://github.com/phstc/shoryuken/wiki/Sending-a-message
     job_class = body["job_class"].constantize
-    job_id = body["job_id"]
     msg_id = sqs_msg.message_id
     job_start_time = Time.zone.now
     job_info = AwsJobLogHelper::JobInfo.new(
