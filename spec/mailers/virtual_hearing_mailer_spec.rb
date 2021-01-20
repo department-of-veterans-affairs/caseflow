@@ -27,9 +27,11 @@ describe VirtualHearingMailer do
   let(:pexip_url) { "fake.va.gov" }
 
   shared_context "ama_hearing" do
+    let(:appeal) { create(:appeal, :hearing_docket) }
     let(:hearing) do
       create(
         :hearing,
+        appeal: appeal,
         scheduled_time: "8:30AM",
         hearing_day: hearing_day,
         regional_office: regional_office
@@ -38,22 +40,42 @@ describe VirtualHearingMailer do
   end
 
   shared_context "legacy_hearing" do
-    let(:hearing) do
-      hearing_date = Time.use_zone("America/New_York") do
+    let(:correspondent) { create(:correspondent) }
+    let(:appellant_address) { nil }
+    let(:hearing_date) do
+      Time.use_zone("America/New_York") do
         Time.zone.now.change(hour: 11, min: 30) + 1.day # Tomorrow. Matches the AMA hearing scheduled for.
       end
-      case_hearing = create(
+    end
+    let(:case_hearing) do
+      create(
         :case_hearing,
         hearing_type: hearing_day.request_type,
         hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date) # VACOLS always has EST time
       )
-      hearing_location = create(:hearing_location, regional_office: regional_office)
-
+    end
+    let(:vacols_case) do
+      create(
+        :case_with_form_9,
+        correspondent: correspondent,
+        case_issues: [create(:case_issue), create(:case_issue)],
+        bfregoff: regional_office,
+        case_hearings: [case_hearing]
+      )
+    end
+    let(:hearing) do
       create(
         :legacy_hearing,
         case_hearing: case_hearing,
         hearing_day_id: hearing_day.id,
-        hearing_location: hearing_location
+        regional_office: regional_office,
+        appeal: create(
+          :legacy_appeal,
+          :with_veteran,
+          appellant_address: appellant_address,
+          closest_regional_office: regional_office,
+          vacols_case: vacols_case
+        )
       )
     end
   end
