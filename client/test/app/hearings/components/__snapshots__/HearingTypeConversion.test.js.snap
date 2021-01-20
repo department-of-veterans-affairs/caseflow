@@ -34,7 +34,16 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
       "closestRegionalOfficeLabel": "Nashville Regional office",
       "completedHearingOnPreviousAppeal": false,
       "decisionDate": null,
-      "decisionIssues": Array [],
+      "decisionIssues": Array [
+        Object {
+          "description": "This is a description of the decision",
+          "id": 1,
+        },
+        Object {
+          "description": "This is a description of another decision",
+          "id": 2,
+        },
+      ],
       "docketName": "Legacy",
       "docketNumber": "200805-541",
       "documentID": null,
@@ -126,7 +135,16 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
         "closestRegionalOfficeLabel": "Nashville Regional office",
         "completedHearingOnPreviousAppeal": false,
         "decisionDate": null,
-        "decisionIssues": Array [],
+        "decisionIssues": Array [
+          Object {
+            "description": "This is a description of the decision",
+            "id": 1,
+          },
+          Object {
+            "description": "This is a description of another decision",
+            "id": 2,
+          },
+        ],
         "docketName": "Legacy",
         "docketNumber": "200805-541",
         "documentID": null,
@@ -440,9 +458,6 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
                           <div
                             className="usa-alert-body"
                           >
-                            <h2
-                              className="usa-alert-heading"
-                            />
                             <div
                               className="usa-alert-text"
                             >

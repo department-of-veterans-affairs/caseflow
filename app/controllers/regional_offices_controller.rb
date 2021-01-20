@@ -2,9 +2,13 @@
 
 class RegionalOfficesController < ApplicationController
   def index
-    render json: {
-      regional_offices: RegionalOffice.ros_with_hearings.merge("C" => RegionalOffice::CITIES["C"])
-    }
+    ros = RegionalOffice.ros_with_hearings.merge("C" => RegionalOffice::CITIES["C"])
+
+    if !FeatureToggle.enabled?(:national_vh_queue, user: current_user)
+      ros.delete_if { |ro_key, _ro| ro_key == "R" }
+    end
+
+    render json: { regional_offices: ros }
   end
 
   def hearing_dates
