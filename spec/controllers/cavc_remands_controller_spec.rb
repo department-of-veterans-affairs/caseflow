@@ -90,8 +90,8 @@ RSpec.describe CavcRemandsController, type: :controller do
       end
 
       context "when sub-type is MDR" do
-        let(:remand_subtype) { Constants::CAVC_REMAND_SUBTYPES.keys.third }
-        context "with unrequired judgement and mandate date parameters" do
+        let(:remand_subtype) { Constants::CAVC_REMAND_SUBTYPES["mdr"] }
+        context "with judgement and mandate date parameters" do
           include_examples "creates a remand depending on the sub-type"
         end
 
