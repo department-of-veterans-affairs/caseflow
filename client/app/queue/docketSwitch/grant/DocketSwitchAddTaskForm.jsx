@@ -26,8 +26,8 @@ const schema = yup.object().shape({
 export const DocketSwitchAddTaskForm = ({
   onSubmit,
   onCancel,
-  docketName,
-  docketType,
+  docketFrom,
+  docketTo,
   taskListing = [],
   onBack
 }) => {
@@ -90,8 +90,8 @@ export const DocketSwitchAddTaskForm = ({
 
   const title = sprintf(
     DOCKET_SWITCH_GRANTED_ADD_TASK_INSTRUCTIONS,
-    StringUtil.snakeCaseToCapitalized(docketName),
-    StringUtil.snakeCaseToCapitalized(docketType)
+    StringUtil.snakeCaseToCapitalized(docketFrom),
+    StringUtil.snakeCaseToCapitalized(docketTo)
   );
 
   return (
@@ -164,8 +164,8 @@ export const DocketSwitchAddTaskForm = ({
 DocketSwitchAddTaskForm.propTypes = {
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
-  docketName: PropTypes.string,
-  docketType: PropTypes.string,
+  docketFrom: PropTypes.string,
+  docketTo: PropTypes.string,
   taskListing: PropTypes.array,
   onBack: PropTypes.func
 };

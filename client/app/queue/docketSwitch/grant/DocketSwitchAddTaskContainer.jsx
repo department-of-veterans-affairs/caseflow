@@ -21,7 +21,6 @@ export const DocketSwitchAddTaskContainer = () => {
 
   const handleCancel = () => {
     // Add code to clear docketSwitch redux store
-    // You can utilize useHistory() react-router hook to go back to the case details page
   };
 
   const handleBack = () => goBack();
@@ -32,11 +31,6 @@ export const DocketSwitchAddTaskContainer = () => {
 
   const handleSubmit = () => {
     // Add stuff to redux store
-
-    // Call stepForward redux action
-    // dispatch(stepForward());
-
-    // Move to next step
   };
 
   return (
@@ -44,10 +38,10 @@ export const DocketSwitchAddTaskContainer = () => {
       <DocketSwitchAddTaskForm
         onCancel={handleCancel}
         onSubmit={handleSubmit}
-        docketName={appeal.docketName}
+        docketFrom={appeal.docketName}
         taskListing={switchableTasks}
         onBack={handleBack}
-        docketType={docketType}
+        docketTo={docketType}
       />
     </>
   );
