@@ -160,7 +160,7 @@ reset-dbs: ## Resets Caseflow and ETL database schemas
 seed-dbs:	## Seed all databases
 	bundle exec rake local:vacols:seed
 	bundle exec rake spec:setup_vacols
-	RAILS_ENV=development bundle exec rake db:seed
+	bundle exec rake db:seed
 	DB=etl bundle exec rake db:seed
 
 enable-feature-flags: ## enable all feature flags
