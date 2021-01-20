@@ -136,12 +136,10 @@ etl-rollback:	## Rollback ETL database
 	DB=etl bundle exec rake db:rollback
 
 db-migrate:	## Migrate main Caseflow db
-	RAILS_ENV=test bundle exec rake db:migrate
-	RAILS_ENV=development bundle exec rake db:migrate
+	bundle exec rake db:migrate
 
 db-rollback:	## Rollback main Caseflow db
-	RAILS_ENV=test bundle exec rake db:rollback
-	RAILS_ENV=development bundle exec rake db:rollback
+	bundle exec rake db:rollback
 
 migrate: etl-migrate etl-test-prepare db-migrate ## Migrate all Rails databases
 
@@ -154,8 +152,7 @@ reset: reset-dbs seed-dbs enable-feature-flags ## Resets databases and enable fe
 
 reset-dbs: ## Resets Caseflow and ETL database schemas
 	DB=etl bundle exec rake db:drop db:create db:schema:load
-	RAILS_ENV=test bundle exec rake db:drop db:create db:schema:load
-	RAILS_ENV=development bundle exec rake db:drop db:create db:schema:load
+	bundle exec rake db:drop db:create db:schema:load
 
 seed-dbs:	## Seed all databases
 	bundle exec rake local:vacols:seed
