@@ -66,18 +66,21 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
     if CavcLitigationSupport.singleton.user_has_access?(user)
       return [Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h] if on_hold?
 
-      return USER_ACTIONS if assigned_to == user ||
-                          task_is_assigned_to_user_within_organization?(user) ||
-                          org_task_and_org_member(user)
-
-
       return ADMIN_ACTIONS if CavcLitigationSupport.singleton.user_is_admin?(user)
+
+      return USER_ACTIONS if user_actions_available?(user)
     end
 
     []
   end
 
   private
+
+  def user_actions_available?(user)
+    assigned_to == user ||
+      task_is_assigned_to_user_within_organization?(user) ||
+      org_task_and_org_member(user)
+  end
 
   def set_assignee
     self.assigned_to = CavcLitigationSupport.singleton if assigned_to.nil?
