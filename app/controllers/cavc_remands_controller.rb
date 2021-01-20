@@ -62,7 +62,7 @@ class CavcRemandsController < ApplicationController
     if params["remand_subtype"] == Constants.CAVC_REMAND_SUBTYPES.mdr
       REMAND_REQUIRED_PARAMS
     else
-      REMAND_REQUIRED_PARAMS + JMR_REQUIRED_PARAMS 
+      REMAND_REQUIRED_PARAMS + JMR_REQUIRED_PARAMS
     end
   end
 end
