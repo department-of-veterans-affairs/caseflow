@@ -52,7 +52,7 @@ class ScheduleHearingTask < Task
       verify_user_can_update!(current_user)
 
       # Either change the hearing request type or schedule/cancel the hearing
-      if params[:business_payloads][:values][:changed_request_type].present?
+      if params.dig(:business_payloads, :values, :changed_request_type).present?
         change_hearing_request_type(params, current_user)
       else
         created_tasks = create_schedule_hearing_tasks(params)
