@@ -4,6 +4,7 @@ class VirtualHearingMailer < ActionMailer::Base
   default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
   layout "virtual_hearing_mailer"
   helper VirtualHearings::LinkHelper
+  helper VirtualHearings::AppellantLocationHelper
   helper VirtualHearings::AppellantNameHelper
   helper VirtualHearings::CalendarTemplateHelper
 
