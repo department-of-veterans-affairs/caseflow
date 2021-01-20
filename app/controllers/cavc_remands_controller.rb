@@ -5,6 +5,21 @@
 class CavcRemandsController < ApplicationController
   before_action :validate_cavc_remand_access
 
+  REQUIRED_PARAMS = [
+    :source_appeal_id,
+    :cavc_decision_type,
+    :cavc_docket_number,
+    :cavc_judge_full_name,
+    :created_by_id,
+    :decision_date,
+    :decision_issue_ids,
+    :instructions,
+    :judgement_date,
+    :mandate_date,
+    :represented_by_attorney,
+    :updated_by_id
+  ]
+
   def create
     cavc_remand = CavcRemand.create!(create_params)
     cavc_appeal = Appeal.court_remand.find_by(stream_docket_number: source_appeal.docket_number)
@@ -31,31 +46,14 @@ class CavcRemandsController < ApplicationController
   def create_params
     params.merge!(created_by_id: current_user.id, updated_by_id: current_user.id, source_appeal_id: source_appeal.id)
     params.require(required_params_by_subtype)
-    params.permit(required_params << :remand_subtype).merge(params.permit(decision_issue_ids: []))
-  end
-
-  def required_params
-    [
-      :source_appeal_id,
-      :cavc_decision_type,
-      :cavc_docket_number,
-      :cavc_judge_full_name,
-      :created_by_id,
-      :decision_date,
-      :decision_issue_ids,
-      :instructions,
-      :judgement_date,
-      :mandate_date,
-      :represented_by_attorney,
-      :updated_by_id
-    ]
+    params.permit(REQUIRED_PARAMS << :remand_subtype).merge(params.permit(decision_issue_ids: []))
   end
 
   def required_params_by_subtype
     if params["remand_subtype"] == Constants.CAVC_REMAND_SUBTYPES.mdr
-      required_params - [:judgement_date, :mandate_date]
+      REQUIRED_PARAMS - [:judgement_date, :mandate_date]
     else
-      required_params
+      REQUIRED_PARAMS
     end
   end
 end
