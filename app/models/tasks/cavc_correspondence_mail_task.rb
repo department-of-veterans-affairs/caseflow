@@ -28,6 +28,7 @@ class CavcCorrespondenceMailTask < MailTask
     return user_task_actions if user_task_and_admin_or_assigned_to_user
 
     return organization_task_actions if org_task_and_org_member(user)
+
     []
   end
 
