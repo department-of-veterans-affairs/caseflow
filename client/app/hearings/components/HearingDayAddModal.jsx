@@ -93,7 +93,7 @@ export const HearingDayAddModal = ({
       judge_id: vlj.value,
       bva_poc: coordinator.value,
       notes,
-      assign_room: roomRequired,
+      assign_room: selectedVirtual ? false : roomRequired,
       ...(selectedRegionalOffice?.key !== '' && requestType.value !== 'C' &&
         { regional_office: selectedRegionalOffice.key })
     };
