@@ -19,7 +19,8 @@ const CavcDetail = (props) => {
     remand_subtype: type,
     decision_date: decisionDate,
     judgement_date: judgementDate,
-    mandate_date: mandateDate
+    mandate_date: mandateDate,
+    instructions: instructionText
   } = props;
 
   const details = [];
@@ -85,6 +86,13 @@ const CavcDetail = (props) => {
     });
   }
 
+  if (instructionText) {
+    details.push({
+      label: COPY.CASE_DETAILS_CAVC_REMAND_INSTRUCTIONS,
+      value: instructionText
+    });
+  }
+
   return (
     <>
       <ul {...detailListStyling}>
@@ -102,7 +110,8 @@ CavcDetail.propTypes = {
   remand_subtype: PropTypes.string,
   decision_date: PropTypes.string.isRequired,
   judgement_date: PropTypes.string,
-  mandate_date: PropTypes.string
+  mandate_date: PropTypes.string,
+  instructions: PropTypes.string.isRequired
 };
 
 export default CavcDetail;

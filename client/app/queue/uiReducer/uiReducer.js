@@ -31,6 +31,7 @@ export const initialState = {
   selectedAssigneeSecondary: null,
   veteranCaseListIsVisible: false,
   canEditAod: false,
+  canEditNodDate: false,
   hearingDay: {
     hearingDate: null,
     regionalOffice: null
@@ -74,6 +75,10 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
   case ACTIONS.SET_CAN_EDIT_AOD:
     return update(state, {
       canEditAod: { $set: action.payload.canEditAod }
+    });
+  case ACTIONS.SET_CAN_EDIT_NOD_DATE:
+    return update(state, {
+      canEditNodDate: { $set: action.payload.canEditNodDate }
     });
   case ACTIONS.SET_CAN_VIEW_OVERTIME_STATUS:
     return update(state, {

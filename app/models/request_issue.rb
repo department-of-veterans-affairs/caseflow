@@ -55,7 +55,8 @@ class RequestIssue < CaseflowRecord
     dismissed_matter_of_law: "dismissed_matter_of_law",
     stayed: "stayed",
     ineligible: "ineligible",
-    no_decision: "no_decision"
+    no_decision: "no_decision",
+    docket_switch: "docket_switch"
   }
 
   enum correction_type: {
@@ -467,6 +468,17 @@ class RequestIssue < CaseflowRecord
       # Removing a request issue also deletes the associated request_decision_issue
       request_decision_issues.update_all(deleted_at: Time.zone.now)
       canceled! if submitted_not_processed?
+    end
+  end
+
+  def move_stream!(new_appeal_stream:, closed_status:)
+    return unless decision_review.is_a?(Appeal)
+
+    transaction do
+      new_issue_attributes = attributes.reject { |attr| %w[id created_at updated_at].include?(attr) }
+      new_issue_attributes["decision_review_id"] = new_appeal_stream.id
+      self.class.create!(new_issue_attributes)
+      close!(status: closed_status)
     end
   end
 

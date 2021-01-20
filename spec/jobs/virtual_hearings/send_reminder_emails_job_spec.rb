@@ -6,9 +6,8 @@ describe VirtualHearings::SendReminderEmailsJob do
   let(:hearing_day) do
     create(
       :hearing_day,
-      regional_office: "RO42",
-      scheduled_for: hearing_date,
-      request_type: HearingDay::REQUEST_TYPES[:virtual]
+      :virtual,
+      scheduled_for: hearing_date
     )
   end
   let(:hearing) do
@@ -40,7 +39,7 @@ describe VirtualHearings::SendReminderEmailsJob do
     subject { VirtualHearings::SendReminderEmailsJob.new.perform }
 
     context "hearing date is 7 days out" do
-      let(:hearing_date) { Time.zone.now + 7.days }
+      let(:hearing_date) { Time.zone.now + 6.days } # at most 7 days out
 
       it "sends reminder emails", :aggregate_failures do
         expect(VirtualHearingMailer).to receive(:reminder).twice.and_call_original
@@ -51,7 +50,7 @@ describe VirtualHearings::SendReminderEmailsJob do
         expect(virtual_hearing.representative_reminder_sent_at).not_to be_nil
       end
 
-      it "creates sent email events" do
+      it "creates sent email events", :aggregate_failures do
         subject
 
         expect(SentHearingEmailEvent.count).to eq(2)
@@ -102,7 +101,7 @@ describe VirtualHearings::SendReminderEmailsJob do
         end
       end
 
-      it "doesn't double send the email" do
+      it "doesn't double send the email", :aggregate_failures do
         expect(VirtualHearingMailer).to receive(:reminder).twice.and_call_original
 
         subject # First Send
@@ -125,7 +124,7 @@ describe VirtualHearings::SendReminderEmailsJob do
     end
 
     context "hearing date is 2 days out" do
-      let(:hearing_date) { Time.zone.now + 2.days }
+      let(:hearing_date) { Time.zone.now + 1.day } # at most 2 days out
 
       context "sent reminder emails 5 days out" do
         let(:appellant_reminder_sent_at) { hearing_date - 4.days }
@@ -149,7 +148,11 @@ describe VirtualHearings::SendReminderEmailsJob do
     end
 
     context "hearing date is 1 day out" do
-      let(:hearing_date) { Time.zone.now + 1.day }
+      before do
+        Timecop.freeze(Time.utc(2020, 11, 5, 12, 0, 0)) # Nov 5, 2020 12:00 ET (Thursday)
+      end
+
+      let(:hearing_date) { Time.zone.now + 10.hours } #  Nov 5, 2020 12:00 ET + 10 hours
 
       context "sent reminder emails 2 days out" do
         let(:appellant_reminder_sent_at) { hearing_date - 2.days }
@@ -169,6 +172,23 @@ describe VirtualHearings::SendReminderEmailsJob do
             be_within(1.second).of(representative_reminder_sent_at)
           )
         end
+      end
+    end
+
+    context "Encountered error" do
+      let(:hearing_date) { Time.zone.now + 6.days } # at most 7 days out
+
+      before do
+        allow_any_instance_of(VirtualHearings::SendEmail)
+          .to receive(:send_email)
+          .and_raise(VirtualHearings::SendEmail::RecipientIsDeceasedVeteran)
+      end
+
+      it "captures error and continues without failing" do
+        expect(Raven).to receive(:capture_exception)
+          .with(VirtualHearings::SendEmail::RecipientIsDeceasedVeteran, any_args)
+
+        subject
       end
     end
   end
