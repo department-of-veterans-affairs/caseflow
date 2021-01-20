@@ -27,7 +27,7 @@ describe "ApplicationJob" do
         "high_priority",
         sqs_msg,
         ActiveSupport::HashWithIndifferentAccess.new(job_class: "JobThatIsGood", job_id: "jobid")
-      ) { }
+      ) {}
 
       expect(Raven).to have_received(:extra_context).with(hash_including(application: :fake))
     end
