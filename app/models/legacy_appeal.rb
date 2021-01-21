@@ -180,6 +180,7 @@ class LegacyAppeal < CaseflowRecord
   READABLE_HEARING_REQUEST_TYPES = {
     central_board: "Central", # Equivalent to :central_office
     central_office: "Central",
+    central: "Central",
     travel_board: "Travel",
     video: "Video",
     virtual: "Virtual"
@@ -413,68 +414,6 @@ class LegacyAppeal < CaseflowRecord
 
   def scheduled_hearings
     hearings.select(&:scheduled_pending?)
-  end
-
-  # Currently changed_request_type can only be stored as 'R' or 'V' because
-  # you can convert a hearing request type to Video or Virtual.
-  # This method returns the sanitized versions of those where 'R' => :virtual and 'V' => :video
-  def sanitized_changed_request_type(changed_request_type)
-    case changed_request_type
-    when HearingDay::REQUEST_TYPES[:central]
-      :central
-    when HearingDay::REQUEST_TYPES[:video]
-      :video
-    when HearingDay::REQUEST_TYPES[:virtual]
-      :virtual
-    else
-      fail InvalidChangedRequestType, "\"#{changed_request_type}\" is not a valid request type."
-    end
-  end
-
-  # `hearing_request_type` is a direct mapping from VACOLS and has some unused
-  # values. Also, `hearing_request_type` alone can't disambiguate a video hearing
-  # from a travel board hearing
-  # This method cleans all of these issues up to return a sanitized version of the original type requested by Appellant.
-  # Replicated in UpdateCachedAppealAttributesJob#original_hearing_request_type_for_vacols_case
-  def original_hearing_request_type(readable: false)
-    original_hearing_request_type = case hearing_request_type
-                                    when :central_office
-                                      :central_office
-                                    when :travel_board
-                                      video_hearing_requested ? :video : :travel_board
-                                    end
-    readable ? READABLE_HEARING_REQUEST_TYPES[original_hearing_request_type] : original_hearing_request_type
-  end
-
-  # [Sept. 2020]:
-  #   In response to COVID, the appellant has the option of changing their hearing
-  #   preference if they were scheduled for a travel board hearing.
-  #   This method captures if a travel board hearing request type was overridden in Caseflow.
-  # In general, this method returns the current hearing request type which could be dervied
-  # from `change_request_type` or VACOLS `hearing_request_type`
-  # Replicated in UpdateCachedAppealAttributesJob#case_fields_for_vacols_ids
-  def current_hearing_request_type(readable: false)
-    current_hearing_request_type = if changed_request_type.present?
-                                     sanitized_changed_request_type(changed_request_type)
-                                   else
-                                     original_hearing_request_type
-                                   end
-    readable ? READABLE_HEARING_REQUEST_TYPES[current_hearing_request_type] : current_hearing_request_type
-  end
-
-  # if `change_hearing_request` is populated meaning the hearing request type was changed, then return what the
-  # previous hearing request type was. Use paper trail event to derive previous type in the case the type was changed
-  # multple times.
-  def previous_hearing_request_type(readable: false)
-    diff = latest_appeal_event&.diff || {} # Example of diff: {"changed_request_type"=>[nil, "R"]}
-    previous_unsanitized_type = diff["changed_request_type"]&.first
-
-    previous_hearing_request_type = if previous_unsanitized_type.present?
-                                      sanitized_changed_request_type(previous_unsanitized_type)
-                                    else
-                                      original_hearing_request_type
-                                    end
-    readable ? READABLE_HEARING_REQUEST_TYPES[previous_hearing_request_type] : previous_hearing_request_type
   end
 
   ## END Hearing specific attributes and methods
@@ -983,11 +922,6 @@ class LegacyAppeal < CaseflowRecord
   # Only AMA Appeals go to BVA Dispatch in Caseflow
   def ready_for_bva_dispatch?
     false
-  end
-
-  # uses the paper_trail version on LegacyAppeal
-  def latest_appeal_event
-    TaskEvent.new(version: versions.last) if versions.any?
   end
 
   # Hacky logic to determine if an acting judge should see judge actions or attorney actions on a case assigned to them

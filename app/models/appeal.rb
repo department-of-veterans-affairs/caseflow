@@ -563,56 +563,6 @@ class Appeal < DecisionReview
     false
   end
 
-  # Returns the hearing request type.
-  #
-  # @note See `LegacyAppeal#current_hearing_request_type` for more information.
-  #   This method is provided for compatibility.
-  def original_hearing_request_type(readable: false)
-    return nil if closest_regional_office.nil?
-
-    # Determine type using closest_regional_office
-    # "Central" if closest_regional_office office is "C", "Video" otherwise
-    current_hearing_request_type = (closest_regional_office == "C") ? :central : :video
-
-    return current_hearing_request_type if !readable
-
-    # Return the readable version of either the Central Office or Video request type
-    Hearing::HEARING_TYPES[HearingDay::REQUEST_TYPES[current_hearing_request_type.to_s].to_sym]
-  end
-
-  def current_hearing_request_type(readable: false)
-    request_type = if changed_request_type.present?
-                     changed_request_type.to_sym
-                   else
-                     HearingDay::REQUEST_TYPES[original_hearing_request_type.to_s].to_sym
-                   end
-
-    # Either use the symbol to get the readable hearing type or use the Hearing Day request type symbol
-    readable ? Hearing::HEARING_TYPES[request_type] : HearingDay::REQUEST_TYPES[request_type.to_s].to_sym
-  end
-
-  # uses the paper_trail version on LegacyAppeal
-  def latest_appeal_event
-    TaskEvent.new(version: versions.last) if versions.any?
-  end
-
-  # # if `change_hearing_request` is populated meaning the hearing request type was changed, then return what the
-  # # previous hearing request type was. Use paper trail event to derive previous type in the case the type was changed
-  # # multple times.
-  def previous_hearing_request_type(readable: false)
-    diff = latest_appeal_event&.diff || {} # Example of diff: {"changed_request_type"=>[nil, "R"]}
-    previous_hearing_request_type = diff["changed_request_type"]&.first
-
-    request_type = if previous_hearing_request_type.present?
-                     previous_hearing_request_type.to_sym
-                   else
-                     HearingDay::REQUEST_TYPES[original_hearing_request_type.to_s].to_sym
-                   end
-
-    # Either use the symbol to get the readable hearing type or use the Hearing Day request type symbol
-    readable ? Hearing::HEARING_TYPES[request_type] : HearingDay::REQUEST_TYPES[request_type.to_s].to_sym
-  end
-
   private
 
   def business_lines_needing_assignment
