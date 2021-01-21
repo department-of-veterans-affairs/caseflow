@@ -38,17 +38,8 @@ export class SearchableDropdown extends React.Component {
       clearOnSelect,
       multi,
       onChange,
-      selfManageValueState,
-      setRelationship
+      selfManageValueState
     } = this.props;
-
-    // (?) ASK JC why sending 'setRelationship' as 'onChange' prop would not trigger my useEffect in parent. Tried passing it as:
-    // * onChange={(val) => setRelationship(val)}
-    // * onChange={(val) => setRelationship(val.value)}
-    // * onChange={setRelationsip}
-    if (setRelationship) {
-      setRelationship(newValue.value);
-    }
 
     /*
      * this is a temp fix for react-select value backspace
@@ -264,7 +255,6 @@ SearchableDropdown.propTypes = {
  */
   noResultsText: PropTypes.string,
   onChange: PropTypes.func,
-  setRelationship: PropTypes.func,
   options: SelectOpts,
   placeholder: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   readOnly: PropTypes.bool,
