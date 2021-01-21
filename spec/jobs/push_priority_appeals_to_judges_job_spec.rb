@@ -224,7 +224,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     let(:priority_count) { Appeal.count { |a| a.aod? || a.cavc? } + VACOLS::Case.count }
     let(:priority_target) { (priority_count + judge_distributions_this_month.sum) / judges.count }
 
-    it "should distibute ready priority appeals to the judges" do
+    it "should distribute ready priority appeals to the judges" do
       expect(subject.count).to eq judges.count
 
       # Ensure we distributed all available ready cases from any docket that are not tied to a judge
