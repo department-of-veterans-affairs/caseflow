@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
+class User < CaseflowRecord
   include BgsService
 
   has_many :dispatch_tasks, class_name: "Dispatch::Task"
@@ -124,8 +124,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_change_hearing_request_type?
-    (can?("Build HearSched") || can?("Edit HearSched")) &&
-      FeatureToggle.enabled?(:convert_travel_board_to_video_or_virtual, user: self)
+    can?("Build HearSched") || can?("Edit HearSched")
   end
 
   def vacols_uniq_id

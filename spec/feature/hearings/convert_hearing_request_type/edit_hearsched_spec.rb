@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.feature "Convert hearing request type for 'Edit HearSched' (Hearing Coordinator)" do
-  let!(:current_user) { User.authenticate!(roles: ["Edit HearSched"]) }
-
-  before do
-    HearingsManagement.singleton.add_user(current_user)
-  end
-
+RSpec.feature "Convert hearing request type" do
   let!(:vacols_case) do
     create(
       :case,
@@ -87,13 +81,11 @@ RSpec.feature "Convert hearing request type for 'Edit HearSched' (Hearing Coordi
     end
   end
 
-  context "with FeatureToggle enabled" do
-    before(:each) do
-      FeatureToggle.enable!(:convert_travel_board_to_video_or_virtual)
-    end
+  context "for 'Edit HearSched' (Hearing Coordinator)" do
+    let!(:current_user) { User.authenticate!(roles: ["Edit HearSched"]) }
 
-    after(:all) do
-      FeatureToggle.disable!(:convert_travel_board_to_video_or_virtual)
+    before do
+      HearingsManagement.singleton.add_user(current_user)
     end
 
     context "When converting travel board appeal" do
@@ -249,7 +241,9 @@ RSpec.feature "Convert hearing request type for 'Edit HearSched' (Hearing Coordi
     end
   end
 
-  context "without FeatureToggle enabled" do
+  context "for all other users" do
+    let!(:current_user) { User.authenticate! }
+
     context "When converting travel board appeal" do
       scenario "it does not create the ChangeHearingRequestTypeTask" do
         visit "queue/appeals/#{legacy_appeal.vacols_id}"
