@@ -106,12 +106,15 @@ FactoryBot.define do
         veteran do
           Veteran.find_by(file_number: veteran_file_number) || create(:veteran, file_number: veteran_file_number)
         end
+        remand_subtype { Constants.CAVC_REMAND_SUBTYPES.jmpr }
       end
       initialize_with do
         cavc_remand = create(:cavc_remand,
-                             remand_subtype: Constants.CAVC_REMAND_SUBTYPES.jmpr,
+                             remand_subtype: remand_subtype,
                              veteran: veteran,
+                             # pass docket type so that the created source appeal is the same docket type
                              docket_type: attributes[:docket_type])
+        # cavc_remand creation triggers creation of a remand_appeal having appropriate tasks depending on remand_subtype
         cavc_remand.remand_appeal
       end
     end
@@ -240,14 +243,14 @@ FactoryBot.define do
     ## The appeal is ready for distribution by the ACD
     trait :ready_for_distribution do
       with_post_intake_tasks
-      after(:create) do |appeal, _evaluator|
-        distribution_tasks = appeal.tasks.select { |task| task.is_a?(DistributionTask) }
-        (distribution_tasks.flat_map(&:descendants) - distribution_tasks).each(&:completed!)
-      end
+      completed_distribution_task
     end
 
     trait :cavc_ready_for_distribution do
-      # with_post_intake_tasks # already done by create(:cavc_remand)
+      completed_distribution_task
+    end
+
+    trait :completed_distribution_task do
       after(:create) do |appeal, _evaluator|
         distribution_tasks = appeal.tasks.select { |task| task.is_a?(DistributionTask) }
         (distribution_tasks.flat_map(&:descendants) - distribution_tasks).each(&:completed!)
