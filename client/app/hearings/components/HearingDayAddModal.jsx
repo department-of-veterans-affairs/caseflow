@@ -84,7 +84,7 @@ export const HearingDayAddModal = ({
   const selectedVirtual = selectedRequestType === HEARING_REQUEST_TYPES.virtual;
   const selectedVideo = selectedRequestType === HEARING_REQUEST_TYPES.video;
 
-  const dateError = errorMessages.noDate || errorMessages.invalidDate;
+  const dateError = errorMessages?.noDate || errorMessages?.invalidDate;
 
   const submitHearingDay = () => {
     const data = {
@@ -94,24 +94,24 @@ export const HearingDayAddModal = ({
       bva_poc: coordinator.value,
       notes,
       assign_room: selectedVirtual ? false : roomRequired,
-      ...(selectedRegionalOffice?.key !== '' && requestType.value !== 'C' &&
-        { regional_office: selectedRegionalOffice.key })
+      ...(selectedRegionalOffice?.key !== '' && requestType?.value !== 'C' &&
+        { regional_office: selectedRegionalOffice?.key })
     };
 
     ApiUtil.post('/hearings/hearing_day.json', { data }).
       then((response) => {
-        const resp = ApiUtil.convertToCamelCase(response.body);
+        const resp = ApiUtil.convertToCamelCase(response?.body);
 
         const newHearings = Object.assign({}, hearingSchedule);
         const hearingsLength = Object.keys(newHearings).length;
 
-        newHearings[hearingsLength] = resp.hearing;
+        newHearings[hearingsLength] = resp?.hearing;
 
         props.onReceiveHearingSchedule(newHearings);
         closeModal();
 
       }, (error) => {
-        if (error.response.body && error.response.body.errors &&
+        if (error?.response?.body && error.response.body.errors &&
         error.response.body.errors[0].status === 400) {
           setNoRoomsAvailableError(error.response.body.errors[0]);
         } else {
@@ -122,7 +122,7 @@ export const HearingDayAddModal = ({
   };
 
   const videoHearingDateNotValid = (hearingDate) => {
-    const integerDate = parseInt(hearingDate.split('-').join(''), 10);
+    const integerDate = parseInt(hearingDate?.split('-').join(''), 10);
 
     return integerDate < 20190401;
   };
@@ -138,7 +138,7 @@ export const HearingDayAddModal = ({
         invalidDate: 'Video hearing days cannot be scheduled for prior than April 1st through Caseflow.'
       }),
       ...(requestType === '' && { requestType: 'Please make sure you have entered a Hearing Type' }),
-      ...(selectedVideo && !selectedRegionalOffice.key && { ro: 'Please make sure you select a Regional Office' })
+      ...(selectedVideo && !selectedRegionalOffice?.key && { ro: 'Please make sure you select a Regional Office' })
     };
 
     if (!isEmpty(errorMsgs)) {
@@ -183,11 +183,12 @@ export const HearingDayAddModal = ({
 
   const showAlert = serverError || noRoomsAvailableError;
 
-  const alertTitle = noRoomsAvailableError ? noRoomsAvailableError.title : 'An error has occurred';
+  const alertTitle = noRoomsAvailableError ? noRoomsAvailableError?.title : 'An error has occurred';
 
-  const alertMessage = noRoomsAvailableError ? noRoomsAvailableError.detail : 'You are unable to complete this action.';
+  const alertMessage = noRoomsAvailableError ? noRoomsAvailableError?.detail :
+    'You are unable to complete this action.';
 
-  const getErrorMessage = ({ roError = false } = {}) => {
+  const getErrorMessage = (roError = false) => {
     const errorMsgTitle = roError ? 'Hearing type is a Video hearing' :
       'Cannot create a New Hearing Day';
 
@@ -204,7 +205,7 @@ export const HearingDayAddModal = ({
   };
 
   const filteredRequestTypeOptions = (options) => {
-    if (user.userCanAddVirtualHearingDays) {
+    if (user?.userCanAddVirtualHearingDays) {
       return options;
     }
 
@@ -242,7 +243,7 @@ export const HearingDayAddModal = ({
             name="requestType"
             label="Select Hearing Type"
             strongLabel
-            errorMessage={!dateError && errorMessages.requestType ? getErrorMessage() : null}
+            errorMessage={!dateError && errorMessages?.requestType ? getErrorMessage() : null}
             value={requestType}
             onChange={onRequestTypeChange}
             options={filteredRequestTypeOptions(requestTypeOptions)} />
@@ -250,7 +251,7 @@ export const HearingDayAddModal = ({
           <RegionalOfficeDropdown
             label="Select Regional Office (RO)"
             excludeVirtualHearingsOption={!selectedVirtual}
-            errorMessage={errorMessages.ro ? getErrorMessage({ roError: true }) : null}
+            errorMessage={errorMessages?.ro ? getErrorMessage(true) : null}
             onChange={onRoChange}
             readOnly={Boolean(selectedVirtual)}
             value={selectedVirtual ? 'R' : selectedRegionalOffice?.key} />
@@ -260,12 +261,12 @@ export const HearingDayAddModal = ({
             <JudgeDropdown
               name="vlj"
               label="Select VLJ (Optional)"
-              value={vlj.value}
+              value={vlj?.value}
               onChange={(value, label) => props.selectVlj({ value, label })} />
             <HearingCoordinatorDropdown
               name="coordinator"
               label="Select Hearing Coordinator (Optional)"
-              value={coordinator.value}
+              value={coordinator?.value}
               onChange={(value, label) => props.selectHearingCoordinator({ value, label })} />
           </React.Fragment>
           }
