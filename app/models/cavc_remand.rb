@@ -58,7 +58,7 @@ class CavcRemand < CaseflowRecord
       AdvanceOnDocketMotion.copy_granted_motions_to_appeal(source_appeal, cavc_appeal)
 
       # Set claimants before calling create_root_and_sub_tasks! so that TrackVeteranTask can be created if needed
-      cavc_appeal.claimants = source_appeal.claimants
+      source_appeal.claimants.map(&:dup).map { |new_claimant| new_claimant.decision_review = cavc_appeal }
 
       InitialTasksFactory.new(cavc_appeal, self).create_root_and_sub_tasks!
     end
