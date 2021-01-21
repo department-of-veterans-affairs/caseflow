@@ -307,6 +307,8 @@ FactoryBot.define do
       at_judge_review
       after(:create) do |appeal|
         # MISSING: JudgeCaseReview
+        # BvaDispatchTask.create_from_root_task will autoassign, so need to have a non-empty BvaDispatch org
+        BvaDispatch.singleton.add_user(create(:user)) if BvaDispatch.singleton.users.empty?
         BvaDispatchTask.create_from_root_task(appeal.root_task)
         appeal.tasks.where(type: JudgeDecisionReviewTask.name).first.completed!
       end
