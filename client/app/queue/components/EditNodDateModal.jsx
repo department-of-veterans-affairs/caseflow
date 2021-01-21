@@ -88,7 +88,6 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
     {
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Submit',
-      // For future disable use cases
       disabled: (badDate || badReason),
       onClick: () => onSubmit(receiptDate, changeReason)
     }
