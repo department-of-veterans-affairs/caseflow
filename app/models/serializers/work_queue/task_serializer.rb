@@ -154,4 +154,8 @@ class WorkQueue::TaskSerializer
   attribute :available_actions do |object, params|
     object.available_actions_unwrapper(params[:user])
   end
+
+  attribute :can_move_on_docket_switch do |object|
+    object.try(:can_move_on_docket_switch?)
+  end
 end
