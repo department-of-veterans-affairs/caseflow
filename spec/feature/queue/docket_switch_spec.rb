@@ -274,7 +274,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
     end
 
-    fit "allows attorney to procced to the add task page" do
+    it "allows attorney to procced to the add task page" do
       User.authenticate!(user: cotb_attorney)
       visit "/queue/appeals/#{appeal.uuid}"
 
@@ -339,6 +339,14 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       click_button(COPY::MODAL_CONFIRM_BUTTON)
       expect(page).to have_field("IHP", checked: false, visible: false)
+
+      # select task again and not show modal
+      within_fieldset("Please unselect any tasks you would like to remove:") do
+        find("label", text: "IHP").click
+      end
+
+      expect(find_field("IHP", visible: false)).to be_checked
+      expect(page).to_not have_content("Confirm removing task")
     end
   end
 end

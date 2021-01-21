@@ -32,10 +32,10 @@ const schema = yup.object().shape({
 export const DocketSwitchAddTaskForm = ({
   onSubmit,
   onCancel,
-  docketName,
-  docketType,
+  docketFrom,
+  docketTo,
   taskListing = [],
-  onBack,
+  onBack
 }) => {
   const methods = useForm({
     resolver: yupResolver(schema),
@@ -75,22 +75,19 @@ export const DocketSwitchAddTaskForm = ({
   };
 
   const activeTaskLabel = useMemo(() => {
-    return activeTaskId ?
-      taskListing.find((task) => task.taskId === activeTaskId)?.['label'] :
-      null;
+    return activeTaskId ? taskListing.find(
+      (task) => String(task.taskId) === String(activeTaskId)
+    )?.['label'] : null;
   }, [activeTaskId]);
 
   // populate all of our checkboxes on initial render
   useEffect(() => selectAllTasks(), []);
 
-  const handleTaskChange = (evt) => {
-    setActiveTaskId(evt.target.name.toString());
-  };
-
-  const updateTaskSelections = () => {
+  const updateTaskSelections = (targetTaskId = null) => {
+    const updatedTaskId = activeTaskId || targetTaskId;
     const newSelections = {
       ...tasks,
-      [activeTaskId]: !tasks[activeTaskId],
+      [updatedTaskId]: !tasks[updatedTaskId],
     };
 
     setTasks(newSelections);
@@ -101,102 +98,107 @@ export const DocketSwitchAddTaskForm = ({
     );
   };
 
+  const handleTaskChange = (evt) => {
+    const targetTaskId = evt.target.id.toString();
+
+    setActiveTaskId(targetTaskId);
+
+    if (!tasks[targetTaskId] === true) {
+      updateTaskSelections(targetTaskId);
+    }
+  };
+
   const handleCancel = () => {
     setActiveTaskId(null);
   };
 
   const title = sprintf(
     DOCKET_SWITCH_GRANTED_ADD_TASK_INSTRUCTIONS,
-    StringUtil.snakeCaseToCapitalized(docketName),
-    StringUtil.snakeCaseToCapitalized(docketType)
+    StringUtil.snakeCaseToCapitalized(docketFrom),
+    StringUtil.snakeCaseToCapitalized(docketTo)
   );
 
   return (
-    <FormProvider {...methods}>
-      <form
-        className="docket-switch-granted-add"
-        onSubmit={handleSubmit(onSubmit)}
-        aria-label="Grant Docket Switch Add Task"
-      >
-        <AppSegment filledBackground>
-          <h1>{DOCKET_SWITCH_GRANTED_ADD_TASK_LABEL}</h1>
-          <div {...sectionStyle}>
-            <ReactMarkdown source={title} />
-          </div>
-          <div>
-            <ReactMarkdown source={DOCKET_SWITCH_GRANTED_ADD_TASK_TEXT} />
-          </div>
-          <Controller
-            name="taskIds"
-            control={control}
-            render={({ name, onChange: onCheckChange }) => {
-              return (
-                <CheckboxGroup
-                  name={name}
-                  label="Please unselect any tasks you would like to remove:"
-                  strongLabel
-                  options={taskOptions}
-                  onChange={(event) => onCheckChange(handleTaskChange(event))}
-                  styling={css({ marginBottom: '0' })}
-                  values={tasks}
-                />
-              );
-            }}
-          />
-
-          {activeTaskId && (
-            <DocketSwitchAddTaskModal
-              onSubmit={onSubmit}
-              onCancel={handleCancel}
-              taskLabel={activeTaskLabel}
-              onConfirm={updateTaskSelections}
-            />
-          )}
-
-          <React.Fragment>
-            <h3 {...css({ marginBottom: '0' })}>
-              <br />
-              <strong>Would you like to add any additional tasks?</strong>
-              <br />
-            </h3>
-            <div>
-              {fields.map((item, idx) => (
-                <DocketSwitchAddAdminTaskForm
-                  key={item.id}
-                  item={item}
-                  baseName={`newTasks[${idx}]`}
-                  onRemove={() => remove(idx)}
-                />
-              ))}
-            </div>
-            <Button
-              willNeverBeLoading
-              dangerStyling
-              styling={css({ marginTop: '1rem' })}
-              name={DOCKET_SWITCH_GRANTED_ADD_TASK_BUTTON}
-              onClick={() =>
-                append({ type: { value: null, label: '' }, instructions: '' })
-              }
-            />
-          </React.Fragment>
-        </AppSegment>
-        <div className="controls cf-app-segment">
-          <CheckoutButtons
-            disabled={!formState.isValid}
-            onCancel={onCancel}
-            onBack={onBack}
-            onSubmit={handleSubmit(onSubmit)}
+    <form
+      className="docket-switch-granted-add"
+      onSubmit={handleSubmit(onSubmit)}
+      aria-label="Grant Docket Switch Add Task"
+    >
+      <AppSegment filledBackground>
+        <h1>{DOCKET_SWITCH_GRANTED_ADD_TASK_LABEL}</h1>
+        <div {...sectionStyle}>
+          <ReactMarkdown
+            source={title}
           />
         </div>
-      </form>
-    </FormProvider>
+        <div><ReactMarkdown source={DOCKET_SWITCH_GRANTED_ADD_TASK_TEXT} /></div>
+        <Controller
+          name="taskIds"
+          control={control}
+          render={({ name, onChange: onCheckChange }) => {
+            return (
+              <CheckboxGroup
+                name={name}
+                label="Please unselect any tasks you would like to remove:"
+                strongLabel
+                options={taskOptions}
+                onChange={(event) => onCheckChange(handleTaskChange(event))}
+                styling={css({ marginBottom: '0' })}
+                values={tasks}
+              />
+            );
+          }}
+        />
+
+        { activeTaskId && (
+          <DocketSwitchAddTaskModal
+            onCancel={handleCancel}
+            taskLabel= {activeTaskLabel}
+            onConfirm={updateTaskSelections}
+          />
+        )
+        }
+
+        <React.Fragment>
+          <h3 {...css({ marginBottom: '0' })}>
+            <br />
+            <strong>Would you like to add any additional tasks?</strong>
+            <br />
+          </h3>
+          <div>
+            {fields.map((item, idx) => (
+              <DocketSwitchAddAdminTaskForm
+                key={item.id}
+                item={item}
+                baseName={`newTasks[${idx}]`}
+                onRemove={() => remove(idx)}
+              />
+            ))}
+          </div>
+          <Button
+            willNeverBeLoading
+            dangerStyling
+            styling={css({ marginTop: '1rem' })}
+            name={DOCKET_SWITCH_GRANTED_ADD_TASK_BUTTON}
+          />
+        </React.Fragment>
+      </AppSegment>
+      <div className="controls cf-app-segment">
+        <CheckoutButtons
+          disabled={!formState.isValid}
+          onCancel={onCancel}
+          onBack={onBack}
+          onSubmit={handleSubmit(onSubmit)}
+        />
+      </div>
+    </form>
   );
 };
 DocketSwitchAddTaskForm.propTypes = {
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
-  docketName: PropTypes.string,
-  docketType: PropTypes.string,
+  docketFrom: PropTypes.string,
+  docketTo: PropTypes.string,
   taskListing: PropTypes.array,
-  onBack: PropTypes.func,
+  onBack: PropTypes.func
 };

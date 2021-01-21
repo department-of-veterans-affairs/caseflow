@@ -1,6 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { ACTIONS } from '../constants';
-import { createAsyncThunk } from '@reduxjs/toolkit';
+
 import ApiUtil from '../../util/ApiUtil';
 
 const initialState = {
@@ -10,10 +10,10 @@ const initialState = {
    * This will hold receipt date, disposition, selected issue IDs, etc
    */
   formData: {
-   disposition: null,
-   receiptDate: null,
-   docketType: null,
-   issueIds: []
+    disposition: null,
+    receiptDate: null,
+    docketType: null,
+    issueIds: []
   },
 };
 
@@ -30,10 +30,8 @@ const docketSwitchSlice = createSlice({
     updateDocketSwitch: (state, action) => {
 
       const { formData: updates } = action.payload;
+
       updates.receiptDate = updates.receiptDate?.toISOString() ?? undefined;
-      updates.disposition = updates.disposition?.toString() ?? undefined;
-      updates.docketType = updates.docketType?.toString() ?? undefined;
-      updates.issueIds = updates.issueIds?.toString() ?? undefined    
 
       state.formData = {
         ...state.formData,
@@ -42,7 +40,6 @@ const docketSwitchSlice = createSlice({
     }
   },
 });
-
 
 const completeDocketSwitchGranted = createAsyncThunk(
   'docketSwitch/grant',

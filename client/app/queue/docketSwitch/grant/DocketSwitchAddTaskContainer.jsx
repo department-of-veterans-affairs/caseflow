@@ -44,10 +44,10 @@ export const DocketSwitchAddTaskContainer = () => {
       <DocketSwitchAddTaskForm
         onCancel={handleCancel}
         onSubmit={handleSubmit}
-        docketName={appeal.docketName}
+        docketFrom={appeal.docketName}
         taskListing={switchableTasks}
         onBack={handleBack}
-        docketType={docketType}
+        docketTo={docketType}
       />
     </>
   );

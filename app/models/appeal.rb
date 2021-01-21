@@ -352,9 +352,7 @@ class Appeal < DecisionReview
   end
 
   def veteran_appellant_deceased?
-    return (veteran_is_deceased && appellant_is_veteran) if FeatureToggle.enabled?(:fnod_badge, user: self)
-
-    false
+    veteran_is_deceased && appellant_is_veteran
   end
 
   # matches Legacy behavior
@@ -367,7 +365,7 @@ class Appeal < DecisionReview
   def cavc_remand
     return nil if !cavc?
 
-    CavcRemand.find_by(source_appeal_id: stream_docket_number.split("-").last)
+    CavcRemand.find_by(remand_appeal: self)
   end
 
   def status

@@ -11,10 +11,18 @@ FactoryBot.define do
     judgement_date { 30.days.ago.to_date }
     mandate_date { 30.days.ago.to_date }
     instructions { "Sample CAVC Remand from factory" }
+    created_by { User.first || create(:user) }
+
+    transient do
+      judge { JudgeTeam.first&.admin || create(:user).tap { |u| create(:staff, :judge_role, user: u) } }
+      attorney do
+        JudgeTeam.first&.non_admins&.first ||
+          create(:user).tap { |u| create(:staff, :attorney_role, user: u) }
+      end
+      veteran { Veteran.first || create(:veteran) }
+    end
 
     after(:build) do |cavc_remand, evaluator|
-      cavc_remand.created_by = (evaluator.created_by || User.first)
-
       if evaluator.source_appeal
         cavc_remand.source_appeal = evaluator.source_appeal
 
@@ -24,22 +32,18 @@ FactoryBot.define do
                                            evaluator.source_appeal.decision_issues.pluck(:id)
                                          end
       else
-        judge = JudgeTeam.first.admin
-        attorney = JudgeTeam.first.non_admins.first
-        veteran = Veteran.first
-
         description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
         notes = "Pain disorder with 100\% evaluation per examination"
         source_appeal = create(:appeal,
                                :dispatched,
-                               veteran_file_number: veteran.file_number,
-                               associated_judge: judge,
-                               associated_attorney: attorney)
+                               veteran_file_number: evaluator.veteran.file_number,
+                               associated_judge: evaluator.judge,
+                               associated_attorney: evaluator.attorney)
         create_list(:request_issue, 2,
                     :rating,
                     :with_rating_decision_issue,
                     decision_review: source_appeal,
-                    veteran_participant_id: veteran.participant_id,
+                    veteran_participant_id: evaluator.veteran.participant_id,
                     contested_issue_description: description,
                     notes: notes)
         cavc_remand.source_appeal = source_appeal

@@ -10,12 +10,11 @@ import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
 import ReactMarkdown from 'react-markdown';
 
-export const DocketSwitchAddTaskModal = ({ onConfirm, onSubmit, onCancel, taskLabel }) => (
+export const DocketSwitchAddTaskModal = ({ onConfirm, onCancel, taskLabel }) => (
   <div>
     <Modal
       title={DOCKET_SWITCH_GRANTED_MODAL_TITLE}
       closeHandler={onCancel}
-      onSubmit={onSubmit}
       buttons={[
         { classNames: ['cf-modal-link', 'cf-btn-link'],
           name: MODAL_CANCEL_BUTTON,
@@ -37,7 +36,6 @@ export const DocketSwitchAddTaskModal = ({ onConfirm, onSubmit, onCancel, taskLa
 );
 
 DocketSwitchAddTaskModal.propTypes = {
-  onSubmit: PropTypes.func,
   onCancel: PropTypes.func,
   onConfirm: PropTypes.func,
   taskLabel: PropTypes.string
