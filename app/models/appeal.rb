@@ -115,7 +115,7 @@ class Appeal < DecisionReview
         established_at: Time.zone.now
       )).tap do |stream|
         stream.copy_claimants!(claimants)
-        stream.reload  # so that claimants returns updated list
+        stream.reload # so that stream.claimants returns updated list
       end
     end
   end

@@ -56,7 +56,7 @@ class InitialTasksFactory
     elsif @cavc_remand.jmr? || @cavc_remand.jmpr?
       SendCavcRemandProcessedLetterTask.create!(appeal: @appeal, parent: cavc_task)
     else
-      fail "Not yet supported"
+      fail "Not yet supported: #{@cavc_remand.remand_subtype}"
     end
   end
 end

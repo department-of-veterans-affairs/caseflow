@@ -147,6 +147,7 @@ class DecisionReview < CaseflowRecord
     claimants.delete_all
   end
 
+  # :reek:FeatureEnvy
   def copy_claimants!(source_claimants)
     # maintain the same ordering as used in the claimant method below so that claimant returns the correct one
     source_claimants.order(:id).each_with_index do |claimant, index|
