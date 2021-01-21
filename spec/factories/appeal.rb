@@ -43,7 +43,7 @@ FactoryBot.define do
           decision_review: appeal,
           type: claimant_class_name
         )
-      elsif !Claimant.find_by(participant_id: appeal.veteran.participant_id, decision_review: appeal)
+      elsif !Claimant.exists?(participant_id: appeal.veteran.participant_id, decision_review: appeal)
         create(
           :claimant,
           participant_id: appeal.veteran.participant_id,
