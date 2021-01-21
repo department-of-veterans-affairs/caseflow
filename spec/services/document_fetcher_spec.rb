@@ -185,6 +185,7 @@ describe DocumentFetcher, :postgres do
 
         expect(Document.first.type).to eq(saved_documents.first.type)
         expect(Document.second.type).to eq(saved_documents.second.type)
+        expect([Document.third.type, Document.fourth.type]).to match_array(returned_documents.map(&:type))
 
         # According to DocumentFetcher.create_new_document!,
         # since returned_documents.first has the same series_id as the 2 saved_documents,
