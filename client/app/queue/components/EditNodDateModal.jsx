@@ -77,7 +77,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
   const [changeReason, setChangeReason] = useState(reason);
   const [errorMessage, setErrorMessage] = useState(null);
   const [badDate, setBadDate] = useState(null);
-  const [badReason, setBadReason] = useState(null);
+  const [badReason, setBadReason] = useState(true);
 
   const buttons = [
     {
