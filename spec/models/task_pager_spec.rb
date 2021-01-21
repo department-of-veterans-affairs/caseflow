@@ -363,9 +363,11 @@ describe TaskPager, :all_dbs do
 
     context "when sorting by closest regional office column" do
       let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name }
+      let(:virtual_hearing_ro_key) { ['R'] }
 
       before do
-        regional_offices = RegionalOffice::ROS
+        # Virtual Hearing "RO" has no city and should be omitted here:
+        regional_offices = (RegionalOffice::ROS - virtual_hearing_ro_key)
           .uniq { |ro_key| RegionalOffice::CITIES[ro_key][:city] }
           .shuffle
         created_tasks.each_with_index do |task, index|
