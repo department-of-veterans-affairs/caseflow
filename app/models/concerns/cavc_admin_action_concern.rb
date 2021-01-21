@@ -21,6 +21,12 @@ module CavcAdminActionConcern
           CavcLitigationSupport.singleton.user_has_access?(user)
       )
     end
+
+    private
+
+    def open_appeal_tasks(parent_task)
+      parent_task.appeal.tasks.open
+    end
   end
 
   # Use the existence of an organization-level task to prevent duplicates since there should only ever be one org-level
@@ -36,11 +42,5 @@ module CavcAdminActionConcern
         assignee_type: assigned_to.class.name
       )
     end
-  end
-
-  private
-
-  def open_appeal_tasks(parent_task)
-    parent_task.appeal.tasks.open
   end
 end
