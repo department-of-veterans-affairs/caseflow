@@ -1,14 +1,14 @@
 import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { DocketSwitchAddTaskForm } from 'app/queue/docketSwitch/grant/DocketSwitchAddTaskForm';
+import { DocketSwitchEditTasksForm } from 'app/queue/docketSwitch/grant/DocketSwitchEditTasksForm';
 import {
   DOCKET_SWITCH_GRANTED_ADD_TASK_LABEL,
   DOCKET_SWITCH_GRANTED_ADD_TASK_INSTRUCTIONS,
 } from 'app/../COPY';
 import { sprintf } from 'sprintf-js';
 
-describe('DocketSwitchAddTaskForm', () => {
+describe('DocketSwitchEditTasksForm', () => {
   const onSubmit = jest.fn();
   const onCancel = jest.fn();
   const onBack  = jest.fn();
@@ -28,7 +28,7 @@ const defaults = { onSubmit, onCancel,onBack, tasks, docketFrom, docketTo };
 
   it('renders correctly', () => {
     const { container } = render(
-      <DocketSwitchAddTaskForm {...defaults} />
+      <DocketSwitchEditTasksForm {...defaults} />
     );
 
     expect(container).toMatchSnapshot();
@@ -39,7 +39,7 @@ const defaults = { onSubmit, onCancel,onBack, tasks, docketFrom, docketTo };
   });
 
   it('fires onCancel', async () => {
-    render(<DocketSwitchAddTaskForm {...defaults} />);
+    render(<DocketSwitchEditTasksForm {...defaults} />);
     expect(onCancel).not.toHaveBeenCalled();
     expect(screen.getByText('Please unselect any tasks you would like to remove:')).toBeInTheDocument();
 

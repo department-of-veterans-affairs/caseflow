@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { DocketSwitchAddTaskForm } from './DocketSwitchAddTaskForm';
+import { DocketSwitchEditTasksForm } from './DocketSwitchEditTasksForm';
 import { appealWithDetailSelector, getAllTasksForAppeal } from '../../selectors';
 import { useHistory, useParams } from 'react-router';
 
-export const DocketSwitchAddTaskContainer = () => {
+export const DocketSwitchEditTasksContainer = () => {
   const { appealId } = useParams();
   const { goBack } = useHistory();
 
@@ -41,7 +41,7 @@ export const DocketSwitchAddTaskContainer = () => {
 
   return (
     <>
-      <DocketSwitchAddTaskForm
+      <DocketSwitchEditTasksForm
         onCancel={handleCancel}
         onSubmit={handleSubmit}
         docketFrom={appeal.docketName}

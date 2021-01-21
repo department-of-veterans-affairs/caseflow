@@ -22,14 +22,14 @@ import ReactMarkdown from 'react-markdown';
 import CheckboxGroup from 'app/components/CheckboxGroup';
 import Button from '../../../components/Button';
 import StringUtil from '../../../util/StringUtil';
-import DocketSwitchAddTaskModal from './DocketSwitchAddTaskModal';
+import DocketSwitchRemoveTaskConfirmationModal from './DocketSwitchRemoveTaskModal';
 import { DocketSwitchAddAdminTaskForm } from './DocketSwitchAddAdminTaskForm';
 
 const schema = yup.object().shape({
   taskIds: yup.array(yup.string()),
 });
 
-export const DocketSwitchAddTaskForm = ({
+export const DocketSwitchEditTasksForm = ({
   onSubmit,
   onCancel,
   docketFrom,
@@ -154,7 +154,7 @@ export const DocketSwitchAddTaskForm = ({
           />
 
           {activeTaskId && (
-            <DocketSwitchAddTaskModal
+            <DocketSwitchRemoveTaskConfirmationModal
               onCancel={handleCancel}
               taskLabel={activeTaskLabel}
               onConfirm={updateTaskSelections}
@@ -200,7 +200,7 @@ export const DocketSwitchAddTaskForm = ({
     </FormProvider>
   );
 };
-DocketSwitchAddTaskForm.propTypes = {
+DocketSwitchEditTasksForm.propTypes = {
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
   docketFrom: PropTypes.string,
