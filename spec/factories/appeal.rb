@@ -355,7 +355,6 @@ FactoryBot.define do
 
     trait :with_straight_vacate_stream do
       after(:create) do |appeal, evaluator|
-        # root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         mail_task = create(
           :vacate_motion_mail_task,
           appeal: appeal,
