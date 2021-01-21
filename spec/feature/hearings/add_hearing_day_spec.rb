@@ -189,7 +189,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       expect(page).to have_content("You have successfully added Hearing Day 01/01/2021", wait: 30)
     end
 
-    scenario "Leave Hearing Date without a selection, expect error", focus: true do
+    scenario "Leave Hearing Date without a selection, expect error" do
       visit "hearings/schedule"
       expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
       find("button", text: "Add Hearing Date").click
