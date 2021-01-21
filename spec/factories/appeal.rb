@@ -43,7 +43,7 @@ FactoryBot.define do
           decision_review: appeal,
           type: claimant_class_name
         )
-      else
+      elsif !Claimant.find_by(participant_id: appeal.veteran.participant_id, decision_review: appeal)
         create(
           :claimant,
           participant_id: appeal.veteran.participant_id,
@@ -102,6 +102,18 @@ FactoryBot.define do
 
     trait :type_cavc_remand do
       stream_type { Constants.AMA_STREAM_TYPES.court_remand }
+      transient do
+        veteran do
+          Veteran.find_by(file_number: veteran_file_number) || create(:veteran, file_number: veteran_file_number)
+        end
+      end
+      initialize_with do
+        cavc_remand = create(:cavc_remand,
+                             remand_subtype: Constants.CAVC_REMAND_SUBTYPES.jmpr,
+                             veteran: veteran,
+                             docket_type: attributes[:docket_type])
+        cavc_remand.remand_appeal
+      end
     end
 
     trait :hearing_docket do
@@ -234,11 +246,18 @@ FactoryBot.define do
       end
     end
 
+    trait :cavc_ready_for_distribution do
+      # with_post_intake_tasks # already done by create(:cavc_remand)
+      after(:create) do |appeal, _evaluator|
+        distribution_tasks = appeal.tasks.select { |task| task.is_a?(DistributionTask) }
+        (distribution_tasks.flat_map(&:descendants) - distribution_tasks).each(&:completed!)
+      end
+    end
+
     ## Appeal with a realistic task tree
     ## The appeal is waiting for CAVC Response
     trait :cavc_response_window_open do
       type_cavc_remand
-      with_post_intake_tasks
       after(:create) do |appeal, _evaluator|
         send_letter_task = appeal.tasks.find { |task| task.is_a?(SendCavcRemandProcessedLetterTask) }
         send_letter_task.update_from_params({ status: "completed" }, CavcLitigationSupport.singleton.admins.first)
@@ -265,8 +284,9 @@ FactoryBot.define do
     trait :assigned_to_judge do
       ready_for_distribution
       after(:create) do |appeal, evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         JudgeAssignTask.create!(appeal: appeal,
-                                parent: appeal.root_task,
+                                parent: root_task,
                                 assigned_at: evaluator.active_task_assigned_at,
                                 assigned_to: evaluator.associated_judge)
         appeal.tasks.where(type: DistributionTask.name).update(status: :completed)
@@ -309,7 +329,8 @@ FactoryBot.define do
         # MISSING: JudgeCaseReview
         # BvaDispatchTask.create_from_root_task will autoassign, so need to have a non-empty BvaDispatch org
         BvaDispatch.singleton.add_user(create(:user)) if BvaDispatch.singleton.users.empty?
-        BvaDispatchTask.create_from_root_task(appeal.root_task)
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        BvaDispatchTask.create_from_root_task(root_task)
         appeal.tasks.where(type: JudgeDecisionReviewTask.name).first.completed!
       end
     end
@@ -334,6 +355,7 @@ FactoryBot.define do
 
     trait :with_straight_vacate_stream do
       after(:create) do |appeal, evaluator|
+        # root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         mail_task = create(
           :vacate_motion_mail_task,
           appeal: appeal,
