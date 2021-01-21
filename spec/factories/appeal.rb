@@ -103,9 +103,6 @@ FactoryBot.define do
     trait :type_cavc_remand do
       stream_type { Constants.AMA_STREAM_TYPES.court_remand }
       transient do
-        veteran do
-          Veteran.find_by(file_number: veteran_file_number) || create(:veteran, file_number: veteran_file_number)
-        end
         remand_subtype { Constants.CAVC_REMAND_SUBTYPES.jmpr }
       end
       initialize_with do
