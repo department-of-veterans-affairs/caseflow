@@ -215,7 +215,7 @@ describe InitialTasksFactory, :postgres do
 
       shared_examples "remand appeal" do
         it "blocks distribution with a CavcTask" do
-          expect_any_instance_of(InitialTasksFactory).to receive(:create_root_and_sub_tasks!).at_least(:once).and_call_original
+          expect_any_instance_of(InitialTasksFactory).to receive(:create_root_and_sub_tasks!).once.and_call_original
           expect_any_instance_of(InitialTasksFactory).to receive(:create_tasks_for_cavc).once.and_call_original
           remand_appeal = subject.remand_appeal
 

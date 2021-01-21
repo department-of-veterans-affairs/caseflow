@@ -24,8 +24,6 @@ FactoryBot.define do
     end
 
     after(:build) do |cavc_remand, evaluator|
-      description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
-      notes = "Pain disorder with 100\% evaluation per examination"
       if evaluator.source_appeal
         cavc_remand.source_appeal = evaluator.source_appeal
 
@@ -34,30 +32,17 @@ FactoryBot.define do
                                          elsif !evaluator.source_appeal.decision_issues.empty?
                                            evaluator.source_appeal.decision_issues.pluck(:id)
                                          else
-                                           create_list(:request_issue, 2,
-                                                       :rating,
-                                                       :with_rating_decision_issue,
-                                                       decision_review: evaluator.source_appeal,
-                                                       veteran_participant_id: evaluator.source_appeal.veteran.participant_id,
-                                                       contested_issue_description: description,
-                                                       notes: notes)
+                                           FactoryBotHelper.create_issues_for(evaluator.source_appeal)
                                            evaluator.source_appeal.decision_issues.pluck(:id)
                                          end
       else
-        source_appeal = create(:appeal,
-                               :dispatched,
-                               docket_type: evaluator.docket_type,
-                               veteran_file_number: evaluator.veteran.file_number,
-                               associated_judge: evaluator.judge,
-                               associated_attorney: evaluator.attorney)
-        create_list(:request_issue, 2,
-                    :rating,
-                    :with_rating_decision_issue,
-                    decision_review: source_appeal,
-                    veteran_participant_id: evaluator.veteran.participant_id,
-                    contested_issue_description: description,
-                    notes: notes)
-        cavc_remand.source_appeal = source_appeal
+        cavc_remand.source_appeal = create(:appeal,
+                                           :dispatched,
+                                           docket_type: evaluator.docket_type,
+                                           veteran_file_number: evaluator.veteran.file_number,
+                                           associated_judge: evaluator.judge,
+                                           associated_attorney: evaluator.attorney)
+        FactoryBotHelper.create_issues_for(cavc_remand.source_appeal)
 
         cavc_remand.decision_issue_ids = if !evaluator.decision_issue_ids.empty?
                                            evaluator.decision_issue_ids
@@ -65,6 +50,20 @@ FactoryBot.define do
                                            cavc_remand.source_appeal.decision_issues.pluck(:id)
                                          end
       end
+    end
+  end
+
+  module FactoryBotHelper
+    def self.create_issues_for(appeal)
+      description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
+      notes = "Pain disorder with 100\% evaluation per examination"
+      FactoryBot.create_list(:request_issue, 2,
+                             :rating,
+                             :with_rating_decision_issue,
+                             decision_review: appeal,
+                             veteran_participant_id: appeal.veteran.participant_id,
+                             contested_issue_description: description,
+                             notes: notes)
     end
   end
 end
