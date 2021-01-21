@@ -1294,7 +1294,7 @@ RSpec.feature "Case details", :all_dbs do
           expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
         end
 
-        fit "success alert displays after submitting NOD date change successfully" do
+        it "success alert displays after submitting NOD date change successfully" do
           visit("/queue/appeals/#{appeal.uuid}")
 
           find("button", text: COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY).click
