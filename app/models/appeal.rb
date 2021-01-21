@@ -114,23 +114,8 @@ class Appeal < DecisionReview
         stream_docket_number: docket_number,
         established_at: Time.zone.now
       )).tap do |stream|
-        # maintain the same ordering as used in DecisionReview#claimant
-        claimants.order(:id).each_with_index do |claimant, index|
-          if index==0
-            # create_claimant! removes all claimants
-            stream.create_claimant!(
-              participant_id: claimant.participant_id,
-              payee_code: claimant.payee_code,
-              type: claimant.type
-            )
-          else
-            stream.claimants.create_without_intake!(              
-              participant_id: claimant.participant_id,
-              payee_code: claimant.payee_code,
-              type: claimant.type
-            )
-          end
-        end
+        stream.copy_claimants!(claimants)
+        stream.reload  # so that claimants returns updated list
       end
     end
   end
