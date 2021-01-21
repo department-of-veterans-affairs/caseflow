@@ -18,8 +18,8 @@ export default {
   args: {
     appellantName: 'Jane Doe',
     taskListing: tasks,
-    docketName: 'Direct Review',
-    docketType: 'Hearings',
+    docketFrom: 'Direct Review',
+    docketTo: 'Hearings',
   },
   argTypes: {
     onBack: { action: 'back' },

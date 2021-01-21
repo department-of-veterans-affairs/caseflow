@@ -60,20 +60,19 @@ export const DocketSwitchAddTaskForm = ({
   };
 
   const activeTaskLabel = useMemo(() => {
-    return activeTaskId ? taskListing.find((task) => task.taskId === activeTaskId)?.['label'] : null;
+    return activeTaskId ? taskListing.find(
+      (task) => String(task.taskId) === String(activeTaskId)
+    )?.['label'] : null;
   }, [activeTaskId]);
 
   // populate all of our checkboxes on initial render
   useEffect(() => selectAllTasks(), []);
 
-  const handleTaskChange = (evt) => {
-    setActiveTaskId(evt.target.name.toString());
-  };
-
-  const updateTaskSelections = () => {
+  const updateTaskSelections = (targetTaskId = null) => {
+    const updatedTaskId = activeTaskId || targetTaskId;
     const newSelections = {
       ...tasks,
-      [activeTaskId]: !tasks[activeTaskId],
+      [updatedTaskId]: !tasks[updatedTaskId],
     };
 
     setTasks(newSelections);
@@ -82,6 +81,16 @@ export const DocketSwitchAddTaskForm = ({
       'taskIds',
       Object.keys(newSelections).filter((key) => newSelections[key])
     );
+  };
+
+  const handleTaskChange = (evt) => {
+    const targetTaskId = evt.target.id.toString();
+
+    setActiveTaskId(targetTaskId);
+
+    if (!tasks[targetTaskId] === true) {
+      updateTaskSelections(targetTaskId);
+    }
   };
 
   const handleCancel = () => {
@@ -128,7 +137,6 @@ export const DocketSwitchAddTaskForm = ({
 
         { activeTaskId && (
           <DocketSwitchAddTaskModal
-            onSubmit={onSubmit}
             onCancel={handleCancel}
             taskLabel= {activeTaskLabel}
             onConfirm={updateTaskSelections}
