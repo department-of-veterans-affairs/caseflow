@@ -22,34 +22,14 @@ const otherOpts = [
   {displayText: 'Individual', value: 'individual'}
 ];
 
-// const radioOpts = useMemo(() => {
-//     return [
-//       ...otherOpts,
-//     ];
-//   }, [otherOpts]);
-
+const individualOpts = [
+  {label: 'Child', value: 'child'},
+  {label: 'Spouse', value: 'spouse'}
+]
 
 const individuals = ['spouse', 'child'];
 const other = ['other']
 
-// const handleOtherClaimant = (value) => {
-//   debugger
-//   if (value === "organization") {
-//     return (
-//       <div>
-//         <TextField
-//          name="organization" 
-//          label="Organization name" 
-//          strongLabel
-//         />
-//       </div>
-//     );
-//   } else {
-//     return (
-//       <IndividualForm />
-//     )
-//   }
-// };
 
 export const AddClaimantForm = ({ onSubmit }) => {
   const { control, handleSubmit, register, watch } = useFormContext();
@@ -115,6 +95,13 @@ export const AddClaimantForm = ({ onSubmit }) => {
       }
       {watchType == 'individual' &&
         <div>
+          <SearchableDropdown
+            control={control}
+            label="Relationship to the Veteran"
+            name="relationship"
+            options={individualOpts}
+            strongLabel
+          />
           <IndividualForm />
         </div>
       }
