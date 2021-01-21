@@ -222,7 +222,7 @@ describe InitialTasksFactory, :postgres do
           expect(DistributionTask.find_by(appeal: remand_appeal).status).to eq("on_hold")
           expect(CavcTask.find_by(appeal: remand_appeal).parent.class.name).to eq("DistributionTask")
           expect(CavcTask.find_by(appeal: remand_appeal).status).to eq("on_hold")
-          expect(remand_appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(0) # TO FIX
+          expect(remand_appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
         end
       end
 
