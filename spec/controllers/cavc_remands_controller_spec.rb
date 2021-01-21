@@ -55,8 +55,29 @@ RSpec.describe CavcRemandsController, type: :controller do
 
     subject { post :create, params: params }
 
+    shared_examples "creates a remand depending on the sub-type" do
+      it "creates the CAVC remand and new appeal" do
+        remand_count = CavcRemand.count
+        cavc_count = Appeal.court_remand.count
+        subject
+
+        expect(response.status).to eq(201)
+        response_body = JSON.parse(response.body)
+
+        expect(response_body["cavc_remand"]["source_appeal_id"]).to eq(source_appeal.id)
+        expect(response_body["cavc_remand"]["decision_issue_ids"]).to match_array(decision_issue_ids)
+        expect(CavcRemand.count).to eq(remand_count + 1)
+
+        expect(response_body["cavc_appeal"]["id"])
+          .to eq(CavcRemand.find(response_body["cavc_remand"]["id"]).remand_appeal_id)
+        expect(response_body["cavc_appeal"]["stream_docket_number"]).to eq(source_appeal.docket_number)
+        expect(response_body["cavc_appeal"]["stream_type"]).to eq(Appeal.stream_types["court_remand"])
+        expect(Appeal.court_remand.count).to eq(cavc_count + 1)
+      end
+    end
+
     context "with a Lit Support User" do
-      context "with insufficient parameters" do
+      context "when sub-type is JMR with insufficient parameters" do
         let(:cavc_docket_number) { nil }
         it "does not create the CAVC remand" do
           expect { subject }.to raise_error do |error|
@@ -65,23 +86,20 @@ RSpec.describe CavcRemandsController, type: :controller do
         end
       end
 
-      context "with correct parameters" do
-        it "creates the CAVC remand and new appeal" do
-          remand_count = CavcRemand.count
-          cavc_count = Appeal.court_remand.count
-          subject
+      context "when sub-type is JMR with correct parameters" do
+        include_examples "creates a remand depending on the sub-type"
+      end
 
-          expect(response.status).to eq(201)
-          response_body = JSON.parse(response.body)
+      context "when sub-type is MDR" do
+        let(:remand_subtype) { Constants::CAVC_REMAND_SUBTYPES["mdr"] }
+        context "with judgement and mandate date parameters" do
+          include_examples "creates a remand depending on the sub-type"
+        end
 
-          expect(response_body["cavc_remand"]["source_appeal_id"]).to eq(source_appeal.id)
-          expect(response_body["cavc_remand"]["decision_issue_ids"]).to match_array(decision_issue_ids)
-          expect(CavcRemand.count).to eq(remand_count + 1)
-
-          expect(response_body["cavc_appeal"]["source_appeal_id"]).not_to eq(source_appeal.id)
-          expect(response_body["cavc_appeal"]["stream_docket_number"]).to eq(source_appeal.docket_number)
-          expect(response_body["cavc_appeal"]["stream_type"]).to eq(Appeal.stream_types["court_remand"])
-          expect(Appeal.court_remand.count).to eq(cavc_count + 1)
+        context "without judgement and mandate date parameters" do
+          let(:judgement_date) { nil }
+          let(:mandate_date) { nil }
+          include_examples "creates a remand depending on the sub-type"
         end
       end
     end
