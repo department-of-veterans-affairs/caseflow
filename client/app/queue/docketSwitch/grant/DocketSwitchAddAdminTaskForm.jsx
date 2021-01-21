@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { Controller, useFormContext } from 'react-hook-form';
@@ -11,7 +11,7 @@ import {
   FORM_ERROR_FIELD_REQUIRED,
 } from 'app/../COPY';
 import { css } from 'glamor';
-import Button from '../../../components/Button';
+import Button from 'app/components/Button';
 
 const fieldStyles = css({
   marginTop: '4rem',
@@ -22,27 +22,29 @@ const actionOptions = Object.entries(colocatedAdminActions).map(
 );
 
 export const DocketSwitchAddAdminTaskForm = ({ baseName, item, onRemove }) => {
-  const { control, errors, register } = useFormContext();
+  const { control, errors, register, unregister } = useFormContext();
 
   const handleRemove = () => onRemove();
+
+  useEffect(() => {
+    register({ name: `${baseName}.type` });
+
+    return () => {
+      unregister(`${baseName}.type`);
+      unregister(`${baseName}.instructions`);
+    };
+  }, []);
 
   return (
     <>
       <div className={fieldStyles}>
         <Controller
+          as={SearchableDropdown}
           name={`${baseName}.type`}
           control={control}
-          defaultValue={item?.type || ''}
-          render={({ name, onChange: onSelectChange }) => {
-            return (
-              <SearchableDropdown
-                name={name}
-                label="Select the type of task you'd like to open:"
-                onChange={onSelectChange}
-                options={actionOptions}
-              />
-            );
-          }}
+          defaultValue={item.type}
+          label="Select the type of task you'd like to open:"
+          options={actionOptions}
         />
       </div>
 
@@ -52,9 +54,9 @@ export const DocketSwitchAddAdminTaskForm = ({ baseName, item, onRemove }) => {
             errors?.[baseName]?.instructions ? FORM_ERROR_FIELD_REQUIRED : null
           }
           name={`${baseName}.instructions`}
-          defaultValue={item?.instructions || ''}
+          defaultValue={item.instructions}
           label={ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
-          inputRef={register}
+          inputRef={register()}
         />
       </div>
       <div>
@@ -69,7 +71,7 @@ export const DocketSwitchAddAdminTaskForm = ({ baseName, item, onRemove }) => {
 DocketSwitchAddAdminTaskForm.propTypes = {
   baseName: PropTypes.string.isRequired,
   item: PropTypes.shape({
-    type: PropTypes.string,
+    type: PropTypes.shape({ value: PropTypes.string, label: PropTypes.string }),
     instructions: PropTypes.string,
   }),
   onRemove: PropTypes.func.isRequired,

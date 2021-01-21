@@ -15,6 +15,7 @@ export default {
   parameters: {},
   args: {
     baseName: 'newTasks[0]',
+    item: { type: null, instructions: '' },
   },
   argTypes: {
     onRemove: { action: 'onRemove' },
