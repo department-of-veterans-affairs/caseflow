@@ -154,7 +154,9 @@ describe DocumentFetcher, :postgres do
         expect(Document.first.type).to eq(saved_documents[0].type)
 
         returned_documents = document_fetcher.find_or_create_documents!
+        expect(returned_documents.count).to eq(2)
         expect(returned_documents.first.reload.annotations.count).to eq(0)
+        expect(returned_documents.second.reload.annotations.count).to eq(0)
       end
 
       include_examples "has non-database attributes"
@@ -183,8 +185,6 @@ describe DocumentFetcher, :postgres do
 
         expect(Document.first.type).to eq(saved_documents.first.type)
         expect(Document.second.type).to eq(saved_documents.second.type)
-        expect(Document.third.type).to eq(returned_documents.first.type)
-        expect(Document.fourth.type).to eq(returned_documents.second.type)
 
         # According to DocumentFetcher.create_new_document!,
         # since returned_documents.first has the same series_id as the 2 saved_documents,
