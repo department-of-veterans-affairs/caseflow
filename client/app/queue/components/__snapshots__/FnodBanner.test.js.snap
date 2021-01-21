@@ -19,7 +19,7 @@ exports[`FnodBanner renders correctly 1`] = `
             Source:
           </strong>
            
-          CorpDB (BGS)
+          VBMS
            
           <span
             data-css-tn55bb=""
@@ -68,7 +68,7 @@ exports[`FnodBanner renders correctly 1`] = `
                 Source:
               </strong>
                
-              CorpDB (BGS)
+              VBMS
                
               <span
                 data-css-tn55bb=""
