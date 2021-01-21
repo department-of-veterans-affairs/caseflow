@@ -127,7 +127,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         step "cavc user confirms data on case details page" do
           expect(page).to have_content "APPEAL STREAM TYPE\nCAVC"
           expect(page).to have_content "DOCKET\nE\n#{appeal.docket_number}"
-          expect(page).to have_content "TASK\n#{SendCavcRemandProcessedLetterTask.label}"
+          expect(page).to have_content "TASK\n#{MdrTask.label}"
           expect(page).to have_content "ASSIGNED TO\n#{CavcLitigationSupport.singleton.name}"
 
           expect(page).to have_content "CAVC Remand"

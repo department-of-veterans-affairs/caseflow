@@ -210,25 +210,42 @@ describe InitialTasksFactory, :postgres do
     end
 
     context "when a Court Remand appeal stream is created" do
-      subject { InitialTasksFactory.new(appeal).create_root_and_sub_tasks! }
+      # create(:cavc_remand, ...) indirectly calls InitialTasksFactory#create_root_and_sub_tasks!
+      subject { create(:cavc_remand, remand_subtype: remand_subtype, source_appeal: appeal) }
 
-      let(:appeal) do
-        create(:appeal,
-               stream_type: Constants.AMA_STREAM_TYPES.court_remand,
-               docket_type: Constants.AMA_DOCKETS.direct_review,
-               claimants: [
-                 create(:claimant, participant_id: participant_id_with_pva),
-                 create(:claimant, participant_id: participant_id_with_aml)
-               ])
+      shared_examples "remand appeal" do
+        it "blocks distribution with a CavcTask" do
+          expect_any_instance_of(InitialTasksFactory).to receive(:create_root_and_sub_tasks!).at_least(:once).and_call_original
+          expect_any_instance_of(InitialTasksFactory).to receive(:create_tasks_for_cavc).once.and_call_original
+          remand_appeal = subject.remand_appeal
+
+          expect(DistributionTask.find_by(appeal: remand_appeal).status).to eq("on_hold")
+          expect(CavcTask.find_by(appeal: remand_appeal).parent.class.name).to eq("DistributionTask")
+          expect(CavcTask.find_by(appeal: remand_appeal).status).to eq("on_hold")
+          expect(remand_appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(0) # TO FIX
+        end
       end
 
-      it "blocks distribution" do
-        subject
-        expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
-        expect(CavcTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
-        expect(CavcTask.find_by(appeal: appeal).status).to eq("on_hold")
-        expect(SendCavcRemandProcessedLetterTask.find_by(appeal: appeal).status).to eq("assigned")
-        expect(appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
+      context "when CavcRemand subtype is JMR or JMPR" do
+        let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.jmpr }
+
+        include_examples "remand appeal"
+
+        it "has SendCavcRemandProcessedLetterTask assigned" do
+          remand_appeal = subject.remand_appeal
+          expect(SendCavcRemandProcessedLetterTask.find_by(appeal: remand_appeal).status).to eq("assigned")
+        end
+      end
+
+      context "when CavcRemand subtype is MDR" do
+        let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.mdr }
+
+        include_examples "remand appeal"
+
+        it "has MdrTask on_hold" do
+          remand_appeal = subject.remand_appeal
+          expect(MdrTask.find_by(appeal: remand_appeal).status).to eq("on_hold")
+        end
       end
     end
   end
