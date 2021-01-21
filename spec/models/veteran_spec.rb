@@ -943,7 +943,7 @@ describe Veteran, :all_dbs do
     end
     context "#update veteran" do
       let(:appeal) { create(:appeal, veteran_file_number: veteranBob.file_number) }
-      let(:appeal2) { create(:appeal) }
+      let(:appeal2) { create(:appeal, veteran_file_number: veteran.file_number) }
       let(:appeal_ids) {[appeal.uuid, appeal2.uuid]}
       let(:date_of_death) { nil }
 

@@ -932,6 +932,116 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
   end
   context ".warm_veteran_attr_for_priority_distributions" do
+    let(:ready_priority_bfkey) { "12345" }
+    let(:ready_priority_uuid) { "bece6907-3b6f-4c49-a580-6d5f2e1ca65c" }
+    let!(:judge_with_ready_priority_cases) do
+      create(:user).tap do |judge|
+        create(:staff, :judge_role, user: judge)
+        vacols_case = create(
+          :case,
+          :aod,
+          bfkey: ready_priority_bfkey,
+          bfd19: 1.year.ago,
+          bfac: "3",
+          bfmpro: "ACT",
+          bfcurloc: "81",
+          bfdloout: 3.days.ago,
+          bfbox: nil,
+          folder: build(:folder, tinum: "1801003", titrnum: "123456789S")
+        )
+        create(
+          :case_hearing,
+          :disposition_held,
+          folder_nr: vacols_case.bfkey,
+          hearing_date: 5.days.ago.to_date,
+          board_member: judge.vacols_attorney_id
+        )
+
+        appeal = create(
+          :appeal,
+          :ready_for_distribution,
+          :advanced_on_docket_due_to_age,
+          uuid: ready_priority_uuid,
+          docket_type: Constants.AMA_DOCKETS.hearing
+        )
+        most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
+        hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
+        hearing.update!(judge: judge)
+      end
+    end
+
+    let!(:judge_with_ready_nonpriority_cases) do
+      create(:user).tap do |judge|
+        create(:staff, :judge_role, user: judge)
+        vacols_case = create(
+          :case,
+          bfd19: 1.year.ago,
+          bfac: "3",
+          bfmpro: "ACT",
+          bfcurloc: "81",
+          bfdloout: 3.days.ago,
+          bfbox: nil,
+          folder: build(:folder, tinum: "1801002", titrnum: "123456782S")
+        )
+        create(
+          :case_hearing,
+          :disposition_held,
+          folder_nr: vacols_case.bfkey,
+          hearing_date: 5.days.ago.to_date,
+          board_member: judge.vacols_attorney_id
+        )
+
+        appeal = create(
+          :appeal,
+          :ready_for_distribution,
+          docket_type: Constants.AMA_DOCKETS.hearing
+        )
+        most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
+        hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
+        hearing.update!(judge: judge)
+      end
+    end
+
+    let!(:judge_with_nonready_priority_cases) do
+      create(:user).tap do |judge|
+        create(:staff, :judge_role, user: judge)
+        vacols_case = create(
+          :case,
+          :aod,
+          bfd19: 1.year.ago,
+          bfac: "3",
+          bfmpro: "ACT",
+          bfcurloc: "not ready",
+          bfdloout: 3.days.ago,
+          bfbox: nil,
+          folder: build(:folder, tinum: "1801003", titrnum: "123456783S")
+        )
+        create(
+          :case_hearing,
+          :disposition_held,
+          folder_nr: vacols_case.bfkey,
+          hearing_date: 5.days.ago.to_date,
+          board_member: judge.vacols_attorney_id
+        )
+
+        appeal = create(
+          :appeal,
+          :advanced_on_docket_due_to_age,
+          docket_type: Constants.AMA_DOCKETS.hearing
+        )
+        most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
+        hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
+        hearing.update!(judge: judge)
+      end
+    end
+    let(:eligible_judges) do
+      [
+        judge_with_ready_priority_cases,
+        judge_with_ready_nonpriority_cases,
+        judge_with_nonready_priority_cases
+      ]
+    end
+
     let!(:job) { PushPriorityAppealsToJudgesJob.new.distribute_genpop_priority_appeals }
     let(:judges) { create_list(:user, 5, :with_vacols_judge_record) }
     let(:judge_distributions_this_month) { (0..4).to_a }
@@ -992,9 +1102,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
     end
 
-    let(:priority_count) { Appeal.count + VACOLS::Case.count }
-    let(:priority_target) { (priority_count + judge_distributions_this_month.sum) / judges.count }
-
     let(:distributed_cases) { DistributedCase.where(distribution: job)}
 
     let(:non_genpop_distro_case_ids) do
@@ -1004,14 +1111,14 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       DistributedCase.where(distribution_id: distributed_cases.pluck(:id)).pluck(:case_id)
     end
     before do
-      job.instance_variable_set(:@tied_distributions, distributed_cases)
-      job.instance_variable_set(:@genpop_distributions, distributed_cases)
+      job.instance_variable_set(:@tied_distributions, non_gen_distributed_cases)
+      job.instance_variable_set(:@genpop_distributions, gen_distributions)
     end
 
     subject { PushPriorityAppealsToJudgesJob.new.warm_veteran_attr_for_priority_distributions }
 
     it "calls warm_veteran_cache_for_appeals with non_genpop_distro_case_ids" do
-      # byebug
+      byebug
       expect { subject }.not_to raise_error
     end
 
