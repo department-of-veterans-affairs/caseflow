@@ -176,9 +176,8 @@ class Document < CaseflowRecord
     serializable_hash
   end
 
-  # Called
-  # - by document_fetcher.save!
-  # - when legacy_appeal references nod, soc, or form9 documents (created in memory and not saved to the DB)
+  # Indirectly called when LegacyAppeal references nod, soc, or form9 Documents
+  # (which are created in memory and not saved to the DB)
   def merge_into(document)
     document.assign_attributes(
       efolder_id: efolder_id,
@@ -192,6 +191,40 @@ class Document < CaseflowRecord
     )
 
     document
+  end
+
+  # These database attributes are used by merge_into(), which was originally used by DocumentFetcher.
+  # The optimized version uses bulk_merge_and_save() and assign_nondatabase_attributes() instead.
+  COLUMNS_TO_MERGE = [
+    :type,
+    :received_at,
+    :upload_date,
+    :vbms_document_id,
+    :series_id
+  ].freeze
+
+  # efficient version of merge_into that also saves to DB
+  def self.bulk_merge_and_save(document_structs)
+    # Bulk update
+    Document.import(document_structs,
+                    on_duplicate_key_update: { conflict_target: [:vbms_document_id], columns: COLUMNS_TO_MERGE })
+
+    # Use 1 SQL query to get the docs and set non-database attributes on the results
+    doc_struct_hash = document_structs.index_by(&:vbms_document_id)
+    Document.where(vbms_document_id: document_structs.pluck(:vbms_document_id)).map do |document|
+      doc_struct = doc_struct_hash[document.vbms_document_id]
+      document.assign_nondatabase_attributes(doc_struct)
+    end
+  end
+
+  # :reek:FeatureEnvy
+  def assign_nondatabase_attributes(source_document)
+    assign_attributes(
+      efolder_id: source_document.efolder_id, # doesn't seem to be used; comes from from efolder
+      alt_types: source_document.alt_types,   # used by type?(type)
+      filename: source_document.filename      # sent to the frontend
+    )
+    self
   end
 
   def category_case_summary
@@ -215,19 +248,19 @@ class Document < CaseflowRecord
   end
 
   def copy_metadata_from_document(source_document)
-    source_document.annotations.map do |annotation|
+    new_annotations = source_document.annotations.map do |annotation|
       annotation.dup.tap do |a|
         a.document_id = id
-        a.save!
       end
     end
+    Annotation.create(new_annotations.map(&:attributes))
 
-    source_document.documents_tags.map do |tag|
+    new_tags = source_document.documents_tags.map do |tag|
       tag.dup.tap do |t|
         t.document_id = id
-        t.save!
       end
     end
+    DocumentsTag.create(new_tags.map(&:attributes))
 
     update(
       category_procedural: source_document.category_procedural,
