@@ -30,12 +30,17 @@ export const DocketSwitchAddAdminTaskForm = ({ baseName, item, onRemove }) => {
     <>
       <div className={fieldStyles}>
         <Controller
-          as={SearchableDropdown}
           name={`${baseName}.type`}
           control={control}
           defaultValue={item.type}
-          label="Select the type of task you'd like to open:"
-          options={actionOptions}
+          render={({ onChange, ...rest }) => (
+            <SearchableDropdown
+              {...rest}
+              label="Select the type of task you'd like to open:"
+              options={actionOptions}
+              onChange={(valObj) => onChange(valObj?.value)}
+            />
+          )}
         />
       </div>
 
