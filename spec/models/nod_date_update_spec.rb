@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe NodDateUpdate, :all_dbs do
+fdescribe NodDateUpdate, :all_dbs do
   let(:timely_request_issue) { create(:request_issue, decision_date: 381.days.ago) }
   let(:untimely_request_issue_with_exemption) do
     create(:request_issue,
@@ -20,8 +20,8 @@ describe NodDateUpdate, :all_dbs do
       expect(nod_date_update.errors[:new_date][0][:message]).to include(
         "Timeliness of one or more issues is affected by NOD date change"
       )
-      expect(nod_date_update.errors[:new_date][0][:affected_issues].first.id).to equal(1)
-      expect(nod_date_update.errors[:new_date][0][:unaffected_issues].first.id).to equal(2)
+      expect(nod_date_update.errors[:new_date][0][:affected_issues].first.id).to eq(1)
+      expect(nod_date_update.errors[:new_date][0][:unaffected_issues].first.id).to eq(2)
     end
 
     it "should return true if untimely issue has exemption status" do
