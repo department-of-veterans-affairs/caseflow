@@ -1313,7 +1313,7 @@ RSpec.feature "Case details", :all_dbs do
           )
         end
 
-        it "updates an existing edit and displays success alert" do
+        it "updates an existing edit and displays success alert after change" do
           visit("/queue/appeals/#{appeal.uuid}")
 
           find("button", text: COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY).click
