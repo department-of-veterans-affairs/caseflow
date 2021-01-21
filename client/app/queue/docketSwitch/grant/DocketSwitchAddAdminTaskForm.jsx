@@ -22,18 +22,9 @@ const actionOptions = Object.entries(colocatedAdminActions).map(
 );
 
 export const DocketSwitchAddAdminTaskForm = ({ baseName, item, onRemove }) => {
-  const { control, errors, register, unregister } = useFormContext();
+  const { control, errors, register } = useFormContext();
 
   const handleRemove = () => onRemove();
-
-  useEffect(() => {
-    register({ name: `${baseName}.type` });
-
-    return () => {
-      unregister(`${baseName}.type`);
-      unregister(`${baseName}.instructions`);
-    };
-  }, []);
 
   return (
     <>
