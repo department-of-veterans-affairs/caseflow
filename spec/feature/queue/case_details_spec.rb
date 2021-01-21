@@ -1294,11 +1294,15 @@ RSpec.feature "Case details", :all_dbs do
           expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
         end
 
-        it "success alert displays after submitting NOD date change successfully" do
+        fit "success alert displays after submitting NOD date change successfully" do
           visit("/queue/appeals/#{appeal.uuid}")
 
           find("button", text: COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY).click
           fill_in COPY::EDIT_NOD_DATE_LABEL, with: Time.zone.today.mdY
+
+          expect(page).to have_content("Reason for edit")
+          find(".cf-form-dropdown", text: "Reason for edit").click
+          find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
           safe_click "#Edit-NOD-Date-button-id-1"
 
           expect(page).to have_content(

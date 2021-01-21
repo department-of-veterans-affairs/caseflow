@@ -13,7 +13,6 @@ import { sprintf } from 'sprintf-js';
 import { formatDateStr } from '../../util/DateUtil';
 import { appealWithDetailSelector } from '../selectors';
 import SearchableDropdown from 'app/components/SearchableDropdown';
-import { useHistory } from 'react-router';
 
 const changeReasons = [
   { label: 'New Form/Information Received', value: 'new_info' },
@@ -22,7 +21,6 @@ const changeReasons = [
 
 export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealId, reason }) => {
   const dispatch = useDispatch();
-  const { goBack } = useHistory();
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
