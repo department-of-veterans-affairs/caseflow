@@ -272,7 +272,7 @@ class Veteran < CaseflowRecord
 
   def date_of_death
     cached_date_of_death = super
-    return cached_date_of_death if cached_date_of_death.present? || RequestStore.store[:current_user].vso_employee?
+    return cached_date_of_death if cached_date_of_death.present? || RequestStore.store[:current_user]&.vso_employee?
 
     dod = bgs_record[:date_of_death] if bgs_record_found?
     dod && Date.strptime(dod, "%m/%d/%Y")
