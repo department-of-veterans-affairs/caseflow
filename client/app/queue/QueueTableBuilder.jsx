@@ -49,11 +49,11 @@ class QueueTableBuilder extends React.PureComponent {
   filterValuesForColumn = (column) => column && column.filterable && column.filter_options;
 
   createColumnObject = (column, config, tasks) => {
-    const { requireDasRecord, featureToggles } = this.props;
+    const { requireDasRecord } = this.props;
     const filterOptions = this.filterValuesForColumn(column);
     const functionForColumn = {
       [QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name]: typeColumn(tasks, filterOptions, requireDasRecord),
-      [QUEUE_CONFIG.COLUMNS.BADGES.name]: badgesColumn(tasks, featureToggles),
+      [QUEUE_CONFIG.COLUMNS.BADGES.name]: badgesColumn(tasks),
       [QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name]: detailsColumn(tasks, requireDasRecord, config.userRole),
       [QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name]: daysOnHoldColumn(requireDasRecord),
       [QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name]: daysWaitingColumn(requireDasRecord),
@@ -130,8 +130,7 @@ const mapStateToProps = (state) => {
   return ({
     config: state.queue.queueConfig,
     organizations: state.ui.organizations,
-    userCanBulkAssign: state.ui.activeOrganization.userCanBulkAssign,
-    featureToggles: state.ui.featureToggles
+    userCanBulkAssign: state.ui.activeOrganization.userCanBulkAssign
   });
 };
 
@@ -143,8 +142,7 @@ QueueTableBuilder.propTypes = {
     active_tab_index: PropTypes.number
   }),
   requireDasRecord: PropTypes.bool,
-  userCanBulkAssign: PropTypes.bool,
-  featureToggles: PropTypes.object
+  userCanBulkAssign: PropTypes.bool
 };
 
 export default (connect(mapStateToProps)(QueueTableBuilder));
