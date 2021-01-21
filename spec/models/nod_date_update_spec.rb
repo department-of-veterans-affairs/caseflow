@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-fdescribe NodDateUpdate, :all_dbs do
+describe NodDateUpdate, :all_dbs do
   let(:timely_request_issue) { create(:request_issue, decision_date: 381.days.ago) }
   let(:untimely_request_issue_with_exemption) do
     create(:request_issue,
