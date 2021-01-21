@@ -680,7 +680,7 @@ class Task < CaseflowRecord
     @alerts ||= []
   end
 
-  def org_task_and_org_member(user)
+  def org_task_and_cavc_lit_support_member(user)
     assigned_to_type == "Organization" && CavcLitigationSupport.singleton.user_has_access?(user)
   end
 

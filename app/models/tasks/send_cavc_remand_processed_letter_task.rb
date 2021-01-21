@@ -70,7 +70,7 @@ class SendCavcRemandProcessedLetterTask < Task
     assigned_to == user ||
       CavcLitigationSupport.singleton.user_is_admin?(user) ||
       task_is_assigned_to_user_within_organization?(user) ||
-      org_task_and_org_member(user)
+      org_task_and_cavc_lit_support_member(user)
   end
 
   def set_assignee
