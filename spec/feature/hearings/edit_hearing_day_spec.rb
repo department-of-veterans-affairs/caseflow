@@ -117,7 +117,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
 
   context "when request type is 'Virtual'" do
     let!(:virtual_hearing_day) do
-      create(:hearing_day, request_type: "R", regional_office: nil, room: '', judge_id: judge.id)
+      create(:hearing_day, request_type: "R", regional_office: nil, room: "", judge_id: judge.id)
     end
 
     scenario "Room is not editable" do

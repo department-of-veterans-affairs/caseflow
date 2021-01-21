@@ -155,4 +155,52 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       expect(page).to have_content(coordinator.full_name)
     end
   end
+
+  context "When adding a Virtual Hearing day" do
+    before { FeatureToggle.enable!(:national_vh_queue) }
+
+    scenario "Opening modal and selecting Virtual presents correct fields" do
+      visit "hearings/schedule"
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
+      find("button", text: "Add Hearing Date").click
+      expect(page).to have_content("Add Hearing Day")
+      click_dropdown(index: "R", text: "Virtual")
+      expect(page).to have_content("Select Regional Office (RO)", wait: 30)
+      expect(find(".dropdown-regionalOffice")).to have_css(".cf-select__control--is-disabled")
+      expect(find(".dropdown-regionalOffice")).to have_text("Virtual Hearings")
+      expect(page).to have_content("Select VLJ (Optional)")
+      expect(page).to have_content("Select Hearing Coordinator (Optional)")
+      expect(page).to have_field("Assign Board Hearing Room", disabled: true, visible: false)
+      expect(find_field("Assign Board Hearing Room", disabled: true, visible: false)).not_to be_checked
+    end
+
+    scenario "Fill out all fields and confirm to save" do
+      visit "hearings/schedule"
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
+      find("button", text: "Add Hearing Date").click
+      expect(page).to have_content("Add Hearing Day")
+      fill_in "hearingDate", with: "01012021"
+      click_dropdown(index: "R", text: "Virtual")
+      expect(page).to have_content("Select Regional Office (RO)", wait: 30)
+      fill_in "vlj", with: "Sallie L Anderson"
+      fill_in "coordinator", with: "Casimir R Funk"
+      fill_in "Notes (Optional)", with: "Test notes."
+      find("button", text: "Confirm").click
+      expect(page).to have_content("You have successfully added Hearing Day 01/01/2021", wait: 30)
+    end
+
+    scenario "Leave Hearing Date without a selection, expect error", focus: true do
+      visit "hearings/schedule"
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
+      find("button", text: "Add Hearing Date").click
+      expect(page).to have_content("Add Hearing Day")
+      click_dropdown(index: "R", text: "Virtual")
+      expect(page).to have_content("Select Regional Office (RO)", wait: 30)
+      fill_in "vlj", with: "Sallie L Anderson"
+      fill_in "coordinator", with: "Casimir R Funk"
+      fill_in "Notes (Optional)", with: "Test notes."
+      find("button", text: "Confirm").click
+      expect(page).to have_content("Please make sure you have entered a Hearing Date")
+    end
+  end
 end
