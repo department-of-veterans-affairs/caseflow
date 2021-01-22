@@ -18,7 +18,7 @@ FactoryBot.define do
           date_of_birth: "01/10/1935",
           date_of_death: nil,
           name_suffix: name_suffix,
-          sex: "M",
+          sex: Faker::Gender.short_binary_type.upcase,
           address_line1: "1234 Main Street",
           country: "USA",
           zip_code: "12345",
