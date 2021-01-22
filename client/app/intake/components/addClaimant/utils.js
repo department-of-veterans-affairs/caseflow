@@ -8,10 +8,9 @@ const dropdownOptSchema = yup.object().shape({
 });
 
 const radioOptSchema = yup.object().shape({
-	displayText: yup.string().required(),
-	value: yup.string().required(),
+  displayText: yup.string().required(),
+  value: yup.string().required(),
 });
-
 
 export const schema = yup.object().shape({
   relationship: dropdownOptSchema.required(),
