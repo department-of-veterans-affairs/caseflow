@@ -20,6 +20,7 @@ FactoryBot.define do
           create(:user).tap { |u| create(:staff, :attorney_role, user: u) }
       end
       veteran { Veteran.first || create(:veteran) }
+      docket_type { Constants.AMA_DOCKETS.evidence_submission }
     end
 
     after(:build) do |cavc_remand, evaluator|
@@ -36,6 +37,7 @@ FactoryBot.define do
         notes = "Pain disorder with 100\% evaluation per examination"
         source_appeal = create(:appeal,
                                :dispatched,
+                               docket_type: evaluator.docket_type,
                                veteran_file_number: evaluator.veteran.file_number,
                                associated_judge: evaluator.judge,
                                associated_attorney: evaluator.attorney)
