@@ -5,7 +5,7 @@
 class NodDateUpdatesController < ApplicationController
   include ValidationConcern
 
-  before_action :verify_access, :react_routed, :set_application
+  before_action :verify_access, :react_routed
   
   validates :update, using: NodDateUpdatesSchemas.update
   def update

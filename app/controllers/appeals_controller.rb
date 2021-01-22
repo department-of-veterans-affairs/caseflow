@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class AppealsController < ApplicationController
-  include ValidationConcern
-
   before_action :react_routed
   before_action :set_application, only: [:document_count, :power_of_attorney]
   # Only whitelist endpoints VSOs should have access to.
