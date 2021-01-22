@@ -9,7 +9,7 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 export const AddressForm = ({ organization }) => {
 
   return (
-    <>
+    <React.Fragment>
       <TextField
         name="address1"
         label="Street address 1"
@@ -24,7 +24,7 @@ export const AddressForm = ({ organization }) => {
       {
         organization && <StreetAddress>
           <TextField
-            name="Street address 3"
+            name="address3"
             label="Street address 3"
             optional
             strongLabel
@@ -56,7 +56,7 @@ export const AddressForm = ({ organization }) => {
           strongLabel
         />
       </ZipCountry>
-    </>
+    </React.Fragment>
   );
 };
 
