@@ -14,7 +14,7 @@ describe MdrTask, :postgres do
 
     it_behaves_like "task requiring specific parent"
 
-    it "has expected defaults" do
+    it "has expected default values" do
       new_task = subject
       expect(new_task.assigned_to).to eq CavcLitigationSupport.singleton
       expect(new_task.label).to eq COPY::MDR_TASK_LABEL
@@ -48,7 +48,7 @@ describe MdrTask, :postgres do
   describe "#available_actions" do
     let(:mdr_task) { MdrTask.create_with_hold(create(:cavc_task)) }
 
-    context "immediately after MdrTask is created" do
+    context "after MdrTask is created" do
       it "returns available actions" do
         expect(mdr_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
         expect(mdr_task.available_actions(org_admin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h

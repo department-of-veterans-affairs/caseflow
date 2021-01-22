@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+##
+# Factory to create tasks for a new appeal based on appeal characteristics.
+
 class InitialTasksFactory
   def initialize(appeal, cavc_remand = nil)
     @appeal = appeal
@@ -34,7 +37,7 @@ class InitialTasksFactory
     distribution_task = DistributionTask.create!(appeal: @appeal, parent: @root_task)
 
     if @appeal.cavc?
-      create_tasks_for_cavc(distribution_task)
+      create_cavc_subtasks(distribution_task)
     elsif @appeal.evidence_submission_docket?
       EvidenceSubmissionWindowTask.create!(appeal: @appeal, parent: distribution_task)
     elsif @appeal.hearing_docket?
@@ -48,7 +51,7 @@ class InitialTasksFactory
   end
 
   # For AMA appeals. Create appropriate subtasks based on the CAVC Remand subtype
-  def create_tasks_for_cavc(distribution_task)
+  def create_cavc_subtasks(distribution_task)
     cavc_task = CavcTask.create!(appeal: @appeal, parent: distribution_task)
 
     if @cavc_remand.mdr?

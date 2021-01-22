@@ -46,14 +46,10 @@ class MdrTask < Task
   TASK_ACTIONS = [].freeze
 
   # Actions a user can take on a task assigned to them
-  USER_ACTIONS = [
-    # Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
-  ].concat(TASK_ACTIONS).freeze
+  USER_ACTIONS = [].concat(TASK_ACTIONS).freeze
 
   # Actions an admin of the organization can take on a task assigned to their organization
-  ADMIN_ACTIONS = [
-    # Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h
-  ].concat(TASK_ACTIONS).freeze
+  ADMIN_ACTIONS = [].concat(TASK_ACTIONS).freeze
 
   def available_actions(user)
     return [] unless CavcLitigationSupport.singleton.user_has_access?(user)
