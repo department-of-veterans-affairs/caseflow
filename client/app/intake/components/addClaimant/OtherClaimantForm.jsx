@@ -3,7 +3,7 @@ import * as Constants from '../../constants';
 
 import { useFormContext } from 'react-hook-form';
 
-import AddressForm from 'app/components/AddressForm'
+import AddressForm from 'app/components/AddressForm';
 import RadioField from 'app/components/RadioField';
 import TextField from 'app/components/TextField';
 
