@@ -1,11 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 import { STATES } from '../constants/AppConstants'
 import TextField from 'app/components/TextField';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 
-export const AddressForm = () => {
+export const AddressForm = ({ organization }) => {
 
   return (
     <>
@@ -20,14 +21,16 @@ export const AddressForm = () => {
         optional
         strongLabel
       />
-      <StreetAddress>
-        <TextField
-          name="Street address 3"
-          label="Street address 3"
-          optional
-          strongLabel
-        />
-      </StreetAddress>
+      {
+        organization && <StreetAddress>
+          <TextField
+            name="Street address 3"
+            label="Street address 3"
+            optional
+            strongLabel
+          />
+        </StreetAddress>
+      }
       <CityState>
         <TextField
           name="City"
@@ -55,6 +58,10 @@ export const AddressForm = () => {
       </ZipCountry>
     </>
   );
+};
+
+AddressForm.propTypes = {
+  organization: PropTypes.bool
 };
 
 // Styles ----------------------------
