@@ -131,7 +131,8 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
   end
 
   describe "#available_actions_unwrapper" do
-    let(:cavc_task) { create(:send_cavc_remand_processed_letter_task, assigned_to: create(:user)) }
+    let(:cavc_user) { create(:user) }
+    let(:cavc_task) { create(:send_cavc_remand_processed_letter_task, assigned_to: cavc_user) }
 
     subject { cavc_task.available_actions_unwrapper(cavc_task.assigned_to) }
 
@@ -140,6 +141,7 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
       completed_distribution_task = build(:task, appeal: cavc_task.appeal, type: DistributionTask.name)
       completed_distribution_task.save!(validate: false)
       completed_distribution_task.completed!
+      CavcLitigationSupport.singleton.add_user(cavc_user)
     end
 
     it "provides the correct parent id for blocking and non blocking admin actions" do

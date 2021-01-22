@@ -68,7 +68,7 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
 
       return ORG_ACTIONS if assigned_to_type == "Organization"
 
-      return USER_ACTIONS if task_is_assigned_to_user_within_organization?(user)
+      return USER_ACTIONS if assigned_to == user || task_is_assigned_to_user_within_organization?(user)
     end
 
     []
