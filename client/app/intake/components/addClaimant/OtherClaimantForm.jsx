@@ -17,7 +17,7 @@ export const OtherClaimantForm = () => {
   const watchType = watch('type');
 
   return (
-    <>
+    <React.Fragment>
       <br />
       <RadioField
         name="type"
@@ -57,7 +57,7 @@ export const OtherClaimantForm = () => {
           />
         </div>
       }
-    </>
+    </React.Fragment>
   );
 };
 
