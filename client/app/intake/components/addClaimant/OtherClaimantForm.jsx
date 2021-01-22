@@ -1,5 +1,6 @@
 import React from 'react';
 import * as Constants from '../../constants';
+import styled from 'styled-components';
 
 import { useFormContext } from 'react-hook-form';
 
@@ -28,25 +29,29 @@ export const OtherClaimantForm = () => {
         options={otherOpts}
       />
       { watchType === 'organization' &&
-        <div style={{ marginTop: '26px' }}>
+        <div style={{ marginTop: '24px' }}>
           <TextField
             name="organization"
             label="Organization name"
             strongLabel
           />
           <AddressForm organization />
-          <TextField
-            name="email"
-            label="Claimant email"
-            optional
-            strongLabel
-          />
-          <TextField
-            name="phoneNumber"
-            label="Phone number"
-            optional
-            strongLabel
-          />
+          <FieldDiv>
+            <TextField
+              name="email"
+              label="Claimant email"
+              optional
+              strongLabel
+            />
+          </FieldDiv>
+          <FieldDiv>
+            <TextField
+              name="phoneNumber"
+              label="Phone number"
+              optional
+              strongLabel
+            />
+          </FieldDiv>
           <RadioField
             name="vaForm"
             label="Do you have a VA Form 21-22 for this claimant?"
@@ -60,5 +65,9 @@ export const OtherClaimantForm = () => {
     </>
   );
 };
+
+const FieldDiv = styled.div`
+  margin-bottom: 1.5em;
+`;
 
 export default OtherClaimantForm;

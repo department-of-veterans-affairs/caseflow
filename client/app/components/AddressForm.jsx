@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { css } from 'glamor';
 
 import { STATES } from '../constants/AppConstants';
 import TextField from 'app/components/TextField';
@@ -10,17 +11,21 @@ export const AddressForm = ({ organization }) => {
 
   return (
     <>
-      <TextField
-        name="address1"
-        label="Street address 1"
-        strongLabel
-      />
-      <TextField
-        name="address2"
-        label="Street address 2"
-        optional
-        strongLabel
-      />
+      <FieldDiv>
+        <TextField
+          name="address1"
+          label="Street address 1"
+          strongLabel
+        />
+      </FieldDiv>
+      <FieldDiv>
+        <TextField
+          name="address2"
+          label="Street address 2"
+          optional
+          strongLabel
+        />
+      </FieldDiv>
       {
         organization && <StreetAddress>
           <TextField
@@ -64,13 +69,12 @@ AddressForm.propTypes = {
   organization: PropTypes.bool
 };
 
-// Styles ----------------------------
-
 const CityState = styled.div`
   display: grid;
   grid-gap: 10px;
   grid-template-columns: 320px 130px;
-  margin-bottom: 1em;
+  margin-bottom: 0em;
+  margin-top: -1em;
   align-items: center;
   input {
     margin-bottom: 0;
@@ -81,10 +85,16 @@ const ZipCountry = styled.div`
   display: grid;
   grid-gap: 10px;
   grid-template-columns: 140px 310px;
+  margin-bottom: -.65em;
 `;
 
 const StreetAddress = styled.div`
-  margin-bottom:0;
+  margin-top: -.5em;
+  margin-bottom: -.65em;
+`;
+
+const FieldDiv = styled.div`
+  margin-bottom: 1.5em;
 `;
 
 export default AddressForm;

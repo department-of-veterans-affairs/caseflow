@@ -11,23 +11,29 @@ export const IndividualForm = () => {
   return (
     <>
       <br />
-      <TextField
-        name="firstName"
-        label="First name"
-        strongLabel
-      />
-      <TextField
-        name="middleName"
-        label="Middle name/initial"
-        optional
-        strongLabel
-      />
-      <TextField
-        name="lastName"
-        label="Last name"
-        optional
-        strongLabel
-      />
+      <FieldDiv>
+        <TextField
+          name="firstName"
+          label="First name"
+          strongLabel
+        />
+      </FieldDiv>
+      <FieldDiv>
+        <TextField
+          name="middleName"
+          label="Middle name/initial"
+          optional
+          strongLabel
+        />
+      </FieldDiv>
+      <FieldDiv>
+        <TextField
+          name="lastName"
+          label="Last name"
+          optional
+          strongLabel
+        />
+      </FieldDiv>
       <Suffix>
         <TextField
           name="suffix"
@@ -37,12 +43,14 @@ export const IndividualForm = () => {
         />
       </Suffix>
       <AddressForm />
-      <TextField
-        name="email"
-        label="Claimant email"
-        optional
-        strongLabel
-      />
+      <FieldDiv>
+        <TextField
+          name="email"
+          label="Claimant email"
+          optional
+          strongLabel
+        />
+      </FieldDiv>
       <PhoneNumber>
         <TextField
           name="phoneNumber"
@@ -68,7 +76,11 @@ const Suffix = styled.div`
 
 const PhoneNumber = styled.div`
   width: 240px;
-  margin-bottom: 2em;
+  margin-bottom: 2em; 
+`;
+
+const FieldDiv = styled.div`
+  margin-bottom: 1.5em;
 `;
 
 export default IndividualForm;
