@@ -16,10 +16,15 @@ module CavcAdminActionConcern
     end
 
     def creating_from_cavc_workflow?(user, parent_task)
-      parent_task&.type == DistributionTask.name && (
-        CavcLitigationSupport.singleton.user_is_admin?(user) ||
-        parent_task.appeal.tasks.open.where(type: CAVC_USER_TASK_TYPES, assigned_to: user).exists?
-      )
+      parent_task&.type == DistributionTask.name &&
+        open_appeal_tasks(parent_task).where(type: CAVC_USER_TASK_TYPES).exists? &&
+        CavcLitigationSupport.singleton.user_has_access?(user)
+    end
+
+    private
+
+    def open_appeal_tasks(parent_task)
+      parent_task.appeal.tasks.open
     end
   end
 
