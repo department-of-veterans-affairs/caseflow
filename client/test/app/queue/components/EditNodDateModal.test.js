@@ -82,4 +82,16 @@ describe('EditNodDateModal', () => {
 
     expect(errorMessage.text()).toEqual(COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE);
   });
+
+  it('should show warning when date is after nodDate', () => {
+    const component = setupEditNodDateModal();
+    const dateInput = component.find('input[type="date"]');
+    const laterThanNodDate = '2021-01-21';
+
+    dateInput.simulate('change', { target: { value: laterThanNodDate } });
+    component.update();
+    const warningMessage = component.find('.usa-alert-text');
+
+    expect(warningMessage.text()).toEqual(COPY.EDIT_NOD_DATE_WARNING_ALERT_MESSAGE);
+  });
 });

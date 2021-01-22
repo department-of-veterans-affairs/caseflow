@@ -12,6 +12,7 @@ import moment from 'moment';
 import { sprintf } from 'sprintf-js';
 import { formatDateStr } from '../../util/DateUtil';
 import { appealWithDetailSelector } from '../selectors';
+import Alert from 'app/components/Alert';
 
 export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealId }) => {
   const dispatch = useDispatch();
@@ -63,6 +64,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
   const [receiptDate, setReceiptDate] = useState(nodDate);
   const [disableButton, setDisableButton] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [showWarning, setWarningMessage] = useState(false);
 
   const buttons = [
     {
@@ -94,16 +96,31 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
     return (formattedNewDate < amaDate);
   };
 
+  const isLaterThanNodDate = (newDate) => {
+    const formattedNewDate = moment(newDate);
+    const formattedNodDate = moment(nodDate);
+
+    return (formattedNewDate > formattedNodDate);
+  };
+
   const handleDateChange = (value) => {
     if (isFutureDate(value)) {
+      setWarningMessage(false);
       setErrorMessage(COPY.EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE);
       setDisableButton(true);
       setReceiptDate(value);
     } else if (isPreAmaDate(value)) {
+      setWarningMessage(false);
       setErrorMessage(COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE);
       setDisableButton(true);
       setReceiptDate(value);
+    } else if (isLaterThanNodDate(value)) {
+      setWarningMessage(true);
+      setErrorMessage(null);
+      setDisableButton(false);
+      setReceiptDate(value);
     } else {
+      setWarningMessage(false);
       setErrorMessage(null);
       setReceiptDate(value);
       setDisableButton(false);
@@ -120,6 +137,12 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
       <div>
         <ReactMarkdown source={COPY.EDIT_NOD_DATE_MODAL_DESCRIPTION} />
       </div>
+      { showWarning ? <Alert
+        message={COPY.EDIT_NOD_DATE_WARNING_ALERT_MESSAGE}
+        title=""
+        type="info"
+        scrollOnAlert= {false}
+      /> : null }
       <DateSelector
         name="nodDate"
         errorMessage={errorMessage}
