@@ -3,19 +3,21 @@
 module HearingRequestTypeConcern
   extend ActiveSupport::Concern
 
-  # Add Paper Trail configuration
-  has_paper_trail only: [:changed_request_type], on: [:update]
+  included do
+    # Add Paper Trail configuration
+    has_paper_trail only: [:changed_request_type], on: [:update]
 
-  validates :changed_request_type,
-            inclusion: {
-              in: [
-                HearingDay::REQUEST_TYPES[:central],
-                HearingDay::REQUEST_TYPES[:video],
-                HearingDay::REQUEST_TYPES[:virtual]
-              ],
-              message: "changed request type (%<value>s) is invalid"
-            },
-            allow_nil: true
+    validates :changed_request_type,
+              inclusion: {
+                in: [
+                  HearingDay::REQUEST_TYPES[:central],
+                  HearingDay::REQUEST_TYPES[:video],
+                  HearingDay::REQUEST_TYPES[:virtual]
+                ],
+                message: "changed request type (%<value>s) is invalid"
+              },
+              allow_nil: true
+  end
 
   class InvalidChangedRequestType < StandardError; end
 
