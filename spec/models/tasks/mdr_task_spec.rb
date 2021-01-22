@@ -70,8 +70,8 @@ describe MdrTask, :postgres do
         child_timed_hold_tasks = mdr_task.children.where(type: :TimedHoldTask)
         expect(child_timed_hold_tasks.first.status).to eq Constants.TASK_STATUSES.completed
 
-        expect(mdr_task.available_actions(org_admin)).to be_empty
-        expect(mdr_task.available_actions(org_nonadmin)).to be_empty
+        expect(mdr_task.available_actions(org_admin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
+        expect(mdr_task.available_actions(org_nonadmin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
         expect(mdr_task.available_actions(other_user)).to be_empty
       end
     end

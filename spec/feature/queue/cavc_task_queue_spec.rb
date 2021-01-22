@@ -150,6 +150,9 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
           click_on "Submit"
           expect(page).to have_content COPY::END_HOLD_SUCCESS_MESSAGE_TITLE
+
+          find(".cf-select__control", text: "Select an action").click
+          expect(page).to have_content Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label
         end
       end
     end
