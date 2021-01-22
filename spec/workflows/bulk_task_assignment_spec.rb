@@ -178,19 +178,14 @@ describe BulkTaskAssignment, :postgres do
         end
 
         let(:expected_appeal_ordering) do
-          [
-            cavc_aod_appeal,
-            cavc_aod_legacy_appeal,
-            aod_appeal,
-            aod_legacy_appeal,
-            cavc_appeal,
-            cavc_legacy_appeal
-          ]
+          [cavc_aod_appeal, cavc_aod_legacy_appeal].sort_by(&:docket_number) +
+            [aod_appeal, aod_legacy_appeal].sort_by(&:docket_number) +
+            [cavc_appeal, cavc_legacy_appeal].sort_by(&:docket_number)
         end
 
         subject { BulkTaskAssignment.new(params).process }
 
-        it "sorts priority appeals first" do
+        it "sorts priority appeals first, then by docket_number" do
           prioritized_assigned_tasks = subject
           expect(prioritized_assigned_tasks.first(6).map(&:appeal)).to eq(expected_appeal_ordering)
 
