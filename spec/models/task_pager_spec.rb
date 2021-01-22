@@ -363,7 +363,7 @@ describe TaskPager, :all_dbs do
 
     context "when sorting by closest regional office column" do
       let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name }
-      let(:virtual_hearing_ro_key) { ['R'] }
+      let(:virtual_hearing_ro_key) { ["R"] }
 
       before do
         # Virtual Hearing "RO" has no city and should be omitted here:
