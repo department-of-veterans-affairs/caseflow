@@ -5,7 +5,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 
 import IndividualForm from './IndividualForm';
 import SearchableDropdown from 'app/components/SearchableDropdown';
-import OtherForm from './OtherForm';
+import OtherClaimantForm from './OtherClaimantForm';
 
 const individual = ['spouse', 'child', 'individual'];
 
@@ -33,7 +33,7 @@ export const AddClaimantForm = ({ onSubmit }) => {
         options={relationshipOpts}
         strongLabel
       />
-      { watchRelationship?.value === 'other' && <OtherForm />}
+      { watchRelationship?.value === 'other' && <OtherClaimantForm />}
       { renderIndividualForm && <IndividualForm /> }
     </form>
   );
