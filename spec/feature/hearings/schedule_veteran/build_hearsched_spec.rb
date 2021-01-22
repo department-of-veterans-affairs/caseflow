@@ -295,7 +295,6 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       expect(page).to have_content("Regional Office")
       click_dropdown(text: "Denver")
       click_button("AMA Veterans Waiting", exact: true)
-      binding.pry
       click_on "Bob"
 
       # Case details screen
