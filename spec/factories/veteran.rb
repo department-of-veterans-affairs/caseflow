@@ -3,20 +3,21 @@
 FactoryBot.define do
   factory :veteran do
     first_name { "Bob" }
-    last_name { "Smith" }
-    name_suffix { "II" }
+    last_name { "Smith#{Faker::Name.last_name}" }
+    name_suffix { (bob_smith_count == 1) ? "II" : bob_smith_count.to_s }
     ssn { Generators::Random.unique_ssn }
     email_address { "#{first_name}.#{last_name}@test.com" }
     date_of_death { nil }
 
     transient do
+      sequence(:bob_smith_count)
       bgs_veteran_record do
         {
-          first_name: "Bob",
-          last_name: "Smith",
+          first_name: first_name,
+          last_name: last_name,
           date_of_birth: "01/10/1935",
           date_of_death: nil,
-          name_suffix: "II",
+          name_suffix: name_suffix,
           sex: "M",
           address_line1: "1234 Main Street",
           country: "USA",
