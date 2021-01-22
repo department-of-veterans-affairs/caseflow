@@ -62,7 +62,6 @@ export const IndividualForm = () => {
   );
 };
 
-
 const Suffix = styled.div`
   max-width: 8em;
 `;

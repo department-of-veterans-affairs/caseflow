@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-import { STATES } from '../constants/AppConstants'
+import { STATES } from '../constants/AppConstants';
 import TextField from 'app/components/TextField';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 
