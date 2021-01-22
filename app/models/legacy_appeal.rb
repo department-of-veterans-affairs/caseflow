@@ -16,6 +16,7 @@ class LegacyAppeal < CaseflowRecord
   include PrintsTaskTree
   include HasTaskHistory
   include AppealAvailableHearingLocations
+  include HearingRequestTypeConcern
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
@@ -38,21 +39,6 @@ class LegacyAppeal < CaseflowRecord
   }, class_name: "Task", foreign_key: :appeal_id
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
-  # Add Paper Trail configuration
-  has_paper_trail only: [:changed_request_type], on: [:update]
-
-  validates :changed_request_type,
-            inclusion: {
-              in: [
-                HearingDay::REQUEST_TYPES[:central],
-                HearingDay::REQUEST_TYPES[:video],
-                HearingDay::REQUEST_TYPES[:virtual]
-              ],
-              message: "changed request type (%<value>s) is invalid"
-            },
-            allow_nil: true
-
-  class InvalidChangedRequestType < StandardError; end
   class UnknownLocationError < StandardError; end
 
   # When these instance variable getters are called, first check if we've

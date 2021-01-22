@@ -12,6 +12,7 @@ class Appeal < DecisionReview
   include PrintsTaskTree
   include HasTaskHistory
   include AppealAvailableHearingLocations
+  include HearingRequestTypeConcern
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -36,22 +37,6 @@ class Appeal < DecisionReview
       .order(closed_at: :desc, assigned_at: :desc)
       .where(type: [InformalHearingPresentationTask.name, IhpColocatedTask.name], appeal_type: Appeal.name)
   }, class_name: "Task", foreign_key: :appeal_id
-
-  # Add Paper Trail configuration
-  has_paper_trail only: [:changed_request_type], on: [:update]
-
-  validates :changed_request_type,
-            inclusion: {
-              in: [
-                HearingDay::REQUEST_TYPES[:central],
-                HearingDay::REQUEST_TYPES[:video],
-                HearingDay::REQUEST_TYPES[:virtual]
-              ],
-              message: "changed request type (%<value>s) is invalid"
-            },
-            allow_nil: true
-
-  class InvalidChangedRequestType < StandardError; end
 
   enum stream_type: {
     Constants.AMA_STREAM_TYPES.original.to_sym => Constants.AMA_STREAM_TYPES.original,
