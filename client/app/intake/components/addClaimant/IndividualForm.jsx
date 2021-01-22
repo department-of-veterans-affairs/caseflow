@@ -12,18 +12,18 @@ export const IndividualForm = () => {
     <>
       <br />
       <TextField
-        name="First name"
+        name="firstName"
         label="First name"
         strongLabel
       />
       <TextField
-        name="Middle name/initial"
+        name="middleName"
         label="Middle name/initial"
         optional
         strongLabel
       />
       <TextField
-        name="Last name"
+        name="lastName"
         label="Last name"
         optional
         strongLabel
@@ -45,7 +45,7 @@ export const IndividualForm = () => {
       />
       <PhoneNumber>
         <TextField
-          name="phone number"
+          name="phoneNumber"
           label="Phone number"
           optional
           strongLabel
@@ -55,14 +55,13 @@ export const IndividualForm = () => {
         options={Constants.BOOLEAN_RADIO_OPTIONS}
         vertical
         label="Do you have a VA Form 21-22 for this claimant?"
-        name="21-22-radio"
+        name="vaForm"
         strongLabel
       />
     </>
   );
 };
 
-// Styles ----------------------------
 
 const Suffix = styled.div`
   max-width: 8em;

@@ -11,12 +11,12 @@ export const AddressForm = ({ organization }) => {
   return (
     <>
       <TextField
-        name="Street address 1"
+        name="address1"
         label="Street address 1"
         strongLabel
       />
       <TextField
-        name="Street address 2"
+        name="address2"
         label="Street address 2"
         optional
         strongLabel
@@ -33,12 +33,12 @@ export const AddressForm = ({ organization }) => {
       }
       <CityState>
         <TextField
-          name="City"
+          name="city"
           label="City"
           strongLabel
         />
         <SearchableDropdown
-          name="State"
+          name="state"
           label="State"
           options={STATES}
           strongLabel
@@ -46,12 +46,12 @@ export const AddressForm = ({ organization }) => {
       </CityState>
       <ZipCountry>
         <TextField
-          name="Zip"
+          name="zip"
           label="Zip"
           strongLabel
         />
         <TextField
-          name="Country"
+          name="country"
           label="Country"
           strongLabel
         />

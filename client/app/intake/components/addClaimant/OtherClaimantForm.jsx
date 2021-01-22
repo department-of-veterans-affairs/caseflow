@@ -42,7 +42,7 @@ export const OtherClaimantForm = () => {
             strongLabel
           />
           <TextField
-            name="phone number"
+            name="phoneNumber"
             label="Phone number"
             optional
             strongLabel
@@ -51,7 +51,7 @@ export const OtherClaimantForm = () => {
             options={Constants.BOOLEAN_RADIO_OPTIONS}
             vertical
             label="Do you have a VA Form 21-22 for this claimant?"
-            name="21-22-radio"
+            name="vaForm"
           />
         </div>
       }
