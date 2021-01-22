@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-
 import { Controller, useFormContext } from 'react-hook-form';
 
 import IndividualForm from './IndividualForm';
@@ -19,19 +18,19 @@ const relationshipOpts = [
 export const AddClaimantForm = ({ onSubmit }) => {
   const { control, handleSubmit, watch } = useFormContext();
   const watchRelationship = watch('relationship'); /* set in SearchableDropdown */
-  const watchType = watch('type'); /* set in OtherForm */
+  const watchType = watch('type'); /* set in OtherClaimantForm */
 
   const renderIndividualForm = individual.includes(watchType || watchRelationship?.value);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Controller
-        as={SearchableDropdown}
         control={control}
-        label="Relationship to the Veteran"
         name="relationship"
+        label="Relationship to the Veteran"
         options={relationshipOpts}
         strongLabel
+        as={SearchableDropdown}
       />
       { watchRelationship?.value === 'other' && <OtherClaimantForm />}
       { renderIndividualForm && <IndividualForm /> }

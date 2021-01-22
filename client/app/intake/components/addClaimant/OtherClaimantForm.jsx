@@ -34,7 +34,7 @@ export const OtherClaimantForm = () => {
             label="Organization name"
             strongLabel
           />
-          <AddressForm />
+          <AddressForm organization />
           <TextField
             name="email"
             label="Claimant email"

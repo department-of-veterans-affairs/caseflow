@@ -116,7 +116,7 @@ export class SearchableDropdown extends React.Component {
       creatable,
       creatableOptions,
       searchable,
-      styling
+      styling,
     } = this.props;
 
     const dropdownStyling = css(styling, {
@@ -262,7 +262,7 @@ SearchableDropdown.propTypes = {
   searchable: PropTypes.bool,
   selfManageValueState: PropTypes.bool,
   styling: PropTypes.object,
-  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
 };
 
 /* eslint-disable no-undefined */
