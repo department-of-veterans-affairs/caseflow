@@ -5,6 +5,9 @@ import Modal from 'app/components/Modal';
 import DateSelector from 'app/components/DateSelector';
 import COPY from 'app/../COPY';
 import { useDispatch, useSelector } from 'react-redux';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers';
+import * as yup from 'yup';
 import { resetSuccessMessages, showSuccessMessage } from '../uiReducer/uiActions';
 import { editAppeal } from '../QueueActions';
 import ApiUtil from '../../util/ApiUtil';
@@ -73,6 +76,20 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
 };
 
 export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
+  const schema = yup.object().shape({
+    receiptDate: yup.date().required(),
+      // min('2019-02-19', COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE).
+      // max(new Date(), COPY.EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE),
+    changeReason: yup.string().required().
+      oneOf(changeReasons.map((changeReason) => changeReason.value))
+  });
+
+  const { register, handleSubmit, errors, watch, control, formState } = useForm({
+    resolver: yupResolver(schema),
+    mode: 'onChange',
+    reValidateMode: 'onChange'
+  });
+
   const [receiptDate, setReceiptDate] = useState(nodDate);
   const [changeReason, setChangeReason] = useState(reason);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -88,10 +105,13 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
     {
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Submit',
-      disabled: (badDate || badReason),
+
+      // For future disable use cases
+      disabled: !formState.isValid,
       onClick: () => onSubmit(receiptDate, changeReason)
     }
   ];
+  console.log(watch(), errors, formState.isValid, formState.errors);
 
   const isFutureDate = (newDate) => {
     const today = new Date();
@@ -143,26 +163,47 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
       <div>
         <ReactMarkdown source={COPY.EDIT_NOD_DATE_MODAL_DESCRIPTION} />
       </div>
-      <DateSelector
-        name="nodDate"
-        errorMessage={errorMessage}
-        label={COPY.EDIT_NOD_DATE_LABEL}
-        strongLabel
-        type="date"
-        value={receiptDate}
-        onChange={handleDateChange}
-      />
-      <SearchableDropdown
-        name="reason"
-        label="Reason for edit"
-        searchable={false}
-        placeholder="Select the reason..."
-        value={changeReason}
-        options={changeReasons}
-        onChange={handleChangeReason}
-        debounce={250}
-        strongLabel
-      />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <DateSelector
+          inputRef={register}
+          name="nodDate"
+          errorMessage={errors.nodDate?.message}
+          label={COPY.EDIT_NOD_DATE_LABEL}
+          strongLabel
+          type="date"
+          // value={receiptDate}
+          // onChange={handleDateChange}
+        />
+        {/* <SearchableDropdown
+          inputRef={register}
+          name="reason"
+          label="Reason for edit"
+          searchable={false}
+          placeholder="Select the reason..."
+          value={changeReason}
+          options={changeReasons}
+          onChange={handleChangeReason}
+          debounce={250}
+          strongLabel
+        /> */}
+        <Controller
+          name="reason"
+          control={control}
+          defaultValue={null}
+          render={({ onChange, ...rest }) => (
+            <SearchableDropdown
+              {...rest}
+              label="Reason for edit"
+              placeholder="Select the reason..."
+              options={changeReasons}
+              // onChange={handleChangeReason}
+              debounce={250}
+              strongLabel
+              onChange={(valObj) => onChange(valObj?.value)}
+            />
+          )}
+        />
+      </form>
     </Modal>
   );
 };
