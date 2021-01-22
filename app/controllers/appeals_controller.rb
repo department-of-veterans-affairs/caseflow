@@ -139,13 +139,6 @@ class AppealsController < ApplicationController
     end
   end
 
-  validates :update_nod_date, using: AppealsSchemas.update_nod_date
-  def update_nod_date
-    if params[:receipt_date]
-      appeal.update_receipt_date!(receipt_date: params[:receipt_date])
-    end
-  end
-
   private
 
   def user_represents_claimant_not_veteran

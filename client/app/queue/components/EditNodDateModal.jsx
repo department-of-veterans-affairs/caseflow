@@ -13,10 +13,15 @@ import { sprintf } from 'sprintf-js';
 import { formatDateStr } from '../../util/DateUtil';
 import { appealWithDetailSelector } from '../selectors';
 import Alert from 'app/components/Alert';
+import SearchableDropdown from 'app/components/SearchableDropdown';
 
-export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealId }) => {
+const changeReasons = [
+  { label: 'New Form/Information Received', value: 'new_info' },
+  { label: 'Data Entry Error', value: 'entry_error' },
+];
+
+export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealId, reason }) => {
   const dispatch = useDispatch();
-
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
@@ -25,7 +30,7 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
     dispatch(resetSuccessMessages());
   }, []);
 
-  const handleSubmit = (receiptDate) => {
+  const handleSubmit = (receiptDate, changeReason) => {
     const alertInfo = {
       appellantName: (appeal.appellantFullName),
       nodDateStr: formatDateStr(nodDate, 'YYYY-MM-DD', 'MM/DD/YYYY'),
@@ -39,10 +44,15 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
       title,
       detail,
     };
-    const payload = { data: { receipt_date: receiptDate } };
+    const payload = {
+      data: {
+        receipt_date: receiptDate,
+        change_reason: changeReason
+      }
+    };
 
-    ApiUtil.patch(`/appeals/${appealId}/update_nod_date`, payload).then(() => {
-      dispatch(editAppeal(appealId, { nodDate: receiptDate }));
+    ApiUtil.patch(`/appeals/${appealId}/nod_date_update`, payload).then(() => {
+      dispatch(editAppeal(appealId, { nodDate: receiptDate, reason: changeReason }));
       dispatch(showSuccessMessage(successMessage));
       onSubmit?.();
       window.scrollTo(0, 0);
@@ -54,17 +64,20 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
       onCancel={onCancel}
       onSubmit={handleSubmit}
       nodDate={nodDate}
+      reason={reason}
       appealId={appealId}
       appellantName={appeal.appellantFullName}
     />
   );
 };
 
-export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
+export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
   const [receiptDate, setReceiptDate] = useState(nodDate);
-  const [disableButton, setDisableButton] = useState(false);
+  const [changeReason, setChangeReason] = useState(reason);
   const [errorMessage, setErrorMessage] = useState(null);
   const [showWarning, setWarningMessage] = useState(false);
+  const [badDate, setBadDate] = useState(null);
+  const [badReason, setBadReason] = useState(true);
 
   const buttons = [
     {
@@ -75,9 +88,8 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
     {
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Submit',
-      // For future disable use cases
-      disabled: disableButton,
-      onClick: () => onSubmit(receiptDate)
+      disabled: (badDate || badReason),
+      onClick: () => onSubmit(receiptDate, changeReason)
     }
   ];
 
@@ -107,23 +119,32 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
     if (isFutureDate(value)) {
       setWarningMessage(false);
       setErrorMessage(COPY.EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE);
-      setDisableButton(true);
       setReceiptDate(value);
+      setBadDate(true);
     } else if (isPreAmaDate(value)) {
       setWarningMessage(false);
       setErrorMessage(COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE);
-      setDisableButton(true);
       setReceiptDate(value);
+      setBadDate(true);
     } else if (isLaterThanNodDate(value)) {
       setWarningMessage(true);
       setErrorMessage(null);
-      setDisableButton(false);
       setReceiptDate(value);
+      setBadDate(true);
     } else {
       setWarningMessage(false);
       setErrorMessage(null);
       setReceiptDate(value);
-      setDisableButton(false);
+      setBadDate(null);
+    }
+  };
+
+  const handleChangeReason = (value) => {
+    if (!value === null) {
+      setBadReason(true);
+    } else {
+      setChangeReason(value);
+      setBadReason(null);
     }
   };
 
@@ -152,6 +173,17 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate }) => {
         value={receiptDate}
         onChange={handleDateChange}
       />
+      <SearchableDropdown
+        name="reason"
+        label="Reason for edit"
+        searchable={false}
+        placeholder="Select the reason..."
+        value={changeReason}
+        options={changeReasons}
+        onChange={handleChangeReason}
+        debounce={250}
+        strongLabel
+      />
     </Modal>
   );
 };
@@ -160,6 +192,7 @@ EditNodDateModalContainer.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   nodDate: PropTypes.string.isRequired,
+  reason: PropTypes.object,
   appealId: PropTypes.string.isRequired
 };
 
@@ -167,5 +200,6 @@ EditNodDateModal.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   nodDate: PropTypes.string.isRequired,
+  reason: PropTypes.object,
   appealId: PropTypes.string.isRequired
 };
