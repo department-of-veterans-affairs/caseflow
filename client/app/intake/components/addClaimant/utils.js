@@ -12,7 +12,6 @@ const radioOptSchema = yup.object().shape({
   value: yup.string().required(),
 });
 
-
 export const schema = yup.object().shape({
   relationship: dropdownOptSchema.required(),
   // firstName: yup.string().when('relationship', {
