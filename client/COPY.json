@@ -112,7 +112,7 @@
   "CASE_DETAILS_POA_ATTORNEY": "Private Attorney",
   "CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY": "Edit NOD Date",
   "CASE_DETAILS_FNOD_BANNER_TITLE": "Veteran Date of Death Reported",
-  "FNOD_SOURCE": "CorpDB (BGS)",
+  "FNOD_SOURCE": "VBMS",
 
   "CASE_DETAILS_GENDER_FIELD_LABEL": "Gender",
   "CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE": "Female",
@@ -428,6 +428,9 @@
   "CRP_LETTER_RESP_WINDOW_TASK_DEFAULT_INSTRUCTIONS": "The response window task will return to the CAVC Team's queue after 90 days or when manually ended early.",
   "CAVC_REMAND_LETTER_RESPONSE_TASK_COMPLETE_MODAL_BODY": "Complete this task to make the case available to be distributed to a judge. You will no longer be able to access this case.",
 
+  "MDR_TASK_LABEL": "CAVC MDR Remand Task",
+  "MDR_WINDOW_TASK_DEFAULT_INSTRUCTIONS": "The MDR task will return to the CAVC Team's queue after 90 days or when manually ended early.",
+
   "CAVC_GRANTED_EXTENSION_TASK_LABEL": "Granted extension",
   "CAVC_DENIED_EXTENSION_TASK_LABEL": "Denied extension",
 
@@ -688,10 +691,18 @@
   "DOCKET_SWITCH_DENIAL_INSTRUCTIONS": "Add the date and add any context for the denial of this switch.",
   "DENIED_DOCKET_SWITCH_TASK_LABEL": "Denied Docket Switch",
   "GRANTED_DOCKET_SWITCH_TASK_LABEL": "Granted Docket Switch",
+
   "DOCKET_SWITCH_DENIAL_SUCCESS_TITLE": "You have marked %s's request to switch dockets as denied",
   "DOCKET_SWITCH_DENIAL_SUCCESS_MESSAGE": "This will be recorded in the Case Timeline for future context.",
   "DOCKET_SWITCH_GRANTED_REQUEST_LABEL": "Switch Docket: Review %s's Request",
   "DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS": "Add the information based on how you are proceeding with this docket switch and the claimant's form.",
+  "DOCKET_SWITCH_GRANTED_ADD_TASK_LABEL": "Switch Docket: Add/Remove Tasks",
+  "DOCKET_SWITCH_GRANTED_ADD_TASK_INSTRUCTIONS": "**You are switching from %s to %s**",
+  "DOCKET_SWITCH_GRANTED_ADD_TASK_TEXT": "Below is a list of tasks that will be opened when you switch dockets. Tasks that are automatically created with the Direct Review docket cannot be selected or removed. Please **unselect** any tasks you would like to **remove** (the remaining tasks will be transferred to the new docket) and **add** any additional tasks that are needed.",
+  "DOCKET_SWITCH_GRANTED_ADD_TASK_BUTTON": "+ Add task",
+  "DOCKET_SWITCH_GRANTED_MODAL_TITLE": "Confirm removing task",
+  "DOCKET_SWITCH_GRANTED_MODAL_INSTRUCTION": "Are you sure you would like to remove the currently active \"**%s**\"? This task will be closed and will not be transferred over to the new docket. \n\nIf you change your mind before you confirm switching the docket, you can re-select this task to re-open it.",
+
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
   "CORRECT_REQUEST_ISSUES_WITHDRAW": "Withdraw",

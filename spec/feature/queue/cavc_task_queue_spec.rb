@@ -127,7 +127,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         step "cavc user confirms data on case details page" do
           expect(page).to have_content "APPEAL STREAM TYPE\nCAVC"
           expect(page).to have_content "DOCKET\nE\n#{appeal.docket_number}"
-          expect(page).to have_content "TASK\n#{SendCavcRemandProcessedLetterTask.label}"
+          expect(page).to have_content "TASK\n#{MdrTask.label}"
           expect(page).to have_content "ASSIGNED TO\n#{CavcLitigationSupport.singleton.name}"
 
           expect(page).to have_content "CAVC Remand"
@@ -139,6 +139,20 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DECISION_DATE}: #{date}"
           expect(page.has_no_content?("#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}:")).to eq(true)
           expect(page.has_no_content?("#{COPY::CASE_DETAILS_CAVC_MANDATE_DATE}:")).to eq(true)
+
+          find(".cf-select__control", text: "Select an action").click
+          expect(page).to have_content Constants.TASK_ACTIONS.END_TIMED_HOLD.label
+          click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
+          click_on "Cancel"
+        end
+
+        step "end timed hold early" do
+          click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
+          click_on "Submit"
+          expect(page).to have_content COPY::END_HOLD_SUCCESS_MESSAGE_TITLE
+
+          find(".cf-select__control", text: "Select an action").click
+          expect(page).to have_content Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label
         end
       end
     end
