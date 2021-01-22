@@ -107,7 +107,7 @@ RSpec.feature "Postpone hearing" do
         click_button("Submit")
 
         expect(page).to have_content(
-          "Successfully sent Bob Smith's case to a Hearings Branch administrator for review."
+          /Successfully sent Bob Smith.*'s case to a Hearings Branch administrator for review./
         )
       end
     end
