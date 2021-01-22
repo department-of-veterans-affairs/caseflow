@@ -48,10 +48,12 @@ export const OtherClaimantForm = () => {
             strongLabel
           />
           <RadioField
-            options={Constants.BOOLEAN_RADIO_OPTIONS}
-            vertical
-            label="Do you have a VA Form 21-22 for this claimant?"
             name="vaForm"
+            label="Do you have a VA Form 21-22 for this claimant?"
+            inputRef={register}
+            strongLabel
+            vertical
+            options={Constants.BOOLEAN_RADIO_OPTIONS}
           />
         </div>
       }

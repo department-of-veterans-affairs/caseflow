@@ -25,23 +25,23 @@ export const schema = yup.object().shape({
   // middleName: yup.string(),
   // lastName: yup.string(), 
   // suffix: yup.string(),
-  // email: yup.string(),
+  // email: yup.string().email(),
   // phoneNumber: yup.string(),
-  // vaForm: radioOptSchema.required(),
+  vaForm: radioOptSchema.required(),
   // type: radioOptSchema.when('relationship', {
   // 	is: 'other', then: radioOptSchema.required(),
   // }),
   // organization: yup.string().when('type', {
   // 	is: 'organization', then: yup.string().required(),
   // }),
-  address1: yup.string().required(),
+  // address1: yup.string().required()
   // address2: yup.string(),
   // address3: yup.string().when('type', {
   // 	is: 'organization', then: yup.string().required(),
   // }),
   // city: yup.string().required(),
   // state: dropdownOptSchema.required(),
-  // zip: yup.string().required(),
+  // zip: yup.number().required(),
   // country: yup.string().required(),
 });
 
