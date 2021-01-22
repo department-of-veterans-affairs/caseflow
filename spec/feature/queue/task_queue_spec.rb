@@ -1049,7 +1049,7 @@ feature "Task queue", :all_dbs do
         click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: COPY::CANCEL_TASK_MODAL_TITLE)
         fill_in "taskInstructions", with: "Cancelling task"
         click_button("Submit")
-        expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name))
+        expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name))
         expect(page.current_path).to eq("/queue")
         expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
       end
