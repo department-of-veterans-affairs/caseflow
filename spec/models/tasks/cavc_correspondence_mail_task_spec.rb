@@ -67,9 +67,9 @@ describe CavcCorrespondenceMailTask do
         end
 
         context "who is a team member" do
-          let(:expected_actions) { [] }
+          let(:expected_actions) { mail_task_actions }
 
-          it "has no actions" do
+          it "has actions" do
             subject
           end
         end
@@ -123,12 +123,12 @@ describe CavcCorrespondenceMailTask do
           end
 
           context "and is not assigned the task" do
-            let(:expected_actions) { [] }
+            let(:expected_actions) { mail_task_user_actions }
             let(:user) { create(:user) }
 
             before { CavcLitigationSupport.singleton.add_user(user) }
 
-            it "has no actions" do
+            it "has actions" do
               subject
             end
           end
