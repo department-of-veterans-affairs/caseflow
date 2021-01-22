@@ -58,7 +58,7 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
   ].concat(TASK_ACTIONS).freeze
 
   # Actions an admin of the organization can take on a task assigned to their organization
-  ADMIN_ACTIONS = [
+  ORG_ACTIONS = [
     Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h
   ].concat(TASK_ACTIONS).freeze
 
@@ -66,21 +66,15 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
     if CavcLitigationSupport.singleton.user_has_access?(user)
       return [Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h] if on_hold?
 
-      return ADMIN_ACTIONS if CavcLitigationSupport.singleton.user_is_admin?(user)
+      return ORG_ACTIONS if assigned_to_type == "Organization"
 
-      return USER_ACTIONS if user_actions_available?(user)
+      return USER_ACTIONS if task_is_assigned_to_user_within_organization?(user)
     end
 
     []
   end
 
   private
-
-  def user_actions_available?(user)
-    assigned_to == user ||
-      task_is_assigned_to_user_within_organization?(user) ||
-      org_task_and_cavc_lit_support_member(user)
-  end
 
   def set_assignee
     self.assigned_to = CavcLitigationSupport.singleton if assigned_to.nil?

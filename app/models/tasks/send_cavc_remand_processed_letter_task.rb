@@ -67,8 +67,7 @@ class SendCavcRemandProcessedLetterTask < Task
   private
 
   def user_actions_available?(user)
-    assigned_to == user ||
-      task_is_assigned_to_user_within_organization?(user)
+    task_is_assigned_to_user_within_organization?(user)
   end
 
   def set_assignee

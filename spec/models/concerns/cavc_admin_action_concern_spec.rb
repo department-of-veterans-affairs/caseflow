@@ -29,12 +29,6 @@ describe CavcAdminActionConcern do
       it { is_expected.to be false }
     end
 
-    context "when the cavc task is assigned to someone not on the cavc lit support team" do
-      before { cavc_task.update!(assigned_to: create(:user)) }
-
-      it { is_expected.to be true }
-    end
-
     context "when the cavc task is assigned to a cavc lit teammate" do
       before { cavc_task.update!(assigned_to: cavc_teammate) }
 
