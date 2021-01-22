@@ -5,6 +5,7 @@ import ProgressBar from 'app/components/ProgressBar';
 import { useSelector } from 'react-redux';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router';
 import { DocketSwitchReviewRequestContainer } from './DocketSwitchReviewRequestContainer';
+import { DocketSwitchAddTaskContainer } from './DocketSwitchAddTaskContainer';
 
 const sections = ['Review Request', 'Add/Remove Tasks', 'Review & Confirm'];
 
@@ -35,7 +36,7 @@ export const DocketSwitchGrantContainer = () => {
           <DocketSwitchReviewRequestContainer />
         </Route>
         <Route path={`${path}/tasks`}>
-          <p>Step 2 component here...</p>
+          <DocketSwitchAddTaskContainer />
         </Route>
         <Route path={`${path}/confirm`}>
           <p>Step 3 component here...</p>
