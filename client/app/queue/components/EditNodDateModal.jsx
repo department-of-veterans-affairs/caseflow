@@ -29,8 +29,6 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
     dispatch(resetSuccessMessages());
   }, []);
 
-  const handleCancel = () => onCancel();
-
   const handleSubmit = (receiptDate, changeReason) => {
     const alertInfo = {
       appellantName: (appeal.appellantFullName),
@@ -62,7 +60,7 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
 
   return (
     <EditNodDateModal
-      onCancel={handleCancel}
+      onCancel={onCancel}
       onSubmit={handleSubmit}
       nodDate={nodDate}
       reason={reason}

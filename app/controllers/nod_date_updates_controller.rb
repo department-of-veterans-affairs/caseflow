@@ -3,6 +3,11 @@
 # Controller to edit NOD dates and store the related info in the nod_date_updates table
 
 class NodDateUpdatesController < ApplicationController
+  include ValidationConcern
+
+  before_action :verify_access, :react_routed, :set_application
+  
+  validates :update, using: NodDateUpdatesSchemas.update
   def update
     nod_date_update = NodDateUpdate.create!(updated_params)
     appeal.update_receipt_date!(receipt_date: params[:receipt_date])
