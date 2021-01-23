@@ -20,22 +20,28 @@ import * as yup from 'yup';
 import { css } from 'glamor';
 import ReactMarkdown from 'react-markdown';
 import CheckboxGroup from 'app/components/CheckboxGroup';
-import Button from '../../../components/Button';
-import StringUtil from '../../../util/StringUtil';
+import Button from 'app/components/Button';
+import StringUtil from 'app/util/StringUtil';
 import DocketSwitchRemoveTaskConfirmationModal from './DocketSwitchRemoveTaskModal';
 import { DocketSwitchAddAdminTaskForm } from './DocketSwitchAddAdminTaskForm';
 
 const schema = yup.object().shape({
   taskIds: yup.array(yup.string()),
+  newTasks: yup.array(
+    yup.object().shape({
+      type: yup.string().required(),
+      instructions: yup.string().required(),
+    })
+  ),
 });
 
 export const DocketSwitchEditTasksForm = ({
-  onSubmit,
-  onCancel,
   docketFrom,
   docketTo,
-  taskListing = [],
   onBack,
+  onCancel,
+  onSubmit,
+  taskListing = [],
 }) => {
   const methods = useForm({
     resolver: yupResolver(schema),
@@ -183,7 +189,7 @@ export const DocketSwitchEditTasksForm = ({
               styling={css({ marginTop: '1rem' })}
               name={DOCKET_SWITCH_GRANTED_ADD_TASK_BUTTON}
               onClick={() =>
-                append({ type: { value: null, label: '' }, instructions: '' })
+                append({ type: null, instructions: '' })
               }
             />
           </React.Fragment>
@@ -201,10 +207,10 @@ export const DocketSwitchEditTasksForm = ({
   );
 };
 DocketSwitchEditTasksForm.propTypes = {
-  onCancel: PropTypes.func,
-  onSubmit: PropTypes.func,
   docketFrom: PropTypes.string,
   docketTo: PropTypes.string,
-  taskListing: PropTypes.array,
   onBack: PropTypes.func,
+  onCancel: PropTypes.func,
+  onSubmit: PropTypes.func,
+  taskListing: PropTypes.array,
 };
