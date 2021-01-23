@@ -102,7 +102,7 @@ describe VirtualHearings::SendEmail do
       before do
         Fakes::BGSService.store_veteran_record(
           veteran.file_number,
-          ptcpnt_id: veteran.participant_id,
+          ptcpnt_id: veteran.participant_id.to_s,
           first_name: "Bgsfirstname",
           last_name: "Bgslastname"
         )
