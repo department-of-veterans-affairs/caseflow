@@ -14,11 +14,8 @@ FactoryBot.define do
       sex { Faker::Gender.short_binary_type.upcase }
       bgs_veteran_record do
         {
-          file_number: file_number,
-          ssn: ssn,
           first_name: first_name,
           last_name: last_name,
-          email_address: email_address,
           date_of_birth: "01/10/1935",
           date_of_death: date_of_death,
           name_suffix: name_suffix,
@@ -27,10 +24,7 @@ FactoryBot.define do
           country: "USA",
           zip_code: "12345",
           state: "FL",
-          city: "Orlando",
-          # both for compatibility
-          ptcpnt_id: participant_id.to_s,
-          participant_id: participant_id.to_s
+          city: "Orlando"
         }
       end
     end
@@ -39,7 +33,18 @@ FactoryBot.define do
     sequence(:participant_id, 500_000_000)
 
     after(:build) do |veteran, evaluator|
-      Fakes::BGSService.store_veteran_record(veteran.file_number, evaluator.bgs_veteran_record)
+      Fakes::BGSService.store_veteran_record(
+        veteran.file_number,
+        evaluator.bgs_veteran_record.merge(
+          file_number: veteran.file_number,
+          ssn: veteran.ssn,
+          email_address: veteran.email_address,
+          date_of_death: veteran.date_of_death,
+          # both for compatability
+          ptcpnt_id: veteran.participant_id,
+          participant_id: veteran.participant_id
+        )
+      )
     end
   end
 end
