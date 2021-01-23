@@ -38,7 +38,7 @@ FactoryBot.define do
         evaluator.bgs_veteran_record.merge(
           file_number: veteran.file_number,
           ssn: veteran.ssn,
-          email_address: veteran.email_address,
+          email_address: evaluator.email_address,
           date_of_death: veteran.date_of_death,
           # both for compatability
           ptcpnt_id: veteran.participant_id,
