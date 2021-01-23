@@ -11,6 +11,7 @@ FactoryBot.define do
 
     transient do
       sequence(:bob_smith_count)
+      sex { Faker::Gender.short_binary_type.upcase }
       bgs_veteran_record do
         {
           first_name: first_name,
@@ -18,7 +19,7 @@ FactoryBot.define do
           date_of_birth: "01/10/1935",
           date_of_death: nil,
           name_suffix: name_suffix,
-          sex: Faker::Gender.short_binary_type.upcase,
+          sex: sex,
           address_line1: "1234 Main Street",
           country: "USA",
           zip_code: "12345",
