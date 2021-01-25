@@ -130,7 +130,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
       setWarningMessage(true);
       setErrorMessage(null);
       setReceiptDate(value);
-      setBadDate(true);
+      setBadDate(false);
     } else {
       setWarningMessage(false);
       setErrorMessage(null);
