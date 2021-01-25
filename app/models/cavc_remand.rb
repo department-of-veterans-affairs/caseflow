@@ -17,8 +17,12 @@ class CavcRemand < CaseflowRecord
   validates :represented_by_attorney, inclusion: { in: [true, false] }
   validates :cavc_judge_full_name, inclusion: { in: Constants::CAVC_JUDGE_FULL_NAMES }
   validates :remand_subtype, presence: true, if: :remand?
-  validates :judgement_date, :mandate_date, presence: true, unless: -> { straight_reversal? || death_dismissal? || (remand? && mdr?) }
+  validates :judgement_date, :mandate_date, presence: true, unless: :mandate_not_required?
   validate :decision_issue_ids_match_appeal_decision_issues, if: -> { remand? && jmr? }
+
+  def mandate_not_required?
+    straight_reversal? || death_dismissal? || (remand? && mdr?)
+  end
 
   before_save :establish_appeal_stream, if: :cavc_remand_form_complete?
 

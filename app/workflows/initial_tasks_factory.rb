@@ -56,18 +56,19 @@ class InitialTasksFactory
 
     case @cavc_remand.cavc_decision_type
     when Constants.CAVC_DECISION_TYPES.remand
-      if @cavc_remand.mdr?
+      case @cavc_remand.remand_subtype
+      when Constants.CAVC_REMAND_SUBTYPES.mdr
         MdrTask.create_with_hold(cavc_task)
-      elsif @cavc_remand.jmr? || @cavc_remand.jmpr?
+      when Constants.CAVC_REMAND_SUBTYPES.jmr, Constants.CAVC_REMAND_SUBTYPES.jmpr
         SendCavcRemandProcessedLetterTask.create!(appeal: @appeal, parent: cavc_task)
       else
-        fail "Not yet supported remand subtype: #{@cavc_remand.remand_subtype}"
+        fail "Unsupported remand subtype: #{@cavc_remand.remand_subtype}"
       end
     when Constants.CAVC_DECISION_TYPES.straight_reversal, Constants.CAVC_DECISION_TYPES.death_dismissal
       # Will be filled out in #15774
       nil
     else
-      fail "Not yet supported type: #{@cavc_remand.type}"
+      fail "Unsupported type: #{@cavc_remand.type}"
     end
   end
 end
