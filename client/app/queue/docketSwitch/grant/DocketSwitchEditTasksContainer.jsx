@@ -1,12 +1,18 @@
 import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { DocketSwitchEditTasksForm } from './DocketSwitchEditTasksForm';
-import { appealWithDetailSelector, getAllTasksForAppeal } from '../../selectors';
+import {
+  appealWithDetailSelector,
+  getAllTasksForAppeal,
+} from '../../selectors';
 import { useHistory, useParams } from 'react-router';
+
+import { cancel, stepForward, updateDocketSwitch } from '../docketSwitchSlice';
 
 export const DocketSwitchEditTasksContainer = () => {
   const { appealId } = useParams();
-  const { goBack } = useHistory();
+  const { goBack, push } = useHistory();
+  const dispatch = useDispatch();
 
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
@@ -16,12 +22,16 @@ export const DocketSwitchEditTasksContainer = () => {
     getAllTasksForAppeal(state, { appealId })
   );
 
-  const docketType = useSelector((state) =>
-    state.docketSwitch.formData.docketType);
+  const docketType = useSelector(
+    (state) => state.docketSwitch.formData.docketType
+  );
 
   const handleCancel = () => {
-    // Add code to clear docketSwitch redux store
-    // You can utilize useHistory() react-router hook to go back to the case details page
+    // Clear Redux store
+    dispatch(cancel());
+
+    // Return to case details page
+    push(`/queue/appeals/${appealId}`);
   };
 
   const handleBack = () => goBack();
@@ -30,13 +40,12 @@ export const DocketSwitchEditTasksContainer = () => {
     return tasks.filter((task) => task.canMoveOnDocketSwitch);
   }, [tasks]);
 
-  const handleSubmit = () => {
+  const handleSubmit = (formData) => {
     // Add stuff to redux store
+    dispatch(updateDocketSwitch(formData));
 
-    // Call stepForward redux action
-    // dispatch(stepForward());
-
-    // Move to next step
+    // // Move to next step
+    dispatch(stepForward());
   };
 
   return (
