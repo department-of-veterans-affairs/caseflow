@@ -268,7 +268,7 @@ describe InitialTasksFactory, :postgres do
 
         it "sets appeal ready for distribution" do
           remand_appeal = subject.remand_appeal
-          
+
           expect(DistributionTask.find_by(appeal: remand_appeal).status).to eq("assigned")
           expect(MandateHoldTask.find_by(appeal: remand_appeal)).to be_nil
           expect(CavcTask.find_by(appeal: remand_appeal)).to be_nil

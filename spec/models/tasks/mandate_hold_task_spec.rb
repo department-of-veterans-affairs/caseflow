@@ -45,17 +45,17 @@ describe MandateHoldTask, :postgres do
   end
 
   describe "#available_actions" do
-    let!(:mandate_hold_task) { MandateHoldTask.create_with_hold(create(:cavc_task)) }
+    let!(:mandate_task) { MandateHoldTask.create_with_hold(create(:cavc_task)) }
 
     context "immediately after MandateHoldTask is created" do
       it "returns available actions when MandateHoldTask is on hold" do
-        expect(mandate_hold_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
-        child_timed_hold_tasks = mandate_hold_task.children.where(type: :TimedHoldTask)
+        expect(mandate_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
+        child_timed_hold_tasks = mandate_task.children.where(type: :TimedHoldTask)
         expect(child_timed_hold_tasks.first.status).to eq Constants.TASK_STATUSES.assigned
 
-        expect(mandate_hold_task.available_actions(org_admin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
-        expect(mandate_hold_task.available_actions(org_nonadmin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
-        expect(mandate_hold_task.available_actions(other_user)).to be_empty
+        expect(mandate_task.available_actions(org_admin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
+        expect(mandate_task.available_actions(org_nonadmin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
+        expect(mandate_task.available_actions(other_user)).to be_empty
       end
     end
 
@@ -65,13 +65,13 @@ describe MandateHoldTask, :postgres do
         TaskTimerJob.perform_now
       end
       it "marks MandateHoldTask as assigned" do
-        expect(mandate_hold_task.reload.status).to eq Constants.TASK_STATUSES.assigned
-        child_timed_hold_tasks = mandate_hold_task.children.where(type: :TimedHoldTask)
+        expect(mandate_task.reload.status).to eq Constants.TASK_STATUSES.assigned
+        child_timed_hold_tasks = mandate_task.children.where(type: :TimedHoldTask)
         expect(child_timed_hold_tasks.first.status).to eq Constants.TASK_STATUSES.completed
 
-        expect(mandate_hold_task.available_actions(org_admin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
-        expect(mandate_hold_task.available_actions(org_nonadmin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
-        expect(mandate_hold_task.available_actions(other_user)).to be_empty
+        expect(mandate_task.available_actions(org_admin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
+        expect(mandate_task.available_actions(org_nonadmin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
+        expect(mandate_task.available_actions(other_user)).to be_empty
       end
     end
   end
