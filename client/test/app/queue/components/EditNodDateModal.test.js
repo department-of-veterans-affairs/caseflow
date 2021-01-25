@@ -53,7 +53,6 @@ describe('EditNodDateModal', () => {
     dateInput.simulate('change', { target: { value: defaultNewNodDate } });
     reasonDropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
     reasonDropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
-
     component.update();
     submitButton.simulate('click');
 
@@ -127,4 +126,32 @@ describe('EditNodDateModal', () => {
     expect(errorMessage.text()).toEqual(COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE);
     expect(submitButton.toBeDisabled);
   });
+
+  it('should disable submit button when date is valid and updated and a reason has not been selected', () => {
+    const component = setupEditNodDateModal();
+    const submitButton = component.find('button#Edit-NOD-Date-button-id-1');
+    const dateInput = component.find('input[type="date"]');
+
+    dateInput.simulate('change', { target: { value: defaultNewNodDate } });
+    component.update();
+
+    expect(submitButton.toBeDisabled);
+  })
+
+  it('should disable submit button if a reason has been selected and date is not valid', () => {
+    const component = setupEditNodDateModal();
+    const submitButton = component.find('button#Edit-NOD-Date-button-id-1');
+    const preAmaDate = '2018-01-01';
+    const dateInput = component.find('input[type="date"]');
+    const reasonDropdown = component.find(SearchableDropdown);
+
+    dateInput.simulate('change', { target: { value: preAmaDate } });
+    reasonDropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
+    reasonDropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
+    component.update();
+    const errorMessage = component.find('.usa-input-error-message');
+
+    expect(errorMessage.text()).toEqual(COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE);
+    expect(submitButton.toBeDisabled);
+  })
 });
