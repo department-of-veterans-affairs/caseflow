@@ -192,8 +192,8 @@ export const HearingDayAddModal = ({
     const errorMsgTitle = roError ? 'Hearing type is a Video hearing' :
       'Cannot create a New Hearing Day';
 
-    const errorMsgs = roError ? pickBy(errorMessages, (value, key) => key === 'ro') :
-      pickBy(errorMessages, (value, key) => key !== 'ro');
+    const errorMsgs = roError ? pickBy(errorMessages, (_value, key) => key === 'ro') :
+      pickBy(errorMessages, (_value, key) => key !== 'ro');
 
     return <div>
       <span {...statusMsgTitleStyle}>{errorMsgTitle}</span>
