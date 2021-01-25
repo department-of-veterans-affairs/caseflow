@@ -215,7 +215,8 @@ export class ListScheduleContainer extends React.Component {
           {this.state.modalOpen &&
             <HearingDayAddModal
               closeModal={this.closeModal}
-              cancelModal={this.cancelModal} />
+              cancelModal={this.cancelModal}
+              user={user} />
           }
         </AppSegment>
       </React.Fragment>
