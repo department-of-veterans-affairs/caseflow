@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-
+import { Controller } from 'react-hook-form';
 import { STATES } from '../constants/AppConstants';
 import TextField from 'app/components/TextField';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 
-export const AddressForm = ({ organization }) => {
+export const AddressForm = ({ control, register, watch }) => {
+  const watchPartyType = watch('partyType');
 
   return (
     <React.Fragment>
@@ -14,6 +15,7 @@ export const AddressForm = ({ organization }) => {
         <TextField
           name="address1"
           label="Street address 1"
+          inputRef={register}
           strongLabel
         />
       </FieldDiv>
@@ -21,15 +23,17 @@ export const AddressForm = ({ organization }) => {
         <TextField
           name="address2"
           label="Street address 2"
+          inputRef={register}
           optional
           strongLabel
         />
       </FieldDiv>
       {
-        organization && <StreetAddress>
+        watchPartyType === 'organization' && <StreetAddress>
           <TextField
             name="address3"
             label="Street address 3"
+            inputRef={register}
             optional
             strongLabel
           />
@@ -39,24 +43,29 @@ export const AddressForm = ({ organization }) => {
         <TextField
           name="city"
           label="City"
+          inputRef={register}
           strongLabel
         />
-        <SearchableDropdown
+        <Controller
+          control={control}
           name="state"
           label="State"
           options={STATES}
           strongLabel
+          as={SearchableDropdown}
         />
       </CityState>
       <ZipCountry>
         <TextField
           name="zip"
           label="Zip"
+          inputRef={register}
           strongLabel
         />
         <TextField
           name="country"
           label="Country"
+          inputRef={register}
           strongLabel
         />
       </ZipCountry>
@@ -65,7 +74,9 @@ export const AddressForm = ({ organization }) => {
 };
 
 AddressForm.propTypes = {
-  organization: PropTypes.bool
+  control: PropTypes.func,
+  register: PropTypes.func,
+  watch: PropTypes.func,
 };
 
 const CityState = styled.div`
