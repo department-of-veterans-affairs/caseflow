@@ -158,6 +158,7 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
 
   context "When adding a Virtual Hearing day" do
     before { FeatureToggle.enable!(:national_vh_queue) }
+    after { FeatureToggle.disable!(:national_vh_queue) }
 
     scenario "Opening modal and selecting Virtual presents correct fields" do
       visit "hearings/schedule"
