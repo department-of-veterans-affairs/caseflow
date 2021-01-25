@@ -1,7 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { useHistory } from 'react-router';
-import { FormProvider, Controller, useFormContext } from 'react-hook-form';
+import { FormProvider, Controller } from 'react-hook-form';
 import styled from 'styled-components';
 
 import { IntakeLayout } from '../components/IntakeLayout';
@@ -27,13 +26,6 @@ const partyTypeOpts = [
   { displayText: 'Individual', value: 'individual' }
 ];
 
-export const vaFormOpts = [
-  { value: 'no',
-    displayText: 'No' },
-  { value: 'yes',
-    displayText: 'Yes' }
-];
-
 export const AddClaimantPage = () => {
   const { goBack } = useHistory();
   const methods = useAddClaimantForm();
@@ -48,7 +40,7 @@ export const AddClaimantPage = () => {
     // Update this to...
     // Add claimant info to Redux
     // Probably handle submission of both claimant and remaining intake info (from Review step)
-    console.log(formData);
+    return formData;
   };
   const handleBack = () => goBack();
 
@@ -96,41 +88,41 @@ export const AddClaimantPage = () => {
           <br />
           { showIndividualNameFields &&
             <>
-            <FieldDiv>
-              <TextField
-                name="firstName"
-                label="First name"
-                inputRef={register}
-                strongLabel
-              />
-            </FieldDiv>
-            <FieldDiv>
-              <TextField
-                name="middleName"
-                label="Middle name/initial"
-                inputRef={register}
-                optional
-                strongLabel
-              />
-            </FieldDiv>
-            <FieldDiv>
-              <TextField
-                name="lastName"
-                label="Last name"
-                inputRef={register}
-                optional
-                strongLabel
-              />
-            </FieldDiv>
-            <Suffix>
-              <TextField
-                name="suffix"
-                label="Suffix"
-                inputRef={register}
-                optional
-                strongLabel
-              />
-            </Suffix>
+              <FieldDiv>
+                <TextField
+                  name="firstName"
+                  label="First name"
+                  inputRef={register}
+                  strongLabel
+                />
+              </FieldDiv>
+              <FieldDiv>
+                <TextField
+                  name="middleName"
+                  label="Middle name/initial"
+                  inputRef={register}
+                  optional
+                  strongLabel
+                />
+              </FieldDiv>
+              <FieldDiv>
+                <TextField
+                  name="lastName"
+                  label="Last name"
+                  inputRef={register}
+                  optional
+                  strongLabel
+                />
+              </FieldDiv>
+              <Suffix>
+                <TextField
+                  name="suffix"
+                  label="Suffix"
+                  inputRef={register}
+                  optional
+                  strongLabel
+                />
+              </Suffix>
             </>
           }
           { watchPartyType === 'organization' &&
@@ -143,7 +135,7 @@ export const AddClaimantPage = () => {
           }
           { showAdditionalFields &&
             <>
-              <AddressForm  {...methods} partyType={watchPartyType} />
+              <AddressForm {...methods} partyType={watchPartyType} />
               <FieldDiv>
                 <TextField
                   name="email"
@@ -163,7 +155,7 @@ export const AddClaimantPage = () => {
                 />
               </PhoneNumber>
               <RadioField
-                options={vaFormOpts}
+                options={Constants.BOOLEAN_RADIO_OPTIONS}
                 vertical
                 inputRef={register}
                 label="Do you have a VA Form 21-22 for this claimant?"
