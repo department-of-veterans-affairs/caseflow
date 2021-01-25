@@ -49,9 +49,7 @@ class CavcRemand < CaseflowRecord
   end
 
   def cavc_remand_form_complete?
-    return valid? if straight_reversal? || death_dismissal? || mdr?
-
-    valid? && !mandate_date.nil? && !judgement_date.nil?
+    valid? && (mandate_not_required? || !mandate_date.nil? && !judgement_date.nil?)
   end
 
   def establish_appeal_stream
