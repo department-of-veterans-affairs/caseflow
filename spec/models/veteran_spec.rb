@@ -946,17 +946,24 @@ describe Veteran, :all_dbs do
       let(:appeal2) { create(:appeal, veteran_file_number: veteran.file_number) }
       let(:appeal_ids) {[appeal.uuid, appeal2.uuid]}
       let(:date_of_death) { nil }
+      # let(:veteran) do {file_number: "44556677"} end
+      let(:veterans) {[veteran, veteranBob]}
 
-      subject { veteranBob.warm_veteran_cache_for_appeals(appeal_ids) }
+      subject { veterans.each do |veteran|
+        veteran.warm_veteran_cache_for_appeals(appeal_ids)
+      end
+      }
 
       # Mock updating veteran DOD using warm method
       context ".warm_veteran_cache_for_appeals" do
         before do
           Fakes::BGSService.edit_veteran_record(veteranBob.file_number, :date_of_death, "2021-1-13")
+          # Fakes::BGSService.edit_veteran_record(veteran.file_number, :date_of_death, "2021-1-13")
         end
         it "updates our veteran_records date_of_death" do
           expect { subject }.not_to raise_error
 
+          # expect(veteran.reload.date_of_death).to eq(Date.parse("2021-1-13"))
           expect(veteranBob.reload.date_of_death).to eq(Date.parse("2021-1-13"))
         end
       end
