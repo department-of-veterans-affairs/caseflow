@@ -11,7 +11,11 @@ class NodDateUpdatesController < ApplicationController
   def update
     nod_date_update = NodDateUpdate.create!(updated_params)
     appeal.update_receipt_date!(receipt_date: params[:receipt_date])
-    render json: { nod_date_update: nod_date_update }, status: :created
+    render json: {
+      nodDate: appeal.receipt_date,
+      docketNumber: appeal.docket_number,
+      changeReason: nod_date_update.change_reason 
+    }, status: :created
   end
 
   private

@@ -50,8 +50,12 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
       }
     };
 
-    ApiUtil.patch(`/appeals/${appealId}/nod_date_update`, payload).then(() => {
-      dispatch(editAppeal(appealId, { nodDate: receiptDate, reason: changeReason }));
+    ApiUtil.patch(`/appeals/${appealId}/nod_date_update`, payload).then((data) => {
+      dispatch(editAppeal(appealId, {
+        nodDate: data.body.nodDate,
+        docketNumber: data.body.docketNumber,
+        reason: data.body.changeReason
+      }));
       dispatch(showSuccessMessage(successMessage));
       onSubmit?.();
       window.scrollTo(0, 0);
