@@ -12,7 +12,7 @@ import {
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../../components/Button';
 import { sprintf } from 'sprintf-js';
-import DISPOSITIONS from '../../../../constants/DOCKET_SWITCH';
+import DISPOSITIONS from '../../../../constants/DOCKET_SWITCH_DISPOSITIONS';
 import TextField from '../../../components/TextField';
 import TextareaField from '../../../components/TextareaField';
 import RadioField from '../../../components/RadioField';

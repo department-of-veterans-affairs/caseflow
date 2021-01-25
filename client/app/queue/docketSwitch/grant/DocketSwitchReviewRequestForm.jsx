@@ -15,7 +15,7 @@ import { css } from 'glamor';
 import DateSelector from 'app/components/DateSelector';
 import RadioField from 'app/components/RadioField';
 import CheckboxGroup from 'app/components/CheckboxGroup';
-import DISPOSITIONS from 'constants/DOCKET_SWITCH';
+import DISPOSITIONS from 'constants/DOCKET_SWITCH_DISPOSITIONS';
 
 const schema = yup.object().shape({
   receiptDate: yup.date().required(),
