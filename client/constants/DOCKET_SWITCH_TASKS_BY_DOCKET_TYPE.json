@@ -1,5 +1,16 @@
 {
-  "directReview": ["DistributionTask"],
-  "evidenceSubmission": ["DistributionTask", "EvidenceSubmissionWindowTask"],
-  "hearing": ["DistributionTask", "HearingTask"]
+  "directReview": [
+    { "id": "DistributionTask", "label": "Distribution Task" }
+  ],
+  "evidenceSubmission": [
+    { "id": "DistributionTask", "label": "Distribution Task" },
+    {
+      "id": "EvidenceSubmissionWindowTask",
+      "label": "Evidence Submission Window Task"
+    }
+  ],
+  "hearing": [
+    { "id": "DistributionTask", "label": "Distribution Task" },
+    { "id": "HearingTask", "label": "Hearing Task" }
+  ]
 }

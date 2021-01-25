@@ -2,10 +2,9 @@ import React from 'react';
 import { DocketSwitchEditTasksForm } from './DocketSwitchEditTasksForm';
 
 const tasks = [
-  { taskId: 1, appealId: 1, type: 'DistributionTask', label: 'Distribution Task' },
-  { taskId: 2, appealId: 1, type: 'TaskTypeA', label: 'Task Type A' },
-  { taskId: 3, appealId: 1, type: 'TaskTypeB', label: 'Task Type B' },
-  { taskId: 4, appealId: 1, type: 'TaskTypeC', label: 'Task Type C' },
+  { taskId: 1, appealId: 1, type: 'TaskTypeA', label: 'Task Type A' },
+  { taskId: 2, appealId: 1, type: 'TaskTypeB', label: 'Task Type B' },
+  { taskId: 3, appealId: 1, type: 'TaskTypeC', label: 'Task Type C' },
 ];
 
 export default {

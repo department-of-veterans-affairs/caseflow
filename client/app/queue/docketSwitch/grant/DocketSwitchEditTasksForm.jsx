@@ -6,6 +6,7 @@ import {
   useFieldArray,
   FormProvider,
 } from 'react-hook-form';
+import { noop } from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { CheckoutButtons } from './CheckoutButtons';
 import {
@@ -25,6 +26,8 @@ import StringUtil from 'app/util/StringUtil';
 import DocketSwitchRemoveTaskConfirmationModal from './DocketSwitchRemoveTaskModal';
 import { DocketSwitchAddAdminTaskForm } from './DocketSwitchAddAdminTaskForm';
 import tasksByDocketType from 'constants/DOCKET_SWITCH_TASKS_BY_DOCKET_TYPE';
+
+const sectionStyle = css({ marginBottom: '24px' });
 
 const schema = yup.object().shape({
   taskIds: yup.array(yup.string()),
@@ -58,44 +61,45 @@ export const DocketSwitchEditTasksForm = ({
   });
 
   const [tasks, setTasks] = useState({});
+  const [mandatoryTasks, setMandatoryTasks] = useState({});
   const [activeTaskId, setActiveTaskId] = useState(null);
 
-  const sectionStyle = css({ marginBottom: '24px' });
-
-  const docketType = useMemo(
-    () => StringUtil.convertToCamelCase(docketTo.toLowerCase()),
-    [docketTo]
-  );
   const taskOptions = useMemo(() => {
-    // Sort and transform the list of active tasks on the appeals
-    // We want to put the "mandatory" tasks (such as DistributionTask) at the bottom, and show as disabled
-    const [optional, mandatory] = taskListing.reduce(
-      (taskArr, task) => {
-        taskArr[
-          tasksByDocketType[docketType]?.includes(task.type) ? 1 : 0
-        ].push({
-          label: task.label,
-          id: task.taskId.toString(),
-          disabled: tasksByDocketType[docketType]?.includes(task.type),
-        });
+    return taskListing.map((task) => ({
+      label: task.label,
+      id: task.taskId.toString(),
+    }));
+  }, [taskListing]);
 
-        return taskArr;
-      },
-      [[], []]
-    );
-
-    return [...optional, ...mandatory];
-  }, [taskListing, docketType]);
-
-  const selectAllTasks = () => {
+  // populate all of our checkboxes on initial render
+  useEffect(() => {
     const newValues = {};
 
     taskListing.forEach((item) => (newValues[item.taskId] = true));
     setTasks(newValues);
 
     setValue('taskIds', taskListing.map((task) => task.taskId));
-  };
+  }, [taskOptions]);
 
+  // Used for display of mandatory tasks
+  const mandatoryTaskOptions = useMemo(() => {
+    const targetType = StringUtil.convertToCamelCase(docketTo.toLowerCase());
+
+    return tasksByDocketType[targetType].map((item) => ({
+      ...item,
+      disabled: true,
+    }));
+  }, [docketTo]);
+
+  // Preselect all "mandatory" task options
+  useEffect(() => {
+    const newValues = {};
+
+    mandatoryTaskOptions.forEach((item) => (newValues[item.id] = true));
+    setMandatoryTasks(newValues);
+  }, [mandatoryTaskOptions]);
+
+  // Used for display in confirmation modal
   const activeTaskLabel = useMemo(() => {
     return activeTaskId ?
       taskListing.find(
@@ -104,9 +108,7 @@ export const DocketSwitchEditTasksForm = ({
       null;
   }, [activeTaskId]);
 
-  // populate all of our checkboxes on initial render
-  useEffect(() => selectAllTasks(), []);
-
+  // Updates a variety of things when an optional task is (de)selected
   const updateTaskSelections = (targetTaskId = null) => {
     const updatedTaskId = activeTaskId || targetTaskId;
     const newSelections = {
@@ -114,14 +116,18 @@ export const DocketSwitchEditTasksForm = ({
       [updatedTaskId]: !tasks[updatedTaskId],
     };
 
+    // Update visual display
     setTasks(newSelections);
+    // Clear value for modal
     setActiveTaskId(null);
+    // Update form values
     setValue(
       'taskIds',
       Object.keys(newSelections).filter((key) => newSelections[key])
     );
   };
 
+  // Event handler for change of optional tasks
   const handleTaskChange = (evt) => {
     const targetTaskId = evt.target.id.toString();
 
@@ -132,6 +138,7 @@ export const DocketSwitchEditTasksForm = ({
     }
   };
 
+  // Handler for "cancel" in modal
   const handleCancel = () => {
     setActiveTaskId(null);
   };
@@ -155,7 +162,12 @@ export const DocketSwitchEditTasksForm = ({
             <ReactMarkdown source={title} />
           </div>
           <div>
-            <ReactMarkdown source={DOCKET_SWITCH_GRANTED_ADD_TASK_TEXT} />
+            <ReactMarkdown
+              source={sprintf(
+                DOCKET_SWITCH_GRANTED_ADD_TASK_TEXT,
+                StringUtil.snakeCaseToCapitalized(docketTo)
+              )}
+            />
           </div>
           <Controller
             name="taskIds"
@@ -173,6 +185,16 @@ export const DocketSwitchEditTasksForm = ({
                 />
               );
             }}
+          />
+
+          <CheckboxGroup
+            name="mandatory"
+            label="Task(s) that will automatically be created:"
+            strongLabel
+            options={mandatoryTaskOptions}
+            onChange={noop}
+            styling={css({ marginBottom: '0' })}
+            values={mandatoryTasks}
           />
 
           {activeTaskId && (

@@ -24,7 +24,7 @@ exports[`DocketSwitchEditTasksForm renders correctly 1`] = `
       </div>
       <div>
         <p>
-          Below is a list of tasks that will be opened when you switch dockets. Tasks that are automatically created with the Direct Review docket cannot be selected or removed. Please 
+          Below is a list of tasks that will be opened when you switch dockets. Tasks that are automatically created with the Hearing docket cannot be selected or removed. Please 
           <strong>
             unselect
           </strong>
@@ -92,6 +92,50 @@ exports[`DocketSwitchEditTasksForm renders correctly 1`] = `
             for="3"
           >
             Task Type C
+          </label>
+        </div>
+      </fieldset>
+      <fieldset
+        class="checkbox-wrapper-mandatory cf-form-checkboxes cf-checkbox-group-inline"
+        data-css-1m1s8ka=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Task(s) that will automatically be created:
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="checkbox"
+        >
+          <input
+            disabled=""
+            id="DistributionTask"
+            name="DistributionTask"
+            type="checkbox"
+          />
+          <label
+            for="DistributionTask"
+          >
+            Distribution Task
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            disabled=""
+            id="HearingTask"
+            name="HearingTask"
+            type="checkbox"
+          />
+          <label
+            for="HearingTask"
+          >
+            Hearing Task
           </label>
         </div>
       </fieldset>

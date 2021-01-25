@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, within, act, waitFor } from '@testing-library/react';
+import { render, screen, within, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import selectEvent from 'react-select-event';
 import { DocketSwitchEditTasksForm } from 'app/queue/docketSwitch/grant/DocketSwitchEditTasksForm';
@@ -174,8 +174,20 @@ describe('DocketSwitchEditTasksForm', () => {
       );
       expect(onSubmit).toHaveBeenCalled();
 
-      // Should only be two selected tasks now
+      // Should only return the two selected tasks
       expect(onSubmit.mock.calls[0][0]?.taskIds?.length).toBe(2);
+    });
+  });
+
+  describe('mandatory tasks', () => {
+    it('shows the correct mandatory tasks', () => {
+      setup();
+
+      const mandatoryGroup = screen.getByRole('group', {
+        name: /automatically be created/i,
+      });
+
+      expect(within(mandatoryGroup).queryAllByRole('checkbox').length).toBe(2);
     });
   });
 
