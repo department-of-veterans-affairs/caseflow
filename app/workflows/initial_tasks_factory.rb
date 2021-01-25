@@ -54,12 +54,18 @@ class InitialTasksFactory
   def create_cavc_subtasks(distribution_task)
     cavc_task = CavcTask.create!(appeal: @appeal, parent: distribution_task)
 
-    if @cavc_remand.mdr?
-      MdrTask.create_with_hold(cavc_task)
-    elsif @cavc_remand.jmr? || @cavc_remand.jmpr?
-      SendCavcRemandProcessedLetterTask.create!(appeal: @appeal, parent: cavc_task)
+    if @cavc_remand.remand?
+      if @cavc_remand.mdr?
+        MdrTask.create_with_hold(cavc_task)
+      elsif @cavc_remand.jmr? || @cavc_remand.jmpr?
+        SendCavcRemandProcessedLetterTask.create!(appeal: @appeal, parent: cavc_task)
+      else
+        fail "Not yet supported remand subtype: #{@cavc_remand.remand_subtype}"
+      end
+    elsif @cavc_remand.straight_reversal? || @cavc_remand.death_dismissal?
+      puts "TBD======"
     else
-      fail "Not yet supported: #{@cavc_remand.remand_subtype}"
+      fail "Not yet supported type: #{@cavc_remand.type}"
     end
   end
 end
