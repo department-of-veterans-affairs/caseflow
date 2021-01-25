@@ -24,6 +24,7 @@ import Button from 'app/components/Button';
 import StringUtil from 'app/util/StringUtil';
 import DocketSwitchRemoveTaskConfirmationModal from './DocketSwitchRemoveTaskModal';
 import { DocketSwitchAddAdminTaskForm } from './DocketSwitchAddAdminTaskForm';
+import tasksByDocketType from 'constants/DOCKET_SWITCH_TASKS_BY_DOCKET_TYPE';
 
 const schema = yup.object().shape({
   taskIds: yup.array(yup.string()),
@@ -61,15 +62,30 @@ export const DocketSwitchEditTasksForm = ({
 
   const sectionStyle = css({ marginBottom: '24px' });
 
+  const docketType = useMemo(
+    () => StringUtil.convertToCamelCase(docketTo.toLowerCase()),
+    [docketTo]
+  );
   const taskOptions = useMemo(() => {
-    return (
-      taskListing &&
-      taskListing.map((task) => ({
-        label: task.label,
-        id: task.taskId.toString(),
-      }))
+    // Sort and transform the list of active tasks on the appeals
+    // We want to put the "mandatory" tasks (such as DistributionTask) at the bottom, and show as disabled
+    const [optional, mandatory] = taskListing.reduce(
+      (taskArr, task) => {
+        taskArr[
+          tasksByDocketType[docketType]?.includes(task.type) ? 1 : 0
+        ].push({
+          label: task.label,
+          id: task.taskId.toString(),
+          disabled: tasksByDocketType[docketType]?.includes(task.type),
+        });
+
+        return taskArr;
+      },
+      [[], []]
     );
-  }, [taskListing]);
+
+    return [...optional, ...mandatory];
+  }, [taskListing, docketType]);
 
   const selectAllTasks = () => {
     const newValues = {};
@@ -188,9 +204,7 @@ export const DocketSwitchEditTasksForm = ({
               dangerStyling
               styling={css({ marginTop: '1rem' })}
               name={DOCKET_SWITCH_GRANTED_ADD_TASK_BUTTON}
-              onClick={() =>
-                append({ type: null, instructions: '' })
-              }
+              onClick={() => append({ type: null, instructions: '' })}
             />
           </React.Fragment>
         </AppSegment>

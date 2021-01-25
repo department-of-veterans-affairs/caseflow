@@ -1,0 +1,5 @@
+{
+  "directReview": ["DistributionTask"],
+  "evidenceSubmission": ["DistributionTask", "EvidenceSubmissionWindowTask"],
+  "hearing": ["DistributionTask", "HearingTask"]
+}
