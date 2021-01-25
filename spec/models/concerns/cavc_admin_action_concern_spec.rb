@@ -7,6 +7,7 @@ describe CavcAdminActionConcern do
 
   let(:parent_task) { create(:distribution_task) }
   let(:cavc_user) { create(:user).tap { |new_user| CavcLitigationSupport.singleton.add_user(new_user) } }
+  let(:cavc_teammate) { create(:user).tap { |teammate| CavcLitigationSupport.singleton.add_user(teammate) } }
   let!(:cavc_task) do
     create(:send_cavc_remand_processed_letter_task, assigned_to: cavc_user, appeal: parent_task.appeal)
   end
@@ -28,10 +29,10 @@ describe CavcAdminActionConcern do
       it { is_expected.to be false }
     end
 
-    context "when the user does not have an assigned cavc task" do
-      before { cavc_task.update!(assigned_to: create(:user)) }
+    context "when the cavc task is assigned to a cavc lit teammate" do
+      before { cavc_task.update!(assigned_to: cavc_teammate) }
 
-      it { is_expected.to be false }
+      it { is_expected.to be true }
     end
   end
 
