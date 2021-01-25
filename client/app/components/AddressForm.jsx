@@ -7,6 +7,8 @@ import TextField from 'app/components/TextField';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 
 export const AddressForm = ({ control, register, watch }) => {
+  const watchPartyType = watch('partyType');
+
   return (
     <React.Fragment>
       <FieldDiv>
@@ -27,7 +29,7 @@ export const AddressForm = ({ control, register, watch }) => {
         />
       </FieldDiv>
       {
-        watch('partyType') === 'organization' && <StreetAddress>
+        watchPartyType === 'organization' && <StreetAddress>
           <TextField
             name="address3"
             label="Street address 3"

@@ -135,7 +135,7 @@ export const AddClaimantPage = () => {
           }
           { showAdditionalFields &&
             <>
-              <AddressForm {...methods} partyType={watchPartyType} />
+              <AddressForm {...methods} />
               <FieldDiv>
                 <TextField
                   name="email"

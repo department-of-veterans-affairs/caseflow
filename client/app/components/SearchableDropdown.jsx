@@ -33,7 +33,7 @@ export class SearchableDropdown extends React.Component {
 
   onChange = (value) => {
     let newValue = value;
-    let deletedValue;
+    let deletedValue = null;
     let {
       clearOnSelect,
       multi,
