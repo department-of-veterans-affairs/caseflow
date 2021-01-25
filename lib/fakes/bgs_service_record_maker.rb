@@ -23,8 +23,9 @@ class Fakes::BGSServiceRecordMaker
       file_number = row_hash["vbms_id"].chop
 
       vacols_case = VACOLS::Case.find_by(bfcorlid: "#{file_number}S")
-      corres = VACOLS::Correspondent.find_by(stafkey: vacols_case.bfcorkey)
-      veteran = Veteran.find_by_file_number(file_number) || Generators::Veteran.build(map_corres_to_veteran(file_number, corres))
+      corres = VACOLS::Correspondent.find_by(stafkey: vacols_case&.bfcorkey)
+      veteran = Veteran.find_by_file_number(file_number) ||
+                Generators::Veteran.build(map_corres_to_veteran(file_number, corres))
 
       method_name = row_hash["bgs_key"]
       if method_name
@@ -34,7 +35,7 @@ class Fakes::BGSServiceRecordMaker
   end
 
   def map_corres_to_veteran(file_number, corres)
-    if corres.susrtyp == "VETERAN"
+    if corres&.susrtyp == "VETERAN"
       {
         file_number: file_number,
         first_name: corres.snamef,
