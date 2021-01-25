@@ -100,7 +100,7 @@ describe('EditNodDateModal', () => {
     expect(submitButton.toBeDisabled);
   })
 
-  it('should disable submit button reason has been selected and date is not valid', () => {
+  it('should disable submit button if a reason has been selected and date is not valid', () => {
     const component = setupEditNodDateModal();
     const submitButton = component.find('button#Edit-NOD-Date-button-id-1');
     const preAmaDate = '2018-01-01';
