@@ -82,20 +82,26 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
     let(:send_task) { create(:send_cavc_remand_processed_letter_task) }
     let(:child_task) { create(:send_cavc_remand_processed_letter_task, parent: send_task, assigned_to: org_nonadmin) }
 
-    context "task assigned to CavcLitigationSupport (aka org-task)" do
-      it "returns admin actions" do
+    context "task assigned to CavcLitigationSupport organization (aka org-task)" do
+      it "returns org actions for an administrator" do
         expect(send_task.assigned_to).to eq CavcLitigationSupport.singleton
-        expect(send_task.available_actions(org_admin)).to match_array SendCRPLetterTask::ADMIN_ACTIONS
+        expect(send_task.available_actions(org_admin)).to match_array SendCRPLetterTask::ORG_ACTIONS
         expect(send_task.available_actions(other_user)).to be_empty
+      end
+
+      it "returns org actions for a colleague" do
+        expect(send_task.assigned_to).to eq CavcLitigationSupport.singleton
+        expect(send_task.available_actions(org_nonadmin)).to match_array SendCRPLetterTask::ORG_ACTIONS
       end
     end
 
-    context "task assigned to CavcLitigationSupport non-admin (aka user-task)" do
+    context "task assigned to user on CavcLitigationSupport (aka user-task)" do
       let(:child_task) { create(:send_cavc_remand_processed_letter_task, parent: send_task, assigned_to: org_nonadmin) }
 
-      it "returns non-admin actions" do
+      it "returns user actions for all CAVC Lit Support team members" do
         expect(child_task.assigned_to).to eq org_nonadmin
         expect(child_task.available_actions(org_nonadmin)).to match_array SendCRPLetterTask::USER_ACTIONS
+        expect(child_task.available_actions(org_admin)).to match_array SendCRPLetterTask::USER_ACTIONS
         expect(child_task.available_actions(other_user)).to be_empty
       end
     end
@@ -125,7 +131,8 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
   end
 
   describe "#available_actions_unwrapper" do
-    let(:cavc_task) { create(:send_cavc_remand_processed_letter_task, assigned_to: create(:user)) }
+    let(:cavc_user) { create(:user) }
+    let(:cavc_task) { create(:send_cavc_remand_processed_letter_task, assigned_to: cavc_user) }
 
     subject { cavc_task.available_actions_unwrapper(cavc_task.assigned_to) }
 
@@ -134,6 +141,7 @@ describe SendCavcRemandProcessedLetterTask, :postgres do
       completed_distribution_task = build(:task, appeal: cavc_task.appeal, type: DistributionTask.name)
       completed_distribution_task.save!(validate: false)
       completed_distribution_task.completed!
+      CavcLitigationSupport.singleton.add_user(cavc_user)
     end
 
     it "provides the correct parent id for blocking and non blocking admin actions" do
