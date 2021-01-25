@@ -15,9 +15,6 @@ describe TasksForAppeal do
       end
       let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
-      before { FeatureToggle.enable!(:convert_travel_board_to_video_or_virtual) }
-      after { FeatureToggle.disable!(:convert_travel_board_to_video_or_virtual) }
-
       subject { TasksForAppeal.new(appeal: appeal, user: user, user_role: "").call }
 
       it "calls the hearing task tree initializer" do

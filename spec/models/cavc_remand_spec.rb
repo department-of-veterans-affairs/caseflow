@@ -52,18 +52,15 @@ describe CavcRemand do
       params.each_key { |key| expect(subject.send(key)).to eq params[key] }
     end
 
-    def last_cavc_appeal(cavc_remand)
-      # To-do: remove assumption that the last appeal with the same document number is the created appeal
-      # We should be able to get the cavc_appeal from cavc_remand in case there are multiple found
-      Appeal.court_remand.where(stream_docket_number: cavc_remand.source_appeal.docket_number).order(:id).last
-    end
-
     it "creates the new court_remand cavc stream" do
       expect(Appeal.court_remand.where(stream_docket_number: source_appeal.docket_number).count).to eq(0)
       expect(source_appeal.aod_based_on_age).not_to be true
-      expect { subject }.not_to raise_error
-      expect(Appeal.court_remand.where(stream_docket_number: source_appeal.docket_number).count).to eq(1)
-      expect(last_cavc_appeal(subject).aod_based_on_age).not_to be true
+
+      cavc_remand = subject
+      expect(cavc_remand.remand_appeal_id).not_to be(nil)
+      cavc_appeal = Appeal.find(cavc_remand.remand_appeal_id)
+      expect(cavc_appeal).not_to be(nil)
+      expect(cavc_appeal.aod_based_on_age).not_to be true
     end
 
     context "when source appeal is AOD" do
@@ -73,7 +70,7 @@ describe CavcRemand do
           expect(source_appeal.aod_based_on_age).to be true
 
           cavc_remand = subject
-          cavc_appeal = last_cavc_appeal(cavc_remand)
+          cavc_appeal = cavc_remand.remand_appeal
           expect(cavc_appeal.aod_based_on_age).to eq cavc_remand.source_appeal.aod_based_on_age
         end
       end
@@ -86,7 +83,7 @@ describe CavcRemand do
           expect(source_appeal.aod?).to be true
 
           cavc_remand = subject
-          cavc_appeal = last_cavc_appeal(cavc_remand)
+          cavc_appeal = cavc_remand.remand_appeal
           expect(cavc_remand.source_appeal.claimant.person).to eq person
           expect(cavc_appeal.claimant.person).to eq person
           expect(AdvanceOnDocketMotion.for_appeal_and_person(source_appeal, person).count).to eq aod_motions_count

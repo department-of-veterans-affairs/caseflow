@@ -30,7 +30,6 @@ const schema = yup.object().shape({
     then: yup.array().min(1),
     otherwise: yup.array().min(0),
   }),
-
 });
 
 const docketTypeRadioOptions = [

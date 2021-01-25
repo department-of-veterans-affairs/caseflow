@@ -132,6 +132,7 @@ detectors:
       - Address#initialize
       - AssignHearingDispositionTask#reschedule
       - ExternalApi::VBMSService#self.create_contentions!
+      - JobSentryScopeMiddleware#call
       - LegacyDocket#new_distributed_case
       - Api::V3::DecisionReviews::ContestableIssueFinder#initialize
       - QueueRepository#assign_case_to_attorney!
