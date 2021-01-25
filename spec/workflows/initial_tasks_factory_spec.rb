@@ -211,7 +211,18 @@ describe InitialTasksFactory, :postgres do
 
     context "when a Court Remand appeal stream is created" do
       # create(:cavc_remand, ...) indirectly calls InitialTasksFactory#create_root_and_sub_tasks!
-      subject { create(:cavc_remand, remand_subtype: remand_subtype, source_appeal: appeal) }
+      subject do
+        create(:cavc_remand,
+               source_appeal: appeal,
+               cavc_decision_type: cavc_decision_type,
+               remand_subtype: remand_subtype,
+               judgement_date: judgement_date,
+               mandate_date: mandate_date)
+      end
+
+      let(:cavc_decision_type) { Constants.CAVC_DECISION_TYPES.remand }
+      let(:judgement_date) { 30.days.ago.to_date }
+      let(:mandate_date) { 30.days.ago.to_date }
 
       shared_examples "remand appeal" do
         it "blocks distribution with a CavcTask" do
@@ -245,6 +256,29 @@ describe InitialTasksFactory, :postgres do
         it "has MdrTask on_hold" do
           remand_appeal = subject.remand_appeal
           expect(MdrTask.find_by(appeal: remand_appeal).status).to eq("on_hold")
+        end
+      end
+
+      context "when CavcRemand decision type is straight_reversal" do
+        let(:cavc_decision_type) { Constants.CAVC_DECISION_TYPES.straight_reversal }
+        let(:remand_subtype) { nil }
+
+        include_examples "remand appeal"
+
+        it "sets appeal ready for distribution" do
+          remand_appeal = subject.remand_appeal
+          expect(DistributionTask.find_by(appeal: remand_appeal).status).to eq("assigned")
+          expect(MandateHoldTask.find_by(appeal: remand_appeal).status).to be_nil
+        end
+
+        context "when mandate dates are not provided" do
+          let(:judgement_date) { nil }
+          let(:mandate_date) { nil }
+
+          it "has MandateHoldTask on_hold" do
+            remand_appeal = subject.remand_appeal
+            expect(MandateHoldTask.find_by(appeal: remand_appeal).status).to eq("on_hold")
+          end
         end
       end
     end

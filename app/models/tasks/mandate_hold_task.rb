@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 ##
-# Task to indicate that CAVC Litigation Support is working on a Memorandum Decision on Remand (MDR),
-# i.e., the appeal is being remanded, but CAVC has not returned the mandate to the Board yet.
+# Task to indicate that CAVC Litigation Support is waiting on a mandate from the Board
+# for a CAVC remand of type straight_reversal or death_dismissal.
+# The appeal is being remanded, but CAVC has not returned the mandate to the Board yet.
 # When this task is created, it is automatically placed on hold for 90 days to wait for CAVC's mandate.
 # There is an option of ending the hold early.
 # This task is only for CAVC Remand appeal streams.

@@ -56,7 +56,7 @@ class InitialTasksFactory
 
     case @cavc_remand.cavc_decision_type
     when Constants.CAVC_DECISION_TYPES.remand
-      create_remand_subtask
+      create_remand_subtask(cavc_task)
     when Constants.CAVC_DECISION_TYPES.straight_reversal, Constants.CAVC_DECISION_TYPES.death_dismissal
       if @cavc_remand.judgement_date.nil? || @cavc_remand.mandate_date.nil?
         MandateHoldTask.create_with_hold(cavc_task)
@@ -66,7 +66,7 @@ class InitialTasksFactory
     end
   end
 
-  def create_remand_subtask
+  def create_remand_subtask(cavc_task)
     case @cavc_remand.remand_subtype
     when Constants.CAVC_REMAND_SUBTYPES.mdr
       MdrTask.create_with_hold(cavc_task)
