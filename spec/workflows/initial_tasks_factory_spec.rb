@@ -224,10 +224,13 @@ describe InitialTasksFactory, :postgres do
       let(:judgement_date) { 30.days.ago.to_date }
       let(:mandate_date) { 30.days.ago.to_date }
 
+      before do
+        expect_any_instance_of(InitialTasksFactory).to receive(:create_root_and_sub_tasks!).once.and_call_original
+        expect_any_instance_of(InitialTasksFactory).to receive(:create_cavc_subtasks).once.and_call_original
+      end
+
       shared_examples "remand appeal" do
         it "blocks distribution with a CavcTask" do
-          expect_any_instance_of(InitialTasksFactory).to receive(:create_root_and_sub_tasks!).once.and_call_original
-          expect_any_instance_of(InitialTasksFactory).to receive(:create_cavc_subtasks).once.and_call_original
           remand_appeal = subject.remand_appeal
 
           expect(DistributionTask.find_by(appeal: remand_appeal).status).to eq("on_hold")
@@ -263,17 +266,20 @@ describe InitialTasksFactory, :postgres do
         let(:cavc_decision_type) { Constants.CAVC_DECISION_TYPES.straight_reversal }
         let(:remand_subtype) { nil }
 
-        include_examples "remand appeal"
-
         it "sets appeal ready for distribution" do
           remand_appeal = subject.remand_appeal
+          
           expect(DistributionTask.find_by(appeal: remand_appeal).status).to eq("assigned")
-          expect(MandateHoldTask.find_by(appeal: remand_appeal).status).to be_nil
+          expect(MandateHoldTask.find_by(appeal: remand_appeal)).to be_nil
+          expect(CavcTask.find_by(appeal: remand_appeal)).to be_nil
+          expect(remand_appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(1)
         end
 
         context "when mandate dates are not provided" do
           let(:judgement_date) { nil }
           let(:mandate_date) { nil }
+
+          include_examples "remand appeal"
 
           it "has MandateHoldTask on_hold" do
             remand_appeal = subject.remand_appeal
