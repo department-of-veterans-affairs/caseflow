@@ -89,7 +89,7 @@ describe('EditNodDateModal', () => {
     expect(submitButton.toBeDisabled);
   });
 
-  it('should disable submit button when date is valid and updated and no reason has not been selected', () => {
+  it('should disable submit button when date is valid and updated and a reason has not been selected', () => {
     const component = setupEditNodDateModal();
     const submitButton = component.find('button#Edit-NOD-Date-button-id-1');
     const dateInput = component.find('input[type="date"]');
