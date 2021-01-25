@@ -157,6 +157,8 @@ exports[`AddClaimantPage renders default state correctly 1`] = `
             </div>
           </div>
         </div>
+        <br />
+        <br />
       </form>
     </div>
   </section>
