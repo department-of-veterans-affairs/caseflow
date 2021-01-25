@@ -23,7 +23,7 @@ import { PAGE_PATHS } from './constants';
 import { toggleCancelModal, submitCancel } from './actions/intake';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { IntakeLayout } from './components/IntakeLayout';
-import { AddClaimantPage } from './components/addClaimant/AddClaimantPage';
+import { AddClaimantPage } from './addClaimant/AddClaimantPage';
 
 export const IntakeFrame = (props) => {
   const history = useHistory();
