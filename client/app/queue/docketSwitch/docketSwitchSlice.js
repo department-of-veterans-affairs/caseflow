@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { ACTIONS } from '../constants';
 
 import ApiUtil from '../../util/ApiUtil';
 
@@ -13,7 +12,7 @@ const initialState = {
     disposition: null,
     receiptDate: null,
     docketType: null,
-    issueIds: []
+    issueIds: [],
   },
 };
 
@@ -21,14 +20,10 @@ const docketSwitchSlice = createSlice({
   name: 'docketSwitch',
   initialState,
   reducers: {
-    stepForward: (state) => {
-      console.log('stepForward');
-
-      return { ...state, step: state.step + 1 };
-    },
+    cancel: () => ({ ...initialState }),
+    stepForward: (state) => ({ ...state, step: state.step + 1 }),
     stepBack: (state) => ({ ...state, step: state.step ? state.step - 1 : 0 }),
     updateDocketSwitch: (state, action) => {
-
       const { formData: updates } = action.payload;
 
       updates.receiptDate = updates.receiptDate?.toISOString() ?? undefined;
@@ -37,11 +32,11 @@ const docketSwitchSlice = createSlice({
         ...state.formData,
         ...updates,
       };
-    }
+    },
   },
 });
 
-const completeDocketSwitchGranted = createAsyncThunk(
+export const completeDocketSwitchGranted = createAsyncThunk(
   'docketSwitch/grant',
   async (data) => {
     try {
@@ -58,9 +53,10 @@ const completeDocketSwitchGranted = createAsyncThunk(
 );
 
 export const {
+  cancel,
   stepForward,
   stepBack,
-  updateDocketSwitch
+  updateDocketSwitch,
 } = docketSwitchSlice.actions;
 
 export default docketSwitchSlice.reducer;
