@@ -561,6 +561,39 @@ class Task < CaseflowRecord
     [sibling, self, sibling.children].flatten
   end
 
+  def can_move_on_docket_switch?
+    return false unless open_with_no_children?
+    return false if type.include?("DocketSwitch")
+    return false if %w[RootTask DistributionTask HearingTask EvidenceSubmissionWindowTask].include?(type)
+    return false if ancestor_task_of_type(HearingTask).present?
+    return false if ancestor_task_of_type(EvidenceSubmissionWindowTask).present?
+
+    true
+  end
+
+  # This method is for copying a task and its ancestors to a new appeal stream
+  def copy_with_ancestors_to_stream(new_appeal_stream)
+    return unless parent
+
+    new_task_attributes = attributes.reject { |attr| %w[id created_at updated_at appeal_id parent_id].include?(attr) }
+    new_task_attributes["appeal_id"] = new_appeal_stream.id
+
+    # This method recurses until the parent is nil or a task of its type is already present on the new stream
+    existing_new_parent = new_appeal_stream.tasks.find { |task| task.type == parent.type }
+    new_parent = existing_new_parent || parent.copy_with_ancestors_to_stream(new_appeal_stream)
+
+    # Do not copy orphaned branches
+    return unless new_parent
+
+    new_task_attributes["parent_id"] = new_parent.id
+
+    # Skip validation since these are not new tasks (and don't need to have a status of assigned, for example)
+    new_stream_task = self.class.new(new_task_attributes)
+    new_stream_task.save(validate: false)
+
+    new_stream_task
+  end
+
   def root_task(task_id = nil)
     task_id = id if task_id.nil?
     return parent.root_task(task_id) if parent
@@ -645,6 +678,10 @@ class Task < CaseflowRecord
   # currently only defined by ScheduleHearingTask and AssignHearingDispositionTask for virtual hearing related updates
   def alerts
     @alerts ||= []
+  end
+
+  def org_task_and_cavc_lit_support_member(user)
+    assigned_to_type == "Organization" && CavcLitigationSupport.singleton.user_has_access?(user)
   end
 
   private
