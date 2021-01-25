@@ -5,7 +5,7 @@
 class NodDateUpdatesController < ApplicationController
   include ValidationConcern
 
-  before_action :verify_access, :react_routed
+  before_action :react_routed
   
   validates :update, using: NodDateUpdatesSchemas.update
   def update
@@ -26,7 +26,7 @@ class NodDateUpdatesController < ApplicationController
       appeal_id: appeal.id,
       old_date: appeal.receipt_date,
       new_date: params["receipt_date"],
-      change_reason: params["change_reason"]["value"]
+      change_reason: params["change_reason"]
     )
     params.permit(required_params)
   end

@@ -46,7 +46,7 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
     const payload = {
       data: {
         receipt_date: receiptDate,
-        change_reason: changeReason
+        change_reason: changeReason.value
       }
     };
 
