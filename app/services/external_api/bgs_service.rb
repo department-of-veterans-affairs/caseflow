@@ -476,7 +476,8 @@ class ExternalApi::BGSService
       ssl_ca_cert: ENV["BGS_CA_CERT_LOCATION"],
       forward_proxy_url: forward_proxy_url,
       jumpbox_url: ENV["RUBY_BGS_JUMPBOX_URL"],
-      log: true
+      log: true,
+      logger: Rails.logger
     )
   end
 

@@ -4,9 +4,6 @@ describe ChangeHearingRequestTypeTask do
   let(:task) { create(:change_hearing_request_type_task, :assigned) }
   let(:user) { create(:user, roles: ["Edit HearSched"]) }
 
-  before { FeatureToggle.enable!(:convert_travel_board_to_video_or_virtual) }
-  after { FeatureToggle.disable!(:convert_travel_board_to_video_or_virtual) }
-
   describe "#update_from_params" do
     subject { task.update_from_params(payload, user) }
 

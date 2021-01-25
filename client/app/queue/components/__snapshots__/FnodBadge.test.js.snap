@@ -1,69 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`FnodBadge renders correctly 1`] = `
-<FnodBadge
-  appeal={
+<Provider
+  store={
     Object {
-      "date_of_death": "2019-03-17",
-      "veteran_appellant_deceased": true,
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(observable): [Function],
     }
   }
 >
-  <Badge
-    color="#E31C3D"
-    displayName="FNOD"
-    id="fnod-undefined"
-    name="fnod"
-    tooltipText="Date of Death Reported"
+  <Connect(FnodBadge)
+    appeal={
+      Object {
+        "date_of_death": "2019-03-17",
+        "veteran_appellant_deceased": true,
+      }
+    }
   >
-    <div
-      className="cf-fnod-badge"
-    >
-      <Tooltip
-        id="badge-fnod-undefined"
-        position="bottom"
-        text="Date of Death Reported"
-      >
-        <span
-          aria-describedby="badge-fnod-undefined"
-          data-event="focus mouseenter"
-          data-event-off="keydown mouseleave"
-          data-for="badge-fnod-undefined"
-          data-tip={true}
-          role="tooltip"
-          tabIndex={0}
-        >
-          <span
-            data-css-goms0=""
-          >
-            FNOD
-          </span>
-        </span>
-        <span
-          data-css-7i4a6=""
-        >
-          <ReactTooltip
-            clickable={false}
-            effect="solid"
-            id="badge-fnod-undefined"
-            insecure={true}
-            multiline={true}
-            offset={Object {}}
-            place="bottom"
-            resizeHide={true}
-            wrapper="div"
-          >
-            <div
-              className="__react_component_tooltip place-bottom type-dark "
-              data-id="tooltip"
-              id="badge-fnod-undefined"
-            >
-              Date of Death Reported
-            </div>
-          </ReactTooltip>
-        </span>
-      </Tooltip>
-    </div>
-  </Badge>
-</FnodBadge>
+    <FnodBadge
+      appeal={
+        Object {
+          "date_of_death": "2019-03-17",
+          "veteran_appellant_deceased": true,
+        }
+      }
+      dispatch={[Function]}
+      featureToggles={Object {}}
+    />
+  </Connect(FnodBadge)>
+</Provider>
 `;

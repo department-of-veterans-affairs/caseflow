@@ -218,9 +218,9 @@ describe VirtualHearings::CreateConferenceJob do
         clear_enqueued_jobs
       end
 
-      shared_examples "raises error", VirtualHearings::CreateConferenceJob::VirtualHearingRequestCancelled
+      include_examples "raises error", VirtualHearings::CreateConferenceJob::VirtualHearingRequestCancelled
 
-      shared_examples "does not retry job"
+      include_examples "does not retry job"
     end
 
     context "for a legacy hearings" do

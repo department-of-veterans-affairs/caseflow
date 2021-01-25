@@ -50,7 +50,7 @@ describe Docket, :all_dbs do
     let!(:cavc_appeal) do
       create(:appeal,
              :type_cavc_remand,
-             :ready_for_distribution,
+             :cavc_ready_for_distribution,
              docket_type: Constants.AMA_DOCKETS.direct_review)
     end
 
@@ -290,7 +290,7 @@ describe Docket, :all_dbs do
         subject { Docket.nonpriority_decisions_per_year }
 
         it "returns nonpriority decisions from the last year" do
-          expect(subject).to eq(2)
+          expect(subject).to eq(3)
         end
       end
     end

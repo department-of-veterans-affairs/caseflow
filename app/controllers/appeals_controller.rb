@@ -143,6 +143,7 @@ class AppealsController < ApplicationController
   def update_nod_date
     if params[:receipt_date]
       appeal.update_receipt_date!(receipt_date: params[:receipt_date])
+      render json: { nodDate: appeal.receipt_date, docketNumber: appeal.docket_number }
     end
   end
 

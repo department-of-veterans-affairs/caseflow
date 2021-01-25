@@ -133,7 +133,8 @@ const taskAttributesFromRawTask = (task) => {
     latestInformalHearingPresentationTask: {
       requestedAt: task.attributes.latest_informal_hearing_presentation_task?.requested_at,
       receivedAt: task.attributes.latest_informal_hearing_presentation_task?.received_at
-    }
+    },
+    canMoveOnDocketSwitch: task.attributes.can_move_on_docket_switch
   };
 };
 
@@ -154,7 +155,7 @@ const appealAttributesFromRawTask = (task) => ({
   caseType: task.attributes.case_type,
   isAdvancedOnDocket: task.attributes.aod,
   overtime: task.attributes.overtime,
-  veteran_appellant_deceased: task.attributes.veteran_appellant_deceased,
+  veteranAppellantDeceased: task.attributes.veteran_appellant_deceased,
   issueCount: task.attributes.issue_count,
   docketNumber: task.attributes.docket_number,
   veteranFullName: task.attributes.veteran_full_name,
@@ -311,7 +312,7 @@ export const prepareAppealForStore = (appeals) => {
       withdrawn: appeal.attributes.withdrawn,
       removed: appeal.attributes.removed,
       overtime: appeal.attributes.overtime,
-      veteran_appellant_deceased: appeal.attributes.veteran_appellant_deceased,
+      veteranAppellantDeceased: appeal.attributes.veteran_appellant_deceased,
       withdrawalDate: formatDateStrUtc(appeal.attributes.withdrawal_date),
       isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
       caseType: appeal.attributes.type,
@@ -344,7 +345,7 @@ export const prepareAppealForStore = (appeals) => {
       appellantRelationship: appeal.attributes.appellant_relationship,
       assignedToLocation: appeal.attributes.assigned_to_location,
       veteranDateOfBirth: appeal.attributes.veteran_date_of_birth,
-      veteranDateOfDeath: appeal.attributes.veteran_date_of_death,
+      veteranDateOfDeath: appeal.attributes.veteran_death_date,
       veteranGender: appeal.attributes.veteran_gender,
       veteranAddress: appeal.attributes.veteran_address,
       closestRegionalOffice: appeal.attributes.closest_regional_office,
