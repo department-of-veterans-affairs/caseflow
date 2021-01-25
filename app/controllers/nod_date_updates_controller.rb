@@ -6,7 +6,7 @@ class NodDateUpdatesController < ApplicationController
   include ValidationConcern
 
   before_action :react_routed
-  
+
   validates :update, using: NodDateUpdatesSchemas.update
   def update
     nod_date_update = NodDateUpdate.create!(updated_params)
