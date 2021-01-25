@@ -12,7 +12,7 @@
 #
 # CAVC Remands Overview: https://github.com/department-of-veterans-affairs/caseflow/wiki/CAVC-Remands
 
-class MdrTask < Task
+class MandateHoldTask < Task
   VALID_PARENT_TYPES = [
     CavcTask
   ].freeze
@@ -27,18 +27,14 @@ class MdrTask < Task
         TimedHoldTask.create_from_parent(
           window_task,
           days_on_hold: 90,
-          instructions: [COPY::MDR_WINDOW_TASK_DEFAULT_INSTRUCTIONS]
+          instructions: [COPY::MANDATE_HOLD_TASK_DEFAULT_INSTRUCTIONS]
         )
       end
     end
   end
 
-  def self.label
-    COPY::MDR_TASK_LABEL
-  end
-
   def default_instructions
-    [COPY::MDR_WINDOW_TASK_DEFAULT_INSTRUCTIONS]
+    [COPY::MANDATE_HOLD_TASK_DEFAULT_INSTRUCTIONS]
   end
 
   # Actions for both admins and non-admins

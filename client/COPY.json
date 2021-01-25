@@ -431,6 +431,8 @@
   "MDR_TASK_LABEL": "CAVC MDR Remand Task",
   "MDR_WINDOW_TASK_DEFAULT_INSTRUCTIONS": "The MDR task will return to the CAVC Team's queue after 90 days or when manually ended early.",
 
+  "MANDATE_HOLD_TASK_DEFAULT_INSTRUCTIONS": "The Mandate Hold task will return to the CAVC Team's queue after 90 days or when manually ended early.",
+
   "CAVC_GRANTED_EXTENSION_TASK_LABEL": "Granted extension",
   "CAVC_DENIED_EXTENSION_TASK_LABEL": "Denied extension",
 
