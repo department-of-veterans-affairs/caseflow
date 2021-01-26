@@ -102,13 +102,6 @@ export const SPREADSHEET_TYPES = {
   }
 };
 
-export const HEARING_DISPOSITION_TYPE_TO_LABEL_MAP = {
-  'postponed': 'Postponed',
-  'no_show': 'No show',
-  'held': 'Held',
-  'cancelled': 'Withdrawn'
-}
-
 export const DISPOSITION_OPTIONS = [{ value: 'held',
   label: 'Held' },
 { value: 'no_show',

@@ -89,12 +89,6 @@ class WorksheetHeader extends React.PureComponent {
     return formatNameLongReversed(worksheet.veteran_first_name, worksheet.veteran_last_name);
   }
 
-  getDisposition = (dispositionSymbol) => {
-    const disposition = _.find(DISPOSITION_OPTIONS, { value: dispositionSymbol });
-
-    return disposition ? disposition.label : '';
-  }
-
   render() {
     const { worksheet } = this.props;
     const olderVeteran = worksheet.veteran_age > 74;
