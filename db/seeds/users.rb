@@ -312,7 +312,7 @@ module Seeds
     end
 
     def create_cavc_lit_support_user
-      user_info = [
+      users_info = [
         { css_id: "CAVC_LIT_SUPPORT_ADMIN", full_name: "Diego CAVCLitSupportAdmin Christiansen" },
         { css_id: "CAVC_LIT_SUPPORT_ADMIN2", full_name: "Mattie CAVCLitSupportAdmin Jackson" },
         { css_id: "CAVC_LIT_SUPPORT_USER1", full_name: "Regina CAVCLitSupportUser Lebsack" },
@@ -325,7 +325,7 @@ module Seeds
         { css_id: "CAVC_LIT_SUPPORT_USER8", full_name: "Irvin CAVCLitSupportUser King" }
       ]
 
-      users = user_info.map do |user_info|
+      users = users_info.map do |user_info|
         User.create!(station_id: 101,
                      css_id: user_info[:css_id],
                      full_name: user_info[:full_name])
