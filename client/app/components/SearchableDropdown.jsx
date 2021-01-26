@@ -34,6 +34,12 @@ export class SearchableDropdown extends React.Component {
   onChange = (value) => {
     let newValue = value;
     let deletedValue = null;
+    let {
+      clearOnSelect,
+      multi,
+      onChange,
+      selfManageValueState,
+    } = this.props;
 
     /*
      * this is a temp fix for react-select value backspace
@@ -42,15 +48,15 @@ export class SearchableDropdown extends React.Component {
      * using the backspace.
      * https://github.com/JedWatson/react-select/pull/773
      */
-    if (!this.props.multi && Array.isArray(value) && value.length <= 0) {
+    if (!multi && Array.isArray(value) && value.length <= 0) {
       newValue = null;
-    } else if (this.props.multi && value === null) {
+    } else if (multi && value === null) {
       // Fix for https://github.com/JedWatson/react-select/issues/3632
       newValue = [];
     }
     // don't set value in state if creatable is true
-    if (!this.props.selfManageValueState) {
-      this.setState({ value: this.props.clearOnSelect ? null : newValue });
+    if (!selfManageValueState) {
+      this.setState({ value: clearOnSelect ? null : newValue });
     }
 
     if (
@@ -62,8 +68,8 @@ export class SearchableDropdown extends React.Component {
     ) {
       deletedValue = _.differenceWith(this.state.value, newValue, _.isEqual);
     }
-    if (this.props.onChange) {
-      this.props.onChange(newValue, deletedValue);
+    if (onChange) {
+      onChange(newValue, deletedValue);
     }
   };
 

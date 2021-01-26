@@ -15,6 +15,7 @@ class AppealsUpdatedSinceQuery
   private
 
   SKIP_ASSOCIATIONS = %w[
+    versions
     appeal_views
     claims_folder_searches
     job_notes

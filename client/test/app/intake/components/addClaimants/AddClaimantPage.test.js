@@ -4,7 +4,7 @@ import { axe } from 'jest-axe';
 
 import COPY from 'app/../COPY';
 
-import { AddClaimantPage } from 'app/intake/components/addClaimant/AddClaimantPage';
+import { AddClaimantPage } from 'app/intake/addClaimant/AddClaimantPage';
 import { IntakeProviders } from '../../testUtils';
 
 describe('AddClaimantPage', () => {
