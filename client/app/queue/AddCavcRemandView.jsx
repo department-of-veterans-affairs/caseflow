@@ -113,13 +113,13 @@ const AddCavcRemandView = (props) => {
     setIssues({ ...issues, [evt.target.name]: evt.target.checked });
   };
 
-  const straightReveralType = () => type === CAVC_DECISION_TYPES.straight_reversal;
+  const straightReversalType = () => type === CAVC_DECISION_TYPES.straight_reversal;
   const deathDismissalType = () => type === CAVC_DECISION_TYPES.death_dismissal;
   const mdrSubtype = () => subType === CAVC_REMAND_SUBTYPES.mdr;
   const validDocketNumber = () => (/^\d{2}-\d{1,5}$/).exec(docketNumber);
   const validJudge = () => Boolean(judge);
   const validDecisionDate = () => Boolean(decisionDate);
-  const mandateNotRequired = () => straightReveralType() || deathDismissalType() || mdrSubtype();
+  const mandateNotRequired = () => straightReversalType() || deathDismissalType() || mdrSubtype();
   const validJudgementDate = () => Boolean(judgementDate) || mandateNotRequired();
   const validMandateDate = () => Boolean(mandateDate) || mandateNotRequired();
   const validInstructions = () => instructions && instructions.length > 0;
