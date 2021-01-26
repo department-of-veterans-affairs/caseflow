@@ -13,6 +13,7 @@ const initialState = {
     receiptDate: null,
     docketType: null,
     issueIds: [],
+    newTasks: [],
   },
 };
 
