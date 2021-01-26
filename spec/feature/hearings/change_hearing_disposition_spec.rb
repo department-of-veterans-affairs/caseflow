@@ -35,10 +35,10 @@ RSpec.shared_examples "Change hearing disposition" do
 
       step "change the hearing disposition to held" do
         click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-        click_dropdown({ prompt: "Select", text: "Held" }, find(".cf-modal-body"))
+        click_dropdown({ prompt: "Select", text: Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held }, find(".cf-modal-body"))
         fill_in "Notes", with: instructions_text
         click_button("Submit")
-        expect(page).to have_content("Successfully changed hearing disposition to Held")
+        expect(page).to have_content("Successfully changed hearing disposition to #{Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held}")
       end
 
       step "return to the hearing admin organization queue and verify that the task is no longer there" do
@@ -68,20 +68,20 @@ RSpec.shared_examples "Change hearing disposition" do
         step "visit and verify that the new hearing disposition is in the hearing schedule daily docket" do
           User.authenticate!(user: hearing_user)
           visit "/hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-          expect(dropdown_selected_value(find(".dropdown-#{hearing.uuid}-disposition"))).to eq "Held"
+          expect(dropdown_selected_value(find(".dropdown-#{hearing.uuid}-disposition"))).to eq Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held
         end
 
         step "visit and verify that the new hearing disposition is on the hearing details page" do
           visit "hearings/" + hearing.external_id.to_s + "/details"
           disposition_div = find("h4", text: "DISPOSITION").first(:xpath, "ancestor::div")
-          expect(disposition_div).to have_css("div", text: "held")
+          expect(disposition_div).to have_css("div", text: Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held)
         end
 
       elsif appeal.is_a? LegacyAppeal
         step "verify that the hearing disposition is now held" do
           click_on "Completed"
           click_on veteran_link_text
-          expect(page).to have_content("Disposition: Held")
+          expect(page).to have_content("Disposition: #{Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held}")
         end
       end
     end
@@ -97,10 +97,10 @@ RSpec.shared_examples "Change hearing disposition" do
 
       step "change the hearing disposition to cancelled" do
         click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-        click_dropdown({ prompt: "Select", text: "Cancelled" }, find(".cf-modal-body"))
+        click_dropdown({ prompt: "Select", text: Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.cancelled }, find(".cf-modal-body"))
         fill_in "Notes", with: instructions_text
         click_button("Submit")
-        expect(page).to have_content("Successfully changed hearing disposition to Cancelled")
+        expect(page).to have_content("Successfully changed hearing disposition to #{Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.cancelled}")
       end
 
       step "return to the hearing admin organization queue and verify that the task is no longer there" do
@@ -130,7 +130,7 @@ RSpec.shared_examples "Change hearing disposition" do
           end
 
         click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-        click_dropdown({ prompt: "Select", text: "Cancelled" }, find(".cf-modal-body"))
+        click_dropdown({ prompt: "Select", text: Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.cancelled }, find(".cf-modal-body"))
         fill_in "Notes", with: instructions_text
         click_button("Submit")
 
@@ -172,10 +172,10 @@ RSpec.shared_examples "Change hearing disposition" do
 
         step "change the hearing disposition to postponed" do
           click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-          click_dropdown({ prompt: "Select", text: "Postponed" }, find(".cf-modal-body"))
+          click_dropdown({ prompt: "Select", text: Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.postponed }, find(".cf-modal-body"))
           fill_in "Notes", with: instructions_text
           click_button("Submit")
-          expect(page).to have_content("Successfully changed hearing disposition to Postponed")
+          expect(page).to have_content("Successfully changed hearing disposition to #{Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.postponed}")
         end
 
         step "return to the hearing admin organization queue and verify that the task is no longer there" do
@@ -212,10 +212,10 @@ RSpec.shared_examples "Change hearing disposition" do
 
         step "change the hearing disposition to no show" do
           click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-          click_dropdown({ prompt: "Select", text: "No Show" }, find(".cf-modal-body"))
+          click_dropdown({ prompt: "Select", text: Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.no_show }, find(".cf-modal-body"))
           fill_in "Notes", with: instructions_text
           click_button("Submit")
-          expect(page).to have_content("Successfully changed hearing disposition to No Show")
+          expect(page).to have_content("Successfully changed hearing disposition to #{Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.no_show}")
         end
 
         step "return to the hearing admin organization queue and verify that the task is no longer unassigned" do
@@ -288,10 +288,10 @@ RSpec.shared_examples "Change hearing disposition" do
           schedule_row.find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
           expect(schedule_row).to have_content(instructions_text)
           click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-          click_dropdown({ prompt: "Select", text: "Held" }, find(".cf-modal-body"))
+          click_dropdown({ prompt: "Select", text: Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held }, find(".cf-modal-body"))
           fill_in "Notes", with: "I'm changing this to held."
           click_button("Submit")
-          expect(page).to have_content("Successfully changed hearing disposition to Held")
+          expect(page).to have_content("Successfully changed hearing disposition to #{Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held}")
         end
       end
     end
