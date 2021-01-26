@@ -11,7 +11,7 @@ import TIMEZONES from '../../constants/TIMEZONES';
 import { COMMON_TIMEZONES, REGIONAL_OFFICE_ZONE_ALIASES } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
-import { HEARING_DISPOSITION_TYPE_TO_LABEL_MAP } from '../../constants';
+import { HEARING_DISPOSITION_TYPE_TO_LABEL_MAP } from './constants';
 
 export const isPreviouslyScheduledHearing = (hearing) =>
   hearing.disposition === HEARING_DISPOSITION_TYPES.postponed ||
