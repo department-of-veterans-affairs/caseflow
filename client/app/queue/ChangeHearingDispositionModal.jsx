@@ -7,7 +7,8 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import COPY from '../../COPY';
-import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
+import { DISPOSITION_OPTIONS } from '../hearings/constants';
+import DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
 import TASK_STATUSES from '../../constants/TASK_STATUSES';
 
 import { taskById, appealWithDetailSelector } from './selectors';
@@ -19,6 +20,7 @@ import TextareaField from '../components/TextareaField';
 import QueueFlowModal from './components/QueueFlowModal';
 
 import { requestPatch } from './uiReducer/uiActions';
+import { dispositionLabel } from '../hearings/utils';
 
 class ChangeHearingDispositionModal extends React.Component {
   constructor(props) {
@@ -39,7 +41,7 @@ class ChangeHearingDispositionModal extends React.Component {
     };
     let afterDispositionUpdate = {};
 
-    if (this.state.selectedValue === HEARING_DISPOSITION_TYPES.postponed) {
+    if (this.state.selectedValue === DISPOSITION_TYPES.postponed) {
       afterDispositionUpdate = {
         after_disposition_update: {
           action: 'schedule_later'
@@ -96,11 +98,7 @@ class ChangeHearingDispositionModal extends React.Component {
     const { appeal, highlightFormItems, task } = this.props;
 
     const hearing = _.find(appeal.hearings, { externalId: task.externalHearingId });
-    const currentDisposition = hearing?.disposition ? _.startCase(hearing?.disposition) : 'None';
-    const dispositionOptions = Object.keys(HEARING_DISPOSITION_TYPES).map((key) => ({
-      value: key,
-      label: _.startCase(key)
-    }));
+    const currentDisposition = dispositionLabel(hearing?.disposition);
 
     return (
       <QueueFlowModal
@@ -127,7 +125,7 @@ class ChangeHearingDispositionModal extends React.Component {
           placeholder="Select"
           value={this.state.selectedValue}
           onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
-          options={dispositionOptions}
+          options={DISPOSITION_OPTIONS}
         />
         <br />
         <TextareaField

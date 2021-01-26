@@ -14,6 +14,9 @@ import { DISPOSITION_OPTIONS } from '../../constants';
 import Tooltip from '../../../components/Tooltip';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
 import { formatNameLong, formatNameLongReversed } from '../../../util/FormatUtil';
+import { dispositionLabel } from '../../utils';
+
+import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION_TYPES';
 
 const WorksheetFormEntry = ({ name, id, print, value, onChange, minRows, maxLength }) => {
   const textAreaProps = {
@@ -96,7 +99,8 @@ class WorksheetHeader extends React.PureComponent {
     const { worksheet } = this.props;
     const olderVeteran = worksheet.veteran_age > 74;
     const veteranClassNames = classNames({ 'cf-red-text': olderVeteran });
-    const negativeDispositionOptions = ['no_show', 'postponed', 'cancelled'];
+    const negativeDispositionOptions = [HEARING_DISPOSITION_TYPES.no_show, HEARING_DISPOSITION_TYPES.postponed,
+      HEARING_DISPOSITION_TYPES.cancelled];
     const negativeDispositions = negativeDispositionOptions.includes(worksheet.disposition);
     const dispositionClassNames = classNames({ 'cf-red-text': negativeDispositions });
 
@@ -130,7 +134,7 @@ class WorksheetHeader extends React.PureComponent {
           <div className="cf-hearings-worksheet-data-cell">
             <h4>{this.props.print ? 'HEAR. DISP.' : 'HEARING DISPOSITION'}</h4>
             <div className={classNames('cf-hearings-headers', dispositionClassNames)}>
-              {this.getDisposition(worksheet.disposition)}
+              {dispositionLabel(worksheet?.disposition)}
             </div>
           </div>
         }
