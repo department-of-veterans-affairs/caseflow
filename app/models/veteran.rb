@@ -361,6 +361,13 @@ class Veteran < CaseflowRecord
       end
     end
 
+    def warm_veteran_cache_for_appeals(appeal_ids)
+      appeal_ids.each do |appeal_id|
+        appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
+        appeal.veteran.refresh_attr
+      end
+    end
+
     private
 
     def find_or_create_by_ssn(ssn, sync_name: false)
@@ -440,22 +447,10 @@ class Veteran < CaseflowRecord
     self
   end
 
-  def warm_veteran_cache_for_appeals(appeal_ids)
-    appeal_ids.each do |appeal_id|
-      warm_veteran_cache_for_appeal(appeal_id)
-    end
-  end
-
-  def warm_veteran_cache_for_appeal(appeal_id)
-    appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
-    refresh_veteran_attr(appeal)
-  end
-
-  def refresh_veteran_attr(appeal)
-    veteran = appeal.veteran
+  def refresh_attr
     begin
-      if veteran&.stale_attributes?
-        veteran.update_cached_attributes!
+      if stale_attributes?
+        update_cached_attributes!
       end
       rescue ActiveRecord::RecordNotFound=> error
       Raven.capture_exception(error)

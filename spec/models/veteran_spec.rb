@@ -912,12 +912,6 @@ describe Veteran, :all_dbs do
     let(:name_suffix) { "Esq" }
     let(:ssn) { "666000000" }
     let(:date_of_death) { "2021-1-12" }
-    let(:bgs_first_name) { first_name }
-    let(:bgs_last_name) { last_name }
-    let(:bgs_middle_name) { middle_name }
-    let(:bgs_name_suffix) { name_suffix }
-    let(:bgs_ssn) { ssn }
-    let(:bgs_date_of_death) { date_of_death }
     let(:veteranBob) do
       create(
         :veteran,
@@ -928,58 +922,60 @@ describe Veteran, :all_dbs do
         ssn: ssn,
         date_of_death: date_of_death,
         bgs_veteran_record: {
-          first_name: bgs_first_name,
-          last_name: bgs_last_name,
-          middle_name: bgs_middle_name,
-          name_suffix: bgs_name_suffix,
-          ssn: bgs_ssn,
-          date_of_death: bgs_date_of_death
+          first_name: first_name,
+          last_name: last_name,
+          middle_name: middle_name,
+          name_suffix: name_suffix,
+          ssn: ssn,
+          date_of_death: date_of_death
         }
       )
     end
-
-    before do
-      veteranBob.unload_bgs_record # force it to reload from BGS
+    let(:sam_first_name) { "Sam" }
+    let(:sam_last_name) { "Samerson" }
+    let(:sam_middle_name) { "S" }
+    let(:sam_name_suffix) { "Esq" }
+    let(:sam_ssn) { "123456789" }
+    let(:sam_date_of_death) { "2021-1-26" }
+    let(:veteranSam) do
+      create(
+        :veteran,
+        first_name: sam_first_name,
+        last_name: sam_last_name,
+        middle_name: sam_middle_name,
+        name_suffix: sam_name_suffix,
+        ssn: sam_ssn,
+        date_of_death: sam_date_of_death,
+        bgs_veteran_record: {
+          first_name: sam_first_name,
+          last_name: sam_last_name,
+          middle_name: sam_middle_name,
+          name_suffix: sam_name_suffix,
+          ssn: sam_ssn,
+          date_of_death: sam_date_of_death
+        }
+      )
     end
-    context "#update veteran" do
-      let(:appeal) { create(:appeal, veteran_file_number: veteranBob.file_number) }
-      let(:appeal2) { create(:appeal, veteran_file_number: veteran.file_number) }
-      let(:appeal_ids) {[appeal.uuid, appeal2.uuid]}
-      let(:date_of_death) { nil }
-      # let(:veteran) do {file_number: "44556677"} end
-      let(:veterans) {[veteran, veteranBob]}
+    let(:appeal) { create(:appeal, veteran_file_number: veteranBob.file_number) }
+    let(:appeal2) { create(:appeal, veteran_file_number: veteranSam.file_number) }
+    let(:appeal_ids) {[appeal.uuid, appeal2.uuid]}
 
-      subject { veterans.each do |veteran|
-        veteran.warm_veteran_cache_for_appeals(appeal_ids)
-      end
-      }
+    context "with new veteran data in bgs" do
+      let(:date_of_death) { "2020-12-08" }
 
-      # Mock updating veteran DOD using warm method
-      context ".warm_veteran_cache_for_appeals" do
-        before do
-          Fakes::BGSService.edit_veteran_record(veteranBob.file_number, :date_of_death, "2021-1-13")
-          # Fakes::BGSService.edit_veteran_record(veteran.file_number, :date_of_death, "2021-1-13")
-        end
-        it "updates our veteran_records date_of_death" do
-          expect { subject }.not_to raise_error
-
-          # expect(veteran.reload.date_of_death).to eq(Date.parse("2021-1-13"))
-          expect(veteranBob.reload.date_of_death).to eq(Date.parse("2021-1-13"))
-        end
+      before do
+        veteranBob.unload_bgs_record # force it to reload from BGS
+        Fakes::BGSService.edit_veteran_record(veteranBob.file_number, :date_of_death, date_of_death)
+        Fakes::BGSService.edit_veteran_record(veteranSam.file_number, :date_of_death, date_of_death)
       end
 
-      # Expect update veteran info to match bgs info
-      context ".warm_veteran_cache_for_appeal" do
-        subject { veteranBob.warm_veteran_cache_for_appeal(appeal.uuid) }
+      subject { Veteran.warm_veteran_cache_for_appeals(appeal_ids)}
 
-        before do
-          Fakes::BGSService.edit_veteran_record(veteranBob.file_number, :date_of_death, "2021-1-13")
-        end
-        it "updates our veteran_records date_of_death" do
-          expect { subject }.not_to raise_error
+      it "updates our veteran_records date_of_death" do
+        expect { subject }.not_to raise_error
 
-          expect(veteranBob.reload.date_of_death).to eq(Date.parse("2021-1-13"))
-        end
+        expect(veteranSam.reload.date_of_death).to eq(Date.parse(date_of_death))
+        expect(veteranBob.reload.date_of_death).to eq(Date.parse(date_of_death))
       end
     end
   end

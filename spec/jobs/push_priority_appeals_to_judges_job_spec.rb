@@ -1042,7 +1042,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       ]
     end
 
-    let!(:job) { PushPriorityAppealsToJudgesJob.new.distribute_genpop_priority_appeals }
+    let!(:job) { PushPriorityAppealsToJudgesJob.new }
     let(:judges) { create_list(:user, 5, :with_vacols_judge_record) }
     let(:judge_distributions_this_month) { (0..4).to_a }
     let!(:legacy_priority_cases) do
@@ -1084,7 +1084,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       (1..5).map do |i|
         appeal = create(:appeal,
                         :type_cavc_remand,
-                        :ready_for_distribution,
                         docket_type: Constants.AMA_DOCKETS.evidence_submission)
         appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.month.ago)
         appeal
@@ -1104,21 +1103,20 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     let(:distributed_cases) { DistributedCase.where(distribution: job)}
 
-    let(:non_genpop_distro_case_ids) do
-      DistributedCase.where(distribution_id: distributed_cases.pluck(:id)).pluck(:case_id)
+    let(:non_genpop_distro_cases) do
+      DistributedCase.where(distribution_id: distributed_cases.pluck(:id))
     end
-    let(:genpop_distro_case_ids) do
-      DistributedCase.where(distribution_id: distributed_cases.pluck(:id)).pluck(:case_id)
+    let(:genpop_distro_cases) do
+      DistributedCase.where(distribution_id: distributed_cases.pluck(:id))
     end
     before do
-      job.instance_variable_set(:@tied_distributions, non_gen_distributed_cases)
-      job.instance_variable_set(:@genpop_distributions, gen_distributions)
+      job.instance_variable_set(:@tied_distributions, non_genpop_distro_cases)
+      job.instance_variable_set(:@genpop_distributions, genpop_distro_cases)
     end
 
-    subject { PushPriorityAppealsToJudgesJob.new.warm_veteran_attr_for_priority_distributions }
+    subject { job.warm_veteran_attr_for_priority_distributions }
 
     it "calls warm_veteran_cache_for_appeals with non_genpop_distro_case_ids" do
-      byebug
       expect { subject }.not_to raise_error
     end
 
