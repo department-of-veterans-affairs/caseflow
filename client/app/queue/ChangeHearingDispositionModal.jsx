@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
-import _ from 'lodash';
+import { isArray, find } from 'lodash';
 import moment from 'moment';
 
 import COPY from '../../COPY';
@@ -67,7 +67,7 @@ class ChangeHearingDispositionModal extends React.Component {
     };
 
     const successMsg = {
-      title: `Successfully changed hearing disposition to ${_.startCase(this.state.selectedValue)}`
+      title: `Successfully changed hearing disposition to ${dispositionLabel(this.state.selectedValue)}`
     };
 
     return this.props.
@@ -78,7 +78,7 @@ class ChangeHearingDispositionModal extends React.Component {
       catch((err) => {
         // Process the error from the response
         const message = err?.message ? JSON.parse(err?.message) : {};
-        const error = _.isArray(message.errors) ? message.errors[0] : err;
+        const error = isArray(message.errors) ? message.errors[0] : err;
 
         // Set the state with the error to show the message
         this.setState({
@@ -97,7 +97,7 @@ class ChangeHearingDispositionModal extends React.Component {
   render = () => {
     const { appeal, highlightFormItems, task } = this.props;
 
-    const hearing = _.find(appeal.hearings, { externalId: task.externalHearingId });
+    const hearing = find(appeal.hearings, { externalId: task.externalHearingId });
     const currentDisposition = dispositionLabel(hearing?.disposition);
 
     return (

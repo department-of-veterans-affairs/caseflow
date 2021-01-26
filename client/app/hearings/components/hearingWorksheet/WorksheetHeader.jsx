@@ -9,8 +9,6 @@ import { ClipboardIcon } from '../../../components/RenderFunctions';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { onRepNameChange, onWitnessChange, onMilitaryServiceChange } from '../../actions/hearingWorksheetActions';
 import { css } from 'glamor';
-import _ from 'lodash';
-import { DISPOSITION_OPTIONS } from '../../constants';
 import Tooltip from '../../../components/Tooltip';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
 import { formatNameLong, formatNameLongReversed } from '../../../util/FormatUtil';
