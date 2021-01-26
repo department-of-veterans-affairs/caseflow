@@ -270,7 +270,8 @@ export class DailyDocketContainer extends React.Component {
       {this.state.modalOpen &&
         <HearingDayEditModal
           closeModal={this.closeModal}
-          cancelModal={this.cancelModal} />
+          cancelModal={this.cancelModal}
+          requestType={this.props.hearingDay.requestType} />
       }
     </LoadingDataDisplay>;
 
