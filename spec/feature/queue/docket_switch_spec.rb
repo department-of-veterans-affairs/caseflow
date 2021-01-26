@@ -153,7 +153,7 @@ RSpec.feature "Docket Switch", :all_dbs do
           User.authenticate!(user: cotb_attorney)
           visit "/queue/appeals/#{appeal.uuid}"
           find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
-          judge_ruling_text = Constants::DOCKET_SWITCH[disposition]["judgeRulingText"]
+          judge_ruling_text = Constants::DOCKET_SWITCH_DISPOSITIONS[disposition]["judgeRulingText"]
 
           expect(page).to have_content "I am proceeding with a #{judge_ruling_text}"
           expect(page).to have_content "Signed ruling letter:\n#{hyperlink}"
