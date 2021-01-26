@@ -131,7 +131,7 @@ const AddCavcRemandView = (props) => {
   };
 
   const successMsgDetail = () => {
-    if (straightReveralType() || deathDismissalType()) {
+    if (straightReversalType() || deathDismissalType()) {
       if (Boolean(judgementDate) && Boolean(mandateDate)) {
         return COPY.CAVC_REMAND_READY_FOR_DISTRIBUTION_DETAIL;
       }
