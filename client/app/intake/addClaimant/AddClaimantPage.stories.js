@@ -1,9 +1,8 @@
 import React from 'react';
-import { Route, MemoryRouter } from 'react-router';
+import { MemoryRouter } from 'react-router';
 
 import { AddClaimantPage } from './AddClaimantPage';
 
-import { PAGE_PATHS } from 'app/intake/constants';
 import ReduxBase from 'app/components/ReduxBase';
 import { reducer, generateInitialState } from 'app/intake';
 
