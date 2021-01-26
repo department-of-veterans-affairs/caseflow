@@ -254,8 +254,7 @@ describe InitialTasksFactory, :postgres do
         include_examples "remand appeal blocking distribution", MdrTask, "on_hold"
       end
 
-      context "when CavcRemand decision type is straight_reversal" do
-        let(:cavc_decision_type) { Constants.CAVC_DECISION_TYPES.straight_reversal }
+      shared_examples "creates mandate hold task if needed" do
         let(:remand_subtype) { nil }
 
         it "sets appeal ready for distribution" do
@@ -280,6 +279,16 @@ describe InitialTasksFactory, :postgres do
 
           include_examples "remand appeal blocking distribution", MandateHoldTask, "on_hold"
         end
+      end
+
+      context "when CavcRemand decision type is straight_reversal" do
+        let(:cavc_decision_type) { Constants.CAVC_DECISION_TYPES.straight_reversal }
+        include_examples "creates mandate hold task if needed"
+      end
+
+      context "when CavcRemand decision type is death_dismissal" do
+        let(:cavc_decision_type) { Constants.CAVC_DECISION_TYPES.death_dismissal }
+        include_examples "creates mandate hold task if needed"
       end
     end
   end
