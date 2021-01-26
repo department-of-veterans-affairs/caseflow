@@ -13,8 +13,8 @@ describe('DocketSwitchEditTasksForm', () => {
   const onSubmit = jest.fn();
   const onCancel = jest.fn();
   const onBack = jest.fn();
-  const docketFrom = 'Direct Review';
-  const docketTo = 'Hearing';
+  const docketFrom = 'direct_review';
+  const docketTo = 'hearing';
   const taskListing = [
     { taskId: 1, appealId: 1, type: 'TaskTypeA', label: 'Task Type A' },
     { taskId: 2, appealId: 1, type: 'TaskTypeB', label: 'Task Type B' },
@@ -46,7 +46,7 @@ describe('DocketSwitchEditTasksForm', () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(`You are switching from ${docketFrom} to ${docketTo}`)
+      screen.getByText('You are switching from Direct Review to Hearing')
     ).toBeInTheDocument();
 
     expect(

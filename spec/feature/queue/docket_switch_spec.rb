@@ -118,7 +118,7 @@ RSpec.feature "Docket Switch", :all_dbs do
     let(:hyperlink) { "https://example.com/file.txt" }
 
     # Checks granted, partially_granted, and denied dispositions
-    Constants::DOCKET_SWITCH.each_key do |disposition|
+    Constants::DOCKET_SWITCH_DISPOSITIONS.each_key do |disposition|
       context "given disposition #{disposition}" do
         it "creates the next docket switch task (granted or denied) assigned to a COTB attorney" do
           User.authenticate!(user: judge)
@@ -229,6 +229,7 @@ RSpec.feature "Docket Switch", :all_dbs do
 
     let(:receipt_date) { Time.zone.today - 5.days }
     let(:context) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit" }
+    let(:admin_action_instructions) { "Lorem ipsum dolor sit amet" }
 
     it "allows attorney to complete the docket switch grant" do
       User.authenticate!(user: cotb_attorney)
@@ -274,7 +275,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
     end
 
-    it "allows attorney to procced to the add task page" do
+    it "allows attorney to edit tasks and proceed to confirmation page" do
       User.authenticate!(user: cotb_attorney)
       visit "/queue/appeals/#{appeal.uuid}"
 
@@ -305,6 +306,8 @@ RSpec.feature "Docket Switch", :all_dbs do
         find("label", text: "Grant a partial switch").click
       end
       expect(page).to have_content("PTSD denied")
+
+      # With no issues yet selected, submit should be disabled
       expect(page).to have_button("Continue", disabled: true)
 
       # select issues
@@ -313,6 +316,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       end
       expect(page).to have_button("Continue", disabled: false)
       click_button(text: "Continue")
+
       # Takes user to add task page
       expect(page).to have_content("Switch Docket: Add/Remove Tasks")
       expect(page).to have_content("You are switching from Evidence Submission to Direct Review")
@@ -347,6 +351,38 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       expect(find_field("IHP", visible: false)).to be_checked
       expect(page).to_not have_content("Confirm removing task")
+
+      # Remove task again
+      within_fieldset("Please unselect any tasks you would like to remove:") do
+        find("label", text: "IHP").click
+      end
+
+      click_button(COPY::MODAL_CONFIRM_BUTTON)
+
+      # Verify it is showing the mandatory tasks section
+      within_fieldset("Task(s) that will automatically be created") do
+        expect(page).to have_content("Distribution Task")
+      end
+
+      # Add new Admin Action
+      click_button("+ Add task")
+      expect(page).to have_button("Continue", disabled: true)
+
+      # Ensure all admin actions are available and select "AOJ"
+      click_dropdown(text: "AOJ") do
+        visible_options = page.find_all(".cf-select__option")
+        expect(visible_options.length).to eq Constants::CO_LOCATED_ADMIN_ACTIONS.length
+      end
+
+      fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: admin_action_instructions
+
+      expect(page).to have_button("Continue", disabled: false)
+      click_button(text: "Continue")
+
+      # Should now be on confirmation page
+      expect(page).to have_current_path(
+        "/queue/appeals/#{appeal.uuid}/tasks/#{docket_switch_granted_task.id}/docket_switch/checkout/grant/confirm"
+      )
     end
   end
 end

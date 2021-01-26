@@ -83,9 +83,7 @@ export const DocketSwitchEditTasksForm = ({
 
   // Used for display of mandatory tasks
   const mandatoryTaskOptions = useMemo(() => {
-    const targetType = StringUtil.convertToCamelCase(docketTo.toLowerCase());
-
-    return tasksByDocketType[targetType].map((item) => ({
+    return tasksByDocketType[docketTo].map((item) => ({
       ...item,
       disabled: true,
     }));
@@ -169,23 +167,26 @@ export const DocketSwitchEditTasksForm = ({
               )}
             />
           </div>
-          <Controller
-            name="taskIds"
-            control={control}
-            render={({ name, onChange: onCheckChange }) => {
-              return (
-                <CheckboxGroup
-                  name={name}
-                  label="Please unselect any tasks you would like to remove:"
-                  strongLabel
-                  options={taskOptions}
-                  onChange={(event) => onCheckChange(handleTaskChange(event))}
-                  styling={css({ marginBottom: '0' })}
-                  values={tasks}
-                />
-              );
-            }}
-          />
+
+          {taskOptions?.length && (
+            <Controller
+              name="taskIds"
+              control={control}
+              render={({ name, onChange: onCheckChange }) => {
+                return (
+                  <CheckboxGroup
+                    name={name}
+                    label="Please unselect any tasks you would like to remove:"
+                    strongLabel
+                    options={taskOptions}
+                    onChange={(event) => onCheckChange(handleTaskChange(event))}
+                    styling={css({ marginBottom: '0' })}
+                    values={tasks}
+                  />
+                );
+              }}
+            />
+          )}
 
           <CheckboxGroup
             name="mandatory"

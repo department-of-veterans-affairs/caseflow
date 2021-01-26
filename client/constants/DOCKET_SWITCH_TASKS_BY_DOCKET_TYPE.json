@@ -1,8 +1,8 @@
 {
-  "directReview": [
+  "direct_review": [
     { "id": "DistributionTask", "label": "Distribution Task" }
   ],
-  "evidenceSubmission": [
+  "evidence_submission": [
     { "id": "DistributionTask", "label": "Distribution Task" },
     {
       "id": "EvidenceSubmissionWindowTask",

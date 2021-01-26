@@ -10,7 +10,7 @@ import { useHistory, useParams } from 'react-router';
 import { cancel, stepForward, updateDocketSwitch } from '../docketSwitchSlice';
 
 export const DocketSwitchEditTasksContainer = () => {
-  const { appealId } = useParams();
+  const { appealId, taskId } = useParams();
   const { goBack, push } = useHistory();
   const dispatch = useDispatch();
 
@@ -42,10 +42,11 @@ export const DocketSwitchEditTasksContainer = () => {
 
   const handleSubmit = (formData) => {
     // Add stuff to redux store
-    dispatch(updateDocketSwitch(formData));
+    dispatch(updateDocketSwitch({ formData }));
 
-    // // Move to next step
+    // Move to next step
     dispatch(stepForward());
+    push(`/queue/appeals/${appealId}/tasks/${taskId}/docket_switch/checkout/grant/confirm`);
   };
 
   return (
