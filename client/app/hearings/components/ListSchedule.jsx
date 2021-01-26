@@ -211,7 +211,7 @@ class ListSchedule extends React.Component {
         valueName: 'regionalOffice'
       },
       {
-        header: 'Room', 
+        header: 'Room',
         name: 'Room',
         align: 'left',
         valueName: 'room',
