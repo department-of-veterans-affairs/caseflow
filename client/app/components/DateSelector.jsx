@@ -85,7 +85,10 @@ DateSelector.propTypes = {
   /**
    * Text (or other node) to display to indicate an error state
    */
-  errorMessage: PropTypes.string,
+  errorMessage: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.node
+  ]),
   invisible: PropTypes.bool,
 
   /**

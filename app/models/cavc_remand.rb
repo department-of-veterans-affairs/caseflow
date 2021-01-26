@@ -45,6 +45,8 @@ class CavcRemand < CaseflowRecord
   end
 
   def cavc_remand_form_complete?
+    return valid? if mdr?
+
     valid? && !mandate_date.nil? && !judgement_date.nil?
   end
 
@@ -54,7 +56,7 @@ class CavcRemand < CaseflowRecord
         cavc_remanded_issue.create_contesting_request_issue!(cavc_appeal)
       end
       AdvanceOnDocketMotion.copy_granted_motions_to_appeal(source_appeal, cavc_appeal)
-      InitialTasksFactory.new(cavc_appeal).create_root_and_sub_tasks!
+      InitialTasksFactory.new(cavc_appeal, self).create_root_and_sub_tasks!
     end
   end
 end
