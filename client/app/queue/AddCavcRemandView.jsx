@@ -142,7 +142,7 @@ const AddCavcRemandView = (props) => {
     }
 
     return COPY.CAVC_REMAND_CREATED_DETAIL;
-  }
+  };
 
   const submit = () => {
     const payload = {
