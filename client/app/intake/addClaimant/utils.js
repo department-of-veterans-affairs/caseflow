@@ -1,4 +1,4 @@
-import { yupResolver } from '@hookform/resolvers';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
@@ -16,18 +16,26 @@ export const schema = yup.object().shape({
     is: (value) => value.value === 'not_listed',
     then: yup.string().required()
   }),
-  firstName: yup.string().when('relationship', {
-	  is: 'child', then: yup.string().required()
-  }).when('relationship', {
-	  is: 'spouse', then: yup.string().required()
-  }).when('partyType', {
-	  is: 'individual', then: yup.string().required()
-  }),
+  firstName: yup.
+    string().
+    when('relationship', {
+      is: 'child',
+      then: yup.string().required(),
+    }).
+    when('relationship', {
+      is: 'spouse',
+      then: yup.string().required(),
+    }).
+    when('partyType', {
+      is: 'individual',
+      then: yup.string().required(),
+    }),
   middleName: yup.string(),
   lastName: yup.string(),
   suffix: yup.string(),
   organization: yup.string().when('partyType', {
-  	is: 'organization', then: yup.string().required(),
+    is: 'organization',
+    then: yup.string().required(),
   }),
   address1: yup.string().when('partyType', {
 	  is: (value) => ['individual', 'organization'].includes(value),
@@ -53,7 +61,7 @@ export const schema = yup.object().shape({
   }),
   email: yup.string().email(),
   phoneNumber: yup.string(),
-  vaForm: yup.string().required()
+  vaForm: yup.string().required(),
 });
 
 export const useAddClaimantForm = () => {

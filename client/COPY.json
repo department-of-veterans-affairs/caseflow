@@ -698,7 +698,7 @@
   "DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS": "Add the information based on how you are proceeding with this docket switch and the claimant's form.",
   "DOCKET_SWITCH_GRANTED_ADD_TASK_LABEL": "Switch Docket: Add/Remove Tasks",
   "DOCKET_SWITCH_GRANTED_ADD_TASK_INSTRUCTIONS": "**You are switching from %s to %s**",
-  "DOCKET_SWITCH_GRANTED_ADD_TASK_TEXT": "Below is a list of tasks that will be opened when you switch dockets. Tasks that are automatically created with the Direct Review docket cannot be selected or removed. Please **unselect** any tasks you would like to **remove** (the remaining tasks will be transferred to the new docket) and **add** any additional tasks that are needed.",
+  "DOCKET_SWITCH_GRANTED_ADD_TASK_TEXT": "Below is a list of tasks that will be opened when you switch dockets. Tasks that are automatically created with the %s docket cannot be selected or removed. Please **unselect** any tasks you would like to **remove** (the remaining tasks will be transferred to the new docket) and **add** any additional tasks that are needed.",
   "DOCKET_SWITCH_GRANTED_ADD_TASK_BUTTON": "+ Add task",
   "DOCKET_SWITCH_GRANTED_MODAL_TITLE": "Confirm removing task",
   "DOCKET_SWITCH_GRANTED_MODAL_INSTRUCTION": "Are you sure you would like to remove the currently active \"**%s**\"? This task will be closed and will not be transferred over to the new docket. \n\nIf you change your mind before you confirm switching the docket, you can re-select this task to re-open it.",
