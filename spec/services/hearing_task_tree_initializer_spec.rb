@@ -66,7 +66,7 @@ describe HearingTaskTreeInitializer do
         expect(ScheduleHearingTask.all.pluck(:appeal_id)).to match_array(LegacyAppeal.all.pluck(:id))
         expect(ScheduleHearingTask.first.parent.type).to eq(HearingTask.name)
         expect(ScheduleHearingTask.first.parent.parent.type).to eq(RootTask.name)
-        expect(cases.map { |c| c.reload.bfcurloc }.uniq).to eq([LegacyAppeal::LOCATION_CODES[:caseflow]])
+        expect(cases.map { |vcase| vcase.reload.bfcurloc }.uniq).to eq([LegacyAppeal::LOCATION_CODES[:caseflow]])
       end
     end
 
