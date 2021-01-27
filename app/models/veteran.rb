@@ -452,10 +452,10 @@ class Veteran < CaseflowRecord
       if stale_attributes?
         update_cached_attributes!
       end
-      rescue ActiveRecord::RecordNotFound=> error
+    rescue ActiveRecord::RecordNotFound => error
       Raven.capture_exception(error)
-      # if veteran could not be found. Raise exception and don't return, just ignore.
-      rescue Errno::ECONNRESET, Savon::HTTPError
+    # if veteran could not be found. Raise exception and don't return, just ignore.
+    rescue Errno::ECONNRESET, Savon::HTTPError
       # no nothing
     end
   end

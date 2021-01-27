@@ -235,7 +235,7 @@ describe Veteran, :all_dbs do
         state: "CA",
         country: "USA",
         date_of_birth: "12/21/1989",
-        date_of_death: date_of_death,
+        date_of_death: Date.new(2019, 12, 31),
         zip_code: "94117",
         military_post_office_type_code: "DPO",
         military_postal_type_code: "AE"
@@ -958,7 +958,7 @@ describe Veteran, :all_dbs do
     end
     let(:appeal) { create(:appeal, veteran_file_number: veteranBob.file_number) }
     let(:appeal2) { create(:appeal, veteran_file_number: veteranSam.file_number) }
-    let(:appeal_ids) {[appeal.uuid, appeal2.uuid]}
+    let(:appeal_ids) { [appeal.uuid, appeal2.uuid] }
 
     context "with new veteran data in bgs" do
       let(:date_of_death) { "2020-12-08" }
@@ -969,7 +969,7 @@ describe Veteran, :all_dbs do
         Fakes::BGSService.edit_veteran_record(veteranSam.file_number, :date_of_death, date_of_death)
       end
 
-      subject { Veteran.warm_veteran_cache_for_appeals(appeal_ids)}
+      subject { Veteran.warm_veteran_cache_for_appeals(appeal_ids) }
 
       it "updates our veteran_records date_of_death" do
         expect { subject }.not_to raise_error

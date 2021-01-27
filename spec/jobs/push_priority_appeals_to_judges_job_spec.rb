@@ -1101,7 +1101,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
     end
 
-    let(:distributed_cases) { DistributedCase.where(distribution: job)}
+    let(:distributed_cases) { DistributedCase.where(distribution: job) }
 
     let(:non_genpop_distro_cases) do
       DistributedCase.where(distribution_id: distributed_cases.pluck(:id))
