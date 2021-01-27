@@ -4,7 +4,7 @@ import { useHistory, useParams } from 'react-router';
 import { fetchJudges } from '../../QueueActions';
 
 import { appealWithDetailSelector } from '../../selectors';
-import DISPOSITIONS from '../../../../constants/DOCKET_SWITCH';
+import DISPOSITIONS from '../../../../constants/DOCKET_SWITCH_DISPOSITIONS';
 import { createDocketSwitchRulingTask } from './recommendDocketSwitchSlice';
 import { RecommendDocketSwitchForm } from './RecommendDocketSwitchForm';
 import {
