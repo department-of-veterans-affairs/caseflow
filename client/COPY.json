@@ -702,7 +702,9 @@
   "DOCKET_SWITCH_GRANTED_ADD_TASK_BUTTON": "+ Add task",
   "DOCKET_SWITCH_GRANTED_MODAL_TITLE": "Confirm removing task",
   "DOCKET_SWITCH_GRANTED_MODAL_INSTRUCTION": "Are you sure you would like to remove the currently active \"**%s**\"? This task will be closed and will not be transferred over to the new docket. \n\nIf you change your mind before you confirm switching the docket, you can re-select this task to re-open it.",
-
+  "DOCKET_SWITCH_GRANTED_CONFIRM_TITLE": "Switch Docket: Review and Confirm",
+  "DOCKET_SWITCH_GRANTED_CONFIRM_DESCRIPTION_A": "You are switching from %s to %s. Tasks specific to the %s docket will be automatically removed, and tasks associated with the %s docket will be automatically created.",
+  "DOCKET_SWITCH_GRANTED_CONFIRM_DESCRIPTION_B": "Please review all the information below before switching the docket. Once you confirm, tasks will be sent to the appropriate team or individual and the original docket number of the appeal will be preserved.",
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
   "CORRECT_REQUEST_ISSUES_WITHDRAW": "Withdraw",
@@ -736,7 +738,7 @@
   "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If the claimant is a Veteran's dependant (spouse, child, or parent) and they are not listed or their information needs to be updated, ",
   "CLAIMANT_NOT_FOUND_END": " for assistance. Note: Remember to encrypt any emails that contain PII (such as a veteran or claimant's name, file number or SSN).",
   "SELECT_CLAIMANT_LABEL": "Please select the claimant listed on the form. If the claimant is not listed, please select \"Claimant not listed\" and add their information in the next step.",
-  "ADD_CLAIMANT_PAGE_DESCRIPTION" : "You are adding a claimant who is not listed in Caseflow. Please select the claimant’s relationship to the Veteran and add their information accordingly. If the claimant has indicated a representative, you can add their information in the next step.",
+  "ADD_CLAIMANT_PAGE_DESCRIPTION": "You are adding a claimant who is not listed in Caseflow. Please select the claimant’s relationship to the Veteran and add their information accordingly. If the claimant has indicated a representative, you can add their information in the next step.",
   "ADD_CLAIMANT_MODAL_TITLE": "Add Claimant",
   "ADD_CLAIMANT_MODAL_DESCRIPTION": "To add a claimant, select their relationship to the Veteran and type to search for their name. **Please note:** at this time, you are only able to add attorneys as claimants.\n\nIf you are unable to find the attorney in the list of names below, please cancel the intake and [email](mailto:VACaseflowIntake@va.gov) for assistance. Remember to encrypt any emails that contain PII.",
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",
@@ -833,7 +835,6 @@
   "ERROR_CITY_INVALID_CHARACTERS": "This Veteran's city has invalid characters. Please edit it in VBMS or SHARE so each address field does not have invalid characters (including double spaces) then try again.",
   "ERROR_ADDRESS_TOO_LONG": "This Veteran's address is too long. Please edit it in VBMS or SHARE so each address field is no longer than 20 characters (including spaces) then try again",
   "ERROR_INVALID_ZIP_CODE": "Zip codes in the USA must be 5 characters long. Please check the veteran's address and try again.",
-
 
   "END_HOLD_MODAL_TITLE": "End hold early",
   "END_HOLD_MODAL_BODY": "Do you want to end the hold early?",
