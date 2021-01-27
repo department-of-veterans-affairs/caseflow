@@ -3,6 +3,7 @@ import { useHistory } from 'react-router';
 import { FormProvider, Controller } from 'react-hook-form';
 import styled from 'styled-components';
 import { debounce } from 'lodash';
+import _ from 'lodash';
 
 import { IntakeLayout } from '../components/IntakeLayout';
 import SearchableDropdown from 'app/components/SearchableDropdown';
@@ -43,11 +44,24 @@ const getAttorneyClaimantOpts = async (search = '', asyncFn) => {
     return [];
   }
 
+  const formatAddress = (bgsAddress) => {
+    return _.reduce(bgsAddress, (result, value, key) => {
+      result[key] = _.startCase(_.camelCase(value));
+      if (["state", "country"].includes(key)) {
+        result[key] = value;
+      } else {
+        result[key] = _.startCase(_.camelCase(value));
+      }
+
+      return result;
+    }, {});
+  };
+
   const res = await asyncFn(search);
   const options = res.map((item) => ({
     label: item.name,
     value: item.participant_id,
-    address: item.address,
+    address: formatAddress(item.address),
   }));
 
   options.push({ label: 'Name not listed', value: 'not_listed' });
