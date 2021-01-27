@@ -34,7 +34,8 @@ class VACOLS::CaseHearing < VACOLS::Record
     C: Constants.HEARING_DISPOSITION_TYPES.cancelled,
     H: Constants.HEARING_DISPOSITION_TYPES.held,
     N: Constants.HEARING_DISPOSITION_TYPES.no_show,
-    P: Constants.HEARING_DISPOSITION_TYPES.postponed
+    P: Constants.HEARING_DISPOSITION_TYPES.postponed,
+    E: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
   }.freeze
 
   # flip {:H => "held", ...} to {:held => "H", ...}

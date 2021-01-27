@@ -42,6 +42,8 @@ module HearingMapper
         "5"
       when VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:postponed]
         nil
+      when VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:scheduled_in_error]
+        nil
       end
     end
 
