@@ -54,15 +54,21 @@ class CavcRemandsController < ApplicationController
 
   def create_params
     params.merge!(created_by_id: current_user.id, updated_by_id: current_user.id, source_appeal_id: source_appeal.id)
-    params.require(required_params_by_subtype)
+    params.require(required_params_by_decisiontype_and_subtype)
     params.permit(PERMITTED_PARAMS).merge(params.permit(decision_issue_ids: []))
   end
 
-  def required_params_by_subtype
-    if params["remand_subtype"] == Constants.CAVC_REMAND_SUBTYPES.mdr
+  def required_params_by_decisiontype_and_subtype
+    case params["cavc_decision_type"]
+    when Constants.CAVC_DECISION_TYPES.remand
+      case params["remand_subtype"]
+      when Constants.CAVC_REMAND_SUBTYPES.mdr
+        REMAND_REQUIRED_PARAMS
+      else
+        REMAND_REQUIRED_PARAMS + JMR_REQUIRED_PARAMS
+      end
+    when Constants.CAVC_DECISION_TYPES.straight_reversal, Constants.CAVC_DECISION_TYPES.death_dismissal
       REMAND_REQUIRED_PARAMS
-    else
-      REMAND_REQUIRED_PARAMS + JMR_REQUIRED_PARAMS
     end
   end
 end
