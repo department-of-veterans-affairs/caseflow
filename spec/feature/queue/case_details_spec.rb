@@ -117,8 +117,7 @@ RSpec.feature "Case details", :all_dbs do
         hearing = appeal.hearings.first
         expect(page).to have_content("Type: #{hearing.readable_request_type}")
 
-        expect(page).to have_content("Disposition: Cancelled")
-
+        expect(page).to have_content("Disposition: #{Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.cancelled}")
         expect(page).to have_content("Date: ")
         expect(page).to have_content("Judge: ")
       end
