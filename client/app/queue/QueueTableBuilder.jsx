@@ -17,7 +17,6 @@ import { tasksWithAppealsFromRawTasks } from './utils';
 
 import COPY from '../../COPY';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
-import { fullWidth } from './constants';
 import { css } from 'glamor';
 
 /**
