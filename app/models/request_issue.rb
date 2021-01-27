@@ -223,7 +223,7 @@ class RequestIssue < CaseflowRecord
 
   def end_product_code
     return if ineligible?
-    return if decision_review.processed_in_caseflow? 
+    return if decision_review.processed_in_caseflow?
 
     EndProductCodeSelector.new(self).call
   end
