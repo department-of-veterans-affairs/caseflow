@@ -47,7 +47,10 @@ export const getWorksheetAppealsAndIssues = (worksheet) => {
 export const sortHearings = (hearings) =>
   _.orderBy(
     Object.values(hearings || {}),
-    (hearing) => hearing.scheduledFor,
+    // Convert to EST before sorting, this timezeon doesn't effect what's displayed
+    //   we just need to pick one so the sorting works correctly if hearings were
+    //   scheduled in different time zones.
+    (hearing) => moment.tz(hearing.scheduledFor, 'America/New_York'),
     'asc'
   );
 
