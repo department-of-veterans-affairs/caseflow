@@ -56,9 +56,6 @@ export const schema = yup.object().shape({
   vaForm: yup.string().required()
 });
 
-// When listedAttorney not required
-// When partyType includes individual or organization, required
-
 export const useAddClaimantForm = () => {
   const methods = useForm({
     resolver: yupResolver(schema),
