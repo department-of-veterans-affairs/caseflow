@@ -1,16 +1,16 @@
 {
   "direct_review": [
-    { "id": "DistributionTask", "label": "Distribution Task" }
+    { "name": "DistributionTask", "label": "Distribution Task" }
   ],
   "evidence_submission": [
-    { "id": "DistributionTask", "label": "Distribution Task" },
+    { "name": "DistributionTask", "label": "Distribution Task" },
     {
-      "id": "EvidenceSubmissionWindowTask",
+      "name": "EvidenceSubmissionWindowTask",
       "label": "Evidence Submission Window Task"
     }
   ],
   "hearing": [
-    { "id": "DistributionTask", "label": "Distribution Task" },
-    { "id": "HearingTask", "label": "Hearing Task" }
+    { "name": "DistributionTask", "label": "Distribution Task" },
+    { "name": "HearingTask", "label": "Hearing Task" }
   ]
 }
