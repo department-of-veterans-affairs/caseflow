@@ -18,6 +18,7 @@ import { tasksWithAppealsFromRawTasks } from './utils';
 import COPY from '../../COPY';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import { fullWidth } from './constants';
+import { css } from 'glamor';
 
 /**
  * A component to create a queue table's tabs and columns from a queue config or the assignee's tasks
@@ -119,7 +120,7 @@ class QueueTableBuilder extends React.PureComponent {
     const config = this.queueConfig();
 
     return <React.Fragment>
-      <h1 {...fullWidth}>{config.table_title}</h1>
+      <h1 {...css({ display: 'inline-block' })}>{config.table_title}</h1>
       <QueueOrganizationDropdown organizations={this.props.organizations} />
       <TabWindow name="tasks-tabwindow" tabs={this.tabsFromConfig(config)} defaultPage={config.active_tab_index} />
     </React.Fragment>;

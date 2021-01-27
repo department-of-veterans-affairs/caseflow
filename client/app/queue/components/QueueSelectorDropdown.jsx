@@ -7,7 +7,7 @@ import COPY from '../../../COPY';
 
 const style = css({
   float: 'right',
-  top: '-40px'
+  margin: '10px'
 });
 
 export default class QueueSelectorDropdown extends React.Component {
