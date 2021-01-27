@@ -59,14 +59,14 @@ describe HearingTaskTreeInitializer do
     context "when missing legacy appeals" do
       let!(:cases) { create_list(:case, 10, bfcurloc: "57", bfhr: "1") }
 
-      it "creates the legacy appeal and creates schedule hearing tasks", skip: "flake on last expect" do
+      it "creates the legacy appeal and creates schedule hearing tasks" do
         described_class.create_schedule_hearing_tasks
 
         expect(LegacyAppeal.all.pluck(:vacols_id)).to match_array(cases.pluck(:bfkey))
         expect(ScheduleHearingTask.all.pluck(:appeal_id)).to match_array(LegacyAppeal.all.pluck(:id))
         expect(ScheduleHearingTask.first.parent.type).to eq(HearingTask.name)
         expect(ScheduleHearingTask.first.parent.parent.type).to eq(RootTask.name)
-        expect(VACOLS::Case.all.pluck(:bfcurloc).uniq).to eq([LegacyAppeal::LOCATION_CODES[:caseflow]])
+        expect(cases.map { |c| c.reload.bfcurloc }.uniq).to eq([LegacyAppeal::LOCATION_CODES[:caseflow]])
       end
     end
 
