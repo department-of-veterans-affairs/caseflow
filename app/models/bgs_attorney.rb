@@ -6,6 +6,18 @@
 class BgsAttorney < CaseflowRecord
   include BgsService
 
+  attr_accessor :address
+
+  delegate :address,
+           :address_line_1,
+           :address_line_2,
+           :address_line_3,
+           :city,
+           :country,
+           :state,
+           :zip,
+           to: :bgs_address_service
+
   class BgsAttorneyNotFound < StandardError; end
 
   class << self
@@ -20,5 +32,11 @@ class BgsAttorney < CaseflowRecord
 
   def warm_address_cache
     BgsAddressService.new(participant_id: participant_id).refresh_cached_bgs_record
+  end
+
+  private
+
+  def bgs_address_service
+    @bgs_address_service ||= BgsAddressService.new(participant_id: participant_id)
   end
 end

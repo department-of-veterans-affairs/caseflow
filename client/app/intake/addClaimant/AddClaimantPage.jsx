@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useHistory } from 'react-router';
 import { FormProvider, Controller } from 'react-hook-form';
 import styled from 'styled-components';
+import { debounce } from 'lodash';
 
 import { IntakeLayout } from '../components/IntakeLayout';
 import SearchableDropdown from 'app/components/SearchableDropdown';
@@ -10,6 +11,8 @@ import TextField from 'app/components/TextField';
 import AddressForm from 'app/components/AddressForm';
 import { AddClaimantButtons } from './AddClaimantButtons';
 import * as Constants from '../constants';
+import ApiUtil from '../../util/ApiUtil';
+import Address from 'app/queue/components/Address';
 
 import { useAddClaimantForm } from './utils';
 import { ADD_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
@@ -25,6 +28,34 @@ const partyTypeOpts = [
   { displayText: 'Organization', value: 'organization' },
   { displayText: 'Individual', value: 'individual' }
 ];
+
+const fetchAttorneys = async (search = '') => {
+  const res = await ApiUtil.get('/intake/attorneys', {
+    query: { query: search }
+  });
+
+  return res?.body;
+};
+
+const getAttorneyClaimantOpts = async (search = '', asyncFn) => {
+  // Enforce minimum search length (we'll simply return empty array rather than throw error)
+  if (search.length < 3) {
+    return [];
+  }
+
+  const res = await asyncFn(search);
+  const options = res.map((item) => ({
+    label: item.name,
+    value: item.participant_id,
+    address: item.address,
+  }));
+
+  options.push({ label: 'Name not listed', value: 'not_listed' });
+
+  return options;
+};
+// We'll show all items returned from the backend instead of using default substring matching
+const filterOption = () => true;
 
 export const AddClaimantPage = () => {
   const { goBack } = useHistory();
@@ -48,8 +79,17 @@ export const AddClaimantPage = () => {
   const watchRelationship = watch('relationship')?.value;
 
   const showIndividualNameFields = watchPartyType === 'individual' || ['spouse', 'child'].includes(watchRelationship);
-  const showPartyType = ['other', 'attorney'].includes(watchRelationship);
+  const listedAttorney = watch('listedAttorney');
+  const attorneyNotListed = listedAttorney?.value === 'not_listed';
+  const showPartyType = watchRelationship === 'other' || attorneyNotListed;
   const showAdditionalFields = watchPartyType || ['spouse', 'child'].includes(watchRelationship);
+
+  const asyncFn = useCallback(
+    debounce((search, callback) => {
+      getAttorneyClaimantOpts(search, fetchAttorneys).then((res) => callback(res));
+    }, 250),
+    [fetchAttorneys]
+  );
 
   return (
     <FormProvider {...methods}>
@@ -75,6 +115,40 @@ export const AddClaimantPage = () => {
             as={SearchableDropdown}
           />
           <br />
+          { watchRelationship === 'attorney' &&
+            <>
+              <Controller
+                control={control}
+                name="listedAttorney"
+                defaultValue=""
+                render={({ onChange, ...rest }) => (
+                  <SearchableDropdown
+                    {...rest}
+                    label="Claimant's name"
+                    filterOption={filterOption}
+                    async={asyncFn}
+                    defaultOptions
+                    debounce={250}
+                    strongLabel
+                    isClearable
+                    placeholder="Type to search..."
+                    onChange={(valObj) => onChange(valObj)}
+                  />
+                )}
+              />
+            </>
+          }
+
+          { listedAttorney?.address &&
+            <div>
+              <ClaimantAddress>
+                <strong>Claimant's address</strong>
+              </ClaimantAddress>
+              <br />
+              <Address address={listedAttorney?.address} />
+            </div>
+          }
+
           { showPartyType &&
             <RadioField
               name="partyType"
@@ -154,15 +228,17 @@ export const AddClaimantPage = () => {
                   strongLabel
                 />
               </PhoneNumber>
-              <RadioField
-                options={Constants.BOOLEAN_RADIO_OPTIONS}
-                vertical
-                inputRef={register}
-                label="Do you have a VA Form 21-22 for this claimant?"
-                name="vaForm"
-                strongLabel
-              />
             </>
+          }
+          { (showAdditionalFields || listedAttorney) &&
+            <RadioField
+              options={Constants.BOOLEAN_RADIO_OPTIONS}
+              vertical
+              inputRef={register}
+              label="Do you have a VA Form 21-22 for this claimant?"
+              name="vaForm"
+              strongLabel
+            />
           }
         </form>
       </IntakeLayout>
@@ -181,4 +257,8 @@ const Suffix = styled.div`
 const PhoneNumber = styled.div`
   width: 240px;
   margin-bottom: 2em;
+`;
+
+const ClaimantAddress = styled.div`
+  margin-top: 1.5em;
 `;
