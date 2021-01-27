@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import Modal from 'app/components/Modal';
 import DateSelector from 'app/components/DateSelector';
@@ -14,6 +15,12 @@ import { formatDateStr } from '../../util/DateUtil';
 import { appealWithDetailSelector } from '../selectors';
 import Alert from 'app/components/Alert';
 import SearchableDropdown from 'app/components/SearchableDropdown';
+import { marginTop } from '../constants';
+
+const alertStyling = css({
+  marginBottom: '2em',
+  '& .usa-alert-text': { lineHeight: '1' }
+});
 
 const changeReasons = [
   { label: 'New Form/Information Received', value: 'new_info' },
@@ -164,11 +171,13 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
       </div>
       { showWarning ? <Alert
         message={COPY.EDIT_NOD_DATE_WARNING_ALERT_MESSAGE}
+        styling={alertStyling}
         title=""
         type="info"
         scrollOnAlert= {false}
       /> : null }
       <DateSelector
+        style={marginTop}
         name="nodDate"
         errorMessage={errorMessage}
         label={COPY.EDIT_NOD_DATE_LABEL}
