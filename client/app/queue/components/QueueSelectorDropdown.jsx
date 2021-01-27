@@ -6,7 +6,8 @@ import DropdownButton from '../../components/DropdownButton';
 import COPY from '../../../COPY';
 
 const style = css({
-  float: 'right'
+  float: 'right',
+  top: '-40px'
 });
 
 export default class QueueSelectorDropdown extends React.Component {
