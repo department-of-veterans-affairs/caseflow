@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :veteran do
     first_name { "Bob" }
-    last_name { "Smith#{Faker::Name.last_name.downcase.tr("'", "")}" }
+    last_name { "Smith#{Faker::Name.last_name.downcase.tr('\'', '')}" }
     name_suffix { (bob_smith_count == 1) ? "II" : bob_smith_count.to_s }
     ssn { Generators::Random.unique_ssn }
     email_address { "#{first_name}.#{last_name}@test.com" }
