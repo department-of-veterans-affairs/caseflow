@@ -91,11 +91,6 @@ feature "Non-veteran claimants", :postgres do
     end
   end
 
-  def select_relationship(relationship_label)
-    safe_click ".cf-select"
-
-  end
-
   def add_existing_attorney(attorney)
     claimant_search(attorney.name)
     select_claimant(0)
