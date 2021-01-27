@@ -84,7 +84,8 @@ export const DocketSwitchEditTasksForm = ({
   // Used for display of mandatory tasks
   const mandatoryTaskOptions = useMemo(() => {
     return tasksByDocketType[docketTo].map((item) => ({
-      ...item,
+      id: item.name,
+      label: item.label,
       disabled: true,
     }));
   }, [docketTo]);
