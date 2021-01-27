@@ -5,11 +5,8 @@ import { css } from 'glamor';
 import DropdownButton from '../../components/DropdownButton';
 import COPY from '../../../COPY';
 
-// NOTE: parent container needs to be given 'position: relative'
 const style = css({
-  position: 'absolute',
-  top: '48px',
-  right: '40px'
+  float: 'right'
 });
 
 export default class QueueSelectorDropdown extends React.Component {
