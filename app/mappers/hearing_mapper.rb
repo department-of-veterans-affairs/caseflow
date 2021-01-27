@@ -34,14 +34,14 @@ module HearingMapper
 
     def bfha_vacols_code(hearing_record)
       case hearing_record.hearing_disp
-      when "H" # Held
+      when VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:cancelled]
+        "5"
+      when VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:held]
         code_based_on_request_type(hearing_record.hearing_type.to_sym)
-      when "P" # Postponed
+      when VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:no_show]
+        "5"
+      when VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:postponed]
         nil
-      when "C" # Canceled
-        "5"
-      when "N" # No Show
-        "5"
       end
     end
 
