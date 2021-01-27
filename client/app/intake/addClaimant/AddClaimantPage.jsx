@@ -2,8 +2,7 @@ import React, { useCallback } from 'react';
 import { useHistory } from 'react-router';
 import { FormProvider, Controller } from 'react-hook-form';
 import styled from 'styled-components';
-import { debounce } from 'lodash';
-import _ from 'lodash';
+import _, { debounce } from 'lodash';
 
 import { IntakeLayout } from '../components/IntakeLayout';
 import SearchableDropdown from 'app/components/SearchableDropdown';
@@ -47,7 +46,7 @@ const getAttorneyClaimantOpts = async (search = '', asyncFn) => {
   const formatAddress = (bgsAddress) => {
     return _.reduce(bgsAddress, (result, value, key) => {
       result[key] = _.startCase(_.camelCase(value));
-      if (["state", "country"].includes(key)) {
+      if (['state', 'country'].includes(key)) {
         result[key] = value;
       } else {
         result[key] = _.startCase(_.camelCase(value));
