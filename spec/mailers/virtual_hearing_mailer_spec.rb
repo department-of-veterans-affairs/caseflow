@@ -27,9 +27,11 @@ describe VirtualHearingMailer do
   let(:pexip_url) { "fake.va.gov" }
 
   shared_context "ama_hearing" do
+    let(:appeal) { create(:appeal, :hearing_docket) }
     let(:hearing) do
       create(
         :hearing,
+        appeal: appeal,
         scheduled_time: "8:30AM",
         hearing_day: hearing_day,
         regional_office: regional_office
@@ -38,22 +40,42 @@ describe VirtualHearingMailer do
   end
 
   shared_context "legacy_hearing" do
-    let(:hearing) do
-      hearing_date = Time.use_zone("America/New_York") do
+    let(:correspondent) { create(:correspondent) }
+    let(:appellant_address) { nil }
+    let(:hearing_date) do
+      Time.use_zone("America/New_York") do
         Time.zone.now.change(hour: 11, min: 30) + 1.day # Tomorrow. Matches the AMA hearing scheduled for.
       end
-      case_hearing = create(
+    end
+    let(:case_hearing) do
+      create(
         :case_hearing,
         hearing_type: hearing_day.request_type,
         hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date) # VACOLS always has EST time
       )
-      hearing_location = create(:hearing_location, regional_office: regional_office)
-
+    end
+    let(:vacols_case) do
+      create(
+        :case_with_form_9,
+        correspondent: correspondent,
+        case_issues: [create(:case_issue), create(:case_issue)],
+        bfregoff: regional_office,
+        case_hearings: [case_hearing]
+      )
+    end
+    let(:hearing) do
       create(
         :legacy_hearing,
         case_hearing: case_hearing,
         hearing_day_id: hearing_day.id,
-        hearing_location: hearing_location
+        regional_office: regional_office,
+        appeal: create(
+          :legacy_appeal,
+          :with_veteran,
+          appellant_address: appellant_address,
+          closest_regional_office: regional_office,
+          vacols_case: vacols_case
+        )
       )
     end
   end
@@ -367,6 +389,29 @@ describe VirtualHearingMailer do
             expect(subject.html_part.body).to include(expected_ama_times[:ro_and_recipient_both_eastern])
           end
         end
+
+        describe "internal use section" do
+          it "has veteran's state of residence" do
+            # FL is the default veteran's state of residence
+            expect(subject.html_part.body.decoded).to include("For internal Board use:\r\n  FL")
+          end
+
+          context "veteran is not appellant" do
+            let(:appeal) do
+              create(
+                :appeal,
+                :hearing_docket,
+                number_of_claimants: 1,
+                veteran_is_not_claimant: true
+              )
+            end
+
+            it "has appellant's state of residence" do
+              # CA is the default appellant's state of residence
+              expect(subject.html_part.body.decoded).to include("For internal Board use:\r\n  CA")
+            end
+          end
+        end
       end
 
       describe "#updated_time_confirmation" do
@@ -433,7 +478,8 @@ describe VirtualHearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_ama_times[:ro_and_recipient_both_eastern]}"
+              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "#{expected_ama_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
             )
           end
         end
@@ -443,7 +489,8 @@ describe VirtualHearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_ama_times[:ro_and_recipient_both_pacific]}"
+              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "#{expected_ama_times[:ro_and_recipient_both_pacific]} – Do Not Reply"
             )
           end
         end
@@ -453,7 +500,8 @@ describe VirtualHearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_ama_times[:ro_eastern_recipient_pacific]}"
+              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "#{expected_ama_times[:ro_eastern_recipient_pacific]} – Do Not Reply"
             )
           end
         end
@@ -461,7 +509,8 @@ describe VirtualHearingMailer do
         context "appellant_tz is not present" do
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_ama_times[:ro_and_recipient_both_eastern]}"
+              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "#{expected_ama_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
             )
           end
         end
@@ -552,6 +601,39 @@ describe VirtualHearingMailer do
             expect(subject.html_part.body).to include(expected_legacy_times[:ro_and_recipient_both_eastern])
           end
         end
+
+        describe "internal use section" do
+          it "has veteran's state of residence" do
+            # FL is the default veteran's state of residence
+            expect(subject.html_part.body.decoded).to include("For internal Board use:\r\n  FL")
+          end
+
+          context "veteran is not appellant" do
+            let(:correspondent) do
+              create(
+                :correspondent,
+                appellant_first_name: "Sirref",
+                appellant_last_name: "Test",
+                ssn: "333224444"
+              )
+            end
+            let(:appellant_address) do
+              {
+                addrs_one_txt: "9001 FAKE ST",
+                addrs_two_txt: "APT 2",
+                addrs_three_txt: nil,
+                city_nm: "BROOKLYN",
+                postal_cd: "NY",
+                cntry_nm: nil,
+                zip_prefix_nbr: "11222"
+              }
+            end
+
+            it "has appellant's state of residence" do
+              expect(subject.html_part.body.decoded).to include("For internal Board use:\r\n  NY")
+            end
+          end
+        end
       end
 
       describe "#updated_time_confirmation" do
@@ -596,7 +678,8 @@ describe VirtualHearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_legacy_times[:ro_and_recipient_both_eastern]}"
+              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "#{expected_legacy_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
             )
           end
         end
@@ -606,7 +689,8 @@ describe VirtualHearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_legacy_times[:ro_and_recipient_both_pacific]}"
+              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "#{expected_legacy_times[:ro_and_recipient_both_pacific]} – Do Not Reply"
             )
           end
         end
@@ -616,7 +700,8 @@ describe VirtualHearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_legacy_times[:ro_eastern_recipient_pacific]}"
+              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "#{expected_legacy_times[:ro_eastern_recipient_pacific]} – Do Not Reply"
             )
           end
         end
@@ -624,7 +709,8 @@ describe VirtualHearingMailer do
         context "appellant_tz is not present" do
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_legacy_times[:ro_and_recipient_both_eastern]}"
+              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "#{expected_legacy_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
             )
           end
         end
@@ -827,7 +913,8 @@ describe VirtualHearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_ama_times[:ro_and_recipient_both_eastern]}"
+              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "#{expected_ama_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
             )
           end
         end
@@ -837,7 +924,8 @@ describe VirtualHearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_ama_times[:ro_and_recipient_both_pacific]}"
+              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "#{expected_ama_times[:ro_and_recipient_both_pacific]} – Do Not Reply"
             )
           end
         end
@@ -847,7 +935,8 @@ describe VirtualHearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_ama_times[:ro_eastern_recipient_pacific]}"
+              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "#{expected_ama_times[:ro_eastern_recipient_pacific]} – Do Not Reply"
             )
           end
         end
@@ -855,7 +944,8 @@ describe VirtualHearingMailer do
         context "appellant_tz is not present" do
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_ama_times[:ro_and_recipient_both_eastern]}"
+              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "#{expected_ama_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
             )
           end
         end
@@ -990,7 +1080,8 @@ describe VirtualHearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_legacy_times[:ro_and_recipient_both_eastern]}"
+              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "#{expected_legacy_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
             )
           end
         end
@@ -1000,7 +1091,8 @@ describe VirtualHearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_legacy_times[:ro_and_recipient_both_pacific]}"
+              "Reminder: Your Board hearing is Tue, Jan 21 at " \
+              "#{expected_legacy_times[:ro_and_recipient_both_pacific]} – Do Not Reply"
             )
           end
         end
@@ -1010,7 +1102,8 @@ describe VirtualHearingMailer do
 
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_legacy_times[:ro_eastern_recipient_pacific]}"
+              "Reminder: Your Board hearing is Tue, Jan 21 at "\
+              "#{expected_legacy_times[:ro_eastern_recipient_pacific]} – Do Not Reply"
             )
           end
         end
@@ -1018,7 +1111,8 @@ describe VirtualHearingMailer do
         context "appellant_tz is not present" do
           it "has the correct subject line" do
             expect(subject.subject).to eq(
-              "Reminder: Your Board hearing is Tue, Jan 21 at #{expected_legacy_times[:ro_and_recipient_both_eastern]}"
+              "Reminder: Your Board hearing is Tue, Jan 21 at "\
+              "#{expected_legacy_times[:ro_and_recipient_both_eastern]} – Do Not Reply"
             )
           end
         end
