@@ -173,7 +173,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
         ]
       end
 
-      it "creates decision issues for each request issue" do
+      fit "creates decision issues for each request issue" do
         put :update, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id,
                                decision_issues: [
                                  {
