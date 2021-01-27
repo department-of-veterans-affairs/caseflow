@@ -29,7 +29,7 @@ describe('HearingDay hearing sort order', () => {
     });
   });
 
-  test('Sorts correctly when scheduledFor has timezones', () => {
+  test('Sorts correctly when scheduledFor has multiple timezones', () => {
     const sorted = sortHearings(hearingsMultipleTimezones);
 
     sorted.map((hearing, index) => {
