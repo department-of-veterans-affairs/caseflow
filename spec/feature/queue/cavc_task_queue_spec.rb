@@ -289,8 +289,12 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
     end
 
     describe "MandateHoldTask" do
-      # also works for death-dismissal
-      let(:cavc_decision_type) { Constants.CAVC_DECISION_TYPES.straight_reversal }
+      let(:cavc_decision_type) do
+        [
+          Constants.CAVC_DECISION_TYPES.straight_reversal,
+          Constants.CAVC_DECISION_TYPES.death_dismissal
+        ].sample
+      end
       let!(:cavc_remand) do
         create(:cavc_remand,
                cavc_decision_type: cavc_decision_type,
