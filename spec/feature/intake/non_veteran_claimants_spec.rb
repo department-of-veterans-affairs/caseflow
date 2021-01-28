@@ -66,8 +66,10 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to_not have_content(attorney.name)
       expect(page).to_not have_content("Claimant's address")
       expect(page).to have_button("Continue to next step", disabled: true)
+      expect(page).to have_content("Type to search...")
 
-      fill_in("Claimant's name", with: "Name not listed").send_keys :enter
+      safe_click ".dropdown-listedAttorney"
+      fill_in("listedAttorney", with: "Name not listed").send_keys :enter
       select_claimant(0)
 
       expect(page).to have_content("Is the claimant an organization or individual?")
