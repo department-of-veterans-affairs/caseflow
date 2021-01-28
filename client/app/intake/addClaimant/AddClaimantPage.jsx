@@ -133,7 +133,7 @@ export const AddClaimantPage = () => {
               <Controller
                 control={control}
                 name="listedAttorney"
-                defaultValue=""
+                defaultValue={null}
                 render={({ onChange, ...rest }) => (
                   <SearchableDropdown
                     {...rest}
@@ -145,7 +145,6 @@ export const AddClaimantPage = () => {
                     strongLabel
                     isClearable
                     placeholder="Type to search..."
-                    onChange={(valObj) => onChange(valObj)}
                   />
                 )}
               />
