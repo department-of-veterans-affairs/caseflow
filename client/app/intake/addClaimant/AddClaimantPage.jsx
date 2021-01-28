@@ -31,8 +31,8 @@ const relationshipOpts = [
 ];
 
 const partyTypeOpts = [
-  { displayText: 'Organization', value: 'organization' },
-  { displayText: 'Individual', value: 'individual' }
+  { displayText: 'Organization', value: 'organization', ariaLabel: 'Organization' },
+  { displayText: 'Individual', value: 'individual', ariaLabel: 'Individual' }
 ];
 
 export const AddClaimantPage = ({ methods }) => {
@@ -80,7 +80,7 @@ export const AddClaimantPage = ({ methods }) => {
       }
       <br />
       { showIndividualNameFields &&
-        <div id="names">
+        <div aria-label="nameFields">
           <TextField
             name="firstName"
             label="First name"
@@ -116,6 +116,7 @@ export const AddClaimantPage = ({ methods }) => {
       }
       { watchPartyType === 'organization' &&
         <TextField
+          ariaLabel="organization"
           name="organization"
           label="Organization name"
           inputRef={register}
@@ -123,8 +124,11 @@ export const AddClaimantPage = ({ methods }) => {
         />
       }
       { showAdditionalFields &&
-        <>
-          <AddressForm {...methods} />
+        <div aria-label="additionalFields">
+          <AddressForm
+            control={control}
+            register={register}
+            watch={watch} />
           <TextField
             name="email"
             label="Claimant email"
@@ -149,7 +153,7 @@ export const AddClaimantPage = ({ methods }) => {
             name="vaForm"
             strongLabel
           />
-        </>
+        </div>
       }
     </form>
   );
