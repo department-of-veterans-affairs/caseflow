@@ -10,7 +10,7 @@ import AddressForm from 'app/components/AddressForm';
 import { useAddClaimantForm } from './utils';
 import * as Constants from '../constants';
 
-const field = css({
+const firstName = css({
   marginBottom: '1.5em',
 });
 
@@ -21,6 +21,10 @@ const suffix = css({
 const phoneNumber = css({
   width: '240px',
   marginBottom: '2em'
+});
+
+const field = css({
+  marginBottom: '0.5em'
 });
 
 const relationshipOpts = [
@@ -86,7 +90,7 @@ export const AddClaimantPage = ({ methods }) => {
             label="First name"
             inputRef={register}
             strongLabel
-            {...field}
+            inputStyling={firstName}
           />
           <TextField
             name="middleName"
@@ -94,7 +98,7 @@ export const AddClaimantPage = ({ methods }) => {
             inputRef={register}
             optional
             strongLabel
-            {...field}
+            inputStyling={field}
           />
           <TextField
             name="lastName"
@@ -102,16 +106,17 @@ export const AddClaimantPage = ({ methods }) => {
             inputRef={register}
             optional
             strongLabel
-            {...field}
+            inputStyling={field}
           />
-          <TextField
-            name="suffix"
-            label="Suffix"
-            inputRef={register}
-            optional
-            strongLabel
-            {...suffix}
-          />
+          <div {...suffix}>
+            <TextField
+              name="suffix"
+              label="Suffix"
+              inputRef={register}
+              optional
+              strongLabel
+            />
+          </div>
         </div>
       }
       { watchPartyType === 'organization' &&
@@ -135,16 +140,17 @@ export const AddClaimantPage = ({ methods }) => {
             inputRef={register}
             optional
             strongLabel
-            {...field}
+            inputStyling={field}
           />
-          <TextField
-            name="phoneNumber"
-            label="Phone number"
-            inputRef={register}
-            optional
-            strongLabel
-            {...phoneNumber}
-          />
+          <div {...phoneNumber}>
+            <TextField
+              name="phoneNumber"
+              label="Phone number"
+              inputRef={register}
+              optional
+              strongLabel
+            />
+          </div>
           <RadioField
             options={Constants.BOOLEAN_RADIO_OPTIONS}
             vertical

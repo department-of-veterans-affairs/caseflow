@@ -8,7 +8,7 @@ import TextField from 'app/components/TextField';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 
 const city = css({
-  marginBottom: '0'
+  marginBottom: '0px'
 });
 
 const cityState = css({
@@ -16,7 +16,6 @@ const cityState = css({
   gridGap: '10px',
   gridTemplateColumns: '320px 130px',
   marginBottom: '0em',
-  marginTop: '-1em',
   alignItems: 'center',
 });
 
@@ -24,16 +23,14 @@ const field = css({
   marginBottom: '1.5em'
 });
 
-const address3 = css({
-  marginTop: '-.5em',
-  marginBottom: '-.65em'
+const address2 = css({
+  marginBottom: '0em'
 });
 
 const zipCountry = css({
   display: 'grid',
   gridGap: '10px',
   gridTemplateColumns: '140px 310px',
-  marginBottom: '-.65em'
 });
 
 export const AddressForm = ({ control, register, watch }) => {
@@ -46,7 +43,7 @@ export const AddressForm = ({ control, register, watch }) => {
         label="Street address 1"
         inputRef={register}
         strongLabel
-        {...field}
+        inputStyling={field}
       />
       <TextField
         name="address2"
@@ -54,7 +51,7 @@ export const AddressForm = ({ control, register, watch }) => {
         inputRef={register}
         optional
         strongLabel
-        {...field}
+        inputStyling={address2}
       />
       {
         watchPartyType === 'organization' &&
@@ -64,7 +61,6 @@ export const AddressForm = ({ control, register, watch }) => {
             inputRef={register}
             optional
             strongLabel
-            {...address3}
           />
       }
       <div {...cityState}>
@@ -73,7 +69,7 @@ export const AddressForm = ({ control, register, watch }) => {
           label="City"
           inputRef={register}
           strongLabel
-          {...city}
+          inputStyling={city}
         />
         <Controller
           control={control}
