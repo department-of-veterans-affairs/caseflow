@@ -15,6 +15,7 @@ import VirtualHearingLink from '../VirtualHearingLink';
 import { DISPOSITION_OPTIONS } from '../../constants';
 import { COLORS } from '../../../constants/AppConstants';
 import COPY from '../../../../COPY';
+import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION_TYPES';
 
 const staticSpacing = css({ marginTop: '5px' });
 
@@ -31,7 +32,7 @@ export const DispositionDropdown = ({ hearing, update, readOnly, openDisposition
           return;
         }
 
-        const fromDisposition = hearing.disposition;
+        const fromDisposition = hearing?.disposition;
         const toDisposition = option.value;
 
         openDispositionModal({
@@ -232,7 +233,8 @@ StaticRegionalOffice.propTypes = {
 };
 
 export const NotesField = ({ hearing, update, readOnly }) => {
-  const disabled = readOnly || ['postponed', 'cancelled'].indexOf(hearing.disposition) > -1;
+  const disabled = readOnly ||
+    [HEARING_DISPOSITION_TYPES.postponed, HEARING_DISPOSITION_TYPES.cancelled].indexOf(hearing.disposition) > -1;
 
   return (
     <TextareaField

@@ -107,7 +107,7 @@ export const DISPOSITION_OPTIONS = [{ value: 'held',
 { value: 'no_show',
   label: 'No Show' },
 { value: 'cancelled',
-  label: 'Cancelled' },
+  label: 'Withdrawn' },
 { value: 'postponed',
   label: 'Postponed' }];
 
