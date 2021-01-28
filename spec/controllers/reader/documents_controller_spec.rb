@@ -3,19 +3,11 @@
 describe Reader::DocumentsController, :postgres, type: :controller do
   let(:attorney_user) { create(:user, roles: ["Reader"]) }
   let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+  let!(:appeal) { create(:appeal) }
   let(:params) { { format: :json, appeal_id: appeal.uuid } }
 
   before { User.authenticate!(user: attorney_user) }
   after { User.unauthenticate! }
-
-  let!(:appeal) { create(:appeal) }
-  let(:document_fetcher) { DocumentFetcher.new(appeal: appeal, use_efolder: true) }
-  let!(:documents) do
-    [
-      Generators::Document.build(id: 201, type: "NOD", series_id: "TEST_SERIES_ID"),
-      Generators::Document.build(id: 202, type: "SOC")
-    ]
-  end
 
   before do
     fetched_doc_struct = {
