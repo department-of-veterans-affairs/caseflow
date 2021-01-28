@@ -1,18 +1,27 @@
 import React from 'react';
-import { useHistory } from 'react-router';
-import { FormProvider, Controller } from 'react-hook-form';
-import styled from 'styled-components';
+import { css } from 'glamor';
+import PropTypes from 'prop-types';
+import { Controller } from 'react-hook-form';
 
-import { IntakeLayout } from '../components/IntakeLayout';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import RadioField from 'app/components/RadioField';
 import TextField from 'app/components/TextField';
 import AddressForm from 'app/components/AddressForm';
-import { AddClaimantButtons } from './AddClaimantButtons';
+import { useAddClaimantForm } from './utils';
 import * as Constants from '../constants';
 
-import { useAddClaimantForm } from './utils';
-import { ADD_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
+const field = css({
+  marginBottom: '1.5em',
+});
+
+const suffix = css({
+  maxWidth: '8em',
+});
+
+const phoneNumber = css({
+  width: '240px',
+  marginBottom: '2em'
+});
 
 const relationshipOpts = [
   { value: 'attorney', label: 'Attorney (previously or currently)' },
@@ -26,23 +35,20 @@ const partyTypeOpts = [
   { displayText: 'Individual', value: 'individual' }
 ];
 
-export const AddClaimantPage = () => {
-  const { goBack } = useHistory();
-  const methods = useAddClaimantForm();
+export const AddClaimantPage = ({ methods }) => {
   const {
     control,
     register,
     watch,
-    formState: { isValid },
     handleSubmit,
-  } = methods;
+  } = methods || useAddClaimantForm();
+
   const onSubmit = (formData) => {
     // Update this to...
     // Add claimant info to Redux
     // Probably handle submission of both claimant and remaining intake info (from Review step)
     return formData;
   };
-  const handleBack = () => goBack();
 
   const watchPartyType = watch('partyType');
   const watchRelationship = watch('relationship')?.value;
@@ -52,133 +58,103 @@ export const AddClaimantPage = () => {
   const showAdditionalFields = watchPartyType || ['spouse', 'child'].includes(watchRelationship);
 
   return (
-    <FormProvider {...methods}>
-      <IntakeLayout
-        buttons={
-          <AddClaimantButtons
-            onBack={handleBack}
-            onSubmit={handleSubmit(onSubmit)}
-            isValid={isValid}
-          />
-        }
-      >
-        <h1>Add Claimant</h1>
-        <p>{ADD_CLAIMANT_PAGE_DESCRIPTION}</p>
-
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Controller
-            control={control}
-            name="relationship"
-            label="Relationship to the Veteran"
-            options={relationshipOpts}
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Controller
+        control={control}
+        name="relationship"
+        label="Relationship to the Veteran"
+        options={relationshipOpts}
+        strongLabel
+        as={SearchableDropdown}
+      />
+      <br />
+      { showPartyType &&
+        <RadioField
+          name="partyType"
+          label="Is the claimant an organization or individual?"
+          inputRef={register}
+          strongLabel
+          vertical
+          options={partyTypeOpts}
+        />
+      }
+      <br />
+      { showIndividualNameFields &&
+        <div id="names">
+          <TextField
+            name="firstName"
+            label="First name"
+            inputRef={register}
             strongLabel
-            as={SearchableDropdown}
+            {...field}
           />
-          <br />
-          { showPartyType &&
-            <RadioField
-              name="partyType"
-              label="Is the claimant an organization or individual?"
-              inputRef={register}
-              strongLabel
-              vertical
-              options={partyTypeOpts}
-            />
-          }
-          <br />
-          { showIndividualNameFields &&
-            <>
-              <FieldDiv>
-                <TextField
-                  name="firstName"
-                  label="First name"
-                  inputRef={register}
-                  strongLabel
-                />
-              </FieldDiv>
-              <FieldDiv>
-                <TextField
-                  name="middleName"
-                  label="Middle name/initial"
-                  inputRef={register}
-                  optional
-                  strongLabel
-                />
-              </FieldDiv>
-              <FieldDiv>
-                <TextField
-                  name="lastName"
-                  label="Last name"
-                  inputRef={register}
-                  optional
-                  strongLabel
-                />
-              </FieldDiv>
-              <Suffix>
-                <TextField
-                  name="suffix"
-                  label="Suffix"
-                  inputRef={register}
-                  optional
-                  strongLabel
-                />
-              </Suffix>
-            </>
-          }
-          { watchPartyType === 'organization' &&
-            <TextField
-              name="organization"
-              label="Organization name"
-              inputRef={register}
-              strongLabel
-            />
-          }
-          { showAdditionalFields &&
-            <>
-              <AddressForm {...methods} />
-              <FieldDiv>
-                <TextField
-                  name="email"
-                  label="Claimant email"
-                  inputRef={register}
-                  optional
-                  strongLabel
-                />
-              </FieldDiv>
-              <PhoneNumber>
-                <TextField
-                  name="phoneNumber"
-                  label="Phone number"
-                  inputRef={register}
-                  optional
-                  strongLabel
-                />
-              </PhoneNumber>
-              <RadioField
-                options={Constants.BOOLEAN_RADIO_OPTIONS}
-                vertical
-                inputRef={register}
-                label="Do you have a VA Form 21-22 for this claimant?"
-                name="vaForm"
-                strongLabel
-              />
-            </>
-          }
-        </form>
-      </IntakeLayout>
-    </FormProvider>
+          <TextField
+            name="middleName"
+            label="Middle name/initial"
+            inputRef={register}
+            optional
+            strongLabel
+            {...field}
+          />
+          <TextField
+            name="lastName"
+            label="Last name"
+            inputRef={register}
+            optional
+            strongLabel
+            {...field}
+          />
+          <TextField
+            name="suffix"
+            label="Suffix"
+            inputRef={register}
+            optional
+            strongLabel
+            {...suffix}
+          />
+        </div>
+      }
+      { watchPartyType === 'organization' &&
+        <TextField
+          name="organization"
+          label="Organization name"
+          inputRef={register}
+          strongLabel
+        />
+      }
+      { showAdditionalFields &&
+        <>
+          <AddressForm {...methods} />
+          <TextField
+            name="email"
+            label="Claimant email"
+            inputRef={register}
+            optional
+            strongLabel
+            {...field}
+          />
+          <TextField
+            name="phoneNumber"
+            label="Phone number"
+            inputRef={register}
+            optional
+            strongLabel
+            {...phoneNumber}
+          />
+          <RadioField
+            options={Constants.BOOLEAN_RADIO_OPTIONS}
+            vertical
+            inputRef={register}
+            label="Do you have a VA Form 21-22 for this claimant?"
+            name="vaForm"
+            strongLabel
+          />
+        </>
+      }
+    </form>
   );
 };
 
-const FieldDiv = styled.div`
-  margin-bottom: 1.5em;
-`;
-
-const Suffix = styled.div`
-  max-width: 8em;
-`;
-
-const PhoneNumber = styled.div`
-  width: 240px;
-  margin-bottom: 2em;
-`;
+AddClaimantPage.propTypes = {
+  methods: PropTypes.object
+};
