@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+/* eslint-disable no-undefined */
+import React, { useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
