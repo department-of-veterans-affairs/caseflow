@@ -29,14 +29,14 @@ describe Reader::DocumentsController, :postgres, type: :controller do
 
   describe "#index" do
     context "when API returns many documents" do
-      # Increase the size of the array to test scalability; 20000 works but takes a minute or so
       let(:documents) { Array.new(50) { Generators::Document.build }.uniq(&:vbms_document_id) }
       let!(:saved_documents) do
         Array.new(20) do |i|
-          # have every other document already exists to test that all CREATEs and UPDATEs are each done at most once
+          # to test that all CREATEs and UPDATEs are each done at most once,
+          # have every other document already exists (up to 20 records)
           fetched_document = documents[i * 2]
           Generators::Document.create(
-            type: "Form 9",
+            type: "SOC",
             series_id: fetched_document.series_id,
             vbms_document_id: fetched_document.vbms_document_id
           )
@@ -48,7 +48,7 @@ describe Reader::DocumentsController, :postgres, type: :controller do
           fetched_document = documents[(i * 2) + 1]
           # same series_id but different vbms_document_id indicate different versions of same document
           doc = Generators::Document.create(
-            type: "Form 9",
+            type: "SOC",
             series_id: fetched_document.series_id,
             vbms_document_id: fetched_document.vbms_document_id + ".old",
             category_medical: true
@@ -59,8 +59,6 @@ describe Reader::DocumentsController, :postgres, type: :controller do
         end
       end
       it "DocumentsController" do
-        annotations = []
-        tags = []
         ActiveRecord::Base.logger = Logger.new(STDOUT)
         controller_query_data = SqlTracker.track do
           get :index, params: params

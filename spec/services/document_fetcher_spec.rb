@@ -337,7 +337,7 @@ describe DocumentFetcher, :postgres do
           annotns_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"annotations\"") }
           expect(annotns_insert_queries.pluck(:count).max).to eq older_documents_with_metadata.count
 
-          doctags_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents_tags\"") }
+          doctags_insert_queries = query_data.values.select { |o| o[:sql].start_with?("INSERT INTO \"documents_tags") }
           expect(doctags_insert_queries.pluck(:count).max).to eq older_documents_with_metadata.count
 
           doc_update_queries = query_data.values.select { |o| o[:sql].start_with?("UPDATE \"documents\"") }
@@ -356,7 +356,7 @@ describe DocumentFetcher, :postgres do
           it "deduplicates, sends warning to Sentry, and does not fail bulk upsert" do
             expect(documents.map(&:vbms_document_id).count).to eq(53)
             expect(documents.map(&:vbms_document_id).uniq.count).to eq(50)
-            expect(Document.count).to eq (saved_documents.count + older_documents_with_metadata.count)
+            expect(Document.count).to eq(saved_documents.count + older_documents_with_metadata.count)
             expect(Document.find_by(vbms_document_id: documents.first.vbms_document_id)).not_to be_nil
             expect(Document.find_by(vbms_document_id: documents.second.vbms_document_id)).to be_nil
             expect(Document.find_by(vbms_document_id: documents.third.vbms_document_id)).not_to be_nil
