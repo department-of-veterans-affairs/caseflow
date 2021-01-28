@@ -134,7 +134,7 @@ export const AddClaimantPage = () => {
                 control={control}
                 name="listedAttorney"
                 defaultValue={null}
-                render={({ onChange, ...rest }) => (
+                render={({ ...rest }) => (
                   <SearchableDropdown
                     {...rest}
                     label="Claimant's name"
