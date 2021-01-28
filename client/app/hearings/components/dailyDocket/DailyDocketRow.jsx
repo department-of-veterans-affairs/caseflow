@@ -6,6 +6,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { isUndefined, isNil, isEmpty, omitBy, get } from 'lodash';
 
+import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION_TYPES';
+
 import { AodModal } from './DailyDocketModals';
 import {
   DispositionDropdown,
@@ -249,7 +251,7 @@ class DailyDocketRow extends React.Component {
 
         this.update(hearingWithDisp);
 
-        if (['postponed', 'cancelled'].indexOf(toDisposition) === -1) {
+        if ([HEARING_DISPOSITION_TYPES.postponed, HEARING_DISPOSITION_TYPES.cancelled].indexOf(toDisposition) === -1) {
           this.setState({
             initialState: hearingWithDisp,
             editedFields: [],
