@@ -13,6 +13,7 @@ export const TextField = (props) => {
   const handleChange = (event) => props.onChange?.(event.target.value);
 
   const {
+    ariaLabel,
     errorMessage,
     className,
     label,
@@ -78,6 +79,7 @@ export const TextField = (props) => {
         <p>{value}</p>
       ) : (
         <input
+          aria-label={ariaLabel}
           ref={inputRef}
           className={className}
           name={name}
@@ -117,6 +119,7 @@ TextField.defaultProps = {
 };
 
 TextField.propTypes = {
+  ariaLabel: PropTypes.string,
   dateErrorMessage: PropTypes.string,
 
   /**
