@@ -58,8 +58,8 @@ describe Reader::DocumentsController, :postgres, type: :controller do
           doc
         end
       end
-      it "DocumentsController" do
-        ActiveRecord::Base.logger = Logger.new(STDOUT)
+      it "efficiently queries and returns correct response" do
+        # ActiveRecord::Base.logger = Logger.new(STDOUT)
         controller_query_data = SqlTracker.track do
           get :index, params: params
         end
@@ -101,14 +101,15 @@ describe Reader::DocumentsController, :postgres, type: :controller do
         expect(doc_ids_with_annotations).to match_array(returned_docs_with_prev_version.pluck(:id))
         expect(doc_ids_with_annotations).to match_array(docs_with_metadata.pluck("id"))
 
-        # The following queries will be made efficient in a subsequent commit
-        single_annot_query = "SELECT \"annotations\".* FROM \"annotations\" WHERE \"annotations\".\"document_id\" = xxx"
+        # Uncomment the following to see a count of SQL queries
+        # pp controller_query_data.values.pluck(:sql, :count)
+        single_annot_query = "SELECT \"annotations\".* FROM \"annotations\""
         annotation_select_queries = controller_query_data.values.select { |o| o[:sql].start_with?(single_annot_query) }
-        expect(annotation_select_queries.pluck(:count).max).to eq documents.count
+        expect(annotation_select_queries.pluck(:count).max).to be <= 2
 
-        single_tags_query = /SELECT \"tags\".* FROM \"tags\" .* WHERE \"documents_tags\".\"document_id\" = xxx/
+        single_tags_query = "SELECT \"tags\".* FROM \"tags\""
         tag_select_queries = controller_query_data.values.select { |o| o[:sql].start_with?(single_tags_query) }
-        expect(tag_select_queries.pluck(:count).max).to eq documents.count
+        expect(tag_select_queries.pluck(:count).max).to be <= 1
       end
     end
   end
