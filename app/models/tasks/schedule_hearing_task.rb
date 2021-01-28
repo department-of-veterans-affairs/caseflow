@@ -114,8 +114,6 @@ class ScheduleHearingTask < Task
     hearing_admin_actions
   end
 
-  private
-
   # Override the available user actions to inject change hearing request type tasks
   def available_hearing_user_actions(user)
     # Capture the parent user actions
@@ -129,6 +127,8 @@ class ScheduleHearingTask < Task
     # Default return the parent user actions
     parent_admin_actions
   end
+
+  private
 
   # Method to return the user actions for changing the hearing request type
   def change_hearing_request_type_actions

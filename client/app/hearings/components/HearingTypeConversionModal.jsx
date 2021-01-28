@@ -12,6 +12,7 @@ import { clearAppealDetails } from '../../queue/QueueActions';
 import { showErrorMessage, showSuccessMessage } from '../../queue/uiReducer/uiActions';
 import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
+import { formatChangeRequestType } from '../utils';
 
 // Constants
 import COPY from '../../../COPY';
@@ -53,7 +54,7 @@ export const HearingTypeConversionModal = ({
   const submit = async () => {
     try {
       // Determine the changed request type
-      const changedRequestType = hearingType === 'Video' ? HEARING_REQUEST_TYPES.video : HEARING_REQUEST_TYPES.central;
+      const changedRequestType = formatChangeRequestType(hearingType);
 
       // Determine the closest regional office
       const closestRegionalOffice = hearingType === 'Video' ? null : HEARING_REQUEST_TYPES.central;
@@ -111,7 +112,7 @@ export const HearingTypeConversionModal = ({
     <Modal
       title={convertTitle}
       closeHandler={cancel}
-      confirmButton={<Button disabled={loading} classNames={['usa-button-secondary']} onClick={submit}>Confirm</Button>}
+      confirmButton={<Button disabled={loading} onClick={submit}>Convert Hearing to {hearingType}</Button>}
       cancelButton={<Button linkStyling disabled={loading} onClick={cancel}>Cancel</Button>}
     >
       <p dangerouslySetInnerHTML={{ __html: convertSubtitle }} />

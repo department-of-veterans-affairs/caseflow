@@ -11,6 +11,7 @@ import TIMEZONES from '../../constants/TIMEZONES';
 import { COMMON_TIMEZONES, REGIONAL_OFFICE_ZONE_ALIASES } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
+import HEARING_REQUEST_TYPES from '../../constants/HEARING_REQUEST_TYPES';
 
 export const isPreviouslyScheduledHearing = (hearing) =>
   hearing.disposition === HEARING_DISPOSITION_TYPES.postponed ||
@@ -429,5 +430,21 @@ export const parseVirtualHearingErrors = (msg, hearing) => {
 export const regionalOfficeDetails = (key) => REGIONAL_OFFICE_INFORMATION[
   Object.keys(REGIONAL_OFFICE_INFORMATION).filter((roKey) => roKey === key)[0]
 ];
+
+/**
+ * Method to format the Hearing Change Request Type
+ * @param {string} type -- The hearing request type label
+ */
+export const formatChangeRequestType = (type) => {
+  switch (type) {
+  case 'Virtual':
+    return HEARING_REQUEST_TYPES.virtual;
+  case 'Video':
+    return HEARING_REQUEST_TYPES.video;
+  case 'Central':
+  default:
+    return HEARING_REQUEST_TYPES.central;
+  }
+};
 
 /* eslint-enable camelcase */

@@ -69,7 +69,10 @@ module HearingRequestTypeConcern
     diff = TaskEvent.new(version: versions[request_type_index]).diff["changed_request_type"]
     versioned_request_type = (version == :prev) ? diff&.first : diff&.last
 
-    request_type = versioned_request_type.presence || original_hearing_request_type
+    # Revive the original appeal to retrieve its values
+    original = versions[request_type_index].reify
+
+    request_type = versioned_request_type.presence || original.original_hearing_request_type
 
     # Format the request type into a symbol
     formatted_request_type = format_hearing_request_type(request_type)

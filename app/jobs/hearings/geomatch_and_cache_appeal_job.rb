@@ -37,14 +37,14 @@ class Hearings::GeomatchAndCacheAppealJob < ApplicationJob
       # the data can still be cached.
     end
 
-    cache_appeal_attributes
+    cache_appeal_attributes(appeal_type)
   end
 
   private
 
   attr_reader :appeal
 
-  def cache_appeal_attributes
+  def cache_appeal_attributes(appeal_type)
     appeal.reload
 
     if appeal.closest_regional_office.present?

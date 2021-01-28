@@ -15,9 +15,8 @@ import {
 } from '../../queue/uiReducer/uiActions';
 import ApiUtil from '../../util/ApiUtil';
 import COPY from '../../../COPY';
-import HEARING_REQUEST_TYPES from
-  '../../../constants/HEARING_REQUEST_TYPES';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
+import { formatChangeRequestType } from '../utils';
 
 export const HearingTypeConversion = ({
   appeal,
@@ -45,7 +44,7 @@ export const HearingTypeConversion = ({
 
   const submit = async () => {
     try {
-      const changedRequestType = type === 'Virtual' ? HEARING_REQUEST_TYPES.virtual : HEARING_REQUEST_TYPES.video;
+      const changedRequestType = formatChangeRequestType(type);
       const data = {
         task: {
           status: TASK_STATUSES.completed,
