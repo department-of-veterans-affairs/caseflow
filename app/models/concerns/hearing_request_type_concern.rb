@@ -63,6 +63,21 @@ module HearingRequestTypeConcern
     readable ? LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[formatted_request_type] : formatted_request_type
   end
 
+  def request_type_for_task(id, version)
+    request_type_index = tasks.where(type: "ChangeHearingRequestTypeTask").order(:created_at).map(&:id).index(id)
+
+    diff = TaskEvent.new(version: versions[request_type_index]).diff["changed_request_type"]
+    versioned_request_type = (version == :prev) ? diff&.first : diff&.last
+
+    request_type = versioned_request_type.presence || original_hearing_request_type
+
+    # Format the request type into a symbol
+    formatted_request_type = format_hearing_request_type(request_type)
+
+    # Return the human readable request type or the symbol of request type
+    LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[formatted_request_type]
+  end
+
   private
 
   # rubocop:disable Metrics/CyclomaticComplexity

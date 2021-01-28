@@ -50,7 +50,7 @@ RSpec.feature "Convert hearing request type" do
 
     step "confirm page has the correct success message" do
       expect(page).to have_content(
-        "You have successfully converted #{appeal.veteran_full_name}'s hearing to virtual"
+        "You have successfully converted #{appeal.veteran_full_name}'s hearing to Virtual"
       )
       expect(page).to have_content(
         "The hearing request is in the scheduling queue for the #{ro_message}"
@@ -230,6 +230,9 @@ RSpec.feature "Convert hearing request type" do
 
         change_request_type(video_appeal, "Video", "Denver regional office")
       end
+
+      scenario "user can change a hearing request from Video to Central" do
+      end
     end
 
     context "When converting appeal with Central Office hearing request type" do
@@ -237,6 +240,9 @@ RSpec.feature "Convert hearing request type" do
         visit "queue/appeals/#{central_office_appeal.uuid}"
 
         change_request_type(central_office_appeal, "Central", "Central Office")
+      end
+
+      scenario "user can change a hearing request from Central Office to Video" do
       end
     end
   end
