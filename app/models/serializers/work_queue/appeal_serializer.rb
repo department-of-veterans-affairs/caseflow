@@ -49,6 +49,8 @@ class WorkQueue::AppealSerializer
 
   attribute :overtime, &:overtime?
 
+  attribute :veteran_appellant_deceased, &:veteran_appellant_deceased?
+
   attribute :assigned_to_location
 
   attribute :completed_hearing_on_previous_appeal? do
@@ -68,6 +70,10 @@ class WorkQueue::AppealSerializer
   attribute :appellant_relationship do |object|
     object.claimant&.relationship
   end
+
+  attribute :cavc_remand
+
+  attribute :veteran_death_date
 
   attribute :veteran_file_number
 

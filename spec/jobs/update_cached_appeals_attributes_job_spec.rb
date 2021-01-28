@@ -90,14 +90,15 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
     end
 
     it "sends a message to Slack that includes the error" do
-      slack_msg = ""
-      allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+      allow_any_instance_of(SlackService).to receive(:send_notification) do |_, msg, title|
+        @slack_msg = msg
+        @slack_title = title
+      end
 
       subject
 
-      expected_msg = "UpdateCachedAppealsAttributesJob failed after running for .*. See Sentry event .*"
-
-      expect(slack_msg).to match(/#{expected_msg}/)
+      expect(@slack_title).to match(/\[ERROR\] UpdateCachedAppealsAttributesJob failed after running for .*/)
+      expect(@slack_msg).to match(/See Sentry event .*/)
     end
   end
 
@@ -148,47 +149,6 @@ describe UpdateCachedAppealsAttributesJob, :all_dbs do
       expect(CachedAppeal.find_by(vacols_id: legacy_appeal1.vacols_id).former_travel).to eq(false)
       expect(CachedAppeal.find_by(vacols_id: legacy_appeal2.vacols_id).former_travel).to eq(false)
       expect(CachedAppeal.find_by(vacols_id: legacy_appeal3.vacols_id).former_travel).to eq(true)
-    end
-
-    context "when BGS fails" do
-      shared_examples "rescues error" do
-        it "completes and sends warning to Slack" do
-          slack_msg = ""
-          allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
-
-          job = described_class.new
-          job.perform_now
-          expect(job.warning_msgs.count).to eq 3
-
-          expect(slack_msg.lines.count).to eq 4
-          expected_msg = "\\[WARN\\] UpdateCachedAppealsAttributesJob .*"
-          expect(slack_msg).to match(/#{expected_msg}/)
-        end
-      end
-
-      context "BGSService fails with ECONNRESET" do
-        before do
-          bgs = Fakes::BGSService.new
-          allow(Fakes::BGSService).to receive(:new).and_return(bgs)
-          allow(bgs).to receive(:fetch_person_by_ssn)
-            .and_raise(Errno::ECONNRESET, "mocked error for testing")
-        end
-        include_examples "rescues error"
-      end
-      context "BGSService fails with Savon::HTTPError" do
-        before do
-          bgs = Fakes::BGSService.new
-          allow(Fakes::BGSService).to receive(:new).and_return(bgs)
-
-          httperror_mock = double("httperror")
-          allow(httperror_mock).to receive(:code).and_return(408)
-          allow(httperror_mock).to receive(:headers).and_return({})
-          allow(httperror_mock).to receive(:body).and_return("stream timeout")
-          allow(bgs).to receive(:fetch_poa_by_file_number)
-            .and_raise(Savon::HTTPError, httperror_mock)
-        end
-        include_examples "rescues error"
-      end
     end
   end
 end

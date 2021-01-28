@@ -1,9 +1,19 @@
 # frozen_string_literal: true
 
+##
+# Factory to create tasks for a new appeal based on appeal characteristics.
+
 class InitialTasksFactory
-  def initialize(appeal)
+  def initialize(appeal, cavc_remand = nil)
     @appeal = appeal
     @root_task = RootTask.find_or_create_by!(appeal: appeal)
+
+    if @appeal.cavc?
+      @cavc_remand = cavc_remand
+      @cavc_remand ||= appeal.cavc_remand
+
+      fail "CavcRemand required for CAVC-Remand appeal #{@appeal.id}" unless @cavc_remand
+    end
   end
 
   def create_root_and_sub_tasks!
@@ -27,7 +37,7 @@ class InitialTasksFactory
     distribution_task = DistributionTask.create!(appeal: @appeal, parent: @root_task)
 
     if @appeal.cavc?
-      CavcTask.create!(appeal: @appeal, parent: distribution_task)
+      create_cavc_subtasks(distribution_task)
     elsif @appeal.evidence_submission_docket?
       EvidenceSubmissionWindowTask.create!(appeal: @appeal, parent: distribution_task)
     elsif @appeal.hearing_docket?
@@ -37,6 +47,28 @@ class InitialTasksFactory
       # If the appeal is direct docket and there are no ihp tasks,
       # then it is initially ready for distribution.
       distribution_task.ready_for_distribution! if vso_tasks.empty?
+    end
+  end
+
+  # For AMA appeals. Create appropriate subtasks based on the CAVC Remand subtype
+  def create_cavc_subtasks(distribution_task)
+    cavc_task = CavcTask.create!(appeal: @appeal, parent: distribution_task)
+
+    case @cavc_remand.cavc_decision_type
+    when Constants.CAVC_DECISION_TYPES.remand
+      case @cavc_remand.remand_subtype
+      when Constants.CAVC_REMAND_SUBTYPES.mdr
+        MdrTask.create_with_hold(cavc_task)
+      when Constants.CAVC_REMAND_SUBTYPES.jmr, Constants.CAVC_REMAND_SUBTYPES.jmpr
+        SendCavcRemandProcessedLetterTask.create!(appeal: @appeal, parent: cavc_task)
+      else
+        fail "Unsupported remand subtype: #{@cavc_remand.remand_subtype}"
+      end
+    when Constants.CAVC_DECISION_TYPES.straight_reversal, Constants.CAVC_DECISION_TYPES.death_dismissal
+      # Will be filled out in #15774
+      nil
+    else
+      fail "Unsupported type: #{@cavc_remand.type}"
     end
   end
 end

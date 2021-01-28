@@ -228,6 +228,19 @@ class ExternalApi::BGSService
     end
   end
 
+  def get_security_profile(username:, station_id:)
+    DBService.release_db_connections
+    MetricsService.record("BGS: get security profile",
+                          service: :bgs,
+                          name: "common_security.get_security_profile") do
+      client.common_security.get_security_profile(
+        username: username,
+        station_id: station_id,
+        application: "CASEFLOW"
+      )
+    end
+  end
+
   def find_address_by_participant_id(participant_id)
     finder = ExternalApi::BgsAddressFinder.new(participant_id: participant_id, client: client)
     @addresses[participant_id] ||= finder.mailing_address || finder.addresses.last
@@ -463,7 +476,8 @@ class ExternalApi::BGSService
       ssl_ca_cert: ENV["BGS_CA_CERT_LOCATION"],
       forward_proxy_url: forward_proxy_url,
       jumpbox_url: ENV["RUBY_BGS_JUMPBOX_URL"],
-      log: true
+      log: true,
+      logger: Rails.logger
     )
   end
 

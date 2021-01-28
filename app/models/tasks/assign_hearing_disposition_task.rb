@@ -7,18 +7,22 @@
 # When the associated hearing's disposition is set, the appropriate tasks are set as children
 #   - held: For legacy, task is set to be completed; for AMA, TranscriptionTask is created as child and
 #         EvidenceSubmissionWindowTask is also created as child unless the veteran/appellant has waived
-#         the 90 day evidence hold
-#   - Cancelled: Task is cancelled and EvidenceWindowSubmissionWindow task is created as a child of RootTask
+#         the 90 day evidence hold.
+#   - Cancelled: Task is cancelled and hearing is withdrawn where if appeal is AMA, EvidenceWindowSubmissionWindow
+#                task is created as a child of RootTask if it does not exist and if appeal is legacy, vacols field
+#                `bfha` and `bfhr` are updated.
 #   - No show: NoShowHearingTask is created as a child of this task
-#   - Postponed: 2 options: Schedule new hearing or cancel HearingTask tree and create new ScheduleHearingTask
+#   - Postponed: 2 options: Schedule new hearing or cancel HearingTask tree and create new ScheduleHearingTask.
 #
 # The task is marked complete when the children tasks are completed.
-
+#
+# If this task is the last closed task for the hearing subtree and there are no more open HearingTasks,
+# the logic in HearingTask#when_child_task_completed properly handles routing or creating ihp task.
+##
 class AssignHearingDispositionTask < Task
   include RunAsyncable
 
-  validates :parent, presence: true
-  before_create :check_parent_type
+  validates :parent, presence: true, parentTask: { task_type: HearingTask }
   delegate :hearing, to: :hearing_task, allow_nil: true
 
   class HearingDispositionNotCanceled < StandardError; end
@@ -61,7 +65,10 @@ class AssignHearingDispositionTask < Task
     hearing_admin_actions = available_hearing_user_actions(user)
 
     if HearingsManagement.singleton.user_has_access?(user)
-      [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h] | hearing_admin_actions
+      [
+        Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h,
+        Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h
+      ] | hearing_admin_actions
     else
       hearing_admin_actions
     end
@@ -84,17 +91,11 @@ class AssignHearingDispositionTask < Task
       fail HearingDispositionNotCanceled
     end
 
-    evidence_task = if appeal.is_a? Appeal
-                      EvidenceSubmissionWindowTask.find_or_create_by!(
-                        appeal: appeal,
-                        parent: hearing_task.parent,
-                        assigned_to: MailTeam.singleton
-                      )
-                    end
+    maybe_evidence_task = withdraw_hearing(hearing_task.parent)
 
     update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
 
-    [evidence_task].compact
+    [maybe_evidence_task].compact
   end
 
   def postpone!
@@ -136,10 +137,7 @@ class AssignHearingDispositionTask < Task
   end
 
   def update_children_status_after_closed
-    update_args = { status: status }
-    update_args[:closed_at] = Time.zone.now unless open?
-    update_args[:cancelled_by_id] = RequestStore[:current_user]&.id if cancelled?
-    children.open.update_all(update_args)
+    children.open.each { |task| task.update!(status: status) }
   end
 
   def cascade_closure_from_child_task?(_child_task)
@@ -176,16 +174,6 @@ class AssignHearingDispositionTask < Task
       hearing.update_caseflow_and_vacols(disposition: disposition)
     else
       hearing.update(disposition: disposition)
-    end
-  end
-
-  def check_parent_type
-    if parent.type != HearingTask.name
-      fail(
-        Caseflow::Error::InvalidParentTask,
-        task_type: self.class.name,
-        assignee_type: assigned_to.class.name
-      )
     end
   end
 

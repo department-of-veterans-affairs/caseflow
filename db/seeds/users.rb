@@ -312,17 +312,28 @@ module Seeds
     end
 
     def create_cavc_lit_support_user
-      users = [User.create!(station_id: 101,
-                            css_id: "CAVC_LIT_SUPPORT_ADMIN",
-                            full_name: "Diego CAVCLitigationSupportUser Christiansen"),
-               User.create!(station_id: 101,
-                            css_id: "CAVC_LIT_SUPPORT_USER1",
-                            full_name: "Regina CAVCLitigationSupportUser Lebsack"),
-               User.create!(station_id: 101,
-                            css_id: "CAVC_LIT_SUPPORT_USER2",
-                            full_name: "Tonita CAVCLitigationSupportUser Kuhn ")]
+      users_info = [
+        { css_id: "CAVC_LIT_SUPPORT_ADMIN", full_name: "Diego CAVCLitSupportAdmin Christiansen" },
+        { css_id: "CAVC_LIT_SUPPORT_ADMIN2", full_name: "Mattie CAVCLitSupportAdmin Jackson" },
+        { css_id: "CAVC_LIT_SUPPORT_USER1", full_name: "Regina CAVCLitSupportUser Lebsack" },
+        { css_id: "CAVC_LIT_SUPPORT_USER2", full_name: "Tonita CAVCLitSupportUser Kuhn" },
+        { css_id: "CAVC_LIT_SUPPORT_USER3", full_name: "Anna CAVCLitSupportUser Cooper" },
+        { css_id: "CAVC_LIT_SUPPORT_USER4", full_name: "Ramona CAVCLitSupportUser Stanley" },
+        { css_id: "CAVC_LIT_SUPPORT_USER5", full_name: "Drew CAVCLitSupportUser Payne" },
+        { css_id: "CAVC_LIT_SUPPORT_USER6", full_name: "Clyde CAVCLitSupportUser Lee" },
+        { css_id: "CAVC_LIT_SUPPORT_USER7", full_name: "Priscilla CAVCLitSupportUser Cortez" },
+        { css_id: "CAVC_LIT_SUPPORT_USER8", full_name: "Irvin CAVCLitSupportUser King" }
+      ]
+
+      users = users_info.map do |user_info|
+        User.create!(station_id: 101,
+                     css_id: user_info[:css_id],
+                     full_name: user_info[:full_name])
+      end
+
       users.each { |u| CavcLitigationSupport.singleton.add_user(u) }
       OrganizationsUser.make_user_admin(users.first, CavcLitigationSupport.singleton)
+      OrganizationsUser.make_user_admin(users.second, CavcLitigationSupport.singleton)
     end
 
     def create_pulac_cerullo_user
@@ -336,7 +347,13 @@ module Seeds
     end
 
     def create_clerk_of_the_board_user
-      u = User.create!(station_id: 101, css_id: "CLERK_OF_THE_BOARD_USER", full_name: "Clark ClerkOfTheBoardUser Bard")
+      u = create(
+        :user,
+        :with_vacols_attorney_record,
+        station_id: 101,
+        css_id: "COB_USER",
+        full_name: "Clark ClerkOfTheBoardUser Bard"
+      )
       ClerkOfTheBoard.singleton.add_user(u)
     end
 

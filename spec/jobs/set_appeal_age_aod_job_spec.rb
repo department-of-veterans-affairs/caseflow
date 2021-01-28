@@ -3,12 +3,6 @@
 describe SetAppealAgeAodJob, :postgres do
   include_context "Metrics Reports"
 
-  # rubocop:disable Metrics/LineLength
-  let(:success_msg) do
-    "[INFO] SetAppealAgeAodJob completed after running for less than a minute."
-  end
-  # rubocop:enable Metrics/LineLength
-
   describe "#perform" do
     let(:non_aod_appeal) { create(:appeal, :with_schedule_hearing_tasks) }
 
@@ -22,7 +16,10 @@ describe SetAppealAgeAodJob, :postgres do
     let(:cancelled_age_aod_appeal) { create(:appeal, :advanced_on_docket_due_to_age, :cancelled) }
 
     before do
-      allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
+      allow_any_instance_of(SlackService).to receive(:send_notification) do |_, msg, title|
+        @slack_msg = msg
+        @slack_title = title
+      end
 
       age_aod_appeal_wrong_dob.update(aod_based_on_age: true)
       # simulate date-of-birth being corrected
@@ -38,13 +35,14 @@ describe SetAppealAgeAodJob, :postgres do
 
       expect(age_aod_appeal_wrong_dob.aod_based_on_age).to eq(true)
 
+      inactive_age_aod_appeal__aod_based_on_age = inactive_age_aod_appeal.aod_based_on_age
       described_class.perform_now
-      expect(@slack_msg).to include(success_msg)
+      expect(@slack_title).to include("[INFO] SetAppealAgeAodJob completed after running for less than a minute.")
 
-      # `aod_based_on_age` will be nil
+      # `aod_based_on_age` will be nil or the same as it was before the job
       # `aod_based_on_age` being false means that it was once true (in the case where the claimant's DOB was updated)
       expect(non_aod_appeal.reload.aod_based_on_age).not_to eq(true)
-      expect(inactive_age_aod_appeal.reload.aod_based_on_age).not_to eq(true)
+      expect(inactive_age_aod_appeal.reload.aod_based_on_age).to eq(inactive_age_aod_appeal__aod_based_on_age)
 
       expect(age_aod_appeal.reload.aod_based_on_age).to eq(true)
       expect(motion_aod_appeal.reload.aod_based_on_age).not_to eq(true)
@@ -56,14 +54,15 @@ describe SetAppealAgeAodJob, :postgres do
       let(:error_msg) { "Some dummy error" }
 
       it "sends a message to Slack that includes the error" do
-        slack_msg = ""
-        allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+        allow_any_instance_of(SlackService).to receive(:send_notification) do |_, msg, title|
+          @slack_msg = msg
+          @slack_title = title
+        end
 
         allow_any_instance_of(described_class).to receive(:appeals_to_set_age_based_aod).and_raise(error_msg)
         described_class.perform_now
 
-        expected_msg = "#{described_class.name} failed after running for .*. Fatal error: #{error_msg}"
-        expect(slack_msg).to match(/#{expected_msg}/)
+        expect(@slack_title).to match(/#{described_class.name} failed after running for .*. Fatal error: #{error_msg}/)
       end
     end
   end

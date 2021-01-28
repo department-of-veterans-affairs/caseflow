@@ -16,9 +16,9 @@ class HearingDayRoomAssignment
   def available_room
     @available_room ||= if !assign_room # assigning a room is not required, so set to blank string
                           room || ""
-                        elsif request_type == HearingDay::REQUEST_TYPES[:central]
+                        elsif request_type_central?
                           first_available_central_room
-                        else
+                        elsif request_type_video_or_virtual?
                           first_available_remote_room
                         end
   end
@@ -26,6 +26,14 @@ class HearingDayRoomAssignment
   private
 
   attr_reader :room, :assign_room, :scheduled_for, :request_type
+
+  def request_type_central?
+    request_type == HearingDay::REQUEST_TYPES[:central]
+  end
+
+  def request_type_video_or_virtual?
+    [HearingDay::REQUEST_TYPES[:video], HearingDay::REQUEST_TYPES[:virtual]].include?(request_type)
+  end
 
   def first_available_central_room
     room_count = hearing_count_by_room["2"] || 0

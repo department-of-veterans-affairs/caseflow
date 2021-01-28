@@ -12,6 +12,7 @@ class Appeal < DecisionReview
   include PrintsTaskTree
   include HasTaskHistory
   include AppealAvailableHearingLocations
+  include HearingRequestTypeConcern
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -23,16 +24,25 @@ class Appeal < DecisionReview
   has_many :vbms_uploaded_documents
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
+  has_many :nod_date_updates, as: :appeal
+
   has_one :special_issue_list
   has_one :post_decision_motion
+  has_one :docket_switch, class_name: "DocketSwitch", foreign_key: :new_docket_stream_id
+
   has_many :record_synced_by_job, as: :record
   has_one :work_mode, as: :appeal
+  has_one :latest_informal_hearing_presentation_task, lambda {
+    not_cancelled
+      .order(closed_at: :desc, assigned_at: :desc)
+      .where(type: [InformalHearingPresentationTask.name, IhpColocatedTask.name], appeal_type: Appeal.name)
+  }, class_name: "Task", foreign_key: :appeal_id
 
   enum stream_type: {
-    "original": "original",
-    "vacate": "vacate",
-    "de_novo": "de_novo",
-    "court_remand": "court_remand"
+    Constants.AMA_STREAM_TYPES.original.to_sym => Constants.AMA_STREAM_TYPES.original,
+    Constants.AMA_STREAM_TYPES.vacate.to_sym => Constants.AMA_STREAM_TYPES.vacate,
+    Constants.AMA_STREAM_TYPES.de_novo.to_sym => Constants.AMA_STREAM_TYPES.de_novo,
+    Constants.AMA_STREAM_TYPES.court_remand.to_sym => Constants.AMA_STREAM_TYPES.court_remand
   }
 
   after_create :conditionally_set_aod_based_on_age
@@ -105,11 +115,8 @@ class Appeal < DecisionReview
         stream_docket_number: docket_number,
         established_at: Time.zone.now
       )).tap do |stream|
-        stream.create_claimant!(
-          participant_id: claimant.participant_id,
-          payee_code: claimant.payee_code,
-          type: claimant.type
-        )
+        stream.copy_claimants!(claimants)
+        stream.reload # so that stream.claimants returns updated list
       end
     end
   end
@@ -264,6 +271,8 @@ class Appeal < DecisionReview
   end
 
   def conditionally_set_aod_based_on_age
+    return unless claimant # do not update if claimant is not yet set, i.e., when create_stream is called
+
     updated_aod_based_on_age = claimant&.advanced_on_docket_based_on_age?
     update(aod_based_on_age: updated_aod_based_on_age) if aod_based_on_age != updated_aod_based_on_age
   end
@@ -332,8 +341,16 @@ class Appeal < DecisionReview
     !!veteran_is_not_claimant
   end
 
+  def appellant_is_veteran
+    !veteran_is_not_claimant
+  end
+
   def veteran_middle_initial
     veteran_middle_name&.first
+  end
+
+  def veteran_appellant_deceased?
+    veteran_is_deceased && appellant_is_veteran
   end
 
   # matches Legacy behavior
@@ -342,6 +359,12 @@ class Appeal < DecisionReview
   end
 
   alias cavc? cavc
+
+  def cavc_remand
+    return nil if !cavc?
+
+    CavcRemand.find_by(remand_appeal: self)
+  end
 
   def status
     @status ||= BVAAppealStatus.new(appeal: self)
@@ -369,7 +392,12 @@ class Appeal < DecisionReview
     return stream_docket_number if stream_docket_number
     return "Missing Docket Number" unless receipt_date && persisted?
 
-    "#{receipt_date.strftime('%y%m%d')}-#{id}"
+    default_docket_number_from_receipt_date
+  end
+
+  def update_receipt_date!(receipt_date)
+    update!(receipt_date)
+    update!(stream_docket_number: default_docket_number_from_receipt_date)
   end
 
   # Currently AMA only supports one claimant per decision review
@@ -400,6 +428,12 @@ class Appeal < DecisionReview
     InitialTasksFactory.new(self).create_root_and_sub_tasks!
     create_business_line_tasks!
     maybe_create_translation_task
+  end
+
+  # Stream change tasks indicate tasks that _may_ be moved to another appeal stream during a docket switch
+  # This includes open children tasks with no children, excluding docket related tasks
+  def docket_switchable_tasks
+    tasks.select(&:can_move_on_docket_switch?)
   end
 
   def establish!
@@ -511,30 +545,6 @@ class Appeal < DecisionReview
     false
   end
 
-  # Returns the hearing request type.
-  #
-  # @note See `LegacyAppeal#current_hearing_request_type` for more information.
-  #   This method is provided for compatibility.
-  def current_hearing_request_type(readable: false)
-    return nil if closest_regional_office.nil?
-
-    current_hearing_request_type = (closest_regional_office == "C") ? :central : :video
-
-    return current_hearing_request_type if !readable
-
-    # Determine type using closest_regional_office
-    # "Central" if closest_regional_office office is "C", "Video" otherwise
-    case current_hearing_request_type
-    when :central
-      Hearing::HEARING_TYPES[:C]
-    else
-      Hearing::HEARING_TYPES[:V]
-    end
-  end
-
-  alias original_hearing_request_type current_hearing_request_type
-  alias previous_hearing_request_type current_hearing_request_type
-
   private
 
   def business_lines_needing_assignment
@@ -558,5 +568,9 @@ class Appeal < DecisionReview
   ensure
     distribution_task = tasks.open.find_by(type: DistributionTask.name)
     TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
+  end
+
+  def default_docket_number_from_receipt_date
+    "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 end

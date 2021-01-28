@@ -12,9 +12,10 @@ import IneligibleIssuesList from '../components/IneligibleIssuesList';
 import SmallLoader from '../../components/SmallLoader';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY';
+import Alert from '../../components/Alert';
 import UnidentifiedIssueAlert from '../components/UnidentifiedIssueAlert';
 
-const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, detailEditUrl, completedReview }) => {
+const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIssuesUrl, completedReview }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
 
@@ -27,7 +28,7 @@ const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, detail
   }
 
   leadMessageArr.push(
-    <div>If needed, you may <a href={detailEditUrl}>correct the issues</a>.</div>
+    <div>If needed, you may <a href={editIssuesUrl}>correct the issues</a>.</div>
   );
 
   if (asyncJobUrl) {
@@ -111,7 +112,8 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       formType,
       intakeStatus,
       asyncJobUrl,
-      detailEditUrl
+      editIssuesUrl,
+      deceasedAppellants
     } = this.props;
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const completedReview = this.props.decisionReviews[selectedForm.key];
@@ -146,13 +148,29 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       return <SmallLoader message="Creating task..." spinnerColor={LOGO_COLORS.CERTIFICATION.ACCENT} />;
     }
 
+    const deceasedVeteranAlert = () => {
+      return (
+        <div className="cf-msg-screen-deck">
+          <Alert
+            type="warning"
+            message={COPY.DECEASED_CLAIMANT_MESSAGE}
+            title={COPY.DECEASED_CLAIMANT_TITLE}
+          />
+        </div>
+      );
+    };
+
+    const allowDeceasedAppellants = deceasedAppellants && formType === 'appeal';
+    const showDeceasedVeteranAlert = veteran.isDeceased &&
+      allowDeceasedAppellants && !completedReview.veteranIsNotClaimant;
+
     return <div><StatusMessage
       title="Intake completed"
       type="success"
       leadMessageList={
         leadMessageList({
           asyncJobUrl,
-          detailEditUrl,
+          editIssuesUrl,
           veteran,
           formName: selectedForm.name,
           requestIssues,
@@ -175,6 +193,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
           You will receive a message in your Caseflow Inbox if the establishment fails or is delayed.
       </h2>)
     }
+    {showDeceasedVeteranAlert && deceasedVeteranAlert()}
     </div>
     ;
   }
@@ -185,12 +204,13 @@ export default connect(
     veteran: state.intake.veteran,
     formType: state.intake.formType,
     asyncJobUrl: state.intake.asyncJobUrl,
-    detailEditUrl: state.intake.detailEditUrl,
+    editIssuesUrl: state.intake.editIssuesUrl,
     decisionReviews: {
       higher_level_review: state.higherLevelReview,
       supplemental_claim: state.supplementalClaim,
       appeal: state.appeal
     },
-    intakeStatus: getIntakeStatus(state)
+    intakeStatus: getIntakeStatus(state),
+    deceasedAppellants: state.featureToggles.deceasedAppellants
   })
 )(DecisionReviewIntakeCompleted);

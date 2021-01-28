@@ -6,6 +6,8 @@
 # It also sends cancellation emails to hearing participants if latter is case.
 
 class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
+  include VirtualHearings::EnsureCurrentUserIsSet
+
   queue_with_priority :low_priority
   application_attr :hearing_schedule
 
@@ -81,10 +83,6 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
 
     Rails.logger.info("Cancelled?: (#{virtual_hearing.cancelled?})")
     Rails.logger.info("Pexip conference id: (#{virtual_hearing.conference_id?})")
-  end
-
-  def ensure_current_user_is_set
-    RequestStore.store[:current_user] ||= User.system_user
   end
 
   def hearing_is_postponed_or_cancelled?(virtual_hearing)

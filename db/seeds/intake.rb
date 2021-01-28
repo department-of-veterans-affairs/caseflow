@@ -10,6 +10,7 @@ module Seeds
       create_higher_level_reviews_and_supplemental_claims
       create_inbox_messages
       create_bgs_attorneys
+      create_deceased_veteran
     end
 
     private
@@ -23,6 +24,15 @@ module Seeds
           full_name: "Jame Local #{role} Smith"
         )
       end
+    end
+
+    def create_deceased_veteran
+      veteran_file_number = "45454545"
+      create(:veteran,
+             file_number: veteran_file_number,
+             first_name: "Ed",
+             last_name: "Deceased",
+             date_of_death: Time.zone.yesterday)
     end
 
     def create_higher_level_review_tasks

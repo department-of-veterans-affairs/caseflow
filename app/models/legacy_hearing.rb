@@ -363,7 +363,7 @@ class LegacyHearing < CaseflowRecord
       if user_nil_or_assigned_to_another_judge?(hearing.user, vacols_record.css_id)
         hearing.update(
           appeal: LegacyAppeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
-          user: User.find_by(css_id: vacols_record.css_id)
+          user: User.find_by_css_id(vacols_record.css_id)
         )
       end
 

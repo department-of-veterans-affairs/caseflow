@@ -7,7 +7,9 @@ FactoryBot.define do
     conference_id { nil }
     conference_deleted { false }
     guest_pin { nil }
+    guest_hearing_link { nil }
     host_pin { nil }
+    host_hearing_link { nil }
     judge_email { "caseflow-judge@test.com" }
     judge_email_sent { false }
     appellant_email { "caseflow-veteran@test.com" }
@@ -18,8 +20,10 @@ FactoryBot.define do
     representative_tz { nil }
     association :created_by, factory: :user
     association :updated_by, factory: :user
-    establishment { nil }
+    establishment { build(:virtual_hearing_establishment) }
     guest_pin_long { nil }
+    created_at { Time.zone.now }
+    updated_at { Time.zone.now }
 
     transient do
       status { nil }
@@ -28,7 +32,7 @@ FactoryBot.define do
     trait :initialized do
       alias_name { rand(1..9).to_s[0..6] }
       conference_id { rand(1..9) }
-      before(:create, &:generate_conference_pins)
+      after(:build, &:generate_conference_pins)
     end
 
     trait :previously_central do
@@ -42,11 +46,28 @@ FactoryBot.define do
       judge_email_sent { true }
     end
 
+    trait :link_generation_initialized do
+      alias_with_host { "BVA0000001@example.va.gov" }
+      host_pin_long { "3998472" }
+      guest_pin_long { "7470125694" }
+      host_hearing_link do
+        "https://example.va.gov/sample/?conference=#{alias_with_host}" \
+          "&name=Judge&pin=#{host_pin_long}&callType=video&join=1"
+      end
+      guest_hearing_link do
+        "https://example.va.gov/sample/?conference=#{alias_with_host}" \
+        "&name=Guest&pin=#{guest_pin_long}&callType=video&join=1"
+      end
+    end
+
+    after(:create) do |virtual_hearing, _evaluator|
+      # Calling reload after create fixes a problem where calling `virtual_hearing.hearing.virtual_hearing`
+      # would return `nil`.
+      virtual_hearing.reload
+    end
+
     after(:create) do |virtual_hearing, evaluator|
-      virtual_hearing.establishment = create(
-        :virtual_hearing_establishment,
-        virtual_hearing: virtual_hearing
-      )
+      virtual_hearing.establishment.save!
 
       if evaluator.status == :cancelled
         virtual_hearing.cancel!

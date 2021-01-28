@@ -1,7 +1,8 @@
+import { omit } from 'lodash';
 import React from 'react';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route } from 'react-router-dom';
 
 import reducer from '../../../app/queue/reducers';
 import { defaultHearing, hearingDateOptions } from '../../data/hearings';
@@ -33,38 +34,63 @@ export const initialState = {
   },
   queue: {
     appeals: appealsData,
-    appealDetails: appealsData
+    appealDetails: appealsData,
+    stagedChanges: {
+      appeals: {}
+    }
+  },
+  ui: {
+    messages: {},
+    saveState: {},
+    modals: {},
+    featureToggles: {}
   }
 };
 
-export const queueWrapper = ({ children, ...props }) => (
-  <Provider store={createStore(reducer, {
-    ...initialState,
-    ...props,
-    components: {
-      ...initialState.components,
-      ...props?.components,
-      dropdowns: {
-        ...initialState.components.dropdowns,
-        ...props?.components?.dropdowns,
+export const queueWrapper = ({ children, ...props }) => {
+  // Providing `route` allows tests that depend on a route match to work (in
+  // other words, if your component relies on `prop.match`).
+  const initialRoute = props.route;
+
+  return (
+    <Provider store={createStore(reducer, {
+      ...initialState,
+      ...omit(props, ['route']),
+      components: {
+        ...initialState.components,
+        ...props?.components,
+        dropdowns: {
+          ...initialState.components.dropdowns,
+          ...props?.components?.dropdowns,
+        },
+        forms: {
+          ...initialState.components.forms,
+          ...props?.components?.forms,
+        },
+        scheduledHearing: {
+          ...initialState.components.scheduledHearing,
+          ...props?.components?.scheduledHearing,
+        }
       },
-      forms: {
-        ...initialState.components.forms,
-        ...props?.components?.forms,
+      queue: {
+        ...initialState.queue,
+        ...props?.queue
       },
-      scheduledHearing: {
-        ...initialState.components.scheduledHearing,
-        ...props?.components?.scheduledHearing,
-      }
-    },
-    queue: {
-      ...initialState.queue,
-      ...props?.queue
-    },
-  })}>
-    <MemoryRouter keyLength={0}>
-      {children}
-    </MemoryRouter>
-  </Provider>
-);
+      ui: {
+        ...initialState.ui,
+        ...props?.ui
+      },
+    })}>
+      <MemoryRouter
+        initialEntries={initialRoute ? [initialRoute] : ['/']}
+        keyLength={0}
+      >
+        {/* Create a dummy route for the supplied route. */}
+        {initialRoute && <Route path={initialRoute}>{children}</Route>}
+        {/* No route supplied. */}
+        {!initialRoute && <React.Fragment>{children}</React.Fragment>}
+      </MemoryRouter>
+    </Provider>
+  );
+};
 

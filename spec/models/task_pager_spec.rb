@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "faker"
+require_relative "tasks/task_shared_examples.rb"
 
 describe TaskPager, :all_dbs do
   let(:assignee) { create(:organization) }
@@ -362,9 +363,13 @@ describe TaskPager, :all_dbs do
 
     context "when sorting by closest regional office column" do
       let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name }
+      let(:virtual_hearing_ro_key) { ["R"] }
 
       before do
-        regional_offices = RegionalOffice::ROS
+        # Virtual Hearing "RO" has no city, and will never be anyone's
+        # closest RO. A nil city breaks this test, but is not a sensible
+        # condition to test anyway, so just remove it from the list:
+        regional_offices = (RegionalOffice::ROS - virtual_hearing_ro_key)
           .uniq { |ro_key| RegionalOffice::CITIES[ro_key][:city] }
           .shuffle
         created_tasks.each_with_index do |task, index|
@@ -435,41 +440,11 @@ describe TaskPager, :all_dbs do
     end
 
     context "when sorting by Appeal Type column" do
+      let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
       let(:sort_by) { Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name }
       let!(:created_tasks) { [] }
 
-      let(:legacy_appeal_1) { create(:legacy_appeal, vacols_case: create(:case, :type_original)) }
-      let(:legacy_appeal_2) { create(:legacy_appeal, vacols_case: create(:case, :type_post_remand)) }
-      let(:legacy_appeal_3) { create(:legacy_appeal, vacols_case: create(:case, :type_cavc_remand)) }
-      let(:appeal_1) { create(:appeal, :advanced_on_docket_due_to_motion) }
-      let(:appeal_2) { create(:appeal) }
-
-      before do
-        legacy_appeals = [legacy_appeal_1, legacy_appeal_2, legacy_appeal_3]
-        legacy_appeals.map do |appeal|
-          create(:colocated_task, assigned_to: assignee, appeal: appeal)
-          create(:cached_appeal,
-                 appeal_id: appeal.id,
-                 appeal_type: LegacyAppeal.name,
-                 case_type: appeal.type)
-        end
-        appeals = [appeal_1, appeal_2]
-        appeals.map do |appeal|
-          create(:ama_colocated_task, assigned_to: assignee, appeal: appeal)
-          create(:cached_appeal,
-                 appeal_id: appeal.id,
-                 appeal_type: Appeal.name,
-                 case_type: appeal.type,
-                 is_aod: appeal.aod)
-        end
-      end
-
-      it "sorts by AOD status, case type, and docket number" do
-        # postgres ascending sort sorts booleans [true, false] as [false, true]. We want is_aod appeals to show up first
-        # so we sort descending on is_aod
-        expected_order = CachedAppeal.order(is_aod: :desc, case_type: :asc, docket_number: :asc)
-        expect(subject.map(&:appeal_id)).to eq(expected_order.pluck(:appeal_id))
-      end
+      it_behaves_like "sort by Appeal Type column"
     end
   end
 

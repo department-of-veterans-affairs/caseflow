@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_20_135542) do
+ActiveRecord::Schema.define(version: 2021_01_15_212305) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
 
   create_table "allocations", force: :cascade do |t|
     t.float "allocated_days", null: false
+    t.float "allocated_days_without_room", comment: "Number of Hearing Days Allocated with no Rooms"
     t.datetime "created_at", null: false
     t.string "regional_office", null: false
     t.bigint "schedule_period_id", null: false
@@ -93,6 +94,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
 
   create_table "appeals", comment: "Decision reviews intaken for AMA appeals to the board (also known as a notice of disagreement).", force: :cascade do |t|
     t.boolean "aod_based_on_age", comment: "If true, appeal is advance-on-docket due to claimant's age."
+    t.string "changed_request_type", comment: "The new hearing type preference for an appellant that needs a hearing scheduled"
     t.string "closest_regional_office", comment: "The code for the regional office closest to the Veteran on the appeal."
     t.datetime "created_at"
     t.date "docket_range_date", comment: "Date that appeal was added to hearing docket range."
@@ -266,7 +268,6 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
   end
 
   create_table "cavc_remands", force: :cascade do |t|
-    t.bigint "appeal_id", null: false, comment: "Appeal that CAVC has remanded"
     t.string "cavc_decision_type", null: false, comment: "CAVC decision type. Expecting 'remand', 'straight_reversal', or 'death_dismissal'"
     t.string "cavc_docket_number", null: false, comment: "Docket number of the CAVC judgement"
     t.string "cavc_judge_full_name", null: false, comment: "CAVC judge that passed the judgement on the remand"
@@ -277,11 +278,14 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.string "instructions", null: false, comment: "Instructions and context provided upon creation of the remand record"
     t.date "judgement_date", comment: "Date CAVC issued a judgement, according to the CAVC"
     t.date "mandate_date", comment: "Date that CAVC reported the mandate was given"
+    t.bigint "remand_appeal_id", comment: "Appeal created by this CAVC Remand"
     t.string "remand_subtype", comment: "Type of remand. If the cavc_decision_type is 'remand', expecting one of 'jmp', 'jmpr', or 'mdr'. Otherwise, this can be null."
     t.boolean "represented_by_attorney", null: false, comment: "Whether or not the appellant was represented by an attorney"
+    t.bigint "source_appeal_id", null: false, comment: "Appeal that CAVC has remanded"
     t.datetime "updated_at", null: false, comment: "Default timestamps"
     t.bigint "updated_by_id", comment: "User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created."
-    t.index ["appeal_id"], name: "index_cavc_remands_on_appeal_id"
+    t.index ["remand_appeal_id"], name: "index_cavc_remands_on_remand_appeal_id"
+    t.index ["source_appeal_id"], name: "index_cavc_remands_on_source_appeal_id"
   end
 
   create_table "certification_cancellations", id: :serial, force: :cascade do |t|
@@ -473,28 +477,28 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.index ["updated_at"], name: "index_distributions_on_updated_at"
   end
 
-  create_table "docket_changes", comment: "Stores the disposition and associated data for Docket Change motions", force: :cascade do |t|
-    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
-    t.string "disposition", comment: "Possible options are granted, partially_granted, and denied"
-    t.string "docket_type", comment: "The new docket"
-    t.integer "granted_request_issue_ids", comment: "When a docket change is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior request issue IDs.", array: true
-    t.bigint "new_docket_stream_id", comment: "References the new appeal stream with the updated docket; initially null until created by workflow"
-    t.bigint "old_docket_stream_id", null: false, comment: "References the original appeal stream with old docket"
-    t.datetime "receipt_date", null: false
-    t.bigint "task_id", null: false, comment: "The task that triggered the switch"
-    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
-    t.index ["created_at"], name: "index_docket_changes_on_created_at"
-    t.index ["new_docket_stream_id"], name: "index_docket_changes_on_new_docket_stream_id"
-    t.index ["old_docket_stream_id"], name: "index_docket_changes_on_old_docket_stream_id"
-    t.index ["task_id"], name: "index_docket_changes_on_task_id"
-  end
-
   create_table "docket_snapshots", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.integer "docket_count"
     t.date "latest_docket_month"
     t.datetime "updated_at"
     t.index ["updated_at"], name: "index_docket_snapshots_on_updated_at"
+  end
+
+  create_table "docket_switches", comment: "Stores the disposition and associated data for Docket Switch motions.", force: :cascade do |t|
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.string "disposition", comment: "Possible options are granted, partially_granted, and denied"
+    t.string "docket_type", comment: "The new docket"
+    t.integer "granted_request_issue_ids", comment: "When a docket switch is partially granted, this includes an array of the appeal's request issue IDs that were selected for the new docket. For full grant, this includes all prior request issue IDs.", array: true
+    t.bigint "new_docket_stream_id", comment: "References the new appeal stream with the updated docket; initially null until created by workflow"
+    t.bigint "old_docket_stream_id", null: false, comment: "References the original appeal stream with old docket"
+    t.datetime "receipt_date", null: false
+    t.bigint "task_id", null: false, comment: "The task that triggered the switch"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.index ["created_at"], name: "index_docket_switches_on_created_at"
+    t.index ["new_docket_stream_id"], name: "index_docket_switches_on_new_docket_stream_id"
+    t.index ["old_docket_stream_id"], name: "index_docket_switches_on_old_docket_stream_id"
+    t.index ["task_id"], name: "index_docket_switches_on_task_id"
   end
 
   create_table "docket_tracers", id: :serial, force: :cascade do |t|
@@ -995,6 +999,18 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.index ["updated_at"], name: "index_messages_on_updated_at"
   end
 
+  create_table "nod_date_updates", comment: "Tracks changes to an AMA appeal's receipt date (aka, NOD date)", force: :cascade do |t|
+    t.bigint "appeal_id", null: false, comment: "Appeal for which the NOD date is being edited"
+    t.string "change_reason", null: false, comment: "Reason for change: entry_error or new_info"
+    t.datetime "created_at", null: false, comment: "Default created_at/updated_at timestamps"
+    t.date "new_date", null: false, comment: "Date after update"
+    t.date "old_date", null: false, comment: "Date before update"
+    t.datetime "updated_at", null: false, comment: "Default created_at/updated_at timestamps"
+    t.bigint "user_id", null: false, comment: "User that updated the NOD date"
+    t.index ["appeal_id"], name: "index_nod_date_updates_on_appeal_id"
+    t.index ["user_id"], name: "index_nod_date_updates_on_user_id"
+  end
+
   create_table "non_availabilities", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date"
@@ -1396,6 +1412,38 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.index ["updated_at"], name: "index_transcriptions_on_updated_at"
   end
 
+  create_table "unrecognized_appellants", comment: "Unrecognized non-veteran appellants", force: :cascade do |t|
+    t.bigint "claimant_id", null: false, comment: "The OtherClaimant record associating this appellant to a DecisionReview"
+    t.datetime "created_at", null: false
+    t.string "poa_participant_id", comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
+    t.string "relationship", null: false, comment: "Relationship to veteran. Allowed values: attorney, child, spouse, other"
+    t.bigint "unrecognized_party_detail_id", comment: "Contact details"
+    t.bigint "unrecognized_power_of_attorney_id", comment: "Appellant's POA, if they aren't in CorpDB."
+    t.datetime "updated_at", null: false
+    t.index ["claimant_id"], name: "index_unrecognized_appellants_on_claimant_id"
+    t.index ["unrecognized_party_detail_id"], name: "index_unrecognized_appellants_on_unrecognized_party_detail_id"
+    t.index ["unrecognized_power_of_attorney_id"], name: "index_unrecognized_appellants_on_power_of_attorney_id"
+  end
+
+  create_table "unrecognized_party_details", comment: "For an appellant or POA, name and contact details for an unrecognized person or organization", force: :cascade do |t|
+    t.string "address_line_1", null: false
+    t.string "address_line_2"
+    t.string "address_line_3"
+    t.string "city", null: false
+    t.string "country", null: false
+    t.datetime "created_at", null: false
+    t.string "email_address"
+    t.string "last_name"
+    t.string "middle_name"
+    t.string "name", null: false, comment: "Name of organization, or first name or mononym of person"
+    t.string "party_type", null: false, comment: "The type of this party. Allowed values: person, organization"
+    t.string "phone_number"
+    t.string "state", null: false
+    t.string "suffix"
+    t.datetime "updated_at", null: false
+    t.string "zip", null: false
+  end
+
   create_table "user_quotas", id: :serial, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "locked_task_count"
@@ -1491,21 +1539,25 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
     t.string "alias_with_host", comment: "Alias for conference in pexip with client_host"
     t.string "appellant_email", comment: "Appellant's email address"
     t.boolean "appellant_email_sent", default: false, null: false, comment: "Determines whether or not a notification email was sent to the appellant"
+    t.datetime "appellant_reminder_sent_at", comment: "The datetime the last reminder email was sent to the appellant."
     t.string "appellant_tz", limit: 50, comment: "Stores appellant timezone"
     t.boolean "conference_deleted", default: false, null: false, comment: "Whether or not the conference was deleted from Pexip"
     t.integer "conference_id", comment: "ID of conference from Pexip"
     t.datetime "created_at", null: false, comment: "Automatic timestamp of when virtual hearing was created"
     t.bigint "created_by_id", null: false, comment: "User who created the virtual hearing"
+    t.string "guest_hearing_link", comment: "Link used by appellants and/or representatives to join virtual hearing conference"
     t.integer "guest_pin", comment: "PIN number for guests of Pexip conference"
     t.string "guest_pin_long", limit: 11, comment: "Change the guest pin to store a longer pin with the # sign trailing"
     t.bigint "hearing_id", comment: "Associated hearing"
     t.string "hearing_type", comment: "'Hearing' or 'LegacyHearing'"
+    t.string "host_hearing_link", comment: "Link used by judges to join virtual hearing conference"
     t.integer "host_pin", comment: "PIN number for host of Pexip conference"
     t.string "host_pin_long", limit: 8, comment: "Change the host pin to store a longer pin with the # sign trailing"
     t.string "judge_email", comment: "Judge's email address"
     t.boolean "judge_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the judge"
     t.string "representative_email", comment: "Veteran's representative's email address"
     t.boolean "representative_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran's representative"
+    t.datetime "representative_reminder_sent_at", comment: "The datetime the last reminder email was sent to the representative."
     t.string "representative_tz", limit: 50, comment: "Stores representative timezone"
     t.boolean "request_cancelled", default: false, comment: "Determines whether the user has cancelled the virtual hearing request"
     t.datetime "updated_at", null: false, comment: "Automatic timestamp of when virtual hearing was updated"
@@ -1564,9 +1616,9 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
   add_foreign_key "certifications", "users"
   add_foreign_key "claims_folder_searches", "users"
   add_foreign_key "dispatch_tasks", "users"
-  add_foreign_key "docket_changes", "appeals", column: "new_docket_stream_id"
-  add_foreign_key "docket_changes", "appeals", column: "old_docket_stream_id"
-  add_foreign_key "docket_changes", "tasks"
+  add_foreign_key "docket_switches", "appeals", column: "new_docket_stream_id"
+  add_foreign_key "docket_switches", "appeals", column: "old_docket_stream_id"
+  add_foreign_key "docket_switches", "tasks"
   add_foreign_key "document_views", "users"
   add_foreign_key "end_product_establishments", "users"
   add_foreign_key "end_product_updates", "end_product_establishments"
@@ -1583,6 +1635,8 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
   add_foreign_key "legacy_hearings", "users", column: "created_by_id"
   add_foreign_key "legacy_hearings", "users", column: "updated_by_id"
   add_foreign_key "legacy_issue_optins", "legacy_issues"
+  add_foreign_key "nod_date_updates", "appeals"
+  add_foreign_key "nod_date_updates", "users"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "post_decision_motions", "appeals"
   add_foreign_key "post_decision_motions", "tasks"
@@ -1590,6 +1644,9 @@ ActiveRecord::Schema.define(version: 2020_10_20_135542) do
   add_foreign_key "ramp_election_rollbacks", "users"
   add_foreign_key "request_issues_updates", "users"
   add_foreign_key "schedule_periods", "users"
+  add_foreign_key "unrecognized_appellants", "claimants"
+  add_foreign_key "unrecognized_appellants", "unrecognized_party_details"
+  add_foreign_key "unrecognized_appellants", "unrecognized_party_details", column: "unrecognized_power_of_attorney_id"
   add_foreign_key "user_quotas", "users"
   add_foreign_key "virtual_hearings", "users", column: "updated_by_id"
 end

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers';
+import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 import {
@@ -12,7 +12,7 @@ import {
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../../components/Button';
 import { sprintf } from 'sprintf-js';
-import { dispositions } from '../constants';
+import DISPOSITIONS from '../../../../constants/DOCKET_SWITCH_DISPOSITIONS';
 import TextField from '../../../components/TextField';
 import TextareaField from '../../../components/TextareaField';
 import RadioField from '../../../components/RadioField';
@@ -23,7 +23,7 @@ const schema = yup.object().shape({
   timely: yup.string().required(),
   disposition: yup.
     mixed().
-    oneOf(Object.keys(dispositions)).
+    oneOf(Object.keys(DISPOSITIONS)).
     required(),
   hyperlink: yup.string(),
   judge: yup.
@@ -57,7 +57,7 @@ export const RecommendDocketSwitchForm = ({
       ),
     [defaultJudgeId, judgeOptions]
   );
-  const dispositionOptions = useMemo(() => Object.values(dispositions), []);
+  const dispositionOptions = useMemo(() => Object.values(DISPOSITIONS), []);
 
   useEffect(() => {
     setValue('judge', judgeDefault);

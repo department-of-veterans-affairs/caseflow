@@ -44,21 +44,9 @@ class HearingTask < Task
 
     if appeal.is_a?(LegacyAppeal)
       update_legacy_appeal_location
-    else
-      IhpTasksFactory.new(parent).create_ihp_tasks!
+    elsif appeal.is_a?(Appeal)
+      create_evidence_or_ihp_task
     end
-  end
-
-  def update_legacy_appeal_location
-    location = if hearing&.held?
-                 LegacyAppeal::LOCATION_CODES[:transcription]
-               elsif appeal.representatives.empty?
-                 LegacyAppeal::LOCATION_CODES[:case_storage]
-               else
-                 LegacyAppeal::LOCATION_CODES[:service_organization]
-               end
-
-    AppealRepository.update_location!(appeal, location)
   end
 
   def create_change_hearing_disposition_task(instructions = nil)
@@ -80,6 +68,30 @@ class HearingTask < Task
   end
 
   private
+
+  def update_legacy_appeal_location
+    location = if hearing&.held?
+                 LegacyAppeal::LOCATION_CODES[:transcription]
+               elsif appeal.representative_is_colocated_vso?
+                 LegacyAppeal::LOCATION_CODES[:service_organization]
+               else
+                 LegacyAppeal::LOCATION_CODES[:case_storage]
+               end
+
+    AppealRepository.update_location!(appeal, location)
+  end
+
+  def create_evidence_or_ihp_task
+    if hearing&.no_show?
+      EvidenceSubmissionWindowTask.create!(
+        appeal: appeal,
+        parent: self,
+        assigned_to: MailTeam.singleton
+      )
+    else
+      IhpTasksFactory.new(parent).create_ihp_tasks!
+    end
+  end
 
   def cascade_closure_from_child_task?(_child_task)
     true
