@@ -117,8 +117,7 @@ RSpec.feature "Case details", :all_dbs do
         hearing = appeal.hearings.first
         expect(page).to have_content("Type: #{hearing.readable_request_type}")
 
-        expect(page).to have_content("Disposition: Cancelled")
-
+        expect(page).to have_content("Disposition: #{Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.cancelled}")
         expect(page).to have_content("Date: ")
         expect(page).to have_content("Judge: ")
       end
@@ -1294,11 +1293,15 @@ RSpec.feature "Case details", :all_dbs do
           expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
         end
 
-        it "success alert displays after submitting NOD date change successfully" do
+        it "creates an Edit NOD Date entry and a success alert displays after a successful change" do
           visit("/queue/appeals/#{appeal.uuid}")
 
           find("button", text: COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY).click
           fill_in COPY::EDIT_NOD_DATE_LABEL, with: Time.zone.today.mdY
+
+          expect(page).to have_content("Reason for edit")
+          find(".cf-form-dropdown", text: "Reason for edit").click
+          find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
           safe_click "#Edit-NOD-Date-button-id-1"
 
           expect(page).to have_content(
