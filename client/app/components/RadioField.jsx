@@ -85,6 +85,7 @@ export const RadioField = (props) => {
             key={`${idPart}-${option.value}-${i}`}
           >
             <input
+              aria-label={option.ariaLabel}
               name={name}
               onChange={handleChange}
               type="radio"
