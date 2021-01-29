@@ -103,7 +103,7 @@ describe TasksForAppeal do
         end
 
         context "hearing was held" do
-          let(:disposition) { "H" }
+          let(:disposition) { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:held] }
 
           it "doesn't call the hearing task tree intitializer" do
             expect(HearingTaskTreeInitializer).to_not receive(:for_appeal_with_pending_travel_board_hearing)
