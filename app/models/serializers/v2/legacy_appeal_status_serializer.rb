@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class V2::LegacyAppealStatusSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   include StatusFieldSerializer
 
   set_key_transform :camel_lower

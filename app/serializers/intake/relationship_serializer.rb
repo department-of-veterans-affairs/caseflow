@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Intake::RelationshipSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   set_id(&:participant_id)
 
   attribute :participant_id

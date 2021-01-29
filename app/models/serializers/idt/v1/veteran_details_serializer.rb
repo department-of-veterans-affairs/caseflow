@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Idt::V1::VeteranDetailsSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   set_id do
     1
   end

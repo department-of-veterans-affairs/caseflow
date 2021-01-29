@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Intake::RequestIssueSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :id
   attribute :rating_issue_reference_id, &:contested_rating_issue_reference_id

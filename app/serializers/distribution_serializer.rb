@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class DistributionSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :distributed_cases_count
   attributes :id, :created_at, :updated_at, :status

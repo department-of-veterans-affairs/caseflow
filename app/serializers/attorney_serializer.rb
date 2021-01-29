@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AttorneySerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   attribute :id
   attribute :css_id
   attribute :full_name

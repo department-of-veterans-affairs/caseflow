@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkQueue::LegacyIssueSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :levels
   attribute(:program) { |object| object.codes[0] }

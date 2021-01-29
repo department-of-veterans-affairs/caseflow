@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkQueue::LegacyTaskSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :is_legacy do
     true

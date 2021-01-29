@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkQueue::VeteranSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :full_name, &:veteran_full_name
   attribute :gender, &:veteran_gender

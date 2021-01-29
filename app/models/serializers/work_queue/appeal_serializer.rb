@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkQueue::AppealSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   extend Helpers::AppealHearingHelper
 
   attribute :assigned_attorney
