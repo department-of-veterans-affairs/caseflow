@@ -14,9 +14,7 @@ import COPY from '../../COPY';
 
 /**
  * @param {Object} props
- *  - @param {string}   appealId         The id of the appeal we are creating this cavc remand for. Used to grab
- *                                       associated decision issues on the appeal from state
- *  - @param {Object[]} decisionIssues   Issues pulled from state to allow the user to select which are being remanded
+ *  - @param {string}   appealId         The id of the appeal we are updating this cavc remand for.
  *  - @param {Object}   error            Error sent from the back end upon submit to be displayed rather than submitting
  *  - @param {boolean}  highlightInvalid Whether or not to show field validation, set to true upon submit
  *  - @param {Object}   history          Provided with react router to be able to route to another page upon success
@@ -30,7 +28,7 @@ const AddCavcDatesModal = ({ appealId, error, highlightInvalid, history }) => {
 
   const validJudgementDate = () => Boolean(judgementDate);
   const validMandateDate = () => Boolean(mandateDate);
-  const validInstructions = () => instructions && instructions.length > 0;
+  const validInstructions = () => instructions?.length > 0;
 
   const validateForm = () => {
     return validJudgementDate() && validMandateDate() && validInstructions();
