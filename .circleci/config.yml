@@ -211,6 +211,9 @@ jobs:
           command: |
             ~/project/ci-bin/capture-log "bundle exec rake spec:setup_vacols"
 
+      # Documentation regarding Knapsack Pro integration:
+      #
+      #   https://github.com/department-of-veterans-affairs/caseflow/wiki/Knapsack-Pro-Integration
       - run:
           name: RSpec via knapsack_pro Queue Mode
           command: |
