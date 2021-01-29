@@ -40,6 +40,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     report << "*Debugging information*"
     report << "Priority Target: #{priority_target}"
     report << "Previous monthly distributions: #{priority_distributions_this_month_for_eligible_judges}"
+    report << "#{veterans_refreshed.count} veterans have been refreshed"
 
     if appeals_not_distributed.values.flatten.any?
       add_stuck_appeals_to_report(report, appeals_not_distributed)
@@ -151,8 +152,8 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   def warm_veteran_attr_for_priority_distributions
     non_genpop_distro_case_ids = DistributedCase.where(distribution_id: @tied_distributions.pluck(:id)).pluck(:case_id)
-    Veteran.warm_veteran_cache_for_appeals(non_genpop_distro_case_ids)
+    veterans_refreshed = Veteran.warm_veteran_cache_for_appeals(non_genpop_distro_case_ids)
     genpop_distro_case_ids = DistributedCase.where(distribution_id: @genpop_distributions.pluck(:id)).pluck(:case_id)
-    Veteran.warm_veteran_cache_for_appeals(genpop_distro_case_ids)
+    (veterans_refreshed + Veteran.warm_veteran_cache_for_appeals(genpop_distro_case_ids)).uniq
   end
 end
