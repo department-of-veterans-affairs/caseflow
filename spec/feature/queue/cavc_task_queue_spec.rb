@@ -288,6 +288,70 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
       end
     end
 
+    describe "MandateHoldTask" do
+      let(:cavc_decision_type) do
+        [
+          Constants.CAVC_DECISION_TYPES.straight_reversal,
+          Constants.CAVC_DECISION_TYPES.death_dismissal
+        ].sample
+      end
+      let!(:cavc_remand) do
+        create(:cavc_remand,
+               cavc_decision_type: cavc_decision_type,
+               remand_subtype: nil,
+               judgement_date: nil,
+               mandate_date: nil)
+      end
+      let(:cavc_appeal) { cavc_remand.remand_appeal }
+
+      it "does not allow non-CAVC users to do anything for MandateHoldTask" do
+        User.authenticate!(user: other_user)
+        visit "queue/appeals/#{cavc_appeal.external_id}"
+
+        expect(page).to_not have_content "Select an action"
+      end
+
+      it "allows CAVC users to process MandateHoldTask" do
+        User.authenticate!(user: org_nonadmin)
+
+        step "check for appeal in Queue's team view" do
+          visit "organizations/cavc-lit-support"
+
+          click_on "Unassigned"
+          expect(page).to_not have_content cavc_appeal.stream_docket_number
+
+          click_on "Assigned"
+          expect(page).to have_content cavc_appeal.stream_docket_number
+        end
+
+        step "end timed hold early" do
+          visit "queue/appeals/#{cavc_appeal.external_id}"
+
+          click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
+          click_on "Cancel"
+          click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
+          click_on "Submit"
+          expect(page).to have_content COPY::END_HOLD_SUCCESS_MESSAGE_TITLE
+        end
+
+        step "check for appeal in Queue's team view" do
+          visit "organizations/cavc-lit-support"
+
+          click_on "Unassigned"
+          expect(page).to have_content cavc_appeal.stream_docket_number
+
+          click_on "Assigned"
+          expect(page).to_not have_content cavc_appeal.stream_docket_number
+        end
+
+        step "check for action to restart timed hold" do
+          visit "queue/appeals/#{cavc_appeal.external_id}"
+          find(".cf-select__control", text: "Select an action").click
+          expect(page).to have_content Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label
+        end
+      end
+    end
+
     describe "SendCavcRemandProcessedLetterTask" do
       let!(:task) { create(:send_cavc_remand_processed_letter_task) }
       let(:vet_name) { task.appeal.veteran_full_name }
