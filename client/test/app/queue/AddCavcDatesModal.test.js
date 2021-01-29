@@ -32,7 +32,6 @@ describe('AddCavcDatesModal', () => {
     const errorClass = '.usa-input-error-message';
 
     const validationErrorShows = (cavcModal, errorMessage) => {
-      // component.find('#Add-Court-dates-button-id-1').simulate('click');
       clickSubmit(cavcModal);
 
       return cavcModal.find(errorClass).findWhere((node) => node.props().children === errorMessage).length > 0;
