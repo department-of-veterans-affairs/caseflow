@@ -1,10 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import SearchBar from '../../components/SearchBar';
 import TabWindow from '../../components/TabWindow';
 import { TaskTableUnconnected } from '../../queue/components/TaskTable';
 import { claimantColumn, veteranParticipantIdColumn, decisionReviewTypeColumn } from './TaskTableColumns';
+import COPY from '../../../COPY';
 
 class NonCompTabsUnconnected extends React.PureComponent {
   render = () => {
@@ -19,6 +21,7 @@ class NonCompTabsUnconnected extends React.PureComponent {
       label: 'Completed tasks',
       page: <TaskTableTab
         key="completed"
+        description={COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}
         predefinedColumns={{ includeCompletedDate: true,
           defaultSortIdx: 3 }}
         tasks={this.props.completedTasks} />
@@ -32,6 +35,13 @@ class NonCompTabsUnconnected extends React.PureComponent {
   }
 }
 
+NonCompTabsUnconnected.propTypes = {
+  completedTasks: PropTypes.array,
+  currentTab: PropTypes.node,
+  dispatch: PropTypes.func,
+  inProgressTasks: PropTypes.array,
+};
+
 class TaskTableTab extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -40,7 +50,7 @@ class TaskTableTab extends React.PureComponent {
       allTasks: this.props.tasks,
       predefinedColumns: this.props.predefinedColumns,
       shownTasks: this.props.tasks,
-      searchText: ''
+      searchText: '',
     };
   }
 
@@ -63,6 +73,7 @@ class TaskTableTab extends React.PureComponent {
 
   render = () => {
     return <React.Fragment>
+      {this.props.description && <div className="cf-noncomp-queue-completed-task">{this.props.description}</div>}
       <div className="cf-search-ahead-parent cf-push-right cf-noncomp-search">
         <SearchBar
           id="searchBar"
@@ -87,6 +98,12 @@ class TaskTableTab extends React.PureComponent {
     </React.Fragment>;
   }
 }
+
+TaskTableTab.propTypes = {
+  description: PropTypes.node,
+  predefinedColumns: PropTypes.object,
+  tasks: PropTypes.array,
+};
 
 const NonCompTabs = connect(
   (state) => ({

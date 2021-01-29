@@ -68,7 +68,7 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
     end
 
     let(:may_hearing_days) do
-      (1..13).each do |n|
+      (1..HearingRooms::ROOMS.size).each do |n|
         create(
           :hearing_day,
           regional_office: "RO10",
@@ -93,7 +93,7 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
     end
 
     let(:mar_hearing_days) do
-      (1..13).each do |n|
+      (1..HearingRooms::ROOMS.size).each do |n|
         create(:hearing_day, scheduled_for: Date.new(2019, 3, 14), room: n.to_s)
       end
     end

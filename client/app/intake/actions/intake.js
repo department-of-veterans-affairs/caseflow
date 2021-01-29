@@ -146,12 +146,14 @@ export const submitIntakeCompleteRequest = (intakeId, data) => (dispatch) => {
         const responseObject = error.response.body || {};
         const responseErrorCode = responseObject.error_code;
         const responseErrorData = responseObject.error_data;
+        const responseErrorUUID = responseObject.error_uuid;
 
         dispatch({
           type: ACTIONS.COMPLETE_INTAKE_FAIL,
           payload: {
             responseErrorCode,
-            responseErrorData
+            responseErrorData,
+            responseErrorUUID
           },
           meta: { analytics }
         });

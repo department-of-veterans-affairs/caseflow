@@ -1,16 +1,24 @@
 # frozen_string_literal: true
 
 class VirtualHearings::SendEmail
+  class RecipientIsDeceasedVeteran < StandardError; end
+
   attr_reader :virtual_hearing, :type
 
   def initialize(virtual_hearing:, type:)
     @virtual_hearing = virtual_hearing
-    @type = type
+    @type = type.to_s
   end
 
   def call
-    if !virtual_hearing.veteran_email_sent
-      virtual_hearing.update!(veteran_email_sent: send_email(veteran_recipient))
+    # Assumption: Reminders and confirmation/cancellation/change emails are sent
+    # separately, so this will return early if any reminder emails are sent. If
+    # reminder emails are being sent, we are assuming the other emails have all
+    # already been sent too.
+    return if send_reminder
+
+    if !virtual_hearing.appellant_email_sent
+      virtual_hearing.update!(appellant_email_sent: send_email(appellant_recipient))
     end
 
     if should_judge_receive_email?
@@ -28,19 +36,39 @@ class VirtualHearings::SendEmail
   delegate :appeal, to: :hearing
   delegate :veteran, to: :appeal
 
+  def send_reminder
+    if type == "appellant_reminder" && send_email(appellant_recipient)
+      virtual_hearing.update!(appellant_reminder_sent_at: Time.zone.now)
+
+      return true
+    end
+
+    if type == "representative_reminder" &&
+       !virtual_hearing.representative_email.nil? &&
+       send_email(representative_recipient)
+      virtual_hearing.update!(representative_reminder_sent_at: Time.zone.now)
+
+      return true
+    end
+
+    false
+  end
+
   def email_for_recipient(recipient)
     args = {
       mail_recipient: recipient,
       virtual_hearing: virtual_hearing
     }
 
-    case type.to_s
+    case type
     when "confirmation"
       VirtualHearingMailer.confirmation(**args)
     when "cancellation"
       VirtualHearingMailer.cancellation(**args)
     when "updated_time_confirmation"
       VirtualHearingMailer.updated_time_confirmation(**args)
+    when "appellant_reminder", "representative_reminder"
+      VirtualHearingMailer.reminder(**args)
     else
       fail ArgumentError, "Invalid type of email to send: `#{type}`"
     end
@@ -55,7 +83,10 @@ class VirtualHearings::SendEmail
       DataDogService.increment_counter(
         app_name: Constants.DATADOG_METRICS.HEARINGS.APP_NAME,
         metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
-        metric_name: "emails.submitted"
+        metric_name: "emails.submitted",
+        attrs: {
+          email_type: type
+        }
       )
 
       Rails.logger.info(
@@ -98,7 +129,10 @@ class VirtualHearings::SendEmail
     Rails.logger.info("Sending email to #{recipient.inspect}...")
 
     msg = email.deliver_now!
-  rescue StandardError => error
+  rescue StandardError, Savon::Error, BGS::ShareError => error
+    # Savon::Error and BGS::ShareError are sometimes thrown when making requests to BGS endpoints
+    Raven.capture_exception(error)
+
     Rails.logger.warn("Failed to send #{type} email to #{recipient.title}: #{error}")
     Rails.logger.warn(error.backtrace.join($INPUT_RECORD_SEPARATOR))
 
@@ -113,13 +147,19 @@ class VirtualHearings::SendEmail
 
   # :nocov:
   def create_sent_hearing_email_event(recipient, external_id)
+    # The "appellant" title is used in the email and is consistent whether or not the
+    # veteran is or isn't the appellant, but the email event can be more specific.
+    recipient_is_veteran = (
+      recipient.title == MailRecipient::RECIPIENT_TITLES[:appellant] &&
+      !appeal.appellant_is_not_veteran
+    )
     SentHearingEmailEvent.create!(
-      hearing: virtual_hearing.hearing,
-      email_type: type,
+      hearing: hearing,
+      email_type: type.ends_with?("reminder") ? "reminder" : type,
       email_address: recipient.email,
       external_message_id: external_id,
-      recipient_role: recipient.title.downcase,
-      sent_by: virtual_hearing.updated_by
+      recipient_role: recipient_is_veteran ? "veteran" : recipient.title.downcase,
+      sent_by: type.ends_with?("reminder") ? User.system_user : virtual_hearing.updated_by
     )
   rescue StandardError => error
     Raven.capture_exception(error)
@@ -128,7 +168,7 @@ class VirtualHearings::SendEmail
 
   def judge_recipient
     MailRecipient.new(
-      name: virtual_hearing.hearing.judge&.full_name,
+      name: hearing.judge&.full_name,
       email: virtual_hearing.judge_email,
       title: MailRecipient::RECIPIENT_TITLES[:judge]
     )
@@ -136,27 +176,46 @@ class VirtualHearings::SendEmail
 
   def representative_recipient
     MailRecipient.new(
-      name: virtual_hearing.hearing.appeal.representative_name,
+      name: appeal.representative_name,
       email: virtual_hearing.representative_email,
       title: MailRecipient::RECIPIENT_TITLES[:representative]
     )
   end
 
-  def veteran_recipient
-    if veteran.first_name.nil? || veteran.last_name.nil?
-      veteran.update_cached_attributes!
-    end
+  def validate_veteran_deceased
+    # Fail-safe check to ensure the recipient of an email is never a deceased veteran.
+    # Handle these on a case-by-case basis.
+    fail RecipientIsDeceasedVeteran if veteran.deceased?
+  end
+
+  def validate_veteran_name
+    veteran.update_cached_attributes! if veteran.first_name.nil? || veteran.last_name.nil?
 
     fail "Veteran name is not populated" unless veteran.first_name.present? && veteran.last_name.present?
+  end
+
+  def appellant_recipient
+    recipient_name = if appeal.appellant_is_not_veteran
+                       appeal.appellant_first_name
+                     elsif veteran.present?
+                       validate_veteran_deceased
+                       validate_veteran_name
+
+                       veteran.first_name
+                     else
+                       "Appellant"
+                     end
 
     MailRecipient.new(
-      name: veteran.first_name,
-      email: virtual_hearing.veteran_email,
-      title: MailRecipient::RECIPIENT_TITLES[:veteran]
+      name: recipient_name,
+      email: virtual_hearing.appellant_email,
+      title: MailRecipient::RECIPIENT_TITLES[:appellant]
     )
   end
 
   def should_judge_receive_email?
-    !virtual_hearing.judge_email.nil? && !virtual_hearing.judge_email_sent && type.to_s != "cancellation"
+    !virtual_hearing.judge_email.nil? &&
+      !virtual_hearing.judge_email_sent &&
+      %w[confirmation updated_time_confirmation].include?(type)
   end
 end

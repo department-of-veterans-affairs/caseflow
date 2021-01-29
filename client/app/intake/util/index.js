@@ -1,10 +1,10 @@
 import _ from 'lodash';
-import { REVIEW_OPTIONS, CLAIMANT_ERRORS } from '../constants';
+import { REVIEW_OPTIONS, REVIEW_DATA_FIELDS, CLAIMANT_ERRORS } from '../constants';
 import DATES from '../../../constants/DATES';
 import { formatDateStr } from '../../util/DateUtil';
 
 export const getBlankOptionError = (responseErrorCodes, field) => (
-  (_.get(responseErrorCodes[field], 0) === 'blank') && 'Please select an option.'
+  _.get(responseErrorCodes[field], 0) === 'blank' ? 'Please select an option.' : null
 );
 
 export const getClaimantError = (responseErrorCodes) => {
@@ -13,9 +13,11 @@ export const getClaimantError = (responseErrorCodes) => {
   return CLAIMANT_ERRORS[errorCode];
 };
 
-export const getPageError = (responseErrorCodes) => (
-  (_.get(responseErrorCodes.other, 0) === 'unknown_error') && 'Unknown error.'
-);
+export const getPageError = (responseErrorPayload) => {
+  if (responseErrorPayload.responseErrorCodes.other?.[0] === 'unknown_error') {
+    return { errorCode: null, errorUUID: responseErrorPayload.errorUUID };
+  }
+};
 
 // use this conversion to change between rails model and react radio input
 // otherwise we send over a string true/false and reloading turns it into a boolean
@@ -43,8 +45,8 @@ export const isCorrection = (isRating, intakeData) => {
 
 export const getReceiptDateError = (responseErrorCodes, state) => (
   {
-    in_future:
-      'Receipt date cannot be in the future.',
+    blank: 'Please enter a valid receipt date.',
+    in_future: 'Receipt date cannot be in the future.',
     before_ramp: 'Receipt Date cannot be earlier than RAMP start date, 11/01/2017.',
     before_ama: `Receipt Date cannot be prior to ${formatDateStr(DATES.AMA_ACTIVATION)}.`,
     before_ramp_receipt_date: 'Receipt date cannot be earlier than the original ' +
@@ -72,7 +74,7 @@ export const formatRelationships = (relationships) => {
 };
 
 export const getDefaultPayeeCode = (state, claimant) => {
-  return _.find(state.relationships, { value: claimant }).defaultPayeeCode;
+  return (claimant ? _.find(state.relationships, { value: claimant }).defaultPayeeCode : null);
 };
 
 export const formatRadioOptions = (options) => {
@@ -89,44 +91,32 @@ export const formatSearchableDropdownOptions = (options) => {
   });
 };
 
-export const prepareReviewData = (intakeData, intakeType) => {
-  switch (intakeType) {
-  case 'appeal':
-    return {
-      docket_type: intakeData.docketType,
-      receipt_date: intakeData.receiptDate,
-      claimant: intakeData.claimant,
-      veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
-      payee_code: intakeData.payeeCode,
-      legacy_opt_in_approved: intakeData.legacyOptInApproved
-    };
-  case 'supplementalClaim':
-    return {
-      receipt_date: intakeData.receiptDate,
-      benefit_type: intakeData.benefitType,
-      claimant: intakeData.claimant,
-      veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
-      payee_code: intakeData.payeeCode,
-      legacy_opt_in_approved: intakeData.legacyOptInApproved
-    };
-  case 'higherLevelReview':
-    return {
-      informal_conference: intakeData.informalConference,
-      same_office: intakeData.sameOffice,
-      benefit_type: intakeData.benefitType,
-      receipt_date: intakeData.receiptDate,
-      claimant: intakeData.claimant,
-      veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
-      payee_code: intakeData.payeeCode,
-      legacy_opt_in_approved: intakeData.legacyOptInApproved
-    };
-  default:
-    return {
-      receipt_date: intakeData.receiptDate,
-      claimant: intakeData.claimant,
-      veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
-      payee_code: intakeData.payeeCode,
-      legacy_opt_in_approved: intakeData.legacyOptInApproved
-    };
+// Performs frontend validation on payloads intended for the /review endpoint.
+// For simple validation (i.e. presence of fields), this saves an XHR roundtrip,
+// and decouples error-reporting in the UI from backend ActiveModel logic.
+export const validateReviewData = (intakeData, intakeType) => {
+  const fields = REVIEW_DATA_FIELDS[intakeType];
+  let errorCodes = {};
+  for (const fieldName in fields) {
+    const field = fields[fieldName];
+    if (field.required && intakeData[field.key] == null) {
+      errorCodes[fieldName] = ['blank'];
+    }
   }
+  if (intakeData.receiptDate && intakeData.receiptDate > (new Date).toISOString()) {
+    errorCodes.receipt_date = ['in_future'];
+  }
+  if (['dependent', 'attorney'].includes(intakeData.claimantType) && !intakeData.claimant) {
+    errorCodes.claimant = ['blank'];
+  }
+  return (Object.keys(errorCodes).length ? errorCodes : null);
+};
+
+export const prepareReviewData = (intakeData, intakeType) => {
+  const fields = REVIEW_DATA_FIELDS[intakeType];
+  const result = {};
+  for (let fieldName in fields) {
+    result[fieldName] = intakeData[fields[fieldName].key];
+  }
+  return result;
 };

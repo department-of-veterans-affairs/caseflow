@@ -275,6 +275,36 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context "legacy_optin" do
+    let!(:legacy_appeal) do
+      create(:legacy_appeal, vacols_case:
+        create(
+          :case,
+          :status_active,
+          bfkey: vacols_id,
+          bfcorlid: "#{veteran.file_number}S",
+          bfdc: "G",
+          bfddec: 3.days.ago,
+          folder: create(:folder, tidcls: folder_date),
+          case_issues: [
+            create(:case_issue, :ankylosis_of_hip),
+            create(:case_issue, :limitation_of_thigh_motion_extension)
+          ]
+        ))
+    end
+    let(:vacols_id) { "vacols7" }
+    let(:vacols_sequence_id) { 1 }
+    let(:decision_date) { 3.days.ago.to_date }
+    let(:folder_date) { 5.days.ago.to_date }
+    subject { rating_request_issue.handle_legacy_issues! }
+    it "saves legacy appeal disposition and decision date " do
+      subject
+      expect(rating_request_issue.legacy_issue_optin.original_legacy_appeal_disposition_code).to eq "G"
+      expect(rating_request_issue.legacy_issue_optin.original_legacy_appeal_decision_date).to eq(decision_date)
+      expect(rating_request_issue.legacy_issue_optin.folder_decision_date).to eq(folder_date)
+    end
+  end
+
   context "#contention" do
     let(:end_product_establishment) { create(:end_product_establishment, :active) }
     let!(:contention) do
@@ -316,6 +346,81 @@ describe RequestIssue, :all_dbs do
       let(:contention_reference_id) { nil }
 
       it { is_expected.to eq(false) }
+    end
+  end
+
+  context "#editable?" do
+    subject { rating_request_issue.editable? }
+    let(:receipt_date) { 1.month.ago }
+    let(:end_product_establishment) do
+      create(
+        :end_product_establishment,
+        :active,
+        established_at: receipt_date + 5.days,
+        veteran: veteran
+      )
+    end
+
+    it { is_expected.to be true }
+
+    context "when there's a connected rating" do
+      before do
+        Generators::PromulgatedRating.build(
+          participant_id: veteran.participant_id,
+          profile_date: receipt_date + 10.days,
+          promulgation_date: receipt_date + 10.days,
+          issues: [
+            {
+              reference_id: "ref_id1", decision_text: "PTSD denied",
+              contention_reference_id: rating_request_issue.contention_reference_id
+            }
+          ],
+          associated_claims: [{ clm_id: end_product_establishment.reference_id, bnft_clm_tc: "030HLRR" }]
+        )
+      end
+
+      it "returns false" do
+        expect(subject).to eq false
+      end
+    end
+  end
+
+  context "#exam_requested?" do
+    subject { rating_request_issue.exam_requested? }
+    before { FeatureToggle.enable!(:detect_contention_exam) }
+    after { FeatureToggle.disable!(:detect_contention_exam) }
+
+    context "when there is no contention" do
+      let(:contention_reference_id) { nil }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "when there is no end product establishment" do
+      let(:end_product_establishment) { nil }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "when there is a contention" do
+      let(:end_product_establishment) { create(:end_product_establishment, :active) }
+      let(:contention_reference_id) { 1234 }
+      let(:orig_source_type_code) { "APP" }
+      let!(:contention) do
+        Generators::BgsContention.build(
+          reference_id: contention_reference_id,
+          claim_id: end_product_establishment.reference_id,
+          orig_source_type_code: orig_source_type_code
+        )
+      end
+
+      it { is_expected.to be_falsey }
+
+      context "when there is an exam scheduled" do
+        let(:orig_source_type_code) { "EXAM" }
+
+        it { is_expected.to be true }
+      end
     end
   end
 
@@ -829,6 +934,31 @@ describe RequestIssue, :all_dbs do
           unidentified_issue_text: "decision text"
         )
       end
+    end
+  end
+
+  context "#move_stream!" do
+    subject { request_issue.move_stream!(new_appeal_stream: new_appeal_stream, closed_status: closed_status) }
+    let(:closed_status) { "docket_switch" }
+    let(:review) { create(:appeal) }
+    let(:new_appeal_stream) { create(:appeal, veteran_file_number: veteran.file_number) }
+    let(:request_issue) { create(:request_issue, nonrating_issue_description: "Moved issue", decision_review: review) }
+
+    it "copies the request issue to the new stream and closes with the provided status" do
+      subject
+      expect(request_issue.closed_status).to eq closed_status
+      expect(request_issue.closed_at).to eq Time.zone.now
+
+      request_issue_copy = new_appeal_stream.reload.request_issues.first
+
+      expect(request_issue_copy.nonrating_issue_description).to eq "Moved issue"
+      expect(request_issue_copy.created_at).to be_within(1.second).of Time.zone.now
+    end
+
+    context "the request issue's decision review is not an appeal" do
+      let(:review) { create(:higher_level_review) }
+
+      it { is_expected.to be_nil }
     end
   end
 
@@ -1421,7 +1551,7 @@ describe RequestIssue, :all_dbs do
 
           context "NOD and SOC dates are still ineligible" do
             let(:nod_date) { Constants::DATES["NOD_COVID_ELIGIBLE"].to_date - 1.day }
-            let(:soc_date) { Constants::DATES["SOC_COVID_ELIGIBLE"].to_date - 1.day }
+            let(:soc_date) { Constants::DATES["SOC_COVID_ELIGIBLE"].to_date - 3.days }
 
             it "is not eligible" do
               rating_request_issue.validate_eligibility!
@@ -1491,6 +1621,50 @@ describe RequestIssue, :all_dbs do
 
           expect(rating_request_issue.contested_rating_issue).to_not be_nil
           expect(rating_request_issue.ineligible_reason).to be_nil
+        end
+      end
+    end
+  end
+
+  context "#close!" do
+    subject { rating_request_issue.close!(status: new_status) }
+    let(:new_status) { "decided" }
+
+    context "with open request issue" do
+      it "sets the specified closed status" do
+        expect(rating_request_issue.reload.closed_status).to be_nil
+        subject
+        expect(rating_request_issue.reload.closed_status).to eq("decided")
+      end
+    end
+
+    context "with already closed request issue" do
+      let(:closed_status) { "withdrawn" }
+      let(:closed_at) { 1.day.ago }
+
+      it "refrains from updating" do
+        expect(rating_request_issue.reload.closed_status).to eq("withdrawn")
+        subject
+        expect(rating_request_issue.reload.closed_status).to eq("withdrawn")
+      end
+
+      context "when prior status was ineligible" do
+        let(:closed_status) { "ineligible" }
+
+        it "leaves as-is when not removing" do
+          expect(rating_request_issue.reload.closed_status).to eq("ineligible")
+          subject
+          expect(rating_request_issue.reload.closed_status).to eq("ineligible")
+        end
+
+        context "when updating to `removed`" do
+          let(:new_status) { "removed" }
+
+          it "successfully removes the issue" do
+            expect(rating_request_issue.reload.closed_status).to eq("ineligible")
+            subject
+            expect(rating_request_issue.reload.closed_status).to eq("removed")
+          end
         end
       end
     end

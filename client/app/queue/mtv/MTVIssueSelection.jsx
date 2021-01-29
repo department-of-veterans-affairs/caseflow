@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import CheckboxGroup from '../../components/CheckboxGroup';
 import { JUDGE_ADDRESS_MTV_ISSUE_SELECTION_LABEL } from '../../../COPY';
 
-const getDisplayOptions = (issues) => {
+const getDisplayOptions = (issues = []) => {
   // CheckboxGroup expects options with id (string) & label
   return issues.map(({ id, description }, idx) => ({ id: id.toString(),
     label: `${idx + 1}. ${description}` }));
 };
 
-export const MTVIssueSelection = ({ issues, onChange }) => {
+export const MTVIssueSelection = ({ issues = [], onChange }) => {
   const [selectedIssues, setSelectedIssues] = useState({});
 
   useEffect(() => {

@@ -1,28 +1,30 @@
-import React from 'react';
-import { withRouter } from 'react-router-dom';
-import connect from 'react-redux/es/connect/connect';
-import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
+import { withRouter } from 'react-router-dom';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Button from '../../components/Button';
-import Modal from '../../components/Modal';
-import { fullWidth } from '../../queue/constants';
+import PropTypes from 'prop-types';
+import React from 'react';
+import _ from 'lodash';
+import connect from 'react-redux/es/connect/connect';
+
 import {
   HearingRoomDropdown,
   JudgeDropdown,
   HearingCoordinatorDropdown
 } from '../../components/DataDropdowns';
-import Checkbox from '../../components/Checkbox';
-import TextareaField from '../../components/TextareaField';
-import { bindActionCreators } from 'redux';
+import { fullWidth } from '../../queue/constants';
 import { selectHearingCoordinator,
   selectVlj,
   selectHearingRoom,
   setNotes,
   onHearingDayModified
 } from '../actions/dailyDocketActions';
-import HEARING_ROOMS_LIST from '../../../constants/HEARING_ROOMS_LIST.json';
-import _ from 'lodash';
+import Button from '../../components/Button';
+import Checkbox from '../../components/Checkbox';
+import HEARING_ROOMS_LIST from '../../../constants/HEARING_ROOMS_LIST';
+import Modal from '../../components/Modal';
+import TextareaField from '../../components/TextareaField';
+import HEARING_REQUEST_TYPES from '../../../constants/HEARING_REQUEST_TYPES';
 
 const notesFieldStyling = css({
   height: '100px',
@@ -43,11 +45,6 @@ class HearingDayEditModal extends React.Component {
   componentDidMount = () => {
     // find labels in options before passing values to modal
     this.initialState();
-    if (this.props.dailyDocket.roomInfo) {
-      const roomInfo = this.props.dailyDocket.roomInfo.split(' ');
-
-      this.props.selectHearingRoom(roomInfo[0]);
-    }
   };
 
   componentDidUpdate(prevProps) {
@@ -128,6 +125,7 @@ class HearingDayEditModal extends React.Component {
           name="roomEdit"
           label={<strong>Change Room</strong>}
           strongLabel
+          disabled={this.props.requestType === HEARING_REQUEST_TYPES.virtual}
           value={this.state.modifyRoom}
           onChange={this.onModifyRoom} />
         <Checkbox
@@ -197,10 +195,44 @@ class HearingDayEditModal extends React.Component {
 }
 
 HearingDayEditModal.propTypes = {
+  activeJudges: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.any,
+      label: PropTypes.string,
+    })
+  ),
+  activeCoordinators: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.any,
+      label: PropTypes.string,
+    })
+  ),
+  coordinator: PropTypes.shape({
+    value: PropTypes.string
+  }),
+  vlj: PropTypes.shape({
+    value: PropTypes.string
+  }),
+  dailyDocket: PropTypes.shape({
+    bvaPoc: PropTypes.string,
+    judgeId: PropTypes.number,
+    notes: PropTypes.string,
+    room: PropTypes.string
+  }),
+  hearingRoom: PropTypes.shape({
+    value: PropTypes.string
+  }),
+  notes: PropTypes.string,
   userId: PropTypes.number,
   userCssId: PropTypes.string,
   closeModal: PropTypes.func,
-  cancelModal: PropTypes.func
+  cancelModal: PropTypes.func,
+  onHearingDayModified: PropTypes.func,
+  selectHearingCoordinator: PropTypes.func,
+  selectHearingRoom: PropTypes.func,
+  setNotes: PropTypes.func,
+  selectVlj: PropTypes.func,
+  requestType: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
@@ -214,11 +246,11 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  selectVlj,
+  onHearingDayModified,
   selectHearingCoordinator,
   selectHearingRoom,
-  setNotes,
-  onHearingDayModified
+  selectVlj,
+  setNotes
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HearingDayEditModal));

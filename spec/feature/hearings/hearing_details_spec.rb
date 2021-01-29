@@ -29,9 +29,16 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
     scenario "User can update fields" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
-      click_dropdown(name: "judgeDropdown", index: 0, wait: 30)
-      click_dropdown(name: "hearingCoordinatorDropdown", index: 0, wait: 30)
-      click_dropdown(name: "hearingRoomDropdown", index: 0, wait: 30)
+      # wait until the label displays before trying to interact with the dropdown
+      find("div", class: "dropdown-judgeDropdown", text: COPY::DROPDOWN_LABEL_JUDGE)
+      click_dropdown(name: "judgeDropdown", index: 0)
+
+      find("div", class: "dropdown-hearingCoordinatorDropdown", text: COPY::DROPDOWN_LABEL_HEARING_COORDINATOR)
+      click_dropdown(name: "hearingCoordinatorDropdown", index: 0)
+
+      find("div", class: "dropdown-hearingRoomDropdown", text: COPY::DROPDOWN_LABEL_HEARING_ROOM)
+      click_dropdown(name: "hearingRoomDropdown", index: 0)
+
       find("label", text: "Yes, Waive 90 Day Evidence Hold").click
 
       fill_in "Notes", with: generate_words(10)
@@ -75,7 +82,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
 
         step "ensure page has existing transcription details" do
           expect(
-            page.find(".dropdown-problemType .Select-value")
+            page.find(".dropdown-problemType .cf-select__value-container")
           ).to have_content(Constants.TRANSCRIPTION_PROBLEM_TYPES.POOR_AUDIO)
           expect(
             find_field(Constants.TRANSCRIPTION_REQUESTED_REMEDIES.NEW_HEARING, visible: false)
@@ -91,7 +98,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
           visit "hearings/#{hearing.external_id}/details"
 
           expect(
-            page.find(".dropdown-problemType .Select-value")
+            page.find(".dropdown-problemType .cf-select__value-container")
           ).to have_content(Constants.TRANSCRIPTION_PROBLEM_TYPES.NO_AUDIO)
           expect(
             find_field(Constants.TRANSCRIPTION_REQUESTED_REMEDIES.NEW_HEARING, visible: false)
@@ -109,7 +116,7 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
 
           expect(page).to have_content("Test Notes Test Notes")
           expect(
-            page.find(".dropdown-problemType .Select-value")
+            page.find(".dropdown-problemType .cf-select__value-container")
           ).to have_content(Constants.TRANSCRIPTION_PROBLEM_TYPES.NO_AUDIO)
           expect(
             find_field(Constants.TRANSCRIPTION_REQUESTED_REMEDIES.NEW_HEARING, visible: false)
@@ -142,9 +149,9 @@ RSpec.feature "Hearing Schedule Daily Docket", :all_dbs do
       expect(page).to have_field("Notes", disabled: false)
       expect(page).to have_no_selector("label", text: "Yes, Waive 90 Day Evidence Hold")
 
-      click_dropdown(name: "hearingType", index: 1)
-      fill_in "vet-email", with: "email@testingEmail.com"
-      fill_in "rep-email", with: "email@testingEmail.com"
+      click_dropdown(name: "hearingType", index: 0)
+      fill_in "appellant-email", with: "email@testingEmail.com"
+      fill_in "representative-email", with: "email@testingEmail.com"
       click_button(COPY::VIRTUAL_HEARING_CHANGE_HEARING_BUTTON)
 
       expect(page).to have_no_content(expected_alert)

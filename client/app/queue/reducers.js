@@ -13,6 +13,7 @@ import teamManagementReducer from './teamManagement/reducers';
 
 import commonComponentsReducer from '../components/common/reducers';
 import mtvReducer from './mtv/reducers';
+import docketSwitchReducer from './docketSwitch/docketSwitchSlice';
 
 // TODO: Remove this when we move entirely over to the appeals search.
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
@@ -46,7 +47,6 @@ export const initialState = {
   attorneysOfJudge: [],
   attorneyAppealsLoadingState: {},
   isTaskAssignedToUserSelected: {},
-  tasksAssignedByBulk: {},
   pendingDistribution: null,
   attorneys: {},
   organizationId: null,
@@ -140,6 +140,16 @@ const editAppeal = (state, action) => {
     appealDetails: {
       [action.payload.appealId]: {
         $merge: action.payload.attributes
+      }
+    }
+  });
+};
+
+const setOvertime = (state, action) => {
+  return update(state, {
+    appeals: {
+      [action.payload.appealId]: {
+        $merge: { overtime: action.payload.overtime }
       }
     }
   });
@@ -426,7 +436,7 @@ const incrementTaskCountForAttorney = (state, action) => {
   } = state;
 
   attorneysOfJudge.forEach((attorney) => {
-    if (action.payload.attorney.id === attorney.id.toString()) {
+    if (action.payload.attorney.id === attorney.id) {
       attorney.active_task_count += 1;
     }
   });
@@ -519,19 +529,6 @@ const setSelectionOfTaskOfUser = (state, action) => {
   });
 };
 
-const bulkAssignTasks = (state, action) => {
-  return update(state, {
-    tasksAssignedByBulk: {
-      $set: {
-        assignedUser: action.payload.assignedUser,
-        regionalOffice: action.payload.regionalOffice,
-        taskType: action.payload.taskType,
-        numberOfTasks: action.payload.numberOfTasks
-      }
-    }
-  });
-};
-
 const setPendingDistribution = (state, action) => {
   return update(state, {
     pendingDistribution: {
@@ -591,6 +588,22 @@ const setSpecialIssue = (state, action) => {
   });
 };
 
+const clearSpecialIssue = (state) => {
+  const { specialIssues } = state;
+
+  Object.keys(specialIssues).forEach((specialIssue) => {
+    if (specialIssues[specialIssue] === true) {
+      specialIssues[specialIssue] = false;
+    }
+  });
+
+  return update(state, {
+    specialIssues: {
+      $merge: specialIssues
+    }
+  });
+};
+
 const setAppealAod = (state, action) => {
   return update(state, {
     appeals: {
@@ -604,10 +617,13 @@ const setAppealAod = (state, action) => {
 };
 
 const startedLoadingAppealValue = (state, action) => {
+  const existingState = state.loadingAppealDetail[action.payload.appealId] || {};
+
   return update(state, {
     loadingAppealDetail: {
       $merge: {
         [action.payload.appealId]: {
+          ...existingState,
           [action.payload.name]: {
             loading: true
           }
@@ -679,6 +695,7 @@ export const workQueueReducer = createReducer({
   [ACTIONS.DELETE_APPEAL]: deleteAppeal,
   [ACTIONS.DELETE_TASK]: deleteTask,
   [ACTIONS.EDIT_APPEAL]: editAppeal,
+  [ACTIONS.SET_OVERTIME]: setOvertime,
   [ACTIONS.RECEIVE_NEW_FILES_FOR_APPEAL]: receiveNewFilesForAppeal,
   [ACTIONS.ERROR_ON_RECEIVE_NEW_FILES_FOR_APPEAL]: errorOnReceiveNewFilesForAppeal,
   [ACTIONS.STARTED_LOADING_DOCUMENTS_FOR_APPEAL]: startedLoadingDocumentsForAppeal,
@@ -706,13 +723,13 @@ export const workQueueReducer = createReducer({
   [ACTIONS.SET_TASKS_AND_APPEALS_OF_ATTORNEY]: setTasksAndAppealsOfAttorney,
   [ACTIONS.ERROR_TASKS_AND_APPEALS_OF_ATTORNEY]: errorTasksAndAppealsOfAttorney,
   [ACTIONS.SET_SELECTION_OF_TASK_OF_USER]: setSelectionOfTaskOfUser,
-  [ACTIONS.BULK_ASSIGN_TASKS]: bulkAssignTasks,
   [ACTIONS.SET_PENDING_DISTRIBUTION]: setPendingDistribution,
   [ACTIONS.RECEIVE_ALL_ATTORNEYS]: receiveAllAttorneys,
   [ACTIONS.ERROR_LOADING_ATTORNEYS]: errorLoadingAttorneys,
   [ACTIONS.SET_TASK_ATTRS]: setTaskAttrs,
   [ACTIONS.SET_APPEAL_ATTRS]: setAppealAttrs,
   [ACTIONS.SET_SPECIAL_ISSUE]: setSpecialIssue,
+  [ACTIONS.CLEAR_SPECIAL_ISSUE]: clearSpecialIssue,
   [ACTIONS.SET_APPEAL_AOD]: setAppealAod,
   [ACTIONS.STARTED_LOADING_APPEAL_VALUE]: startedLoadingAppealValue,
   [ACTIONS.RECEIVE_APPEAL_VALUE]: receiveAppealValue,
@@ -727,6 +744,7 @@ const rootReducer = combineReducers({
   teamManagement: teamManagementReducer,
   ui: uiReducer,
   components: commonComponentsReducer,
+  docketSwitch: docketSwitchReducer,
   mtv: mtvReducer
 });
 

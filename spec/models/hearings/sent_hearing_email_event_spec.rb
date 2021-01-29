@@ -5,7 +5,7 @@ describe SentHearingEmailEvent do
     let(:user) { create(:user) }
     let(:hearing) { create(:hearing) }
     let(:email_type) { "confirmation" }
-    let(:recipient_role) { "veteran" }
+    let(:recipient_role) { "appellant" }
 
     subject do
       SentHearingEmailEvent.create(

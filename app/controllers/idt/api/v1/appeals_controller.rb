@@ -6,6 +6,12 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   skip_before_action :verify_authenticity_token, only: [:outcode]
 
+  rescue_from BGS::AccountLocked do |_e|
+    account_locked_error_msg = "Your account is locked. " \
+                               "Please contact the VA Enterprise Service Desk to resolve this issue."
+    render(json: { message: account_locked_error_msg }, status: :forbidden)
+  end
+
   def list
     if file_number.present?
       render json: json_appeals(appeals_by_file_number)
@@ -41,7 +47,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   end
 
   def appeal
-    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
+    @appeal ||= Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
   end
 
   def appeals_by_file_number

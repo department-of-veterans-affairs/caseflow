@@ -1,0 +1,383 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`IssueRemandReasonsForm AMA renders correctly by default 1`] = `
+<div>
+  <div
+    class="remand-reasons-form"
+  >
+    <h2
+      class="cf-push-left"
+      data-css-dektrd=""
+    >
+      Issue 
+      1
+       
+       of 2
+    </h2>
+    <div
+      data-css-1trinzn=""
+    >
+      Benefit type: Education
+    </div>
+    <div
+      data-css-1trinzn=""
+    >
+      Issue description: 
+      Lorem ipsum and whatnot
+    </div>
+    <div
+      data-css-wt7zrf=""
+    >
+      <div
+        data-css-1gx5mrt=""
+      >
+        <fieldset
+          class="checkbox-wrapper-duty-to-notify cf-form-checkboxes cf-checkbox-group"
+        >
+          <legend
+            class=""
+          >
+            <span>
+              <h3>
+                Duty to notify
+              </h3>
+            </span>
+          </legend>
+          <div
+            class="checkbox-wrapper-issue-1-no_notice_sent"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="issue-1-no_notice_sent"
+                id="issue-1-no_notice_sent"
+                name="issue-1-no_notice_sent"
+                type="checkbox"
+              />
+              <label
+                for="issue-1-no_notice_sent"
+              >
+                <span
+                  class=""
+                >
+                  No notice sent
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+          <div
+            class="checkbox-wrapper-issue-1-incorrect_notice_sent"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="issue-1-incorrect_notice_sent"
+                id="issue-1-incorrect_notice_sent"
+                name="issue-1-incorrect_notice_sent"
+                type="checkbox"
+              />
+              <label
+                for="issue-1-incorrect_notice_sent"
+              >
+                <span
+                  class=""
+                >
+                  Incorrect notice sent
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+          <div
+            class="checkbox-wrapper-issue-1-legally_inadequate_notice"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="issue-1-legally_inadequate_notice"
+                id="issue-1-legally_inadequate_notice"
+                name="issue-1-legally_inadequate_notice"
+                type="checkbox"
+              />
+              <label
+                for="issue-1-legally_inadequate_notice"
+              >
+                <span
+                  class=""
+                >
+                  Legally inadequate notice
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset
+          class="checkbox-wrapper-duty-to-assist cf-form-checkboxes cf-checkbox-group"
+        >
+          <legend
+            class=""
+          >
+            <span>
+              <h3>
+                Duty to assist
+              </h3>
+            </span>
+          </legend>
+          <div
+            class="checkbox-wrapper-issue-1-va_records"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="issue-1-va_records"
+                id="issue-1-va_records"
+                name="issue-1-va_records"
+                type="checkbox"
+              />
+              <label
+                for="issue-1-va_records"
+              >
+                <span
+                  class=""
+                >
+                  VA records
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+          <div
+            class="checkbox-wrapper-issue-1-private_records"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="issue-1-private_records"
+                id="issue-1-private_records"
+                name="issue-1-private_records"
+                type="checkbox"
+              />
+              <label
+                for="issue-1-private_records"
+              >
+                <span
+                  class=""
+                >
+                  Private records
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+          <div
+            class="checkbox-wrapper-issue-1-service_personnel_records"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="issue-1-service_personnel_records"
+                id="issue-1-service_personnel_records"
+                name="issue-1-service_personnel_records"
+                type="checkbox"
+              />
+              <label
+                for="issue-1-service_personnel_records"
+              >
+                <span
+                  class=""
+                >
+                  Service personnel records
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+          <div
+            class="checkbox-wrapper-issue-1-service_treatment_records"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="issue-1-service_treatment_records"
+                id="issue-1-service_treatment_records"
+                name="issue-1-service_treatment_records"
+                type="checkbox"
+              />
+              <label
+                for="issue-1-service_treatment_records"
+              >
+                <span
+                  class=""
+                >
+                  Service treatment records
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+          <div
+            class="checkbox-wrapper-issue-1-other_government_records"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="issue-1-other_government_records"
+                id="issue-1-other_government_records"
+                name="issue-1-other_government_records"
+                type="checkbox"
+              />
+              <label
+                for="issue-1-other_government_records"
+              >
+                <span
+                  class=""
+                >
+                  Other government records
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+      <div
+        data-css-1gx5mrt=""
+      >
+        <fieldset
+          class="checkbox-wrapper-medical-exam cf-form-checkboxes cf-checkbox-group"
+        >
+          <legend
+            class=""
+          >
+            <span>
+              <h3>
+                Medical examination
+              </h3>
+            </span>
+          </legend>
+          <div
+            class="checkbox-wrapper-issue-1-medical_examinations"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="issue-1-medical_examinations"
+                id="issue-1-medical_examinations"
+                name="issue-1-medical_examinations"
+                type="checkbox"
+              />
+              <label
+                for="issue-1-medical_examinations"
+              >
+                <span
+                  class=""
+                >
+                  Medical examinations
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+          <div
+            class="checkbox-wrapper-issue-1-medical_opinions"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="issue-1-medical_opinions"
+                id="issue-1-medical_opinions"
+                name="issue-1-medical_opinions"
+                type="checkbox"
+              />
+              <label
+                for="issue-1-medical_opinions"
+              >
+                <span
+                  class=""
+                >
+                  Medical opinions
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+          <div
+            class="checkbox-wrapper-issue-1-advisory_medical_opinion"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="issue-1-advisory_medical_opinion"
+                id="issue-1-advisory_medical_opinion"
+                name="issue-1-advisory_medical_opinion"
+                type="checkbox"
+              />
+              <label
+                for="issue-1-advisory_medical_opinion"
+              >
+                <span
+                  class=""
+                >
+                  Advisory medical opinion
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+        </fieldset>
+        <br />
+        <fieldset
+          class="checkbox-wrapper-due-process cf-form-checkboxes cf-checkbox-group-inline"
+        >
+          <legend
+            class=""
+          >
+            <span>
+              <h3>
+                Due Process
+              </h3>
+            </span>
+          </legend>
+          <div
+            class="checkbox-wrapper-issue-1-due_process_deficiency"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="issue-1-due_process_deficiency"
+                id="issue-1-due_process_deficiency"
+                name="issue-1-due_process_deficiency"
+                type="checkbox"
+              />
+              <label
+                for="issue-1-due_process_deficiency"
+              >
+                <span
+                  class=""
+                >
+                  Other due process deficiency
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+</div>
+`;

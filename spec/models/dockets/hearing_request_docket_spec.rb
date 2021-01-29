@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 describe HearingRequestDocket, :all_dbs do
-  describe "#age_of_n_oldest_priority_appeals" do
+  describe "#age_of_n_oldest_genpop_priority_appeals" do
     let(:judge_user) { create(:user, last_login_at: Time.zone.now) }
     let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
 
-    subject { HearingRequestDocket.new.age_of_n_oldest_priority_appeals(10) }
+    subject { HearingRequestDocket.new.age_of_n_oldest_genpop_priority_appeals(10) }
 
     it "only returns priority, distributable, hearing docket appeals that match the following conditions:
         where the most recent held hearing was not tied to an active judge
@@ -92,9 +92,11 @@ describe HearingRequestDocket, :all_dbs do
     end
 
     context "priority appeals and genpop 'any'" do
+      let(:limit) { 10 }
+
       subject do
         HearingRequestDocket.new.distribute_appeals(
-          distribution, priority: true, limit: 10, genpop: "any"
+          distribution, priority: true, limit: limit, genpop: "any"
         )
       end
 
@@ -116,6 +118,26 @@ describe HearingRequestDocket, :all_dbs do
         expect(tasks.second.genpop_query).to eq "any"
         expect(distribution.distributed_cases.length).to eq(2)
         expect(distribution_judge.reload.tasks.map(&:appeal)).to match_array([tied, not_tied])
+      end
+
+      context "when the limit is one" do
+        let(:limit) { 1 }
+
+        it "only distributes priority, distributable, hearing docket cases
+          that are either genpop or not genpop" do
+          not_tied = create_priority_distributable_hearing_appeal_not_tied_to_any_judge
+          not_tied.tasks.find_by(type: DistributionTask.name).update(assigned_at: 1.month.ago)
+          not_tied.reload
+          matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
+          tasks = subject
+
+          expect(tasks.length).to eq(1)
+          expect(tasks.first.class).to eq(DistributedCase)
+          expect(tasks.first.genpop).to eq true
+          expect(tasks.first.genpop_query).to eq "any"
+          expect(distribution.distributed_cases.length).to eq(1)
+          expect(distribution_judge.reload.tasks.map(&:appeal)).to match_array([not_tied])
+        end
       end
     end
 
@@ -209,7 +231,7 @@ describe HearingRequestDocket, :all_dbs do
         HearingRequestDocket.new.distribute_appeals(distribution, priority: false, limit: 10, genpop: "any")
       end
 
-      it "does not fail and distributes the legitimate tasks" do
+      it "does not fail, renames conflicting already distributed appeals, and distributes the legitimate appeals" do
         number_of_already_distributed_appeals = 1
         total_number_of_appeals = 10
         total_number_of_appeals.times { create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge }
@@ -226,17 +248,19 @@ describe HearingRequestDocket, :all_dbs do
           DistributionTask.create!(appeal: distributed_appeal, parent: distributed_appeal.root_task)
         end
 
-        expect(Raven).to receive(:capture_exception).once
+        expect(Raven).to receive(:capture_message).once
 
         subject
 
-        expect(DistributionTask.open.count).to eq(number_of_already_distributed_appeals)
-        expect(DistributionTask.closed.where.not(appeal_id: distributed_appeals.map(&:id)).count).to eq(
-          total_number_of_appeals - number_of_already_distributed_appeals
-        )
+        expect(DistributionTask.open.count).to eq(0)
         distributed_cases = DistributedCase.where(distribution: distribution)
-        expect(distributed_cases.count).to eq(total_number_of_appeals - number_of_already_distributed_appeals)
-        expect(distributed_cases.where(case_id: distributed_appeals.map(&:uuid)).count).to eq(0)
+        expect(distributed_cases.count).to eq(total_number_of_appeals)
+        expect(
+          distributed_cases.where(case_id: distributed_appeals.map(&:uuid)).count
+        ).to eq(number_of_already_distributed_appeals)
+        expect(
+          DistributedCase.where("case_id LIKE ?", "#{distributed_appeals.first.uuid}-redistributed-%").count
+        ).to eq 1
       end
     end
   end

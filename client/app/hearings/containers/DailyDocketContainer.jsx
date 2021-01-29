@@ -10,7 +10,6 @@ import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ApiUtil from '../../util/ApiUtil';
 import {
   onReceiveDailyDocket,
-  onReceiveHearing,
   onReceiveSavedHearing,
   onResetSaveSuccessful,
   selectHearingRoom,
@@ -70,19 +69,6 @@ export class DailyDocketContainer extends React.Component {
     this.props.onResetLockHearingAfterError();
   };
 
-  loadHearingDetails = (hearings) => {
-    _.each(hearings, (hearing) => {
-      ApiUtil.get(`/hearings/${hearing.externalId}`).then((response) => {
-        const hearingResp = ApiUtil.convertToCamelCase(response.body.data);
-
-        this.props.onReceiveHearing(hearingResp);
-      }).
-        catch((error) => {
-          console.log(`Hearing endpoint failed with: ${error}`); // eslint-disable-line no-console
-        });
-    });
-  }
-
   loadHearingDay = () => {
     const requestUrl = `/hearings/hearing_day/${this.props.match.params.hearingDayId}`;
 
@@ -93,8 +79,6 @@ export class DailyDocketContainer extends React.Component {
       const hearingDay = _.omit(resp.hearingDay, ['hearings']);
 
       this.props.onReceiveDailyDocket(hearingDay, hearings);
-
-      this.loadHearingDetails(resp.hearingDay.hearings);
     });
   };
 
@@ -168,10 +152,6 @@ export class DailyDocketContainer extends React.Component {
       });
   };
 
-  createHearingPromise = () => Promise.all([
-    this.loadHearingDay()
-  ]);
-
   openModal = () => {
     this.setState({ showModalAlert: false,
       modalOpen: true });
@@ -244,7 +224,7 @@ export class DailyDocketContainer extends React.Component {
 
   render() {
     const loadingDataDisplay = <LoadingDataDisplay
-      createLoadPromise={this.createHearingPromise}
+      createLoadPromise={this.loadHearingDay}
       loadingComponentProps={{
         spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
         message: 'Loading the daily docket...'
@@ -290,7 +270,8 @@ export class DailyDocketContainer extends React.Component {
       {this.state.modalOpen &&
         <HearingDayEditModal
           closeModal={this.closeModal}
-          cancelModal={this.cancelModal} />
+          cancelModal={this.cancelModal}
+          requestType={this.props.hearingDay.requestType} />
       }
     </LoadingDataDisplay>;
 
@@ -316,7 +297,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveDailyDocket,
-  onReceiveHearing,
   onReceiveSavedHearing,
   onResetSaveSuccessful,
   selectHearingRoom,
@@ -385,7 +365,6 @@ DailyDocketContainer.propTypes = {
   onSuccessfulHearingDayDelete: PropTypes.func,
   onReceiveDailyDocket: PropTypes.func,
   onReceiveSavedHearing: PropTypes.func,
-  onReceiveHearing: PropTypes.func,
   onResetSaveSuccessful: PropTypes.func,
   onResetLockHearingAfterError: PropTypes.func,
   onResetLockSuccessMessage: PropTypes.func,

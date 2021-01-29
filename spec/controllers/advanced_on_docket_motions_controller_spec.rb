@@ -29,7 +29,8 @@ RSpec.describe AdvanceOnDocketMotionsController, :postgres, type: :controller do
             person: appeal.claimant.person,
             granted: false,
             user: aod_user,
-            reason: Constants.AOD_REASONS.serious_illness
+            reason: Constants.AOD_REASONS.serious_illness,
+            appeal: appeal
           )
         end
 

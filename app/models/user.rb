@@ -90,6 +90,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     can?("RO ViewHearSched") && !can?("Build HearSched") && !can?("Edit HearSched")
   end
 
+  def can_view_edit_nod_date?
+    (attorney? || judge? || BvaIntake.singleton.users.include?(self) ||
+      ClerkOfTheBoard.singleton.users.include?(self)) && FeatureToggle.enabled?(:edit_nod_date, user: self)
+  end
+
   def can_vso_hearing_schedule?
     can?("VSO") && !can?("RO ViewHearSched") && !can?("Build HearSched") && !can?("Edit HearSched")
   end
@@ -115,7 +120,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_view_overtime_status?
-    (attorney_in_vacols? || judge_in_vacols?) && FeatureToggle.enabled?(:overtime_revamp)
+    (attorney_in_vacols? || judge_in_vacols?) && FeatureToggle.enabled?(:overtime_revamp, user: self)
+  end
+
+  def can_change_hearing_request_type?
+    can?("Build HearSched") || can?("Edit HearSched")
   end
 
   def vacols_uniq_id
@@ -153,7 +162,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def appeal_has_task_assigned_to_user?(appeal)
-    if appeal.class.name == "LegacyAppeal"
+    if appeal.is_a?(LegacyAppeal)
       fail_if_no_access_to_legacy_task!(appeal.vacols_id)
     else
       appeal.tasks.includes(:assigned_to).any? do |task|
@@ -273,6 +282,23 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     organizations_users.non_admin.where(organization: JudgeTeam.all)
   end
 
+  def security_profile
+    BGSService.new.get_security_profile(
+      username: css_id,
+      station_id: station_id
+    )
+  rescue BGS::ShareError, BGS::PublicError
+    {}
+  end
+
+  def job_title
+    security_profile.dig(:job_title)
+  end
+
+  def can_intake_decision_reviews?
+    !job_title.include?("Senior Veterans Service Representative")
+  end
+
   def user_info_for_idt
     self.class.user_repository.user_info_for_idt(css_id)
   end
@@ -317,10 +343,12 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def use_task_pages_api?
-    FeatureToggle.enabled?(:user_queue_pagination, user: self) && !attorney? && !judge?
+    FeatureToggle.enabled?(:user_queue_pagination, user: self)
   end
 
   def queue_tabs
+    return [assigned_tasks_tab] if judge_in_vacols? && !attorney_in_vacols?
+
     [
       assigned_tasks_tab,
       on_hold_tasks_tab,
@@ -344,16 +372,28 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     ::CompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
   end
 
-  def can_bulk_assign_tasks?
-    false
+  def can_act_on_behalf_of_judges?
+    member_of_organization?(SpecialCaseMovementTeam.singleton)
   end
 
-  def can_act_on_behalf_of_judges?
-    member_of_organization?(SpecialCaseMovementTeam.singleton) && FeatureToggle.enabled?(:scm_view_judge_assign_queue)
+  def can_view_team_management?
+    member_of_organization?(Bva.singleton)
+  end
+
+  def can_view_judge_team_management?
+    DvcTeam.for_dvc(self).present?
+  end
+
+  def can_view_user_management?
+    member_of_organization?(Bva.singleton)
   end
 
   def show_regional_office_in_queue?
     HearingsManagement.singleton.user_has_access?(self)
+  end
+
+  def can_be_assigned_legacy_tasks?
+    judge_in_vacols? || attorney_in_vacols?
   end
 
   def show_reader_link_column?
@@ -478,6 +518,8 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
     # case-insensitive search
     def find_by_css_id(css_id)
+      # this query uses the index_users_unique_css_id
+      # find_by(css_id: css_id) does a slower seq scan
       find_by("UPPER(css_id)=UPPER(?)", css_id)
     end
 

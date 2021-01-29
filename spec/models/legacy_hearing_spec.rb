@@ -35,10 +35,17 @@ describe LegacyHearing, :all_dbs do
     )
   end
 
-  let(:scheduled_for) { Time.zone.yesterday }
+  let(:scheduled_for) do
+    now = Time.zone.now
+    yesterday = Time.zone.yesterday
+
+    Time.zone.local(yesterday.year, yesterday.month, yesterday.day, now.hour, now.min, now.sec)
+  end
   let(:disposition) { nil }
   let(:hold_open) { nil }
   let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
+
+  # Baltimore regional office
   let(:regional_office) { "RO13" }
 
   context "#location" do
@@ -97,7 +104,7 @@ describe LegacyHearing, :all_dbs do
 
   context "#no_show?" do
     subject { hearing.no_show? }
-    let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.no_show }
+    let(:disposition) { :N }
 
     it { is_expected.to be_truthy }
   end
@@ -385,13 +392,13 @@ describe LegacyHearing, :all_dbs do
         end
 
         it "get hearing day calls update once" do
-          expect(legacy_hearing).to receive(:update!).once
+          expect(legacy_hearing).to receive(:update!).at_least(:once)
 
           legacy_hearing.hearing_day
         end
 
         it "get hearing day calls VACOLS only once" do
-          expect(HearingRepository).to receive(:load_vacols_data).once
+          expect(HearingRepository).to receive(:load_vacols_data).at_least(:once)
 
           legacy_hearing.hearing_day
           legacy_hearing.hearing_day
@@ -412,7 +419,7 @@ describe LegacyHearing, :all_dbs do
         end
 
         it "get hearing day calls hearing_day_id_refers_to_vacols_row" do
-          expect(legacy_hearing).to receive(:hearing_day_id_refers_to_vacols_row?).once
+          expect(legacy_hearing).to receive(:hearing_day_id_refers_to_vacols_row?).at_least(:once)
 
           legacy_hearing.hearing_day
         end
@@ -436,6 +443,55 @@ describe LegacyHearing, :all_dbs do
 
       it "get hearing day returns nil" do
         expect(legacy_hearing.hearing_day).to eq nil
+      end
+    end
+  end
+
+  # Note: `scheduled_for` is populated by `HearingRepostiory#vacols_attributes`
+  context "#scheduled_for" do
+    let(:hearing) do
+      create(
+        :legacy_hearing,
+        hearing_day: hearing_day,
+        scheduled_for: scheduled_for,
+        request_type: request_type,
+        regional_office: regional_office
+      )
+    end
+
+    subject { hearing.scheduled_for }
+
+    # Note: This can happen if the hearing is scheduled across state lines
+    context "if case hearing regional office differs from hearing day regional office" do
+      # Oakland regional office
+      let(:regional_office) { "RO43" }
+      let(:hearing_day) do
+        create(
+          :hearing_day,
+          regional_office: "RO06", # New York regional office
+          request_type: HearingDay::REQUEST_TYPES[:video]
+        )
+      end
+
+      before { Timecop.freeze(Time.utc(2020, 6, 22)) }
+
+      after { Timecop.return }
+
+      it "raw time is expected value in UTC" do
+        # Sanity check that regional office for appeal is Oakland (RO43)
+        expect(hearing.vacols_record.bfregoff).to eq("RO43")
+
+        expect(hearing.vacols_record.attributes_before_type_cast["hearing_date"].zone).to eq("UTC")
+        expect(subject.hour).to eq(scheduled_for.hour)
+        expect(subject.min).to eq(scheduled_for.min)
+        expect(subject.sec).to eq(scheduled_for.sec)
+      end
+
+      it "time is expected value and is in hearing day timezone (EDT)" do
+        expect(subject.zone).to eq("EDT")
+        expect(subject.hour).to eq(scheduled_for.hour)
+        expect(subject.min).to eq(scheduled_for.min)
+        expect(subject.sec).to eq(scheduled_for.sec)
       end
     end
   end
@@ -500,6 +556,67 @@ describe LegacyHearing, :all_dbs do
 
       it "returns hearing location" do
         expect(subject).to eq(legacy_hearing.location)
+      end
+    end
+  end
+
+  context "update_request_type_in_vacols" do
+    let(:new_request_type) { nil }
+
+    subject { hearing.update_request_type_in_vacols(new_request_type) }
+
+    context "request type in VACOLS is not virtual" do
+      let(:request_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:central] }
+
+      context "new request type is virtual" do
+        let(:new_request_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:virtual] }
+
+        it "saves the request type from VACOLS to original_vacols_request_type" do
+          expect(hearing.original_vacols_request_type).to be_nil
+
+          subject
+
+          expect(hearing.original_vacols_request_type).to eq request_type
+        end
+
+        it "updates HEARSCHED.HEARING_TYPE in VACOLS" do
+          expect(hearing.request_type).to eq request_type
+
+          subject
+
+          expect(hearing.request_type).to eq new_request_type
+        end
+      end
+
+      context "new request type is invalid" do
+        let(:new_request_type) { "INVALID" }
+
+        it "raises an InvalidRequestTypeError" do
+          expect { subject }.to raise_error(HearingMapper::InvalidRequestTypeError)
+        end
+      end
+    end
+
+    context "request type in VACOLS is virtual" do
+      let(:request_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:virtual] }
+      let(:new_request_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:central] }
+
+      before { hearing.update!(original_vacols_request_type: new_request_type) }
+
+      it "doesn't change original_vacols_request_type" do
+        expect(hearing.original_vacols_request_type).to eq new_request_type
+
+        subject
+
+        expect(hearing.original_vacols_request_type).to eq new_request_type
+      end
+
+      it "updates HEARSCHED.HEARING_TYPE in VACOLS" do
+        expect(hearing.request_type).to eq request_type
+
+        subject
+
+        expect(hearing.request_type).to eq new_request_type
       end
     end
   end

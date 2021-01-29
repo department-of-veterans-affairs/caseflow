@@ -2,6 +2,7 @@ import { ACTIONS } from './constants';
 import { update } from '../../util/ReducerUtil';
 
 export const initialState = {
+  dvcTeams: [],
   judgeTeams: [],
   vsos: [],
   privateBars: [],
@@ -12,10 +13,15 @@ const teamManagementReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case ACTIONS.ON_RECEIVE_TEAM_LIST:
     return update(state, {
+      dvcTeams: { $set: action.payload.dvc_teams },
       judgeTeams: { $set: action.payload.judge_teams },
       privateBars: { $set: action.payload.private_bars },
       vsos: { $set: action.payload.vsos },
       otherOrgs: { $set: action.payload.other_orgs }
+    });
+  case ACTIONS.ON_RECEIVE_NEW_DVC_TEAM:
+    return update(state, {
+      dvcTeams: { $set: state.dvcTeams.concat(action.payload.org) }
     });
   case ACTIONS.ON_RECEIVE_NEW_JUDGE_TEAM:
     return update(state, {

@@ -1,60 +1,68 @@
 import _ from 'lodash';
-import { formatDateStr, formatDateStrUtc } from '../../util/DateUtil';
-import DATES from '../../../constants/DATES.json';
+import { formatDateStr } from '../../util/DateUtil';
+import DATES from '../../../constants/DATES';
 import { FORM_TYPES } from '../constants';
 
-const getNonVeteranClaimant = (intakeData) => {
-  const claimant = intakeData.relationships.filter((relationship) => {
-    return relationship.value === intakeData.claimant;
-  });
+const getDependentClaimant = (intakeData) => {
+  const relation = intakeData.relationships.find(({ value }) => value === intakeData.claimant);
 
   if (!intakeData.payeeCode) {
-    return claimant[0].displayText;
+    return relation.displayText;
   }
 
-  return `${claimant[0].displayText} (payee code ${intakeData.payeeCode})`;
+  return `${relation.displayText} (payee code ${intakeData.payeeCode})`;
 };
 
-const getClaimantField = (formType, veteran, intakeData) => {
-    const claimant = intakeData.veteranIsNotClaimant ? getNonVeteranClaimant(intakeData) : veteran.name;
+const getClaimantField = (veteran, intakeData) => {
+  const claimantMap = {
+    veteran: () => veteran.name,
+    dependent: () => getDependentClaimant(intakeData),
+    attorney: () => `${intakeData.claimantName}, Attorney`,
+    other: () => intakeData.claimantNotes
+  };
 
-    return [{
-      field: 'Claimant',
-      content: claimant
-    }];
+  const claimantType = intakeData.claimantType;
+  const claimantDisplayText = claimantMap[claimantType ?? 'veteran']?.();
+
+  return [{
+    field: 'Claimant',
+    content: claimantDisplayText
+  }];
 };
 
 export const isTimely = (formType, decisionDateStr, receiptDateStr) => {
-    if (formType === 'supplemental_claim') {
-      return true;
-    }
+  if (formType === 'supplemental_claim') {
+    return true;
+  }
 
-    if(!decisionDateStr) {
-      return true
-    }
+  if (!decisionDateStr) {
+    return true;
+  }
 
-    const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
+  const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
 
-    // we assume the timezone of the browser for all these.
-    const decisionDate = new Date(decisionDateStr)
-    const receiptDate = new Date(receiptDateStr);
-    const lessThanOneYear = receiptDate - decisionDate <= ONE_YEAR_PLUS_MS;
+  // we assume the timezone of the browser for all these.
+  const decisionDate = new Date(decisionDateStr);
+  const receiptDate = new Date(receiptDateStr);
+  const lessThanOneYear = receiptDate - decisionDate <= ONE_YEAR_PLUS_MS;
 
-    return lessThanOneYear;
+  return lessThanOneYear;
 };
 
 export const legacyIssue = (issue, legacyAppeals) => {
-  if (issue.vacolsIssue) {
-    return issue.vacolsIssue;
+  if (issue.vacolsId) {
+    if (issue.vacolsIssue) {
+      return issue.vacolsIssue;
+    }
+
+    const legacyAppeal = _.find(legacyAppeals, { vacols_id: issue.vacolsId });
+
+    if (!legacyAppeal) {
+      throw new Error(`No legacyAppeal found for '${issue.vacolsId}'`);
+    }
+
+    return _.find(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })
   }
-
-  let legacyAppeal = _.filter(legacyAppeals, { vacols_id: issue.vacolsId })[0];
-
-  if (!legacyAppeal) {
-    throw new Error(`No legacyAppeal found for '${issue.vacolsId}'`);
-  }
-
-  return _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })[0];
 };
 
 export const validateDateNotInFuture = (date) => {
@@ -131,6 +139,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       endProductCode: issue.end_product_code,
       withdrawalDate: issue.withdrawal_date,
       editable: issue.editable,
+      examRequested: issue.exam_requested,
       isUnidentified: issue.is_unidentified,
       notes: issue.notes,
       category: issue.category,
@@ -140,7 +149,6 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       ratingDecisionReferenceId: issue.rating_decision_reference_id,
       ratingIssueProfileDate: new Date(issue.rating_issue_profile_date).toISOString(),
       approxDecisionDate: issue.approx_decision_date,
-      decisionIssueId: issue.contested_decision_issue_id,
       titleOfActiveReview: issue.title_of_active_review,
       rampClaimId: issue.ramp_claim_id,
       verifiedUnidentifiedIssue: issue.verified_unidentified_issue
@@ -228,27 +236,27 @@ const formatRatingRequestIssues = (state) => {
 
 const formatNonratingRequestIssues = (state) => {
   return (state.addedIssues || []).
-  filter((issue) => !issue.isRating && !issue.isUnidentified && !issue.verifiedUnidentifiedIssue).
-  map((issue) => {
-    return {
-      request_issue_id: issue.id,
-      contested_decision_issue_id: issue.decisionIssueId,
-      benefit_type: issue.benefitType,
-      nonrating_issue_category: issue.category,
-      decision_text: issue.description,
-      decision_date: issue.decisionDate,
-      untimely_exemption: issue.untimelyExemption,
-      untimely_exemption_notes: issue.untimelyExemptionNotes,
-      untimely_exemption_covid: issue.untimelyExemptionCovid,
-      vacols_id: issue.vacolsId,
-      vacols_sequence_id: issue.vacolsSequenceId,
-      ineligible_due_to_id: issue.ineligibleDueToId,
-      ineligible_reason: issue.ineligibleReason,
-      edited_description: issue.editedDescription,
-      withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : null,
-      correction_type: issue.correctionType
-    };
-  });
+    filter((issue) => !issue.isRating && !issue.isUnidentified && !issue.verifiedUnidentifiedIssue).
+    map((issue) => {
+      return {
+        request_issue_id: issue.id,
+        contested_decision_issue_id: issue.decisionIssueId,
+        benefit_type: issue.benefitType,
+        nonrating_issue_category: issue.category,
+        decision_text: issue.description,
+        decision_date: issue.decisionDate,
+        untimely_exemption: issue.untimelyExemption,
+        untimely_exemption_notes: issue.untimelyExemptionNotes,
+        untimely_exemption_covid: issue.untimelyExemptionCovid,
+        vacols_id: issue.vacolsId,
+        vacols_sequence_id: issue.vacolsSequenceId,
+        ineligible_due_to_id: issue.ineligibleDueToId,
+        ineligible_reason: issue.ineligibleReason,
+        edited_description: issue.editedDescription,
+        withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : null,
+        correction_type: issue.correctionType
+      };
+    });
 };
 
 export const formatIssues = (state) => {
@@ -282,7 +290,9 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
       { field: 'Informal conference request',
         content: intakeData.informalConference ? 'Yes' : 'No' },
       { field: 'Same office request',
-        content: intakeData.sameOffice ? 'Yes' : 'No' }
+        content: intakeData.sameOffice ? 'Yes' : 'No' },
+      { field: 'SOC/SSOC Opt-in',
+        content: intakeData.legacyOptInApproved ? 'Yes' : 'No' },
     ];
     break;
   case 'supplemental_claim':
@@ -294,7 +304,9 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
       { field: 'Receipt date of this form',
         content: formatDateStr(intakeData.receiptDate) },
       { field: 'Benefit type',
-        content: _.startCase(intakeData.benefitType) }
+        content: _.startCase(intakeData.benefitType) },
+      { field: 'SOC/SSOC Opt-in',
+        content: intakeData.legacyOptInApproved ? 'Yes' : 'No' },
     ];
     break;
   case 'appeal':
@@ -304,25 +316,45 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
       { field: 'NOD receipt date',
         content: formatDateStr(intakeData.receiptDate) },
       { field: 'Review option',
-        content: _.startCase(intakeData.docketType.split('_').join(' ')) }
+        content: _.startCase(intakeData?.docketType?.split('_').join(' ')) },
+      { field: 'SOC/SSOC Opt-in',
+        content: intakeData.legacyOptInApproved ? 'Yes' : 'No' },
     ];
     break;
   default:
     fields = [];
   }
 
-  let claimantField = getClaimantField(formType, veteran, intakeData);
+  let claimantField = getClaimantField(veteran, intakeData);
 
   return fields.concat(claimantField);
 };
 
-export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
-  let issues = intakeData.addedIssues || [];
+export const formatIssuesBySection = (issues, editClaimLabelFeatureToggle) => {
+  return issues.reduce(
+    (result, issue) => {
+      if (issue.withdrawalDate || issue.withdrawalPending) {
+        (result.withdrawnIssues || (result.withdrawnIssues = [])).push(issue);
+      } else if (issue.endProductCode && editClaimLabelFeatureToggle) {
+        (result[issue.endProductCode] || (result[issue.endProductCode] = [])).push(issue);
+      } else {
+        (result.requestedIssues || (result.requestedIssues = [])).push(issue);
+      }
+
+      return result;
+    }, {}
+  );
+};
+
+export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => {
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
 
   return issues.map((issue, index) => {
     if (issue.isUnidentified || issue.verifiedUnidentifiedIssue) {
-      const issueText = issue.isUnidentified ? `Unidentified issue: no issue matched for "${issue.description}"` : issue.description
+      const issueText = issue.isUnidentified ?
+        `Unidentified issue: no issue matched for "${issue.description}"` :
+        issue.description;
+
       return {
         index,
         id: issue.id,
@@ -333,8 +365,10 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         withdrawalPending: issue.withdrawalPending,
         withdrawalDate: issue.withdrawalDate,
         endProductCleared: issue.endProductCleared,
+        endProductCode: issue.endProductCode,
         correctionType: issue.correctionType,
         editable: issue.editable,
+        examRequested: issue.examRequested,
         timely: issue.timely,
         untimelyExemption: issue.untimelyExemption,
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
@@ -379,9 +413,11 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         withdrawalPending: issue.withdrawalPending,
         withdrawalDate: issue.withdrawalDate,
         endProductCleared: issue.endProductCleared,
+        endProductCode: issue.endProductCode,
         editedDescription: issue.editedDescription,
         correctionType: issue.correctionType,
         editable: issue.editable,
+        examRequested: issue.examRequested,
         decisionIssueId: issue.decisionIssueId,
         ratingIssueReferenceId: issue.ratingIssueReferenceId,
         ratingDecisionReferenceId: issue.ratingDecisionReferenceId
@@ -394,7 +430,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
     return {
       index,
       id: issue.id,
-      text: issue.decisionIssueId ? issue.description : `${issue.category} - ${issue.description}`,
+      text: issue.id ? issue.description : `${issue.category} - ${issue.description}`,
       benefitType: issue.benefitType,
       date: issue.decisionDate,
       timely: issue.timely,
@@ -412,10 +448,12 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       withdrawalPending: issue.withdrawalPending,
       withdrawalDate: issue.withdrawalDate,
       endProductCleared: issue.endProductCleared,
+      endProductCode: issue.endProductCode,
       category: issue.category,
       editedDescription: issue.editedDescription,
       correctionType: issue.correctionType,
       editable: issue.editable,
+      examRequested: issue.examRequested,
       decisionIssueId: issue.decisionIssueId
     };
   });

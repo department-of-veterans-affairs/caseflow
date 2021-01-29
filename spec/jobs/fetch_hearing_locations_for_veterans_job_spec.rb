@@ -1,9 +1,16 @@
 # frozen_string_literal: true
 
-require "faker"
+describe FetchHearingLocationsForVeteransJob do
+  include GeomatchHelper
 
-describe FetchHearingLocationsForVeteransJob, :all_dbs do
   let!(:job) { FetchHearingLocationsForVeteransJob.new }
+
+  before do
+    # Force the job to only run for 5 seconds. This overrides the default job
+    # duration which is supposed to take into account latency from the actual
+    # API.
+    stub_const("FetchHearingLocationsForVeteransJob::JOB_DURATION", 5.seconds)
+  end
 
   describe "find_appeals_ready_for_geomatching" do
     let!(:legacy_appeal_with_ro_updated_one_day_ago) { create(:legacy_appeal, vacols_case: create(:case)) }
@@ -46,6 +53,7 @@ describe FetchHearingLocationsForVeteransJob, :all_dbs do
     end
   end
 
+  # Location Code 57 is "Schedule Hearing"
   context "when there is a case in location 57 *without* an associated veteran" do
     let!(:bfcorlid) { "123456789S" }
     let!(:bfcorlid_file_number) { "123456789" }
@@ -91,15 +99,20 @@ describe FetchHearingLocationsForVeteransJob, :all_dbs do
 
     describe "#perform" do
       before(:each) do
-        allow_any_instance_of(VaDotGovAddressValidator).to receive(:update_closest_ro_and_ahls)
-          .and_return(status: :matched_available_hearing_locations)
+        allow_any_instance_of(VaDotGovAddressValidator).to(
+          receive(:update_closest_ro_and_ahls)
+            .and_return(status: :matched_available_hearing_locations)
+        )
       end
 
       subject { FetchHearingLocationsForVeteransJob.new }
 
       it "creates schedule hearing tasks for appeal and records a geomatched result" do
-        expect(subject).to receive(:record_geomatched_appeal)
-          .with(legacy_appeal.external_id, :matched_available_hearing_locations)
+        setup_geomatch_service_mock(legacy_appeal) do |geomatch_service|
+          expect(geomatch_service).to(
+            receive(:record_geomatched_appeal).with(:matched_available_hearing_locations)
+          )
+        end
 
         subject.perform
 
@@ -108,31 +121,15 @@ describe FetchHearingLocationsForVeteransJob, :all_dbs do
         expect(legacy_appeal.tasks.open.where(type: "HearingTask").count).to eq(1)
       end
 
-      context "when appeal has open admin action" do
-        before do
-          HearingAdminActionVerifyAddressTask.create!(
-            appeal: legacy_appeal,
-            assigned_to: HearingsManagement.singleton,
-            parent: ScheduleHearingTask.create(
-              appeal: legacy_appeal,
-              parent: RootTask.find_or_create_by(appeal: legacy_appeal)
-            )
-          )
-        end
-
-        it "closes admin action" do
-          subject.perform
-
-          expect(HearingAdminActionVerifyAddressTask.first.status).to eq(Constants.TASK_STATUSES.cancelled)
-        end
-      end
-
-      context "when appeal can't be matched" do
+      context "when appeal can't be geomatched" do
         let(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
 
         before do
-          allow_any_instance_of(VaDotGovAddressValidator).to receive(:update_closest_ro_and_ahls)
-            .and_return(status: :created_verify_address_admin_action)
+          allow_any_instance_of(VaDotGovAddressValidator).to(
+            receive(:update_closest_ro_and_ahls)
+              .and_return(status: :created_verify_address_admin_action)
+          )
+
           AvailableHearingLocations.create(appeal: appeal, facility_id: "fake_152", updated_at: Time.zone.now - 15.days)
         end
 
@@ -146,28 +143,117 @@ describe FetchHearingLocationsForVeteransJob, :all_dbs do
       end
 
       context "when API limit is reached" do
-        before(:each) do
-          allow_any_instance_of(VaDotGovAddressValidator).to receive(:update_closest_ro_and_ahls)
-            .and_raise(Caseflow::Error::VaDotGovLimitError.new(code: 500, message: "Error"))
+        let(:limit_error) { Caseflow::Error::VaDotGovLimitError.new(code: 500, message: "Error") }
+
+        # intercept sleep requests
+        before { allow(subject).to(receive(:sleep_before_retry_on_limit_error)) }
+
+        context "and limit error is always returned" do
+          before(:each) do
+            allow_any_instance_of(VaDotGovAddressValidator).to(
+              receive(:update_closest_ro_and_ahls).and_raise(limit_error)
+            )
+          end
+
+          context "and VaDotGovLimitError wait time exceeds the expected end time of the job" do
+            it "records a geomatch error once" do
+              expect(subject).to(receive(:job_running_past_expected_end_time?).and_return(false, false, true))
+
+              setup_geomatch_service_mock(legacy_appeal) do |geomatch_service|
+                expect(geomatch_service).to(
+                  receive(:record_geomatched_appeal).with("limit_error").once
+                )
+              end
+
+              subject.perform
+            end
+          end
+
+          context "and VaDotGovLimitError wait time doesn't immediately exceed the expected end time of the job" do
+            before do
+              expect(subject).to(
+                receive(:job_running_past_expected_end_time?).and_return(false, false, false, false, true)
+              )
+            end
+
+            it "records multiple geomatch errors" do
+              setup_geomatch_service_mock(legacy_appeal) do |geomatch_service|
+                expect(geomatch_service).to(
+                  receive(:record_geomatched_appeal).with("limit_error").at_least(:once)
+                )
+              end
+
+              subject.perform
+            end
+
+            context "with multiple appeals" do
+              let!(:veteran_3) { create(:veteran, file_number: "000000000") }
+              let!(:appeal) { create(:appeal, veteran_file_number: "000000000") }
+              let!(:task_2) { create(:schedule_hearing_task, appeal: appeal) }
+
+              it "retries the same appeal again" do
+                setup_geomatch_service_mock(legacy_appeal) do |geomatch_service|
+                  expect(geomatch_service).to(
+                    receive(:record_geomatched_appeal).with("limit_error").at_least(:twice)
+                  )
+                end
+
+                expect(GeomatchService).not_to(
+                  receive(:new).with(appeal: appeal)
+                )
+
+                subject.perform
+              end
+            end
+          end
         end
 
-        it "records a geomatch error" do
-          expect(subject).to receive(:record_geomatched_appeal)
-            .with(legacy_appeal.external_id, "limit_error")
+        context "and limit error is only returned the first time" do
+          before(:each) do
+            @va_dot_gov_address_validator_count = 0
 
-          subject.perform
+            allow_any_instance_of(VaDotGovAddressValidator).to(receive(:update_closest_ro_and_ahls) do
+              @va_dot_gov_address_validator_count += 1
+              if @va_dot_gov_address_validator_count == 1
+                fail limit_error
+              else
+                { status: :matched_available_hearing_locations }
+              end
+            end)
+          end
+
+          context "retries to geomatch" do
+            it "retries geomatching hearing locations for appeal" do
+              setup_geomatch_service_mock(legacy_appeal) do |geomatch_service|
+                expect(geomatch_service).to(
+                  receive(:record_geomatched_appeal).once.with("limit_error")
+                )
+                expect(geomatch_service).to(
+                  receive(:record_geomatched_appeal)
+                    .once
+                    .with(:matched_available_hearing_locations)
+                )
+              end
+
+              subject.perform
+            end
+          end
         end
       end
 
       context "when unknown error is thrown" do
         before(:each) do
-          allow_any_instance_of(VaDotGovAddressValidator).to receive(:update_closest_ro_and_ahls)
-            .and_raise(StandardError)
+          allow_any_instance_of(VaDotGovAddressValidator).to(
+            receive(:update_closest_ro_and_ahls).and_raise(StandardError)
+          )
         end
 
         it "records a geomatch error" do
-          expect(subject).to receive(:record_geomatched_appeal)
-            .with(legacy_appeal.external_id, "error")
+          setup_geomatch_service_mock(legacy_appeal) do |geomatch_service|
+            expect(geomatch_service).to(
+              receive(:record_geomatched_appeal).with("error")
+            )
+          end
           expect(Raven).to receive(:capture_exception)
 
           subject.perform

@@ -14,8 +14,8 @@ const updateFromServerIntake = (state, serverIntake) => {
     asyncJobUrl: {
       $set: serverIntake.async_job_url
     },
-    detailEditUrl: {
-      $set: serverIntake.detail_edit_url
+    editIssuesUrl: {
+      $set: serverIntake.editIssuesUrl
     },
     unreadMessages: {
       $set: serverIntake.unread_messages
@@ -41,7 +41,7 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
     id: null,
     asyncJobUrl: null,
-    detailEditUrl: null,
+    editIssuesUrl: null,
     formType: null,
     fileNumberSearch: '',
     searchErrorCode: null,
@@ -52,6 +52,7 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
       veteranAddressTooLong: null,
       veteranAddressInvalidFields: null,
       veteranCityInvalidFields: null,
+      veteranZipCodeInvalid: null,
       veteranPayGradeInvalid: null,
       pids: null
     },
@@ -137,6 +138,9 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
         veteranNameSuffixInvalid: {
           $set: action.payload.errorData.veteran_name_suffix_invalid
         },
+        veteranZipCodeInvalid: {
+          $set: action.payload.errorData.veteran_zip_code_invalid
+        },
         veteranPayGradeInvalid: {
           $set: action.payload.errorData.veteran_pay_grade_invalid
         },
@@ -172,6 +176,12 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
           $set: null
         },
         veteranCityInvalidFields: {
+          $set: null
+        },
+        veteranZipCodeInvalid: {
+          $set: null
+        },
+        veteranPayGradeInvalid: {
           $set: null
         },
         pids: {

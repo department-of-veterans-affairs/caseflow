@@ -15,8 +15,8 @@ export default class StyleGuideSearchableDropdown extends React.PureComponent {
 
   render() {
     const creatableOptions = {
-      tagAlreadyExistsMsg: 'Tag already exists',
-      promptTextCreator: (label) => `Create a tag for "${label}"`
+      noResultsText: 'Tag already exists',
+      formatCreateLabel: (label) => `Create a tag for "${label}"`
     };
 
     const options = [{ value: 'unitedstates',

@@ -49,8 +49,8 @@ context "api/docs/v3/decision_reviews.yaml" do
       end
     end.call
 
-    hlr_errors = Api::V3::DecisionReview::IntakeError::KNOWN_ERRORS.map(&:to_s) +
-                 [Api::V3::DecisionReview::IntakeError::UNKNOWN_ERROR.to_s]
+    hlr_errors = Api::V3::DecisionReviews::IntakeError::KNOWN_ERRORS.map(&:to_s) +
+                 [Api::V3::DecisionReviews::IntakeError::UNKNOWN_ERROR.to_s]
 
     expect(hlr_errors_in_spec).to match_array(hlr_errors)
   end

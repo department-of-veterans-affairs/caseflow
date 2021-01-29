@@ -52,15 +52,12 @@ class RampRefilingIntake < Intake
     detail.errors.messages
   end
 
+  def ramp_elections_with_decisions
+    ramp_elections.reject(&:end_product_active?)
+  end
+
   def ui_hash
-    super.merge(
-      option_selected: detail.option_selected,
-      receipt_date: detail.receipt_date,
-      election_receipt_date: detail.election_receipt_date,
-      appeal_docket: detail.appeal_docket,
-      issues: ramp_elections_with_decisions.map(&:issues).flatten.map(&:serialize),
-      end_product_description: detail.end_product_description
-    )
+    Intake::RampRefilingIntakeSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
   private
@@ -108,9 +105,5 @@ class RampRefilingIntake < Intake
 
   def ramp_elections
     RampElection.established.where(veteran_file_number: veteran_file_number).all
-  end
-
-  def ramp_elections_with_decisions
-    ramp_elections.reject(&:end_product_active?)
   end
 end

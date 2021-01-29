@@ -10,62 +10,58 @@ export default class Alert extends React.Component {
     }
   }
 
-  getRole() {
-    let attrs = {};
-
-    if (this.props.type === 'error') {
-      attrs.role = 'alert';
-    }
-
-    return attrs;
-  }
-
   messageDiv() {
-    let message = this.props.children || this.props.message;
+    const message = this.props.children || this.props.message;
 
     return <div className="usa-alert-text">{message}</div>;
   }
 
   render() {
-    let {
-      fixed,
-      title,
-      type,
-      styling,
-      lowerMargin
-    } = this.props;
+    const { fixed, title, type, styling, lowerMargin } = this.props;
 
-    let typeClass = `usa-alert-${type}`;
+    const typeClass = `usa-alert-${type}`;
 
     const className = classnames('usa-alert', typeClass, {
       'usa-alert-slim': !title,
       fixed,
-      'cf-margin-bottom-2rem': lowerMargin
+      'cf-margin-bottom-2rem': lowerMargin,
     });
 
-    return <div className={className} {...this.getRole()} {...styling}>
-      <div className="usa-alert-body">
-        <h2 className="usa-alert-heading">{title}</h2>
-        { this.messageDiv() }
+    return (
+      <div role="alert" className={className} {...styling}>
+        <div className="usa-alert-body">
+          {title && <h2 className="usa-alert-heading">{title}</h2>}
+          {this.messageDiv()}
+        </div>
       </div>
-    </div>;
+    );
   }
 }
 
 Alert.defaultProps = {
-  scrollOnAlert: true
+  fixed: false,
+  scrollOnAlert: true,
 };
 
 Alert.propTypes = {
   children: PropTypes.node,
-  fixed: PropTypes.string,
+
+  /**
+   * Sets `position:fixed`
+   */
+  fixed: PropTypes.bool,
+
+  /**
+   * Sets `.cf-margin-bottom-2rem` class
+   */
   lowerMargin: PropTypes.bool,
   message: PropTypes.node,
+
+  /**
+   * If empty, a "slim" alert is displayed
+   */
   title: PropTypes.string,
   type: PropTypes.oneOf(['success', 'error', 'warning', 'info']).isRequired,
-  styling: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object
-  ]),
-  scrollOnAlert: PropTypes.bool
+  styling: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  scrollOnAlert: PropTypes.bool,
 };

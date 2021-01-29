@@ -236,6 +236,53 @@ describe HearingDay, :all_dbs do
     end
   end
 
+  context ".total_slots" do
+    subject { hearing_day.total_slots }
+
+    context "for a video day" do
+      let(:room) { "1" }
+      let(:hearing_day) do
+        create(
+          :hearing_day,
+          request_type: HearingDay::REQUEST_TYPES[:video],
+          regional_office: regional_office_key,
+          room: room
+        )
+      end
+
+      RegionalOffice.all.each do |ro|
+        context "at RO (#{ro.key})" do
+          let(:regional_office_key) { ro.key }
+
+          it "has 12 slots" do
+            expect(subject).to be(12)
+          end
+
+          context "with no room" do
+            let(:room) { nil }
+
+            it "has 12 slots" do
+              expect(subject).to be(12)
+            end
+          end
+        end
+      end
+    end
+
+    context "for a central day" do
+      let(:hearing_day) do
+        create(
+          :hearing_day,
+          request_type: HearingDay::REQUEST_TYPES[:central]
+        )
+      end
+
+      it "has 10 slots" do
+        expect(subject).to be(10)
+      end
+    end
+  end
+
   context "hearing day full" do
     context "the hearing day has 12 scheduled hearings" do
       let!(:hearing_day) { create(:hearing_day) }
@@ -254,11 +301,11 @@ describe HearingDay, :all_dbs do
       end
     end
 
-    context "the hearing day has 12 closed hearings" do
+    context "the hearing day has 10 closed hearings" do
       let!(:hearing_day) { create(:hearing_day) }
 
       before do
-        6.times do
+        5.times do
           create(:hearing, hearing_day: hearing_day, disposition: "postponed")
           create(:case_hearing, vdkey: hearing_day.id, hearing_disp: "C")
         end
@@ -297,7 +344,7 @@ describe HearingDay, :all_dbs do
       subject { HearingDayRange.new(schedule_period.start_date, schedule_period.end_date).load_days }
 
       it do
-        expect(subject.size).to eql(427)
+        expect(subject.size).to eql(970)
       end
     end
   end

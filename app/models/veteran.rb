@@ -14,7 +14,7 @@ class Veteran < CaseflowRecord
   bgs_attr_accessor :ptcpnt_id, :sex, :address_line1, :address_line2,
                     :address_line3, :city, :state, :country, :zip_code,
                     :military_postal_type_code, :military_post_office_type_code,
-                    :service, :date_of_birth, :date_of_death, :email_address
+                    :service, :date_of_birth, :email_address
 
   with_options if: :alive? do
     validates :address_line1, :country, presence: true, on: :bgs
@@ -31,6 +31,7 @@ class Veteran < CaseflowRecord
     validate :validate_city
     validate :validate_date_of_birth
     validate :validate_name_suffix
+    validate :validate_zip_code
     validate :validate_veteran_pay_grade
   end
 
@@ -56,6 +57,7 @@ class Veteran < CaseflowRecord
 
   # key is local attribute name; value is corresponding bgs attribute name
   CACHED_BGS_ATTRIBUTES = {
+    date_of_death: :date_of_death,
     first_name: :first_name,
     last_name: :last_name,
     middle_name: :middle_name,
@@ -139,9 +141,13 @@ class Veteran < CaseflowRecord
   end
 
   def access_error
-    @access_error ||= nil if bgs_record.is_a?(Hash)
+    @access_error ||= nil if bgs_record_found?
   rescue BGS::ShareError => error
     error.message
+  end
+
+  def bgs_record_found?
+    bgs_record.is_a?(Hash)
   end
 
   # When two Veteran records get merged for data clean up, it can lead to multiple active phone numbers
@@ -167,7 +173,7 @@ class Veteran < CaseflowRecord
   end
 
   def incident_flash?
-    bgs_record.is_a?(Hash) && bgs_record[:block_cadd_ind] == "S"
+    bgs_record_found? && bgs_record[:block_cadd_ind] == "S"
   end
 
   # Postal code might be stored in address line 3 for international addresses
@@ -183,16 +189,25 @@ class Veteran < CaseflowRecord
     zip_code
   end
 
+  def pay_grades
+    return unless service
+
+    service.map { |service| service[:pay_grade] }.compact
+  end
+
   alias zip zip_code
   alias address_line_1 address_line1
   alias address_line_2 address_line2
   alias address_line_3 address_line3
   alias gender sex
 
-  def pay_grades
-    return unless service
+  def validate_zip_code
+    return unless zip_code
 
-    service.map { |service| service[:pay_grade] }.compact
+    if country == "USA"
+      # This regex validation checks for that zip code is 5 characters long
+      errors.add(:zip_code, "invalid_zip_code") unless zip_code&.match?(/^(?=(\D*\d){5}\D*$)/)
+    end
   end
 
   def validate_address_line
@@ -228,17 +243,15 @@ class Veteran < CaseflowRecord
   end
 
   def validate_veteran_pay_grade
-    # list of valid pay grades came from
-    # http://vbacoda.vba.va.gov/plsql/typ_val1.list_val?env=CERT&typ_grp=PAY_GRADE_TYPE [vbacoda.vba.va.gov]
-    return errors.add(:pay_grades, "invalid_pay_grade") if pay_grades&.any? do |pay_grade|
-      Constants.PAY_GRADES.valid_codes.exclude?(pay_grade.strip)
+    return errors.add(:pay_grades, "invalid_pay_grade") if pay_grades&.any? do |pay_grades|
+      bgs.pay_grade_list.map { |pay_grade| pay_grade[:code] }.exclude?(pay_grades.strip)
     end
   end
 
   def ratings
     @ratings ||= begin
       if FeatureToggle.enabled?(:ratings_at_issue, user: RequestStore.store[:current_user])
-        RatingAtIssue.fetch_all(participant_id)
+        RatingAtIssue.fetch_promulgated(participant_id)
       else
         PromulgatedRating.fetch_all(participant_id)
       end
@@ -254,7 +267,17 @@ class Veteran < CaseflowRecord
   end
 
   def ssn
-    super || (bgs_record.is_a?(Hash) ? bgs_record[:ssn] : nil)
+    super || (bgs_record_found? ? bgs_record[:ssn] : nil)
+  end
+
+  def date_of_death
+    cached_date_of_death = super
+    return cached_date_of_death if cached_date_of_death.present? || RequestStore.store[:current_user]&.vso_employee?
+
+    dod = bgs_record[:date_of_death] if bgs_record_found?
+    dod && Date.strptime(dod, "%m/%d/%Y")
+  rescue ArgumentError
+    nil
   end
 
   def address
@@ -274,7 +297,7 @@ class Veteran < CaseflowRecord
 
     return response.data if response.success?
 
-    fail response.error
+    raise response.error # rubocop:disable Style/SignalException
   end
 
   def stale?
@@ -286,8 +309,12 @@ class Veteran < CaseflowRecord
     return false unless accessible? && bgs_record.is_a?(Hash)
 
     is_stale = stale?
-    is_stale ||= CACHED_BGS_ATTRIBUTES.any? { |local_attr, bgs_attr| self[local_attr] != bgs_record[bgs_attr] }
+    is_stale ||= stale_bgs_attributes?
     is_stale
+  end
+
+  def stale_bgs_attributes?
+    CACHED_BGS_ATTRIBUTES.any? { |local_attr, bgs_attr| self[local_attr] != bgs_record[bgs_attr] }
   end
 
   def update_cached_attributes!
@@ -350,8 +377,15 @@ class Veteran < CaseflowRecord
     end
 
     def find_by_file_number_and_sync(file_number, sync_name: false)
-      veteran = find_by(file_number: file_number)
-      return nil unless veteran
+      veteran = begin
+            # Only make request to BGS if finding by file number is nil
+            find_by(file_number: file_number) ||
+              find_by(file_number: bgs.fetch_veteran_info(file_number)&.dig(:ssn))
+                rescue BGS::ShareError
+                  nil
+          end
+
+      return nil if veteran.blank?
 
       # Check to see if veteran is accessible to make sure bgs_record is
       # a hash and not :not_found. Also if it's not found, bgs_record returns
@@ -389,11 +423,11 @@ class Veteran < CaseflowRecord
   end
 
   def cached_attributes_updatable?
-    accessible? && bgs_record.is_a?(Hash) && stale_attributes?
+    accessible? && bgs_record_found? && stale_attributes?
   end
 
   def deceased?
-    !date_of_death.nil?
+    date_of_death.present?
   end
 
   def alive?
@@ -403,6 +437,7 @@ class Veteran < CaseflowRecord
   def unload_bgs_record
     @bgs_record_loaded = false
     @bgs_record = nil
+    self
   end
 
   private
@@ -468,7 +503,7 @@ class Veteran < CaseflowRecord
   def vbms_attributes
     self.class.bgs_attributes \
       - [:military_postal_type_code, :military_post_office_type_code, :ptcpnt_id] \
-      + [:file_number, :address_type, :first_name, :last_name, :name_suffix, :ssn]
+      + [:file_number, :address_type, :first_name, :last_name, :name_suffix, :ssn, :date_of_death]
   end
 
   def military_address?

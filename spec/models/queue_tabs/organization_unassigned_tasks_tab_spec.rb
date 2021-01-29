@@ -48,26 +48,6 @@ describe OrganizationUnassignedTasksTab, :postgres do
     end
   end
 
-  describe ".allow_bulk_assign?" do
-    subject { tab.allow_bulk_assign? }
-
-    context "when only the assignee argument is passed when instantiating the object" do
-      let(:params) { { assignee: create(:organization) } }
-
-      it "returns false" do
-        expect(subject).to eq(false)
-      end
-    end
-
-    context "when input argument is true" do
-      let(:allow_bulk_assign) { true }
-
-      it "returns true" do
-        expect(subject).to eq(true)
-      end
-    end
-  end
-
   describe ".tasks" do
     subject { tab.tasks }
 

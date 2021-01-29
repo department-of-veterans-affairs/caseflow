@@ -87,7 +87,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
     end
 
     context "when special_issues_revamp feature is enabled" do
-      before { FeatureToggle.enable!(:special_issues_revamp) }
+      before { FeatureToggle.enable!(:special_issues_revamp, users: [judge_user.css_id]) }
       after { FeatureToggle.disable!(:special_issues_revamp) }
       scenario "starts dispatch checkout flow" do
         visit "/queue"
@@ -104,6 +104,13 @@ RSpec.feature "Judge checkout flow", :all_dbs do
         expect(page).to have_content("Burn Pit")
         expect(page).to have_content("Military Sexual Trauma (MST)")
         expect(page).to have_content("US Court of Appeals for Veterans Claims (CAVC)")
+        find("label", text: "Blue Water").click
+        expect(page.find("#blue_water", visible: false).checked?).to eq true
+        find("label", text: "No Special Issues").click
+        expect(page.find("#blue_water", visible: false).checked?).to eq false
+        expect(page.find("#blue_water", visible: false).disabled?).to eq true
+        find("label", text: "No Special Issues").click
+        expect(page.find("#blue_water", visible: false).checked?).to eq false
         find("label", text: "Blue Water").click
         click_on "Continue"
 

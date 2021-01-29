@@ -25,11 +25,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
 
     SpecialCaseMovementTeam.singleton.add_user(scm_user)
     User.authenticate!(user: current_user)
-
-    FeatureToggle.enable!(:scm_view_judge_assign_queue)
   end
-
-  after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
 
   context "Non-SCM user should not see judge assign queue page if they are not the judge" do
     context "logged in user is some user" do
@@ -91,7 +87,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
         expect(page.find(".usa-sidenav-list")).to have_content attorney_one.full_name
         expect(page.find(".usa-sidenav-list")).to have_content attorney_two.full_name
 
-        safe_click ".Select"
+        safe_click ".cf-select"
         expect(page.find(".dropdown-Assignee")).to have_content attorney_one.full_name
         expect(page.find(".dropdown-Assignee")).to have_content attorney_two.full_name
 
@@ -120,11 +116,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
         allow_any_instance_of(DirectReviewDocket).to receive(:weight).and_return(10)
         allow_any_instance_of(DirectReviewDocket).to receive(:nonpriority_receipts_per_year).and_return(100)
         allow(Docket).to receive(:nonpriority_decisions_per_year).and_return(1000)
-
-        FeatureToggle.enable!(:scm_view_judge_assign_queue)
       end
-
-      after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
 
       scenario "on ama appeals" do
         step "request cases" do
@@ -167,9 +159,11 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(propmt: "Select an action...", text: "Assign to attorney")
           click_dropdown(prompt: "Select a user", text: "Other")
           click_dropdown(prompt: "Select a user", text: attorney_one.full_name)
+          instructions = "#{judge_one.user.full_name} is on leave. Please draft a decision for this case"
+          fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions)
           click_on("Submit")
 
-          expect(page).to have_content("Assigned 1 case")
+          expect(page).to have_content("Assigned 1 task to #{attorney_one.full_name}")
 
           visit "/queue/appeals/#{appeal.external_id}"
           expect(page).to have_content("ASSIGNED TO\n#{attorney_one.css_id}")
@@ -177,6 +171,8 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           expect(page).to have_content("TASK\n#{AttorneyTask.label}")
           expect(page).to have_content("TASK\n#{JudgeDecisionReviewTask.label}")
           expect(page).not_to have_content("TASK\n#{JudgeAssignTask.label}")
+          click_on("View task instructions")
+          expect(page).to have_content(instructions)
         end
 
         step "reassign an AttorneyTask" do
@@ -185,17 +181,19 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(prompt: "Select a user", text: attorney_two.full_name)
           click_on("Submit")
 
-          expect(page).to have_content("Assigned 1 case")
+          expect(page).to have_content("Reassigned 1 task to #{attorney_two.full_name}")
 
           visit "/queue/appeals/#{appeal.external_id}"
-          expect(page).not_to have_content("ASSIGNED TO\n#{attorney_one.css_id}")
-          expect(page).to have_content("ASSIGNED TO\n#{attorney_two.css_id}")
-          expect(page).to have_content("ASSIGNED BY\n#{assigner_name}")
+          active_tasks_section = page.find("#currently-active-tasks")
+          expect(active_tasks_section).not_to have_content("ASSIGNED TO\n#{attorney_one.css_id}")
+          expect(active_tasks_section).to have_content("ASSIGNED TO\n#{attorney_two.css_id}")
+          expect(active_tasks_section).to have_content("ASSIGNED BY\n#{assigner_name}")
         end
 
         step "cancel an AttorneyTask" do
           click_dropdown(propmt: "Select an action...", text: "Cancel task")
           expect(page).to have_content(format(COPY::CANCEL_TASK_MODAL_DETAIL, judge_two.user.full_name))
+          fill_in "taskInstructions", with: "Sending back to judge to be reassigned"
           click_on("Submit")
           expect(page).to have_content(
             "Task for #{appeal.veteran.first_name} #{appeal.veteran.last_name}'s case has been cancelled"
@@ -205,6 +203,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           expect(page).to have_content("ASSIGNED TO\n#{judge_two.user.css_id}")
           expect(page).to have_content("ASSIGNED BY\n#{assigner_name}")
           expect(page).to have_content("TASK\n#{JudgeAssignTask.label}")
+          expect(page).to have_content("CANCELLED BY\n#{scm_user.css_id}")
         end
 
         step "reassign a JudgeDecisionReviewTask" do
@@ -250,9 +249,11 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(propmt: "Select an action...", text: "Assign to attorney")
           click_dropdown(prompt: "Select a user", text: "Other")
           click_dropdown(prompt: "Select a user", text: attorney_one.full_name)
+          instructions = "#{judge_one.user.full_name} is on leave. Please draft a decision for this case"
+          fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions)
           click_on("Submit")
 
-          expect(page).to have_content("Assigned 1 case")
+          expect(page).to have_content("Assigned 1 task to #{attorney_one.full_name}")
 
           visit "/queue/appeals/#{legacy_appeal.external_id}"
           expect(page).to have_content("ASSIGNED TO\n#{attorney_one.vacols_uniq_id}")

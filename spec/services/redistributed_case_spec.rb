@@ -22,11 +22,20 @@ describe RedistributedCase, :all_dbs do
   end
 
   context ".ok_to_redistribute?" do
-    context "when there are no relevant tasks" do
+    shared_examples "valid redistribution" do
       let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
       it "returns true" do
         expect(subject.ok_to_redistribute?).to eq true
       end
+    end
+    context "when there are no relevant tasks" do
+      include_examples "valid redistribution"
+    end
+    context "when tasks are an empty array" do
+      before do
+        legacy_appeal.tasks = []
+      end
+      include_examples "valid redistribution"
     end
     context "when RootTask and TrackVeteranTask exist" do
       before do
@@ -40,13 +49,13 @@ describe RedistributedCase, :all_dbs do
           expect(subject.ok_to_redistribute?).to eq false
         end
       end
-      context "when there is an completed JudgeAssignTask (non-HearingTask)" do
+      context "when there is a completed JudgeAssignTask (non-HearingTask)" do
         let(:legacy_appeal) { create(:legacy_appeal, :with_judge_assign_task, vacols_case: vacols_case) }
         before do
           legacy_appeal.tasks.where(type: :JudgeAssignTask).each(&:completed!)
         end
-        it "returns false so that appeal is manually addressed" do
-          expect(subject.ok_to_redistribute?).to eq false
+        it "returns true" do
+          expect(subject.ok_to_redistribute?).to eq true
         end
       end
       context "when there is an open ScheduleHearingTask and an open parent HearingTask" do
@@ -80,7 +89,7 @@ describe RedistributedCase, :all_dbs do
           legacy_appeal.tasks.where(type: :ScheduleHearingTask).each(&:completed!)
         end
         it "returns true" do
-          expect(subject.ok_to_redistribute?).to eq false
+          expect(subject.ok_to_redistribute?).to eq true
         end
       end
     end

@@ -48,7 +48,7 @@ class Review extends React.PureComponent {
     return <div>
       <h1>Review { veteranName }'s { FORM_TYPES.SUPPLEMENTAL_CLAIM.name }</h1>
 
-      { reviewIntakeError && <ErrorAlert errorUUID={this.props.errorUUID} /> }
+      { reviewIntakeError && <ErrorAlert {...reviewIntakeError} /> }
       { showInvalidVeteranError &&
           <ErrorAlert
             errorUUID={this.props.errorUUID}
@@ -75,7 +75,7 @@ class Review extends React.PureComponent {
       <SelectClaimantConnected />
 
       <LegacyOptInApproved
-        value={legacyOptInApproved === null ? null : legacyOptInApproved.toString()}
+        value={legacyOptInApproved === null ? null : legacyOptInApproved}
         onChange={this.props.setLegacyOptInApproved}
         errorMessage={legacyOptInApprovedError}
       />
@@ -95,7 +95,7 @@ Review.propTypes = {
   sameOfficeError: PropTypes.string,
   legacyOptInApproved: PropTypes.string,
   legacyOptInApprovedError: PropTypes.string,
-  reviewIntakeError: PropTypes.string,
+  reviewIntakeError: PropTypes.object,
   veteranValid: PropTypes.bool,
   veteranInvalidFields: PropTypes.object,
   setBenefitType: PropTypes.func,
@@ -108,7 +108,7 @@ Review.propTypes = {
 };
 
 const SelectClaimantConnected = connect(
-  ({ supplementalClaim, intake }) => ({
+  ({ supplementalClaim, intake, featureToggles }) => ({
     isVeteranDeceased: intake.veteran.isDeceased,
     veteranIsNotClaimant: supplementalClaim.veteranIsNotClaimant,
     veteranIsNotClaimantError: supplementalClaim.veteranIsNotClaimantError,
@@ -118,7 +118,8 @@ const SelectClaimantConnected = connect(
     payeeCodeError: supplementalClaim.payeeCodeError,
     relationships: supplementalClaim.relationships,
     benefitType: supplementalClaim.benefitType,
-    formType: intake.formType
+    formType: intake.formType,
+    featureToggles
   }),
   (dispatch) => bindActionCreators({
     setVeteranIsNotClaimant,

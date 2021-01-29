@@ -15,12 +15,10 @@ feature "Supplemental Claim Intake", :all_dbs do
 
   let(:veteran_file_number) { "123412345" }
 
-  let(:date_of_death) { nil }
   let(:veteran) do
     Generators::Veteran.build(file_number: veteran_file_number,
                               first_name: "Ed",
-                              last_name: "Merica",
-                              date_of_death: date_of_death)
+                              last_name: "Merica")
   end
 
   let(:veteran_no_ratings) do
@@ -56,17 +54,6 @@ feature "Supplemental Claim Intake", :all_dbs do
   let!(:untimely_ratings) { generate_untimely_rating(veteran, untimely_promulgation_date, untimely_profile_date) }
   let!(:future_rating) { generate_future_rating(veteran, future_rating_promulgation_date, future_rating_profile_date) }
   let!(:before_ama_rating) { generate_pre_ama_rating(veteran) }
-
-  context "veteran is deceased" do
-    let(:date_of_death) { Time.zone.today - 1.day }
-
-    scenario "veteran cannot be claimant" do
-      create(:supplemental_claim, veteran_file_number: veteran.file_number)
-      check_deceased_veteran_claimant(
-        SupplementalClaimIntake.new(veteran_file_number: veteran.file_number, user: current_user)
-      )
-    end
-  end
 
   it "Creates an end product" do
     # Testing two relationships, tests 1 relationship in HRL and nil in Appeal
@@ -109,14 +96,6 @@ feature "Supplemental Claim Intake", :all_dbs do
       find("label", text: "Compensation", match: :prefer_exact).click
     end
 
-    fill_in "What is the Receipt Date of this form?", with: (Time.zone.today + 1.day).mdY
-    click_intake_continue
-    expect(page).to have_content(
-      "Receipt date cannot be in the future."
-    )
-
-    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
-
     expect(page).to_not have_content("Please select the claimant listed on the form.")
     within_fieldset("Is the claimant someone other than the Veteran?") do
       find("label", text: "Yes", match: :prefer_exact).click
@@ -132,6 +111,13 @@ feature "Supplemental Claim Intake", :all_dbs do
     find("#cf-payee-code").send_keys :enter
 
     select_agree_to_withdraw_legacy_issues(false)
+
+    fill_in "What is the Receipt Date of this form?", with: (Time.zone.today + 1.day).mdY
+    click_intake_continue
+    expect(page).to have_content(
+      "Receipt date cannot be in the future."
+    )
+    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
     click_intake_continue
 
@@ -367,7 +353,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       detail: supplemental_claim
     )
 
-    Claimant.create!(
+    VeteranClaimant.create!(
       decision_review: supplemental_claim,
       participant_id: test_veteran.participant_id
     )
@@ -468,6 +454,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Ed Merica")
+      check_row("SOC/SSOC Opt-in", "No")
 
       # clicking the add issues button should bring up the modal
       click_intake_add_issue
@@ -819,6 +806,8 @@ feature "Supplemental Claim Intake", :all_dbs do
         scenario "adding issues" do
           start_supplemental_claim(veteran, legacy_opt_in_approved: true)
           visit "/intake/add_issues"
+
+          check_row("SOC/SSOC Opt-in", "Yes")
 
           click_intake_add_issue
           expect(page).to have_content("Next")

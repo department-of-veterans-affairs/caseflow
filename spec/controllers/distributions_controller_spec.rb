@@ -56,11 +56,7 @@ describe DistributionsController, :all_dbs do
         end
 
         context "but scm is enabled" do
-          before do
-            FeatureToggle.enable!(:scm_view_judge_assign_queue)
-            SpecialCaseMovementTeam.singleton.add_user(authed_user)
-          end
-          after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
+          before { SpecialCaseMovementTeam.singleton.add_user(authed_user) }
 
           it "renders the created distribution as json" do
             subject

@@ -17,15 +17,6 @@ const PageRoute = (props) => {
     throw new Error('PageRoute must implement `title`');
   }
 
-  if (!props.render && !props.component) {
-    throw new Error(
-      [
-        'PageRoute currently only works with `render` and `component`',
-        '...feel free to add support for `children` :)'
-      ].join('\n')
-    );
-  }
-
   // Update title and analytics (only) when location changes
   useEffect(() => {
     document.title = isFunction(title) ? title(props) : title;

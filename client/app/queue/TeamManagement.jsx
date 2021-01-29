@@ -8,6 +8,7 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import PropTypes from 'prop-types';
 import React from 'react';
 import TextField from '../components/TextField';
+import RadioField from '../components/RadioField';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
@@ -21,10 +22,16 @@ const tableStyling = css({
   '& input': { margin: 0 }
 });
 
+const buttonStyling = css({
+  marginLeft: '1rem'
+});
+
 class TeamManagement extends React.PureComponent {
   loadingPromise = () => ApiUtil.get('/team_management').then((resp) => this.props.onReceiveTeamList(resp.body));
 
   addJudgeTeam = () => this.props.history.push('/team_management/add_judge_team');
+
+  addDvcTeam = () => this.props.history.push('/team_management/add_dvc_team');
 
   addIhpWritingVso = () => this.props.history.push('/team_management/add_vso');
 
@@ -56,33 +63,57 @@ class TeamManagement extends React.PureComponent {
 
           <table {...tableStyling}>
             <tbody>
-              <OrgHeader>
-                Judge teams <Button name={COPY.TEAM_MANAGEMENT_ADD_JUDGE_BUTTON} onClick={this.addJudgeTeam} />
-              </OrgHeader>
-              <OrgList orgs={this.props.judgeTeams} />
+              { this.props.dvcTeams && <React.Fragment>
+                <OrgHeader>
+                  {COPY.TEAM_MANAGEMENT_ADD_DVC_LABEL}
+                  <span {...buttonStyling}>
+                    <Button name={COPY.TEAM_MANAGEMENT_ADD_DVC_BUTTON} onClick={this.addDvcTeam} />
+                  </span>
+                </OrgHeader>
+                <OrgList orgs={this.props.dvcTeams} />
+              </React.Fragment> }
 
-              <OrgHeader>
-                VSOs <Button name={COPY.TEAM_MANAGEMENT_ADD_VSO_BUTTON} onClick={this.addIhpWritingVso} />
-              </OrgHeader>
-              <OrgList orgs={this.props.vsos} showBgsParticipantId />
+              { this.props.judgeTeams && <React.Fragment>
+                <OrgHeader>
+                  {COPY.TEAM_MANAGEMENT_ADD_JUDGE_LABEL}
+                  <span {...buttonStyling}>
+                    <Button name={COPY.TEAM_MANAGEMENT_ADD_JUDGE_BUTTON} onClick={this.addJudgeTeam} />
+                  </span>
+                </OrgHeader>
+                <OrgList orgs={this.props.judgeTeams} showPriorityPushToggles />
+              </React.Fragment> }
 
-              <OrgHeader>
-                Private Bar
-                <span {...css({ marginLeft: '1rem' })}>
-                  <Button name={COPY.TEAM_MANAGEMENT_ADD_PRIVATE_BAR_BUTTON} onClick={this.addPrivateBar} />
-                </span>
-                <span {...css({ marginLeft: '1rem' })}>
-                  <Button
-                    name="Look up Participant ID"
-                    onClick={this.lookupParticipantId}
-                    classNames={['usa-button-secondary']}
-                  />
-                </span>
-              </OrgHeader>
-              <OrgList orgs={this.props.privateBars} showBgsParticipantId />
+              { this.props.vsos && <React.Fragment>
+                <OrgHeader>
+                  {COPY.TEAM_MANAGEMENT_ADD_VSO_LABEL}
+                  <span {...buttonStyling}>
+                    <Button name={COPY.TEAM_MANAGEMENT_ADD_VSO_BUTTON} onClick={this.addIhpWritingVso} />
+                  </span>
+                </OrgHeader>
+                <OrgList orgs={this.props.vsos} isRepresentative />
+              </React.Fragment> }
 
-              <OrgHeader>Other teams</OrgHeader>
-              <OrgList orgs={this.props.otherOrgs} />
+              { this.props.privateBars && <React.Fragment>
+                <OrgHeader>
+                  {COPY.TEAM_MANAGEMENT_ADD_PRIVATE_BAR_LABEL}
+                  <span {...buttonStyling}>
+                    <Button name={COPY.TEAM_MANAGEMENT_ADD_PRIVATE_BAR_BUTTON} onClick={this.addPrivateBar} />
+                  </span>
+                  <span {...buttonStyling}>
+                    <Button
+                      name="Look up Participant ID"
+                      onClick={this.lookupParticipantId}
+                      classNames={['usa-button-secondary']}
+                    />
+                  </span>
+                </OrgHeader>
+                <OrgList orgs={this.props.privateBars} isRepresentative />
+              </React.Fragment> }
+
+              { this.props.otherOrgs && <React.Fragment>
+                <OrgHeader>{COPY.TEAM_MANAGEMENT_ADD_OTHER_TEAM_LABEL}</OrgHeader>
+                <OrgList orgs={this.props.otherOrgs} />
+              </React.Fragment> }
             </tbody>
           </table>
 
@@ -95,6 +126,7 @@ class TeamManagement extends React.PureComponent {
 TeamManagement.propTypes = {
   error: PropTypes.object,
   history: PropTypes.object,
+  dvcTeams: PropTypes.array,
   judgeTeams: PropTypes.array,
   onReceiveTeamList: PropTypes.func,
   otherOrgs: PropTypes.array,
@@ -110,6 +142,7 @@ const mapStateToProps = (state) => {
   } = state.ui.messages;
 
   const {
+    dvcTeams,
     judgeTeams,
     privateBars,
     vsos,
@@ -117,6 +150,7 @@ const mapStateToProps = (state) => {
   } = state.teamManagement;
 
   return {
+    dvcTeams,
     judgeTeams,
     privateBars,
     vsos,
@@ -153,34 +187,46 @@ class OrgList extends React.PureComponent {
   render = () => {
     return <React.Fragment>
       <tr {...labelRowStyling}>
-        <td>{COPY.TEAM_MANAGEMENT_ID_COLUMN_HEADING}</td>
         <td>{COPY.TEAM_MANAGEMENT_NAME_COLUMN_HEADING}</td>
-        <td>{COPY.TEAM_MANAGEMENT_URL_COLUMN_HEADING}</td>
-        <td>{ this.props.showBgsParticipantId && COPY.TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING}</td>
+        { this.props.showPriorityPushToggles && <td>{COPY.TEAM_MANAGEMENT_PRIORITY_DISTRIBUTION_COLUMN_HEADING}</td> }
+        { this.props.isRepresentative && <td>{COPY.TEAM_MANAGEMENT_URL_COLUMN_HEADING}</td> }
+        <td>{this.props.isRepresentative && COPY.TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING}</td>
         <td></td>
         <td></td>
       </tr>
       { this.props.orgs.map((org) =>
-        <OrgRow {...org} key={org.id} showBgsParticipantId={this.props.showBgsParticipantId} />
+        <OrgRow
+          {...org}
+          key={org.id}
+          isRepresentative={this.props.isRepresentative}
+          showPriorityPushToggles={this.props.showPriorityPushToggles}
+        />
       ) }
     </React.Fragment>;
   }
 }
 
 OrgList.defaultProps = {
-  showBgsParticipantId: false
+  isRepresentative: false,
+  showPriorityPushToggles: false
 };
 
 OrgList.propTypes = {
   orgs: PropTypes.array,
-  showBgsParticipantId: PropTypes.bool
+  isRepresentative: PropTypes.bool,
+  showPriorityPushToggles: PropTypes.bool
 };
+
+const orgRowStyling = css({
+  '&:last_child': { textAlign: 'right' }
+});
 
 class OrgRow extends React.PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
+      accepts_priority_pushed_cases: props.accepts_priority_pushed_cases,
       id: props.id,
       name: props.name,
       url: props.url,
@@ -192,6 +238,21 @@ class OrgRow extends React.PureComponent {
   changeName = (value) => this.setState({ name: value });
   changeUrl = (value) => this.setState({ url: value });
   changeParticipantId = (value) => this.setState({ participant_id: value });
+
+  changePriorityPush = (judgeTeamId, priorityPush) => {
+    const payload = {
+      data: {
+        organization: {
+          accepts_priority_pushed_cases: priorityPush === 'true'
+        }
+      }
+    };
+
+    return ApiUtil.patch(`/team_management/${judgeTeamId}`, payload).
+      then((resp) => {
+        this.setState({ accepts_priority_pushed_cases: resp.body.org.accepts_priority_pushed_cases });
+      });
+  };
 
   // TODO: Add feedback around whether this request was successful or not.
   submitUpdate = () => {
@@ -221,8 +282,19 @@ class OrgRow extends React.PureComponent {
 
   // TODO: Indicate that changes have been made to the row by enabling the submit changes button. Default to disabled.
   render = () => {
-    return <tr>
-      <td>{ this.props.id }</td>
+    const priorityPushRadioOptions = [
+      {
+        displayText: 'Available',
+        value: true,
+        disabled: !this.state.accepts_priority_pushed_cases && !this.props.current_user_can_toggle_priority_pushed_cases
+      }, {
+        displayText: 'Unavailable',
+        value: false,
+        disabled: this.state.accepts_priority_pushed_cases && !this.props.current_user_can_toggle_priority_pushed_cases
+      }
+    ];
+
+    return <tr {...orgRowStyling}>
       <td>
         <TextField
           name={`${COPY.TEAM_MANAGEMENT_NAME_COLUMN_HEADING}-${this.props.id}`}
@@ -230,19 +302,30 @@ class OrgRow extends React.PureComponent {
           useAriaLabel
           value={this.state.name}
           onChange={this.changeName}
+          readOnly={!this.props.isRepresentative}
         />
       </td>
-      <td>
+      { this.props.showPriorityPushToggles && <td>
+        <RadioField
+          id={`priority-push-${this.props.id}`}
+          options={priorityPushRadioOptions}
+          value={this.state.accepts_priority_pushed_cases}
+          onChange={(option) => this.changePriorityPush(this.props.id, option)}
+        />
+      </td> }
+      { this.props.isRepresentative && <td>
         <TextField
           name={`${COPY.TEAM_MANAGEMENT_URL_COLUMN_HEADING}-${this.props.id}`}
           label={false}
           useAriaLabel
           value={this.state.url}
           onChange={this.changeUrl}
+          readOnly={!this.props.isRepresentative}
         />
-      </td>
+      </td> }
+      { !this.props.isRepresentative && !this.props.showPriorityPushToggles && <td></td> }
       <td>
-        { this.props.showBgsParticipantId &&
+        { this.props.isRepresentative &&
           <TextField
             name={`${COPY.TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING}-${this.props.id}`}
             label={false}
@@ -253,29 +336,40 @@ class OrgRow extends React.PureComponent {
         }
       </td>
       <td>
-        <Button
-          name={COPY.TEAM_MANAGEMENT_UPDATE_ROW_BUTTON}
-          id={`${this.props.id}`}
-          classNames={['usa-button-secondary']}
-          onClick={this.submitUpdate}
-        />
+        { this.props.isRepresentative &&
+          <Button
+            name={COPY.TEAM_MANAGEMENT_UPDATE_ROW_BUTTON}
+            id={`${this.props.id}`}
+            classNames={['usa-button-secondary']}
+            onClick={this.submitUpdate}
+          />
+        }
       </td>
       <td>
-        { this.state.url && <Link to={this.state.user_admin_path}>Org admin page</Link> }
+        { this.state.url && this.state.user_admin_path && <Link to={this.state.user_admin_path}>
+          <Button
+            name="Org Admin Page"
+            classNames={['usa-button-secondary']}
+          />
+        </Link> }
       </td>
     </tr>;
   }
 }
 
 OrgRow.defaultProps = {
-  showBgsParticipantId: false
+  isRepresentative: false,
+  showPriorityPushToggles: false
 };
 
 OrgRow.propTypes = {
+  accepts_priority_pushed_cases: PropTypes.bool,
+  current_user_can_toggle_priority_pushed_cases: PropTypes.bool,
   id: PropTypes.number,
   name: PropTypes.string,
   participant_id: PropTypes.number,
-  showBgsParticipantId: PropTypes.bool,
+  isRepresentative: PropTypes.bool,
+  showPriorityPushToggles: PropTypes.bool,
   url: PropTypes.string,
   user_admin_path: PropTypes.string
 };

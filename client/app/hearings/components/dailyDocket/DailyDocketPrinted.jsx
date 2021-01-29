@@ -5,20 +5,20 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import { getDate, getDisplayTime } from '../../../util/DateUtil';
-import { isPreviouslyScheduledHearing, sortHearings } from '../../utils';
+import { isPreviouslyScheduledHearing, sortHearings, dispositionLabel } from '../../utils';
 import { openPrintDialogue } from '../../../util/PrintUtil';
 import AOD_CODE_TO_LABEL_MAP from '../../../../constants/AOD_CODE_TO_LABEL_MAP';
-import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP';
 import Table from '../../../components/Table';
 
 export class DailyDocketPrinted extends React.Component {
-
   componentDidMount() {
     window.onafterprint = () => window.close();
 
     document.title += ` ${getDate(this.props.docket.scheduledFor)}`;
 
-    openPrintDialogue();
+    if (!this.props.disablePrompt) {
+      openPrintDialogue();
+    }
   }
 
   isUserJudge = () => this.props.user.userHasHearingPrepRole;
@@ -35,7 +35,7 @@ export class DailyDocketPrinted extends React.Component {
     {
       header: '',
       valueFunction: (hearing) => {
-        const disposition = hearing.disposition ? HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[hearing.disposition] : 'None';
+        const disposition = dispositionLabel(hearing?.disposition);
 
         return (
           <div>
@@ -61,11 +61,9 @@ export class DailyDocketPrinted extends React.Component {
             <strong>Veteran:</strong> {veteranName}<br />
             <strong>Representative:</strong> {representativeName}<br />
             <strong>Location:</strong> {hearing.readableLocation}<br />
-            {hearing.readableRequestType !== 'Central' &&
-              <span>
-                <strong>Type:</strong> {hearing.isVirtual ? 'Virtual' : hearing.readableRequestType}<br />
-              </span>
-            }
+            <span>
+              <strong>Type:</strong> {hearing.isVirtual ? 'Virtual' : hearing.readableRequestType}<br />
+            </span>
             {hearing.notes &&
               <span><strong>Notes:</strong> {hearing.notes}</span>
             }
@@ -106,7 +104,8 @@ export class DailyDocketPrinted extends React.Component {
         <Table
           columns={this.getTableColumns()}
           rowObjects={currentHearings}
-          slowReRendersAreOk />
+          slowReRendersAreOk
+        />
 
         {_.size(previousHearings) > 0 &&
           <div>
@@ -115,7 +114,8 @@ export class DailyDocketPrinted extends React.Component {
             <Table
               columns={this.getTableColumns()}
               rowObjects={previousHearings}
-              slowReRendersAreOk />
+              slowReRendersAreOk
+            />
           </div>
         }
       </AppSegment>
@@ -126,7 +126,14 @@ export class DailyDocketPrinted extends React.Component {
 DailyDocketPrinted.propTypes = {
   user: PropTypes.object.isRequired,
   docket: PropTypes.object,
-  hearings: PropTypes.object
+  hearings: PropTypes.object,
+
+  // Whether or not to display the print screen prompt.
+  disablePrompt: PropTypes.bool
+};
+
+DailyDocketPrinted.defaultProps = {
+  disablePrompt: false
 };
 
 export default DailyDocketPrinted;

@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+##
+# FetchHearingLocationsForVeteransJob creates a list of hearing locations based on the
+# proximity to veteran/appellant's physical location and stores them as
+# AvailableHearingLocations for an appeal. From this list, a hearing coordinator chooses
+# a location to schedule the veteran/appellant for.
+
 class AvailableHearingLocations < CaseflowRecord
   include HasAppealUpdatedSince
 

@@ -23,6 +23,8 @@
   "040SCNRPMC": "PMC Supplemental Claim Non-Rating",
   "040SCR": "Supplemental Claim Rating",
   "040SCRPMC": "PMC Supplemental Claim Rating",
+  "030HLRFID": "FID-Higher Level Review",
+  "040SCRFID": "FID-Supplemental Claim Review",
   "070BVAGR": "BVA Grant (070)",
   "070BVAGRARC": "ARC BVA Grant",
   "070BVAGRPMC": "PMC BVA Grant (070)",

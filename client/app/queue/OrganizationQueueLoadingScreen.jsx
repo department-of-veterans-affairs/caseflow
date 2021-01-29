@@ -31,10 +31,11 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
             id,
             organization_name: organizationName,
             is_vso: isVso,
+            user_can_bulk_assign: userCanBulkAssign,
             queue_config: queueConfig
           } = response.body;
 
-          this.props.setActiveOrganization(id, organizationName, isVso);
+          this.props.setActiveOrganization(id, organizationName, isVso, userCanBulkAssign);
           this.props.setQueueConfig(queueConfig);
         }
       ).

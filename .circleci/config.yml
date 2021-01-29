@@ -1,5 +1,94 @@
 version: 2.1
+
+commands:
+  install_ruby_dependencies:
+    description: "Install Ruby Dependencies"
+    steps:
+      - run:
+          name: Ruby version
+          command: ruby -v
+
+      - restore_cache:
+          keys:
+            - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+
+      - run:
+          name: Bundle install
+          command: bundle install --path vendor/bundle
+
+      - save_cache:
+          key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ~/project/vendor/bundle
+
+  install_node_dependencies:
+    description: "Install NodeJS Dependencies"
+    steps:
+      - restore_cache:
+          name: Restore yarn cache
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+
+      - run:
+          name: yarn install
+          command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
+
+      - save_cache:
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+            - public/assets
+            - tmp/cache/assets/sprockets
+
+  install_dockerize:
+    description: "Install Dockerize"
+    steps:
+      - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.6.1
+
+  wait_for_databases:
+    description: "Wait for FACOLS and PostgreSQL"
+    steps:
+      - run:
+          name: Wait for database
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+
+      - run:
+          name: Wait for FACOLS to be ready
+          command: |
+            ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
+          environment:
+            DISABLE_FACTORY_BOT_INITIALIZERS: 1
+
 jobs:
+  # build workspace
+  build_workspace:
+    docker:
+      # The first image listed is the image that all steps run inside of.
+      # This can be modified by steps, or can be built as a separate
+      # customized container.
+      - image: cimg/node:12.3.0 # NodeJS Version defined in ./nvmrc
+        environment:
+          - DBUS_SESSION_BUS_ADDRESS: /dev/null
+          - RAILS_ENV: test
+          - NODE_ENV: test
+    resource_class: large
+    steps:
+      - checkout
+
+      - install_node_dependencies
+
+      - run:
+          name: Build webpack
+          command: ~/project/ci-bin/capture-log "cd client && yarn build:test"
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
   # validate our demo/development setup
   demo:
     docker:
@@ -17,7 +106,7 @@ jobs:
           - POSTGRES_USER: root
       # This is the circleci provided Postgres container. We can
       # configure it via environment variables.
-      - image: circleci/postgres:9.6
+      - image: circleci/postgres:11.7
         environment:
           - POSTGRES_USER: root
             POSTGRES_PASSWORD: password
@@ -36,58 +125,19 @@ jobs:
           name: Setup testfiles directory
           command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
-      - run:
-          name: Ruby version
-          command: ruby -v
+      - install_node_dependencies
 
-      - restore_cache:
-          keys:
-            - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+      - install_ruby_dependencies
 
-      - run:
-          name: Bundle install
-          command: bundle install --path vendor/bundle
+      - install_dockerize
 
-      - save_cache:
-          key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
-          paths:
-            - ~/project/vendor/bundle
-
-      - restore_cache:
-          name: Restore yarn cache
-          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
-
-      - run:
-          name: yarn install
-          command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
-
-      - save_cache:
-          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
-          paths:
-            - ~/.cache/yarn
-            - public/assets
-            - tmp/cache/assets/sprockets
-
-      - run:
-          name: install dockerize
-          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-          environment:
-            DOCKERIZE_VERSION: v0.6.1
-
-      - run:
-          name: Wait for database
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - wait_for_databases
 
       - run:
           name: Database setup
           command: |
             ~/project/ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate"
             ~/project/ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate"
-
-      - run:
-          name: Wait for FACOLS to be ready
-          command: |
-            ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
 
       - run:
           name: make seed-dbs
@@ -123,7 +173,7 @@ jobs:
           - POSTGRES_USER: root
       # This is the circleci provided Postgres container. We can
       # configure it via environment variables.
-      - image: circleci/postgres:9.6
+      - image: circleci/postgres:11.7
         environment:
           - POSTGRES_USER: root
             POSTGRES_PASSWORD: password
@@ -134,67 +184,27 @@ jobs:
 
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.10
-    parallelism: 5
+    parallelism: 12
     resource_class: large
     steps:
-      - checkout
+      - attach_workspace:
+          at: .
 
       - run:
           name: Setup testfiles directory
           command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
-      - run:
-          name: Ruby version
-          command: ruby -v
+      - install_ruby_dependencies
 
-      - restore_cache:
-          keys:
-            - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+      - install_dockerize
 
-      - run:
-          name: Bundle install
-          command: bundle install --path vendor/bundle
-
-      - save_cache:
-          key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
-          paths:
-            - ~/project/vendor/bundle
-
-      - restore_cache:
-          name: Restore yarn cache
-          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
-
-      - run:
-          name: yarn install
-          command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
-
-      - save_cache:
-          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
-          paths:
-            - ~/.cache/yarn
-            - public/assets
-            - tmp/cache/assets/sprockets
-
-      - run:
-          name: install dockerize
-          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-          environment:
-            DOCKERIZE_VERSION: v0.6.1
-
-      - run:
-          name: Wait for database
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - wait_for_databases
 
       - run:
           name: Database setup
           command: |
-            ~/project/ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate"
-            ~/project/ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate"
-
-      - run:
-          name: Wait for FACOLS to be ready
-          command: |
-            ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
+            ~/project/ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate:redo"
+            ~/project/ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate:redo"
 
       - run:
           name: FACOLS test setup
@@ -202,17 +212,17 @@ jobs:
             ~/project/ci-bin/capture-log "bundle exec rake spec:setup_vacols"
 
       - run:
-          name: RSpec
+          name: RSpec via knapsack_pro Queue Mode
           command: |
             mkdir -p ~/test-results/rspec
-            testfiles=$(circleci tests glob "spec/**/*spec.rb" | circleci tests split --split-by=timings)
-            echo $testfiles > ~/project/tmp/testfiles/rspec_testfiles.txt
-            ~/project/ci-bin/capture-log "bundle exec rspec --no-color --format documentation --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}"
-          # Uncomment to profile test performance in CircleCI
-          #environment:
-          #  RDOC: 1
-          #  RD_PROF: 1
-          #  FPROF: 1
+            export RAILS_ENV=test
+            bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"
+          environment:
+            KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
+            # Uncomment to profile test performance in CircleCI
+            #  RDOC: 1
+            #  RD_PROF: 1
+            #  FPROF: 1
 
       - store_test_results:
           name: Store test results as summary
@@ -237,10 +247,6 @@ jobs:
       - store_artifacts:
           name: Store bullet log
           path: ~/project/log/bullet.log
-
-      - store_artifacts:
-          name: Store testfile ordering
-          path: ~/project/tmp/testfiles
 
       - store_artifacts:
           name: Store run logs
@@ -276,31 +282,9 @@ jobs:
     steps:
       - checkout
 
-      - restore_cache:
-          keys:
-            - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+      - install_ruby_dependencies
 
-      - run:
-          name: Bundle install
-          command: bundle install --path vendor/bundle
-
-      - save_cache:
-          key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
-          paths:
-            - ~/project/vendor/bundle
-
-      - restore_cache:
-          name: Restore yarn cache
-          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
-
-      - run:
-          name: yarn install
-          command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
-
-      - save_cache:
-          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
-          paths:
-            - ~/.cache/yarn
+      - install_node_dependencies
 
       - run:
           name: Danger
@@ -332,37 +316,28 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.5.3-node-browsers
+      - image: circleci/ruby:2.5.3-node-browsers # NodeJS Version defined in ./nvmrc
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - NODE_ENV: test
-          - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
-          - KARMA_JUNIT_OUTPUT_DIR: /home/circleci/karma-test-results/karma
-          - KARMA_JUNIT_OUTPUT_FILE: /home/circleci/karma-test-results/karma/karma.xml
+          - JEST_DIR: /home/circleci/test-results/jest
+          - TEST_REPORTER: jest-junit
+          - JEST_JUNIT_OUTPUT_DIR: /home/circleci/test-results/jest
+          - KARMA_JUNIT_OUTPUT_DIR: /home/circleci/test-results/karma
+          - KARMA_JUNIT_OUTPUT_FILE: /home/circleci/test-results/karma/karma.xml
           - COVERAGE_DIR: /home/circleci/coverage
     resource_class: large
     steps:
       - checkout
 
-      - restore_cache:
-          name: Restore yarn cache
-          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+      - install_node_dependencies
 
       - run:
-          name: yarn install
-          command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
-
-      - save_cache:
-          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
-          paths:
-            - ~/.cache/yarn
-
-      - run:
-          name: Mocha
+          name: Jest
           command: |
-            mkdir -p ~/test-results/mocha
+            mkdir -p ~/test-results/jest
             pushd client
-            ~/project/ci-bin/capture-log "node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --require ./test/node/register.js --require ./test/node/setup.js 'test/node/**/*-test.js'"
+            ~/project/ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit --maxWorkers=4"
 
       - run:
           name: Karma
@@ -393,7 +368,10 @@ workflows:
   version: 2
   build:
     jobs:
+      - build_workspace
       - demo
-      - rspec
+      - rspec:
+          requires:
+            - build_workspace
       - js_tests
       - lint

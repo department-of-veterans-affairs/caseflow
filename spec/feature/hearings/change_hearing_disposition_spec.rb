@@ -35,10 +35,18 @@ RSpec.shared_examples "Change hearing disposition" do
 
       step "change the hearing disposition to held" do
         click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-        click_dropdown({ prompt: "Select", text: "Held" }, find(".cf-modal-body"))
+        click_dropdown(
+          {
+            prompt: "Select",
+            text: Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held
+          },
+          find(".cf-modal-body")
+        )
         fill_in "Notes", with: instructions_text
         click_button("Submit")
-        expect(page).to have_content("Successfully changed hearing disposition to Held")
+        expect(page).to have_content(
+          "Successfully changed hearing disposition to #{Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held}"
+        )
       end
 
       step "return to the hearing admin organization queue and verify that the task is no longer there" do
@@ -68,20 +76,22 @@ RSpec.shared_examples "Change hearing disposition" do
         step "visit and verify that the new hearing disposition is in the hearing schedule daily docket" do
           User.authenticate!(user: hearing_user)
           visit "/hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-          expect(dropdown_selected_value(find(".dropdown-#{hearing.uuid}-disposition"))).to eq "Held"
+          expect(dropdown_selected_value(find(".dropdown-#{hearing.uuid}-disposition"))).to eq(
+            Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held
+          )
         end
 
         step "visit and verify that the new hearing disposition is on the hearing details page" do
           visit "hearings/" + hearing.external_id.to_s + "/details"
           disposition_div = find("h4", text: "DISPOSITION").first(:xpath, "ancestor::div")
-          expect(disposition_div).to have_css("div", text: "held")
+          expect(disposition_div).to have_css("div", text: Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held)
         end
 
       elsif appeal.is_a? LegacyAppeal
         step "verify that the hearing disposition is now held" do
           click_on "Completed"
           click_on veteran_link_text
-          expect(page).to have_content("Disposition: Held")
+          expect(page).to have_content("Disposition: #{Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held}")
         end
       end
     end
@@ -97,10 +107,18 @@ RSpec.shared_examples "Change hearing disposition" do
 
       step "change the hearing disposition to cancelled" do
         click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-        click_dropdown({ prompt: "Select", text: "Cancelled" }, find(".cf-modal-body"))
+        click_dropdown(
+          {
+            prompt: "Select",
+            text: Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.cancelled
+          },
+          find(".cf-modal-body")
+        )
         fill_in "Notes", with: instructions_text
         click_button("Submit")
-        expect(page).to have_content("Successfully changed hearing disposition to Cancelled")
+        expect(page).to have_content(
+          "Successfully changed hearing disposition to #{Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.cancelled}"
+        )
       end
 
       step "return to the hearing admin organization queue and verify that the task is no longer there" do
@@ -125,16 +143,22 @@ RSpec.shared_examples "Change hearing disposition" do
 
       step "change the hearing disposition to cancelled" do
         expect(Raven).to receive(:capture_exception)
-          .with(AssignHearingDispositionTask::HearingAssociationMissing) { @raven_called = true }
+          .with(AssignHearingDispositionTask::HearingAssociationMissing, any_args) do
+            @raven_called = true
+          end
 
         click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-        click_dropdown({ prompt: "Select", text: "Cancelled" }, find(".cf-modal-body"))
+        click_dropdown(
+          {
+            prompt: "Select",
+            text: Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.cancelled
+          },
+          find(".cf-modal-body")
+        )
         fill_in "Notes", with: instructions_text
         click_button("Submit")
 
-        expect(page).to have_content("Hearing task (#{change_task.id}) is missing an associated hearing. " \
-        "This means that either the hearing was deleted in VACOLS or " \
-        "the hearing association has been deleted.")
+        expect(page).to have_content(format(COPY::HEARING_TASK_ASSOCIATION_MISSING_MESASAGE, hearing_task.id))
       end
     end
   end
@@ -172,10 +196,18 @@ RSpec.shared_examples "Change hearing disposition" do
 
         step "change the hearing disposition to postponed" do
           click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-          click_dropdown({ prompt: "Select", text: "Postponed" }, find(".cf-modal-body"))
+          click_dropdown(
+            {
+              prompt: "Select",
+              text: Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.postponed
+            },
+            find(".cf-modal-body")
+          )
           fill_in "Notes", with: instructions_text
           click_button("Submit")
-          expect(page).to have_content("Successfully changed hearing disposition to Postponed")
+          expect(page).to have_content(
+            "Successfully changed hearing disposition to #{Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.postponed}"
+          )
         end
 
         step "return to the hearing admin organization queue and verify that the task is no longer there" do
@@ -198,7 +230,7 @@ RSpec.shared_examples "Change hearing disposition" do
           schedule_row.find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
           expect(schedule_row).to have_content(instructions_text)
           expect(schedule_row).to have_css(
-            ".Select-control .Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
+            ".cf-select__control .cf-select__placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
           )
         end
       end
@@ -212,10 +244,18 @@ RSpec.shared_examples "Change hearing disposition" do
 
         step "change the hearing disposition to no show" do
           click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-          click_dropdown({ prompt: "Select", text: "No Show" }, find(".cf-modal-body"))
+          click_dropdown(
+            {
+              prompt: "Select",
+              text: Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.no_show
+            },
+            find(".cf-modal-body")
+          )
           fill_in "Notes", with: instructions_text
           click_button("Submit")
-          expect(page).to have_content("Successfully changed hearing disposition to No Show")
+          expect(page).to have_content(
+            "Successfully changed hearing disposition to #{Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.no_show}"
+          )
         end
 
         step "return to the hearing admin organization queue and verify that the task is no longer unassigned" do
@@ -229,7 +269,9 @@ RSpec.shared_examples "Change hearing disposition" do
           click_on "Assigned (1)"
           find("td", text: "No Show Hearing Task").find(:xpath, "ancestor::tr").click_on veteran_link_text
           no_show_active_row = find("dd", text: "No Show Hearing Task").find(:xpath, "ancestor::tr")
-          expect(no_show_active_row).to have_content("DAYS ON HOLD 0 of 25", normalize_ws: true)
+          expect(no_show_active_row).to have_content(
+            "DAYS ON HOLD 0 of #{NoShowHearingTask::DAYS_ON_HOLD}", normalize_ws: true
+          )
         end
       end
     end
@@ -286,10 +328,18 @@ RSpec.shared_examples "Change hearing disposition" do
           schedule_row.find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
           expect(schedule_row).to have_content(instructions_text)
           click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-          click_dropdown({ prompt: "Select", text: "Held" }, find(".cf-modal-body"))
+          click_dropdown(
+            {
+              prompt: "Select",
+              text: Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held
+            },
+            find(".cf-modal-body")
+          )
           fill_in "Notes", with: "I'm changing this to held."
           click_button("Submit")
-          expect(page).to have_content("Successfully changed hearing disposition to Held")
+          expect(page).to have_content(
+            "Successfully changed hearing disposition to #{Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held}"
+          )
         end
       end
     end
@@ -438,7 +488,7 @@ RSpec.shared_examples "Change hearing disposition" do
       scenario "cannot create a change hearing disposition task" do
         visit(appeal_path)
         expect(page).to have_content(ScheduleHearingTask.last.label)
-        expect(page).to_not have_css(".Select-control")
+        expect(page).to_not have_css(".cf-select__control")
       end
 
       context "hearing admin task" do
@@ -449,7 +499,7 @@ RSpec.shared_examples "Change hearing disposition" do
         scenario "cannot create a change hearing disposition task" do
           visit(appeal_path)
           expect(page).to have_content(HearingAdminActionIncarceratedVeteranTask.last.label)
-          expect(page).to_not have_css(".Select-control")
+          expect(page).to_not have_css(".cf-select__control")
         end
       end
     end
@@ -495,7 +545,7 @@ RSpec.feature "Change ama and legacy hearing disposition", :all_dbs do
       create(:case_hearing, case_hearing_disposition, vdkey: hearing_day.id, folder_nr: appeal.vacols_id)
     end
     let(:hearing) do
-      create(:legacy_hearing, appeal: appeal, vacols_id: case_hearing.hearing_pkseq, disposition: hearing_disposition)
+      create(:legacy_hearing, appeal: appeal, case_hearing: case_hearing)
     end
     let(:waiting_button_text) { "Legacy Veterans Waiting" }
     let(:appeal_path) { "/queue/appeals/#{appeal.vacols_id}" }

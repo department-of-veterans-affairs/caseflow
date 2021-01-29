@@ -11,7 +11,7 @@ module TaskExtensionForHearings
   def ancestor_task_of_type(_task_type); end
 
   def available_hearing_user_actions(user)
-    available_hearing_admin_actions(user) | available_hearing_mgmt_actions(user)
+    available_hearing_admin_actions(user) | available_hearing_mgmt_actions(user) | hearing_teams_admin_actions(user)
   end
 
   def most_recent_closed_hearing_task_on_appeal
@@ -58,5 +58,34 @@ module TaskExtensionForHearings
     [
       Constants.TASK_ACTIONS.CREATE_CHANGE_PREVIOUS_HEARING_DISPOSITION_TASK.to_h
     ]
+  end
+
+  def hearing_teams_admin_actions(user)
+    if task_is_assigned_to_user_within_admined_hearing_organization?(user)
+      return [Constants.TASK_ACTIONS.REASSIGN_TO_HEARINGS_TEAMS_MEMBER.to_h]
+    end
+
+    []
+  end
+
+  def task_is_assigned_to_user_within_admined_hearing_organization?(user)
+    hearings_orgs = [HearingsManagement.singleton, HearingAdmin.singleton, TranscriptionTeam.singleton]
+
+    assigned_to.is_a?(User) &&
+      assigned_to.organizations.any? { |org| hearings_orgs.include?(org) && org.admins.include?(user) }
+  end
+
+  # used by ScheduleHearingTask and AssignHearingDispositionTask to for withdrawal of scheduled and unscheduled hearings
+  def withdraw_hearing(parent)
+    if appeal.is_a?(LegacyAppeal)
+      AppealRepository.withdraw_hearing!(appeal)
+      nil
+    elsif appeal.is_a?(Appeal)
+      EvidenceSubmissionWindowTask.find_or_create_by!(
+        appeal: appeal,
+        parent: parent,
+        assigned_to: MailTeam.singleton
+      )
+    end
   end
 end

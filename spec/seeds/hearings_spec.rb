@@ -10,7 +10,7 @@ describe Seeds::Hearings do
 
     it "creates all kinds of hearings" do
       expect { subject }.to_not raise_error
-      expect(Hearing.count).to eq(16)
+      expect(Hearing.count).to eq(22)
     end
   end
 end

@@ -133,7 +133,20 @@ describe AppealRepository, :all_dbs do
       )
     end
 
-    context "bfha set to value not represent a held hearing" do
+    context "bfha set to a value representing a held virtual hearing" do
+      let(:case_record) do
+        OpenStruct.new(
+          correspondent: correspondent_record,
+          folder: folder_record,
+          bfha: "7",
+          case_issues: []
+        )
+      end
+
+      it { is_expected.to have_attributes(hearing_held: true) }
+    end
+
+    context "bfha set to a value not representing a held hearing" do
       let(:case_record) do
         OpenStruct.new(
           correspondent: correspondent_record,
@@ -285,80 +298,6 @@ describe AppealRepository, :all_dbs do
     end
   end
 
-  context "#create_schedule_hearing_tasks" do
-    context "when missing legacy appeals" do
-      let!(:cases) { create_list(:case, 10, bfcurloc: "57", bfhr: "1") }
-
-      it "creates the legacy appeal and creates schedule hearing tasks", skip: "flake on last expect" do
-        AppealRepository.create_schedule_hearing_tasks
-
-        expect(LegacyAppeal.all.pluck(:vacols_id)).to match_array(cases.pluck(:bfkey))
-        expect(ScheduleHearingTask.all.pluck(:appeal_id)).to match_array(LegacyAppeal.all.pluck(:id))
-        expect(ScheduleHearingTask.first.parent.type).to eq(HearingTask.name)
-        expect(ScheduleHearingTask.first.parent.parent.type).to eq(RootTask.name)
-        expect(VACOLS::Case.all.pluck(:bfcurloc).uniq).to eq([LegacyAppeal::LOCATION_CODES[:caseflow]])
-      end
-    end
-
-    context "when some legacy appeals already have schedule hearing tasks" do
-      let!(:cases) { create_list(:case, 5, bfcurloc: "57", bfhr: "1") }
-
-      it "doesn't duplicate tasks" do
-        AppealRepository.create_schedule_hearing_tasks
-
-        more_cases = create_list(:case, 5, bfcurloc: "57", bfhr: "1")
-        AppealRepository.create_schedule_hearing_tasks
-
-        expect(LegacyAppeal.all.pluck(:vacols_id)).to match_array((cases + more_cases).pluck(:bfkey))
-        expect(ScheduleHearingTask.all.pluck(:appeal_id)).to match_array(LegacyAppeal.all.pluck(:id))
-      end
-    end
-  end
-
-  context "#cases_that_need_hearings" do
-    let!(:case_without_hearing) { create(:case, bfcurloc: "57", bfhr: "1") }
-    let!(:case_with_closed_hearing) do
-      create(
-        :case,
-        bfcurloc: "57",
-        bfhr: "1",
-        case_hearings: [create(:case_hearing, hearing_disp: "H")]
-      )
-    end
-    let!(:case_with_open_hearing) do
-      create(
-        :case,
-        bfcurloc: "57",
-        bfhr: "1",
-        case_hearings: [create(:case_hearing, hearing_disp: nil)]
-      )
-    end
-    let!(:case_with_two_closed_hearings) do
-      create(
-        :case,
-        bfcurloc: "57",
-        bfhr: "1",
-        case_hearings: create_list(:case_hearing, 2, hearing_disp: "H")
-      )
-    end
-    let!(:case_with_two_open_hearings) do
-      create(
-        :case,
-        bfcurloc: "57",
-        bfhr: "1",
-        case_hearings: create_list(:case_hearing, 2, hearing_disp: nil)
-      )
-    end
-
-    it "excludes cases that have open hearings" do
-      expect(AppealRepository.cases_that_need_hearings).to match_array(
-        [
-          case_without_hearing, case_with_closed_hearing, case_with_two_closed_hearings
-        ]
-      )
-    end
-  end
-
   describe ".find_case_record" do
     subject { AppealRepository.find_case_record(ids, ignore_misses: ignore_misses) }
 
@@ -385,6 +324,93 @@ describe AppealRepository, :all_dbs do
 
         it "raises a record not found error" do
           expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+      end
+    end
+  end
+
+  context "AMA Opt-ins and rollbacks on previously decided appeals" do
+    let!(:user) { create(:user) }
+    let!(:appeal) { create(:legacy_appeal, vacols_case: case_record) }
+    let(:folder_record) { create(:folder, tidcls: past_decision_date) }
+    let(:past_decision_date) { 5.days.ago.to_date }
+    let(:new_decision_date) { Time.zone.today }
+    let(:original_data) do
+      { disposition_code: "G", decision_date: past_decision_date, folder_decision_date: past_decision_date }
+    end
+    let(:case_record) do
+      create(
+        :case,
+        :status_complete,
+        bfdc: disposition,
+        bfddec: decision_date,
+        folder: folder_record
+      )
+    end
+
+    describe ".opt_in_decided_appeal!" do
+      subject { AppealRepository.opt_in_decided_appeal!(appeal: appeal, user: user, closed_on: new_decision_date) }
+
+      let(:decision_date) { past_decision_date }
+
+      context "Appeal does not have an advance failure to respond disposition" do
+        let(:disposition) { Constants::VACOLS_DISPOSITIONS_BY_ID.key("Allowed") }
+
+        it "raises an error" do
+          expect { subject }.to raise_error(AppealRepository::AppealNotValidToClose)
+          expect(case_record.bfdc).to eq "1"
+          expect(case_record.bfddec).to eq(past_decision_date)
+          expect(folder_record.reload.tidcls).to eq(past_decision_date)
+        end
+      end
+
+      context "Appeal has an advance failure to respond disposition" do
+        let(:disposition) { Constants::VACOLS_DISPOSITIONS_BY_ID.key("Advance Failure to Respond") }
+
+        it "opts in the appeal and updates decision dates" do
+          subject
+
+          expect(case_record.reload).to be_closed
+          expect(case_record.bfdc).to eq "O"
+          expect(case_record.bfddec).to eq(new_decision_date)
+          expect(folder_record.reload.tidcls).to eq(new_decision_date)
+        end
+      end
+    end
+
+    describe ".rollback_opt_in_on_decided_appeal!" do
+      subject do
+        AppealRepository.rollback_opt_in_on_decided_appeal!(
+          appeal: appeal,
+          user: user,
+          original_data: original_data
+        )
+      end
+
+      let(:folder_record) { create(:folder, tidcls: new_decision_date) }
+      let(:decision_date) { new_decision_date }
+
+      context "Appeal is not currently opted in" do
+        let(:disposition) { Constants::VACOLS_DISPOSITIONS_BY_ID.key("Allowed") }
+
+        it "does nothing" do
+          expect(subject).to be_nil
+          expect(case_record.bfdc).to eq "1"
+          expect(case_record.bfddec).to eq(new_decision_date)
+          expect(folder_record.reload.tidcls).to eq(new_decision_date)
+        end
+      end
+
+      context "Appeal is opted in" do
+        let(:disposition) { Constants::VACOLS_DISPOSITIONS_BY_ID.key("AMA SOC/SSOC Opt-in") }
+
+        it "restores original data on legacy appeal" do
+          subject
+
+          expect(case_record.reload).to be_closed
+          expect(case_record.bfdc).to eq "G"
+          expect(case_record.bfddec).to eq(past_decision_date)
+          expect(folder_record.reload.tidcls).to eq(past_decision_date)
         end
       end
     end

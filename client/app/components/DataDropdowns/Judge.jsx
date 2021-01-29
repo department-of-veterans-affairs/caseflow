@@ -8,6 +8,7 @@ import _ from 'lodash';
 import LoadingLabel from './LoadingLabel';
 
 import SearchableDropdown from '../SearchableDropdown';
+import COPY from '../../../COPY';
 
 class JudgeDropdown extends React.Component {
 
@@ -69,6 +70,12 @@ JudgeDropdown.propTypes = {
   label: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
+  onFetchDropdownData: PropTypes.func,
+  onReceiveDropdownData: PropTypes.func.isRequired,
+  judges: PropTypes.shape({
+    options: PropTypes.arrayOf(PropTypes.object),
+    isFetching: PropTypes.bool
+  }),
   readOnly: PropTypes.bool,
   placeholder: PropTypes.string,
   errorMessage: PropTypes.string
@@ -76,7 +83,7 @@ JudgeDropdown.propTypes = {
 
 JudgeDropdown.defaultProps = {
   name: 'vlj',
-  label: 'VLJ'
+  label: COPY.DROPDOWN_LABEL_JUDGE
 };
 
 const mapStateToProps = (state) => ({

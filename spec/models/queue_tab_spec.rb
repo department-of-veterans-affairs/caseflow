@@ -12,23 +12,13 @@ describe QueueTab do
   let(:assignee) { create(:organization) }
   let(:show_regional_office_column) { false }
 
-  describe ".allow_bulk_assign?" do
-    subject { tab.allow_bulk_assign? }
-
-    context "when only the assignee argument is passed when instantiating the object" do
-      let(:params) { { assignee: assignee } }
-
-      it "returns false" do
-        expect(subject).to eq(false)
-      end
-    end
-  end
-
   describe ".to_hash" do
     subject { tab.to_hash }
 
     it "returns a hash with the correct keys" do
-      expect(subject.keys).to match_array([:label, :name, :description, :columns, :allow_bulk_assign])
+      expect(subject.keys).to match_array(
+        [:label, :name, :description, :columns, :allow_bulk_assign, :contains_legacy_tasks]
+      )
     end
 
     it "interpolates assignee name in description element of hash" do

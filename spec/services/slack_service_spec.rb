@@ -3,10 +3,14 @@
 describe SlackService do
   let(:slack_service) { SlackService.new(url: "http://www.example.com") }
   let(:http_agent) { double("http") }
+  let(:ssl_config) { double("ssl") }
 
   before do
     @http_params = nil
     allow(HTTPClient).to receive(:new) { http_agent }
+    allow(http_agent).to receive(:ssl_config) { ssl_config }
+    allow(ssl_config).to receive(:clear_cert_store) { true }
+    allow(ssl_config).to receive(:add_trust_ca) { true }
     allow(http_agent).to receive(:post) do |_url, params|
       @http_params = params
       "response"
@@ -31,6 +35,13 @@ describe SlackService do
       it "picks red color" do
         slack_service.send_notification("filler message contents", "[ERROR] ouch!")
         expect(@http_params[:body]).to match(/"#ff0000"/)
+      end
+    end
+
+    context "message contains error but title contains warning" do
+      it "picks yellow color" do
+        slack_service.send_notification("there was an error", "Really just a warning")
+        expect(@http_params[:body]).to match(/"#ffff00"/)
       end
     end
 

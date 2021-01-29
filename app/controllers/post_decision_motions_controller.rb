@@ -3,6 +3,10 @@
 class PostDecisionMotionsController < ApplicationController
   before_action :verify_task_access, only: [:create, :return_to_lit_support, :return_to_judge]
 
+  def set_application
+    RequestStore.store[:application] = "queue"
+  end
+
   def create
     motion_updater = PostDecisionMotionUpdater.new(task, motion_params)
     motion_updater.process

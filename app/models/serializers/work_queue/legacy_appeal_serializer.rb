@@ -6,8 +6,12 @@ class WorkQueue::LegacyAppealSerializer
 
   attribute :assigned_attorney
   attribute :assigned_judge
-  attribute :sanitized_hearing_request_type
-
+  attribute :readable_hearing_request_type do |object|
+    object.current_hearing_request_type(readable: true)
+  end
+  attribute :readable_original_hearing_request_type do |object|
+    object.original_hearing_request_type(readable: true)
+  end
   attribute :issues do |object|
     object.issues.map do |issue|
       WorkQueue::LegacyIssueSerializer.new(issue).serializable_hash[:data][:attributes]
@@ -49,6 +53,8 @@ class WorkQueue::LegacyAppealSerializer
   end
 
   attribute :closest_regional_office
+
+  attribute :closest_regional_office_label
 
   attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
 

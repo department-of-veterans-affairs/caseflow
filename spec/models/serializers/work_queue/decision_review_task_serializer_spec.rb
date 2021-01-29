@@ -34,12 +34,12 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
         create(:higher_level_review, veteran_file_number: veteran.file_number, veteran_is_not_claimant: true)
       end
 
-      it "returns placeholder 'claimant'" do
+      it "returns placeholder 'Unknown'" do
         serializable_hash = {
           id: task.id.to_s,
           type: :decision_review_task,
           attributes: {
-            claimant: { name: "claimant", relationship: "claimant" },
+            claimant: { name: "claimant", relationship: "Unknown" },
             appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
             veteran_participant_id: veteran.participant_id,
             assigned_on: task.assigned_at,
@@ -69,12 +69,12 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
               veteran_is_not_claimant: true)
       end
 
-      it "returns placeholder 'claimant'" do
+      it "returns relationship based on claimant class" do
         serializable_hash = {
           id: task.id.to_s,
           type: :decision_review_task,
           attributes: {
-            claimant: { name: claimant.name, relationship: "claimant" },
+            claimant: { name: claimant.name, relationship: "Veteran" },
             appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
             veteran_participant_id: veteran.participant_id,
             assigned_on: task.assigned_at,

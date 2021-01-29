@@ -17,14 +17,25 @@ class TaskFilter
       end.compact.join(" AND ")
     end
 
+    private
+
     def create_where_clause(filter)
       clause = "#{table_column_from_name(filter.column)} IN (?)"
       filter_selections = filter.values
+      if filter.column == Constants.QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME &&
+         filter_selections.include?(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_FORMER_TRAVEL.key)
+        clause = extract_former_travel_clause(filter, clause)
+      end
       if filter.column == Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name &&
          filter_selections.include?(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
         clause = extract_aod_clause(filter, clause)
       end
       clause
+    end
+
+    def extract_former_travel_clause(filter, orig_clause)
+      is_former_travel_clause = "cached_appeal_attributes.former_travel = true"
+      (filter.values.size == 1) ? is_former_travel_clause : "(#{orig_clause} OR #{is_former_travel_clause})"
     end
 
     def extract_aod_clause(filter, orig_clause)
@@ -45,11 +56,13 @@ class TaskFilter
       when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
         "cached_appeal_attributes.case_type"
       when Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
-        "cached_appeal_attributes.assignee_label"
+        "assignees.display_name"
       when Constants.QUEUE_CONFIG.POWER_OF_ATTORNEY_COLUMN_NAME
         "cached_appeal_attributes.power_of_attorney_name"
       when Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME
         "cached_appeal_attributes.suggested_hearing_location"
+      when Constants.QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME
+        "cached_appeal_attributes.hearing_request_type"
       else
         fail(Caseflow::Error::InvalidTaskTableColumnFilter, column: column_name)
       end
@@ -67,7 +80,9 @@ class TaskFilter
   end
 
   def filtered_tasks
-    where_clause.empty? ? tasks : tasks.joins(CachedAppeal.left_join_from_tasks_clause).where(*where_clause)
+    return tasks if where_clause.empty?
+
+    tasks.with_assignees.with_cached_appeals.where(*where_clause)
   end
 
   # filter_params = ["col=docketNumberColumn&val=legacy|evidence_submission", "col=taskColumn&val=TranslationTask"]

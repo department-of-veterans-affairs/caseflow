@@ -5,7 +5,7 @@ import { css } from 'glamor';
 
 import DocumentSearch from './DocumentSearch';
 import Button from '../components/Button';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import Link from '../components/Link';
 import PdfUIPageNumInput from '../reader/PdfUIPageNumInput';
 import Pdf from './Pdf';
 import DocumentCategoryIcons from './DocumentCategoryIcons';
@@ -366,24 +366,39 @@ PdfUI.propTypes = {
   doc: PropTypes.shape({
     content_url: PropTypes.string,
     filename: PropTypes.string,
-    id: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number]),
-    type: PropTypes.string,
-    receivedAt: PropTypes.string
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    receivedAt: PropTypes.string,
+    type: PropTypes.string
   }).isRequired,
+  docListIsFiltered: PropTypes.any,
+  documentPathBase: PropTypes.any,
+  featureToggles: PropTypes.object,
+  filteredDocIds: PropTypes.shape({
+    indexOf: PropTypes.func,
+    length: PropTypes.any
+  }),
+  hidePdfSidebar: PropTypes.bool,
+  history: PropTypes.any,
   id: PropTypes.string.isRequired,
-  pdfWorker: PropTypes.string.isRequired,
+  isPlacingAnnotation: PropTypes.any,
+  jumpToPage: PropTypes.func,
+  loadError: PropTypes.any,
+  nextDocId: PropTypes.number,
+  numPages: PropTypes.any,
   onPageClick: PropTypes.func,
   onShowList: PropTypes.func,
-  togglePdfSidebar: PropTypes.func,
-  nextDocId: PropTypes.number,
-  prevDocId: PropTypes.number,
-  selectCurrentPdf: PropTypes.func,
-  showClaimsFolderNavigation: PropTypes.bool.isRequired,
+  pdfWorker: PropTypes.string.isRequired,
   prefetchFiles: PropTypes.arrayOf(PropTypes.string),
-  hidePdfSidebar: PropTypes.bool,
-  featureToggles: PropTypes.object,
+  prevDocId: PropTypes.number,
+  resetJumpToPage: PropTypes.func,
+  rotateDocument: PropTypes.func,
+  rotation: PropTypes.any,
+  scale: PropTypes.number,
+  selectCurrentPdf: PropTypes.func,
+  setZoomLevel: PropTypes.func,
+  showClaimsFolderNavigation: PropTypes.bool.isRequired,
   showPdf: PropTypes.func,
-  scale: PropTypes.number
+  stopPlacingAnnotation: PropTypes.func,
+  togglePdfSidebar: PropTypes.func,
+  toggleSearchBar: PropTypes.any
 };

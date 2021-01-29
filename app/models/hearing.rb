@@ -1,17 +1,40 @@
 # frozen_string_literal: true
 
+##
+# The Veteran/Appellant, often with a representative, has a hearing with a Veterans Law Judge(VLJ) to
+# provide additional details for their appeal. In this case the appeal is an AMA Appeal meaning it was filed
+# after Appeals Improvement and Modernization Act (AMA) was passed.
+#
+# If the veterans/appellants opt in to have a hearing for their appeal process, an open ScheduleHearingTask is
+# created to track the the status of hearings. Hearings are created when a hearing coordinator
+# schedules the veteran/apellant for a hearing by completing the open ScheduleHearingTask.
+#
+# There are four types of hearings: travel board, in-person (also known as Central), video and virtual. Unlike the
+# other types, virtual type has VirtualHearing model which tracks additional details about virtual conference
+# and emails. Travel board hearings are only worked on in VACOLS.
+#
+# Hearings have a nil disposition unless the hearing is held, cancelled, postponed or the veteran/appellant
+# does not show up for their hearing. AssignHearingDispositionTask is created after hearing has passed
+# and allows users to set the disposition.
+#
+# A HearingDay organizes hearings by regional office and a room. Hearing has a HearingLocation where the
+# hearing will place as well as a Trascription which is the trascribed record of the hearing if hearing was held.
+# If a hearing is virtual then it has EmailEvents which is a record of virtual hearing emails sent to
+# different recipients.
+
 class Hearing < CaseflowRecord
   include HasHearingTask
   include HasVirtualHearing
   include HearingTimeConcern
   include HearingLocationConcern
   include HasSimpleAppealUpdatedSince
+  include UpdatedByUserConcern
+  include HearingConcern
 
   belongs_to :hearing_day
   belongs_to :appeal
   belongs_to :judge, class_name: "User"
   belongs_to :created_by, class_name: "User"
-  belongs_to :updated_by, class_name: "User"
   has_one :transcription, -> { order(created_at: :desc) }
   has_many :hearing_views, as: :hearing
   has_one :hearing_location, as: :hearing
@@ -22,43 +45,33 @@ class Hearing < CaseflowRecord
 
   accepts_nested_attributes_for :hearing_issue_notes
   accepts_nested_attributes_for :transcription, reject_if: proc { |attributes| attributes.blank? }
-  accepts_nested_attributes_for :hearing_location
+  accepts_nested_attributes_for :hearing_location, reject_if: proc { |attributes| attributes.blank? }
 
   alias_attribute :location, :hearing_location
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
-  delegate :request_type, to: :hearing_day
-  delegate :veteran_first_name, to: :appeal
-  delegate :veteran_last_name, to: :appeal
-  delegate :appellant_first_name, to: :appeal
-  delegate :appellant_last_name, to: :appeal
-  delegate :appellant_address_line_1, to: :appeal
-  delegate :appellant_city, to: :appeal
-  delegate :appellant_state, to: :appeal
-  delegate :appellant_zip, to: :appeal
-  delegate :veteran_age, to: :appeal
-  delegate :veteran_gender, to: :appeal
-  delegate :veteran_file_number, to: :appeal
-  delegate :veteran_email_address, to: :appeal
-  delegate :docket_number, to: :appeal
-  delegate :docket_name, to: :appeal
-  delegate :request_issues, to: :appeal
-  delegate :decision_issues, to: :appeal
-  delegate :available_hearing_locations, :closest_regional_office, :advanced_on_docket?, to: :appeal
+  delegate :appellant_first_name, :appellant_last_name, :representative_address,
+           :representative_type, :appellant_city, :appellant_state,
+           :appellant_zip, :appellant_address_line_1, :appellant_email_address, :appellant_tz,
+           :representative_tz, :veteran_age, :veteran_gender, :veteran_first_name,
+           :veteran_last_name, :veteran_file_number, :veteran_email_address, :docket_number,
+           :docket_name, :request_issues, :decision_issues, :available_hearing_locations,
+           :closest_regional_office, :advanced_on_docket?,
+           to: :appeal
   delegate :external_id, to: :appeal, prefix: true
+  delegate :hearing_day_full?, :request_type, to: :hearing_day
   delegate :regional_office, to: :hearing_day, prefix: true
-  delegate :hearing_day_full?, to: :hearing_day
   delegate :timezone, :name, to: :regional_office, prefix: true
 
   after_create :update_fields_from_hearing_day
   before_create :check_available_slots, unless: :override_full_hearing_day_validation
   before_create :assign_created_by_user
-  before_update :assign_updated_by_user
 
   attr_accessor :override_full_hearing_day_validation
 
   HEARING_TYPES = {
+    R: "Virtual",
     V: "Video",
     T: "Travel",
     C: "Central"
@@ -91,6 +104,8 @@ class Hearing < CaseflowRecord
     HEARING_TYPES[request_type.to_sym]
   end
 
+  alias original_request_type request_type
+
   def assigned_to_vso?(user)
     appeal.tasks.any? do |task|
       task.type == TrackVeteranTask.name &&
@@ -117,7 +132,7 @@ class Hearing < CaseflowRecord
   def claimant_id
     return nil if appeal.appellant.nil?
 
-    Person.find_by(participant_id: appeal.appellant.participant_id).id
+    appeal.appellant.person.id
   end
 
   def aod?
@@ -220,13 +235,15 @@ class Hearing < CaseflowRecord
     ::HearingSerializer.worksheet(self).serializable_hash[:data][:attributes]
   end
 
+  def serialized_email_events
+    email_events.order(sent_at: :desc).map do |event|
+      SentEmailEventSerializer.new(event).serializable_hash[:data][:attributes]
+    end
+  end
+
   private
 
   def assign_created_by_user
     self.created_by ||= RequestStore[:current_user]
-  end
-
-  def assign_updated_by_user
-    self.updated_by ||= RequestStore[:current_user]
   end
 end

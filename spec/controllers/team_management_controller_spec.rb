@@ -20,16 +20,16 @@ describe TeamManagementController, :postgres, type: :controller do
       end
     end
 
-    context "when current user is a member of the Bva organization" do
-      context "when there are organizations in the database" do
-        let!(:vsos) { create_list(:vso, 5) }
-        let!(:judge_team_count) { 3.times { JudgeTeam.create_for_judge(create(:user)) } }
-        let!(:private_bars) { create_list(:private_bar, 4) }
-        let!(:other_orgs) { create_list(:organization, 7) }
+    context "when there are organizations in the database" do
+      let!(:vsos) { create_list(:vso, 5) }
+      let!(:dvc_team_count) { 2.times { DvcTeam.create_for_dvc(create(:user)) } }
+      let!(:judge_team_count) { 3.times { JudgeTeam.create_for_judge(create(:user)) } }
+      let!(:private_bars) { create_list(:private_bar, 4) }
+      let!(:other_orgs) { create_list(:organization, 7) }
 
-        # Increase the count of other orgs to account for the Bva organization the current user is a member of.
-        let!(:other_org_count) { other_orgs.count + 1 }
-
+      # Increase the count of other orgs to account for the Bva organization the current user is a member of.
+      let!(:other_org_count) { other_orgs.count + 1 }
+      context "when current user is a member of the Bva organization" do
         it "properly returns the list of organizations" do
           get(:index, format: :json)
 
@@ -37,9 +37,37 @@ describe TeamManagementController, :postgres, type: :controller do
 
           response_body = JSON.parse(response.body)
           expect(response_body["vsos"].length).to eq(vsos.count)
+          expect(response_body["dvc_teams"].length).to eq(dvc_team_count)
           expect(response_body["judge_teams"].length).to eq(judge_team_count)
+          expect(response_body["judge_teams"].first["user_admin_path"].present?).to be true
+          expect(response_body["judge_teams"].first["accepts_priority_pushed_cases"]).to be true
+          expect(response_body["judge_teams"].first["current_user_can_toggle_priority_pushed_cases"]).to be false
           expect(response_body["private_bars"].length).to eq(private_bars.count)
+          expect(response_body["private_bars"].first["accepts_priority_pushed_cases"]).to be nil
           expect(response_body["other_orgs"].length).to eq(other_org_count)
+        end
+      end
+
+      context "when current user is a DVC" do
+        before do
+          dvc = create(:user)
+          DvcTeam.create_for_dvc(dvc)
+          User.authenticate!(user: dvc)
+        end
+
+        it "properly returns only judge teams with no link to team admin pages" do
+          get(:index, format: :json)
+
+          expect(response.status).to eq(200)
+
+          response_body = JSON.parse(response.body)
+          expect(response_body["judge_teams"].length).to eq(judge_team_count)
+          expect(response_body["judge_teams"].first["user_admin_path"].present?).to be false
+          expect(response_body["judge_teams"].first["accepts_priority_pushed_cases"]).to be true
+          expect(response_body["judge_teams"].first["current_user_can_toggle_priority_pushed_cases"]).to be true
+          expect(response_body["vsos"]).to eq nil
+          expect(response_body["private_bars"]).to eq nil
+          expect(response_body["other_orgs"]).to eq nil
         end
       end
     end
@@ -73,6 +101,21 @@ describe TeamManagementController, :postgres, type: :controller do
         response_body = JSON.parse(response.body)
         expect(response_body["org"]["participant_id"]).to eq(participant_id.to_s)
       end
+
+      context "when toggling priority push" do
+        let(:params) { { id: params_id, organization: { accepts_priority_pushed_cases: true } } }
+
+        it "updates the existing organization record and returns the expected structure" do
+          expect(org.accepts_priority_pushed_cases).to be nil
+          patch(:update, params: params, format: :json)
+
+          expect(org.reload.accepts_priority_pushed_cases).to be true
+
+          expect(response.status).to eq(200)
+          response_body = JSON.parse(response.body)
+          expect(response_body["org"]["accepts_priority_pushed_cases"]).to be true
+        end
+      end
     end
   end
 
@@ -104,6 +147,38 @@ describe TeamManagementController, :postgres, type: :controller do
         response_body = JSON.parse(response.body)
         org = JudgeTeam.find(response_body["org"]["id"])
         expect(org.judge.id).to eq(judge.id)
+      end
+    end
+  end
+
+  describe "POST /team_management/dvc_team/:id" do
+    let(:dvc) { create(:user) }
+    let(:dvc_id) { dvc.id }
+    let(:params) { { user_id: dvc_id } }
+
+    context "for a user who does not exist" do
+      let(:dvc_id) { "fake ID" }
+      it "returns a 404 error" do
+        post(:create_dvc_team, params: params, format: :json)
+        expect(response.status).to eq(404)
+      end
+    end
+
+    context "for a user who already has a DvcTeam" do
+      before { DvcTeam.create_for_dvc(dvc) }
+      it "returns a 400 error" do
+        post(:create_dvc_team, params: params, format: :json)
+        expect(response.status).to eq(400)
+      end
+    end
+
+    context "for a user who does not yet have a DvcTeam" do
+      it "properly creates new organization" do
+        post(:create_dvc_team, params: params, format: :json)
+        expect(response.status).to eq(200)
+        response_body = JSON.parse(response.body)
+        org = DvcTeam.find(response_body["org"]["id"])
+        expect(org.dvc.id).to eq(dvc.id)
       end
     end
   end

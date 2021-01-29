@@ -230,12 +230,14 @@ feature "Appeal Edit issues", :all_dbs do
 
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
-        expect(RequestIssue.find_by(
-                 contested_issue_description: "Left knee granted",
-                 ineligible_reason: :legacy_appeal_not_eligible,
-                 vacols_id: "vacols2",
-                 vacols_sequence_id: "1"
-               )).to_not be_nil
+        ineligible_ri = RequestIssue.find_by(
+          contested_issue_description: "Left knee granted",
+          ineligible_reason: :legacy_appeal_not_eligible,
+          vacols_id: "vacols2",
+          vacols_sequence_id: "1"
+        )
+        expect(ineligible_ri).to_not be_nil
+        expect(ineligible_ri.closed_status).to eq("ineligible")
 
         ri_with_optin = RequestIssue.find_by(
           contested_issue_description: "Back pain",
@@ -254,6 +256,10 @@ feature "Appeal Edit issues", :all_dbs do
         # Check rollback
         visit "appeals/#{appeal.uuid}/edit/"
         click_remove_intake_issue_dropdown("Back pain")
+
+        # Let's verify ineligible issue properly changes removed status
+        click_remove_intake_issue_dropdown("Left knee granted")
+
         click_edit_submit_and_confirm
 
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
@@ -261,6 +267,8 @@ feature "Appeal Edit issues", :all_dbs do
         expect(VACOLS::CaseIssue.find_by(isskey: "vacols1", issseq: 1).issdc).to eq(
           li_optin.original_disposition_code
         )
+
+        expect(ineligible_ri.reload.closed_status).to eq("removed")
       end
     end
 
@@ -431,7 +439,7 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to_not have_content("This review will be withdrawn.")
       expect(page).to have_button("Save", disabled: false)
 
-      click_withdraw_intake_issue_dropdown("Military Retired Pay - Military Retired Pay - nonrating description")
+      click_withdraw_intake_issue_dropdown("Military Retired Pay - nonrating description")
 
       expect(page).to have_content("This review will be withdrawn.")
       expect(page).to have_button("Withdraw", disabled: false)

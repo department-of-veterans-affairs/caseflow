@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 ##
-# Task automatically assigned after intake to the Translation organization when a case originates
-# from an RO in Puerto Rico or the Phillipines.
+# After intake, a TranslationTask is automatically assigned to the Translation organization when a case originates
+# from an RO in Puerto Rico or the Philippines because the VA assumes there are Veteran documents needing translation.
+# Task can be manually assigned in other stages.
 
 class TranslationTask < Task
+  include CavcAdminActionConcern
+
   def self.create_from_root_task(root_task)
     create!(assigned_to: Translation.singleton, parent_id: root_task.id, appeal: root_task.appeal)
   end

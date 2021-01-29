@@ -80,16 +80,31 @@ class DocketCoordinator
 
   # Determines which non-priority appeals to schedule for a hearing for a given
   # time period in DAYS.
-  def upcoming_appeals_in_range(time_period)
+  #
+  # @param time_period [Numeric] The number of days in the time period
+  # @param end_of_time_period [Date] The date of last day in the time period
+  #
+  # @return [ActiveRecord::Relation]
+  #   The appeals that should be scheduled in the given time period
+  def upcoming_appeals_in_range(time_period, end_of_time_period)
     target = target_number_of_ama_hearings(time_period)
-    dockets[:hearing].appeals(priority: false).where(docket_range_date: nil).limit(target)
+
+    dockets[:hearing]
+      .appeals(priority: false)
+      .where(docket_range_date: [nil, end_of_time_period])
+      .order("docket_range_date DESC NULLS LAST")
+      .limit(target)
   end
 
   def priority_count
     @priority_count ||= dockets
       .values
       .map { |docket| docket.count(priority: true, ready: true) }
-      .reduce(0, :+)
+      .sum
+  end
+
+  def genpop_priority_count
+    @genpop_priority_count ||= dockets.values.map(&:genpop_priority_count).sum
   end
 
   def direct_review_due_count
@@ -118,17 +133,17 @@ class DocketCoordinator
     @pacesetting_direct_review_proportion = receipts_per_year.to_f / nonpriority_decisions_per_year
   end
 
-  private
-
   def total_batch_size
-    DecisionDraftingAttorney.users.size * Distribution::CASES_PER_ATTORNEY
+    JudgeTeam.includes(:non_admin_users).flat_map(&:non_admin_users).size * Distribution::CASES_PER_ATTORNEY
   end
+
+  private
 
   def docket_margin_net_of_priority
     [total_batch_size - priority_count, 0].max
   end
 
   def nonpriority_decisions_per_year
-    @nonpriority_decisions_per_year ||= [LegacyAppeal, Docket].map(&:nonpriority_decisions_per_year).reduce(0, :+)
+    @nonpriority_decisions_per_year ||= [LegacyAppeal, Docket].map(&:nonpriority_decisions_per_year).sum
   end
 end

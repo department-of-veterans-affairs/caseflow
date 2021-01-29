@@ -4,6 +4,7 @@ FactoryBot.define do
   factory :legacy_hearing do
     transient do
       regional_office { nil }
+      disposition { nil }
       hearing_day do
         create(:hearing_day,
                regional_office: regional_office,
@@ -26,15 +27,24 @@ FactoryBot.define do
           user: user,
           hearing_type: hearing_day.request_type,
           hearing_date: VacolsHelper.format_datetime_with_utc_timezone(scheduled_for),
-          vdkey: hearing_day.id
+          vdkey: hearing_day.id,
+          hearing_disp: disposition
         )
       end
     end
 
     appeal do
-      create(:legacy_appeal, :with_veteran, closest_regional_office: regional_office, vacols_case:
-        create(:case_with_form_9, case_issues:
-        [create(:case_issue), create(:case_issue)], bfregoff: regional_office, case_hearings: [case_hearing]))
+      create(
+        :legacy_appeal,
+        :with_veteran,
+        closest_regional_office: regional_office,
+        vacols_case: create(
+          :case_with_form_9,
+          case_issues: [create(:case_issue), create(:case_issue)],
+          bfregoff: regional_office,
+          case_hearings: [case_hearing]
+        )
+      )
     end
 
     hearing_day_id { case_hearing.vdkey }

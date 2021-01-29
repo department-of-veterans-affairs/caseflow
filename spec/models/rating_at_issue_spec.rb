@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 describe RatingAtIssue do
-  before { FeatureToggle.enable!(:ratings_at_issue) }
-  after { FeatureToggle.disable!(:ratings_at_issue) }
-
   let(:disability_sn) { "1234" }
   let(:diagnostic_code) { "7611" }
   let(:reference_id) { "1555" }
@@ -93,8 +90,15 @@ describe RatingAtIssue do
       )
     end
 
+    let!(:unpromulgated_rating) do
+      Generators::RatingAtIssue.build(
+        participant_id: "DRAYMOND",
+        promulgation_date: nil
+      )
+    end
+
     it "returns rating objects for all ratings" do
-      expect(subject.count).to eq(2)
+      expect(subject.count).to eq(3)
     end
 
     context "on NoRatingsExistForVeteran error" do
@@ -103,6 +107,30 @@ describe RatingAtIssue do
       it "returns empty array" do
         expect(subject.count).to eq(0)
       end
+    end
+  end
+
+  context ".fetch_promulgated" do
+    let(:receipt_date) { Time.zone.today - 50.years }
+
+    subject { RatingAtIssue.fetch_promulgated("DRAYMOND") }
+
+    let!(:unpromulgated_rating) do
+      Generators::RatingAtIssue.build(
+        participant_id: "DRAYMOND",
+        promulgation_date: nil
+      )
+    end
+
+    let!(:promulgated_rating) do
+      Generators::RatingAtIssue.build(
+        participant_id: "DRAYMOND",
+        promulgation_date: receipt_date - 100.days
+      )
+    end
+
+    it "returns only promulgated ratings" do
+      expect(subject.count).to eq(1)
     end
   end
 

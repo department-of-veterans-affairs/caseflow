@@ -56,6 +56,14 @@ describe PrepareEstablishClaimTasksJob, :all_dbs do
 
   let!(:task_that_will_fail) do
     appeal = create(:legacy_appeal, vacols_case: vacols_case_with_decision_that_will_fail)
+
+    # this is a flaky test https://github.com/department-of-veterans-affairs/caseflow/issues/13461
+    # failure point, reproduceable only in CI. Add some pre-emptive debug logging.
+    existing_document = Document.where(vbms_document_id: FAILING_DECISION).first
+    if existing_document
+      fail "Existing Document with FAILING_DECISION #{existing_document.pretty_inspect}"
+    end
+
     appeal.decisions.first.update!(vbms_document_id: FAILING_DECISION)
     EstablishClaim.create(appeal: appeal)
   end

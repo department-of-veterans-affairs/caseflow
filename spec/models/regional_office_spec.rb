@@ -81,11 +81,47 @@ describe RegionalOffice do
     end
   end
 
+  context ".rooms" do
+    describe "double room ROs get two rooms" do
+      RegionalOffice::DOUBLE_ROOM_ROS.each do |ro|
+        it "regional office (#{ro}) gets two rooms" do
+          expect(RegionalOffice.new(ro).rooms).to eq 2
+        end
+      end
+    end
+
+    describe "all other ROs get the default room count" do
+      (RegionalOffice::CITIES.keys +
+        RegionalOffice::SATELLITE_OFFICES.keys -
+        RegionalOffice::DOUBLE_ROOM_ROS).each do |ro|
+        it "regional office (#{ro}) gets one room" do
+          expect(RegionalOffice.new(ro).rooms).to eq 1
+        end
+      end
+    end
+  end
+
   context ".facility_id" do
     RegionalOffice.all.each do |ro|
       it "regional office (#{ro.key}) does not throw when facility id is called" do
         expect { ro.facility_id }.not_to raise_error
       end
+    end
+  end
+
+  context ".ro_facility_ids" do
+    subject { RegionalOffice.ro_facility_ids }
+
+    it "returns all RO facility ids" do
+      expect(subject.count).to eq 57
+    end
+  end
+
+  context ".ro_facility_ids_for_state for TX" do
+    subject { RegionalOffice.ro_facility_ids_for_state("TX") }
+
+    it "returns ro facility ids for Texas" do
+      expect(subject).to match_array(%w[vba_349 vba_362])
     end
   end
 

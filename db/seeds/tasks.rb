@@ -78,7 +78,8 @@ module Seeds
           )
         )
       end
-      # Create AMA tasks ready for distribution
+
+      # Create AMA appeals ready for distribution
       (1..30).each do |num|
         vet_file_number = format("3213213%<num>02d", num: num)
         create(
@@ -95,6 +96,39 @@ module Seeds
         )
       end
 
+      # Create AMA appeals blocked for distribution due to Evidence Window
+      (1..30).each do |num|
+        vet_file_number = format("4324324%<num>02d", num: num)
+        create(
+          :appeal,
+          :with_post_intake_tasks,
+          number_of_claimants: 1,
+          active_task_assigned_at: Time.zone.now,
+          veteran_file_number: vet_file_number,
+          docket_type: Constants.AMA_DOCKETS.evidence_submission,
+          closest_regional_office: "RO17",
+          request_issues: create_list(
+            :request_issue, 2, :nonrating, notes: notes
+          )
+        )
+      end
+
+      # Create AMA appeals blocked for distribution due to blocking mail
+      (1..30).each do |num|
+        vet_file_number = format("4324334%<num>02d", num: num)
+        create(
+          :appeal,
+          :mail_blocking_distribution,
+          number_of_claimants: 1,
+          active_task_assigned_at: Time.zone.now,
+          veteran_file_number: vet_file_number,
+          docket_type: Constants.AMA_DOCKETS.direct_review,
+          closest_regional_office: "RO17",
+          request_issues: create_list(
+            :request_issue, 2, :nonrating, notes: notes
+          )
+        )
+      end
       LegacyAppeal.create(vacols_id: "2096907", vbms_id: "228081153S")
       LegacyAppeal.create(vacols_id: "2226048", vbms_id: "213912991S")
       LegacyAppeal.create(vacols_id: "2249056", vbms_id: "608428712S")
@@ -111,6 +145,7 @@ module Seeds
       create_ama_tasks
       create_board_grant_tasks
       create_veteran_record_request_tasks
+      create_cavc_appeals
     end
 
     def create_ama_distribution_tasks
@@ -160,6 +195,7 @@ module Seeds
       )
 
       notes = "Pain disorder with 100\% evaluation per examination"
+      notes += ". Created with the inital_tasks factory trait and moved thru"
 
       appeal = create(
         :appeal,
@@ -174,8 +210,7 @@ module Seeds
       )
 
       root_task = appeal.root_task
-      judge = create(:user, station_id: 101, full_name: "Apurva Judge_CaseAtDispatch Wakefield")
-      create(:staff, :judge_role, user: judge)
+      judge = User.find_by_css_id("BVAAWAKEFIELD")
       judge_task = create(
         :ama_judge_decision_review_task,
         assigned_to: judge,
@@ -183,8 +218,7 @@ module Seeds
         parent: root_task
       )
 
-      atty = create(:user, station_id: 101, full_name: "Andy Attorney_CaseAtDispatch Belanger")
-      create(:staff, :attorney_role, user: atty)
+      atty = User.find_by_css_id("BVAABELANGER")
       atty_task = create(
         :ama_attorney_task,
         :in_progress,
@@ -193,9 +227,6 @@ module Seeds
         parent: judge_task,
         appeal: appeal
       )
-
-      judge_team = JudgeTeam.create_for_judge(judge)
-      judge_team.add_user(atty)
 
       appeal.request_issues.each do |request_issue|
         create(
@@ -213,6 +244,90 @@ module Seeds
       judge_task.update!(status: Constants.TASK_STATUSES.completed)
 
       BvaDispatchTask.create_from_root_task(root_task)
+
+      # appeals at dispatch
+      5.times do
+        notes = "Pain disorder with 100\% evaluation per examination"
+        notes += ". Created with the at_bva_dispatch factory trait"
+
+        vet = create(
+          :veteran,
+          file_number: Faker::Number.number(digits: 9).to_s,
+          first_name: Faker::Name.first_name,
+          last_name: Faker::Name.last_name
+        )
+
+        attorney = User.find_by_css_id("BVASCASPER1")
+        judge = User.find_by_css_id("BVAAABSHIRE")
+
+        appeal = create(
+          :appeal,
+          :at_bva_dispatch,
+          number_of_claimants: 1,
+          veteran_file_number: vet.file_number,
+          docket_type: Constants.AMA_DOCKETS.direct_review,
+          closest_regional_office: "RO17",
+          associated_judge: judge,
+          associated_attorney: attorney,
+          request_issues: create_list(
+            :request_issue, 2, :nonrating, notes: notes
+          )
+        )
+
+        appeal.request_issues.each do |request_issue|
+          create(
+            :decision_issue,
+            :nonrating,
+            disposition: "allowed",
+            decision_review: appeal,
+            request_issues: [request_issue],
+            rating_promulgation_date: 2.months.ago,
+            benefit_type: request_issue.benefit_type
+          )
+        end
+      end
+
+      # dispatched appeals
+      10.times do
+        notes = "Pain disorder with 100\% evaluation per examination"
+        notes += ". Created with the dispatched factory trait"
+
+        vet = create(
+          :veteran,
+          file_number: Faker::Number.number(digits: 9).to_s,
+          first_name: Faker::Name.first_name,
+          last_name: Faker::Name.last_name
+        )
+
+        attorney = User.find_by_css_id("BVASCASPER1")
+        judge = User.find_by_css_id("BVAAABSHIRE")
+
+        appeal = create(
+          :appeal,
+          :dispatched,
+          number_of_claimants: 1,
+          veteran_file_number: vet.file_number,
+          docket_type: Constants.AMA_DOCKETS.direct_review,
+          closest_regional_office: "RO17",
+          associated_judge: judge,
+          associated_attorney: attorney,
+          request_issues: create_list(
+            :request_issue, 2, :nonrating, notes: notes
+          )
+        )
+
+        appeal.request_issues.each do |request_issue|
+          create(
+            :decision_issue,
+            :nonrating,
+            disposition: "allowed",
+            decision_review: appeal,
+            request_issues: [request_issue],
+            rating_promulgation_date: 2.months.ago,
+            benefit_type: request_issue.benefit_type
+          )
+        end
+      end
     end
 
     def create_task_at_quality_review(
@@ -443,8 +558,8 @@ module Seeds
     end
 
     def create_ama_tasks
-      attorney = User.find_by(css_id: "BVASCASPER1")
-      judge = User.find_by(css_id: "BVAAABSHIRE")
+      attorney = User.find_by_css_id("BVASCASPER1")
+      judge = User.find_by_css_id("BVAAABSHIRE")
 
       # At Judge Assignment
       # evidence submission docket
@@ -460,6 +575,10 @@ module Seeds
       create_task_at_judge_assignment(@ama_appeals[7], judge)
       create_task_at_judge_review(@ama_appeals[8], judge, attorney)
       create_task_at_colocated(@ama_appeals[9], judge, attorney)
+
+      5.times do
+        create_task_at_colocated(create(:appeal), judge, attorney, :schedule_hearing)
+      end
 
       9.times do
         create_appeal_at_judge_assignment(judge: judge, assigned_at: Time.zone.today)
@@ -480,7 +599,7 @@ module Seeds
         create(
           :ama_judge_assign_task,
           :in_progress,
-          assigned_to: User.find_by(css_id: "BVAEBECKER"),
+          assigned_to: User.find_by_css_id("BVAEBECKER"),
           appeal: create(:appeal)
         )
       end
@@ -496,8 +615,8 @@ module Seeds
     end
 
     def create_tasks_at_acting_judge
-      attorney = User.find_by(css_id: "BVASCASPER1")
-      judge = User.find_by(css_id: "BVAAABSHIRE")
+      attorney = User.find_by_css_id("BVASCASPER1")
+      judge = User.find_by_css_id("BVAAABSHIRE")
 
       acting_judge = create(:user, css_id: "BVAACTING", station_id: 101, full_name: "Kris ActingVLJ_AVLJ Merle")
       create(:staff, :attorney_judge_role, user: acting_judge)
@@ -603,6 +722,15 @@ module Seeds
           :request_issue, 2, :rating, contested_issue_description: description, notes: notes
         )
       )
+    end
+
+    def create_cavc_appeals
+      9.times do
+        create(:cavc_remand,
+               judge: JudgeTeam.first.admin,
+               attorney: JudgeTeam.first.non_admins.first,
+               veteran: Veteran.first)
+      end
     end
 
     # these really belong in Seeds::Intake but we put them here for now because they rely on Seeds::Facols

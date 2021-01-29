@@ -1,0 +1,45 @@
+import { Meta, Story, Preview } from '@storybook/addon-docs/blocks';
+
+import { PowerOfAttorneyNameUnconnected, PowerOfAttorneyDetailUnconnected } from './PowerOfAttorneyDetail';
+
+<Meta
+  title="Queue/Components/PowerOfAttorneyDetail"
+  component={PowerOfAttorneyDetailUnconnected}
+/>
+
+export const powerOfAttorney = {
+  representative_type: "Attorney",
+  representative_name: "Attorney McAttorneyFace",
+  representative_address: {
+    address_line_1: "9999 MISSION ST",
+    address_line_2: "UBER",
+    address_line_3: "APT 2",
+    city: "SAN FRANCISCO",
+    zip: "94103",
+    country: "USA",
+    state: "CA"
+  },
+  representative_email_address: "tom.brady@caseflow.gov"
+};
+
+# Power Of Attorney Detail
+
+### Full Detail
+
+<Preview>
+  <Story name="Normal">
+    <PowerOfAttorneyDetailUnconnected
+      powerOfAttorney={powerOfAttorney}
+    />
+  </Story>
+</Preview>
+
+### Just Name
+
+<Preview>
+  <Story name="Just Name">
+    <PowerOfAttorneyNameUnconnected
+      powerOfAttorney={powerOfAttorney}
+    />
+  </Story>
+</Preview>

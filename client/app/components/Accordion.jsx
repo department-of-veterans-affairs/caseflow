@@ -16,41 +16,55 @@ const CLASS_NAME_MAPPING = {
 * issues for future accordion styles please consult that file along with _main.scss.
 */
 
-export default class Accordion extends React.PureComponent {
-  render() {
-    const {
-      style,
-      children,
-      ...passthroughProps
-    } = this.props;
-
-    // converting children to an array and mapping through them
-    const accordionSections = _.map(React.Children.toArray(children), (child) => {
+export const Accordion = (
+  { children, header = null, style, ...passthroughProps }
+) => {
+  // converting children to an array and mapping through them
+  const accordionSections = _.map(
+    React.Children.toArray(children),
+    (child) => {
       const headerClass = 'usa-accordion-button';
+      const headerElement = header || (
+        <h3 className="cf-non-stylized-header">
+          {child.props.title}
+        </h3>
+      );
+      const {
+        children: sectionChildren,
+        id: sectionId,
+        disabled: sectionIsDisabled,
+        title: sectionTitle,
+        ...sectionProps
+      } = child.props;
 
-      return <Panel id={child.props.id}
-        disabled={child.props.disabled}
-        headerClass={classnames(headerClass, {
-          disabled: child.props.disabled
-        })}
-        key={child.props.title}
-        header={<h3 className="cf-non-stylized-header">{child.props.title}</h3>}>
-        <div className="usa-accordion-content">
-          {child.props.children}
-        </div>
-      </Panel>;
-    });
+      return (
+        <Panel id={sectionId}
+          disabled={sectionIsDisabled}
+          headerClass={
+            classnames(headerClass, { disabled: sectionIsDisabled })
+          }
+          key={sectionTitle}
+          header={headerElement}
+        >
+          <div className="usa-accordion-content" {...sectionProps}>
+            {sectionChildren}
+          </div>
+        </Panel>
+      );
+    }
+  );
 
-    /* rc-collapse props:
-       accordion: If accordion=true, there can be no more than one active panel at a time.
-       defaultActiveKey: shows which accordion headers are expanded on default render
-       Source: https://github.com/react-component/collapse */
+  /* rc-collapse props:
+     accordion: If accordion=true, there can be no more than one active panel at a time.
+     defaultActiveKey: shows which accordion headers are expanded on default render
+     Source: https://github.com/react-component/collapse */
 
-    return <Collapse {...passthroughProps} className={CLASS_NAME_MAPPING[style]}>
+  return (
+    <Collapse {...passthroughProps} className={CLASS_NAME_MAPPING[style]}>
       {accordionSections}
-    </Collapse>;
-  }
-}
+    </Collapse>
+  );
+};
 
 Accordion.propTypes = {
   accordion: PropTypes.bool,
@@ -72,6 +86,10 @@ Accordion.propTypes = {
 
     return error;
   },
+  // Override the default header element.
+  // Mutually exclusive with style.
+  header: PropTypes.node,
   id: PropTypes.string,
-  style: PropTypes.string.isRequired
+  // Mutually exclusive with header.
+  style: PropTypes.string
 };

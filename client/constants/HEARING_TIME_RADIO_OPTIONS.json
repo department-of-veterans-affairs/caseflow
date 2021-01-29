@@ -1,0 +1,30 @@
+{
+  "central": [
+    {
+      "displayText": "9:00 am",
+      "value": "09:00"
+    },
+    {
+      "displayText": "1:00 pm",
+      "value": "13:00"
+    },
+    {
+      "displayText": "Other",
+      "value": "other"
+    }
+  ],
+  "default": [
+    {
+      "displayText": "8:30 am",
+      "value": "08:30"
+    },
+    {
+      "displayText": "12:30 pm",
+      "value": "12:30"
+    },
+    {
+      "displayText": "Other",
+      "value": "other"
+    }
+  ]
+}

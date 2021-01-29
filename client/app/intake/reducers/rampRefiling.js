@@ -14,19 +14,19 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: Boolean(serverIntake.id)
     },
     optionSelected: {
-      $set: serverIntake.option_selected
+      $set: serverIntake.optionSelected
     },
     receiptDate: {
-      $set: serverIntake.receipt_date
+      $set: serverIntake.receiptDate
     },
     appealDocket: {
-      $set: serverIntake.appeal_docket
+      $set: serverIntake.appealDocket
     },
     electionReceiptDate: {
-      $set: serverIntake.election_receipt_date && formatDateStr(serverIntake.election_receipt_date)
+      $set: serverIntake.electionReceiptDate && formatDateStr(serverIntake.electionReceiptDate)
     },
     isReviewed: {
-      $set: Boolean(serverIntake.option_selected && serverIntake.receipt_date)
+      $set: Boolean(serverIntake.optionSelected && serverIntake.receiptDate)
     },
     issues: {
       $set: state.issues || _.keyBy(serverIntake.issues, 'id')
@@ -35,7 +35,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: Boolean(serverIntake.completed_at)
     },
     endProductDescription: {
-      $set: serverIntake.end_product_description
+      $set: serverIntake.endProductDescription
     }
   });
 
@@ -172,7 +172,7 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
           $set: REQUEST_STATE.FAILED
         },
         reviewIntakeError: {
-          $set: getPageError(action.payload.responseErrorCodes)
+          $set: getPageError(action.payload)
         }
       }
     });

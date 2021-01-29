@@ -18,7 +18,7 @@ class HearingDayRoomAssignment
                           room || ""
                         elsif request_type == HearingDay::REQUEST_TYPES[:central]
                           first_available_central_room
-                        else
+                        elsif request_type == HearingDay::REQUEST_TYPES[:video]
                           first_available_video_room
                         end
   end
@@ -33,14 +33,18 @@ class HearingDayRoomAssignment
   end
 
   def first_available_video_room
-    (1..HearingRooms::ROOMS.size).detect do |room_number|
-      room_count = hearing_count_by_room[room_number.to_s] || 0
-      room_number != 2 && room_count == 0
-    end&.to_s
+    (1..HearingRooms::ROOMS.size)
+      .detect do |room_number|
+        room_count = hearing_count_by_room[room_number.to_s] || 0
+        room_number != 2 && room_count == 0
+      end
+      &.to_s
   end
 
   def hearing_count_by_room
-    @hearing_count_by_room ||= HearingDay.where(scheduled_for: scheduled_for, request_type: request_type)
-      .group(:room).count
+    @hearing_count_by_room ||= HearingDay
+      .where(scheduled_for: scheduled_for)
+      .group(:room)
+      .count
   end
 end

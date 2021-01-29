@@ -53,7 +53,7 @@ class Review extends React.PureComponent {
     return <div>
       <h1>Review { veteranName }'s { FORM_TYPES.APPEAL.name }</h1>
 
-      { reviewIntakeError && <ErrorAlert /> }
+      { reviewIntakeError && <ErrorAlert {...reviewIntakeError} /> }
 
       <DateSelector
         name="receipt-date"
@@ -79,7 +79,7 @@ class Review extends React.PureComponent {
       <SelectClaimantConnected />
 
       <LegacyOptInApproved
-        value={legacyOptInApproved === null ? null : legacyOptInApproved.toString()}
+        value={legacyOptInApproved}
         onChange={this.props.setLegacyOptInApproved}
         errorMessage={legacyOptInApprovedError}
       />
@@ -95,7 +95,7 @@ Review.propTypes = {
   docketTypeError: PropTypes.string,
   legacyOptInApproved: PropTypes.bool,
   legacyOptInApprovedError: PropTypes.string,
-  reviewIntakeError: PropTypes.string,
+  reviewIntakeError: PropTypes.object,
   setDocketType: PropTypes.func,
   setReceiptDate: PropTypes.func,
   setLegacyOptInApproved: PropTypes.func,
@@ -103,7 +103,7 @@ Review.propTypes = {
 };
 
 const SelectClaimantConnected = connect(
-  ({ appeal, intake }) => ({
+  ({ appeal, intake, featureToggles }) => ({
     isVeteranDeceased: intake.veteran.isDeceased,
     veteranIsNotClaimant: appeal.veteranIsNotClaimant,
     veteranIsNotClaimantError: appeal.veteranIsNotClaimantError,
@@ -112,7 +112,8 @@ const SelectClaimantConnected = connect(
     payeeCode: appeal.payeeCode,
     relationships: appeal.relationships,
     benefitType: appeal.benefitType,
-    formType: intake.formType
+    formType: intake.formType,
+    featureToggles
   }),
   (dispatch) => bindActionCreators({
     setVeteranIsNotClaimant,

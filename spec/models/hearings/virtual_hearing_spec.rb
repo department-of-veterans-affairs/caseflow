@@ -1,6 +1,75 @@
 # frozen_string_literal: true
 
 describe VirtualHearing do
+  shared_examples "all test link behaviors" do
+    it "returns representative link when title is 'Representative'" do
+      recipient = "Representative"
+      expect(virtual_hearing.test_link(recipient)).to eq link(recipient)
+    end
+
+    it "returns appellant link when appellant is not the veteran" do
+      recipient = "Appellant"
+      virtual_hearing.hearing.appeal.update(veteran_is_not_claimant: true)
+      expect(virtual_hearing.test_link("Veteran")).to eq link(recipient)
+    end
+
+    it "returns veteran link when appellant is the veteran" do
+      recipient = "Veteran"
+      expect(virtual_hearing.test_link(recipient)).to eq link(recipient)
+    end
+
+    it "returns veteran link when title is not rep and appellant is the veteran" do
+      recipient = "Something"
+      expect(virtual_hearing.test_link(recipient)).to eq link("Veteran")
+    end
+  end
+
+  shared_context "virtual hearing created with new link generation" do
+    let(:virtual_hearing) do
+      build(
+        :virtual_hearing,
+        :link_generation_initialized,
+        hearing: build(
+          :hearing,
+          hearing_day: build(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
+        )
+      )
+    end
+  end
+
+  shared_context "virtual hearing not created with new link generation" do
+    let(:virtual_hearing) do
+      build(
+        :virtual_hearing,
+        :initialized,
+        hearing: build(
+          :hearing,
+          hearing_day: build(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
+        )
+      )
+    end
+  end
+
+  context "#test_link" do
+    context "vh created with new link generation" do
+      def link(name)
+        "https://vc.va.gov/webapp2/conference/test_call?name=#{name}&join=1"
+      end
+
+      include_context "virtual hearing created with new link generation"
+      include_examples "all test link behaviors"
+    end
+
+    context "vh not created with new link generation" do
+      def link(name)
+        "https://care.va.gov/webapp2/conference/test_call?name=#{name}&join=1"
+      end
+
+      include_context "virtual hearing not created with new link generation"
+      include_examples "all test link behaviors"
+    end
+  end
+
   context "#guest_pin" do
     let(:virtual_hearing) do
       create(
@@ -66,7 +135,7 @@ describe VirtualHearing do
         )
       end
 
-      it { expect(subject).to be(false) }
+      it { expect(subject).to be(true) }
     end
 
     context "for a central legacy hearing" do
@@ -80,7 +149,7 @@ describe VirtualHearing do
         )
       end
 
-      it { expect(subject).to be(false) }
+      it { expect(subject).to be(true) }
     end
 
     shared_examples_for "hearing with existing virtual hearing" do
@@ -149,6 +218,73 @@ describe VirtualHearing do
       end
 
       it_behaves_like "hearing with existing virtual hearing"
+    end
+  end
+
+  context "#status" do
+    shared_examples "returns correct status" do |status|
+      it "returns correct status" do
+        expect(subject).to eq(status)
+      end
+    end
+    subject { virtual_hearing.status }
+
+    context "cancelled" do
+      let(:virtual_hearing) do
+        build(
+          :virtual_hearing,
+          :initialized,
+          hearing: build(
+            :hearing,
+            hearing_day: build(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
+          ),
+          request_cancelled: true
+        )
+      end
+
+      include_examples "returns correct status", :cancelled
+    end
+
+    context "closed" do
+      let(:virtual_hearing) do
+        build(
+          :virtual_hearing,
+          :initialized,
+          hearing: build(
+            :hearing,
+            hearing_day: build(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
+          ),
+          conference_deleted: true
+        )
+      end
+
+      include_examples "returns correct status", :closed
+    end
+
+    context "active" do
+      context "vh created with new link generation" do
+        include_context "virtual hearing created with new link generation"
+        include_examples "returns correct status", :active
+      end
+
+      context "vh not created with new link generation" do
+        include_context "virtual hearing not created with new link generation"
+        include_examples "returns correct status", :active
+      end
+    end
+
+    context "pending" do
+      let(:virtual_hearing) do
+        build(
+          :virtual_hearing,
+          hearing: build(
+            :hearing,
+            hearing_day: build(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:central])
+          )
+        )
+      end
+
+      include_examples "returns correct status", :pending
     end
   end
 end

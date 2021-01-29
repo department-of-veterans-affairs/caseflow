@@ -17,6 +17,7 @@ import {
 } from '../../actions/decisionReview';
 import { setReceiptDate } from '../../actions/intake';
 import { PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS, FORM_TYPES, VBMS_BENEFIT_TYPES } from '../../constants';
+import { convertStringToBoolean } from '../../util';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 import PropTypes from 'prop-types';
@@ -54,7 +55,7 @@ class Review extends React.PureComponent {
     return <div>
       <h1>Review { veteranName }'s { FORM_TYPES.HIGHER_LEVEL_REVIEW.name }</h1>
 
-      { reviewIntakeError && <ErrorAlert /> }
+      { reviewIntakeError && <ErrorAlert {...reviewIntakeError} /> }
       { showInvalidVeteranError && <ErrorAlert errorCode="veteran_not_valid" errorData={veteranInvalidFields} /> }
 
       <BenefitType
@@ -79,7 +80,9 @@ class Review extends React.PureComponent {
         strongLabel
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
-        onChange={this.props.setInformalConference}
+        onChange={(value) => {
+          this.props.setInformalConference(convertStringToBoolean(value));
+        }}
         errorMessage={informalConferenceError}
         value={informalConference === null ? null : informalConference.toString()}
       />
@@ -90,7 +93,9 @@ class Review extends React.PureComponent {
         strongLabel
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
-        onChange={this.props.setSameOffice}
+        onChange={(value) => {
+          this.props.setSameOffice(convertStringToBoolean(value));
+        }}
         errorMessage={sameOfficeError}
         value={sameOffice === null ? null : sameOffice.toString()}
       />
@@ -98,7 +103,7 @@ class Review extends React.PureComponent {
       <SelectClaimantConnected />
 
       <LegacyOptInApproved
-        value={legacyOptInApproved === null ? null : legacyOptInApproved.toString()}
+        value={legacyOptInApproved}
         onChange={this.props.setLegacyOptInApproved}
         errorMessage={legacyOptInApprovedError}
       />
@@ -112,13 +117,13 @@ Review.propTypes = {
   receiptDateError: PropTypes.string,
   benefitType: PropTypes.string,
   benefitTypeError: PropTypes.string,
-  informalConference: PropTypes.string,
+  informalConference: PropTypes.bool,
   informalConferenceError: PropTypes.string,
   sameOffice: PropTypes.string,
   sameOfficeError: PropTypes.string,
   legacyOptInApproved: PropTypes.string,
   legacyOptInApprovedError: PropTypes.string,
-  reviewIntakeError: PropTypes.string,
+  reviewIntakeError: PropTypes.object,
   veteranValid: PropTypes.bool,
   veteranInvalidFields: PropTypes.object,
   setBenefitType: PropTypes.func,
@@ -130,7 +135,7 @@ Review.propTypes = {
 };
 
 const SelectClaimantConnected = connect(
-  ({ higherLevelReview, intake }) => ({
+  ({ higherLevelReview, intake, featureToggles }) => ({
     isVeteranDeceased: intake.veteran.isDeceased,
     veteranIsNotClaimant: higherLevelReview.veteranIsNotClaimant,
     veteranIsNotClaimantError: higherLevelReview.veteranIsNotClaimantError,
@@ -140,7 +145,8 @@ const SelectClaimantConnected = connect(
     payeeCodeError: higherLevelReview.payeeCodeError,
     relationships: higherLevelReview.relationships,
     benefitType: higherLevelReview.benefitType,
-    formType: intake.formType
+    formType: intake.formType,
+    featureToggles
   }),
   (dispatch) => bindActionCreators({
     setVeteranIsNotClaimant,

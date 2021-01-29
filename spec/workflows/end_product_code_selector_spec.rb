@@ -92,7 +92,9 @@ EP_CODES = [
   %w[930DONRPMC 930 control remand difference_of_opinion pension nonrating higher_level_review],
   %w[930DORPMC 930 control remand difference_of_opinion pension rating higher_level_review],
   %w[930DORPMC 930 local_quality_error remand difference_of_opinion pension rating higher_level_review],
-  %w[930DORPMC 930 national_quality_error remand difference_of_opinion pension rating higher_level_review]
+  %w[930DORPMC 930 national_quality_error remand difference_of_opinion pension rating higher_level_review],
+  %w[030HLRFID primary na original na fiduciary nonrating higher_level_review],
+  %w[040SCRFID primary na original na fiduciary nonrating supplemental_claim]
 ].freeze
 
 describe "Request Issue Correction Cleaner", :postgres do

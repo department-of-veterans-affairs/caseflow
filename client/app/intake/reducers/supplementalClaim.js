@@ -21,7 +21,7 @@ const updateFromServerIntake = (state, serverIntake) => {
   return update(state, {
     ...commonState,
     benefitType: {
-      $set: serverIntake.benefit_type
+      $set: serverIntake.benefitType
     }
   });
 };
@@ -86,7 +86,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
   let veteranIsNotClaimant;
 
   if (action.payload) {
-    veteranIsNotClaimant = convertStringToBoolean(action.payload.veteranIsNotClaimant);
+    veteranIsNotClaimant = action.payload.veteranIsNotClaimant;
   }
 
   switch (action.type) {
@@ -120,6 +120,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       },
       payeeCode: {
         $set: getDefaultPayeeCode(state, action.payload.claimant)
+      },
+      claimantType: {
+        $set: action.payload.claimantType
       }
     });
   case ACTIONS.SET_PAYEE_CODE:
@@ -183,7 +186,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')
       },
       veteranIsNotClaimantError: {
-        $set: getBlankOptionError(action.payload.responseErrorCodes, 'veteran_is_not_claimant')
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'claimant_type')
       },
       claimantError: {
         $set: getClaimantError(action.payload.responseErrorCodes)
@@ -196,7 +199,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
           $set: REQUEST_STATE.FAILED
         },
         reviewIntakeError: {
-          $set: getPageError(action.payload.responseErrorCodes)
+          $set: getPageError(action.payload)
         },
         errorUUID: {
           $set: action.payload.errorUUID
@@ -236,6 +239,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         },
         completeIntakeErrorData: {
           $set: action.payload.responseErrorData
+        },
+        completeIntakeErrorUUID: {
+          $set: action.payload.responseErrorUUID
         }
       }
     });

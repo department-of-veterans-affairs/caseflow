@@ -130,6 +130,9 @@ class DocumentsTable extends React.Component {
     const isTagDropdownFilterOpen =
       _.get(this.props.pdfList, ['dropdowns', 'tag']);
 
+    const sortDirectionAriaLabel =
+      `Sorted ${this.props.docFilterCriteria.sort.sortAscending ? 'ascending' : 'descending'}`;
+
     return [
       {
         cellClass: 'last-read-column',
@@ -168,7 +171,9 @@ class DocumentsTable extends React.Component {
           name="Receipt Date"
           id="receipt-date-header"
           classNames={['cf-document-list-button-header']}
-          ariaLabel="Sort by Receipt Date"
+          ariaLabel={`Sort by Receipt Date. ${this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ?
+            sortDirectionAriaLabel :
+            '' }`}
           onClick={() => this.props.changeSortState('receivedAt')}>
           Receipt Date {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ? sortArrowIcon : notSortedIcon }
         </Button>,
@@ -183,7 +188,9 @@ class DocumentsTable extends React.Component {
         header: <Button id="type-header"
           name="Document Type"
           classNames={['cf-document-list-button-header']}
-          ariaLabel="Sort by Document Type"
+          ariaLabel={`Sort by Document Type. ${this.props.docFilterCriteria.sort.sortBy === 'type' ?
+            sortDirectionAriaLabel :
+            '' }`}
           onClick={() => this.props.changeSortState('type')}>
           Document Type {this.props.docFilterCriteria.sort.sortBy === 'type' ? sortArrowIcon : notSortedIcon }
         </Button>,

@@ -90,4 +90,25 @@ class HearingTimeService
   def central_office_time
     local_time.in_time_zone(CENTRAL_OFFICE_TIMEZONE)
   end
+
+  def normalized_time(timezone)
+    return local_time if timezone.nil?
+
+    # throws an error here if timezone is invalid
+    local_time.in_time_zone(timezone)
+  end
+
+  # hearing time in poa timezone
+  def poa_time
+    representative_tz = @hearing.virtual_hearing&.representative_tz
+
+    normalized_time(representative_tz)
+  end
+
+  # hearing time in appellant timezone
+  def appellant_time
+    appellant_tz = @hearing.virtual_hearing&.appellant_tz
+
+    normalized_time(appellant_tz)
+  end
 end

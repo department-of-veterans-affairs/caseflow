@@ -12,13 +12,15 @@ describe LegacyAppeal, :all_dbs do
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
   let(:veteran_address) { nil }
   let(:appellant_address) { nil }
+  let(:changed_request_type) { nil }
 
   let(:appeal) do
     create(
       :legacy_appeal,
       vacols_case: vacols_case,
       veteran_address: veteran_address,
-      appellant_address: appellant_address
+      appellant_address: appellant_address,
+      changed_request_type: changed_request_type
     )
   end
 
@@ -127,7 +129,7 @@ describe LegacyAppeal, :all_dbs do
       scenario "when the ssoc date is before AMA was launched" do
         allow(appeal).to receive(:active?).and_return(true)
         allow(appeal).to receive(:issues).and_return(issues)
-        allow(appeal).to receive(:soc_date).and_return(ama_start_date - 1.day)
+        allow(appeal).to receive(:soc_date).and_return(ama_start_date - 5.days)
 
         expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
         expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: true)).to eq(false)
@@ -135,14 +137,16 @@ describe LegacyAppeal, :all_dbs do
       end
     end
 
-    scenario "when is active but not eligible" do
-      allow(appeal).to receive(:active?).and_return(true)
-      allow(appeal).to receive(:issues).and_return(issues)
-      allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date)
-      allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
+    context "checks ssoc/soc dates" do
+      scenario "when is active but not eligible" do
+        allow(appeal).to receive(:active?).and_return(true)
+        allow(appeal).to receive(:issues).and_return(issues)
+        allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date - 3.days)
+        allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
 
-      expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
-      expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
+        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
+      end
     end
 
     scenario "when is active and soc is not eligible but ssoc is" do
@@ -166,14 +170,16 @@ describe LegacyAppeal, :all_dbs do
       expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
     end
 
-    scenario "when is not active or eligible" do
-      allow(appeal).to receive(:active?).and_return(false)
-      allow(appeal).to receive(:issues).and_return(issues)
-      allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date)
-      allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
+    context "check ssoc/soc dates" do
+      scenario "when is not active or eligible" do
+        allow(appeal).to receive(:active?).and_return(false)
+        allow(appeal).to receive(:issues).and_return(issues)
+        allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date - 3.days)
+        allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
 
-      expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
-      expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
+        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+      end
     end
 
     scenario "when is active or eligible but has no issues" do
@@ -197,6 +203,50 @@ describe LegacyAppeal, :all_dbs do
 
         expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
         expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+      end
+    end
+
+    context "when receipt_date falls on saturday" do
+      let(:new_receipt_date) { eligible_soc_date + 60.days }
+
+      scenario "return true" do
+        allow(appeal).to receive(:soc_date).and_return(eligible_soc_date)
+        expect(appeal.eligible_for_opt_in?(receipt_date: new_receipt_date)).to eq(true)
+        expect(new_receipt_date.saturday?).to eq(true)
+      end
+    end
+
+    context "when receipt_date falls on sunday" do
+      let(:new_receipt_date) { eligible_soc_date + 61.days }
+
+      scenario "return true" do
+        allow(appeal).to receive(:soc_date).and_return(eligible_soc_date)
+        expect(appeal.eligible_for_opt_in?(receipt_date: new_receipt_date)).to eq(true)
+        expect(new_receipt_date.sunday?).to eq(true)
+      end
+    end
+
+    context "when receipt date falls on a holiday" do
+      let(:federal_holiday) { Date.new(2020, 5, 25) }
+      let(:receipt_date) { federal_holiday + 1.day }
+
+      scenario "return true" do
+        allow(appeal).to receive(:soc_date).and_return(federal_holiday - 61.days)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: false)).to eq(true)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date + 1.day, covid_flag: false)).to eq(false)
+        expect(check_for_federal_holiday(federal_holiday)).to eq(true)
+      end
+    end
+
+    context "when receipt date falls on inauguration day " do
+      let(:inauguration_date) { Date.new(2021, 1, 20) }
+      let(:receipt_date) { inauguration_date + 1.day }
+
+      scenario "return true" do
+        allow(appeal).to receive(:soc_date).and_return(inauguration_date - 61.days)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: false)).to eq(true)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date + 1.day, covid_flag: false)).to eq(false)
+        expect(receipt_date.sunday?).to eq(false)
       end
     end
 
@@ -1930,65 +1980,111 @@ describe LegacyAppeal, :all_dbs do
   end
 
   context "#update" do
-    subject { appeal.update(appeals_hash) }
+    subject { appeal.update!(appeals_hash) }
     let(:vacols_case) { create(:case) }
 
     context "when Vacols does not need an update" do
-      let(:appeals_hash) do
-        { worksheet_issues_attributes: [{
-          remand: true,
-          omo: true,
-          description: "Cabbage\nPickle",
-          notes: "Donkey\nCow",
-          from_vacols: true,
-          vacols_sequence_id: 1
-        }] }
+      context "updating worksheet issues" do
+        let(:appeals_hash) do
+          { worksheet_issues_attributes: [{
+            remand: true,
+            omo: true,
+            description: "Cabbage\nPickle",
+            notes: "Donkey\nCow",
+            from_vacols: true,
+            vacols_sequence_id: 1
+          }] }
+        end
+
+        it "updates worksheet issues and does not create a new version in paper trail" do
+          expect(appeal.worksheet_issues.count).to eq(0)
+          subject # do update
+          expect(appeal.worksheet_issues.count).to eq(1)
+
+          # Ensure paper trail is not updated after initial update
+          expect(appeal.reload.versions.length).to eq(0)
+
+          issue = appeal.worksheet_issues.first
+          expect(issue.remand).to eq true
+          expect(issue.allow).to eq false
+          expect(issue.deny).to eq false
+          expect(issue.dismiss).to eq false
+          expect(issue.omo).to eq true
+          expect(issue.description).to eq "Cabbage\nPickle"
+          expect(issue.notes).to eq "Donkey\nCow"
+
+          # test that a 2nd save updates the same record, rather than create new one
+          id = appeal.worksheet_issues.first.id
+          appeals_hash[:worksheet_issues_attributes][0][:deny] = true
+          appeals_hash[:worksheet_issues_attributes][0][:notes] = "Tomato"
+          appeals_hash[:worksheet_issues_attributes][0][:id] = id
+
+          appeal.update(appeals_hash)
+
+          # Ensure paper trail is not updated after additional update
+          expect(appeal.reload.versions.length).to eq(0)
+
+          expect(appeal.worksheet_issues.count).to eq(1)
+          issue = appeal.worksheet_issues.first
+          expect(issue.id).to eq(id)
+          expect(issue.deny).to eq(true)
+          expect(issue.remand).to eq(true)
+          expect(issue.allow).to eq(false)
+          expect(issue.dismiss).to eq(false)
+          expect(issue.description).to eq "Cabbage\nPickle"
+          expect(issue.notes).to eq "Tomato"
+
+          # soft delete an issue
+          appeals_hash[:worksheet_issues_attributes][0][:_destroy] = "1"
+          appeal.update(appeals_hash)
+          expect(appeal.worksheet_issues.count).to eq(0)
+          expect(appeal.worksheet_issues.with_deleted.count).to eq(1)
+          expect(appeal.worksheet_issues.with_deleted.first.deleted_at).to_not eq nil
+        end
       end
 
-      it "updates worksheet issues" do
-        expect(appeal.worksheet_issues.count).to eq(0)
-        subject # do update
-        expect(appeal.worksheet_issues.count).to eq(1)
+      context "updating changed_request_type to valid value" do
+        let(:appeals_hash) { { changed_request_type: "V" } }
+        let(:updated_appeals_hash) { { changed_request_type: HearingDay::REQUEST_TYPES[:virtual] } }
 
-        issue = appeal.worksheet_issues.first
-        expect(issue.remand).to eq true
-        expect(issue.allow).to eq false
-        expect(issue.deny).to eq false
-        expect(issue.dismiss).to eq false
-        expect(issue.omo).to eq true
-        expect(issue.description).to eq "Cabbage\nPickle"
-        expect(issue.notes).to eq "Donkey\nCow"
+        it "successfully updates" do
+          subject
+          expect(appeal.reload.changed_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
+        end
 
-        # test that a 2nd save updates the same record, rather than create new one
-        id = appeal.worksheet_issues.first.id
-        appeals_hash[:worksheet_issues_attributes][0][:deny] = true
-        appeals_hash[:worksheet_issues_attributes][0][:notes] = "Tomato"
-        appeals_hash[:worksheet_issues_attributes][0][:id] = id
+        it "creates a new version in paper trail" do
+          subject
 
-        appeal.update(appeals_hash)
+          # Check for the first round fo updates
+          expect(appeal.reload.changed_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
+          expect(appeal.reload.versions.length).to eq(1)
+          expect(appeal.reload.paper_trail.previous_version.changed_request_type).to eq(nil)
 
-        expect(appeal.worksheet_issues.count).to eq(1)
-        issue = appeal.worksheet_issues.first
-        expect(issue.id).to eq(id)
-        expect(issue.deny).to eq(true)
-        expect(issue.remand).to eq(true)
-        expect(issue.allow).to eq(false)
-        expect(issue.dismiss).to eq(false)
-        expect(issue.description).to eq "Cabbage\nPickle"
-        expect(issue.notes).to eq "Tomato"
+          # Check that changing the hearing request type creates a new paper trail record
+          appeal.update(updated_appeals_hash)
+          new_appeal = appeal.reload
+          expect(new_appeal.versions.length).to eq(2)
 
-        # soft delete an issue
-        appeals_hash[:worksheet_issues_attributes][0][:_destroy] = "1"
-        appeal.update(appeals_hash)
-        expect(appeal.worksheet_issues.count).to eq(0)
-        expect(appeal.worksheet_issues.with_deleted.count).to eq(1)
-        expect(appeal.worksheet_issues.with_deleted.first.deleted_at).to_not eq nil
+          # Ensure the correct details are stored in paper trail
+          expect(new_appeal.paper_trail.previous_version.changed_request_type).to eq(HearingDay::REQUEST_TYPES[:video])
+
+          # Ensure the previous version is set to the original appeal
+          expect(new_appeal.paper_trail.previous_version).to eq(appeal)
+        end
+      end
+
+      context "updating changed_request_type to invalid value" do
+        let(:appeals_hash) { { changed_request_type: "INVALID" } }
+
+        it "throws an exception" do
+          expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+        end
       end
     end
   end
 
-  context "#sanitized_hearing_request_type" do
-    subject { appeal.sanitized_hearing_request_type }
+  context "#current_hearing_request_type" do
+    subject { appeal.current_hearing_request_type }
 
     context "when central_office" do
       let(:vacols_case) { create(:case, :video_hearing_requested, :central_office_hearing) }
@@ -2006,11 +2102,102 @@ describe LegacyAppeal, :all_dbs do
         let(:vacols_case) { create(:case, :travel_board_hearing) }
         it { is_expected.to eq(:travel_board) }
       end
+
+      context "when request type overriden in Caseflow to video" do
+        let(:changed_request_type) { HearingDay::REQUEST_TYPES[:video] }
+        let(:vacols_case) { create(:case, :travel_board_hearing) }
+
+        it { is_expected.to eq(:video) }
+      end
+
+      context "when request type overriden in Caseflow to virtual" do
+        let(:changed_request_type) { HearingDay::REQUEST_TYPES[:virtual] }
+        let(:vacols_case) { create(:case, :travel_board_hearing) }
+
+        it { is_expected.to eq(:virtual) }
+      end
     end
 
     context "when unsupported type" do
       let(:vacols_case) { create(:case, bfhr: "9") }
       it { is_expected.to be_nil }
+    end
+  end
+
+  context "#original_hearing_request_type" do
+    subject { appeal.original_hearing_request_type }
+
+    context "when central_office" do
+      let(:vacols_case) { create(:case, :video_hearing_requested, :central_office_hearing) }
+      it { is_expected.to eq(:central_office) }
+    end
+
+    context "when travel_board" do
+      let(:vacols_case) { create(:case, :video_hearing_requested, :travel_board_hearing) }
+
+      context "when video_hearing_requested" do
+        it { is_expected.to eq(:video) }
+      end
+
+      context "when video_hearing_requested is false" do
+        let(:vacols_case) { create(:case, :travel_board_hearing) }
+        it { is_expected.to eq(:travel_board) }
+      end
+
+      context "when request type overriden in Caseflow to video" do
+        let(:changed_request_type) { HearingDay::REQUEST_TYPES[:video] }
+        let(:vacols_case) { create(:case, :travel_board_hearing) }
+
+        it { is_expected.to eq(:travel_board) }
+      end
+
+      context "when request type overriden in Caseflow to virtual" do
+        let(:changed_request_type) { HearingDay::REQUEST_TYPES[:virtual] }
+        let(:vacols_case) { create(:case, :travel_board_hearing) }
+
+        it { is_expected.to eq(:travel_board) }
+      end
+    end
+
+    context "when unsupported type" do
+      let(:vacols_case) { create(:case, bfhr: "9") }
+      it { is_expected.to be_nil }
+    end
+  end
+
+  context "#previous_hearing_request_type" do
+    subject { appeal.reload.previous_hearing_request_type }
+
+    context "when there's one paper trail event" do
+      let(:vacols_case) { create(:case, :travel_board_hearing) }
+
+      before do
+        # this will create the event
+        appeal.update!(changed_request_type: HearingDay::REQUEST_TYPES[:virtual])
+      end
+
+      it { is_expected.to eq(:travel_board) }
+    end
+
+    context "when there are two paper trail events" do
+      let(:changed_request_type1) { HearingDay::REQUEST_TYPES[:virtual] }
+      let(:changed_request_type2) { HearingDay::REQUEST_TYPES[:video] }
+      let(:vacols_case) { create(:case, :travel_board_hearing) }
+
+      before do
+        # this will create the first event
+        appeal.update!(changed_request_type: changed_request_type1)
+        # this will create the second event
+        appeal.reload.update!(changed_request_type: changed_request_type2)
+      end
+
+      it { is_expected.to eq(:virtual) }
+    end
+
+    context "when paper trail event is nil" do
+      let(:vacols_case) { create(:case, :video_hearing_requested, :central_office_hearing) }
+
+      it { is_expected.to eq(:central_office) }
     end
   end
 
@@ -2785,6 +2972,83 @@ describe LegacyAppeal, :all_dbs do
 
       it "does not return VSOs with nil participant_id" do
         expect(appeal.representatives).to eq([])
+      end
+    end
+  end
+
+  describe ".ready_for_bva_dispatch?" do
+    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+
+    subject { appeal.ready_for_bva_dispatch? }
+
+    context "Legacy appeals do not go to BVA Dispatch via Caseflow" do
+      it "should return false" do
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
+  describe "#latest_informal_hearing_presentation_task" do
+    let(:appeal) { create(:legacy_appeal) }
+
+    it_behaves_like "latest informal hearing presentation task"
+  end
+
+  describe "#assigned_to_acting_judge_as_judge?" do
+    shared_examples "assumes user is the decision drafter" do
+      it { is_expected.to be false }
+    end
+
+    shared_examples "assumes user is the decision signer" do
+      it { is_expected.to be true }
+    end
+
+    let(:acting_judge) { create(:user, :with_vacols_acting_judge_record) }
+    let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case, :assigned, user: acting_judge)) }
+
+    subject { appeal.assigned_to_acting_judge_as_judge?(acting_judge) }
+
+    context "when the attorney review process has happened outside of caseflow" do
+      context "when a decision has not been written for the case" do
+        it_behaves_like "assumes user is the decision drafter"
+      end
+
+      context "when a decision has been written for the case" do
+        before { VACOLS::Decass.where(defolder: appeal.vacols_id).update_all(dedocid: "02255-00000002") }
+
+        it_behaves_like "assumes user is the decision signer"
+      end
+    end
+
+    context "when the attorney review process has happened within caseflow" do
+      let(:created_at) { VACOLS::Decass.where(defolder: appeal.vacols_id).first.deadtim }
+      let!(:case_review) { create(:attorney_case_review, task_id: "#{appeal.vacols_id}-#{created_at}") }
+
+      context "when the user does not match the judge or attorney on the case review" do
+        it_behaves_like "assumes user is the decision drafter"
+
+        it "falls back to check the presence of a decision document" do
+          expect_any_instance_of(VACOLS::CaseAssignment).to receive(:valid_document_id?).once
+          subject
+        end
+      end
+
+      context "when the user matches the attorney on the case review" do
+        before do
+          case_review.update!(attorney: acting_judge)
+          expect_any_instance_of(VACOLS::CaseAssignment).not_to receive(:valid_document_id?)
+        end
+
+        it_behaves_like "assumes user is the decision drafter"
+      end
+
+      context "when the user matches the judge on the case review" do
+        before do
+          case_review.update!(reviewing_judge: acting_judge)
+          expect_any_instance_of(VACOLS::CaseAssignment).not_to receive(:valid_document_id?)
+        end
+
+        it_behaves_like "assumes user is the decision signer"
       end
     end
   end

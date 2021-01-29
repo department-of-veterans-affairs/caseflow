@@ -61,7 +61,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       end
 
       context "and user is a mail intake" do
-        let(:user) { User.find_by(css_id: "ID1234") }
+        let(:user) { User.find_by_css_id("ID1234") }
         before do
           User.authenticate!(roles: ["Mail Intake"], css_id: "ID1234")
           request.headers["TOKEN"] = token
@@ -77,7 +77,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       end
 
       context "and the user is intake" do
-        let(:user) { User.find_by(css_id: "ID1234") }
+        let(:user) { User.find_by_css_id("ID1234") }
         let(:appeal) { create(:appeal, number_of_claimants: 1) }
         let(:params) { { appeal_id: appeal.uuid } }
 
@@ -303,7 +303,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
               expect(response_body["attributes"]["representative_address"]).to eq(nil)
               expect(response_body["attributes"]["aod"]).to eq appeal.advanced_on_docket?
-              expect(response_body["attributes"]["cavc"]).to eq "not implemented for AMA"
+              expect(response_body["attributes"]["cavc"]).to eq false
               expect(response_body["attributes"]["issues"].first["program"]).to eq "Compensation"
               expect(response_body["attributes"]["issues"].second["program"]).to eq "Compensation"
               expect(response_body["attributes"]["status"]).to eq "assigned_to_attorney"
@@ -407,6 +407,20 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             expect(response_body["attributes"]["veteran_is_deceased"]).to eq appeal.veteran_is_deceased
             expect(response_body["attributes"]["veteran_death_date"]).to eq appeal.veteran_death_date
             expect(response_body["attributes"]["appellant_is_not_veteran"]).to eq !!appeal.appellant_first_name
+          end
+
+          context "and BGS::AccountLocked error is raised" do
+            let(:account_locked_error) { BGS::AccountLocked.new("Your account is locked.", 500) }
+            before do
+              allow(controller).to receive(:json_appeal_details).and_raise(account_locked_error)
+            end
+
+            it "responds with 403 Forbidden error" do
+              get :details, params: params
+              expect(response.status).to eq 403
+              expect(JSON.parse(response.body)["message"])
+                .to eq "Your account is locked. Please contact the VA Enterprise Service Desk to resolve this issue."
+            end
           end
 
           # Unfortunately we need to make the contested claimant tests separate from the above since

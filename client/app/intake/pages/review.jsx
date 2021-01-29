@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 
 import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../constants';
 import RampElectionPage from './rampElection/review';
@@ -54,6 +55,11 @@ class ReviewNextButton extends React.PureComponent {
   }
 
   handleClick = (selectedForm, intakeData) => {
+    // If adding new claimant, we won't submit to backend yet
+    if (intakeData?.claimant === 'claimant_not_listed') {
+      return this.props.history.push('/add_claimant');
+    }
+
     this.submitReview(selectedForm, intakeData).then(
       () => selectedForm.category === 'decisionReview' ?
         this.props.history.push('/add_issues') :
@@ -85,8 +91,11 @@ class ReviewNextButton extends React.PureComponent {
     };
 
     const invalidVet = intakeData && !intakeData.veteranValid && VBMS_BENEFIT_TYPES.includes(intakeData.benefitType);
-    const needsRelationships = intakeData && intakeData.veteranIsNotClaimant && intakeData.relationships.length === 0;
-    const disableSubmit = rampRefilingIneligibleOption() || needsRelationships || invalidVet;
+    const needsClaimant =
+      intakeData?.veteranIsNotClaimant &&
+      intakeData.relationships.length === 0 &&
+      !(intakeData?.claimant || intakeData.claimantNotes);
+    const disableSubmit = rampRefilingIneligibleOption() || needsClaimant || invalidVet;
 
     return <Button
       name="submit-review"
@@ -128,3 +137,22 @@ export class ReviewButtons extends React.PureComponent {
       <ReviewNextButtonConnected history={this.props.history} />
     </div>
 }
+
+ReviewNextButton.propTypes = {
+  history: PropTypes.object,
+  featureToggles: PropTypes.object,
+  formType: PropTypes.string,
+  intakeForms: PropTypes.object,
+  intakeId: PropTypes.number,
+  submitRampElection: PropTypes.func,
+  submitDecisionReview: PropTypes.func,
+  submitRampRefiling: PropTypes.func
+};
+
+Review.propTypes = {
+  featureToggles: PropTypes.object
+};
+
+ReviewButtons.propTypes = {
+  history: PropTypes.object
+};

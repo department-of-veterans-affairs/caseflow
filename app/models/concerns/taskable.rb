@@ -20,7 +20,7 @@ module Taskable
   end
 
   def overtime?
-    return !!work_mode&.overtime if FeatureToggle.enabled?(:overtime_revamp)
+    return !!work_mode&.overtime if FeatureToggle.enabled?(:overtime_revamp, user: RequestStore.store[:current_user])
 
     false
   end

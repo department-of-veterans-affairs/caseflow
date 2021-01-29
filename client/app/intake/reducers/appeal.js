@@ -17,10 +17,11 @@ const updateFromServerIntake = (state, serverIntake) => {
   }
 
   const commonState = commonStateFromServerIntake(serverIntake);
+
   return update(state, {
     ...commonState,
     docketType: {
-      $set: serverIntake.docket_type
+      $set: serverIntake.docketType
     }
   });
 };
@@ -40,6 +41,9 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     claimant: null,
     claimantError: null,
     payeeCode: null,
+    claimantName: null,
+    claimantNotes: null,
+    claimantType: null,
     legacyOptInApproved: null,
     legacyOptInApprovedError: null,
     legacyAppeals: [],
@@ -80,7 +84,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
   let veteranIsNotClaimant;
 
   if (action.payload) {
-    veteranIsNotClaimant = convertStringToBoolean(action.payload.veteranIsNotClaimant);
+    veteranIsNotClaimant = action.payload.veteranIsNotClaimant;
   }
 
   switch (action.type) {
@@ -111,6 +115,15 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
     return update(state, {
       claimant: {
         $set: action.payload.claimant
+      },
+      claimantName: {
+        $set: action.payload.claimantName
+      },
+      claimantNotes: {
+        $set: action.payload.claimantNotes
+      },
+      claimantType: {
+        $set: action.payload.claimantType
       }
     });
   case ACTIONS.SET_PAYEE_CODE:
@@ -168,7 +181,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         $set: getReceiptDateError(action.payload.responseErrorCodes, state)
       },
       veteranIsNotClaimantError: {
-        $set: getBlankOptionError(action.payload.responseErrorCodes, 'veteran_is_not_claimant')
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'claimant_type')
       },
       claimantError: {
         $set: getClaimantError(action.payload.responseErrorCodes)
@@ -181,7 +194,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
           $set: REQUEST_STATE.FAILED
         },
         reviewIntakeError: {
-          $set: getPageError(action.payload.responseErrorCodes)
+          $set: getPageError(action.payload)
         }
       }
     });

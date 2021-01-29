@@ -30,12 +30,31 @@ class Docket
     appeals(priority: priority, ready: ready).ids.size
   end
 
+  # By default all cases are considered genpop. This can be overridden for specific dockets
+  def genpop_priority_count
+    count(priority: true, ready: true)
+  end
+
   def weight
     count
   end
 
-  def age_of_n_oldest_priority_appeals(num)
+  def age_of_n_oldest_genpop_priority_appeals(num)
     appeals(priority: true, ready: true).limit(num).map(&:ready_for_distribution_at)
+  end
+
+  def age_of_oldest_priority_appeal
+    @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
+  end
+
+  def oldest_priority_appeal_days_waiting
+    return 0 if age_of_oldest_priority_appeal.nil?
+
+    (Time.zone.now.to_date - age_of_oldest_priority_appeal.to_date).to_i
+  end
+
+  def ready_priority_appeal_ids
+    appeals(priority: true, ready: true).pluck(:uuid)
   end
 
   # rubocop:disable Lint/UnusedMethodArgument
@@ -85,24 +104,25 @@ class Docket
 
   module Scopes
     def priority
-      join_aod_motions
+      include_aod_motions
         .where("advance_on_docket_motions.created_at > appeals.established_at")
         .where("advance_on_docket_motions.granted = ?", true)
-        .or(join_aod_motions
-          .where("people.date_of_birth <= ?", 75.years.ago))
+        .or(include_aod_motions.where("people.date_of_birth <= ?", 75.years.ago))
+        .or(include_aod_motions.where("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand))
         .group("appeals.id")
     end
 
     # rubocop:disable Metrics/LineLength
     def nonpriority
-      join_aod_motions
+      include_aod_motions
         .where("people.date_of_birth > ?", 75.years.ago)
+        .where.not("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand)
         .group("appeals.id")
         .having("count(case when advance_on_docket_motions.granted and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
     end
     # rubocop:enable Metrics/LineLength
 
-    def join_aod_motions
+    def include_aod_motions
       joins(claimants: :person)
         .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
     end
@@ -112,8 +132,6 @@ class Docket
         .group("appeals.id")
         .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
                 DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
-        .having("count(case when tasks.type in (?) and tasks.status not in (?) then 1 end) = ?",
-                MailTask.blocking_subclasses, Task.closed_statuses, 0)
     end
 
     def ordered_by_distribution_ready_date

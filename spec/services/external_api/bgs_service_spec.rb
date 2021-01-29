@@ -6,6 +6,7 @@ describe ExternalApi::BGSService do
   let(:bgs_security_service) { double("security") }
   let(:bgs_claimants_service) { double("claimants") }
   let(:bgs_address_service) { double("address") }
+  let(:bgs_org_service) { double("org") }
   let(:bgs_client) { double("BGS::Services") }
   let(:bgs) { ExternalApi::BGSService.new(client: bgs_client) }
   let(:veteran_record) { { name: "foo", ssn: "123" } }
@@ -22,6 +23,63 @@ describe ExternalApi::BGSService do
 
   after do
     bgs.bust_fetch_veteran_info_cache(vbms_id)
+  end
+
+  describe "#fetch_poa_by_file_number" do
+    let(:participant_id) { "1234" }
+    let(:poa_participant_id) { "person-pid" }
+    let(:file_number) { "00001234" }
+
+    let(:bgs_poa_claimants_file_number_response) do
+      {
+        person_org_name: "PARALYZED VETERANS OF AMERICA, INC.",
+        person_org_ptcpnt_id: poa_participant_id,
+        person_organization_name: "POA National Organization",
+        relationship_name: "Power of Attorney For",
+        veteran_ptcpnt_id: participant_id
+      }
+    end
+
+    let(:bgs_poa_org_file_number_response) do
+      {
+        file_number: file_number,
+        ptcpnt_id: participant_id,
+        power_of_attorney: {
+          legacy_poa_cd: "071",
+          nm: "PARALYZED VETERANS OF AMERICA, INC.",
+          org_type_nm: "POA National Organization",
+          ptcpnt_id: poa_participant_id
+        }
+      }
+    end
+
+    before do
+      allow(bgs_claimants_service).to receive(:find_poa_by_file_number) { bgs_poa_claimants_file_number_response }
+      allow(bgs_org_service).to receive(:find_poas_by_file_number) { bgs_poa_org_file_number_response }
+      allow(bgs_client).to receive(:claimants) { bgs_claimants_service }
+      allow(bgs_client).to receive(:org) { bgs_org_service }
+    end
+
+    subject { bgs.fetch_poa_by_file_number(file_number) }
+
+    context "use_poa_claimants feature toggle on" do
+      before { FeatureToggle.enable!(:use_poa_claimants) }
+      after { FeatureToggle.disable!(:use_poa_claimants) }
+
+      it "returns POA" do
+        expect(subject[:participant_id]).to eq poa_participant_id
+        expect(subject[:representative_type]).to eq "Service Organization"
+        expect(subject[:file_number]).to be_nil
+      end
+    end
+
+    context "use_poa_claimants feature toggle off" do
+      it "returns POA" do
+        expect(subject[:participant_id]).to eq poa_participant_id
+        expect(subject[:representative_type]).to eq "Service Organization"
+        expect(subject[:file_number]).to eq file_number
+      end
+    end
   end
 
   describe "#find_address_by_participant_id" do
@@ -226,6 +284,47 @@ describe ExternalApi::BGSService do
 
       it "returns true" do
         expect(subject).to be_truthy
+      end
+    end
+  end
+
+  describe "fetch_ratings_in_range" do
+    let!(:veteran) { create(:veteran) }
+    let!(:rating) { double("rating") }
+    let(:start_date) { Time.zone.now - 5.years }
+    let(:start_date_formatted) { start_date.to_date.to_datetime.iso8601 }
+    let(:end_date) { start_date }
+
+    before do
+      allow(bgs_client).to receive(:rating).and_return rating
+    end
+
+    subject do
+      bgs.fetch_ratings_in_range(participant_id: veteran.participant_id, start_date: start_date, end_date: end_date)
+    end
+
+    context "the start and end dates are the same" do
+      let(:end_date_formatted) { (start_date + 1.day).to_date.to_datetime.iso8601 }
+
+      it "formats dates correctly" do
+        expect(rating)
+          .to receive(:find_by_participant_id_and_date_range)
+          .with(veteran.participant_id, start_date_formatted, end_date_formatted)
+
+        subject
+      end
+    end
+
+    context "the start and end dates are different" do
+      let(:end_date) { Time.zone.now }
+      let(:end_date_formatted) { end_date.to_date.to_datetime.iso8601 }
+
+      it "formats dates correctly" do
+        expect(rating)
+          .to receive(:find_by_participant_id_and_date_range)
+          .with(veteran.participant_id, start_date_formatted, end_date_formatted)
+
+        subject
       end
     end
   end

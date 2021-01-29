@@ -4,13 +4,24 @@ module LegacyAttorneyCaseReviewDocumentIdValidator
   extend ActiveSupport::Concern
 
   def valid_document_id?
+    return false if document_id.nil?
+
     if draft_decision_work_product?
       return document_id.match?(new_decision_regex) || document_id.match?(old_decision_regex)
     end
 
     return document_id.match?(vha_regex) if vha_work_product?
 
-    document_id.match?(ime_regex) if ime_work_product?
+    return document_id.match?(ime_regex) if ime_work_product?
+
+    document_id_matches_any?
+  end
+
+  def document_id_matches_any?
+    document_id.match?(new_decision_regex) ||
+      document_id.match?(old_decision_regex) ||
+      document_id.match?(vha_regex) ||
+      document_id.match?(ime_regex)
   end
 
   def draft_decision_work_product?

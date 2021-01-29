@@ -6,6 +6,8 @@ module AppealConcern
   delegate :station_key, to: :regional_office
 
   def regional_office
+    return nil if regional_office_key.nil?
+
     @regional_office ||= begin
                             RegionalOffice.find!(regional_office_key)
                          rescue RegionalOffice::NotFoundError
@@ -17,6 +19,14 @@ module AppealConcern
     return if regional_office.nil?
 
     "#{regional_office.city}, #{regional_office.state}"
+  end
+
+  def closest_regional_office_label
+    return if closest_regional_office.nil?
+
+    return "Central Office" if closest_regional_office == "C"
+
+    RegionalOffice.find!(closest_regional_office).name
   end
 
   def veteran_name
@@ -37,6 +47,11 @@ module AppealConcern
     end
   end
 
+  # JOHN S SMITH => John S Smith
+  def appellant_fullname_readable
+    appellant_name&.titleize
+  end
+
   def appellant_last_first_mi
     # returns appellant name in format <last>, <first> <middle_initial>.
     if appellant_first_name
@@ -51,9 +66,5 @@ module AppealConcern
   # the naming of the helper methods.
   def veteran_name_object
     FullName.new(veteran_first_name, veteran_middle_initial, veteran_last_name)
-  end
-
-  def appellant_name_object
-    FullName.new(appellant_first_name, appellant_middle_initial, appellant_last_name)
   end
 end

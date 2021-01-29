@@ -40,7 +40,7 @@ RSpec.describe IntakesController, :postgres do
         expect(vet).to_not be_nil
         expect(vet.first_name).to eq "Ed"
         expect(vet.last_name).to eq "Merica"
-        expect(bgs).to have_received(:fetch_veteran_info).exactly(2).times
+        expect(bgs).to have_received(:fetch_veteran_info).exactly(4).times
       end
     end
 
@@ -57,7 +57,7 @@ RSpec.describe IntakesController, :postgres do
         expect(vet).to_not be_nil
         expect(vet.first_name).to eq "Ed"
         expect(vet.last_name).to eq "Merica"
-        expect(bgs).to have_received(:fetch_veteran_info).exactly(1).times
+        expect(bgs).to have_received(:fetch_veteran_info).exactly(2).times
       end
     end
 
@@ -133,9 +133,8 @@ RSpec.describe IntakesController, :postgres do
           intake = Intake.new(user_id: current_user.id, started_at: Time.zone.now)
           intake.save!
           allow_any_instance_of(Intake).to receive(:complete!).and_raise(unknown_error)
-          expect do
-            post :complete, params: { id: intake.id }
-          end.to raise_error(Caseflow::Error::EstablishClaimFailedInVBMS)
+          post :complete, params: { id: intake.id }
+          expect(response.status).to eq(500)
         end
       end
 
@@ -191,6 +190,31 @@ RSpec.describe IntakesController, :postgres do
         expect(resp[:serverIntake]).to eq(redirect_to: "/decision_reviews/education")
         expect(flash[:success]).to be_present
       end
+    end
+  end
+
+  describe "#attorneys" do
+    it "returns the names and participant IDs of matching attorneys" do
+      create(:bgs_attorney, name: "JOHN SMITH", participant_id: "123")
+      create(:bgs_attorney, name: "KEANU REEVES", participant_id: "456")
+
+      get :attorneys, params: { query: "JON SMITH" }
+      resp = JSON.parse(response.body, symbolize_names: true)
+      expect(resp).to eq [
+        {
+          "address": {
+              "address_line_1": "9999 MISSION ST",
+              "address_line_2": "UBER",
+              "address_line_3": "APT 2",
+              "city": "SAN FRANCISCO",
+              "country": "USA",
+              "state": "CA",
+              "zip": "94103"
+            },
+          "name": "JOHN SMITH",
+          "participant_id": "123"
+        }
+      ]
     end
   end
 end

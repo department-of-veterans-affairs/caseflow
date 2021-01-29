@@ -16,7 +16,7 @@ class OrganizationCompletedTasksTab < QueueTab
   end
 
   def tasks
-    recently_closed_tasks
+    recently_completed_tasks
   end
 
   # rubocop:disable Metrics/AbcSize

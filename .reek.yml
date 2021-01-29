@@ -15,10 +15,12 @@ detectors:
       - HearingRepository#slot_new_hearing
       - LegacyDocket#distribute_appeals
       - Veteran
+      - ControllerSchema#respond_to_missing?
   ControlParameter:
     exclude:
       - ExternalApi::VBMSService#self.send_and_log_request
       - Fakes::BGSService
+      - Hearings::GeomatchAndCacheAppealJob#perform
       - HearingRepository#slot_new_hearing
       - LegacyDocket#distribute_appeals
       - Seeds::Tasks#create_legacy_case_with_open_schedule_hearing_task
@@ -27,6 +29,7 @@ detectors:
       - TaskSorter#sort_requires_case_norm?
       - VBMSCaseflowLogger#log
       - Veteran
+      - VirtualHearing#email_recipient_name
       - JudgeDecisionReviewTask#additional_available_actions
   UncommunicativeVariableName:
     exclude:
@@ -42,7 +45,7 @@ detectors:
   UncommunicativeParameterName:
     exclude:
       - Address
-      - Api::V3::DecisionReview::ContestableIssueFinder#initialize
+      - Api::V3::DecisionReviews::ContestableIssueFinder#initialize
   DataClump:
     exclude:
       - HearingSerializerBase
@@ -59,14 +62,23 @@ detectors:
       - AppealAvailableHearingLocations#suggested_hearing_location
       - AppealTaskHistory#build_events
       - ApplicationRecord#as_hash
-      - AssignJudgeteamRoles#process
+      - AssignHearingDispositionTask#reschedule_or_schedule_later
       - AsyncableJobsReporter
+      - CachedAppealService#cache_ama_appeals
+      - CachedAppealService#cache_legacy_appeal_postgres_data
+      - CachedAppealService#cache_legacy_appeal_vacols_data
+      - CachedAppealService#poa_representative_name_for
+      - CachedAppealService#case_fields_for_vacols_ids
+      - ConvertToVirtualHearing#convert_hearing_to_virtual
       - ClaimReviewAsyncStatsReporter#as_csv
       - DataIntegrityChecksJob
       - DecisionIssueSyncJob
+      - VirtualHearings::CreateConferenceJob#log_virtual_hearing_state
       - VirtualHearings::DeleteConferencesJob#delete_conference
+      - VirtualHearings::DeleteConferencesJob#log_virtual_hearing_state
       - VirtualHearings::DeleteConferencesJob#perform
       - VirtualHearings::DeleteConferencesJob#process_virtual_hearing
+      - VirtualHearings::DeleteConferencesJob#send_cancellation_emails
       - VirtualHearings::SendEmail#external_message_id
       - Fakes::EndProductStore
       - Fakes::BGSService#get_participant_id_for_user
@@ -74,32 +86,43 @@ detectors:
       - Fakes::BGSService#fetch_poas_by_participant_ids
       - Fakes::PersistentStore#convert_dates_from
       - FetchDocumentsForReaderJob#fetch_for_appeal
+      - FetchHearingLocationsForVeteransJob#sleep_before_retry_on_limit_error
       - HearingSerializerBase
+      - HearingSchedule::GenerateHearingDaysSchedule#generate_co_hearing_days_schedule
+      - HearingSchedule::GenerateHearingDaysSchedule#get_fallback_date_for_co
       - LegacyDocket#count
       - RedistributedCase#legacy_appeal_relevant_tasks
       - LegacyAppeal#cancel_open_caseflow_tasks!
       - MonthlyMetricsReportJob#build_report
       - NightlySyncsJob#sync_vacols_cases
+      - Person#fetch_bgs_record_by_participant_id
+      - Person#fetch_bgs_record_by_ssn
       - RequestIssue#find_or_create_decision_issue_from_rating_issue
       - RequestIssue#special_issues
       - RequestIssueReporter#as_csv
+      - RunAsyncable#perform_later_or_now
+      - ScheduleHearingTask#create_hearing
       - Seeds::Hearings
       - Seeds::Tasks#create_colocated_legacy_tasks
       - Seeds::Users#create_aod_user_and_tasks
+      - SlackService#http_service
       - SyncReviewsJob
       - TaskTimerJob
       - UpdateCachedAppealsAttributesJob
       - UserReporter#report_user_related_records
       - User#appeal_has_task_assigned_to_user?
       - VeteranAttributeCacher
+      - HearingDayRequestTypeQuery#call
       - WarmBgsCachesJob
       - ExternalApi::PexipService#send_pexip_request
+      - ControllerSchema#remove_unknown_keys
+      - BusinessLineReporter#as_csv
   InstanceVariableAssumption:
     exclude:
       - Appeal
       - Task
       - CaseflowJob
-      - Api::V3::DecisionReview::HigherLevelReviewIntakeProcessor
+      - Api::V3::DecisionReviews::HigherLevelReviewIntakeProcessor
       - ETL::Syncer
       - User
   IrresponsibleModule:
@@ -107,9 +130,11 @@ detectors:
   LongParameterList:
     exclude:
       - Address#initialize
+      - AssignHearingDispositionTask#reschedule
       - ExternalApi::VBMSService#self.create_contentions!
+      - JobSentryScopeMiddleware#call
       - LegacyDocket#new_distributed_case
-      - Api::V3::DecisionReview::ContestableIssueFinder#initialize
+      - Api::V3::DecisionReviews::ContestableIssueFinder#initialize
       - QueueRepository#assign_case_to_attorney!
       - Seeds::MTV#judge_addresses_mtv
       - Seeds::MTV#send_mtv_to_judge
@@ -117,13 +142,15 @@ detectors:
       - VirtualHearings::CreateConferenceJob#perform
   ManualDispatch:
     exclude:
-      - Api::V3::DecisionReview::IntakeError#potential_error_code
-      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#attributes?
-      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#params?
-      - Api::V3::DecisionReview::IntakeError#error_code
-      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object
-      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#claimant_object_present?
-      - Api::V3::DecisionReview::HigherLevelReviewIntakeParams#describe_shape_error
+      - Api::V3::DecisionReviews::IntakeError#potential_error_code
+      - Api::V3::DecisionReviews::HigherLevelReviewIntakeParams#attributes?
+      - Api::V3::DecisionReviews::HigherLevelReviewIntakeParams#params?
+      - Api::V3::DecisionReviews::IntakeError#error_code
+      - Api::V3::DecisionReviews::HigherLevelReviewIntakeParams#claimant_object
+      - Api::V3::DecisionReviews::HigherLevelReviewIntakeParams#claimant_object_present?
+      - Api::V3::DecisionReviews::HigherLevelReviewIntakeParams#describe_shape_error
+      - ETL::Hearing#merge_original_attributes_to_target
+      - RouteDocsController::DocumentedRoute#schema
   MissingSafeMethod:
     enabled: false
   NestedIterators:
@@ -136,13 +163,15 @@ detectors:
     exclude:
       - BgsPowerOfAttorney
       - HearingLocation
-      - JudgeTeam
       - LegacyAppeal
+      - Person
       - QueueConfig
       - RequestIssue
       - BulkTaskReassignment
+      - Seeds::Hearings
       - Task
       - UpdateCachedAppealsAttributesJob
+      - Veteran
   TooManyConstants:
     exclude:
       - Fakes::BGSServicePOA
@@ -154,9 +183,10 @@ detectors:
       - Address
       - ExternalApi::PexipService
       - InvalidAssigneeStatusOnTaskCreate
-      - Api::V3::DecisionReview::ContestableIssueFinder
-      - Api::V3::DecisionReview::ContestableIssueParams
-      - Api::V3::DecisionReview::IntakeError
+      - Api::V3::DecisionReviews::ContestableIssueFinder
+      - Api::V3::DecisionReviews::ContestableIssueParams
+      - Api::V3::DecisionReviews::IntakeError
+      - ControllerSchema::Field
   TooManyMethods:
     enabled: false
   TooManyStatements:
@@ -181,20 +211,17 @@ detectors:
       - Helpers::AppealHearingHelper#hearings
       - JudgeLegacyDecisionReviewTask#review_action
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
-      - LegacyDocket#age_of_n_oldest_priority_appeals
+      - LegacyDocket#age_of_n_oldest_genpop_priority_appeals
       - OrganizationOnHoldTasksTab#name
       - OrganizationTrackingTasksTab#column_names
       - PendingIncompleteAndUncancelledTaskTimersQuery#call
-      - PowerOfAttorneyMapper#get_claimant_poa_from_bgs_poa
+      - PowerOfAttorneyMapper
       - Reporter#average
       - Reporter#median
       - Reporter#seconds_to_hms
       - Reporter#percent
       - ScheduleHearingTaskPager#sorted_tasks
       - VBMSCaseflowLogger#log
-      - VirtualHearings::ExternalLinkHelper#external_link
-      - VirtualHearings::ExternalLinkHelper#phone_link
-      - VirtualHearings::VeteranNameHelper#formatted_veteran_name
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.
@@ -204,6 +231,9 @@ detectors:
 directories:
   "app/controllers":
     InstanceVariableAssumption:
+      enabled: false
+  "app/helpers":
+    UtilityFunction:
       enabled: false
   "app/jobs":
     UtilityFunction:

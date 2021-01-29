@@ -206,11 +206,19 @@ export const resetDecisionOptions = () => ({
   type: ACTIONS.RESET_DECISION_OPTIONS
 });
 
-const editAppeal = (appealId, attributes) => ({
+export const editAppeal = (appealId, attributes) => ({
   type: ACTIONS.EDIT_APPEAL,
   payload: {
     appealId,
     attributes
+  }
+});
+
+export const setOvertime = (appealId, overtime) => ({
+  type: ACTIONS.SET_OVERTIME,
+  payload: {
+    appealId,
+    overtime
   }
 });
 
@@ -388,17 +396,6 @@ export const setSelectionOfTaskOfUser =
     }
   });
 
-export const bulkAssignTasks =
-  ({ assignedUser, regionalOffice, taskType, numberOfTasks }) => ({
-    type: ACTIONS.BULK_ASSIGN_TASKS,
-    payload: {
-      assignedUser,
-      regionalOffice,
-      taskType,
-      numberOfTasks
-    }
-  });
-
 // isInitial is only used for das deprecation
 const dispatchOldTasks = (dispatch, oldTasks, resp) => {
   // Ama request is batched
@@ -417,7 +414,7 @@ const dispatchOldTasks = (dispatch, oldTasks, resp) => {
 };
 
 export const initialAssignTasksToUser = ({
-  tasks, assigneeId, previousAssigneeId
+  tasks, assigneeId, previousAssigneeId, instructions
 }) => (dispatch) => {
   const amaTasks = tasks.filter((oldTask) => oldTask.appealType === 'Appeal');
   const legacyTasks = tasks.filter((oldTask) => oldTask.appealType === 'LegacyAppeal');
@@ -430,7 +427,8 @@ export const initialAssignTasksToUser = ({
         tasks: amaTasks.map((oldTask) => ({
           external_id: oldTask.externalAppealId,
           parent_id: oldTask.taskId,
-          assigned_to_id: assigneeId
+          assigned_to_id: assigneeId,
+          instructions
         }))
       }
     }
@@ -477,7 +475,7 @@ export const initialAssignTasksToUser = ({
 };
 
 export const reassignTasksToUser = ({
-  tasks, assigneeId, previousAssigneeId
+  tasks, assigneeId, previousAssigneeId, instructions
 }) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   let params, url;
 
@@ -486,8 +484,11 @@ export const reassignTasksToUser = ({
     params = {
       data: {
         task: {
-          type: 'AttorneyTask',
-          assigned_to_id: assigneeId
+          reassign: {
+            assigned_to_id: assigneeId,
+            assigned_to_type: 'User',
+            instructions
+          }
         }
       }
     };
@@ -522,6 +523,8 @@ export const reassignTasksToUser = ({
       dispatch(decrementTaskCountForAttorney({
         id: previousAssigneeId
       }));
+
+      dispatch(setOvertime(oldTask.externalAppealId, false));
     });
 }));
 
@@ -545,12 +548,20 @@ export const legacyReassignToJudge = ({
       dispatch(onReceiveTasks(_.pick(allTasks, ['tasks', 'amaTasks'])));
 
       dispatch(showSuccessMessage(successMessage));
+
+      dispatch(setOvertime(oldTask.externalAppealId, false));
     });
 }));
 
-const refreshTasks = (dispatch, userId, userRole) => {
+const refreshTasks = (dispatch, userId, userRole, type = null) => {
+  let url = `/tasks?user_id=${userId}&role=${userRole}`;
+
+  if (type) {
+    url = url.concat(`&type=${type}`)
+  }
+
   return Promise.all([
-    ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`),
+    ApiUtil.get(url),
     ApiUtil.get(`/queue/${userId}`, { timeout: { response: getMinutesToMilliseconds(5) } })
   ]).then((responses) => {
     dispatch(onReceiveQueue(extractAppealsAndAmaTasks(responses[0].body.tasks.data)));
@@ -594,7 +605,7 @@ const receiveDistribution = (dispatch, userId, response) => {
       detail: `${caseN} new ${pluralize('case', caseN)} have been distributed from the docket.`
     }));
 
-    refreshTasks(dispatch, userId, 'judge').then(() => dispatch(setPendingDistribution(null)));
+    refreshTasks(dispatch, userId, 'judge', 'assign').then(() => dispatch(setPendingDistribution(null)));
   } else {
     setTimeout(() => {
       // Poll until the distribution completes or errors out.
@@ -632,8 +643,14 @@ export const fetchAllAttorneys = () => (dispatch) =>
     then((resp) => dispatch(receiveAllAttorneys(resp.body.attorneys))).
     catch((error) => dispatch(errorAllAttorneys(error)));
 
-export const fetchAmaTasksOfUser = (userId, userRole) => (dispatch) =>
-  ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
+export const fetchAmaTasksOfUser = (userId, userRole, type = null) => (dispatch) => {
+  let url = `/tasks?user_id=${userId}&role=${userRole}`;
+
+  if (type) {
+    url = url.concat(`&type=${type}`)
+  }
+
+  return ApiUtil.get(url).
     then((resp) => {
       dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data)));
       dispatch(setQueueConfig(resp.body.queue_config));
@@ -643,6 +660,7 @@ export const fetchAmaTasksOfUser = (userId, userRole) => (dispatch) =>
       // rethrow error so that QueueLoadingScreen can catch and display error
       throw error;
     });
+};
 
 export const setAppealAttrs = (appealId, attributes) => ({
   type: ACTIONS.SET_APPEAL_ATTRS,
@@ -657,6 +675,10 @@ export const setSpecialIssues = (specialIssues) => ({
   payload: {
     specialIssues
   }
+});
+
+export const clearSpecialIssues = () => ({
+  type: ACTIONS.CLEAR_SPECIAL_ISSUE
 });
 
 export const setAppealAod = (externalAppealId, granted) => ({

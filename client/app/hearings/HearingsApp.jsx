@@ -8,14 +8,13 @@ import _ from 'lodash';
 import querystring from 'querystring';
 
 import { HearingsUserContext } from './contexts/HearingsUserContext';
-import { HearingsFormContextProvider } from './contexts/HearingsFormContext';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import AppFrame from '../components/AppFrame';
 import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import BuildScheduleContainer from './containers/BuildScheduleContainer';
 import BuildScheduleUploadContainer from './containers/BuildScheduleUploadContainer';
 import DailyDocketContainer from './containers/DailyDocketContainer';
-import HearingDetailsContainer from './containers/DetailsContainer';
+import { HearingDetailsContainer } from './containers/DetailsContainer';
 import HearingWorksheetContainer from './containers/HearingWorksheetContainer';
 import HearingWorksheetPrintAllContainer from './containers/HearingWorksheetPrintAllContainer';
 import ListScheduleContainer from './containers/ListScheduleContainer';
@@ -28,6 +27,8 @@ import UnsupportedBrowserBanner from '../components/UnsupportedBrowserBanner';
 export default class HearingsApp extends React.PureComponent {
   userPermissionProps = () => {
     const {
+      userUseFullPageVideoToVirtual,
+      userCanConvertCentralHearings,
       userCanScheduleVirtualHearings,
       userCanAssignHearingSchedule,
       userCanBuildHearingSchedule,
@@ -35,11 +36,14 @@ export default class HearingsApp extends React.PureComponent {
       userCanVsoHearingSchedule,
       userHasHearingPrepRole,
       userInHearingOrTranscriptionOrganization,
+      userCanAddVirtualHearingDays,
       userId,
       userCssId
     } = this.props;
 
     return Object.freeze({
+      userUseFullPageVideoToVirtual,
+      userCanConvertCentralHearings,
       userCanScheduleVirtualHearings,
       userCanAssignHearingSchedule,
       userCanBuildHearingSchedule,
@@ -47,6 +51,7 @@ export default class HearingsApp extends React.PureComponent {
       userCanVsoHearingSchedule,
       userHasHearingPrepRole,
       userInHearingOrTranscriptionOrganization,
+      userCanAddVirtualHearingDays,
       userId,
       userCssId
     });
@@ -75,9 +80,7 @@ export default class HearingsApp extends React.PureComponent {
 
   routeForHearingDetails = ({ match: { params }, history }) => (
     <HearingsUserContext.Provider value={this.userPermissionProps()}>
-      <HearingsFormContextProvider>
-        <HearingDetailsContainer hearingId={params.hearingId} history={history} />
-      </HearingsFormContextProvider>
+      <HearingDetailsContainer hearingId={params.hearingId} history={history} />
     </HearingsUserContext.Provider>
   );
 
@@ -190,13 +193,16 @@ HearingsApp.propTypes = {
   applicationUrls: PropTypes.array,
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
+  userUseFullPageVideoToVirtual: PropTypes.bool,
   userCanScheduleVirtualHearings: PropTypes.bool,
+  userCanConvertCentralHearings: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
   userCanBuildHearingSchedule: PropTypes.bool,
   userCanViewHearingSchedule: PropTypes.bool,
   userCanVsoHearingSchedule: PropTypes.bool,
   userHasHearingPrepRole: PropTypes.bool,
   userInHearingOrTranscriptionOrganization: PropTypes.bool,
+  userCanAddVirtualHearingDays: PropTypes.bool,
   userRole: PropTypes.string,
   userId: PropTypes.number,
   userCssId: PropTypes.string

@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 ##
+# Caseflow Intake establishes the appeal. Once the appeal is established, Caseflow Queue automatically
+# creates a Root Task for other tasks to attach to, depending on the Veteran's situation.
 # Root task that tracks an appeal all the way through the appeal lifecycle.
 # This task is closed when an appeal has been completely resolved.
+# There should only be one RootTask per appeal.
 
 class RootTask < Task
   before_create :verify_root_task_unique

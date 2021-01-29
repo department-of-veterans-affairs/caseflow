@@ -20,6 +20,8 @@ import React from 'react';
 // queueSectionOrder:        for Queue display, the order to display
 // isAmaRelevant:            whether issue is relevant to AMA cases
 
+
+//# Note: If the `snakeCase` field here is changed or added for LegacyAppeals, they must also be changed in app/models/legacy_appeal.rb SPECIAL_ISSUES const
 export const SPECIAL_ISSUES = [
   {
     display: 'Contaminated Water at Camp LeJeune',
@@ -333,10 +335,8 @@ export const SPECIAL_ISSUES = [
   }
 ];
 
-// Special Issues added in 2020-Spring. Currently separate from the above in order to be
-// locked to the FeatureToggle :special_issues_revamp in SpecialIssueEnabler. As a part of
-// removing the feature toggle these can be cleanly merged into the above array. Reference PR #13781
-export const NEW_SPECIAL_ISSUES = [
+// Special Issues added in 2020-Spring for AMA appeals use only
+export const AMA_SPECIAL_ISSUES = [
   {
     display: 'Burn Pit',
     queueDisplay: 'Burn Pit',
@@ -371,7 +371,7 @@ export const NEW_SPECIAL_ISSUES = [
     display: 'US Court of Appeals for Veterans Claims (CAVC)',
     queueDisplay: 'US Court of Appeals for Veterans Claims (CAVC)',
     specialIssue: 'usCourtOfAppealsForVeteransClaims',
-    snakeCase: 'cavc',
+    snakeCase: 'us_court_of_appeals_for_veterans_claims',
     unhandled: null,
     queueSection: 'issuesOnAppeal',
     queueSectionOrder: 11,

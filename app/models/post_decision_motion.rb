@@ -10,6 +10,8 @@ class PostDecisionMotion < CaseflowRecord
   validate :vacate_type_is_present_if_granted
   validate :vacated_issues_present_if_partial
 
+  delegate :request_issues, to: :appeal
+
   enum disposition: {
     granted: "granted",
     partially_granted: "partially_granted",
@@ -30,20 +32,17 @@ class PostDecisionMotion < CaseflowRecord
     DecisionIssue.find(vacated_decision_issue_ids)
   end
 
-  def request_issues_for_vacatur
-    @request_issues_for_vacatur ||= RequestIssue.where(contested_decision_issue_id: vacated_decision_issue_ids)
-  end
-
+  # Creates request issues on the vacate stream contesting the decisions to be vacated
   def create_request_issues_for_vacatur
     decision_issues_for_vacatur.map { |di| di.create_contesting_request_issue!(appeal) }
   end
 
   def vacated_decision_issues
-    @vacated_decision_issues ||= request_issues_for_vacatur.map { |ri| ri.decision_issues.first }
+    @vacated_decision_issues ||= request_issues.map { |ri| ri.decision_issues.first }
   end
 
   def create_vacated_decision_issues
-    request_issues_for_vacatur.map(&:create_vacated_decision_issue!)
+    request_issues.map(&:create_vacated_decision_issue!)
   end
 
   private

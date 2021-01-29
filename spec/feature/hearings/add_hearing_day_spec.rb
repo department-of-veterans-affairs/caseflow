@@ -100,9 +100,9 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
       fill_in "hearingDate", with: "04152019"
       click_dropdown(index: "V", text: "Video")
       expect(page).to have_content("Select Regional Office (RO)", wait: 30)
-      dropdowns = page.all(".Select-control")
+      dropdowns = page.all(".cf-select__control")
       dropdowns[1].click
-      dropdowns[1].sibling(".Select-menu-outer").find("div .Select-option", text: "Atlanta, GA").click
+      dropdowns[1].sibling(".cf-select__menu").find("div .cf-select__option", text: "Atlanta, GA").click
       fill_in "vlj", with: "Sallie L Anderson"
       fill_in "coordinator", with: "Casimir R Funk"
       fill_in "Notes (Optional)", with: "Test notes."
@@ -153,6 +153,42 @@ RSpec.feature "Add a Hearing Day", :all_dbs do
     scenario "select a coordinator from the dropdown works" do
       click_dropdown(name: "coordinator", text: coordinator.full_name, wait: 30)
       expect(page).to have_content(coordinator.full_name)
+    end
+  end
+
+  context "When adding a Virtual Hearing day" do
+    before { FeatureToggle.enable!(:national_vh_queue) }
+    after { FeatureToggle.disable!(:national_vh_queue) }
+
+    scenario "Adds a virtual hearing day" do
+      step "Opening modal and selecting Virtual presents correct fields" do
+        visit "hearings/schedule"
+        expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
+        find("button", text: "Add Hearing Date").click
+        expect(page).to have_content("Add Hearing Day")
+        click_dropdown(index: "R", text: "Virtual")
+        expect(page).to have_content("Select Regional Office (RO)", wait: 30)
+        expect(find(".dropdown-regionalOffice")).to have_css(".cf-select__control--is-disabled")
+        expect(find(".dropdown-regionalOffice")).to have_text("Virtual Hearings")
+        expect(page).to have_content("Select VLJ (Optional)")
+        expect(page).to have_content("Select Hearing Coordinator (Optional)")
+        expect(page).to have_field("Assign Board Hearing Room", disabled: true, visible: false)
+        expect(find_field("Assign Board Hearing Room", disabled: true, visible: false)).not_to be_checked
+      end
+
+      step "Leave Hearing Date without a selection, expect error" do
+        fill_in "vlj", with: "Sallie L Anderson"
+        fill_in "coordinator", with: "Casimir R Funk"
+        fill_in "Notes (Optional)", with: "Test notes."
+        find("button", text: "Confirm").click
+        expect(page).to have_content("Please make sure you have entered a Hearing Date")
+      end
+
+      step "Fill out all fields and confirm to save" do
+        fill_in "hearingDate", with: "01012021"
+        find("button", text: "Confirm").click
+        expect(page).to have_content("You have successfully added Hearing Day 01/01/2021", wait: 30)
+      end
     end
   end
 end

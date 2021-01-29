@@ -9,6 +9,56 @@ describe TranscriptionTask, :postgres do
 
   let(:transcription_user) { create(:user) }
 
+  context "check_parent_type" do
+    let(:parent_task_type) { :hearing_task }
+    let(:grand_parent_task_type) { :assign_hearing_disposition_task }
+    let(:grand_parent_task) { create(grand_parent_task_type) }
+    let(:parent_task) { create(parent_task_type, parent: grand_parent_task) }
+
+    before { allow_any_instance_of(Task).to receive(:automatically_assign_org_task?).and_return(false) }
+
+    subject { create(:transcription_task, parent: parent_task) }
+
+    shared_examples "valid parent type" do
+      it "does not throw an error" do
+        expect { subject }.not_to raise_error
+        expect(parent_task.children.length).to eq 1
+        expect(parent_task.children.first.type).to eq TranscriptionTask.name
+      end
+    end
+
+    it "throws an error because parent task type is invalid" do
+      expect { subject }.to raise_error(ActiveRecord::RecordInvalid).with_message("Validation failed: Parent should " \
+        "be one of AssignHearingDispositionTask, MissingHearingTranscriptsColocatedTask, TranscriptionTask, " \
+        "DistributionTask")
+      expect(parent_task.children.length).to eq 0
+    end
+
+    context "when the task type is valid" do
+      context "transcription_task" do
+        let(:parent_task_type) { :transcription_task }
+
+        it_behaves_like "valid parent type"
+      end
+
+      context "assign_hearing_disposition_task" do
+        let(:grand_parent_task_type) { :hearing_task }
+        let(:parent_task_type) { :assign_hearing_disposition_task }
+
+        it_behaves_like "valid parent type"
+      end
+
+      context "missing_hearing_transcripts_colocated_task" do
+        let(:parent_task) { create(:ama_colocated_task, :missing_hearing_transcripts, parent: grand_parent_task) }
+
+        # missing_hearing_transcripts automatically create a child transcription task
+        subject { create(parent_task_type, parent: grand_parent_task) }
+
+        it_behaves_like "valid parent type"
+      end
+    end
+  end
+
   context "#update_from_params" do
     context "When cancelled" do
       let(:update_params) do

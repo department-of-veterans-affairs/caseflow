@@ -1,5 +1,7 @@
 # Shown below are the defaults for configuration
 ReactOnRails.configure do |config|
+  config.node_modules_location = "client"
+
   # Client bundles are configured in application.js
 
   # Directory where your generated assets go. All generated assets must go to the same directory.
@@ -18,16 +20,16 @@ ReactOnRails.configure do |config|
   # If you are using the ReactOnRails::TestHelper.configure_rspec_to_compile_assets(config)
   # with rspec then this controls what npm command is run
   # to automatically refresh your webpack assets on every test run.
-  config.npm_build_test_command = "yarn run build:test"
+  config.build_test_command = "yarn run build:test"
 
   # This configures the script to run to build the production assets by webpack. Set this to nil
   # if you don't want react_on_rails building this file for you.
   # This will set NODE_ENV=development necessary for source maps in DEMO
-  config.npm_build_production_command = if Rails.env.demo?
-                                          "yarn run build:demo"
-                                        else
-                                          "yarn run build:production"
-                                        end
+  config.build_production_command = if Rails.env.demo?
+                                      "yarn run build:demo"
+                                    else
+                                      "yarn run build:production"
+                                    end
 
   ################################################################################
   # CLIENT RENDERING OPTIONS
@@ -67,9 +69,6 @@ ReactOnRails.configure do |config|
   ################################################################################
   # MISCELLANEOUS OPTIONS
   ################################################################################
-
-  # The server render method - either ExecJS or NodeJS
-  config.server_render_method = "ExecJS"
 
   # Client js uses assets not digested by rails.
   # For any asset matching this regex, non-digested symlink will be created (what webpack's css wants)

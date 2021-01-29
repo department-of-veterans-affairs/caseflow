@@ -3,7 +3,7 @@
 class PrepareDocumentUploadToVbms
   include ActiveModel::Model
 
-  validates :appeal_id, :file, presence: true
+  validates :appeal, :file, presence: true
   validate :valid_document_type
 
   def initialize(params)
@@ -28,8 +28,8 @@ class PrepareDocumentUploadToVbms
 
   attr_reader :document_type, :file, :params, :success
 
-  def appeal_id
-    Appeal.find_by(uuid: params[:appeal_id])&.id
+  def appeal
+    @appeal ||= Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
   end
 
   def valid_document_type
@@ -38,7 +38,8 @@ class PrepareDocumentUploadToVbms
 
   def document_params
     {
-      appeal_id: appeal_id,
+      appeal_id: appeal.id,
+      appeal_type: appeal.class.name,
       document_type: document_type,
       file: file
     }

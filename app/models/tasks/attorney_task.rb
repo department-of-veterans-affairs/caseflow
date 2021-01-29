@@ -12,9 +12,6 @@ class AttorneyTask < Task
 
   validate :assigned_by_role_is_valid, if: :will_save_change_to_assigned_by_id?
   validate :assigned_to_role_is_valid, if: :will_save_change_to_assigned_to_id?
-  validate :child_attorney_tasks_are_completed, on: :create
-
-  after_update :send_back_to_judge_assign, if: :attorney_task_just_cancelled?
 
   def available_actions(user)
     if can_be_moved_by_user?(user)
@@ -51,7 +48,29 @@ class AttorneyTask < Task
     super || completed?
   end
 
+  def reassign_clears_overtime?
+    true
+  end
+
+  def send_back_to_judge_assign!(params = {})
+    transaction do
+      update_with_instructions(params.merge(status: :cancelled))
+      parent.update_with_instructions(params.merge(status: :cancelled))
+      judge_assign_task = open_judge_assign_task
+
+      [self, parent, judge_assign_task]
+    end
+  end
+
+  def update_from_params(params, user)
+    update_params_will_cancel_attorney_task?(params) ? send_back_to_judge_assign!(params) : super(params, user)
+  end
+
   private
+
+  def update_params_will_cancel_attorney_task?(params)
+    type == AttorneyTask.name && params[:status].eql?(Constants.TASK_STATUSES.cancelled)
+  end
 
   def can_be_moved_by_user?(user)
     return false unless parent.is_a?(JudgeTask)
@@ -59,12 +78,6 @@ class AttorneyTask < Task
     # The judge who is assigned the parent review task, the assigning judge, and SpecialCaseMovementTeam members can
     # cancel or reassign this task
     parent.assigned_to == user || assigned_by == user || user&.can_act_on_behalf_of_judges?
-  end
-
-  def child_attorney_tasks_are_completed
-    if parent&.children_attorney_tasks&.open&.any?
-      errors.add(:parent, "has open child tasks")
-    end
   end
 
   def assigned_to_role_is_valid
@@ -75,21 +88,6 @@ class AttorneyTask < Task
     if assigned_by && (!assigned_by.judge? && !assigned_by.can_act_on_behalf_of_judges?)
       errors.add(:assigned_by, "has to be a judge or special case movement team member")
     end
-  end
-
-  def attorney_task_just_cancelled?
-    type.eql?(AttorneyTask.name) && saved_change_to_attribute?("status") && cancelled?
-  end
-
-  def send_back_to_judge_assign
-    transaction do
-      cancel_parent_judge_review
-      open_judge_assign_task
-    end
-  end
-
-  def cancel_parent_judge_review
-    parent.update!(status: Constants.TASK_STATUSES.cancelled)
   end
 
   def open_judge_assign_task

@@ -69,11 +69,7 @@ RSpec.describe JudgeAssignTasksController, :all_dbs do
       context "when the assigner is a member of the scm team" do
         let(:user) { create(:user) }
 
-        before do
-          SpecialCaseMovementTeam.singleton.add_user(user)
-          FeatureToggle.enable!(:scm_view_judge_assign_queue)
-        end
-        after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
+        before { SpecialCaseMovementTeam.singleton.add_user(user) }
 
         it_behaves_like "attorney task assignment"
       end

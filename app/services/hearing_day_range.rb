@@ -16,10 +16,10 @@ class HearingDayRange
               HearingDay.where(
                 "DATE(scheduled_for) between ? and ?", start_date, end_date
               )
-            elsif regional_office == HearingDay::REQUEST_TYPES[:central]
+            elsif [HearingDay::REQUEST_TYPES[:central], HearingDay::REQUEST_TYPES[:virtual]].include?(regional_office)
               HearingDay.where(
                 "request_type = ? and DATE(scheduled_for) between ? and ?",
-                HearingDay::REQUEST_TYPES[:central],
+                regional_office, # regional_office stores the hearing request type in this case
                 start_date,
                 end_date
               )
@@ -96,7 +96,7 @@ class HearingDayRange
 
   def open_hearing_days_with_hearings_hash
     # Optimzation: shared for every call to hash the HearingDay.
-    video_hearing_days_request_types = VideoHearingDayRequestTypeQuery.new.call
+    video_hearing_days_request_types = HearingDayRequestTypeQuery.new.call
 
     all_hearing_days
       .select { |hearing_day, scheduled_hearings| self.class.open_hearing_day?(hearing_day, scheduled_hearings) }

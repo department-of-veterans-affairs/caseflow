@@ -13,6 +13,7 @@ class AsyncableJobsController < ApplicationController
       @jobs = asyncable_job_klass.potentially_stuck.limit(page_size).offset(page_start)
     end
     respond_to do |format|
+      format.json { render json: jobs.map(&:asyncable_ui_hash) }
       format.html
       format.csv do
         jobs_as_csv = AsyncableJobsReporter.new(jobs: all_jobs).as_csv
@@ -60,7 +61,11 @@ class AsyncableJobsController < ApplicationController
   end
 
   def asyncable_jobs
-    @asyncable_jobs ||= AsyncableJobs.new(page_size: page_size, page: current_page)
+    @asyncable_jobs ||= AsyncableJobs.new(
+      page_size: page_size,
+      page: current_page,
+      veteran_file_number: veteran_file_number
+    )
   end
 
   def total_jobs
@@ -116,5 +121,9 @@ class AsyncableJobsController < ApplicationController
 
   def allowed_params
     params.permit(:asyncable_job_klass, :id, :page, :note, :send_to_intake_user)
+  end
+
+  def veteran_file_number
+    request.headers["HTTP_VETERAN_FILE_NUMBER"]
   end
 end

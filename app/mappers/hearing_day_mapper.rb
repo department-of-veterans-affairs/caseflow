@@ -30,13 +30,16 @@ module HearingDayMapper
 
     def validate_regional_office(regional_office)
       return if regional_office.nil?
-      return regional_office if regional_office == HearingDay::REQUEST_TYPES[:central]
+
+      if [HearingDay::REQUEST_TYPES[:central], HearingDay::REQUEST_TYPES[:virtual]].include?(regional_office)
+        return regional_office
+      end
 
       ro = begin
-        RegionalOffice.find!(regional_office)
+             RegionalOffice.find!(regional_office)
            rescue RegionalOffice::NotFoundError
              nil
-      end
+           end
       fail(InvalidRegionalOfficeError) if ro.nil?
 
       ro.key
@@ -53,12 +56,6 @@ module HearingDayMapper
       return "" if ro.nil?
 
       "#{ro.city}, #{ro.state}"
-    end
-
-    def label_for_room(room_nbr)
-      return if room_nbr.nil?
-
-      HearingRooms.find!(room_nbr).label
     end
   end
 end

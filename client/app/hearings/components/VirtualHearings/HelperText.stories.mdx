@@ -1,0 +1,29 @@
+import { useState } from "react";
+import { Meta, Story, Preview, Props } from "@storybook/addon-docs/blocks";
+import { text } from "@storybook/addon-knobs";
+
+import { HelperText } from "./HelperText";
+
+export const defaultProps = {};
+
+<Meta
+  title="Hearings/Components/Virtual Hearings/HelperText"
+  component={HelperText}
+/>
+
+# Helper Text
+
+<Preview>
+  <Story name="Normal">
+    {() => {
+      const [value, setValue] = useState("");
+      return (
+        <div style={{ width: 500 }}>
+          <HelperText label={text("Label", "Example", "knobs")} />
+        </div>
+      );
+    }}
+  </Story>
+</Preview>
+
+<Props of={HelperText} />

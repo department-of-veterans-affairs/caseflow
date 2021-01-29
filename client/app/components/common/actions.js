@@ -94,3 +94,28 @@ export const removeAlertsWithTimestamps = (timestamps) => ({
     timestamps
   }
 });
+
+export const clearAlerts = () => ({
+  type: ACTIONS.CLEAR_ALERTS,
+});
+
+export const startPollingHearing = (externalId) => ({
+  type: ACTIONS.START_POLLING,
+  payload: {
+    externalId,
+    polling: true
+  }
+});
+
+export const stopPollingHearing = () => ({
+  type: ACTIONS.STOP_POLLING,
+  payload: {
+    externalId: null,
+    polling: false
+  }
+});
+
+export const setScheduledHearing = (payload) => ({
+  type: ACTIONS.SET_SCHEDULE_HEARING_PAYLOAD,
+  payload
+});

@@ -24,7 +24,9 @@ class WorkQueue::DecisionReviewTaskSerializer
     return "self" unless decision_review(object).veteran_is_not_claimant
 
     claimant = claimant_with_name(object)
-    claimant.try(:relationship).present? ? claimant.relationship : "claimant"
+    return "Unknown" if claimant.nil?
+
+    claimant.relationship.presence || claimant.class.name.delete_suffix("Claimant")
   end
 
   attribute :claimant do |object|

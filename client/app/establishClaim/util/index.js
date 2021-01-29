@@ -11,12 +11,11 @@ import { enabledSpecialIssues } from '../../constants/SpecialIssueEnabler.js';
 export const formattedStationOfJurisdiction = (
   stationOfJurisdiction,
   regionalOfficeKey,
-  regionalOfficeCities,
-  special_issues_revamp
+  regionalOfficeCities
 ) => {
   let suffix;
 
-  enabledSpecialIssues(special_issues_revamp).forEach((issue) => {
+  enabledSpecialIssues().forEach((issue) => {
     let issueKey = issue.stationOfJurisdiction && issue.stationOfJurisdiction.key;
 
     // If the assigned stationOfJurisdiction matches a routed special issue, use the

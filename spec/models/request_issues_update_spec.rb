@@ -443,7 +443,9 @@ describe RequestIssuesUpdate, :all_dbs do
           expect_any_instance_of(Fakes::BGSService).to receive(:cancel_end_product).with(
             veteran.file_number,
             "030HLRNR",
-            "030"
+            "030",
+            "00",
+            "1"
           )
 
           allow_remove_contention
@@ -683,6 +685,29 @@ describe RequestIssuesUpdate, :all_dbs do
         end
       end
 
+      context "if remaining issues after update are ineligible" do
+        let!(:in_progress_task) { create(:higher_level_review_task, :in_progress, appeal: review) }
+        let!(:after_issue) do
+          create(:request_issue,
+                 :ineligible,
+                 decision_review: review,
+                 contention_reference_id: "2")
+        end
+        let!(:request_issues_update) do
+          create(:request_issues_update,
+                 :requires_processing,
+                 review: review,
+                 withdrawn_request_issue_ids: nil,
+                 before_request_issue_ids: review.request_issues.map(&:id),
+                 after_request_issue_ids: [after_issue.id])
+        end
+
+        it "should cancel tasks" do
+          subject
+          expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        end
+      end
+
       def capture_raven_log
         allow(Raven).to receive(:capture_exception) { @raven_called = true }
       end
@@ -712,10 +737,11 @@ describe RequestIssuesUpdate, :all_dbs do
       create(
         :request_issue_with_epe,
         decision_review: review,
-        contention_reference_id: "3",
+        contention_reference_id: edited_issue_contention_id,
         edited_description: edited_description
       )
     end
+    let(:edited_issue_contention_id) { "3" }
 
     let!(:riu) do
       create(:request_issues_update, :requires_processing,
@@ -746,7 +772,7 @@ describe RequestIssuesUpdate, :all_dbs do
       Generators::Contention.build(
         claim_id: edited_issue.end_product_establishment.reference_id,
         text: "old request issue description",
-        id: "3",
+        id: edited_issue_contention_id,
         start_date: Time.zone.now,
         submit_date: 5.days.ago
       )
@@ -769,6 +795,17 @@ describe RequestIssuesUpdate, :all_dbs do
       expect(review.end_product_establishments.map(&:user)).to_not include(riu.user)
       subject
       expect(review.end_product_establishments.map(&:user).uniq).to eq([riu.user])
+    end
+
+    context "when the request issue doesn't have a contention" do
+      let(:edited_issue_contention) { nil }
+      let(:edited_issue) { create(:request_issue, decision_review: review, edited_description: edited_description) }
+
+      it "does not try to update the contention in VBMS" do
+        expect(subject).to be_truthy
+        expect(Fakes::VBMSService).to_not have_received(:update_contention!)
+        expect(edited_issue.reload.contention_updated_at).to be nil
+      end
     end
   end
 

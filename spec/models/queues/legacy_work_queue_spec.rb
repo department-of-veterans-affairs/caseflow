@@ -17,7 +17,8 @@ describe LegacyWorkQueue, :all_dbs do
             work_product: "DEC"
           )
         ),
-        create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user, document_id: "NONE"))
+        create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user, document_id: "NONE")),
+        create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user, document_id: nil))
       ]
     end
 
@@ -27,7 +28,7 @@ describe LegacyWorkQueue, :all_dbs do
       let(:role) { :attorney_role }
 
       it "returns tasks" do
-        expect(subject.length).to eq(3)
+        expect(subject.length).to eq(4)
         expect(subject[0].class).to eq(AttorneyLegacyTask)
       end
     end
@@ -36,7 +37,7 @@ describe LegacyWorkQueue, :all_dbs do
       let(:role) { :judge_role }
 
       it "returns tasks" do
-        expect(subject.length).to eq(3)
+        expect(subject.length).to eq(4)
         expect(subject[0].class).to eq(JudgeLegacyDecisionReviewTask)
       end
     end
@@ -45,10 +46,11 @@ describe LegacyWorkQueue, :all_dbs do
       let(:role) { :attorney_judge_role }
 
       it "returns attorney tasks for cases with invalid doc ids, but judge task for cases with a valid doc id" do
-        expect(subject.length).to eq(3)
+        expect(subject.length).to eq(4)
         expect(subject[0].class).to eq(AttorneyLegacyTask)
         expect(subject[1].class).to eq(JudgeLegacyDecisionReviewTask)
         expect(subject[2].class).to eq(AttorneyLegacyTask)
+        expect(subject[3].class).to eq(AttorneyLegacyTask)
       end
     end
   end

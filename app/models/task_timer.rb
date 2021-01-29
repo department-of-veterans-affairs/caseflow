@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+##
+# See https://github.com/department-of-veterans-affairs/caseflow/wiki/Timed-Tasks#tasktimer
+
 class TaskTimer < CaseflowRecord
   belongs_to :task
   include Asyncable

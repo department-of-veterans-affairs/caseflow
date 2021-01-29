@@ -9,6 +9,8 @@ module Seeds
       RequestStore[:current_user] = created_by_user
       create_hearing_days
       create_ama_hearing_appeals
+      create_virtual_hearing_day
+      create_former_travel_currently_virtual_requested_legacy_appeals
       RequestStore[:current_user] = prev_user
     end
 
@@ -26,7 +28,8 @@ module Seeds
         :appeal,
         veteran_file_number: veteran.file_number,
         claimants: [create(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO")],
-        docket_type: Constants.AMA_DOCKETS.hearing
+        docket_type: Constants.AMA_DOCKETS.hearing,
+        veteran_is_not_claimant: Faker::Boolean.boolean
       )
 
       root_task = create(:root_task, appeal: appeal)
@@ -81,6 +84,7 @@ module Seeds
 
       create(
         :case_hearing,
+        hearing_type: (ro_key == "C") ? HearingDay::REQUEST_TYPES[:central] : HearingDay::REQUEST_TYPES[:video],
         folder_nr: folder_map[ro_key],
         vdkey: day.id,
         board_member: User.find_by_css_id("BVAAABSHIRE").vacols_attorney_id.to_i
@@ -91,25 +95,28 @@ module Seeds
       @created_by_user ||= User.find_or_create_by(css_id: "BVATWARNER", station_id: "101")
     end
 
-    # rubocop:disable Metrics/MethodLength
+    def hearing_day_for_ro(ro_key, scheduled_for)
+      HearingDay.create!(
+        regional_office: (ro_key == "C") ? nil : ro_key,
+        room: "1",
+        judge: User.find_by_css_id("BVAAABSHIRE"),
+        request_type: (ro_key == "C") ? "C" : "V",
+        scheduled_for: scheduled_for,
+        created_by: created_by_user,
+        updated_by: created_by_user
+      )
+    end
+
     def create_hearing_days
       %w[C RO17 RO19 RO31 RO43 RO45].each do |ro_key|
         (1..5).each do |index|
-          day = HearingDay.create!(
-            regional_office: (ro_key == "C") ? nil : ro_key,
-            room: "1",
-            judge: User.find_by_css_id("BVAAABSHIRE"),
-            request_type: (ro_key == "C") ? "C" : "V",
-            scheduled_for: Time.zone.today + (index * 11).days,
-            created_by: created_by_user,
-            updated_by: created_by_user
-          )
+          day = hearing_day_for_ro(ro_key, Time.zone.today + (index * 11).days)
 
           case index
           when 1
-            create_ama_hearing(day)
+            2.times { create_ama_hearing(day) }
           when 2
-            create_case_hearing(day, ro_key)
+            2.times { create_case_hearing(day, ro_key) }
           when 3
             create_case_hearing(day, ro_key)
             create_ama_hearing(day)
@@ -117,7 +124,6 @@ module Seeds
         end
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
     # rubocop:disable Metrics/MethodLength
     def create_ama_hearing_appeals
@@ -147,7 +153,7 @@ module Seeds
         )
       )
 
-      user = User.find_by(css_id: "BVATWARNER")
+      user = User.find_by_css_id("BVATWARNER")
       HearingDay.create(
         regional_office: "RO17",
         request_type: "V",
@@ -167,6 +173,63 @@ module Seeds
                 appeal.hearings.map(&:disposition).include?(:held)
 
       create(:case_hearing, :disposition_held, user: user, folder_nr: appeal.vacols_id)
+    end
+
+    def create_virtual_hearing_day
+      # Take an existing hearing day change it to a Virtual hearing day to get around
+      # validations
+      HearingDay.last.dup.update!(request_type: "R", regional_office: nil)
+    end
+
+    # creates fake veteran given a file number
+    def create_veteran(veteran_file_number)
+      create(
+        :veteran,
+        first_name: Faker::Name.first_name,
+        last_name: Faker::Name.last_name,
+        file_number: veteran_file_number,
+        bgs_veteran_record: {
+          date_of_birth: Faker::Date.birthday(min_age: 35, max_age: 80).strftime("%m/%d/%Y"),
+          date_of_death: nil,
+          name_suffix: nil,
+          sex: Faker::Gender.binary_type[0],
+          address_line1: Faker::Address.street_address,
+          country: "USA",
+          zip_code: Faker::Address.zip_code,
+          state: Faker::Address.state_abbr,
+          city: Faker::Address.city
+        }
+      )
+    end
+
+    def create_travel_board_vacols_case(id)
+      create(
+        :case,
+        :travel_board_hearing,
+        bfkey: "1234#{id}",
+        bfcorkey: "5678#{id}",
+        correspondent: create(:correspondent, stafkey: "5678#{id}")
+      )
+    end
+
+    def create_former_travel_currently_virtual_requested_legacy_appeals
+      ro_key = "R" # virtual
+      (1..16).each do |id|
+        vacols_case = create_travel_board_vacols_case(id)
+
+        create_veteran(LegacyAppeal.veteran_file_number_from_bfcorlid(vacols_case.bfcorlid))
+
+        create(
+          :schedule_hearing_task,
+          appeal: create(
+            :legacy_appeal,
+            :with_veteran,
+            vacols_case: vacols_case,
+            closest_regional_office: ro_key,
+            changed_request_type: "R"
+          )
+        )
+      end
     end
   end
 end

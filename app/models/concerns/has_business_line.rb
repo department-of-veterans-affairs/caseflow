@@ -19,6 +19,10 @@ module HasBusinessLine
   private
 
   def benefit_type_requires_payee_code?
-    ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(benefit_type)
+    if !FeatureToggle.enabled?(:establish_fiduciary_eps) && benefit_type == "fiduciary"
+      false
+    else
+      ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(benefit_type)
+    end
   end
 end

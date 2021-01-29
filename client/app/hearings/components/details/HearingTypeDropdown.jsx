@@ -1,75 +1,82 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
+
+import { VIDEO_HEARING_LABEL, VIRTUAL_HEARING_LABEL } from '../../constants';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 
-class HearingTypeDropdown extends React.Component {
-  constructor(props) {
-    super(props);
-
-    const { requestType } = props;
-
-    this.HEARING_TYPE_OPTIONS = [
-      {
-        value: false,
-        label: requestType
-      },
-      {
-        value: true,
-        label: 'Virtual'
-      }
-    ];
-  }
-
-  getValue = () => {
-    const { virtualHearing } = this.props;
-
-    if (!virtualHearing || !virtualHearing.status || virtualHearing.status === 'cancelled') {
-      return this.HEARING_TYPE_OPTIONS[0];
+/**
+ * Component to convert a hearing to virtual.
+ */
+const HearingTypeDropdown = ({
+  convertHearing,
+  enableFullPageConversion,
+  openModal,
+  readOnly,
+  originalRequestType,
+  styling,
+  update,
+  virtualHearing,
+}) => {
+  const hearingTypeOptions = [
+    {
+      value: false,
+      label: originalRequestType
+    },
+    {
+      value: true,
+      label: VIRTUAL_HEARING_LABEL
     }
+  ];
 
-    return this.HEARING_TYPE_OPTIONS[1];
-  };
+  const currentOption = (!virtualHearing || !virtualHearing.status || virtualHearing.status === 'cancelled') ?
+    hearingTypeOptions[0] :
+    hearingTypeOptions[1];
+  const { label: currentLabel } = currentOption;
 
-  onChange = (option) => {
-    const { updateVirtualHearing, openModal, virtualHearing } = this.props;
-    const currentValue = this.getValue();
+  const onChange = ({ label }) => {
+    // Change from virtual if the current label is virtual
+    const type = currentLabel === VIRTUAL_HEARING_LABEL ? 'change_from_virtual' : 'change_to_virtual';
 
-    // if current value is true (a virtual hearing), then we will be sending cancellation emails,
-    // if new value is true, then we will be sending confirmation emails
-    if ((currentValue.value || option.value) && currentValue.value !== option.value) {
-      const type = option.value ? 'change_to_virtual' : 'change_from_virtual';
-
+    // Use the modal if the label is video
+    if ((label === VIDEO_HEARING_LABEL || currentLabel === VIDEO_HEARING_LABEL) && !enableFullPageConversion) {
       openModal({ type });
+    } else if (convertHearing) {
+      convertHearing(type);
     }
 
-    if ((currentValue.value && !option.value) || virtualHearing.requestCancelled) {
-      updateVirtualHearing({ requestCancelled: !virtualHearing.requestCancelled });
-    }
+    // If the current value is not virtual, we are cancelling the virtual hearing
+    update('virtualHearing', { requestCancelled: currentLabel === VIRTUAL_HEARING_LABEL, jobCompleted: false });
   };
 
-  render() {
-    return (
-      <SearchableDropdown
-        label="Hearing Type"
-        name="hearingType"
-        strongLabel
-        options={this.HEARING_TYPE_OPTIONS}
-        value={this.getValue()}
-        onChange={this.onChange}
-        readOnly={this.props.readOnly}
-        styling={this.props.styling}
-      />
-    );
-  }
-}
+  return (
+    <SearchableDropdown
+      label="Hearing Type"
+      name="hearingType"
+      strongLabel
+      options={hearingTypeOptions.filter((opt) => opt.label !== currentLabel)}
+      value={currentOption}
+      onChange={onChange}
+      readOnly={readOnly}
+      styling={styling}
+    />
+  );
+};
 
 HearingTypeDropdown.propTypes = {
-  virtualHearing: PropTypes.object,
-  updateVirtualHearing: PropTypes.func,
+  convertHearing: PropTypes.func,
+  enableFullPageConversion: PropTypes.bool,
   openModal: PropTypes.func,
-  requestType: PropTypes.string,
+
+  // The original hearing request type.
+  //
+  // This component is used to convert a hearing to virtual from the hearing's
+  // original request type (or vice versa).
+  originalRequestType: PropTypes.string,
+
   readOnly: PropTypes.bool,
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  update: PropTypes.func,
+  virtualHearing: PropTypes.object,
 };
 
 export default HearingTypeDropdown;

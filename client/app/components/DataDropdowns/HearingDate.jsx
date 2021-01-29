@@ -1,59 +1,64 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import React, { useEffect } from 'react';
+import { values, find } from 'lodash';
+
+import { formatDateStr, getMinutesToMilliseconds } from '../../util/DateUtil';
 import {
   onReceiveDropdownData,
   onFetchDropdownData,
   onDropdownError
 } from '../common/actions';
 import ApiUtil from '../../util/ApiUtil';
-import _ from 'lodash';
-import { formatDateStr, getMinutesToMilliseconds } from '../../util/DateUtil';
+import COPY from '../../../COPY';
 import LoadingLabel from './LoadingLabel';
 import SearchableDropdown from '../SearchableDropdown';
-import COPY from '../../../COPY.json';
 
-class HearingDateDropdown extends React.Component {
-  componentDidMount() {
-    setTimeout(this.getHearingDates, 0);
-  }
+export const HearingDateDropdown = (props) => {
+  const {
+    name,
+    label,
+    value,
+    hearingDates,
+    regionalOffice,
+    onChange,
+    placeholder,
+    errorMessage,
+    readOnly
+  } = props;
 
-  componentDidUpdate(prevProps) {
-    const { hearingDates: { options }, validateValueOnMount, onChange } = this.props;
+  const hearingDateOptions = hearingDates?.options;
 
-    if (!_.isEqual(prevProps.hearingDates.options, options) && validateValueOnMount) {
-      const option = this.getSelectedOption() || {};
+  const fetchRegionalOfficeHearingDates = (ro) => {
+    const xhrUrl = `/regional_offices/${ro}/hearing_dates.json`;
 
-      onChange(option.value, option.label);
-    }
+    return ApiUtil.
+      get(xhrUrl, { timeout: { response: getMinutesToMilliseconds(5) } });
+  };
 
-    if (prevProps.regionalOffice !== this.props.regionalOffice) {
-      setTimeout(() => this.getHearingDates(true), 0);
-    }
-  }
+  // fetch hearing dates for RO and format
+  const getHearingDates = () => {
+    // ex `hearingDatesForRO17`
+    const dropdownKeyForRo = `hearingDatesFor${regionalOffice}`;
 
-  getHearingDates = (force) => {
-    const { hearingDates: { options, isFetching }, regionalOffice } = this.props;
-    const name = `hearingDatesFor${regionalOffice}`;
-    const xhrUrl = `/regional_offices/${regionalOffice}/hearing_dates.json`;
-
-    if ((options && !force) || isFetching) {
+    // no need to fetch
+    if (hearingDateOptions || hearingDates?.isFetching) {
       return;
     }
 
-    this.props.onFetchDropdownData(name);
+    props.onFetchDropdownData(dropdownKeyForRo);
 
-    return ApiUtil.
-      get(xhrUrl, { timeout: { response: getMinutesToMilliseconds(5) } }).
+    return fetchRegionalOfficeHearingDates(regionalOffice).
       then((resp) => {
+        // format data
         const jsonResponse = ApiUtil.convertToCamelCase(resp.body);
-        const hearingDateOptions = _.values(jsonResponse.hearingDays).
+        const dateOptionsForRO = values(jsonResponse.hearingDays).
           map((hearingDate) => {
             const scheduled = formatDateStr(hearingDate.scheduledFor);
 
             return {
-              label: `${scheduled} (${hearingDate.filledSlots}/${hearingDate.totalSlots})`,
+              label: `${scheduled} (${hearingDate.filledSlots}/${hearingDate.totalSlots}) ${hearingDate.roomLabel} `,
               value: {
                 ...hearingDate,
                 hearingDate: formatDateStr(hearingDate.scheduledFor, 'YYYY-MM-DD', 'YYYY-MM-DD')
@@ -61,9 +66,11 @@ class HearingDateDropdown extends React.Component {
             };
           });
 
-        hearingDateOptions.sort((d1, d2) => new Date(d1.value.hearingDate) - new Date(d2.value.hearingDate));
+        // sort dates in ascending order
+        dateOptionsForRO?.sort((d1, d2) => new Date(d1.value.hearingDate) - new Date(d2.value.hearingDate));
 
-        hearingDateOptions.unshift(
+        // add empty value as the first item on list
+        dateOptionsForRO?.unshift(
           {
             label: ' ',
             value: {
@@ -73,79 +80,92 @@ class HearingDateDropdown extends React.Component {
           }
         );
 
-        this.props.onReceiveDropdownData(name, hearingDateOptions);
+        props.onReceiveDropdownData(dropdownKeyForRo, dateOptionsForRO);
 
-        if (hearingDateOptions && hearingDateOptions.length === 1) {
-          this.props.onDropdownError(name, 'There are no upcoming hearing dates for this regional office.');
+        if (dateOptionsForRO && dateOptionsForRO.length === 1) {
+          props.onDropdownError(dropdownKeyForRo, 'There are no upcoming hearing dates for this regional office.');
         } else {
-          this.props.onDropdownError(name, null);
+          props.onDropdownError(dropdownKeyForRo, null);
         }
       });
-  }
+  };
 
-  getSelectedOption = () => {
-    const { value, hearingDates: { options } } = this.props;
-
+  // return the last selected hearing date for RO
+  const getSelectedOption = () => {
+    // no history of date selection, return first item on list
     if (!value) {
-      return options ? options[0] : {};
+      return hearingDateOptions ? hearingDateOptions[0] : {};
     }
 
     let comparison;
 
+    // determine if any selection was made
     if (typeof (value) === 'string') {
-      comparison = (opt) => opt.value.hearingDate === formatDateStr(value, 'YYYY-MM-DD', 'YYYY-MM-DD');
+      comparison = (opt) => opt?.value.hearingDate === formatDateStr(value, 'YYYY-MM-DD', 'YYYY-MM-DD');
     } else {
-      comparison = (opt) => opt.value === value;
+      comparison = (opt) => opt?.value === value;
     }
 
-    return _.find(options, comparison);
-  }
+    // find which date was selected from list of hearing dates
+    return find(hearingDateOptions, comparison);
+  };
 
-  onOptionSelected = (option) => {
-    const { onChange } = this.props;
-    const safeOption = option || {};
+  // on mount and if new RO is selected
+  useEffect(() => {
+    setTimeout(() => getHearingDates(), 0);
+  }, [regionalOffice]);
 
-    return onChange(safeOption.value, safeOption.label);
-  }
+  // only if there's new set of hearingDateOptions, triggered by a RO change
+  useEffect(() => {
+    const option = getSelectedOption() || {};
 
-  render() {
-    const {
-      name, label, readOnly, errorMessage, placeholder,
-      hearingDates: { options, isFetching, errorMsg }
-    } = this.props;
+    onChange(option.value, option.label);
+  }, [hearingDateOptions]);
 
-    return (
-      <React.Fragment>
-        <SearchableDropdown
-          name={name}
-          label={
-            isFetching ? <LoadingLabel text={COPY.HEARING_DATE_LOADING} /> : label
-          }
-          strongLabel
-          readOnly={readOnly}
-          value={this.getSelectedOption()}
-          onChange={this.onOptionSelected}
-          options={options}
-          errorMessage={errorMsg || errorMessage}
-          placeholder={placeholder} />
-      </React.Fragment>
-    );
-  }
-}
+  return (
+    <React.Fragment>
+      <SearchableDropdown
+        name={name}
+        label={
+          hearingDates?.isFetching ? <LoadingLabel text={COPY.HEARING_DATE_LOADING} /> : label
+        }
+        strongLabel
+        readOnly={readOnly}
+        value={getSelectedOption()}
+        onChange={(option) => onChange(option?.value, option?.label)}
+        options={hearingDateOptions}
+        errorMessage={hearingDates?.errorMsg || errorMessage}
+        placeholder={placeholder}
+      />
+    </React.Fragment>
+  );
+};
 
 HearingDateDropdown.propTypes = {
   name: PropTypes.string,
   label: PropTypes.string,
+  hearingDates: PropTypes.shape({
+    options: PropTypes.arrayOf(
+      PropTypes.shape({
+        value: PropTypes.any,
+        label: PropTypes.string,
+      })
+    ),
+    isFetching: PropTypes.bool,
+    errorMsg: PropTypes.string
+  }),
   regionalOffice: PropTypes.string.isRequired,
   value: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object
   ]),
   onChange: PropTypes.func.isRequired,
+  onDropdownError: PropTypes.func,
+  onFetchDropdownData: PropTypes.func,
+  onReceiveDropdownData: PropTypes.func,
   readOnly: PropTypes.bool,
   placeholder: PropTypes.string,
-  errorMessage: PropTypes.string,
-  validateValueOnMount: PropTypes.bool
+  errorMessage: PropTypes.string
 };
 
 HearingDateDropdown.defaultProps = {

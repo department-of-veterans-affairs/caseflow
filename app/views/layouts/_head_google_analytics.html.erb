@@ -9,6 +9,7 @@
       userId: '<%= current_user ? current_user.id : "" %>'
     });
     ga('set', 'anonymizeIp', true);
+    ga('set', 'dimension1', <%= current_user&.id || -1 %>);
 
     window.analyticsPageView = function(page) {
       ga('send', 'pageview', page);

@@ -5,8 +5,8 @@ class Organization < CaseflowRecord
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
   has_many :users, through: :organizations_users
-  has_many :judge_team_roles, through: :organizations_users
   has_many :non_admin_users, -> { non_admin }, class_name: "OrganizationsUser"
+  require_dependency "dvc_team"
 
   validates :name, presence: true
   validates :url, presence: true, uniqueness: true
@@ -45,10 +45,6 @@ class Organization < CaseflowRecord
   end
 
   def users_can_create_mail_task?
-    false
-  end
-
-  def can_bulk_assign_tasks?
     false
   end
 
@@ -124,8 +120,7 @@ class Organization < CaseflowRecord
     ::OrganizationUnassignedTasksTab.new(
       assignee: self,
       show_regional_office_column: show_regional_office_in_queue?,
-      show_reader_link_column: show_reader_link_column?,
-      allow_bulk_assign: can_bulk_assign_tasks?
+      show_reader_link_column: show_reader_link_column?
     )
   end
 
@@ -139,6 +134,18 @@ class Organization < CaseflowRecord
 
   def completed_tasks_tab
     ::OrganizationCompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+  end
+
+  def serialize
+    {
+      accepts_priority_pushed_cases: accepts_priority_pushed_cases,
+      id: id,
+      name: name,
+      participant_id: participant_id,
+      type: type,
+      url: url,
+      user_admin_path: user_admin_path
+    }
   end
 
   private

@@ -5,7 +5,7 @@ RSpec.feature "Bulk task assignment", :postgres do
   let(:user) { create(:user) }
 
   before do
-    org.add_user(user)
+    OrganizationsUser.make_user_admin(user, org)
     User.authenticate!(user: user)
   end
 
@@ -16,14 +16,14 @@ RSpec.feature "Bulk task assignment", :postgres do
       assign_to.click
       task_type = options.find { |option| option.text =~ /No Show Hearing Task/ }
       task_type.click
-      number_of_tasks = options.find { |option| option.text =~ /3/ }
+      number_of_tasks = options.find { |option| option.text =~ /3 \(all available tasks\)/ }
       number_of_tasks.click
       expect(page).to_not have_content("Please select a value")
-      submit = all("button", text: "Assign Tasks")[0]
+      submit = find("button", id: "Bulk-Assign-Tasks-button-id-1")
       submit.click
     end
 
-    it "is able to bulk assign tasks for the hearing management org", skip: "flake" do
+    it "is able to bulk assign tasks for the hearing management org" do
       3.times do
         create(:no_show_hearing_task)
       end
@@ -31,8 +31,8 @@ RSpec.feature "Bulk task assignment", :postgres do
       click_button(text: "Assign Tasks")
       expect(page).to have_content("Bulk Assign Tasks")
 
-      # Whem missing required fields
-      submit = all("button", text: "Assign Tasks")[0]
+      # When missing required fields
+      submit = find("button", id: "Bulk-Assign-Tasks-button-id-1")
       submit.click
       expect(page).to have_content("Please select a value")
       expect(page).to_not have_content("Loading")
@@ -138,14 +138,22 @@ RSpec.feature "Bulk task assignment", :postgres do
     end
   end
 
-  context "when there are more tasks than will fit on a single page" do
+  context "when there are more tasks than will fit on a single page for any org" do
+    let(:org) { create(:organization) }
     let(:task_count) { TaskPager::TASKS_PER_PAGE + 2 }
-    let(:regional_offices) { RegionalOffice::CITIES.keys.last(task_count) }
+    let(:regional_offices) do
+      RegionalOffice
+        .ros_with_hearings
+        .keys
+        .reject { |ro_key| ro_key == HearingDay::REQUEST_TYPES[:virtual] }
+        .map { |ro_key| RegionalOffice.find!(ro_key) }
+        .last(task_count)
+    end
 
     before do
       regional_offices.each do |ro|
-        appeal = create(:appeal, :hearing_docket, closest_regional_office: ro)
-        create(:no_show_hearing_task, appeal: appeal)
+        appeal = create(:appeal, :hearing_docket, closest_regional_office: ro.key)
+        create(:no_show_hearing_task, appeal: appeal, assigned_to: org)
       end
     end
 
@@ -163,8 +171,23 @@ RSpec.feature "Bulk task assignment", :postgres do
       regional_office_options = options.last(task_count).map(&:text)
 
       # Sort the regional offices we expect to see by city name.
-      sorted_regional_offices = regional_offices.map { |ro| RegionalOffice::CITIES[ro][:city] }.sort
+      sorted_regional_offices = regional_offices.map(&:city).sort
       expect(regional_office_options).to eq(sorted_regional_offices)
+    end
+  end
+
+  context "when the user is not an admin" do
+    before do
+      user = create(:user)
+      org.add_user(user)
+      User.authenticate!(user: user)
+    end
+
+    it "does not show the bulk assign button" do
+      visit(org.path)
+
+      expect(page).to have_content(org.name)
+      expect(page).to have_no_content(COPY::BULK_ASSIGN_BUTTON_TEXT)
     end
   end
 end

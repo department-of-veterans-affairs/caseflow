@@ -1,9 +1,17 @@
 # frozen_string_literal: true
 
 class Address
+  ZIP5_REGEX = /[0-9]{5}/.freeze
   ZIP_CODE_REGEX = /(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/.freeze
 
   attr_reader :country, :city, :zip, :address_line_1, :address_line_2, :address_line_3, :state
+
+  class << self
+    # Validates a 5-digit US zip code.
+    def validate_zip5_code(zip)
+      fail ArgumentError, "invalid zip code" unless zip.match?(ZIP5_REGEX)
+    end
+  end
 
   # rubocop:disable Metrics/ParameterLists
   def initialize(

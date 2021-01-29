@@ -96,6 +96,9 @@ class LegacyTasksController < ApplicationController
     # update the location to the assigned judge.
     QueueRepository.update_location_to_judge(appeal.vacols_id, assigned_to)
 
+    # Remove overtime status of an appeal when reassigning to a judge
+    appeal.overtime = false if appeal.overtime?
+
     render json: {
       task: json_task(AttorneyLegacyTask.from_vacols(
                         VACOLS::CaseAssignment.latest_task_for_appeal(appeal.vacols_id),
@@ -113,6 +116,9 @@ class LegacyTasksController < ApplicationController
     task = JudgeCaseAssignmentToAttorney.update(legacy_task_params.merge(task_id: params[:id]))
 
     return invalid_record_error(task) unless task.valid?
+
+    # Remove overtime status of an appeal when reassigning to another attorney
+    appeal.overtime = false if appeal.overtime?
 
     render json: {
       task: json_task(AttorneyLegacyTask.from_vacols(

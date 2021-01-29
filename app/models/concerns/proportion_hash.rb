@@ -11,7 +11,7 @@
 
 module ProportionHash
   def normalize!(to: 1.0)
-    total = values.reduce(0, :+)
+    total = values.sum
     transform_values! { |proportion| proportion * (to / total) }
   end
 
@@ -24,7 +24,7 @@ module ProportionHash
 
   def add_fixed_proportions!(fixed)
     except!(*fixed.keys)
-      .normalize!(to: 1.0 - fixed.values.reduce(0, :+))
+      .normalize!(to: 1.0 - fixed.values.sum)
       .merge!(fixed)
   end
 
@@ -52,7 +52,7 @@ module ProportionHash
 
   def stochastic_allocation(num)
     result = transform_values { |proportion| (num * proportion).floor }
-    rem = num - result.values.reduce(0, :+)
+    rem = num - result.values.sum
 
     return result if rem == 0
 

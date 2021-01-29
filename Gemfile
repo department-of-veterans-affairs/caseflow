@@ -8,16 +8,18 @@ gem "aasm", "4.11.0"
 gem "activerecord-import"
 gem "acts_as_tree"
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "b6d05017344a861b4b858c037f8b277e25ea84f2"
+
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "7d7c67f7bad5e5aa03e257f0d8e57a4aa1a6cbbf"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "fb6fa9658825c143eb8d202b87128f34ca7e210b"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "f374da6041b52d73af60d79d60d4013a13d4a72e"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "049b3c5068fa6c6d1cae0b58654529316b84be57"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
+gem "countries"
 gem "ddtrace"
 gem "dogstatsd-ruby"
-gem "fast_jsonapi", "~> 1.7.1", git: "https://github.com/fast-jsonapi/fast_jsonapi"
+
 gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "icalendar"
@@ -31,7 +33,9 @@ gem "newrelic_rpm"
 # https://github.com/sparklemotion/nokogiri/issues/1915
 # nokogiri 1.10.4 is vulnerable to CVE-2019-13117, CVE-2019-13118, CVE-2019-18197.
 # https://github.com/sparklemotion/nokogiri/issues/1943
-gem "nokogiri", "~> 1.10.8"
+# Nokogiri <= 1.10.10 vulnerable to CVE-2020-26247
+# https://github.com/sparklemotion/nokogiri/security/advisories/GHSA-vr8q-g5c7-m54m
+gem "nokogiri", ">= 1.11.0.rc4"
 gem "paper_trail", "~> 10"
 # Used to speed up reporting
 gem "parallel"
@@ -44,13 +48,14 @@ gem "pg", platforms: :ruby
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
-gem "puma", "~> 3.12.4"
-gem "rack", "~> 2.2.0"
-gem "rails", "5.2.4.2"
+# We are not yet at version 4.x because we have not tested.
+gem "puma", "~> 3.12.6"
+gem "rack", "~> 2.2.3"
+gem "rails", "5.2.4.4"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
-gem "react_on_rails", "8.0.6"
+gem "react_on_rails", "11.3.0"
 gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"
@@ -67,9 +72,11 @@ gem "strong_migrations"
 gem "therubyracer", platforms: :ruby
 # print trees
 gem "tty-tree"
+gem "tzinfo"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
+gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
@@ -87,15 +94,16 @@ group :test, :development, :demo do
   # Testing tools
   gem "capybara"
   gem "capybara-screenshot"
-  gem "danger", "~> 5.10"
+  gem "danger", "~> 6.0"
   gem "database_cleaner"
-  gem "factory_bot_rails", "~> 4.8"
+  gem "factory_bot_rails", "~> 5.2"
   gem "faker"
   gem "guard-rspec"
   # Linters
   gem "jshint", platforms: :ruby
   gem "pry"
   gem "pry-byebug"
+  gem "rails-erd"
   gem "rb-readline"
   gem "rspec"
   gem "rspec-rails"
@@ -108,6 +116,7 @@ group :test, :development, :demo do
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
   gem "single_cov"
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
+  gem "sql_tracker"
   gem "test-prof"
   gem "timecop"
   gem "webdrivers"
@@ -121,12 +130,15 @@ group :development do
   gem "fasterer", require: false
   gem "foreman"
   gem "meta_request"
-  gem "rails-erd"
+  gem "ruby-prof", "~> 1.4"
 end
 
 group :test do
+  gem "knapsack_pro"
   # For retrying failed feature tests. Read more: https://github.com/NoRedInk/rspec-retry
   gem "rspec-retry"
   gem "webmock"
 end
 # rubocop:enable Metrics/LineLength
+
+gem "json_schemer", "~> 0.2.16"

@@ -18,7 +18,7 @@ export const docketCutoffLineStyle = (_index, scheduledForText) => {
         content: `Schedule for ${scheduledForText}`,
         display: 'block',
         position: 'absolute',
-        transform: 'translateY(calc(100% + 4px))',
+        transform: 'translateY(calc(155% + 4px))',
         background: '#fff',
         padding: '10px 10px 10px 0px',
         height: '42px',
@@ -39,7 +39,7 @@ export const docketCutoffLineStyle = (_index, scheduledForText) => {
         paddingBottom: '15px'
       },
       '& td:first-child::before': {
-        transform: 'translateY(-165%)',
+        transform: 'translateY(-215%)',
         content: `All veterans have been scheduled through ${scheduledForText}`
       }
     }

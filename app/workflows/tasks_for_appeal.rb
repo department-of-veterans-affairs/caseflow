@@ -15,6 +15,10 @@ class TasksForAppeal
   def call
     RootTask.find_or_create_by!(appeal: appeal)
 
+    if initialize_hearing_tasks_for_travel_board?
+      HearingTaskTreeInitializer.for_appeal_with_pending_travel_board_hearing(appeal)
+    end
+
     # Prevent VSOs from viewing tasks for this appeal assigned to anybody or team at the Board.
     # VSO users will be able to see other VSO's tasks because we don't store that membership information in Caseflow.
     return tasks_assigned_to_user_or_any_other_vso_employee if user.vso_employee?
@@ -52,6 +56,17 @@ class TasksForAppeal
     %w[attorney judge].include?(user_role)
   end
 
+  def initialize_hearing_tasks_for_travel_board?
+    appeal.is_a?(LegacyAppeal) &&
+      user.can_change_hearing_request_type? &&
+      appeal.tasks.open.where(type: HearingTask.name).empty? &&
+      appeal.tasks.closed.where(type: ChangeHearingRequestTypeTask.name).empty? &&
+      appeal.current_hearing_request_type == :travel_board &&
+      appeal.active? &&
+      appeal.original? &&
+      !appeal.any_held_hearings?
+  end
+
   def legacy_appeal_tasks
     return [] unless user_is_judge_or_attorney? || user.can_act_on_behalf_of_judges?
 
@@ -63,6 +78,7 @@ class TasksForAppeal
       :appeal,
       :assigned_by,
       :assigned_to,
+      :cancelled_by,
       :parent
     ]
   end

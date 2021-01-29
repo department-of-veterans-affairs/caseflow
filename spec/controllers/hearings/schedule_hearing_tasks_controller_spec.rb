@@ -54,7 +54,7 @@ describe Hearings::ScheduleHearingTasksController, :all_dbs, type: :controller d
     let(:cache_appeals) { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
 
     before do
-      AppealRepository.create_schedule_hearing_tasks.each do |appeal|
+      HearingTaskTreeInitializer.create_schedule_hearing_tasks.each do |appeal|
         appeal.update(closest_regional_office: closest_regional_office)
 
         AvailableHearingLocations.create(

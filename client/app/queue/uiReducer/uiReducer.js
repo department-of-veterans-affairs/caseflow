@@ -31,6 +31,7 @@ export const initialState = {
   selectedAssigneeSecondary: null,
   veteranCaseListIsVisible: false,
   canEditAod: false,
+  canEditNodDate: false,
   hearingDay: {
     hearingDate: null,
     regionalOffice: null
@@ -74,6 +75,10 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
   case ACTIONS.SET_CAN_EDIT_AOD:
     return update(state, {
       canEditAod: { $set: action.payload.canEditAod }
+    });
+  case ACTIONS.SET_CAN_EDIT_NOD_DATE:
+    return update(state, {
+      canEditNodDate: { $set: action.payload.canEditNodDate }
     });
   case ACTIONS.SET_CAN_VIEW_OVERTIME_STATUS:
     return update(state, {
@@ -196,6 +201,14 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
         $set: action.payload.assigneeId
       }
     });
+  case ACTIONS.RESET_ASSIGNEES:
+    return update(state, {
+      selectedAssigneeSecondary: {
+        $set: null
+      }, selectedAssignee: {
+        $set: null
+      }
+    });
   case ACTIONS.SET_ORGANIZATIONS:
     return update(state, {
       organizations: {
@@ -207,7 +220,8 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
       activeOrganization: {
         id: { $set: action.payload.id },
         name: { $set: action.payload.name },
-        isVso: { $set: action.payload.isVso }
+        isVso: { $set: action.payload.isVso },
+        userCanBulkAssign: { $set: action.payload.userCanBulkAssign }
       }
     });
   case ACTIONS.SET_HEARING_DAY:

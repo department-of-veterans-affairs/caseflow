@@ -19,6 +19,7 @@ class Task < CaseflowRecord
 
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
+  belongs_to :cancelled_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
   has_many :attorney_case_reviews, dependent: :destroy
   has_many :task_timers, dependent: :destroy
@@ -36,6 +37,8 @@ class Task < CaseflowRecord
   after_create :tell_parent_task_child_task_created
 
   before_save :set_timestamp
+
+  before_update :set_cancelled_by_id, if: :task_will_be_cancelled?
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
   after_update :cancel_task_timers, if: :task_just_closed?
@@ -60,9 +63,9 @@ class Task < CaseflowRecord
 
   scope :not_cancelled, -> { where.not(status: Constants.TASK_STATUSES.cancelled) }
 
-  scope :recently_closed, -> { closed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now) }
+  scope :recently_completed, -> { completed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now) }
 
-  scope :incomplete_or_recently_closed, -> { open.or(recently_closed) }
+  scope :incomplete_or_recently_completed, -> { open.or(recently_completed) }
 
   # Equivalent to .reject(&:hide_from_queue_table_view) but offloads that to the database.
   scope :visible_in_queue_table_view, lambda {
@@ -76,6 +79,12 @@ class Task < CaseflowRecord
                                    type: DecisionReviewTask.descendants.map(&:name) + ["DecisionReviewTask"]
                                  )
                                }
+
+  scope :with_assignees, -> { joins(Task.joins_with_assignees_clause) }
+
+  scope :with_assigners, -> { joins(Task.joins_with_assigners_clause) }
+
+  scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause) }
 
   ############################################################################################
   ## class methods
@@ -151,8 +160,7 @@ class Task < CaseflowRecord
 
     def create_from_params(params, user)
       parent_task = Task.find(params[:parent_id])
-      fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_task.assigned_to_id == params[:assigned_to_id] &&
-                                                           parent_task.assigned_to_type == params[:assigned_to_type]
+      fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_of_same_type_has_same_assignee(parent_task, params)
 
       verify_user_can_create!(user, parent_task)
 
@@ -160,6 +168,12 @@ class Task < CaseflowRecord
       child = create_child_task(parent_task, user, params)
       parent_task.update!(status: params[:status]) if params[:status]
       child
+    end
+
+    def parent_of_same_type_has_same_assignee(parent_task, params)
+      parent_task.assigned_to_id == params[:assigned_to_id] &&
+        parent_task.assigned_to_type == params[:assigned_to_type] &&
+        parent_task.type == params[:type]
     end
 
     def create_child_task(parent, current_user, params)
@@ -171,6 +185,55 @@ class Task < CaseflowRecord
         assigned_to: params[:assigned_to] || child_task_assignee(parent, params),
         instructions: params[:instructions]
       )
+    end
+
+    def assigners_table_clause
+      "(SELECT id, full_name AS display_name FROM users) AS assigners"
+    end
+
+    def joins_with_assigners_clause
+      "LEFT JOIN #{Task.assigners_table_clause} ON assigners.id = tasks.assigned_by_id"
+    end
+
+    def assignees_table_clause
+      "(SELECT id, 'Organization' AS type, name AS display_name FROM organizations " \
+      "UNION " \
+      "SELECT id, 'User' AS type, css_id AS display_name FROM users)" \
+      "AS assignees"
+    end
+
+    def joins_with_assignees_clause
+      "INNER JOIN #{Task.assignees_table_clause} ON " \
+      "assignees.id = tasks.assigned_to_id AND assignees.type = tasks.assigned_to_type"
+    end
+
+    def joins_with_cached_appeals_clause
+      "left join #{CachedAppeal.table_name} "\
+      "on #{CachedAppeal.table_name}.appeal_id = #{Task.table_name}.appeal_id "\
+      "and #{CachedAppeal.table_name}.appeal_type = #{Task.table_name}.appeal_type"
+    end
+
+    def order_by_appeal_priority_clause(order: "asc")
+      boolean_order_clause = (order == "asc") ? "0 ELSE 1" : "1 ELSE 0"
+      Arel.sql(
+        "CASE WHEN #{CachedAppeal.table_name}.is_aod = TRUE THEN #{boolean_order_clause} END, "\
+        "CASE WHEN #{CachedAppeal.table_name}.case_type = 'Court Remand' THEN #{boolean_order_clause} END, "\
+        "#{CachedAppeal.table_name}.docket_number #{order}, "\
+        "#{Task.table_name}.created_at #{order}"
+      )
+    end
+
+    # Sorting tasks by docket number within each category of appeal: case type, aod, docket number
+    # Used by ScheduleHearingTaskPager and WarmBgsCachedJob to sort ScheduleHearingTasks
+    def order_by_cached_appeal_priority_clause
+      Arel.sql(<<-SQL)
+        (CASE
+          WHEN cached_appeal_attributes.case_type = 'Court Remand' THEN 1
+          ELSE 0
+        END) DESC,
+        cached_appeal_attributes.is_aod DESC,
+        cached_appeal_attributes.docket_number ASC
+      SQL
     end
   end
 
@@ -239,16 +302,22 @@ class Task < CaseflowRecord
     []
   end
 
-  # When a status is "active" we expect properties of the task to change. When a task is not "active" we expect that
-  # properties of the task will not change.
+  # includes on_hold
   def open?
-    !self.class.closed_statuses.include?(status)
+    self.class.open_statuses.include?(status)
+  end
+
+  def closed?
+    self.class.closed_statuses.include?(status)
   end
 
   def open_with_no_children?
     open? && children.empty?
   end
 
+  # When a status is "active" we expect properties of the task to change
+  # When a task is not "active" we expect that properties of the task will not change
+  # on_hold is not included
   def active?
     self.class.active_statuses.include?(status)
   end
@@ -274,8 +343,8 @@ class Task < CaseflowRecord
   def actions_allowable?(user)
     return false if !open?
 
-    # Users who are assigned a subtask of an organization don't have actions on the organizational task.
-    return false if assigned_to.is_a?(Organization) && children.any? { |child| child.assigned_to == user }
+    # Users who are assigned an open subtask of an organization don't have actions on the organizational task.
+    return false if assigned_to.is_a?(Organization) && children.open.any? { |child| child.assigned_to == user }
 
     true
   end
@@ -357,8 +426,10 @@ class Task < CaseflowRecord
     type.eql?(task_to_check&.type)
   end
 
-  def cancel_descendants
-    descendants.each { |desc| desc.update!(status: Constants.TASK_STATUSES.cancelled) }
+  def cancel_descendants(instructions: [])
+    descendants.select(&:open?).each do |desc|
+      desc.update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: instructions)
+    end
   end
 
   def create_twin_of_type(_params)
@@ -389,7 +460,7 @@ class Task < CaseflowRecord
   end
 
   def duplicate_org_task
-    assigned_to.is_a?(Organization) && children.any? do |child_task|
+    assigned_to.is_a?(Organization) && descendants.any? do |child_task|
       User.name == child_task.assigned_to_type && type == child_task.type
     end
   end
@@ -485,7 +556,42 @@ class Task < CaseflowRecord
 
     update_with_instructions(status: Constants.TASK_STATUSES.cancelled, instructions: reassign_params[:instructions])
 
+    appeal.overtime = false if appeal.overtime? && reassign_clears_overtime?
+
     [sibling, self, sibling.children].flatten
+  end
+
+  def can_move_on_docket_switch?
+    return false unless open_with_no_children?
+    return false if type.include?("DocketSwitch")
+    return false if %w[RootTask DistributionTask HearingTask EvidenceSubmissionWindowTask].include?(type)
+    return false if ancestor_task_of_type(HearingTask).present?
+    return false if ancestor_task_of_type(EvidenceSubmissionWindowTask).present?
+
+    true
+  end
+
+  # This method is for copying a task and its ancestors to a new appeal stream
+  def copy_with_ancestors_to_stream(new_appeal_stream)
+    return unless parent
+
+    new_task_attributes = attributes.reject { |attr| %w[id created_at updated_at appeal_id parent_id].include?(attr) }
+    new_task_attributes["appeal_id"] = new_appeal_stream.id
+
+    # This method recurses until the parent is nil or a task of its type is already present on the new stream
+    existing_new_parent = new_appeal_stream.tasks.find { |task| task.type == parent.type }
+    new_parent = existing_new_parent || parent.copy_with_ancestors_to_stream(new_appeal_stream)
+
+    # Do not copy orphaned branches
+    return unless new_parent
+
+    new_task_attributes["parent_id"] = new_parent.id
+
+    # Skip validation since these are not new tasks (and don't need to have a status of assigned, for example)
+    new_stream_task = self.class.new(new_task_attributes)
+    new_stream_task.save(validate: false)
+
+    new_stream_task
   end
 
   def root_task(task_id = nil)
@@ -523,6 +629,7 @@ class Task < CaseflowRecord
       tasks.each { |task| task.paper_trail.save_with_version }
       tasks.update_all(
         status: Constants.TASK_STATUSES.cancelled,
+        cancelled_by_id: RequestStore[:current_user]&.id,
         closed_at: Time.zone.now
       )
       tasks.each { |task| task.reload.paper_trail.save_with_version }
@@ -547,6 +654,34 @@ class Task < CaseflowRecord
 
   def stays_with_reassigned_parent?
     open?
+  end
+
+  def reassign_clears_overtime?
+    false
+  end
+
+  def serialize_for_cancellation
+    assignee_display_name = if assigned_to.is_a?(Organization)
+                              assigned_to.name
+                            else
+                              "#{assigned_to.full_name.titlecase} (#{assigned_to.css_id})"
+                            end
+
+    {
+      id: id,
+      assigned_to_email: assigned_to.is_a?(Organization) ? assigned_to.admins.first&.email : assigned_to.email,
+      assigned_to_name: assignee_display_name,
+      type: type
+    }
+  end
+
+  # currently only defined by ScheduleHearingTask and AssignHearingDispositionTask for virtual hearing related updates
+  def alerts
+    @alerts ||= []
+  end
+
+  def org_task_and_cavc_lit_support_member(user)
+    assigned_to_type == "Organization" && CavcLitigationSupport.singleton.user_has_access?(user)
   end
 
   private
@@ -585,6 +720,10 @@ class Task < CaseflowRecord
     saved_change_to_attribute?("status") && !open?
   end
 
+  def task_will_be_cancelled?
+    status_change_to_be_saved&.last == Constants.TASK_STATUSES.cancelled
+  end
+
   def task_just_closed_and_has_parent?
     task_just_closed? && parent
   end
@@ -617,6 +756,10 @@ class Task < CaseflowRecord
 
   def set_assigned_at
     self.assigned_at = created_at unless assigned_at
+  end
+
+  def set_cancelled_by_id
+    self.cancelled_by_id = RequestStore[:current_user].id if RequestStore[:current_user]&.id
   end
 
   STATUS_TIMESTAMPS = {

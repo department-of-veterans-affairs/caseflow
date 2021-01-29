@@ -55,7 +55,8 @@ class RequestIssue < CaseflowRecord
     dismissed_matter_of_law: "dismissed_matter_of_law",
     stayed: "stayed",
     ineligible: "ineligible",
-    no_decision: "no_decision"
+    no_decision: "no_decision",
+    docket_switch: "docket_switch"
   }
 
   enum correction_type: {
@@ -423,7 +424,8 @@ class RequestIssue < CaseflowRecord
   end
 
   def close!(status:, closed_at_value: Time.zone.now)
-    return unless closed_at.nil?
+    # No need to update if already closed unless switching from ineligible to removed
+    return unless closed_at.nil? || (status.to_sym == :removed && ineligible?)
 
     transaction do
       update!(closed_at: closed_at_value, closed_status: status)
@@ -466,6 +468,17 @@ class RequestIssue < CaseflowRecord
       # Removing a request issue also deletes the associated request_decision_issue
       request_decision_issues.update_all(deleted_at: Time.zone.now)
       canceled! if submitted_not_processed?
+    end
+  end
+
+  def move_stream!(new_appeal_stream:, closed_status:)
+    return unless decision_review.is_a?(Appeal)
+
+    transaction do
+      new_issue_attributes = attributes.reject { |attr| %w[id created_at updated_at].include?(attr) }
+      new_issue_attributes["decision_review_id"] = new_appeal_stream.id
+      self.class.create!(new_issue_attributes)
+      close!(status: closed_status)
     end
   end
 
@@ -567,6 +580,14 @@ class RequestIssue < CaseflowRecord
     end_product_establishment.contention_for_object(self)
   end
 
+  def bgs_contention
+    end_product_establishment&.bgs_contention_for_object(self)
+  end
+
+  def exam_requested?
+    bgs_contention&.exam_requested?
+  end
+
   def editable?
     !contention_connected_to_rating?
   end
@@ -602,6 +623,13 @@ class RequestIssue < CaseflowRecord
     create_legacy_issue_optin!
   end
 
+  def timely_issue?(receipt_date)
+    return true unless receipt_date && decision_date
+    return true if untimely_exemption
+
+    decision_date >= (receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
+  end
+
   private
 
   def create_legacy_issue!
@@ -620,15 +648,14 @@ class RequestIssue < CaseflowRecord
       request_issue: self,
       original_disposition_code: vacols_issue.disposition_id,
       original_disposition_date: vacols_issue.disposition_date,
-      legacy_issue: legacy_issues.first
+      legacy_issue: legacy_issues.first,
+      original_legacy_appeal_decision_date: vacols_issue&.legacy_appeal&.decision_date,
+      original_legacy_appeal_disposition_code: vacols_issue&.legacy_appeal&.case_record&.bfdc,
+      folder_decision_date: vacols_issue&.legacy_appeal&.case_record&.folder&.tidcls
     )
   end
 
-  # When a request issue already has a rating in VBMS, prevent user from editing it.
-  # LockedRatingError indicates that the matching rating issue could be locked,
-  # we can't know if the rating issues include this specific issue
-  # BackfilledRatingError prevents from fetching the list of ratings
-  # so we don't know if there is a rating in progress
+  # When a request issue contention is connected to a new rating issue, it can no longer be removed in VBMS.
   def contention_connected_to_rating?
     if contention_reference_id && end_product_establishment&.associated_rating
       return matching_rating_issues.any?
@@ -637,8 +664,6 @@ class RequestIssue < CaseflowRecord
     false
   rescue Rating::NilRatingProfileListError
     false
-  rescue PromulgatedRating::LockedRatingError, PromulgatedRating::BackfilledRatingError
-    true
   end
 
   def limited_poa
@@ -772,6 +797,8 @@ class RequestIssue < CaseflowRecord
       rating_profile_date: rating_issue.profile_date,
       decision_review: decision_review,
       benefit_type: rating_issue.benefit_type,
+      subject_text: rating_issue.subject_text,
+      percent_number: rating_issue.percent_number,
       end_product_last_action_date: end_product_establishment.last_action_date
     )
   end

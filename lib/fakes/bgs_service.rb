@@ -125,6 +125,45 @@ class Fakes::BGSService
     records.values
   end
 
+  def find_contentions_by_claim_id(claim_id)
+    contentions = self.class.end_product_store.inflated_bgs_contentions_for(claim_id)
+
+    if contentions.blank?
+      fail BGS::ShareError, "No benefit claims found with claim id: #{claim_id.to_i}"
+    end
+
+    format_contentions(contentions)
+  end
+
+  # :reek:FeatureEnvy
+  def find_current_rating_profile_by_ptcpnt_id(participant_id)
+    record = get_rating_record(participant_id)
+    fail BGS::ShareError, "No Record Found" if record.blank?
+
+    # We grab the latest promulgated rating, assuming that under the hood BGS also does.
+    rating = record[:ratings].max_by { |rt| rt[:prmlgn_dt] }
+    rating_at_issue_profile_data(rating)
+  end
+
+  def format_contentions(contentions)
+    { contentions: contentions.map { |contention| format_contention(contention) } }
+  end
+
+  def format_contention(contention)
+    {
+      cntntn_id: contention[:reference_id],
+      clmnt_txt: contention[:text],
+      cntntn_type_cd: contention[:type_code],
+      clsfcn_id: contention[:classification_id],
+      clsfcn_txt: contention[:classification_text],
+      med_ind: contention[:medical_indicator],
+      orig_source_type_cd: contention[:orig_source_type_code],
+      begin_dt: contention[:begin_date],
+      clm_id: contention[:claim_id],
+      special_issues: contention[:special_issues]
+    }
+  end
+
   def get_veteran_record(file_number)
     self.class.get_veteran_record(file_number)
   end
@@ -133,10 +172,12 @@ class Fakes::BGSService
     self.class.rating_store.fetch_and_inflate(participant_id) || {}
   end
 
-  def cancel_end_product(file_number, end_product_code, end_product_modifier)
+  # benefit_type_code is not available data on end product data we fetch from BGS,
+  # and isn't part of the end product store in fakes
+  def cancel_end_product(file_number, end_product_code, end_product_modifier, payee_code, _benefit_type)
     end_products = get_end_products(file_number)
     matching_eps = end_products.select do |ep|
-      ep[:claim_type_code] == end_product_code && ep[:end_product_type_code] == end_product_modifier
+      ep[:claim_type_code] == end_product_code && ep[:modifier] == end_product_modifier && ep[:payee_code] == payee_code
     end
     matching_eps.each do |ep|
       ep[:status_type_code] = "CAN"
@@ -161,6 +202,7 @@ class Fakes::BGSService
         first_name: "Bob",
         middle_name: "Billy",
         last_name: "Vance",
+        ssn_nbr: "666001234",
         email_address: "bob.vance@caseflow.gov"
       }
     elsif participant_id == "1129318238"
@@ -170,6 +212,7 @@ class Fakes::BGSService
         middle_name: "",
         last_name: "Smith",
         name_suffix: "Jr.",
+        ssn_nbr: "666002222",
         email_address: "cathy.smith@caseflow.gov"
       }
     elsif participant_id == "600153863"
@@ -178,6 +221,7 @@ class Fakes::BGSService
         fist_name: "Clarence",
         middle_name: "",
         last_name: "Darrow",
+        ssn_nbr: "666003333",
         email_address: "clarence.darrow@caseflow.gov"
       }
     else
@@ -186,6 +230,7 @@ class Fakes::BGSService
         first_name: "Tom",
         middle_name: "Edward",
         last_name: "Brady",
+        ssn_nbr: "666004444",
         email_address: "tom.brady@caseflow.gov"
       }
     end
@@ -284,6 +329,45 @@ class Fakes::BGSService
     result.empty? ? nil : result
   end
 
+  def poas_list
+    [
+      { ptcpnt_id: "12345678", nm: "NANCY BAUMBACH", org_type_nm: "POA Attorney" },
+      { ptcpnt_id: "55114884", nm: "RICH TREUTING SR.", org_type_nm: "POA Agent" },
+      { ptcpnt_id: "56242925", nm: "MADELINE JENKINS", org_type_nm: "POA Attorney" },
+      { ptcpnt_id: "21543986", nm: "ACADIA VETERAN SERVICES", org_type_nm: "POA State Organization" },
+      { ptcpnt_id: "56154689", nm: "RANDALL KOHLER III", org_type_nm: "POA Attorney" }
+    ]
+  end
+
+  def pay_grade_list
+    [
+      { code: "E1", name: "E-1" },
+      { code: "E2", name: "E-2" },
+      { code: "E3", name: "E-3" },
+      { code: "E4", name: "E-4" },
+      { code: "E5", name: "E-5" },
+      { code: "E6", name: "E-6" },
+      { code: "E9", name: "E-9" },
+      { code: "O1", name: "O-1" },
+      { code: "O2", name: "O-2" },
+      { code: "O3", name: "O-3" },
+      { code: "O4", name: "O-4" },
+      { code: "O5", name: "O-5" },
+      { code: "WO1", name: "WO-1" },
+      { code: "WO2", name: "WO-2" },
+      { code: "WO3", name: "WO-3" },
+      { code: "WO4", name: "WO-4" }
+    ]
+  end
+
+  def get_security_profile(username:, station_id:)
+    if username == "BVAAABSHIRE"
+      { job_title: "Senior Veterans Service Representative" }
+    else
+      { job_title: "Legal Clerk" }
+    end
+  end
+
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
     address = (self.class.address_records || {})[participant_id]
@@ -331,9 +415,12 @@ class Fakes::BGSService
     format_promulgated_rating(build_ratings_in_range(ratings, start_date, end_date))
   end
 
+  def fetch_rating_profile(participant_id:, profile_date:)
+    stored_rating_profile(participant_id: participant_id, profile_date: profile_date)
+  end
+
   def fetch_rating_profiles_in_range(participant_id:, start_date:, end_date:)
     ratings = get_rating_record(participant_id)[:ratings] || []
-
     # Simulate the response if participant doesn't exist or doesn't have any ratings
     if ratings.blank?
       return { response: { response_text: "No Data Found" } }
@@ -344,7 +431,7 @@ class Fakes::BGSService
 
   def build_ratings_in_range(all_ratings, start_date, end_date)
     ratings = all_ratings.select do |rating|
-      start_date <= rating[:prmlgn_dt] && end_date >= rating[:prmlgn_dt]
+      rating[:prmlgn_dt].nil? || (start_date <= rating[:prmlgn_dt] && end_date >= rating[:prmlgn_dt])
     end
 
     # BGS returns the data not as an array if there is only one rating
@@ -358,10 +445,38 @@ class Fakes::BGSService
   end
 
   def format_rating_at_issue(ratings)
+    ratings = Array.wrap(ratings).map do |rating|
+      rating_at_issue_profile_data(rating)
+    end
+
     { rba_profile_list: ratings.empty? ? nil : { rba_profile: ratings } }
   end
 
-  def fetch_rating_profile(participant_id:, profile_date:)
+  def rating_at_issue_profile_data(rating)
+    promulgated_rating_data = rating.dig(:comp_id)
+
+    # If a PromulgatedRating was originally stored in rating_store
+    # convert to be compatible with RatingAtIssue
+    if promulgated_rating_data.present?
+      rating_profile = stored_rating_profile(
+        participant_id: promulgated_rating_data[:ptcpnt_vet_id],
+        profile_date: promulgated_rating_data[:prfil_dt]
+      )
+
+      {
+        prfl_dt: promulgated_rating_data[:prfil_dt],
+        ptcpnt_vet_id: promulgated_rating_data[:ptcpnt_vet_id],
+        prmlgn_dt: rating[:prmlgn_dt],
+        rba_issue_list: { rba_issue: rating_profile[:rating_issues] },
+        disability_list: { disability: rating_profile[:disabilities] },
+        rba_claim_list: { rba_claim: rating_profile[:associated_claims] }
+      }
+    else
+      rating
+    end
+  end
+
+  def stored_rating_profile(participant_id:, profile_date:)
     normed_date_key = Fakes::RatingStore.normed_profile_date_key(profile_date).to_sym
     rating_profile = (get_rating_record(participant_id)[:profiles] || {})[normed_date_key]
 

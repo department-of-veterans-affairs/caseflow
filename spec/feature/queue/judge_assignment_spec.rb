@@ -36,7 +36,6 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       expect(page).to have_content("Moe Syzlak")
       expect(page).to have_content("Alice Macgyvertwo")
 
-      safe_click ".Select"
       click_dropdown(text: "Other")
       safe_click ".dropdown-Other"
       # expect attorneys and acting judges but not judges
@@ -70,11 +69,11 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         check judge_task_one.id.to_s, allow_label_click: true
         check judge_task_two.id.to_s, allow_label_click: true
 
-        safe_click ".Select"
+        safe_click ".cf-select"
         click_dropdown(text: attorney_one.full_name)
 
         click_on "Assign 2 cases"
-        expect(page).to have_content("Assigned 2 cases")
+        expect(page).to have_content("Assigned 2 tasks to #{attorney_one.full_name}")
       end
 
       step "navigates to the attorney's case list" do
@@ -89,11 +88,11 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         scroll_to(".usa-table-borderless")
         check attorney_one.tasks.first.id.to_s, allow_label_click: true
 
-        safe_click ".Select"
+        safe_click ".cf-select"
         click_dropdown(text: attorney_two.full_name)
 
         click_on "Assign 1 case"
-        expect(page).to have_content("Assigned 1 case")
+        expect(page).to have_content("Reassigned 1 task to #{attorney_two.full_name}")
       end
 
       step "navigates to the other attorney's case list" do
@@ -119,28 +118,20 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
     before { User.authenticate!(user: judge_two.user) }
     context "attempt to view other team's attorney's cases" do
+      include_examples "accessing assigned queue for attorney in other team"
+
       it "allows visiting own case assign page" do
         visit "/queue/#{judge_two.user.css_id}/assign"
         expect(page).to have_content("Assign 0 Cases")
       end
 
-      include_examples "accessing assigned queue for attorney in other team"
-    end
+      it "succeeds after user is added to SpecialCaseMovementTeam" do
+        SpecialCaseMovementTeam.singleton.add_user(judge_two.user)
+        visit "/queue/#{judge_two.user.css_id}/assign/#{attorney_one.id}"
+        expect(page).to have_content("Attorney is not part of the specified judge's team.")
 
-    context "When :scm_view_judge_assign_queue feature is enabled" do
-      before { FeatureToggle.enable!(:scm_view_judge_assign_queue) }
-      after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
-      context "attempt to view other team's attorney's cases" do
-        include_examples "accessing assigned queue for attorney in other team"
-
-        it "succeeds after user is added to SpecialCaseMovementTeam" do
-          SpecialCaseMovementTeam.singleton.add_user(judge_two.user)
-          visit "/queue/#{judge_two.user.css_id}/assign/#{attorney_one.id}"
-          expect(page).to have_content("Attorney is not part of the specified judge's team.")
-
-          visit "/queue/#{judge_one.user.css_id}/assign/#{attorney_one.id}"
-          expect(page).to have_content("#{attorney_one.full_name}'s Cases")
-        end
+        visit "/queue/#{judge_one.user.css_id}/assign/#{attorney_one.id}"
+        expect(page).to have_content("#{attorney_one.full_name}'s Cases")
       end
     end
   end
@@ -188,7 +179,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
         visit "/queue"
 
-        expect(page).to have_content("Review 1 Cases")
+        expect(page).to have_content("Your cases")
         expect(page).to have_content("#{veteran.first_name} #{veteran.last_name}")
         expect(page).to have_content(appeal.veteran_file_number)
         expect(page).to have_content(case_review.document_id)
@@ -211,7 +202,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         click_on COPY::JUDGE_REVIEW_DROPDOWN_LINK_LABEL
 
         expect(page).to have_current_path("/queue")
-        expect(page).to have_content("Review 1 Cases")
+        expect(page).to have_content("Your cases")
       end
     end
   end
@@ -235,7 +226,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         check judge_task_one.id.to_s, allow_label_click: true
         check judge_task_two.id.to_s, allow_label_click: true
 
-        safe_click ".Select"
+        safe_click ".cf-select"
         click_dropdown(text: attorney_one.full_name)
 
         click_on "Assign 2 cases"
@@ -293,9 +284,10 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
       click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label)
       click_dropdown(prompt: "Select a user", text: attorney_one.full_name)
+      fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
       click_on("Submit")
 
-      expect(page).to have_content("Assigned 1 case")
+      expect(page).to have_content("Assigned 1 task to #{attorney_one.full_name}")
     end
   end
 
@@ -341,9 +333,10 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       click_dropdown(prompt: "Select a user", text: "Other")
       safe_click ".dropdown-Other"
       click_dropdown({ text: judge_two.user.full_name }, page.find(".dropdown-Other"))
+      fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
 
       click_on("Submit")
-      expect(page).to have_content("Assigned 1 case")
+      expect(page).to have_content("Assigned 1 task to #{judge_two.user.full_name}")
     end
   end
 

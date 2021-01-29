@@ -4,6 +4,12 @@
 # Task assigned to VSOs to submit an Informal Hearing Presentation for Veterans who have elected not to have a hearing.
 # IHPs are a chance for VSOs to make final arguments before a case is sent to the Board.
 # BVA typically (but not always) waits for an IHP to be submitted before making a decision.
+#
+# If an appeal is in the Direct Review docket, this task is automatically created as a child of DistributionTask if the
+# representing VSO `should_write_ihp?(appeal)` -- see `IhpTasksFactory.create_ihp_tasks!`.
+#
+# For an Evidence Submission docket, this task is created as the child of DistributionTask
+# after the 90 evidence submission window is complete.
 
 class InformalHearingPresentationTask < Task
   # https://github.com/department-of-veterans-affairs/caseflow/issues/10824
@@ -46,5 +52,17 @@ class InformalHearingPresentationTask < Task
 
   def self.label
     COPY::IHP_TASK_LABEL
+  end
+
+  def update_from_params(params, user)
+    transaction do
+      ihp_path = params.delete(:ihp_path)
+
+      if FeatureToggle.enabled?(:ihp_notification) && params[:status] == Constants.TASK_STATUSES.completed
+        IhpDraft.create_or_update_from_task!(self, ihp_path)
+      end
+
+      super(params, user)
+    end
   end
 end

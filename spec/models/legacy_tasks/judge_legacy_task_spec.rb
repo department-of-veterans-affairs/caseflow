@@ -90,9 +90,6 @@ describe JudgeLegacyTask, :postgres do
       context "when the user is on the special case movement team" do
         let(:user) { create(:user).tap { |scm_user| SpecialCaseMovementTeam.singleton.add_user(scm_user) } }
 
-        before { FeatureToggle.enable!(:scm_view_judge_assign_queue) }
-        after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
-
         it "returns only case movement actions" do
           expect(subject).to match_array [
             Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,

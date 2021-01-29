@@ -13,11 +13,9 @@ export default {
 
 export const standard = () => <AddColocatedTaskForm onChange={action('onChange', 'standard')} />;
 
-standard.story = {
-  parameters: {
-    docs: {
-      storyDescription:
-        'This allows a user to specify a particular admin action along with related context/instructions'
-    }
+standard.parameters = {
+  docs: {
+    storyDescription:
+      'This allows a user to specify a particular admin action along with related context/instructions'
   }
 };

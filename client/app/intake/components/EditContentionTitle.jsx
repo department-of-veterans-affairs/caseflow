@@ -1,5 +1,6 @@
-import React from 'react';
-import COPY from '../../../COPY.json';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import COPY from '../../../COPY';
 import TextareaField from '../../components/TextareaField';
 import Button from '../../components/Button';
 import { css } from 'glamor';
@@ -7,85 +8,115 @@ import { setEditContentionText } from '../actions/addIssues';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-export class EditContentionTitle extends React.Component {
+export const EditContentionTitle = ({
+  issue,
+  issueIdx,
+  setEditContentionText: callback,
+}) => {
+  const { text, editedDescription, notes } = issue;
+  const [editing, setEditing] = useState(false);
+  const [value, setValue] = useState(editedDescription ?? text);
 
-  constructor(props) {
-    super(props);
+  const toggleEdit = () => setEditing(!editing);
 
-    this.state = {
-      showEditTitle: false,
-      editedDescription: props.issue.editedDescription ? this.props.issue.editedDescription : this.props.issue.text
-    };
-  }
+  const handleChange = (val) => setValue(val);
 
-  editContentionOnClick = () => {
-    this.setState({ showEditTitle: true });
-  }
+  const handleSubmit = () => {
+    callback(issueIdx, value);
+    setEditing(false);
+  };
 
-  hideEditContentionOnClick = () => {
-    this.setState({ showEditTitle: false });
-  }
+  // Ensure that we update our state in case our inputs have changed
+  useEffect(() => setValue(editedDescription ?? text), [issue]);
 
-  editContentionTextOnChange = (value) => {
-    this.setState({
-      editedDescription: value
-    });
-  }
+  const label = `${issueIdx + 1}. Contention title`;
 
-  onClickSaveEdit = () => {
-    this.props.setEditContentionText(this.props.issueIdx, this.state.editedDescription);
-    this.setState({ showEditTitle: false });
-  }
-
-  render() {
-    const title = `${this.props.issueIdx + 1}. Contention title `;
-
-    return <div>
-      { !this.state.showEditTitle && <div className="issue-edit-text">
-        <Button
-          onClick={this.editContentionOnClick}
-          classNames={['cf-btn-link', 'edit-contention-issue']}
-        >
-          {COPY.INTAKE_EDIT_TITLE}
-        </Button>
-      </div> }
-
-      { this.state.showEditTitle && <div className="issue-text-style">
-        <TextareaField
-          name={title}
-          placeholder={this.props.issue.editedDescription ? this.props.issue.editedDescription : this.props.issue.text}
-          onChange= {this.editContentionTextOnChange}
-          value={this.state.editedDescription}
-          strongLabel
-        />
-        <p>{this.props.issue.editedDescription ? this.props.issue.editedDescription : this.props.issue.text}</p>
-        {this.props.issue.notes && <p {...css({
-          fontStyle: 'italic' })}>Notes: {this.props.issue.notes}</p>}
-        <div className="issue-text-buttons">
-          {this.state.showEditTitle && <Button
-            classNames={['cf-btn-link']}
-            onClick={this.hideEditContentionOnClick}
-          >
-                Cancel
-          </Button>
-          }
+  return (
+    <div>
+      {!editing && (
+        <div className="issue-edit-text">
           <Button
-            name="submit-issue"
-            classNames={['cf-submit', 'issue-edit-submit-button']}
-            disabled={!this.state.editedDescription}
-            onClick={this.onClickSaveEdit}
+            onClick={toggleEdit}
+            classNames={['cf-btn-link', 'edit-contention-issue']}
           >
-                Submit
+            {COPY.INTAKE_EDIT_TITLE}
           </Button>
         </div>
-      </div> }
-    </div>;
-  }
-}
+      )}
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setEditContentionText
-}, dispatch);
+      {editing && (
+        <div className="issue-text-style">
+          <TextareaField
+            name={label}
+            label={label}
+            placeholder={editedDescription ?? text}
+            onChange={handleChange}
+            value={value}
+            strongLabel
+          />
+          <p>{editedDescription ?? text}</p>
+          {notes && (
+            <p
+              {...css({
+                fontStyle: 'italic',
+              })}
+            >
+              Notes: {notes}
+            </p>
+          )}
+          <div className="issue-text-buttons">
+            {editing && (
+              <Button classNames={['cf-btn-link']} onClick={toggleEdit}>
+                Cancel
+              </Button>
+            )}
+            <Button
+              name="submit-issue"
+              classNames={['cf-submit', 'issue-edit-submit-button']}
+              disabled={!value}
+              onClick={handleSubmit}
+            >
+              Submit
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
-export default connect(null, mapDispatchToProps
+EditContentionTitle.propTypes = {
+
+  /**
+   * Request issue; proptypes here are minimal subset
+   */
+  issue: PropTypes.shape({
+    editedDescription: PropTypes.string,
+    index: PropTypes.number,
+    notes: PropTypes.string,
+    text: PropTypes.string,
+  }),
+
+  /**
+   * Number (should match `issue.index`)
+   */
+  issueIdx: PropTypes.number,
+
+  /**
+   * Callback with two arguments: issue index and new value
+   */
+  setEditContentionText: PropTypes.func,
+};
+
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      setEditContentionText,
+    },
+    dispatch
+  );
+
+export default connect(
+  null,
+  mapDispatchToProps
 )(EditContentionTitle);

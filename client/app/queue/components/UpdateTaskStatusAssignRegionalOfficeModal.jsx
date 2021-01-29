@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { css } from 'glamor';
 
-import COPY from '../../../COPY.json';
+import COPY from '../../../COPY';
 import QueueFlowModal from './QueueFlowModal';
 import RegionalOfficeDropdown from '../../components/DataDropdowns/RegionalOffice';
 import TextareaField from '../../components/TextareaField';
@@ -43,7 +43,7 @@ class UpdateTaskStatusAssignRegionalOfficeModal extends React.Component {
           instructions: notes,
           business_payloads: {
             values: {
-              regional_office_value: regionalOffice
+              regional_office_value: regionalOffice.key
             }
           }
         }
@@ -71,6 +71,7 @@ class UpdateTaskStatusAssignRegionalOfficeModal extends React.Component {
         {actionConfiguration.modal_body && <p>{actionConfiguration.modal_body}</p>}
         <RegionalOfficeDropdown
           errorMessage={hasError ? COPY.REGIONAL_OFFICE_REQUIRED_MESSAGE : null}
+          excludeVirtualHearingsOption
           value={this.state.regionalOffice}
           onChange={this.onRegionalOfficeSelected}
         />
@@ -104,11 +105,13 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 UpdateTaskStatusAssignRegionalOfficeModal.propTypes = {
-  updateStatusTo: PropTypes.string.isRequired,
-  task: PropTypes.object.isRequired,
   actionConfiguration: PropTypes.object.isRequired,
   appealId: PropTypes.string.isRequired,
-  hasError: PropTypes.bool.isRequired
+  hasError: PropTypes.bool.isRequired,
+  highlightInvalidFormItems: PropTypes.func,
+  requestPatch: PropTypes.func,
+  task: PropTypes.object.isRequired,
+  updateStatusTo: PropTypes.string.isRequired,
 };
 
 export default (withRouter(

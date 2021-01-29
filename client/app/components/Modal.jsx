@@ -7,8 +7,7 @@ import Button from './Button';
 import _ from 'lodash';
 import { css } from 'glamor';
 
-const modalTextStyling = css({ width: '100%',
-  fontFamily: 'Source Sans Pro' });
+const modalTextStyling = css({ width: '100%', fontFamily: 'Source Sans Pro' });
 
 const iconStyling = css({
   float: 'left',
@@ -16,9 +15,15 @@ const iconStyling = css({
   flexShrink: 0,
   flexBasis: '13%',
   marginTop: '1rem',
-  color: '#323a45'
+  color: '#323a45',
 });
 
+/**
+ * Modals are 490 pixels in width with 30px padding around the border and contain the following:
+ * a title, explanation text, a divider, and action buttons.
+ * There are modal-specific classes that must be included in your modal (see below code snippets).
+ * Whenever possible, use a close link as the left action.
+ */
 export default class Modal extends React.Component {
   constructor(props) {
     super(props);
@@ -104,7 +109,8 @@ export default class Modal extends React.Component {
       cancelButton,
       title,
       icon,
-      customStyles
+      customStyles,
+      scrollLock
     } = this.props;
 
     let modalButtons;
@@ -129,7 +135,7 @@ export default class Modal extends React.Component {
         aria-describedby="modal_id-desc"
         aria-modal="true"
       >
-        <ScrollLock />
+        {scrollLock && <ScrollLock />}
         <div className="cf-modal-body" id={id || ''} {...customStyles}>
           <button
             type="button"
@@ -138,11 +144,12 @@ export default class Modal extends React.Component {
             onClick={closeHandler}
             ref={this.modalCloseFocus}
           >
+            <span className="usa-sr-only">Close</span>
             {closeSymbolHtml()}
           </button>
           <div style={{ display: 'flex' }}>
             {icon && <i className={`fa fa-2x fa-${icon}`} {...iconStyling} />}
-            <div>
+            <div {...css({ flexGrow: 1 })}>
               <h1 id="modal_id-title">{title}</h1>
               <div {...modalTextStyling}>{children}</div>
             </div>
@@ -157,7 +164,8 @@ export default class Modal extends React.Component {
 
 Modal.defaultProps = {
   buttons: [],
-  className: ''
+  className: '',
+  scrollLock: true
 };
 
 Modal.propTypes = {
@@ -169,16 +177,20 @@ Modal.propTypes = {
     }
 
     if (buttons.length && (props.cancelButton || props.confirmButton)) {
-      return new Error('You cannot set both `buttons` and one of `confirmButton` or `cancelButton`');
+      return new Error(
+        'You cannot set both `buttons` and one of `confirmButton` or `cancelButton`'
+      );
     }
   },
   className: PropTypes.string,
   confirmButton: PropTypes.element,
   cancelButton: PropTypes.element,
   id: PropTypes.string,
-  label: PropTypes.string,
   noDivider: PropTypes.bool,
+
+  // Enable/disable the `ScrollLock` element from displaying (for Storybook).
+  scrollLock: PropTypes.bool,
   specialContent: PropTypes.func,
   title: PropTypes.string.isRequired,
-  icon: PropTypes.string
+  icon: PropTypes.string,
 };

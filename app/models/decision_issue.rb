@@ -9,8 +9,6 @@ class DecisionIssue < CaseflowRecord
 
   with_options if: :appeal? do
     validates :disposition, inclusion: { in: Constants::ISSUE_DISPOSITIONS_BY_ID.keys.map(&:to_s) }
-    validates :diagnostic_code, inclusion: { in: Constants::DIAGNOSTIC_CODE_DESCRIPTIONS.keys.map(&:to_s) },
-                                allow_nil: true
   end
 
   # Attorneys will be entering in a description of the decision manually for appeals
@@ -198,7 +196,7 @@ class DecisionIssue < CaseflowRecord
   end
 
   def processed_in_caseflow?
-    decision_review.processed_in_caseflow?
+    decision_review.processed_in_caseflow? || decision_review.tasks.active.any?
   end
 
   # the decision date is approximate but we need it for timeliness checks.
@@ -234,7 +232,7 @@ class DecisionIssue < CaseflowRecord
   end
 
   def dta_payee_code
-    decision_review.payee_code || prior_payee_code || decision_review.claimant.bgs_payee_code
+    decision_review.payee_code || prior_payee_code || decision_review.claimant&.bgs_payee_code
   end
 
   def find_remand_supplemental_claim
@@ -261,7 +259,8 @@ class DecisionIssue < CaseflowRecord
 
     sc.create_claimant!(
       participant_id: decision_review.claimant_participant_id,
-      payee_code: dta_payee_code
+      payee_code: dta_payee_code,
+      type: decision_review.claimant.type
     )
 
     sc

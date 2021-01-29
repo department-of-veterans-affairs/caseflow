@@ -31,12 +31,17 @@ Rails.application.routes.draw do
       resources :hearings, only: :show, param: :hearing_day
     end
     namespace :v3 do
-      namespace :decision_review do
+      namespace :decision_reviews do
+        namespace :higher_level_reviews do
+          get "contestable_issues(/:benefit_type)", to: "contestable_issues#index"
+        end
         resources :higher_level_reviews, only: [:create, :show]
         resources :supplemental_claims, only: [:create, :show]
+        namespace :appeals do
+          get 'contestable_issues', to: "contestable_issues#index"
+        end
         resources :appeals, only: [:create, :show]
         resources :intake_statuses, only: :show
-        resources :contestable_issues, only: [:index]
       end
     end
     namespace :docs do
@@ -125,6 +130,8 @@ Rails.application.routes.draw do
       get 'tasks', to: "tasks#for_appeal"
       patch 'update'
       post 'work_mode', to: "work_modes#create"
+      post 'cavc_remand', to: "cavc_remands#create"
+      patch 'nod_date_update', to: "nod_date_updates#update"
     end
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
@@ -180,6 +187,7 @@ Rails.application.routes.draw do
 
   scope path: '/intake' do
     get "/", to: 'intakes#index'
+    get "/attorneys", to: 'intakes#attorneys'
     get "/manager", to: 'intake_manager#index'
     get "/manager/flagged_for_review", to: 'intake_manager#flagged_for_review'
     get "/manager/users/:user_css_id", to: 'intake_manager#user_stats'
@@ -238,6 +246,7 @@ Rails.application.routes.draw do
   resources :team_management, only: [:index, :update]
   get '/team_management(*rest)', to: 'team_management#index'
   post '/team_management/judge_team/:user_id', to: 'team_management#create_judge_team'
+  post '/team_management/dvc_team/:user_id', to: 'team_management#create_dvc_team'
   post '/team_management/private_bar', to: 'team_management#create_private_bar'
   post '/team_management/national_vso', to: 'team_management#create_national_vso'
   post '/team_management/field_vso', to: 'team_management#create_field_vso'
@@ -256,6 +265,7 @@ Rails.application.routes.draw do
     end
     resources(:place_hold, only: [:create], controller: 'tasks/place_hold')
     resources(:end_hold, only: [:create], controller: 'tasks/end_hold')
+    resources(:extension_request, only: [:create], controller: 'extension_request')
   end
 
   resources :judge_assign_tasks, only: [:create]
@@ -306,6 +316,7 @@ Rails.application.routes.draw do
   post "post_decision_motions/return", to: "post_decision_motions#return_to_lit_support"
   post "post_decision_motions/return_to_judge", to: "post_decision_motions#return_to_judge"
   post "post_decision_motions", to: "post_decision_motions#create"
+  post "docket_switches", to: "docket_switches#create"
 
   # :nocov:
   namespace :test do
@@ -318,9 +329,12 @@ Rails.application.routes.draw do
       post "/set_user/:id", to: "users#set_user", as: "set_user"
       post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'
       post "/reseed", to: "users#reseed", as: "reseed"
+      get "/data", to: "users#data"
     end
     post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
     post "/toggle_feature", to: "users#toggle_feature", as: "toggle_feature"
   end
   # :nocov:
+
+  get "/route_docs", to: "route_docs#index"
 end

@@ -8,7 +8,6 @@ import SearchableDropdown from '../../../components/SearchableDropdown';
 import Checkbox from '../../../components/Checkbox';
 import TextareaField from '../../../components/TextareaField';
 import { AppealHearingLocationsDropdown } from '../../../components/DataDropdowns';
-import HearingTime from '../modalForms/HearingTime';
 import { pencilSymbol } from '../../../components/RenderFunctions';
 import PropTypes from 'prop-types';
 import VirtualHearingLink from '../VirtualHearingLink';
@@ -16,6 +15,7 @@ import VirtualHearingLink from '../VirtualHearingLink';
 import { DISPOSITION_OPTIONS } from '../../constants';
 import { COLORS } from '../../../constants/AppConstants';
 import COPY from '../../../../COPY';
+import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION_TYPES';
 
 const staticSpacing = css({ marginTop: '5px' });
 
@@ -32,7 +32,7 @@ export const DispositionDropdown = ({ hearing, update, readOnly, openDisposition
           return;
         }
 
-        const fromDisposition = hearing.disposition;
+        const fromDisposition = hearing?.disposition;
         const toDisposition = option.value;
 
         openDispositionModal({
@@ -101,7 +101,7 @@ export const HearingDetailsLink = ({ hearing }) => (
     <b>Hearing Details</b>
     <br />
     <div {...staticSpacing}>
-      <Link href={`/hearings/${hearing.externalId}/details`}>
+      <Link to={`/${hearing.externalId}/details`}>
         Edit Hearing Details
         <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
       </Link>
@@ -233,10 +233,12 @@ StaticRegionalOffice.propTypes = {
 };
 
 export const NotesField = ({ hearing, update, readOnly }) => {
-  const disabled = readOnly || ['postponed', 'cancelled'].indexOf(hearing.disposition) > -1;
+  const disabled = readOnly ||
+    [HEARING_DISPOSITION_TYPES.postponed, HEARING_DISPOSITION_TYPES.cancelled].indexOf(hearing.disposition) > -1;
 
   return (
     <TextareaField
+      maxlength={1000}
       label="Notes"
       name={`${hearing.externalId}-notes`}
       strongLabel
@@ -321,23 +323,6 @@ export const StaticHearingDay = ({ hearing }) => (
 StaticHearingDay.propTypes = {
   hearing: PropTypes.object
 };
-export const TimeRadioButtons = ({ hearing, regionalOffice, update, readOnly }) => {
-  return (
-    <HearingTime
-      regionalOffice={regionalOffice}
-      value={hearing.scheduledTimeString}
-      readOnly={readOnly}
-      onChange={(scheduledTimeString) => update({ scheduledTimeString })}
-    />
-  );
-};
-
-TimeRadioButtons.propTypes = {
-  hearing: PropTypes.object,
-  readOnly: PropTypes.bool,
-  update: PropTypes.func,
-  regionalOffice: PropTypes.string
-};
 
 export const PreppedCheckbox = ({ hearing, update, readOnly }) => (
   <div>
@@ -367,7 +352,7 @@ export const StaticVirtualHearing = ({ hearing, user }) => (
       virtualHearing={hearing.virtualHearing}
       link={hearing?.virtualHearing?.hostLink}
     />
-    {!hearing.virtualHearing.jobCompleted && (
+    {hearing?.virtualHearing?.status === 'pending' && (
       <div {...staticSpacing}>
         <span {...css({ color: COLORS.GREY_MEDIUM })}>{COPY.VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS}</span>
       </div>

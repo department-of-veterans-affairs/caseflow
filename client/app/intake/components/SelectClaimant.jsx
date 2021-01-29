@@ -1,41 +1,73 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'glamor';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import {
   BOOLEAN_RADIO_OPTIONS,
   BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE,
   DECEASED_PAYEE_CODES,
-  LIVING_PAYEE_CODES
+  LIVING_PAYEE_CODES,
 } from '../constants';
-import COPY from '../../../COPY';
-import { useSelector } from 'react-redux';
-import Button from '../../components/Button';
+import { convertStringToBoolean } from '../util';
+import {
+  ADD_CLAIMANT_TEXT,
+  ADD_RELATIONSHIPS,
+  CLAIMANT_NOT_FOUND_START,
+  CLAIMANT_NOT_FOUND_END,
+  DECEASED_CLAIMANT_TITLE,
+  DECEASED_CLAIMANT_MESSAGE,
+  NO_RELATIONSHIPS,
+  SELECT_CLAIMANT_LABEL,
+} from 'app/../COPY';
+import Alert from 'app/components/Alert';
+import Button from 'app/components/Button';
 import classes from './SelectClaimant.module.scss';
 import { AddClaimantModal } from './AddClaimantModal';
 
 const email = React.createElement(
   'a',
-  { href: 'mailto:VACaseflowIntake@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database' },
+  {
+    href:
+      'mailto:VACaseflowIntake@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database',
+  },
   'email'
 );
-const claimantLabel = React.createElement(
-  'p',
-  { id: 'claimantLabel' },
-  COPY.CLAIMANT_NOT_FOUND_START,
-  email,
-  COPY.CLAIMANT_NOT_FOUND_END
+
+const RemovableRadioLabel = ({ text, onRemove, notes }) => (
+  <>
+    <span>{text}</span>{' '}
+    {onRemove && (
+      <Button
+        linkStyling
+        onClick={onRemove}
+        classNames={['remove-item']}
+        styling={{ style: { marginTop: '-1rem' } }}
+      >
+        <i className="fa fa-trash-o" aria-hidden="true" /> Remove
+      </Button>
+    )}
+    <br />
+    <span>
+      <i>{notes}</i>
+    </span>
+  </>
 );
-const noClaimantsCopy = React.createElement(
-  'p',
-  { id: 'noClaimants', className: 'cf-red-text' },
-  COPY.NO_RELATIONSHIPS,
-  email,
-  COPY.CLAIMANT_NOT_FOUND_END
-);
+
+RemovableRadioLabel.propTypes = {
+  text: PropTypes.string,
+  onRemove: PropTypes.func,
+  notes: PropTypes.string,
+};
+
+const claimantNotListedOpt = {
+  value: 'claimant_not_listed',
+  displayText: 'Claimant not listed',
+};
 
 export const SelectClaimant = (props) => {
   const {
+    featureToggles = {},
     formType,
     benefitType,
     isVeteranDeceased,
@@ -48,46 +80,173 @@ export const SelectClaimant = (props) => {
     relationships,
     payeeCode,
     payeeCodeError,
-    setPayeeCode
+    setPayeeCode,
   } = props;
 
-  const { attorneyFees } = useSelector((state) => state.featureToggles);
-  const [showClaimantModal, setShowClaimantModal] = useState(false);
-  const openAddClaimantModal = () => setShowClaimantModal(true);
-  const handleAddClaimant = (newClaimant) => {
-    // eslint-disable-next-line
-    console.log('claimant', newClaimant);
-  };
+  const {
+    attorneyFees,
+    establishFiduciaryEps,
+    deceasedAppellants,
+    nonVeteranClaimants,
+  } = featureToggles;
 
-  const handlePayeeCodeChange = (event) => setPayeeCode(event ? event.value : null);
-  const shouldShowPayeeCode = () => {
-    return formType !== 'appeal' && (benefitType === 'compensation' || benefitType === 'pension');
+  const [showClaimantModal, setShowClaimantModal] = useState(false);
+  const [newClaimant, setNewClaimant] = useState(null);
+  const openAddClaimantModal = () => setShowClaimantModal(true);
+
+  const enableAddClaimantModal = useMemo(
+    () => formType === 'appeal' && attorneyFees && veteranIsNotClaimant && !nonVeteranClaimants,
+    [formType, veteranIsNotClaimant, attorneyFees, nonVeteranClaimants]
+  );
+
+  const enableAddClaimant = useMemo(
+    () => formType === 'appeal' && nonVeteranClaimants && veteranIsNotClaimant,
+    [formType, veteranIsNotClaimant, nonVeteranClaimants]
+  );
+
+  const radioOpts = useMemo(() => {
+    return [
+      ...relationships,
+      ...(newClaimant ? [newClaimant] : []),
+      // Conditionally include "Claimant not listed" option
+      ...(enableAddClaimant ? [claimantNotListedOpt] : []),
+    ];
+  }, [newClaimant, relationships, enableAddClaimant]);
+
+  const allowFiduciary = useMemo(
+    () => establishFiduciaryEps && benefitType === 'fiduciary',
+    [benefitType, establishFiduciaryEps]
+  );
+  const shouldShowPayeeCode = useMemo(() => {
+    return (
+      formType !== 'appeal' &&
+      (benefitType === 'compensation' ||
+        benefitType === 'pension' ||
+        allowFiduciary)
+    );
+  }, [formType, benefitType, allowFiduciary]);
+
+  const handleVeteranIsNotClaimantChange = (value) => {
+    const boolValue = convertStringToBoolean(value);
+
+    setVeteranIsNotClaimant(boolValue);
+    setClaimant({
+      claimant: null,
+      claimantType: boolValue ? 'dependent' : 'veteran',
+    });
   };
+  const handleRemove = () => {
+    setNewClaimant(null);
+    setClaimant({
+      claimant: null,
+      claimantType: 'dependent',
+      claimantNotes: null,
+    });
+  };
+  const handleSelectNonVeteran = (value) => {
+    if (newClaimant && value === newClaimant.value) {
+      setClaimant({
+        claimant: value || null,
+        claimantName: newClaimant.claimantName,
+        claimantNotes: newClaimant.claimantNotes,
+        claimantType: newClaimant.claimantType,
+      });
+    } else {
+      setClaimant({ claimant: value, claimantType: 'dependent' });
+    }
+  };
+  const handleAddClaimant = ({
+    name,
+    participantId,
+    claimantType,
+    claimantNotes,
+  }) => {
+    setNewClaimant({
+      displayElem: (
+        <RemovableRadioLabel
+          text={`${name || 'Claimant not listed'}, Attorney`}
+          onRemove={handleRemove}
+          notes={claimantNotes}
+        />
+      ),
+      value: participantId ?? '',
+      defaultPayeeCode: '',
+      claimantName: name,
+      claimantNotes,
+      claimantType,
+    });
+    setClaimant({
+      claimant: participantId ?? null,
+      claimantType,
+      claimantNotes,
+      claimantName: name,
+    });
+    setShowClaimantModal(false);
+  };
+  const handlePayeeCodeChange = (event) =>
+    setPayeeCode(event ? event.value : null);
 
   const hasRelationships = relationships.length > 0;
   const showClaimants = ['true', true].includes(veteranIsNotClaimant);
 
+  const claimantLabel = () => {
+    let claimantNotes = props.claimantNotes;
+
+    return (
+      <p
+        id="claimantLabel"
+        style={{ marginTop: '8.95px', marginBottom: '0px' }}
+      >
+        {nonVeteranClaimants ?
+          SELECT_CLAIMANT_LABEL :
+          [CLAIMANT_NOT_FOUND_START, email, CLAIMANT_NOT_FOUND_END]}
+
+        <br />
+        <br />
+        {enableAddClaimantModal && formType === 'appeal' && !(claimant || claimantNotes) ?
+          ADD_CLAIMANT_TEXT :
+          ''}
+      </p>
+    );
+  };
+
+  const noClaimantsCopy = () => {
+    return (
+      <p id="noClaimants" className="cf-red-text">
+        {NO_RELATIONSHIPS}
+        {ADD_RELATIONSHIPS}
+        {email}
+        {CLAIMANT_NOT_FOUND_END}
+        <br />
+        <br />
+        {enableAddClaimantModal && formType === 'appeal' ? ADD_CLAIMANT_TEXT : ''}
+      </p>
+    );
+  };
+
   const claimantOptions = () => {
     return (
-      <div className="cf-claimant-options">
+      <div>
         <RadioField
           name="claimant-options"
-          label={claimantLabel}
+          label={claimantLabel()}
           strongLabel
           vertical
-          options={relationships}
-          onChange={setClaimant}
-          value={claimant}
+          options={radioOpts}
+          onChange={handleSelectNonVeteran}
+          value={claimant ?? ''}
           errorMessage={claimantError}
         />
 
-        {shouldShowPayeeCode() && (
+        {shouldShowPayeeCode && (
           <SearchableDropdown
             name="cf-payee-code"
             strongLabel
             label="What is the payee code for this claimant?"
             placeholder="Select"
-            options={isVeteranDeceased ? DECEASED_PAYEE_CODES : LIVING_PAYEE_CODES}
+            options={
+              isVeteranDeceased ? DECEASED_PAYEE_CODES : LIVING_PAYEE_CODES
+            }
             value={payeeCode}
             errorMessage={payeeCodeError}
             onChange={(event) => handlePayeeCodeChange(event)}
@@ -97,32 +256,54 @@ export const SelectClaimant = (props) => {
     );
   };
 
-  let veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS;
+  const alertStyling = css({
+    width: '463px'
+  });
 
-  if (isVeteranDeceased) {
+  const deceasedVeteranAlert = () => {
+    return (
+      <Alert
+        lowerMargin
+        styling={alertStyling}
+        type="warning"
+        message={`${DECEASED_CLAIMANT_TITLE} ${DECEASED_CLAIMANT_MESSAGE}`}
+      />
+    );
+  };
+
+  let veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS;
+  const allowDeceasedAppellants = deceasedAppellants && formType === 'appeal';
+  const showDeceasedVeteranAlert = isVeteranDeceased && veteranIsNotClaimant === false && allowDeceasedAppellants;
+
+  if (isVeteranDeceased && !allowDeceasedAppellants) {
     // disable veteran claimant option if veteran is deceased
     veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE;
     // set claimant value to someone other than the veteran
-    setVeteranIsNotClaimant('true');
+    setVeteranIsNotClaimant(true);
   }
 
   return (
-    <div className="cf-different-claimant">
+    <div className="cf-different-claimant" style={{ marginTop: '18.95px' }}>
       <RadioField
         name="different-claimant-option"
         label="Is the claimant someone other than the Veteran?"
         strongLabel
         vertical
         options={veteranClaimantOptions}
-        onChange={setVeteranIsNotClaimant}
+        onChange={handleVeteranIsNotClaimantChange}
         errorMessage={veteranIsNotClaimantError}
-        value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant.toString()}
+        value={
+          veteranIsNotClaimant === null ?
+            null :
+            veteranIsNotClaimant?.toString()
+        }
       />
 
-      {showClaimants && hasRelationships && claimantOptions()}
-      {showClaimants && !hasRelationships && noClaimantsCopy}
+      {showDeceasedVeteranAlert && deceasedVeteranAlert()}
+      {showClaimants && (hasRelationships || newClaimant) && claimantOptions()}
+      {showClaimants && !hasRelationships && !newClaimant && noClaimantsCopy()}
 
-      {attorneyFees && veteranIsNotClaimant && (
+      {enableAddClaimantModal && !newClaimant && (
         <>
           <Button
             classNames={['usa-button-secondary', classes.button]}
@@ -132,7 +313,10 @@ export const SelectClaimant = (props) => {
           />
 
           {showClaimantModal && (
-            <AddClaimantModal onCancel={() => setShowClaimantModal(false)} onSubmit={handleAddClaimant} />
+            <AddClaimantModal
+              onCancel={() => setShowClaimantModal(false)}
+              onSubmit={handleAddClaimant}
+            />
           )}
         </>
       )}
@@ -142,9 +326,15 @@ export const SelectClaimant = (props) => {
 
 SelectClaimant.propTypes = {
   benefitType: PropTypes.string,
+  featureToggles: PropTypes.shape({
+    attorneyFees: PropTypes.bool,
+    establishFiduciaryEps: PropTypes.bool,
+    deceasedAppellants: PropTypes.bool,
+    nonVeteranClaimants: PropTypes.bool,
+  }),
   formType: PropTypes.string,
   isVeteranDeceased: PropTypes.bool,
-  veteranIsNotClaimant: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  veteranIsNotClaimant: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
   veteranIsNotClaimantError: PropTypes.string,
   setVeteranIsNotClaimant: PropTypes.func,
   claimant: PropTypes.string,
@@ -153,7 +343,8 @@ SelectClaimant.propTypes = {
   relationships: PropTypes.array,
   payeeCode: PropTypes.string,
   payeeCodeError: PropTypes.string,
-  setPayeeCode: PropTypes.func
+  setPayeeCode: PropTypes.func,
+  claimantNotes: PropTypes.string,
 };
 
 export default SelectClaimant;

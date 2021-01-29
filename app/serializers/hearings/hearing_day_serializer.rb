@@ -22,7 +22,7 @@ class HearingDaySerializer
   attribute :regional_office_key, &:regional_office
   attribute :request_type
   attribute :room do |object|
-    HearingDayMapper.label_for_room(object.room)
+    HearingRooms.find!(object.room).label unless object.room.nil?
   end
   attribute :scheduled_for
   attribute :total_slots
@@ -31,11 +31,11 @@ class HearingDaySerializer
 
   def self.get_readable_request_type(hearing_day, params)
     if params[:video_hearing_days_request_types].nil?
-      fail ArgumentError, "params must have video_hearing_days_request_tyeps"
+      fail ArgumentError, "params must have video_hearing_days_request_types"
     end
 
     # `video_hearing_days_request_types` should be constructed with
-    # VideoHearingDayRequestTypeQuery. It is an optimized way to get the request type
+    # HearingDayRequestTypeQuery. It is an optimized way to get the request type
     # for a video hearing day, which can vary depending on how many virtual hearings
     # a video hearing day has.
     request_type = params[:video_hearing_days_request_types][hearing_day.id]
@@ -46,7 +46,7 @@ class HearingDaySerializer
   end
 
   def self.serialize_collection(hearing_days)
-    video_hearing_days_request_types = VideoHearingDayRequestTypeQuery.new.call
+    video_hearing_days_request_types = HearingDayRequestTypeQuery.new.call
 
     ::HearingDaySerializer.new(
       hearing_days,

@@ -180,7 +180,7 @@ feature "Asyncable Jobs index", :postgres do
       it "shows nice message" do
         visit "/jobs"
 
-        expect(page).to have_content("Success! There are no pending jobs.")
+        expect(page).to have_content("There are no pending jobs.")
       end
     end
   end

@@ -6,7 +6,14 @@ class DecisionReviewsController < ApplicationController
 
   def index
     if business_line
-      render "index"
+      respond_to do |format|
+        format.html { render "index" }
+        format.csv do
+          jobs_as_csv = BusinessLineReporter.new(business_line).as_csv
+          filename = Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
+          send_data jobs_as_csv, filename: filename
+        end
+      end
     else
       # TODO: make index show error message
       render json: { error: "#{business_line_slug} not found" }, status: :not_found
@@ -58,7 +65,7 @@ class DecisionReviewsController < ApplicationController
 
   def completed_tasks
     apply_task_serializer(
-      business_line.tasks.recently_closed.includes([:assigned_to, :appeal]).order(closed_at: :desc).select(&:completed?)
+      business_line.tasks.recently_completed.includes([:assigned_to, :appeal]).order(closed_at: :desc)
     )
   end
 

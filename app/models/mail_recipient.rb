@@ -5,7 +5,7 @@ class MailRecipient
 
   RECIPIENT_TITLES = {
     judge: "Judge",
-    veteran: "Veteran",
+    appellant: "Appellant",
     representative: "Representative"
   }.freeze
 

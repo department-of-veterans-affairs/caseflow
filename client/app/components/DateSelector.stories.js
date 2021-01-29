@@ -1,35 +1,58 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-import { action } from '@storybook/addon-actions';
-import { withKnobs, text, boolean, select } from '@storybook/addon-knobs';
+import { useArgs } from '@storybook/client-api';
 
 import DateSelector from './DateSelector';
 
 export default {
   title: 'Commons/Components/DateSelector',
   component: DateSelector,
-  decorators: [withKnobs]
+  decorators: [],
+  args: {
+    name: 'datefield',
+    label: 'Enter Date',
+    type: 'date',
+  },
+  argTypes: {
+    onChange: { action: 'onChange' },
+    type: {
+      control: { type: 'select', options: ['date', 'datetime-local', 'text'] },
+    },
+  },
 };
 
-export const allOptions = () => {
-  const [value, setValue] = useState(text('Value', '', 'allOptions'));
+const Template = (args) => {
+  const [storyArgs, updateStoryArgs] = useArgs();
+  const handleChange = (value) => {
+    args.onChange(value);
+    updateStoryArgs({ ...storyArgs, value });
+  };
 
-  return (
-    <DateSelector
-      name={text('Name', 'datefield', 'allOptions')}
-      errorMessage={text('Error Msg', '', 'allOptions')}
-      dateErrorMessage={text('Date Error Msg', '', 'allOptions')}
-      invisible={boolean('Invisible', false, 'allOptions')}
-      label={text('Label', 'Date Field', 'allOptions')}
-      onChange={(newVal) => {
-        setValue(newVal);
-        action('onChange', 'allOptions');
-      }}
-      readOnly={boolean('Read Only', false, 'allOptions')}
-      required={boolean('Required', false, 'allOptions')}
-      type={select('Type', ['date', 'datetime-local', 'text'], 'date', 'allOptions')}
-      validationError={text('Validation Error', '', 'allOptions')}
-      value={value}
-    />
-  );
+  return <DateSelector {...args} onChange={handleChange} />;
+};
+
+export const Default = Template.bind({});
+
+export const ReadOnly = Template.bind({});
+ReadOnly.args = {
+  value: '2020-01-30',
+  readOnly: true,
+};
+
+export const ErrorMsg = Template.bind({});
+ErrorMsg.args = {
+  errorMessage: 'Something is wrong',
+};
+
+export const DateErrorMsg = Template.bind({});
+DateErrorMsg.args = {
+  dateErrorMessage: 'Invalid date',
+};
+
+const UncontrolledTemplate = (args) => <DateSelector {...args} />;
+
+export const Uncontrolled = UncontrolledTemplate.bind({});
+Uncontrolled.args = {
+  name: 'uncontrolled',
+  value: undefined
 };

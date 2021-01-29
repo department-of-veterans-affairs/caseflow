@@ -54,9 +54,23 @@ export default class CopyTextButton extends React.PureComponent {
   };
 }
 
+CopyTextButton.defaultProps = {
+  styling: {},
+  label: '',
+  textToCopy: null
+};
+
 CopyTextButton.propTypes = {
   text: PropTypes.string.isRequired,
+
+  /**
+   * If set, this text will be copied instead of the contents of the `text` prop
+   */
   textToCopy: PropTypes.string,
+
+  /**
+   * Populates into the aria-label as `Copy ${label} ${text}`
+   */
   label: PropTypes.string,
   styling: PropTypes.object
 };

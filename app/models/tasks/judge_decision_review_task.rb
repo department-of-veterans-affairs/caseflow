@@ -2,6 +2,11 @@
 
 ##
 # Task for a judge to review decisions.
+# A JudgeDecisionReviewTask implies that there is a decision that needs to be reviewed from an attorney.
+# The case associated with this task appears in the judge's Cases to review view
+# There should only ever be one open JudgeDecisionReviewTask at a time for an appeal.
+# If an AttorneyTask is cancelled, we would want to cancel both it and its parent JudgeDecisionReviewTask
+# and create a new JudgeAssignTask, because another assignment by a judge is needed.
 
 class JudgeDecisionReviewTask < JudgeTask
   before_create :verify_user_task_unique
@@ -10,7 +15,7 @@ class JudgeDecisionReviewTask < JudgeTask
     return [] unless assigned_to == user
 
     judge_checkout_label = if ama?
-                             ama_judge_actions
+                             ama_judge_actions(user)
                            else
                              Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.to_h
                            end
@@ -46,8 +51,10 @@ class JudgeDecisionReviewTask < JudgeTask
 
   private
 
-  def ama_judge_actions
-    return Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT_SP_ISSUES.to_h if FeatureToggle.enabled?(:special_issues_revamp)
+  def ama_judge_actions(user)
+    if FeatureToggle.enabled?(:special_issues_revamp, user: user)
+      return Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT_SP_ISSUES.to_h
+    end
 
     Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.to_h
   end

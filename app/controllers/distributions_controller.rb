@@ -38,7 +38,7 @@ class DistributionsController < ApplicationController
 
   def render_errors(error)
     errors = error.record.errors.details.values.flatten.map { |error_details| error_details[:error] }
-    return render_single(pending_distribution) if errors.include? :pending_distribution
+    return render_single(pending_distributions.first) if errors.include? :pending_distribution
 
     render_403_error(errors)
   end
@@ -101,7 +101,7 @@ class DistributionsController < ApplicationController
     end
   end
 
-  def pending_distribution
+  def pending_distributions
     Distribution.pending_for_judge(judge)
   end
 

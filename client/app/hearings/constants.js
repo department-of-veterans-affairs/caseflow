@@ -107,51 +107,23 @@ export const DISPOSITION_OPTIONS = [{ value: 'held',
 { value: 'no_show',
   label: 'No Show' },
 { value: 'cancelled',
-  label: 'Cancelled' },
+  label: 'Withdrawn' },
 { value: 'postponed',
   label: 'Postponed' }];
 
-export const VIDEO_HEARING = 'Video';
-export const CENTRAL_OFFICE_HEARING = 'Central';
-
-export const TIME_OPTIONS = [{
-  value: '08:30',
-  label: '8:30 am ' },
-{ value: '09:00',
-  label: '9:00 am ' },
-{ value: '09:30',
-  label: '9:30 am ' },
-{ value: '10:00',
-  label: '10:00 am ' },
-{ value: '10:30',
-  label: '10:30 am ' },
-{ value: '11:00',
-  label: '11:00 am ' },
-{ value: '11:30',
-  label: '11:30 am ' },
-{ value: '12:00',
-  label: '12:00 pm ' },
-{ value: '12:30',
-  label: '12:30 pm ' },
-{ value: '13:00',
-  label: '1:00 pm ' },
-{ value: '13:30',
-  label: '1:30 pm ' },
-{ value: '14:00',
-  label: '2:00 pm ' },
-{ value: '14:30',
-  label: '2:30 pm ' },
-{ value: '15:00',
-  label: '3:00 pm ' },
-{ value: '15:30',
-  label: '3:30 pm ' },
-{ value: '16:00',
-  label: '4:00 pm ' },
-{ value: '16:30',
-  label: '4:30 pm '
-}];
+export const VIDEO_HEARING_LABEL = 'Video';
+export const CENTRAL_OFFICE_HEARING_LABEL = 'Central';
+export const TRAVEL_BOARD_HEARING_LABEL = 'Travel';
+export const VIRTUAL_HEARING_LABEL = 'Virtual';
 
 export const LIST_SCHEDULE_VIEWS = {
   DEFAULT_VIEW: 'DEFAULT_VIEW',
   SHOW_ALL: 'SHOW_ALL'
 };
+
+export const HEARING_CONVERSION_TYPES = [
+  'change_to_virtual',
+  'change_from_virtual',
+  'change_email_or_timezone',
+  'change_hearing_time'
+];

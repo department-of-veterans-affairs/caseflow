@@ -26,7 +26,7 @@ class TaskSorter
 
     # Always join to the CachedAppeal and users tables because we sometimes need it, joining does not slow down the
     # application, and conditional logic to only join sometimes adds unnecessary complexity.
-    tasks.joins(CachedAppeal.left_join_from_tasks_clause).joins(left_join_from_users_clause).order(order_clause)
+    tasks.with_assignees.with_assigners.with_cached_appeals.order(order_clause)
   end
 
   private
@@ -42,6 +42,8 @@ class TaskSorter
 
   def order_clause
     case column.name
+    when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
+      Task.order_by_appeal_priority_clause(order: sort_order)
     when Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name
       Arel.sql(task_type_order_clause)
     when Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name
@@ -67,16 +69,13 @@ class TaskSorter
   # postgres to use as a reference for sorting as a task's label is not stored in the database.
   def task_type_order_clause
     task_types_sorted_by_label = Task.descendants.sort_by(&:label).map(&:name)
-    task_type_sort_position = "type in '#{task_types_sorted_by_label.join(',')}'"
-    "position(#{task_type_sort_position}) #{sort_order}"
+    task_types_sql_array = "array#{task_types_sorted_by_label}::varchar[]".tr('"', "'")
+    task_type_sort_position = "#{task_types_sql_array}, tasks.type"
+    "array_position(#{task_type_sort_position}) #{sort_order}"
   end
 
   def assigner_order_clause
-    "substring(users.full_name,\'([a-zA-Z]+)$\') #{sort_order}"
-  end
-
-  def left_join_from_users_clause
-    "left join users on users.id = tasks.assigned_by_id"
+    "substring(assigners.display_name,\'([a-zA-Z]+)$\') #{sort_order}"
   end
 
   def column_is_valid

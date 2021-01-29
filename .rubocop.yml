@@ -22,6 +22,9 @@ Bundler/OrderedGems:
   Enabled: true
   TreatCommentsAsGroupSeparators: false
 
+Style/AsciiComments:
+  Enabled: false
+
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
@@ -89,6 +92,7 @@ Rails/Present:
 Metrics/MethodLength:
   Max: 20
   Exclude:
+    - app/jobs/middleware/job_sentry_scope_middleware.rb
     - "spec/**/*"
 
 Metrics/ClassLength:

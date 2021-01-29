@@ -28,13 +28,13 @@ RSpec.feature "ColocatedTask", :all_dbs do
       User.authenticate!(user: attorney_user)
       visit("/queue/appeals/#{appeal.uuid}")
 
-      find(".Select-control", text: "Select an action…").click
-      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h[:label]).click
+      find(".cf-select__control", text: "Select an action…").click
+      find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h[:label]).click
 
       # Redirected to assign colocated action page
       action = Constants.CO_LOCATED_ADMIN_ACTIONS.poa_clarification
-      find(".Select-control", text: "Select an action").click
-      find("div", class: "Select-option", text: action).click
+      find(".cf-select__control", text: "Select an action").click
+      find("div", class: "cf-select__option", text: action).click
       fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
       find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
 
@@ -46,8 +46,12 @@ RSpec.feature "ColocatedTask", :all_dbs do
       visit("/queue/appeals/#{appeal.uuid}")
 
       # Return case to attorney.
-      find(".Select-control", text: "Select an action…").click
-      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h[:label]).click
+      find(".cf-select__control", text: "Select an action…").click
+      find(
+        "div",
+        class: "cf-select__option",
+        text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h[:label]
+      ).click
       fill_in("instructions", with: return_instructions)
       find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
@@ -69,7 +73,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
       click_button(COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, id: poa_task.id)
       expect(page).to have_content(return_instructions)
       # Expect to see draft decision option.
-      find(".Select-control", text: "Select an action…").click
+      find(".cf-select__control", text: "Select an action…").click
       expect(page).to have_content(Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h[:label])
 
       # ColocatedTask assigned to organization should have status completed.
@@ -105,8 +109,8 @@ RSpec.feature "ColocatedTask", :all_dbs do
         expect(page).to have_content(Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
 
         # Attempt to place the task on hold without including notes.
-        find(".Select-control", text: COPY::COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL).click
-        find("div", class: "Select-option", text: "#{hold_duration_days} days").click
+        find(".cf-select__control", text: COPY::COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL).click
+        find("div", class: "cf-select__option", text: "#{hold_duration_days} days").click
         click_on(COPY::MODAL_SUBMIT_BUTTON)
 
         # Instructions field is required
@@ -150,19 +154,19 @@ RSpec.feature "ColocatedTask", :all_dbs do
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
       # Navigate to the change task type modal
-      find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h[:label]).click
+      find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h[:label]).click
 
       expect(page).to have_content(COPY::CHANGE_TASK_TYPE_SUBHEAD)
 
       # Ensure all admin actions are available
-      find(".Select-control", text: "Select an action type").click do
-        visible_options = page.find_all(".Select-option")
+      find(".cf-select__control", text: "Select an action type").click do
+        visible_options = page.find_all(".cf-select__option")
         expect(visible_options.length).to eq Constants::CO_LOCATED_ADMIN_ACTIONS.length
       end
 
       # Attempt to change task type without including instuctions.
-      find("div", class: "Select-option", text: new_task_type.label).click
+      find("div", class: "cf-select__option", text: new_task_type.label).click
       find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
 
       # Instructions field is required

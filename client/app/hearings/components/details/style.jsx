@@ -1,5 +1,5 @@
 import { css } from 'glamor';
-import { COLORS } from '../../../constants/AppConstants';
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export const labelPaddingFirst = css({
   paddingBottom: 5,
@@ -13,31 +13,6 @@ export const labelPadding = css({
 export const maxWidthFormInput = css({
   display: 'block',
   maxWidth: '100%'
-});
-
-export const listStyling = css({
-  verticalAlign: 'super',
-  '::after': {
-    content: ' ',
-    clear: 'both',
-    display: 'block'
-  }
-});
-
-export const listItemStyling = css({
-  display: 'block',
-  float: 'left',
-  padding: '0.5rem 1.5rem 0.5rem 0',
-  ':not(:last-child)': {
-    '& > div': {
-      borderRight: `1px solid ${COLORS.GREY_LIGHT}`
-    },
-    '& > *': {
-      paddingRight: '1.5rem',
-      minHeight: '22px'
-    }
-  },
-  '& > h4': { textTransform: 'uppercase' }
 });
 
 export const flexParent = css({
@@ -108,16 +83,111 @@ export const hearingLinksContainer = css({
   marginBottom: 38
 });
 
-export const copyButtonStyles = {
-  borderColor: COLORS.PRIMARY,
-  borderWidth: '2px',
-  color: COLORS.PRIMARY,
-  ':hover': {
-    backgroundColor: 'transparent',
-    color: COLORS.PRIMARY,
-    borderColor: COLORS.PRIMARY,
-    borderBottomWidth: '2px'
+export const fullWidth = css({ display: 'flex', flex: 1 });
+
+export const leftAlign = css({
+  marginTop: 30,
+  display: 'flex',
+  '& > *': {
+    paddingLeft: 15,
+    paddingRight: 15,
+    flex: 1,
+    margin: 0
   },
-  '& > svg path': { fill: COLORS.PRIMARY },
-  '&:hover > svg path': { fill: COLORS.PRIMARY }
-};
+  '& > :first-child': {
+    paddingLeft: 0
+  },
+  '& > :last-child': {
+    paddingRight: 0
+  },
+});
+
+export const noMaxWidth = css({
+  '& label': {
+    maxWidth: 'none !important'
+  }
+});
+
+export const marginTop = (margin) =>
+  css({
+    marginTop: margin
+  });
+
+export const helperLabel = css({ marginTop: 15, color: COLORS.GREY_DARK });
+export const timezoneDropdownStyles = (count) => ({
+  height: `${count * 39}px !important`,
+  maxHeight: 'none'
+});
+
+export const timezoneStyles = (count) => ({
+  '& .cf-select__menu-list': {
+    height: `${count * 39}px !important`,
+    maxHeight: 'none',
+    overflowY: 'auto',
+    [`& > :nth-child(${count})`]: {
+      borderBottom: '1px solid grey'
+    }
+  }
+});
+
+export const verticalAlign = css({
+  flexDirection: 'column',
+  display: 'flex',
+  '& > :first-child': {
+    flex: 1,
+    '& .cf-form-radio-options': {
+      flexDirection: 'column',
+      display: 'flex',
+    },
+  },
+  '& > :last-child': {
+    flex: 1,
+    paddingLeft: 0
+  },
+});
+
+export const inputFix = css({
+  '& .question-label': {
+    marginBottom: '2rem !important',
+  },
+});
+
+export const virtualHearingModalStyles = css({
+  '& pre': {
+    margin: '5px 0'
+  }
+});
+
+export const regionalOfficeSection = css({
+  lineHeight: '200%',
+  '& .cf-form-radio-option': {
+    lineHeight: '100%'
+  },
+  '& .usa-input-error-message': {
+    margin: '10px 0',
+  },
+  '& .usa-input-error': {
+    lineHeight: '100%',
+    margin: 0,
+    paddingLeft: 15
+  },
+  '& pre': {
+    margin: 0,
+    lineHeight: '125%'
+  }
+});
+
+export const spacing = (space, el) => css({
+  [`& ${el}`]: {
+    margin: space
+  }
+});
+
+export const cancelButton = css({ float: 'left', paddingLeft: 0, paddingRight: 0 });
+
+export const saveButton = css({ float: 'right' });
+
+export const setMargin = (margin) =>
+  css({
+    margin
+  });

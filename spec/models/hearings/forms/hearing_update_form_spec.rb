@@ -11,7 +11,7 @@ describe HearingUpdateForm, :all_dbs do
       {
         hearing: hearing.reload,
         virtual_hearing_attributes: {
-          veteran_email: "veteran@example.com",
+          appellant_email: "veteran@example.com",
           representative_email: "representative@example.com"
         }
       }

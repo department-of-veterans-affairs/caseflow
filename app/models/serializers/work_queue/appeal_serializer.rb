@@ -49,6 +49,8 @@ class WorkQueue::AppealSerializer
 
   attribute :overtime, &:overtime?
 
+  attribute :veteran_appellant_deceased, &:veteran_appellant_deceased?
+
   attribute :assigned_to_location
 
   attribute :completed_hearing_on_previous_appeal? do
@@ -69,6 +71,10 @@ class WorkQueue::AppealSerializer
     object.claimant&.relationship
   end
 
+  attribute :cavc_remand
+
+  attribute :veteran_death_date
+
   attribute :veteran_file_number
 
   attribute :veteran_full_name do |object|
@@ -76,6 +82,8 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :closest_regional_office
+
+  attribute :closest_regional_office_label
 
   attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
 
@@ -115,11 +123,18 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :attorney_case_rewrite_details do |object|
-    {
-      overtime: object.latest_attorney_case_review&.overtime,
-      note_from_attorney: object.latest_attorney_case_review&.note,
-      untimely_evidence: object.latest_attorney_case_review&.untimely_evidence
-    }
+    if FeatureToggle.enabled?(:overtime_revamp, user: RequestStore.store[:current_user])
+      {
+        note_from_attorney: object.latest_attorney_case_review&.note,
+        untimely_evidence: object.latest_attorney_case_review&.untimely_evidence
+      }
+    else
+      {
+        overtime: object.latest_attorney_case_review&.overtime,
+        note_from_attorney: object.latest_attorney_case_review&.note,
+        untimely_evidence: object.latest_attorney_case_review&.untimely_evidence
+      }
+    end
   end
 
   attribute :can_edit_document_id do |object, params|
@@ -127,5 +142,12 @@ class WorkQueue::AppealSerializer
       user: params[:user],
       case_review: object.latest_attorney_case_review
     ).editable?
+  end
+
+  attribute :readable_hearing_request_type do |object|
+    object.current_hearing_request_type(readable: true)
+  end
+  attribute :readable_original_hearing_request_type do |object|
+    object.original_hearing_request_type(readable: true)
   end
 end

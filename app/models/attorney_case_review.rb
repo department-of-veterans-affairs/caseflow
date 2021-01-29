@@ -35,6 +35,7 @@ class AttorneyCaseReview < CaseflowRecord
     if task.assigned_by_id != reviewing_judge_id
       task.parent.update(assigned_to_id: reviewing_judge_id)
     end
+    task.parent.update(assigned_by_id: task.assigned_to_id)
     update_issue_dispositions_in_caseflow!
   end
 

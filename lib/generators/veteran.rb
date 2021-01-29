@@ -83,8 +83,8 @@ class Generators::Veteran
         service: [{ branch_of_service: "Army",
                     entered_on_duty_date: "02132002",
                     released_active_duty_date: "12212003",
-                    pay_grade: "E4",
-                    char_of_svc_code: "HON" },
+                    char_of_svc_code: "HON",
+                    pay_grade: "E4" },
                   { branch_of_service: "Navy",
                     entered_on_duty_date: "07022006",
                     released_active_duty_date: "06282008",
@@ -100,6 +100,7 @@ class Generators::Veteran
                   first_name: attrs[:first_name],
                   last_name: attrs[:last_name],
                   middle_name: attrs[:middle_name],
+                  date_of_death: attrs[:date_of_death],
                   name_suffix: attrs[:suffix_name])
     end
   end

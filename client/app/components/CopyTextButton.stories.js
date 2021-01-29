@@ -7,21 +7,16 @@ import CopyTextButton from './CopyTextButton';
 export default {
   title: 'Commons/Components/CopyTextButton',
   component: CopyTextButton,
-  decorators: [withKnobs]
+  decorators: [withKnobs],
+  args: {
+    text: 'Lorem ipsum',
+    label: 'accessible label text'
+  }
 };
 
-export const allOptions = () => (
-  <CopyTextButton
-    text={text('Text', 'Lorem ipsum', 'allOptions')}
-    textToCopy={text('Text to Copy', '', 'allOptions')}
-    label={text('Label', '', 'allOptions')}
-  />
-);
+const Template = (args) => <CopyTextButton {...args} />;
 
-export const customTextToCopy = () => (
-  <CopyTextButton
-    text={text('Text', 'Lorem ipsum', 'customTextToCopy')}
-    textToCopy={text('Text to Copy', 'I am custom text', 'customTextToCopy')}
-    label={text('Label', '', 'customTextToCopy')}
-  />
-);
+export const Default = Template.bind({});
+
+export const customTextToCopy = Template.bind({});
+customTextToCopy.args = { textToCopy: 'I am custom text' };

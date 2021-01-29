@@ -9,14 +9,22 @@ class TasksController < ApplicationController
   before_action :verify_task_access, only: [:create]
   skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
+  # Tasks that are allowed to be created by a user.
+  # If a task type is not sent to the frontend via TaskActionRepository's `type` or `options` parameters,
+  # then it doesn't need to be included here.
   TASK_CLASSES_LOOKUP = {
     AttorneyDispatchReturnTask: AttorneyDispatchReturnTask,
     AttorneyQualityReviewTask: AttorneyQualityReviewTask,
     AttorneyRewriteTask: AttorneyRewriteTask,
     AttorneyTask: AttorneyTask,
+    BlockedSpecialCaseMovementTask: BlockedSpecialCaseMovementTask,
     ChangeHearingDispositionTask: ChangeHearingDispositionTask,
     ColocatedTask: ColocatedTask,
-    EvidenceSubmissionWindowTask: EvidenceSubmissionWindowTask,
+    CavcPoaClarificationTask: CavcPoaClarificationTask,
+    CavcRemandProcessedLetterResponseWindowTask: CavcRemandProcessedLetterResponseWindowTask,
+    DocketSwitchRulingTask: DocketSwitchRulingTask,
+    DocketSwitchDeniedTask: DocketSwitchDeniedTask,
+    DocketSwitchGrantedTask: DocketSwitchGrantedTask,
     FoiaTask: FoiaTask,
     HearingAdminActionTask: HearingAdminActionTask,
     InformalHearingPresentationTask: InformalHearingPresentationTask,
@@ -29,8 +37,10 @@ class TasksController < ApplicationController
     PulacCerulloTask: PulacCerulloTask,
     QualityReviewTask: QualityReviewTask,
     ScheduleHearingTask: ScheduleHearingTask,
+    SendCavcRemandProcessedLetterTask: SendCavcRemandProcessedLetterTask,
     SpecialCaseMovementTask: SpecialCaseMovementTask,
-    Task: Task,
+    Task: Task, # Consider for removal, after cleaning up occurrences in prod
+    TranscriptionTask: TranscriptionTask,
     TranslationTask: TranslationTask
   }.freeze
 
@@ -41,8 +51,9 @@ class TasksController < ApplicationController
   # e.g, GET /tasks?user_id=xxx&role=colocated
   #      GET /tasks?user_id=xxx&role=attorney
   #      GET /tasks?user_id=xxx&role=judge
+  #      GET /tasks?user_id=xxx&role=judge&type=assign
   def index
-    tasks = user.use_task_pages_api? ? [] : QueueForRole.new(user_role).create(user: user).tasks
+    tasks = params[:type].eql?("assign") ? QueueForRole.new(user_role).create(user: user).tasks : []
     render json: { tasks: json_tasks(tasks), queue_config: queue_config }
   end
 
@@ -76,11 +87,9 @@ class TasksController < ApplicationController
     param_groups.each do |task_type, param_group|
       tasks << valid_task_classes[task_type.to_sym].create_many_from_params(param_group, current_user)
     end
-    modified_tasks = [parent_tasks_from_params, tasks].flatten!
+    modified_tasks = [parent_tasks_from_params, tasks].flatten.uniq
 
-    tasks_to_return = (QueueForRole.new(user_role).create(user: current_user).tasks + modified_tasks).uniq
-
-    render json: { tasks: json_tasks(tasks_to_return) }
+    render json: { tasks: json_tasks(modified_tasks) }
   rescue ActiveRecord::RecordInvalid => error
     invalid_record_error(error.record)
   rescue Caseflow::Error::MailRoutingError => error
@@ -96,16 +105,29 @@ class TasksController < ApplicationController
     tasks = task.update_from_params(update_params, current_user)
     tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
-    tasks_to_return = (QueueForRole.new(user_role).create(user: current_user).tasks + tasks).uniq
+    tasks_hash = json_tasks(tasks.uniq)
 
-    render json: { tasks: json_tasks(tasks_to_return) }
-  rescue AssignHearingDispositionTask::HearingAssociationMissing => error
-    Raven.capture_exception(error)
+    # currently alerts are only returned by ScheduleHearingTask
+    # and AssignHearingDispositionTask for virtual hearing related updates
+    alerts = tasks.reduce([]) { |acc, t| acc + t.alerts }
+    tasks_hash[:alerts] = alerts if alerts # does not add to hash if alerts == []
+
     render json: {
-      "errors": [
-        "title": "Missing Associated Hearing",
-        "detail": error
-      ]
+      tasks: tasks_hash
+    }
+  rescue ActiveRecord::RecordInvalid => error
+    invalid_record_error(error.record)
+  rescue AssignHearingDispositionTask::HearingAssociationMissing => error
+    Raven.capture_exception(error, extra: { application: "hearings" })
+
+    render json: {
+      "errors": ["title": "Missing Associated Hearing", "detail": error]
+    }, status: :bad_request
+  rescue Caseflow::Error::VirtualHearingConversionFailed => error
+    Raven.capture_exception(error, extra: { application: "hearings" })
+
+    render json: {
+      "errors": ["title": COPY::FAILED_HEARING_UPDATE, "message": error.message, "code": error.code]
     }, status: :bad_request
   end
 
@@ -153,14 +175,13 @@ class TasksController < ApplicationController
   private
 
   def queue_config
-    QueueConfig.new(assignee: user).to_hash
+    params[:type].eql?("assign") ? {} : QueueConfig.new(assignee: user).to_hash
   end
 
   def verify_view_access
-    return true if user == current_user || Judge.new(current_user).attorneys.include?(user)
-
-    return true if FeatureToggle.enabled?(:scm_view_judge_assign_queue) &&
-                   current_user.member_of_organization?(SpecialCaseMovementTeam.singleton)
+    return true if user == current_user ||
+                   Judge.new(current_user).attorneys.include?(user) ||
+                   current_user.can_act_on_behalf_of_judges?
 
     fail Caseflow::Error::ActionForbiddenError, message: "Only accessible by members of the Case Movement Team."
   end
@@ -199,7 +220,7 @@ class TasksController < ApplicationController
   end
 
   def appeal
-    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
+    @appeal ||= Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
   end
 
   def invalid_type_error
@@ -221,8 +242,9 @@ class TasksController < ApplicationController
 
   def create_params
     @create_params ||= [params.require("tasks")].flatten.map do |task|
-      appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id])
-      task = task.permit(:type, :instructions, :assigned_to_id,
+      appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id])
+      task = task.merge(instructions: [task[:instructions]].flatten.compact)
+      task = task.permit(:type, { instructions: [] }, :assigned_to_id,
                          :assigned_to_type, :parent_id, business_payloads: [:description, values: {}])
         .merge(assigned_by: current_user)
         .merge(appeal: appeal)
@@ -237,6 +259,7 @@ class TasksController < ApplicationController
       :status,
       :assigned_to_id,
       :instructions,
+      :ihp_path,
       reassign: [:assigned_to_id, :assigned_to_type, :instructions],
       business_payloads: [:description, values: {}]
     )

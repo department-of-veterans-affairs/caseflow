@@ -255,21 +255,28 @@ describe Task, :all_dbs do
 
   describe "#duplicate_org_task" do
     let(:root_task) { create(:root_task) }
-    let(:qr_user) { create(:user) }
-    let!(:quality_review_organization_task) do
-      create(:qr_task, assigned_to: QualityReview.singleton, parent: root_task)
+    let(:mail_user) { create(:user) }
+    let!(:mail_grandparent_organization_task) do
+      create(:aod_motion_mail_task, assigned_to: MailTeam.singleton, parent: root_task)
     end
-    let!(:quality_review_task) do
-      create(:qr_task, assigned_to: qr_user, parent: quality_review_organization_task)
+    let!(:mail_parent_organization_task) do
+      create(:aod_motion_mail_task, assigned_to: MailTeam.singleton, parent: mail_grandparent_organization_task)
+    end
+    let!(:mail_task) do
+      create(:aod_motion_mail_task, assigned_to: mail_user, parent: mail_parent_organization_task)
     end
 
     context "when there are duplicate organization tasks" do
-      it "returns true when there is a duplicate task assigned to an organization" do
-        expect(quality_review_organization_task.duplicate_org_task).to eq(true)
+      it "returns true when there is a duplicate descendent task assigned to a user" do
+        expect(mail_grandparent_organization_task.duplicate_org_task).to eq(true)
+      end
+
+      it "returns true when there is a duplicate child task assigned to a user" do
+        expect(mail_parent_organization_task.duplicate_org_task).to eq(true)
       end
 
       it "returns false otherwise" do
-        expect(quality_review_task.duplicate_org_task).to eq(false)
+        expect(mail_task.duplicate_org_task).to eq(false)
       end
     end
   end
@@ -303,6 +310,9 @@ describe Task, :all_dbs do
     let!(:top_level_task) { create(:task, appeal: appeal) }
     let!(:second_level_tasks) { create_list(:task, 2, parent: top_level_task) }
     let!(:third_level_task) { create_list(:task, 2, parent: second_level_tasks.first) }
+    let(:logged_in_user) { create(:user) }
+
+    before { User.authenticate!(user: logged_in_user) }
 
     it "cancels all tasks and child subtasks" do
       initial_versions = second_level_tasks[0].versions.count
@@ -314,6 +324,7 @@ describe Task, :all_dbs do
 
       [top_level_task, *second_level_tasks, *third_level_task].each do |task|
         expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(task.cancelled_by_id).to eq(logged_in_user.id)
       end
     end
   end
@@ -489,6 +500,20 @@ describe Task, :all_dbs do
 
     it "returns no actions when task doesn't have an active hearing task ancestor" do
       expect(subject).to eq []
+    end
+
+    context "when the user is an admin on any of the hearings teams" do
+      it "returns the reassign action" do
+        [HearingsManagement, HearingAdmin, TranscriptionTeam].each do |org|
+          admin = create(:user).tap { |user| OrganizationsUser.make_user_admin(user, org.singleton) }
+          assignee = create(:user).tap { |user| org.singleton.add_user(user) }
+          task = create(:ama_task, assigned_to: assignee)
+
+          expect(task.available_hearing_user_actions(admin)).to match_array(
+            [Constants.TASK_ACTIONS.REASSIGN_TO_HEARINGS_TEAMS_MEMBER.to_h]
+          )
+        end
+      end
     end
 
     context "task has an active hearing task ancestor" do
@@ -895,6 +920,64 @@ describe Task, :all_dbs do
           expect(task.children.length).to eq(closed_children_count / 2)
           expect(task.children.map(&:status)).to match_array([Constants.TASK_STATUSES.cancelled])
         end
+      end
+    end
+
+    context "When the appeal has not been marked for overtime" do
+      let!(:appeal) { create(:appeal) }
+      let(:task) { create(:ama_judge_assign_task, appeal: appeal) }
+
+      before { FeatureToggle.enable!(:overtime_revamp) }
+      after { FeatureToggle.disable!(:overtime_revamp) }
+
+      it "does not create a new work mode for the appeal" do
+        expect(appeal.work_mode.nil?).to be true
+        subject
+        expect(appeal.work_mode.nil?).to be true
+      end
+    end
+
+    context "When the appeal has been marked for overtime" do
+      shared_examples "clears overtime" do
+        it "sets overtime to false" do
+          expect(appeal.overtime?).to be true
+          subject
+          expect(appeal.overtime?).to be false
+        end
+      end
+
+      let!(:appeal) { create(:appeal) }
+      let(:task) { create(:ama_task, appeal: appeal.reload) }
+
+      before do
+        appeal.overtime = true
+        FeatureToggle.enable!(:overtime_revamp)
+      end
+      after { FeatureToggle.disable!(:overtime_revamp) }
+
+      context "when the task type is not a judge or attorney task" do
+        it "does not clear the overtime status" do
+          expect(appeal.overtime?).to be true
+          subject
+          expect(appeal.overtime?).to be true
+        end
+      end
+
+      context "when the task is a judge task" do
+        let(:task) { create(:ama_judge_assign_task, appeal: appeal) }
+
+        it_behaves_like "clears overtime"
+      end
+
+      context "when the task is an attorney task" do
+        let(:judge) { create(:user, :with_vacols_judge_record) }
+        let(:attorney) { create(:user, :with_vacols_attorney_record) }
+        let(:new_assignee) { create(:user, :with_vacols_attorney_record) }
+        let(:task) { create(:ama_attorney_rewrite_task, assigned_to: attorney, assigned_by: judge, appeal: appeal) }
+
+        subject { task.reassign(params, judge) }
+
+        it_behaves_like "clears overtime"
       end
     end
   end
@@ -1356,6 +1439,24 @@ describe Task, :all_dbs do
         task.update!(status: status)
         expect(task.closed_at).to_not eq(nil)
       end
+
+      it "does not set the cancelled_by_id if there is no logged in user" do
+        task.update!(cancelled_by_id: 1)
+        task.update!(status: status)
+        expect(task.cancelled_by_id).to eq(1)
+      end
+
+      context "when a user is logged in" do
+        let(:logged_in_user) { create(:user) }
+
+        before { User.authenticate!(user: logged_in_user) }
+
+        it "sets the cancelled_by_id of the logged in user" do
+          expect(task.cancelled_by_id).to be_nil
+          task.update!(status: status)
+          expect(task.cancelled_by_id).to eq(logged_in_user.id)
+        end
+      end
     end
 
     context "when a timestamp is passed" do
@@ -1552,6 +1653,234 @@ describe Task, :all_dbs do
         expect(Raven).to have_received(:capture_message).exactly(1).times
         expect(parent_task.status).to eq(Constants.TASK_STATUSES.on_hold)
         expect(parent_task.children.count).to eq(1)
+      end
+    end
+  end
+
+  describe ".cancel_descendants" do
+    let(:appeal) { create(:appeal) }
+    let(:top_level_task) { create(:task, appeal: appeal) }
+    let(:second_level_tasks) { create_list(:task, 2, parent: top_level_task) }
+    let(:third_level_completed_task) { create(:task, parent: second_level_tasks.first) }
+    let!(:third_level_tasks) { create_list(:task, 2, parent: second_level_tasks.first) }
+
+    before do
+      third_level_completed_task.update(status: Constants.TASK_STATUSES.completed)
+    end
+
+    context "when no instructions are passed" do
+      it "cancels all open descendants" do
+        second_level_tasks.first.cancel_descendants
+
+        expect(second_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(third_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(third_level_tasks.second.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(second_level_tasks.first.reload.instructions).to eq([])
+        expect(third_level_tasks.first.reload.instructions).to eq([])
+        expect(third_level_tasks.second.reload.instructions).to eq([])
+        # previously completed task _not_ cancelled
+        expect(third_level_completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+
+        # parent and sibling not cancelled
+        expect(top_level_task.reload.open?).to eq(true)
+        expect(second_level_tasks.second.reload.open?).to eq(true)
+      end
+    end
+
+    context "when instructions are passed" do
+      let(:instructions) { "instructions" }
+
+      it "cancels all open descendants and adds instructions to the cancelled tasks" do
+        second_level_tasks.first.cancel_descendants(instructions: instructions)
+
+        expect(second_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(third_level_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(third_level_tasks.second.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(second_level_tasks.first.reload.instructions).to eq([instructions])
+        expect(third_level_tasks.first.reload.instructions).to eq([instructions])
+        expect(third_level_tasks.second.reload.instructions).to eq([instructions])
+        # previously completed task _not_ cancelled
+        expect(third_level_completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+
+        # parent and sibling not cancelled
+        expect(top_level_task.reload.open?).to eq(true)
+        expect(second_level_tasks.second.reload.open?).to eq(true)
+      end
+    end
+  end
+
+  describe ".serialize_for_cancellation" do
+    let(:user) { create(:user, email: "test@gmail.com") }
+
+    subject { create(:task, assigned_to: assignee).serialize_for_cancellation }
+
+    context "when the task is assigned to an org" do
+      let(:assignee) { create(:organization) }
+
+      context "with no admins" do
+        it "returns the org name and no email" do
+          expect(subject.keys).to match_array [:id, :assigned_to_email, :assigned_to_name, :type]
+          expect(subject[:assigned_to_email]).to be nil
+          expect(subject[:assigned_to_name]).to eq assignee.name
+        end
+      end
+
+      context "with admins" do
+        before { OrganizationsUser.make_user_admin(user, assignee) }
+
+        it "returns the org name and the admin's email" do
+          expect(subject.keys).to match_array [:id, :assigned_to_email, :assigned_to_name, :type]
+          expect(subject[:assigned_to_email]).to eq assignee.admins.first.email
+          expect(subject[:assigned_to_name]).to eq assignee.name
+        end
+      end
+    end
+
+    context "when the task is assigned to a user" do
+      let(:assignee) { user }
+
+      it "returns the user's name and css_id and email" do
+        expect(subject.keys).to match_array [:id, :assigned_to_email, :assigned_to_name, :type]
+        expect(subject[:assigned_to_email]).to eq assignee.email
+        expect(subject[:assigned_to_name]).to eq "#{assignee.full_name.titleize} (#{assignee.css_id})"
+      end
+    end
+  end
+
+  describe "#copy_with_ancestors_to_stream" do
+    subject { selected_task.copy_with_ancestors_to_stream(new_stream) }
+
+    let!(:old_stream) { create(:appeal, :evidence_submission_docket, :with_post_intake_tasks) }
+    let!(:new_stream) { create(:appeal, :hearing_docket, :with_post_intake_tasks) }
+    let!(:organization) { Organization.create!(name: "Other organization", url: "other") }
+    let!(:selected_task) do
+      create(
+        :foia_task,
+        appeal: old_stream,
+        parent: parent_task
+      )
+    end
+    let(:parent_task) { create(:foia_task, appeal: old_stream, parent: parent_of_parent, assigned_to: organization) }
+
+    context "branch is off of root task" do
+      let(:parent_of_parent) { old_stream.root_task }
+
+      it "copies branch and connects to new root task" do
+        expect { subject }.to change(new_stream.tasks, :count).by(2)
+
+        new_stream.reload
+        task_copy = new_stream.tasks.find { |task| task.type == selected_task.type && task.assigned_to.is_a?(User) }
+        parent_copy = task_copy.parent
+
+        expect(parent_copy.appeal_id).to eq new_stream.id
+        expect(parent_copy.parent).to eq new_stream.root_task
+      end
+    end
+
+    context "branch is off of distribution task" do
+      let(:parent_of_parent) { old_stream.tasks.find_by(type: DistributionTask.name) }
+
+      it "copies branch and connects to new distribution task" do
+        expect { subject }.to change(new_stream.tasks, :count).by(2)
+
+        new_stream_distribution_task = new_stream.reload.tasks.open.find_by(type: DistributionTask.name)
+        task_copy = new_stream.tasks.find { |task| task.type == selected_task.type && task.assigned_to.is_a?(User) }
+        parent_copy = task_copy.parent
+
+        expect(parent_copy.appeal_id).to eq new_stream.id
+        expect(parent_copy.parent).to eq new_stream_distribution_task
+      end
+    end
+
+    context "branch has multiple layers" do
+      let(:parent_of_parent) do
+        create(
+          :colocated_task,
+          assigned_to: create(:user),
+          appeal: old_stream,
+          parent: create(:colocated_task, parent: old_stream.root_task, assigned_to: create(:organization))
+        )
+      end
+
+      it "copies the entire branch" do
+        expect { subject }.to change(new_stream.tasks, :count).by(4)
+
+        new_stream.reload
+
+        task_copy = new_stream.tasks.find { |task| task.type == selected_task.type && task.assigned_to.is_a?(User) }
+        root_task_child = new_stream.root_task.children.find { |task| task.same_task_type?(parent_of_parent.parent) }
+
+        expect(root_task_child.descendants).to include(task_copy)
+      end
+    end
+
+    context "parent of parent is nil, branch is orphaned (not connected to a root or other task)" do
+      let(:parent_of_parent) { nil }
+
+      it "does not copy tasks" do
+        expect { subject }.to change(new_stream.tasks, :count).by(0)
+      end
+    end
+  end
+
+  describe "hearings teams admin available actions" do
+    let(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
+    let(:parent) { appeal.tasks.detect { |task| task.type == HearingTask.name } }
+    let(:task_types) do
+      [
+        ChangeHearingDispositionTask,
+        HearingRelatedMailTask,
+        NoShowHearingTask,
+        ScheduleHearingColocatedTask,
+        TranscriptionTask,
+        HearingAdminActionTask.subclasses
+      ].flatten
+    end
+    let(:tasks) do
+      task_types.map do |type|
+        if type == TranscriptionTask
+          new_parent = AssignHearingDispositionTask.create!(
+            assigned_to: user, assigned_by: admin, parent: parent, appeal: appeal
+          )
+          type.create!(assigned_to: user, assigned_by: admin, parent: new_parent, appeal: appeal)
+        else
+          type.create!(assigned_to: user, assigned_by: admin, parent: parent, appeal: appeal)
+        end
+      end
+    end
+
+    let!(:user) do
+      create(:user).tap do |user|
+        HearingsManagement.singleton.add_user(user)
+        HearingAdmin.singleton.add_user(user)
+        TranscriptionTeam.singleton.add_user(user)
+      end
+    end
+
+    let!(:admin) do
+      create(:user).tap do |user|
+        OrganizationsUser.make_user_admin(user, HearingsManagement.singleton)
+        OrganizationsUser.make_user_admin(user, HearingAdmin.singleton)
+        OrganizationsUser.make_user_admin(user, TranscriptionTeam.singleton)
+      end
+    end
+
+    let(:reassign_label) { Constants.TASK_ACTIONS.REASSIGN_TO_HEARINGS_TEAMS_MEMBER.label }
+
+    it "can reassign any task assigned to a hearing management team member" do
+      tasks.each do |task|
+        expect(task.available_actions_unwrapper(admin).any? { |action| action[:label] == reassign_label }).to be true
+      end
+    end
+
+    context "when the users are a part of a non hearing team" do
+      let!(:user) { create(:user).tap { |user| MailTeam.singleton.add_user(user) } }
+      let!(:admin) { create(:user).tap { |user| OrganizationsUser.make_user_admin(user, MailTeam.singleton) } }
+
+      it "cannot reassign any task assigned to a hearing management team member" do
+        tasks.each do |task|
+          expect(task.available_actions_unwrapper(admin).any? { |action| action[:label] == reassign_label }).to be false
+        end
       end
     end
   end

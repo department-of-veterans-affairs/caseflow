@@ -135,10 +135,8 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       before do
         current_user = create(:user).tap { |scm_user| SpecialCaseMovementTeam.singleton.add_user(scm_user) }
         User.stub = current_user
-        FeatureToggle.enable!(:scm_view_judge_assign_queue)
         @appeal = create(:legacy_appeal, vacols_case: create(:case, staff: @staff_user))
       end
-      after { FeatureToggle.disable!(:scm_view_judge_assign_queue) }
 
       it "should be successful" do
         params = {
@@ -272,8 +270,12 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       let(:role) { :attorney_role }
       let(:params) do
         {
-          "assigned_to_id": user.id
+          "assigned_to_id": user.id,
+          "appeal_id": @appeal.id
         }
+      end
+      before do
+        @appeal = create(:legacy_appeal, vacols_case: create(:case, staff: @staff_user))
       end
 
       it "fails because the current user is not a judge" do
@@ -286,12 +288,16 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
       let(:role) { :judge_role }
       let(:params) do
         {
-          "assigned_to_id": attorney.id
+          "assigned_to_id": attorney.id,
+          "appeal_id": @appeal.id
         }
       end
       before do
+        FeatureToggle.enable!(:overtime_revamp)
         @appeal = create(:legacy_appeal, vacols_case: create(:case, staff: @staff_user))
+        @appeal.update!(overtime: true)
       end
+      after { FeatureToggle.disable!(:overtime_revamp) }
 
       it "should be successful" do
         allow(QueueRepository).to receive(:reassign_case_to_attorney!).with(
@@ -301,14 +307,17 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
           created_in_vacols_date: "2018-04-18".to_date
         ).and_return(true)
 
+        expect(@appeal.overtime?).to be true
         patch :update, params: { tasks: params, id: "#{@appeal.vacols_id}-2018-04-18" }
+        expect(@appeal.reload.overtime?).to be false
         expect(response.status).to eq 200
       end
 
       context "when attorney is not found" do
         let(:params) do
           {
-            "assigned_to_id": 7_777_777_777
+            "assigned_to_id": 7_777_777_777,
+            "appeal_id": @appeal.id
           }
         end
 
@@ -447,6 +456,31 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
         User.stub = create(:user).tap { |scm_user| SpecialCaseMovementTeam.singleton.add_user(scm_user) }
       end
       it_behaves_like "judge reassigns case"
+    end
+
+    context "When the appeal has not been marked for overtime" do
+      before { FeatureToggle.enable!(:overtime_revamp) }
+      after { FeatureToggle.disable!(:overtime_revamp) }
+
+      it "does not create a new work mode for the appeal" do
+        expect(appeal.work_mode.nil?).to be true
+        patch :assign_to_judge, params: { tasks: params }
+        expect(appeal.work_mode.nil?).to be true
+      end
+    end
+
+    context "when the appeal has been marked for overtime" do
+      before do
+        FeatureToggle.enable!(:overtime_revamp)
+        appeal.overtime = true
+      end
+      after { FeatureToggle.disable!(:overtime_revamp) }
+
+      it "removes the overtime status of the appeal" do
+        expect(appeal.overtime?).to be true
+        patch :assign_to_judge, params: { tasks: params }
+        expect(appeal.reload.overtime?).to be false
+      end
     end
   end
 end

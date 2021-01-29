@@ -9,7 +9,14 @@ export const initialState = {
   },
   forms: {},
   alerts: [],
-  transitioningAlerts: {}
+  transitioningAlerts: {},
+  // Used to handle communication between Case Details/ScheduleVeteran
+  scheduledHearing: {
+    taskId: null,
+    disposition: null,
+    externalId: null,
+    polling: false,
+  }
 };
 
 const dropdownsReducer = (state = {}, action = {}) => {
@@ -113,6 +120,12 @@ const commonComponentsReducer = (state = initialState, action = {}) => {
         $set: state.alerts.filter((alert) => action.payload.timestamps.indexOf(alert.timestamp) === -1)
       }
     });
+  case ACTIONS.CLEAR_ALERTS:
+    return update(state, {
+      alerts: {
+        $set: []
+      }
+    });
   case ACTIONS.RECEIVE_REGIONAL_OFFICES:
     return update(state, {
       regionalOffices: {
@@ -145,6 +158,16 @@ const commonComponentsReducer = (state = initialState, action = {}) => {
         $set: formsReducer(state.forms, action)
       }
     });
+  case ACTIONS.SET_SCHEDULE_HEARING_PAYLOAD:
+  case ACTIONS.STOP_POLLING:
+  case ACTIONS.START_POLLING:
+    return {
+      ...state,
+      scheduledHearing: {
+        ...state.scheduledHearing,
+        ...action.payload
+      }
+    };
   default:
     return state;
   }

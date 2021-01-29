@@ -6,6 +6,12 @@
 # Task is created as a result of case distribution.
 # Task should always have a RootTask as its parent.
 # Task can one or more AttorneyTask children, one or more ColocatedTask children, or no child tasks at all.
+# An open task will result in the case appearing in the Judge Assign View.
+#
+# Expected parent task: RootTask
+#
+# Expected child task: JudgeAssignTask can have one or more ColocatedTask children or no child tasks at all.
+# Historically, it can have AttorneyTask children, but AttorneyTasks should now be under JudgeDecisionReviewTasks.
 
 class JudgeAssignTask < JudgeTask
   def additional_available_actions(_user)

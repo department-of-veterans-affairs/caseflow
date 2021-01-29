@@ -43,6 +43,19 @@ feature "Intake", :all_dbs do
     end
   end
 
+  context "As a user with Senior Veterans Service Representative job_title" do
+    let!(:svsr_user) { create(:user, css_id: "BVAAABSHIRE", station_id: "101") }
+
+    before do
+      User.authenticate!(user: svsr_user)
+    end
+
+    scenario "Attempts to view establish claim pages" do
+      visit "/intake"
+      expect(page).to have_content("You aren't authorized")
+    end
+  end
+
   context "As a user with Admin Intake role" do
     let!(:current_user) do
       User.authenticate!(roles: ["Admin Intake"])
@@ -159,7 +172,7 @@ feature "Intake", :all_dbs do
 
       expect(page).to have_current_path("/intake/search")
       expect(page).to have_content("Something went wrong")
-      expect(page).to have_content(/Error code \w+-\w+-\w+-\w+/)
+      expect(page).to have_content("Error code 00000000000000000123456789abcdef")
     end
 
     scenario "Search for a veteran with an incident flash" do
@@ -535,6 +548,67 @@ feature "Intake", :all_dbs do
         end
       end
 
+      context "four digit zip" do
+        let(:veteran) do
+          Generators::Veteran.build(
+            file_number: "12341234",
+
+            country: "USA",
+            address_line1: "1234",
+            zip_code: "1234"
+          )
+        end
+
+        scenario "veteran has four digit zip" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "12341234"
+          click_on "Search"
+
+          expect(page).to have_current_path("/intake/review_request")
+          within_fieldset("What is the Benefit Type?") do
+            find("label", text: "Compensation", match: :prefer_exact).click
+          end
+
+          expect(page).to have_content("Check the Veteran's profile for invalid information")
+          expect(page).to have_content(
+            "Zip codes in the USA must be 5 characters long. Please check the veteran's address and try again."
+          )
+        end
+      end
+
+      context "not a US address and zipcode" do
+        let!(:country) { "CANADA" }
+        let!(:zip_code) { "1234" }
+
+        let(:veteran) do
+          create(
+            :veteran,
+            country: country,
+            zip_code: zip_code,
+            file_number: "12341234"
+          )
+        end
+
+        scenario "veteran has valid zipcode from different country" do
+          visit "/intake"
+          select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "12341234"
+          click_on "Search"
+
+          expect(page).to have_current_path("/intake/review_request")
+          within_fieldset("What is the Benefit Type?") do
+            find("label", text: "Compensation", match: :prefer_exact).click
+          end
+
+          expect(page).not_to have_content("Check the Veteran's profile for invalid information")
+        end
+      end
+
       context "invalid pay grade" do
         let(:service) { [{ branch_of_service: "army", pay_grade: "not valid" }] }
         let(:veteran) do
@@ -549,8 +623,9 @@ feature "Intake", :all_dbs do
           )
         end
 
-        scenario "veteran has invalid pay grade" do
+        scenario "On an HLR: Error shows on review page for VBMS claims after benefit type is selected" do
           visit "/intake"
+
           select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
           safe_click ".cf-submit.usa-button"
 
@@ -567,48 +642,59 @@ feature "Intake", :all_dbs do
             "Please check the Veteran's pay grade data in VBMS or SHARE to ensure all values are valid and try again"
           )
         end
-      end
-    end
 
-    context "Adding new claimant" do
-      let(:hlr) { create(:higher_level_review, veteran_file_number: "12341234") }
-      let(:intake) { HigherLevelReviewIntake.new(veteran_file_number: "12341234", user: current_user) }
-
-      before do
-        intake.start!
-      end
-
-      context "without attorney_fees feature toggle" do
-        it "doesn't allow adding new claimants" do
+        scenario "On an appeal: Error shows on add issues page if an issue is added with a VBMS benefit type" do
           visit "/intake"
+
+          select_form(Constants.INTAKE_FORM_NAMES.appeal)
+          safe_click ".cf-submit.usa-button"
+
+          fill_in search_bar_title, with: "12341234"
+          click_on "Search"
 
           expect(page).to have_current_path("/intake/review_request")
 
-          within_fieldset("Is the claimant someone other than the Veteran?") do
-            find("label", text: "Yes", match: :prefer_exact).click
+          fill_in "What is the Receipt Date of this form?", with: Time.zone.now.mdY
+
+          within_fieldset("Which review option did the Veteran request?") do
+            find("label", text: "Evidence Submission", match: :prefer_exact).click
           end
 
-          expect(page).to_not have_content("+ Add Claimant")
-        end
-      end
-
-      context "with attorney_fees feature toggle" do
-        before { FeatureToggle.enable!(:attorney_fees) }
-        after { FeatureToggle.disable!(:attorney_fees) }
-
-        it "allows adding new claimants" do
-          visit "/intake"
-
-          expect(page).to have_current_path("/intake/review_request")
-
           within_fieldset("Is the claimant someone other than the Veteran?") do
-            find("label", text: "Yes", match: :prefer_exact).click
+            find("label", text: "No", match: :prefer_exact).click
           end
 
-          expect(page).to have_content("+ Add Claimant")
+          select_agree_to_withdraw_legacy_issues(false)
+          click_intake_continue
 
-          click_button("+ Add Claimant")
-          expect(page).to have_content(COPY::ADD_CLAIMANT_MODAL_TITLE)
+          expect(page).to have_current_path("/intake/add_issues")
+
+          click_intake_add_issue
+          add_intake_nonrating_issue(
+            benefit_type: "Vocational Rehabilitation and Employment",
+            category: "Additional Training",
+            description: "Description for Additional Training",
+            date: 1.month.ago.mdY,
+            legacy_issues: true
+          )
+          add_intake_rating_issue("No VACOLS issues were found")
+
+          expect(page).to_not have_content("Check the Veteran's profile for invalid information")
+
+          click_intake_add_issue
+          add_intake_nonrating_issue(
+            benefit_type: "Compensation",
+            category: "Active Duty Adjustments",
+            description: "Description for Active Duty Adjustments",
+            date: 1.month.ago.mdY,
+            legacy_issues: true
+          )
+          add_intake_rating_issue("No VACOLS issues were found")
+
+          expect(page).to have_content("Check the Veteran's profile for invalid information")
+          expect(page).to have_content(
+            "Please check the Veteran's pay grade data in VBMS or SHARE to ensure all values are valid and try again"
+          )
         end
       end
     end

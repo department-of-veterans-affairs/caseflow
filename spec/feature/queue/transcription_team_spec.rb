@@ -38,6 +38,7 @@ RSpec.feature "TranscriptionTeam", :postgres do
       visit("/organizations/transcription")
       click_on veteran_link_text
       click_dropdown(text: Constants.TASK_ACTIONS.RESCHEDULE_HEARING.to_h[:label])
+      fill_in "taskInstructions", with: "Cancelling task"
       click_on "Submit"
 
       expect(page).to have_content(
@@ -91,10 +92,18 @@ RSpec.feature "TranscriptionTeam", :postgres do
           schedule_row.find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
           expect(schedule_row).to have_content(instructions_text)
           click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-          click_dropdown({ prompt: "Select", text: "Postponed" }, find(".cf-modal-body"))
-          fill_in "Notes", with: "I'm changing this to postponed."
+          click_dropdown(
+            {
+              prompt: "Select",
+              text: Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held
+            },
+            find(".cf-modal-body")
+          )
+          fill_in "Notes", with: "I'm changing this to held."
           click_button("Submit")
-          expect(page).to have_content("Successfully changed hearing disposition to Postponed")
+          expect(page).to have_content(
+            "Successfully changed hearing disposition to #{Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held}"
+          )
         end
       end
     end

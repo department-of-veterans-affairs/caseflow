@@ -1,5 +1,5 @@
 import React from 'react';
-import Accordion from '../../components/Accordion';
+import { Accordion } from '../../components/Accordion';
 import AccordionSection from '../../components/AccordionSection';
 import StyleGuideComponentTitle from '../../components/StyleGuideComponentTitle';
 

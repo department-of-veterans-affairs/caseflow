@@ -1,61 +1,58 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
-import _ from 'lodash';
+import React from 'react';
 
-import BareList from '../components/BareList';
-import { boldText } from './constants';
+import { detailListStyling, getDetailField } from './Detail';
 import Address from './components/Address';
-import COPY from '../../COPY';
+import BareList from '../components/BareList';
 
-const detailListStyling = css({
-  paddingLeft: 0,
-  listStyle: 'none',
-  marginBottom: '3rem'
-});
+/**
+ * A component to display various details about the appeal's appellant including name, address and their relation to the
+ * veteran
+ */
+export const AppellantDetail = ({ appeal }) => {
+  const {
+    appellantAddress,
+    appellantFullName,
+    appellantRelationship
+  } = appeal;
 
-export default class AppellantDetail extends React.PureComponent {
-  getAppealAttr = (attr) => _.get(this.props.appeal, attr);
+  const details = [{
+    label: 'Name',
+    value: appellantFullName
+  }];
 
-  getGenderValue = (genderFieldName) => this.getAppealAttr(genderFieldName) === 'F' ?
-    COPY.CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE :
-    COPY.CASE_DETAILS_GENDER_FIELD_VALUE_MALE;
+  if (appellantRelationship) {
+    details.push({
+      label: 'Relation to Veteran',
+      value: appellantRelationship
+    });
+  }
 
-  getDetails = ({ nameField, addressField, relationField }) => {
-    const details = [{
-      label: 'Name',
-      value: this.getAppealAttr(nameField)
-    }];
+  if (appellantAddress) {
+    details.push({
+      label: 'Mailing Address',
+      value: <Address address={appellantAddress} />
+    });
+  }
 
-    if (relationField && this.getAppealAttr(relationField)) {
-      details.push({
-        label: 'Relation to Veteran',
-        value: this.getAppealAttr(relationField)
-      });
-    }
-    if (addressField && this.getAppealAttr(addressField)) {
-      details.push({
-        label: 'Mailing Address',
-        value: <Address address={this.getAppealAttr(addressField)} />
-      });
-    }
-
-    const getDetailField = ({ label, value }) => () => <React.Fragment>
-      <span {...boldText}>{label}:</span> {value}
-    </React.Fragment>;
-
-    return <BareList ListElementComponent="ul" items={details.map(getDetailField)} />;
-  };
-
-  render = () => <ul {...detailListStyling}>
-    {this.getDetails({
-      nameField: 'appellantFullName',
-      addressField: 'appellantAddress',
-      relationField: 'appellantRelationship'
-    })}
-  </ul>;
-}
+  return (
+    <ul {...detailListStyling}>
+      <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
+    </ul>
+  );
+};
 
 AppellantDetail.propTypes = {
-  appeal: PropTypes.object.isRequired
+
+  /**
+   * Appeal object that contains information abbout the appellant including name, address, and their relation to the
+   * veteran
+   */
+  appeal: PropTypes.shape({
+    appellantAddress: PropTypes.object,
+    appellantFullName: PropTypes.string,
+    appellantRelationship: PropTypes.string
+  }).isRequired
 };
+
+export default AppellantDetail;

@@ -1,3 +1,4 @@
+
 import React, { Fragment } from 'react';
 import Alert from '../../components/Alert';
 import BareList from '../../components/BareList';
@@ -7,6 +8,7 @@ import { ERROR_ADDRESS_LINE_INVALID_CHARACTERS,
   ERROR_CITY_INVALID_CHARACTERS,
   ERROR_ADDRESS_TOO_LONG, INTAKE_VETERAN_DATE_OF_BIRTH_ERROR,
   INTAKE_VETERAN_NAME_SUFFIX_ERROR,
+  ERROR_INVALID_ZIP_CODE,
   INTAKE_VETERAN_PAY_GRADE_INVALID } from '../../../COPY';
 import { css } from 'glamor';
 
@@ -29,42 +31,42 @@ const veteranAddressTips = <Fragment>
 </Fragment>;
 
 export const invalidVeteranCharacters = (searchErrorData) => {
+  let errorMessage;
+
   if (searchErrorData.veteranAddressInvalidFields) {
-    return <Fragment>
+    errorMessage = <Fragment>
       <p>{ERROR_ADDRESS_LINE_INVALID_CHARACTERS}</p>
       <span>{veteranAddressTips}</span>
     </Fragment>;
-  }
-  if (searchErrorData.veteranCityInvalidFields) {
-    return <Fragment>
+  } else if (searchErrorData.veteranCityInvalidFields) {
+    errorMessage = <Fragment>
       <p>{ERROR_CITY_INVALID_CHARACTERS}</p>
       <span>{veteranAddressTips}</span>
     </Fragment>;
-  }
-  if (searchErrorData.veteranAddressTooLong) {
-    return <Fragment>
+  } else if (searchErrorData.veteranAddressTooLong) {
+    errorMessage = <Fragment>
       <p>{ERROR_ADDRESS_TOO_LONG}</p>
       <span>{veteranAddressTips}</span>
     </Fragment>;
-  }
-  if (searchErrorData.veteranDateOfBirthInvalid) {
-    return <Fragment>
+  } else if (searchErrorData.veteranDateOfBirthInvalid) {
+    errorMessage = <Fragment>
       <p>{INTAKE_VETERAN_DATE_OF_BIRTH_ERROR}</p>
     </Fragment>;
-  }
-
-  if (searchErrorData.veteranNameSuffixInvalid) {
-    return <Fragment>
+  } else if (searchErrorData.veteranNameSuffixInvalid) {
+    errorMessage = <Fragment>
       <p>{INTAKE_VETERAN_NAME_SUFFIX_ERROR}</p>
     </Fragment>;
-  }
-
-  if (searchErrorData.veteranPayGradeInvalid) {
-    return <Fragment>
+  } else if (searchErrorData.veteranZipCodeInvalid) {
+    errorMessage = <Fragment>
+      <p>{ERROR_INVALID_ZIP_CODE}</p>
+    </Fragment>;
+  } else if (searchErrorData.veteranPayGradeInvalid) {
+    errorMessage = <Fragment>
       <p>{INTAKE_VETERAN_PAY_GRADE_INVALID}</p>
     </Fragment>;
   }
 
+  return errorMessage;
 };
 
 export const invalidVeteranInstructions = (searchErrorData) => {

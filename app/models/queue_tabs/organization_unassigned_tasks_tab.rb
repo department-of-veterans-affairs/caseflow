@@ -37,6 +37,6 @@ class OrganizationUnassignedTasksTab < QueueTab
   # rubocop:enable Metrics/AbcSize
 
   def allow_bulk_assign?
-    !!allow_bulk_assign
+    true
   end
 end

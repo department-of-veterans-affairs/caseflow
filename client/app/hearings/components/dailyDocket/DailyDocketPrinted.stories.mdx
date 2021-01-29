@@ -1,0 +1,79 @@
+import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
+
+import { userWithJudgeRole } from '../../../../test/data/user';
+import { centralHearing, defaultHearing, legacyHearing } from '../../../../test/data/hearings';
+import DailyDocketPrinted from './DailyDocketPrinted';
+
+<Meta
+  title="Hearings/Components/Daily Docket/DailyDocketPrinted"
+  component={DailyDocketPrinted}
+/>
+
+export const videoDocket = {
+  bvaPoc: "BVA POC",
+  judgeFirstName: "Aaron",
+  judgeLastName: "Abshire",
+  notes: null,
+  readableRequestType: "Video",
+  regionalOffice: "St Petersburg, FL",
+  regionalOfficeKey: "RO17",
+  requestType: "V",
+  room: "1 (1W200A)",
+  scheduledFor: "2020-08-08"
+};
+
+export const videoHearings = {
+  [defaultHearing.appealExternalId]: defaultHearing,
+  [legacyHearing.appealExternalId]: legacyHearing
+};
+
+export const centralDocket = {
+  bvaPoc: "BVA POC",
+  judgeFirstName: "Aaron",
+  judgeLastName: "Abshire",
+  notes: null,
+  readableRequestType: "Central",
+  regionalOffice: null,
+  regionalOfficeKey: null,
+  requestType: "C",
+  room: "1 (1W200A)",
+  scheduledFor: "2020-08-08"
+};
+
+export const centralHearings = {
+  [centralHearing.appeal_external_id]: centralHearing
+};
+
+# Daily Docket - Printed
+
+Printed version of the daily docket.
+
+### Central Docket
+
+<Preview>
+  <Story name="Central">
+    <DailyDocketPrinted
+      docket={centralDocket}
+      hearings={centralHearings}
+      user={userWithJudgeRole}
+      disablePrompt
+    />
+  </Story>
+</Preview>
+
+### Video Docket
+
+<Preview>
+  <Story name="Video">
+    <DailyDocketPrinted
+      docket={videoDocket}
+      hearings={videoHearings}
+      user={userWithJudgeRole}
+      disablePrompt
+    />
+  </Story>
+</Preview>
+
+### Props
+
+<Props of={DailyDocketPrinted} />

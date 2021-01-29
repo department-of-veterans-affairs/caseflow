@@ -98,6 +98,7 @@ class AppealsController < ApplicationController
                                 service: :queue,
                                 name: "AppealsController.show") do
             appeal.appeal_views.find_or_create_by(user: current_user).update!(last_viewed_at: Time.zone.now)
+
             render json: { appeal: json_appeals(appeal)[:data] }
           end
         else
@@ -115,7 +116,7 @@ class AppealsController < ApplicationController
   helper_method :appeal, :url_appeal_uuid
 
   def appeal
-    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
+    @appeal ||= Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
   end
 
   def url_appeal_uuid

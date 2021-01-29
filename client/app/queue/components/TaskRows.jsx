@@ -7,12 +7,13 @@ import COPY from '../../../COPY';
 import { GrayDot, GreenCheckmark, CancelIcon } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
 import { taskIsOnHold, sortTaskList } from '../utils';
-import StringUtil from '../../util/StringUtil';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import ActionsDropdown from '../components/ActionsDropdown';
 import OnHoldLabel from '../components/OnHoldLabel';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import DecisionDateTimeLine from '../components/DecisionDateTimeLine';
+import ReactMarkdown from 'react-markdown';
+import { EditNodDateModalContainer } from './EditNodDateModal';
 
 export const grayLineStyling = css({
   width: '5px',
@@ -87,7 +88,8 @@ class TaskRows extends React.PureComponent {
     }
 
     this.state = {
-      taskInstructionsIsVisible: { }
+      taskInstructionsIsVisible: { },
+      showEditNodDateModal: false
     };
   }
 
@@ -153,8 +155,22 @@ class TaskRows extends React.PureComponent {
   assignedByListItem = (task) => {
     const assignor = task.assignedBy.firstName ? this.getAbbrevName(task.assignedBy) : null;
 
-    return assignor ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_FROM_LABEL}</dt>
+    return assignor ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL}</dt>
       <dd>{assignor}</dd></div> : null;
+  }
+
+  cancelledByListItem = (task) => {
+    const canceler = task.cancelledBy?.cssId;
+
+    return canceler ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_CANCELER_LABEL}</dt>
+      <dd>{canceler}</dd></div> : null;
+  }
+
+  hearingRequestTypeConvertedBy = (task) => {
+    const convertedBy = task.convertedBy?.cssId;
+
+    return convertedBy ? <div><dt>{COPY.TASK_SNAPSHOT_HEARING_REQUEST_CONVERTER_LABEL}</dt>
+      <dd>{convertedBy}</dd></div> : null;
   }
 
   taskLabelListItem = (task) => {
@@ -171,10 +187,34 @@ class TaskRows extends React.PureComponent {
       return <br />;
     }
 
-    return <React.Fragment key={`${task.uniqueId} fragment`}>
-      {task.instructions.map((text) => <React.Fragment key={`${task.uniqueId} span`}>
-        <span key={`${task.uniqueId} instructions`}>{StringUtil.nl2br(text)}</span><br /></React.Fragment>)}
-    </React.Fragment>;
+    // We aren't allowing ReactMarkdown to do full HTML parsing, so we'll convert any `<br>`
+    // or newline characters to the Markdown standard of two spaces followed by \n
+    const formatBreaks = (text = '') => {
+      // Somehow the contents are occasionally an array, at least in tests
+      // Here we'll format the individual items, then just join to ensure we return string
+      if (Array.isArray(text)) {
+        return text.map((item) => item.replace(/<br>|(?<! {2})\n/g, '  \n')).join(' ');
+      }
+
+      // Normally this should just be a string
+      return text.replace(/<br>|(?<! {2})\n/g, '  \n');
+    };
+
+    // We specify the same 2.4rem margin-bottom as paragraphs to each set of instructions
+    // to ensure a consistent margin between instruction content and the "Hide" button
+    const divStyles = { marginBottom: '2.4rem' };
+
+    return (
+      <React.Fragment key={`${task.uniqueId} fragment`}>
+        {task.instructions.map((text) => (
+          <React.Fragment key={`${task.uniqueId} div`}>
+            <div key={`${task.uniqueId} instructions`} style={divStyles} className="task-instructions">
+              <ReactMarkdown>{formatBreaks(text)}</ReactMarkdown>
+            </div>
+          </React.Fragment>
+        ))}
+      </React.Fragment>
+    );
   }
 
   taskInstructionsListItem = (task) => {
@@ -185,7 +225,7 @@ class TaskRows extends React.PureComponent {
     return <div>
       { this.state.taskInstructionsIsVisible[task.uniqueId] &&
       <React.Fragment key={`${task.uniqueId}instructions_text`} >
-        <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
+        <dt style={{ width: '100%' }}>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
         <dd>{this.taskInstructionsWithLineBreaks(task)}</dd>
       </React.Fragment> }
       <Button
@@ -218,6 +258,38 @@ class TaskRows extends React.PureComponent {
     };
   }
 
+  hearingRequestTypeConvertedAtListItem = (task) => {
+    return task.convertedOn ? <div><dt>{COPY.TASK_SNAPSHOT_HEARING_REQUEST_CONVERTED_ON_LABEL}</dt>
+      <dd>{moment(task.convertedOn).format('MM/DD/YYYY')}</dd></div> : null;
+  };
+
+  closedOrCancelledAtListItem = (task) => {
+    if (isCancelled(task)) {
+      return this.cancelledAtListItem(task);
+    }
+
+    return task.type === 'ChangeHearingRequestTypeTask' ?
+      this.hearingRequestTypeConvertedAtListItem(task) : this.closedAtListItem(task);
+
+  }
+
+  showTimelineDescriptionItems = (task, timeline) => {
+    if (task.type === 'ChangeHearingRequestTypeTask' && timeline) {
+      return this.hearingRequestTypeConvertedBy(task);
+    }
+
+    return (
+      <React.Fragment>
+        { this.assignedToListItem(task) }
+        { this.assignedByListItem(task) }
+        { this.cancelledByListItem(task) }
+        { this.taskLabelListItem(task) }
+        { this.taskInstructionsListItem(task) }
+      </React.Fragment>
+    );
+
+  }
+
   taskTemplate = (templateConfig) => {
     const { task, taskList, index, timeline, appeal } = templateConfig;
 
@@ -227,7 +299,7 @@ class TaskRows extends React.PureComponent {
       <td {...taskTimeContainerStyling} className={timeline ? taskTimeTimelineContainerStyling : ''}>
         <CaseDetailsDescriptionList>
           { this.assignedOnListItem(task) }
-          { isCancelled(task) ? this.cancelledAtListItem(task) : this.closedAtListItem(task) }
+          { this.closedOrCancelledAtListItem(task) }
           { !task.closedAt && this.daysWaitingListItem(task) }
         </CaseDetailsDescriptionList>
       </td>
@@ -241,15 +313,18 @@ class TaskRows extends React.PureComponent {
         className={timeline ? 'taskInformationTimelineContainerStyling' : ''}>
         <CaseDetailsDescriptionList>
           { timeline && timelineTitle }
-          { this.assignedToListItem(task) }
-          { this.assignedByListItem(task) }
-          { this.taskLabelListItem(task) }
-          { this.taskInstructionsListItem(task) }
+          { this.showTimelineDescriptionItems(task, timeline) }
         </CaseDetailsDescriptionList>
       </td>
       { !timeline && <td className="taskContainerStyling taskActionsContainerStyling">
         { this.showActionsListItem(task, appeal) } </td> }
     </tr>;
+  }
+
+  toggleEditNodDateModal = () => this.setState((state) => ({ showEditNodDateModal: !state.showEditNodDateModal }));
+
+  handleNODDateChange = () => {
+    this.toggleEditNodDateModal();
   }
 
   render = () => {
@@ -297,9 +372,30 @@ class TaskRows extends React.PureComponent {
           { moment(appeal.nodDate).format('MM/DD/YYYY') }
         </td>
         <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer">
-          { <GreenCheckmark /> } </td>
+          <GreenCheckmark /></td>
         <td className="taskContainerStyling taskInformationTimelineContainerStyling">
           { COPY.CASE_TIMELINE_NOD_RECEIVED } <br />
+          {this.props.editNodDateEnabled && (
+            <React.Fragment>
+              <p>
+                <Button
+                  type="button"
+                  linkStyling
+                  styling={css({ 'padding-left': '0' })}
+                  onClick={this.toggleEditNodDateModal}>
+                  {COPY.CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY}
+                </Button>
+              </p>
+              {this.state.showEditNodDateModal && (
+                <EditNodDateModalContainer
+                  onCancel={this.toggleEditNodDateModal}
+                  onSubmit={this.toggleEditNodDateModal}
+                  nodDate={appeal.nodDate}
+                  appealId={appeal.externalId}
+                />
+              )}
+            </React.Fragment>
+          )}
         </td>
       </tr> }
     </React.Fragment>;
@@ -308,6 +404,7 @@ class TaskRows extends React.PureComponent {
 
 TaskRows.propTypes = {
   appeal: PropTypes.object,
+  editNodDateEnabled: PropTypes.bool,
   hideDropdown: PropTypes.bool,
   taskList: PropTypes.array,
   timeline: PropTypes.bool

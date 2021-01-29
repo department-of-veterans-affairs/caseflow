@@ -7,9 +7,10 @@ FactoryBot.define do
     sequence(:bfcorlid, 300_000_000) { |n| "#{n}S" }
 
     association :correspondent, factory: :correspondent
-    association :folder, factory: :folder, ticknum: :bfkey
+    folder { association :folder, ticknum: bfkey, tinum: bfkey }
 
     bfregoff { "RO18" }
+    bfdloout { Time.zone.now }
 
     trait :assigned do
       transient do
@@ -18,6 +19,7 @@ FactoryBot.define do
         assigner { nil }
         work_product { nil }
         document_id { nil }
+        as_judge_assign_task { nil }
       end
 
       after(:create) do |vacols_case, evaluator|
@@ -40,6 +42,13 @@ FactoryBot.define do
                    evaluator.work_product
                  end
 
+        # If user=judge and dereceive=nil, then reassigned_to_judge_date=nil, resulting in a JudgeLegacyAssignTask.
+        # If user=judge and dereceive!=nil, then this results in a JudgeLegacyDecisionReviewTask.
+        # Otherwise AttorneyLegacyTask will result.
+        dereceive = if evaluator.user&.vacols_roles&.include?("judge")
+                      evaluator.as_judge_assign_task ? nil : Time.zone.today
+                    end
+
         create_list(
           :decass,
           evaluator.decass_count,
@@ -47,7 +56,7 @@ FactoryBot.define do
           defolder: vacols_case.bfkey,
           deadusr: slogid || "TEST",
           demdusr: assigner_slogid || "ASSIGNER",
-          dereceive: evaluator.user&.vacols_roles&.include?("judge") ? Time.zone.today : nil,
+          dereceive: dereceive,
           dedocid: evaluator.document_id || nil,
           deatty: sattyid || "100"
         )
@@ -164,6 +173,23 @@ FactoryBot.define do
       end
     end
 
+    trait :tied_to_judge do
+      transient do
+        tied_judge { nil }
+      end
+
+      after(:create) do |vacols_case, evaluator|
+        VACOLS::Folder.find_by(tinum: vacols_case.bfkey).update!(titrnum: "123456789S")
+        create(
+          :case_hearing,
+          :disposition_held,
+          folder_nr: vacols_case.bfkey,
+          hearing_date: 5.days.ago.to_date,
+          user: evaluator.tied_judge
+        )
+      end
+    end
+
     trait :type_original do
       bfac { "1" }
     end
@@ -191,6 +217,12 @@ FactoryBot.define do
 
     trait :status_active do
       bfmpro { "ACT" }
+    end
+
+    trait :ready_for_distribution do
+      status_active
+      bfcurloc { "81" }
+      bfd19 { 1.year.ago.to_date }
     end
 
     trait :status_remand do
@@ -232,6 +264,14 @@ FactoryBot.define do
 
     trait :disposition_ramp do
       bfdc { "P" }
+    end
+
+    trait :disposition_ama do
+      bfdc { "O" }
+    end
+
+    trait :disposition_advance_failure_to_respond do
+      bfdc { "G" }
     end
 
     trait :representative_american_legion do
@@ -277,7 +317,7 @@ FactoryBot.define do
 
     trait :docs_in_vbms do
       after(:build) do |vacols_case, _evaluator|
-        vacols_case.folder.tivbms = %w[Y 1 0].sample
+        vacols_case.folder.update!(tivbms: %w[Y 1 0].sample)
       end
     end
 

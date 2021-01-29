@@ -74,7 +74,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         User.authenticate!(user: mail_user)
         visit "/queue/appeals/#{appeal.uuid}"
         find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
-        find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+        find(".cf-select__control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
         expect(page).to have_content(COPY::ADDRESS_CHANGE_MAIL_TASK_LABEL)
         expect(page).to_not have_content(COPY::VACATE_MOTION_MAIL_TASK_LABEL)
       end
@@ -85,8 +85,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
       User.authenticate!(user: mail_user)
       visit "/queue/appeals/#{appeal.uuid}"
       find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
-      find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
-      find("div", class: "Select-option", text: COPY::VACATE_MOTION_MAIL_TASK_LABEL).click
+      find(".cf-select__control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+      find("div", class: "cf-select__option", text: COPY::VACATE_MOTION_MAIL_TASK_LABEL).click
       fill_in("taskInstructions", with: "Instructions for motion to vacate mail task")
       find("button", text: "Submit").click
       expect(page).to have_content("Created Motion to vacate task")
@@ -95,10 +95,10 @@ RSpec.feature "Motion to vacate", :all_dbs do
       # Lit support user can assign task to a motions attorney
       User.authenticate!(user: lit_support_user)
       visit "/queue/appeals/#{appeal.uuid}"
-      find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-      find("div", class: "Select-option", text: "Assign to person").click
-      find(".Select-value").click
-      find("div", class: "Select-option", text: "Motions attorney").click
+      find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find("div", class: "cf-select__option", text: "Assign to person").click
+      find(".cf-modal .cf-select__control").click
+      find("div", class: "cf-select__option", text: "Motions attorney").click
       click_button(text: "Submit")
       expect(page).to have_content("Task assigned to Motions attorney")
       motions_attorney_task = VacateMotionMailTask.find_by(assigned_to: motions_attorney)
@@ -107,8 +107,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
       # Motions attorney can send to judge
       User.authenticate!(user: motions_attorney)
       visit "/queue/appeals/#{appeal.uuid}"
-      find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-      find("div", class: "Select-option", text: "Send to judge").click
+      find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find("div", class: "cf-select__option", text: "Send to judge").click
       expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{motions_attorney_task.id}/send_to_judge")
     end
 
@@ -192,8 +192,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
         User.authenticate!(user: motions_attorney)
         visit "/queue/appeals/#{appeal.uuid}"
 
-        find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label).click
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label).click
         expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_TITLE)
         expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_1)
         expect(page).to have_content(COPY::PULAC_CERULLO_MODAL_BODY_2)
@@ -579,7 +579,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
       PostDecisionMotionUpdater.new(judge_address_motion_to_vacate_task, post_decision_motion_params)
     end
     let!(:post_decision_motion) { post_decision_motion_updater.process }
-    let(:vacate_stream) { Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "vacate") }
+    let(:vacate_stream) do
+      Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: Constants.AMA_STREAM_TYPES.vacate)
+    end
     let(:attorney_task) { AttorneyTask.find_by(assigned_to: drafting_attorney) }
 
     let(:review_decisions_path) do
@@ -593,6 +595,13 @@ RSpec.feature "Motion to vacate", :all_dbs do
       [
         "/queue/appeals/#{vacate_stream.uuid}/tasks/#{attorney_task.id}",
         "motion_to_vacate_checkout/add_decisions"
+      ].join("/")
+    end
+
+    let(:remand_reasons_path) do
+      [
+        "/queue/appeals/#{vacate_stream.uuid}/tasks/#{attorney_task.id}",
+        "motion_to_vacate_checkout/remand_reasons"
       ].join("/")
     end
 
@@ -630,8 +639,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
         check_cavc_alert
         verify_cavc_conflict_action
 
-        find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
 
         expect(page.current_path).to eq(review_decisions_path)
 
@@ -676,8 +685,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
         expect(PostDecisionMotion.all.size).to eq(1)
         expect(JudgeAddressMotionToVacateTask.all.size).to eq(1)
 
-        find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
 
         expect(page.current_path).to eq(review_decisions_path)
 
@@ -707,80 +716,210 @@ RSpec.feature "Motion to vacate", :all_dbs do
     context "Vacate & Readjudicate" do
       let(:vacate_type) { "vacate_and_readjudication" }
 
-      it "correctly handles checkout flow" do
-        User.authenticate!(user: drafting_attorney)
+      context "without remanded decision" do
+        it "correctly handles checkout flow" do
+          User.authenticate!(user: drafting_attorney)
 
-        visit "/queue/appeals/#{vacate_stream.uuid}"
+          visit "/queue/appeals/#{vacate_stream.uuid}"
 
-        check_cavc_alert
-        verify_cavc_conflict_action
+          check_cavc_alert
+          verify_cavc_conflict_action
 
-        find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
+          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+          find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
 
-        expect(page.current_path).to eq(review_decisions_path)
+          expect(page.current_path).to eq(review_decisions_path)
 
-        expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
-        expect(page).to have_css(".cf-progress-bar-not-activated", text: "2. Add Decisions")
-        expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
+          expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+          expect(page).to have_css(".cf-progress-bar-not-activated", text: "2. Add Decisions")
+          expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
 
-        safe_click "#button-next-button"
+          safe_click "#button-next-button"
 
-        expect(page.current_path).to eq(add_decisions_path)
+          expect(page.current_path).to eq(add_decisions_path)
 
-        safe_click "#button-back-button"
+          safe_click "#button-back-button"
 
-        expect(page.current_path).to eq(review_decisions_path)
+          expect(page.current_path).to eq(review_decisions_path)
 
-        safe_click "#button-next-button"
+          safe_click "#button-next-button"
 
-        expect(page.current_path).to eq(add_decisions_path)
+          expect(page.current_path).to eq(add_decisions_path)
 
-        expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
-        expect(page).to have_css(".cf-progress-bar-activated", text: "2. Add Decisions")
-        expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
+          expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+          expect(page).to have_css(".cf-progress-bar-activated", text: "2. Add Decisions")
+          expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
 
-        # Add a first decision issue
-        all("button", text: "+ Add decision", count: 3)[0].click
+          # Add a first decision issue
+          all("button", text: "+ Add decision", count: 3)[0].click
+          expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+          fill_in "Text Box", with: "test"
+
+          find(".cf-select__control", text: "Select disposition").click
+          find("div", class: "cf-select__option", text: "Allowed").click
+
+          click_on "Add Issue"
+
+          safe_click "#button-next-button"
+
+          expect(page.current_path).to eq(submit_decisions_path)
+
+          safe_click "#button-back-button"
+
+          expect(page.current_path).to eq(add_decisions_path)
+
+          safe_click "#button-next-button"
+
+          expect(page.current_path).to eq(submit_decisions_path)
+
+          expect(page).to have_content("Submit Draft Decision for Review")
+
+          expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+          expect(page).to have_css(".cf-progress-bar-activated", text: "2. Add Decisions")
+          expect(page).to have_css(".cf-progress-bar-activated", text: "3. Submit Draft Decision for Review")
+
+          fill_in "Document ID:", with: valid_document_id
+          expect(page).to have_content(judge.full_name)
+          fill_in "notes", with: "all done"
+
+          click_on "Submit"
+
+          expect(page).to have_content(
+            "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
+            "sent to #{judge.full_name} for review."
+          )
+
+          expect(vacate_stream.decision_issues.size).to eq(4)
+        end
+      end
+
+      context "with remanded decision" do
+        it "correctly handles checkout flow" do
+          User.authenticate!(user: drafting_attorney)
+
+          visit "/queue/appeals/#{vacate_stream.uuid}"
+
+          check_cavc_alert
+          verify_cavc_conflict_action
+
+          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+          find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
+
+          expect(page.current_path).to eq(review_decisions_path)
+
+          expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+          expect(page).to have_css(".cf-progress-bar-not-activated", text: "2. Add Decisions")
+          expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
+
+          safe_click "#button-next-button"
+
+          expect(page.current_path).to eq(add_decisions_path)
+
+          safe_click "#button-back-button"
+
+          expect(page.current_path).to eq(review_decisions_path)
+
+          safe_click "#button-next-button"
+
+          expect(page.current_path).to eq(add_decisions_path)
+
+          expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+          expect(page).to have_css(".cf-progress-bar-activated", text: "2. Add Decisions")
+          expect(page).to have_css(".cf-progress-bar-not-activated", text: "3. Submit Draft Decision for Review")
+
+          # Add a first decision issue
+          add_decision_to_issue(0, "Allowed", "test")
+
+          # Add a remanded decision issue
+          add_decision_to_issue(1, "Remanded", "remanded test")
+          add_decision_to_issue(2, "Remanded", "remanded test 2")
+
+          # Next should be remand reasons
+          safe_click "#button-next-button"
+
+          expect(page.current_path).to eq(remand_reasons_path)
+          expect(page).to have_selector(".remand-reasons-form", maximum: 1)
+
+          # Add remand reasons for issue 1
+          within all("div.remand-reasons-form")[0] do
+            find_field("Service treatment records", visible: false).sibling("label").click
+            find_field("Post AOJ", visible: false).sibling("label").click
+          end
+
+          safe_click "#button-next-button"
+
+          # Should still be on remand reasons page, but should have added second issue form
+          expect(page.current_path).to eq(remand_reasons_path)
+          expect(page).to have_selector(".remand-reasons-form", minimum: 2)
+
+          # Add remand reasons for issue 2
+          within all("div.remand-reasons-form")[1] do
+            find_field("Medical examinations", visible: false).sibling("label").click
+            find_field("Pre AOJ", visible: false).sibling("label").click
+          end
+
+          safe_click "#button-next-button"
+
+          expect(page.current_path).to eq(submit_decisions_path)
+
+          safe_click "#button-back-button"
+
+          # Going back should return to add_decisions, not remand_reasons
+
+          expect(page.current_path).to eq(add_decisions_path)
+
+          safe_click "#button-next-button"
+
+          expect(page.current_path).to eq(remand_reasons_path)
+
+          # Need to press continue twice, due to two issues
+          safe_click "#button-next-button"
+          safe_click "#button-next-button"
+
+          expect(page.current_path).to eq(submit_decisions_path)
+
+          expect(page).to have_content("Submit Draft Decision for Review")
+
+          expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
+          expect(page).to have_css(".cf-progress-bar-activated", text: "2. Add Decisions")
+          expect(page).to have_css(".cf-progress-bar-activated", text: "3. Submit Draft Decision for Review")
+
+          fill_in "Document ID:", with: valid_document_id
+          expect(page).to have_content(judge.full_name)
+          fill_in "notes", with: "all done"
+
+          click_on "Submit"
+
+          expect(page).to have_content(
+            "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
+            "sent to #{judge.full_name} for review."
+          )
+
+          expect(vacate_stream.decision_issues.size).to eq(6)
+
+          remanded = vacate_stream.decision_issues.select { |di| di.remanded? }
+          remanded1 = remanded.find { |di| di.description.eql? "remanded test" }
+          remanded2 = remanded.find { |di| di.description.eql? "remanded test 2" }
+
+          expect(remanded1.remand_reasons.size).to eq(1)
+          expect(remanded1.remand_reasons.first).to have_attributes(code: "service_treatment_records")
+
+          expect(remanded2.remand_reasons.size).to eq(1)
+          expect(remanded2.remand_reasons.first).to have_attributes(code: "medical_examinations")
+        end
+      end
+
+      def add_decision_to_issue(idx, disposition, description)
+        all("button", text: "+ Add decision", count: 3)[idx].click
         expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
 
-        fill_in "Text Box", with: "test"
+        fill_in "Text Box", with: description
 
-        find(".Select-control", text: "Select disposition").click
-        find("div", class: "Select-option", text: "Allowed").click
+        find(".cf-select__control", text: "Select disposition").click
+        find("div", class: "cf-select__option", text: disposition).click
 
         click_on "Add Issue"
-
-        safe_click "#button-next-button"
-
-        expect(page.current_path).to eq(submit_decisions_path)
-
-        safe_click "#button-back-button"
-
-        expect(page.current_path).to eq(add_decisions_path)
-
-        safe_click "#button-next-button"
-
-        expect(page.current_path).to eq(submit_decisions_path)
-
-        expect(page).to have_content("Submit Draft Decision for Review")
-
-        expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Vacated Decision Issues")
-        expect(page).to have_css(".cf-progress-bar-activated", text: "2. Add Decisions")
-        expect(page).to have_css(".cf-progress-bar-activated", text: "3. Submit Draft Decision for Review")
-
-        fill_in "Document ID:", with: valid_document_id
-        expect(page).to have_content(judge.full_name)
-        fill_in "notes", with: "all done"
-
-        click_on "Submit"
-
-        expect(page).to have_content(
-          "Thank you for drafting #{appeal.veteran_full_name}'s decision. It's been "\
-          "sent to #{judge.full_name} for review."
-        )
-
-        expect(vacate_stream.decision_issues.size).to eq(4)
       end
     end
 
@@ -799,8 +938,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
         check_cavc_alert
         verify_cavc_conflict_action
 
-        find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
+        find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.label).click
 
         expect(page.current_path).to eq(review_decisions_path)
 
@@ -833,7 +972,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         instructions = generate_words(5)
 
         click_dropdown(text: selected_opt_0) do
-          visible_options = page.find_all(".Select-option")
+          visible_options = page.find_all(".cf-select__option")
           expect(visible_options.length).to eq Constants::CO_LOCATED_ADMIN_ACTIONS.length
         end
 
@@ -957,7 +1096,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
   end
 
   def visit_vacate_stream
-    vacate_stream = Appeal.find_by(stream_docket_number: appeal.docket_number, stream_type: "vacate")
+    vacate_stream = Appeal.find_by(
+      stream_docket_number: appeal.docket_number, stream_type: Constants.AMA_STREAM_TYPES.vacate
+    )
     visit "/queue/appeals/#{vacate_stream.uuid}"
     expect(page).to have_content("Vacate")
     find("span", text: "View all cases").click
@@ -971,8 +1112,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
     check_cavc_alert
     verify_cavc_conflict_action
 
-    find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-    find("div", class: "Select-option", text: "Send to judge").click
+    find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    find("div", class: "cf-select__option", text: "Send to judge").click
     expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{motions_attorney_task.id}/send_to_judge")
   end
 
@@ -983,8 +1124,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
     check_cavc_alert
     verify_cavc_conflict_action
 
-    find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-    find("div", class: "Select-option", text: "Address Motion to Vacate").click
+    find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    find("div", class: "cf-select__option", text: "Address Motion to Vacate").click
     expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{judge_task.id}/address_motion_to_vacate")
   end
 
@@ -995,16 +1136,16 @@ RSpec.feature "Motion to vacate", :all_dbs do
     check_cavc_alert
     verify_cavc_conflict_action
 
-    find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-    find("div", class: "Select-option", text: "Ready for Dispatch").click
+    find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    find("div", class: "cf-select__option", text: "Ready for Dispatch").click
   end
 
   def complete_motion_to_vacate(user:, appeal:, task:)
     User.authenticate!(user: user)
     visit "/queue/appeals/#{appeal.uuid}"
 
-    find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-    find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
+    find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
 
     expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{task.id}/modal/mark_task_complete")
 
@@ -1035,7 +1176,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
   def verify_cavc_conflict_action
     # Open dropdown
-    action_dropdown = find(".Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+    action_dropdown = find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
     expect(page).to have_content(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label)
     # Close dropdown
     action_dropdown.click

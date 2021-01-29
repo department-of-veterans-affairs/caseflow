@@ -61,6 +61,11 @@ Rails.application.configure do
     end
   end
 
+  # Allows rake scripts to be run without querying VACOLS on startup
+  if ENV['DISABLE_FACTORY_BOT_INITIALIZERS']
+    config.factory_bot.definition_file_paths = []
+  end
+
   unless ENV['RAILS_ENABLE_TEST_LOG']
     config.logger = Logger.new(nil)
     config.log_level = :error

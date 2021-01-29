@@ -10,6 +10,7 @@ import { MotionToVacateContext } from './MotionToVacateContext';
 import { AddEditDecisionIssueModal } from './AddEditDecisionIssueModal';
 import uuid from 'uuid';
 import { RemoveDecisionIssueModal } from './RemoveDecisionIssueModal';
+import { useRouteMatch } from 'react-router';
 
 const validateForm = () => true;
 const defaultState = {
@@ -25,6 +26,7 @@ const hideEdit = ({ decisionIssue }) => decisionIssue?.disposition === 'vacated'
 export const AddDecisionIssuesView = ({ appeal }) => {
   const [ctx, setCtx] = useContext(MotionToVacateContext);
   const [state, setState] = useState(defaultState);
+  const { url } = useRouteMatch();
 
   const connectedRequestIssues = useMemo(
     () =>
@@ -87,11 +89,19 @@ export const AddDecisionIssuesView = ({ appeal }) => {
     closeModals();
   };
 
+  const hasRemandedIssues = useMemo(() => {
+    return ctx.decisionIssues.some((issue) => issue.disposition === 'remanded');
+  }, [ctx.decisionIssues]);
+
+  // Add conditional based on existence of remanded issues
+  const remandUrl = url.replace('add_decisions', 'remand_reasons');
+  const getNextStepUrl = () => hasRemandedIssues ? remandUrl : ctx.getNextUrl('add_decisions');
+
   return (
     <QueueFlowPage
       validateForm={validateForm}
       appealId={appeal.externalId}
-      getNextStepUrl={() => ctx.getNextUrl('add_decisions')}
+      getNextStepUrl={getNextStepUrl}
       getPrevStepUrl={() => ctx.getPrevUrl('add_decisions')}
     >
       <h1>{COPY.MTV_CHECKOUT_ADD_DECISIONS_TITLE}</h1>

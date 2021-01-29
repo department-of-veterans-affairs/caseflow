@@ -16,16 +16,17 @@ const updateFromServerIntake = (state, serverIntake) => {
   }
 
   const commonState = commonStateFromServerIntake(serverIntake);
+
   return update(state, {
     ...commonState,
     informalConference: {
-      $set: serverIntake.informal_conference
+      $set: serverIntake.informalConference
     },
     sameOffice: {
-      $set: serverIntake.same_office
+      $set: serverIntake.sameOffice
     },
     benefitType: {
-      $set: serverIntake.benefit_type
+      $set: serverIntake.benefitType
     }
   });
 };
@@ -50,6 +51,7 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     veteranIsNotClaimant: null,
     veteranIsNotClaimantError: null,
     claimant: null,
+    claimantType: null,
     claimantError: null,
     payeeCode: null,
     payeeCodeError: null,
@@ -94,7 +96,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
   let veteranIsNotClaimant;
 
   if (action.payload) {
-    veteranIsNotClaimant = convertStringToBoolean(action.payload.veteranIsNotClaimant);
+    veteranIsNotClaimant = action.payload.veteranIsNotClaimant;
   }
 
   switch (action.type) {
@@ -140,6 +142,9 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       },
       payeeCode: {
         $set: getDefaultPayeeCode(state, action.payload.claimant)
+      },
+      claimantType: {
+        $set: action.payload.claimantType
       }
     });
   case ACTIONS.SET_PAYEE_CODE:
@@ -212,7 +217,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')
       },
       veteranIsNotClaimantError: {
-        $set: getBlankOptionError(action.payload.responseErrorCodes, 'veteran_is_not_claimant')
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'claimant_type')
       },
       claimantError: {
         $set: getClaimantError(action.payload.responseErrorCodes)
@@ -228,7 +233,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
           $set: REQUEST_STATE.FAILED
         },
         reviewIntakeError: {
-          $set: getPageError(action.payload.responseErrorCodes)
+          $set: getPageError(action.payload)
         }
       }
     });
@@ -265,6 +270,9 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         },
         completeIntakeErrorData: {
           $set: action.payload.responseErrorData
+        },
+        completeIntakeErrorUUID: {
+          $set: action.payload.responseErrorUUID
         }
       }
     });

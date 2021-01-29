@@ -65,7 +65,7 @@ select count(*) into dcnt from assign
 
 hcnt := 0;
 select count(*) into hcnt from hearsched where folder_nr = folder
-  and hearing_type in ('C', 'T', 'V') and aod in ('G', 'Y');
+  and hearing_type in ('C', 'T', 'V', 'R') and aod in ('G', 'Y');
 
 aodcnt := dcnt + hcnt;
 
@@ -102,7 +102,7 @@ select count(*) into dcnt from assign
 
 hcnt := 0;
 select count(*) into hcnt from hearsched where folder_nr = folder
-  and hearing_type in ('C', 'T', 'V') and aod in ('G', 'Y');
+  and hearing_type in ('C', 'T', 'V', 'R') and aod in ('G', 'Y');
 
 aodcnt := dcnt + hcnt;
 
@@ -770,7 +770,7 @@ END;
   hrcnt number;
 BEGIN
 select count(*) into hrcnt from hearsched where folder_nr = folder
-and hearing_type in ('C', 'T', 'V') and hearing_disp in ('H', 'C', 'N');
+and hearing_type in ('C', 'T', 'V', 'R') and hearing_disp in ('H', 'C', 'N');
 RETURN hrcnt;
 END;
 /
@@ -805,7 +805,7 @@ CURSOR DN_Cur is
   SELECT HEARING_DATE FROM HEARSCHED, FOLDER
    WHERE TICKNUM = FOLDER_NR and
      (TITRNUM = appealid AND (tinum = docket or tinum is null))
-     and HEARING_TYPE in ('C', 'V', 'T') and HEARING_DISP = 'H' order by HEARING_DATE DESC;
+     and HEARING_TYPE in ('C', 'T', 'V', 'R') and HEARING_DISP = 'H' order by HEARING_DATE DESC;
 
 BEGIN
 
@@ -828,7 +828,7 @@ CURSOR DN_Cur is
   SELECT HEARING_DATE FROM HEARSCHED, FOLDER
    WHERE TICKNUM = FOLDER_NR and
      (TITRNUM = appealid AND (tinum = docket or tinum is null))
-     and HEARING_TYPE in ('C', 'V', 'T') and board_member = vlj and
+     and HEARING_TYPE in ('C', 'T', 'V', 'R') and board_member = vlj and
      HEARING_DISP = 'H' order by HEARING_DATE DESC;
 
 BEGIN
@@ -851,7 +851,7 @@ CURSOR DV_Cur is select hearing_disp || ' ' || to_char(hearing_date, 'mm/dd/yy')
  || ' ' || nvl(aod, 'N')|| ' ' || to_char(holddays, '999')
  into hrinfo from BRIEFF, HEARSCHED where
  bfkey = folder_nr and bfcorlid = appealid
- and hearing_type in ('C', 'T', 'V') order by hearing_date Desc;
+ and hearing_type in ('C', 'T', 'V', 'R') order by hearing_date Desc;
 
 BEGIN
 
@@ -869,7 +869,7 @@ END;
   hrcnt number;
 BEGIN
 select count(*) into hrcnt from hearsched where folder_nr = folder
-and hearing_type in ('C', 'T', 'V')
+and hearing_type in ('C', 'T', 'V', 'R')
 and hearing_disp in ('H', 'C', 'N');
 RETURN hrcnt;
 END;
@@ -881,7 +881,7 @@ END;
   hrcnt number;
 BEGIN
 select count(*) into hrcnt from hearsched where folder_nr = folder
-and hearing_type in ('C', 'T', 'V')
+and hearing_type in ('C', 'T', 'V', 'R')
 and hearing_disp in ('H');
 RETURN hrcnt;
 END;
@@ -900,7 +900,7 @@ CURSOR DN_Cur is
   SELECT to_char(hearing_date, 'mm/dd/yy'), hearing_type, board_member
    FROM HEARSCHED, FOLDER WHERE TICKNUM = FOLDER_NR and
      (TITRNUM = appealid AND (tinum = docket or tinum is null))
-     and HEARING_TYPE in ('C', 'V', 'T') and HEARING_DISP = 'H'
+     and HEARING_TYPE in ('C', 'T', 'V', 'R') and HEARING_DISP = 'H'
      order by HEARING_DATE DESC;
 
 BEGIN
@@ -923,7 +923,7 @@ hrcnt number;
 
 BEGIN
 select count(*) into hrcnt from hearsched where folder_nr = folder
-and hearing_type in ('C', 'T', 'V')
+and hearing_type in ('C', 'T', 'V', 'R')
 and hearing_disp in ('H', 'C', 'N') and hearing_date > decdate;
 
 if hrcnt > 0 then
@@ -944,7 +944,7 @@ END;
 BEGIN
 select Max(hearing_date) into hrdate from hearsched
   where folder_nr = folder
-  and hearing_type in ('C', 'T', 'V')
+  and hearing_type in ('C', 'T', 'V', 'R')
   and (hearing_disp = 'H' or hearing_disp = null)
   and (hearing_date > reqdate or reqdate is null);
 
@@ -958,7 +958,7 @@ END;
 
 BEGIN
 select max(to_char(holddays, '999'))  into hrinfo from hearsched where folder_nr = folder
-and hearing_type in ('C', 'T', 'V')  and hearing_disp in ('H', 'C', 'N');
+and hearing_type in ('C', 'T', 'V', 'R')  and hearing_disp in ('H', 'C', 'N');
 
 if hrinfo is null then
   hrinfo := '   ';
@@ -990,7 +990,7 @@ if inha = '1' or inha = '2' or inha = '6' then
 end if;
 
 select count(*) into hrcnt from hearsched where folder_nr = folder
-and hearing_type in ('C', 'T', 'V') and hearing_disp in ('H', 'C', 'N');
+and hearing_type in ('C', 'T', 'V', 'R') and hearing_disp in ('H', 'C', 'N');
 
 if hrcnt > 0 then
   pending := 'N';
@@ -1009,7 +1009,7 @@ END;
 
 BEGIN
 select max(repname) into hrrep  from hearsched where folder_nr = folder
-  and hearing_type in ('C', 'T', 'V') ;
+  and hearing_type in ('C', 'T', 'V', 'R') ;
 
 RETURN hrrep;
 END;
@@ -1023,7 +1023,7 @@ hrcnt number;
 
 BEGIN
 select count(*) into hrcnt from hearsched where folder_nr = folder
-  and hearing_type in ('C', 'T', 'V') and hearing_disp is null;
+  and hearing_type in ('C', 'T', 'V', 'R') and hearing_disp is null;
 
 if hrcnt > 0 then
   sched := 'Y';
@@ -1045,7 +1045,7 @@ hrdate varchar2(8);
 BEGIN
 select hearing_type, to_char(hearing_date, 'mm/dd/yy') into hrtype, hrdate
   from hearsched where folder_nr = folder
-  and hearing_type in ('C', 'T', 'V') and hearing_disp is null;
+  and hearing_type in ('C', 'T', 'V', 'R') and hearing_disp is null;
 
 hrinfo := hrtype || ' ' || hrdate;
 
@@ -1141,7 +1141,7 @@ tbcnt number;
 
 BEGIN
 select count(*) into tbcnt from HEARSCHED where folder_nr = folder
-  and hearing_type in ('C', 'V', 'T')
+  and hearing_type in ('C', 'T', 'V', 'R')
   and (hearing_disp is null or hearing_disp = 'H');
 
 if tbcnt > 0 then
@@ -1667,7 +1667,7 @@ CURSOR DN_Cur is
   SELECT BOARD_MEMBER FROM HEARSCHED, FOLDER
    WHERE TICKNUM = FOLDER_NR and
      (TITRNUM = appealid AND (tinum = docket or tinum is null))
-     and HEARING_TYPE in ('C', 'V', 'T') and HEARING_DISP = 'H' order by HEARING_DATE DESC;
+     and HEARING_TYPE in ('C', 'T', 'V', 'R') and HEARING_DISP = 'H' order by HEARING_DATE DESC;
 
 CURSOR BF_Cur is
   SELECT BFMEMID FROM BRIEFF, FOLDER
@@ -1706,7 +1706,7 @@ CURSOR DN_Cur is
   SELECT BOARD_MEMBER FROM HEARSCHED, FOLDER
    WHERE TICKNUM = FOLDER_NR and
      (TITRNUM = appealid AND (tinum = docket or tinum is null))
-     and HEARING_TYPE in ('C', 'V', 'T') and HEARING_DISP = 'H' order by HEARING_DATE DESC;
+     and HEARING_TYPE in ('C', 'T', 'V', 'R') and HEARING_DISP = 'H' order by HEARING_DATE DESC;
 
 CURSOR BF_Cur is
   SELECT BFMEMID FROM BRIEFF, FOLDER
@@ -1749,7 +1749,7 @@ END;
   hrcnt number;
 BEGIN
 select count(*) into hrcnt from hearsched where folder_nr = folder and
-  hearing_type in ('C', 'V') and hearing_date is not null and
+  hearing_type in ('C', 'V', 'R') and hearing_date is not null and
   board_member is not null and hearing_disp is null;
 RETURN hrcnt;
 END;
@@ -1765,7 +1765,7 @@ mdate date;
 
 CURSOR Hr_Cur is SELECT BOARD_MEMBER, HEARING_DATE from  HEARSCHED, FOLDER
   where TICKNUM = FOLDER_NR and TITRNUM = in_appealid AND tinum = in_tinum and
-      HEARING_DISP = 'H' AND HEARING_TYPE in ('C', 'T', 'V') and
+      HEARING_DISP = 'H' AND HEARING_TYPE in ('C', 'T', 'V', 'R') and
       (HEARING_DATE >= in_dpdcn or in_dpdcn is null)
       order by HEARING_DATE DESC ;
       
@@ -2430,7 +2430,7 @@ tbcnt number;
 
 BEGIN
 select count(*) into tbcnt from HEARSCHED where folder_nr = folder
-  and hearing_type in ('V', 'T')
+  and hearing_type in ('T', 'V', 'R')
   and (hearing_disp is null or hearing_disp = 'H');
 
 if tbcnt > 0 then

@@ -9,13 +9,13 @@ import COPY from '../../COPY';
 
 import { taskById, appealWithDetailSelector } from './selectors';
 
-import { onReceiveAmaTasks, legacyReassignToJudge } from './QueueActions';
+import { onReceiveAmaTasks, legacyReassignToJudge, setOvertime } from './QueueActions';
 
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
 import QueueFlowModal from './components/QueueFlowModal';
 
-import { requestPatch, requestSave } from './uiReducer/uiActions';
+import { requestPatch, requestSave, resetSuccessMessages } from './uiReducer/uiActions';
 
 import { taskActionData } from './utils';
 
@@ -23,14 +23,6 @@ const selectedAction = (props) => {
   const actionData = taskActionData(props);
 
   return actionData.selected ? actionData.options.find((option) => option.value === actionData.selected.id) : null;
-};
-
-const vetNameFromAppeal = (appeal) => {
-  const {
-    veteranInfo: { veteran }
-  } = appeal;
-
-  return veteran.full_name;
 };
 
 const getAction = (props) => {
@@ -59,6 +51,8 @@ class AssignToView extends React.Component {
     };
   }
 
+  componentDidMount = () => this.props.resetSuccessMessages();
+
   validateForm = () => {
     return this.state.selectedValue !== null && this.state.instructions !== '';
   };
@@ -69,7 +63,8 @@ class AssignToView extends React.Component {
     const action = getAction(this.props);
     const isPulacCerullo = action && action.label === 'Pulac-Cerullo';
 
-    const taskType = taskActionData(this.props).type ? taskActionData(this.props).type : 'Task';
+    const actionData = taskActionData(this.props);
+    const taskType = actionData.type || 'Task';
 
     const payload = {
       data: {
@@ -77,7 +72,7 @@ class AssignToView extends React.Component {
           {
             type: taskType,
             external_id: appeal.externalId,
-            parent_id: task.taskId,
+            parent_id: actionData.parent_id || task.taskId,
             assigned_to_id: this.state.selectedValue,
             assigned_to_type: isTeamAssign ? 'Organization' : 'User',
             instructions: this.state.instructions
@@ -93,7 +88,7 @@ class AssignToView extends React.Component {
 
     const pulacCerulloSuccessMessage = {
       title: COPY.PULAC_CERULLO_SUCCESS_TITLE,
-      detail: sprintf(COPY.PULAC_CERULLO_SUCCESS_DETAIL, vetNameFromAppeal(appeal))
+      detail: sprintf(COPY.PULAC_CERULLO_SUCCESS_DETAIL, appeal.veteranFullName)
     };
 
     if (isReassignAction) {
@@ -145,6 +140,9 @@ class AssignToView extends React.Component {
 
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).then((resp) => {
       this.props.onReceiveAmaTasks(resp.body.tasks.data);
+      if (task.type === 'JudgeAssignTask') {
+        this.props.setOvertime(task.externalAppealId, false);
+      }
     });
   };
 
@@ -203,7 +201,7 @@ class AssignToView extends React.Component {
 
     return (
       <QueueFlowModal {...modalProps}>
-        <div>{actionData.modal_body ? actionData.modal_body : ''}</div>
+        <p>{actionData.modal_body ? actionData.modal_body : ''}</p>
         {!assigneeAlreadySelected && (
           <React.Fragment>
             <SearchableDropdown
@@ -241,7 +239,9 @@ class AssignToView extends React.Component {
 
 AssignToView.propTypes = {
   appeal: PropTypes.shape({
-    externalId: PropTypes.string
+    externalId: PropTypes.string,
+    id: PropTypes.string,
+    veteranFullName: PropTypes.string
   }),
   assigneeAlreadySelected: PropTypes.bool,
   highlightFormItems: PropTypes.bool,
@@ -254,8 +254,12 @@ AssignToView.propTypes = {
   task: PropTypes.shape({
     instructions: PropTypes.string,
     taskId: PropTypes.string,
-    availableActions: PropTypes.arrayOf(PropTypes.object)
-  })
+    availableActions: PropTypes.arrayOf(PropTypes.object),
+    externalAppealId: PropTypes.string,
+    type: PropTypes.string
+  }),
+  setOvertime: PropTypes.func,
+  resetSuccessMessages: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -274,7 +278,9 @@ const mapDispatchToProps = (dispatch) =>
       requestPatch,
       requestSave,
       onReceiveAmaTasks,
-      legacyReassignToJudge
+      legacyReassignToJudge,
+      setOvertime,
+      resetSuccessMessages
     },
     dispatch
   );

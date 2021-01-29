@@ -17,12 +17,18 @@ Tech specs are considered 'done' when key stakeholders have reviewed and approve
 ## Context
 <!-- Why are you creating this tech spec? 
 
-<!-- What information helps readers understand the rest of this tech spec? 
+What information helps readers understand the rest of this tech spec? 
 
-<!-- Who are the stakeholders? -->
+Who are the stakeholders? -->
 
 ## Overview
 <!-- A brief summary of research, findings, and recommendations. -->
+
+### Requirements and/or Acceptance Criteria
+<!-- What requirements are being addressed? What acceptance criteria should be fulfilled by the solution? -->
+
+### Concerns
+<!-- Concerns about potential solutions. Explicitly state if they should be addressed in the chosen solution. -->
 
 ## Open Questions
 <!-- Sometimes we're missing information needed to fully spec work. 
@@ -37,6 +43,9 @@ Is the work sufficiently defined such that someone else could pick it up?
 Is the work parallelizable?
 What new API endpoints, database fields / tables / models need to be defined?
 How will we safely ship this work? Are there migrations, external dependencies that need to be notified, documentation changes, etc? -->
+
+### Implementation concerns
+<!-- List implementation-specific concerns about each option. -->
 
 ## Test Plan
 <!-- How do we validate this work? What types of testing is required? -->
@@ -53,6 +62,7 @@ How will we safely ship this work? Are there migrations, external dependencies t
  - [ ] Tech spec drafter: Facilitate that discussion.
  - [ ] Other developers: Read the tech spec before arriving at the discussion.
  - [ ] Other developers: Remind the tech spec drafter if a tech spec has been produced and no meeting has been scheduled.
+ - [ ] One or more solutions determined as viable paths forward
  - [ ] Tech spec drafter: Turn tech spec into next-step actionable tickets.
     - [ ] Write tickets as is necessary
     - [ ] Other developers provide more formal feedback as is necessary.

@@ -124,5 +124,7 @@ UpcomingHearingsTable.propTypes = {
     id: PropTypes.number,
     scheduledFor: PropTypes.string
   }),
+
+  // Selected Regional Office Key
   selectedRegionalOffice: PropTypes.string
 };

@@ -13,6 +13,13 @@ export const setCanEditAod = (canEditAod) => ({
   }
 });
 
+export const setCanEditNodDate = (canEditNodDate) => ({
+  type: ACTIONS.SET_CAN_EDIT_NOD_DATE,
+  payload: {
+    canEditNodDate
+  }
+});
+
 export const setCanViewOvertimeStatus = (canViewOvertimeStatus) => ({
   type: ACTIONS.SET_CAN_VIEW_OVERTIME_STATUS,
   payload: {
@@ -76,11 +83,9 @@ const saveFailure = (err) => (dispatch) => {
   } catch (ex) {
     // the default case if there is no `text` node in the response (ie the backend did not return sufficient info)
     uiErrorMessage = {
-      errors: [{
-        title: 'Error',
-        detail: 'There was an error processing your request. ' +
-        'Please retry your action and contact support if errors persist.'
-      }]
+      title: 'Error',
+      detail: 'There was an error processing your request. ' +
+      'Please retry your action and contact support if errors persist.'
     };
   }
 
@@ -155,12 +160,13 @@ export const setOrganizations = (organizations) => ({
   payload: { organizations }
 });
 
-export const setActiveOrganization = (id, name, isVso) => ({
+export const setActiveOrganization = (id, name, isVso, userCanBulkAssign) => ({
   type: ACTIONS.SET_ACTIVE_ORGANIZATION,
   payload: {
     id,
     name,
-    isVso
+    isVso,
+    userCanBulkAssign
   }
 });
 
@@ -196,6 +202,10 @@ export const setSelectedAssigneeSecondary = ({ assigneeId }) => ({
   payload: {
     assigneeId
   }
+});
+
+export const resetAssignees = () => ({
+  type: ACTIONS.RESET_ASSIGNEES
 });
 
 export const toggleVeteranCaseList = () => ({

@@ -63,6 +63,8 @@ class UsersController < ApplicationController
       render json: { coordinators: users }
     when "non_judges"
       render json: { non_judges: json_users(users) }
+    when "non_dvcs"
+      render json: { non_dvcs: json_users(users) }
     end
   end
 

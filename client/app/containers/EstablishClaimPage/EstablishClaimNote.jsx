@@ -66,7 +66,7 @@ export class EstablishClaimNote extends BaseForm {
 
   selectedSpecialIssues() {
     return _.reduce(
-      enabledSpecialIssues(this.props.specialIssuesRevamp),
+      enabledSpecialIssues(),
       (result, issue) => {
         if (this.props.specialIssues[issue.specialIssue]) {
           result.push(issue.display);

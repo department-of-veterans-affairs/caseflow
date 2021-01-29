@@ -52,7 +52,7 @@ class ActionsDropdown extends React.PureComponent {
 ActionsDropdown.propTypes = {
   appealId: PropTypes.string,
   task: PropTypes.object,
-  history: PropTypes.func,
+  history: PropTypes.object,
   resetDecisionOptions: PropTypes.func,
   stageAppeal: PropTypes.func
 };

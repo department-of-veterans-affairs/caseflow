@@ -9,7 +9,8 @@ class Organizations::UsersController < OrganizationsController
 
         render json: {
           organization_name: organization.name,
-          judge_team: FeatureToggle.enabled?(:judge_admin_scm) && organization.type == JudgeTeam.name,
+          judge_team: organization.type == JudgeTeam.name,
+          dvc_team: organization.type == DvcTeam.name,
           organization_users: json_administered_users(organization_users)
         }
       end
@@ -27,10 +28,6 @@ class Organizations::UsersController < OrganizationsController
 
     if params.key?(:admin)
       adjust_admin_rights
-    end
-
-    if params.key?(:attorney)
-      adjust_decision_drafting_ability
     end
 
     render json: { users: json_administered_users([user_to_modify]) }, status: :ok
@@ -65,14 +62,6 @@ class Organizations::UsersController < OrganizationsController
       OrganizationsUser.make_user_admin(user_to_modify, organization)
     else
       OrganizationsUser.remove_admin_rights_from_user(user_to_modify, organization)
-    end
-  end
-
-  def adjust_decision_drafting_ability
-    if params[:attorney] == true
-      OrganizationsUser.enable_decision_drafting(user_to_modify, organization)
-    else
-      OrganizationsUser.disable_decision_drafting(user_to_modify, organization)
     end
   end
 

@@ -8,6 +8,10 @@ body {
   background: $cf-background;
 }
 
+pre {
+  font-family: inherit;
+}
+
 .content {
   min-height: calc(100vh - 125px);
   padding-bottom: 30px;
@@ -839,10 +843,6 @@ input {
   }
 }
 
-[type='checkbox']:disabled + label {
-  color: $color-gray-dark;
-}
-
 .cf-inline-form {
   line-height: 4em;
   @include clearfix;
@@ -872,7 +872,7 @@ input {
 }
 
 .cf-required {
-  color: $color-secondary;
+  color: $color-gray;
   float: right;
   font-style: italic;
   margin-left: 0.25em;
@@ -882,6 +882,7 @@ input {
   color: $color-gray;
   font-style: italic;
   margin-left: 1em;
+  float: right;
 }
 
 fieldset {
@@ -894,7 +895,6 @@ fieldset {
 
 * + .cf-form-textinput {
   @include clearfix;
-  margin-top: rem(20px);
   margin-bottom: rem(20px);
   color: $color-gray-dark;
 }

@@ -19,12 +19,16 @@ class HearingSerializer
   end
   attribute :appeal_external_id
   attribute :appeal_id
-  attribute :appellant_address_line_1, if: for_full
-  attribute :appellant_city, if: for_full
-  attribute :appellant_first_name, if: for_full
-  attribute :appellant_last_name, if: for_full
-  attribute :appellant_state, if: for_full
-  attribute :appellant_zip, if: for_full
+  attribute :appellant_address_line_1
+  attribute :appellant_city
+  attribute :appellant_email_address, if: for_full
+  attribute :appellant_first_name
+  attribute :appellant_is_not_veteran do |hearing|
+    hearing.appeal.appellant_is_not_veteran
+  end
+  attribute :appellant_last_name
+  attribute :appellant_state
+  attribute :appellant_zip
   attribute :available_hearing_locations
   attribute :bva_poc
   attribute :central_office_time_string
@@ -54,8 +58,10 @@ class HearingSerializer
   attribute :regional_office_name
   attribute :regional_office_timezone
   attribute :representative, if: for_full
-  attribute :representative_name
-  attribute :representative_email_address
+  attribute :representative_type, if: for_full
+  attribute :representative_name, if: for_full
+  attribute :representative_address, if: for_full
+  attribute :representative_email_address, if: for_full
   attribute :room
   attribute :scheduled_for
   attribute :scheduled_for_is_past, &:scheduled_for_past?
@@ -71,18 +77,16 @@ class HearingSerializer
   attribute :veteran_first_name
   attribute :veteran_gender, if: for_full
   attribute :veteran_last_name
-  attribute :veteran_email_address
+  attribute :veteran_email_address, if: for_full
   attribute :is_virtual, &:virtual?
+  attribute :appellant_tz, if: for_full
+  attribute :representative_tz, if: for_full
   attribute :virtual_hearing do |object|
     if object.virtual? || object.was_virtual?
       VirtualHearingSerializer.new(object.virtual_hearing).serializable_hash[:data][:attributes]
     end
   end
-  attribute :email_events do |object|
-    object.email_events.order(sent_at: :desc).map do |event|
-      SentEmailEventSerializer.new(event).serializable_hash[:data][:attributes]
-    end
-  end
+  attribute :email_events, if: for_full, &:serialized_email_events
   attribute :was_virtual, &:was_virtual?
   attribute :witness
   attribute :worksheet_issues

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Utility class to sort, filter, and paginate tasks for a given queue tab and assignee
 class TaskPager
   include ActiveModel::Model
 
@@ -23,7 +24,10 @@ class TaskPager
   end
 
   def paged_tasks
-    @paged_tasks ||= sorted_tasks(filtered_tasks).page(page).per(TASKS_PER_PAGE)
+    @paged_tasks ||= begin
+      tasks = sorted_tasks(filtered_tasks)
+      pagination_enabled ? tasks.page(page).per(TASKS_PER_PAGE) : tasks
+    end
   end
 
   def sorted_tasks(tasks)
@@ -32,7 +36,7 @@ class TaskPager
   end
 
   def task_page_count
-    @task_page_count ||= paged_tasks.total_pages
+    @task_page_count ||= pagination_enabled ? paged_tasks.total_pages : 1
   end
 
   def filtered_tasks
@@ -40,11 +44,19 @@ class TaskPager
   end
 
   def tasks_for_tab
-    @tasks_for_tab ||= QueueTab.from_name(tab_name).new(assignee: assignee).tasks
+    @tasks_for_tab ||= queue_tab.tasks
   end
 
   def total_task_count
-    @total_task_count ||= paged_tasks.total_count
+    @total_task_count ||= pagination_enabled ? paged_tasks.total_count : paged_tasks.count
+  end
+
+  def queue_tab
+    @queue_tab ||= QueueTab.from_name(tab_name).new(assignee: assignee)
+  end
+
+  def pagination_enabled
+    @pagination_enabled ||= assignee.use_task_pages_api? && !queue_tab.contains_legacy_tasks?
   end
 
   private

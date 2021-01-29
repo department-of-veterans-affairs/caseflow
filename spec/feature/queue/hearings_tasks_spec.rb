@@ -43,7 +43,7 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
       expect(new_parent_hearing_task).to be_a(HearingTask)
       expect(new_parent_hearing_task.children.first).to be_a(ScheduleHearingTask)
 
-      expect(distribution_task.ready_for_distribution?).to eq(false)
+      expect(distribution_task.appeal.ready_for_distribution?).to eq(false)
     end
 
     context "with a hearing and a hearing admin member" do
@@ -84,10 +84,18 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
             schedule_row.find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
             expect(schedule_row).to have_content(instructions_text)
             click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-            click_dropdown({ prompt: "Select", text: "Postponed" }, find(".cf-modal-body"))
+            click_dropdown(
+              {
+                prompt: "Select",
+                text: Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.postponed
+              },
+              find(".cf-modal-body")
+            )
             fill_in "Notes", with: "I'm changing this to postponed."
             click_button("Submit")
-            expect(page).to have_content("Successfully changed hearing disposition to Postponed")
+            expect(page).to have_content(
+              "Successfully changed hearing disposition to #{Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.postponed}"
+            )
           end
         end
       end
@@ -121,13 +129,18 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
     end
 
     context "when the appeal is a LegacyAppeal" do
-      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+      let(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:caseflow]) }
+      let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+      let(:lar) { double("LegacyAppealRepresentative") }
       let(:hearing_task_parent) { root_task }
 
-      context "when the appellant is represented by a VSO" do
+      before do
+        allow(LegacyAppealRepresentative).to receive(:new).and_return(lar)
+      end
+
+      context "when the appellant is represented by a colocated VSO" do
         before do
-          create(:vso)
-          allow_any_instance_of(LegacyAppeal).to receive(:representatives) { Representative.all }
+          allow(lar).to receive(:representative_is_colocated_vso?).and_return(true)
         end
 
         it "marks all Caseflow tasks complete and sets the VACOLS location correctly" do
@@ -144,7 +157,11 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
         end
       end
 
-      context "when the appellant is not represented by a VSO" do
+      context "when the appellant is not represented by a colocated VSO" do
+        before do
+          allow(lar).to receive(:representative_is_colocated_vso?).and_return(false)
+        end
+
         it "marks all Caseflow tasks complete and sets the VACOLS location correctly" do
           caseflow_task_count_before = Task.count
 
@@ -161,6 +178,18 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
     end
 
     context "when the appeal is an AMA Appeal" do
+      shared_examples "ready for distribution" do
+        it "marks the case ready for distribution" do
+          mark_complete_and_verify_status(appeal, page, no_show_hearing_task)
+
+          # DispositionTask has been closed and no IHP tasks have been created for this appeal.
+          expect(parent_hearing_task.reload.children.open.count).to eq(0)
+          expect(InformalHearingPresentationTask.count).to eq(0)
+
+          expect(distribution_task.reload.appeal.ready_for_distribution?).to eq(true)
+        end
+      end
+
       let(:hearing_task_parent) { distribution_task }
 
       context "when the appellant is represented by a VSO" do
@@ -172,15 +201,7 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
         context "when the VSO is not supposed to write an IHP for this appeal" do
           before { allow_any_instance_of(Representative).to receive(:should_write_ihp?) { false } }
 
-          it "marks the case ready for distribution" do
-            mark_complete_and_verify_status(appeal, page, no_show_hearing_task)
-
-            # DispositionTask has been closed and no IHP tasks have been created for this appeal.
-            expect(parent_hearing_task.reload.children.open.count).to eq(0)
-            expect(InformalHearingPresentationTask.count).to eq(0)
-
-            expect(distribution_task.reload.ready_for_distribution?).to eq(true)
-          end
+          include_examples "ready for distribution"
         end
 
         context "when the VSO is supposed to write an IHP for this appeal" do
@@ -193,21 +214,13 @@ RSpec.feature "Hearings tasks workflows", :all_dbs do
             expect(parent_hearing_task.parent.reload.children.open.count).to eq(1)
             expect(parent_hearing_task.parent.children.open.first).to be_a(InformalHearingPresentationTask)
 
-            expect(distribution_task.reload.ready_for_distribution?).to eq(false)
+            expect(distribution_task.reload.appeal.ready_for_distribution?).to eq(false)
           end
         end
       end
 
       context "when the appellant is not represented by a VSO" do
-        it "marks the case ready for distribution" do
-          mark_complete_and_verify_status(appeal, page, no_show_hearing_task)
-
-          # DispositionTask has been closed and no IHP tasks have been created for this appeal.
-          expect(parent_hearing_task.reload.children.open.count).to eq(0)
-          expect(InformalHearingPresentationTask.count).to eq(0)
-
-          expect(distribution_task.reload.ready_for_distribution?).to eq(true)
-        end
+        include_examples "ready for distribution"
       end
     end
   end

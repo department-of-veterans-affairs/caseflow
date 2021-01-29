@@ -35,20 +35,13 @@ class Generators::PromulgatedRating < Generators::Rating
             prfil_dt: issue[:profile_date],
             cntntn_id: issue[:contention_reference_id]
           },
-          dis_sn: issue[:dis_sn]
+          dis_sn: issue[:dis_sn],
+          subjct_txt: issue[:subject_text]
         }
       end
 
       # BGS returns the data not as an array if there is only one issue
       (issue_data.length == 1) ? issue_data.first : issue_data
-    end
-
-    def bgs_rating_profile_data(attrs)
-      {
-        rating_issues: bgs_rating_issues_data(attrs),
-        associated_claims: bgs_associated_claims_data(attrs),
-        disabilities: [attrs[:disabilities], bgs_rating_decisions_data(attrs)].compact.flatten
-      }
     end
   end
 end

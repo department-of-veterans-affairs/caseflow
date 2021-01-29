@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
@@ -17,7 +18,8 @@ import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../constants';
-import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
+import EP_CLAIM_TYPES from '../../../constants/EP_CLAIM_TYPES';
+import { formatAddedIssues, getAddIssuesFields, formatIssuesBySection } from '../util/issues';
 import Table from '../../components/Table';
 import IssueList from '../components/IssueList';
 
@@ -37,6 +39,8 @@ import {
   toggleCorrectionTypeModal
 } from '../actions/addIssues';
 import COPY from '../../../COPY';
+import { EditClaimLabelModal } from '../../intakeEdit/components/EditClaimLabelModal';
+import { ConfirmClaimLabelModal } from '../../intakeEdit/components/ConfirmClaimLabelModal';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -102,9 +106,7 @@ class AddIssuesPage extends React.Component {
     const { correctClaimReviews } = featureToggles;
 
     return (
-      !formType ||
-      (this.editingClaimReview() && !processedAt) ||
-      intakeData.isOutcoded ||
+      !formType || (this.editingClaimReview() && !processedAt) || intakeData.isOutcoded ||
       (hasClearedEp && !correctClaimReviews)
     );
   }
@@ -136,14 +138,51 @@ class AddIssuesPage extends React.Component {
   establishmentCredits() {
     return <div className="cf-intake-establish-credits">
       Established {this.establishmentCreditsTimestamp()}
-      <span> by <a href={`/intake/manager?user_css_id=${this.props.intakeUser}`}>{this.props.intakeUser}</a></span>
+      { this.props.intakeUser &&
+        <span> by <a href={`/intake/manager?user_css_id=${this.props.intakeUser}`}>{this.props.intakeUser}</a></span>
+      }
     </div>;
+  }
+
+  // Methods for handling editing of claim label
+  openEditClaimLabelModal = (endProductCode) => {
+    this.setState({
+      showEditClaimLabelModal: true,
+      selectedEpCode: endProductCode
+    });
+  }
+  closeEditClaimLabelModal = () => {
+    this.setState({
+      showEditClaimLabelModal: false,
+      showConfirmClaimLabelModal: false,
+      previousEpCode: null,
+      selectedEpCode: null
+    });
+  }
+
+  handleEditClaimLabel = (data) => {
+    this.setState({
+      showEditClaimLabelModal: false,
+      showConfirmClaimLabelModal: true,
+      previousEpCode: data.oldCode,
+      selectedEpCode: data.newCode
+    });
+  }
+
+  submitClaimLabelEdit = () => {
+    // eslint-disable-next-line no-console
+    console.log(`Submitting request to switch from ${this.state.previousEpCode} to ${this.state.selectedEpCode}...`);
+    this.setState({
+      showConfirmClaimLabelModal: false,
+      previousEpCode: null,
+      selectedEpCode: null
+    });
   }
 
   render() {
     const { intakeForms, formType, veteran, featureToggles, editPage, addingIssue, userCanWithdrawIssues } = this.props;
     const intakeData = intakeForms[formType];
-    const { useAmaActivationDate } = featureToggles;
+    const { useAmaActivationDate, editEpClaimLabels } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
@@ -151,7 +190,9 @@ class AddIssuesPage extends React.Component {
     }
 
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
-    const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
+    const requestErrorCode =
+      intakeData.requestStatus.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
+    const requestErrorUUID = intakeData.requestStatus.completeIntakeErrorUUID;
     const showInvalidVeteranError =
       !intakeData.veteranValid &&
       _.some(
@@ -159,11 +200,10 @@ class AddIssuesPage extends React.Component {
         (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId
       );
 
-    const issues = formatAddedIssues(intakeData, useAmaActivationDate);
-    const requestedIssues = issues.filter((issue) => !issue.withdrawalPending && !issue.withdrawalDate);
-    const previouslywithdrawnIssues = issues.filter((issue) => issue.withdrawalDate);
+    const issues = formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
-    const withdrawnIssues = previouslywithdrawnIssues.concat(issuesPendingWithdrawal);
+    const issuesBySection = formatIssuesBySection(issues, editEpClaimLabels);
+
     const withdrawReview =
       !_.isEmpty(issues) && _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
 
@@ -240,39 +280,63 @@ class AddIssuesPage extends React.Component {
 
     let rowObjects = fieldsForFormType;
 
-    if (!_.isEmpty(requestedIssues)) {
-      rowObjects = fieldsForFormType.concat({
-        field: 'Requested issues',
+    const issueSectionRow = (sectionIssues, fieldTitle) => {
+      return {
+        field: fieldTitle,
         content: (
-          <IssueList
-            onClickIssueAction={this.onClickIssueAction}
-            issues={requestedIssues}
-            intakeData={intakeData}
-            formType={formType}
-            featureToggles={featureToggles}
-            userCanWithdrawIssues={userCanWithdrawIssues}
-            editPage={editPage}
-          />
+          <div>
+            { !fieldTitle.includes('issues') && <span><strong>Requested issues</strong></span> }
+            <IssueList
+              onClickIssueAction={this.onClickIssueAction}
+              withdrawReview={withdrawReview}
+              issues={sectionIssues}
+              intakeData={intakeData}
+              formType={formType}
+              featureToggles={featureToggles}
+              userCanWithdrawIssues={userCanWithdrawIssues}
+              editPage={editPage}
+            />
+          </div>
         )
-      });
-    }
+      };
+    };
 
-    if (!_.isEmpty(withdrawnIssues)) {
-      rowObjects = rowObjects.concat({
-        field: 'Withdrawn issues',
+    const endProductLabelRow = (endProductCode) => {
+      return {
+        field: 'EP Claim Label',
         content: (
-          <IssueList
-            withdrawReview={withdrawReview}
-            issues={withdrawnIssues}
-            intakeData={intakeData}
-            formType={formType}
-            featureToggles={featureToggles}
-            userCanWithdrawIssues={userCanWithdrawIssues}
-            editPage={editPage}
-          />
+          <div className="claim-label-row" key={`claim-label-${endProductCode}`}>
+            <div className="claim-label">
+              <strong>{ EP_CLAIM_TYPES[endProductCode].official_label }</strong>
+            </div>
+            <div className="edit-claim-label">
+              <Button
+                classNames={['usa-button-secondary']}
+                onClick={() => this.openEditClaimLabelModal(endProductCode)}
+              >
+              Edit claim label
+              </Button>
+            </div>
+          </div>
         )
+      };
+    };
+
+    Object.keys(issuesBySection).sort().
+      map((key) => {
+        const sectionIssues = issuesBySection[key];
+
+        if (key === 'requestedIssues') {
+          rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Requested issues'));
+        } else if (key === 'withdrawnIssues') {
+          rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Withdrawn issues'));
+        } else {
+          rowObjects = rowObjects.concat(endProductLabelRow(key));
+          rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, ' '));
+        }
+
+        return rowObjects;
       });
-    }
 
     const hideAddIssueButton = intakeData.isDtaError && _.isEmpty(intakeData.contestableIssues);
 
@@ -322,9 +386,26 @@ class AddIssuesPage extends React.Component {
             }}
           />
         )}
+        {this.state.showEditClaimLabelModal && (
+          <EditClaimLabelModal
+            selectedEpCode={this.state.selectedEpCode}
+            onCancel={this.closeEditClaimLabelModal}
+            onSubmit={this.handleEditClaimLabel}
+          />
+        )}
+        {this.state.showConfirmClaimLabelModal && (
+          <ConfirmClaimLabelModal
+            previousEpCode={this.state.previousEpCode}
+            newEpCode={this.state.selectedEpCode}
+            onCancel={this.closeEditClaimLabelModal}
+            onSubmit={this.submitClaimLabelEdit}
+          />
+        )}
         <h1 className="cf-txt-c">{messageHeader}</h1>
 
-        {requestState === REQUEST_STATE.FAILED && <ErrorAlert errorCode={requestErrorCode} />}
+        {requestState === REQUEST_STATE.FAILED && (
+          <ErrorAlert errorCode={requestErrorCode} errorUUID={requestErrorUUID} />
+        )}
 
         {showInvalidVeteranError && (
           <ErrorAlert errorCode="veteran_not_valid" errorData={intakeData.veteranInvalidFields} />

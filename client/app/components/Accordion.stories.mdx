@@ -1,0 +1,66 @@
+import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
+
+import { Accordion } from './Accordion';
+import AccordionSection from './AccordionSection';
+
+export const defaultProps = {};
+
+<Meta
+  title="Commons/Components/Layout/Accordion"
+  component={Accordion}
+/>
+
+export const exampleAccordionSection = [1, 2, 3, 4, 5].map((header) =>
+  (
+    <AccordionSection title={`Example title ${header}`} key={header}>
+      <p>
+        Millions of Americans interact with government services every day.
+        Veterans apply for benefits. Students compare financial aid options.
+        Small business owners seek loans. Too often, outdated tools and complex
+        systems make these interactions cumbersome and frustrating. Enter the
+        United States Digital Service. We partner leading technologists with
+        dedicated public servants to improve the usability and reliability of
+        our government's most important digital services.
+        Visit USDS.gov to learn more.
+      </p>
+    </AccordionSection>
+  )
+);
+
+# Accordion
+
+Our accordion style was taken from the US Web Design Standards.
+Accordions are a list of headers that can be clicked to hide or reveal additional
+content.
+
+### Bordered
+
+<Preview>
+  <Story name="bordered">
+    <Accordion style="bordered" accordion>
+      {exampleAccordionSection}
+    </Accordion>
+  </Story>
+</Preview>
+
+### Borderless
+
+<Preview>
+  <Story name="borderless">
+    <Accordion style="borderless" accordion>
+      {exampleAccordionSection}
+    </Accordion>
+  </Story>
+</Preview>
+
+### Bordered Outline
+
+<Preview>
+  <Story name="bordered-outline">
+    <Accordion style="outline" accordion>
+      {exampleAccordionSection}
+    </Accordion>
+  </Story>
+</Preview>
+
+<Props of={Accordion} />

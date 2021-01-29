@@ -28,6 +28,10 @@ module DateTimeHelper
   def post_ramp_start_date
     Time.new(2017, 12, 8).in_time_zone
   end
+
+  def check_for_federal_holiday(date)
+    Holidays.on(date, :federal_reserve, :observed).any?
+  end
 end
 
 class Date

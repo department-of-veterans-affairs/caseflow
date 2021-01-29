@@ -420,6 +420,44 @@ describe AttorneyCaseReview, :all_dbs do
           end
         end
       end
+
+      context "when ama" do
+        let(:attorney_task) { Task.find(task_id) }
+        let(:judge_task) { attorney_task.parent }
+        let!(:request_issue1) do
+          create(:request_issue,
+                 decision_review: judge_task.appeal,
+                 decision_issues: [build(:decision_issue)])
+        end
+        let(:request_issue2) do
+          create(:request_issue,
+                 decision_review: attorney_task.appeal,
+                 decision_issues: [create(:decision_issue,
+                                          remand_reasons: [create(:ama_remand_reason), create(:ama_remand_reason)],
+                                          decision_review: attorney_task.appeal)])
+        end
+        let(:issues) do
+          [{ disposition: "allowed", description: "something",
+             benefit_type: "compensation", diagnostic_code: "9999",
+             request_issue_ids: [request_issue1.id, request_issue2.id] },
+           { disposition: "remanded", description: "somethingElse",
+             benefit_type: "compensation", diagnostic_code: "9999",
+             request_issue_ids: [request_issue1.id, request_issue2.id],
+             remand_reasons: [
+               { code: "va_records", post_aoj: false },
+               { code: "incorrect_notice_sent", post_aoj: true },
+               { code: "due_process_deficiency", post_aoj: false }
+             ] }]
+        end
+
+        it "updates the assigned_by field to the attorney" do
+          expect(judge_task.assigned_by).not_to eq(attorney)
+          subject
+          expect(judge_task.reload.assigned_by).to eq(attorney)
+        end
+        it "should create an AttorneyCaseReview record"
+        it "should check for erroneous AMA states"
+      end
     end
   end
 end

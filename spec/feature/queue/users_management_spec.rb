@@ -53,7 +53,7 @@ RSpec.feature "Users management page", :postgres do
         fill_in COPY::USER_MANAGEMENT_FIND_USER_DROPDOWN_NAME, with: active_user.css_id
         expect(page).to have_content(active_user.full_name)
 
-        find("div", class: "Select-option", text: active_user.full_name).click
+        find("div", class: "cf-select__option", text: active_user.full_name).click
         expect(page).to have_content("#{active_user.full_name} (#{active_user.css_id})")
       end
 
@@ -71,10 +71,11 @@ RSpec.feature "Users management page", :postgres do
       end
 
       step "user marks another user active" do
+        visit "/user_management"
         fill_in COPY::USER_MANAGEMENT_FIND_USER_DROPDOWN_NAME, with: inactive_user.css_id
         expect(page).to have_content(inactive_user.full_name)
 
-        find("div", class: "Select-option", text: inactive_user.full_name).click
+        find("div", class: "cf-select__option", text: inactive_user.full_name).click
         expect(page).to have_content("#{inactive_user.full_name} (#{inactive_user.css_id})")
         expect(page).to have_content(COPY::USER_MANAGEMENT_GIVE_USER_ACTIVE_STATUS_BUTTON_TEXT)
         page.find("button", text: COPY::USER_MANAGEMENT_GIVE_USER_ACTIVE_STATUS_BUTTON_TEXT).click

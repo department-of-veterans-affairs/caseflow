@@ -38,27 +38,6 @@ class ApplicationController < ApplicationBaseController
     redirect_to "/unauthorized" unless Bva.singleton.user_has_access?(current_user)
   end
 
-  def manage_teams_menu_items
-    current_user.administered_teams.map do |team|
-      {
-        title: "#{team.name} team management",
-        link: team.user_admin_path
-      }
-    end
-  end
-
-  def admin_menu_items
-    [
-      {
-        title: COPY::TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK,
-        link: url_for(controller: "/team_management", action: "index")
-      }, {
-        title: COPY::USER_MANAGEMENT_PAGE_DROPDOWN_LINK,
-        link: url_for(controller: "/user_management", action: "index")
-      }
-    ]
-  end
-
   def handle_non_critical_error(endpoint, err)
     Rails.logger.error "#{err.message}\n#{err.backtrace.join("\n")}"
 
@@ -136,24 +115,58 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :application_urls
 
-  def dropdown_urls
-    urls = [
+  def defult_menu_items
+    [
       { title: "Help", link: help_url },
       { title: "Send Feedback", link: feedback_url, target: "_blank" },
       { title: "Release History", link: release_history_url, target: "_blank" }
     ]
+  end
 
-    urls.concat(manage_teams_menu_items) if current_user&.administered_teams&.any?
-    urls.concat(admin_menu_items) if Bva.singleton.user_has_access?(current_user)
-
-    if ApplicationController.dependencies_faked? && current_user.present?
-      urls.append(title: "Switch User", link: url_for(controller: "/test/users", action: "index"))
+  def manage_teams_menu_items
+    current_user.administered_teams.map do |team|
+      {
+        title: "#{team.name} team management",
+        link: team.user_admin_path
+      }
     end
+  end
+
+  def manage_all_teams_menu_item
+    {
+      title: COPY::TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK,
+      link: url_for(controller: "/team_management", action: "index")
+    }
+  end
+
+  def manage_users_menu_item
+    {
+      title: COPY::USER_MANAGEMENT_PAGE_DROPDOWN_LINK,
+      link: url_for(controller: "/user_management", action: "index")
+    }
+  end
+
+  def admin_menu_items
+    admin_urls = []
+    admin_urls.concat(manage_teams_menu_items) if current_user&.administered_teams&.any?
+    admin_urls.push(manage_users_menu_item) if current_user&.can_view_user_management?
+    if current_user&.can_view_team_management? || current_user&.can_view_judge_team_management?
+      admin_urls.unshift(manage_all_teams_menu_item)
+    end
+    admin_urls.flatten
+  end
+
+  def dropdown_urls
+    urls = defult_menu_items
+    urls.concat(admin_menu_items)
 
     if current_user.present?
       urls.append(title: "Sign Out", link: url_for(controller: "/sessions", action: "destroy"), border: true)
+      if ApplicationController.dependencies_faked?
+        urls.append(title: "Switch User", link: url_for(controller: "/test/users", action: "index"))
+      end
     else
-      urls.append(title: "Sign In", link: url_for("/login"), border: true)
+      urls.append(title: "Sign In", link: url_for("/search"), border: true)
     end
 
     urls

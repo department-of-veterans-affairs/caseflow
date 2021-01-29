@@ -45,13 +45,15 @@ describe VACOLS::CaseDocket, :all_dbs do
 
   let(:another_nonpriority_ready_case_docket_number) { "1801002" }
   let!(:another_nonpriority_ready_case) do
-    create(:case,
-           bfd19: 1.year.ago,
-           bfac: "1",
-           bfmpro: "ACT",
-           bfcurloc: "83",
-           bfdloout: 1.day.ago,
-           folder: build(:folder, tinum: another_nonpriority_ready_case_docket_number, titrnum: "123456789S"))
+    create(
+      :case,
+      bfd19: 1.year.ago,
+      bfac: "1",
+      bfmpro: "ACT",
+      bfcurloc: "83",
+      bfdloout: 1.day.ago,
+      folder: build(:folder, tinum: another_nonpriority_ready_case_docket_number, titrnum: "123456789S")
+    ).tap { |vacols_case| create(:mail, :blocking, :completed, mlfolder: vacols_case.bfkey) }
   end
 
   let!(:nonpriority_unready_case) do
@@ -90,7 +92,7 @@ describe VACOLS::CaseDocket, :all_dbs do
            folder: build(:folder, tinum: postcavc_ready_case_docket_number, titrnum: "123456789S"))
   end
 
-  let!(:aod_unready_case) do
+  let!(:aod_case_unready_due_to_location) do
     create(:case,
            :aod,
            bfd19: 1.year.ago,
@@ -99,11 +101,20 @@ describe VACOLS::CaseDocket, :all_dbs do
            bfcurloc: "55")
   end
 
+  let!(:aod_case_unready_due_to_blocking_mail) do
+    create(:case,
+           :aod,
+           bfd19: 1.year.ago,
+           bfac: "1",
+           bfmpro: "ACT",
+           bfcurloc: "81").tap { |vacols_case| create(:mail, :blocking, :incomplete, mlfolder: vacols_case.bfkey) }
+  end
+
   context ".counts_by_priority_and_readiness" do
     subject { VACOLS::CaseDocket.counts_by_priority_and_readiness }
     it "creates counts grouped by priority and readiness" do
       expect(subject).to match_array([
-                                       { "n" => 1, "priority" => 1, "ready" => 0 },
+                                       { "n" => 2, "priority" => 1, "ready" => 0 },
                                        { "n" => 2, "priority" => 1, "ready" => 1 },
                                        { "n" => 1, "priority" => 0, "ready" => 0 },
                                        { "n" => 2, "priority" => 0, "ready" => 1 }
@@ -118,8 +129,8 @@ describe VACOLS::CaseDocket, :all_dbs do
     end
   end
 
-  context ".age_of_n_oldest_priority_appeals" do
-    subject { VACOLS::CaseDocket.age_of_n_oldest_priority_appeals(2) }
+  context ".age_of_n_oldest_genpop_priority_appeals" do
+    subject { VACOLS::CaseDocket.age_of_n_oldest_genpop_priority_appeals(2) }
     it "returns the sorted ages of the n oldest priority appeals" do
       expect(subject).to eq([aod_ready_case_ready_time, 2.days.ago].map(&:to_date))
     end
@@ -136,6 +147,29 @@ describe VACOLS::CaseDocket, :all_dbs do
 
       it "does not include the hearing appeal" do
         expect(subject).to eq([2.days.ago.to_date])
+      end
+    end
+  end
+
+  context ".age_of_oldest_priority_appeal" do
+    subject { VACOLS::CaseDocket.age_of_oldest_priority_appeal }
+
+    it "returns the oldest priority appeal ready at date" do
+      expect(subject).to eq(aod_ready_case_ready_time.to_date)
+    end
+
+    context "when an appeal is tied to a judge" do
+      let(:original_docket_number) { aod_ready_case_docket_number }
+      let!(:hearing) do
+        create(:case_hearing,
+               :disposition_held,
+               folder_nr: original.bfkey,
+               hearing_date: 5.days.ago.to_date,
+               board_member: judge.vacols_attorney_id)
+      end
+
+      it "does not affect the results of the call" do
+        expect(subject).to eq(aod_ready_case_ready_time.to_date)
       end
     end
   end
@@ -187,12 +221,62 @@ describe VACOLS::CaseDocket, :all_dbs do
     end
   end
 
+  context ".nonpriority_hearing_cases_for_judge_count" do
+    subject { VACOLS::CaseDocket.nonpriority_hearing_cases_for_judge_count(judge) }
+
+    let(:hearing_judge) { judge.vacols_attorney_id }
+    let(:first_case) { nonpriority_ready_case }
+    let(:second_case) { another_nonpriority_ready_case }
+
+    before do
+      create(
+        :case_hearing,
+        :disposition_held,
+        folder_nr: first_case.bfkey,
+        hearing_date: 5.days.ago.to_date,
+        board_member: hearing_judge
+      )
+
+      create(
+        :case_hearing,
+        :disposition_held,
+        folder_nr: second_case.bfkey,
+        hearing_date: 5.days.ago.to_date,
+        board_member: hearing_judge
+      )
+    end
+
+    context "when there are only priority cases linked to the judge" do
+      let(:first_case) { aod_ready_case }
+      let(:second_case) { aod_ready_case }
+
+      it "returns no cases" do
+        expect(subject).to eq 0
+      end
+    end
+
+    context "when there are only non priority cases linked to another judge" do
+      let(:hearing_judge) { another_judge.vacols_attorney_id }
+
+      it "returns no cases" do
+        expect(subject).to eq 0
+      end
+    end
+
+    context "when there are ready non priority hearings linked to the judge" do
+      it "returns the number of ready non priority hearings" do
+        expect(subject).to eq 2
+      end
+    end
+  end
+
   context ".distribute_nonpriority_appeals" do
     let(:genpop) { "any" }
     let(:range) { nil }
     let(:limit) { 10 }
+    let(:bust_backlog) { false }
 
-    subject { VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, genpop, range, limit) }
+    subject { VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog) }
 
     it "distributes ready genpop cases" do
       expect(subject.count).to eq(2)
@@ -235,6 +319,7 @@ describe VACOLS::CaseDocket, :all_dbs do
 
     context "when a case is tied to a judge by a hearing on a prior appeal" do
       let(:hearing_judge) { judge.vacols_attorney_id }
+      let(:another_hearing_judge) { another_judge.vacols_attorney_id }
       let!(:hearing) do
         create(:case_hearing,
                :disposition_held,
@@ -248,7 +333,7 @@ describe VACOLS::CaseDocket, :all_dbs do
                :disposition_held,
                folder_nr: another_nonpriority_ready_case.bfkey,
                hearing_date: 5.days.ago.to_date,
-               board_member: another_judge.vacols_attorney_id)
+               board_member: another_hearing_judge)
       end
 
       context "when genpop is no" do
@@ -289,6 +374,35 @@ describe VACOLS::CaseDocket, :all_dbs do
           expect(subject.count).to eq(1)
           expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
+        end
+      end
+
+      context "when bust backlog is specified" do
+        let(:limit) { 2 }
+        let(:bust_backlog) { true }
+        let(:another_hearing_judge) { judge.vacols_attorney_id }
+
+        context "when the judge does not have 30 cases in their backlog" do
+          it "does not distribute any appeals" do
+            expect(subject.count).to eq(0)
+            expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
+            expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
+          end
+        end
+
+        context "when the judge's backlog is full" do
+          let(:number_of_cases_over_backlog) { 1 }
+
+          before do
+            allow(VACOLS::CaseDocket).to receive(:nonpriority_hearing_cases_for_judge_count).with(judge)
+              .and_return(VACOLS::CaseDocket::HEARING_BACKLOG_LIMIT + number_of_cases_over_backlog)
+          end
+
+          it "only distributes the one case to get back down to 30" do
+            expect(subject.count).to eq(number_of_cases_over_backlog)
+            expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+            expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
+          end
         end
       end
     end
@@ -353,7 +467,7 @@ describe VACOLS::CaseDocket, :all_dbs do
     end
 
     it "does not distribute non-ready or nonpriority cases" do
-      expect(aod_unready_case.reload.bfcurloc).to eq("55")
+      expect(aod_case_unready_due_to_location.reload.bfcurloc).to eq("55")
       expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
     end
 
@@ -377,6 +491,7 @@ describe VACOLS::CaseDocket, :all_dbs do
     context "when a case is tied to a judge by a hearing on a prior appeal" do
       let(:original_docket_number) { aod_ready_case_docket_number }
       let(:hearing_judge) { judge.vacols_attorney_id }
+      let(:another_hearing_judge) { another_judge.vacols_attorney_id }
       let!(:hearing) do
         create(:case_hearing,
                :disposition_held,
@@ -390,7 +505,7 @@ describe VACOLS::CaseDocket, :all_dbs do
                :disposition_held,
                folder_nr: postcavc_ready_case.bfkey,
                hearing_date: 5.days.ago.to_date,
-               board_member: another_judge.vacols_attorney_id)
+               board_member: another_hearing_judge)
       end
 
       context "when genpop is no" do
@@ -399,6 +514,17 @@ describe VACOLS::CaseDocket, :all_dbs do
           expect(subject.count).to eq(1)
           expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
+        end
+
+        context "when limit is nil" do
+          let(:limit) { nil }
+          let(:another_hearing_judge) { judge.vacols_attorney_id }
+
+          it "distributes all cases tied to the judge" do
+            expect(subject.count).to eq(2)
+            expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+            expect(postcavc_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+          end
         end
       end
 
@@ -534,7 +660,7 @@ describe VACOLS::CaseDocket, :all_dbs do
     end
 
     it "sets the case location to 'CASEFLOW'" do
-      VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, "any", nil, 2)
+      VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, "any", nil, 2, false)
       expect(nonpriority_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
     end
   end

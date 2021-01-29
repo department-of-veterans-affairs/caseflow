@@ -11,13 +11,12 @@
   "LEGACY_ASSIGN_HEARINGS_TAB_NAME": "legacyAssignHearingsTab",
   "SUGGESTED_HEARING_LOCATION_COLUMN_NAME": "suggestedLocation",
   "POWER_OF_ATTORNEY_COLUMN_NAME": "powerOfAttorneyName",
+  "HEARING_REQUEST_TYPE_COLUMN_NAME": "hearingRequestType",
 
   "COLUMNS": {
     "APPEAL_TYPE": {
       "filterable": true,
-      "name": "typeColumn",
-      "sorting_table": "cached_appeal_attributes",
-      "sorting_columns": ["is_aod", "case_type", "docket_number"]
+      "name": "typeColumn"
     },
     "CASE_DETAILS_LINK": {
       "name": "detailsColumn",
@@ -41,6 +40,9 @@
     "DOCUMENT_COUNT_READER_LINK": {
       "name": "readerLinkColumn"
     },
+    "DOCUMENT_ID": {
+      "name": "documentIdColumn"
+    },
     "BADGES": {
       "name": "badgesColumn"
     },
@@ -61,8 +63,8 @@
     "TASK_ASSIGNEE": {
       "filterable": true,
       "name": "assignedToColumn",
-      "sorting_table": "cached_appeal_attributes",
-      "sorting_columns": ["assignee_label"]
+      "sorting_table": "assignees",
+      "sorting_columns": ["display_name"]
     },
     "TASK_ASSIGNER": {
       "name": "completedToNameColumn"
@@ -107,6 +109,9 @@
   "FILTER_OPTIONS": {
     "IS_AOD": {
       "key": "is_aod"
+    },
+    "IS_FORMER_TRAVEL": {
+      "key": "former Travel"
     }
   }
 }

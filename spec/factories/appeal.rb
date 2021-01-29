@@ -36,14 +36,21 @@ FactoryBot.define do
           claimant.save
         end
       elsif evaluator.number_of_claimants
-        appeal.claimants = create_list(:claimant, evaluator.number_of_claimants, decision_review: appeal)
-      else
-        appeal.claimants = [create(
+        claimant_class_name = appeal.veteran_is_not_claimant ? "DependentClaimant" : "VeteranClaimant"
+        create_list(
+          :claimant,
+          evaluator.number_of_claimants,
+          decision_review: appeal,
+          type: claimant_class_name
+        )
+      elsif !Claimant.exists?(participant_id: appeal.veteran.participant_id, decision_review: appeal)
+        create(
           :claimant,
           participant_id: appeal.veteran.participant_id,
           decision_review: appeal,
-          payee_code: "00"
-        )]
+          payee_code: "00",
+          type: "VeteranClaimant"
+        )
       end
     end
 
@@ -93,8 +100,61 @@ FactoryBot.define do
       end
     end
 
+    trait :type_cavc_remand do
+      stream_type { Constants.AMA_STREAM_TYPES.court_remand }
+      transient do
+        remand_subtype { Constants.CAVC_REMAND_SUBTYPES.jmpr }
+      end
+      initialize_with do
+        cavc_remand = create(:cavc_remand,
+                             remand_subtype: remand_subtype,
+                             veteran: veteran,
+                             # pass docket type so that the created source appeal is the same docket type
+                             docket_type: attributes[:docket_type])
+        # cavc_remand creation triggers creation of a remand_appeal having appropriate tasks depending on remand_subtype
+        cavc_remand.remand_appeal
+      end
+    end
+
     trait :hearing_docket do
       docket_type { Constants.AMA_DOCKETS.hearing }
+    end
+
+    trait :evidence_submission_docket do
+      docket_type { Constants.AMA_DOCKETS.evidence_submission }
+    end
+
+    trait :direct_review_docket do
+      docket_type { Constants.AMA_DOCKETS.direct_review }
+    end
+
+    trait :held_hearing do
+      transient do
+        adding_user { nil }
+      end
+
+      after(:create) do |appeal, evaluator|
+        create(:hearing, judge: nil, disposition: "held", appeal: appeal, adding_user: evaluator.adding_user)
+      end
+    end
+
+    trait :tied_to_judge do
+      transient do
+        tied_judge { nil }
+      end
+
+      after(:create) do |appeal, evaluator|
+        hearing_day = create(
+          :hearing_day,
+          scheduled_for: 1.day.ago,
+          created_by: evaluator.tied_judge,
+          updated_by: evaluator.tied_judge
+        )
+        Hearing.find_by(disposition: Constants.HEARING_DISPOSITION_TYPES.held, appeal: appeal).update!(
+          judge: evaluator.tied_judge,
+          hearing_day: hearing_day
+        )
+      end
     end
 
     trait :outcoded do
@@ -105,42 +165,59 @@ FactoryBot.define do
     end
 
     trait :advanced_on_docket_due_to_age do
-      after(:create) do |appeal, _evaluator|
-        appeal.claimants = [create(:claimant, :advanced_on_docket_due_to_age, decision_review: appeal)]
+      # set claimant.decision_review to nil so that it isn't created by the Claimant factorybot
+      claimants { [create(:claimant, :advanced_on_docket_due_to_age, decision_review: nil)] }
+    end
+
+    trait :active do
+      before(:create) do |appeal, _evaluator|
+        RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
       end
     end
 
     trait :advanced_on_docket_due_to_motion do
       # the appeal has to be established before the motion is created to apply to it.
       established_at { Time.zone.now - 1 }
-      claimants do
+      after(:create) do |appeal|
         # Create an appeal with two claimants, one with a denied AOD motion
-        # and one with a granted motion. The appeal should still be counted as AOD.
-        claimant = create(:claimant)
-        another_claimant = create(:claimant)
-        create(:advance_on_docket_motion, person: claimant.person, granted: true)
-        create(:advance_on_docket_motion, person: another_claimant.person, granted: false)
-        [claimant, another_claimant]
+        # and one with a granted motion. The appeal should still be counted as AOD. Appeals only support one claimant,
+        # so set the aod claimant as the last claimant on the appeal (and create it last)
+        another_claimant = create(:claimant, decision_review: appeal)
+        create(:advance_on_docket_motion, person: another_claimant.person, granted: false, appeal: appeal)
+
+        claimant = create(:claimant, decision_review: appeal)
+        create(:advance_on_docket_motion, person: claimant.person, granted: true, appeal: appeal)
+
+        appeal.claimants = [another_claimant, claimant]
+      end
+    end
+
+    trait :cancelled do
+      after(:create) do |appeal, _evaluator|
+        # make sure a request issue exists, then mark all removed
+        create(:request_issue, decision_review: appeal)
+        appeal.reload.request_issues.each(&:remove!)
+
+        # Cancel the task tree
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        root_task.cancel_task_and_child_subtasks
       end
     end
 
     trait :denied_advance_on_docket do
       established_at { Time.zone.yesterday }
-      claimants do
-        claimant = create(:claimant)
-
-        create(:advance_on_docket_motion, person: claimant.person, granted: false)
-        [claimant]
+      after(:create) do |appeal|
+        appeal.claimants { [create(:claimant, decision_review: appeal)] }
+        create(:advance_on_docket_motion, person: appeal.claimants.last.person, granted: false, appeal: appeal)
       end
     end
 
     trait :inapplicable_aod_motion do
       established_at { Time.zone.tomorrow }
-      claimants do
-        claimant = create(:claimant)
-        create(:advance_on_docket_motion, person: claimant.person, granted: true)
-        create(:advance_on_docket_motion, person: claimant.person, granted: false)
-        [claimant]
+      after(:create) do |appeal|
+        appeal.claimants { [create(:claimant, decision_review: appeal)] }
+        create(:advance_on_docket_motion, person: appeal.claimants.last.person, granted: true, appeal: appeal)
+        create(:advance_on_docket_motion, person: appeal.claimants.last.person, granted: false, appeal: appeal)
       end
     end
 
@@ -161,25 +238,55 @@ FactoryBot.define do
 
     ## Appeal with a realistic task tree
     ## The appeal is ready for distribution by the ACD
-    ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
-    ## for those dockets
     trait :ready_for_distribution do
       with_post_intake_tasks
+      completed_distribution_task
+    end
+
+    trait :cavc_ready_for_distribution do
+      completed_distribution_task
+    end
+
+    trait :completed_distribution_task do
       after(:create) do |appeal, _evaluator|
         distribution_tasks = appeal.tasks.select { |task| task.is_a?(DistributionTask) }
-        distribution_tasks.each(&:ready_for_distribution!)
+        (distribution_tasks.flat_map(&:descendants) - distribution_tasks).each(&:completed!)
+      end
+    end
+
+    ## Appeal with a realistic task tree
+    ## The appeal is waiting for CAVC Response
+    trait :cavc_response_window_open do
+      type_cavc_remand
+      after(:create) do |appeal, _evaluator|
+        send_letter_task = appeal.tasks.find { |task| task.is_a?(SendCavcRemandProcessedLetterTask) }
+        send_letter_task.update_from_params({ status: "completed" }, CavcLitigationSupport.singleton.admins.first)
+      end
+    end
+
+    ## Appeal with a realistic task tree
+    ## The appeal would be ready for distribution by the ACD except there is a blocking mail task
+    trait :mail_blocking_distribution do
+      ready_for_distribution
+      after(:create) do |appeal, _evaluator|
+        distribution_task = appeal.tasks.active.detect { |task| task.is_a?(DistributionTask) }
+        create(
+          :extension_request_mail_task,
+          appeal: appeal,
+          parent: distribution_task
+        )
       end
     end
 
     ## Appeal with a realistic task tree
     ## The appeal is assigned to a Judge for a decision
-    ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
-    ## for those dockets. Strongly suggest you provide a judge.
+    ## Strongly suggest you provide a judge.
     trait :assigned_to_judge do
       ready_for_distribution
       after(:create) do |appeal, evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         JudgeAssignTask.create!(appeal: appeal,
-                                parent: appeal.root_task,
+                                parent: root_task,
                                 assigned_at: evaluator.active_task_assigned_at,
                                 assigned_to: evaluator.associated_judge)
         appeal.tasks.where(type: DistributionTask.name).update(status: :completed)
@@ -188,8 +295,7 @@ FactoryBot.define do
 
     ## Appeal with a realistic task tree
     ## The appeal is assigned to an Attorney for decision drafting
-    ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
-    ## for those dockets. Strongly suggest you provide a judge and attorney.
+    ## Strongly suggest you provide a judge and attorney.
     trait :at_attorney_drafting do
       assigned_to_judge
       after(:create) do |appeal, evaluator|
@@ -205,13 +311,45 @@ FactoryBot.define do
 
     ## Appeal with a realistic task tree
     ## The appeal is assigned to a judge at decision review
-    ## Leaves incorrectly open & incomplete Hearing / Evidence Window task branches
-    ## for those dockets. Strongly suggest you provide a judge and attorney.
+    ## Strongly suggest you provide a judge and attorney.
     trait :at_judge_review do
       at_attorney_drafting
-      after(:create) do |appeal|
-        create(:decision_document, appeal: appeal)
+      after(:create) do |appeal, _evaluator|
+        # MISSING: AttorneyCaseReview
         appeal.tasks.where(type: AttorneyTask.name).first.completed!
+      end
+    end
+
+    ## Appeal with a realistic task tree
+    ## The appeal is assigned to a judge at decision review
+    ## Strongly suggest you provide a judge and attorney.
+    trait :at_bva_dispatch do
+      at_judge_review
+      after(:create) do |appeal|
+        # MISSING: JudgeCaseReview
+        # BvaDispatchTask.create_from_root_task will autoassign, so need to have a non-empty BvaDispatch org
+        BvaDispatch.singleton.add_user(create(:user)) if BvaDispatch.singleton.users.empty?
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        BvaDispatchTask.create_from_root_task(root_task)
+        appeal.tasks.where(type: JudgeDecisionReviewTask.name).first.completed!
+      end
+    end
+
+    ## Appeal with a realistic task tree
+    ## The appeal is assigned to a judge at decision review
+    ## Strongly suggest you provide a judge and attorney.
+    trait :dispatched do
+      at_bva_dispatch
+      after(:create) do |appeal|
+        create(:decision_document,
+               :processed,
+               appeal: appeal,
+               citation_number: "A882#{(appeal.id % 100_000).to_s.rjust(5, '0')}")
+        dispatch = AmaAppealDispatch.new(appeal: appeal, params: { bar: "foo" }, user: User.first)
+        appeal.tasks.where(type: BvaDispatchTask.name, assigned_to_type: "User").first.completed!
+        appeal.root_task.completed!
+        dispatch.send(:close_request_issues_as_decided!)
+        dispatch.send(:store_poa_participant_id)
       end
     end
 

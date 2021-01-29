@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { setSpecialIssues } from './QueueActions';
+import { setSpecialIssues, clearSpecialIssues } from './QueueActions';
 import { requestSave, showErrorMessage } from './uiReducer/uiActions';
 
 import Alert from '../components/Alert';
@@ -25,11 +25,28 @@ const flexColumn = css({
 });
 
 class SelectSpecialIssuesView extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      allIssuesDisabled: props.specialIssues.no_special_issues
+    };
+  }
+
   getPageName = () => COPY.SPECIAL_ISSUES_PAGE_TITLE;
   getPageNote = () => COPY.SPECIAL_ISSUES_PAGE_NOTE;
   onChangeSpecialIssue = (event) => {
+    const specialIssueId = event.target.id;
+    const checked = document.getElementById(specialIssueId).checked;
+
+    if (specialIssueId === 'no_special_issues') {
+      this.setState({ allIssuesDisabled: checked });
+      if (checked) {
+        this.props.clearSpecialIssues();
+      }
+    }
     this.props.setSpecialIssues({
-      [event.target.id]: document.getElementById(event.target.id).checked
+      [specialIssueId]: checked
     });
   }
 
@@ -114,6 +131,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
       error,
       ...otherProps
     } = this.props;
+    const { allIssuesDisabled } = this.state;
     const sectionsMap = this.sortAndConvertIssues(sections);
 
     return <QueueFlowPage goToNextStep={this.goToNextStep} validateForm={this.validateForm} {...otherProps}>
@@ -148,6 +166,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
               options={sectionsMap.about}
               values={specialIssues}
               onChange={this.onChangeSpecialIssue}
+              disableAll={allIssuesDisabled}
             />
           }
           {
@@ -157,6 +176,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
               options={sectionsMap.residence}
               values={specialIssues}
               onChange={this.onChangeSpecialIssue}
+              disableAll={allIssuesDisabled}
             />
           }
           {
@@ -166,6 +186,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
               options={sectionsMap.benefitType}
               values={specialIssues}
               onChange={this.onChangeSpecialIssue}
+              disableAll={allIssuesDisabled}
             />
           }
         </div>
@@ -183,6 +204,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
               options={sectionsMap.dicOrPension}
               values={specialIssues}
               onChange={this.onChangeSpecialIssue}
+              disableAll={allIssuesDisabled}
             />
           }
         </div>
@@ -198,6 +220,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
       options={sectionsMap.issuesOnAppeal}
       values={specialIssues}
       onChange={this.onChangeSpecialIssue}
+      disableAll={this.state.allIssuesDisabled}
     />;
   };
 }
@@ -217,6 +240,7 @@ SelectSpecialIssuesView.propTypes = {
   }),
   requestSave: PropTypes.func,
   setSpecialIssues: PropTypes.func,
+  clearSpecialIssues: PropTypes.func,
   showErrorMessage: PropTypes.func,
   specialIssues: PropTypes.object
 };
@@ -230,6 +254,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setSpecialIssues,
+  clearSpecialIssues,
   showErrorMessage,
   requestSave
 }, dispatch);

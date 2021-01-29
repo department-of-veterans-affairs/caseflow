@@ -138,22 +138,51 @@ class DecisionReview < CaseflowRecord
   end
 
   # Creates claimants for automatically generated decision reviews
-  def create_claimant!(participant_id:, payee_code:)
+  def create_claimant!(participant_id:, payee_code:, type:)
     remove_claimants!
-    claimants.create_without_intake!(participant_id: participant_id, payee_code: payee_code)
+    claimants.create_without_intake!(participant_id: participant_id, payee_code: payee_code, type: type)
   end
 
   def remove_claimants!
     claimants.delete_all
   end
 
+  # :reek:FeatureEnvy
+  def copy_claimants!(source_claimants)
+    # maintain the same ordering as used in the claimant method below so that claimant returns the correct one
+    source_claimants.order(:id).each_with_index do |claimant, index|
+      if index == 0
+        create_claimant!(
+          participant_id: claimant.participant_id,
+          payee_code: claimant.payee_code,
+          type: claimant.type
+        )
+      else
+        # Since create_claimant! removes all claimants, don't call it again
+        claimants.create_without_intake!(
+          participant_id: claimant.participant_id,
+          payee_code: claimant.payee_code,
+          type: claimant.type
+        )
+      end
+    end
+  end
+
   # Currently AMA only supports one claimant per decision review
   def claimant
-    claimants.last
+    claimants.order(:id).last
   end
 
   def claimant_participant_id
     claimant&.participant_id
+  end
+
+  def claimant_type
+    claimant_class_name&.sub(/Claimant$/, "")&.downcase
+  end
+
+  def claimant_class_name
+    claimant&.type
   end
 
   def finalized_decision_issues_before_receipt_date
@@ -339,9 +368,13 @@ class DecisionReview < CaseflowRecord
   end
 
   def request_issues_ui_hash
-    request_issues.includes(
+    issues = request_issues.includes(
       :decision_review, :contested_decision_issue
-    ).active_or_ineligible_or_withdrawn.map(&:serialize)
+    )
+    active_issues = issues.active.sort_by { |issue| issue.end_product_establishment&.code }
+
+    # Sorts issues in the order that they appear on Add issues page, so that the numbering is sequential
+    [active_issues + issues.ineligible + issues.withdrawn].flatten.compact.map(&:serialize)
   end
 
   private

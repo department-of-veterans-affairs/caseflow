@@ -1,37 +1,38 @@
-import React from 'react';
-import { withRouter } from 'react-router-dom';
-import connect from 'react-redux/es/connect/connect';
-import PropTypes from 'prop-types';
-import { debounce } from 'lodash';
+import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Button from '../../components/Button';
-import Modal from '../../components/Modal';
-import { fullWidth } from '../../queue/constants';
+import { debounce, pickBy, isEmpty, filter } from 'lodash';
+import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import connect from 'react-redux/es/connect/connect';
+
 import {
   RegionalOfficeDropdown,
   HearingCoordinatorDropdown,
   JudgeDropdown
 } from '../../components/DataDropdowns';
-import DateSelector from '../../components/DateSelector';
-import SearchableDropdown from '../../components/SearchableDropdown';
-import TextareaField from '../../components/TextareaField';
-import { bindActionCreators } from 'redux';
-import {
-  selectVlj,
-  selectHearingCoordinator,
-  setNotes
-} from '../actions/dailyDocketActions';
+import { fullWidth } from '../../queue/constants';
+import { onRegionalOfficeChange } from '../../components/common/actions';
 import {
   onSelectedHearingDayChange,
   selectRequestType,
   onAssignHearingRoom,
   onReceiveHearingSchedule
 } from '../actions/hearingScheduleActions';
-import { onRegionalOfficeChange } from '../../components/common/actions';
-import Checkbox from '../../components/Checkbox';
+import {
+  selectVlj,
+  selectHearingCoordinator,
+  setNotes
+} from '../actions/dailyDocketActions';
 import Alert from '../../components/Alert';
 import ApiUtil from '../../util/ApiUtil';
+import Button from '../../components/Button';
+import Checkbox from '../../components/Checkbox';
+import DateSelector from '../../components/DateSelector';
+import Modal from '../../components/Modal';
+import SearchableDropdown from '../../components/SearchableDropdown';
+import TextareaField from '../../components/TextareaField';
+import HEARING_REQUEST_TYPES from '../../../constants/HEARING_REQUEST_TYPES';
 
 const notesFieldStyling = css({
   height: '100px',
@@ -57,316 +58,237 @@ const statusMsgDetailStyle = css({
   color: '#e31c3d'
 });
 
-const requestTypeOptions = [
-  { label: 'Video',
-    value: 'V' },
-  { label: 'Central',
-    value: 'C' }
-];
-
 const titleStyling = css({
   marginBottom: 0,
   padding: 0
 });
 
-class HearingDayAddModal extends React.Component {
-  constructor(props) {
-    super(props);
+const requestTypeOptions = [
+  { label: 'Video',
+    value: HEARING_REQUEST_TYPES.video },
+  { label: 'Central',
+    value: HEARING_REQUEST_TYPES.central },
+  { label: 'Virtual',
+    value: HEARING_REQUEST_TYPES.virtual }
+];
 
-    this.state = {
-      videoSelected: false,
-      centralOfficeSelected: false,
-      dateError: false,
-      typeError: false,
-      roError: false,
-      errorMessages: [],
-      roErrorMessages: [],
-      serverError: false,
-      noRoomsAvailableError: false
+export const HearingDayAddModal = ({
+  requestType, selectedHearingDay, vlj, coordinator, notes, roomRequired, selectedRegionalOffice,
+  hearingSchedule, closeModal, cancelModal, user, ...props
+}) => {
+  const [selectedRequestType, setSelectedRequestType] = useState(null);
+  const [serverError, setServerError] = useState(false);
+  const [noRoomsAvailableError, setNoRoomsAvailableError] = useState(false);
+  const [errorMessages, setErrorMessages] = useState({});
+
+  const selectedVirtual = selectedRequestType === HEARING_REQUEST_TYPES.virtual;
+  const selectedVideo = selectedRequestType === HEARING_REQUEST_TYPES.video;
+
+  const dateError = errorMessages?.noDate || errorMessages?.invalidDate;
+
+  const submitHearingDay = () => {
+    const data = {
+      request_type: requestType.value,
+      scheduled_for: selectedHearingDay,
+      judge_id: vlj.value,
+      bva_poc: coordinator.value,
+      notes,
+      assign_room: selectedVirtual ? false : roomRequired,
+      ...(selectedRegionalOffice?.key !== '' && requestType?.value !== 'C' &&
+        { regional_office: selectedRegionalOffice?.key })
     };
-  }
-
-  modalConfirmButton = () => {
-    return <Button
-      classNames={['usa-button-secondary']}
-      onClick={this.onClickConfirm}
-    >Confirm
-    </Button>;
-  };
-
-  onClickConfirm = () => {
-    let errorMessages = [];
-    let roErrorMessages = [];
-
-    this.setState({ serverError: false,
-      noRoomsAvailableError: false });
-
-    if (this.props.selectedHearingDay === '') {
-      this.setState({ dateError: true });
-      errorMessages.push('Please make sure you have entered a Hearing Date');
-    }
-
-    if (this.props.requestType === '') {
-      this.setState({ typeError: true });
-      errorMessages.push('Please make sure you have entered a Hearing Type');
-    }
-
-    if (this.state.videoSelected && !this.props.selectedRegionalOffice.value) {
-      this.setState({ roError: true });
-      roErrorMessages.push('Please make sure you select a Regional Office');
-    }
-
-    if (this.state.videoSelected && this.videoHearingDateNotValid(this.props.selectedHearingDay)) {
-      this.setState({ dateError: true });
-      errorMessages.push('Video hearing days cannot be scheduled for prior than April 1st through Caseflow.');
-    }
-
-    if (errorMessages.length > 0) {
-      this.setState({ errorMessages });
-    }
-
-    if (roErrorMessages.length > 0) {
-      this.setState({ roErrorMessages });
-    }
-
-    if (errorMessages.length > 0 || roErrorMessages.length > 0) {
-      return;
-    }
-
-    this.persistHearingDay();
-  };
-
-  videoHearingDateNotValid = (hearingDate) => {
-    const integerDate = parseInt(hearingDate.split('-').join(''), 10);
-
-    return integerDate < 20190401;
-  };
-
-  persistHearingDay = () => {
-    let data = {
-      request_type: this.props.requestType.value,
-      scheduled_for: this.props.selectedHearingDay,
-      judge_id: this.props.vlj.value,
-      bva_poc: this.props.coordinator.value,
-      notes: this.props.notes,
-      assign_room: this.props.roomRequired
-    };
-
-    if (this.props.selectedRegionalOffice &&
-      this.props.selectedRegionalOffice.value !== '' &&
-      this.props.requestType.value !== 'C') {
-      data.regional_office = this.props.selectedRegionalOffice.value;
-    }
 
     ApiUtil.post('/hearings/hearing_day.json', { data }).
       then((response) => {
-        const resp = ApiUtil.convertToCamelCase(response.body);
+        const resp = ApiUtil.convertToCamelCase(response?.body);
 
-        const newHearings = Object.assign({}, this.props.hearingSchedule);
+        const newHearings = Object.assign({}, hearingSchedule);
         const hearingsLength = Object.keys(newHearings).length;
 
-        newHearings[hearingsLength] = resp.hearing;
+        newHearings[hearingsLength] = resp?.hearing;
 
-        this.props.onReceiveHearingSchedule(newHearings);
-        this.props.closeModal();
+        props.onReceiveHearingSchedule(newHearings);
+        closeModal();
 
       }, (error) => {
-        if (error.response.body && error.response.body.errors &&
+        if (error?.response?.body && error.response.body.errors &&
         error.response.body.errors[0].status === 400) {
-          this.setState({ noRoomsAvailableError: error.response.body.errors[0] });
+          setNoRoomsAvailableError(error.response.body.errors[0]);
         } else {
         // All other server errors
-          this.setState({ serverError: true });
+          setServerError(true);
         }
       });
   };
 
-  getDateTypeErrorMessages = () => {
-    return <div>
-      <span {...statusMsgTitleStyle}>Cannot create a New Hearing Day</span>
-      <ul {...statusMsgDetailStyle} >
-        {
-          this.state.errorMessages.map((item, i) => <li key={i}>{item}</li>)
-        }
-      </ul></div>;
+  const videoHearingDateNotValid = (hearingDate) => {
+    const integerDate = parseInt(hearingDate?.split('-').join(''), 10);
+
+    return integerDate < 20190401;
   };
 
-  getRoErrorMessages = () => {
-    return <div>
-      <span {...statusMsgTitleStyle}>Hearing type is a Video hearing</span>
-      <ul {...statusMsgDetailStyle} >
-        {
-          this.state.roErrorMessages.map((item, i) => <li key={i}>{item}</li>)
-        }
-      </ul></div>;
+  const onClickConfirm = () => {
+    setServerError(false);
+    setNoRoomsAvailableError(false);
+
+    const errorMsgs = {
+      ...(selectedHearingDay === '' && { noDate: 'Please make sure you have entered a Hearing Date' }),
+      ...(selectedVideo && videoHearingDateNotValid(selectedHearingDay) &&
+      {
+        invalidDate: 'Video hearing days cannot be scheduled for prior than April 1st through Caseflow.'
+      }),
+      ...(requestType === '' && { requestType: 'Please make sure you have entered a Hearing Type' }),
+      ...(selectedVideo && !selectedRegionalOffice?.key && { ro: 'Please make sure you select a Regional Office' })
+    };
+
+    if (!isEmpty(errorMsgs)) {
+      setErrorMessages(errorMsgs);
+
+      return;
+    }
+
+    submitHearingDay();
   };
 
-  modalCancelButton = () => {
-    return <Button linkStyling onClick={this.onCancelModal}>Go back</Button>;
+  const onClickCancel = () => cancelModal();
+
+  const resetErrorState = debounce(() => {
+    setErrorMessages({});
+  }, 250);
+
+  const onHearingDateChange = (option) => {
+    props.onSelectedHearingDayChange(option);
+    resetErrorState();
   };
 
-  onCancelModal = () => {
-    this.props.cancelModal();
+  const onRoChange = (option) => {
+    props.onRegionalOfficeChange(option);
+    resetErrorState();
   };
 
-  onHearingDateChange = (option) => {
-    this.props.onSelectedHearingDayChange(option);
-    this.resetErrorState();
-  };
-
-  onRequestTypeChange = (value) => {
-    this.props.selectRequestType(value);
-    this.resetErrorState();
+  const onRequestTypeChange = (value) => {
+    props.selectRequestType(value);
+    resetErrorState();
 
     switch ((value || {}).value) {
-    case 'V':
-      this.setState({ videoSelected: true,
-        centralOfficeSelected: false });
-      break;
-    case 'C':
-      this.setState({ videoSelected: false,
-        centralOfficeSelected: true });
+    case HEARING_REQUEST_TYPES.video:
+    case HEARING_REQUEST_TYPES.central:
+    case HEARING_REQUEST_TYPES.virtual:
+      setSelectedRequestType(value.value);
       break;
     default:
-      this.setState({ videoSelected: false,
-        centralOfficeSelected: false });
+      setSelectedRequestType(null);
     }
   };
 
-  onRegionalOfficeChange = (option) => {
-    this.props.onRegionalOfficeChange(option);
-    this.resetErrorState();
-  };
+  const showAlert = serverError || noRoomsAvailableError;
 
-  resetErrorState = debounce(() => {
-    this.setState({ dateError: false,
-      typeError: false,
-      roError: false });
-  }, 250);
+  const alertTitle = noRoomsAvailableError ? noRoomsAvailableError?.title : 'An error has occurred';
 
-  onVljChange = (value) => {
-    this.props.selectVlj(value);
-  };
+  const alertMessage = noRoomsAvailableError ? noRoomsAvailableError?.detail :
+    'You are unable to complete this action.';
 
-  onCoordinatorChange = (value) => {
-    this.props.selectHearingCoordinator(value);
-  };
+  const getErrorMessage = (roError = false) => {
+    const errorMsgTitle = roError ? 'Hearing type is a Video hearing' :
+      'Cannot create a New Hearing Day';
 
-  onNotesChange = (value) => {
-    this.props.setNotes(value);
-  };
+    const errorMsgs = roError ? pickBy(errorMessages, (_value, key) => key === 'ro') :
+      pickBy(errorMessages, (_value, key) => key !== 'ro');
 
-  onRoomRequired = (value) => {
-    this.props.onAssignHearingRoom(value);
-  };
-
-  getAlertTitle = () => {
-    return this.state.noRoomsAvailableError ? this.state.noRoomsAvailableError.title :
-      'An error has occurred';
-  };
-
-  getAlertMessage = () => {
-    return this.state.noRoomsAvailableError ? this.state.noRoomsAvailableError.detail :
-      'You are unable to complete this action.';
-  };
-
-  showAlert = () => {
-    return this.state.serverError || this.state.noRoomsAvailableError;
-  };
-
-  modalMessage = () => {
-    return <React.Fragment>
-      <div {...fullWidth} {...css({ marginBottom: '0' })} >
-        {!this.showAlert() && <React.Fragment>
-          <p {...spanStyling} >Please select the details of the new hearing day </p>
-          <b {...titleStyling} >Select Hearing Date</b>
-        </React.Fragment>}
-        {this.showAlert() &&
-          <Alert type="error"
-            title={this.getAlertTitle()}
-            scrollOnAlert={false}>
-            {this.getAlertMessage()}
-          </Alert>}
-        <DateSelector
-          name="hearingDate"
-          label={false}
-          errorMessage={this.state.dateError ?
-            this.getDateTypeErrorMessages() : null}
-          value={this.props.selectedHearingDay}
-          onChange={this.onHearingDateChange}
-          type="date"
-        />
-        <SearchableDropdown
-          name="requestType"
-          label="Select Hearing Type"
-          strongLabel
-          errorMessage={(!this.state.dateError && this.state.typeError) ? this.getDateTypeErrorMessages() : null}
-          value={this.props.requestType}
-          onChange={this.onRequestTypeChange}
-          options={requestTypeOptions} />
-        {this.state.videoSelected &&
-        <RegionalOfficeDropdown
-          label="Select Regional Office (RO)"
-          errorMessage={this.state.roError ? this.getRoErrorMessages() : null}
-          onChange={(value, label) => this.onRegionalOfficeChange({
-            value,
-            label
-          })}
-          value={this.props.selectedRegionalOffice.value} />
+    return <div>
+      <span {...statusMsgTitleStyle}>{errorMsgTitle}</span>
+      <ul {...statusMsgDetailStyle} >
+        {
+          Object.values(errorMsgs).map((item, i) => <li key={i}>{item}</li>)
         }
-        {(this.state.videoSelected || this.state.centralOfficeSelected) &&
-        <React.Fragment>
-          <JudgeDropdown
-            name="vlj"
-            label="Select VLJ (Optional)"
-            value={this.props.vlj.value}
-            onChange={(value, label) => this.onVljChange({
-              value,
-              label
-            })} />
-          <HearingCoordinatorDropdown
-            name="coordinator"
-            label="Select Hearing Coordinator (Optional)"
-            value={this.props.coordinator.value}
-            onChange={(value, label) => this.onCoordinatorChange({
-              value,
-              label
-            })} />
-        </React.Fragment>
-        }
-        <TextareaField
-          name="Notes (Optional)"
-          strongLabel
-          onChange={this.onNotesChange}
-          textAreaStyling={notesFieldStyling}
-          value={this.props.notes} />
-        <Checkbox
-          name="roomRequired"
-          label="Assign Board Hearing Room"
-          strongLabel
-          value={this.props.roomRequired}
-          onChange={this.onRoomRequired}
-          {...roomRequiredStyling} />
-      </div>
-    </React.Fragment>;
+      </ul></div>;
   };
 
-  render() {
+  const filteredRequestTypeOptions = (options) => {
+    if (user?.userCanAddVirtualHearingDays) {
+      return options;
+    }
 
-    return <AppSegment filledBackground>
-      <div className="cf-modal-scroll">
-        <Modal
-          title="Add Hearing Day"
-          closeHandler={this.onCancelModal}
-          confirmButton={this.modalConfirmButton()}
-          cancelButton={this.modalCancelButton()}
-        >
-          {this.modalMessage()}
-        </Modal>
-      </div>
-    </AppSegment>;
-  }
-}
+    return filter(options, (option) => option.value !== HEARING_REQUEST_TYPES.virtual);
+  };
+
+  return (
+    <Modal
+      title="Add Hearing Day"
+      closeHandler={onClickCancel}
+      confirmButton={<Button classNames={['usa-button-secondary']} onClick={onClickConfirm}>Confirm </Button>}
+      cancelButton={<Button linkStyling onClick={onClickCancel}>Go back</Button>}
+    >
+      <React.Fragment>
+        <div {...fullWidth} {...css({ marginBottom: '0' })} >
+          {!showAlert && <React.Fragment>
+            <p {...spanStyling} >Please select the details of the new hearing day </p>
+            <b {...titleStyling} >Select Hearing Date</b>
+          </React.Fragment>}
+          {showAlert &&
+            <Alert type="error"
+              title={alertTitle}
+              scrollOnAlert={false}>
+              {alertMessage}
+            </Alert>}
+          <DateSelector
+            name="hearingDate"
+            label={false}
+            errorMessage={dateError ? getErrorMessage() : null}
+            value={selectedHearingDay}
+            onChange={onHearingDateChange}
+            type="date"
+          />
+          <SearchableDropdown
+            name="requestType"
+            label="Select Hearing Type"
+            strongLabel
+            errorMessage={!dateError && errorMessages?.requestType ? getErrorMessage() : null}
+            value={requestType}
+            onChange={onRequestTypeChange}
+            options={filteredRequestTypeOptions(requestTypeOptions)} />
+          {(selectedVideo || selectedVirtual) &&
+          <RegionalOfficeDropdown
+            label="Select Regional Office (RO)"
+            excludeVirtualHearingsOption={!selectedVirtual}
+            errorMessage={errorMessages?.ro ? getErrorMessage(true) : null}
+            onChange={onRoChange}
+            readOnly={Boolean(selectedVirtual)}
+            value={selectedVirtual ? 'R' : selectedRegionalOffice?.key} />
+          }
+          {selectedRequestType !== null &&
+          <React.Fragment>
+            <JudgeDropdown
+              name="vlj"
+              label="Select VLJ (Optional)"
+              value={vlj?.value}
+              onChange={(value, label) => props.selectVlj({ value, label })} />
+            <HearingCoordinatorDropdown
+              name="coordinator"
+              label="Select Hearing Coordinator (Optional)"
+              value={coordinator?.value}
+              onChange={(value, label) => props.selectHearingCoordinator({ value, label })} />
+          </React.Fragment>
+          }
+          <TextareaField
+            name="Notes (Optional)"
+            strongLabel
+            onChange={(value) => props.setNotes(value)}
+            textAreaStyling={notesFieldStyling}
+            value={notes} />
+          <Checkbox
+            name="roomRequired"
+            label="Assign Board Hearing Room"
+            disabled={selectedVirtual}
+            strongLabel
+            value={selectedVirtual ? false : roomRequired}
+            onChange={(value) => props.onAssignHearingRoom(value)}
+            {...roomRequiredStyling} />
+        </div>
+      </React.Fragment>
+    </Modal>
+  );
+};
 
 HearingDayAddModal.propTypes = {
   cancelModal: PropTypes.func,
@@ -380,9 +302,6 @@ HearingDayAddModal.propTypes = {
   onReceiveHearingSchedule: PropTypes.func,
   onRegionalOfficeChange: PropTypes.func,
   onSelectedHearingDayChange: PropTypes.func,
-  regionalOffices: PropTypes.shape({
-    options: PropTypes.arrayOf(PropTypes.object)
-  }),
   requestType: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.shape({
@@ -394,21 +313,20 @@ HearingDayAddModal.propTypes = {
   selectRequestType: PropTypes.func,
   selectVlj: PropTypes.func,
   selectedHearingDay: PropTypes.string,
-  selectedRegionalOffice: PropTypes.shape({
-    value: PropTypes.string
-  }),
+
+  // Selected Regional Office (See onRegionalOfficeChange).
+  selectedRegionalOffice: PropTypes.object,
+
   setNotes: PropTypes.func,
-  userCssId: PropTypes.string,
-  userId: PropTypes.number,
   vlj: PropTypes.shape({
     value: PropTypes.string
-  })
+  }),
+  user: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
   hearingSchedule: state.hearingSchedule.hearingSchedule,
   selectedRegionalOffice: state.components.selectedRegionalOffice || {},
-  regionalOffices: state.components.regionalOffices,
   selectedHearingDay: state.hearingSchedule.selectedHearingDay,
   requestType: state.hearingSchedule.requestType,
   vlj: state.hearingSchedule.vlj || {},
