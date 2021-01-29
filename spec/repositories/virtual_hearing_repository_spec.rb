@@ -106,7 +106,7 @@ describe VirtualHearingRepository, :all_dbs do
       end
 
       context "that was cancelled" do
-        let(:legacy_dispositon) { "C" }
+        let(:legacy_dispositon) { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:cancelled] }
 
         it "returns the virtual hearing" do
           expect(subject).to eq [virtual_hearing]
