@@ -30,12 +30,22 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   HEARING_TYPES = HEARING_TYPE_LOOKUP.values.freeze
 
+  # NOTE: add scheduled_in_error to Constants.HEARING_DISPOSITION_TYPES and
+  #       reference it here when we are ready to expose the new disposition
+  #       to users (the disposition dropdown in ChangeHearingDispositionModal
+  #       is populated from HEARING_DISPOSITION_TYPES)
   HEARING_DISPOSITIONS = {
-    H: Constants.HEARING_DISPOSITION_TYPES.held,
     C: Constants.HEARING_DISPOSITION_TYPES.cancelled,
+    H: Constants.HEARING_DISPOSITION_TYPES.held,
+    N: Constants.HEARING_DISPOSITION_TYPES.no_show,
     P: Constants.HEARING_DISPOSITION_TYPES.postponed,
-    N: Constants.HEARING_DISPOSITION_TYPES.no_show
+    E: "scheduled_in_error"
   }.freeze
+
+  # flip {:H => "held", ...} to {:held => "H", ...}
+  HEARING_DISPOSITION_CODES = HEARING_DISPOSITIONS.each_with_object({}) do |(key, value), obj|
+    obj[value.to_sym] = key.to_s
+  end
 
   HEARING_AODS = {
     G: :granted,

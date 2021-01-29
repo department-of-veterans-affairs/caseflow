@@ -121,6 +121,7 @@ const AddCavcRemandView = (props) => {
     setIssues({ ...issues, [evt.target.name]: evt.target.checked });
   };
 
+  const remandType = () => type === CAVC_DECISION_TYPES.remand;
   const straightReversalType = () => type === CAVC_DECISION_TYPES.straight_reversal;
   const deathDismissalType = () => type === CAVC_DECISION_TYPES.death_dismissal;
   const mdrSubtype = () => subType === CAVC_REMAND_SUBTYPES.mdr;
@@ -136,6 +137,20 @@ const AddCavcRemandView = (props) => {
   const validateForm = () => {
     return validDocketNumber() && validJudge() && validDecisionDate() && validJudgementDate() && validMandateDate() &&
       validInstructions();
+  };
+
+  const successMsgDetail = () => {
+    if (straightReversalType() || deathDismissalType()) {
+      if (Boolean(judgementDate) && Boolean(mandateDate)) {
+        return COPY.CAVC_REMAND_READY_FOR_DISTRIBUTION_DETAIL;
+      }
+
+      return COPY.CAVC_REMAND_MANDATEHOLD_CREATED_DETAIL;
+    } else if (remandType() && mdrSubtype()) {
+      return COPY.CAVC_REMAND_MDR_CREATED_DETAIL;
+    }
+
+    return COPY.CAVC_REMAND_CREATED_DETAIL;
   };
 
   const submit = () => {
@@ -157,7 +172,7 @@ const AddCavcRemandView = (props) => {
 
     const successMsg = {
       title: COPY.CAVC_REMAND_CREATED_TITLE,
-      detail: mdrSubtype() ? COPY.CAVC_REMAND_MDR_CREATED_DETAIL : COPY.CAVC_REMAND_CREATED_DETAIL
+      detail: successMsgDetail()
     };
 
     props.requestSave(`/appeals/${appealId}/cavc_remand`, payload, successMsg).
