@@ -76,7 +76,7 @@ const AddCavcDatesModal = ({ appealId, error, highlightInvalid, history }) => {
     strongLabel
   />;
 
-  const instructionsField = <TextareaField
+  const instructionsTextField = <TextareaField
     label={COPY.CAVC_INSTRUCTIONS_LABEL}
     name="context-and-instructions-textBox"
     value={instructions}
@@ -94,7 +94,7 @@ const AddCavcDatesModal = ({ appealId, error, highlightInvalid, history }) => {
       <p>{COPY.ADD_CAVC_DESCRIPTION}</p>
       {judgementField}
       {mandateField}
-      {instructionsField}
+      {instructionsTextField}
       {error && <Alert title={error.title} type="error">{error.detail}</Alert>}
     </QueueFlowModal>
   );

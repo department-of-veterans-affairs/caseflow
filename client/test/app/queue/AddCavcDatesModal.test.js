@@ -74,7 +74,7 @@ describe('AddCavcDatesModal', () => {
       });
     });
 
-    describe('text instructions validations', () => {
+    describe('cavc dates instructions validations', () => {
       const error = COPY.CAVC_INSTRUCTIONS_ERROR;
 
       it('shows error on empty instructions', () => {

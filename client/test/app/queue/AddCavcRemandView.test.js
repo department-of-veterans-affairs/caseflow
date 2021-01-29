@@ -209,7 +209,7 @@ describe('AddCavcRemandView', () => {
       });
     });
 
-    describe('text instructions validations', () => {
+    describe('cavc form instructions validations', () => {
       const error = COPY.CAVC_INSTRUCTIONS_ERROR;
 
       it('shows error on empty instructions', () => {
