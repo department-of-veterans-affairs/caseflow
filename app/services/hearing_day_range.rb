@@ -150,7 +150,8 @@ class HearingDayRange
         else
           [
             VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:postponed],
-            VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:cancelled]
+            VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:cancelled],
+            VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:scheduled_in_error]
           ].exclude?(hearing.vacols_record.hearing_disp)
         end
       end

@@ -47,6 +47,13 @@ describe HearingMapper do
       it { is_expected.to eq nil }
     end
 
+    context "when disposition is scheduled in error" do
+      let(:hearing_disp) { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:scheduled_in_error] }
+      let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:video] }
+
+      it { is_expected.to eq nil }
+    end
+
     context "when disposition is cancelled" do
       let(:hearing_disp) { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:cancelled] }
       let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:video] }

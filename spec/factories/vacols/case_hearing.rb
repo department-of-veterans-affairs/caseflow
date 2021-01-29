@@ -31,6 +31,10 @@ FactoryBot.define do
       hearing_disp { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:no_show] }
     end
 
+    trait :disposition_scheduled_in_error do
+      hearing_disp { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:scheduled_in_error] }
+    end
+
     after(:build) do |hearing, evaluator|
       # Build Caseflow hearing day and associate with legacy hearing.
       if hearing.vdkey.nil?
