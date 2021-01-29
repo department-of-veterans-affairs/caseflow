@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
-import { appealWithDetailSelector } from '../../selectors';
+import StringUtil from 'app/util/StringUtil';
+import { appealWithDetailSelector } from 'app/queue/selectors';
 import { DocketSwitchReviewConfirm } from './DocketSwitchReviewConfirm';
+import { cancel } from '../docketSwitchSlice';
 
 export const DocketSwitchReviewConfirmContainer = () => {
-  const { appealId, taskId } = useParams();
+  const { appealId } = useParams();
   const { goBack, push } = useHistory();
   const dispatch = useDispatch();
 
@@ -14,9 +16,48 @@ export const DocketSwitchReviewConfirmContainer = () => {
     appealWithDetailSelector(state, { appealId })
   );
 
-  const docketType = useSelector(
-    (state) => state.docketSwitch.formData.docketType
-  );
+  const formData = useSelector((state) => state.docketSwitch.formData);
 
-  return <DocketSwitchReviewConfirm />;
+  const handleCancel = () => {
+    // Clear Redux store
+    dispatch(cancel());
+
+    // Return to case details page
+    push(`/queue/appeals/${appealId}`);
+  };
+
+  const handleSubmit = () => console.log('submit');
+
+  //   const issuesSwitched = useMemo(() => {
+  //     formData.issueIds.map((issueId) => {
+  //       const issue = appeal.issues.find((item) => String(item.id) === issueId);
+
+  //       return issue ? { id: issue.id, description: issue.description } : null;
+  //     });
+  //   }, [formData]);
+
+  //   We need to display more info than just the stored issue IDs
+  const [issuesSwitched, issuesRemaining] = useMemo(() => {
+    return appeal.issues.reduce(
+      (issueArr, issue) => {
+        issueArr[formData.issueIds.includes(issue.id) ? 0 : 1].push(issue);
+
+        return issueArr;
+      },
+      [[], []]
+    );
+  }, [formData]);
+
+  return (
+    <DocketSwitchReviewConfirm
+      claimantName={appeal.claimantName}
+      docketFrom={StringUtil.snakeCaseToCapitalized(appeal.docketName)}
+      docketTo={StringUtil.snakeCaseToCapitalized(formData.docketType)}
+      issuesSwitched={issuesSwitched}
+      issuesRemaining={issuesRemaining}
+      onBack={goBack}
+      onCancel={handleCancel}
+      onSubmit={handleSubmit}
+    />
+  );
 };

@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
+import { format } from 'date-fns';
+import { css } from 'glamor';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -11,6 +13,26 @@ import {
   DOCKET_SWITCH_GRANTED_CONFIRM_DESCRIPTION_B,
 } from 'app/../COPY';
 import CheckoutButtons from './CheckoutButtons';
+
+const styles = {
+  mainTable: css({
+    '& > tbody > tr > td': {
+      verticalAlign: 'top',
+      ':first-child': {
+        fontWeight: 'bold',
+      },
+    },
+    '& table': {
+      margin: 0,
+      '& tr:first-of-type td': {
+        borderTop: 'none',
+      },
+      '& tr:last-of-type td': {
+        borderBottom: 'none',
+      },
+    },
+  }),
+};
 
 export const DocketSwitchReviewConfirm = ({
   claimantName,
@@ -24,7 +46,7 @@ export const DocketSwitchReviewConfirm = ({
   issuesSwitched,
   issuesRemaining,
   tasksKept,
-  tasksAdded,
+  tasksAdded = [],
 }) => {
   const description1 = useMemo(
     () =>
@@ -47,7 +69,7 @@ export const DocketSwitchReviewConfirm = ({
         </p>
         <p>{DOCKET_SWITCH_GRANTED_CONFIRM_DESCRIPTION_B}</p>
 
-        <table className="usa-table-borderless">
+        <table className={`usa-table-borderless ${styles.mainTable}`}>
           <tbody>
             <tr>
               <td>Veteran</td>
@@ -55,15 +77,68 @@ export const DocketSwitchReviewConfirm = ({
             </tr>
             <tr>
               <td>VA Form - 10182 Receipt Date</td>
-              <td>{originalReceiptDate}</td>
+              <td>{format(originalReceiptDate, 'M/d/y')}</td>
             </tr>
             <tr>
               <td>Docket Switch Receipt Date</td>
-              <td>{docketSwitchReceiptDate}</td>
+              <td>{format(docketSwitchReceiptDate, 'M/d/y')}</td>
             </tr>
             <tr>
               <td>New Review option</td>
               <td>{StringUtil.snakeCaseToCapitalized(docketTo)}</td>
+            </tr>
+            <tr>
+              <td>Issues switched to the new docket</td>
+              <td>
+                <table className="usa-table-borderless">
+                  <tbody>
+                    {issuesSwitched.map((issue, idx) => (
+                      <tr key={issue.id}>
+                        <td>
+                          <div>{`${idx + 1}. ${issue.description}`}</div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            {issuesRemaining?.length && (
+              <tr>
+                <td>Issues on original docket</td>
+                <td>
+                  <table className="usa-table-borderless">
+                    <tbody>
+                      {issuesRemaining.map((issue, idx) => (
+                        <tr key={issue.id}>
+                          <td>
+                            <div>{`${idx + 1}. ${issue.description}`}</div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            )}
+            <tr>
+              <td>Transferred/Added tasks</td>
+              <td>
+                <table className="usa-table-borderless">
+                  <tbody>
+                    {[...tasksKept, ...tasksAdded].map((task, idx) => (
+                      <tr key={task.id || task.name}>
+                        <td>
+                          <div>{`${idx + 1}. ${task.label}`}</div>
+                          <div>
+                            <em>{task.instructions}</em>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -85,8 +160,8 @@ DocketSwitchReviewConfirm.propTypes = {
   onBack: PropTypes.func,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
-  originalReceiptDate: PropTypes.string,
-  docketSwitchReceiptDate: PropTypes.string,
+  originalReceiptDate: PropTypes.instanceOf(Date),
+  docketSwitchReceiptDate: PropTypes.instanceOf(Date),
   issuesSwitched: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string,

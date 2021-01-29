@@ -1,4 +1,5 @@
 import React from 'react';
+import { sub } from 'date-fns';
 import { DocketSwitchReviewConfirm } from './DocketSwitchReviewConfirm';
 
 const tasks = [
@@ -25,6 +26,13 @@ const tasks = [
   },
 ];
 
+const issues = [
+  { id: 1, program: 'compensation', description: 'PTSD denied' },
+  { id: 2, program: 'compensation', description: 'Left knee denied' },
+  { id: 3, program: 'compensation', description: 'Right knee denied' },
+  { id: 4, program: 'compensation', description: 'Right knee granted at 90%' },
+];
+
 export default {
   title: 'Queue/Docket Switch/DocketSwitchReviewConfirm',
   component: DocketSwitchReviewConfirm,
@@ -35,9 +43,12 @@ export default {
   parameters: {},
   args: {
     claimantName: 'Jane Doe',
-    taskListing: tasks,
     docketFrom: 'direct_review',
     docketTo: 'hearing',
+    originalReceiptDate: sub(new Date(), { days: 30 }),
+    docketSwitchReceiptDate: sub(new Date(), { days: 7 }),
+    issuesSwitched: issues,
+    tasksKept: tasks,
   },
   argTypes: {
     onBack: { action: 'back' },
@@ -53,4 +64,10 @@ Basic.parameters = {
     storyDescription:
       'Used by attorney in Clerk of the Board office to complete a grant of a docket switch checkout flow ',
   },
+};
+
+export const PartialGrant = Template.bind({});
+PartialGrant.args = {
+  issuesSwitched: issues.slice(0, 2),
+  issuesRemaining: issues.slice(2),
 };
