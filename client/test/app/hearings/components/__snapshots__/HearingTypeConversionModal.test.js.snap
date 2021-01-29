@@ -292,7 +292,7 @@ exports[`HearingTypeConversion Displays convert to Central text when converting 
           <Button
             classNames={
               Array [
-                "usa-button-secondary",
+                "cf-submit",
               ]
             }
             disabled={false}
@@ -302,7 +302,8 @@ exports[`HearingTypeConversion Displays convert to Central text when converting 
             type="button"
             willNeverBeLoading={false}
           >
-            Confirm
+            Convert Hearing to 
+            Central
           </Button>
         }
         scrollLock={true}
@@ -402,7 +403,7 @@ exports[`HearingTypeConversion Displays convert to Central text when converting 
                   <Button
                     classNames={
                       Array [
-                        "usa-button-secondary",
+                        "cf-submit",
                       ]
                     }
                     disabled={false}
@@ -414,12 +415,13 @@ exports[`HearingTypeConversion Displays convert to Central text when converting 
                   >
                     <span>
                       <button
-                        className="usa-button-secondary usa-button"
+                        className="cf-submit usa-button"
                         disabled={false}
                         onClick={[Function]}
                         type="button"
                       >
-                        Confirm
+                        Convert Hearing to 
+                        Central
                       </button>
                     </span>
                   </Button>
@@ -754,7 +756,7 @@ exports[`HearingTypeConversion Displays convert to Video text when converting fr
           <Button
             classNames={
               Array [
-                "usa-button-secondary",
+                "cf-submit",
               ]
             }
             disabled={false}
@@ -764,7 +766,8 @@ exports[`HearingTypeConversion Displays convert to Video text when converting fr
             type="button"
             willNeverBeLoading={false}
           >
-            Confirm
+            Convert Hearing to 
+            Video
           </Button>
         }
         scrollLock={true}
@@ -864,7 +867,7 @@ exports[`HearingTypeConversion Displays convert to Video text when converting fr
                   <Button
                     classNames={
                       Array [
-                        "usa-button-secondary",
+                        "cf-submit",
                       ]
                     }
                     disabled={false}
@@ -876,12 +879,13 @@ exports[`HearingTypeConversion Displays convert to Video text when converting fr
                   >
                     <span>
                       <button
-                        className="usa-button-secondary usa-button"
+                        className="cf-submit usa-button"
                         disabled={false}
                         onClick={[Function]}
                         type="button"
                       >
-                        Confirm
+                        Convert Hearing to 
+                        Video
                       </button>
                     </span>
                   </Button>
