@@ -3,8 +3,7 @@
 class Api::V3::RequestIssueSerializer
   include JSONAPI::Serializer
   set_key_transform :camel_lower
-
-  self.record_type = "RequestIssue"
+  set_type "RequestIssue"
 
   attributes :diagnostic_code, :description, :contention_text, :notes,
              :is_unidentified, :ramp_claim_id, :withdrawal_date,

@@ -5,7 +5,7 @@ class Api::V3::HigherLevelReviewSerializer
   set_key_transform :camel_lower
 
   set_id :uuid
-  self.record_type = "HigherLevelReview"
+  set_type "HigherLevelReview"
 
   attribute :status, &:fetch_status
   attributes :aoj, :description, :benefit_type, :receipt_date, :informal_conference,
@@ -15,19 +15,19 @@ class Api::V3::HigherLevelReviewSerializer
   # disable SymbolProc because these relationships aren't Rails relationships
   # rubocop:disable Style/SymbolProc
 
-  has_one :veteran, record_type: "Veteran" do |higher_level_review|
+  has_one :veteran, serializer: Api::V3::VeteranSerializer do |higher_level_review|
     higher_level_review.veteran
   end
 
-  has_one :claimant, record_type: "Claimant" do |higher_level_review|
+  has_one :claimant, serializer: Api::V3::ClaimantSerializer do |higher_level_review|
     higher_level_review.claimant
   end
 
-  has_many :decision_issues, record_type: "DecisionIssue" do |higher_level_review|
+  has_many :decision_issues, serializer: Api::V3::DecisionIssueSerializer do |higher_level_review|
     higher_level_review.fetch_all_decision_issues
   end
 
-  has_many :request_issues, record_type: "RequestIssue" do |higher_level_review|
+  has_many :request_issues, serializer: Api::V3::RequestIssueSerializer do |higher_level_review|
     higher_level_review.request_issues.includes(
       :decision_review, :contested_decision_issue
     ).active_or_ineligible_or_withdrawn
