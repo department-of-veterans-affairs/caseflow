@@ -481,7 +481,7 @@
   "COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY": "Enter a custom number of days for the hold",
   "COLOCATED_ACTION_PLACE_CUSTOM_HOLD_INVALID_VALUE": "Please enter a number greater than 0",
   "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION": "%s's case has been placed on hold for %s days.",
-  "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION_DETAIL": "You can find this case in the on hold tab of your queue",
+  "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION_DETAIL": "You can find this case in your queue",
   "COLOCATED_ACTION_PLACE_HOLD_BUTTON_COPY": "Place case on hold",
   "COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL": "Select number of days",
 
