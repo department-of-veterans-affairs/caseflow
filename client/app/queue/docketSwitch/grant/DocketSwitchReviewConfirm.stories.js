@@ -27,10 +27,30 @@ const tasks = [
 ];
 
 const issues = [
-  { id: 1, program: 'compensation', description: 'PTSD denied' },
-  { id: 2, program: 'compensation', description: 'Left knee denied' },
-  { id: 3, program: 'compensation', description: 'Right knee denied' },
-  { id: 4, program: 'compensation', description: 'Right knee granted at 90%' },
+  {
+    id: 1,
+    program: 'compensation',
+    description: 'PTSD denied',
+    decision_date: sub(new Date(), { days: 10 }),
+  },
+  {
+    id: 2,
+    program: 'compensation',
+    description: 'Left knee denied',
+    decision_date: sub(new Date(), { days: 10 }),
+  },
+  {
+    id: 3,
+    program: 'compensation',
+    description: 'Right knee denied',
+    decision_date: sub(new Date(), { days: 10 }),
+  },
+  {
+    id: 4,
+    program: 'compensation',
+    description: 'Right knee granted at 90%',
+    decision_date: sub(new Date(), { days: 10 }),
+  },
 ];
 
 export default {

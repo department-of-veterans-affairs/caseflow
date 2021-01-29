@@ -28,14 +28,6 @@ export const DocketSwitchReviewConfirmContainer = () => {
 
   const handleSubmit = () => console.log('submit');
 
-  //   const issuesSwitched = useMemo(() => {
-  //     formData.issueIds.map((issueId) => {
-  //       const issue = appeal.issues.find((item) => String(item.id) === issueId);
-
-  //       return issue ? { id: issue.id, description: issue.description } : null;
-  //     });
-  //   }, [formData]);
-
   //   We need to display more info than just the stored issue IDs
   const [issuesSwitched, issuesRemaining] = useMemo(() => {
     return appeal.issues.reduce(

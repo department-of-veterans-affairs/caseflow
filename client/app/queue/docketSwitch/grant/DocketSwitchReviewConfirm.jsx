@@ -88,7 +88,7 @@ export const DocketSwitchReviewConfirm = ({
               <td>{StringUtil.snakeCaseToCapitalized(docketTo)}</td>
             </tr>
             <tr>
-              <td>Issues switched to the new docket</td>
+              <td>Issues switched to new docket</td>
               <td>
                 <table className="usa-table-borderless">
                   <tbody>
@@ -96,6 +96,7 @@ export const DocketSwitchReviewConfirm = ({
                       <tr key={issue.id}>
                         <td>
                           <div>{`${idx + 1}. ${issue.description}`}</div>
+                          <div>Decision date: {format(issue.decision_date, 'M/d/Y')}</div>
                         </td>
                       </tr>
                     ))}
@@ -113,6 +114,7 @@ export const DocketSwitchReviewConfirm = ({
                         <tr key={issue.id}>
                           <td>
                             <div>{`${idx + 1}. ${issue.description}`}</div>
+                            <div>Decision date: {format(issue.decision_date, 'M/d/Y')}</div>
                           </td>
                         </tr>
                       ))}
@@ -148,6 +150,7 @@ export const DocketSwitchReviewConfirm = ({
           onCancel={onCancel}
           onBack={onBack}
           onSubmit={onSubmit}
+          submitText="Confirm docket switch"
         />
       </div>
     </>
