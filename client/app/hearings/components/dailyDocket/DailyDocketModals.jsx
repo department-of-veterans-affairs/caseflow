@@ -6,7 +6,7 @@ import { sprintf } from 'sprintf-js';
 import COPY from '../../../../COPY';
 import Modal from '../../../components/Modal';
 import Button from '../../../components/Button';
-import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP';
+import { dispositionLabel } from '../../utils';
 
 export const RemoveHearingModal = ({ onCancelRemoveHearingDay, deleteHearingDay, dailyDocket }) => (
   <div>
@@ -161,10 +161,10 @@ export class DispositionModal extends React.Component {
           <div>
             <p>
               Previous Disposition:{' '}
-              <strong>{hearing.disposition ? HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[fromDisposition] : 'None'}</strong>
+              <strong>{dispositionLabel(fromDisposition)}</strong>
             </p>
             <p>
-              New Disposition: <strong>{HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[toDisposition]}</strong>
+              New Disposition: <strong>{dispositionLabel(toDisposition)}</strong>
             </p>
           </div>
           {this.COPY[hearingType].body}

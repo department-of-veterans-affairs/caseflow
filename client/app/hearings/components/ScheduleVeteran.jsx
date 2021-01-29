@@ -11,6 +11,7 @@ import { isNil, maxBy, omit, find, get } from 'lodash';
 
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import COPY from '../../../COPY';
+import HEARING_DISPOSITION_TYPES from '../../../constants/HEARING_DISPOSITION_TYPES';
 import { CENTRAL_OFFICE_HEARING_LABEL, VIDEO_HEARING_LABEL, VIRTUAL_HEARING_LABEL } from '../constants';
 import { appealWithDetailSelector, scheduleHearingTasksForAppeal } from '../../queue/selectors';
 import { showSuccessMessage, showErrorMessage, requestPatch } from '../../queue/uiReducer/uiActions';
@@ -167,7 +168,7 @@ export const ScheduleVeteran = ({
       status: TASK_STATUSES.cancelled,
       business_payloads: {
         values: {
-          disposition: 'postponed',
+          disposition: HEARING_DISPOSITION_TYPES.postponed,
           after_disposition_update: {
             action: 'reschedule',
             new_hearing_attrs: hearingValues,

@@ -12,6 +12,8 @@ import { COMMON_TIMEZONES, REGIONAL_OFFICE_ZONE_ALIASES } from '../constants/App
 import ApiUtil from '../util/ApiUtil';
 import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
 import HEARING_REQUEST_TYPES from '../../constants/HEARING_REQUEST_TYPES';
+import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP';
+
 
 export const isPreviouslyScheduledHearing = (hearing) =>
   hearing.disposition === HEARING_DISPOSITION_TYPES.postponed ||
@@ -48,7 +50,10 @@ export const getWorksheetAppealsAndIssues = (worksheet) => {
 export const sortHearings = (hearings) =>
   _.orderBy(
     Object.values(hearings || {}),
-    (hearing) => hearing.scheduledFor,
+    // Convert to EST before sorting, this timezeon doesn't effect what's displayed
+    //   we just need to pick one so the sorting works correctly if hearings were
+    //   scheduled in different time zones.
+    (hearing) => moment.tz(hearing.scheduledFor, 'America/New_York'),
     'asc'
   );
 
@@ -446,5 +451,7 @@ export const formatChangeRequestType = (type) => {
     return HEARING_REQUEST_TYPES.central;
   }
 };
+
+export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[disposition] ?? 'None'
 
 /* eslint-enable camelcase */
