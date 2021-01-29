@@ -62,7 +62,7 @@ class Reader::DocumentsController < Reader::ApplicationController
 
   def load_tags_by_doc_id
     tags_by_doc_id = Hash[document_ids.map { |key, _| [key, Set[]] }]
-    Tag.joins(:documents_tags).where(documents_tags: { document_id: document_ids }).each do |tag|
+    Tag.includes(:documents_tags).where(documents_tags: { document_id: document_ids }).each do |tag|
       # tag.documents_tags returns extraneous documents outside document_ids, so
       # only capture tags associated with docs associated with document_ids
       (tag.documents_tags.pluck(:document_id) & document_ids).each do |doc_id|
