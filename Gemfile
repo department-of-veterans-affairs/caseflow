@@ -19,10 +19,12 @@ gem "console_tree_renderer", git: "https://github.com/department-of-veterans-aff
 gem "countries"
 gem "ddtrace"
 gem "dogstatsd-ruby"
-
+gem "dry-schema", "~> 1.4"    
+gem "fuzzy_match"
 gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
 gem "icalendar"
+gem "jsonapi-serializer", "~> 2.1.0"
 gem "kaminari"
 gem "moment_timezone-rails"
 # Rails 6 has native support for multiple dbs, so prefer that over multiverse after upgrade.
