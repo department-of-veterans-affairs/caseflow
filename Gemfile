@@ -19,7 +19,7 @@ gem "console_tree_renderer", git: "https://github.com/department-of-veterans-aff
 gem "countries"
 gem "ddtrace"
 gem "dogstatsd-ruby"
-gem "dry-schema", "~> 1.4"    
+gem "dry-schema", "~> 1.4"
 gem "fuzzy_match"
 gem "govdelivery-tms", require: "govdelivery/tms/mail/delivery_method"
 gem "holidays", "~> 6.4"
