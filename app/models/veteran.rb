@@ -37,7 +37,7 @@ class Veteran < CaseflowRecord
 
   delegate :full_address, to: :address
 
-  before_save :set_death_reported_on_date!
+  before_save :set_death_reported_at!
 
   CHARACTER_OF_SERVICE_CODES = {
     "HON" => "Honorable",
@@ -282,8 +282,8 @@ class Veteran < CaseflowRecord
     nil
   end
 
-  def set_death_reported_on_date!
-    self.death_reported_on_date = Time.zone.now if date_of_death_changed?
+  def set_death_reported_at!
+    self.death_reported_at = Time.zone.now if date_of_death_changed?
   end
 
   def address

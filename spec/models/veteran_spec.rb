@@ -849,8 +849,8 @@ describe Veteran, :all_dbs do
         is_expected.to eq(true)
       end
 
-      it "updates death_reported_on_date" do
-        expect(veteran.death_reported_on_date).to eq(Time.zone.now)
+      it "updates death_reported_at" do
+        expect(veteran.death_reported_at).to eq(Time.zone.now)
       end
     end
 
