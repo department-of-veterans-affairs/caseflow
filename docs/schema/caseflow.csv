@@ -43,6 +43,7 @@ api_views,updated_at,datetime,,,,,,
 api_views,vbms_id,string,,,,,,
 appeals,,,,,,,,Decision reviews intaken for AMA appeals to the board (also known as a notice of disagreement).
 appeals,aod_based_on_age,boolean,,,,,x,"If true, appeal is advance-on-docket due to claimant's age."
+appeals,changed_request_type,string,,,,,,The new hearing type preference for an appellant that needs a hearing scheduled
 appeals,closest_regional_office,string,,,,,,The code for the regional office closest to the Veteran on the appeal.
 appeals,created_at,datetime,,,,,,
 appeals,docket_range_date,date,,,,,,Date that appeal was added to hearing docket range.
@@ -191,6 +192,7 @@ cavc_remands,id,integer (8) PK,x,x,,,,
 cavc_remands,instructions,string ∗,x,,,,,Instructions and context provided upon creation of the remand record
 cavc_remands,judgement_date,date ∗,x,,,,,"Date CAVC issued a judgement, according to the CAVC"
 cavc_remands,mandate_date,date ∗,x,,,,,Date that CAVC reported the mandate was given
+cavc_remands,remand_appeal_id,integer (8) FK,,,x,,x,Appeal created by this CAVC Remand
 cavc_remands,remand_subtype,string ∗,x,,,,,"Type of remand. If the cavc_decision_type is 'remand', expecting one of 'jmp', 'jmpr', or 'mdr'. Otherwise, this can be null."
 cavc_remands,represented_by_attorney,boolean ∗,x,,,,,Whether or not the appellant was represented by an attorney
 cavc_remands,source_appeal_id,integer (8) ∗ FK,x,,x,,x,Appeal that CAVC has remanded

@@ -1,20 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AddClaimantForm renders default state correctly 1`] = `
+exports[`DocketSwitchAddAdminTaskForm renders correctly 1`] = `
 <div>
-  <form>
+  <div
+    class="css-78wbnw"
+  >
     <div
-      class="cf-form-dropdown dropdown-relationship"
+      class="cf-form-dropdown dropdown-newTasks[0].type"
     >
       <label
         class="question-label"
-        for="relationship"
+        for="newTasks[0].type"
       >
-        <strong>
-          <span>
-            Relationship to the Veteran
-          </span>
-        </strong>
+        <span>
+          Select the type of task you'd like to open:
+        </span>
       </label>
       <div
         class=""
@@ -48,7 +48,7 @@ exports[`AddClaimantForm renders default state correctly 1`] = `
                       autocapitalize="none"
                       autocomplete="off"
                       autocorrect="off"
-                      id="relationship"
+                      id="newTasks[0].type"
                       spellcheck="false"
                       style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                       tabindex="0"
@@ -90,6 +90,36 @@ exports[`AddClaimantForm renders default state correctly 1`] = `
         </div>
       </div>
     </div>
-  </form>
+  </div>
+  <div
+    class="css-78wbnw"
+  >
+    <div
+      class="cf-form-textarea"
+    >
+      <label
+        class="question-label"
+        for="newTasks[0].instructions"
+      >
+        <span>
+          Provide instructions and context for this action:
+        </span>
+      </label>
+      <textarea
+        id="newTasks[0].instructions"
+        name="newTasks[0].instructions"
+      />
+    </div>
+  </div>
+  <div>
+    <span>
+      <button
+        class="cf-submit cf-btn-link usa-button"
+        type="button"
+      >
+        Remove this action
+      </button>
+    </span>
+  </div>
 </div>
 `;

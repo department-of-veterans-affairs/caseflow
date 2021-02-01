@@ -343,7 +343,7 @@ module Seeds
         create(
           :appeal,
           :type_cavc_remand,
-          :ready_for_distribution
+          :cavc_ready_for_distribution
         )
       end
     end
@@ -353,7 +353,7 @@ module Seeds
         create(
           :appeal,
           :type_cavc_remand,
-          :ready_for_distribution,
+          :cavc_ready_for_distribution,
           :advanced_on_docket_due_to_age
         )
       end
@@ -363,8 +363,7 @@ module Seeds
       rand(50).times do
         create(
           :appeal,
-          :type_cavc_remand,
-          :with_post_intake_tasks
+          :type_cavc_remand
         )
       end
     end

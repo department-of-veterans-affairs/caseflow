@@ -1,14 +1,14 @@
 import React from 'react';
-import { Route, MemoryRouter } from 'react-router';
+import { MemoryRouter } from 'react-router';
 
 import { AddClaimantPage } from './AddClaimantPage';
 
-import { PAGE_PATHS } from 'app/intake/constants';
 import ReduxBase from 'app/components/ReduxBase';
 import { reducer, generateInitialState } from 'app/intake';
+import { PAGE_PATHS } from '../constants';
 
 const RouterDecorator = (Story) => (
-  <MemoryRouter initialEntries={['/']}>
+  <MemoryRouter initialEntries={[PAGE_PATHS.ADD_CLAIMANT]}>
     <Story />
   </MemoryRouter>
 );

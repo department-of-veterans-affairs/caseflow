@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
+import { connect } from 'react-redux';
 
 import { COLORS } from '../../constants/AppConstants';
 import Badge from './Badge';
@@ -26,4 +27,6 @@ FnodBadge.propTypes = {
   featureToggles: PropTypes.object
 };
 
-export default FnodBadge;
+const mapStateToProps = (state) => ({ featureToggles: state.ui.featureToggles });
+
+export default connect(mapStateToProps)(FnodBadge);

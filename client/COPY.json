@@ -112,7 +112,7 @@
   "CASE_DETAILS_POA_ATTORNEY": "Private Attorney",
   "CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY": "Edit NOD Date",
   "CASE_DETAILS_FNOD_BANNER_TITLE": "Veteran Date of Death Reported",
-  "FNOD_SOURCE": "CorpDB (BGS)",
+  "FNOD_SOURCE": "VBMS",
 
   "CASE_DETAILS_GENDER_FIELD_LABEL": "Gender",
   "CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE": "Female",
@@ -154,6 +154,8 @@
   "CAVC_REMAND_CREATED_TITLE": "You have successfully created a CAVC remand case",
   "CAVC_REMAND_CREATED_DETAIL": "This has generated a 90-day letter task in your team's queue",
   "CAVC_REMAND_MDR_CREATED_DETAIL": "This has generated an MDR task in your team's Assigned tab and will return to the Unassigned tab after 90 days from the court decision date",
+  "CAVC_REMAND_MANDATEHOLD_CREATED_DETAIL": "This has generated a Mandate Hold task in your team's Assigned tab and will return to the Unassigned tab after 90 days from the court decision date",
+  "CAVC_REMAND_READY_FOR_DISTRIBUTION_DETAIL": "A new CAVC remand case has been created and will be distributed to a VLJ",
 
   "CAVC_EXTENSION_REQUEST_TITLE": "Review extension request",
   "CAVC_EXTENSION_REQUEST_DECISION_LABEL": "How will you proceed?",
@@ -173,6 +175,7 @@
   "EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE": "The NOD date for %(appellantName)s's case has been updated from %(nodDateStr)s to %(receiptDateStr)s. There have been no changes to the timeliness of issues.",
   "EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE": "The new NOD date cannot be after today's date",
   "EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE": "New NOD date cannot be before 02/19/2019",
+  "EDIT_NOD_DATE_WARNING_ALERT_MESSAGE": "The new NOD date entered is later than the original date. Changing the NOD date to a later date may negatively affect the time it takes for a Veteran to receive a response to their appeal.",
 
   "DROPDOWN_LABEL_JUDGE": "VLJ",
   "DROPDOWN_LABEL_HEARING_COORDINATOR": "Hearing Coordinator",
@@ -428,6 +431,11 @@
   "CRP_LETTER_RESP_WINDOW_TASK_DEFAULT_INSTRUCTIONS": "The response window task will return to the CAVC Team's queue after 90 days or when manually ended early.",
   "CAVC_REMAND_LETTER_RESPONSE_TASK_COMPLETE_MODAL_BODY": "Complete this task to make the case available to be distributed to a judge. You will no longer be able to access this case.",
 
+  "MDR_TASK_LABEL": "CAVC MDR Remand Task",
+  "MDR_WINDOW_TASK_DEFAULT_INSTRUCTIONS": "The MDR task will return to the CAVC Team's queue after 90 days or when manually ended early.",
+
+  "MANDATE_HOLD_TASK_DEFAULT_INSTRUCTIONS": "The Mandate Hold task will return to the CAVC Team's queue after 90 days or when manually ended early.",
+
   "CAVC_GRANTED_EXTENSION_TASK_LABEL": "Granted extension",
   "CAVC_DENIED_EXTENSION_TASK_LABEL": "Denied extension",
 
@@ -473,7 +481,7 @@
   "COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY": "Enter a custom number of days for the hold",
   "COLOCATED_ACTION_PLACE_CUSTOM_HOLD_INVALID_VALUE": "Please enter a number greater than 0",
   "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION": "%s's case has been placed on hold for %s days.",
-  "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION_DETAIL": "You can find this case in the on hold tab of your queue",
+  "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION_DETAIL": "You can find this case in your queue",
   "COLOCATED_ACTION_PLACE_HOLD_BUTTON_COPY": "Place case on hold",
   "COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL": "Select number of days",
 
@@ -688,10 +696,18 @@
   "DOCKET_SWITCH_DENIAL_INSTRUCTIONS": "Add the date and add any context for the denial of this switch.",
   "DENIED_DOCKET_SWITCH_TASK_LABEL": "Denied Docket Switch",
   "GRANTED_DOCKET_SWITCH_TASK_LABEL": "Granted Docket Switch",
+
   "DOCKET_SWITCH_DENIAL_SUCCESS_TITLE": "You have marked %s's request to switch dockets as denied",
   "DOCKET_SWITCH_DENIAL_SUCCESS_MESSAGE": "This will be recorded in the Case Timeline for future context.",
   "DOCKET_SWITCH_GRANTED_REQUEST_LABEL": "Switch Docket: Review %s's Request",
   "DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS": "Add the information based on how you are proceeding with this docket switch and the claimant's form.",
+  "DOCKET_SWITCH_GRANTED_ADD_TASK_LABEL": "Switch Docket: Add/Remove Tasks",
+  "DOCKET_SWITCH_GRANTED_ADD_TASK_INSTRUCTIONS": "**You are switching from %s to %s**",
+  "DOCKET_SWITCH_GRANTED_ADD_TASK_TEXT": "Below is a list of tasks that will be opened when you switch dockets. Tasks that are automatically created with the %s docket cannot be selected or removed. Please **unselect** any tasks you would like to **remove** (the remaining tasks will be transferred to the new docket) and **add** any additional tasks that are needed.",
+  "DOCKET_SWITCH_GRANTED_ADD_TASK_BUTTON": "+ Add task",
+  "DOCKET_SWITCH_GRANTED_MODAL_TITLE": "Confirm removing task",
+  "DOCKET_SWITCH_GRANTED_MODAL_INSTRUCTION": "Are you sure you would like to remove the currently active \"**%s**\"? This task will be closed and will not be transferred over to the new docket. \n\nIf you change your mind before you confirm switching the docket, you can re-select this task to re-open it.",
+
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
   "CORRECT_REQUEST_ISSUES_WITHDRAW": "Withdraw",
