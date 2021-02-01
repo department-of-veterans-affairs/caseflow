@@ -1143,7 +1143,7 @@ veterans,,,,,,,,
 veterans,closest_regional_office,string,,,,,,
 veterans,created_at,datetime,,,,,,
 veterans,date_of_death,date,,,,,,"Date of Death reported by BGS, cached locally"
-veterans,death_reported_at,datetime,,,,,,The datetime that date_of_death last changed for veteran.
+veterans,date_of_death_reported_at,datetime,,,,,,The datetime that date_of_death last changed for veteran.
 veterans,file_number,string ∗,x,,,,x,
 veterans,first_name,string ∗,x,,,,,
 veterans,id,integer (8) PK,x,x,,,,
