@@ -127,7 +127,6 @@
     "sass-loader": "^8.0.0",
     "sprintf-js": "^1.1.2",
     "style-loader": "^1.0.1",
-    "styled-components": "^5.2.1",
     "superagent": "^3.0.0",
     "superagent-no-cache": "^0.1.0",
     "svg-loader": "^0.0.2",
