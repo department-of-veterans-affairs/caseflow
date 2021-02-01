@@ -156,10 +156,8 @@ class AssignHearingDispositionTask < Task
                     when Constants.HEARING_DISPOSITION_TYPES.postponed,
                       Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
                       mark_hearing_with_disposition(
-                        disposition: payload_values[:disposition],
-                        hearing_notes: payload_values[:notes],
-                        instructions: params["instructions"],
-                        after_disposition_update: payload_values[:after_disposition_update]
+                        payload_values: payload_values,
+                        instructions: params["instructions"]
                       )
                     else
                       fail ArgumentError, "unknown disposition"
@@ -200,7 +198,7 @@ class AssignHearingDispositionTask < Task
 
   def mark_hearing_cancelled
     multi_transaction do
-      update_hearing({ disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled })
+      update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
       clean_up_virtual_hearing
       cancel!
     end
@@ -208,33 +206,38 @@ class AssignHearingDispositionTask < Task
 
   def mark_hearing_held
     multi_transaction do
-      update_hearing({ disposition: Constants.HEARING_DISPOSITION_TYPES.held })
+      update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.held)
       hold!
     end
   end
 
   def mark_hearing_no_show
     multi_transaction do
-      update_hearing({ disposition: Constants.HEARING_DISPOSITION_TYPES.no_show})
+      update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.no_show)
       no_show!
     end
   end
 
-  def mark_hearing_with_disposition(disposition:, hearing_notes:, instructions: nil, after_disposition_update: nil)
+  def mark_hearing_postponed
+    update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
+  end
+
+  def mark_hearing_with_disposition(payload_values:, instructions: nil)
     multi_transaction do
-      if disposition == Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+      if payload_values[:disposition] == Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
         update_hearing(
-          {
-            disposition: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error,
-            notes: hearing_notes
-          }
+          disposition: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error,
+          notes: payload_values[:hearing_notes]
         )
-      elsif disposition == Constants.HEARING_DISPOSITION_TYPES.postponed
-        update_hearing({ disposition: Constants.HEARING_DISPOSITION_TYPES.postponed })
+      elsif payload_values[:disposition] == Constants.HEARING_DISPOSITION_TYPES.postponed
+        update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
       end
 
       clean_up_virtual_hearing
-      reschedule_or_schedule_later(instructions: instructions, after_disposition_update: after_disposition_update)
+      reschedule_or_schedule_later(
+        instructions: instructions,
+        after_disposition_update: payload_values[:after_disposition_update]
+      )
     end
   end
 

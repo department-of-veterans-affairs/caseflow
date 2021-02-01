@@ -386,8 +386,8 @@ describe AssignHearingDispositionTask, :all_dbs do
 
     subject do
       disposition_task.send(
-        :update_hearing_disposition,
-        disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled
+        :update_hearing,
+        { disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled }
       )
     end
 

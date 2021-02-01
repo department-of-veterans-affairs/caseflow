@@ -205,13 +205,13 @@ exports[`CancelTaskModal for cancel change hearing request type action 1`] = `
       }
       taskId="2"
     >
-      <withRouter(Connect(QueueFlowModal))
+      <withRouter(Connect(FlowModal))
         pathAfterSubmit="/queue/appeals/1986897"
         submit={[Function]}
         title="Cancel convert hearing to virtual task"
         validateForm={[Function]}
       >
-        <Connect(QueueFlowModal)
+        <Connect(FlowModal)
           history={
             Object {
               "action": "POP",
@@ -263,7 +263,7 @@ exports[`CancelTaskModal for cancel change hearing request type action 1`] = `
           title="Cancel convert hearing to virtual task"
           validateForm={[Function]}
         >
-          <QueueFlowModal
+          <FlowModal
             button="Submit"
             highlightInvalidFormItems={[Function]}
             history={
@@ -490,9 +490,9 @@ exports[`CancelTaskModal for cancel change hearing request type action 1`] = `
                 </div>
               </section>
             </Modal>
-          </QueueFlowModal>
-        </Connect(QueueFlowModal)>
-      </withRouter(Connect(QueueFlowModal))>
+          </FlowModal>
+        </Connect(FlowModal)>
+      </withRouter(Connect(FlowModal))>
     </CancelTaskModal>
   </Connect(CancelTaskModal)>
 </withRouter(Connect(CancelTaskModal))>

@@ -8,7 +8,7 @@ import { sprintf } from 'sprintf-js';
 
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
-import HEARING_DISPOSITION_TYPES from '../../../constants/HEARING_DISPOSITION_TYPES'
+import HEARING_DISPOSITION_TYPES from '../../../constants/HEARING_DISPOSITION_TYPES';
 import COPY from '../../../COPY';
 
 import TextareaField from '../../components/TextareaField';
@@ -40,15 +40,15 @@ const AFTER_DISPOSITION_UPDATE_ACTION_OPTIONS = [
 const HearingScheduledInErrorModal = (props) => {
   const {
     appeal, task, scheduledHearing
-  } = props
+  } = props;
 
-  const [afterDispositionUpdateAction, setAfterDispositionUpdateAction] = useState('')
-  const [isPosting, setIsPosting] = useState(false)
+  const [afterDispositionUpdateAction, setAfterDispositionUpdateAction] = useState('');
+  const [isPosting, setIsPosting] = useState(false);
 
   const hearing = find(appeal.hearings, { externalId: task.externalHearingId });
 
   useEffect(() => {
-    props.setScheduledHearing({ notes: hearing?.notes })
+    props.setScheduledHearing({ notes: hearing?.notes });
   }, []);
 
   const scheduleLaterPayload = {
@@ -77,7 +77,7 @@ const HearingScheduledInErrorModal = (props) => {
     if (afterDispositionUpdateAction === ACTIONS.RESCHEDULE) {
       // Change the disposition in the store
       props.setScheduledHearing({
-        action:ACTIONS.RESCHEDULE,
+        action: ACTIONS.RESCHEDULE,
         taskId: task.taskId,
         disposition: HEARING_DISPOSITION_TYPES.scheduled_in_error
       });
@@ -94,24 +94,24 @@ const HearingScheduledInErrorModal = (props) => {
         return;
       }
 
-      setIsPosting(true)
+      setIsPosting(true);
 
       return props.
-      requestPatch(`/tasks/${task.taskId}`, scheduleLaterPayload, scheduleLaterSuccessMessage).
-      then(
-        (resp) => {
-          setIsPosting(false)
-          props.onReceiveAmaTasks(resp.body.tasks.data);
-        },
-        () => {
-          setIsPosting(false)
+        requestPatch(`/tasks/${task.taskId}`, scheduleLaterPayload, scheduleLaterSuccessMessage).
+        then(
+          (resp) => {
+            setIsPosting(false);
+            props.onReceiveAmaTasks(resp.body.tasks.data);
+          },
+          () => {
+            setIsPosting(false);
 
-          props.showErrorMessage({
-            title: COPY.REMOVE_HEARING_SCHEDULED_IN_ERROR_TITLE,
-            detail: COPY.REMOVE_HEARING_SCHEDULED_IN_ERROR_DETAIL,
-          });
-        }
-      );
+            props.showErrorMessage({
+              title: COPY.REMOVE_HEARING_SCHEDULED_IN_ERROR_TITLE,
+              detail: COPY.REMOVE_HEARING_SCHEDULED_IN_ERROR_DETAIL,
+            });
+          }
+        );
     }
   };
 
@@ -136,12 +136,12 @@ const HearingScheduledInErrorModal = (props) => {
         strongLabel
         styling={maxWidthFormInput}
         value={scheduledHearing?.notes}
-        onChange={(notes) => props.setScheduledHearing({ notes: notes })}
+        onChange={(notes) => props.setScheduledHearing({ notes })}
         maxlength={1000}
       />
     </ModalProp>
   );
-}
+};
 
 HearingScheduledInErrorModal.defaultProps = {
   flowModal: QueueFlowModal
@@ -153,6 +153,7 @@ HearingScheduledInErrorModal.propTypes = {
   appeal: PropTypes.shape({
     externalId: PropTypes.string,
     veteranFullName: PropTypes.string,
+    hearings: PropTypes.object
   }),
   onReceiveAmaTasks: PropTypes.func,
   flowModal: PropTypes.elementType,
@@ -161,6 +162,7 @@ HearingScheduledInErrorModal.propTypes = {
   showErrorMessage: PropTypes.func,
   task: PropTypes.shape({
     taskId: PropTypes.string,
+    externalHearingId: PropTypes.string
   })
 };
 

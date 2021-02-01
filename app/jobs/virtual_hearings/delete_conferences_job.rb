@@ -87,8 +87,8 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
 
   def hearing_is_postponed_or_cancelled?(virtual_hearing)
     return true if virtual_hearing.hearing.postponed? ||
-      virtual_hearing.hearing.cancelled? ||
-      virtual_hearing.hearing.scheduled_in_error?
+                   virtual_hearing.hearing.cancelled? ||
+                   virtual_hearing.hearing.scheduled_in_error?
 
     false
   end
