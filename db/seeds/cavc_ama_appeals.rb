@@ -34,7 +34,7 @@ module Seeds
       now = Time.zone.now
       10.times do
         Timecop.travel(now - 91.days)
-        appeal = FactoryBot.create(:appeal, :cavc_response_window_open)
+        appeal = create(:appeal, :cavc_response_window_open)
         timed_hold_task = appeal.reload.tasks.find { |task| task.is_a?(TimedHoldTask) }
         Timecop.travel(now)
         TaskTimerJob.new.send(:process, timed_hold_task.task_timers.first)

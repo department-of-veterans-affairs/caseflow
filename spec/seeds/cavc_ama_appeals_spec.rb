@@ -5,15 +5,13 @@ describe Seeds::CavcAmaAppeals do
     subject { described_class.new.seed! }
 
     before do
-      # to do: these are expensive to run, esp Facols.
-      # make Seeds::Tasks less dependent on them.
+      # Users and Facols are expensive to run, it'd be nice to
+      # make Seeds::* less dependent
       Seeds::Users.new.seed!
       puts "start facols seed #{Time.zone.now}"
       Seeds::Facols.new.seed!
       puts "end facols seed #{Time.zone.now}"
-      puts "start tasks seed #{Time.zone.now}"
-      Seeds::Tasks.new.seed!
-      puts "end tasks seed #{Time.zone.now}"
+      BvaDispatch.singleton.add_user(create(:user))
     end
 
     it "creates CAVC appeals" do
