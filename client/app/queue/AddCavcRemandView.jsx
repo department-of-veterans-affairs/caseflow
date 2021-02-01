@@ -254,6 +254,8 @@ const AddCavcRemandView = (props) => {
 
   const mdrBanner = <Alert type="info" scrollOnAlert={false}>{COPY.MDR_SELECTION_ALERT_BANNER}</Alert>;
 
+  const noMandateBanner = <Alert type="info" scrollOnAlert={false}>{COPY.CAVC_REMAND_NO_MANDATE_TEXT}</Alert>;
+
   const judgementField = <DateSelector
     label={COPY.CAVC_JUDGEMENT_DATE}
     type="date"
@@ -314,12 +316,14 @@ const AddCavcRemandView = (props) => {
       {representedField}
       {judgeField}
       {typeField}
+      {COPY.CAVC_DEATH_DISMISSAL_DESC}
       {type === CAVC_DECISION_TYPES.remand && remandTypeField }
       {!mdrSubtype() && type !== CAVC_DECISION_TYPES.remand && mandateProvidedField }
       {decisionField}
       {type === CAVC_DECISION_TYPES.remand && mdrSubtype() && mdrBanner }
       {mandateAvailable() && judgementField }
       {mandateAvailable() && mandateField }
+      {!mandateAvailable() && type !== CAVC_DECISION_TYPES.remand && noMandateBanner }
       {issuesField}
       {instructionsField}
     </QueueFlowPage>
