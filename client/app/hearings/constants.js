@@ -109,7 +109,9 @@ export const DISPOSITION_OPTIONS = [{ value: 'held',
 { value: 'cancelled',
   label: 'Withdrawn' },
 { value: 'postponed',
-  label: 'Postponed' }];
+  label: 'Postponed'},
+{ value: 'scheduled_in_error',
+  label: 'Scheduled in Error' }];
 
 export const VIDEO_HEARING_LABEL = 'Video';
 export const CENTRAL_OFFICE_HEARING_LABEL = 'Central';
