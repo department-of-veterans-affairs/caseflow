@@ -73,7 +73,10 @@ export const ScheduleVeteran = ({
     VIDEO_HEARING_LABEL;
 
   // Determine whether we are rescheduling
-  const reschedule = scheduledHearing?.disposition === 'reschedule';
+  const reschedule = scheduledHearing?.action === 'reschedule';
+
+  // Determine what disposition to assign for previous hearing
+  const prevHearingDisposition = scheduledHearing?.disposition;
 
   // Set the task ID
   const taskId = scheduleHearingTask ? scheduleHearingTask.taskId : scheduledHearing?.taskId;
@@ -168,11 +171,14 @@ export const ScheduleVeteran = ({
       status: TASK_STATUSES.cancelled,
       business_payloads: {
         values: {
-          disposition: HEARING_DISPOSITION_TYPES.postponed,
+          disposition: prevHearingDisposition,
           after_disposition_update: {
             action: 'reschedule',
             new_hearing_attrs: hearingValues,
-          }
+          },
+          ...(prevHearingDisposition === HEARING_DISPOSITION_TYPES.scheduled_in_error && {
+            notes: scheduledHearing?.notes
+          })
         }
       }
     } : {
