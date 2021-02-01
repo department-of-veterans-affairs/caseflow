@@ -37,7 +37,7 @@ class Veteran < CaseflowRecord
 
   delegate :full_address, to: :address
 
-  before_save :set_date_of_death_reported_at! if :will_save_change_to_date_of_death?
+  before_save :set_date_of_death_reported_at!, if: :will_save_change_to_date_of_death?
 
   CHARACTER_OF_SERVICE_CODES = {
     "HON" => "Honorable",
