@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  browser-tools: circleci/browser-tools@1.1.1
+
 commands:
   install_ruby_dependencies:
     description: "Install Ruby Dependencies"
@@ -212,6 +215,9 @@ jobs:
           command: |
             ~/project/ci-bin/capture-log "bundle exec rake spec:setup_vacols"
 
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
+
       - run:
           name: RSpec via knapsack_pro Queue Mode
           command: |
@@ -327,6 +333,9 @@ jobs:
           name: FACOLS test setup
           command: |
             ~/project/ci-bin/capture-log "bundle exec rake spec:setup_vacols"
+
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
 
       - run:
           name: RSpec Feature Tests (Chrome) via knapsack_pro Queue Mode
