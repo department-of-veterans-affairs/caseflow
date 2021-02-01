@@ -77,8 +77,8 @@ describe Veteran, :all_dbs do
           expect(subject.first_name).to be_nil
         end
 
-        it "returns an empty string and no errors when accessing zip_code" do
-          expect(subject.zip_code).to eq ""
+        it "returns nil and no errors when accessing zip_code" do
+          expect(subject.zip_code).to eq nil
         end
       end
     end
@@ -286,7 +286,7 @@ describe Veteran, :all_dbs do
 
       context "when address line 3 is nil" do
         let(:address_line3) { nil }
-
+        
         it { is_expected.to include(zip_code: nil) }
       end
 
