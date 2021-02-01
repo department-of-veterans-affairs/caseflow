@@ -76,6 +76,10 @@ describe Veteran, :all_dbs do
           expect(subject.accessible?).to eq(true)
           expect(subject.first_name).to be_nil
         end
+
+        it "returns an empty string and no errors when accessing zip_code" do
+          expect(subject.zip_code).to eq ""
+        end
       end
     end
 
