@@ -154,6 +154,8 @@
   "CAVC_REMAND_CREATED_TITLE": "You have successfully created a CAVC remand case",
   "CAVC_REMAND_CREATED_DETAIL": "This has generated a 90-day letter task in your team's queue",
   "CAVC_REMAND_MDR_CREATED_DETAIL": "This has generated an MDR task in your team's Assigned tab and will return to the Unassigned tab after 90 days from the court decision date",
+  "CAVC_REMAND_MANDATEHOLD_CREATED_DETAIL": "This has generated a Mandate Hold task in your team's Assigned tab and will return to the Unassigned tab after 90 days from the court decision date",
+  "CAVC_REMAND_READY_FOR_DISTRIBUTION_DETAIL": "A new CAVC remand case has been created and will be distributed to a VLJ",
 
   "CAVC_EXTENSION_REQUEST_TITLE": "Review extension request",
   "CAVC_EXTENSION_REQUEST_DECISION_LABEL": "How will you proceed?",
@@ -432,6 +434,8 @@
   "MDR_TASK_LABEL": "CAVC MDR Remand Task",
   "MDR_WINDOW_TASK_DEFAULT_INSTRUCTIONS": "The MDR task will return to the CAVC Team's queue after 90 days or when manually ended early.",
 
+  "MANDATE_HOLD_TASK_DEFAULT_INSTRUCTIONS": "The Mandate Hold task will return to the CAVC Team's queue after 90 days or when manually ended early.",
+
   "CAVC_GRANTED_EXTENSION_TASK_LABEL": "Granted extension",
   "CAVC_DENIED_EXTENSION_TASK_LABEL": "Denied extension",
 
@@ -477,7 +481,7 @@
   "COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY": "Enter a custom number of days for the hold",
   "COLOCATED_ACTION_PLACE_CUSTOM_HOLD_INVALID_VALUE": "Please enter a number greater than 0",
   "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION": "%s's case has been placed on hold for %s days.",
-  "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION_DETAIL": "You can find this case in the on hold tab of your queue",
+  "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION_DETAIL": "You can find this case in your queue",
   "COLOCATED_ACTION_PLACE_HOLD_BUTTON_COPY": "Place case on hold",
   "COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL": "Select number of days",
 
