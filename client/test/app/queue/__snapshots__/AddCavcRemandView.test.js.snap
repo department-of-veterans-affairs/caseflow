@@ -3149,7 +3149,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     </div>
                   </fieldset>
                 </RadioField>
-                E.g., if the veteran has passed away with no substitution
                 <RadioField
                   className={
                     Array [

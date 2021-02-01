@@ -316,7 +316,7 @@ const AddCavcRemandView = (props) => {
       {representedField}
       {judgeField}
       {typeField}
-      {COPY.CAVC_DEATH_DISMISSAL_DESC}
+      {featureToggles.dismissal_cavc_remand && COPY.CAVC_DEATH_DISMISSAL_DESC}
       {type === CAVC_DECISION_TYPES.remand && remandTypeField }
       {!mdrSubtype() && type !== CAVC_DECISION_TYPES.remand && mandateProvidedField }
       {decisionField}
