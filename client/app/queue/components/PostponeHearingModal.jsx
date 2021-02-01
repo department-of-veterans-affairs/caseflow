@@ -19,6 +19,8 @@ import ScheduleHearingLaterWithAdminActionForm
   from '../../hearings/components/modalForms/ScheduleHearingLaterWithAdminActionForm';
 import ApiUtil from '../../util/ApiUtil';
 
+import HEARING_DISPOSITION_TYPES from '../../../constants/HEARING_DISPOSITION_TYPES';
+
 const ACTIONS = {
   RESCHEDULE: 'reschedule',
   SCHEDULE_LATER: 'schedule_later',
@@ -129,7 +131,7 @@ class PostponeHearingModal extends React.Component {
           status: TASK_STATUSES.cancelled,
           business_payloads: {
             values: {
-              disposition: 'postponed',
+              disposition: HEARING_DISPOSITION_TYPES.postponed,
               after_disposition_update:
                 afterDispositionUpdateAction === ACTIONS.RESCHEDULE ?
                   this.getReschedulePayload() :

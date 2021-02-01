@@ -332,7 +332,7 @@ describe ScheduleHearingTask, :all_dbs do
       let(:vacols_case) { create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:caseflow]) }
       let(:veteran_pid) { "0000" }
       let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
-      let(:case_hearing_past_disposition) { "P" }
+      let(:case_hearing_past_disposition) { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:postponed] }
       let(:hearing) { create(:legacy_hearing, appeal: appeal, disposition: case_hearing_past_disposition) }
 
       include_examples "creates new task"
