@@ -1,6 +1,6 @@
 # CircleCI Configuration
 
-## `build` Topology
+## Workflow Topology
 
 ![CircleCI Topology](./topology.png)
 
