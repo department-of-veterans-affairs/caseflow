@@ -76,7 +76,7 @@ end
 
 Capybara.register_driver(:sniffybara_headless) do |app|
   browser_options = webdriver_options_class.new(
-    args: ['headless', 'disable-gpu', 'window-size=1200,1200']
+    args: ["headless", "disable-gpu", "window-size=1200,1200"]
   )
 
   puts browser_options
