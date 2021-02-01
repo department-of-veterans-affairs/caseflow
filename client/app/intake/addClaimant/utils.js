@@ -10,10 +10,10 @@ const dropdownOptSchema = yup.object().shape({
 export const schema = yup.object().shape({
   relationship: dropdownOptSchema.required(),
   partyType: yup.string().when('relationship', {
-  	is: 'other',
+    is: 'other',
     then: yup.string().required()
   }).when('listedAttorney', {
-    is: (value) => value.value === 'not_listed',
+    is: (value) => value?.value === 'not_listed',
     then: yup.string().required()
   }),
   firstName: yup.
@@ -38,25 +38,25 @@ export const schema = yup.object().shape({
     then: yup.string().required(),
   }),
   address1: yup.string().when('partyType', {
-	  is: (value) => ['individual', 'organization'].includes(value),
+    is: (value) => ['individual', 'organization'].includes(value),
     then: yup.string().required()
   }),
   address2: yup.string(),
   address3: yup.string(),
   city: yup.string().when('partyType', {
-	  is: (value) => ['individual', 'organization'].includes(value),
+    is: (value) => ['individual', 'organization'].includes(value),
     then: yup.string().required()
   }),
   state: yup.object().when('partyType', {
-	  is: (value) => ['individual', 'organization'].includes(value),
+    is: (value) => ['individual', 'organization'].includes(value),
     then: dropdownOptSchema.required()
   }),
   zip: yup.number().when('partyType', {
-	  is: (value) => ['individual', 'organization'].includes(value),
+    is: (value) => ['individual', 'organization'].includes(value),
     then: yup.number().min(5).required()
   }),
   country: yup.string().when('partyType', {
-	  is: (value) => ['individual', 'organization'].includes(value),
+    is: (value) => ['individual', 'organization'].includes(value),
     then: yup.string().required()
   }),
   email: yup.string().email(),
