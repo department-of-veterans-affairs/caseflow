@@ -23,7 +23,7 @@
     "build:demo": "NODE_ENV=production yarn run build && yarn run build:storybook",
     "dev:clear-build": "rm ../app/assets/javascripts/*webpack* || true",
     "dev": "yarn run dev:clear-build && NODE_ENV=development yarn run build -w",
-    "dev:hot": "yarn run dev:clear-build && NODE_ENV=development node webpack-hot-server.js",
+    "dev:hot": "webpack-dev-server",
     "storybook": "start-storybook -p 6006",
     "build:storybook": "build-storybook -o ../public/storybook"
   },
@@ -104,7 +104,6 @@
     "react-draft-wysiwyg": "^1.12.11",
     "react-highlight-words": "^0.8.0",
     "react-hook-form": "^6.14.2",
-    "react-hot-loader": "^4.12.18",
     "react-markdown": "^5.0.2",
     "react-on-rails": "11.3.0",
     "react-polling": "^1.0.5",
@@ -140,6 +139,7 @@
   },
   "devDependencies": {
     "@department-of-veterans-affairs/eslint-config-appeals": "https://github.com/department-of-veterans-affairs/eslint-config-appeals#1e2a2db",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
     "@testing-library/jest-dom": "^5.11.3",
     "@testing-library/react": "^10.4.9",
     "@testing-library/react-hooks": "^3.4.1",
@@ -176,6 +176,7 @@
     "mocha-junit-reporter": "^1.17.0",
     "prettier": "1.17.1",
     "prettier-eslint": "^9.0.1",
+    "react-refresh": "^0.9.0",
     "react-select-event": "^4.1.4",
     "sinon": "^2.1.0",
     "weak-napi": "^2.0.2",

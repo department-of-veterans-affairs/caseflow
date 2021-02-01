@@ -1,7 +1,5 @@
 /* eslint-disable max-lines */
 
-import { hot } from 'react-hot-loader/root';
-
 import querystring from 'querystring';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -348,7 +346,9 @@ class QueueApp extends React.PureComponent {
     <HearingTypeConversion type="Virtual" {...props.match.params} />
   );
 
-  routedSetOvertimeStatusModal = (props) => <SetOvertimeStatusModal {...props.match.params} />;
+  routedSetOvertimeStatusModal = (props) => (
+    <SetOvertimeStatusModal {...props.match.params} />
+  );
 
   routedChangeHearingDisposition = (props) => (
     <ChangeHearingDispositionModal {...props.match.params} />
@@ -422,7 +422,10 @@ class QueueApp extends React.PureComponent {
   routedEndHoldModal = (props) => <EndHoldModal {...props.match.params} />;
 
   routedCavcExtensionRequest = (props) => (
-    <CavcReviewExtensionRequestModal {...props.match.params} closeModal={() => props.history.goBack()} />
+    <CavcReviewExtensionRequestModal
+      {...props.match.params}
+      closeModal={() => props.history.goBack()}
+    />
   );
 
   queueName = () =>
@@ -629,7 +632,6 @@ class QueueApp extends React.PureComponent {
               {motionToVacateRoutes.page}
 
               {docketSwitchRoutes.page}
-
             </Switch>
 
             {/* Modal routes are in their own Switch so they will display above the base routes */}
@@ -855,13 +857,17 @@ class QueueApp extends React.PureComponent {
               />
               <PageRoute
                 exact
-                path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.value}`}
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.value
+                }`}
                 title="Assign Hearing | Caseflow"
                 render={this.routedScheduleVeteran}
               />
               <PageRoute
                 exact
-                path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SCHEDULE_VETERAN.value}`}
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.SCHEDULE_VETERAN.value
+                }`}
                 title="Assign Hearing | Caseflow"
                 render={this.routedAssignHearingModal}
               />
@@ -887,9 +893,9 @@ class QueueApp extends React.PureComponent {
               />
               <PageRoute
                 exact
-                path={
-                  `/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`
-                }
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value
+                }`}
                 title="Change Hearing Request Type to Virtual | Caseflow"
                 render={this.routedChangeHearingRequestTypeToVirtual}
               />
@@ -963,7 +969,7 @@ QueueApp.propTypes = {
   reviewActionType: PropTypes.string,
   userCanViewHearingSchedule: PropTypes.bool,
   userCanViewOvertimeStatus: PropTypes.bool,
-  userCanViewEditNodDate: PropTypes.bool
+  userCanViewEditNodDate: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
@@ -986,9 +992,7 @@ const mapDispatchToProps = (dispatch) =>
     dispatch
   );
 
-export default hot(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(QueueApp)
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(QueueApp);
