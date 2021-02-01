@@ -17,7 +17,7 @@ commands:
 
       - run:
           name: Bundle install
-          command: bundle install --path vendor/bundle
+          command: bundle install
 
       - save_cache:
           key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
@@ -170,7 +170,7 @@ jobs:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
           - NODE_ENV: test
-          - BUNDLE_PATH: vendor/bundle
+          - BUNDLE_PATH: /home/circleci/project/vendor/bundle
           - COVERAGE_DIR: /home/circleci/coverage
           - POSTGRES_HOST: localhost
           - POSTGRES_USER: root
@@ -289,7 +289,7 @@ jobs:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
           - NODE_ENV: test
-          - BUNDLE_PATH: vendor/bundle
+          - BUNDLE_PATH: /home/circleci/project/vendor/bundle
           - COVERAGE_DIR: /home/circleci/coverage
           - POSTGRES_HOST: localhost
           - POSTGRES_USER: root
