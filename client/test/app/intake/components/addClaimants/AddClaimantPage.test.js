@@ -192,7 +192,7 @@ describe('AddClaimantPage', () => {
       });
 
       it('does render organization field', () => {
-        const organizationField = screen.getByLabelText('organization');
+        const organizationField = screen.getByText('Organization name');
 
         expect(organizationField).toBeInTheDocument();
       });
