@@ -105,6 +105,38 @@ describe('AddClaimantPage', () => {
     });
   });
 
+  describe('Attorney', () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      setup();
+      await selectEvent.select(screen.getByRole('textbox'), 'Attorney (previously or currently)');
+    });
+
+    it('does not render name fields', () => {
+      const nameFields = screen.queryByLabelText('nameFields');
+
+      expect(nameFields).not.toBeInTheDocument();
+    });
+
+    it('does not render additional fields', () => {
+      const additionalFields = screen.queryByLabelText('additionalFields');
+
+      expect(additionalFields).not.toBeInTheDocument();
+    });
+
+    it('does not render partyType radio fields', () => {
+      const partyType = screen.queryByText('Is the claimant an organization or individual?');
+
+      expect(partyType).not.toBeInTheDocument();
+    });
+
+    it('does render claimant name input', () => {
+      const claimantName = screen.queryByText("Claimant's name");
+
+      expect(claimantName).toBeInTheDocument();
+    });
+  });
+
   describe('Other Claimant', () => {
     beforeEach(async () => {
       jest.clearAllMocks();
