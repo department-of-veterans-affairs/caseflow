@@ -35,7 +35,7 @@ RUN ln -s /opt/oracle/instantclient_12_1/libclntsh.so.12.1 /opt/oracle/instantcl
 
 # Install Edge
 # via. https://www.tecmint.com/install-microsoft-edge-browser-in-linux/
-# TODO: This could eventually migrate to the CircleCI browser-tools orb
+# Note: This could eventually migrate to the CircleCI browser-tools orb
 # see https://circleci.com/developer/orbs/orb/circleci/browser-tools
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
 RUN install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
