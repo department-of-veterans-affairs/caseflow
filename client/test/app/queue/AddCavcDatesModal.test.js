@@ -72,7 +72,6 @@ describe('AddCavcDatesModal', () => {
     const errorClass = '.usa-input-error-message';
 
     const validationErrorShows = (cavcModal, errorMessage) => {
-
       clickSubmit(cavcModal);
 
       return cavcModal.find(errorClass).findWhere((node) => node.props().children === errorMessage).length > 0;
