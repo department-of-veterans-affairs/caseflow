@@ -3,7 +3,7 @@ const path = require('path');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const devBuild = process.env.NODE_ENV !== 'production'; // eslint-disable-line no-process-env
-const testBuild = process.env.NODE_ENV === 'test';
+const testBuild = process.env.NODE_ENV === 'test'; // eslint-disable-line no-process-env
 
 const config = {
   mode: devBuild ? 'development' : 'production',
