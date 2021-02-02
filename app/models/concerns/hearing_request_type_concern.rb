@@ -66,7 +66,7 @@ module HearingRequestTypeConcern
   def request_type_for_task(id, version)
     request_type_index = tasks.where(type: "ChangeHearingRequestTypeTask").order(:created_at).map(&:id).index(id)
 
-    diff = TaskEvent.new(version: versions[request_type_index]).diff["changed_request_type"]
+    diff = versions[request_type_index].changeset["changed_request_type"]
     versioned_request_type = (version == :prev) ? diff&.first : diff&.last
 
     # Revive the original appeal to retrieve its values
