@@ -93,7 +93,7 @@ class VirtualHearingRepository
     end
 
     def postponed_or_cancelled_vacols_ids
-      # FIXME Limit of 1000 is a hotfix for a performance issue with this query.
+      # Note: Limit of 1000 is a hotfix for a performance issue with this query.
       # See:
       #   - https://dsva.slack.com/archives/C3EAF3Q15/p1612211920046800
       #   - https://dsva.slack.com/archives/CHD7QU4L8/p1612278521029500
