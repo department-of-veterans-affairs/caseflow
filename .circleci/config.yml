@@ -174,7 +174,7 @@ jobs:
           - COVERAGE_DIR: /home/circleci/coverage
           - POSTGRES_HOST: localhost
           - POSTGRES_USER: root
-          - CASEFLOW_WEBDRIVER: chrome
+          - CASEFLOW_WEBDRIVER: edge
       # This is the circleci provided Postgres container. We can
       # configure it via environment variables.
       - image: circleci/postgres:11.7
