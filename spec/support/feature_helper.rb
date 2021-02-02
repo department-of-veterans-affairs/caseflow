@@ -102,7 +102,7 @@ module FeatureHelper
   # an error when you try to check a hidden checkbox. This method will click the parent
   # element of a hidden checkbox, which can be interacted with.
   def check_hidden_checkbox(name)
-    find_field(name: name, visible: :hidden).find(:xpath, '..').click
+    find_field(name: name, visible: :hidden).find(:xpath, "..").click
   end
 
   private
