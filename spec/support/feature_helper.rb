@@ -98,6 +98,13 @@ module FeatureHelper
     sleep(10_000)
   end
 
+  # Selenium doesn't allow you to interact with hidden elements by default, and throws
+  # an error when you try to check a hidden checkbox. This method will click the parent
+  # element of a hidden checkbox, which can be interacted with.
+  def check_hidden_checkbox(name)
+    find_field(name: name, visible: :hidden).find(:xpath, '..').click
+  end
+
   private
 
   def dropdown_click_and_get_options(dropdown)
