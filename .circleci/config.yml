@@ -174,7 +174,6 @@ jobs:
           - COVERAGE_DIR: /home/circleci/coverage
           - POSTGRES_HOST: localhost
           - POSTGRES_USER: root
-          - CASEFLOW_WEBDRIVER: edge
       # This is the circleci provided Postgres container. We can
       # configure it via environment variables.
       - image: circleci/postgres:11.7
@@ -223,6 +222,7 @@ jobs:
             bundle exec rake "knapsack_pro:queue:rspec[--format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"
           environment:
             KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
+            CASEFLOW_WEBDRIVER: edge
             # Uncomment to profile test performance in CircleCI
             #  RDOC: 1
             #  RD_PROF: 1
@@ -290,7 +290,6 @@ jobs:
           - COVERAGE_DIR: /home/circleci/coverage
           - POSTGRES_HOST: localhost
           - POSTGRES_USER: root
-          - CASEFLOW_WEBDRIVER: chrome
       # This is the circleci provided Postgres container. We can
       # configure it via environment variables.
       - image: circleci/postgres:11.7
@@ -341,6 +340,7 @@ jobs:
             export RAILS_ENV=test
             bundle exec rake "knapsack_pro:queue:rspec[--tag type:feature --format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"
           environment:
+            CASEFLOW_WEBDRIVER: chrome
             KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
 
       - store_test_results:
