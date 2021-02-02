@@ -9,13 +9,21 @@ class NodDateUpdatesController < ApplicationController
 
   validates :update, using: NodDateUpdatesSchemas.update
   def update
-    nod_date_update = NodDateUpdate.create!(updated_params)
-    appeal.update_receipt_date!(receipt_date: params[:receipt_date])
-    render json: {
-      nodDate: appeal.receipt_date,
-      docketNumber: appeal.docket_number,
-      changeReason: nod_date_update.change_reason
-    }, status: :created
+    new_date = params[:receipt_date]
+    timeliness_error = appeal.validate_all_issues_timely!(new_date)
+    binding.pry
+    if !timeliness_error
+      nod_date_update = NodDateUpdate.create!(updated_params)
+      appeal.update_receipt_date!(receipt_date: params[:receipt_date])
+      binding.pry
+      render json: {
+            nodDate: appeal.receipt_date,
+            docketNumber: appeal.docket_number,
+            changeReason: nod_date_update.change_reason
+          }, status: :created
+    else
+      render json: { "errors": timeliness_error }
+    end
   end
 
   private

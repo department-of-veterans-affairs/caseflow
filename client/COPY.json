@@ -173,6 +173,8 @@
   "EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE": "The NOD date for %(appellantName)s's case has been updated from %(nodDateStr)s to %(receiptDateStr)s. There have been no changes to the timeliness of issues.",
   "EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE": "The new NOD date cannot be after today's date",
   "EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE": "New NOD date cannot be before 02/19/2019",
+  "EDIT_NOD_DATE_WARNING_ALERT_MESSAGE": "The new NOD date entered is later than the original date. Changing the NOD date to a later date may negatively affect the time it takes for a Veteran to receive a response to their appeal.",
+  "EDIT_NOD_DATE_TIMELINESS_ERROR_MESSAGE": "The NOD Date cannot be edited because it affects the eligibility of the following issue(s).",
 
   "DROPDOWN_LABEL_JUDGE": "VLJ",
   "DROPDOWN_LABEL_HEARING_COORDINATOR": "Hearing Coordinator",
