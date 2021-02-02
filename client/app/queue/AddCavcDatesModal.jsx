@@ -36,7 +36,7 @@ const AddCavcDatesModal = ({ appealId, error, highlightInvalid, history }) => {
     return validJudgementDate() && validMandateDate() && validInstructions();
   };
 
-  const submit = () => {
+  const submit = () => new Promise((resolve) => {
     const payload = {
       data: {
         judgement_date: judgementDate,
@@ -52,9 +52,12 @@ const AddCavcDatesModal = ({ appealId, error, highlightInvalid, history }) => {
     };
 
     requestSave(`/appeals/${appealId}/cavc_remand`, payload, successMsg).
-      then(() => history.replace('/queue')).
+      then(() => {
+        history.replace('/queue');
+        resolve();
+      }).
       catch((err) => showErrorMessage({ title: 'Error', detail: JSON.parse(err.message).errors[0].detail }));
-  };
+  });
 
   const judgementField = <DateSelector
     label={COPY.CAVC_JUDGEMENT_DATE}

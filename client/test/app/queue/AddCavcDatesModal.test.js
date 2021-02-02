@@ -7,8 +7,13 @@ import { amaAppeal } from 'test/data/appeals';
 import AddCavcDatesModal from 'app/queue/AddCavcDatesModal';
 import COPY from 'COPY';
 
+import * as uiActions from 'app/queue/uiReducer/uiActions';
+
 describe('AddCavcDatesModal', () => {
-  beforeEach(() => jest.clearAllMocks());
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   const appealId = amaAppeal.externalId;
 
@@ -28,11 +33,46 @@ describe('AddCavcDatesModal', () => {
     expect(cavcModal).toMatchSnapshot();
   });
 
+  it('submits succesfully', async () => {
+    jest.spyOn(uiActions, 'requestSave').mockImplementation(() => new Promise((resolve) => resolve()));
+
+    const cavcModal = setup({ appealId });
+
+    const judgementDate = '03/27/2020';
+    const mandateDate = '03/31/2019';
+    const instructions = 'test instructions';
+
+    cavcModal.find({ name: 'judgement-date' }).find('input').
+      simulate('change', { target: { value: judgementDate } });
+
+    cavcModal.find({ name: 'mandate-date' }).find('input').
+      simulate('change', { target: { value: mandateDate } });
+
+    cavcModal.find({ name: 'context-and-instructions-textBox' }).
+      find('textarea').
+      simulate('change', { target: { value: instructions } });
+
+    clickSubmit(cavcModal);
+
+    expect(uiActions.requestSave).toHaveBeenCalledWith(`/appeals/${appealId}/cavc_remand`, {
+      data: {
+        judgement_date: judgementDate,
+        mandate_date: mandateDate,
+        source_appeal_id: appealId,
+        instructions
+      }
+    }, {
+      title: COPY.CAVC_REMAND_CREATED_TITLE,
+      detail: COPY.CAVC_REMAND_CREATED_DETAIL
+    });
+    expect(cavcModal).toMatchSnapshot();
+  });
+
   describe('form validations', () => {
     const errorClass = '.usa-input-error-message';
 
     const validationErrorShows = (cavcModal, errorMessage) => {
-      // component.find('#Add-Court-dates-button-id-1').simulate('click');
+
       clickSubmit(cavcModal);
 
       return cavcModal.find(errorClass).findWhere((node) => node.props().children === errorMessage).length > 0;
