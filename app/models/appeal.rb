@@ -392,6 +392,24 @@ class Appeal < DecisionReview
     update!(stream_docket_number: default_docket_number_from_receipt_date)
   end
 
+  def validate_all_issues_timely!(new_date)
+    binding.pry
+    affected_issues = request_issues.reject { |request_issue| request_issue.timely_issue?(new_date.to_date) }
+    unaffected_issues = request_issues - affected_issues
+    binding.pry
+
+    return if affected_issues.blank?
+
+    timeliness_error = {
+      message: "Timeliness of one or more issues is affected by NOD date change",
+      affected_issues: affected_issues,
+      unaffected_issues: unaffected_issues
+    }
+    #errors.add(:new_date, timeliness_error)
+    #return errors
+    return timeliness_error
+  end
+
   # Currently AMA only supports one claimant per decision review
   def power_of_attorney
     claimant&.power_of_attorney
