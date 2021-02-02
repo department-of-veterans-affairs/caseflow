@@ -31,7 +31,7 @@ end
 #   export CASEFLOW_WEBDRIVER=chrome
 #
 webdriver_name = ENV.fetch("CASEFLOW_WEBDRIVER", "edge")
-puts "USING #{webdriver_name}"
+
 webdriver_options_class = case webdriver_name
                           when "edge"
                             ::Selenium::WebDriver::Edge::Options
