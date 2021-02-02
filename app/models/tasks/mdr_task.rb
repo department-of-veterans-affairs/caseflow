@@ -50,7 +50,7 @@ class MdrTask < Task
   def available_actions(user)
     return [] unless CavcLitigationSupport.singleton.user_has_access?(user)
 
-    return TASK_ACTIONS
+    TASK_ACTIONS
   end
 
   private
