@@ -73,7 +73,7 @@ describe MandateHoldTask, :postgres do
       it "shows correct actions" do
         actions = [
           Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
-          Constants.TASK_ACTIONS.CAVC_REMAND_RECEIVED.to_h
+          Constants.TASK_ACTIONS.CAVC_REMAND_RECEIVED_VLJ.to_h
         ]
 
         expect(mandate_task.available_actions(org_admin)).to match_array(actions)

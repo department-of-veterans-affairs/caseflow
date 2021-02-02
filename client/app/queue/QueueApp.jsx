@@ -425,7 +425,7 @@ class QueueApp extends React.PureComponent {
     <CavcReviewExtensionRequestModal {...props.match.params} closeModal={() => props.history.goBack()} />
   );
 
-  routedCavcRemandReceived = (props) => <AddCavcDatesModal {...props.match.params}/>;
+  routedCavcRemandReceived = (props) => <AddCavcDatesModal {...props.match.params} />;
 
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
@@ -796,7 +796,13 @@ class QueueApp extends React.PureComponent {
               />
               <Route
                 path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.CAVC_REMAND_RECEIVED.value
+                  TASK_ACTIONS.CAVC_REMAND_RECEIVED_MDR.value
+                }`}
+                render={this.routedCavcRemandReceived}
+              />
+              <Route
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CAVC_REMAND_RECEIVED_VLJ.value
                 }`}
                 render={this.routedCavcRemandReceived}
               />

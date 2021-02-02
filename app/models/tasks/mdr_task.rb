@@ -44,7 +44,7 @@ class MdrTask < Task
   # Actions for both admins and non-admins
   TASK_ACTIONS = [
     Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
-    Constants.TASK_ACTIONS.CAVC_REMAND_RECEIVED.to_h
+    Constants.TASK_ACTIONS.CAVC_REMAND_RECEIVED_MDR.to_h
   ].freeze
 
   def available_actions(user)
