@@ -24,7 +24,7 @@ class Hearings::GeomatchAndCacheAppealJob < ApplicationJob
   # :nocov:
 
   def perform(appeal_id:, appeal_type:)
-    @appeal = (appeal_type == LegacyAppeal.name) ? LegacyAppeal.find(appeal_id) : Appeal.find(appeal_id)
+    @appeal = appeal_type.constantize.find(appeal_id)
 
     begin
       GeomatchService.new(appeal: appeal).geomatch if appeal.closest_regional_office.nil?
