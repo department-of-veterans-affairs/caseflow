@@ -8,6 +8,7 @@ import {
 } from '../../../components/TitleDetailsSubheader';
 import CopyTextButton from '../../../components/CopyTextButton';
 import * as DateUtil from '../../../util/DateUtil';
+import { dispositionLabel } from '../../utils';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
 
 const headerContainerStyling = css({
@@ -74,7 +75,7 @@ export const DetailsHeader = (
     },
     {
       label: 'Disposition',
-      value: disposition
+      value: dispositionLabel(disposition)
     },
     {
       label: 'Type',

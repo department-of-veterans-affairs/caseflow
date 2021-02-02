@@ -1,4 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
+import ApiUtil from '../../util/ApiUtil';
 
 const initialState = {
   step: 0,
@@ -6,21 +8,28 @@ const initialState = {
   /**
    * This will hold receipt date, disposition, selected issue IDs, etc
    */
-  formData: null,
+  formData: {
+    disposition: null,
+    receiptDate: null,
+    docketType: null,
+    issueIds: [],
+    newTasks: [],
+  },
 };
 
 const docketSwitchSlice = createSlice({
   name: 'docketSwitch',
   initialState,
   reducers: {
-    stepForward: (state) => {
-      console.log('stepForward');
-
-      return { ...state, step: state.step + 1 };
-    },
+    cancel: () => ({ ...initialState }),
+    stepForward: (state) => ({ ...state, step: state.step + 1 }),
     stepBack: (state) => ({ ...state, step: state.step ? state.step - 1 : 0 }),
     updateDocketSwitch: (state, action) => {
-      const updates = action.payload;
+      const { formData: updates } = action.payload;
+
+      if (updates.receiptDate) {
+        updates.receiptDate = updates.receiptDate?.toISOString();
+      }
 
       state.formData = {
         ...state.formData,
@@ -30,7 +39,24 @@ const docketSwitchSlice = createSlice({
   },
 });
 
+export const completeDocketSwitchGranted = createAsyncThunk(
+  'docketSwitch/grant',
+  async (data) => {
+    try {
+      // Update this to conform to submission endpoint expectations
+      const res = await ApiUtil.post('/docket_switches', { data });
+      const result = res.body?.data;
+
+      return result;
+    } catch (error) {
+      console.error('Error granting docket switch', error);
+      throw error;
+    }
+  }
+);
+
 export const {
+  cancel,
   stepForward,
   stepBack,
   updateDocketSwitch,

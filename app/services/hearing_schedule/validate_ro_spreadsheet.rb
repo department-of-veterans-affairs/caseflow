@@ -12,7 +12,7 @@ class HearingSchedule::ValidateRoSpreadsheet
   CO_SPREADSHEET_EMPTY_COLUMN = [nil].freeze
 
   HEARING_ALLOCATION_SHEET_TITLE = "Allocation of Regional Office Video Hearings"
-  HEARING_ALLOCATION_SHEET_EXAMPLE_ROW = ["Example", "Ithaca, NY", "RO00", 10].freeze
+  HEARING_ALLOCATION_SHEET_EXAMPLE_ROW = ["Example", "Ithaca, NY", "RO00", 10, 50].freeze
   HEARING_ALLOCATION_SHEET_EMPTY_COLUMN = [nil].freeze
 
   class RoDatesNotUnique < StandardError; end
@@ -56,20 +56,22 @@ class HearingSchedule::ValidateRoSpreadsheet
     @end_date = end_date
   end
 
+  # Verifies that the spreadsheet city and state data all match for the respective ROs,
+  # and that every RO key appears in the spreadsheet data.
   def validate_ros_with_hearings(spreadsheet_data)
-    unless spreadsheet_data.all? do |row|
-             RegionalOffice::CITIES[row["ro_code"]][:state] == row["ro_state"].rstrip &&
-             RegionalOffice::CITIES[row["ro_code"]][:city] == row["ro_city"].rstrip
-           end
-      return false
-    end
-    unless RegionalOffice.ros_with_hearings.keys.sort == spreadsheet_data.collect do |ro|
-                                                           ro["ro_code"]
-                                                         end.uniq.sort
-      return false
-    end
+    # Right now, exclude virtual regional offices since they can't be added to the RO spreadsheet.
+    all_ro_keys = RegionalOffice
+      .ros_with_hearings
+      .keys
+      .sort
 
-    true
+    spreadsheet_ro_keys = spreadsheet_data.collect do |ro|
+      (ro["ro_code"] == "NVHQ") ? HearingDay::REQUEST_TYPES[:virtual] : ro["ro_code"]
+    end.uniq.sort
+
+    all_ro_keys_appear = all_ro_keys == spreadsheet_ro_keys
+
+    city_state_match(spreadsheet_data) && all_ro_keys_appear
   end
 
   def validate_ro_non_availability_template
@@ -193,5 +195,20 @@ class HearingSchedule::ValidateRoSpreadsheet
     validate_hearing_allocation_template
     validate_hearing_allocation_days
     @errors
+  end
+
+  private
+
+  def city_state_match(spreadsheet_data)
+    spreadsheet_data.all? do |row|
+      ro_code = (row["ro_code"] == "NVHQ") ? HearingDay::REQUEST_TYPES[:virtual] : row["ro_code"]
+      ro = RegionalOffice.find!(ro_code)
+
+      if ro.virtual?
+        row["ro_state"].nil? && row["ro_city"].nil?
+      else
+        ro.state == row["ro_state"].rstrip && ro.city == row["ro_city"].rstrip
+      end
+    end
   end
 end

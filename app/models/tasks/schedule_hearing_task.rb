@@ -23,6 +23,8 @@
 # If completed, an AssignHearingDispositionTask is created as a child of HearingTask.
 ##
 class ScheduleHearingTask < Task
+  include CavcAdminActionConcern
+
   before_validation :set_assignee
   before_create :create_parent_hearing_task
   delegate :hearing, to: :parent, allow_nil: true
@@ -49,25 +51,15 @@ class ScheduleHearingTask < Task
     multi_transaction do
       verify_user_can_update!(current_user)
 
-      created_tasks = []
+      # Either change the hearing request type or schedule/cancel the hearing
+      if params.dig(:business_payloads, :values, :changed_request_type).present?
+        change_hearing_request_type(params, current_user)
+      else
+        created_tasks = create_schedule_hearing_tasks(params)
 
-      if params[:status] == Constants.TASK_STATUSES.completed
-        task_values = params.delete(:business_payloads)[:values]
-
-        hearing = create_hearing(task_values)
-
-        if task_values[:virtual_hearing_attributes].present?
-          @alerts = VirtualHearings::ConvertToVirtualHearingService
-            .convert_hearing_to_virtual(hearing, task_values[:virtual_hearing_attributes])
-        end
-
-        created_tasks << AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, parent, hearing)
-      elsif params[:status] == Constants.TASK_STATUSES.cancelled
-        created_tasks << withdraw_hearing(parent)
+        # super returns [self]
+        super(params, current_user) + created_tasks.compact
       end
-
-      # super returns [self]
-      super(params, current_user) + created_tasks.compact
     end
   end
 
@@ -105,6 +97,10 @@ class ScheduleHearingTask < Task
   def available_actions(user)
     hearing_admin_actions = available_hearing_user_actions(user)
 
+    if user.can_change_hearing_request_type? && appeal.changed_request_type != HearingDay::REQUEST_TYPES[:virtual]
+      hearing_admin_actions.push(Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.to_h)
+    end
+
     if (assigned_to &.== user) || HearingsManagement.singleton.user_has_access?(user)
       schedule_hearing_action = if FeatureToggle.enabled?(:schedule_veteran_virtual_hearing, user: user)
                                   Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE
@@ -123,6 +119,48 @@ class ScheduleHearingTask < Task
   end
 
   private
+
+  # Method to create the appropriate schedule hearing tasks based on the status
+  def create_schedule_hearing_tasks(params)
+    # Instantiate the tasks to create for the schedule hearing task
+    created_tasks = []
+
+    # Check if we are completing the schedule hearing task
+    if params[:status] == Constants.TASK_STATUSES.completed
+      # Extract the schedule hearing task values and create a hearing from them
+      task_values = params.delete(:business_payloads)[:values]
+      hearing = create_hearing(task_values)
+
+      # Create the virtual hearing if the attributes have been passed
+      if task_values[:virtual_hearing_attributes].present?
+        @alerts = VirtualHearings::ConvertToVirtualHearingService
+          .convert_hearing_to_virtual(hearing, task_values[:virtual_hearing_attributes])
+      end
+
+      # Create and assign the hearing now that it has been scheduled
+      created_tasks << AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, parent, hearing)
+
+    # The only other option is to cancel the schedule hearing task
+    elsif params[:status] == Constants.TASK_STATUSES.cancelled
+      # If we are cancelling the schedule hearing task, we need to withdraw the request
+      created_tasks << withdraw_hearing(parent)
+    end
+
+    # Return the created tasks
+    created_tasks
+  end
+
+  # Method to change the hearing request type on an appeal
+  def change_hearing_request_type(params, current_user)
+    changed_request_type = ChangeHearingRequestTypeTask.create!(
+      appeal: appeal,
+      assigned_to: current_user,
+      parent: self
+    )
+
+    # Call the child method so that we follow that workflow when changing the hearing request type
+    changed_request_type.update_from_params(params, current_user)
+  end
 
   def cancel_parent_task(parent)
     # if parent HearingTask does not have any open children tasks, cancel it

@@ -15,11 +15,21 @@ describe('AddCavcRemandView', () => {
 
   const appealId = amaAppeal.externalId;
 
-  const setup = (props = { appealId }) => {
+  const setup = ({ appealId: id, mdrToggled, reversalToggled, dismissalToggled }) => {
     return mount(
-      <AddCavcRemandView appealId={props.appealId} />,
+      <AddCavcRemandView appealId={id} />,
       {
-        wrappingComponent: queueWrapper
+        wrappingComponent: queueWrapper,
+        wrappingComponentProps: {
+          ui: {
+            featureToggles: {
+              cavc_remand: true,
+              mdr_cavc_remand: mdrToggled,
+              reversal_cavc_remand: reversalToggled,
+              dismissal_cavc_remand: dismissalToggled
+            }
+          }
+        }
       });
   };
 
@@ -30,7 +40,7 @@ describe('AddCavcRemandView', () => {
   });
 
   it('hides remand subtypes if decision type is not "remand"', () => {
-    const cavcForm = setup({ appealId });
+    const cavcForm = setup({ appealId, reversalToggled: true });
 
     expect(cavcForm.find('#sub-type-options_jmr').length).toBe(1);
     cavcForm.find('#type-options_straight_reversal').simulate('change', { target: { checked: true } });
@@ -43,6 +53,50 @@ describe('AddCavcRemandView', () => {
     const decisionIssueChecks = cavcForm.find(CheckboxGroup).props().values;
 
     expect(descisionIssues.map((issue) => issue.id).every((id) => decisionIssueChecks[id])).toBeTruthy();
+  });
+
+  describe('feature toggles', () => {
+    describe('mdr_cavc_remand', () => {
+      it('hides mdr when not toggled', () => {
+        const cavcForm = setup({ appealId, mdrToggled: false });
+
+        expect(cavcForm.find('#sub-type-options_mdr').length).toBe(0);
+      });
+
+      it('shows mdr when toggled', () => {
+        const cavcForm = setup({ appealId, mdrToggled: true });
+
+        expect(cavcForm.find('#sub-type-options_mdr').length).toBe(1);
+      });
+    });
+
+    describe('reversal_cavc_remand', () => {
+      it('hides reversal when not toggled', () => {
+        const cavcForm = setup({ appealId, reversalToggled: false });
+
+        expect(cavcForm.find('#type-options_straight_reversal').length).toBe(0);
+      });
+
+      it('shows reversal when toggled', () => {
+        const cavcForm = setup({ appealId, reversalToggled: true });
+
+        expect(cavcForm.find('#type-options_straight_reversal').length).toBe(1);
+      });
+    });
+
+    describe('dismisal_cavc_remand', () => {
+      it('hides dismissal when not toggled', () => {
+        const cavcForm = setup({ appealId, dismissalToggled: false });
+
+        expect(cavcForm.find('#type-options_death_dismissal').length).toBe(0);
+      });
+
+      it('shows dismissal when toggled', () => {
+        const cavcForm = setup({ appealId, dismissalToggled: true });
+
+        expect(cavcForm.find('#type-options_death_dismissal').length).toBe(1);
+      });
+    });
   });
 
   describe('form validations', () => {

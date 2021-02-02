@@ -16,7 +16,7 @@ export const CaseTimeline = ({ appeal }) => {
         <tbody>
           <TaskRows appeal={appeal}
             taskList={tasks}
-            editNodDateEnabled={canEditNodDate}
+            editNodDateEnabled={!appeal.isLegacyAppeal && canEditNodDate}
             timeline
           />
         </tbody>

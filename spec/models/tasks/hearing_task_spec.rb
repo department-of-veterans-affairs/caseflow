@@ -99,7 +99,7 @@ describe HearingTask, :postgres do
       end
 
       context "hearing is held" do
-        let(:disposition) { "H" }
+        let(:disposition) { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:held] }
 
         it "moves the appeal to transcription" do
           expect { subject }.to change { vacols_case.reload.bfcurloc }.from(loc_caseflow).to(loc_transcription)

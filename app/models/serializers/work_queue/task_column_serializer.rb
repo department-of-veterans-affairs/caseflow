@@ -232,6 +232,24 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
+  attribute :veteran_appellant_deceased do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
+
+    if serialize_attribute?(params, columns)
+      begin
+        object.appeal.try(:veteran_appellant_deceased?)
+      rescue BGS::PowerOfAttorneyFolderDenied => error
+        # This is a bit of a leaky abstraction: BGS exceptions are suppressed and logged here so
+        # that a single appeal raising this error does not prevent users from loading their queues.
+        # This will no longer be necessary when nil date_of_death values, which currently result
+        # in flesh BGS calls currently, are cached in Caseflow. Note that other "non-bulk" views,
+        # e.g. the case details page, intentionally do not suppress this exception.
+        Raven.capture_exception(error)
+        nil
+      end
+    end
+  end
+
   attribute :document_id do |object, params|
     columns = [Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_ID.name]
 

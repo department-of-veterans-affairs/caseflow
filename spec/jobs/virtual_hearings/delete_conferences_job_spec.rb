@@ -135,7 +135,7 @@ describe VirtualHearings::DeleteConferencesJob do
     context "for virtual hearing that was cancelled" do
       let(:scheduled_for) { Time.zone.now + 7.days }
       let!(:virtual_hearing) do
-        create(:virtual_hearing, status: :cancelled, hearing: hearing, conference_deleted: false)
+        create(:virtual_hearing, :initialized, status: :cancelled, hearing: hearing, conference_deleted: false)
       end
 
       include_examples "job is not retried"

@@ -23,7 +23,11 @@ client/junit.xml
 /tmp
 /coverage
 /reports/*
+!/reports/sql_queries
 !/reports/.keep
+credstash.log
+# Ignore MS Office temp files
+~$*
 
 # Ignore vim swap and tag files
 *.swp

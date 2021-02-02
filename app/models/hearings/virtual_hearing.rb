@@ -28,7 +28,7 @@
 #             because for the latter `request_cancelled` will not be set to `true`.
 #
 #   `active`: This indicates that the conference was created for a virtual hearing, derived from presence of
-#             `conference_id`.
+#             `conference_id` or presence of `host_hearing_link` and `guest_hearing_link`
 #
 #   `pending`: This indicates that the conference has yet to be created.
 ##
@@ -69,7 +69,8 @@ class VirtualHearing < CaseflowRecord
         lambda {
           joins(:establishment)
             .where("
-              conference_deleted = false AND (
+              conference_deleted = false AND
+              conference_id IS NOT NULL AND (
               request_cancelled = true OR
               virtual_hearing_establishments.processed_at IS NOT NULL
             )")
@@ -116,19 +117,27 @@ class VirtualHearing < CaseflowRecord
   end
 
   def guest_link
+    return guest_hearing_link if guest_hearing_link.present?
+
     "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
     "conference=#{formatted_alias_or_alias_with_host}&" \
     "pin=#{guest_pin}&role=guest"
   end
 
   def host_link
+    return host_hearing_link if host_hearing_link.present?
+
     "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
     "conference=#{formatted_alias_or_alias_with_host}&" \
     "pin=#{host_pin}&role=host"
   end
 
   def test_link(title)
-    "https://care.va.gov/webapp2/conference/test_call?name=#{email_recipient_name(title)}&join=1"
+    if guest_hearing_link.present? && host_hearing_link.present?
+      "https://vc.va.gov/webapp2/conference/test_call?name=#{email_recipient_name(title)}&join=1"
+    else
+      "https://care.va.gov/webapp2/conference/test_call?name=#{email_recipient_name(title)}&join=1"
+    end
   end
 
   def job_completed?
@@ -140,7 +149,8 @@ class VirtualHearing < CaseflowRecord
   # can switch the type from virtual back to Video or Central. This essentailly cancels
   # this virtual hearing.
   def cancelled?
-    status == :cancelled
+    # the establishment has been cancelled by the user
+    request_cancelled?
   end
 
   # Hearings are pending if the conference is not created and it is not cancelled
@@ -150,7 +160,8 @@ class VirtualHearing < CaseflowRecord
 
   # Determines if the hearing conference has been created
   def active?
-    status == :active
+    # the conference has been created the virtual hearing is active
+    conference_id.present? || (guest_hearing_link.present? && host_hearing_link.present?)
   end
 
   # Determines if the conference was deleted
@@ -159,27 +170,17 @@ class VirtualHearing < CaseflowRecord
   # switched back to original type and cancelled and postponed hearings which
   # require us to delete the conference but not set `request_cancelled`.
   def closed?
-    status == :closed
+    # the conference has been created the virtual hearing was deleted
+    conference_id.present? && conference_deleted?
   end
 
   # Determines the status of the Virtual Hearing based on the establishment
   def status
-    # Check if the establishment has been cancelled by the user
-    if request_cancelled?
-      return :cancelled
-    end
+    return :cancelled if cancelled?
+    return :closed if closed?
+    return :active if active?
 
-    # if the conference has been created the virtual hearing was deleted
-    if conference_id && conference_deleted?
-      return :closed
-    end
-
-    # If the conference has been created the virtual hearing is active
-    if conference_id
-      return :active
-    end
-
-    # If the establishment is not active or cancelled it is pending
+    # If the establishment is not active, closed, or cancelled it is pending
     :pending
   end
 

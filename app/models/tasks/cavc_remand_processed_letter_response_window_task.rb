@@ -9,9 +9,16 @@
 # to be assigned and acted upon.
 # Expected parent: CavcTask
 # Expected assigned_to.type: CavcLitigationSupport
+#
+# CAVC Remands Overview: https://github.com/department-of-veterans-affairs/caseflow/wiki/CAVC-Remands
 
 class CavcRemandProcessedLetterResponseWindowTask < Task
-  validates :parent, presence: true, parentTask: { task_type: CavcTask }, on: :create
+  VALID_PARENT_TYPES = [
+    CavcTask,
+    CavcRemandProcessedLetterResponseWindowTask
+  ].freeze
+
+  validates :parent, presence: true, parentTask: { task_types: VALID_PARENT_TYPES }, on: :create
 
   before_validation :set_assignee
 
@@ -35,12 +42,36 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
     [COPY::CRP_LETTER_RESP_WINDOW_TASK_DEFAULT_INSTRUCTIONS]
   end
 
-  USER_ACTIONS = [
-    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
+  TASK_ACTIONS = [
+    Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+    Constants.TASK_ACTIONS.CAVC_EXTENSION_REQUEST.to_h,
+    Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.to_h,
+    Constants.TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.to_h,
+    Constants.TASK_ACTIONS.SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION.to_h,
+    Constants.TASK_ACTIONS.SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION.to_h,
+    Constants.TASK_ACTIONS.SEND_TO_HEARINGS_BLOCKING_DISTRIBUTION.to_h
   ].freeze
 
+  # Actions a user can take on a task assigned to them
+  USER_ACTIONS = [
+    Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
+  ].concat(TASK_ACTIONS).freeze
+
+  # Actions an admin of the organization can take on a task assigned to their organization
+  ORG_ACTIONS = [
+    Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h
+  ].concat(TASK_ACTIONS).freeze
+
   def available_actions(user)
-    assigned_to.user_has_access?(user) ? USER_ACTIONS : []
+    if CavcLitigationSupport.singleton.user_has_access?(user)
+      return [Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h] if on_hold?
+
+      return ORG_ACTIONS if assigned_to_type == "Organization"
+
+      return USER_ACTIONS if assigned_to == user || task_is_assigned_to_user_within_organization?(user)
+    end
+
+    []
   end
 
   private

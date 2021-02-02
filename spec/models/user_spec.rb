@@ -348,13 +348,12 @@ describe User, :all_dbs do
     end
 
     context "when the user is a judge team admin" do
-      let(:judge_team) { create(:judge_team, :has_judge_team_lead_as_admin) }
-      let!(:judge) { judge_team.judge }
+      let(:judge_team) { JudgeTeam.create_for_judge(user) }
+      let!(:judge) { judge_team.admin }
 
       before do
-        OrganizationsUser.make_user_admin(user, judge_team)
-        allow(JudgeTeam).to receive(:for_judge).with(user).and_return(nil)
-        allow(user).to receive(:judge_in_vacols?).and_return(false)
+        allow(JudgeTeam).to receive(:for_judge).with(judge).and_return(nil)
+        allow(judge).to receive(:judge_in_vacols?).and_return(false)
       end
 
       it "does not return assigned cases link for judge" do
@@ -791,7 +790,7 @@ describe User, :all_dbs do
               expect(user.selectable_organizations.length).to eq 2
             end
 
-            expect(judge_team.admins).to include user
+            expect(judge_team.admin).to eq user
             expect(user.organizations.size).to eq 3
             expect(subject).to eq true
             expect(user.reload.status).to eq status
@@ -819,7 +818,7 @@ describe User, :all_dbs do
             expect(user.selectable_organizations.length).to eq 1
           end
 
-          context "when judge is a non-JudgeTeamLead in another JudgeTeam" do
+          context "when judge is a non-admin in another JudgeTeam" do
             let(:judge_team2) { JudgeTeam.create_for_judge(create(:user)) }
             before { allow(user).to receive(:judge_in_vacols?).and_return(true) }
             before { judge_team2.add_user(user) }

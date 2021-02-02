@@ -15,18 +15,20 @@ RSpec.feature "Docket Switch", :all_dbs do
   let(:appeal) do
     create(:appeal, receipt_date: receipt_date)
   end
-  let(:decision_issues) do
-    3.times do |idx|
+
+  let!(:request_issues) do
+    3.times do
       create(
-        :decision_issue,
+        :request_issue,
         :rating,
         decision_review: appeal,
-        disposition: "denied",
-        description: "Decision issue description #{idx}",
-        decision_text: "decision issue"
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: 10.days.ago,
+        contested_issue_description: "PTSD denied"
       )
     end
   end
+
   let(:root_task) { create(:root_task, :completed, appeal: appeal) }
   let(:cotb_attorney) { create(:user, :with_vacols_attorney_record, full_name: "Clark Bard") }
   let!(:cotb_non_attorney) { create(:user, full_name: "Aang Bender") }
@@ -116,7 +118,7 @@ RSpec.feature "Docket Switch", :all_dbs do
     let(:hyperlink) { "https://example.com/file.txt" }
 
     # Checks granted, partially_granted, and denied dispositions
-    Constants::DOCKET_SWITCH.each_key do |disposition|
+    Constants::DOCKET_SWITCH_DISPOSITIONS.each_key do |disposition|
       context "given disposition #{disposition}" do
         it "creates the next docket switch task (granted or denied) assigned to a COTB attorney" do
           User.authenticate!(user: judge)
@@ -139,7 +141,7 @@ RSpec.feature "Docket Switch", :all_dbs do
           # Return back to user's queue
           expect(page).to have_current_path("/queue")
           # Success banner
-          disposition_type = Constants::DOCKET_SWITCH[disposition]["dispositionType"]
+          disposition_type = Constants::DOCKET_SWITCH_DISPOSITIONS[disposition]["dispositionType"]
           expect(page).to have_content(
             format(COPY::DOCKET_SWITCH_RULING_SUCCESS_TITLE, disposition_type.downcase, appeal.claimant.name)
           )
@@ -151,7 +153,7 @@ RSpec.feature "Docket Switch", :all_dbs do
           User.authenticate!(user: cotb_attorney)
           visit "/queue/appeals/#{appeal.uuid}"
           find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
-          judge_ruling_text = Constants::DOCKET_SWITCH[disposition]["judgeRulingText"]
+          judge_ruling_text = Constants::DOCKET_SWITCH_DISPOSITIONS[disposition]["judgeRulingText"]
 
           expect(page).to have_content "I am proceeding with a #{judge_ruling_text}"
           expect(page).to have_content "Signed ruling letter:\n#{hyperlink}"
@@ -188,12 +190,16 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       click_button(text: "Confirm")
 
-      # Return back to user's queue
-      expect(page).to have_current_path("/queue")
+      # Redirect to Case Details Page
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
       # Verify correct success alert
-
+      expect(page).to have_content(format(COPY::DOCKET_SWITCH_DENIAL_SUCCESS_TITLE, appeal.claimant.name))
       # Verify that denial completed correctly
+      expect(docket_switch_denied_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+      expect(docket_switch_denied_task.reload.instructions).to include(context)
+      docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
+      expect(docket_switch).to_not be_nil
     end
   end
 
@@ -207,29 +213,176 @@ RSpec.feature "Docket Switch", :all_dbs do
         assigned_by: judge
       )
     end
+
+    let(:colocated_user) { create(:user) }
+    let!(:colocated_staff) { create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
+
+    let!(:admin_action) do
+      create(
+        :ama_colocated_task,
+        :ihp,
+        appeal: appeal,
+        parent: root_task,
+        assigned_to: colocated_user
+      )
+    end
+
     let(:receipt_date) { Time.zone.today - 5.days }
     let(:context) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit" }
+    let(:admin_action_instructions) { "Lorem ipsum dolor sit amet" }
 
     it "allows attorney to complete the docket switch grant" do
       User.authenticate!(user: cotb_attorney)
       visit "/queue/appeals/#{appeal.uuid}"
+
       find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
       find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_SWITCH_GRANTED.label).click
 
-      # expect(page).to have_content(format(COPY::DOCKET_SWITCH_GRANT_TITLE, appeal.claimant.name))
-      # expect(page).to have_content(COPY::DOCKET_SWITCH_GRANT_INSTRUCTIONS)
+      expect(page).to have_content(format(COPY::DOCKET_SWITCH_GRANTED_REQUEST_LABEL, appeal.claimant.name))
+      expect(page).to have_content(COPY::DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS)
 
-      # fill_in "What is the Receipt Date of the docket switch request?", with: receipt_date
-      # fill_in("context", with: context)
+      fill_in "What is the Receipt Date of the docket switch request?", with: receipt_date
 
-      # click_button(text: "Confirm")
+      # select full grants
+      within_fieldset("How are you proceeding with this request to switch dockets?") do
+        find("label", text: "Grant all issues").click
+      end
 
-      # # Return back to user's queue
-      # expect(page).to have_current_path("/queue")
+      expect(page).to have_content("Which docket will the issue(s) be switched to?")
+      expect(page).to have_button("Continue", disabled: true)
 
-      # Verify correct success alert
+      # select docket type
+      within_fieldset("Which docket will the issue(s) be switched to?") do
+        find("label", text: "Direct Review").click
+      end
+      expect(page).to have_button("Continue", disabled: false)
 
-      # Verify that denial completed correctly
+      # select partial grants
+      within_fieldset("How are you proceeding with this request to switch dockets?") do
+        find("label", text: "Grant a partial switch").click
+      end
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_button("Continue", disabled: true)
+
+      # select issues
+      within_fieldset("Select the issue(s) that are switching dockets:") do
+        find("label", text: "1. PTSD denied").click
+      end
+      expect(page).to have_button("Continue", disabled: false)
+
+      click_button(text: "Cancel")
+      # Return back to user's queue
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+    end
+
+    it "allows attorney to edit tasks and proceed to confirmation page" do
+      User.authenticate!(user: cotb_attorney)
+      visit "/queue/appeals/#{appeal.uuid}"
+
+      find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_SWITCH_GRANTED.label).click
+
+      expect(page).to have_content(format(COPY::DOCKET_SWITCH_GRANTED_REQUEST_LABEL, appeal.claimant.name))
+      expect(page).to have_content(COPY::DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS)
+
+      fill_in "What is the Receipt Date of the docket switch request?", with: receipt_date
+
+      # select full grants
+      within_fieldset("How are you proceeding with this request to switch dockets?") do
+        find("label", text: "Grant all issues").click
+      end
+
+      expect(page).to have_content("Which docket will the issue(s) be switched to?")
+      expect(page).to have_button("Continue", disabled: true)
+
+      # select docket type
+      within_fieldset("Which docket will the issue(s) be switched to?") do
+        find("label", text: "Direct Review").click
+      end
+      expect(page).to have_button("Continue", disabled: false)
+
+      # select partial grants
+      within_fieldset("How are you proceeding with this request to switch dockets?") do
+        find("label", text: "Grant a partial switch").click
+      end
+      expect(page).to have_content("PTSD denied")
+
+      # With no issues yet selected, submit should be disabled
+      expect(page).to have_button("Continue", disabled: true)
+
+      # select issues
+      within_fieldset("Select the issue(s) that are switching dockets:") do
+        find("label", text: "1. PTSD denied").click
+      end
+      expect(page).to have_button("Continue", disabled: false)
+      click_button(text: "Continue")
+
+      # Takes user to add task page
+      expect(page).to have_content("Switch Docket: Add/Remove Tasks")
+      expect(page).to have_content("You are switching from Evidence Submission to Direct Review")
+
+      # select task
+      within_fieldset("Please unselect any tasks you would like to remove:") do
+        find("label", text: "IHP").click
+      end
+
+      expect(page).to have_content("Confirm removing task")
+      expect(page).to have_content("IHP")
+
+      safe_click ".cf-modal-link"
+
+      # Return back to add task
+      within_fieldset("Please unselect any tasks you would like to remove:") do
+        expect(find_field("IHP", visible: false)).to be_checked
+      end
+
+      # select task
+      within_fieldset("Please unselect any tasks you would like to remove:") do
+        find("label", text: "IHP").click
+      end
+
+      click_button(COPY::MODAL_CONFIRM_BUTTON)
+      expect(page).to have_field("IHP", checked: false, visible: false)
+
+      # select task again and not show modal
+      within_fieldset("Please unselect any tasks you would like to remove:") do
+        find("label", text: "IHP").click
+      end
+
+      expect(find_field("IHP", visible: false)).to be_checked
+      expect(page).to_not have_content("Confirm removing task")
+
+      # Remove task again
+      within_fieldset("Please unselect any tasks you would like to remove:") do
+        find("label", text: "IHP").click
+      end
+
+      click_button(COPY::MODAL_CONFIRM_BUTTON)
+
+      # Verify it is showing the mandatory tasks section
+      within_fieldset("Task(s) that will automatically be created") do
+        expect(page).to have_content("Distribution Task")
+      end
+
+      # Add new Admin Action
+      click_button("+ Add task")
+      expect(page).to have_button("Continue", disabled: true)
+
+      # Ensure all admin actions are available and select "AOJ"
+      click_dropdown(text: "AOJ") do
+        visible_options = page.find_all(".cf-select__option")
+        expect(visible_options.length).to eq Constants::CO_LOCATED_ADMIN_ACTIONS.length
+      end
+
+      fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: admin_action_instructions
+
+      expect(page).to have_button("Continue", disabled: false)
+      click_button(text: "Continue")
+
+      # Should now be on confirmation page
+      expect(page).to have_current_path(
+        "/queue/appeals/#{appeal.uuid}/tasks/#{docket_switch_granted_task.id}/docket_switch/checkout/grant/confirm"
+      )
     end
   end
 end

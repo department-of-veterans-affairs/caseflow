@@ -62,9 +62,13 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
     context "when the signed in user is on cavc litigation support and the feature toggle is on" do
       before do
         FeatureToggle.enable!(:cavc_remand)
+        FeatureToggle.enable!(:mdr_cavc_remand)
         User.authenticate!(user: org_admin)
       end
-      after { FeatureToggle.disable!(:cavc_remand) }
+      after do
+        FeatureToggle.disable!(:cavc_remand)
+        FeatureToggle.disable!(:mdr_cavc_remand)
+      end
 
       it "allows the user to intake a cavc remand" do
         step "cavc user inputs cavc data" do
@@ -100,6 +104,55 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DECISION_DATE}: #{date}"
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}: #{date}"
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_MANDATE_DATE}: #{date}"
+        end
+      end
+
+      it "allows the user to intake a mdr cavc remand" do
+        step "cavc user inputs cavc data" do
+          visit "queue/appeals/#{appeal.external_id}"
+          page.find("button", text: "+ Add CAVC Remand").click
+
+          # Fill in all of our fields!
+          fill_in "docket-number", with: docket_number
+          click_dropdown(text: judge_name)
+          find("label", text: "Memorandum Decision on Remand (MDR)").click
+          fill_in "decision-date", with: date
+          fill_in "context-and-instructions-textBox", with: "Please process this remand"
+          page.find("button", text: "Submit").click
+
+          expect(page).to have_content COPY::CAVC_REMAND_CREATED_TITLE
+          expect(page).to have_content COPY::CAVC_REMAND_MDR_CREATED_DETAIL
+        end
+
+        step "cavc user confirms data on case details page" do
+          expect(page).to have_content "APPEAL STREAM TYPE\nCAVC"
+          expect(page).to have_content "DOCKET\nE\n#{appeal.docket_number}"
+          expect(page).to have_content "TASK\n#{MdrTask.label}"
+          expect(page).to have_content "ASSIGNED TO\n#{CavcLitigationSupport.singleton.name}"
+
+          expect(page).to have_content "CAVC Remand"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DOCKET_NUMBER}: #{docket_number}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_ATTORNEY}: Yes"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGE}: #{judge_name}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_PROCEDURE}: #{decision_type}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_TYPE}: #{Constants.CAVC_REMAND_SUBTYPE_NAMES.mdr}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DECISION_DATE}: #{date}"
+          expect(page.has_no_content?("#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}:")).to eq(true)
+          expect(page.has_no_content?("#{COPY::CASE_DETAILS_CAVC_MANDATE_DATE}:")).to eq(true)
+
+          find(".cf-select__control", text: "Select an action").click
+          expect(page).to have_content Constants.TASK_ACTIONS.END_TIMED_HOLD.label
+          click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
+          click_on "Cancel"
+        end
+
+        step "end timed hold early" do
+          click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
+          click_on "Submit"
+          expect(page).to have_content COPY::END_HOLD_SUCCESS_MESSAGE_TITLE
+
+          find(".cf-select__control", text: "Select an action").click
+          expect(page).to have_content Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label
         end
       end
     end
@@ -161,56 +214,62 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
     end
   end
 
-  describe "when CAVC Lit Support is assigned SendCavcRemandProcessedLetterTask" do
-    let!(:send_task) { create(:send_cavc_remand_processed_letter_task) }
-    let(:vet_name) { send_task.appeal.veteran_full_name }
+  describe "when CAVC Lit Support is assigned tasks" do
+    shared_examples "assign and reassign" do
+      it "users can assign and reassign tasks" do
+        step "admin can assign task to user" do
+          # Logged in as CAVC Lit Support admin
+          User.authenticate!(user: org_admin)
+          visit "queue/appeals/#{task.appeal.external_id}"
+          find(".cf-select__control", text: "Select an action").click
+          expect(page).to have_content Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label
+          find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label).click
 
-    it "allows users to assign and process tasks" do
-      step "admin adds admin actions" do
+          find(".cf-select__control", text: org_admin.full_name).click
+          find("div", class: "cf-select__option", text: org_nonadmin.full_name).click
+          fill_in "taskInstructions", with: "Confirm info and send letter to Veteran."
+          click_on "Submit"
+          expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin.full_name
+        end
+
+        step "assigned user can reassign task" do
+          # Logged in as first user assignee
+          User.authenticate!(user: org_nonadmin)
+          visit "queue/appeals/#{task.appeal.external_id}"
+
+          find(".cf-select__control", text: "Select an action").click
+          expect(page).to have_content Constants.TASK_ACTIONS.MARK_COMPLETE.label
+          expect(page).to have_content Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.label
+
+          find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.label).click
+          find(".cf-select__control", text: COPY::ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER).click
+          find("div", class: "cf-select__option", text: org_nonadmin2.full_name).click
+          fill_in "taskInstructions", with: "Going fishing. Handing off to you."
+          click_on "Submit"
+          expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin2.full_name
+        end
+      end
+    end
+
+    shared_examples "admin creates admin actions" do
+      it "admin can add admin actions" do
         # Logged in as CAVC Lit Support admin
         User.authenticate!(user: org_admin)
-        visit "queue/appeals/#{send_task.appeal.external_id}"
+        visit "queue/appeals/#{task.appeal.external_id}"
 
         click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label)
         fill_in "taskInstructions", with: "Please translate the documents in spanish"
         click_on "Submit"
         expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Translation.singleton.name
       end
+    end
 
-      step "admin assigns SendCavcRemandProcessedLetterTask to user" do
-        find(".cf-select__control", text: "Select an action").click
-        expect(page).to have_content Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label
-        expect(page).to have_content Constants.TASK_ACTIONS.CLARIFY_POA_BLOCKING_CAVC.label
-        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label).click
-
-        find(".cf-select__control", text: org_admin.full_name).click
-        find("div", class: "cf-select__option", text: org_nonadmin.full_name).click
-        fill_in "taskInstructions", with: "Confirm info and send letter to Veteran."
-        click_on "Submit"
-        expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin.full_name
-      end
-
-      step "assigned user reassigns SendCavcRemandProcessedLetterTask" do
-        # Logged in as first user assignee
+    shared_examples "assignee adds admin actions" do
+      it "assigned user can add admin actions" do
+        task.update!(assigned_to: org_nonadmin)
+        # Logged in as assignee (due to reassignment)
         User.authenticate!(user: org_nonadmin)
-        visit "queue/appeals/#{send_task.appeal.external_id}"
-
-        find(".cf-select__control", text: "Select an action").click
-        expect(page).to have_content Constants.TASK_ACTIONS.MARK_COMPLETE.label
-        expect(page).to have_content Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.label
-
-        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.label).click
-        find(".cf-select__control", text: COPY::ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER).click
-        find("div", class: "cf-select__option", text: org_nonadmin2.full_name).click
-        fill_in "taskInstructions", with: "Going fishing. Handing off to you."
-        click_on "Submit"
-        expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin2.full_name
-      end
-
-      step "assigned user adds admin actions" do
-        # Logged in as second user assignee (due to reassignment)
-        User.authenticate!(user: org_nonadmin2)
-        visit "queue/appeals/#{send_task.appeal.external_id}"
+        visit "queue/appeals/#{task.appeal.external_id}"
 
         click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.label)
         fill_in "taskInstructions", with: "Please transcribe the hearing on record for this appeal"
@@ -227,96 +286,232 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         click_on "Submit"
         expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Colocated.singleton.name
       end
+    end
 
-      step "assigned user adds blocking admin action" do
-        # Assign an admin action that DOES block the sending of the 90 day letter
-        click_dropdown(text: Constants.TASK_ACTIONS.CLARIFY_POA_BLOCKING_CAVC.label)
-        fill_in "taskInstructions", with: "Please find out the POA for this veteran"
-        click_on "Submit"
-        expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % CavcLitigationSupport.singleton.name
+    describe "MandateHoldTask" do
+      let(:cavc_decision_type) do
+        [
+          Constants.CAVC_DECISION_TYPES.straight_reversal,
+          Constants.CAVC_DECISION_TYPES.death_dismissal
+        ].sample
+      end
+      let!(:cavc_remand) do
+        create(:cavc_remand,
+               cavc_decision_type: cavc_decision_type,
+               remand_subtype: nil,
+               judgement_date: nil,
+               mandate_date: nil)
+      end
+      let(:cavc_appeal) { cavc_remand.remand_appeal }
 
-        # Ensure there are no actions on the send letter task as it is blocked by poa clarification
-        active_task_rows = page.find("#currently-active-tasks").find_all("tr")
-        poa_task_row = active_task_rows[0]
-        send_task_row = active_task_rows[-3]
-        expect(poa_task_row).to have_content("TASK\n#{COPY::CAVC_POA_TASK_LABEL}")
-        expect(poa_task_row.find(".taskActionsContainerStyling").all("*", wait: false).length).to be > 0
-        expect(send_task_row).to have_content("TASK\n#{COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL}")
-        expect(send_task_row.find(".taskActionsContainerStyling").all("*", wait: false).length).to be 0
+      it "does not allow non-CAVC users to do anything for MandateHoldTask" do
+        User.authenticate!(user: other_user)
+        visit "queue/appeals/#{cavc_appeal.external_id}"
 
-        # Complete the task to unblock
-        click_dropdown(text: Constants.TASK_ACTIONS.MARK_COMPLETE.label)
-        fill_in "completeTaskInstructions", with: "POA verified"
-        click_on COPY::MARK_TASK_COMPLETE_BUTTON
-        visit "queue/appeals/#{send_task.appeal.external_id}"
-        send_task_row = page.find("#currently-active-tasks").find_all("tr")[-3]
-        expect(send_task_row).to have_content("TASK\n#{COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL}")
-        expect(send_task_row.find(".taskActionsContainerStyling").all("*", wait: false).length).to be > 0
+        expect(page).to_not have_content "Select an action"
       end
 
-      step "assigned user completes task" do
-        click_dropdown(text: Constants.TASK_ACTIONS.MARK_COMPLETE.label)
-        fill_in "completeTaskInstructions", with: "Letter sent."
-        click_on COPY::MARK_TASK_COMPLETE_BUTTON
-        expect(page).to have_content COPY::MARK_TASK_COMPLETE_CONFIRMATION % vet_name
+      it "allows CAVC users to process MandateHoldTask" do
+        User.authenticate!(user: org_nonadmin)
 
-        # Check that appeal is in correct tab in user's queue
-        find(".cf-tab", text: "Completed").click
-        expect(page).to have_content send_task.appeal.docket_number
+        step "check for appeal in Queue's team view" do
+          visit "organizations/cavc-lit-support"
 
-        # Check that appeal is in correct tab in Team view
-        User.authenticate!(user: org_admin)
-        visit "organizations/cavc-lit-support"
-        find(".cf-tab", text: "Assigned").click
-        expect(page).to have_content send_task.appeal.docket_number
-        # Check that org_admin has option to End hold early
-        visit "queue/appeals/#{send_task.appeal.external_id}"
-        click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
-        click_on "Cancel"
+          click_on "Unassigned"
+          expect(page).to_not have_content cavc_appeal.stream_docket_number
+
+          click_on "Assigned"
+          expect(page).to have_content cavc_appeal.stream_docket_number
+        end
+
+        step "end timed hold early" do
+          visit "queue/appeals/#{cavc_appeal.external_id}"
+
+          click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
+          click_on "Cancel"
+          click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
+          click_on "Submit"
+          expect(page).to have_content COPY::END_HOLD_SUCCESS_MESSAGE_TITLE
+        end
+
+        step "check for appeal in Queue's team view" do
+          visit "organizations/cavc-lit-support"
+
+          click_on "Unassigned"
+          expect(page).to have_content cavc_appeal.stream_docket_number
+
+          click_on "Assigned"
+          expect(page).to_not have_content cavc_appeal.stream_docket_number
+        end
+
+        step "check for action to restart timed hold" do
+          visit "queue/appeals/#{cavc_appeal.external_id}"
+          find(".cf-select__control", text: "Select an action").click
+          expect(page).to have_content Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label
+        end
       end
+    end
 
-      step "end timed hold early" do
-        # Actually "End hold early" as org_nonadmin this time
-        User.authenticate!(user: org_nonadmin2)
-        visit "queue/appeals/#{send_task.appeal.external_id}"
-        click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
-        click_on "Submit"
-        expect(page).to have_content COPY::END_HOLD_SUCCESS_MESSAGE_TITLE
+    describe "SendCavcRemandProcessedLetterTask" do
+      let!(:task) { create(:send_cavc_remand_processed_letter_task) }
+      let(:vet_name) { task.appeal.veteran_full_name }
+
+      it_behaves_like "assign and reassign"
+      it_behaves_like "admin creates admin actions"
+      it_behaves_like "assignee adds admin actions"
+
+      it "allows users to process SendCavcRemandProcessedLetterTasks" do
+        task.update!(assigned_to: org_nonadmin)
+
+        step "assigned user adds blocking admin action" do
+          # Logged in as assignee
+          User.authenticate!(user: org_nonadmin)
+          visit "queue/appeals/#{task.appeal.external_id}"
+
+          # Assign an admin action that DOES block the sending of the 90 day letter
+          click_dropdown(text: Constants.TASK_ACTIONS.CLARIFY_POA_BLOCKING_CAVC.label)
+          fill_in "taskInstructions", with: "Please find out the POA for this veteran"
+          click_on "Submit"
+          expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % CavcLitigationSupport.singleton.name
+
+          # Ensure there are no actions on the send letter task as it is blocked by poa clarification
+          active_task_rows = page.find("#currently-active-tasks").find_all("tr")
+          poa_task_row = active_task_rows[0]
+          send_task_row = active_task_rows[1]
+          expect(poa_task_row).to have_content("TASK\n#{COPY::CAVC_POA_TASK_LABEL}")
+          expect(poa_task_row.find(".taskActionsContainerStyling").all("*", wait: false).length).to be > 0
+          expect(send_task_row).to have_content("TASK\n#{COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL}")
+          expect(send_task_row.find(".taskActionsContainerStyling").all("*", wait: false).length).to be 0
+
+          # Complete the task to unblock
+          click_dropdown(text: Constants.TASK_ACTIONS.MARK_COMPLETE.label)
+          fill_in "completeTaskInstructions", with: "POA verified"
+          click_on COPY::MARK_TASK_COMPLETE_BUTTON
+          visit "queue/appeals/#{task.appeal.external_id}"
+          send_task_row = page.find("#currently-active-tasks").find_all("tr")[0]
+          expect(send_task_row).to have_content("TASK\n#{COPY::SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL}")
+          expect(send_task_row.find(".taskActionsContainerStyling").all("*", wait: false).length).to be > 0
+        end
+
+        step "assigned user completes task" do
+          click_dropdown(text: Constants.TASK_ACTIONS.MARK_COMPLETE.label)
+          fill_in "completeTaskInstructions", with: "Letter sent."
+          click_on COPY::MARK_TASK_COMPLETE_BUTTON
+          expect(page).to have_content COPY::MARK_TASK_COMPLETE_CONFIRMATION % vet_name
+
+          # Check that appeal is in correct tab in user's queue
+          find(".cf-tab", text: "Completed").click
+          expect(page).to have_content task.appeal.docket_number
+
+          # Check that appeal is in correct tab in Team view
+          User.authenticate!(user: org_admin)
+          visit "organizations/cavc-lit-support"
+          find(".cf-tab", text: "Assigned").click
+          expect(page).to have_content task.appeal.docket_number
+          # Check that org_admin has option to End hold early
+          visit "queue/appeals/#{task.appeal.external_id}"
+          click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
+          click_on "Cancel"
+        end
+
+        step "end timed hold early" do
+          # Actually "End hold early" as org_nonadmin this time
+          User.authenticate!(user: org_nonadmin2)
+          visit "queue/appeals/#{task.appeal.external_id}"
+          click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
+          click_on "Submit"
+          expect(page).to have_content COPY::END_HOLD_SUCCESS_MESSAGE_TITLE
+        end
       end
+    end
 
-      step "resume hold" do
-        find(".cf-select__control", text: "Select an action").click
-        find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label).click
-        find(".cf-select__control", text: "Select number of days").click
-        find("div", class: "cf-select__option", text: "90 days").click
-        fill_in "instructions", with: "Put it back on hold. Wait for more Veteran responses."
-        click_on "Submit"
-        expect(page).to have_content(format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, vet_name, 90))
+    describe "CavcRemandProcessedLetterResponseWindowTask" do
+      let!(:task) { create(:cavc_remand_processed_letter_response_window_task) }
+      let(:vet_name) { task.appeal.veteran_full_name }
 
-        # Check that appeal is back in correct tab in user's queue
-        visit "/queue"
-        find(".cf-tab", text: "Completed").click
-        expect(page).to have_content send_task.appeal.docket_number
+      it_behaves_like "assign and reassign"
+      it_behaves_like "admin creates admin actions"
+      it_behaves_like "assignee adds admin actions"
 
-        # Check that appeal is back in correct tab in Team view
-        User.authenticate!(user: org_admin)
-        visit "organizations/cavc-lit-support"
-        find(".cf-tab", text: "Assigned").click
-        expect(page).to have_content send_task.appeal.docket_number
-      end
-
-      step "travel 90+ days into the future to trigger TimedHoldTask to expire" do
+      it "automatically ends the timer in 90 days" do
+        # travel 90+ days into the future to trigger TimedHoldTask to expire
         Timecop.travel(Time.zone.now + 90.days + 1.hour)
         TaskTimerJob.perform_now
 
+        # Logged in as CAVC Lit Support admin
+        User.authenticate!(user: org_admin)
         visit "organizations/cavc-lit-support"
         find(".cf-tab", text: "Unassigned").click
-        expect(page).to have_content send_task.appeal.docket_number
+        expect(page).to have_content task.appeal.docket_number
+      end
 
-        # Check case details page has action to place on hold
-        visit "queue/appeals/#{send_task.appeal.external_id}"
-        click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
-        click_on "Cancel"
+      it "allows users to process CavcRemandProcessedLetterResponseWindowTask" do
+        task.update!(assigned_to: org_nonadmin)
+
+        step "assigned user adds schedule hearing task" do
+          # Logged in as assignee
+          User.authenticate!(user: org_nonadmin)
+          visit "queue/appeals/#{task.appeal.external_id}"
+
+          click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_HEARINGS_BLOCKING_DISTRIBUTION.label)
+          fill_in "taskInstructions", with: "Please transcribe the hearing on record for this appeal"
+          click_on "Submit"
+          expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Bva.singleton.name
+        end
+
+        step "assigned user adds denied extension request" do
+          click_dropdown(text: Constants.TASK_ACTIONS.CAVC_EXTENSION_REQUEST.label)
+          page.find("#decision_deny", visible: false).sibling("label").click
+          fill_in "instructions", with: "Denying extension request"
+          click_on "Confirm"
+
+          expect(page).to have_content COPY::CAVC_EXTENSION_REQUEST_DENY_SUCCESS_TITLE
+          expect(page).to have_content COPY::CAVC_EXTENSION_REQUEST_DENY_SUCCESS_DETAIL
+
+          # Ensure there are still actions on the response window task (it is assigned, not on hold)
+          response_window_task_row = page.find("#currently-active-tasks").find_all("tr")[2]
+          expect(response_window_task_row).to have_content("TASK\n#{COPY::CRP_LETTER_RESP_WINDOW_TASK_LABEL}")
+          expect(response_window_task_row.find(".taskActionsContainerStyling").all("*", wait: false).length).to be > 0
+
+          # Ensure we recorded the denial
+          scroll_to("#case-timeline-table")
+          expect(page).to have_content "#{CavcDeniedExtensionRequestTask.name} completed"
+        end
+
+        step "assigned user adds granted extension request" do
+          click_dropdown(text: Constants.TASK_ACTIONS.CAVC_EXTENSION_REQUEST.label)
+          page.find("#decision_grant", visible: false).sibling("label").click
+          click_dropdown(prompt: "Select number of days", text: "Custom")
+          fill_in "customDuration", with: 91
+          fill_in "instructions", with: "Granting extension request, putting on hold for 91 days"
+          click_on "Confirm"
+
+          expect(page).to have_content COPY::CAVC_EXTENSION_REQUEST_GRANT_SUCCESS_TITLE % 91
+          expect(page).to have_content COPY::CAVC_EXTENSION_REQUEST_GRANT_SUCCESS_DETAIL
+
+          # Ensure there is only 1 action on the response window task (end hold early as it is on hold)
+          response_window_task_row = page.find("#currently-active-tasks").find_all("tr")[2]
+          expect(response_window_task_row).to have_content("TASK\n#{COPY::CRP_LETTER_RESP_WINDOW_TASK_LABEL}")
+          find(".cf-select__control", text: "Select an action").click
+          expect(response_window_task_row.find_all(".cf-select__option").length).to eq 1
+
+          # Ensure we recorded the grant
+          scroll_to("#case-timeline-table")
+          expect(page).to have_content "#{CavcGrantedExtensionRequestTask.name} completed"
+        end
+
+        step "assigned user completes task" do
+          click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
+          click_on "Submit"
+          click_dropdown(text: Constants.TASK_ACTIONS.MARK_COMPLETE.label)
+          fill_in "completeTaskInstructions", with: "Response processed"
+          click_on COPY::MARK_TASK_COMPLETE_BUTTON
+          expect(page).to have_content COPY::MARK_TASK_COMPLETE_CONFIRMATION % vet_name
+
+          # Check that appeal is in correct tab in user's queue
+          find(".cf-tab", text: "Completed").click
+          expect(page).to have_content task.appeal.docket_number
+        end
       end
     end
   end

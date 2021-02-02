@@ -1,22 +1,31 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { stepForward } from '../docketSwitchSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import { DocketSwitchReviewRequestForm } from './DocketSwitchReviewRequestForm';
+import { useHistory, useParams } from 'react-router';
+import { appealWithDetailSelector } from '../../selectors';
+import { updateDocketSwitch, stepForward } from '../docketSwitchSlice';
 
 export const DocketSwitchReviewRequestContainer = () => {
   const dispatch = useDispatch();
+  const { appealId, taskId } = useParams();
+  const { goBack, push } = useHistory();
 
-  const handleCancel = () => {
-    // Add code to clear docketSwitch redux store
-    // You can utilize useHistory() react-router hook to go back to the case details page
-  };
-  const handleSubmit = () => {
-    // Add stuff to redux store
+  const appeal = useSelector((state) =>
+    appealWithDetailSelector(state, { appealId })
+  );
 
-    // Call stepForward redux action
-    dispatch(stepForward());
+  // Reminder to add code to clear docketSwitch redux store when we go back.
+  const handleCancel = () => goBack();
 
-    // Move to next step
+  const handleSubmit = async (formData) => {
+
+    try {
+      await dispatch(updateDocketSwitch({ formData }));
+      dispatch(stepForward());
+      push(`/queue/appeals/${appealId}/tasks/${taskId}/docket_switch/checkout/grant/tasks`);
+    } catch (error) {
+      // Perhaps show an alert that indicates error, advise trying again...?
+    }
   };
 
   return (
@@ -24,6 +33,8 @@ export const DocketSwitchReviewRequestContainer = () => {
       <DocketSwitchReviewRequestForm
         onCancel={handleCancel}
         onSubmit={handleSubmit}
+        appellantName={appeal.appellantFullName}
+        issues={appeal.issues}
       />
     </>
   );
