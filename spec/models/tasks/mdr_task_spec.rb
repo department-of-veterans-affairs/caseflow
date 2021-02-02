@@ -68,9 +68,16 @@ describe MdrTask, :postgres do
         expect(mdr_task.reload.status).to eq Constants.TASK_STATUSES.assigned
         child_timed_hold_tasks = mdr_task.children.where(type: :TimedHoldTask)
         expect(child_timed_hold_tasks.first.status).to eq Constants.TASK_STATUSES.completed
+      end
 
-        expect(mdr_task.available_actions(org_admin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
-        expect(mdr_task.available_actions(org_nonadmin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
+      it "shows correct actions" do
+        actions = [
+          Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
+          Constants.TASK_ACTIONS.CAVC_REMAND_RECEIVED.to_h
+        ]
+
+        expect(mdr_task.available_actions(org_admin)).to match_array(actions)
+        expect(mdr_task.available_actions(org_nonadmin)).to match_array(actions)
         expect(mdr_task.available_actions(other_user)).to be_empty
       end
     end
