@@ -79,8 +79,6 @@ Capybara.register_driver(:sniffybara_headless) do |app|
     args: ["headless", "disable-gpu", "window-size=1200,1200"]
   )
 
-  puts browser_options
-
   browser_options.add_preference(:download,
                                  prompt_for_download: false,
                                  default_directory: download_directory)
