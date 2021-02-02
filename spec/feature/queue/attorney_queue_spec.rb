@@ -62,7 +62,7 @@ RSpec.feature "Attorney queue", :all_dbs do
       it "displays a Tasks column" do
         visit("/queue")
 
-        expect(page).to have_content(format(COPY::CASE_LIST_TABLE_TASKS_COLUMN_TITLE), 1)
+        expect(page).to have_content(format(COPY::CASE_LIST_TABLE_TASKS_COLUMN_TITLE, 1))
       end
     end
   end
