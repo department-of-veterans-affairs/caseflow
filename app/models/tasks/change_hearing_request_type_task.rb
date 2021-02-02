@@ -23,7 +23,7 @@ class ChangeHearingRequestTypeTask < Task
   def timeline_title
     if completed?
       "Hearing type converted from #{appeal.request_type_for_task(id, :prev)}"\
-        " to #{appeal.request_type_for_task(id, :curent)}"
+        " to #{appeal.request_type_for_task(id, :current)}"
     end
   end
 
