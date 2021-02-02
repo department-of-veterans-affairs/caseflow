@@ -34,7 +34,6 @@ const zipCountry = css({
   gridTemplateColumns: '140px 310px',
 });
 
-
 export const AddressForm = ({ control, register, watch }) => {
   const watchPartyType = watch('partyType');
 
@@ -56,7 +55,7 @@ export const AddressForm = ({ control, register, watch }) => {
         inputStyling={address2}
       />
       {
-        watchPartyType === 'organization' && 
+        watchPartyType === 'organization' &&
           <TextField
             name="address3"
             label="Street address 3"
