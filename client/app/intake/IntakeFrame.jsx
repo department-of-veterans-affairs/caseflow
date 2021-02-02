@@ -1,33 +1,49 @@
 /* eslint-disable react/prop-types */
-
 import { hot } from 'react-hot-loader/root';
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import NavigationBar from '../components/NavigationBar';
-import CaseSearchLink from '../components/CaseSearchLink';
-import InboxLink from '../components/InboxLink';
-import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { useHistory } from 'react-router-dom';
-import PageRoute from '../components/PageRoute';
-import AppFrame from '../components/AppFrame';
-import CancelIntakeModal from './components/CancelIntakeModal';
-import SelectFormPage, { SelectFormButton } from './pages/selectForm';
-import SearchPage from './pages/search';
-import ReviewPage, { ReviewButtons } from './pages/review';
+import { FormProvider } from 'react-hook-form';
+
+import CompletedPage, { CompletedNextButton } from './pages/completed';
 import FinishPage, { FinishButtons } from './pages/finish';
 import { IntakeAddIssuesPage } from './pages/addIssues';
-import CompletedPage, { CompletedNextButton } from './pages/completed';
-import { PAGE_PATHS } from './constants';
-import { toggleCancelModal, submitCancel } from './actions/intake';
-import { LOGO_COLORS } from '../constants/AppConstants';
+import ReviewPage, { ReviewButtons } from './pages/review';
+import SelectFormPage, { SelectFormButton } from './pages/selectForm';
+import SearchPage from './pages/search';
+
+import { AddClaimantButtons } from './addClaimant/AddClaimantButtons';
+import AppFrame from '../components/AppFrame';
+import CancelIntakeModal from './components/CancelIntakeModal';
+import CaseSearchLink from '../components/CaseSearchLink';
+import InboxLink from '../components/InboxLink';
 import { IntakeLayout } from './components/IntakeLayout';
+import { LOGO_COLORS } from '../constants/AppConstants';
+import NavigationBar from '../components/NavigationBar';
+import PageRoute from '../components/PageRoute';
+import { useAddClaimantForm } from './addClaimant/utils';
+import { PAGE_PATHS } from './constants';
+import { ADD_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
+import { toggleCancelModal, submitCancel } from './actions/intake';
+import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { AddClaimantPage } from './addClaimant/AddClaimantPage';
 
 export const IntakeFrame = (props) => {
   const history = useHistory();
+  const methods = useAddClaimantForm();
+  const {
+    formState: { isValid },
+    handleSubmit,
+  } = methods;
+  const handleBack = () => history.goBack();
 
+  const onSubmit = (formData) => {
+    // Update this to...
+    // Add claimant info to Redux
+    // Probably handle submission of both claimant and remaining intake info (from Review step)
+    return formData;
+  };
   const appName = 'Intake';
 
   const topMessage = props.veteran.fileNumber ?
@@ -103,7 +119,22 @@ export const IntakeFrame = (props) => {
             path={PAGE_PATHS.ADD_CLAIMANT}
             title="Add Claimant | Caseflow Intake"
           >
-            <AddClaimantPage />
+            <FormProvider {...methods}>
+              <IntakeLayout
+                buttons={
+                  <AddClaimantButtons
+                    onBack={handleBack}
+                    onSubmit={handleSubmit(onSubmit)}
+                    isValid={isValid}
+                  />
+                }
+              >
+                <h1>Add Claimant</h1>
+                <p>{ADD_CLAIMANT_PAGE_DESCRIPTION}</p>
+                <AddClaimantPage methods={methods} onSubmit={onSubmit} />
+              </IntakeLayout>
+            </FormProvider>
+            {/* <AddClaimantPage /> */}
           </PageRoute>
 
           <PageRoute
