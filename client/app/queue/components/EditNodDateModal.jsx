@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import Modal from 'app/components/Modal';
 import DateSelector from 'app/components/DateSelector';
@@ -12,8 +13,15 @@ import moment from 'moment';
 import { sprintf } from 'sprintf-js';
 import { formatDateStr } from '../../util/DateUtil';
 import { appealWithDetailSelector } from '../selectors';
+import Alert from 'app/components/Alert';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import { css } from 'glamor';
+import { marginTop } from '../constants';
+
+const alertStyling = css({
+  marginBottom: '2em',
+  '& .usa-alert-text': { lineHeight: '1' }
+});
 
 const changeReasons = [
   { label: 'New Form/Information Received', value: 'new_info' },
@@ -92,6 +100,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
   const [receiptDate, setReceiptDate] = useState(nodDate);
   const [changeReason, setChangeReason] = useState(reason);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [showWarning, setWarningMessage] = useState(false);
   const [badDate, setBadDate] = useState(null);
   const [badReason, setBadReason] = useState(true);
 
@@ -124,16 +133,31 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
     return (formattedNewDate < amaDate);
   };
 
+  const isLaterThanNodDate = (newDate) => {
+    const formattedNewDate = moment(newDate);
+    const formattedNodDate = moment(nodDate);
+
+    return (formattedNewDate > formattedNodDate);
+  };
+
   const handleDateChange = (value) => {
     if (isFutureDate(value)) {
+      setWarningMessage(false);
       setErrorMessage(COPY.EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE);
       setReceiptDate(value);
       setBadDate(true);
     } else if (isPreAmaDate(value)) {
+      setWarningMessage(false);
       setErrorMessage(COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE);
       setReceiptDate(value);
       setBadDate(true);
+    } else if (isLaterThanNodDate(value)) {
+      setWarningMessage(true);
+      setErrorMessage(null);
+      setReceiptDate(value);
+      setBadDate(false);
     } else {
+      setWarningMessage(false);
       setErrorMessage(null);
       setReceiptDate(value);
       setBadDate(null);
@@ -159,7 +183,15 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
       <div>
         <ReactMarkdown source={COPY.EDIT_NOD_DATE_MODAL_DESCRIPTION} />
       </div>
+      { showWarning ? <Alert
+        message={COPY.EDIT_NOD_DATE_WARNING_ALERT_MESSAGE}
+        styling={alertStyling}
+        title=""
+        type="info"
+        scrollOnAlert= {false}
+      /> : null }
       <DateSelector
+        style={marginTop}
         name="nodDate"
         errorMessage={errorMessage}
         label={COPY.EDIT_NOD_DATE_LABEL}

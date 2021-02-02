@@ -196,7 +196,7 @@ class DecisionIssue < CaseflowRecord
   end
 
   def processed_in_caseflow?
-    decision_review.processed_in_caseflow?
+    decision_review.processed_in_caseflow? || decision_review.tasks.active.any?
   end
 
   # the decision date is approximate but we need it for timeliness checks.

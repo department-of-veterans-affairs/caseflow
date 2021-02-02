@@ -5,10 +5,9 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import { getDate, getDisplayTime } from '../../../util/DateUtil';
-import { isPreviouslyScheduledHearing, sortHearings } from '../../utils';
+import { isPreviouslyScheduledHearing, sortHearings, dispositionLabel } from '../../utils';
 import { openPrintDialogue } from '../../../util/PrintUtil';
 import AOD_CODE_TO_LABEL_MAP from '../../../../constants/AOD_CODE_TO_LABEL_MAP';
-import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP';
 import Table from '../../../components/Table';
 
 export class DailyDocketPrinted extends React.Component {
@@ -36,7 +35,7 @@ export class DailyDocketPrinted extends React.Component {
     {
       header: '',
       valueFunction: (hearing) => {
-        const disposition = hearing.disposition ? HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[hearing.disposition] : 'None';
+        const disposition = dispositionLabel(hearing?.disposition);
 
         return (
           <div>

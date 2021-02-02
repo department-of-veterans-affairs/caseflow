@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
 import ReactMarkdown from 'react-markdown';
 
-export const DocketSwitchAddTaskModal = ({ onConfirm, onCancel, taskLabel }) => (
+export const DocketSwitchRemoveTaskConfirmationModal = ({ onConfirm, onCancel, taskLabel }) => (
   <div>
     <Modal
       title={DOCKET_SWITCH_GRANTED_MODAL_TITLE}
@@ -35,11 +35,11 @@ export const DocketSwitchAddTaskModal = ({ onConfirm, onCancel, taskLabel }) => 
   </div>
 );
 
-DocketSwitchAddTaskModal.propTypes = {
+DocketSwitchRemoveTaskConfirmationModal.propTypes = {
   onCancel: PropTypes.func,
   onConfirm: PropTypes.func,
   taskLabel: PropTypes.string
 };
 
-export default DocketSwitchAddTaskModal;
+export default DocketSwitchRemoveTaskConfirmationModal;
 
