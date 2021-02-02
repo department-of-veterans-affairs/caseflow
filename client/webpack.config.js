@@ -3,6 +3,7 @@ const path = require('path');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const devBuild = process.env.NODE_ENV !== 'production'; // eslint-disable-line no-process-env
+const testBuild = process.env.NODE_ENV === 'test';
 
 const config = {
   mode: devBuild ? 'development' : 'production',
@@ -16,7 +17,7 @@ const config = {
   plugins: [
     new webpack.EnvironmentPlugin({ NODE_ENV: 'development' }),
     // devBuild && new webpack.HotModuleReplacementPlugin(),
-    devBuild && new ReactRefreshWebpackPlugin(),
+    devBuild && !testBuild && new ReactRefreshWebpackPlugin(),
   ].filter(Boolean),
   devServer: {
     // hmr: true,
@@ -63,7 +64,9 @@ const config = {
             loader: 'babel-loader',
             options: {
               plugins: [
-                devBuild && require.resolve('react-refresh/babel'),
+                devBuild &&
+                  !testBuild &&
+                  require.resolve('react-refresh/babel'),
               ].filter(Boolean),
             },
           },
