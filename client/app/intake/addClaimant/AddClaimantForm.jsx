@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import { css } from 'glamor';
 import { Controller } from 'react-hook-form';
 import _, { debounce } from 'lodash';
 
@@ -12,6 +12,23 @@ import AddressForm from 'app/components/AddressForm';
 import RadioField from 'app/components/RadioField';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import TextField from 'app/components/TextField';
+
+const firstName = css({
+  marginBottom: '1.5em',
+});
+
+const suffix = css({
+  maxWidth: '8em',
+});
+
+const phoneNumber = css({
+  width: '240px',
+  marginBottom: '2em'
+});
+
+const field = css({
+  marginBottom: '0.5em'
+});
 
 const partyTypeOpts = [
   { displayText: 'Organization', value: 'organization' },
@@ -96,33 +113,29 @@ export const AddClaimantForm = ({ onSubmit, methods }) => {
       />
       <br />
       { watchRelationship === 'attorney' &&
-        <>
-          <Controller
-            control={control}
-            name="listedAttorney"
-            defaultValue={null}
-            render={({ ...rest }) => (
-              <SearchableDropdown
-                {...rest}
-                label="Claimant's name"
-                filterOption={filterOption}
-                async={asyncFn}
-                defaultOptions
-                debounce={250}
-                strongLabel
-                isClearable
-                placeholder="Type to search..."
-              />
-            )}
-          />
-        </>
+        <Controller
+          control={control}
+          name="listedAttorney"
+          defaultValue={null}
+          render={({ ...rest }) => (
+            <SearchableDropdown
+              {...rest}
+              label="Claimant's name"
+              filterOption={filterOption}
+              async={asyncFn}
+              defaultOptions
+              debounce={250}
+              strongLabel
+              isClearable
+              placeholder="Type to search..."
+            />
+          )}
+        />
       }
 
       { listedAttorney?.address &&
         <div>
-          <ClaimantAddress>
-            <strong>Claimant's address</strong>
-          </ClaimantAddress>
+          <strong>Claimant's address</strong>
           <br />
           <Address address={listedAttorney?.address} />
         </div>
@@ -140,34 +153,31 @@ export const AddClaimantForm = ({ onSubmit, methods }) => {
       }
       <br />
       { showIndividualNameFields &&
-        <>
-          <FieldDiv>
-            <TextField
-              name="firstName"
-              label="First name"
-              inputRef={register}
-              strongLabel
-            />
-          </FieldDiv>
-          <FieldDiv>
-            <TextField
-              name="middleName"
-              label="Middle name/initial"
-              inputRef={register}
-              optional
-              strongLabel
-            />
-          </FieldDiv>
-          <FieldDiv>
-            <TextField
-              name="lastName"
-              label="Last name"
-              inputRef={register}
-              optional
-              strongLabel
-            />
-          </FieldDiv>
-          <Suffix>
+        <div>
+          <TextField
+            name="firstName"
+            label="First name"
+            inputRef={register}
+            strongLabel
+            inputStyling={firstName}
+          />
+          <TextField
+            name="middleName"
+            label="Middle name/initial"
+            inputRef={register}
+            optional
+            strongLabel
+            inputStyling={field}
+          />
+          <TextField
+            name="lastName"
+            label="Last name"
+            inputRef={register}
+            optional
+            strongLabel
+            inputStyling={field}
+          />
+          <div {...suffix}>
             <TextField
               name="suffix"
               label="Suffix"
@@ -175,8 +185,8 @@ export const AddClaimantForm = ({ onSubmit, methods }) => {
               optional
               strongLabel
             />
-          </Suffix>
-        </>
+          </div>
+        </div>
       }
       { watchPartyType === 'organization' &&
         <TextField
@@ -187,18 +197,17 @@ export const AddClaimantForm = ({ onSubmit, methods }) => {
         />
       }
       { showAdditionalFields &&
-        <>
+        <div>
           <AddressForm {...methods} />
-          <FieldDiv>
-            <TextField
-              name="email"
-              label="Claimant email"
-              inputRef={register}
-              optional
-              strongLabel
-            />
-          </FieldDiv>
-          <PhoneNumber>
+          <TextField
+            name="email"
+            label="Claimant email"
+            inputRef={register}
+            optional
+            strongLabel
+            inputStyling={field}
+          />
+          <div {...phoneNumber}>
             <TextField
               name="phoneNumber"
               label="Phone number"
@@ -206,8 +215,8 @@ export const AddClaimantForm = ({ onSubmit, methods }) => {
               optional
               strongLabel
             />
-          </PhoneNumber>
-        </>
+          </div>
+        </div>
       }
       { (showAdditionalFields || listedAttorney) &&
         <RadioField
@@ -227,22 +236,5 @@ AddClaimantForm.propTypes = {
   onSubmit: PropTypes.func,
   methods: PropTypes.object
 };
-
-const FieldDiv = styled.div`
-  margin-bottom: 1.5em;
-`;
-
-const Suffix = styled.div`
-  max-width: 8em;
-`;
-
-const PhoneNumber = styled.div`
-  width: 240px;
-  margin-bottom: 2em;
-`;
-
-const ClaimantAddress = styled.div`
-  margin-top: 1.5em;
-`;
 
 export default AddClaimantForm;
