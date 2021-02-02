@@ -16,11 +16,9 @@ const config = {
   },
   plugins: [
     new webpack.EnvironmentPlugin({ NODE_ENV: 'development' }),
-    // devBuild && new webpack.HotModuleReplacementPlugin(),
     devBuild && !testBuild && new ReactRefreshWebpackPlugin(),
   ].filter(Boolean),
   devServer: {
-    // hmr: true,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': 'true',
