@@ -60,10 +60,10 @@ class WarmBgsCachesJob < CaseflowJob
     warm_poa_and_cache_for_appeals_for_hearings_most_recent
     warm_poa_and_cache_ama_appeals_for_oldest_claimants
     warm_poa_for_oldest_cached_records
-  rescue StandardError => error
-    capture_exception(error)
-  else
+
     log_warning unless warning_msgs.empty?
+  rescue StandardError => error
+    capture_exception(error: error)
   end
 
   # Warm POA and cache 2000(legacy + ama) appeals with active ScheduleHearingTask in the priority
@@ -117,7 +117,9 @@ class WarmBgsCachesJob < CaseflowJob
       begin
         bgs_poa.save_with_updated_bgs_record! if bgs_poa.stale_attributes?
       rescue Errno::ECONNRESET, Savon::HTTPError
-        # no nothing
+        # do nothing
+      rescue StandardError => error
+        capture_exception(error: error)
       end
     end
     datadog_report_time_segment(segment: "warm_poa_bgs_oldest", start_time: start_time)
@@ -140,7 +142,7 @@ class WarmBgsCachesJob < CaseflowJob
 
   def warm_poa_and_cache_for_ama_appeals(claimants, start_time, datadog_segment)
     appeals_to_cache = claimants.map do |claimant|
-      bgs_poa = claimant.power_of_attorney
+      bgs_poa = claimant_poa_or_nil(claimant)
       claimant.update!(updated_at: Time.zone.now)
 
       # [{:appeal_id=>1, :appeal_type=>"Appeal", :power_of_attorney_name=>"Clarence Darrow"}, ...]
@@ -172,24 +174,26 @@ class WarmBgsCachesJob < CaseflowJob
     BgsPowerOfAttorney.find_or_create_by_file_number(file_number)
   rescue ActiveRecord::RecordInvalid # not found at BGS
     BgsPowerOfAttorney.new(file_number: file_number)
-  rescue Errno::ECONNRESET, Savon::HTTPError => error
-    warning_msgs << "#{LegacyAppeal.name} #{appeal_id}: #{error}" if warning_msgs.count < 100
+  rescue StandardError => error
+    add_warning_msg("#{LegacyAppeal.name} #{appeal_id}: #{error}")
     nil
   end
 
   def warm_bgs_poa_and_return_cache_data(bgs_poa, appeal_id, appeal_type)
-    if bgs_poa&.stale_attributes?
-      bgs_poa.save_with_updated_bgs_record!
+    bgs_poa.save_with_updated_bgs_record! if bgs_poa&.stale_attributes?
 
-      {
-        appeal_id: appeal_id,
-        appeal_type: appeal_type,
-        power_of_attorney_name: bgs_poa&.representative_name
-      }
-    end
-  rescue Errno::ECONNRESET, Savon::HTTPError => error
-    warning_msgs << "#{appeal_type} #{appeal_id}: #{error}" if warning_msgs.count < 100
+    {
+      appeal_id: appeal_id,
+      appeal_type: appeal_type,
+      power_of_attorney_name: bgs_poa&.representative_name
+    }
+  rescue StandardError => error
+    add_warning_msg("#{appeal_type} #{appeal_id}: #{error}")
     nil
+  end
+
+  def add_warning_msg(msg)
+    warning_msgs << msg if warning_msgs.count < 100
   end
 
   def log_warning
@@ -212,11 +216,18 @@ class WarmBgsCachesJob < CaseflowJob
 
   def oldest_claimants_with_poa
     oldest_claimants_for_open_appeals.limit(LIMITS[:OLDEST_CLAIMANT])
-      .select { |claimant| claimant.power_of_attorney.present? }
+      .select { |claimant| claimant_poa_or_nil(claimant).present? }
   end
 
   def oldest_claimants_for_open_appeals
     claimants_for_open_appeals.order(updated_at: :asc)
+  end
+
+  def claimant_poa_or_nil(claimant)
+    claimant.power_of_attorney
+  rescue StandardError => error
+    add_warning_msg("#{Appeal.name} #{claimant.decision_review_id}: #{error}")
+    nil # returning nil here to allow job to continue; this does not mean that claimant is missing POA
   end
 
   def oldest_bgs_poa_records

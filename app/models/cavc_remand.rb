@@ -1,22 +1,30 @@
 # frozen_string_literal: true
 
 # Model to store information captured when processing a form for an appeal remanded by CAVC
+#
+# CAVC Remands Overview: https://github.com/department-of-veterans-affairs/caseflow/wiki/CAVC-Remands
 
 class CavcRemand < CaseflowRecord
+  self.ignored_columns = ["appeal_id"]
   include UpdatedByUserConcern
 
   belongs_to :created_by, class_name: "User"
-  belongs_to :appeal
+  belongs_to :source_appeal, class_name: "Appeal"
+  belongs_to :remand_appeal, class_name: "Appeal"
 
-  validates :created_by, :appeal, :cavc_docket_number, :cavc_judge_full_name, :cavc_decision_type, :decision_date,
-            :decision_issue_ids, :instructions, presence: true
+  validates :created_by, :source_appeal, :cavc_docket_number, :cavc_judge_full_name, :cavc_decision_type,
+            :decision_date, :decision_issue_ids, :instructions, presence: true
   validates :represented_by_attorney, inclusion: { in: [true, false] }
   validates :cavc_judge_full_name, inclusion: { in: Constants::CAVC_JUDGE_FULL_NAMES }
   validates :remand_subtype, presence: true, if: :remand?
-  validates :judgement_date, :mandate_date, presence: true, unless: -> { remand? && mdr? }
+  validates :judgement_date, :mandate_date, presence: true, unless: :mandate_not_required?
   validate :decision_issue_ids_match_appeal_decision_issues, if: -> { remand? && jmr? }
 
-  after_save :establish_appeal_stream, if: :cavc_remand_form_complete?
+  def mandate_not_required?
+    straight_reversal? || death_dismissal? || (remand? && mdr?)
+  end
+
+  before_save :establish_appeal_stream, if: :cavc_remand_form_complete?
 
   enum cavc_decision_type: {
     Constants.CAVC_DECISION_TYPES.remand.to_sym => Constants.CAVC_DECISION_TYPES.remand,
@@ -35,21 +43,22 @@ class CavcRemand < CaseflowRecord
   private
 
   def decision_issue_ids_match_appeal_decision_issues
-    unless (appeal.decision_issues.map(&:id) - decision_issue_ids).empty?
+    unless (source_appeal.decision_issues.map(&:id) - decision_issue_ids).empty?
       fail Caseflow::Error::JmrAppealDecisionIssueMismatch, message: "JMR remands must address all decision issues"
     end
   end
 
   def cavc_remand_form_complete?
-    valid? && !mandate_date.nil? && !judgement_date.nil?
+    valid? && (mandate_not_required? || (!mandate_date.nil? && !judgement_date.nil?))
   end
 
   def establish_appeal_stream
-    appeal.create_stream(:court_remand).tap do |cavc_appeal|
+    self.remand_appeal = source_appeal.create_stream(:court_remand).tap do |cavc_appeal|
       DecisionIssue.find(decision_issue_ids).map do |cavc_remanded_issue|
         cavc_remanded_issue.create_contesting_request_issue!(cavc_appeal)
       end
-      InitialTasksFactory.new(cavc_appeal).create_root_and_sub_tasks!
+      AdvanceOnDocketMotion.copy_granted_motions_to_appeal(source_appeal, cavc_appeal)
+      InitialTasksFactory.new(cavc_appeal, self).create_root_and_sub_tasks!
     end
   end
 end

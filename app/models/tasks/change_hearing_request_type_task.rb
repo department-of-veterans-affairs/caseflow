@@ -65,7 +65,6 @@ class ChangeHearingRequestTypeTask < Task
       update_appeal_and_self(payload_values, params)
 
       [self]
-
     elsif params[:status] == Constants.TASK_STATUSES.cancelled
       cancel_self_and_hearing_task_parents_without_callbacks
     else

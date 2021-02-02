@@ -91,8 +91,8 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_view_edit_nod_date?
-    (BvaIntake.singleton.users.include?(self) || ClerkOfTheBoard.singleton.users.include?(self)) &&
-      FeatureToggle.enabled?(:edit_nod_date, user: self)
+    (attorney? || judge? || BvaIntake.singleton.users.include?(self) ||
+      ClerkOfTheBoard.singleton.users.include?(self)) && FeatureToggle.enabled?(:edit_nod_date, user: self)
   end
 
   def can_vso_hearing_schedule?
@@ -124,8 +124,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_change_hearing_request_type?
-    (can?("Build HearSched") || can?("Edit HearSched")) &&
-      FeatureToggle.enabled?(:convert_travel_board_to_video_or_virtual, user: self)
+    can?("Build HearSched") || can?("Edit HearSched")
   end
 
   def vacols_uniq_id

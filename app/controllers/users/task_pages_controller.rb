@@ -3,6 +3,8 @@
 class Users::TaskPagesController < UsersController
   include TaskPaginationConcern
 
+  skip_before_action :deny_vso_access
+
   # This request:
   # /users/{user.id}/task_pages?
   #   tab=on_hold&

@@ -16,10 +16,10 @@ class HearingDayRange
               HearingDay.where(
                 "DATE(scheduled_for) between ? and ?", start_date, end_date
               )
-            elsif regional_office == HearingDay::REQUEST_TYPES[:central]
+            elsif [HearingDay::REQUEST_TYPES[:central], HearingDay::REQUEST_TYPES[:virtual]].include?(regional_office)
               HearingDay.where(
                 "request_type = ? and DATE(scheduled_for) between ? and ?",
-                HearingDay::REQUEST_TYPES[:central],
+                regional_office, # regional_office stores the hearing request type in this case
                 start_date,
                 end_date
               )
@@ -146,9 +146,13 @@ class HearingDayRange
     def filter_non_scheduled_hearings(hearings)
       hearings.select do |hearing|
         if hearing.is_a?(Hearing)
-          !%w[postponed cancelled].include?(hearing.disposition)
+          %w[postponed cancelled].exclude?(hearing.disposition)
         else
-          hearing.vacols_record.hearing_disp != "P" && hearing.vacols_record.hearing_disp != "C"
+          [
+            VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:postponed],
+            VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:cancelled],
+            VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:scheduled_in_error]
+          ].exclude?(hearing.vacols_record.hearing_disp)
         end
       end
     end
