@@ -14,8 +14,7 @@
 
 class MdrTask < Task
   VALID_PARENT_TYPES = [
-    CavcTask,
-    MdrTask
+    CavcTask
   ].freeze
 
   validates :parent, presence: true, parentTask: { task_types: VALID_PARENT_TYPES }, on: :create
