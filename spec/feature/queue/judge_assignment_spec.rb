@@ -72,7 +72,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         safe_click ".cf-select"
         click_dropdown(text: attorney_one.full_name)
 
-        click_on "Assign 2 cases"
+        click_on "Assign 2 cases", wait: 5
         expect(page).to have_content("Assigned 2 tasks to #{attorney_one.full_name}")
       end
 
@@ -91,7 +91,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         safe_click ".cf-select"
         click_dropdown(text: attorney_two.full_name)
 
-        click_on "Assign 1 case"
+        click_on "Assign 1 case", wait: 5
         expect(page).to have_content("Reassigned 1 task to #{attorney_two.full_name}")
       end
 
@@ -229,7 +229,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         safe_click ".cf-select"
         click_dropdown(text: attorney_one.full_name)
 
-        click_on "Assign 2 cases"
+        click_on "Assign 2 cases", wait: 5
         expect(page).to have_content("#{attorney_one.full_name} (0)")
         expect(page).to have_content("Error assigning tasks")
         expect(page).to have_content("Docket (#{appeal_two.docket_number}) already "\
