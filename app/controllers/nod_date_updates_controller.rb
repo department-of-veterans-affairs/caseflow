@@ -15,7 +15,6 @@ class NodDateUpdatesController < ApplicationController
     if !timeliness_error
       nod_date_update = NodDateUpdate.create!(updated_params)
       appeal.update_receipt_date!(receipt_date: params[:receipt_date])
-      binding.pry
       render json: {
             nodDate: appeal.receipt_date,
             docketNumber: appeal.docket_number,
