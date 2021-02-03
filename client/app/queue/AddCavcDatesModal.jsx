@@ -6,7 +6,7 @@ import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 
 import QueueFlowModal from './components/QueueFlowModal';
-import { requestSave, showErrorMessage } from './uiReducer/uiActions';
+import { requestPatch, showErrorMessage } from './uiReducer/uiActions';
 import DateSelector from '../components/DateSelector';
 import TextareaField from '../components/TextareaField';
 import Alert from '../components/Alert';
@@ -49,7 +49,7 @@ const AddCavcDatesModal = ({ appealId, error, highlightInvalid, history }) => {
       detail: COPY.CAVC_REMAND_CREATED_DETAIL
     };
 
-    requestSave(`/appeals/${appealId}/cavc_remand`, payload, successMsg).
+    requestPatch(`/appeals/${appealId}/cavc_remand`, payload, successMsg).
       then(() => {
         history.replace('/queue');
         resolve();
@@ -116,7 +116,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestSave,
+  requestPatch,
   showErrorMessage
 }, dispatch);
 

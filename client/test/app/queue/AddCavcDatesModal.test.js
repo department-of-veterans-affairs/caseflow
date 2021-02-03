@@ -34,7 +34,7 @@ describe('AddCavcDatesModal', () => {
   });
 
   it('submits succesfully', async () => {
-    jest.spyOn(uiActions, 'requestSave').mockImplementation(() => new Promise((resolve) => resolve()));
+    jest.spyOn(uiActions, 'requestPatch').mockImplementation(() => new Promise((resolve) => resolve()));
 
     const cavcModal = setup({ appealId });
 
@@ -54,7 +54,7 @@ describe('AddCavcDatesModal', () => {
 
     clickSubmit(cavcModal);
 
-    expect(uiActions.requestSave).toHaveBeenCalledWith(`/appeals/${appealId}/cavc_remand`, {
+    expect(uiActions.requestPatch).toHaveBeenCalledWith(`/appeals/${appealId}/cavc_remand`, {
       data: {
         judgement_date: judgementDate,
         mandate_date: mandateDate,

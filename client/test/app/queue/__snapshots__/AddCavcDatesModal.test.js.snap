@@ -102,7 +102,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
           "url": "/",
         }
       }
-      requestSave={[Function]}
+      requestPatch={[Function]}
       showErrorMessage={[Function]}
     >
       <withRouter(Connect(QueueFlowModal))
@@ -668,7 +668,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
           "url": "/",
         }
       }
-      requestSave={[Function]}
+      requestPatch={[Function]}
       showErrorMessage={[Function]}
     >
       <withRouter(Connect(QueueFlowModal))
