@@ -62,7 +62,7 @@ export default {
   ],
   parameters: {},
   args: {
-    claimantName: 'Jane Doe',
+    veteranName: 'Jane Doe',
     docketFrom: 'direct_review',
     docketTo: 'hearing',
     originalReceiptDate: sub(new Date(), { days: 30 }),
@@ -90,4 +90,9 @@ export const PartialGrant = Template.bind({});
 PartialGrant.args = {
   issuesSwitched: issues.slice(0, 2),
   issuesRemaining: issues.slice(2),
+};
+
+export const AlternateClaimant = Template.bind({});
+AlternateClaimant.args = {
+  claimantName: 'John Doe',
 };

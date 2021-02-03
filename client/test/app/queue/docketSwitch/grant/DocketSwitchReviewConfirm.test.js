@@ -41,30 +41,32 @@ describe('DocketSwitchReviewConfirm', () => {
     },
   ];
 
+  const decisionDate = sub(new Date('2021-02-01'), { days: 10 });
+
   const issues = [
     {
       id: 1,
       program: 'compensation',
       description: 'PTSD denied',
-      decision_date: sub(new Date(), { days: 10 }),
+      decision_date: decisionDate,
     },
     {
       id: 2,
       program: 'compensation',
       description: 'Left knee denied',
-      decision_date: sub(new Date(), { days: 10 }),
+      decision_date: decisionDate,
     },
     {
       id: 3,
       program: 'compensation',
       description: 'Right knee denied',
-      decision_date: sub(new Date(), { days: 10 }),
+      decision_date: decisionDate,
     },
     {
       id: 4,
       program: 'compensation',
       description: 'Right knee granted at 90%',
-      decision_date: sub(new Date(), { days: 10 }),
+      decision_date: decisionDate,
     },
   ];
 
@@ -78,6 +80,7 @@ describe('DocketSwitchReviewConfirm', () => {
     docketSwitchReceiptDate: sub(new Date(), { days: 7 }),
     issuesSwitched: issues,
     tasksKept: tasks,
+    veteranName: 'Foo Bar',
   };
 
   const setup = (props) =>
@@ -151,6 +154,14 @@ describe('DocketSwitchReviewConfirm', () => {
       expect(
         screen.queryByText('Issues on original docket')
       ).not.toBeInTheDocument();
+    });
+  });
+
+  describe('with alternate claimant', () => {
+    it('renders the claimant row', async () => {
+      const { container } = setup({ claimantName: 'Jane Doe' });
+
+      expect(container).toMatchSnapshot();
     });
   });
 });

@@ -47,6 +47,7 @@ export const DocketSwitchReviewConfirm = ({
   issuesRemaining,
   tasksKept,
   tasksAdded = [],
+  veteranName,
 }) => {
   const description1 = useMemo(
     () =>
@@ -73,8 +74,14 @@ export const DocketSwitchReviewConfirm = ({
           <tbody>
             <tr>
               <td>Veteran</td>
-              <td>{claimantName}</td>
+              <td>{veteranName}</td>
             </tr>
+            {claimantName && (
+              <tr>
+                <td>Claimant</td>
+                <td>{claimantName}</td>
+              </tr>
+            )}
             <tr>
               <td>VA Form - 10182 Receipt Date</td>
               <td>{format(originalReceiptDate, 'M/d/y')}</td>
@@ -96,7 +103,10 @@ export const DocketSwitchReviewConfirm = ({
                       <tr key={issue.id}>
                         <td>
                           <div>{`${idx + 1}. ${issue.description}`}</div>
-                          <div>Decision date: {format(issue.decision_date, 'M/d/Y')}</div>
+                          <div>
+                            Decision date:{' '}
+                            {format(Date.parse(issue.decision_date), 'M/d/Y')}
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -114,7 +124,10 @@ export const DocketSwitchReviewConfirm = ({
                         <tr key={issue.id}>
                           <td>
                             <div>{`${idx + 1}. ${issue.description}`}</div>
-                            <div>Decision date: {format(issue.decision_date, 'M/d/Y')}</div>
+                            <div>
+                              Decision date:{' '}
+                              {format(Date.parse(issue.decision_date), 'M/d/Y')}
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -157,6 +170,7 @@ export const DocketSwitchReviewConfirm = ({
   );
 };
 DocketSwitchReviewConfirm.propTypes = {
+  veteranName: PropTypes.string,
   claimantName: PropTypes.string,
   docketFrom: PropTypes.string,
   docketTo: PropTypes.string,
