@@ -286,7 +286,7 @@ describe Veteran, :all_dbs do
 
       context "when address line 3 is nil" do
         let(:address_line3) { nil }
-        
+
         it { is_expected.to include(zip_code: nil) }
       end
 
