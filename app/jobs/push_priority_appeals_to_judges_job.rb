@@ -40,11 +40,12 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     report << "*Debugging information*"
     report << "Priority Target: #{priority_target}"
     report << "Previous monthly distributions: #{priority_distributions_this_month_for_eligible_judges}"
-    report << "#{veterans_refreshed.count} veterans have been refreshed"
 
     if appeals_not_distributed.values.flatten.any?
       add_stuck_appeals_to_report(report, appeals_not_distributed)
     end
+
+    report << "#{veterans_refreshed.count} veterans have been refreshed"
 
     report
   end
@@ -149,7 +150,6 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   def priority_distributions_this_month
     Distribution.priority_pushed.completed.where(completed_at: 30.days.ago..Time.zone.now)
   end
-
 
   def warm_veteran_attr_for_priority_distributions
     start_time = Time.zone.now

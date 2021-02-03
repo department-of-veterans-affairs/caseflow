@@ -345,6 +345,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       expect(subject[13].include?(ready_priority_hearing_case.uuid)).to be true
       expect(subject[13].include?(ready_priority_evidence_case.uuid)).to be true
       expect(subject[13].include?(ready_priority_direct_case.uuid)).to be true
+      veterans_refreshed = veteran * 120.to_a
+      expect(subject[14].to eq "#{veterans_refreshed.count} veterans have been refreshed")
 
       expect(subject.last).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
     end
