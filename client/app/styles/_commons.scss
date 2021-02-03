@@ -1125,6 +1125,8 @@ ul {
 .cf-form-checkbox,
 .cf-form-radio-option {
   position: relative;
+  display: inline-block;
+  overflow: hidden;
 
   input {
     left: -999em;
