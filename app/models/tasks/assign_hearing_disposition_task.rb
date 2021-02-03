@@ -218,10 +218,6 @@ class AssignHearingDispositionTask < Task
     end
   end
 
-  def mark_hearing_postponed
-    update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
-  end
-
   def mark_hearing_with_disposition(payload_values:, instructions: nil)
     multi_transaction do
       if payload_values[:disposition] == Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error

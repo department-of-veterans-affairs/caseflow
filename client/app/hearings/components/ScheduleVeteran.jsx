@@ -163,7 +163,7 @@ export const ScheduleVeteran = ({
       scheduled_time_string: hearing.scheduledTimeString,
       hearing_day_id: hearing.hearingDay.hearingId,
       hearing_location: hearing.hearingLocation ? ApiUtil.convertToSnakeCase(hearing.hearingLocation) : null,
-      virtual_hearing_attributes: virtualHearing ? ApiUtil.convertToSnakeCase(virtualHearing) : null,
+      virtual_hearing_attributes: virtualHearing ? ApiUtil.convertToSnakeCase(virtualHearing) : null
     };
 
     // Determine whether to send the reschedule payload
@@ -177,7 +177,7 @@ export const ScheduleVeteran = ({
             new_hearing_attrs: hearingValues,
           },
           ...(prevHearingDisposition === HEARING_DISPOSITION_TYPES.scheduled_in_error && {
-            notes: scheduledHearing?.notes
+            hearing_notes: scheduledHearing?.notes
           })
         }
       }

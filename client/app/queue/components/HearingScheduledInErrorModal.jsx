@@ -28,11 +28,11 @@ const ACTIONS = {
 
 const AFTER_DISPOSITION_UPDATE_ACTION_OPTIONS = [
   {
-    displayText: 'Reschedule immediately',
+    displayText: COPY.RESCHEDULE_IMMEDIATELY_DISPLAY_TEXT,
     value: ACTIONS.RESCHEDULE,
   },
   {
-    displayText: 'Send to Schedule Veteran list',
+    displayText: COPY.SCHEDULE_LATER_DISPLAY_TEXT,
     value: ACTIONS.SCHEDULE_LATER,
   }
 ];
@@ -59,7 +59,7 @@ const HearingScheduledInErrorModal = (props) => {
           values: {
             disposition: HEARING_DISPOSITION_TYPES.scheduled_in_error,
             after_disposition_update: { action: ACTIONS.SCHEDULE_LATER },
-            notes: scheduledHearing?.notes
+            hearing_notes: scheduledHearing?.notes
           },
         },
       },
@@ -107,8 +107,8 @@ const HearingScheduledInErrorModal = (props) => {
             setIsPosting(false);
 
             props.showErrorMessage({
-              title: COPY.REMOVE_HEARING_SCHEDULED_IN_ERROR_TITLE,
-              detail: COPY.REMOVE_HEARING_SCHEDULED_IN_ERROR_DETAIL,
+              title: COPY.REMOVE_HEARING_ERROR_TITLE,
+              detail: COPY.REMOVE_HEARING_ERROR_DETAIL,
             });
           }
         );
@@ -117,7 +117,7 @@ const HearingScheduledInErrorModal = (props) => {
 
   return (
     <ModalProp
-      title="Remove Hearing"
+      title={COPY.HEARING_SCHEDULED_IN_ERROR_MODAL_TITLE}
       submit={submit}
       validateForm={() => true}
       pathAfterSubmit={`/queue/appeals/${appeal.externalId}`}
@@ -153,7 +153,7 @@ HearingScheduledInErrorModal.propTypes = {
   appeal: PropTypes.shape({
     externalId: PropTypes.string,
     veteranFullName: PropTypes.string,
-    hearings: PropTypes.object
+    hearings: PropTypes.array
   }),
   onReceiveAmaTasks: PropTypes.func,
   flowModal: PropTypes.elementType,
