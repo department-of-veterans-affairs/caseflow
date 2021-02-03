@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 ##
-# Task to indicate that CAVC Litigation Support is working on a Memorandum Decision on Remand (MDR),
-# i.e., the appeal is being remanded, but CAVC has not returned the mandate to the Board yet.
+# Task to indicate that CAVC Litigation Support is waiting on a mandate from the Board
+# for a CAVC remand of type straight_reversal or death_dismissal.
+# The appeal is being remanded, but CAVC has not returned the mandate to the Board yet.
 # When this task is created, it is automatically placed on hold for 90 days to wait for CAVC's mandate.
 # There is an option of ending the hold early.
 # This task is only for CAVC Remand appeal streams.
@@ -12,7 +13,7 @@
 #
 # CAVC Remands Overview: https://github.com/department-of-veterans-affairs/caseflow/wiki/CAVC-Remands
 
-class MdrTask < Task
+class MandateHoldTask < Task
   VALID_PARENT_TYPES = [
     CavcTask
   ].freeze
@@ -27,18 +28,14 @@ class MdrTask < Task
         TimedHoldTask.create_from_parent(
           window_task,
           days_on_hold: 90,
-          instructions: [COPY::MDR_WINDOW_TASK_DEFAULT_INSTRUCTIONS]
+          instructions: [COPY::MANDATE_HOLD_TASK_DEFAULT_INSTRUCTIONS]
         )
       end
     end
   end
 
-  def self.label
-    COPY::MDR_TASK_LABEL
-  end
-
   def default_instructions
-    [COPY::MDR_WINDOW_TASK_DEFAULT_INSTRUCTIONS]
+    [COPY::MANDATE_HOLD_TASK_DEFAULT_INSTRUCTIONS]
   end
 
   # Actions for both admins and non-admins
