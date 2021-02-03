@@ -299,6 +299,20 @@ const prepareAppealAvailableHearingLocationsForStore = (appeal) =>
     zipCode: ahl.zip_code
   }));
 
+const prepareNodDateUpdatesForStore = (appeal) => {
+  const nodDateUpdates = appeal.attributes.nod_date_updates.map((nodDateUpdate) => ({
+    appealId: appeal.id,
+    changeReason: nodDateUpdate.change_reason,
+    newDate: nodDateUpdate.new_date,
+    oldDate: nodDateUpdate.old_date,
+    closedAt: nodDateUpdate.closed_at,
+    userFirstName: nodDateUpdate.updated_by.split(' ')[0],
+    userLastName: nodDateUpdate.updated_by.split(' ')[nodDateUpdate.updated_by.split(' ').length - 1]
+  }));
+
+  return nodDateUpdates;
+};
+
 export const prepareAppealForStore = (appeals) => {
   const appealHash = appeals.reduce((accumulator, appeal) => {
     const {
@@ -356,6 +370,7 @@ export const prepareAppealForStore = (appeals) => {
       decisionDate: appeal.attributes.decision_date,
       form9Date: appeal.attributes.form9_date,
       nodDate: appeal.attributes.nod_date,
+      nodDateUpdates: prepareNodDateUpdatesForStore(appeal),
       certificationDate: appeal.attributes.certification_date,
       powerOfAttorney: appeal.attributes.power_of_attorney,
       cavcRemand: appeal.attributes.cavc_remand,
@@ -605,10 +620,15 @@ export const nullToFalse = (key, obj) => {
   return obj;
 };
 
-export const sortTaskList = (taskList) => {
-  return taskList.sort((prev, next) => {
-    return new Date(next.closedAt || next.createdAt).getTime() - new Date(prev.closedAt || prev.createdAt).getTime();
+export const sortCaseTimelineEntries = (taskList, nodDateUpdates) => {
+  const timelineEntries = [...taskList, ...nodDateUpdates];
+
+  const sortedTimelineEntries = timelineEntries.sort((prev, next) => {
+    return new Date(next.closedAt || next.createdAt).getTime() -
+           new Date(prev.closedAt || prev.createdAt).getTime();
   });
+
+  return sortedTimelineEntries;
 };
 
 export const regionalOfficeCity = (objWithLocation, defaultToUnknown) => {
