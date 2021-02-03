@@ -11,16 +11,23 @@ class VirtualHearingRepository
           virtual_hearings.request_cancelled = true", today: Time.zone.today
         )
 
-      virtual_hearings_for_legacy_hearings = virtual_hearings_joined_with_hearings_and_hearing_day(LegacyHearing)
-        .eligible_for_deletion
-        .where(
-          "hearing_days.scheduled_for < :today OR
-          legacy_hearings.vacols_id in (:postponed_or_cancelled_vacols_ids) OR
-          virtual_hearings.request_cancelled = true",
-          postponed_or_cancelled_vacols_ids: postponed_or_cancelled_vacols_ids, today: Time.zone.today
-        )
+      virtual_hearings_for_legacy_hearings = []
 
-      virtual_hearings_for_ama_hearings + virtual_hearings_for_legacy_hearings
+      # VACOLS can support a max of 1000 at a time which is the in_batches default
+      virtual_hearings_joined_with_hearings_and_hearing_day(LegacyHearing).eligible_for_deletion.in_batches do |vhs|
+        vacols_ids = vhs.pluck("legacy_hearings.vacols_id")
+        # the subset of selected hearings that are postponed or cancelled in VACOLS
+        selected_vacols_ids = postponed_or_cancelled_vacols_ids_from(vacols_ids)
+        virtual_hearings_for_legacy_hearings << vhs
+          .where(
+            "hearing_days.scheduled_for < :today OR
+            legacy_hearings.vacols_id in (:postponed_or_cancelled_vacols_ids) OR
+            virtual_hearings.request_cancelled = true",
+            postponed_or_cancelled_vacols_ids: selected_vacols_ids, today: Time.zone.today
+          ).to_a
+      end
+
+      virtual_hearings_for_ama_hearings + virtual_hearings_for_legacy_hearings.flatten
     end
 
     # Get all virtual hearings that *might* need to have a reminder email sent.
@@ -38,21 +45,24 @@ class VirtualHearingRepository
         )
         .where(where_hearing_occurs_within_the_timeframe)
 
-      legacy_virtual_hearings_ready_for_email = virtual_hearings_joined_with_hearings_and_hearing_day(LegacyHearing)
-        .not_cancelled
-        .where(where_hearing_occurs_within_the_timeframe)
+      legacy_virtual_hearings_ready_for_email = []
 
-      postponed_or_cancelled_legacy = postponed_or_cancelled_vacols_ids
-
-      unless postponed_or_cancelled_legacy.empty?
-        # Active Hearings
-        legacy_virtual_hearings_ready_for_email = legacy_virtual_hearings_ready_for_email.where(
-          "legacy_hearings.vacols_id NOT IN (:postponed_or_cancelled_vacols_ids)",
-          postponed_or_cancelled_vacols_ids: postponed_or_cancelled_vacols_ids
-        )
+      # VACOLS can support a max of 1000 at a time which is the in_batches default
+      virtual_hearings_joined_with_hearings_and_hearing_day(LegacyHearing)
+        .not_cancelled.where(where_hearing_occurs_within_the_timeframe)
+        .in_batches do |vhs|
+        vacols_ids = vhs.pluck("legacy_hearings.vacols_id")
+        # the subset of selected hearings that are postponed or cancelled in VACOLS
+        # default to [""] if empty so the NOT IN clause in the query below will work
+        selected_vacols_ids = postponed_or_cancelled_vacols_ids_from(vacols_ids).presence || [""]
+        legacy_virtual_hearings_ready_for_email << vhs
+          .where(
+            "legacy_hearings.vacols_id NOT IN (:postponed_or_cancelled_vacols_ids)",
+            postponed_or_cancelled_vacols_ids: selected_vacols_ids
+          ).to_a
       end
 
-      ama_virtual_hearings_ready_for_email + legacy_virtual_hearings_ready_for_email
+      ama_virtual_hearings_ready_for_email + legacy_virtual_hearings_ready_for_email.flatten
     end
 
     def cancelled_hearings_with_pending_emails
@@ -92,17 +102,13 @@ class VirtualHearingRepository
         .joins("INNER JOIN hearing_days ON hearing_days.id = #{table}.hearing_day_id")
     end
 
-    def postponed_or_cancelled_vacols_ids
-      # Note: Limit of 1000 is a hotfix for a performance issue with this query.
-      # See:
-      #   - https://dsva.slack.com/archives/C3EAF3Q15/p1612211920046800
-      #   - https://dsva.slack.com/archives/CHD7QU4L8/p1612278521029500
+    def postponed_or_cancelled_vacols_ids_from(vacols_ids = [])
       VACOLS::CaseHearing.by_dispositions(
         [
           VACOLS::CaseHearing::HEARING_DISPOSITIONS.key("postponed"),
           VACOLS::CaseHearing::HEARING_DISPOSITIONS.key("cancelled")
         ]
-      ).limit(1000).pluck(:hearing_pkseq).map(&:to_s) || []
+      ).where(hearing_pkseq: vacols_ids).pluck(:hearing_pkseq).map(&:to_s) || []
     end
 
     def pending_appellant_or_rep_emails_sql
