@@ -66,13 +66,13 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
       step "checks both cases and assigns them to an attorney" do
         scroll_to(".usa-table-borderless")
-        check_hidden_checkbox(judge_task_one.id.to_s)
-        check_hidden_checkbox(judge_task_two.id.to_s)
+        check_hidden_checkbox(judge_task_one.id.to_s, x: 15, y: 15)
+        check_hidden_checkbox(judge_task_two.id.to_s, x: 15, y: 15)
 
         safe_click ".cf-select"
         click_dropdown(text: attorney_one.full_name)
 
-        click_on "Assign 2 cases", wait: 5
+        click_on "Assign 2 cases"
         expect(page).to have_content("Assigned 2 tasks to #{attorney_one.full_name}")
       end
 
@@ -86,12 +86,12 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
       step "checks one case and assigns it to another attorney" do
         scroll_to(".usa-table-borderless")
-        check_hidden_checkbox(attorney_one.tasks.first.id.to_s)
+        check_hidden_checkbox(attorney_one.tasks.first.id.to_s, x: 15, y: 15)
 
         safe_click ".cf-select"
         click_dropdown(text: attorney_two.full_name)
 
-        click_on "Assign 1 case", wait: 5
+        click_on "Assign 1 case"
         expect(page).to have_content("Reassigned 1 task to #{attorney_two.full_name}")
       end
 
@@ -223,13 +223,13 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
       step "checks both cases and assigns them to an attorney" do
         scroll_to(".usa-table-borderless")
-        check_hidden_checkbox(judge_task_one.id.to_s)
-        check_hidden_checkbox(judge_task_two.id.to_s)
+        check_hidden_checkbox(judge_task_one.id.to_s, x: 15, y: 15)
+        check_hidden_checkbox(judge_task_two.id.to_s, x: 15, y: 15)
 
         safe_click ".cf-select"
         click_dropdown(text: attorney_one.full_name)
 
-        click_on "Assign 2 cases", wait: 5
+        click_on "Assign 2 cases"
         expect(page).to have_content("#{attorney_one.full_name} (0)")
         expect(page).to have_content("Error assigning tasks")
         expect(page).to have_content("Docket (#{appeal_two.docket_number}) already "\
