@@ -239,7 +239,6 @@ const AddCavcRemandView = (props) => {
     value={isMandateProvided}
     onChange={(val) => setMandateProvided(val)}
     strongLabel
-    vertical
   />;
 
   const decisionField = <DateSelector
@@ -316,7 +315,6 @@ const AddCavcRemandView = (props) => {
       {representedField}
       {judgeField}
       {typeField}
-      {featureToggles.dismissal_cavc_remand && COPY.CAVC_DEATH_DISMISSAL_DESC}
       {type === CAVC_DECISION_TYPES.remand && remandTypeField }
       {!mdrSubtype() && type !== CAVC_DECISION_TYPES.remand && mandateProvidedField }
       {decisionField}
