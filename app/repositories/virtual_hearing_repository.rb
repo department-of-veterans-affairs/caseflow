@@ -83,11 +83,11 @@ class VirtualHearingRepository
 
     # Returns virtual hearings joined with either the legacy hearing or hearings table,
     # and joined with the hearing day table.
-    def virtual_hearings_joined_with_hearings_and_hearing_day(appeal_type)
-      table = appeal_type.table_name
+    def virtual_hearings_joined_with_hearings_and_hearing_day(hearing_type)
+      table = hearing_type.table_name
 
       VirtualHearing
-        .where(hearing_type: appeal_type.name)
+        .where(hearing_type: hearing_type.name)
         .joins("INNER JOIN #{table} ON #{table}.id = virtual_hearings.hearing_id")
         .joins("INNER JOIN hearing_days ON hearing_days.id = #{table}.hearing_day_id")
     end
