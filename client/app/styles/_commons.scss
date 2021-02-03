@@ -1125,8 +1125,8 @@ ul {
 .cf-form-checkbox,
 .cf-form-radio-option {
   position: relative;
-  display: inline-block;
-  overflow: hidden;
+  display: inline-block; // Fixes an issue clicking checkboxes in headless Chrome
+  overflow: hidden;      // Fixes an issue clicking checkboxes in headless Chrome
 
   input {
     left: -999em;
