@@ -118,6 +118,45 @@ describe AppealIntake, :all_dbs do
       )
     end
 
+    context "when claimant is unlisted non-veteran" do
+      before { FeatureToggle.enable!(:non_veteran_claimants) }
+      after { FeatureToggle.disable!(:non_veteran_claimants) }
+
+      let(:request_params) do
+        ActionController::Parameters.new(
+          receipt_date: receipt_date,
+          docket_type: docket_type,
+          claimant: nil,
+          claimant_type: "other",
+          payee_code: payee_code,
+          legacy_opt_in_approved: legacy_opt_in_approved,
+          unlisted_claimant_relationship: "child",
+          unlisted_claimant_party_type: "individual",
+          unlisted_claimant_first_name: "John",
+          unlisted_claimant_last_name: "Smith",
+          unlisted_claimant_address_line_1: "1600 Pennsylvania Ave",
+          unlisted_claimant_city: "Springfield",
+          unlisted_claimant_state: "NY",
+          unlisted_claimant_zip: "12345",
+          unlisted_claimant_country: "USA",
+          unlisted_claimant_poa_form: false
+        )
+      end
+
+      it "adds unlisted claimant and saves additional details" do
+        expect(subject).to be_truthy
+        expect(intake.detail.claimants.count).to eq 1
+        expect(intake.detail.claimant).to have_attributes(
+          participant_id: intake.veteran.participant_id,
+          payee_code: nil,
+          decision_review: intake.detail,
+          type: "OtherClaimant",
+          name: "John Smith",
+          relationship: "child"
+        )
+      end
+    end
+
     context "receipt date is blank" do
       let(:receipt_date) { nil }
 
