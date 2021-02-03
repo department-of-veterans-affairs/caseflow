@@ -37,6 +37,8 @@ class Veteran < CaseflowRecord
 
   delegate :full_address, to: :address
 
+  before_save :set_date_of_death_reported_at!, if: :will_save_change_to_date_of_death?
+
   CHARACTER_OF_SERVICE_CODES = {
     "HON" => "Honorable",
     "UHC" => "Under Honorable Conditions",
@@ -278,6 +280,10 @@ class Veteran < CaseflowRecord
     dod && Date.strptime(dod, "%m/%d/%Y")
   rescue ArgumentError
     nil
+  end
+
+  def set_date_of_death_reported_at!
+    self.date_of_death_reported_at = Time.zone.now
   end
 
   def address

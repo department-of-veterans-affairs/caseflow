@@ -848,6 +848,10 @@ describe Veteran, :all_dbs do
       it "is true" do
         is_expected.to eq(true)
       end
+
+      it "updates date_of_death_death_reported_at" do
+        expect(veteran.date_of_death_reported_at).to eq(Time.zone.now)
+      end
     end
 
     context "first_name is nil" do

@@ -93,12 +93,16 @@ class VirtualHearingRepository
     end
 
     def postponed_or_cancelled_vacols_ids
+      # Note: Limit of 1000 is a hotfix for a performance issue with this query.
+      # See:
+      #   - https://dsva.slack.com/archives/C3EAF3Q15/p1612211920046800
+      #   - https://dsva.slack.com/archives/CHD7QU4L8/p1612278521029500
       VACOLS::CaseHearing.by_dispositions(
         [
           VACOLS::CaseHearing::HEARING_DISPOSITIONS.key("postponed"),
           VACOLS::CaseHearing::HEARING_DISPOSITIONS.key("cancelled")
         ]
-      ).pluck(:hearing_pkseq).map(&:to_s) || []
+      ).limit(1000).pluck(:hearing_pkseq).map(&:to_s) || []
     end
 
     def pending_appellant_or_rep_emails_sql

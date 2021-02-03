@@ -99,7 +99,7 @@ describe HearingRepository, :all_dbs do
         hearing_date: date,
         hearing_type: HearingDay::REQUEST_TYPES[:video],
         hearing_pkseq: "12345678",
-        hearing_disp: "N",
+        hearing_disp: VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:no_show],
         aod: "Y",
         tranreq: nil,
         holddays: 90,
