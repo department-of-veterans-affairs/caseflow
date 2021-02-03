@@ -338,6 +338,7 @@ jobs:
           command: |
             mkdir -p ~/test-results/rspec
             export RAILS_ENV=test
+            export KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC=$KNAPSACK_PRO_TEST_SUITE_TOKEN_CHROME_FEATURE_RSPEC
             bundle exec rake "knapsack_pro:queue:rspec[--tag type:feature --format documentation --no-color --format RspecJunitFormatter --out tmp/rspec.xml]"
           environment:
             CASEFLOW_WEBDRIVER: chrome
