@@ -37,6 +37,19 @@ class WorkQueue::AppealSerializer
     end
   end
 
+  attribute :nod_date_updates do |object|
+    object.nod_date_updates.map do |nod_date_update|
+      updated_by = nod_date_update.user
+      {
+        old_date: nod_date_update.old_date,
+        new_date: nod_date_update.new_date,
+        change_reason: nod_date_update.change_reason,
+        closed_at: nod_date_update.updated_at, # alias to sort updates with tasks
+        updated_by: updated_by.full_name
+      }
+    end
+  end
+
   attribute :can_edit_request_issues do |object, params|
     AppealRequestIssuesPolicy.new(user: params[:user], appeal: object).editable?
   end
