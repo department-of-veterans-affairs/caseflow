@@ -32,7 +32,7 @@ class OtherClaimant < Claimant
   def save_unrecognized_details!(params)
     relationship = params.delete(:relationship)
     first_name = params.delete(:first_name)
-    poa_form = params.delete(:poa_form) # Use or save this when intake supports user-supplied POAs
+    params.delete(:poa_form) # Use or save this when intake supports user-supplied POAs
     if params[:party_type] == "individual"
       params[:name] = first_name
       params[:party_type] = "person"

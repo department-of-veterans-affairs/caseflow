@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 ##
-# An attorneys can be a claimant when contesting attorney fees. Note that this class represents only
+# An attorney can be a claimant when contesting attorney fees. Note that this class represents only
 # attorneys with participant IDs in CorpDB, whereas a non-CorpDB attorney is an OtherClaimant.
 
 class AttorneyClaimant < Claimant

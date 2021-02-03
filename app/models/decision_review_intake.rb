@@ -59,8 +59,8 @@ class DecisionReviewIntake < Intake
     # This can be a much cleaner unlisted_claimant hash when schemas allow nested objects.
     Hash[request_params
       .keys
-      .select { |k| k.to_s.start_with?("unlisted_claimant_") }
-      .map { |k| [k.to_s[18..-1].to_sym, request_params[k]] }
+      .select { |key| key.to_s.start_with?("unlisted_claimant_") }
+      .map { |key| [key.to_s[18..-1].to_sym, request_params[key]] }
     ]
   end
 

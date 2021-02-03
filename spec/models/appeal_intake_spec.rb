@@ -210,12 +210,6 @@ describe AppealIntake, :all_dbs do
         let(:claimant_type) { "other" }
         let(:claimant) { nil }
 
-        context "when notes are empty" do
-          it "is invalid" do
-            expect(subject).to_not be_truthy
-          end
-        end
-
         context "when notes are set" do
           let(:claimant_notes) { "foo" }
 
