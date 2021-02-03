@@ -103,7 +103,6 @@ jobs:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
           - NODE_ENV: test
-          - BUNDLE_PATH: vendor/bundle
           - COVERAGE_DIR: /home/circleci/coverage
           - POSTGRES_HOST: localhost
           - POSTGRES_USER: root
@@ -121,6 +120,8 @@ jobs:
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.10
     resource_class: large
+    environment:
+      - BUNDLE_PATH: /home/circleci/project/vendor/bundle
     steps:
       - checkout
 
@@ -170,7 +171,6 @@ jobs:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
           - NODE_ENV: test
-          - BUNDLE_PATH: /home/circleci/project/vendor/bundle
           - COVERAGE_DIR: /home/circleci/coverage
           - POSTGRES_HOST: localhost
           - POSTGRES_USER: root
@@ -189,6 +189,8 @@ jobs:
       - image: circleci/redis:4.0.10
     parallelism: 12
     resource_class: large
+    environment:
+      - BUNDLE_PATH: /home/circleci/project/vendor/bundle
     steps:
       - attach_workspace:
           at: .
@@ -286,7 +288,6 @@ jobs:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
           - NODE_ENV: test
-          - BUNDLE_PATH: /home/circleci/project/vendor/bundle
           - COVERAGE_DIR: /home/circleci/coverage
           - POSTGRES_HOST: localhost
           - POSTGRES_USER: root
@@ -305,6 +306,8 @@ jobs:
       - image: circleci/redis:4.0.10
     parallelism: 12
     resource_class: large
+    environment:
+      - BUNDLE_PATH: /home/circleci/project/vendor/bundle
     steps:
       - attach_workspace:
           at: .
