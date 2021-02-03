@@ -168,6 +168,8 @@
   "CAVC_EXTENSION_REQUEST_DENY_SUCCESS_TITLE": "You have denied extension",
   "CAVC_EXTENSION_REQUEST_DENY_SUCCESS_DETAIL": "This task can be completed to distribute to a judge for further processing",
 
+  "ADD_CAVC_DATES_TITLE": "Add Court dates",
+
   "EDIT_NOD_DATE_MODAL_TITLE": "Edit NOD Date",
   "EDIT_NOD_DATE_MODAL_DESCRIPTION": "**Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.**",
   "EDIT_NOD_DATE_LABEL": "NOD Date",
