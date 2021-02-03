@@ -2165,6 +2165,129 @@ describe LegacyAppeal, :all_dbs do
     end
   end
 
+  fcontext "#hearing_request_type_for_task" do
+    let(:appeal_with_hearing_tasks) do
+      create(
+        :legacy_appeal,
+        :with_schedule_hearing_tasks,
+        vacols_case: vacols_case,
+        veteran_address: veteran_address,
+        appellant_address: appellant_address,
+        changed_request_type: changed_request_type
+      )
+    end
+    let(:current_user) { User.authenticate!(roles: ["Edit HearSched"]) }
+    let(:current_user) { create(:user, roles: ["Edit HearSched"]) }
+    let(:vacols_case) { create(:case, :travel_board_hearing) }
+    let(:hearing_task) { appeal_with_hearing_tasks.tasks.find_by(type: "ScheduleHearingTask") }
+
+    before do
+      HearingsManagement.singleton.add_user(current_user)
+    end
+
+    context "when there's one paper trail event" do
+      let(:requested_change) do
+        {
+          business_payloads: {
+            values: {
+              changed_request_type: HearingDay::REQUEST_TYPES[:virtual],
+              closest_regional_office: "C"
+            }
+          }
+        }
+      end
+
+      before do
+        # this will create the event
+        hearing_task.update_from_params(requested_change, current_user)
+      end
+
+      it "returns changed request type if version is `current`" do
+        expect(ChangeHearingRequestTypeTask.count).to eq(1)
+        change_request_type_task = appeal_with_hearing_tasks.tasks.find_by(type: "ChangeHearingRequestTypeTask")
+        current_type = appeal_with_hearing_tasks.hearing_request_type_for_task(change_request_type_task.id, :current)
+        expect(current_type).to eq(LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:virtual])
+      end
+
+      it "returns the original request type if version is `prev`" do
+        expect(ChangeHearingRequestTypeTask.count).to eq(1)
+        change_request_type_task = appeal_with_hearing_tasks.tasks.find_by(type: "ChangeHearingRequestTypeTask")
+        current_type = appeal_with_hearing_tasks.hearing_request_type_for_task(change_request_type_task.id, :prev)
+        expect(current_type).to eq(LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:travel_board])
+      end
+    end
+
+    context "when there are two paper trail events" do
+      let(:changed_request_type1) { HearingDay::REQUEST_TYPES[:central] }
+      let(:changed_request_type2) { HearingDay::REQUEST_TYPES[:video] }
+      let(:requested_change1) do
+        {
+          status: Constants.TASK_STATUSES.completed,
+          business_payloads: {
+            values: {
+              changed_request_type: changed_request_type1,
+              closest_regional_office: "C"
+            }
+          }
+        }
+      end
+      let(:requested_change2) do
+        {
+          status: Constants.TASK_STATUSES.completed,
+          business_payloads: {
+            values: {
+              changed_request_type: changed_request_type2,
+              closest_regional_office: nil
+            }
+          }
+        }
+      end
+
+      before do
+        # this will create the first event
+        hearing_task.update_from_params(requested_change1, current_user)
+
+        # this will create the second event
+        hearing_task.update_from_params(requested_change2, current_user)
+      end
+
+      it "returns changed request type if version is `current`" do
+        expect(ChangeHearingRequestTypeTask.count).to eq(2)
+        change_request_type_tasks = appeal_with_hearing_tasks.tasks.where(type: "ChangeHearingRequestTypeTask")
+
+        # Set the changed request types
+        first_request_type = appeal_with_hearing_tasks
+          .hearing_request_type_for_task(change_request_type_tasks.first.id, :current)
+        second_request_type = appeal_with_hearing_tasks
+          .hearing_request_type_for_task(change_request_type_tasks.last.id, :current)
+
+        expect(first_request_type).to eq(LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:video])
+        expect(second_request_type).to eq(LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:central])
+      end
+
+      it "returns the original request type if version is `prev`" do
+        expect(ChangeHearingRequestTypeTask.count).to eq(2)
+
+        change_request_type_tasks = appeal_with_hearing_tasks.tasks.where(type: "ChangeHearingRequestTypeTask")
+
+        # Set the changed request types
+        first_request_type = appeal_with_hearing_tasks
+          .hearing_request_type_for_task(change_request_type_tasks.first.id, :prev)
+        second_request_type = appeal_with_hearing_tasks
+          .hearing_request_type_for_task(change_request_type_tasks.last.id, :prev)
+
+        expect(first_request_type).to eq(LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:central])
+        expect(second_request_type).to eq(LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:video])
+      end
+    end
+
+    context "when paper trail event is nil" do
+      let(:vacols_case) { create(:case, :video_hearing_requested, :central_office_hearing) }
+
+      it { expect(appeal_with_hearing_tasks.hearing_request_type_for_task(nil, nil)).to eq(nil) }
+    end
+  end
+
   context "#previous_hearing_request_type" do
     subject { appeal.reload.previous_hearing_request_type }
 

@@ -63,7 +63,9 @@ module HearingRequestTypeConcern
     readable ? LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[formatted_request_type] : formatted_request_type
   end
 
-  def request_type_for_task(id, version)
+  def hearing_request_type_for_task(id, version)
+    return nil if id.nil?
+
     request_type_index = tasks.where(type: "ChangeHearingRequestTypeTask").order(:created_at).map(&:id).index(id)
 
     diff = TaskEvent.new(version: versions[request_type_index]).diff["changed_request_type"]
