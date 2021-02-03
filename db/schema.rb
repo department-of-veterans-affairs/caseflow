@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_15_212305) do
+ActiveRecord::Schema.define(version: 2021_01_26_194054) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1507,6 +1507,7 @@ ActiveRecord::Schema.define(version: 2021_01_15_212305) do
     t.string "closest_regional_office"
     t.datetime "created_at"
     t.date "date_of_death", comment: "Date of Death reported by BGS, cached locally"
+    t.datetime "date_of_death_reported_at", comment: "The datetime that date_of_death last changed for veteran."
     t.string "file_number", null: false
     t.string "first_name"
     t.string "last_name"

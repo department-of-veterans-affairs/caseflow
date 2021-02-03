@@ -1,5 +1,5 @@
 import React from 'react';
-import { DocketSwitchAddTaskForm } from './DocketSwitchAddTaskForm';
+import { DocketSwitchEditTasksForm } from './DocketSwitchEditTasksForm';
 
 const tasks = [
   { taskId: 1, appealId: 1, type: 'TaskTypeA', label: 'Task Type A' },
@@ -8,8 +8,8 @@ const tasks = [
 ];
 
 export default {
-  title: 'Queue/Docket Switch/DocketSwitchAddTaskForm',
-  component: DocketSwitchAddTaskForm,
+  title: 'Queue/Docket Switch/DocketSwitchEditTasksForm',
+  component: DocketSwitchEditTasksForm,
   decorators: [
     // AppSegment styling relies on being inside a .cf-content-inside element
     (storyFn) => <div className="cf-content-inside">{storyFn()}</div>,
@@ -18,19 +18,23 @@ export default {
   args: {
     appellantName: 'Jane Doe',
     taskListing: tasks,
-    docketFrom: 'Direct Review',
-    docketTo: 'Hearings',
+    docketFrom: 'direct_review',
+    docketTo: 'hearing',
   },
   argTypes: {
     onBack: { action: 'back' },
     onCancel: { action: 'cancel' },
     onSubmit: { action: 'submit' },
     type: {
-      control: { type: 'select', options: ['Task Type A', 'Task Type B', 'Task Type C'] },
+      control: {
+        type: 'select',
+        options: ['Task Type A', 'Task Type B', 'Task Type C'],
+      },
     },
   },
 };
-const Template = (args) => <DocketSwitchAddTaskForm {...args} />;
+const Template = (args) => <DocketSwitchEditTasksForm {...args} />;
+
 export const Basic = Template.bind({});
 Basic.parameters = {
   docs: {

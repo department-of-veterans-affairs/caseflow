@@ -44,7 +44,6 @@ describe MdrTask, :postgres do
     end
   end
 
-  SendCRPLetterTask = SendCavcRemandProcessedLetterTask
   describe "#available_actions" do
     let!(:mdr_task) { MdrTask.create_with_hold(create(:cavc_task)) }
 
