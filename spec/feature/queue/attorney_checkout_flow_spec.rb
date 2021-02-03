@@ -614,7 +614,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         expect(page.has_no_content?(COPY::FORM_ERROR_FIELD_INVALID)).to eq(true)
 
         dummy_note = generate_words 100
-        fill_in "notes", with: dummy_note
+        fill_in "notes", with: dummy_note, fill_options: { clear: :backspace }
         expect(page).to have_content(dummy_note[0..349])
 
         safe_click("#select-judge")
