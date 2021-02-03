@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class VirtualHearingRepository
+  class TooManyVacolsIdsPassed < StandardError; end
+
   class << self
     # Get all virtual hearings that can have their conference deleted.
     def ready_for_deletion
@@ -101,7 +103,14 @@ class VirtualHearingRepository
         .joins("INNER JOIN hearing_days ON hearing_days.id = #{table}.hearing_day_id")
     end
 
+    # Accepts a list of legacy hearing VACOLS ids, and queries VACOLS to return the
+    # subset that are associated with legacy hearings with "postponed" or "cancelled"
+    # status.
+    #
+    # @note Cannot accept more than 1000 ids due to a limit in the VACOLS database.
     def vacols_select_postponed_or_cancelled(vacols_ids = [])
+      fail TooManyVacolsIdsPassed if vacols_ids.length > 1000
+
       VACOLS::CaseHearing.by_dispositions(
         [
           VACOLS::CaseHearing::HEARING_DISPOSITIONS.key("postponed"),
