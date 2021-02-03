@@ -39,7 +39,7 @@ const AddCavcDatesModal = ({ appealId, error, highlightInvalid, history }) => {
       data: {
         judgement_date: judgementDate,
         mandate_date: mandateDate,
-        source_appeal_id: appealId,
+        remand_appeal_id: appealId,
         instructions
       }
     };
