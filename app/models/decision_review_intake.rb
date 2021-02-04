@@ -49,19 +49,9 @@ class DecisionReviewIntake < Intake
       notes: request_params[:claimant_notes]
     )
     if FeatureToggle.enabled?(:non_veteran_claimants, user: user) && claimant.is_a?(OtherClaimant)
-      claimant.save_unrecognized_details!(unlisted_claimant_params)
+      claimant.save_unrecognized_details!(request_params[:unlisted_claimant])
     end
     update_person!
-  end
-
-  def unlisted_claimant_params
-    # Remove unwieldy unlisted_claimant_ prefix from params and return as a separate hash.
-    # This can be a much cleaner unlisted_claimant hash when schemas allow nested objects.
-    Hash[request_params
-      .keys
-      .select { |key| key.to_s.start_with?("unlisted_claimant_") }
-      .map { |key| [key.to_s[18..-1].to_sym, request_params[key]] }
-    ]
   end
 
   # :nocov:

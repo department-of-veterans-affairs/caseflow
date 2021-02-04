@@ -30,6 +30,7 @@ class OtherClaimant < Claimant
   end
 
   def save_unrecognized_details!(params)
+    params.permit!
     relationship = params.delete(:relationship)
     first_name = params.delete(:first_name)
     params.delete(:poa_form) # Use or save this when intake supports user-supplied POAs

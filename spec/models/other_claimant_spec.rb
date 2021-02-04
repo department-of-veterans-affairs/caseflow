@@ -5,7 +5,7 @@ describe OtherClaimant, :postgres do
 
   describe "#save_unrecognized_details!" do
     let(:params) do
-      {
+      ActionController::Parameters.new(
         relationship: relationship,
         party_type: party_type,
         address_line_1: "1600 Pennsylvania Ave",
@@ -14,7 +14,7 @@ describe OtherClaimant, :postgres do
         zip: "12345",
         country: "USA",
         poa_form: false
-      }
+      )
     end
 
     subject { claimant.save_unrecognized_details!(params) }

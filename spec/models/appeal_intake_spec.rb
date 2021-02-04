@@ -130,16 +130,18 @@ describe AppealIntake, :all_dbs do
           claimant_type: "other",
           payee_code: payee_code,
           legacy_opt_in_approved: legacy_opt_in_approved,
-          unlisted_claimant_relationship: "child",
-          unlisted_claimant_party_type: "individual",
-          unlisted_claimant_first_name: "John",
-          unlisted_claimant_last_name: "Smith",
-          unlisted_claimant_address_line_1: "1600 Pennsylvania Ave",
-          unlisted_claimant_city: "Springfield",
-          unlisted_claimant_state: "NY",
-          unlisted_claimant_zip: "12345",
-          unlisted_claimant_country: "USA",
-          unlisted_claimant_poa_form: false
+          unlisted_claimant: {
+            relationship: "child",
+            party_type: "individual",
+            first_name: "John",
+            last_name: "Smith",
+            address_line_1: "1600 Pennsylvania Ave",
+            city: "Springfield",
+            state: "NY",
+            zip: "12345",
+            country: "USA",
+            poa_form: false
+          }
         )
       end
 
