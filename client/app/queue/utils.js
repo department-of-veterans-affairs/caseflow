@@ -620,15 +620,15 @@ export const nullToFalse = (key, obj) => {
   return obj;
 };
 
-export const sortCaseTimelineEntries = (taskList, nodDateUpdates) => {
-  const timelineEntries = [...taskList, ...nodDateUpdates];
+export const sortCaseTimelineEvents = (taskList, nodDateUpdates) => {
+  const timelineEvents = [...taskList, ...nodDateUpdates];
 
-  const sortedTimelineEntries = timelineEntries.sort((prev, next) => {
+  const sortedTimelineEvents = timelineEvents.sort((prev, next) => {
     return new Date(next.closedAt || next.createdAt).getTime() -
            new Date(prev.closedAt || prev.createdAt).getTime();
   });
 
-  return sortedTimelineEntries;
+  return sortedTimelineEvents;
 };
 
 export const regionalOfficeCity = (objWithLocation, defaultToUnknown) => {

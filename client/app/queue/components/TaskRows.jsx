@@ -6,7 +6,7 @@ import Button from '../../components/Button';
 import COPY from '../../../COPY';
 import { GrayDot, GreenCheckmark, CancelIcon } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
-import { taskIsOnHold, sortCaseTimelineEntries } from '../utils';
+import { taskIsOnHold, sortCaseTimelineEvents } from '../utils';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import ActionsDropdown from '../components/ActionsDropdown';
 import OnHoldLabel from '../components/OnHoldLabel';
@@ -337,29 +337,29 @@ class TaskRows extends React.PureComponent {
     } = this.props;
     const nodDateUpdates = appeal.nodDateUpdates;
 
-    const sortedTimelineEvents = sortCaseTimelineEntries(taskList, nodDateUpdates);
+    const sortedTimelineEvents = sortCaseTimelineEvents(taskList, nodDateUpdates);
 
     return <React.Fragment key={appeal.externalId}>
 
-      { sortedTimelineEvents.map((timelineEntry, index) => {
+      { sortedTimelineEvents.map((timelineEvent, index) => {
         const templateConfig = {
-          task: timelineEntry,
+          task: timelineEvent,
           index,
           timeline,
           sortedTimelineEvents,
           appeal
         };
 
-        if (timelineEntry.isDecisionDate) {
+        if (timelineEvent.isDecisionDate) {
           return <DecisionDateTimeLine
             appeal = {appeal}
             timeline = {timeline}
             taskList = {taskList} />;
         }
 
-        if (timelineEntry.changeReason) {
+        if (timelineEvent.changeReason) {
           return <NodDateUpdateTimeline
-            nodDateUpdate = {timelineEntry}
+            nodDateUpdate = {timelineEvent}
             timeline = {timeline}
           />;
         }
