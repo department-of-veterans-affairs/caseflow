@@ -478,17 +478,17 @@ workflows:
   version: 2
   build:
     jobs:
-      #- build_workspace
-      #- demo
-      #- rspec:
-      #    requires:
-      #      - build_workspace
-      #- rspec_feature_tests_chrome:
-      #    requires:
-      #      - build_workspace
-      #    filters:
-      #      branches:
-      #        ignore:
-      #          - master
-      #- js_tests
+      - build_workspace
+      - demo
+      - rspec:
+          requires:
+            - build_workspace
+      - rspec_feature_tests_chrome:
+          requires:
+            - build_workspace
+          filters:
+            branches:
+              ignore:
+                - master
+      - js_tests
       - lint
