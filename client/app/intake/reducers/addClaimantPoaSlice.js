@@ -28,8 +28,6 @@ const addClaimantPoaSlice = createSlice({
   },
 });
 
-console.log(addClaimantPoaSlice)
-
 export const {
   cancel,
   addClaimant
