@@ -20,8 +20,12 @@ commands:
           command: ls ~/project/vendor/bundle
 
       - run:
+          name: Print Bundle path
+          command: echo $BUNDLE_PATH
+
+      - run:
           name: Bundle install
-          command: bundle install --deployment
+          command: bundle install
 
       - save_cache:
           key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
@@ -391,6 +395,8 @@ jobs:
       - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:test
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
+    environment:
+      - BUNDLE_PATH: /home/circleci/project/vendor/bundle
     steps:
       - checkout
 
@@ -480,17 +486,17 @@ workflows:
   version: 2
   build:
     jobs:
-      - build_workspace
-      - demo
-      - rspec:
-          requires:
-            - build_workspace
-      - rspec_feature_tests_chrome:
-          requires:
-            - build_workspace
-          filters:
-            branches:
-              ignore:
-                - master
-      - js_tests
+      #- build_workspace
+      #- demo
+      #- rspec:
+      #    requires:
+      #      - build_workspace
+      #- rspec_feature_tests_chrome:
+      #    requires:
+      #      - build_workspace
+      #    filters:
+      #      branches:
+      #        ignore:
+      #          - master
+      #- js_tests
       - lint
