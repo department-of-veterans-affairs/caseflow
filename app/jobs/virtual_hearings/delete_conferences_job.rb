@@ -36,7 +36,7 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
     ensure_current_user_is_set
     @exception_list = {} # reset on every perform
 
-    VirtualHearingRepository.cancelled_hearings_with_pending_emails.each do |virtual_hearing|
+    VirtualHearingRepository.cancelled_with_pending_emails.each do |virtual_hearing|
       log_virtual_hearing_state(virtual_hearing)
 
       Rails.logger.info("Sending cancellation emails to recipients for hearing (#{virtual_hearing.hearing_id})")
