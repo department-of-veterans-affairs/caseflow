@@ -11,19 +11,22 @@ commands:
           name: Ruby version
           command: ruby -v
 
-      - run: bundle clean --force
       - restore_cache:
           keys:
             - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
 
       - run:
+          name: Check Bundle cache
+          command: ls ~/vendor/bundle
+
+      - run:
           name: Bundle install
-          command: bundle install
+          command: bundle install --deployment
 
       - save_cache:
-          paths:
-            - ~/.bundle
           key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ~/project/vendor/bundle
 
   install_node_dependencies:
     description: "Install NodeJS Dependencies"
