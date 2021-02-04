@@ -63,6 +63,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   # Using "pure_judge" terminology from VACOLS::Staff
+  # This implementation relies on UserRepository#roles_based_on_staff_fields return values
   def pure_judge_in_vacols?
     vacols_roles.first == "judge"
   end
