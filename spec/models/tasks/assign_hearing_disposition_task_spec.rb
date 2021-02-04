@@ -42,7 +42,7 @@ describe AssignHearingDispositionTask, :all_dbs do
 
         expect(hearing_class.count).to eq 1
         expect(hearing.disposition).to eq disposition
-        if (disposition == Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error)
+        if disposition == Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
           expect(hearing.notes).to eq hearing_notes
         end
         expect(HearingTask.count).to eq 2
@@ -124,7 +124,7 @@ describe AssignHearingDispositionTask, :all_dbs do
             # does not create the hearing
             expect(hearing_class.count).to eq(1)
             expect(AssignHearingDispositionTask.count).to eq(1)
-            expect(hearing.reload.disposition).not_to eq disposition
+            expect(hearing_class.first.disposition).not_to eq disposition
           end
         end
       end
