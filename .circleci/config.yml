@@ -31,6 +31,10 @@ commands:
           name: Bundle install
           command: bundle install
 
+      - run:
+          name: Check Bundle cache 2
+          command: ls $BUNDLE_PATH/ruby
+
       - save_cache:
           key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
           paths:
