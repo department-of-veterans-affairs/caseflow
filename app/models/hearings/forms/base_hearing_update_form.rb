@@ -176,7 +176,7 @@ class BaseHearingUpdateForm
 
   # also returns false if the judge id is present or true if the virtual hearing is being cancelled
   def judge_email_sent_flag
-    should_send_email = updates_requiring_email ||
+    should_send_email = updates_requiring_email? ||
                         judge_id.present? ||
                         virtual_hearing_attributes&.key?(:judge_email)
 
