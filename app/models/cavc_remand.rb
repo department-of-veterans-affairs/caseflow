@@ -53,7 +53,7 @@ class CavcRemand < CaseflowRecord
   end
 
   def establish_appeal_stream
-    self.remand_appeal = source_appeal.create_stream(:court_remand).tap do |cavc_appeal|
+    self.remand_appeal ||= source_appeal.create_stream(:court_remand).tap do |cavc_appeal|
       DecisionIssue.find(decision_issue_ids).map do |cavc_remanded_issue|
         cavc_remanded_issue.create_contesting_request_issue!(cavc_appeal)
       end
