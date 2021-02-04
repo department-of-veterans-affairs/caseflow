@@ -16,16 +16,8 @@ commands:
             - vendor-bundle-v3-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
 
       - run:
-          name: Check Bundle cache
-          command: ls $BUNDLE_PATH/ruby
-
-      - run:
           name: Print Bundle path
           command: echo $BUNDLE_PATH
-
-      - run:
-          name: Set Bundle path
-          command: bundle config --local path $BUNDLE_PATH
 
       - run: bundle show
       - run: bundle env
@@ -41,7 +33,7 @@ commands:
       - save_cache:
           key: vendor-bundle-v3-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
           paths:
-            - ~$BUNDLE_PATH
+            - $BUNDLE_PATH
 
   install_node_dependencies:
     description: "Install NodeJS Dependencies"
