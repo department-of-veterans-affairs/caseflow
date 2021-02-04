@@ -13,28 +13,16 @@ commands:
 
       - restore_cache:
           keys:
-            - vendor-bundle-v3-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
-
-      - run:
-          name: Print Bundle path
-          command: echo $BUNDLE_PATH
-
-      - run: bundle env
+            - vendor-bundle-v4-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
 
       - run:
           name: Bundle install
           command: bundle install
 
-      - run: bundle list
-
-      - run:
-          name: Check Bundle cache 2
-          command: ls $BUNDLE_PATH/ruby
-
       - save_cache:
-          key: vendor-bundle-v3-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+          key: vendor-bundle-v4-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
           paths:
-            - $BUNDLE_PATH
+            - /home/circleci/project/vendor/bundle # Should match $BUNDLE_PATH
 
   install_node_dependencies:
     description: "Install NodeJS Dependencies"
