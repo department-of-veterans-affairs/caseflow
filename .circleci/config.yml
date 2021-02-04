@@ -488,6 +488,7 @@ workflows:
             - build_workspace
           filters:
             branches:
-              - master
+              only:
+                - master
       - js_tests
       - lint
