@@ -374,7 +374,7 @@ describe AssignHearingDispositionTask, :all_dbs do
         end
       end
 
-      describe "hearing disposition of held", focus: true do
+      describe "hearing disposition of held" do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.held }
         include_context "params"
 
