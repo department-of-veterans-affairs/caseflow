@@ -324,7 +324,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
     let(:name_suffix) { "II" }
     let(:date_of_death) { nil }
-    let!(:veterans_refreshed) {Array([veteran.file_number])}
+    let!(:veterans_refreshed) { Array([veteran.file_number]) }
 
     subject { job.slack_report }
 

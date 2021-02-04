@@ -158,7 +158,6 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     veterans_refreshed = Veteran.warm_veteran_cache_for_appeals(non_genpop_distro_case_ids)
     genpop_distro_case_ids = DistributedCase.where(distribution_id: @genpop_distributions.pluck(:id)).pluck(:case_id)
     (veterans_refreshed + Veteran.warm_veteran_cache_for_appeals(genpop_distro_case_ids)).uniq
-    veterans_refreshed
     datadog_report_time_segment(segment: datadog_segment, start_time: start_time)
   end
 end
