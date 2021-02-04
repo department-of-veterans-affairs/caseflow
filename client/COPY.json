@@ -138,7 +138,7 @@
   "CAVC_JUDGE_LABEL": "What is the CAVC judge's name?",
   "CAVC_JUDGE_ERROR": "Please select a judge. Contact support if the judge is not listed below.",
   "CAVC_TYPE_LABEL": "How are you proceeding?",
-  "CAVC_DEATH_DISMISSAL_DESC": "E.g., if the veteran has passed away with no substitution",
+  "CAVC_DEATH_DISMISSAL_DESC": "e.g., if the veteran has passed away with no substitution",
   "CAVC_SUB_TYPE_LABEL": "What type of remand is this?",
   "CAVC_COURT_DECISION_DATE": "What is the Court's decision date?",
   "CAVC_DECISION_DATE_ERROR": "Please select the date of the court's decision",

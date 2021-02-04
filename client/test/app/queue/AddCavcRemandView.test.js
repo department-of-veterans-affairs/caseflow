@@ -47,15 +47,6 @@ describe('AddCavcRemandView', () => {
     expect(cavcForm.find('#sub-type-options_jmr').length).toBe(0);
   });
 
-  // it('hides mandate and judgement dates if remand subtype is "mdr"', () => {
-  //   const cavcForm = setup({ appealId, mdrToggled: true });
-  //
-  //   cavcForm.find('#sub-type-options_mdr').simulate('change', { target: { checked: true } });
-  //   // Checking 'MDR' should remove these, and does in browser, but gets '1' here:
-  //   expect(cavcForm.find('#judgement-date').length).toBe(0);
-  //   expect(cavcForm.find('#mandate-date').length).toBe(0);
-  // });
-
   it('selects all issues on page load', () => {
     const descisionIssues = amaAppeal.decisionIssues;
     const cavcForm = setup({ appealId });
