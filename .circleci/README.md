@@ -18,6 +18,12 @@
 
 The main custom container is build in `ci-bin/circle_docker_container/`. It uses one of the base CircleCI containers with Ruby installed, and also adds Oracle instant client, PDFtk, and Microsoft Edge.
 
+## Secrets
+
+Global secrets (API keys, etc...) are configured on CircleCI's website and show up as environment variables. **DO NOT store secrets in the `config.yml` file as they'd be exposed to the public.**
+
+See: https://app.circleci.com/settings/project/github/department-of-veterans-affairs/caseflow/environment-variables
+
 ## Metrics
 
   - [Build time and success rate across all branches](https://app.datadoghq.com/dashboard/f3a-zr4-v3v/circle-c-i)
