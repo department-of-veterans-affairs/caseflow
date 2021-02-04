@@ -926,7 +926,6 @@ RSpec.feature "Case details", :all_dbs do
       it "should sort tasks and nod date updates properly" do
         visit "/queue/appeals/#{appeal.uuid}"
         case_timeline_rows = page.find_all("table#case-timeline-table tbody tr")
-        puts(case_timeline_rows)
         first_row_with_date = case_timeline_rows[1]
         second_row_with_date = case_timeline_rows[2]
         third_row_with_date = case_timeline_rows[3]
