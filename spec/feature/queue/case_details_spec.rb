@@ -930,11 +930,11 @@ RSpec.feature "Case details", :all_dbs do
         first_row_with_date = case_timeline_rows[1]
         second_row_with_date = case_timeline_rows[2]
         third_row_with_date = case_timeline_rows[3]
-        foruth_row_with_date = case_timeline_rows[4]
+        fourth_row_with_date = case_timeline_rows[4]
         expect(first_row_with_date).to have_content("01/01/2020")
         expect(second_row_with_date).to have_content("03/01/2019")
         expect(third_row_with_date).to have_content("02/01/2019")
-        expect(foruth_row_with_date).to have_content("01/05/2019")
+        expect(fourth_row_with_date).to have_content("01/05/2019")
       end
 
       it "should NOT display judge & attorney tasks" do
