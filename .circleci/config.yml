@@ -19,12 +19,13 @@ commands:
           name: Print Bundle path
           command: echo $BUNDLE_PATH
 
-      - run: bundle show
       - run: bundle env
 
       - run:
           name: Bundle install
           command: bundle install
+
+      - run: bundle list
 
       - run:
           name: Check Bundle cache 2
