@@ -62,6 +62,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     vacols_roles.include?("attorney")
   end
 
+  # Using "pure_judge" terminology from VACOLS::Staff
+  def pure_judge_in_vacols?
+    vacols_roles.first == "judge"
+  end
+
   def judge_in_vacols?
     vacols_roles.include?("judge")
   end
