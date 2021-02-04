@@ -7,9 +7,6 @@ require "webdrivers"
 
 Webdrivers.logger.level = :DEBUG if ENV["DEBUG"]
 
-# Pinned Edge version. Most recent version (88.0.705.0) seems to be deleted.
-Webdrivers::Edgedriver.required_version   = "88.0.702.0"
-
 Sniffybara::Driver.run_configuration_file = File.expand_path("VA-axe-run-configuration.json", __dir__)
 
 download_directory = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
