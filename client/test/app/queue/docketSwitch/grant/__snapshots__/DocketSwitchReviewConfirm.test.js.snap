@@ -34,7 +34,7 @@ exports[`DocketSwitchReviewConfirm renders correctly 1`] = `
             VA Form - 10182 Receipt Date
           </td>
           <td>
-            1/3/2021
+            1/1/2021
           </td>
         </tr>
         <tr>
@@ -42,7 +42,7 @@ exports[`DocketSwitchReviewConfirm renders correctly 1`] = `
             Docket Switch Receipt Date
           </td>
           <td>
-            1/26/2021
+            1/24/2021
           </td>
         </tr>
         <tr>
@@ -243,7 +243,7 @@ exports[`DocketSwitchReviewConfirm with alternate claimant renders the claimant 
             VA Form - 10182 Receipt Date
           </td>
           <td>
-            1/3/2021
+            1/1/2021
           </td>
         </tr>
         <tr>
@@ -251,7 +251,7 @@ exports[`DocketSwitchReviewConfirm with alternate claimant renders the claimant 
             Docket Switch Receipt Date
           </td>
           <td>
-            1/26/2021
+            1/24/2021
           </td>
         </tr>
         <tr>

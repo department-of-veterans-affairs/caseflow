@@ -1,15 +1,12 @@
 import React from 'react';
-import { render, screen, within, act } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import selectEvent from 'react-select-event';
 import { sub } from 'date-fns';
 import { DocketSwitchReviewConfirm } from 'app/queue/docketSwitch/grant/DocketSwitchReviewConfirm';
 import {
   DOCKET_SWITCH_GRANTED_CONFIRM_TITLE,
-  DOCKET_SWITCH_GRANTED_CONFIRM_DESCRIPTION_A,
   DOCKET_SWITCH_GRANTED_CONFIRM_DESCRIPTION_B,
 } from 'app/../COPY';
-import { sprintf } from 'sprintf-js';
 
 describe('DocketSwitchReviewConfirm', () => {
   const onSubmit = jest.fn();
@@ -76,8 +73,8 @@ describe('DocketSwitchReviewConfirm', () => {
     onBack,
     onCancel,
     onSubmit,
-    originalReceiptDate: sub(new Date(), { days: 30 }),
-    docketSwitchReceiptDate: sub(new Date(), { days: 7 }),
+    originalReceiptDate: sub(new Date('2021-02-01'), { days: 30 }),
+    docketSwitchReceiptDate: sub(new Date('2021-02-01'), { days: 7 }),
     issuesSwitched: issues,
     tasksKept: tasks,
     veteranName: 'Foo Bar',
