@@ -11,6 +11,7 @@ commands:
           name: Ruby version
           command: ruby -v
 
+      - run: bundle clean --force
       - restore_cache:
           keys:
             - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
@@ -20,9 +21,9 @@ commands:
           command: bundle install
 
       - save_cache:
-          key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
           paths:
-            - ~/project/vendor/bundle
+            - ~/.bundle
+          key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
 
   install_node_dependencies:
     description: "Install NodeJS Dependencies"
@@ -120,8 +121,6 @@ jobs:
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.10
     resource_class: large
-    environment:
-      - BUNDLE_PATH: /home/circleci/project/vendor/bundle
     steps:
       - checkout
 
@@ -189,8 +188,6 @@ jobs:
       - image: circleci/redis:4.0.10
     parallelism: 12
     resource_class: large
-    environment:
-      - BUNDLE_PATH: /home/circleci/project/vendor/bundle
     steps:
       - attach_workspace:
           at: .
@@ -306,8 +303,6 @@ jobs:
       - image: circleci/redis:4.0.10
     parallelism: 12
     resource_class: large
-    environment:
-      - BUNDLE_PATH: /home/circleci/project/vendor/bundle
     steps:
       - attach_workspace:
           at: .
