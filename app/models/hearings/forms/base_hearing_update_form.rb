@@ -152,14 +152,12 @@ class BaseHearingUpdateForm
 
   # Send appellant email if cancelling, updating time or updating either appellant email or appellant timezone
   def appellant_email_sent_flag
-    # Note: Don't set flag if hearing disposition is cancelled or postponed
-    return true if hearing.postponed_or_cancelled?
-
     should_send_email = updates_requiring_email? ||
                         virtual_hearing_attributes&.key?(:appellant_email) ||
                         virtual_hearing_attributes&.key?(:appellant_tz)
 
-    !should_send_email
+    # Note: Don't set flag if hearing disposition is cancelled or postponed
+    !should_send_email || hearing.postponed_or_cancelled?
   end
 
   def representative_email
@@ -168,20 +166,22 @@ class BaseHearingUpdateForm
 
   # Send rep email if cancelling, updating time or updating either rep email or rep timezone
   def representative_email_sent_flag
-    # Note: Don't set flag if hearing disposition is cancelled or postponed
-    return true if hearing.postponed_or_cancelled? && representative_email.present?
-
     should_send_email = updates_requiring_email? ||
                         representative_email.present? ||
                         virtual_hearing_attributes&.key?(:representative_tz)
 
-    !should_send_email
+    # Note: Don't set flag if hearing disposition is cancelled or postponed
+    !should_send_email || hearing.postponed_or_cancelled?
   end
 
   # also returns false if the judge id is present or true if the virtual hearing is being cancelled
   def judge_email_sent_flag
-    flag = !(updates_requiring_email? || virtual_hearing_attributes&.key?(:judge_email) || judge_id.present?)
-    flag || virtual_hearing_cancelled?
+    should_send_email = updates_requiring_email ||
+                        judge_id.present? ||
+                        virtual_hearing_attributes&.key?(:judge_email)
+
+    # Note: Don't set flag if hearing disposition is cancelled or postponed
+    !should_send_email || virtual_hearing_cancelled? || hearing.postponed_or_cancelled?
   end
 
   def virtual_hearing_cancelled?
