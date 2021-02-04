@@ -14,6 +14,10 @@
 | rspec           | Runs `rspec` tests |
 | js_tests        | Runs `jest` and `karma` frontend tests |
 
+## Custom Container
+
+The main custom container is build in `ci-bin/circle_docker_container/`. It uses one of the base CircleCI containers with Ruby installed, and also adds Oracle instant client, PDFtk, and Microsoft Edge.
+
 ## Metrics
 
   - [Build time and success rate across all branches](https://app.datadoghq.com/dashboard/f3a-zr4-v3v/circle-c-i)
