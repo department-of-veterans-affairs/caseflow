@@ -3,7 +3,6 @@
 FactoryBot.define do
   factory :legacy_hearing do
     transient do
-      vacols_case { nil }
       regional_office { nil }
       disposition { nil }
       notes { nil }
@@ -80,7 +79,7 @@ FactoryBot.define do
           vdkey: hearing_day.id,
           hearing_disp: disposition,
           notes1: HearingMapper.notes_to_vacols_format(notes),
-          folder_nr: vacols_case&.bfkey
+          folder_nr: appeal&.vacols_id
         )
       end
     end

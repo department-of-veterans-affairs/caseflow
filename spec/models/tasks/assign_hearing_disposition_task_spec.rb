@@ -78,7 +78,7 @@ describe AssignHearingDispositionTask, :all_dbs do
 
         expect(hearing_class.count).to eq 2
         expect(hearing.disposition).to eq disposition
-        if (disposition == Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error)
+        if disposition == Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
           expect(hearing.notes).to eq hearing_notes
         end
         expect(hearing_class.last.hearing_location.facility_id).to eq "vba_370"
@@ -374,7 +374,7 @@ describe AssignHearingDispositionTask, :all_dbs do
         end
       end
 
-      describe "hearing disposition of held" do
+      describe "hearing disposition of held", focus: true do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.held }
         include_context "params"
 
@@ -459,7 +459,7 @@ describe AssignHearingDispositionTask, :all_dbs do
     subject do
       disposition_task.send(
         :update_hearing,
-        { disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled }
+        disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled
       )
     end
 

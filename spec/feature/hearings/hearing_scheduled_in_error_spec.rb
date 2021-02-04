@@ -54,7 +54,7 @@ RSpec.feature "Remove hearing scheduled in error" do
     end
   end
 
-  def fill_preliminary_reschedule_form(virtual=false)
+  def fill_preliminary_reschedule_form(virtual = false)
     visit "/queue/appeals/#{appeal.external_id}"
 
     click_dropdown(text: Constants.TASK_ACTIONS.REMOVE_HEARING_SCHEDULED_IN_ERROR.to_h[:label])
@@ -204,6 +204,7 @@ RSpec.feature "Remove hearing scheduled in error" do
     let!(:hearing) do
       create(
         :legacy_hearing,
+        :for_vacols_case,
         appeal: appeal,
         regional_office: regional_office,
         hearing_day: video_hearing_day,
