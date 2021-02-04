@@ -92,7 +92,7 @@ describe HearingTaskTreeInitializer do
         :case,
         bfcurloc: "57",
         bfhr: "1",
-        case_hearings: [create(:case_hearing, hearing_disp: "H")]
+        case_hearings: [create(:case_hearing, hearing_disp: VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:held])]
       )
     end
     let!(:case_with_open_hearing) do
@@ -108,7 +108,11 @@ describe HearingTaskTreeInitializer do
         :case,
         bfcurloc: "57",
         bfhr: "1",
-        case_hearings: create_list(:case_hearing, 2, hearing_disp: "H")
+        case_hearings: create_list(
+          :case_hearing,
+          2,
+          hearing_disp: VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:held]
+        )
       )
     end
     let!(:case_with_two_open_hearings) do

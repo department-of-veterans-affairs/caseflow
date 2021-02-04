@@ -802,7 +802,7 @@ class AppealRepository
       # Only scheduled hearings need to be closed
       case_record.case_hearings.where(clsdate: nil, hearing_disp: nil).update_all(
         clsdate: VacolsHelper.local_time_with_utc_timezone,
-        hearing_disp: "C"
+        hearing_disp: VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:cancelled]
       )
     end
 
