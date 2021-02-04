@@ -13,7 +13,7 @@ commands:
 
       - restore_cache:
           keys:
-            - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+            - vendor-bundle-v3-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
 
       - run:
           name: Check Bundle cache
@@ -27,6 +27,9 @@ commands:
           name: Set Bundle path
           command: bundle config --local path $BUNDLE_PATH
 
+      - run: bundle show
+      - run: bundle env
+
       - run:
           name: Bundle install
           command: bundle install
@@ -36,7 +39,7 @@ commands:
           command: ls $BUNDLE_PATH/ruby
 
       - save_cache:
-          key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+          key: vendor-bundle-v3-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~$BUNDLE_PATH
 
