@@ -3,6 +3,7 @@
 FactoryBot.define do
   factory :legacy_hearing do
     transient do
+      vacols_case { nil }
       regional_office { nil }
       disposition { nil }
       notes { nil }
@@ -22,7 +23,6 @@ FactoryBot.define do
     scheduled_for { hearing_day&.scheduled_for }
 
     transient do
-      vacols_case { VACOLS::Case.find_by(bfkey: appeal.vacols_id) }
       case_hearing do
         create(
           :case_hearing,
@@ -30,9 +30,7 @@ FactoryBot.define do
           hearing_type: hearing_day.request_type,
           hearing_date: VacolsHelper.format_datetime_with_utc_timezone(scheduled_for),
           vdkey: hearing_day.id,
-          hearing_disp: disposition,
-          notes1: HearingMapper.notes_to_vacols_format(notes),
-          folder_nr: vacols_case&.bfkey
+          hearing_disp: disposition
         )
       end
     end
@@ -68,6 +66,21 @@ FactoryBot.define do
           :assign_hearing_disposition_task,
           parent: hearing.hearing_task_association.hearing_task,
           appeal: hearing.appeal
+        )
+      end
+    end
+
+    trait :for_vacols_case do
+      case_hearing do
+        create(
+          :case_hearing,
+          user: user,
+          hearing_type: hearing_day.request_type,
+          hearing_date: VacolsHelper.format_datetime_with_utc_timezone(scheduled_for),
+          vdkey: hearing_day.id,
+          hearing_disp: disposition,
+          notes1: HearingMapper.notes_to_vacols_format(notes),
+          folder_nr: vacols_case&.bfkey
         )
       end
     end
