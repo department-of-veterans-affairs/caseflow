@@ -398,7 +398,7 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       expect(page).to have_content COPY::DOCKET_SWITCH_GRANTED_CONFIRM_TITLE
       expect(page).to have_content format(
-        COPY::DOCKET_SWITCH_GRANTED_CONFIRM_DESCRIPTION_A, 
+        COPY::DOCKET_SWITCH_GRANTED_CONFIRM_DESCRIPTION_A,
         old_task_type,
         new_task_type,
         old_task_type,
@@ -412,7 +412,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(page).to have_content "Issues switched to new docket"
 
       expect(page).to have_button("Confirm docket switch", disabled: false)
-      
+
       click_button(text: "Confirm docket switch")
       # Add checks for post-submit
     end

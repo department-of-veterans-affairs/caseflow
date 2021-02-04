@@ -39,7 +39,9 @@ export const DocketSwitchReviewConfirmContainer = () => {
     push(`/queue/appeals/${appealId}`);
   };
 
-  const handleSubmit = () => console.log('submit');
+  const handleSubmit = () => {
+    // Make API call, redirect, etc
+  };
 
   //   We need to display more info than just the stored issue IDs
   const [issuesSwitched, issuesRemaining] = useMemo(() => {
