@@ -98,7 +98,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:test
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:edge-latest
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
@@ -164,7 +164,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:test
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:edge_latest
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
@@ -279,7 +279,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:test
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:edge_latest
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
@@ -384,7 +384,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:test
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:edge_latest
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
     environment:
