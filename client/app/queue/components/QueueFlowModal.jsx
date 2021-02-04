@@ -1,9 +1,16 @@
+import React from 'react';
 import FlowModal from '../../components/FlowModal';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import { highlightInvalidFormItems, resetSaveState } from '../uiReducer/uiActions';
+
+const QueueFlowModal = (props) => {
+  return (
+    <FlowModal {...props} />
+  );
+};
 
 const mapStateToProps = (state) => ({
   saveSuccessful: state.ui.saveState.saveSuccessful,
@@ -24,5 +31,5 @@ export default withRouter(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(FlowModal)
+  )(QueueFlowModal)
 );

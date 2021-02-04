@@ -70,8 +70,6 @@ const HearingScheduledInErrorModal = (props) => {
     title: sprintf(COPY.SCHEDULE_LATER_SUCCESS_MESSAGE, appeal?.veteranFullName)
   };
 
-  const ModalProp = props.flowModal;
-
   const submit = () => {
     // Determine whether to redirect to the ful page schedule veteran flow
     if (afterDispositionUpdateAction === ACTIONS.RESCHEDULE) {
@@ -116,7 +114,7 @@ const HearingScheduledInErrorModal = (props) => {
   };
 
   return (
-    <ModalProp
+    <QueueFlowModal
       title={COPY.HEARING_SCHEDULED_IN_ERROR_MODAL_TITLE}
       submit={submit}
       validateForm={() => true}
@@ -139,12 +137,8 @@ const HearingScheduledInErrorModal = (props) => {
         onChange={(notes) => props.setScheduledHearing({ notes })}
         maxlength={1000}
       />
-    </ModalProp>
+    </QueueFlowModal>
   );
-};
-
-HearingScheduledInErrorModal.defaultProps = {
-  flowModal: QueueFlowModal
 };
 
 HearingScheduledInErrorModal.propTypes = {
