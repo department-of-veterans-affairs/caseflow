@@ -142,15 +142,27 @@ const AddCavcRemandView = (props) => {
   const successMsgDetail = () => {
     if (straightReversalType() || deathDismissalType()) {
       if (Boolean(judgementDate) && Boolean(mandateDate)) {
-        return COPY.CAVC_REMAND_READY_FOR_DISTRIBUTION_DETAIL;
+        return COPY.CAVC_REMAND_CASE_READY_FOR_DISTRIBUTION_DETAIL;
       }
 
-      return COPY.CAVC_REMAND_MANDATEHOLD_CREATED_DETAIL;
+      return COPY.CAVC_REMAND_MANDATE_HOLD_CREATED_DETAIL;
     } else if (remandType() && mdrSubtype()) {
       return COPY.CAVC_REMAND_MDR_CREATED_DETAIL;
     }
 
     return COPY.CAVC_REMAND_CREATED_DETAIL;
+  };
+
+  const successMsgTitle = () => {
+    if (straightReversalType() || deathDismissalType()) {
+      if (Boolean(judgementDate) && Boolean(mandateDate)) {
+        return COPY.CAVC_REMAND_CREATED_FOR_DISTRIBUTION_TITLE;
+      }
+
+      return COPY.CAVC_REMAND_CREATED_ON_HOLD_TITLE;
+    }
+
+    return COPY.CAVC_REMAND_CREATED_TITLE;
   };
 
   const submit = () => {
@@ -171,7 +183,7 @@ const AddCavcRemandView = (props) => {
     };
 
     const successMsg = {
-      title: COPY.CAVC_REMAND_CREATED_TITLE,
+      title: successMsgTitle(),
       detail: successMsgDetail()
     };
 
