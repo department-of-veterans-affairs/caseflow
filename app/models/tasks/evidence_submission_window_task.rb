@@ -11,7 +11,7 @@ class EvidenceSubmissionWindowTask < Task
 
   before_validation :set_assignee
 
-  # also called when EvidenceSubmissionWindownTask is manually closed by the user
+  # also called when EvidenceSubmissionWindowTask is manually closed by the user
   def when_timer_ends
     IhpTasksFactory.new(parent).create_ihp_tasks!
     update!(status: :completed)
