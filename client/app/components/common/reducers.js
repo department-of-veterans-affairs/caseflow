@@ -13,9 +13,11 @@ export const initialState = {
   // Used to handle communication between Case Details/ScheduleVeteran
   scheduledHearing: {
     taskId: null,
+    action: null,
     disposition: null,
     externalId: null,
     polling: false,
+    notes: null
   }
 };
 

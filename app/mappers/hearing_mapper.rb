@@ -74,6 +74,13 @@ module HearingMapper
         .in_time_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE)
     end
 
+    def notes_to_vacols_format(value)
+      return if value.nil?
+      fail(InvalidNotesError) if !value.is_a?(String)
+
+      value[0, 1000]
+    end
+
     private
 
     def code_based_on_request_type(type)
@@ -88,13 +95,6 @@ module HearingMapper
       fail(InvalidRepresentativeNameError) if !value.is_a?(String)
 
       value[0, 25]
-    end
-
-    def notes_to_vacols_format(value)
-      return if value.nil?
-      fail(InvalidNotesError) if !value.is_a?(String)
-
-      value[0, 1000]
     end
 
     def validate_request_type(value, keys)

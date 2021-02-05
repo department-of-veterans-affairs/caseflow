@@ -345,5 +345,9 @@
     "label": "Postpone hearing",
     "value": "modal/postpone_hearing",
     "func": "add_schedule_hearing_task_admin_actions_data"
+  },
+  "REMOVE_HEARING_SCHEDULED_IN_ERROR": {
+    "label": "Remove hearing to correct a scheduling error",
+    "value": "modal/hearing_scheduled_in_error"
   }
 }

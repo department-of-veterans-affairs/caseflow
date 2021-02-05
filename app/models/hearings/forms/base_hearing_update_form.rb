@@ -155,21 +155,33 @@ class BaseHearingUpdateForm
     should_send_email = updates_requiring_email? ||
                         virtual_hearing_attributes&.key?(:appellant_email) ||
                         virtual_hearing_attributes&.key?(:appellant_tz)
-    !should_send_email
+
+    # Note: Don't set flag if hearing disposition is cancelled, postponed, or scheduled in error
+    !should_send_email || hearing.postponed_or_cancelled_or_scheduled_in_error?
+  end
+
+  def representative_email
+    virtual_hearing_attributes&.fetch(:representative_email, nil)
   end
 
   # Send rep email if cancelling, updating time or updating either rep email or rep timezone
   def representative_email_sent_flag
     should_send_email = updates_requiring_email? ||
-                        virtual_hearing_attributes&.fetch(:representative_email, nil).present? ||
+                        representative_email.present? ||
                         virtual_hearing_attributes&.key?(:representative_tz)
-    !should_send_email
+
+    # Note: Don't set flag if hearing disposition is cancelled, postponed, or scheduled in error
+    !should_send_email || hearing.postponed_or_cancelled_or_scheduled_in_error?
   end
 
   # also returns false if the judge id is present or true if the virtual hearing is being cancelled
   def judge_email_sent_flag
-    flag = !(updates_requiring_email? || virtual_hearing_attributes&.key?(:judge_email) || judge_id.present?)
-    flag || virtual_hearing_cancelled?
+    should_send_email = updates_requiring_email? ||
+                        judge_id.present? ||
+                        virtual_hearing_attributes&.key?(:judge_email)
+
+    # Note: Don't set flag if hearing disposition is cancelled, postponed, or scheduled in error
+    !should_send_email || virtual_hearing_cancelled? || hearing.postponed_or_cancelled_or_scheduled_in_error?
   end
 
   def virtual_hearing_cancelled?
@@ -182,8 +194,8 @@ class BaseHearingUpdateForm
       virtual_hearing_attributes[:appellant_email] = virtual_hearing_attributes[:appellant_email].strip
     end
 
-    if virtual_hearing_attributes[:representative_email].present?
-      virtual_hearing_attributes[:representative_email] = virtual_hearing_attributes[:representative_email].strip
+    if representative_email.present?
+      virtual_hearing_attributes[:representative_email] = representative_email&.strip
     end
   end
 
@@ -217,7 +229,7 @@ class BaseHearingUpdateForm
     virtual_hearing = VirtualHearing.not_cancelled.find_or_create_by!(hearing: hearing) do |new_virtual_hearing|
       new_virtual_hearing.appellant_email = virtual_hearing_attributes[:appellant_email]&.strip
       new_virtual_hearing.judge_email = hearing.judge&.email
-      new_virtual_hearing.representative_email = virtual_hearing_attributes[:representative_email]&.strip
+      new_virtual_hearing.representative_email = representative_email&.strip
       new_virtual_hearing.appellant_tz = virtual_hearing_attributes[:appellant_tz]
       new_virtual_hearing.representative_tz = virtual_hearing_attributes[:representative_tz]
       @virtual_hearing_created = true
