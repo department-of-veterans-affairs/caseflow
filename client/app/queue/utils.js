@@ -283,7 +283,8 @@ export const prepareAppealHearingsForStore = (appeal) =>
     type: hearing.type,
     externalId: hearing.external_id,
     disposition: hearing.disposition,
-    isVirtual: hearing.is_virtual
+    isVirtual: hearing.is_virtual,
+    notes: hearing.notes
   }));
 
 const prepareAppealAvailableHearingLocationsForStore = (appeal) =>

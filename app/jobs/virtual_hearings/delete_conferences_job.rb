@@ -85,16 +85,10 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
     Rails.logger.info("Pexip conference id: (#{virtual_hearing.conference_id?})")
   end
 
-  def hearing_is_postponed_or_cancelled?(virtual_hearing)
-    return true if virtual_hearing.hearing.postponed? || virtual_hearing.hearing.cancelled?
-
-    false
-  end
-
   def send_cancellation_emails(virtual_hearing)
-    if !hearing_is_postponed_or_cancelled?(virtual_hearing)
-      VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
-    end
+    return if virtual_hearing.hearing.postponed_or_cancelled_or_scheduled_in_error?
+
+    VirtualHearings::SendEmail.new(virtual_hearing: virtual_hearing, type: :cancellation).call
 
     if !virtual_hearing.cancellation_emails_sent?
       fail EmailsFailedToSend # failing so we can log errors
