@@ -18,7 +18,7 @@ Webdrivers.logger.level = :DEBUG if ENV["DEBUG"]
 # in the CircleCI container. You run CircleCI tests and have it start an SSH
 # server, which enables you to check the actual version of Microsoft Edge
 # on the container.
-Webdrivers::Edgedriver.required_version = '90.0.782.0'
+Webdrivers::Edgedriver.required_version = "90.0.782.0"
 
 Sniffybara::Driver.run_configuration_file = File.expand_path("VA-axe-run-configuration.json", __dir__)
 
