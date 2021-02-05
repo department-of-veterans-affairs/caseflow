@@ -23,7 +23,7 @@ class ChangeHearingRequestTypeTask < Task
   def timeline_title
     if completed?
       "Hearing type converted from #{appeal.hearing_request_type_for_task(id, :prev)}"\
-        " to #{appeal.hearing_request_type_for_task(id, :curent)}"
+        " to #{appeal.hearing_request_type_for_task(id, :current)}"
     end
   end
 
@@ -90,7 +90,7 @@ class ChangeHearingRequestTypeTask < Task
         closest_regional_office: payload_values[:closest_regional_office]
       )
 
-      # update location to `CASEFLOW`
+      # in VACOLS, update location to `CASEFLOW` and save the new hearing request type
       if appeal.is_a?(LegacyAppeal)
         AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
         AppealRepository.update_vacols_hearing_request_type!(appeal, payload_values[:changed_request_type])

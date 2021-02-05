@@ -47,9 +47,9 @@ module HearingRequestTypeConcern
     readable ? LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[formatted_request_type] : formatted_request_type
   end
 
-  # # if `change_hearing_request` is populated meaning the hearing request type was changed, then return what the
-  # # previous hearing request type was. Use paper trail event to derive previous type in the case the type was changed
-  # # multple times.
+  # if `change_hearing_request` is populated meaning the hearing request type was changed, then
+  # return what the previous hearing request type was. Use paper trail event to derive previous
+  # type in the case the type was changed multple times.
   def previous_hearing_request_type(readable: false)
     diff = latest_appeal_event&.diff || {} # Example of diff: {"changed_request_type"=>[nil, "R"]}
     previous_hearing_request_type = diff["changed_request_type"]&.first

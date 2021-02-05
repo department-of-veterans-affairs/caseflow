@@ -57,7 +57,7 @@ export const HearingTypeConversionModal = ({
       const changedRequestType = formatChangeRequestType(hearingType);
 
       // Determine the closest regional office
-      const closestRegionalOffice = hearingType === 'Video' ? null : "C";
+      const closestRegionalOffice = hearingType === 'Video' ? null : 'C';
 
       const data = {
         task: {
