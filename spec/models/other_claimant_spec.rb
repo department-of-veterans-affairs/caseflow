@@ -2,12 +2,18 @@
 
 describe OtherClaimant, :postgres do
   let(:claimant) { create(:claimant, type: "OtherClaimant") }
+  let(:first_name) { nil }
+  let(:last_name) { nil }
+  let(:name) { nil }
 
   describe "#save_unrecognized_details!" do
     let(:params) do
       ActionController::Parameters.new(
         relationship: relationship,
         party_type: party_type,
+        first_name: first_name,
+        last_name: last_name,
+        name: name,
         address_line_1: "1600 Pennsylvania Ave",
         city: "Springfield",
         state: "NY",
@@ -22,10 +28,10 @@ describe OtherClaimant, :postgres do
     context "when appellant is an unlisted individual" do
       let(:relationship) { "child" }
       let(:party_type) { "individual" }
-      it "saves the individual" do
-        params[:first_name] = "John"
-        params[:last_name] = "Smith"
+      let(:first_name) { "John" }
+      let(:last_name) { "Smith" }
 
+      it "saves the individual" do
         expect(subject).to have_attributes(
           name: "John Smith",
           relationship: "child"
@@ -40,9 +46,9 @@ describe OtherClaimant, :postgres do
     context "when appellant is an unlisted organization" do
       let(:relationship) { "attorney" }
       let(:party_type) { "organization" }
-      it "saves the organization" do
-        params[:name] = "American Legion"
+      let(:name) { "American Legion" }
 
+      it "saves the organization" do
         expect(subject).to have_attributes(
           name: "American Legion",
           relationship: "attorney"
