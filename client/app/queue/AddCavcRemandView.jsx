@@ -139,9 +139,13 @@ const AddCavcRemandView = (props) => {
       validInstructions();
   };
 
+  const mandateSubmitted = () => {
+    return mandateAvailable() && Boolean(judgementDate) && Boolean(mandateDate);
+  };
+
   const successMsgDetail = () => {
     if (straightReversalType() || deathDismissalType()) {
-      if (Boolean(judgementDate) && Boolean(mandateDate)) {
+      if (mandateSubmitted()) {
         return COPY.CAVC_REMAND_CASE_READY_FOR_DISTRIBUTION_DETAIL;
       }
 
@@ -155,7 +159,7 @@ const AddCavcRemandView = (props) => {
 
   const successMsgTitle = () => {
     if (straightReversalType() || deathDismissalType()) {
-      if (Boolean(judgementDate) && Boolean(mandateDate)) {
+      if (mandateSubmitted()) {
         return COPY.CAVC_REMAND_CREATED_FOR_DISTRIBUTION_TITLE;
       }
 
@@ -168,8 +172,8 @@ const AddCavcRemandView = (props) => {
   const submit = () => {
     const payload = {
       data: {
-        judgement_date: judgementDate,
-        mandate_date: mandateDate,
+        judgement_date: mandateAvailable() ? judgementDate : null,
+        mandate_date: mandateAvailable() ? mandateDate : null,
         source_appeal_id: appealId,
         cavc_docket_number: docketNumber,
         cavc_judge_full_name: judge.value,
