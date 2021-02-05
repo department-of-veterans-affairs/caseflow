@@ -169,7 +169,7 @@ export const DocketSwitchEditTasksForm = ({
             />
           </div>
 
-          {taskOptions?.length && (
+          {/* {Boolean(taskOptions?.length) && (
             <Controller
               name="taskIds"
               control={control}
@@ -187,6 +187,29 @@ export const DocketSwitchEditTasksForm = ({
                 );
               }}
             />
+          )} */}
+
+          <Controller
+            name="taskIds"
+            control={control}
+            render={({ name, onChange: onCheckChange }) => {
+              return (
+                <CheckboxGroup
+                  name={name}
+                  label="Please unselect any tasks you would like to remove:"
+                  strongLabel
+                  options={taskOptions}
+                  onChange={(event) => onCheckChange(handleTaskChange(event))}
+                  styling={css({ marginBottom: '0' })}
+                  values={tasks}
+                />
+              );
+            }}
+          />
+          {!taskOptions?.length && (
+            <div>
+              <em>There are currently no open tasks on this appeal.</em>
+            </div>
           )}
 
           <CheckboxGroup
