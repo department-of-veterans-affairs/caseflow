@@ -114,7 +114,7 @@ export const DocketSwitchReviewConfirm = ({
                 </table>
               </td>
             </tr>
-            {issuesRemaining?.length && (
+            {Boolean(issuesRemaining?.length) && (
               <tr>
                 <td>Issues on original docket</td>
                 <td>
