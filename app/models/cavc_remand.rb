@@ -20,10 +20,6 @@ class CavcRemand < CaseflowRecord
   validates :judgement_date, :mandate_date, presence: true, unless: :mandate_not_required?
   validate :decision_issue_ids_match_appeal_decision_issues, if: -> { remand? && jmr? }
 
-  def mandate_not_required?
-    straight_reversal? || death_dismissal? || (remand? && mdr?)
-  end
-
   before_save :establish_appeal_stream, if: :cavc_remand_form_complete?
 
   enum cavc_decision_type: {
@@ -40,6 +36,14 @@ class CavcRemand < CaseflowRecord
     Constants.CAVC_REMAND_SUBTYPES.mdr.to_sym => Constants.CAVC_REMAND_SUBTYPES.mdr
   }
 
+  def update(params)
+    if(already_has_mandate?)
+      fail Caseflow::Error::CannotUpdateMandatedRemands
+    end
+    update!(params)
+    end_mandate_hold
+  end
+
   private
 
   def decision_issue_ids_match_appeal_decision_issues
@@ -52,13 +56,34 @@ class CavcRemand < CaseflowRecord
     valid? && (mandate_not_required? || (!mandate_date.nil? && !judgement_date.nil?))
   end
 
+  def already_has_mandate?
+    !!mandate_date
+  end
+
+  def mandate_not_required?
+    straight_reversal? || death_dismissal? || (remand? && mdr?)
+  end
+
   def establish_appeal_stream
-    self.remand_appeal = source_appeal.create_stream(:court_remand).tap do |cavc_appeal|
+    self.remand_appeal ||= source_appeal.create_stream(:court_remand).tap do |cavc_appeal|
       DecisionIssue.find(decision_issue_ids).map do |cavc_remanded_issue|
         cavc_remanded_issue.create_contesting_request_issue!(cavc_appeal)
       end
       AdvanceOnDocketMotion.copy_granted_motions_to_appeal(source_appeal, cavc_appeal)
       InitialTasksFactory.new(cavc_appeal, self).create_root_and_sub_tasks!
     end
+  end
+
+  def end_mandate_hold
+    if remand? && mdr?
+      SendCavcRemandProcessedLetterTask.create!(appeal: remand_appeal, parent: cavc_task)
+      MdrTask.find_by(appeal_id: remand_appeal_id).descendants.each(&:completed!)
+    elsif straight_reversal? || death_dismissal?
+      CavcTask.find_by(appeal_id: remand_appeal_id).descendants.each(&:completed!)
+    end
+  end
+
+  def cavc_task
+    CavcTask.open.where(appeal_id: remand_appeal_id).first
   end
 end
