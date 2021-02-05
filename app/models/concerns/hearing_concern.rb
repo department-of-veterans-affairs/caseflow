@@ -25,4 +25,13 @@ module HearingConcern
   def held?
     disposition == Constants.HEARING_DISPOSITION_TYPES.held
   end
+
+  # NOTE: for LegacyHearing, this makes a call to VACOLS
+  def scheduled_in_error?
+    disposition == Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+  end
+
+  def postponed_or_cancelled_or_scheduled_in_error?
+    postponed? || cancelled? || scheduled_in_error?
+  end
 end
