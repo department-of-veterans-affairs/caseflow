@@ -7,6 +7,10 @@ require "webdrivers"
 
 Webdrivers.logger.level = :DEBUG if ENV["DEBUG"]
 
+# Latest Edge Driver for Linux
+# https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/
+Webdrivers::Edgedriver.required_version = '89.0.774.4'
+
 Sniffybara::Driver.run_configuration_file = File.expand_path("VA-axe-run-configuration.json", __dir__)
 
 download_directory = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
