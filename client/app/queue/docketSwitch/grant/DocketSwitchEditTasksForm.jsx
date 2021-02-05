@@ -207,7 +207,7 @@ export const DocketSwitchEditTasksForm = ({
             }}
           />
           {!taskOptions?.length && (
-            <div>
+            <div style={{ marginTop: '1.6rem' }}>
               <em>There are currently no open tasks on this appeal.</em>
             </div>
           )}
