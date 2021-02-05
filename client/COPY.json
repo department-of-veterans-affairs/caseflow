@@ -143,7 +143,7 @@
   "CAVC_COURT_DECISION_DATE": "What is the Court's decision date?",
   "CAVC_DECISION_DATE_ERROR": "Please select the date of the court's decision",
   "MDR_SELECTION_ALERT_BANNER": "Choosing MDR will set a 90-day hold on this case starting from the Court's decision date listed above. The hold is to wait for the Court's judgement and mandate dates. This remand case will be accessible in your organization's Assigned tab and will return to the team's Unassigned tab when the 90 days are over or the hold is manually ended, at which point the judgement and mandate dates can be entered.",
-  "CAVC_REMAND_NO_MANDATE_TEXT": "This task will be put on hold for 90 days to wait for the Court's judgement and mandate dates. This case will be accessible in the On Hold tab and will return to the team's Unassigned tab when the 90 days has passed.",
+  "CAVC_REMAND_NO_MANDATE_TEXT": "This task will be put on hold for 90 days to wait for the Court's judgement and mandate dates. This case will be accessible in the Assigned tab and will return to the team's Unassigned tab when the 90 days has passed.",
   "CAVC_JUDGEMENT_DATE_HEADER": "Judgement and mandate date",
   "CAVC_JUDGEMENT_DATE": "What is the Court's judgement date?",
   "CAVC_JUDGEMENT_DATE_ERROR": "Please select the date of judgement",
