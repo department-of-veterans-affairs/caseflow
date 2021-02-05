@@ -16,7 +16,6 @@ import { formatChangeRequestType } from '../utils';
 
 // Constants
 import COPY from '../../../COPY';
-import HEARING_REQUEST_TYPES from '../../../constants/HEARING_REQUEST_TYPES';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 
 export const HearingTypeConversionModal = ({
