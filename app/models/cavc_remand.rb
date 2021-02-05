@@ -41,11 +41,20 @@ class CavcRemand < CaseflowRecord
       fail Caseflow::Error::CannotUpdateMandatedRemands
     end
 
-    update!(params)
+    update_with_instructions(params)
     end_mandate_hold
   end
 
   private
+
+  def update_with_instructions(params)
+    params[:instructions] = flattened_instructions(params)
+    update!(params)
+  end
+
+  def flattened_instructions(params)
+    instructions + " - " + params.dig(:instructions).presence
+  end
 
   def decision_issue_ids_match_appeal_decision_issues
     unless (source_appeal.decision_issues.map(&:id) - decision_issue_ids).empty?

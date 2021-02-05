@@ -191,6 +191,7 @@ RSpec.describe CavcRemandsController, type: :controller do
 
         it "updates the CAVC remand" do
           existing_remand = Appeal.find(remand_appeal_id)
+          old_instructions = cavc_remand.instructions
 
           expect { subject }.not_to raise_error
 
@@ -200,7 +201,8 @@ RSpec.describe CavcRemandsController, type: :controller do
           expect(response_body["cavc_remand"]["remand_appeal_id"]).to eq(existing_remand.reload.id)
           expect(response_body["cavc_remand"]["judgement_date"].to_date).to eq(judgement_date.to_date)
           expect(response_body["cavc_remand"]["mandate_date"].to_date).to eq(mandate_date.to_date)
-          expect(response_body["cavc_remand"]["instructions"]).to eq(instructions)
+          expect(response_body["cavc_remand"]["instructions"]).to include(instructions)
+          expect(response_body["cavc_remand"]["instructions"]).to include(old_instructions)
         end
       end
     end

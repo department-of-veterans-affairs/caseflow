@@ -191,6 +191,20 @@ describe CavcRemand do
 
     context "on an MDR appeal" do
       let!(:cavc_remand) { create(:cavc_remand, :mdr) }
+
+      it "updates the cavc remand" do
+        old_instructions = cavc_remand.instructions
+        expect(cavc_remand.judgement_date).to be(nil)
+        expect(cavc_remand.mandate_date).to be(nil)
+
+        expect { subject }.not_to raise_error
+
+        expect(cavc_remand.reload.instructions).to include(old_instructions)
+        expect(cavc_remand.reload.instructions).to include(instructions)
+        expect(cavc_remand.reload.judgement_date).to eq(judgement_date.to_date)
+        expect(cavc_remand.reload.mandate_date).to eq(mandate_date.to_date)
+      end
+
       it "completes the MDR hold" do
         cavc_task = CavcTask.find_by(appeal_id: remand_appeal_id)
         mdr_task = MdrTask.find_by(appeal_id: remand_appeal_id)
