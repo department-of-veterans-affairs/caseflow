@@ -53,9 +53,7 @@ const AddCavcDatesModal = ({ appealId, decisionType, error, highlightInvalid, hi
       if (straightReversalType() || deathDismissalType()) {
         return COPY.CAVC_REMAND_READY_FOR_DISTRIBUTION_DETAIL;
       }
-      else {
-        return COPY.CAVC_REMAND_CREATED_DETAIL
-      }
+      return COPY.CAVC_REMAND_CREATED_DETAIL;
     };
 
     const successMsg = {
@@ -128,6 +126,7 @@ AddCavcDatesModal.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   highlightInvalid: state.ui.highlightFormItems,
   error: state.ui.messages.error,
+  // eslint-disable-next-line camelcase
   decisionType: state.queue.appealDetails[ownProps.appealId].cavcRemand?.cavc_decision_type
 });
 
