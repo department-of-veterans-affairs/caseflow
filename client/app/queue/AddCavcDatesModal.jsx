@@ -1,7 +1,7 @@
 /* eslint-disable no-undefined */
 import React, { useState } from 'react';
 import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 
@@ -25,6 +25,7 @@ const AddCavcDatesModal = ({ appealId, error, highlightInvalid, history }) => {
   const [judgementDate, setJudgementDate] = useState(null);
   const [mandateDate, setMandateDate] = useState(null);
   const [instructions, setInstructions] = useState(undefined);
+  const dispatch = useDispatch();
 
   const validJudgementDate = () => Boolean(judgementDate);
   const validMandateDate = () => Boolean(mandateDate);
@@ -49,7 +50,7 @@ const AddCavcDatesModal = ({ appealId, error, highlightInvalid, history }) => {
       detail: COPY.CAVC_REMAND_CREATED_DETAIL
     };
 
-    requestPatch(`/appeals/${appealId}/cavc_remand`, payload, successMsg).
+    dispatch(requestPatch(`/appeals/${appealId}/cavc_remand`, payload, successMsg)).
       then(() => {
         history.replace('/queue');
         resolve();
@@ -103,7 +104,7 @@ const AddCavcDatesModal = ({ appealId, error, highlightInvalid, history }) => {
 
 AddCavcDatesModal.propTypes = {
   appealId: PropTypes.string,
-  requestSave: PropTypes.func,
+  requestPatch: PropTypes.func,
   showErrorMessage: PropTypes.func,
   error: PropTypes.object,
   highlightInvalid: PropTypes.bool,

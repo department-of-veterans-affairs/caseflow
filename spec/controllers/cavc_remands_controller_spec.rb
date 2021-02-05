@@ -141,15 +141,16 @@ RSpec.describe CavcRemandsController, type: :controller do
 
   describe "PATCH /appeals/:appeal_id/cavc_remands" do
     # create an existing cavc remand
-    let(:cavc_remand) { create(:cavc_remand) }
+    let(:cavc_remand) { create(:cavc_remand, :mdr) }
     let(:remand_appeal_id) { cavc_remand.remand_appeal_id  }
+    let(:remand_appeal_uuid) { Appeal.find(cavc_remand.remand_appeal_id).uuid  }
     let(:judgement_date) { 2.days.ago }
     let(:mandate_date) { 2.days.ago }
     let(:instructions) { "Do this!"  }
     let(:params) do
       {
-        remand_appeal_id: remand_appeal_id,
-        appeal_id: remand_appeal_id,
+        remand_appeal_id: remand_appeal_uuid,
+        appeal_id: remand_appeal_uuid,
         judgement_date: judgement_date,
         mandate_date: mandate_date,
         instructions: instructions
@@ -202,7 +203,6 @@ RSpec.describe CavcRemandsController, type: :controller do
           expect(response_body["cavc_remand"]["judgement_date"].to_date).to eq(judgement_date.to_date)
           expect(response_body["cavc_remand"]["mandate_date"].to_date).to eq(mandate_date.to_date)
           expect(response_body["cavc_remand"]["instructions"]).to eq(instructions)
-
         end
       end
     end

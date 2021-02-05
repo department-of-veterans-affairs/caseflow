@@ -43,7 +43,7 @@ class CavcRemandsController < ApplicationController
   end
 
   def update
-    cavc_remand.update!(update_params)
+    cavc_remand.update(update_params)
     render json: { cavc_remand: cavc_remand, cavc_appeal: cavc_remand.remand_appeal}, status: :ok
   end
 
@@ -51,6 +51,10 @@ class CavcRemandsController < ApplicationController
 
   def source_appeal
     @source_appeal ||= Appeal.find_by_uuid(params[:source_appeal_id])
+  end
+
+  def cavc_remand
+    @cavc_remand ||= CavcRemand.find_by(remand_appeal_id: Appeal.find_by(uuid: params[:appeal_id]).id)
   end
 
   def validate_cavc_remand_access
@@ -62,17 +66,13 @@ class CavcRemandsController < ApplicationController
 
   def update_params
     params.require(UPDATE_PARAMS)
-    params.permit(UPDATE_PARAMS)
+    params.permit(UPDATE_PARAMS).reject{ |param| param == "remand_appeal_id" }
   end
 
   def create_params
     params.merge!(created_by_id: current_user.id, updated_by_id: current_user.id, source_appeal_id: source_appeal.id)
     params.require(required_params_by_decisiontype_and_subtype)
     params.permit(PERMITTED_PARAMS).merge(params.permit(decision_issue_ids: []))
-  end
-
-  def cavc_remand
-    @cavc_remand ||= CavcRemand.find_by(remand_appeal_id: params[:remand_appeal_id])
   end
 
   def required_params_by_decisiontype_and_subtype
