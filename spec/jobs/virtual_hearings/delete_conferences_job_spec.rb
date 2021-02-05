@@ -89,6 +89,12 @@ describe VirtualHearings::DeleteConferencesJob do
       include_examples "doesn't create email events"
     end
 
+    shared_examples "no error when sending emails" do
+      it "does not raise error" do
+        expect { subject }.to_not raise_error
+      end
+    end
+
     let(:job) { VirtualHearings::DeleteConferencesJob.new }
     let(:fake_pexip) { Fakes::PexipService.new }
     let(:fake_pexip_with_error) { Fakes::PexipService.new(status_code: 501) }
@@ -341,6 +347,7 @@ describe VirtualHearings::DeleteConferencesJob do
         let!(:virtual_hearing) { create(:virtual_hearing, status: :active, hearing: cancelled_hearing) }
 
         include_examples "doesn't send any emails"
+        include_examples "no error when sending emails"
       end
 
       context "postponed hearing" do
@@ -348,6 +355,7 @@ describe VirtualHearings::DeleteConferencesJob do
         let!(:virtual_hearing) { create(:virtual_hearing, status: :active, hearing: postponed_hearing) }
 
         include_examples "doesn't send any emails"
+        include_examples "no error when sending emails"
       end
     end
   end

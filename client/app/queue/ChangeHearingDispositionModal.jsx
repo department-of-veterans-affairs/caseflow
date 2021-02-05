@@ -41,7 +41,8 @@ class ChangeHearingDispositionModal extends React.Component {
     };
     let afterDispositionUpdate = {};
 
-    if (this.state.selectedValue === DISPOSITION_TYPES.postponed) {
+    if (this.state.selectedValue === DISPOSITION_TYPES.postponed ||
+      this.state.selectedValue === DISPOSITION_TYPES.scheduled_in_error) {
       afterDispositionUpdate = {
         after_disposition_update: {
           action: 'schedule_later'

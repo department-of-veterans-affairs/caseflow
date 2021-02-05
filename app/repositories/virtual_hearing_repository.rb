@@ -9,7 +9,7 @@ class VirtualHearingRepository
       ama_ready = joins_hearing_and_hearing_day(Hearing)
         .eligible_for_deletion
         .where(
-          "hearing_days.scheduled_for < :today OR
+          "hearing_days.scheduled_for < :today OR hearings.disposition='scheduled_in_error' OR
           hearings.disposition='postponed' OR hearings.disposition='cancelled' OR
           virtual_hearings.request_cancelled = true", today: Time.zone.today
         )
@@ -113,8 +113,9 @@ class VirtualHearingRepository
 
       VACOLS::CaseHearing.by_dispositions(
         [
-          VACOLS::CaseHearing::HEARING_DISPOSITIONS.key("postponed"),
-          VACOLS::CaseHearing::HEARING_DISPOSITIONS.key("cancelled")
+          VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:postponed],
+          VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:cancelled],
+          VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:scheduled_in_error]
         ]
       ).where(hearing_pkseq: vacols_ids).pluck(:hearing_pkseq).map(&:to_s) || []
     end

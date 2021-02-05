@@ -460,6 +460,13 @@
 
   "SCHEDULE_HEARING_TASK_DEFAULT_INSTRUCTIONS": "Schedule Veteran and/or appellant for Board hearing.",
 
+  "SCHEDULE_LATER_SUCCESS_MESSAGE": "%s was successfully added back to the schedule veteran list.",
+  "HEARING_SCHEDULED_IN_ERROR_MODAL_TITLE": "Remove Hearing",
+  "REMOVE_HEARING_ERROR_TITLE": "Unable to remove hearing.",
+  "REMOVE_HEARING_ERROR_DETAIL": "Please retry submitting again and contact support if errors persist.",
+  "HEARING_SCHEDULED_IN_ERROR_MODAL_INTRO": "The hearing will no longer appear on the docket and the disposition will change to Scheduled in Error.",
+  "RESCHEDULE_IMMEDIATELY_DISPLAY_TEXT": "Reschedule immediately",
+  "SCHEDULE_LATER_DISPLAY_TEXT": "Send to Schedule Veteran list",
   "ADD_COLOCATED_TASK_SUBHEAD": "Submit admin action",
   "ADD_COLOCATED_TASK_ACTION_TYPE_LABEL": "Select the type of administrative action you'd like to assign:",
   "ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL": "Provide instructions and context for this action:",
