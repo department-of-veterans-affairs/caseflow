@@ -30,7 +30,7 @@ class HearingDay < CaseflowRecord
 
   belongs_to :judge, class_name: "User"
   belongs_to :created_by, class_name: "User"
-  has_many :hearings
+  has_many :hearings, -> { not_scheduled_in_error }
 
   class HearingDayHasChildrenRecords < StandardError; end
 
@@ -99,7 +99,8 @@ class HearingDay < CaseflowRecord
   def open_hearings
     closed_hearing_dispositions = [
       Constants.HEARING_DISPOSITION_TYPES.postponed,
-      Constants.HEARING_DISPOSITION_TYPES.cancelled
+      Constants.HEARING_DISPOSITION_TYPES.cancelled,
+      Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
     ]
 
     (hearings + vacols_hearings).reject { |hearing| closed_hearing_dispositions.include?(hearing.disposition) }
