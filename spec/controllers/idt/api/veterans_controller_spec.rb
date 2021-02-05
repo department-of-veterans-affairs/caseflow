@@ -15,7 +15,10 @@ RSpec.describe Idt::Api::V1::VeteransController, :all_dbs, type: :controller do
       let(:role) { :attorney_role }
       let(:file_number) { "111222333" }
       let!(:ssn) { "666660000" }
-      let!(:veteran) { create(:veteran, file_number: file_number, ssn: ssn) }
+      let!(:veteran) do
+        create(:veteran, file_number: file_number, ssn: ssn,
+                         first_name: "Bob", last_name: "Smith", name_suffix: "II", sex: "M")
+      end
       let(:power_of_attorney) { PowerOfAttorney.new(file_number: file_number) }
       let(:power_of_attorney_address) { power_of_attorney.bgs_representative_address }
 

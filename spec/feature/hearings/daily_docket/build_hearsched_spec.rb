@@ -109,4 +109,45 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
       expect(find(".dropdown-#{hearing.external_id}-disposition")).to have_css(".cf-select__control--is-disabled")
     end
   end
+
+  shared_context "Scheduled in Error hearing is removed from daily docket" do
+    scenario "hearing is not displayed on daily docked" do
+      visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_DOCKET_NO_VETERANS)
+    end
+  end
+
+  context "scheduled_in_error hearing disposition" do
+    let!(:hearing_day) do
+      create(
+        :hearing_day,
+        request_type: HearingDay::REQUEST_TYPES[:video],
+        regional_office: "RO18",
+        scheduled_for: Time.zone.today + 1.week
+      )
+    end
+
+    context "AMA hearing" do
+      let!(:hearing) do
+        create(
+          :hearing,
+          hearing_day: hearing_day,
+          disposition: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+        )
+      end
+      include_context "Scheduled in Error hearing is removed from daily docket"
+    end
+
+    context "Legacy Hearing" do
+      let!(:hearing) do
+        create(
+          :legacy_hearing,
+          user: current_user,
+          hearing_day: hearing_day,
+          disposition: VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:scheduled_in_error]
+        )
+      end
+      include_context "Scheduled in Error hearing is removed from daily docket"
+    end
+  end
 end
