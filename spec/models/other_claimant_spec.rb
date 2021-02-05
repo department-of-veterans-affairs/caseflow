@@ -31,7 +31,7 @@ describe OtherClaimant, :postgres do
           relationship: "child"
         )
         expect(subject.unrecognized_party_detail).to have_attributes(
-          party_type: "person",
+          party_type: "individual",
           name: "John Smith"
         )
       end

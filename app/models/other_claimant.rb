@@ -34,10 +34,7 @@ class OtherClaimant < Claimant
     relationship = params.delete(:relationship)
     first_name = params.delete(:first_name)
     params.delete(:poa_form) # Use or save this when intake supports user-supplied POAs
-    if params[:party_type] == "individual"
-      params[:name] = first_name
-      params[:party_type] = "person"
-    end
+    params[:name] = first_name if params[:party_type] == "individual"
     UnrecognizedAppellant.create!(
       relationship: relationship,
       claimant_id: id,
