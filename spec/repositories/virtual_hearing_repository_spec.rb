@@ -145,8 +145,8 @@ describe VirtualHearingRepository, :all_dbs do
     end
   end
 
-  context ".cancelled_hearings_with_pending_emails" do
-    subject { VirtualHearingRepository.cancelled_hearings_with_pending_emails }
+  context ".cancelled_with_pending_emails" do
+    subject { VirtualHearingRepository.cancelled_with_pending_emails }
 
     let!(:cancelled_vh_with_only_pending_judge_emails) do
       create(:virtual_hearing, :all_emails_sent, status: :cancelled, hearing: hearing)
@@ -167,8 +167,8 @@ describe VirtualHearingRepository, :all_dbs do
     end
   end
 
-  context ".hearings_with_pending_conference_or_pending_emails" do
-    subject { VirtualHearingRepository.hearings_with_pending_conference_or_pending_emails }
+  context ".with_pending_conference_or_emails" do
+    subject { VirtualHearingRepository.with_pending_conference_or_emails }
 
     context "virtual hearings created with new link generation" do
       let!(:vh_with_pending_link) { create(:virtual_hearing, hearing: hearing) }

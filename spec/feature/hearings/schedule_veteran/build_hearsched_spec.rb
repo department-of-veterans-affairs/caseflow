@@ -295,7 +295,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       expect(page).to have_content("Regional Office")
       click_dropdown(text: "Denver")
       click_button("AMA Veterans Waiting", exact: true)
-      click_on "Bob Smith"
+      click_on "Bob"
 
       # Case details screen
       click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h[:label])
@@ -347,7 +347,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       # Your queue
       visit "/queue"
-      click_on "Bob Smith"
+      click_on "Bob"
 
       # Reassign
       within find("tr", text: "BVATWARNER") do
@@ -372,7 +372,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         expect(page).to have_content("Regional Office")
         click_dropdown(text: "Denver")
         click_button("AMA Veterans Waiting", exact: true)
-        click_on "Bob Smith"
+        click_on "Bob"
 
         # Case details screen
         click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h[:label])
@@ -392,7 +392,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
         # Your queue
         visit "/queue"
-        click_on "Bob Smith"
+        click_on "Bob"
         click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
 
         # On hold
@@ -407,7 +407,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       # Refresh the page in the present, and the hold should be completed.
       TaskTimerJob.perform_now
       visit "/queue"
-      click_on "Bob Smith"
+      click_on "Bob"
 
       # Complete the admin action
       click_dropdown(text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label])
@@ -421,7 +421,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_dropdown(text: "Denver")
       click_button("AMA Veterans Waiting", exact: true)
 
-      click_on "Bob Smith"
+      click_on "Bob"
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
       click_dropdown({ text: "Denver" }, find(".dropdown-regionalOffice"))
       click_dropdown(name: "hearingDate", index: 1)
@@ -453,7 +453,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
         click_dropdown(text: "Denver")
         click_button("AMA Veterans Waiting", exact: true)
-        click_on "Bob Smith"
+        click_on "Bob"
 
         click_dropdown(text: "Schedule Veteran")
         click_dropdown(
@@ -479,7 +479,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
         click_dropdown(text: "Denver")
         click_button("AMA Veterans Waiting", exact: true)
-        click_on "Bob Smith"
+        click_on "Bob"
 
         click_dropdown(text: "Schedule Veteran")
         click_dropdown(

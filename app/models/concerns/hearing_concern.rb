@@ -29,4 +29,9 @@ module HearingConcern
   def postponed_or_cancelled?
     postponed? || cancelled?
   end
+  
+  # NOTE: for LegacyHearing, this makes a call to VACOLS
+  def scheduled_in_error?
+    disposition == Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+  end
 end
