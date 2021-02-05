@@ -53,6 +53,7 @@ const AddCavcDatesModal = ({ appealId, decisionType, error, highlightInvalid, hi
       if (straightReversalType() || deathDismissalType()) {
         return COPY.CAVC_REMAND_READY_FOR_DISTRIBUTION_DETAIL;
       }
+
       return COPY.CAVC_REMAND_CREATED_DETAIL;
     };
 
