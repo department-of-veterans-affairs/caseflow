@@ -16,9 +16,9 @@
 
 ## Custom Container
 
-The main custom container is build in `ci-bin/circle_docker_container/`. It uses one of the base CircleCI containers with Ruby installed, and also adds Oracle instant client, PDFtk, and Microsoft Edge.
+The main custom container is built in `ci-bin/circle_docker_container/`. It uses one of the base CircleCI containers with Ruby installed, and also adds Oracle instant client, PDFtk, and Microsoft Edge.
 
-The docker containers are hosted in [Amazon ECR](https://console.amazonaws-us-gov.com/ecr/repositories/circleci?region=us-gov-west-1#). These are private containers and you'll need credentials to push and pull from ECR.
+The docker containers are hosted in [Amazon ECR](https://console.amazonaws-us-gov.com/ecr/repositories/circleci?region=us-gov-west-1#). These are private docker repositories and you'll need credentials to push and pull from ECR.
 
 ## Secrets
 
