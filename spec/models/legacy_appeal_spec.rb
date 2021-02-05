@@ -2165,7 +2165,7 @@ describe LegacyAppeal, :all_dbs do
     end
   end
 
-  fcontext "#hearing_request_type_for_task" do
+  context "#hearing_request_type_for_task" do
     let(:appeal_with_hearing_tasks) do
       create(
         :legacy_appeal,
