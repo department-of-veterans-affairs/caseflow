@@ -20,10 +20,6 @@ class CavcRemand < CaseflowRecord
   validates :judgement_date, :mandate_date, presence: true, unless: :mandate_not_required?
   validate :decision_issue_ids_match_appeal_decision_issues, if: -> { remand? && jmr? }
 
-  def mandate_not_required?
-    straight_reversal? || death_dismissal? || (remand? && mdr?)
-  end
-
   before_save :establish_appeal_stream, if: :cavc_remand_form_complete?
 
   enum cavc_decision_type: {
@@ -42,7 +38,7 @@ class CavcRemand < CaseflowRecord
 
   def update(params)
     if(already_has_mandate?)
-      fail Caseflow::Error::MandatedRemandsNoUpdate
+      fail Caseflow::Error::CannotUpdateMandatedRemands
     end
     update!(params)
     end_mandate_hold
@@ -61,7 +57,11 @@ class CavcRemand < CaseflowRecord
   end
 
   def already_has_mandate?
-    !mandate_not_required? || (!remand? && mandate_date)
+    !!mandate_date
+  end
+
+  def mandate_not_required?
+    straight_reversal? || death_dismissal? || (remand? && mdr?)
   end
 
   def establish_appeal_stream

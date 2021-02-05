@@ -185,7 +185,7 @@ describe CavcRemand do
     context "on a JMR appeal" do
       let(:cavc_remand) { create(:cavc_remand) }
       it "throws an error" do
-        expect { subject }.to raise_error(Caseflow::Error::MandatedRemandsNoUpdate)
+        expect { subject }.to raise_error(Caseflow::Error::CannotUpdateMandatedRemands)
       end
     end
 
@@ -207,6 +207,7 @@ describe CavcRemand do
         expect(mdr_task.reload.open?).to be(false)
         expect(hold_task.reload.open?).to be(false)
       end
+
       it "opens a CAVC Send Letter task" do
         existing_remand = cavc_remand.remand_appeal
         expect { subject }.not_to raise_error
@@ -218,7 +219,7 @@ describe CavcRemand do
       context "that had mandate" do
         let(:cavc_remand) { create(:cavc_remand, type) }
         it "throws an error" do
-          expect { subject }.to raise_error(Caseflow::Error::MandatedRemandsNoUpdate)
+          expect { subject }.to raise_error(Caseflow::Error::CannotUpdateMandatedRemands)
         end
       end
 
