@@ -77,9 +77,9 @@ class CavcRemand < CaseflowRecord
   def end_mandate_hold
     if remand? && mdr?
       SendCavcRemandProcessedLetterTask.create!(appeal: remand_appeal, parent: cavc_task)
-      MdrTask.find_by(appeal_id: remand_appeal_id).descendants.each { |t| t.completed! }
+      MdrTask.find_by(appeal_id: remand_appeal_id).descendants.each(&:completed!)
     elsif straight_reversal? || death_dismissal?
-      CavcTask.find_by(appeal_id: remand_appeal_id).descendants.each { |t| t.completed! }
+      CavcTask.find_by(appeal_id: remand_appeal_id).descendants.each(&:completed!)
     end
   end
 
