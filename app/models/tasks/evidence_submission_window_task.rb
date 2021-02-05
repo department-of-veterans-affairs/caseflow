@@ -77,6 +77,6 @@ class EvidenceSubmissionWindowTask < Task
   end
 
   def update_params_will_create_ihp_task?(params)
-    type == EvidenceSubmissionWindowTask.name && params[:status].eql?(Constants.TASK_STATUSES.completed)
+    params[:status].eql?(Constants.TASK_STATUSES.completed)
   end
 end
