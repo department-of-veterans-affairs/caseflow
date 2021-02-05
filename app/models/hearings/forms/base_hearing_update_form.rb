@@ -156,8 +156,8 @@ class BaseHearingUpdateForm
                         virtual_hearing_attributes&.key?(:appellant_email) ||
                         virtual_hearing_attributes&.key?(:appellant_tz)
 
-    # Note: Don't set flag if hearing disposition is cancelled or postponed
-    !should_send_email || hearing.postponed_or_cancelled?
+    # Note: Don't set flag if hearing disposition is cancelled, postponed, or scheduled in error
+    !should_send_email || hearing.postponed_or_cancelled_or_scheduled_in_error?
   end
 
   def representative_email
@@ -170,8 +170,8 @@ class BaseHearingUpdateForm
                         representative_email.present? ||
                         virtual_hearing_attributes&.key?(:representative_tz)
 
-    # Note: Don't set flag if hearing disposition is cancelled or postponed
-    !should_send_email || hearing.postponed_or_cancelled?
+    # Note: Don't set flag if hearing disposition is cancelled, postponed, or scheduled in error
+    !should_send_email || hearing.postponed_or_cancelled_or_scheduled_in_error?
   end
 
   # also returns false if the judge id is present or true if the virtual hearing is being cancelled
@@ -180,8 +180,8 @@ class BaseHearingUpdateForm
                         judge_id.present? ||
                         virtual_hearing_attributes&.key?(:judge_email)
 
-    # Note: Don't set flag if hearing disposition is cancelled or postponed
-    !should_send_email || virtual_hearing_cancelled? || hearing.postponed_or_cancelled?
+    # Note: Don't set flag if hearing disposition is cancelled, postponed, or scheduled in error
+    !should_send_email || virtual_hearing_cancelled? || hearing.postponed_or_cancelled_or_scheduled_in_error?
   end
 
   def virtual_hearing_cancelled?
