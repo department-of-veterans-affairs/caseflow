@@ -67,7 +67,8 @@ class AssignHearingDispositionTask < Task
     if HearingsManagement.singleton.user_has_access?(user)
       [
         Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h,
-        Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h
+        Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h,
+        Constants.TASK_ACTIONS.REMOVE_HEARING_SCHEDULED_IN_ERROR.to_h
       ] | hearing_admin_actions
     else
       hearing_admin_actions
@@ -152,10 +153,11 @@ class AssignHearingDispositionTask < Task
                       mark_hearing_held
                     when Constants.HEARING_DISPOSITION_TYPES.no_show
                       mark_hearing_no_show
-                    when Constants.HEARING_DISPOSITION_TYPES.postponed
-                      mark_hearing_postponed(
-                        instructions: params["instructions"],
-                        after_disposition_update: payload_values[:after_disposition_update]
+                    when Constants.HEARING_DISPOSITION_TYPES.postponed,
+                      Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+                      mark_hearing_with_disposition(
+                        payload_values: payload_values,
+                        instructions: params["instructions"]
                       )
                     else
                       fail ArgumentError, "unknown disposition"
@@ -166,14 +168,14 @@ class AssignHearingDispositionTask < Task
     created_tasks
   end
 
-  def update_hearing_disposition(disposition:)
+  def update_hearing(hearing_hash)
     # Ensure the hearing exists
     fail HearingAssociationMissing, hearing_task&.id if hearing.nil?
 
     if hearing.is_a?(LegacyHearing)
-      hearing.update_caseflow_and_vacols(disposition: disposition)
+      hearing.update_caseflow_and_vacols(hearing_hash)
     else
-      hearing.update(disposition: disposition)
+      hearing.update(hearing_hash)
     end
   end
 
@@ -196,7 +198,7 @@ class AssignHearingDispositionTask < Task
 
   def mark_hearing_cancelled
     multi_transaction do
-      update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
+      update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
       clean_up_virtual_hearing
       cancel!
     end
@@ -204,23 +206,34 @@ class AssignHearingDispositionTask < Task
 
   def mark_hearing_held
     multi_transaction do
-      update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.held)
+      update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.held)
       hold!
     end
   end
 
   def mark_hearing_no_show
     multi_transaction do
-      update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.no_show)
+      update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.no_show)
       no_show!
     end
   end
 
-  def mark_hearing_postponed(instructions: nil, after_disposition_update: nil)
+  def mark_hearing_with_disposition(payload_values:, instructions: nil)
     multi_transaction do
-      update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
+      if payload_values[:disposition] == Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+        update_hearing(
+          disposition: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error,
+          notes: payload_values[:hearing_notes]
+        )
+      elsif payload_values[:disposition] == Constants.HEARING_DISPOSITION_TYPES.postponed
+        update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
+      end
+
       clean_up_virtual_hearing
-      reschedule_or_schedule_later(instructions: instructions, after_disposition_update: after_disposition_update)
+      reschedule_or_schedule_later(
+        instructions: instructions,
+        after_disposition_update: payload_values[:after_disposition_update]
+      )
     end
   end
 
