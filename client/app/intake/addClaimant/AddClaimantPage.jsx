@@ -17,7 +17,7 @@ import Address from 'app/queue/components/Address';
 
 import { useAddClaimantForm } from './utils';
 import { ADD_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
-import { addClaimant } from '../reducers/addClaimantPoaSlice';
+import { addClaimant } from '../reducers/addClaimantSlice';
 
 const relationshipOpts = [
   { value: 'attorney', label: 'Attorney (previously or currently)' },

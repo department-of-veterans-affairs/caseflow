@@ -90,6 +90,9 @@ feature "Non-veteran claimants", :postgres do
       end
 
       expect(page).to have_button("Continue to next step", disabled: false)
+
+      click_button "Continue to next step"
+      expect(page).to have_current_path("/intake/add_issues")
     end
   end
 
