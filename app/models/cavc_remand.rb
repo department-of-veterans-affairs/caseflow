@@ -37,9 +37,10 @@ class CavcRemand < CaseflowRecord
   }
 
   def update(params)
-    if(already_has_mandate?)
+    if already_has_mandate?
       fail Caseflow::Error::CannotUpdateMandatedRemands
     end
+
     update!(params)
     end_mandate_hold
   end
@@ -84,6 +85,6 @@ class CavcRemand < CaseflowRecord
   end
 
   def cavc_task
-    CavcTask.open.where(appeal_id: remand_appeal_id).first
+    CavcTask.open.find_by(appeal_id: remand_appeal_id)
   end
 end

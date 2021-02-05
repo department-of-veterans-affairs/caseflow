@@ -132,21 +132,20 @@ RSpec.describe CavcRemandsController, type: :controller do
         let(:remand_subtype) { nil }
 
         include_examples "works without judgement and mandate date parameters"
-     end
+      end
     end
 
     include_examples "required cavc lit support user"
   end
 
-
   describe "PATCH /appeals/:appeal_id/cavc_remands" do
     # create an existing cavc remand
     let(:cavc_remand) { create(:cavc_remand, :mdr) }
-    let(:remand_appeal_id) { cavc_remand.remand_appeal_id  }
-    let(:remand_appeal_uuid) { Appeal.find(cavc_remand.remand_appeal_id).uuid  }
+    let(:remand_appeal_id) { cavc_remand.remand_appeal_id }
+    let(:remand_appeal_uuid) { Appeal.find(cavc_remand.remand_appeal_id).uuid }
     let(:judgement_date) { 2.days.ago }
     let(:mandate_date) { 2.days.ago }
-    let(:instructions) { "Do this!"  }
+    let(:instructions) { "Do this!" }
     let(:params) do
       {
         remand_appeal_id: remand_appeal_uuid,
@@ -156,7 +155,6 @@ RSpec.describe CavcRemandsController, type: :controller do
         instructions: instructions
       }
     end
-
 
     subject { patch :update, params: params }
 
@@ -173,7 +171,7 @@ RSpec.describe CavcRemandsController, type: :controller do
 
       context "with sufficient parameters" do
         it "does not create new objects" do
-          existing_remand = Appeal.find(remand_appeal_id)
+          Appeal.find(remand_appeal_id)
           remand_count = CavcRemand.count
           cavc_count = Appeal.court_remand.count
 

@@ -44,7 +44,7 @@ class CavcRemandsController < ApplicationController
 
   def update
     cavc_remand.update(update_params)
-    render json: { cavc_remand: cavc_remand, cavc_appeal: cavc_remand.remand_appeal}, status: :ok
+    render json: { cavc_remand: cavc_remand, cavc_appeal: cavc_remand.remand_appeal }, status: :ok
   end
 
   private
@@ -66,7 +66,7 @@ class CavcRemandsController < ApplicationController
 
   def update_params
     params.require(UPDATE_PARAMS)
-    params.permit(UPDATE_PARAMS).reject{ |param| param == "remand_appeal_id" }
+    params.permit(UPDATE_PARAMS).reject { |param| param == "remand_appeal_id" }
   end
 
   def create_params

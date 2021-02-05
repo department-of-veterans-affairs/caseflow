@@ -167,11 +167,11 @@ describe CavcRemand do
   end
 
   describe ".update!" do
-    let(:remand_appeal_id) { cavc_remand.remand_appeal_id  }
-    let(:remand_appeal_uuid) { Appeal.find(cavc_remand.remand_appeal_id).uuid  }
+    let(:remand_appeal_id) { cavc_remand.remand_appeal_id }
+    let(:remand_appeal_uuid) { Appeal.find(cavc_remand.remand_appeal_id).uuid }
     let(:judgement_date) { 2.days.ago }
     let(:mandate_date) { 2.days.ago }
-    let(:instructions) { "Do this!"  }
+    let(:instructions) { "Do this!" }
     let(:params) do
       {
         judgement_date: judgement_date,
@@ -190,9 +190,8 @@ describe CavcRemand do
     end
 
     context "on an MDR appeal" do
-      let(:cavc_remand) { create(:cavc_remand, :mdr) }
+      let!(:cavc_remand) { create(:cavc_remand, :mdr) }
       it "completes the MDR hold" do
-        existing_remand = cavc_remand.remand_appeal
         cavc_task = CavcTask.find_by(appeal_id: remand_appeal_id)
         mdr_task = MdrTask.find_by(appeal_id: remand_appeal_id)
         hold_task = TimedHoldTask.find_by(appeal_id: remand_appeal_id)
@@ -209,7 +208,6 @@ describe CavcRemand do
       end
 
       it "opens a CAVC Send Letter task" do
-        existing_remand = cavc_remand.remand_appeal
         expect { subject }.not_to raise_error
         expect(SendCavcRemandProcessedLetterTask.find_by(appeal_id: remand_appeal_id).open?).to be(true)
       end
@@ -224,9 +222,8 @@ describe CavcRemand do
       end
 
       context "without mandate" do
-        let(:cavc_remand) { create(:cavc_remand, type, :no_mandate) }
+        let!(:cavc_remand) { create(:cavc_remand, type, :no_mandate) }
         it "sends the appeal to distribution" do
-          existing_remand = cavc_remand.remand_appeal
           dist_task = DistributionTask.find_by(appeal_id: remand_appeal_id)
           cavc_task = CavcTask.find_by(appeal_id: remand_appeal_id)
           mandate_hold_task = MandateHoldTask.find_by(appeal_id: remand_appeal_id)
