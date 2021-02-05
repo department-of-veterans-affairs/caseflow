@@ -10,6 +10,7 @@ import { requestPatch, showErrorMessage } from './uiReducer/uiActions';
 import DateSelector from '../components/DateSelector';
 import TextareaField from '../components/TextareaField';
 import Alert from '../components/Alert';
+import CAVC_DECISION_TYPES from '../../constants/CAVC_DECISION_TYPES';
 import COPY from '../../COPY';
 
 /**
@@ -20,12 +21,15 @@ import COPY from '../../COPY';
  *  - @param {Object}   history          Provided with react router to be able to route to another page upon success
  */
 
-const AddCavcDatesModal = ({ appealId, error, highlightInvalid, history }) => {
+const AddCavcDatesModal = ({ appealId, decisionType, error, highlightInvalid, history }) => {
 
   const [judgementDate, setJudgementDate] = useState(null);
   const [mandateDate, setMandateDate] = useState(null);
   const [instructions, setInstructions] = useState(undefined);
   const dispatch = useDispatch();
+
+  const straightReversalType = () => decisionType === CAVC_DECISION_TYPES.straight_reversal;
+  const deathDismissalType = () => decisionType === CAVC_DECISION_TYPES.death_dismissal;
 
   const validJudgementDate = () => Boolean(judgementDate);
   const validMandateDate = () => Boolean(mandateDate);
@@ -45,9 +49,18 @@ const AddCavcDatesModal = ({ appealId, error, highlightInvalid, history }) => {
       }
     };
 
+    const successMsgDetail = () => {
+      if (straightReversalType() || deathDismissalType()) {
+        return COPY.CAVC_REMAND_READY_FOR_DISTRIBUTION_DETAIL;
+      }
+      else {
+        return COPY.CAVC_REMAND_CREATED_DETAIL
+      }
+    };
+
     const successMsg = {
       title: COPY.CAVC_REMAND_CREATED_TITLE,
-      detail: COPY.CAVC_REMAND_CREATED_DETAIL
+      detail: successMsgDetail()
     };
 
     dispatch(requestPatch(`/appeals/${appealId}/cavc_remand`, payload, successMsg)).
@@ -104,6 +117,7 @@ const AddCavcDatesModal = ({ appealId, error, highlightInvalid, history }) => {
 
 AddCavcDatesModal.propTypes = {
   appealId: PropTypes.string,
+  decisionType: PropTypes.string,
   requestPatch: PropTypes.func,
   showErrorMessage: PropTypes.func,
   error: PropTypes.object,
@@ -111,9 +125,10 @@ AddCavcDatesModal.propTypes = {
   history: PropTypes.object
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state, ownProps) => ({
   highlightInvalid: state.ui.highlightFormItems,
   error: state.ui.messages.error,
+  decisionType: state.queue.appealDetails[ownProps.appealId].cavcRemand.cavc_decision_type
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
