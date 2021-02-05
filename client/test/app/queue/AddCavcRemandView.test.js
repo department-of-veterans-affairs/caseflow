@@ -208,5 +208,25 @@ describe('AddCavcRemandView', () => {
         expect(validationErrorShows(cavcForm, error)).toBeFalsy();
       });
     });
+
+    describe('cavc form instructions validations', () => {
+      const error = COPY.CAVC_INSTRUCTIONS_ERROR;
+
+      it('shows error on empty instructions', () => {
+        const cavcModal = setup({ appealId });
+
+        cavcModal.find('#context-and-instructions-textBox').simulate('change', { target: { value: '' } });
+
+        expect(validationErrorShows(cavcModal, error)).toBeTruthy();
+      });
+
+      it('does not show error on instructions', () => {
+        const cavcModal = setup({ appealId });
+
+        cavcModal.find('#context-and-instructions-textBox').simulate('change', { target: { value: '2020-11-11' } });
+
+        expect(validationErrorShows(cavcModal, error)).toBeFalsy();
+      });
+    });
   });
 });

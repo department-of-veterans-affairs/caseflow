@@ -19,7 +19,7 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
   def stuck_virtual_hearings
     rerun_jobs
 
-    VirtualHearingRepository.hearings_with_pending_conference_or_pending_emails.select do |virtual_hearing|
+    VirtualHearingRepository.with_pending_conference_or_emails.select do |virtual_hearing|
       virtual_hearing.updated_at < Time.zone.now - 2.hours
     end
   end
