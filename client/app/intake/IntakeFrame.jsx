@@ -24,6 +24,7 @@ import { toggleCancelModal, submitCancel } from './actions/intake';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { IntakeLayout } from './components/IntakeLayout';
 import { AddClaimantPage } from './addClaimant/AddClaimantPage';
+import { AddPoaPage } from './addPOA/AddPoaPage';
 
 export const IntakeFrame = (props) => {
   const history = useHistory();
@@ -104,6 +105,14 @@ export const IntakeFrame = (props) => {
             title="Add Claimant | Caseflow Intake"
           >
             <AddClaimantPage />
+          </PageRoute>
+
+          <PageRoute
+            exact
+            path={PAGE_PATHS.ADD_POWER_OF_ATTORNEY}
+            title="Add Power of Attorney | Caseflow Intake"
+          >
+            <AddPoaPage />
           </PageRoute>
 
           <PageRoute

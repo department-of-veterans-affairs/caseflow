@@ -89,6 +89,17 @@ describe('EditNodDateModal', () => {
     expect(submitButton.toBeDisabled);
   });
 
+  it('should show warning when date is after nodDate', () => {
+    const component = setupEditNodDateModal();
+    const dateInput = component.find('input[type="date"]');
+    const laterThanNodDate = '2021-01-21';
+
+    dateInput.simulate('change', { target: { value: laterThanNodDate } });
+    component.update();
+    const warningMessage = component.find('.usa-alert-text');
+
+    expect(warningMessage.text()).toEqual(COPY.EDIT_NOD_DATE_WARNING_ALERT_MESSAGE);
+  });
   it('should disable submit button when date is valid and updated and a reason has not been selected', () => {
     const component = setupEditNodDateModal();
     const submitButton = component.find('button#Edit-NOD-Date-button-id-1');
