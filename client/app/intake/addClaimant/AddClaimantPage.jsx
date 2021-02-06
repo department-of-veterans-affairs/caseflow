@@ -17,7 +17,7 @@ import Address from 'app/queue/components/Address';
 
 import { useAddClaimantForm } from './utils';
 import { ADD_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
-import { addClaimant } from '../reducers/addClaimantSlice';
+import { editClaimantInformation } from '../reducers/addClaimantSlice';
 
 const relationshipOpts = [
   { value: 'attorney', label: 'Attorney (previously or currently)' },
@@ -86,7 +86,7 @@ export const AddClaimantPage = () => {
   const onSubmit = (formData) => {
 
     // Add stuff to redux store
-    dispatch(addClaimant({ formData }));
+    dispatch(editClaimantInformation({ formData }));
 
     if (formData.vaForm === 'true') {
       push('/add_power_of_attorney');

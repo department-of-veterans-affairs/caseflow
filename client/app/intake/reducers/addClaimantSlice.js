@@ -7,11 +7,11 @@ const initialState = {
 };
 
 const addClaimantSlice = createSlice({
-  name: 'addClaimantPoa',
+  name: 'editClaimant',
   initialState,
   reducers: {
     cancel: () => ({ ...initialState }),
-    addClaimant: (state, action) => {
+    editClaimantInformation: (state, action) => {
       const { formData } = action.payload;
 
       state.formData = {
@@ -23,7 +23,7 @@ const addClaimantSlice = createSlice({
 
 export const {
   cancel,
-  addClaimant
+  editClaimantInformation
 } = addClaimantSlice.actions;
 
 export default addClaimantSlice.reducer;
