@@ -7,7 +7,7 @@ const getDependentClaimant = (intakeData) => {
   const relation = intakeData.relationships.find(({ value }) => value === intakeData.claimant);
 
   if (!intakeData.payeeCode) {
-    return relation.displayText;
+    return relation?.displayText;
   }
 
   return `${relation.displayText} (payee code ${intakeData.payeeCode})`;
