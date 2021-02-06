@@ -13,7 +13,7 @@ export const schema = yup.object().shape({
   	is: 'other',
     then: yup.string().required()
   }).when('listedAttorney', {
-    is: (value) => value.value === 'not_listed',
+    is: (value) => value?.value === 'not_listed',
     then: yup.string().required()
   }),
   firstName: yup.
