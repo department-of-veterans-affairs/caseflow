@@ -12,11 +12,10 @@ export default {
   },
   args: {
     nodDateUpdate: {
-      appealId: 1,
       changeReason: 'entry_error',
       newDate: '2021-01-12',
       oldDate: '2021-01-05',
-      closedAt: '2021-01-25T15:10:29.033-05:00',
+      updatedAt: '2021-01-25T15:10:29.033-05:00',
       userFirstName: 'Jane',
       userLastName: 'Doe'
     },

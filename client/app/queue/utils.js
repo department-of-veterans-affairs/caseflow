@@ -309,7 +309,7 @@ const prepareNodDateUpdatesForStore = (appeal) => {
       changeReason: nodDateUpdate.change_reason,
       newDate: nodDateUpdate.new_date,
       oldDate: nodDateUpdate.old_date,
-      closedAt: nodDateUpdate.closed_at,
+      updatedAt: nodDateUpdate.updated_at,
       userFirstName: nodDateUpdate.updated_by.split(' ')[0],
       userLastName: nodDateUpdate.updated_by.split(' ')[nodDateUpdate.updated_by.split(' ').length - 1]
     }));
@@ -629,8 +629,8 @@ export const sortCaseTimelineEvents = (taskList, nodDateUpdates) => {
   const timelineEvents = [...taskList, ...nodDateUpdates];
 
   const sortedTimelineEvents = timelineEvents.sort((prev, next) => {
-    return new Date(next.closedAt || next.createdAt).getTime() -
-           new Date(prev.closedAt || prev.createdAt).getTime();
+    return new Date(next.closedAt || next.createdAt || next.updatedAt).getTime() -
+           new Date(prev.closedAt || prev.createdAt || next.updatedAt).getTime();
   });
 
   return sortedTimelineEvents;

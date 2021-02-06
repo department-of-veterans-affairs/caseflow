@@ -37,9 +37,9 @@ export const NodDateUpdateTimeline = (props) => {
   return <React.Fragment>
     {timeline && <tr>
       <td className="taskContainerStyling taskTimeTimelineContainerStyling">
-        <div>{ moment(nodDateUpdate.closedAt).format('MM/DD/YYYY') }</div>
+        <div>{ moment(nodDateUpdate.updatedAt).format('MM/DD/YYYY') }</div>
         <div {...nodDateUpdateTimelineTimeStyling}>
-          { moment(nodDateUpdate.closedAt).tz('America/New_York').
+          { moment(nodDateUpdate.updatedAt).tz('America/New_York').
             format('HH:mm:ss') } EST
         </div>
       </td>
@@ -63,13 +63,12 @@ export const NodDateUpdateTimeline = (props) => {
 
 NodDateUpdateTimeline.propTypes = {
   nodDateUpdate: PropTypes.shape({
-    appealId: PropTypes.number,
-    changeReason: PropTypes.string,
-    closedAt: PropTypes.string,
-    newDate: PropTypes.string,
-    oldDate: PropTypes.string,
-    userFirstName: PropTypes.string,
-    userLastName: PropTypes.string
-  }),
-  timeline: PropTypes.bool
+    changeReason: PropTypes.string.isRequired,
+    updatedAt: PropTypes.string.isRequired,
+    newDate: PropTypes.string.isRequired,
+    oldDate: PropTypes.string.isRequired,
+    userFirstName: PropTypes.string.isRequired,
+    userLastName: PropTypes.string.isRequired
+  }).isRequired,
+  timeline: PropTypes.bool.isRequired
 };

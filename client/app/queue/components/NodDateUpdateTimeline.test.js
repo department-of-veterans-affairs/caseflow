@@ -7,11 +7,10 @@ Enzyme.configure({ adapter: new Adapter() });
 
 describe('NodDateUpdateTimeline', () => {
   const nodDateUpdate = {
-    appealId: 1,
     changeReason: 'entry_error',
     newDate: '2021-01-12',
     oldDate: '2021-01-05',
-    closedAt: '2021-01-25T15:10:29.033-05:00',
+    updatedAt: '2021-01-25T15:10:29.033-05:00',
     userFirstName: 'Jane',
     userLastName: 'Doe'
   };
@@ -33,7 +32,6 @@ describe('NodDateUpdateTimeline', () => {
 
   it('should show update details', () => {
     const component = setupNodDateUpdateTimeline(true);
-    console.log(component.debug())
 
     expect(component.text()).toContain('01/05/2021');
     expect(component.text()).toContain('01/12/2021');

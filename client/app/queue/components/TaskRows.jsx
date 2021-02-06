@@ -367,7 +367,7 @@ class TaskRows extends React.PureComponent {
         return this.taskTemplate(templateConfig);
       }) }
 
-      {/* Everything below won't be in chronological order unless added to task list to return under render function*/}
+      {/* Tasks and decision dates won't be in chronological order unless added to task list to return under render function*/}
       { timeline && appeal.isLegacyAppeal && <tr>
         <td className="taskContainerStyling taskTimeTimelineContainerStyling">
           { appeal.form9Date ? moment(appeal.form9Date).format('MM/DD/YYYY') : null }
