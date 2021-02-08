@@ -34,6 +34,7 @@ export const DocketSwitchReviewRequestContainer = () => {
         onCancel={handleCancel}
         onSubmit={handleSubmit}
         appellantName={appeal.appellantFullName}
+        docketFrom={appeal.docketName}
         issues={appeal.issues}
       />
     </>
