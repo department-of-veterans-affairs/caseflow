@@ -45,7 +45,7 @@ class WorkQueue::AppealSerializer
         old_date: nod_date_update.old_date,
         new_date: nod_date_update.new_date,
         change_reason: nod_date_update.change_reason,
-        updated_at: nod_date_update.updated_at, # alias to sort updates with tasks
+        updated_at: nod_date_update.updated_at,
         updated_by: updated_by.full_name
       }
     end
