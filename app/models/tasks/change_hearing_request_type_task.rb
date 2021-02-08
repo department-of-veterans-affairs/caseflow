@@ -85,6 +85,8 @@ class ChangeHearingRequestTypeTask < Task
 
   def update_appeal_and_self(payload_values, params)
     multi_transaction do
+      # this will save the original request type if needed
+      appeal.original_hearing_request_type
       appeal.update!(
         changed_request_type: payload_values[:changed_request_type],
         closest_regional_office: payload_values[:closest_regional_office]
