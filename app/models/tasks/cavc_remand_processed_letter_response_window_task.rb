@@ -7,6 +7,10 @@
 # The appeal is put on hold for 90 days, with the option of ending the hold early.
 # After 90 days, the task comes off hold and show up in the CavcLitigationSupport team's unassigned tab
 # to be assigned and acted upon.
+# While on-hold, a CAVC Litigation Support user has the ability to add actions in response to Veterans replying
+# before the 90-day window is complete. If they end the hold, they can put the task back on hold.
+# Users cannot mark task complete without ending the hold.
+#
 # Expected parent: CavcTask
 # Expected assigned_to.type: CavcLitigationSupport
 #
@@ -43,7 +47,7 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
   end
 
   TASK_ACTIONS = [
-    Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
     Constants.TASK_ACTIONS.CAVC_EXTENSION_REQUEST.to_h,
     Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.to_h,
     Constants.TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.to_h,
@@ -64,17 +68,21 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
 
   def available_actions(user)
     if CavcLitigationSupport.singleton.user_has_access?(user)
-      return [Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h] if on_hold?
+      return other_actions + ORG_ACTIONS if assigned_to_type == "Organization"
 
-      return ORG_ACTIONS if assigned_to_type == "Organization"
-
-      return USER_ACTIONS if assigned_to == user || task_is_assigned_to_user_within_organization?(user)
+      return other_actions + USER_ACTIONS if assigned_to == user || task_is_assigned_to_user_within_organization?(user)
     end
 
     []
   end
 
   private
+
+  def other_actions
+    return [Constants.TASK_ACTIONS.MARK_COMPLETE.to_h] unless on_hold?
+
+    []
+  end
 
   def set_assignee
     self.assigned_to = CavcLitigationSupport.singleton if assigned_to.nil?
