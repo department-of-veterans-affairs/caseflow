@@ -24,7 +24,7 @@ class Appeal < DecisionReview
   has_many :vbms_uploaded_documents
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
-  has_many :nod_date_updates, as: :appeal
+  has_many :nod_date_updates
 
   has_one :special_issue_list
   has_one :post_decision_motion
