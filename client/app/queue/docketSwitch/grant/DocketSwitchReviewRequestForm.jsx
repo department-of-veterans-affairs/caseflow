@@ -42,6 +42,7 @@ export const DocketSwitchReviewRequestForm = ({
   onSubmit,
   onCancel,
   appellantName,
+  docketFrom,
   issues,
 }) => {
   const {
@@ -76,6 +77,15 @@ export const DocketSwitchReviewRequestForm = ({
     []
   );
 
+  // We want to prevent accidental selection of the same docket type
+  const filteredDocketTypeOpts = useMemo(() => {
+    return docketTypeRadioOptions.map(({ value, displayText }) => ({
+      value,
+      displayText: value === docketFrom ? `${displayText} (current docket)` : displayText,
+      disabled: value === docketFrom,
+    }));
+  }, [docketTypeRadioOptions, docketFrom]);
+
   const watchDisposition = watch('disposition');
 
   // Ensure that we trigger revalidation whenever disposition changes
@@ -95,10 +105,19 @@ export const DocketSwitchReviewRequestForm = ({
     return Object.keys(newIssues).filter((key) => newIssues[key]);
   };
 
+  // Need a bit of extra handling before passing along
+  const formatFormData = (formData) => {
+    // Ensure that all issue IDs are selected if full grant is chosen
+    if (formData.disposition === 'granted') {
+      formData.issueIds = issues.map((item) => String(item.id));
+    }
+    onSubmit?.(formData);
+  };
+
   return (
     <form
       className="docket-switch-granted-request"
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(formatFormData)}
       aria-label="Grant Docket Switch Request"
     >
       <AppSegment filledBackground>
@@ -147,7 +166,7 @@ export const DocketSwitchReviewRequestForm = ({
           <RadioField
             name="docketType"
             label="Which docket will the issue(s) be switched to?"
-            options={docketTypeRadioOptions}
+            options={filteredDocketTypeOpts}
             inputRef={register}
             strongLabel
             vertical
@@ -158,7 +177,7 @@ export const DocketSwitchReviewRequestForm = ({
         <CheckoutButtons
           disabled={!formState.isValid}
           onCancel={onCancel}
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(formatFormData)}
         />
       </div>
     </form>
@@ -169,5 +188,6 @@ DocketSwitchReviewRequestForm.propTypes = {
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
   appellantName: PropTypes.string.isRequired,
+  docketFrom: PropTypes.string.isRequired,
   issues: PropTypes.array,
 };

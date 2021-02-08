@@ -1,3 +1,5 @@
+// File likely no longer needed -- marked for removal in future
+
 // This webpack config is used by webpack dev server for
 // hot module reloading
 
