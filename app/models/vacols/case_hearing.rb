@@ -30,16 +30,12 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   HEARING_TYPES = HEARING_TYPE_LOOKUP.values.freeze
 
-  # NOTE: add scheduled_in_error to Constants.HEARING_DISPOSITION_TYPES and
-  #       reference it here when we are ready to expose the new disposition
-  #       to users (the disposition dropdown in ChangeHearingDispositionModal
-  #       is populated from HEARING_DISPOSITION_TYPES)
   HEARING_DISPOSITIONS = {
     C: Constants.HEARING_DISPOSITION_TYPES.cancelled,
     H: Constants.HEARING_DISPOSITION_TYPES.held,
     N: Constants.HEARING_DISPOSITION_TYPES.no_show,
     P: Constants.HEARING_DISPOSITION_TYPES.postponed,
-    E: "scheduled_in_error"
+    E: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
   }.freeze
 
   # flip {:H => "held", ...} to {:held => "H", ...}
@@ -90,6 +86,7 @@ class VACOLS::CaseHearing < VACOLS::Record
         .where(vdkey: hearing_day_ids)
         .where("hearing_date > ?", Date.new(2019, 1, 1))
         .where.not(folder_nr: nil)
+        .where("hearing_disp != ? or hearing_disp is null", HEARING_DISPOSITION_CODES[:scheduled_in_error])
     end
 
     # Finds all hearings for specific days that are assigned to a judge.
@@ -103,6 +100,7 @@ class VACOLS::CaseHearing < VACOLS::Record
         .where("hearing_date > ?", Date.new(2019, 1, 1))
         .where("staff.sdomainid = #{id}")
         .where.not(folder_nr: nil)
+        .where("hearing_disp != ? or hearing_disp is null", HEARING_DISPOSITION_CODES[:scheduled_in_error])
     end
 
     # Finds all hearings for an appeal.

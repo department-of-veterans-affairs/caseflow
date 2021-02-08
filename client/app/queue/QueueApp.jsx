@@ -41,6 +41,7 @@ import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskSt
 import CancelTaskModal from './components/CancelTaskModal';
 import AssignHearingModal from './components/AssignHearingModal';
 import PostponeHearingModal from './components/PostponeHearingModal';
+import HearingScheduledInErrorModal from './components/HearingScheduledInErrorModal';
 import ChangeHearingDispositionModal from './ChangeHearingDispositionModal';
 import CreateChangeHearingDispositionTaskModal from './CreateChangeHearingDispositionTaskModal';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
@@ -337,6 +338,13 @@ class QueueApp extends React.PureComponent {
       {...props.match.params}
     />
   );
+
+  routedHearingScheduledInError = (props) => (
+    <HearingScheduledInErrorModal
+      userId={this.props.userId}
+      {...props.match.params}
+    />
+  )
 
   routedChangeTaskTypeModal = (props) => (
     <ChangeTaskTypeModal {...props.match.params} />
@@ -870,6 +878,14 @@ class QueueApp extends React.PureComponent {
                 }`}
                 title="Assign Hearing | Caseflow"
                 render={this.routedAssignHearingModal}
+              />
+              <PageRoute
+                exact
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.REMOVE_HEARING_SCHEDULED_IN_ERROR.value
+                }`}
+                title="Remove hearing to correct a scheduling error | Caseflow"
+                render={this.routedHearingScheduledInError}
               />
               <PageRoute
                 exact
