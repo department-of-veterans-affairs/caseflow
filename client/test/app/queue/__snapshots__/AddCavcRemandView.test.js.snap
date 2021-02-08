@@ -3240,6 +3240,96 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     </div>
                   </fieldset>
                 </RadioField>
+                <RadioField
+                  className={
+                    Array [
+                      "usa-fieldset-inputs",
+                    ]
+                  }
+                  label="Are judgement and mandate dates provided?"
+                  name="remand-provided-toggle"
+                  onChange={[Function]}
+                  options={
+                    Array [
+                      Object {
+                        "displayText": "Yes",
+                        "value": "1",
+                      },
+                      Object {
+                        "displayText": "No",
+                        "value": "2",
+                      },
+                    ]
+                  }
+                  required={false}
+                  strongLabel={true}
+                  styling={
+                    Object {
+                      "data-css-1m3edv2": "",
+                    }
+                  }
+                  value="1"
+                >
+                  <fieldset
+                    className="usa-fieldset-inputs cf-form-radio-inline "
+                    data-css-1m3edv2=""
+                  >
+                    <legend
+                      className=""
+                    >
+                      <strong>
+                        <span>
+                          Are judgement and mandate dates provided?
+                           
+                        </span>
+                      </strong>
+                    </legend>
+                    <div
+                      className="cf-form-radio-options"
+                    >
+                      <div
+                        className="cf-form-radio-option"
+                        key="remand-provided-toggle-1-0"
+                      >
+                        <input
+                          checked={true}
+                          disabled={false}
+                          id="remand-provided-toggle_1"
+                          name="remand-provided-toggle"
+                          onChange={[Function]}
+                          type="radio"
+                          value="1"
+                        />
+                        <label
+                          className=""
+                          htmlFor="remand-provided-toggle_1"
+                        >
+                          Yes
+                        </label>
+                      </div>
+                      <div
+                        className="cf-form-radio-option"
+                        key="remand-provided-toggle-2-1"
+                      >
+                        <input
+                          checked={false}
+                          disabled={false}
+                          id="remand-provided-toggle_2"
+                          name="remand-provided-toggle"
+                          onChange={[Function]}
+                          type="radio"
+                          value="2"
+                        />
+                        <label
+                          className=""
+                          htmlFor="remand-provided-toggle_2"
+                        >
+                          No
+                        </label>
+                      </div>
+                    </div>
+                  </fieldset>
+                </RadioField>
                 <DateSelector
                   errorMessage={null}
                   label="What is the Court's decision date?"
