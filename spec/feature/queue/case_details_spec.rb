@@ -777,6 +777,8 @@ RSpec.feature "Case details", :all_dbs do
     let(:appeal) { create(:appeal) }
     let(:user) { create(:user) }
     let(:user2) { create(:user) }
+    before { FeatureToggle.enable!(:edit_nod_date) }
+    after { FeatureToggle.disable!(:edit_nod_date) }
 
     context "when the current user is a member of the AOD team" do
       before do
