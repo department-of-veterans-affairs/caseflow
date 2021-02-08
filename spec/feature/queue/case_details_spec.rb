@@ -892,7 +892,8 @@ RSpec.feature "Case details", :all_dbs do
 
     describe "CaseTimeline shows judge & attorney tasks" do
       let!(:user) { create(:user) }
-      let!(:appeal) { create(:appeal) }
+      let!(:nod_date_update) { create(:nod_date_update) }
+      let!(:appeal) { create(:appeal, nod_date_updates: [nod_date_update]) }
       let!(:appeal2) { create(:appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
       let!(:assign_task) { create(:ama_judge_assign_task, assigned_to: user, parent: root_task) }
@@ -907,13 +908,17 @@ RSpec.feature "Case details", :all_dbs do
       let!(:attorney_task2) { create(:ama_attorney_task, parent: root_task, assigned_to: user) }
 
       before do
+        FeatureToggle.enable!(:edit_nod_date)
         # The status attribute needs to be set here due to update_parent_status hook in the task model
         # the updated_at attribute needs to be set here due to the set_timestamps hook in the task model
         assign_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-01-01")
         attorney_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-02-01")
         attorney_task2.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-03-01")
         judge_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now)
+        nod_date_update.update!(updated_at: "2019-01-05")
       end
+
+      after { FeatureToggle.disable!(:edit_nod_date) }
 
       it "should display judge & attorney tasks, but not judge assign tasks" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -921,15 +926,17 @@ RSpec.feature "Case details", :all_dbs do
         expect(page.find_all("dl", text: COPY::CASE_TIMELINE_JUDGE_TASK).length).to eq 1
       end
 
-      it "should sort tasks properly" do
+      it "should sort tasks and nod date updates properly" do
         visit "/queue/appeals/#{appeal.uuid}"
         case_timeline_rows = page.find_all("table#case-timeline-table tbody tr")
         first_row_with_date = case_timeline_rows[1]
         second_row_with_date = case_timeline_rows[2]
         third_row_with_date = case_timeline_rows[3]
+        fourth_row_with_date = case_timeline_rows[4]
         expect(first_row_with_date).to have_content("01/01/2020")
         expect(second_row_with_date).to have_content("03/01/2019")
         expect(third_row_with_date).to have_content("02/01/2019")
+        expect(fourth_row_with_date).to have_content("01/05/2019")
       end
 
       it "should NOT display judge & attorney tasks" do
