@@ -973,7 +973,7 @@ describe Veteran, :all_dbs do
         Fakes::BGSService.edit_veteran_record(veteranSam.file_number, :date_of_death, date_of_death)
       end
 
-      subject { Veteran.warm_veteran_cache_for_appeals(appeal_ids) }
+      subject { Veteran.update_veteran_attr_service.warm_veteran_cache_for_appeals(appeal_ids) }
 
       it "updates our veteran_records date_of_death" do
         expect { subject }.not_to raise_error
