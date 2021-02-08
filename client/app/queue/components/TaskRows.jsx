@@ -357,7 +357,7 @@ class TaskRows extends React.PureComponent {
             taskList = {taskList} />;
         }
 
-        if (timelineEvent.changeReason) {
+        if (timelineEvent.changeReason && this.props.editNodDateEnabled) {
           return <NodDateUpdateTimeline
             nodDateUpdate = {timelineEvent}
             timeline = {timeline}
