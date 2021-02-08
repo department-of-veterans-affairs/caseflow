@@ -9,5 +9,5 @@ class UpdateVeteranAttrService
         appeal.veteran.id
       end
     end
-    end
+  end
 end
