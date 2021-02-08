@@ -68,9 +68,9 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
 
   def available_actions(user)
     if CavcLitigationSupport.singleton.user_has_access?(user)
-      return other_actions + ORG_ACTIONS if assigned_to_type == "Organization"
+      return other_actions_based_on_status + ORG_ACTIONS if assigned_to_type == "Organization"
 
-      return other_actions + USER_ACTIONS if assigned_to == user || task_is_assigned_to_user_within_organization?(user)
+      return other_actions_based_on_status + USER_ACTIONS if assigned_to == user || task_is_assigned_to_user_within_organization?(user)
     end
 
     []
@@ -78,7 +78,7 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
 
   private
 
-  def other_actions
+  def other_actions_based_on_status
     return [Constants.TASK_ACTIONS.MARK_COMPLETE.to_h] unless on_hold?
 
     []
