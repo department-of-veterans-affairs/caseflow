@@ -42,6 +42,7 @@ export const DocketSwitchReviewRequestForm = ({
   onSubmit,
   onCancel,
   appellantName,
+  docketFrom,
   issues,
 }) => {
   const {
@@ -75,6 +76,15 @@ export const DocketSwitchReviewRequestForm = ({
       ),
     []
   );
+
+  // We want to prevent accidental selection of the same docket type
+  const filteredDocketTypeOpts = useMemo(() => {
+    return docketTypeRadioOptions.map(({ value, displayText }) => ({
+      value,
+      displayText: value === docketFrom ? `${displayText} (current docket)` : displayText,
+      disabled: value === docketFrom,
+    }));
+  }, [docketTypeRadioOptions, docketFrom]);
 
   const watchDisposition = watch('disposition');
 
@@ -147,7 +157,7 @@ export const DocketSwitchReviewRequestForm = ({
           <RadioField
             name="docketType"
             label="Which docket will the issue(s) be switched to?"
-            options={docketTypeRadioOptions}
+            options={filteredDocketTypeOpts}
             inputRef={register}
             strongLabel
             vertical
@@ -169,5 +179,6 @@ DocketSwitchReviewRequestForm.propTypes = {
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
   appellantName: PropTypes.string.isRequired,
+  docketFrom: PropTypes.string.isRequired,
   issues: PropTypes.array,
 };
