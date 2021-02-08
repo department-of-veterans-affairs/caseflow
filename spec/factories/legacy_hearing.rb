@@ -5,6 +5,7 @@ FactoryBot.define do
     transient do
       regional_office { nil }
       disposition { nil }
+      notes { nil }
       hearing_day do
         create(:hearing_day,
                regional_office: regional_office,
@@ -64,6 +65,21 @@ FactoryBot.define do
           :assign_hearing_disposition_task,
           parent: hearing.hearing_task_association.hearing_task,
           appeal: hearing.appeal
+        )
+      end
+    end
+
+    trait :for_vacols_case do
+      case_hearing do
+        create(
+          :case_hearing,
+          user: user,
+          hearing_type: hearing_day.request_type,
+          hearing_date: VacolsHelper.format_datetime_with_utc_timezone(scheduled_for),
+          vdkey: hearing_day.id,
+          hearing_disp: disposition,
+          notes1: HearingMapper.notes_to_vacols_format(notes),
+          folder_nr: appeal&.vacols_id
         )
       end
     end

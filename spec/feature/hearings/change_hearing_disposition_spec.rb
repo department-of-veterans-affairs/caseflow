@@ -274,6 +274,31 @@ RSpec.shared_examples "Change hearing disposition" do
           )
         end
       end
+
+      scenario "change hearing disposition to scheduled_in_error" do
+        step "visit the hearing admin organization queue and click on the veteran's name" do
+          visit "/organizations/#{HearingAdmin.singleton.url}"
+          expect(page).to have_content("Unassigned (1)")
+          click_on veteran_link_text
+        end
+
+        step "change the hearing disposition to scheduled_in_error" do
+          click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
+          click_dropdown(
+            {
+              prompt: "Select",
+              text: Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.scheduled_in_error
+            },
+            find(".cf-modal-body")
+          )
+          fill_in "Notes", with: instructions_text
+          click_button("Submit")
+          expect(page).to have_content(
+            "Successfully changed hearing disposition to " \
+              "#{Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.scheduled_in_error}"
+          )
+        end
+      end
     end
 
     context "a hearing has mistakenly been marked postponed" do
