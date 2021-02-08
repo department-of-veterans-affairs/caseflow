@@ -16,8 +16,9 @@ export default {
   ],
   parameters: {},
   args: {
-  appellantName: 'Jane Doe',
-  issues
+    appellantName: 'Jane Doe',
+    docketFrom: 'direct_review',
+    issues,
   },
   argTypes: {
     onCancel: { action: 'cancel' },
@@ -31,6 +32,7 @@ export const Basic = Template.bind({});
 
 Basic.parameters = {
   docs: {
-    storyDescription: 'Used by attorney in Clerk of the Board office to complete a grant of a docket switch checkout flow ',
+    storyDescription:
+      'Used by attorney in Clerk of the Board office to complete a grant of a docket switch checkout flow ',
   },
 };

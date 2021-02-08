@@ -2,5 +2,6 @@
   "cancelled": "cancelled",
   "held": "held",
   "no_show": "no_show",
-  "postponed": "postponed"
+  "postponed": "postponed",
+  "scheduled_in_error": "scheduled_in_error"
 }

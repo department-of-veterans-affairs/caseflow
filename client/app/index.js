@@ -4,7 +4,6 @@ import 'regenerator-runtime/runtime';
 import React from 'react';
 import ReactOnRails from 'react-on-rails';
 import { render } from 'react-dom';
-import { AppContainer } from 'react-hot-loader';
 import _ from 'lodash';
 import './styles/app.scss';
 import '../node_modules/pdfjs-dist/web/pdf_viewer.css';
@@ -71,9 +70,9 @@ const COMPONENTS = {
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
   const renderApp = (Component) => {
     const element = (
-      <AppContainer>
-        <Component {...props} />
-      </AppContainer>
+
+      <Component {...props} />
+
     );
 
     render(element, document.getElementById(domNodeId));
