@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ControllerSchema
-  SUPPORTED_TYPES = %w[bool date datetime integer string].freeze
+  SUPPORTED_TYPES = %w[bool date datetime integer nested string].freeze
 
   class Field
     attr_reader :name, :type, :optional, :nullable, :included_in, :doc
@@ -19,12 +19,13 @@ class ControllerSchema
 
     # convert this Field into a DSL entry on a Dry::Schema
     def register(dry_dsl)
+      dsl_type = (type == :nested) ? :hash : type # hash is a reserved built-in name
       key = register_key(dry_dsl)
       if nullable
-        key = key.maybe(type)
+        key = key.maybe(dsl_type)
         key.value(**value_options) if value_options.present?
       else
-        key.value(type, **value_options)
+        key.value(dsl_type, **value_options)
       end
     end
 

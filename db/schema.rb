@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_05_183027) do
+ActiveRecord::Schema.define(version: 2021_02_05_194714) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1438,7 +1438,7 @@ ActiveRecord::Schema.define(version: 2021_02_05_183027) do
     t.string "last_name"
     t.string "middle_name"
     t.string "name", null: false, comment: "Name of organization, or first name or mononym of person"
-    t.string "party_type", null: false, comment: "The type of this party. Allowed values: person, organization"
+    t.string "party_type", null: false, comment: "The type of this party. Allowed values: individual, organization"
     t.string "phone_number"
     t.string "state", null: false
     t.string "suffix"
@@ -1509,6 +1509,7 @@ ActiveRecord::Schema.define(version: 2021_02_05_183027) do
     t.string "closest_regional_office"
     t.datetime "created_at"
     t.date "date_of_death", comment: "Date of Death reported by BGS, cached locally"
+    t.datetime "date_of_death_reported_at", comment: "The datetime that date_of_death last changed for veteran."
     t.string "file_number", null: false
     t.string "first_name"
     t.string "last_name"

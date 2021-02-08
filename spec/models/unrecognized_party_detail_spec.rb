@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 describe UnrecognizedPartyDetail do
-  let(:party_type) { :person }
+  let(:party_type) { :individual }
   let(:detail) { create(:unrecognized_party_detail, party_type) }
 
   describe "#name" do
     subject { detail.name }
 
-    context "when the party is a person" do
+    context "when the party is an individual" do
       it { is_expected.to eq "Jane Smith" }
     end
 
@@ -20,7 +20,7 @@ describe UnrecognizedPartyDetail do
   describe "#first_name" do
     subject { detail.first_name }
 
-    context "when the party is a person" do
+    context "when the party is an individual" do
       it { is_expected.to eq "Jane" }
     end
 
