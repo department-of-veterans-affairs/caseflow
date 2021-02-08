@@ -777,8 +777,6 @@ RSpec.feature "Case details", :all_dbs do
     let(:appeal) { create(:appeal) }
     let(:user) { create(:user) }
     let(:user2) { create(:user) }
-    before { FeatureToggle.enable!(:edit_nod_date) }
-    after { FeatureToggle.disable!(:edit_nod_date) }
 
     context "when the current user is a member of the AOD team" do
       before do
@@ -910,6 +908,7 @@ RSpec.feature "Case details", :all_dbs do
       let!(:attorney_task2) { create(:ama_attorney_task, parent: root_task, assigned_to: user) }
 
       before do
+        FeatureToggle.enable!(:edit_nod_date)
         # The status attribute needs to be set here due to update_parent_status hook in the task model
         # the updated_at attribute needs to be set here due to the set_timestamps hook in the task model
         assign_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-01-01")
@@ -918,6 +917,8 @@ RSpec.feature "Case details", :all_dbs do
         judge_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now)
         nod_date_update.update!(updated_at: "2019-01-05")
       end
+
+      after { FeatureToggle.disable!(:edit_nod_date) }
 
       it "should display judge & attorney tasks, but not judge assign tasks" do
         visit "/queue/appeals/#{appeal.uuid}"
