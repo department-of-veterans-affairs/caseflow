@@ -177,6 +177,16 @@ describe('DocketSwitchEditTasksForm', () => {
       // Should only return the two selected tasks
       expect(onSubmit.mock.calls[0][0]?.taskIds?.length).toBe(2);
     });
+
+    describe('no existing tasks', () => {
+      it('renders alternate text', () => {
+        setup({ taskListing: [] });
+
+        expect(
+          screen.getByText(/there are currently no open tasks on this appeal/i)
+        ).toBeInTheDocument();
+      });
+    });
   });
 
   describe('mandatory tasks', () => {
