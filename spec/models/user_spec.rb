@@ -58,6 +58,33 @@ describe User, :all_dbs do
     end
   end
 
+  describe "judges in VACOLS" do
+    context "user is a judge" do
+      let(:user) { create(:user, :with_vacols_judge_record) }
+      it "distinguishes a pure judge" do
+        expect(user.pure_judge_in_vacols?)
+        expect(user.attorney_in_vacols?).to be false
+        expect(user.acting_judge_in_vacols?).to be false
+      end
+    end
+    context "user is an acting judge" do
+      let(:user) { create(:user, :with_vacols_acting_judge_record) }
+      it "distinguishes an acting judge" do
+        expect(user.pure_judge_in_vacols?).to be false
+        expect(user.attorney_in_vacols?)
+        expect(user.acting_judge_in_vacols?)
+      end
+    end
+    context "user is a pure attorney" do
+      let(:user) { create(:user, :with_vacols_attorney_record) }
+      it "distinguishes an acting attorney" do
+        expect(user.pure_judge_in_vacols?).to be false
+        expect(user.attorney_in_vacols?)
+        expect(user.acting_judge_in_vacols?).to be false
+      end
+    end
+  end
+
   context ".batch_find_by_css_id_or_create_with_default_station_id" do
     subject { User.batch_find_by_css_id_or_create_with_default_station_id(css_ids) }
 
