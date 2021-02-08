@@ -74,6 +74,7 @@
     "classnames": "^2.2.5",
     "core-js": "^3.4.1",
     "css-loader": "^3.6.0",
+    "date-fns": "^2.16.1",
     "detect-browser": "^2.4.0",
     "dompurify": "^2.0.17",
     "draft-js": "^0.10.5",
