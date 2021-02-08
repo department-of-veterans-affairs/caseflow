@@ -452,9 +452,7 @@ class Veteran < CaseflowRecord
 
   def refresh_attr
     begin
-      if stale_attributes?
-        update_cached_attributes!
-      end
+      update_cached_attributes! if stale_attributes?
     rescue ActiveRecord::RecordNotFound => error
       Raven.capture_exception(error)
     # if veteran could not be found. Raise exception and don't return, just ignore.
