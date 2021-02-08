@@ -185,14 +185,14 @@ class ScheduleHearingTask < Task
 
   # Method to change the hearing request type on an appeal
   def change_hearing_request_type(params, current_user)
-    changed_request_type = ChangeHearingRequestTypeTask.create!(
+    change_hearing_request_type_task = ChangeHearingRequestTypeTask.create!(
       appeal: appeal,
       assigned_to: current_user,
       parent: self
     )
 
     # Call the child method so that we follow that workflow when changing the hearing request type
-    changed_request_type.update_from_params(params, current_user)
+    change_hearing_request_type_task.update_from_params(params, current_user)
   end
 
   def cancel_parent_task(parent)
