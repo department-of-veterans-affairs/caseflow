@@ -501,9 +501,6 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         end
 
         step "assigned user completes task" do
-          click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
-          click_on "Submit"
-
           find(".cf-select__control", text: "Select an action").click
           response_window_task_row = page.find("#currently-active-tasks").find_all("tr")[2]
           expect(response_window_task_row).to have_content("TASK\n#{COPY::CRP_LETTER_RESP_WINDOW_TASK_LABEL}")
