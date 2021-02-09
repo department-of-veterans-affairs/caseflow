@@ -333,7 +333,8 @@ class TaskRows extends React.PureComponent {
     const {
       appeal,
       taskList,
-      timeline
+      timeline,
+      editNodDateEnabled
     } = this.props;
     const nodDateUpdates = appeal.nodDateUpdates;
 
@@ -342,13 +343,6 @@ class TaskRows extends React.PureComponent {
     return <React.Fragment key={appeal.externalId}>
 
       { sortedTimelineEvents.map((timelineEvent, index) => {
-        const templateConfig = {
-          task: timelineEvent,
-          index,
-          timeline,
-          sortedTimelineEvents,
-          appeal
-        };
 
         if (timelineEvent.isDecisionDate) {
           return <DecisionDateTimeLine
@@ -357,12 +351,21 @@ class TaskRows extends React.PureComponent {
             taskList = {taskList} />;
         }
 
-        if (timelineEvent.changeReason && this.props.editNodDateEnabled) {
+        if (timelineEvent.changeReason) {
           return <NodDateUpdateTimeline
             nodDateUpdate = {timelineEvent}
             timeline = {timeline}
+            editNodDateEnabled = {editNodDateEnabled}
           />;
         }
+
+        const templateConfig = {
+          task: timelineEvent,
+          index,
+          timeline,
+          sortedTimelineEvents,
+          appeal
+        };
 
         return this.taskTemplate(templateConfig);
       }) }

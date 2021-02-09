@@ -31,11 +31,11 @@ const nodDateUpdateTimelineInfoStyling = css({
 });
 
 export const NodDateUpdateTimeline = (props) => {
-  const { nodDateUpdate, timeline } = props;
+  const { nodDateUpdate, timeline, editNodDateEnabled } = props;
   const changeReason = changeReasons.find((reason) => reason.value === nodDateUpdate.changeReason).label;
 
   return <React.Fragment>
-    {timeline && <tr>
+    {editNodDateEnabled && timeline && <tr>
       <td className="taskContainerStyling taskTimeTimelineContainerStyling">
         <div>{ moment(nodDateUpdate.updatedAt).format('MM/DD/YYYY') }</div>
         <div {...nodDateUpdateTimelineTimeStyling}>
@@ -70,5 +70,6 @@ NodDateUpdateTimeline.propTypes = {
     userFirstName: PropTypes.string.isRequired,
     userLastName: PropTypes.string.isRequired
   }).isRequired,
-  timeline: PropTypes.bool.isRequired
+  timeline: PropTypes.bool.isRequired,
+  editNodDateEnabled: PropTypes.bool.isRequired
 };

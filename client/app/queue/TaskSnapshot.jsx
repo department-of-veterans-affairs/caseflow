@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { appealWithDetailSelector, taskSnapshotTasksForAppeal } from './selectors';
 import { css } from 'glamor';
 import AddNewTaskButton from './components/AddNewTaskButton';
@@ -20,9 +20,11 @@ const alertStyling = css({
 });
 
 export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAlert }) => {
+  const canEditNodDate = useSelector((state) => state.ui.canEditNodDate);
+
   const sectionBody = tasks.length ? (
     <table {...tableStyling} summary="layout table">
-      <tbody><TaskRows appeal={appeal} taskList={tasks} timeline={false} hideDropdown={hideDropdown} /></tbody>
+      <tbody><TaskRows appeal={appeal} taskList={tasks} timeline={false} editNodDateEnabled={!appeal.isLegacyAppeal && canEditNodDate} hideDropdown={hideDropdown} /></tbody>
     </table>
   ) : (
     COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL
