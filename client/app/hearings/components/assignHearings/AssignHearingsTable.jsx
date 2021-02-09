@@ -5,6 +5,7 @@ import moment from 'moment';
 
 import { css } from 'glamor';
 import { COLORS } from '../../../constants/AppConstants';
+import COPY from '../../../../COPY.json'
 import { DateString } from '../../../util/DateUtil';
 
 import {
@@ -144,10 +145,10 @@ export default class AssignHearingsTable extends React.PureComponent {
                 <div>
                   <strong>Date of Death Reported</strong>
                   <ul {...listStyling}>
-                    <li><strong>Veteran: </strong>{"Bob Smith"}</li>
-                    <li><strong>Source: </strong>{"SSA"}</li>
-                    <li><strong>Date of Death: </strong><DateString date={'2020-03-19'} /></li>
-                    <li><strong>Reported on: </strong><DateString date={'2020-03-19'} /></li>
+                    <li><strong>Veteran: </strong>{row.appeal.veteranFullName}</li>
+                    <li><strong>Source: </strong>{COPY.FNOD_SOURCE}</li>
+                    <li><strong>Date of Death: </strong><DateString date={row.appeal.veteranDeathDate} /></li>
+                    <li><strong>Reported on: </strong><DateString date={row.appeal.veteranDeathDateReportedAt} /></li>
                   </ul>
                 </div>
               }
