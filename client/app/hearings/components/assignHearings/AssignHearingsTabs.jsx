@@ -105,6 +105,9 @@ AssignHearingsTabs.propTypes = {
     totalSlots: PropTypes.number
   }),
 
+  // View FNOD Badge toggle
+  userCanViewFnodBadgeInHearings: PropTypes.bool,
+
   // Selected Regional Office Key
   selectedRegionalOffice: PropTypes.string,
 
