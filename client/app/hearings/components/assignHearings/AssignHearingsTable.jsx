@@ -3,6 +3,10 @@ import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 
+import { css } from 'glamor';
+import { COLORS } from '../../../constants/AppConstants';
+import { DateString } from '../../../util/DateUtil';
+
 import {
   AppealDocketTag,
   CaseDetailsInformation,
@@ -22,6 +26,7 @@ import ApiUtil from '../../../util/ApiUtil';
 import LinkToAppeal from './LinkToAppeal';
 import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG';
 import QueueTable from '../../../queue/QueueTable';
+import FnodBadge from '../../../queue/components/FnodBadge';
 
 const TASKS_ENDPOINT = '/hearings/schedule_hearing_tasks';
 const COLUMNS_ENDPOINT = '/hearings/schedule_hearing_tasks_columns';
@@ -98,6 +103,19 @@ export default class AssignHearingsTable extends React.PureComponent {
       return [];
     }
 
+    const listStyling = css({
+      listStyle: 'none',
+      textAlign: 'left',
+      marginBottom: 0,
+      padding: 0,
+      '& > li': {
+        marginBottom: 0,
+        '& > strong': {
+          color: COLORS.WHITE
+        }
+      }
+    });
+
     const columns = [
       {
         header: '',
@@ -111,13 +129,30 @@ export default class AssignHearingsTable extends React.PureComponent {
         header: 'Case Details',
         align: 'left',
         valueFunction: (row) => (
-          <LinkToAppeal
-            appealExternalId={row.externalAppealId}
-            hearingDay={selectedHearingDay}
-            regionalOffice={selectedRegionalOffice}
-          >
-            <CaseDetailsInformation appeal={row.appeal} />
-          </LinkToAppeal>
+          <React.Fragment>
+            <LinkToAppeal
+              appealExternalId={row.externalAppealId}
+              hearingDay={selectedHearingDay}
+              regionalOffice={selectedRegionalOffice}
+            >
+              <CaseDetailsInformation appeal={row.appeal} />
+            </LinkToAppeal>
+            <FnodBadge
+              appeal={row.appeal}
+              show
+              tooltipText = {
+                <div>
+                  <strong>Date of Death Reported</strong>
+                  <ul {...listStyling}>
+                    <li><strong>Veteran: </strong>{"Bob Smith"}</li>
+                    <li><strong>Source: </strong>{"SSA"}</li>
+                    <li><strong>Date of Death: </strong><DateString date={'2020-03-19'} /></li>
+                    <li><strong>Reported on: </strong><DateString date={'2020-03-19'} /></li>
+                  </ul>
+                </div>
+              }
+            />
+          </React.Fragment>
         )
       },
       {
