@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import { connect } from 'react-redux';
 
 import { COLORS } from '../../constants/AppConstants';
 import Badge from './Badge';
@@ -11,22 +10,19 @@ import Badge from './Badge';
  */
 
 const FnodBadge = (props) => {
-  const { appeal, featureToggles } = props;
+  const { appeal, show, tooltipText } = props;
 
-  if (!appeal.veteranAppellantDeceased || !featureToggles.fnod_badge) {
+  if (!appeal.veteranAppellantDeceased || !show) {
     return null;
   }
-
-  const tooltipText = 'Date of Death Reported';
 
   return <Badge name="fnod" displayName="FNOD" color={COLORS.RED} tooltipText={tooltipText} id={`fnod-${appeal.id}`} />;
 };
 
 FnodBadge.propTypes = {
   appeal: PropTypes.object,
-  featureToggles: PropTypes.object
+  show: PropTypes.bool,
+  tooltipText: PropTypes.string
 };
 
-const mapStateToProps = (state) => ({ featureToggles: state.ui.featureToggles });
-
-export default connect(mapStateToProps)(FnodBadge);
+export default FnodBadge;
