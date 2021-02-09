@@ -145,7 +145,6 @@ module Seeds
       create_ama_tasks
       create_board_grant_tasks
       create_veteran_record_request_tasks
-      create_cavc_appeals
     end
 
     def create_ama_distribution_tasks
@@ -722,15 +721,6 @@ module Seeds
           :request_issue, 2, :rating, contested_issue_description: description, notes: notes
         )
       )
-    end
-
-    def create_cavc_appeals
-      9.times do
-        create(:cavc_remand,
-               judge: JudgeTeam.first.admin,
-               attorney: JudgeTeam.first.non_admins.first,
-               veteran: Veteran.first)
-      end
     end
 
     # these really belong in Seeds::Intake but we put them here for now because they rely on Seeds::Facols

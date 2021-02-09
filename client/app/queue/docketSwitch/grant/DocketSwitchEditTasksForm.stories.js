@@ -42,3 +42,9 @@ Basic.parameters = {
       'Used by attorney in Clerk of the Board office to complete a grant of a docket switch checkout flow ',
   },
 };
+
+export const NoExistingTasks = Template.bind({});
+NoExistingTasks.args = {
+  taskListing: []
+};
+

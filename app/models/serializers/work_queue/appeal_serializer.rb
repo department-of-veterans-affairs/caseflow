@@ -16,7 +16,8 @@ class WorkQueue::AppealSerializer
         notes: issue.notes,
         diagnostic_code: issue.contested_rating_issue_diagnostic_code,
         remand_reasons: issue.remand_reasons,
-        closed_status: issue.closed_status
+        closed_status: issue.closed_status,
+        decision_date: issue.decision_date
       }
     end
   end
@@ -33,6 +34,19 @@ class WorkQueue::AppealSerializer
         remand_reasons: issue.remand_reasons,
         diagnostic_code: issue.diagnostic_code,
         request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id)
+      }
+    end
+  end
+
+  attribute :nod_date_updates do |object|
+    object.nod_date_updates.map do |nod_date_update|
+      updated_by = nod_date_update.user
+      {
+        old_date: nod_date_update.old_date,
+        new_date: nod_date_update.new_date,
+        change_reason: nod_date_update.change_reason,
+        updated_at: nod_date_update.updated_at,
+        updated_by: updated_by.full_name
       }
     end
   end
