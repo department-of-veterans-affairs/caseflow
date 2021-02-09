@@ -139,7 +139,7 @@ export default class AssignHearingsTable extends React.PureComponent {
             </LinkToAppeal>
             <FnodBadge
               appeal={row.appeal}
-              show
+              show={this.props.userCanViewFnodBadgeInHearings}
               tooltipText = {
                 <div>
                   <strong>Date of Death Reported</strong>
@@ -313,6 +313,9 @@ AssignHearingsTable.propTypes = {
   selectedHearingDay: PropTypes.shape({
     scheduledFor: PropTypes.string
   }),
+
+  // View FNOD badge permission
+  userCanViewFnodBadgeInHearings: PropTypes.bool,
 
   // Selected Regional Office Key
   selectedRegionalOffice: PropTypes.string,

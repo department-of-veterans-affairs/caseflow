@@ -1,6 +1,6 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useContext } from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -8,6 +8,8 @@ import { COLORS } from '../../../constants/AppConstants';
 import { NoUpcomingHearingDayMessage } from './Messages';
 import AssignHearingsTabs from './AssignHearingsTabs';
 import Button from '../../../components/Button';
+
+import { HearingsUserContext } from '../../contexts/HearingsUserContext';
 
 const sectionNavigationListStyling = css({
   '& > li': {
@@ -80,6 +82,10 @@ export const AssignHearings = ({
   upcomingHearingDays, selectedHearingDay, selectedRegionalOffice, onSelectedHearingDayChange
 }) => {
 
+  // This is so far only used in AssignHearingTable.
+  // TODO: Convert AssignHearingTable to a functional component and move this in there.
+  const { userCanViewFnodBadgeInHearings } = useContext(HearingsUserContext);
+
   if (_.isEmpty(upcomingHearingDays)) {
     return <NoUpcomingHearingDayMessage />;
   }
@@ -94,6 +100,7 @@ export const AssignHearings = ({
         selectedRegionalOffice={selectedRegionalOffice}
         selectedHearingDay={selectedHearingDay}
         room={selectedHearingDay?.room}
+        userCanViewFnodBadgeInHearings={userCanViewFnodBadgeInHearings}
       />
     </React.Fragment>
   );

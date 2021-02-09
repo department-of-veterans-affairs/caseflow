@@ -24,6 +24,7 @@
   userCanVsoHearingSchedule: current_user.can_vso_hearing_schedule?,
   userHasHearingPrepRole: current_user.can?('Hearing Prep'),
   userInHearingOrTranscriptionOrganization: current_user.in_hearing_or_transcription_organization?,
+  userCanViewFnodBadgeInHearings: true,#FeatureToggle.enabled?(:national_vh_queue, user: current_user),
   userId: current_user.id,
   userCssId: current_user.css_id
 }) %>
