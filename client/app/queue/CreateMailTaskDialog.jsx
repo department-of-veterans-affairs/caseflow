@@ -78,8 +78,8 @@ export class CreateMailTaskDialog extends React.Component {
     if (relevantAction && relevantAction.data && (status === 'dispatched' || status === 'post_dispatch')) {
       return dispatchedAppealMailTaskOptions;
     } else if (relevantAction && relevantAction.data) {
-      return relevantAction.data.options
-    };
+      return relevantAction.data.options;
+    }
 
     // We should never get here since any task action the creates this modal should provide data.
     throw new Error('Task action requires data');
@@ -135,6 +135,7 @@ export class CreateMailTaskDialog extends React.Component {
 CreateMailTaskDialog.propTypes = {
   appeal: PropTypes.shape({
     externalId: PropTypes.string,
+    status: PropTypes.string,
   }),
   appealId: PropTypes.string,
   highlightFormItems: PropTypes.bool,
