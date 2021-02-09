@@ -19,7 +19,7 @@ FactoryBot.define do
         JudgeTeam.first&.non_admins&.first ||
           create(:user).tap { |u| create(:staff, :attorney_role, user: u) }
       end
-      veteran { Veteran.first || create(:veteran) }
+      veteran { create(:veteran) }
       docket_type { Constants.AMA_DOCKETS.evidence_submission }
     end
 
