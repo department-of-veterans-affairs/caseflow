@@ -47,3 +47,13 @@ Controlled.parameters = {
     },
   },
 };
+
+export const ControlledBooleanValues = ControlledTemplate.bind({});
+ControlledBooleanValues.args = {
+  name: 'radioField',
+  label: 'Select boolean',
+  options: [
+    { displayText: 'True', value: 'true' },
+    { displayText: 'False', value: 'false' }
+  ],
+};

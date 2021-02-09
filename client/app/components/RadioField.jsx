@@ -67,6 +67,7 @@ export const RadioField = (props) => {
 
   const handleChange = (event) => onChange?.(event.target.value);
   const controlled = useMemo(() => typeof value !== 'undefined', [value]);
+  console.error('controlled', controlled, value);
 
   return (
     <fieldset className={radioClass.join(' ')} {...styling}>
