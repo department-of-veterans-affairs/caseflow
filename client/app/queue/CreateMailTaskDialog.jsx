@@ -72,14 +72,14 @@ export class CreateMailTaskDialog extends React.Component {
     const relevantAction = this.props.task.availableActions.find((action) =>
       this.props.history.location.pathname.endsWith(action.value)
     );
-    const status = this.props.appeal.status
-    const dispatchedAppealMailTaskOptions = relevantAction.data.options.filter((task) => task.value != "DocketSwitchMailTask") 
+    const status = this.props.appeal.status;
+    const dispatchedAppealMailTaskOptions = relevantAction.data.options.filter((task) => task.value !== 'DocketSwitchMailTask');
 
-    if (relevantAction && relevantAction.data && (status == "dispatched" || status == "post_dispatch")) {
+    if (relevantAction && relevantAction.data && (status === 'dispatched' || status === 'post_dispatch')) {
       return dispatchedAppealMailTaskOptions;
     } else if (relevantAction && relevantAction.data) {
       return relevantAction.data.options
-    }
+    };
 
     // We should never get here since any task action the creates this modal should provide data.
     throw new Error('Task action requires data');
