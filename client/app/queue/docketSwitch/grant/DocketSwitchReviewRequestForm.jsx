@@ -105,10 +105,19 @@ export const DocketSwitchReviewRequestForm = ({
     return Object.keys(newIssues).filter((key) => newIssues[key]);
   };
 
+  // Need a bit of extra handling before passing along
+  const formatFormData = (formData) => {
+    // Ensure that all issue IDs are selected if full grant is chosen
+    if (formData.disposition === 'granted') {
+      formData.issueIds = issues.map((item) => String(item.id));
+    }
+    onSubmit?.(formData);
+  };
+
   return (
     <form
       className="docket-switch-granted-request"
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(formatFormData)}
       aria-label="Grant Docket Switch Request"
     >
       <AppSegment filledBackground>
@@ -168,7 +177,7 @@ export const DocketSwitchReviewRequestForm = ({
         <CheckoutButtons
           disabled={!formState.isValid}
           onCancel={onCancel}
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(formatFormData)}
         />
       </div>
     </form>
