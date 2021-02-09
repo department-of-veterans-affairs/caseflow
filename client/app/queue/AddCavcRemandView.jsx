@@ -45,9 +45,9 @@ const typeOptions = _.map(_.keys(CAVC_DECISION_TYPES), (key) => ({
 
 const isMandateProvidedOptions = [
   { displayText: 'Yes',
-    value: '1' },
+    value: 'true' },
   { displayText: 'No',
-    value: '2' }
+    value: 'false' }
 ];
 
 const subTypeOptions = _.map(_.keys(CAVC_REMAND_SUBTYPE_NAMES), (key) => ({
@@ -78,7 +78,7 @@ const AddCavcRemandView = (props) => {
   const [mandateDate, setMandateDate] = useState(null);
   const [issues, setIssues] = useState({});
   const [instructions, setInstructions] = useState(null);
-  const [isMandateProvided, setMandateProvided] = useState('1');
+  const [isMandateProvided, setMandateProvided] = useState('true');
 
   const supportedDecisionTypes = {
     [CAVC_DECISION_TYPES.remand]: featureToggles.cavc_remand,
@@ -125,7 +125,7 @@ const AddCavcRemandView = (props) => {
   const straightReversalType = () => type === CAVC_DECISION_TYPES.straight_reversal;
   const deathDismissalType = () => type === CAVC_DECISION_TYPES.death_dismissal;
   const mdrSubtype = () => subType === CAVC_REMAND_SUBTYPES.mdr;
-  const mandateAvailable = () => !(type === CAVC_DECISION_TYPES.remand && mdrSubtype()) && (isMandateProvided === '1');
+  const mandateAvailable = () => !(type === CAVC_DECISION_TYPES.remand && mdrSubtype()) && (isMandateProvided === 'true');
   const validDocketNumber = () => (/^\d{2}-\d{1,5}$/).exec(docketNumber);
   const validJudge = () => Boolean(judge);
   const validDecisionDate = () => Boolean(decisionDate);
