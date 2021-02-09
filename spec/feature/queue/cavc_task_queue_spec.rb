@@ -490,9 +490,9 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           expect(page).to have_content COPY::CAVC_EXTENSION_REQUEST_GRANT_SUCCESS_DETAIL
 
           # Check for many actions on the response window task
-          find(".cf-select__control", text: "Select an action").click
           response_window_task_row = page.find("#currently-active-tasks").find_all("tr")[2]
           expect(response_window_task_row).to have_content("TASK\n#{COPY::CRP_LETTER_RESP_WINDOW_TASK_LABEL}")
+          find(".cf-select__control", text: "Select an action").click
           expect(response_window_task_row.find_all(".cf-select__option").length).to eq 8
 
           # Ensure we recorded the grant
