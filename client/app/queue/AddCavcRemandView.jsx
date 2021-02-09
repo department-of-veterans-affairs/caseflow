@@ -139,13 +139,13 @@ const AddCavcRemandView = (props) => {
       validInstructions();
   };
 
-  const mandateSubmitted = () => {
+  const mandateDatesPopulated = () => {
     return mandateAvailable() && Boolean(judgementDate) && Boolean(mandateDate);
   };
 
   const successMsgDetail = () => {
     if (straightReversalType() || deathDismissalType()) {
-      if (mandateSubmitted()) {
+      if (mandateDatesPopulated()) {
         return COPY.CAVC_REMAND_CASE_READY_FOR_DISTRIBUTION_DETAIL;
       }
 
@@ -159,7 +159,7 @@ const AddCavcRemandView = (props) => {
 
   const successMsgTitle = () => {
     if (straightReversalType() || deathDismissalType()) {
-      if (mandateSubmitted()) {
+      if (mandateDatesPopulated()) {
         return COPY.CAVC_REMAND_CREATED_FOR_DISTRIBUTION_TITLE;
       }
 
