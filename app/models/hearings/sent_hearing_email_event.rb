@@ -33,10 +33,6 @@ class SentHearingEmailEvent < CaseflowRecord
     }
   ), _prefix: :is
 
-  def readonly?
-    !new_record?
-  end
-
   def sent_to_role
     case recipient_role
     when "judge"
