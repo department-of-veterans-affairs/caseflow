@@ -936,14 +936,15 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       expect(subject.first).to eq recent_completed_priority_distribution
     end
   end
+
   context ".warm_veteran_attribs_for_priority_distributions" do
     let!(:job) { PushPriorityAppealsToJudgesJob.new }
-    let(:distributed_cases) { DistributedCase.where(distribution: job) }
+    let(:distributed_cases_2) { DistributedCase.where(distribution: job) }
     let(:non_genpop_distro_cases) do
-      DistributedCase.where(distribution_id: distributed_cases.pluck(:id))
+      DistributedCase.where(distribution_id: distributed_cases_2.pluck(:id))
     end
     let(:genpop_distro_cases) do
-      DistributedCase.where(distribution_id: distributed_cases.pluck(:id))
+      DistributedCase.where(distribution_id: distributed_cases_2.pluck(:id))
     end
     before do
       job.instance_variable_set(:@tied_distributions, non_genpop_distro_cases)
@@ -952,12 +953,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     subject { job.warm_veteran_attribs_for_priority_distributions }
 
-    it "calls warm_veteran_cache_for_appeals with non_genpop_distro_case_ids" do
-      expect { subject }.not_to raise_error
-    end
-
-    it "calls warm_veteran_cache_for_appeals with genpop_distro_case_ids" do
-      expect { subject }.not_to raise_error
+    it "calls warm_veteran_cache_for_appeals with list of case ids" do
+      expect(subject).to eq 114
     end
   end
 end
