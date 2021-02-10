@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router';
 import { DocketSwitchReviewRequestContainer } from './DocketSwitchReviewRequestContainer';
 import { DocketSwitchEditTasksContainer } from './DocketSwitchEditTasksContainer';
+import { DocketSwitchReviewConfirmContainer } from './DocketSwitchReviewConfirmContainer';
 
 const sections = ['Review Request', 'Add/Remove Tasks', 'Review & Confirm'];
 
@@ -39,7 +40,7 @@ export const DocketSwitchGrantContainer = () => {
           <DocketSwitchEditTasksContainer />
         </Route>
         <Route path={`${path}/confirm`}>
-          <p>Step 3 component here...</p>
+          <DocketSwitchReviewConfirmContainer />
         </Route>
       </Switch>
     </AppSegment>

@@ -13,9 +13,14 @@
     "value": "modal/cancel_task",
     "func": "cancel_convert_hearing_request_type_data"
   },
+  "CHANGE_HEARING_REQUEST_TYPE_TO_CENTRAL": {
+    "label": "Convert hearing to Central",
+    "value": "modal/change_hearing_request_type_to_central",
+    "func": "change_hearing_request_type_data"
+  },
   "CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO": {
     "label": "Convert hearing to video",
-    "value": "<placeholder>modal/change_hearing_request_type</placeholder>",
+    "value": "modal/change_hearing_request_type_to_video",
     "func": "change_hearing_request_type_data"
   },
   "CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL": {
@@ -337,5 +342,9 @@
     "label": "Postpone hearing",
     "value": "modal/postpone_hearing",
     "func": "add_schedule_hearing_task_admin_actions_data"
+  },
+  "REMOVE_HEARING_SCHEDULED_IN_ERROR": {
+    "label": "Remove hearing to correct a scheduling error",
+    "value": "modal/hearing_scheduled_in_error"
   }
 }

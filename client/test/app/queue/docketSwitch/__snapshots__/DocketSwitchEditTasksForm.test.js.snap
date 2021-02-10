@@ -24,7 +24,7 @@ exports[`DocketSwitchEditTasksForm renders correctly 1`] = `
       </div>
       <div>
         <p>
-          Below is a list of tasks that will be opened when you switch dockets. Tasks that are automatically created with the Hearing docket cannot be selected or removed. Please 
+          Below is a list of tasks that will remain open when you switch dockets. Tasks that are automatically created with the Hearing docket cannot be selected or removed. Please 
           <strong>
             unselect
           </strong>

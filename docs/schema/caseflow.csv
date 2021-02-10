@@ -57,6 +57,7 @@ appeals,establishment_processed_at,datetime,,,,,,Timestamp for when the establis
 appeals,establishment_submitted_at,datetime,,,,,,Timestamp for when the the intake was submitted for asynchronous processing.
 appeals,id,integer (8) PK,x,x,,,,
 appeals,legacy_opt_in_approved,boolean,,,,,,Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review.
+appeals,original_request_type,string,,,,,,The hearing type preference for an appellant before any changes were made in Caseflow
 appeals,poa_participant_id,string,,,,,,"Used to identify the power of attorney (POA) at the time the appeal was dispatched to BVA. Sometimes the POA changes in BGS after the fact, and BGS only returns the current representative."
 appeals,receipt_date,date ∗,x,,,,,Receipt date of the appeal form. Used to determine which issues are within the timeliness window to be appealed. Only issues decided prior to the receipt date will show up as contestable issues.
 appeals,stream_docket_number,string,,,,,,"Multiple appeals with the same docket number indicate separate appeal streams, mimicking the structure of legacy appeals."
@@ -677,7 +678,7 @@ judge_case_reviews,task_id,string ∗ FK,x,,x,,,
 judge_case_reviews,updated_at,datetime ∗,x,,,,x,
 legacy_appeals,,,,,,,,
 legacy_appeals,appeal_series_id,integer (8) FK,,,x,,x,
-legacy_appeals,changed_request_type,string,,,,,,The new hearing type preference for an appellant that had previously requested a travel board hearing
+legacy_appeals,changed_request_type,string,,,,,,The new hearing type preference for an appellant that needs a hearing scheduled
 legacy_appeals,closest_regional_office,string,,,,,,
 legacy_appeals,contaminated_water_at_camp_lejeune,boolean,,,,,,
 legacy_appeals,created_at,datetime,,,,,,
@@ -697,6 +698,7 @@ legacy_appeals,manlincon_compliance,boolean,,,,,,
 legacy_appeals,mustard_gas,boolean,,,,,,
 legacy_appeals,national_cemetery_administration,boolean,,,,,,
 legacy_appeals,nonrating_issue,boolean,,,,,,
+legacy_appeals,original_request_type,string,,,,,,The hearing type preference for an appellant before any changes were made in Caseflow
 legacy_appeals,pension_united_states,boolean,,,,,,
 legacy_appeals,private_attorney_or_agent,boolean,,,,,,
 legacy_appeals,radiation,boolean,,,,,,
@@ -1143,6 +1145,7 @@ veterans,,,,,,,,
 veterans,closest_regional_office,string,,,,,,
 veterans,created_at,datetime,,,,,,
 veterans,date_of_death,date,,,,,,"Date of Death reported by BGS, cached locally"
+veterans,date_of_death_reported_at,datetime,,,,,,The datetime that date_of_death last changed for veteran.
 veterans,file_number,string ∗,x,,,,x,
 veterans,first_name,string ∗,x,,,,,
 veterans,id,integer (8) PK,x,x,,,,

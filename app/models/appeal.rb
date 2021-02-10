@@ -24,7 +24,7 @@ class Appeal < DecisionReview
   has_many :vbms_uploaded_documents
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
-  has_many :nod_date_updates, as: :appeal
+  has_many :nod_date_updates
 
   has_one :special_issue_list
   has_one :post_decision_motion
@@ -253,18 +253,6 @@ class Appeal < DecisionReview
            :available_hearing_locations,
            :email_address,
            :country, to: :veteran, prefix: true
-
-  def veteran_if_exists
-    @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
-  end
-
-  def veteran_closest_regional_office
-    veteran_if_exists&.closest_regional_office
-  end
-
-  def veteran_available_hearing_locations
-    veteran_if_exists&.available_hearing_locations
-  end
 
   def regional_office_key
     nil

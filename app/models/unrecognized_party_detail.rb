@@ -10,11 +10,11 @@ class UnrecognizedPartyDetail < CaseflowRecord
   # This polymorphism is extremely lightweight, so we opt for vanilla Ruby over STI.
   enum party_type: {
     organization: "organization",
-    person: "person"
+    individual: "individual"
   }
 
   def first_name
-    self[:name] if person?
+    self[:name] if individual?
   end
 
   def name

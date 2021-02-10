@@ -22,7 +22,7 @@ const alertStyling = css({
   '& .usa-alert-text': { lineHeight: '1' }
 });
 
-const changeReasons = [
+export const changeReasons = [
   { label: 'New Form/Information Received', value: 'new_info' },
   { label: 'Data Entry Error', value: 'entry_error' },
 ];
