@@ -113,7 +113,7 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
 
             expect(user_window_task.reload.status).to eq Constants.TASK_STATUSES.assigned
 
-            expected_actions = [Constants.TASK_ACTIONS.MARK_COMPLETE.to_h] + CRPLRWindowTask::USER_ACTIONS
+            expected_actions = CRPLRWindowTask::USER_ACTIONS_FOR_ACTIVE_TASK
             expect(user_window_task.available_actions(org_admin)).to match_array expected_actions
             expect(user_window_task.available_actions(org_nonadmin)).to match_array expected_actions
 
