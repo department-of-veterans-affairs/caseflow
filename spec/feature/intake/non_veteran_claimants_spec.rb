@@ -95,7 +95,7 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_current_path("/intake/add_issues")
     end
 
-    it "allows selecting claimant not listed goes to and add_power_of_attorney path" do
+    fit "allows selecting claimant not listed goes to and add_power_of_attorney path" do
       start_appeal(veteran)
       visit "/intake"
 
@@ -132,6 +132,7 @@ feature "Non-veteran claimants", :postgres do
       fill_in("State", with: "California").send_keys :enter
       fill_in("Zip", with: "12345").send_keys :enter
       fill_in("Country", with: "United States").send_keys :enter
+      binding.pry
       within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
         find("label", text: "Yes", match: :prefer_exact).click
       end
