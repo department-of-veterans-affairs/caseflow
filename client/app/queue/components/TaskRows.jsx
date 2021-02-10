@@ -90,7 +90,8 @@ class TaskRows extends React.PureComponent {
 
     this.state = {
       taskInstructionsIsVisible: { },
-      showEditNodDateModal: false
+      showEditNodDateModal: false,
+      activeTasks: [...props.taskList]
     };
   }
 
@@ -307,7 +308,7 @@ class TaskRows extends React.PureComponent {
       <td {...taskInfoWithIconContainer} className={tdClassNames(timeline, task)}>
         { isCancelled(task) ? <CancelIcon /> : closedAtIcon(task, timeline) }
         { (((index < sortedTimelineEvents.length) && timeline) ||
-          (index < sortedTimelineEvents.length - 1 && !timeline)) &&
+          (index < this.state.activeTasks.length - 1 && !timeline)) &&
               <div {...grayLineStyling} className={[cancelGrayTimeLineStyle(timeline),
                 task.closedAt ? '' : greyDotAndlineStyling].join(' ')} /> }
       </td>
@@ -333,8 +334,7 @@ class TaskRows extends React.PureComponent {
     const {
       appeal,
       taskList,
-      timeline,
-      editNodDateEnabled
+      timeline
     } = this.props;
     const nodDateUpdates = appeal.nodDateUpdates;
 
@@ -355,7 +355,6 @@ class TaskRows extends React.PureComponent {
           return <NodDateUpdateTimeline
             nodDateUpdate = {timelineEvent}
             timeline = {timeline}
-            editNodDateEnabled = {editNodDateEnabled}
           />;
         }
 
