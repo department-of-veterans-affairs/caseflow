@@ -22,7 +22,7 @@ describe IntakeStartValidator, :postgres do
       intake.error_code
     end
 
-    it "sets no error_code when BGS allows modification" do
+    it "sets no error_code when BGS allows modification", :aggregate_failures do
       expect_any_instance_of(BGSService).to(
         receive(:station_conflict?)
           .once
@@ -32,7 +32,7 @@ describe IntakeStartValidator, :postgres do
       expect(validate_error_code).to be nil
     end
 
-    it "sets error_code \"veteran_not_modifiable\" when BGS shows a station conflict" do
+    it "sets error_code \"veteran_not_modifiable\" when BGS shows a station conflict", :aggregate_failures do
       expect_any_instance_of(BGSService).to(
         receive(:station_conflict?)
           .once
