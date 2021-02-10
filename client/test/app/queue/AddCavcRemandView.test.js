@@ -55,6 +55,24 @@ describe('AddCavcRemandView', () => {
     expect(descisionIssues.map((issue) => issue.id).every((id) => decisionIssueChecks[id])).toBeTruthy();
   });
 
+  describe('"Are judgement and mandate dates provided?" input', () => {
+    const cavcForm = setup({ appealId, reversalToggled: true, mdrToggled: true, dismissalToggled: true });
+
+    it('does not appear for Remand type (default case)', () => {
+      expect(cavcForm.find('#remand-provided-toggle_true').length).toBe(0);
+    });
+
+    it('appears for Straight Reversal', () => {
+      cavcForm.find('#type-options_straight_reversal').simulate('change', { target: { checked: true } });
+      expect(cavcForm.find('#remand-provided-toggle_true').length).toBe(1);
+    });
+
+    it('appears for Death Dismissal', () => {
+      cavcForm.find('#type-options_death_dismissal').simulate('change', { target: { checked: true } });
+      expect(cavcForm.find('#remand-provided-toggle_true').length).toBe(1);
+    });
+  });
+
   describe('feature toggles', () => {
     describe('mdr_cavc_remand', () => {
       it('hides mdr when not toggled', () => {
