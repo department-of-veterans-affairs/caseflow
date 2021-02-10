@@ -100,7 +100,8 @@ describe BoardGrantEffectuation, :postgres do
               :decision_issue,
               rating_issue_reference_id: "ref_id1",
               disposition: granted_decision_issue.disposition,
-              participant_id: granted_decision_issue.participant_id)
+              participant_id: granted_decision_issue.participant_id
+            )
           end
           it "Updates the granted decision issue" do
             subject
