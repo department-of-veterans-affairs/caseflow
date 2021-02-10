@@ -178,7 +178,7 @@ class CachedAppealService
     #   ...
     # }
     VACOLS::Case.where(bfkey: vacols_ids).map do |vacols_case|
-      original_request = original_hearing_request_type_for_vacols_case(vacols_case)
+      original_request = original_hearing_request_type_for_vacols_case(vacols_case)&.to_sym
       changed_request = hearing_request_types_for_all_vacols_ids[vacols_case.bfkey][:changed]
       # Replicates LegacyAppeal#current_hearing_request_type
       current_request = HearingDay::REQUEST_TYPES.key(changed_request)&.to_sym || original_request
