@@ -57,9 +57,13 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
 
   # Actions a user can take on a task assigned to them
   USER_ACTIONS = [
-    Constants.TASK_ACTIONS.CAVC_EXTENSION_REQUEST.to_h,
     Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
   ].concat(TASK_ACTIONS).freeze
+
+  USER_ACTIONS_FOR_ACTIVE_TASK = [
+    Constants.TASK_ACTIONS.CAVC_EXTENSION_REQUEST.to_h,
+    Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
+  ].concat(USER_ACTIONS).freeze
 
   # Actions an admin of the organization can take on a task assigned to their organization
   ORG_ACTIONS = [
@@ -68,10 +72,12 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
 
   def available_actions(user)
     if CavcLitigationSupport.singleton.user_has_access?(user)
-      return other_actions_based_on_status + ORG_ACTIONS if assigned_to_type == "Organization"
+      return ORG_ACTIONS if assigned_to_type == "Organization"
 
       if assigned_to == user || task_is_assigned_to_user_within_organization?(user)
-        return other_actions_based_on_status + USER_ACTIONS
+        return USER_ACTIONS_FOR_ACTIVE_TASK if active?
+
+        return USER_ACTIONS
       end
     end
 
@@ -79,12 +85,6 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
   end
 
   private
-
-  def other_actions_based_on_status
-    return [Constants.TASK_ACTIONS.MARK_COMPLETE.to_h] if assigned_to_type == "User" && active?
-
-    []
-  end
 
   def set_assignee
     self.assigned_to = CavcLitigationSupport.singleton if assigned_to.nil?
