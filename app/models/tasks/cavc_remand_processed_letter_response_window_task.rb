@@ -26,12 +26,12 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
 
   before_validation :set_assignee
 
-  def self.create_with_hold(parent_task)
+  def self.create_with_hold(parent_task, days_on_hold: 90, assignee: nil)
     multi_transaction do
-      create!(parent: parent_task, appeal: parent_task.appeal).tap do |window_task|
+      create!(parent: parent_task, appeal: parent_task.appeal, assigned_to: assignee).tap do |window_task|
         TimedHoldTask.create_from_parent(
           window_task,
-          days_on_hold: 90,
+          days_on_hold: days_on_hold,
           instructions: [COPY::CRP_LETTER_RESP_WINDOW_TASK_DEFAULT_INSTRUCTIONS]
         )
       end
