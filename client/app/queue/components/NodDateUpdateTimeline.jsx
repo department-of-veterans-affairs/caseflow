@@ -9,6 +9,7 @@ import COPY from 'app/../COPY';
 import { GreenCheckmark } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
 import { grayLineTimelineStyling } from './TaskRows';
+import { useSelector } from 'react-redux';
 
 const nodDateUpdateTimelineTimeStyling = css({
   color: COLORS.GREY_MEDIUM,
@@ -33,9 +34,10 @@ const nodDateUpdateTimelineInfoStyling = css({
 export const NodDateUpdateTimeline = (props) => {
   const { nodDateUpdate, timeline, editNodDateEnabled } = props;
   const changeReason = changeReasons.find((reason) => reason.value === nodDateUpdate.changeReason).label;
+  const viewNodDateUpdates = useSelector((state) => state.ui.featureToggles.view_nod_date_updates);
 
   return <React.Fragment>
-    {editNodDateEnabled && timeline && <tr>
+    {viewNodDateUpdates && timeline && <tr>
       <td className="taskContainerStyling taskTimeTimelineContainerStyling">
         <div>{ moment(nodDateUpdate.updatedAt).format('MM/DD/YYYY') }</div>
         <div {...nodDateUpdateTimelineTimeStyling}>

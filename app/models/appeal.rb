@@ -258,14 +258,6 @@ class Appeal < DecisionReview
     @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
   end
 
-  def veteran_closest_regional_office
-    veteran_if_exists&.closest_regional_office
-  end
-
-  def veteran_available_hearing_locations
-    veteran_if_exists&.available_hearing_locations
-  end
-
   def regional_office_key
     nil
   end
