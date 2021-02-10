@@ -48,7 +48,6 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
 
   TASK_ACTIONS = [
     Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
-    Constants.TASK_ACTIONS.CAVC_EXTENSION_REQUEST.to_h,
     Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.to_h,
     Constants.TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.to_h,
     Constants.TASK_ACTIONS.SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION.to_h,
@@ -58,6 +57,7 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
 
   # Actions a user can take on a task assigned to them
   USER_ACTIONS = [
+    Constants.TASK_ACTIONS.CAVC_EXTENSION_REQUEST.to_h,
     Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
   ].concat(TASK_ACTIONS).freeze
 
@@ -81,7 +81,7 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
   private
 
   def other_actions_based_on_status
-    return [Constants.TASK_ACTIONS.MARK_COMPLETE.to_h] unless on_hold?
+    return [Constants.TASK_ACTIONS.MARK_COMPLETE.to_h] if assigned_to_type == "User" && !on_hold?
 
     []
   end
