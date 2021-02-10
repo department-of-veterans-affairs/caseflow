@@ -95,9 +95,13 @@ describe BoardGrantEffectuation, :postgres do
         end
 
         context "when a decision issue already exists for the matching rating issue" do
-          let(:existing_decision_issue) { 
-            create(:decision_issue, rating_issue_reference_id: "ref_id1", disposition: granted_decision_issue.disposition, participant_id: granted_decision_issue.participant_id)
-          }
+          let(:existing_decision_issue) do
+            create(
+              :decision_issue,
+              rating_issue_reference_id: "ref_id1",
+              disposition: granted_decision_issue.disposition,
+              participant_id: granted_decision_issue.participant_id)
+          end
           it "Updates the granted decision issue" do
             subject
             expect(granted_decision_issue).to have_attributes(
