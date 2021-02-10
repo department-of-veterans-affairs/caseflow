@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FormProvider, Controller } from 'react-hook-form';
 import { useAddClaimantForm } from '../addClaimant/utils';
 import { ADD_CLAIMANT_POA_PAGE_DESCRIPTION } from 'app/../COPY';
@@ -9,6 +9,12 @@ import styled from 'styled-components';
 import { useHistory } from 'react-router';
 import _, { debounce } from 'lodash';
 import ApiUtil from '../../util/ApiUtil';
+import RadioField from 'app/components/RadioField';
+import * as Constants from '../constants';
+
+import Address from 'app/queue/components/Address';
+import AddressForm from 'app/components/AddressForm';
+import TextField from 'app/components/TextField';
 
 const partyTypeOpts = [
   { displayText: 'Organization', value: 'organization' },
@@ -23,7 +29,7 @@ const fetchAttorneys = async (search = '') => {
   return res?.body;
 };
 
-const getRepresentativeOpts = async (search = '', asyncFn) => {
+const getAttorneyClaimantOpts = async (search = '', asyncFn) => {
   // Enforce minimum search length (we'll simply return empty array rather than throw error)
   if (search.length < 3) {
     return [];
@@ -56,16 +62,10 @@ const getRepresentativeOpts = async (search = '', asyncFn) => {
 
 const filterOption = () => true;
 
-const asyncFn = useCallback(
-  debounce((search, callback) => {
-    getAttorneyClaimantOpts(search, fetchAttorneys).then((res) => callback(res));
-  }, 250),
-  [fetchAttorneys]
-);
-
 export const AddPoaPage = () => {
+
   const methods = useAddClaimantForm();
-  const { goBack, push } = useHistory();
+  const { goBack } = useHistory();
 
   const {
     control,
@@ -76,10 +76,23 @@ export const AddPoaPage = () => {
   } = methods;
 
   const onSubmit = (formData) => {
-
+  	return formData;
   };
-
   const handleBack = () => goBack();
+
+  const watchPartyType = watch('partyType');
+  const showAdditionalFields = watchPartyType;
+  const showIndividualNameFields = watchPartyType === 'individual';
+
+  const listedAttorney = watch('listedAttorney');
+  const attorneyNotListed = listedAttorney?.value === 'not_listed';
+  const showPartyType = attorneyNotListed;
+  const asyncFn = useCallback(
+    debounce((search, callback) => {
+      getAttorneyClaimantOpts(search, fetchAttorneys).then((res) => callback(res));
+    }, 250),
+    [fetchAttorneys]
+  );
 
   return (
     <FormProvider {...methods}>
@@ -99,7 +112,7 @@ export const AddPoaPage = () => {
           <h2>Representative</h2>
           <Controller
             control={control}
-            name="listedRepresentative"
+            name="listedAttorney"
             defaultValue={null}
             render={({ ...rest }) => (
               <SearchableDropdown
@@ -116,6 +129,106 @@ export const AddPoaPage = () => {
             )}
           />
 
+          { listedAttorney?.address &&
+            <div>
+              <ClaimantAddress>
+                <strong>Representative's address</strong>
+              </ClaimantAddress>
+              <br />
+              <Address address={listedAttorney?.address} />
+            </div>
+          }
+
+          { showPartyType &&
+            <RadioField
+              name="partyType"
+              label="Is the claimant an organization or individual?"
+              inputRef={register}
+              strongLabel
+              vertical
+              options={partyTypeOpts}
+            />
+          }
+          <br />
+          { showIndividualNameFields &&
+            <>
+              <FieldDiv>
+                <TextField
+                  name="firstName"
+                  label="First name"
+                  inputRef={register}
+                  strongLabel
+                />
+              </FieldDiv>
+              <FieldDiv>
+                <TextField
+                  name="middleName"
+                  label="Middle name/initial"
+                  inputRef={register}
+                  optional
+                  strongLabel
+                />
+              </FieldDiv>
+              <FieldDiv>
+                <TextField
+                  name="lastName"
+                  label="Last name"
+                  inputRef={register}
+                  optional
+                  strongLabel
+                />
+              </FieldDiv>
+              <Suffix>
+                <TextField
+                  name="suffix"
+                  label="Suffix"
+                  inputRef={register}
+                  optional
+                  strongLabel
+                />
+              </Suffix>
+            </>
+          }
+          { watchPartyType === 'organization' &&
+            <TextField
+              name="organization"
+              label="Organization name"
+              inputRef={register}
+              strongLabel
+            />
+	       }
+
+          { showAdditionalFields &&
+          	<div>
+          	  <AddressForm {...methods} />
+          	  <FieldDiv>
+          	    <TextField
+          	      name="email"
+          	      label="Claimant email"
+          	      inputRef={register}
+          	      optional
+          	      strongLabel
+          	    />
+          	  </FieldDiv>
+          	  <PhoneNumber>
+          	    <TextField
+          	      name="phoneNumber"
+          	      label="Phone number"
+          	      inputRef={register}
+          	      optional
+          	      strongLabel
+          	    />
+          	  </PhoneNumber>
+          	  <RadioField
+          	    options={Constants.BOOLEAN_RADIO_OPTIONS}
+          	    vertical
+          	    inputRef={register}
+          	    label="Do you have a VA Form 21-22 for this claimant?"
+          	    name="vaForm"
+          	    strongLabel
+          	  />
+          	</div>
+          }
         </form>
       </IntakeLayout>
     </FormProvider>
