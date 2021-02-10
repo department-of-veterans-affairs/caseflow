@@ -57,7 +57,7 @@ describe('AddCavcRemandView', () => {
     expect(descisionIssues.map((issue) => issue.id).every((id) => decisionIssueChecks[id])).toBeTruthy();
   });
 
-  describe('"Are judgement and mandate dates provided?" input', () => {
+  describe('Are judgement and mandate dates provided?', () => {
     const cavcForm = setup({ appealId, reversalToggled: true, mdrToggled: true, dismissalToggled: true });
 
     it('does not appear for Remand type (default case)', () => {
