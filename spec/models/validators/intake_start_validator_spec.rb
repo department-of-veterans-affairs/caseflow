@@ -23,12 +23,22 @@ describe IntakeStartValidator, :postgres do
     end
 
     it "sets no error_code when BGS allows modification" do
-      allow_any_instance_of(BGSService).to receive(:station_conflict?) { false }
+      expect_any_instance_of(BGSService).to(
+        receive(:station_conflict?)
+          .once
+          .with(veteran.file_number, veteran.participant_id)
+          .and_return(false)
+      )
       expect(validate_error_code).to be nil
     end
 
     it "sets error_code \"veteran_not_modifiable\" when BGS shows a station conflict" do
-      allow_any_instance_of(BGSService).to receive(:station_conflict?) { true }
+      expect_any_instance_of(BGSService).to(
+        receive(:station_conflict?)
+          .once
+          .with(veteran.file_number, veteran.participant_id)
+          .and_return(true)
+      )
       expect(validate_error_code).to eq "veteran_not_modifiable"
     end
 
