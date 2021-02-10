@@ -11,6 +11,19 @@ RSpec.describe CavcRemandsController, type: :controller do
     CavcLitigationSupport.singleton.users.first
   end
 
+  shared_examples "required cavc lit support user" do
+    context "without a Lit Support User" do
+      it "does not create the CAVC remand" do
+        User.authenticate!(user: create(:user))
+        subject
+
+        expect(response.status).to eq(403)
+        expect(JSON.parse(response.body)["errors"][0]["title"])
+          .to eq("Only CAVC Litigation Support users can create CAVC Remands")
+      end
+    end
+  end
+
   describe "POST /appeals/:appeal_id/cavc_remands" do
     let(:source_appeal) { create(:appeal) }
     let(:source_appeal_id) { source_appeal.uuid }
@@ -122,15 +135,78 @@ RSpec.describe CavcRemandsController, type: :controller do
       end
     end
 
-    context "without a Lit Support User" do
-      it "does not create the CAVC remand" do
-        User.authenticate!(user: create(:user))
-        subject
+    include_examples "required cavc lit support user"
+  end
 
-        expect(response.status).to eq(403)
-        expect(JSON.parse(response.body)["errors"][0]["title"])
-          .to eq("Only CAVC Litigation Support users can create CAVC Remands")
+  describe "PATCH /appeals/:appeal_id/cavc_remands" do
+    # create an existing cavc remand
+    let(:cavc_remand) { create(:cavc_remand, :mdr) }
+    let(:remand_appeal_id) { cavc_remand.remand_appeal_id }
+    let(:remand_appeal_uuid) { Appeal.find(cavc_remand.remand_appeal_id).uuid }
+    let(:judgement_date) { 2.days.ago }
+    let(:mandate_date) { 2.days.ago }
+    let(:instructions) { "Do this!" }
+    let(:params) do
+      {
+        remand_appeal_id: remand_appeal_uuid,
+        appeal_id: remand_appeal_uuid,
+        judgement_date: judgement_date,
+        mandate_date: mandate_date,
+        instructions: instructions
+      }
+    end
+
+    subject { patch :update, params: params }
+
+    context "with a Lit Support User" do
+      context "with insufficient parameters" do
+        let(:mandate_date) { nil }
+
+        it "does not create the CAVC remand" do
+          expect { subject }.to raise_error do |error|
+            expect(error).to be_a(ActionController::ParameterMissing)
+          end
+        end
+      end
+
+      context "with sufficient parameters" do
+        it "does not create new objects" do
+          Appeal.find(remand_appeal_id)
+          remand_count = CavcRemand.count
+          cavc_count = Appeal.court_remand.count
+
+          expect { subject }.not_to raise_error
+
+          expect(CavcRemand.count).to eq(remand_count)
+          expect(Appeal.court_remand.count).to eq(cavc_count)
+        end
+
+        it "does not change the Remand appeal" do
+          existing_remand = Appeal.find(remand_appeal_id)
+          expect { subject }.not_to raise_error
+          response_body = JSON.parse(response.body)
+          expect(response_body["cavc_appeal"]["id"]).to eq(existing_remand.reload.id)
+          expect(response_body["cavc_appeal"]["updated_at"].to_date).to eq(existing_remand.updated_at.to_date)
+        end
+
+        it "updates the CAVC remand" do
+          existing_remand = Appeal.find(remand_appeal_id)
+          old_instructions = cavc_remand.instructions
+
+          expect { subject }.not_to raise_error
+
+          expect(response.status).to eq(200)
+          response_body = JSON.parse(response.body)
+
+          expect(response_body["cavc_remand"]["remand_appeal_id"]).to eq(existing_remand.reload.id)
+          expect(response_body["cavc_remand"]["judgement_date"].to_date).to eq(judgement_date.to_date)
+          expect(response_body["cavc_remand"]["mandate_date"].to_date).to eq(mandate_date.to_date)
+          expect(response_body["cavc_remand"]["instructions"]).to include(instructions)
+          expect(response_body["cavc_remand"]["instructions"]).to include(old_instructions)
+        end
       end
     end
+
+    include_examples "required cavc lit support user"
   end
 end
