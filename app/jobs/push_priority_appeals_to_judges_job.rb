@@ -13,7 +13,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   def perform
     @tied_distributions = distribute_non_genpop_priority_appeals
     @genpop_distributions = distribute_genpop_priority_appeals
-    @updated_veterans = warm_veteran_attr_for_priority_distributions
+    @updated_veterans = warm_veteran_attribs_for_priority_distributions
     send_job_report
   end
 
@@ -151,15 +151,13 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     Distribution.priority_pushed.completed.where(completed_at: 30.days.ago..Time.zone.now)
   end
 
-  def warm_veteran_attr_for_priority_distributions
+  def warm_veteran_attribs_for_priority_distributions
     start_time = Time.zone.now
-    datadog_segment = "warm_veteran_attr_for_priority_distributions"
     non_genpop_distro_case_ids = DistributedCase.where(distribution_id: @tied_distributions.pluck(:id)).pluck(:case_id)
-    veterans_refreshed = Veteran.update_veteran_attr_service.warm_veteran_cache_for_appeals(non_genpop_distro_case_ids)
+    veterans_refreshed = Veteran.update_veteran_attributes_service.update_veterans_for_appeals(non_genpop_distro_case_ids)
     genpop_distro_case_ids = DistributedCase.where(distribution_id: @genpop_distributions.pluck(:id)).pluck(:case_id)
-    (
-      veterans_refreshed + Veteran.update_veteran_attr_service.warm_veteran_cache_for_appeals(genpop_distro_case_ids)
-    ).uniq
-    datadog_report_time_segment(segment: datadog_segment, start_time: start_time)
+    veterans_refreshed += Veteran.update_veteran_attributes_service.update_veterans_for_appeals(genpop_distro_case_ids)
+    veterans_refreshed.uniq
+    datadog_report_time_segment(segment: "warm_veteran_attribs_for_priority_distributions", start_time: start_time)
   end
 end

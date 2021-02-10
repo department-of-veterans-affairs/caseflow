@@ -367,8 +367,8 @@ class Veteran < CaseflowRecord
       end
     end
 
-    def update_veteran_attr_service
-      @update_veteran_attr_service ||= UpdateVeteranAttrService.new
+    def update_veteran_attributes_service
+      @update_veteran_attributes_service ||= UpdateVeteranAttributesService.new
     end
 
     private
@@ -450,7 +450,7 @@ class Veteran < CaseflowRecord
     self
   end
 
-  def refresh_attr
+  def refresh_attributes
     begin
       update_cached_attributes! if stale_attributes?
     rescue ActiveRecord::RecordNotFound => error

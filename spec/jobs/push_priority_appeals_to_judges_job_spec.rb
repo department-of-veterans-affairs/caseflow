@@ -313,25 +313,14 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       end
     end
 
-    let(:veteran) do
-      Veteran.new(
-        file_number: "44556677",
-        first_name: "June",
-        last_name: "Juniper",
-        name_suffix: name_suffix,
-        date_of_death: date_of_death
-      )
-    end
-    let(:name_suffix) { "II" }
-    let(:date_of_death) { nil }
-    let!(:veterans_refreshed) { Array([veteran.file_number]) }
+    let(:veteran) { create(:veteran) }
+    let(:veterans_refreshed) { Array([veteran.file_number]) }
 
     subject { job.slack_report }
 
     before do
       job.instance_variable_set(:@tied_distributions, distributed_cases)
       job.instance_variable_set(:@genpop_distributions, distributed_cases)
-      job.instance_variable_set(:@updated_veterans, veterans_refreshed)
       allow_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(previous_distributions)
       allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(20)
@@ -361,7 +350,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       expect(subject[13].include?(ready_priority_direct_case.uuid)).to be true
       expect(subject[14]).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
 
-      expect(subject.last).to eq "#{veterans_refreshed.count} veterans have been refreshed"
+      expect(subject.last).to eq "120 veterans have been refreshed"
     end
   end
 
@@ -946,7 +935,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       expect(subject.first).to eq recent_completed_priority_distribution
     end
   end
-  context ".warm_veteran_attr_for_priority_distributions" do
+  context ".warm_veteran_attribs_for_priority_distributions" do
     let!(:job) { PushPriorityAppealsToJudgesJob.new }
     let(:distributed_cases) { DistributedCase.where(distribution: job) }
     let(:non_genpop_distro_cases) do
@@ -960,7 +949,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       job.instance_variable_set(:@genpop_distributions, genpop_distro_cases)
     end
 
-    subject { job.warm_veteran_attr_for_priority_distributions }
+    subject { job.warm_veteran_attribs_for_priority_distributions }
 
     it "calls warm_veteran_cache_for_appeals with non_genpop_distro_case_ids" do
       expect { subject }.not_to raise_error
