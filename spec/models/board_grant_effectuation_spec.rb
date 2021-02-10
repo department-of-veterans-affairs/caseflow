@@ -53,7 +53,7 @@ describe BoardGrantEffectuation, :postgres do
         promulgation_date: 15.days.ago,
         profile_date: 20.days.ago,
         issues: [
-          { reference_id: "ref_id1", decision_text: "PTSD denied", contention_reference_id: "1111"},
+          { reference_id: "ref_id1", decision_text: "PTSD denied", contention_reference_id: "1111" },
           { reference_id: "ref_id2", decision_text: "Left leg", contention_reference_id: "2222" }
         ],
         associated_claims: associated_claims
@@ -95,17 +95,16 @@ describe BoardGrantEffectuation, :postgres do
         end
 
         context "when a decision issue already exists for the matching rating issue" do
-          let(:existing_decision_issue) { create(
-            :decision_issue, rating_issue_reference_id: "ref_id1", disposition: granted_decision_issue.disposition, participant_id: granted_decision_issue.participant_id 
-          )}
+          let(:existing_decision_issue) { 
+            create(:decision_issue, rating_issue_reference_id: "ref_id1", disposition: granted_decision_issue.disposition, participant_id: granted_decision_issue.participant_id)
+          }
           it "Updates the granted decision issue" do
-            binding.pry
             subject
             expect(granted_decision_issue).to have_attributes(
               rating_promulgation_date: rating.promulgation_date,
               rating_profile_date: rating.profile_date,
               decision_text: "PTSD denied",
-              rating_issue_reference_id: "ref_id1",
+              rating_issue_reference_id: "ref_id1"
             )
             expect(board_grant_effectuation).to be_processed
           end
