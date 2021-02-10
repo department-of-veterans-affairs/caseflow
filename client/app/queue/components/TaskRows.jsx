@@ -334,8 +334,7 @@ class TaskRows extends React.PureComponent {
     const {
       appeal,
       taskList,
-      timeline,
-      editNodDateEnabled
+      timeline
     } = this.props;
     const nodDateUpdates = appeal.nodDateUpdates;
 
@@ -356,7 +355,6 @@ class TaskRows extends React.PureComponent {
           return <NodDateUpdateTimeline
             nodDateUpdate = {timelineEvent}
             timeline = {timeline}
-            editNodDateEnabled = {editNodDateEnabled}
           />;
         }
 
