@@ -39,12 +39,14 @@ describe('AddCavcRemandView', () => {
     expect(cavcForm).toMatchSnapshot();
   });
 
-  it('hides remand subtypes if decision type is not "remand"', () => {
+  describe('Type and subtype inputs', () => {
     const cavcForm = setup({ appealId, reversalToggled: true });
 
-    expect(cavcForm.find('#sub-type-options_jmr').length).toBe(1);
-    cavcForm.find('#type-options_straight_reversal').simulate('change', { target: { checked: true } });
-    expect(cavcForm.find('#sub-type-options_jmr').length).toBe(0);
+    it('hides remand subtypes if decision type is not "remand"', () => {
+      expect(cavcForm.find('#sub-type-options_jmr').length).toBe(1);
+      cavcForm.find('#type-options_straight_reversal').simulate('change', { target: { checked: true } });
+      expect(cavcForm.find('#sub-type-options_jmr').length).toBe(0);
+    });
   });
 
   it('selects all issues on page load', () => {
