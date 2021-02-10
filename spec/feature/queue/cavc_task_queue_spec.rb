@@ -493,7 +493,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           response_window_task_row = page.find("#currently-active-tasks").find_all("tr")[2]
           expect(response_window_task_row).to have_content("TASK\n#{COPY::CRP_LETTER_RESP_WINDOW_TASK_LABEL}")
           find(".cf-select__control", text: "Select an action").click
-          expect(response_window_task_row.find_all(".cf-select__option").length).to eq 8
+          expect(response_window_task_row.find_all(".cf-select__option").length).to eq 7
 
           # Ensure we recorded the grant
           scroll_to("#case-timeline-table")
