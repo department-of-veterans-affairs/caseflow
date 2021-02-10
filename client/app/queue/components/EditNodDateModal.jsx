@@ -15,7 +15,6 @@ import { formatDateStr } from '../../util/DateUtil';
 import { appealWithDetailSelector } from '../selectors';
 import Alert from 'app/components/Alert';
 import SearchableDropdown from 'app/components/SearchableDropdown';
-import { css } from 'glamor';
 import { marginTop } from '../constants';
 
 const alertStyling = css({
@@ -58,8 +57,6 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
         change_reason: changeReason.value
       }
     };
-    
-    const issuesTitle = COPY.EDIT_NOD_DATE_TIMELINESS_ERROR_MESSAGE;
 
     ApiUtil.patch(`/appeals/${appealId}/nod_date_update`, payload).then((data) => {
       dispatch(editAppeal(appealId, {
@@ -77,9 +74,16 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
       }
       if (data.body.errors) {
         console.log("Timeliness error!", data.body.errors)
-        alert(JSON.stringify(data.body.errors["affected_issues"]))
         debugger;
         //dispatch(showErrorMessage(data.body.errors));
+        return (
+          <TimelinessModal
+            onCancel={onCancel}
+            onClose={() => closeModal('TimelinessModal')}
+            affectedIssues={data.body.errors["affected_issues"]}
+            unaffectedIssues={data.body.errors["unaffected_issues"]}
+          />
+        );
       }
     });
   };
@@ -215,9 +219,53 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
   );
 };
 
+export const TimelinessModal = ({ onCancel, onClose, affectedIssues, unaffectedIssues }) => {
+  //const affected_issues = "testing affected_issues";
+  //const unaffected_issues = "testing unaffected_issues";  
+  
+  const buttons = [
+    {
+      classNames: ['cf-modal-link', 'cf-btn-link'],
+      name: 'Cancel',
+      onClick: onCancel
+    },
+    {
+      classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
+      name: 'Close',
+      onClick: () => onClose
+    }
+  ];
+
+  return (
+      <Modal
+        title={COPY.EDIT_NOD_DATE_MODAL_TITLE}
+        onCancel={onCancel}
+        onClose={onClose}
+        closeHandler={onClose}
+        buttons={buttons}>
+        <div>
+          <ReactMarkdown source={COPY.EDIT_NOD_DATE_TIMELINESS_ERROR_MESSAGE} />
+        </div>
+        <TextField
+            name="Affected Issues"
+            optional
+            strongLabel="Affected Issue(s)"
+            value={affectedIssues}
+          />
+        <TextField
+            name="Unaffected Issues"
+            optional
+            strongLabel="Unaffected Issue(s)"
+            value={unaffectedIssues}
+          />
+      </Modal>
+  );
+};
+
 EditNodDateModalContainer.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
+  onClose: PropTypes.func,
   nodDate: PropTypes.string.isRequired,
   reason: PropTypes.object,
   appealId: PropTypes.string.isRequired
@@ -226,7 +274,15 @@ EditNodDateModalContainer.propTypes = {
 EditNodDateModal.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
+  onClose: PropTypes.func,
   nodDate: PropTypes.string.isRequired,
   reason: PropTypes.object,
   appealId: PropTypes.string.isRequired
+};
+
+TimelinessModal.propTypes = {
+  onCancel: PropTypes.func.isRequired,
+  onClose: PropTypes.func,
+  affectedIssues: PropTypes.array,
+  unaffectedIssues: PropTypes.array
 };
