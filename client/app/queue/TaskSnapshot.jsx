@@ -24,7 +24,13 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
 
   const sectionBody = tasks.length ? (
     <table {...tableStyling} summary="layout table">
-      <tbody><TaskRows appeal={appeal} taskList={tasks} timeline={false} editNodDateEnabled={!appeal.isLegacyAppeal && canEditNodDate} hideDropdown={hideDropdown} /></tbody>
+      <tbody>
+        <TaskRows appeal={appeal}
+        taskList={tasks}
+        timeline={false}
+        editNodDateEnabled={!appeal.isLegacyAppeal && canEditNodDate}
+        hideDropdown={hideDropdown} />
+      </tbody>
     </table>
   ) : (
     COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL
