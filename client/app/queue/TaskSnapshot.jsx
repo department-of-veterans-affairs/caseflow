@@ -26,10 +26,11 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
     <table {...tableStyling} summary="layout table">
       <tbody>
         <TaskRows appeal={appeal}
-        taskList={tasks}
-        timeline={false}
-        editNodDateEnabled={!appeal.isLegacyAppeal && canEditNodDate}
-        hideDropdown={hideDropdown} />
+          taskList={tasks}
+          timeline={false}
+          editNodDateEnabled={!appeal.isLegacyAppeal && canEditNodDate}
+          hideDropdown={hideDropdown}
+        />
       </tbody>
     </table>
   ) : (
