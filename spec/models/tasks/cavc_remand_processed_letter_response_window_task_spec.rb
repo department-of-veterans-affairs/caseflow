@@ -49,15 +49,34 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
   describe "#available_actions" do
     shared_examples "has correct actions" do
       context "while window task is on-hold" do
-        it "returns available actions" do
-          expect(window_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
-          expect(window_task.available_actions(org_admin)).to include(*CRPLRWindowTask::ORG_ACTIONS)
-          expect(window_task.available_actions(org_nonadmin)).to include(*CRPLRWindowTask::ORG_ACTIONS)
+        context "window task assigned to org" do
+          it "returns on-hold actions available to org" do
+            child_timed_hold_task = window_task.children.where(type: :TimedHoldTask).active.first
+            expect(child_timed_hold_task.status).to eq Constants.TASK_STATUSES.assigned
 
-          expect(window_task.available_actions(org_admin)).to_not include Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
-          expect(window_task.available_actions(org_nonadmin)).to_not include Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
+            expect(window_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
+            expect(window_task.available_actions(org_admin)).to match_array CRPLRWindowTask::ORG_ACTIONS
+            expect(window_task.available_actions(org_nonadmin)).to match_array CRPLRWindowTask::ORG_ACTIONS
 
-          expect(window_task.available_actions(other_user)).to be_empty
+            expect(window_task.available_actions(other_user)).to be_empty
+          end
+        end
+        context "window task assigned to CAVC user" do
+          let!(:user_window_task) do
+            window_task.on_hold!
+            CRPLRWindowTask.create_with_hold(window_task, days_on_hold: 80, assignee: org_nonadmin)
+          end
+
+          it "returns on-hold actions available to user" do
+            child_timed_hold_task = user_window_task.children.where(type: :TimedHoldTask).active.first
+            expect(child_timed_hold_task.status).to eq Constants.TASK_STATUSES.assigned
+
+            expect(user_window_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
+            expect(user_window_task.available_actions(org_admin)).to match_array CRPLRWindowTask::USER_ACTIONS
+            expect(user_window_task.available_actions(org_nonadmin)).to match_array CRPLRWindowTask::USER_ACTIONS
+
+            expect(user_window_task.available_actions(other_user)).to be_empty
+          end
         end
       end
 
@@ -93,11 +112,10 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
             expect(child_timed_hold_task.reload.status).to eq Constants.TASK_STATUSES.completed
 
             expect(user_window_task.reload.status).to eq Constants.TASK_STATUSES.assigned
-            expect(user_window_task.available_actions(org_admin)).to include(*CRPLRWindowTask::USER_ACTIONS)
-            expect(user_window_task.available_actions(org_nonadmin)).to include(*CRPLRWindowTask::USER_ACTIONS)
 
-            expect(user_window_task.available_actions(org_admin)).to include Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
-            expect(user_window_task.available_actions(org_nonadmin)).to include Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
+            expected_actions = [Constants.TASK_ACTIONS.MARK_COMPLETE.to_h] + CRPLRWindowTask::USER_ACTIONS
+            expect(user_window_task.available_actions(org_admin)).to match_array expected_actions
+            expect(user_window_task.available_actions(org_nonadmin)).to match_array expected_actions
 
             expect(user_window_task.available_actions(other_user)).to be_empty
           end

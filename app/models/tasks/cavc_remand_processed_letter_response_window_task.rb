@@ -81,7 +81,7 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
   private
 
   def other_actions_based_on_status
-    return [Constants.TASK_ACTIONS.MARK_COMPLETE.to_h] if assigned_to_type == "User" && !on_hold?
+    return [Constants.TASK_ACTIONS.MARK_COMPLETE.to_h] if assigned_to_type == "User" && active?
 
     []
   end
