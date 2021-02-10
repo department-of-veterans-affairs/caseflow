@@ -31,9 +31,9 @@ module HearingRequestTypeConcern
     TaskEvent.new(version: versions.last) if versions.any?
   end
 
-  def original_hearing_request_type(readable: false)
+  def original_hearing_request_type(readable: false, save_type: false)
     # get the formatted original request type (and save it if it's not already saved)
-    formatted_request_type = save_original_hearing_request_type
+    formatted_request_type = save_original_hearing_request_type(save_type)
 
     # Return the human readable request type or the symbol of request type
     readable ? LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[formatted_request_type] : formatted_request_type
@@ -105,15 +105,15 @@ module HearingRequestTypeConcern
   end
   # rubocop:enable Metrics/CyclomaticComplexity
 
-  def save_original_hearing_request_type
+  def save_original_hearing_request_type(save_type = false)
     return original_request_type.to_sym if original_request_type.present?
 
     # Use the VACOLS value for LegacyAppeals, otherwise use the closest regional office
     original = is_a?(LegacyAppeal) ? hearing_request_type : closest_regional_office
     # Format the request type into a symbol
     formatted_request_type = format_hearing_request_type(original)
-    # save the original type for future reference
-    update!(original_request_type: formatted_request_type&.to_s)
+    # save the original type for future reference if requested
+    update!(original_request_type: formatted_request_type&.to_s) if save_type
     formatted_request_type
   end
 end
