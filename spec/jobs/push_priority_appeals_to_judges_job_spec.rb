@@ -321,6 +321,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     before do
       job.instance_variable_set(:@tied_distributions, distributed_cases)
       job.instance_variable_set(:@genpop_distributions, distributed_cases)
+      job.instance_variable_set(:@updated_veterans, veterans_refreshed)
       allow_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(previous_distributions)
       allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(20)
@@ -350,7 +351,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       expect(subject[13].include?(ready_priority_direct_case.uuid)).to be true
       expect(subject[14]).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
 
-      expect(subject.last).to eq "120 veterans have been refreshed"
+      expect(subject.last).to eq "#{veterans_refreshed.count} veterans have been refreshed"
     end
   end
 
