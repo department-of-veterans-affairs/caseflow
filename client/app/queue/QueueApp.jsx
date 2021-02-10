@@ -88,6 +88,7 @@ import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
 import { docketSwitchRoutes } from './docketSwitch/docketSwitchRoutes';
 import ScheduleVeteran from '../hearings/components/ScheduleVeteran';
 import HearingTypeConversion from '../hearings/components/HearingTypeConversion';
+import HearingTypeConversionModal from '../hearings/components/HearingTypeConversionModal';
 import CavcReviewExtensionRequestModal from './components/CavcReviewExtensionRequestModal';
 
 class QueueApp extends React.PureComponent {
@@ -353,6 +354,10 @@ class QueueApp extends React.PureComponent {
   routedChangeHearingRequestTypeToVirtual = (props) => (
     <HearingTypeConversion type="Virtual" {...props.match.params} />
   );
+
+  routedChangeHearingRequestTypeModal = (props) => (
+    <HearingTypeConversionModal hearingType={props.hearingType} {...props.match.params} />
+  )
 
   routedSetOvertimeStatusModal = (props) => (
     <SetOvertimeStatusModal {...props.match.params} />
@@ -914,6 +919,22 @@ class QueueApp extends React.PureComponent {
                 }`}
                 title="Change Hearing Request Type to Virtual | Caseflow"
                 render={this.routedChangeHearingRequestTypeToVirtual}
+              />
+              <PageRoute
+                exact
+                path={
+                  `/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO.value}`
+                }
+                title="Change Hearing Request Type to Video | Caseflow"
+                render={(props) => this.routedChangeHearingRequestTypeModal({ ...props, hearingType: 'Video' })}
+              />
+              <PageRoute
+                exact
+                path={
+                  `/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_CENTRAL.value}`
+                }
+                title="Change Hearing Request Type to Central | Caseflow"
+                render={(props) => this.routedChangeHearingRequestTypeModal({ ...props, hearingType: 'Central' })}
               />
 
               <Route

@@ -209,11 +209,8 @@ class CachedAppealService
   end
 
   # Gets the symbolic representation of the original type of hearing requested for a vacols case record
-  # Replicates logic in LegacyAppeal#original_hearing_request_type
   def original_hearing_request_type_for_vacols_case(vacols_case)
-    request_type = VACOLS::Case::HEARING_REQUEST_TYPES[vacols_case.bfhr]
-
-    (request_type == :travel_board && vacols_case.bfdocind == "V") ? :video : request_type
+    LegacyAppeal.find_or_create_by_vacols_id(vacols_case.bfkey).original_hearing_request_type
   end
 
   # Maps vacols ids to their leagcy appeal's changed hearing request type
