@@ -33,6 +33,13 @@ RSpec.feature "Convert hearing request type" do
       veteran: create(:veteran)
     )
   end
+  let!(:hearing_days) do
+    [
+      create(:hearing_day, :video, scheduled_for: Time.zone.today + 7.days, regional_office: "RO17"),
+      create(:hearing_day, :video, scheduled_for: Time.zone.today + 7.days),
+      create(:hearing_day, scheduled_for: Time.zone.today + 8.days)
+    ]
+  end
 
   def change_request_type(appeal, request_type, ro_message)
     step "select change hearing request type action" do
@@ -50,7 +57,7 @@ RSpec.feature "Convert hearing request type" do
 
     step "confirm page has the correct success message" do
       expect(page).to have_content(
-        "You have successfully converted #{appeal.veteran_full_name}'s hearing to virtual"
+        "You have successfully converted #{appeal.veteran_full_name}'s hearing to Virtual"
       )
       expect(page).to have_content(
         "The hearing request is in the scheduling queue for the #{ro_message}"
@@ -230,6 +237,47 @@ RSpec.feature "Convert hearing request type" do
 
         change_request_type(video_appeal, "Video", "Denver regional office")
       end
+
+      scenario "user can change a hearing request from Video to Central" do
+        visit "queue/appeals/#{video_appeal.uuid}"
+
+        # Select the Convert hearing to Central action
+        click_dropdown(text: Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_CENTRAL.label)
+
+        # CHeck the Modal content and confirm the conversion
+        expect(page).to have_content("Central Office")
+        click_button("Convert Hearing to Central")
+
+        # Check t
+        expect(page).to have_content(
+          "You have successfully converted #{video_appeal.veteran_full_name}'s hearing to Central"
+        )
+        expect(page).to have_content(
+          "The hearing request is in the scheduling queue for the Central Office"
+        )
+
+        within("table#case-timeline-table") do
+          expect(page).to have_content(COPY::TASK_SNAPSHOT_HEARING_REQUEST_CONVERTED_ON_LABEL.upcase)
+          expect(page).to have_content(COPY::TASK_SNAPSHOT_HEARING_REQUEST_CONVERTER_LABEL.upcase)
+          expect(page).to have_content(
+            "Hearing type converted from Video to Central"
+          )
+        end
+
+        click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.label)
+        click_button("Cancel")
+
+        expect(ChangeHearingRequestTypeTask.count).to eq(1)
+        expect(page).not_to have_content(ChangeHearingRequestTypeTask.label)
+
+        # Check the schedule veterans tab to ensure the hearing is present
+        visit "hearings/schedule/assign"
+
+        click_dropdown(text: "Central")
+        click_button("AMA Veterans Waiting")
+
+        expect(page).to have_content(video_appeal.docket_number)
+      end
     end
 
     context "When converting appeal with Central Office hearing request type" do
@@ -237,6 +285,46 @@ RSpec.feature "Convert hearing request type" do
         visit "queue/appeals/#{central_office_appeal.uuid}"
 
         change_request_type(central_office_appeal, "Central", "Central Office")
+      end
+
+      scenario "user can change a hearing request from Central Office to Video" do
+        # Set the converion text
+        convert_label = COPY::CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT
+        visit "queue/appeals/#{central_office_appeal.uuid}"
+
+        click_dropdown(text: Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO.label)
+
+        # CHeck the Modal content and confirm the conversion
+        expect(page).to have_content(convert_label)
+        click_button("Convert Hearing to Video")
+
+        # Check t
+        expect(page).to have_content(
+          "You have successfully converted #{central_office_appeal.veteran_full_name}'s hearing to Video"
+        )
+        expect(page).to have_content("The hearing request is in the scheduling queue for the #{convert_label}")
+
+        within("table#case-timeline-table") do
+          expect(page).to have_content(COPY::TASK_SNAPSHOT_HEARING_REQUEST_CONVERTED_ON_LABEL.upcase)
+          expect(page).to have_content(COPY::TASK_SNAPSHOT_HEARING_REQUEST_CONVERTER_LABEL.upcase)
+          expect(page).to have_content(
+            "Hearing type converted from Central to Video"
+          )
+        end
+
+        click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.label)
+        click_button("Cancel")
+
+        expect(ChangeHearingRequestTypeTask.count).to eq(1)
+        expect(page).not_to have_content(ChangeHearingRequestTypeTask.label)
+
+        # Check the schedule veterans tab to ensure the hearing is present
+        visit "hearings/schedule/assign"
+
+        click_dropdown(text: "St. Petersburg, FL")
+        click_button("AMA Veterans Waiting")
+
+        expect(page).to have_content(central_office_appeal.docket_number)
       end
     end
   end

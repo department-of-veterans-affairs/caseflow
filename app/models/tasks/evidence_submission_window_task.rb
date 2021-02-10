@@ -11,6 +11,7 @@ class EvidenceSubmissionWindowTask < Task
 
   before_validation :set_assignee
 
+  # also called when EvidenceSubmissionWindowTask is manually closed by the user
   def when_timer_ends
     IhpTasksFactory.new(parent).create_ihp_tasks!
     update!(status: :completed)
@@ -36,6 +37,12 @@ class EvidenceSubmissionWindowTask < Task
 
   def hearing
     appeal.hearings.max_by(&:id)
+  end
+
+  def update_from_params(params, user)
+    update_params_will_create_ihp_task?(params) ? when_timer_ends : super(params, user)
+
+    [self]
   end
 
   private
@@ -67,5 +74,9 @@ class EvidenceSubmissionWindowTask < Task
       type: ScheduleHearingTask.name,
       status: Constants.TASK_STATUSES.cancelled
     )
+  end
+
+  def update_params_will_create_ihp_task?(params)
+    params[:status].eql?(Constants.TASK_STATUSES.completed)
   end
 end

@@ -3,6 +3,7 @@ import { useHistory } from 'react-router';
 import { FormProvider, Controller } from 'react-hook-form';
 import styled from 'styled-components';
 import _, { debounce } from 'lodash';
+import { useDispatch } from 'react-redux';
 
 import { IntakeLayout } from '../components/IntakeLayout';
 import SearchableDropdown from 'app/components/SearchableDropdown';
@@ -16,6 +17,7 @@ import Address from 'app/queue/components/Address';
 
 import { useAddClaimantForm } from './utils';
 import { ADD_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
+import { editClaimantInformation } from '../reducers/addClaimantSlice';
 
 const relationshipOpts = [
   { value: 'attorney', label: 'Attorney (previously or currently)' },
@@ -71,7 +73,8 @@ const getAttorneyClaimantOpts = async (search = '', asyncFn) => {
 const filterOption = () => true;
 
 export const AddClaimantPage = () => {
-  const { goBack } = useHistory();
+  const dispatch = useDispatch();
+  const { goBack, push } = useHistory();
   const methods = useAddClaimantForm();
   const {
     control,
@@ -81,11 +84,21 @@ export const AddClaimantPage = () => {
     handleSubmit,
   } = methods;
   const onSubmit = (formData) => {
+
+    // Add stuff to redux store
+    dispatch(editClaimantInformation({ formData }));
+
+    if (formData.vaForm === 'true') {
+      push('/add_power_of_attorney');
+    } else {
+      push('/add_issues');
+    }
     // Update this to...
     // Add claimant info to Redux
     // Probably handle submission of both claimant and remaining intake info (from Review step)
-    return formData;
+    // return formData;
   };
+
   const handleBack = () => goBack();
 
   const watchPartyType = watch('partyType');
