@@ -213,6 +213,14 @@
     "label": "Extension request",
     "value": "modal/cavc_extension_request"
   },
+  "CAVC_REMAND_RECEIVED_MDR": {
+    "label": "Remand ready for 90-day letter",
+    "value": "modal/cavc_remand_received"
+  },
+  "CAVC_REMAND_RECEIVED_VLJ": {
+    "label": "Ready for VLJ",
+    "value": "modal/cavc_remand_received"
+  },
   "SPECIAL_CASE_MOVEMENT": {
     "label": "Case Movement: Advance to judge",
     "value": "modal/distribute_to_judge",
