@@ -83,7 +83,6 @@ export const AssignHearings = ({
 }) => {
 
   // This is so far only used in AssignHearingTable.
-  // TODO: Convert AssignHearingTable to a functional component and move this in there.
   const { userCanViewFnodBadgeInHearings } = useContext(HearingsUserContext);
 
   if (_.isEmpty(upcomingHearingDays)) {
