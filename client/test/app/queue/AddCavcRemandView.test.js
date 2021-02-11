@@ -39,12 +39,14 @@ describe('AddCavcRemandView', () => {
     expect(cavcForm).toMatchSnapshot();
   });
 
-  it('hides remand subtypes if decision type is not "remand"', () => {
+  describe('Type and subtype inputs', () => {
     const cavcForm = setup({ appealId, reversalToggled: true });
 
-    expect(cavcForm.find('#sub-type-options_jmr').length).toBe(1);
-    cavcForm.find('#type-options_straight_reversal').simulate('change', { target: { checked: true } });
-    expect(cavcForm.find('#sub-type-options_jmr').length).toBe(0);
+    it('hides remand subtypes if decision type is not "remand"', () => {
+      expect(cavcForm.find('#sub-type-options_jmr').length).toBe(1);
+      cavcForm.find('#type-options_straight_reversal').simulate('change', { target: { checked: true } });
+      expect(cavcForm.find('#sub-type-options_jmr').length).toBe(0);
+    });
   });
 
   it('selects all issues on page load', () => {
@@ -53,6 +55,24 @@ describe('AddCavcRemandView', () => {
     const decisionIssueChecks = cavcForm.find(CheckboxGroup).props().values;
 
     expect(descisionIssues.map((issue) => issue.id).every((id) => decisionIssueChecks[id])).toBeTruthy();
+  });
+
+  describe('Are judgement and mandate dates provided?', () => {
+    const cavcForm = setup({ appealId, reversalToggled: true, mdrToggled: true, dismissalToggled: true });
+
+    it('does not appear for Remand type (default case)', () => {
+      expect(cavcForm.find('#remand-provided-toggle_true').length).toBe(0);
+    });
+
+    it('appears for Straight Reversal', () => {
+      cavcForm.find('#type-options_straight_reversal').simulate('change', { target: { checked: true } });
+      expect(cavcForm.find('#remand-provided-toggle_true').length).toBe(1);
+    });
+
+    it('appears for Death Dismissal', () => {
+      cavcForm.find('#type-options_death_dismissal').simulate('change', { target: { checked: true } });
+      expect(cavcForm.find('#remand-provided-toggle_true').length).toBe(1);
+    });
   });
 
   describe('feature toggles', () => {
