@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { FormProvider, Controller } from 'react-hook-form';
-// import { useAddClaimantForm } from '../addClaimant/utils';
 import { useAddPoaForm } from './utils';
 import { ADD_CLAIMANT_POA_PAGE_DESCRIPTION } from 'app/../COPY';
 import { IntakeLayout } from '../components/IntakeLayout';
@@ -95,9 +94,9 @@ export const AddPoaPage = () => {
   );
 
   return (
-  	<FormProvider {...methods}>
-  	  <IntakeLayout
-    	  buttons={
+    <FormProvider {...methods}>
+      <IntakeLayout
+        buttons={
           <AddClaimantButtons
             onBack={handleBack}
             onSubmit={handleSubmit(onSubmit)}
@@ -199,34 +198,34 @@ export const AddPoaPage = () => {
           }
           {showAdditionalFields &&
        <div>
-      	 <AddressForm {...methods} />
-      	  <FieldDiv>
-      	   <TextField
-      	      name="email"
-      	      label="Claimant email"
-      	      inputRef={register}
-      	      optional
-      	      strongLabel
-      	   />
-      	  </FieldDiv>
-      	  <PhoneNumber>
-      	    <TextField
-      	      name="phoneNumber"
-      	      label="Phone number"
-      	      inputRef={register}
-      	      optional
-      	      strongLabel
-      	    />
-      	  </PhoneNumber>
-      	  <RadioField
-      	    options={Constants.BOOLEAN_RADIO_OPTIONS}
-      	    vertical
-      	    inputRef={register}
-      	    label="Do you have a VA Form 21-22 for this claimant?"
-      	    name="vaForm"
-      	    strongLabel
-      	  />
-      	</div>
+         <AddressForm {...methods} />
+         <FieldDiv>
+           <TextField
+             name="email"
+             label="Claimant email"
+             inputRef={register}
+             optional
+             strongLabel
+           />
+         </FieldDiv>
+         <PhoneNumber>
+           <TextField
+             name="phoneNumber"
+             label="Phone number"
+             inputRef={register}
+             optional
+             strongLabel
+           />
+         </PhoneNumber>
+         <RadioField
+           options={Constants.BOOLEAN_RADIO_OPTIONS}
+           vertical
+           inputRef={register}
+           label="Do you have a VA Form 21-22 for this claimant?"
+           name="vaForm"
+           strongLabel
+         />
+       </div>
           }
         </form>
       </IntakeLayout>
