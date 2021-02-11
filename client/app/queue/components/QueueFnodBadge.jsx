@@ -22,6 +22,8 @@ QueueFnodBadge.propTypes = {
   fnodBadge: PropTypes.bool,
 };
 
+// There are places in queue that use this, changing to camelCase seems unwise in this PR
+// eslint-disable-next-line
 const mapStateToProps = (state) => ({ fnodBadge: state.ui.featureToggles?.fnod_badge });
 
 export default connect(mapStateToProps)(QueueFnodBadge);
