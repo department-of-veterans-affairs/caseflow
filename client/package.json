@@ -3,7 +3,7 @@
   "private": true,
   "repository": "https://github.com/department-of-veterans-affairs/caseflow",
   "license": "none",
-  "version": "0.0.1",
+  "version": "v1.13.0",
   "scripts": {
     "test": "yarn run test:karma && yarn run test:jest",
     "test:jest": "NODE_ENV=test jest",
