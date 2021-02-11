@@ -157,6 +157,12 @@ module Caseflow::Error
     end
   end
 
+  class CannotUpdateMandatedRemands < SerializableError
+    def initialize
+      @message = "Cavc Remands can only be updated if they did not have mandate"
+    end
+  end
+
   class JmrAppealDecisionIssueMismatch < SerializableError
     def initialize(args)
       @code = args[:code] || 422

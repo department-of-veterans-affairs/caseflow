@@ -254,10 +254,6 @@ class Appeal < DecisionReview
            :email_address,
            :country, to: :veteran, prefix: true
 
-  def veteran_if_exists
-    @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
-  end
-
   def regional_office_key
     nil
   end
