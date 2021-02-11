@@ -1,6 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-
-import ApiUtil from '../../util/ApiUtil';
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   formData: {},
@@ -16,14 +14,12 @@ const addClaimantSlice = createSlice({
 
       state.formData = {
         ...state.formData,
+        ...formData,
       };
     },
   },
 });
 
-export const {
-  cancel,
-  editClaimantInformation
-} = addClaimantSlice.actions;
+export const { cancel, editClaimantInformation } = addClaimantSlice.actions;
 
 export default addClaimantSlice.reducer;
