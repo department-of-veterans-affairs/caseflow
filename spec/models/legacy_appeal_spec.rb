@@ -2091,9 +2091,9 @@ describe LegacyAppeal, :all_dbs do
         let(:vacols_case) { create(:case, :video_hearing_requested, :central_office_hearing) }
         it { is_expected.to eq(:central_office) }
 
-        it "saves the value to original_request_type" do
+        it "does not save the value to original_request_type" do
           subject
-          expect(appeal.original_request_type).to eq :central_office.to_s
+          expect(appeal.original_request_type).to be_nil
         end
       end
 
@@ -2132,58 +2132,74 @@ describe LegacyAppeal, :all_dbs do
   end
 
   context "#original_hearing_request_type" do
-    subject { appeal.original_hearing_request_type }
+    context "with save_type not passed" do
+      subject { appeal.original_hearing_request_type }
 
-    context "when central_office" do
-      let(:vacols_case) { create(:case, :video_hearing_requested, :central_office_hearing) }
-      it { is_expected.to eq(:central_office) }
+      context "when central_office" do
+        let(:vacols_case) { create(:case, :video_hearing_requested, :central_office_hearing) }
+        it { is_expected.to eq(:central_office) }
 
-      it "saves the value to original_request_type" do
-        subject
-        expect(appeal.original_request_type).to eq :central_office.to_s
+        it "does not save the value to original_request_type" do
+          subject
+          expect(appeal.original_request_type).to be_nil
+        end
       end
     end
 
-    context "when travel_board" do
-      let(:vacols_case) { create(:case, :video_hearing_requested, :travel_board_hearing) }
+    context "with save_type true" do
+      subject { appeal.original_hearing_request_type(save_type: true) }
 
-      context "when video_hearing_requested" do
-        it { is_expected.to eq(:video) }
-
-        it "saves the value to original_request_type" do
-          subject
-          expect(appeal.original_request_type).to eq :video.to_s
-        end
-      end
-
-      context "when video_hearing_requested is false" do
-        let(:vacols_case) { create(:case, :travel_board_hearing) }
-        it { is_expected.to eq(:travel_board) }
+      context "when central_office" do
+        let(:vacols_case) { create(:case, :video_hearing_requested, :central_office_hearing) }
+        it { is_expected.to eq(:central_office) }
 
         it "saves the value to original_request_type" do
           subject
-          expect(appeal.original_request_type).to eq :travel_board.to_s
+          expect(appeal.original_request_type).to eq :central_office.to_s
         end
       end
 
-      context "when request type overriden in Caseflow to video" do
-        let(:changed_request_type) { HearingDay::REQUEST_TYPES[:video] }
-        let(:vacols_case) { create(:case, :travel_board_hearing) }
+      context "when travel_board" do
+        let(:vacols_case) { create(:case, :video_hearing_requested, :travel_board_hearing) }
 
-        it { is_expected.to eq(:travel_board) }
+        context "when video_hearing_requested" do
+          it { is_expected.to eq(:video) }
+
+          it "saves the value to original_request_type" do
+            subject
+            expect(appeal.original_request_type).to eq :video.to_s
+          end
+        end
+
+        context "when video_hearing_requested is false" do
+          let(:vacols_case) { create(:case, :travel_board_hearing) }
+          it { is_expected.to eq(:travel_board) }
+
+          it "saves the value to original_request_type" do
+            subject
+            expect(appeal.original_request_type).to eq :travel_board.to_s
+          end
+        end
+
+        context "when request type overriden in Caseflow to video" do
+          let(:changed_request_type) { HearingDay::REQUEST_TYPES[:video] }
+          let(:vacols_case) { create(:case, :travel_board_hearing) }
+
+          it { is_expected.to eq(:travel_board) }
+        end
+
+        context "when request type overriden in Caseflow to virtual" do
+          let(:changed_request_type) { HearingDay::REQUEST_TYPES[:virtual] }
+          let(:vacols_case) { create(:case, :travel_board_hearing) }
+
+          it { is_expected.to eq(:travel_board) }
+        end
       end
 
-      context "when request type overriden in Caseflow to virtual" do
-        let(:changed_request_type) { HearingDay::REQUEST_TYPES[:virtual] }
-        let(:vacols_case) { create(:case, :travel_board_hearing) }
-
-        it { is_expected.to eq(:travel_board) }
+      context "when unsupported type" do
+        let(:vacols_case) { create(:case, bfhr: "9") }
+        it { is_expected.to be_nil }
       end
-    end
-
-    context "when unsupported type" do
-      let(:vacols_case) { create(:case, bfhr: "9") }
-      it { is_expected.to be_nil }
     end
   end
 
@@ -2318,9 +2334,9 @@ describe LegacyAppeal, :all_dbs do
 
       it { is_expected.to eq(:travel_board) }
 
-      it "saves the value to original_request_type" do
+      it "does not save the value to original_request_type" do
         subject
-        expect(appeal.original_request_type).to eq :travel_board.to_s
+        expect(appeal.original_request_type).to be_nil
       end
     end
 
