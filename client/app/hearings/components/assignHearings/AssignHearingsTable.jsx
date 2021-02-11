@@ -5,7 +5,7 @@ import moment from 'moment';
 
 import { css } from 'glamor';
 import { COLORS } from '../../../constants/AppConstants';
-import COPY from '../../../../COPY.json'
+import COPY from '../../../../COPY.json';
 import { DateString } from '../../../util/DateUtil';
 
 import {
