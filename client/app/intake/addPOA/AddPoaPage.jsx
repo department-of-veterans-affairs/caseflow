@@ -7,7 +7,7 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 import { AddClaimantButtons } from '../addClaimant/AddClaimantButtons';
 import styled from 'styled-components';
 import { useHistory } from 'react-router';
-import _, { debounce } from 'lodash';
+import { debounce, reduce, startCase, camelCase } from 'lodash';
 import ApiUtil from '../../util/ApiUtil';
 import RadioField from 'app/components/RadioField';
 import * as Constants from '../constants';
@@ -36,12 +36,12 @@ const getAttorneyClaimantOpts = async (search = '', asyncFn) => {
   }
 
   const formatAddress = (bgsAddress) => {
-    return _.reduce(bgsAddress, (result, value, key) => {
-      result[key] = _.startCase(_.camelCase(value));
+    return reduce(bgsAddress,(result, value, key) => {
+      result[key] = startCase(camelCase(value));
       if (['state', 'country'].includes(key)) {
         result[key] = value;
       } else {
-        result[key] = _.startCase(_.camelCase(value));
+        result[key] = startCase(camelCase(value));
       }
 
       return result;
