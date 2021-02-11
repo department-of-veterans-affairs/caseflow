@@ -1,12 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
+import { css } from 'glamor';
+
 import Modal from 'app/components/Modal';
 
 import {
   ADD_CLAIMANT_CONFIRM_MODAL_TITLE,
   ADD_CLAIMANT_CONFIRM_MODAL_DESCRIPTION,
+  ADD_CLAIMANT_CONFIRM_MODAL_NO_POA,
 } from 'app/../COPY';
 import { claimantPropTypes, poaPropTypes } from './utils';
+import { AddressBlock } from './AddressBlock';
+
+const classes = {
+  addressHeader: css({ margin: '1.6rem 0' }),
+};
 
 export const AddClaimantConfirmationModal = ({
   claimant,
@@ -37,26 +46,21 @@ export const AddClaimantConfirmationModal = ({
     >
       <p>{ADD_CLAIMANT_CONFIRM_MODAL_DESCRIPTION}</p>
 
-      <div>
-        <p>
+      <section>
+        <div className={classes.addressHeader}>
           <strong>Claimant</strong>
-        </p>
-        {claimant.partyType === 'organization' && (
-          <div>{claimant.organization}</div>
-        )}
-        {claimant.partyType === 'individual' && (
-          <div>{`${claimant.firstName} ${claimant.middleName} ${
-            claimant.lastName
-          }`}</div>
-        )}
-        <div>{claimant.address1}</div>
-        {claimant.address2 && <div>{claimant.address2}</div>}
-        {claimant.address3 && <div>{claimant.address3}</div>}
-        <div>
-          {`${claimant.city}, ${claimant.state} ${claimant.country} ${claimant.zip}`}
         </div>
-        {claimant.phoneNumber && <div>{claimant.phoneNumber}</div>}
-      </div>
+        <AddressBlock entity={claimant} />
+      </section>
+
+      <section>
+        <div className={classes.addressHeader}>
+          <strong>Claimant's POA</strong>
+        </div>
+
+        {!poa && <div>{ADD_CLAIMANT_CONFIRM_MODAL_NO_POA}</div>}
+        {poa && <AddressBlock entity={poa} />}
+      </section>
     </Modal>
   );
 };
@@ -64,4 +68,6 @@ export const AddClaimantConfirmationModal = ({
 AddClaimantConfirmationModal.propTypes = {
   claimant: PropTypes.shape(claimantPropTypes),
   poa: PropTypes.shape(poaPropTypes),
+  onCancel: PropTypes.func,
+  onConfirm: PropTypes.func,
 };

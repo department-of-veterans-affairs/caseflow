@@ -21,3 +21,21 @@ export const organizationClaimant = {
   organization: 'Organization of Vet Helpers',
   ...sharedClaimantInfo,
 };
+
+const sharedPoaInfo = {
+  address1: '321 Main St',
+  address2: 'Suite 5',
+  city: 'Washington',
+  state: 'DC',
+  country: 'USA',
+  zip: '20001',
+  phoneNumber: '555-321-4567',
+};
+
+export const individualPoa = {
+  partyType: 'individual',
+  firstName: 'Paul',
+  middleName: 'Ern',
+  lastName: "O'Attorney",
+  ...sharedPoaInfo,
+};

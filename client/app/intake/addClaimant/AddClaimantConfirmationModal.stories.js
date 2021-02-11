@@ -1,5 +1,5 @@
 import React from 'react';
-import { individualClaimant } from '../../../test/data/intake/claimants';
+import { individualClaimant, individualPoa } from 'test/data/intake/claimants';
 
 import { AddClaimantConfirmationModal } from './AddClaimantConfirmationModal';
 
@@ -15,7 +15,7 @@ export default {
   },
   argTypes: {
     onCancel: { action: 'cancel' },
-    onSubmit: { action: 'submit' },
+    onConfirm: { action: 'confirm' },
   },
 };
 
@@ -30,4 +30,10 @@ Individual.parameters = {
     storyDescription:
       'This is shown after adding a new claimant or a new claimant\'s POA',
   },
+};
+
+export const WithPoa = Template.bind({});
+WithPoa.args = {
+  claimant: individualClaimant,
+  poa: individualPoa
 };

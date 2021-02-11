@@ -2,18 +2,15 @@ import React from 'react';
 import {
   screen,
   render,
-  fireEvent,
-  within,
-  act,
-  waitFor,
+
 } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import userEvent from '@testing-library/user-event';
-import selectEvent from 'react-select-event';
 
 import COPY from 'app/../COPY';
 
 import { AddClaimantConfirmationModal } from 'app/intake/addClaimant/AddClaimantConfirmationModal';
+import { individualClaimant } from 'test/data/intake/claimants';
 
 describe('AddClaimantConfirmationModal', () => {
   const onConfirm = jest.fn();
@@ -22,7 +19,7 @@ describe('AddClaimantConfirmationModal', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  const defaults = { onConfirm, onCancel };
+  const defaults = { onConfirm, onCancel, claimant: individualClaimant };
   const setup = () => {
     return render(<AddClaimantConfirmationModal {...defaults} />);
   };
@@ -33,6 +30,14 @@ describe('AddClaimantConfirmationModal', () => {
 
       expect(container).toMatchSnapshot();
     });
+
+    it('passes a11y', async () => {
+      const { container } = setup();
+
+      const results = await axe(container);
+
+      expect(results).toHaveNoViolations();
+    });
   });
 
   describe('with POA', () => {
@@ -40,6 +45,14 @@ describe('AddClaimantConfirmationModal', () => {
       const { container } = setup();
 
       expect(container).toMatchSnapshot();
+    });
+
+    it('passes a11y', async () => {
+      const { container } = setup();
+
+      const results = await axe(container);
+
+      expect(results).toHaveNoViolations();
     });
   });
 
@@ -51,7 +64,7 @@ describe('AddClaimantConfirmationModal', () => {
     expect(onCancel).not.toHaveBeenCalled();
 
     await userEvent.click(cancelButton);
-    expect(onCancel).not.toHaveBeenCalled();
+    expect(onCancel).toHaveBeenCalled();
   });
 
 });
