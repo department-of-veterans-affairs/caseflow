@@ -103,7 +103,7 @@ describe BoardGrantEffectuation, :postgres do
               participant_id: granted_decision_issue.participant_id
             )
           end
-          
+
           it "Updates the granted decision issue" do
             subject
             expect(granted_decision_issue).to have_attributes(
