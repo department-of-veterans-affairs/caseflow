@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { FormProvider, Controller } from 'react-hook-form';
-import { useAddClaimantForm } from '../addClaimant/utils';
+// import { useAddClaimantForm } from '../addClaimant/utils';
+import { useAddPoaForm } from './utils';
 import { ADD_CLAIMANT_POA_PAGE_DESCRIPTION } from 'app/../COPY';
 import { IntakeLayout } from '../components/IntakeLayout';
 import SearchableDropdown from 'app/components/SearchableDropdown';
@@ -64,8 +65,7 @@ const filterOption = () => true;
 
 export const AddPoaPage = () => {
 
-  const methods = useAddClaimantForm();
-  const { goBack } = useHistory();
+  const methods = useAddPoaForm();
   const {
     control,
     register,
@@ -74,6 +74,7 @@ export const AddPoaPage = () => {
     handleSubmit,
   } = methods;
 
+  const { goBack } = useHistory();
   const onSubmit = (formData) => {
     return formData;
   };
@@ -93,42 +94,42 @@ export const AddPoaPage = () => {
     [fetchAttorneys]
   );
 
- return (
+  return (
   	<FormProvider {...methods}>
-  	<IntakeLayout
-    	buttons={
-      <AddClaimantButtons
-        onBack={handleBack}
-        onSubmit={handleSubmit(onSubmit)}
-        isValid={isValid}
-      />
-    }
-  >
-    <h1>Add Claimant's POA</h1>
-    <p>{ADD_CLAIMANT_POA_PAGE_DESCRIPTION}</p>
-
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <h2>Representative</h2>
-      <Controller
-        control={control}
-        name="listedAttorney"
-        defaultValue={null}
-        render={({ ...rest }) => (
-          <SearchableDropdown
-            {...rest}
-            label="Representative's name"
-            filterOption={filterOption}
-            async={asyncFn}
-            defaultOptions
-            debounce={250}
-            strongLabel
-            isClearable
-            placeholder="Type to search..."
+  	  <IntakeLayout
+    	  buttons={
+          <AddClaimantButtons
+            onBack={handleBack}
+            onSubmit={handleSubmit(onSubmit)}
+            isValid={isValid}
           />
-        )}
-      />
+        }
+      >
+        <h1>Add Claimant's POA</h1>
+        <p>{ADD_CLAIMANT_POA_PAGE_DESCRIPTION}</p>
 
-      { listedAttorney?.address &&
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <h2>Representative</h2>
+          <Controller
+            control={control}
+            name="listedAttorney"
+            defaultValue={null}
+            render={({ ...rest }) => (
+              <SearchableDropdown
+                {...rest}
+                label="Representative's name"
+                filterOption={filterOption}
+                async={asyncFn}
+                defaultOptions
+                debounce={250}
+                strongLabel
+                isClearable
+                placeholder="Type to search..."
+              />
+            )}
+          />
+
+          { listedAttorney?.address &&
         <div>
           <ClaimantAddress>
             <strong>Representative's address</strong>
@@ -136,9 +137,9 @@ export const AddPoaPage = () => {
           <br />
           <Address address={listedAttorney?.address} />
         </div>
-      }
+          }
 
-      { showPartyType &&
+          { showPartyType &&
         <RadioField
           name="partyType"
           label="Is the claimant an organization or individual?"
@@ -147,9 +148,9 @@ export const AddPoaPage = () => {
           vertical
           options={partyTypeOpts}
         />
-      }
-      <br />
-      { showIndividualNameFields &&
+          }
+          <br />
+          { showIndividualNameFields &&
         <>
           <FieldDiv>
             <TextField
@@ -187,16 +188,16 @@ export const AddPoaPage = () => {
             />
           </Suffix>
         </>
-      }
-      { watchPartyType === 'organization' &&
+          }
+          { watchPartyType === 'organization' &&
         <TextField
           name="organization"
           label="Organization name"
           inputRef={register}
           strongLabel
         />
-       }
-      {showAdditionalFields &&
+          }
+          {showAdditionalFields &&
        <div>
       	 <AddressForm {...methods} />
       	  <FieldDiv>
@@ -226,11 +227,11 @@ export const AddPoaPage = () => {
       	    strongLabel
       	  />
       	</div>
-      }
-    </form>
-  </IntakeLayout>
-</FormProvider>
-);
+          }
+        </form>
+      </IntakeLayout>
+    </FormProvider>
+  );
 };
 
 const FieldDiv = styled.div`
