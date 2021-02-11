@@ -73,7 +73,9 @@ export class CreateMailTaskDialog extends React.Component {
       this.props.history.location.pathname.endsWith(action.value)
     );
     const status = this.props.appeal.status;
-    const dispatchedAppealMailTaskOptions = relevantAction.data.options.filter((task) => task.value !== 'DocketSwitchMailTask');
+    const dispatchedAppealMailTaskOptions = relevantAction.data.options.filter((task) => 
+      task.value !== 'DocketSwitchMailTask'
+    );
 
     if (relevantAction && relevantAction.data && (status === 'dispatched' || status === 'post_dispatch')) {
       return dispatchedAppealMailTaskOptions;
