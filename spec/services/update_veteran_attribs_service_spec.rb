@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe UpdateVeteranAttributesService do
-  let(:veteranBob) {create(:veteran)}
-  let(:veteranSam) {create(:veteran)}
+describe UpdateVeteranAttribsService do
+  let(:veteranBob) { create(:veteran) }
+  let(:veteranSam) { create(:veteran) }
   let(:appeal) { create(:appeal, veteran_file_number: veteranBob.file_number) }
   let(:appeal2) { create(:appeal, veteran_file_number: veteranSam.file_number) }
   let(:appeal_ids) { [appeal.uuid, appeal2.uuid] }
@@ -16,7 +16,7 @@ describe UpdateVeteranAttributesService do
       Fakes::BGSService.edit_veteran_record(veteranSam.file_number, :date_of_death, date_of_death)
     end
 
-    subject { Veteran.update_veteran_attributes_service.update_veterans_for_appeals(appeal_ids) }
+    subject { Veteran.update_veteran_attribs_service.update_veterans_for_appeals(appeal_ids) }
 
     it "updates our veteran_records date_of_death" do
       expect { subject }.not_to raise_error

@@ -367,8 +367,8 @@ class Veteran < CaseflowRecord
       end
     end
 
-    def update_veteran_attributes_service
-      @update_veteran_attributes_service ||= UpdateVeteranAttributesService.new
+    def update_veteran_attribs_service
+      @update_veteran_attribs_service ||= UpdateVeteranAttribsService.new
     end
 
     private
