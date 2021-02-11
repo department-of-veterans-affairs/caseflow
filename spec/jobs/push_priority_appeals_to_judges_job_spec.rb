@@ -954,7 +954,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     subject { job.warm_veteran_attribs_for_priority_distributions }
 
     it "calls warm_veteran_cache_for_appeals with list of case ids" do
-      expect(subject).to eq 114
+      expect(subject).to eq 117
     end
   end
 end
