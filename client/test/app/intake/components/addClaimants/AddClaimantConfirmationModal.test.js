@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 import COPY from 'app/../COPY';
 
 import { AddClaimantConfirmationModal } from 'app/intake/addClaimant/AddClaimantConfirmationModal';
-import { individualClaimant } from 'test/data/intake/claimants';
+import { individualClaimant, individualPoa } from 'test/data/intake/claimants';
 
 describe('AddClaimantConfirmationModal', () => {
   const onConfirm = jest.fn();
@@ -20,8 +20,8 @@ describe('AddClaimantConfirmationModal', () => {
     jest.clearAllMocks();
   });
   const defaults = { onConfirm, onCancel, claimant: individualClaimant };
-  const setup = () => {
-    return render(<AddClaimantConfirmationModal {...defaults} />);
+  const setup = (props) => {
+    return render(<AddClaimantConfirmationModal {...defaults} {...props} />);
   };
 
   describe('without POA', () => {
@@ -42,7 +42,7 @@ describe('AddClaimantConfirmationModal', () => {
 
   describe('with POA', () => {
     it('renders correctly', () => {
-      const { container } = setup();
+      const { container } = setup({ poa: individualPoa });
 
       expect(container).toMatchSnapshot();
     });
@@ -65,6 +65,17 @@ describe('AddClaimantConfirmationModal', () => {
 
     await userEvent.click(cancelButton);
     expect(onCancel).toHaveBeenCalled();
+  });
+
+  it('fires onConfirm', async () => {
+    setup();
+
+    const confirmButton = screen.getByRole('button', { name: /add this claimant/i });
+
+    expect(onConfirm).not.toHaveBeenCalled();
+
+    await userEvent.click(confirmButton);
+    expect(onConfirm).toHaveBeenCalled();
   });
 
 });

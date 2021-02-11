@@ -89,7 +89,19 @@ exports[`AddClaimantConfirmationModal with POA renders correctly 1`] = `
                 </strong>
               </div>
               <div>
-                Intake does not have a form 21-22
+                Paul Ern O'Attorney
+              </div>
+              <div>
+                321 Main St
+              </div>
+              <div>
+                Suite 5
+              </div>
+              <div>
+                Washington, DC USA 20001
+              </div>
+              <div>
+                555-321-4567
               </div>
             </section>
           </div>
