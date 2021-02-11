@@ -90,6 +90,55 @@ feature "Non-veteran claimants", :postgres do
       end
 
       expect(page).to have_button("Continue to next step", disabled: false)
+
+      click_button "Continue to next step"
+      expect(page).to have_current_path("/intake/add_issues")
+    end
+
+    it "allows selecting claimant not listed goes to and add_power_of_attorney path" do
+      start_appeal(veteran)
+      visit "/intake"
+
+      expect(page).to have_current_path("/intake/review_request")
+
+      within_fieldset("Is the claimant someone other than the Veteran?") do
+        find("label", text: "Yes", match: :prefer_exact).click
+      end
+
+      expect(page).to have_selector("label[for=claimant-options_claimant_not_listed]")
+
+      within_fieldset(COPY::SELECT_CLAIMANT_LABEL) do
+        find("label", text: "Claimant not listed", match: :prefer_exact).click
+      end
+
+      click_intake_continue
+
+      expect(page).to have_current_path("/intake/add_claimant")
+      expect(page).to have_content("Add Claimant")
+
+      fill_in("Relationship to the Veteran", with: "Other").send_keys :enter
+
+      expect(page).to have_content("Is the claimant an organization or individual?")
+
+      within_fieldset("Is the claimant an organization or individual?") do
+        find("label", text: "Organization", match: :prefer_exact).click
+      end
+      expect(page).to have_button("Continue to next step", disabled: true)
+
+      # fill in form information
+      fill_in "Organization name", with: "Attorney's Law Firm"
+      fill_in "Street address 1", with: "1234 Justice St."
+      fill_in "City", with: "Anytown"
+      fill_in("State", with: "California").send_keys :enter
+      fill_in("Zip", with: "12345").send_keys :enter
+      fill_in("Country", with: "United States").send_keys :enter
+      within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
+        find("label", text: "Yes", match: :prefer_exact).click
+      end
+
+      expect(page).to have_button("Continue to next step", disabled: false)
+      click_button "Continue to next step"
+      expect(page).to have_current_path("/intake/add_power_of_attorney")
     end
   end
 

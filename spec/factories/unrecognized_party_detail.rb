@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :unrecognized_party_detail do
-    party_type { "person" }
+    party_type { "individual" }
     name { "Jane" }
     last_name { "Smith" }
     address_line_1 { "123 Park Ave" }
@@ -11,8 +11,8 @@ FactoryBot.define do
     zip { "12345" }
     country { "USA" }
 
-    trait :person do
-      party_type { "person" }
+    trait :individual do
+      party_type { "individual" }
       name { "Jane" }
       last_name { "Smith" }
     end

@@ -133,8 +133,8 @@ class VirtualHearing < CaseflowRecord
   end
 
   def test_link(title)
-    if guest_hearing_link.present? && host_hearing_link.present?
-      "https://vc.va.gov/webapp2/conference/test_call?name=#{email_recipient_name(title)}&join=1"
+    if use_vc_test_link?
+      "https://vc.va.gov/bva-app?conference=test_call&name=#{email_recipient_name(title)}&join=1"
     else
       "https://care.va.gov/webapp2/conference/test_call?name=#{email_recipient_name(title)}&join=1"
     end
@@ -203,6 +203,10 @@ class VirtualHearing < CaseflowRecord
   # checks if emails were sent to appellant and reps
   def cancellation_emails_sent?
     appellant_email_sent && (representative_email.nil? || representative_email_sent)
+  end
+
+  def use_vc_test_link?
+    guest_hearing_link.present? && host_hearing_link.present?
   end
 
   private

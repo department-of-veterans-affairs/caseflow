@@ -11,20 +11,20 @@ RSpec.feature "Docket Switch", :all_dbs do
   after { FeatureToggle.disable!(:docket_switch) }
 
   let(:cotb_org) { ClerkOfTheBoard.singleton }
-  let(:receipt_date) { Time.zone.today - 20 }
+  let(:orig_receipt_date) { Time.zone.today - 20 }
   let(:appeal) do
-    create(:appeal, receipt_date: receipt_date)
+    create(:appeal, receipt_date: orig_receipt_date)
   end
 
   let!(:request_issues) do
-    3.times do
+    3.times do |index|
       create(
         :request_issue,
         :rating,
         decision_review: appeal,
         contested_rating_issue_reference_id: "def456",
         contested_rating_issue_profile_date: 10.days.ago,
-        contested_issue_description: "PTSD denied"
+        contested_issue_description: "PTSD denied #{(index + 65).chr}"
       )
     end
   end
@@ -217,10 +217,19 @@ RSpec.feature "Docket Switch", :all_dbs do
     let(:colocated_user) { create(:user) }
     let!(:colocated_staff) { create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
 
-    let!(:admin_action) do
+    let!(:existing_admin_action1) do
       create(
         :ama_colocated_task,
         :ihp,
+        appeal: appeal,
+        parent: root_task,
+        assigned_to: colocated_user
+      )
+    end
+    let!(:existing_admin_action2) do
+      create(
+        :ama_colocated_task,
+        :foia,
         appeal: appeal,
         parent: root_task,
         assigned_to: colocated_user
@@ -230,6 +239,9 @@ RSpec.feature "Docket Switch", :all_dbs do
     let(:receipt_date) { Time.zone.today - 5.days }
     let(:context) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit" }
     let(:admin_action_instructions) { "Lorem ipsum dolor sit amet" }
+
+    let(:old_task_type) { "Evidence Submission" }
+    let(:new_task_type) { "Direct Review" }
 
     it "allows attorney to complete the docket switch grant" do
       User.authenticate!(user: cotb_attorney)
@@ -312,7 +324,7 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       # select issues
       within_fieldset("Select the issue(s) that are switching dockets:") do
-        find("label", text: "1. PTSD denied").click
+        find("label", text: "2. PTSD denied B").click
       end
       expect(page).to have_button("Continue", disabled: false)
       click_button(text: "Continue")
@@ -383,6 +395,26 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(page).to have_current_path(
         "/queue/appeals/#{appeal.uuid}/tasks/#{docket_switch_granted_task.id}/docket_switch/checkout/grant/confirm"
       )
+
+      expect(page).to have_content COPY::DOCKET_SWITCH_GRANTED_CONFIRM_TITLE
+      expect(page).to have_content format(
+        COPY::DOCKET_SWITCH_GRANTED_CONFIRM_DESCRIPTION_A,
+        old_task_type,
+        new_task_type,
+        old_task_type,
+        new_task_type
+      )
+      expect(page).to have_content COPY::DOCKET_SWITCH_GRANTED_CONFIRM_DESCRIPTION_B
+
+      expect(page).to have_content appeal.veteran_full_name
+
+      # Partial switch should have this
+      expect(page).to have_content "Issues switched to new docket"
+
+      expect(page).to have_button("Confirm docket switch", disabled: false)
+
+      click_button(text: "Confirm docket switch")
+      # Add checks for post-submit
     end
   end
 end

@@ -53,7 +53,7 @@ describe VirtualHearing do
   context "#test_link" do
     context "vh created with new link generation" do
       def link(name)
-        "https://vc.va.gov/webapp2/conference/test_call?name=#{name}&join=1"
+        "https://vc.va.gov/bva-app?conference=test_call&name=#{name}&join=1"
       end
 
       include_context "virtual hearing created with new link generation"
