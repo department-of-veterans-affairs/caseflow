@@ -6,17 +6,22 @@ import FnodBadge from './FnodBadge';
 
 // When FnodBadge is used by the Queue app, the relevant state is retrieved from
 // the store in this component.
-const QueueFnodBadge = (props) => {
+const QueueFnodBadge = ({ fnodBadge, appeal }) => {
   const tooltipText = 'Date of Death Reported';
 
-  return <FnodBadge appeal={props.appeal} show={props.fnod_badge} tooltipText={tooltipText} />;
+  return <FnodBadge
+    veteranAppellantDeceased={appeal.veteranAppellantDeceased}
+    uniqueId={appeal.id}
+    show={fnodBadge}
+    tooltipText={tooltipText}
+  />;
 };
 
 QueueFnodBadge.propTypes = {
   appeal: PropTypes.object,
-  fnod_badge: PropTypes.bool,
+  fnodBadge: PropTypes.bool,
 };
 
-const mapStateToProps = (state) => ({ fnod_badge: state.ui.featureToggles?.fnod_badge });
+const mapStateToProps = (state) => ({ fnodBadge: state.ui.featureToggles?.fnod_badge });
 
 export default connect(mapStateToProps)(QueueFnodBadge);

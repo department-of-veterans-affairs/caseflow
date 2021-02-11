@@ -139,7 +139,8 @@ export default class AssignHearingsTable extends React.PureComponent {
               <CaseDetailsInformation appeal={row.appeal} />
             </LinkToAppeal>
             <FnodBadge
-              appeal={row.appeal}
+              veteranAppellantDeceased={row.appeal.veteranAppellantDeceased}
+              uniqueId={row.uniqueId}
               show={this.props.userCanViewFnodBadgeInHearings}
               tooltipText = {
                 <div>
