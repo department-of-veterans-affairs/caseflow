@@ -250,6 +250,34 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
+  attribute :veteran_death_date do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
+
+    if serialize_attribute?(params, columns)
+      begin
+        object.appeal.try(:veteran_death_date)
+      rescue BGS::PowerOfAttorneyFolderDenied => error
+        #  Copied from above in :veteran_appelant_deceased
+        Raven.capture_exception(error)
+        nil
+      end
+    end
+  end
+
+  attribute :veteran_death_date_reported_at do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
+
+    if serialize_attribute?(params, columns)
+      begin
+        object.appeal.try(:veteran_death_date_reported_at)
+      rescue BGS::PowerOfAttorneyFolderDenied => error
+        #  Copied from above in :veteran_appelant_deceased
+        Raven.capture_exception(error)
+        nil
+      end
+    end
+  end
+
   attribute :document_id do |object, params|
     columns = [Constants.QUEUE_CONFIG.COLUMNS.DOCUMENT_ID.name]
 
