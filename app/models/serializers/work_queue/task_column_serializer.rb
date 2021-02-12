@@ -7,6 +7,10 @@ class WorkQueue::TaskColumnSerializer
     (params[:columns] & columns).any?
   end
 
+  def self.view_fnod_in_hearings_toggle?
+    return FeatureToggle.enabled?(:view_fnod_badge_in_hearings, user: RequestStore.store[:current_user])
+  end
+
   # Used by hasDASRecord()
   attribute :docket_name do |object|
     object.appeal.try(:docket_name)
@@ -233,6 +237,8 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :veteran_appellant_deceased do |object, params|
+    # Don't retrieve data that could result in a bgs call if we can't see the fnod badge
+    return nil if !view_fnod_in_hearings_toggle?
     columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
 
     if serialize_attribute?(params, columns)
@@ -251,6 +257,8 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :veteran_death_date do |object, params|
+    # Don't retrieve data that could result in a bgs call if we can't see the fnod badge
+    return nil if !view_fnod_in_hearings_toggle?
     columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
 
     if serialize_attribute?(params, columns)
@@ -265,6 +273,8 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :veteran_death_date_reported_at do |object, params|
+    # Don't retrieve data that could result in a bgs call if we can't see the fnod badge
+    return nil if !view_fnod_in_hearings_toggle?
     columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
 
     if serialize_attribute?(params, columns)
