@@ -53,9 +53,10 @@ RSpec.feature "Docket Switch", :all_dbs do
       let(:dispatched_appeal) { create(:appeal, :dispatched) }
       it "doesn't allow Clerk of Board users to create DocketSwitchMailTask" do
         User.authenticate!(user: cotb_attorney)
-        visit "/queue/appeals/#{appeal.uuid}"
+        visit "/queue/appeals/#{dispatched_appeal.uuid}"
         find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
         find(".cf-select__control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+        expect(page).not_to have_selector("div", class: "cf-select__option", text: COPY::DOCKET_SWITCH_MAIL_TASK_LABEL)
       end
     end
   end
