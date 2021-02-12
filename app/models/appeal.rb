@@ -233,18 +233,6 @@ class Appeal < DecisionReview
     tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
   end
 
-  def veteran_is_deceased
-    veteran_death_date.present?
-  end
-
-  def veteran_death_date
-    veteran&.date_of_death
-  end
-
-  def veteran_death_date_reported_at
-    veteran&.date_of_death_reported_at
-  end
-
   delegate :address_line_1,
            :address_line_2,
            :address_line_3,

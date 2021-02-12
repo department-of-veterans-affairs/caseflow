@@ -60,6 +60,26 @@ module AppealConcern
     end
   end
 
+  def appellant_is_veteran
+    !veteran_is_not_claimant
+  end
+
+  def veteran_is_deceased
+    veteran_death_date.present?
+  end
+
+  def veteran_appellant_deceased?
+    veteran_is_deceased && appellant_is_veteran
+  end
+
+  def veteran_death_date
+    veteran&.date_of_death
+  end
+
+  def veteran_death_date_reported_at
+    veteran&.date_of_death_reported_at
+  end
+
   private
 
   # TODO: this is named "veteran_name_object" to avoid name collision, refactor
