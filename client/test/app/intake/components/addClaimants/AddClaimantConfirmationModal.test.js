@@ -1,16 +1,12 @@
 import React from 'react';
-import {
-  screen,
-  render,
-
-} from '@testing-library/react';
+import { screen, render } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import userEvent from '@testing-library/user-event';
 
 import COPY from 'app/../COPY';
 
 import { AddClaimantConfirmationModal } from 'app/intake/addClaimant/AddClaimantConfirmationModal';
-import { individualClaimant, individualPoa } from 'test/data/intake/claimants';
+import { individualClaimant, individualPoa, organizationClaimant } from 'test/data/intake/claimants';
 
 describe('AddClaimantConfirmationModal', () => {
   const onConfirm = jest.fn();
@@ -56,10 +52,46 @@ describe('AddClaimantConfirmationModal', () => {
     });
   });
 
+  describe('individual claimant', () => {
+    describe('missing last name', () => {
+      const claimant = { ...defaults.claimant, lastName: '' };
+
+      it('shows alert', () => {
+        const { container } = setup({ claimant });
+
+        expect(
+          screen.getByText(COPY.ADD_CLAIMANT_CONFIRM_MODAL_LAST_NAME_ALERT)
+        ).toBeInTheDocument();
+
+        expect(container).toMatchSnapshot();
+      });
+
+      it('passes a11y', async () => {
+        const { container } = setup({ claimant });
+
+        const results = await axe(container);
+
+        expect(results).toHaveNoViolations();
+      });
+    });
+  });
+
+  describe('organization claimant', () => {
+    const claimant = organizationClaimant;
+
+    it('renders correctly', () => {
+      const { container } = setup({ claimant });
+
+      expect(container).toMatchSnapshot();
+    });
+  });
+
   it('fires onCancel', async () => {
     setup();
 
-    const cancelButton = screen.getByRole('button', { name: /cancel and edit/i });
+    const cancelButton = screen.getByRole('button', {
+      name: /cancel and edit/i,
+    });
 
     expect(onCancel).not.toHaveBeenCalled();
 
@@ -77,5 +109,4 @@ describe('AddClaimantConfirmationModal', () => {
     await userEvent.click(confirmButton);
     expect(onConfirm).toHaveBeenCalled();
   });
-
 });

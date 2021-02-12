@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import { css } from 'glamor';
 
 import Modal from 'app/components/Modal';
+import Alert from 'app/components/Alert';
 
 import {
   ADD_CLAIMANT_CONFIRM_MODAL_TITLE,
   ADD_CLAIMANT_CONFIRM_MODAL_DESCRIPTION,
   ADD_CLAIMANT_CONFIRM_MODAL_NO_POA,
+  ADD_CLAIMANT_CONFIRM_MODAL_LAST_NAME_ALERT,
 } from 'app/../COPY';
 import { claimantPropTypes, poaPropTypes } from './utils';
 import { AddressBlock } from './AddressBlock';
@@ -37,6 +39,11 @@ export const AddClaimantConfirmationModal = ({
     },
   ];
 
+  const missingLastName = useMemo(
+    () => claimant?.partyType === 'individual' && !claimant?.lastName,
+    [claimant]
+  );
+
   return (
     <Modal
       title={ADD_CLAIMANT_CONFIRM_MODAL_TITLE}
@@ -51,6 +58,12 @@ export const AddClaimantConfirmationModal = ({
           <strong>Claimant</strong>
         </div>
         <AddressBlock entity={claimant} />
+        {missingLastName && (
+          <Alert
+            message={ADD_CLAIMANT_CONFIRM_MODAL_LAST_NAME_ALERT}
+            type="warning"
+          />
+        )}
       </section>
 
       <section>

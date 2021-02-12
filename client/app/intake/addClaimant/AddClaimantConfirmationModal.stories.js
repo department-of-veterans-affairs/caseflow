@@ -23,17 +23,23 @@ const Template = (args) => <AddClaimantConfirmationModal {...args} />;
 
 export const Individual = Template.bind({});
 Individual.args = {
-  claimant: individualClaimant
+  claimant: individualClaimant,
 };
 Individual.parameters = {
   docs: {
     storyDescription:
-      'This is shown after adding a new claimant or a new claimant\'s POA',
+      "This is shown after adding a new claimant or a new claimant's POA",
   },
 };
 
 export const WithPoa = Template.bind({});
 WithPoa.args = {
   claimant: individualClaimant,
-  poa: individualPoa
+  poa: individualPoa,
+};
+
+export const MissingLastName = Template.bind({});
+MissingLastName.args = {
+  claimant: { ...individualClaimant, lastName: '' },
+  poa: individualPoa,
 };
