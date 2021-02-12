@@ -3,8 +3,6 @@ import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 
-import { css } from 'glamor';
-import { COLORS } from '../../../constants/AppConstants';
 import COPY from '../../../../COPY';
 import { DateString } from '../../../util/DateUtil';
 
@@ -23,6 +21,7 @@ import {
 } from '../../../util/QueryParamsUtil';
 import { renderAppealType } from '../../../queue/utils';
 import { tableNumberStyling } from './styles';
+import { tooltipListStyling } from '../../../queue/components/style';
 import ApiUtil from '../../../util/ApiUtil';
 import LinkToAppeal from './LinkToAppeal';
 import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG';
@@ -104,19 +103,6 @@ export default class AssignHearingsTable extends React.PureComponent {
       return [];
     }
 
-    const listStyling = css({
-      listStyle: 'none',
-      textAlign: 'left',
-      marginBottom: 0,
-      padding: 0,
-      '& > li': {
-        marginBottom: 0,
-        '& > strong': {
-          color: COLORS.WHITE
-        }
-      }
-    });
-
     const columns = [
       {
         header: '',
@@ -145,7 +131,7 @@ export default class AssignHearingsTable extends React.PureComponent {
               tooltipText = {
                 <div>
                   <strong>Date of Death Reported</strong>
-                  <ul {...listStyling}>
+                  <ul {...tooltipListStyling}>
                     <li><strong>Veteran: </strong>{row.appeal.veteranFullName}</li>
                     <li><strong>Source: </strong>{COPY.FNOD_SOURCE}</li>
                     <li><strong>Date of Death: </strong><DateString date={row.appeal.veteranDeathDate} /></li>
