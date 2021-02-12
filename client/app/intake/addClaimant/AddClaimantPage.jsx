@@ -1,9 +1,9 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useHistory } from 'react-router';
 import { FormProvider, Controller } from 'react-hook-form';
 import styled from 'styled-components';
 import _, { debounce } from 'lodash';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { IntakeLayout } from '../components/IntakeLayout';
 import SearchableDropdown from 'app/components/SearchableDropdown';
@@ -18,6 +18,7 @@ import Address from 'app/queue/components/Address';
 import { useAddClaimantForm } from './utils';
 import { ADD_CLAIMANT_PAGE_DESCRIPTION } from 'app/../COPY';
 import { editClaimantInformation } from '../reducers/addClaimantSlice';
+import { AddClaimantConfirmationModal } from './AddClaimantConfirmationModal';
 
 const relationshipOpts = [
   { value: 'attorney', label: 'Attorney (previously or currently)' },
@@ -28,12 +29,12 @@ const relationshipOpts = [
 
 const partyTypeOpts = [
   { displayText: 'Organization', value: 'organization' },
-  { displayText: 'Individual', value: 'individual' }
+  { displayText: 'Individual', value: 'individual' },
 ];
 
 const fetchAttorneys = async (search = '') => {
   const res = await ApiUtil.get('/intake/attorneys', {
-    query: { query: search }
+    query: { query: search },
   });
 
   return res?.body;
@@ -46,16 +47,20 @@ const getAttorneyClaimantOpts = async (search = '', asyncFn) => {
   }
 
   const formatAddress = (bgsAddress) => {
-    return _.reduce(bgsAddress, (result, value, key) => {
-      result[key] = _.startCase(_.camelCase(value));
-      if (['state', 'country'].includes(key)) {
-        result[key] = value;
-      } else {
+    return _.reduce(
+      bgsAddress,
+      (result, value, key) => {
         result[key] = _.startCase(_.camelCase(value));
-      }
+        if (['state', 'country'].includes(key)) {
+          result[key] = value;
+        } else {
+          result[key] = _.startCase(_.camelCase(value));
+        }
 
-      return result;
-    }, {});
+        return result;
+      },
+      {}
+    );
   };
 
   const res = await asyncFn(search);
@@ -75,6 +80,10 @@ const filterOption = () => true;
 export const AddClaimantPage = () => {
   const dispatch = useDispatch();
   const { goBack, push } = useHistory();
+
+  const [confirmModal, setConfirmModal] = useState(false);
+  const { claimant, poa } = useSelector((state) => state.addClaimant);
+
   const methods = useAddClaimantForm();
   const {
     control,
@@ -83,20 +92,22 @@ export const AddClaimantPage = () => {
     formState: { isValid },
     handleSubmit,
   } = methods;
-  const onSubmit = (formData) => {
 
+  const toggleConfirm = () => setConfirmModal((val) => !val);
+  const handleConfirm = () => {
+    console.log('confirm!');
+    push('/add_issues');
+  };
+
+  const onSubmit = (formData) => {
     // Add stuff to redux store
     dispatch(editClaimantInformation({ formData }));
 
     if (formData.vaForm === 'true') {
       push('/add_power_of_attorney');
     } else {
-      push('/add_issues');
+      toggleConfirm();
     }
-    // Update this to...
-    // Add claimant info to Redux
-    // Probably handle submission of both claimant and remaining intake info (from Review step)
-    // return formData;
   };
 
   const handleBack = () => goBack();
@@ -104,15 +115,20 @@ export const AddClaimantPage = () => {
   const watchPartyType = watch('partyType');
   const watchRelationship = watch('relationship')?.value;
 
-  const showIndividualNameFields = watchPartyType === 'individual' || ['spouse', 'child'].includes(watchRelationship);
+  const showIndividualNameFields =
+    watchPartyType === 'individual' ||
+    ['spouse', 'child'].includes(watchRelationship);
   const listedAttorney = watch('listedAttorney');
   const attorneyNotListed = listedAttorney?.value === 'not_listed';
   const showPartyType = watchRelationship === 'other' || attorneyNotListed;
-  const showAdditionalFields = watchPartyType || ['spouse', 'child'].includes(watchRelationship);
+  const showAdditionalFields =
+    watchPartyType || ['spouse', 'child'].includes(watchRelationship);
 
   const asyncFn = useCallback(
     debounce((search, callback) => {
-      getAttorneyClaimantOpts(search, fetchAttorneys).then((res) => callback(res));
+      getAttorneyClaimantOpts(search, fetchAttorneys).then((res) =>
+        callback(res)
+      );
     }, 250),
     [fetchAttorneys]
   );
@@ -130,7 +146,6 @@ export const AddClaimantPage = () => {
       >
         <h1>Add Claimant</h1>
         <p>{ADD_CLAIMANT_PAGE_DESCRIPTION}</p>
-
         <form onSubmit={handleSubmit(onSubmit)}>
           <Controller
             control={control}
@@ -141,7 +156,7 @@ export const AddClaimantPage = () => {
             as={SearchableDropdown}
           />
           <br />
-          { watchRelationship === 'attorney' &&
+          {watchRelationship === 'attorney' && (
             <>
               <Controller
                 control={control}
@@ -162,9 +177,9 @@ export const AddClaimantPage = () => {
                 )}
               />
             </>
-          }
+          )}
 
-          { listedAttorney?.address &&
+          {listedAttorney?.address && (
             <div>
               <ClaimantAddress>
                 <strong>Claimant's address</strong>
@@ -172,9 +187,9 @@ export const AddClaimantPage = () => {
               <br />
               <Address address={listedAttorney?.address} />
             </div>
-          }
+          )}
 
-          { showPartyType &&
+          {showPartyType && (
             <RadioField
               name="partyType"
               label="Is the claimant an organization or individual?"
@@ -183,9 +198,9 @@ export const AddClaimantPage = () => {
               vertical
               options={partyTypeOpts}
             />
-          }
+          )}
           <br />
-          { showIndividualNameFields &&
+          {showIndividualNameFields && (
             <>
               <FieldDiv>
                 <TextField
@@ -223,16 +238,16 @@ export const AddClaimantPage = () => {
                 />
               </Suffix>
             </>
-          }
-          { watchPartyType === 'organization' &&
+          )}
+          {watchPartyType === 'organization' && (
             <TextField
               name="organization"
               label="Organization name"
               inputRef={register}
               strongLabel
             />
-          }
-          { showAdditionalFields &&
+          )}
+          {showAdditionalFields && (
             <>
               <AddressForm {...methods} />
               <FieldDiv>
@@ -254,8 +269,8 @@ export const AddClaimantPage = () => {
                 />
               </PhoneNumber>
             </>
-          }
-          { (showAdditionalFields || listedAttorney) &&
+          )}
+          {(showAdditionalFields || listedAttorney) && (
             <RadioField
               options={Constants.BOOLEAN_RADIO_OPTIONS}
               vertical
@@ -264,8 +279,16 @@ export const AddClaimantPage = () => {
               name="vaForm"
               strongLabel
             />
-          }
+          )}
         </form>
+        {confirmModal && (
+          <AddClaimantConfirmationModal
+            onCancel={toggleConfirm}
+            onConfirm={handleConfirm}
+            claimant={claimant}
+            poa={poa}
+          />
+        )}
       </IntakeLayout>
     </FormProvider>
   );

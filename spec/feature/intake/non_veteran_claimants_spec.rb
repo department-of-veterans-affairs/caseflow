@@ -92,6 +92,9 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_button("Continue to next step", disabled: false)
 
       click_button "Continue to next step"
+
+      submit_confirmation_modal
+
       expect(page).to have_current_path("/intake/add_issues")
     end
 
@@ -149,5 +152,14 @@ feature "Non-veteran claimants", :postgres do
 
   def select_claimant(index = 0)
     click_dropdown({ index: index }, find(".dropdown-listedAttorney"))
+  end
+
+  def submit_confirmation_modal
+    # Ensure it is showing
+    expect(page).to have_content(COPY::ADD_CLAIMANT_CONFIRM_MODAL_TITLE)
+
+    click_button "Confirm"
+
+    expect(page).to_not have_content(COPY::ADD_CLAIMANT_CONFIRM_MODAL_TITLE)
   end
 end

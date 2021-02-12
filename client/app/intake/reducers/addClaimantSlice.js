@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  formData: {},
+  claimant: {},
+  poa: {}
 };
 
 const addClaimantSlice = createSlice({
@@ -12,8 +13,8 @@ const addClaimantSlice = createSlice({
     editClaimantInformation: (state, action) => {
       const { formData } = action.payload;
 
-      state.formData = {
-        ...state.formData,
+      state.claimant = {
+        ...state.claimant,
         ...formData,
       };
     },
