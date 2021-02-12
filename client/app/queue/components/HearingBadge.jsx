@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
 import _ from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
