@@ -70,7 +70,7 @@ describe('AddClaimantConfirmationModal', () => {
   it('fires onConfirm', async () => {
     setup();
 
-    const confirmButton = screen.getByRole('button', { name: /add this claimant/i });
+    const confirmButton = screen.getByRole('button', { name: /confirm/i });
 
     expect(onConfirm).not.toHaveBeenCalled();
 

@@ -31,7 +31,7 @@ export const AddClaimantConfirmationModal = ({
     },
     {
       classNames: ['usa-button', 'usa-button-primary'],
-      name: 'Add this claimant',
+      name: 'Confirm',
       onClick: onConfirm,
       disabled: false,
     },
