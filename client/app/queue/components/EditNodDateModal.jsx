@@ -57,6 +57,8 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
         change_reason: changeReason.value
       }
     };
+    
+    const issuesTitle = COPY.EDIT_NOD_DATE_TIMELINESS_ERROR_MESSAGE;
 
     ApiUtil.patch(`/appeals/${appealId}/nod_date_update`, payload).then((data) => {
       dispatch(editAppeal(appealId, {
@@ -75,6 +77,7 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
       if (data.body.errors) {
         console.log("Timeliness error!", data.body.errors)
         debugger;
+        alert(JSON.stringify(data.body.errors["affected_issues"]))
         //dispatch(showErrorMessage(data.body.errors));
         return (
           <TimelinessModal
