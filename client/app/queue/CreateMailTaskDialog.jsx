@@ -72,7 +72,6 @@ export class CreateMailTaskDialog extends React.Component {
     const relevantAction = this.props.task.availableActions.find((action) =>
       this.props.history.location.pathname.endsWith(action.value)
     );
-    const status = this.props.appeal.status;
 
     if (relevantAction && relevantAction.data) {
       return relevantAction.data;
@@ -88,8 +87,6 @@ export class CreateMailTaskDialog extends React.Component {
     if (!task || task.availableActions.length === 0) {
       return null;
     }
-
-    console.log(this.taskActionData())
 
     return (
       <QueueFlowModal
@@ -112,9 +109,9 @@ export class CreateMailTaskDialog extends React.Component {
           onChange={(option) =>
             this.setState({ selectedValue: option ? option.value : null })
           }
-          options={ (this.props.appeal.status === 'dispatched' || this.props.appeal.status === 'post_dispatch') ? 
+          options={(this.props.appeal.status === 'dispatched' || this.props.appeal.status === 'post_dispatch') ? 
             this.taskActionData().options.filter((task) => task.value !== 'DocketSwitchMailTask') : 
-            this.taskActionData().options  
+            this.taskActionData().options
           }
         />
         <br />
@@ -151,6 +148,7 @@ CreateMailTaskDialog.propTypes = {
   task: PropTypes.shape({
     taskId: PropTypes.string,
     availableActions: PropTypes.array,
+    value: PropTypes.string,
   }),
 };
 
