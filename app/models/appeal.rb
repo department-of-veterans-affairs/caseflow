@@ -96,7 +96,12 @@ class Appeal < DecisionReview
     if UUID_REGEX.match?(id)
       find_by_uuid!(id)
     else
-      LegacyAppeal.find_by!(vacols_id: id)
+      begin
+        LegacyAppeal.find_by!(vacols_id: id)
+      rescue ActiveRecord::RecordNotFound => error
+        # if appeal could not be found raise exception and don't return, just ignore.
+        Raven.capture_exception(error)
+      end
     end
   end
 
