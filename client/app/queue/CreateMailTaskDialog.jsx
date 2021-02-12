@@ -109,8 +109,8 @@ export class CreateMailTaskDialog extends React.Component {
           onChange={(option) =>
             this.setState({ selectedValue: option ? option.value : null })
           }
-          options={(this.props.appeal.status === 'dispatched' || this.props.appeal.status === 'post_dispatch') ? 
-            this.taskActionData().options.filter((task) => task.value !== 'DocketSwitchMailTask') : 
+          options={(this.props.appeal.status === 'dispatched' || this.props.appeal.status === 'post_dispatch') ?
+            this.taskActionData().options.filter((option) => option.value !== 'DocketSwitchMailTask') :
             this.taskActionData().options
           }
         />
