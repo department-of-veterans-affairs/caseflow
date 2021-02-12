@@ -946,6 +946,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     let(:genpop_distro_cases) do
       DistributedCase.where(distribution_id: distributed_cases_2.pluck(:id))
     end
+
     before do
       job.instance_variable_set(:@tied_distributions, non_genpop_distro_cases)
       job.instance_variable_set(:@genpop_distributions, genpop_distro_cases)

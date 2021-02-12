@@ -92,6 +92,14 @@ class Appeal < DecisionReview
     end
   end
 
+  def self.find_appeal_by_uuid_or_find_legacy_appeal_by_vacols_id(id)
+    if UUID_REGEX.match?(id)
+      find_by_uuid!(id)
+    else
+      LegacyAppeal.find_by!(vacols_id: id)
+    end
+  end
+
   def ui_hash
     Intake::AppealSerializer.new(self).serializable_hash[:data][:attributes]
   end

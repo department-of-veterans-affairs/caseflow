@@ -10,7 +10,7 @@ class UpdateVeteranAttribsService
   private
 
   def update_veteran_for_appeal(appeal_id)
-    appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
+    appeal = Appeal.find_appeal_by_uuid_or_find_legacy_appeal_by_vacols_id(appeal_id)
     if appeal.veteran
       appeal.veteran.refresh_attributes
       appeal.veteran.id
