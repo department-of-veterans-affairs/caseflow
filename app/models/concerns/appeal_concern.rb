@@ -60,6 +60,19 @@ module AppealConcern
     end
   end
 
+  #
+  # This section was added to deal with displaying FNOD information in various places.
+  # Currently, the FNOD information is used by both queue and hearings in:
+  # - FnodBanner.jsx
+  # - FnodBadge.jsx
+  #
+  # Overridden in Appeal and LegacyAppeal
+  def veteran_is_not_claimant
+    # This method eventually, after many calls, checks:
+    # - Appeal: The 'veteran_is_not_claimant' field in the caseflow DB
+    # - LegacyAppeal: If 'appellant_first_name' exists in VACOLS
+  end
+
   def appellant_is_veteran
     !veteran_is_not_claimant
   end
@@ -79,6 +92,8 @@ module AppealConcern
   def veteran_death_date_reported_at
     veteran&.date_of_death_reported_at
   end
+
+# End FNOD section
 
   private
 
