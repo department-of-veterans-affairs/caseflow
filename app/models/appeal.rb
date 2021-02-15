@@ -389,10 +389,8 @@ class Appeal < DecisionReview
   end
 
   def validate_all_issues_timely!(new_date)
-    binding.pry
     affected_issues = request_issues.reject { |request_issue| request_issue.timely_issue?(new_date.to_date) }
     unaffected_issues = request_issues - affected_issues
-    binding.pry
 
     return if affected_issues.blank?
 
@@ -401,8 +399,7 @@ class Appeal < DecisionReview
       affected_issues: affected_issues,
       unaffected_issues: unaffected_issues
     }
-    #errors.add(:new_date, timeliness_error)
-    #return errors
+
     return timeliness_error
   end
 

@@ -11,7 +11,6 @@ class NodDateUpdatesController < ApplicationController
   def update
     new_date = params[:receipt_date]
     timeliness_error = appeal.validate_all_issues_timely!(new_date)
-    binding.pry
     if !timeliness_error
       nod_date_update = NodDateUpdate.create!(updated_params)
       appeal.update_receipt_date!(receipt_date: params[:receipt_date])
