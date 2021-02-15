@@ -16,10 +16,11 @@ class NodDateUpdatesController < ApplicationController
       nod_date_update = NodDateUpdate.create!(updated_params)
       appeal.update_receipt_date!(receipt_date: params[:receipt_date])
       render json: {
-            nodDate: appeal.receipt_date,
-            docketNumber: appeal.docket_number,
-            changeReason: nod_date_update.change_reason
-          }, status: :created
+        nodDate: appeal.receipt_date,
+        docketNumber: appeal.docket_number,
+        changeReason: nod_date_update.change_reason,
+        nodDateUpdate: WorkQueue::NodDateUpdateSerializer.new(nod_date_update).serializable_hash[:data][:attributes]
+      }, status: :created
     else
       render json: { "errors": timeliness_error }
     end

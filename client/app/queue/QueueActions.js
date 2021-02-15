@@ -214,6 +214,14 @@ export const editAppeal = (appealId, attributes) => ({
   }
 });
 
+export const editNodDateUpdates = (appealId, nodDateUpdate) => ({
+  type: ACTIONS.EDIT_NOD_DATE_UPDATES,
+  payload: {
+    appealId,
+    nodDateUpdate
+  }
+});
+
 export const clearAppealDetails = (appealId) => ({
   type: ACTIONS.CLEAR_APPEAL,
   payload: {
