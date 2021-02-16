@@ -8,6 +8,11 @@ import COPY from '../../../../COPY';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
 import { PowerOfAttorneyName } from '../../../queue/PowerOfAttorneyDetail';
 
+//import HearingsFnodBadge from '../HearingsFnodBadge';
+import FnodBadge from '../../../queue/components/FnodBadge';
+import { tooltipListStyling } from '../../../queue/components/style';
+import { DateString } from '../../../util/DateUtil';
+
 const hearingPropTypes = PropTypes.shape({
   appealExternalId: PropTypes.string,
   appellantAddressLine1: PropTypes.string,
@@ -45,6 +50,22 @@ const AppellantInformation = ({ hearing }) => {
     <DocketTypeBadge name={hearing.docketName} number={hearing.docketNumber} />
     {hearing.docketNumber} <br />
     {hearing.paperCase && <span>{COPY.IS_PAPER_CASE}</span>}
+    <FnodBadge
+      veteranAppellantDeceased={true}
+      uniqueId={14}
+      show={true}
+      tooltipText = {
+        <div>
+          <strong>Date of Death Reported</strong>
+          <ul {...tooltipListStyling}>
+            <li><strong>Veteran: </strong>{'Jones Bill'}</li>
+            <li><strong>Source: </strong>{COPY.FNOD_SOURCE}</li>
+            <li><strong>Date of Death: </strong><DateString date={'2020-04-05'} /></li>
+            <li><strong>Reported on: </strong><DateString date={'2020-04-05'} /></li>
+          </ul>
+        </div>
+      }
+    />
     <br /><br />
     {hearing.appellantAddressLine1}<br />
     {hearing.appellantCity ?
