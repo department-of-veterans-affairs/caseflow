@@ -630,7 +630,7 @@ export const sortCaseTimelineEvents = (taskList, nodDateUpdates) => {
 
   const sortedTimelineEvents = timelineEvents.sort((prev, next) => {
     return new Date(next.closedAt || next.createdAt || next.updatedAt).getTime() -
-           new Date(prev.closedAt || prev.createdAt || next.updatedAt).getTime();
+           new Date(prev.closedAt || prev.createdAt || prev.updatedAt).getTime();
   });
 
   return sortedTimelineEvents;
@@ -697,5 +697,5 @@ export const statusLabel = (appeal) =>
   appeal.status === 'cancelled' ? (
     <span {...css({ color: COLORS.RED })}>{capitalize(appeal.status)}</span>
   ) : (
-    appeal.status ? StringUtil.snakeCaseToCapitalized(appeal.status) : ""
+    appeal.status ? StringUtil.snakeCaseToCapitalized(appeal.status) : ''
   );
