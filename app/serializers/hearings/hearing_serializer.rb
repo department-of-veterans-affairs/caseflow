@@ -4,6 +4,10 @@ class HearingSerializer
   include FastJsonapi::ObjectSerializer
   include HearingSerializerBase
 
+  def self.view_fnod_in_hearings_toggle?
+    return FeatureToggle.enabled?(:view_fnod_badge_in_hearings, user: RequestStore.store[:current_user])
+  end
+
   attribute :aod, &:aod?
   attribute :advance_on_docket_motion do |hearing|
     if hearing.aod?
@@ -90,4 +94,17 @@ class HearingSerializer
   attribute :was_virtual, &:was_virtual?
   attribute :witness
   attribute :worksheet_issues
+  attribute :veteran_date_of_death_info do |hearing|
+    if FeatureToggle.enabled?(:view_fnod_badge_in_hearings, user: RequestStore.store[:current_user])
+      # Also found in legacy_hearing_serializer.rb
+      # The BGS part of this rescue block is originally from task_column_serializer.rb, added to solve the problem detailed here:
+      # https://github.com/department-of-veterans-affairs/caseflow/pull/15804
+      begin
+        hearing.veteran_date_of_death_info
+      rescue BGS::PowerOfAttorneyFolderDenied, StandardError => error
+        Raven.capture_exception(error) 
+        nil
+      end
+    end
+  end
 end
