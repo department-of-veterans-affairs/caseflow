@@ -1,5 +1,5 @@
 import React from 'react';
-import { isNil, isEmpty, values, filter } from 'lodash';
+import { isNil, isEmpty, values } from 'lodash';
 import { css } from 'glamor';
 import moment from 'moment';
 
