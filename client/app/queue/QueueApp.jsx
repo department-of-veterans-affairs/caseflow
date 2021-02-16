@@ -36,6 +36,7 @@ import EvaluateDecisionView from './caseEvaluation/EvaluateDecisionView';
 import AddColocatedTaskView from './colocatedTasks/AddColocatedTaskView';
 import BlockedAdvanceToJudgeView from './BlockedAdvanceToJudgeView';
 import AddCavcRemandView from './AddCavcRemandView';
+import AddCavcDatesModal from './AddCavcDatesModal';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
@@ -88,6 +89,7 @@ import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
 import { docketSwitchRoutes } from './docketSwitch/docketSwitchRoutes';
 import ScheduleVeteran from '../hearings/components/ScheduleVeteran';
 import HearingTypeConversion from '../hearings/components/HearingTypeConversion';
+import HearingTypeConversionModal from '../hearings/components/HearingTypeConversionModal';
 import CavcReviewExtensionRequestModal from './components/CavcReviewExtensionRequestModal';
 import { PrivateRoute } from '../components/PrivateRoute';
 
@@ -374,6 +376,10 @@ class QueueApp extends React.PureComponent {
     <HearingTypeConversion type="Virtual" {...props.match.params} />
   );
 
+  routedChangeHearingRequestTypeModal = (props) => (
+    <HearingTypeConversionModal hearingType={props.hearingType} {...props.match.params} />
+  )
+
   routedSetOvertimeStatusModal = (props) => (
     <SetOvertimeStatusModal {...props.match.params} />
   );
@@ -455,6 +461,8 @@ class QueueApp extends React.PureComponent {
       closeModal={() => props.history.goBack()}
     />
   );
+
+  routedCavcRemandReceived = (props) => <AddCavcDatesModal {...props.match.params} />;
 
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
@@ -823,6 +831,18 @@ class QueueApp extends React.PureComponent {
                 }`}
                 render={this.routedCavcExtensionRequest}
               />
+              <Route
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CAVC_REMAND_RECEIVED_MDR.value
+                }`}
+                render={this.routedCavcRemandReceived}
+              />
+              <Route
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CAVC_REMAND_RECEIVED_VLJ.value
+                }`}
+                render={this.routedCavcRemandReceived}
+              />
 
               <PageRoute
                 exact
@@ -936,6 +956,22 @@ class QueueApp extends React.PureComponent {
                 }`}
                 title="Change Hearing Request Type to Virtual | Caseflow"
                 render={this.routedChangeHearingRequestTypeToVirtual}
+              />
+              <PageRoute
+                exact
+                path={
+                  `/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO.value}`
+                }
+                title="Change Hearing Request Type to Video | Caseflow"
+                render={(props) => this.routedChangeHearingRequestTypeModal({ ...props, hearingType: 'Video' })}
+              />
+              <PageRoute
+                exact
+                path={
+                  `/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_CENTRAL.value}`
+                }
+                title="Change Hearing Request Type to Central | Caseflow"
+                render={(props) => this.routedChangeHearingRequestTypeModal({ ...props, hearingType: 'Central' })}
               />
 
               <Route

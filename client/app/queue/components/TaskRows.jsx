@@ -6,7 +6,7 @@ import Button from '../../components/Button';
 import COPY from '../../../COPY';
 import { GrayDot, GreenCheckmark, CancelIcon } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
-import { taskIsOnHold, sortTaskList } from '../utils';
+import { taskIsOnHold, sortCaseTimelineEvents } from '../utils';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import ActionsDropdown from '../components/ActionsDropdown';
 import OnHoldLabel from '../components/OnHoldLabel';
@@ -14,6 +14,7 @@ import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import DecisionDateTimeLine from '../components/DecisionDateTimeLine';
 import ReactMarkdown from 'react-markdown';
 import { EditNodDateModalContainer } from './EditNodDateModal';
+import { NodDateUpdateTimeline } from './NodDateUpdateTimeline';
 
 export const grayLineStyling = css({
   width: '5px',
@@ -21,11 +22,11 @@ export const grayLineStyling = css({
   margin: 'auto',
   position: 'absolute',
   top: '30px',
-  left: '49.5%',
+  left: '45.5%',
   bottom: 0
 });
 
-const grayLineTimelineStyling = css(grayLineStyling, { left: '9%',
+export const grayLineTimelineStyling = css(grayLineStyling, { left: '9%',
   marginLeft: '12px',
   top: '39px' });
 
@@ -291,7 +292,7 @@ class TaskRows extends React.PureComponent {
   }
 
   taskTemplate = (templateConfig) => {
-    const { task, taskList, index, timeline, appeal } = templateConfig;
+    const { task, sortedTimelineEvents, index, timeline, appeal } = templateConfig;
 
     const timelineTitle = isCancelled(task) ? `${task.type} cancelled` : task.timelineTitle;
 
@@ -305,7 +306,8 @@ class TaskRows extends React.PureComponent {
       </td>
       <td {...taskInfoWithIconContainer} className={tdClassNames(timeline, task)}>
         { isCancelled(task) ? <CancelIcon /> : closedAtIcon(task, timeline) }
-        { (((index < taskList.length) && timeline) || (index < taskList.length - 1 && !timeline)) &&
+        { (((index < sortedTimelineEvents.length) && timeline) ||
+          (index < sortedTimelineEvents.length - 1 && !timeline)) &&
               <div {...grayLineStyling} className={[cancelGrayTimeLineStyle(timeline),
                 task.closedAt ? '' : greyDotAndlineStyling].join(' ')} /> }
       </td>
@@ -333,29 +335,40 @@ class TaskRows extends React.PureComponent {
       taskList,
       timeline
     } = this.props;
+    const nodDateUpdates = appeal.nodDateUpdates;
+
+    const sortedTimelineEvents = sortCaseTimelineEvents(taskList, nodDateUpdates);
 
     return <React.Fragment key={appeal.externalId}>
 
-      { sortTaskList(taskList, appeal).map((task, index) => {
+      { sortedTimelineEvents.map((timelineEvent, index) => {
         const templateConfig = {
-          task,
+          task: timelineEvent,
           index,
           timeline,
-          taskList,
+          sortedTimelineEvents,
           appeal
         };
 
-        if (!task.isDecisionDate) {
-          return this.taskTemplate(templateConfig);
+        if (timelineEvent.isDecisionDate) {
+          return <DecisionDateTimeLine
+            appeal = {appeal}
+            timeline = {timeline}
+            taskList = {taskList} />;
         }
 
-        return <DecisionDateTimeLine
-          appeal = {appeal}
-          timeline ={timeline}
-          taskList = {taskList} />;
+        if (timelineEvent.changeReason && this.props.editNodDateEnabled) {
+          return <NodDateUpdateTimeline
+            nodDateUpdate = {timelineEvent}
+            timeline = {timeline}
+          />;
+        }
+
+        return this.taskTemplate(templateConfig);
       }) }
 
-      {/* everything below here will not be in chronological order unless it's added to the task list on line 287*/}
+      {/* Tasks and decision dates won't be in chronological order unless added to task list
+          to return under render function*/}
       { timeline && appeal.isLegacyAppeal && <tr>
         <td className="taskContainerStyling taskTimeTimelineContainerStyling">
           { appeal.form9Date ? moment(appeal.form9Date).format('MM/DD/YYYY') : null }
@@ -381,7 +394,7 @@ class TaskRows extends React.PureComponent {
                 <Button
                   type="button"
                   linkStyling
-                  styling={css({ 'padding-left': '0' })}
+                  styling={css({ paddingLeft: '0' })}
                   onClick={this.toggleEditNodDateModal}>
                   {COPY.CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY}
                 </Button>

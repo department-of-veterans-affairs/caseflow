@@ -13,9 +13,14 @@
     "value": "modal/cancel_task",
     "func": "cancel_convert_hearing_request_type_data"
   },
+  "CHANGE_HEARING_REQUEST_TYPE_TO_CENTRAL": {
+    "label": "Convert hearing to Central",
+    "value": "modal/change_hearing_request_type_to_central",
+    "func": "change_hearing_request_type_data"
+  },
   "CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO": {
     "label": "Convert hearing to video",
-    "value": "<placeholder>modal/change_hearing_request_type</placeholder>",
+    "value": "modal/change_hearing_request_type_to_video",
     "func": "change_hearing_request_type_data"
   },
   "CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL": {
@@ -207,6 +212,14 @@
   "CAVC_EXTENSION_REQUEST": {
     "label": "Extension request",
     "value": "modal/cavc_extension_request"
+  },
+  "CAVC_REMAND_RECEIVED_MDR": {
+    "label": "Remand ready for 90-day letter",
+    "value": "modal/cavc_remand_received"
+  },
+  "CAVC_REMAND_RECEIVED_VLJ": {
+    "label": "Ready for VLJ",
+    "value": "modal/cavc_remand_received"
   },
   "SPECIAL_CASE_MOVEMENT": {
     "label": "Case Movement: Advance to judge",

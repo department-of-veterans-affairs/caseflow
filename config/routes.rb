@@ -130,6 +130,7 @@ Rails.application.routes.draw do
       get 'tasks', to: "tasks#for_appeal"
       patch 'update'
       post 'work_mode', to: "work_modes#create"
+      patch 'cavc_remand', to: "cavc_remands#update"
       post 'cavc_remand', to: "cavc_remands#create"
       patch 'nod_date_update', to: "nod_date_updates#update"
     end

@@ -136,14 +136,6 @@ class HearingRepository
 
     private
 
-    def worksheet_issues_for_appeals(appeal_ids)
-      WorksheetIssue.issues_for_appeals(appeal_ids)
-        .each_with_object({}) do |issue, hash|
-        hash[issue.appeal_id] ||= []
-        hash[issue.appeal_id] << issue
-      end
-    end
-
     # Gets the regional office to use when mapping the VACOLS hearing date to
     # the local scheduled time.
     #
