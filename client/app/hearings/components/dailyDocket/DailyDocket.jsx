@@ -182,7 +182,6 @@ export default class DailyDocket extends React.Component {
     const docketHearings = this.dailyDocketHearings();
     const prevHearings = this.previouslyScheduledHearings();
 
-    console.log('HEARINGS: ', docketHearings);
     const hasDocketHearings = !_.isEmpty(docketHearings);
     const hasPrevHearings = !_.isEmpty(prevHearings);
 

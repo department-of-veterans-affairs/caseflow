@@ -14,6 +14,8 @@
     flash: flash,
     buildDate: build_date,
     hasCaseDetailsRole: current_user.roles.include?('Case Details'),
+    userCanBuildHearingSchedule: current_user.can?('Build HearSched'),
+    userHasHearingPrepRole: current_user.can?('Hearing Prep'),
     userCanViewHearingSchedule: current_user.can_view_hearing_schedule?,
     userCanViewOvertimeStatus: current_user.can_view_overtime_status?,
     userCanViewEditNodDate: current_user.can_view_edit_nod_date?,

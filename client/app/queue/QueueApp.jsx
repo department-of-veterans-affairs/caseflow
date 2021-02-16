@@ -89,6 +89,7 @@ import { docketSwitchRoutes } from './docketSwitch/docketSwitchRoutes';
 import ScheduleVeteran from '../hearings/components/ScheduleVeteran';
 import HearingTypeConversion from '../hearings/components/HearingTypeConversion';
 import CavcReviewExtensionRequestModal from './components/CavcReviewExtensionRequestModal';
+import { PrivateRoute } from '../components/PrivateRoute';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -324,18 +325,23 @@ class QueueApp extends React.PureComponent {
   routedScheduleVeteran = (props) => {
     const params = querystring.parse(props.location.search.replace(/^\?/, ''));
 
-    console.log('PROPS: ', props);
-
-    return params.action === 'reschedule' ? (
-      <CaseDetailsLoadingScreen
-        {...this.propsForQueueLoadingScreen()}
-        preventReset
-        appealId={props.match.params.appealId}
+    return (
+      <PrivateRoute
+        authorized={this.props.userHasHearingPrepRole || this.props.userCanBuildHearingSchedule}
+        redirectTo={`/queue/appeals/${props.match.params.appealId}`}
       >
-        <ScheduleVeteran params={params} userId={this.props.userId} {...props.match.params} />
-      </CaseDetailsLoadingScreen>
-    ) : (
-      <ScheduleVeteran params={params} userId={this.props.userId} {...props.match.params} />
+        {params.action === 'reschedule' ? (
+          <CaseDetailsLoadingScreen
+            {...this.propsForQueueLoadingScreen()}
+            preventReset
+            appealId={props.match.params.appealId}
+          >
+            <ScheduleVeteran params={params} userId={this.props.userId} {...props.match.params} />
+          </CaseDetailsLoadingScreen>
+        ) : (
+          <ScheduleVeteran params={params} userId={this.props.userId} {...props.match.params} />
+        )};
+      </PrivateRoute>
     );
   };
 
@@ -1002,6 +1008,8 @@ QueueApp.propTypes = {
   userCanViewHearingSchedule: PropTypes.bool,
   userCanViewOvertimeStatus: PropTypes.bool,
   userCanViewEditNodDate: PropTypes.bool,
+  userCanBuildHearingSchedule: PropTypes.bool,
+  userHasHearingPrepRole: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
