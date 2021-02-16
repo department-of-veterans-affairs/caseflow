@@ -9,7 +9,7 @@ const dropdownOptSchema = yup.object().shape({
 
 export const schema = yup.object().shape({
   partyType: yup.string().when('listedAttorney', {
-    is: (value) => value?.value === 'not_listed' || value.address,
+    is: (value) => value?.value === 'not_listed' || value?.value === value.address,
     then: yup.string().required()
   }),
   firstName: yup.
@@ -49,7 +49,6 @@ export const schema = yup.object().shape({
   }),
   email: yup.string().email(),
   phoneNumber: yup.string(),
-  vaForm: yup.string().required(),
 });
 
 export const useAddPoaForm = () => {

@@ -10,8 +10,6 @@ import { useHistory } from 'react-router';
 import { debounce, reduce, startCase, camelCase } from 'lodash';
 import ApiUtil from '../../util/ApiUtil';
 import RadioField from 'app/components/RadioField';
-import * as Constants from '../constants';
-
 import Address from 'app/queue/components/Address';
 import AddressForm from 'app/components/AddressForm';
 import TextField from 'app/components/TextField';
@@ -36,7 +34,7 @@ const getAttorneyClaimantOpts = async (search = '', asyncFn) => {
   }
 
   const formatAddress = (bgsAddress) => {
-    return reduce(bgsAddress,(result, value, key) => {
+    return reduce(bgsAddress, (result, value, key) => {
       result[key] = startCase(camelCase(value));
       if (['state', 'country'].includes(key)) {
         result[key] = value;
@@ -217,14 +215,6 @@ export const AddPoaPage = () => {
              strongLabel
            />
          </PhoneNumber>
-         <RadioField
-           options={Constants.BOOLEAN_RADIO_OPTIONS}
-           vertical
-           inputRef={register}
-           label="Do you have a VA Form 21-22 for this claimant?"
-           name="vaForm"
-           strongLabel
-         />
        </div>
           }
         </form>
