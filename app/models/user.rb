@@ -438,17 +438,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     @user_info ||= self.class.user_repository.user_info_from_vacols(css_id)
   end
 
-  def get_appeal_stream_hearings(appeal_streams)
-    appeal_streams.reduce({}) do |acc, (appeal_id, appeals)|
-      acc[appeal_id] = appeal_hearings(appeals.map(&:id))
-      acc
-    end
-  end
-
-  def appeal_hearings(appeal_ids)
-    LegacyHearing.where(appeal_id: appeal_ids)
-  end
-
   class << self
     attr_writer :authentication_service
     delegate :authenticate_vacols, to: :authentication_service

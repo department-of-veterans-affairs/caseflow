@@ -308,10 +308,6 @@ class LegacyAppeal < CaseflowRecord
     Person.find_or_create_by_ssn(appellant_ssn)
   end
 
-  def veteran_if_exists
-    @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
-  end
-
   def veteran
     @veteran ||= VeteranFinder.find_best_match(sanitized_vbms_id)
   end

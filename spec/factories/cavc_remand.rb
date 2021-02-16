@@ -51,6 +51,26 @@ FactoryBot.define do
                                          end
       end
     end
+
+    trait :mdr do
+      no_mandate
+      remand_subtype { Constants::CAVC_REMAND_SUBTYPES["mdr"] }
+    end
+
+    trait :straight_reversal do
+      cavc_decision_type { Constants::CAVC_DECISION_TYPES["straight_reversal"] }
+      remand_subtype { nil }
+    end
+
+    trait :death_dismissal do
+      cavc_decision_type { Constants::CAVC_DECISION_TYPES["death_dismissal"] }
+      remand_subtype { nil }
+    end
+
+    trait :no_mandate do
+      judgement_date { nil }
+      mandate_date { nil }
+    end
   end
 
   module FactoryBotHelper

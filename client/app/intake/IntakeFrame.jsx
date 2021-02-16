@@ -1,7 +1,4 @@
 /* eslint-disable react/prop-types */
-
-import { hot } from 'react-hot-loader/root';
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -155,22 +152,20 @@ export const IntakeFrame = (props) => {
   );
 };
 
-export default hot(
-  connect(
-    ({ intake }) => ({
-      intakeId: intake.id,
-      unreadMessages: intake.unreadMessages,
-      veteran: intake.veteran,
-      cancelModalVisible: intake.cancelModalVisible,
-      cancelIntakeRequestStatus: intake.requestStatus.cancel,
-    }),
-    (dispatch) =>
-      bindActionCreators(
-        {
-          toggleCancelModal,
-          submitCancel,
-        },
-        dispatch
-      )
-  )(IntakeFrame)
-);
+export default connect(
+  ({ intake }) => ({
+    intakeId: intake.id,
+    unreadMessages: intake.unreadMessages,
+    veteran: intake.veteran,
+    cancelModalVisible: intake.cancelModalVisible,
+    cancelIntakeRequestStatus: intake.requestStatus.cancel,
+  }),
+  (dispatch) =>
+    bindActionCreators(
+      {
+        toggleCancelModal,
+        submitCancel,
+      },
+      dispatch
+    )
+)(IntakeFrame);
