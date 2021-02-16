@@ -59,8 +59,6 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
         change_reason: changeReason.value
       }
     };
-    
-    const issuesTitle = COPY.EDIT_NOD_DATE_TIMELINESS_ERROR_MESSAGE;
 
     ApiUtil.patch(`/appeals/${appealId}/nod_date_update`, payload).then((data) => {
       dispatch(editAppeal(appealId, {
@@ -70,10 +68,7 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
       }));
 
       if (data.body.errors) {
-        console.log("Timeliness error!", data.body.errors);
         setTimelinessError(true);
-        // affectedIssues={data.body.errors["affected_issues"]}
-        // unaffectedIssues={data.body.errors["unaffected_issues"]}
       } else {
         dispatch(editNodDateUpdates(appealId, data.body.nodDateUpdate));
         dispatch(showSuccessMessage(successMessage));
@@ -192,7 +187,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
         strongLabel="Unaffected Issue(s)"
         value={unaffectedIssues}
       /> */}
-    </div>
+    </div>;
   } else {
     modalContent = <div>
       <div>
@@ -203,7 +198,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
         styling={alertStyling}
         title=""
         type="info"
-        scrollOnAlert= {false}
+        scrollOnAlert={false}
       /> : null }
       <DateSelector
         style={marginTop}
@@ -226,7 +221,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
         debounce={250}
         strongLabel
       />
-    </div>
+    </div>;
   }
 
   return (
@@ -256,5 +251,6 @@ EditNodDateModal.propTypes = {
   onClose: PropTypes.func,
   nodDate: PropTypes.string.isRequired,
   reason: PropTypes.object,
-  appealId: PropTypes.string.isRequired
+  appealId: PropTypes.string.isRequired,
+  showTimelinessError: PropTypes.bool.isRequired
 };
