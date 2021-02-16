@@ -58,6 +58,8 @@ export default class DailyDocketHearingRows extends React.Component {
   componentDidMount() {
     const sortedHearings = sortHearings(this.props.hearings);
 
+    console.log('SORTED: ', sortedHearings);
+
     this.setState({ hearings: sortedHearings });
   }
 

@@ -248,6 +248,7 @@ export class DailyDocketContainer extends React.Component {
 
       {!this.props.print &&
         <DailyDocket
+          loadHearingDay={this.loadHearingDay}
           user={this.props.user}
           dailyDocket={this.props.hearingDay}
           hearings={this.props.hearings}
@@ -264,6 +265,7 @@ export class DailyDocketContainer extends React.Component {
           updateLockHearingDay={this.updateLockHearingDay}
           displayLockSuccessMessage={this.props.displayLockSuccessMessage}
           dailyDocketServerError={this.props.dailyDocketServerError}
+          history={this.props.history}
           onErrorHearingDayLock={this.props.onErrorHearingDayLock} />
       }
 

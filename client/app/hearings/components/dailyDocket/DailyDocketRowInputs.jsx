@@ -25,7 +25,7 @@ export const DispositionDropdown = ({ hearing, update, readOnly, openDisposition
       name={`${hearing.externalId}-disposition`}
       label="Disposition"
       strongLabel
-      options={filter(DISPOSITION_OPTIONS, (option) => option?.value !== HEARING_DISPOSITION_TYPES.scheduled_in_error)}
+      options={DISPOSITION_OPTIONS}
       value={hearing.disposition}
       onChange={(option) => {
         if (!option) {
@@ -36,6 +36,7 @@ export const DispositionDropdown = ({ hearing, update, readOnly, openDisposition
         const toDisposition = option.value;
 
         openDispositionModal({
+          update,
           hearing,
           fromDisposition,
           toDisposition,

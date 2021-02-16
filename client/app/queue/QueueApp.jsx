@@ -321,9 +321,23 @@ class QueueApp extends React.PureComponent {
     />
   );
 
-  routedScheduleVeteran = (props) => (
-    <ScheduleVeteran userId={this.props.userId} {...props.match.params} />
-  );
+  routedScheduleVeteran = (props) => {
+    const params = querystring.parse(props.location.search.replace(/^\?/, ''));
+
+    console.log('PROPS: ', props);
+
+    return params.action === 'reschedule' ? (
+      <CaseDetailsLoadingScreen
+        {...this.propsForQueueLoadingScreen()}
+        preventReset
+        appealId={props.match.params.appealId}
+      >
+        <ScheduleVeteran params={params} userId={this.props.userId} {...props.match.params} />
+      </CaseDetailsLoadingScreen>
+    ) : (
+      <ScheduleVeteran params={params} userId={this.props.userId} {...props.match.params} />
+    );
+  };
 
   routedAssignHearingModal = (props) => (
     <AssignHearingModal userId={this.props.userId} {...props.match.params} />
@@ -477,6 +491,7 @@ class QueueApp extends React.PureComponent {
 
             {/* Base/page (non-modal) routes */}
             <Switch>
+
               <PageRoute
                 exact
                 path={['/search', '/cases/:caseflowVeteranIds']}
@@ -863,14 +878,7 @@ class QueueApp extends React.PureComponent {
                 title="Cancel Task | Caseflow"
                 render={this.routedCancelTaskModal}
               />
-              <PageRoute
-                exact
-                path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.value
-                }`}
-                title="Assign Hearing | Caseflow"
-                render={this.routedScheduleVeteran}
-              />
+
               <PageRoute
                 exact
                 path={`/queue/appeals/:appealId/tasks/:taskId/${
@@ -878,6 +886,14 @@ class QueueApp extends React.PureComponent {
                 }`}
                 title="Assign Hearing | Caseflow"
                 render={this.routedAssignHearingModal}
+              />
+              <PageRoute
+                exact
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.value
+                }`}
+                title="Assign Hearing | Caseflow"
+                render={this.routedScheduleVeteran}
               />
               <PageRoute
                 exact

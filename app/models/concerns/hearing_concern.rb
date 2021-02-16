@@ -34,4 +34,8 @@ module HearingConcern
   def postponed_or_cancelled_or_scheduled_in_error?
     postponed? || cancelled? || scheduled_in_error?
   end
+
+  def open_hearing_disposition_task_id
+    appeal.tasks.open.find_by(type: AssignHearingDispositionTask.name)&.id
+  end
 end

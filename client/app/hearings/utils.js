@@ -14,8 +14,8 @@ import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
 import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP';
 
 export const isPreviouslyScheduledHearing = (hearing) =>
-  hearing.disposition === HEARING_DISPOSITION_TYPES.postponed ||
-  hearing.disposition === HEARING_DISPOSITION_TYPES.cancelled;
+  hearing?.disposition === HEARING_DISPOSITION_TYPES.postponed ||
+  hearing?.disposition === HEARING_DISPOSITION_TYPES.cancelled;
 
 export const now = () => {
   return moment().
@@ -434,6 +434,34 @@ export const regionalOfficeDetails = (key) => REGIONAL_OFFICE_INFORMATION[
   Object.keys(REGIONAL_OFFICE_INFORMATION).filter((roKey) => roKey === key)[0]
 ];
 
-export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[disposition] ?? 'None'
+export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[disposition] ?? 'None';
+
+/**
+ * Method to return the full name of the appellant depending on whether it is the Veteran or not
+ * @param {object} hearing -- Hearing values used to return the appellant name
+ */
+export const appellantFullName = ({
+  appellantIsNotVeteran,
+  appellantFirstName,
+  appellantLastName,
+  veteranFirstName,
+  veteranLastName
+}) => appellantIsNotVeteran ? `${appellantFirstName} ${appellantLastName}` : `${veteranFirstName} ${veteranLastName}`;
+
+/**
+ * Method to construct the task payload
+ * @param {object} values -- The payload values to send to the backend
+ * @param {object} task -- Additional details about the task
+ */
+export const taskPayload = (values, task = {}) => ({
+  data: {
+    task: {
+      ...task,
+      business_payloads: {
+        values
+      },
+    },
+  },
+});
 
 /* eslint-enable camelcase */
