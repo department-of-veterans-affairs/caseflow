@@ -90,9 +90,4 @@ class UserReporter
   def all_users_for_css_id
     User.where("UPPER(css_id)=UPPER(?)", css_id)
   end
-
-  # Where is this used?
-  def uppercase_user
-    User.find_by_css_id(css_id)
-  end
 end
