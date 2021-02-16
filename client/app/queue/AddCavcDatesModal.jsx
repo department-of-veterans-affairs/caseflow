@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 
 import QueueFlowModal from './components/QueueFlowModal';
 import { requestPatch, showErrorMessage } from './uiReducer/uiActions';
+import { validateDateNotInFuture } from '../intake/util/issues';
 import DateSelector from '../components/DateSelector';
 import TextareaField from '../components/TextareaField';
 import Alert from '../components/Alert';
@@ -31,8 +32,8 @@ const AddCavcDatesModal = ({ appealId, decisionType, error, highlightInvalid, hi
   const straightReversalType = () => decisionType === CAVC_DECISION_TYPES.straight_reversal;
   const deathDismissalType = () => decisionType === CAVC_DECISION_TYPES.death_dismissal;
 
-  const validJudgementDate = () => Boolean(judgementDate);
-  const validMandateDate = () => Boolean(mandateDate);
+  const validJudgementDate = () => validateDateNotInFuture(judgementDate);
+  const validMandateDate = () => validateDateNotInFuture(mandateDate);
   const validInstructions = () => instructions?.length > 0;
 
   const validateForm = () => {

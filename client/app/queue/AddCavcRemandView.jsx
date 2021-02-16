@@ -12,6 +12,7 @@ import CAVC_DECISION_TYPES from '../../constants/CAVC_DECISION_TYPES';
 
 import QueueFlowPage from './components/QueueFlowPage';
 import { requestSave, showErrorMessage } from './uiReducer/uiActions';
+import { validateDateNotInFuture } from '../intake/util/issues';
 import TextField from '../components/TextField';
 import RadioField from '../components/RadioField';
 import DateSelector from '../components/DateSelector';
@@ -22,7 +23,6 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import StringUtil from '../util/StringUtil';
 import Alert from '../components/Alert';
 import { withRouter } from 'react-router';
-import { validateDateNotInFuture } from '../intake/util/issues';
 
 const radioLabelStyling = css({ marginTop: '2.5rem' });
 const buttonStyling = css({ paddingLeft: '0' });
