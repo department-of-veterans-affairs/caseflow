@@ -315,7 +315,7 @@ export const ScheduleVeteran = ({
   const headerStyle = virtual ? setMargin('0 0 0.75rem 0') : setMargin(0);
   const helperTextStyle = virtual ? setMargin('0 0 2rem 0') : setMargin(0);
 
-  return scheduledHearing.taskId && !scheduledHearing.action ? (
+  return scheduledHearing?.taskId && !scheduledHearing?.action ? (
     <Redirect to={`/queue/appeals/${props.appealId}`} />
   ) : (
     <div {...regionalOfficeSection}>
