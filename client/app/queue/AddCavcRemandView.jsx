@@ -22,6 +22,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import StringUtil from '../util/StringUtil';
 import Alert from '../components/Alert';
 import { withRouter } from 'react-router';
+import { validateDateNotInFuture } from '../intake/util/issues';
 
 const radioLabelStyling = css({ marginTop: '2.5rem' });
 const buttonStyling = css({ paddingLeft: '0' });
@@ -130,10 +131,10 @@ const AddCavcRemandView = (props) => {
   };
   const validDocketNumber = () => (/^\d{2}-\d{1,5}$/).exec(docketNumber);
   const validJudge = () => Boolean(judge);
-  const validDecisionDate = () => Boolean(decisionDate);
+  const validDecisionDate = () => validateDateNotInFuture(decisionDate);
   const mandateNotRequired = () => straightReversalType() || deathDismissalType() || mdrSubtype();
-  const validJudgementDate = () => Boolean(judgementDate) || mandateNotRequired();
-  const validMandateDate = () => Boolean(mandateDate) || mandateNotRequired();
+  const validJudgementDate = () => validateDateNotInFuture(judgementDate) || mandateNotRequired();
+  const validMandateDate = () => validateDateNotInFuture(mandateDate) || mandateNotRequired();
   const validInstructions = () => instructions && instructions.length > 0;
 
   const validateForm = () => {
