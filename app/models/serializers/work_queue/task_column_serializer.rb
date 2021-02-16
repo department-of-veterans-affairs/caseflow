@@ -237,11 +237,10 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :veteran_appellant_deceased do |object, params|
-    # Don't retrieve data that could result in a bgs call if we can't see the fnod badge
-    return nil if !view_fnod_in_hearings_toggle?
     columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
 
-    if serialize_attribute?(params, columns)
+
+    if serialize_attribute?(params, columns) && view_fnod_in_hearings_toggle?
       begin
         object.appeal.try(:veteran_appellant_deceased?)
       rescue BGS::PowerOfAttorneyFolderDenied => error
@@ -257,11 +256,10 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :veteran_death_date do |object, params|
-    # Don't retrieve data that could result in a bgs call if we can't see the fnod badge
-    return nil if !view_fnod_in_hearings_toggle?
     columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
 
-    if serialize_attribute?(params, columns)
+
+    if serialize_attribute?(params, columns) && view_fnod_in_hearings_toggle?
       begin
         object.appeal.try(:veteran_death_date)
       rescue BGS::PowerOfAttorneyFolderDenied => error
@@ -273,11 +271,10 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :veteran_death_date_reported_at do |object, params|
-    # Don't retrieve data that could result in a bgs call if we can't see the fnod badge
-    return nil if !view_fnod_in_hearings_toggle?
     columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
 
-    if serialize_attribute?(params, columns)
+
+    if serialize_attribute?(params, columns) && view_fnod_in_hearings_toggle?
       begin
         object.appeal.try(:veteran_death_date_reported_at)
       rescue BGS::PowerOfAttorneyFolderDenied => error
