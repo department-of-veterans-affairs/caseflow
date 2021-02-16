@@ -168,6 +168,10 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
     }
   };
 
+  const affectedIssuesList = "This is a test A";
+
+  const unaffectedIssuesList = "This is a test B";
+
   let modalContent;
 
   if (showTimelinessError) {
@@ -175,18 +179,25 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
       <div>
         <ReactMarkdown source={COPY.EDIT_NOD_DATE_TIMELINESS_ERROR_MESSAGE} />
       </div>
-      {/* <TextField
+
+      <strong>Affected Issue(s)</strong>
+      <ReactMarkdown>{affectedIssuesList}</ReactMarkdown>
+
+      <strong>Unaffected Issue(s)</strong>
+      <ReactMarkdown>{unaffectedIssuesList}</ReactMarkdown>
+
+      {/* <React.Fragment>
         name="Affected Issues"
         optional
         strongLabel="Affected Issue(s)"
         value={affectedIssues}
-      />
-      <TextField
+      </React.Fragment>
+      <React.Fragment>
         name="Unaffected Issues"
         optional
         strongLabel="Unaffected Issue(s)"
         value={unaffectedIssues}
-      /> */}
+      </React.Fragment> */}
     </div>;
   } else {
     modalContent = <div>
