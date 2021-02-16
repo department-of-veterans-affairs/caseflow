@@ -144,7 +144,6 @@ CreateMailTaskDialog.propTypes = {
   task: PropTypes.shape({
     taskId: PropTypes.string,
     availableActions: PropTypes.array,
-    value: PropTypes.string,
   }),
 };
 
