@@ -32,8 +32,8 @@ const AddCavcDatesModal = ({ appealId, decisionType, error, highlightInvalid, hi
   const straightReversalType = () => decisionType === CAVC_DECISION_TYPES.straight_reversal;
   const deathDismissalType = () => decisionType === CAVC_DECISION_TYPES.death_dismissal;
 
-  const validJudgementDate = () => validateDateNotInFuture(judgementDate);
-  const validMandateDate = () => validateDateNotInFuture(mandateDate);
+  const validJudgementDate = () => Boolean(judgementDate) && validateDateNotInFuture(judgementDate);
+  const validMandateDate = () => Boolean(mandateDate) && validateDateNotInFuture(mandateDate);
   const validInstructions = () => instructions?.length > 0;
 
   const validateForm = () => {
