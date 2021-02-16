@@ -109,10 +109,7 @@ export class CreateMailTaskDialog extends React.Component {
           onChange={(option) =>
             this.setState({ selectedValue: option ? option.value : null })
           }
-          options={(this.props.appeal.status === 'dispatched' || this.props.appeal.status === 'post_dispatch') ?
-            this.taskActionData().options.filter((option) => option.value !== 'DocketSwitchMailTask') :
-            this.taskActionData().options
-          }
+          options={this.taskActionData().options}
         />
         <br />
         <TextareaField
@@ -134,7 +131,6 @@ export class CreateMailTaskDialog extends React.Component {
 CreateMailTaskDialog.propTypes = {
   appeal: PropTypes.shape({
     externalId: PropTypes.string,
-    status: PropTypes.string,
   }),
   appealId: PropTypes.string,
   highlightFormItems: PropTypes.bool,
