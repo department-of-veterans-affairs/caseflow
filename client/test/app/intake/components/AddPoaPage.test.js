@@ -2,7 +2,7 @@ import React from 'react';
 import { screen, render, fireEvent, within, act, waitFor} from '@testing-library/react';
 import { axe } from 'jest-axe';
 import userEvent from '@testing-library/user-event';
-import { AddPoaPage } from 'app/intake/addPoa/AddPoaPage';
+import { AddPoaPage } from 'app/intake/addPOA/AddPoaPage';
 import { IntakeProviders } from '../testUtils';
 
 describe('AddPoaPage', () => {
@@ -14,16 +14,18 @@ describe('AddPoaPage', () => {
   });
   const defaults = { onSubmit, onBack};
   const setup = () => {
-    return render(<AddPoaPage  {...defaults}/>, { wrapper: IntakeProviders });
+    return render(<AddPoaPage {...defaults}/>, { wrapper: IntakeProviders });
   };
 
-  it('renders default state correctly', () => {
+  it('renders default state correctly', async () => {
     const { container } = setup();
 
     expect(container).toMatchSnapshot();
+    await waitFor(() => {
     expect(
       screen.getByText("Add Claimant's POA")
     ).toBeInTheDocument();
+  });
   });
 
   it('fires onBack', async () => {
@@ -31,8 +33,10 @@ describe('AddPoaPage', () => {
 
     const backButton = screen.getByRole('button', { name: /back/i });
     expect(onBack).not.toHaveBeenCalled();
-     
-    await userEvent.click(backButton);
+  
+    await waitFor(() => {
+    userEvent.click(backButton)
     expect(onBack).not.toHaveBeenCalled();
+  });
   });
 });

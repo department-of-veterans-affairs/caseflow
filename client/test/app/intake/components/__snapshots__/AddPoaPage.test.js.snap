@@ -67,7 +67,7 @@ exports[`AddPoaPage renders default state correctly 1`] = `
         Add Claimant's POA
       </h1>
       <p>
-        Add the claimant’s POA so they can be notified of any correspondence sent to the claimant. If you are unable to find their name in the list of options, please select "Name not listed" and add their information accordingly.
+        Add the claimant’s POA information based on the VA Form 21-22, so they can be notified of any correspondence sent to the claimant. If you are unable to find their name in the list of options, please select "Name not listed" and add their information accordingly.
       </p>
       <form>
         <h2>
