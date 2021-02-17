@@ -157,14 +157,9 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
       after { FeatureToggle.disable!(:view_fnod_badge_in_hearings) }
 
       context "when there is a date of death present" do
-        before { veteran.update!(date_of_death: Time.zone.today - 1.year) }
+        before { veteran.update!(date_of_death: date_of_death) }
 
         scenario "badge does appear" do
-          visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-          expect(page).to have_content("FNOD")
-        end
-
-        scenario "when the badge appears it shows the correct information" do
           visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
           expect(page).to have_content("FNOD")
         end
@@ -180,7 +175,7 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
 
     context "without feature toggle enabled" do
       context "when there is a date of death present" do
-        before { veteran.update!(date_of_death: Time.zone.today - 1.year) }
+        before { veteran.update!(date_of_death: date_of_death) }
 
         scenario "badge does not appear" do
           visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
@@ -199,6 +194,8 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
         scheduled_for: Time.zone.today + 1.week
       )
     end
+
+    let(:date_of_death) { Time.zone.today - 1.year }
 
     context "AMA hearing" do
       let(:veteran) { create(:veteran) }
