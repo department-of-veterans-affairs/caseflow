@@ -52,10 +52,10 @@ module HearingConcern
 
   def veteran_date_of_death_info
     {
-     veteran_full_name: appeal.veteran_full_name,
-     veteran_appellant_deceased: appeal.veteran_appellant_deceased?,
-     veteran_death_date: appeal.veteran_death_date,
-     veteran_death_date_reported_at: appeal.veteran_death_date_reported_at
+      veteran_full_name: appeal.veteran_full_name,
+      veteran_appellant_deceased: appeal.veteran_appellant_deceased?,
+      veteran_death_date: appeal.veteran_death_date,
+      veteran_death_date_reported_at: appeal.veteran_death_date_reported_at
     }
   end
 end

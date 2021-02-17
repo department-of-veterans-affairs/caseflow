@@ -66,12 +66,10 @@ module AppealConcern
   # - FnodBanner.jsx
   # - FnodBadge.jsx
   #
-  # Overridden in Appeal and LegacyAppeal
-  #def veteran_is_not_claimant
-    # This method eventually, after many calls, checks:
-    # - Appeal: The 'veteran_is_not_claimant' field in the caseflow DB
-    # - LegacyAppeal: If 'appellant_first_name' exists in VACOLS
-  #end
+  # veteran_is_not_claimaint is in Appeal and LegacyAppeal
+  # This method eventually, after many calls, checks:
+  # - Appeal: The 'veteran_is_not_claimant' field in the caseflow DB
+  # - LegacyAppeal: If 'appellant_first_name' exists in VACOLS
 
   def appellant_is_veteran
     !veteran_is_not_claimant
@@ -92,7 +90,7 @@ module AppealConcern
   def veteran_death_date_reported_at
     veteran&.date_of_death_reported_at
   end
-  
+
   # End FNOD section
 
   private
