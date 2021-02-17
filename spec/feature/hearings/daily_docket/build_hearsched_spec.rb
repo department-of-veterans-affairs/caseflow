@@ -154,21 +154,45 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
   # Test logic, works on both ama/legacy
   shared_context "fnod_badge display" do
     context "with feature toggle enabled" do
+      before { FeatureToggle.enable!(:view_fnod_badge_in_hearings) }
+      after { FeatureToggle.disable!(:view_fnod_badge_in_hearings) }
+
       context "when there is a date of death present" do
-        context "when the badge appears it shows the correct information" do
+        before { veteran.update!(date_of_death: Time.zone.today - 1.year) }
+
+        scenario "badge does appear" do
+          visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+          expect(page).to have_content("FNOD")
+        end
+
+        scenario "when the badge appears it shows the correct information" do
+          visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+          expect(page).to have_content("FNOD")
+          # TODO
         end
       end
+
       context "when there is no date of death present" do
+        scenario "badge does not appear" do
+          visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+          expect(page).not_to have_content("FNOD")
+        end
       end
     end
+
     context "without feature toggle enabled" do
+      context "when there is a date of death present" do
+        before { veteran.update!(date_of_death: Time.zone.today - 1.year) }
+
+        scenario "badge does not appear" do
+          visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+          expect(page).not_to have_content("FNOD")
+        end
+      end
     end
   end
 
-  context "fnod_badge", focus: true do
-    before {FeatureToggle.enable!(:view_fnod_badge_in_hearings)}
-    after {FeatureToggle.disable!(:view_fnod_badge_in_hearings)}
-
+  context "fnod_badge" do
     let!(:hearing_day) do
       create(
         :hearing_day,
@@ -179,63 +203,45 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
     end
 
     context "AMA hearing" do
-      let!(:appeal) do
-        create(:appeal, veteran: create(:veteran, date_of_death: Time.zone.today - 1.year))
-      end
+      let(:veteran) { create(:veteran) }
+      let(:appeal) { create(:appeal, veteran: veteran) }
       let!(:hearing) do
         create(
           :hearing,
           appeal: appeal,
-          hearing_day: hearing_day,
+          hearing_day: hearing_day
         )
       end
-      #include_context "fnod_badge display"
-      scenario "fnod badge displays" do
-        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-        expect(page).to have_content('FNOD')
-      end
+
+      include_context "fnod_badge display"
     end
 
     context "Legacy hearing" do
-      let(:veteran_file_number) { create(:veteran, date_of_death: DateTime.now()).file_number }
-      let!(:vacols_case) do
+      let(:vacols_case) { create(:case) }
+      let!(:veteran) do
         create(
-          :case,
-          folder: create(:folder, tinum: "docket-number"),
-          bfregoff: "RO04",
-          bfcurloc: "57",
-          bfcorlid: "#{veteran_file_number}C",
-          bfhr: "2",
-          bfdocind: HearingDay::REQUEST_TYPES[:video]
+          :veteran,
+          file_number: LegacyAppeal.veteran_file_number_from_bfcorlid(vacols_case.bfcorlid)
         )
       end
-      let!(:legacy_appeal) do
-        create(:legacy_appeal, vacols_case: vacols_case, closest_regional_office: "RO04")
+      let(:appeal) do
+        create(
+          :legacy_appeal,
+          :with_veteran,
+          vacols_case: vacols_case
+        )
       end
-    #   let(:veteran) do
-    #     create(
-    #       :veteran,
-    #       date_of_death: Time.zone.today - 1.year
-    #     )
-    #   end
-    #   let!(:appeal) do
-    #     create(
-    #       :legacy_appeal,
-    #       :with_veteran,
-    #       vacols_case: create(:case, bfcorlid: veteran.file_number),
-    #     )
-    #   end
+      let(:case_hearing) { create(:case_hearing, folder_nr: appeal.vacols_id) }
       let!(:hearing) do
         create(
           :legacy_hearing,
-          appeal: legacy_appeal,
+          appeal: appeal,
           hearing_day: hearing_day,
+          case_hearing: case_hearing
         )
       end
-      scenario "fnod badge displays" do
-        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-        expect(page).to have_content('FNOD')
-      end
+
+      include_context "fnod_badge display"
     end
   end
 end
