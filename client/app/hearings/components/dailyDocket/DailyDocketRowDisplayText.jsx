@@ -90,7 +90,7 @@ export default class HearingText extends React.Component {
         <PreppedCheckbox hearing={hearing} update={update} readOnly={readOnly} />}
       </div>
       <div><strong>{index + 1}</strong></div>
-      <AppellantInformation hearing={hearing} userCanViewFnodBadgeInHearings={ user.userCanViewFnodBadgeInHearings } />
+      <AppellantInformation hearing={hearing} userCanViewFnodBadgeInHearings={user.userCanViewFnodBadgeInHearings} />
       <HearingTime hearing={initialState} showIssueCount showRegionalOffice showRequestType />
     </React.Fragment>;
   }
