@@ -223,7 +223,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         end
 
         step "cavc user confirms data on case details page" do
-          click_on "#{appeal.veteran.last_name}"
+          click_on appeal.veteran.last_name.to_s
           expect(page).to have_content "APPEAL STREAM TYPE\nCAVC"
           expect(page).to have_content "DOCKET\nE\n#{appeal.docket_number}"
           expect(page).to have_content "TASK\n#{SendCavcRemandProcessedLetterTask.label}"
@@ -231,9 +231,9 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
 
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}: #{later_date}"
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_MANDATE_DATE}: #{later_date}"
-          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_REMAND_INSTRUCTIONS}: #{instructions} - #{mandate_instructions}"
+          expect(page)
+            .to have_content "#{COPY::CASE_DETAILS_CAVC_REMAND_INSTRUCTIONS}: #{instructions} - #{mandate_instructions}"
         end
-
       end
     end
   end
