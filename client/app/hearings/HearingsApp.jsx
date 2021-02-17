@@ -37,7 +37,6 @@ export default class HearingsApp extends React.PureComponent {
       userHasHearingPrepRole,
       userInHearingOrTranscriptionOrganization,
       userCanAddVirtualHearingDays,
-      userCanViewFnodBadgeInHearings,
       userId,
       userCssId
     } = this.props;
@@ -53,7 +52,6 @@ export default class HearingsApp extends React.PureComponent {
       userHasHearingPrepRole,
       userInHearingOrTranscriptionOrganization,
       userCanAddVirtualHearingDays,
-      userCanViewFnodBadgeInHearings,
       userId,
       userCssId
     });
@@ -74,12 +72,9 @@ export default class HearingsApp extends React.PureComponent {
   routeForListScheduleContainer = () => <ListScheduleContainer user={this.userPermissionProps()} />;
   routeForAssignHearingsContainer = () => (
     // Also remove where this gets set in the view. (#11757)
-    <HearingsUserContext.Provider value={this.userPermissionProps()}>
-      <AssignHearingsContainer
-        {...this.propsForAssignHearingsContainer()}
-      />
-    </HearingsUserContext.Provider>
-
+    <AssignHearingsContainer
+      {...this.propsForAssignHearingsContainer()}
+    />
   );
   routeForDailyDocket = (print) => () => <DailyDocketContainer user={this.userPermissionProps()} print={print} />;
 
@@ -208,7 +203,6 @@ HearingsApp.propTypes = {
   userHasHearingPrepRole: PropTypes.bool,
   userInHearingOrTranscriptionOrganization: PropTypes.bool,
   userCanAddVirtualHearingDays: PropTypes.bool,
-  userCanViewFnodBadgeInHearings: PropTypes.bool,
   userRole: PropTypes.string,
   userId: PropTypes.number,
   userCssId: PropTypes.string

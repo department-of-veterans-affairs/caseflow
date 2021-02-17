@@ -3,9 +3,6 @@ import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 
-import COPY from '../../../../COPY';
-import { DateString } from '../../../util/DateUtil';
-
 import {
   AppealDocketTag,
   CaseDetailsInformation,
@@ -21,12 +18,10 @@ import {
 } from '../../../util/QueryParamsUtil';
 import { renderAppealType } from '../../../queue/utils';
 import { tableNumberStyling } from './styles';
-import { tooltipListStyling } from '../../../queue/components/style';
 import ApiUtil from '../../../util/ApiUtil';
 import LinkToAppeal from './LinkToAppeal';
 import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG';
 import QueueTable from '../../../queue/QueueTable';
-import FnodBadge from '../../../queue/components/FnodBadge';
 
 const TASKS_ENDPOINT = '/hearings/schedule_hearing_tasks';
 const COLUMNS_ENDPOINT = '/hearings/schedule_hearing_tasks_columns';
@@ -116,31 +111,13 @@ export default class AssignHearingsTable extends React.PureComponent {
         header: 'Case Details',
         align: 'left',
         valueFunction: (row) => (
-          <React.Fragment>
-            <LinkToAppeal
-              appealExternalId={row.externalAppealId}
-              hearingDay={selectedHearingDay}
-              regionalOffice={selectedRegionalOffice}
-            >
-              <CaseDetailsInformation appeal={row.appeal} />
-            </LinkToAppeal>
-            <FnodBadge
-              veteranAppellantDeceased={row.appeal.veteranAppellantDeceased}
-              uniqueId={row.uniqueId}
-              show={this.props.userCanViewFnodBadgeInHearings}
-              tooltipText = {
-                <div>
-                  <strong>Date of Death Reported</strong>
-                  <ul {...tooltipListStyling}>
-                    <li><strong>Veteran: </strong>{row.appeal.veteranFullName}</li>
-                    <li><strong>Source: </strong>{COPY.FNOD_SOURCE}</li>
-                    <li><strong>Date of Death: </strong><DateString date={row.appeal.veteranDeathDate} /></li>
-                    <li><strong>Reported on: </strong><DateString date={row.appeal.veteranDeathDateReportedAt} /></li>
-                  </ul>
-                </div>
-              }
-            />
-          </React.Fragment>
+          <LinkToAppeal
+            appealExternalId={row.externalAppealId}
+            hearingDay={selectedHearingDay}
+            regionalOffice={selectedRegionalOffice}
+          >
+            <CaseDetailsInformation appeal={row.appeal} />
+          </LinkToAppeal>
         )
       },
       {
@@ -301,9 +278,6 @@ AssignHearingsTable.propTypes = {
   selectedHearingDay: PropTypes.shape({
     scheduledFor: PropTypes.string
   }),
-
-  // View FNOD badge permission
-  userCanViewFnodBadgeInHearings: PropTypes.bool,
 
   // Selected Regional Office Key
   selectedRegionalOffice: PropTypes.string,

@@ -7,10 +7,6 @@ class WorkQueue::TaskColumnSerializer
     (params[:columns] & columns).any?
   end
 
-  def self.view_fnod_in_hearings_toggle?
-    return FeatureToggle.enabled?(:view_fnod_badge_in_hearings, user: RequestStore.store[:current_user])
-  end
-
   # Used by hasDASRecord()
   attribute :docket_name do |object|
     object.appeal.try(:docket_name)
@@ -239,8 +235,7 @@ class WorkQueue::TaskColumnSerializer
   attribute :veteran_appellant_deceased do |object, params|
     columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
 
-
-    if serialize_attribute?(params, columns) && view_fnod_in_hearings_toggle?
+    if serialize_attribute?(params, columns)
       begin
         object.appeal.try(:veteran_appellant_deceased?)
       rescue BGS::PowerOfAttorneyFolderDenied => error
@@ -249,36 +244,6 @@ class WorkQueue::TaskColumnSerializer
         # This will no longer be necessary when nil date_of_death values, which currently result
         # in flesh BGS calls currently, are cached in Caseflow. Note that other "non-bulk" views,
         # e.g. the case details page, intentionally do not suppress this exception.
-        Raven.capture_exception(error)
-        nil
-      end
-    end
-  end
-
-  attribute :veteran_death_date do |object, params|
-    columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
-
-
-    if serialize_attribute?(params, columns) && view_fnod_in_hearings_toggle?
-      begin
-        object.appeal.try(:veteran_death_date)
-      rescue BGS::PowerOfAttorneyFolderDenied => error
-        #  Copied from above in :veteran_appelant_deceased
-        Raven.capture_exception(error)
-        nil
-      end
-    end
-  end
-
-  attribute :veteran_death_date_reported_at do |object, params|
-    columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
-
-
-    if serialize_attribute?(params, columns) && view_fnod_in_hearings_toggle?
-      begin
-        object.appeal.try(:veteran_death_date_reported_at)
-      rescue BGS::PowerOfAttorneyFolderDenied => error
-        #  Copied from above in :veteran_appelant_deceased
         Raven.capture_exception(error)
         nil
       end

@@ -34,8 +34,7 @@ export default class AssignHearingsTabs extends React.PureComponent {
       selectedHearingDay,
       selectedRegionalOffice,
       room,
-      defaultTabIndex,
-      userCanViewFnodBadgeInHearings
+      defaultTabIndex
     } = this.props;
 
     const hearingsForSelected = _.get(selectedHearingDay, 'hearings', {});
@@ -60,7 +59,6 @@ export default class AssignHearingsTabs extends React.PureComponent {
                 selectedRegionalOffice={selectedRegionalOffice}
                 selectedHearingDay={selectedHearingDay}
                 hearings={hearingsForSelected}
-                userCanViewFnodBadgeInHearings={userCanViewFnodBadgeInHearings}
               />
             },
             {
@@ -71,7 +69,6 @@ export default class AssignHearingsTabs extends React.PureComponent {
                 tabName={QUEUE_CONFIG.LEGACY_ASSIGN_HEARINGS_TAB_NAME}
                 key={QUEUE_CONFIG.LEGACY_ASSIGN_HEARINGS_TAB_NAME}
                 clicked={this.state && this.state.clickedTab === 1}
-                userCanViewFnodBadgeInHearings={userCanViewFnodBadgeInHearings}
               />
             },
             {
@@ -82,7 +79,6 @@ export default class AssignHearingsTabs extends React.PureComponent {
                 tabName={QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME}
                 key={QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME}
                 clicked={this.state && this.state.clickedTab === 2}
-                userCanViewFnodBadgeInHearings={userCanViewFnodBadgeInHearings}
               />
             }
           ]}
@@ -104,9 +100,6 @@ AssignHearingsTabs.propTypes = {
     scheduledFor: PropTypes.string,
     totalSlots: PropTypes.number
   }),
-
-  // View FNOD Badge toggle
-  userCanViewFnodBadgeInHearings: PropTypes.bool,
 
   // Selected Regional Office Key
   selectedRegionalOffice: PropTypes.string,
