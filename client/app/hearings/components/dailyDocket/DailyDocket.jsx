@@ -212,7 +212,7 @@ export default class DailyDocket extends React.Component {
             history={history}
             hearing={
               this.props.hearings[
-                this.state.scheduledInErrorModalProps.hearing.uuid
+                this.state.scheduledInErrorModalProps.hearing.externalId
               ]
             }
           />

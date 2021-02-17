@@ -150,15 +150,4 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
       include_context "Scheduled in Error hearing is removed from daily docket"
     end
   end
-
-  context "when changing hearing disposition to scheduled_in_error" do
-    context "Modal displays correctly" do
-    end
-
-    context "Reschedule Immediately" do
-    end
-
-    context "Send to Veterans List" do
-    end
-  end
 end

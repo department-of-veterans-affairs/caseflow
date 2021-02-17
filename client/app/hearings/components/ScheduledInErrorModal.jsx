@@ -33,6 +33,7 @@ const AFTER_DISPOSITION_UPDATE_ACTION_OPTIONS = [
 ];
 
 export const ScheduledInErrorModal = ({ update, cancelHandler, hearing, saveHearing }) => {
+  console.log('HEARING: ', hearing);
   const { notes, appealExternalId, hearingDispositionTaskId, externalId } = hearing;
 
   const [afterDispositionUpdateAction, setAfterDispositionUpdateAction] = useState('');
@@ -106,6 +107,7 @@ export const ScheduledInErrorModal = ({ update, cancelHandler, hearing, saveHear
         value={afterDispositionUpdateAction}
       />
       <TextareaField
+        id="scheduled-in-error-notes"
         name="Notes"
         strongLabel
         styling={maxWidthFormInput}
