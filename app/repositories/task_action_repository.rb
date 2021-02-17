@@ -23,6 +23,8 @@ class TaskActionRepository
                         options.reject { |opt| opt[:value] == "VacateMotionMailTask" }
                       elsif task.appeal.status.status == "dispatched" or "post_dispatch"
                         options.reject { |opt| opt[:value] == "DocketSwitchMailTask" }
+                      else
+                        options
                       end
       { options: valid_options }
     end
