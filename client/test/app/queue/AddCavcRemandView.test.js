@@ -1,5 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
+import moment from 'moment';
 
 import { queueWrapper } from 'test/data/stores/queueStore';
 import { amaAppeal } from 'test/data/appeals';
@@ -121,6 +122,7 @@ describe('AddCavcRemandView', () => {
 
   describe('form validations', () => {
     const errorClass = '.usa-input-error-message';
+    const tomorrow = moment(new Date().toISOString()).add(1, 'day').format('YYYY-MM-DD');
 
     const validationErrorShows = (component, errorMessage) => {
       component.find('#button-next-button').simulate('click');
@@ -184,6 +186,13 @@ describe('AddCavcRemandView', () => {
         expect(validationErrorShows(cavcForm, error)).toBeTruthy();
       });
 
+      it('shows error on future date selection', () => {
+        const cavcForm = setup({ appealId });
+
+        cavcForm.find('input#decision-date').simulate('change', { target: { value: tomorrow } });
+        expect(validationErrorShows(cavcForm, error)).toBeTruthy();
+      });
+
       it('does not show error on selected date', () => {
         const cavcForm = setup({ appealId });
 
@@ -202,6 +211,13 @@ describe('AddCavcRemandView', () => {
         expect(validationErrorShows(cavcForm, error)).toBeTruthy();
       });
 
+      it('shows error on future date selection', () => {
+        const cavcForm = setup({ appealId });
+
+        cavcForm.find('input#judgement-date').simulate('change', { target: { value: tomorrow } });
+        expect(validationErrorShows(cavcForm, error)).toBeTruthy();
+      });
+
       it('does not show error on selected date', () => {
         const cavcForm = setup({ appealId });
 
@@ -217,6 +233,13 @@ describe('AddCavcRemandView', () => {
       it('shows error on no selected date', () => {
         const cavcForm = setup({ appealId });
 
+        expect(validationErrorShows(cavcForm, error)).toBeTruthy();
+      });
+
+      it('shows error on future date selection', () => {
+        const cavcForm = setup({ appealId });
+
+        cavcForm.find('input#mandate-date').simulate('change', { target: { value: tomorrow } });
         expect(validationErrorShows(cavcForm, error)).toBeTruthy();
       });
 
