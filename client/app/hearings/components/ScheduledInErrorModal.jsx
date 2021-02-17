@@ -33,7 +33,6 @@ const AFTER_DISPOSITION_UPDATE_ACTION_OPTIONS = [
 ];
 
 export const ScheduledInErrorModal = ({ update, cancelHandler, hearing, saveHearing }) => {
-  console.log('HEARING: ', hearing);
   const { notes, appealExternalId, hearingDispositionTaskId, externalId } = hearing;
 
   const [afterDispositionUpdateAction, setAfterDispositionUpdateAction] = useState('');
@@ -60,6 +59,9 @@ export const ScheduledInErrorModal = ({ update, cancelHandler, hearing, saveHear
   };
 
   const submit = async () => {
+    // Send the event to google analytics
+    window.analyticsEvent('Hearings', disposition, afterDispositionUpdateAction);
+
     // Determine whether to redirect to the ful page schedule veteran flow
     if (afterDispositionUpdateAction === ACTIONS.RESCHEDULE) {
       // Add the notes to the task before continuing
