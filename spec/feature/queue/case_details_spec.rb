@@ -908,7 +908,7 @@ RSpec.feature "Case details", :all_dbs do
       let!(:attorney_task2) { create(:ama_attorney_task, parent: root_task, assigned_to: user) }
 
       before do
-        FeatureToggle.enable!(:edit_nod_date)
+        FeatureToggle.enable!(:view_nod_date_updates)
         # The status attribute needs to be set here due to update_parent_status hook in the task model
         # the updated_at attribute needs to be set here due to the set_timestamps hook in the task model
         assign_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-01-01")
@@ -918,7 +918,7 @@ RSpec.feature "Case details", :all_dbs do
         nod_date_update.update!(updated_at: "2019-01-05")
       end
 
-      after { FeatureToggle.disable!(:edit_nod_date) }
+      after { FeatureToggle.disable!(:view_nod_date_updates) }
 
       it "should display judge & attorney tasks, but not judge assign tasks" do
         visit "/queue/appeals/#{appeal.uuid}"
