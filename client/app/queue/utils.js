@@ -156,8 +156,6 @@ const appealAttributesFromRawTask = (task) => ({
   isAdvancedOnDocket: task.attributes.aod,
   overtime: task.attributes.overtime,
   veteranAppellantDeceased: task.attributes.veteran_appellant_deceased,
-  veteranDeathDate: task.attributes.veteran_death_date,
-  veteranDeathDateReportedAt: task.attributes.veteran_death_date_reported_at,
   issueCount: task.attributes.issue_count,
   docketNumber: task.attributes.docket_number,
   veteranFullName: task.attributes.veteran_full_name,
