@@ -11,7 +11,13 @@ class DocketSwitchRulingTask < JudgeTask
     actions
   end
 
-  def self.label
-    COPY::DOCKET_SWITCH_RULING_TASK_LABEL
+  class << self
+    def label
+      COPY::DOCKET_SWITCH_RULING_TASK_LABEL
+    end
+
+    def verify_user_can_create!(user, parent)
+      parent.is_a?(RootTask) ? true : super(user, parent)
+    end
   end
 end
