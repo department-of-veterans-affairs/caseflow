@@ -726,6 +726,10 @@
   "DOCKET_SWITCH_GRANTED_CONFIRM_TITLE": "Switch Docket: Review and Confirm",
   "DOCKET_SWITCH_GRANTED_CONFIRM_DESCRIPTION_A": "You are switching from %s to %s. Tasks specific to the %s docket will be automatically removed, and tasks associated with the %s docket will be automatically created.",
   "DOCKET_SWITCH_GRANTED_CONFIRM_DESCRIPTION_B": "Please review all the information below before switching the docket. Once you confirm, tasks will be sent to the appropriate team or individual and the original docket number of the appeal will be preserved.",
+  "DOCKET_SWITCH_PARTIAL_GRANTED_SUCCESS_TITLE": "You have successfully switched issue(s) on %s's appeal to the %s docket.",
+  "DOCKET_SWITCH_FULL_GRANTED_SUCCESS_TITLE": "You have successfully switched %s's docket to %s.",
+  "DOCKET_SWITCH_GRANTED_SUCCESS_MESSAGE": "The appeal will be found under the original docket number and all relevant tasks will be sent to the appropriate team or individual.",
+
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
   "CORRECT_REQUEST_ISSUES_WITHDRAW": "Withdraw",
