@@ -59,8 +59,14 @@ const AppellantInformation = ({ hearing, userCanViewFnodBadgeInHearings }) => {
           <ul {...tooltipListStyling}>
             <li><strong>Veteran: </strong>{hearing.veteranDateOfDeathInfo?.veteranFullName}</li>
             <li><strong>Source: </strong>{COPY.FNOD_SOURCE}</li>
-            <li><strong>Date of Death: </strong><DateString date={hearing.veteranDateOfDeathInfo?.veteranDeathDate} /></li>
-            <li><strong>Reported on: </strong><DateString date={hearing.veteranDateOfDeathInfo?.veteranDeathDateReportedAt} /></li>
+            <li>
+              <strong>Date of Death: </strong>
+              <DateString date={hearing.veteranDateOfDeathInfo?.veteranDeathDate} />
+            </li>
+            <li>
+              <strong>Reported on: </strong>
+              <DateString date={hearing.veteranDateOfDeathInfo?.veteranDeathDateReportedAt} />
+            </li>
           </ul>
         </div>
       }
