@@ -53,6 +53,14 @@ let patchSpy;
 const setState = jest.fn();
 const useStateMock = (initState) => [initState, setState];
 const setScheduledHearingMock = jest.fn();
+const scheduleVeteranProps = {
+  showSuccessMessage: jest.fn(),
+  onChangeFormData: changeSpy,
+  appeals: appealsData,
+  appealId: amaAppeal.externalId,
+  taskId: scheduledHearing.taskId,
+  setScheduledHearing: setScheduledHearingMock,
+};
 
 describe('ScheduleVeteran', () => {
   beforeEach(() => {
@@ -374,14 +382,7 @@ describe('ScheduleVeteran', () => {
 
     // Render the scheduleVeteran component
     const scheduleVeteran = mount(
-      <ScheduleVeteran
-        showSuccessMessage={jest.fn()}
-        onChangeFormData={changeSpy}
-        appeals={appealsData}
-        appealId={amaAppeal.externalId}
-        taskId={scheduledHearing.taskId}
-        setScheduledHearing={setScheduledHearingMock}
-      />,
+      <ScheduleVeteran {...scheduleVeteranProps} />,
       {
         wrappingComponent: queueWrapper,
         wrappingComponentProps: {
@@ -458,14 +459,7 @@ describe('ScheduleVeteran', () => {
 
     // Render the scheduleVeteran component
     const scheduleVeteran = mount(
-      <ScheduleVeteran
-        showSuccessMessage={jest.fn()}
-        onChangeFormData={changeSpy}
-        appeals={appealsData}
-        appealId={amaAppeal.externalId}
-        taskId={scheduledHearing.taskId}
-        setScheduledHearing={setScheduledHearingMock}
-      />,
+      <ScheduleVeteran {...scheduleVeteranProps} />,
       {
         wrappingComponent: queueWrapper,
         wrappingComponentProps: {

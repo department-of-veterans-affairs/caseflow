@@ -328,7 +328,10 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         )
 
         # The timeline has the correct content
-        incarcerated_row = find("dd", text: HearingAdminActionIncarceratedVeteranTask.label).find(:xpath, "ancestor::tr")
+        incarcerated_row = find(
+          "dd",
+          text: HearingAdminActionIncarceratedVeteranTask.label
+        ).find(:xpath, "ancestor::tr")
         incarcerated_row.click_on(
           COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
         )
@@ -682,8 +685,11 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
 
           room_label = HearingRooms.find!(hearing_day.room)&.label
+          date_label = hearing_day.scheduled_for.to_formatted_s(:short_date)
+          dropdown_label = "#{date_label} (0/#{hearing_day.total_slots}) #{room_label}"
+
           click_dropdown(
-            text: "#{hearing_day.scheduled_for.to_formatted_s(:short_date)} (0/#{hearing_day.total_slots}) #{room_label}",
+            text: dropdown_label,
             name: "hearingDate"
           )
           click_button("Schedule", exact: true)
