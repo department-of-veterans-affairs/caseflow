@@ -151,7 +151,6 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
     end
   end
 
-  # Test logic, works on both ama/legacy
   shared_context "fnod_badge display" do
     context "with feature toggle enabled" do
       before { FeatureToggle.enable!(:view_fnod_badge_in_hearings) }
@@ -168,7 +167,6 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
         scenario "when the badge appears it shows the correct information" do
           visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
           expect(page).to have_content("FNOD")
-          # TODO
         end
       end
 
