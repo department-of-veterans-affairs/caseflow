@@ -133,7 +133,9 @@ const AddCavcRemandView = (props) => {
   const validJudge = () => Boolean(judge);
   const validDecisionDate = () => Boolean(decisionDate) && validateDateNotInFuture(decisionDate);
   const mandateNotRequired = () => straightReversalType() || deathDismissalType() || mdrSubtype();
-  const validJudgementDate = () => (Boolean(judgementDate) && validateDateNotInFuture(judgementDate)) || mandateNotRequired();
+  const validJudgementDate = () => {
+    return (Boolean(judgementDate) && validateDateNotInFuture(judgementDate)) || mandateNotRequired();
+  };
   const validMandateDate = () => (Boolean(mandateDate) && validateDateNotInFuture(mandateDate)) || mandateNotRequired();
   const validInstructions = () => instructions && instructions.length > 0;
 
