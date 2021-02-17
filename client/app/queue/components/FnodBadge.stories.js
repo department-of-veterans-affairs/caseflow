@@ -15,7 +15,7 @@ export default {
   args: {
     appeal: {
       veteranAppellantDeceased: true,
-      date_of_death: '2019-03-17'
+      veteranDateOfDeath: '2019-03-17'
     },
     featureToggles: {
       fnod_badge: true
