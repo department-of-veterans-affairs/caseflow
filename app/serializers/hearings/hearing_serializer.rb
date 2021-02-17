@@ -4,10 +4,6 @@ class HearingSerializer
   include FastJsonapi::ObjectSerializer
   include HearingSerializerBase
 
-  def self.view_fnod_in_hearings_toggle?
-    return FeatureToggle.enabled?(:view_fnod_badge_in_hearings, user: RequestStore.store[:current_user])
-  end
-
   attribute :aod, &:aod?
   attribute :advance_on_docket_motion do |hearing|
     if hearing.aod?

@@ -92,8 +92,8 @@ module AppealConcern
   def veteran_death_date_reported_at
     veteran&.date_of_death_reported_at
   end
-
-# End FNOD section
+  
+  # End FNOD section
 
   private
 
