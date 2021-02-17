@@ -94,17 +94,5 @@ class HearingSerializer
   attribute :was_virtual, &:was_virtual?
   attribute :witness
   attribute :worksheet_issues
-  attribute :veteran_date_of_death_info do |hearing|
-    if FeatureToggle.enabled?(:view_fnod_badge_in_hearings, user: RequestStore.store[:current_user])
-      # Also found in legacy_hearing_serializer.rb
-      # The BGS part of this rescue block is originally from task_column_serializer.rb, added to solve the problem detailed here:
-      # https://github.com/department-of-veterans-affairs/caseflow/pull/15804
-      begin
-        hearing.veteran_date_of_death_info
-      rescue BGS::PowerOfAttorneyFolderDenied, StandardError => error
-        Raven.capture_exception(error) 
-        nil
-      end
-    end
-  end
+  attribute :veteran_date_of_death_info, &:rescue_and_check_toggle_veteran_date_of_death_info
 end

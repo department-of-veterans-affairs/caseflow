@@ -35,6 +35,20 @@ module HearingConcern
     postponed? || cancelled? || scheduled_in_error?
   end
 
+  def rescue_and_check_toggle_veteran_date_of_death_info
+    if FeatureToggle.enabled?(:view_fnod_badge_in_hearings, user: RequestStore.store[:current_user])
+      # Also found in hearing_serializer.rb
+      # The BGS part of this rescue block is originally from task_column_serializer.rb, added to solve the problem detailed here:
+      # https://github.com/department-of-veterans-affairs/caseflow/pull/15804
+      begin
+        veteran_date_of_death_info
+      rescue BGS::PowerOfAttorneyFolderDenied, StandardError => error
+        Raven.capture_exception(error) 
+        nil
+      end
+    end
+  end
+
   def veteran_date_of_death_info
     {
      veteran_full_name: appeal.veteran_full_name,
