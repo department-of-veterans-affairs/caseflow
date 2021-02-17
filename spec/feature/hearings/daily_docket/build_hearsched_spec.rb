@@ -189,10 +189,14 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
           hearing_day: hearing_day,
         )
       end
-      #include_context "fnod_badge display"
-      scenario "fnod badge displays" do
+      scenario "fnod badge displays when dod present" do
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
         expect(page).to have_content('FNOD')
+      end
+      scenario "fnod badge does not display when no dod present" do
+        appeal.veteran.update(date_of_death: nil)
+        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+        expect(page).not_to have_content('FNOD')
       end
     end
   end
