@@ -90,7 +90,8 @@ class TaskRows extends React.PureComponent {
 
     this.state = {
       taskInstructionsIsVisible: { },
-      showEditNodDateModal: false
+      showEditNodDateModal: false,
+      activeTasks: [...props.taskList]
     };
   }
 
@@ -307,7 +308,7 @@ class TaskRows extends React.PureComponent {
       <td {...taskInfoWithIconContainer} className={tdClassNames(timeline, task)}>
         { isCancelled(task) ? <CancelIcon /> : closedAtIcon(task, timeline) }
         { (((index < sortedTimelineEvents.length) && timeline) ||
-          (index < sortedTimelineEvents.length - 1 && !timeline)) &&
+          (index < this.state.activeTasks.length - 1 && !timeline)) &&
               <div {...grayLineStyling} className={[cancelGrayTimeLineStyle(timeline),
                 task.closedAt ? '' : greyDotAndlineStyling].join(' ')} /> }
       </td>
@@ -342,13 +343,6 @@ class TaskRows extends React.PureComponent {
     return <React.Fragment key={appeal.externalId}>
 
       { sortedTimelineEvents.map((timelineEvent, index) => {
-        const templateConfig = {
-          task: timelineEvent,
-          index,
-          timeline,
-          sortedTimelineEvents,
-          appeal
-        };
 
         if (timelineEvent.isDecisionDate) {
           return <DecisionDateTimeLine
@@ -357,12 +351,20 @@ class TaskRows extends React.PureComponent {
             taskList = {taskList} />;
         }
 
-        if (timelineEvent.changeReason && this.props.editNodDateEnabled) {
+        if (timelineEvent.changeReason) {
           return <NodDateUpdateTimeline
             nodDateUpdate = {timelineEvent}
             timeline = {timeline}
           />;
         }
+
+        const templateConfig = {
+          task: timelineEvent,
+          index,
+          timeline,
+          sortedTimelineEvents,
+          appeal
+        };
 
         return this.taskTemplate(templateConfig);
       }) }
