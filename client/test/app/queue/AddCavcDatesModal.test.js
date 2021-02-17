@@ -1,5 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
+import moment from 'moment';
 
 import { queueWrapper } from 'test/data/stores/queueStore';
 import { amaAppeal } from 'test/data/appeals';
@@ -70,6 +71,7 @@ describe('AddCavcDatesModal', () => {
 
   describe('form validations', () => {
     const errorClass = '.usa-input-error-message';
+    const tomorrow = moment(new Date().toISOString()).add(1, 'day').format('YYYY-MM-DD');
 
     const validationErrorShows = (cavcModal, errorMessage) => {
       clickSubmit(cavcModal);
@@ -83,6 +85,13 @@ describe('AddCavcDatesModal', () => {
       it('shows error on no selected date', () => {
         const cavcModal = setup({ appealId });
 
+        expect(validationErrorShows(cavcModal, error)).toBeTruthy();
+      });
+
+      it('shows error on future date selection', () => {
+        const cavcModal = setup({ appealId });
+
+        cavcModal.find('#judgement-date').simulate('change', { target: { value: tomorrow } });
         expect(validationErrorShows(cavcModal, error)).toBeTruthy();
       });
 
@@ -101,6 +110,13 @@ describe('AddCavcDatesModal', () => {
       it('shows error on no selected date', () => {
         const cavcModal = setup({ appealId });
 
+        expect(validationErrorShows(cavcModal, error)).toBeTruthy();
+      });
+
+      it('shows error on future date selection', () => {
+        const cavcModal = setup({ appealId });
+
+        cavcModal.find('#mandate-date').simulate('change', { target: { value: tomorrow } });
         expect(validationErrorShows(cavcModal, error)).toBeTruthy();
       });
 
