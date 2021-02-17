@@ -195,47 +195,5 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
         expect(page).to have_content('FNOD')
       end
     end
-
-    context "Legacy hearing" do
-      let(:veteran_file_number) { create(:veteran, date_of_death: DateTime.now()).file_number }
-      let!(:vacols_case) do
-        create(
-          :case,
-          folder: create(:folder, tinum: "docket-number"),
-          bfregoff: "RO04",
-          bfcurloc: "57",
-          bfcorlid: "#{veteran_file_number}C",
-          bfhr: "2",
-          bfdocind: HearingDay::REQUEST_TYPES[:video]
-        )
-      end
-      let!(:legacy_appeal) do
-        create(:legacy_appeal, vacols_case: vacols_case, closest_regional_office: "RO04")
-      end
-    #   let(:veteran) do
-    #     create(
-    #       :veteran,
-    #       date_of_death: Time.zone.today - 1.year
-    #     )
-    #   end
-    #   let!(:appeal) do
-    #     create(
-    #       :legacy_appeal,
-    #       :with_veteran,
-    #       vacols_case: create(:case, bfcorlid: veteran.file_number),
-    #     )
-    #   end
-      let!(:hearing) do
-        create(
-          :legacy_hearing,
-          appeal: legacy_appeal,
-          hearing_day: hearing_day,
-        )
-      end
-      scenario "fnod badge displays" do
-        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-        expect(page).to have_content('FNOD')
-      end
-    end
   end
 end
