@@ -36,7 +36,7 @@ const FnodBadge = (props) => {
     <strong>Date of Death Reported</strong>
     <ul {...listStyling}>
       <li><strong>Source:</strong> VBMS</li>
-      <li><strong>Date of Death:</strong> <DateString date={appeal.veteranDateOfDeath} /></li>
+      {appeal.veteranDateOfDeath && <li><strong>Date of Death:</strong> <DateString date={appeal.veteranDateOfDeath} /></li>}
     </ul>
   </div>;
 
