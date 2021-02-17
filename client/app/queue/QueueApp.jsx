@@ -329,7 +329,7 @@ class QueueApp extends React.PureComponent {
 
     return (
       <PrivateRoute
-        authorized={this.props.userHasHearingPrepRole || this.props.userCanBuildHearingSchedule}
+        authorized={this.props.userCanScheduleHearings}
         redirectTo={`/queue/appeals/${props.match.params.appealId}`}
       >
         {params.action === 'reschedule' ? (
@@ -1044,8 +1044,7 @@ QueueApp.propTypes = {
   userCanViewHearingSchedule: PropTypes.bool,
   userCanViewOvertimeStatus: PropTypes.bool,
   userCanViewEditNodDate: PropTypes.bool,
-  userCanBuildHearingSchedule: PropTypes.bool,
-  userHasHearingPrepRole: PropTypes.bool,
+  userCanScheduleHearings: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
