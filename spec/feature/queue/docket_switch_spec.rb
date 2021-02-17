@@ -35,29 +35,17 @@ RSpec.feature "Docket Switch", :all_dbs do
   let(:judge) { create(:user, :with_vacols_judge_record, full_name: "Judge the First", css_id: "JUDGE_1") }
 
   describe "create DocketSwitchMailTask" do
-    context "given appeal has not been dispatched" do
-      it "allows Clerk of the Board users to create DocketSwitchMailTask" do
-        User.authenticate!(user: cotb_attorney)
-        visit "/queue/appeals/#{appeal.uuid}"
-        find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
-        find(".cf-select__control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
-        find("div", class: "cf-select__option", text: COPY::DOCKET_SWITCH_MAIL_TASK_LABEL).click
-        fill_in("taskInstructions", with: "Instructions for docket switch mail task")
-        find("button", text: "Submit").click
-        expect(page).to have_content(format(COPY::SELF_ASSIGNED_MAIL_TASK_CREATION_SUCCESS_TITLE, "Docket Switch"))
-        expect(page).to have_content(COPY::SELF_ASSIGNED_MAIL_TASK_CREATION_SUCCESS_MESSAGE)
-        expect(DocketSwitchMailTask.find_by(assigned_to: cotb_attorney)).to_not be_nil
-      end
-    end
-    context "given an appeal has been dispatched" do
-      let(:dispatched_appeal) { create(:appeal, :dispatched) }
-      it "doesn't allow Clerk of Board users to create DocketSwitchMailTask" do
-        User.authenticate!(user: cotb_attorney)
-        visit "/queue/appeals/#{dispatched_appeal.uuid}"
-        find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
-        find(".cf-select__control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
-        expect(page).not_to have_selector("div", class: "cf-select__option", text: COPY::DOCKET_SWITCH_MAIL_TASK_LABEL)
-      end
+    it "allows Clerk of the Board users to create DocketSwitchMailTask" do
+      User.authenticate!(user: cotb_attorney)
+      visit "/queue/appeals/#{appeal.uuid}"
+      find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
+      find(".cf-select__control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+      find("div", class: "cf-select__option", text: COPY::DOCKET_SWITCH_MAIL_TASK_LABEL).click
+      fill_in("taskInstructions", with: "Instructions for docket switch mail task")
+      find("button", text: "Submit").click
+      expect(page).to have_content(format(COPY::SELF_ASSIGNED_MAIL_TASK_CREATION_SUCCESS_TITLE, "Docket Switch"))
+      expect(page).to have_content(COPY::SELF_ASSIGNED_MAIL_TASK_CREATION_SUCCESS_MESSAGE)
+      expect(DocketSwitchMailTask.find_by(assigned_to: cotb_attorney)).to_not be_nil
     end
   end
 

@@ -22,8 +22,8 @@ class MailTask < Task
       false
     end
 
-    def subclass_routing_options(user = nil)
-      filtered = MailTask.subclasses.select { |sc| sc.allow_creation?(user) }
+    def subclass_routing_options(user: nil, appeal: nil)
+      filtered = MailTask.subclasses.select { |sc| sc.allow_creation?(user: user, appeal: appeal) }
       sorted = filtered.sort_by(&:label).map { |subclass| { value: subclass.name, label: subclass.label } }
       if !FeatureToggle.enabled?(:cavc_remand, user: user)
         sorted.reject { |task| task[:label] == CavcCorrespondenceMailTask.label }
@@ -32,7 +32,7 @@ class MailTask < Task
       end
     end
 
-    def allow_creation?(_user)
+    def allow_creation?(user: nil, appeal: nil)
       true
     end
 
