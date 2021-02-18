@@ -43,21 +43,12 @@ class MdrTask < Task
 
   # Actions for both admins and non-admins
   TASK_ACTIONS = [
-    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
+    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
+    Constants.TASK_ACTIONS.CAVC_REMAND_RECEIVED_MDR.to_h
   ].freeze
-
-  # Actions a user can take on a task assigned to them
-  USER_ACTIONS = [].concat(TASK_ACTIONS).freeze
-
-  # Actions an admin of the organization can take on a task assigned to their organization
-  ADMIN_ACTIONS = [].concat(TASK_ACTIONS).freeze
 
   def available_actions(user)
     return [] unless CavcLitigationSupport.singleton.user_has_access?(user)
-
-    return USER_ACTIONS if assigned_to == user
-
-    return ADMIN_ACTIONS if CavcLitigationSupport.singleton.user_is_admin?(user)
 
     TASK_ACTIONS
   end

@@ -15,8 +15,8 @@ exports[`FnodBadge renders correctly 1`] = `
   <FnodBadge
     appeal={
       Object {
-        "date_of_death": "2019-03-17",
-        "veteran_appellant_deceased": true,
+        "veteranAppellantDeceased": true,
+        "veteranDateOfDeath": "2019-03-17",
       }
     }
   />

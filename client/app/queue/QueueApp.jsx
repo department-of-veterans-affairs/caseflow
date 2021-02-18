@@ -36,6 +36,7 @@ import EvaluateDecisionView from './caseEvaluation/EvaluateDecisionView';
 import AddColocatedTaskView from './colocatedTasks/AddColocatedTaskView';
 import BlockedAdvanceToJudgeView from './BlockedAdvanceToJudgeView';
 import AddCavcRemandView from './AddCavcRemandView';
+import AddCavcDatesModal from './AddCavcDatesModal';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
@@ -441,6 +442,8 @@ class QueueApp extends React.PureComponent {
     />
   );
 
+  routedCavcRemandReceived = (props) => <AddCavcDatesModal {...props.match.params} />;
+
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
       'Your Queue' :
@@ -806,6 +809,18 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.CAVC_EXTENSION_REQUEST.value
                 }`}
                 render={this.routedCavcExtensionRequest}
+              />
+              <Route
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CAVC_REMAND_RECEIVED_MDR.value
+                }`}
+                render={this.routedCavcRemandReceived}
+              />
+              <Route
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CAVC_REMAND_RECEIVED_VLJ.value
+                }`}
+                render={this.routedCavcRemandReceived}
               />
 
               <PageRoute
