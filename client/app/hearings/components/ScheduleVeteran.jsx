@@ -219,6 +219,13 @@ export const ScheduleVeteran = ({
         regionalOffice: hearing.regionalOffice || hearing.virtualHearing ? null : 'Please select a Regional Office '
       };
 
+      // Prevent submitting the form with a null appellant email
+      if (hearing.virtualHearing && !hearing.virtualHearing.appellantEmail) {
+        document.getElementById('email-section').scrollIntoView();
+
+        return setErrors({ appellantEmail: 'Appellant email is required' });
+      }
+
       // First validate the form
       if ((openHearing && !reschedule) || Object.values(formErrors).filter((err) => err !== null).length > 0) {
         return setErrors(formErrors);
