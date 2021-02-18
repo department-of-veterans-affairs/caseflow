@@ -28,8 +28,8 @@ export const AddressForm = ({ control, register, watch }) => {
           strongLabel
         />
       </FieldDiv>
-      {
-        watchPartyType === 'organization' && <StreetAddress>
+      {watchPartyType === 'organization' && (
+        <StreetAddress>
           <TextField
             name="address3"
             label="Street address 3"
@@ -38,30 +38,25 @@ export const AddressForm = ({ control, register, watch }) => {
             strongLabel
           />
         </StreetAddress>
-      }
+      )}
       <CityState>
-        <TextField
-          name="city"
-          label="City"
-          inputRef={register}
-          strongLabel
-        />
+        <TextField name="city" label="City" inputRef={register} strongLabel />
         <Controller
           control={control}
           name="state"
-          label="State"
-          options={STATES}
-          strongLabel
-          as={SearchableDropdown}
+          render={({ onChange, ...rest }) => (
+            <SearchableDropdown
+              {...rest}
+              label="State"
+              options={STATES}
+              onChange={(valObj) => onChange(valObj?.label)}
+              strongLabel
+            />
+          )}
         />
       </CityState>
       <ZipCountry>
-        <TextField
-          name="zip"
-          label="Zip"
-          inputRef={register}
-          strongLabel
-        />
+        <TextField name="zip" label="Zip" inputRef={register} strongLabel />
         <TextField
           name="country"
           label="Country"
@@ -95,12 +90,12 @@ const ZipCountry = styled.div`
   display: grid;
   grid-gap: 10px;
   grid-template-columns: 140px 310px;
-  margin-bottom: -.65em;
+  margin-bottom: -0.65em;
 `;
 
 const StreetAddress = styled.div`
-  margin-top: -.5em;
-  margin-bottom: -.65em;
+  margin-top: -0.5em;
+  margin-bottom: -0.65em;
 `;
 
 const FieldDiv = styled.div`
