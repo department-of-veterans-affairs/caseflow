@@ -1275,19 +1275,13 @@ RSpec.feature "Case details", :all_dbs do
                last_name: "Winters",
                file_number: "55555456")
       end
-      let(:timely_request_issue) { create(:request_issue, id: 1, decision_date: 381.days.ago) }
-      let(:untimely_request_issue_with_exemption) do
-        create(:request_issue, id: 2, decision_date: 2.years.ago, untimely_exemption: true)
-      end
-      let(:request_issues) { [timely_request_issue, untimely_request_issue_with_exemption] }
 
       let!(:appeal) do
         create(:appeal,
                :with_post_intake_tasks,
                veteran_file_number: veteran.file_number,
                docket_type: Constants.AMA_DOCKETS.direct_review,
-               receipt_date: 10.months.ago.to_date.mdY,
-               request_issues: request_issues)
+               receipt_date: 10.months.ago.to_date.mdY)
       end
 
       context "when the user is a COB_USER" do
@@ -1310,7 +1304,7 @@ RSpec.feature "Case details", :all_dbs do
           visit("/queue/appeals/#{appeal.uuid}")
 
           find("button", text: COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY).click
-          fill_in COPY::EDIT_NOD_DATE_LABEL, with: 391.days.ago
+          fill_in COPY::EDIT_NOD_DATE_LABEL, with: Time.zone.today.mdY
 
           expect(page).to have_content("Reason for edit")
           find(".cf-form-dropdown", text: "Reason for edit").click
@@ -1321,26 +1315,8 @@ RSpec.feature "Case details", :all_dbs do
             format(COPY::EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE.tr("(", "{").gsub(")s", "}"),
                    appellantName: appeal.claimant.name,
                    nodDateStr: appeal.receipt_date.mdY,
-                   receiptDateStr: 391.days.ago)
+                   receiptDateStr: Time.zone.today.mdY)
           )
-        end
-
-        fit "displays timeliness error if new NOD date causes timely issue to be untimely" do
-          visit("/queue/appeals/#{appeal.uuid}")
-
-          find("button", text: COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY).click
-          fill_in COPY::EDIT_NOD_DATE_LABEL, with: 7.days.ago
-
-          expect(page).to have_content("Reason for edit")
-          find(".cf-form-dropdown", text: "Reason for edit").click
-          find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
-          safe_click "#Edit-NOD-Date-button-id-1"
-
-          issues_list = page.find_all("ol li")
-          expect(issues_list[0]).to have_content("#{timely_request_issue.nonrating_issue_category} -
-            #{timely_request_issue.nonrating_issue_description}")
-          expect(issues_list[1]).to have_content("#{timely_request_issue.nonrating_issue_category} - 
-            #{timely_request_issue.nonrating_issue_description}")
         end
       end
 
@@ -1428,6 +1404,62 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
         expect(page).to_not have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
       end
+    end
+
+    fcontext "when a NOD exists and user can edit NOD date but timeliness issues with new date" do
+      before { FeatureToggle.enable!(:edit_nod_date) }
+      after { FeatureToggle.disable!(:edit_nod_date) }
+
+      let(:appeal) { create(:appeal) }
+      let(:veteran) do
+        create(:veteran,
+               first_name: "Bobby",
+               last_name: "Winters",
+               file_number: "55555456")
+      end
+      let(:timely_request_issue) { create(:request_issue, id: 1, decision_date: 381.days.ago) }
+      let(:untimely_request_issue_with_exemption) do
+        create(:request_issue, id: 2, decision_date: 2.years.ago, untimely_exemption: true)
+      end
+      let(:request_issues) { [timely_request_issue, untimely_request_issue_with_exemption] }
+
+      let!(:appeal) do
+        create(:appeal,
+               :with_post_intake_tasks,
+               veteran_file_number: veteran.file_number,
+               docket_type: Constants.AMA_DOCKETS.direct_review,
+               receipt_date: 10.months.ago.to_date.mdY,
+               request_issues: request_issues)
+      end
+
+      let(:judge_user) { create(:user, css_id: "BVAAABSHIRE", station_id: "101") }
+
+      before do
+        BvaDispatch.singleton.add_user(judge_user)
+        User.authenticate!(user: judge_user)
+      end
+
+      it "displays timeliness error if new NOD date causes timely issue to be untimely" do
+        visit("/queue/appeals/#{appeal.uuid}")
+
+        expect(appeal.nod_date).to_not be_nil
+        expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
+        expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+
+        find("button", text: COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY).click
+        fill_in COPY::EDIT_NOD_DATE_LABEL, with: 7.days.ago
+
+        expect(page).to have_content("Reason for edit")
+        find(".cf-form-dropdown", text: "Reason for edit").click
+        find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
+        safe_click "#Edit-NOD-Date-button-id-1"
+
+        issues_list = page.find_all("ol li")
+        expect(issues_list[0]).to have_content("#{timely_request_issue.nonrating_issue_category} -
+          #{timely_request_issue.nonrating_issue_description}")
+        expect(issues_list[1]).to have_content("#{timely_request_issue.nonrating_issue_category} - 
+          #{timely_request_issue.nonrating_issue_description}")
+        end
     end
   end
 
