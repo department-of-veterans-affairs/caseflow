@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
 import { fetchJudges } from '../../QueueActions';
 
-import { appealWithDetailSelector } from '../../selectors';
+import { appealWithDetailSelector, rootTasksForAppeal } from '../../selectors';
 import DISPOSITIONS from '../../../../constants/DOCKET_SWITCH_DISPOSITIONS';
 import { createDocketSwitchRulingTask } from './recommendDocketSwitchSlice';
 import { RecommendDocketSwitchForm } from './RecommendDocketSwitchForm';
@@ -36,13 +36,12 @@ export const formatDocketSwitchRecommendation = ({
 };
 
 export const RecommendDocketSwitchContainer = () => {
-  const { appealId, taskId } = useParams();
+  const { appealId } = useParams();
   const { goBack, push } = useHistory();
   const dispatch = useDispatch();
 
-  const appeal = useSelector((state) =>
-    appealWithDetailSelector(state, { appealId })
-  );
+  const appeal = useSelector((state) => appealWithDetailSelector(state, { appealId }));
+  const rootTask = useSelector((state) => rootTasksForAppeal(state, { appealId }))[0];
 
   const judges = useSelector((state) => state.queue.judges);
   const judgeOptions = useMemo(
@@ -65,7 +64,7 @@ export const RecommendDocketSwitchContainer = () => {
 
     const instructions = formatDocketSwitchRecommendation({ ...formData });
     const newTask = {
-      parent_id: taskId,
+      parent_id: rootTask.taskId,
       type: 'DocketSwitchRulingTask',
       external_id: appeal.externalId,
       instructions,
