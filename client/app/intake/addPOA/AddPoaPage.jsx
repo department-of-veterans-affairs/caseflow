@@ -139,7 +139,7 @@ export const AddPoaPage = () => {
           { showPartyType &&
         <RadioField
           name="partyType"
-          label="Is the claimant an organization or individual?"
+          label="Is the representative an organization or individual?"
           inputRef={register}
           strongLabel
           vertical
@@ -200,7 +200,7 @@ export const AddPoaPage = () => {
          <FieldDiv>
            <TextField
              name="email"
-             label="Claimant email"
+             label="Representative email"
              inputRef={register}
              optional
              strongLabel
