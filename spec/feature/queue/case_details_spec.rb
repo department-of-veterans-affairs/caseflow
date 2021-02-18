@@ -1411,6 +1411,7 @@ RSpec.feature "Case details", :all_dbs do
       after { FeatureToggle.disable!(:edit_nod_date) }
 
       let(:appeal) { create(:appeal) }
+      
       let(:veteran) do
         create(:veteran,
                first_name: "Bobby",
@@ -1431,7 +1432,7 @@ RSpec.feature "Case details", :all_dbs do
                receipt_date: 10.months.ago.to_date.mdY,
                request_issues: request_issues)
       end
-
+      subject { appeal.validate_all_issues_timely!(receipt_date) }
       let(:judge_user) { create(:user, css_id: "BVAAABSHIRE", station_id: "101") }
 
       before do
@@ -1439,7 +1440,7 @@ RSpec.feature "Case details", :all_dbs do
         User.authenticate!(user: judge_user)
       end
 
-      it "displays timeliness error if new NOD date causes timely issue to be untimely" do
+      it "displays timeliness issues list if new NOD date causes timely issue to be untimely" do
         visit("/queue/appeals/#{appeal.uuid}")
 
         expect(appeal.nod_date).to_not be_nil
@@ -1454,12 +1455,13 @@ RSpec.feature "Case details", :all_dbs do
         find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
         safe_click "#Edit-NOD-Date-button-id-1"
 
+        expect(page).to_not have_content(COPY::EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE)
+
         issues_list = page.find_all("ol li")
-        expect(issues_list[0]).to have_content("#{timely_request_issue.nonrating_issue_category} -
-          #{timely_request_issue.nonrating_issue_description}")
-        expect(issues_list[1]).to have_content("#{timely_request_issue.nonrating_issue_category} - 
-          #{timely_request_issue.nonrating_issue_description}")
-        end
+
+        expect(issues_list[0]).to have_content("#{timely_request_issue.nonrating_issue_category}")
+        expect(issues_list[1]).to have_content("#{timely_request_issue.nonrating_issue_category}")
+      end
     end
   end
 
