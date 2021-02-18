@@ -79,9 +79,6 @@ export const ScheduleVeteran = ({
   // Determine what disposition to assign for previous hearing
   const prevHearingDisposition = scheduledHearing?.disposition;
 
-  // Set the task ID
-  // const taskId = scheduleHearingTask ? scheduleHearingTask.taskId : scheduledHearing?.taskId;
-
   // Create a hearing object for the form
   const hearing = {
     ...assignHearingForm,
@@ -315,6 +312,7 @@ export const ScheduleVeteran = ({
   const headerStyle = virtual ? setMargin('0 0 0.75rem 0') : setMargin(0);
   const helperTextStyle = virtual ? setMargin('0 0 2rem 0') : setMargin(0);
 
+  // This protects against users navigating directly to this page without the correct data in the store
   return scheduledHearing?.taskId && !scheduledHearing?.action ? (
     <Redirect to={`/queue/appeals/${props.appealId}`} />
   ) : (

@@ -904,15 +904,6 @@ class QueueApp extends React.PureComponent {
                 title="Cancel Task | Caseflow"
                 render={this.routedCancelTaskModal}
               />
-
-              <PageRoute
-                exact
-                path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.SCHEDULE_VETERAN.value
-                }`}
-                title="Assign Hearing | Caseflow"
-                render={this.routedAssignHearingModal}
-              />
               <PageRoute
                 exact
                 path={`/queue/appeals/:appealId/tasks/:taskId/${
@@ -920,6 +911,14 @@ class QueueApp extends React.PureComponent {
                 }`}
                 title="Assign Hearing | Caseflow"
                 render={this.routedScheduleVeteran}
+              />
+              <PageRoute
+                exact
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.SCHEDULE_VETERAN.value
+                }`}
+                title="Assign Hearing | Caseflow"
+                render={this.routedAssignHearingModal}
               />
               <PageRoute
                 exact
