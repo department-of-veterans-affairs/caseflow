@@ -1,4 +1,5 @@
 import React from 'react';
+import * as redux from 'react-redux';
 import Enzyme, { shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import { NodDateUpdateTimeline } from 'app/queue/components/NodDateUpdateTimeline';
@@ -14,6 +15,12 @@ describe('NodDateUpdateTimeline', () => {
     userFirstName: 'Jane',
     userLastName: 'Doe'
   };
+
+  beforeEach(() => {
+    const spy = jest.spyOn(redux, 'useSelector');
+
+    spy.mockReturnValue({ nod_date_updates: true });
+  });
 
   const setupNodDateUpdateTimeline = (timeline) => {
     return shallow(
