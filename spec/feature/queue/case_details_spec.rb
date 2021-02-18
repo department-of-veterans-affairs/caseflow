@@ -1411,7 +1411,7 @@ RSpec.feature "Case details", :all_dbs do
       after { FeatureToggle.disable!(:edit_nod_date) }
 
       let(:appeal) { create(:appeal) }
-      
+
       let(:veteran) do
         create(:veteran,
                first_name: "Bobby",
@@ -1459,8 +1459,10 @@ RSpec.feature "Case details", :all_dbs do
 
         issues_list = page.find_all("ol li")
 
-        expect(issues_list[0]).to have_content("#{timely_request_issue.nonrating_issue_category}")
-        expect(issues_list[1]).to have_content("#{timely_request_issue.nonrating_issue_category}")
+        expect(issues_list[0]).to have_content(timely_request_issue.nonrating_issue_category.to_s)
+        expect(issues_list[0]).to have_content(timely_request_issue.nonrating_issue_description.to_s)
+        expect(issues_list[1]).to have_content(timely_request_issue.nonrating_issue_category.to_s)
+        expect(issues_list[1]).to have_content(timely_request_issue.nonrating_issue_description.to_s)
       end
     end
   end
