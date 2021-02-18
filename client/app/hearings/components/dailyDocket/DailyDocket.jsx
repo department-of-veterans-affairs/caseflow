@@ -104,6 +104,9 @@ export default class DailyDocket extends React.Component {
     const hearings = _.filter(
       this.props.hearings,
       _.negate(isPreviouslyScheduledHearing)
+    ).filter(
+      (hearing) =>
+        hearing.disposition !== HEARING_DISPOSITION_TYPES.scheduled_in_error
     );
 
     return hearings;
