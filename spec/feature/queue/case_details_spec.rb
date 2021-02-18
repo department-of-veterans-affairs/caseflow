@@ -1406,12 +1406,7 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
-    context "when a NOD exists and user can edit NOD date but timeliness issues with new date" do
-      before { FeatureToggle.enable!(:edit_nod_date) }
-      after { FeatureToggle.disable!(:edit_nod_date) }
-
-      let(:appeal) { create(:appeal) }
-
+    context "when a NOD exists and user can edit NOD date but triggers timeliness issues with NOD date update" do
       let(:veteran) do
         create(:veteran,
                first_name: "Bobby",
@@ -1436,9 +1431,12 @@ RSpec.feature "Case details", :all_dbs do
       let(:judge_user) { create(:user, css_id: "BVAAABSHIRE", station_id: "101") }
 
       before do
+        FeatureToggle.enable!(:edit_nod_date)
         BvaDispatch.singleton.add_user(judge_user)
         User.authenticate!(user: judge_user)
       end
+
+      after { FeatureToggle.disable!(:edit_nod_date) }
 
       it "displays timeliness issues list if new NOD date causes timely issue to be untimely" do
         visit("/queue/appeals/#{appeal.uuid}")
