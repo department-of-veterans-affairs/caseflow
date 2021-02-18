@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
+import { DateString } from '../../util/DateUtil';
+import { tooltipListStyling } from './style'
 import { connect } from 'react-redux';
 
 import FnodBadge from './FnodBadge';
@@ -7,7 +9,15 @@ import FnodBadge from './FnodBadge';
 // When FnodBadge is used by the Queue app, the relevant state is retrieved from
 // the store in this component.
 const QueueFnodBadge = ({ fnodBadge, appeal }) => {
-  const tooltipText = 'Date of Death Reported';
+  const tooltipText = <div>
+    <strong>Date of Death Reported</strong>
+    <ul {...tooltipListStyling}>
+      <li><strong>Source:</strong> VBMS</li>
+      { appeal.veteranDateOfDeath &&
+        <li><strong>Date of Death:</strong> <DateString date={appeal.veteranDateOfDeath} /></li>
+      }
+    </ul>
+  </div>;
 
   return <FnodBadge
     veteranAppellantDeceased={appeal.veteranAppellantDeceased}
