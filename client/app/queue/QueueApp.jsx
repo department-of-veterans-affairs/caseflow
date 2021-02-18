@@ -342,7 +342,7 @@ class QueueApp extends React.PureComponent {
           </CaseDetailsLoadingScreen>
         ) : (
           <ScheduleVeteran params={params} userId={this.props.userId} {...props.match.params} />
-        )};
+        )}
       </PrivateRoute>
     );
   };
