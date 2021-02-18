@@ -82,7 +82,7 @@ export const ScheduledInErrorModal = ({ update, cancelHandler, hearing, saveHear
       // Update the task status to cancelled
       await ApiUtil.patch(`/tasks/${hearingDispositionTaskId}`, taskPayload(hearingDetails, task));
 
-      // Add the notes to the task before continuing
+      // Add the notes to the hearing before continuing
       update({ notes, disposition });
 
       // Receive the alert after cancelling the hearing
