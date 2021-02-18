@@ -44,6 +44,11 @@ const typeOptions = _.map(_.keys(CAVC_DECISION_TYPES), (key) => ({
   value: key
 }));
 
+const isMandateDifferentOptions = {
+    id: decisionIssue.id,
+    label: decisionIssue.description
+};
+
 const isMandateProvidedOptions = [
   { displayText: 'Yes',
     value: 'true' },
@@ -80,6 +85,7 @@ const AddCavcRemandView = (props) => {
   const [issues, setIssues] = useState({});
   const [instructions, setInstructions] = useState(null);
   const [isMandateProvided, setMandateProvided] = useState('true');
+  const [isMandateDifferent, setMandateDifferent] = useState({});
 
   const supportedDecisionTypes = {
     [CAVC_DECISION_TYPES.remand]: featureToggles.cavc_remand,
@@ -118,6 +124,10 @@ const AddCavcRemandView = (props) => {
   // populate all of our checkboxes on initial render
   useEffect(() => selectAllIssues(), []);
 
+  const onMandateDiffersChange = (evt) => {
+    setMandateDifferent({ ...issues, [evt.target.name]: evt.target.checked });
+  };
+
   const onIssueChange = (evt) => {
     setIssues({ ...issues, [evt.target.name]: evt.target.checked });
   };
@@ -129,6 +139,7 @@ const AddCavcRemandView = (props) => {
   const mandateAvailable = () => {
     return !(type === CAVC_DECISION_TYPES.remand && mdrSubtype()) && (isMandateProvided === 'true');
   };
+  const mandateDiffers = () => isMandateDifferent === 'true';
   const validDocketNumber = () => (/^\d{2}-\d{1,5}$/).exec(docketNumber);
   const validJudge = () => Boolean(judge);
   const validDecisionDate = () => Boolean(decisionDate) && validateDateNotInFuture(decisionDate);
@@ -252,6 +263,16 @@ const AddCavcRemandView = (props) => {
     vertical
   />;
 
+  const mandateDiffersField = <CheckboxGroup
+    styling={radioLabelStyling}
+    label={COPY.CAVC_REMAND_MANDATE_DIFFER}
+    name="remand-different-toggle"
+    options={isMandateDifferentOptions}
+    values={isMandateDifferent}
+    onChange={(val) => onMandateDiffersChange(val)}
+    strongLabel
+  />;
+
   const mandateProvidedField = <RadioField
     styling={radioLabelStyling}
     label={COPY.CAVC_REMAND_MANDATE_QUESTION}
@@ -295,6 +316,9 @@ const AddCavcRemandView = (props) => {
     errorMessage={highlightInvalid && !validMandateDate() ? COPY.CAVC_MANDATE_DATE_ERROR : null}
     strongLabel
   />;
+
+  const mandateSection = {
+  }
 
   const issuesField = <React.Fragment>
     <legend><strong>{COPY.CAVC_ISSUES_LABEL}</strong></legend>
@@ -340,8 +364,9 @@ const AddCavcRemandView = (props) => {
       {type !== CAVC_DECISION_TYPES.remand && mandateProvidedField }
       {decisionField}
       {type === CAVC_DECISION_TYPES.remand && mdrSubtype() && mdrBanner }
-      {mandateAvailable() && judgementField }
-      {mandateAvailable() && mandateField }
+      {mandateAvailable() && mandateDiffersField }
+      {mandateAvailable() && mandateDiffers() && judgementField }
+      {mandateAvailable() && mandateDiffers() && mandateField }
       {!mandateAvailable() && type !== CAVC_DECISION_TYPES.remand && noMandateBanner }
       {issuesField}
       {instructionsField}
