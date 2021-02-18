@@ -29,6 +29,7 @@ export const changeReasons = [
 
 export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealId, reason }) => {
   const [showTimelinessError, setTimelinessError] = useState(false);
+  const [issues, setIssues] = useState(null);
 
   const dispatch = useDispatch();
   const appeal = useSelector((state) =>
@@ -67,7 +68,8 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
         reason: data.body.changeReason
       }));
 
-      if (data.body.errors) {
+      if (data.body.affectedIssues) {
+        setIssues({ affectedIssues: data.body.affectedIssues, unaffectedIssues: data.body.unaffectedIssues });
         setTimelinessError(true);
       } else {
         dispatch(editNodDateUpdates(appealId, data.body.nodDateUpdate));
@@ -87,11 +89,12 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
       appealId={appealId}
       appellantName={appeal.appellantFullName}
       showTimelinessError={showTimelinessError}
+      issues={issues}
     />
   );
 };
 
-export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTimelinessError }) => {
+export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTimelinessError, issues }) => {
   const [receiptDate, setReceiptDate] = useState(nodDate);
   const [changeReason, setChangeReason] = useState(reason);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -168,10 +171,6 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
     }
   };
 
-  const affectedIssuesList = "This is a test A";
-
-  const unaffectedIssuesList = "This is a test B";
-
   let modalContent;
 
   if (showTimelinessError) {
@@ -181,23 +180,24 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
       </div>
 
       <strong>Affected Issue(s)</strong>
-      <ReactMarkdown>{affectedIssuesList}</ReactMarkdown>
+      <ol className="cf-error">
+        {issues.affectedIssues.map((issue) => {
+
+          return <li key={issue.id}>
+            {issue.description}
+          </li>;
+        })}
+      </ol>
 
       <strong>Unaffected Issue(s)</strong>
-      <ReactMarkdown>{unaffectedIssuesList}</ReactMarkdown>
+      <ol>
+        {issues.unaffectedIssues.map((issue) => {
 
-      {/* <React.Fragment>
-        name="Affected Issues"
-        optional
-        strongLabel="Affected Issue(s)"
-        value={affectedIssues}
-      </React.Fragment>
-      <React.Fragment>
-        name="Unaffected Issues"
-        optional
-        strongLabel="Unaffected Issue(s)"
-        value={unaffectedIssues}
-      </React.Fragment> */}
+          return <li key={issue.id}>
+            {issue.description}
+          </li>;
+        })}
+      </ol>
     </div>;
   } else {
     modalContent = <div>
@@ -263,5 +263,6 @@ EditNodDateModal.propTypes = {
   nodDate: PropTypes.string.isRequired,
   reason: PropTypes.object,
   appealId: PropTypes.string.isRequired,
-  showTimelinessError: PropTypes.bool.isRequired
+  showTimelinessError: PropTypes.bool.isRequired,
+  issues: PropTypes.object
 };
