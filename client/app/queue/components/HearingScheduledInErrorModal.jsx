@@ -79,6 +79,9 @@ const HearingScheduledInErrorModal = (props) => {
   };
 
   const submit = () => {
+    // Send the event to google analytics
+    window.analyticsEvent('Hearings', HEARING_DISPOSITION_TYPES.scheduled_in_error, afterDispositionUpdateAction);
+
     // Determine whether to redirect to the ful page schedule veteran flow
     if (afterDispositionUpdateAction === ACTIONS.RESCHEDULE) {
       // Change the disposition in the store
