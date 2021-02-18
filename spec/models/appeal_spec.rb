@@ -1218,56 +1218,6 @@ describe Appeal, :all_dbs do
     end
   end
 
-  describe "#current_hearing_request_type" do
-    let(:appeal) { create(:appeal, closest_regional_office: closest_regional_office) }
-
-    subject { appeal.current_hearing_request_type }
-
-    context "closest_regional_office is 'C'" do
-      let(:closest_regional_office) { "C" }
-
-      it { expect(subject).to eq(:central) }
-    end
-
-    context "closest_regional_office is a RO" do
-      let(:closest_regional_office) { "RO39" }
-
-      it { expect(subject).to eq(:video) }
-    end
-
-    context "closest_regional_office is a nil" do
-      let(:closest_regional_office) { nil }
-
-      it { expect(subject).to eq(nil) }
-    end
-  end
-
-  describe "readable current_hearing_request_type" do
-    subject { appeal.current_hearing_request_type(readable: true) }
-
-    context "no hearings have been scheduled" do
-      let(:appeal) { create(:appeal, closest_regional_office: closest_regional_office) }
-
-      context "closest_regional_office is 'C'" do
-        let(:closest_regional_office) { "C" }
-
-        it { expect(subject).to eq("Central") }
-      end
-
-      context "closest_regional_office is a RO" do
-        let(:closest_regional_office) { "RO39" }
-
-        it { expect(subject).to eq("Video") }
-      end
-
-      context "closest_regional_office is a nil" do
-        let(:closest_regional_office) { nil }
-
-        it { expect(subject).to eq(nil) }
-      end
-    end
-  end
-
   describe "#latest_informal_hearing_presentation_task" do
     let(:appeal) { create(:appeal) }
 
