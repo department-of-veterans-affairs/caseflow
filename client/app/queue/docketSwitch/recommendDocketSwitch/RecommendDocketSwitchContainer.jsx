@@ -36,7 +36,7 @@ export const formatDocketSwitchRecommendation = ({
 };
 
 export const RecommendDocketSwitchContainer = () => {
-  const { appealId, taskId } = useParams();
+  const { appealId } = useParams();
   const { goBack, push } = useHistory();
   const dispatch = useDispatch();
 
