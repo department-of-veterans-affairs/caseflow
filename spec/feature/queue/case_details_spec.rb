@@ -1406,7 +1406,7 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
-    fcontext "when a NOD exists and user can edit NOD date but timeliness issues with new date" do
+    context "when a NOD exists and user can edit NOD date but timeliness issues with new date" do
       before { FeatureToggle.enable!(:edit_nod_date) }
       after { FeatureToggle.disable!(:edit_nod_date) }
 
@@ -1418,9 +1418,9 @@ RSpec.feature "Case details", :all_dbs do
                last_name: "Winters",
                file_number: "55555456")
       end
-      let(:timely_request_issue) { create(:request_issue, id: 1, decision_date: 381.days.ago) }
+      let(:timely_request_issue) { create(:request_issue, :nonrating, id: 1, decision_date: 381.days.ago) }
       let(:untimely_request_issue_with_exemption) do
-        create(:request_issue, id: 2, decision_date: 2.years.ago, untimely_exemption: true)
+        create(:request_issue, :nonrating, id: 2, decision_date: 2.years.ago, untimely_exemption: true)
       end
       let(:request_issues) { [timely_request_issue, untimely_request_issue_with_exemption] }
 
@@ -1448,21 +1448,23 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
 
         find("button", text: COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY).click
-        fill_in COPY::EDIT_NOD_DATE_LABEL, with: 7.days.ago
+        fill_in COPY::EDIT_NOD_DATE_LABEL, with: Time.zone.today.mdY
 
         expect(page).to have_content("Reason for edit")
         find(".cf-form-dropdown", text: "Reason for edit").click
         find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
         safe_click "#Edit-NOD-Date-button-id-1"
 
-        expect(page).to_not have_content(COPY::EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE)
+        expect(page).to_not have_content("There have been no changes to the timeliness of issues.")
 
         issues_list = page.find_all("ol li")
 
-        expect(issues_list[0]).to have_content(timely_request_issue.nonrating_issue_category.to_s)
-        expect(issues_list[0]).to have_content(timely_request_issue.nonrating_issue_description.to_s)
-        expect(issues_list[1]).to have_content(timely_request_issue.nonrating_issue_category.to_s)
-        expect(issues_list[1]).to have_content(timely_request_issue.nonrating_issue_description.to_s)
+        expect(issues_list[0]).to have_content(
+          "#{timely_request_issue.nonrating_issue_category} - #{timely_request_issue.nonrating_issue_description}"
+        )
+        expect(issues_list[1]).to have_content(
+          "#{timely_request_issue.nonrating_issue_category} - #{timely_request_issue.nonrating_issue_description}"
+        )
       end
     end
   end
