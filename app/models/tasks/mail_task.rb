@@ -32,7 +32,7 @@ class MailTask < Task
       end
     end
 
-    def allow_creation?(_user, _appeal)
+    def allow_creation?(user:, appeal:)
       true
     end
 
