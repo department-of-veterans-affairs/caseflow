@@ -8,8 +8,8 @@ import { Provider } from 'react-redux';
 
 describe('FnodBadge', () => {
   const defaultAppeal = {
-    veteran_appellant_deceased: true,
-    date_of_death: '2019-03-17'
+    veteranAppellantDeceased: true,
+    veteranDateOfDeath: '2019-03-17'
   };
 
   const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
