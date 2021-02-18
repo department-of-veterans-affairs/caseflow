@@ -18,9 +18,17 @@ const addClaimantSlice = createSlice({
         ...formData,
       };
     },
+    editPoaInformation: (state, action) => {
+      const { formData } = action.payload;
+
+      state.poa = {
+        ...state.poa,
+        ...formData,
+      };
+    },
   },
 });
 
-export const { cancel, editClaimantInformation } = addClaimantSlice.actions;
+export const { cancel, editClaimantInformation, editPoaInformation } = addClaimantSlice.actions;
 
 export default addClaimantSlice.reducer;

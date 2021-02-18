@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { FormProvider, Controller } from 'react-hook-form';
 import { useAddPoaForm } from './utils';
 import { ADD_CLAIMANT_POA_PAGE_DESCRIPTION } from 'app/../COPY';
@@ -13,15 +13,18 @@ import RadioField from 'app/components/RadioField';
 import Address from 'app/queue/components/Address';
 import AddressForm from 'app/components/AddressForm';
 import TextField from 'app/components/TextField';
+import { useDispatch, useSelector } from 'react-redux';
+import { editPoaInformation } from 'app/intake/reducers/addClaimantSlice';
+import { AddClaimantConfirmationModal } from '../addClaimant/AddClaimantConfirmationModal';
 
 const partyTypeOpts = [
   { displayText: 'Organization', value: 'organization' },
-  { displayText: 'Individual', value: 'individual' }
+  { displayText: 'Individual', value: 'individual' },
 ];
 
 const fetchAttorneys = async (search = '') => {
   const res = await ApiUtil.get('/intake/attorneys', {
-    query: { query: search }
+    query: { query: search },
   });
 
   return res?.body;
@@ -34,16 +37,20 @@ const getAttorneyClaimantOpts = async (search = '', asyncFn) => {
   }
 
   const formatAddress = (bgsAddress) => {
-    return reduce(bgsAddress, (result, value, key) => {
-      result[key] = startCase(camelCase(value));
-      if (['state', 'country'].includes(key)) {
-        result[key] = value;
-      } else {
+    return reduce(
+      bgsAddress,
+      (result, value, key) => {
         result[key] = startCase(camelCase(value));
-      }
+        if (['state', 'country'].includes(key)) {
+          result[key] = value;
+        } else {
+          result[key] = startCase(camelCase(value));
+        }
 
-      return result;
-    }, {});
+        return result;
+      },
+      {}
+    );
   };
 
   const res = await asyncFn(search);
@@ -61,7 +68,6 @@ const getAttorneyClaimantOpts = async (search = '', asyncFn) => {
 const filterOption = () => true;
 
 export const AddPoaPage = () => {
-
   const methods = useAddPoaForm();
   const {
     control,
@@ -71,9 +77,22 @@ export const AddPoaPage = () => {
     handleSubmit,
   } = methods;
 
-  const { goBack } = useHistory();
+  const { goBack, push } = useHistory();
+  const dispatch = useDispatch();
+
+  const [confirmModal, setConfirmModal] = useState(false);
+  const { claimant, poa } = useSelector((state) => state.addClaimant);
+
+  const toggleConfirm = () => setConfirmModal((val) => !val);
+  const handleConfirm = () => {
+    push('/add_issues');
+  };
+
   const onSubmit = (formData) => {
-    return formData;
+    // Add to Redux store
+    dispatch(editPoaInformation({ formData }));
+
+    toggleConfirm();
   };
   const handleBack = () => goBack();
 
@@ -86,7 +105,9 @@ export const AddPoaPage = () => {
   const showPartyType = attorneyNotListed;
   const asyncFn = useCallback(
     debounce((search, callback) => {
-      getAttorneyClaimantOpts(search, fetchAttorneys).then((res) => callback(res));
+      getAttorneyClaimantOpts(search, fetchAttorneys).then((res) =>
+        callback(res)
+      );
     }, 250),
     [fetchAttorneys]
   );
@@ -126,98 +147,106 @@ export const AddPoaPage = () => {
             )}
           />
 
-          { listedAttorney?.address &&
-        <div>
-          <ClaimantAddress>
-            <strong>Representative's address</strong>
-          </ClaimantAddress>
-          <br />
-          <Address address={listedAttorney?.address} />
-        </div>
-          }
+          {listedAttorney?.address && (
+            <div>
+              <ClaimantAddress>
+                <strong>Representative's address</strong>
+              </ClaimantAddress>
+              <br />
+              <Address address={listedAttorney?.address} />
+            </div>
+          )}
 
-          { showPartyType &&
-        <RadioField
-          name="partyType"
-          label="Is the claimant an organization or individual?"
-          inputRef={register}
-          strongLabel
-          vertical
-          options={partyTypeOpts}
-        />
-          }
+          {showPartyType && (
+            <RadioField
+              name="partyType"
+              label="Is the claimant an organization or individual?"
+              inputRef={register}
+              strongLabel
+              vertical
+              options={partyTypeOpts}
+            />
+          )}
           <br />
-          { showIndividualNameFields &&
-        <>
-          <FieldDiv>
+          {showIndividualNameFields && (
+            <>
+              <FieldDiv>
+                <TextField
+                  name="firstName"
+                  label="First name"
+                  inputRef={register}
+                  strongLabel
+                />
+              </FieldDiv>
+              <FieldDiv>
+                <TextField
+                  name="middleName"
+                  label="Middle name/initial"
+                  inputRef={register}
+                  optional
+                  strongLabel
+                />
+              </FieldDiv>
+              <FieldDiv>
+                <TextField
+                  name="lastName"
+                  label="Last name"
+                  inputRef={register}
+                  optional
+                  strongLabel
+                />
+              </FieldDiv>
+              <Suffix>
+                <TextField
+                  name="suffix"
+                  label="Suffix"
+                  inputRef={register}
+                  optional
+                  strongLabel
+                />
+              </Suffix>
+            </>
+          )}
+          {watchPartyType === 'organization' && (
             <TextField
-              name="firstName"
-              label="First name"
+              name="organization"
+              label="Organization name"
               inputRef={register}
               strongLabel
             />
-          </FieldDiv>
-          <FieldDiv>
-            <TextField
-              name="middleName"
-              label="Middle name/initial"
-              inputRef={register}
-              optional
-              strongLabel
-            />
-          </FieldDiv>
-          <FieldDiv>
-            <TextField
-              name="lastName"
-              label="Last name"
-              inputRef={register}
-              optional
-              strongLabel
-            />
-          </FieldDiv>
-          <Suffix>
-            <TextField
-              name="suffix"
-              label="Suffix"
-              inputRef={register}
-              optional
-              strongLabel
-            />
-          </Suffix>
-        </>
-          }
-          { watchPartyType === 'organization' &&
-        <TextField
-          name="organization"
-          label="Organization name"
-          inputRef={register}
-          strongLabel
-        />
-          }
-          {showAdditionalFields &&
-       <div>
-         <AddressForm {...methods} />
-         <FieldDiv>
-           <TextField
-             name="email"
-             label="Claimant email"
-             inputRef={register}
-             optional
-             strongLabel
-           />
-         </FieldDiv>
-         <PhoneNumber>
-           <TextField
-             name="phoneNumber"
-             label="Phone number"
-             inputRef={register}
-             optional
-             strongLabel
-           />
-         </PhoneNumber>
-       </div>
-          }
+          )}
+          {showAdditionalFields && (
+            <div>
+              <AddressForm {...methods} />
+              <FieldDiv>
+                <TextField
+                  name="email"
+                  label="Claimant email"
+                  inputRef={register}
+                  optional
+                  strongLabel
+                />
+              </FieldDiv>
+              <PhoneNumber>
+                <TextField
+                  name="phoneNumber"
+                  label="Phone number"
+                  inputRef={register}
+                  optional
+                  strongLabel
+                />
+              </PhoneNumber>
+            </div>
+          )}
         </form>
+        {confirmModal && (
+          <AddClaimantConfirmationModal
+            onCancel={toggleConfirm}
+            onConfirm={handleConfirm}
+            claimant={claimant}
+            poa={poa}
+          />
+        )}
       </IntakeLayout>
     </FormProvider>
   );

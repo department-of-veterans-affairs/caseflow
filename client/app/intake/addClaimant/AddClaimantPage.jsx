@@ -95,7 +95,6 @@ export const AddClaimantPage = () => {
 
   const toggleConfirm = () => setConfirmModal((val) => !val);
   const handleConfirm = () => {
-    console.log('confirm!');
     push('/add_issues');
   };
 
