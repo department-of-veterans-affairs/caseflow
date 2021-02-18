@@ -2326,53 +2326,6 @@ describe LegacyAppeal, :all_dbs do
     end
   end
 
-  context "#previous_hearing_request_type" do
-    subject { appeal.reload.previous_hearing_request_type }
-
-    context "when there are no paper trail events" do
-      let(:vacols_case) { create(:case, :travel_board_hearing) }
-
-      it { is_expected.to eq(:travel_board) }
-
-      it "does not save the value to original_request_type" do
-        subject
-        expect(appeal.original_request_type).to be_nil
-      end
-    end
-
-    context "when there's one paper trail event" do
-      let(:vacols_case) { create(:case, :travel_board_hearing) }
-
-      before do
-        # this will create the event
-        appeal.update!(changed_request_type: HearingDay::REQUEST_TYPES[:virtual])
-      end
-
-      it { is_expected.to eq(:travel_board) }
-    end
-
-    context "when there are two paper trail events" do
-      let(:changed_request_type1) { HearingDay::REQUEST_TYPES[:virtual] }
-      let(:changed_request_type2) { HearingDay::REQUEST_TYPES[:video] }
-      let(:vacols_case) { create(:case, :travel_board_hearing) }
-
-      before do
-        # this will create the first event
-        appeal.update!(changed_request_type: changed_request_type1)
-        # this will create the second event
-        appeal.reload.update!(changed_request_type: changed_request_type2)
-      end
-
-      it { is_expected.to eq(:virtual) }
-    end
-
-    context "when paper trail event is nil" do
-      let(:vacols_case) { create(:case, :video_hearing_requested, :central_office_hearing) }
-
-      it { is_expected.to eq(:central_office) }
-    end
-  end
-
   context "#appellant_last_first_mi" do
     let(:vacols_case) do
       create(:case, correspondent:
