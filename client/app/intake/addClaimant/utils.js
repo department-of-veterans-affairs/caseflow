@@ -52,9 +52,9 @@ export const schema = yup.object().shape({
     is: (value) => ['individual', 'organization'].includes(value),
     then: yup.string().required(),
   }),
-  state: yup.object().when('partyType', {
+  state: yup.string().when('partyType', {
     is: (value) => ['individual', 'organization'].includes(value),
-    then: dropdownOptSchema.required(),
+    then: yup.string().required(),
   }),
   zip: yup.number().when('partyType', {
     is: (value) => ['individual', 'organization'].includes(value),
