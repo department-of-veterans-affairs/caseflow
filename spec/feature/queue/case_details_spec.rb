@@ -1275,13 +1275,19 @@ RSpec.feature "Case details", :all_dbs do
                last_name: "Winters",
                file_number: "55555456")
       end
+      let(:timely_request_issue) { create(:request_issue, id: 1, decision_date: 381.days.ago) }
+      let(:untimely_request_issue_with_exemption) do
+        create(:request_issue, id: 2, decision_date: 2.years.ago, untimely_exemption: true)
+      end
+      let(:request_issues) { [timely_request_issue, untimely_request_issue_with_exemption] }
 
       let!(:appeal) do
         create(:appeal,
                :with_post_intake_tasks,
                veteran_file_number: veteran.file_number,
                docket_type: Constants.AMA_DOCKETS.direct_review,
-               receipt_date: 10.months.ago.to_date.mdY)
+               receipt_date: 10.months.ago.to_date.mdY,
+               request_issues: request_issues)
       end
 
       context "when the user is a COB_USER" do
@@ -1304,7 +1310,7 @@ RSpec.feature "Case details", :all_dbs do
           visit("/queue/appeals/#{appeal.uuid}")
 
           find("button", text: COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY).click
-          fill_in COPY::EDIT_NOD_DATE_LABEL, with: Time.zone.today.mdY
+          fill_in COPY::EDIT_NOD_DATE_LABEL, with: 391.days.ago
 
           expect(page).to have_content("Reason for edit")
           find(".cf-form-dropdown", text: "Reason for edit").click
@@ -1315,8 +1321,26 @@ RSpec.feature "Case details", :all_dbs do
             format(COPY::EDIT_NOD_DATE_SUCCESS_ALERT_MESSAGE.tr("(", "{").gsub(")s", "}"),
                    appellantName: appeal.claimant.name,
                    nodDateStr: appeal.receipt_date.mdY,
-                   receiptDateStr: Time.zone.today.mdY)
+                   receiptDateStr: 391.days.ago)
           )
+        end
+
+        fit "displays timeliness error if new NOD date causes timely issue to be untimely" do
+          visit("/queue/appeals/#{appeal.uuid}")
+
+          find("button", text: COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY).click
+          fill_in COPY::EDIT_NOD_DATE_LABEL, with: 7.days.ago
+
+          expect(page).to have_content("Reason for edit")
+          find(".cf-form-dropdown", text: "Reason for edit").click
+          find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
+          safe_click "#Edit-NOD-Date-button-id-1"
+
+          issues_list = page.find_all("ol li")
+          expect(issues_list[0]).to have_content("#{timely_request_issue.nonrating_issue_category} -
+            #{timely_request_issue.nonrating_issue_description}")
+          expect(issues_list[1]).to have_content("#{timely_request_issue.nonrating_issue_category} - 
+            #{timely_request_issue.nonrating_issue_description}")
         end
       end
 

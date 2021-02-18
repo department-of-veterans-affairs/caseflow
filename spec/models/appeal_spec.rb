@@ -1273,4 +1273,36 @@ describe Appeal, :all_dbs do
 
     it_behaves_like "latest informal hearing presentation task"
   end
+
+  describe "validate issue timeliness" do
+    let(:timely_request_issue) { create(:request_issue, id: 1, decision_date: 381.days.ago) }
+    let(:untimely_request_issue_with_exemption) do
+      create(:request_issue,
+             id: 2,
+             decision_date: 2.years.ago,
+             untimely_exemption: true)
+    end
+    let(:request_issues) { [timely_request_issue, untimely_request_issue_with_exemption] }
+    let(:appeal) { create(:appeal, request_issues: request_issues) }
+    subject { appeal.validate_all_issues_timely!(receipt_date) }
+
+    context "should fail validation" do
+      let(:receipt_date) { 7.days.ago }
+
+      it "if timely issue without exemption becomes untimely" do
+        subject
+        expect(subject[:affected_issues].first.id).to eq(1)
+        expect(subject[:unaffected_issues].first.id).to eq(2)
+      end
+    end
+
+    context "should pass validation" do
+      let(:receipt_date) { 391.days.ago }
+
+      it "if untimely issue has exemption status" do
+        subject
+        expect(subject).to be_nil
+      end
+    end
+  end
 end
