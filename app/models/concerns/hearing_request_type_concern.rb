@@ -31,23 +31,32 @@ module HearingRequestTypeConcern
     TaskEvent.new(version: versions.last) if versions.any?
   end
 
-  def original_hearing_request_type(readable: false, save_type: false)
-    # get the formatted original request type (and save it if it's not already saved)
-    formatted_request_type = save_original_hearing_request_type(save_type)
+  def original_hearing_request_type
+    return original_request_type.to_sym if original_request_type.present?
 
-    # Return the human readable request type or the symbol of request type
-    readable ? LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[formatted_request_type] : formatted_request_type
+    # Use the VACOLS value for LegacyAppeals, otherwise use the closest regional office
+    original = is_a?(LegacyAppeal) ? hearing_request_type : closest_regional_office
+    # Format the request type into a symbol
+    format_hearing_request_type(original)
   end
 
-  def current_hearing_request_type(readable: false)
-    # Format the request type into a symbol, or retrieve the original request type
-    formatted_request_type = format_or_formatted_original_request_type(changed_request_type)
-
-    # Return the human readable request type or the symbol of request type
-    readable ? LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[formatted_request_type] : formatted_request_type
+  def readable_original_hearing_request_type
+    LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[original_hearing_request_type]
   end
 
-  def hearing_request_type_for_task(task_id, version)
+  def remember_original_hearing_request_type
+    update!(original_request_type: original_hearing_request_type&.to_s) if original_request_type.blank?
+  end
+
+  def current_hearing_request_type
+    format_or_formatted_original_request_type(changed_request_type)
+  end
+
+  def readable_current_hearing_request_type
+    LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[current_hearing_request_type]
+  end
+
+  def readable_hearing_request_type_for_task(task_id, version)
     return nil if task_id.nil?
 
     request_type_index = tasks.where(type: "ChangeHearingRequestTypeTask").order(:id).map(&:id).index(task_id)
@@ -90,16 +99,4 @@ module HearingRequestTypeConcern
     end
   end
   # rubocop:enable Metrics/CyclomaticComplexity
-
-  def save_original_hearing_request_type(save_type = false)
-    return original_request_type.to_sym if original_request_type.present?
-
-    # Use the VACOLS value for LegacyAppeals, otherwise use the closest regional office
-    original = is_a?(LegacyAppeal) ? hearing_request_type : closest_regional_office
-    # Format the request type into a symbol
-    formatted_request_type = format_hearing_request_type(original)
-    # save the original type for future reference if requested
-    update!(original_request_type: formatted_request_type&.to_s) if save_type
-    formatted_request_type
-  end
 end
