@@ -12,6 +12,7 @@ import CAVC_DECISION_TYPES from '../../constants/CAVC_DECISION_TYPES';
 
 import QueueFlowPage from './components/QueueFlowPage';
 import { requestSave, showErrorMessage } from './uiReducer/uiActions';
+import { validateDateNotInFuture } from '../intake/util/issues';
 import TextField from '../components/TextField';
 import RadioField from '../components/RadioField';
 import DateSelector from '../components/DateSelector';
@@ -130,10 +131,12 @@ const AddCavcRemandView = (props) => {
   };
   const validDocketNumber = () => (/^\d{2}-\d{1,5}$/).exec(docketNumber);
   const validJudge = () => Boolean(judge);
-  const validDecisionDate = () => Boolean(decisionDate);
-  const mandateNotRequired = () => straightReversalType() || deathDismissalType() || mdrSubtype();
-  const validJudgementDate = () => Boolean(judgementDate) || mandateNotRequired();
-  const validMandateDate = () => Boolean(mandateDate) || mandateNotRequired();
+  const validDecisionDate = () => Boolean(decisionDate) && validateDateNotInFuture(decisionDate);
+  const mandateNotRequired = () => !mandateAvailable || mdrSubtype();
+  const validJudgementDate = () => {
+    return (Boolean(judgementDate) && validateDateNotInFuture(judgementDate)) || mandateNotRequired();
+  };
+  const validMandateDate = () => (Boolean(mandateDate) && validateDateNotInFuture(mandateDate)) || mandateNotRequired();
   const validInstructions = () => instructions && instructions.length > 0;
 
   const validateForm = () => {

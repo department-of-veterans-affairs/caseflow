@@ -47,26 +47,96 @@ describe CavcRemandProcessedLetterResponseWindowTask, :postgres do
   SendCRPLetterTask = SendCavcRemandProcessedLetterTask
   CRPLRWindowTask = CavcRemandProcessedLetterResponseWindowTask
   describe "#available_actions" do
-    let(:send_task) { create(:send_cavc_remand_processed_letter_task) }
+    shared_examples "has correct actions" do
+      context "while window task is on-hold" do
+        context "window task assigned to org" do
+          it "returns on-hold actions available to org" do
+            child_timed_hold_task = window_task.children.where(type: :TimedHoldTask).active.first
+            expect(child_timed_hold_task.status).to eq Constants.TASK_STATUSES.assigned
 
-    context "window task created after SendCRPLetterTask completed" do
-      let(:user_task) { create(:send_cavc_remand_processed_letter_task, parent: send_task, assigned_to: org_nonadmin) }
-      let(:window_task) do
-        user_task.update_from_params({ status: Constants.TASK_STATUSES.completed }, org_nonadmin)
-        user_task.appeal.tasks.where(type: CRPLRWindowTask.name).first
-      end
-      it "returns available actions" do
-        expect(user_task.available_actions(org_nonadmin)).to match_array SendCRPLetterTask::USER_ACTIONS
-        expect(window_task.available_actions(org_nonadmin)).to include Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
-        expect(window_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
-        expect(window_task.available_actions(other_user)).to be_empty
+            expect(window_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
+            expect(window_task.available_actions(org_admin)).to match_array CRPLRWindowTask::ORG_ACTIONS
+            expect(window_task.available_actions(org_nonadmin)).to match_array CRPLRWindowTask::ORG_ACTIONS
 
-        Timecop.travel(Time.zone.now + 90.days + 1.hour)
-        TaskTimerJob.perform_now
-        child_timed_hold_tasks = window_task.children.where(type: :TimedHoldTask)
-        expect(child_timed_hold_tasks.first.status).to eq Constants.TASK_STATUSES.completed
-        expect(window_task.reload.status).to eq Constants.TASK_STATUSES.assigned
+            expect(window_task.available_actions(other_user)).to be_empty
+          end
+        end
+        context "window task assigned to CAVC user" do
+          let!(:user_window_task) do
+            window_task.on_hold!
+            CRPLRWindowTask.create_with_hold(window_task, days_on_hold: 80, assignee: org_nonadmin)
+          end
+
+          it "returns on-hold actions available to user" do
+            child_timed_hold_task = user_window_task.children.where(type: :TimedHoldTask).active.first
+            expect(child_timed_hold_task.status).to eq Constants.TASK_STATUSES.assigned
+
+            expect(user_window_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
+            expect(user_window_task.available_actions(org_admin)).to match_array CRPLRWindowTask::USER_ACTIONS
+            expect(user_window_task.available_actions(org_nonadmin)).to match_array CRPLRWindowTask::USER_ACTIONS
+
+            expect(user_window_task.available_actions(other_user)).to be_empty
+          end
+        end
       end
+
+      context "after timed-hold window ends (due to cancellation or time passed)" do
+        context "window task assigned to org" do
+          it "returns actions available to org" do
+            child_timed_hold_task = window_task.children.where(type: :TimedHoldTask).active.first
+            expect(child_timed_hold_task.status).to eq Constants.TASK_STATUSES.assigned
+
+            Timecop.travel(Time.zone.now + 90.days + 1.hour)
+            TaskTimerJob.perform_now
+            expect(child_timed_hold_task.reload.status).to eq Constants.TASK_STATUSES.completed
+
+            expect(window_task.reload.status).to eq Constants.TASK_STATUSES.assigned
+            expect(window_task.available_actions(org_admin)).to match_array CRPLRWindowTask::ORG_ACTIONS
+            expect(window_task.available_actions(org_nonadmin)).to match_array CRPLRWindowTask::ORG_ACTIONS
+
+            expect(window_task.available_actions(other_user)).to be_empty
+          end
+        end
+        context "window task assigned to CAVC user" do
+          let!(:user_window_task) do
+            window_task.on_hold!
+            CRPLRWindowTask.create_with_hold(window_task, days_on_hold: 80, assignee: org_nonadmin)
+          end
+
+          it "returns actions available to user" do
+            child_timed_hold_task = user_window_task.children.where(type: :TimedHoldTask).active.first
+            expect(child_timed_hold_task.status).to eq Constants.TASK_STATUSES.assigned
+
+            Timecop.travel(Time.zone.now + 80.days + 1.hour)
+            TaskTimerJob.perform_now
+            expect(child_timed_hold_task.reload.status).to eq Constants.TASK_STATUSES.completed
+
+            expect(user_window_task.reload.status).to eq Constants.TASK_STATUSES.assigned
+
+            expected_actions = CRPLRWindowTask::USER_ACTIONS_FOR_ACTIVE_TASK
+            expect(user_window_task.available_actions(org_admin)).to match_array expected_actions
+            expect(user_window_task.available_actions(org_nonadmin)).to match_array expected_actions
+
+            expect(user_window_task.available_actions(other_user)).to be_empty
+          end
+        end
+      end
+    end
+
+    let(:org_task) { create(:send_cavc_remand_processed_letter_task) }
+    let(:send_task) { org_task }
+    let!(:window_task) do
+      send_task.update_from_params({ status: Constants.TASK_STATUSES.completed }, org_nonadmin)
+      send_task.appeal.tasks.where(type: CRPLRWindowTask.name).first
+    end
+
+    context "window task created after org-assigned SendCRPLetterTask completed" do
+      include_examples "has correct actions"
+    end
+
+    context "window task created after user-assigned SendCRPLetterTask completed" do
+      let(:send_task) { create(:send_cavc_remand_processed_letter_task, parent: org_task, assigned_to: org_nonadmin) }
+      include_examples "has correct actions"
     end
   end
 end
