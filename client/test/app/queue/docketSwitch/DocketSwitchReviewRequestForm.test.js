@@ -17,7 +17,8 @@ describe('DocketSwitchReviewRequestForm', () => {
     { id: 1, program: 'compensation', description: 'PTSD denied' },
     { id: 2, program: 'compensation', description: 'Left  knee denied' },
   ];
-  const defaults = { onSubmit, onCancel, appellantName, issues };
+  const docketFrom = 'evidence_submission';
+  const defaults = { onSubmit, onCancel, appellantName, docketFrom, issues };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -40,6 +41,24 @@ describe('DocketSwitchReviewRequestForm', () => {
     ).toBeInTheDocument();
   });
 
+  it('disables current docket', async () => {
+    render(<DocketSwitchReviewRequestForm {...defaults} />);
+
+    // Set disposition to show docket selection
+    await userEvent.click(
+      screen.getByRole('radio', { name: /grant all issues/i })
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('Evidence Submission (current docket)')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('radio', { name: /evidence submission/i })
+      ).toBeDisabled();
+    });
+  });
+
   it('fires onCancel', async () => {
     render(<DocketSwitchReviewRequestForm {...defaults} />);
     expect(onCancel).not.toHaveBeenCalled();
@@ -51,8 +70,6 @@ describe('DocketSwitchReviewRequestForm', () => {
 
   describe('form validation for all granted issues', () => {
     const receiptDate = '2020-10-01';
-    const disposition = 'granted';
-    const docketType = 'direct_review';
 
     it('fires onSubmit with correct values', async () => {
       render(<DocketSwitchReviewRequestForm {...defaults} />);
@@ -71,7 +88,9 @@ describe('DocketSwitchReviewRequestForm', () => {
 
       // Wait for docketType to show up
       await waitFor(() => {
-        expect(screen.getByRole('radio', { name: /direct review/i })).toBeInTheDocument();
+        expect(
+          screen.getByRole('radio', { name: /direct review/i })
+        ).toBeInTheDocument();
       });
 
       //   Set docketType
@@ -86,7 +105,7 @@ describe('DocketSwitchReviewRequestForm', () => {
       await userEvent.click(submit);
 
       await waitFor(() => {
-        expect(onSubmit).toHaveBeenCalled()
+        expect(onSubmit).toHaveBeenCalled();
       });
     });
   });
@@ -95,7 +114,7 @@ describe('DocketSwitchReviewRequestForm', () => {
     const receiptDate = '2020-10-01';
     const disposition = 'partially_granted';
     const docketType = 'direct_review';
-    const issueIds = ['1']
+    const issueIds = ['1'];
     const fillForm = async () => {
       //   Set receipt date
       await fireEvent.change(screen.getByLabelText(/receipt date/i), {
@@ -125,7 +144,9 @@ describe('DocketSwitchReviewRequestForm', () => {
 
       // Wait for docketType to show up
       await waitFor(() => {
-        expect(screen.getByRole('radio', { name: /direct review/i })).toBeInTheDocument();
+        expect(
+          screen.getByRole('radio', { name: /direct review/i })
+        ).toBeInTheDocument();
       });
 
       //   Set docketType
@@ -149,7 +170,7 @@ describe('DocketSwitchReviewRequestForm', () => {
       await userEvent.click(submit);
 
       await waitFor(() => {
-        expect(onSubmit).toHaveBeenCalled()
+        expect(onSubmit).toHaveBeenCalled();
       });
     });
   });

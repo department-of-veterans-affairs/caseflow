@@ -24,6 +24,7 @@ import {
   featureToggleReducer,
   mapDataToFeatureToggle,
 } from './reducers/featureToggles';
+import addClaimantReducer from './reducers/addClaimantSlice';
 import ReduxBase from '../components/ReduxBase';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -35,6 +36,7 @@ export const reducer = combineReducers({
   higherLevelReview: higherLevelReviewReducer,
   appeal: appealReducer,
   featureToggles: featureToggleReducer,
+  addClaimantSlice: addClaimantReducer,
 });
 
 export const generateInitialState = (props) => ({

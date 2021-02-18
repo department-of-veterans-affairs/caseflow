@@ -1,8 +1,9 @@
 const webpack = require('webpack');
 const path = require('path');
-const _ = require('lodash');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const devBuild = process.env.NODE_ENV !== 'production'; // eslint-disable-line no-process-env
+const testBuild = process.env.NODE_ENV === 'test'; // eslint-disable-line no-process-env
 
 const config = {
   mode: devBuild ? 'development' : 'production',
@@ -10,11 +11,30 @@ const config = {
   output: {
     filename: 'webpack-bundle.js',
     sourceMapFilename: 'sourcemap-[file].map',
-    path: path.join(__dirname, '../app/assets/javascripts')
+    path: path.join(__dirname, '../app/assets/javascripts'),
+    publicPath: 'http://localhost:3500/',
   },
-  plugins: _.compact([
-    new webpack.EnvironmentPlugin({ NODE_ENV: 'development' })
-  ]),
+  plugins: [
+    new webpack.EnvironmentPlugin({ NODE_ENV: 'development' }),
+    devBuild && new webpack.HotModuleReplacementPlugin(),
+    devBuild && !testBuild && new ReactRefreshWebpackPlugin(),
+  ].filter(Boolean),
+  devServer: {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': 'true',
+    },
+    hotOnly: true,
+    contentBase: './',
+    port: 3500,
+    proxy: {
+      '*': 'http://localhost:3500',
+    },
+    watchOptions: {
+      poll: true,
+      ignored: '/node_modules/',
+    },
+  },
   resolve: {
     extensions: ['.js', '.jsx', '.json'],
     alias: {
@@ -29,7 +49,7 @@ const config = {
       screens: path.resolve('app/2.0/screens'),
       components: path.resolve('app/2.0/components'),
       test: path.resolve('test'),
-    }
+    },
   },
   module: {
     rules: [
@@ -40,16 +60,23 @@ const config = {
         ),
         use: [
           {
-            loader: 'babel-loader'
-          }
-        ]
+            loader: 'babel-loader',
+            options: {
+              plugins: [
+                devBuild &&
+                  !testBuild &&
+                  require.resolve('react-refresh/babel'),
+              ].filter(Boolean),
+            },
+          },
+        ],
       },
       {
         test: /\.(ttf|eot|woff|woff2)$/,
         use: {
           loader:
-            'url-loader?limit=1024&name=fonts/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/'
-        }
+            'url-loader?limit=1024&name=fonts/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/',
+        },
       },
       {
         test: /\.((c|sa|sc)ss)$/i,
@@ -61,25 +88,25 @@ const config = {
               importLoaders: 1,
               modules: { auto: true },
               sourceMap: true,
-              localsConvention: 'camelCase'
-            }
+              localsConvention: 'camelCase',
+            },
           },
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: true
-            }
-          }
-        ]
+              sourceMap: true,
+            },
+          },
+        ],
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
         use: [
-          'url-loader?limit=1024&name=images/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/'
-        ]
-      }
-    ]
-  }
+          'url-loader?limit=1024&name=images/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/',
+        ],
+      },
+    ],
+  },
 };
 
 if (devBuild) {

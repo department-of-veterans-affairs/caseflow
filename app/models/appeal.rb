@@ -12,6 +12,7 @@ class Appeal < DecisionReview
   include PrintsTaskTree
   include HasTaskHistory
   include AppealAvailableHearingLocations
+  include HearingRequestTypeConcern
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -23,7 +24,7 @@ class Appeal < DecisionReview
   has_many :vbms_uploaded_documents
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
-  has_many :nod_date_updates, as: :appeal
+  has_many :nod_date_updates
 
   has_one :special_issue_list
   has_one :post_decision_motion
@@ -114,11 +115,8 @@ class Appeal < DecisionReview
         stream_docket_number: docket_number,
         established_at: Time.zone.now
       )).tap do |stream|
-        stream.create_claimant!(
-          participant_id: claimant.participant_id,
-          payee_code: claimant.payee_code,
-          type: claimant.type
-        )
+        stream.copy_claimants!(claimants)
+        stream.reload # so that stream.claimants returns updated list
       end
     end
   end
@@ -255,18 +253,6 @@ class Appeal < DecisionReview
            :available_hearing_locations,
            :email_address,
            :country, to: :veteran, prefix: true
-
-  def veteran_if_exists
-    @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
-  end
-
-  def veteran_closest_regional_office
-    veteran_if_exists&.closest_regional_office
-  end
-
-  def veteran_available_hearing_locations
-    veteran_if_exists&.available_hearing_locations
-  end
 
   def regional_office_key
     nil
@@ -546,30 +532,6 @@ class Appeal < DecisionReview
 
     false
   end
-
-  # Returns the hearing request type.
-  #
-  # @note See `LegacyAppeal#current_hearing_request_type` for more information.
-  #   This method is provided for compatibility.
-  def current_hearing_request_type(readable: false)
-    return nil if closest_regional_office.nil?
-
-    current_hearing_request_type = (closest_regional_office == "C") ? :central : :video
-
-    return current_hearing_request_type if !readable
-
-    # Determine type using closest_regional_office
-    # "Central" if closest_regional_office office is "C", "Video" otherwise
-    case current_hearing_request_type
-    when :central
-      Hearing::HEARING_TYPES[:C]
-    else
-      Hearing::HEARING_TYPES[:V]
-    end
-  end
-
-  alias original_hearing_request_type current_hearing_request_type
-  alias previous_hearing_request_type current_hearing_request_type
 
   private
 

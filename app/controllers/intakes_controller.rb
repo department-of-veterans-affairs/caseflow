@@ -73,7 +73,7 @@ class IntakesController < ApplicationController
 
   def attorneys
     results = AttorneySearch.new(params[:query]).fetch_attorneys.map do |attorney|
-      attorney.as_json.extract!("name", "participant_id")
+      attorney.as_json.extract!("name", "participant_id").merge("address": attorney.address.as_json)
     end
     render json: results
   end

@@ -17,7 +17,7 @@ class CavcRemand < CaseflowRecord
   validates :represented_by_attorney, inclusion: { in: [true, false] }
   validates :cavc_judge_full_name, inclusion: { in: Constants::CAVC_JUDGE_FULL_NAMES }
   validates :remand_subtype, presence: true, if: :remand?
-  validates :judgement_date, :mandate_date, presence: true, unless: -> { remand? && mdr? }
+  validates :judgement_date, :mandate_date, presence: true, unless: :mandate_not_required?
   validate :decision_issue_ids_match_appeal_decision_issues, if: -> { remand? && jmr? }
 
   before_save :establish_appeal_stream, if: :cavc_remand_form_complete?
@@ -36,7 +36,25 @@ class CavcRemand < CaseflowRecord
     Constants.CAVC_REMAND_SUBTYPES.mdr.to_sym => Constants.CAVC_REMAND_SUBTYPES.mdr
   }
 
+  def update(params)
+    if already_has_mandate?
+      fail Caseflow::Error::CannotUpdateMandatedRemands
+    end
+
+    update_with_instructions(params)
+    end_mandate_hold
+  end
+
   private
+
+  def update_with_instructions(params)
+    params[:instructions] = flattened_instructions(params)
+    update!(params)
+  end
+
+  def flattened_instructions(params)
+    instructions + " - " + params.dig(:instructions).presence
+  end
 
   def decision_issue_ids_match_appeal_decision_issues
     unless (source_appeal.decision_issues.map(&:id) - decision_issue_ids).empty?
@@ -45,18 +63,37 @@ class CavcRemand < CaseflowRecord
   end
 
   def cavc_remand_form_complete?
-    return valid? if mdr?
+    valid? && (mandate_not_required? || (!mandate_date.nil? && !judgement_date.nil?))
+  end
 
-    valid? && !mandate_date.nil? && !judgement_date.nil?
+  def already_has_mandate?
+    !!mandate_date
+  end
+
+  def mandate_not_required?
+    straight_reversal? || death_dismissal? || (remand? && mdr?)
   end
 
   def establish_appeal_stream
-    self.remand_appeal = source_appeal.create_stream(:court_remand).tap do |cavc_appeal|
+    self.remand_appeal ||= source_appeal.create_stream(:court_remand).tap do |cavc_appeal|
       DecisionIssue.find(decision_issue_ids).map do |cavc_remanded_issue|
         cavc_remanded_issue.create_contesting_request_issue!(cavc_appeal)
       end
       AdvanceOnDocketMotion.copy_granted_motions_to_appeal(source_appeal, cavc_appeal)
-      InitialTasksFactory.new(cavc_appeal).create_root_and_sub_tasks!
+      InitialTasksFactory.new(cavc_appeal, self).create_root_and_sub_tasks!
     end
+  end
+
+  def end_mandate_hold
+    if remand? && mdr?
+      SendCavcRemandProcessedLetterTask.create!(appeal: remand_appeal, parent: cavc_task)
+      MdrTask.find_by(appeal_id: remand_appeal_id).descendants.each(&:completed!)
+    elsif straight_reversal? || death_dismissal?
+      CavcTask.find_by(appeal_id: remand_appeal_id).descendants.each(&:completed!)
+    end
+  end
+
+  def cavc_task
+    CavcTask.open.find_by(appeal_id: remand_appeal_id)
   end
 end

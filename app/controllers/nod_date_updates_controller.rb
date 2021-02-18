@@ -3,10 +3,20 @@
 # Controller to edit NOD dates and store the related info in the nod_date_updates table
 
 class NodDateUpdatesController < ApplicationController
+  include ValidationConcern
+
+  before_action :react_routed
+
+  validates :update, using: NodDateUpdatesSchemas.update
   def update
     nod_date_update = NodDateUpdate.create!(updated_params)
     appeal.update_receipt_date!(receipt_date: params[:receipt_date])
-    render json: { nod_date_update: nod_date_update }, status: :created
+    render json: {
+      nodDate: appeal.receipt_date,
+      docketNumber: appeal.docket_number,
+      changeReason: nod_date_update.change_reason,
+      nodDateUpdate: WorkQueue::NodDateUpdateSerializer.new(nod_date_update).serializable_hash[:data][:attributes]
+    }, status: :created
   end
 
   private
@@ -21,7 +31,7 @@ class NodDateUpdatesController < ApplicationController
       appeal_id: appeal.id,
       old_date: appeal.receipt_date,
       new_date: params["receipt_date"],
-      change_reason: params["change_reason"]["value"]
+      change_reason: params["change_reason"]
     )
     params.permit(required_params)
   end

@@ -1,15 +1,17 @@
 /* eslint-disable no-undefined */
 import React, { useState } from 'react';
 import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 
 import QueueFlowModal from './components/QueueFlowModal';
 import { requestPatch, showErrorMessage } from './uiReducer/uiActions';
+import { validateDateNotInFuture } from '../intake/util/issues';
 import DateSelector from '../components/DateSelector';
 import TextareaField from '../components/TextareaField';
 import Alert from '../components/Alert';
+import CAVC_DECISION_TYPES from '../../constants/CAVC_DECISION_TYPES';
 import COPY from '../../COPY';
 
 /**
@@ -20,14 +22,18 @@ import COPY from '../../COPY';
  *  - @param {Object}   history          Provided with react router to be able to route to another page upon success
  */
 
-const AddCavcDatesModal = ({ appealId, error, highlightInvalid, history }) => {
+const AddCavcDatesModal = ({ appealId, decisionType, error, highlightInvalid, history }) => {
 
   const [judgementDate, setJudgementDate] = useState(null);
   const [mandateDate, setMandateDate] = useState(null);
   const [instructions, setInstructions] = useState(undefined);
+  const dispatch = useDispatch();
 
-  const validJudgementDate = () => Boolean(judgementDate);
-  const validMandateDate = () => Boolean(mandateDate);
+  const straightReversalType = () => decisionType === CAVC_DECISION_TYPES.straight_reversal;
+  const deathDismissalType = () => decisionType === CAVC_DECISION_TYPES.death_dismissal;
+
+  const validJudgementDate = () => Boolean(judgementDate) && validateDateNotInFuture(judgementDate);
+  const validMandateDate = () => Boolean(mandateDate) && validateDateNotInFuture(mandateDate);
   const validInstructions = () => instructions?.length > 0;
 
   const validateForm = () => {
@@ -44,12 +50,20 @@ const AddCavcDatesModal = ({ appealId, error, highlightInvalid, history }) => {
       }
     };
 
-    const successMsg = {
-      title: COPY.CAVC_REMAND_CREATED_TITLE,
-      detail: COPY.CAVC_REMAND_CREATED_DETAIL
+    const successMsgDetail = () => {
+      if (straightReversalType() || deathDismissalType()) {
+        return COPY.CAVC_REMAND_READY_FOR_DISTRIBUTION_DETAIL;
+      }
+
+      return COPY.CAVC_REMAND_CREATED_DETAIL;
     };
 
-    requestPatch(`/appeals/${appealId}/cavc_remand`, payload, successMsg).
+    const successMsg = {
+      title: COPY.CAVC_REMAND_CREATED_TITLE,
+      detail: successMsgDetail()
+    };
+
+    dispatch(requestPatch(`/appeals/${appealId}/cavc_remand`, payload, successMsg)).
       then(() => {
         history.replace('/queue');
         resolve();
@@ -103,16 +117,19 @@ const AddCavcDatesModal = ({ appealId, error, highlightInvalid, history }) => {
 
 AddCavcDatesModal.propTypes = {
   appealId: PropTypes.string,
-  requestSave: PropTypes.func,
+  decisionType: PropTypes.string,
+  requestPatch: PropTypes.func,
   showErrorMessage: PropTypes.func,
   error: PropTypes.object,
   highlightInvalid: PropTypes.bool,
   history: PropTypes.object
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state, ownProps) => ({
   highlightInvalid: state.ui.highlightFormItems,
   error: state.ui.messages.error,
+  // eslint-disable-next-line camelcase
+  decisionType: state.queue.appealDetails[ownProps.appealId].cavcRemand?.cavc_decision_type
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

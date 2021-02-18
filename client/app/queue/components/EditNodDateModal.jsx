@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import Modal from 'app/components/Modal';
 import DateSelector from 'app/components/DateSelector';
@@ -9,14 +10,21 @@ import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { resetSuccessMessages, showSuccessMessage } from '../uiReducer/uiActions';
-import { editAppeal } from '../QueueActions';
+import { editAppeal, editNodDateUpdates } from '../QueueActions';
 import ApiUtil from '../../util/ApiUtil';
 import { sprintf } from 'sprintf-js';
 import { formatDateStr } from '../../util/DateUtil';
 import { appealWithDetailSelector } from '../selectors';
+import Alert from 'app/components/Alert';
 import SearchableDropdown from 'app/components/SearchableDropdown';
+import { marginTop } from '../constants';
 
-const changeReasons = [
+const alertStyling = css({
+  marginBottom: '2em',
+  '& .usa-alert-text': { lineHeight: '1' }
+});
+
+export const changeReasons = [
   { label: 'New Form/Information Received', value: 'new_info' },
   { label: 'Data Entry Error', value: 'entry_error' },
 ];
@@ -50,12 +58,17 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
     const payload = {
       data: {
         receipt_date: nodDate,
-        change_reason: reason
+        change_reason: reason.value
       }
     };
 
-    ApiUtil.patch(`/appeals/${appealId}/nod_date_update`, payload).then(() => {
-      dispatch(editAppeal(appealId, { nodDate, reason }));
+    ApiUtil.patch(`/appeals/${appealId}/nod_date_update`, payload).then((data) => {
+      dispatch(editAppeal(appealId, {
+        nodDate: data.body.nodDate,
+        docketNumber: data.body.docketNumber,
+        reason: data.body.changeReason
+      }));
+      dispatch(editNodDateUpdates(appealId, data.body.nodDateUpdate));
       dispatch(showSuccessMessage(successMessage));
       onSubmit?.();
       window.scrollTo(0, 0);
@@ -104,7 +117,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
 
       // For future disable use cases
       disabled: !formState.isValid,
-      onClick: () => handleSubmit(onSubmit)
+      onClick: () => onSubmit(nodDate, reason)
     }
   ];
 

@@ -11,20 +11,20 @@ RSpec.feature "Docket Switch", :all_dbs do
   after { FeatureToggle.disable!(:docket_switch) }
 
   let(:cotb_org) { ClerkOfTheBoard.singleton }
-  let(:receipt_date) { Time.zone.today - 20 }
+  let(:orig_receipt_date) { Time.zone.today - 20 }
   let(:appeal) do
-    create(:appeal, receipt_date: receipt_date)
+    create(:appeal, receipt_date: orig_receipt_date)
   end
 
   let!(:request_issues) do
-    3.times do
+    3.times do |index|
       create(
         :request_issue,
         :rating,
         decision_review: appeal,
         contested_rating_issue_reference_id: "def456",
         contested_rating_issue_profile_date: 10.days.ago,
-        contested_issue_description: "PTSD denied"
+        contested_issue_description: "PTSD denied #{(index + 65).chr}"
       )
     end
   end
@@ -91,6 +91,7 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       judge_task = DocketSwitchRulingTask.find_by(assigned_to: judge)
       expect(judge_task).to_not be_nil
+      expect(judge_task.parent.type).to eq RootTask.name
 
       # Switch to judge to verify instructions
       User.authenticate!(user: judge)
@@ -118,7 +119,7 @@ RSpec.feature "Docket Switch", :all_dbs do
     let(:hyperlink) { "https://example.com/file.txt" }
 
     # Checks granted, partially_granted, and denied dispositions
-    Constants::DOCKET_SWITCH.each_key do |disposition|
+    Constants::DOCKET_SWITCH_DISPOSITIONS.each_key do |disposition|
       context "given disposition #{disposition}" do
         it "creates the next docket switch task (granted or denied) assigned to a COTB attorney" do
           User.authenticate!(user: judge)
@@ -141,7 +142,7 @@ RSpec.feature "Docket Switch", :all_dbs do
           # Return back to user's queue
           expect(page).to have_current_path("/queue")
           # Success banner
-          disposition_type = Constants::DOCKET_SWITCH[disposition]["dispositionType"]
+          disposition_type = Constants::DOCKET_SWITCH_DISPOSITIONS[disposition]["dispositionType"]
           expect(page).to have_content(
             format(COPY::DOCKET_SWITCH_RULING_SUCCESS_TITLE, disposition_type.downcase, appeal.claimant.name)
           )
@@ -153,7 +154,7 @@ RSpec.feature "Docket Switch", :all_dbs do
           User.authenticate!(user: cotb_attorney)
           visit "/queue/appeals/#{appeal.uuid}"
           find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
-          judge_ruling_text = Constants::DOCKET_SWITCH[disposition]["judgeRulingText"]
+          judge_ruling_text = Constants::DOCKET_SWITCH_DISPOSITIONS[disposition]["judgeRulingText"]
 
           expect(page).to have_content "I am proceeding with a #{judge_ruling_text}"
           expect(page).to have_content "Signed ruling letter:\n#{hyperlink}"
@@ -217,7 +218,7 @@ RSpec.feature "Docket Switch", :all_dbs do
     let(:colocated_user) { create(:user) }
     let!(:colocated_staff) { create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
 
-    let!(:admin_action) do
+    let!(:existing_admin_action1) do
       create(
         :ama_colocated_task,
         :ihp,
@@ -226,9 +227,22 @@ RSpec.feature "Docket Switch", :all_dbs do
         assigned_to: colocated_user
       )
     end
+    let!(:existing_admin_action2) do
+      create(
+        :ama_colocated_task,
+        :foia,
+        appeal: appeal,
+        parent: root_task,
+        assigned_to: colocated_user
+      )
+    end
 
     let(:receipt_date) { Time.zone.today - 5.days }
     let(:context) { "Lorem ipsum dolor sit amet, consectetur adipiscing elit" }
+    let(:admin_action_instructions) { "Lorem ipsum dolor sit amet" }
+
+    let(:old_task_type) { "Evidence Submission" }
+    let(:new_task_type) { "Direct Review" }
 
     it "allows attorney to complete the docket switch grant" do
       User.authenticate!(user: cotb_attorney)
@@ -274,7 +288,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
     end
 
-    it "allows attorney to procced to the add task page" do
+    it "allows attorney to edit tasks and proceed to confirmation page" do
       User.authenticate!(user: cotb_attorney)
       visit "/queue/appeals/#{appeal.uuid}"
 
@@ -305,14 +319,17 @@ RSpec.feature "Docket Switch", :all_dbs do
         find("label", text: "Grant a partial switch").click
       end
       expect(page).to have_content("PTSD denied")
+
+      # With no issues yet selected, submit should be disabled
       expect(page).to have_button("Continue", disabled: true)
 
       # select issues
       within_fieldset("Select the issue(s) that are switching dockets:") do
-        find("label", text: "1. PTSD denied").click
+        find("label", text: "2. PTSD denied B").click
       end
       expect(page).to have_button("Continue", disabled: false)
       click_button(text: "Continue")
+
       # Takes user to add task page
       expect(page).to have_content("Switch Docket: Add/Remove Tasks")
       expect(page).to have_content("You are switching from Evidence Submission to Direct Review")
@@ -347,6 +364,58 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       expect(find_field("IHP", visible: false)).to be_checked
       expect(page).to_not have_content("Confirm removing task")
+
+      # Remove task again
+      within_fieldset("Please unselect any tasks you would like to remove:") do
+        find("label", text: "IHP").click
+      end
+
+      click_button(COPY::MODAL_CONFIRM_BUTTON)
+
+      # Verify it is showing the mandatory tasks section
+      within_fieldset("Task(s) that will automatically be created") do
+        expect(page).to have_content("Distribution Task")
+      end
+
+      # Add new Admin Action
+      click_button("+ Add task")
+      expect(page).to have_button("Continue", disabled: true)
+
+      # Ensure all admin actions are available and select "AOJ"
+      click_dropdown(text: "AOJ") do
+        visible_options = page.find_all(".cf-select__option")
+        expect(visible_options.length).to eq Constants::CO_LOCATED_ADMIN_ACTIONS.length
+      end
+
+      fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: admin_action_instructions
+
+      expect(page).to have_button("Continue", disabled: false)
+      click_button(text: "Continue")
+
+      # Should now be on confirmation page
+      expect(page).to have_current_path(
+        "/queue/appeals/#{appeal.uuid}/tasks/#{docket_switch_granted_task.id}/docket_switch/checkout/grant/confirm"
+      )
+
+      expect(page).to have_content COPY::DOCKET_SWITCH_GRANTED_CONFIRM_TITLE
+      expect(page).to have_content format(
+        COPY::DOCKET_SWITCH_GRANTED_CONFIRM_DESCRIPTION_A,
+        old_task_type,
+        new_task_type,
+        old_task_type,
+        new_task_type
+      )
+      expect(page).to have_content COPY::DOCKET_SWITCH_GRANTED_CONFIRM_DESCRIPTION_B
+
+      expect(page).to have_content appeal.veteran_full_name
+
+      # Partial switch should have this
+      expect(page).to have_content "Issues switched to new docket"
+
+      expect(page).to have_button("Confirm docket switch", disabled: false)
+
+      click_button(text: "Confirm docket switch")
+      # Add checks for post-submit
     end
   end
 end

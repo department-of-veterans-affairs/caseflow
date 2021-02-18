@@ -1,14 +1,14 @@
 import React from 'react';
-import { Route, MemoryRouter } from 'react-router';
+import { MemoryRouter } from 'react-router';
 
-import { AddClaimantPage } from './AddClaimantPage';
+import { AddPoaPage } from './AddPoaPage';
 
-import { PAGE_PATHS } from 'app/intake/constants';
 import ReduxBase from 'app/components/ReduxBase';
 import { reducer, generateInitialState } from 'app/intake';
+import { PAGE_PATHS } from '../constants';
 
 const RouterDecorator = (Story) => (
-  <MemoryRouter initialEntries={['/']}>
+  <MemoryRouter initialEntries={[PAGE_PATHS.ADD_POWER_OF_ATTORNEY]}>
     <Story />
   </MemoryRouter>
 );
@@ -20,8 +20,8 @@ const ReduxDecorator = (Story) => (
 );
 
 export default {
-  title: 'Intake/Add Claimant/AddClaimantPage',
-  component: AddClaimantPage,
+  title: 'Intake/Add Claimant/AddPoaPage',
+  component: AddPoaPage,
   decorators: [ReduxDecorator, RouterDecorator],
   parameters: {},
   argTypes: {
@@ -30,13 +30,13 @@ export default {
   },
 };
 
-const Template = (args) => <AddClaimantPage {...args} />;
+const Template = (args) => <AddPoaPage {...args} />;
 
 export const Basic = Template.bind({});
 
 Basic.parameters = {
   docs: {
     storyDescription:
-      'This is used to add claimants not already associated with the appeal',
+      'This is used to add Power of attorneys associated with the appeal',
   },
 };

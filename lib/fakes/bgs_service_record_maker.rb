@@ -21,13 +21,34 @@ class Fakes::BGSServiceRecordMaker
     CSV.foreach(csv_file_path, headers: true) do |row|
       row_hash = row.to_h
       file_number = row_hash["vbms_id"].chop
-      veteran = Veteran.find_by_file_number(file_number) || Generators::Veteran.build(file_number: file_number)
+      veteran = Veteran.find_by_file_number(file_number) ||
+                Generators::Veteran.build(map_corres_to_veteran(file_number))
 
       method_name = row_hash["bgs_key"]
 
       if method_name
         send(method_name.to_sym, veteran)
       end
+    end
+  end
+
+  # For veterans, maps attributes from VACOLS CORRES table to Veteran record
+  def map_corres_to_veteran(file_number)
+    vacols_case = VACOLS::Case.find_by(bfcorlid: "#{file_number}S")
+    corres = VACOLS::Correspondent.find_by(stafkey: vacols_case&.bfcorkey)
+    if corres&.susrtyp == "VETERAN"
+      {
+        file_number: file_number,
+        first_name: corres.snamef,
+        last_name: corres.snamel,
+        middle_name: corres.snamemi,
+        suffix_name: corres.ssalut
+        # See lib/generators/veteran.rb:12 for other attributes
+      }
+    else
+      {
+        file_number: file_number
+      }
     end
   end
 

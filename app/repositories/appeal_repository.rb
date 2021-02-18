@@ -109,8 +109,8 @@ class AppealRepository
         aod_and_rem_return = VACOLS::Case.where(bfkey: vacols_ids)
           .joins(VACOLS::Case::JOIN_AOD, VACOLS::Case::JOIN_REMAND_RETURN)
           .select("bfkey", "aod", "rem_return")
-          .each_with_object({}) do |row, memo|
-            memo[(row["bfkey"]).to_s] = row
+          .index_by do |row|
+            (row["bfkey"]).to_s
           end
 
         cases.map do |case_record|
@@ -316,6 +316,19 @@ class AppealRepository
 
     def withdraw_hearing!(appeal)
       appeal.case_record.update!(bfhr: "5", bfha: "5")
+    end
+
+    def update_vacols_hearing_request_type!(appeal, type)
+      case type
+      when VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:central]
+        # if we're switching to Central
+        # change bfhr: "1" and bfdocind: nil
+        appeal.case_record.update!(bfhr: "1", bfdocind: nil)
+      when VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:video]
+        # if we're switching to Video
+        # change bfhr: "2" and bfdocind: "V"
+        appeal.case_record.update!(bfhr: "2", bfdocind: "V")
+      end
     end
 
     def update_location_after_dispatch!(appeal:)
@@ -802,7 +815,7 @@ class AppealRepository
       # Only scheduled hearings need to be closed
       case_record.case_hearings.where(clsdate: nil, hearing_disp: nil).update_all(
         clsdate: VacolsHelper.local_time_with_utc_timezone,
-        hearing_disp: "C"
+        hearing_disp: VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:cancelled]
       )
     end
 

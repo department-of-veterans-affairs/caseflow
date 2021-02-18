@@ -13,6 +13,10 @@ module.exports = {
     '@storybook/addon-actions',
     '@storybook/addon-a11y'
   ],
+  reactOptions: {
+    fastRefresh: true,
+    strictMode: true,
+  },
   webpackFinal: (config) => {
     const customRules = custom.module.rules.filter((rule) => {
       return !rule.test.toString().includes('woff') && !rule.test.toString().includes('svg');

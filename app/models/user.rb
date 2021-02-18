@@ -62,6 +62,12 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     vacols_roles.include?("attorney")
   end
 
+  # Using "pure_judge" terminology from VACOLS::Staff
+  # This implementation relies on UserRepository#roles_based_on_staff_fields return values
+  def pure_judge_in_vacols?
+    vacols_roles.first == "judge"
+  end
+
   def judge_in_vacols?
     vacols_roles.include?("judge")
   end
@@ -124,8 +130,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_change_hearing_request_type?
-    (can?("Build HearSched") || can?("Edit HearSched")) &&
-      FeatureToggle.enabled?(:convert_travel_board_to_video_or_virtual, user: self)
+    can?("Build HearSched") || can?("Edit HearSched")
   end
 
   def vacols_uniq_id
@@ -431,17 +436,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def user_info
     @user_info ||= self.class.user_repository.user_info_from_vacols(css_id)
-  end
-
-  def get_appeal_stream_hearings(appeal_streams)
-    appeal_streams.reduce({}) do |acc, (appeal_id, appeals)|
-      acc[appeal_id] = appeal_hearings(appeals.map(&:id))
-      acc
-    end
-  end
-
-  def appeal_hearings(appeal_ids)
-    LegacyHearing.where(appeal_id: appeal_ids)
   end
 
   class << self
