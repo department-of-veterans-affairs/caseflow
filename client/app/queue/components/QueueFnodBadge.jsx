@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { DateString } from '../../util/DateUtil';
-import { tooltipListStyling } from './style'
+import { tooltipListStyling } from './style';
 import { connect } from 'react-redux';
 
 import FnodBadge from './FnodBadge';
