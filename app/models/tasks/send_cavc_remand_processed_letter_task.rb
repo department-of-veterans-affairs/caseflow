@@ -55,7 +55,7 @@ class SendCavcRemandProcessedLetterTask < Task
 
   def update_from_params(params, current_user)
     if params[:status] == "completed"
-      # Create ResponseWindowTask before completing this task so that parent CavcTask is remains on-hold
+      # Create ResponseWindowTask before completing this task so that parent CavcTask remains on-hold
       CavcRemandProcessedLetterResponseWindowTask.create_with_hold(ancestor_task_of_type(CavcTask))
     end
 

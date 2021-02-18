@@ -1,4 +1,8 @@
 import React from 'react';
+import { createStore, applyMiddleware } from 'redux';
+import rootReducer from '../../../app/queue/reducers';
+import thunk from 'redux-thunk';
+import { Provider } from 'react-redux';
 
 import FnodBadge from './FnodBadge';
 
@@ -10,14 +14,22 @@ export default {
   },
   args: {
     appeal: {
-      veteran_appellant_deceased: true,
-      date_of_death: '2019-03-17'
+      veteranAppellantDeceased: true,
+      veteranDateOfDeath: '2019-03-17'
+    },
+    featureToggles: {
+      fnod_badge: true
     },
   }
 };
 
+const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
+const store = getStore();
+
 const Template = (args) => (
-  <FnodBadge {...args} />
+  <Provider store={store}>
+    <FnodBadge {...args} />
+  </Provider>
 );
 
 export const FNODBadge = Template.bind({});

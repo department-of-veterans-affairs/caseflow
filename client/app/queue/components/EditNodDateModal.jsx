@@ -7,7 +7,7 @@ import DateSelector from 'app/components/DateSelector';
 import COPY from 'app/../COPY';
 import { useDispatch, useSelector } from 'react-redux';
 import { resetSuccessMessages, showSuccessMessage } from '../uiReducer/uiActions';
-import { editAppeal } from '../QueueActions';
+import { editAppeal, editNodDateUpdates } from '../QueueActions';
 import ApiUtil from '../../util/ApiUtil';
 import moment from 'moment';
 import { sprintf } from 'sprintf-js';
@@ -64,6 +64,7 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
         docketNumber: data.body.docketNumber,
         reason: data.body.changeReason
       }));
+      dispatch(editNodDateUpdates(appealId, data.body.nodDateUpdate));
       dispatch(showSuccessMessage(successMessage));
       onSubmit?.();
       window.scrollTo(0, 0);
