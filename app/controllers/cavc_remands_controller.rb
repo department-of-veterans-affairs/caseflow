@@ -5,6 +5,13 @@
 class CavcRemandsController < ApplicationController
   before_action :validate_cavc_remand_access
 
+  UPDATE_PARAMS = [
+    :instructions,
+    :judgement_date,
+    :mandate_date,
+    :remand_appeal_id
+  ].freeze
+
   REMAND_REQUIRED_PARAMS = [
     :source_appeal_id,
     :cavc_decision_type,
@@ -30,14 +37,15 @@ class CavcRemandsController < ApplicationController
   ].flatten.freeze
 
   def create
-    cavc_remand = CavcRemand.create!(create_params)
-    cavc_appeal = cavc_remand.remand_appeal.reload
-    render json: { cavc_remand: cavc_remand, cavc_appeal: cavc_appeal }, status: :created
+    new_cavc_remand = CavcRemand.create!(create_params)
+    cavc_appeal = new_cavc_remand.remand_appeal.reload
+    render json: { cavc_remand: new_cavc_remand, cavc_appeal: cavc_appeal }, status: :created
   end
 
-  #  def update
-  # only for mdr, not yet implemented
-  #  end
+  def update
+    cavc_remand.update(update_params)
+    render json: { cavc_remand: cavc_remand, cavc_appeal: cavc_remand.remand_appeal }, status: :ok
+  end
 
   private
 
@@ -45,11 +53,20 @@ class CavcRemandsController < ApplicationController
     @source_appeal ||= Appeal.find_by_uuid(params[:source_appeal_id])
   end
 
+  def cavc_remand
+    @cavc_remand ||= CavcRemand.find_by(remand_appeal_id: Appeal.find_by(uuid: params[:appeal_id]).id)
+  end
+
   def validate_cavc_remand_access
     unless CavcLitigationSupport.singleton.user_has_access?(current_user)
       msg = "Only CAVC Litigation Support users can create CAVC Remands"
       fail Caseflow::Error::ActionForbiddenError, message: msg
     end
+  end
+
+  def update_params
+    params.require(UPDATE_PARAMS)
+    params.permit(UPDATE_PARAMS).reject { |param| param == "remand_appeal_id" }
   end
 
   def create_params
