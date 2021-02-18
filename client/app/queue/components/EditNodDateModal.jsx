@@ -66,22 +66,10 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
         docketNumber: data.body.docketNumber,
         reason: data.body.changeReason
       }));
-<<<<<<< HEAD
-
-      if (data.body.errors) {
-        setTimelinessError(true);
-      } else {
-        dispatch(editNodDateUpdates(appealId, data.body.nodDateUpdate));
-        dispatch(showSuccessMessage(successMessage));
-        onSubmit?.();
-        window.scrollTo(0, 0);
-      }
-=======
       dispatch(editNodDateUpdates(appealId, data.body.nodDateUpdate));
       dispatch(showSuccessMessage(successMessage));
       onSubmit?.();
       window.scrollTo(0, 0);
->>>>>>> c2a8830812c57fd9f585889652dd6072898460f0
     });
   };
 
