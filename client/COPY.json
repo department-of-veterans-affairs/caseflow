@@ -150,6 +150,7 @@
   "CAVC_MANDATE_DATE": "What is the Court's mandate date?",
   "CAVC_MANDATE_DATE_ERROR": "Please select a valid mandate date.",
   "CAVC_ISSUES_LABEL": "Which issues are being addressed by the court?",
+  "CAVC_NO_ISSUES_ERROR": "Please select at least one of the issues to proceed",
   "CAVC_INSTRUCTIONS_LABEL": "Provide context and instructions for this action",
   "CAVC_INSTRUCTIONS_ERROR": "Please provide context and instructions for the remand",
   "CAVC_REMAND_CREATED_TITLE": "You have successfully created a CAVC remand case",

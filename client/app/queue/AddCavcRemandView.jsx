@@ -132,16 +132,18 @@ const AddCavcRemandView = (props) => {
   const validDocketNumber = () => (/^\d{2}-\d{1,5}$/).exec(docketNumber);
   const validJudge = () => Boolean(judge);
   const validDecisionDate = () => Boolean(decisionDate) && validateDateNotInFuture(decisionDate);
-  const mandateNotRequired = () => !mandateAvailable || mdrSubtype();
+  const validDecisionIssues = () => deathDismissalType() || (!deathDismissalType() && selectedIssues.length > 0);
+  const validInstructions = () => instructions && instructions.length > 0;
+  const mandateNotRequired = () => !mandateAvailable || mdrSubtype() ||
+  ((straightReversalType() || deathDismissalType()) && (isMandateProvided === 'false'));
   const validJudgementDate = () => {
     return (Boolean(judgementDate) && validateDateNotInFuture(judgementDate)) || mandateNotRequired();
   };
   const validMandateDate = () => (Boolean(mandateDate) && validateDateNotInFuture(mandateDate)) || mandateNotRequired();
-  const validInstructions = () => instructions && instructions.length > 0;
 
   const validateForm = () => {
     return validDocketNumber() && validJudge() && validDecisionDate() && validJudgementDate() && validMandateDate() &&
-      validInstructions();
+      validInstructions() && validDecisionIssues();
   };
 
   const mandateDatesPopulated = () => {
@@ -272,10 +274,6 @@ const AddCavcRemandView = (props) => {
     strongLabel
   />;
 
-  const mdrBanner = <Alert type="info" scrollOnAlert={false}>{COPY.MDR_SELECTION_ALERT_BANNER}</Alert>;
-
-  const noMandateBanner = <Alert type="info" scrollOnAlert={false}>{COPY.CAVC_REMAND_NO_MANDATE_TEXT}</Alert>;
-
   const judgementField = <DateSelector
     label={COPY.CAVC_JUDGEMENT_DATE}
     type="date"
@@ -308,6 +306,7 @@ const AddCavcRemandView = (props) => {
       options={issueOptions()}
       values={issues}
       onChange={(val) => onIssueChange(val)}
+      errorMessage={highlightInvalid && !validDecisionIssues() ? COPY.CAVC_NO_ISSUES_ERROR : null}
     />
   </React.Fragment>;
 
@@ -319,6 +318,10 @@ const AddCavcRemandView = (props) => {
     errorMessage={highlightInvalid && !validInstructions() ? COPY.CAVC_INSTRUCTIONS_ERROR : null}
     strongLabel
   />;
+
+  const mdrBanner = <Alert type="info" scrollOnAlert={false}>{COPY.MDR_SELECTION_ALERT_BANNER}</Alert>;
+
+  const noMandateBanner = <Alert type="info" scrollOnAlert={false}>{COPY.CAVC_REMAND_NO_MANDATE_TEXT}</Alert>;
 
   return (
     <QueueFlowPage
@@ -343,7 +346,7 @@ const AddCavcRemandView = (props) => {
       {mandateAvailable() && judgementField }
       {mandateAvailable() && mandateField }
       {!mandateAvailable() && type !== CAVC_DECISION_TYPES.remand && noMandateBanner }
-      {issuesField}
+      {!deathDismissalType() && issuesField}
       {instructionsField}
     </QueueFlowPage>
   );

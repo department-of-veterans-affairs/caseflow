@@ -51,11 +51,11 @@ describe('AddCavcRemandView', () => {
   });
 
   it('selects all issues on page load', () => {
-    const descisionIssues = amaAppeal.decisionIssues;
+    const decisionIssues = amaAppeal.decisionIssues;
     const cavcForm = setup({ appealId });
     const decisionIssueChecks = cavcForm.find(CheckboxGroup).props().values;
 
-    expect(descisionIssues.map((issue) => issue.id).every((id) => decisionIssueChecks[id])).toBeTruthy();
+    expect(decisionIssues.map((issue) => issue.id).every((id) => decisionIssueChecks[id])).toBeTruthy();
   });
 
   describe('Are judgement and mandate dates provided?', () => {
@@ -105,7 +105,7 @@ describe('AddCavcRemandView', () => {
       });
     });
 
-    describe('dismisal_cavc_remand', () => {
+    describe('dismissal_cavc_remand', () => {
       it('hides dismissal when not toggled', () => {
         const cavcForm = setup({ appealId, dismissalToggled: false });
 
