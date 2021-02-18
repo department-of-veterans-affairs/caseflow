@@ -175,7 +175,7 @@ describe HearingRequestTypeConcern do
       end
     end
 
-    context "#readable_hearing_request_type_for_task" do
+    context "#readable_previous_hearing_request_type_for_task and #readable_current_hearing_request_type_for_task" do
       let!(:appeal) do
         create(
           :legacy_appeal,
@@ -212,14 +212,14 @@ describe HearingRequestTypeConcern do
         it "returns changed request type if version is `current`" do
           expect(ChangeHearingRequestTypeTask.count).to eq(1)
           change_request_type_task = appeal.tasks.find_by(type: "ChangeHearingRequestTypeTask")
-          current_type = appeal.readable_hearing_request_type_for_task(change_request_type_task.id, :current)
+          current_type = appeal.readable_current_hearing_request_type_for_task(change_request_type_task.id)
           expect(current_type).to eq(LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:virtual])
         end
 
         it "returns the original request type if version is `prev`" do
           expect(ChangeHearingRequestTypeTask.count).to eq(1)
           change_request_type_task = appeal.tasks.find_by(type: "ChangeHearingRequestTypeTask")
-          current_type = appeal.readable_hearing_request_type_for_task(change_request_type_task.id, :prev)
+          current_type = appeal.readable_previous_hearing_request_type_for_task(change_request_type_task.id)
           expect(current_type).to eq(LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:travel_board])
         end
       end
@@ -264,9 +264,9 @@ describe HearingRequestTypeConcern do
 
           # Set the changed request types
           first_request_type = appeal
-            .readable_hearing_request_type_for_task(change_request_type_tasks.first.id, :current)
+            .readable_current_hearing_request_type_for_task(change_request_type_tasks.first.id)
           second_request_type = appeal
-            .readable_hearing_request_type_for_task(change_request_type_tasks.last.id, :current)
+            .readable_current_hearing_request_type_for_task(change_request_type_tasks.last.id)
 
           expect(first_request_type).to eq(LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:central])
           expect(second_request_type).to eq(LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:video])
@@ -279,19 +279,30 @@ describe HearingRequestTypeConcern do
 
           # Set the changed request types
           first_request_type = appeal
-            .readable_hearing_request_type_for_task(change_request_type_tasks.first.id, :prev)
+            .readable_previous_hearing_request_type_for_task(change_request_type_tasks.first.id)
           second_request_type = appeal
-            .readable_hearing_request_type_for_task(change_request_type_tasks.last.id, :prev)
+            .readable_previous_hearing_request_type_for_task(change_request_type_tasks.last.id)
 
           expect(first_request_type).to eq(LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:travel_board])
           expect(second_request_type).to eq(LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:central])
+        end
+
+        context "when a task id that's not on the appeal is passed" do
+          it "returns the original request type" do
+            bad_task_id = appeal.tasks.order(:id).pluck(:id).last + 1
+            previous_request_type = appeal.readable_previous_hearing_request_type_for_task(bad_task_id)
+            current_request_type = appeal.readable_current_hearing_request_type_for_task(bad_task_id)
+            expect(previous_request_type).to eq LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:travel_board]
+            expect(current_request_type).to eq LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[:travel_board]
+          end
         end
       end
 
       context "when paper trail event is nil" do
         let(:vacols_case) { create(:case, :central_office_hearing) }
 
-        it { expect(appeal.readable_hearing_request_type_for_task(nil, nil)).to eq(nil) }
+        it { expect(appeal.readable_previous_hearing_request_type_for_task(nil)).to eq(nil) }
+        it { expect(appeal.readable_current_hearing_request_type_for_task(nil)).to eq(nil) }
       end
     end
   end

@@ -56,22 +56,36 @@ module HearingRequestTypeConcern
     LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[current_hearing_request_type]
   end
 
-  def readable_hearing_request_type_for_task(task_id, version)
-    return nil if task_id.nil?
+  def readable_previous_hearing_request_type_for_task(task_id)
+    return nil if task_id.blank?
 
-    request_type_index = tasks.where(type: "ChangeHearingRequestTypeTask").order(:id).map(&:id).index(task_id)
+    previous_request_type = previous_hearing_request_type_for_task(task_id)
+    LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[previous_request_type]
+  end
 
-    diff = versions[request_type_index].changeset["changed_request_type"]
-    versioned_request_type = (version == :prev) ? diff&.first : diff&.last
+  def readable_current_hearing_request_type_for_task(task_id)
+    return nil if task_id.blank?
 
-    # Format the request type into a symbol, or retrieve the original request type
-    formatted_request_type = format_or_formatted_original_request_type(versioned_request_type)
-
-    # Return the human readable request type or the symbol of request type
-    LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[formatted_request_type]
+    current_request_type = current_hearing_request_type_for_task(task_id)
+    LegacyAppeal::READABLE_HEARING_REQUEST_TYPES[current_request_type]
   end
 
   private
+
+  def previous_hearing_request_type_for_task(task_id)
+    format_or_formatted_original_request_type(changeset_at_index_for_task(task_id)&.first)
+  end
+
+  def current_hearing_request_type_for_task(task_id)
+    format_or_formatted_original_request_type(changeset_at_index_for_task(task_id)&.last)
+  end
+
+  def changeset_at_index_for_task(task_id)
+    request_type_index = tasks.where(type: "ChangeHearingRequestTypeTask").order(:id).map(&:id).index(task_id)
+    return nil if request_type_index.blank?
+
+    versions[request_type_index].changeset["changed_request_type"]
+  end
 
   def format_or_formatted_original_request_type(request_type)
     if request_type.present?
