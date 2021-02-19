@@ -394,13 +394,12 @@ class Appeal < DecisionReview
 
     return if affected_issues.blank?
 
-    timeliness_error = {
-      message: "Timeliness of one or more issues is affected by NOD date change",
+    timeliness_issues_report = {
       affected_issues: affected_issues,
       unaffected_issues: unaffected_issues
     }
 
-    return timeliness_error
+    timeliness_issues_report
   end
 
   # Currently AMA only supports one claimant per decision review
