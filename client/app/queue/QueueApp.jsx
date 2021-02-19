@@ -1043,7 +1043,7 @@ QueueApp.propTypes = {
   userCanViewHearingSchedule: PropTypes.bool,
   userCanViewOvertimeStatus: PropTypes.bool,
   userCanViewEditNodDate: PropTypes.bool,
-  userCanScheduleHearings: PropTypes.bool,
+  userCanAssignHearingSchedule: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
