@@ -1,13 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import ProgressBarSection from './ProgressBarSection';
 
 export default class ProgressBar extends React.Component {
   render() {
-    let { sections } = this.props;
+    const { sections } = this.props;
 
-    let currentSectionIndex = this.props.sections.findIndex(
+    const currentSectionIndex = this.props.sections.findIndex(
       (section) => section.current === true
     );
 
