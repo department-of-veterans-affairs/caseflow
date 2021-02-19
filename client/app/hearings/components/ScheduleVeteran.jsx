@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
 import { sprintf } from 'sprintf-js';
@@ -26,13 +26,13 @@ import {
   onReceiveTransitioningAlert,
   transitionAlert,
   startPollingHearing,
+  setScheduledHearing
 } from '../../components/common/actions';
 import { ScheduleVeteranForm } from './ScheduleVeteranForm';
 import ApiUtil from '../../util/ApiUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 export const ScheduleVeteran = ({
-  scheduleHearingTask,
   history,
   error,
   assignHearingForm,
@@ -40,6 +40,7 @@ export const ScheduleVeteran = ({
   openHearing,
   appeal,
   scheduledHearing,
+  taskId,
   ...props
 }) => {
   // Create and manage the loading state
@@ -73,13 +74,10 @@ export const ScheduleVeteran = ({
     VIDEO_HEARING_LABEL;
 
   // Determine whether we are rescheduling
-  const reschedule = scheduledHearing?.action === 'reschedule';
+  const reschedule = scheduledHearing?.action === 'reschedule' || props.params?.action === 'reschedule';
 
   // Determine what disposition to assign for previous hearing
   const prevHearingDisposition = scheduledHearing?.disposition;
-
-  // Set the task ID
-  const taskId = scheduleHearingTask ? scheduleHearingTask.taskId : scheduledHearing?.taskId;
 
   // Create a hearing object for the form
   const hearing = {
@@ -115,6 +113,18 @@ export const ScheduleVeteran = ({
   useEffect(() => {
     if (appeal?.readableHearingRequestType === VIRTUAL_HEARING_LABEL) {
       props.onChangeFormData('assignHearing', { virtualHearing: { status: 'pending' } });
+    }
+
+    if (props.params?.action && props.params?.disposition) {
+      props.setScheduledHearing({
+        action: props.params.action,
+        disposition: props.params.disposition,
+        taskId
+      });
+    } else {
+      props.setScheduledHearing({
+        taskId
+      });
     }
 
     return reset;
@@ -209,6 +219,13 @@ export const ScheduleVeteran = ({
         regionalOffice: hearing.regionalOffice || hearing.virtualHearing ? null : 'Please select a Regional Office '
       };
 
+      // Prevent submitting the form with a null appellant email
+      if (hearing.virtualHearing && !hearing.virtualHearing.appellantEmail) {
+        document.getElementById('email-section').scrollIntoView();
+
+        return setErrors({ appellantEmail: 'Appellant email is required' });
+      }
+
       // First validate the form
       if ((openHearing && !reschedule) || Object.values(formErrors).filter((err) => err !== null).length > 0) {
         return setErrors(formErrors);
@@ -302,7 +319,10 @@ export const ScheduleVeteran = ({
   const headerStyle = virtual ? setMargin('0 0 0.75rem 0') : setMargin(0);
   const helperTextStyle = virtual ? setMargin('0 0 2rem 0') : setMargin(0);
 
-  return (
+  // This protects against users navigating directly to this page without the correct data in the store
+  return scheduledHearing?.taskId && !scheduledHearing?.action ? (
+    <Redirect to={`/queue/appeals/${props.appealId}`} />
+  ) : (
     <div {...regionalOfficeSection}>
       <AppSegment filledBackground >
         <h1 {...headerStyle}>{header}</h1>
@@ -358,7 +378,11 @@ export const ScheduleVeteran = ({
 };
 
 ScheduleVeteran.propTypes = {
+  setScheduledHearing: PropTypes.func,
+  taskId: PropTypes.string,
+  action: PropTypes.string,
   appeals: PropTypes.object,
+  params: PropTypes.object,
   // Router inherited props
   history: PropTypes.object,
   appealId: PropTypes.string,
@@ -408,7 +432,7 @@ const mapStateToProps = (state, ownProps) => ({
     appealId: ownProps.appealId,
   })[0],
   openHearing: find(
-    appealWithDetailSelector(state, ownProps).hearings,
+    appealWithDetailSelector(state, ownProps)?.hearings,
     (hearing) => hearing.disposition === null
   ),
   assignHearingForm: state.components.forms.assignHearing,
@@ -430,6 +454,7 @@ const mapDispatchToProps = (dispatch) =>
       requestPatch,
       startPollingHearing,
       onReceiveAppealDetails,
+      setScheduledHearing
     },
     dispatch
   );
