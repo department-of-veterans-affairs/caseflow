@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
+import { camelCase, reduce, startCase } from 'lodash';
+
+import ApiUtil from 'app/util/ApiUtil';
 
 const dropdownOptSchema = yup.object().shape({
   label: yup.string().required(),
@@ -80,6 +83,31 @@ export const useAddClaimantForm = () => {
   });
 
   return methods;
+};
+
+export const formatAddress = (bgsAddress) => {
+  return reduce(
+    bgsAddress,
+    (result, value, key) => {
+      result[key] = startCase(camelCase(value));
+      if (['state', 'country'].includes(key)) {
+        result[key] = value;
+      } else {
+        result[key] = startCase(camelCase(value));
+      }
+
+      return result;
+    },
+    {}
+  );
+};
+
+export const fetchAttorneys = async (search = '') => {
+  const res = await ApiUtil.get('/intake/attorneys', {
+    query: { query: search },
+  });
+
+  return res?.body;
 };
 
 export const claimantPropTypes = {
