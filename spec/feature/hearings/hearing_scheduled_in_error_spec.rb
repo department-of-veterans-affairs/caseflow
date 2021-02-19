@@ -53,7 +53,7 @@ RSpec.feature "Remove hearing scheduled in error" do
       create(:hearing, appeal: appeal, hearing_day: video_hearing_day, notes: hearing_notes)
     end
 
-    let(:hearing_class) { Hearing.name.constantize }
+    let(:hearing_class) { Hearing }
   end
 
   shared_context "form data" do
