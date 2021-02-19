@@ -329,7 +329,7 @@ class QueueApp extends React.PureComponent {
 
     return (
       <PrivateRoute
-        authorized={this.props.userCanScheduleHearings}
+        authorized={this.props.userCanAssignHearingSchedule}
         redirectTo={`/queue/appeals/${props.match.params.appealId}`}
       >
         {params.action === 'reschedule' ? (
