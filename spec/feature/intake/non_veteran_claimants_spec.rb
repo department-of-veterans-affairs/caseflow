@@ -169,7 +169,13 @@ feature "Non-veteran claimants", :postgres do
       fill_in("State", with: "California").send_keys :enter
       fill_in("Zip", with: "12345").send_keys :enter
       fill_in("Country", with: "United States").send_keys :enter
+
       expect(page).to have_button("Continue to next step", disabled: false)
+      click_button "Continue to next step"
+
+      submit_confirmation_modal
+
+      expect(page).to have_current_path("/intake/add_issues")
     end
   end
 
