@@ -103,20 +103,22 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
   const [badDate, setBadDate] = useState(null);
   const [badReason, setBadReason] = useState(true);
 
-  const buttons = [
-    {
+  const buttons = [];
+
+  if (!showTimelinessError) {
+    buttons.push({
       classNames: ['cf-modal-link', 'cf-btn-link'],
       name: 'Cancel',
-      onClick: onCancel,
-      disabled: showTimelinessError
-    },
-    {
-      classNames: ['usa-button', 'usa-button-primary'],
-      name: showTimelinessError ? 'Close' : 'Submit',
-      disabled: (badDate || badReason),
-      onClick: showTimelinessError ? onCancel : () => onSubmit(receiptDate, changeReason)
-    }
-  ];
+      onClick: onCancel
+    });
+  }
+
+  buttons.push({
+    classNames: ['usa-button', 'usa-button-primary'],
+    name: showTimelinessError ? 'Close' : 'Submit',
+    disabled: (badDate || badReason),
+    onClick: showTimelinessError ? onCancel : () => onSubmit(receiptDate, changeReason)
+  });
 
   const isFutureDate = (newDate) => {
     const today = new Date();
@@ -177,13 +179,13 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
 
   if (showTimelinessError) {
     modalContent = <div>      
-      {/* { showTimelinessError ? <Alert
+      { showTimelinessError ? <Alert
         message={COPY.EDIT_NOD_DATE_TIMELINESS_ERROR_MESSAGE}
         styling={alertStyling}
         title={COPY.EDIT_NOD_DATE_TIMELINESS_ALERT_TITLE}
         type="error"
         scrollOnAlert={false}
-      /> : null } */}
+      /> : null }
 
       <strong>Affected Issue (s)</strong>
       <ul className="cf-error">
