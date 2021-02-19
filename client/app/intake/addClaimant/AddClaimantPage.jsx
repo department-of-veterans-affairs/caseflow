@@ -63,7 +63,7 @@ export const AddClaimantPage = () => {
 
   const handleBack = () => goBack();
 
-  const methods = useAddClaimantForm();
+  const methods = useAddClaimantForm({ defaultValues: claimant });
   const {
     formState: { isValid },
     handleSubmit,

@@ -6,6 +6,7 @@ import * as yup from 'yup';
 import { camelCase, reduce, startCase } from 'lodash';
 
 import ApiUtil from 'app/util/ApiUtil';
+import { STATES } from 'app/constants/AppConstants';
 
 const dropdownOptSchema = yup.object().shape({
   label: yup.string().required(),
@@ -75,11 +76,14 @@ export const schema = yup.object().shape({
   vaForm: yup.string().required(),
 });
 
-export const useAddClaimantForm = () => {
+export const useAddClaimantForm = ({ defaultValues = {} } = {}) => {
   const methods = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
-    defaultValues: {},
+    defaultValues: {
+      ...defaultValues,
+      state: STATES.find((state) => state.label === defaultValues?.state),
+    },
   });
 
   return methods;

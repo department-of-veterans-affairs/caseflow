@@ -55,7 +55,13 @@ const getAttorneyClaimantOpts = async (search = '', asyncFn) => {
 const filterOption = () => true;
 
 export const AddPoaPage = () => {
-  const methods = useAddPoaForm();
+  const { goBack, push } = useHistory();
+  const dispatch = useDispatch();
+
+  const [confirmModal, setConfirmModal] = useState(false);
+  const { claimant, poa } = useSelector((state) => state.addClaimant);
+
+  const methods = useAddPoaForm({ defaultValues: poa });
   const {
     control,
     register,
@@ -63,12 +69,6 @@ export const AddPoaPage = () => {
     formState: { isValid },
     handleSubmit,
   } = methods;
-
-  const { goBack, push } = useHistory();
-  const dispatch = useDispatch();
-
-  const [confirmModal, setConfirmModal] = useState(false);
-  const { claimant, poa } = useSelector((state) => state.addClaimant);
 
   /* eslint-disable no-unused-vars */
   // This code will likely be needed in submission (see handleConfirm)

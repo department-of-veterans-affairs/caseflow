@@ -2,6 +2,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
+import { STATES } from 'app/constants/AppConstants';
+
 export const schema = yup.object().shape({
   partyType: yup.string().when('listedAttorney', {
     is: (value) =>
@@ -48,11 +50,14 @@ export const schema = yup.object().shape({
   phoneNumber: yup.string(),
 });
 
-export const useAddPoaForm = () => {
+export const useAddPoaForm = ({ defaultValues = {} } = {}) => {
   const methods = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
-    defaultValues: {},
+    defaultValues: {
+      ...defaultValues,
+      state: STATES.find((state) => state.label === defaultValues?.state),
+    },
   });
 
   return methods;
