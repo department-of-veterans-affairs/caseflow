@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { FormProvider, Controller } from 'react-hook-form';
 import { useAddPoaForm } from './utils';
 import { ADD_CLAIMANT_POA_PAGE_DESCRIPTION } from 'app/../COPY';
@@ -7,7 +7,7 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 import { AddClaimantButtons } from '../addClaimant/AddClaimantButtons';
 import styled from 'styled-components';
 import { useHistory } from 'react-router';
-import { debounce } from 'lodash';
+import { camelCase, debounce } from 'lodash';
 import ApiUtil from '../../util/ApiUtil';
 import RadioField from 'app/components/RadioField';
 import Address from 'app/queue/components/Address';
@@ -17,6 +17,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { editPoaInformation } from 'app/intake/reducers/addClaimantSlice';
 import { AddClaimantConfirmationModal } from '../addClaimant/AddClaimantConfirmationModal';
 import { formatAddress } from '../addClaimant/utils';
+import { FORM_TYPES } from '../constants';
+// eslint-disable-next-line no-unused-vars
+import { submitReview } from '../actions/decisionReview';
 
 const partyTypeOpts = [
   { displayText: 'Organization', value: 'organization' },
@@ -67,9 +70,32 @@ export const AddPoaPage = () => {
   const [confirmModal, setConfirmModal] = useState(false);
   const { claimant, poa } = useSelector((state) => state.addClaimant);
 
+  /* eslint-disable no-unused-vars */
+  // This code will likely be needed in submission (see handleConfirm)
+  // Remove eslint-disable once used
+  const { formType, id: intakeId } = useSelector((state) => state.intake);
+  const intakeForms = useSelector(
+    ({ higherLevelReview, supplementalClaim, appeal }) => ({
+      appeal,
+      higherLevelReview,
+      supplementalClaim,
+    })
+  );
+
+  const selectedForm = useMemo(() => {
+    return Object.values(FORM_TYPES).find((item) => item.key === formType);
+  }, [formType]);
+  const intakeData = useMemo(() => {
+    return selectedForm ? intakeForms[camelCase(formType)] : null;
+  }, [intakeForms, formType, selectedForm]);
+  /* eslint-enable no-unused-vars */
+
   const toggleConfirm = () => setConfirmModal((val) => !val);
   const handleConfirm = () => {
-    push('/add_issues');
+    // TODO - trigger action to submit data to backend
+    // dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
+    // TODO - Redirect to next step (conditional on review type)
+    // push('/add_issues');
   };
 
   const onSubmit = (formData) => {
