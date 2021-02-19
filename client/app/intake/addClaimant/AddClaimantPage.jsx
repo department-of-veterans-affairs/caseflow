@@ -45,8 +45,9 @@ export const AddClaimantPage = () => {
   const handleConfirm = () => {
     // TODO - trigger action to submit data to backend
     // dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
-    // Redirect to next step (likely conditional on review type)
-    // push('/add_issues');
+
+    // Redirect to next step (likely needs conditional on review type)
+    push('/add_issues');
   };
 
   const onSubmit = (formData) => {

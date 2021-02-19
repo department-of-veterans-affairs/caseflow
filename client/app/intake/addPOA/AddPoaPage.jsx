@@ -64,7 +64,7 @@ export const AddPoaPage = () => {
     handleSubmit,
   } = methods;
 
-  const { goBack } = useHistory();
+  const { goBack, push } = useHistory();
   const dispatch = useDispatch();
 
   const [confirmModal, setConfirmModal] = useState(false);
@@ -94,8 +94,9 @@ export const AddPoaPage = () => {
   const handleConfirm = () => {
     // TODO - trigger action to submit data to backend
     // dispatch(submitReview(intakeId, intakeData, selectedForm.formName));
-    // TODO - Redirect to next step (conditional on review type); push comes from useHistory above
-    // push('/add_issues');
+
+    // Redirect to next step (likely needs conditional on review type)
+    push('/add_issues');
   };
 
   const onSubmit = (formData) => {

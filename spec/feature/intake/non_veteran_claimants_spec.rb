@@ -95,6 +95,7 @@ feature "Non-veteran claimants", :postgres do
 
       submit_confirmation_modal
 
+      # Submission currently out of scope; consider stub as next path might be conditional
       expect(page).to have_current_path("/intake/add_issues")
     end
 
@@ -175,6 +176,7 @@ feature "Non-veteran claimants", :postgres do
 
       submit_confirmation_modal
 
+      # Submission currently out of scope; consider stub as next path might be conditional
       expect(page).to have_current_path("/intake/add_issues")
     end
   end
