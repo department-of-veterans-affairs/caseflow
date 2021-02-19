@@ -44,6 +44,29 @@ class ClaimReview < DecisionReview
     Intake::ClaimReviewSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
+  def stream_attributes
+    slice(
+      :legacy_opt_in_approved,
+      :receipt_date,
+      :veteran_file_number,
+      :veteran_is_not_claimant,
+      :establishment_submitted_at,
+      :establishment_processed_at,
+      :establishment_attempted_at,
+      :establishment_last_submitted_at,
+      :created_at
+    )
+  end
+
+  def find_or_create_stream!(benefit_type)
+    attributes = stream_attributes.merge(benefit_type: benefit_type)
+    self.class.find_by(attributes) || create_stream!(attributes)
+  end
+
+  def create_stream!(attributes)
+    self.class.create(attributes).tap { |new_stream| new_stream.copy_claimants!(claimants) }
+  end
+
   def validate_prior_to_edit
     if processed?
       # force sync on initial edit call so that we have latest EP status.
