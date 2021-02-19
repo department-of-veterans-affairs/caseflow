@@ -14,7 +14,7 @@
     flash: flash,
     buildDate: build_date,
     hasCaseDetailsRole: current_user.roles.include?('Case Details'),
-    userCanScheduleHearings: current_user.can_assign_hearing_schedule?,
+    userCanAssignHearingSchedule: current_user.can_assign_hearing_schedule?,
     userCanViewHearingSchedule: current_user.can_view_hearing_schedule?,
     userCanViewOvertimeStatus: current_user.can_view_overtime_status?,
     userCanViewEditNodDate: current_user.can_view_edit_nod_date?,
