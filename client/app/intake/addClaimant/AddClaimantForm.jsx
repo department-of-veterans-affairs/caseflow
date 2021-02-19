@@ -51,10 +51,10 @@ export const AddClaimantForm = ({
   onSubmit,
 }) => {
   const methods = useFormContext();
-  const { control, register, watch, handleSubmit } = methods;
+  const { control, register, watch, handleSubmit, setValue } = methods;
 
   const watchPartyType = watch('partyType');
-  const watchRelationship = watch('relationship')?.value;
+  const watchRelationship = watch('relationship');
 
   const showIndividualNameFields =
     watchPartyType === 'individual' ||
@@ -79,13 +79,29 @@ export const AddClaimantForm = ({
       <h1>Add Claimant</h1>
       <p>{ADD_CLAIMANT_PAGE_DESCRIPTION}</p>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Controller
+        {/* <Controller
           control={control}
           name="relationship"
           label="Relationship to the Veteran"
           options={relationshipOpts}
           strongLabel
           as={SearchableDropdown}
+        /> */}
+        <Controller
+          control={control}
+          name="relationship"
+          render={({ onChange, ...rest }) => (
+            <SearchableDropdown
+              {...rest}
+              label="Relationship to the Veteran"
+              options={relationshipOpts}
+              onChange={(valObj) => {
+                onChange(valObj);
+                setValue('relationship', valObj?.value);
+              }}
+              strongLabel
+            />
+          )}
         />
         <br />
         {watchRelationship === 'attorney' && (

@@ -8,13 +8,8 @@ import { camelCase, reduce, startCase } from 'lodash';
 import ApiUtil from 'app/util/ApiUtil';
 import { STATES } from 'app/constants/AppConstants';
 
-const dropdownOptSchema = yup.object().shape({
-  label: yup.string().required(),
-  value: yup.string().required(),
-});
-
 export const schema = yup.object().shape({
-  relationship: dropdownOptSchema.required(),
+  relationship: yup.string().required(),
   partyType: yup.
     string().
     when('relationship', {
