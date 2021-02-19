@@ -139,11 +139,44 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_button("Continue to next step", disabled: false)
       click_button "Continue to next step"
       expect(page).to have_current_path("/intake/add_power_of_attorney")
+      expect(page).to have_content("Add Claimant's POA")
+
+      # add poa
+      add_existing_poa(attorney)
+      expect(page).to have_content("Representative's address")
+      find(".cf-select__clear-indicator").click
+
+      expect(page).to_not have_content(attorney.name)
+      expect(page).to_not have_content("Representative's address")
+      expect(page).to have_content("Type to search...")
+
+      # Fill in Name not listed
+      safe_click ".dropdown-listedAttorney"
+      fill_in("listedAttorney", with: "Name not listed").send_keys :enter
+      select_claimant(0)
+      expect(page).to have_content("Is the representative an organization or individual?")
+
+      # Check validation for unlisted attorney
+      within_fieldset("Is the representative an organization or individual?") do
+        find("label", text: "Organization", match: :prefer_exact).click
+      end
+      fill_in "Organization name", with: "Attorney's Law Firm"
+      fill_in "Street address 1", with: "1234 Justice St."
+      fill_in "City", with: "Anytown"
+      fill_in("State", with: "California").send_keys :enter
+      fill_in("Zip", with: "12345").send_keys :enter
+      fill_in("Country", with: "United States").send_keys :enter
+      expect(page).to have_button("Continue to next step", disabled: false)
     end
   end
 
   def add_existing_attorney(attorney)
     fill_in "Claimant's name", with: attorney.name
+    select_claimant(0)
+  end
+
+  def add_existing_poa(attorney)
+    fill_in "Representative's name", with: attorney.name
     select_claimant(0)
   end
 
