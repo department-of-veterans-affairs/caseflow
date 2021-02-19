@@ -85,7 +85,7 @@ RSpec.feature "Remove hearing scheduled in error" do
       )
     end
 
-    let(:hearing_class) { LegacyHearing.name.constantize }
+    let(:hearing_class) { LegacyHearing }
   end
 
   shared_context "Case Details modal displays correctly" do
