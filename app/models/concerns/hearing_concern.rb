@@ -36,6 +36,7 @@ module HearingConcern
   end
 
   def open_hearing_disposition_task_id
-    appeal.tasks.open.find_by(type: AssignHearingDispositionTask.name)&.id
+    hearing_task = appeal.tasks.open.where(type: HearingTask.name).find { |task| task.hearing&.id == id }
+    hearing_task.children.open.find_by(type: [AssignHearingDispositionTask.name, ChangeHearingDispositionTask.name])&.id
   end
 end
