@@ -16,6 +16,7 @@ import { appealWithDetailSelector } from '../selectors';
 import Alert from 'app/components/Alert';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import { marginTop } from '../constants';
+import { FormatDateString } from '../../util/DateUtil';
 
 const alertStyling = css({
   marginBottom: '2em',
@@ -106,7 +107,8 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
     {
       classNames: ['cf-modal-link', 'cf-btn-link'],
       name: 'Cancel',
-      onClick: onCancel
+      onClick: onCancel,
+      disabled: showTimelinessError
     },
     {
       classNames: ['usa-button', 'usa-button-primary'],
@@ -174,30 +176,44 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
   let modalContent;
 
   if (showTimelinessError) {
-    modalContent = <div>
-      <div>
-        <ReactMarkdown source={COPY.EDIT_NOD_DATE_TIMELINESS_ERROR_MESSAGE} />
-      </div>
+    modalContent = <div>      
+      {/* { showTimelinessError ? <Alert
+        message={COPY.EDIT_NOD_DATE_TIMELINESS_ERROR_MESSAGE}
+        styling={alertStyling}
+        title={COPY.EDIT_NOD_DATE_TIMELINESS_ALERT_TITLE}
+        type="error"
+        scrollOnAlert={false}
+      /> : null } */}
 
-      <strong>Affected Issue(s)</strong>
-      <ol className="cf-error">
+      <strong>Affected Issue (s)</strong>
+      <ul className="cf-error">
         {issues.affectedIssues.map((issue) => {
 
           return <li key={issue.id}>
             {issue.description}
+            <div>
+              (Decision Date: <FormatDateString date={issue.approx_decision_date} />)
+            </div>
           </li>;
         })}
-      </ol>
+      </ul>
 
-      <strong>Unaffected Issue(s)</strong>
-      <ol>
+      <strong>Unaffected Issue (s)</strong>
+      <ul>
         {issues.unaffectedIssues.map((issue) => {
 
           return <li key={issue.id}>
             {issue.description}
+            <div>
+              (Decision Date: <FormatDateString date={issue.approx_decision_date} />)
+            </div>
           </li>;
         })}
-      </ol>
+      </ul>
+      <br />
+      <div>
+        <ReactMarkdown source={COPY.EDIT_NOD_DATE_TIMELINESS_COB_MESSAGE} />
+      </div>
     </div>;
   } else {
     modalContent = <div>

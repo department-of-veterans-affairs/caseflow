@@ -1453,9 +1453,9 @@ RSpec.feature "Case details", :all_dbs do
         find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
         safe_click "#Edit-NOD-Date-button-id-1"
 
-        expect(page).to_not have_content("There have been no changes to the timeliness of issues.")
+        expect(page).to_not have_content("There have been no changes to the eligibility of issues.")
 
-        issues_list = page.find_all("ol li")
+        issues_list = page.find_all("ul li")
 
         expect(issues_list[0]).to have_content(
           "#{timely_request_issue.nonrating_issue_category} - #{timely_request_issue.nonrating_issue_description}"
