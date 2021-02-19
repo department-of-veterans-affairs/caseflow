@@ -7,7 +7,7 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 import { AddClaimantButtons } from '../addClaimant/AddClaimantButtons';
 import styled from 'styled-components';
 import { useHistory } from 'react-router';
-import { debounce, reduce, startCase, camelCase } from 'lodash';
+import { debounce } from 'lodash';
 import ApiUtil from '../../util/ApiUtil';
 import RadioField from 'app/components/RadioField';
 import Address from 'app/queue/components/Address';
@@ -16,6 +16,7 @@ import TextField from 'app/components/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { editPoaInformation } from 'app/intake/reducers/addClaimantSlice';
 import { AddClaimantConfirmationModal } from '../addClaimant/AddClaimantConfirmationModal';
+import { formatAddress } from '../addClaimant/utils';
 
 const partyTypeOpts = [
   { displayText: 'Organization', value: 'organization' },
@@ -35,23 +36,6 @@ const getAttorneyClaimantOpts = async (search = '', asyncFn) => {
   if (search.length < 3) {
     return [];
   }
-
-  const formatAddress = (bgsAddress) => {
-    return reduce(
-      bgsAddress,
-      (result, value, key) => {
-        result[key] = startCase(camelCase(value));
-        if (['state', 'country'].includes(key)) {
-          result[key] = value;
-        } else {
-          result[key] = startCase(camelCase(value));
-        }
-
-        return result;
-      },
-      {}
-    );
-  };
 
   const res = await asyncFn(search);
   const options = res.map((item) => ({
