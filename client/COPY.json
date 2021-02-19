@@ -703,7 +703,7 @@
   "DOCKET_SWITCH_RECOMMENDATION_INSTRUCTIONS": "Add and send your recommendation for this docket switch request to a Veteran's Law Judge.",
   "DOCKET_SWITCH_RULING_TASK_LABEL": "Rule on Docket Switch",
   "DOCKET_SWITCH_RECOMMENDATION_SUCCESS_TITLE": "%s's docket switch request has been sent to %s",
-  "DOCKET_SWITCH_RECOMMENDATION_SUCCESS_MESSAGE": "This task will appear on your hold tab until it has been addressed by the VLJ.",
+  "DOCKET_SWITCH_RECOMMENDATION_SUCCESS_MESSAGE": "This task will appear in the “Completed” tab in your Queue.",
   "DOCKET_SWITCH_RULING_TITLE": "Switch Docket: Rule on %s's Request",
   "DOCKET_SWITCH_RULING_INSTRUCTIONS": "**Provided below is a summary of the pertinent facts used by the Office of the Clerk of the Board to prepare a docket switch ruling. Determine how you would like to rule on this request to switch dockets and select the corresponding button below.**\n\nThe hyperlink takes you to a draft ruling letter based on the recommended ruling. Please feel free to make any necessary edits to the ruling letter. You may then sign the letter. Inserting a hyperlink to a signed ruling letter is recommended, but optional.\n\nIf you have any questions, or need assistance making edits to the ruling letter, please [email](mailto:BVA.Clerk@va.gov) the Office of the Clerk of the Board or use the text box below to provide any additional context or instructions.\n\nWhen you click \"Confirm,\" the task will automatically be returned to the individual who assigned it to you. If you would like to return the task to a different individual, please use the drop down box to select a different name.",
   "DOCKET_SWITCH_RULING_SUCCESS_TITLE": "You have %s %s's request to switch dockets",

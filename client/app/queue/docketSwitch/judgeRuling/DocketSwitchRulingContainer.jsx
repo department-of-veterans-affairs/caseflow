@@ -4,7 +4,7 @@ import { useHistory, useParams, useRouteMatch } from 'react-router';
 import { taskById, appealWithDetailSelector } from 'app/queue/selectors';
 import { taskActionData } from 'app/queue/utils';
 import DISPOSITIONS from 'constants/DOCKET_SWITCH_DISPOSITIONS';
-import { createDocketSwitchGrantedTask, createDocketSwitchDeniedTask } from './docketSwitchRulingSlice';
+import { addressDocketSwitchRuling } from './docketSwitchRulingSlice';
 import { DocketSwitchRulingForm } from './DocketSwitchRulingForm';
 import {
   DOCKET_SWITCH_RULING_SUCCESS_TITLE,
@@ -46,17 +46,11 @@ export const DocketSwitchRulingContainer = () => {
     const dispositionType = DISPOSITIONS[disposition].dispositionType;
     const taskType = `DocketSwitch${dispositionType}Task`;
 
-    const newTask = {
-      parent_id: taskId,
-      type: taskType,
-      external_id: appeal.externalId,
-      instructions,
-      assigned_to_id: formData.attorney.value,
-      assigned_to_type: 'User',
-    };
-
     const data = {
-      tasks: [newTask],
+      task_id: taskId,
+      new_task_type: taskType,
+      instructions,
+      assigned_to_user_id: formData.attorney.value,
     };
 
     const successMessage = {
@@ -65,12 +59,7 @@ export const DocketSwitchRulingContainer = () => {
     };
 
     try {
-      if (dispositionType === 'Granted') {
-        await dispatch(createDocketSwitchGrantedTask(data));
-      } else if (dispositionType === 'Denied') {
-        await dispatch(createDocketSwitchDeniedTask(data));
-      }
-
+      await dispatch(addressDocketSwitchRuling(data));
       dispatch(showSuccessMessage(successMessage));
       push('/queue');
     } catch (error) {

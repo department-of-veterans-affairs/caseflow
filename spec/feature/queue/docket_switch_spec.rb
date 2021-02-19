@@ -147,8 +147,11 @@ RSpec.feature "Docket Switch", :all_dbs do
             format(COPY::DOCKET_SWITCH_RULING_SUCCESS_TITLE, disposition_type.downcase, appeal.claimant.name)
           )
 
-          next_task = Object.const_get("DocketSwitch#{disposition_type}Task").find_by(assigned_to: cotb_attorney)
+          task_type = "DocketSwitch#{disposition_type}Task".constantize
+          next_task = task_type.find_by(assigned_to: cotb_attorney)
           expect(next_task).to_not be_nil
+          expect(next_task.parent).to be_a(task_type)
+          expect(next_task.parent.assigned_to).to be_a(ClerkOfTheBoard)
 
           # Check that task got created and shows instructions on Case Details
           User.authenticate!(user: cotb_attorney)
