@@ -6,7 +6,7 @@ import { STATES } from '../constants/AppConstants';
 import TextField from 'app/components/TextField';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 
-export const AddressForm = ({ control, register, watch }) => {
+export const AddressForm = ({ control, register, watch, setValue }) => {
   const watchPartyType = watch('partyType');
 
   return (
@@ -49,7 +49,10 @@ export const AddressForm = ({ control, register, watch }) => {
               {...rest}
               label="State"
               options={STATES}
-              onChange={(valObj) => onChange(valObj?.label)}
+              onChange={(valObj) => {
+                onChange(valObj);
+                setValue('state', valObj?.label);
+              }}
               strongLabel
             />
           )}
@@ -72,6 +75,7 @@ AddressForm.propTypes = {
   control: PropTypes.func,
   register: PropTypes.func,
   watch: PropTypes.func,
+  setValue: PropTypes.func,
 };
 
 const CityState = styled.div`
