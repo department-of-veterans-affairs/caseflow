@@ -40,7 +40,55 @@ RSpec.feature "Remove hearing scheduled in error" do
     end
   end
 
-  shared_context "Modal displays correctly" do
+  shared_context "AMA appeal" do
+    let(:appeal) do
+      create(
+        :appeal,
+        docket_type: Constants.AMA_DOCKETS.hearing,
+        closest_regional_office: regional_office
+      )
+    end
+
+    let!(:hearing) do
+      create(:hearing, appeal: appeal, hearing_day: video_hearing_day, notes: hearing_notes)
+    end
+
+    let(:hearing_class) { Hearing }
+  end
+
+  shared_context "form data" do
+    let(:fill_in_veteran_email) { "vet@testingEmail.com" }
+    let(:fill_in_representative_email) { "email@testingEmail.com" }
+    let(:expected_alert) do
+      COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % appeal.veteran&.name
+    end
+  end
+
+  shared_context "Legacy appeal" do
+    let(:vacols_case) { create(:case) }
+    let(:appeal) do
+      create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: vacols_case,
+        closest_regional_office: regional_office
+      )
+    end
+    let!(:hearing) do
+      create(
+        :legacy_hearing,
+        :for_vacols_case,
+        appeal: appeal,
+        regional_office: regional_office,
+        hearing_day: video_hearing_day,
+        notes: hearing_notes
+      )
+    end
+
+    let(:hearing_class) { LegacyHearing }
+  end
+
+  shared_context "Case Details modal displays correctly" do
     scenario "Clicking on action 'Remove Hearing Scheduled in Error' opens correct modal" do
       visit "/queue/appeals/#{appeal.external_id}"
 
@@ -54,15 +102,42 @@ RSpec.feature "Remove hearing scheduled in error" do
     end
   end
 
-  def fill_preliminary_reschedule_form(virtual = false)
+  shared_context "Daily docket modal displays correctly" do
+    scenario "Clicking on action 'Remove Hearing Scheduled in Error' opens correct modal" do
+      visit "/hearings/schedule/docket/#{hearing.hearing_day.id}"
+
+      click_dropdown(name: "#{hearing.external_id}-disposition", index: 4)
+
+      expect(page).to have_content(COPY::HEARING_SCHEDULED_IN_ERROR_MODAL_TITLE)
+      expect(page).to have_content(COPY::HEARING_SCHEDULED_IN_ERROR_MODAL_INTRO)
+      expect(page).to have_content(COPY::RESCHEDULE_IMMEDIATELY_DISPLAY_TEXT)
+      expect(page).to have_content(COPY::SCHEDULE_LATER_DISPLAY_TEXT)
+      expect(page).to have_field("Notes")
+      expect(page).to have_content(hearing_notes)
+    end
+  end
+
+  def fill_daily_docket_reschedule_form
+    visit "/hearings/schedule/docket/#{hearing.hearing_day.id}"
+
+    click_dropdown(name: "#{hearing.external_id}-disposition", index: 4)
+    find("label", text: COPY::RESCHEDULE_IMMEDIATELY_DISPLAY_TEXT).click
+    fill_in "scheduled-in-error-notes", with: fill_in_notes
+    click_button("Submit")
+    expect(page).to have_content("Schedule Veteran for a Hearing")
+  end
+
+  def fill_case_details_reschedule_form
     visit "/queue/appeals/#{appeal.external_id}"
 
     click_dropdown(text: Constants.TASK_ACTIONS.REMOVE_HEARING_SCHEDULED_IN_ERROR.to_h[:label])
     find("label", text: COPY::RESCHEDULE_IMMEDIATELY_DISPLAY_TEXT).click
     fill_in "Notes", with: fill_in_notes
     click_button("Submit")
-
     expect(page).to have_content("Schedule Veteran for a Hearing")
+  end
+
+  def fill_schedule_veteran_form(virtual = false)
     if virtual
       click_dropdown(name: "hearingType", text: "Virtual")
     else
@@ -78,14 +153,8 @@ RSpec.feature "Remove hearing scheduled in error" do
   end
 
   shared_context "Reschedule Immediately" do
-    let(:fill_in_veteran_email) { "vet@testingEmail.com" }
-    let(:fill_in_representative_email) { "email@testingEmail.com" }
-    let(:expected_alert) do
-      COPY::VIRTUAL_HEARING_PROGRESS_ALERTS["CHANGED_TO_VIRTUAL"]["TITLE"] % appeal.veteran&.name
-    end
-
     scenario "Reschedule to a Video hearing" do
-      fill_preliminary_reschedule_form
+      fill_schedule_veteran_form
       click_button("Schedule")
 
       expect(page).to have_content("You have successfully assigned")
@@ -98,7 +167,7 @@ RSpec.feature "Remove hearing scheduled in error" do
 
     context "Reschedule to a Virtual hearing" do
       scenario "Reschedule to a Virtual hearing without error" do
-        fill_preliminary_reschedule_form(true)
+        fill_schedule_veteran_form(true)
 
         # Fill in appellant details
         fill_in "Veteran Email", with: fill_in_veteran_email
@@ -138,20 +207,41 @@ RSpec.feature "Remove hearing scheduled in error" do
       end
 
       scenario "Reschedule to a Virtual hearing with error" do
-        fill_preliminary_reschedule_form(true)
+        fill_schedule_veteran_form(true)
 
         fill_in "Veteran Email", with: "invalid email"
         click_button("Schedule")
         expect(page).to have_content("Veteran email does not appear to be a valid e-mail address")
         expect(hearing_class.where(hearing_day_id: video_hearing_day.id).reload.count).to eq 1
         expect(hearing.reload.disposition).to eq nil
-        expect(hearing.reload.notes).to eq(hearing_notes)
         expect(hearing_class.count).to eq 1
       end
     end
   end
 
-  shared_context "Send to Veterans List" do
+  shared_context "Reschedule Immediately from Case Details" do
+    context "rescheduling from the case details" do
+      before do
+        fill_case_details_reschedule_form
+      end
+
+      include_context "form data"
+      include_context "Reschedule Immediately"
+    end
+  end
+
+  shared_context "Reschedule Immediately from Daily Docket" do
+    context "rescheduling from the daily docket" do
+      before do
+        fill_daily_docket_reschedule_form
+      end
+
+      include_context "form data"
+      include_context "Reschedule Immediately"
+    end
+  end
+
+  shared_context "Send to Veterans List from Case Details" do
     scenario "Schedule Later" do
       visit "/queue/appeals/#{appeal.external_id}"
 
@@ -169,55 +259,62 @@ RSpec.feature "Remove hearing scheduled in error" do
     end
   end
 
-  context "AMA appeal" do
-    let(:appeal) do
-      create(
-        :appeal,
-        docket_type: Constants.AMA_DOCKETS.hearing,
-        closest_regional_office: regional_office
-      )
+  shared_context "Send to Veterans List from Daily Docket" do
+    scenario "Schedule Later" do
+      visit "/hearings/schedule/docket/#{hearing.hearing_day.id}"
+
+      click_dropdown(name: "#{hearing.external_id}-disposition", index: 4)
+      find("label", text: COPY::SCHEDULE_LATER_DISPLAY_TEXT).click
+      fill_in "scheduled-in-error-notes", with: fill_in_notes
+      click_button("Submit")
+
+      expect(page).to have_content("was successfully added back to the schedule veteran list.")
+
+      # Ensure that the hearing is removed from the daily docket
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_DOCKET_NO_VETERANS)
+      expect(hearing_class.count).to eq 1
+      expect(hearing.reload.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+      expect(hearing.reload.notes).to eq(fill_in_notes)
+      expect(HearingTask.count).to eq 2
+      expect(ScheduleHearingTask.count).to eq 1
     end
-
-    let!(:hearing) do
-      create(:hearing, appeal: appeal, hearing_day: video_hearing_day, notes: hearing_notes)
-    end
-
-    let(:hearing_class) { Hearing.name.constantize }
-
-    include_context "hearing day"
-    include_context "hearing subtree"
-    include_context "Modal displays correctly"
-    include_context "Reschedule Immediately"
-    include_context "Send to Veterans List"
   end
 
-  context "Legacy Appeal" do
-    let(:vacols_case) { create(:case) }
-    let(:appeal) do
-      create(
-        :legacy_appeal,
-        :with_veteran,
-        vacols_case: vacols_case,
-        closest_regional_office: regional_office
-      )
-    end
-    let!(:hearing) do
-      create(
-        :legacy_hearing,
-        :for_vacols_case,
-        appeal: appeal,
-        regional_office: regional_office,
-        hearing_day: video_hearing_day,
-        notes: hearing_notes
-      )
-    end
-
-    let(:hearing_class) { LegacyHearing.name.constantize }
-
+  context "from the case details page" do
     include_context "hearing day"
     include_context "hearing subtree"
-    include_context "Modal displays correctly"
-    include_context "Reschedule Immediately"
-    include_context "Send to Veterans List"
+
+    context "with an AMA appeal" do
+      include_context "AMA appeal"
+      include_context "Case Details modal displays correctly"
+      include_context "Reschedule Immediately from Case Details"
+      include_context "Send to Veterans List from Case Details"
+    end
+
+    context "with a Legacy Appeal" do
+      include_context "Legacy appeal"
+      include_context "Case Details modal displays correctly"
+      include_context "Reschedule Immediately from Case Details"
+      include_context "Send to Veterans List from Case Details"
+    end
+  end
+
+  context "from the daily docket" do
+    include_context "hearing day"
+    include_context "hearing subtree"
+
+    context "with an AMA appeal" do
+      include_context "AMA appeal"
+      include_context "Daily docket modal displays correctly"
+      include_context "Send to Veterans List from Daily Docket"
+      include_context "Reschedule Immediately from Daily Docket"
+    end
+
+    context "with a Legacy Appeal" do
+      include_context "Legacy appeal"
+      include_context "Daily docket modal displays correctly"
+      include_context "Send to Veterans List from Daily Docket"
+      include_context "Reschedule Immediately from Daily Docket"
+    end
   end
 end

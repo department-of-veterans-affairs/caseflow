@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import React from 'react';
 import { mount } from 'enzyme';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -14,7 +15,7 @@ import {
   scheduledHearing,
   scheduleVeteranResponse,
   openHearingAppeal,
-  legacyAppeal
+  legacyAppeal,
 } from 'test/data';
 import { queueWrapper, appealsData } from 'test/data/stores/queueStore';
 import Button from 'app/components/Button';
@@ -41,21 +42,31 @@ const defaultError = {
     body: {
       errors: [
         {
-          code: 500
-        }
-      ]
-    }
-  }
+          code: 500,
+        },
+      ],
+    },
+  },
 };
 
 let patchSpy;
 const setState = jest.fn();
 const useStateMock = (initState) => [initState, setState];
+const setScheduledHearingMock = jest.fn();
+const scheduleVeteranProps = {
+  showSuccessMessage: jest.fn(),
+  onChangeFormData: changeSpy,
+  appeals: appealsData,
+  appealId: amaAppeal.externalId,
+  taskId: scheduledHearing.taskId,
+  setScheduledHearing: setScheduledHearingMock,
+};
 
 describe('ScheduleVeteran', () => {
-
   beforeEach(() => {
-    jest.spyOn(document, 'getElementById').mockReturnValue({ scrollIntoView: jest.fn() });
+    jest.
+      spyOn(document, 'getElementById').
+      mockReturnValue({ scrollIntoView: jest.fn() });
     jest.spyOn(utils, 'processAlerts');
     patchSpy = jest.spyOn(ApiUtil, 'patch');
     jest.spyOn(React, 'useState').mockImplementation(useStateMock);
@@ -81,14 +92,24 @@ describe('ScheduleVeteran', () => {
     );
 
     // Assertions
-    expect(scheduleVeteran.find(Button).first().
-      prop('name')).toEqual('Cancel');
-    expect(scheduleVeteran.find(Button).at(1).
-      prop('name')).toEqual('Schedule');
+    expect(
+      scheduleVeteran.
+        find(Button).
+        first().
+        prop('name')
+    ).toEqual('Cancel');
+    expect(
+      scheduleVeteran.
+        find(Button).
+        at(1).
+        prop('name')
+    ).toEqual('Schedule');
     expect(scheduleVeteran.find(Alert)).toHaveLength(0);
     expect(scheduleVeteran.find(AppSegment)).toHaveLength(1);
     expect(scheduleVeteran.find(ScheduleVeteranForm)).toHaveLength(1);
-    expect(scheduleVeteran.find(AppSegment).text()).not.toContain(COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL);
+    expect(scheduleVeteran.find(AppSegment).text()).not.toContain(
+      COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL
+    );
     expect(scheduleVeteran).toMatchSnapshot();
   });
 
@@ -98,7 +119,7 @@ describe('ScheduleVeteran', () => {
       hearingLocation: null,
       scheduledTimeString: null,
       regionalOffice: null,
-      hearingDay: 'Please select a hearing date'
+      hearingDay: 'Please select a hearing date',
     };
 
     // Render the scheduleVeteran component
@@ -116,20 +137,24 @@ describe('ScheduleVeteran', () => {
             forms: {
               assignHearing: {
                 ...scheduleHearingDetails,
-                hearingDay: null
-              }
-            }
-          }
-        }
+                hearingDay: null,
+              },
+            },
+          },
+        },
       }
     );
 
     // Run the test
-    scheduleVeteran.find(Button).at(1).
+    scheduleVeteran.
+      find(Button).
+      at(1).
       find('button').
       simulate('click');
     expect(patchSpy).toHaveBeenCalledTimes(0);
-    expect(scheduleVeteran.find(ScheduleVeteranForm).prop('errors')).toEqual(errors);
+    expect(scheduleVeteran.find(ScheduleVeteranForm).prop('errors')).toEqual(
+      errors
+    );
     expect(scheduleVeteran).toMatchSnapshot();
   });
   test('Can handle backend validation errors for Legacy Appeals', () => {
@@ -151,14 +176,16 @@ describe('ScheduleVeteran', () => {
           components: {
             forms: {
               assignHearing: scheduleHearingDetails,
-            }
-          }
-        }
+            },
+          },
+        },
       }
     );
 
     // Run the test
-    scheduleVeteran.find(Button).at(1).
+    scheduleVeteran.
+      find(Button).
+      at(1).
       find('button').
       simulate('click');
     expect(uiActions.showErrorMessage).toHaveBeenCalledWith({
@@ -178,11 +205,11 @@ describe('ScheduleVeteran', () => {
           errors: [
             {
               title: 'Error',
-              detail: 'message'
-            }
-          ]
-        }
-      }
+              detail: 'message',
+            },
+          ],
+        },
+      },
     };
 
     patchSpy.mockImplementationOnce(() => {
@@ -202,17 +229,21 @@ describe('ScheduleVeteran', () => {
           components: {
             forms: {
               assignHearing: scheduleHearingDetails,
-            }
-          }
-        }
+            },
+          },
+        },
       }
     );
 
     // Run the test
-    scheduleVeteran.find(Button).at(1).
+    scheduleVeteran.
+      find(Button).
+      at(1).
       find('button').
       simulate('click');
-    expect(uiActions.showErrorMessage).toHaveBeenCalledWith(titleError.response.body.errors[0]);
+    expect(uiActions.showErrorMessage).toHaveBeenCalledWith(
+      titleError.response.body.errors[0]
+    );
     expect(scheduleVeteran).toMatchSnapshot();
   });
 
@@ -224,11 +255,11 @@ describe('ScheduleVeteran', () => {
           errors: [
             {
               code: 1002,
-              message: 'Validation Error: Appellant email malformed'
-            }
-          ]
-        }
-      }
+              message: 'Validation Error: Appellant email malformed',
+            },
+          ],
+        },
+      },
     };
 
     patchSpy.mockImplementationOnce(() => {
@@ -248,19 +279,25 @@ describe('ScheduleVeteran', () => {
           components: {
             forms: {
               assignHearing: scheduleHearingDetails,
-            }
-          }
-        }
+            },
+          },
+        },
       }
     );
 
     // Run the test
-    expect(scheduleVeteran.find(ScheduleVeteranForm).prop('errors')).toEqual({});
+    expect(scheduleVeteran.find(ScheduleVeteranForm).prop('errors')).toEqual(
+      {}
+    );
 
-    await scheduleVeteran.find(Button).at(1).
+    await scheduleVeteran.
+      find(Button).
+      at(1).
       find('button').
       simulate('click');
-    expect(scheduleVeteran.find(ScheduleVeteranForm).prop('errors')).toEqual({ appellantEmail: ' Veteran email malformed' });
+    expect(scheduleVeteran.find(ScheduleVeteranForm).prop('errors')).toEqual({
+      appellantEmail: ' Veteran email malformed',
+    });
     expect(scheduleVeteran).toMatchSnapshot();
   });
 
@@ -283,14 +320,16 @@ describe('ScheduleVeteran', () => {
           components: {
             forms: {
               assignHearing: scheduleHearingDetails,
-            }
-          }
-        }
+            },
+          },
+        },
       }
     );
 
     // Run the test
-    scheduleVeteran.find(Button).at(1).
+    scheduleVeteran.
+      find(Button).
+      at(1).
       find('button').
       simulate('click');
     expect(cancelSpy).toHaveBeenCalledTimes(0);
@@ -303,13 +342,15 @@ describe('ScheduleVeteran', () => {
     expect(scheduleVeteran).toMatchSnapshot();
   });
 
-  test('Can cancel the form', () => {
+  test('Can cancel the form', async () => {
     // Render the scheduleVeteran component
     const scheduleVeteran = mount(
       <ScheduleVeteran.WrappedComponent
         history={{ goBack: cancelSpy }}
         onChangeFormData={changeSpy}
         appeal={amaAppeal}
+        taskId={scheduledHearing.taskId}
+        setScheduledHearing={setScheduledHearingMock}
       />,
       {
         wrappingComponent: queueWrapper,
@@ -317,7 +358,7 @@ describe('ScheduleVeteran', () => {
     );
 
     // Run the test
-    scheduleVeteran.
+    await scheduleVeteran.
       find(Button).
       first().
       find('button').
@@ -334,19 +375,14 @@ describe('ScheduleVeteran', () => {
       body: {
         tasks: {
           ...scheduleVeteranResponse.body.tasks,
-          alerts: [{ title: 'Success', detail: 'success' }]
-        }
-      }
+          alerts: [{ title: 'Success', detail: 'success' }],
+        },
+      },
     });
 
     // Render the scheduleVeteran component
     const scheduleVeteran = mount(
-      <ScheduleVeteran
-        showSuccessMessage={jest.fn()}
-        onChangeFormData={changeSpy}
-        appeals={appealsData}
-        appealId={amaAppeal.externalId}
-      />,
+      <ScheduleVeteran {...scheduleVeteranProps} />,
       {
         wrappingComponent: queueWrapper,
         wrappingComponentProps: {
@@ -355,40 +391,39 @@ describe('ScheduleVeteran', () => {
             forms: {
               assignHearing: {
                 ...scheduleHearingDetails,
-                virtualHearing: virtualHearing.virtualHearing
-              }
-            }
-          }
-        }
-      }
-    );
-
-    // Run the test
-    await scheduleVeteran.find(Button).at(1).
-      find('button').
-      simulate('click');
-
-    // Assertions
-    expect(patchSpy).toHaveBeenCalledWith(
-      `/tasks/${scheduledHearing.taskId}`,
-      {
-        data: {
-          task: {
-            status: 'completed',
-            business_payloads: {
-              description: 'Update Task',
-              values: {
-                ...scheduleHearingDetails.apiFormattedValues,
-                virtual_hearing_attributes: ApiUtil.convertToSnakeCase(
-                  omit(virtualHearing.virtualHearing, ['status'])
-                ),
-                override_full_hearing_day_validation: false,
+                virtualHearing: virtualHearing.virtualHearing,
               },
             },
           },
         },
       }
     );
+
+    // Run the test
+    await scheduleVeteran.
+      find(Button).
+      at(1).
+      find('button').
+      simulate('click');
+
+    // Assertions
+    expect(patchSpy).toHaveBeenCalledWith(`/tasks/${scheduledHearing.taskId}`, {
+      data: {
+        task: {
+          status: 'completed',
+          business_payloads: {
+            description: 'Update Task',
+            values: {
+              ...scheduleHearingDetails.apiFormattedValues,
+              virtual_hearing_attributes: ApiUtil.convertToSnakeCase(
+                omit(virtualHearing.virtualHearing, ['status'])
+              ),
+              override_full_hearing_day_validation: false,
+            },
+          },
+        },
+      },
+    });
     expect(uiActions.showSuccessMessage).not.toHaveBeenCalled();
     expect(utils.processAlerts).toHaveBeenCalled();
     expect(scheduleVeteran).toMatchSnapshot();
@@ -404,7 +439,11 @@ describe('ScheduleVeteran', () => {
           in new tab.
           <br />
           <br />
-          <Link href={`/hearings/schedule/assign?regional_office_key=${scheduleHearingDetails.hearingDay.regionalOffice}`}>
+          <Link
+            href={`/hearings/schedule/assign?regional_office_key=${
+              scheduleHearingDetails.hearingDay.regionalOffice
+            }`}
+          >
             Back to Schedule Veterans
           </Link>
         </p>
@@ -420,12 +459,7 @@ describe('ScheduleVeteran', () => {
 
     // Render the scheduleVeteran component
     const scheduleVeteran = mount(
-      <ScheduleVeteran
-        showSuccessMessage={jest.fn()}
-        onChangeFormData={changeSpy}
-        appeals={appealsData}
-        appealId={amaAppeal.externalId}
-      />,
+      <ScheduleVeteran {...scheduleVeteranProps} />,
       {
         wrappingComponent: queueWrapper,
         wrappingComponentProps: {
@@ -433,36 +467,35 @@ describe('ScheduleVeteran', () => {
             scheduledHearing,
             forms: {
               assignHearing: scheduleHearingDetails,
-            }
-          }
-        }
-      }
-    );
-
-    // Run the test
-    await scheduleVeteran.find(Button).at(1).
-      find('button').
-      simulate('click');
-
-    // Assertions
-    expect(patchSpy).toHaveBeenCalledWith(
-      `/tasks/${scheduledHearing.taskId}`,
-      {
-        data: {
-          task: {
-            status: 'completed',
-            business_payloads: {
-              description: 'Update Task',
-              values: {
-                ...scheduleHearingDetails.apiFormattedValues,
-                virtual_hearing_attributes: null,
-                override_full_hearing_day_validation: false,
-              },
             },
           },
         },
       }
     );
+
+    // Run the test
+    await scheduleVeteran.
+      find(Button).
+      at(1).
+      find('button').
+      simulate('click');
+
+    // Assertions
+    expect(patchSpy).toHaveBeenCalledWith(`/tasks/${scheduledHearing.taskId}`, {
+      data: {
+        task: {
+          status: 'completed',
+          business_payloads: {
+            description: 'Update Task',
+            values: {
+              ...scheduleHearingDetails.apiFormattedValues,
+              virtual_hearing_attributes: null,
+              override_full_hearing_day_validation: false,
+            },
+          },
+        },
+      },
+    });
     expect(uiActions.showSuccessMessage).toHaveBeenCalledWith(successMsg);
     expect(scheduleVeteran).toMatchSnapshot();
   });
@@ -483,11 +516,13 @@ describe('ScheduleVeteran', () => {
             forms: {
               assignHearing: {
                 ...scheduleHearingDetails,
-                hearingDay: hearingDateOptions.filter((date) => date.value.filledSlots >= date.value.totalSlots)[0].value
-              }
-            }
-          }
-        }
+                hearingDay: hearingDateOptions.filter(
+                  (date) => date.value.filledSlots >= date.value.totalSlots
+                )[0].value,
+              },
+            },
+          },
+        },
       }
     );
 
@@ -513,9 +548,9 @@ describe('ScheduleVeteran', () => {
           components: {
             forms: {
               assignHearing: scheduleHearingDetails,
-            }
-          }
-        }
+            },
+          },
+        },
       }
     );
 
@@ -543,18 +578,20 @@ describe('ScheduleVeteran', () => {
             forms: {
               assignHearing: {
                 ...scheduleHearingDetails,
-                virtualHearing: virtualHearing.virtualHearing
-              }
-            }
-          }
-        }
+                virtualHearing: virtualHearing.virtualHearing,
+              },
+            },
+          },
+        },
       }
     );
 
     // Assertions
     expect(scheduleVeteran.find(RepresentativeSection)).toHaveLength(1);
     expect(scheduleVeteran.find(AppellantSection)).toHaveLength(1);
-    expect(scheduleVeteran.find(AppSegment).text()).toContain(COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL);
+    expect(scheduleVeteran.find(AppSegment).text()).toContain(
+      COPY.SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL
+    );
     expect(scheduleVeteran).toMatchSnapshot();
   });
 });
