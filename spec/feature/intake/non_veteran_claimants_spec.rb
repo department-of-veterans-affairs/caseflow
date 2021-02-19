@@ -15,6 +15,19 @@ feature "Non-veteran claimants", :postgres do
   end
   let(:benefit_type) { "compensation" }
 
+  let(:new_individual_claimant) do
+    {
+      first_name: "Michelle",
+      last_name: "McClaimant",
+      address1: "123 Main St",
+      city: "San Francisco",
+      state: "CA",
+      zip: "94123",
+      country: "United States",
+      email: "claimant@example.com"
+    }
+  end
+
   context "with non_veteran_claimants feature toggle" do
     before { FeatureToggle.enable!(:non_veteran_claimants) }
     after { FeatureToggle.disable!(:non_veteran_claimants) }
@@ -125,17 +138,12 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_content("Is the claimant an organization or individual?")
 
       within_fieldset("Is the claimant an organization or individual?") do
-        find("label", text: "Organization", match: :prefer_exact).click
+        find("label", text: "Individual", match: :prefer_exact).click
       end
       expect(page).to have_button("Continue to next step", disabled: true)
 
       # fill in form information
-      fill_in "Organization name", with: "Attorney's Law Firm"
-      fill_in "Street address 1", with: "1234 Justice St."
-      fill_in "City", with: "Anytown"
-      fill_in("State", with: "California").send_keys :enter
-      fill_in("Zip", with: "12345").send_keys :enter
-      fill_in("Country", with: "United States").send_keys :enter
+      add_new_claimant
       within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
         find("label", text: "Yes", match: :prefer_exact).click
       end
@@ -164,14 +172,11 @@ feature "Non-veteran claimants", :postgres do
       within_fieldset("Is the claimant an organization or individual?") do
         find("label", text: "Organization", match: :prefer_exact).click
       end
-      fill_in "Organization name", with: "Attorney's Law Firm"
-      fill_in "Street address 1", with: "1234 Justice St."
-      fill_in "City", with: "Anytown"
-      fill_in("State", with: "California").send_keys :enter
-      fill_in("Zip", with: "12345").send_keys :enter
-      fill_in("Country", with: "United States").send_keys :enter
+      
+      add_new_poa
 
       expect(page).to have_button("Continue to next step", disabled: false)
+
       click_button "Continue to next step"
 
       submit_confirmation_modal
@@ -189,6 +194,26 @@ feature "Non-veteran claimants", :postgres do
   def add_existing_poa(attorney)
     fill_in "Representative's name", with: attorney.name
     select_claimant(0)
+  end
+
+  def add_new_claimant
+    fill_in "First name", with: new_individual_claimant[:first_name]
+    fill_in "Last name", with: new_individual_claimant[:last_name]
+    fill_in "Street address 1", with: new_individual_claimant[:address1]
+    fill_in "City", with: new_individual_claimant[:city]
+    fill_in("State", with: new_individual_claimant[:state]).send_keys :enter
+    fill_in("Zip", with: new_individual_claimant[:zip]).send_keys :enter
+    fill_in("Country", with: new_individual_claimant[:country]).send_keys :enter
+    fill_in "Claimant email", with: new_individual_claimant[:email]
+  end
+
+  def add_new_poa
+    fill_in "Organization name", with: "Attorney's Law Firm"
+    fill_in "Street address 1", with: "1234 Justice St."
+    fill_in "City", with: "Anytown"
+    fill_in("State", with: "California").send_keys :enter
+    fill_in("Zip", with: "12345").send_keys :enter
+    fill_in("Country", with: "United States").send_keys :enter
   end
 
   def select_claimant(index = 0)
