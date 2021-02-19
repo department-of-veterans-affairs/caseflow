@@ -86,5 +86,6 @@ class LegacyHearingSerializer
   end
   attribute :email_events, if: for_full, &:serialized_email_events
   attribute :was_virtual, &:was_virtual?
+  attribute :hearing_disposition_task_id, &:open_hearing_disposition_task_id
   attribute :witness
 end

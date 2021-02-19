@@ -16,7 +16,7 @@ class CachedAppealService
           issue_count: request_issues_to_cache[appeal.id] || 0,
           docket_type: appeal.docket_type,
           docket_number: appeal.docket_number,
-          hearing_request_type: appeal.current_hearing_request_type(readable: true),
+          hearing_request_type: appeal.readable_current_hearing_request_type,
           is_aod: appeal_aod_status.include?(appeal.id),
           suggested_hearing_location: appeal.suggested_hearing_location&.formatted_location,
           veteran_name: veteran_names_to_cache[appeal.veteran_file_number]
@@ -180,7 +180,7 @@ class CachedAppealService
     VACOLS::Case.where(bfkey: vacols_ids).map do |vacols_case|
       original_request = original_hearing_request_type_for_vacols_case(vacols_case)
       changed_request = hearing_request_types_for_all_vacols_ids[vacols_case.bfkey]&.[](:changed)
-      # Replicates LegacyAppeal#current_hearing_request_type
+      # Replicates HearingRequestTypeConcern#current_hearing_request_type
       current_request = HearingDay::REQUEST_TYPES.key(changed_request)&.to_sym || original_request
 
       [
