@@ -5,7 +5,7 @@ class DocketSwitch < CaseflowRecord
   belongs_to :new_docket_stream, class_name: "Appeal"
   belongs_to :task, optional: false
 
-  attr_accessor :context, :selected_task_ids, :new_admin_actions
+  attr_accessor :context, :selected_task_ids, :new_admin_actions, :granted_request_issue_ids
 
   validates :disposition, presence: true
   validate :granted_issues_present_if_partial
@@ -43,11 +43,15 @@ class DocketSwitch < CaseflowRecord
       DocketSwitchTaskHandler.new(
         docket_switch: self,
         selected_task_ids: selected_task_ids,
-        new_admin_actions: new_admin_actions
+        new_admin_actions: admin_actions_params
       ).call
 
       task.update(status: Constants.TASK_STATUSES.completed)
     end
+  end
+
+  def admin_actions_params
+    new_admin_actions.map { |data| data.permit(:instructions, :type).merge(assigned_by: task.assigned_to) }
   end
 
   def request_issues_for_switch

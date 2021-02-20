@@ -61,6 +61,8 @@ export const DocketSwitchReviewConfirm = ({
     [docketFrom, docketTo]
   );
 
+  const noTasksShown = ![...tasksKept, ...tasksAdded]?.length ? 'None' : null;
+
   return (
     <>
       <AppSegment filledBackground>
@@ -141,6 +143,14 @@ export const DocketSwitchReviewConfirm = ({
               <td>
                 <table className="usa-table-borderless">
                   <tbody>
+                    {<tr>
+                      <td>
+                        <div>
+                          <em>{noTasksShown}</em>
+                        </div>
+                      </td>
+                    </tr>
+                    }
                     {[...tasksKept, ...tasksAdded].map((task, idx) => (
                       <tr key={task.id || task.name}>
                         <td>
