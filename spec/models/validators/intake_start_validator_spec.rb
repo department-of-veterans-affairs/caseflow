@@ -4,7 +4,7 @@ describe IntakeStartValidator, :postgres do
   let(:user) { create(:user, station_id: "283") }
   let(:veteran) { create(:veteran) }
   # IntakeStartValidator expects an uncommitted intake (hence new)
-  let(:intake) { HigherLevelReviewIntake.new(veteran_file_number: veteran.file_number, user: user)}
+  let(:intake) { HigherLevelReviewIntake.new(veteran_file_number: veteran.file_number, user: user) }
 
   context "#validate" do
     let(:validator) { described_class.new(intake: intake) }
