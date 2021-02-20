@@ -34,4 +34,13 @@ module HearingConcern
   def postponed_or_cancelled_or_scheduled_in_error?
     postponed? || cancelled? || scheduled_in_error?
   end
+
+  def open_hearing_disposition_task_id
+    hearing_task = appeal.tasks.open.where(type: HearingTask.name).find { |task| task.hearing&.id == id }
+    hearing_task
+      &.children
+      &.open
+      &.find_by(type: [AssignHearingDispositionTask.name, ChangeHearingDispositionTask.name])
+      &.id
+  end
 end
