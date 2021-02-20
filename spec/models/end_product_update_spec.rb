@@ -74,7 +74,7 @@ describe EndProductUpdate do
           allow(original_decision_review).to receive(:create_stream!).and_call_original
 
           expect(original_decision_review.end_product_establishments.count).to eq 2
-          expect { subject }.to change { original_decision_review.end_product_establishments.count }.by (-1)
+          expect { subject }.to change { original_decision_review.end_product_establishments.count }.by(-1)
           expect(original_decision_review).to have_received(:create_stream!).once
 
           new_stream = epu.end_product_establishment.source
@@ -97,7 +97,7 @@ describe EndProductUpdate do
             )
 
             expect(original_decision_review.end_product_establishments.count).to eq 2
-            expect { subject }.to change { original_decision_review.end_product_establishments.count }.by (-1)
+            expect { subject }.to change { original_decision_review.end_product_establishments.count }.by(-1)
 
             expect(original_decision_review).to_not have_received(:create_stream!)
             expect(original_decision_review.benefit_type).to eq old_benefit_type
