@@ -4,8 +4,10 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { setScheduledHearing } from '../../components/common/actions';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
+import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
 
 import {
   resetDecisionOptions,
@@ -26,6 +28,13 @@ class ActionsDropdown extends React.PureComponent {
 
     if (!option) {
       return;
+    }
+
+    if (option.value === TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.value) {
+      this.props.setScheduledHearing({
+        taskId: task.uniqueId,
+        action: 'schedule'
+      });
     }
 
     this.props.stageAppeal(appealId);
@@ -54,6 +63,7 @@ ActionsDropdown.propTypes = {
   task: PropTypes.object,
   history: PropTypes.object,
   resetDecisionOptions: PropTypes.func,
+  setScheduledHearing: PropTypes.func,
   stageAppeal: PropTypes.func
 };
 
@@ -63,6 +73,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setScheduledHearing,
   resetDecisionOptions,
   stageAppeal
 }, dispatch);

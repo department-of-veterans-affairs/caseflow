@@ -90,4 +90,5 @@ class HearingSerializer
   attribute :was_virtual, &:was_virtual?
   attribute :witness
   attribute :worksheet_issues
+  attribute :hearing_disposition_task_id, &:open_hearing_disposition_task_id
 end

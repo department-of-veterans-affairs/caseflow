@@ -14,7 +14,7 @@ import COPY from '../../../COPY';
 import TextareaField from '../../components/TextareaField';
 import RadioField from '../../components/RadioField';
 import { maxWidthFormInput } from '../../hearings/components/details/style';
-import QueueFlowModal from './QueueFlowModal';
+import FlowModal from '../../components/FlowModal';
 
 import { taskById, appealWithDetailSelector } from '../selectors';
 import { onReceiveAmaTasks } from '../QueueActions';
@@ -70,7 +70,18 @@ const HearingScheduledInErrorModal = (props) => {
     title: sprintf(COPY.SCHEDULE_LATER_SUCCESS_MESSAGE, appeal?.veteranFullName)
   };
 
+  const resetSaveState = () => {
+    if (afterDispositionUpdateAction === ACTIONS.RESCHEDULE) {
+      props.history.push(
+        `/queue/appeals/${appeal.externalId}/tasks/${task.taskId}/${TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.value}`
+      );
+    }
+  };
+
   const submit = () => {
+    // Send the event to google analytics
+    window.analyticsEvent('Hearings', HEARING_DISPOSITION_TYPES.scheduled_in_error, afterDispositionUpdateAction);
+
     // Determine whether to redirect to the ful page schedule veteran flow
     if (afterDispositionUpdateAction === ACTIONS.RESCHEDULE) {
       // Change the disposition in the store
@@ -80,13 +91,9 @@ const HearingScheduledInErrorModal = (props) => {
         disposition: HEARING_DISPOSITION_TYPES.scheduled_in_error
       });
 
-      props.history.push(
-        `/queue/appeals/${appeal.externalId}/tasks/${task.taskId}/${TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.value}`
-      );
-
       // This is a failed Promise to prevent `QueueFlowModal` from thinking the
       // request completed successfully, and redirecting back to the `CaseDetails` page.
-      return Promise.reject();
+      return Promise.resolve();
     } else if (afterDispositionUpdateAction === ACTIONS.SCHEDULE_LATER) {
       if (isPosting) {
         return;
@@ -114,10 +121,12 @@ const HearingScheduledInErrorModal = (props) => {
   };
 
   return (
-    <QueueFlowModal
+    <FlowModal
+      history={props.history}
       title={COPY.HEARING_SCHEDULED_IN_ERROR_MODAL_TITLE}
       submit={submit}
       validateForm={() => true}
+      resetSaveState={resetSaveState}
       pathAfterSubmit={`/queue/appeals/${appeal.externalId}`}
     >
       <p> {COPY.HEARING_SCHEDULED_IN_ERROR_MODAL_INTRO} </p>
@@ -137,7 +146,7 @@ const HearingScheduledInErrorModal = (props) => {
         onChange={(notes) => props.setScheduledHearing({ notes })}
         maxlength={1000}
       />
-    </QueueFlowModal>
+    </FlowModal>
   );
 };
 
