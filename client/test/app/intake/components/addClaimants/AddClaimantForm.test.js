@@ -10,8 +10,8 @@ import { AddClaimantForm } from 'app/intake/addClaimant/AddClaimantForm';
 import { useAddClaimantForm } from 'app/intake/addClaimant/utils';
 import { fillForm, relationshipOpts } from './testUtils';
 
-const FormWrapper = ({ children }) => {
-  const methods = useAddClaimantForm();
+const FormWrapper = ({ children, defaultValues }) => {
+  const methods = useAddClaimantForm({ defaultValues });
 
   return <FormProvider {...methods}>{children}</FormProvider>;
 };
@@ -23,8 +23,12 @@ describe('AddClaimantForm', () => {
 
   const onSubmit = jest.fn();
 
-  const setup = (props = { onSubmit }) => {
-    return render(<AddClaimantForm {...props} />, { wrapper: FormWrapper });
+  const setup = (props = { onSubmit }, wrapperProps = {}) => {
+    return render(<AddClaimantForm {...props} />, {
+      wrapper: ({ children }) => (
+        <FormWrapper {...wrapperProps}>{children}</FormWrapper>
+      ),
+    });
   };
 
   it('renders default state correctly', () => {
@@ -73,6 +77,31 @@ describe('AddClaimantForm', () => {
       await waitFor(() => {
         expect(onSubmit).toHaveBeenCalled();
       });
+    });
+  });
+
+  describe('default values', () => {
+    const defaultValues = {
+      relationship: 'other',
+      partyType: 'individual',
+      firstName: 'Jane',
+      lastName: 'Doe',
+      address1: '123 Main St',
+      city: 'San Francisco',
+      state: 'CA',
+      zip: '94123',
+      vaForm: 'false',
+    };
+
+    it('prepopulates with default values', async () => {
+      const { container } = setup({}, { defaultValues });
+
+      await waitFor(() => {
+        expect(screen.getByDisplayValue(defaultValues.firstName)).toBeInTheDocument();
+        expect(screen.getByDisplayValue(defaultValues.city)).toBeInTheDocument();
+      });
+
+      expect(container).toMatchSnapshot();
     });
   });
 });
