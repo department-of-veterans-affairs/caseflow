@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Controller } from 'react-hook-form';
@@ -8,6 +8,11 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 
 export const AddressForm = ({ control, register, watch, setValue }) => {
   const watchPartyType = watch('partyType');
+  const watchState = watch('state');
+  const defaultState = useMemo(
+    () => STATES.find((state) => state.label === watchState),
+    [STATES, watchState]
+  );
 
   return (
     <React.Fragment>
@@ -53,6 +58,7 @@ export const AddressForm = ({ control, register, watch, setValue }) => {
                 onChange(valObj);
                 setValue('state', valObj?.label);
               }}
+              defaultValue={defaultState}
               strongLabel
             />
           )}

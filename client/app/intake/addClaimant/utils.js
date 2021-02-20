@@ -6,7 +6,6 @@ import * as yup from 'yup';
 import { camelCase, reduce, startCase } from 'lodash';
 
 import ApiUtil from 'app/util/ApiUtil';
-import { STATES } from 'app/constants/AppConstants';
 
 export const schema = yup.object().shape({
   relationship: yup.string().required(),
@@ -75,10 +74,7 @@ export const useAddClaimantForm = ({ defaultValues = {} } = {}) => {
   const methods = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
-    defaultValues: {
-      ...defaultValues,
-      state: STATES.find((state) => state.label === defaultValues?.state),
-    },
+    defaultValues,
   });
 
   return methods;
