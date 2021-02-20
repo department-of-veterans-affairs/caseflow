@@ -2,7 +2,7 @@
 
 describe EndProductUpdate do
   describe "#perform!" do
-    let(:original_decision_review) { create(:higher_level_review, same_office: false) }
+    let(:original_decision_review) { create(:higher_level_review, :processed, same_office: false) }
     let!(:epe) { create(:end_product_establishment, code: old_code, source: original_decision_review) }
     let(:epu) do
       create(:end_product_update,
@@ -74,7 +74,7 @@ describe EndProductUpdate do
           allow(original_decision_review).to receive(:create_stream!).and_call_original
 
           expect(original_decision_review.end_product_establishments.count).to eq 2
-          expect { subject }.to change { original_decision_review.end_product_establishments.count }.by -1
+          expect { subject }.to change { original_decision_review.end_product_establishments.count }.by (-1)
           expect(original_decision_review).to have_received(:create_stream!).once
 
           new_stream = epu.end_product_establishment.source
@@ -92,12 +92,12 @@ describe EndProductUpdate do
           it "moves the EP and its issues to the existing stream" do
             allow(original_decision_review).to receive(:create_stream!).and_call_original
             existing_stream = HigherLevelReview.find_by(
-              created_at: original_decision_review.created_at,
+              establishment_processed_at: original_decision_review.establishment_processed_at,
               benefit_type: new_benefit_type
             )
 
             expect(original_decision_review.end_product_establishments.count).to eq 2
-            expect { subject }.to change { original_decision_review.end_product_establishments.count }.by -1
+            expect { subject }.to change { original_decision_review.end_product_establishments.count }.by (-1)
 
             expect(original_decision_review).to_not have_received(:create_stream!)
             expect(original_decision_review.benefit_type).to eq old_benefit_type
