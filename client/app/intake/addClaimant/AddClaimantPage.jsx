@@ -3,7 +3,10 @@ import { useHistory } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormProvider } from 'react-hook-form';
 
-import { editClaimantInformation } from '../reducers/addClaimantSlice';
+import {
+  clearPoa,
+  editClaimantInformation,
+} from '../reducers/addClaimantSlice';
 import { AddClaimantConfirmationModal } from './AddClaimantConfirmationModal';
 import { AddClaimantForm } from './AddClaimantForm';
 import { IntakeLayout } from '../components/IntakeLayout';
@@ -57,6 +60,10 @@ export const AddClaimantPage = () => {
     if (formData.vaForm === 'true') {
       push('/add_power_of_attorney');
     } else {
+      // In case user has come back to this page and changed value on vaForm
+      dispatch(clearPoa());
+
+      // Regardless, show confirmation modal
       toggleConfirm();
     }
   };

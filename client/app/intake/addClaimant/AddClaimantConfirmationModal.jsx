@@ -14,6 +14,7 @@ import {
 } from 'app/../COPY';
 import { claimantPropTypes, poaPropTypes } from './utils';
 import { AddressBlock } from './AddressBlock';
+import { isEmpty } from 'lodash';
 
 const classes = {
   addressHeader: css({ margin: '1.6rem 0' }),
@@ -44,6 +45,8 @@ export const AddClaimantConfirmationModal = ({
     [claimant]
   );
 
+  const showPoa = poa && !isEmpty(poa);
+
   return (
     <Modal
       title={ADD_CLAIMANT_CONFIRM_MODAL_TITLE}
@@ -71,8 +74,8 @@ export const AddClaimantConfirmationModal = ({
           <strong>Claimant's POA</strong>
         </div>
 
-        {!poa && <div>{ADD_CLAIMANT_CONFIRM_MODAL_NO_POA}</div>}
-        {poa && <AddressBlock entity={poa} />}
+        {!showPoa && <div>{ADD_CLAIMANT_CONFIRM_MODAL_NO_POA}</div>}
+        {showPoa && <AddressBlock entity={poa} />}
       </section>
     </Modal>
   );

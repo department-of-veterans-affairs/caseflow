@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   claimant: {},
-  poa: {}
+  poa: {},
 };
 
 const addClaimantSlice = createSlice({
@@ -18,6 +18,9 @@ const addClaimantSlice = createSlice({
         ...formData,
       };
     },
+    clearClaimant: (state) => {
+      state.claimant = {};
+    },
     editPoaInformation: (state, action) => {
       const { formData } = action.payload;
 
@@ -26,9 +29,18 @@ const addClaimantSlice = createSlice({
         ...formData,
       };
     },
+    clearPoa: (state) => {
+      state.poa = {};
+    },
   },
 });
 
-export const { cancel, editClaimantInformation, editPoaInformation } = addClaimantSlice.actions;
+export const {
+  cancel,
+  editClaimantInformation,
+  clearClaimant,
+  editPoaInformation,
+  clearPoa,
+} = addClaimantSlice.actions;
 
 export default addClaimantSlice.reducer;
