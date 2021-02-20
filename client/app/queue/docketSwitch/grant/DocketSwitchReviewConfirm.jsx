@@ -61,7 +61,11 @@ export const DocketSwitchReviewConfirm = ({
     [docketFrom, docketTo]
   );
 
-  const noTasksShown = ![...tasksKept, ...tasksAdded]?.length ? 'None' : null;
+  const noTasksShown = () => {
+    if (![...tasksKept, ...tasksAdded]?.length) {
+      return 'None';
+    }
+  };
 
   return (
     <>
@@ -146,7 +150,7 @@ export const DocketSwitchReviewConfirm = ({
                     {<tr>
                       <td>
                         <div>
-                          <em>{noTasksShown}</em>
+                          <em>{noTasksShown()}</em>
                         </div>
                       </td>
                     </tr>
