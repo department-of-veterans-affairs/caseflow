@@ -16,6 +16,7 @@ import { validateDateNotInFuture } from '../intake/util/issues';
 import TextField from '../components/TextField';
 import RadioField from '../components/RadioField';
 import DateSelector from '../components/DateSelector';
+import Checkbox from '../components/Checkbox';
 import CheckboxGroup from '../components/CheckboxGroup';
 import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
@@ -78,6 +79,7 @@ const AddCavcRemandView = (props) => {
   const [judgementDate, setJudgementDate] = useState(null);
   const [mandateDate, setMandateDate] = useState(null);
   const [issues, setIssues] = useState({});
+  const [federalCircuit, setFederalCircuit] = useState(false);
   const [instructions, setInstructions] = useState(null);
   const [isMandateProvided, setMandateProvided] = useState('true');
 
@@ -313,6 +315,14 @@ const AddCavcRemandView = (props) => {
     />
   </React.Fragment>;
 
+  const federalCircuitField = <React.Fragment>
+    <legend><strong>{COPY.CAVC_FEDERAL_CIRCUIT_HEADER}</strong></legend>
+    <Checkbox name="federalCircuit" label={COPY.CAVC_FEDERAL_CIRCUIT_LABEL}
+      value={federalCircuit}
+      onChange={(evt) => setFederalCircuit(evt)}
+    />
+  </React.Fragment>;
+
   const instructionsField = <TextareaField
     label={COPY.CAVC_INSTRUCTIONS_LABEL}
     name="context-and-instructions-textBox"
@@ -346,6 +356,7 @@ const AddCavcRemandView = (props) => {
       {mandateAvailable() && mandateField }
       {!mandateAvailable() && type !== CAVC_DECISION_TYPES.remand && noMandateBanner }
       {!deathDismissalType() && issuesField}
+      {type === CAVC_DECISION_TYPES.remand && mdrSubtype() && federalCircuitField }
       {instructionsField}
     </QueueFlowPage>
   );
