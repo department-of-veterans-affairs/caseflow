@@ -49,10 +49,9 @@ const AppellantInformation = ({ hearing, userCanViewFnodBadgeInHearings }) => {
     <DocketTypeBadge name={hearing.docketName} number={hearing.docketNumber} />
     {hearing.docketNumber} <br />
     {hearing.paperCase && <span>{COPY.IS_PAPER_CASE}</span>}
-    <FnodBadge
+    {userCanViewFnodBadgeInHearings && <FnodBadge
       veteranAppellantDeceased={hearing.veteranDateOfDeathInfo?.veteranAppellantDeceased}
       uniqueId={hearing.id}
-      show={userCanViewFnodBadgeInHearings}
       tooltipText = {
         <div>
           <strong>Date of Death Reported</strong>
@@ -70,7 +69,7 @@ const AppellantInformation = ({ hearing, userCanViewFnodBadgeInHearings }) => {
           </ul>
         </div>
       }
-    />
+    />}
     <br /><br />
     {hearing.appellantAddressLine1}<br />
     {hearing.appellantCity ?

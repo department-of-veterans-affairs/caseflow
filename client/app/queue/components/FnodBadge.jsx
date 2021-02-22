@@ -10,9 +10,9 @@ import Badge from './Badge';
  */
 
 const FnodBadge = (props) => {
-  const { veteranAppellantDeceased, uniqueId, show, tooltipText } = props;
+  const { veteranAppellantDeceased, uniqueId, tooltipText } = props;
 
-  if (!veteranAppellantDeceased || !show) {
+  if (!veteranAppellantDeceased) {
     return null;
   }
 
@@ -22,7 +22,6 @@ const FnodBadge = (props) => {
 FnodBadge.propTypes = {
   veteranAppellantDeceased: PropTypes.bool,
   uniqueId: PropTypes.string,
-  show: PropTypes.bool,
   tooltipText: PropTypes.string
 };
 

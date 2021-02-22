@@ -19,12 +19,14 @@ const QueueFnodBadge = ({ fnodBadge, appeal }) => {
     </ul>
   </div>;
 
-  return <FnodBadge
-    veteranAppellantDeceased={appeal.veteranAppellantDeceased}
-    uniqueId={appeal.id}
-    show={fnodBadge}
-    tooltipText={tooltipText}
-  />;
+  return <div>
+    {fnodBadge &&
+      <FnodBadge
+        veteranAppellantDeceased={appeal.veteranAppellantDeceased}
+        uniqueId={appeal.id}
+        tooltipText={tooltipText}
+      />}
+  </div>;
 };
 
 QueueFnodBadge.propTypes = {
