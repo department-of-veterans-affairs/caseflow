@@ -319,6 +319,7 @@ Rails.application.routes.draw do
   post "post_decision_motions/return_to_judge", to: "post_decision_motions#return_to_judge"
   post "post_decision_motions", to: "post_decision_motions#create"
   post "docket_switches", to: "docket_switches#create"
+  post "docket_switches/address_ruling", to: "docket_switches#address_ruling"
 
   # :nocov:
   namespace :test do

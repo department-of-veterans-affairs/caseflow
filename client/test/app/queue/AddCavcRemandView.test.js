@@ -122,11 +122,10 @@ describe('AddCavcRemandView', () => {
 
   describe('form validations', () => {
     const errorClass = '.usa-input-error-message';
-    const tomorrow = moment(new Date().toISOString()).add(1, 'day').format('YYYY-MM-DD');
+    const futureDate = moment(new Date().toISOString()).add(2, 'day').format('YYYY-MM-DD');
 
     const validationErrorShows = (component, errorMessage) => {
       component.find('#button-next-button').simulate('click');
-
       return component.find(errorClass).findWhere((node) => node.props().children === errorMessage).length > 0;
     };
 
@@ -189,7 +188,7 @@ describe('AddCavcRemandView', () => {
       it('shows error on future date selection', () => {
         const cavcForm = setup({ appealId });
 
-        cavcForm.find('input#decision-date').simulate('change', { target: { value: tomorrow } });
+        cavcForm.find('input#decision-date').simulate('change', { target: { value: futureDate } });
         expect(validationErrorShows(cavcForm, error)).toBeTruthy();
       });
 
@@ -214,7 +213,7 @@ describe('AddCavcRemandView', () => {
       it('shows error on future date selection', () => {
         const cavcForm = setup({ appealId });
 
-        cavcForm.find('input#judgement-date').simulate('change', { target: { value: tomorrow } });
+        cavcForm.find('input#judgement-date').simulate('change', { target: { value: futureDate } });
         expect(validationErrorShows(cavcForm, error)).toBeTruthy();
       });
 
@@ -239,7 +238,7 @@ describe('AddCavcRemandView', () => {
       it('shows error on future date selection', () => {
         const cavcForm = setup({ appealId });
 
-        cavcForm.find('input#mandate-date').simulate('change', { target: { value: tomorrow } });
+        cavcForm.find('input#mandate-date').simulate('change', { target: { value: futureDate } });
         expect(validationErrorShows(cavcForm, error)).toBeTruthy();
       });
 
