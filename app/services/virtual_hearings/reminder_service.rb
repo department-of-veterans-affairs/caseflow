@@ -13,15 +13,38 @@ class VirtualHearings::ReminderService
   def should_send_reminder_email?
     return false if days_until_hearing <= 0
 
-    should_send_2_day_reminder? ||
-      should_send_3_day_friday_reminder? ||
-      should_send_7_day_reminder?
+    which_type_of_reminder_to_send
   end
 
   private
 
   attr_reader :virtual_hearing
   attr_reader :last_sent_reminder
+
+  def log_reminder_type(type)
+    Rails.logger.info(
+      "Send #{type} reminder emails: ( "\
+      "Last sent reminder: #{last_sent_reminder}, \n " \
+      "Days until hearing: #{days_until_hearing}, \n" \
+      "Days from hearing day to last reminder sent: #{days_from_hearing_day_to_last_sent_reminder}, \n" \
+      "Days between hearing and created at: #{days_between_hearing_and_created_at}, \n" \
+      "Is hearing scheduled for Monday?: #{virtual_hearing.hearing.scheduled_for.monday?})"
+    )
+  end
+
+  def which_type_of_reminder_to_send
+    if should_send_2_day_reminder?
+      log_reminder_type("2 day")
+    elsif should_send_3_day_friday_reminder?
+      log_reminder_type("3 day")
+    elsif should_send_7_day_reminder?
+      log_reminder_type("7 day")
+    else
+      return false
+    end
+
+    true
+  end
 
   def should_send_2_day_reminder?
     days_between_hearing_and_created_at > 2 &&
@@ -31,8 +54,9 @@ class VirtualHearings::ReminderService
   # The 3 day reminder is a special reminder that is sent on Friday, *only* if the hearing
   # itself is on Monday.
   def should_send_3_day_friday_reminder?
-    days_between_hearing_and_created_at > 3 &&
-      days_until_hearing <= 3 && virtual_hearing.hearing.scheduled_for.monday?
+    Time.zone.now.utc.friday? &&
+      days_between_hearing_and_created_at > 3 && days_until_hearing <= 3 &&
+      virtual_hearing.hearing.scheduled_for.monday? && days_from_hearing_day_to_last_sent_reminder > 3
   end
 
   def should_send_7_day_reminder?
@@ -48,7 +72,7 @@ class VirtualHearings::ReminderService
   end
 
   def days_until_hearing
-    ((virtual_hearing.hearing.scheduled_for - Time.zone.now.utc) / 1.day).round
+    (virtual_hearing.hearing.scheduled_for - Time.zone.now.utc) / 1.day
   end
 
   def days_from_hearing_day_to_last_sent_reminder

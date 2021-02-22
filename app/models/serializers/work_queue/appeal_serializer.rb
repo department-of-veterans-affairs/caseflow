@@ -16,7 +16,8 @@ class WorkQueue::AppealSerializer
         notes: issue.notes,
         diagnostic_code: issue.contested_rating_issue_diagnostic_code,
         remand_reasons: issue.remand_reasons,
-        closed_status: issue.closed_status
+        closed_status: issue.closed_status,
+        decision_date: issue.decision_date
       }
     end
   end
@@ -37,6 +38,12 @@ class WorkQueue::AppealSerializer
     end
   end
 
+  attribute :nod_date_updates do |object|
+    object.nod_date_updates.map do |nod_date_update|
+      WorkQueue::NodDateUpdateSerializer.new(nod_date_update).serializable_hash[:data][:attributes]
+    end
+  end
+
   attribute :can_edit_request_issues do |object, params|
     AppealRequestIssuesPolicy.new(user: params[:user], appeal: object).editable?
   end
@@ -48,6 +55,8 @@ class WorkQueue::AppealSerializer
   attribute :removed, &:removed?
 
   attribute :overtime, &:overtime?
+
+  attribute :veteran_appellant_deceased, &:veteran_appellant_deceased?
 
   attribute :assigned_to_location
 
@@ -70,6 +79,8 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :cavc_remand
+
+  attribute :veteran_death_date
 
   attribute :veteran_file_number
 
@@ -140,10 +151,7 @@ class WorkQueue::AppealSerializer
     ).editable?
   end
 
-  attribute :readable_hearing_request_type do |object|
-    object.current_hearing_request_type(readable: true)
-  end
-  attribute :readable_original_hearing_request_type do |object|
-    object.original_hearing_request_type(readable: true)
-  end
+  attribute :readable_hearing_request_type, &:readable_current_hearing_request_type
+
+  attribute :readable_original_hearing_request_type, &:readable_original_hearing_request_type
 end

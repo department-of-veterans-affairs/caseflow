@@ -37,6 +37,8 @@ class Veteran < CaseflowRecord
 
   delegate :full_address, to: :address
 
+  before_save :set_date_of_death_reported_at!, if: :will_save_change_to_date_of_death?
+
   CHARACTER_OF_SERVICE_CODES = {
     "HON" => "Honorable",
     "UHC" => "Under Honorable Conditions",
@@ -271,7 +273,17 @@ class Veteran < CaseflowRecord
   end
 
   def date_of_death
-    super || (bgs_record_found? ? bgs_record[:date_of_death] : nil)
+    cached_date_of_death = super
+    return cached_date_of_death if cached_date_of_death.present? || RequestStore.store[:current_user]&.vso_employee?
+
+    dod = bgs_record[:date_of_death] if bgs_record_found?
+    dod && Date.strptime(dod, "%m/%d/%Y")
+  rescue ArgumentError
+    nil
+  end
+
+  def set_date_of_death_reported_at!
+    self.date_of_death_reported_at = Time.zone.now
   end
 
   def address

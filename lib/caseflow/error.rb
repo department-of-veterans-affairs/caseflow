@@ -147,11 +147,19 @@ module Caseflow::Error
     end
   end
 
+  class IneligibleForCavcCorrespondence < SerializableError; end
+
   class InvalidParentTask < SerializableError
     def initialize(args)
       @task_type = args[:task_type]
       @code = args[:code] || 500
       @message = args[:message] || "Invalid parent type for task #{@task_type}"
+    end
+  end
+
+  class CannotUpdateMandatedRemands < SerializableError
+    def initialize
+      @message = "Cavc Remands can only be updated if they did not have mandate"
     end
   end
 
@@ -255,7 +263,7 @@ module Caseflow::Error
   class ChildTaskAssignedToSameUser < SerializableError
     def initialize
       @code = 500
-      @message = "A task cannot be assigned to the same user as the parent."
+      @message = "A task of the same type as the parent task cannot be assigned to the same user."
     end
   end
 

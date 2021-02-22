@@ -3,9 +3,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams, useRouteMatch } from 'react-router';
 import { taskById, appealWithDetailSelector } from 'app/queue/selectors';
 import { taskActionData } from 'app/queue/utils';
-import DISPOSITIONS from 'constants/DOCKET_SWITCH';
-import { createDocketSwitchGrantedTask, createDocketSwitchDeniedTask } from './docketSwitchRulingSlice';
+import DISPOSITIONS from 'constants/DOCKET_SWITCH_DISPOSITIONS';
+import { addressDocketSwitchRuling } from './docketSwitchRulingSlice';
 import { DocketSwitchRulingForm } from './DocketSwitchRulingForm';
+import {
+  DOCKET_SWITCH_RULING_SUCCESS_TITLE,
+  DOCKET_SWITCH_RULING_SUCCESS_MESSAGE,
+} from '../../../../COPY';
+
+import { sprintf } from 'sprintf-js';
+import { showSuccessMessage } from '../../uiReducer/uiActions';
 
 export const formatDocketSwitchRuling = ({
   disposition,
@@ -39,27 +46,21 @@ export const DocketSwitchRulingContainer = () => {
     const dispositionType = DISPOSITIONS[disposition].dispositionType;
     const taskType = `DocketSwitch${dispositionType}Task`;
 
-    const newTask = {
-      parent_id: taskId,
-      type: taskType,
-      external_id: appeal.externalId,
+    const data = {
+      task_id: taskId,
+      new_task_type: taskType,
       instructions,
-      assigned_to_id: formData.attorney.value,
-      assigned_to_type: 'User',
+      assigned_to_user_id: formData.attorney.value,
     };
 
-    const data = {
-      tasks: [newTask],
+    const successMessage = {
+      title: sprintf(DOCKET_SWITCH_RULING_SUCCESS_TITLE, dispositionType.toLowerCase(), appeal.appellantFullName),
+      detail: DOCKET_SWITCH_RULING_SUCCESS_MESSAGE,
     };
 
     try {
-      if (dispositionType === 'Granted') {
-        await dispatch(createDocketSwitchGrantedTask(data));
-      } else if (dispositionType === 'Denied') {
-        await dispatch(createDocketSwitchDeniedTask(data));
-      }
-
-      // Add logic for success banner
+      await dispatch(addressDocketSwitchRuling(data));
+      dispatch(showSuccessMessage(successMessage));
       push('/queue');
     } catch (error) {
       // Perhaps show an alert that indicates error, advise trying again...?

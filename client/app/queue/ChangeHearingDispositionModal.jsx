@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
-import _ from 'lodash';
+import { isArray, find } from 'lodash';
 import moment from 'moment';
 
 import COPY from '../../COPY';
-import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
+import { DISPOSITION_OPTIONS } from '../hearings/constants';
+import DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES';
 import TASK_STATUSES from '../../constants/TASK_STATUSES';
 
 import { taskById, appealWithDetailSelector } from './selectors';
@@ -19,6 +20,7 @@ import TextareaField from '../components/TextareaField';
 import QueueFlowModal from './components/QueueFlowModal';
 
 import { requestPatch } from './uiReducer/uiActions';
+import { dispositionLabel } from '../hearings/utils';
 
 class ChangeHearingDispositionModal extends React.Component {
   constructor(props) {
@@ -39,7 +41,8 @@ class ChangeHearingDispositionModal extends React.Component {
     };
     let afterDispositionUpdate = {};
 
-    if (this.state.selectedValue === HEARING_DISPOSITION_TYPES.postponed) {
+    if (this.state.selectedValue === DISPOSITION_TYPES.postponed ||
+      this.state.selectedValue === DISPOSITION_TYPES.scheduled_in_error) {
       afterDispositionUpdate = {
         after_disposition_update: {
           action: 'schedule_later'
@@ -65,7 +68,7 @@ class ChangeHearingDispositionModal extends React.Component {
     };
 
     const successMsg = {
-      title: `Successfully changed hearing disposition to ${_.startCase(this.state.selectedValue)}`
+      title: `Successfully changed hearing disposition to ${dispositionLabel(this.state.selectedValue)}`
     };
 
     return this.props.
@@ -76,7 +79,7 @@ class ChangeHearingDispositionModal extends React.Component {
       catch((err) => {
         // Process the error from the response
         const message = err?.message ? JSON.parse(err?.message) : {};
-        const error = _.isArray(message.errors) ? message.errors[0] : err;
+        const error = isArray(message.errors) ? message.errors[0] : err;
 
         // Set the state with the error to show the message
         this.setState({
@@ -95,12 +98,8 @@ class ChangeHearingDispositionModal extends React.Component {
   render = () => {
     const { appeal, highlightFormItems, task } = this.props;
 
-    const hearing = _.find(appeal.hearings, { externalId: task.externalHearingId });
-    const currentDisposition = hearing?.disposition ? _.startCase(hearing?.disposition) : 'None';
-    const dispositionOptions = Object.keys(HEARING_DISPOSITION_TYPES).map((key) => ({
-      value: key,
-      label: _.startCase(key)
-    }));
+    const hearing = find(appeal.hearings, { externalId: task.externalHearingId });
+    const currentDisposition = dispositionLabel(hearing?.disposition);
 
     return (
       <QueueFlowModal
@@ -127,7 +126,7 @@ class ChangeHearingDispositionModal extends React.Component {
           placeholder="Select"
           value={this.state.selectedValue}
           onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
-          options={dispositionOptions}
+          options={DISPOSITION_OPTIONS}
         />
         <br />
         <TextareaField

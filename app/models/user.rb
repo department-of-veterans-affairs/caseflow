@@ -62,6 +62,12 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     vacols_roles.include?("attorney")
   end
 
+  # Using "pure_judge" terminology from VACOLS::Staff
+  # This implementation relies on UserRepository#roles_based_on_staff_fields return values
+  def pure_judge_in_vacols?
+    vacols_roles.first == "judge"
+  end
+
   def judge_in_vacols?
     vacols_roles.include?("judge")
   end
@@ -88,6 +94,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def can_view_hearing_schedule?
     can?("RO ViewHearSched") && !can?("Build HearSched") && !can?("Edit HearSched")
+  end
+
+  def can_view_edit_nod_date?
+    (attorney? || judge? || BvaIntake.singleton.users.include?(self) ||
+      ClerkOfTheBoard.singleton.users.include?(self)) && FeatureToggle.enabled?(:edit_nod_date, user: self)
   end
 
   def can_vso_hearing_schedule?
@@ -119,8 +130,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_change_hearing_request_type?
-    (can?("Build HearSched") || can?("Edit HearSched")) &&
-      FeatureToggle.enabled?(:convert_travel_board_to_video_or_virtual, user: self)
+    can?("Build HearSched") || can?("Edit HearSched")
   end
 
   def vacols_uniq_id
@@ -428,17 +438,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     @user_info ||= self.class.user_repository.user_info_from_vacols(css_id)
   end
 
-  def get_appeal_stream_hearings(appeal_streams)
-    appeal_streams.reduce({}) do |acc, (appeal_id, appeals)|
-      acc[appeal_id] = appeal_hearings(appeals.map(&:id))
-      acc
-    end
-  end
-
-  def appeal_hearings(appeal_ids)
-    LegacyHearing.where(appeal_id: appeal_ids)
-  end
-
   class << self
     attr_writer :authentication_service
     delegate :authenticate_vacols, to: :authentication_service
@@ -514,6 +513,8 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
     # case-insensitive search
     def find_by_css_id(css_id)
+      # this query uses the index_users_unique_css_id
+      # find_by(css_id: css_id) does a slower seq scan
       find_by("UPPER(css_id)=UPPER(?)", css_id)
     end
 

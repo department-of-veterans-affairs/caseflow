@@ -108,17 +108,115 @@ describe WarmBgsCachesJob, :all_dbs do
           expect(@raven_called).to eq true
         end
       end
+    end
+  end
 
-      context "bgs POA error" do
+  context "Warm POA and cache appeals" do
+    let(:job) { described_class.new }
+
+    shared_examples "warms poa and caches in CachedAppeal table" do
+      it "warms poa and caches in CachedAppeal table", :aggregate_failures do
+        subject
+
+        expect(BgsPowerOfAttorney.all.count).to eq(1)
+        expect(CachedAppeal.first.power_of_attorney_name).to eq(BgsPowerOfAttorney.first.representative_name)
+      end
+    end
+
+    context "Legacy appeal with open ScheduleHearingTask" do
+      before { UpdateCachedAppealsAttributesJob.new.cache_legacy_appeals }
+
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal) }
+
+      context "priority" do
+        subject { job.send(:warm_poa_and_cache_for_appeals_for_hearings_priority) }
+        include_examples "warms poa and caches in CachedAppeal table"
+      end
+
+      context "most recently assigned" do
+        subject { job.send(:warm_poa_and_cache_for_appeals_for_hearings_most_recent) }
+        include_examples "warms poa and caches in CachedAppeal table"
+      end
+    end
+
+    context "AMA appeal with open ScheduleHearingTask" do
+      before { UpdateCachedAppealsAttributesJob.new.cache_ama_appeals }
+
+      subject { job.send(:warm_poa_and_cache_for_ama_appeals_with_hearings) }
+
+      let(:appeal) { create(:appeal) }
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal) }
+
+      context "priority" do
+        subject { job.send(:warm_poa_and_cache_for_appeals_for_hearings_priority) }
+        include_examples "warms poa and caches in CachedAppeal table"
+      end
+
+      context "most recently assigned" do
+        subject { job.send(:warm_poa_and_cache_for_appeals_for_hearings_most_recent) }
+        include_examples "warms poa and caches in CachedAppeal table"
+      end
+    end
+
+    context "Oldest Claimant" do
+      subject { job.send(:warm_poa_and_cache_ama_appeals_for_oldest_claimants) }
+
+      let!(:appeal) { create(:appeal, :with_post_intake_tasks) }
+
+      include_examples "warms poa and caches in CachedAppeal table"
+    end
+
+    context "when BGS fails" do
+      let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: legacy_appeal) }
+
+      shared_examples "rescues error" do
+        it "completes and sends warning to Slack" do
+          allow_any_instance_of(SlackService).to receive(:send_notification) do |_, msg, title|
+            @slack_msg = msg
+            @slack_title = title
+          end
+
+          job.perform_now
+
+          expect(job.send(:warning_msgs).count).to eq 2
+          expect(@slack_msg.lines.count).to eq 2
+          expect(@slack_title).to match(/\[WARN\] #{described_class}: .*/)
+        end
+      end
+
+      context "BGSService fails with ECONNRESET" do
+        before do
+          bgs = Fakes::BGSService.new
+          allow(Fakes::BGSService).to receive(:new).and_return(bgs)
+          allow(bgs).to receive(:fetch_poa_by_file_number)
+            .and_raise(Errno::ECONNRESET, "mocked error for testing")
+        end
+        include_examples "rescues error"
+      end
+      context "BGSService fails with Savon::HTTPError" do
+        before do
+          bgs = Fakes::BGSService.new
+          allow(Fakes::BGSService).to receive(:new).and_return(bgs)
+
+          httperror_mock = double("httperror")
+          allow(httperror_mock).to receive(:code).and_return(408)
+          allow(httperror_mock).to receive(:headers).and_return({})
+          allow(httperror_mock).to receive(:body).and_return("stream timeout")
+          allow(bgs).to receive(:fetch_poa_by_file_number)
+            .and_raise(Savon::HTTPError, httperror_mock)
+        end
+        include_examples "rescues error"
+      end
+
+      context "BGSService fails with BGS::ShareError" do
         before do
           error = BGS::ShareError.new("error!")
           allow_any_instance_of(BgsPowerOfAttorney).to receive(:fetch_bgs_record).and_raise(error)
         end
 
-        it "captures exceptions" do
-          expect { described_class.perform_now }.to_not raise_error
-          expect(@raven_called).to eq true
-        end
+        include_examples "rescues error"
       end
     end
   end

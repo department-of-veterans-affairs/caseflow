@@ -1,0 +1,195 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DocketSwitchEditTasksForm renders correctly 1`] = `
+<div>
+  <form
+    aria-label="Grant Docket Switch Add Task"
+    class="docket-switch-granted-add"
+  >
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+      role="main"
+    >
+      <h1>
+        Switch Docket: Add/Remove Tasks
+      </h1>
+      <div
+        data-css-1sbm5ab=""
+      >
+        <p>
+          <strong>
+            You are switching from Direct Review to Hearing
+          </strong>
+        </p>
+      </div>
+      <div>
+        <p>
+          Below is a list of tasks that will remain open when you switch dockets. Tasks that are automatically created with the Hearing docket cannot be selected or removed. Please 
+          <strong>
+            unselect
+          </strong>
+           any tasks you would like to 
+          <strong>
+            remove
+          </strong>
+           (the remaining tasks will be transferred to the new docket) and 
+          <strong>
+            add
+          </strong>
+           any additional tasks that are needed.
+        </p>
+      </div>
+      <fieldset
+        class="checkbox-wrapper-taskIds cf-form-checkboxes cf-checkbox-group"
+        data-css-1m1s8ka=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Please unselect any tasks you would like to remove:
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="1"
+            name="1"
+            type="checkbox"
+          />
+          <label
+            for="1"
+          >
+            Task Type A
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="2"
+            name="2"
+            type="checkbox"
+          />
+          <label
+            for="2"
+          >
+            Task Type B
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            id="3"
+            name="3"
+            type="checkbox"
+          />
+          <label
+            for="3"
+          >
+            Task Type C
+          </label>
+        </div>
+      </fieldset>
+      <fieldset
+        class="checkbox-wrapper-mandatory cf-form-checkboxes cf-checkbox-group-inline"
+        data-css-1m1s8ka=""
+      >
+        <legend
+          class=""
+        >
+          <strong>
+            <span>
+              Task(s) that will automatically be created:
+            </span>
+          </strong>
+        </legend>
+        <div
+          class="checkbox"
+        >
+          <input
+            disabled=""
+            id="DistributionTask"
+            name="DistributionTask"
+            type="checkbox"
+          />
+          <label
+            for="DistributionTask"
+          >
+            Distribution Task
+          </label>
+        </div>
+        <div
+          class="checkbox"
+        >
+          <input
+            disabled=""
+            id="HearingTask"
+            name="HearingTask"
+            type="checkbox"
+          />
+          <label
+            for="HearingTask"
+          >
+            Hearing Task
+          </label>
+        </div>
+      </fieldset>
+      <h3
+        data-css-1m1s8ka=""
+      >
+        <br />
+        <strong>
+          Would you like to add any additional tasks?
+        </strong>
+        <br />
+      </h3>
+      <div />
+      <button
+        class="cf-submit usa-button-secondary"
+        data-css-byo489=""
+        id="button-+-Add-task"
+        type="button"
+      >
+        + Add task
+      </button>
+    </section>
+    <div
+      class="controls cf-app-segment"
+    >
+      <div
+        data-css-63oe3q=""
+      >
+        <span>
+          <button
+            class="cf-right-side usa-button"
+            data-css-wn5k45=""
+            id="button-next-button"
+            type="button"
+          >
+            Continue
+          </button>
+        </span>
+        <button
+          class="cf-btn-link usa-button"
+          id="button-cancel-button"
+          type="button"
+        >
+          Cancel
+        </button>
+        <button
+          class="cf-right-side cf-prev-step usa-button-secondary usa-button"
+          id="button-back-button"
+          type="button"
+        >
+          Back
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+`;

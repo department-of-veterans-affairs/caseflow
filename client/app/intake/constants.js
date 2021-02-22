@@ -41,6 +41,7 @@ export const PAGE_PATHS = {
   BEGIN: '/',
   SEARCH: '/search',
   REVIEW: '/review_request',
+  ADD_CLAIMANT: '/add_claimant',
   FINISH: '/finish',
   ADD_ISSUES: '/add_issues',
   COMPLETED: '/completed',
@@ -48,7 +49,8 @@ export const PAGE_PATHS = {
   CANCEL_ISSUES: '/cancel',
   CONFIRMATION: '/confirmation',
   CLEARED_EPS: '/cleared_eps',
-  OUTCODED: '/outcoded'
+  OUTCODED: '/outcoded',
+  ADD_POWER_OF_ATTORNEY: '/add_power_of_attorney'
 };
 
 export const BOOLEAN_RADIO_OPTIONS = [

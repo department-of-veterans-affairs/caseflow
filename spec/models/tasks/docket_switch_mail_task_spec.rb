@@ -30,8 +30,8 @@ describe DocketSwitchMailTask, :postgres do
       before { allow_any_instance_of(ClerkOfTheBoard).to receive(:user_has_access?).and_return(false) }
 
       context "without docket_switch feature toggle" do
-        it "returns the available_actions as defined by Task" do
-          expect(subject).to eq(task_actions)
+        it "returns no task actions" do
+          expect(subject).to be_empty
         end
       end
 
@@ -39,8 +39,8 @@ describe DocketSwitchMailTask, :postgres do
         before { FeatureToggle.enable!(:docket_switch) }
         after { FeatureToggle.disable!(:docket_switch) }
 
-        it "returns the available_actions as defined by Task" do
-          expect(subject).to eq(task_actions)
+        it "returns no task actions" do
+          expect(subject).to be_empty
         end
       end
     end
@@ -79,16 +79,32 @@ describe DocketSwitchMailTask, :postgres do
   end
 
   describe ".allow_creation?" do
-    subject { DocketSwitchMailTask.allow_creation?(user) }
+    let(:appeal) { create(:appeal) }
+    subject { DocketSwitchMailTask.allow_creation?(user: user, appeal: appeal) }
 
     context "user is part of Clerk of the Board org" do
       it "allows task creation" do
         expect(subject).to eq(true)
       end
+
+      context "appeal has not been dispatched" do
+        it "allows task creation" do
+          expect(subject).to eq(true)
+        end
+      end
     end
 
     context "user is not part of Clerk of the Board org" do
       before { allow_any_instance_of(ClerkOfTheBoard).to receive(:user_has_access?).and_return(false) }
+
+      it "disallows task creation" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "appeal has been dispatched" do
+      let(:dispatched_appeal) { create(:appeal, :dispatched) }
+      subject { DocketSwitchMailTask.allow_creation?(user: user, appeal: dispatched_appeal) }
 
       it "disallows task creation" do
         expect(subject).to eq(false)

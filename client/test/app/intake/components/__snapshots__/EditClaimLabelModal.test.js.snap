@@ -12,7 +12,7 @@ exports[`EditClaimLabelModal renders correctly 1`] = `
   >
     <div
       class="cf-modal-body"
-      id="add_claimant_modal"
+      id="edit-claim-label-modal"
     >
       <button
         class="cf-modal-close"
@@ -62,11 +62,11 @@ exports[`EditClaimLabelModal renders correctly 1`] = `
               Please note: you will only be able to select claim labels within the same EP family (e.g. 040, 030). If you need to switch to another EP family, please cancel and re-establish the claim.
             </p>
             <div
-              class="cf-form-dropdown dropdown-claimLabel"
+              class="cf-form-dropdown dropdown-select-claim-label"
             >
               <label
                 class="question-label"
-                for="claimLabel"
+                for="select-claim-label"
               >
                 <strong>
                   <span>
@@ -106,7 +106,7 @@ exports[`EditClaimLabelModal renders correctly 1`] = `
                               autocapitalize="none"
                               autocomplete="off"
                               autocorrect="off"
-                              id="claimLabel"
+                              id="select-claim-label"
                               spellcheck="false"
                               style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
                               tabindex="0"

@@ -264,13 +264,15 @@ export class DailyDocketContainer extends React.Component {
           updateLockHearingDay={this.updateLockHearingDay}
           displayLockSuccessMessage={this.props.displayLockSuccessMessage}
           dailyDocketServerError={this.props.dailyDocketServerError}
+          history={this.props.history}
           onErrorHearingDayLock={this.props.onErrorHearingDayLock} />
       }
 
       {this.state.modalOpen &&
         <HearingDayEditModal
           closeModal={this.closeModal}
-          cancelModal={this.cancelModal} />
+          cancelModal={this.cancelModal}
+          requestType={this.props.hearingDay.requestType} />
       }
     </LoadingDataDisplay>;
 

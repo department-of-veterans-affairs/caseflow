@@ -14,9 +14,9 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import Tooltip from '../components/Tooltip';
 
 import COPY from '../../COPY';
-import StringUtil from '../util/StringUtil';
 import { DateString } from '../util/DateUtil';
 import { showVeteranCaseList } from './uiReducer/uiActions';
+import { dispositionLabel } from '../hearings/utils';
 
 const appealSummaryUlStyling = css({
   paddingLeft: 0,
@@ -53,7 +53,7 @@ class CaseHearingsDetail extends React.PureComponent {
     {
       label: 'Disposition',
       value: <React.Fragment>
-        {hearing.disposition && StringUtil.snakeCaseToCapitalized(hearing.disposition)}
+        {dispositionLabel(hearing?.disposition)}
       </React.Fragment>
     }];
 

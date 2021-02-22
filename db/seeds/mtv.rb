@@ -47,8 +47,8 @@ module Seeds
     end
 
     def create_motion_to_vacate_mail_task(appeal)
-      lit_support_user = User.find_by(css_id: "LIT_SUPPORT_USER")
-      mail_user = User.find_by(css_id: "JOLLY_POSTMAN")
+      lit_support_user = User.find_by_css_id("LIT_SUPPORT_USER")
+      mail_user = User.find_by_css_id("JOLLY_POSTMAN")
       mail_team_task = create(
         :vacate_motion_mail_task,
         :on_hold,

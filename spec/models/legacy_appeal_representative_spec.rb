@@ -96,4 +96,67 @@ describe LegacyAppealRepresentative do
       end
     end
   end
+
+  describe "representative_is_agent?" do
+    before do
+      # poa is returned from bgs in application, let's use poa from bgs
+      RequestStore.store[:application] = "hearings"
+      allow(poa).to receive(:bgs_representative_type).and_return(poa_type)
+    end
+
+    let(:poa_type) { nil }
+
+    context "representative is a agent" do
+      let(:poa_type) { "Agent" }
+
+      it "is true" do
+        expect(lar.representatives.count).to eq 1
+        expect(lar.representative_is_agent?).to eq true
+      end
+    end
+
+    context "representative is a private attorney" do
+      let(:poa_type) { "Attorney" }
+
+      it "is true" do
+        expect(lar.representatives.count).to eq 1
+        expect(lar.representative_is_agent?).to eq true
+      end
+    end
+
+    context "representative is a colocated vso" do
+      it "is false" do
+        expect(lar.representatives.count).to eq 1
+        expect(lar.representative_is_agent?).to eq false
+      end
+    end
+  end
+
+  describe "representative_is_organization?" do
+    before do
+      # poa is returned from bgs in application, let's use poa from bgs
+      RequestStore.store[:application] = "hearings"
+      allow(poa).to receive(:bgs_representative_type).and_return(poa_type)
+    end
+
+    let(:poa_type) { nil }
+
+    context "representative is organization" do
+      let(:poa_type) { "Service Organization" }
+
+      it "is true" do
+        expect(lar.representatives.count).to eq 1
+        expect(lar.representative_is_organization?).to eq true
+      end
+    end
+
+    context "representative is a private attorney" do
+      let(:poa_type) { "Attorney" }
+
+      it "is false" do
+        expect(lar.representatives.count).to eq 1
+        expect(lar.representative_is_organization?).to eq false
+      end
+    end
+  end
 end

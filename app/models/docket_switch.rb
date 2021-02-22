@@ -5,6 +5,8 @@ class DocketSwitch < CaseflowRecord
   belongs_to :new_docket_stream, class_name: "Appeal"
   belongs_to :task, optional: false
 
+  attr_accessor :context, :selected_task_ids, :new_admin_actions
+
   validates :disposition, presence: true
   validate :granted_issues_present_if_partial
 
@@ -16,17 +18,50 @@ class DocketSwitch < CaseflowRecord
     denied: "denied"
   }
 
-  def request_issues_for_switch
-    return [] unless granted_request_issue_ids
+  scope :updated_since_for_appeals, lambda { |since|
+    select(:old_docket_stream_id).where("#{table_name}.updated_at >= ?", since)
+  }
 
-    RequestIssue.find(granted_request_issue_ids)
-  end
-
-  def move_granted_request_issues
-    request_issues_for_switch.map { |ri| ri.update!(decision_review: new_docket_stream) }
+  def process!
+    process_denial! if denied?
+    process_granted! if task.is_a?(DocketSwitchGrantedTask)
   end
 
   private
+
+  def process_denial!
+    new_instructions = task.instructions.push(context)
+    task.update(status: Constants.TASK_STATUSES.completed, instructions: new_instructions)
+  end
+
+  def process_granted!
+    transaction do
+      update!(new_docket_stream: old_docket_stream.create_stream(:original))
+
+      copy_granted_request_issues!
+
+      DocketSwitch::TaskHandler.new(
+        docket_switch: self,
+        selected_task_ids: selected_task_ids,
+        new_admin_actions: new_admin_actions
+      ).call
+
+      task.update(status: Constants.TASK_STATUSES.completed)
+    end
+  end
+
+  def request_issues_for_switch
+    return [] if denied?
+
+    issue_ids = [*granted_request_issue_ids].presence || old_docket_stream.request_issues.map(&:id)
+    RequestIssue.find(issue_ids)
+  end
+
+  def copy_granted_request_issues!
+    request_issues_for_switch.each do |ri|
+      ri.move_stream!(new_appeal_stream: new_docket_stream, closed_status: "docket_switch")
+    end
+  end
 
   def granted_issues_present_if_partial
     return unless partially_granted?

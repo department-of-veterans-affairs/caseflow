@@ -7,13 +7,18 @@
 # When the associated hearing's disposition is set, the appropriate tasks are set as children
 #   - held: For legacy, task is set to be completed; for AMA, TranscriptionTask is created as child and
 #         EvidenceSubmissionWindowTask is also created as child unless the veteran/appellant has waived
-#         the 90 day evidence hold
-#   - Cancelled: Task is cancelled and EvidenceWindowSubmissionWindow task is created as a child of RootTask
+#         the 90 day evidence hold.
+#   - Cancelled: Task is cancelled and hearing is withdrawn where if appeal is AMA, EvidenceWindowSubmissionWindow
+#                task is created as a child of RootTask if it does not exist and if appeal is legacy, vacols field
+#                `bfha` and `bfhr` are updated.
 #   - No show: NoShowHearingTask is created as a child of this task
-#   - Postponed: 2 options: Schedule new hearing or cancel HearingTask tree and create new ScheduleHearingTask
+#   - Postponed: 2 options: Schedule new hearing or cancel HearingTask tree and create new ScheduleHearingTask.
 #
 # The task is marked complete when the children tasks are completed.
-
+#
+# If this task is the last closed task for the hearing subtree and there are no more open HearingTasks,
+# the logic in HearingTask#when_child_task_completed properly handles routing or creating ihp task.
+##
 class AssignHearingDispositionTask < Task
   include RunAsyncable
 
@@ -60,7 +65,11 @@ class AssignHearingDispositionTask < Task
     hearing_admin_actions = available_hearing_user_actions(user)
 
     if HearingsManagement.singleton.user_has_access?(user)
-      [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h] | hearing_admin_actions
+      [
+        Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h,
+        Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h,
+        Constants.TASK_ACTIONS.REMOVE_HEARING_SCHEDULED_IN_ERROR.to_h
+      ] | hearing_admin_actions
     else
       hearing_admin_actions
     end
@@ -83,17 +92,11 @@ class AssignHearingDispositionTask < Task
       fail HearingDispositionNotCanceled
     end
 
-    evidence_task = if appeal.is_a? Appeal
-                      EvidenceSubmissionWindowTask.find_or_create_by!(
-                        appeal: appeal,
-                        parent: hearing_task.parent,
-                        assigned_to: MailTeam.singleton
-                      )
-                    end
+    maybe_evidence_task = withdraw_hearing(hearing_task.parent)
 
     update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
 
-    [evidence_task].compact
+    [maybe_evidence_task].compact
   end
 
   def postpone!
@@ -135,10 +138,7 @@ class AssignHearingDispositionTask < Task
   end
 
   def update_children_status_after_closed
-    update_args = { status: status }
-    update_args[:closed_at] = Time.zone.now unless open?
-    update_args[:cancelled_by_id] = RequestStore[:current_user]&.id if cancelled?
-    children.open.update_all(update_args)
+    children.open.each { |task| task.update!(status: status) }
   end
 
   def cascade_closure_from_child_task?(_child_task)
@@ -153,10 +153,11 @@ class AssignHearingDispositionTask < Task
                       mark_hearing_held
                     when Constants.HEARING_DISPOSITION_TYPES.no_show
                       mark_hearing_no_show
-                    when Constants.HEARING_DISPOSITION_TYPES.postponed
-                      mark_hearing_postponed(
-                        instructions: params["instructions"],
-                        after_disposition_update: payload_values[:after_disposition_update]
+                    when Constants.HEARING_DISPOSITION_TYPES.postponed,
+                      Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+                      mark_hearing_with_disposition(
+                        payload_values: payload_values,
+                        instructions: params["instructions"]
                       )
                     else
                       fail ArgumentError, "unknown disposition"
@@ -167,14 +168,14 @@ class AssignHearingDispositionTask < Task
     created_tasks
   end
 
-  def update_hearing_disposition(disposition:)
+  def update_hearing(hearing_hash)
     # Ensure the hearing exists
     fail HearingAssociationMissing, hearing_task&.id if hearing.nil?
 
     if hearing.is_a?(LegacyHearing)
-      hearing.update_caseflow_and_vacols(disposition: disposition)
+      hearing.update_caseflow_and_vacols(hearing_hash)
     else
-      hearing.update(disposition: disposition)
+      hearing.update(hearing_hash)
     end
   end
 
@@ -197,7 +198,7 @@ class AssignHearingDispositionTask < Task
 
   def mark_hearing_cancelled
     multi_transaction do
-      update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
+      update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
       clean_up_virtual_hearing
       cancel!
     end
@@ -205,23 +206,31 @@ class AssignHearingDispositionTask < Task
 
   def mark_hearing_held
     multi_transaction do
-      update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.held)
+      update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.held)
       hold!
     end
   end
 
   def mark_hearing_no_show
     multi_transaction do
-      update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.no_show)
+      update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.no_show)
       no_show!
     end
   end
 
-  def mark_hearing_postponed(instructions: nil, after_disposition_update: nil)
+  def mark_hearing_with_disposition(payload_values:, instructions: nil)
     multi_transaction do
-      update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
+      if payload_values[:disposition] == Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+        update_hearing_disposition_and_notes(payload_values)
+      elsif payload_values[:disposition] == Constants.HEARING_DISPOSITION_TYPES.postponed
+        update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
+      end
+
       clean_up_virtual_hearing
-      reschedule_or_schedule_later(instructions: instructions, after_disposition_update: after_disposition_update)
+      reschedule_or_schedule_later(
+        instructions: instructions,
+        after_disposition_update: payload_values[:after_disposition_update]
+      )
     end
   end
 
@@ -282,5 +291,18 @@ class AssignHearingDispositionTask < Task
                     end
 
     [transcription_task, evidence_task].compact
+  end
+
+  def update_hearing_disposition_and_notes(payload_values)
+    if payload_values[:hearing_notes].nil?
+      update_hearing(
+        disposition: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+      )
+    else
+      update_hearing(
+        disposition: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error,
+        notes: payload_values[:hearing_notes]
+      )
+    end
   end
 end
