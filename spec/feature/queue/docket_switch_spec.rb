@@ -348,8 +348,12 @@ RSpec.feature "Docket Switch", :all_dbs do
         new_task_type
       )
       expect(page).to have_content format(COPY::DOCKET_SWITCH_GRANTED_SUCCESS_MESSAGE)
+
+      # Verify that full grant completed correctly
       docket_switch = DocketSwitch.find_by(disposition: "granted")
       expect(docket_switch).to_not be_nil
+      expect(docket_switch_granted_task.reload.status).to eq Constants.TASK_STATUSES.completed
+      expect(existing_admin_action1.reload.status).to eq Constants.TASK_STATUSES.cancelled
     end
 
     it "allows attorney to complete a partial docket switch" do
@@ -414,8 +418,13 @@ RSpec.feature "Docket Switch", :all_dbs do
         new_task_type
       )
       expect(page).to have_content format(COPY::DOCKET_SWITCH_GRANTED_SUCCESS_MESSAGE)
+
+      # Verify that partial grant completed correctly
       docket_switch = DocketSwitch.find_by(disposition: "partially_granted")
       expect(docket_switch).to_not be_nil
+
+      expect(existing_admin_action1.reload.status).to eq Constants.TASK_STATUSES.cancelled
+      expect(docket_switch_granted_task.reload.status).to eq Constants.TASK_STATUSES.completed
     end
 
     it "allows attorney to edit tasks and proceed to confirmation page" do
