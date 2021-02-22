@@ -51,7 +51,7 @@ class DocketSwitch < CaseflowRecord
   end
 
   def admin_actions_params
-    new_admin_actions.map { |data| data.permit(:instructions, :type).merge(assigned_by: task.assigned_to) }
+    (new_admin_actions || []).map { |data| data.permit(:instructions, :type).merge(assigned_by: task.assigned_to) }
   end
 
   def request_issues_for_switch

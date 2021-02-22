@@ -348,7 +348,7 @@ RSpec.feature "Docket Switch", :all_dbs do
         new_task_type
       )
       expect(page).to have_content format(COPY::DOCKET_SWITCH_GRANTED_SUCCESS_MESSAGE)
-      docket_switch = DocketSwitch.find_by(new_docket_stream_id: appeal.id)
+      docket_switch = DocketSwitch.find_by(disposition: "granted")
       expect(docket_switch).to_not be_nil
     end
 
