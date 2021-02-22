@@ -179,7 +179,7 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
 
         scenario "badge does not appear" do
           visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-          expect(page).not_to have_content("FNOD")
+          expect(page.has_no_content?("FNOD")).to eq true
         end
       end
     end
