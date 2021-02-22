@@ -66,10 +66,9 @@ module AppealConcern
   # - FnodBanner.jsx
   # - FnodBadge.jsx
   #
-  # veteran_is_not_claimaint is in Appeal and LegacyAppeal
-  # This method eventually, after many calls, checks:
-  # - Appeal: The 'veteran_is_not_claimant' field in the caseflow DB
-  # - LegacyAppeal: If 'appellant_first_name' exists in VACOLS
+  # veteran_is_not_claimant is implemented differently in Appeal and LegacyAppeal
+  # - Appeal: The result depends on 'veteran_is_not_claimant' field in the caseflow DB
+  # - LegacyAppeal: The result depends on if 'appellant_first_name' exists in VACOLS
 
   def appellant_is_veteran
     !veteran_is_not_claimant

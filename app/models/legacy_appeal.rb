@@ -297,6 +297,7 @@ class LegacyAppeal < CaseflowRecord
   def appellant_is_not_veteran
     !!appellant_first_name
   end
+
   # This seems to be valid based on definition of the claimant method in this file
   alias veteran_is_not_claimant appellant_is_not_veteran
 
