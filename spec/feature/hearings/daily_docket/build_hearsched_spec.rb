@@ -111,7 +111,7 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
   end
 
   shared_context "Scheduled in Error hearing is removed from daily docket" do
-    scenario "hearing is not displayed on daily docked" do
+    scenario "hearing is not displayed on daily docket" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
       expect(page).to have_content(COPY::HEARING_SCHEDULE_DOCKET_NO_VETERANS)
     end
