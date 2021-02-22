@@ -79,14 +79,6 @@ export const AddClaimantForm = ({
       <h1>Add Claimant</h1>
       <p>{ADD_CLAIMANT_PAGE_DESCRIPTION}</p>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {/* <Controller
-          control={control}
-          name="relationship"
-          label="Relationship to the Veteran"
-          options={relationshipOpts}
-          strongLabel
-          as={SearchableDropdown}
-        /> */}
         <Controller
           control={control}
           name="relationship"
