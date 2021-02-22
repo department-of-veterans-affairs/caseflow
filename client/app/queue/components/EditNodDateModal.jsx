@@ -186,7 +186,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
         scrollOnAlert={false}
       /> : null }
 
-      <strong>Affected Issue (s)</strong>
+      <strong>Affected Issue(s)</strong>
       <ul className="cf-error">
         {issues.affectedIssues.map((issue) => {
 
@@ -199,7 +199,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
         })}
       </ul>
 
-      <strong>Unaffected Issue (s)</strong>
+      <strong>Unaffected Issue(s)</strong>
       <ul>
         {issues.unaffectedIssues.map((issue) => {
 
