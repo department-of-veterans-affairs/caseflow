@@ -54,7 +54,8 @@ class DocketSwitchesController < ApplicationController
       :receipt_date,
       :context,
       :old_docket_stream_id,
-      :docket_type
+      :docket_type,
+      granted_request_issue_ids: []
     )
   end
 end
