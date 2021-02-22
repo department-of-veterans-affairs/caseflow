@@ -1453,15 +1453,15 @@ RSpec.feature "Case details", :all_dbs do
         find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
         safe_click "#Edit-NOD-Date-button-id-1"
 
-        expect(page).to_not have_content("There have been no changes to the eligibility of issues.")
+        expect(page).to have_content(COPY::EDIT_NOD_DATE_TIMELINESS_ERROR_MESSAGE)
 
-        issues_list = page.find_all("ul li")
+        issues_list = page.find_all(".cf-modal-body ul li")
 
         expect(issues_list[0]).to have_content(
-          "#{timely_request_issue.nonrating_issue_category} - #{timely_request_issue.nonrating_issue_description}"
+          "#{timely_request_issue.nonrating_issue_category} - #{timely_request_issue.nonrating_issue_description}\n(Decision Date: #{timely_request_issue.decision_date.to_date.mdY})"
         )
         expect(issues_list[1]).to have_content(
-          "#{timely_request_issue.nonrating_issue_category} - #{timely_request_issue.nonrating_issue_description}"
+          "#{untimely_request_issue_with_exemption.nonrating_issue_category} - #{untimely_request_issue_with_exemption.nonrating_issue_description}\n(Decision Date: #{untimely_request_issue_with_exemption.decision_date.to_date.mdY})"
         )
       end
     end
