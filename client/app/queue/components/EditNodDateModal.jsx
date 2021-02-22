@@ -193,7 +193,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
           return <li key={issue.id}>
             {issue.description}
             <div>
-              (Decision Date: <DateString date={issue.approx_decision_date} dateFormat = 'MM/DD/YYYY' />)
+              (Decision Date: <DateString date={issue.approx_decision_date} dateFormat = "MM/DD/YYYY" />)
             </div>
           </li>;
         })}
@@ -206,7 +206,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
           return <li key={issue.id}>
             {issue.description}
             <div>
-              (Decision Date: <DateString date={issue.approx_decision_date} dateFormat = 'MM/DD/YYYY' />)
+              (Decision Date: <DateString date={issue.approx_decision_date} dateFormat = "MM/DD/YYYY" />)
             </div>
           </li>;
         })}
