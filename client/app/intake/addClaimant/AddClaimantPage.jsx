@@ -1,9 +1,10 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormProvider } from 'react-hook-form';
 
 import {
+  clearClaimant,
   clearPoa,
   editClaimantInformation,
 } from '../reducers/addClaimantSlice';
@@ -11,7 +12,7 @@ import { AddClaimantConfirmationModal } from './AddClaimantConfirmationModal';
 import { AddClaimantForm } from './AddClaimantForm';
 import { IntakeLayout } from '../components/IntakeLayout';
 import { AddClaimantButtons } from './AddClaimantButtons';
-import { useAddClaimantForm } from './utils';
+import { useAddClaimantForm, defaultFormValues } from './utils';
 // eslint-disable-next-line no-unused-vars
 import { submitReview } from '../actions/decisionReview';
 import { FORM_TYPES } from '../constants';
@@ -74,7 +75,23 @@ export const AddClaimantPage = () => {
   const {
     formState: { isValid },
     handleSubmit,
+    reset,
+    watch,
   } = methods;
+
+  const relationship = watch('relationship');
+
+  useEffect(() => {
+    console.log(relationship, claimant?.relationship, claimant?.relationship !== relationship, watch());
+    if (
+      relationship &&
+      claimant?.relationship &&
+      claimant?.relationship !== relationship
+    ) {
+      dispatch(clearClaimant());
+      // reset();
+    }
+  }, [relationship, claimant]);
 
   return (
     <FormProvider {...methods}>
