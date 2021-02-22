@@ -11,7 +11,7 @@ import { editAppeal, editNodDateUpdates } from '../QueueActions';
 import ApiUtil from '../../util/ApiUtil';
 import moment from 'moment';
 import { sprintf } from 'sprintf-js';
-import { formatDateStr, FormatDateString } from '../../util/DateUtil';
+import { formatDateStr, DateString } from '../../util/DateUtil';
 import { appealWithDetailSelector } from '../selectors';
 import Alert from 'app/components/Alert';
 import SearchableDropdown from 'app/components/SearchableDropdown';
@@ -193,7 +193,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
           return <li key={issue.id}>
             {issue.description}
             <div>
-              (Decision Date: <FormatDateString date={issue.approx_decision_date} />)
+              (Decision Date: <DateString date={issue.approx_decision_date} />)
             </div>
           </li>;
         })}
@@ -206,7 +206,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
           return <li key={issue.id}>
             {issue.description}
             <div>
-              (Decision Date: <FormatDateString date={issue.approx_decision_date} />)
+              (Decision Date: <DateString date={issue.approx_decision_date} />)
             </div>
           </li>;
         })}

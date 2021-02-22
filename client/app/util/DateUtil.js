@@ -67,10 +67,6 @@ export const DateString = ({ date, dateFormat = 'MM/DD/YY', inputFormat = 'YYYY-
   {formatDateStr(date, inputFormat, dateFormat)}
 </span>;
 
-export const FormatDateString = ({ date, dateFormat = 'MM/DD/YYYY', inputFormat = 'YYYY-MM-DD', style }) => <span {...style}>
-  {formatDateStr(date, inputFormat, dateFormat)}
-</span>;
-
 export const formatDateStringForApi = (dateString) => (
   formatDateStr(dateString, 'MM/DD/YYYY', 'YYYY-MM-DD')
 );
