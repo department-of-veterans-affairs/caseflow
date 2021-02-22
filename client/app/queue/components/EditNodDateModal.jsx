@@ -11,12 +11,11 @@ import { editAppeal, editNodDateUpdates } from '../QueueActions';
 import ApiUtil from '../../util/ApiUtil';
 import moment from 'moment';
 import { sprintf } from 'sprintf-js';
-import { formatDateStr } from '../../util/DateUtil';
+import { formatDateStr, FormatDateString } from '../../util/DateUtil';
 import { appealWithDetailSelector } from '../selectors';
 import Alert from 'app/components/Alert';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import { marginTop } from '../constants';
-import { FormatDateString } from '../../util/DateUtil';
 
 const alertStyling = css({
   marginBottom: '2em',
@@ -178,7 +177,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
   let modalContent;
 
   if (showTimelinessError) {
-    modalContent = <div>      
+    modalContent = <div>
       { showTimelinessError ? <Alert
         message={COPY.EDIT_NOD_DATE_TIMELINESS_ERROR_MESSAGE}
         styling={alertStyling}
