@@ -1457,11 +1457,17 @@ RSpec.feature "Case details", :all_dbs do
 
         issues_list = page.find_all(".cf-modal-body ul li")
 
+        issue_one = timely_request_issue
+        issue_two = untimely_request_issue_with_exemption
+
+        issue_one_desc = "#{issue_one.nonrating_issue_category} - #{issue_one.nonrating_issue_description}"
+        issue_two_desc = "#{issue_two.nonrating_issue_category} - #{issue_two.nonrating_issue_description}"
+
         expect(issues_list[0]).to have_content(
-          "#{timely_request_issue.nonrating_issue_category} - #{timely_request_issue.nonrating_issue_description}\n(Decision Date: #{timely_request_issue.decision_date.to_date.mdY})"
+          "#{issue_one_desc}\n(Decision Date: #{issue_one.decision_date.to_date.mdY})"
         )
         expect(issues_list[1]).to have_content(
-          "#{untimely_request_issue_with_exemption.nonrating_issue_category} - #{untimely_request_issue_with_exemption.nonrating_issue_description}\n(Decision Date: #{untimely_request_issue_with_exemption.decision_date.to_date.mdY})"
+          "#{issue_two_desc}\n(Decision Date: #{issue_two.decision_date.to_date.mdY})"
         )
       end
     end
