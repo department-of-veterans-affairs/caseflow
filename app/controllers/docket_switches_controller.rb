@@ -21,8 +21,7 @@ class DocketSwitchesController < ApplicationController
     docket_switch = DocketSwitch.new(*docket_switch_params)
     docket_switch.update(
       selected_task_ids: params[:selected_task_ids],
-      new_admin_actions: params[:new_admin_actions],
-      granted_request_issue_ids: params[:granted_request_issue_ids]
+      new_admin_actions: params[:new_admin_actions]
     )
     # :nocov:
     if docket_switch.errors.present?

@@ -5,7 +5,7 @@ class DocketSwitch < CaseflowRecord
   belongs_to :new_docket_stream, class_name: "Appeal"
   belongs_to :task, optional: false
 
-  attr_accessor :context, :selected_task_ids, :new_admin_actions, :granted_request_issue_ids
+  attr_accessor :context, :selected_task_ids, :new_admin_actions
 
   validates :disposition, presence: true
   validate :granted_issues_present_if_partial
