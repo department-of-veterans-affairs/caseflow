@@ -103,7 +103,7 @@ exports[`AddClaimantConfirmationModal individual claimant missing last name show
                 </strong>
               </div>
               <div>
-                Intake does not have a form 21-22
+                Intake does not have a Form 21-22
               </div>
             </section>
           </div>
@@ -228,7 +228,7 @@ exports[`AddClaimantConfirmationModal organization claimant renders correctly 1`
                 </strong>
               </div>
               <div>
-                Intake does not have a form 21-22
+                Intake does not have a Form 21-22
               </div>
             </section>
           </div>
@@ -490,7 +490,7 @@ exports[`AddClaimantConfirmationModal without POA renders correctly 1`] = `
                 </strong>
               </div>
               <div>
-                Intake does not have a form 21-22
+                Intake does not have a Form 21-22
               </div>
             </section>
           </div>
