@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :veteran do
     first_name { "Bob" }
-    last_name { "FillerSmith" }
+    last_name { "Smith" }
     name_suffix { "II" }
     ssn { Generators::Random.unique_ssn }
     email_address { "#{first_name}.#{last_name}@test.com" }
@@ -13,7 +13,7 @@ FactoryBot.define do
       bgs_veteran_record do
         {
           first_name: "Bob",
-          last_name: "FillerSmith",
+          last_name: "Smith",
           date_of_birth: "01/10/1935",
           date_of_death: nil,
           name_suffix: "II",
