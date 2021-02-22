@@ -57,5 +57,13 @@ module HearingConcern
       veteran_death_date: appeal.veteran_death_date,
       veteran_death_date_reported_at: appeal.veteran_death_date_reported_at
     }
+
+  def open_hearing_disposition_task_id
+    hearing_task = appeal.tasks.open.where(type: HearingTask.name).find { |task| task.hearing&.id == id }
+    hearing_task
+      &.children
+      &.open
+      &.find_by(type: [AssignHearingDispositionTask.name, ChangeHearingDispositionTask.name])
+      &.id
   end
 end

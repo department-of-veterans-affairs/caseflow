@@ -154,10 +154,10 @@ feature "Non-veteran claimants", :postgres do
       safe_click ".dropdown-listedAttorney"
       fill_in("listedAttorney", with: "Name not listed").send_keys :enter
       select_claimant(0)
-      expect(page).to have_content("Is the claimant an organization or individual?")
+      expect(page).to have_content("Is the representative an organization or individual?")
 
       # Check validation for unlisted attorney
-      within_fieldset("Is the claimant an organization or individual?") do
+      within_fieldset("Is the representative an organization or individual?") do
         find("label", text: "Organization", match: :prefer_exact).click
       end
       fill_in "Organization name", with: "Attorney's Law Firm"
