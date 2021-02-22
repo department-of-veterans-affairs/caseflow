@@ -221,10 +221,7 @@ class AssignHearingDispositionTask < Task
   def mark_hearing_with_disposition(payload_values:, instructions: nil)
     multi_transaction do
       if payload_values[:disposition] == Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
-        update_hearing(
-          disposition: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error,
-          notes: payload_values[:hearing_notes]
-        )
+        update_hearing_disposition_and_notes(payload_values)
       elsif payload_values[:disposition] == Constants.HEARING_DISPOSITION_TYPES.postponed
         update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
       end
@@ -294,5 +291,18 @@ class AssignHearingDispositionTask < Task
                     end
 
     [transcription_task, evidence_task].compact
+  end
+
+  def update_hearing_disposition_and_notes(payload_values)
+    if payload_values[:hearing_notes].nil?
+      update_hearing(
+        disposition: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error
+      )
+    else
+      update_hearing(
+        disposition: Constants.HEARING_DISPOSITION_TYPES.scheduled_in_error,
+        notes: payload_values[:hearing_notes]
+      )
+    end
   end
 end

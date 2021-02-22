@@ -40,7 +40,7 @@ class DocketSwitch < CaseflowRecord
 
       copy_granted_request_issues!
 
-      DocketSwitchTaskHandler.new(
+      DocketSwitch::TaskHandler.new(
         docket_switch: self,
         selected_task_ids: selected_task_ids,
         new_admin_actions: admin_actions_params

@@ -1218,59 +1218,41 @@ describe Appeal, :all_dbs do
     end
   end
 
-  describe "#current_hearing_request_type" do
-    let(:appeal) { create(:appeal, closest_regional_office: closest_regional_office) }
-
-    subject { appeal.current_hearing_request_type }
-
-    context "closest_regional_office is 'C'" do
-      let(:closest_regional_office) { "C" }
-
-      it { expect(subject).to eq(:central) }
-    end
-
-    context "closest_regional_office is a RO" do
-      let(:closest_regional_office) { "RO39" }
-
-      it { expect(subject).to eq(:video) }
-    end
-
-    context "closest_regional_office is a nil" do
-      let(:closest_regional_office) { nil }
-
-      it { expect(subject).to eq(nil) }
-    end
-  end
-
-  describe "readable current_hearing_request_type" do
-    subject { appeal.current_hearing_request_type(readable: true) }
-
-    context "no hearings have been scheduled" do
-      let(:appeal) { create(:appeal, closest_regional_office: closest_regional_office) }
-
-      context "closest_regional_office is 'C'" do
-        let(:closest_regional_office) { "C" }
-
-        it { expect(subject).to eq("Central") }
-      end
-
-      context "closest_regional_office is a RO" do
-        let(:closest_regional_office) { "RO39" }
-
-        it { expect(subject).to eq("Video") }
-      end
-
-      context "closest_regional_office is a nil" do
-        let(:closest_regional_office) { nil }
-
-        it { expect(subject).to eq(nil) }
-      end
-    end
-  end
-
   describe "#latest_informal_hearing_presentation_task" do
     let(:appeal) { create(:appeal) }
 
     it_behaves_like "latest informal hearing presentation task"
+  end
+
+  describe "validate issue timeliness" do
+    let(:timely_request_issue) { create(:request_issue, id: 1, decision_date: 381.days.ago) }
+    let(:untimely_request_issue_with_exemption) do
+      create(:request_issue,
+             id: 2,
+             decision_date: 2.years.ago,
+             untimely_exemption: true)
+    end
+    let(:request_issues) { [timely_request_issue, untimely_request_issue_with_exemption] }
+    let(:appeal) { create(:appeal, request_issues: request_issues) }
+    subject { appeal.validate_all_issues_timely!(receipt_date) }
+
+    context "should fail validation" do
+      let(:receipt_date) { 7.days.ago }
+
+      it "if timely issue without exemption becomes untimely" do
+        subject
+        expect(subject[:affected_issues].first.id).to eq(1)
+        expect(subject[:unaffected_issues].first.id).to eq(2)
+      end
+    end
+
+    context "should pass validation" do
+      let(:receipt_date) { 391.days.ago }
+
+      it "if untimely issue has exemption status" do
+        subject
+        expect(subject).to be_nil
+      end
+    end
   end
 end

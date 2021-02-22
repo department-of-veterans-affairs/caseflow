@@ -1,7 +1,21 @@
 # frozen_string_literal: true
 
 class DocketSwitchesController < ApplicationController
-  before_action :verify_task_access, only: [:create]
+  include ValidationConcern
+
+  before_action :verify_task_access, only: [:address_ruling, :create]
+
+  validates :address_ruling, using: DocketSwitchesSchemas.address_ruling
+  def address_ruling
+    DocketSwitch::AddressRuling.new(
+      ruling_task: task,
+      new_task_type: params[:new_task_type],
+      instructions: params[:instructions],
+      assigned_by: current_user,
+      assigned_to: User.find(params[:assigned_to_user_id])
+    ).process!
+    render json: {}
+  end
 
   def create
     docket_switch = DocketSwitch.new(*docket_switch_params)
@@ -31,7 +45,7 @@ class DocketSwitchesController < ApplicationController
   end
 
   def task
-    @task ||= Task.find(docket_switch_params[:task_id])
+    @task ||= Task.find(params[:task_id])
   end
 
   def docket_switch_params
