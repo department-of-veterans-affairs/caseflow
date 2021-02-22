@@ -189,6 +189,7 @@ cavc_remands,created_at,datetime ∗,x,,,,,Default timestamps
 cavc_remands,created_by_id,integer (8) ∗ FK,x,,x,,,User that created this record
 cavc_remands,decision_date,date ∗,x,,,,,"Date CAVC issued a decision, according to the CAVC"
 cavc_remands,decision_issue_ids,integer (8) ∗,x,,,,,"Decision issues being remanded; IDs refer to decision_issues table. For a JMR, all decision issues on the previous appeal will be remanded. For a JMPR, only some"
+cavc_remands,federal_circuit,boolean,,,,,,Whether the case has been appealed to the US Court of Appeal for the Federal Circuit
 cavc_remands,id,integer (8) PK,x,x,,,,
 cavc_remands,instructions,string ∗,x,,,,,Instructions and context provided upon creation of the remand record
 cavc_remands,judgement_date,date ∗,x,,,,,"Date CAVC issued a judgement, according to the CAVC"
