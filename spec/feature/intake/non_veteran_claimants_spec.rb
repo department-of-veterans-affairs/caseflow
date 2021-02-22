@@ -172,7 +172,7 @@ feature "Non-veteran claimants", :postgres do
       within_fieldset("Is the representative an organization or individual?") do
         find("label", text: "Organization", match: :prefer_exact).click
       end
-      
+
       add_new_poa
 
       expect(page).to have_button("Continue to next step", disabled: false)
