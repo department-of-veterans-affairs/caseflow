@@ -37,7 +37,9 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
     let(:instructions) { "Please process this remand" }
     let(:mandate_instructions) { "Mandate received!" }
     let(:judge_name) { Constants::CAVC_JUDGE_FULL_NAMES.first }
-    let(:decision_type) { Constants.CAVC_DECISION_TYPES.remand.titleize }
+    let(:remand_decision_type) { Constants.CAVC_DECISION_TYPES.remand.titleize }
+    let(:reversal_decision_type) { Constants.CAVC_DECISION_TYPES.straight_reversal.titleize }
+    let(:dismissal_decision_type) { Constants.CAVC_DECISION_TYPES.death_dismissal.titleize }
 
     shared_examples "does not display the add remand button" do
       it "does not display the add remand button" do
@@ -66,11 +68,15 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
       before do
         FeatureToggle.enable!(:cavc_remand)
         FeatureToggle.enable!(:mdr_cavc_remand)
+        FeatureToggle.enable!(:reversal_cavc_remand)
+        FeatureToggle.enable!(:dismissal_cavc_remand)
         User.authenticate!(user: org_admin)
       end
       after do
         FeatureToggle.disable!(:cavc_remand)
         FeatureToggle.disable!(:mdr_cavc_remand)
+        FeatureToggle.disable!(:reversal_cavc_remand)
+        FeatureToggle.disable!(:dismissal_cavc_remand)
       end
 
       it "allows the user to intake a JMR cavc remand" do
@@ -102,7 +108,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DOCKET_NUMBER}: #{docket_number}"
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_ATTORNEY}: Yes"
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGE}: #{judge_name}"
-          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_PROCEDURE}: #{decision_type}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_PROCEDURE}: #{remand_decision_type}"
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_TYPE}: #{Constants.CAVC_REMAND_SUBTYPE_NAMES.jmr}"
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DECISION_DATE}: #{date}"
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}: #{date}"
@@ -141,7 +147,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DOCKET_NUMBER}: #{docket_number}"
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_ATTORNEY}: Yes"
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGE}: #{judge_name}"
-          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_PROCEDURE}: #{decision_type}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_PROCEDURE}: #{remand_decision_type}"
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_TYPE}: #{Constants.CAVC_REMAND_SUBTYPE_NAMES.jmpr}"
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DECISION_DATE}: #{date}"
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}: #{date}"
@@ -177,7 +183,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DOCKET_NUMBER}: #{docket_number}"
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_ATTORNEY}: Yes"
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGE}: #{judge_name}"
-          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_PROCEDURE}: #{decision_type}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_PROCEDURE}: #{remand_decision_type}"
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_TYPE}: #{Constants.CAVC_REMAND_SUBTYPE_NAMES.mdr}"
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DECISION_DATE}: #{date}"
           expect(page.has_no_content?("#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}:")).to eq(true)
@@ -233,6 +239,150 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_MANDATE_DATE}: #{later_date}"
           expect(page)
             .to have_content "#{COPY::CASE_DETAILS_CAVC_REMAND_INSTRUCTIONS}: #{instructions} - #{mandate_instructions}"
+        end
+      end
+
+      it "allows the user to intake a straight reversal with a judgement and mandate date" do
+        step "cavc user inputs cavc data" do
+          visit "queue/appeals/#{appeal.external_id}"
+          page.find("button", text: "+ Add CAVC Remand").click
+
+          fill_in "docket-number", with: docket_number
+          click_dropdown(text: judge_name)
+          find("label", text: "Straight Reversal").click
+          fill_in "decision-date", with: date
+          fill_in "judgement-date", with: date
+          fill_in "mandate-date", with: date
+          find(".checkbox-wrapper-undefined").find("label[for=\"2\"]").click
+          fill_in "context-and-instructions-textBox", with: instructions
+          page.find("button", text: "Submit").click
+
+          expect(page).to have_content COPY::CAVC_REMAND_CREATED_FOR_DISTRIBUTION_TITLE
+          expect(page).to have_content COPY::CAVC_REMAND_CASE_READY_FOR_DISTRIBUTION_DETAIL
+        end
+
+        step "cavc user confirms data on straight reversal case details page" do
+          expect(page).to have_content "APPEAL STREAM TYPE\nCAVC"
+          expect(page).to have_content "DOCKET\nE\n#{appeal.docket_number}"
+          expect(page).to have_content "TASK\n#{DistributionTask.label}"
+          expect(page).to have_content "ASSIGNED TO\n#{Bva.singleton.name}"
+
+          expect(page).to have_content "CAVC Remand"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DOCKET_NUMBER}: #{docket_number}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_ATTORNEY}: Yes"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGE}: #{judge_name}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_PROCEDURE}: #{reversal_decision_type}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DECISION_DATE}: #{date}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}: #{date}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_MANDATE_DATE}: #{date}"
+        end
+      end
+
+      it "allows the user to intake a straight reversal without a judgement and mandate date" do
+        step "cavc user inputs cavc data" do
+          visit "queue/appeals/#{appeal.external_id}"
+          page.find("button", text: "+ Add CAVC Remand").click
+
+          fill_in "docket-number", with: docket_number
+          click_dropdown(text: judge_name)
+          find("label", text: "Straight Reversal").click
+          page.all(".cf-form-radio-inline")[1].find("label[for=\"remand-provided-toggle_false\"]").click
+          expect(page).to have_content COPY::CAVC_REMAND_NO_MANDATE_TEXT
+          fill_in "decision-date", with: date
+          find(".checkbox-wrapper-undefined").find("label[for=\"2\"]").click
+          fill_in "context-and-instructions-textBox", with: instructions
+          page.find("button", text: "Submit").click
+
+          expect(page).to have_content COPY::CAVC_REMAND_CREATED_ON_HOLD_TITLE
+          expect(page).to have_content COPY::CAVC_REMAND_MANDATE_HOLD_CREATED_DETAIL
+        end
+
+        step "cavc user confirms data on reversal case details page" do
+          expect(page).to have_content "APPEAL STREAM TYPE\nCAVC"
+          expect(page).to have_content "DOCKET\nE\n#{appeal.docket_number}"
+          expect(page).to have_content "TASK\n#{MandateHoldTask.label}"
+          expect(page).to have_content "ASSIGNED TO\n#{CavcLitigationSupport.singleton.name}"
+
+          expect(page).to have_content "CAVC Remand"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DOCKET_NUMBER}: #{docket_number}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_ATTORNEY}: Yes"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGE}: #{judge_name}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_PROCEDURE}: #{reversal_decision_type}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DECISION_DATE}: #{date}"
+
+          expect(page.has_no_content?("#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}:")).to eq(true)
+          expect(page.has_no_content?("#{COPY::CASE_DETAILS_CAVC_MANDATE_DATE}:")).to eq(true)
+        end
+      end
+
+      it "allows the user to intake a death dismissal with a judgement and mandate date" do
+        step "cavc user inputs cavc data" do
+          visit "queue/appeals/#{appeal.external_id}"
+          page.find("button", text: "+ Add CAVC Remand").click
+
+          fill_in "docket-number", with: docket_number
+          click_dropdown(text: judge_name)
+          find("label", text: "Death Dismissal").click
+          fill_in "decision-date", with: date
+          fill_in "judgement-date", with: date
+          fill_in "mandate-date", with: date
+          fill_in "context-and-instructions-textBox", with: instructions
+          page.find("button", text: "Submit").click
+
+          expect(page).to have_content COPY::CAVC_REMAND_CREATED_FOR_DISTRIBUTION_TITLE
+          expect(page).to have_content COPY::CAVC_REMAND_CASE_READY_FOR_DISTRIBUTION_DETAIL
+        end
+
+        step "cavc user confirms data on death dismissal case details page" do
+          expect(page).to have_content "APPEAL STREAM TYPE\nCAVC"
+          expect(page).to have_content "DOCKET\nE\n#{appeal.docket_number}"
+          expect(page).to have_content "TASK\n#{DistributionTask.label}"
+          expect(page).to have_content "ASSIGNED TO\n#{Bva.singleton.name}"
+
+          expect(page).to have_content "CAVC Remand"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DOCKET_NUMBER}: #{docket_number}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_ATTORNEY}: Yes"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGE}: #{judge_name}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_PROCEDURE}: #{dismissal_decision_type}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DECISION_DATE}: #{date}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}: #{date}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_MANDATE_DATE}: #{date}"
+        end
+      end
+
+      it "allows the user to intake a death dismissal without a judgement and mandate date" do
+        step "cavc user inputs cavc data" do
+          visit "queue/appeals/#{appeal.external_id}"
+          page.find("button", text: "+ Add CAVC Remand").click
+
+          fill_in "docket-number", with: docket_number
+          click_dropdown(text: judge_name)
+          find("label", text: "Death Dismissal").click
+          page.all(".cf-form-radio-inline")[1].find("label[for=\"remand-provided-toggle_false\"]").click
+          expect(page).to have_content COPY::CAVC_REMAND_NO_MANDATE_TEXT
+          fill_in "decision-date", with: date
+          fill_in "context-and-instructions-textBox", with: instructions
+          page.find("button", text: "Submit").click
+
+          expect(page).to have_content COPY::CAVC_REMAND_CREATED_ON_HOLD_TITLE
+          expect(page).to have_content COPY::CAVC_REMAND_MANDATE_HOLD_CREATED_DETAIL
+        end
+
+        step "cavc user confirms data on dismissal case details page" do
+          expect(page).to have_content "APPEAL STREAM TYPE\nCAVC"
+          expect(page).to have_content "DOCKET\nE\n#{appeal.docket_number}"
+          expect(page).to have_content "TASK\n#{MandateHoldTask.label}"
+          expect(page).to have_content "ASSIGNED TO\n#{CavcLitigationSupport.singleton.name}"
+
+          expect(page).to have_content "CAVC Remand"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DOCKET_NUMBER}: #{docket_number}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_ATTORNEY}: Yes"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_JUDGE}: #{judge_name}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_PROCEDURE}: #{dismissal_decision_type}"
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DECISION_DATE}: #{date}"
+
+          expect(page.has_no_content?("#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}:")).to eq(true)
+          expect(page.has_no_content?("#{COPY::CASE_DETAILS_CAVC_MANDATE_DATE}:")).to eq(true)
         end
       end
     end

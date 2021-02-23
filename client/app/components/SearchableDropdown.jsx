@@ -100,6 +100,7 @@ export class SearchableDropdown extends React.Component {
       async,
       options,
       defaultOptions,
+      defaultValue,
       filterOption,
       isClearable,
       loading,
@@ -187,6 +188,7 @@ export class SearchableDropdown extends React.Component {
               inputId={name}
               options={options}
               defaultOptions={defaultOptions}
+              defaultValue={defaultValue}
               filterOption={filterOption}
               loadOptions={async}
               isLoading={loading}
@@ -240,6 +242,7 @@ SearchableDropdown.propTypes = {
     formatCreateLabel: PropTypes.func,
   }),
   defaultOptions: PropTypes.oneOfType([SelectOpts, PropTypes.bool]),
+  defaultValue: PropTypes.oneOfType([PropTypes.object, PropTypes.arrayOf(PropTypes.object)]),
   dropdownStyling: PropTypes.object,
   errorMessage: PropTypes.string,
   filterOption: PropTypes.func,
