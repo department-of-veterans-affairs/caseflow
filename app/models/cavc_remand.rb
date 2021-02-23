@@ -19,6 +19,7 @@ class CavcRemand < CaseflowRecord
   validates :remand_subtype, presence: true, if: :remand?
   validates :judgement_date, :mandate_date, presence: true, unless: :mandate_not_required?
   validate :decision_issue_ids_match_appeal_decision_issues, if: -> { remand? && jmr? }
+  # TODO: test this: validate :federal_circuit, presence: true, if: -> { remand? && mdr? }
 
   before_create :normalize_cavc_docket_number
   before_save :establish_appeal_stream, if: :cavc_remand_form_complete?
