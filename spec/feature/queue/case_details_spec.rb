@@ -1405,6 +1405,73 @@ RSpec.feature "Case details", :all_dbs do
         expect(page).to_not have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
       end
     end
+
+    context "when a NOD exists and user can edit NOD date but triggers timeliness issues with NOD date update" do
+      let(:veteran) do
+        create(:veteran,
+               first_name: "Bobby",
+               last_name: "Winters",
+               file_number: "55555456")
+      end
+      let(:untimely_request_issue) { create(:request_issue, :nonrating, id: 1, decision_date: 381.days.ago) }
+      let(:untimely_request_issue_with_exemption) do
+        create(:request_issue, :nonrating, id: 2, decision_date: 2.years.ago, untimely_exemption: true)
+      end
+      let(:request_issues) { [untimely_request_issue, untimely_request_issue_with_exemption] }
+
+      let!(:appeal) do
+        create(:appeal,
+               :with_post_intake_tasks,
+               veteran_file_number: veteran.file_number,
+               docket_type: Constants.AMA_DOCKETS.direct_review,
+               receipt_date: 10.months.ago.to_date.mdY,
+               request_issues: request_issues)
+      end
+      subject { appeal.validate_all_issues_timely!(receipt_date) }
+      let(:judge_user) { create(:user, css_id: "BVAAABSHIRE", station_id: "101") }
+
+      before do
+        FeatureToggle.enable!(:edit_nod_date)
+        BvaDispatch.singleton.add_user(judge_user)
+        User.authenticate!(user: judge_user)
+      end
+
+      after { FeatureToggle.disable!(:edit_nod_date) }
+
+      it "displays timeliness issues list if new NOD date causes timely issue to be untimely" do
+        visit("/queue/appeals/#{appeal.uuid}")
+
+        expect(appeal.nod_date).to_not be_nil
+        expect(page).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
+        expect(page).to have_content(COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY)
+
+        find("button", text: COPY::CASE_DETAILS_EDIT_NOD_DATE_LINK_COPY).click
+        fill_in COPY::EDIT_NOD_DATE_LABEL, with: Time.zone.today.mdY
+
+        expect(page).to have_content("Reason for edit")
+        find(".cf-form-dropdown", text: "Reason for edit").click
+        find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
+        safe_click "#Edit-NOD-Date-button-id-1"
+
+        expect(page).to have_content(COPY::EDIT_NOD_DATE_TIMELINESS_ERROR_MESSAGE)
+
+        affected_issues_list = page.find_all(".cf-modal-body ul.cf-error li")
+        unaffected_issues_list = page.find_all(".cf-modal-body ul:not(.cf-error) li")
+
+        issue_one = untimely_request_issue
+        issue_two = untimely_request_issue_with_exemption
+
+        issue_one_desc = "#{issue_one.nonrating_issue_category} - #{issue_one.nonrating_issue_description}"
+        issue_two_desc = "#{issue_two.nonrating_issue_category} - #{issue_two.nonrating_issue_description}"
+
+        expect(affected_issues_list[0]).to have_content(
+          "#{issue_one_desc}\n(Decision Date: #{issue_one.decision_date.to_date.mdY})"
+        )
+        expect(unaffected_issues_list[0]).to have_content(
+          "#{issue_two_desc}\n(Decision Date: #{issue_two.decision_date.to_date.mdY})"
+        )
+      end
+    end
   end
 
   describe "task snapshot" do
@@ -1564,7 +1631,7 @@ RSpec.feature "Case details", :all_dbs do
         visit("/queue/appeals/#{id}")
 
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ABOUT_BOX_HEARING_REQUEST_TYPE_LABEL.upcase)
-        expect(page).to have_content(appeal.current_hearing_request_type(readable: true))
+        expect(page).to have_content(appeal.readable_current_hearing_request_type)
       end
     end
 

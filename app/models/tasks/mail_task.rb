@@ -22,8 +22,8 @@ class MailTask < Task
       false
     end
 
-    def subclass_routing_options(user = nil)
-      filtered = MailTask.subclasses.select { |sc| sc.allow_creation?(user) }
+    def subclass_routing_options(user: nil, appeal: nil)
+      filtered = MailTask.subclasses.select { |sc| sc.allow_creation?(user: user, appeal: appeal) }
       sorted = filtered.sort_by(&:label).map { |subclass| { value: subclass.name, label: subclass.label } }
       if !FeatureToggle.enabled?(:cavc_remand, user: user)
         sorted.reject { |task| task[:label] == CavcCorrespondenceMailTask.label }
@@ -32,7 +32,7 @@ class MailTask < Task
       end
     end
 
-    def allow_creation?(_user)
+    def allow_creation?(_user = nil, _appeal = nil)
       true
     end
 
@@ -129,6 +129,7 @@ require_dependency "clear_and_unmistakeable_error_mail_task"
 require_dependency "congressional_interest_mail_task"
 require_dependency "controlled_correspondence_mail_task"
 require_dependency "death_certificate_mail_task"
+require_dependency "docket_switch_mail_task"
 require_dependency "evidence_or_argument_mail_task"
 require_dependency "extension_request_mail_task"
 require_dependency "foia_request_mail_task"

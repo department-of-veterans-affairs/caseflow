@@ -140,16 +140,16 @@ const AddCavcRemandView = (props) => {
   const validDocketNumber = () => (/^\d{2}-\d{1,5}$/).exec(docketNumber);
   const validJudge = () => Boolean(judge);
   const validDecisionDate = () => Boolean(decisionDate) && validateDateNotInFuture(decisionDate);
-  const mandateNotRequired = () => !mandateAvailable || mdrSubtype();
+  const validDecisionIssues = () => selectedIssues && selectedIssues.length > 0;
   const validJudgementDate = () => {
-    return (Boolean(judgementDate) && validateDateNotInFuture(judgementDate)) || mandateNotRequired();
+    return (Boolean(judgementDate) && validateDateNotInFuture(judgementDate)) || !mandateAvailable();
   };
-  const validMandateDate = () => (Boolean(mandateDate) && validateDateNotInFuture(mandateDate)) || mandateNotRequired();
+  const validMandateDate = () => (Boolean(mandateDate) && validateDateNotInFuture(mandateDate)) || !mandateAvailable();
   const validInstructions = () => instructions && instructions.length > 0;
 
   const validateForm = () => {
     return validDocketNumber() && validJudge() && validDecisionDate() && validJudgementDate() && validMandateDate() &&
-      validInstructions();
+      validInstructions() && validDecisionIssues();
   };
 
   const mandateDatesPopulated = () => {
@@ -326,6 +326,7 @@ const AddCavcRemandView = (props) => {
       options={issueOptions()}
       values={issues}
       onChange={(val) => onIssueChange(val)}
+      errorMessage={highlightInvalid && !validDecisionIssues() ? COPY.CAVC_NO_ISSUES_ERROR : null}
     />
   </React.Fragment>;
 
@@ -362,7 +363,7 @@ const AddCavcRemandView = (props) => {
       {mandateAvailable() && !mandateSame() && judgementField }
       {mandateAvailable() && !mandateSame() && mandateField }
       {!mandateAvailable() && type !== CAVC_DECISION_TYPES.remand && noMandateBanner }
-      {issuesField}
+      {!deathDismissalType() && issuesField}
       {instructionsField}
     </QueueFlowPage>
   );

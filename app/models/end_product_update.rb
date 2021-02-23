@@ -3,9 +3,9 @@
 # This is for updating the claim label for end products established from Caseflow
 
 class EndProductUpdate < CaseflowRecord
-  belongs_to :end_product_establishment
-  belongs_to :original_decision_review, polymorphic: true
-  belongs_to :user
+  belongs_to :end_product_establishment, optional: false
+  belongs_to :original_decision_review, polymorphic: true, optional: false
+  belongs_to :user, optional: false
 
   delegate :request_issues, to: :end_product_establishment
 
@@ -16,6 +16,7 @@ class EndProductUpdate < CaseflowRecord
       end_product_establishment.update(code: new_code)
       update_correction_type
       update_issue_type
+      update_benefit_type
     end
   end
 
@@ -35,6 +36,14 @@ class EndProductUpdate < CaseflowRecord
     (issue_type == "rating") ? update_issue_type_to_rating : update_issue_type_to_nonrating
   end
 
+  def update_benefit_type
+    benefit_type = new_code_hash[:benefit_type]
+    return if benefit_type == old_code_hash[:benefit_type]
+
+    request_issues.update(benefit_type: benefit_type)
+    update_decision_review_benefit_type(benefit_type)
+  end
+
   def update_issue_type_to_nonrating
     request_issues.each do |ri|
       ri.update(
@@ -51,6 +60,18 @@ class EndProductUpdate < CaseflowRecord
         type: "RatingRequestIssue",
         edited_description: ri.nonrating_issue_description
       )
+    end
+  end
+
+  # If a decision review ends up with multiple end products that have different benefit types, this will move the
+  # current EP and its issues onto a separate "claim review stream"
+  def update_decision_review_benefit_type(new_benefit_type)
+    if original_decision_review.end_product_establishments.count > 1
+      review_stream = original_decision_review.find_or_create_stream!(new_benefit_type)
+      end_product_establishment.update(source_id: review_stream.id)
+      request_issues.update_all(decision_review_id: review_stream.id)
+    else
+      original_decision_review.update(benefit_type: new_benefit_type)
     end
   end
 
