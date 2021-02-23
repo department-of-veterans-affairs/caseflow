@@ -20,6 +20,7 @@ const CavcDetail = (props) => {
     decision_date: decisionDate,
     judgement_date: judgementDate,
     mandate_date: mandateDate,
+    federal_circuit: federalCircuit,
     instructions: instructionText
   } = props;
 
@@ -86,6 +87,13 @@ const CavcDetail = (props) => {
     });
   }
 
+  if (federalCircuit !== null) {
+    details.push({
+      label: COPY.CASE_DETAILS_CAVC_FEDERAL_CIRCUIT,
+      value: (federalCircuit === true) ? 'Yes' : 'No'
+    });
+  }
+
   if (instructionText) {
     details.push({
       label: COPY.CASE_DETAILS_CAVC_REMAND_INSTRUCTIONS,
@@ -111,6 +119,7 @@ CavcDetail.propTypes = {
   decision_date: PropTypes.string.isRequired,
   judgement_date: PropTypes.string,
   mandate_date: PropTypes.string,
+  federal_circuit: PropTypes.bool.isRequired,
   instructions: PropTypes.string.isRequired
 };
 
