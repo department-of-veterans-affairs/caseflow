@@ -47,6 +47,7 @@ RSpec.describe CavcRemandsController, type: :controller do
       )
     end
     let(:decision_issue_ids) { decision_issues.map(&:id) }
+    let(:federal_circuit) { nil }
     let(:instructions) { "Intructions!" }
 
     let(:params) do
@@ -62,7 +63,16 @@ RSpec.describe CavcRemandsController, type: :controller do
         judgement_date: judgement_date,
         mandate_date: mandate_date,
         decision_issue_ids: decision_issue_ids,
+        federal_circuit: federal_circuit,
         instructions: instructions
+      }
+    end
+
+    let(:expected_remand_values) do
+      {
+        "source_appeal_id": source_appeal.id,
+        "decision_issue_ids": decision_issue_ids,
+        "federal_circuit": federal_circuit
       }
     end
 
@@ -79,6 +89,9 @@ RSpec.describe CavcRemandsController, type: :controller do
 
         expect(response_body["cavc_remand"]["source_appeal_id"]).to eq(source_appeal.id)
         expect(response_body["cavc_remand"]["decision_issue_ids"]).to match_array(decision_issue_ids)
+        expected_remand_values.each do |key, value|
+          expect(response_body["cavc_remand"][key]).to eq value
+        end
         expect(CavcRemand.count).to eq(remand_count + 1)
 
         expect(response_body["cavc_appeal"]["id"])
@@ -113,11 +126,30 @@ RSpec.describe CavcRemandsController, type: :controller do
 
       context "when sub-type is MDR" do
         let(:remand_subtype) { Constants::CAVC_REMAND_SUBTYPES["mdr"] }
+        let(:federal_circuit) { false }
+
         context "with judgement and mandate date parameters" do
           include_examples "creates a remand depending on the sub-type"
         end
 
         include_examples "works without judgement and mandate date parameters"
+
+        it "sets federal circuit DB field to false" do
+          subject
+          expect(response.status).to eq(201)
+          response_body = JSON.parse(response.body)
+          expect(response_body["cavc_remand"]["federal_circuit"]).to eq false
+        end
+
+        context "when federal circuit boolean is set" do
+          let(:federal_circuit) { true }
+          it "sets federal circuit DB field" do
+            subject
+            expect(response.status).to eq(201)
+            response_body = JSON.parse(response.body)
+            expect(response_body["cavc_remand"]["federal_circuit"]).to eq true
+          end
+        end
       end
 
       context "when type is straight_reversal" do
