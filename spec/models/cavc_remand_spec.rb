@@ -27,6 +27,7 @@ describe CavcRemand do
       )
     end
     let(:decision_issue_ids) { decision_issues.map(&:id) }
+    let(:federal_circuit) { nil }
     let(:instructions) { "Instructions!" }
 
     let(:params) do
@@ -43,6 +44,7 @@ describe CavcRemand do
         judgement_date: judgement_date,
         mandate_date: mandate_date,
         decision_issue_ids: decision_issue_ids,
+        federal_circuit: federal_circuit,
         instructions: instructions
       }
     end
