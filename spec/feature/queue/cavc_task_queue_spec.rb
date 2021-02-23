@@ -82,8 +82,6 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           fill_in "docket-number", with: docket_number
           click_dropdown(text: judge_name)
           fill_in "decision-date", with: date
-          fill_in "judgement-date", with: date
-          fill_in "mandate-date", with: date
           fill_in "context-and-instructions-textBox", with: "Please process this remand"
 
           page.find("button", text: "Submit").click
@@ -115,11 +113,12 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           visit "queue/appeals/#{appeal.external_id}"
           page.find("button", text: "+ Add CAVC Remand").click
 
-          # unselect an issue
+          # unselect an issue and manually fill in judgement and mandate dates
           fill_in "docket-number", with: docket_number
           click_dropdown(text: judge_name)
           find("label", text: "Joint Motion for Partial Remand (JMPR)").click
           fill_in "decision-date", with: date
+          find(".checkbox-wrapper-remand-different-toggle").find("label[for=\"remand-different-toggle\"]").click
           fill_in "judgement-date", with: date
           fill_in "mandate-date", with: date
           find(".checkbox-wrapper-undefined").find("label[for=\"3\"]").click

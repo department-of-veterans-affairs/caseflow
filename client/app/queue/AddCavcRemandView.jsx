@@ -16,6 +16,7 @@ import { validateDateNotInFuture } from '../intake/util/issues';
 import TextField from '../components/TextField';
 import RadioField from '../components/RadioField';
 import DateSelector from '../components/DateSelector';
+import Checkbox from '../components/Checkbox';
 import CheckboxGroup from '../components/CheckboxGroup';
 import TextareaField from '../components/TextareaField';
 import Button from '../components/Button';
@@ -43,13 +44,6 @@ const typeOptions = _.map(_.keys(CAVC_DECISION_TYPES), (key) => ({
   displayText: StringUtil.snakeCaseToCapitalized(key),
   value: key
 }));
-
-const isMandateSameOptions = [
-  { displayText: 'Yes',
-    value: 'true' },
-  { displayText: 'No',
-    value: 'false' },
-];
 
 const isMandateProvidedOptions = [
   { displayText: 'Yes',
@@ -87,8 +81,7 @@ const AddCavcRemandView = (props) => {
   const [issues, setIssues] = useState({});
   const [instructions, setInstructions] = useState(null);
   const [isMandateProvided, setMandateProvided] = useState('true');
-  const [isMandateSame, setMandateSame] = useState('true');
-
+  const [isMandateSame, setMandateSame] = useState(true);
   const supportedDecisionTypes = {
     [CAVC_DECISION_TYPES.remand]: featureToggles.cavc_remand,
     [CAVC_DECISION_TYPES.straight_reversal]: featureToggles.reversal_cavc_remand,
@@ -123,8 +116,14 @@ const AddCavcRemandView = (props) => {
     setIssues(newValues);
   };
 
-  // populate all of our checkboxes on initial render
+  // populate all issues checkboxes on initial render
   useEffect(() => selectAllIssues(), []);
+
+  // update judgement and mandate dates every time isMandateSame or decisionDate is changed
+  useEffect(() => {
+    setJudgementDate(isMandateSame ? decisionDate : '');
+    setMandateDate(isMandateSame ? decisionDate : '');
+  }, [isMandateSame, decisionDate]);
 
   const onIssueChange = (evt) => {
     setIssues({ ...issues, [evt.target.name]: evt.target.checked });
@@ -137,7 +136,7 @@ const AddCavcRemandView = (props) => {
   const mandateAvailable = () => {
     return !(type === CAVC_DECISION_TYPES.remand && mdrSubtype()) && (isMandateProvided === 'true');
   };
-  const mandateSame = () => isMandateSame === 'true';
+  const mandateSame = () => Boolean(isMandateSame);
   const validDocketNumber = () => (/^\d{2}-\d{1,5}$/).exec(docketNumber);
   const validJudge = () => Boolean(judge);
   const validDecisionDate = () => Boolean(decisionDate) && validateDateNotInFuture(decisionDate);
@@ -186,8 +185,8 @@ const AddCavcRemandView = (props) => {
   const submit = () => {
     const payload = {
       data: {
-        judgement_date: mandateAvailable() ? judgementDate : null,
-        mandate_date: mandateAvailable() ? mandateDate : null,
+        judgement_date: judgementDate,
+        mandate_date: mandateDate,
         source_appeal_id: appealId,
         cavc_docket_number: docketNumber,
         cavc_judge_full_name: judge.value,
@@ -261,15 +260,15 @@ const AddCavcRemandView = (props) => {
     vertical
   />;
 
-  const mandateSameField = <RadioField
-    styling={radioLabelStyling}
-    label={COPY.CAVC_REMAND_MANDATE_DIFFER}
-    name="remand-different-toggle"
-    options={isMandateSameOptions}
-    values={isMandateSame}
-    onChange={(val) => setMandateSame(val)}
-    strongLabel
-  />;
+  const mandateSameField = <>
+    <legend><strong>{COPY.CAVC_REMAND_MANDATE_DIFFER_LABEL}</strong></legend>
+    <Checkbox
+      label={COPY.CAVC_REMAND_MANDATE_DIFFER_DESCRIPTION}
+      name="remand-different-toggle"
+      value={isMandateSame}
+      onChange={(val) => setMandateSame(val)}
+    />
+  </>;
 
   const mandateProvidedField = <RadioField
     styling={radioLabelStyling}
@@ -301,7 +300,7 @@ const AddCavcRemandView = (props) => {
     name="judgement-date"
     value={judgementDate}
     onChange={(val) => setJudgementDate(val)}
-    errorMessage={highlightInvalid && !validJudgementDate() ? COPY.CAVC_JUDGEMENT_DATE_ERROR : null}
+    errorMessage={highlightInvalid && !validJudgementDate() && !mandateSame() ? COPY.CAVC_JUDGEMENT_DATE_ERROR : null}
     strongLabel
   />;
 
@@ -311,7 +310,7 @@ const AddCavcRemandView = (props) => {
     name="mandate-date"
     value={mandateDate}
     onChange={(val) => setMandateDate(val)}
-    errorMessage={highlightInvalid && !validMandateDate() ? COPY.CAVC_MANDATE_DATE_ERROR : null}
+    errorMessage={highlightInvalid && !validMandateDate() && !mandateSame() ? COPY.CAVC_MANDATE_DATE_ERROR : null}
     strongLabel
   />;
 
