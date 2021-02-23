@@ -146,10 +146,18 @@ describe('AddCavcRemandView', () => {
         expect(validationErrorShows(cavcForm, error)).toBeTruthy();
       });
 
-      it('does not show error on correctly formatted docket number', () => {
+      it('does not show error on correctly formatted docket number with dash', () => {
         const cavcForm = setup({ appealId });
 
         cavcForm.find('input#docket-number').simulate('change', { target: { value: '20-39283' } });
+
+        expect(validationErrorShows(cavcForm, error)).toBeFalsy();
+      });
+
+      it('does not show error on correctly formatted docket number with hyphen', () => {
+        const cavcForm = setup({ appealId });
+
+        cavcForm.find('input#docket-number').simulate('change', { target: { value: '20‐39283' } });
 
         expect(validationErrorShows(cavcForm, error)).toBeFalsy();
       });

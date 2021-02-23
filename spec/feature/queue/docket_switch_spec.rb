@@ -291,7 +291,7 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
     end
 
-    it "allows attorney to edit tasks and proceed to confirmation page" do
+    it "allows attorney to complete a full grant docket switch" do
       User.authenticate!(user: cotb_attorney)
       visit "/queue/appeals/#{appeal.uuid}"
 
@@ -311,6 +311,146 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(page).to have_content("Which docket will the issue(s) be switched to?")
       expect(page).to have_button("Continue", disabled: true)
 
+      # select docket type
+      within_fieldset("Which docket will the issue(s) be switched to?") do
+        find("label", text: "Direct Review").click
+      end
+
+      click_button(text: "Continue")
+
+      # Takes user to add task page
+      expect(page).to have_content("Switch Docket: Add/Remove Tasks")
+      expect(page).to have_content("You are switching from Evidence Submission to Direct Review")
+
+      # select task
+      within_fieldset("Please unselect any tasks you would like to remove:") do
+        find("label", text: "IHP").click
+      end
+
+      expect(page).to have_content("Confirm removing task")
+      expect(page).to have_content("IHP")
+      click_button(COPY::MODAL_CONFIRM_BUTTON)
+
+      click_button(text: "Continue")
+      # Should now be on confirmation page
+      expect(page).to have_current_path(
+        "/queue/appeals/#{appeal.uuid}/tasks/#{docket_switch_granted_task.id}/docket_switch/checkout/grant/confirm"
+      )
+      expect(page).to have_content appeal.veteran_full_name
+
+      click_button(text: "Confirm docket switch")
+
+      # Return back to user's queue
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+      expect(page).to have_content format(
+        COPY::DOCKET_SWITCH_FULL_GRANTED_SUCCESS_TITLE,
+        appeal.claimant.name,
+        new_task_type
+      )
+      expect(page).to have_content format(COPY::DOCKET_SWITCH_GRANTED_SUCCESS_MESSAGE)
+
+      # Verify that full grant completed correctly
+      expect(docket_switch_granted_task.reload.status).to eq Constants.TASK_STATUSES.completed
+      expect(existing_admin_action1.reload.status).to eq Constants.TASK_STATUSES.cancelled
+
+      docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
+      expect(docket_switch).to_not be_nil
+      expect(docket_switch.disposition).to eq "granted"
+      expect(docket_switch.docket_type).to eq "direct_review"
+    end
+
+    it "allows attorney to complete a partial docket switch" do
+      User.authenticate!(user: cotb_attorney)
+      visit "/queue/appeals/#{appeal.uuid}"
+
+      find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_SWITCH_GRANTED.label).click
+
+      expect(page).to have_content(format(COPY::DOCKET_SWITCH_GRANTED_REQUEST_LABEL, appeal.claimant.name))
+      expect(page).to have_content(COPY::DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS)
+
+      fill_in "What is the Receipt Date of the docket switch request?", with: receipt_date
+
+      # select partial grants
+      within_fieldset("How are you proceeding with this request to switch dockets?") do
+        find("label", text: "Grant a partial switch").click
+      end
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_button("Continue", disabled: true)
+
+      # select issues
+      within_fieldset("Select the issue(s) that are switching dockets:") do
+        find("label", text: "1. PTSD denied").click
+      end
+
+      # select docket type
+      within_fieldset("Which docket will the issue(s) be switched to?") do
+        find("label", text: "Direct Review").click
+      end
+
+      expect(page).to have_button("Continue", disabled: false)
+      click_button(text: "Continue")
+      # Should now be on confirmation page
+      expect(page).to have_content("Switch Docket: Add/Remove Tasks")
+      expect(page).to have_content("You are switching from Evidence Submission to Direct Review")
+
+      click_button(text: "Continue")
+
+      click_button(text: "Confirm docket switch")
+
+      # Should now be on confirmation page
+      expect(page).to have_current_path(
+        "/queue/appeals/#{appeal.uuid}/tasks/#{docket_switch_granted_task.id}/docket_switch/checkout/grant/confirm"
+      )
+
+      expect(page).to have_content COPY::DOCKET_SWITCH_GRANTED_CONFIRM_TITLE
+      expect(page).to have_content format(
+        COPY::DOCKET_SWITCH_GRANTED_CONFIRM_DESCRIPTION_A,
+        old_task_type,
+        new_task_type,
+        old_task_type,
+        new_task_type
+      )
+
+      click_button(text: "Confirm docket switch")
+      # Return back to user's queue
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+      expect(page).to have_content format(
+        COPY::DOCKET_SWITCH_PARTIAL_GRANTED_SUCCESS_TITLE,
+        appeal.claimant.name,
+        new_task_type
+      )
+      expect(page).to have_content format(COPY::DOCKET_SWITCH_GRANTED_SUCCESS_MESSAGE)
+
+      # Verify that partial grant completed correctly
+      expect(existing_admin_action1.reload.status).to eq Constants.TASK_STATUSES.cancelled
+      expect(docket_switch_granted_task.reload.status).to eq Constants.TASK_STATUSES.completed
+
+      docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
+      expect(docket_switch).to_not be_nil
+      expect(docket_switch.disposition).to eq "partially_granted"
+      expect(docket_switch.docket_type).to eq "direct_review"
+    end
+
+    it "allows attorney to edit tasks and proceed to confirmation page" do
+      User.authenticate!(user: cotb_attorney)
+      visit "/queue/appeals/#{appeal.uuid}"
+
+      find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.DOCKET_SWITCH_GRANTED.label).click
+
+      expect(page).to have_content(format(COPY::DOCKET_SWITCH_GRANTED_REQUEST_LABEL, appeal.claimant.name))
+      expect(page).to have_content(COPY::DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS)
+
+      fill_in "What is the Receipt Date of the docket switch request?", with: receipt_date
+
+      # select full grants
+      within_fieldset("How are you proceeding with this request to switch dockets?") do
+        find("label", text: "Grant all issues").click
+      end
+
+      expect(page).to have_content("Which docket will the issue(s) be switched to?")
+      expect(page).to have_button("Continue", disabled: true)
       # select docket type
       within_fieldset("Which docket will the issue(s) be switched to?") do
         find("label", text: "Direct Review").click
@@ -391,7 +531,6 @@ RSpec.feature "Docket Switch", :all_dbs do
       end
 
       fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: admin_action_instructions
-
       expect(page).to have_button("Continue", disabled: false)
       click_button(text: "Continue")
 
@@ -409,7 +548,6 @@ RSpec.feature "Docket Switch", :all_dbs do
         new_task_type
       )
       expect(page).to have_content COPY::DOCKET_SWITCH_GRANTED_CONFIRM_DESCRIPTION_B
-
       expect(page).to have_content appeal.veteran_full_name
 
       # Partial switch should have this
@@ -419,6 +557,14 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       click_button(text: "Confirm docket switch")
       # Add checks for post-submit
+
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+      expect(page).to have_content format(
+        COPY::DOCKET_SWITCH_PARTIAL_GRANTED_SUCCESS_TITLE,
+        appeal.claimant.name,
+        new_task_type
+      )
+      expect(page).to have_content format(COPY::DOCKET_SWITCH_GRANTED_SUCCESS_MESSAGE)
     end
   end
 end

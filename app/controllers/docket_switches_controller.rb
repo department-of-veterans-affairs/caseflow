@@ -18,7 +18,11 @@ class DocketSwitchesController < ApplicationController
   end
 
   def create
-    docket_switch = DocketSwitch.create(*docket_switch_params)
+    docket_switch = DocketSwitch.new(*docket_switch_params)
+    docket_switch.update(
+      selected_task_ids: params[:selected_task_ids],
+      new_admin_actions: params[:new_admin_actions]
+    )
     # :nocov:
     if docket_switch.errors.present?
       render json: { errors: [detail: docket_switch.errors.full_messages.join(", ")] }, status: :bad_request
@@ -44,6 +48,14 @@ class DocketSwitchesController < ApplicationController
   end
 
   def docket_switch_params
-    params.permit(:disposition, :task_id, :receipt_date, :context, :old_docket_stream_id)
+    params.permit(
+      :disposition,
+      :task_id,
+      :receipt_date,
+      :context,
+      :old_docket_stream_id,
+      :docket_type,
+      granted_request_issue_ids: []
+    )
   end
 end
