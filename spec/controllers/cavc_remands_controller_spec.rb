@@ -68,14 +68,6 @@ RSpec.describe CavcRemandsController, type: :controller do
       }
     end
 
-    let(:expected_remand_values) do
-      {
-        "source_appeal_id": source_appeal.id,
-        "decision_issue_ids": decision_issue_ids,
-        "federal_circuit": federal_circuit
-      }
-    end
-
     subject { post :create, params: params }
 
     shared_examples "creates a remand depending on the sub-type" do
@@ -89,9 +81,7 @@ RSpec.describe CavcRemandsController, type: :controller do
 
         expect(response_body["cavc_remand"]["source_appeal_id"]).to eq(source_appeal.id)
         expect(response_body["cavc_remand"]["decision_issue_ids"]).to match_array(decision_issue_ids)
-        expected_remand_values.each do |key, value|
-          expect(response_body["cavc_remand"][key]).to eq value
-        end
+        expect(response_body["cavc_remand"]["federal_circuit"]).to eq(federal_circuit)
         expect(CavcRemand.count).to eq(remand_count + 1)
 
         expect(response_body["cavc_appeal"]["id"])
