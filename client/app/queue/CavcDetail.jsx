@@ -119,7 +119,7 @@ CavcDetail.propTypes = {
   decision_date: PropTypes.string.isRequired,
   judgement_date: PropTypes.string,
   mandate_date: PropTypes.string,
-  federal_circuit: PropTypes.bool.isRequired,
+  federal_circuit: PropTypes.bool,
   instructions: PropTypes.string.isRequired
 };
 
