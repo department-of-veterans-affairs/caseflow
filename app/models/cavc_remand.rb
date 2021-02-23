@@ -96,7 +96,7 @@ class CavcRemand < CaseflowRecord
 
   # we want to be generous to whatever the user types, but normalize to a dash
   def normalize_cavc_docket_number
-    self.cavc_docket_number.sub!(/[‐−–—]/, "-")
+    cavc_docket_number.sub!(/[‐−–—]/, "-")
   end
 
   def cavc_task
