@@ -129,7 +129,8 @@ const AddCavcRemandView = (props) => {
   const mandateAvailable = () => {
     return !(type === CAVC_DECISION_TYPES.remand && mdrSubtype()) && (isMandateProvided === 'true');
   };
-  const validDocketNumber = () => (/^\d{2}-\d{1,5}$/).exec(docketNumber);
+  // We accept ‐ HYPHEN, - Hyphen-minus, − MINUS SIGN, – EN DASH, — EM DASH
+  const validDocketNumber = () => (/^\d{2}[-‐−–—]\d{1,5}$/).exec(docketNumber);
   const validJudge = () => Boolean(judge);
   const validDecisionDate = () => Boolean(decisionDate) && validateDateNotInFuture(decisionDate);
   const validDecisionIssues = () => selectedIssues && selectedIssues.length > 0;

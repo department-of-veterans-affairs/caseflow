@@ -1,9 +1,8 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-
-import ApiUtil from '../../util/ApiUtil';
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  formData: {},
+  claimant: {},
+  poa: {},
 };
 
 const addClaimantSlice = createSlice({
@@ -14,16 +13,34 @@ const addClaimantSlice = createSlice({
     editClaimantInformation: (state, action) => {
       const { formData } = action.payload;
 
-      state.formData = {
-        ...state.formData,
+      state.claimant = {
+        ...state.claimant,
+        ...formData,
       };
+    },
+    clearClaimant: (state) => {
+      state.claimant = {};
+    },
+    editPoaInformation: (state, action) => {
+      const { formData } = action.payload;
+
+      state.poa = {
+        ...state.poa,
+        ...formData,
+      };
+    },
+    clearPoa: (state) => {
+      state.poa = {};
     },
   },
 });
 
 export const {
   cancel,
-  editClaimantInformation
+  editClaimantInformation,
+  clearClaimant,
+  editPoaInformation,
+  clearPoa,
 } = addClaimantSlice.actions;
 
 export default addClaimantSlice.reducer;

@@ -11,7 +11,7 @@ import { editAppeal, editNodDateUpdates } from '../QueueActions';
 import ApiUtil from '../../util/ApiUtil';
 import moment from 'moment';
 import { sprintf } from 'sprintf-js';
-import { formatDateStr } from '../../util/DateUtil';
+import { formatDateStr, DateString } from '../../util/DateUtil';
 import { appealWithDetailSelector } from '../selectors';
 import Alert from 'app/components/Alert';
 import SearchableDropdown from 'app/components/SearchableDropdown';
@@ -102,19 +102,22 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
   const [badDate, setBadDate] = useState(null);
   const [badReason, setBadReason] = useState(true);
 
-  const buttons = [
-    {
+  const buttons = [];
+
+  if (!showTimelinessError) {
+    buttons.push({
       classNames: ['cf-modal-link', 'cf-btn-link'],
       name: 'Cancel',
       onClick: onCancel
-    },
-    {
-      classNames: ['usa-button', 'usa-button-primary'],
-      name: showTimelinessError ? 'Close' : 'Submit',
-      disabled: (badDate || badReason),
-      onClick: showTimelinessError ? onCancel : () => onSubmit(receiptDate, changeReason)
-    }
-  ];
+    });
+  }
+
+  buttons.push({
+    classNames: ['usa-button', 'usa-button-primary'],
+    name: showTimelinessError ? 'Close' : 'Submit',
+    disabled: (badDate || badReason),
+    onClick: showTimelinessError ? onCancel : () => onSubmit(receiptDate, changeReason)
+  });
 
   const isFutureDate = (newDate) => {
     const today = new Date();
@@ -175,29 +178,43 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
 
   if (showTimelinessError) {
     modalContent = <div>
-      <div>
-        <ReactMarkdown source={COPY.EDIT_NOD_DATE_TIMELINESS_ERROR_MESSAGE} />
-      </div>
+      { showTimelinessError ? <Alert
+        message={COPY.EDIT_NOD_DATE_TIMELINESS_ERROR_MESSAGE}
+        styling={alertStyling}
+        title={COPY.EDIT_NOD_DATE_TIMELINESS_ALERT_TITLE}
+        type="error"
+        scrollOnAlert={false}
+      /> : null }
 
       <strong>Affected Issue(s)</strong>
-      <ol className="cf-error">
+      <ul className="cf-error">
         {issues.affectedIssues.map((issue) => {
 
           return <li key={issue.id}>
             {issue.description}
+            <div>
+              (Decision Date: <DateString date={issue.approx_decision_date} dateFormat = "MM/DD/YYYY" />)
+            </div>
           </li>;
         })}
-      </ol>
+      </ul>
 
       <strong>Unaffected Issue(s)</strong>
-      <ol>
+      <ul>
         {issues.unaffectedIssues.map((issue) => {
 
           return <li key={issue.id}>
             {issue.description}
+            <div>
+              (Decision Date: <DateString date={issue.approx_decision_date} dateFormat = "MM/DD/YYYY" />)
+            </div>
           </li>;
         })}
-      </ol>
+      </ul>
+      <br />
+      <div>
+        <ReactMarkdown source={COPY.EDIT_NOD_DATE_TIMELINESS_COB_MESSAGE} />
+      </div>
     </div>;
   } else {
     modalContent = <div>
