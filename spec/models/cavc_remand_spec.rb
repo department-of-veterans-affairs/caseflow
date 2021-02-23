@@ -132,6 +132,7 @@ describe CavcRemand do
     shared_examples "works for all remand subtypes" do
       context "when remand subtype is MDR" do
         let(:remand_subtype) { Constants.CAVC_REMAND_SUBTYPES.mdr }
+        let(:federal_circuit) { false }
 
         it "creates the record" do
           expect { subject }.not_to raise_error
