@@ -14,7 +14,7 @@ import { AddClaimantConfirmationModal } from './AddClaimantConfirmationModal';
 import { AddClaimantForm } from './AddClaimantForm';
 import { IntakeLayout } from '../components/IntakeLayout';
 import { AddClaimantButtons } from './AddClaimantButtons';
-import { useAddClaimantForm, defaultFormValues, fetchAttorneys } from './utils';
+import { useAddClaimantForm, fetchAttorneys } from './utils';
 // eslint-disable-next-line no-unused-vars
 import { submitReview } from '../actions/decisionReview';
 import { FORM_TYPES } from '../constants';
