@@ -1413,11 +1413,11 @@ RSpec.feature "Case details", :all_dbs do
                last_name: "Winters",
                file_number: "55555456")
       end
-      let(:timely_request_issue) { create(:request_issue, :nonrating, id: 1, decision_date: 381.days.ago) }
+      let(:untimely_request_issue) { create(:request_issue, :nonrating, id: 1, decision_date: 381.days.ago) }
       let(:untimely_request_issue_with_exemption) do
         create(:request_issue, :nonrating, id: 2, decision_date: 2.years.ago, untimely_exemption: true)
       end
-      let(:request_issues) { [timely_request_issue, untimely_request_issue_with_exemption] }
+      let(:request_issues) { [untimely_request_issue, untimely_request_issue_with_exemption] }
 
       let!(:appeal) do
         create(:appeal,
@@ -1453,15 +1453,22 @@ RSpec.feature "Case details", :all_dbs do
         find(:css, "input[id$='reason']").set("New Form/Information Received").send_keys(:return)
         safe_click "#Edit-NOD-Date-button-id-1"
 
-        expect(page).to_not have_content("There have been no changes to the timeliness of issues.")
+        expect(page).to have_content(COPY::EDIT_NOD_DATE_TIMELINESS_ERROR_MESSAGE)
 
-        issues_list = page.find_all("ol li")
+        affected_issues_list = page.find_all(".cf-modal-body ul.cf-error li")
+        unaffected_issues_list = page.find_all(".cf-modal-body ul:not(.cf-error) li")
 
-        expect(issues_list[0]).to have_content(
-          "#{timely_request_issue.nonrating_issue_category} - #{timely_request_issue.nonrating_issue_description}"
+        issue_one = untimely_request_issue
+        issue_two = untimely_request_issue_with_exemption
+
+        issue_one_desc = "#{issue_one.nonrating_issue_category} - #{issue_one.nonrating_issue_description}"
+        issue_two_desc = "#{issue_two.nonrating_issue_category} - #{issue_two.nonrating_issue_description}"
+
+        expect(affected_issues_list[0]).to have_content(
+          "#{issue_one_desc}\n(Decision Date: #{issue_one.decision_date.to_date.mdY})"
         )
-        expect(issues_list[1]).to have_content(
-          "#{timely_request_issue.nonrating_issue_category} - #{timely_request_issue.nonrating_issue_description}"
+        expect(unaffected_issues_list[0]).to have_content(
+          "#{issue_two_desc}\n(Decision Date: #{issue_two.decision_date.to_date.mdY})"
         )
       end
     end
