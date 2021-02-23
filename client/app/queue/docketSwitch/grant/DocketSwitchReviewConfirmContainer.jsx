@@ -7,7 +7,14 @@ import StringUtil from 'app/util/StringUtil';
 import { appealWithDetailSelector } from 'app/queue/selectors';
 import colocatedAdminActions from 'constants/CO_LOCATED_ADMIN_ACTIONS';
 import { DocketSwitchReviewConfirm } from './DocketSwitchReviewConfirm';
-import { cancel } from '../docketSwitchSlice';
+import { cancel, completeDocketSwitchGranted, stepForward } from '../docketSwitchSlice';
+import { showSuccessMessage } from '../../uiReducer/uiActions';
+import { sprintf } from 'sprintf-js';
+import {
+  DOCKET_SWITCH_PARTIAL_GRANTED_SUCCESS_TITLE,
+  DOCKET_SWITCH_FULL_GRANTED_SUCCESS_TITLE,
+  DOCKET_SWITCH_GRANTED_SUCCESS_MESSAGE
+} from 'app/../COPY';
 
 export const reformatTaskType = (type) => {
   const truncated = type.replace('ColocatedTask', '');
@@ -17,7 +24,7 @@ export const reformatTaskType = (type) => {
 };
 
 export const DocketSwitchReviewConfirmContainer = () => {
-  const { appealId } = useParams();
+  const { appealId, taskId } = useParams();
   const { goBack, push } = useHistory();
   const dispatch = useDispatch();
 
@@ -31,6 +38,14 @@ export const DocketSwitchReviewConfirmContainer = () => {
 
   const receiptDate = useMemo(() => parseISO(appeal.nodDate), [appeal.nodDate]);
 
+  const docketType = useSelector(
+    (state) => state.docketSwitch.formData.docketType
+  );
+
+  const dispositionType = useSelector(
+    (state) => state.docketSwitch.formData.disposition
+  );
+
   const handleCancel = () => {
     // Clear Redux store
     dispatch(cancel());
@@ -39,8 +54,45 @@ export const DocketSwitchReviewConfirmContainer = () => {
     push(`/queue/appeals/${appealId}`);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Make API call, redirect, etc
+
+    const partialGrantedMessage = {
+      title: sprintf(DOCKET_SWITCH_PARTIAL_GRANTED_SUCCESS_TITLE,
+        appeal.appellantFullName, StringUtil.snakeCaseToCapitalized(docketType)),
+      detail: DOCKET_SWITCH_GRANTED_SUCCESS_MESSAGE,
+    };
+
+    const fullGrantedMessage = {
+      title: sprintf(DOCKET_SWITCH_FULL_GRANTED_SUCCESS_TITLE,
+        appeal.appellantFullName, StringUtil.snakeCaseToCapitalized(docketType)),
+      detail: DOCKET_SWITCH_GRANTED_SUCCESS_MESSAGE,
+    };
+
+    const successMessage = dispositionType === 'partially_granted' ? partialGrantedMessage : fullGrantedMessage;
+
+    const docketSwitch = {
+      disposition: formData.disposition,
+      receipt_date: formData.receiptDate,
+      docket_type: formData.docketType,
+      granted_request_issue_ids: formData.issueIds,
+      new_admin_actions: formData.newTasks,
+      selected_task_ids: formData.taskIds,
+      task_id: taskId,
+      old_docket_stream_id: appeal.id
+    };
+
+    try {
+      await dispatch(completeDocketSwitchGranted(docketSwitch));
+
+      dispatch(showSuccessMessage(successMessage));
+      dispatch(stepForward());
+      push(`/queue/appeals/${appealId}`);
+    } catch (error) {
+      // Perhaps show an alert that indicates error, advise trying again...?
+      console.error('Error Granting Docket Switch', error);
+    }
+
   };
 
   //   We need to display more info than just the stored issue IDs
@@ -56,7 +108,7 @@ export const DocketSwitchReviewConfirmContainer = () => {
   }, [formData]);
 
   const tasksSwitched = useMemo(() => {
-    return formData.taskIds.map((taskId) => amaTasks[taskId]);
+    return formData.taskIds.map((taskid) => amaTasks[taskid]);
   }, [formData.taskIds, amaTasks]);
 
   const tasksAdded = useMemo(() => {
