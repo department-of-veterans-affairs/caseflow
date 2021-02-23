@@ -20,6 +20,7 @@ class CavcRemand < CaseflowRecord
   validates :judgement_date, :mandate_date, presence: true, unless: :mandate_not_required?
   validate :decision_issue_ids_match_appeal_decision_issues, if: -> { remand? && jmr? }
 
+  before_create :normalize_cavc_docket_number
   before_save :establish_appeal_stream, if: :cavc_remand_form_complete?
 
   enum cavc_decision_type: {
@@ -91,6 +92,11 @@ class CavcRemand < CaseflowRecord
     elsif straight_reversal? || death_dismissal?
       CavcTask.find_by(appeal_id: remand_appeal_id).descendants.each(&:completed!)
     end
+  end
+
+  # we want to be generous to whatever the user types, but normalize to a dash
+  def normalize_cavc_docket_number
+    cavc_docket_number.sub!(/[‐−–—]/, "-")
   end
 
   def cavc_task
