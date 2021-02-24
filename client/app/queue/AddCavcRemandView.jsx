@@ -262,9 +262,9 @@ const AddCavcRemandView = (props) => {
   />;
 
   const mandateDatesSameField = <>
-    <legend><strong>{COPY.CAVC_REMAND_MANDATE_DIFFER_LABEL}</strong></legend>
+    <legend><strong>{COPY.CAVC_REMAND_MANDATE_DATES_LABEL}</strong></legend>
     <Checkbox
-      label={COPY.CAVC_REMAND_MANDATE_DIFFER_DESCRIPTION}
+      label={COPY.CAVC_REMAND_MANDATE_DATES_SAME_DESCRIPTION}
       name="mandate-dates-same-toggle"
       value={isMandateSame}
       onChange={(val) => setMandateSame(val)}
