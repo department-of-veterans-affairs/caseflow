@@ -121,9 +121,8 @@ const AddCavcRemandView = (props) => {
   // populate all of our checkboxes on initial render
   useEffect(() => selectAllIssues(), []);
 
-  const allIssuesSelected = useMemo(() => {
-    return Object.values(issues).every((isChecked) => isChecked);
-  }, [issues]);
+  const allIssuesSelected = useMemo(() => Object.values(issues).every((isChecked) => isChecked), [issues]);
+  const allIssuesUnselected = useMemo(() => Object.values(issues).every((isChecked) => !isChecked), [issues]);
 
   const onIssueChange = (evt) => {
     setIssues({ ...issues, [evt.target.name]: evt.target.checked });
@@ -133,6 +132,7 @@ const AddCavcRemandView = (props) => {
   const straightReversalType = () => type === CAVC_DECISION_TYPES.straight_reversal;
   const deathDismissalType = () => type === CAVC_DECISION_TYPES.death_dismissal;
   const jmrSubtype = () => subType === CAVC_REMAND_SUBTYPES.jmr;
+  const jmprSubtype = () => subType === CAVC_REMAND_SUBTYPES.jmpr;
   const mdrSubtype = () => subType === CAVC_REMAND_SUBTYPES.mdr;
   const mandateAvailable = () => {
     return !(type === CAVC_DECISION_TYPES.remand && mdrSubtype()) && (isMandateProvided === 'true');
@@ -282,6 +282,7 @@ const AddCavcRemandView = (props) => {
   />;
 
   const jmrIssuesBanner = <Alert type="info" scrollOnAlert={false}>{COPY.JMR_SELECTION_ISSUE_INFO_BANNER}</Alert>;
+  const jmprIssuesBanner = <Alert type="info" scrollOnAlert={false}>{COPY.JMPR_SELECTION_ISSUE_INFO_BANNER}</Alert>;
 
   const mdrBanner = <Alert type="info" scrollOnAlert={false}>{COPY.MDR_SELECTION_ALERT_BANNER}</Alert>;
 
@@ -365,6 +366,7 @@ const AddCavcRemandView = (props) => {
       {!mandateAvailable() && type !== CAVC_DECISION_TYPES.remand && noMandateBanner }
       {!deathDismissalType() && issuesField}
       {remandType() && jmrSubtype() && !allIssuesSelected && jmrIssuesBanner }
+      {remandType() && jmprSubtype() && allIssuesUnselected && jmprIssuesBanner }
       {remandType() && mdrSubtype() && federalCircuitField }
       {instructionsField}
     </QueueFlowPage>
