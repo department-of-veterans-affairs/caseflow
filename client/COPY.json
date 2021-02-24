@@ -126,6 +126,7 @@
   "CASE_DETAILS_CAVC_DECISION_DATE": "Court's decision date",
   "CASE_DETAILS_CAVC_JUDGEMENT_DATE": "Judgement date",
   "CASE_DETAILS_CAVC_MANDATE_DATE": "Mandate date",
+  "CASE_DETAILS_CAVC_FEDERAL_CIRCUIT": "Appealed to Federal Circuit",
   "CASE_DETAILS_CAVC_REMAND_INSTRUCTIONS": "Remand Instructions",
 
   "POST_DISPATCH_TITLE": "Post-dispatch actions",

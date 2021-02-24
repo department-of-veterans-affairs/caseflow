@@ -172,6 +172,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           fill_in "decision-date", with: date
           find(".checkbox-wrapper-undefined").find("label[for=\"3\"]").click
           fill_in "context-and-instructions-textBox", with: instructions
+          find("label", text: "Yes, this case has been appealed to the Federal Circuit").click
           page.find("button", text: "Submit").click
 
           expect(page).to have_content COPY::CAVC_REMAND_CREATED_TITLE
@@ -193,6 +194,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_DECISION_DATE}: #{date}"
           expect(page.has_no_content?("#{COPY::CASE_DETAILS_CAVC_JUDGEMENT_DATE}:")).to eq(true)
           expect(page.has_no_content?("#{COPY::CASE_DETAILS_CAVC_MANDATE_DATE}:")).to eq(true)
+          expect(page).to have_content "#{COPY::CASE_DETAILS_CAVC_FEDERAL_CIRCUIT}: Yes"
 
           find(".cf-select__control", text: "Select an action").click
           expect(page).to have_content Constants.TASK_ACTIONS.END_TIMED_HOLD.label
