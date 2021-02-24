@@ -186,9 +186,21 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           expect(page).to have_content COPY::CAVC_FEDERAL_CIRCUIT_HEADER
           expect(page).to have_content COPY::CAVC_FEDERAL_CIRCUIT_LABEL
 
-          # unselect an issue and don't fill in judgement date or mandate date
+          # don't fill in judgement date or mandate date
           fill_in "decision-date", with: date
+
+          # unselect all issues
+          find(".checkbox-wrapper-undefined").find("label[for=\"1\"]").click
+          expect(page).to_not have_content COPY::MDR_SELECTION_ISSUE_INFO_BANNER
+          find(".checkbox-wrapper-undefined").find("label[for=\"2\"]").click
+          expect(page).to_not have_content COPY::MDR_SELECTION_ISSUE_INFO_BANNER
           find(".checkbox-wrapper-undefined").find("label[for=\"3\"]").click
+          expect(page).to have_content COPY::MDR_SELECTION_ISSUE_INFO_BANNER
+
+          # only need one issue selected for MDR
+          find(".checkbox-wrapper-undefined").find("label[for=\"3\"]").click
+          expect(page).to_not have_content COPY::MDR_SELECTION_ISSUE_INFO_BANNER
+
           fill_in "context-and-instructions-textBox", with: instructions
           page.find("button", text: "Submit").click
 
