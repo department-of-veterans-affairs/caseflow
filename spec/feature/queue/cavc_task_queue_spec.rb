@@ -92,6 +92,13 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           fill_in "mandate-date", with: date
           fill_in "context-and-instructions-textBox", with: "Please process this remand"
 
+          # unselect an issue
+          find(".checkbox-wrapper-undefined").find("label[for=\"2\"]").click
+          expect(page).to have_content COPY::JMR_SELECTION_ISSUE_INFO_BANNER
+          # select the issue; all issues must be selected for JMR
+          find(".checkbox-wrapper-undefined").find("label[for=\"2\"]").click
+          expect(page).to_not have_content COPY::JMR_SELECTION_ISSUE_INFO_BANNER
+
           page.find("button", text: "Submit").click
 
           expect(page).to have_content COPY::CAVC_REMAND_CREATED_TITLE
@@ -121,14 +128,25 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           visit "queue/appeals/#{appeal.external_id}"
           page.find("button", text: "+ Add CAVC Remand").click
 
-          # unselect an issue
           fill_in "docket-number", with: docket_number
           click_dropdown(text: judge_name)
           find("label", text: "Joint Motion for Partial Remand (JMPR)").click
           fill_in "decision-date", with: date
           fill_in "judgement-date", with: date
           fill_in "mandate-date", with: date
+
+          # unselect all issues
+          find(".checkbox-wrapper-undefined").find("label[for=\"1\"]").click
+          expect(page).to_not have_content COPY::JMPR_SELECTION_ISSUE_INFO_BANNER
+          find(".checkbox-wrapper-undefined").find("label[for=\"2\"]").click
+          expect(page).to_not have_content COPY::JMPR_SELECTION_ISSUE_INFO_BANNER
           find(".checkbox-wrapper-undefined").find("label[for=\"3\"]").click
+          expect(page).to have_content COPY::JMPR_SELECTION_ISSUE_INFO_BANNER
+
+          # only need one issue selected for JMPR
+          find(".checkbox-wrapper-undefined").find("label[for=\"2\"]").click
+          expect(page).to_not have_content COPY::JMPR_SELECTION_ISSUE_INFO_BANNER
+
           fill_in "context-and-instructions-textBox", with: "Please process this remand"
 
           page.find("button", text: "Submit").click
