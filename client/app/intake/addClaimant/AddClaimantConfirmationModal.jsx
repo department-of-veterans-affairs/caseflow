@@ -18,8 +18,8 @@ import { isEmpty } from 'lodash';
 
 export const shapeAddressBlock = (entity) => {
   if (
-    entity?.relationship === 'attorney' &&
-    entity.listedAttorney?.value !== 'not_listed'
+    entity?.listedAttorney?.value &&
+    entity?.listedAttorney?.value !== 'not_listed'
   ) {
     const [firstName, lastName] = entity.listedAttorney?.label.split(' ');
 

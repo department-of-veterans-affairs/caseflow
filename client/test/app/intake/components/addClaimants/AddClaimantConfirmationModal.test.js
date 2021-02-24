@@ -145,10 +145,23 @@ describe('shapeAddressBlock', () => {
     });
   });
 
-  describe('with existing attorney', () => {
+  describe('with existing attorney for claimant', () => {
     const entity = {
       relationship: 'attorney',
       partyType: 'individual',
+      listedAttorney: {
+        label: 'Jane Doe',
+        ...addressObj,
+      },
+    };
+
+    it('returns correct data', () => {
+      expect(shapeAddressBlock(entity)).toMatchObject({ ...entity });
+    });
+  });
+
+  describe('with existing attorney for claimant POA', () => {
+    const entity = {
       listedAttorney: {
         label: 'Jane Doe',
         ...addressObj,
