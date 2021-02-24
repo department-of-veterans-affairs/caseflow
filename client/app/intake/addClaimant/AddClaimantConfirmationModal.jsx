@@ -31,8 +31,6 @@ export const shapeAddressBlock = (entity) => {
     };
   }
 
-  console.log('shapeAddressBlock', entity);
-
   return entity;
 };
 
