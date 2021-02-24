@@ -28,6 +28,7 @@ import { withRouter } from 'react-router';
 const radioLabelStyling = css({ marginTop: '2.5rem' });
 const buttonStyling = css({ paddingLeft: '0' });
 const bottomInfoStyling = css({ marginBottom: '4rem' });
+const issueListStyling = css({ marginTop: '0rem' });
 
 const judgeOptions = _.map(CAVC_JUDGE_FULL_NAMES, (value) => ({
   label: value,
@@ -142,7 +143,17 @@ const AddCavcRemandView = (props) => {
   const validDocketNumber = () => (/^\d{2}[-‐−–—]\d{1,5}$/).exec(docketNumber);
   const validJudge = () => Boolean(judge);
   const validDecisionDate = () => Boolean(decisionDate) && validateDateNotInFuture(decisionDate);
-  const validDecisionIssues = () => selectedIssueIds?.length > 0;
+
+  const validDecisionIssues = () => {
+    if (remandType() && jmrSubtype()) {
+      return allIssuesSelected;
+    }
+
+    return selectedIssueIds?.length > 0;
+  };
+  const issueSelectionError = () =>
+    (remandType() && jmrSubtype() && !allIssuesSelected) ? COPY.CAVC_ALL_ISSUES_ERROR : COPY.CAVC_NO_ISSUES_ERROR;
+
   const validJudgementDate = () => {
     return (Boolean(judgementDate) && validateDateNotInFuture(judgementDate)) || !mandateAvailable();
   };
@@ -328,10 +339,11 @@ const AddCavcRemandView = (props) => {
       onClick={selectAllIssues}
     />
     <CheckboxGroup
+      styling={issueListStyling}
       options={issueOptions()}
       values={issues}
       onChange={(val) => onIssueChange(val)}
-      errorMessage={highlightInvalid && !validDecisionIssues() ? COPY.CAVC_NO_ISSUES_ERROR : null}
+      errorMessage={highlightInvalid && !validDecisionIssues() ? issueSelectionError() : null}
     />
   </React.Fragment>;
 
