@@ -139,31 +139,26 @@ const AddCavcRemandView = (props) => {
   const remandType = () => type === CAVC_DECISION_TYPES.remand;
   const straightReversalType = () => type === CAVC_DECISION_TYPES.straight_reversal;
   const deathDismissalType = () => type === CAVC_DECISION_TYPES.death_dismissal;
-  const jmrSubtype = () => subType === CAVC_REMAND_SUBTYPES.jmr;
-  const jmprSubtype = () => subType === CAVC_REMAND_SUBTYPES.jmpr;
-  const mdrSubtype = () => subType === CAVC_REMAND_SUBTYPES.mdr;
-  const mandateAvailable = () => {
-    return !(type === CAVC_DECISION_TYPES.remand && mdrSubtype()) && (isMandateProvided === 'true');
-  };
+
+  const jmrSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmr;
+  const jmprSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.jmpr;
+  const mdrSubtype = () => remandType() && subType === CAVC_REMAND_SUBTYPES.mdr;
+  const mandateAvailable = () => !mdrSubtype() && (isMandateProvided === 'true');
+
   // We accept ‐ HYPHEN, - Hyphen-minus, − MINUS SIGN, – EN DASH, — EM DASH
   const validDocketNumber = () => (/^\d{2}[-‐−–—]\d{1,5}$/).exec(docketNumber);
   const validJudge = () => Boolean(judge);
   const validDecisionDate = () => Boolean(decisionDate) && validateDateNotInFuture(decisionDate);
 
-  const validDecisionIssues = () => {
-    if (remandType() && jmrSubtype()) {
-      return allIssuesSelected;
-    }
-
-    return selectedIssueIds?.length > 0;
-  };
+  const validDecisionIssues = () => jmrSubtype() ? allIssuesSelected : selectedIssueIds?.length > 0;
   const issueSelectionError = () =>
-    (remandType() && jmrSubtype() && !allIssuesSelected) ? COPY.CAVC_ALL_ISSUES_ERROR : COPY.CAVC_NO_ISSUES_ERROR;
+    (jmrSubtype() && !allIssuesSelected) ? COPY.CAVC_ALL_ISSUES_ERROR : COPY.CAVC_NO_ISSUES_ERROR;
 
-  const validJudgementDate = () => {
-    return (Boolean(judgementDate) && validateDateNotInFuture(judgementDate)) || !mandateAvailable();
-  };
-  const validMandateDate = () => (Boolean(mandateDate) && validateDateNotInFuture(mandateDate)) || !mandateAvailable();
+  const validJudgementDate = () =>
+    (Boolean(judgementDate) && validateDateNotInFuture(judgementDate)) || !mandateAvailable();
+  const validMandateDate = () =>
+    (Boolean(mandateDate) && validateDateNotInFuture(mandateDate)) || !mandateAvailable();
+
   const validInstructions = () => instructions && instructions.length > 0;
 
   const validateForm = () => {
@@ -171,9 +166,7 @@ const AddCavcRemandView = (props) => {
       validInstructions() && validDecisionIssues();
   };
 
-  const mandateDatesPopulated = () => {
-    return mandateAvailable() && Boolean(judgementDate) && Boolean(mandateDate);
-  };
+  const mandateDatesPopulated = () => mandateAvailable() && Boolean(judgementDate) && Boolean(mandateDate);
 
   const successMsgDetail = () => {
     if (straightReversalType() || deathDismissalType()) {
@@ -182,7 +175,7 @@ const AddCavcRemandView = (props) => {
       }
 
       return COPY.CAVC_REMAND_MANDATE_HOLD_CREATED_DETAIL;
-    } else if (remandType() && mdrSubtype()) {
+    } else if (mdrSubtype()) {
       return COPY.CAVC_REMAND_MDR_CREATED_DETAIL;
     }
 
@@ -402,16 +395,16 @@ const AddCavcRemandView = (props) => {
       {remandType() && remandTypeField }
       {type !== CAVC_DECISION_TYPES.remand && mandateProvidedField }
       {decisionField}
-      {remandType() && mdrSubtype() && mdrBanner }
+      {mdrSubtype() && mdrBanner }
       {mandateAvailable() && mandateDatesSameField }
       {mandateAvailable() && !isMandateSame && judgementField }
       {mandateAvailable() && !isMandateSame && mandateField }
       {!mandateAvailable() && type !== CAVC_DECISION_TYPES.remand && noMandateBanner }
       {!deathDismissalType() && issuesField}
-      {remandType() && jmrSubtype() && !allIssuesSelected && jmrIssuesBanner }
-      {remandType() && jmprSubtype() && allIssuesUnselected && jmprIssuesBanner }
-      {remandType() && mdrSubtype() && allIssuesUnselected && mdrIssuesBanner }
-      {remandType() && mdrSubtype() && federalCircuitField }
+      {jmrSubtype() && !allIssuesSelected && jmrIssuesBanner}
+      {jmprSubtype() && allIssuesUnselected && jmprIssuesBanner}
+      {mdrSubtype() && allIssuesUnselected && mdrIssuesBanner}
+      {mdrSubtype() && federalCircuitField }
       {instructionsField}
     </QueueFlowPage>
   );
