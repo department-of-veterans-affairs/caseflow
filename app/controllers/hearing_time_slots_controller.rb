@@ -20,6 +20,8 @@ class HearingTimeSlotsController < ApplicationController
   end
 
   def hearing_times(hearing_day)
+    return if hearing_day.nil?
+
     open_hearings = hearing_day.open_hearings
 
     open_hearings.map do |hearing|
