@@ -20,7 +20,6 @@ import { formatDateStr, DateString } from '../../util/DateUtil';
 import { appealWithDetailSelector } from '../selectors';
 import Alert from 'app/components/Alert';
 import SearchableDropdown from 'app/components/SearchableDropdown';
-// import { marginTop } from '../constants';
 
 const alertStyling = css({
   marginBottom: '2em',
@@ -169,9 +168,6 @@ export const EditNodDateModal = ({
     disabled: !formState.isValid,
     onClick: showTimelinessError ? onCancel : handleSubmit(onSubmit)
   });
-
-  // eslint-disable-next-line no-console
-  console.log(watch(), errors, formState.isValid, formState.errors);
 
   let modalContent;
 
