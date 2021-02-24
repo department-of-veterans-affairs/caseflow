@@ -165,7 +165,8 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           find("label", text: "Joint Motion for Partial Remand (JMPR)").click
           fill_in "decision-date", with: date
           find(".checkbox-wrapper-mandate-dates-same-toggle").find("label[for=\"mandate-dates-same-toggle\"]").click
-          # we expect these dates to be ignored as we're toggling the judgment & mandate checkbox again after they are set on line 171
+          # we expect these dates to be ignored as we're toggling the judgment & mandate checkbox
+          # again on line 171
           fill_in "judgement-date", with: later_date
           fill_in "mandate-date", with: later_date
           find(".checkbox-wrapper-mandate-dates-same-toggle").find("label[for=\"mandate-dates-same-toggle\"]").click
