@@ -122,7 +122,7 @@ const AddCavcRemandView = (props) => {
   useEffect(() => selectAllIssues(), []);
 
   const allIssuesSelected = useMemo(() => {
-    return Object.values(issues).filter((isChecked) => !isChecked).length === 0;
+    return Object.values(issues).every((isChecked) => isChecked);
   }, [issues]);
 
   const onIssueChange = (evt) => {
