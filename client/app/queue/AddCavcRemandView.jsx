@@ -368,7 +368,7 @@ const AddCavcRemandView = (props) => {
       {type !== CAVC_DECISION_TYPES.remand && mandateProvidedField }
       {decisionField}
       {type === CAVC_DECISION_TYPES.remand && mdrSubtype() && mdrBanner }
-      {mandateAvailable() && mandateSameField }
+      {mandateAvailable() && mandateDatesSameField }
       {mandateAvailable() && !isMandateSame && judgementField }
       {mandateAvailable() && !isMandateSame && mandateField }
       {!mandateAvailable() && type !== CAVC_DECISION_TYPES.remand && noMandateBanner }
