@@ -17,7 +17,10 @@ import { AddressBlock } from './AddressBlock';
 import { isEmpty } from 'lodash';
 
 export const shapeAddressBlock = (entity) => {
-  if (entity?.relationship === 'attorney' && entity.listedAttorney?.value !== 'not_listed') {
+  if (
+    entity?.relationship === 'attorney' &&
+    entity.listedAttorney?.value !== 'not_listed'
+  ) {
     const [firstName, lastName] = entity.listedAttorney?.label.split(' ');
 
     return {
@@ -27,6 +30,8 @@ export const shapeAddressBlock = (entity) => {
       ...entity.listedAttorney.address,
     };
   }
+
+  console.log('shapeAddressBlock', entity);
 
   return entity;
 };
@@ -55,15 +60,18 @@ export const AddClaimantConfirmationModal = ({
     },
   ];
 
-  const missingLastName = useMemo(
-    () => claimant?.partyType === 'individual' && !claimant?.lastName,
-    [claimant]
-  );
-
   const showPoa = poa && !isEmpty(poa);
 
   const claimantEntity = useMemo(() => shapeAddressBlock(claimant), [claimant]);
   const poaEntity = useMemo(() => shapeAddressBlock(poa), [poa]);
+
+  const missingLastName = useMemo(
+    () =>
+      (['child', 'spouse'].includes(claimantEntity?.relationship) ||
+        claimantEntity?.partyType === 'individual') &&
+      !claimantEntity?.lastName,
+    [claimantEntity]
+  );
 
   return (
     <Modal
