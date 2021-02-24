@@ -186,8 +186,8 @@ const AddCavcRemandView = (props) => {
   const submit = () => {
     const payload = {
       data: {
-        judgement_date: (remandType() && mdrSubtype()) || !mandateAvailable() ? null : judgementDate,
-        mandate_date: (remandType() && mdrSubtype()) || !mandateAvailable() ? null : mandateDate,
+        judgement_date: ((remandType() && mdrSubtype()) || !mandateAvailable()) ? null : judgementDate,
+        mandate_date: ((remandType() && mdrSubtype()) || !mandateAvailable()) ? null : mandateDate,
         source_appeal_id: appealId,
         cavc_docket_number: docketNumber,
         cavc_judge_full_name: judge.value,
@@ -261,11 +261,11 @@ const AddCavcRemandView = (props) => {
     vertical
   />;
 
-  const mandateSameField = <>
+  const mandateDatesSameField = <>
     <legend><strong>{COPY.CAVC_REMAND_MANDATE_DIFFER_LABEL}</strong></legend>
     <Checkbox
       label={COPY.CAVC_REMAND_MANDATE_DIFFER_DESCRIPTION}
-      name="remand-different-toggle"
+      name="mandate-dates-same-toggle"
       value={isMandateSame}
       onChange={(val) => setMandateSame(val)}
     />
@@ -301,7 +301,7 @@ const AddCavcRemandView = (props) => {
     name="judgement-date"
     value={judgementDate}
     onChange={(val) => setJudgementDate(val)}
-    errorMessage={highlightInvalid && !validJudgementDate() && !isMandateSame ? COPY.CAVC_JUDGEMENT_DATE_ERROR : null}
+    errorMessage={(highlightInvalid && !validJudgementDate() && !isMandateSame) ? COPY.CAVC_JUDGEMENT_DATE_ERROR : null}
     strongLabel
   />;
 
@@ -311,7 +311,7 @@ const AddCavcRemandView = (props) => {
     name="mandate-date"
     value={mandateDate}
     onChange={(val) => setMandateDate(val)}
-    errorMessage={highlightInvalid && !validMandateDate() && !isMandateSame ? COPY.CAVC_MANDATE_DATE_ERROR : null}
+    errorMessage={(highlightInvalid && !validMandateDate() && !isMandateSame) ? COPY.CAVC_MANDATE_DATE_ERROR : null}
     strongLabel
   />;
 

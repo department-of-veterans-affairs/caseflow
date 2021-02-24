@@ -165,8 +165,8 @@
   "CAVC_REMAND_READY_FOR_DISTRIBUTION_DETAIL": "A new CAVC remand case has been created and will be distributed to a VLJ",
   "CAVC_REMAND_CASE_READY_FOR_DISTRIBUTION_DETAIL": "The case will be distributed to a judge for further processing",
   "CAVC_REMAND_MANDATE_QUESTION": "Are judgement and mandate dates provided?",
-  "CAVC_REMAND_MANDATE_DIFFER_LABEL": "Judgement and mandate date",
-  "CAVC_REMAND_MANDATE_DIFFER_DESCRIPTION": "Same as Court's decision date",
+  "CAVC_REMAND_MANDATE_DATES_LABEL": "Judgement and mandate date",
+  "CAVC_REMAND_MANDATE_DATES_SAME_DESCRIPTION": "Same as Court's decision date",
 
   "CAVC_EXTENSION_REQUEST_TITLE": "Review extension request",
   "CAVC_EXTENSION_REQUEST_DECISION_LABEL": "How will you proceed?",
