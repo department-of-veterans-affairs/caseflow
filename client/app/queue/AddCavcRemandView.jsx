@@ -185,14 +185,14 @@ const AddCavcRemandView = (props) => {
   const submit = () => {
     const payload = {
       data: {
-        judgement_date: judgementDate,
-        mandate_date: mandateDate,
+        judgement_date: (remandType() && mdrSubtype()) || !mandateAvailable() ? null : judgementDate,
+        mandate_date: (remandType() && mdrSubtype()) || !mandateAvailable() ? null : mandateDate,
         source_appeal_id: appealId,
         cavc_docket_number: docketNumber,
         cavc_judge_full_name: judge.value,
         cavc_decision_type: type,
         decision_date: decisionDate,
-        remand_subtype: type === CAVC_DECISION_TYPES.remand ? subType : null,
+        remand_subtype: remandType() ? subType : null,
         represented_by_attorney: attorney === '1',
         decision_issue_ids: selectedIssues,
         instructions

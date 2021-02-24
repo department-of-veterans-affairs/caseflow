@@ -250,8 +250,6 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           click_dropdown(text: judge_name)
           find("label", text: "Straight Reversal").click
           fill_in "decision-date", with: date
-          fill_in "judgement-date", with: date
-          fill_in "mandate-date", with: date
           find(".checkbox-wrapper-undefined").find("label[for=\"2\"]").click
           fill_in "context-and-instructions-textBox", with: instructions
           page.find("button", text: "Submit").click
@@ -323,8 +321,6 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           click_dropdown(text: judge_name)
           find("label", text: "Death Dismissal").click
           fill_in "decision-date", with: date
-          fill_in "judgement-date", with: date
-          fill_in "mandate-date", with: date
           fill_in "context-and-instructions-textBox", with: instructions
           page.find("button", text: "Submit").click
 
