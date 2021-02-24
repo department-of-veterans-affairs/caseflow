@@ -79,6 +79,7 @@ const AddCavcRemandView = (props) => {
   const [judgementDate, setJudgementDate] = useState(null);
   const [mandateDate, setMandateDate] = useState(null);
   const [issues, setIssues] = useState({});
+  const [federalCircuit, setFederalCircuit] = useState(false);
   const [instructions, setInstructions] = useState(null);
   const [isMandateProvided, setMandateProvided] = useState('true');
   const [isMandateSame, setMandateSame] = useState(true);
@@ -137,7 +138,7 @@ const AddCavcRemandView = (props) => {
     return !(type === CAVC_DECISION_TYPES.remand && mdrSubtype()) && (isMandateProvided === 'true');
   };
   const mandateSame = () => Boolean(isMandateSame);
-  const validDocketNumber = () => (/^\d{2}-\d{1,5}$/).exec(docketNumber);
+  const validDocketNumber = () => (/^\d{2}[-‐−–—]\d{1,5}$/).exec(docketNumber);
   const validJudge = () => Boolean(judge);
   const validDecisionDate = () => Boolean(decisionDate) && validateDateNotInFuture(decisionDate);
   const validDecisionIssues = () => selectedIssues && selectedIssues.length > 0;
@@ -330,6 +331,14 @@ const AddCavcRemandView = (props) => {
     />
   </React.Fragment>;
 
+  const federalCircuitField = <React.Fragment>
+    <legend><strong>{COPY.CAVC_FEDERAL_CIRCUIT_HEADER}</strong></legend>
+    <Checkbox name="federalCircuit" label={COPY.CAVC_FEDERAL_CIRCUIT_LABEL}
+      value={federalCircuit}
+      onChange={(evt) => setFederalCircuit(evt)}
+    />
+  </React.Fragment>;
+
   const instructionsField = <TextareaField
     label={COPY.CAVC_INSTRUCTIONS_LABEL}
     name="context-and-instructions-textBox"
@@ -364,6 +373,7 @@ const AddCavcRemandView = (props) => {
       {mandateAvailable() && !mandateSame() && mandateField }
       {!mandateAvailable() && type !== CAVC_DECISION_TYPES.remand && noMandateBanner }
       {!deathDismissalType() && issuesField}
+      {type === CAVC_DECISION_TYPES.remand && mdrSubtype() && federalCircuitField }
       {instructionsField}
     </QueueFlowPage>
   );

@@ -159,10 +159,15 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           visit "queue/appeals/#{appeal.external_id}"
           page.find("button", text: "+ Add CAVC Remand").click
 
-          # unselect an issue and don't fill in judgement date or mandate date
           fill_in "docket-number", with: docket_number
           click_dropdown(text: judge_name)
           find("label", text: "Memorandum Decision on Remand (MDR)").click
+
+          expect(page).to have_content COPY::MDR_SELECTION_ALERT_BANNER
+          expect(page).to have_content COPY::CAVC_FEDERAL_CIRCUIT_HEADER
+          expect(page).to have_content COPY::CAVC_FEDERAL_CIRCUIT_LABEL
+
+          # unselect an issue and don't fill in judgement date or mandate date
           fill_in "decision-date", with: date
           find(".checkbox-wrapper-undefined").find("label[for=\"3\"]").click
           fill_in "context-and-instructions-textBox", with: instructions
