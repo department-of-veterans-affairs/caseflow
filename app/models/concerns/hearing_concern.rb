@@ -6,18 +6,6 @@
 module HearingConcern
   extend ActiveSupport::Concern
 
-  class_methods do
-    def joins_with_cached_appeals_clause
-      "left join #{CachedAppeal.table_name} "\
-      "on #{CachedAppeal.table_name}.appeal_id = #{self.table_name}.appeal_id "\
-      "and #{CachedAppeal.table_name}.appeal_type = '#{appeal_or_legacy_appeal.name}'"
-    end
-
-    def appeal_or_legacy_appeal
-      self.class.is_a?(LegacyHearing) ? LegacyAppeal : Appeal
-    end
-  end
-
   # NOTE: for LegacyHearing, this makes a call to VACOLS
   def postponed?
     disposition == Constants.HEARING_DISPOSITION_TYPES.postponed
