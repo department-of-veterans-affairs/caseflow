@@ -259,6 +259,10 @@ describe('AddCavcRemandView', () => {
       });
     });
 
+    describe('issue selection validations', () => {
+      
+    });
+
     describe('cavc form instructions validations', () => {
       const error = COPY.CAVC_INSTRUCTIONS_ERROR;
 
