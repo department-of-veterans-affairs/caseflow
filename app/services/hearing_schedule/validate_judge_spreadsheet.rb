@@ -12,7 +12,8 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   class JudgeTemplateNotFollowed < StandardError; end
   class JudgeDatesNotUnique < StandardError; end
   class JudgeDatesNotInRange < StandardError; end
-  class JudgeNotInDatabase < StandardError; end
+  class JudgeIdNotInDatabase < StandardError; end
+  class JudgeNameNotInDatabase < StandardError; end
 
   def initialize(spreadsheet, start_date, end_date)
     get_spreadsheet_data = HearingSchedule::GetSpreadsheetData.new(spreadsheet)
@@ -46,9 +47,13 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   end
   # :nocov:
 
-  def judge_in_vacols?(vacols_judges, name, vlj_id)
+  def judge_id_in_vacols?(vacols_judges, name, vlj_id)
     return find_or_create_judges_in_vacols(vacols_judges, name, vlj_id) if Rails.env.development? || Rails.env.demo?
 
+    vacols_judges[vlj_id]
+  end
+
+  def judge_name_and_id_in_vacols?(vacols_judges, name, vlj_id)
     vacols_judges[vlj_id] &&
       vacols_judges[vlj_id][:first_name].casecmp(name.split(", ")[1].strip.downcase).zero? &&
       vacols_judges[vlj_id][:last_name].casecmp(name.split(", ")[0].strip.downcase).zero?
@@ -74,7 +79,10 @@ class HearingSchedule::ValidateJudgeSpreadsheet
 
   def filter_judges_not_in_db
     vacols_judges = User.css_ids_by_vlj_ids(@spreadsheet_data.pluck("vlj_id").uniq)
-    @spreadsheet_data.select { |row| !judge_in_vacols?(vacols_judges, row["name"], row["vlj_id"]) }.pluck("vlj_id")
+    judges_id_not_in_db = @spreadsheet_data.select { |row| !judge_id_in_vacols?(vacols_judges, row["name"], row["vlj_id"]) }.pluck("vlj_id")
+    judges_name_not_in_db = @spreadsheet_data.select { |row| !judge_name_and_id_in_vacols?(vacols_judges, row["name"], row["vlj_id"]) }.pluck("vlj_id")
+
+    return [judges_id_not_in_db, judges_name_not_in_db]
   end
 
   def validate_judge_non_availability_dates
@@ -90,9 +98,12 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     if out_of_range_dates.count > 0
       @errors << JudgeDatesNotInRange.new("These dates are out of the selected range: " + out_of_range_dates.to_s)
     end
-    judges_not_in_db = filter_judges_not_in_db
-    if judges_not_in_db.count > 0
-      @errors << JudgeNotInDatabase.new("These judges are not in the database: " + judges_not_in_db.to_s)
+    judges_id_not_in_db, judges_name_not_in_db = filter_judges_not_in_db
+    if judges_id_not_in_db.count > 0
+      @errors << JudgeIdNotInDatabase.new("These judges ids are not in the database: " + judges_id_not_in_db.to_s)
+    end
+    if judges_name_not_in_db.count > 0
+      @errors << JudgeNameNotInDatabase.new("These judges names are not in the database: " + judges_name_not_in_db.to_s)
     end
   end
 
