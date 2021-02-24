@@ -113,27 +113,33 @@ export const EditNodDateModal = ({
   showTimelinessError,
   issues
 }) => {
+  const [showWarning, setWarning] = useState(false);
 
-  let showWarning;
+  yup.addMethod(yup.date, 'isLater', function () {
+    return this.test(function (value) {
+      const formattedValue = formatDateStr(value);
+      const formattedNodDate = formatDateStr(nodDate);
+      if (formattedValue > formattedNodDate) {
+        setWarning(true);
+      } else {
+        setWarning(false);
+      }
+      return value;
+    });
+  });
 
   const schema = yup.object().shape({
-    islater: yup.boolean(),
     nodDate: yup.
       date().
       min('2019-02-19', COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE).
       max(new Date(), COPY.EDIT_NOD_DATE_FUTURE_DATE_ERROR_MESSAGE).
-      when('isLater', {
-        is: true,
-        then: yup.date().max(nodDate, () => {
-          showWarning = true;
-        }),
-      }).
+      isLater().
       typeError('Invalid date.').
       required(),
     reason: yup.
       string().
       required().
-      oneOf(changeReasons.map((changeReason) => changeReason.value)),
+      oneOf(changeReasons.map((changeReason) => changeReason.value))
   });
 
   const { register, errors, watch, control, handleSubmit, formState } = useForm(
@@ -141,7 +147,7 @@ export const EditNodDateModal = ({
       defaultValues: { nodDate, reason },
       resolver: yupResolver(schema),
       mode: 'onChange',
-      reValidateMode: 'onChange',
+      reValidateMode: 'onChange'
     }
   );
 
