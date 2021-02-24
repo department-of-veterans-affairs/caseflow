@@ -3311,27 +3311,27 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                 </legend>
                 <Checkbox
                   label="Same as Court's decision date"
-                  name="remand-different-toggle"
+                  name="mandate-dates-same-toggle"
                   onChange={[Function]}
                   required={false}
                   value={true}
                 >
                   <div
-                    className="checkbox-wrapper-remand-different-toggle cf-form-checkboxes"
+                    className="checkbox-wrapper-mandate-dates-same-toggle cf-form-checkboxes"
                   >
                     <div
                       className="cf-form-checkbox"
                     >
                       <input
-                        aria-label="remand-different-toggle"
+                        aria-label="mandate-dates-same-toggle"
                         checked={true}
-                        id="remand-different-toggle"
-                        name="remand-different-toggle"
+                        id="mandate-dates-same-toggle"
+                        name="mandate-dates-same-toggle"
                         onChange={[Function]}
                         type="checkbox"
                       />
                       <label
-                        htmlFor="remand-different-toggle"
+                        htmlFor="mandate-dates-same-toggle"
                       >
                         <span
                           className=""

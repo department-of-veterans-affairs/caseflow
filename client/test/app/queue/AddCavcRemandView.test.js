@@ -217,7 +217,7 @@ describe('AddCavcRemandView', () => {
       it('shows error on no selected date', () => {
         const cavcForm = setup({ appealId });
 
-        cavcForm.find('input#remand-different-toggle').simulate('change', { target: { checked: false } });
+        cavcForm.find('input#mandate-dates-same-toggle').simulate('change', { target: { checked: false } });
 
         expect(validationErrorShows(cavcForm, error)).toBeTruthy();
       });
@@ -225,7 +225,7 @@ describe('AddCavcRemandView', () => {
       it('shows error on future date selection', () => {
         const cavcForm = setup({ appealId });
 
-        cavcForm.find('input#remand-different-toggle').simulate('change', { target: { checked: false } });
+        cavcForm.find('input#mandate-dates-same-toggle').simulate('change', { target: { checked: false } });
 
         cavcForm.find('input#judgement-date').simulate('change', { target: { value: futureDate } });
 
@@ -235,7 +235,7 @@ describe('AddCavcRemandView', () => {
       it('does not show error on selected date', () => {
         const cavcForm = setup({ appealId });
 
-        cavcForm.find('input#remand-different-toggle').simulate('change', { target: { checked: false } });
+        cavcForm.find('input#mandate-dates-same-toggle').simulate('change', { target: { checked: false } });
 
         cavcForm.find('input#judgement-date').simulate('change', { target: { value: '2020-11-11' } });
 
@@ -249,7 +249,7 @@ describe('AddCavcRemandView', () => {
       it('shows error on no selected date', () => {
         const cavcForm = setup({ appealId });
 
-        cavcForm.find('input#remand-different-toggle').simulate('change', { target: { checked: false } });
+        cavcForm.find('input#mandate-dates-same-toggle').simulate('change', { target: { checked: false } });
 
         expect(validationErrorShows(cavcForm, error)).toBeTruthy();
       });
@@ -257,7 +257,7 @@ describe('AddCavcRemandView', () => {
       it('shows error on future date selection', () => {
         const cavcForm = setup({ appealId });
 
-        cavcForm.find('input#remand-different-toggle').simulate('change', { target: { checked: false } });
+        cavcForm.find('input#mandate-dates-same-toggle').simulate('change', { target: { checked: false } });
 
         cavcForm.find('input#mandate-date').simulate('change', { target: { value: futureDate } });
         expect(validationErrorShows(cavcForm, error)).toBeTruthy();
@@ -266,7 +266,7 @@ describe('AddCavcRemandView', () => {
       it('does not show error on selected date', () => {
         const cavcForm = setup({ appealId });
 
-        cavcForm.find('input#remand-different-toggle').simulate('change', { target: { checked: false } });
+        cavcForm.find('input#mandate-dates-same-toggle').simulate('change', { target: { checked: false } });
 
         cavcForm.find('input#mandate-date').simulate('change', { target: { value: '2020-11-11' } });
 
