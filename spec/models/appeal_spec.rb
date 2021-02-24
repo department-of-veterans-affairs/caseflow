@@ -1251,7 +1251,7 @@ describe Appeal, :all_dbs do
     context "should fail validation" do
       let(:receipt_date) { 3.years.ago }
 
-      it "if receipt date is before decision date" do
+      it "if receipt date is before decision date regardless of exemption" do
         expect(subject[:affected_issues].count).to eq(2)
       end
     end
