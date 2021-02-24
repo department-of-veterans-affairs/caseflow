@@ -27,6 +27,9 @@ import { withRouter } from 'react-router';
 
 const radioLabelStyling = css({ marginTop: '2.5rem' });
 const buttonStyling = css({ paddingLeft: '0' });
+const bottomInfoStyling = css({
+  marginBottom: '4rem'
+});
 
 const judgeOptions = _.map(CAVC_JUDGE_FULL_NAMES, (value) => ({
   label: value,
@@ -281,12 +284,12 @@ const AddCavcRemandView = (props) => {
     strongLabel
   />;
 
-  const jmrIssuesBanner = <Alert type="info" scrollOnAlert={false}>{COPY.JMR_SELECTION_ISSUE_INFO_BANNER}</Alert>;
-  const jmprIssuesBanner = <Alert type="info" scrollOnAlert={false}>{COPY.JMPR_SELECTION_ISSUE_INFO_BANNER}</Alert>;
+  const jmrIssuesBanner = <Alert type="info" styling={bottomInfoStyling} scrollOnAlert={false}>{COPY.JMR_SELECTION_ISSUE_INFO_BANNER}</Alert>;
+  const jmprIssuesBanner = <Alert type="info" styling={bottomInfoStyling} scrollOnAlert={false}>{COPY.JMPR_SELECTION_ISSUE_INFO_BANNER}</Alert>;
 
-  const mdrBanner = <Alert type="info" scrollOnAlert={false}>{COPY.MDR_SELECTION_ALERT_BANNER}</Alert>;
+  const mdrBanner = <Alert type="info" styling={bottomInfoStyling} scrollOnAlert={false}>{COPY.MDR_SELECTION_ALERT_BANNER}</Alert>;
 
-  const noMandateBanner = <Alert type="info" scrollOnAlert={false}>{COPY.CAVC_REMAND_NO_MANDATE_TEXT}</Alert>;
+  const noMandateBanner = <Alert type="info" styling={bottomInfoStyling} scrollOnAlert={false}>{COPY.CAVC_REMAND_NO_MANDATE_TEXT}</Alert>;
 
   const judgementField = <DateSelector
     label={COPY.CAVC_JUDGEMENT_DATE}
