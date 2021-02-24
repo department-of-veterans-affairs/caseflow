@@ -282,7 +282,7 @@ const AddCavcRemandView = (props) => {
   />;
 
   const jmrIssuesBanner = <Alert type="info" scrollOnAlert={false}>{COPY.JMR_SELECTION_ISSUE_INFO_BANNER}</Alert>;
-  
+
   const mdrBanner = <Alert type="info" scrollOnAlert={false}>{COPY.MDR_SELECTION_ALERT_BANNER}</Alert>;
 
   const noMandateBanner = <Alert type="info" scrollOnAlert={false}>{COPY.CAVC_REMAND_NO_MANDATE_TEXT}</Alert>;
