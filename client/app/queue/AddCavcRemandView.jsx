@@ -78,6 +78,7 @@ const AddCavcRemandView = (props) => {
   const [decisionDate, setDecisionDate] = useState(null);
   const [judgementDate, setJudgementDate] = useState(null);
   const [mandateDate, setMandateDate] = useState(null);
+  // issues is a hash keyed on decisionIssue.id with boolean values indicating checkbox state
   const [issues, setIssues] = useState({});
   const [federalCircuit, setFederalCircuit] = useState(false);
   const [instructions, setInstructions] = useState(null);
@@ -102,15 +103,15 @@ const AddCavcRemandView = (props) => {
     label: decisionIssue.description
   }));
 
-  // determines which issues are currently selected
-  const selectedIssues = useMemo(() => {
+  // returns ids of issues that are currently selected
+  const selectedIssueIds = useMemo(() => {
     return Object.entries(issues).filter((item) => item[1]).
       flatMap((item) => item[0]);
   }, [issues]);
 
   // populates all checkboxes
   const selectAllIssues = () => {
-    const checked = selectedIssues.length === 0;
+    const checked = selectedIssueIds.length === 0;
     const newValues = {};
 
     issueOptions().forEach((item) => newValues[item.id] = checked);
@@ -120,6 +121,10 @@ const AddCavcRemandView = (props) => {
   // populate all of our checkboxes on initial render
   useEffect(() => selectAllIssues(), []);
 
+  const allIssuesSelected = useMemo(() => {
+    return Object.values(issues).filter((isChecked) => !isChecked).length === 0;
+  }, [issues]);
+
   const onIssueChange = (evt) => {
     setIssues({ ...issues, [evt.target.name]: evt.target.checked });
   };
@@ -127,6 +132,7 @@ const AddCavcRemandView = (props) => {
   const remandType = () => type === CAVC_DECISION_TYPES.remand;
   const straightReversalType = () => type === CAVC_DECISION_TYPES.straight_reversal;
   const deathDismissalType = () => type === CAVC_DECISION_TYPES.death_dismissal;
+  const jmrSubtype = () => subType === CAVC_REMAND_SUBTYPES.jmr;
   const mdrSubtype = () => subType === CAVC_REMAND_SUBTYPES.mdr;
   const mandateAvailable = () => {
     return !(type === CAVC_DECISION_TYPES.remand && mdrSubtype()) && (isMandateProvided === 'true');
@@ -135,7 +141,7 @@ const AddCavcRemandView = (props) => {
   const validDocketNumber = () => (/^\d{2}[-‐−–—]\d{1,5}$/).exec(docketNumber);
   const validJudge = () => Boolean(judge);
   const validDecisionDate = () => Boolean(decisionDate) && validateDateNotInFuture(decisionDate);
-  const validDecisionIssues = () => selectedIssues && selectedIssues.length > 0;
+  const validDecisionIssues = () => selectedIssueIds?.length > 0;
   const validJudgementDate = () => {
     return (Boolean(judgementDate) && validateDateNotInFuture(judgementDate)) || !mandateAvailable();
   };
@@ -189,7 +195,7 @@ const AddCavcRemandView = (props) => {
         decision_date: decisionDate,
         remand_subtype: type === CAVC_DECISION_TYPES.remand ? subType : null,
         represented_by_attorney: attorney === '1',
-        decision_issue_ids: selectedIssues,
+        decision_issue_ids: selectedIssueIds,
         instructions
       }
     };
@@ -275,6 +281,8 @@ const AddCavcRemandView = (props) => {
     strongLabel
   />;
 
+  const jmrIssuesBanner = <Alert type="info" scrollOnAlert={false}>{COPY.JMR_SELECTION_ISSUE_INFO_BANNER}</Alert>;
+  
   const mdrBanner = <Alert type="info" scrollOnAlert={false}>{COPY.MDR_SELECTION_ALERT_BANNER}</Alert>;
 
   const noMandateBanner = <Alert type="info" scrollOnAlert={false}>{COPY.CAVC_REMAND_NO_MANDATE_TEXT}</Alert>;
@@ -302,7 +310,7 @@ const AddCavcRemandView = (props) => {
   const issuesField = <React.Fragment>
     <legend><strong>{COPY.CAVC_ISSUES_LABEL}</strong></legend>
     <Button
-      name={selectedIssues.length ? 'Unselect all' : 'Select all'}
+      name={selectedIssueIds.length ? 'Unselect all' : 'Select all'}
       styling={buttonStyling}
       linkStyling
       onClick={selectAllIssues}
@@ -348,15 +356,16 @@ const AddCavcRemandView = (props) => {
       {representedField}
       {judgeField}
       {typeField}
-      {type === CAVC_DECISION_TYPES.remand && remandTypeField }
+      {remandType() && remandTypeField }
       {type !== CAVC_DECISION_TYPES.remand && mandateProvidedField }
       {decisionField}
-      {type === CAVC_DECISION_TYPES.remand && mdrSubtype() && mdrBanner }
+      {remandType() && mdrSubtype() && mdrBanner }
       {mandateAvailable() && judgementField }
       {mandateAvailable() && mandateField }
       {!mandateAvailable() && type !== CAVC_DECISION_TYPES.remand && noMandateBanner }
       {!deathDismissalType() && issuesField}
-      {type === CAVC_DECISION_TYPES.remand && mdrSubtype() && federalCircuitField }
+      {remandType() && jmrSubtype() && !allIssuesSelected && jmrIssuesBanner }
+      {remandType() && mdrSubtype() && federalCircuitField }
       {instructionsField}
     </QueueFlowPage>
   );
