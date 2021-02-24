@@ -137,7 +137,6 @@ const AddCavcRemandView = (props) => {
   const mandateAvailable = () => {
     return !(type === CAVC_DECISION_TYPES.remand && mdrSubtype()) && (isMandateProvided === 'true');
   };
-  const mandateSame = () => Boolean(isMandateSame);
   const validDocketNumber = () => (/^\d{2}[-‐−–—]\d{1,5}$/).exec(docketNumber);
   const validJudge = () => Boolean(judge);
   const validDecisionDate = () => Boolean(decisionDate) && validateDateNotInFuture(decisionDate);
@@ -301,7 +300,7 @@ const AddCavcRemandView = (props) => {
     name="judgement-date"
     value={judgementDate}
     onChange={(val) => setJudgementDate(val)}
-    errorMessage={highlightInvalid && !validJudgementDate() && !mandateSame() ? COPY.CAVC_JUDGEMENT_DATE_ERROR : null}
+    errorMessage={highlightInvalid && !validJudgementDate() && !isMandateSame() ? COPY.CAVC_JUDGEMENT_DATE_ERROR : null}
     strongLabel
   />;
 
@@ -311,7 +310,7 @@ const AddCavcRemandView = (props) => {
     name="mandate-date"
     value={mandateDate}
     onChange={(val) => setMandateDate(val)}
-    errorMessage={highlightInvalid && !validMandateDate() && !mandateSame() ? COPY.CAVC_MANDATE_DATE_ERROR : null}
+    errorMessage={highlightInvalid && !validMandateDate() && !isMandateSame() ? COPY.CAVC_MANDATE_DATE_ERROR : null}
     strongLabel
   />;
 
@@ -369,8 +368,8 @@ const AddCavcRemandView = (props) => {
       {decisionField}
       {type === CAVC_DECISION_TYPES.remand && mdrSubtype() && mdrBanner }
       {mandateAvailable() && mandateSameField }
-      {mandateAvailable() && !mandateSame() && judgementField }
-      {mandateAvailable() && !mandateSame() && mandateField }
+      {mandateAvailable() && !isMandateSame() && judgementField }
+      {mandateAvailable() && !isMandateSame() && mandateField }
       {!mandateAvailable() && type !== CAVC_DECISION_TYPES.remand && noMandateBanner }
       {!deathDismissalType() && issuesField}
       {type === CAVC_DECISION_TYPES.remand && mdrSubtype() && federalCircuitField }
