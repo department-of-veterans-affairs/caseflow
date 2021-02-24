@@ -116,14 +116,16 @@ export const EditNodDateModal = ({
   const [showWarning, setWarning] = useState(false);
 
   yup.addMethod(yup.date, 'isLater', function () {
-    return this.test(function (value) {
+    return this.test((value) => {
       const formattedValue = formatDateStr(value);
       const formattedNodDate = formatDateStr(nodDate);
+
       if (formattedValue > formattedNodDate) {
         setWarning(true);
       } else {
         setWarning(false);
       }
+
       return value;
     });
   });
@@ -165,7 +167,7 @@ export const EditNodDateModal = ({
     classNames: ['usa-button', 'usa-button-primary'],
     name: showTimelinessError ? 'Close' : 'Submit',
     disabled: !formState.isValid,
-    onClick: showTimelinessError ? onCancel : () => handleSubmit(onSubmit)
+    onClick: showTimelinessError ? onCancel : handleSubmit(onSubmit)
   });
 
   // eslint-disable-next-line no-console
