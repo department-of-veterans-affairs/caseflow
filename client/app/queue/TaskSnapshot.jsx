@@ -8,6 +8,8 @@ import TaskRows from './components/TaskRows';
 import COPY from '../../COPY';
 import { sectionSegmentStyling, sectionHeadingStyling, anchorJumpLinkStyling } from './StickyNavContentArea';
 import { PulacCerulloReminderAlert } from './pulacCerullo/PulacCerulloReminderAlert';
+import Alert from 'app/components/Alert';
+import DocketSwitchBanner from './docketSwitch/DocketSwitchBanner'
 
 const tableStyling = css({
   width: '100%',
@@ -50,6 +52,7 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
           <PulacCerulloReminderAlert />
         </div>
       )}
+      <div {...alertStyling}>{appeal.docket_switch ? <DocketSwitchBanner appeal={appeal}/> : "Hello World" }</div>
       <div {...sectionSegmentStyling}>{sectionBody}</div>
     </div>
   );

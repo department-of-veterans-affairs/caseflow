@@ -91,7 +91,7 @@
   "TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL": "View task instructions",
   "TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL": "Hide task instructions",
   "TASK_SNAPSHOT_ACTION_BOX_TITLE": "Actions",
-  "TASK_SNAPSHOT_NO_ACTIVE_LABEL": "No active tasks",
+  "TASK_SNAPSHOT_NO_ACTIVE_LABEL": "There are currently no active tasks",
   "TASK_SNAPSHOT_ACTIVE_TASKS_LABEL": "Currently active tasks",
   "TASK_SNAPSHOT_ADD_NEW_TASK_LABEL": "+ Add a new task",
 
@@ -733,6 +733,12 @@
   "DOCKET_SWITCH_PARTIAL_GRANTED_SUCCESS_TITLE": "You have successfully switched issue(s) on %s's appeal to the %s docket.",
   "DOCKET_SWITCH_FULL_GRANTED_SUCCESS_TITLE": "You have successfully switched %s's docket to %s.",
   "DOCKET_SWITCH_GRANTED_SUCCESS_MESSAGE": "The appeal will be found under the original docket number and all relevant tasks will be sent to the appropriate team or individual.",
+  "DOCKET_SWITCH_FULL_GRANTED_TITLE": "This appeal has been switched to a different docket.",
+  "DOCKET_SWITCH_FULL_GRANTED_LABEL": "All active tasks can be found on the new switched appeal stream.",
+  "DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_OLD_DOCKET": "Some issue(s) on this appeal have been switched to a different docket.",
+  "DOCKET_SWITCH_PARTIAL_GRANTED_LABEL_OLD_DOCKET": "The issues and active tasks can be found on the switched appeal stream.",
+  "DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_NEW_DOCKET": "Some issues(s) on this appeal are on a different docket.",
+  "DOCKET_SWITCH_PARTIAL_GRANTED_LABEL_NEW_DOCKET": "The issues and active tasks can be found on the other appeal stream.",
 
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
