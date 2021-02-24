@@ -101,8 +101,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     judges_id_not_in_db, judges_name_not_in_db = filter_judges_not_in_db
     if judges_id_not_in_db.count > 0
       @errors << JudgeIdNotInDatabase.new("These judges ids are not in the database: " + judges_id_not_in_db.to_s)
-    end
-    if judges_name_not_in_db.count > 0
+    elsif judges_name_not_in_db.count > 0 
       @errors << JudgeNameNotInDatabase.new("These judges names do not match the database for this id: " + judges_name_not_in_db.to_s)
     end
   end

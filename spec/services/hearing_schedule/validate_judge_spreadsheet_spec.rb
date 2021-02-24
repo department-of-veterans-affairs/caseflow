@@ -43,9 +43,9 @@ describe HearingSchedule::ValidateJudgeSpreadsheet, :all_dbs do
       ).validate
     end
 
-    it "returns JudgeIdNotInDatabase and JudgeNameNotInDatabase" do
+    it "returns JudgeIdNotInDatabase (not JudgeNameNotInDatabase)" do
       expect(subject).to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeIdNotInDatabase
-      expect(subject).to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeNameNotInDatabase
+      expect(subject).not_to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeNameNotInDatabase
     end
   end
 
