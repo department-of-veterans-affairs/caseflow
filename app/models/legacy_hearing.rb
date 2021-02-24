@@ -88,6 +88,8 @@ class LegacyHearing < CaseflowRecord
 
   before_create :assign_created_by_user
 
+  scope :with_cached_appeals, -> { joins(LegacyHearing.joins_with_cached_appeals_clause) }
+
   CO_HEARING = "Central"
   VIDEO_HEARING = "Video"
 

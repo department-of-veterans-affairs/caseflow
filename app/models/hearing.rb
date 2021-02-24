@@ -78,6 +78,8 @@ class Hearing < CaseflowRecord
           )
         }
 
+  scope :with_cached_appeals, -> { joins(Hearing.joins_with_cached_appeals_clause) }
+
   HEARING_TYPES = {
     R: "Virtual",
     V: "Video",

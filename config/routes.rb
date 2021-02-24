@@ -142,6 +142,9 @@ Rails.application.routes.draw do
   resources :regional_offices, only: [:index]
   get '/regional_offices/:regional_office/hearing_dates', to: "regional_offices#hearing_dates"
 
+  resources :hearing_time_slots, only: [:index]
+  get '/hearing_time_slots/:hearing_day_id', to: "hearing_time_slots#index"
+
   namespace :hearings do
     resources :appeals, only: [:update], param: :appeal_id
     resources :hearing_day, only: [:index, :show, :destroy, :update]
