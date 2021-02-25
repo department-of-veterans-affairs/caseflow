@@ -9,8 +9,9 @@ export default {
   title: 'Hearings/Components/Schedule Hearing/TimeSlot',
   component: TimeSlot,
   argTypes: {
-    hearings: { table: { disable: true } },
-    setTime: { table: { disable: true } },
+    scheduledHearingsList: { table: { disable: true } },
+    update: { table: { disable: true } },
+    fetchScheduledHearings: { table: { disable: true } },
   }
 };
 
@@ -19,7 +20,13 @@ const Template = (args) => {
     <TimeSlot
       {...args}
       fetchScheduledHearings={() => false}
-      hearings={[
+      scheduledHearingsList={[
+        {
+          hearingTime: '08:45',
+          docketName: 'legacy',
+          issueCount: 2,
+          poaName: 'American Legion'
+        },
         {
           hearingTime: args.hearingTime,
           docketName: args?.docketName,

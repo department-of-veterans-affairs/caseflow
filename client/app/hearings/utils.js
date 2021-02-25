@@ -490,29 +490,29 @@ export const setTimeSlots = (hearings) => {
   // Default to using EST for all times before conversion
   moment.tz.setDefault('America/New_York');
 
-  // Set the available time slots to every half hour
-  const available = HEARING_TIME_OPTIONS.filter((time) => time.value.includes('30')).map((slot) => ({
-    hearingTime: slot.value
-  }));
+  // Filter the hearing time options by 30 minutes increments or filled hearing times
+  const slots = HEARING_TIME_OPTIONS.
+    reduce((list, slot) => ([
+      ...list,
+      ...(hearings || []).filter((time) => time.hearingTime === slot.value),
+      ...(slot.value.includes('30') ? [slot] : [])
+    ]), []).
+    map((slot) => ({
+      ...slot,
+      full: hearings.map((hearing) => hearing.hearingTime).includes(slot.hearingTime),
+      hearingTime: slot.value || slot.hearingTime,
+    })).
+    filter((slot) => {
+      // Grab all of the scheduled hearing times
+      const time = (hearings || []).map((hearing) => hearing.hearingTime);
 
-  // Format the hearings values into time slot values
-  const filledSlots = hearings?.map((hearing) => ({
-    full: true,
-    hearingTime: hearing?.hearingTime,
-    docketName: hearing?.docketName,
-    issueCount: hearing?.issueCount,
-    poaName: hearing?.poaName
-  }));
+      // Filter out all of the hours to shift if necessary
+      const hours = (hearings || []).map((hearing) => hearing.hearingTime.split(':')[0]);
 
-  // Combine the scheduled and available and reduce to a list of slots separated by filled/available
-  const slots = [...available, ...(filledSlots || [])].reduce(
-    (list, slot) => [...list.filter((item) => {
-      const [time] = item?.hearingTime.split(':');
-
-      return !slot.hearingTime?.includes(time);
-    }), slot],
-    []
-  );
+      // Return slots that are full and available only
+      return (time.includes(slot.hearingTime) && slot.full) || !hours.includes(slot.hearingTime.split(':')[0]);
+    })
+  ;
 
   // Return the time slots sorted by time
   return _.sortBy(slots, 'hearingTime');
