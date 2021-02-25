@@ -16,6 +16,24 @@ import { claimantPropTypes, poaPropTypes } from './utils';
 import { AddressBlock } from './AddressBlock';
 import { isEmpty } from 'lodash';
 
+export const shapeAddressBlock = (entity) => {
+  if (
+    entity?.listedAttorney?.value &&
+    entity?.listedAttorney?.value !== 'not_listed'
+  ) {
+    const [firstName, lastName] = entity.listedAttorney?.label.split(' ');
+
+    return {
+      ...entity,
+      firstName,
+      lastName,
+      ...entity.listedAttorney.address,
+    };
+  }
+
+  return entity;
+};
+
 const classes = {
   addressHeader: css({ margin: '1.6rem 0' }),
 };
@@ -40,12 +58,18 @@ export const AddClaimantConfirmationModal = ({
     },
   ];
 
-  const missingLastName = useMemo(
-    () => claimant?.partyType === 'individual' && !claimant?.lastName,
-    [claimant]
-  );
-
   const showPoa = poa && !isEmpty(poa);
+
+  const claimantEntity = useMemo(() => shapeAddressBlock(claimant), [claimant]);
+  const poaEntity = useMemo(() => shapeAddressBlock(poa), [poa]);
+
+  const missingLastName = useMemo(
+    () =>
+      (['child', 'spouse'].includes(claimantEntity?.relationship) ||
+        claimantEntity?.partyType === 'individual') &&
+      !claimantEntity?.lastName,
+    [claimantEntity]
+  );
 
   return (
     <Modal
@@ -60,7 +84,7 @@ export const AddClaimantConfirmationModal = ({
         <div className={classes.addressHeader}>
           <strong>Claimant</strong>
         </div>
-        <AddressBlock entity={claimant} />
+        <AddressBlock entity={claimantEntity} />
         {missingLastName && (
           <Alert
             message={ADD_CLAIMANT_CONFIRM_MODAL_LAST_NAME_ALERT}
@@ -75,7 +99,7 @@ export const AddClaimantConfirmationModal = ({
         </div>
 
         {!showPoa && <div>{ADD_CLAIMANT_CONFIRM_MODAL_NO_POA}</div>}
-        {showPoa && <AddressBlock entity={poa} />}
+        {showPoa && <AddressBlock entity={poaEntity} />}
       </section>
     </Modal>
   );
