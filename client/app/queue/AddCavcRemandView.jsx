@@ -101,7 +101,7 @@ const AddCavcRemandView = (props) => {
   const filteredRemandTypes = subTypeOptions.filter((subTypeOption) => supportedRemandTypes[subTypeOption.value]);
 
   const issueOptions = () => decisionIssues.map((decisionIssue) => ({
-    id: decisionIssue.id,
+    id: decisionIssue.id.toString(),
     label: decisionIssue.description
   }));
 

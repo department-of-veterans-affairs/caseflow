@@ -59,11 +59,11 @@ exports[`AddCavcRemandView renders correctly 1`] = `
         Array [
           Object {
             "description": "This is a description of the decision",
-            "id": "1",
+            "id": 1,
           },
           Object {
             "description": "This is a description of another decision",
-            "id": "2",
+            "id": 2,
           },
         ]
       }
