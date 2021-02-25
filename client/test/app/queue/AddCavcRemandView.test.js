@@ -15,6 +15,7 @@ describe('AddCavcRemandView', () => {
   beforeEach(() => jest.clearAllMocks());
 
   const appealId = amaAppeal.externalId;
+  const decisionIssues2 = amaAppeal.decisionIssues;
 
   const setup = ({ appealId: id, mdrToggled, reversalToggled, dismissalToggled }) => {
     return mount(
@@ -260,7 +261,24 @@ describe('AddCavcRemandView', () => {
     });
 
     describe('issue selection validations', () => {
-      
+      const error = COPY.CAVC_ALL_ISSUES_ERROR;
+
+      it('shows error when any issue is not selected', () => {
+        const cavcForm = setup({ appealId });
+        console.log("amaAppeal", amaAppeal)
+        console.log("decisionIssues2", decisionIssues2);
+
+        console.log("input2 before", cavcForm.find('input[id=2]').debug());
+
+        cavcForm.find('input[id=2]').simulate('change', { target: { checked: false } });
+        console.log("input2 after change", cavcForm.find('input[id=2]').debug());
+
+        cavcForm.find('label[htmlFor=2]').simulate('click');
+        console.log("input2 after click", cavcForm.find('input[id=2]').debug());
+        // debugger;
+
+        expect(validationErrorShows(cavcForm, error)).toBeTruthy();
+      });
     });
 
     describe('cavc form instructions validations', () => {
