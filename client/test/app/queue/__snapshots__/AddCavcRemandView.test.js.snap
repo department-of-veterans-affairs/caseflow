@@ -3485,6 +3485,11 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     ]
                   }
                   required={false}
+                  styling={
+                    Object {
+                      "data-css-13g2xn1": "",
+                    }
+                  }
                   values={
                     Object {
                       "1": true,
@@ -3494,6 +3499,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                 >
                   <fieldset
                     className="checkbox-wrapper-undefined cf-form-checkboxes cf-checkbox-group-inline"
+                    data-css-13g2xn1=""
                   >
                     <legend
                       className=""
