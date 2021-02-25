@@ -283,13 +283,25 @@ describe('AddCavcRemandView', () => {
         console.log("amaAppeal", amaAppeal)
         console.log("decisionIssues2", decisionIssues2);
 
-        console.log("input2 before", cavcForm.find('input[id=2]').debug());
+        console.log("input2 before", cavcForm.find('input[id="2"]').debug());
 
-        cavcForm.find('input[id=2]').simulate('change', { target: { checked: false } });
-        console.log("input2 after change", cavcForm.find('input[id=2]').debug());
+        console.log("mandate before", cavcForm.find('input#mandate-dates-same-toggle').debug());
+        cavcForm.find('input#mandate-dates-same-toggle').simulate('change', { target: { checked: false } });
+        console.log("mandate after change", cavcForm.find('input#mandate-dates-same-toggle').debug());
 
-        cavcForm.find('label[htmlFor=2]').simulate('click');
-        console.log("input2 after click", cavcForm.find('input[id=2]').debug());
+        // cavcForm.find('input#2').simulate('change', { target: { checked: false } });
+        // cavcForm.find('input#2').update();
+        // console.log("input#2 after change", cavcForm.find('input#2').debug());
+
+        cavcForm.find('input[id="2"]').simulate('change', { target: { checked: false } });
+        cavcForm.find('input[id="2"]').update();
+        cavcForm.update();
+        console.log("input2 after change", cavcForm.find('input[id="2"]').debug());
+        // console.log("input2 state after change", cavcForm.state());
+
+        // cavcForm.find('label[htmlFor=2]').simulate('click');
+        // cavcForm.find('input[id="2"]').update();
+        // console.log("input2 after click", cavcForm.find('input[id="2"]').debug());
         // debugger;
 
         expect(validationErrorShows(cavcForm, error)).toBeTruthy();
