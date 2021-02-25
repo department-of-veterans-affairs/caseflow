@@ -50,19 +50,19 @@ describe HearingSchedule::ValidateJudgeSpreadsheet, :all_dbs do
   end
 
   context "when the judges id is in the db, but name is not" do
-      subject do
-        HearingSchedule::ValidateJudgeSpreadsheet.new(
-          Roo::Spreadsheet.open("spec/support/judgeNameNotInDb.xlsx", extension: :xlsx),
-          Date.parse("01/01/2018"),
-          Date.parse("01/06/2018")
-        ).validate
-      end
-  
-      it "returns JudgeNameNotInDatabase (not JudgeIdNotInDatabase)" do
-        expect(subject).not_to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeIdNotInDatabase
-        expect(subject).to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeNameNotInDatabase
-      end
+    subject do
+      HearingSchedule::ValidateJudgeSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/judgeNameNotInDb.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
     end
+
+    it "returns JudgeNameNotInDatabase (not JudgeIdNotInDatabase)" do
+      expect(subject).not_to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeIdNotInDatabase
+      expect(subject).to include HearingSchedule::ValidateJudgeSpreadsheet::JudgeNameNotInDatabase
+    end
+  end
 
   context "when judge non-availaility dates valid" do
     subject do
