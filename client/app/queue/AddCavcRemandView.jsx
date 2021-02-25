@@ -196,6 +196,7 @@ const AddCavcRemandView = (props) => {
         remand_subtype: remandType() ? subType : null,
         represented_by_attorney: attorney === '1',
         decision_issue_ids: selectedIssues,
+        federal_circuit: mdrSubtype() ? federalCircuit : null,
         instructions
       }
     };
