@@ -19,6 +19,7 @@ import { RepresentativeSection } from './VirtualHearings/RepresentativeSection';
 import { AppellantSection } from './VirtualHearings/AppellantSection';
 import { marginTop } from './details/style';
 import { isEmpty, orderBy } from 'lodash';
+import { TimeSlot } from './scheduleHearing/TimeSlot';
 
 export const ScheduleVeteranForm = ({
   virtual,
@@ -29,6 +30,7 @@ export const ScheduleVeteranForm = ({
   initialRegionalOffice,
   initialHearingDate,
   convertToVirtual,
+  userCanViewTimeSlots,
   ...props
 }) => {
   const ro = hearing?.regionalOffice || initialRegionalOffice;
@@ -100,16 +102,25 @@ export const ScheduleVeteranForm = ({
               value={hearing.hearingDay || initialHearingDate}
               onChange={(hearingDay) => props.onChange('hearingDay', hearingDay)}
             />
-            <HearingTime
-              regionalOffice={ro}
-              errorMessage={errors?.scheduledTimeString}
-              vertical
-              label="Hearing Time"
-              enableZone
-              localZone={hearing?.hearingDay?.timezone}
-              onChange={(scheduledTimeString) => props.onChange('scheduledTimeString', scheduledTimeString)}
-              value={hearing.scheduledTimeString}
-            />
+            {userCanViewTimeSlots ? (
+              <TimeSlot
+                {...props}
+                update={props.onChange}
+                hearing={hearing}
+                roTimezone={hearing?.hearingDay?.timezone}
+              />
+            ) : (
+              <HearingTime
+                regionalOffice={ro}
+                errorMessage={errors?.scheduledTimeString}
+                vertical
+                label="Hearing Time"
+                enableZone
+                localZone={hearing?.hearingDay?.timezone}
+                onChange={(scheduledTimeString) => props.onChange('scheduledTimeString', scheduledTimeString)}
+                value={hearing.scheduledTimeString}
+              />
+            )}
           </React.Fragment>
         )}
 
@@ -160,7 +171,8 @@ ScheduleVeteranForm.propTypes = {
   initialRegionalOffice: PropTypes.string,
   initialHearingDate: PropTypes.string,
   appellantTitle: PropTypes.string,
-  convertToVirtual: PropTypes.func
+  convertToVirtual: PropTypes.func,
+  userCanViewTimeSlots: PropTypes.bool
 };
 
 /* eslint-enable camelcase */

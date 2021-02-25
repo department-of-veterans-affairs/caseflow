@@ -338,10 +338,20 @@ class QueueApp extends React.PureComponent {
             preventReset
             appealId={props.match.params.appealId}
           >
-            <ScheduleVeteran params={params} userId={this.props.userId} {...props.match.params} />
+            <ScheduleVeteran
+              userCanViewTimeSlots={this.props.featureToggles?.enable_hearing_time_slots}
+              params={params}
+              userId={this.props.userId}
+              {...props.match.params}
+            />
           </CaseDetailsLoadingScreen>
         ) : (
-          <ScheduleVeteran params={params} userId={this.props.userId} {...props.match.params} />
+          <ScheduleVeteran
+            userCanViewTimeSlots={this.props.featureToggles?.enable_hearing_time_slots}
+            params={params}
+            userId={this.props.userId}
+            {...props.match.params}
+          />
         )}
       </PrivateRoute>
     );

@@ -13,7 +13,7 @@ import ApiUtil from '../util/ApiUtil';
 import { RESET_VIRTUAL_HEARING } from './contexts/HearingsFormContext';
 import HEARING_REQUEST_TYPES from '../../constants/HEARING_REQUEST_TYPES';
 import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP';
-
+import HEARING_TIME_OPTIONS from '../../constants/HEARING_TIME_OPTIONS';
 
 export const isPreviouslyScheduledHearing = (hearing) =>
   hearing?.disposition === HEARING_DISPOSITION_TYPES.postponed ||
@@ -480,7 +480,53 @@ export const formatChangeRequestType = (type) => {
   }
 };
 
-export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[disposition] ?? 'None'
+export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[disposition] ?? 'None';
 
+/**
+ * Method to set the available time slots based on the hearings scheduled
+ * @param {array} hearings -- List of hearings scheduled for a specific date
+ */
+export const setTimeSlots = (hearings) => {
+  // Default to using EST for all times before conversion
+  moment.tz.setDefault('America/New_York');
+
+  // Set the available time slots to every half hour
+  const available = HEARING_TIME_OPTIONS.filter((time) => time.value.includes('30')).map((slot) => ({
+    hearingTime: slot.value
+  }));
+
+  // Format the hearings values into time slot values
+  const filledSlots = hearings?.map((hearing) => ({
+    full: true,
+    hearingTime: hearing?.hearingTime,
+    docketName: hearing?.docketName,
+    issueCount: hearing?.issueCount,
+    poaName: hearing?.poaName
+  }));
+
+  // Combine the scheduled and available and reduce to a list of slots separated by filled/available
+  const slots = [...available, ...(filledSlots || [])].reduce(
+    (list, slot) => [...list.filter((item) => {
+      const [time] = item?.hearingTime.split(':');
+
+      return !slot.hearingTime?.includes(time);
+    }), slot],
+    []
+  );
+
+  // Return the time slots sorted by time
+  return _.sortBy(slots, 'hearingTime');
+};
+
+export const formatTimeSlotLabel = (time, zone) => {
+  const coTime = zoneName(time, COMMON_TIMEZONES[3], 'z');
+  const roTime = zoneName(time, zone, 'z');
+
+  if (roTime === coTime) {
+    return coTime;
+  }
+
+  return `${coTime} (${roTime})`;
+};
 
 /* eslint-enable camelcase */
