@@ -39,6 +39,8 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
     COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL
   );
 
+  debugger
+
   return (
     <div className="usa-grid" id="currently-active-tasks" {...css({ marginTop: '3rem' })}>
       <h2 {...sectionHeadingStyling}>
