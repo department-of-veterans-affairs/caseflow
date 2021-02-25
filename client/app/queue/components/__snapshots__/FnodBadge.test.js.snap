@@ -12,24 +12,13 @@ exports[`FnodBadge renders correctly 1`] = `
     }
   }
 >
-  <Connect(FnodBadge)
+  <FnodBadge
     appeal={
       Object {
         "veteranAppellantDeceased": true,
         "veteranDateOfDeath": "2019-03-17",
       }
     }
-  >
-    <FnodBadge
-      appeal={
-        Object {
-          "veteranAppellantDeceased": true,
-          "veteranDateOfDeath": "2019-03-17",
-        }
-      }
-      dispatch={[Function]}
-      featureToggles={Object {}}
-    />
-  </Connect(FnodBadge)>
+  />
 </Provider>
 `;
