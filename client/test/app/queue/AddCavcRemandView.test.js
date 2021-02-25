@@ -15,7 +15,6 @@ describe('AddCavcRemandView', () => {
   beforeEach(() => jest.clearAllMocks());
 
   const appealId = amaAppeal.externalId;
-  const decisionIssues2 = amaAppeal.decisionIssues;
 
   const setup = ({ appealId: id, mdrToggled, reversalToggled, dismissalToggled }) => {
     return mount(
@@ -280,8 +279,12 @@ describe('AddCavcRemandView', () => {
 
       it('shows error when any issue is not selected', () => {
         const cavcForm = setup({ appealId });
-        console.log("amaAppeal", amaAppeal)
-        console.log("decisionIssues2", decisionIssues2);
+        const decisionIssues = amaAppeal.decisionIssues;
+        const decisionIssueChecks = cavcForm.find(CheckboxGroup).props().values;
+
+        console.log("amaAppeal", amaAppeal);
+        console.log("decisionIssues", decisionIssues);
+        console.log("decisionIssueChecks", decisionIssueChecks);
 
         console.log("input2 before", cavcForm.find('input[id="2"]').debug());
 
@@ -303,6 +306,9 @@ describe('AddCavcRemandView', () => {
         // cavcForm.find('input[id="2"]').update();
         // console.log("input2 after click", cavcForm.find('input[id="2"]').debug());
         // debugger;
+
+        console.log("decisionIssueChecks2", cavcForm.find(CheckboxGroup).props().values);
+        expect(decisionIssues.map((issue) => issue.id).every((id) => decisionIssueChecks[id])).toBeTruthy();
 
         expect(validationErrorShows(cavcForm, error)).toBeTruthy();
       });
