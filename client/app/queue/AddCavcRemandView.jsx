@@ -83,7 +83,7 @@ const AddCavcRemandView = (props) => {
   // issues is a hash keyed on decisionIssue.id with boolean values indicating checkbox state
   const [issues, setIssues] = useState({});
   const [federalCircuit, setFederalCircuit] = useState(false);
-  const [instructions, setInstructions] = useState(null);
+  const [instructions, setInstructions] = useState('');
   const [isMandateProvided, setMandateProvided] = useState('true');
   const [isMandateSame, setMandateSame] = useState(true);
   const supportedDecisionTypes = {
@@ -356,6 +356,8 @@ const AddCavcRemandView = (props) => {
       onClick={selectAllIssues}
     />
     <CheckboxGroup
+      name="issuesList"
+      hideLabel
       styling={issueListStyling}
       options={issueOptions()}
       values={issues}

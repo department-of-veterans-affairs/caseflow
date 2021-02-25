@@ -72,10 +72,10 @@ export const appealData = {
   issues: [],
   decisionIssues: [
     {
-      id: 1,
+      id: '1',
       description: 'This is a description of the decision'
     }, {
-      id: 2,
+      id: '2',
       description: 'This is a description of another decision'
     }
   ],

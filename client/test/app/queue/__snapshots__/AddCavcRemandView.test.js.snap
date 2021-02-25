@@ -59,11 +59,11 @@ exports[`AddCavcRemandView renders correctly 1`] = `
         Array [
           Object {
             "description": "This is a description of the decision",
-            "id": 1,
+            "id": "1",
           },
           Object {
             "description": "This is a description of another decision",
-            "id": 2,
+            "id": "2",
           },
         ]
       }
@@ -3382,15 +3382,17 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   errorMessage={null}
                   getCheckbox={[Function]}
                   hideErrorMessage={false}
+                  hideLabel={true}
+                  name="issuesList"
                   onChange={[Function]}
                   options={
                     Array [
                       Object {
-                        "id": 1,
+                        "id": "1",
                         "label": "This is a description of the decision",
                       },
                       Object {
-                        "id": 2,
+                        "id": "2",
                         "label": "This is a description of another decision",
                       },
                     ]
@@ -3409,13 +3411,15 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   }
                 >
                   <fieldset
-                    className="checkbox-wrapper-undefined cf-form-checkboxes cf-checkbox-group-inline"
+                    className="checkbox-wrapper-issuesList cf-form-checkboxes cf-checkbox-group-inline"
                     data-css-13g2xn1=""
                   >
                     <legend
-                      className=""
+                      className="hidden-field"
                     >
-                      <span />
+                      <span>
+                        issuesList
+                      </span>
                     </legend>
                     <div
                       className="checkbox"
@@ -3424,13 +3428,13 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                       <input
                         checked={true}
                         disabled=""
-                        id={1}
-                        name={1}
+                        id="1"
+                        name="1"
                         onChange={[Function]}
                         type="checkbox"
                       />
                       <label
-                        htmlFor={1}
+                        htmlFor="1"
                       >
                         This is a description of the decision
                       </label>
@@ -3442,13 +3446,13 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                       <input
                         checked={true}
                         disabled=""
-                        id={2}
-                        name={2}
+                        id="2"
+                        name="2"
                         onChange={[Function]}
                         type="checkbox"
                       />
                       <label
-                        htmlFor={2}
+                        htmlFor="2"
                       >
                         This is a description of another decision
                       </label>
@@ -3464,7 +3468,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   optional={false}
                   required={false}
                   strongLabel={true}
-                  value={null}
+                  value=""
                 >
                   <div
                     className="cf-form-textarea"
@@ -3491,7 +3495,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                       id="context-and-instructions-textBox"
                       name="context-and-instructions-textBox"
                       onChange={[Function]}
-                      value={null}
+                      value=""
                     />
                   </div>
                 </TextareaField>
