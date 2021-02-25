@@ -339,7 +339,7 @@ class QueueApp extends React.PureComponent {
             appealId={props.match.params.appealId}
           >
             <ScheduleVeteran
-              userCanViewTimeSlots={this.props.featureToggles?.enable_hearing_time_slots}
+              userCanViewTimeSlots={this.props.featureToggles.enable_hearing_time_slots}
               params={params}
               userId={this.props.userId}
               {...props.match.params}
@@ -347,7 +347,7 @@ class QueueApp extends React.PureComponent {
           </CaseDetailsLoadingScreen>
         ) : (
           <ScheduleVeteran
-            userCanViewTimeSlots={this.props.featureToggles?.enable_hearing_time_slots}
+            userCanViewTimeSlots={this.props.featureToggles.enable_hearing_time_slots}
             params={params}
             userId={this.props.userId}
             {...props.match.params}

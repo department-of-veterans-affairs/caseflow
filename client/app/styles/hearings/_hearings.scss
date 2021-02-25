@@ -348,23 +348,23 @@
   height: 60px;
   width: 325px;
   text-align: left;
+
   > div:first-child {
     display: flex;
     height: 100%;
     align-items: center;
   }
-
 }
 
-.time-slot-button-selected {
-  background-color: $color-primary-darker !important;
-  color: $color-white !important;
+.time-slot-button-selected.usa-button {
+  background-color: $color-primary-darker;
+  color: $color-white;
 }
 
-.time-slot-button-full {
-  background-color: #F9F9F9 !important;
-  border: 2px solid $color-gray-lighter !important;
-  color: $color-gray !important;
+.time-slot-button-full.usa-button {
+  background-color: $caseflow-background;
+  border: 2px solid $color-gray-lighter;
+  color: $color-gray;
   font-weight: 600;
 }
 
@@ -377,16 +377,17 @@
   font-size: medium;
 }
 
-.time-slot-container {
+.time-slot-container.usa-width-one-third {
   display: flex;
   height: 350px;
   flex-direction: column;
   flex-wrap: wrap;
+
   > span {
-    margin: 5px !important;
+    margin: 5px;
   }
 }
 
-.time-slot-button-toggle {
-  padding-left: 0 !important;
+.time-slot-button-toggle.usa-button {
+  padding-left: 0;
 }
