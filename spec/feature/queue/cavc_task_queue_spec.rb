@@ -91,10 +91,10 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           fill_in "context-and-instructions-textBox", with: "Please process this remand"
 
           # unselect an issue
-          find(".checkbox-wrapper-undefined").find("label[for=\"2\"]").click
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
           expect(page).to have_content COPY::JMR_SELECTION_ISSUE_INFO_BANNER
           # select the issue; all issues must be selected for JMR
-          find(".checkbox-wrapper-undefined").find("label[for=\"2\"]").click
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
           expect(page).to_not have_content COPY::JMR_SELECTION_ISSUE_INFO_BANNER
 
           page.find("button", text: "Submit").click
@@ -137,15 +137,15 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           fill_in "mandate-date", with: date
 
           # unselect all issues
-          find(".checkbox-wrapper-undefined").find("label[for=\"1\"]").click
+          find(".checkbox-wrapper-issuesList").find("label[for=\"1\"]").click
           expect(page).to_not have_content COPY::JMPR_SELECTION_ISSUE_INFO_BANNER
-          find(".checkbox-wrapper-undefined").find("label[for=\"2\"]").click
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
           expect(page).to_not have_content COPY::JMPR_SELECTION_ISSUE_INFO_BANNER
-          find(".checkbox-wrapper-undefined").find("label[for=\"3\"]").click
+          find(".checkbox-wrapper-issuesList").find("label[for=\"3\"]").click
           expect(page).to have_content COPY::JMPR_SELECTION_ISSUE_INFO_BANNER
 
           # only need one issue selected for JMPR
-          find(".checkbox-wrapper-undefined").find("label[for=\"2\"]").click
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
           expect(page).to_not have_content COPY::JMPR_SELECTION_ISSUE_INFO_BANNER
 
           fill_in "context-and-instructions-textBox", with: "Please process this remand"
@@ -190,7 +190,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           fill_in "judgement-date", with: later_date
           fill_in "mandate-date", with: later_date
           find(".checkbox-wrapper-mandate-dates-same-toggle").find("label[for=\"mandate-dates-same-toggle\"]").click
-          find(".checkbox-wrapper-undefined").find("label[for=\"3\"]").click
+          find(".checkbox-wrapper-issuesList").find("label[for=\"3\"]").click
           fill_in "context-and-instructions-textBox", with: "Please process this remand"
 
           page.find("button", text: "Submit").click
@@ -234,15 +234,15 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           fill_in "decision-date", with: date
 
           # unselect all issues
-          find(".checkbox-wrapper-undefined").find("label[for=\"1\"]").click
+          find(".checkbox-wrapper-issuesList").find("label[for=\"1\"]").click
           expect(page).to_not have_content COPY::MDR_SELECTION_ISSUE_INFO_BANNER
-          find(".checkbox-wrapper-undefined").find("label[for=\"2\"]").click
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
           expect(page).to_not have_content COPY::MDR_SELECTION_ISSUE_INFO_BANNER
-          find(".checkbox-wrapper-undefined").find("label[for=\"3\"]").click
+          find(".checkbox-wrapper-issuesList").find("label[for=\"3\"]").click
           expect(page).to have_content COPY::MDR_SELECTION_ISSUE_INFO_BANNER
 
           # only need one issue selected for MDR
-          find(".checkbox-wrapper-undefined").find("label[for=\"3\"]").click
+          find(".checkbox-wrapper-issuesList").find("label[for=\"3\"]").click
           expect(page).to_not have_content COPY::MDR_SELECTION_ISSUE_INFO_BANNER
 
           fill_in "context-and-instructions-textBox", with: instructions
@@ -332,7 +332,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           click_dropdown(text: judge_name)
           find("label", text: "Straight Reversal").click
           fill_in "decision-date", with: date
-          find(".checkbox-wrapper-undefined").find("label[for=\"2\"]").click
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
           fill_in "context-and-instructions-textBox", with: instructions
           page.find("button", text: "Submit").click
 
@@ -368,7 +368,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           page.all(".cf-form-radio-inline")[1].find("label[for=\"remand-provided-toggle_false\"]").click
           expect(page).to have_content COPY::CAVC_REMAND_NO_MANDATE_TEXT
           fill_in "decision-date", with: date
-          find(".checkbox-wrapper-undefined").find("label[for=\"2\"]").click
+          find(".checkbox-wrapper-issuesList").find("label[for=\"2\"]").click
           fill_in "context-and-instructions-textBox", with: instructions
           page.find("button", text: "Submit").click
 
