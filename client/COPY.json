@@ -734,11 +734,11 @@
   "DOCKET_SWITCH_FULL_GRANTED_SUCCESS_TITLE": "You have successfully switched %s's docket to %s.",
   "DOCKET_SWITCH_GRANTED_SUCCESS_MESSAGE": "The appeal will be found under the original docket number and all relevant tasks will be sent to the appropriate team or individual.",
   "DOCKET_SWITCH_FULL_GRANTED_TITLE": "This appeal has been switched to a different docket.",
-  "DOCKET_SWITCH_FULL_GRANTED_LABEL": "All active tasks can be found on the new",
+  "DOCKET_SWITCH_FULL_GRANTED_LABEL": "All active tasks can be found on the new ",
   "DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_OLD_DOCKET": "Some issue(s) on this appeal have been switched to a different docket.",
-  "DOCKET_SWITCH_PARTIAL_GRANTED_LABEL_OLD_DOCKET": "The issues and active tasks can be found on the switched appeal stream.",
+  "DOCKET_SWITCH_PARTIAL_GRANTED_LABEL_OLD_DOCKET": "The issues and active tasks can be found on the ",
   "DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_NEW_DOCKET": "Some issues(s) on this appeal are on a different docket.",
-  "DOCKET_SWITCH_PARTIAL_GRANTED_LABEL_NEW_DOCKET": "The issues and active tasks can be found on the other appeal stream.",
+  "DOCKET_SWITCH_PARTIAL_GRANTED_LABEL_NEW_DOCKET": "The issues and active tasks can be found on the ",
 
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",

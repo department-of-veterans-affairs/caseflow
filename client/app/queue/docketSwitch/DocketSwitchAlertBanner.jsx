@@ -4,18 +4,40 @@ import { css } from 'glamor';
 import COPY from 'app/../COPY';
 import Alert from 'app/components/Alert';
 import { useParams } from 'react-router';
-import { Link } from 'react-router-dom';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 
 const DocketSwitchAlertBanner = ({ appeal }) => {
   const { appealId } = useParams();
   const docketSwitch = appeal.docketSwitch ? appeal.docketSwitch : appeal.switchedDocket;
 
+  const fullGrantSuccessMessage = <div>
+    {COPY.DOCKET_SWITCH_FULL_GRANTED_LABEL}
+      <Link
+        name="appeal-stream"
+        to={`${appeal.newAppealStream?.uuid}`}>
+         switched appeal stream.</Link>
+  </div>
+  const partialGrantOldDocketSuccessMessage = <div>
+    {COPY.DOCKET_SWITCH_PARTIAL_GRANTED_LABEL_OLD_DOCKET}
+      <Link
+        name="appeal-stream"
+        to={`${appeal.newAppealStream?.uuid}`}>
+         switched appeal stream.</Link>
+  </div>
+  const partialGrantNewDocketSuccessMessage = <div>
+    {COPY.DOCKET_SWITCH_PARTIAL_GRANTED_LABEL_NEW_DOCKET}
+      <Link
+        name="appeal-stream"
+        to={`${appeal.oldAppealStream?.uuid}`}>
+         other appeal stream.</Link>
+  </div>;
+
   if (docketSwitch.disposition === 'granted') {
    return (
     <div>
       <Alert
-        message={COPY.DOCKET_SWITCH_FULL_GRANTED_LABEL}
+        message={ fullGrantSuccessMessage }
         title={COPY.DOCKET_SWITCH_FULL_GRANTED_TITLE}
         type="info"
       />
@@ -26,8 +48,8 @@ const DocketSwitchAlertBanner = ({ appeal }) => {
    return (
      <div>
        <Alert
-         message={ appeal.docketSwitch ? COPY.DOCKET_SWITCH_PARTIAL_GRANTED_LABEL_NEW_DOCKET : COPY.DOCKET_SWITCH_PARTIAL_GRANTED_LABEL_OLD_DOCKET}
-         title={ appeal.docketSwitch ? COPY.DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_NEW_DOCKET : COPY.DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_OLD_DOCKET}
+         message={ appeal.docketSwitch ? partialGrantNewDocketSuccessMessage : partialGrantOldDocketSuccessMessage }
+         title={ appeal.docketSwitch ? COPY.DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_NEW_DOCKET : COPY.DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_OLD_DOCKET }
          type="info"
         />
       <br />
@@ -41,3 +63,4 @@ DocketSwitchAlertBanner.propTypes = {
 };
 
 export default DocketSwitchAlertBanner;
+
