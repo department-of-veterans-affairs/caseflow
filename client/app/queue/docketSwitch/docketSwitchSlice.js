@@ -43,9 +43,8 @@ export const completeDocketSwitchGranted = createAsyncThunk(
   'docketSwitch/grant',
   async (data) => {
     try {
-      // Update this to conform to submission endpoint expectations
       const res = await ApiUtil.post('/docket_switches', { data });
-      const result = res.body?.data;
+      const result = res.body?.data?.attributes?.new_appeal_uuid;
 
       return result;
     } catch (error) {

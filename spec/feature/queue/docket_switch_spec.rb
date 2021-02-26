@@ -341,7 +341,6 @@ RSpec.feature "Docket Switch", :all_dbs do
       click_button(text: "Confirm docket switch")
 
       # Return back to user's queue
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
       expect(page).to have_content format(
         COPY::DOCKET_SWITCH_FULL_GRANTED_SUCCESS_TITLE,
         appeal.claimant.name,
@@ -350,11 +349,13 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(page).to have_content format(COPY::DOCKET_SWITCH_GRANTED_SUCCESS_MESSAGE)
 
       # Verify that full grant completed correctly
+      docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
+      expect(docket_switch).to_not be_nil
+      expect(page).to have_current_path("/queue/appeals/#{docket_switch.new_docket_stream.uuid}")
+
       expect(docket_switch_granted_task.reload.status).to eq Constants.TASK_STATUSES.completed
       expect(existing_admin_action1.reload.status).to eq Constants.TASK_STATUSES.cancelled
 
-      docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
-      expect(docket_switch).to_not be_nil
       expect(docket_switch.disposition).to eq "granted"
       expect(docket_switch.docket_type).to eq "direct_review"
     end

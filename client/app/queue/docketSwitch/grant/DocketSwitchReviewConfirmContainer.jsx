@@ -83,11 +83,11 @@ export const DocketSwitchReviewConfirmContainer = () => {
     };
 
     try {
-      await dispatch(completeDocketSwitchGranted(docketSwitch));
+      const newAppealId = (await dispatch(completeDocketSwitchGranted(docketSwitch))).payload;
 
       dispatch(showSuccessMessage(successMessage));
       dispatch(stepForward());
-      push(`/queue/appeals/${appealId}`);
+      push(`/queue/appeals/${newAppealId}`);
     } catch (error) {
       // Perhaps show an alert that indicates error, advise trying again...?
       console.error('Error Granting Docket Switch', error);

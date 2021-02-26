@@ -32,7 +32,7 @@ class DocketSwitchesController < ApplicationController
 
     docket_switch.process!
 
-    render json: { docket_switch: docket_switch }
+    render json: WorkQueue::DocketSwitchSerializer.new(docket_switch).serializable_hash
   end
 
   private
