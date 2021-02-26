@@ -32,12 +32,6 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     end
   end
 
-  def judge_name_and_id_in_vacols?(vacols_judges, name, vlj_id)
-    vacols_judges[vlj_id] &&
-      vacols_judges[vlj_id][:first_name].casecmp(name.split(", ")[1].strip.downcase).zero? &&
-      vacols_judges[vlj_id][:last_name].casecmp(name.split(", ")[0].strip.downcase).zero?
-  end
-
   def filter_incorrectly_formatted_dates
     @spreadsheet_data.reject do |row|
       HearingSchedule::DateValidators.new(row["date"]).date_correctly_formatted?
@@ -63,7 +57,9 @@ class HearingSchedule::ValidateJudgeSpreadsheet
       vacols_judges[row["vlj_id"]]
     end.pluck("vlj_id")
     judges_name_not_in_db = @spreadsheet_data.reject do |row|
-      judge_name_and_id_in_vacols?(vacols_judges, row["name"], row["vlj_id"])
+      vacols_judges[row["vlj_id"]] &&
+      vacols_judges[row["vlj_id"]][:first_name].casecmp(row["name"].split(", ")[1].strip.downcase).zero? &&
+      vacols_judges[row["vlj_id"]][:last_name].casecmp(row["name"].split(", ")[0].strip.downcase).zero?
     end.pluck("vlj_id")
 
     [judges_id_not_in_db, judges_name_not_in_db]
