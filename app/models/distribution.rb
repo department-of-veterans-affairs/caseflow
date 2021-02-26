@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Distribution1 < CaseflowRecord
+class Distribution < CaseflowRecord
   include ActiveModel::Serializers::JSON
   include AutomaticCaseDistribution
 

@@ -8,8 +8,7 @@ import TaskRows from './components/TaskRows';
 import COPY from '../../COPY';
 import { sectionSegmentStyling, sectionHeadingStyling, anchorJumpLinkStyling } from './StickyNavContentArea';
 import { PulacCerulloReminderAlert } from './pulacCerullo/PulacCerulloReminderAlert';
-import Alert from 'app/components/Alert';
-import DocketSwitchBanner from './docketSwitch/DocketSwitchBanner'
+import DocketSwitchAlertBanner from './docketSwitch/DocketSwitchAlertBanner'
 
 const tableStyling = css({
   width: '100%',
@@ -23,6 +22,7 @@ const alertStyling = css({
 
 export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAlert }) => {
   const canEditNodDate = useSelector((state) => state.ui.canEditNodDate);
+  const docketSwitchDisposition = appeal.docketSwitch?.disposition
 
   const sectionBody = tasks.length ? (
     <table {...tableStyling} summary="layout table">
@@ -39,8 +39,6 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
     COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL
   );
 
-  debugger
-
   return (
     <div className="usa-grid" id="currently-active-tasks" {...css({ marginTop: '3rem' })}>
       <h2 {...sectionHeadingStyling}>
@@ -54,7 +52,7 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
           <PulacCerulloReminderAlert />
         </div>
       )}
-      <div {...alertStyling}>{appeal.docketSwitch ? <DocketSwitchBanner appeal={appeal}/> : '' }</div>
+      <div {...alertStyling}>{appeal.switchedDocket || docketSwitchDisposition == "partially_granted" ? <DocketSwitchAlertBanner appeal={appeal}/> : '' }</div>
       <div {...sectionSegmentStyling}>{sectionBody}</div>
     </div>
   );

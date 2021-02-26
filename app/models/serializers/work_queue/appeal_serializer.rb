@@ -159,7 +159,15 @@ class WorkQueue::AppealSerializer
     object.docket_switch
   end
 
+  attribute :switched_docket do |object|
+    object.switched_docket
+  end
+
   attribute :old_appeal_stream do |object|
     object.docket_switch&.old_docket_stream
+  end
+
+  attribute :new_appeal_stream do |object|
+    object.switched_docket&.new_docket_stream
   end
 end
