@@ -39,6 +39,7 @@ const docketTypeRadioOptions = [
 ];
 
 export const DocketSwitchReviewRequestForm = ({
+  defaultValues,
   onSubmit,
   onCancel,
   appellantName,
@@ -56,6 +57,7 @@ export const DocketSwitchReviewRequestForm = ({
     resolver: yupResolver(schema),
     mode: 'onChange',
     reValidateMode: 'onChange',
+    defaultValues,
   });
   const sectionStyle = css({ marginBottom: '24px' });
 
@@ -81,7 +83,8 @@ export const DocketSwitchReviewRequestForm = ({
   const filteredDocketTypeOpts = useMemo(() => {
     return docketTypeRadioOptions.map(({ value, displayText }) => ({
       value,
-      displayText: value === docketFrom ? `${displayText} (current docket)` : displayText,
+      displayText:
+        value === docketFrom ? `${displayText} (current docket)` : displayText,
       disabled: value === docketFrom,
     }));
   }, [docketTypeRadioOptions, docketFrom]);
@@ -93,17 +96,29 @@ export const DocketSwitchReviewRequestForm = ({
     trigger();
   }, [watchDisposition]);
 
-  const [issue, setIssues] = useState({});
+  const [issueVals, setIssueVals] = useState({});
 
   // We have to do a bit of manual manipulation for issue IDs due to nature of CheckboxGroup
   const handleIssueChange = (evt) => {
-    const newIssues = { ...issue, [evt.target.name]: evt.target.checked };
+    const newIssues = { ...issueVals, [evt.target.name]: evt.target.checked };
 
-    setIssues(newIssues);
+    setIssueVals(newIssues);
 
     // Form wants to track only the selected issue IDs
     return Object.keys(newIssues).filter((key) => newIssues[key]);
   };
+
+  // Handle prepopulating issue checkboxes if defaultValues are present
+  useEffect(() => {
+    if (defaultValues?.issueIds) {
+      const newIssues = { ...issueVals };
+
+      for (const id of defaultValues.issueIds) {
+        newIssues[id] = true;
+      }
+      setIssueVals(newIssues);
+    }
+  }, [defaultValues]);
 
   // Need a bit of extra handling before passing along
   const formatFormData = (formData) => {
@@ -147,7 +162,7 @@ export const DocketSwitchReviewRequestForm = ({
           <Controller
             name="issueIds"
             control={control}
-            defaultValue={[]}
+            // defaultValue={[]}
             render={({ onChange: onCheckChange }) => {
               return (
                 <CheckboxGroup
@@ -156,6 +171,7 @@ export const DocketSwitchReviewRequestForm = ({
                   strongLabel
                   options={issueOptions}
                   onChange={(event) => onCheckChange(handleIssueChange(event))}
+                  values={issueVals}
                 />
               );
             }}
@@ -190,4 +206,12 @@ DocketSwitchReviewRequestForm.propTypes = {
   appellantName: PropTypes.string.isRequired,
   docketFrom: PropTypes.string.isRequired,
   issues: PropTypes.array,
+  defaultValues: PropTypes.shape({
+    disposition: PropTypes.string,
+    receiptDate: PropTypes.string,
+    docketType: PropTypes.string,
+    issueIds: PropTypes.arrayOf(
+      PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    ),
+  }),
 };

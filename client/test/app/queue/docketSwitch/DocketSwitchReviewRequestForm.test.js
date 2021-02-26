@@ -8,6 +8,7 @@ import {
   DOCKET_SWITCH_GRANTED_REQUEST_INSTRUCTIONS,
 } from 'app/../COPY';
 import { sprintf } from 'sprintf-js';
+import { formatISO } from 'date-fns';
 
 describe('DocketSwitchReviewRequestForm', () => {
   const onSubmit = jest.fn();
@@ -20,14 +21,15 @@ describe('DocketSwitchReviewRequestForm', () => {
   const docketFrom = 'evidence_submission';
   const defaults = { onSubmit, onCancel, appellantName, docketFrom, issues };
 
+  const setup = (props) =>
+    render(<DocketSwitchReviewRequestForm {...defaults} {...props} />);
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('renders correctly', () => {
-    const { container } = render(
-      <DocketSwitchReviewRequestForm {...defaults} />
-    );
+    const { container } = setup();
 
     expect(container).toMatchSnapshot();
 
@@ -42,7 +44,7 @@ describe('DocketSwitchReviewRequestForm', () => {
   });
 
   it('disables current docket', async () => {
-    render(<DocketSwitchReviewRequestForm {...defaults} />);
+    setup();
 
     // Set disposition to show docket selection
     await userEvent.click(
@@ -60,7 +62,7 @@ describe('DocketSwitchReviewRequestForm', () => {
   });
 
   it('fires onCancel', async () => {
-    render(<DocketSwitchReviewRequestForm {...defaults} />);
+    setup();
     expect(onCancel).not.toHaveBeenCalled();
     expect(screen.getByText('Grant all issues')).toBeInTheDocument();
 
@@ -72,7 +74,7 @@ describe('DocketSwitchReviewRequestForm', () => {
     const receiptDate = '2020-10-01';
 
     it('fires onSubmit with correct values', async () => {
-      render(<DocketSwitchReviewRequestForm {...defaults} />);
+      setup();
 
       const submit = screen.getByRole('button', { name: /Continue/i });
 
@@ -128,7 +130,7 @@ describe('DocketSwitchReviewRequestForm', () => {
     };
 
     it('fires onSubmit with correct values', async () => {
-      render(<DocketSwitchReviewRequestForm {...defaults} />);
+      setup();
 
       const submit = screen.getByRole('button', { name: /Continue/i });
 
@@ -171,6 +173,71 @@ describe('DocketSwitchReviewRequestForm', () => {
 
       await waitFor(() => {
         expect(onSubmit).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('default values', () => {
+    let defaultValues;
+
+    beforeEach(() => {
+      defaultValues = {
+        receiptDate: '2021-02-15',
+        disposition: 'granted',
+        docketType: 'hearing',
+      };
+    });
+
+    describe('full grant', () => {
+      it('populates with default values', async () => {
+        const { container } = setup({ defaultValues });
+
+        expect(container).toMatchSnapshot();
+
+        const submit = screen.getByRole('button', { name: /Continue/i });
+
+        expect(submit).toBeEnabled();
+        await userEvent.click(submit);
+        await waitFor(() => {
+          expect(onSubmit).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+              disposition: defaultValues.disposition,
+              docketType: defaultValues.docketType,
+              issueIds: issues.map((item) => `${item.id}`),
+              // receiptDate: new Date(defaultValues.receiptDate), // commented due to TZ weirdness
+            })
+          );
+        });
+      });
+    });
+
+    describe('partial grant', () => {
+      it('populates with default values', async () => {
+        const newDefaults = {
+          ...defaultValues,
+          disposition: 'partially_granted',
+          issueIds: [2],
+        };
+        const { container } = setup({
+          defaultValues: newDefaults,
+        });
+
+        expect(container).toMatchSnapshot();
+
+        const submit = screen.getByRole('button', { name: /Continue/i });
+
+        expect(submit).toBeEnabled();
+        await userEvent.click(submit);
+        await waitFor(() => {
+          expect(onSubmit).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+              disposition: newDefaults.disposition,
+              docketType: newDefaults.docketType,
+              issueIds: ['2'],
+              // receiptDate: new Date(defaultValues.receiptDate), // commented due to TZ weirdness
+            })
+          );
+        });
       });
     });
   });
