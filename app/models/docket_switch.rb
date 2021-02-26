@@ -40,14 +40,18 @@ class DocketSwitch < CaseflowRecord
 
       copy_granted_request_issues!
 
-      DocketSwitchTaskHandler.new(
+      DocketSwitch::TaskHandler.new(
         docket_switch: self,
         selected_task_ids: selected_task_ids,
-        new_admin_actions: new_admin_actions
+        new_admin_actions: admin_actions_params
       ).call
 
       task.update(status: Constants.TASK_STATUSES.completed)
     end
+  end
+
+  def admin_actions_params
+    (new_admin_actions || []).map { |data| data.permit(:instructions, :type).merge(assigned_by: task.assigned_to) }
   end
 
   def request_issues_for_switch

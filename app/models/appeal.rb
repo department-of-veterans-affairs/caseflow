@@ -246,14 +246,6 @@ class Appeal < DecisionReview
     tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
   end
 
-  def veteran_is_deceased
-    veteran_death_date.present?
-  end
-
-  def veteran_death_date
-    veteran&.date_of_death
-  end
-
   delegate :address_line_1,
            :address_line_2,
            :address_line_3,
@@ -342,16 +334,8 @@ class Appeal < DecisionReview
     !!veteran_is_not_claimant
   end
 
-  def appellant_is_veteran
-    !veteran_is_not_claimant
-  end
-
   def veteran_middle_initial
     veteran_middle_name&.first
-  end
-
-  def veteran_appellant_deceased?
-    veteran_is_deceased && appellant_is_veteran
   end
 
   # matches Legacy behavior
@@ -399,6 +383,20 @@ class Appeal < DecisionReview
   def update_receipt_date!(receipt_date)
     update!(receipt_date)
     update!(stream_docket_number: default_docket_number_from_receipt_date)
+  end
+
+  def validate_all_issues_timely!(new_date)
+    affected_issues = request_issues.reject { |request_issue| request_issue.timely_issue?(new_date.to_date) }
+    unaffected_issues = request_issues - affected_issues
+
+    return if affected_issues.blank?
+
+    timeliness_issues_report = {
+      affected_issues: affected_issues,
+      unaffected_issues: unaffected_issues
+    }
+
+    timeliness_issues_report
   end
 
   # Currently AMA only supports one claimant per decision review

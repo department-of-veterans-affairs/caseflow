@@ -16,8 +16,8 @@ import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../constants/HEARING_DISPO
 
 
 export const isPreviouslyScheduledHearing = (hearing) =>
-  hearing.disposition === HEARING_DISPOSITION_TYPES.postponed ||
-  hearing.disposition === HEARING_DISPOSITION_TYPES.cancelled;
+  hearing?.disposition === HEARING_DISPOSITION_TYPES.postponed ||
+  hearing?.disposition === HEARING_DISPOSITION_TYPES.cancelled;
 
 export const now = () => {
   return moment().
@@ -437,6 +437,34 @@ export const regionalOfficeDetails = (key) => REGIONAL_OFFICE_INFORMATION[
 ];
 
 /**
+ * Method to return the full name of the appellant depending on whether it is the Veteran or not
+ * @param {object} hearing -- Hearing values used to return the appellant name
+ */
+export const appellantFullName = ({
+  appellantIsNotVeteran,
+  appellantFirstName,
+  appellantLastName,
+  veteranFirstName,
+  veteranLastName
+}) => appellantIsNotVeteran ? `${appellantFirstName} ${appellantLastName}` : `${veteranFirstName} ${veteranLastName}`;
+
+/**
+ * Method to construct the task payload
+ * @param {object} values -- The payload values to send to the backend
+ * @param {object} task -- Additional details about the task
+ */
+export const taskPayload = (values, task = {}) => ({
+  data: {
+    task: {
+      ...task,
+      business_payloads: {
+        values
+      },
+    },
+  },
+});
+
+/**
  * Method to format the Hearing Change Request Type
  * @param {string} type -- The hearing request type label
  */
@@ -453,5 +481,6 @@ export const formatChangeRequestType = (type) => {
 };
 
 export const dispositionLabel = (disposition) => HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[disposition] ?? 'None'
+
 
 /* eslint-enable camelcase */

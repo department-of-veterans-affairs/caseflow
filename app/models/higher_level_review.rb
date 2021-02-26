@@ -17,6 +17,10 @@ class HigherLevelReview < ClaimReview
     Intake::HigherLevelReviewSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
+  def stream_attributes
+    super.merge(informal_conference: informal_conference, same_office: same_office)
+  end
+
   def on_decision_issues_sync_processed
     create_remand_supplemental_claims!
   end

@@ -13,7 +13,9 @@ export default class FlowModal extends React.PureComponent {
   }
 
   componentDidMount = () => {
-    this.props.highlightInvalidFormItems(false);
+    if (this.props.highlightInvalidFormItems) {
+      this.props.highlightInvalidFormItems(false);
+    }
   }
 
   cancelHandler = () => this.props.onCancel ? this.props.onCancel() : this.props.history.goBack();
@@ -29,7 +31,9 @@ export default class FlowModal extends React.PureComponent {
       return this.props.highlightInvalidFormItems(true);
     }
 
-    this.props.highlightInvalidFormItems(false);
+    if (this.props.highlightInvalidFormItems) {
+      this.props.highlightInvalidFormItems(false);
+    }
     this.setState({ loading: true });
 
     this.props.

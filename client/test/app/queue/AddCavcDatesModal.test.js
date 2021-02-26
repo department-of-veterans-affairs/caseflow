@@ -71,7 +71,7 @@ describe('AddCavcDatesModal', () => {
 
   describe('form validations', () => {
     const errorClass = '.usa-input-error-message';
-    const tomorrow = moment(new Date().toISOString()).add(1, 'day').format('YYYY-MM-DD');
+    const futureDate = moment(new Date().toISOString()).add(2, 'day').format('YYYY-MM-DD');
 
     const validationErrorShows = (cavcModal, errorMessage) => {
       clickSubmit(cavcModal);
@@ -91,7 +91,7 @@ describe('AddCavcDatesModal', () => {
       it('shows error on future date selection', () => {
         const cavcModal = setup({ appealId });
 
-        cavcModal.find('#judgement-date').simulate('change', { target: { value: tomorrow } });
+        cavcModal.find('#judgement-date').simulate('change', { target: { value: futureDate } });
         expect(validationErrorShows(cavcModal, error)).toBeTruthy();
       });
 
@@ -116,7 +116,7 @@ describe('AddCavcDatesModal', () => {
       it('shows error on future date selection', () => {
         const cavcModal = setup({ appealId });
 
-        cavcModal.find('#mandate-date').simulate('change', { target: { value: tomorrow } });
+        cavcModal.find('#mandate-date').simulate('change', { target: { value: futureDate } });
         expect(validationErrorShows(cavcModal, error)).toBeTruthy();
       });
 

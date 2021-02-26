@@ -33,9 +33,7 @@ export const IntakeLayout = ({
         )}
         <div>{children}</div>
       </AppSegment>
-      {buttons && (
-        <AppSegment styling={textAlignRightStyling}>{buttons}</AppSegment>
-      )}
+      {buttons && <nav role="navigation" className={`cf-app-segment ${textAlignRightStyling}`}>{buttons}</nav>}
     </>
   );
 };

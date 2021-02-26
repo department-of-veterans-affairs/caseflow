@@ -51,11 +51,11 @@ describe('AddCavcRemandView', () => {
   });
 
   it('selects all issues on page load', () => {
-    const descisionIssues = amaAppeal.decisionIssues;
+    const decisionIssues = amaAppeal.decisionIssues;
     const cavcForm = setup({ appealId });
     const decisionIssueChecks = cavcForm.find(CheckboxGroup).props().values;
 
-    expect(descisionIssues.map((issue) => issue.id).every((id) => decisionIssueChecks[id])).toBeTruthy();
+    expect(decisionIssues.map((issue) => issue.id).every((id) => decisionIssueChecks[id])).toBeTruthy();
   });
 
   describe('Are judgement and mandate dates provided?', () => {
@@ -105,7 +105,7 @@ describe('AddCavcRemandView', () => {
       });
     });
 
-    describe('dismisal_cavc_remand', () => {
+    describe('dismissal_cavc_remand', () => {
       it('hides dismissal when not toggled', () => {
         const cavcForm = setup({ appealId, dismissalToggled: false });
 
@@ -122,7 +122,8 @@ describe('AddCavcRemandView', () => {
 
   describe('form validations', () => {
     const errorClass = '.usa-input-error-message';
-    const tomorrow = moment(new Date().toISOString()).add(1, 'day').format('YYYY-MM-DD');
+    const futureDate = moment(new Date().toISOString()).add(2, 'day').
+      format('YYYY-MM-DD');
 
     const validationErrorShows = (component, errorMessage) => {
       component.find('#button-next-button').simulate('click');
@@ -147,10 +148,18 @@ describe('AddCavcRemandView', () => {
         expect(validationErrorShows(cavcForm, error)).toBeTruthy();
       });
 
-      it('does not show error on correctly formatted docket number', () => {
+      it('does not show error on correctly formatted docket number with dash', () => {
         const cavcForm = setup({ appealId });
 
         cavcForm.find('input#docket-number').simulate('change', { target: { value: '20-39283' } });
+
+        expect(validationErrorShows(cavcForm, error)).toBeFalsy();
+      });
+
+      it('does not show error on correctly formatted docket number with hyphen', () => {
+        const cavcForm = setup({ appealId });
+
+        cavcForm.find('input#docket-number').simulate('change', { target: { value: '20‐39283' } });
 
         expect(validationErrorShows(cavcForm, error)).toBeFalsy();
       });
@@ -189,7 +198,7 @@ describe('AddCavcRemandView', () => {
       it('shows error on future date selection', () => {
         const cavcForm = setup({ appealId });
 
-        cavcForm.find('input#decision-date').simulate('change', { target: { value: tomorrow } });
+        cavcForm.find('input#decision-date').simulate('change', { target: { value: futureDate } });
         expect(validationErrorShows(cavcForm, error)).toBeTruthy();
       });
 
@@ -208,18 +217,25 @@ describe('AddCavcRemandView', () => {
       it('shows error on no selected date', () => {
         const cavcForm = setup({ appealId });
 
+        cavcForm.find('input#mandate-dates-same-toggle').simulate('change', { target: { checked: false } });
+
         expect(validationErrorShows(cavcForm, error)).toBeTruthy();
       });
 
       it('shows error on future date selection', () => {
         const cavcForm = setup({ appealId });
 
-        cavcForm.find('input#judgement-date').simulate('change', { target: { value: tomorrow } });
+        cavcForm.find('input#mandate-dates-same-toggle').simulate('change', { target: { checked: false } });
+
+        cavcForm.find('input#judgement-date').simulate('change', { target: { value: futureDate } });
+
         expect(validationErrorShows(cavcForm, error)).toBeTruthy();
       });
 
       it('does not show error on selected date', () => {
         const cavcForm = setup({ appealId });
+
+        cavcForm.find('input#mandate-dates-same-toggle').simulate('change', { target: { checked: false } });
 
         cavcForm.find('input#judgement-date').simulate('change', { target: { value: '2020-11-11' } });
 
@@ -233,18 +249,24 @@ describe('AddCavcRemandView', () => {
       it('shows error on no selected date', () => {
         const cavcForm = setup({ appealId });
 
+        cavcForm.find('input#mandate-dates-same-toggle').simulate('change', { target: { checked: false } });
+
         expect(validationErrorShows(cavcForm, error)).toBeTruthy();
       });
 
       it('shows error on future date selection', () => {
         const cavcForm = setup({ appealId });
 
-        cavcForm.find('input#mandate-date').simulate('change', { target: { value: tomorrow } });
+        cavcForm.find('input#mandate-dates-same-toggle').simulate('change', { target: { checked: false } });
+
+        cavcForm.find('input#mandate-date').simulate('change', { target: { value: futureDate } });
         expect(validationErrorShows(cavcForm, error)).toBeTruthy();
       });
 
       it('does not show error on selected date', () => {
         const cavcForm = setup({ appealId });
+
+        cavcForm.find('input#mandate-dates-same-toggle').simulate('change', { target: { checked: false } });
 
         cavcForm.find('input#mandate-date').simulate('change', { target: { value: '2020-11-11' } });
 
