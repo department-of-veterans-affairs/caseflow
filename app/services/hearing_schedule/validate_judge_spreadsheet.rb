@@ -79,10 +79,12 @@ class HearingSchedule::ValidateJudgeSpreadsheet
 
   def filter_judges_not_in_db
     vacols_judges = User.css_ids_by_vlj_ids(@spreadsheet_data.pluck("vlj_id").uniq)
-    judges_id_not_in_db = @spreadsheet_data.select { |row|
-      !judge_id_in_vacols?(vacols_judges, row["name"], row["vlj_id"]) }.pluck("vlj_id")
-    judges_name_not_in_db = @spreadsheet_data.select { |row|
-      !judge_name_and_id_in_vacols?(vacols_judges, row["name"], row["vlj_id"]) }.pluck("vlj_id")
+    judges_id_not_in_db = @spreadsheet_data.reject do |row|
+      judge_id_in_vacols?(vacols_judges, row["name"], row["vlj_id"])
+    end.pluck("vlj_id")
+    judges_name_not_in_db = @spreadsheet_data.reject do |row|
+      judge_name_and_id_in_vacols?(vacols_judges, row["name"], row["vlj_id"])
+    end.pluck("vlj_id")
 
     [judges_id_not_in_db, judges_name_not_in_db]
   end
@@ -100,12 +102,15 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     if out_of_range_dates.count > 0
       @errors << JudgeDatesNotInRange.new("These dates are out of the selected range: " + out_of_range_dates.to_s)
     end
+  end
+
+  def validate_judge_ids_and_names
     judges_id_not_in_db, judges_name_not_in_db = filter_judges_not_in_db
     if judges_id_not_in_db.count > 0
       @errors << JudgeIdNotInDatabase.new(
         "These judges ids are not in the database: " + judges_id_not_in_db.to_s
       )
-    elsif judges_name_not_in_db.count > 0 
+    elsif judges_name_not_in_db.count > 0
       @errors << JudgeNameNotInDatabase.new(
         "These judges names do not match the database for this id: " + judges_name_not_in_db.to_s
       )
@@ -115,6 +120,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   def validate
     validate_judge_non_availability_template
     validate_judge_non_availability_dates
+    validate_judge_ids_and_names
     @errors
   end
 end
