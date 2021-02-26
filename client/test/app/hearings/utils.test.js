@@ -91,7 +91,7 @@ describe('hearing utils', () => {
       const result = setTimeSlots(scheduledHearingPrevious);
 
       // Expect the slot count to be the same as the number available when we have filtered 1 out
-      expect(result).toHaveLength(AVAILABLE_SLOT_COUNT + scheduledHearingPrevious.length);
+      expect(result).toHaveLength(AVAILABLE_SLOT_COUNT);
 
       // Expect the results to contain the scheduled time slot but not the next 30 minute increment
       expect(result).toEqual(
@@ -115,10 +115,10 @@ describe('hearing utils', () => {
       // Call the function and assign to the results object for inspection
       const result = setTimeSlots(scheduledHearingAfter);
 
-      // Expect the slot count to be the same as the number available when we have filtered 1 out
+      // Expect the slot count to be the same as the number available plus the hearings scheduled after 3:30
       expect(result).toHaveLength(AVAILABLE_SLOT_COUNT + scheduledHearingAfter.length);
 
-      // Expect the results to contain the scheduled time slot but not the next 30 minute increment
+      // Expect the results to contain the scheduled time slot but not a slot after 3:30
       expect(result).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
@@ -132,7 +132,7 @@ describe('hearing utils', () => {
         ])
       );
 
-      // Ensure the last available is still 3:30
+      // Ensure the last available is not 3:30 but the last scheduled
       expect(result[result.length - 1].hearingTime).toEqual(scheduledHearingAfterTime);
     });
 

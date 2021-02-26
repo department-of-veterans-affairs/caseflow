@@ -490,31 +490,59 @@ export const setTimeSlots = (hearings) => {
   // Default to using EST for all times before conversion
   moment.tz.setDefault('America/New_York');
 
+  // Establish the time period and increment to create time slots between (15:00 - 8:00 and add 1 to include 15:00)
+  const hoursInPeriod = 8;
+  const incrementAmount = 30;
+  const startTime = 8;
+
+  // Safe assign the hearings array in case there are no scheduled hearings
   const scheduledHearings = hearings || [];
 
-  // Filter the hearing time options by 30 minutes increments or filled hearing times
-  const slots = HEARING_TIME_OPTIONS.
-    reduce((list, slot) => ([
-      ...list,
-      ...scheduledHearings.filter((time) => time.hearingTime === slot.value),
-      ...(slot.value.includes('30') ? [slot] : [])
-    ]), []).
-    map((slot) => ({
-      ...slot,
-      full: scheduledHearings.map((hearing) => hearing.hearingTime).includes(slot.hearingTime),
-      hearingTime: slot.value || slot.hearingTime,
-    })).
-    filter((slot) => {
-      // Grab all of the scheduled hearing times
-      const time = scheduledHearings.map((hearing) => hearing.hearingTime);
+  // Store a list of the filled times to compare against when creating the time slots
+  const filledTimes = scheduledHearings.map((hearing) => {
+    const [hour, minute] = hearing.hearingTime.split(':');
 
-      // Filter out all of the hours to shift if necessary
-      const hours = scheduledHearings.map((hearing) => hearing.hearingTime.split(':')[0]);
+    // Return the time value with the hours and minutes for the time
+    return new Date(`01/01/1900 ${hour}:${minute}`);
+  });
 
-      // Return slots that are full and available only
-      return (time.includes(slot.hearingTime) && slot.full) || !hours.includes(slot.hearingTime.split(':')[0]);
-    })
-  ;
+  // Loop up to the number of hours in the period to get the available times
+  const availableTimes = _.compact(_.times(hoursInPeriod).map((index) => {
+    // Add the index to the start time so we assign 1 value per hour
+    const hour = startTime + index;
+
+    // Convert the hour and increment amount to a date so we can compare
+    const availableTime = new Date(`01/01/1900 ${hour}:${incrementAmount}`);
+
+    // Get the difference between the time available and the scheduled times
+    const filled = filledTimes.filter((time) => {
+      // Calculate the time difference then divide by the number of seconds and divide by 60 to get minutes
+      const interval = Math.floor((availableTime - time) / 1000 / 60);
+
+      // Return true if the scheduled time is within an hour of the time slot
+      return interval >= 0 && interval <= 60;
+    });
+
+    // Return nul if there is a filled time slot
+    if (filled.length) {
+      return null;
+    }
+
+    // Return the time string appending 0 if the number is less than 10
+    return {
+      hearingTime: `${hour < 10 ? 0 : ''}${hour}:${incrementAmount}`,
+      full: false
+    };
+  }));
+
+  // Transform the values into the available slots
+  const slots = [...availableTimes, ...scheduledHearings].map((slot) => ({
+    ...slot,
+    full: slot?.full !== false,
+    hearingTime: slot?.hearingTime
+  }));
+
+  // console.log('SLOTS: ', slots);
 
   // Return the time slots sorted by time
   return _.sortBy(slots, 'hearingTime');
