@@ -7,7 +7,7 @@ RSpec.describe Hearings::HearingDay::FilledHearingSlotsController, :all_dbs, typ
     context "with invalid params" do
       let(:invalid_hearing_day_id) { "invalid" }
       it "does not return anything", :aggregate_failures do
-        get :index, params: { hearing_day_id:  invalid_hearing_day_id }, as: :json
+        get :index, params: { hearing_day_id: invalid_hearing_day_id }, as: :json
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
         expect(response_body["filled_hearing_slots"]).to eq(nil)
