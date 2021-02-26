@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
 import _ from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { COLORS } from '../../constants/AppConstants';
+import { tooltipListStyling } from './style';
 
 import Badge from './Badge';
 import ApiUtil from '../../util/ApiUtil';
@@ -20,19 +20,6 @@ import { setMostRecentlyHeldHearingForAppeal } from '../QueueActions';
  *   <HearingBadge hearing={hearing} />
  *   <HearingBadge task={task} />
  */
-
-const listStyling = css({
-  listStyle: 'none',
-  textAlign: 'left',
-  marginBottom: 0,
-  padding: 0,
-  '& > li': {
-    marginBottom: 0,
-    '& > strong': {
-      color: COLORS.WHITE
-    }
-  }
-});
 
 class HearingBadge extends React.PureComponent {
   componentDidMount = () => {
@@ -65,7 +52,7 @@ class HearingBadge extends React.PureComponent {
 
     const tooltipText = <div>
       This case has a hearing associated with it.
-      <ul {...listStyling}>
+      <ul {...tooltipListStyling}>
         <li>Judge: <strong>{hearing.heldBy}</strong></li>
         <li>Disposition: <strong>{_.startCase(hearing.disposition)}</strong></li>
         <li>Date: <strong><DateString date={hearing.date} /></strong></li>

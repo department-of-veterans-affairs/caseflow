@@ -10,6 +10,7 @@ FactoryBot.define do
     decision_date { 30.days.ago.to_date }
     judgement_date { 30.days.ago.to_date }
     mandate_date { 30.days.ago.to_date }
+    federal_circuit { (remand_subtype == Constants::CAVC_REMAND_SUBTYPES["mdr"]) ? false : nil }
     instructions { "Sample CAVC Remand from factory" }
     created_by { User.first || create(:user) }
 
