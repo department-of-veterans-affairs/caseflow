@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-class HearingTimeSlotsController < ApplicationController
+class Hearings::HearingDay::FilledHearingSlotsController < ApplicationController
   def index
     hearing_day = HearingDay.find_by(id: params[:hearing_day_id])
 
-    render json: { hearing_time_slots: hearing_times(hearing_day) }
+    render json: { filled_hearing_slots: filled_hearing_slots(hearing_day) }
   end
 
   private
@@ -19,7 +19,7 @@ class HearingTimeSlotsController < ApplicationController
     poa&.representative_name
   end
 
-  def hearing_times(hearing_day)
+  def filled_hearing_slots(hearing_day)
     return if hearing_day.nil?
 
     open_hearings = hearing_day.open_hearings
