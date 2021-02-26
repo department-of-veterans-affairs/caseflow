@@ -14,7 +14,7 @@ import {
 
 import { sprintf } from 'sprintf-js';
 import { showSuccessMessage } from 'app/queue/uiReducer/uiActions';
-import { completeDocketSwitchMailTask, createDocketSwitchRulingTask } from '../docketSwitchSlice';
+import { completeTask, createDocketSwitchRulingTask } from '../docketSwitchSlice';
 
 // This takes form data and generates Markdown-formatted text to be saved as task instructions
 export const formatDocketSwitchRecommendation = ({
@@ -85,7 +85,7 @@ export const RecommendDocketSwitchContainer = () => {
     try {
       await dispatch(createDocketSwitchRulingTask(data));
 
-      await dispatch(completeDocketSwitchMailTask({ taskId }));
+      await dispatch(completeTask({ taskId }));
 
       dispatch(showSuccessMessage(successMessage));
       push('/queue');
