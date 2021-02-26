@@ -542,8 +542,6 @@ export const setTimeSlots = (hearings) => {
     hearingTime: slot?.hearingTime
   }));
 
-  // console.log('SLOTS: ', slots);
-
   // Return the time slots sorted by time
   return _.sortBy(slots, 'hearingTime');
 };
