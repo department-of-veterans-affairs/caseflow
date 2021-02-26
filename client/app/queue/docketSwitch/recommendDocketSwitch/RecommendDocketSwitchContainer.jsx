@@ -1,19 +1,20 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
-import { fetchJudges } from '../../QueueActions';
+import { fetchJudges } from 'app/queue/QueueActions';
 
 import { appealWithDetailSelector, rootTasksForAppeal } from '../../selectors';
-import DISPOSITIONS from '../../../../constants/DOCKET_SWITCH_DISPOSITIONS';
-import { createDocketSwitchRulingTask } from './recommendDocketSwitchSlice';
+import DISPOSITIONS from 'constants/DOCKET_SWITCH_DISPOSITIONS';
+
 import { RecommendDocketSwitchForm } from './RecommendDocketSwitchForm';
 import {
   DOCKET_SWITCH_RECOMMENDATION_SUCCESS_TITLE,
   DOCKET_SWITCH_RECOMMENDATION_SUCCESS_MESSAGE,
-} from '../../../../COPY';
+} from 'app/../COPY';
 
 import { sprintf } from 'sprintf-js';
-import { showSuccessMessage } from '../../uiReducer/uiActions';
+import { showSuccessMessage } from 'app/queue/uiReducer/uiActions';
+import { completeDocketSwitchMailTask, createDocketSwitchRulingTask } from '../docketSwitchSlice';
 
 // This takes form data and generates Markdown-formatted text to be saved as task instructions
 export const formatDocketSwitchRecommendation = ({
@@ -36,7 +37,7 @@ export const formatDocketSwitchRecommendation = ({
 };
 
 export const RecommendDocketSwitchContainer = () => {
-  const { appealId } = useParams();
+  const { appealId, taskId } = useParams();
   const { goBack, push } = useHistory();
   const dispatch = useDispatch();
 
@@ -83,6 +84,8 @@ export const RecommendDocketSwitchContainer = () => {
 
     try {
       await dispatch(createDocketSwitchRulingTask(data));
+
+      await dispatch(completeDocketSwitchMailTask({ taskId }));
 
       dispatch(showSuccessMessage(successMessage));
       push('/queue');
