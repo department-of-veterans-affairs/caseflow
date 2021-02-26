@@ -18,6 +18,7 @@ import docketSwitchReducer from './docketSwitch/docketSwitchSlice';
 
 // TODO: Remove this when we move entirely over to the appeals search.
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
+import addClaimantReducer from '../intake/reducers/addClaimantSlice';
 
 export const initialState = {
   judges: {},
@@ -774,7 +775,8 @@ const rootReducer = combineReducers({
   ui: uiReducer,
   components: commonComponentsReducer,
   docketSwitch: docketSwitchReducer,
-  mtv: mtvReducer
+  mtv: mtvReducer,
+  addClaimant: addClaimantReducer
 });
 
 export default timeFunction(

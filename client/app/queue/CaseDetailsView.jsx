@@ -74,6 +74,8 @@ export const CaseDetailsView = (props) => {
     props
   });
 
+  const { claimant, poa } = useSelector((state) => state.addClaimant);
+
   useEffect(() => {
     window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
 
@@ -153,6 +155,14 @@ export const CaseDetailsView = (props) => {
           )}
           {!_.isNull(appeal.cavcRemand) && appeal.cavcRemand &&
           (<CavcDetail title="CAVC Remand" {...appeal.cavcRemand} />)}
+          <VeteranDetail title="About the Appellant" appealId={appealId} />
+          {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) && (
+            <CaseHearingsDetail title="Hearings" appeal={appeal} />
+          )}
+          <VeteranDetail title="Appellant's Power of Attorney" appealId={appealId} />
+          {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) && (
+            <CaseHearingsDetail title="Hearings" appeal={appeal} />
+          )}
           <CaseTimeline title="Case Timeline" appeal={appeal} />
         </StickyNavContentArea>
         {props.pollHearing && pollHearing()}
@@ -176,7 +186,9 @@ CaseDetailsView.propTypes = {
   userCanScheduleVirtualHearings: PropTypes.bool,
   scheduledHearingId: PropTypes.string,
   pollHearing: PropTypes.bool,
-  stopPollingHearing: PropTypes.func
+  stopPollingHearing: PropTypes.func,
+  claimant: PropTypes.object,
+  poa: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({

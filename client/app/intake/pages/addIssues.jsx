@@ -19,7 +19,7 @@ import DateSelector from '../../components/DateSelector';
 import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../constants';
 import EP_CLAIM_TYPES from '../../../constants/EP_CLAIM_TYPES';
-import { formatAddedIssues, getAddIssuesFields, formatIssuesBySection } from '../util/issues';
+import { formatAddedIssues, getAddIssuesFields, formatIssuesBySection, getDependentClaimant } from '../util/issues';
 import Table from '../../components/Table';
 import IssueList from '../components/IssueList';
 
@@ -180,7 +180,15 @@ class AddIssuesPage extends React.Component {
   }
 
   render() {
-    const { intakeForms, formType, veteran, featureToggles, editPage, addingIssue, userCanWithdrawIssues } = this.props;
+    const { intakeForms,
+      formType,
+      veteran,
+      featureToggles,
+      editPage,
+      addingIssue,
+      userCanWithdrawIssues,
+      claimant,
+      poaClaimant } = this.props;
     const intakeData = intakeForms[formType];
     const { useAmaActivationDate, editEpClaimLabels } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
@@ -262,7 +270,59 @@ class AddIssuesPage extends React.Component {
 
     const columns = [{ valueName: 'field' }, { valueName: 'content' }];
 
+    const poaFields = () => {
+      let fields;
+
+      if (poaClaimant.partyType === 'organization') {
+        fields = `${poaClaimant.organization}`;
+      } else if (poaClaimant.partyType === 'individual') {
+        fields = `${poaClaimant.firstName} ${poaClaimant.lastName}`;
+      } else if (poaClaimant.listedAttorney) {
+        fields = `${poaClaimant.listedAttorney}`;
+      }
+
+      return fields;
+    };
+
+    const claimantFields = () => {
+      let fields;
+
+      if (claimant.partyType === 'organization') {
+        fields = `${claimant.organization}`;
+      } else if (claimant.partyType === 'individual') {
+        fields = `${claimant.firstName} ${claimant.lastName}`;
+      }
+
+      return fields;
+    };
+
     let fieldsForFormType = getAddIssuesFields(formType, veteran, intakeData);
+
+    const claimantMap = {
+      veteran: () => veteran.name,
+      dependent: () => getDependentClaimant(intakeData),
+      attorney: () => `${intakeData.claimantName}, Attorney`,
+      other: () => intakeData.claimantNotes
+    };
+
+    const claimantType = intakeData.claimantType;
+    const claimantDisplayText = claimantMap[claimantType ?? 'veteran']?.();
+
+    if (!editPage && claimant) {
+      fieldsForFormType = fieldsForFormType.concat({
+        field: 'Claimant',
+        content: claimantDisplayText || claimantFields()
+      });
+    }
+
+    if (!editPage && (formType === 'appeal' && poaClaimant)) {
+
+      fieldsForFormType = fieldsForFormType.concat({
+        field: 'Claimant\'s Poa',
+        content: claimant.vaForm === 'false' ? COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA : poaFields()
+      });
+    }
+
     let issueChangeClassname = () => {
       // no-op unless the issue banner needs to be displayed
     };
@@ -455,11 +515,13 @@ AddIssuesPage.propTypes = {
   undoCorrection: PropTypes.func,
   veteran: PropTypes.object,
   withdrawIssue: PropTypes.func,
-  userCanWithdrawIssues: PropTypes.bool
+  userCanWithdrawIssues: PropTypes.bool,
+  poaClaimant: PropTypes.object,
+  claimant: PropTypes.object
 };
 
 export const IntakeAddIssuesPage = connect(
-  ({ intake, higherLevelReview, supplementalClaim, appeal, featureToggles, activeIssue, addingIssue }) => ({
+  ({ intake, higherLevelReview, supplementalClaim, appeal, featureToggles, activeIssue, addingIssue, addClaimant }) => ({
     intakeForms: {
       higher_level_review: higherLevelReview,
       supplemental_claim: supplementalClaim,
@@ -467,6 +529,8 @@ export const IntakeAddIssuesPage = connect(
     },
     formType: intake.formType,
     veteran: intake.veteran,
+    claimant: addClaimant.claimant,
+    poaClaimant: addClaimant.poa,
     featureToggles,
     activeIssue,
     addingIssue

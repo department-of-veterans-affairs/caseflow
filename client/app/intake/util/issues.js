@@ -3,7 +3,7 @@ import { formatDateStr } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES';
 import { FORM_TYPES } from '../constants';
 
-const getDependentClaimant = (intakeData) => {
+export const getDependentClaimant = (intakeData) => {
   const relation = intakeData.relationships.find(({ value }) => value === intakeData.claimant);
 
   if (!intakeData.payeeCode) {
@@ -11,23 +11,6 @@ const getDependentClaimant = (intakeData) => {
   }
 
   return `${relation.displayText} (payee code ${intakeData.payeeCode})`;
-};
-
-const getClaimantField = (veteran, intakeData) => {
-  const claimantMap = {
-    veteran: () => veteran.name,
-    dependent: () => getDependentClaimant(intakeData),
-    attorney: () => `${intakeData.claimantName}, Attorney`,
-    other: () => intakeData.claimantNotes
-  };
-
-  const claimantType = intakeData.claimantType;
-  const claimantDisplayText = claimantMap[claimantType ?? 'veteran']?.();
-
-  return [{
-    field: 'Claimant',
-    content: claimantDisplayText
-  }];
 };
 
 export const isTimely = (formType, decisionDateStr, receiptDateStr) => {
@@ -325,9 +308,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
     fields = [];
   }
 
-  let claimantField = getClaimantField(veteran, intakeData);
-
-  return fields.concat(claimantField);
+  return fields
 };
 
 export const formatIssuesBySection = (issues, editClaimLabelFeatureToggle) => {
