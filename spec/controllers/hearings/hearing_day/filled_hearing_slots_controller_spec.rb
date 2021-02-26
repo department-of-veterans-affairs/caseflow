@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Hearings::HearingDay::FilledHearingSlotsController, :all_dbs, type: :controller, focus: true do
+RSpec.describe Hearings::HearingDay::FilledHearingSlotsController, :all_dbs, type: :controller do
   let!(:user) { User.authenticate! }
 
   describe "#index" do
