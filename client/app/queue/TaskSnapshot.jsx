@@ -52,7 +52,7 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
           <PulacCerulloReminderAlert />
         </div>
       )}
-      <div {...alertStyling}>{appeal.switchedDocket || docketSwitchDisposition == "partially_granted" ? <DocketSwitchAlertBanner appeal={appeal}/> : '' }</div>
+      <div {...alertStyling} {...sectionSegmentStyling}>{appeal.switchedDocket || docketSwitchDisposition == "partially_granted" ? <DocketSwitchAlertBanner appeal={appeal}/> : '' }</div>
       <div {...sectionSegmentStyling}>{sectionBody}</div>
     </div>
   );
