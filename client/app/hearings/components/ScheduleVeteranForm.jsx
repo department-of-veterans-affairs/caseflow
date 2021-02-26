@@ -105,7 +105,7 @@ export const ScheduleVeteranForm = ({
             {userCanViewTimeSlots ? (
               <TimeSlot
                 {...props}
-                update={props.onChange}
+                onChange={props.onChange}
                 hearing={hearing}
                 roTimezone={hearing?.hearingDay?.timezone}
               />

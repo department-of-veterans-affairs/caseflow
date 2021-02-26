@@ -359,6 +359,10 @@
 .time-slot-button-selected.usa-button {
   background-color: $color-primary-darker;
   color: $color-white;
+
+  &:hover {
+    color: $color-white;
+  }
 }
 
 .time-slot-button-full.usa-button {

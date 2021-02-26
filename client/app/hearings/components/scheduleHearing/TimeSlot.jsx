@@ -13,7 +13,7 @@ import { LOGO_COLORS } from '../../../constants/AppConstants';
 export const TimeSlot = ({
   scheduledHearingsList,
   roTimezone,
-  update,
+  onChange,
   hearing,
   fetchScheduledHearings,
   fetchingHearings,
@@ -32,8 +32,8 @@ export const TimeSlot = ({
     // Set the selected time slot
     setSelected(time);
 
-    // Use the update callback
-    update('hearing', { scheduledTimeString: time });
+    // Use the onChange callback to set the hearing time
+    onChange('scheduledTimeString', time);
   };
 
   // Create a hearing Time ID to associate the label with the appropriate form element
@@ -68,9 +68,7 @@ export const TimeSlot = ({
               disableRadioOptions
               id={hearingTimeId}
               localZone={roTimezone}
-              onChange={(scheduledTimeString) =>
-                update('hearing', { scheduledTimeString })
-              }
+              onChange={(scheduledTimeString) => onChange('scheduledTimeString', scheduledTimeString)}
               value={hearing?.scheduledTimeString}
             />
           ) : (
@@ -101,7 +99,7 @@ TimeSlot.propTypes = {
   fetchScheduledHearings: PropTypes.func,
   fetchingHearings: PropTypes.bool,
   hearing: PropTypes.object,
-  update: PropTypes.func,
+  onChange: PropTypes.func,
   scheduledHearingsList: PropTypes.array,
   roTimezone: PropTypes.string,
 };
