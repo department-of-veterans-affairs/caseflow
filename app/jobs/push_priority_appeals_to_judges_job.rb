@@ -22,10 +22,6 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     datadog_report_runtime(metric_group_name: "priority_appeal_push_job")
   end
 
-  def warning_msgs
-    @warning_msgs ||= []
-  end
-
   def slack_report
     report = []
     report << "*Number of cases tied to judges distributed*: " \
@@ -153,15 +149,6 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   def priority_distributions_this_month
     Distribution.priority_pushed.completed.where(completed_at: 30.days.ago..Time.zone.now)
-  end
-
-  def add_warning_msg(msg)
-    warning_msgs << msg if warning_msgs.count < 100
-  end
-
-  def log_warning
-    slack_msg = warning_msgs.join("\n")
-    slack_service.send_notification(slack_msg, "[WARN] WarmBgsCachesJob: first 100 warnings")
   end
 
   def warm_veteran_attribs_for_priority_distributions
