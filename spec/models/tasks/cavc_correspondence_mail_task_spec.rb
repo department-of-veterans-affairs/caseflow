@@ -19,11 +19,21 @@ describe CavcCorrespondenceMailTask do
       described_class.create_from_params({ appeal: appeal, parent_id: appeal.root_task.id }, mail_user)
     end
 
+    # organization-level-tasks
     let(:mail_task_actions) do
       [
         Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
         Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+      ]
+    end
+
+    # organization-level-tasks-for-cavc-correspondence-task
+    let(:mail_task_limited_actions) do
+      [
+        Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
+        Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
         Constants.TASK_ACTIONS.CANCEL_TASK.to_h
       ]
     end
@@ -56,25 +66,53 @@ describe CavcCorrespondenceMailTask do
       context "a CAVC Litigation Support team user" do
         let(:user) { cavc_lit_user }
 
-        context "who is a team admin" do
-          let(:expected_actions) { mail_task_actions }
+        context "when type is CavcCorrespondenceMailTask" do
+          let(:type) { "CavcCorrespondenceMailTask" }
 
-          before { OrganizationsUser.make_user_admin(user, CavcLitigationSupport.singleton) }
+          context "who is a team admin" do
+            let(:expected_actions) { mail_task_limited_actions }
 
-          it "has actions" do
-            subject
+            before { OrganizationsUser.make_user_admin(user, CavcLitigationSupport.singleton) }
+
+            it "has actions" do
+              subject
+            end
+          end
+
+          context "who is a team member" do
+            let(:expected_actions) { mail_task_limited_actions }
+
+            it "has actions" do
+              subject
+            end
           end
         end
 
-        context "who is a team member" do
-          let(:expected_actions) { mail_task_actions }
+        context "when type is not CavcCorrespondenceMailTask" do
+          #binding.pry
+          let(:type) { "CavcLitigationSupport" }
 
-          it "has actions" do
-            subject
+          context "who is a team admin" do
+            let(:expected_actions) { mail_task_actions }
+
+            before { OrganizationsUser.make_user_admin(user, CavcLitigationSupport.singleton) }
+
+            it "has actions" do
+              subject
+            end
+          end
+
+          context "who is a team member" do
+            let(:expected_actions) { mail_task_actions }
+
+            it "has actions" do
+              subject
+            end
           end
         end
       end
     end
+
     context "when assigned to a User" do
       let(:mail_user_task) do
         described_class.create_from_params({ appeal: appeal,

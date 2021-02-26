@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 ##
-# Task created by the mail team when mail arrives for a CAVC Appeal which is in processing with the CAVC Litigation Support
-# team. May or not end up being related to CAVC response.
+# Task created by the mail team when mail arrives for a CAVC Appeal which is in processing with the CAVC Litigation
+# Support team. May or not end up being related to CAVC response.
 #
 # Expected Parent Task: RootTask
 #
@@ -27,7 +27,9 @@ class CavcCorrespondenceMailTask < MailTask
 
     return user_task_actions if user_task_assigned_to_cavc_lit_support
 
-    return organization_task_actions if assigned_to_type == "Organization"
+    return organization_task_actions if !organization_assigned_cavc_mail_task
+
+    return limited_organization_task_actions if organization_assigned_cavc_mail_task
 
     []
   end
@@ -61,6 +63,14 @@ class CavcCorrespondenceMailTask < MailTask
     ]
   end
 
+  def limited_organization_task_actions
+    [
+      Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
+      Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
+      Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+    ]
+  end
+
   def user_task_actions
     [
       Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
@@ -73,6 +83,10 @@ class CavcCorrespondenceMailTask < MailTask
 
   def user_task_assigned_to_cavc_lit_support
     assigned_to_type == "User" && assigned_to_cavc_lit_team_member
+  end
+
+  def organization_assigned_cavc_mail_task
+    assigned_to_type == "Organization" && type == "CavcCorrespondenceMailTask"
   end
 
   def assigned_to_cavc_lit_team_member
