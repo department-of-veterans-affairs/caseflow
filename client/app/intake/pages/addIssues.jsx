@@ -308,7 +308,7 @@ class AddIssuesPage extends React.Component {
     const claimantType = intakeData.claimantType;
     const claimantDisplayText = claimantMap[claimantType ?? 'veteran']?.();
 
-    if (!editPage && claimant) {
+    if (claimantType) {
       fieldsForFormType = fieldsForFormType.concat({
         field: 'Claimant',
         content: claimantDisplayText || claimantFields()
