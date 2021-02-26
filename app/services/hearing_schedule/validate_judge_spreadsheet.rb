@@ -32,30 +32,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     end
   end
 
-  # This method is only used in dev/demo mode to test the judge spreadsheet functionality
-  # :nocov:
-  def find_or_create_judges_in_vacols(vacols_judges, name, vlj_id)
-    return unless Rails.env.development? || Rails.env.demo?
-
-    if vacols_judges[vlj_id] &&
-       vacols_judges[vlj_id][:first_name] == name.split(", ")[1].strip &&
-       vacols_judges[vlj_id][:last_name] == name.split(", ")[0].strip
-      true
-    else
-      User.create_judge_in_vacols(name.split(", ")[1].strip, name.split(", ")[0].strip, vlj_id)
-    end
-  end
-  # :nocov:
-
-  def judge_id_in_vacols?(vacols_judges, name, vlj_id)
-    return find_or_create_judges_in_vacols(vacols_judges, name, vlj_id) if Rails.env.development? || Rails.env.demo?
-
-    vacols_judges[vlj_id]
-  end
-
   def judge_name_and_id_in_vacols?(vacols_judges, name, vlj_id)
-    return find_or_create_judges_in_vacols(vacols_judges, name, vlj_id) if Rails.env.development? || Rails.env.demo?
-    
     vacols_judges[vlj_id] &&
       vacols_judges[vlj_id][:first_name].casecmp(name.split(", ")[1].strip.downcase).zero? &&
       vacols_judges[vlj_id][:last_name].casecmp(name.split(", ")[0].strip.downcase).zero?
@@ -81,8 +58,9 @@ class HearingSchedule::ValidateJudgeSpreadsheet
 
   def filter_judges_not_in_db
     vacols_judges = User.css_ids_by_vlj_ids(@spreadsheet_data.pluck("vlj_id").uniq)
+
     judges_id_not_in_db = @spreadsheet_data.reject do |row|
-      judge_id_in_vacols?(vacols_judges, row["name"], row["vlj_id"])
+      vacols_judges[row["vlj_id"]]
     end.pluck("vlj_id")
     judges_name_not_in_db = @spreadsheet_data.reject do |row|
       judge_name_and_id_in_vacols?(vacols_judges, row["name"], row["vlj_id"])
