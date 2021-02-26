@@ -5,6 +5,7 @@ import nocache from 'superagent-no-cache';
 jest.mock('superagent-no-cache');
 
 jest.mock('superagent', () => ({
+  patch: jest.fn().mockReturnThis(),
   post: jest.fn().mockReturnThis(),
   get: jest.fn().mockReturnThis(),
   send: jest.fn().mockReturnThis(),
@@ -44,11 +45,7 @@ describe('ApiUtil', () => {
       const req = ApiUtil.patch('/foo', options);
 
       // Expectations
-      expect(request.post).toHaveBeenCalledWith('/foo');
-      expect(request.set).toHaveBeenCalledWith({
-        ...defaultHeaders,
-        'X-HTTP-METHOD-OVERRIDE': 'patch'
-      });
+      expect(request.patch).toHaveBeenCalledWith('/foo');
       expect(request.send).toHaveBeenCalledWith(options.data);
       expect(request.use).toHaveBeenCalledWith(nocache);
       expect(req).toMatchObject(request);

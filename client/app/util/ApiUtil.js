@@ -76,8 +76,8 @@ const httpMethods = {
 
   patch(url, options = {}) {
     return request.
-      post(url).
-      set(getHeadersObject({ 'X-HTTP-METHOD-OVERRIDE': 'patch' })).
+      patch(url).
+      set(getHeadersObject(options.headers)).
       send(options.data).
       use(nocache);
   },
