@@ -156,6 +156,9 @@ RSpec.feature "Docket Switch", :all_dbs do
           expect(next_task.parent).to be_a(task_type)
           expect(next_task.parent.assigned_to).to be_a(ClerkOfTheBoard)
 
+          # Ensure judge task is now on hold
+          expect(docket_switch_ruling_task.reload).to have_attributes(status: Constants.TASK_STATUSES.on_hold)
+
           # Check that task got created and shows instructions on Case Details
           User.authenticate!(user: cotb_attorney)
           visit "/queue/appeals/#{appeal.uuid}"
