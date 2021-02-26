@@ -3304,134 +3304,45 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                     </div>
                   </TextField>
                 </DateSelector>
-                <DateSelector
-                  errorMessage={null}
-                  label="What is the Court's judgement date?"
-                  name="judgement-date"
+                <legend>
+                  <strong>
+                    Judgement and mandate date
+                  </strong>
+                </legend>
+                <Checkbox
+                  label="Same as Court's decision date"
+                  name="mandate-dates-same-toggle"
                   onChange={[Function]}
-                  strongLabel={true}
-                  type="date"
-                  value={null}
+                  required={false}
+                  value={true}
                 >
-                  <TextField
-                    className={
-                      Array [
-                        "cf-form-textinput",
-                      ]
-                    }
-                    errorMessage={null}
-                    label="What is the Court's judgement date?"
-                    max="9999-12-31"
-                    name="judgement-date"
-                    onChange={[Function]}
-                    optional={false}
-                    placeholder="mm/dd/yyyy"
-                    required={false}
-                    strongLabel={true}
-                    type="date"
-                    useAriaLabel={false}
-                    value={null}
+                  <div
+                    className="checkbox-wrapper-mandate-dates-same-toggle cf-form-checkboxes"
                   >
                     <div
-                      className="cf-form-textinput   "
+                      className="cf-form-checkbox"
                     >
-                      <label
-                        htmlFor="judgement-date"
-                      >
-                        <strong>
-                          <FormLabel
-                            label="What is the Court's judgement date?"
-                            name="judgement-date"
-                            optional={false}
-                            required={false}
-                          >
-                            <span>
-                              What is the Court's judgement date?
-                            </span>
-                          </FormLabel>
-                        </strong>
-                      </label>
                       <input
-                        className={
-                          Array [
-                            "cf-form-textinput",
-                          ]
-                        }
-                        id="judgement-date"
-                        max="9999-12-31"
-                        name="judgement-date"
+                        aria-label="mandate-dates-same-toggle"
+                        checked={true}
+                        id="mandate-dates-same-toggle"
+                        name="mandate-dates-same-toggle"
                         onChange={[Function]}
-                        placeholder="mm/dd/yyyy"
-                        type="date"
-                        value=""
+                        type="checkbox"
                       />
-                    </div>
-                  </TextField>
-                </DateSelector>
-                <DateSelector
-                  errorMessage={null}
-                  label="What is the Court's mandate date?"
-                  name="mandate-date"
-                  onChange={[Function]}
-                  strongLabel={true}
-                  type="date"
-                  value={null}
-                >
-                  <TextField
-                    className={
-                      Array [
-                        "cf-form-textinput",
-                      ]
-                    }
-                    errorMessage={null}
-                    label="What is the Court's mandate date?"
-                    max="9999-12-31"
-                    name="mandate-date"
-                    onChange={[Function]}
-                    optional={false}
-                    placeholder="mm/dd/yyyy"
-                    required={false}
-                    strongLabel={true}
-                    type="date"
-                    useAriaLabel={false}
-                    value={null}
-                  >
-                    <div
-                      className="cf-form-textinput   "
-                    >
                       <label
-                        htmlFor="mandate-date"
+                        htmlFor="mandate-dates-same-toggle"
                       >
-                        <strong>
-                          <FormLabel
-                            label="What is the Court's mandate date?"
-                            name="mandate-date"
-                            optional={false}
-                            required={false}
-                          >
-                            <span>
-                              What is the Court's mandate date?
-                            </span>
-                          </FormLabel>
-                        </strong>
+                        <span
+                          className=""
+                        >
+                          Same as Court's decision date
+                        </span>
+                         
                       </label>
-                      <input
-                        className={
-                          Array [
-                            "cf-form-textinput",
-                          ]
-                        }
-                        id="mandate-date"
-                        max="9999-12-31"
-                        name="mandate-date"
-                        onChange={[Function]}
-                        placeholder="mm/dd/yyyy"
-                        type="date"
-                        value=""
-                      />
                     </div>
-                  </TextField>
-                </DateSelector>
+                  </div>
+                </Checkbox>
                 <legend>
                   <strong>
                     Which issues are being addressed by the court?

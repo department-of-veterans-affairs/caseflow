@@ -199,7 +199,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTime
         })}
       </ul>
 
-      <strong>Unaffected Issue(s)</strong>
+      { issues.unaffectedIssues.length > 0 && <strong>Unaffected Issue(s)</strong> }
       <ul>
         {issues.unaffectedIssues.map((issue) => {
 

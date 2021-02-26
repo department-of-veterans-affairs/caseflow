@@ -5,8 +5,15 @@ import userEvent from '@testing-library/user-event';
 
 import COPY from 'app/../COPY';
 
-import { AddClaimantConfirmationModal } from 'app/intake/addClaimant/AddClaimantConfirmationModal';
-import { individualClaimant, individualPoa, organizationClaimant } from 'test/data/intake/claimants';
+import {
+  AddClaimantConfirmationModal,
+  shapeAddressBlock,
+} from 'app/intake/addClaimant/AddClaimantConfirmationModal';
+import {
+  individualClaimant,
+  individualPoa,
+  organizationClaimant,
+} from 'test/data/intake/claimants';
 
 describe('AddClaimantConfirmationModal', () => {
   const onConfirm = jest.fn();
@@ -108,5 +115,61 @@ describe('AddClaimantConfirmationModal', () => {
 
     await userEvent.click(confirmButton);
     expect(onConfirm).toHaveBeenCalled();
+  });
+});
+
+describe('shapeAddressBlock', () => {
+  const addressObj = {
+    address1: '123 Main St',
+    address2: 'Suite A',
+    city: 'San Francisco',
+    state: 'CA',
+    zip: '94123',
+  };
+
+  describe('with newly entered entity', () => {
+    const entity = {
+      relationship: 'other',
+      partyType: 'individual',
+      listedAttorney: {
+        label: 'Name not listed',
+        value: 'not_listed'
+      },
+      firstName: 'Jane',
+      lastName: 'Doe',
+      ...addressObj,
+    };
+
+    it('returns correct data', () => {
+      expect(shapeAddressBlock(entity)).toMatchObject({ ...entity });
+    });
+  });
+
+  describe('with existing attorney for claimant', () => {
+    const entity = {
+      relationship: 'attorney',
+      partyType: 'individual',
+      listedAttorney: {
+        label: 'Jane Doe',
+        ...addressObj,
+      },
+    };
+
+    it('returns correct data', () => {
+      expect(shapeAddressBlock(entity)).toMatchObject({ ...entity });
+    });
+  });
+
+  describe('with existing attorney for claimant POA', () => {
+    const entity = {
+      listedAttorney: {
+        label: 'Jane Doe',
+        ...addressObj,
+      },
+    };
+
+    it('returns correct data', () => {
+      expect(shapeAddressBlock(entity)).toMatchObject({ ...entity });
+    });
   });
 });

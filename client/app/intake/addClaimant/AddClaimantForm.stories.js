@@ -22,7 +22,8 @@ const data = Array.from({ length: totalRecords }, () => ({
     zip: faker.address.zipCode(),
   },
 }));
-const performQuery = async (search = '') => {
+
+export const performQuery = async (search = '') => {
   const regex = RegExp(search, 'i');
 
   return data.filter((item) => regex.test(item.name));

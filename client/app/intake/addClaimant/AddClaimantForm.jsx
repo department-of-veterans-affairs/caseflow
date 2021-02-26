@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -73,6 +73,12 @@ export const AddClaimantForm = ({
     }, 250),
     [onAttorneySearch]
   );
+
+  useEffect(() => {
+    if (watchRelationship !== 'attorney') {
+      setValue('listedAttorney', null);
+    }
+  }, [watchRelationship]);
 
   return (
     <>

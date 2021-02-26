@@ -70,7 +70,26 @@ export const schema = yup.object().shape({
   vaForm: yup.string().required(),
 });
 
-export const useAddClaimantForm = ({ defaultValues = {} } = {}) => {
+export const defaultFormValues = {
+  relationship: null,
+  partyType: null,
+  firstName: '',
+  middleName: '',
+  lastName: '',
+  suffix: '',
+  address1: '',
+  address2: '',
+  address3: '',
+  city: '',
+  state: null,
+  zip: '',
+  country: '',
+  email: '',
+  phoneNumber: '',
+  vaForm: null,
+};
+
+export const useAddClaimantForm = ({ defaultValues = defaultFormValues } = {}) => {
   const methods = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
