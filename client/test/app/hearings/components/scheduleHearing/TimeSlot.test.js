@@ -9,7 +9,7 @@ const time2 = '09:30';
 const emptyHearings = [];
 
 // Create the mock functions
-const update = jest.fn();
+const onChange = jest.fn();
 const fetchScheduledHearings = jest.fn();
 
 let roTimezone = '';
@@ -42,7 +42,7 @@ describe('TimeSlot', () => {
       <TimeSlot
         roTimezone={roTimezone}
         hearings={emptyHearings}
-        update={update}
+        onChange={onChange}
         fetchScheduledHearings={fetchScheduledHearings}
         hearing={{ scheduledTimeString: time }}
       />
@@ -73,7 +73,7 @@ describe('TimeSlot', () => {
       <TimeSlot
         roTimezone={roTimezone}
         hearings={emptyHearings}
-        update={update}
+        onChange={onChange}
         fetchScheduledHearings={fetchScheduledHearings}
         hearing={{ scheduledTimeString: time }}
       />
