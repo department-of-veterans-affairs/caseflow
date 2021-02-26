@@ -54,6 +54,8 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   end
 
   def judge_name_and_id_in_vacols?(vacols_judges, name, vlj_id)
+    return find_or_create_judges_in_vacols(vacols_judges, name, vlj_id) if Rails.env.development? || Rails.env.demo?
+    
     vacols_judges[vlj_id] &&
       vacols_judges[vlj_id][:first_name].casecmp(name.split(", ")[1].strip.downcase).zero? &&
       vacols_judges[vlj_id][:last_name].casecmp(name.split(", ")[0].strip.downcase).zero?
