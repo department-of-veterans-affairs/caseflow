@@ -890,6 +890,30 @@ RSpec.feature "Case details", :all_dbs do
       end
     end
 
+    describe "Appeal part of a Docket Switch" do
+      # let!(:old_docket_stream) { create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review) }
+      # let!(:new_docket_stream) { create(:appeal, docket_type: Constants.AMA_DOCKETS.evidence_submission }
+      let!(:docket_switch) { create(:docket_switch) }
+      context "appeal has received full grant docket switch" do
+        it "should display alert banner on old appeal stream page" do
+          visit "/queue/appeals/#{docket_switch.old_docket_stream.uuid}"
+          expect(page).to have_content(COPY:DOCKET_SWITCH_FULL_GRANTED_TITLE)
+        end
+      end
+
+      context "appeal has received partial grant docket switch" do
+        it "should display alert banner on old appeal stream page" do
+          visit "/queue/appeals/#{docket_switch.old_docket_stream.uuid}"
+          expect(page).to have_content(COPY:DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_OLD_DOCKET)
+        end
+
+        it "should display alert banner on new appeal stream page" do
+          visit "/queue/appeals/#{docket_switch.new_docket_stream.uuid}"
+          expect(page).to have_content(COPY:DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_NEW_DOCKET)
+        end
+      end
+    end
+
     describe "CaseTimeline shows judge & attorney tasks" do
       let!(:user) { create(:user) }
       let!(:nod_date_update) { create(:nod_date_update) }
