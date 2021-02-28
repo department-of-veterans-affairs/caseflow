@@ -8,5 +8,9 @@ FactoryBot.define do
     receipt_date { 5.days.ago }
     docket_type { Constants.AMA_DOCKETS.hearing }
     disposition { "granted" }
+
+    trait :partially_granted do
+      disposition { "partially_granted" }
+    end
   end
 end
