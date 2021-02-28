@@ -11,6 +11,7 @@ FactoryBot.define do
 
     trait :partially_granted do
       disposition { "partially_granted" }
+      granted_request_issue_ids  { [create(:request_issue).id] }
     end
   end
 end
