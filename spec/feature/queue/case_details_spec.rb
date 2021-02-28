@@ -897,19 +897,19 @@ RSpec.feature "Case details", :all_dbs do
       context "appeal has received full grant docket switch" do
         it "should display alert banner on old appeal stream page" do
           visit "/queue/appeals/#{docket_switch.old_docket_stream.uuid}"
-          expect(page).to have_content(COPY:DOCKET_SWITCH_FULL_GRANTED_TITLE)
+          expect(page).to have_content COPY::DOCKET_SWITCH_FULL_GRANTED_TITLE
         end
       end
 
       context "appeal has received partial grant docket switch" do
         it "should display alert banner on old appeal stream page" do
           visit "/queue/appeals/#{docket_switch.old_docket_stream.uuid}"
-          expect(page).to have_content(COPY:DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_OLD_DOCKET)
+          expect(page).to have_content COPY::DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_OLD_DOCKET
         end
 
         it "should display alert banner on new appeal stream page" do
           visit "/queue/appeals/#{docket_switch.new_docket_stream.uuid}"
-          expect(page).to have_content(COPY:DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_NEW_DOCKET)
+          expect(page).to have_content COPY::DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_NEW_DOCKET
         end
       end
     end
