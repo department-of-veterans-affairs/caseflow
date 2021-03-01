@@ -87,29 +87,6 @@ describe CavcCorrespondenceMailTask do
             end
           end
         end
-
-        context "when type is not CavcCorrespondenceMailTask" do
-          #binding.pry
-          let(:type) { "CavcLitigationSupport" }
-
-          context "who is a team admin" do
-            let(:expected_actions) { mail_task_actions }
-
-            before { OrganizationsUser.make_user_admin(user, CavcLitigationSupport.singleton) }
-
-            it "has actions" do
-              subject
-            end
-          end
-
-          context "who is a team member" do
-            let(:expected_actions) { mail_task_actions }
-
-            it "has actions" do
-              subject
-            end
-          end
-        end
       end
     end
 
