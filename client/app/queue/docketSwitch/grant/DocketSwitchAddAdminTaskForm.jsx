@@ -35,7 +35,6 @@ export const DocketSwitchAddAdminTaskForm = ({ baseName, item, onRemove }) => {
     `${capitalizeFirst(snakeCaseToCamelCase(taskStr))}ColocatedTask`;
 
   useEffect(() => {
-    console.log('useEffect', selectRef.current);
     selectRef?.current?.focus();
   }, [selectRef.current]);
 
@@ -53,9 +52,8 @@ export const DocketSwitchAddAdminTaskForm = ({ baseName, item, onRemove }) => {
               label="Select the type of task you'd like to open:"
               options={actionOptions}
               onChange={(valObj) => onChange(formatTaskName(valObj?.value))}
-              inputRef={(e) => {
-                console.log('ref', e);
-                selectRef.current = e;
+              inputRef={(ref) => {
+                selectRef.current = ref;
               }}
             />
           )}

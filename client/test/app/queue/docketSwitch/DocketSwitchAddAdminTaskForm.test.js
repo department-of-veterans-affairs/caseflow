@@ -44,4 +44,10 @@ describe('DocketSwitchAddAdminTaskForm', () => {
     );
     expect(onRemove).toHaveBeenCalled();
   });
+
+  it('focuses the first element when mounted', async () => {
+    setup();
+
+    expect(screen.getByRole('textbox', { name: /select the type of task/i })).toHaveFocus();
+  });
 });
