@@ -22,12 +22,14 @@ const Template = (args) => {
       fetchScheduledHearings={() => false}
       scheduledHearingsList={[
         {
+          externalId: 1,
           hearingTime: '08:45',
           docketName: 'legacy',
           issueCount: 2,
           poaName: 'American Legion'
         },
         {
+          externalId: 2,
           hearingTime: args.hearingTime,
           docketName: args?.docketName,
           issueCount: args?.issueCount,

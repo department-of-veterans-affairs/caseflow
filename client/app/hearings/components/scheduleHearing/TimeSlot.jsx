@@ -80,7 +80,7 @@ export const TimeSlot = ({
                 {slots.map((slot) => (
                   <TimeSlotButton
                     {...slot}
-                    key={slot.hearingTime}
+                    key={slot.key}
                     roTimezone={roTimezone}
                     selected={selected === slot.hearingTime}
                     onClick={() => handleClick(slot.hearingTime)}

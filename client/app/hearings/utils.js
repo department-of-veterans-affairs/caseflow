@@ -537,6 +537,7 @@ export const setTimeSlots = (hearings) => {
   // Transform the values into the available slots
   const slots = [...availableTimes, ...scheduledHearings].map((slot) => ({
     ...slot,
+    key: `${slot?.externalId}-${slot?.hearingTime}`,
     full: slot?.full !== false,
     hearingTime: slot?.hearingTime
   }));
