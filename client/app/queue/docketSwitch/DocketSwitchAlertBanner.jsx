@@ -44,7 +44,7 @@ const DocketSwitchAlertBanner = ({ appeal }) => {
       </div>
     );
   }
-  
+
   return (
     <div>
       <Alert
