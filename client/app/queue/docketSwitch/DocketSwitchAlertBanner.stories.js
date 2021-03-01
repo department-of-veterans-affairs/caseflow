@@ -37,8 +37,6 @@ const appeal3 = {
 	switchedDocket: partialGrantDocketSwitch
 }
 
-
-
 export default {
   title: 'Queue/Docket Switch/DocketSwitchAlertBanner',
   component: DocketSwitchAlertBanner,
