@@ -274,6 +274,18 @@ describe('AddCavcRemandView', () => {
       });
     });
 
+    describe('issue selection validations', () => {
+      const error = COPY.CAVC_ALL_ISSUES_ERROR;
+
+      it('shows error when any issue is not selected', () => {
+        const cavcForm = setup({ appealId });
+
+        cavcForm.find('input[id="2"]').simulate('change', { target: { checked: false } });
+
+        expect(validationErrorShows(cavcForm, error)).toBeTruthy();
+      });
+    });
+
     describe('cavc form instructions validations', () => {
       const error = COPY.CAVC_INSTRUCTIONS_ERROR;
 
