@@ -10,6 +10,7 @@ FactoryBot.define do
     decision_date { 30.days.ago.to_date }
     judgement_date { 30.days.ago.to_date }
     mandate_date { 30.days.ago.to_date }
+    federal_circuit { (remand_subtype == Constants::CAVC_REMAND_SUBTYPES["mdr"]) ? false : nil }
     instructions { "Sample CAVC Remand from factory" }
     created_by { User.first || create(:user) }
 
@@ -19,7 +20,7 @@ FactoryBot.define do
         JudgeTeam.first&.non_admins&.first ||
           create(:user).tap { |u| create(:staff, :attorney_role, user: u) }
       end
-      veteran { Veteran.first || create(:veteran) }
+      veteran { create(:veteran) }
       docket_type { Constants.AMA_DOCKETS.evidence_submission }
     end
 
@@ -50,6 +51,26 @@ FactoryBot.define do
                                            cavc_remand.source_appeal.decision_issues.pluck(:id)
                                          end
       end
+    end
+
+    trait :mdr do
+      no_mandate
+      remand_subtype { Constants::CAVC_REMAND_SUBTYPES["mdr"] }
+    end
+
+    trait :straight_reversal do
+      cavc_decision_type { Constants::CAVC_DECISION_TYPES["straight_reversal"] }
+      remand_subtype { nil }
+    end
+
+    trait :death_dismissal do
+      cavc_decision_type { Constants::CAVC_DECISION_TYPES["death_dismissal"] }
+      remand_subtype { nil }
+    end
+
+    trait :no_mandate do
+      judgement_date { nil }
+      mandate_date { nil }
     end
   end
 

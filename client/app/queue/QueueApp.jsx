@@ -36,6 +36,7 @@ import EvaluateDecisionView from './caseEvaluation/EvaluateDecisionView';
 import AddColocatedTaskView from './colocatedTasks/AddColocatedTaskView';
 import BlockedAdvanceToJudgeView from './BlockedAdvanceToJudgeView';
 import AddCavcRemandView from './AddCavcRemandView';
+import AddCavcDatesModal from './AddCavcDatesModal';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
@@ -90,6 +91,7 @@ import ScheduleVeteran from '../hearings/components/ScheduleVeteran';
 import HearingTypeConversion from '../hearings/components/HearingTypeConversion';
 import HearingTypeConversionModal from '../hearings/components/HearingTypeConversionModal';
 import CavcReviewExtensionRequestModal from './components/CavcReviewExtensionRequestModal';
+import { PrivateRoute } from '../components/PrivateRoute';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -322,9 +324,28 @@ class QueueApp extends React.PureComponent {
     />
   );
 
-  routedScheduleVeteran = (props) => (
-    <ScheduleVeteran userId={this.props.userId} {...props.match.params} />
-  );
+  routedScheduleVeteran = (props) => {
+    const params = querystring.parse(props.location.search.replace(/^\?/, ''));
+
+    return (
+      <PrivateRoute
+        authorized={this.props.userCanAssignHearingSchedule}
+        redirectTo={`/queue/appeals/${props.match.params.appealId}`}
+      >
+        {params.action === 'reschedule' ? (
+          <CaseDetailsLoadingScreen
+            {...this.propsForQueueLoadingScreen()}
+            preventReset
+            appealId={props.match.params.appealId}
+          >
+            <ScheduleVeteran params={params} userId={this.props.userId} {...props.match.params} />
+          </CaseDetailsLoadingScreen>
+        ) : (
+          <ScheduleVeteran params={params} userId={this.props.userId} {...props.match.params} />
+        )}
+      </PrivateRoute>
+    );
+  };
 
   routedAssignHearingModal = (props) => (
     <AssignHearingModal userId={this.props.userId} {...props.match.params} />
@@ -441,6 +462,8 @@ class QueueApp extends React.PureComponent {
     />
   );
 
+  routedCavcRemandReceived = (props) => <AddCavcDatesModal {...props.match.params} />;
+
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
       'Your Queue' :
@@ -482,6 +505,7 @@ class QueueApp extends React.PureComponent {
 
             {/* Base/page (non-modal) routes */}
             <Switch>
+
               <PageRoute
                 exact
                 path={['/search', '/cases/:caseflowVeteranIds']}
@@ -807,6 +831,18 @@ class QueueApp extends React.PureComponent {
                 }`}
                 render={this.routedCavcExtensionRequest}
               />
+              <Route
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CAVC_REMAND_RECEIVED_MDR.value
+                }`}
+                render={this.routedCavcRemandReceived}
+              />
+              <Route
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CAVC_REMAND_RECEIVED_VLJ.value
+                }`}
+                render={this.routedCavcRemandReceived}
+              />
 
               <PageRoute
                 exact
@@ -1007,6 +1043,7 @@ QueueApp.propTypes = {
   userCanViewHearingSchedule: PropTypes.bool,
   userCanViewOvertimeStatus: PropTypes.bool,
   userCanViewEditNodDate: PropTypes.bool,
+  userCanAssignHearingSchedule: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({

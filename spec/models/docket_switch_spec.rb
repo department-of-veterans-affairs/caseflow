@@ -65,6 +65,9 @@ RSpec.describe DocketSwitch, type: :model do
 
           subject
 
+          # new stream has a the new docket type
+          expect(docket_switch.new_docket_stream.docket_type).to eq(docket_switch.docket_type)
+
           # all request issues are copied to new appeal stream, accessible as new_docket_stream
           expect(docket_switch.new_docket_stream.request_issues.count).to eq appeal.request_issues.count
 
@@ -87,6 +90,9 @@ RSpec.describe DocketSwitch, type: :model do
           expect(docket_switch_task).to be_assigned
 
           subject
+
+          # new stream has a the new docket type
+          expect(docket_switch.new_docket_stream.docket_type).to eq(docket_switch.docket_type)
 
           # granted request issues are copied to new appeal stream
           expect(docket_switch.new_docket_stream.request_issues.count).to eq 2

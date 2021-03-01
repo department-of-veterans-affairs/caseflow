@@ -6,6 +6,7 @@ import { combineReducers } from 'redux';
 import _ from 'lodash';
 
 import { ACTIONS } from './constants';
+import ApiUtil from '../util/ApiUtil';
 
 import caseListReducer from './CaseList/CaseListReducer';
 import uiReducer from './uiReducer/uiReducer';
@@ -146,6 +147,26 @@ const editAppeal = (state, action) => {
     appealDetails: {
       [action.payload.appealId]: {
         $merge: action.payload.attributes
+      }
+    }
+  });
+};
+
+const editNodDateUpdates = (state, action) => {
+  const nodDateUpdate = ApiUtil.convertToCamelCase(action.payload.nodDateUpdate);
+
+  nodDateUpdate.appealId = action.payload.appealId;
+  nodDateUpdate.userFirstName = action.payload.nodDateUpdate.updated_by.split(' ')[0];
+  nodDateUpdate.userLastName = action.payload.nodDateUpdate.updated_by.split(' ')[
+    action.payload.nodDateUpdate.updated_by.split(' ').length - 1
+  ];
+
+  return update(state, {
+    appealDetails: {
+      [action.payload.appealId]: {
+        nodDateUpdates: {
+          $push: [nodDateUpdate]
+        }
       }
     }
   });
@@ -702,6 +723,7 @@ export const workQueueReducer = createReducer({
   [ACTIONS.CLEAR_APPEAL]: clearAppealDetails,
   [ACTIONS.DELETE_TASK]: deleteTask,
   [ACTIONS.EDIT_APPEAL]: editAppeal,
+  [ACTIONS.EDIT_NOD_DATE_UPDATES]: editNodDateUpdates,
   [ACTIONS.SET_OVERTIME]: setOvertime,
   [ACTIONS.RECEIVE_NEW_FILES_FOR_APPEAL]: receiveNewFilesForAppeal,
   [ACTIONS.ERROR_ON_RECEIVE_NEW_FILES_FOR_APPEAL]: errorOnReceiveNewFilesForAppeal,

@@ -22,8 +22,8 @@ class ChangeHearingRequestTypeTask < Task
   # conditioned to reduce a call to vacols in the absence of a value in `changed_hearing_type` field
   def timeline_title
     if completed?
-      "Hearing type converted from #{appeal.hearing_request_type_for_task(id, :prev)}"\
-        " to #{appeal.hearing_request_type_for_task(id, :current)}"
+      "Hearing type converted from #{appeal.readable_previous_hearing_request_type_for_task(id)}"\
+        " to #{appeal.readable_current_hearing_request_type_for_task(id)}"
     end
   end
 
@@ -85,8 +85,8 @@ class ChangeHearingRequestTypeTask < Task
 
   def update_appeal_and_self(payload_values, params)
     multi_transaction do
-      # this will save the original request type if needed
-      appeal.original_hearing_request_type
+      # save the original request type if needed
+      appeal.remember_original_hearing_request_type
       appeal.update!(
         changed_request_type: payload_values[:changed_request_type],
         closest_regional_office: payload_values[:closest_regional_office]
