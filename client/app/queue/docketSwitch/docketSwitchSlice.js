@@ -43,11 +43,13 @@ export const completeDocketSwitchGranted = createAsyncThunk(
   'docketSwitch/grant',
   async (data) => {
     try {
-      // Update this to conform to submission endpoint expectations
       const res = await ApiUtil.post('/docket_switches', { data });
-      const result = res.body?.data;
+      const attrs = res.body?.data?.attributes;
 
-      return result;
+      return {
+        oldAppealId: attrs?.old_appeal_uuid,
+        newAppealId: attrs?.new_appeal_uuid,
+      };
     } catch (error) {
       console.error('Error granting docket switch', error);
       throw error;

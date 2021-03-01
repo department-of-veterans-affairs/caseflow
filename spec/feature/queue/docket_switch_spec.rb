@@ -218,7 +218,9 @@ RSpec.feature "Docket Switch", :all_dbs do
       )
     end
 
-    let(:colocated_user) { create(:user) }
+    let(:colocated_user) do
+      create(:user).tap { |user| Colocated.singleton.add_user(user) }
+    end
     let!(:colocated_staff) { create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
 
     let!(:existing_admin_action1) do
@@ -341,7 +343,6 @@ RSpec.feature "Docket Switch", :all_dbs do
       click_button(text: "Confirm docket switch")
 
       # Return back to user's queue
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
       expect(page).to have_content format(
         COPY::DOCKET_SWITCH_FULL_GRANTED_SUCCESS_TITLE,
         appeal.claimant.name,
@@ -350,11 +351,14 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(page).to have_content format(COPY::DOCKET_SWITCH_GRANTED_SUCCESS_MESSAGE)
 
       # Verify that full grant completed correctly
+      docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
+      expect(docket_switch).to_not be_nil
+      expect(docket_switch.new_docket_stream.docket_type).to eq(docket_switch.docket_type)
+      expect(page).to have_current_path("/queue/appeals/#{docket_switch.new_docket_stream.uuid}")
+
       expect(docket_switch_granted_task.reload.status).to eq Constants.TASK_STATUSES.completed
       expect(existing_admin_action1.reload.status).to eq Constants.TASK_STATUSES.cancelled
 
-      docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
-      expect(docket_switch).to_not be_nil
       expect(docket_switch.disposition).to eq "granted"
       expect(docket_switch.docket_type).to eq "direct_review"
     end
@@ -390,13 +394,11 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       expect(page).to have_button("Continue", disabled: false)
       click_button(text: "Continue")
-      # Should now be on confirmation page
+      # Should now be on add/remove tasks page
       expect(page).to have_content("Switch Docket: Add/Remove Tasks")
       expect(page).to have_content("You are switching from Evidence Submission to Direct Review")
 
       click_button(text: "Continue")
-
-      click_button(text: "Confirm docket switch")
 
       # Should now be on confirmation page
       expect(page).to have_current_path(
@@ -414,7 +416,6 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       click_button(text: "Confirm docket switch")
       # Return back to user's queue
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
       expect(page).to have_content format(
         COPY::DOCKET_SWITCH_PARTIAL_GRANTED_SUCCESS_TITLE,
         appeal.claimant.name,
@@ -428,8 +429,9 @@ RSpec.feature "Docket Switch", :all_dbs do
 
       docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
       expect(docket_switch).to_not be_nil
-      expect(docket_switch.disposition).to eq "partially_granted"
-      expect(docket_switch.docket_type).to eq "direct_review"
+      expect(docket_switch.new_docket_stream.docket_type).to eq(docket_switch.docket_type)
+      expect(page).to have_current_path("/queue/appeals/#{docket_switch.new_docket_stream.uuid}")
+      expect(docket_switch).to have_attributes(disposition: "partially_granted", docket_type: "direct_review")
     end
 
     it "allows attorney to edit tasks and proceed to confirmation page" do
@@ -556,15 +558,18 @@ RSpec.feature "Docket Switch", :all_dbs do
       expect(page).to have_button("Confirm docket switch", disabled: false)
 
       click_button(text: "Confirm docket switch")
-      # Add checks for post-submit
 
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
       expect(page).to have_content format(
         COPY::DOCKET_SWITCH_PARTIAL_GRANTED_SUCCESS_TITLE,
         appeal.claimant.name,
         new_task_type
       )
       expect(page).to have_content format(COPY::DOCKET_SWITCH_GRANTED_SUCCESS_MESSAGE)
+
+      docket_switch = DocketSwitch.find_by(old_docket_stream_id: appeal.id)
+      expect(docket_switch).to_not be_nil
+      expect(docket_switch.new_docket_stream.docket_type).to eq(docket_switch.docket_type)
+      expect(page).to have_current_path("/queue/appeals/#{docket_switch.new_docket_stream.uuid}")
     end
   end
 end
