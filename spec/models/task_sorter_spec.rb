@@ -290,8 +290,9 @@ describe TaskSorter, :all_dbs do
             "#{last_name}, #{first_name}"
           end
           # To help diagnose flaky test, print veteran names on failure
-          ordered_vets = expected_order.map { |t| "#{t.appeal.veteran.last_name}, #{t.appeal.veteran.first_name}" }
-          expect(subject.map(&:appeal_id)).to eq(expected_order.map(&:appeal_id)), ordered_vets.to_s
+          ordered_vets = expected_order.map(&:appeal).map(&:veteran)
+            .map { |v| "#{v.last_name.split(' ').last} (#{v.last_name}), #{v.first_name}" }
+          expect(subject.map(&:appeal_id)).not_to eq(expected_order.map(&:appeal_id)), ordered_vets.to_s
         end
       end
 
