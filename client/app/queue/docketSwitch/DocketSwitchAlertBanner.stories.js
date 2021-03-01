@@ -4,9 +4,9 @@ import { MemoryRouter } from 'react-router';
 import DocketSwitchAlertBanner from './DocketSwitchAlertBanner';
 
 const RouterDecorator = (Story) => (
-	<MemoryRouter>
-		<Story />
-	</MemoryRouter>
+  <MemoryRouter>
+	<Story />
+  </MemoryRouter>
 );
 
 const fullGrantDocketSwitch = {
@@ -43,10 +43,7 @@ export default {
   title: 'Queue/Docket Switch/DocketSwitchAlertBanner',
   component: DocketSwitchAlertBanner,
   parameters: {},
-  decorators: [RouterDecorator],
-  args: {
-  	appeal: appeal
-  }
+  decorators: [RouterDecorator]
 };
 
 const Template = (args) => (
