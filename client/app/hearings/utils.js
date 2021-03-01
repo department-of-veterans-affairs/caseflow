@@ -520,7 +520,7 @@ export const setTimeSlots = (hearings) => {
       const interval = Math.floor((availableTime - time) / 1000 / 60);
 
       // Return true if the scheduled time is within an hour of the time slot
-      return interval >= 0 && interval <= 60;
+      return interval >= 0 && interval < 60;
     });
 
     // Return nul if there is a filled time slot
