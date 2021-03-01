@@ -16,10 +16,10 @@ const fullGrantDocketSwitch = {
 };
 
 const partialGrantDocketSwitch = {
-	disposition: 'partially_granted',
-	docket_type: 'evidence_submission',
-	new_docket_stream_id: '2',
-	old_docket_stream_id: '3'
+  disposition: 'partially_granted',
+  docket_type: 'evidence_submission',
+  new_docket_stream_id: '2',
+  old_docket_stream_id: '3'
 }
 
 const appeal = {
@@ -28,14 +28,14 @@ const appeal = {
 };
 
 const appeal2 = {
-	externalId: '2',
-	docketSwitch: partialGrantDocketSwitch
-}
+  externalId: '2',
+  docketSwitch: partialGrantDocketSwitch
+};
 
 const appeal3 = {
-	externalId: '3',
-	switchedDocket: partialGrantDocketSwitch
-}
+  externalId: '3',
+  switchedDocket: partialGrantDocketSwitch
+};
 
 export default {
   title: 'Queue/Docket Switch/DocketSwitchAlertBanner',
