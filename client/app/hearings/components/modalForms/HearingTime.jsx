@@ -54,6 +54,7 @@ export const HearingTime = ({
   disableRadioOptions,
   label,
   vertical,
+  hideLabel,
 }) => {
   const timeOptions = getTimeOptions(regionalOffice, readOnly);
   const isOther = _.isUndefined(
@@ -99,7 +100,7 @@ export const HearingTime = ({
           }
           value={value}
           onChange={(option) => onChange(option ? option.value : null)}
-          hideLabel={!disableRadioOptions}
+          hideLabel={!disableRadioOptions || hideLabel}
         />
       )}
     </React.Fragment>
@@ -123,4 +124,5 @@ HearingTime.propTypes = {
   value: PropTypes.string,
   label: PropTypes.string,
   localZone: PropTypes.string,
+  hideLabel: PropTypes.bool,
 };

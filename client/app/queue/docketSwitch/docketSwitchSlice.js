@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 import ApiUtil from '../../util/ApiUtil';
+import { onReceiveAmaTasks } from '../QueueActions';
 
 const initialState = {
   step: 0,
@@ -52,6 +53,55 @@ export const completeDocketSwitchGranted = createAsyncThunk(
       };
     } catch (error) {
       console.error('Error granting docket switch', error);
+      throw error;
+    }
+  }
+);
+
+export const createDocketSwitchRulingTask = createAsyncThunk(
+  'tasks/createDocketSwitchRulingTask',
+  async (data) => {
+    try {
+      const res = await ApiUtil.post('/tasks', { data });
+      const updatedTasks = res.body?.tasks?.data;
+
+      return updatedTasks;
+    } catch (error) {
+      console.error('Error creating task', error);
+      throw error;
+    }
+  }
+);
+
+export const addressDocketSwitchRuling = createAsyncThunk(
+  'tasks/addressDocketSwitchRuling',
+  async (data) => {
+    try {
+      const res = await ApiUtil.post('/docket_switches/address_ruling', { data });
+
+      return res.body;
+    } catch (error) {
+      console.error('Error creating task', error);
+      throw error;
+    }
+  }
+);
+
+// This should likely move to a more generic task slice when it exists
+export const completeTask = createAsyncThunk(
+  'tasks/complete',
+  async ({ taskId }, { dispatch }) => {
+    try {
+      const res = await ApiUtil.patch(`/tasks/${taskId}`, {
+        data: { task: { status: 'completed' } },
+      });
+      const updatedTasks = res.body?.tasks?.data;
+
+      dispatch(onReceiveAmaTasks(updatedTasks));
+
+      return updatedTasks;
+    } catch (error) {
+      console.error('Error creating task', error);
       throw error;
     }
   }

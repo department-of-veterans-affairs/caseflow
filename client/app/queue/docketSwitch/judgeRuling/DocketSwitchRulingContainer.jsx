@@ -4,7 +4,6 @@ import { useHistory, useParams, useRouteMatch } from 'react-router';
 import { taskById, appealWithDetailSelector } from 'app/queue/selectors';
 import { taskActionData } from 'app/queue/utils';
 import DISPOSITIONS from 'constants/DOCKET_SWITCH_DISPOSITIONS';
-import { addressDocketSwitchRuling } from './docketSwitchRulingSlice';
 import { DocketSwitchRulingForm } from './DocketSwitchRulingForm';
 import {
   DOCKET_SWITCH_RULING_SUCCESS_TITLE,
@@ -13,6 +12,7 @@ import {
 
 import { sprintf } from 'sprintf-js';
 import { showSuccessMessage } from '../../uiReducer/uiActions';
+import { addressDocketSwitchRuling } from '../docketSwitchSlice';
 
 export const formatDocketSwitchRuling = ({
   disposition,
