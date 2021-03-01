@@ -815,10 +815,8 @@ RSpec.feature "Case details", :all_dbs do
     end
   end
 
-  describe "Appeal part of a Docket Switch" do
-    # let!(:old_docket_stream) { create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review) }
-    # let!(:new_docket_stream) { create(:appeal, docket_type: Constants.AMA_DOCKETS.evidence_submission }
-    let(:full_grant_docket_switch) { create(:docket_switch) }
+  describe "Appeal has switched dockets" do
+    let!(:full_grant_docket_switch) { create(:docket_switch) }
     let!(:partial_grant_docket_switch) { create(:docket_switch, :partially_granted) }
     context "appeal has received full grant docket switch" do
       it "should display alert banner on old appeal stream page" do
