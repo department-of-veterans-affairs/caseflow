@@ -64,10 +64,19 @@ describe('hearing utils', () => {
 
     test('Skips the next available slot if a hearing is scheduled within an hour', () => {
       // Call the function and assign to the results object for inspection
-      const result = setTimeSlots(scheduledHearingNext);
+      // Slots with no scheduled apts are like this
+      // [8:30, 9:30, 10:30, 11:30,
+      //  12:30, 1:30, 2:30, 3:30]
+      // With the scheduledHearingNext apts:
+      // [8:30, 8:45, 10:30, 11:30, <- 8:45 instead of 9:30
+      //  12:30, 1:30, 2:30, 3:30]
+      const result = setTimeSlots([{
+        ...defaultHearing,
+        hearingTime: '8:45'
+      }]);
 
       // Expect the slot count to be the same as the number available when we have filtered 1 out
-      expect(result).toHaveLength(AVAILABLE_SLOT_COUNT + 1);
+      expect(result).toHaveLength(AVAILABLE_SLOT_COUNT);
 
       // Expect the results to contain the scheduled time slot but not the next 30 minute increment
       expect(result).toEqual(
@@ -91,7 +100,7 @@ describe('hearing utils', () => {
       const result = setTimeSlots(scheduledHearingPrevious);
 
       // Expect the slot count to be the same as the number available when we have filtered 1 out
-      expect(result).toHaveLength(AVAILABLE_SLOT_COUNT + 1);
+      expect(result).toHaveLength(AVAILABLE_SLOT_COUNT);
 
       // Expect the results to contain the scheduled time slot but not the next 30 minute increment
       expect(result).toEqual(
