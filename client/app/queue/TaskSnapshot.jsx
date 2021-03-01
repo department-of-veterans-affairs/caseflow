@@ -53,8 +53,8 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
         </div>
       )}
       <div {...alertStyling} {...sectionSegmentStyling}>
-        { appeal.switchedDocket || docketSwitchDisposition === 'partially_granted' ? 
-          <DocketSwitchAlertBanner appeal={appeal}/> : 
+        { appeal.switchedDocket || docketSwitchDisposition === 'partially_granted' ?
+          <DocketSwitchAlertBanner appeal={appeal} /> :
           ''
         }
       </div>
