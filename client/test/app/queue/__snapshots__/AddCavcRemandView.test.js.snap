@@ -435,6 +435,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                   options={
                     Array [
                       Object {
+                        "label": "Clerk",
+                        "value": "Clerk",
+                      },
+                      Object {
+                        "label": "Panel",
+                        "value": "Panel",
+                      },
+                      Object {
+                        "label": "Per Curium",
+                        "value": "Per Curium",
+                      },
+                      Object {
                         "label": "Alan G. Lance, Sr.",
                         "value": "Alan G. Lance, Sr.",
                       },
@@ -549,6 +561,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           onChange={[Function]}
                           options={
                             Array [
+                              Object {
+                                "label": "Clerk",
+                                "value": "Clerk",
+                              },
+                              Object {
+                                "label": "Panel",
+                                "value": "Panel",
+                              },
+                              Object {
+                                "label": "Per Curium",
+                                "value": "Per Curium",
+                              },
                               Object {
                                 "label": "Alan G. Lance, Sr.",
                                 "value": "Alan G. Lance, Sr.",
@@ -678,6 +702,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                             options={
                               Array [
                                 Object {
+                                  "label": "Clerk",
+                                  "value": "Clerk",
+                                },
+                                Object {
+                                  "label": "Panel",
+                                  "value": "Panel",
+                                },
+                                Object {
+                                  "label": "Per Curium",
+                                  "value": "Per Curium",
+                                },
+                                Object {
                                   "label": "Alan G. Lance, Sr.",
                                   "value": "Alan G. Lance, Sr.",
                                 },
@@ -787,6 +823,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                               isRtl={false}
                               options={
                                 Array [
+                                  Object {
+                                    "label": "Clerk",
+                                    "value": "Clerk",
+                                  },
+                                  Object {
+                                    "label": "Panel",
+                                    "value": "Panel",
+                                  },
+                                  Object {
+                                    "label": "Per Curium",
+                                    "value": "Per Curium",
+                                  },
                                   Object {
                                     "label": "Alan G. Lance, Sr.",
                                     "value": "Alan G. Lance, Sr.",
@@ -910,6 +958,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                   "openMenuOnClick": true,
                                   "openMenuOnFocus": false,
                                   "options": Array [
+                                    Object {
+                                      "label": "Clerk",
+                                      "value": "Clerk",
+                                    },
+                                    Object {
+                                      "label": "Panel",
+                                      "value": "Panel",
+                                    },
+                                    Object {
+                                      "label": "Per Curium",
+                                      "value": "Per Curium",
+                                    },
                                     Object {
                                       "label": "Alan G. Lance, Sr.",
                                       "value": "Alan G. Lance, Sr.",
@@ -1071,6 +1131,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                     options={
                                       Array [
                                         Object {
+                                          "label": "Clerk",
+                                          "value": "Clerk",
+                                        },
+                                        Object {
+                                          "label": "Panel",
+                                          "value": "Panel",
+                                        },
+                                        Object {
+                                          "label": "Per Curium",
+                                          "value": "Per Curium",
+                                        },
+                                        Object {
                                           "label": "Alan G. Lance, Sr.",
                                           "value": "Alan G. Lance, Sr.",
                                         },
@@ -1193,6 +1265,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                         "openMenuOnClick": true,
                                         "openMenuOnFocus": false,
                                         "options": Array [
+                                          Object {
+                                            "label": "Clerk",
+                                            "value": "Clerk",
+                                          },
+                                          Object {
+                                            "label": "Panel",
+                                            "value": "Panel",
+                                          },
+                                          Object {
+                                            "label": "Per Curium",
+                                            "value": "Per Curium",
+                                          },
                                           Object {
                                             "label": "Alan G. Lance, Sr.",
                                             "value": "Alan G. Lance, Sr.",
@@ -1362,6 +1446,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                           options={
                                             Array [
                                               Object {
+                                                "label": "Clerk",
+                                                "value": "Clerk",
+                                              },
+                                              Object {
+                                                "label": "Panel",
+                                                "value": "Panel",
+                                              },
+                                              Object {
+                                                "label": "Per Curium",
+                                                "value": "Per Curium",
+                                              },
+                                              Object {
                                                 "label": "Alan G. Lance, Sr.",
                                                 "value": "Alan G. Lance, Sr.",
                                               },
@@ -1484,6 +1580,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                               "openMenuOnClick": true,
                                               "openMenuOnFocus": false,
                                               "options": Array [
+                                                Object {
+                                                  "label": "Clerk",
+                                                  "value": "Clerk",
+                                                },
+                                                Object {
+                                                  "label": "Panel",
+                                                  "value": "Panel",
+                                                },
+                                                Object {
+                                                  "label": "Per Curium",
+                                                  "value": "Per Curium",
+                                                },
                                                 Object {
                                                   "label": "Alan G. Lance, Sr.",
                                                   "value": "Alan G. Lance, Sr.",
@@ -1640,6 +1748,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                 options={
                                                   Array [
                                                     Object {
+                                                      "label": "Clerk",
+                                                      "value": "Clerk",
+                                                    },
+                                                    Object {
+                                                      "label": "Panel",
+                                                      "value": "Panel",
+                                                    },
+                                                    Object {
+                                                      "label": "Per Curium",
+                                                      "value": "Per Curium",
+                                                    },
+                                                    Object {
                                                       "label": "Alan G. Lance, Sr.",
                                                       "value": "Alan G. Lance, Sr.",
                                                     },
@@ -1762,6 +1882,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     "openMenuOnClick": true,
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
+                                                      Object {
+                                                        "label": "Clerk",
+                                                        "value": "Clerk",
+                                                      },
+                                                      Object {
+                                                        "label": "Panel",
+                                                        "value": "Panel",
+                                                      },
+                                                      Object {
+                                                        "label": "Per Curium",
+                                                        "value": "Per Curium",
+                                                      },
                                                       Object {
                                                         "label": "Alan G. Lance, Sr.",
                                                         "value": "Alan G. Lance, Sr.",
@@ -1965,6 +2097,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     "openMenuOnClick": true,
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
+                                                      Object {
+                                                        "label": "Clerk",
+                                                        "value": "Clerk",
+                                                      },
+                                                      Object {
+                                                        "label": "Panel",
+                                                        "value": "Panel",
+                                                      },
+                                                      Object {
+                                                        "label": "Per Curium",
+                                                        "value": "Per Curium",
+                                                      },
                                                       Object {
                                                         "label": "Alan G. Lance, Sr.",
                                                         "value": "Alan G. Lance, Sr.",
@@ -2202,6 +2346,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                           options={
                                             Array [
                                               Object {
+                                                "label": "Clerk",
+                                                "value": "Clerk",
+                                              },
+                                              Object {
+                                                "label": "Panel",
+                                                "value": "Panel",
+                                              },
+                                              Object {
+                                                "label": "Per Curium",
+                                                "value": "Per Curium",
+                                              },
+                                              Object {
                                                 "label": "Alan G. Lance, Sr.",
                                                 "value": "Alan G. Lance, Sr.",
                                               },
@@ -2324,6 +2480,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                               "openMenuOnClick": true,
                                               "openMenuOnFocus": false,
                                               "options": Array [
+                                                Object {
+                                                  "label": "Clerk",
+                                                  "value": "Clerk",
+                                                },
+                                                Object {
+                                                  "label": "Panel",
+                                                  "value": "Panel",
+                                                },
+                                                Object {
+                                                  "label": "Per Curium",
+                                                  "value": "Per Curium",
+                                                },
                                                 Object {
                                                   "label": "Alan G. Lance, Sr.",
                                                   "value": "Alan G. Lance, Sr.",
@@ -2475,6 +2643,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                 options={
                                                   Array [
                                                     Object {
+                                                      "label": "Clerk",
+                                                      "value": "Clerk",
+                                                    },
+                                                    Object {
+                                                      "label": "Panel",
+                                                      "value": "Panel",
+                                                    },
+                                                    Object {
+                                                      "label": "Per Curium",
+                                                      "value": "Per Curium",
+                                                    },
+                                                    Object {
                                                       "label": "Alan G. Lance, Sr.",
                                                       "value": "Alan G. Lance, Sr.",
                                                     },
@@ -2597,6 +2777,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     "openMenuOnClick": true,
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
+                                                      Object {
+                                                        "label": "Clerk",
+                                                        "value": "Clerk",
+                                                      },
+                                                      Object {
+                                                        "label": "Panel",
+                                                        "value": "Panel",
+                                                      },
+                                                      Object {
+                                                        "label": "Per Curium",
+                                                        "value": "Per Curium",
+                                                      },
                                                       Object {
                                                         "label": "Alan G. Lance, Sr.",
                                                         "value": "Alan G. Lance, Sr.",
@@ -2759,6 +2951,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                 options={
                                                   Array [
                                                     Object {
+                                                      "label": "Clerk",
+                                                      "value": "Clerk",
+                                                    },
+                                                    Object {
+                                                      "label": "Panel",
+                                                      "value": "Panel",
+                                                    },
+                                                    Object {
+                                                      "label": "Per Curium",
+                                                      "value": "Per Curium",
+                                                    },
+                                                    Object {
                                                       "label": "Alan G. Lance, Sr.",
                                                       "value": "Alan G. Lance, Sr.",
                                                     },
@@ -2881,6 +3085,18 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                                                     "openMenuOnClick": true,
                                                     "openMenuOnFocus": false,
                                                     "options": Array [
+                                                      Object {
+                                                        "label": "Clerk",
+                                                        "value": "Clerk",
+                                                      },
+                                                      Object {
+                                                        "label": "Panel",
+                                                        "value": "Panel",
+                                                      },
+                                                      Object {
+                                                        "label": "Per Curium",
+                                                        "value": "Per Curium",
+                                                      },
                                                       Object {
                                                         "label": "Alan G. Lance, Sr.",
                                                         "value": "Alan G. Lance, Sr.",

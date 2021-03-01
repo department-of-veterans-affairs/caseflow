@@ -1,9 +1,12 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useHistory } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormProvider } from 'react-hook-form';
+import { camelCase } from 'lodash';
 
 import {
+  clearClaimant,
   clearPoa,
   editClaimantInformation,
 } from '../reducers/addClaimantSlice';
@@ -11,13 +14,12 @@ import { AddClaimantConfirmationModal } from './AddClaimantConfirmationModal';
 import { AddClaimantForm } from './AddClaimantForm';
 import { IntakeLayout } from '../components/IntakeLayout';
 import { AddClaimantButtons } from './AddClaimantButtons';
-import { useAddClaimantForm } from './utils';
+import { useAddClaimantForm, fetchAttorneys } from './utils';
 // eslint-disable-next-line no-unused-vars
 import { submitReview } from '../actions/decisionReview';
 import { FORM_TYPES } from '../constants';
-import { camelCase } from 'lodash';
 
-export const AddClaimantPage = () => {
+export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys }) => {
   const dispatch = useDispatch();
   const { goBack, push } = useHistory();
 
@@ -74,7 +76,21 @@ export const AddClaimantPage = () => {
   const {
     formState: { isValid },
     handleSubmit,
+    watch,
   } = methods;
+
+  const relationship = watch('relationship');
+
+  useEffect(() => {
+    if (
+      relationship &&
+      claimant?.relationship &&
+      claimant?.relationship !== relationship
+    ) {
+      dispatch(clearClaimant());
+      // reset();
+    }
+  }, [relationship, claimant]);
 
   return (
     <FormProvider {...methods}>
@@ -87,7 +103,11 @@ export const AddClaimantPage = () => {
           />
         }
       >
-        <AddClaimantForm onBack={handleBack} onSubmit={onSubmit} />
+        <AddClaimantForm
+          onBack={handleBack}
+          onSubmit={onSubmit}
+          onAttorneySearch={onAttorneySearch}
+        />
         {confirmModal && (
           <AddClaimantConfirmationModal
             onCancel={toggleConfirm}
@@ -99,4 +119,7 @@ export const AddClaimantPage = () => {
       </IntakeLayout>
     </FormProvider>
   );
+};
+AddClaimantPage.propTypes = {
+  onAttorneySearch: PropTypes.func,
 };
