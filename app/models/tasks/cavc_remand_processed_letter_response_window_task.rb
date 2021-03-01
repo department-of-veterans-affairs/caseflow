@@ -84,6 +84,38 @@ class CavcRemandProcessedLetterResponseWindowTask < Task
     []
   end
 
+  def when_child_task_completed(child_task)
+    pp "when_child_task_completed: #{child_task.id}"
+    if same_task_type_assigned_to_user(child_task)
+      # Move any open TimedHoldTask to the this task
+      child_task.children.open.where(type: :TimedHoldTask).each do |timed_hold_task|
+        timed_hold_task.update(parent_id: id)
+      end
+    end
+
+    # call super after moving open TimedHoldTask to this task so that task's status is correctly set
+    super
+    # binding.pry
+  end
+
+  def same_task_type_assigned_to_user(child_task)
+    child_task.type == type && child_task.assigned_to_type == "User"
+  end
+
+  def when_child_task_created(child_task)
+    if same_task_type_assigned_to_user(child_task)
+      # Move any open TimedHoldTask to the child_task
+      timed_hold_tasks = children.open.where(type: :TimedHoldTask).each do |timed_hold_task|
+        timed_hold_task.update!(parent_id: child_task.id)
+      end
+
+      child_task.update!(status: :on_hold) if timed_hold_tasks.any?
+    end
+
+    put_on_hold_due_to_new_child_task
+    # binding.pry
+  end
+
   private
 
   def set_assignee
