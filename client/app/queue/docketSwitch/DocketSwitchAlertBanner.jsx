@@ -32,8 +32,8 @@ const DocketSwitchAlertBanner = ({ appeal }) => {
       other appeal stream.</Link>
   </div>;
 
-    if (docketSwitch.disposition === 'granted') {
-     return (
+  if (docketSwitch.disposition === 'granted') {
+    return (
       <div>
         <Alert
           message={fullGrantSuccessMessage}
@@ -43,18 +43,21 @@ const DocketSwitchAlertBanner = ({ appeal }) => {
         <br />
       </div>
     );
-  } else {
-    return (
-      <div>
-        <Alert
-          message={appeal.docketSwitch ? partialGrantNewDocketSuccessMessage : partialGrantOldDocketSuccessMessage}
-          title={appeal.docketSwitch ? COPY.DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_NEW_DOCKET : COPY.DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_OLD_DOCKET}
-          type="info"
-        />
-        <br />
-      </div>
-    );
   }
+  
+  return (
+    <div>
+      <Alert
+        message={appeal.docketSwitch ? partialGrantNewDocketSuccessMessage : partialGrantOldDocketSuccessMessage}
+        title={appeal.docketSwitch ?
+          COPY.DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_NEW_DOCKET :
+          COPY.DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_OLD_DOCKET
+        }
+        type="info"
+      />
+      <br />
+    </div>
+  );
 };
 
 DocketSwitchAlertBanner.propTypes = {
