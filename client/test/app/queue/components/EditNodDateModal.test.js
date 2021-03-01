@@ -12,7 +12,7 @@ describe('EditNodDateModal', () => {
   const onCancel = jest.fn();
   const defaultNodDate = '2020-10-31';
   const defaultNewNodDate = '2020-10-15';
-  const defaultReason = {"label": "New Form/Information Received", "value": "new_info"};
+  const defaultReason = { label: 'New Form/Information Received', value: 'new_info' };
 
   const setupEditNodDateModal = () => {
     return mount(
@@ -22,6 +22,7 @@ describe('EditNodDateModal', () => {
         onSubmit={onSubmit}
         nodDate={defaultNodDate}
         reason={defaultReason}
+        showTimelinessError={false}
       />
     );
   };
@@ -53,7 +54,7 @@ describe('EditNodDateModal', () => {
     dateInput.simulate('change', { target: { value: defaultNewNodDate } });
     reasonDropdown.find('Select').simulate('keyDown', { key: 'ArrowDown', keyCode: 40 });
     reasonDropdown.find('Select').simulate('keyDown', { key: 'Enter', keyCode: 13 });
-    
+
     component.update();
     submitButton.simulate('click');
 
@@ -86,7 +87,7 @@ describe('EditNodDateModal', () => {
     const errorMessage = component.find('.usa-input-error-message');
 
     expect(errorMessage.text()).toEqual(COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE);
-    expect(submitButton.toBeDisabled);
+    expect(submitButton.getDOMNode()).toHaveProperty('disabled');
   });
 
   it('should show warning when date is after nodDate', () => {
@@ -108,8 +109,8 @@ describe('EditNodDateModal', () => {
     dateInput.simulate('change', { target: { value: defaultNewNodDate } });
     component.update();
 
-    expect(submitButton.toBeDisabled);
-  })
+    expect(submitButton.getDOMNode()).toHaveProperty('disabled');
+  });
 
   it('should disable submit button if a reason has been selected and date is not valid', () => {
     const component = setupEditNodDateModal();
@@ -125,6 +126,6 @@ describe('EditNodDateModal', () => {
     const errorMessage = component.find('.usa-input-error-message');
 
     expect(errorMessage.text()).toEqual(COPY.EDIT_NOD_DATE_PRE_AMA_DATE_ERROR_MESSAGE);
-    expect(submitButton.toBeDisabled);
-  })
+    expect(submitButton.getDOMNode()).toHaveProperty('disabled');
+  });
 });

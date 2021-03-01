@@ -1,7 +1,5 @@
 /* eslint-disable max-lines */
 
-import { hot } from 'react-hot-loader/root';
-
 import querystring from 'querystring';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -38,11 +36,13 @@ import EvaluateDecisionView from './caseEvaluation/EvaluateDecisionView';
 import AddColocatedTaskView from './colocatedTasks/AddColocatedTaskView';
 import BlockedAdvanceToJudgeView from './BlockedAdvanceToJudgeView';
 import AddCavcRemandView from './AddCavcRemandView';
+import AddCavcDatesModal from './AddCavcDatesModal';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
 import AssignHearingModal from './components/AssignHearingModal';
 import PostponeHearingModal from './components/PostponeHearingModal';
+import HearingScheduledInErrorModal from './components/HearingScheduledInErrorModal';
 import ChangeHearingDispositionModal from './ChangeHearingDispositionModal';
 import CreateChangeHearingDispositionTaskModal from './CreateChangeHearingDispositionTaskModal';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
@@ -89,7 +89,9 @@ import { motionToVacateRoutes } from './mtv/motionToVacateRoutes';
 import { docketSwitchRoutes } from './docketSwitch/docketSwitchRoutes';
 import ScheduleVeteran from '../hearings/components/ScheduleVeteran';
 import HearingTypeConversion from '../hearings/components/HearingTypeConversion';
+import HearingTypeConversionModal from '../hearings/components/HearingTypeConversionModal';
 import CavcReviewExtensionRequestModal from './components/CavcReviewExtensionRequestModal';
+import { PrivateRoute } from '../components/PrivateRoute';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -322,9 +324,28 @@ class QueueApp extends React.PureComponent {
     />
   );
 
-  routedScheduleVeteran = (props) => (
-    <ScheduleVeteran userId={this.props.userId} {...props.match.params} />
-  );
+  routedScheduleVeteran = (props) => {
+    const params = querystring.parse(props.location.search.replace(/^\?/, ''));
+
+    return (
+      <PrivateRoute
+        authorized={this.props.userCanAssignHearingSchedule}
+        redirectTo={`/queue/appeals/${props.match.params.appealId}`}
+      >
+        {params.action === 'reschedule' ? (
+          <CaseDetailsLoadingScreen
+            {...this.propsForQueueLoadingScreen()}
+            preventReset
+            appealId={props.match.params.appealId}
+          >
+            <ScheduleVeteran params={params} userId={this.props.userId} {...props.match.params} />
+          </CaseDetailsLoadingScreen>
+        ) : (
+          <ScheduleVeteran params={params} userId={this.props.userId} {...props.match.params} />
+        )}
+      </PrivateRoute>
+    );
+  };
 
   routedAssignHearingModal = (props) => (
     <AssignHearingModal userId={this.props.userId} {...props.match.params} />
@@ -340,6 +361,13 @@ class QueueApp extends React.PureComponent {
     />
   );
 
+  routedHearingScheduledInError = (props) => (
+    <HearingScheduledInErrorModal
+      userId={this.props.userId}
+      {...props.match.params}
+    />
+  )
+
   routedChangeTaskTypeModal = (props) => (
     <ChangeTaskTypeModal {...props.match.params} />
   );
@@ -348,7 +376,13 @@ class QueueApp extends React.PureComponent {
     <HearingTypeConversion type="Virtual" {...props.match.params} />
   );
 
-  routedSetOvertimeStatusModal = (props) => <SetOvertimeStatusModal {...props.match.params} />;
+  routedChangeHearingRequestTypeModal = (props) => (
+    <HearingTypeConversionModal hearingType={props.hearingType} {...props.match.params} />
+  )
+
+  routedSetOvertimeStatusModal = (props) => (
+    <SetOvertimeStatusModal {...props.match.params} />
+  );
 
   routedChangeHearingDisposition = (props) => (
     <ChangeHearingDispositionModal {...props.match.params} />
@@ -422,8 +456,13 @@ class QueueApp extends React.PureComponent {
   routedEndHoldModal = (props) => <EndHoldModal {...props.match.params} />;
 
   routedCavcExtensionRequest = (props) => (
-    <CavcReviewExtensionRequestModal {...props.match.params} closeModal={() => props.history.goBack()} />
+    <CavcReviewExtensionRequestModal
+      {...props.match.params}
+      closeModal={() => props.history.goBack()}
+    />
   );
+
+  routedCavcRemandReceived = (props) => <AddCavcDatesModal {...props.match.params} />;
 
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
@@ -466,6 +505,7 @@ class QueueApp extends React.PureComponent {
 
             {/* Base/page (non-modal) routes */}
             <Switch>
+
               <PageRoute
                 exact
                 path={['/search', '/cases/:caseflowVeteranIds']}
@@ -629,7 +669,6 @@ class QueueApp extends React.PureComponent {
               {motionToVacateRoutes.page}
 
               {docketSwitchRoutes.page}
-
             </Switch>
 
             {/* Modal routes are in their own Switch so they will display above the base routes */}
@@ -792,6 +831,18 @@ class QueueApp extends React.PureComponent {
                 }`}
                 render={this.routedCavcExtensionRequest}
               />
+              <Route
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CAVC_REMAND_RECEIVED_MDR.value
+                }`}
+                render={this.routedCavcRemandReceived}
+              />
+              <Route
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CAVC_REMAND_RECEIVED_VLJ.value
+                }`}
+                render={this.routedCavcRemandReceived}
+              />
 
               <PageRoute
                 exact
@@ -855,15 +906,27 @@ class QueueApp extends React.PureComponent {
               />
               <PageRoute
                 exact
-                path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.value}`}
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.value
+                }`}
                 title="Assign Hearing | Caseflow"
                 render={this.routedScheduleVeteran}
               />
               <PageRoute
                 exact
-                path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SCHEDULE_VETERAN.value}`}
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.SCHEDULE_VETERAN.value
+                }`}
                 title="Assign Hearing | Caseflow"
                 render={this.routedAssignHearingModal}
+              />
+              <PageRoute
+                exact
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.REMOVE_HEARING_SCHEDULED_IN_ERROR.value
+                }`}
+                title="Remove hearing to correct a scheduling error | Caseflow"
+                render={this.routedHearingScheduledInError}
               />
               <PageRoute
                 exact
@@ -887,11 +950,27 @@ class QueueApp extends React.PureComponent {
               />
               <PageRoute
                 exact
-                path={
-                  `/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`
-                }
+                path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value
+                }`}
                 title="Change Hearing Request Type to Virtual | Caseflow"
                 render={this.routedChangeHearingRequestTypeToVirtual}
+              />
+              <PageRoute
+                exact
+                path={
+                  `/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO.value}`
+                }
+                title="Change Hearing Request Type to Video | Caseflow"
+                render={(props) => this.routedChangeHearingRequestTypeModal({ ...props, hearingType: 'Video' })}
+              />
+              <PageRoute
+                exact
+                path={
+                  `/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_CENTRAL.value}`
+                }
+                title="Change Hearing Request Type to Central | Caseflow"
+                render={(props) => this.routedChangeHearingRequestTypeModal({ ...props, hearingType: 'Central' })}
               />
 
               <Route
@@ -963,7 +1042,8 @@ QueueApp.propTypes = {
   reviewActionType: PropTypes.string,
   userCanViewHearingSchedule: PropTypes.bool,
   userCanViewOvertimeStatus: PropTypes.bool,
-  userCanViewEditNodDate: PropTypes.bool
+  userCanViewEditNodDate: PropTypes.bool,
+  userCanAssignHearingSchedule: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
@@ -986,9 +1066,7 @@ const mapDispatchToProps = (dispatch) =>
     dispatch
   );
 
-export default hot(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(QueueApp)
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(QueueApp);

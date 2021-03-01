@@ -298,6 +298,9 @@ class LegacyAppeal < CaseflowRecord
     !!appellant_first_name
   end
 
+  # This seems to be valid based on definition of the claimant method in this file
+  alias veteran_is_not_claimant appellant_is_not_veteran
+
   def appellant_email_address
     person_for_appellant&.email_address
   end
@@ -306,10 +309,6 @@ class LegacyAppeal < CaseflowRecord
     return nil if appellant_ssn.blank?
 
     Person.find_or_create_by_ssn(appellant_ssn)
-  end
-
-  def veteran_if_exists
-    @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
   end
 
   def veteran
@@ -403,14 +402,6 @@ class LegacyAppeal < CaseflowRecord
   end
 
   ## END Hearing specific attributes and methods
-
-  def veteran_is_deceased
-    veteran_death_date.present?
-  end
-
-  def veteran_death_date
-    veteran&.date_of_death
-  end
 
   attr_writer :cavc_decisions
   def cavc_decisions

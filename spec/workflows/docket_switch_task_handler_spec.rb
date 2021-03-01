@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe DocketSwitchTaskHandler, :all_dbs do
+describe DocketSwitch::TaskHandler, :all_dbs do
   include QueueHelpers
 
   before do

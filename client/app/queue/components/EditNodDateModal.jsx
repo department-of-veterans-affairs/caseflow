@@ -7,11 +7,11 @@ import DateSelector from 'app/components/DateSelector';
 import COPY from 'app/../COPY';
 import { useDispatch, useSelector } from 'react-redux';
 import { resetSuccessMessages, showSuccessMessage } from '../uiReducer/uiActions';
-import { editAppeal } from '../QueueActions';
+import { editAppeal, editNodDateUpdates } from '../QueueActions';
 import ApiUtil from '../../util/ApiUtil';
 import moment from 'moment';
 import { sprintf } from 'sprintf-js';
-import { formatDateStr } from '../../util/DateUtil';
+import { formatDateStr, DateString } from '../../util/DateUtil';
 import { appealWithDetailSelector } from '../selectors';
 import Alert from 'app/components/Alert';
 import SearchableDropdown from 'app/components/SearchableDropdown';
@@ -22,12 +22,15 @@ const alertStyling = css({
   '& .usa-alert-text': { lineHeight: '1' }
 });
 
-const changeReasons = [
+export const changeReasons = [
   { label: 'New Form/Information Received', value: 'new_info' },
   { label: 'Data Entry Error', value: 'entry_error' },
 ];
 
 export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealId, reason }) => {
+  const [showTimelinessError, setTimelinessError] = useState(false);
+  const [issues, setIssues] = useState(null);
+
   const dispatch = useDispatch();
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
@@ -64,9 +67,16 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
         docketNumber: data.body.docketNumber,
         reason: data.body.changeReason
       }));
-      dispatch(showSuccessMessage(successMessage));
-      onSubmit?.();
-      window.scrollTo(0, 0);
+
+      if (data.body.affectedIssues) {
+        setIssues({ affectedIssues: data.body.affectedIssues, unaffectedIssues: data.body.unaffectedIssues });
+        setTimelinessError(true);
+      } else {
+        dispatch(editNodDateUpdates(appealId, data.body.nodDateUpdate));
+        dispatch(showSuccessMessage(successMessage));
+        onSubmit?.();
+        window.scrollTo(0, 0);
+      }
     });
   };
 
@@ -78,11 +88,13 @@ export const EditNodDateModalContainer = ({ onCancel, onSubmit, nodDate, appealI
       reason={reason}
       appealId={appealId}
       appellantName={appeal.appellantFullName}
+      showTimelinessError={showTimelinessError}
+      issues={issues}
     />
   );
 };
 
-export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
+export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason, showTimelinessError, issues }) => {
   const [receiptDate, setReceiptDate] = useState(nodDate);
   const [changeReason, setChangeReason] = useState(reason);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -90,19 +102,22 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
   const [badDate, setBadDate] = useState(null);
   const [badReason, setBadReason] = useState(true);
 
-  const buttons = [
-    {
+  const buttons = [];
+
+  if (!showTimelinessError) {
+    buttons.push({
       classNames: ['cf-modal-link', 'cf-btn-link'],
       name: 'Cancel',
       onClick: onCancel
-    },
-    {
-      classNames: ['usa-button', 'usa-button-primary'],
-      name: 'Submit',
-      disabled: (badDate || badReason),
-      onClick: () => onSubmit(receiptDate, changeReason)
-    }
-  ];
+    });
+  }
+
+  buttons.push({
+    classNames: ['usa-button', 'usa-button-primary'],
+    name: showTimelinessError ? 'Close' : 'Submit',
+    disabled: (badDate || badReason),
+    onClick: showTimelinessError ? onCancel : () => onSubmit(receiptDate, changeReason)
+  });
 
   const isFutureDate = (newDate) => {
     const today = new Date();
@@ -159,13 +174,50 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
     }
   };
 
-  return (
-    <Modal
-      title={COPY.EDIT_NOD_DATE_MODAL_TITLE}
-      onCancel={onCancel}
-      onSubmit={onSubmit}
-      closeHandler={onCancel}
-      buttons={buttons}>
+  let modalContent;
+
+  if (showTimelinessError) {
+    modalContent = <div>
+      { showTimelinessError ? <Alert
+        message={COPY.EDIT_NOD_DATE_TIMELINESS_ERROR_MESSAGE}
+        styling={alertStyling}
+        title={COPY.EDIT_NOD_DATE_TIMELINESS_ALERT_TITLE}
+        type="error"
+        scrollOnAlert={false}
+      /> : null }
+
+      <strong>Affected Issue(s)</strong>
+      <ul className="cf-error">
+        {issues.affectedIssues.map((issue) => {
+
+          return <li key={issue.id}>
+            {issue.description}
+            <div>
+              (Decision Date: <DateString date={issue.approx_decision_date} dateFormat = "MM/DD/YYYY" />)
+            </div>
+          </li>;
+        })}
+      </ul>
+
+      { issues.unaffectedIssues.length > 0 && <strong>Unaffected Issue(s)</strong> }
+      <ul>
+        {issues.unaffectedIssues.map((issue) => {
+
+          return <li key={issue.id}>
+            {issue.description}
+            <div>
+              (Decision Date: <DateString date={issue.approx_decision_date} dateFormat = "MM/DD/YYYY" />)
+            </div>
+          </li>;
+        })}
+      </ul>
+      <br />
+      <div>
+        <ReactMarkdown source={COPY.EDIT_NOD_DATE_TIMELINESS_COB_MESSAGE} />
+      </div>
+    </div>;
+  } else {
+    modalContent = <div>
       <div>
         <ReactMarkdown source={COPY.EDIT_NOD_DATE_MODAL_DESCRIPTION} />
       </div>
@@ -174,7 +226,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
         styling={alertStyling}
         title=""
         type="info"
-        scrollOnAlert= {false}
+        scrollOnAlert={false}
       /> : null }
       <DateSelector
         style={marginTop}
@@ -197,6 +249,17 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
         debounce={250}
         strongLabel
       />
+    </div>;
+  }
+
+  return (
+    <Modal
+      title={COPY.EDIT_NOD_DATE_MODAL_TITLE}
+      onCancel={onCancel}
+      onSubmit={onSubmit}
+      closeHandler={onCancel}
+      buttons={buttons}>
+      {modalContent}
     </Modal>
   );
 };
@@ -204,6 +267,7 @@ export const EditNodDateModal = ({ onCancel, onSubmit, nodDate, reason }) => {
 EditNodDateModalContainer.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
+  onClose: PropTypes.func,
   nodDate: PropTypes.string.isRequired,
   reason: PropTypes.object,
   appealId: PropTypes.string.isRequired
@@ -212,7 +276,10 @@ EditNodDateModalContainer.propTypes = {
 EditNodDateModal.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
+  onClose: PropTypes.func,
   nodDate: PropTypes.string.isRequired,
   reason: PropTypes.object,
-  appealId: PropTypes.string.isRequired
+  appealId: PropTypes.string.isRequired,
+  showTimelinessError: PropTypes.bool.isRequired,
+  issues: PropTypes.object
 };

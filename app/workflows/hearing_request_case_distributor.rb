@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class HearingRequestCaseDistributor
-  class CannotDistribute < StandardError; end
-
   def initialize(appeals:, genpop:, distribution:, priority:)
     @appeals = appeals
     @genpop = genpop

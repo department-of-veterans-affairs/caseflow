@@ -8,7 +8,7 @@ describe UnrecognizedAppellant do
     subject { ua.power_of_attorney }
 
     context "when there is an unrecognized POA" do
-      let(:poa_detail) { create(:unrecognized_party_detail, :person) }
+      let(:poa_detail) { create(:unrecognized_party_detail, :individual) }
 
       it "returns a POA object with the correct attributes" do
         expect(subject).to have_attributes(

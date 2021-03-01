@@ -12,50 +12,57 @@ describe HearingMapper do
 
     subject { HearingMapper.bfha_vacols_code(hearing) }
 
-    context "when disposition is held and it is central office hearing" do
-      let(:hearing_disp) { "H" }
-      let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:central] }
+    context "when disposition is held" do
+      let(:hearing_disp) { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:held] }
 
-      it { is_expected.to eq "1" }
-    end
+      context "and it is a central office hearing" do
+        let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:central] }
 
-    context "when disposition is held and it is video hearing" do
-      let(:hearing_disp) { "H" }
-      let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:video] }
+        it { is_expected.to eq "1" }
+      end
 
-      it { is_expected.to eq "6" }
-    end
+      context "and it is video hearing" do
+        let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:video] }
 
-    context "when disposition is held and it is travel board hearing" do
-      let(:hearing_disp) { "H" }
-      let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:travel] }
+        it { is_expected.to eq "6" }
+      end
 
-      it { is_expected.to eq "2" }
-    end
+      context "and it is travel board hearing" do
+        let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:travel] }
 
-    context "when disposition is held and it is a virtual hearing" do
-      let(:hearing_disp) { "H" }
-      let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:virtual] }
+        it { is_expected.to eq "2" }
+      end
 
-      it { is_expected.to eq "7" }
+      context "and it is a virtual hearing" do
+        let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:virtual] }
+
+        it { is_expected.to eq "7" }
+      end
     end
 
     context "when disposition is postponed" do
-      let(:hearing_disp) { "P" }
+      let(:hearing_disp) { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:postponed] }
       let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:travel] }
 
       it { is_expected.to eq nil }
     end
 
+    context "when disposition is scheduled in error" do
+      let(:hearing_disp) { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:scheduled_in_error] }
+      let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:video] }
+
+      it { is_expected.to eq nil }
+    end
+
     context "when disposition is cancelled" do
-      let(:hearing_disp) { "C" }
+      let(:hearing_disp) { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:cancelled] }
       let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:video] }
 
       it { is_expected.to eq "5" }
     end
 
-    context "when disposition is not held" do
-      let(:hearing_disp) { "N" }
+    context "when disposition is no-show" do
+      let(:hearing_disp) { VACOLS::CaseHearing::HEARING_DISPOSITION_CODES[:no_show] }
       let(:hearing_type) { VACOLS::CaseHearing::HEARING_TYPE_LOOKUP[:central] }
 
       it { is_expected.to eq "5" }

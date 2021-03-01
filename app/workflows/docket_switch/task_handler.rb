@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 ##
-# The DocketSwitchTaskHandler handles cancelling, moving, and creating tasks to support Docket Switches.
+# The DocketSwitch::TaskHandler handles cancelling, moving, and creating tasks to support Docket Switches.
 
 # Notes on logic order in the call method:
 # New tasks are created on the new stream first so that the new root and distribution tasks are available
@@ -9,7 +9,7 @@
 # Copying persistent tasks happens before cancelling the old tasks in order to preserve the current state of the task
 # And are saved after cancelling the tasks to prevent duplicate Org tasks per docket number
 
-class DocketSwitchTaskHandler
+class DocketSwitch::TaskHandler
   include ActiveModel::Model
 
   validates :docket_switch, presence: true
